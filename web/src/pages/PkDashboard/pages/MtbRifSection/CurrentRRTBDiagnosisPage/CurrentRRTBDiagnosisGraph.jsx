@@ -15,10 +15,17 @@ import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
 const endPointParams = [
+  { assay: 'GxMtbRif' },
+  { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { resultCategory1: 'Detected' },
+  { resultCategory2: 'Detected' },
+  { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
+  { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
+  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
 const CurrentDiagnosisGraphPage = () => {
@@ -41,7 +48,7 @@ const CurrentDiagnosisGraphPage = () => {
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
 
   return (
@@ -80,9 +87,9 @@ const CurrentDiagnosisGraphPage = () => {
           />
           <TripleCardSide
             data={[
-              { label: formatMessage(messages.RRPerYear), value: 123 },
-              { label: formatMessage(messages.RRPerMonth), value: 456 },
-              { label: formatMessage(messages.RRPerDay), value: 799 },
+              { label: formatMessage(messages.RRPerYear), value: `${data.totalResultsCurrentYear}` },
+              { label: formatMessage(messages.RRPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              { label: formatMessage(messages.RRPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
         </Grid>
