@@ -33,7 +33,7 @@ const PartnerSelect = ({ id, name, label, value, onChange, error, helperText }) 
         endAdornment: (
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
-            onClick={() => onChange({ target: { name, value: '' } })}
+            onClick={() => onChange({ target: { name, value: null } })}
             disabled={(partnersData || []).length === 1}
           >
             <ClearIcon />

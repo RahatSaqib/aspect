@@ -31,7 +31,7 @@ const ResultCategorySelect = ({ id, name, label, value, onChange, error, helperT
           endAdornment: (
             <IconButton
               sx={{ visibility: value ? 'visible' : 'hidden' }}
-              onClick={() => onChange({ target: { name, value: '' } })}
+              onClick={() => onChange({ target: { name, value: null } })}
               disabled={disabled}
             >
               <ClearIcon />

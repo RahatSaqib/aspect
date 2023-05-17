@@ -173,13 +173,13 @@ const Btn = ({ lbl, del }) => (
 const StateId = ({ countryId, stateId, remove }) => {
   const { data } = useStatesByCountry(countryId)
 
-  return data ? <Btn lbl={data.find(s => s.id === stateId).name} del={() => remove(['stateId'])} /> : null
+  return data && stateId ? <Btn lbl={data.find(s => s.id === stateId).name} del={() => remove(['stateId'])} /> : null
 }
 
 const LgaId = ({ stateId, lgaId, remove }) => {
   const { data } = useLgaByState(stateId)
 
-  return data ? <Btn lbl={data.find(s => s.id === lgaId).name} del={() => remove(['lgaId'])} /> : null
+  return data && lgaId ? <Btn lbl={data.find(s => s.id === lgaId).name} del={() => remove(['lgaId'])} /> : null
 }
 
 const SiteName = ({ siteName, remove }) => {
@@ -241,7 +241,7 @@ const ConsumableId = ({ consumableId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useConsumable()
 
-  return data ? (
+  return data && consumableId ? (
     <Btn
       lbl={formatMessage(messages[data.find(a => a.id === consumableId).i18nKey])}
       del={() => remove(['consumableId'])}
@@ -367,7 +367,7 @@ const DeviceApprovalId = ({ deviceApprovalId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useDeviceApprovalType()
 
-  if (data) {
+  if (data && deviceApprovalId) {
     const deviceApprovalName = formatMessage(
       messages[`deviceApproval${data.find(it => it.id === deviceApprovalId).name}`]
     )
@@ -385,7 +385,7 @@ const DeviceType = ({ deviceType, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useDeviceTypeList()
 
-  if (data) {
+  if (data && deviceType) {
     const deviceTypeName = data.find(it => it.id === deviceType).name
 
     return <Btn lbl={formatMessage(messages.withDeviceType, { deviceTypeName })} del={() => remove(['deviceType'])} />

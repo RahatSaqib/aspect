@@ -38,7 +38,7 @@ const DeviceMaintenanceStatusSelect = ({
         endAdornment: (
           <IconButton
             sx={{ visibility: value.length ? 'visible' : 'hidden' }}
-            onClick={() => onChange({ target: { name, value: '' } })}
+            onClick={() => onChange({ target: { name, value: null } })}
             disabled={disabled}
           >
             <ClearIcon />
