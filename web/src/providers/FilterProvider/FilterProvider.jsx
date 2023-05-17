@@ -1,68 +1,16 @@
-import React, { createContext, useContext, useMemo, useState } from 'react'
-import endOfDay from 'date-fns/endOfDay'
-import endOfMonth from 'date-fns/endOfMonth'
-import startOfDay from 'date-fns/startOfDay'
-import startOfMonth from 'date-fns/startOfMonth'
-import subtractDays from 'date-fns/subDays'
-import { useLocation } from 'react-router-dom'
+import React, { createContext, useContext, useEffect, useState } from 'react'
+import { useInitialValues } from './tools'
 
 const FilterContext = createContext()
 
-const now = new Date()
-const minDate = startOfDay(subtractDays(now, 30))
-const maxDate = endOfDay(now)
-
-// TODO: remove pagination from URL
-const defaultFilter = {
-  '/browse/device/list': {}, // done
-  '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 }, // done
-  '/browse/deviceApiKey': {}, // done
-  '/browse/inventory/supplies': { hasStock: true }, // done
-  '/browse/inventory/log': { minDate, maxDate }, // done
-  '/browse/notification': {}, // done
-  '/browse/person': { contactStatus: 0 }, // done
-  '/browse/reporter': { minDate, maxDate }, // done
-  '/browse/result': {}, // done
-  '/browse/site': {}, // done
-  '/reports': {}, // done
-}
-
-function mapValues(value) {
-  switch (true) {
-    case ['true', 'false'].includes(value):
-      return Boolean(value)
-    case value.includes('+'):
-      return value.replaceAll('+', ' ')
-    default: {
-      return value
-    }
-  }
-}
-
 function FilterProvider({ children }) {
-  const { pathname, search } = useLocation()
+  const { initialFilter } = useInitialValues()
 
-  const initialFilter = useMemo(() => {
-    const filters = { ...defaultFilter }
-    try {
-      const params = new URLSearchParams(search).get('filters').split('&')
-      if (filters[pathname]) {
-        params.forEach(item => {
-          const [name, value] = item.split('=')
-          if (!['minDate', 'maxDate', 'maxExpirationDate', 'minExpirationDate'].includes(name))
-            filters[pathname] = { ...filters[pathname], [name]: mapValues(value) }
-        })
-        return filters
-      }
-      return defaultFilter
-    } catch (e) {
-      return defaultFilter
-    }
-  }, [pathname, search])
+  const [filterState, setFilterState] = useState()
 
-  const filterState = useState(initialFilter)
+  useEffect(() => setFilterState(initialFilter), [setFilterState, initialFilter])
 
-  return <FilterContext.Provider value={filterState}>{children}</FilterContext.Provider>
+  return <FilterContext.Provider value={[filterState, setFilterState]}>{children}</FilterContext.Provider>
 }
 
 function useFilterValues(pathname) {
