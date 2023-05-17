@@ -1,9 +1,10 @@
-import React, { useState, createContext, useContext } from 'react'
+import React, { createContext, useContext, useMemo, useState } from 'react'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import subtractDays from 'date-fns/subDays'
+import { useLocation } from 'react-router-dom'
 
 const FilterContext = createContext()
 
@@ -26,8 +27,40 @@ const defaultFilter = {
   '/reports': {}, // done
 }
 
+function mapValues(value) {
+  switch (true) {
+    case ['true', 'false'].includes(value):
+      return Boolean(value)
+    case value.includes('+'):
+      return value.replaceAll('+', ' ')
+    default: {
+      return value
+    }
+  }
+}
+
 function FilterProvider({ children }) {
-  const filterState = useState(defaultFilter)
+  const { pathname, search } = useLocation()
+
+  const initialFilter = useMemo(() => {
+    const filters = { ...defaultFilter }
+    try {
+      const params = new URLSearchParams(search).get('filters').split('&')
+      if (filters[pathname]) {
+        params.forEach(item => {
+          const [name, value] = item.split('=')
+          if (!['minDate', 'maxDate', 'maxExpirationDate', 'minExpirationDate'].includes(name))
+            filters[pathname] = { ...filters[pathname], [name]: mapValues(value) }
+        })
+        return filters
+      }
+      return defaultFilter
+    } catch (e) {
+      return defaultFilter
+    }
+  }, [pathname, search])
+
+  const filterState = useState(initialFilter)
 
   return <FilterContext.Provider value={filterState}>{children}</FilterContext.Provider>
 }
