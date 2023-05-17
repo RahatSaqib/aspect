@@ -30,8 +30,10 @@ function PeriodSelector({ minDate, maxDate, onChange, label, noDay, noWeek, noMo
   const [valueLabel, setValueLabel] = useState(
     minDate && maxDate
       ? [...day, ...week, ...month, ...quarter, ...year].find(
-          o => o.value.minDate.getTime() === minDate.getTime() && o.value.maxDate.getTime() === maxDate.getTime()
-        ).label
+          o =>
+            o.value.minDate.getTime() === new Date(minDate).getTime() &&
+            o.value.maxDate.getTime() === new Date(maxDate).getTime()
+        )?.label || customFormat(new Date(minDate), new Date(maxDate))
       : formatMessage(messages.any)
   )
   const anchorRef = useRef(null)
