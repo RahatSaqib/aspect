@@ -168,7 +168,7 @@ export const DeviceApiKeyList = () => {
             />
           </div>
           {(data?.data || []).length === 0 ? (
-            <BrowseEmptyList navigate={navigate} location={location} />
+            <BrowseEmptyList />
           ) : (
             <>
               <Table className={cssClasses('DeviceApiKeyDataTable')}>

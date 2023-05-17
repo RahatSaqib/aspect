@@ -66,7 +66,9 @@ function useFilterUpdate() {
     update(filterForLocation, pathname)
   }
 
-  return [update, removeFilter] // pathname is to allow changing the filter in other places before navigation
+  const resetFilter = pathname => setFilter({ ...filter, [pathname]: { ...defaultFilter[pathname] } })
+
+  return [update, removeFilter, resetFilter] // pathname is to allow changing the filter in other places before navigation
 }
 
 export { FilterProvider, useFilterValues, useFilterUpdate }

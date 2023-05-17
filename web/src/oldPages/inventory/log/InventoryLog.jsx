@@ -97,7 +97,7 @@ export const InventoryLogWithProps = ({
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
           <DataTableProgressBar disabled={!isLoading} />
           {!hasItems ? (
-            <BrowseEmptyList navigate={navigate} location={location} />
+            <BrowseEmptyList />
           ) : (
             <>
               <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>

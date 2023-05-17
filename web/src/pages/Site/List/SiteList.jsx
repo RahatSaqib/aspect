@@ -95,7 +95,7 @@ export const SiteList = ({ navigate, location }) => {
             <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
           </div>
           {data.siteList.length === 0 ? (
-            <BrowseEmptyList navigate={navigate} location={location} />
+            <BrowseEmptyList />
           ) : (
             <>
               <SiteDataTable className={cssClasses('SiteDataTable')}>

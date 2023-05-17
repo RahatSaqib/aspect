@@ -199,7 +199,7 @@ export const InventoryItemsListWithProps = ({
           </div>
           <DataTableProgressBar disabled={!isLoading} />
           {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList navigate={navigate} location={location} />
+            <BrowseEmptyList />
           ) : (
             <>
               <InventoryDataTable className={cssClasses('InventoryDataTable')}>

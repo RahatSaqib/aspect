@@ -63,7 +63,7 @@ export const PersonList = () => {
             />
           </div>
           {data.data.length === 0 ? (
-            <BrowseEmptyList navigate={navigate} location={location} />
+            <BrowseEmptyList />
           ) : (
             <>
               <PersonDataTable className={cssClasses('PersonDataTable')}>

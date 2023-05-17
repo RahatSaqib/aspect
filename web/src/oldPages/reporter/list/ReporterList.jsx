@@ -113,7 +113,7 @@ export const ReporterListWithProps = ({
           <DataTableProgressBar disabled={!isLoading} />
 
           {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList navigate={navigate} location={location} />
+            <BrowseEmptyList />
           ) : (
             <>
               <ReporterDataTable className={cssClasses('ReporterDataTable')}>

@@ -153,7 +153,7 @@ export const ResultListWithProps = ({
         {isLoading ? <DataTableProgressBar /> : null}
 
         {items.currentIdList.isEmpty() ? (
-          <BrowseEmptyList navigate={navigate} location={location} />
+          <BrowseEmptyList />
         ) : (
           <>
             <ResultDataTable className={cssClasses('ResultDataTable')}>
