@@ -19,7 +19,9 @@ const endPointParams = [
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
-  { flags: 'GET_TOTAL_RESULTS' },
+  { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
+  { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
+  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
 const CovidGraphPage = () => {
@@ -30,7 +32,7 @@ const CovidGraphPage = () => {
   const { data, isLoading } = useQuery(
     ['covidByCategory1Monthly', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
 
   return (
