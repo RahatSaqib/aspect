@@ -19,10 +19,10 @@ function addDepth(items) {
   const stack = [[tree, 0]]
   let n
   while (stack?.length) {
-    n = stack?.length
+    n = stack.length
     const [node, i] = stack[n - 1]
     if (i < node?.children?.length) {
-      stack.push([node?.children?.[i], 0])
+      stack.push([node.children[i], 0])
       // eslint-disable-next-line no-plusplus
       stack[n - 1][1]++
     } else {
