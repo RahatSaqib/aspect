@@ -15,6 +15,7 @@ const {
 } = require('./service')
 const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
+const listDeviceMtbErrors = require('./listDeviceMtbErrors')
 const listDeviceCapacity = require('./listDeviceCapacity')
 const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
 const {
@@ -547,6 +548,56 @@ const routes = [
           sourceDevicesIds: Joi.array().items(Joi.number()).description('Source devices Ids').required(),
           targetDeviceId: Joi.number().description('Target device Id').required(),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/deviceMtbErrors',
+    handler: asyncHandler(listDeviceMtbErrors),
+    config: {
+      description: 'Device list with errors details for 4 levels',
+      notes: 'Contains 4 levels of device locations - State, Lga, Site, Device',
+      ...listDevicesBaseRequest(true),
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of devices that match the given filters'),
+          length: Joi.number().required().description('The number of devices included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The devices with errors details')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().required().description('The ID of the device'),
+                name: Joi.string().required().description('The name of the device'),
+                shortName: Joi.string().allow('', null).description('The short name of the device'),
+                type: Joi.string().allow('', null).description('The type of the device'),
+                stateName: Joi.string().allow('', null).description('The state where the device is located'),
+                lgaName: Joi.string().allow('', null).description('The lga where the device is located'),
+                siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
+                numberOfModules: Joi.number().allow(null).description('Number of modules in device'),
+                cntMtbResults: Joi.number()
+                  .allow(null)
+                  .description('Number of MTB and MTB-Ultra results delivered from the device'),
+                cntMtbError: Joi.number().allow(null).description('# of Errors for MTB and MTB-Ultra results'),
+                cntMtbInvalid: Joi.number().allow(null).description('# of Invalids for MTB and MTB-Ultra results'),
+                cntMtbNoResult: Joi.number().allow(null).description('# of NoResults for MTB and MTB-Ultra results'),
+                percentMtbError: Joi.number()
+                  .allow(null)
+                  .description('Percent of Errors for MTB and MTB-Ultra results'),
+                percentMtbInvalid: Joi.number()
+                  .allow(null)
+                  .description('Percent of Invalids for MTB and MTB-Ultra results'),
+                percentMtbNoResult: Joi.number()
+                  .allow(null)
+                  .description('Percent of NoResults for MTB and MTB-Ultra results'),
+              })
+            ),
+        }),
       },
     },
   },
