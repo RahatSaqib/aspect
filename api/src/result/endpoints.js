@@ -11,6 +11,7 @@ const {
   validateResultDetailResponse,
   resultCreatePayload,
   treatmentTrackingValidationQuery,
+  currentTestingValidGroups,
 } = require('./endpointsValidation')
 const {
   listResults,
@@ -43,6 +44,7 @@ const {
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
   xdrAssayGraphAggregations,
+  currentResultAggregations,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
@@ -1026,6 +1028,45 @@ const routes = [
           grouped: Joi.array().required().description('List of prepared data for the graph'),
           keysFromGrouped: Joi.array().required().description('List of keys for series'),
           i18nKeys: Joi.object().required().description('Intl keys for axis X'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/current-result-aggregations',
+    handler: asyncHandler(currentResultAggregations),
+    config: {
+      description: 'Current Testing Dashboard',
+      notes: 'Data for most of the graphs on the Current Testing page',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate(currentTestingValidGroups),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          data: Joi.array()
+            .required()
+            .description('List of counts of grouped/filtered results')
+            .items(
+              Joi.object().keys({
+                ...resultAggregationsResponseItem,
+                lga: Joi.string().optional().allow(null, '').description('The LGA that the count is grouped by'),
+              })
+            ),
+          totalResults: Joi.number().allow(null).integer().positive().description('Number of affected/used results'),
+          totalResultsInPeriod: Joi.number().allow(null).integer().description('Total results in specified date range'),
+          totalResultsCurrentYear: Joi.number().allow(null).integer().description('Total results this year'),
+          averageTestsPerMonthCurrentYear: Joi.number()
+            .allow(null)
+            .integer()
+            .description('Average tests per month this year'),
+          totalResultsInLast24Hours: Joi.number().allow(null).integer().description('Total results in last 24 hours'),
         }),
       },
     },
