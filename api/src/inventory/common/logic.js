@@ -600,7 +600,13 @@ async function modifyInventoryOnHand({ auth, payload, plugins }) {
     siteId,
     lotNumber,
     expiresOn,
-    quantity,
+    /**
+     * make sure `quantity` is positive, because we add (quantityOnHand + quantity) or
+     * remove (quantityOnHand - quantity) based on `operation`. And if `quantity` remains
+     * negative for `remove` - then we increase instead of decreasing in, for instance,
+     * inventory strategy for Pakistan - api/src/plugin/partner/Pakistan/inventoryStrategy.js
+     */
+    quantity: Math.abs(quantity),
     operation,
     now,
     userId,
