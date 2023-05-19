@@ -164,23 +164,28 @@ const buttonMapping = {
   singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
 }
 
-const Btn = ({ lbl, del }) => (
-  <Button color="secondary" variant="contained" onClick={del} sx={{ m: '2px' }}>
-    {lbl?.charAt(0).toUpperCase() + lbl?.slice(1)}
-    {del ? <MdClose style={{ marginLeft: '5px' }} /> : null}
-  </Button>
-)
+const Btn = ({ lbl, del }) => {
+  if (!lbl) return null
+  return (
+    <Button color="secondary" variant="contained" onClick={del} sx={{ m: '2px' }}>
+      {lbl.charAt(0).toUpperCase() + lbl.slice(1)}
+      {del ? <MdClose style={{ marginLeft: '5px' }} /> : null}
+    </Button>
+  )
+}
 
 const StateId = ({ countryId, stateId, remove }) => {
   const { data } = useStatesByCountry(countryId)
+  const lbl = data?.find(s => s.id === stateId)?.name
 
-  return data && stateId ? <Btn lbl={data.find(s => s.id === stateId)?.name} del={() => remove(['stateId'])} /> : null
+  return lbl && stateId ? <Btn lbl={lbl} del={() => remove(['stateId'])} /> : null
 }
 
 const LgaId = ({ stateId, lgaId, remove }) => {
   const { data } = useLgaByState(stateId)
+  const lbl = data?.find(s => s.id === lgaId)?.name
 
-  return data && lgaId ? <Btn lbl={data.find(s => s.id === lgaId)?.name} del={() => remove(['lgaId'])} /> : null
+  return lbl && lgaId ? <Btn lbl={lbl} del={() => remove(['lgaId'])} /> : null
 }
 
 const SiteName = ({ siteName, remove }) => {
@@ -374,11 +379,9 @@ const BreakOutByLot = ({ remove, daysStockLeft }) => {
 const DeviceApprovalId = ({ deviceApprovalId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useDeviceApprovalType()
-
-  if (data && deviceApprovalId) {
-    const deviceApprovalName = formatMessage(
-      messages[`deviceApproval${data.find(it => it.id === deviceApprovalId)?.name}`]
-    )
+  const name = data?.find(it => it.id === deviceApprovalId)?.name
+  if (deviceApprovalId && name) {
+    const deviceApprovalName = formatMessage(messages[`deviceApproval${name}`])
     return (
       <Btn
         lbl={formatMessage(messages.withDeviceApproval, { deviceApprovalName })}
