@@ -13,7 +13,7 @@ export default function AspectSelect(props) {
       getOptionLabel={itemToString}
       renderInput={params => <TextField {...params} variant="standard" label={label} />}
       options={options}
-      disabled={!!options?.length}
+      disabled={!options?.length}
       value={valueBy ? options?.find(option => option[valueBy] === value) : value}
     />
   )
