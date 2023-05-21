@@ -1,11 +1,12 @@
-import React, { useState, createContext, useContext } from 'react'
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import subtractDays from 'date-fns/subDays'
-
-const FilterContext = createContext()
+import isArray from 'lodash/isArray'
+import { useLocation } from 'react-router-dom'
+import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 
 const now = new Date()
 const minDate = startOfDay(subtractDays(now, 30))
@@ -26,10 +27,66 @@ const defaultFilter = {
   '/reports': {}, // done
 }
 
-function FilterProvider({ children }) {
-  const filterState = useState(defaultFilter)
+const FilterContext = createContext()
 
-  return <FilterContext.Provider value={filterState}>{children}</FilterContext.Provider>
+function FilterProvider({ children }) {
+  const { pathname, search } = useLocation()
+  const { data: deviceTypes } = useDeviceTypeList()
+
+  const mapValues = useCallback(
+    (key, value) => {
+      switch (true) {
+        case ['minDate', 'maxDate', 'maxExpirationDate', 'minExpirationDate'].includes(key):
+          return new Date(value)
+        case key === 'deviceMaintenanceStatusId':
+          return [value]
+        case key === 'deviceType':
+          return deviceTypes?.find(i => i.externalId === value)?.id
+        default: {
+          return value
+        }
+      }
+    },
+    [deviceTypes]
+  )
+
+  const getFilters = useCallback(
+    urlSearchParams => {
+      const filters = {}
+      urlSearchParams.forEach((_value, key) => {
+        const value = mapValues(key, _value)
+        if (filters[key]) {
+          let filter = filters[key]
+          filter = isArray(filter) ? filter : [filter]
+          filters[key] = [...filter, value]
+        } else {
+          filters[key] = value
+        }
+      })
+      return filters
+    },
+    [mapValues]
+  )
+
+  const initialFilter = useMemo(() => {
+    const filters = { ...defaultFilter }
+    try {
+      const searchParams = new URLSearchParams(search)
+      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+      if (filters[pathname]) {
+        filters[pathname] = { ...filters[pathname], ...getFilters(filtersParams) }
+      }
+      return filters
+    } catch (e) {
+      return defaultFilter
+    }
+  }, [getFilters, pathname, search])
+
+  const [filterState, setFilterState] = useState()
+
+  useEffect(() => setFilterState(initialFilter), [setFilterState, initialFilter])
+
+  return <FilterContext.Provider value={[filterState, setFilterState]}>{children}</FilterContext.Provider>
 }
 
 function useFilterValues(pathname) {
