@@ -6,7 +6,7 @@ import AspectSelect from '../AspectSelect'
 
 export default function ConsumableSelect(props) {
   const { formatMessage } = useI18n()
-  const { loading: isConsumableLoading, data: consumables } = useConsumable()
+  const { isLoading: isConsumableLoading, data: consumables } = useConsumable()
   return (
     <AspectSelect
       {...props}
