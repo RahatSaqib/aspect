@@ -1,8 +1,20 @@
 import React from 'react'
 import { LinearProgress, MenuItem, TextField } from '@mui/material'
 import useDeviceCapacityForSelect from '../../hooks/device/useDeviceCapacityForSelect'
+import useI18n from '../../hooks/useI18n'
+
+const messages = {
+  modules: {
+    id: 'pages.DeviceCapacitySelect.modules',
+    defaultMessage: `{numberOfModules, plural,
+      one {# module}
+      other {# modules}
+    }`,
+  },
+}
 
 const DeviceCapacitySelect = ({ name, label, value, onChange, deviceTypeId }) => {
+  const { formatMessage } = useI18n()
   const { isLoading, data } = useDeviceCapacityForSelect(deviceTypeId)
 
   return (
@@ -22,7 +34,12 @@ const DeviceCapacitySelect = ({ name, label, value, onChange, deviceTypeId }) =>
         >
           {data.map(device => (
             <MenuItem key={device.id} value={device.id}>
-              {device.dailyCapacity}
+              {device.dailyCapacity +
+                (device.modules
+                  ? ` (${formatMessage(messages.modules, {
+                      numberOfModules: device.modules,
+                    })})`
+                  : '')}
             </MenuItem>
           ))}
         </TextField>

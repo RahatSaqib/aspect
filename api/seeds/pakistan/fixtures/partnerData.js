@@ -35,4 +35,10 @@ module.exports = {
   serverUrl: 'https://pakistan.aspect.id',
   apiUrl: 'https://pakistan.aspect.id/api',
   excludePattern: '^ExcludeMe.+$',
+  deviceCapacity: [
+    {
+      deviceTypeExternalId: 'CepheidGeneXpert',
+      modules: [1, 2, 6, 10, 12, 14, 18, 24, 30, 36, 42, 48],
+    },
+  ],
 }
