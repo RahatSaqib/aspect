@@ -18,7 +18,7 @@ const routes = [
       description: 'Registered Samples',
       notes: 'All manually registered samples created by Aspect Mobile',
       // TODO create a specific scope for sample registration workflows
-      auth: { scope: ['demo:view'] },
+      auth: { scope: ['result:edit'] },
       response: {
         options: {
           allowUnknown: false,
@@ -35,7 +35,7 @@ const routes = [
       description: 'Register new sample specimen',
       notes: 'Ability to register a new sample specimen by hand using Aspect Mobile',
       // TODO create a specific scope for sample registration workflows
-      auth: { scope: ['demo:edit'] },
+      auth: { scope: ['result:edit'] },
       validate: {
         payload: sampleRegistrationPayloadValidation(),
       },

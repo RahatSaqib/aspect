@@ -18,7 +18,7 @@ function transformSampleResponse(query, data, results) {
       sample: transformSampleData(sample),
       testType: transformEntryType(),
       dbUpdatedOn: sample.updatedOn,
-      searchSchema: generateSearchKeys(sample, []),
+      searchSchema: generateSearchKeys(sample, sample?.sampleData?.patientId),
       updatedOn: getSampleUpdatedOnDate(sample),
       collectedOn: sample.sampleCollectedOn,
     })

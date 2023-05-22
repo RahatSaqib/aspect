@@ -30,7 +30,7 @@ function transFormResultResponse(data, followUps, comments, acknowledgedId) {
       patientId: patientData?.id,
       resultData: transformResultText(result),
       sample: transformSampleData(result),
-      searchSchema: generateSearchKeys(result, resultFollowUps, patientData?.id),
+      searchSchema: generateSearchKeys(result, patientData?.id),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),
       transferStatus: generateTransferStatus(result),

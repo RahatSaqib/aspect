@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const subDays = require('date-fns/subDays')
 const { knex } = require('../../../../db')
 const { DAYS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
@@ -49,7 +50,7 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
       assayType: 'assayType',
-      device: 'device',
+      site: 'reportableSite',
       geography: 'reportableSiteGeography',
       result: 'result',
     })
@@ -69,6 +70,7 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
       'result.resultData as resultData',
       'result.sampleId as resultSampleId',
       'result.updatedOn as updatedOn',
+      knex.raw('COALESCE(result.endedOn, result.startedOn) as testDate'),
       'resultCategory1.i18nKey as resultCategory1ValueI18nKey',
       'resultCategory1.name as resultCategory1Name',
       'resultCategory2.i18nKey as resultCategory2ValueI18nKey',
@@ -97,22 +99,18 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
       'sampleType.i18nKey as sampleTypeI18nKey',
       'sampleType.name as sampleTypeName',
       'reportableSite.id as reportableSiteId',
-      'reportableSite.name as reportableSiteName',
-      'resultFollowUp.resultId as resultFollowUpResultId',
-      'resultFollowUp.date as resultFollowUpDate',
-      'resultFollowUp.createdOn as resultFollowUpCreatedOn',
-      'resultFollowUp.updatedOn as resultFollowUpUpdatedOn'
+      'reportableSite.name as reportableSiteName'
     )
   return knexQuery
 }
 
-const getFollowUpsOfResultById = data => {
+const getFollowUpsByResultIds = results => {
   const knexQuery = knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .whereIn(
       'rfu.resultId',
-      data.map(r => r.id)
+      _.map(results, r => r.id)
     )
     .where('rfu.isDeleted', false)
     .select(
@@ -132,23 +130,26 @@ const getFollowUpsOfResultById = data => {
   return knexQuery
 }
 
-const getCommentsOfResultById = data => {
+const getCommentsOfResultById = comments => {
   const knexQuery = knex('ResultNote as rn')
     .innerJoin('ResultNoteType as rnt', 'rn.resultNoteTypeId', 'rnt.id')
-    .leftOuterJoin('User as uC', 'rn.createdBy', 'uC.id')
-    .leftOuterJoin('User as uU', 'rn.updatedBy', 'uU.id')
+    .leftOuterJoin('User as createdByUser', 'rn.createdBy', 'createdByUser.id')
+    .leftOuterJoin('Person as createdByPerson', 'createdByUser.id', 'createdByPerson.userId')
+    .leftOuterJoin('User as updatedByUser', 'rn.updatedBy', 'updatedByUser.id')
+    .leftOuterJoin('Person as updatedByPerson', 'updatedByUser.id', 'updatedByPerson.userId')
     .whereIn(
       'rn.resultId',
-      data.map(r => r.id)
+      _.map(comments, r => r.id)
     )
+    .groupBy('rn.id')
     .select(
       'rn.resultId',
       'rn.id',
       'rn.text',
       'rn.createdOn',
-      'uC.name as createdBy',
+      'createdByPerson.name as createdBy',
       'rn.changedOn',
-      'uU.name as changedBy',
+      'updatedByPerson.name as changedBy',
       'rnt.name as noteType'
     )
   return knexQuery
@@ -166,16 +167,11 @@ const countAllAwaitingTreatment = dataConstraints => {
       'resultTreatmentStatusLog.resultTreatmentStatusId',
       'resultTreatmentStatus.id'
     )
-    .join('Device as device', 'result.deviceId', 'device.id')
-    .join('Assay as assay', 'result.assayId', 'assay.id')
-    .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
     .leftJoin('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
     .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .where('resultTreatmentStatus.externalId', 'AwaitingTreatment')
     .modify(addConstraints, dataConstraints, {
-      assay: 'assay',
-      assayType: 'assayType',
-      device: 'device',
+      site: 'reportableSite',
       geography: 'reportableSiteGeography',
       result: 'result',
     })
@@ -188,5 +184,5 @@ module.exports = {
   countAllAwaitingTreatment,
   fetchEntriesByUpdatedOnQuery,
   getCommentsOfResultById,
-  getFollowUpsOfResultById,
+  getFollowUpsByResultIds,
 }

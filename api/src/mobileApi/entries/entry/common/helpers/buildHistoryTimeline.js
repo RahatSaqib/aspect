@@ -14,14 +14,27 @@ function buildHistoryTimeline(data, followUps) {
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data)
 
-  output.push({
-    id: data.resultSampleId,
-    resultId: data.id,
-    event: 'sampleCollected',
-    name: data.sampleTypeExternalId,
-    siteName: data?.reportableSiteName,
-    updatedOn: data.sampleCollectedOn,
-  })
+  if (data.sampleCollectedOn || data.sampleSiteName) {
+    output.push({
+      id: data.resultSampleId,
+      resultId: data.id,
+      event: 'sampleCollected',
+      name: data.sampleTypeExternalId,
+      siteName: data?.sampleSiteName,
+      updatedOn: data.sampleCollectedOn,
+    })
+  }
+
+  if (!_.isNil(data.testDate)) {
+    output.push({
+      id: data.resultSampleId,
+      resultId: data.id,
+      event: 'sampleTested',
+      name: data.sampleTypeExternalId,
+      siteName: data?.reportableSiteName,
+      updatedOn: data.testDate,
+    })
+  }
 
   if (!_.isEmpty(transferStatus)) {
     output.push({
