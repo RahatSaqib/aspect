@@ -3,12 +3,12 @@ const { getXdrDevicesSummary } = require('../common/db')
 
 module.exports = async (auth, query) => {
   const dataConstraints = await getConstraints(auth.credentials)
-  const data = await getXdrDevicesSummary(dataConstraints, query)
+  const { total, length, data } = await getXdrDevicesSummary(dataConstraints, query)
 
   return {
     ok: true,
-    total: data.length,
-    length: data.length,
+    total,
+    length,
     data,
   }
 }

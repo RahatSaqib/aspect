@@ -7,6 +7,7 @@ const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { getDatesFromQuery } = require('../../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
+const { pageParams, sortParams } = require('../../db')
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -544,7 +545,7 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
   const countsBase = getResultCountBaseGroupBySiteId(assayIds, resultCategoryIds, dataConstraints, query)
 
   const counterField = name => knex.raw(`IFNULL(SUM(_sub.${name}), 0) as ${name}`)
-  const data = await knex('Geography as g')
+  const baseQuery = knex('Geography as g')
     .modify(qb => {
       if (query.lgaId) {
         qb.innerJoin('Site as location', 'g.id', 'location.geographyId')
@@ -565,6 +566,10 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
     })
+
+  const total = (await baseQuery.clone()).length
+  const data = await baseQuery
+    .clone()
     .select(
       `location.name as locationName`,
       counterField('totalPmdtSites'),
@@ -581,9 +586,13 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       counterField('cnt_NoResult'),
       counterField('cnt_Error')
     )
-    .orderBy('location.name')
+    .modify(sortParams, query, 'locationName')
+    .modify(_q => {
+      // For export, we don't provide paging params - we should get all records
+      if (query.size) _q.modify(pageParams, query)
+    })
 
-  return data
+  return { total, data, length: data.length }
 }
 
 module.exports = {
