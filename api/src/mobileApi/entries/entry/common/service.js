@@ -4,7 +4,7 @@ const {
   countAllAwaitingTreatment,
   fetchEntriesByUpdatedOnQuery,
   getCommentsOfResultById,
-  getFollowUpsOfResultById,
+  getFollowUpsByResultIds,
 } = require('./db')
 const { getAllSamplesRegistered } = require('../../sample/common/db')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
@@ -16,7 +16,7 @@ async function fetchEntriesServiceHandler(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const samples = await getAllSamplesRegistered(query, dataConstraints)
   const results = await fetchEntriesByUpdatedOnQuery(query, dataConstraints)
-  const followUps = await getFollowUpsOfResultById(results)
+  const followUps = await getFollowUpsByResultIds(results)
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
   const acknowledgedId = await resultWorkflowStatusToId('Acknowledged')

@@ -5,11 +5,11 @@ const { generateTransferStatus } = require('./generateTransferStatus')
 /**
  * Generates search keys using result and followUps array used for the search functionality in Aspect Mobile
  * @param {object} result - The result object.
- * @param {array} followUps - The array of followups.
+ * @param {string} patientDataId - The patientDataId.
  * @returns {object} - Object containing the search keys extracted from the given result and followups.
  */
 
-function generateSearchKeys(result, followUps, patientDataId) {
+function generateSearchKeys(result, patientDataId) {
   const output = {}
   const filterMeta = {
     entryType: transformEntryType(result)?.i18nKey,

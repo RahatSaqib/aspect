@@ -1,3 +1,8 @@
+const SEVERITY_THRESHOLDS = {
+  DANGER: 32,
+  WARNING: 16,
+}
+
 const TRANSFERRED = {
   AWAY: 'awayTransfer',
   HERE: 'hereTransfer',
@@ -16,9 +21,9 @@ const TEST_TYPE = {
 
 const ACKNOWLEDGED = 'Acknowledged'
 
-const fieldNameToFollowUpTypeIdMappings = {
-  treatment: 'treatment',
-  outcome: 'outcome',
+const FOLLOW_UP_TYPES = {
+  TREATMENT: 'treatment',
+  OUTCOME: 'outcome',
 }
 
 const assayAvatarColorsIcon = {
@@ -62,10 +67,11 @@ const sampleStatusState = [
 ]
 
 module.exports = {
-  TRANSFERRED,
-  TEST_TYPE,
   ACKNOWLEDGED,
-  fieldNameToFollowUpTypeIdMappings,
+  FOLLOW_UP_TYPES,
+  SEVERITY_THRESHOLDS,
+  TEST_TYPE,
+  TRANSFERRED,
   assayAvatarColorsIcon,
   sampleStatusState,
 }
