@@ -50,6 +50,7 @@ const filtersOrdering = {
   hasStock: 28,
   onlyDownloadedByReporter: 29,
   onlyTransfers: 30,
+  daysStockLeft: 31,
   minExpirationDate: 31,
   maxExpirationDate: 32,
 }
@@ -83,7 +84,7 @@ const buttonMapping = {
   stateId: ({ countryId, stateId, remove }) => <StateId countryId={countryId} stateId={stateId} remove={remove} />,
   lgaId: ({ stateId, lgaId, remove }) => <LgaId stateId={stateId} lgaId={lgaId} remove={remove} />,
   siteName: ({ siteName, remove }) => <SiteName siteName={siteName} remove={remove} />,
-  assayId: ({ assayId, remove }) => <AssayId assayId={assayId} remove={remove} />, // should receive an array of assayIds
+  assayId: ({ assayId, remove }) => <AssayId assayId={assayId} remove={remove} />,
   resultCategoryId: ({ resultCategoryId, assayOverride, assayId, diseaseId, remove }) => (
     <ResultCategoryId
       resultCategoryId={resultCategoryId}
@@ -123,7 +124,6 @@ const buttonMapping = {
   onlyTransfers: ({ remove }) => <OnlyTranfers remove={remove} />,
   lotNumber: ({ lotNumber, remove }) => <LotNumber lotNumber={lotNumber} remove={remove} />,
   hasStock: ({ remove }) => <HasStock remove={remove} />,
-  daysStockLeft: ({ remove, daysStockLeft }) => <DaysStockLeft remove={remove} daysStockLeft={daysStockLeft} />,
   breakOutByLot: ({ remove }) => <BreakOutByLot remove={remove} />,
   deviceApprovalId: ({ deviceApprovalId, remove }) => (
     <DeviceApprovalId deviceApprovalId={deviceApprovalId} remove={remove} />
@@ -162,10 +162,10 @@ const buttonMapping = {
   revoked: ({ revoked, remove }) => <Revoked revoked={revoked} remove={remove} />,
   assayOverride: () => null,
   singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
+  daysStockLeft: ({ daysStockLeft, remove }) => <DaysStockLeft daysStockLeft={daysStockLeft} remove={remove} />,
 }
 
 const Btn = ({ lbl, del }) => {
-  if (!lbl) return null
   return (
     <Button color="secondary" variant="contained" onClick={del} sx={{ m: '2px' }}>
       {lbl.charAt(0).toUpperCase() + lbl.slice(1)}
@@ -200,7 +200,12 @@ const AssayId = ({ assayId, remove }) => {
 
   const del = { del: remove ? () => remove(['assayId']) : undefined } // singleAssayId has no delete option
 
-  return data && assayId !== -1 ? (
+  if (!data) {
+    return null
+  }
+  return isArray(assayId) ? (
+    assayId.map(id => <Btn key={id} lbl={formatMessage(messages[data.find(a => a.id === id).i18nKey])} {...del} />)
+  ) : assayId !== -1 ? (
     <Btn lbl={formatMessage(messages[data.find(a => a.id === assayId).i18nKey])} {...del} />
   ) : null
 }
@@ -209,7 +214,9 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
   const { formatMessage } = useI18n()
   const { data: assays } = useAssayList()
   if (resultCategoryId && assays) {
-    const rcName = assays.find(a => a.id === assayId).resultCategories.find(rc => rc.id === resultCategoryId).i18nKey
+    const rcName = assays
+      .find(a => (isArray(assayId) ? a.id === assayId[0] : a.id === assayId))
+      .resultCategories.find(rc => rc.id === resultCategoryId).i18nKey
     // diseaseId here is used to fix filtering from HIV graph
     const rcdName = (
       (assays.find(i => i.diseaseId === diseaseId && i.hasResults) || { resultCategories: [] }).resultCategories.find(
@@ -364,13 +371,13 @@ const HasStock = ({ remove }) => {
   return <Btn lbl={formatMessage(messages.hasStock)} del={() => remove(['hasStock'])} />
 }
 
-const DaysStockLeft = ({ remove, daysStockLeft }) => {
+const DaysStockLeft = ({ daysStockLeft, remove }) => {
   const { formatMessage } = useI18n()
 
-  return <Btn lbl={`${formatMessage(messages[daysStockLeft])}`} del={() => remove(['daysStockLeft'])} />
+  return <Btn lbl={formatMessage(messages[daysStockLeft])} del={() => remove(['daysStockLeft'])} />
 }
 
-const BreakOutByLot = ({ remove, daysStockLeft }) => {
+const BreakOutByLot = ({ remove }) => {
   const { formatMessage } = useI18n()
 
   return <Btn lbl={formatMessage(messages.breakOutByLot)} del={() => remove(['breakOutByLot'])} />
@@ -397,7 +404,7 @@ const DeviceType = ({ deviceType, remove }) => {
   const { data } = useDeviceTypeList()
 
   if (data && deviceType) {
-    const deviceTypeName = data.find(it => it.id === deviceType)?.name
+    const deviceTypeName = data.find(it => it.id === deviceType || it.externalId === deviceType)?.name
 
     return <Btn lbl={formatMessage(messages.withDeviceType, { deviceTypeName })} del={() => remove(['deviceType'])} />
   }
@@ -410,7 +417,7 @@ const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove }) => {
   return ids.map(id => (
     <Btn
       lbl={formatMessage(messages.withDeviceMaintenanceStatus, {
-        deviceMaintenanceStatusName: formatMessage(messages[deviceMaintenanceStatusId]),
+        deviceMaintenanceStatusName: formatMessage(messages[id]),
       })}
       del={() => remove([`deviceMaintenanceStatusId.${id}`])}
     />

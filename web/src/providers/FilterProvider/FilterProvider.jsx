@@ -1,4 +1,4 @@
-import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
+import React, { createContext, useContext, useEffect, useState } from 'react'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfDay from 'date-fns/startOfDay'
@@ -29,62 +29,50 @@ const defaultFilter = {
 
 const FilterContext = createContext()
 
+const mapValues = (key, value, deviceTypes) => {
+  switch (true) {
+    case ['minDate', 'maxDate', 'maxExpirationDate', 'minExpirationDate'].includes(key):
+      return new Date(value)
+    case key === 'deviceMaintenanceStatusId':
+      return [value]
+    case key === 'deviceType':
+      return deviceTypes?.find(i => i.externalId === value)?.id
+    default: {
+      return value
+    }
+  }
+}
+const getFilters = (urlSearchParams, deviceTypes) => {
+  const filters = {}
+  urlSearchParams.forEach((_value, key) => {
+    const value = mapValues(key, _value, deviceTypes)
+    if (filters[key]) {
+      let filter = filters[key]
+      filter = isArray(filter) ? filter : [filter]
+      filters[key] = [...filter, value]
+    } else {
+      filters[key] = value
+    }
+  })
+  return filters
+}
+
 function FilterProvider({ children }) {
   const { pathname, search } = useLocation()
   const { data: deviceTypes } = useDeviceTypeList()
+  const [filterState, setFilterState] = useState(defaultFilter)
 
-  const mapValues = useCallback(
-    (key, value) => {
-      switch (true) {
-        case ['minDate', 'maxDate', 'maxExpirationDate', 'minExpirationDate'].includes(key):
-          return new Date(value)
-        case key === 'deviceMaintenanceStatusId':
-          return [value]
-        case key === 'deviceType':
-          return deviceTypes?.find(i => i.externalId === value)?.id
-        default: {
-          return value
-        }
-      }
-    },
-    [deviceTypes]
-  )
-
-  const getFilters = useCallback(
-    urlSearchParams => {
-      const filters = {}
-      urlSearchParams.forEach((_value, key) => {
-        const value = mapValues(key, _value)
-        if (filters[key]) {
-          let filter = filters[key]
-          filter = isArray(filter) ? filter : [filter]
-          filters[key] = [...filter, value]
-        } else {
-          filters[key] = value
-        }
-      })
-      return filters
-    },
-    [mapValues]
-  )
-
-  const initialFilter = useMemo(() => {
+  useEffect(() => {
     const filters = { ...defaultFilter }
-    try {
-      const searchParams = new URLSearchParams(search)
-      const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
-      if (filters[pathname]) {
-        filters[pathname] = { ...filters[pathname], ...getFilters(filtersParams) }
-      }
-      return filters
-    } catch (e) {
-      return defaultFilter
+    const searchParams = new URLSearchParams(search)
+    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+    if (filters[pathname] && filtersParams !== '') {
+      searchParams.delete('filters')
+      filters[pathname] = { ...filters[pathname], ...getFilters(filtersParams, deviceTypes) }
+      setFilterState(filters)
     }
-  }, [getFilters, pathname, search])
-
-  const [filterState, setFilterState] = useState()
-
-  useEffect(() => setFilterState(initialFilter), [setFilterState, initialFilter])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return <FilterContext.Provider value={[filterState, setFilterState]}>{children}</FilterContext.Provider>
 }
@@ -96,8 +84,15 @@ function useFilterValues(pathname) {
     throw new Error('useFilter must be used within a FilterProvider')
   }
 
-  // eslint-disable-next-line no-unused-vars
-  return Object.fromEntries(Object.entries(filter[pathname]).filter(([_, v]) => v != null)) // remove nulls
+  if (pathname) {
+    const cleanPath = pathname.split('#')[0]
+
+    if (Object.keys(filter).includes(cleanPath)) {
+      // eslint-disable-next-line no-unused-vars
+      return Object.fromEntries(Object.entries(filter[cleanPath]).filter(([_, v]) => v != null)) // remove nulls
+    }
+  }
+  return {}
 }
 
 function useFilterUpdate() {

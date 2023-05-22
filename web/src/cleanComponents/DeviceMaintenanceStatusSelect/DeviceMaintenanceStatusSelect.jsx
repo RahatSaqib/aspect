@@ -20,6 +20,8 @@ const DeviceMaintenanceStatusSelect = ({
   const { formatMessage } = useI18n()
   const { data: maintenanceStatuses, isLoading } = useDeviceMaintenanceStatus(onlyManuallySetableStatuses || false)
 
+  const valueArray = value ? (Array.isArray(value) ? value : [value]) : []
+
   return isLoading ? (
     <LinearProgress />
   ) : (
@@ -30,7 +32,7 @@ const DeviceMaintenanceStatusSelect = ({
       error={error}
       helperText={helperText}
       select
-      value={value || []}
+      value={valueArray}
       onChange={onChange}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null, multiple }}
@@ -38,7 +40,7 @@ const DeviceMaintenanceStatusSelect = ({
         endAdornment: (
           <IconButton
             sx={{ visibility: value.length ? 'visible' : 'hidden' }}
-            onClick={() => onChange({ target: { name, value: null } })}
+            onClick={() => onChange({ target: { name, value: [] } })}
             disabled={disabled}
           >
             <ClearIcon />
