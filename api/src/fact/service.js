@@ -95,7 +95,12 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
         if (lastResultOn == null) {
           lastResultOn = deviceCreatedOn
         }
+        // Signal the DEVICE_OFFLINE action when the device has been in
+        // the Aspect database but has not uploaded data for the amount
+        // of time that the partner expects it to have sent some type of
+        // upload
         if (
+          deviceCreatedOn < maxLastDateOffline &&
           (!lastPingOn || (!!maxLastDateOffline && lastPingOn <= maxLastDateOffline)) &&
           (!lastSeenOn || (!!maxLastDateOffline && lastSeenOn <= maxLastDateOffline))
         ) {
@@ -104,7 +109,7 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
         }
         // Only signal a DEVICE_NO_RESULTS action if the device has
         // been connected before the last result was expected
-        if (deviceCreatedOn < lastResultOn) {
+        if (deviceCreatedOn < maxLastDateNoResult) {
           if (maxLastDateNoResult != null && lastResultOn <= maxLastDateNoResult) {
             // OR no tests run > Y days
             context.deviceNoResults(id, { lastResultOn })
