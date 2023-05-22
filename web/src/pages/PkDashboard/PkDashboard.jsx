@@ -7,32 +7,51 @@ import DashboardCard from './components/DashboardCard'
 import DashboardLink from './components/DashboardLink'
 import PkPage from './components/PkPage'
 import SummaryCard from './components/SummaryCard'
+import useResultOverview from './hooks/useResultOverview'
 import messages from './PkDashboard.Messages'
-
-const mock = {
-  summary: [
-    { main: { key: 'molecularAssay', value: '32,536,412' }, secondary: { key: 'molecularAssay24', value: '1,932' } },
-    { main: { key: 'TB', value: '61,137' }, secondary: { key: 'TB24', value: '423' } },
-    { main: { key: 'RTTB', value: '2,274' }, secondary: { key: 'RTTB24', value: '13' } },
-  ],
-}
 
 const PkDashboard = () => {
   const { formatMessage } = useI18n()
-  const data = mock // replace with useQuery()
-  const loading = false
+  const { data: resultOverview, isLoading } = useResultOverview()
 
   return (
     <PkPage title={formatMessage(messages.aspectDashboard)} full>
       <Grid container spacing={2} sx={{ flexGrow: 1 }}>
         <Grid item lg={4} style={{ padding: '16px 8px 0' }}>
-          {loading ? <Loading /> : <SummaryCard key={data.summary[0].key} item={data.summary[0]} />}
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <SummaryCard
+              items={[
+                { key: 'molecularAssay', value: resultOverview.total1Year },
+                { key: 'molecularAssay24', value: resultOverview.total1Day },
+              ]}
+            />
+          )}
         </Grid>
         <Grid item lg={4} style={{ padding: '16px 8px 0' }}>
-          {loading ? <Loading /> : <SummaryCard key={data.summary[1].key} item={data.summary[0]} />}
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <SummaryCard
+              items={[
+                { key: 'TB', value: resultOverview.mtbDetected1Year },
+                { key: 'TB24', value: resultOverview.mtbDetected1Day },
+              ]}
+            />
+          )}
         </Grid>
         <Grid item lg={4} style={{ padding: '16px 8px 0' }}>
-          {loading ? <Loading /> : <SummaryCard key={data.summary[2].key} item={data.summary[2]} />}
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <SummaryCard
+              items={[
+                { key: 'RTTB', value: resultOverview.rifDetected1Year },
+                { key: 'RTTB24', value: resultOverview.rifDetected1Day },
+              ]}
+            />
+          )}
         </Grid>
         <Grid item lg={4} style={{ padding: '8px 8px 0' }}>
           <ColumnName title={formatMessage(messages.titlemtbRif)} />

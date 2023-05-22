@@ -12,6 +12,14 @@ import useInventoryOverview from './useInventoryOverview'
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 
+function transformInventory(data) {
+  return data?.map(item => ({
+    ...item,
+    name: item[item.type],
+    children: transformInventory(item.children ?? []),
+  }))
+}
+
 const InventoryOverviewPage = () => {
   const { formatMessage } = useI18n()
   const [filter, setFilter] = useState({
@@ -44,7 +52,7 @@ const InventoryOverviewPage = () => {
         </>
       }
     >
-      {isLoading ? <LinearProgress /> : <NestedTable columns={columns} rows={data} />}
+      {isLoading ? <LinearProgress /> : <NestedTable columns={columns} rows={transformInventory(data)} />}
     </PkPage>
   )
 }

@@ -35,7 +35,7 @@ const messages = {
     // summary
     molecularAssay: {
       id: 'p.PkDashboard.molecularAssay',
-      defaultMessage: 'Tests for TB using MTB/Rif assay in current year',
+      defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
     },
     molecularAssay24: { id: 'p.PkDashboard.molecularAssay24', defaultMessage: 'Last 24 hours' },
     TB: { id: 'p.PkDashboard.TB', defaultMessage: 'TB Cases Diagnosed in current year' },
