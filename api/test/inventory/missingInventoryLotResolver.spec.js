@@ -187,7 +187,7 @@ describe('Missing inventory lot resolver', () => {
     })
   })
 
-  before(async () => {
+  after(async () => {
     await knex('Consumable').update({
       strategy: 'withLotAndExpirationDateStrategy',
     })
