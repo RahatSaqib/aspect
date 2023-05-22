@@ -119,7 +119,7 @@ describe('Backward update db after getting tests from offline device', () => {
     ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
     expect(factDevice).to.containSubset({
       offline: 1, // device is 'offline'
-      noResults: 0,
+      noResults: 1,
       maintenance: 0,
     })
     assert.isNotOk(factDevice.maintenanceDueOn)

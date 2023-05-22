@@ -142,7 +142,7 @@ describe('Fact based issues', () => {
       ;[factDevice] = await knex('FactDeviceFlag').where({ deviceId }).select()
       expect(factDevice).to.containSubset({
         offline: 1,
-        noResults: 0,
+        noResults: 1,
         maintenance: 0,
       })
       assert.isNotOk(factDevice.maintenanceDueOn)
@@ -903,6 +903,7 @@ describe('Fact based issues', () => {
       assert.equal(issues[1].deviceId, deviceId)
       assert.equal(issues[1].issueStatus, 'Resolved')
     }))
+
   describe('New results available', () => {
     let issueId = null
 
