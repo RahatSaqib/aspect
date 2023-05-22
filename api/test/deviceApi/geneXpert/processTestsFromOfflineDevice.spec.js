@@ -131,7 +131,7 @@ describe('Backward update db after getting tests from offline device', () => {
     const minDate = deviceOfflineDate
     const maxDate = now
     const days = []
-    for (let day = minDate; day < maxDate; day = addDays(day, 1)) {
+    for (let day = minDate; day <= maxDate; day = addDays(day, 1)) {
       days.push(`${format(day, 'yyyy-MM-dd')}T00:00:00.000Z`)
     }
     /**
