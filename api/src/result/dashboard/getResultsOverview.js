@@ -11,7 +11,7 @@ const getResultCount = (dataConstraints, minDate, maxDate) =>
     .clone()
     .where('dt.externalId', 'CepheidGeneXpert')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .whereBetween('r.createdOn', [minDate, maxDate])
+    .whereBetween('r.endedOn', [minDate, maxDate])
     .first({
       mtbValid,
       mtbDetectedTraceDetected,
