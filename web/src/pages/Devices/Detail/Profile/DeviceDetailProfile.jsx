@@ -15,6 +15,7 @@ import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
 import Results from '../../../../oldPages/result/historyResults/HistoryResults'
 import resultMessages from '../../../../oldPages/result/list/messages.js'
 import { useAuthState } from '../../../../providers/AuthProvider'
+import { useFilterUpdate, useFilterValues } from '../../../../providers/FilterProvider'
 import { tokens } from '../../../../store/DeviceApprovalRedux'
 import {
   showDialog,
@@ -220,6 +221,8 @@ const DeviceDetailProfile = ({
   onExportClick,
   onExportDeviceLogsClick,
 }) => {
+  const deviceListFilter = useFilterValues('/browse/device/list')
+  const [addFilter] = useFilterUpdate()
   const { formatMessage, formatNumber, formatDate } = useI18n()
   const {
     culture,
@@ -239,44 +242,18 @@ const DeviceDetailProfile = ({
       ? null
       : device.get('maintenanceStatusNotes')
   const resultColumns = [
-    {
-      key: 'endedOn',
-      label: formatMessage(messages.endedOn),
-      formatter: value => formatDate(value),
-      sortable: true,
-    },
-    {
-      key: 'sampleOriginSiteName',
-      label: formatMessage(messages.sampleOriginSiteName),
-      sortable: true,
-    },
-    {
-      key: 'sampleId',
-      label: formatMessage(messages.sampleId),
-      sortable: true,
-    },
-    {
-      key: 'errorCode',
-      label: formatMessage(messages.errorCode),
-      sortable: true,
-    },
+    { key: 'endedOn', label: formatMessage(messages.endedOn), formatter: value => formatDate(value), sortable: true },
+    { key: 'sampleOriginSiteName', label: formatMessage(messages.sampleOriginSiteName), sortable: true },
+    { key: 'sampleId', label: formatMessage(messages.sampleId), sortable: true },
+    { key: 'errorCode', label: formatMessage(messages.errorCode), sortable: true },
     {
       key: 'resultWorkflowStatusI18nkey',
       formatter: value => (value ? formatMessage(resultMessages[value]) : ''),
       label: formatMessage(messages.resultWorkflowStatus),
       sortable: true,
     },
-    {
-      key: 'patientId',
-      label: formatMessage(messages.patientId),
-      sortable: true,
-    },
-    {
-      key: 'resultText',
-      label: formatMessage(messages.resultText),
-      sortable: false,
-      formatter: () => true,
-    },
+    { key: 'patientId', label: formatMessage(messages.patientId), sortable: true },
+    { key: 'resultText', label: formatMessage(messages.resultText), sortable: false, formatter: () => true },
   ]
 
   const AuthenticatedResults = requirePermissions({
@@ -302,7 +279,13 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.deviceType)}
               description={device.getIn(['deviceType', 'name'])}
-              to={`/browse/device/list?filters=deviceTypeId%3D${device.getIn(['deviceType', 'id'])}`}
+              to={() => {
+                addFilter(
+                  { ...deviceListFilter, deviceTypeId: device.getIn(['deviceType', 'id']) },
+                  '/browse/device/list'
+                )
+                navigate('/browse/device/list')
+              }}
               action={
                 <Fragment>
                   <Tooltip title={formatMessage(messages.deviceLogsTooltip)} placement="right">
@@ -376,7 +359,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.site)}
               description={device.get('siteName')}
-              to={`/browse/site/${device.get('siteId')}`}
+              to={() => navigate(`/browse/site/${device.get('siteId')}`)}
             />
             <Summary
               title={formatMessage(messages.connectivity)}

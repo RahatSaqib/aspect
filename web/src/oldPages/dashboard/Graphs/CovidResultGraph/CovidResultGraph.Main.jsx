@@ -21,7 +21,7 @@ const getBaseConfig = (assays = []) => {
     clickThrough: {
       assays,
       allow: true,
-      baseUrl: '/browse/result?filters=',
+      baseUrl: '/browse/result',
       baseAssay,
       keys: ['resultCategoryId', 'indexBy', 'assay'],
     },

@@ -19,7 +19,7 @@ const baseConfig = {
   clickThrough: {
     allow: true,
     assays: ['GxMtbXdr'],
-    baseUrl: '/browse/result?filters=',
+    baseUrl: '/browse/result',
     baseAssay: 'GxMtbXdr',
     keys: ['resultCategoryId', 'indexBy'],
   },

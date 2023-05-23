@@ -20,8 +20,8 @@ const baseConfig = {
   id: 'testPerformedMonthlyPercentage',
   clickThrough: {
     allow: true,
-    baseUrl: '/browse/result?filters=onlyReportableResults%3Dtrue%26displayResult%3Dactual%26',
-    keys: ['assay', 'indexBy'],
+    baseUrl: '/browse/result',
+    keys: ['assay', 'indexBy', 'onlyReportableResults', 'displayResult'],
   },
   indexBy: 'month',
   formatDate: 'MMM',
