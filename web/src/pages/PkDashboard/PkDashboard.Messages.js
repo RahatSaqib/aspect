@@ -117,6 +117,7 @@ const messages = {
     titleother: { id: 'p.PkDashboard.titleother', defaultMessage: 'Other' },
     covid: { id: 'p.PkDashboard.covid', defaultMessage: 'Covid' },
     hiv: { id: 'p.PkDashboard.hiv', defaultMessage: 'Hiv' },
+    incompleteScreen: { id: 'p.PkDashboard.incompleteScreen', defaultMessage: 'Screen is not yet complete' },
   }),
 }
 
