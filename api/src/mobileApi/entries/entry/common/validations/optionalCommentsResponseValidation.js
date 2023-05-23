@@ -1,13 +1,15 @@
 const Joi = require('@hapi/joi')
 
-const serverCommentsResponseValidation = () => {
-  return Joi.object().keys({
+const optionalCommentsResponseValidation = Joi.object()
+  .optional()
+  .description('Comments schema used in Aspect Mobile')
+  .keys({
     comments: Joi.array()
       .allow(null)
-      .description('Result comments')
+      .description('Entry comments')
       .items(
         Joi.object().keys({
-          id: Joi.number().required().description('Result comment ID'),
+          id: Joi.number().required().description('Entry comment ID'),
           text: Joi.string().allow(null, '').description('Comment text'),
           createdOn: Joi.date().required().description('When comment was first created'),
           createdBy: Joi.string().allow(null, '').description('Who added comment'),
@@ -17,5 +19,5 @@ const serverCommentsResponseValidation = () => {
         })
       ),
   })
-}
-module.exports = { serverCommentsResponseValidation }
+
+module.exports = { optionalCommentsResponseValidation }

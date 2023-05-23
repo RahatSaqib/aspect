@@ -1,7 +1,8 @@
 const Joi = require('@hapi/joi')
 
-const serverFollowUpsResponseValidation = () => {
-  return Joi.object().keys({
+const optionalFollowUpsResponseValidation = Joi.object()
+  .optional()
+  .keys({
     followUps: Joi.array()
       .description('Result Follow Ups')
       .items(
@@ -20,5 +21,4 @@ const serverFollowUpsResponseValidation = () => {
         })
       ),
   })
-}
-module.exports = { serverFollowUpsResponseValidation }
+module.exports = { optionalFollowUpsResponseValidation }

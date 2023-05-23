@@ -1,7 +1,8 @@
 const Joi = require('@hapi/joi')
 
-const serverTreatmentResponseValidation = () => {
-  return Joi.object().keys({
+const optionalTreatmentResponseValidation = Joi.object()
+  .optional()
+  .keys({
     treatmentStatus: Joi.object()
       .allow(null)
       .description('Current treatment status of the result')
@@ -15,5 +16,5 @@ const serverTreatmentResponseValidation = () => {
         daysInCurrentStatus: Joi.string().description('External ID of the treatment status').allow(null),
       }),
   })
-}
-module.exports = { serverTreatmentResponseValidation }
+
+module.exports = { optionalTreatmentResponseValidation }

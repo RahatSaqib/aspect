@@ -1,7 +1,8 @@
 const Joi = require('@hapi/joi')
 
-const serverTestInformationResponseValidation = () => {
-  return Joi.object().keys({
+const optionalTestInformationResponseValidation = Joi.object()
+  .optional()
+  .keys({
     testInformation: Joi.array()
       .description('Test information list')
       .items(
@@ -20,5 +21,5 @@ const serverTestInformationResponseValidation = () => {
         })
       ),
   })
-}
-module.exports = { serverTestInformationResponseValidation }
+
+module.exports = { optionalTestInformationResponseValidation }

@@ -1,7 +1,9 @@
 const Joi = require('@hapi/joi')
 
-const serverEntryTypeResponseValidation = () => {
-  return Joi.object().keys({
+const optionalEntryTypeResponseValidation = Joi.object()
+  .optional()
+  .description('Entry type schema to help identify it in the mobile app')
+  .keys({
     entryType: Joi.object()
       .required()
       .keys({
@@ -9,5 +11,5 @@ const serverEntryTypeResponseValidation = () => {
         text: Joi.string().description('Test type text'),
       }),
   })
-}
-module.exports = { serverEntryTypeResponseValidation }
+
+module.exports = { optionalEntryTypeResponseValidation }
