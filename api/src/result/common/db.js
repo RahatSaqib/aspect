@@ -1,9 +1,13 @@
-const { subDays } = require('date-fns')
+const { subDays, subMonths } = require('date-fns')
 const _ = require('lodash')
 const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
 const { SELECT_FIELDS_UTC } = require('../query')
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
+const { getDatesFromQuery } = require('../../shared/date')
+const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
+const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
+const { pageParams, sortParams } = require('../../db')
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -454,6 +458,143 @@ function getQueryForDataExtract(query, dataConstraints) {
   return resultQuery
 }
 
+const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstraints, query) => {
+  const dates = getDatesFromQuery(query)
+  let { dateFrom } = dates
+  const { dateTo } = dates
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+
+  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
+  const mtbDetected = `
+    JSON_SEARCH(
+      r.resultData ->> '$.detectedResistance[*]',
+      'one',
+      'MTB'
+    ) IS NOT NULL
+    OR
+    r.resultCategory1 IN (${positiveResultCategories})
+  `
+
+  const counter = (id, condition) =>
+    knex.raw(`
+    DISTINCT
+    CASE
+      WHEN ${condition}
+      THEN ${id}
+      ELSE null
+    END
+  `)
+
+  const countXdr = value =>
+    counter(
+      'r.id',
+      `
+    JSON_SEARCH(
+      r.resultData ->> '$.detectedResistance[*]',
+      'one',
+      '${value}'
+    ) IS NOT NULL
+  `
+    )
+
+  return knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .whereIn('a.id', [assayIds.GxMtbXdr])
+    .modify(addConstraints, dataConstraints, {
+      site: 's',
+      geography: 'g',
+      result: 'r',
+    })
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+    .select(`s.id as siteId`, 'g.stateId', 'g.lgaId')
+    .groupBy('s.id')
+    .count({
+      totalPmdtSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
+      totalXdrSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
+      cntAll: knex.raw('DISTINCT r.id'),
+      cnt_mtb: counter('r.id', mtbDetected),
+      cnt_inh: countXdr('INH'),
+      cnt_flq: countXdr('FLQ'),
+      cnt_amk: countXdr('AMK'),
+      cnt_kan: countXdr('KAN'),
+      cnt_cap: countXdr('CAP'),
+      cnt_eth: countXdr('ETH'),
+      cnt_Invalid: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Invalid}`),
+      cnt_NoResult: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.NoResult}`),
+      cnt_Error: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Error}`),
+    })
+    .clone()
+}
+
+const getXdrDevicesSummary = async (dataConstraints, query) => {
+  const assayIds = await allAssayToId()
+  const resultCategoryIds = await allResultCategoryToId()
+  const countsBase = getResultCountBaseGroupBySiteId(assayIds, resultCategoryIds, dataConstraints, query)
+
+  const counterField = name => knex.raw(`IFNULL(SUM(_sub.${name}), 0) as ${name}`)
+  const baseQuery = knex('Geography as g')
+    .modify(qb => {
+      if (query.lgaId) {
+        qb.innerJoin('Site as location', 'g.id', 'location.geographyId')
+        qb.leftJoin(countsBase.as('_sub'), '_sub.siteId', 'location.id')
+      } else if (query.stateId) {
+        qb.innerJoin('Lga as location', 'g.lgaId', 'location.id')
+        qb.leftJoin(countsBase.as('_sub'), '_sub.lgaId', 'location.id')
+      } else {
+        qb.innerJoin('State as location', 'g.stateId', 'location.id')
+        qb.leftJoin(countsBase.as('_sub'), '_sub.stateId', 'location.id')
+        qb.whereNull('g.lgaId')
+      }
+      qb.groupBy('location.id')
+    })
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+    })
+
+  const total = (await baseQuery.clone()).length
+  const data = await baseQuery
+    .clone()
+    .select(
+      `location.name as locationName`,
+      counterField('totalPmdtSites'),
+      counterField('totalXdrSites'),
+      counterField('cntAll'),
+      counterField('cnt_mtb'),
+      counterField('cnt_inh'),
+      counterField('cnt_flq'),
+      counterField('cnt_amk'),
+      counterField('cnt_kan'),
+      counterField('cnt_cap'),
+      counterField('cnt_eth'),
+      counterField('cnt_Invalid'),
+      counterField('cnt_NoResult'),
+      counterField('cnt_Error')
+    )
+    .modify(sortParams, query, 'locationName')
+    .modify(_q => {
+      // For export, we don't provide paging params - we should get all records
+      if (query.size) _q.modify(pageParams, query)
+    })
+
+  return { total, data, length: data.length }
+}
+
 module.exports = {
   getResultByResultId,
   getQueryForResultsListAndExport,
@@ -462,4 +603,5 @@ module.exports = {
   getBaseQueryForResults,
   getQueryForDataExtract,
   getCustomFieldsForResult,
+  getXdrDevicesSummary,
 }
