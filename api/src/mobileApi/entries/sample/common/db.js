@@ -1,15 +1,15 @@
 const subDays = require('date-fns/subDays')
 const { knex } = require('../../../../db')
-const { addConstraints } = require('../../../../auth/constraints')
+const { addConstraints, getConstraints } = require('../../../../auth/constraints')
 const { DAYS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
 
 const getBaseAllSamplesRegistered = dataConstraints => {
   const knexQuery = knex('Sample as sample')
     .select(
+      'sample.id as id',
       'sample.collectedOn as collectedOn',
       'sample.externalId as externalId',
       'sample.externalId as sampleExternalId',
-      'sample.id as id',
       'sample.id as sampleId',
       'sample.sampleStatus as sampleStatus',
       'sample.updatedOn as sampleUpdatedOn',
@@ -39,14 +39,15 @@ const getAllSamplesRegistered = (query, dataConstraints) => {
   return knexQuery
 }
 
-const getSamplesRegisteredById = (sampleId, dataConstraints) => {
+const getSamplesRegisteredById = async (sampleId, auth) => {
+  const dataConstraints = await getConstraints(auth.credentials)
   const knexQuery = getBaseAllSamplesRegistered(dataConstraints).where({ 'sample.id': sampleId })
   return knexQuery
 }
 
-const insertNewSample = payload =>
+const insertNewSample = (payload, auth) =>
   knex('Sample')
     .insert({ ...payload })
-    .then(newSample => getSamplesRegisteredById(newSample[0]).first())
+    .then(async newSample => getSamplesRegisteredById(newSample[0], auth))
 
 module.exports = { getAllSamplesRegistered, insertNewSample }

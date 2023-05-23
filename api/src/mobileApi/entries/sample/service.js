@@ -1,57 +1,35 @@
 const _ = require('lodash')
-const Boom = require('@hapi/boom')
-const { formatISO } = require('date-fns')
 const { getUser } = require('../../../auth/service')
-const { getConstraints } = require('../../../auth/constraints')
-const { insertNewSample, getAllSamplesRegistered } = require('./common/db')
+const { insertNewSample } = require('./common/db')
 const { transformSampleData } = require('../entry/common/helpers/transformSample')
 
-function transFormSampleResponse(sample) {
-  return {
-    id: sample.id,
-    externalId: sample.externalId,
-    collectedOn: sample.collectedOn,
-    updatedOn: formatISO(new Date()),
-  }
-}
-
 async function registerNewSample(request) {
-  const { payload } = request
-  const currentlyLoggedInUser = await getUser(request.auth.credentials.name)
   const sampleData = {}
+  const { payload } = request
+  const payloadForDb = _.clone(payload)
+  const currentlyLoggedInUser = await getUser(request.auth.credentials.name)
+  _.set(payloadForDb, 'externalId', payload.externalId)
+  _.set(payloadForDb, 'collectedOn', payload?.collectedOn ?? new Date())
+
+  // sampleTypeId is SampleType.sampleTypeSputum hard coded for Nigeria
+  _.set(payloadForDb, 'sampleTypeId', 4)
+  _.set(payloadForDb, 'originSiteId', payload.originSiteId)
+  _.set(payloadForDb, 'sampleStatus', 'SAMPLE_REGISTERED')
+  _.set(payloadForDb, 'updatedBy', currentlyLoggedInUser.id)
+  _.set(payloadForDb, 'updatedOn', new Date())
+  _.set(payloadForDb, 'collectedBy', currentlyLoggedInUser.id)
+
+  _.set(sampleData, 'clinicianName', _.trim(payload?.clinicianName).toString() ?? null)
   _.set(sampleData, 'userId', currentlyLoggedInUser.id)
   _.set(sampleData, 'partnerId', currentlyLoggedInUser.partnerId)
   _.set(sampleData, 'countryId', currentlyLoggedInUser.countryId)
   _.set(sampleData, 'clientType', payload?.clientType || 'reporter_app')
+  _.set(payloadForDb, 'patientExternalId', _.trim(payload?.patientExternalId).toString() ?? null)
   _.mapKeys(sampleData, (value, key) => (_.isNil(value) ? _.set(payload, `${key}`, null) : value))
-  _.set(payload, 'sampleData', JSON.stringify(sampleData))
-  _.set(payload, 'collectedBy', payload.clinicianName)
-  _.set(payload, 'collectedOn', payload?.collectedOn || new Date())
-  _.set(payload, 'patientId', payload?.patientId || null)
-  _.set(payload, 'sampleStatus', 'SAMPLE_REGISTERED')
-  _.set(payload, 'sampleTypeId', 4) // SampleType.sampleTypeSputum
-  _.set(payload, 'updatedBy', currentlyLoggedInUser.id)
-  _.set(payload, 'updatedOn', new Date())
+  _.set(payloadForDb, 'sampleData', JSON.stringify(sampleData))
 
-  const newSample = await insertNewSample(payload)
-  return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample) }
+  const newSample = await insertNewSample(_.omit(payloadForDb, ['clinicianName', 'patientExternalId']), request.auth)
+  return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample[0]) }
 }
 
-async function registeredSamples(request) {
-  const { auth } = request
-  const dataConstraints = await getConstraints(auth.credentials)
-  const samplesRegistered = await getAllSamplesRegistered(dataConstraints.person.id, dataConstraints)
-  if (_.isEmpty(samplesRegistered)) Boom.notFound()
-
-  const output = _.map(samplesRegistered, sample => transFormSampleResponse(sample))
-
-  const result = {
-    ok: !!output,
-    total: output.length,
-    data: output,
-  }
-
-  return result
-}
-
-module.exports = { registerNewSample, registeredSamples }
+module.exports = { registerNewSample }
