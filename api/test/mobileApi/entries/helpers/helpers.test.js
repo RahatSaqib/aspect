@@ -17,7 +17,6 @@ const { generateSeverity } = require('../../../../src/mobileApi/entries/entry/co
 const { getFollowUpByType } = require('../../../../src/mobileApi/entries/entry/common/helpers/getFollowUpByType')
 const { transformAssayAvatar } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformAssayAvatar')
 const { transformEntryType } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformEntryType')
-const { transformResultText } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformResultText')
 const { generateSearchKeys } = require('../../../../src/mobileApi/entries/entry/common/helpers/generateSearchKeys')
 const { transformSampleData } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformSample')
 const {
@@ -325,24 +324,6 @@ describe('Entries helpers', () => {
         { key: 'address', value: '123 Main St', title: 'Address', order: 4 },
       ]
       expect(transformPatientDataBySchema(patientData, patientDataSchema)).to.deep.eq(expectedOutput)
-    })
-  })
-
-  describe('transformResultText', () => {
-    it('returns an empty object when resultData is null', () => {
-      expect(transformResultText({ resultData: null })).to.deep.eq({})
-    })
-
-    it('returns a transformed object when resultData is valid JSON', () => {
-      const data = {
-        resultData:
-          '{"probes": {"qc1": "YES", "qc2": "No", "qc1Ct": 1, "qc2Ct": 0.007, "probeA": "NEG", "probeB": "POS", "probeC": "NO RESULT", "probeD": "NEG", "probeE": "POS", "probeACt": 12.32, "probeBCt": 11.2, "probeCCt": 12.5, "probeDCt": 0.5, "probeECt": 1.2, "probeSpc": "NO RESULT", "qc1Endpt": 0.1234, "qc2Endpt": 1.22, "probeSpcCt": 5.78, "probeAEndpt": 1.6, "probeBEndpt": 2.33, "probeCEndpt": 457, "probeDEndpt": 12.43, "probeEEndpt": 3.14, "probeSpcEndpt": 8.9018}, "resultText": "MTB Detected|Rif Resistance Detected"}',
-      }
-      expect(transformResultText(data)).to.deep.eq({
-        copies: null,
-        log: null,
-        resultText: 'MTB Detected|Rif Resistance Detected',
-      })
     })
   })
 
