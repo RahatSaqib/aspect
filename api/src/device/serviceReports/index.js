@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = require('date-fns')
 const locales = require('date-fns/locale')
-const { getDeviceBaseExtendedQuery, listDevices } = require('../service')
+const { getDeviceBaseExtendedQuery } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
 const { issueCategoryIntlToShortname, issueTypeToId } = require('../../shared/dictionary')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../../db')
@@ -22,9 +22,10 @@ const { getResultCategoryGroupColumns } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
 const { getErrorRateByDevice, getErrorRateByModule, getErrorRateByUser } = require('./errorRatesReport')
 const { getNoStockInventoryReport } = require('./noStockInventoryReport')
+const { listDevice } = require('../listDevice')
 
 async function exportDevices(request, reply) {
-  const { data: dataSet } = await listDevices(request)
+  const { data: dataSet } = await listDevice(request)
   const [devicesData] = dataSet
   const scope = devicesData.category !== 'Router' ? 'devices' : 'routers'
 

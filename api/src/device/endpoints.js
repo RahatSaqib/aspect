@@ -1,7 +1,6 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateDateRangeParams } = require('../routes')
 const {
-  listDevices,
   showDevice,
   listApprovalTypes,
   listMaintenanceStatuses,
@@ -26,6 +25,7 @@ const {
   listDevicesBaseRequest,
 } = require('./common/validations')
 const exportWorkload = require('./exportWorkload')
+const { listDevice } = require('./listDevice')
 const { updateDevice } = require('./updateDevice')
 
 const routes = [
@@ -72,7 +72,7 @@ const routes = [
   {
     method: 'GET',
     path: '/device',
-    handler: asyncHandler(listDevices),
+    handler: asyncHandler(listDevice),
     config: {
       description: 'Device List',
       notes: 'Pageable and sortable list of devices',
