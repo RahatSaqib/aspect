@@ -8,7 +8,7 @@ const sampleRegistrationPayloadValidation = () => {
       .allow(null)
       .max(255)
       .description('Optional: Name of Clinician that Collected the Sample'),
-    patientId: Joi.string().allow(null).max(255).description('Optional: Sample Collected from Patient ID'),
+    patientExternalId: Joi.string().allow(null).max(255).description('Optional: Sample Collected from Patient ID'),
     originSiteId: Joi.number().required().description('Site where the Sample was Collected'),
   })
 }

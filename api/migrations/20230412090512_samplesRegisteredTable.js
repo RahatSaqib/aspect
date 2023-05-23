@@ -6,6 +6,6 @@ async function up(knex) {
     row.string('sampleStatus')
     row.integer('updatedBy')
     row.dateTime('updatedOn')
-    row.dateTime('collectedBy')
+    row.string('collectedBy')
   })
 }

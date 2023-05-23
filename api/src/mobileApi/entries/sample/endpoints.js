@@ -1,31 +1,11 @@
-const {
-  sampleRegistrationPayloadValidation,
-  sampleRegistrationResponseValidation,
-  samplesRegisteredResponseValidation,
-} = require('./common/validations')
-const { registerNewSample, registeredSamples } = require('./service')
+const { sampleRegistrationPayloadValidation, sampleRegistrationResponseValidation } = require('./common/validations')
+const { registerNewSample } = require('./service')
 const { asyncHandler } = require('../../../routes')
 
 // -----------------------------------------------------
 // routes
 // -----------------------------------------------------
 const routes = [
-  {
-    method: 'GET',
-    path: '/v4/samples',
-    handler: asyncHandler(registeredSamples),
-    config: {
-      description: 'Registered Samples',
-      notes: 'All manually registered samples created by Aspect Mobile',
-      auth: { scope: ['result:edit'] },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: samplesRegisteredResponseValidation,
-      },
-    },
-  },
   {
     method: 'POST',
     path: '/v4/sample/register',
