@@ -10,11 +10,7 @@ const _ = require('lodash')
  */
 
 function getFollowUpByType(followUps, type) {
-  return _.orderBy(
-    _.find(followUps, followUp => followUp.followUpTypeExternalId === type),
-    ['updatedOn'],
-    ['desc']
-  )
+  return _.find(_.orderBy(followUps, ['updatedOn'], ['desc']), followUp => followUp.followUpTypeExternalId === type)
 }
 
 module.exports = { getFollowUpByType }

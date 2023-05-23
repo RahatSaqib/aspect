@@ -8,7 +8,6 @@ const { transformAssayAvatar } = require('./transformAssayAvatar')
 const { transformClinicalResponse } = require('./transformClinicalResponse')
 const { transformEntryType } = require('./transformEntryType')
 const { transformPatientDataBySchema } = require('./transformPatientDataBySchema')
-const { transformResultText } = require('./transformResultText')
 const { transformSampleData } = require('./transformSample')
 const { transformTestInformation } = require('./transformTestInformation')
 const { transformTreatmentStatus } = require('./transformTreatmentStatus')
@@ -28,14 +27,12 @@ function transFormResultResponse(data, followUps, comments, acknowledgedId) {
       history: buildHistoryTimeline(result, resultFollowUps, comments),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
       patientId: patientData?.id,
-      resultData: transformResultText(result),
       sample: transformSampleData(result),
       searchSchema: generateSearchKeys(result, patientData?.id),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),
       transferStatus: generateTransferStatus(result),
       treatmentStatus: transformTreatmentStatus(result, resultFollowUps),
-      dbUpdatedOn: result.updatedOn,
       updatedOn: getResultUpdatedOnDate(result, resultFollowUps, comments),
     })
   })

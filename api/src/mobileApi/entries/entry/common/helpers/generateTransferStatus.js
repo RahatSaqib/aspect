@@ -9,10 +9,10 @@ const { TRANSFERRED } = require('../consts')
 
 function generateTransferStatus(data) {
   let transferStatus
-  let canBeTransferred = true
-  if (_.isNil(data.transferStatusLogData)) return { canBeTransferred }
+  let canBeTransferred
+  if (_.isNil(data.transferStatusLogData)) return { canBeTransferred: true }
   const transferStatusLogData = JSON.parse(data.transferStatusLogData)
-  const { siteId, reportableSiteId, previousReportableSiteId } = transferStatusLogData
+  const { siteId, comment, reportableSiteId, previousReportableSiteId } = transferStatusLogData
   switch (true) {
     case !_.isEqual(siteId, reportableSiteId) && _.isEqual(siteId, previousReportableSiteId):
       transferStatus = TRANSFERRED.AWAY
@@ -20,10 +20,12 @@ function generateTransferStatus(data) {
       break
     case _.isEqual(siteId, reportableSiteId) && !_.isEqual(siteId, previousReportableSiteId):
       transferStatus = TRANSFERRED.HERE
+      canBeTransferred = true
       break
 
     default:
       transferStatus = null
+      canBeTransferred = true
   }
 
   return {
@@ -32,6 +34,7 @@ function generateTransferStatus(data) {
     reportableSiteId,
     resultId: data.id,
     siteId,
+    comment,
     siteName: data.reportableSiteName,
     transferStatus,
     transferredBy: data.transferredBy,
