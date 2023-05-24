@@ -3,16 +3,13 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { differenceInDays } = require('date-fns')
 const { pipe, find, values } = require('ramda')
-const shared = require('../utils/sharedToken')
 
+const shared = require('../utils/sharedToken')
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
 const patients = require('../../seeds/test/fixtures/patients.json')
 const { getBaseQueryForResults } = require('../../src/result/common/db')
-
 const { knex } = require('../../src/db')
-
 const { resultCategoryToId, resultWorkflowStatusToId } = require('../../src/shared/dictionary')
-
 const server = require('../utils/testUtils')
 
 const { assert, expect } = chai
@@ -172,10 +169,6 @@ describe('Mobile API Result download routes v1 without api version', () => {
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
-
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
-
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
@@ -183,7 +176,7 @@ describe('Mobile API Result download routes v1 without api version', () => {
         .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
         .whereIn(
           'rdl.resultId',
-          _.map(res.body.data, elem => elem.id)
+          _.map(res.body.data, result => result.id)
         )
         .where('rs.externalId', 'Delivered')
         .count('rdl.id as count')
@@ -197,7 +190,6 @@ describe('Mobile API Result download routes v1 without api version', () => {
       let res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
         .set('Authorization', `Bearer ${shared.token}`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
@@ -205,19 +197,16 @@ describe('Mobile API Result download routes v1 without api version', () => {
           `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra,GxMtbXdr`
         )
         .set('Authorization', `Bearer ${shared.token}`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
         .set('Authorization', `Bearer ${shared.token}`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -230,7 +219,6 @@ describe('Mobile API Result download routes v1 without api version', () => {
           diseaseExternalIds: 'tb,ebola,hiv',
         })
         .set('Authorization', `Bearer ${shared.token}`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -252,7 +240,6 @@ describe('Mobile API Result download routes v1 without api version', () => {
       const res = await server
         .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, 2)
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog')
@@ -414,9 +401,6 @@ describe('Mobile API Result download routes v1 with available custom api-version
         .set('api-version', `1`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
-
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
@@ -439,7 +423,6 @@ describe('Mobile API Result download routes v1 with available custom api-version
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `1`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
@@ -448,21 +431,18 @@ describe('Mobile API Result download routes v1 with available custom api-version
         )
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `1`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `1`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `1`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -476,7 +456,6 @@ describe('Mobile API Result download routes v1 with available custom api-version
         })
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `1`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -499,7 +478,6 @@ describe('Mobile API Result download routes v1 with available custom api-version
         .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `1`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, 2)
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog')
@@ -879,9 +857,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .set('api-version', `31`)
       assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(res, totalResults)
 
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
-
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
@@ -904,9 +879,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
       assertReporterResultDownloadResponseContainingResultsWithTreatmentStatus(res, totalResults)
-
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
 
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
@@ -931,9 +903,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .set('api-version', `31`)
       treatmentStatusValidation(res)
 
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
-
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
@@ -957,9 +926,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .set('api-version', `2`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
-
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
@@ -982,7 +948,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `2`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
@@ -991,21 +956,18 @@ describe('Mobile API Result download routes v2 with available custom api-version
         )
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `2`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `2`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `2`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -1019,7 +981,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         })
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `2`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -1042,7 +1003,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `2`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, 2)
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog')
@@ -1082,8 +1042,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
       assertReporterResultDownloadResponseContainingClinicalResponse(res, totalResults)
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
 
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
@@ -1334,9 +1292,6 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         .set('api-version', `31`)
       assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(res, totalResults)
 
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
-
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
@@ -1360,9 +1315,6 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         .set('api-version', `31`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
-      // we're not awaiting the insert before returning in service.js, so need a delay here
-      await Promise.delay(1000)
-
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
         .join('Result as r', 'rdl.resultId', 'r.id')
@@ -1385,7 +1337,6 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
@@ -1394,21 +1345,18 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         )
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
-      await Promise.delay(500)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -1422,7 +1370,6 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         })
         .set('Authorization', `Bearer ${shared.token}`)
         .set('api-version', `31`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -1445,7 +1392,6 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         .get(`${path}?deviceType=CepheidGeneXpert`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `31`)
-      await Promise.delay(1000)
       assertReporterResultDownloadResponseContainingResults(res, 2)
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog')
