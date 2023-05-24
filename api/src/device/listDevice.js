@@ -1,10 +1,13 @@
 const _ = require('lodash')
+const { subMonths, endOfMonth, startOfMonth } = require('date-fns')
+const { utcToZonedTime, zonedTimeToUtc } = require('date-fns-tz')
 const { getAccountDetailsForUsername } = require('../accountDetails/service')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { resultCategoryToId } = require('../shared/dictionary')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getSelectListFields } = require('./common/querySelectors')
+const { convertTimezonetoIANA } = require('../shared/date')
 
 async function getListDevices(query, auth) {
   // get data constraints
@@ -137,12 +140,32 @@ async function getListDevices(query, auth) {
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
   const userTimeOffset = '+00:00' // TODO: get time offset from somewhere and put here, as there is no datetime parameter to use getOffsetFromIsoDateString(someIsoDateParam) here.
+
+  const timezone = convertTimezonetoIANA(accountDetails.timezone || 'UTC')
+  const now = utcToZonedTime(new Date(), timezone)
+  const previousMonth = subMonths(now, 1)
+  const maxCurrentDate = zonedTimeToUtc(endOfMonth(now), timezone)
+  const minCurrentDate = zonedTimeToUtc(startOfMonth(now), timezone)
+  const maxPreviousDate = zonedTimeToUtc(endOfMonth(previousMonth), timezone)
+  const minPreviousDate = zonedTimeToUtc(startOfMonth(previousMonth), timezone)
+
   // get rows
   const getItems = deviceQuery
     .clone()
     .leftJoin(
       knex('Result as resDevice')
-        .select('deviceId', knex.raw('max(resDevice.endedOn) as lastResultConductedOn'))
+        .select({
+          deviceId: 'deviceId',
+          lastResultConductedOn: knex.raw('MAX(resDevice.endedOn)'),
+          totalCurrentMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            minCurrentDate,
+            maxCurrentDate,
+          ]),
+          totalPreviousMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            minPreviousDate,
+            maxPreviousDate,
+          ]),
+        })
         .groupBy('deviceId')
         .as('deviceResult'),
       'd.id',
@@ -183,8 +206,8 @@ async function getListDevices(query, auth) {
     .groupBy('d.id')
     .select([
       ...getSelectListFields(userTimeOffset),
-      'frd30.resultCount as resultCountThisMonth',
-      knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
+      'deviceResult.totalCurrentMonth as resultCountThisMonth', // 'frd30.resultCount as resultCountThisMonth',
+      'deviceResult.totalPreviousMonth as resultCountLastMonth', // knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
       'frd30Errors.resultCount as thisMonthErrors',
       knex.raw('count(distinct dmslActivity.day) as totalDays'),
       knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
