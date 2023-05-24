@@ -17,7 +17,7 @@ function generateSearchKeys(result, patientDataId) {
     transferStatus: generateTransferStatus(result)?.transferStatus ?? '',
     assayType: result?.assayExternalId ?? '',
   }
-  const transformedPatientId = patientDataId?.replace(/[^a-zA-Z0-9]+/g, '') ?? null
+  const transformedPatientId = !_.isNil(patientDataId) ? patientDataId.replace(/[^a-zA-Z0-9]+/g, '') : null
   _.set(output, 'id', String(result.id))
   _.set(output, 'sampleId', result?.sampleExternalId)
   _.set(output, 'sampleIdFlat', _.toLower(result?.sampleExternalId?.replace(/[^a-zA-Z0-9]+/g, '')))
