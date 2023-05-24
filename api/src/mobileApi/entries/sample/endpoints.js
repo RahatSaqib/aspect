@@ -21,7 +21,7 @@ const routes = [
         options: {
           allowUnknown: false,
         },
-        schema: sampleRegistrationResponseValidation,
+        schema: sampleRegistrationResponseValidation(),
       },
     },
   },

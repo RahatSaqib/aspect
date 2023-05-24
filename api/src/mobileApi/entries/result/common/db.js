@@ -1,17 +1,16 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
 const { knex } = require('../../../../db')
-const { DAYS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
+const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
 
 const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
-  const minUpdatedOn = query?.minUpdatedOn ?? subDays(new Date(), DAYS_HISTORY_TO_LOOK_UP)
+  const minUpdatedOn = query?.minUpdatedOn ?? subDays(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const knexQuery = knex('Result as result')
     .join('Device as device', 'result.deviceId', 'device.id')
     .join('Assay as assay', 'result.assayId', 'assay.id')
     .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
-    .leftJoin('ResultFollowUp as resultFollowUp', 'result.id', 'resultFollowUp.resultId')
     .leftJoin('ResultCategory as resultCategory1', 'result.resultCategory1', 'resultCategory1.id')
     .leftJoin('ResultCategory as resultCategory2', 'result.resultCategory2', 'resultCategory2.id')
     .leftJoin('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')

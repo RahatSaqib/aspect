@@ -18,7 +18,7 @@ const routes = [
       validate: downloadEntriesRequestValidation(),
       response: {
         options: { allowUnknown: false },
-        schema: downloadEntriesResponseValidation,
+        schema: downloadEntriesResponseValidation(),
       },
     },
   },

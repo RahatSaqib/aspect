@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { TEST_TYPE } = require('../consts')
+const { TEST_TYPE } = require('../../../common/consts')
 const { transformTestInformation } = require('./transformTestInformation')
 
 function transformEntryType(data) {

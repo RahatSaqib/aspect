@@ -5,11 +5,12 @@ const { transformEntryType } = require('./transformEntryType')
 const { transformSampleData } = require('./transformSample')
 const { getSampleUpdatedOnDate } = require('./getTrueUpdatedOnDates')
 const { generateSearchKeys } = require('./generateSearchKeys')
+const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../../common/consts')
 
 function transformSampleResponse(query, data, results) {
   const output = []
   if (_.isEmpty(data)) return
-  const minUpdatedOn = query?.minUpdatedOn ?? formatISO(subMonths(new Date(), 1))
+  const minUpdatedOn = query?.minUpdatedOn ?? formatISO(subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP))
   _.map(data, sample => {
     if (!_.isEmpty(_.find(results, { sample: { id: sample.id } }))) return
     if (_.lt(new Date(sample.collectedOn), minUpdatedOn)) return

@@ -10,36 +10,36 @@ const {
   followUp450,
   searchKeys450,
 } = require('./data')
-const { TRANSFERRED, FOLLOW_UP_TYPES } = require('../../../../src/mobileApi/entries/entry/common/consts')
-const { extractFromDataById } = require('../../../../src/mobileApi/entries/entry/common/helpers/extractFromDataById')
-const { buildHistoryTimeline } = require('../../../../src/mobileApi/entries/entry/common/helpers/buildHistoryTimeline')
-const { generateSeverity } = require('../../../../src/mobileApi/entries/entry/common/helpers/generateSeverity')
-const { getFollowUpByType } = require('../../../../src/mobileApi/entries/entry/common/helpers/getFollowUpByType')
-const { transformAssayAvatar } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformAssayAvatar')
-const { transformEntryType } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformEntryType')
-const { generateSearchKeys } = require('../../../../src/mobileApi/entries/entry/common/helpers/generateSearchKeys')
-const { transformSampleData } = require('../../../../src/mobileApi/entries/entry/common/helpers/transformSample')
+const { TRANSFERRED, FOLLOW_UP_TYPES } = require('../../../../src/mobileApi/entries/common/consts')
+const { extractFromDataById } = require('../../../../src/mobileApi/entries/result/common/helpers/extractFromDataById')
+const { buildHistoryTimeline } = require('../../../../src/mobileApi/entries/result/common/helpers/buildHistoryTimeline')
+const { generateSeverity } = require('../../../../src/mobileApi/entries/result/common/helpers/generateSeverity')
+const { getFollowUpByType } = require('../../../../src/mobileApi/entries/result/common/helpers/getFollowUpByType')
+const { transformAssayAvatar } = require('../../../../src/mobileApi/entries/result/common/helpers/transformAssayAvatar')
+const { transformEntryType } = require('../../../../src/mobileApi/entries/result/common/helpers/transformEntryType')
+const { generateSearchKeys } = require('../../../../src/mobileApi/entries/result/common/helpers/generateSearchKeys')
+const { transformSampleData } = require('../../../../src/mobileApi/entries/result/common/helpers/transformSample')
 const {
   transformTreatmentStatus,
-} = require('../../../../src/mobileApi/entries/entry/common/helpers/transformTreatmentStatus')
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformTreatmentStatus')
 const {
   transFormResultResponse,
-} = require('../../../../src/mobileApi/entries/entry/common/helpers/transFormResultResponse')
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transFormResultResponse')
 const {
   transformTestInformation,
-} = require('../../../../src/mobileApi/entries/entry/common/helpers/transformTestInformation')
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformTestInformation')
 const {
   transformPatientDataBySchema,
-} = require('../../../../src/mobileApi/entries/entry/common/helpers/transformPatientDataBySchema')
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformPatientDataBySchema')
 const {
   transformClinicalResponse,
-} = require('../../../../src/mobileApi/entries/entry/common/helpers/transformClinicalResponse')
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformClinicalResponse')
 const {
   generateTransferStatus,
-} = require('../../../../src/mobileApi/entries/entry/common/helpers/generateTransferStatus')
+} = require('../../../../src/mobileApi/entries/result/common/helpers/generateTransferStatus')
 const {
   getResultUpdatedOnDate,
-} = require('../../../../src/mobileApi/entries/entry/common/helpers/getTrueUpdatedOnDates')
+} = require('../../../../src/mobileApi/entries/result/common/helpers/getTrueUpdatedOnDates')
 
 describe('Entries helpers', () => {
   describe('extractFromDataById', () => {

@@ -1,7 +1,7 @@
 const { differenceInDays } = require('date-fns')
 const { isNil } = require('lodash')
 const { getFollowUpByType } = require('./getFollowUpByType')
-const { SEVERITY_THRESHOLDS } = require('../consts')
+const { SEVERITY_THRESHOLDS } = require('../../../common/consts.js')
 
 /**
  * Determines severity level based on given data and followups.

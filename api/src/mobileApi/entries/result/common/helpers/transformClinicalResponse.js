@@ -1,6 +1,5 @@
-const _ = require('lodash')
 const { getFollowUpByType } = require('./getFollowUpByType')
-const { FOLLOW_UP_TYPES } = require('../consts')
+const { FOLLOW_UP_TYPES } = require('../../../common/consts')
 
 function transformClinicalResponse(data, followUps, acknowledgedId) {
   const treatment = getFollowUpByType(followUps, FOLLOW_UP_TYPES.TREATMENT)

@@ -39,7 +39,7 @@ function addClientRoutes(server) {
 function addMobileRoutes(server) {
   server.route(require('./mobileApi/result/endpoints').routes.map(decorateMobileAPI('result')))
   server.route(require('./mobileApi/person/endpoints').routes.map(decorateMobileAPI('person')))
-  server.route(require('./mobileApi/entries/entry/endpoints').routes.map(decorateMobileAPI('entry')))
+  server.route(require('./mobileApi/entries/result/endpoints').routes.map(decorateMobileAPI('entry')))
   server.route(require('./mobileApi/entries/sample/endpoints').routes.map(decorateMobileAPI('sample')))
 }
 

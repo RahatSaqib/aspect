@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { sampleStatusState } = require('../consts')
+const { sampleStatusState } = require('../../../common/consts')
 
 function transformSampleStatus(status) {
   const defaultStatus = _.find(sampleStatusState, { id: 'SAMPLE_STATUS_UNKNOWN' })

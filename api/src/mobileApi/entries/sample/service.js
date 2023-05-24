@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { getUser } = require('../../../auth/service')
 const { insertNewSample } = require('./common/db')
-const { transformSampleData } = require('../entry/common/helpers/transformSample')
+const { transformSampleData } = require('../result/common/helpers/transformSample')
 
 async function registerNewSample(request) {
   const sampleData = {}

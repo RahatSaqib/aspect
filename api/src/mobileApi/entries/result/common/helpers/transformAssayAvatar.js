@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { assayAvatarColorsIcon } = require('../consts')
+const { assayAvatarColorsIcon } = require('../../../common/consts')
 
 function transformAssayAvatar(data) {
   const assayConst = assayAvatarColorsIcon[_.toLower(data.assayTypeAbbreviation)] ?? assayAvatarColorsIcon.default
