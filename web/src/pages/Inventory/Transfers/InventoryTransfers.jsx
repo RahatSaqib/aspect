@@ -101,15 +101,17 @@ export const InventoryTransfers = () => {
                   <TableBody>
                     {data.data.map(row => (
                       <TableRow key={row.sentOn}>
-                        <TableCell>{formatDateTime(row.sentOn, 'N/A')}</TableCell>
-                        <TableCell>{formatDateTime(row.receivedOn, 'N/A')}</TableCell>
+                        <TableCell>{formatDateTime(row.sentOn) || 'N/A'}</TableCell>
+                        <TableCell>{formatDateTime(row.receivedOn) || 'N/A'}</TableCell>
                         <TableCell>{formatMessage(consumables[row.consumableNameI18nKey])}</TableCell>
-                        <TableCell>{row.sentQuantity}</TableCell>
                         <TableCell>{row.receivedQuantity}</TableCell>
+                        <TableCell>{row.sentQuantity}</TableCell>
                         <TableCell>{row.originSiteName}</TableCell>
                         <TableCell>{row.destinationSiteName}</TableCell>
-                        <TableCell>{row.lotNumber}</TableCell>
-                        <TableCell>{formatDateTime(row.expirationDate, 'N/A')}</TableCell>
+                        <TableCell>{row.lotNumber || 'N/A'}</TableCell>
+                        <TableCell style={{ color: new Date(row.expirationDate) < new Date() ? 'red' : undefined }}>
+                          {formatDateTime(row.expirationDate) || 'N/A'}
+                        </TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
