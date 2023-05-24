@@ -956,9 +956,8 @@ describe('Device routes', () => {
       const startOfDayTwoDaysAgoUtc = getLocalDateInUtc(subDays(startOfToday(), 2))
       const dispatchDeviceMaintenanceStatusForDay = async day => {
         const messageContext = await createMessageContext()
-        const action = logDeviceMaintenanceStatus(day)
-        await messageContext.dispatch(action)
-        await waitForAction(action)
+        messageContext.bindActionCreators({ logDeviceMaintenanceStatus })
+        messageContext.logDeviceMaintenanceStatus(day)
         await waitForIdle()
       }
 
