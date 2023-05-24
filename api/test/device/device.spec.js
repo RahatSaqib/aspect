@@ -957,7 +957,7 @@ describe('Device routes', () => {
       const dispatchDeviceMaintenanceStatusForDay = async day => {
         const messageContext = await createMessageContext()
         messageContext.bindActionCreators({ logDeviceMaintenanceStatus })
-        messageContext.logDeviceMaintenanceStatus(day)
+        await messageContext.logDeviceMaintenanceStatus(day)
         await waitForIdle()
       }
 
