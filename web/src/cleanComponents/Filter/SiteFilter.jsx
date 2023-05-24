@@ -52,7 +52,7 @@ const SiteFilter = () => {
           <TextField
             label={formatMessage(messages.externalId)}
             value={state.externalId || ''}
-            onChange={e => setState({ ...state, externalId: e.target.value })}
+            onChange={e => setState({ ...state, externalId: e.target.value ? e.target.value : null })}
           />
         </Grid>
       </Grid>

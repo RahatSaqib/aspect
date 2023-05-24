@@ -21,7 +21,7 @@ const NotificationFilter = () => {
           <TextField
             label={formatMessage(messages.notificationName)}
             value={state.notificationName || ''}
-            onChange={e => setState({ ...state, notificationName: e.target.value })}
+            onChange={e => setState({ ...state, notificationName: e.target.value ? e.target.value : null })}
           />
         </Grid>
       </Grid>

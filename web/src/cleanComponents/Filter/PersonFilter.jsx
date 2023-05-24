@@ -39,7 +39,7 @@ const PersonFilter = () => {
           <TextField
             label={formatMessage(messages.contactNameEmail)}
             value={state.contactNameOrEmail || ''}
-            onChange={e => setState({ ...state, contactNameOrEmail: e.target.value })}
+            onChange={e => setState({ ...state, contactNameOrEmail: e.target.value ? e.target.value : null })}
           />
         </Grid>
         <Grid item xs={3}>

@@ -86,7 +86,7 @@ const InventoryLogFilter = () => {
           <TextField
             label={formatMessage(messages.lotNumber)}
             value={state.lotNumber || ''}
-            onChange={e => setState({ ...state, lotNumber: e.target.value })}
+            onChange={e => setState({ ...state, lotNumber: e.target.value ? e.target.value : null })}
           />
         </Grid>
         <Grid item xs={3}>

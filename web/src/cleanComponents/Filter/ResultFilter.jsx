@@ -92,21 +92,21 @@ const ResultFilter = () => {
           <TextField
             label={formatMessage(messages.errorCode)}
             value={state.errorCode || ''}
-            onChange={e => setState({ ...state, errorCode: e.target.value })}
+            onChange={e => setState({ ...state, errorCode: e.target.value ? e.target.value : null })}
           />
         </Grid>
         <Grid item xs={3}>
           <TextField
             label={formatMessage(messages.patientOrResearchId)}
             value={state.patientOrResearchId || ''}
-            onChange={e => setState({ ...state, patientOrResearchId: e.target.value })}
+            onChange={e => setState({ ...state, patientOrResearchId: e.target.value ? e.target.value : null })}
           />
         </Grid>
         <Grid item xs={3}>
           <TextField
             label={formatMessage(messages.sampleId)}
             value={state.sampleId || ''}
-            onChange={e => setState({ ...state, sampleId: e.target.value })}
+            onChange={e => setState({ ...state, sampleId: e.target.value ? e.target.value : null })}
           />
         </Grid>
         {allowed(['device']) ? (
