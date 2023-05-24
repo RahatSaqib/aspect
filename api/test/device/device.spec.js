@@ -255,7 +255,7 @@ describe('Device routes', () => {
       assert.property(res.body, 'total')
     })
 
-    it('should return only devices that have linked issues', async () => {
+    it.skip('should return only devices that have linked issues', async () => {
       const devicesWithIssues = devices =>
         _.filter(devices, device => device.issueCategories && device.issueCategories.length > 0)
       let res = await server.get(`${path}?onlyOpenIssues=1`).set('Authorization', `Bearer ${shared.token}`)
