@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { getFollowUpByType } = require('./getFollowUpByType')
 const { FOLLOW_UP_TYPES } = require('../consts')
 
@@ -9,11 +10,11 @@ function transformClinicalResponse(data, followUps, acknowledgedId) {
   return {
     resultId: data.id,
     confirmedOn: isRecorded ? data.resultWorkflowStatusChangedOn : null,
-    outcome: outcome?.externalId || null,
-    outcomeOccurred: outcome?.date || null,
+    outcome: outcome?.followUpTypeExternalId ?? null,
+    outcomeOccurred: outcome?.updatedOn ?? null,
     recorded: isRecorded,
-    treatment: treatment?.externalId ?? null,
-    treatmentStarted: treatment?.date ?? null,
+    treatment: treatment?.followUpTypeExternalId ?? null,
+    treatmentStarted: treatment?.updatedOn ?? null,
   }
 }
 

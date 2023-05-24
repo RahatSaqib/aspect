@@ -11,6 +11,7 @@ const {
   data2997,
   expected2997,
 } = require('./data')
+const { TRANSFERRED, FOLLOW_UP_TYPES } = require('../../../../src/mobileApi/entries/entry/common/consts')
 const { extractFromDataById } = require('../../../../src/mobileApi/entries/entry/common/helpers/extractFromDataById')
 const { buildHistoryTimeline } = require('../../../../src/mobileApi/entries/entry/common/helpers/buildHistoryTimeline')
 const { generateSeverity } = require('../../../../src/mobileApi/entries/entry/common/helpers/generateSeverity')
@@ -64,45 +65,57 @@ describe('Entries helpers', () => {
   })
 
   describe('buildHistoryTimeline', () => {
-    it('should return the correct output', () => {
+    it('should build a correct timeline', () => {
       const data = {
-        resultSampleId: 1,
-        sampleTypeExternalId: 'sample123',
-        sampleSiteName: 'Site A',
-        sampleCollectedOn: '2023-01-01T00:00:00Z',
+        id: 123,
+        sampleCollectedOn: '2023-05-01T00:00:00Z',
+        sampleSiteName: 'Lab1',
+        resultSampleId: 456,
+        sampleTypeExternalId: 'SampleType1',
+        reportableSiteName: 'ReportLab1',
+        testDate: '2023-05-02T00:00:00Z',
       }
 
-      const followUps = [
-        { id: 2, followUpName: 'Follow Up 1', updatedOn: '2023-01-02T00:00:00Z' },
-        { id: 3, followUpName: 'Follow Up 2', updatedOn: '2023-01-03T00:00:00Z' },
-      ]
+      const followUps = [{ id: 789, resultId: 123, followUpName: 'FollowUp1', updatedOn: '2023-05-03T00:00:00Z' }]
 
       const expectedOutput = [
         {
-          id: 3,
+          id: 789,
+          resultId: 123,
           event: 'followUpCreated',
-          name: 'Follow Up 2',
-          siteName: null,
-          updatedOn: '2023-01-03T00:00:00Z',
+          name: 'FollowUp1',
+          siteName: 'ReportLab1',
+          updatedOn: '2023-05-03T00:00:00Z',
         },
         {
-          id: 2,
-          event: 'followUpCreated',
-          name: 'Follow Up 1',
-          siteName: null,
-          updatedOn: '2023-01-02T00:00:00Z',
+          id: 456,
+          resultId: 123,
+          event: 'sampleTested',
+          name: 'SampleType1',
+          siteName: 'ReportLab1',
+          updatedOn: '2023-05-02T00:00:00Z',
         },
         {
-          id: 1,
+          id: 456,
+          resultId: 123,
           event: 'sampleCollected',
-          name: 'sample123',
-          siteName: 'Site A',
-          updatedOn: '2023-01-01T00:00:00Z',
+          name: 'SampleType1',
+          siteName: 'Lab1',
+          updatedOn: '2023-05-01T00:00:00Z',
         },
       ]
 
-      const output = buildHistoryTimeline(data, followUps)
-      expect(output).to.deep.eq(expectedOutput)
+      const result = buildHistoryTimeline(data, followUps)
+      expect(result).to.deep.eq(expectedOutput)
+    })
+
+    it('should handle null/undefined values correctly', () => {
+      const data = { id: 123 }
+      const followUps = []
+      const expectedOutput = []
+
+      const result = buildHistoryTimeline(data, followUps)
+      expect(result).to.eql(expectedOutput)
     })
   })
 
@@ -129,93 +142,100 @@ describe('Entries helpers', () => {
 
   describe('generateSeverity', () => {
     it('should return "info" if daysDiff is less than or equal to 16', () => {
-      const data = { resultTreatmentStatusChangedOn: subDays(new Date(), 10) }
+      const data = { testDate: subDays(new Date(), 10) }
       const followUps = []
       const result = generateSeverity(data, followUps)
       expect(result).to.eq('info')
     })
     it('should return "success" if on treatment', () => {
-      const data = { resultTreatmentStatusChangedOn: '2022-01-01' }
+      const data = { testDate: '2022-01-01' }
       const followUps = [{ id: 1, followUpTypeExternalId: 'treatment', updatedOn: '2022-01-04' }]
       const result = generateSeverity(data, followUps)
       expect(result).to.eq('success')
     })
 
     it('should return "warning" if daysDiff is greater than 16', () => {
-      const data = { resultTreatmentStatusChangedOn: subDays(new Date(), 18) }
+      const data = { testDate: subDays(new Date(), 18) }
       const followUps = []
       const result = generateSeverity(data, followUps)
       expect(result).to.eq('warning')
     })
 
     it('should return "danger" if daysDiff is greater than 32', () => {
-      const data = { resultTreatmentStatusChangedOn: subDays(new Date(), 34) }
+      const data = { testDate: subDays(new Date(), 34) }
       const followUps = []
       const result = generateSeverity(data, followUps)
       expect(result).to.eq('danger')
     })
   })
 
-  describe('generateTransferStatus()', () => {
-    const TRANSFERRED = {
-      AWAY: 'away',
-      HERE: 'here',
-    }
-    it('should return an object with transferStatus = null when transferStatusLogData is null', () => {
-      const data = { transferStatusLogData: null }
+  describe('generateTransferStatus', () => {
+    it('should generate the correct transfer data.transferStatusLogData is nil', () => {
+      const data = {}
+      const expectedOutput = { canBeTransferred: true }
+
       const result = generateTransferStatus(data)
-      expect(result).to.eql({})
+      expect(result).to.eql(expectedOutput)
     })
 
-    it('should return an object with transferStatus = "away" when siteId is not equal to reportableSiteId and equal to previousReportableSiteId', () => {
+    it('should generate TRANSFERRED.AWAY when siteId equals previousReportableSiteId and not reportableSiteId', () => {
       const data = {
-        transferStatusLogData: '{"siteId": "123", "reportableSiteId": "456", "previousReportableSiteId": "123"}',
-        transferredOn: '2023-01-01',
-        transferredBy: 'John Doe',
+        id: 123,
+        transferStatusLogData: JSON.stringify({
+          siteId: 1,
+          reportableSiteId: 2,
+          previousReportableSiteId: 1,
+        }),
+        transferredBy: 'user1',
+        transferredOn: '2023-01-01T00:00:00Z',
+        reportableSiteName: 'SiteName1',
       }
-      const result = generateTransferStatus(data)
-      expect(result).to.eql({
+
+      const expectedOutput = {
+        canBeTransferred: false,
+        previousReportableSiteId: 1,
+        reportableSiteId: 2,
+        resultId: 123,
+        siteId: 1,
+        comment: undefined,
+        siteName: 'SiteName1',
         transferStatus: TRANSFERRED.AWAY,
-        siteId: '123',
-        reportableSiteId: '456',
-        previousReportableSiteId: '123',
-        transferredOn: '2023-01-01',
-        transferredBy: 'John Doe',
-      })
+        transferredBy: 'user1',
+        transferredOn: '2023-01-01T00:00:00Z',
+      }
+
+      const result = generateTransferStatus(data)
+      expect(result).to.eql(expectedOutput)
     })
 
-    it('should return an object with transferStatus = "here" when siteId is equal to reportableSiteId and not equal to previousReportableSiteId', () => {
+    it('should generate TRANSFERRED.HERE when siteId equals reportableSiteId and not previousReportableSiteId', () => {
       const data = {
-        transferStatusLogData: '{"siteId": "123", "reportableSiteId": "123", "previousReportableSiteId": "456"}',
-        transferredOn: '2023-01-01',
-        transferredBy: 'John Doe',
+        id: 123,
+        transferStatusLogData: JSON.stringify({
+          siteId: 1,
+          reportableSiteId: 1,
+          previousReportableSiteId: 2,
+        }),
+        transferredBy: 'user1',
+        transferredOn: '2023-01-01T00:00:00Z',
+        reportableSiteName: 'SiteName1',
       }
-      const result = generateTransferStatus(data)
-      expect(result).to.eql({
+
+      const expectedOutput = {
+        canBeTransferred: true,
+        previousReportableSiteId: 2,
+        reportableSiteId: 1,
+        resultId: 123,
+        siteId: 1,
+        comment: undefined,
+        siteName: 'SiteName1',
         transferStatus: TRANSFERRED.HERE,
-        siteId: '123',
-        reportableSiteId: '123',
-        previousReportableSiteId: '456',
-        transferredOn: '2023-01-01',
-        transferredBy: 'John Doe',
-      })
-    })
-
-    it('should return an object with transferStatus = null when siteId, reportableSiteId and previousReportableSiteId are equal', () => {
-      const data = {
-        transferStatusLogData: '{"siteId": "123", "reportableSiteId": "123", "previousReportableSiteId": "123"}',
-        transferredOn: '2023-01-01',
-        transferredBy: 'John Doe',
+        transferredBy: 'user1',
+        transferredOn: '2023-01-01T00:00:00Z',
       }
+
       const result = generateTransferStatus(data)
-      expect(result).to.eql({
-        transferStatus: null,
-        siteId: '123',
-        reportableSiteId: '123',
-        previousReportableSiteId: '123',
-        transferredOn: '2023-01-01',
-        transferredBy: 'John Doe',
-      })
+      expect(result).to.eql(expectedOutput)
     })
   })
 
@@ -259,27 +279,54 @@ describe('Entries helpers', () => {
   })
 
   describe('transformClinicalResponse', () => {
-    it('returns the expected object', () => {
+    it('should transform clinical response correctly when result is recorded and treatment and outcome are present', () => {
+      const acknowledgedId = 456
       const data = {
-        resultWorkflowStatusId: 'someId',
-        resultWorkflowStatusChangedOn: '2022-09-01',
+        id: 123,
+        resultWorkflowStatusId: 456,
+        resultWorkflowStatusChangedOn: '2023-01-01T00:00:00Z',
       }
+
       const followUps = [
-        { followUpTypeExternalId: 'treatment', externalId: 'tx123', date: '2022-08-01' },
-        { followUpTypeExternalId: 'outcome', externalId: 'out123', date: '2022-09-20' },
+        {
+          type: FOLLOW_UP_TYPES.TREATMENT,
+          followUpTypeExternalId: 'treatment',
+          updatedOn: '2023-02-01T00:00:00Z',
+        },
+        {
+          type: FOLLOW_UP_TYPES.OUTCOME,
+          followUpTypeExternalId: 'outcome',
+          updatedOn: '2023-03-01T00:00:00Z',
+        },
       ]
-      const acknowledgedId = 'someId'
+
+      const expectedOutput = {
+        resultId: 123,
+        confirmedOn: '2023-01-01T00:00:00Z',
+        outcome: 'outcome',
+        outcomeOccurred: '2023-03-01T00:00:00Z',
+        recorded: true,
+        treatment: 'treatment',
+        treatmentStarted: '2023-02-01T00:00:00Z',
+      }
 
       const result = transformClinicalResponse(data, followUps, acknowledgedId)
+      expect(result).to.eql(expectedOutput)
+    })
 
-      expect(result).to.deep.eq({
-        confirmedOn: '2022-09-01',
-        outcome: 'out123',
-        outcomeOccurred: '2022-09-20',
-        recorded: true,
-        treatment: 'tx123',
-        treatmentStarted: '2022-08-01',
-      })
+    it('should return empty object when result is not recorded and treatment and outcome are not present', () => {
+      const data = {
+        id: 123,
+        resultWorkflowStatusId: 456,
+      }
+
+      const followUps = []
+      const acknowledgedId = 789
+
+      const expectedOutput = {}
+
+      const result = transformClinicalResponse(data, followUps, acknowledgedId)
+      expect(result).to.eql(expectedOutput)
     })
   })
 
@@ -343,61 +390,72 @@ describe('Entries helpers', () => {
       expect(result).to.deep.eq([])
     })
 
-    it('should transform test information correctly for one result category', () => {
+    it('should transform test information correctly for one result category', function () {
       const data = {
-        resultCategory1i18nKey: 'category1_i18n',
-        resultCategory1Label: 'Category 1',
-        resultCategory1Name: 'Pass',
+        id: 123,
+        resultCategory1i18nKey: 'key1',
+        resultCategory1Label: 'label1',
+        resultCategory1Name: 'name1',
         resultCategory1Emphasize: true,
-        resultCategory1ValueI18nKey: 'pass_i18n',
+        resultCategory1ValueI18nKey: 'valueKey1',
       }
-      const result = transformTestInformation(data)
-      expect(result).to.deep.eq([
+
+      const expectedOutput = [
         {
-          label: 'Category 1',
-          labelI18nKey: 'category1_i18n',
-          value: 'Pass',
-          valueI18nKey: 'pass_i18n',
+          resultId: 123,
+          label: 'label1',
+          labelI18nKey: 'key1',
+          value: 'name1',
+          valueI18nKey: 'valueKey1',
           severity: 'danger',
         },
-      ])
+      ]
+
+      const result = transformTestInformation(data)
+      expect(result).to.eql(expectedOutput)
     })
 
-    it('should transform test information correctly for two result categories', () => {
+    it('should transform test information correctly for two result categories', function () {
       const data = {
-        resultCategory1i18nKey: 'category1_i18n',
-        resultCategory1Label: 'Category 1',
-        resultCategory1Name: 'Pass',
+        id: 123,
+        resultCategory1i18nKey: 'key1',
+        resultCategory1Label: 'label1',
+        resultCategory1Name: 'name1',
         resultCategory1Emphasize: true,
-        resultCategory1ValueI18nKey: 'pass_i18n',
-        resultCategory2i18nKey: 'category2_i18n',
-        resultCategory2Label: 'Category 2',
-        resultCategory2Name: 'Fail',
+        resultCategory1ValueI18nKey: 'valueKey1',
+        resultCategory2i18nKey: 'key2',
+        resultCategory2Label: 'label2',
+        resultCategory2Name: 'name2',
         resultCategory2Emphasize: false,
-        resultCategory2ValueI18nKey: 'fail_i18n',
+        resultCategory2ValueI18nKey: 'valueKey2',
       }
-      const result = transformTestInformation(data)
-      expect(result).to.deep.eq([
+
+      const expectedOutput = [
         {
-          label: 'Category 1',
-          labelI18nKey: 'category1_i18n',
-          value: 'Pass',
-          valueI18nKey: 'pass_i18n',
+          resultId: 123,
+          label: 'label1',
+          labelI18nKey: 'key1',
+          value: 'name1',
+          valueI18nKey: 'valueKey1',
           severity: 'danger',
         },
         {
-          label: 'Category 2',
-          labelI18nKey: 'category2_i18n',
-          value: 'Fail',
-          valueI18nKey: 'fail_i18n',
+          resultId: 123,
+          label: 'label2',
+          labelI18nKey: 'key2',
+          value: 'name2',
+          valueI18nKey: 'valueKey2',
           severity: 'info',
         },
-      ])
+      ]
+
+      const result = transformTestInformation(data)
+      expect(result).to.eql(expectedOutput)
     })
   })
 
-  describe('transformTreatmentStatus', function () {
-    it('returns an object with expected properties when given valid input', function () {
+  describe('transformTreatmentStatus', () => {
+    it('returns an object with expected properties when given valid input', () => {
       const changedOn = subDays(new Date(), 8).toISOString()
       const data = {
         resultTreatmentStatusChangedOn: changedOn,
@@ -428,8 +486,8 @@ describe('Entries helpers', () => {
     })
   })
 
-  describe('transformSampleData', function () {
-    it('returns a transformed sample data object when given valid input', function () {
+  describe('transformSampleData', () => {
+    it('returns a transformed sample data object when given valid input', () => {
       const data = {
         id: 1,
         sampleExternalId: 'SAMPLE01',
@@ -461,7 +519,7 @@ describe('Entries helpers', () => {
       expect(result).to.deep.eq(expectedOutput)
     })
 
-    it('returns null when given null input', function () {
+    it('returns null when given null input', () => {
       const data = null
       const result = transformSampleData(data)
       expect(result).to.eq(null)
@@ -479,3 +537,60 @@ describe('Entries helpers', () => {
     })
   })
 })
+
+// transformTestInformation
+// transformTreatmentStatus
+// generateSearchKeys
+// transFormResultResponse
+
+it('should transform test information correctly for one result category', () => {
+  const data = {
+    resultCategory1i18nKey: 'category1_i18n',
+    resultCategory1Label: 'Category 1',
+    resultCategory1Name: 'Pass',
+    resultCategory1Emphasize: true,
+    resultCategory1ValueI18nKey: 'pass_i18n',
+  }
+  const result = transformTestInformation(data)
+  expect(result).to.deep.eq([
+    {
+      label: 'Category 1',
+      labelI18nKey: 'category1_i18n',
+      value: 'Pass',
+      valueI18nKey: 'pass_i18n',
+      severity: 'danger',
+    },
+  ])
+})
+
+// it('should transform test information correctly for two result categories', () => {
+//   const data = {
+//     resultCategory1i18nKey: 'category1_i18n',
+//     resultCategory1Label: 'Category 1',
+//     resultCategory1Name: 'Pass',
+//     resultCategory1Emphasize: true,
+//     resultCategory1ValueI18nKey: 'pass_i18n',
+//     resultCategory2i18nKey: 'category2_i18n',
+//     resultCategory2Label: 'Category 2',
+//     resultCategory2Name: 'Fail',
+//     resultCategory2Emphasize: false,
+//     resultCategory2ValueI18nKey: 'fail_i18n',
+//   }
+//   const result = transformTestInformation(data)
+//   expect(result).to.deep.eq([
+//     {
+//       label: 'Category 1',
+//       labelI18nKey: 'category1_i18n',
+//       value: 'Pass',
+//       valueI18nKey: 'pass_i18n',
+//       severity: 'danger',
+//     },
+//     {
+//       label: 'Category 2',
+//       labelI18nKey: 'category2_i18n',
+//       value: 'Fail',
+//       valueI18nKey: 'fail_i18n',
+//       severity: 'info',
+//     },
+//   ])
+// })

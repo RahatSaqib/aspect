@@ -36,7 +36,7 @@ function buildHistoryTimeline(data, followUps) {
     })
   }
 
-  if (!_.isEmpty(transferStatus)) {
+  if (!_.isNil(transferStatus?.transferStatus)) {
     output.push({
       id: data.id,
       resultId: data.id,
