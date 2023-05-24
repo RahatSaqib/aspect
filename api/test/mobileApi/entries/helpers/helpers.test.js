@@ -473,7 +473,7 @@ describe('Entries helpers', () => {
 
   describe('generateSearchKeys', () => {
     it('correctly transform results', async () => {
-      const result = generateSearchKeys(data450, [])
+      const result = generateSearchKeys(data450, '84-687-3493')
       expect(result).to.deep.eq(searchKeys450)
     })
   })
