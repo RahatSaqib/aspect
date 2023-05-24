@@ -33,7 +33,12 @@ const FilterContainer = ({ children, state, setState }) => {
     toggleOpen()
   }
 
-  const remove = key => removeFilter(key, location.pathname)
+  const remove = key => {
+    removeFilter(key, location.pathname)
+    const newState = { ...state }
+    delete newState[key]
+    setState(newState)
+  }
 
   return (
     <Card sx={{ mb: 1 }}>
