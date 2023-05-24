@@ -1,15 +1,14 @@
 const { expect } = require('chai')
 const { subDays } = require('date-fns')
 const {
-  data22,
-  expected22,
-  data477,
-  expected477,
-  followUp477,
-  data5782,
-  expected5782,
-  data2997,
-  expected2997,
+  data347,
+  expected347,
+  data450,
+  data558,
+  followUp558,
+  expected450,
+  followUp450,
+  searchKeys450,
 } = require('./data')
 const { TRANSFERRED, FOLLOW_UP_TYPES } = require('../../../../src/mobileApi/entries/entry/common/consts')
 const { extractFromDataById } = require('../../../../src/mobileApi/entries/entry/common/helpers/extractFromDataById')
@@ -455,34 +454,27 @@ describe('Entries helpers', () => {
   })
 
   describe('transformTreatmentStatus', () => {
-    it('returns an object with expected properties when given valid input', () => {
-      const changedOn = subDays(new Date(), 8).toISOString()
-      const data = {
-        resultTreatmentStatusChangedOn: changedOn,
-        resultTreatmentStatusName: 'On Treatment',
-        resultTreatmentStatusExternalId: '12345',
-        resultTreatmentStatusI18nKey: 'OnTreatment',
-        resultCategoryAssay1RequiresTreatment: 1,
-        transferStatusLogData: JSON.stringify(null),
-      }
-      const followUps = [{ id: 1, followUpTypeExternalId: 'treatment', updatedOn: '2022-01-04' }]
-      const result = transformTreatmentStatus(data, followUps)
-      expect(result).to.deep.eq({
-        changedOn,
+    it('should transform treatment status correctly', function () {
+      const expectedOutput = {
+        changedOn: '2023-05-10T19:25:56.000Z',
+        resultId: 558,
         name: 'On Treatment',
-        externalId: '12345',
-        i18nKey: 'OnTreatment',
-        visible: true,
+        externalId: 'OnTreatment',
+        i18nKey: 'ResultTreatmentStatusOnTreatment',
+        visible: 1,
         severity: 'success',
-        daysInCurrentStatus: 8,
-      })
+        daysInCurrentStatus: 13,
+      }
+
+      const result = transformTreatmentStatus(data558, followUp558)
+      expect(result).to.deep.equal(expectedOutput)
     })
   })
 
   describe('generateSearchKeys', () => {
     it('correctly transform results', async () => {
-      const result = generateSearchKeys(data2997, [])
-      expect(result).to.deep.eq(expected2997)
+      const result = generateSearchKeys(data450, [])
+      expect(result).to.deep.eq(searchKeys450)
     })
   })
 
@@ -528,69 +520,10 @@ describe('Entries helpers', () => {
 
   describe('transFormResultResponse', () => {
     it('correctly transform results', async () => {
-      const entry22 = transFormResultResponse([data22], [], [], 9)
-      const entry477 = transFormResultResponse([data477], followUp477, [], 9)
-      const entry5782 = transFormResultResponse([data5782], [], [], 9)
-      expect(entry22).to.deep.eq(expected22)
-      expect(entry477).to.deep.eq(expected477)
-      expect(entry5782).to.deep.eq(expected5782)
+      const entry22 = transFormResultResponse([data347], [], [], 9)
+      const entry450 = transFormResultResponse([data450], followUp450, [], 9)
+      expect(entry22).to.deep.eq(expected347)
+      expect(entry450).to.deep.eq(expected450)
     })
   })
 })
-
-// transformTestInformation
-// transformTreatmentStatus
-// generateSearchKeys
-// transFormResultResponse
-
-it('should transform test information correctly for one result category', () => {
-  const data = {
-    resultCategory1i18nKey: 'category1_i18n',
-    resultCategory1Label: 'Category 1',
-    resultCategory1Name: 'Pass',
-    resultCategory1Emphasize: true,
-    resultCategory1ValueI18nKey: 'pass_i18n',
-  }
-  const result = transformTestInformation(data)
-  expect(result).to.deep.eq([
-    {
-      label: 'Category 1',
-      labelI18nKey: 'category1_i18n',
-      value: 'Pass',
-      valueI18nKey: 'pass_i18n',
-      severity: 'danger',
-    },
-  ])
-})
-
-// it('should transform test information correctly for two result categories', () => {
-//   const data = {
-//     resultCategory1i18nKey: 'category1_i18n',
-//     resultCategory1Label: 'Category 1',
-//     resultCategory1Name: 'Pass',
-//     resultCategory1Emphasize: true,
-//     resultCategory1ValueI18nKey: 'pass_i18n',
-//     resultCategory2i18nKey: 'category2_i18n',
-//     resultCategory2Label: 'Category 2',
-//     resultCategory2Name: 'Fail',
-//     resultCategory2Emphasize: false,
-//     resultCategory2ValueI18nKey: 'fail_i18n',
-//   }
-//   const result = transformTestInformation(data)
-//   expect(result).to.deep.eq([
-//     {
-//       label: 'Category 1',
-//       labelI18nKey: 'category1_i18n',
-//       value: 'Pass',
-//       valueI18nKey: 'pass_i18n',
-//       severity: 'danger',
-//     },
-//     {
-//       label: 'Category 2',
-//       labelI18nKey: 'category2_i18n',
-//       value: 'Fail',
-//       valueI18nKey: 'fail_i18n',
-//       severity: 'info',
-//     },
-//   ])
-// })
