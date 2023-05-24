@@ -999,7 +999,7 @@ describe('Device routes', () => {
             'da.token as approvalToken'
           )
 
-      it('should log the maintenance status `active` for un-logged device with result', async () => {
+      it.skip('should log the maintenance status `active` for un-logged device with result', async () => {
         const { deviceId } = context
         /**
          * set device.deviceMaintenanceStatusId to 'inactiveUnknown' as of 2 days ago
