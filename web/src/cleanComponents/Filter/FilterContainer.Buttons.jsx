@@ -416,6 +416,7 @@ const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove }) => {
   const ids = isArray(deviceMaintenanceStatusId) ? deviceMaintenanceStatusId : [deviceMaintenanceStatusId]
   return ids.map(id => (
     <Btn
+      key={id}
       lbl={formatMessage(messages.withDeviceMaintenanceStatus, {
         deviceMaintenanceStatusName: formatMessage(messages[id]),
       })}
