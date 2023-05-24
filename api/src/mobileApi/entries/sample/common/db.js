@@ -1,7 +1,7 @@
-const subDays = require('date-fns/subDays')
+const subMonths = require('date-fns/subMonths')
 const { knex } = require('../../../../db')
 const { addConstraints, getConstraints } = require('../../../../auth/constraints')
-const { DAYS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
+const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
 
 const getBaseAllSamplesRegistered = dataConstraints => {
   const knexQuery = knex('Sample as sample')
@@ -32,7 +32,7 @@ const getBaseAllSamplesRegistered = dataConstraints => {
   return knexQuery
 }
 const getAllSamplesRegistered = (query, dataConstraints) => {
-  const minUpdatedOn = query?.minUpdatedOn ?? subDays(new Date(), DAYS_HISTORY_TO_LOOK_UP)
+  const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
   const knexQuery = getBaseAllSamplesRegistered(dataConstraints).where(queryBuilder =>
     queryBuilder.where('sample.collectedOn', '>=', minUpdatedOn).orWhere('sample.updatedOn', '>=', minUpdatedOn)
   )
