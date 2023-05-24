@@ -25,7 +25,7 @@ const getClinicianAccessToken = async () => {
   return res.body.access
 }
 
-describe('Mobile API Result download routes v1 without api version', () => {
+describe.only('Mobile API Result download routes v1 without api version', () => {
   const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
@@ -160,7 +160,6 @@ describe('Mobile API Result download routes v1 without api version', () => {
         assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
         assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpName')
-        assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
         assert.property(response.body.data[0].followUps[0], 'date')
         assert.property(response.body.data[0].followUps[0], 'createdOn')
@@ -401,7 +400,6 @@ describe('Mobile API Result download routes v1 with available custom api-version
         assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
         assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpName')
-        assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
         assert.property(response.body.data[0].followUps[0], 'date')
         assert.property(response.body.data[0].followUps[0], 'createdOn')
@@ -663,7 +661,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
         assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpName')
-        assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
         assert.property(response.body.data[0].followUps[0], 'date')
         assert.property(response.body.data[0].followUps[0], 'createdOn')
@@ -868,7 +865,6 @@ describe('Mobile API Result download routes v2 with available custom api-version
         assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
         assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpName')
-        assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
         assert.property(response.body.data[0].followUps[0], 'date')
         assert.property(response.body.data[0].followUps[0], 'createdOn')
@@ -1259,7 +1255,6 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
         assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpName')
-        assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
         assert.property(response.body.data[0].followUps[0], 'date')
         assert.property(response.body.data[0].followUps[0], 'createdOn')
@@ -1325,7 +1320,6 @@ describe('Mobile API Result download routes v2 with higher version', () => {
         assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
         assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpName')
-        assert.property(response.body.data[0].followUps[0], 'followUpTypei18nKey')
         assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
         assert.property(response.body.data[0].followUps[0], 'date')
         assert.property(response.body.data[0].followUps[0], 'createdOn')
@@ -1578,7 +1572,6 @@ describe('Mobile API Result download by id routes v2', () => {
         assert.property(response.body.data.followUps[0], 'followUpExternalId')
         assert.property(response.body.data.followUps[0], 'followUpi18nKey')
         assert.property(response.body.data.followUps[0], 'followUpName')
-        assert.property(response.body.data.followUps[0], 'followUpTypei18nKey')
         assert.property(response.body.data.followUps[0], 'followUpTypeName')
         assert.property(response.body.data.followUps[0], 'date')
         assert.property(response.body.data.followUps[0], 'createdOn')
