@@ -114,7 +114,7 @@ const ResultFilter = () => {
             <TextField
               label={formatMessage(messages.deviceName)}
               value={state.deviceName || ''}
-              onChange={e => setState({ ...state, deviceName: e.target.value })}
+              onChange={e => setState({ ...state, deviceName: e.target.value ? e.target.value : null })}
             />
           </Grid>
         ) : null}
