@@ -705,6 +705,161 @@ describe.skip('Mobile API Result & Sample download routes v4 with available cust
       res = await server
         .get(`${path}?minUpdatedOn=${format(thirtyDaysAgo, 'yyyy-MM-dd')}`)
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
+        .set('api-version', `31`)
+      await Promise.delay(1000)
+      assertReporterResultDownloadResponseContainingResults(res, 2)
+      // check if the download is register in the table.
+      const { count: totalResult } = await knex('ResultDownloadLog')
+        .where('resultId', res.body.data[0].id)
+        .count('id as count')
+        .first()
+
+      assert.equal(totalResult, 1)
+    })
+  })
+})
+
+describe('Mobile API Result download by id routes v2', () => {
+  const path = '/mobile/api/results'
+
+  // const clinicianAccessToken = ''
+  let results = []
+  const resultId = 171
+
+  before(async () => {
+    shared.checkToken(server, path)
+  })
+
+  beforeEach(async () => {
+    const { partnerId, userId } = await knex('Person as p')
+      .innerJoin('User as u')
+      .where('u.name', 'admin')
+      .first('p.lastPartnerId as partnerId', 'p.id as personId', 'p.userId')
+
+    results = await generateResults(knex, userId, partnerId, patients, [], 'US', false, 30, 0, 0, 0)
+
+    await setTreatmentStatusToResults(knex, results, ['OnTreatment'])
+
+    // set all to deliverable
+    const resultWorkflowStatusId = await resultWorkflowStatusToId('Deliverable')
+    await knex('ResultWorkflowLog')
+      .whereIn('resultId', _.map(results, 'id'))
+      .update('resultWorkflowStatusId', resultWorkflowStatusId)
+
+    // set all to a reportable result (=detected)
+    const resultCategoryId = await resultCategoryToId('Detected')
+    await knex('Result').whereIn('id', _.map(results, 'id')).update('resultCategory1', resultCategoryId)
+
+    /**
+     * notice that query in 'api/src/result/service.js' func 'getDownloadResultsList'
+     * applies constraints which, by default, deal with only approved devices.
+     * And because above func 'generateResults' generates also results for non-approved
+     * devices (for randomly used sites) - we need to narrow obtained `results` for only approved devices.
+     * So, use for that same base query as in func 'getDownloadResultsList' with WHERE
+     * for 'approved' device or NULL
+     */
+    const reportableResultIds = await getBaseQueryForResults()
+      .clone()
+      .leftOuterJoin(`DeviceApproval as deviceApproval`, `d.deviceApprovalId`, `deviceApproval.id`)
+      .where(function () {
+        this.where({ [`deviceApproval.token`]: 'approved' }).orWhere(knex.raw('isnull(`deviceApproval`.`token`)'))
+      })
+      .whereIn(
+        'r.id',
+        results.map(({ id }) => id)
+      )
+      .andWhere('dt.externalId', 'CepheidGeneXpert')
+      .pluck('r.id')
+    /**
+     * leave only valid results
+     */
+    results = results.filter(({ id }) => reportableResultIds.includes(id))
+  })
+
+  afterEach(async () => {
+    await knex('ResultFollowUp').whereIn('resultId', _.map(results, 'id')).delete()
+
+    await knex('ResultDownloadLog').whereIn('resultId', _.map(results, 'id')).delete()
+
+    await knex('Result').whereIn('id', _.map(results, 'id')).delete()
+  })
+
+  describe('GET', () => {
+    function assertReporterResultDownloadResponse(response) {
+      expect(response.status).to.equal(200)
+      expect(response.body).to.containSubset({
+        ok: true,
+        data: {},
+      })
+      assert.property(response.body, 'data')
+    }
+
+    function assertReporterResultDownloadRequestValidResultId(response) {
+      assertReporterResultDownloadResponse(response)
+
+      assert.property(response.body.data, 'id')
+      assert.property(response.body.data, 'externalId')
+      assert.property(response.body.data, 'endedOn')
+      assert.property(response.body.data, 'updatedOn')
+      assert.property(response.body.data, 'assayExternalId')
+      assert.property(response.body.data, 'siteName')
+      assert.property(response.body.data, 'reportableSiteId')
+      assert.property(response.body.data, 'sampleOriginSiteId')
+      assert.property(response.body.data, 'firstViewedOn')
+      assert.property(response.body.data, 'deviceName')
+      assert.property(response.body.data, 'resultCategory1ExternalId')
+      assert.property(response.body.data, 'resultCategory2ExternalId')
+      assert.property(response.body.data, 'workflowStatus')
+      assert.property(response.body.data, 'treatmentStatus')
+      assert.property(response.body.data, 'patientData')
+      assert.property(response.body.data, 'testId')
+      assert.property(response.body.data, 'resultData')
+      assert.property(response.body.data, 'sample')
+      assert.property(response.body.data, 'comments')
+      assert.property(response.body.data, 'followUps')
+      assert.property(response.body.data, 'assayAvatar')
+      assert.property(response.body.data, 'testInformation')
+      assert.property(response.body.data, 'transferred')
+      assert.property(response.body.data, 'testType')
+      assert.property(response.body.data, 'clinicalResponse')
+      if (response.body.data.followUps) {
+        assert.typeOf(response.body.data.followUps, 'array')
+        assert.property(response.body.data.followUps[0], 'id')
+        assert.property(response.body.data.followUps[0], 'externalId')
+        assert.property(response.body.data.followUps[0], 'followUpTypeExternalId')
+        assert.property(response.body.data.followUps[0], 'followUpExternalId')
+        assert.property(response.body.data.followUps[0], 'followUpi18nKey')
+        assert.property(response.body.data.followUps[0], 'followUpName')
+        assert.property(response.body.data.followUps[0], 'followUpTypei18nKey')
+        assert.property(response.body.data.followUps[0], 'followUpTypeName')
+        assert.property(response.body.data.followUps[0], 'date')
+        assert.property(response.body.data.followUps[0], 'createdOn')
+        assert.property(response.body.data.followUps[0], 'updatedOn')
+      }
+    }
+
+    it('should return a result object for valid result ID', async () => {
+      const res = await server
+        .get(`${path}/${results[0].id}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
+      assertReporterResultDownloadRequestValidResultId(res)
+    })
+
+    it('Result ID not found', async () => {
+      const res = await server
+        .get(`${path}/${resultId}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
+      assert.equal(res.status, 404)
+    })
+
+    it('Result ID is non numeric, it shoud throw result not found', async () => {
+      const res = await server
+        .get(`${path}/testResId`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .set('api-version', `2`)
+      assert.equal(res.status, 404)
         .set('api-version', `4`)
       assertBasicEntriesSchemaAndFollowUps(res)
     })
