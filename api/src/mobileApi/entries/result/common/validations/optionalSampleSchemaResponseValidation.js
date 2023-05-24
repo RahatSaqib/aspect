@@ -7,9 +7,9 @@ const originSite = Joi.object({
 })
 
 const sampleType = Joi.object({
-  name: Joi.string().required().description('The name of the sample type.'),
-  i18nKey: Joi.string().required().description('The internationalization key of the sample type.'),
-  externalId: Joi.string().required().description('The external ID of the sample type.'),
+  name: Joi.required().description('The name of the sample type.'),
+  i18nKey: Joi.required().description('The internationalization key of the sample type.'),
+  externalId: Joi.required().description('The external ID of the sample type.'),
 })
 
 const status = Joi.object({
@@ -23,19 +23,18 @@ const optionalSampleSchemaResponseValidation = Joi.object()
   .optional()
   .description('Sample schema for the entry')
   .keys({
-    id: Joi.number().required().description('The ID of the sample.'),
-    externalId: Joi.string().required().description('The external ID of the sample.'),
-    originSite: originSite.required().description('The origin site of the sample.'),
-    sampleType: sampleType.required().description('The type of the sample.'),
-    status: status.required().description('The status of the sample.'),
-    collectedOn: Joi.string()
-      .isoDate()
-      .required()
-      .description('The date and time when the sample was collected in ISO 8601 format.'),
-    updatedOn: Joi.string()
-      .allow(null)
-      .optional()
-      .description('The date and time when the sample was last updated. Can be null if not updated.'),
+    sample: Joi.object().keys({
+      id: Joi.number().required().description('The ID of the sample.'),
+      externalId: Joi.string().required().description('The external ID of the sample.'),
+      originSite: originSite.required().description('The origin site of the sample.'),
+      sampleType: sampleType.required().description('The type of the sample.'),
+      status: status.required().description('The status of the sample.'),
+      collectedOn: Joi.required().description('The date and time when the sample was collected in ISO 8601 format.'),
+      updatedOn: Joi.string()
+        .allow(null)
+        .optional()
+        .description('The date and time when the sample was last updated. Can be null if not updated.'),
+    }),
   })
 
 module.exports = { optionalSampleSchemaResponseValidation }

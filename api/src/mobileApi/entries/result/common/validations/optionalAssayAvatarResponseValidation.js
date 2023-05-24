@@ -4,7 +4,7 @@ const optionalAssayAvatarResponseValidation = Joi.object()
   .optional()
   .description('Assay Avatar schema used in Aspect Mobile')
   .keys({
-    clinicalResponse: {
+    assayAvatar: {
       resultId: Joi.number().required().description('Unique ID of the result for this instance of Aspect'),
       contentI18nKey: Joi.string().required().description('Assay i18nKey used, example assayTypeMtbXdr'),
       contentText: Joi.string().required().description('Assay text used, example XDR'),

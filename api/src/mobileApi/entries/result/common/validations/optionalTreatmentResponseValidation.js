@@ -7,13 +7,14 @@ const optionalTreatmentResponseValidation = Joi.object()
       .allow(null)
       .description('Current treatment status of the result')
       .keys({
-        changedOn: Joi.date().description('Date of the latest change to the treatment status').allow(null),
-        externalId: Joi.string().description('External ID of the treatment status').allow(null),
-        i18nKey: Joi.string().description('i18nKey ID of the treatment status').allow(null),
-        name: Joi.string().description('Name of the treatment status').allow(null),
-        visible: Joi.boolean().description('External ID of the treatment status').allow(null),
-        severity: Joi.string().description('External ID of the treatment status').allow(null),
-        daysInCurrentStatus: Joi.string().description('External ID of the treatment status').allow(null),
+        resultId: Joi.number().allow(null).description('ID of the entry'),
+        changedOn: Joi.date().allow(null).description('Date of the latest change to the treatment status'),
+        externalId: Joi.string().allow(null).description('External ID of the treatment status'),
+        i18nKey: Joi.string().allow(null).description('i18nKey ID of the treatment status'),
+        name: Joi.string().allow(null).description('Name of the treatment status'),
+        visible: Joi.allow(null).description('External ID of the treatment status'),
+        severity: Joi.string().allow(null).description('External ID of the treatment status'),
+        daysInCurrentStatus: Joi.number().allow(null).description('External ID of the treatment status'),
       }),
   })
 

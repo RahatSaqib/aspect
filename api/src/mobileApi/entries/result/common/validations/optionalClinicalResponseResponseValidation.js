@@ -5,7 +5,7 @@ const optionalClinicalResponseResponseValidation = Joi.object()
   .description('Clinical Response schema used in Aspect Mobile')
   .keys({
     clinicalResponse: {
-      resultId: Joi.number().required().description('Unique ID of the result for this instance of Aspect'),
+      resultId: Joi.number().allow(null).description('Unique ID of the result for this instance of Aspect'),
       confirmedOn: Joi.date()
         .allow(null)
         .description('Date & time that checkbox was checked, if not checked, return null'),

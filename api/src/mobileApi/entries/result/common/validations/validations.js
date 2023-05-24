@@ -10,38 +10,46 @@ const { optionalSampleSchemaResponseValidation } = require('./optionalSampleSche
 const { optionalSearchKeysResponseValidation } = require('./optionalSearchKeysResponseValidation')
 const { optionalTestInformationResponseValidation } = require('./optionalTestInformationResponseValidation')
 const { optionalTreatmentResponseValidation } = require('./optionalTreatmentResponseValidation')
-const { serverBaseResponseValidation } = require('./serverBaseResponseValidation')
 const { serverTransferResponseValidation } = require('./serverTransferResponseValidation')
+const { serverBaseResponseValidation } = require('./serverBaseResponseValidation')
 
 const downloadEntriesResponseValidation = () => {
-  return Joi.object().keys({
-    serverBaseResponseValidation,
-    data: Joi.array()
-      .required()
-      .description('Data for all entries')
-      .items(
-        Joi.object().keys({
-          id: Joi.number().required().description('Unique ID of the result for this instance of Aspect'),
-          patientId: Joi.string()
-            .optional()
-            .allow(null)
-            .description('Unique ID of the patient for this entry if available'),
-          assayAvatar: optionalAssayAvatarResponseValidation,
-          clinicalResponse: optionalClinicalResponseResponseValidation,
-          comments: optionalCommentsResponseValidation,
-          followUps: optionalFollowUpsResponseValidation,
-          history: optionalHistoryResponseValidation,
-          patientData: optionalPatientDataResponseValidation,
-          sample: optionalSampleSchemaResponseValidation,
-          searchSchema: optionalSearchKeysResponseValidation,
-          testInformation: optionalTestInformationResponseValidation,
-          testType: optionalEntryTypeResponseValidation,
-          transferStatus: serverTransferResponseValidation,
-          treatmentStatus: optionalTreatmentResponseValidation,
-          updatedOn: Joi.date().required().description('When the entry was last updated in the Aspect database'),
-        })
-      ),
-  })
+  return Joi.object()
+    .keys({
+      data: Joi.array()
+        .required()
+        .description('Data for all entries')
+        .items(
+          Joi.object()
+            .keys({
+              id: Joi.number().required().description('Unique ID of the result for this instance of Aspect'),
+              patientId: Joi.string()
+                .optional()
+                .allow(null, '')
+                .description('Unique ID of the patient for this entry if available'),
+              updatedOn: Joi.date().required().description('When the entry was last updated in the Aspect database'),
+              collectedOn: Joi.optional()
+                .allow(null)
+                .description('When the entry was last updated in the Aspect database'),
+              dbUpdatedOn: Joi.optional()
+                .allow(null)
+                .description('When the entry was last updated in the Aspect database'),
+            })
+            .concat(optionalAssayAvatarResponseValidation)
+            .concat(optionalClinicalResponseResponseValidation)
+            .concat(optionalCommentsResponseValidation)
+            .concat(optionalFollowUpsResponseValidation)
+            .concat(optionalHistoryResponseValidation)
+            .concat(optionalPatientDataResponseValidation)
+            .concat(optionalSampleSchemaResponseValidation)
+            .concat(optionalSearchKeysResponseValidation)
+            .concat(optionalTestInformationResponseValidation)
+            .concat(optionalEntryTypeResponseValidation)
+            .concat(serverTransferResponseValidation)
+            .concat(optionalTreatmentResponseValidation)
+        ),
+    })
+    .concat(serverBaseResponseValidation)
 }
 
 module.exports = { downloadEntriesResponseValidation }
