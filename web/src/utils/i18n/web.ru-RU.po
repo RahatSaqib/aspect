@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-05-03T16:15:31.910Z\n"
+"POT-Creation-Date: 2023-05-24T19:02:53.823Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -18,10 +18,8 @@ msgstr ""
 #. defaultMessage is:
 #. "Do Not Use" Modules
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Devices with Unused Modules"
 msgid "\"Do Not Use\" Modules"
-msgstr "Устройства с неиспользуемыми модулями"
+msgstr "модули \"Не использовать\""
 
 #. [pages.ReportIndex.no_stock]
 #. defaultMessage is:
@@ -32,17 +30,17 @@ msgstr "отчет об инвентаризации \"Нет запасов\""
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
-#. #Results (Last 30 Days)
+#. #Results Actual month (MTD)
 #: extracted_strings.json
-msgid "#Results (Last 30 Days)"
-msgstr "#Результаты (последние 30 дней)"
+msgid "#Results Actual month (MTD)"
+msgstr "#Результаты Фактический месяц (MTD)"
 
 #. [pages.DeviceList.lastMonth]
 #. defaultMessage is:
-#. #Results (Preceding 30 Days)
+#. #Results Last month
 #: extracted_strings.json
-msgid "#Results (Preceding 30 Days)"
-msgstr "#Результаты (предшествующие 30 дней)"
+msgid "#Results Last month"
+msgstr "#Результаты В прошлом месяце"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -82,9 +80,7 @@ msgstr ""
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr ""
-"...контакты, множественное число, один {# больше {name}} другой {# больше "
-"{name}s} }"
+msgstr "...контакты, plural, one {# больше {name}} другой {# больше {name}s} }"
 
 #. [legends.Unknown.upTo14]
 #. defaultMessage is:
@@ -717,16 +713,12 @@ msgstr "Все государства"
 #. defaultMessage is:
 #. All test results in the system. One row per result with all the fields needed.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "All test results in the system (up to 50.000 records). One row per result "
-#| "with all the fields needed."
 msgid ""
 "All test results in the system. One row per result with all the fields "
 "needed."
 msgstr ""
-"Все результаты тестирования в системе (до 50 000 записей). Одна строка на "
-"результат со всеми необходимыми полями."
+"Все результаты тестирования в системе. Одна строка на результат со всеми "
+"необходимыми полями."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -898,10 +890,8 @@ msgstr ""
 #. defaultMessage is:
 #. Aspect Dashboard
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Dashboard"
 msgid "Aspect Dashboard"
-msgstr "Панель управления"
+msgstr "Приборная панель Aspect"
 
 #. [errorResponseMessages.generic.title]
 #. defaultMessage is:
@@ -1167,10 +1157,8 @@ msgstr "Среднее количество тестов в день в теку
 #. defaultMessage is:
 #. Average tests performed per month
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Average Monthly Tests Performed"
 msgid "Average tests performed per month"
-msgstr "Среднемесячные выполненные тесты"
+msgstr "Среднее количество проведенных тестов в месяц"
 
 #. [component.Widget.averageTimeToModuleReplacementTitle]
 #. defaultMessage is:
@@ -1315,10 +1303,8 @@ msgstr "Обзор"
 #. defaultMessage is:
 #. Build Notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Edit Notification"
 msgid "Build Notification"
-msgstr "Изменить уведомление"
+msgstr "Уведомление о строительстве"
 
 #. [results.categoryTypeCAPResistanceI18nKey]
 #. defaultMessage is:
@@ -1721,10 +1707,8 @@ msgstr "Категория"
 #. defaultMessage is:
 #. Cellphone Number
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Mobile Number"
 msgid "Cellphone Number"
-msgstr "Мобильный номер"
+msgstr "Номер мобильного телефона"
 
 #. [pages.NotificationDetail.actionChange]
 #. defaultMessage is:
@@ -2079,6 +2063,9 @@ msgstr "Версия разъема"
 #. [pages.InventoryLog.consumableName]
 #. defaultMessage is:
 #. Consumable
+#. [pages.InventoryTransfer.consumableName]
+#. defaultMessage is:
+#. Consumable
 #: extracted_strings.json
 msgid "Consumable"
 msgstr "Расходный продукт"
@@ -2340,10 +2327,8 @@ msgstr "Округ"
 #. defaultMessage is:
 #. Coverage
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Country Average"
 msgid "Coverage"
-msgstr "В среднем по стране"
+msgstr "Покрытие"
 
 #. [p.PkDashboard.covid]
 #. defaultMessage is:
@@ -2517,19 +2502,15 @@ msgstr "Текущие активные устройства"
 #. defaultMessage is:
 #. Current Diagnosis
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Current Password"
 msgid "Current Diagnosis"
-msgstr "Текущий пароль"
+msgstr "Текущий диагноз"
 
 #. [p.PkDashboard.FQCurrent]
 #. defaultMessage is:
 #. Current FQ Trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Current Password"
 msgid "Current FQ Trends"
-msgstr "Текущий пароль"
+msgstr "Текущие тенденции FQ"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2542,10 +2523,8 @@ msgstr "Текущее тестирование GX-10CX, выполненное 
 #. defaultMessage is:
 #. Current MTB Detection
 #: extracted_strings.json
-#, fuzzy
-#| msgid "MTB Detected"
 msgid "Current MTB Detection"
-msgstr "Обнаружен MTB"
+msgstr "Текущее обнаружение МТБ"
 
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
@@ -2579,10 +2558,8 @@ msgstr "Текущие тенденции диагностики устойчи�
 #. defaultMessage is:
 #. Current TB Diagnosis
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Current Password"
 msgid "Current TB Diagnosis"
-msgstr "Текущий пароль"
+msgstr "Текущий диагноз туберкулеза"
 
 #. [p.PkDashboard.TbCurrent]
 #. defaultMessage is:
@@ -3211,10 +3188,8 @@ msgstr "Имя устройства"
 #. defaultMessage is:
 #. Device Performance
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Performance"
 msgid "Device Performance"
-msgstr "Представление"
+msgstr "Производительность устройства"
 
 #. [forms.formItem.deviceSerial]
 #. defaultMessage is:
@@ -3240,10 +3215,8 @@ msgstr "Статус устройства"
 #. defaultMessage is:
 #. Device Summary Report
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Device Calibration Report"
 msgid "Device Summary Report"
-msgstr "Калибровка устройства"
+msgstr "Сводный отчет по устройству"
 
 #. [forms.formItem.deviceType]
 #. defaultMessage is:
@@ -3549,7 +3522,7 @@ msgid ""
 msgstr ""
 "Загрузите все записи, которые прибор GeneXpert создал в своем журнале. В "
 "этом отчете вы можете увидеть даты калибровки, сбои аппаратного/программного "
-"обеспечения и другие ошибки, сбои или информационные записи, которые "
+"обеспечения и other ошибки, сбои или информационные записи, которые "
 "генерировал прибор"
 
 #. [pages.ResultList.resultCategoryDrugResistance]
@@ -4099,10 +4072,8 @@ msgstr "Excel"
 #. defaultMessage is:
 #. Exclude reason is required
 #: extracted_strings.json
-#, fuzzy
-#| msgid "End date is required"
 msgid "Exclude reason is required"
-msgstr "Укажите дату окончания"
+msgstr "Требуется причина исключения"
 
 #. [forms.formItem.excluded]
 #. defaultMessage is:
@@ -4118,10 +4089,8 @@ msgstr "Исключенный"
 #. defaultMessage is:
 #. Excluded Reason
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Excluded Results"
 msgid "Excluded Reason"
-msgstr "Исключенные результаты"
+msgstr "Причина исключения"
 
 #. [filter.btnGroup.displayExcludedResults]
 #. defaultMessage is:
@@ -4159,6 +4128,9 @@ msgid "Expand Row"
 msgstr "Развернуть Строку"
 
 #. [forms.formItem.consumableExpirationDate]
+#. defaultMessage is:
+#. Expiration Date
+#. [pages.InventoryTransfer.expirationDate]
 #. defaultMessage is:
 #. Expiration Date
 #: extracted_strings.json
@@ -4348,10 +4320,8 @@ msgstr "Сопротивление FLQ"
 #. defaultMessage is:
 #. FQ Resistance
 #: extracted_strings.json
-#, fuzzy
-#| msgid "FLQ Resistance"
 msgid "FQ Resistance"
-msgstr "Сопротивление FLQ"
+msgstr "Сопротивление FQ"
 
 #. [legends.Unknown.FQRPercent]
 #. defaultMessage is:
@@ -4540,6 +4510,9 @@ msgstr "Забыли пароль?"
 msgid "Friday"
 msgstr "Пятница"
 
+#. [pages.InventoryTransfer.originSiteName]
+#. defaultMessage is:
+#. From
 #. [pages.DailyStatusDialog.siteWorkingHoursFrom]
 #. defaultMessage is:
 #. From
@@ -4696,10 +4669,8 @@ msgstr "Картридж GeneXpert COVID-19"
 #. defaultMessage is:
 #. GeneXpert Device Coverage
 #: extracted_strings.json
-#, fuzzy
-#| msgid "GeneXpert Devices"
 msgid "GeneXpert Device Coverage"
-msgstr "Устройства GeneXpert"
+msgstr "Покрытие устройства GeneXpert"
 
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
@@ -4790,10 +4761,8 @@ msgstr "Устройства GeneXpert"
 #. defaultMessage is:
 #. GeneXpert MTB-RIF/Ultra Device Utilization
 #: extracted_strings.json
-#, fuzzy
-#| msgid "GeneXpert TB Ultra Cartridge"
 msgid "GeneXpert MTB-RIF/Ultra Device Utilization"
-msgstr "Картридж GeneXpert TB Ultra"
+msgstr "Использование устройства GeneXpert MTB-RIF/Ultra"
 
 #. [filter.AssaySelectField.assayGeneXpertMtbRif]
 #. defaultMessage is:
@@ -5854,10 +5823,15 @@ msgstr "Журнал инвентаризации"
 #. defaultMessage is:
 #. Inventory Overview
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Inventory Item"
 msgid "Inventory Overview"
-msgstr "Тип картриджа"
+msgstr "Состояние запасов"
+
+#. [pages.InventoryTransfer.InventoryTransferTitle]
+#. defaultMessage is:
+#. Inventory Transfer
+#: extracted_strings.json
+msgid "Inventory Transfer"
+msgstr "Передача товарно-материальных ценностей"
 
 #. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
 #. defaultMessage is:
@@ -6306,6 +6280,9 @@ msgstr "Липидная панель"
 #. [pages.ReportIndex.missing_cartridges_report]
 #. defaultMessage is:
 #. List of Missing Lots
+#. [pages.ReportIndex.pk_missing_cartridges_report]
+#. defaultMessage is:
+#. List of Missing Lots
 #: extracted_strings.json
 msgid "List of Missing Lots"
 msgstr "Список недостающих лотов"
@@ -6663,6 +6640,9 @@ msgstr "Ло"
 #. [pages.InventoryLog.lotNumber]
 #. defaultMessage is:
 #. Lot Number
+#. [pages.InventoryTransfer.lotNumber]
+#. defaultMessage is:
+#. Lot Number
 #: extracted_strings.json
 msgid "Lot Number"
 msgstr "Номер партии"
@@ -6864,10 +6844,8 @@ msgstr "MTB Обнаружен XDR Не обнаружен"
 #. defaultMessage is:
 #. MTB Detection
 #: extracted_strings.json
-#, fuzzy
-#| msgid "MTB Detected"
 msgid "MTB Detection"
-msgstr "Обнаружен MTB"
+msgstr "Обнаружение МТБ"
 
 #. [resultCategoryGroup.gxMtbRifMtbError]
 #. defaultMessage is:
@@ -6904,10 +6882,8 @@ msgstr "Ошибка MTB"
 #. defaultMessage is:
 #. MTB Error Rif Error
 #: extracted_strings.json
-#, fuzzy
-#| msgid "MTB Error"
 msgid "MTB Error Rif Error"
-msgstr "Ошибка MTB"
+msgstr "MTB Error Rif Error"
 
 #. [resultCategoryGroup.gxMtbRifMtbInvalid]
 #. defaultMessage is:
@@ -7019,10 +6995,8 @@ msgstr "MTB не обнаружен"
 #. defaultMessage is:
 #. MTB Not Detected Drug Resistance Not Detected
 #: extracted_strings.json
-#, fuzzy
-#| msgid "MTB Detected - Rif Not Detected"
 msgid "MTB Not Detected Drug Resistance Not Detected"
-msgstr "Обнаружен MTB - Rif не обнаружен"
+msgstr "МТБ Не выявлено Лекарственная устойчивость Не выявлено"
 
 #. [assayGenericDstresultCategoryPositiveMOTT]
 #. defaultMessage is:
@@ -7103,19 +7077,15 @@ msgstr "Обнаружен след MTB"
 #. defaultMessage is:
 #. MTB Trace Detected Rif Indeterminate
 #: extracted_strings.json
-#, fuzzy
-#| msgid "MTB Detected - Rif Indeterminate"
 msgid "MTB Trace Detected Rif Indeterminate"
-msgstr "Обнаружен MTB - Неопределенный Rif"
+msgstr "MTB Trace Detected Rif Indeterminate"
 
 #. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult]
 #. defaultMessage is:
 #. MTB Trace Detected Rif No Result
 #: extracted_strings.json
-#, fuzzy
-#| msgid "MTB Trace Detected"
 msgid "MTB Trace Detected Rif No Result"
-msgstr "Обнаружен след MTB"
+msgstr "MTB обнаружено Следы Rif нет результата"
 
 #. [assayGenericDstresultCategoryUnknown]
 #. defaultMessage is:
@@ -7152,8 +7122,6 @@ msgstr "Тенденции MTB+ в году"
 #. defaultMessage is:
 #. MTB/RIF
 #: extracted_strings.json
-#, fuzzy
-#| msgid "MTB/Rif"
 msgid "MTB/RIF"
 msgstr "МТБ/Риф"
 
@@ -7562,10 +7530,8 @@ msgstr "Национальные контакты"
 #. defaultMessage is:
 #. National FQ Trend
 #: extracted_strings.json
-#, fuzzy
-#| msgid "National"
 msgid "National FQ Trend"
-msgstr "Национальный уровень"
+msgstr "Национальная тенденция FQ"
 
 #. [p.PkDashboard.GXTbNationalTrend]
 #. defaultMessage is:
@@ -7602,10 +7568,8 @@ msgstr "Национальные тенденции тестирования н�
 #. defaultMessage is:
 #. National Testing Trends
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Testing Trends In Year"
 msgid "National Testing Trends"
-msgstr "Тенденции тестирования в году"
+msgstr "Тенденции национального тестирования"
 
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
@@ -8555,10 +8519,8 @@ msgstr "В ожидании"
 #. defaultMessage is:
 #. Pending changes
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Pending"
 msgid "Pending changes"
-msgstr "В ожидании"
+msgstr "Ожидающие изменения"
 
 #. [pages.TaskDetail.peopleAlerted]
 #. defaultMessage is:
@@ -8566,6 +8528,15 @@ msgstr "В ожидании"
 #: extracted_strings.json
 msgid "People alerted"
 msgstr "Люди предупреждены"
+
+#. [p.PkDashboard.molecularAssay]
+#. defaultMessage is:
+#. People tested for TB using MTB/Rif assay in current year
+#: extracted_strings.json
+msgid "People tested for TB using MTB/Rif assay in current year"
+msgstr ""
+"Люди, прошедшие тестирование на ТБ с использованием анализа MTB/Rif в "
+"текущем году"
 
 #. [pages.OperationalData.percentPositive]
 #. defaultMessage is:
@@ -9086,10 +9057,8 @@ msgstr "Предварительный просмотр"
 #. defaultMessage is:
 #. Preview Notification
 #: extracted_strings.json
-#, fuzzy
-#| msgid "New Notification"
 msgid "Preview Notification"
-msgstr "Новое уведомление"
+msgstr "Уведомление о предварительном просмотре"
 
 #. [pages.TablePaginator.previous]
 #. defaultMessage is:
@@ -9512,6 +9481,13 @@ msgstr "Получить товарно-материальные запасы в
 #: extracted_strings.json
 msgid "Receive {consumableName}"
 msgstr "Получить {consumableName}"
+
+#. [pages.InventoryTransfer.receivedOn]
+#. defaultMessage is:
+#. Received On
+#: extracted_strings.json
+msgid "Received On"
+msgstr "Получено на"
 
 #. [errorResponseMessages.receiveInventory.PUT.default.title]
 #. defaultMessage is:
@@ -10031,10 +10007,8 @@ msgstr "Ошибка результата"
 #. defaultMessage is:
 #. Result Group
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Result Error"
 msgid "Result Group"
-msgstr "Ошибка результата"
+msgstr "Группа результатов"
 
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryMissing]
 #. defaultMessage is:
@@ -10433,10 +10407,8 @@ msgstr "Отправлено SMS за месяц"
 #. defaultMessage is:
 #. SMS Stats
 #: extracted_strings.json
-#, fuzzy
-#| msgid "SMS Sent"
 msgid "SMS Stats"
-msgstr "SMS отправлено"
+msgstr "Статистика SMS"
 
 #. [pages.Notifications.table.smsSentTo]
 #. defaultMessage is:
@@ -11109,6 +11081,20 @@ msgstr "Отправить пациенту"
 msgid "Sender Operator"
 msgstr "Оператор отправителя"
 
+#. [pages.InventoryTransfer.sentOn]
+#. defaultMessage is:
+#. Sent On
+#: extracted_strings.json
+msgid "Sent On"
+msgstr "Отправлено"
+
+#. [pages.InventoryTransfer.quantity]
+#. defaultMessage is:
+#. Sent Qty
+#: extracted_strings.json
+msgid "Sent Qty"
+msgstr "Отправлено Количество"
+
 #. [pages.Notifications.table.sentDetails]
 #. defaultMessage is:
 #. Sent details
@@ -11316,6 +11302,17 @@ msgid ""
 msgstr ""
 "Показывает все сайты/устройства и количество дней, когда у них не было "
 "запасов за последний месяц."
+
+#. [pages.InventoryTransfer.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# Transfer} other {# Transfers} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"Transfer} other {# Transfers} }"
+msgstr ""
+"Показывает {firstItemIndex}-{lastItemIndex} из {itemCount, plural, one {# "
+"Передача} other {# Передачи} }"
 
 #. [pages.CaseList.paginatorStatus]
 #. defaultMessage is:
@@ -11806,10 +11803,8 @@ msgstr "Регион"
 #. defaultMessage is:
 #. Stats about SMS notifications sent.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Result Notifications Report"
 msgid "Stats about SMS notifications sent."
-msgstr "Отчет об уведомлениях о результатах"
+msgstr "Статистика отправленных SMS-уведомлений."
 
 #. [pages.CasesList.status]
 #. defaultMessage is:
@@ -11978,10 +11973,8 @@ msgstr "Поставка на складе"
 #. defaultMessage is:
 #. Surname
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Username"
 msgid "Surname"
-msgstr "Имя пользователя"
+msgstr "Фамилия"
 
 #. [legends.Unknown.resultCategorySusceptible]
 #. defaultMessage is:
@@ -12283,10 +12276,8 @@ msgstr "История тестирования"
 #. defaultMessage is:
 #. Testing
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tests"
 msgid "Testing"
-msgstr "Тесты"
+msgstr "Тестирование"
 
 #. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
@@ -12351,13 +12342,6 @@ msgstr ""
 "отслеживаются в местоположении устройства или на складе, который обслуживает "
 "это место."
 
-#. [p.PkDashboard.molecularAssay]
-#. defaultMessage is:
-#. Tests for TB using MTB/Rif assay in current year
-#: extracted_strings.json
-msgid "Tests for TB using MTB/Rif assay in current year"
-msgstr "Анализы на ТБ с использованием теста MTB/Rif в текущем году"
-
 #. [p.PkDashboard.testPerDay]
 #. defaultMessage is:
 #. Tests performed in last 24 hours
@@ -12369,10 +12353,8 @@ msgstr "Тесты, проведенные за последние 24 часа"
 #. defaultMessage is:
 #. Tests performed this year
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Tests Performed"
 msgid "Tests performed this year"
-msgstr "Проведенные тесты"
+msgstr "Испытания, проведенные в этом году"
 
 #. [component.Widget.bangladeshAverageCompletionDescription]
 #. defaultMessage is:
@@ -13250,6 +13232,9 @@ msgstr "Часовой пояс"
 msgid "Title"
 msgstr "Заголовок"
 
+#. [pages.InventoryTransfer.destinationSiteName]
+#. defaultMessage is:
+#. To
 #. [pages.DailyStatusDialog.siteWorkingHoursTo]
 #. defaultMessage is:
 #. To
@@ -13489,6 +13474,13 @@ msgstr "Переведено"
 #: extracted_strings.json
 msgid "Transferring Inventory Failed"
 msgstr "Трансферт Инвентаризация Ошибка"
+
+#. [browsePage.browseDropdown.inventoryTransfers]
+#. defaultMessage is:
+#. Transfers
+#: extracted_strings.json
+msgid "Transfers"
+msgstr "Трансферы"
 
 #. [pages.Milestones.resultTreatmentName]
 #. defaultMessage is:
@@ -13790,10 +13782,8 @@ msgstr "Имя пользователя"
 #. defaultMessage is:
 #. Utilization
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Utilization Rate"
 msgid "Utilization"
-msgstr "Коэффициент использования"
+msgstr "Утилизация"
 
 #. [component.Widget.utilizationRateTitle]
 #. defaultMessage is:
@@ -14149,10 +14139,8 @@ msgstr "Отчет о производительности сайта внедр
 #. defaultMessage is:
 #. Xpert MTB/RIF Coverage
 #: extracted_strings.json
-#, fuzzy
-#| msgid "GeneXpert MTB/XDR Cartridge"
 msgid "Xpert MTB/RIF Coverage"
-msgstr "Картридж GeneXpert MTB/XDR"
+msgstr "Охват Xpert MTB/RIF"
 
 #. [pages.ReportIndex.reportDrTb10a10bCovidNtpUse]
 #. defaultMessage is:
@@ -14172,10 +14160,8 @@ msgstr "Отчет о пациентах Xpert"
 #. defaultMessage is:
 #. Xpert Site Detailed Report
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Xpert Patients Report"
 msgid "Xpert Site Detailed Report"
-msgstr "Отчет о пациентах Xpert"
+msgstr "Xpert Test Activities Report"
 
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
@@ -14898,8 +14884,7 @@ msgstr "статус рабочего процесса: {workflowStatusName}"
 #. {alertCount, plural, one {# alert} other {# alerts} }
 #: extracted_strings.json
 msgid "{alertCount, plural, one {# alert} other {# alerts} }"
-msgstr ""
-"Счетчик, множественное число, один сигнал тревоги, другой сигнал тревоги }"
+msgstr "Счетчик, plural, one сигнал тревоги, другой сигнал тревоги }"
 
 #. [pages.RouterDetail.nestedDataSubtitle]
 #. defaultMessage is:
@@ -14929,8 +14914,8 @@ msgstr "{count} из {total}дней{count}"
 msgid ""
 "{daysInSameStatus, plural, one {# day} other {# days} } since last update"
 msgstr ""
-"{daysInSameStatus, множественное число, один {# day} other {# days} } с "
-"момента последнего обновления"
+"{daysInSameStatus, plural, one {# day} other {# days} } с момента последнего "
+"обновления"
 
 #. [pages.TableCell.timeClassification]
 #. defaultMessage is:
@@ -14944,8 +14929,7 @@ msgstr "{elapsed}прошло, {upcoming}предстоящее*"
 #. {itemCount, plural, one {# Contact} other {# Contacts} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Contact} other {# Contacts} }"
-msgstr ""
-"{пунктСчет, множественное число, один {# Контакт} другой {# Контакты} }"
+msgstr "{пунктСчет, plural, one {# Контакт} другой {# Контакты} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCount]
 #. defaultMessage is:
@@ -14959,14 +14943,14 @@ msgstr "{itemCount, plural, one {# Функция работы} other {# Фун�
 #. {itemCount, plural, one {# Name} other {# Names} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Name} other {# Names} }"
-msgstr "{пунктСчет, множественное число, один {# Имя} другой {# Имена} }"
+msgstr "{пунктСчет, plural, one {# Имя} другой {# Имена} }"
 
 #. [pages.Notifications.notificationsTableJobFunctionsCountPersons]
 #. defaultMessage is:
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, множественное число, один {# Человек} другой {# лица} }"
+msgstr "{itemCount, plural, one {# Человек} другой {# лица} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -14983,8 +14967,8 @@ msgid ""
 "{maintenanceStatusName} ({totalResults, plural, one {# result reported} "
 "other {# results reported} })"
 msgstr ""
-"{maintenanceStatusName} ({totalResults, множественное число, один {# result "
-"reported} other {# results reported} })"
+"{maintenanceStatusName} ({totalResults, plural, one {# result reported} "
+"other {# results reported} })"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithStatus]
 #. defaultMessage is:
@@ -14994,8 +14978,15 @@ msgid ""
 "{maintenanceStatusName} ({totalResults}) for {daysInSameStatus, plural, one "
 "{# day} other {# days} }"
 msgstr ""
-"{maintenanceStatusName} ({totalResults}) для {daysInSameStatus, "
-"множественное число, один {# day} other {# days} }"
+"{maintenanceStatusName} ({totalResults}) для {daysInSameStatus, plural, one "
+"{# day} other {# days} }"
+
+#. [pages.DeviceDetailProfile.deviceCapacityModules]
+#. defaultMessage is:
+#. {numberOfModules, plural, one {# module} other {# modules} }
+#: extracted_strings.json
+msgid "{numberOfModules, plural, one {# module} other {# modules} }"
+msgstr "{numberOfModules, plural, one {# модуль} other {# модули}"
 
 #. [component.Widget.ytd]
 #. defaultMessage is:
@@ -15042,6 +15033,9 @@ msgstr "{unit} суммарные калибровки"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
+
+#~ msgid "#Results (Preceding 30 Days)"
+#~ msgstr "#Результаты (предшествующие 30 дней)"
 
 #~ msgid "Assay is required"
 #~ msgstr "Требуется анализ"
