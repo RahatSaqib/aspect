@@ -7,6 +7,7 @@ import subtractDays from 'date-fns/subDays'
 import isArray from 'lodash/isArray'
 import { useLocation } from 'react-router-dom'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
+import { useAuthState } from '../AuthProvider'
 
 const now = new Date()
 const minDate = startOfDay(subtractDays(now, 30))
@@ -59,8 +60,9 @@ const getFilters = (urlSearchParams, deviceTypes) => {
 
 function FilterProvider({ children }) {
   const { pathname, search } = useLocation()
-  const { data: deviceTypes } = useDeviceTypeList()
   const [filterState, setFilterState] = useState(defaultFilter)
+  const { user } = useAuthState()
+  const { data: deviceTypes } = useDeviceTypeList({ enabled: !!user })
 
   useEffect(() => {
     const filters = { ...defaultFilter }
