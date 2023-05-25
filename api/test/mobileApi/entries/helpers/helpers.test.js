@@ -1,5 +1,7 @@
 const { expect } = require('chai')
 const { subDays } = require('date-fns')
+const { differenceInDays } = require('date-fns')
+
 const {
   data347,
   expected347,
@@ -455,15 +457,16 @@ describe('Entries helpers', () => {
 
   describe('transformTreatmentStatus', () => {
     it('should transform treatment status correctly', function () {
+      const changedOn = '2023-05-10T19:25:56.000Z'
       const expectedOutput = {
-        changedOn: '2023-05-10T19:25:56.000Z',
+        changedOn,
         resultId: 558,
         name: 'On Treatment',
         externalId: 'OnTreatment',
         i18nKey: 'ResultTreatmentStatusOnTreatment',
         visible: 1,
         severity: 'success',
-        daysInCurrentStatus: 14,
+        daysInCurrentStatus: differenceInDays(new Date(), new Date(changedOn)),
       }
 
       const result = transformTreatmentStatus(data558, followUp558)
