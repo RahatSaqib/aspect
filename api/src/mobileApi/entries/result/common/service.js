@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Promise = require('bluebird')
 const { resultWorkflowStatusToId } = require('../../../../shared/dictionary')
 const {
   countAllAwaitingTreatment,
@@ -7,15 +8,51 @@ const {
   getFollowUpsByResultIds,
 } = require('./db')
 const { getAllSamplesRegistered } = require('../../sample/common/db')
+const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transFormResultResponse } = require('./helpers/transFormResultResponse')
 const { getConstraints } = require('../../../../auth/constraints')
+const { getUser } = require('../../../../auth/service')
+const {
+  addResultDownloadLogQuery,
+  getResultWorkflowStatusQuery,
+  insertResultWorkflowLogQuery,
+  updateResultWorkflowLogQuery,
+} = require('../../../result/common/db')
+
+const addResultDownloadLog = async (idsToBeRegistered, userId) => {
+  const now = new Date()
+  return Promise.each(idsToBeRegistered, async resultId => addResultDownloadLogQuery(resultId, now, userId))
+}
+
+const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkflowStatusExternalId) => {
+  const { id: resultWorkflowStatusId } = await getResultWorkflowStatusQuery(resultWorkflowStatusExternalId)
+  const now = new Date()
+  return Promise.each(resultIdsToUpdate, async resultId => {
+    const [resultWorkflowStatusLogId] = await insertResultWorkflowLogQuery(
+      resultId,
+      resultWorkflowStatusId,
+      now,
+      userId
+    )
+    await updateResultWorkflowLogQuery(resultId, userId, now, resultWorkflowStatusLogId)
+  })
+}
 
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const samples = await getAllSamplesRegistered(query, dataConstraints)
   const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
+  const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
+  const user = await getUser(auth.credentials.name)
+  await addResultDownloadLog(resultIdsToBeRegistered, user.id)
+  const resultIdsToUpdate = _.uniq(
+    results
+      .filter(result => setDeliveredResultWorkflowStatuses.includes(result.resultWorkflowStatusExternalId))
+      .map(result => result.id)
+  )
+  await updateResultWorkflowStatus(resultIdsToUpdate, user.id, 'Delivered')
   const followUps = await getFollowUpsByResultIds(results)
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)

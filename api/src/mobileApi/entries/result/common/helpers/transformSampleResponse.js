@@ -9,7 +9,7 @@ const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../../common/consts')
 
 function transformSampleResponse(query, data, results) {
   const output = []
-  if (_.isEmpty(data)) return
+  if (_.isEmpty(data)) return []
   const minUpdatedOn = query?.minUpdatedOn ?? formatISO(subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP))
   _.map(data, sample => {
     if (!_.isEmpty(_.find(results, { sample: { id: sample.id } }))) return

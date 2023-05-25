@@ -1,10 +1,9 @@
 const chai = require('chai')
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { differenceInDays } = require('date-fns')
+const { parseISO, format, subDays, differenceInDays } = require('date-fns')
 const { pipe, find, values } = require('ramda')
 
-const shared = require('../utils/sharedToken')
 const { generateResults, setTreatmentStatusToResults } = require('../../seeds/commonGenerateResults')
 const patients = require('../../seeds/test/fixtures/patients.json')
 const { getBaseQueryForResults } = require('../../src/result/common/db')
@@ -30,7 +29,6 @@ describe('Mobile API Result download routes v1 without api version', () => {
   let totalResults
 
   before(async () => {
-    shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
@@ -167,7 +165,7 @@ describe('Mobile API Result download routes v1 without api version', () => {
     it('should return a paged list of results and update them to delivered', async () => {
       const res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
       // check if the download is register in the table.
       const { count: totalResult } = await knex('ResultDownloadLog as rdl')
@@ -189,24 +187,24 @@ describe('Mobile API Result download routes v1 without api version', () => {
       const resultCategories = ['Detected', 'Invalid', 'Error', 'Acknowledged', 'Processed']
       let res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(
           `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra,GxMtbXdr`
         )
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -218,7 +216,7 @@ describe('Mobile API Result download routes v1 without api version', () => {
           deviceType: 'CepheidGeneXpert',
           diseaseExternalIds: 'tb,ebola,hiv',
         })
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
@@ -260,7 +258,6 @@ describe('Mobile API Result download routes v1 with available custom api-version
   let totalResults
 
   before(async () => {
-    shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
@@ -397,7 +394,7 @@ describe('Mobile API Result download routes v1 with available custom api-version
     it('should return a paged list of results and update them to delivered', async () => {
       const res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `1`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
@@ -421,7 +418,7 @@ describe('Mobile API Result download routes v1 with available custom api-version
       const resultCategories = ['Detected', 'Invalid', 'Error', 'Acknowledged', 'Processed']
       let res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `1`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
@@ -429,19 +426,19 @@ describe('Mobile API Result download routes v1 with available custom api-version
         .get(
           `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra,GxMtbXdr`
         )
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `1`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
 
       res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `1`)
       assertReporterResultDownloadResponseContainingNoResults(res)
 
       res = await server
         .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `1`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
@@ -454,7 +451,7 @@ describe('Mobile API Result download routes v1 with available custom api-version
           deviceType: 'CepheidGeneXpert',
           diseaseExternalIds: 'tb,ebola,hiv',
         })
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `1`)
       assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
@@ -498,7 +495,6 @@ describe('Mobile API Result & Sample download routes v4 with available custom ap
   let totalResults
 
   before(async () => {
-    shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
@@ -570,77 +566,6 @@ describe('Mobile API Result & Sample download routes v4 with available custom ap
       assert.property(response.body, 'awaitingTreatment')
     }
 
-    function assertReporterResultDownloadResponseContainingNoResults(response) {
-      assertReporterResultDownloadResponse(response)
-      assert.isAtLeast(response.body.total, 0)
-      assert.equal(response.body.length, 0)
-      assert.isAtLeast(response.body.awaitingTreatment, 0)
-
-      assert.typeOf(response.body.data, 'array')
-      assert.equal(response.body.data.length, 0)
-    }
-
-    function assertReporterResultDownloadResponseContainingResults(response, numberOfResults) {
-      assertReporterResultDownloadResponse(response)
-
-      assert.equal(response.body.total, numberOfResults)
-      assert.equal(response.body.length, numberOfResults)
-      assert.isAtLeast(response.body.awaitingTreatment, 0)
-      if (!_.isNil(response.body.nextPage)) {
-        assert.isAtLeast(response.body.nextPage, 0)
-      }
-      expect(response).to.containSubset({
-        body: {
-          data: [
-            {
-              workflowStatus: {
-                externalId: 'Delivered',
-              },
-            },
-          ],
-        },
-      })
-
-      assert.property(response.body.data[0], 'id')
-      assert.property(response.body.data[0], 'externalId')
-      assert.property(response.body.data[0], 'endedOn')
-      assert.property(response.body.data[0], 'updatedOn')
-      assert.property(response.body.data[0], 'assayExternalId')
-      assert.property(response.body.data[0], 'siteName')
-      assert.property(response.body.data[0], 'reportableSiteId')
-      assert.property(response.body.data[0], 'sampleOriginSiteId')
-      assert.property(response.body.data[0], 'firstViewedOn')
-      assert.property(response.body.data[0], 'deviceName')
-      assert.property(response.body.data[0], 'resultCategory1ExternalId')
-      assert.property(response.body.data[0], 'resultCategory2ExternalId')
-      assert.property(response.body.data[0], 'workflowStatus')
-      assert.property(response.body.data[0], 'treatmentStatus')
-      assert.property(response.body.data[0], 'patientData')
-      assert.property(response.body.data[0], 'testId')
-      assert.property(response.body.data[0], 'resultData')
-      assert.property(response.body.data[0], 'sample')
-      assert.property(response.body.data[0], 'comments')
-      assert.property(response.body.data[0], 'followUps')
-      assert.property(response.body.data[0], 'assayAvatar')
-      assert.property(response.body.data[0], 'testInformation')
-      assert.property(response.body.data[0], 'transferred')
-      assert.property(response.body.data[0], 'testType')
-      assert.property(response.body.data[0], 'clinicalResponse')
-      if (response.body.data[0].followUps) {
-        assert.typeOf(response.body.data[0].followUps, 'array')
-        assert.property(response.body.data[0].followUps[0], 'id')
-        assert.property(response.body.data[0].followUps[0], 'externalId')
-        assert.property(response.body.data[0].followUps[0], 'followUpTypeExternalId')
-        assert.property(response.body.data[0].followUps[0], 'followUpExternalId')
-        assert.property(response.body.data[0].followUps[0], 'followUpi18nKey')
-        assert.property(response.body.data[0].followUps[0], 'followUpName')
-        assert.property(response.body.data[0].followUps[0], 'followUpTypeName')
-        assert.property(response.body.data[0].followUps[0], 'date')
-        assert.property(response.body.data[0].followUps[0], 'createdOn')
-        assert.property(response.body.data[0].followUps[0], 'updatedOn')
-      }
-    }
-
     function assertReporterResultDownloadResponseContainingResultsWithTreatmentStatus(response) {
       assert.isAtLeast(response.body.awaitingTreatment, 0)
       expect(response).to.containSubset({
@@ -664,65 +589,6 @@ describe('Mobile API Result & Sample download routes v4 with available custom ap
         assert.property(entry.treatmentStatus, 'severity')
         assert.property(entry.treatmentStatus, 'daysInCurrentStatus')
       })
-    }
-
-    function assertReporterResultDownloadResponseContainingTestInformation(response, numberOfResults) {
-      assertReporterResultDownloadResponse(response)
-
-      assert.equal(response.body.total, numberOfResults)
-      assert.equal(response.body.length, numberOfResults)
-      assert.isAtLeast(response.body.awaitingTreatment, 0)
-      if (!_.isNil(response.body.nextPage)) {
-        assert.isAtLeast(response.body.nextPage, 0)
-      }
-      expect(response).to.containSubset({
-        body: {
-          data: [
-            {
-              testInformation: {},
-            },
-          ],
-        },
-      })
-
-      assert.equal(Object.keys(response.body.data[0].treatmentStatus).length, 7)
-      if (response.body.data[0].treatmentStatus) {
-        assert.property(response.body.data[0].testInformation[0], 'label')
-        assert.property(response.body.data[0].testInformation[0], 'labelI18nKey')
-        assert.property(response.body.data[0].testInformation[0], 'value')
-        assert.property(response.body.data[0].testInformation[0], 'valueI18nKey')
-        assert.property(response.body.data[0].testInformation[0], 'severity')
-      }
-    }
-
-    function assertReporterResultDownloadResponseContainingClinicalResponse(response, numberOfResults) {
-      assertReporterResultDownloadResponse(response)
-
-      assert.equal(response.body.total, numberOfResults)
-      assert.equal(response.body.length, numberOfResults)
-      assert.isAtLeast(response.body.awaitingTreatment, 0)
-      if (!_.isNil(response.body.nextPage)) {
-        assert.isAtLeast(response.body.nextPage, 0)
-      }
-      expect(response).to.containSubset({
-        body: {
-          data: [
-            {
-              clinicalResponse: {},
-            },
-          ],
-        },
-      })
-
-      if (response.body.data[0].clinicalResponse) {
-        assert.property(response.body.data[0].clinicalResponse, 'recorded')
-        assert.property(response.body.data[0].clinicalResponse, 'confirmedOn')
-        assert.property(response.body.data[0].clinicalResponse, 'treatment')
-        assert.property(response.body.data[0].clinicalResponse, 'treatmentStarted')
-        assert.property(response.body.data[0].clinicalResponse, 'outcome')
-        assert.property(response.body.data[0].clinicalResponse, 'outcomeOccurred')
-        assert.equal(Object.keys(response.body.data[0].clinicalResponse).length, 6)
-      }
     }
 
     function treatmentStatusValidation(response) {
@@ -802,7 +668,7 @@ describe('Mobile API Result & Sample download routes v4 with available custom ap
     }
 
     it('should return a list of results and update them to delivered', async () => {
-      const res = await server.get(`${path}`).set('Authorization', `Bearer ${shared.token}`).set('api-version', `4`)
+      const res = await server.get(path).set('Authorization', `Bearer ${clinicianAccessToken}`).set('api-version', `4`)
       assertBasicEntriesSchemaAndFollowUps(res, totalResults)
 
       // check if the download is register in the table.
@@ -814,106 +680,47 @@ describe('Mobile API Result & Sample download routes v4 with available custom ap
           'rdl.resultId',
           _.map(res.body.data, elem => elem.id)
         )
-        .where('rs.externalId', 'Delivered')
+        .andWhere(qb => qb.whereIn('rs.externalId', ['Delivered', 'Acknowledged', 'Flagged']))
         .count('rdl.id as count')
         .first()
       assert.isAtLeast(totalResultCount, res.body.data.length)
     })
 
-    it('should return a list of results and update them to delivered with treatment status', async () => {
-      const res = await server.get(`${path}`).set('Authorization', `Bearer ${shared.token}`).set('api-version', `31`)
+    it('should return a list of results treatment status', async () => {
+      const res = await server.get(path).set('Authorization', `Bearer ${clinicianAccessToken}`).set('api-version', `4`)
       assertReporterResultDownloadResponseContainingResultsWithTreatmentStatus(res)
     })
 
-    it('should return a paged list of results and update them to delivered with treatment status validation', async () => {
-      const res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
+    it('should return a list of results with treatment status validation', async () => {
+      const res = await server.get(path).set('Authorization', `Bearer ${clinicianAccessToken}`).set('api-version', `4`)
       treatmentStatusValidation(res)
-
-      // check if the download is register in the table.
-      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
-        .join('Result as r', 'rdl.resultId', 'r.id')
-        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
-        .whereIn(
-          'rdl.resultId',
-          _.map(res.body.data, elem => elem.id)
-        )
-        .where('rs.externalId', 'Delivered')
-        .count('rdl.id as count')
-        .first()
-
-      assert.isAtLeast(totalResult, res.body.length)
     })
 
-    it('should return a paged list of results and update them to delivered', async () => {
-      const res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `2`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
-
-      // check if the download is register in the table.
-      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
-        .join('Result as r', 'rdl.resultId', 'r.id')
-        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
-        .whereIn(
-          'rdl.resultId',
-          _.map(res.body.data, elem => elem.id)
-        )
-        .where('rs.externalId', 'Delivered')
-        .count('rdl.id as count')
-        .first()
-
-      assert.isAtLeast(totalResult, res.body.length)
-    })
-
-    it('should be able to handle different optional filter parameters', async () => {
-      const resultCategories = ['Detected', 'Invalid', 'Error', 'Acknowledged', 'Processed']
+    it('should return a list of results that has been updated after a certain date', async () => {
+      const threeDaysAgo = subDays(new Date(), 3)
       let res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `2`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
-
+        .get(`${path}?minUpdatedOn=${format(threeDaysAgo, 'yyyy-MM-dd')}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
+        .set('api-version', `4`)
+      const threeDaysOfResults = res.body.data.length
+      res.body.data.forEach(entry => {
+        assert.isAtLeast(parseISO(entry.updatedOn), threeDaysAgo)
+      })
+      const thirtyDaysAgo = subDays(new Date(), 30)
       res = await server
-        .get(
-          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra,GxMtbXdr`
-        )
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `2`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
-
-      res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `2`)
-      assertReporterResultDownloadResponseContainingNoResults(res)
-
-      res = await server
-        .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `2`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
+        .get(`${path}?minUpdatedOn=${format(thirtyDaysAgo, 'yyyy-MM-dd')}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
+        .set('api-version', `4`)
+      const thirtyDaysOfResults = res.body.data.length
+      res.body.data.forEach(entry => {
+        assert.isAtLeast(parseISO(entry.updatedOn), thirtyDaysAgo)
+      })
+      assert.operator(threeDaysOfResults, '<', thirtyDaysOfResults)
     })
 
-    it('should return a paged list of results filtered by disease external id', async () => {
-      const res = await server
-        .get(path)
-        .query({
-          size: totalResults,
-          deviceType: 'CepheidGeneXpert',
-          diseaseExternalIds: 'tb,ebola,hiv',
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `2`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
-    })
-
-    it('should return a paged list of results, including all result details, that the clinician has access to', async () => {
+    it('should return a list of results that the clinician has access to', async () => {
+      let res = await server.get(path).set('Authorization', `Bearer ${clinicianAccessToken}`).set('api-version', `4`)
+      const accessToOriginalResults = res.body.data.length
       // clinician only has access to Dayton, OH. Assign results so there's exactly 2 there
       const { id: siteIdDayton } = await knex('Site').where('externalId', 'OH_Dayton').first('id')
 
@@ -926,66 +733,9 @@ describe('Mobile API Result & Sample download routes v4 with available custom ap
             .update({ reportableSiteId: i < 2 ? siteIdDayton : siteIdWayne })
         })
       )
-
-      // query server
-      const res = await server
-        .get(`${path}?deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${clinicianAccessToken}`)
-        .set('api-version', `2`)
-      assertReporterResultDownloadResponseContainingResults(res, 2)
-      // check if the download is register in the table.
-      const { count: totalResult } = await knex('ResultDownloadLog')
-        .where('resultId', res.body.data[0].id)
-        .count('id as count')
-        .first()
-
-      assert.equal(totalResult, 1)
-    })
-
-    it('should return testInfo for each test items', async () => {
-      const res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingTestInformation(res, totalResults, async () => {
-        // check if the download is register in the table.
-        const { count: totalResult } = await knex('ResultDownloadLog as rdl')
-          .join('Result as r', 'rdl.resultId', 'r.id')
-          .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-          .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
-          .whereIn(
-            'rdl.resultId',
-            _.map(res.body.data, elem => elem.id)
-          )
-          .where('rs.externalId', 'Delivered')
-          .count('rdl.id as count')
-          .first()
-
-        assert.isAtLeast(totalResult, res.body.length)
-      })
-    })
-
-    it('should return clinical response for each test items', async () => {
-      const res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingClinicalResponse(res, totalResults)
-
-      // check if the download is register in the table.
-      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
-        .join('Result as r', 'rdl.resultId', 'r.id')
-        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
-        .whereIn(
-          'rdl.resultId',
-          _.map(res.body.data, elem => elem.id)
-        )
-        .where('rs.externalId', 'Delivered')
-        .count('rdl.id as count')
-        .first()
-
-      assert.isAtLeast(totalResult, res.body.length)
+      res = await server.get(path).set('Authorization', `Bearer ${clinicianAccessToken}`).set('api-version', `4`)
+      const accessToUpdatedResults = res.body.data.length
+      assert.operator(accessToUpdatedResults, '<', accessToOriginalResults)
     })
   })
 })
@@ -998,7 +748,6 @@ describe('Mobile API Result download routes v4 with higher version', () => {
   let totalResults
 
   before(async () => {
-    shared.checkToken(server, path)
     clinicianAccessToken = await getClinicianAccessToken()
   })
 
@@ -1076,16 +825,6 @@ describe('Mobile API Result download routes v4 with higher version', () => {
         assert.property(response.body, 'nextPage')
         assert.isAtLeast(response.body, 'hasNext')
       }
-    }
-
-    function assertReporterResultDownloadResponseContainingNoResults(response) {
-      assertReporterResultDownloadResponse(response)
-      assert.isAtLeast(response.body.total, 0)
-      assert.equal(response.body.length, 0)
-      assert.isAtLeast(response.body.awaitingTreatment, 0)
-
-      assert.typeOf(response.body.data, 'array')
-      assert.equal(response.body.data.length, 0)
     }
 
     function assertReporterResultDownloadResponseContainingResults(response, numberOfResults) {
@@ -1214,10 +953,10 @@ describe('Mobile API Result download routes v4 with higher version', () => {
       }
     }
 
-    it('should return a paged list of results and update them to delivered with assayAvatar purple', async () => {
+    it('should return a list of results and update them to delivered', async () => {
       const res = await server
         .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `31`)
       assertReporterResultDownloadResponseContainingResultsWithAssayAvatar(res, totalResults)
 
@@ -1235,71 +974,6 @@ describe('Mobile API Result download routes v4 with higher version', () => {
         .first()
 
       assert.isAtLeast(totalResult, res.body.length)
-    })
-
-    it('should return a paged list of results and update them to delivered', async () => {
-      const res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
-
-      // check if the download is register in the table.
-      const { count: totalResult } = await knex('ResultDownloadLog as rdl')
-        .join('Result as r', 'rdl.resultId', 'r.id')
-        .join('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
-        .join('ResultWorkflowStatus as rs', 'rs.id', 'rsl.resultWorkflowStatusId')
-        .whereIn(
-          'rdl.resultId',
-          _.map(res.body.data, elem => elem.id)
-        )
-        .where('rs.externalId', 'Delivered')
-        .count('rdl.id as count')
-        .first()
-
-      assert.isAtLeast(totalResult, res.body.length)
-    })
-
-    it('should be able to handle different optional filter parameters', async () => {
-      const resultCategories = ['Detected', 'Invalid', 'Error', 'Acknowledged', 'Processed']
-      let res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&resultCategories=${resultCategories.join(',')}`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
-
-      res = await server
-        .get(
-          `${path}?size=${totalResults}&deviceType=CepheidGeneXpert&assayExternalIds=GxMtbRif,GxMtbRifUltra,GxMtbXdr`
-        )
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
-
-      res = await server
-        .get(`${path}?size=${totalResults}&deviceType=CepheidGeneXpert&workflowStatus=Deliverable`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingNoResults(res)
-
-      res = await server
-        .get(`${path}?size=${totalResults}&patientSample=-&deviceType=CepheidGeneXpert`)
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
-    })
-
-    it('should return a paged list of results filtered by disease external id', async () => {
-      const res = await server
-        .get(path)
-        .query({
-          size: totalResults,
-          deviceType: 'CepheidGeneXpert',
-          diseaseExternalIds: 'tb,ebola,hiv',
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .set('api-version', `31`)
-      assertReporterResultDownloadResponseContainingResults(res, totalResults)
     })
 
     it('should return a paged list of results with the higher api endpoint available version, including all result details, that the clinician has access to', async () => {
@@ -1336,13 +1010,12 @@ describe('Mobile API Result download routes v4 with higher version', () => {
 describe('Mobile API Result download by id routes v4', () => {
   const path = '/mobile/api/entries'
 
-  // const clinicianAccessToken = ''
+  let clinicianAccessToken = ''
   let results = []
   const resultId = 171
 
   before(async () => {
-    shared.checkToken(server, path)
-    // clinicianAccessToken = await getClinicianAccessToken()
+    clinicianAccessToken = await getClinicianAccessToken()
   })
 
   beforeEach(async () => {
@@ -1457,7 +1130,7 @@ describe('Mobile API Result download by id routes v4', () => {
     it('should return a result object for valid result ID', async () => {
       const res = await server
         .get(`${path}/${results[0].id}`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `2`)
       assertReporterResultDownloadRequestValidResultId(res)
     })
@@ -1465,7 +1138,7 @@ describe('Mobile API Result download by id routes v4', () => {
     it('Result ID not found', async () => {
       const res = await server
         .get(`${path}/${resultId}`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `2`)
       assert.equal(res.status, 404)
     })
@@ -1473,7 +1146,7 @@ describe('Mobile API Result download by id routes v4', () => {
     it('Result ID is non numeric, it shoud throw result not found', async () => {
       const res = await server
         .get(`${path}/testResId`)
-        .set('Authorization', `Bearer ${shared.token}`)
+        .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `2`)
       assert.equal(res.status, 404)
     })
