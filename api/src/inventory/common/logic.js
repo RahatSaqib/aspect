@@ -752,14 +752,14 @@ async function checkOpenedStockIssues({ knex, siteId, consumableId, now, plugins
   // 'site' may be undefinied if InventoryItem.expiresOn is less than today
   if (site && dailyRate > 0) {
     // try to resolve Stockout/StockExpiring issues, if any opened for this site/consumable
-    if (!messageContext) {
-      messageContext = plugins.messageContext.bindActionCreators({
-        inventoryStockout,
-        inventoryStockExpiring,
-        resolveIssues,
-        escalateIssues,
-      })
-    }
+    messageContext = plugins?.messageContext || messageContext
+    messageContext = messageContext.bindActionCreators({
+      inventoryStockout,
+      inventoryStockExpiring,
+      resolveIssues,
+      escalateIssues,
+    })
+
     const props = {
       knex,
       siteId,

@@ -854,6 +854,7 @@ async function updateTreatmentStatus(
 
   const lastTreatment = await updateTreatmentStatusByResultId(
     currentUserId,
+    now,
     result.data.id,
     result.data.resultTreatmentStatusId,
     resultTreatmentStatusExternalId,
@@ -875,6 +876,7 @@ async function updateTreatmentStatus(
 
 async function updateTreatmentStatusByResultId(
   userId,
+  now,
   resultId,
   currentTreatmentStatusId,
   resultTreatmentStatusExternalId,
@@ -883,8 +885,6 @@ async function updateTreatmentStatusByResultId(
   method,
   changedOn = new Date()
 ) {
-  const now = new Date()
-
   let treatmentStatusId = null
   // check if a externalId is provided
   if (resultTreatmentStatusExternalId) {
@@ -2475,6 +2475,7 @@ async function updateOrCreateResult(request, result = {}) {
     const resultTreatmentStatusId = await resultTreatmentStatusToId('AwaitingTreatment')
     await updateTreatmentStatusByResultId(
       userId,
+      now,
       result.id,
       null,
       null,
