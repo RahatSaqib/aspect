@@ -1,4 +1,5 @@
 const { get } = require('lodash')
+const Boom = require('@hapi/boom')
 const { startOfDay } = require('date-fns')
 const { knex, transact } = require('../db')
 const { consumeInventoryForResult, transferInventory } = require('./common/logic')
@@ -131,7 +132,7 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
       const consumables = get(JSON.parse(payload), 'result.consumable') || []
 
       await transact(async knex => {
-        await consumeInventoryForResult(
+        const consumableResults = await consumeInventoryForResult(
           resultId,
           assayId,
           siteId,
@@ -143,8 +144,11 @@ const missingInventoryLotsResolver = async (_, { messageContext }) => {
           messageContext,
           null
         )
-        // Delete missingInventoryLots entry
-        await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
+
+        if (!consumableResults.some(s => Boom.isBoom(s))) {
+          // Delete missingInventoryLots entry
+          await knex('MissingInventoryLots as m').where('id', missingInventoryLotId).delete()
+        }
       })
     }
   }

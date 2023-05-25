@@ -643,8 +643,8 @@ async function consumeInventoryForResult(
   const assayConsumables = await selectAssayConsumables(knex, { partner: { id: partnerId } }, assayId)
 
   const { id: testRunConsumableReasonId } = await findConsumableReason('Test Conducted')
-  await Promise.all(
-    _.map(assayConsumables, async assayConsumable => {
+  return Promise.all(
+    assayConsumables.map(async assayConsumable => {
       const { consumableId, quantity } = assayConsumable
       const existingInventoryLog = await knex('InventoryLog as il')
         .join('InventoryItem as ii', 'il.inventoryItemId', 'ii.id')
