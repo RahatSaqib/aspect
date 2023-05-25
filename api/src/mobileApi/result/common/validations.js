@@ -107,7 +107,7 @@ const downloadResultResponseValidation = () => {
                 followUpi18nKey: Joi.string().required().description('Translation key for the follow up'),
                 followUpTypeName: Joi.string().required().description('Name of the follow up type'),
                 followUpTypeExternalId: Joi.string().required().description('External ID of the follow up type'),
-                followUpTypei18nKey: Joi.string().required().description('Translation key for the follow up type'),
+                followUpTypeI18nKey: Joi.string().required().description('Translation key for the follow up type'),
               })
             ),
           comments: Joi.array()
@@ -256,7 +256,7 @@ const downloadResultResponseValidationV2 = () => {
                 followUpi18nKey: Joi.string().required().description('Translation key for the follow up'),
                 followUpTypeName: Joi.string().required().description('Name of the follow up type'),
                 followUpTypeExternalId: Joi.string().required().description('External ID of the follow up type'),
-                followUpTypei18nKey: Joi.string().required().description('Translation key for the follow up type'),
+                followUpTypeI18nKey: Joi.string().required().description('Translation key for the follow up type'),
               })
             ),
           // clinical response
@@ -482,7 +482,7 @@ const validateResultDetailResponse = () => {
           followUpi18nKey: Joi.string().required().description('Translation key for the follow up'),
           followUpTypeName: Joi.string().required().description('Name of the follow up type'),
           followUpTypeExternalId: Joi.string().required().description('External ID of the follow up type'),
-          followUpTypei18nKey: Joi.string().required().description('Translation key for the follow up type'),
+          followUpTypeI18nKey: Joi.string().required().description('Translation key for the follow up type'),
         })
       ),
     // transfer result

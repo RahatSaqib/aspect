@@ -1,0 +1,529 @@
+const { expect } = require('chai')
+const { subDays } = require('date-fns')
+const {
+  data347,
+  expected347,
+  data450,
+  data558,
+  followUp558,
+  expected450,
+  followUp450,
+  searchKeys450,
+} = require('./data')
+const { TRANSFERRED, FOLLOW_UP_TYPES } = require('../../../../src/mobileApi/entries/common/consts')
+const { extractFromDataById } = require('../../../../src/mobileApi/entries/result/common/helpers/extractFromDataById')
+const { buildHistoryTimeline } = require('../../../../src/mobileApi/entries/result/common/helpers/buildHistoryTimeline')
+const { generateSeverity } = require('../../../../src/mobileApi/entries/result/common/helpers/generateSeverity')
+const { getFollowUpByType } = require('../../../../src/mobileApi/entries/result/common/helpers/getFollowUpByType')
+const { transformAssayAvatar } = require('../../../../src/mobileApi/entries/result/common/helpers/transformAssayAvatar')
+const { transformEntryType } = require('../../../../src/mobileApi/entries/result/common/helpers/transformEntryType')
+const { generateSearchKeys } = require('../../../../src/mobileApi/entries/result/common/helpers/generateSearchKeys')
+const { transformSampleData } = require('../../../../src/mobileApi/entries/result/common/helpers/transformSample')
+const {
+  transformTreatmentStatus,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformTreatmentStatus')
+const {
+  transFormResultResponse,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transFormResultResponse')
+const {
+  transformTestInformation,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformTestInformation')
+const {
+  transformPatientDataBySchema,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformPatientDataBySchema')
+const {
+  transformClinicalResponse,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformClinicalResponse')
+const {
+  generateTransferStatus,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/generateTransferStatus')
+const {
+  getResultUpdatedOnDate,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/getTrueUpdatedOnDates')
+
+describe('Entries helpers', () => {
+  describe('extractFromDataById', () => {
+    const data = [
+      { id: 1, resultId: 100, updatedOn: '2023-01-01' },
+      { id: 2, resultId: 200, updatedOn: '2023-01-02' },
+      { id: 3, resultId: 100, updatedOn: '2023-01-03' },
+      { id: 4, resultId: 300, updatedOn: '2023-01-04' },
+    ]
+
+    it('returns filtered and ordered data without resultId key', () => {
+      const key = 'resultId'
+      const id = 100
+      const expectedOutput = [
+        { id: 3, resultId: 100, updatedOn: '2023-01-03' },
+        { id: 1, resultId: 100, updatedOn: '2023-01-01' },
+      ]
+
+      const output = extractFromDataById(data, key, id)
+      expect(output).to.deep.eq(expectedOutput)
+    })
+  })
+
+  describe('buildHistoryTimeline', () => {
+    it('should build a correct timeline', () => {
+      const data = {
+        id: 123,
+        sampleCollectedOn: '2023-05-01T00:00:00Z',
+        sampleSiteName: 'Lab1',
+        resultSampleId: 456,
+        sampleTypeExternalId: 'SampleType1',
+        reportableSiteName: 'ReportLab1',
+        testDate: '2023-05-02T00:00:00Z',
+      }
+
+      const followUps = [{ id: 789, resultId: 123, followUpName: 'FollowUp1', updatedOn: '2023-05-03T00:00:00Z' }]
+
+      const expectedOutput = [
+        {
+          id: 789,
+          resultId: 123,
+          event: 'followUpCreated',
+          name: 'FollowUp1',
+          siteName: 'ReportLab1',
+          updatedOn: '2023-05-03T00:00:00Z',
+        },
+        {
+          id: 456,
+          resultId: 123,
+          event: 'sampleTested',
+          name: 'SampleType1',
+          siteName: 'ReportLab1',
+          updatedOn: '2023-05-02T00:00:00Z',
+        },
+        {
+          id: 456,
+          resultId: 123,
+          event: 'sampleCollected',
+          name: 'SampleType1',
+          siteName: 'Lab1',
+          updatedOn: '2023-05-01T00:00:00Z',
+        },
+      ]
+
+      const result = buildHistoryTimeline(data, followUps)
+      expect(result).to.deep.eq(expectedOutput)
+    })
+
+    it('should handle null/undefined values correctly', () => {
+      const data = { id: 123 }
+      const followUps = []
+      const expectedOutput = []
+
+      const result = buildHistoryTimeline(data, followUps)
+      expect(result).to.eql(expectedOutput)
+    })
+  })
+
+  describe('getResultUpdatedOnDate', () => {
+    const data = {
+      updatedOn: '2022-01-01',
+      sampleCollectedOn: '2022-01-05',
+      resultWorkflowStatusChangedOn: '2022-01-10',
+    }
+    const followUps = [{ updatedOn: '2022-01-03' }, { updatedOn: '2022-01-06' }]
+    const comments = [{ updatedOn: '2022-01-07' }, { updatedOn: '2022-01-09' }]
+
+    it('returns correct date for the provided input data', () => {
+      const result = getResultUpdatedOnDate(data, followUps, comments)
+      expect(result).to.eq('2022-01-10')
+    })
+
+    it('returns correct date if no followUps are provided', () => {
+      const followUps = []
+      const result = getResultUpdatedOnDate(data, followUps, comments)
+      expect(result).to.eq('2022-01-10')
+    })
+  })
+
+  describe('generateSeverity', () => {
+    it('should return "info" if daysDiff is less than or equal to 16', () => {
+      const data = { testDate: subDays(new Date(), 10) }
+      const followUps = []
+      const result = generateSeverity(data, followUps)
+      expect(result).to.eq('info')
+    })
+    it('should return "success" if on treatment', () => {
+      const data = { testDate: '2022-01-01' }
+      const followUps = [{ id: 1, followUpTypeExternalId: 'treatment', updatedOn: '2022-01-04' }]
+      const result = generateSeverity(data, followUps)
+      expect(result).to.eq('success')
+    })
+
+    it('should return "warning" if daysDiff is greater than 16', () => {
+      const data = { testDate: subDays(new Date(), 18) }
+      const followUps = []
+      const result = generateSeverity(data, followUps)
+      expect(result).to.eq('warning')
+    })
+
+    it('should return "danger" if daysDiff is greater than 32', () => {
+      const data = { testDate: subDays(new Date(), 34) }
+      const followUps = []
+      const result = generateSeverity(data, followUps)
+      expect(result).to.eq('danger')
+    })
+  })
+
+  describe('generateTransferStatus', () => {
+    it('should generate the correct transfer data.transferStatusLogData is nil', () => {
+      const data = {}
+      const expectedOutput = { canBeTransferred: true }
+
+      const result = generateTransferStatus(data)
+      expect(result).to.eql(expectedOutput)
+    })
+
+    it('should generate TRANSFERRED.AWAY when siteId equals previousReportableSiteId and not reportableSiteId', () => {
+      const data = {
+        id: 123,
+        transferStatusLogData: JSON.stringify({
+          siteId: 1,
+          reportableSiteId: 2,
+          previousReportableSiteId: 1,
+        }),
+        transferredBy: 'user1',
+        transferredOn: '2023-01-01T00:00:00Z',
+        reportableSiteName: 'SiteName1',
+      }
+
+      const expectedOutput = {
+        canBeTransferred: false,
+        previousReportableSiteId: 1,
+        reportableSiteId: 2,
+        resultId: 123,
+        siteId: 1,
+        comment: undefined,
+        siteName: 'SiteName1',
+        transferStatus: TRANSFERRED.AWAY,
+        transferredBy: 'user1',
+        transferredOn: '2023-01-01T00:00:00Z',
+      }
+
+      const result = generateTransferStatus(data)
+      expect(result).to.eql(expectedOutput)
+    })
+
+    it('should generate TRANSFERRED.HERE when siteId equals reportableSiteId and not previousReportableSiteId', () => {
+      const data = {
+        id: 123,
+        transferStatusLogData: JSON.stringify({
+          siteId: 1,
+          reportableSiteId: 1,
+          previousReportableSiteId: 2,
+        }),
+        transferredBy: 'user1',
+        transferredOn: '2023-01-01T00:00:00Z',
+        reportableSiteName: 'SiteName1',
+      }
+
+      const expectedOutput = {
+        canBeTransferred: true,
+        previousReportableSiteId: 2,
+        reportableSiteId: 1,
+        resultId: 123,
+        siteId: 1,
+        comment: undefined,
+        siteName: 'SiteName1',
+        transferStatus: TRANSFERRED.HERE,
+        transferredBy: 'user1',
+        transferredOn: '2023-01-01T00:00:00Z',
+      }
+
+      const result = generateTransferStatus(data)
+      expect(result).to.eql(expectedOutput)
+    })
+  })
+
+  describe('getFollowUpByType', () => {
+    const followUps = [
+      { followUpTypeExternalId: 'type1', data: 'data1' },
+      { followUpTypeExternalId: 'type2', data: 'data2' },
+      { followUpTypeExternalId: 'type3', data: 'data3' },
+    ]
+
+    it('returns correct followUp for the given type', () => {
+      const expectedFollowUp = { followUpTypeExternalId: 'type2', data: 'data2' }
+      const actualFollowUp = getFollowUpByType(followUps, 'type2')
+      expect(actualFollowUp).to.deep.eq(expectedFollowUp)
+    })
+
+    it("returns undefined when type doesn't exist in followUps", () => {
+      const actualFollowUp = getFollowUpByType(followUps, 'type4')
+      expect(actualFollowUp).to.eq(undefined)
+    })
+
+    it('returns undefined when followUps array is empty', () => {
+      const actualFollowUp = getFollowUpByType([], 'type3')
+      expect(actualFollowUp).to.eq(undefined)
+    })
+  })
+
+  describe('transformAssayAvatar', () => {
+    it('returns correct backgroundColor and foregroundColor when assayTypeAbbreviation exists in assayAvatarColorsIcon', () => {
+      const data = { assayTypeAbbreviation: 'TB' }
+      const result = transformAssayAvatar(data)
+      expect(result).to.have.property('backgroundColor').eq('purple')
+      expect(result).to.have.property('foregroundColor').eq('secondary')
+    })
+    it('returns correct backgroundColor and foregroundColor when assayTypeAbbreviation exists in assayAvatarColorsIcon', () => {
+      const data = { assayTypeAbbreviation: 'HIV' }
+      const result = transformAssayAvatar(data)
+      expect(result).to.have.property('backgroundColor').eq('orange')
+      expect(result).to.have.property('foregroundColor').eq('secondary')
+    })
+  })
+
+  describe('transformClinicalResponse', () => {
+    it('should transform clinical response correctly when result is recorded and treatment and outcome are present', () => {
+      const acknowledgedId = 456
+      const data = {
+        id: 123,
+        resultWorkflowStatusId: 456,
+        resultWorkflowStatusChangedOn: '2023-01-01T00:00:00Z',
+      }
+
+      const followUps = [
+        {
+          type: FOLLOW_UP_TYPES.TREATMENT,
+          followUpTypeExternalId: 'treatment',
+          updatedOn: '2023-02-01T00:00:00Z',
+        },
+        {
+          type: FOLLOW_UP_TYPES.OUTCOME,
+          followUpTypeExternalId: 'outcome',
+          updatedOn: '2023-03-01T00:00:00Z',
+        },
+      ]
+
+      const expectedOutput = {
+        resultId: 123,
+        confirmedOn: '2023-01-01T00:00:00Z',
+        outcome: 'outcome',
+        outcomeOccurred: '2023-03-01T00:00:00Z',
+        recorded: true,
+        treatment: 'treatment',
+        treatmentStarted: '2023-02-01T00:00:00Z',
+      }
+
+      const result = transformClinicalResponse(data, followUps, acknowledgedId)
+      expect(result).to.eql(expectedOutput)
+    })
+
+    it('should return empty object when result is not recorded and treatment and outcome are not present', () => {
+      const data = {
+        id: 123,
+        resultWorkflowStatusId: 456,
+      }
+
+      const followUps = []
+      const acknowledgedId = 789
+
+      const expectedOutput = {}
+
+      const result = transformClinicalResponse(data, followUps, acknowledgedId)
+      expect(result).to.eql(expectedOutput)
+    })
+  })
+
+  describe('transformEntryType', () => {
+    it('should return TEST_TYPE.SAMPLE when test information is empty', () => {
+      const data = []
+      const result = transformEntryType(data)
+      expect(result).to.deep.eq({ i18nKey: 'sample', text: 'Sample' })
+    })
+
+    it('should return TEST_TYPE.RESULT when test information is not empty', () => {
+      const data = {
+        resultCategory1i18nKey: 'resultCategoryResult',
+        resultCategory1Label: 'Result',
+        resultCategory1Name: 'Detected',
+        resultCategory1Emphasize: 1,
+        resultCategory1ValueI18nKey: 'ResultCategoryDetected',
+      }
+      const result = transformEntryType(data)
+      expect(result).to.deep.eq({ i18nKey: 'testResult', text: 'Test Result' })
+    })
+  })
+
+  describe('transformPatientDataBySchema', () => {
+    it('transformPatientDataBySchema should transform patient data based on the provided schema', () => {
+      const patientData = {
+        name: 'John',
+        age: 30,
+        address: '123 Main St',
+        phone: '555-555-5555',
+      }
+      const patientDataSchema = {
+        name: { title: 'Name', order: 1 },
+        age: { title: 'Age', order: 2 },
+        address: { title: 'Address', order: 4 },
+        phone: { title: 'Phone', order: 3 },
+      }
+      const expectedOutput = [
+        { key: 'name', value: 'John', title: 'Name', order: 1 },
+        { key: 'age', value: 30, title: 'Age', order: 2 },
+        { key: 'phone', value: '555-555-5555', title: 'Phone', order: 3 },
+        { key: 'address', value: '123 Main St', title: 'Address', order: 4 },
+      ]
+      expect(transformPatientDataBySchema(patientData, patientDataSchema)).to.deep.eq(expectedOutput)
+    })
+  })
+
+  describe('transformTestInformation', () => {
+    it('should return an empty array if given empty data', () => {
+      const data = {}
+      const result = transformTestInformation(data)
+      expect(result).to.deep.eq([])
+    })
+
+    it('should return an empty array if all result category names are empty', () => {
+      const data = {
+        resultCategory1Name: '',
+        resultCategory2Name: '',
+      }
+      const result = transformTestInformation(data)
+      expect(result).to.deep.eq([])
+    })
+
+    it('should transform test information correctly for one result category', function () {
+      const data = {
+        id: 123,
+        resultCategory1i18nKey: 'key1',
+        resultCategory1Label: 'label1',
+        resultCategory1Name: 'name1',
+        resultCategory1Emphasize: true,
+        resultCategory1ValueI18nKey: 'valueKey1',
+      }
+
+      const expectedOutput = [
+        {
+          resultId: 123,
+          label: 'label1',
+          labelI18nKey: 'key1',
+          value: 'name1',
+          valueI18nKey: 'valueKey1',
+          severity: 'danger',
+        },
+      ]
+
+      const result = transformTestInformation(data)
+      expect(result).to.eql(expectedOutput)
+    })
+
+    it('should transform test information correctly for two result categories', function () {
+      const data = {
+        id: 123,
+        resultCategory1i18nKey: 'key1',
+        resultCategory1Label: 'label1',
+        resultCategory1Name: 'name1',
+        resultCategory1Emphasize: true,
+        resultCategory1ValueI18nKey: 'valueKey1',
+        resultCategory2i18nKey: 'key2',
+        resultCategory2Label: 'label2',
+        resultCategory2Name: 'name2',
+        resultCategory2Emphasize: false,
+        resultCategory2ValueI18nKey: 'valueKey2',
+      }
+
+      const expectedOutput = [
+        {
+          resultId: 123,
+          label: 'label1',
+          labelI18nKey: 'key1',
+          value: 'name1',
+          valueI18nKey: 'valueKey1',
+          severity: 'danger',
+        },
+        {
+          resultId: 123,
+          label: 'label2',
+          labelI18nKey: 'key2',
+          value: 'name2',
+          valueI18nKey: 'valueKey2',
+          severity: 'info',
+        },
+      ]
+
+      const result = transformTestInformation(data)
+      expect(result).to.eql(expectedOutput)
+    })
+  })
+
+  describe('transformTreatmentStatus', () => {
+    it('should transform treatment status correctly', function () {
+      const expectedOutput = {
+        changedOn: '2023-05-10T19:25:56.000Z',
+        resultId: 558,
+        name: 'On Treatment',
+        externalId: 'OnTreatment',
+        i18nKey: 'ResultTreatmentStatusOnTreatment',
+        visible: 1,
+        severity: 'success',
+        daysInCurrentStatus: 14,
+      }
+
+      const result = transformTreatmentStatus(data558, followUp558)
+      expect(result).to.deep.equal(expectedOutput)
+    })
+  })
+
+  describe('generateSearchKeys', () => {
+    it('correctly transform results', async () => {
+      const result = generateSearchKeys(data450, '84-687-3493')
+      expect(result).to.deep.eq(searchKeys450)
+    })
+  })
+
+  describe('transformSampleData', () => {
+    it('returns a transformed sample data object when given valid input', () => {
+      const data = {
+        id: 1,
+        sampleExternalId: 'SAMPLE01',
+        sampleSiteId: 2,
+        sampleSiteName: 'Sample Site',
+        sampleSiteExternalId: 'sample_site',
+        sampleTypeName: 'Sputum',
+        sampleTypeI18nKey: 'sampleTypeSputum',
+        sampleTypeExternalId: 'Sputum',
+        sampleStatus: 'SAMPLE_RECEIVED_AT_LAB',
+        sampleCollectedOn: '2023-04-21T07:34:00.000Z',
+        sampleUpdatedOn: null,
+      }
+      const expectedOutput = {
+        id: 1,
+        externalId: 'SAMPLE01',
+        originSite: { id: 2, name: 'Sample Site', externalId: 'sample_site' },
+        sampleType: { name: 'Sputum', i18nKey: 'sampleTypeSputum', externalId: 'Sputum' },
+        status: {
+          id: 'SAMPLE_RECEIVED_AT_LAB',
+          backgroundColor: 'info',
+          label: 'Received',
+          i18nKey: 'received_at_lab',
+        },
+        collectedOn: '2023-04-21T07:34:00.000Z',
+        updatedOn: null,
+      }
+      const result = transformSampleData(data)
+      expect(result).to.deep.eq(expectedOutput)
+    })
+
+    it('returns null when given null input', () => {
+      const data = null
+      const result = transformSampleData(data)
+      expect(result).to.eq(null)
+    })
+  })
+
+  describe('transFormResultResponse', () => {
+    it('correctly transform results', async () => {
+      const entry22 = transFormResultResponse([data347], [], [], 9)
+      const entry450 = transFormResultResponse([data450], followUp450, [], 9)
+      expect(entry22).to.deep.eq(expected347)
+      expect(entry450).to.deep.eq(expected450)
+    })
+  })
+})
