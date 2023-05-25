@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { resultWorkflowStatusToId } = require('../../../../shared/dictionary')
 const {
   countAllAwaitingTreatment,
-  fetchEntriesByUpdatedOnQuery,
+  fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
 } = require('./db')
@@ -15,7 +15,7 @@ async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
   const samples = await getAllSamplesRegistered(query, dataConstraints)
-  const results = await fetchEntriesByUpdatedOnQuery(query, dataConstraints)
+  const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
   const followUps = await getFollowUpsByResultIds(results)
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)

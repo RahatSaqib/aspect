@@ -4,7 +4,7 @@ const { knex } = require('../../../../db')
 const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
 
-const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
+const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const knexQuery = knex('Result as result')
@@ -181,7 +181,7 @@ const countAllAwaitingTreatment = dataConstraints => {
 
 module.exports = {
   countAllAwaitingTreatment,
-  fetchEntriesByUpdatedOnQuery,
+  fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
 }

@@ -1,7 +1,7 @@
-const { downloadEntriesResponseValidation } = require('./common/validations/validations')
-const { downloadEntriesRequestValidation } = require('./common/validations/downloadEntriesRequestValidation')
-const { fetchEntriesServiceHandler } = require('./common/service')
-const { asyncHandler } = require('../../../routes')
+const { downloadEntriesResponseValidation } = require('./result/common/validations/validations')
+const { downloadEntriesRequestValidation } = require('./result/common/validations/downloadEntriesRequestValidation')
+const { fetchEntriesServiceHandler } = require('./result/common/service')
+const { asyncHandler } = require('../../routes')
 
 // -----------------------------------------------------
 // routes
