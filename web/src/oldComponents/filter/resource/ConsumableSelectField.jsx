@@ -52,7 +52,9 @@ export class ConsumableSelectField extends PureComponent {
         {allItemText ? <MenuItem value="all">{allItemText}</MenuItem> : null}
         {consumableItems.map(a => (
           <MenuItem key={a.get('id')} value={a.get('id')}>
-            {this.props.intl.formatMessage(consumableMessages[a.get('i18nKey')])}
+            {consumableMessages[a.get('i18nKey')]
+              ? this.props.intl.formatMessage(consumableMessages[a.get('i18nKey')])
+              : a.get('name')}
           </MenuItem>
         ))}
       </SelectField>
