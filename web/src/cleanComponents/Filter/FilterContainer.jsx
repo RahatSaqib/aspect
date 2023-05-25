@@ -33,10 +33,18 @@ const FilterContainer = ({ children, state, setState }) => {
     toggleOpen()
   }
 
-  const remove = key => {
-    removeFilter(key, location.pathname)
+  const remove = keys => {
+    removeFilter(keys, location.pathname)
+
     const newState = { ...state }
-    delete newState[key]
+    keys.forEach(k => {
+      if (k.includes('.')) {
+        const [key, value] = k.split('.')
+        newState[key] = newState[key].filter(v => v !== value)
+      } else {
+        delete newState[k]
+      }
+    })
     setState(newState)
   }
 
