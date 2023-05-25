@@ -463,7 +463,7 @@ describe('Entries helpers', () => {
         i18nKey: 'ResultTreatmentStatusOnTreatment',
         visible: 1,
         severity: 'success',
-        daysInCurrentStatus: 13,
+        daysInCurrentStatus: 14,
       }
 
       const result = transformTreatmentStatus(data558, followUp558)
