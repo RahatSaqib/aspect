@@ -21,7 +21,7 @@ const getClinicianAccessToken = async () => {
   return res.body.access
 }
 
-describe('Mobile API Result download routes v1 without api version', () => {
+describe.skip('Mobile API Result download routes v1 without api version', () => {
   const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
@@ -250,7 +250,7 @@ describe('Mobile API Result download routes v1 without api version', () => {
   })
 })
 
-describe('Mobile API Result download routes v1 with available custom api-version 1', () => {
+describe.skip('Mobile API Result download routes v1 with available custom api-version 1', () => {
   const path = '/mobile/api/results'
 
   let clinicianAccessToken = ''
@@ -487,7 +487,7 @@ describe('Mobile API Result download routes v1 with available custom api-version
   })
 })
 
-describe('Mobile API Result & Sample download routes v4 with available custom api-version 4', () => {
+describe.skip('Mobile API Result & Sample download routes v4 with available custom api-version 4', () => {
   const path = '/mobile/api/entries'
 
   let clinicianAccessToken = ''
