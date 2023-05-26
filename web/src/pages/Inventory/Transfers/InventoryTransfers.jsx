@@ -13,7 +13,7 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import { formatDateTime } from '../../../utils/utils/dateFormat'
+import { formatDateTime, formatDate } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 import styles from './styles.css'
 
@@ -101,8 +101,8 @@ export const InventoryTransfers = () => {
                   <TableBody>
                     {data.data.map(row => (
                       <TableRow key={row.sentOn}>
-                        <TableCell>{formatDateTime(row.sentOn) || 'N/A'}</TableCell>
-                        <TableCell>{formatDateTime(row.receivedOn) || 'N/A'}</TableCell>
+                        <TableCell>{formatDateTime(row.sentOn)}</TableCell>
+                        <TableCell>{formatDateTime(row.receivedOn)}</TableCell>
                         <TableCell>{formatMessage(consumables[row.consumableNameI18nKey])}</TableCell>
                         <TableCell>{row.receivedQuantity}</TableCell>
                         <TableCell>{row.sentQuantity}</TableCell>
@@ -110,7 +110,7 @@ export const InventoryTransfers = () => {
                         <TableCell>{row.destinationSiteName}</TableCell>
                         <TableCell>{row.lotNumber || 'N/A'}</TableCell>
                         <TableCell style={{ color: new Date(row.expirationDate) < new Date() ? 'red' : undefined }}>
-                          {formatDateTime(row.expirationDate) || 'N/A'}
+                          {formatDate(row.expirationDate)}
                         </TableCell>
                       </TableRow>
                     ))}
