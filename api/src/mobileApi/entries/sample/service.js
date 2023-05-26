@@ -9,7 +9,7 @@ async function registerNewSample(request) {
   const payloadForDb = _.clone(payload)
   const currentlyLoggedInUser = await getUser(request.auth.credentials.name)
   _.set(payloadForDb, 'externalId', payload.externalId)
-  _.set(payloadForDb, 'collectedOn', payload?.collectedOn ?? new Date())
+  _.set(payloadForDb, 'collectedOn', new Date(payload?.collectedOn))
 
   // sampleTypeId is SampleType.sampleTypeSputum hard coded for Nigeria
   _.set(payloadForDb, 'sampleTypeId', 4)
@@ -24,10 +24,9 @@ async function registerNewSample(request) {
   _.set(sampleData, 'partnerId', currentlyLoggedInUser.partnerId)
   _.set(sampleData, 'countryId', currentlyLoggedInUser.countryId)
   _.set(sampleData, 'clientType', payload?.clientType || 'reporter_app')
-  _.set(payloadForDb, 'patientExternalId', _.trim(payload?.patientExternalId).toString() ?? null)
+  _.set(sampleData, 'patientExternalId', _.trim(payload?.patientExternalId).toString() ?? null)
   _.mapKeys(sampleData, (value, key) => (_.isNil(value) ? _.set(payload, `${key}`, null) : value))
   _.set(payloadForDb, 'sampleData', JSON.stringify(sampleData))
-
   const newSample = await insertNewSample(_.omit(payloadForDb, ['clinicianName', 'patientExternalId']), request.auth)
   return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample[0]) }
 }
