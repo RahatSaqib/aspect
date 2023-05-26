@@ -517,11 +517,11 @@ describe('Entries helpers', () => {
     })
   })
 
-  describe('transFormResultResponse', () => {
+  describe.only('transFormResultResponse', () => {
     it('correctly transform results', async () => {
-      const entry22 = transFormResultResponse([data347], [], [], 9)
+      const entry347 = transFormResultResponse([data347], [], [], 9)
       const entry450 = transFormResultResponse([data450], followUp450, [], 9)
-      expect(entry22).to.deep.eq(expected347)
+      expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
     })
   })
