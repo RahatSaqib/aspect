@@ -229,11 +229,7 @@ const expected450 = [
     },
     clinicalResponse: {
       resultId: 450,
-      confirmedOn: null,
-      outcome: null,
-      outcomeOccurred: null,
-      recorded: false,
-      treatment: 'treatment',
+      treatment: 'dstb-2rhze',
       treatmentStarted: '2023-05-20T19:45:55.000Z',
     },
     comments: [],
