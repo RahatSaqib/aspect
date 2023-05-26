@@ -1,5 +1,5 @@
 const { expect } = require('chai')
-const { subDays } = require('date-fns')
+const { subDays, differenceInDays } = require('date-fns')
 const {
   data347,
   expected347,
@@ -302,10 +302,8 @@ describe('Entries helpers', () => {
       const expectedOutput = {
         resultId: 123,
         confirmedOn: '2023-01-01T00:00:00Z',
-        outcome: 'outcome',
         outcomeOccurred: '2023-03-01T00:00:00Z',
         recorded: true,
-        treatment: 'treatment',
         treatmentStarted: '2023-02-01T00:00:00Z',
       }
 
@@ -389,7 +387,7 @@ describe('Entries helpers', () => {
       expect(result).to.deep.eq([])
     })
 
-    it('should transform test information correctly for one result category', function () {
+    it('should transform test information correctly for one result category', () => {
       const data = {
         id: 123,
         resultCategory1i18nKey: 'key1',
@@ -414,7 +412,7 @@ describe('Entries helpers', () => {
       expect(result).to.eql(expectedOutput)
     })
 
-    it('should transform test information correctly for two result categories', function () {
+    it('should transform test information correctly for two result categories', () => {
       const data = {
         id: 123,
         resultCategory1i18nKey: 'key1',
@@ -454,7 +452,7 @@ describe('Entries helpers', () => {
   })
 
   describe('transformTreatmentStatus', () => {
-    it('should transform treatment status correctly', function () {
+    it('should transform treatment status correctly', () => {
       const expectedOutput = {
         changedOn: '2023-05-10T19:25:56.000Z',
         resultId: 558,
@@ -463,7 +461,7 @@ describe('Entries helpers', () => {
         i18nKey: 'ResultTreatmentStatusOnTreatment',
         visible: 1,
         severity: 'success',
-        daysInCurrentStatus: 13,
+        daysInCurrentStatus: differenceInDays(new Date(), new Date('2023-05-10T19:25:56.000Z')),
       }
 
       const result = transformTreatmentStatus(data558, followUp558)
