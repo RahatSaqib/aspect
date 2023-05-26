@@ -517,7 +517,7 @@ describe('Entries helpers', () => {
     })
   })
 
-  describe.only('transFormResultResponse', () => {
+  describe('transFormResultResponse', () => {
     it('correctly transform results', async () => {
       const entry347 = transFormResultResponse([data347], [], [], 9)
       const entry450 = transFormResultResponse([data450], followUp450, [], 9)
