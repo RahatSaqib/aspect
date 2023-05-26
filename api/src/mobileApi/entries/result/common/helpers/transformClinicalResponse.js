@@ -6,7 +6,6 @@ function transformClinicalResponse(data, followUps, acknowledgedId) {
   const treatment = getFollowUpByType(followUps, FOLLOW_UP_TYPES.TREATMENT)
   const outcome = getFollowUpByType(followUps, FOLLOW_UP_TYPES.OUTCOME)
   const isRecorded = data.resultWorkflowStatusId === acknowledgedId
-  if (!treatment && !outcome) return {}
   const output = {
     resultId: data.id,
     confirmedOn: isRecorded ? data.resultWorkflowStatusChangedOn : null,
