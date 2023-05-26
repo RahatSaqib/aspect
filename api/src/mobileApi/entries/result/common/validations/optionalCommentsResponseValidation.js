@@ -5,7 +5,7 @@ const optionalCommentsResponseValidation = Joi.object()
   .description('Comments schema used in Aspect Mobile')
   .keys({
     comments: Joi.array()
-      .allow(null)
+      .allow(null, '')
       .description('Entry comments')
       .items(
         Joi.object().keys({

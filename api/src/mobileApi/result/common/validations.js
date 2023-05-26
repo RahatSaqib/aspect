@@ -4,9 +4,9 @@ const { validateSortPageParams } = require('../../../routes')
 // download result - v1
 const downloadResultValidation = () => {
   return {
-    minUpdatedOn: Joi.date().iso().allow(null).description('Updated From Date'),
-    diseaseExternalIds: Joi.string().allow(null).optional().description('A csv of the diseases external ID'),
-    maxUpdatedOn: Joi.date().iso().allow(null).description('Updated To Date'),
+    minUpdatedOn: Joi.date().iso().allow(null, '').description('Updated From Date'),
+    diseaseExternalIds: Joi.string().allow(null, '').optional().description('A csv of the diseases external ID'),
+    maxUpdatedOn: Joi.date().iso().allow(null, '').description('Updated To Date'),
     patientSample: Joi.string()
       .optional()
       .description(
@@ -17,7 +17,10 @@ const downloadResultValidation = () => {
     workflowStatus: Joi.string().optional().description('External Id of the workflow status'),
     treatmentStatus: Joi.string().optional().description('External Id of the treatment status'),
     deviceType: Joi.string().optional().description('External Id Device type, the default value is CepheidGeneXpert'),
-    isTransferred: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
+    isTransferred: Joi.boolean()
+      .optional()
+      .allow(null, '')
+      .description('True to search only among Transferred results'),
     ...validateSortPageParams('updatedOn'),
   }
 }
@@ -52,8 +55,8 @@ const downloadResultResponseValidation = () => {
             .required()
             .description('Name of the site where the device was located when the sample was processed'),
           deviceName: Joi.string().required().description('Name of the device'),
-          resultCategory1ExternalId: Joi.string().allow(null).description('Category of the first result'),
-          resultCategory2ExternalId: Joi.string().allow(null).description('Category of the second result'),
+          resultCategory1ExternalId: Joi.string().allow(null, '').description('Category of the first result'),
+          resultCategory2ExternalId: Joi.string().allow(null, '').description('Category of the second result'),
           workflowStatus: Joi.object()
             .description('Current workflow status of the result')
             .keys({
@@ -65,28 +68,28 @@ const downloadResultResponseValidation = () => {
               reason: Joi.string().description('Reason for the latest workflow status change').allow(null, ''),
               setDelivered: Joi.boolean()
                 .optional()
-                .allow(null)
+                .allow(null, '')
                 .description('Tells if the record was updated manually'),
             }),
           treatmentStatus: Joi.object()
-            .allow(null)
+            .allow(null, '')
             .description('Current treatment status of the result')
             .keys({
-              changedOn: Joi.date().description('Date of the latest change to the treatment status').allow(null),
-              externalId: Joi.string().description('External ID of the treatment status').allow(null),
-              i18nKey: Joi.string().description('i18nKey ID of the treatment status').allow(null),
-              name: Joi.string().description('Name of the treatment status').allow(null),
+              changedOn: Joi.date().description('Date of the latest change to the treatment status').allow(null, ''),
+              externalId: Joi.string().description('External ID of the treatment status').allow(null, ''),
+              i18nKey: Joi.string().description('i18nKey ID of the treatment status').allow(null, ''),
+              name: Joi.string().description('Name of the treatment status').allow(null, ''),
             }),
-          patientData: Joi.object().allow(null).description('Data about the patient'),
-          resultData: Joi.object().allow(null).description('Data about the result'),
-          sampleOriginSiteId: Joi.number().allow(null).description('Sample Origin Site Id for the patient'),
-          firstViewedOn: Joi.date().allow(null).description('date when result first viewed'),
+          patientData: Joi.object().allow(null, '').description('Data about the patient'),
+          resultData: Joi.object().allow(null, '').description('Data about the result'),
+          sampleOriginSiteId: Joi.number().allow(null, '').description('Sample Origin Site Id for the patient'),
+          firstViewedOn: Joi.date().allow(null, '').description('date when result first viewed'),
           sample: Joi.object()
             .description('The sample that the result is based on')
             .keys({
-              id: Joi.string().allow(null).description('ID of the sample'),
+              id: Joi.string().allow(null, '').description('ID of the sample'),
               originSite: Joi.object()
-                .allow(null)
+                .allow(null, '')
                 .description('The site where the sample was taken')
                 .keys({
                   externalId: Joi.string().description('ID of the site'),
@@ -99,7 +102,7 @@ const downloadResultResponseValidation = () => {
               Joi.object().keys({
                 id: Joi.number().required().description('Result follow up ID'),
                 externalId: Joi.string().allow(null, '').description('External ID of the follow up'),
-                date: Joi.date().allow(null).description('When the follow up started'),
+                date: Joi.date().allow(null, '').description('When the follow up started'),
                 createdOn: Joi.date().required().description('When the follow up was first created in Aspect'),
                 updatedOn: Joi.date().required().description('When the follow up was last updated in Aspect'),
                 followUpExternalId: Joi.string().required().description('External ID of the follow up'),
@@ -111,7 +114,7 @@ const downloadResultResponseValidation = () => {
               })
             ),
           comments: Joi.array()
-            .allow(null)
+            .allow(null, '')
             .description('Result comments')
             .items(
               Joi.object().keys({
@@ -128,14 +131,14 @@ const downloadResultResponseValidation = () => {
           reportableSiteName: Joi.string()
             .allow('', null)
             .description('The name of reportable site, differ from siteName when transferred'),
-          transferredOn: Joi.date().allow(null).description('When result was transferred to another clinic'),
-          transferredBy: Joi.string().allow(null).description('Who transferred result to another clinic'),
+          transferredOn: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
+          transferredBy: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
           resultStatusLogId: Joi.number()
-            .allow(null)
+            .allow(null, '')
             .integer()
             .positive()
             .description('The id of last entry in ResultStatusLog for current result'),
-          reportableSiteId: Joi.number().allow(null).description('Reportable siteId of the patient'),
+          reportableSiteId: Joi.number().allow(null, '').description('Reportable siteId of the patient'),
         })
       ),
   })
@@ -144,9 +147,9 @@ const downloadResultResponseValidation = () => {
 // download result - v2
 const downloadResultValidationV2 = () => {
   return {
-    minUpdatedOn: Joi.date().iso().allow(null).description('Updated From Date'),
-    diseaseExternalIds: Joi.string().allow(null).optional().description('A csv of the diseases external ID'),
-    maxUpdatedOn: Joi.date().iso().allow(null).description('Updated To Date'),
+    minUpdatedOn: Joi.date().iso().allow(null, '').description('Updated From Date'),
+    diseaseExternalIds: Joi.string().allow(null, '').optional().description('A csv of the diseases external ID'),
+    maxUpdatedOn: Joi.date().iso().allow(null, '').description('Updated To Date'),
     patientSample: Joi.string()
       .optional()
       .description(
@@ -157,7 +160,10 @@ const downloadResultValidationV2 = () => {
     workflowStatus: Joi.string().optional().description('External Id of the workflow status'),
     treatmentStatus: Joi.string().optional().description('External Id of the treatment status'),
     deviceType: Joi.string().optional().description('External Id Device type, the default value is CepheidGeneXpert'),
-    isTransferred: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
+    isTransferred: Joi.boolean()
+      .optional()
+      .allow(null, '')
+      .description('True to search only among Transferred results'),
     ...validateSortPageParams('updatedOn'),
   }
 }
@@ -197,8 +203,8 @@ const downloadResultResponseValidationV2 = () => {
             .required()
             .description('Name of the site where the device was located when the sample was processed'),
           deviceName: Joi.string().required().description('Name of the device'),
-          resultCategory1ExternalId: Joi.string().allow(null).description('Category of the first result'),
-          resultCategory2ExternalId: Joi.string().allow(null).description('Category of the second result'),
+          resultCategory1ExternalId: Joi.string().allow(null, '').description('Category of the first result'),
+          resultCategory2ExternalId: Joi.string().allow(null, '').description('Category of the second result'),
           workflowStatus: Joi.object()
             .description('Current workflow status of the result')
             .keys({
@@ -210,32 +216,32 @@ const downloadResultResponseValidationV2 = () => {
               reason: Joi.string().description('Reason for the latest workflow status change').allow(null, ''),
               setDelivered: Joi.boolean()
                 .optional()
-                .allow(null)
+                .allow(null, '')
                 .description('Tells if the record was updated manually'),
             }),
           treatmentStatus: Joi.object()
-            .allow(null)
+            .allow(null, '')
             .description('Current treatment status of the result')
             .keys({
-              changedOn: Joi.date().description('Date of the latest change to the treatment status').allow(null),
-              externalId: Joi.string().description('External ID of the treatment status').allow(null),
-              i18nKey: Joi.string().description('i18nKey ID of the treatment status').allow(null),
-              name: Joi.string().description('Name of the treatment status').allow(null),
-              visible: Joi.boolean().description('External ID of the treatment status').allow(null),
-              severity: Joi.string().description('External ID of the treatment status').allow(null),
-              daysInCurrentStatus: Joi.string().description('External ID of the treatment status').allow(null),
+              changedOn: Joi.date().description('Date of the latest change to the treatment status').allow(null, ''),
+              externalId: Joi.string().description('External ID of the treatment status').allow(null, ''),
+              i18nKey: Joi.string().description('i18nKey ID of the treatment status').allow(null, ''),
+              name: Joi.string().description('Name of the treatment status').allow(null, ''),
+              visible: Joi.boolean().description('External ID of the treatment status').allow(null, ''),
+              severity: Joi.string().description('External ID of the treatment status').allow(null, ''),
+              daysInCurrentStatus: Joi.string().description('External ID of the treatment status').allow(null, ''),
             }),
-          patientData: Joi.object().allow(null).description('Data about the patient'),
-          testId: Joi.string().allow(null).description('Patient ID/Sample ID'),
-          resultData: Joi.object().allow(null).description('Data about the result'),
-          sampleOriginSiteId: Joi.number().allow(null).description('Sample Origin Site Id for the patient'),
-          firstViewedOn: Joi.date().allow(null).description('date when result first viewed'),
+          patientData: Joi.object().allow(null, '').description('Data about the patient'),
+          testId: Joi.string().allow(null, '').description('Patient ID/Sample ID'),
+          resultData: Joi.object().allow(null, '').description('Data about the result'),
+          sampleOriginSiteId: Joi.number().allow(null, '').description('Sample Origin Site Id for the patient'),
+          firstViewedOn: Joi.date().allow(null, '').description('date when result first viewed'),
           sample: Joi.object()
             .description('The sample that the result is based on')
             .keys({
-              id: Joi.string().allow(null).description('ID of the sample'),
+              id: Joi.string().allow(null, '').description('ID of the sample'),
               originSite: Joi.object()
-                .allow(null)
+                .allow(null, '')
                 .description('The site where the sample was taken')
                 .keys({
                   externalId: Joi.string().description('ID of the site'),
@@ -248,7 +254,7 @@ const downloadResultResponseValidationV2 = () => {
               Joi.object().keys({
                 id: Joi.number().required().description('Result follow up ID'),
                 externalId: Joi.string().allow(null, '').description('External ID of the follow up'),
-                date: Joi.date().allow(null).description('When the follow up started'),
+                date: Joi.date().allow(null, '').description('When the follow up started'),
                 createdOn: Joi.date().required().description('When the follow up was first created in Aspect'),
                 updatedOn: Joi.date().required().description('When the follow up was last updated in Aspect'),
                 followUpExternalId: Joi.string().required().description('External ID of the follow up'),
@@ -261,14 +267,17 @@ const downloadResultResponseValidationV2 = () => {
             ),
           // clinical response
           clinicalResponse: {
-            recorded: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
+            recorded: Joi.boolean()
+              .optional()
+              .allow(null, '')
+              .description('True to search only among Transferred results'),
             confirmedOn: Joi.date()
-              .allow(null)
+              .allow(null, '')
               .description('Date & time that checkbox was checked, if not checked, return null'),
             treatment: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
-            treatmentStarted: Joi.date().allow(null).description('When result was transferred to another clinic'),
+            treatmentStarted: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
             outcome: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
-            outcomeOccurred: Joi.date().allow(null).description('When result was transferred to another clinic'),
+            outcomeOccurred: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
           },
           // test information
           testInformation: Joi.array()
@@ -276,14 +285,14 @@ const downloadResultResponseValidationV2 = () => {
             .items(
               Joi.object().keys({
                 label: Joi.string().allow(null, '').description('Test label'),
-                labelI18nKey: Joi.string().required().description('Test label key').allow(null),
+                labelI18nKey: Joi.string().required().description('Test label key').allow(null, ''),
                 value: Joi.string().required().description('Test result value').allow(null, ''),
                 valueI18nKey: Joi.string().required().description('Test result value key').allow(null, ''),
                 severity: Joi.string().description('Severity of the test'),
               })
             ),
           comments: Joi.array()
-            .allow(null)
+            .allow(null, '')
             .description('Result comments')
             .items(
               Joi.object().keys({
@@ -307,24 +316,24 @@ const downloadResultResponseValidationV2 = () => {
               text: Joi.string().description('Test type text'),
             }),
           transferred: Joi.string()
-            .allow(null)
+            .allow(null, '')
             .description('The result has transferred to another clinic, probable value : Here or Away'),
-          transferredOn: Joi.date().allow(null).description('When result was transferred to another clinic'),
-          transferredBy: Joi.string().allow(null).description('Who transferred result to another clinic'),
+          transferredOn: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
+          transferredBy: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
           resultStatusLogId: Joi.number()
-            .allow(null)
+            .allow(null, '')
             .integer()
             .positive()
             .description('The id of last entry in ResultStatusLog for current result'),
-          reportableSiteId: Joi.number().allow(null).description('Reportable siteId of the patient'),
+          reportableSiteId: Joi.number().allow(null, '').description('Reportable siteId of the patient'),
           assayAvatar: Joi.object()
             .description('The assay avatar')
             .keys({
-              contentI18nKey: Joi.string().allow(null).description('Translation key for the content text'),
-              contentText: Joi.string().allow(null).description('Name of the content text'),
-              backgroundColor: Joi.string().allow(null).description('Background color code'),
-              foregroundColor: Joi.string().allow(null).description('Foreground color code'),
-              contentIcon: Joi.string().allow(null).description('Icon of content'),
+              contentI18nKey: Joi.string().allow(null, '').description('Translation key for the content text'),
+              contentText: Joi.string().allow(null, '').description('Name of the content text'),
+              backgroundColor: Joi.string().allow(null, '').description('Background color code'),
+              foregroundColor: Joi.string().allow(null, '').description('Foreground color code'),
+              contentIcon: Joi.string().allow(null, '').description('Icon of content'),
             }),
         })
       ),
@@ -337,12 +346,12 @@ const baseResultResponse = {
   sampleId: Joi.string().allow(null, '').description('Sample id'),
   externalId: Joi.string().allow(null, '').description('Unique ID of the result for this diagnostic device'),
   startedOn: Joi.date()
-    .allow(null)
+    .allow(null, '')
     .description(
       'When sample processing started. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
     ),
   endedOn: Joi.date()
-    .allow(null)
+    .allow(null, '')
     .description(
       'When sample processing ended. Note that the zone designator is empty because this is the local date/time as reported by the device. This should be shown as is and not converted to the user time zone.'
     ),
@@ -357,9 +366,9 @@ const baseResultResponse = {
   errorCode: Joi.string().allow(null, '').description('If an error occurred, contains the error code from the device'),
   resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
   caseExternalId: Joi.string().optional().allow(null, '').description('The id of the case'),
-  diseaseId: Joi.number().positive().allow(null).required().description('the Id of the disease'),
-  diseaseName: Joi.string().required().allow(null).description('the name of the disease'),
-  diseaseExternalId: Joi.string().required().allow(null).description('the external id of the disease'),
+  diseaseId: Joi.number().positive().allow(null, '').required().description('the Id of the disease'),
+  diseaseName: Joi.string().required().allow(null, '').description('the name of the disease'),
+  diseaseExternalId: Joi.string().required().allow(null, '').description('the external id of the disease'),
 
   detectedResistance: Joi.alternatives()
     .try(Joi.string(), Joi.array())
@@ -367,10 +376,10 @@ const baseResultResponse = {
     .allow(null, '')
     .description('CSV with detected resistances'),
 
-  partnerId: Joi.number().allow(null).description('The Partner Id'),
+  partnerId: Joi.number().allow(null, '').description('The Partner Id'),
   partnerPluginName: Joi.string().allow(null, '').description('Plugin name for Partner'),
   deviceTypePluginName: Joi.string().allow(null, '').description('Plugin name for Device'),
-  customFieldsValues: Joi.array().allow(null).description('Custom Fields Values'),
+  customFieldsValues: Joi.array().allow(null, '').description('Custom Fields Values'),
 }
 
 const validateResultDetailResponse = () => {
@@ -386,15 +395,15 @@ const validateResultDetailResponse = () => {
         'When the result was last updated in the Aspect database. This can be converted to the user time zone.'
       ),
     deviceId: Joi.number().integer().positive().required().description('Device id in aspect'),
-    deviceTypeId: Joi.number().integer().positive().allow(null).description('The id of the deviceType'),
+    deviceTypeId: Joi.number().integer().positive().allow(null, '').description('The id of the deviceType'),
     deviceSerial: Joi.string().allow(null, '').description('The device serial number'),
     countryName: Joi.string().description("The device's country name"),
-    stateId: Joi.number().integer().positive().allow(null).description('The id of the state'),
+    stateId: Joi.number().integer().positive().allow(null, '').description('The id of the state'),
     stateName: Joi.string().allow(null, '').description("The device's state name"),
     lgaName: Joi.string().allow(null, '').description("The device's lga name"),
-    resultWorkflowChangedOn: Joi.date().allow(null).description('The date when status was changed'),
-    resultCategory1: Joi.number().integer().positive().allow(null).description('Value of ResultCategory1'),
-    resultCategory2: Joi.number().integer().positive().allow(null).description('Value of ResultCategory1'),
+    resultWorkflowChangedOn: Joi.date().allow(null, '').description('The date when status was changed'),
+    resultCategory1: Joi.number().integer().positive().allow(null, '').description('Value of ResultCategory1'),
+    resultCategory2: Joi.number().integer().positive().allow(null, '').description('Value of ResultCategory1'),
     resultCategory1Name: Joi.string().allow(null, '').description("The result's category 1 name"),
     resultCategory2Name: Joi.string().allow(null, '').description("The result's category 2 name"),
     resultWorkflowStatusId: Joi.number().integer().description("The result's workflow status id"),
@@ -402,7 +411,7 @@ const validateResultDetailResponse = () => {
     resultWorkflowStatusExternalId: Joi.string().allow(null, '').description("The result's Workflow status name"),
     resultData: Joi.object().description('The result data'),
     files: Joi.array().description('Result Files'),
-    formData: Joi.object().allow(null).description('The form data'),
+    formData: Joi.object().allow(null, '').description('The form data'),
     siteId: Joi.number().integer().positive().description('The id of the site'),
     resultTreatmentStatusCreatedBy: Joi.string()
       .allow(null, '')
@@ -419,24 +428,24 @@ const validateResultDetailResponse = () => {
     researchId: Joi.string().allow(null, '').description('The research id'),
     senderVersion: Joi.string().allow(null, '').description('The sender version'),
     senderOperator: Joi.string().allow(null, '').description('The sender operator'),
-    consumableExpirationDate: Joi.date().allow(null).description('The consumable expiration date'),
+    consumableExpirationDate: Joi.date().allow(null, '').description('The consumable expiration date'),
     notes: Joi.string().allow(null, '').description('Any notes entered for the sample'),
     errorCode: Joi.string()
       .allow(null, '')
       .description('If an error occurred, contains the error code from the device'),
     errorNotes: Joi.string().allow(null, '').description('Contains any details about the error'),
     assayId: Joi.number().integer().description('The id of the assay'),
-    sampleOriginSiteId: Joi.number().allow(null).integer().description('the id of the original site'),
+    sampleOriginSiteId: Joi.number().allow(null, '').integer().description('the id of the original site'),
     sampleId: Joi.string().allow(null, '').description('Sample id'),
     sampleGroup: Joi.string().allow(null, '').description('Sample group'),
-    sampleCollectedOn: Joi.date().allow(null).description('The date when the sample has been collected'),
+    sampleCollectedOn: Joi.date().allow(null, '').description('The date when the sample has been collected'),
     sampleOriginSiteName: Joi.string().allow(null, '').description('Sample original site name'),
     sampleTypeName: Joi.string().allow(null, '').description('Sample type name'),
-    sampleTypeId: Joi.number().integer().positive().allow(null).description('Sample type Id'),
+    sampleTypeId: Joi.number().integer().positive().allow(null, '').description('Sample type Id'),
     patientId: Joi.string().allow(null, '').description('The patient Id'),
-    patientData: Joi.object().allow(null).description('The patient data'),
-    formSchema: Joi.object().allow(null).description('The form data object'),
-    assay: Joi.object().allow(null).description('The assay object'),
+    patientData: Joi.object().allow(null, '').description('The patient data'),
+    formSchema: Joi.object().allow(null, '').description('The form data object'),
+    assay: Joi.object().allow(null, '').description('The assay object'),
     assayType: Joi.string().allow(null, '').description("The type of the result's assay"),
     deviceType: Joi.string().allow(null, '').description("The type of the result's device"),
     resultText: Joi.string().allow(null, '').description('The result represented in text format'),
@@ -447,18 +456,22 @@ const validateResultDetailResponse = () => {
     resultCategory2Label: Joi.string()
       .allow(null, '')
       .description('The name of the test made for the second result category'),
-    treatmentStatus: Joi.object().allow(null).description('The treatment status object'),
+    treatmentStatus: Joi.object().allow(null, '').description('The treatment status object'),
     resultWorkflowLogReason: Joi.string().allow(null, '').description('Value of Reason from latest ResultWorkflowLog'),
     resultWorkflowLogOperator: Joi.string().allow(null, '').description('Operator from the latest ResultWorkflowLog'),
-    resultWorkflowLogCreatedOn: Joi.date().allow(null).description('CreatedOn date from the latest ResultWorkflowLog'),
+    resultWorkflowLogCreatedOn: Joi.date()
+      .allow(null, '')
+      .description('CreatedOn date from the latest ResultWorkflowLog'),
     resultTreatmentStatusChangedOn: Joi.date()
-      .allow(null)
+      .allow(null, '')
       .description('ChangedOn date from the latest ResultTreatmentStatusLog'),
     resultTreatmentStatusCreatedOn: Joi.date()
-      .allow(null)
+      .allow(null, '')
       .description('CreatedOn date from the latest ResultTreatmentStatusLog'),
-    resultWorkflowLogChangedOn: Joi.date().allow(null).description('ChangedOn date from the latest ResultWorkflowLog'),
-    resultTreatmentStatusId: Joi.number().allow(null).description('ID of the result treatment status'),
+    resultWorkflowLogChangedOn: Joi.date()
+      .allow(null, '')
+      .description('ChangedOn date from the latest ResultWorkflowLog'),
+    resultTreatmentStatusId: Joi.number().allow(null, '').description('ID of the result treatment status'),
     resultTreatmentMethod: Joi.string().allow(null, '').description('Method from latest ResultTreatmentWorkflowLog'),
     resultTreatmentStatus: Joi.string().allow(null, '').description('ExternalId of the result treatment status'),
     treatmentStatusInfo: Joi.string().allow(null, '').description('treatment status info'),
@@ -467,14 +480,14 @@ const validateResultDetailResponse = () => {
     requiresTreatment: Joi.number()
       .allow(null, '')
       .description('Indicates if the result category and assay require treatment'),
-    patientCaseId: Joi.number().allow(null).optional().description('Case ID for the result.'),
+    patientCaseId: Joi.number().allow(null, '').optional().description('Case ID for the result.'),
     followUps: Joi.array()
       .description('Result Follow Ups')
       .items(
         Joi.object().keys({
           id: Joi.number().required().description('Result follow up ID'),
           externalId: Joi.string().allow(null, '').description('External ID of the follow up'),
-          date: Joi.date().allow(null).description('When the follow up started'),
+          date: Joi.date().allow(null, '').description('When the follow up started'),
           createdOn: Joi.date().required().description('When the follow up was first created in Aspect'),
           updatedOn: Joi.date().required().description('When the follow up was last updated in Aspect'),
           followUpExternalId: Joi.string().required().description('External ID of the follow up'),
@@ -487,35 +500,37 @@ const validateResultDetailResponse = () => {
       ),
     // transfer result
     reportableSiteId: Joi.number()
-      .allow(null)
+      .allow(null, '')
       .integer()
       .positive()
       .description('The id of reportable site, differ from siteId when transferred'),
     reportableSiteName: Joi.string()
       .allow(null, '')
       .description('The name of reportable site, differ from siteName when transferred'),
-    transferredOn: Joi.date().allow(null).description('When result was transferred to another clinic'),
-    firstViewedOn: Joi.date().allow(null).description('When transferred result was clicked'),
+    transferredOn: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
+    firstViewedOn: Joi.date().allow(null, '').description('When transferred result was clicked'),
     transferredBy: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
     resultStatusLogId: Joi.number()
-      .allow(null)
+      .allow(null, '')
       .integer()
       .positive()
       .description('The id of last entry in ResultStatusLog for current result'),
-    canEdit: Joi.number().allow(null).description("Is the result's assay configured to allow editing of results?"),
-    canDelete: Joi.number().allow(null).description("Is the result's assay configured to allow deleting of results?"),
+    canEdit: Joi.number().allow(null, '').description("Is the result's assay configured to allow editing of results?"),
+    canDelete: Joi.number()
+      .allow(null, '')
+      .description("Is the result's assay configured to allow deleting of results?"),
     resultSourceExternalId: Joi.string()
       .required() // resultSourceId is NOT NULL in Result table
       .description('External ID of the result source'),
     clinicalResponse: {
-      recorded: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
+      recorded: Joi.boolean().optional().allow(null, '').description('True to search only among Transferred results'),
       confirmedOn: Joi.date()
-        .allow(null)
+        .allow(null, '')
         .description('Date & time that checkbox was checked, if not checked, return null'),
       treatment: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
-      treatmentStarted: Joi.date().allow(null).description('When result was transferred to another clinic'),
+      treatmentStarted: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
       outcome: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
-      outcomeOccurred: Joi.date().allow(null).description('When result was transferred to another clinic'),
+      outcomeOccurred: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
     },
   }
 }
@@ -540,7 +555,11 @@ const addClinicalResponsePayloadValidation = () => {
         Joi.string().allow('', null).description('The ID of the follow up'),
         Joi.bool().allow('', null).description('The ID of the follow up'),
       ],
-      clientTime: Joi.date().iso().optional().allow(null).description('This is the date when the follow up happened'),
+      clientTime: Joi.date()
+        .iso()
+        .optional()
+        .allow(null, '')
+        .description('This is the date when the follow up happened'),
     })
   )
 }

@@ -19,22 +19,20 @@ const status = Joi.object({
   i18nKey: Joi.string().required().description('The internationalization key of the status.'),
 })
 
-const optionalSampleSchemaResponseValidation = Joi.object()
-  .optional()
-  .description('Sample schema for the entry')
-  .keys({
-    sample: Joi.object().keys({
-      id: Joi.number().required().description('The ID of the sample.'),
-      externalId: Joi.string().required().description('The external ID of the sample.'),
-      originSite: originSite.required().description('The origin site of the sample.'),
-      sampleType: sampleType.required().description('The type of the sample.'),
-      status: status.required().description('The status of the sample.'),
-      collectedOn: Joi.required().description('The date and time when the sample was collected in ISO 8601 format.'),
-      updatedOn: Joi.string()
-        .allow(null)
-        .optional()
-        .description('The date and time when the sample was last updated. Can be null if not updated.'),
-    }),
-  })
+const baseSampleSchemaResponseValidation = Joi.object().keys({
+  id: Joi.number().required().description('The ID of the sample.'),
+  externalId: Joi.string().required().description('The external ID of the sample.'),
+  originSite: originSite.required().description('The origin site of the sample.'),
+  sampleType: sampleType.required().description('The type of the sample.'),
+  status: status.required().description('The status of the sample.'),
+  collectedOn: Joi.required().description('The date and time when the sample was collected in ISO 8601 format.'),
+  updatedOn: Joi.allow(null, '')
+    .optional()
+    .description('The date and time when the sample was last updated. Can be null if not updated.'),
+})
 
-module.exports = { optionalSampleSchemaResponseValidation }
+const optionalSampleSchemaResponseValidation = Joi.object().optional().description('Sample schema for the entry').keys({
+  sample: baseSampleSchemaResponseValidation,
+})
+
+module.exports = { optionalSampleSchemaResponseValidation, baseSampleSchemaResponseValidation }
