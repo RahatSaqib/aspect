@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const Boom = require('@hapi/boom')
 
 // ----------------------------------------------------------------------------------
@@ -10,7 +9,7 @@ async function getNewQuantityOnHand(
   knex,
   inventoryItem,
   operation,
-  quantityOnHand,
+  _, // not used quantityOnHand
   quantity,
   { resultId, userId } = {}
 ) {
@@ -30,26 +29,38 @@ async function getNewQuantityOnHand(
     case 'transfer from':
       /**
        * see ASP-5543 with rules for below code
+       * case of result consuming inventory:
        */
-      if (_.isEmpty(inventoryItem)) {
-        return Boom.notFound('Can not deduct from non-existed inventory item')
-      }
-      if (inventoryItem.quantityOnHand < 0) {
-        return Boom.notFound(
-          `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`
-        )
-      }
-
-      if (inventoryItem.quantityOnHand >= quantity) {
-        /**
-         * normal mode - deduct `quantity` from current site
-         */
+      if (resultId)
+        if (inventoryItem && inventoryItem.quantityOnHand >= quantity) {
+          /**
+           * normal mode - deduct `quantity` from current site
+           */
+          newQuantityOnHand -= quantity
+        } else {
+          // log missing lots only for results, and not for manual changes
+          await logMissingInventory(knex, resultId, userId)
+          return Boom.notFound(
+            // Throwing this prevents the code to save the inventory log entry in case of missing lots.
+            `Not enough inventory items on the site to remove ${quantity} items`
+          )
+        }
+      else {
+        // case of ui operation
+        if (!inventoryItem) {
+          return Boom.notFound('Can not deduct from non-existed inventory item')
+        }
+        if (inventoryItem.quantityOnHand < 0) {
+          return Boom.notFound(
+            `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`
+          )
+        }
+        if (inventoryItem.quantityOnHand < quantity) {
+          return Boom.notFound(
+            `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`
+          )
+        }
         newQuantityOnHand -= quantity
-      } else {
-        await logMissingInventory(knex, inventoryItem, resultId, userId)
-        return Boom.notFound(
-          `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`
-        )
       }
       break
     default: {
@@ -60,13 +71,12 @@ async function getNewQuantityOnHand(
 }
 
 // ----------------------------------------------------------------------------------
-async function logMissingInventory(knex, inventoryItem, resultId, userId) {
-  if (!resultId) {
-    // log missing lots only for results, and not for manual changes
-    return
-  }
+async function logMissingInventory(knex, resultId, userId) {
   const now = new Date()
-  const { siteId, lotNumber, expiresOn } = inventoryItem
+
+  const { siteId, lotNumber, expiresOn } = await knex('Result as r')
+    .where({ id: resultId })
+    .first('siteId', 'consumableLot as lotNumber', 'consumableExpirationDate as expiresOn')
   await knex('MissingInventoryLots').insert({
     resultId,
     expirationDate: expiresOn,

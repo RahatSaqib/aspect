@@ -7,8 +7,8 @@ async function getMissingCartridgesReport(dataConstraints, query) {
     .innerJoin('Result as r', 'm.resultId', 'r.id')
     .innerJoin('Site as s', 'm.SiteId', 's.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
-    .innerJoin('State as st', 'g.stateId', 'st.id')
-    .innerJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
     .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
     .modify(addConstraints, dataConstraints, {

@@ -36,6 +36,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
 
   return (
     <PkPage
+      isMocked
       title={`${formatMessage(messages.RRProvincialComparison)}`}
       filters={
         <StateAutocomplete

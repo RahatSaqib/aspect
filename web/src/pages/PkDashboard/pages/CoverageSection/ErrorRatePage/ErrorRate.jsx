@@ -23,7 +23,7 @@ const ErrorRatePage = () => {
   ]
 
   return (
-    <PkPage title={formatMessage(messages.errorRateTitle)}>
+    <PkPage isMocked title={formatMessage(messages.errorRateTitle)}>
       <NestedTable columns={columns} rows={data} hasDetail />
     </PkPage>
   )
