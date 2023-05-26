@@ -311,7 +311,7 @@ describe('Entries helpers', () => {
       expect(result).to.eql(expectedOutput)
     })
 
-    it('should return empty object when result is not recorded and treatment and outcome are not present', () => {
+    it('should return object when result is not recorded and treatment and outcome are not present', () => {
       const data = {
         id: 123,
         resultWorkflowStatusId: 456,
@@ -320,7 +320,10 @@ describe('Entries helpers', () => {
       const followUps = []
       const acknowledgedId = 789
 
-      const expectedOutput = {}
+      const expectedOutput = {
+        recorded: false,
+        resultId: 123,
+      }
 
       const result = transformClinicalResponse(data, followUps, acknowledgedId)
       expect(result).to.eql(expectedOutput)
