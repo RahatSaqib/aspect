@@ -1,17 +1,18 @@
 const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
-const {
-  listInventoryGroupedBySite,
-  addInventory,
-  removeInventory,
-  transferInventory,
-  receiveInventory,
-  getDaysByLocation,
-  modifyInventoryOnHand,
-} = require('./service')
+const listInventoryGroupedBySite = require('./listInventoryGroupedBySite')
+const getDaysByLocation = require('./getDaysByLocation')
+const modifyInventoryOnHand = require('./modifyInventoryOnHand')
+const addInventory = require('./addInventory')
+const removeInventory = require('./removeInventory')
+const transferInventory = require('./transferInventory')
+const receiveInventory = require('./receiveInventory')
 const listInventory = require('./listInventory')
+const getInventoryOverview = require('./getInventoryOverview')
 const listInventoryLog = require('./listInventoryLog')
+const listInventoryTransfer = require('./listInventoryTransfer')
+const exportInventoryTransfer = require('./exportInventoryTransfer')
 const { exportSupplies } = require('./serviceReports')
 const {
   listSuppliesBaseConfig,
@@ -19,6 +20,7 @@ const {
   removeInventoryCommonPayloadFields,
   modifyInventoryCommonPayloadFields,
   inventoryFilters,
+  inventoryTransferFilters,
 } = require('./requestValidation')
 
 const routes = [
@@ -76,6 +78,23 @@ const routes = [
             'expiresOn',
             'quantity'
           ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/overview',
+    handler: asyncHandler(getInventoryOverview),
+    config: {
+      description: 'Hierarchical view of inventory',
+      notes: 'Hierarchical view of inventory',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          consumableExternalId: Joi.string().allow('', null),
+          minDate: Joi.date().iso().allow(null).description('From Date'),
+          maxDate: Joi.date().iso().allow(null).description('To Date'),
         },
       },
     },
@@ -195,6 +214,52 @@ const routes = [
             dateAdjustedTo: Joi.date().iso().required(),
           }
         ),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/transfer',
+    handler: asyncHandler(listInventoryTransfer),
+    config: {
+      description: 'Transfer Inventory History',
+      notes: 'Pageable and sortable list of inventory transfers',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          ...inventoryTransferFilters,
+          ...validateDateRangeParams(),
+          ...validateAllGeographyFilterParams(),
+          ...validateSortPageParams(
+            'sentQuantity',
+            'sentOn',
+            'receivedQuantity',
+            'receivedOn',
+            'lotNumber',
+            'expirationDate',
+            'originSiteName',
+            'destinationSiteName',
+            'consumableName',
+            'consumableNameI18nKey'
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/transfer/export',
+    handler: exportInventoryTransfer,
+    config: {
+      description: 'Export Inventory Transfer List into Excel or CSV',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          format: Joi.string().allow('').description('File format for exporting data'),
+          ...inventoryTransferFilters,
+          ...validateDateRangeParams(),
+          ...validateAllGeographyFilterParams(),
+        },
       },
     },
   },

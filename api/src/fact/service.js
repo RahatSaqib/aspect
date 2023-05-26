@@ -19,7 +19,6 @@ const {
 } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const { startOfDayUtc } = require('../shared/date')
-const { excludeResultsIfNeeded } = require('./utils')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const daysToCalculateCountOfDeliveredResults = [30, 60]
@@ -247,17 +246,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
       return
     }
 
-    /**
-     * try to get plugin `modifyQueryToExcludeResult` for device's partnerId
-     */
-    let modifyToExcludeTests
-    const { partnerId } = await knex('Device').where('id', deviceId).select('partnerId').first()
-    const { getPartnerPluginName } = require('../plugin/utils')
-    const partnerPluginName = await getPartnerPluginName({ partnerId })
-    if (partnerPluginName) {
-      const { loadPlugin } = require('../plugin/registration')
-      modifyToExcludeTests = await loadPlugin([partnerPluginName], 'modifyQueryToExcludeResult')
-    }
     await messageContext.initDictionaryTables()
 
     await Promise.each(daysToCalculate, async days => {
@@ -275,7 +263,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         const deliveredResultWorkfowStatusId = await resultWorkflowStatusToId('Delivered')
         const countByDevice = (await query
           .clone()
-          .modify(queryBuilder => excludeResultsIfNeeded(queryBuilder, modifyToExcludeTests))
           .leftJoin('ResultWorkflowLog as rwl', queryBuilder => {
             queryBuilder
               .on('r.resultWorkflowStatusLogId', 'rwl.id')
@@ -289,12 +276,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         factResultsDevice.resultCount = countByDevice.resultCount
         factResultsDevice.resultsDeliveredCount = countByDevice.resultsDeliveredCount
       } else {
-        const countByDevice = await query
-          .clone()
-          .modify(queryBuilder => excludeResultsIfNeeded(queryBuilder, modifyToExcludeTests))
-          .count('r.id as resultCount')
-          .select('r.deviceId')
-          .first()
+        const countByDevice = await query.clone().count('r.id as resultCount').select('r.deviceId').first()
         factResultsDevice.resultCount = countByDevice.resultCount
       }
 
@@ -313,7 +295,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
       const countsByAssay = await query
         .clone()
         .whereNotNull('r.assayId')
-        .modify(queryBuilder => excludeResultsIfNeeded(queryBuilder, modifyToExcludeTests))
         .groupBy('r.assayid')
         .count('r.id as resultCount')
         .select('r.assayId')
@@ -343,7 +324,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         .clone()
         .whereNotNull('r.assayId')
         .whereNotNull('r.resultCategory1')
-        .modify(queryBuilder => excludeResultsIfNeeded(queryBuilder, modifyToExcludeTests))
         .groupBy('r.assayId', 'r.resultCategory1')
         .count('r.id as resultCount')
         .select('r.assayId', 'r.resultCategory1')
@@ -384,7 +364,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         .whereNotNull('r.assayId')
         .whereNotNull('r.resultCategory1')
         .whereNotNull('r.resultCategory2')
-        .modify(queryBuilder => excludeResultsIfNeeded(queryBuilder, modifyToExcludeTests))
         .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
         .count('r.id as resultCount')
         .select('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
@@ -431,7 +410,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         .clone()
         .whereNotNull('r.assayId')
         .whereNotNull('r.resultCategory1')
-        .modify(queryBuilder => excludeResultsIfNeeded(queryBuilder, modifyToExcludeTests))
         .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
         .count('r.id as resultCount')
         .modify(qb => {

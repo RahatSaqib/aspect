@@ -68,6 +68,10 @@ const sampleStatusState = [
   { id: 'SAMPLE_STATUS_UNKNOWN', backgroundColor: 'mute', label: 'Unknown', i18nKey: 'sample_status_unknown' },
 ]
 
+const deliverableResultWorkflowStatuses = ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged']
+
+const setDeliveredResultWorkflowStatuses = ['Deliverable']
+
 module.exports = {
   ACKNOWLEDGED,
   MONTHS_HISTORY_TO_LOOK_UP,
@@ -77,4 +81,6 @@ module.exports = {
   TRANSFERRED,
   assayAvatarColorsIcon,
   sampleStatusState,
+  deliverableResultWorkflowStatuses,
+  setDeliveredResultWorkflowStatuses,
 }

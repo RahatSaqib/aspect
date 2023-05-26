@@ -8,8 +8,8 @@ import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages } from '../../../../../messages'
 import HivResultsGraphMain from '../../../../../oldPages/dashboard/Graphs/HivResultsGraph/HivResultsGraph.Main'
-import HivResultsGraphSide from '../../../../../oldPages/dashboard/Graphs/HivResultsGraph/HivResultsGraph.Side'
 import PkPage from '../../../components/PkPage'
+import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
 const endPointParams = [
@@ -18,7 +18,9 @@ const endPointParams = [
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
-  { flags: 'GET_TOTAL_RESULTS' },
+  { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
+  { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
+  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
 const HivGraphPage = () => {
@@ -29,7 +31,7 @@ const HivGraphPage = () => {
   const { data, isLoading } = useQuery(
     ['hivByCategory1Monthly', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
 
   return (
@@ -53,11 +55,12 @@ const HivGraphPage = () => {
             assaysFromState={assays}
             showLabel={showLabel}
           />
-          <HivResultsGraphSide
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
+          <TripleCardSide
+            data={[
+              { label: formatMessage(messages.testPerYear), value: 123 },
+              { label: formatMessage(messages.testPerMonth), value: 456 },
+              { label: formatMessage(messages.testPerDay), value: 799 },
+            ]}
           />
         </Grid>
       )}

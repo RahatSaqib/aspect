@@ -453,15 +453,16 @@ describe('Entries helpers', () => {
 
   describe('transformTreatmentStatus', () => {
     it('should transform treatment status correctly', () => {
+      const changedOn = '2023-05-10T19:25:56.000Z'
       const expectedOutput = {
-        changedOn: '2023-05-10T19:25:56.000Z',
+        changedOn,
         resultId: 558,
         name: 'On Treatment',
         externalId: 'OnTreatment',
         i18nKey: 'ResultTreatmentStatusOnTreatment',
         visible: 1,
         severity: 'success',
-        daysInCurrentStatus: differenceInDays(new Date(), new Date('2023-05-10T19:25:56.000Z')),
+        daysInCurrentStatus: differenceInDays(new Date(), new Date(changedOn)),
       }
 
       const result = transformTreatmentStatus(data558, followUp558)

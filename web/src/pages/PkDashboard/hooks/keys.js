@@ -1,0 +1,4 @@
+const RESULT_KEY = 'RESULT'
+const RESULT_OVERVIEW_ENDPOINT = '/result/overview'
+
+export { RESULT_KEY, RESULT_OVERVIEW_ENDPOINT }

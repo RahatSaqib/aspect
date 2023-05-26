@@ -1,8 +1,6 @@
 const subDays = require('date-fns/subDays')
-
 const _ = require('lodash')
 
-const strategies = require('../strategies')
 const { knex, filterDateRangeParams, query, filterParams, sortPageParams } = require('../../db')
 const {
   INVENTORY_ITEM_SELECT,
@@ -11,17 +9,43 @@ const {
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
   INVENTORY_LOG_LIST,
   INVENTORY_LOG_SORT_FIELDS,
+  INVENTORY_TRANSFER,
   INVENTORY_ITEM_LOT_SELECT_LIST_FIELDS,
   CONCATENATED_ID,
   INVENTORY_ITEM_SORT_FIELDS,
+  STOCK_LEFT_FILTER_FIELDS,
+  SUPPLY_IN_STOCK_FIELDS,
 } = require('./querySelectors')
 const { addConstraints } = require('../../auth/constraints')
+const {
+  getOffsetFromIsoDateString,
+  getDateTimeProjectionInUserTimeZone,
+  parseDateOrDefault,
+} = require('../../shared/date')
+const consumableStrategyModifier = require('./consumableStrategyModifier')
 
+// ----------------------------------------------------------------------------------
 async function getConsumableStrategy(consumableId) {
-  const { strategy } = await knex('Consumable').where({ id: consumableId }).first('strategy')
-  return strategies[strategy]
+  let { strategy } = await knex('Consumable').where({ id: consumableId }).first('strategy')
+  strategy = _.trim(strategy)
+  const isLookingAsArray = _.startsWith(strategy, '[') && _.endsWith(strategy, ']')
+  const strategyJson = isLookingAsArray ? JSON.parse(strategy) : [strategy]
+  const consumableStrategy = _.reduce(
+    strategyJson,
+    (acc, name) => {
+      const handler = consumableStrategyModifier[name]
+      if (handler) {
+        acc = [...acc, { name, handler }]
+      }
+      return acc
+    },
+    // {}
+    []
+  )
+  return consumableStrategy
 }
 
+// ----------------------------------------------------------------------------------
 function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
   const matchingInventoryItemsQuery = knex('InventoryItem as ii')
     .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
@@ -45,6 +69,7 @@ function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
   return matchingInventoryItemsQuery
 }
 
+// ----------------------------------------------------------------------------------
 function getInventoryItemsRawQuery() {
   const fldExpiresOn = `DATE_FORMAT(IFNULL(ii.expiresOn, NOW()), '%Y-%m-%d')`
   const fldQuantity = `CAST(IFNULL(ii.quantityOnHand, 0) AS CHAR(10))`
@@ -64,6 +89,7 @@ function getInventoryItemsRawQuery() {
   )`
 }
 
+// ----------------------------------------------------------------------------------
 function getInventorySitesQuery(constraints, request) {
   const inventoryItemsRaw = getInventoryItemsRawQuery()
 
@@ -144,18 +170,24 @@ function getInventorySitesQuery(constraints, request) {
     ])
 }
 
+// ----------------------------------------------------------------------------------
 async function findInventoryItem(siteId, consumableId, expiresOn, lotNumber, inTransitFromSiteId) {
   const matchingInventoryItemsQuery = baseInventoryQuery(siteId, consumableId, inTransitFromSiteId)
-  const matchingStrategy = await getConsumableStrategy(consumableId)
+  const consumableStrategy = await getConsumableStrategy(consumableId)
 
-  if (matchingStrategy) {
-    matchingStrategy(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+  if (consumableStrategy) {
+    consumableStrategy.forEach(({ handler }) => {
+      handler(matchingInventoryItemsQuery, { lotNumber, expiresOn })
+    })
   }
 
-  const matchingInventoryItems = await matchingInventoryItemsQuery.first(INVENTORY_ITEM_SELECT)
-
-  return matchingInventoryItems
+  const matchingInventoryItem = await matchingInventoryItemsQuery
+    .orderBy('ii.quantityOnHand', 'desc')
+    .first(INVENTORY_ITEM_SELECT)
+  return matchingInventoryItem
 }
+
+// ----------------------------------------------------------------------------------
 const getInventoryLogBaseQuery = (knex, dataConstraints) =>
   knex('InventoryLog as il')
     .innerJoin('Consumable as c', 'il.consumableId', 'c.id')
@@ -174,6 +206,8 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
       },
       { displayResult: 'all' }
     )
+
+// ----------------------------------------------------------------------------------
 async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
   if (_.isNil(query.maxDate)) {
     query.maxDate = new Date()
@@ -211,6 +245,48 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
   return { data, total }
 }
 
+// ----------------------------------------------------------------------------------
+async function getInventoryTransfer(query, dataConstraints) {
+  const { minDate = subDays(new Date(query.maxDate), 30), maxDate = new Date() } = query
+  const offset = getOffsetFromIsoDateString(maxDate)
+
+  const inventoryTransferQuery = knex('InventoryTransfer as it')
+    .innerJoin('InventoryLog as oil', 'it.outcomeInventoryLogId', 'oil.id')
+    .leftJoin('InventoryLog as iil', 'it.incomeInventoryLogId', 'iil.id')
+    .innerJoin('Consumable as c', 'oil.consumableId', 'c.id')
+    .innerJoin('Site as originSite', 'oil.siteId', 'originSite.id')
+    .leftJoin('Site as destinationSite', 'iil.siteId', 'destinationSite.id')
+    .innerJoin('Geography as g', 'originSite.geographyId', 'g.id')
+    .modify(addConstraints, dataConstraints, {
+      site: 'originSite',
+      geography: 'g',
+    })
+    .modify(filterDateRangeParams, { minDate, maxDate }, 'oil.createdOn')
+    .modify(filterParams, query, {
+      originSiteName: 'originSite.name',
+      destinationSiteName: 'destinationSite.name',
+      consumableName: 'c.name',
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+    })
+
+  const { total } = await inventoryTransferQuery.clone().count('it.id as total').first()
+
+  const querySelector = {
+    ...INVENTORY_TRANSFER,
+    sentOn: getDateTimeProjectionInUserTimeZone(knex, 'oil.createdOn', offset),
+    receivedOn: getDateTimeProjectionInUserTimeZone(knex, 'iil.createdOn', offset),
+    expirationDate: getDateTimeProjectionInUserTimeZone(knex, 'oil.expiresOn', offset),
+  }
+
+  const data = await inventoryTransferQuery
+    .select(querySelector)
+    .modify(sortPageParams, query, 'it.createdOn', INVENTORY_TRANSFER)
+  return { data, total }
+}
+
+// ----------------------------------------------------------------------------------
 function getInventoryLots(request, dataConstraints) {
   const inventoryItemsQuery = query('Search Inventory Lots')
     .from('Site as s')
@@ -253,6 +329,7 @@ function getInventoryLots(request, dataConstraints) {
   return inventoryItemsQuery
 }
 
+// ----------------------------------------------------------------------------------
 async function getInventoryByLot(request, requestQuery, dataConstraints) {
   const inventoryQuery = getInventoryLots(request, dataConstraints)
 
@@ -266,6 +343,7 @@ async function getInventoryByLot(request, requestQuery, dataConstraints) {
   return { total, data }
 }
 
+// ----------------------------------------------------------------------------------
 function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range, columns = '*') {
   const inventoryQuery = getInventorySitesQuery(dataConstraints, request)
     .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
@@ -291,6 +369,7 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     .select(columns)
 }
 
+// ----------------------------------------------------------------------------------
 async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
   let inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range)
 
@@ -303,8 +382,361 @@ async function getInventoryBySitesAndConsumable(request, dataConstraints, range)
 
   return { data: inventorySites, total }
 }
+
+// ----------------------------------------------------------------------------------
+function getInventoryItem(inventoryItemId) {
+  return query('Get Inventory Item')
+    .from('InventoryItem as ii')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .where('ii.id', inventoryItemId)
+    .first(INVENTORY_ITEM_SELECT)
+}
+
+// ----------------------------------------------------------------------------------
+async function getInventoryItems(inventoryItemIds) {
+  if (_.isEmpty(inventoryItemIds)) {
+    return Promise.resolve([])
+  }
+  return query('Get Inventory Item')
+    .from('InventoryItem as ii')
+    .innerJoin('Consumable as c', 'ii.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('Site as itfs', 'ii.inTransitFromSiteId', 'itfs.id')
+    .whereIn('ii.id', inventoryItemIds)
+    .select(INVENTORY_ITEM_SELECT)
+}
+
+// ----------------------------------------------------------------------------------
+async function updateInventoryItem(knex, inventoryItemId, inventoryItemValues) {
+  const updateValues = {}
+  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
+    updateValues.expiresOn = inventoryItemValues.expiresOn ? parseDateOrDefault(inventoryItemValues.expiresOn) : null
+  }
+  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
+    updateValues.lotNumber = inventoryItemValues.lotNumber
+  }
+  if (typeof inventoryItemValues.siteId !== 'undefined') {
+    updateValues.siteId = inventoryItemValues.siteId
+  }
+  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
+    updateValues.quantityOnHand = inventoryItemValues.quantityOnHand
+  }
+  updateValues.updatedOn = new Date()
+  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
+    updateValues.updatedBy = inventoryItemValues.updatedBy
+  }
+
+  return knex('InventoryItem').where('id', inventoryItemId).update(updateValues)
+}
+
+// ----------------------------------------------------------------------------------
+async function insertInventoryItem(knex, inventoryItemValues) {
+  const insertValues = {}
+  if (typeof inventoryItemValues.consumableId !== 'undefined') {
+    insertValues.consumableId = inventoryItemValues.consumableId
+  }
+  if (typeof inventoryItemValues.inTransitFromSiteId !== 'undefined') {
+    insertValues.inTransitFromSiteId = inventoryItemValues.inTransitFromSiteId
+  }
+  if (typeof inventoryItemValues.siteId !== 'undefined') {
+    insertValues.siteId = inventoryItemValues.siteId
+  }
+  if (typeof inventoryItemValues.lotNumber !== 'undefined') {
+    insertValues.lotNumber = inventoryItemValues.lotNumber
+  }
+  if (typeof inventoryItemValues.expiresOn !== 'undefined') {
+    insertValues.expiresOn = inventoryItemValues.expiresOn ? parseDateOrDefault(inventoryItemValues.expiresOn) : null
+  }
+  if (typeof inventoryItemValues.quantityOnHand !== 'undefined') {
+    insertValues.quantityOnHand = inventoryItemValues.quantityOnHand
+  }
+  if (typeof inventoryItemValues.updatedOn !== 'undefined') {
+    insertValues.updatedOn = inventoryItemValues.updatedOn
+  }
+  if (typeof inventoryItemValues.updatedBy !== 'undefined') {
+    insertValues.updatedBy = inventoryItemValues.updatedBy
+  }
+  if (typeof inventoryItemValues.createdOn !== 'undefined') {
+    insertValues.createdOn = inventoryItemValues.createdOn
+  }
+  if (typeof inventoryItemValues.createdBy !== 'undefined') {
+    insertValues.createdBy = inventoryItemValues.createdBy
+  }
+  const newInventoryItem = await knex('InventoryItem').insert(insertValues)
+  return newInventoryItem
+}
+
+// ----------------------------------------------------------------------------------
+async function logInventoryChange({
+  knex,
+  inventoryItemId,
+  consumableId,
+  siteId,
+  referencedSiteId,
+  consumableReasonId,
+  resultId,
+  lotNumber,
+  expiresOn,
+  quantity,
+  operation,
+  notes,
+  adjustedFrom,
+  adjustedTo,
+  createdOn,
+  createdBy,
+  isAutomatic,
+  effectiveDate,
+}) {
+  const [id] = await knex('InventoryLog').insert({
+    inventoryItemId,
+    consumableId,
+    siteId,
+    referencedSiteId,
+    consumableReasonId,
+    resultId,
+    lotNumber,
+    expiresOn: parseDateOrDefault(expiresOn) || null,
+    quantity,
+    operation,
+    notes,
+    adjustedFrom,
+    adjustedTo,
+    createdOn,
+    createdBy,
+    isAutomatic,
+    effectiveDate,
+  })
+
+  return id
+}
+
+// ----------------------------------------------------------------------------------
+async function createInventoryTransfer(knex, outcomeInventoryLogId, tempInventoryItemId) {
+  const now = new Date()
+  await knex('InventoryTransfer').insert({
+    outcomeInventoryLogId,
+    tempInventoryItemId,
+    createdOn: now,
+    updatedOn: now,
+  })
+}
+
+// ----------------------------------------------------------------------------------
+async function updateInventoryTransfer(knex, tempInventoryItemId, incomeInventoryLogId) {
+  const now = new Date()
+  await knex('InventoryTransfer')
+    .update({
+      tempInventoryItemId: null,
+      incomeInventoryLogId,
+      updatedOn: now,
+    })
+    .where({ tempInventoryItemId })
+}
+
+// ----------------------------------------------------------------------------------
+/**
+ * Returns base knex query (no async/await!) with prepared/precalculated data for
+ * inventories
+ * @param {*} request
+ * @param {*} dataConstraints
+ */
+function getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(request, dataConstraints) {
+  const baseInventoryItemsBySiteGeography = query(
+    'Join Consumable with Inventory Items, Site Details, and Geography Details'
+  )
+    .from('Consumable as c')
+    .innerJoin('InventoryItem as ii', 'c.id', 'ii.consumableId')
+    .innerJoin('Site as s', 'ii.siteId', 's.id')
+    .innerJoin('ConsumableAssay as cona', 'cona.consumableId', 'c.id')
+    .innerJoin('Assay as asa', 'asa.id', 'cona.assayId')
+    .innerJoin('DeviceType as dt', 'dt.id', 'asa.deviceTypeId')
+    .innerJoin(
+      function () {
+        this.select('d.*')
+          .from('Device as d')
+          .innerJoin('Site as si', 'si.id', 'd.siteId')
+          .innerJoin('DeviceType as det', 'det.id', 'd.deviceTypeId')
+          .groupBy('d.siteId', 'd.deviceTypeId')
+          .as('DistTable')
+      },
+      function () {
+        this.on('DistTable.siteId', 's.id').andOn('DistTable.deviceTypeId', 'dt.id')
+      }
+    )
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('Country as co', 'g.countryId', 'co.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    // dailyRate
+    .leftOuterJoin('FactInventoryConsumptionRate as rate1', function () {
+      this.on('rate1.siteId', 's.id').andOn('rate1.consumableId', 'c.id').andOn('rate1.days', 1)
+    })
+    .modify(filterParams, request.query, {
+      ...INVENTORY_ITEM_FILTER_FIELDS,
+      hasStock: knex.raw('ii.quantityOnHand <> 0'),
+    })
+    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
+    .modify(addConstraints, dataConstraints, {
+      ...INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
+      device: 'DistTable',
+    })
+    .select(
+      'c.id as consumableId',
+      'c.name as consumableName',
+      's.id as siteId',
+      'ii.quantityOnHand',
+      knex.raw('CASE WHEN ii.quantityOnHand IS NOT NULL THEN ii.expiresOn ELSE NULL END as expirationDate'),
+      // expiresInDays - when inventory expires, in days
+      knex.raw(`
+        CASE
+        WHEN ii.quantityOnHand IS NULL THEN NULL
+        ELSE CAST(GREATEST(DATEDIFF(ii.expiresOn, NOW()), 0) AS SIGNED INTEGER)
+        END AS expiresInDays
+      `),
+      // daily consumption rate
+      knex.raw('CAST(rate1.rate AS DECIMAL(10, 6)) AS dailyRate'),
+      // lastsInDays - how long the 'quantityOnHand' lasts, in days
+      knex.raw(`
+        CASE
+        WHEN IFNULL(ii.quantityOnHand,0) > 0 and IFNULL(rate1.rate, 0) > 0 THEN CAST(ii.quantityOnHand / rate1.rate AS SIGNED)
+        ELSE NULL
+        END AS lastsInDays
+      `)
+    )
+    .union([
+      query('Join Consumable with Sites which does not have inventories')
+        .from('Consumable as c')
+        .join('Site as s')
+        .innerJoin('ConsumableAssay as cona', 'cona.consumableId', 'c.id')
+        .innerJoin('Assay as asa', 'asa.id', 'cona.assayId')
+        .innerJoin('DeviceType as dt', 'dt.id', 'asa.deviceTypeId')
+        .innerJoin(
+          function () {
+            this.select('d.*')
+              .from('Device as d')
+              .innerJoin('Site as si', 'si.id', 'd.siteId')
+              .innerJoin('DeviceType as det', 'det.id', 'd.deviceTypeId')
+              .groupBy('d.siteId', 'd.deviceTypeId')
+              .as('DistTable')
+          },
+          function () {
+            this.on('DistTable.siteId', 's.id').andOn('DistTable.deviceTypeId', 'dt.id')
+          }
+        )
+        .leftOuterJoin('InventoryItem as ii', function () {
+          this.on('c.id', 'ii.consumableId').andOn('s.id', 'ii.siteId')
+        })
+        .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+        .leftOuterJoin('Country as co', 'g.countryId', 'co.id')
+        .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+        .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+        .whereNull('ii.id') // means site doesn't have inventory items
+        .modify(filterParams, request.query, {
+          ...INVENTORY_ITEM_FILTER_FIELDS,
+          hasStock: knex.raw('ii.quantityOnHand <> 0'),
+        })
+        .modify(addConstraints, dataConstraints, {
+          ...INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
+          assay: 'asa',
+          device: 'DistTable',
+        })
+        .select(
+          'c.id as consumableId',
+          'c.name as consumableName',
+          's.id as siteId',
+          knex.raw('null as quantityOnHand'),
+          knex.raw('null as expirationDate'),
+          knex.raw('null as expiresInDays'),
+          knex.raw('null as dailyRate'),
+          knex.raw('null as lastsInDays')
+        ),
+    ])
+  // -----------------
+  // add couple of calculated fields - daysUnexpired, wasted
+  const baseWithCalculatedFields = knex.from(baseInventoryItemsBySiteGeography.as('t1')).select(
+    't1.*',
+    knex.raw(`
+      CASE
+        WHEN quantityOnHand IS NULL THEN NULL
+        WHEN quantityOnHand <= 0 THEN 0
+        WHEN expiresInDays > lastsInDays OR expirationDate IS NULL OR dailyRate IS NULL
+          THEN lastsInDays
+        ELSE expiresInDays
+      END AS daysUnexpired
+      `),
+    knex.raw(`
+      CASE
+        WHEN quantityOnHand IS NULL THEN NULL
+        WHEN quantityOnHand <= 0 THEN 0
+        WHEN expiresInDays < lastsInDays AND expirationDate IS NOT NULL
+          THEN
+            CASE
+              WHEN expirationDate > NOW() THEN CAST(dailyRate * (lastsInDays - expiresInDays) AS SIGNED)
+              ELSE quantityOnHand
+            END
+        ELSE 0
+      END AS wasted
+      `)
+  )
+  return baseWithCalculatedFields
+}
+
+// ----------------------------------------------------------------------------------
+function getSupplyInStockBySiteAndConsumableBase(request, dataConstraints) {
+  // group by siteId and consumableId, and return different counts
+  const baseWithCalculatedFields = getInventoryItemsBySiteGeographyWithCalculatedFieldsBase(request, dataConstraints)
+  const supplyInStockBase = knex
+    .from(baseWithCalculatedFields.as('t2'))
+    .groupBy(['consumableId', 'siteId'])
+    .select([...SUPPLY_IN_STOCK_FIELDS, knex.raw('MAX(daysUnexpired) as stockLeft'), 'siteId'])
+  return supplyInStockBase
+}
+
+// ----------------------------------------------------------------------------------
+function filteredInventoryItemsBase(request, dataConstraints) {
+  const supplyInStockBase = getSupplyInStockBySiteAndConsumableBase(request, dataConstraints)
+
+  const inventoryItemsQuery = query('Search Inventory Items')
+    .from(supplyInStockBase.as('stock'))
+    .innerJoin('Site as s', 'stock.siteId', 's.id')
+    .innerJoin('Consumable as c', 'stock.consumableId', 'c.id')
+    .innerJoin('Unit as u', 'c.unit', 'u.id')
+    .leftOuterJoin('FactInventoryConsumptionRate as ficr', builder => {
+      builder.on('ficr.siteId', 's.id').andOn('ficr.consumableId', 'c.id').andOn('ficr.days', 1)
+    })
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as co', 'g.countryId', 'co.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .modify(filterDateRangeParams, request.query, 'ii.expiresOn')
+    .modify(filterParams, request.query, {
+      ...INVENTORY_ITEM_FILTER_FIELDS,
+      hasStock: knex.raw('ii.quantityOnHand <> 0'),
+      ...STOCK_LEFT_FILTER_FIELDS,
+    })
+    .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
+
+  return inventoryItemsQuery
+}
+
 module.exports = {
   findInventoryItem,
+  updateInventoryItem,
+  insertInventoryItem,
+  getInventoryItem,
+  getInventoryItems,
   getInventorySitesQuery,
   getInventoryLogBaseQuery,
   getInventoryLog,
@@ -312,4 +744,11 @@ module.exports = {
   getInventoryByLot,
   getInventoryBySitesAndConsumable,
   getGeneXpertInventoryBySitesAndConsumableQuery,
+  logInventoryChange,
+  getConsumableStrategy,
+  getInventoryItemsBySiteGeographyWithCalculatedFieldsBase,
+  filteredInventoryItemsBase,
+  getInventoryTransfer,
+  createInventoryTransfer,
+  updateInventoryTransfer,
 }

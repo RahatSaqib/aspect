@@ -1,6 +1,5 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const crypto = require('crypto')
 
 const { isJson, deepMerge } = require('../shared/json')
 const {
@@ -13,7 +12,8 @@ const {
 const { convertStringToFloat } = require('../shared/string')
 
 const { getDevice } = require('../device/service')
-const inventory = require('../inventory/service')
+const inventoryUtils = require('../inventory/common/logic')
+const { mergeResultWithPayload } = require('../result/common/logic')
 
 // ----------------------------------------------------------
 async function getExistingResult(knex, payload, deviceId) {
@@ -346,44 +346,6 @@ async function getSiteAdAssays(knex, payload, existingResult, deviceId) {
 }
 
 // ----------------------------------------------------------
-function sanitizeResultData(obj) {
-  const names = _.keys(obj)
-  // sort all props by name
-  names.sort()
-  const objSortedByPropNames = _.reduce(
-    names,
-    (acc, propName) => {
-      // remove all `date` props because they differ because of timezone shifts
-      if (['testEndedOn', 'testStartedOn', 'messageSentOn', 'cartridgeExpirationDate'].includes(propName)) {
-        return acc
-      }
-      let value = obj[propName]
-      if (_.isPlainObject(value)) {
-        value = sanitizeResultData(value)
-      } else if (_.isArray(value)) {
-        value = _.map(value, item => {
-          if (_.isPlainObject(item)) {
-            return sanitizeResultData(item)
-          }
-          return item
-        })
-      }
-      acc[propName] = value
-      return acc
-    },
-    {}
-  )
-  return objSortedByPropNames
-}
-
-// ----------------------------------------------------------
-function getResultDataHash(obj) {
-  const objSanitized = sanitizeResultData(obj)
-  const objHash = crypto.createHash('md5').update(JSON.stringify(objSanitized)).digest('hex')
-  return objHash
-}
-
-// ----------------------------------------------------------
 async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId = null } = {}) {
   // Look up existing result matching external id if specified
   const existingResult = await getExistingResult(knex, payload, deviceId)
@@ -433,23 +395,10 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   ;({ sampleId } = existingSampleDetails)
 
   //
-  const existingResultDataString = _.get(existingResult, 'resultData', null)
-  const existingResultDataHash = _.get(existingResult, 'resultDataHash', null)
-  const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}
-  const resultData = payload.data ? deepMerge({ ...existingResultData }, payload.data) : existingResultData
-
-  /**
-   * get hash of new resultData and if it is the same as already saved `resultDataHash` then
-   * skip ResultUpdated notification because we already processed it
-   */
-  const resultDataHash = payload.data ? getResultDataHash(resultData) : null
-  const shouldTriggerResultNotification =
-    // send notification if Result.resultData is null
-    !existingResultDataString ||
-    // send notification if Result.resultDataHash is null
-    !existingResultDataHash ||
-    // send notification if Result.resultDataHash is NOT equal new resultDataHash from payload
-    (!!resultDataHash && existingResultDataHash !== resultDataHash)
+  const { resultData, resultDataHash, shouldTriggerResultNotification } = mergeResultWithPayload(
+    existingResult,
+    payload
+  )
 
   const existingResultPatientString = _.get(existingResult, 'patientData', null)
   const existingResultPatient = isJson(existingResultPatientString) ? JSON.parse(existingResultPatientString) : {}
@@ -747,25 +696,25 @@ async function getResult(knex, resultId) {
 }
 
 async function postProcessMergeResult(context, result, previousResult) {
-  const { knex, payload, now } = context
+  const { knex, payload, now, messageContext, userId } = context
 
   await addResultWorkflowLogIfChanged(knex, payload, result, previousResult, 'Device API Update', now)
 
   await resolveAutoTagging(knex, result)
   // // TODO ASP-355 consume inventory using a message listener instead
   // // of within plugin/same transaction
-  await consumeInventoryForResult(knex, payload, result)
+  await consumeInventoryForResult(knex, payload, result, messageContext, userId)
   return {}
 }
 
 /**
  * Consumes inventory for the new result
  */
-async function consumeInventoryForResult(knex, payload, result) {
+async function consumeInventoryForResult(knex, payload, result, messageContext, userId) {
   // TODO ASP-355 Move consumeInventory for Result to listener
   // Update Inventory Levels at Site
   const consumablesInResultData = _.isEmpty(payload.consumable) ? [] : payload.consumable
-  await inventory.consumeInventoryForResult(
+  await inventoryUtils.consumeInventoryForResult(
     result.id,
     result.assayId,
     result.siteId,
@@ -773,7 +722,9 @@ async function consumeInventoryForResult(knex, payload, result) {
     result.partnerId,
     result.startedOn,
     result.endedOn,
-    knex
+    knex,
+    messageContext,
+    userId
   )
 }
 

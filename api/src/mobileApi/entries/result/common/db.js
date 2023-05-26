@@ -1,10 +1,10 @@
 const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex } = require('../../../../db')
-const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
+const { MONTHS_HISTORY_TO_LOOK_UP, deliverableResultWorkflowStatuses } = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
 
-const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
+const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const knexQuery = knex('Result as result')
@@ -54,6 +54,7 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
       result: 'result',
     })
     .where('result.updatedOn', '>', minUpdatedOn)
+    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
@@ -98,7 +99,8 @@ const fetchEntriesByUpdatedOnQuery = (query, dataConstraints) => {
       'sampleType.i18nKey as sampleTypeI18nKey',
       'sampleType.name as sampleTypeName',
       'reportableSite.id as reportableSiteId',
-      'reportableSite.name as reportableSiteName'
+      'reportableSite.name as reportableSiteName',
+      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId'
     )
   return knexQuery
 }
@@ -181,7 +183,7 @@ const countAllAwaitingTreatment = dataConstraints => {
 
 module.exports = {
   countAllAwaitingTreatment,
-  fetchEntriesByUpdatedOnQuery,
+  fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
 }

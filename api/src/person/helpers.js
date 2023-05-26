@@ -37,7 +37,6 @@ const sharedContactDetailsPayload = {
   tags: Joi.string().optional().allow('', null),
   partnerId: Joi.number().integer().positive().allow('', null),
   lastPartnerId: Joi.number().integer().positive().allow('', null),
-  canLogIn: customBoolean('Person canLogIn'),
   hidePatientId: customBoolean('Person hidePatientId'),
   hideSampleId: customBoolean('Person hideSampleId'),
   hideNotes: customBoolean('Person hideNotes'),

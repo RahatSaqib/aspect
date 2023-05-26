@@ -1,7 +1,8 @@
 const { get, merge } = require('lodash')
 const Boom = require('@hapi/boom')
-const strategies = require('../inventory/strategies')
 const { postProcessMergeResult } = require('../deviceApi/result')
+// include excludeResult file
+const excludeResult = require('./result/excludeResult')
 
 const DEFAULT_SETTINGS = {
   displayPreferences: {
@@ -52,7 +53,7 @@ const plugins = {
     issueEscalations: {},
     dataCategories: {},
     filtersOpenIssues: require('../issue/filterConditions'),
-    inventoryStrategy: strategies,
+    inventoryStrategy: require('../inventory/strategies'),
     transformInitialPayload,
     getDeviceSeenOn,
     getDevicePingOn,
@@ -67,6 +68,7 @@ const plugins = {
     preProcessGetResult,
     postProcessGetResult,
     preProcessMergeResult,
+    excludeResult,
     transformMergeResultPayload,
     postProcessMergeResult,
     onResultLogged,
@@ -76,7 +78,6 @@ const plugins = {
     onPatientAdded,
     onPatientUpdated,
     getCustomFields,
-    modifyQueryToExcludeResult,
   },
   commcare: {
     transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
@@ -85,10 +86,10 @@ const plugins = {
     settings: require('./partner/Malawi/settings'),
     transformNewDevicePayload: require('./partner/Malawi/transformNewDevicePayload'),
     preProcessGetResult: require('./partner/Malawi/preProcessGetResult'),
+    excludeResult: require('./partner/Malawi/excludeResult'),
     postProcessMergeResult: require('./partner/Malawi/postProcessMergeResult'),
     postProcessUpdateSite: require('./partner/Malawi/postProcessUpdateSite'),
     onResultLogged: require('./partner/Malawi/onResultLogged'),
-    modifyQueryToExcludeResult: require('./partner/Malawi/modifyQueryToExcludeResult'),
   },
   gxconnect: {
     preProcessCreateDevice: require('./deviceType/CepheidGeneXpert/preProcessCreateDevice'),
@@ -154,6 +155,7 @@ const plugins = {
   },
   pakistan: {
     settings: require('./partner/Pakistan/settings'),
+    inventoryStrategy: require('./partner/Pakistan/inventoryStrategy'),
   },
 }
 
@@ -337,13 +339,6 @@ async function transformMergeResultPayload(context) {
  */
 async function getCustomFields() {
   return null
-}
-
-/**
- *
- */
-function modifyQueryToExcludeResult(/* queryBuilder, constraints, aliases */) {
-  // nothing to do by default
 }
 
 /**

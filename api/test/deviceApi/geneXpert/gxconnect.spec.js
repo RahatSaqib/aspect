@@ -2520,7 +2520,6 @@ describe('Device API routes for GxConnect Devices', () => {
             'il.adjustedFrom',
             'il.adjustedTo'
           )
-
         assert.deepEqual(inventoryLog, [
           {
             consumableName,
@@ -2782,6 +2781,7 @@ describe('Device API routes for GxConnect Devices', () => {
           const endedOn = subHours(now, 2)
           const consumableReason = 'Captured'
           const quantity = 13
+          const resultingQuantityOnHand = inventoryItemAtSiteBefore.quantityOnHand + quantity
 
           await server
             .post('/device')
@@ -2797,7 +2797,7 @@ describe('Device API routes for GxConnect Devices', () => {
                         consumableName: inventoryItemAtSiteBefore.consumableName,
                         consumableReasonName: consumableReason,
                         quantity,
-                        resultingQuantityOnHand: inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                        resultingQuantityOnHand,
                         dateChanged: startedOn,
                         expirationDate: inventoryItemAtSiteBefore.expiresOn,
                       },
@@ -2831,7 +2831,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 inTransitFromSiteId: null,
                 lotNumber: null,
                 expiresOn: inventoryItemAtSiteBefore.expiresOn,
-                quantityOnHand: _.max([0, inventoryItemAtSiteBefore.quantityOnHand + quantity]),
+                quantityOnHand: _.max([0, resultingQuantityOnHand]),
               },
             ]
           )
@@ -2891,6 +2891,7 @@ describe('Device API routes for GxConnect Devices', () => {
           const endedOn = subHours(now, 2)
           const consumableReason = 'Captured'
           const quantity = -3
+          const resultingQuantityOnHand = inventoryItemAtSiteBefore.quantityOnHand + quantity
 
           await server
             .post('/device')
@@ -2906,7 +2907,7 @@ describe('Device API routes for GxConnect Devices', () => {
                         consumableName: inventoryItemAtSiteBefore.consumableName,
                         consumableReasonName: consumableReason,
                         quantity,
-                        resultingQuantityOnHand: inventoryItemAtSiteBefore.quantityOnHand + quantity,
+                        resultingQuantityOnHand,
                         dateChanged: startedOn,
                         expirationDate: inventoryItemAtSiteBefore.expiresOn,
                       },
@@ -2941,7 +2942,7 @@ describe('Device API routes for GxConnect Devices', () => {
                 inTransitFromSiteId: null,
                 lotNumber: null,
                 expiresOn: inventoryItemAtSiteBefore.expiresOn,
-                quantityOnHand: _.max([0, inventoryItemAtSiteBefore.quantityOnHand + quantity]),
+                quantityOnHand: _.max([0, resultingQuantityOnHand]),
               },
             ]
           )

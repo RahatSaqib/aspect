@@ -90,6 +90,16 @@ const INVENTORY_LOG_UILIST = {
   notes: knex.raw(`case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`),
 }
 
+const INVENTORY_TRANSFER = {
+  consumableName: 'c.name',
+  consumableNameI18nKey: 'c.i18nKey',
+  lotNumber: 'oil.lotNumber',
+  originSiteName: 'originSite.name',
+  destinationSiteName: 'destinationSite.name',
+  sentQuantity: 'oil.quantity',
+  receivedQuantity: 'iil.quantity',
+}
+
 // Select for inventory grouped by site and consumable
 const INVENTORY_ITEM_SELECT_LIST_FIELDS = [...INVENTORY_COMMON_FIELDS, knex.raw('SUM(ii.quantityOnHand)')]
 
@@ -187,6 +197,7 @@ const SUPPLY_IN_STOCK_FIELDS = [
 module.exports = {
   INVENTORY_LOG_LIST,
   INVENTORY_LOG_UILIST,
+  INVENTORY_TRANSFER,
   INVENTORY_ITEM_SORT_FIELDS,
   INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES,
   INVENTORY_ITEM_SELECT_LIST_FIELDS,

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Button, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isString from 'lodash/isString'
@@ -24,10 +24,13 @@ import { getCustomMessage } from '../../messages/customMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
+import { DirtyListener, FormStatusContext } from './context'
 import messages from './messages'
 
-const ContactDetails = ({ setStep, id }) => {
+const ContactDetails = ({ setStep }) => {
   const navigate = useNavigate()
+
+  const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
   const { countryAbbreviation, countryId } = useAuthState()
   const { formatMessage } = useI18n()
@@ -87,12 +90,18 @@ const ContactDetails = ({ setStep, id }) => {
         <Formik
           initialValues={{
             ...person,
-            email: person.email || '',
-            phone: person.phone?.length > 5 ? person.phone : null,
-            cell: person.cell?.length > 5 ? person.cell : null,
+            email: person?.email || '',
+            title: person?.title || '',
+            email2: person?.email2 || '',
+            stateId: person?.stateId || '',
+            lgaId: person?.lgaId || '',
+            notes: person?.notes || '',
+            zip: person?.zip || '',
+            phone: person?.phone?.length > 5 ? person.phone : null,
+            cell: person?.cell?.length > 5 ? person.cell : null,
           }}
           validationSchema={validationSchema}
-          onSubmit={values => {
+          onSubmit={(values, { resetForm }) => {
             const noField = [
               'country',
               'stateName',
@@ -104,6 +113,7 @@ const ContactDetails = ({ setStep, id }) => {
               'userId',
               'username',
               'userLockedOut',
+              'canLogIn',
             ]
             values.tags = (values.tags || []).join(',')
             noField.map(f => delete values[f])
@@ -112,17 +122,24 @@ const ContactDetails = ({ setStep, id }) => {
                 onSuccess: ({ data }) => {
                   navigate(`/browse/person/${data.id}?add=true`)
                   setStep(1)
+                  resetForm({ values })
                 },
               })
             } else if (id === ACTION.SELF) {
-              updateSelf(values)
+              updateSelf(values, { onSuccess: () => resetForm({ values }) })
             } else {
-              updatePerson(values)
+              updatePerson(values, {
+                onSuccess: () => {
+                  resetForm({ values })
+                  if (isRecentlyAdd) setStep(1)
+                },
+              })
             }
           }}
         >
-          {({ handleSubmit, handleChange, values, errors, isValid }) => (
+          {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
             <form onSubmit={handleSubmit}>
+              <DirtyListener step={0} />
               <Grid container spacing={2}>
                 {/* row0 */}
 
@@ -319,11 +336,15 @@ const ContactDetails = ({ setStep, id }) => {
                 ) : null}
               </Grid>
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button onClick={() => navigate(-1)}>{formatMessage(messages.backToTable)}</Button>
+                <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
                 <Box sx={{ flex: '1 1 auto' }} />
-                <Button type="submit" disabled={!isValid}>
-                  {formatMessage(messages[id === ACTION.ADD ? 'saveAndNext' : 'save'])}
-                </Button>
+                {isRecentlyAdd && !dirty ? (
+                  <Button onClick={() => setStep(1)}>{formatMessage(messages.next)}</Button>
+                ) : dirty || isAdding ? (
+                  <Button disabled={!isValid} type="submit">
+                    {formatMessage(messages[isAdding ? 'saveAndNext' : 'save'])}
+                  </Button>
+                ) : null}
               </Box>
             </form>
           )}

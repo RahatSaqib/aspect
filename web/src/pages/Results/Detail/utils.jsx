@@ -3,6 +3,7 @@ import isArray from 'lodash/isArray'
 import uniqBy from 'lodash/uniqBy'
 import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
+import { validations } from '../../../messages/validations'
 import getFormConfig from './Forms/editConfig'
 import getValidationSchema from './Forms/validation'
 import messages from './messages'
@@ -24,7 +25,7 @@ export const getFormConfigWithData = (intl, isNew, values) => {
     // generate custom rows
     customFields.rows = getRowsForCustomFields(values)
     // generate validations
-    validationSchema = validationSchema.shape(getValidationsForCustomFields(values))
+    validationSchema = validationSchema.shape(getValidationsForCustomFields(values, intl.formatMessage))
   }
 
   const initialValues = getInitialValuesFromFormConfig(formSchema, values)
@@ -88,7 +89,7 @@ function getRowsForCustomFields(values) {
   return rows
 }
 
-function getValidationsForCustomFields(values) {
+function getValidationsForCustomFields(values, formatMessage) {
   const rows = {}
 
   uniqBy(values.customFields, elem => elem.source).forEach(customField => {
@@ -96,6 +97,7 @@ function getValidationsForCustomFields(values) {
       const source = customField.source?.split('.')
       const dataOrigin = source[0]
       const dataField = source[1]
+      let validationRule = Yup.mixed()
 
       if (!Object.keys(rows).includes(dataOrigin)) {
         rows[dataOrigin] = Yup.object({})
@@ -105,20 +107,24 @@ function getValidationsForCustomFields(values) {
         // add validation for select
       } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
         // add validation for text
+        validationRule = Yup.string()
       } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
         const validation =
           customField.validation && customField.validation.length
             ? customField.validation[0]
             : { min: 1, max: 100, errorMessage: '' }
-        rows[dataOrigin] = rows[dataOrigin].shape({
-          [dataField]: Yup.number()
-            .required(validation.errorMessage)
-            .positive()
-            .integer()
-            .min(validation.min || 1, validation.errorMessage)
-            .max(validation.max, validation.errorMessage),
-        })
+        validationRule = Yup.number()
+          .positive()
+          .integer()
+          .min(validation.min || 1, validation.errorMessage)
+          .max(validation.max, validation.errorMessage)
       }
+
+      if (customField.optional === false) {
+        validationRule = validationRule.required(formatMessage(validations.required))
+      }
+
+      rows[dataOrigin] = rows[dataOrigin].shape({ [dataField]: validationRule })
     }
   })
 

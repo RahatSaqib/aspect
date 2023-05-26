@@ -35,7 +35,7 @@ const messages = {
     // summary
     molecularAssay: {
       id: 'p.PkDashboard.molecularAssay',
-      defaultMessage: 'Tests for TB using MTB/Rif assay in current year',
+      defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
     },
     molecularAssay24: { id: 'p.PkDashboard.molecularAssay24', defaultMessage: 'Last 24 hours' },
     TB: { id: 'p.PkDashboard.TB', defaultMessage: 'TB Cases Diagnosed in current year' },
@@ -78,6 +78,10 @@ const messages = {
     mtbXdrTesting: { id: 'p.PkDashboard.mtbXdrTesting', defaultMessage: 'Testing' },
     mtbXdrmtbDetection: { id: 'p.PkDashboard.mtbXdrmtbDetection', defaultMessage: 'MTB Detection' },
     mtbXdrFQResistance: { id: 'p.PkDashboard.mtbXdrFQResistance', defaultMessage: 'FQ Resistance' },
+    mtbXdrTestingDiagnosisTrends: {
+      id: 'p.PkDashboard.mtbXdrTestingDiagnosisTrends',
+      defaultMessage: 'Testing & Diagnosis Trends using MTB/XDR Assay',
+    },
     TCurrent: { id: 'p.PkDashboard.TCurrent', defaultMessage: 'Current Testing' },
     TNationalTrend: { id: 'p.PkDashboard.TNationalTrend', defaultMessage: 'National Testing Trends' },
     TProvincialComparison: {

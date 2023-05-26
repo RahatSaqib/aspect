@@ -116,7 +116,7 @@ async function getCustomFieldsDefinitions() {
   const queryForm = await knex('FormType AS ft')
     .join('FormDefinition as fd', 'fd.formTypeId', 'ft.id')
     .join('FormDefinitionSchema as fschema', 'fd.formDefinitionSchemaId', 'fschema.id')
-    .innerJoin('Disease as d', 'fd.diseaseId', 'd.id')
+    .leftJoin('Disease as d', 'fd.diseaseId', 'd.id')
     .where('fd.partnerId', 1)
     .where('ft.externalId', 'gxConnectForm')
     .distinct(
@@ -155,7 +155,7 @@ function generateStatsResult(fields, res) {
     .map(r => {
       let completionRate = 0
       const currentFields = fields.filter(f => {
-        return f.assayId === r.assayId || (!f.assayId && f.diseaseId === r.diseaseId)
+        return f.assayId === r.assayId || (!f.assayId && (!f.diseaseId || f.diseaseId === r.diseaseId))
       })
       const statsRow = {
         siteId: r.siteId,
@@ -166,7 +166,7 @@ function generateStatsResult(fields, res) {
             const completionCount = r[f.fieldName]
 
             const totalWeight = fields.reduce((acc, cur) => {
-              if (cur.assayId === r.assayId || cur.diseaseId === r.diseaseId) {
+              if ((!cur.assayId && !cur.diseaseId) || cur.assayId === r.assayId || cur.diseaseId === r.diseaseId) {
                 acc += cur.completionWeight
               }
               return acc

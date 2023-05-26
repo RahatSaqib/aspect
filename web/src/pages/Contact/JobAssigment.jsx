@@ -1,7 +1,7 @@
-import React from 'react'
+import React, { useContext } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
-import { useParams } from 'react-router-dom'
+import { useNavigate, useParams } from 'react-router-dom'
 import { object, string } from 'yup'
 import {
   AssaySelect,
@@ -24,13 +24,15 @@ import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
+import { DirtyListener, FormStatusContext } from './context'
 import messages from './messages'
 
-const JobAssigment = ({ setStep, id }) => {
+const JobAssigment = ({ setStep }) => {
+  const { id, isAdding } = useContext(FormStatusContext)
   const { countryAbbreviation, countryId } = useAuthState()
   const { formatMessage } = useI18n()
   const { personId } = useParams()
-
+  const navigate = useNavigate()
   const { isLoading, data: assignment } = usePersonAssignment(personId)
 
   const initialValues = {
@@ -79,6 +81,7 @@ const JobAssigment = ({ setStep, id }) => {
           {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
             <>
               <form onSubmit={handleSubmit}>
+                <DirtyListener step={1} />
                 <Grid container spacing={2}>
                   <Grid item xs={6}>
                     <Grid item xs={12}>
@@ -219,16 +222,16 @@ const JobAssigment = ({ setStep, id }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button onClick={() => setStep(0)}>{formatMessage(messages.back)}</Button>
+                  <Button onClick={() => (isAdding ? setStep(0) : navigate('/browse/person'))}>
+                    {formatMessage(messages[isAdding ? 'back' : 'backToTable'])}
+                  </Button>
                   {dirty ? (
                     <Button type="submit" disabled={!isValid}>
                       {formatMessage(messages.addAssignment)}
                     </Button>
                   ) : null}
                   <Box sx={{ flex: '1 1 auto' }} />
-                  {id === ACTION.ADD ? (
-                    <Button onClick={() => setStep(2)}>{formatMessage(messages.next)}</Button>
-                  ) : null}
+                  {isAdding ? <Button onClick={() => setStep(2)}>{formatMessage(messages.next)}</Button> : null}
                 </Box>
               </form>
             </>

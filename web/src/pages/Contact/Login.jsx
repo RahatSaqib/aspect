@@ -1,10 +1,10 @@
-import React from 'react'
-import { Grid, Box, Button, TextField, FormControlLabel, Checkbox } from '@mui/material'
+import React, { useContext } from 'react'
+import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isEmpty from 'lodash/isEmpty'
 import { useNavigate } from 'react-router-dom'
-import { string, object, ref } from 'yup'
-import { LabeledSwitch, InputPassword } from '../../cleanComponents'
+import { object, ref, string } from 'yup'
+import { InputPassword, LabeledSwitch } from '../../cleanComponents'
 import Loading from '../../components/Loading'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePersonLogin from '../../hooks/person/useUpdatePersonLogin'
@@ -12,16 +12,18 @@ import useI18n from '../../hooks/useI18n'
 import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
+import { DirtyListener, FormStatusContext } from './context'
 import messages from './messages'
 
-const Login = ({ setStep, id }) => {
+const Login = ({ setStep }) => {
+  const { id, isAdding } = useContext(FormStatusContext)
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
   const { userId: loggedInUserId } = useAuthState()
 
   const initialValues = {
-    canLogIn: person?.canLogIn,
+    canLogIn: id === ACTION.SELF ? 1 : person?.canLogIn,
     username: person?.username || '',
     newPassword: '',
     confirmNewPassword: '',
@@ -35,10 +37,11 @@ const Login = ({ setStep, id }) => {
     .matches(/\d/, formatMessage(messages.passwordConditionsShouldFulfilled))
 
   const validationSchema = object({
-    canLogIn: id === ACTION.SELF ? string().nullable() : string().required(formatMessage(messages.required)),
     username: string().required(formatMessage(messages.usernameRequired)),
     newPassword:
-      id === ACTION.ADD ? pwdValidation.required(formatMessage(messages.confirmNewPasswordRequired)) : pwdValidation,
+      isAdding || !person?.username
+        ? pwdValidation.required(formatMessage(messages.confirmNewPasswordRequired))
+        : pwdValidation,
     confirmNewPassword: string().when('newPassword', {
       is: val => !isEmpty(val),
       then: pwdValidation
@@ -65,16 +68,18 @@ const Login = ({ setStep, id }) => {
         <Formik
           initialValues={initialValues}
           validationSchema={validationSchema}
-          onSubmit={values => {
+          onSubmit={(values, { resetForm }) => {
             updateLogin(
               {
+                canLogIn: !!values.canLogIn,
                 newUsername: values.username,
                 newPassword: values.newPassword,
                 userLockedOut: values.userLockedOut === 1,
               },
               {
                 onSuccess: () => {
-                  if (id === ACTION.ADD) {
+                  resetForm({ values })
+                  if (isAdding) {
                     setStep(2)
                   }
                 },
@@ -82,39 +87,34 @@ const Login = ({ setStep, id }) => {
             )
           }}
         >
-          {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
+          {({ handleSubmit, handleChange, values: { canLogIn, ...values }, errors, isValid, dirty }) => (
             <>
+              <DirtyListener step={2} />
               <form onSubmit={handleSubmit}>
                 <Grid container spacing={2}>
                   <Grid item xs={12}>
-                    <FormControlLabel
-                      control={
-                        <Checkbox
-                          id="canLogIn"
-                          name="canLogIn"
-                          checked={values.canLogIn === 1}
-                          onChange={e => {
-                            const { checked } = e.target
-                            if (!checked)
-                              updateLogin({
-                                newUsername: values.username,
-                                newPassword: values.newPassword,
-                                userLockedOut: true,
-                              })
-                            handleChange({ target: { name: 'canLogIn', value: checked ? 1 : 0 } })
-                          }}
-                          error={errors.canLogIn ? errors.canLogIn : undefined}
-                          helperText={errors.canLogIn}
-                        />
-                      }
-                      label={`${formatMessage(messages.userCanAlsoLogIn)} *`}
-                    />
+                    {id !== ACTION.SELF ? (
+                      <FormControlLabel
+                        control={
+                          <Checkbox
+                            id="canLogIn"
+                            name="canLogIn"
+                            checked={canLogIn === 1}
+                            onChange={e => {
+                              const { checked } = e.target
+                              handleChange({ target: { name: 'canLogIn', value: checked ? 1 : 0 } })
+                            }}
+                          />
+                        }
+                        label={`${formatMessage(messages.userCanAlsoLogIn)} *`}
+                      />
+                    ) : null}
                   </Grid>
                   <Grid item xs={6}>
                     <TextField
                       id="username"
                       name="username"
-                      disabled={values.canLogIn !== 1}
+                      disabled={canLogIn !== 1}
                       label={`${formatMessage(messages.username)} *`}
                       value={values.username}
                       onChange={handleChange}
@@ -127,7 +127,7 @@ const Login = ({ setStep, id }) => {
                       <LabeledSwitch
                         id="userLockedOut"
                         name="userLockedOut"
-                        disabled={values.canLogIn !== 1}
+                        disabled={canLogIn !== 1}
                         label={`${formatMessage(messages.userLockedOut)} *`}
                         value={values.userLockedOut === 1}
                         onChange={e =>
@@ -144,7 +144,7 @@ const Login = ({ setStep, id }) => {
                     <InputPassword
                       id="newPassword"
                       name="newPassword"
-                      disabled={values.canLogIn !== 1}
+                      disabled={canLogIn !== 1}
                       label={`${formatMessage(messages.newPassword)}`}
                       value={values.newPassword}
                       onChange={handleChange}
@@ -156,7 +156,7 @@ const Login = ({ setStep, id }) => {
                     <InputPassword
                       id="confirmNewPassword"
                       name="confirmNewPassword"
-                      disabled={values.canLogIn !== 1}
+                      disabled={canLogIn !== 1}
                       label={`${formatMessage(messages.confirmNewPassword)}`}
                       value={values.confirmNewPassword}
                       onChange={handleChange}
@@ -166,17 +166,15 @@ const Login = ({ setStep, id }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  {id === ACTION.ADD ? (
-                    <Button onClick={() => setStep(1)}>{formatMessage(messages.back)}</Button>
-                  ) : null}
+                  {isAdding ? <Button onClick={() => setStep(1)}>{formatMessage(messages.back)}</Button> : null}
 
                   <Box sx={{ flex: '1 1 auto' }} />
                   {dirty ? (
                     <Button type="submit" disabled={!isValid}>
-                      {formatMessage(messages.save)}
+                      {formatMessage(messages.save)} {isValid}
                     </Button>
                   ) : (
-                    <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.next)}</Button>
+                    <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
                   )}
                 </Box>
               </form>

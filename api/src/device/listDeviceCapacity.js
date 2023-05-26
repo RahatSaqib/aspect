@@ -9,8 +9,8 @@ module.exports = async function ({ query, auth }) {
     .innerJoin('DeviceType as dt', 'dc.deviceTypeId', 'dt.id')
     .innerJoin('Partner as p', 'dc.partnerId', 'p.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
-    .where({ externalId: deviceTypeId })
-    .select('dc.id', 'dc.name', 'dc.dailyCapacity')
+    .where('dt.externalId', deviceTypeId)
+    .select('dc.id', 'dc.name', 'dc.dailyCapacity', 'dc.modules', 'dc.externalId', 'dc.i18nKey')
 
   return { ok: true, data }
 }
