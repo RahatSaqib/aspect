@@ -11,6 +11,7 @@ const { transformPatientDataBySchema } = require('./transformPatientDataBySchema
 const { transformSampleData } = require('./transformSample')
 const { transformTestInformation } = require('./transformTestInformation')
 const { transformTreatmentStatus } = require('./transformTreatmentStatus')
+const { clinicalResponse } = require('../../../../result/clinicalResponse')
 
 function transFormResultResponse(data, followUps, comments, acknowledgedId) {
   const output = []
