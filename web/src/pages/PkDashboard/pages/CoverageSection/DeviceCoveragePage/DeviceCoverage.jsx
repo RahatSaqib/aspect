@@ -19,7 +19,7 @@ const DeviceCoveragePage = () => {
   ]
 
   return (
-    <PkPage title={formatMessage(messages.coverageTitle)}>
+    <PkPage isMocked title={formatMessage(messages.coverageTitle)}>
       <NestedTable columns={columns} rows={data} hasDetail />
     </PkPage>
   )
