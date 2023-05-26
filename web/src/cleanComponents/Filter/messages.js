@@ -214,6 +214,10 @@ export const messages = {
       id: 'filter.btnGroup.contactEnabledStatus',
       defaultMessage: 'Contact Status: {contactStatus}',
     },
+    all: {
+      id: 'filter.btnGroup.all',
+      defaultMessage: 'All',
+    },
     online: {
       id: 'filter.btnGroup.online',
       defaultMessage: 'Online',

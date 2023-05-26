@@ -428,7 +428,6 @@ const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove }) => {
 const ConnectorStatus = ({ connectorStatus, remove }) => {
   const { formatMessage } = useI18n()
   const status = formatMessage(messages[connectorStatus])
-
   return (
     <Btn
       lbl={formatMessage(messages.withConnectorStatus, { connectorStatus: status })}
