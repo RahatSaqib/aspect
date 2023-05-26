@@ -25,7 +25,7 @@ const baseSampleSchemaResponseValidation = Joi.object().keys({
   originSite: originSite.required().description('The origin site of the sample.'),
   sampleType: sampleType.required().description('The type of the sample.'),
   status: status.required().description('The status of the sample.'),
-  collectedOn: Joi.required().description('The date and time when the sample was collected in ISO 8601 format.'),
+  collectedOn: Joi.allow(null, '').description('The date and time when the sample was collected in ISO 8601 format.'),
   updatedOn: Joi.allow(null, '')
     .optional()
     .description('The date and time when the sample was last updated. Can be null if not updated.'),

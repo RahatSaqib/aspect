@@ -11,7 +11,7 @@ function transformClinicalResponse(data, followUps, acknowledgedId) {
     confirmedOn: isRecorded ? data.resultWorkflowStatusChangedOn : null,
     outcome: outcome?.followUpExternalId ?? null,
     outcomeOccurred: outcome?.updatedOn ?? null,
-    recorded: isRecorded,
+    recorded: isRecorded ?? false,
     treatment: treatment?.followUpExternalId ?? null,
     treatmentStarted: treatment?.updatedOn ?? null,
   }

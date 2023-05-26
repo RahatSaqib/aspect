@@ -58,7 +58,10 @@ const expected347 = [
       backgroundColor: 'purple',
       foregroundColor: 'secondary',
     },
-    clinicalResponse: {},
+    clinicalResponse: {
+      resultId: 347,
+      recorded: false,
+    },
     comments: [],
     followUps: [],
     history: [

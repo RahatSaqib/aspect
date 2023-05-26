@@ -9,7 +9,7 @@ async function registerNewSample(request) {
   const payloadForDb = _.clone(payload)
   const currentlyLoggedInUser = await getUser(request.auth.credentials.name)
   _.set(payloadForDb, 'externalId', payload.externalId)
-  _.set(payloadForDb, 'collectedOn', new Date(payload?.collectedOn))
+  _.set(payloadForDb, 'collectedOn', new Date(payload.collectedOn))
 
   // sampleTypeId is SampleType.sampleTypeSputum hard coded for Nigeria
   _.set(payloadForDb, 'sampleTypeId', 4)
