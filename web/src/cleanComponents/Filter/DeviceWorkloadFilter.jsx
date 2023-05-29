@@ -43,7 +43,6 @@ const DeviceWorkloadFilter = () => {
             label={formatMessage(messages.assay)}
             value={state.singleAssayId}
             onChange={e => setState({ ...state, singleAssayId: e.target.value })}
-            onlyResults
           />
         </Grid>
         {allowed(['device']) ? (

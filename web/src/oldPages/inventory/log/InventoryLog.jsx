@@ -144,19 +144,26 @@ const InventoryLog = () => {
   const intl = useI18n()
   // >>>>>> Structuring data <<<<<<
 
+  const apiFilters = { ...filters }
+
+  if (Object.keys(apiFilters).includes('maxExpirationDate')) {
+    apiFilters.maxExpirationDate = apiFilters.maxExpirationDate.toISOString()
+    apiFilters.minExpirationDate = apiFilters.minExpirationDate.toISOString()
+  }
+
   const {
     isError,
     isLoading,
     data = false,
     error,
   } = useQuery(
-    [INVENTORY_LOG.KEY, { sortCol, sortDir, page: pageAt, size: pageSize, ...filters }],
+    [INVENTORY_LOG.KEY, { sortCol, sortDir, page: pageAt, size: pageSize, ...apiFilters }],
     async () =>
       fetchWrapperForQueries({
         endpoint: INVENTORY_LOG.ENDPOINT,
-        params: { sortCol, sortDir, page: pageAt, size: pageSize, ...filters },
+        params: { sortCol, sortDir, page: pageAt, size: pageSize, ...apiFilters },
       }),
-    { enable: !isEmpty(filters) }
+    { enable: !isEmpty(apiFilters) }
   )
   const sortPage = makeSortPageSelector({
     sortCol: 'createdOn',

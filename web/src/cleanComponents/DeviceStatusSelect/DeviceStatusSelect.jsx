@@ -47,10 +47,7 @@ const DeviceStatusSelect = ({ id, name, label, value, onChange, error, helperTex
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
         endAdornment: (
-          <IconButton
-            sx={{ visibility: value ? 'visible' : 'hidden' }}
-            onClick={() => onChange({ target: { name, value: undefined } })}
-          >
+          <IconButton sx={{ visibility: value ? 'visible' : 'hidden' }} onClick={() => onChange([])}>
             <ClearIcon />
           </IconButton>
         ),
