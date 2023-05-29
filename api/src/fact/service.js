@@ -95,28 +95,39 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
         if (lastResultOn == null) {
           lastResultOn = deviceCreatedOn
         }
-
+        // Signal the DEVICE_OFFLINE action when the device has been in
+        // the Aspect database but has not uploaded data for the amount
+        // of time that the partner expects it to have sent some type of
+        // upload
         if (
+          maxLastDateOffline != null &&
+          deviceCreatedOn < maxLastDateOffline &&
           (!lastPingOn || (!!maxLastDateOffline && lastPingOn <= maxLastDateOffline)) &&
           (!lastSeenOn || (!!maxLastDateOffline && lastSeenOn <= maxLastDateOffline))
         ) {
           // Number of days of "heartbeat" > X days
           context.deviceOffline(id, { lastSeenOn, lastPingOn })
-        } else if (maxLastDateNoResult != null && lastResultOn <= maxLastDateNoResult) {
-          // OR no tests run > Y days
-          context.deviceNoResults(id, { lastResultOn })
-        } else if (
-          maintenance === 1 &&
-          maintenanceDueOn != null &&
-          maxMaintenanceDateNoResult != null &&
-          maintenanceDueOn >= maxMaintenanceDateNoResult
-        ) {
-          // OR inactive - expected back date > Z days
-          context.deviceNoResults(id, { lastResultOn })
-        } else if (maintenance === 1 && maintenanceDueOn != null && now > maintenanceDueOn) {
-          // OR date passes expected back date
-          context.deviceNoResults(id, { lastResultOn })
         }
+        // Only signal a DEVICE_NO_RESULTS action if the device has
+        // been connected before the last result was expected
+        if (maxLastDateNoResult != null && deviceCreatedOn < maxLastDateNoResult) {
+          if (lastResultOn <= maxLastDateNoResult) {
+            // OR no tests run > Y days
+            context.deviceNoResults(id, { lastResultOn })
+          } else if (
+            maintenance === 1 &&
+            maintenanceDueOn != null &&
+            maxMaintenanceDateNoResult != null &&
+            maintenanceDueOn >= maxMaintenanceDateNoResult
+          ) {
+            // OR inactive - expected back date > Z days
+            context.deviceNoResults(id, { lastResultOn })
+          } else if (maintenance === 1 && maintenanceDueOn != null && now > maintenanceDueOn) {
+            // OR date passes expected back date
+            context.deviceNoResults(id, { lastResultOn })
+          }
+        }
+
         return id // for lint
       }
     )
