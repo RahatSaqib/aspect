@@ -707,6 +707,13 @@ describe.skip('Mobile API Result & Sample download routes v4 with available cust
         .set('Authorization', `Bearer ${clinicianAccessToken}`)
         .set('api-version', `4`)
       assertBasicEntriesSchemaAndFollowUps(res)
+      // check if the download is register in the table.
+      const { count: totalResult } = await knex('ResultDownloadLog')
+        .where('resultId', res.body.data[0].id)
+        .count('id as count')
+        .first()
+
+      assert.equal(totalResult, 1)
     })
   })
 })
