@@ -100,6 +100,7 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
         // of time that the partner expects it to have sent some type of
         // upload
         if (
+          maxLastDateOffline != null &&
           deviceCreatedOn < maxLastDateOffline &&
           (!lastPingOn || (!!maxLastDateOffline && lastPingOn <= maxLastDateOffline)) &&
           (!lastSeenOn || (!!maxLastDateOffline && lastSeenOn <= maxLastDateOffline))
@@ -109,8 +110,8 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
         }
         // Only signal a DEVICE_NO_RESULTS action if the device has
         // been connected before the last result was expected
-        if (deviceCreatedOn < maxLastDateNoResult) {
-          if (maxLastDateNoResult != null && lastResultOn <= maxLastDateNoResult) {
+        if (maxLastDateNoResult != null && deviceCreatedOn < maxLastDateNoResult) {
+          if (lastResultOn <= maxLastDateNoResult) {
             // OR no tests run > Y days
             context.deviceNoResults(id, { lastResultOn })
           } else if (
