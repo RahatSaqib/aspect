@@ -3,7 +3,6 @@ const { asyncHandler, validateDateRangeParams } = require('../routes')
 const {
   listDevices,
   showDevice,
-  updateDevice,
   listApprovalTypes,
   listMaintenanceStatuses,
   listDevicesForSelectList,
@@ -27,6 +26,7 @@ const {
   listDevicesBaseRequest,
 } = require('./common/validations')
 const exportWorkload = require('./exportWorkload')
+const { updateDevice } = require('./updateDevice')
 
 const routes = [
   {
