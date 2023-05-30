@@ -18,6 +18,7 @@ const AssaySelect = ({
   deviceTypeId,
   reportGroup,
   onlyResults = false,
+  single = false,
 }) => {
   const { isLoading, data: assayList } = useAssayList()
   const { formatMessage } = useI18n()
@@ -58,7 +59,7 @@ const AssaySelect = ({
       InputProps={{
         endAdornment: (
           <IconButton
-            sx={{ visibility: value ? 'visible' : 'hidden' }}
+            sx={{ visibility: value && !single ? 'visible' : 'hidden' }}
             onClick={() => onChange({ target: { name, value: { id: null, resultCategory2Label: null } } })}
             disabled={disabled}
           >
