@@ -29,10 +29,10 @@ const downloadEntriesResponseValidation = () => {
                 .description('Unique ID of the patient for this entry if available'),
               updatedOn: Joi.date().required().description('When the entry was last updated in the Aspect database'),
               collectedOn: Joi.optional()
-                .allow(null)
+                .allow(null, '')
                 .description('When the entry was last updated in the Aspect database'),
               dbUpdatedOn: Joi.optional()
-                .allow(null)
+                .allow(null, '')
                 .description('When the entry was last updated in the Aspect database'),
             })
             .concat(optionalAssayAvatarResponseValidation)

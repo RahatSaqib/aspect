@@ -9,7 +9,7 @@ async function getNewQuantityOnHand(
   knex,
   inventoryItem,
   operation,
-  _, // not used quantityOnHand
+  quantityOnHandIgnored,
   quantity,
   { resultId, userId } = {}
 ) {

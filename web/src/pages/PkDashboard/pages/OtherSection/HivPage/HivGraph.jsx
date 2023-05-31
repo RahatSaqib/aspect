@@ -57,9 +57,9 @@ const HivGraphPage = () => {
           />
           <TripleCardSide
             data={[
-              { label: formatMessage(messages.testPerYear), value: 123 },
-              { label: formatMessage(messages.testPerMonth), value: 456 },
-              { label: formatMessage(messages.testPerDay), value: 799 },
+              { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
+              { label: formatMessage(messages.testPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
         </Grid>
