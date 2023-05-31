@@ -553,7 +553,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/device/deviceMtbErrors',
+    path: '/device/device-mtb-errors',
     handler: asyncHandler(listDeviceMtbErrors),
     config: {
       description: 'Device list with errors details for 4 levels',
