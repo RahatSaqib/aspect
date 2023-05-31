@@ -6,6 +6,7 @@ import startOfMonth from 'date-fns/startOfMonth'
 import subtractDays from 'date-fns/subDays'
 import isArray from 'lodash/isArray'
 import { useLocation } from 'react-router-dom'
+import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import { useAuthState } from '../AuthProvider'
 
@@ -61,20 +62,29 @@ const getFilters = (urlSearchParams, deviceTypes) => {
 function FilterProvider({ children }) {
   const { pathname, search } = useLocation()
   const [filterState, setFilterState] = useState(defaultFilter)
-  const { user } = useAuthState()
+  const user = useAuthState()
   const { data: deviceTypes } = useDeviceTypeList({ enabled: !!user })
+  const { data: assays } = useAssayList({ enabled: !!user })
 
   useEffect(() => {
     const filters = { ...defaultFilter }
     const searchParams = new URLSearchParams(search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
+
+    // default filter (data based)
+    if (assays?.length) {
+      const mostResultsAssay = assays.filter(a => a.hasResults).sort((a, b) => b.resultCount - a.resultCount)[0]
+
+      if (filters['/browse/device/workload'].singleAssayId === -1) {
+        filters['/browse/device/workload'].singleAssayId = mostResultsAssay?.id
+      }
+    } // url parsing
     if (filters[pathname] && filtersParams !== '') {
       searchParams.delete('filters')
       filters[pathname] = { ...filters[pathname], ...getFilters(filtersParams, deviceTypes) }
-      setFilterState(filters)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+    setFilterState(filters)
+  }, [assays, deviceTypes, pathname, search, user])
 
   return <FilterContext.Provider value={[filterState, setFilterState]}>{children}</FilterContext.Provider>
 }

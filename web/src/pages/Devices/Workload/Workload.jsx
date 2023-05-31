@@ -6,7 +6,6 @@ import { useLocation, useNavigate } from 'react-router'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import DeviceWorkloadFilter from '../../../cleanComponents/Filter/DeviceWorkloadFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
-import useAssayList from '../../../hooks/assay/useAssayList'
 import useI18n from '../../../hooks/useI18n'
 import useWorkload from '../../../hooks/workload/useWorkload'
 import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
@@ -18,7 +17,7 @@ import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgres
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import colMessages from '../../../oldPages/result/list/messages'
 import { useAuthState } from '../../../providers/AuthProvider'
-import { useFilterUpdate, useFilterValues } from '../../../providers/FilterProvider'
+import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import styles from './styles.css'
@@ -45,13 +44,11 @@ const Workload = () => {
   const location = useLocation()
   const { formatMessage } = useI18n()
   const filter = useFilterValues(location.pathname)
-  const [addFilter] = useFilterUpdate()
   const user = useAuthState()
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
   const { isError, isLoading, data = false, error } = useWorkload(filter)
-  const { data: assays } = useAssayList()
 
   if (isError) throw new Error(error)
 
@@ -64,16 +61,6 @@ const Workload = () => {
       setDownload({ fileFormat: '', enabled: false })
     }
   }, [download])
-
-  useEffect(() => {
-    if (assays?.length) {
-      const mostResultsAssay = assays.filter(a => a.hasResults).sort((a, b) => b.resultCount - a.resultCount)[0]
-
-      if (filter.singleAssayId === -1) {
-        addFilter({ ...filter, singleAssayId: mostResultsAssay?.id }, location.pathname)
-      }
-    }
-  }, [addFilter, assays, filter, location.pathname])
 
   const { data: workloadList, total, extraColumns } = data || { data: [], total: 0, extraColumns: [] }
 
