@@ -7,9 +7,10 @@ async function registerNewSample(request) {
   const sampleData = {}
   const { payload } = request
   const payloadForDb = _.clone(payload)
+  const collectedOn = new Date(payload?.collectedOn)
   const currentlyLoggedInUser = await getUser(request.auth.credentials.name)
   _.set(payloadForDb, 'externalId', payload.externalId)
-  _.set(payloadForDb, 'collectedOn', _.isNil(payload?.collectedOn) ? new Date() : new Date(payload.collectedOn))
+  _.set(payloadForDb, 'collectedOn', _.isNaN(collectedOn.getTime()) ? null : collectedOn)
 
   // sampleTypeId is SampleType.sampleTypeSputum hard coded for Nigeria
   _.set(payloadForDb, 'sampleTypeId', 4)
