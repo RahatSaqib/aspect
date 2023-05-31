@@ -329,7 +329,7 @@ async function getListDevices(query, auth) {
       // ...else, it's considered notRecorded because we didn't register a status since the day previous yesterday
       knex.raw(`
         CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN
-          CASE 
+          CASE
             WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
             WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
             ELSE 'down' END
@@ -1558,7 +1558,6 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
     }
     const today = getCustomToday(action.today)
     const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(knex, today)
-
     await Promise.each(devicesMaintenanceLogForTheDay, async device => {
       const {
         id,
@@ -1578,12 +1577,18 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
        * and the last log was one of the inactive statuses,
        * then assume that the reason of inactivity is the same than before.
        */
-      if (currentMaintenanceStatusExternalId && today > currentMaintenanceStatusDay && !currentMaintenanceStatusActive)
+      if (
+        currentMaintenanceStatusExternalId &&
+        today > currentMaintenanceStatusDay &&
+        !currentMaintenanceStatusActive
+      ) {
         deviceMaintenanceStatusForTheDay = currentMaintenanceStatusExternalId
-      /**
-       * Else, as we don't know the reason of inactivity, 'inactiveUnknown' will be set as default
-       */ else deviceMaintenanceStatusForTheDay = 'inactiveUnknown'
-
+      } else {
+        /**
+         * Else, as we don't know the reason of inactivity, 'inactiveUnknown' will be set as default
+         */
+        deviceMaintenanceStatusForTheDay = 'inactiveUnknown'
+      }
       /**
        * If the device is currently decommissioned, we need to check if that is the reason of inactivity
        */
@@ -1591,7 +1596,7 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
         /**
          * If the device's last approval log is 'inactiveDecommissioned', and the day to process is after that approval log,
          * then we can assume the device inactivty reason is that it was decommissioned and no longer working
-         */
+         * */
         const decommissionedId = deviceApprovalId
         const lastDeviceApprovalLog = await knex('DeviceApprovalLog')
           .where({ deviceId: id })

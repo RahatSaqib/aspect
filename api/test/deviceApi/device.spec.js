@@ -9,7 +9,7 @@ const {
   getLastDeviceOperationId,
   getDeviceFromApiKey,
 } = require('./utils')
-const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
+const { createMessageContext, waitForIdle } = require('../utils/mqUtils')
 
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
@@ -218,7 +218,7 @@ describe('Device API routes', () => {
       assert.isOk(apiKey)
 
       const messageContext = await createMessageContext()
-      messageContext.bindActionCreators({ factGenerateDeviceConnectivity })
+      messageContext.bindActionCreators({ factGenerateDeviceConnectivity, deviceOffline, deviceOnline })
 
       // add device
       let res = await server
@@ -263,18 +263,15 @@ describe('Device API routes', () => {
 
       await knex('Device as d')
         .where('d.id', factDevice[0].deviceId)
-        .update({ lastPingOn: last8Day, lastSeenOn: last8Day })
+        .update({ lastPingOn: last8Day, lastSeenOn: last8Day, createdOn: last8Day })
 
       // Generate device offline facts and wait for offline action for new device
-      const waitForOffline = waitForAction(deviceOffline(newDevice.id))
       messageContext.factGenerateDeviceConnectivity(newDevice.id)
-      await waitForOffline
       await waitForIdle()
 
       const [offlineFactDevice] = await knex('FactDeviceFlag as fdf').where('fdf.deviceId', newDevice.id)
       assert.equal(offlineFactDevice.offline, 1)
 
-      const waitForOnline = waitForAction(deviceOnline(newDevice.id))
       res = await server
         .post(devicePath)
         .set('Authorization', deviceAuth)
@@ -283,7 +280,6 @@ describe('Device API routes', () => {
         })
       assert.equal(res.status, 200)
 
-      await waitForOnline
       await waitForIdle()
 
       const [onlineFactDevice] = await knex('FactDeviceFlag as fdf').where('fdf.deviceId', newDevice.id)

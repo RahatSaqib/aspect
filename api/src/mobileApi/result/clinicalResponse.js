@@ -166,6 +166,7 @@ async function updateTreatmentStatus(
 
   const lastTreatment = await updateTreatmentStatusByResultId(
     currentUserId,
+    now,
     resultId,
     resultTreatmentStatusExternalId,
     resultTreatmentStatusId,
@@ -187,6 +188,7 @@ async function updateTreatmentStatus(
 // supporting method for updateTreatmentStatus
 async function updateTreatmentStatusByResultId(
   userId,
+  now,
   resultId,
   resultTreatmentStatusExternalId,
   resultTreatmentStatusId,
@@ -217,11 +219,12 @@ async function updateTreatmentStatusByResultId(
       method,
       data,
       changedOn,
-      userId
+      userId,
+      now
     )
 
     if (!lastTreatment) {
-      await updateResult(resultId, treatmentStatusLogId, userId)
+      await updateResult(resultId, treatmentStatusLogId, userId, now)
       lastTreatment = await getLastTreatmentStatusByResult(resultId)
     }
   }
@@ -229,6 +232,7 @@ async function updateTreatmentStatusByResultId(
   if (data) {
     const [{ treatmentStatusLogId }] = await getTreatmentStatusLogId(resultId)
     await updateResultTreatmentStatusLog(treatmentStatusLogId, data, changedOn)
+    await updateResult(resultId, treatmentStatusLogId, userId, now)
   }
 
   return lastTreatment

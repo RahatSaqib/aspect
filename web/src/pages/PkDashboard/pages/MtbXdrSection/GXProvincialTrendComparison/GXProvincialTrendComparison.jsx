@@ -36,6 +36,7 @@ const GXProvincialTrendComparison = () => {
 
   return (
     <PkPage
+      isMocked
       title={`${formatMessage(messages.TbDProvincialComparison)}`}
       filters={
         <>

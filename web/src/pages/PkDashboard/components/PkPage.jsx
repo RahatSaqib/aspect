@@ -1,7 +1,8 @@
 import React from 'react'
-import { Container, Grid, Card, CardContent, Stack } from '@mui/material'
+import { Card, CardContent, Container, Grid, Stack } from '@mui/material'
 import DetailHeader from '../../../components/DetailHeader'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
+import IncompleteScreenBadge from './IncompleteScreenBadge'
 
 const baseStyle = { pb: 3, paddingLeft: '8px !important', paddingRight: '8px !important', overflow: 'auto' }
 const normalHeight = { height: 'calc(100vh - 128px)' }
@@ -9,11 +10,13 @@ const fullHeight = { height: 'calc(100vh - 64px)' }
 const gridStyle = { padding: '16px 8px 0' }
 const filterStyle = { width: '50%', float: 'left' }
 
-const PkPage = ({ title, filters, filter, children, full }) => {
+const PkPage = ({ title, filters, filter, children, full, isMocked }) => {
   useDocumentTitle(`${title} - Aspect`) // no need for helmet
   return (
     <>
       <DetailHeader name={title} disableBack={full} />
+      {isMocked ? <IncompleteScreenBadge /> : null}
+
       <Container maxWidth="xxl" sx={full ? { ...baseStyle, ...fullHeight } : { ...baseStyle, ...normalHeight }}>
         {full ? (
           children
