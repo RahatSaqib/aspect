@@ -6,7 +6,7 @@ const {
 const sampleRegistrationPayloadValidation = () => {
   return Joi.object().keys({
     externalId: Joi.string().required().max(255).description('Generated Sample ID'),
-    collectedOn: Joi.date().iso().required().description('Sample Collection Date'),
+    collectedOn: Joi.date().iso().allow(null, '').description('Optional Sample Collection Date'),
     clinicianName: Joi.string()
       .allow(null, '')
       .max(255)
