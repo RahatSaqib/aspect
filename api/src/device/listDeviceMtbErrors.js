@@ -46,9 +46,9 @@ const listDeviceMtbErrors = async request => {
   }
   // add more fields which depend on aggregations
   data.forEach(async it => {
-    it.percentError = getPercentage(it.cntMtbError, it.cntMtbResults)
-    it.percentInvalid = getPercentage(it.cntMtbInvalid, it.cntMtbResults)
-    it.percentNoResult = getPercentage(it.cntMtbNoResult, it.cntMtbResults)
+    it.percentMtbError = getPercentage(it.cntMtbError, it.cntMtbResults)
+    it.percentMtbInvalid = getPercentage(it.cntMtbInvalid, it.cntMtbResults)
+    it.percentMtbNoResult = getPercentage(it.cntMtbNoResult, it.cntMtbResults)
   })
 
   return { ok: true, total, length: data.length, data }

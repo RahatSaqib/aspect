@@ -81,7 +81,7 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
 
   // get total count for paging
-  const getCount = deviceQuery.clone().countDistinct('d.id').as('count').first()
+  const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
   const queryResults = knex('Result as r')
     .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .modify(addConstraints, dataConstraints, {
