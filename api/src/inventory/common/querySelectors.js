@@ -98,6 +98,9 @@ const INVENTORY_TRANSFER = {
   destinationSiteName: 'destinationSite.name',
   sentQuantity: 'oil.quantity',
   receivedQuantity: 'iil.quantity',
+  expirationDate: 'oil.expiresOn',
+  sentOn: 'oil.createdOn',
+  receivedOn: 'iil.createdOn',
 }
 
 // Select for inventory grouped by site and consumable

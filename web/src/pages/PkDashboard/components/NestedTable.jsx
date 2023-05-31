@@ -61,7 +61,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
   }
 
   return rows ? (
-    <Table>
+    <Table style={{ tableLayout: 'fixed' }}>
       {!isDetail ? (
         <TableHead>
           <TableRow>
@@ -90,7 +90,6 @@ const NestedTable = ({ columns, rows, isDetail }) => {
           : rows
         ).map((row, i) => {
           const hasChildren = row?.children?.length > 0 ?? false
-          const totalCols = hasChildren ? columns.length + 1 : columns.length
           return (
             <>
               <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
@@ -117,7 +116,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
               </TableRow>
               {hasChildren ? (
                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                  <TableCell sx={{ p: 0 }} colSpan={totalCols}>
+                  <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
                     <Collapse in={open === row.id} timeout="auto" unmountOnExit>
                       <Box sx={{ backgroundColor: colors[i % 2] }}>
                         <NestedTable columns={columns} isDetail rows={row.children} />
@@ -132,7 +131,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
 
         {emptyRows > 0 && (
           <TableRow style={{ height: 44.5 * emptyRows }}>
-            <TableCell colSpan={6} />
+            <TableCell colSpan={columns?.length + 1} />
           </TableRow>
         )}
       </TableBody>
