@@ -7,6 +7,12 @@ const listDeviceMtbErrors = async request => {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
+  /**
+   * get all devices without pagination.
+   * See `getPageParams()` in `api/src/routes.js` for more details how we use `size='all'`
+   */
+  query.size = 'all'
+
   const assayIds = await allAssayToId()
 
   const { getCount, queryResults, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(
