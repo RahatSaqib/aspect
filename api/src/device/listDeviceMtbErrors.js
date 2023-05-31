@@ -7,6 +7,12 @@ const listDeviceMtbErrors = async request => {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
+  /**
+   * get all devices without pagination.
+   * See `getPageParams()` in `api/src/routes.js` for more details how we use `size='all'`
+   */
+  query.size = 'all'
+
   const assayIds = await allAssayToId()
 
   const { getCount, queryResults, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(
@@ -46,9 +52,9 @@ const listDeviceMtbErrors = async request => {
   }
   // add more fields which depend on aggregations
   data.forEach(async it => {
-    it.percentError = getPercentage(it.cntMtbError, it.cntMtbResults)
-    it.percentInvalid = getPercentage(it.cntMtbInvalid, it.cntMtbResults)
-    it.percentNoResult = getPercentage(it.cntMtbNoResult, it.cntMtbResults)
+    it.percentMtbError = getPercentage(it.cntMtbError, it.cntMtbResults)
+    it.percentMtbInvalid = getPercentage(it.cntMtbInvalid, it.cntMtbResults)
+    it.percentMtbNoResult = getPercentage(it.cntMtbNoResult, it.cntMtbResults)
   })
 
   return { ok: true, total, length: data.length, data }
