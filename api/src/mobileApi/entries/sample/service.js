@@ -2,18 +2,21 @@ const _ = require('lodash')
 const { getUser } = require('../../../auth/service')
 const { insertNewSample } = require('./common/db')
 const { transformSampleData } = require('../result/common/helpers/transformSample')
+const { sampleTypeToId } = require('../../../shared/dictionary')
 
 async function registerNewSample(request) {
   const sampleData = {}
   const { payload } = request
   const payloadForDb = _.clone(payload)
-  const collectedOn = new Date(payload?.collectedOn)
+  const collectedOn = new Date(payload?.collectedOn ?? '')
   const currentlyLoggedInUser = await getUser(request.auth.credentials.name)
   _.set(payloadForDb, 'externalId', payload.externalId)
   _.set(payloadForDb, 'collectedOn', _.isNaN(collectedOn.getTime()) ? null : collectedOn)
 
-  // sampleTypeId is SampleType.sampleTypeSputum hard coded for Nigeria
-  _.set(payloadForDb, 'sampleTypeId', 4)
+  // sampleTypeId is SampleType.sampleTypeSputum defaults to Sputum for most MTB tests
+  const sampleTypeId = await sampleTypeToId(payload.sampleTypeExternalId ?? 'Sputum')
+  const otherSampleTypeId = sampleTypeId ?? (await sampleTypeToId('Other'))
+  _.set(payloadForDb, 'sampleTypeId', sampleTypeId ?? otherSampleTypeId)
   _.set(payloadForDb, 'originSiteId', payload.originSiteId)
   _.set(payloadForDb, 'sampleStatus', 'SAMPLE_REGISTERED')
   _.set(payloadForDb, 'updatedBy', currentlyLoggedInUser.id)
@@ -28,7 +31,10 @@ async function registerNewSample(request) {
   _.set(sampleData, 'patientExternalId', _.trim(payload?.patientExternalId).toString() ?? null)
   _.mapKeys(sampleData, (value, key) => (_.isNil(value) ? _.set(payload, `${key}`, null) : value))
   _.set(payloadForDb, 'sampleData', JSON.stringify(sampleData))
-  const newSample = await insertNewSample(_.omit(payloadForDb, ['clinicianName', 'patientExternalId']), request.auth)
+  const newSample = await insertNewSample(
+    _.omit(payloadForDb, ['clinicianName', 'patientExternalId', 'sampleTypeExternalId']),
+    request.auth
+  )
   return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample[0]) }
 }
 
