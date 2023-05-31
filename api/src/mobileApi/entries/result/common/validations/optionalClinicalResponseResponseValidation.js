@@ -5,15 +5,15 @@ const optionalClinicalResponseResponseValidation = Joi.object()
   .description('Clinical Response schema used in Aspect Mobile')
   .keys({
     clinicalResponse: {
-      resultId: Joi.number().allow(null).description('Unique ID of the result for this instance of Aspect'),
+      resultId: Joi.number().allow(null, '').description('Unique ID of the result for this instance of Aspect'),
       confirmedOn: Joi.date()
-        .allow(null)
+        .allow(null, '')
         .description('Date & time that checkbox was checked, if not checked, return null'),
       outcome: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
-      outcomeOccurred: Joi.date().allow(null).description('When result was transferred to another clinic'),
-      recorded: Joi.boolean().optional().allow(null).description('True to search only among Transferred results'),
+      outcomeOccurred: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
+      recorded: Joi.boolean().optional().allow(null, '').description('True to search only among Transferred results'),
       treatment: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
-      treatmentStarted: Joi.date().allow(null).description('When result was transferred to another clinic'),
+      treatmentStarted: Joi.date().allow(null, '').description('When result was transferred to another clinic'),
     },
   })
 

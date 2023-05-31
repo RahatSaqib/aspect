@@ -1,7 +1,5 @@
 const { expect } = require('chai')
-const { subDays } = require('date-fns')
-const { differenceInDays } = require('date-fns')
-
+const { subDays, differenceInDays } = require('date-fns')
 const {
   data347,
   expected347,
@@ -304,10 +302,8 @@ describe('Entries helpers', () => {
       const expectedOutput = {
         resultId: 123,
         confirmedOn: '2023-01-01T00:00:00Z',
-        outcome: 'outcome',
         outcomeOccurred: '2023-03-01T00:00:00Z',
         recorded: true,
-        treatment: 'treatment',
         treatmentStarted: '2023-02-01T00:00:00Z',
       }
 
@@ -315,7 +311,7 @@ describe('Entries helpers', () => {
       expect(result).to.eql(expectedOutput)
     })
 
-    it('should return empty object when result is not recorded and treatment and outcome are not present', () => {
+    it('should return object when result is not recorded and treatment and outcome are not present', () => {
       const data = {
         id: 123,
         resultWorkflowStatusId: 456,
@@ -324,7 +320,10 @@ describe('Entries helpers', () => {
       const followUps = []
       const acknowledgedId = 789
 
-      const expectedOutput = {}
+      const expectedOutput = {
+        recorded: false,
+        resultId: 123,
+      }
 
       const result = transformClinicalResponse(data, followUps, acknowledgedId)
       expect(result).to.eql(expectedOutput)
@@ -391,7 +390,7 @@ describe('Entries helpers', () => {
       expect(result).to.deep.eq([])
     })
 
-    it('should transform test information correctly for one result category', function () {
+    it('should transform test information correctly for one result category', () => {
       const data = {
         id: 123,
         resultCategory1i18nKey: 'key1',
@@ -416,7 +415,7 @@ describe('Entries helpers', () => {
       expect(result).to.eql(expectedOutput)
     })
 
-    it('should transform test information correctly for two result categories', function () {
+    it('should transform test information correctly for two result categories', () => {
       const data = {
         id: 123,
         resultCategory1i18nKey: 'key1',
@@ -456,7 +455,7 @@ describe('Entries helpers', () => {
   })
 
   describe('transformTreatmentStatus', () => {
-    it('should transform treatment status correctly', function () {
+    it('should transform treatment status correctly', () => {
       const changedOn = '2023-05-10T19:25:56.000Z'
       const expectedOutput = {
         changedOn,
@@ -523,9 +522,9 @@ describe('Entries helpers', () => {
 
   describe('transFormResultResponse', () => {
     it('correctly transform results', async () => {
-      const entry22 = transFormResultResponse([data347], [], [], 9)
+      const entry347 = transFormResultResponse([data347], [], [], 9)
       const entry450 = transFormResultResponse([data450], followUp450, [], 9)
-      expect(entry22).to.deep.eq(expected347)
+      expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
     })
   })

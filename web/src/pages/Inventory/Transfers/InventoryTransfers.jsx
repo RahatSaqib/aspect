@@ -13,7 +13,7 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import { formatDateTime, formatDate } from '../../../utils/utils/dateFormat'
+import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 import styles from './styles.css'
 
@@ -102,15 +102,17 @@ export const InventoryTransfers = () => {
                     {data.data.map(row => (
                       <TableRow key={row.sentOn}>
                         <TableCell>{formatDateTime(row.sentOn)}</TableCell>
-                        <TableCell>{formatDateTime(row.receivedOn)}</TableCell>
+                        <TableCell>
+                          {row.receivedOn ? formatDateTime(row.receivedOn) : formatMessage(messages.notAvailable)}
+                        </TableCell>
                         <TableCell>{formatMessage(consumables[row.consumableNameI18nKey])}</TableCell>
-                        <TableCell>{row.receivedQuantity}</TableCell>
+                        <TableCell>{row.receivedQuantity || formatMessage(messages.notAvailable)}</TableCell>
                         <TableCell>{row.sentQuantity}</TableCell>
                         <TableCell>{row.originSiteName}</TableCell>
-                        <TableCell>{row.destinationSiteName}</TableCell>
-                        <TableCell>{row.lotNumber || 'N/A'}</TableCell>
+                        <TableCell>{row.destinationSiteName || formatMessage(messages.notAvailable)}</TableCell>
+                        <TableCell>{row.lotNumber || formatMessage(messages.notAvailable)}</TableCell>
                         <TableCell style={{ color: new Date(row.expirationDate) < new Date() ? 'red' : undefined }}>
-                          {formatDate(row.expirationDate)}
+                          {row.expirationDate ? row.expirationDate.split('T')[0] : formatMessage(messages.notAvailable)}
                         </TableCell>
                       </TableRow>
                     ))}

@@ -4,7 +4,7 @@ const optionalPatientDataResponseValidation = Joi.object()
   .optional()
   .keys({
     patientData: Joi.array()
-      .allow(null)
+      .allow(null, '')
       .description('Entry history events')
       .items(
         Joi.object().keys({
