@@ -178,7 +178,7 @@ const StateId = ({ countryId, stateId, remove }) => {
   const { data } = useStatesByCountry(countryId)
   const lbl = data?.find(s => s.id === stateId)?.name
 
-  return lbl && stateId ? <Btn lbl={lbl} del={() => remove(['stateId'])} /> : null
+  return lbl && stateId ? <Btn lbl={lbl} del={() => remove(['stateId', 'lgaId'])} /> : null
 }
 
 const LgaId = ({ stateId, lgaId, remove }) => {
