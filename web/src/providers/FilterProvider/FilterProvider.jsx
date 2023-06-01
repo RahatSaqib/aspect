@@ -63,11 +63,11 @@ function FilterProvider({ children }) {
   const { pathname, search } = useLocation()
   const [filterState, setFilterState] = useState(defaultFilter)
   const user = useAuthState()
-  const { data: deviceTypes } = useDeviceTypeList({ enabled: !!user })
-  const { data: assays } = useAssayList({ enabled: !!user })
+  const { data: deviceTypes } = useDeviceTypeList({ enabled: !user.isLoggedOut })
+  const { data: assays } = useAssayList({ enabled: !user.isLoggedOut })
 
   useEffect(() => {
-    const filters = { ...defaultFilter }
+    const filters = { ...filterState }
     const searchParams = new URLSearchParams(search)
     const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
 
@@ -84,7 +84,8 @@ function FilterProvider({ children }) {
       filters[pathname] = { ...filters[pathname], ...getFilters(filtersParams, deviceTypes) }
     }
     setFilterState(filters)
-  }, [assays, deviceTypes, pathname, search, user])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [assays, deviceTypes])
 
   return <FilterContext.Provider value={[filterState, setFilterState]}>{children}</FilterContext.Provider>
 }
