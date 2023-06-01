@@ -2,6 +2,7 @@ const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listPartners, showPartner } = require('./service')
 const getCurrentPartner = require('./getCurrentPartner')
+const { listParnersForSelectList } = require('./listParnersForSelectList')
 
 const routes = [
   {
@@ -43,6 +44,21 @@ const routes = [
       auth: { scope: ['browse'] },
       description: 'Current Partner',
       notes: 'Get current partner with configuration data',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/partner/select-list',
+    handler: asyncHandler(listParnersForSelectList),
+    config: {
+      auth: { scope: ['device:edit'] },
+      description: 'List Partners for Select List',
+      notes: "List of Partners ID's and names",
+      validate: {
+        query: {
+          partnerType: Joi.string().allow('').description('Filter for partner type name'),
+        },
+      },
     },
   },
 ]
