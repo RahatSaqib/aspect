@@ -18,7 +18,7 @@ describe('inventory strategy for Pakistan', () => {
     user: 'pk_admin',
     password: 'x2KusKKEqR8M',
     type: 'DaktariVirology',
-    partner: 'Pakistan',
+    partner: 'Pakistan NTP',
   })
 
   before(async () => knex('Consumable').update({ strategy: 'withExpirationDateStrategy' }))
