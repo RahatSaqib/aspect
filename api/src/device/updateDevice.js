@@ -36,6 +36,7 @@ async function updateDevice(request) {
       deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
       deviceCapacityId: payload.deviceCapacityId,
+      implementingPartnerId: payload.implementingPartnerId,
       name: payload.name,
       notes: payload.notes,
       shortName: payload.shortName,
