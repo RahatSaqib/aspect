@@ -56,7 +56,7 @@ const routes = [
       notes: "List of Partners ID's and names",
       validate: {
         query: {
-          partnerType: Joi.string().allow('').description('Filter for partner type name'),
+          partnerType: Joi.string().allow('').description('Filter for partner type externalId'),
         },
       },
     },
