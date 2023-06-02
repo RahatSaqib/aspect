@@ -8,7 +8,7 @@ describe('device endpoints', () => {
     const endpoints = proxyquire('../../src/device/endpoints', {
       './service': serviceStub,
       './updateDevice': serviceStub,
-      './listDevice': serviceStub,
+      './listDevices': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }
@@ -20,7 +20,7 @@ describe('device endpoints', () => {
 
       beforeEach(() => {
         endpoint = setupRoute('GET', '/device', {
-          async listDevice() {
+          async listDevices() {
             return expectedResponse
           },
         })

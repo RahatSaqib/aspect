@@ -286,7 +286,7 @@ async function getListDevices(query, auth) {
 // ---------------------------------
 // reading dataset for Devices grid
 // ---------------------------------
-async function listDevice(request) {
+async function listDevices(request) {
   const { query, auth } = request
 
   // get dataset for current query params (sorting, filtering and pagination) and auth constraints
@@ -297,5 +297,5 @@ async function listDevice(request) {
 }
 
 module.exports = {
-  listDevice,
+  listDevices,
 }

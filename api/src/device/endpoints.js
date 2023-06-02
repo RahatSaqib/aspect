@@ -25,7 +25,7 @@ const {
   listDevicesBaseRequest,
 } = require('./common/validations')
 const exportWorkload = require('./exportWorkload')
-const { listDevice } = require('./listDevice')
+const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
 
 const routes = [
@@ -72,7 +72,7 @@ const routes = [
   {
     method: 'GET',
     path: '/device',
-    handler: asyncHandler(listDevice),
+    handler: asyncHandler(listDevices),
     config: {
       description: 'Device List',
       notes: 'Pageable and sortable list of devices',

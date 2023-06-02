@@ -22,10 +22,10 @@ const { getResultCategoryGroupColumns } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
 const { getErrorRateByDevice, getErrorRateByModule, getErrorRateByUser } = require('./errorRatesReport')
 const { getNoStockInventoryReport } = require('./noStockInventoryReport')
-const { listDevice } = require('../listDevice')
+const { listDevices } = require('../listDevices')
 
 async function exportDevices(request, reply) {
-  const { data: dataSet } = await listDevice(request)
+  const { data: dataSet } = await listDevices(request)
   const [devicesData] = dataSet
   const scope = devicesData.category !== 'Router' ? 'devices' : 'routers'
 
