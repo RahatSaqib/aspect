@@ -138,11 +138,11 @@ export const messages = {
     },
     resultCountDescription: {
       id: 'pages.DeviceList.resultCountDescription',
-      defaultMessage: 'Represents the number of results conducted from {startDate} to {endDate}',
+      defaultMessage: 'Represents the number of results conducted from {startDate} to {endDate} (Month to Date)',
     },
     thisMonth: {
       id: 'pages.DeviceList.thisMonth',
-      defaultMessage: '#Results Actual month (MTD)',
+      defaultMessage: 'Results Current Month (MTD)',
     },
     needsRepair: {
       id: 'pages.DeviceList.needsRepair',
