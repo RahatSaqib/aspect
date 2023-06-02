@@ -206,8 +206,8 @@ async function getListDevices(query, auth) {
     .groupBy('d.id')
     .select([
       ...getSelectListFields(userTimeOffset),
-      'deviceResult.totalCurrentMonth as resultCountThisMonth', // 'frd30.resultCount as resultCountThisMonth',
-      'deviceResult.totalPreviousMonth as resultCountLastMonth', // knex.raw('frd60.resultCount - frd30.resultCount as resultCountLastMonth'),
+      'deviceResult.totalCurrentMonth as resultCountThisMonth',
+      'deviceResult.totalPreviousMonth as resultCountLastMonth',
       'frd30Errors.resultCount as thisMonthErrors',
       knex.raw('count(distinct dmslActivity.day) as totalDays'),
       knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
