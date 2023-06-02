@@ -39,7 +39,7 @@ const SiteDetailProfile = ({ site, siteTags, formatMessage, disabled, user }) =>
         site.devices &&
         site.devices.map(device => ({
           description: device.name,
-          to: device.category === 2 ? '/browse/router' : `/browse/device/list/${device.id}`,
+          to: `/browse/device/list/${device.id}`,
         })),
     },
     { label: formatMessage(messages.fieldTags), value: siteTags.map(tag => tag.title).join(', ') },

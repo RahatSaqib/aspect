@@ -5,10 +5,10 @@ import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import useI18n from '../../../../../hooks/useI18n'
-import countries from '../../../../../oldComponents/filter/hardcoded/countries'
-import dialCodes from '../../../../../oldComponents/filter/hardcoded/dialCodes'
 import messages from '../../messages'
 import { PureSelect, PureTextInput } from '../index'
+import countries from './countries'
+import dialCodes from './dialCodes'
 
 const RenderPhoneNumber = ({ dialCodeProps, numberProps }) => {
   return (

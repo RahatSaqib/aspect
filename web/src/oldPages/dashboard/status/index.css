@@ -7,8 +7,7 @@
 }
 
 .Section--summary {
-  margin: 10px -3px 0;
-  width: calc(100vw - 20px);
+  margin-top: 10px;
 }
 
 .Section--withDropdown {

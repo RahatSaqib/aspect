@@ -41,7 +41,6 @@ import {
 import {
   groupByKey,
   groupForPie,
-  groupForPieRow,
   groupForDivergent,
   groupForInventoryStatusAPI,
   groupForOldTreatmentAPI,
@@ -374,10 +373,6 @@ const formatDataByGraphType = (
       grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
       break
 
-    case 'pieRow':
-      grouped = groupForPieRow(data, mergedParams)
-      break
-
     case 'line-trends': {
       const filtered = filterBy ? filterByMultiple(data, filterBy) : data
       return filtered
@@ -508,7 +503,6 @@ export {
   groupForOldTreatmentAPI,
   groupForPie,
   groupForPieOldTreatmentAPI,
-  groupForPieRow,
   negateTimeZoneOffset,
   normaliseKeys,
   percentageOrActualForPie,

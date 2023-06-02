@@ -52,28 +52,25 @@ const buildMessagesFromI18nKeys = item => {
   return messages
 }
 
-const buildWidgetToLinkParams = (link, linkParams) => {
-  const params = new URLSearchParams()
+const buildWidgetParams = (link, linkParams) => {
+  const params = {}
   const inParams = JSON.parse(linkParams)
 
   if (!inParams || Object.keys(inParams).length === 0 || inParams instanceof Object === false) {
-    return link
+    return params
   }
 
   for (const [key, value] of Object.entries(omit(inParams, ['permissions']))) {
     if (key === 'dateRange') {
       for (const [key, value] of Object.entries(buildDateRange(value))) {
-        params.append(key, value)
+        params[key] = value
       }
     } else {
-      const values = value instanceof Array ? value : [value]
-      for (const singleValue of values) {
-        params.append(key, singleValue)
-      }
+      params[key] = value
     }
   }
 
-  return `${link}?filters=${encodeURIComponent(params.toString())}`
+  return params
 }
 
 const buildDateRange = term => {
@@ -111,4 +108,4 @@ const translate = (i18nKey, defaultValue, { formatMessage, messages }) => {
   }
 }
 
-export { buildMessagesFromI18nKeys, buildWidgetToLinkParams, groupWidgets, translate }
+export { buildMessagesFromI18nKeys, buildWidgetParams, groupWidgets, translate }

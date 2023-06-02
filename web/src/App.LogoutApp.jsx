@@ -1,6 +1,6 @@
 import React, { Suspense, lazy } from 'react'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import Loading from './components/Loading'
+import Loading from './cleanComponents/Loading'
 import SignedOutLayout from './oldComponents/SignedOutLayout'
 import License from './oldPages/auth/license/License'
 import ResetPassword from './oldPages/auth/resetPassword/ResetPassword'

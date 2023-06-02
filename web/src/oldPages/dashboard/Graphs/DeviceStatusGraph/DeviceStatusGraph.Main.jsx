@@ -4,6 +4,7 @@ import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'
+import Loading from '../../../../cleanComponents/Loading'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
 import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import {
@@ -12,7 +13,6 @@ import {
   getPreviousPeriod,
 } from '../../../../components/Graphs/Helpers/Formatters'
 import messages from '../../../../components/Graphs/intlMessages'
-import Loading from '../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
 import styles from '../styles.css'

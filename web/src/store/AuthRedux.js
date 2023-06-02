@@ -13,7 +13,6 @@ import {
 } from '../utils/error/CommonErrorNotifications'
 import { getClientId, getClientName, getClientType as clientType } from '../utils/utils/browser'
 import { aspectFetch } from '../utils/utils/fetch'
-import { types as accountTypes } from './AccountRedux'
 
 export const types = {
   LOGIN_REQUEST: 'LOGIN_REQUEST',
@@ -467,7 +466,6 @@ export default function authReducer(state = initialState, action) {
       return state.set('requestedAt', action.requestedAt)
     case types.LOGIN_SUCCESS:
     case types.REFRESH_SUCCESS:
-    case accountTypes.RECEIVE_UPDATED_LOGIN_DETAILS:
     case types.ACCEPT_LICENSE_SUCCESS:
       return state.withMutations(mutState => {
         mutState.delete('requestedAt')
@@ -491,12 +489,6 @@ export default function authReducer(state = initialState, action) {
     case types.REFRESH_FAILURE:
     case types.LOGOUT:
       return state.clear().set('loggedOutReason', action.data.reason)
-
-    case accountTypes.RECEIVE_UPDATED_USER_PREFERENCES:
-      return state.merge({
-        culture: action.accountDetails.culture,
-        timezoneId: action.accountDetails.timezone,
-      })
 
     case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
       return state

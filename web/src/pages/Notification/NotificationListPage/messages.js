@@ -102,6 +102,13 @@ export const messages = defineMessages({
     id: 'pages.Notification.status',
     defaultMessage: 'Status',
   },
+  paginatorStatus: {
+    id: 'pages.Notification.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# notification}
+      other {# notifications}
+    }`,
+  },
 
   // values for notifications list
   issueBased: {

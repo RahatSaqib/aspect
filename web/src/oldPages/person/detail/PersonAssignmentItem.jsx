@@ -5,7 +5,7 @@ import camelCase from 'lodash/camelCase'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import useI18n from '../../../hooks/useI18n'
-import { mergeToFiltersParams } from '../../../oldComponents/filter/utils'
+import { mergeToFiltersParams } from '../../../oldComponents/utils'
 import messages from './messages'
 import styles from './PersonDetail.css'
 
