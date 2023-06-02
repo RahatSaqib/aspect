@@ -3,7 +3,7 @@ const upsertPartnerData = require('../common/upsert_partner_data')
 
 module.exports = require('../utils').seed(async knex => {
   await knex('Partner').where({ name: 'Pakistan' }).update({ name: 'Pakistan NTP' })
-  const { id: implementingPartnerTypeId } = await knex('PartnerType').where({ name: 'Implementing' }).first('id')
+  const { id: implementingPartnerTypeId } = await knex('PartnerType').where({ externalId: 'implementing' }).first('id')
 
   await upsertPartnerData(knex, {
     ...fixture,

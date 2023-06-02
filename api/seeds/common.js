@@ -1055,7 +1055,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
 
   const partnerId = await upsertPartnerData(knex, {
     ...partnerData,
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
   })
   const returnValue = {
     adminId,
