@@ -65,6 +65,7 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
     .select([
       'd.name',
       's.name AS siteName',
+      's.id AS siteId',
       'st.name AS stateName',
       'lg.name AS districtName',
       'd.serial AS serial',
