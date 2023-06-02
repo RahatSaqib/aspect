@@ -1,12 +1,15 @@
 {
   "data": [
     {
+      "externalId": "funding",
       "name": "Funding"
     },
     {
+      "externalId": "implementing",
       "name": "Implementing"
     },
     {
+      "externalId": "operating",
       "name": "Operating"
     }
   ]
