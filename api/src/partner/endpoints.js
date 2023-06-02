@@ -51,7 +51,7 @@ const routes = [
     path: '/partner/select-list',
     handler: asyncHandler(listParnersForSelectList),
     config: {
-      auth: { scope: ['device:edit'] },
+      auth: { scope: ['device:view'] },
       description: 'List Partners for Select List',
       notes: "List of Partners ID's and names",
       validate: {
