@@ -2,7 +2,7 @@ const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
 const { listPartners, showPartner } = require('./service')
 const getCurrentPartner = require('./getCurrentPartner')
-const { listParnersForSelectList } = require('./listParnersForSelectList')
+const { listPartnersForSelectList } = require('./listPartnersForSelectList')
 
 const routes = [
   {
@@ -49,7 +49,7 @@ const routes = [
   {
     method: 'GET',
     path: '/partner/select-list',
-    handler: asyncHandler(listParnersForSelectList),
+    handler: asyncHandler(listPartnersForSelectList),
     config: {
       auth: { scope: ['device:view'] },
       description: 'List Partners for Select List',

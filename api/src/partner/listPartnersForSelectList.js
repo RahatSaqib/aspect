@@ -1,6 +1,6 @@
 const { knex, filterParams } = require('../db')
 
-async function listParnersForSelectList(request) {
+async function listPartnersForSelectList(request) {
   const { query } = request
 
   const partnerQuery = knex('Partner as p')
@@ -23,5 +23,5 @@ async function listParnersForSelectList(request) {
 }
 
 module.exports = {
-  listParnersForSelectList,
+  listPartnersForSelectList,
 }
