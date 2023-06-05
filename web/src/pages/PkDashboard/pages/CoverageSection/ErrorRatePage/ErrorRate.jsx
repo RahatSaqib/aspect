@@ -70,7 +70,7 @@ const ErrorRatePage = () => {
   const { data } = useDeviceErrors()
 
   return (
-    <PkPage isMocked title={formatMessage(messages.errorRateTitle)}>
+    <PkPage title={formatMessage(messages.errorRateTitle)}>
       <NestedTable columns={columns} rows={makeNestedData(data ?? [])} hasDetail />
     </PkPage>
   )
