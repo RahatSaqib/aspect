@@ -1,5 +1,5 @@
 import React, { Suspense, lazy } from 'react'
-import Loading from './components/Loading'
+import Loading from './cleanComponents/Loading'
 import { useAuthState } from './providers/AuthProvider'
 
 const LogoutApp = lazy(() => import('./App.LogoutApp'))

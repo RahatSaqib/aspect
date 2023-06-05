@@ -4,7 +4,7 @@ import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import reduce from 'lodash/reduce'
-import ErrorBoundary from '../../../../components/ErrorBoundary'
+import ErrorBoundary from '../../../../cleanComponents/ErrorBoundary'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
 import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
@@ -21,7 +21,7 @@ const getBaseConfig = (assays = []) => {
     clickThrough: {
       assays,
       allow: true,
-      baseUrl: '/browse/result?filters=',
+      baseUrl: '/browse/result',
       baseAssay,
       keys: ['resultCategoryId', 'indexBy', 'assay'],
     },

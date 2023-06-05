@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { FormControl, MenuItem, InputLabel, Select } from '@mui/material'
 import { useQuery } from 'react-query'
-import Loading from '../../../components/Loading'
+import Loading from '../../../cleanComponents/Loading'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import { consumableMessages } from '../../../messages'

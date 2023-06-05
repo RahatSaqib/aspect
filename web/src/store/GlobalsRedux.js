@@ -1,5 +1,5 @@
 import Immutable from 'immutable'
-import { downloadFile, safeDownloadFile } from '../utils/utils/files'
+import { downloadFile } from '../utils/utils/files'
 
 export const types = {
   GLOBALS_SET_LAST_SERVER_RESPONSE_TIME: 'GLOBALS_SET_LAST_SERVER_RESPONSE_TIME',
@@ -15,19 +15,6 @@ export function setLastServerResponseTime(serverTime) {
   return {
     type: types.GLOBALS_SET_LAST_SERVER_RESPONSE_TIME,
     serverTime,
-  }
-}
-
-export function onStartDownloading() {
-  return {
-    type: types.EXPORT_FILE_STARTED,
-  }
-}
-
-export function receivedFileResponse(blob, fileName) {
-  safeDownloadFile(blob, fileName)
-  return {
-    type: types.EXPORT_RESPONSE_FILE_RECEIVED,
   }
 }
 

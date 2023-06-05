@@ -5,6 +5,6 @@ import { ASSAY_KEY, ASSAY_KEY_LIST_ENDPOINT } from './assayKeys.js'
 const getDeviceSelectList = async () =>
   fetchWrapperForQueries({ endpoint: ASSAY_KEY_LIST_ENDPOINT }).then(response => response.data)
 
-const useAssayList = () => useQuery([ASSAY_KEY, 'list'], () => getDeviceSelectList())
+const useAssayList = options => useQuery([ASSAY_KEY, 'list'], () => getDeviceSelectList(), options)
 
 export default useAssayList

@@ -1,5 +1,5 @@
 import fetchWrapperForQueries from '../../components/QueryFetch'
-import { getFilters } from '../../oldComponents/filter/utils'
+import { getFilters } from '../../oldComponents/utils'
 
 async function getExportableFile(
   filtersParams,

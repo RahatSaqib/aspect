@@ -1,7 +1,6 @@
 import React from 'react'
 import { mount } from 'enzyme'
 import { DetailBackBar } from '../../DetailBackBar'
-import AspectButton from '../../shared/AspectButton'
 import { NotificationDetailBackBar } from './NotificationDetailBackBar'
 
 describe('NotificationDetailBackBar component', () => {
@@ -23,20 +22,6 @@ describe('NotificationDetailBackBar component', () => {
 
   it('should render without crashing', () => {
     mount(<NotificationDetailBackBar {...props} />)
-  })
-  describe.skip('NotificationDetailBackBar Edit Link', () => {
-    const wrapper = mount(<NotificationDetailBackBar {...props} />)
-
-    it("should  have active 'Edit' link if user has edit rights", () => {
-      const editLink = wrapper.find(AspectButton).filterWhere(link => link.text() === 'Edit')
-      expect(editLink.prop('disabled')).toBe(false)
-    })
-
-    it("should disable 'Edit' link if user has no edit rights", () => {
-      wrapper.setProps({ disabled: true })
-      const editLink = wrapper.find(AspectButton).filterWhere(n => n.text() === 'Edit')
-      expect(editLink.prop('disabled')).toBe(true)
-    })
   })
 
   describe('Page Redirection', () => {

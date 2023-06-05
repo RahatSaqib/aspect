@@ -1,11 +1,9 @@
-import format from 'date-fns/format'
 import {
   calcPercentageSplitBar,
   getISOFromString,
   generateToolTip,
   groupByKey,
   groupForPie,
-  groupForPieRow,
   groupForDeviceStatusAPI,
   groupForDivergent,
   groupForOldTreatmentAPI,
@@ -28,8 +26,6 @@ import {
   mockedDeviceStatusOut,
   pieDataActualFromAPIIn,
   pieDataActualFromAPIOut,
-  pieRowDataFromAPIIn,
-  pieRowDataFromAPIOut,
   tickDataForBarDisplayMethodPercentageIn,
   tickDataForBarDisplayMethodActualIn,
   tickDataForBarYAxisShapeBookendsDisplayPercentageOut,
@@ -67,14 +63,6 @@ describe('Graph Helpers', () => {
         const filterBy = false
         const grouped = groupByKey(barDataActualFromAPIIn, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
         expect(grouped).toEqual(barDataActualFromAPIOut)
-      })
-    })
-
-    describe('PieRowchart: groupForPieRow', () => {
-      it('should group data by types correctly', () => {
-        const mergedParams = [{ currentMonth: `${format(new Date(), 'yyyy-MM')}-01` }]
-        const grouped = groupForPieRow(pieRowDataFromAPIIn, mergedParams)
-        expect(grouped).toEqual(pieRowDataFromAPIOut)
       })
     })
 

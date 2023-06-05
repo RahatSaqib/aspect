@@ -1,7 +1,7 @@
 const jobFunctions = require('./jobFunctions')
 
 module.exports = {
-  partnerName: 'Pakistan',
+  partnerName: 'Pakistan NTP',
   adminUserName: 'admin',
   adminPassword: 'x2KusKKEqR8M',
   deviceApiToken: '77zc0ar862xcys2626w6',

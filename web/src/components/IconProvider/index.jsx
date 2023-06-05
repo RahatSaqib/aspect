@@ -2,7 +2,7 @@ import React, { Suspense, lazy, memo } from 'react'
 import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
 import { FaSquare } from 'react-icons/fa'
-import ErrorBoundary from '../ErrorBoundary'
+import ErrorBoundary from '../../cleanComponents/ErrorBoundary'
 import styles from './Icons.css'
 
 const cssClasses = classnames.bind(styles)

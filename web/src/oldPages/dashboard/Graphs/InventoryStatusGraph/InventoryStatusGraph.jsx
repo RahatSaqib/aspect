@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
-import ErrorBoundary from '../../../../components/ErrorBoundary'
+import ErrorBoundary from '../../../../cleanComponents/ErrorBoundary'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages } from '../../../../messages'
 import ConsumableSelector from '../ConsumableSelector'
