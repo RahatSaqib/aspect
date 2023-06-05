@@ -17,7 +17,11 @@ async function xpertSiteDetailedReport(auth, query) {
 async function xpertSiteSummarySiteWiseReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
-  const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+
+  const devicesBase = getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+    .leftJoin('Partner as pImpl', 'pImpl.id', 'd.implementingPartnerId')
+    .select(['pImpl.name as implementingPartner'])
+  const rows = await devicesBase
 
   /**
    * group by siteId - not by siteName because same site name may exist in
@@ -26,12 +30,11 @@ async function xpertSiteSummarySiteWiseReport(auth, query) {
   const bySiteId = _.reduce(
     rows,
     (acc, item) => {
-      const { siteId, siteName, stateName, districtName, implementingPartner, ...rest } = item
+      const { siteId, siteName, stateName, districtName, ...rest } = item
       acc[siteId] = acc[siteId] || {
         siteName,
         stateName,
         districtName,
-        implementingPartner,
         data: [],
       }
       acc[siteId].data = [...acc[siteId].data, rest]
@@ -63,11 +66,20 @@ async function xpertSiteSummarySiteWiseReport(auth, query) {
         {}
       )
       const { lastUploadOn } = _.maxBy(data, 'lastUploadOn') || {}
+      /**
+       * when different devices in the site use different implementingPartner's - assemble
+       * final implementingPartner for the site
+       */
+      const implementingPartner = data
+        .filter(x => x.implementingPartner)
+        .map(x => x.implementingPartner)
+        .join(', ')
       acc = [
         ...acc,
         {
           // few static columns with geography group names (site, province, district, etc)
           ...rest,
+          implementingPartner,
           // few static columns with aggregations
           lastUploadOn,
           totalXpertTests: _.sumBy(data, 'totalXpertTests'),
