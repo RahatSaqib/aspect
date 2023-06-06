@@ -66,15 +66,11 @@ const enhance = compose(
   connect(
     state => {
       const { activeDialog, performanceReport } = state.device
-      const {
-        deviceMaintenanceStatus: { items: maintenanceStatus },
-      } = state
       const { items, table } = state.result
       const { culture } = state.user
       return {
         activeDialog,
         performanceReport,
-        maintenanceStatus,
         culture,
         items,
         table,
