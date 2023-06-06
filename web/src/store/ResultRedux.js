@@ -1,7 +1,7 @@
 import { stringify } from 'querystring'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { getFilters } from '../oldComponents/filter/utils'
+import { getFilters } from '../oldComponents/utils'
 import screenSchema from '../oldPages/result/ResultScreenSchema.json'
 import {
   filterFieldsRejectedError,
@@ -44,22 +44,6 @@ export const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-// updating a single result with given resultId and data
-function requestCreatingTreatmentStatusLog(resultId) {
-  return {
-    type: types.REQUEST_CREATING_TREATMENT_STATUS_LOG,
-    resultId,
-  }
-}
-
-// received a updated single result
-function receiveTreatmentStatusLog(item, resultId) {
-  return {
-    type: types.RECEIVE_CREATING_TREATMENT_STATUS_LOG,
-    resultId,
-    item,
-  }
-}
 
 // updating a single result with given resultId and data
 function requestCreatingResultNote(resultId) {
@@ -78,26 +62,6 @@ function receiveResultNote(item, resultId) {
   }
 }
 
-export function logTreatmentStatus(resultId, data) {
-  return dispatch => {
-    dispatch(requestCreatingTreatmentStatusLog(resultId, data))
-
-    return aspectFetch(`/result/treatment-status/${resultId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Result',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveTreatmentStatusLog(json.data, resultId)))
-  }
-}
 export function addResultNote(resultId, data) {
   return dispatch => {
     dispatch(requestCreatingResultNote(resultId))
@@ -151,23 +115,6 @@ export function fetchResultLog(resultId) {
         ),
       },
     }).then(json => dispatch(receiveResultLogs(json.data)))
-  }
-}
-
-// updating a single result with given resultId and data
-function requestUpdatingSingleResult(resultId, data) {
-  return {
-    type: types.REQUEST_UPDATING_SINGLE_RESULT,
-    resultId,
-    data,
-  }
-}
-
-// received a updated single result
-function receiveUpdatedSingleResult(item) {
-  return {
-    type: types.RECEIVE_UPDATED_SINGLE_RESULT,
-    item,
   }
 }
 
@@ -245,196 +192,9 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
   }
 }
 
-// update a single result with given resultId and data
-export function updateSingleResult(resultId, data) {
-  return dispatch => {
-    dispatch(requestUpdatingSingleResult(resultId, data))
-
-    return aspectFetch(`/result/${resultId}`, {
-      method: 'PUT',
-      body: JSON.stringify(data),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateSingleResult.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Result',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
-  }
-}
-
-// update a single result with given workflow status externalId
-function updateSingleResultWorkflowStatus(resultId, externalId) {
-  return {
-    type: types.REQUEST_SINGLE_RESULT,
-    resultId,
-    externalId,
-  }
-}
-
-const RESULT_WORKFLOW_STATUS_EXTERNALID_ACKNOWLEDGED = 'Acknowledged'
-
-export function updateResultWorkflowStatus(resultId) {
-  return dispatch => {
-    const externalId = RESULT_WORKFLOW_STATUS_EXTERNALID_ACKNOWLEDGED
-
-    dispatch(updateSingleResultWorkflowStatus(resultId, externalId))
-
-    return aspectFetch(`/result/workflow-status/${resultId}`, {
-      method: 'PUT',
-      body: JSON.stringify({ externalId }),
-      errorNotifications: {
-        default: errorPleaseTryAgainInAFewMinutes(
-          defineMessages({
-            title: {
-              id: 'errorResponseMessages.updateResultWorkflowStatus.PUT.default.title',
-              defaultMessage: 'An Error Occurred When Trying to Save the Workflow Status',
-            },
-          })
-        ),
-      },
-    }).then(json => dispatch(receiveUpdatedSingleResult(json.data)))
-  }
-}
-
-function setSingleResultFormDataValue(resultId, formFieldKey, value) {
-  return {
-    type: types.SET_RESULT_FORM_DATA_VALUE,
-    resultId,
-    formFieldKey,
-    value,
-  }
-}
-
-function savingSingleResultFormData(resultId) {
-  return {
-    type: types.SAVING_RESULT_FORM_DATA,
-    resultId,
-  }
-}
-
-function savingSingleResultFormDataComplete(resultId) {
-  return {
-    type: types.SAVING_RESULT_FORM_DATA_COMPLETE,
-    resultId,
-  }
-}
-
-function sendUpdatedResultFormData(dispatch, resultId, formData) {
-  return aspectFetch(`/result/form-data/${resultId}`, {
-    method: 'PUT',
-    body: JSON.stringify(formData),
-    errorNotifications: {
-      default: errorPleaseTryAgainInAFewMinutes(
-        defineMessages({
-          title: {
-            id: 'errorResponseMessages.saveResultFormDataValue.PUT.default.title',
-            defaultMessage: 'An error occurred when trying to update the result.',
-          },
-        })
-      ),
-    },
-  })
-    .then(json => dispatch(receiveUpdatedSingleResult(json.data)))
-    .catch(err => {
-      dispatch(savingSingleResultFormDataComplete(resultId))
-      return err
-    })
-}
-
-export function saveResultFormDataValue(resultId, formFieldKey, value) {
-  return (dispatch, getState) => {
-    const originalFieldValue = getState().getIn(['result', 'items', 'byId', resultId, 'formData', formFieldKey]) || ''
-    if (value !== originalFieldValue) {
-      dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
-      dispatch(savingSingleResultFormData(resultId))
-      const formData = {}
-      formData[formFieldKey] = value
-      return sendUpdatedResultFormData(dispatch, resultId, formData)
-    }
-  }
-}
-
-export function setResultFormDataValue(resultId, formFieldKey, value) {
-  return (dispatch, getState) => {
-    const originalFieldValue = getState().getIn(['result', 'items', 'byId', resultId, 'formData', formFieldKey]) || ''
-    if (value !== originalFieldValue) {
-      return dispatch(setSingleResultFormDataValue(resultId, formFieldKey, value))
-    }
-  }
-}
-
-export function saveResultFormData(resultId, formData) {
-  return dispatch => {
-    dispatch(savingSingleResultFormData(resultId))
-    return sendUpdatedResultFormData(dispatch, resultId, formData)
-  }
-}
-
 /*
  * ---------------- Result Workflow Status Logs -----------------
  */
-// action for setting table's prop loading:true
-function requestWorkflowStatusLogsAction(sortCol, sortDir, page, size) {
-  return {
-    type: types.REQUEST_WORKFLOW_LOG,
-    sortCol,
-    sortDir,
-    page,
-    size,
-  }
-}
-
-// received list of workflow-status-logs
-function receiveWorkflowStatusLogsAction(json) {
-  return {
-    type: types.RECEIVE_WORKFLOW_LOG,
-    items: json.data,
-    total: json.total,
-  }
-}
-
-// load a list of workflow-status-logs for given resultId
-export function fetchWorkflowStatusLogs(resultId, sortCol = 'changedOn', sortDir = 'desc', page = 0, pageSize = 10) {
-  return dispatch => {
-    // action to set table's prop loading:true
-    dispatch(requestWorkflowStatusLogsAction(sortCol, sortDir, page, pageSize))
-
-    // request sorted/paged dataset from api
-    return aspectFetch(
-      `/result/workflow-status-logs/${resultId}?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-      })}`,
-      {
-        errorNotifications: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchWorkflowLogs.GET.400.title',
-                defaultMessage: 'Searching Result Workflow Status Logs Failed',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchWorkflowLogs.GET.default.title',
-                defaultMessage: 'Loading Result Workflow Status Logs Failed',
-              },
-            })
-          ),
-        },
-      }
-    ).then(json => dispatch(receiveWorkflowStatusLogsAction(json)))
-  }
-}
 
 // TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
 export function exportResults(filtersParams, format, sortCol, sortDir, page, pageSize, fileFormat, reportName) {

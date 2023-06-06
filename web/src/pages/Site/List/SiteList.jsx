@@ -1,61 +1,37 @@
 import React, { useState, useEffect } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
-import flowRight from 'lodash/flowRight'
 import { Helmet } from 'react-helmet'
+import DetailHeader from '../../../cleanComponents/DetailHeader'
+import SiteFilter from '../../../cleanComponents/Filter/SiteFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
-import DetailHeader from '../../../components/DetailHeader'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { useAuthState } from '../../../providers/AuthProvider/index'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../../utils/selectors/searchParams'
+import { useFilterValues } from '../../../providers/FilterProvider'
+import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.css'
 
 const cssClasses = classnames.bind(styles)
 
-const FILTERS_CONFIG = [
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { siteName: true, requiredPermissions: ['site'] },
-  { externalId: true, requiredPermissions: [] },
-]
-
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['name', 'state', 'lga', 'totalDevices', 'inventoryUpdatedOn'],
-})
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-const filtersFromLocation = composeSanitizer(
-  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
-  searchSanitizer
-)
-
 export const SiteList = ({ navigate, location }) => {
   const user = useAuthState()
   const intl = useI18n()
-  const { sanitized, value: filtersParamsFromLocation } = filtersFromLocation(location)
-  const filters = getFilters(filtersParamsFromLocation)
+  const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, user.jwt.permissions)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
 
   const { data, isLoading } = useSites({ sortCol, sortDir, pageAt, pageSize, filters }, { enabled: !!sortCol })
   useSitesDownload({
-    filtersParams: filtersParamsFromLocation,
+    filtersParams: filters,
     sortCol,
     sortDir,
     page: pageAt,
@@ -66,16 +42,6 @@ export const SiteList = ({ navigate, location }) => {
   useEffect(() => {
     if (download.enabled) setDownload({ enabled: false })
   }, [download])
-
-  useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
-    if (sanitized || filtersSanitized) {
-      searchParams.set('filters', filtersParams)
-      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   const tableColumns = [
     { key: 'name', label: intl.formatMessage(messages.siteName), sortable: true },
@@ -97,9 +63,7 @@ export const SiteList = ({ navigate, location }) => {
   }
 
   const onExcelClick = formatType => {
-    if (!sanitized) {
-      setDownload({ fileFormat: formatType, enabled: true })
-    }
+    setDownload({ fileFormat: formatType, enabled: true })
   }
 
   const onRowClick = ({
@@ -108,7 +72,7 @@ export const SiteList = ({ navigate, location }) => {
     },
   }) => navigate(`/browse/site/${siteId}`)
 
-  return isLoading || !reducedFilters ? (
+  return isLoading ? (
     <LinearProgress />
   ) : (
     <>
@@ -125,14 +89,13 @@ export const SiteList = ({ navigate, location }) => {
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
+        <SiteFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <BrowseFilters navigate={navigate} location={location} intl={intl} config={reducedFilters}>
-              <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
-            </BrowseFilters>
+            <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
           </div>
           {data.siteList.length === 0 ? (
-            <BrowseEmptyList navigate={navigate} location={location} />
+            <BrowseEmptyList />
           ) : (
             <>
               <SiteDataTable className={cssClasses('SiteDataTable')}>

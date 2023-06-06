@@ -41,9 +41,7 @@ const cacheConfig = {
   MessageSeverity: {},
   MessageStatus: {},
   NotificationTypeCategory: {},
-  PartnerType: {
-    keyColumn: 'name',
-  },
+  PartnerType: {},
   ResultCategory: {},
   ResultSource: {},
   ResultStatus: {},

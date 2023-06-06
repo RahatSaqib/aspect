@@ -2,12 +2,13 @@ import React from 'react'
 import { Card, CircularProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import { bool, func, number, object, oneOfType, shape, string } from 'prop-types'
+import { useNavigate } from 'react-router'
 import useI18n from '../../hooks/useI18n'
 import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
-import AspectLink from '../AspectLink'
+import { useFilterUpdate, useFilterValues } from '../../providers/FilterProvider'
 import IconProvider from '../IconProvider'
 import WidgetAlert from './Alerts'
-import { buildWidgetToLinkParams, translate } from './Helpers'
+import { buildWidgetParams, translate } from './Helpers'
 import messages from './messages'
 import styles from './Widgets.css'
 
@@ -40,18 +41,23 @@ const AspectWidget = ({
   },
 }) => {
   const { formatMessage } = useI18n()
+  const filter = useFilterValues(link)
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
   const translator = { formatMessage, messages }
-  const linkParam = link ? buildWidgetToLinkParams(link, linkParams) : null
+  const params = link ? buildWidgetParams(link, linkParams) : null
   const titleText = translate(titleI18nKey, title, translator)
+
+  const goToLink = () => {
+    if (link) {
+      addFilter({ ...filter, ...params }, link)
+      navigate(link)
+    }
+  }
+
   return (
-    <AspectLink
-      to={linkParam}
-      className={{
-        active: cssClasses('Summary'),
-        disabled: cssClasses('Summary', 'Summary_Link--disabled'),
-      }}
-    >
-      <Card className={cssClasses('Summary__Card')}>
+    <span className={cssClasses('Summary')}>
+      <Card className={cssClasses('Summary', 'Summary__Card')} onClick={() => goToLink()}>
         <div className={cssClasses('Summary__Card__Title')}>
           <IconProvider icon={icon} className="summaryCard__icon" />
           <span className={cssClasses('Summary__Card__Title--main')}>
@@ -86,7 +92,7 @@ const AspectWidget = ({
           </div>
         </div>
       </Card>
-    </AspectLink>
+    </span>
   )
 }
 

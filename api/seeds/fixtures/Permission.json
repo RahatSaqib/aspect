@@ -115,6 +115,10 @@
     {
       "name": "operationalData",
       "activities": ["view", "edit"]
+    },
+    {
+      "name": "dashboard-v2",
+      "activities": ["view"]
     }
   ]
 }

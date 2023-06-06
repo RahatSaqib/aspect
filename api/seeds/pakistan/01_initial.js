@@ -17,7 +17,7 @@ async function seed(knex) {
 
   const partnerId = await upsertPartnerData(knex, {
     ...partnerData,
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
   })
 
   const [adminId] = await knex('User').insert({

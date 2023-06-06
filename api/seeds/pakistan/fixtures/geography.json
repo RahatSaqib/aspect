@@ -7,8 +7,8 @@
       "culture": "en-GB",
       "countryCode": "92",
       "timezone": "Pakistan Standard Time",
-      "portNumber": null,
-      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|HIV|DRSuspect|PatientAge|PatientGender|PatientLGA|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeA",
+      "portNumber": 3033,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ReagentLotID|ExpirationDate|CartridgeSerial|InstrumentSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|PatientId|PatientId2|Notes|PatientName|PatientAgeYears|PatientAgeMonths|PatientGender|Hiv",
       "inventoryDaysThreshold": 21,
       "monthStartsOnDay": 1,
       "states": [
@@ -291,6 +291,33 @@
             },
             {
               "name": "Bolan"
+            },
+            {
+              "name": "Chaman"
+            },
+            {
+              "name": "Harnai"
+            },
+            {
+              "name": "Killa Abdullah"
+            },
+            {
+              "name": "Awaran"
+            },
+            {
+              "name": "Barkhan"
+            },
+            {
+              "name": "Dera Bugti"
+            },
+            {
+              "name": "Kech"
+            },
+            {
+              "name": "Sherani"
+            },
+            {
+              "name": "Keich"
             }
           ]
         },
@@ -351,6 +378,9 @@
             },
             {
               "name": "North Waziristan"
+            },
+            {
+              "name": "Orakzai Agency"
             }
           ]
         },
@@ -468,6 +498,9 @@
             },
             {
               "name": "Upper Dir"
+            },
+            {
+              "name": "Tank"
             }
           ]
         },
@@ -483,38 +516,7 @@
         {
           "name": "Mercy Corps Sites",
           "abbreviation": "Mercy",
-          "lgas": [
-            {
-              "name": "Gujranwala"
-            },
-            {
-              "name": "Hafizabad"
-            },
-            {
-              "name": "Vehari"
-            },
-            {
-              "name": "Multan"
-            },
-            {
-              "name": "Khanewal"
-            },
-            {
-              "name": "Sanghar"
-            },
-            {
-              "name": "Khairpur"
-            },
-            {
-              "name": "Mandi Bahauddin"
-            },
-            {
-              "name": "Mardan"
-            },
-            {
-              "name": "Okara"
-            }
-          ]
+          "lgas": []
         }
       ]
     }

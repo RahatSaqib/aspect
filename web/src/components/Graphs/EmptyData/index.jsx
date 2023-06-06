@@ -38,25 +38,8 @@ const EmptyPieGraph = ({ title }) => {
   )
 }
 
-const EmptyRowPieGraph = ({ title }) => {
-  return (
-    <div className={cssClasses('placeholder__container')}>
-      <div className={cssClasses('placeholder__text')}>{title}</div>
-      <div className={cssClasses('placeholder__graphRowPie')}>
-        {[0, 1].map(key => (
-          <div className={cssClasses('placeholder__pieRowItemSolid')} key={key} />
-        ))}
-        {[0, 1, 2, 3, 4].map(key => (
-          <div className={cssClasses('placeholder__pieRowItemDoughNut')} key={key} />
-        ))}
-      </div>
-    </div>
-  )
-}
-
 const barGraphs = ['bar', 'stacked', 'divergent', 'calendar', 'barLegacyTreatment', 'stackedDeviceActivity']
 const pieGraphs = ['pie', 'pieLegacyTreatment']
-const pieRowGraphs = ['pieRow']
 
 const EmptyGraph = ({ type }) => {
   const { formatMessage } = useI18n()
@@ -66,8 +49,6 @@ const EmptyGraph = ({ type }) => {
     <EmptyBarGraph title={title} />
   ) : pieGraphs.includes(type) ? (
     <EmptyPieGraph title={title} />
-  ) : pieRowGraphs.includes(type) ? (
-    <EmptyRowPieGraph title={title} />
   ) : null
 }
 

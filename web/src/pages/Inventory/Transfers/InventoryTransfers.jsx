@@ -3,8 +3,8 @@ import { Card, CardContent, LinearProgress, Table, TableBody, TableCell, TableRo
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useLocation, useNavigate } from 'react-router'
+import DetailHeader from '../../../cleanComponents/DetailHeader'
 import AspectExportListButton from '../../../components/AspectExportListButton'
-import DetailHeader from '../../../components/DetailHeader'
 import useInventoryTransferDownload from '../../../hooks/inventory/useInventoryTransferDownload'
 import useInventoryTransferList from '../../../hooks/inventory/useInventoryTransferList'
 import useI18n from '../../../hooks/useI18n'
@@ -87,7 +87,7 @@ export const InventoryTransfers = () => {
             {isLoading ? (
               <LinearProgress />
             ) : data.data.length === 0 ? (
-              <BrowseEmptyList navigate={navigate} location={location} />
+              <BrowseEmptyList />
             ) : (
               <>
                 <Table className={cssClasses('SiteDataTable')}>

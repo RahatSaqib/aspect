@@ -6,7 +6,7 @@ import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import pick from 'lodash/pick'
 import reduce from 'lodash/reduce'
-import ErrorBoundary from '../../../../components/ErrorBoundary'
+import ErrorBoundary from '../../../../cleanComponents/ErrorBoundary'
 import AspectResponsiveBar from '../../../../components/Graphs/BarGraph/AspectResponsiveBar'
 import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
@@ -20,8 +20,8 @@ const baseConfig = {
   id: 'testPerformedMonthlyPercentage',
   clickThrough: {
     allow: true,
-    baseUrl: '/browse/result?filters=onlyReportableResults%3Dtrue%26displayResult%3Dactual%26',
-    keys: ['assay', 'indexBy'],
+    baseUrl: '/browse/result',
+    keys: ['assay', 'indexBy', 'onlyReportableResults', 'displayResult'],
   },
   indexBy: 'month',
   formatDate: 'MMM',

@@ -1,6 +1,8 @@
 const Promise = require('bluebird')
 
-exports.seed = async function (knex) {
+module.exports = require('../utils').seed(seed, __filename)
+
+async function seed(knex) {
   /* Mapping devices provided by Mehdi in asp-2211 */
   /* Last two objects are get for Presons from GX Alert, geography ids where LGA is null */
   const map = [

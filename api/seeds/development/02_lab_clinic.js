@@ -64,7 +64,7 @@ async function seed(knex) {
   // Reuse previously seeded "static" data
   const [partnerId] = await knex('Partner').insert({
     name: 'Reporter',
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
     plugin: 'malawi',
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,

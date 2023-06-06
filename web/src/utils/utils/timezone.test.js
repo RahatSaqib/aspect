@@ -1,5 +1,4 @@
-import { timezones } from '../../oldComponents/filter/hardcoded'
-import { getTimezoneById } from './timezone'
+import { timezones, getTimezoneById } from './timezone'
 
 describe('timezone module', () => {
   describe('getTimezoneById function', () => {

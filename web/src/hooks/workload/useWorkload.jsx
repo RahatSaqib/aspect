@@ -17,7 +17,7 @@ const getDeviceWorkload = async originalParams => {
 
 const useWorkload = params =>
   useQuery([DEVICE_KEY, params], () => getDeviceWorkload(params), {
-    enabled: !!(params && params.singleAssayId !== 'undefined'),
+    enabled: !!(params && params.singleAssayId !== -1),
   })
 
 export default useWorkload

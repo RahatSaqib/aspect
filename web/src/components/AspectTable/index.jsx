@@ -5,15 +5,15 @@ import isEqual from 'lodash/isEqual'
 import { func, array, object, oneOfType } from 'prop-types'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
+import ErrorBoundary from '../../cleanComponents/ErrorBoundary'
 import useI18n from '../../hooks/useI18n'
-import { getFilters, sanitizeFiltersStringBy } from '../../oldComponents/filter/utils'
+import { getFilters, sanitizeFiltersStringBy } from '../../oldComponents/utils'
 import {
   DEFAULT_PAGE_AT,
   DEFAULT_PAGE_SIZE,
   makeSearchParamsSanitizer,
   makeSortPageSelector,
 } from '../../utils/selectors/searchParams'
-import ErrorBoundary from '../ErrorBoundary'
 import fetchWrapperForQueries from '../QueryFetch'
 import { replaceRouteParams } from '../QueryFetch/Helpers'
 import { allowOnlyAPIKeys, determineSortDirection, getColumnIdFromFilterKey, removeNullFromCollection } from './Helpers'

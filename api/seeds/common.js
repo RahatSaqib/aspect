@@ -50,7 +50,7 @@ async function upsertGeography(knex, geography) {
       'culture',
       'countryCode',
       'timezone',
-      'portNumber',
+      // 'portNumber', ??
       'exportColumns',
       'inventoryDaysThreshold',
       'monthStartsOnDay',
@@ -59,15 +59,14 @@ async function upsertGeography(knex, geography) {
       (await knex('Country as c')
         .leftJoin('Geography as g', 'c.id', 'g.countryId')
         .where('c.abbreviation', country.abbreviation)
-        .andWhere(function () {
-          this.whereNull('g.stateId')
-        })
-        .andWhere(function () {
-          this.whereNull('g.lgaId')
-        })
+        .whereNull('g.stateId')
+        .whereNull('g.lgaId')
         .first('c.id as countryId', 'g.id as countryGeographyId')) || {}
+
     if (!countryId) {
       ;[countryId] = await knex('Country').insert(countryData)
+    } else {
+      await knex('Country').where('id', countryId).update(countryData)
     }
     if (!countryGeographyId) {
       ;[countryGeographyId] = await knex('Geography').insert({
@@ -1055,7 +1054,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
 
   const partnerId = await upsertPartnerData(knex, {
     ...partnerData,
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
   })
   const returnValue = {
     adminId,
@@ -1796,6 +1795,9 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
     updatedOn: now,
     updatedBy: adminId,
   }
+
+  const siteTypes = await knex('SiteType').select('id', 'externalId')
+
   await Promise.each(sitesFromGxAlert, async site => {
     const state = site.stateName
       ? statesByName[site.stateName.toLowerCase()] || {
@@ -1822,13 +1824,15 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
       })
       .first()
 
-    const { id: siteTypeId } = await knex('SiteType')
-      .where({
-        externalId: site.type || 'lab',
-      })
-      .first()
+    const siteTypeId = siteTypes.find(st => st.externalId === (site.type || 'lab')).id
 
-    // sites
+    const warehouse = await knex('Site as w')
+      .join('SiteType as st', 'w.siteTypeId', 'st.id')
+      .where('st.externalId', 'warehouse')
+      .where('w.externalId', site.warehouse_externalId || null)
+      .first({ warehouseId: 'w.id' })
+    const warehouseId = warehouse ? warehouse.warehouseId : null
+
     const siteData = {
       partnerId,
       geographyId: siteGeographyId,
@@ -1839,10 +1843,13 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
       latitude: site.latitude,
       longitude: site.longitude,
       timezoneId: country.timezone,
+      parentWarehouseId: warehouseId || null,
       customProperties: site.customProperties || null,
       ...auditFields,
     }
+
     const existingSite = await knex('Site').where('externalId', site.externalId).orWhere('name', site.name).first('id')
+
     let siteId = 0
     if (existingSite) {
       siteId = existingSite.id
