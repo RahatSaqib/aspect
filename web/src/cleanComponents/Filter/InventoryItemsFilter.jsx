@@ -41,9 +41,10 @@ const InventoryItemsFilter = () => {
         </Grid>
         <Grid item xs={3}>
           <ConsumableSelect
+            valueBy="id"
             label={formatMessage(messages.consumable)}
             value={state.consumableId}
-            onChange={e => setState({ ...state, consumableId: e.target.value })}
+            onChange={value => setState({ ...state, consumableId: value })}
           />
         </Grid>
         {allowed(['site:view']) ? (
