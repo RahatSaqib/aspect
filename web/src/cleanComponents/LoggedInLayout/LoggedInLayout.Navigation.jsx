@@ -86,6 +86,7 @@ const Submenu = ({ link, level, setParentAnchorEl }) => {
 
 const getRawLinks = f => [
   { href: '/dashboard', label: f(messages.homeTitle), perm: ['dashboard:summary'] },
+  { href: '/dashboard-v2', label: f(messages.dashboardV2Title), perm: ['dashboard:summary', '+dashboard-v2:view'] },
   { href: '/operational-data', label: f(messages.operationDataTitle), perm: ['operationalData'] },
   { href: '/clinical-indicators', label: f(messages.clinicalIndicatorsTitle), perm: ['clinicalIndicators'] },
   {
