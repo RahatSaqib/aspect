@@ -42,9 +42,9 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const NestedTable = ({ columns, rows, isDetail }) => {
+const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
   const [page, setPage] = useState(0)
-  const [rowsPerPage, setRowsPerPage] = useState(10)
+  const [rowsPerPage, setRowsPerPage] = useState(perPage)
   const [order, setOrder] = useState('asc')
   const [orderBy, setOrderBy] = useState(columns[0].prop)
   const [open, setOpen] = useState(-1)
@@ -119,7 +119,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
                   <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
                     <Collapse in={open === row.id} timeout="auto" unmountOnExit>
                       <Box sx={{ backgroundColor: colors[i % 2] }}>
-                        <NestedTable columns={columns} isDetail rows={row.children} />
+                        <NestedTable perPage={rowsPerPage} columns={columns} isDetail rows={row.children} />
                       </Box>
                     </Collapse>
                   </TableCell>

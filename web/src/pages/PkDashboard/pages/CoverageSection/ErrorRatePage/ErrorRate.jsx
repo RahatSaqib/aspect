@@ -35,7 +35,10 @@ const childrenKey = 'children'
 const createNode = (name, parent) =>
   parent.reduce(
     (prev, curr) => {
-      values.forEach(key => set(prev, key, (prev?.[key] ?? 0) + (curr?.[key] ?? 0)))
+      values.forEach(key => {
+        const sum = (prev?.[key] ?? 0) + (curr?.[key] ?? 0)
+        set(prev, key, Number(sum.toFixed(2)))
+      })
       return prev
     },
     { name, id: name }
@@ -50,7 +53,7 @@ const makeNestedData = array => {
     entries(groupBy(stateValues, 'lgaName')).forEach(([lgaName, lgaValues]) => {
       const lga = createNode(lgaName, lgaValues)
 
-      entries(groupBy(lgaValues, 'type')).forEach(([typeName, typeValues]) => {
+      entries(groupBy(lgaValues, 'name')).forEach(([typeName, typeValues]) => {
         const type = createNode(typeName, typeValues)
         set(lga, childrenKey, [...get(lga, childrenKey, []), type])
       })
@@ -71,7 +74,7 @@ const ErrorRatePage = () => {
 
   return (
     <PkPage title={formatMessage(messages.errorRateTitle)}>
-      <NestedTable columns={columns} rows={makeNestedData(data ?? [])} hasDetail />
+      <NestedTable columns={columns} perPage={30} rows={makeNestedData(data ?? [])} hasDetail />
     </PkPage>
   )
 }
