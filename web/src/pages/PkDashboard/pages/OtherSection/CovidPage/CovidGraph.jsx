@@ -37,6 +37,7 @@ const CovidGraphPage = () => {
 
   return (
     <PkPage
+      isMocked
       title={`${formatMessage(messages.covid)} / ${formatMessage(graphMessages.clinicalIndicatorsCovidTitle)}`}
       filters={
         <FormControlLabel
