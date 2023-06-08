@@ -1,13 +1,11 @@
-import React from 'react'
+import React, { memo } from 'react'
 import { Button, DialogActions, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Formik } from 'formik'
+import { ConsumableSelect, SiteSelect } from '../../../cleanComponents'
+import ConsumableReasonSelect from '../../../cleanComponents/ConsumableReasonSelect'
 import useI18n from '../../../hooks/useI18n'
-import ConsumableReasonSelectField, {
-  testConductedReasonI18nKey,
-} from '../../../oldComponents/filter/resource/ConsumableReasonSelectField'
-import ConsumableSelectField from '../../../oldComponents/filter/resource/ConsumableSelectField'
-import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectField'
+import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
@@ -20,7 +18,7 @@ const cssClasses = classnames.bind(styles)
 
 export { testConductedReasonI18nKey }
 
-export default function PakistanInventoryAdjustmentDialog(props) {
+export function PakistanInventoryAdjustmentDialog(props) {
   const { onCancel, onSubmit, inventoryItem, actionType } = props
   const { formatMessage, ...intl } = useI18n()
   const inventory = inventoryItem?.toJS?.() ?? undefined
@@ -28,17 +26,29 @@ export default function PakistanInventoryAdjustmentDialog(props) {
 
   return (
     <Formik
-      enableReinitialize
       validationSchema={getValidations(formatMessage, actionType)}
       initialValues={transformInitialValue(inventory, actionType)}
       onSubmit={values => onSubmit(transformValues(values))}
     >
-      {({ values, initialValues, handleBlur, handleSubmit, errors, handleChange, setFieldValue, isSubmitting }) => {
+      {({
+        resetForm,
+        values,
+        initialValues,
+        handleBlur,
+        handleSubmit,
+        errors,
+        handleChange,
+        setFieldValue,
+        isSubmitting,
+      }) => {
         return (
           <AspectDialog
             maxWidth="sm"
             open={!!actionType}
-            onClose={onCancel}
+            onClose={() => {
+              onCancel()
+              resetForm()
+            }}
             title={formatMessage(labels.dialogTitle, {
               consumableName: values?.consumable?.name ?? formatMessage(messages.defaultConsumableName),
             })}
@@ -46,14 +56,12 @@ export default function PakistanInventoryAdjustmentDialog(props) {
             <form className={cssClasses('Form')}>
               <div className={cssClasses('Form__Content')}>
                 {!inventory ? (
-                  <ConsumableSelectField
+                  <ConsumableSelect
                     name="consumable"
-                    returnItem
-                    floatingLabelText={formatMessage(messages.consumable)}
-                    floatingLabelFixed
-                    errorText={errors?.consumable}
-                    value={values.consumable?.id}
-                    onConsumableChange={(_, consumable) => setFieldValue('consumable', consumable)}
+                    label={formatMessage(messages.consumable)}
+                    error={errors?.consumable}
+                    value={values.consumable ?? null}
+                    onChange={consumable => setFieldValue('consumable', consumable)}
                     fullWidth
                   />
                 ) : null}
@@ -95,39 +103,23 @@ export default function PakistanInventoryAdjustmentDialog(props) {
                 ) : null}
 
                 {initialValues?.fromSiteId ? (
-                  <SiteSelectField
+                  <SiteSelect
                     name="fromSiteId"
-                    floatingLabelText={formatMessage(messages.fromSiteName)}
+                    label={formatMessage(messages.fromSiteName)}
                     disabled
-                    value={values.fromSiteId}
-                    onSiteChange={site => setFieldValue('fromSiteId', site)}
-                    errorStyle={{
-                      float: 'left',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'visible',
-                    }}
-                    fullWidth
-                    tabIndex="0"
-                    aria-haspopup
+                    value={values.fromSiteId ?? null}
+                    onChange={e => setFieldValue('fromSiteId', e.target.value)}
                   />
                 ) : null}
 
                 {actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG ? (
-                  <SiteSelectField
+                  <SiteSelect
                     name="toSiteId"
                     disabled={actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG}
-                    errorText={errors?.toSiteId}
-                    floatingLabelText={formatMessage(messages.toSiteName)}
+                    error={errors?.toSiteId ?? null}
+                    label={formatMessage(messages.toSiteName)}
                     value={values.toSiteId}
-                    onSiteChange={site => setFieldValue('toSiteId', site)}
-                    errorStyle={{
-                      float: 'left',
-                      whiteSpace: 'nowrap',
-                      textOverflow: 'visible',
-                    }}
-                    fullWidth
-                    tabIndex="0"
-                    aria-haspopup
+                    onChange={e => setFieldValue('toSiteId', e.target.value)}
                   />
                 ) : null}
 
@@ -158,15 +150,12 @@ export default function PakistanInventoryAdjustmentDialog(props) {
                 ) : null}
 
                 {actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ? (
-                  <ConsumableReasonSelectField
-                    intl={{ formatMessage, ...intl }}
+                  <ConsumableReasonSelect
                     name="reasonId"
-                    returnItem
-                    errorText={errors?.reason}
-                    floatingLabelText={formatMessage(messages.reason)}
-                    value={values.reason?.id}
-                    onConsumableReasonIdChange={(_, reason) => setFieldValue('reason', reason)}
-                    margin="normal"
+                    error={errors?.reason}
+                    label={formatMessage(messages.reason)}
+                    value={values?.reason ?? null}
+                    onChange={reason => setFieldValue('reason', reason)}
                   />
                 ) : null}
 
@@ -246,3 +235,5 @@ export default function PakistanInventoryAdjustmentDialog(props) {
     </Formik>
   )
 }
+
+export default memo(PakistanInventoryAdjustmentDialog)
