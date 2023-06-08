@@ -5,7 +5,7 @@ export function usePakistan() {
   const { countryAbbreviation } = useAuthState()
 
   const isPakistan = useMemo(
-    () => true, //localStorage.getItem('<showPkDashboard>') || countryAbbreviation === 'PK',
+    () => localStorage.getItem('<showPkDashboard>') || countryAbbreviation === 'PK',
     [countryAbbreviation]
   )
 
