@@ -14,7 +14,7 @@ import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../components/QueryFetch'
 import ASSAY_LIST from '../components/QueryFetch/Assay'
 import { negateTimeZoneOffset } from '../oldComponents/shared/DateTimeInput/utils/date'
-import { useFilterUpdate, useFilterValues } from '../providers/FilterProvider'
+import { useFilterUpdate } from '../providers/FilterProvider'
 import DATE_CONSTS from '../utils/consts/DateTime/CONSTS'
 import GRAPH_CONSTS from '../utils/consts/Graphs/CONSTS'
 
@@ -154,7 +154,6 @@ const useGraphClickThrough = cfg => {
 
   const navigate = useNavigate()
   const [value, setValue] = useState()
-  const filter = useFilterValues(baseUrl)
   const [addFilter] = useFilterUpdate()
 
   const { data } = useQuery(ASSAY_LIST.KEY, async () => fetchWrapperForQueries({ endpoint: ASSAY_LIST.ENDPOINT }))
@@ -163,7 +162,7 @@ const useGraphClickThrough = cfg => {
     if (allow && data && value) {
       const moreProps = { assays, baseAssay, keys, filterBy, keyToConsume }
       const params = getQueryParameters(data, value.data, formatDate, value.id, indexBy, moreProps)
-      addFilter({ ...filter, ...params }, baseUrl)
+      addFilter({ ...params }, baseUrl)
 
       navigate(baseUrl)
     }
