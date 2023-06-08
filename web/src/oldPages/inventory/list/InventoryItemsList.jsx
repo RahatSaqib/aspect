@@ -1,7 +1,5 @@
-import React, { useEffect, useCallback, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { FormControlLabel, Switch, TableBody } from '@mui/material'
-import React, { useCallback, useEffect, useMemo, useState } from 'react'
-import { FormControlLabel, FormGroup, Switch, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import omit from 'lodash/omit'
@@ -16,12 +14,11 @@ import AspectExportListButton from '../../../components/AspectExportListButton/i
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
+import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
 import useI18n from '../../../hooks/useI18n'
 import { usePakistan } from '../../../hooks/usePakistan'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
-import { getFilters, reduceFiltersConfig, sanitizeFiltersStringBy } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
@@ -104,10 +101,6 @@ export const InventoryItemsListWithProps = ({
   refetch,
 }) => {
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
-  const breakOutByLotToggle = useCallback(() => {
-    setBreakOutByLot(!breakOutByLot)
-    setEnableInventoryOnHandField(false)
-  }, [breakOutByLot, setEnableInventoryOnHandField, setBreakOutByLot])
 
   const { isPakistan } = usePakistan()
 
@@ -267,7 +260,7 @@ export const InventoryItemsListWithProps = ({
           )}
         </DataTableCard>
 
-        {isPakistan ? (
+        {isPakistan && inventoryAdjustment.get('actionType') ? (
           <PakistanInventoryAdjustmentDialog
             actionType={inventoryAdjustment.get('actionType')}
             inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], undefined)}
@@ -329,7 +322,8 @@ export const InventoryItemsList = () => {
 
   // >>>>>> Defining selectors <<<<<<
   const inventory = useSelector(state => state.inventory)
-  const consumableReasons = useSelector(state => state.consumable.consumableReasons)
+
+  const { data: consumableReasons } = useConsumableReasons()
   // >>>>>> Structuring data <<<<<<
   const { table, items, inventoryAdjustment } = inventory
   const sortPage = makeSortPageSelector({ sortCol: 'siteName' })
@@ -392,8 +386,8 @@ export const InventoryItemsList = () => {
   // Remove
   const { mutate: onRemoveInventorySubmit } = useMutation(
     values => {
-      const selectedAdjustmentReason = consumableReasons.items.find(reason => reason.get('id') === values.reasonId)
-      if (selectedAdjustmentReason.get('i18nKey') === testConductedReasonI18nKey) {
+      const selectedAdjustmentReason = consumableReasons?.find(reason => reason?.id === values.reasonId)
+      if (selectedAdjustmentReason?.i18nKey === testConductedReasonI18nKey) {
         return removeInventory(omit(values, ['canExpire', 'dateAdjusted']), dispatch, inventory).then(
           onAdjustInventorySucceeded
         )
