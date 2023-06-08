@@ -71,7 +71,7 @@ export function getLabels(actionType) {
 }
 
 export function transformInitialValue(inventory, actionType) {
-  let value = { dateAdjusted: new Date() }
+  let value = { dateAdjusted: new Date(), quantity: '', lotNumber: '' }
 
   if (inventory) {
     value = {
@@ -88,6 +88,7 @@ export function transformInitialValue(inventory, actionType) {
         showExpirationDate: inventory.showExpirationDate,
         showLot: inventory.showLot,
         unitShortName: inventory.unitShortName,
+        i18nKey: inventory.consumableNameI18nKey,
       },
     }
   }
