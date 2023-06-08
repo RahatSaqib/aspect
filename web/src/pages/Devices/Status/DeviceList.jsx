@@ -20,8 +20,9 @@ import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
+import DetailHeader from '../../../cleanComponents/DetailHeader'
+import DeviceListFilter from '../../../cleanComponents/Filter/DeviceListFilter'
 import ExportListButton from '../../../components/AspectExportListButton'
-import DetailHeader from '../../../components/DetailHeader'
 import PermissionChecker from '../../../components/PermissionChecker/index'
 import { DEVICE_LIST } from '../../../components/QueryFetch/Device/index'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
@@ -30,12 +31,11 @@ import useMergeDevices from '../../../hooks/device/useMergeDevices'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
+import { useFilterValues } from '../../../providers/FilterProvider'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
@@ -50,20 +50,6 @@ import getExportableFile from './DeviceQueries'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
-const FILTERS_CONFIG = [
-  { assayId: true, requiredPermissions: [] },
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { siteName: true, requiredPermissions: ['site:view'] },
-  { deviceName: true, requiredPermissions: ['device'] },
-  { deviceStatus: true, requiredPermissions: [] },
-  { deviceMaintenanceStatus: true, requiredPermissions: [] },
-  { deviceType: true, requiredPermissions: [] },
-  { deviceApproval: true, requiredPermissions: [] },
-  { issueTypeId: true, requiredPermissions: [] },
-  { connectorStatus: true, requiredPermissions: [] },
-]
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -82,9 +68,8 @@ const searchSanitizer = makeSearchParamsSanitizer({
     'lastResultConductedOn',
   ],
 })
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
+  flowRight(searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -170,10 +155,7 @@ const DeviceList = () => {
   const { mutate: mergeDevices } = useMergeDevices()
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
-  const {
-    jwt: { permissions: userPermissions },
-    displayPreferences,
-  } = useAuthState()
+  const { displayPreferences } = useAuthState()
   const location = useLocation()
   const clearMergeDialog = () => {
     setSourceDevicesIds([])
@@ -189,18 +171,16 @@ const DeviceList = () => {
   const [sourceDevicesIds, setSourceDevicesIds] = useState([])
   const [targetDevice, setTargetDevice] = useState(null)
   const targetDeviceId = useMemo(() => +targetDevice?.key || null, [targetDevice])
-
+  const filters = useFilterValues(location.pathname)
   const [isMergeDeviceModalOpen, setMergeDeviceModalOpen] = useState(false)
   const [isConfirmationVisible, setConfirmationVisible] = useState(false)
   const [siteToMergeDevices, setSiteToMergeDevices] = useState()
   const [isProcessingMergeDevices, setProcessingMergeDevices] = useState(false)
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
-  const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
   const queryClient = useQueryClient()
 
   const { sortCol, sortDir, page, size } = pagination
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions)
   const params = { ...pagination, ...filters }
 
   const onRowClick = ({
@@ -236,16 +216,8 @@ const DeviceList = () => {
   }, [data])
 
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location)
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '')
-    if (sanitized || filtersSanitized) {
-      searchParams.set('filters', filtersParams)
-      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
-    }
-
     const sortPage = makeSortPageSelector({ sortCol: 'name' })
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setFilters(getFilters(filtersParams))
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
@@ -285,14 +257,14 @@ const DeviceList = () => {
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.devicesTitle)} />
+        <DeviceListFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <BrowseFilters navigate={navigate} location={location} config={reducedFilters} />
             <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
           </div>
           {isLoading ? <DataTableProgressBar /> : null}
           {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList navigate={navigate} location={location} />
+            <BrowseEmptyList />
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>

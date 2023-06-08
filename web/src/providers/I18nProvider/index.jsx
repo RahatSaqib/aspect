@@ -11,7 +11,6 @@ import ukLocale from 'date-fns/locale/uk'
 import viLocale from 'date-fns/locale/vi'
 import { DateTime } from 'luxon'
 import { createIntl, useIntl } from 'react-intl' // eslint-disable-line no-restricted-imports
-import ErrorBoundary from '../../components/ErrorBoundary'
 import translation from '../../utils/i18n/translation'
 import tgLocale from './date-fns-locales/tg-TJ'
 
@@ -91,11 +90,7 @@ function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
 const I18nProvider = ({ children }) => {
   const { messages } = useIntl()
   const value = i18nWrapper(messages)
-  return (
-    <I18nContext.Provider value={value}>
-      <ErrorBoundary>{children}</ErrorBoundary>
-    </I18nContext.Provider>
-  )
+  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
 }
 
 export { I18nProvider, I18nContext, i18nWrapper }

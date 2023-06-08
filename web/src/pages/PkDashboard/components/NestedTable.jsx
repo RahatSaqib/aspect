@@ -14,6 +14,26 @@ import {
   TableSortLabel,
 } from '@mui/material'
 
+function addDepth(items) {
+  const tree = { children: items }
+  const stack = [[tree, 0]]
+  let n
+  while (stack?.length) {
+    n = stack.length
+    const [node, i] = stack[n - 1]
+    if (i < node?.children?.length) {
+      stack.push([node.children[i], 0])
+      // eslint-disable-next-line no-plusplus
+      stack[n - 1][1]++
+    } else {
+      stack.pop()
+      node.depth = n
+    }
+  }
+
+  return tree?.children
+}
+
 function getComparator(order, orderBy) {
   const descendingComparator = (a, b, orderBy) => (b[orderBy] < a[orderBy] ? -1 : b[orderBy] > a[orderBy] ? 1 : 0)
 
@@ -41,7 +61,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
   }
 
   return rows ? (
-    <Table>
+    <Table style={{ tableLayout: 'fixed' }}>
       {!isDetail ? (
         <TableHead>
           <TableRow>
@@ -70,7 +90,6 @@ const NestedTable = ({ columns, rows, isDetail }) => {
           : rows
         ).map((row, i) => {
           const hasChildren = row?.children?.length > 0 ?? false
-          const totalCols = hasChildren ? columns.length + 1 : columns.length
           return (
             <>
               <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
@@ -78,6 +97,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
                   <TableCell
                     width="10%"
                     scope={i === 0 ? 'row' : undefined}
+                    style={{ paddingLeft: row?.depth * 7.5 }}
                     key={c.prop}
                     align={i !== 0 ? 'right' : undefined}
                   >
@@ -86,7 +106,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
                         <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
                           {open === row.id ? <ExpandLess /> : <ExpandMore />}
                         </Box>
-                        <span>{row[row.type]}</span>
+                        <span>{row[c.prop]}</span>
                       </Box>
                     ) : (
                       row[c.prop]
@@ -96,9 +116,9 @@ const NestedTable = ({ columns, rows, isDetail }) => {
               </TableRow>
               {hasChildren ? (
                 <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                  <TableCell sx={{ pl: 0.5, pr: 0, pt: 0, pb: 0 }} colSpan={totalCols}>
+                  <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
                     <Collapse in={open === row.id} timeout="auto" unmountOnExit>
-                      <Box sx={{ ml: 0.5, mr: 0.5, backgroundColor: colors[i % 2] }}>
+                      <Box sx={{ backgroundColor: colors[i % 2] }}>
                         <NestedTable columns={columns} isDetail rows={row.children} />
                       </Box>
                     </Collapse>
@@ -111,7 +131,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
 
         {emptyRows > 0 && (
           <TableRow style={{ height: 44.5 * emptyRows }}>
-            <TableCell colSpan={6} />
+            <TableCell colSpan={columns?.length + 1} />
           </TableRow>
         )}
       </TableBody>
@@ -134,4 +154,7 @@ const NestedTable = ({ columns, rows, isDetail }) => {
   ) : null
 }
 
-export default NestedTable
+export default props => {
+  const { rows, ...rest } = props
+  return <NestedTable rows={addDepth(rows ?? [])} {...rest} />
+}

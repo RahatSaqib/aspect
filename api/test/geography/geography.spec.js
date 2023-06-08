@@ -43,7 +43,7 @@ describe('Geography routes', () => {
                 assert.property(state, 'id')
                 assert.property(state, 'name')
                 assert.property(state, 'lgas')
-                const expectedLGAsInAlphabeticalOrder = _.orderBy(state.lgas, 'name', 'asc')
+                const expectedLGAsInAlphabeticalOrder = _.orderBy(state.lgas, [lga => lga.name.toLowerCase()])
                 assert.isTrue(
                   _.isEqual(state.lgas, expectedLGAsInAlphabeticalOrder),
                   `LGAs returned are not in alphabetical order ${JSON.stringify(state.lgas)}`

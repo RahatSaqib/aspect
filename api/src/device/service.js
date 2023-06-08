@@ -20,7 +20,6 @@ const { getUser } = require('../auth/service')
 const {
   allResultCategoryToId,
   allDeviceMaintenanceStatusToId,
-  deviceApprovalToId,
   resultCategoryToId,
   deviceMaintenanceTypeToId,
 } = require('../shared/dictionary')
@@ -89,6 +88,7 @@ const SELECT_SHOW_FIELDS = [
   'd.createdOn',
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',
+  'd.implementingPartnerId',
   'da.name as approval',
   'dms.externalId as maintenanceStatus',
   'dms.i18nKey as maintenanceStatusI18nKey',
@@ -115,6 +115,8 @@ const SELECT_SHOW_FIELDS = [
   'dt.deviceOperationSchema',
   'dp.dailyCapacity',
   'dp.id as dailyCapacityId',
+  'dp.modules as dailyCapacityModules',
+  'dp.i18nKey as dailyCapacityModulesI18nKey',
   'frd30.resultCount as resultCountThisMonth',
   'frd60.resultCount as resultCount60',
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
@@ -327,7 +329,7 @@ async function getListDevices(query, auth) {
       // ...else, it's considered notRecorded because we didn't register a status since the day previous yesterday
       knex.raw(`
         CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN
-          CASE 
+          CASE
             WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
             WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
             ELSE 'down' END
@@ -507,61 +509,6 @@ async function showDevice(request) {
   }
 
   return result
-}
-
-async function updateDevice(request) {
-  const {
-    params,
-    payload,
-    auth: { credentials },
-  } = request
-
-  const { id: currentlyLoggedInUserId } = await getUser(credentials.name)
-
-  // TODO: check permission
-  const now = new Date()
-  const device = await getDeviceByRequest(request)
-
-  const configurationData = _.assign({}, device.configurationData, payload.configurationData)
-
-  let { deviceApprovalId } = device
-  // check if a approvalToken is provided
-  if (_.has(payload, 'approvalToken') && device.approvalToken !== payload.approvalToken) {
-    deviceApprovalId = await deviceApprovalToId(payload.approvalToken)
-  }
-
-  const prevDeviceApprovalId = await knex('Device').where('id', params.deviceId).first('deviceApprovalId')
-
-  // update item
-  const updatedCount = await knex('Device')
-    .where('id', params.deviceId)
-    .update({
-      siteId: payload.siteId || device.siteId,
-      deviceApprovalId,
-      configurationData: JSON.stringify(configurationData),
-      deviceCapacityId: payload.deviceCapacityId,
-      name: payload.name,
-      notes: payload.notes,
-      shortName: payload.shortName,
-      updatedOn: now,
-      updatedBy: currentlyLoggedInUserId,
-    })
-
-  if (prevDeviceApprovalId !== deviceApprovalId) {
-    await knex('DeviceApprovalLog').insert({
-      deviceId: params.deviceId,
-      deviceApprovalId,
-      changedOn: now,
-      createdOn: now,
-      createdBy: currentlyLoggedInUserId,
-    })
-  }
-
-  if (updatedCount !== 1) {
-    return Boom.badRequest()
-  }
-
-  return showDevice(request)
 }
 
 async function listApprovalTypes() {
@@ -1556,7 +1503,6 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
     }
     const today = getCustomToday(action.today)
     const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(knex, today)
-
     await Promise.each(devicesMaintenanceLogForTheDay, async device => {
       const {
         id,
@@ -1576,12 +1522,18 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
        * and the last log was one of the inactive statuses,
        * then assume that the reason of inactivity is the same than before.
        */
-      if (currentMaintenanceStatusExternalId && today > currentMaintenanceStatusDay && !currentMaintenanceStatusActive)
+      if (
+        currentMaintenanceStatusExternalId &&
+        today > currentMaintenanceStatusDay &&
+        !currentMaintenanceStatusActive
+      ) {
         deviceMaintenanceStatusForTheDay = currentMaintenanceStatusExternalId
-      /**
-       * Else, as we don't know the reason of inactivity, 'inactiveUnknown' will be set as default
-       */ else deviceMaintenanceStatusForTheDay = 'inactiveUnknown'
-
+      } else {
+        /**
+         * Else, as we don't know the reason of inactivity, 'inactiveUnknown' will be set as default
+         */
+        deviceMaintenanceStatusForTheDay = 'inactiveUnknown'
+      }
       /**
        * If the device is currently decommissioned, we need to check if that is the reason of inactivity
        */
@@ -1589,7 +1541,7 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
         /**
          * If the device's last approval log is 'inactiveDecommissioned', and the day to process is after that approval log,
          * then we can assume the device inactivty reason is that it was decommissioned and no longer working
-         */
+         * */
         const decommissionedId = deviceApprovalId
         const lastDeviceApprovalLog = await knex('DeviceApprovalLog')
           .where({ deviceId: id })
@@ -1708,7 +1660,7 @@ async function postPayloadFromDevice(deviceLogDetails, optionalKnex) {
 module.exports = {
   listDevices,
   showDevice,
-  updateDevice,
+  getDeviceByRequest,
   listApprovalTypes,
   listMaintenanceStatuses,
   listDevicesForSelectList,

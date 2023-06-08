@@ -88,7 +88,7 @@ async function seed(knex) {
   }
 
   // Create partner types
-  const { Funding: partnerTypeFundingId, Implementing: partnerTypeImplementingId } = await allPartnerTypeToId()
+  const { funding: partnerTypeFundingId, implementing: partnerTypeImplementingId } = await allPartnerTypeToId()
 
   // Create partners
   const [partnerOneId] = await knex('Partner').insert({

@@ -1,0 +1,55 @@
+import { defineMessages } from 'react-intl'
+
+const messages = defineMessages({
+  title: {
+    id: 'pages.DeviceApiKeyList.title',
+    defaultMessage: 'Device API Keys',
+  },
+  /* ---------------- Dialog ----------------- */
+  generate: {
+    id: 'pages.DeviceApiKeyList.generate',
+    defaultMessage: 'Generate',
+  },
+  assign: {
+    id: 'pages.DeviceApiKeyList.assign',
+    defaultMessage: 'Assign',
+  },
+  /* ---------------- Table ----------------- */
+  createdOn: {
+    id: 'pages.DeviceApiKeyList.createdOn',
+    defaultMessage: 'Created On',
+  },
+  token: {
+    id: 'pages.DeviceApiKeyList.token',
+    defaultMessage: 'Key',
+  },
+  partner: {
+    id: 'pages.DeviceApiKeyList.partner',
+    defaultMessage: 'Partner',
+  },
+  country: {
+    id: 'pages.DeviceApiKeyList.country',
+    defaultMessage: 'Country',
+  },
+  site: {
+    id: 'pages.DeviceApiKeyList.site',
+    defaultMessage: 'Site',
+  },
+  device: {
+    id: 'pages.DeviceApiKeyList.device',
+    defaultMessage: 'Device',
+  },
+  revoked: {
+    id: 'pages.DeviceApiKeyList.revoked',
+    defaultMessage: 'Revoked',
+  },
+  paginatorStatus: {
+    id: 'pages.DeviceApiKeyList.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# device API key}
+      other {# device API keys}
+    }`,
+  },
+})
+
+export default messages

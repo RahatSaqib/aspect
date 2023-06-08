@@ -1,4 +1,4 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import PropTypes from 'prop-types'
 import { Unit } from '../../oldComponents/pureGrids'
 import Group from './Group'
@@ -13,7 +13,7 @@ const EmptyWidgets = () =>
 
 const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
   return (
-    <Fragment>
+    <>
       {widgetGroups && widgetGroups.length ? <Group data={widgetGroups} /> : null}
       {nonGroupedWidgets && nonGroupedWidgets.length
         ? nonGroupedWidgets.map(widget => (
@@ -22,7 +22,7 @@ const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
             </Unit>
           ))
         : null}
-    </Fragment>
+    </>
   )
 }
 

@@ -170,6 +170,14 @@ const messages = {
       id: 'pages.deviceDetail.countryAverage',
       defaultMessage: 'Country Average',
     },
+
+    deviceCapacityModules: {
+      id: 'pages.DeviceDetailProfile.deviceCapacityModules',
+      defaultMessage: `{numberOfModules, plural,
+        one {# module}
+        other {# modules}
+      }`,
+    },
   }),
 }
 

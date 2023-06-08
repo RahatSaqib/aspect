@@ -2,6 +2,7 @@ const _ = require('lodash')
 const cron = require('node-cron')
 const { startUp: reportBasedCronStartUp } = require('../notification/reportBased/reportBasedCronHandler')
 const { resultAnalyzeTimeout } = require('../notification/actions')
+const { missingInventoryLotsResolver } = require('../inventory/actions')
 const { calibrationDueDateAnalysis, calibrationIssueNotificationTrigger } = require('../device/actions')
 const {
   factGenerateDeviceConnectivity,
@@ -38,6 +39,7 @@ function startScheduler(queue) {
     resolveIssues,
     tryToContinueUnprocessedRawData,
     resultAnalyzeTimeout,
+    missingInventoryLotsResolver,
   })
 
   dispatcher.factGenerateResultCounts()
@@ -50,6 +52,7 @@ function startScheduler(queue) {
   dispatcher.calibrationDueDateAnalysis()
   dispatcher.calibrationIssueNotificationTrigger()
   dispatcher.resultAnalyzeTimeout()
+  dispatcher.missingInventoryLotsResolver()
 
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
@@ -70,6 +73,8 @@ function startScheduler(queue) {
   cron.schedule('30 7,22,37,52 * * * *', dispatcher.resolveIssues) // run every 15 minutes starting at 7m and 30s
 
   cron.schedule('0 7 * * *', dispatcher.factNewResultsAvailableCheck) // daily at 7am
+
+  cron.schedule('0 2 * * *', dispatcher.missingInventoryLotsResolver) // daily at 02:00 am
 
   if (_.get(config, 'uptimerobot.api.key')) {
     const dispatchCheckUptimeRobot = () => {

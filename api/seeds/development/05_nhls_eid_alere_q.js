@@ -71,7 +71,7 @@ async function seed(knex) {
 
   const [partnerId] = await knex('Partner').insert({
     name: 'South Africa NHLS',
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
     plugin: 'sa_nhls',
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,

@@ -186,6 +186,9 @@ const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
   mtbError: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END), 0)"),
   mtbTraceDetected: knex.raw("IFNULL(SUM(CASE WHEN rc1.externalId = 'Trace Detected' THEN 1 ELSE 0 END), 0)"),
   // Flat rif cnt
+  mtbDetectedTraceDetected: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId IN ('Detected', 'Trace Detected') THEN 1 ELSE 0 END), 0)"
+  ),
   rifDetected: knex.raw("IFNULL(SUM(CASE WHEN rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)"),
   rifNotDetected: knex.raw("IFNULL(SUM(CASE WHEN rc2.externalId = 'NotDetected' THEN 1 ELSE 0 END), 0)"),
   rifIndeterminate: knex.raw("IFNULL(SUM(CASE WHEN rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"),

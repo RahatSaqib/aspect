@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { FormControl, InputLabel, MenuItem, Select, IconButton } from '@mui/material'
-import Loading from '../../../components/Loading'
+import Loading from '../../../cleanComponents/Loading'
 import useStatesByCountry from '../../../hooks/geography/useStatesByCountry'
 import { getCustomMessage, commonDefinitions as messages } from '../../../messages'
 import { useAuthState } from '../../../providers/AuthProvider'

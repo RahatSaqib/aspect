@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
+const { asyncHandler, validateSortPageParams, validateDateRangeParams } = require('../routes')
 const {
   listResultsBaseConfig,
   getResponseForComments,
@@ -11,6 +11,7 @@ const {
   validateResultDetailResponse,
   resultCreatePayload,
   treatmentTrackingValidationQuery,
+  currentTestingValidGroups,
 } = require('./endpointsValidation')
 const {
   listResults,
@@ -43,10 +44,14 @@ const {
   trendInQuartersMtbDetected,
   trendInQuartersRifDetected,
   xdrAssayGraphAggregations,
+  currentResultAggregations,
 } = require('./service')
 const { getPatientResultsDetails } = require('./patientResultDetailService')
 const { exportResults } = require('./serviceReport')
 const { updateResult } = require('./updateResult')
+const { getResultsOverview } = require('./dashboard/getResultsOverview')
+const { xdrDevicesSummaryList } = require('./xdrDevicesSummaryList')
+const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
 const configs = {
   trendInQuarters: {
@@ -1025,6 +1030,102 @@ const routes = [
           grouped: Joi.array().required().description('List of prepared data for the graph'),
           keysFromGrouped: Joi.array().required().description('List of keys for series'),
           i18nKeys: Joi.object().required().description('Intl keys for axis X'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/current-result-aggregations',
+    handler: asyncHandler(currentResultAggregations),
+    config: {
+      description: 'Current Testing Dashboard',
+      notes: 'Data for most of the graphs on the Current Testing page',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate(currentTestingValidGroups),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          data: Joi.array()
+            .required()
+            .description('List of counts of grouped/filtered results')
+            .items(
+              Joi.object().keys({
+                ...resultAggregationsResponseItem,
+                lga: Joi.string().optional().allow(null, '').description('The LGA that the count is grouped by'),
+              })
+            ),
+          totalResults: Joi.number().allow(null).integer().positive().description('Number of affected/used results'),
+          totalResultsInPeriod: Joi.number().allow(null).integer().description('Total results in specified date range'),
+          totalResultsCurrentYear: Joi.number().allow(null).integer().description('Total results this year'),
+          averageTestsPerMonthCurrentYear: Joi.number()
+            .allow(null)
+            .integer()
+            .description('Average tests per month this year'),
+          totalResultsInLast24Hours: Joi.number().allow(null).integer().description('Total results in last 24 hours'),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/overview',
+    handler: asyncHandler(getResultsOverview),
+    config: {
+      description: 'Count of all results',
+      notes: 'Count of all results',
+      auth: { scope: ['dashboard', 'result'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/xdr-summary-screen',
+    handler: asyncHandler(xdrDevicesSummaryList),
+    config: {
+      description: 'XDR Assay Results Summary Screen',
+      notes: 'XDR Assay Results Summary Screen',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams('locationName'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False on any non-fatal error'),
+          total: Joi.number().required().description('The total number of items'),
+          length: Joi.number().required().description('The number of items included in this response'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                locationName: Joi.string().description('The location name (Site / LGA / State)'),
+                totalPmdtSites: Joi.number().description('Number of PMDT Sites with 10 C GX'),
+                totalXdrSites: Joi.number().description('Number of sites tested MTB/XDR Assay'),
+                cntAll: Joi.number().description('Total Tests'),
+                cnt_mtb: Joi.number().description('Number of MTB+'),
+                cnt_inh: Joi.number().description('Number of INH Resistance'),
+                cnt_flq: Joi.number().description('Number of FLQ Resistance'),
+                cnt_amk: Joi.number().description('Number of AMK Resistance'),
+                cnt_kan: Joi.number().description('Number of KAN Resistance'),
+                cnt_cap: Joi.number().description('Number of CAP Resistance'),
+                cnt_eth: Joi.number().description('Number of ETH Resistance'),
+                cnt_Invalid: Joi.number().description('Number of Invalid'),
+                cnt_NoResult: Joi.number().description('Number of No Result'),
+                cnt_Error: Joi.number().description('Number of Errors'),
+              })
+            ),
         }),
       },
     },

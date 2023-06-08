@@ -16,6 +16,7 @@ import translation from '../utils/i18n/translation'
 import LocalStorage from '../utils/LocalStorage'
 import { getTimezoneById } from '../utils/utils/timezone'
 import { AuthProvider } from './AuthProvider'
+import { FilterProvider } from './FilterProvider'
 import { I18nProvider, dateFNSLocales } from './I18nProvider'
 import { RoutesPermissionProvider } from './RoutePermissions'
 
@@ -46,7 +47,9 @@ const AppWithProviders = ({ children }) => {
               <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocales[culture]}>
                 <BrowserRouter history={history}>
                   <AuthProvider>
-                    <RoutesPermissionProvider>{children}</RoutesPermissionProvider>
+                    <FilterProvider>
+                      <RoutesPermissionProvider>{children}</RoutesPermissionProvider>
+                    </FilterProvider>
                   </AuthProvider>
                 </BrowserRouter>
               </LocalizationProvider>

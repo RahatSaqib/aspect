@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import fetchWrapperForQueries from '../components/QueryFetch'
-import { getFilters } from '../oldComponents/filter/utils'
+import { getFilters } from '../oldComponents/utils'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { receiveList, Items } from '../utils/metaReducers/groupedItems'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/groupedTable'
@@ -33,10 +33,6 @@ function receiveInventoryItems(json, childrenPropertyPath) {
     total: json.total,
     childrenPropertyPath,
   }
-}
-
-function toggleGroupBySite(toggleOn) {
-  return { type: types.TOGGLE_GROUP_BY_SITE, toggleOn }
 }
 
 function showNewInventoryDialog() {
@@ -333,7 +329,6 @@ export default function inventoryItemsReducer(state = initialState, action) {
 
 export {
   receiveInventoryItems,
-  toggleGroupBySite,
   showNewInventoryDialog,
   showAddInventoryDialog,
   showRemoveInventoryDialog,
