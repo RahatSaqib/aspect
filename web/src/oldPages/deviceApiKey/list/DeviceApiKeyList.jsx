@@ -49,7 +49,7 @@ export const DeviceApiKeyList = () => {
     { sortCol, sortDir, page: pageAt, size: pageSize, ...filters },
     { enabled: !!sortCol }
   )
-  const { mutation: generate } = useDeviceApiKeyGenerate()
+  const { mutate: generate } = useDeviceApiKeyGenerate()
   const { mutate: assign } = useDeviceApiKeyAssign()
   const { mutate: update } = useDeviceApiKeyUpdate()
 
@@ -89,7 +89,14 @@ export const DeviceApiKeyList = () => {
       },
     })
   }
-  const onRevokedChange = e => update(e.target.dataset.deviceApiKeyId, { revoked: e.target.checked })
+  const onRevokedChange = e => {
+    const {
+      dataset: { deviceApiKeyId },
+      checked,
+    } = e.target
+    const revokeValues = { deviceApiKeyId, data: { revoked: checked } }
+    update(revokeValues)
+  }
   const onAssignerFormChange = assignerValues => onChangeDialogState({ ...dialogState, assignerValues })
   const onSelectAllChange = isInputChecked => {
     const nextDeviceApiKeyIds = isInputChecked ? selectableIds : []
