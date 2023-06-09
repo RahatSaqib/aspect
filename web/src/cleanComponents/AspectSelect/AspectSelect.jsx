@@ -11,7 +11,9 @@ export default function AspectSelect(props) {
       {...rest}
       onChange={(_, newValue) => onChange(valueBy ? newValue?.[valueBy] : newValue)}
       getOptionLabel={itemToString}
-      renderInput={params => <TextField {...params} variant="standard" label={label} />}
+      renderInput={params => (
+        <TextField {...params} InputLabelProps={{ shrink: true }} variant="standard" label={label} />
+      )}
       options={options}
       disabled={!options?.length}
       value={valueBy ? options?.find(option => option[valueBy] === value) : value}
