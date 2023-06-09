@@ -1,7 +1,7 @@
 const { seedIssueType, seedIssueEventTriggersForPartner, upsertIssueResolutionTrigger } = require('../utils')
 
 module.exports = async (knex, partnerData) => {
-  const { id: partnerId } = await knex('Partner').where({ name: partnerData.partnerName }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerData.partner.externalId }).first()
 
   await seedIssueType(knex, 'ModuleDisabled', {
     userName: partnerData.adminUserName || 'admin',

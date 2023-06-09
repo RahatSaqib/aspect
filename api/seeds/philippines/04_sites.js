@@ -7,10 +7,10 @@ const Promise = require('bluebird')
 
 const sites = require('./fixtures/sites.json')
 const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 
 async function seed(knex) {
-  const partner = await getPartnerByName(knex, 'Philippines')
+  const partner = await getPartnerByExternalId(knex, 'Philippines')
   const now = new Date()
   const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const auditFields = {

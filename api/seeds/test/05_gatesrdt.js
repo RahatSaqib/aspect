@@ -41,6 +41,7 @@ async function seed(knex) {
 
   const [partnerId] = await knex('Partner').insert({
     name: 'GatesRDT',
+    externalId: 'gatesRdt',
     partnerTypeId: await partnerTypeToId('operating'),
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,

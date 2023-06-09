@@ -1,8 +1,8 @@
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 const { upsertDashboardWidgets } = require('../common')
 
-module.exports = async (knex, partnerName, fixture) => {
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+module.exports = async (knex, partnerExternalId, fixture) => {
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
   await upsertDashboardWidgets(knex, partnerId, fixture, [
     'geneXpertDevices',
     'dashboardWidgetValidResultsPc',

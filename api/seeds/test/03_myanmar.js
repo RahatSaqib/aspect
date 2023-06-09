@@ -10,7 +10,7 @@ const { upsertJobFunction } = require('../common')
 const { rowsAsObject, getPermissionModules, seedNotificationTypes, seedIssues } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
-
+const { partner: myanmarPartner } = require('../myanmar/fixtures/partnerData')
 const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()
@@ -44,7 +44,8 @@ async function seed(knex) {
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
-    name: 'Myanmar',
+    name: myanmarPartner.name,
+    externalId: myanmarPartner.externalId,
     partnerTypeId: await partnerTypeToId('operating'),
     plugin: pluginName,
     deviceLogHistoryDays: 365,
@@ -724,7 +725,7 @@ async function seed(knex) {
 
   await seedIssues(knex, baseProps)
 
-  await seedDataCategory(knex, 'Myanmar')
+  await seedDataCategory(knex, myanmarPartner.name, myanmarPartner.externalId)
 }
 
 async function getId(knex, table, externalId) {

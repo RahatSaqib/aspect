@@ -3,7 +3,7 @@ const geographyFromGxAlert = require('./fixtures/geography.json')
 const jobFunctions = require('./fixtures/jobFunctions')
 
 module.exports = async function (knex, contactsFromGxAlert, customFieldsFromGxAlert, sitesFromGxAlert, partnerData) {
-  const { adminUserName, adminPassword, partnerName, gxAlertDeviceApiKey } = partnerData
+  const { adminUserName, adminPassword, partner, gxAlertDeviceApiKey } = partnerData
   await baseGxAlertMigration(
     {
       admin: {
@@ -11,7 +11,8 @@ module.exports = async function (knex, contactsFromGxAlert, customFieldsFromGxAl
         password: adminPassword,
       },
       partner: {
-        name: partnerName,
+        name: partner.name,
+        externalId: partner.externalId,
         serverUrl: 'https://lesotho.aspect.id',
       },
       geographyFromGxAlert,
@@ -27,7 +28,7 @@ module.exports = async function (knex, contactsFromGxAlert, customFieldsFromGxAl
     partnerData
   )
 
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
+  const { id: partnerId } = await knex('Partner').where({ externalId: partner.externalId }).first('id')
 
   await upsertDashboardWidgets(knex, partnerId)
 }
