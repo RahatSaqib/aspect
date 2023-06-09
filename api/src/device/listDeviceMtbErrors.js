@@ -12,6 +12,12 @@ const listDeviceMtbErrors = async request => {
    * See `getPageParams()` in `api/src/routes.js` for more details how we use `size='all'`
    */
   query.size = 'all'
+  /**
+   * explicitly define deviceType for `CepheidGeneXpert` which will then be used for filter
+   * in `getDeviceBaseExtendedQuery()` in `api/src/device/common/db.js` - see
+   *   .modify(filterParams, query, { ..., deviceType: 'dt.externalId', ... })
+   */
+  query.deviceType = 'CepheidGeneXpert'
 
   const assayIds = await allAssayToId()
 
