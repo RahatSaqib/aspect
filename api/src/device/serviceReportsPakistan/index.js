@@ -17,11 +17,10 @@ async function xpertSiteDetailedReport(auth, query) {
 async function xpertSiteSummarySiteWiseReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
-
-  const devicesBase = getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const rows = await builder
     .leftJoin('Partner as pImpl', 'pImpl.id', 'd.implementingPartnerId')
     .select(['pImpl.name as implementingPartner'])
-  const rows = await devicesBase
 
   /**
    * group by siteId - not by siteName because same site name may exist in
@@ -42,6 +41,7 @@ async function xpertSiteSummarySiteWiseReport(auth, query) {
     },
     {}
   )
+
   /**
    * prepare array of dynamic columns to return and to use it below as well
    */
@@ -49,6 +49,7 @@ async function xpertSiteSummarySiteWiseReport(auth, query) {
     key: a.columnKey,
     header: a.columnName,
   }))
+
   /**
    * construct final list of sites and aggregate totals and  custom fields counts
    */

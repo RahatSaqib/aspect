@@ -491,7 +491,8 @@ async function getErrorRateByUserReport(auth, query) {
 async function getAllDeviceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
-  const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const rows = await builder
 
   return {
     ok: true,
