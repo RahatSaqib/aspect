@@ -1,10 +1,10 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { adminName } = require('./fixtures/partnerData')
+const { adminUserName } = require('./fixtures/partnerData')
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner').where('name', 'Partner One').first()
-  const { id: adminId } = await knex('User').where('name', adminName).first('id')
+  const { id: adminId } = await knex('User').where('name', adminUserName).first('id')
   const results = await knex('Result').where('partnerId', partnerId)
   const inserts = []
   for (let i = 0; i < results.length; i += 2) {

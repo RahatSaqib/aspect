@@ -1,10 +1,9 @@
 const Promise = require('bluebird')
-const partnerData = require('./fixtures/partnerData')
+const { partner } = require('./fixtures/partnerData')
 const upsertTags = require('../common/upsert_tags')
 
 module.exports = require('../utils').seed(async knex => {
-  const { partnerName } = partnerData
-  await upsertTags(knex, partnerName)
+  await upsertTags(knex, partner.externalId)
 
   const siteIds = await knex('Site as s')
     .leftJoin('SiteTag as st', 's.id', 'st.siteId')

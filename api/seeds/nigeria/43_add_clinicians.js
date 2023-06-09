@@ -3,13 +3,17 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const clinicians = require('./fixtures/clinicians')
 const config = require('../../src/config')
-const { partnerName, adminUserName, defaultPassword } = require('./fixtures/partnerData')
+const {
+  partner: { externalId: partnerExternalId },
+  adminUserName,
+  defaultPassword,
+} = require('./fixtures/partnerData')
 const logger = require('../../src/shared/logger')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 module.exports = require('../utils').seed(async knex => {
-  const { id: partnerId } = await knex('Partner').where('name', partnerName).first()
+  const { id: partnerId } = await knex('Partner').where('externalId', partnerExternalId).first()
   const {
     culture,
     timezone,

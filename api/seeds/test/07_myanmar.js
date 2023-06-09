@@ -7,6 +7,7 @@ const { rowsAsObject } = require('../utils')
 const { getPermissionModules, upsertIssueResolutionTrigger } = require('../utils')
 const geography = require('./fixtures/geography.json')
 const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
+const { partner: partnerMyanmar } = require('../myanmar/fixtures/partnerData')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -302,5 +303,5 @@ async function seed(knex) {
   })
 
   // correction requested in SD-769
-  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
+  await updateDataCategoryNotificationTypeForRO(knex, partnerMyanmar.name, partnerMyanmar.externalId)
 }

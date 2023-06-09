@@ -7,14 +7,16 @@ const {
   messageStatusToId,
   resultTypeToId,
 } = require('../../src/shared/dictionary')
-const { partnerName } = require('./fixtures/partnerData')
+const {
+  partner: { externalId: partnerExternalId },
+} = require('./fixtures/partnerData')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { getPeopleBase } = require('../../src/shared/utilsPerson')
 
 async function seed(knex) {
   const now = new Date()
 
-  const { id: partnerId } = await knex('Partner').where('name', partnerName).first()
+  const { id: partnerId } = await knex('Partner').where('externalId', partnerExternalId).first()
   const notificationTypeCategoryId = await notificationTypeCategoryToId('resultBased')
   const messageStatusId = await messageStatusToId('Sent')
   const {

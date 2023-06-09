@@ -5,6 +5,10 @@ export default defineMessages({
     id: 'jobFunction.admin',
     defaultMessage: 'Admin',
   },
+  aspectTester: {
+    id: 'jobFunction.aspectTester',
+    defaultMessage: 'Aspect Tester',
+  },
   clinician: {
     id: 'jobFunction.clinician',
     defaultMessage: 'Clinician',

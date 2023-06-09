@@ -5,21 +5,24 @@ const Promise = require('bluebird')
 const { upsertJobFunctionFixture } = require('../../common')
 
 const {
-  getPartnerByName,
+  getPartnerByExternalId,
   seedIssueEventTriggersForPartner,
   seedIssueEscalationTriggersForPartner,
 } = require('../../utils')
 
 const { addIssueTypes } = require('../../relativeObjectsSeeds')
 
-const { partnerName, adminUserName } = require('./fixtures/partnerData')
+const {
+  partner: { externalId: partnerExternalId },
+  adminUserName,
+} = require('./fixtures/partnerData')
 
 const fixture = require('../shared/fixtures/jobFunctions')
 
 const cellsToNotify = ['+26663212251', '+266 58434642', '+266 62949666']
 
 async function seed(knex) {
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
 
   await upsertJobFunctionFixture(knex, fixture, partnerId)
 

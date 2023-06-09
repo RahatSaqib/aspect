@@ -2,19 +2,19 @@ const Promise = require('bluebird')
 const { subYears, subDays } = require('date-fns')
 const { random } = require('lodash')
 
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 const { allDeviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 
-module.exports = async (knex, partnerName, adminName, countryAbbreviation) => {
+module.exports = async (knex, partnerExternalId, adminUserName, countryAbbreviation) => {
   const now = new Date()
-  const { id: adminId } = await knex('User').where({ name: adminName }).first('id')
+  const { id: adminId } = await knex('User').where({ name: adminUserName }).first('id')
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
     updatedOn: now,
     updatedBy: adminId,
   }
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
   const deviceMaintenanceTypeToId = await allDeviceMaintenanceTypeToId()
   const deviceMaintenanceTypeId = deviceMaintenanceTypeToId.calibration
 

@@ -5,8 +5,11 @@ const partnerData = require('./fixtures/partnerData')
 module.exports = require('../utils').seed(seed, __filename)
 
 async function seed(knex) {
-  const { deviceCapacity, partnerName } = partnerData
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
+  const {
+    deviceCapacity,
+    partner: { externalId: partnerExternalId },
+  } = partnerData
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first('id')
 
   const { deviceTypeToId } = require('../../src/shared/dictionary')
 

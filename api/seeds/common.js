@@ -121,14 +121,13 @@ async function commonUpserts(
     (await knex('Person')
       .where({
         userId: adminId,
-        name: 'Admin',
         geographyId,
       })
       .first('id')) || {}
   if (!adminPersonId) {
     ;[adminPersonId] = await knex('Person').insert({
       userId: adminId,
-      name: 'Admin',
+      name: 'Aspect Admin',
       lastPartnerId: partnerId,
       lastCountryId: countryId,
       geographyId,
