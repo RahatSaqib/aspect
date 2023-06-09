@@ -134,15 +134,15 @@ export const messages = {
     },
     lastMonth: {
       id: 'pages.DeviceList.lastMonth',
-      defaultMessage: '#Results (Preceding 30 Days)',
+      defaultMessage: '#Results Last month',
     },
     resultCountDescription: {
       id: 'pages.DeviceList.resultCountDescription',
-      defaultMessage: 'Represents the number of results conducted from {startDate} to {endDate}',
+      defaultMessage: 'Represents the number of results conducted from {startDate} to {endDate} (Month to Date)',
     },
     thisMonth: {
       id: 'pages.DeviceList.thisMonth',
-      defaultMessage: '#Results (Last 30 Days)',
+      defaultMessage: 'Results Current Month (MTD)',
     },
     needsRepair: {
       id: 'pages.DeviceList.needsRepair',
