@@ -7,9 +7,9 @@ const dashboardWidgets = require(`../${process.env['seeds.directory'].replace(
   './seeds/',
   ''
 )}/fixtures/dashboardWidget`)
-const { partnerName } = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
+const { partner } = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
+  const { id: partnerId } = await knex('Partner').where({ externalId: partner.externalId }).first('id')
 
   await upsertDashboardWidgets(knex, partnerId, dashboardWidgets)
 }

@@ -2,15 +2,20 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 const config = require('../../src/config')
 
 module.exports = async (knex, partnerData, contacts) => {
   const now = new Date()
 
-  const { partnerName, adminUserName, partnerAbbreviation, defaultPassword = 'WelcomeToAspect' } = partnerData
+  const {
+    partner: { externalId: partnerExternalId },
+    adminUserName,
+    partnerAbbreviation,
+    defaultPassword = 'WelcomeToAspect',
+  } = partnerData
 
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
 
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })

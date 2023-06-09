@@ -39,7 +39,8 @@ async function seed(knex) {
         password: adminPassword,
       },
       partner: {
-        name: partnerData.partnerName,
+        name: partnerData.partner.name,
+        externalId: partnerData.partner.externalId,
         serverUrl: partnerData.serverUrl,
       },
       geographyFromGxAlert: geography,

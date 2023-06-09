@@ -5,10 +5,10 @@ const { data: issueEventTrigger } = require('../fixtures/IssueEventTrigger.json'
 
 module.exports = upsertIssueEventTrigger
 
-async function upsertIssueEventTrigger(knex, partnerName, fixture = issueEventTrigger) {
+async function upsertIssueEventTrigger(knex, partnerExternalId, fixture = issueEventTrigger) {
   const now = new Date()
   await Promise.each(fixture, async issueEvent => {
-    const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
+    const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first()
 
     const [issueTypeId] = await knex('IssueType').where({ externalId: issueEvent.issueType }).pluck('id')
     const [issueEventStatusId] = await knex('IssueEventStatus')
@@ -33,11 +33,11 @@ async function upsertIssueEventTrigger(knex, partnerName, fixture = issueEventTr
       }
     )
   })
-  await removeIssueTriggers(knex, partnerName, fixture)
+  await removeIssueTriggers(knex, partnerExternalId, fixture)
 }
 
-async function removeIssueTriggers(knex, partnerName, fixture) {
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
+async function removeIssueTriggers(knex, partnerExternalId, fixture) {
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first()
 
   const issueTypesInserted = await knex('IssueEventTrigger').pluck('issueTypeId')
   const issueTypesInFixture = await Promise.map(fixture, async ({ issueType }) => {

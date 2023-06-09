@@ -1,7 +1,7 @@
-const _ = require('lodash')
 const seedHardwareIssues = require('../common/20201130_add_hardware_issues')
-const partnerVariables = require('./fixtures/partnerData')
+const partnerData = require('./fixtures/partnerData')
 
 module.exports = require('../utils').seed(async knex => {
-  await seedHardwareIssues(knex, _.pick(partnerVariables, ['partnerName', 'adminName', 'jobFunctionsToNotify']))
+  const { partner, adminUserName, jobFunctionsToNotify } = partnerData
+  await seedHardwareIssues(knex, { partnerExternalId: partner.externalId, adminUserName, jobFunctionsToNotify })
 }, __filename)

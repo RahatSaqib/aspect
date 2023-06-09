@@ -22,6 +22,7 @@ const {
   resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
+const { partner: myanmarPartner } = require('../myanmar/fixtures/partnerData')
 
 const { loadPlugin } = require('../../src/plugin/registration')
 const { seedDataCategory } = require('../dataCategoryLow')
@@ -65,7 +66,8 @@ async function seed(knex) {
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
-    name: 'Myanmar',
+    name: myanmarPartner.name,
+    externalId: myanmarPartner.externalId,
     partnerTypeId: await partnerTypeToId('operating'),
     plugin: 'myanmar',
     deviceLogHistoryDays: 365,
@@ -859,7 +861,7 @@ async function seed(knex) {
 
   await seedIssues(knex, baseProps)
 
-  await seedDataCategory(knex, 'Myanmar')
+  await seedDataCategory(knex, myanmarPartner.name, myanmarPartner.externalId)
 }
 
 function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {
