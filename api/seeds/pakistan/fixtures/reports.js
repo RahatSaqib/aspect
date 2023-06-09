@@ -66,6 +66,37 @@ const xpertSiteSummaryReportSiteWise = {
   ],
 }
 
+
+const xpertWorkloadSummaryReport = {
+  name: 'Xpert Workload Summary Report',
+  description: 'A list of all devices in the system and aggregated by assay and by month.',
+  i18nKey: 'xpert_workload_summary_report',
+  i18nKeyDescription: 'xpert_workload_summary_report_description',
+  externalId: 'pk_xpert_workload_summary_report', // folder name in /templates with low dash casing
+  fileName: 'xpertWorkloadSummaryReport',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 0,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReportsPakistan/xpertWorkloadSummaryReport',
+      functionName: 'xpertWorkloadSummaryReportByDevice',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReportsPakistan/xpertWorkloadSummaryReport',
+      functionName: 'xpertWorkloadSummaryReportByDistrict',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 const missingCartridgesReport = {
   name: 'List of Missing Lots',
   description:
@@ -93,5 +124,6 @@ module.exports = {
   deviceSummaryReport,
   xpertSiteDetailedReport,
   xpertSiteSummaryReportSiteWise,
+  xpertWorkloadSummaryReport,
   missingCartridgesReport,
 }
