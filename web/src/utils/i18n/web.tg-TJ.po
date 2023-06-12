@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-06-02T23:00:23.064Z\n"
+"POT-Creation-Date: 2023-06-12T19:27:42.246Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -28,12 +28,19 @@ msgstr "Модулҳои \"Истифода набаред\""
 msgid "\"No Stock\" Inventory Report"
 msgstr "Ҳисоботи инвентаризатсияи \"Не саҳмияҳо\""
 
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. # Results Current Month
+#: extracted_strings.json
+msgid "# Results Current Month"
+msgstr "# Натиҷаҳои моҳи ҷорӣ"
+
 #. [pages.DeviceList.lastMonth]
 #. defaultMessage is:
-#. #Results Last month
+#. # Results Last month
 #: extracted_strings.json
-msgid "#Results Last month"
-msgstr "#Натиҷаҳои моҳи гузашта"
+msgid "# Results Last month"
+msgstr "# Натичахои мохи гузашта"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -831,6 +838,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "Aspect Dashboard"
 msgstr "Панели абзор"
+
+#. [jobFunction.aspectTester]
+#. defaultMessage is:
+#. Aspect Tester
+#: extracted_strings.json
+msgid "Aspect Tester"
+msgstr "Санҷандаи ҷанба"
 
 #. [errorResponseMessages.generic.title]
 #. defaultMessage is:
@@ -2618,6 +2632,13 @@ msgstr "Зарар"
 #: extracted_strings.json
 msgid "Dashboard"
 msgstr "Панели асбобҳо"
+
+#. [header.link.dashboardv2.title]
+#. defaultMessage is:
+#. Dashboard v2
+#: extracted_strings.json
+msgid "Dashboard v2"
+msgstr "Панели идоракунӣ v2"
 
 #. [pages.TaskList.taskListOptionsData]
 #. defaultMessage is:
@@ -9385,14 +9406,12 @@ msgstr ""
 
 #. [pages.DeviceList.resultCountDescription]
 #. defaultMessage is:
-#. Represents the number of results conducted from {startDate} to {endDate} (Month to Date)
+#. Represents the number of results conducted from {startDate} to {endDate}
 #: extracted_strings.json
 msgid ""
-"Represents the number of results conducted from {startDate} to {endDate} "
-"(Month to Date)"
+"Represents the number of results conducted from {startDate} to {endDate}"
 msgstr ""
-"Миқдори натиҷаҳои аз {startDate} то {endDate} гузаронидашударо ифода мекунад "
-"(моҳ то сана)"
+"Миқдори натиҷаҳои аз {startDate} то {endDate} гузаронидашударо ифода мекунад"
 
 #. [pages.DeviceList.deviceStatusDescription]
 #. defaultMessage is:
@@ -9836,13 +9855,6 @@ msgstr "Натиҷа навсозӣ шудааст"
 #: extracted_strings.json
 msgid "Results"
 msgstr "Натиҷаҳо"
-
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. Results Current Month (MTD)
-#: extracted_strings.json
-msgid "Results Current Month (MTD)"
-msgstr "Натоиҷи моҳи ҷорӣ (MTD)"
 
 #. [pages.Status.resultsTransmittedTitle.graph]
 #. defaultMessage is:
@@ -11976,12 +11988,14 @@ msgstr ""
 
 #. [component.Widget.devicesDescription]
 #. defaultMessage is:
-#. The number of approved lab devices (excluding decommissioned devices)
+#. The number of approved devices that perform results (excluding decommissioned devices)
 #: extracted_strings.json
-msgid "The number of approved lab devices (excluding decommissioned devices)"
+msgid ""
+"The number of approved devices that perform results (excluding "
+"decommissioned devices)"
 msgstr ""
-"Шумораи дастгоҳҳои лаборатории тасдиқшуда (ба истиснои дастгоҳҳои аз кор "
-"баровардашуда)"
+"Шумораи дастгоҳҳои тасдиқшуда, ки натиҷаҳоро иҷро мекунанд (ба истиснои "
+"дастгоҳҳои аз кор баровардашуда)"
 
 #. [component.Widget.personDescription]
 #. defaultMessage is:

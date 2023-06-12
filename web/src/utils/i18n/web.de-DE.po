@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-06-02T23:00:23.064Z\n"
+"POT-Creation-Date: 2023-06-12T19:27:42.246Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -28,12 +28,19 @@ msgstr "\"Nicht verwenden\"-Module"
 msgid "\"No Stock\" Inventory Report"
 msgstr "bestandsbericht \"Kein Bestand\""
 
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. # Results Current Month
+#: extracted_strings.json
+msgid "# Results Current Month"
+msgstr "Monat"
+
 #. [pages.DeviceList.lastMonth]
 #. defaultMessage is:
-#. #Results Last month
+#. # Results Last month
 #: extracted_strings.json
-msgid "#Results Last month"
-msgstr "#Ergebnisse Letzter Monat"
+msgid "# Results Last month"
+msgstr "Im vergangenen Monat ({minDate} - {maxDate})"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -832,6 +839,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "Aspect Dashboard"
 msgstr "Dashboard"
+
+#. [jobFunction.aspectTester]
+#. defaultMessage is:
+#. Aspect Tester
+#: extracted_strings.json
+msgid "Aspect Tester"
+msgstr "Aspect ist auf ein Problem gestoßen."
 
 #. [errorResponseMessages.generic.title]
 #. defaultMessage is:
@@ -2626,6 +2640,13 @@ msgstr "Schaden"
 #. Dashboard
 #: extracted_strings.json
 msgid "Dashboard"
+msgstr "Dashboard"
+
+#. [header.link.dashboardv2.title]
+#. defaultMessage is:
+#. Dashboard v2
+#: extracted_strings.json
+msgid "Dashboard v2"
 msgstr "Dashboard"
 
 #. [pages.TaskList.taskListOptionsData]
@@ -9398,11 +9419,14 @@ msgstr ""
 
 #. [pages.DeviceList.resultCountDescription]
 #. defaultMessage is:
-#. Represents the number of results conducted from {startDate} to {endDate} (Month to Date)
+#. Represents the number of results conducted from {startDate} to {endDate}
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Represents the number of results conducted from {startDate} to {endDate} "
+#| "(Month to Date)"
 msgid ""
-"Represents the number of results conducted from {startDate} to {endDate} "
-"(Month to Date)"
+"Represents the number of results conducted from {startDate} to {endDate}"
 msgstr ""
 "Stellt die Anzahl der durchgeführten Ergebnisse von {startDate} bis "
 "{endDate} dar (Monat bis Datum)"
@@ -9851,13 +9875,6 @@ msgstr "Ergebnis wird aktualisiert"
 #: extracted_strings.json
 msgid "Results"
 msgstr "Ergebnisse"
-
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. Results Current Month (MTD)
-#: extracted_strings.json
-msgid "Results Current Month (MTD)"
-msgstr "Ergebnisse Aktueller Monat (MTD)"
 
 #. [pages.Status.resultsTransmittedTitle.graph]
 #. defaultMessage is:
@@ -11993,11 +12010,14 @@ msgstr ""
 
 #. [component.Widget.devicesDescription]
 #. defaultMessage is:
-#. The number of approved lab devices (excluding decommissioned devices)
+#. The number of approved devices that perform results (excluding decommissioned devices)
 #: extracted_strings.json
-msgid "The number of approved lab devices (excluding decommissioned devices)"
+msgid ""
+"The number of approved devices that perform results (excluding "
+"decommissioned devices)"
 msgstr ""
-"Die Anzahl der zugelassenen Laborgeräte (ausgenommen stillgelegte Geräte)"
+"Die Anzahl der zugelassenen GeneXpert-Geräte (ausgenommen stillgelegte "
+"Geräte)."
 
 #. [component.Widget.personDescription]
 #. defaultMessage is:
