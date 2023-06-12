@@ -4,6 +4,7 @@ import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useLocation, useNavigate } from 'react-router'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
+import InventoryTransferFilter from '../../../cleanComponents/Filter/InventoryTransferFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import useInventoryTransferDownload from '../../../hooks/inventory/useInventoryTransferDownload'
 import useInventoryTransferList from '../../../hooks/inventory/useInventoryTransferList'
@@ -12,6 +13,7 @@ import consumables from '../../../messages/consumableMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
+import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
@@ -19,40 +21,18 @@ import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-// const FILTERS_CONFIG = [
-//   { state: true, requiredPermissions: [] },
-//   { lga: true, requiredPermissions: [] },
-//   { date: true, requiredPermissions: [] },
-//   { siteName: true, requiredPermissions: [] },
-//   { reportableSiteName: true, requiredPermissions: [] },
-//   { consumable: true, requiredPermissions: [] },
-// ]
-
 export const InventoryTransfers = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { formatMessage } = useI18n()
+  const filter = useFilterValues(location.pathname)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
 
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'originSiteName' })({ location })
 
-  const { data, isLoading } = useInventoryTransferList(
-    {
-      sortCol,
-      sortDir,
-      // ...(filters.consumableId ? { consumableName: filters.consumableId } : {}),
-      // ...(filters.siteName ? { originSiteName: filters.siteName } : {}),
-      // ...(filters.reportableSiteName ? { destinationSiteName: filters.reportableSiteName } : {}),
-    },
-    { enabled: !!sortCol }
-  )
+  const { data, isLoading } = useInventoryTransferList({ sortCol, sortDir, ...filter }, { enabled: !!sortCol })
 
-  useInventoryTransferDownload({
-    // ...(filters.consumableId ? { consumableName: filters.consumableId } : {}),
-    // ...(filters.siteName ? { originSiteName: filters.siteName } : {}),
-    // ...(filters.reportableSiteName ? { destinationSiteName: filters.reportableSiteName } : {}),
-    ...download,
-  })
+  useInventoryTransferDownload({ ...filter, ...download })
 
   useEffect(() => {
     if (download.enabled) setDownload({ fileFormat: '', enabled: false })
@@ -79,6 +59,7 @@ export const InventoryTransfers = () => {
       <DetailHeader name={formatMessage(messages.InventoryTransferTitle)} disableBack />
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.InventoryTransferTitle)} />
+        <InventoryTransferFilter />
         <Card>
           <CardContent>
             <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>

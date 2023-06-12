@@ -74,6 +74,10 @@ export const messages = {
       id: 'filter.btnGroup.whereSiteNameIncludes',
       defaultMessage: 'site name includes "{siteName}"',
     },
+    whereOriginSiteNameIncludes: {
+      id: 'filter.btnGroup.whereOriginSiteNameIncludes',
+      defaultMessage: 'origin site name includes "{originSiteName}"',
+    },
     whereSiteIdIncludes: {
       id: 'filter.btnGroup.whereSiteIdIncludes',
       defaultMessage: 'site ID includes "{siteId}"',
