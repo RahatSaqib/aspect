@@ -104,16 +104,13 @@ const devicesTitle = {
   titleI18nKey: 'devicesTitle',
   subTitle: null,
   subTitleI18nKey: null,
-  sqlForIndicator: `select count(d.id) as cnt from Device as d inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where dc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
+  sqlForIndicator: `select count(d.id) as cnt from Device as d inner join DeviceApproval da on d.deviceApprovalId = da.id inner join Site as s on s.id = d.siteId inner join DeviceType as dt on dt.id = d.deviceTypeId inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId left outer join Geography as g on s.geographyId = g.id where da.token = 'approved' and dc.hasResults = 1 and dt.externalId not in ('${INTERNAL_DEVICE_IDS.join(
     "','"
   )}')`,
   link: '/browse/device/list',
-  linkParams: {
-    dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
-  },
   sortOrder: 1,
   externalId: 'devicesTitle',
-  description: 'The number of approved lab devices (excluding decommissioned devices)',
+  description: 'The number of approved devices that perform results (excluding decommissioned devices)',
   descriptionI18nKey: 'devicesDescription',
   dashboards: {
     home: {},
