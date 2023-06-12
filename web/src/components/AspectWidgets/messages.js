@@ -95,7 +95,7 @@ export const messages = defineMessages({
   },
   devicesDescription: {
     id: 'component.Widget.devicesDescription',
-    defaultMessage: 'The number of approved lab devices (excluding decommissioned devices)',
+    defaultMessage: 'The number of approved devices that perform results (excluding decommissioned devices)',
   },
   resultsTitle: {
     id: 'component.Widget.resultsTitle',
