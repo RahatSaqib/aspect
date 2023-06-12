@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-06-02T23:00:23.064Z\n"
+"POT-Creation-Date: 2023-06-12T19:27:42.246Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.1\n"
+"X-Generator: Poedit 3.0.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -28,12 +28,19 @@ msgstr "модули \"Не использовать\""
 msgid "\"No Stock\" Inventory Report"
 msgstr "отчет об инвентаризации \"Нет запасов\""
 
+#. [pages.DeviceList.thisMonth]
+#. defaultMessage is:
+#. # Results Current Month
+#: extracted_strings.json
+msgid "# Results Current Month"
+msgstr "# Результаты Текущий месяц"
+
 #. [pages.DeviceList.lastMonth]
 #. defaultMessage is:
-#. #Results Last month
+#. # Results Last month
 #: extracted_strings.json
-msgid "#Results Last month"
-msgstr "#Результаты В прошлом месяце"
+msgid "# Results Last month"
+msgstr "# Результаты В прошлом месяце"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -832,6 +839,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "Aspect Dashboard"
 msgstr "Приборная панель Aspect"
+
+#. [jobFunction.aspectTester]
+#. defaultMessage is:
+#. Aspect Tester
+#: extracted_strings.json
+msgid "Aspect Tester"
+msgstr "Испытатель аспектов"
 
 #. [errorResponseMessages.generic.title]
 #. defaultMessage is:
@@ -2622,6 +2636,13 @@ msgstr "Урон"
 #: extracted_strings.json
 msgid "Dashboard"
 msgstr "Панель управления"
+
+#. [header.link.dashboardv2.title]
+#. defaultMessage is:
+#. Dashboard v2
+#: extracted_strings.json
+msgid "Dashboard v2"
+msgstr "Приборная панель v2"
 
 #. [pages.TaskList.taskListOptionsData]
 #. defaultMessage is:
@@ -9388,14 +9409,13 @@ msgstr ""
 
 #. [pages.DeviceList.resultCountDescription]
 #. defaultMessage is:
-#. Represents the number of results conducted from {startDate} to {endDate} (Month to Date)
+#. Represents the number of results conducted from {startDate} to {endDate}
 #: extracted_strings.json
 msgid ""
-"Represents the number of results conducted from {startDate} to {endDate} "
-"(Month to Date)"
+"Represents the number of results conducted from {startDate} to {endDate}"
 msgstr ""
-"Представляет собой количество результатов, проведенных с {startDate} по "
-"{endDate} (с месяца по дату)"
+"Представляет собой количество результатов, проведенных от {startDate} до "
+"{endDate}"
 
 #. [pages.DeviceList.deviceStatusDescription]
 #. defaultMessage is:
@@ -9840,13 +9860,6 @@ msgstr "Результат обновлен"
 #: extracted_strings.json
 msgid "Results"
 msgstr "Результаты"
-
-#. [pages.DeviceList.thisMonth]
-#. defaultMessage is:
-#. Results Current Month (MTD)
-#: extracted_strings.json
-msgid "Results Current Month (MTD)"
-msgstr "Результаты текущего месяца (MTD)"
 
 #. [pages.Status.resultsTransmittedTitle.graph]
 #. defaultMessage is:
@@ -11977,11 +11990,14 @@ msgstr ""
 
 #. [component.Widget.devicesDescription]
 #. defaultMessage is:
-#. The number of approved lab devices (excluding decommissioned devices)
+#. The number of approved devices that perform results (excluding decommissioned devices)
 #: extracted_strings.json
-msgid "The number of approved lab devices (excluding decommissioned devices)"
+msgid ""
+"The number of approved devices that perform results (excluding "
+"decommissioned devices)"
 msgstr ""
-"Количество одобренных лабораторных устройств (исключая списанные устройства)"
+"Количество утвержденных устройств, которые выдают результаты (исключая "
+"устройства, снятые с эксплуатации)"
 
 #. [component.Widget.personDescription]
 #. defaultMessage is:
