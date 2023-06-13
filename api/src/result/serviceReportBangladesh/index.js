@@ -263,8 +263,9 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         ),
         cnt_Total_MtbNotDetected: counter(
           'r.id',
-          // ` r.resultCategory1 = ${resultCategoryIds.NotDetected} `
-          ` NOT (r.resultCategory1 IN (${positiveResultCategories})) `
+          `
+          r.resultCategory1 = ${resultCategoryIds.NotDetected}
+        `
         ),
         /**
          * ****************************************
