@@ -4,7 +4,7 @@ const addIssue = require('./add_issue')
 
 const { getBaseIssues } = require('../relatedObjects/issues')
 
-module.exports = async function cleanIssueTypes(knex, adminUserName, partnerName) {
+module.exports = async function cleanIssueTypes(knex, adminUserName, partnerExternalId) {
   const { userId, partnerId } = await knex('User as u')
     .join('Person as p', 'p.userId', 'u.id')
     .where({ 'u.name': adminUserName })
@@ -96,6 +96,6 @@ module.exports = async function cleanIssueTypes(knex, adminUserName, partnerName
       .first('id as jobFunctionAdminId'))
 
   await Promise.each(Object.values(configuredIssues), async externalId => {
-    return addIssue(knex, externalId, [jobFunctionAdminId], partnerName, adminUserName)
+    return addIssue(knex, externalId, [jobFunctionAdminId], partnerExternalId, adminUserName)
   })
 }

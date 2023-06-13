@@ -1,7 +1,10 @@
 module.exports = {
-  adminName: 'admin',
+  adminUserName: 'admin',
   adminPassword: 'test07',
-  partnerName: 'Partner One',
+  partner: {
+    name: 'Partner One',
+    externalId: 'partnerOne',
+  },
   jobFunctionsToNotify: ['admin'],
   serverUrl: 'http://localhost:8000',
   dueDaysCalibrationIssue: 90,

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Card, CardContent, Container, Grid, Stack } from '@mui/material'
-import DetailHeader from '../../../components/DetailHeader'
+import DetailHeader from '../../../cleanComponents/DetailHeader'
 import useDocumentTitle from '../../../hooks/useDocumentTitle'
 import IncompleteScreenBadge from './IncompleteScreenBadge'
 

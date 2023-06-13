@@ -2,7 +2,6 @@ import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
-import { Link } from 'react-router-dom'
 import { Unit } from './pureGrids'
 import styles from './Summary.css'
 
@@ -11,11 +10,7 @@ const cssClasses = classnames.bind(styles)
 const descriptionSection = (description, to, action) => (
   <div className={cssClasses('Summary__Description')}>
     {description}
-    {to && (
-      <Link to={to} className={cssClasses('Summary__Description__Link')}>
-        <FaExternalLink />
-      </Link>
-    )}
+    {to && <FaExternalLink onClick={to} className={cssClasses('Summary__Description__Link')} />}
     {action && <span className={cssClasses('Summary__Description__Action')}>{action}</span>}
   </div>
 )

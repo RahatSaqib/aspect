@@ -14,26 +14,26 @@ const DeviceApiKeyTableRow = ({ deviceApiKey, disabled, checked, onSelectedChang
         name="selected"
         className={cssClasses('Checkbox__field')}
         inputProps={{
-          'data-device-api-key-id': deviceApiKey.get('id'),
+          'data-device-api-key-id': deviceApiKey.id,
         }}
         disabled={disabled}
         checked={checked}
         onChange={onSelectedChange}
       />
     </TableCell>
-    <TableCell>{formatDate(deviceApiKey.get('createdOn'))}</TableCell>
-    <TableCell>{deviceApiKey.get('token')}</TableCell>
-    <TableCell>{deviceApiKey.get('partner')}</TableCell>
-    <TableCell>{deviceApiKey.get('country')}</TableCell>
-    <TableCell>{deviceApiKey.get('site')}</TableCell>
-    <TableCell>{deviceApiKey.get('device')}</TableCell>
+    <TableCell>{formatDate(deviceApiKey.createdOn)}</TableCell>
+    <TableCell>{deviceApiKey.token}</TableCell>
+    <TableCell>{deviceApiKey.partner}</TableCell>
+    <TableCell>{deviceApiKey.country}</TableCell>
+    <TableCell>{deviceApiKey.site}</TableCell>
+    <TableCell>{deviceApiKey.device}</TableCell>
     <TableCell>
       <AspectCheckbox
         name="revoked"
         inputProps={{
-          'data-device-api-key-id': deviceApiKey.get('id'),
+          'data-device-api-key-id': deviceApiKey.id,
         }}
-        checked={deviceApiKey.get('revoked') > 0}
+        checked={deviceApiKey.revoked > 0}
         onChange={onRevokedChange}
       />
     </TableCell>

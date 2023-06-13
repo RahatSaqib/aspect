@@ -9,9 +9,9 @@ import { defineMessages } from 'react-intl'
 import { connect, useDispatch } from 'react-redux'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
-} from '../../../oldComponents/filter/resource/ConsumableReasonSelectField'
-import ConsumableSelectField from '../../../oldComponents/filter/resource/ConsumableSelectField'
-import SiteSelectField from '../../../oldComponents/filter/resource/SiteSelectField'
+} from '../../../oldComponents/resource/ConsumableReasonSelectField'
+import ConsumableSelectField from '../../../oldComponents/resource/ConsumableSelectField'
+import SiteSelectField from '../../../oldComponents/resource/SiteSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'

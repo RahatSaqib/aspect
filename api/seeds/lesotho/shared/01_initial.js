@@ -44,11 +44,12 @@ async function seed(knex) {
   }
 
   await knex('Partner').where('name', 'Lesotho').update({
-    name: tbPartnerVariables.partnerName,
+    name: tbPartnerVariables.partner.name,
+    externalId: tbPartnerVariables.partner.externalId,
   })
   const hivPartnerId = await upsertPartnerData(knex, {
     ...hivPartnerVariables,
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
   })
 
   let { id: hivAdminId } = (await knex('User').where('name', hivPartnerVariables.adminUserName).first('id')) || {}
@@ -76,8 +77,9 @@ async function seed(knex) {
   }
   const tbPartnerId = await upsertPartnerData(knex, {
     ...tbPartnerVariables,
-    partnerTypeId: await partnerTypeToId('Operating'),
-    name: tbPartnerVariables.partnerName,
+    partnerTypeId: await partnerTypeToId('operating'),
+    name: tbPartnerVariables.partner.name,
+    externalId: tbPartnerVariables.partner.externalId,
   })
 
   await commonUpserts(knex, tbPartnerId, tbAdminId, geography, 'LS', tbPartnerVariables.gxAlertDeviceApiKey)

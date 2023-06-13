@@ -1,9 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateDateRangeParams } = require('../routes')
 const {
-  listDevices,
   showDevice,
-  updateDevice,
   listApprovalTypes,
   listMaintenanceStatuses,
   listDevicesForSelectList,
@@ -27,6 +25,8 @@ const {
   listDevicesBaseRequest,
 } = require('./common/validations')
 const exportWorkload = require('./exportWorkload')
+const { listDevices } = require('./listDevices')
+const { updateDevice } = require('./updateDevice')
 
 const routes = [
   {
@@ -169,6 +169,7 @@ const routes = [
           notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number(),
+          implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
           deviceCapacityId: Joi.number().allow(null).optional(),
         },
       },
@@ -553,7 +554,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/device/deviceMtbErrors',
+    path: '/device/device-mtb-errors',
     handler: asyncHandler(listDeviceMtbErrors),
     config: {
       description: 'Device list with errors details for 4 levels',

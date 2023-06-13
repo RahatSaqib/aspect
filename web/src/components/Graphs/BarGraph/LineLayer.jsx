@@ -174,7 +174,7 @@ const Line = barGraphProps => {
         style={{ pointerEvents: 'none', strokeDasharray: '3 3', strokeWidth }}
       />
       {anchorBars.map((bar, index) => (
-        <>
+        <Fragment key={index}>
           {showLabel ? (
             <text x={coordinates[index].x + 10} y={coordinates[index].y - 5} fill="#000">
               {parseFloat(barGraphProps.data[index][barGraphProps?.layerProps?.valueFieldName]).toFixed(showDecimals)}%
@@ -189,7 +189,7 @@ const Line = barGraphProps => {
               onMouseMove={event => onMouseMove(event, index)}
             />
           </g>
-        </>
+        </Fragment>
       ))}
 
       {visibleTooltipIndex >= 0 ? (

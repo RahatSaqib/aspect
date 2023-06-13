@@ -250,7 +250,7 @@ async function getInventoryTransfer(query, dataConstraints, querySelector = INVE
     .leftJoin('InventoryLog as iil', 'it.incomeInventoryLogId', 'iil.id')
     .innerJoin('Consumable as c', 'oil.consumableId', 'c.id')
     .innerJoin('Site as originSite', 'oil.siteId', 'originSite.id')
-    .leftJoin('Site as destinationSite', 'iil.siteId', 'destinationSite.id')
+    .leftJoin('Site as destinationSite', 'oil.referencedSiteId', 'destinationSite.id')
     .innerJoin('Geography as g', 'originSite.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, {
       site: 'originSite',

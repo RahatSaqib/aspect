@@ -11,5 +11,5 @@ module.exports = require('../utils').seed(async knex => {
     .join('Device AS d', 'fdf.deviceId', '=', 'd.id')
     .where('d.lastPingOn', '<=', maxLastDateOffline)
   await upsertIssueModuleDisabled(knex, partnerData)
-  await upsertIssueEventTrigger(knex, partnerData.partnerName)
+  await upsertIssueEventTrigger(knex, partnerData.partner.externalId)
 }, __filename)

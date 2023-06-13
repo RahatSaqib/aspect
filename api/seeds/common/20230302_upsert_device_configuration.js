@@ -1,7 +1,7 @@
 module.exports = async (knex, partnerData, countryName) => {
   const now = new Date()
 
-  const { id: partnerId } = await knex('Partner').where('name', partnerData.partnerName).first('id')
+  const { id: partnerId } = await knex('Partner').where('externalId', partnerData.partner.externalId).first('id')
 
   // Fill DeviceConfiguration table
   if (partnerData.deviceConfiguration && partnerData.deviceConfiguration.length > 0) {

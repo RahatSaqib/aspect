@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useQuery } from 'react-query'
+import Loading from '../../../../../cleanComponents/Loading'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
-import Loading from '../../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
@@ -36,6 +36,7 @@ const HivGraphPage = () => {
 
   return (
     <PkPage
+      isMocked
       title={`${formatMessage(messages.hiv)} / ${formatMessage(graphMessages.clinicalIndicatorsVLTitle)}`}
       filters={
         <FormControlLabel

@@ -166,8 +166,8 @@ async function getDefaultMessageTypes(knex) {
 // -------------------------------------------------------
 // seedStockIssuesUpdate
 // -------------------------------------------------------
-async function seedStockIssuesUpdate(knex, partnerName) {
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
+async function seedStockIssuesUpdate(knex, partnerExternalId) {
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first()
 
   const now = new Date()
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
@@ -200,7 +200,7 @@ async function seedStockIssues(knex) {
     dueDaysInventoryStockExpiring: 30,
   })
 
-  const { id: partnerId } = await knex('Partner').where({ name: 'Myanmar' }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: 'myanmar' }).first()
 
   const now = new Date()
   const auditFields = {
@@ -2010,7 +2010,7 @@ async function seedIssues(
   { partnerId, pluginName, auditFields, issueTypeBlacklist = [], issueTypeWhitelist = [] }
 ) {
   await seedStockIssues(knex)
-  await seedStockIssuesUpdate(knex, 'Myanmar')
+  await seedStockIssuesUpdate(knex, 'myanmar')
   await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist,
@@ -2174,15 +2174,16 @@ async function updateAssayResultCategoryTreatmentEmphasize(knex) {
 async function addLicenses(knex) {
   const { data: licensesByPartner } = await readJson(`./seeds/fixtures/License.json`)
 
-  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner')])
-
-  await Promise.each(licensesByPartner, async ({ partnerNames, createdOn, content }) => {
+  const [partners] = await Promise.all([rowsAsObject(knex, 'Partner', 'externalId')])
+  await Promise.each(licensesByPartner, async ({ partnerExternalIds, createdOn, content }) => {
     await knex('License').insert(
-      _.map(partnerNames, partnerName => ({
-        partnerId: partnerName ? partners[partnerName].id : null,
-        createdOn: new Date(createdOn),
-        content: content.replace('PARTNERNAME', partnerName),
-      }))
+      _.map(partnerExternalIds, partnerExternalId => {
+        return {
+          partnerId: partnerExternalId ? partners[partnerExternalId].id : null,
+          createdOn: new Date(createdOn),
+          content: partnerExternalId ? content.replace('PARTNERNAME', partners[partnerExternalId].name) : content,
+        }
+      })
     )
   })
 }
@@ -2393,6 +2394,11 @@ async function getPermissonByModuleAndActivity(knex, module, activity) {
 
 async function getPartnerByName(knex, name) {
   const partner = await knex('Partner').where({ name }).first()
+  return partner
+}
+
+async function getPartnerByExternalId(knex, externalId) {
+  const partner = await knex('Partner').where({ externalId }).first()
   return partner
 }
 
@@ -3104,6 +3110,7 @@ module.exports = {
   seedIssues,
   getGeographyId,
   getPartnerByName,
+  getPartnerByExternalId,
   getPermissonByModuleAndActivity,
 
   seedNotificationTypes,

@@ -18,7 +18,7 @@ const now = new Date()
 
 async function seed(knex) {
   const {
-    partnerName,
+    partner,
     adminPassword,
     adminUserName,
     lowerLevelUserPassword,
@@ -29,7 +29,7 @@ async function seed(knex) {
 
   const partnerId = await upsertPartnerData(knex, {
     ...partnerData,
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
   })
 
   const { id: adminId } = await utils.upsertSingle(
@@ -62,7 +62,7 @@ async function seed(knex) {
   // GeneXpert
   await upsertGeneXpertDeviceTypeAndAssays(knex, assayTypes)
 
-  await updateReportsAndJobFunctions(knex, jobFunctionFixture, partnerName)
+  await updateReportsAndJobFunctions(knex, jobFunctionFixture, partner.externalId)
 
   const { id: personId } = await knex('Person').where('userId', adminId).first('id')
   const { id: licenseId } = await knex('License')
