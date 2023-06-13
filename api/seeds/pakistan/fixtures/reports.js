@@ -69,7 +69,7 @@ const xpertSiteSummaryReportSiteWise = {
 
 const xpertWorkloadSummaryReport = {
   name: 'Xpert Workload Summary Report',
-  description: 'A list of all devices in the system and aggregated by assay and by month.',
+  description: 'A list of all devices in the system and results aggregated by assay and by month.',
   i18nKey: 'xpert_workload_summary_report',
   i18nKeyDescription: 'xpert_workload_summary_report_description',
   externalId: 'pk_xpert_workload_summary_report', // folder name in /templates with low dash casing
