@@ -1,6 +1,9 @@
-const { seed, seedTable } = require('../utils')
+/* eslint-disable import/no-dynamic-require */
+const { seed } = require('../utils')
+const fixture = require('../fixtures/ConsumableReason')
 
 module.exports = seed(async knex => {
-  const overridedSeeds = { seedsFolder: null, staticDataFiles: [] }
-  seedTable(knex, 'ConsumableReason', overridedSeeds)
+  fixture.data.forEach(async cr => {
+    await knex('ConsumableReason').where('name', cr.name).update({ externalId: cr.externalId })
+  })
 }, __filename)

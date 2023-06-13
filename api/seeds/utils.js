@@ -3164,7 +3164,7 @@ module.exports = {
   removeAndReplaceActivity,
   removePermissions,
   updatePermissions,
-
+  getSeedsFolder,
   seedIssueType,
   seedIssueEscalationTriggersForPartner,
   deleteIssueTypes,
