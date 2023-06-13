@@ -1022,10 +1022,6 @@ async function getDataForReportCovid19(auth, query) {
       conditionBase('Previously treated', 'Female', `r.resultCategory1 IN (${negativeResultCategories})`)
     ),
   }
-  /**
-   * define single entry with all zero's when no data matches filter condition in query
-   */
-  // const fieldsAllZero = _.mapValues(fields, () => 0)
 
   const data = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -1057,24 +1053,7 @@ async function getDataForReportCovid19(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
-    // define field for grouping by it
-    .select(
-      knex.raw(`
-        DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
-      `)
-    )
-    // .groupBy('yearAndMonth')
     .count(fields)
-
-  // const yymm = formatDateOrDefault(dateFrom, 'yyyy-MM-01') // same format as field `yearAndMonth` in query
-
-  // /**
-  //  * set `data` to single object with all counters prepared
-  //  */
-  // data =
-  //   {
-  //     ...data?.find(d => d.yearAndMonth === yymm),
-  //   } || fieldsAllZero
 
   return {
     ok: true,
