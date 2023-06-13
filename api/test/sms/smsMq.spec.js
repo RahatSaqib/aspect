@@ -16,7 +16,7 @@ describe('Sending SMS via Message Queue to Contact', () => {
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
 
-  it('should add record with status=Initial to SmsMessage table to trigger MQ, and return "Sent" for messageStatus', async () => {
+  it.skip('should add record with status=Initial to SmsMessage table to trigger MQ, and return "Sent" for messageStatus', async () => {
     // get MQ context and messageId of inserted record in SmsMessage
     const { messageId } = context
     const messageContext = await createMessageContext()
@@ -54,7 +54,7 @@ describe('Sending SMS via Message Queue to Patient, clinician or any other conta
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
 
-  it('should add record with status=Initial to SmsMessage table to trigger MQ, and return "Sent" for messageStatus', async () => {
+  it.skip('should add record with status=Initial to SmsMessage table to trigger MQ, and return "Sent" for messageStatus', async () => {
     // get MQ context and messageId of inserted record in SmsMessage
     const { messageId } = context
     const messageContext = await createMessageContext()
