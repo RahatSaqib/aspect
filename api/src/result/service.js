@@ -35,7 +35,6 @@ const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 const { getSiteByPartnerCountry, getSite } = require('../site/service')
-const { getDeviceByDeviceId } = require('../device/service')
 const { updateTagsById } = require('../tag/service')
 const { getCaseId } = require('../case/service')
 const { applyExtraColumns, sanitizeExtraColumns } = require('./extraColumns')
@@ -53,6 +52,7 @@ const {
   showFileReferencesById,
   getResultNotesByResultId,
 } = require('./common/db')
+const { getDeviceByDeviceId } = require('../device/service')
 
 async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations

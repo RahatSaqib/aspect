@@ -17,7 +17,6 @@ const {
 } = require('../src/shared/dictionary')
 const logger = require('../src/shared/logger')
 const config = require('../src/config')
-const { partner: myanmarPartner } = require('./myanmar/fixtures/partnerData')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -201,7 +200,7 @@ async function seedStockIssues(knex) {
     dueDaysInventoryStockExpiring: 30,
   })
 
-  const { id: partnerId } = await knex('Partner').where({ externalId: myanmarPartner.externalId }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: 'myanmar' }).first()
 
   const now = new Date()
   const auditFields = {
@@ -2011,7 +2010,7 @@ async function seedIssues(
   { partnerId, pluginName, auditFields, issueTypeBlacklist = [], issueTypeWhitelist = [] }
 ) {
   await seedStockIssues(knex)
-  await seedStockIssuesUpdate(knex, myanmarPartner.externalId)
+  await seedStockIssuesUpdate(knex, 'myanmar')
   await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist,

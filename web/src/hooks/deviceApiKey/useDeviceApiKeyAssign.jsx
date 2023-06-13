@@ -6,7 +6,7 @@ const assignApiKey = async data => {
   return fetchWrapperForQueries({
     endpoint: DEVICE_KEY_ASSIGN_ENDPOINT,
     method: 'PUT',
-    body: JSON.stringify(data),
+    params: data,
   })
 }
 

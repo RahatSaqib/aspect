@@ -8,7 +8,6 @@ const { getPermissionModules, upsertIssueResolutionTrigger } = require('../utils
 const geography = require('./fixtures/geography.json')
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
-const { partner: myanmarPartner } = require('../myanmar/fixtures/partnerData')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -46,7 +45,7 @@ async function seed(knex) {
       htmlBody: 'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })
 
-  const { id: partnerId } = await knex('Partner').where({ externalId: myanmarPartner.externalId }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: 'myanmar' }).first()
 
   await knex('IssueEscalationTrigger')
     .update({
@@ -312,5 +311,5 @@ async function seed(knex) {
   await updateDashboardWidgetQueries(knex)
 
   // correction requested in SD-769
-  await updateDataCategoryNotificationTypeForRO(knex, myanmarPartner.name, myanmarPartner.externalId)
+  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar', 'myanmar')
 }
