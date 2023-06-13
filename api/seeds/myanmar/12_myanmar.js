@@ -2,6 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
+const { partner } = require('./fixtures/partnerData')
 
 async function seed(knex) {
   const widget = await knex('DashboardWidget').where('title', 'children').first('id')
@@ -12,7 +13,7 @@ async function seed(knex) {
   await removeChildrenDashboardTarget(knex)
   await updateDashboardWidgetQueries(knex)
   await turnOffEmailSms(knex)
-  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
+  await updateDataCategoryNotificationTypeForRO(knex, partner.name, partner.externalId)
 }
 
 async function removeChildrenDashboardTarget(knex) {

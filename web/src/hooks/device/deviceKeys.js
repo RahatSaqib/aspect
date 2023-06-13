@@ -6,6 +6,9 @@ const DEVICE_KEY_MERGE_DEVICES_ENDPOINT = '/device/mergedevices'
 const DEVICE_PERFORMANCE_KEY_BY_ID_ENDPOINT = '/device/performance/:deviceId?timezoneOffset=:offset'
 const DEVICE_CAPACITY_KEY_ENDPOINT = '/device/capacity/select-list?deviceTypeId=:deviceTypeId'
 const DEVICE_TYPE_KEY_LIST_ENDPOINT = '/device-type/select-list'
+const DEVICE_RESULT_CATEGORY_GROUP_ENDPOINT = '/device/maintenance-statuses'
+const DEVICE_APPROVAL_TYPE_ENDPOINT = '/device/approval-types'
+
 export {
   DEVICE_KEY,
   DEVICE_KEY_BY_ID_ENDPOINT,
@@ -14,4 +17,6 @@ export {
   DEVICE_PERFORMANCE_KEY_BY_ID_ENDPOINT,
   DEVICE_CAPACITY_KEY_ENDPOINT,
   DEVICE_TYPE_KEY_LIST_ENDPOINT,
+  DEVICE_RESULT_CATEGORY_GROUP_ENDPOINT,
+  DEVICE_APPROVAL_TYPE_ENDPOINT,
 }

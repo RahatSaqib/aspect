@@ -253,6 +253,7 @@ const deviceDetailsResponseFields = Joi.object()
       ),
     state: Joi.string().allow('', null).description('The state where the device is located'),
     siteId: Joi.number().allow('', null).description('The ID of the site where the device is located'),
+    implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
     siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
     hostId: Joi.string().allow('', null).description('The host ID of the device'),
     deviceType: Joi.object()
@@ -306,6 +307,9 @@ const deviceDetailsResponseFields = Joi.object()
     errorRateThisMonth: Joi.number().allow(null).description('Error rate in last 30 days'),
     dailyCapacity: Joi.number().allow(null).description('Number of results delivered in the last 30 days'),
     dailyCapacityId: Joi.number().allow(null).description('Id of the device capacity'),
+    dailyCapacityModules: Joi.number().allow(null).description('Number of DeviceCapacity modules'),
+    dailyCapacityExternalId: Joi.string().allow(null, '').description('field externalId of DeviceCapacity'),
+    dailyCapacityModulesI18nKey: Joi.string().allow(null, '').description('Intl key of DeviceCapacity modules'),
     deliveredLastMonth: Joi.number().allow(null).description('Number of results delivered in the 30 days before that'),
     calibrationDate: Joi.date().allow(null).description('Date of the last calibration'),
     calibrationNotes: Joi.string().allow('', null).description('Notes about the last calibration'),

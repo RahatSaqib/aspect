@@ -6,7 +6,9 @@ const endpointUtils = require('../utils/endpointUtils')
 describe('inventory endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/inventory/endpoints', {
-      './service': serviceStub,
+      './addInventory': serviceStub,
+      './removeInventory': serviceStub,
+      './transferInventory': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }
@@ -17,11 +19,7 @@ describe('inventory endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/add', {
-          async addInventory() {
-            return expectedResponse
-          },
-        })
+        endpoint = setupRoute('PUT', '/inventory/add', async () => expectedResponse)
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils
@@ -39,11 +37,7 @@ describe('inventory endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/remove', {
-          async removeInventory() {
-            return expectedResponse
-          },
-        })
+        endpoint = setupRoute('PUT', '/inventory/remove', async () => expectedResponse)
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils
@@ -61,11 +55,7 @@ describe('inventory endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('PUT', '/inventory/transfer', {
-          async transferInventory() {
-            return expectedResponse
-          },
-        })
+        endpoint = setupRoute('PUT', '/inventory/transfer', async () => expectedResponse)
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils
@@ -85,11 +75,7 @@ describe('inventory endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('POST', '/inventory/add', {
-          async addInventory() {
-            return expectedResponse
-          },
-        })
+        endpoint = setupRoute('POST', '/inventory/add', async () => expectedResponse)
       })
       it('Should respond with the data returned from the service', done => {
         endpointUtils

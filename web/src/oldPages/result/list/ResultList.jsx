@@ -13,18 +13,17 @@ import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
+import DetailHeader from '../../../cleanComponents/DetailHeader'
+import ResultFilter from '../../../cleanComponents/Filter/ResultFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton'
-import DetailHeader from '../../../components/DetailHeader'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { RESULT_LIST } from '../../../components/QueryFetch/Result'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
-import BrowseFilters from '../../../oldComponents/filter/BrowseFilters'
-import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../../oldComponents/filter/utils'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { useAuthState } from '../../../providers/AuthProvider'
+import { useFilterValues } from '../../../providers/FilterProvider'
 import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
@@ -84,30 +83,6 @@ const getBaseColumns = (extraColumns = [], formatMessage) => {
   )
 }
 
-const FILTERS_CONFIG = [
-  { assayAndResultCategory: true, requiredPermissions: ['assay:view'] },
-  { geography: true, requiredPermissions: [] },
-  { state: true, requiredPermissions: [] },
-  { lga: true, requiredPermissions: [] },
-  { date: true, requiredPermissions: [] },
-  { patientOrResearchId: true, requiredPermissions: [] },
-  { sampleId: true, requiredPermissions: [] },
-  { errorCode: true, requiredPermissions: [] },
-  { siteName: true, requiredPermissions: ['site:view'] },
-  { reportableSiteName: true, requiredPermissions: ['site:view'] },
-  { reportableSiteId: true, requiredPermissions: ['site:view'] },
-  { deviceName: true, requiredPermissions: ['device'] },
-  { deviceType: true, requiredPermissions: [] },
-  { sampleOriginSite: true, requiredPermissions: [] },
-  { workflowStatus: true, requiredPermissions: [] },
-  { treatmentStatus: true, requiredPermissions: [] },
-  { displayResult: true, requiredPermissions: [] },
-  { onlyReportableResults: true, requiredPermissions: ['assay:view'] },
-  { onlyDownloadedByReporter: true, requiredPermissions: [] },
-  { onlyEverTransferred: true, requiredPermissions: [] },
-  { onlyTreatmentRequired: true, requiredPermissions: [] },
-]
-
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
     'endedOn',
@@ -128,9 +103,8 @@ const searchSanitizer = makeSearchParamsSanitizer({
     /* --- table.extraColumns END --- */
   ],
 })
-const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
-  flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
+  flowRight(searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
 
@@ -155,7 +129,6 @@ export const ResultListWithProps = ({
   sortCol,
   sortDir,
   columns,
-  reducedFilters,
   onExportClick,
   table,
   total,
@@ -166,28 +139,21 @@ export const ResultListWithProps = ({
     <DetailHeader name={intl.formatMessage(messages.resultsTitle)} disableBack />
     <div className={cssClasses('Container')}>
       <Helmet title={intl.formatMessage(messages.resultsTitle)} />
+      <ResultFilter />
       <DataTableCard key={`DataTableCard--table-Result-list---${location.key}`}>
         <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-          <BrowseFilters
-            navigate={navigate}
-            location={location}
-            intl={intl}
-            config={reducedFilters}
-            askConfirmationForExport={table.total > 1000}
-          >
-            <AspectExportListButton
-              onExport={onExportClick}
-              visible={!items.currentIdList.isEmpty()}
-              reportName="Results"
-              disableExcel
-            />
-          </BrowseFilters>
+          <AspectExportListButton
+            onExport={onExportClick}
+            visible={!items.currentIdList.isEmpty()}
+            reportName="Results"
+            disableExcel
+          />
         </div>
 
         {isLoading ? <DataTableProgressBar /> : null}
 
         {items.currentIdList.isEmpty() ? (
-          <BrowseEmptyList navigate={navigate} location={location} />
+          <BrowseEmptyList />
         ) : (
           <>
             <ResultDataTable className={cssClasses('ResultDataTable')}>
@@ -244,8 +210,7 @@ const ResultList = () => {
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
-  const { userPermissions } = useAuthState()
-
+  const filters = useFilterValues(location.pathname)
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(
@@ -258,7 +223,6 @@ const ResultList = () => {
   )
   const [total, setTotal] = useState()
   const [isLoading, setIsLoading] = useState(false)
-  const [filters, setFilters] = useState()
   const [pagination, setPagination] = useState({})
   const [columns, setColumns] = useState([])
 
@@ -267,7 +231,6 @@ const ResultList = () => {
   const searchParams = new URLSearchParams()
   searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
   const params = { ...pagination, ...filters }
   delete params.assayOverride
 
@@ -289,21 +252,9 @@ const ResultList = () => {
   }, [tableLoading])
 
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location, {})
-    const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
-      searchParams.get('filters') || '',
-      {}
-    )
-
-    if (sanitized || filtersSanitized) {
-      searchParams.set('filters', filtersParams)
-      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
-    }
-
     const sortPage = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-    setFilters(getFilters(filtersParams))
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
@@ -347,7 +298,6 @@ const ResultList = () => {
     sortCol,
     sortDir,
     columns,
-    reducedFilters,
     onExportClick,
     table,
     total,

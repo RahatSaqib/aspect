@@ -1,12 +1,15 @@
 const { upsertTruenatDeviceTypeAndAssays } = require('../commonTruenat')
 const { createDevicesForAllMissingTypes } = require('../commonGenerateResults')
-const { partnerName, adminName } = require('./fixtures/partnerData')
+const {
+  partner: { externalId: partnerExternalId },
+  adminUserName,
+} = require('./fixtures/partnerData')
 
 module.exports = require('../utils').seed(async knex => {
   await upsertTruenatDeviceTypeAndAssays(knex)
-  const { id: partnerId } = await knex('Partner').where('name', partnerName).first('id')
+  const { id: partnerId } = await knex('Partner').where('externalId', partnerExternalId).first('id')
 
-  const { id: userId } = await knex('User').where('name', adminName).first('id')
+  const { id: userId } = await knex('User').where('name', adminUserName).first('id')
 
   const siteDatas = await knex('Site').where('partnerId', partnerId).select()
 

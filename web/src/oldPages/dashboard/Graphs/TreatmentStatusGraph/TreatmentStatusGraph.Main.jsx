@@ -31,7 +31,7 @@ const baseConfig = {
   id: 'treatmentStatusMonthly',
   clickThrough: {
     allow: true,
-    baseUrl: '/browse/result?filters=',
+    baseUrl: '/browse/result',
     keys: ['treatmentStatus', 'indexBy'],
   },
   indexBy: 'monthTested',

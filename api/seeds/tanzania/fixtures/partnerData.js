@@ -1,7 +1,10 @@
 const jobFunctions = require('../../fixtures/jobFunctions')
 
 module.exports = {
-  partnerName: 'Tanzania',
+  partner: {
+    name: 'Tanzania',
+    externalId: 'tanzania',
+  },
   partnerAbbreviation: 'TZ',
   adminUserName: 'admin',
   adminPassword: 'qlrQ9508*7',

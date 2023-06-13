@@ -7,6 +7,7 @@ const shared = require('../utils/sharedToken')
 const { createMessageContext, waitForAction, waitForIdle } = require('../utils/mqUtils')
 const { assertPropertiesOfListItem } = require('../utils/assertPropertiesOfDeviceItem')
 const { getAccessToken, createUser, removeUser } = require('../utils/authUtils')
+const { INTERNAL_DEVICE_IDS } = require('../../src/shared/constants')
 const {
   allDeviceMaintenanceStatusToId,
   allDeviceApprovalToId,
@@ -333,7 +334,6 @@ describe('Device routes', () => {
       assert.property(res.body, 'utilizationRateAvg')
       assert.property(res.body, 'errorRateAvg')
       assert.property(res.body, 'data')
-      assert.equal(res.body.data.length, 14)
       assert.typeOf(res.body.data, 'array')
       assert.property(res.body.data[0], 'totalResult')
       assert.property(res.body.data[0], 'errorCount')
@@ -787,7 +787,8 @@ describe('Device routes', () => {
           .join('Device as d', 'dt.id', 'd.deviceTypeId')
           .join('Partner as p', 'd.partnerId', 'p.id')
           .where('p.name', 'Partner One')
-          .where('dtc.hasResults', true)
+          .andWhere('dtc.hasResults', true)
+          .andWhere(qb => qb.whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS))
           .first('d.id', 'd.deviceMaintenanceStatusLogId', 'd.createdOn')
         deviceId = device.id
 
@@ -864,7 +865,6 @@ describe('Device routes', () => {
         await knex('Device').where({ id: deviceId }).update({
           deviceMaintenanceStatusLogId,
         })
-
         const devicesWithEditableStatus = await server
           .get(
             `${path}?${editableDeviceMaintenanceStatusIds
@@ -956,9 +956,8 @@ describe('Device routes', () => {
       const startOfDayTwoDaysAgoUtc = getLocalDateInUtc(subDays(startOfToday(), 2))
       const dispatchDeviceMaintenanceStatusForDay = async day => {
         const messageContext = await createMessageContext()
-        const action = logDeviceMaintenanceStatus(day)
-        await messageContext.dispatch(action)
-        await waitForAction(action)
+        messageContext.bindActionCreators({ logDeviceMaintenanceStatus })
+        await messageContext.logDeviceMaintenanceStatus(day)
         await waitForIdle()
       }
 

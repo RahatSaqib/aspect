@@ -22,14 +22,14 @@ const generateResultQuery = (query, dataConstraints, resultId) => {
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
-    .leftJoin('ResultCategoryAssay as rca', function () {
-      this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
-    })
-    .leftJoin('ResultCategoryAssay as rca2', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
+    .leftJoin('ResultCategoryAssay as rca', qb =>
+      qb.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
+    )
+    .leftJoin('ResultCategoryAssay as rca2', qb =>
+      qb.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
+    )
     // only results which are reportable for either ResultCategory
-    .where(builder => builder.where('rca.reportable', 1).orWhere('rca2.reportable', 1))
+    .where(qb => qb.where('rca.reportable', 1).orWhere('rca2.reportable', 1))
     .whereIn('rs.externalId', ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged'])
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
@@ -42,16 +42,16 @@ const generateResultQuery = (query, dataConstraints, resultId) => {
       country: 'c',
     })
   if (query) {
-    knexQuery.modify((queryBuilder, params) => {
+    knexQuery.modify((qb, params) => {
       if (params.minUpdatedOn) {
-        queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
+        qb.where('r.updatedOn', '>=', params.minUpdatedOn)
       }
       if (params.maxUpdatedOn) {
-        queryBuilder.where('r.updatedOn', '<', params.maxUpdatedOn)
+        qb.where('r.updatedOn', '<', params.maxUpdatedOn)
       }
       if (params.patientSample) {
-        queryBuilder.where(builder =>
-          builder
+        qb.where(innerQb =>
+          innerQb
             .where('sp.externalId', 'like', `%${params.patientSample}%`)
             .orWhere(
               knex.raw('LOWER(JSON_EXTRACT(patientData,"$.firstName")) like LOWER(JSON_QUOTE(?))', [
@@ -76,26 +76,26 @@ const generateResultQuery = (query, dataConstraints, resultId) => {
         )
       }
       if (params.assayExternalIds) {
-        queryBuilder.whereIn('a.externalId', params.assayExternalIds.split(','))
+        qb.whereIn('a.externalId', params.assayExternalIds.split(','))
       }
-      if (params.diseaseExternalIds) queryBuilder.whereIn('dis.externalId', params.diseaseExternalIds.split(','))
+      if (params.diseaseExternalIds) qb.whereIn('dis.externalId', params.diseaseExternalIds.split(','))
 
       if (params.resultCategories) {
-        queryBuilder.where(builder =>
+        qb.where(builder =>
           builder
             .whereIn('rc1.externalId', params.resultCategories.split(','))
             .orWhereIn('rc2.externalId', params.resultCategories.split(','))
         )
       }
       if (params.workflowStatus) {
-        queryBuilder.where('rs.externalId', params.workflowStatus)
+        qb.where('rs.externalId', params.workflowStatus)
       }
       if (params.isTransferred) {
         // return only results transferred "to me" (to r.reportableSiteId)
-        queryBuilder.whereRaw('sp.originSiteId != r.reportableSiteId')
+        qb.whereRaw('sp.originSiteId != r.reportableSiteId')
       }
-      if (params.treatmentStatus) queryBuilder.where('rts.externalId', params.treatmentStatus)
-      if (params.deviceType) queryBuilder.where('dt.externalId', params.deviceType)
+      if (params.treatmentStatus) qb.where('rts.externalId', params.treatmentStatus)
+      if (params.deviceType) qb.where('dt.externalId', params.deviceType)
     }, query)
   }
   if (resultId) {
@@ -171,7 +171,7 @@ const getFollowUps = data => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey'
+      'fut.i18nKey as followUpTypeI18nKey'
     )
 }
 
@@ -209,12 +209,10 @@ const insertResultWorkflowLogQuery = (resultId, resultWorkflowStatusId, now, use
   })
 }
 
-const updateResultWorkflowLogQuery = (resultId, resultWorkflowStatusLogId) => {
+const updateResultWorkflowLogQuery = (resultId, currentUserId, now, resultWorkflowStatusLogId) => {
   return knex('Result')
-    .where({
-      id: resultId,
-    })
-    .update({ resultWorkflowStatusLogId })
+    .where('id', resultId)
+    .update({ resultWorkflowStatusLogId, updatedBy: currentUserId, updatedOn: now })
 }
 
 const getResultWorkflowStatusQuery = resultWorkflowStatusExternalId => {
@@ -250,14 +248,14 @@ const generateResultQueryV2 = (query, dataConstraints, resultId) => {
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
-    .leftJoin('ResultCategoryAssay as rca', function () {
-      this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
-    })
-    .leftJoin('ResultCategoryAssay as rca2', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
+    .leftJoin('ResultCategoryAssay as rca', qb =>
+      qb.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
+    )
+    .leftJoin('ResultCategoryAssay as rca2', qb =>
+      qb.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
+    )
     // only results which are reportable for either ResultCategory
-    .where(builder => builder.where('rca.reportable', 1).orWhere('rca2.reportable', 1))
+    .where(qb => qb.where('rca.reportable', 1).orWhere('rca2.reportable', 1))
     .whereIn('rs.externalId', ['Deliverable', 'Delivered', 'Acknowledged', 'Flagged'])
 
     .modify(addConstraints, dataConstraints, {
@@ -271,16 +269,16 @@ const generateResultQueryV2 = (query, dataConstraints, resultId) => {
       country: 'c',
     })
   if (query) {
-    knexQuery.modify((queryBuilder, params) => {
+    knexQuery.modify((qb, params) => {
       if (params.minUpdatedOn) {
-        queryBuilder.where('r.updatedOn', '>=', params.minUpdatedOn)
+        qb.where('r.updatedOn', '>=', params.minUpdatedOn)
       }
       if (params.maxUpdatedOn) {
-        queryBuilder.where('r.updatedOn', '<', params.maxUpdatedOn)
+        qb.where('r.updatedOn', '<', params.maxUpdatedOn)
       }
       if (params.patientSample) {
-        queryBuilder.where(builder =>
-          builder
+        qb.where(innrQb =>
+          innrQb
             .where('sp.externalId', 'like', `%${params.patientSample}%`)
             .orWhere(
               knex.raw('LOWER(JSON_EXTRACT(patientData,"$.firstName")) like LOWER(JSON_QUOTE(?))', [
@@ -305,26 +303,26 @@ const generateResultQueryV2 = (query, dataConstraints, resultId) => {
         )
       }
       if (params.assayExternalIds) {
-        queryBuilder.whereIn('a.externalId', params.assayExternalIds.split(','))
+        qb.whereIn('a.externalId', params.assayExternalIds.split(','))
       }
-      if (params.diseaseExternalIds) queryBuilder.whereIn('dis.externalId', params.diseaseExternalIds.split(','))
+      if (params.diseaseExternalIds) qb.whereIn('dis.externalId', params.diseaseExternalIds.split(','))
 
       if (params.resultCategories) {
-        queryBuilder.where(builder =>
-          builder
+        qb.where(innerQb =>
+          innerQb
             .whereIn('rc1.externalId', params.resultCategories.split(','))
             .orWhereIn('rc2.externalId', params.resultCategories.split(','))
         )
       }
       if (params.workflowStatus) {
-        queryBuilder.where('rs.externalId', params.workflowStatus)
+        qb.where('rs.externalId', params.workflowStatus)
       }
       if (params.isTransferred) {
         // return only results transferred "to me" (to r.reportableSiteId)
-        queryBuilder.whereRaw('sp.originSiteId != r.reportableSiteId')
+        qb.whereRaw('sp.originSiteId != r.reportableSiteId')
       }
-      if (params.treatmentStatus) queryBuilder.where('rts.externalId', params.treatmentStatus)
-      if (params.deviceType) queryBuilder.where('dt.externalId', params.deviceType)
+      if (params.treatmentStatus) qb.where('rts.externalId', params.treatmentStatus)
+      if (params.deviceType) qb.where('dt.externalId', params.deviceType)
     }, query)
   }
   if (resultId) {
@@ -402,7 +400,7 @@ const getItemsV2 = (resultQuery, query) => {
     )
 }
 
-// get follow ups for all results in the response for performance (filter later) v2
+// get follow-ups for all results in the response for performance (filter later) v2
 const getFollowUpsV2 = data => {
   return knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
@@ -424,7 +422,7 @@ const getFollowUpsV2 = data => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey'
+      'fut.i18nKey as followUpTypeI18nKey'
     )
 }
 
@@ -469,7 +467,7 @@ const getFollowUpsOfResultById = data => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypei18nKey'
+      'fut.i18nKey as followUpTypeI18nKey'
     )
 }
 // get comments for all results in the response for performance (filter later) v2
@@ -549,13 +547,13 @@ const getTreatmentStatus = resultTreatmentStatusId => {
 }
 
 // feature: clinical response
-const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, changedOn, userId) => {
+const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, changedOn, userId, now) => {
   return knex('ResultTreatmentStatusLog').insert({
     resultId,
     resultTreatmentStatusId: treatmentStatusId,
     method,
     data,
-    createdOn: new Date(),
+    createdOn: now,
     changedOn,
     createdBy: userId,
   })
@@ -576,11 +574,11 @@ const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, up
 }
 
 // feature: clinical response
-const updateResult = (resultId, treatmentStatusLogId, userId) => {
+const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
   return knex('Result').where('id', resultId).update({
     treatmentStatusLogId,
     updatedBy: userId,
-    updatedOn: new Date(),
+    updatedOn: now,
   })
 }
 

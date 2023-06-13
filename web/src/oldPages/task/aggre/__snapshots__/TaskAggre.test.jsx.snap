@@ -39,13 +39,7 @@ exports[`TaskAggre module TaskAggre component should render correctly 1`] = `
       <DataTableProgressBar
         disabled={true}
       />
-      <pure(withHandlers(EmptyList))
-        location={
-          Object {
-            "search": "",
-          }
-        }
-      />
+      <BrowseEmptyList />
     </DataTableCard>
   </section>
 </div>

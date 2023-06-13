@@ -5,11 +5,25 @@ import useAssayList from '../../hooks/assay/useAssayList'
 import useI18n from '../../hooks/useI18n'
 import { assay } from '../../messages'
 
-const AssaySelect = ({ id, name, label, value, onChange, error, helperText, disabled, assayTypeId, deviceTypeId }) => {
+const AssaySelect = ({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  error,
+  helperText,
+  disabled,
+  assayTypeId,
+  deviceTypeId,
+  reportGroup,
+  onlyResults = false,
+  single = false,
+}) => {
   const { isLoading, data: assayList } = useAssayList()
   const { formatMessage } = useI18n()
 
-  const data =
+  let data =
     assayList && assayTypeId && deviceTypeId
       ? assayList.filter(s => s.assayTypeId === assayTypeId && s.deviceTypeId === deviceTypeId)
       : assayList && assayTypeId
@@ -17,6 +31,8 @@ const AssaySelect = ({ id, name, label, value, onChange, error, helperText, disa
       : assayList && deviceTypeId
       ? assayList.filter(s => s.deviceTypeId === deviceTypeId)
       : assayList
+
+  data = assayList && onlyResults ? data.filter(a => a.hasResults) : data
 
   return isLoading ? (
     <LinearProgress />
@@ -28,15 +44,23 @@ const AssaySelect = ({ id, name, label, value, onChange, error, helperText, disa
       error={error}
       helperText={helperText}
       select
-      value={value}
-      onChange={onChange}
+      value={value || ''}
+      onChange={e => {
+        if (reportGroup) {
+          const assayId = e.target.value
+          const { resultCategory2Label } = data.find(e => e.id === assayId)
+          onChange({ target: { value: { id: assayId, resultCategory2Label } } })
+        } else {
+          onChange(e)
+        }
+      }}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
         endAdornment: (
           <IconButton
-            sx={{ visibility: value ? 'visible' : 'hidden' }}
-            onClick={() => onChange({ target: { name, value: '' } })}
+            sx={{ visibility: value && !single ? 'visible' : 'hidden' }}
+            onClick={() => onChange({ target: { name, value: { id: null, resultCategory2Label: null } } })}
             disabled={disabled}
           >
             <ClearIcon />

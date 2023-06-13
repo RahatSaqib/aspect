@@ -45,13 +45,5 @@ async function seed(knex) {
       password: '50cTfGhz',
     },
   ]
-  await upsertContacts(
-    knex,
-    {
-      adminUserName: partnerData.adminName,
-      partnerName: partnerData.partnerName,
-      partnerAbbreviation: 'US',
-    },
-    contacts
-  )
+  await upsertContacts(knex, partnerData, contacts)
 }

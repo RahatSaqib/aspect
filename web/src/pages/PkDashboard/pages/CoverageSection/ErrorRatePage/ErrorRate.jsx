@@ -23,7 +23,7 @@ const ErrorRatePage = () => {
   ]
 
   return (
-    <PkPage title={formatMessage(messages.errorRateTitle)}>
+    <PkPage isMocked title={formatMessage(messages.errorRateTitle)}>
       <NestedTable columns={columns} rows={data} hasDetail />
     </PkPage>
   )
@@ -40,7 +40,7 @@ function createData(id, name, quantity, lastSixMonths, used, rate, left) {
     used,
     rate,
     left,
-    detail: [
+    children: [
       { id: `${id}${id}`, name, quantity, lastSixMonths, used, rate, left },
       { id: `${id}${id}2`, name, quantity, lastSixMonths, used, rate, left },
     ],

@@ -6,7 +6,7 @@ const logger = require('../../src/shared/logger')
 const { createNewIssue, findOpenIssue } = require('../../src/issue/service')
 const cleanIssueTypes = require('./remove_unused_issues')
 
-module.exports = async function cleanModuleReplacedIssues(knex, adminUserName, partnerName) {
+module.exports = async function cleanModuleReplacedIssues(knex, adminUserName, partnerExternalId) {
   try {
     await knex.transaction(async trx => {
       const moduleReplacedIssue = await issueTypeToId('ModuleReplaced')
@@ -50,7 +50,7 @@ module.exports = async function cleanModuleReplacedIssues(knex, adminUserName, p
         }
       })
     })
-    cleanIssueTypes(knex, adminUserName, partnerName)
+    cleanIssueTypes(knex, adminUserName, partnerExternalId)
   } catch (error) {
     logger.error(error, { reLabel: 'seed:cleanModuleReplacedIssues' })
     throw error

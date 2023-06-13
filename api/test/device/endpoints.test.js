@@ -7,6 +7,8 @@ describe('device endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/device/endpoints', {
       './service': serviceStub,
+      './updateDevice': serviceStub,
+      './listDevices': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }

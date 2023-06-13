@@ -78,12 +78,12 @@ async function removeOld(knex) {
 // -------------------------------------------------------
 // seedDataCategory
 // -------------------------------------------------------
-async function seedDataCategory(knex, partnerName) {
+async function seedDataCategory(knex, partnerExternalId, partnerName) {
   // remove old data seeded in previous seed files
   await removeOld(knex)
 
   // get partnerId and adminId
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first()
   const auditFields = {
     createdOn: now,
     updatedOn: now,
@@ -290,9 +290,9 @@ async function seedDataCategory(knex, partnerName) {
   })
 }
 
-async function updateDataCategoryNotificationTypeForRO(knex, partnerName) {
+async function updateDataCategoryNotificationTypeForRO(knex, partnerExternalId, partnerName) {
   // get partnerId
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first()
 
   // ----------------------------------------------------------------------
   // get jobFunctionId

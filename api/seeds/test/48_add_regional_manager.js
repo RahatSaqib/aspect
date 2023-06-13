@@ -1,5 +1,7 @@
 const bcrypt = require('bcrypt')
-const { partnerName } = require('./fixtures/partnerData')
+const {
+  partner: { externalId: partnerExternalId },
+} = require('./fixtures/partnerData')
 
 const config = require('../../src/config')
 
@@ -9,7 +11,7 @@ module.exports = require('../utils').seed(async knex => {
   const now = new Date()
   const { partnerOneId } = await knex('Partner')
     .where({
-      name: partnerName,
+      externalId: partnerExternalId,
     })
     .first('id as partnerOneId')
   const { adminId } = await knex('User').where({ name: 'admin' }).first('id as adminId')

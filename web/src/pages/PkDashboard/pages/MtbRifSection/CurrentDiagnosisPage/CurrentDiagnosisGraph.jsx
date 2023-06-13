@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useQuery } from 'react-query'
 import { StateSelect, LgaSelect } from '../../../../../cleanComponents'
+import Loading from '../../../../../cleanComponents/Loading'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
-import Loading from '../../../../../components/Loading'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
@@ -16,10 +16,15 @@ import messages from '../../../PkDashboard.Messages'
 import TestsOverTimeGraphHalf from './CurrentDiagnosisGraph.Half'
 
 const endPointParams = [
+  { assay: 'GxMtbRif' },
+  { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
+  { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
+  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
 const CurrentDiagnosisGraphPage = () => {
@@ -33,8 +38,8 @@ const CurrentDiagnosisGraphPage = () => {
 
   useEffect(() => {
     if (assays) {
-      const tbAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
-      const defaultFilter = tbAssays.length > 0 ? tbAssays : assays
+      const seriesAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
+      const defaultFilter = seriesAssays.length > 0 ? seriesAssays : assays
       setFilter(defaultFilter)
     }
   }, [assays])
@@ -42,7 +47,7 @@ const CurrentDiagnosisGraphPage = () => {
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
 
   return (
@@ -81,9 +86,9 @@ const CurrentDiagnosisGraphPage = () => {
           />
           <TripleCardSide
             data={[
-              { label: formatMessage(messages.testPerYear), value: 123 },
-              { label: formatMessage(messages.testPerMonth), value: 456 },
-              { label: formatMessage(messages.testPerDay), value: 799 },
+              { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
+              { label: formatMessage(messages.testPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
           <TestsOverTimeGraphHalf

@@ -1,7 +1,9 @@
-const { partnerName } = require('./fixtures/partnerData')
+const {
+  partner: { externalId: partnerExternalId },
+} = require('./fixtures/partnerData')
 
 module.exports = require('../utils').seed(async knex => {
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first()
   const { id: lpaId } = await knex('Assay').where({ externalId: 'assayLPA' }).first()
   const { id: detectedId } = await knex('ResultCategory').where({ externalId: 'Detected' }).first()
   const { id: notDetectedId } = await knex('ResultCategory').where({ externalId: 'NotDetected' }).first()

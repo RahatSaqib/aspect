@@ -7,9 +7,9 @@ const partnerData = require('./fixtures/partnerData')
 const upsertContacts = require('../common/upsert_contacts')
 
 async function seed(knex) {
-  const { id: countryId } = await knex('Country').where('name', partnerData.partnerName).first('id')
+  const { id: countryId } = await knex('Country').where('name', partnerData.partner.name).first('id')
 
-  const { id: partnerId } = await knex('Partner').where('name', partnerData.partnerName).first('id')
+  const { id: partnerId } = await knex('Partner').where('externalId', partnerData.partner.externalId).first('id')
 
   await insertSites(knex, partnerId, countryId, sites)
   await upsertContacts(knex, partnerData, contacts)

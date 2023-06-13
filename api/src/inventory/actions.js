@@ -5,6 +5,7 @@ const types = {
   INVENTORY_STOCKOUT: 'INVENTORY_STOCKOUT',
   INVENTORY_STOCK_EXPIRING: 'INVENTORY_STOCK_EXPIRING',
   INVENTORY_REAGENT_HEALTH: 'INVENTORY_REAGENT_HEALTH',
+  INVENTORY_MISSING_LOTS_RESOLVER: 'INVENTORY_MISSING_LOTS_RESOLVER',
 }
 
 // ----------- Action Creators -------------------
@@ -65,9 +66,16 @@ function inventoryReagentHealth(deviceId, consumableId) {
   }
 }
 
+function missingInventoryLotsResolver() {
+  return {
+    type: types.INVENTORY_MISSING_LOTS_RESOLVER,
+  }
+}
+
 module.exports = {
   types,
   inventoryStockout,
   inventoryStockExpiring,
   inventoryReagentHealth,
+  missingInventoryLotsResolver,
 }

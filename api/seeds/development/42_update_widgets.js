@@ -5,10 +5,13 @@ const dashboardWidget = require('./fixtures/dashboardWidget')
 const { upsertDashboardWidgets } = require('../common')
 
 async function seed(knex) {
-  const partnerOneName = 'Partner One'
-  const { id: partnerId } = await knex('Partner').where({ name: partnerOneName }).first('id')
+  const partnerOneExternalId = 'partnerone'
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerOneExternalId }).first('id')
 
-  dashboardWidget.stat = _.filter(dashboardWidget.stat, d => !d.partnerNames || d.partnerNames.includes(partnerOneName))
+  dashboardWidget.stat = _.filter(
+    dashboardWidget.stat,
+    d => !d.partnerExternalIds || d.partnerExternalIds.includes(partnerOneExternalId)
+  )
 
   await upsertDashboardWidgets(knex, partnerId, dashboardWidget)
 }
