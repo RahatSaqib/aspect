@@ -1,11 +1,16 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
+const bcrypt = require('bcrypt')
+const config = require('../../../config')
+const { knex } = require('../../../db')
+const { randomToken } = require('../../../deviceApi/apiKey')
 const { lookupUsingCredentials } = require('../../../deviceApiKey/service')
 const { getRemoteAddress } = require('../../../shared/request')
 const { SynchronousDataProcessor } = require('../_base')
 const { postPayloadFromDevice } = require('../../../device/service')
 const { deviceSeen } = require('../../../device/actions')
+const { deviceApprovalToId, deviceTypeToId } = require('../../../shared/dictionary')
 
 class TruenatLogin extends SynchronousDataProcessor {
   static get AllowUnauthenticatedRequests() {
@@ -30,6 +35,12 @@ class TruenatLogin extends SynchronousDataProcessor {
   async processRequest() {
     const { request } = this
     const { payload } = request
+    if (payload.Username === '') {
+      throw Boom.badRequest('Username cannot be empty')
+    }
+    if (payload.Password === '') {
+      throw Boom.badRequest('Password cannot be empty')
+    }
     const deviceApiKeyAuthResult = await lookupUsingCredentials(payload.Username, payload.Password)
     const deviceId = _.get(deviceApiKeyAuthResult, 'data.deviceId')
     if (deviceId) {
@@ -45,13 +56,94 @@ class TruenatLogin extends SynchronousDataProcessor {
       this.response.username = payload.Username
       this.response.token = `Bearer ${deviceApiKeyAuthResult.data.token}`
       this.response.success = true
-    } else {
+    } else if (deviceApiKeyAuthResult.data) {
       throw Boom.unauthorized(
         JSON.stringify({
           username: payload.Username,
           success: false,
         })
       )
+    } else {
+      const defaultPartner = await knex('Partner').where({ isDefault: true }).first('id')
+      if (!defaultPartner) {
+        throw Boom.unauthorized(
+          JSON.stringify({
+            username: payload.Username,
+            success: false,
+          })
+        )
+      }
+      const now = new Date()
+      let site
+      let device = await knex('Device')
+        .where('name', payload.Username)
+        .orWhere('shortName', payload.Username)
+        .orWhere('hostId', payload.Username)
+        .first()
+      if (!device) {
+        site = await knex('Site').where('name', payload.Username).orWhere('shortName', payload.Username).first()
+        if (!site) {
+          const { id: countryId } = await knex('Country').orderBy('id').first('id')
+          const { id: geographyId } = await knex('Geography')
+            .where('countryId', countryId)
+            .where('stateId', null)
+            .where('lgaId', null)
+            .first('id')
+          site = {
+            name: payload.Username,
+            shortName: payload.Username,
+            partnerId: defaultPartner.id,
+            externalId: payload.Username,
+            geographyId,
+            notes: 'Created automatically by new Truelab device',
+            createdOn: now,
+            updatedOn: now,
+          }
+          const [siteId] = await knex('Site').insert(site)
+          site.id = siteId
+        }
+        const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
+        const deviceApprovalId = await deviceApprovalToId('assigned')
+        device = {
+          name: payload.Username,
+          shortName: payload.Username,
+          partnerId: site.partnerId,
+          geographyId: site.geographyId,
+          siteId: site.id,
+          hostId: payload.Username,
+          deviceTypeId: truenatDeviceTypeId,
+          deviceApprovalId,
+          createdOn: now,
+          updatedOn: now,
+        }
+        const [deviceId] = await knex('Device').insert(device)
+        device.id = deviceId
+      }
+      if (!site) {
+        site = await knex('Site').where('id', device.siteId).first()
+      }
+      const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
+      const apiKey = { token: randomToken() }
+      const saltRounds = parseInt(config.passwordSaltRounds, 10)
+      const passwordHash = bcrypt.hashSync(payload.Password, saltRounds)
+      const deviceApiKey = {
+        deviceId: device.id,
+        partnerId: device.partnerId,
+        geographyId: site.geographyId,
+        siteId: site.id,
+        token: apiKey.token,
+        username: payload.Username,
+        password: passwordHash,
+        revoked: 0,
+        createdOn: now,
+        createdBy: adminId,
+        updatedOn: now,
+        updatedBy: adminId,
+      }
+      await knex('DeviceApiKey').insert(deviceApiKey)
+      this.response.username = payload.Username
+      this.response.token = `Bearer ${apiKey.token}`
+      this.response.success = true
     }
   }
 

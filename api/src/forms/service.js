@@ -62,6 +62,9 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
         field.items = _.map(items, item => ({
           key: item[itemsSourceConfig?.key || 'externalId'],
           value: item[itemsSourceConfig?.value || 'name'],
+          state: item.stateName,
+          lga: item.lgaName,
+          ...JSON.parse(item.customProperties || '{}'),
         }))
       }
 
@@ -81,8 +84,8 @@ const replaceOptionSourceProp = async (customFields, partnerId, countryId) => {
   )
 }
 
-const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, diseaseId = null) => {
-  const formQuery = await getFormsBaseQuery(partnerId, {
+const getCustomFieldsBaseQuery = async (partnerId, deviceId, assayId = null, diseaseId = null) =>
+  getFormsBaseQuery(partnerId, {
     formType: 'gxConnectForm',
     assayId,
     diseaseId,
@@ -94,20 +97,58 @@ const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, d
     .leftJoin('Device as d', 'd.deviceTypeId', 'dt.id')
     .leftJoin('Assay as formAssay', 'fd.assayId', 'formAssay.id')
     .where(qb => {
-      qb.where('d.id', deviceId)
-      qb.orWhereNull('fd.diseaseId')
+      if (deviceId) {
+        qb.where('d.id', deviceId)
+        qb.orWhereNull('fd.diseaseId')
+      }
     })
     .whereNotNull('fd.externalId')
-    .select(knex.raw('GROUP_CONCAT(DISTINCT formAssay.externalId) AS assayExternalId'))
+    .select([
+      // A form can be scoped to one specific assay
+      knex.raw('formAssay.externalId AS assayExternalId'),
+      // Or can be scoped to many assays, determined by the disease
+      knex.raw('GROUP_CONCAT(DISTINCT a.externalId) AS assayExternalIdFromDisease'),
+    ])
     .groupBy('fd.id')
+
+const setFormAssayToCustomFields = (form, customFields) => {
+  const fields = _.map(customFields, field => ({
+    ...field,
+    assayExternalId: form.assayExternalId
+      ? [form.assayExternalId]
+      : form.assayExternalIdFromDisease
+      ? form.assayExternalIdFromDisease.split(',')
+      : [],
+    diseaseId: form.diseaseId,
+  }))
+  return fields
+}
+
+const getCustomFieldPlaceholdersForNotifications = async partnerId => {
+  const formQuery = await getCustomFieldsBaseQuery(partnerId)
+
+  const placeholders = []
+  await Promise.each(formQuery, async form => {
+    const formPlaceholders = setFormAssayToCustomFields(form, formDictionary[form.jsonSchemaFileName].fields).map(
+      field => ({
+        id: `result.customFields.${field.source}`,
+        nameI18nKey: `${field.i18nKey}`,
+        name: `${field.title}`,
+        assayWhitelist: field.assayExternalId,
+      })
+    )
+    placeholders.push(...formPlaceholders)
+  })
+
+  return placeholders
+}
+
+const getCustomFields = async (partnerId, deviceId, countryId, assayId = null, diseaseId = null) => {
+  const formQuery = await getCustomFieldsBaseQuery(partnerId, deviceId, assayId, diseaseId)
 
   const formFields = []
   await Promise.each(formQuery, async form => {
-    const fields = _.map(formDictionary[form.jsonSchemaFileName].fields, field => ({
-      ...field,
-      assayExternalId: form.assayExternalId ? form.assayExternalId.split(',') : [],
-      diseaseId: form.diseaseId,
-    }))
+    const fields = setFormAssayToCustomFields(form, formDictionary[form.jsonSchemaFileName].fields)
     await replaceOptionSourceProp(fields, partnerId, countryId)
     formFields.push(...fields)
   })
@@ -146,4 +187,5 @@ module.exports = {
   getCustomFields,
   createFormObject,
   replaceOptionSourceProp,
+  getCustomFieldPlaceholdersForNotifications,
 }

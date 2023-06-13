@@ -8,7 +8,7 @@ const {
   getFollowUpsOfResultById,
   getItems,
   generateResultQuery,
-  addResultDownlodLogQuery,
+  addResultDownloadLogQuery,
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
   getResultWorkflowStatusQuery,
@@ -65,7 +65,7 @@ async function downloadResultById(request) {
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
-  return Promise.each(idsToBeRegistered, async resultId => addResultDownlodLogQuery(resultId, now, userId))
+  return Promise.each(idsToBeRegistered, async resultId => addResultDownloadLogQuery(resultId, now, userId))
 }
 
 const updateResultWorkflowStatus = async (idsToUpdate, userId, resultWorkflowStatusExternalId) => {

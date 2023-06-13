@@ -3,10 +3,11 @@ const _ = require('lodash')
 const { format } = require('date-fns')
 const excel = require('exceljs') // see https://www.npmjs.com/package/exceljs
 const Range = require('exceljs/lib/doc/range')
-const { getContentType, readExcelFile, readTemplateFile } = require('./io')
+const { readExcelFile, readTemplateFile } = require('./io')
 const { getDisplayPreferences, getUser } = require('../auth/service')
 const logger = require('./logger')
 const { RELABEL_EXCEL } = require('./constants')
+const { respondFile } = require('./response')
 
 const LANG_DEFAULT = 'en'
 
@@ -160,16 +161,6 @@ function getHeaderRows(sheet, cellTableToken) {
 }
 
 // ----------------------------------------------------------------------------------------------
-
-async function respondFile({ reply, dataBuffer, extension = 'xlsx', fileName, streamResponse = false }) {
-  return reply
-    .response(dataBuffer)
-    .encoding('binary')
-    .type(getContentType(extension, streamResponse))
-    .header('content-disposition', `attachment; filename=${fileName};`)
-}
-
-// ----------------------------------------------------------------------------------------------
 function getBaseReplacements() {
   const replacements = [
     {
@@ -313,7 +304,14 @@ async function renderExcelTemplate({
   // process all sheets
   _.each(worksheets, async (worksheet, sheetIndex) => {
     const dataForSheet = dataSet[sheetIndex] || {}
-    const { data, dynamicColumns = [], defaultNoDataMessage, dataSelector: dataSelectorSheet } = dataForSheet
+    const {
+      data,
+      dynamicColumns = [],
+      defaultNoDataMessage,
+      dataSelector: dataSelectorSheet,
+      // populator is a special function to populate current sheet
+      populator,
+    } = dataForSheet
     // define sections on a sheet
     let { sections } = dataForSheet
     const isListWithSections = !!sections
@@ -331,6 +329,23 @@ async function renderExcelTemplate({
     if (extension === 'csv' && (sheetIndex > 0 || wayToFillInData !== 'list')) {
       return
     }
+
+    if (populator) {
+      /**
+       * if populator is defined then it handles all rendering/generation/replacements
+       * by it's own, so after it finishes - exit from here
+       */
+      populator({
+        dataForSheet,
+        templateFolderPath,
+        dataSet,
+        replacements,
+        sheetIndex,
+        worksheet,
+      })
+      return
+    }
+
     if (wayToFillInData === 'mapping') {
       // populate worksheet and exit this loop
       fillInSheetWithMap({
@@ -1153,7 +1168,8 @@ module.exports = {
   readExcelFile,
   renderExcelTemplate,
   renderExcelTemplateToCsv,
+  replacePlaceholders,
   streamExcelTemplate,
-  respondFile,
   RELABEL_EXCEL,
+  setCellStyle,
 }

@@ -43,13 +43,13 @@ const CustomSwitch = styled(Switch)(({ theme }) => ({
   },
 }))
 
-const LabeledSwitch = ({ offLabel, onLabel, id, name, label, value, onChange }) => {
+const LabeledSwitch = ({ offLabel, onLabel, id, name, label, value, onChange, disabled }) => {
   return (
     <>
       <InputLabel shrink>{label}</InputLabel>
       <Stack direction="row" spacing={1} alignItems="flex-start">
         <InputLabel shrink>{offLabel}</InputLabel>
-        <CustomSwitch id={id} name={name} checked={value} onChange={onChange} />
+        <CustomSwitch id={id} name={name} checked={value} disabled={disabled} onChange={onChange} />
         <InputLabel shrink>{onLabel}</InputLabel>
       </Stack>
     </>

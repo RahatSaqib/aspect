@@ -9,11 +9,18 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { userName } = await getUser(auth.credentials.name)
   const results = await getBaseQueryForResults()
+    .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
+    .select('rt.excluded', 'rt.id as resultTypeId')
     .where('r.id', resultId)
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      result: 'r',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        result: 'r',
+      },
+      { displayResult: 'all' }
+    )
     .select({
       resultText: knex.raw(
         `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
@@ -108,13 +115,12 @@ function getResultTreatmentStatus(response) {
   }
 }
 
-async function getCustomFieldsForResult(data) {
-  const { deviceId, partnerId, countryId, assayId, diseaseId } = data
+async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayId, diseaseId } = {}) {
   const { getCustomFields } = require('../../forms/service')
   let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
   customFields = _.sortBy(customFields, ['order', 'name'])
   customFields = customFields.map(
-    ({ title, source, fieldType, order, controlType, validation, items, condition, filters }) => ({
+    ({ title, source, fieldType, order, controlType, validation, items, condition, filters, optional, id }) => ({
       title,
       source,
       fieldType,
@@ -124,6 +130,8 @@ async function getCustomFieldsForResult(data) {
       items,
       condition,
       filters,
+      optional,
+      id,
     })
   )
   return customFields
@@ -174,7 +182,7 @@ const getBaseQueryForResults = () =>
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
-  const displayResult = query.displayResult || 'all'
+  const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseQueryForResults()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
@@ -295,20 +303,23 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       }
     }, query)
     .modify(addPartnerQueryConstraints, dataConstraints)
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      assayType: 'at',
-      device: 'd',
-      deviceType: 'dt',
-      sample: 'sp',
-      site: 'si',
-      geography: 'g',
-      result: 'r',
-      country: 'c',
-      disease: 'dis',
-      showUnapprovedDevices,
-      displayResult,
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        assay: 'a',
+        assayType: 'at',
+        device: 'd',
+        deviceType: 'dt',
+        sample: 'sp',
+        site: 'si',
+        geography: 'g',
+        result: 'r',
+        country: 'c',
+        disease: 'dis',
+      },
+      { displayResult, showUnapprovedDevices }
+    )
 
   return resultQuery
 }
@@ -389,7 +400,7 @@ async function getResultNotesByResultId(resultId) {
 
 function getQueryForDataExtract(query, dataConstraints) {
   const { showUnapprovedDevices = false } = query
-  const displayResult = query.displayResult || 'all'
+  const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseResults()
     .leftJoin('Geography as go', 'so.geographyId', 'go.id')
@@ -422,20 +433,23 @@ function getQueryForDataExtract(query, dataConstraints) {
       assayId: 'a.id',
     })
     .modify(addPartnerQueryConstraints, dataConstraints)
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      assayType: 'at',
-      device: 'd',
-      deviceType: 'dt',
-      sample: 'sp',
-      site: 'si',
-      geography: 'g',
-      result: 'r',
-      country: 'c',
-      disease: 'dis',
-      showUnapprovedDevices,
-      displayResult,
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        assay: 'a',
+        assayType: 'at',
+        device: 'd',
+        deviceType: 'dt',
+        sample: 'sp',
+        site: 'si',
+        geography: 'g',
+        result: 'r',
+        country: 'c',
+        disease: 'dis',
+      },
+      { showUnapprovedDevices, displayResult }
+    )
 
   return resultQuery
 }
@@ -447,4 +461,5 @@ module.exports = {
   getResultNotesByResultId,
   getBaseQueryForResults,
   getQueryForDataExtract,
+  getCustomFieldsForResult,
 }

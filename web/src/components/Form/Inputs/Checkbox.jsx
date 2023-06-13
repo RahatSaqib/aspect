@@ -22,7 +22,7 @@ const Checkbox = props => {
         onChange={event => {
           updateField(id, event.target.checked, { formik, toggleEdit })
         }}
-        // {...getFieldErrorProps(formik, id)}
+        disabled={props.InputProps.readOnly}
       />
       {error && helperText ? <FormHelperText error>{helperText}</FormHelperText> : null}
     </FormControl>
@@ -41,5 +41,7 @@ Checkbox.propTypes = {
   id: PropTypes.string.isRequired,
   label: PropTypes.string,
   formik: PropTypes.oneOfType([PropTypes.object]).isRequired,
+  // eslint-disable-next-line react/require-default-props
+  InputProps: PropTypes.any,
 }
 export default Checkbox

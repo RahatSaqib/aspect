@@ -1,0 +1,12 @@
+{
+  "CustomFields_Pakistan": {
+    "fileName": "CustomFields_Pakistan.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Pakistan",
+      "i18nKeyTitle": "CustomFields_Pakistan_i18nkey",
+      "externalId": "CustomFields_Pakistan",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  }
+}

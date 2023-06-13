@@ -116,14 +116,15 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           }
           navigate={[Function]}
           onClickExport={[Function]}
-        />
-        <AspectExportListButton
-          disableCSV={false}
-          disableExcel={false}
-          onExport={[Function]}
-          reportName="DeviceApiKey"
-          visible={false}
-        />
+        >
+          <AspectExportListButton
+            disableCSV={false}
+            disableExcel={false}
+            onExport={[Function]}
+            reportName="DeviceApiKey"
+            visible={false}
+          />
+        </BrowseFilters>
       </div>
       <DataTableProgressBar
         disabled={true}
@@ -344,14 +345,15 @@ exports[`Device Api Key List module DeviceApiKeyList component should shallow re
           }
           navigate={[Function]}
           onClickExport={[Function]}
-        />
-        <AspectExportListButton
-          disableCSV={false}
-          disableExcel={false}
-          onExport={[Function]}
-          reportName="DeviceApiKey"
-          visible={true}
-        />
+        >
+          <AspectExportListButton
+            disableCSV={false}
+            disableExcel={false}
+            onExport={[Function]}
+            reportName="DeviceApiKey"
+            visible={true}
+          />
+        </BrowseFilters>
       </div>
       <DataTableProgressBar
         disabled={true}

@@ -1,0 +1,13 @@
+Hello {{name}},
+
+This is to let you know that the device "{{deviceName}}" successfully connected to Aspect.
+{{#if noInventory}}
+No cartridges on hand
+{{else}}
+    {{#if cartridgeCount includeZero=true}}
+Cartridges on hand: {{cartridgeCount}}
+    {{/if}}
+{{/if}}
+
+Thanks,
+The Aspect Team

@@ -7,8 +7,16 @@ const cssClasses = classNames.bind(styles)
 
 const AspectMessageField = ({ controlType: { text, color, icon } }) => {
   return (
-    <div style={{ color }} className={cssClasses('messageField')}>
-      {icon && <IconProvider icon={icon} />} {text}
+    <div className={cssClasses('messageField')} style={{ color }}>
+      {icon && <IconProvider icon={icon} />}{' '}
+      <div className={cssClasses('text')}>
+        {text.split('\n').map((t, index) => (
+          <div key={index}>
+            {t}
+            <br />
+          </div>
+        ))}
+      </div>
     </div>
   )
 }

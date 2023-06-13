@@ -791,11 +791,6 @@ async function getDataForReportDrTb10A(auth, query) {
  */
 async function getDataForReportDrTb10B(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  // ---------------
-  // change query page/size values to get whole dataset (not only currently paged items)
-  query.page = 0
-  // for the sake of performance gain - limit to max of 10k results
-  query.size = query.maxNumberOfRecords || 10000
 
   const now = new Date()
   const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query

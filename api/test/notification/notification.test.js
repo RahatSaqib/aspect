@@ -99,7 +99,7 @@ describe('Query generator for filtering conditions', () => {
     const query = knex('Result as r').modify(resultConditionsMet, filterConditionExample, { result: 'r' })
     assert.include(
       query.toString(),
-      "where ((`a`.`externalId` = 'abbottM2000DBSHivVL' and (`rc1`.`externalId` in ('Indeterminate', 'Error') or `rc2`.`externalId` in ('Indeterminate', 'Error'))) or (`a`.`externalId` = 'GxMtbRif' and `rcg`.`externalId` in ('GxMtbRifMtbDetectedRifNotDetected', 'GxMtbRifMtbInvalid'))"
+      "((`a`.`externalId` = 'abbottM2000DBSHivVL' and (`rc1`.`externalId` in ('Indeterminate', 'Error') or `rc2`.`externalId` in ('Indeterminate', 'Error'))) or (`a`.`externalId` = 'GxMtbRif' and `rcg`.`externalId` in ('GxMtbRifMtbDetectedRifNotDetected', 'GxMtbRifMtbInvalid'))"
     )
   })
   it('Should generate a proper query filter for ResultCategory', async () => {

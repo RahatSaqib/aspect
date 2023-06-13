@@ -1,57 +1,6 @@
 {
   "fields": [
     {
-      "id": 101,
-      "completionWeight": 10,
-      "name": "Gender",
-      "title": "Gender",
-      "i18nKey": "Genderi18nKey",
-      "fieldType": "number",
-      "order": 1,
-      "caption": "Gender",
-      "gxAlertDbColumn": "PatientGender",
-      "i18nKeyCaption": "Genderi18nCaptionKey",
-      "controlType": "comboBox",
-      "payloadDestinationPath": "patient.PatientGender",      
-      "items": [
-        {
-          "key": 1,
-          "value": "Male",
-          "order": 0
-        },
-        {
-          "key": 0,
-          "value": "Female",
-          "order": 10
-        }
-      ],
-      "source": "patientData.gender"
-    },
-    {
-      "id": 102,
-      "completionWeight": 10,
-      "name": "Age",
-      "title": "Age",
-      "i18nKey": "AgeFieldi18nKey",
-      "fieldType": "number",
-      "order": 2,
-      "gxAlertDbColumn": "PatientAgeYears",
-      "caption": "Age",
-      "i18nKeyCaption": "Agei18nCaptionKey",
-      "controlType": "textBox",
-      "payloadDestinationPath": "patient.PatientAgeYears",
-      "validation": [
-        {
-          "validationType": "integer",
-          "min": 0,
-          "max": 150,
-          "errorMessage": "The age should be a number between 1-150",
-          "errorMessageI18nKey": "AgeValidationFieldi18nKey"
-        }
-      ],
-      "source": "patientData.age"
-    },
-    {
       "id": 103,
       "name": "Retreatment Case",
       "i18nKey": "RetreatCaseFieldi18nKey",

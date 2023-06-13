@@ -43,7 +43,7 @@ async function getConstraintsByDeviceAPIKey(apiKey) {
   return Promise.resolve()
 }
 
-async function getConstraints(credentials, { displayResult = 'actual' } = {}) {
+async function getConstraints(credentials) {
   const user = await getUserFromCredentials(credentials)
   if (!user) {
     return Promise.resolve()
@@ -61,16 +61,6 @@ async function getConstraints(credentials, { displayResult = 'actual' } = {}) {
     result: {
       modify: null,
     },
-  }
-
-  if (displayResult === 'actual' || displayResult === 'excluded') {
-    const { partnerId } = user
-    const { getPartnerPluginName } = require('../plugin/utils')
-    const partnerPluginName = await getPartnerPluginName({ partnerId })
-    if (partnerPluginName) {
-      const { loadPlugin } = require('../plugin/registration')
-      constraints.result.modify = await loadPlugin([partnerPluginName], 'modifyQueryToExcludeResult')
-    }
   }
 
   const jobContexts = await getContext(user)
@@ -329,20 +319,18 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
 
     if (_.get(constraints, 'country.id')) {
       if (country) {
-        queryBuilder.where(`${country}.id`, constraints.country.id)
+        applyConstraintObjectOnAlias(queryBuilder, country, { id: constraints.country.id })
       } else if (aliases.geography) {
-        queryBuilder.where({
-          [`${aliases.geography}.countryId`]: constraints.country.id,
-        })
+        applyConstraintObjectOnAlias(queryBuilder, aliases.geography, { countryId: constraints.country.id })
       }
     }
   }
 }
 
-function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases) {
+function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options) {
   let filterAlias = null
-  const { device, assay, result, showUnapprovedDevices = false, showDecommissionedDevices = false } = aliases
-
+  const { device, assay, result } = aliases
+  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = options
   if (!result) {
     if (!aliases.site && device) {
       aliases.site = alias('Site')
@@ -510,13 +498,46 @@ function addOrConstraints(
   }
 }
 
-function addResultConstraints(queryBuilder, constraints, aliases) {
+function addResultConstraints(queryBuilder, constraints, aliases, options = {}) {
   if (constraints.result?.modify) {
     constraints.result.modify(queryBuilder, constraints, aliases)
   }
+
+  filterExcludedResults(queryBuilder, aliases, options)
 }
 
-function addConstraints(queryBuilder, constraints, receivedAliases) {
+function filterExcludedResults(queryBuilder, aliases, options) {
+  if (aliases.result && options.displayResult !== 'all') {
+    if (!aliases.resultType) {
+      aliases.resultType = alias('ResultType')
+      queryBuilder.innerJoin(
+        `ResultType as ${aliases.resultType}`,
+        `${aliases.result}.resultTypeId`,
+        `${aliases.resultType}.id`
+      )
+    }
+    const onlyExcluded = options.displayResult === 'excluded'
+    queryBuilder.where({ [`${aliases.resultType}.excluded`]: onlyExcluded })
+  }
+}
+
+/** Add constraints to query a knex query.
+ * @param {*} queryBuilder - Knex query builder
+ * @param {*} constraints - Constraints to apply, @see getConstraints
+ * @param {*} receivedAliases - Aliases used for each table in the query (e.g. { assay: 'a', result: 'r' })
+ * @param {Object} options - Options to apply.
+ * @param {('actual'|'excluded'|'all')=} options.displayResult - Excluded result filter mode.
+ * 'actual': default. only returns non excluded results.
+ * 'excluded' only returns excluded results.
+ * 'all' return all results.
+ */
+
+function addConstraints(
+  queryBuilder,
+  constraints,
+  receivedAliases,
+  options = { displayResult: 'actual', showUnapprovedDevices: false, showDecommissionedDevices: false }
+) {
   if (_.isEmpty(constraints)) {
     queryBuilder.whereRaw('0 = 1')
     return
@@ -527,11 +548,11 @@ function addConstraints(queryBuilder, constraints, receivedAliases) {
   // TODO only join queries if needed within constraints or required by unspecified aliases
   addPartnerConstraints(queryBuilder, constraints, aliases)
   addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases)
-  addDevicesAndSitesConstraints(queryBuilder, constraints, aliases)
+  addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options)
   addPersonConstraints(queryBuilder, constraints, aliases)
   addGeographyConstraints(queryBuilder, constraints, aliases)
   addOrConstraints(queryBuilder, constraints, aliases)
-  addResultConstraints(queryBuilder, constraints, aliases)
+  addResultConstraints(queryBuilder, constraints, aliases, options)
 }
 
 function isNullInOrEqual(queryBuilder, columnName, value) {
@@ -564,18 +585,35 @@ function addConstraintWithJobFunction({
   if (alias && constraint) {
     queryBuilder.andWhere(qb => {
       if (jobFunctionAlias && jobFunctionConstraint && (!jobFunctionConstraint.isAdmin || !allowAdminThrough)) {
-        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`)).andWhere(
-          _.mapKeys(_.omit(jobFunctionConstraint, 'isAdmin'), (v, k) => `${jobFunctionAlias}.${k}`)
-        )
-      } else {
-        qb.where(_.mapKeys(constraint, (v, k) => `${alias}.${k}`))
+        if (!_.isEmpty(constraint)) {
+          applyConstraintObjectOnAlias(qb, alias, constraint)
+        }
+        if (!_.isEmpty(jobFunctionConstraint)) {
+          applyConstraintObjectOnAlias(qb, jobFunctionAlias, _.omit(jobFunctionConstraint, 'isAdmin'))
+        }
+      } else if (!_.isEmpty(constraint)) {
+        applyConstraintObjectOnAlias(qb, alias, constraint)
       }
       if (personAlias && personConstraint) {
-        qb.andWhere(_.mapKeys(personConstraint, (v, k) => `${personAlias}.${k}`))
+        if (_.isEmpty(personConstraint)) {
+          applyConstraintObjectOnAlias(qb, personAlias, personConstraint)
+        }
         if (allowAdminThrough) {
           qb.orWhere(`${jobFunctionAlias}.isAdmin`, true)
         }
       }
+    })
+  }
+}
+
+function applyConstraintObjectOnAlias(queryBuilder, alias, constraint) {
+  if (alias && constraint) {
+    queryBuilder.where(nullOrEqualQb => {
+      _.keys(constraint)
+        .filter(k => !!constraint[k])
+        .forEach(k => {
+          nullOrEqualQb.where(knex.raw(`IFNULL(${alias}.${k}, 0)`), constraint[k])
+        })
     })
   }
 }

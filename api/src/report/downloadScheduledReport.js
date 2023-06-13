@@ -1,7 +1,7 @@
 const jwt = require('jsonwebtoken')
-const { respondFile } = require('../shared/excel')
 const config = require('../config')
 const { readDataFromFile } = require('../shared/io')
+const { respondFile } = require('../shared/response')
 
 /**
  * This method allows to download a scheduled report file.

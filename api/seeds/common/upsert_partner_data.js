@@ -18,6 +18,10 @@ module.exports = async (knex, partnerData) => {
     apiUrl: finalValues.apiUrl,
     dueDaysCalibrationIssue: finalValues.dueDaysCalibrationIssue,
     partnerTypeId: finalValues.partnerTypeId,
+    daysLimitToNotifyResults: finalValues.daysLimitToNotifyResults,
+    hoursNotificationsShouldWaitForCustomFields: finalValues.hoursNotificationsShouldWaitForCustomFields,
+    isDefault: true,
+    excludePattern: finalValues.excludePattern,
   }
 
   if (!dbPartner) {

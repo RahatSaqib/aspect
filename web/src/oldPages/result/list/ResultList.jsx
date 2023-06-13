@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useMemo } from 'react'
+import React, { useState, useEffect } from 'react'
 import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
@@ -11,6 +11,7 @@ import partial from 'lodash/partial'
 import without from 'lodash/without'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
+import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import DetailHeader from '../../../components/DetailHeader'
@@ -24,6 +25,7 @@ import { getFilters, sanitizeFiltersStringBy, reduceFiltersConfig } from '../../
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
+import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import {
@@ -38,54 +40,29 @@ import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './Resu
 import styles from './ResultList.css'
 
 const cssClasses = classnames.bind(styles)
+
 const getBaseColumns = (extraColumns = [], formatMessage) => {
   return Immutable.List(
     filter(
       [
-        {
-          key: 'endedOn',
-          label: formatMessage(messages.endedOn),
-          sortable: true,
-        },
-        {
-          key: 'deviceName',
-          label: formatMessage(messages.deviceName),
-          sortable: true,
-          hiddenOn: 'xs',
-        },
+        { key: 'endedOn', label: formatMessage(messages.endedOn), sortable: true },
+        { key: 'deviceName', label: formatMessage(messages.deviceName), sortable: true, hiddenOn: 'xs' },
         {
           key: 'sampleOriginSiteName',
           label: formatMessage(messages.sampleOriginSiteName),
           sortable: true,
           hiddenOn: 'sm',
         },
-        {
-          key: 'sampleId',
-          label: formatMessage(messages.sampleId),
-          sortable: true,
-        },
-        {
-          key: 'assayName',
-          label: formatMessage(messages.assayName),
-          sortable: true,
-        },
-        {
-          key: 'resultText',
-          label: formatMessage(messages.resultText),
-          sortable: true,
-        },
+        { key: 'sampleId', label: formatMessage(messages.sampleId), sortable: true },
+        { key: 'assayName', label: formatMessage(messages.assayName), sortable: true },
+        { key: 'resultText', label: formatMessage(messages.resultText), sortable: true },
         ...map(extraColumns, column => ({
           key: column?.fieldName,
           label: messageByI18nKey(column?.i18nKey)(column?.title, formatMessage),
           sortable: true,
           hiddenOn: 'md',
         })),
-        {
-          key: 'errorCode',
-          label: formatMessage(messages.errorCode),
-          sortable: true,
-          hiddenOn: 'lg',
-        },
+        { key: 'errorCode', label: formatMessage(messages.errorCode), sortable: true, hiddenOn: 'lg' },
         {
           key: 'resultWorkflowStatus',
           label: formatMessage(messages.resultWorkflowStatus),
@@ -100,22 +77,15 @@ const getBaseColumns = (extraColumns = [], formatMessage) => {
           hiddenOn: 'md',
           auth: ['+reporter'],
         },
-        {
-          key: 'patientId',
-          label: formatMessage(messages.patientId),
-          sortable: true,
-          hiddenOn: 'xs',
-        },
+        { key: 'patientId', label: formatMessage(messages.patientId), sortable: true, hiddenOn: 'xs' },
       ],
       elem => (extraColumns.length > 0 && elem.key !== 'resultText') || extraColumns.length === 0
     )
   )
 }
+
 const FILTERS_CONFIG = [
-  {
-    assayAndResultCategory: true,
-    requiredPermissions: ['assay:view'],
-  },
+  { assayAndResultCategory: true, requiredPermissions: ['assay:view'] },
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
@@ -123,63 +93,20 @@ const FILTERS_CONFIG = [
   { patientOrResearchId: true, requiredPermissions: [] },
   { sampleId: true, requiredPermissions: [] },
   { errorCode: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    reportableSiteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    reportableSiteId: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    deviceName: true,
-    requiredPermissions: ['device'],
-  },
-  {
-    deviceType: true,
-    requiredPermissions: [],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
+  { reportableSiteName: true, requiredPermissions: ['site:view'] },
+  { reportableSiteId: true, requiredPermissions: ['site:view'] },
+  { deviceName: true, requiredPermissions: ['device'] },
+  { deviceType: true, requiredPermissions: [] },
   { sampleOriginSite: true, requiredPermissions: [] },
   { workflowStatus: true, requiredPermissions: [] },
   { treatmentStatus: true, requiredPermissions: [] },
-  {
-    displayResult: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => !!dependencies.showFilterDisplayResult,
-  },
-  {
-    onlyReportableResults: true,
-    requiredPermissions: ['assay:view'],
-  },
-  {
-    onlyDownloadedByReporter: true,
-    requiredPermissions: [],
-  },
-  {
-    onlyEverTransferred: true,
-    requiredPermissions: [],
-  },
+  { displayResult: true, requiredPermissions: [] },
+  { onlyReportableResults: true, requiredPermissions: ['assay:view'] },
+  { onlyDownloadedByReporter: true, requiredPermissions: [] },
+  { onlyEverTransferred: true, requiredPermissions: [] },
   { onlyTreatmentRequired: true, requiredPermissions: [] },
 ]
-
-const onRowClick =
-  (navigate, location) =>
-  ({
-    currentTarget: {
-      dataset: { resultId },
-    },
-  }) => {
-    gotoResultDetails(navigate, location, resultId)
-  }
-
-const gotoResultDetails = (navigate, location, resultId) => {
-  const url = `/browse/result/${resultId || 'add'}`
-  gotoWithReturnUrl(url, navigate, location)
-}
 
 const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: [
@@ -247,13 +174,14 @@ export const ResultListWithProps = ({
             intl={intl}
             config={reducedFilters}
             askConfirmationForExport={table.total > 1000}
-          />
-          <AspectExportListButton
-            onExport={onExportClick}
-            visible={!items.currentIdList.isEmpty()}
-            reportName="Results"
-            disableExcel
-          />{' '}
+          >
+            <AspectExportListButton
+              onExport={onExportClick}
+              visible={!items.currentIdList.isEmpty()}
+              reportName="Results"
+              disableExcel
+            />
+          </BrowseFilters>
         </div>
 
         {isLoading ? <DataTableProgressBar /> : null}
@@ -279,7 +207,13 @@ export const ResultListWithProps = ({
                       intl={intl}
                       extraColumns={table.extraColumns}
                       result={result}
-                      onClick={onRowClick(navigate, location)}
+                      onClick={e =>
+                        gotoWithReturnUrl(
+                          `/browse/result/${e.currentTarget.dataset.resultId || 'add'}`,
+                          navigate,
+                          location
+                        )
+                      }
                       data-result-id={result.get('id')}
                       messages={messages}
                     />
@@ -308,17 +242,9 @@ const ResultList = () => {
   // >>>>>> hooks/ <<<<<<
   const intl = useI18n()
   const navigate = useNavigate()
+  const dispatch = useDispatch()
   const location = useLocation()
-  const {
-    userPermissions,
-    displayPreferences: { showFilterDisplayResult },
-  } = useAuthState()
-  const dependencies = useMemo(
-    () => ({
-      showFilterDisplayResult,
-    }),
-    [showFilterDisplayResult]
-  )
+  const { userPermissions } = useAuthState()
 
   // >>>>>> Local state <<<<<<
   const [items, setItems] = useState(new Items())
@@ -326,11 +252,7 @@ const ResultList = () => {
     new Table({
       sortCol: 'endedOn',
       sortDir: 'desc',
-      filters: Immutable.fromJS({
-        sampleId: '',
-        sampleGroup: '',
-        assayId: null,
-      }),
+      filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
       extraColumns: Immutable.List(),
     })
   )
@@ -342,8 +264,10 @@ const ResultList = () => {
 
   // >>>>>> Constants <<<<<<
   const { sortCol, sortDir, page, size } = pagination
+  const searchParams = new URLSearchParams()
+  searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
-  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, dependencies)
+  const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, {})
   const params = { ...pagination, ...filters }
   delete params.assayOverride
 
@@ -355,44 +279,33 @@ const ResultList = () => {
     error,
   } = useQuery(
     [RESULT_LIST.KEY, { params }],
-    async () =>
-      fetchWrapperForQueries({
-        endpoint: RESULT_LIST.ENDPOINT,
-        params,
-      }),
+    async () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params }),
     { enabled: !isEmpty(params) }
   )
 
+  useEffect(() => dispatch(fetchTreatmentStatuses()), [dispatch])
   useEffect(() => {
     setIsLoading(tableLoading)
   }, [tableLoading])
+
   useEffect(() => {
-    const { sanitized, value: searchParams } = searchSanitizer(location, dependencies)
+    const { sanitized, value: searchParams } = searchSanitizer(location, {})
     const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
       searchParams.get('filters') || '',
-      dependencies
+      {}
     )
 
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-      navigate(
-        {
-          ...location,
-          search: `?${searchParams.toString()}`,
-        },
-        { replace: true }
-      )
+      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
 
-    const sortPage = makeSortPageSelector({
-      sortCol: 'endedOn',
-      sortDir: 'desc',
-    })
+    const sortPage = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
     setFilters(getFilters(filtersParams))
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [location, dependencies])
+  }, [location])
 
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {

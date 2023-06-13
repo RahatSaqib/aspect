@@ -101,6 +101,14 @@ const messagesBase = defineMessages({
     id: 'forms.formItem.technicalDetails',
     defaultMessage: 'Technical Details',
   },
+  excluded: {
+    id: 'forms.formItem.excluded',
+    defaultMessage: 'Excluded',
+  },
+  excludeReason: {
+    id: 'forms.formItem.excludeReason',
+    defaultMessage: 'Excluded Reason',
+  },
   instrumentSerial: {
     id: 'forms.formItem.instrumentSerial',
     defaultMessage: 'Instrument Serial',

@@ -306,6 +306,8 @@ function validateResultDetailResponse() {
     resultSourceExternalId: Joi.string()
       .required() // resultSourceId is NOT NULL in Result table
       .description('External ID of the result source'),
+    excluded: Joi.number().description('Is the result excluded from the actual results?'),
+    resultTypeId: Joi.number().allow(null).description('The id of the result type'),
   }
 }
 

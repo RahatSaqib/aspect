@@ -16,6 +16,7 @@ body {
   padding: 0;
   margin: 0;
   background-color: var(--aspect-color-grey-7);
+  /* overflow: hidden; */
 }
 
 a {

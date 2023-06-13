@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { CircularProgress, Box, Card, CardContent } from '@mui/material'
+import { CircularProgress, Box, Card, CardContent, Grid } from '@mui/material'
 import { useFormikContext } from 'formik'
 import './NotificationFormPage.css'
 import DetailHeader from '../../../components/DetailHeader'
@@ -11,6 +11,7 @@ import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import validationSchema from './Forms/validation'
 import messages from './messages'
+import NotificationFormPreview from './NotificationFormPage.Preview'
 import { getFormConfigWithData } from './utils'
 
 const NotificationFormPage = ({ onSubmit }) => {
@@ -63,7 +64,15 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
       <Box component="main" sx={{ p: 1, width: '100%' }}>
         <Card>
           <CardContent>
-            <AspectForm config={formConfig} />
+            <Grid container spacing={1}>
+              <Grid item xs={8}>
+                <h2>{intl.formatMessage(messages.buildNotification)}</h2>
+                <AspectForm config={formConfig} />
+              </Grid>
+              <Grid item xs={4}>
+                <NotificationFormPreview values={formik.values} />
+              </Grid>
+            </Grid>
           </CardContent>
         </Card>
       </Box>

@@ -31,6 +31,8 @@ module.exports = {
   maxDaysDeviceNoResults: 14,
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
+  daysLimitToNotifyResults: 30,
   serverUrl: 'https://pakistan.aspect.id',
   apiUrl: 'https://pakistan.aspect.id/api',
+  excludePattern: '^ExcludeMe.+$',
 }

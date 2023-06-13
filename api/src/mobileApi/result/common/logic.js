@@ -131,10 +131,9 @@ const checkFollowupType = (testResult, followUp, type) => {
 }
 
 // Its number of days from the day treatment has started/updated
-const daysFromTreatmentDateUpdateOn = (testResult, followUp) => {
-  const isTreatment = checkFollowupType(testResult, followUp, 'treatment')
+const daysFromTreatmentDateUpdateOn = testResult => {
   const today = new Date()
-  return isTreatment ? differenceInDays(today, new Date(isTreatment?.updatedOn || today)) : 0
+  return differenceInDays(today, new Date(testResult?.resultTreatmentStatusChangedOn || today))
 }
 
 const isTransferred = testResult => {
@@ -157,30 +156,19 @@ const requiresTreatment = testResult => {
 
 const getSeverity = (testResult, followUp) => {
   const daysDiff = daysFromTreatmentDateUpdateOn(testResult, followUp)
-  const requireTreatment = requiresTreatment(testResult)
   const isOnTreatment = checkFollowupType(testResult, followUp, 'treatment')
-  let severity = ''
-  if (requireTreatment) {
-    if (!isOnTreatment && daysDiff < 30) {
-      severity = 'info'
-    } else if (!isOnTreatment && daysDiff === 30) {
-      severity = 'warning'
-    } else if (!isOnTreatment && daysDiff > 30) {
-      severity = 'danger'
-    } else if (isOnTreatment) {
-      severity = 'success'
-    }
-  } else {
-    severity = 'info'
-  }
-  return severity
+
+  if (isOnTreatment) return 'success'
+  if (daysDiff > 32) return 'danger'
+  if (daysDiff > 16) return 'warning'
+  return 'info'
 }
 
 // transformed data
 const getTransformedData = (data, setDelivered, followUps, comments) =>
   _.map(data, d => getResultItemTransformedData(d, setDelivered, followUps, comments))
 
-// Trasnformed data v2
+// Transformed data v2
 const getTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
   const transformedData = await Promise.all(
     _.map(data, async d => {
@@ -190,6 +178,7 @@ const getTransformedDataV2 = async (data, setDelivered, followUps, comments) => 
   )
   return transformedData
 }
+
 const getResultItemTransformedData = (data, setDelivered, followUps, comments) => ({
   id: data.id,
   externalId: data.externalId,
@@ -407,6 +396,19 @@ async function getResultNotesByResultId(resultId, getResultNotesByResultIdForRes
   return resultNotes
 }
 
+// refactor transformPatientDataBySchema to use lodash map
+function transformPatientDataBySchema(patientData, patientDataSchema) {
+  const transformedData = _.map(patientDataSchema, (value, key) => {
+    return {
+      key,
+      value: patientData[key],
+      title: value.title,
+      order: value.order,
+    }
+  })
+  return _.orderBy(transformedData, ['order'], ['asc'])
+}
+
 // Trasnformed data v2 for result by Id
 const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
@@ -419,6 +421,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
   const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
+  const patientDataSchema = data.patientDataSchema ? JSON.parse(data.patientDataSchema) : null
   const isRecorded = data.resultWorkflowStatusId === acknowledgedId
   const resultData = data.resultData
     ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
@@ -436,7 +439,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     deviceName: data.deviceName,
     resultCategory1ExternalId: data.resultCategory1ExternalId,
     resultCategory2ExternalId: data.resultCategory2ExternalId,
-    patientData,
+    patientData: transformPatientDataBySchema(patientData, patientDataSchema),
     testId: patientData ? patientData.id : data.sampleId,
     resultData,
     sample: {
@@ -575,4 +578,5 @@ module.exports = {
   getResultItemTransformedDataV2,
   fieldNameToFollowUpTypeIdMappings,
   getLatestFollowUpsFromFolloups,
+  getCustomFieldsForResult,
 }

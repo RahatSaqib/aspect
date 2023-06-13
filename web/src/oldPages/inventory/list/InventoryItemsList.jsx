@@ -7,6 +7,7 @@ import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useSelector, useDispatch } from 'react-redux'
+import { useLocation, useNavigate } from 'react-router'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import DetailHeader from '../../../components/DetailHeader'
 import ErrorBoundary from '../../../components/ErrorBoundary/index'
@@ -25,6 +26,7 @@ import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgres
 import requirePermissions from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
+import { fetchConsumables } from '../../../store/ConsumableRedux'
 import {
   types,
   hideAdjustInventoryDialog,
@@ -60,29 +62,11 @@ const FILTERS_CONFIG = [
   { geography: true, requiredPermissions: [] },
   { state: true, requiredPermissions: [] },
   { lga: true, requiredPermissions: [] },
-  {
-    siteName: true,
-    requiredPermissions: ['site:view'],
-  },
-  {
-    date: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => dependencies.breakOutByLot,
-  },
-  {
-    lotNumber: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => dependencies.breakOutByLot,
-  },
-  {
-    daysStockLeft: true,
-    requiredPermissions: [],
-    isEnabled: dependencies => !dependencies.breakOutByLot,
-  },
-  {
-    hasStock: true,
-    requiredPermissions: [],
-  },
+  { siteName: true, requiredPermissions: ['site:view'] },
+  { date: true, requiredPermissions: [], isEnabled: dependencies => dependencies.breakOutByLot },
+  { lotNumber: true, requiredPermissions: [], isEnabled: dependencies => dependencies.breakOutByLot },
+  { daysStockLeft: true, requiredPermissions: [], isEnabled: dependencies => !dependencies.breakOutByLot },
+  { hasStock: true, requiredPermissions: [] },
 ]
 
 const availableSortCol = [
@@ -140,7 +124,6 @@ export const InventoryItemsListWithProps = ({
   onTransferInventorySubmit,
   onAddInventorySubmit,
   refetch,
-  navButton,
 }) => {
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
   const breakOutByLotToggle = useCallback(() => {
@@ -230,7 +213,6 @@ export const InventoryItemsListWithProps = ({
             {intl.formatMessage(messages.addInventory)}
           </AddNewButton>
         </PermissionChecker>
-        {navButton}
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
@@ -275,8 +257,9 @@ export const InventoryItemsListWithProps = ({
               intl={intl}
               config={reducedFilters}
               dateFilterLabel={intl.formatMessage(messages.expiresOn)}
-            />
-            <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+            >
+              <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+            </BrowseFilters>
           </div>
           <DataTableProgressBar disabled={!isLoading} />
           {items.currentIdList.length === 0 ? (
@@ -359,8 +342,10 @@ export const InventoryItemsListWithProps = ({
   )
 }
 
-export const InventoryItemsList = ({ navigate, location, navButton }) => {
+export const InventoryItemsList = () => {
   const queryClient = useQueryClient()
+  const location = useLocation()
+  const navigate = useNavigate()
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
   const intl = useI18n()
@@ -370,24 +355,13 @@ export const InventoryItemsList = ({ navigate, location, navButton }) => {
   const inventory = useSelector(state => state.inventory)
   const consumableReasons = useSelector(state => state.consumable.consumableReasons)
   const [breakOutByLot, setBreakOutByLot] = useState(false)
-  const dependencies = useMemo(
-    () => ({
-      breakOutByLot,
-    }),
-    [breakOutByLot]
-  )
+  const dependencies = useMemo(() => ({ breakOutByLot }), [breakOutByLot])
 
   // >>>>>> Structuring data <<<<<<
   const { table, items, inventoryAdjustment } = inventory
-  const sortPage = makeSortPageSelector({
-    sortCol: 'siteName',
-  })
+  const sortPage = makeSortPageSelector({ sortCol: 'siteName' })
   const reducedFilters = reduceFiltersConfig(FILTERS_CONFIG, userPermissions, dependencies)
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
-    location,
-    availableSortCol,
-    dependencies,
-  })
+  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies })
   const { value: searchParams } = searchSanitizer(location, dependencies)
   const { value: filtersParams } = filtersSanitizer(searchParams.get('filters') || '', dependencies)
   const filters = getFilters(filtersParams)
@@ -482,6 +456,8 @@ export const InventoryItemsList = ({ navigate, location, navButton }) => {
     if (data) dispatch(receiveInventoryItems(data))
   }, [data, dispatch])
 
+  useEffect(() => dispatch(fetchConsumables(false)), [dispatch])
+
   useEffect(() => {
     const { sanitized, value: searchParams } = searchSanitizer(location, dependencies)
     const { sanitized: filtersSanitized, value: filtersParams } = filtersSanitizer(
@@ -490,16 +466,21 @@ export const InventoryItemsList = ({ navigate, location, navButton }) => {
     )
     if (sanitized || filtersSanitized) {
       searchParams.set('filters', filtersParams)
-
-      navigate(
-        {
-          ...location,
-          search: `?${searchParams.toString()}`,
-        },
-        { replace: true }
-      )
+      navigate({ ...location, search: `?${searchParams.toString()}` }, { replace: true })
     }
   }, [location, navigate, breakOutByLot, dependencies, dispatch])
+
+  useEffect(() => {
+    const searchParams = new URLSearchParams()
+    searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
+    const filtersParams = new URLSearchParams(searchParams.get('filters'))
+    if (!filtersParams.has('hasStock')) {
+      filtersParams.set('hasStock', true)
+      searchParams.set('filters', filtersParams)
+      navigate({ ...location, search: `?${searchParams.toString()}` })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   if (isError) throw new Error(error)
 
@@ -525,7 +506,6 @@ export const InventoryItemsList = ({ navigate, location, navButton }) => {
     onTransferInventorySubmit,
     onAddInventorySubmit,
     refetch: onSuccess,
-    navButton,
   }
 
   return <InventoryItemsListWithProps {...props} />

@@ -47,7 +47,7 @@ function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
 
 function getInventoryItemsRawQuery() {
   const fldExpiresOn = `DATE_FORMAT(IFNULL(ii.expiresOn, NOW()), '%Y-%m-%d')`
-  const fldQuantity = `CAST( IFNULL(ii.quantityOnHand, 0) AS CHAR )`
+  const fldQuantity = `CAST(IFNULL(ii.quantityOnHand, 0) AS CHAR(10))`
   const itemRaw = `CONCAT(
     '{ "expiresOn": "', ${fldExpiresOn}, '", "quantityOnHand": "', ${fldQuantity}, '" }'
   )`
@@ -165,10 +165,15 @@ const getInventoryLogBaseQuery = (knex, dataConstraints) =>
     .leftJoin('Result as r', 'il.resultId', 'r.id')
     .leftJoin('Site as refSite', 'il.referencedSiteId', 'refSite.id')
     .leftJoin('Sample as sam', 'r.sampleId', 'sam.id')
-    .modify(addConstraints, dataConstraints, {
-      site: 's',
-      geography: 'g',
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        site: 's',
+        geography: 'g',
+      },
+      { displayResult: 'all' }
+    )
 async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY_LOG_LIST) {
   if (_.isNil(query.maxDate)) {
     query.maxDate = new Date()

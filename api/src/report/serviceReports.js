@@ -69,6 +69,7 @@ async function getSheetData(auth, queryParams, sheet, sharedResults) {
     fixedColumns = [],
     dataSelector = null,
     sections = [],
+    populator,
   } = result
 
   if (nameOfSharedData) {
@@ -79,7 +80,7 @@ async function getSheetData(auth, queryParams, sheet, sharedResults) {
   logger.debug(`Worksheet data - total=${total}, list size=${listSize}'`, RELABEL_EXCEL)
 
   if (ok) {
-    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections }
+    return { data, total, dynamicColumns, fixedColumns, dataSelector, sections, populator }
   }
 
   return Boom.preconditionFailed(`Error in function ${functionName} of module ${moduleName} - ${errorMessage}`)
@@ -149,6 +150,18 @@ async function getAssaysNamesString(query) {
   return items.map(x => x.name).join(', ')
 }
 
+async function getConsumablesNamesString(query) {
+  if (!query.consumableId) {
+    return 'all'
+  }
+  const items = await knex('Consumable as c')
+    .modify(filterParams, query, {
+      consumableId: 'c.id',
+    })
+    .select('c.name')
+  return items.map(x => x.name).join(', ')
+}
+
 async function getAllSheetsData(auth, query, sheets) {
   let boomError
   const dataSet = []
@@ -165,6 +178,7 @@ async function getAllSheetsData(auth, query, sheets) {
       total = null,
       dataSelector = null,
       sections,
+      populator,
     } = await getSheetData(auth, query, sheet, sharedResults)
     if (Boom.isBoom(data)) {
       boomError = data
@@ -180,6 +194,7 @@ async function getAllSheetsData(auth, query, sheets) {
       total,
       // TODO: use i18n string, because `downloadReport()` uses locale file templates with all labels translated
       defaultNoDataMessage: 'No data',
+      populator,
     }
   })
 
@@ -189,13 +204,10 @@ async function getAllSheetsData(auth, query, sheets) {
   return dataSet
 }
 
-async function generateReport(externalId, query, auth, user, userPlaceHolders) {
+async function generateReport(externalId, query, auth, user, userPlaceHolders, extension) {
   // query: {...filters}
   const { countryAbbreviation, culture, partnerId, userName, personId } = user
-  const { sheets, fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId })
-
-  // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
-  const extension = (query.format && query.format === 'csv') || !exportExcel ? 'csv' : 'xlsx'
+  const { sheets } = await getReportDetails(externalId, { personId })
 
   const data = await getAllSheetsData(auth, query, sheets)
   if (Boom.isBoom(data)) {
@@ -228,6 +240,10 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
       value: await getAssaysNamesString(query),
     },
     {
+      placeholder: '<Consumables>',
+      value: await getConsumablesNamesString(query),
+    },
+    {
       placeholder: '<UserEmail>',
       value: userPlaceHolders.email || '-',
     },
@@ -243,9 +259,8 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
     ...administrativeDivisionLabelPlaceHolders,
   ]
   /**
-   * generate actual file or stream and get back a data buffer
+   * generate stream or data buffer
    */
-  const fileName = getContentDispositionFilename(fileNamePrefix, extension)
   let dataBuffer
   let streamResponse = false
   if (extension === 'csv') {
@@ -292,11 +307,7 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders) {
     }
   }
 
-  return { dataBuffer, streamResponse, fileName, extension }
-}
-
-function getContentDispositionFilename(fileNamePrefix, extension) {
-  return `${fileNamePrefix}_${new Date().toISOString()}.${extension}`.replace(/:/g, '-')
+  return { dataBuffer, streamResponse }
 }
 
 // ----------------------------------------------------------------------------------------------

@@ -358,7 +358,7 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
 }
 
 async function findDevices(availableDeviceDetails, knex) {
-  const { deviceId, partnerId, hostId, deviceSerialNumber, countryCode, deviceIdFromGxAlertSource } =
+  const { deviceId, partnerId, hostId, deviceSerialNumber, macAddress, countryCode, deviceIdFromGxAlertSource } =
     availableDeviceDetails
   const fields = [
     'd.id',
@@ -367,6 +367,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.geographyId',
     'd.name',
     'd.serial',
+    'd.hostId',
     'd.macAddress',
     'd.configurationData',
     'd.lastSeenOn',
@@ -393,22 +394,65 @@ async function findDevices(availableDeviceDetails, knex) {
   }
   let matchingDevices = []
   if (partnerId) {
+    const partnerDeviceQuery = deviceQuery.clone().modify(queryBuilder => {
+      queryBuilder.where('d.partnerId', partnerId)
+      if (countryCode) {
+        queryBuilder.andWhere('c.abbreviation', countryCode)
+      }
+    })
     if (deviceIdFromGxAlertSource) {
-      matchingDevices = await deviceQuery
+      matchingDevices = await partnerDeviceQuery
         .clone()
-        .whereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`)
-        .andWhere('d.partnerId', partnerId)
+        .andWhereRaw(`JSON_EXTRACT(d.configurationData, "$.gxAlertDeviceId") = ${deviceIdFromGxAlertSource}`)
         .select(fields)
     }
     if (_.isEmpty(matchingDevices) && countryCode) {
+      const partnerCountryDeviceQuery = partnerDeviceQuery.clone().andWhere('c.abbreviation', countryCode)
       if (hostId && deviceSerialNumber) {
-        matchingDevices = await deviceQuery
+        matchingDevices = await partnerCountryDeviceQuery
           .clone()
-          .where('d.partnerId', partnerId)
           .andWhere('d.hostId', hostId)
           .andWhere('d.serial', deviceSerialNumber)
-          .andWhere('c.abbreviation', countryCode)
           .select(fields)
+      }
+      if (hostId) {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.hostId', hostId).select(fields)
+          // There are multiple devices using this Host ID
+          //  therefore the Host ID cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.hostId === hostId)
+        }
+      }
+      if (deviceSerialNumber) {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery
+            .clone()
+            .andWhere('d.serial', deviceSerialNumber)
+            .select(fields)
+          // There are multiple devices using this computer name
+          // therefore the device serial number cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.serial === deviceSerialNumber)
+        }
+      }
+      if (macAddress && macAddress !== 'MAC') {
+        if (_.isEmpty(matchingDevices)) {
+          matchingDevices = await partnerCountryDeviceQuery.clone().andWhere('d.macAddress', macAddress).select(fields)
+          // There are multiple devices using this MAC address
+          //  therefore the MAC address cannot be used as a device identifier
+          if (matchingDevices.length > 1) {
+            matchingDevices = []
+          }
+        } else if (matchingDevices.length > 1) {
+          matchingDevices = matchingDevices.filter(d => d.macAddress === macAddress)
+        }
       }
     }
   }
@@ -617,6 +661,7 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
         .where({
           's.partnerId': device.partnerId,
           'c.abbreviation': countryCode,
+          's.disabled': 0,
         })
         .andWhere(function () {
           if (deviceName) {
@@ -635,7 +680,9 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
         sites = matchingSites.splice(0, 1)
       } else if (matchingSites.length > 1) {
         throw Boom.conflict(
-          `Cannot uniquely determine which site this request came from using ${deviceName} in ${countryCode})`
+          `Cannot uniquely determine which site this request came from comparing the device name with the site name or site external id, or the device short name with the site external ID. More than one site were found for the device name ${deviceName} and the device short name ${deviceShortName}. The sites IDs are: ${matchingSites.join(
+            ', '
+          )}.`
         )
       }
       if (_.isEmpty(sites)) {

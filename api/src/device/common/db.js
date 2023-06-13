@@ -5,12 +5,14 @@ const { allResultCategoryToId } = require('../../shared/dictionary')
 const { addConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { usedAssay } = require('../../assay/common/db')
+const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 
 function getDeviceBaseExtendedQuery(
   query,
   dataConstraints,
   showUnapprovedDevices = false,
-  showDecommissionedDevices = false
+  showDecommissionedDevices = false,
+  excludeInternalDevices = true
 ) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -40,6 +42,8 @@ function getDeviceBaseExtendedQuery(
         queryBuilder
           .innerJoin('ResultCategoryAssay as rca2', 'a.id', 'rca2.assayId')
           .where('rca2.resultCategoryId', query.resultCategory2Id)
+
+      if (excludeInternalDevices) queryBuilder.whereNotIn('dt.externalId', INTERNAL_DEVICE_IDS)
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -57,15 +61,18 @@ function getDeviceBaseExtendedQuery(
       siteName: 's.name',
       assayId: 'a.id',
     })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      device: 'd',
-      deviceType: 'dt',
-      geography: 'g',
-      site: 's',
-      showDecommissionedDevices,
-      showUnapprovedDevices,
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        assay: 'a',
+        device: 'd',
+        deviceType: 'dt',
+        geography: 'g',
+        site: 's',
+      },
+      { showDecommissionedDevices, showUnapprovedDevices }
+    )
   return deviceQuery
 }
 
@@ -103,22 +110,30 @@ async function getTargetDevice(targetDeviceId) {
 /**
  * Builds a knex query object including all 'join' and 'where' for managing constraints.
  * @param {object} dataConstraints
- * @param {object} options An object representing the dataConstraints options, including the constraint-table-name definition, and also additional configurations like showUnapprovedDevices and showDecommissionedDevices. For example: { assay: 'a', showUnapprovedDevices: true, showDecommissionedDevices: true }
+ * @param {aliases} aliases An object representing the aliases for the tables used in the query.e.g. { assay: 'a'}
+ * @param {object} options An object representing the dataConstraints options, like showUnapprovedDevices
+ *  and showDecommissionedDevices.
+ *  For example: { showUnapprovedDevices: true, showDecommissionedDevices: true }
  * @returns The knex query object.
  */
-function getDeviceBaseQuery(dataConstraints, options) {
+function getDeviceBaseQuery(dataConstraints, aliases, options = {}) {
   return knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      deviceType: 'dt',
-      ...(options || {}),
-    })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        deviceType: 'dt',
+        ...aliases,
+      },
+      options
+    )
 }
 
 const getNotDecommissionedDevices = dataConstraints =>
-  getDeviceBaseQuery(dataConstraints, { showUnapprovedDevices: true })
+  getDeviceBaseQuery(dataConstraints, {}, { showUnapprovedDevices: true })
 
 async function mergeIssuesFromDuplicatedResults(devicesToMerge, trknex) {
   const {
@@ -495,6 +510,49 @@ function getResultCategoryGroupColumns(dataConstraints, query) {
     })
     .orderBy('columnName')
 }
+
+function moduleDisabledIssues(onlyActiveIssues = false) {
+  const query = knex('Issue as i2')
+    .join('IssueType as it', 'i2.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i2.issueStatusId', 'is.id')
+    .where('it.externalId', 'ModuleDisabled')
+    .whereIn('i2.id', function () {
+      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleName"')
+    })
+    .select(
+      'i2.id',
+      'i2.resultId',
+      'i2.deviceId',
+      knex.raw('i2.data->>"$.moduleName" as moduleName'),
+      'i2.createdOn as dateLastIssue',
+      'it.name as lastIssue'
+    )
+    .as('i')
+
+  if (onlyActiveIssues) {
+    query.where('is.externalId', 'Active')
+  }
+
+  return query
+}
+
+function modulesWithLastResultBeforeMinDate(minDate) {
+  return knex('Result as r')
+    .where('r.endedOn', '<', minDate)
+    .select(
+      'r.siteId',
+      'r.deviceId',
+      'r.moduleName',
+      'r.moduleSerial',
+      knex.raw('max(r.id) as id'),
+      knex.raw('max(r.endedOn) as endedOn'),
+      knex.raw('count(r.id) as totalTestsRun')
+    )
+    .groupBy('r.deviceId', 'r.moduleName', 'r.moduleSerial')
+    .having('endedOn', '<', minDate) // only bays with last result before minDate -> inactive
+    .as('r')
+}
+
 module.exports = {
   getDeviceWorkload,
   getResultCategoriesByAssay,
@@ -529,4 +587,6 @@ module.exports = {
   joinModuleAvailability,
   getFirstAndLastResults,
   getResultCategoryGroupColumns,
+  moduleDisabledIssues,
+  modulesWithLastResultBeforeMinDate,
 }

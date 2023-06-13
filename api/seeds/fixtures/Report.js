@@ -53,7 +53,7 @@ const allResults = {
   sortOrder: 0,
   availableForNotification: 1,
   exportCsv: true,
-  exportExcel: false,
+  exportExcel: true,
   sheets: [
     {
       sortOrder: 0,
@@ -63,7 +63,7 @@ const allResults = {
         sortCol: 'endedOn',
         sortDir: 'desc',
         // templateFolderPath: 'export/results',
-        maxNumberOfRecords: 50000,
+        maxNumberOfRecords: 1000000,
         streamCSV: true,
       },
     },
@@ -338,6 +338,25 @@ const moduleActivityReport = {
   ],
 }
 
+const doNotUseModulesReport = {
+  name: "'Do Not Use' Modules",
+  description: "A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.",
+  i18nKey: 'doNotUseModulesReport',
+  i18nKeyDescription: 'doNotUseModulesReport_Description',
+  externalId: 'do_not_use_modules_report',
+  fileName: 'DoNotUseModulesReport',
+  availableForNotification: 1,
+  exportCsv: true,
+  sortOrder: 125,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDoNotUseModulesReport',
+    },
+  ],
+}
+
 const moduleStatusReport = {
   name: 'Module Status Report',
   description:
@@ -456,6 +475,7 @@ const usageStats = {
   fileName: 'UsageStatistics',
   exportCsv: false,
   exportExcel: true,
+  availableForNotification: 1,
   sortOrder: 140,
   sheets: [
     {
@@ -560,6 +580,48 @@ const devicesAndSitesOverview = {
 }
 
 /**
+ * Error rates report
+ */
+const errorRatesReport = {
+  name: 'Error Rate',
+  description: 'Report error rates per quarter, break them down by devices, modules and users',
+  i18nKey: 'error_rate',
+  i18nKeyDescription: 'error_rate_description',
+  externalId: 'error_rate',
+  fileName: 'ErrorRate',
+  sortOrder: 170,
+  availableForNotification: 1,
+  exportCsv: false,
+  exportExcel: true,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorRateByDeviceReport',
+      query: {
+        streamCSV: true,
+      },
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorRateByModuleReport',
+      query: {
+        streamCSV: true,
+      },
+    },
+    {
+      sortOrder: 2,
+      moduleName: 'device/serviceReports',
+      functionName: 'getErrorRateByUserReport',
+      query: {
+        streamCSV: true,
+      },
+    },
+  ],
+}
+
+/**
  * see section `Tuning MySql` in api/README.md
  */
 const dataExtract = {
@@ -570,7 +632,7 @@ const dataExtract = {
   externalId: 'data_extract',
   fileName: 'DataExtract',
   sortOrder: 0,
-  availableForNotification: 1,
+  availableForNotification: 0,
   exportCsv: true,
   exportExcel: false,
   sheets: [
@@ -581,11 +643,6 @@ const dataExtract = {
       query: {
         sortCol: 'updatedOn',
         sortDir: 'desc',
-        /**
-         * querying 500K of records should work well with
-         * new MySql settings for buffer pool size
-         */
-        maxNumberOfRecords: 500000,
         streamCSV: true,
       },
     },
@@ -629,6 +686,7 @@ const resultNotificationsReport = {
   fileName: 'ResultNotification',
   exportCsv: false,
   exportExcel: true,
+  availableForNotification: 1,
   sortOrder: 160,
   sheets: [
     {
@@ -659,12 +717,14 @@ module.exports = {
   allResults,
   utilizationPerInstrumentDayReport,
   moduleActivityReport,
+  doNotUseModulesReport,
   reportCustomFieldsCompletion,
   inventoryLog,
   moduleStatusReport,
   tbWorkloadSummary,
   xdrDevicesSummary,
   usageStats,
+  errorRatesReport,
   devicesAndSitesOverview,
   dataExtract,
   resultNotificationsReport,

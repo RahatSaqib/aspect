@@ -2,6 +2,7 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
+const crypto = require('crypto')
 const { knex, transact } = require('../db')
 const { getRemoteAddress } = require('../shared/request')
 const { asyncHandler } = require('../routes')
@@ -10,9 +11,10 @@ const {
   resultUpdated,
   resultLogged,
   resultLoggedProcessed,
+  resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
-
+const templateProcessor = require('../email/templateProcessor')
 const {
   updateDeviceConfiguration,
   getDeviceConfigurationFromDeviceLog,
@@ -27,6 +29,8 @@ const { loadPlugin } = require('../plugin/registration')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')
+const { sendSms } = require('../sms/smsUtil')
+const { sendEmail } = require('../email/emailUtil')
 
 const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 
@@ -368,6 +372,8 @@ async function processLogItem(context, logItem, options) {
     details = JSON.parse(details)
   }
   const { device, knex } = context
+  const value = `${device.id}|${externalId}|${logFileName}`
+  const hash = crypto.createHash('md5').update(value).digest('hex')
   const payload = {
     id: externalId,
     startedOn: occurredOn,
@@ -377,19 +383,40 @@ async function processLogItem(context, logItem, options) {
       logLevel,
       details,
     },
+    hash,
   }
 
   logger.debug('executing processLogItem', {
     reLabel: 'deviceApi:processLogItem',
   })
 
-  const { id: deviceOperationId } = await addDeviceOperation(knex, device.id, payload, now)
+  try {
+    const { id: deviceOperationId } = await addDeviceOperation(knex, device.id, payload, now)
 
-  // check if stored in table 'DeviceOperation' entry is
-  // hardware error and dispatch MQ action if needed
-  await shouldTriggerHardwareErrorAnalysis(context.messageContext, device, payload, deviceOperationId)
-  // process 'calibration' log item
-  await shouldLogDeviceCalibration(knex, device.id, payload, calibrationDeviceMaintenanceTypeId, context.messageContext)
+    // check if stored in table 'DeviceOperation' entry is
+    // hardware error and dispatch MQ action if needed
+    await shouldTriggerHardwareErrorAnalysis(context.messageContext, device, payload, deviceOperationId)
+    // process 'calibration' log item
+    await shouldLogDeviceCalibration(
+      knex,
+      device.id,
+      payload,
+      calibrationDeviceMaintenanceTypeId,
+      context.messageContext
+    )
+  } catch (err) {
+    if (err.code === 'ER_DUP_ENTRY') {
+      // ignore duplicate entry errors since the same log item may come from GxAlert and GxConnect
+      logger.warning(
+        `got duplicated logItem. deviceId=${device.id}, externalId=${externalId}, logFileName=${logFileName}`,
+        {
+          reLabel: 'deviceApi:processLogItem',
+        }
+      )
+    } else {
+      throw err
+    }
+  }
 
   return logItem.externalId
 }
@@ -605,6 +632,7 @@ async function mergeResultWithContext(context) {
     device: { id: deviceId, deviceType },
     pluginNames: plugins,
     payload,
+    partnerId,
     now,
   } = context
 
@@ -614,25 +642,41 @@ async function mergeResultWithContext(context) {
     actions,
     deviceType,
     payload,
+    partnerId,
     now,
   }
+
   const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
   await preProcess(pluginContext)
 
+  const excludeResult = await loadPlugin(plugins, 'excludeResult')
+  await excludeResult(pluginContext)
+
   const transformPayload = await loadPlugin(plugins, 'transformMergeResultPayload')
   const transformedPayload = await transformPayload(pluginContext)
-  const { processedResult: result, existingResult: previousResult } = await mergeResult(
-    knex,
-    deviceId,
-    transformedPayload,
-    { now }
-  )
-  context.addDeviceLogUpdate('resultId', result.id)
+  const {
+    processedResult: plainResult,
+    existingResult: plainPreviousResult,
+    shouldTriggerResultNotification,
+    // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
+  } = await mergeResult(knex, deviceId, transformedPayload, { now })
+  context.addDeviceLogUpdate('resultId', plainResult.id)
   const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
-  const postProcessResult = await postProcess(pluginContext, result, previousResult)
+  const postProcessResult = await postProcess(pluginContext, plainResult, plainPreviousResult)
+
+  // This is going to be used when we implement the Sample ID and Patient ID based notification
+  // const result = plainToDeepObjectResult(plainResult)
+  // const previousResult = plainToDeepObjectResult(plainPreviousResult)
+
+  if (shouldTriggerResultNotification) {
+    context.messageContext.bindActionCreators({ resultReadyForNotification })
+    const isResultUpdated = !!plainPreviousResult
+    context.messageContext.resultReadyForNotification(plainResult.id, isResultUpdated)
+  }
+
   return {
     ...postProcessResult,
-    aspectResultId: result.id,
+    aspectResultId: plainResult.id,
   }
 }
 
@@ -709,6 +753,8 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
       return deviceAndError
     }
     ;({ device } = deviceAndError)
+
+    await sendNotificationToContacts(originalRequest.payload, device)
   }
 
   if (device == null) {
@@ -1062,6 +1108,69 @@ async function getHealthState(context) {
     })),
   }
   return result
+}
+
+async function sendNotificationToContacts(payload, device) {
+  const { configuration } = payload
+  if (configuration && configuration.data) {
+    const configurationData = configuration.data
+    const { culture, routerNumber, noInventory } = configurationData
+    const labContact = {
+      name: configurationData.labContactName,
+      email: configurationData.labContactEmail,
+      cell: configurationData.labContactCell,
+    }
+
+    const installerContact = {
+      name: configurationData.installerName,
+      email: configurationData.installerEmail,
+      cell: configurationData.installerCell,
+    }
+
+    const { operation } = payload
+    let cartridgeCount = null
+    if (operation && operation.data && operation.data.inventoryChanges && operation.data.inventoryChanges.length > 0) {
+      cartridgeCount = operation.data.inventoryChanges.reduce(
+        (accumulator, inventoryChange) => accumulator + inventoryChange.quantity,
+        0
+      )
+    }
+
+    await Promise.all([
+      notifyPerson(labContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+      notifyPerson(installerContact, device.name, routerNumber, noInventory, culture, cartridgeCount),
+    ])
+  }
+}
+
+async function notifyPerson({ name, email, cell }, deviceName, routerNumber, noInventory, culture, cartridgeCount) {
+  const generatedTemplate = await templateProcessor.process(
+    'newDevice',
+    {
+      deviceName,
+      name,
+      routerNumber,
+      noInventory,
+      cartridgeCount,
+    },
+    culture
+  )
+
+  if (email) {
+    const inlineImageAttachments = await templateProcessor.getInlineImageAttachments(generatedTemplate.html)
+
+    await sendEmail(
+      email,
+      generatedTemplate.subject,
+      generatedTemplate.html,
+      generatedTemplate.text,
+      inlineImageAttachments
+    ).catch(err => logger.error(err))
+  }
+
+  if (cell) {
+    await sendSms(cell, generatedTemplate.text).catch(err => logger.error(err))
+  }
 }
 
 module.exports = {

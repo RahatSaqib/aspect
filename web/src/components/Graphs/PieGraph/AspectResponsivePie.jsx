@@ -53,6 +53,7 @@ const AspectResponsivePie = ({
   link,
   i18nKeys,
   config: baseConfig,
+  sideLegend,
 }) => {
   const { id: graphId, showLabel, labelTextColor, showDecimals = 2 } = baseConfig
   const { formatNumber: intlFormatNumber, formatMessage } = useI18n()
@@ -108,6 +109,9 @@ const AspectResponsivePie = ({
       {averages && !type ? <PieInnerLegend averages={averages} data={data} /> : null}
       {type === 'solid' ? <PieInnerLegendSolid data={data} link={link} /> : null}
       {type === 'doughnut' ? <PieInnerLegendDoughNut data={data} /> : null}
+      {sideLegend ? (
+        <Legend data={config(type, data, displayMethod).data} graphId={graphId} averages={averages} />
+      ) : null}
     </div>
   )
 }
@@ -117,6 +121,7 @@ AspectResponsivePie.defaultProps = {
   link: false,
   i18nKeys: {},
   config: {},
+  sideLegend: false,
 }
 
 AspectResponsivePie.propTypes = {
@@ -127,9 +132,32 @@ AspectResponsivePie.propTypes = {
   keys: PropTypes.oneOfType([PropTypes.array]).isRequired,
   componentClasses: PropTypes.oneOfType([PropTypes.array]).isRequired,
   type: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
+  sideLegend: PropTypes.bool,
   link: PropTypes.oneOfType([PropTypes.bool, PropTypes.string]),
   i18nKeys: PropTypes.oneOfType([PropTypes.object]),
   config: PropTypes.oneOfType([PropTypes.object]),
+}
+
+const Legend = ({ data, graphId }) => {
+  const { formatMessage } = useI18n()
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'space-evenly',
+        flexDirection: 'column',
+        alignItems: 'flex-start',
+        minWidth: '25%',
+      }}
+    >
+      {data.map(item => (
+        <div key={item.id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
+          <span style={{ fontSize: '2rem', color: generateColorForValue(item.id, graphId) }}>•</span>{' '}
+          <span>{formatMessage(messages[item.label])}</span>
+        </div>
+      ))}
+    </div>
+  )
 }
 
 export default AspectResponsivePie

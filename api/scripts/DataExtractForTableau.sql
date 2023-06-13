@@ -30,13 +30,13 @@ CREATE TEMPORARY TABLE
     `HivStatus` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     `PreviouslyTreated` varchar(3) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
     `Gender` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-    `MicroscopyResult` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin NOT NULL,
+    `MicroscopyResult` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin DEFAULT NULL,
     `RepeatTest` varchar(15) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL DEFAULT '',
     `TestReason` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     `HealthFacility` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     `RequestorName` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
     `RequestorPhone` longtext CHARACTER SET utf8mb4 COLLATE utf8mb4_bin,
-    `errorCode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
+    `ErrorCode` varchar(50) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
     `ErrorDescription` text CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     `AssayName` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci NOT NULL,
     `AssayHostTestCode` varchar(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci DEFAULT NULL,
@@ -149,19 +149,18 @@ SELECT
 	JSON_VALUE(r.patientData, '$.gender' RETURNING CHAR),
 	JSON_VALUE(r.patientData, '$.patientGender' RETURNING CHAR)
   ) AS Gender,
-  JSON_VALUE(r.patientData, '$.microscopyResult' RETURNING CHAR) AS MicroscopyResult, -- microscopyResult only seems to exists in dev seeding  
+  JSON_VALUE(r.patientData, '$.microscopyResult' RETURNING CHAR) AS MicroscopyResult, -- microscopyResult only seems to exists in dev seeding
   CASE
      JSON_VALUE(r.patientData, '$.repeatTest' RETURNING CHAR)
 	WHEN '0' THEN 'First or second'
     WHEN '1' THEN 'Follow-up'
     WHEN '2' THEN 'Repeat Baseline'
-    ELSE NULL
+    ELSE ''
   END AS RepeatTest,
   JSON_VALUE(r.resultData, '$.testReasonShortName' RETURNING CHAR) as TestReason, -- testReasonShortName seems to be always null in resultData
   so.name as HealthFacility, -- HealthFacility custom field seems to be in declared for zw, but no present: JSON_VALUE(r.patientData, '$.healthFacility' RETURNING CHAR) as HealthFacility,
   JSON_VALUE(r.patientData, '$.requestorName' RETURNING CHAR) as RequestorName, -- RequestorName only seems to exists in dev seeding lesotho, ethiopia and mozambique (in customFieldsFromGxAlert)
   JSON_VALUE(r.patientData, '$.requestorPhone' RETURNING CHAR) as RequestorPhone,
-  r.errorCode,
   -- ec.`Category` AS `ErrorCategory`, -- ------------------------------- error category -> Not found in Aspect
   REGEXP_REPLACE(r.errorCode,'(\r\n|\n|\r)',' ') as ErrorCode,
   REGEXP_REPLACE(r.errorNotes,'(\r\n|\n|\r)',' ') as ErrorDescription,
@@ -208,7 +207,7 @@ SELECT
   , c.name as Country
   , st.name as State
   , lg.name as Lga
-  , firstResult.minDate as DateFirstTest 
+  , MIN(firstResult.minDate) as DateFirstTest
   , d.name as DeviceName
   , r.senderOperator as 'User'
   , si.latitude as latitude
@@ -237,11 +236,22 @@ FROM
   LEFT JOIN SampleType AS stp ON sp.sampleTypeId = stp.id
   LEFT JOIN Site AS so ON sp.originSiteId = so.id
   LEFT JOIN Site AS si ON r.siteId = si.id
-  LEFT JOIN Geography AS go on go.id = so.geographyId
+  LEFT JOIN Geography AS go ON go.id = so.geographyId
   LEFT JOIN Lga as lgao ON lgao.id = go.lgaId
   LEFT JOIN State as stateo ON go.stateId = stateo.id
   LEFT JOIN (SELECT minr.deviceId, min(minr.endedOn) as minDate from Result as minr group by minr.deviceId) as firstResult on firstResult.deviceId = d.id
-  WHERE r.endedOn >= @currentMonth AND r.endedOn < date_add(@currentMonth, INTERVAL @interval MONTH);
+  LEFT JOIN DeviceApproval as deviceApproval on d.deviceApprovalId = deviceApproval.id
+         LEFT JOIN DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog
+                         on d.deviceMaintenanceStatusLogId = deviceMaintenanceStatusLog.id
+         LEFT JOIN DeviceMaintenanceStatus as deviceMaintenanceStatus
+                         on deviceMaintenanceStatusLog.deviceMaintenanceStatusId = deviceMaintenanceStatus.id
+  WHERE r.endedOn >= @currentMonth AND r.endedOn < date_add(@currentMonth, INTERVAL @interval MONTH)
+     AND (si.id is null OR si.disabled = 0)
+     AND (deviceApproval.token = 'approved' OR isnull(deviceApproval.token))
+     AND (deviceMaintenanceStatus.externalId IS NULL
+        OR NOT deviceMaintenanceStatus.externalId = 'inactiveDecommissioned')
+
+  GROUP BY r.id;
     -- ------------------------------------------------------------------------------------------------------
 SET @currentMonth = date_add(@currentMonth, INTERVAL @interval MONTH);
 
@@ -269,3 +279,5 @@ EXECUTE stc;
 DEALLOCATE PREPARE stc;
 SELECT @filename filename, count(*) register from ResultExport;
 DROP TEMPORARY TABLE ResultExport;
+
+

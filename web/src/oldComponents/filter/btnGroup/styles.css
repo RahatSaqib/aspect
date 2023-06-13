@@ -1,8 +1,7 @@
 @import '../../../theme/variables.css';
 
 .FiltersBtnGroup {
-  align-items: flex-end !important;
-  flex-wrap: nowrap !important;
+  flex-wrap: wrap !important;
   flex-direction: row !important;
   display: flex !important;
 }
