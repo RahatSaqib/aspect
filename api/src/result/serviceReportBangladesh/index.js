@@ -1025,9 +1025,9 @@ async function getDataForReportCovid19(auth, query) {
   /**
    * define single entry with all zero's when no data matches filter condition in query
    */
-  const fieldsAllZero = _.mapValues(fields, () => 0)
+  // const fieldsAllZero = _.mapValues(fields, () => 0)
 
-  let data = await knex('Result as r')
+  const data = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -1063,18 +1063,18 @@ async function getDataForReportCovid19(auth, query) {
         DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
       `)
     )
-    .groupBy('yearAndMonth')
+    // .groupBy('yearAndMonth')
     .count(fields)
 
-  const yymm = formatDateOrDefault(dateFrom, 'yyyy-MM-01') // same format as field `yearAndMonth` in query
+  // const yymm = formatDateOrDefault(dateFrom, 'yyyy-MM-01') // same format as field `yearAndMonth` in query
 
-  /**
-   * set `data` to single object with all counters prepared
-   */
-  data =
-    {
-      ...data?.find(d => d.yearAndMonth === yymm),
-    } || fieldsAllZero
+  // /**
+  //  * set `data` to single object with all counters prepared
+  //  */
+  // data =
+  //   {
+  //     ...data?.find(d => d.yearAndMonth === yymm),
+  //   } || fieldsAllZero
 
   return {
     ok: true,
