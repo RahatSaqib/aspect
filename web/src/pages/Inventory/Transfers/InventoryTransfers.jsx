@@ -32,7 +32,7 @@ export const InventoryTransfers = () => {
 
   const { data, isLoading } = useInventoryTransferList({ sortCol, sortDir, ...filter }, { enabled: !!sortCol })
 
-  useInventoryTransferDownload({ ...filter, ...download })
+  useInventoryTransferDownload({ ...download, ...filter })
 
   useEffect(() => {
     if (download.enabled) setDownload({ fileFormat: '', enabled: false })

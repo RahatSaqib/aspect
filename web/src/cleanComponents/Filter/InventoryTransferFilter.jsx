@@ -49,6 +49,18 @@ const InventoryTransferFilter = () => {
           />
         </Grid>
         <Grid item xs={3}>
+          <SiteAutoCompleteField
+            name="destinationSiteName"
+            value={state.destinationSiteName || ''}
+            onChange={site => setState({ ...state, destinationSiteName: site.name })}
+            floatingLabelFixed
+            floatingLabelText={formatMessage(messages.destinationSiteName)}
+            stateId={state.stateId}
+            lgaId={state.lgaId}
+            width="100%"
+          />
+        </Grid>
+        <Grid item xs={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
             minDate={state.minDate || null}
