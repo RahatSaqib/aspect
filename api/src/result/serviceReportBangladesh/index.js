@@ -741,6 +741,8 @@ async function getDataForReportDrTb10A(auth, query) {
     item.devices[deviceId] = null
   })
   data = item
+
+  if (_.isNil(data)) data = {}
   /**
    * set `cntDevices` and remove temporal prop `devices`
    */
