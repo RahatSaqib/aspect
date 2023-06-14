@@ -17,7 +17,6 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     .modify(modifiers.join.resultCategory1)
     .modify(modifiers.join.resultCategory2)
     .leftJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
@@ -26,8 +25,8 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
       districtName: 'lg.name',
       deviceName: 'd.name',
       assayName: 'a.name',
-      responsible: 'dt.name',
       approvalStatus: 'da.name',
+      responsible: knex.raw(`'Aspect'`),
     })
     .groupBy(groupBy)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
