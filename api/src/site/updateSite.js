@@ -24,7 +24,7 @@ module.exports = async function (request) {
 
   const tagType = 'site'
 
-  if (canEdit(auth, `${tagType}:`)) {
+  if (!canEdit(auth, `${tagType}:`)) {
     return Boom.forbidden(`You are not permitted to update tags to this ${tagType}`)
   }
 
