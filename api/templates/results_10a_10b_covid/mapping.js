@@ -5,11 +5,10 @@ module.exports = [
    * ********************************************************
    */
   {
-    H14: 'cntAll',
-
     C6: 'stateName',
     C7: 'lgaName',
     C8: 'siteName',
+    C9: 'cntAll',
 
     M12: 'cntDevices',
     M13: 'cntModules',
@@ -32,10 +31,12 @@ module.exports = [
      */
     D19: 'cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate',
     E19: 'cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate',
+    /*
     G17: 'cnt_Total_MtbDetectedRifNotDetected',
     G18: 'cnt_Total_MtbDetectedRifDetected',
     G19: 'cnt_Total_MtbDetectedRifIndeterminate',
     G20: 'cnt_Total_MtbNotDetected',
+    */
 
     /**
      * Block 2
