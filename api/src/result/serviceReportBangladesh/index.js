@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
+const dateFormat = require('date-fns/format')
 
 const { getUser } = require('../../auth/service')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
@@ -703,6 +704,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
  */
 async function getDataForReportDrTb10A(auth, query) {
   const { stateId, lgaId, siteName } = query
+  const { userName, cell, phone, email } = await getUser(auth.credentials.name)
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
   const { dateTo } = dates
@@ -717,6 +719,10 @@ async function getDataForReportDrTb10A(auth, query) {
     const propNames = _.keys(rest) // i.e. all counters `cnt*`
     if (!item) {
       item = {
+        userName,
+        cell,
+        phone,
+        email,
         devices: {}, // this is a temporal prop to collect distinct deviceId's
       }
       propNames.forEach(propName => {
@@ -745,6 +751,7 @@ async function getDataForReportDrTb10A(auth, query) {
   /**
    * additional props
    */
+  data.today = dateFormat(new Date(), 'dd-MM-yyyy')
   data.stateName = 'All'
   data.lgaName = 'All'
   data.siteName = siteName || 'All'
