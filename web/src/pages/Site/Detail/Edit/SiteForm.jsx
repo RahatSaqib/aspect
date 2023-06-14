@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Button, Card, MenuItem, TextField } from '@mui/material'
+import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -15,7 +15,6 @@ import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
 import useDeleteSite from '../../../../hooks/site/useDeleteSite'
 import useUpdateSite from '../../../../hooks/site/useUpdateSite'
-import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import useI18n from '../../../../hooks/useI18n'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
@@ -27,14 +26,13 @@ import SiteTypeSelect from './SiteTypeSelect'
 
 const cssClasses = classnames.bind(styles)
 
-const SiteForm = ({ site, siteTags, onLatLongChange }) => {
+const SiteForm = ({ site, onLatLongChange }) => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const navigate = useNavigate()
   const [showConfirmation, setShowConfirmation] = useState(false)
 
   const { mutate: updateSite } = useUpdateSite(site.id)
-  const { mutate: updateTags } = useUpdateTagByTypeAndId('site', site.id)
   const { mutate: deleteSite } = useDeleteSite(site.id)
   const { mutate: createSite } = useCreateSite()
 
@@ -94,7 +92,7 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
       isEmpty(editSite.externalId))
 
   return (
-    <div>
+    <Box width="100%">
       <section className={cssClasses('Section', 'Section--first')}>
         <Card className={cssClasses('Section__Content')}>
           <div className={cssClasses('container')}>
@@ -409,18 +407,16 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
           </AspectDialog>
         </Card>
       </section>
-    </div>
+    </Box>
   )
 }
 
 SiteForm.propTypes = {
   // eslint-disable-next-line react/forbid-prop-types
   site: PropTypes.object,
-  siteTags: PropTypes.arrayOf(PropTypes.object),
   onLatLongChange: PropTypes.func,
 }
 SiteForm.defaultProps = {
-  siteTags: [],
   site: {
     id: 0,
     name: '',
