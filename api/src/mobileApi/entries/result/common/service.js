@@ -1,11 +1,11 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { resultWorkflowStatusToId } = require('../../../../shared/dictionary')
 const {
   countAllAwaitingTreatment,
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
+  getAcknowledgementsByResultIds,
 } = require('./db')
 const { getAllSamplesRegistered } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
@@ -44,6 +44,7 @@ async function fetchEntriesServiceHandler(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const samples = await getAllSamplesRegistered(query, dataConstraints)
   const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
+  const acknowledgements = await getAcknowledgementsByResultIds(results)
   const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
   const user = await getUser(auth.credentials.name)
   await addResultDownloadLog(resultIdsToBeRegistered, user.id)
@@ -56,8 +57,7 @@ async function fetchEntriesServiceHandler(request) {
   const followUps = await getFollowUpsByResultIds(results)
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
-  const acknowledgedId = await resultWorkflowStatusToId('Acknowledged')
-  const transformedResults = transformResultResponse(results, followUps, comments, acknowledgedId)
+  const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
   const entries = _.orderBy(_.uniqBy(_.concat(transformedResults, transformedSamples), 'id'), ['updatedOn'], ['desc'])
 
