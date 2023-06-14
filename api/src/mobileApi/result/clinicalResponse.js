@@ -21,22 +21,21 @@ const {
   updateFollowUpDate,
   deleteResultFollowUp,
   insertResultWorkflowLog,
-  updateResultWithResultWorkflowLog,
+  deleteResultWorkflowLogs,
   getFollowUpsOfResultById,
   getCommentsOfResultById,
   getItemsV2,
   generateResultQueryV2,
-  getLatestResultWorkflowLog,
 } = require('./common/db')
+const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
 
-const DELIVERED = 'Delivered'
 const ACKNOWLEDGED = 'Acknowledged'
 
 async function clinicalResponse(request) {
   const { payload, params } = request
   const { resultId } = params
   const clinicalResponseData = payload
-  // get follow ups for a single result
+  // get follow-ups for a single result
   const followUps = await getFollowUpsOfResultById({ id: resultId })
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUps)
   let response
@@ -48,20 +47,23 @@ async function clinicalResponse(request) {
       )
       if (
         (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
-        (fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'treatment' ||
-          fieldNameToFollowUpTypeIdMappings[data.fieldName] === 'outcome')
+        ['treatment', 'outcome'].includes(fieldNameToFollowUpTypeIdMappings[data.fieldName])
       ) {
         response = await addClinicalResponse(request, data)
       } else if (data.fieldName === 'confirmed') {
-        response = await updateWorkflowStatus(request, data)
+        if (data.value) {
+          response = await acknowledgeResult(request, data)
+        } else {
+          response = await unAcknowledgeResult(request)
+        }
       }
     })
   ).then(async () => {
-    // get follow ups for a single result
+    // get follow-ups for a single result
     const followUps = await getFollowUpsOfResultById({ id: resultId })
     const latestFollowUps = getLatestFollowUpsFromFolloups(followUps)
     clinicalResponseData.map(async data => {
-      if (data.fieldName === 'treatmentStarted' || data.fieldName === 'outcomeOccurred') {
+      if (['treatmentStarted', 'outcomeOccurred'].includes(data.fieldName)) {
         response = await updateResultFollowUp(request, data, latestFollowUps)
       }
     })
@@ -239,51 +241,28 @@ async function updateTreatmentStatusByResultId(
 }
 
 // update result workflow
-async function updateWorkflowStatus(request, data) {
+async function acknowledgeResult(request, data) {
   const { auth, params } = request
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
-
-  // get the result so we can check access and if status changed
-  const result = await getLatestResultWorkflowLog(resultId)
   const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
-  const deliveredId = await resultWorkflowStatusToId(DELIVERED)
   const resultWorkflowLogEntry = {
     resultId,
-    resultWorkflowStatusId: data.value ? acknowledgedId : deliveredId,
+    resultWorkflowStatusId: acknowledgedId,
     createdBy: currentUserId,
     reason: null,
     changedOn: data.clientTime,
   }
-  const errorMessage = await updateResultWorkflowStatusByResultId(
-    resultWorkflowLogEntry,
-    data.clientTime,
-    result?.resultWorkflowStatusId,
-    result?.resultWorkflowChangedOn
-  )
-
-  if (errorMessage) {
-    return Boom.badRequest(errorMessage)
-  }
-
-  const response = await showResult(request)
-  return response
+  await insertResultWorkflowLog(resultWorkflowLogEntry)
+  return showResult(request)
 }
 
-// supporting function for update workflow status
-async function updateResultWorkflowStatusByResultId(
-  resultWorkflowLogEntry,
-  clientDate,
-  currentResultWorkflowStatusId,
-  resultWorkflowChangedOn
-) {
-  // update the resultWorkflowStatusId.
-  if (resultWorkflowLogEntry.resultWorkflowStatusId !== currentResultWorkflowStatusId) {
-    if (resultWorkflowChangedOn < clientDate || !resultWorkflowChangedOn) {
-      const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
-      await updateResultWithResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
-    }
-  }
+async function unAcknowledgeResult(request) {
+  const { params } = request
+  const { resultId } = params
+  const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
+  await deleteResultWorkflowLogs(resultId, acknowledgedId)
+  return showResult(request)
 }
 
 // generate result
@@ -296,12 +275,13 @@ async function showResult(request) {
   const myResultQuery = generateResultQueryV2(false, dataConstraints, resultId)
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
-  // get follow ups for all result in the response for performance (filter later)
+  const [acknowledgement] = await getAcknowledgementsByResultIds([data])
+  // get follow-ups for all result in the response for performance (filter later)
   const followUps = await getFollowUpsOfResultById(data)
   // get comments for all result in the response for performance (filter later)
   const comments = await getCommentsOfResultById(data)
 
-  const result = await getResultItemTransformedDataV2(data, true, followUps, comments)
+  const result = await getResultItemTransformedDataV2(data, true, followUps, comments, acknowledgement)
   return result || Boom.notFound()
 }
 
