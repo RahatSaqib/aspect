@@ -19,11 +19,10 @@ import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAnd
 import useI18n from '../../../../hooks/useI18n'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
-import { ReadOnlyField } from '../../../../oldComponents/shared/ReadOnlyFields'
 import { useAuthState } from '../../../../providers/AuthProvider'
 import messages from '../messages'
 import styles from '../SiteDetail.css'
-import { getLatLongFromAddress, convertToFloat } from './address'
+import { convertToFloat, getLatLongFromAddress } from './address'
 import SiteTypeSelect from './SiteTypeSelect'
 
 const cssClasses = classnames.bind(styles)
@@ -345,13 +344,11 @@ const SiteForm = ({ site, siteTags, onLatLongChange }) => {
             </span>
           </div>
           {isNew ? null : (
-            <div className={cssClasses('container')}>
-              <ReadOnlyField
-                label={formatMessage(messages.fieldTags)}
-                value={siteTags}
-                format={v => <SiteTagInput qryId={editSite.id} onTagChange={tags => updateTags(tags)} value={v} />}
-              />
-            </div>
+            <SiteTagInput
+              label={formatMessage(messages.fieldTags)}
+              onChange={tags => setEditSite(prv => ({ ...prv, tags }))}
+              value={editSite?.tags ?? []}
+            />
           )}
           <div className={cssClasses('container', 'coordinate')}>
             <TextField
