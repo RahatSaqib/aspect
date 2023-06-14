@@ -5,26 +5,26 @@ const {
   seedIssueEventTriggersForPartner,
   upsertNotificationTypes,
   upsertIssueResolutionTrigger,
-  getPartnerByName,
+  getPartnerByExternalId,
 } = require('../utils')
 
 module.exports = async (
   knex,
   externalId,
   jobFunctionsToNotify,
-  partnerName,
-  adminName,
+  partnerExternalId,
+  adminUserName,
   resolutionConditions = null
 ) => {
   const now = new Date()
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
   const { userId } = await knex('User as u')
     .join('Person as p', 'p.userId', 'u.id')
-    .where({ 'u.name': adminName, 'p.lastPartnerId': partnerId })
+    .where({ 'u.name': adminUserName, 'p.lastPartnerId': partnerId })
     .first('p.userId')
 
   const issueTypeId = await seedIssueType(knex, externalId, {
-    userName: adminName,
+    userName: adminUserName,
   })
 
   await seedIssueEventTriggersForPartner(knex, partnerId, {

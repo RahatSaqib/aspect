@@ -22,11 +22,7 @@ const AuthProvider = ({ children }) => {
   } else {
     isLoggedOut = true
   }
-  const userData = Object.freeze({
-    ...user,
-    userPermissions: user.jwt.permissions,
-    isLoggedOut,
-  })
+  const userData = Object.freeze({ ...user, userPermissions: user.jwt.permissions, isLoggedOut })
 
   return <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
 }

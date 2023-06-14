@@ -2,7 +2,10 @@ const jobFunctions = require('./jobFunctions')
 
 module.exports = {
   adminUserName: 'admin',
-  partnerName: 'Mozambique',
+  partner: {
+    name: 'Mozambique',
+    externalId: 'mozambique',
+  },
   deviceApiToken: 'dwumjc2a7ke5w6a1c0e0',
   partnerAbbreviation: 'MZ',
   fixtures: {

@@ -36,6 +36,7 @@ const ProvincialDiagnosisTrendPage = () => {
 
   return (
     <PkPage
+      isMocked
       title={`${formatMessage(messages.TbDProvincialComparison)}`}
       filters={
         <StateAutocomplete

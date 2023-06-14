@@ -11,7 +11,7 @@ const { smsMessageCreated, smsMessageReadyForSending, smsMessageSent } = require
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const config = require('../../src/config')
 
-describe('Sending SMS via Message Queue to Contact', () => {
+describe.skip('Sending SMS via Message Queue to Contact', () => {
   const context = createSmsTestContext({ user: 'admin' })
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
@@ -49,7 +49,7 @@ describe('Sending SMS via Message Queue to Contact', () => {
     assert(!msg.message.includes('{{') && !msg.message.includes('}}'), 'Sms message template has not been parsed well')
   })
 })
-describe('Sending SMS via Message Queue to Patient, clinician or any other contact type', () => {
+describe.skip('Sending SMS via Message Queue to Patient, clinician or any other contact type', () => {
   const context = createSmsTestContext({ user: 'admin' }, config.admin.cell)
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)

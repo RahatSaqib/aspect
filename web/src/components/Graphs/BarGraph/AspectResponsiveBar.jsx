@@ -7,6 +7,7 @@ import first from 'lodash/first'
 import isFunction from 'lodash/isFunction'
 import sortBy from 'lodash/sortBy'
 import PropTypes from 'prop-types'
+import useGraphClickThrough from '../../../hooks/useGraphClickThrough'
 import useI18n from '../../../hooks/useI18n'
 import { negateTimeZoneOffset } from '../../../oldComponents/shared/DateTimeInput/utils/date'
 import { GraphLegend } from '../GraphLegend'
@@ -21,7 +22,6 @@ import {
   getColorIdByFieldName,
 } from '../Helpers/Formatters'
 import { calcOverallRate } from '../Helpers/Formatters/calcs'
-import useGraphClickThrough from '../Hooks/useGraphClickThrough'
 import messages from '../intlMessages'
 import styles from './AspectResponsiveBar.css'
 import CustomBarGraphLegend from './CustomBarGraphLegend'
@@ -105,7 +105,9 @@ const AspectResponsiveBar = props => {
     type,
     i18nKeys,
   } = props
-  const { setConfig } = useGraphClickThrough()
+  // if we dont have a clickThrough we mock the setValue and dont use the hook
+  // eslint-disable-next-line react-hooks/rules-of-hooks
+  const { setValue } = baseConfig.clickThrough ? useGraphClickThrough(baseConfig) : { setValue: () => {} }
   const i18n = useI18n()
   const { format, formatMessage } = i18n
 
@@ -270,7 +272,7 @@ const AspectResponsiveBar = props => {
           keys={keysForBars}
           indexBy={indexBy}
           colorBy="index"
-          onClick={(value, event) => setConfig({ value, event, baseConfig })}
+          onClick={value => setValue && setValue(value)}
           enableLabel={!!showLabel}
           label={d => `${parseFloat(d.value).toFixed(showDecimals)}`}
           labelTextColor={labelTextColor}

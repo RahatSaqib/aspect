@@ -20,7 +20,7 @@ const TimezoneSelect = ({ id, name, label, value, onChange, error, helperText, d
         endAdornment: (
           <IconButton
             sx={{ visibility: value ? 'visible' : 'hidden' }}
-            onClick={() => onChange({ target: { name, value: '' } })}
+            onClick={() => onChange({ target: { name, value: null } })}
             disabled={disabled}
           >
             <ClearIcon />

@@ -19,7 +19,7 @@ const DeviceCoveragePage = () => {
   ]
 
   return (
-    <PkPage title={formatMessage(messages.coverageTitle)}>
+    <PkPage isMocked title={formatMessage(messages.coverageTitle)}>
       <NestedTable columns={columns} rows={data} hasDetail />
     </PkPage>
   )
@@ -36,7 +36,7 @@ function createData(id, name, quantity, lastSixMonths, used, rate, left) {
     used,
     rate,
     left,
-    detail: [
+    children: [
       { id: `${id}${id}`, name, quantity, lastSixMonths, used, rate, left },
       { id: `${id}${id}2`, name, quantity, lastSixMonths, used, rate, left },
     ],

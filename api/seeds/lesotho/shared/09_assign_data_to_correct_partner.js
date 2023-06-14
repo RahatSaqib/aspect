@@ -13,8 +13,8 @@ module.exports = async function (
   diseaseExternalId,
   partnerData
 ) {
-  const { partnerName, adminUserName, gxAlertDeviceApiKey } = partnerData
-  const { id: partnerId } = await knex('Partner').where('name', partnerName).first('id')
+  const { partner, adminUserName, gxAlertDeviceApiKey } = partnerData
+  const { id: partnerId } = await knex('Partner').where('externalId', partner.externalId).first('id')
   const siteExternalIds = sitesFromGxAlert.map(site => site.externalId)
   const siteIds = await knex('Site').whereIn('externalId', siteExternalIds).pluck('id')
   await knex('Site').whereIn('id', siteIds).update('partnerId', partnerId)
@@ -43,7 +43,8 @@ module.exports = async function (
         name: adminUserName,
       },
       partner: {
-        name: partnerName,
+        name: partner.name,
+        externalId: partner.externalId,
         serverUrl: 'https://lesotho.aspect.id',
       },
       geographyFromGxAlert,

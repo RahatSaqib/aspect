@@ -144,11 +144,11 @@ async function upsertTruenatDeviceTypeAndAssays(
   await seedPartnerDisease(knex)
 }
 
-async function upsertTruenatDevices(knex, truenatDevices, partnerName, adminUserName, countryAbbreviation) {
+async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adminUserName, countryAbbreviation) {
   await upsertTruenatDeviceTypeAndAssays(knex)
   // Initial Test Truenat Device
   const now = new Date()
-  const { id: partnerId } = await knex('Partner').where('name', partnerName).first('id')
+  const { id: partnerId } = await knex('Partner').where('externalId', partnerExternalId).first('id')
   const { id: adminId } = await knex('User').where('name', adminUserName).first('id')
   const auditFields = {
     createdOn: now,

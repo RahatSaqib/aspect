@@ -1,11 +1,14 @@
+const lowerCase = require('lodash/lowerCase')
+
 module.exports = async (knex, partnerData) => {
-  const dbPartner = await knex('Partner').where({ name: partnerData.partnerName }).first()
+  const dbPartner = await knex('Partner').where({ externalId: partnerData.partner.externalId }).first()
   const defaultValues = require('../fixtures/PartnerDataDefaultValues.json')
 
   const finalValues = { ...defaultValues, ...partnerData }
 
   const values = {
-    name: finalValues.partnerName,
+    name: finalValues.partner.name,
+    externalId: finalValues.partner.externalId,
     plugin: finalValues.plugin,
     autoAcknowledgeOlderThanDays: finalValues.autoAcknowledgeOlderThanDays,
     numberToLeaveUnacknowledged: finalValues.numberToLeaveUnacknowledged,
@@ -20,7 +23,7 @@ module.exports = async (knex, partnerData) => {
     partnerTypeId: finalValues.partnerTypeId,
     daysLimitToNotifyResults: finalValues.daysLimitToNotifyResults,
     hoursNotificationsShouldWaitForCustomFields: finalValues.hoursNotificationsShouldWaitForCustomFields,
-    isDefault: true,
+    isDefault: finalValues.isDefault ?? true,
     excludePattern: finalValues.excludePattern,
   }
 
@@ -29,6 +32,8 @@ module.exports = async (knex, partnerData) => {
     return partnerId
   }
 
-  await knex('Partner').update(values).where({ name: partnerData.partnerName })
+  await knex('Partner')
+    .update(values)
+    .where({ externalId: partnerData.partner.externalId || lowerCase(partnerData.name) })
   return dbPartner.id
 }

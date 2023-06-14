@@ -1,0 +1,3 @@
+import DeviceMaintenanceStatusSelect from './DeviceMaintenanceStatusSelect'
+
+export default DeviceMaintenanceStatusSelect

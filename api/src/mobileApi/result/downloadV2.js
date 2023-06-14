@@ -100,7 +100,7 @@ const updateResultWorkflowStatus = async (idsToUpdate, userId, resultWorkflowSta
       now,
       userId
     )
-    await updateResultWorkflowLogQuery(resultId, resultWorkflowStatusLogId)
+    await updateResultWorkflowLogQuery(resultId, userId, now, resultWorkflowStatusLogId)
   })
 }
 

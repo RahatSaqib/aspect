@@ -1,7 +1,10 @@
 const jobFunctions = require('./jobFunctions')
 
 module.exports = {
-  partnerName: 'Pakistan',
+  partner: {
+    name: 'Pakistan NTP',
+    externalId: 'pakistanNtp',
+  },
   adminUserName: 'admin',
   adminPassword: 'x2KusKKEqR8M',
   deviceApiToken: '77zc0ar862xcys2626w6',
@@ -35,4 +38,10 @@ module.exports = {
   serverUrl: 'https://pakistan.aspect.id',
   apiUrl: 'https://pakistan.aspect.id/api',
   excludePattern: '^ExcludeMe.+$',
+  deviceCapacity: [
+    {
+      deviceTypeExternalId: 'CepheidGeneXpert',
+      modules: [1, 2, 6, 10, 12, 14, 18, 24, 30, 36, 42, 48],
+    },
+  ],
 }

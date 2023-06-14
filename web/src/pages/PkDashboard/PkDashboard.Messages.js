@@ -35,7 +35,7 @@ const messages = {
     // summary
     molecularAssay: {
       id: 'p.PkDashboard.molecularAssay',
-      defaultMessage: 'Tests for TB using MTB/Rif assay in current year',
+      defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
     },
     molecularAssay24: { id: 'p.PkDashboard.molecularAssay24', defaultMessage: 'Last 24 hours' },
     TB: { id: 'p.PkDashboard.TB', defaultMessage: 'TB Cases Diagnosed in current year' },
@@ -117,6 +117,7 @@ const messages = {
     titleother: { id: 'p.PkDashboard.titleother', defaultMessage: 'Other' },
     covid: { id: 'p.PkDashboard.covid', defaultMessage: 'Covid' },
     hiv: { id: 'p.PkDashboard.hiv', defaultMessage: 'Hiv' },
+    incompleteScreen: { id: 'p.PkDashboard.incompleteScreen', defaultMessage: 'Screen is not yet complete' },
   }),
 }
 

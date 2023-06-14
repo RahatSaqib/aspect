@@ -7,10 +7,10 @@ const { upsertJobFunctionFixture } = require('../common')
 module.exports = async function upsertReportsAndJobFunctions(
   knex,
   jobFunctionFixture,
-  partnerName,
+  partnerExternalId,
   { countrySpecificReportFixture } = {}
 ) {
-  const [partnerId] = await knex('Partner').where({ name: partnerName }).pluck('id')
+  const [partnerId] = await knex('Partner').where({ externalId: partnerExternalId }).pluck('id')
   await upsertReports(knex, countrySpecificReportFixture)
   await upsertJobFunctionFixture(knex, jobFunctionFixture, partnerId)
 }

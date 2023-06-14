@@ -50,7 +50,7 @@ async function upsertGeography(knex, geography) {
       'culture',
       'countryCode',
       'timezone',
-      'portNumber',
+      // 'portNumber', ??
       'exportColumns',
       'inventoryDaysThreshold',
       'monthStartsOnDay',
@@ -59,15 +59,14 @@ async function upsertGeography(knex, geography) {
       (await knex('Country as c')
         .leftJoin('Geography as g', 'c.id', 'g.countryId')
         .where('c.abbreviation', country.abbreviation)
-        .andWhere(function () {
-          this.whereNull('g.stateId')
-        })
-        .andWhere(function () {
-          this.whereNull('g.lgaId')
-        })
+        .whereNull('g.stateId')
+        .whereNull('g.lgaId')
         .first('c.id as countryId', 'g.id as countryGeographyId')) || {}
+
     if (!countryId) {
       ;[countryId] = await knex('Country').insert(countryData)
+    } else {
+      await knex('Country').where('id', countryId).update(countryData)
     }
     if (!countryGeographyId) {
       ;[countryGeographyId] = await knex('Geography').insert({
@@ -122,14 +121,13 @@ async function commonUpserts(
     (await knex('Person')
       .where({
         userId: adminId,
-        name: 'Admin',
         geographyId,
       })
       .first('id')) || {}
   if (!adminPersonId) {
     ;[adminPersonId] = await knex('Person').insert({
       userId: adminId,
-      name: 'Admin',
+      name: 'Aspect Admin',
       lastPartnerId: partnerId,
       lastCountryId: countryId,
       geographyId,
@@ -229,23 +227,36 @@ async function upsertDemoUsersPerJobFunction(
   const insertUsers = jobFunctions.map(async jf => {
     const { id: jobFunctionId, name: jobFunctionName } = jf
     const userName = jobFunctionName.toLowerCase().replace(' ', '-')
-    const [userId] = await knex('User').insert({
-      name: userName,
-      ...commonUserFields,
-    })
-    const [personId] = await knex('Person').insert({
-      name: userName,
-      userId,
-      ...commonPersonFields,
-    })
-    const [jobId] = await knex('Job').insert({
-      personId,
-      jobFunctionId,
-    })
-    await knex('JobContext').insert({
-      jobId,
-      geographyId,
-    })
+    const user = await knex('User').where({ name: userName }).first()
+    let userId = user?.id
+    if (!userId) {
+      ;[userId] = await knex('User').insert({
+        name: userName,
+        ...commonUserFields,
+      })
+    }
+    const person = await knex('Person').where({ userId }).first()
+    let personId = person?.id
+    if (!personId) {
+      ;[personId] = await knex('Person').insert({
+        name: userName,
+        userId,
+        ...commonPersonFields,
+      })
+    }
+    const job = await knex('Job').where({ personId, jobFunctionId }).first()
+    let jobId = job?.id
+    if (!jobId) {
+      ;[jobId] = await knex('Job').insert({ personId, jobFunctionId })
+    }
+    const jonContext = await knex('JobContext').where({ jobId, geographyId }).first()
+    const jonContextId = jonContext?.id
+    if (!jonContextId) {
+      await knex('JobContext').insert({
+        jobId,
+        geographyId,
+      })
+    }
   })
   await Promise.all(insertUsers)
 }
@@ -1042,7 +1053,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
 
   const partnerId = await upsertPartnerData(knex, {
     ...partnerData,
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
   })
   const returnValue = {
     adminId,
@@ -1783,6 +1794,9 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
     updatedOn: now,
     updatedBy: adminId,
   }
+
+  const siteTypes = await knex('SiteType').select('id', 'externalId')
+
   await Promise.each(sitesFromGxAlert, async site => {
     const state = site.stateName
       ? statesByName[site.stateName.toLowerCase()] || {
@@ -1809,13 +1823,15 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
       })
       .first()
 
-    const { id: siteTypeId } = await knex('SiteType')
-      .where({
-        externalId: site.type || 'lab',
-      })
-      .first()
+    const siteTypeId = siteTypes.find(st => st.externalId === (site.type || 'lab')).id
 
-    // sites
+    const warehouse = await knex('Site as w')
+      .join('SiteType as st', 'w.siteTypeId', 'st.id')
+      .where('st.externalId', 'warehouse')
+      .where('w.externalId', site.warehouse_externalId || null)
+      .first({ warehouseId: 'w.id' })
+    const warehouseId = warehouse ? warehouse.warehouseId : null
+
     const siteData = {
       partnerId,
       geographyId: siteGeographyId,
@@ -1826,10 +1842,13 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
       latitude: site.latitude,
       longitude: site.longitude,
       timezoneId: country.timezone,
+      parentWarehouseId: warehouseId || null,
       customProperties: site.customProperties || null,
       ...auditFields,
     }
+
     const existingSite = await knex('Site').where('externalId', site.externalId).orWhere('name', site.name).first('id')
+
     let siteId = 0
     if (existingSite) {
       siteId = existingSite.id

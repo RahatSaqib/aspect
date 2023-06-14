@@ -2,16 +2,20 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const logger = require('../../src/shared/logger')
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 const config = require('../../src/config')
 
 module.exports = async (knex, partnerData, contacts) => {
-  const saltRounds = parseInt(config.passwordSaltRounds, 10)
+  const now = new Date()
 
-  const { partnerName, adminUserName, partnerAbbreviation, defaultPassword = 'WelcomeToAspect' } = partnerData
+  const {
+    partner: { externalId: partnerExternalId },
+    adminUserName,
+    partnerAbbreviation,
+    defaultPassword = 'WelcomeToAspect',
+  } = partnerData
 
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
 
   const jobFunctions = await knex('JobFunction')
     .where({ partnerId })
@@ -23,7 +27,7 @@ module.exports = async (knex, partnerData, contacts) => {
       }, {})
     )
 
-  const now = new Date()
+  // audit fields
   const { id: adminId } = await knex('User').where({ name: adminUserName }).first('id')
   const auditFields = {
     createdOn: now,
@@ -31,29 +35,36 @@ module.exports = async (knex, partnerData, contacts) => {
     updatedOn: now,
     updatedBy: adminId,
   }
+
   const country = await knex('Country as c')
     .where({ 'c.abbreviation': partnerAbbreviation })
     .first('c.id', 'c.culture', 'c.timezone')
+
   const countryGeography = await knex('Geography')
     .where('countryId', country.id)
     .whereNull('stateId')
     .whereNull('lgaId')
     .first('id')
+
   const { id: countryId } = country
+
   const states = await knex('Geography as g')
     .innerJoin('State as s', 's.id', 'g.stateId')
     .where({ 'g.countryId': country.id })
+    .whereNull('lgaId')
     .select('g.countryId', 's.id', 's.name')
+
+  // Lgas with states
   const lgas = await knex('Geography as g')
     .innerJoin('Lga as l', 'l.id', 'g.lgaId')
     .innerJoin('State as s', 's.id', 'g.stateId')
     .where({ 'g.countryId': country.id })
     .select('g.countryId', 'l.id', 'l.name', 's.name as stateName')
+
   const provincesByName = states.reduce((provinceMemo, province) => {
     provinceMemo[province.name.toLowerCase()] = province
-    const provinceDistricts = _.filter(lgas, {
-      stateName: province.name,
-    })
+    const provinceDistricts = lgas.filter(l => l.stateName === province.name)
+
     if (provinceDistricts) {
       provinceMemo[province.name.toLowerCase()].districts = provinceDistricts.reduce((districtMemo, district) => {
         districtMemo[district.name.toLowerCase()] = district
@@ -76,26 +87,7 @@ module.exports = async (knex, partnerData, contacts) => {
 
   await Promise.each(contacts, async person => {
     let userId = null
-    if (person.username) {
-      const existingUser = await knex('User').where('name', person.username).first('id')
-      if (existingUser) {
-        userId = existingUser.id
-      } else {
-        const pw = bcrypt.hashSync(person.password || defaultPassword, saltRounds)
-        const baseUserData = {
-          password: pw,
-          failedPasswordAttempts: 0,
-          legacyPassword: person.getPasswordFromGxAlert ? 1 : 0,
-          lockedOut: 0,
-        }
-        ;[userId] = await knex('User').insert({
-          name: person.username,
-          approved: 1,
-          createdOn: now,
-          ...baseUserData,
-        })
-      }
-    }
+    userId = await getOrCreateUserForPerson(person, knex, userId, defaultPassword, now)
 
     const province =
       !_.isEmpty(person.geographies) && person.geographies[0].stateName
@@ -208,18 +200,21 @@ module.exports = async (knex, partnerData, contacts) => {
 
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
+        // Upsert Jobs
         let { id: jobId } =
           (await knex('Job').where({ personId, jobFunctionId: jobFunctions[jobFunctionName] }).first()) || {}
+
         if (!jobId) {
           ;[jobId] = await knex('Job').insert({
             personId,
             jobFunctionId: jobFunctions[jobFunctionName],
           })
         }
+
         if (
           !['Admin', 'Regional Officer'].includes(jobFunctionName) &&
           !_.isEmpty(person.sites) &&
-          _.some(person.sites, site => !!siteIds[site.shortName || site.name])
+          person.sites.some(site => !!siteIds[site.shortName || site.name])
         ) {
           const existingJobContexts = await knex('JobContext').whereNotNull('siteId').andWhere({ jobId }).select()
           const expectedJobContexts = person.sites
@@ -234,9 +229,6 @@ module.exports = async (knex, partnerData, contacts) => {
           )
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
-          } else {
-            logger.error(person.sites.filter(site => !!siteIds[site.shortName || site.name]))
-            logger.error(`There is an existing JobContext for site ${JSON.stringify(person.sites)} for this person`)
           }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
@@ -244,6 +236,7 @@ module.exports = async (knex, partnerData, contacts) => {
                 siteId: existingJobContext.siteId,
               })
           )
+
           await knex('JobContext')
             .where('jobId', jobId)
             .whereNull('geographyId')
@@ -305,8 +298,6 @@ module.exports = async (knex, partnerData, contacts) => {
           )
           if (!_.isEmpty(jobContextItem)) {
             await knex('JobContext').insert(jobContextItem)
-          } else {
-            logger.error('Attempt to insert empty data to table JobContext')
           }
           const existingJobContextsToRemove = existingJobContexts.filter(
             existingJobContext =>
@@ -336,4 +327,29 @@ module.exports = async (knex, partnerData, contacts) => {
       })
     }
   })
+}
+
+async function getOrCreateUserForPerson(person, knex, userId, defaultPassword, now) {
+  const saltRounds = parseInt(config.passwordSaltRounds, 10)
+  if (person.username) {
+    const existingUser = await knex('User').where('name', person.username).first('id')
+    if (existingUser) {
+      userId = existingUser.id
+    } else {
+      const pw = bcrypt.hashSync(person.password || defaultPassword, saltRounds)
+      const baseUserData = {
+        password: pw,
+        failedPasswordAttempts: 0,
+        legacyPassword: person.getPasswordFromGxAlert ? 1 : 0,
+        lockedOut: 0,
+      }
+      ;[userId] = await knex('User').insert({
+        name: person.username,
+        approved: 1,
+        createdOn: now,
+        ...baseUserData,
+      })
+    }
+  }
+  return userId
 }

@@ -329,4 +329,13 @@ module.exports = [
     ],
   }),
   technician,
+  {
+    name: 'Aspect Tester',
+    permissions: [
+      {
+        module: 'dashboard-v2',
+        activity: 'view',
+      },
+    ],
+  },
 ]

@@ -1,11 +1,170 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
-const { allResultCategoryToId } = require('../../shared/dictionary')
-const { addConstraints } = require('../../auth/constraints')
+const { allResultCategoryToId, resultCategoryToId, deviceMaintenanceTypeToId } = require('../../shared/dictionary')
+const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { usedAssay } = require('../../assay/common/db')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
+
+const SELECT_SHOW_FIELDS = [
+  'd.id',
+  'd.name',
+  'd.shortName',
+  'd.createdOn',
+  'd.lastPingOn',
+  'd.lastSeenOn as lastSeen',
+  'da.name as approval',
+  'dms.externalId as maintenanceStatus',
+  'dms.i18nKey as maintenanceStatusI18nKey',
+  'dms.name as maintenanceStatusName',
+  'dms.active as maintenanceStatusActive',
+  'dms.manuallySet as maintenanceStatusManuallySet',
+  'da.token as approvalToken',
+  'da.i18nKey as approvalStatusI18nKey',
+  'dc.name as category',
+  'dc.hasResults',
+  'dc.hasConnectivity',
+  'd.siteId',
+  's.name as siteName',
+  'd.hostId',
+  'd.deviceTypeId',
+  'd.deviceApprovalId',
+  'd.configurationData',
+  'd.notes',
+  'd.serial',
+  'dt.id as deviceTypeId',
+  'dt.name as deviceTypeName',
+  'dt.externalId as deviceTypeExternalId',
+  'dt.configurationDataSchema',
+  'dt.deviceOperationSchema',
+  'dp.dailyCapacity',
+  'dp.id as dailyCapacityId',
+  'dp.modules as dailyCapacityModules',
+  'dp.i18nKey as dailyCapacityModulesI18nKey',
+  'frd30.resultCount as resultCountThisMonth',
+  'frd60.resultCount as resultCount60',
+  knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
+  knex.raw('ifnull(frd60Errors.resultCount, 0) as errorCount60'),
+  knex.raw("dmsl.data->>'$.options.data.notes' as maintenanceStatusNotes"),
+  'dmC.contextDate as calibrationDate',
+  'dmC.notes as calibrationNotes',
+  'dmW.contextDate as warrantyDueDate',
+  'dmW.notes as warrantyNotes',
+]
+
+async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW_FIELDS }) {
+  const dataConstraints = await getConstraints(credentials)
+
+  const maintenanceCalibrationId = await deviceMaintenanceTypeToId('calibration')
+  const maintenanceWarrantyId = await deviceMaintenanceTypeToId('warranty')
+
+  const resultCategoryErrorId = await resultCategoryToId('Error')
+
+  const device = await getDeviceByIdBaseQuery(dataConstraints, deviceId, fields, true, true)
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
+    .leftJoin('DeviceCapacity as dp', 'd.deviceCapacityId', 'dp.id')
+    .leftJoin('FactResultsDevice as frd30', function () {
+      this.on('d.id', 'frd30.deviceId').andOn('frd30.days', 30)
+    })
+    .leftJoin('FactResultsDevice as frd60', function () {
+      this.on('d.id', 'frd60.deviceId').andOn('frd60.days', 60)
+    })
+    .leftJoin('FactResultsDeviceByCategory1 as frd30Errors', function () {
+      this.on('d.id', 'frd30Errors.deviceId')
+        .andOn('frd30Errors.days', 30)
+        .andOn('frd30Errors.resultCategory1', resultCategoryErrorId)
+    })
+    .leftJoin('FactResultsDeviceByCategory1 as frd60Errors', function () {
+      this.on('d.id', 'frd60Errors.deviceId')
+        .andOn('frd60Errors.days', 60)
+        .andOn('frd60Errors.resultCategory1', resultCategoryErrorId)
+    })
+    // device calibration
+    .leftOuterJoin('DeviceMaintenance as dmC', function () {
+      this.on('d.id', 'dmC.deviceId')
+        .andOn('dmC.current', 1)
+        .andOn('dmC.deviceMaintenanceTypeId', maintenanceCalibrationId)
+    })
+    // device warranty
+    .leftOuterJoin('DeviceMaintenance as dmW', function () {
+      this.on('d.id', 'dmW.deviceId')
+        .andOn('dmW.current', 1)
+        .andOn('dmW.deviceMaintenanceTypeId', maintenanceWarrantyId)
+    })
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        device: 'd',
+        deviceType: 'dt',
+      },
+      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+    )
+
+  if (!device) {
+    return null
+  }
+
+  device.configurationData = JSON.parse(device.configurationData) || {}
+  device.deviceType = {
+    id: device.deviceTypeId,
+    name: device.deviceTypeName,
+    externalId: device.deviceTypeExternalId,
+    configurationDataSchema: JSON.parse(device.configurationDataSchema) || {},
+    deviceOperationSchema: JSON.parse(device.deviceOperationSchema) || {},
+  }
+  delete device.deviceTypeId
+  delete device.deviceTypeName
+  delete device.deviceTypeExternalId
+  delete device.configurationDataSchema
+  delete device.deviceOperationSchema
+
+  device.resultCountLastMonth = device.resultCount60 - device.resultCountThisMonth
+  device.errorCountLastMonth = device.errorCount60 - device.errorCountThisMonth
+
+  device.utilizationRateThisMonth = device.dailyCapacity
+    ? device.resultCountThisMonth / (device.dailyCapacity * 30)
+    : null
+
+  device.errorRateThisMonth = device.resultCountThisMonth
+    ? device.errorCountThisMonth / device.resultCountThisMonth
+    : null
+
+  return device
+}
+
+function getDeviceByIdBaseQuery(
+  dataConstraints,
+  deviceId,
+  fields = 'd.*',
+  showUnapprovedDevices = false,
+  showDecommissionedDevices = false
+) {
+  const query = knex('Device as d')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .modify(
+      addConstraints,
+      dataConstraints,
+      {
+        partner: 'p',
+        geography: 'g',
+        site: 's',
+        device: 'd',
+      },
+      { showUnapprovedDevices, showDecommissionedDevices }
+    )
+    .where('d.id', +deviceId)
+    .first(fields)
+
+  return query
+}
 
 function getDeviceBaseExtendedQuery(
   query,
@@ -81,7 +240,7 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
 
   // get total count for paging
-  const getCount = deviceQuery.clone().countDistinct('d.id').as('count').first()
+  const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
   const queryResults = knex('Result as r')
     .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .modify(addConstraints, dataConstraints, {
@@ -554,6 +713,7 @@ function modulesWithLastResultBeforeMinDate(minDate) {
 }
 
 module.exports = {
+  getDeviceByDeviceId,
   getDeviceWorkload,
   getResultCategoriesByAssay,
   getDeviceBaseQuery,
@@ -589,4 +749,5 @@ module.exports = {
   getResultCategoryGroupColumns,
   moduleDisabledIssues,
   modulesWithLastResultBeforeMinDate,
+  getDeviceByIdBaseQuery,
 }

@@ -2,7 +2,7 @@ import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
-import { getFilters } from '../../oldComponents/filter/utils'
+import { getFilters } from '../../oldComponents/utils'
 import {
   filterFieldsRejectedError,
   errorPleaseTryAgainInAFewMinutes,

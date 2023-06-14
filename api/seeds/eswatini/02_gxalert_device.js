@@ -17,7 +17,8 @@ async function seed(knex) {
         password: partnerData.adminPassword,
       },
       partner: {
-        name: partnerData.partnerName,
+        name: partnerData.partner.name,
+        externalId: partnerData.partner.externalId,
         serverUrl: partnerData.serverUrl,
       },
       geographyFromGxAlert,
@@ -33,7 +34,7 @@ async function seed(knex) {
     partnerData
   )
 
-  const { id: partnerId } = await knex('Partner').where({ name: partnerData.partnerName }).first('id')
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerData.partner.externalId }).first('id')
 
   await upsertDashboardWidgets(knex, partnerId, dashboardWidgets)
 }

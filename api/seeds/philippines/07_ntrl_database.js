@@ -1,10 +1,10 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const { id: partnerId } = await getPartnerByName(knex, 'Philippines')
+  const { id: partnerId } = await getPartnerByExternalId(knex, 'Philippines')
   const ntrlSite = await knex('Site')
     .where({
       shortName: 'NTRL',

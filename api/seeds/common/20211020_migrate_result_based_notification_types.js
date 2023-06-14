@@ -1,8 +1,8 @@
 const Promise = require('bluebird')
 const isNil = require('lodash/isNil')
 
-module.exports = async (knex, partnerName) => {
-  const [partnerId] = await knex('Partner').where({ name: partnerName }).pluck('id')
+module.exports = async (knex, partnerExternalId) => {
+  const [partnerId] = await knex('Partner').where({ externalId: partnerExternalId }).pluck('id')
   const [resultBasedId] = await knex('NotificationTypeCategory').where({ externalId: 'resultBased' }).pluck('id')
   const [resultReceivedIssueTypeId] = await knex('IssueType').where({ externalId: 'ResultReceived' }).pluck('id')
   const assays = await knex('Assay')

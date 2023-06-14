@@ -2,7 +2,7 @@
 const fs = require('fs')
 const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_functions')
 
-const { partnerName, fixtures } = require(`../${process.env['seeds.directory'].replace(
+const { partner, fixtures } = require(`../${process.env['seeds.directory'].replace(
   './seeds/',
   ''
 )}/fixtures/partnerData`)
@@ -14,7 +14,7 @@ function exists(path) {
 module.exports = require('../utils').seed(async knex => {
   const { jobFunctions } = fixtures
   const countrySpecificReportFixture = (await exists(absolutePath)) ? require(relativeReportPath) : {}
-  await updateReportsAndJobFunctions(knex, jobFunctions, partnerName, {
+  await updateReportsAndJobFunctions(knex, jobFunctions, partner.externalId, {
     countrySpecificReportFixture,
   })
 }, __filename)

@@ -18,6 +18,8 @@
 
 .Summary__Description__Link {
   margin: 0 5px;
+  cursor: pointer;
+  color: var(--aspect-color-blue-1);
 }
 
 .Summary__Description__Action {

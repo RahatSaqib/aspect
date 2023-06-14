@@ -3,7 +3,10 @@ const jobFunctions = require('../../shared/fixtures/jobFunctions')
 module.exports = {
   adminUserName: 'tb_admin',
   adminPassword: 'DM3tFfbQnx',
-  partnerName: 'Lesotho TB',
+  partner: {
+    name: 'Lesotho TB',
+    externalId: 'lesothoTb',
+  },
   gxAlertDeviceApiKey: 'auv294emdbaervaeqzxc',
   plugin: '',
   fixtures: {

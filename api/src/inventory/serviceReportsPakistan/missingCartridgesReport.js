@@ -7,9 +7,10 @@ async function getMissingCartridgesReport(dataConstraints, query) {
     .innerJoin('Result as r', 'm.resultId', 'r.id')
     .innerJoin('Site as s', 'm.SiteId', 's.id')
     .innerJoin('Geography as g', 'r.geographyId', 'g.id')
-    .innerJoin('State as st', 'g.stateId', 'st.id')
-    .innerJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+    .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
@@ -31,7 +32,8 @@ async function getMissingCartridgesReport(dataConstraints, query) {
       'l.name as district',
       'm.expirationDate',
       'm.lotNumber',
-      'pa.name as warehouse'
+      'pa.name as warehouse',
+      'c.name as consumableName'
     )
     .orderBy('r.endedOn')
 
@@ -48,6 +50,7 @@ async function getMissingCartridgesReport(dataConstraints, query) {
       { key: 'expirationDate', header: 'Expiration Date' },
       { key: 'lotNumber', header: 'Lot Number' },
       { key: 'warehouse', header: 'Warehouse' },
+      { key: 'consumableName', header: 'Consumables' },
     ],
     defaultNoDataMessage: 'No data',
   }

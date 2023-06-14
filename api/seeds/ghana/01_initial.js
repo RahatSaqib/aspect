@@ -19,7 +19,7 @@ const { adminUserName, adminPassword, deviceApiToken, partnerAbbreviation } = pa
 async function seed(knex) {
   const partnerId = await upsertPartnerData(knex, {
     ...partnerData,
-    partnerTypeId: await partnerTypeToId('Operating'),
+    partnerTypeId: await partnerTypeToId('operating'),
   })
   const [adminId] = await knex('User').insert({
     name: adminUserName,
@@ -39,7 +39,8 @@ async function seed(knex) {
         password: adminPassword,
       },
       partner: {
-        name: partnerData.partnerName,
+        name: partnerData.partner.name,
+        externalId: partnerData.partner.externalId,
         serverUrl: partnerData.serverUrl,
       },
       geographyFromGxAlert: geography,

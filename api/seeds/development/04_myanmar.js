@@ -45,7 +45,7 @@ async function seed(knex) {
       htmlBody: 'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })
 
-  const { id: partnerId } = await knex('Partner').where({ name: 'Myanmar' }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: 'myanmar' }).first()
 
   await knex('IssueEscalationTrigger')
     .update({
@@ -311,5 +311,5 @@ async function seed(knex) {
   await updateDashboardWidgetQueries(knex)
 
   // correction requested in SD-769
-  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar')
+  await updateDataCategoryNotificationTypeForRO(knex, 'Myanmar', 'myanmar')
 }

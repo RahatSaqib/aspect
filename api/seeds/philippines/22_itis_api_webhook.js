@@ -3,11 +3,11 @@ module.exports = require('../utils').seed(seed, __filename)
 const { adminUserName } = require('./fixtures/partnerData')
 const { itisWebhookTemplate } = require('./fixtures/webhookTemplate')
 const upsertWebHookTemplates = require('../common/upsert_webhook_templates')
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 const { messageSeverityToId, issueCategoryToId, issueEventStatusToId } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const { id: partnerId } = await getPartnerByName(knex, 'Philippines')
+  const { id: partnerId } = await getPartnerByExternalId(knex, 'Philippines')
   await knex('Partner').where('id', partnerId).update('plugin', 'philippines')
   const now = new Date()
   const { id: adminId } = await knex('User').where({ name: adminUserName }).first('id')
