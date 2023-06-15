@@ -59,7 +59,11 @@ async function fetchEntriesServiceHandler(request) {
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
   const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
-  const entries = _.orderBy(_.uniqBy(_.concat(transformedResults, transformedSamples), 'id'), ['updatedOn'], ['desc'])
+  const entries = _.orderBy(
+    _.uniqBy(_.concat(transformedResults, transformedSamples).filter(_.identity), 'id'),
+    ['updatedOn'],
+    ['desc']
+  )
 
   return {
     ok: !!entries,
