@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { format, endOfMonth, startOfMonth, subMonths, addMonths } = require('date-fns')
+const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
 
 const { addConstraints } = require('../../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams } = require('../../../db')
@@ -8,7 +8,7 @@ const { getCellsByValue, setCellStyle } = require('../../../shared/excel')
 const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
-  getLocalDateTimeStringInUtc,
+  getAllMonthsInRange,
 } = require('../../../shared/date')
 const { styleYellow, styles, styleSumRed } = require('./excelStyles')
 
@@ -23,16 +23,6 @@ const getFieldsForLine = (resultCategory, pulmonary, smear, historyKeys) => {
     }
   })
   return items
-}
-// ---------------------------------------------------------------------------------------
-function getAllMonthsInRange(minDate, maxDate) {
-  let allRanges = []
-  let currentMonth = getLocalDateTimeStringInUtc(minDate)
-  while (currentMonth <= getLocalDateTimeStringInUtc(maxDate)) {
-    allRanges = [...allRanges, format(currentMonth, 'yyyy-MM')]
-    currentMonth = addMonths(currentMonth, 1)
-  }
-  return allRanges
 }
 
 // ---------------------------------------------------------------------------------------
@@ -54,7 +44,6 @@ async function getXpertSiteDetailedReport(dataConstraints, query) {
    * then all 0's will be displayed.
    */
   const allYearAndMonth = getAllMonthsInRange(minDate, maxDate)
-  allYearAndMonth.sort()
 
   const assayIds = await allAssayToId()
   // const diseaseId = await diseaseToId('tb')

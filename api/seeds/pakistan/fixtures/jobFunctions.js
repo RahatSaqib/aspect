@@ -97,6 +97,7 @@ module.exports = [
       'pk_xpert_site_detailed_report',
       'pk_xpert_site_summary_site_wise_report',
       'pk_missing_cartridges_report',
+      'pk_xpert_workload_summary_report',
     ],
   }),
   mergeJobFunctions(regionalOfficer, {
@@ -172,6 +173,7 @@ module.exports = [
       'pk_xpert_site_detailed_report',
       'pk_xpert_site_summary_site_wise_report',
       'pk_missing_cartridges_report',
+      'pk_xpert_workload_summary_report',
     ],
   }),
   mergeJobFunctions(labUser, {
@@ -251,6 +253,7 @@ module.exports = [
       'pk_xpert_site_detailed_report',
       'pk_xpert_site_summary_site_wise_report',
       'pk_missing_cartridges_report',
+      'pk_xpert_workload_summary_report',
     ],
   }),
   mergeJobFunctions(clinician, {
@@ -330,6 +333,7 @@ module.exports = [
       'pk_xpert_site_detailed_report',
       'pk_xpert_site_summary_site_wise_report',
       'pk_missing_cartridges_report',
+      'pk_xpert_workload_summary_report',
     ],
   }),
   technician,
