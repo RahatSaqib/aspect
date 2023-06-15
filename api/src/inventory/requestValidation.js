@@ -20,6 +20,7 @@ const inventoryFilters = {
 const inventoryTransferFilters = {
   originSiteName: Joi.string().allow('', null),
   destinationSiteName: Joi.string().allow('', null),
+  consumableId: Joi.number().integer().positive().allow('', null),
   consumableName: Joi.string().allow('', null),
 }
 
