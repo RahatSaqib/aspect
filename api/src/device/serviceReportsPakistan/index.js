@@ -2,7 +2,8 @@ const _ = require('lodash')
 const { getConstraints } = require('../../auth/constraints')
 const { getXpertSiteDetailedReport } = require('./xpertSiteDetailedReport')
 const { getAllDeviceReportData } = require('../serviceReports/devicesAndSitesOverviewReport')
-const { getResultCategoryGroupColumns } = require('../common/db')
+const { getResultCategoryGroupColumns, getLastUploadDateBySites } = require('../common/db')
+const { getOffsetFromIsoDateString } = require('../../shared/date')
 
 async function xpertSiteDetailedReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -18,6 +19,8 @@ async function xpertSiteSummarySiteWiseReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
   const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const { maxDate = new Date() } = query
+  const offset = getOffsetFromIsoDateString(maxDate)
   const rows = await builder
     .leftJoin('Partner as pImpl', 'pImpl.id', 'd.implementingPartnerId')
     .select(['pImpl.name as implementingPartner'])
@@ -50,11 +53,16 @@ async function xpertSiteSummarySiteWiseReport(auth, query) {
     header: a.columnName,
   }))
 
+  const allSiteIds = _.keys(bySiteId)
+  /**
+   * Get global (not within date range) `lastUploadOn` for all sites
+   */
+  const lastUploadBySites = await getLastUploadDateBySites(allSiteIds, offset)
   /**
    * construct final list of sites and aggregate totals and  custom fields counts
    */
   const sites = _.reduce(
-    _.keys(bySiteId),
+    allSiteIds,
     (acc, siteId) => {
       const { data, ...rest } = bySiteId[siteId]
 
@@ -66,7 +74,7 @@ async function xpertSiteSummarySiteWiseReport(auth, query) {
         },
         {}
       )
-      const { lastUploadOn } = _.maxBy(data, 'lastUploadOn') || {}
+      const lastUploadOn = lastUploadBySites.find(x => x.siteId === +siteId)?.lastUploadOn
       /**
        * when different devices in the site use different implementingPartner's - assemble
        * final implementingPartner for the site

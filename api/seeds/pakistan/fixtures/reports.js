@@ -46,7 +46,7 @@ const xpertSiteDetailedReport = {
 
 const xpertSiteSummaryReportSiteWise = {
   name: 'Xpert Site Summary Report - Site Wise',
-  description: 'Shows sites along with error rates and combined invalid/error rates.',
+  description: 'List of sites with counts of the results of different types from all devices at the site',
   i18nKey: 'xpert_site_summary_site_wise_report',
   i18nKeyDescription: 'xpert_site_summary_site_wise_report_description',
   externalId: 'pk_xpert_site_summary_site_wise_report', // folder name in /templates with low dash casing
