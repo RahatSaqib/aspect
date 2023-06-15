@@ -34,6 +34,7 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     .orderBy('st.name', 'lg.name')
 
   const dateRanges = getAllMonthsInRange(dateFrom.toISOString(), dateTo.toISOString())
+  const totalColumns = []
 
   for (const dateRange of dateRanges) {
     const date = new Date(`${dateRange}-01`)
@@ -56,37 +57,19 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
         `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)`
       ),
     })
+
+    totalColumns.push(
+      ...[
+        `${alias}_total`,
+        `${alias}_mtbDetectedTraceDetected`,
+        `${alias}_mtbTraceDetected`,
+        `${alias}_mtbDetectedRifDetected`,
+      ]
+    )
   }
 
-  // Add summary row per provinceName
   const data = await baseQuery
-  const newData = []
-  let group = []
-  for (const row of data) {
-    if (group.length > 0 && group[0].provinceName !== row.provinceName) {
-      const keys = Object.keys(group[0]).filter(key => key.startsWith('resultsCount'))
-
-      const counters = group.reduce((prev, current) => {
-        const object = {}
-        keys.forEach(key => {
-          object[key] = (prev[key] || 0) + current[key]
-        })
-        return object
-      }, {})
-      newData.push({
-        provinceName: group[0].provinceName,
-        districtName: 'All',
-        deviceName: '',
-        assayName: '',
-        responsible: '',
-        approvalStatus: '',
-        ...counters,
-      })
-      newData.push(...group)
-      group = []
-    }
-    group.push(row)
-  }
+  const newData = addTotalRowByProvince(data, totalColumns)
 
   const dynamicColumns = [
     { key: 'total', name: 'GXpert Tested' },
@@ -102,6 +85,53 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
   }))
 
   return { data: newData, dynamicColumns }
+}
+
+const sumOfColumns = (rows, columns) => {
+  // Create a seed object with all columns as keys and initializing them with zero
+  const countersSeed = columns.reduce((object, column) => {
+    return { ...object, [column]: 0 }
+  }, {})
+
+  // Sum all the columns
+  return rows.reduce((counters, row) => {
+    columns.forEach(column => {
+      counters[column] += row[column]
+    })
+    return counters
+  }, countersSeed)
+}
+
+const addTotalRowByProvince = (rows, columnsToSum) => {
+  const newData = []
+  let group = [] // group of rows with the same province
+  for (const [i, row] of rows.entries()) {
+    const isLastRow = i === rows.length - 1
+    const shouldCreateNewGroup = isLastRow || (group.length > 0 && group[0].provinceName !== row.provinceName)
+    if (shouldCreateNewGroup) {
+      const { provinceName } = group[0]
+      const counters = sumOfColumns(group, columnsToSum)
+
+      // Add total row before the group of rows
+      newData.push({
+        provinceName,
+        districtName: 'All',
+        ...counters,
+      })
+
+      // Add rows of the group
+      newData.push(...group)
+
+      // Start a new group
+      group = []
+    }
+
+    if (!isLastRow) {
+      group.push(row)
+    }
+  }
+
+  return newData
 }
 
 const getXpertWorkloadSummaryReportByDistrict = async (dataConstraints, query) =>
