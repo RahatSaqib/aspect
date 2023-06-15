@@ -21,7 +21,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
     const requiresFollowUp = !!(
       result?.resultCategoryAssay1RequiresTreatment || result?.resultCategoryAssay2RequiresTreatment
     )
-    const clinicalResponse = transformClinicalResponse(result, resultFollowUps, acknowledgedId)
+    const clinicalResponse = transformClinicalResponse(result, resultFollowUps, acknowledgement)
     const hasFollowUp = !!(!!clinicalResponse?.treatment || !!clinicalResponse?.outcome)
     const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
     const clinicalFollowUpFlags = {
