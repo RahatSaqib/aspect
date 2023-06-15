@@ -8,23 +8,27 @@ const { generateSearchKeys } = require('./generateSearchKeys')
 const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../../common/consts')
 
 function transformSampleResponse(query, data, results) {
-  const output = []
   if (_.isEmpty(data)) return []
   const minUpdatedOn = query?.minUpdatedOn ?? formatISO(subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP))
-  _.map(data, sample => {
+  return _.map(data, sample => {
     if (!_.isEmpty(_.find(results, { sample: { id: sample.id } }))) return
     if (_.lt(new Date(sample.collectedOn), minUpdatedOn)) return
-    output.push({
+    const clinicalResponseFlags = {
+      requiresFollowUp: false,
+      hasFollowUp: false,
+      noFollowUpPossible: true,
+    }
+    return {
       id: sample.id,
       sample: transformSampleData(sample),
       testType: transformEntryType(),
       dbUpdatedOn: sample.updatedOn,
-      searchSchema: generateSearchKeys(sample, sample?.sampleData?.patientId),
+      ...clinicalResponseFlags,
+      searchSchema: generateSearchKeys(sample, sample?.sampleData?.patientId, clinicalResponseFlags),
       updatedOn: getSampleUpdatedOnDate(sample),
       collectedOn: sample.sampleCollectedOn,
-    })
-  })
-  return output
+    }
+  }).filter(_.identity)
 }
 
 module.exports = { transformSampleResponse }
