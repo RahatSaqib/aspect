@@ -10,6 +10,10 @@ module.exports = [
     C8: 'siteName',
     C9: 'cntAll',
 
+    M7: 'userName',
+    M9: 'today',
+    Q10: 'cell',
+
     M12: 'cntDevices',
     M13: 'cntModules',
     M14: 'cntModulesActive',
