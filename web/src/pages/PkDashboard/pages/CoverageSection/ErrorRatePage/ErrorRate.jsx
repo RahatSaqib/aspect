@@ -8,6 +8,7 @@ import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
 import messages from '../../../PkDashboard.Messages'
+import Loading from '../../../../../cleanComponents/Loading'
 
 const values = [
   'numberOfModules',
@@ -70,11 +71,15 @@ const makeNestedData = array => {
 const ErrorRatePage = () => {
   const { formatMessage } = useI18n()
 
-  const { data } = useDeviceErrors()
+  const { data, isLoading } = useDeviceErrors()
 
   return (
     <PkPage title={formatMessage(messages.errorRateTitle)}>
-      <NestedTable columns={columns} perPage={30} rows={makeNestedData(data ?? [])} hasDetail />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <NestedTable columns={columns} perPage={9999} rows={makeNestedData(data ?? [])} hasDetail />
+      )}
     </PkPage>
   )
 }
