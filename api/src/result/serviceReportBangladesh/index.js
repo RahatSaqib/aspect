@@ -1,11 +1,11 @@
 const _ = require('lodash')
-const dateFormat = require('date-fns/format')
 const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
+const dateFormat = require('date-fns/format')
 
 const { getUser } = require('../../auth/service')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../../db')
-const { formatDateOrDefault, getDatesFromQuery } = require('../../shared/date')
+const { getDatesFromQuery } = require('../../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const logger = require('../../shared/logger')
@@ -155,9 +155,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       })
       .select(
         'r.deviceId',
-        knex.raw(`
-          DATE_FORMAT(r.endedOn, "%Y-%m-01") as yearAndMonth
-        `),
         /**
          * Notice that we below group by `deviceId`
          * only because we need to count number of modules
@@ -167,7 +164,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           ROUND(IFNULL(dc.dailyCapacity, 12) / 2, 0) as cntModules
         `)
       )
-      .groupBy('yearAndMonth', 'r.deviceId')
+      .groupBy('r.deviceId')
       /**
        * get total results per each device per period
        *
@@ -707,6 +704,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
  */
 async function getDataForReportDrTb10A(auth, query) {
   const { stateId, lgaId, siteName } = query
+  const { userName, cell, phone, email } = await getUser(auth.credentials.name)
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
   const { dateTo } = dates
@@ -716,45 +714,35 @@ async function getDataForReportDrTb10A(auth, query) {
 
   const { drTb10AData } = await reportDrTb10ABaseQuery(auth, query)
   let data = await drTb10AData
-  data = _.reduce(
-    data, // <-- this `data` is grouped by 'yearAndMonth' and 'deviceId'
-    (acc, { deviceId, yearAndMonth, ...rest }) => {
-      /**
-       * Notice that above prop `rest` contains counter props
-       * only, i.e. name starts with `cnt`
-       */
-      let item = acc[yearAndMonth]
-      const propNames = _.keys(rest) // i.e. all counters `cnt*`
-      if (!item) {
-        item = {
-          devices: {}, // this is a temporal prop to collect distinct deviceId's
-        }
-        propNames.forEach(propName => {
-          item[propName] = 0
-        })
+  let item
+  _.forEach(data, ({ deviceId, ...rest }) => {
+    const propNames = _.keys(rest) // i.e. all counters `cnt*`
+    if (!item) {
+      item = {
+        userName,
+        cell,
+        phone,
+        email,
+        devices: {}, // this is a temporal prop to collect distinct deviceId's
       }
-      /**
-       * increment all counters
-       */
       propNames.forEach(propName => {
-        item[propName] += rest[propName]
+        item[propName] = 0
       })
-      /**
-       * keep `deviceId`, we need only object keys
-       */
-      item.devices[deviceId] = null
+    }
+    /**
+     * increment all counters for current deviceId
+     */
+    propNames.forEach(propName => {
+      item[propName] += rest[propName]
+    })
+    /**
+     * keep `deviceId`, we need only object keys
+     */
+    item.devices[deviceId] = null
+  })
+  data = item
 
-      acc[yearAndMonth] = item
-      return acc
-    },
-    {}
-  )
-
-  const yymm = formatDateOrDefault(dateFrom, 'yyyy-MM-01') // same format as field `yearAndMonth` in query
-  /**
-   * set `data` to single object with all counters prepared
-   */
-  data = data[yymm] || {}
+  if (_.isNil(data)) data = {}
   /**
    * set `cntDevices` and remove temporal prop `devices`
    */
@@ -765,11 +753,7 @@ async function getDataForReportDrTb10A(auth, query) {
   /**
    * additional props
    */
-  data.month = dateFormat(dateFrom, 'MMMM')
-  data.quarter = dateFormat(dateFrom, 'qo')
-  data.year = +dateFormat(dateFrom, 'yyyy')
-  data.today = formatDateOrDefault(new Date(), 'yyyy-MM-dd')
-
+  data.today = dateFormat(new Date(), 'dd-MM-yyyy')
   data.stateName = 'All'
   data.lgaName = 'All'
   data.siteName = siteName || 'All'
@@ -1524,7 +1508,7 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
       _.forEach(_.keys(current), key => {
         const found = _.find(CONSTANT_COLS, { key })
         if (found) {
-          const { deviceId, lgaName, siteId, siteName, stateName, yearAndMonth } = current
+          const { deviceId, lgaName, siteId, siteName, stateName } = current
 
           obj[found.line] = {
             ...obj[found.line],
@@ -1534,7 +1518,6 @@ async function getReportDrTb10a10bCovidNtpUse(auth, query) {
             siteId,
             siteName,
             stateName,
-            yearAndMonth,
           }
         }
       })
