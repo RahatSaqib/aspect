@@ -106,10 +106,10 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
                         <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
                           {open === row.id ? <ExpandLess /> : <ExpandMore />}
                         </Box>
-                        <span>{row[c.prop]}</span>
+                        <span>{row?.[c.prop] ?? 'N/A'}</span>
                       </Box>
                     ) : (
-                      row[c.prop]
+                      row?.[c.prop] ?? 'N/A'
                     )}
                   </TableCell>
                 ))}
