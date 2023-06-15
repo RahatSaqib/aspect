@@ -5,7 +5,6 @@ import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 
 const DeviceTypeSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
   const { isLoading, data: deviceTypes } = useDeviceTypeList()
-
   return isLoading ? (
     <LinearProgress />
   ) : (
@@ -33,7 +32,7 @@ const DeviceTypeSelect = ({ id, name, label, value, onChange, error, helperText,
       }}
     >
       {deviceTypes.map(c => (
-        <MenuItem key={c.id} value={c.id}>
+        <MenuItem key={c.externalId} value={c.externalId}>
           {c.name}
         </MenuItem>
       ))}
