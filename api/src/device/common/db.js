@@ -267,7 +267,7 @@ async function getLastUploadDateBySites(siteIds, timeOffset) {
     .groupBy('s.id')
     .select({
       siteId: 's.id',
-      lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', timeOffset),
+      lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', timeOffset),
     })
 }
 
