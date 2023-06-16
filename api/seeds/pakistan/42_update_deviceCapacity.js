@@ -9,6 +9,9 @@ async function seed(knex) {
     deviceCapacity,
     partner: { externalId: partnerExternalId },
   } = partnerData
+
+  await knex('Partner').where({ externalId: 'pakistan' }).update({ externalId: partnerExternalId })
+
   const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first('id')
 
   const { deviceTypeToId } = require('../../src/shared/dictionary')
