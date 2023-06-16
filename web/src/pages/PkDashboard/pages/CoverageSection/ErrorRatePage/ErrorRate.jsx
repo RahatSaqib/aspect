@@ -3,23 +3,17 @@ import entries from 'lodash/entries'
 import get from 'lodash/get'
 import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
+import { useLocation } from 'react-router'
+import ErrorRateFilter from '../../../../../cleanComponents/Filter/ErrorRateFilter'
+import Loading from '../../../../../cleanComponents/Loading'
 import useI18n from '../../../../../hooks/useI18n'
+import { useFilterValues } from '../../../../../providers/FilterProvider'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
 import messages from '../../../PkDashboard.Messages'
-import Loading from '../../../../../cleanComponents/Loading'
 
-const values = [
-  'numberOfModules',
-  'cntMtbResults',
-  'cntMtbError',
-  'cntMtbInvalid',
-  'cntMtbNoResult',
-  'percentMtbError',
-  'percentMtbInvalid',
-  'percentMtbNoResult',
-]
+const values = ['numberOfModules', 'cntMtbResults', 'cntMtbError', 'cntMtbInvalid', 'cntMtbNoResult']
 
 const columns = [
   { name: 'Devices', prop: 'name' },
@@ -27,14 +21,14 @@ const columns = [
   { name: 'Total Tests', prop: 'cntMtbResults' },
   { name: 'Error Rate', prop: 'percentMtbError' },
   { name: 'Errors', prop: 'cntMtbError' },
-  { name: 'Invalid', prop: 'percentMtbInvalid' },
-  { name: 'No Res', prop: 'percentMtbNoResult' },
+  { name: 'Invalid', prop: 'cntMtbInvalid' },
+  { name: 'No Res', prop: 'cntMtbNoResult' },
 ]
 
 const childrenKey = 'children'
 
-const createNode = (name, parent) =>
-  parent.reduce(
+const createNode = (name, parent) => {
+  const data = parent.reduce(
     (prev, curr) => {
       values.forEach(key => {
         const sum = (prev?.[key] ?? 0) + (curr?.[key] ?? 0)
@@ -44,12 +38,21 @@ const createNode = (name, parent) =>
     },
     { name, id: name }
   )
+  const errorRate = data?.cntMtbError / data?.cntMtbResults
+
+  return { ...data, percentMtbError: Number.isNaN(errorRate) ? 0 : errorRate.toPrecision(2) }
+}
 
 const makeNestedData = array => {
   const result = []
 
   entries(groupBy(array, 'stateName')).forEach(([stateName, stateValues]) => {
     const state = createNode(stateName, stateValues)
+
+    if (state.name === 'null') {
+      result.push({ ...state, name: 'N/A', [childrenKey]: stateValues })
+      return
+    }
 
     entries(groupBy(stateValues, 'lgaName')).forEach(([lgaName, lgaValues]) => {
       const lga = createNode(lgaName, lgaValues)
@@ -70,11 +73,12 @@ const makeNestedData = array => {
 
 const ErrorRatePage = () => {
   const { formatMessage } = useI18n()
-
-  const { data, isLoading } = useDeviceErrors()
+  const location = useLocation()
+  const filter = useFilterValues(location.pathname)
+  const { data, isLoading } = useDeviceErrors(filter)
 
   return (
-    <PkPage title={formatMessage(messages.errorRateTitle)}>
+    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.errorRateTitle)}>
       {isLoading ? (
         <Loading />
       ) : (
