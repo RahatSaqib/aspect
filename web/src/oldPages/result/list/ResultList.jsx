@@ -3,7 +3,6 @@ import { TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import filter from 'lodash/filter'
-import flowRight from 'lodash/flowRight'
 import identity from 'lodash/identity'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
@@ -27,11 +26,7 @@ import { useFilterValues } from '../../../providers/FilterProvider'
 import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../../utils/selectors/searchParams'
+import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import getExportableFile from '../ResultQueries'
 import messages from './messages'
@@ -82,31 +77,6 @@ const getBaseColumns = (extraColumns = [], formatMessage) => {
     )
   )
 }
-
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'endedOn',
-    'deviceName',
-    'sampleOriginSiteName',
-    'sampleId',
-    'errorCode',
-    'patientId',
-    'resultWorkflowStatus',
-    'treatmentStatusInfo',
-    'resultText',
-    'assayName',
-    /* --- table.extraColumns BEGIN --- */
-    'resultCategory1Name',
-    'resultCategory2Name',
-    'count',
-    'copies',
-    /* --- table.extraColumns END --- */
-  ],
-})
-const filtersFromLocation = composeSanitizer(
-  flowRight(searchParams => searchParams.get('filters') || ''),
-  searchSanitizer
-)
 
 const RESULT_PAGE_SIZE_BUTTON_KEYS = without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
 
@@ -274,19 +244,16 @@ const ResultList = () => {
 
   // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {
-    const { sanitized, value: filtersParams } = filtersFromLocation(location)
-    if (!sanitized) {
-      setIsLoading(true)
-      return getExportableFile(filtersParams, formatType, sortCol, sortDir, 0, Math.min(total, 50000), 'results')
-        .then(response => {
-          setIsLoading(false)
-          return response
-        })
-        .catch(error => {
-          setIsLoading(false)
-          throw error
-        })
-    }
+    setIsLoading(true)
+    return getExportableFile(filters, formatType, sortCol, sortDir, 0, Math.min(total, 50000), 'results')
+      .then(response => {
+        setIsLoading(false)
+        return response
+      })
+      .catch(error => {
+        setIsLoading(false)
+        throw error
+      })
   }
   const baseProps = {
     intl,
