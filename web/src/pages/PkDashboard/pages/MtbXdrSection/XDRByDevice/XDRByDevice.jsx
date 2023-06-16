@@ -102,7 +102,7 @@ const XdrByDevice = () => {
               }}
               className={cssClasses('export-icon-button')}
             >
-              XDR assay result summary by device
+              {formatMessage(messages.goTo)}
             </Button>
           </div>
           <DataTableProgressBar disabled={!isLoading} />
