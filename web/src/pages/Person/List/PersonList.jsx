@@ -38,7 +38,7 @@ export const PersonList = () => {
 
   const {
     isLoading: tableLoading,
-    data,
+    data = { data: [] },
     total,
   } = usePersons({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
 
@@ -60,10 +60,7 @@ export const PersonList = () => {
         throw error
       })
   }
-
-  return isLoading ? (
-    <LinearProgress />
-  ) : (
+  return (
     <>
       <DetailHeader name={formatMessage(messages.contactsTitle)} disableBack>
         <PermissionChecker permissions={['person:edit']}>
@@ -79,7 +76,8 @@ export const PersonList = () => {
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} visible={data.data.length !== 0} />
           </div>
-          {data.data.length === 0 ? (
+          {isLoading ? <LinearProgress /> : null}
+          {data.data?.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
