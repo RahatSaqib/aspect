@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-02-23T20:58:03.352Z\n"
+"POT-Creation-Date: 2023-06-12T19:27:42.246Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,17 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.0.1\n"
+
+#. [pages.ReportIndex.doNotUseModulesReport]
+#. defaultMessage is:
+#. "Do Not Use" Modules
+#. [pages.ReportIndex.do_not_use_modules_report]
+#. defaultMessage is:
+#. "Do Not Use" Modules
+#: extracted_strings.json
+msgid "\"Do Not Use\" Modules"
+msgstr "\"Nicht verwenden\"-Module"
 
 #. [pages.ReportIndex.no_stock]
 #. defaultMessage is:
@@ -20,17 +30,17 @@ msgstr "bestandsbericht \"Kein Bestand\""
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
-#. #Results (Last 30 Days)
+#. # Results Current Month
 #: extracted_strings.json
-msgid "#Results (Last 30 Days)"
-msgstr "#Ergebnisse (Letzte 30 Tage)"
+msgid "# Results Current Month"
+msgstr "Monat"
 
 #. [pages.DeviceList.lastMonth]
 #. defaultMessage is:
-#. #Results (Preceding 30 Days)
+#. # Results Last month
 #: extracted_strings.json
-msgid "#Results (Preceding 30 Days)"
-msgstr "#Ergebnisse (vor 30 Tagen)"
+msgid "# Results Last month"
+msgstr "Im vergangenen Monat ({minDate} - {maxDate})"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -72,40 +82,40 @@ msgstr ""
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
 msgstr "...{Kontakte, plural, one {# mehr {name}} other {# mehr {name}s}} }"
 
-#. [legends.Unknown.upTo14]
+#. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
-#. [filter.btnGroup.daysStockLeft.upTo14]
+#. [legends.Unknown.upTo14]
 #. defaultMessage is:
 #. 1-14 Days
 #: extracted_strings.json
 msgid "1-14 Days"
 msgstr "1-14 Tage"
 
-#. [legends.Unknown.upTo90]
+#. [filter.btnGroup.daysStockLeft.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
-#. [filter.btnGroup.daysStockLeft.upTo90]
+#. [legends.Unknown.upTo90]
 #. defaultMessage is:
 #. 1-3 Months
 #: extracted_strings.json
 msgid "1-3 Months"
 msgstr "1-3 Monate"
 
-#. [legends.Unknown.upTo30]
+#. [filter.btnGroup.daysStockLeft.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
-#. [filter.btnGroup.daysStockLeft.upTo30]
+#. [legends.Unknown.upTo30]
 #. defaultMessage is:
 #. 15-30 Days
 #: extracted_strings.json
 msgid "15-30 Days"
 msgstr "15-30 Tage"
 
-#. [legends.Unknown.upTo180]
+#. [filter.btnGroup.daysStockLeft.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
-#. [filter.btnGroup.daysStockLeft.upTo180]
+#. [legends.Unknown.upTo180]
 #. defaultMessage is:
 #. 4-6 Months
 #: extracted_strings.json
@@ -185,10 +195,10 @@ msgstr ""
 "style=“color: red;”> **WICHTIG:** Diese Aktion kann nicht rückgängig gemacht "
 "werden! </p>"
 
-#. [legends.Unknown.moreThan180]
+#. [filter.btnGroup.daysStockLeft.moreThan180]
 #. defaultMessage is:
 #. >6 Months
-#. [filter.btnGroup.daysStockLeft.moreThan180]
+#. [legends.Unknown.moreThan180]
 #. defaultMessage is:
 #. >6 Months
 #: extracted_strings.json
@@ -222,6 +232,17 @@ msgstr ">= 40 cp/mL"
 #: extracted_strings.json
 msgid ">= 550 cp/mL"
 msgstr ">= 550 cp/mL"
+
+#. [pages.ReportIndex.doNotUseModulesReport_Description]
+#. defaultMessage is:
+#. A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.
+#: extracted_strings.json
+msgid ""
+"A list of all GeneXpert device modules marked as 'do not use'. Includes "
+"device name, module serial."
+msgstr ""
+"Eine Liste aller GeneXpert-Gerätemodule, die als \"nicht zu verwenden\" "
+"gekennzeichnet sind. Enthält den Gerätenamen und die Modulserie."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -257,6 +278,9 @@ msgstr "August"
 #. [legends.Unknown.assayAbbottM2000DBSHivVL]
 #. defaultMessage is:
 #. Abbott m2000 DBS HIV VL
+#. [filter.AssaySelectField.abbottM2000DBSHivVL]
+#. defaultMessage is:
+#. Abbott m2000 DBS HIV VL
 #: extracted_strings.json
 msgid "Abbott m2000 DBS HIV VL"
 msgstr "Abbott m2000 DBS HIV VL"
@@ -267,6 +291,9 @@ msgstr "Abbott m2000 DBS HIV VL"
 #. [legends.Unknown.assayAbbottM2000DaanNCOVID19]
 #. defaultMessage is:
 #. Abbott m2000 Daan N COVID-19
+#. [filter.AssaySelectField.abbottM2000DaanNCOVID19]
+#. defaultMessage is:
+#. Abbott m2000 Daan N COVID-19
 #: extracted_strings.json
 msgid "Abbott m2000 Daan N COVID-19"
 msgstr "Abbott m2000 Daan N COVID-19"
@@ -275,6 +302,9 @@ msgstr "Abbott m2000 Daan N COVID-19"
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
 #. [legends.Unknown.assayAbbottM2000HIVEID]
+#. defaultMessage is:
+#. Abbott m2000 HIV EID
+#. [filter.AssaySelectField.abbottM2000HIVEID]
 #. defaultMessage is:
 #. Abbott m2000 HIV EID
 #: extracted_strings.json
@@ -353,23 +383,16 @@ msgstr "Kontodetails"
 msgid "Acknowledged"
 msgstr "Anerkannt"
 
-#. [errorResponseMessages.acknowledgeIssue..default.title]
-#. defaultMessage is:
-#. Acknowledging Issue Failed
-#: extracted_strings.json
-msgid "Acknowledging Issue Failed"
-msgstr "Problembestätigung fehlgeschlagen"
-
 #. [pages.shared.deviceStatus.active]
 #. defaultMessage is:
 #. Active
 #. [component.Widget.activeDevicesTitle]
 #. defaultMessage is:
 #. Active
-#. [pages.DeviceList.availabilityRate]
+#. [pages.TaskList.issueStatusActive]
 #. defaultMessage is:
 #. Active
-#. [pages.TaskList.issueStatusActive]
+#. [pages.DeviceList.availabilityRate]
 #. defaultMessage is:
 #. Active
 #: extracted_strings.json
@@ -573,28 +596,34 @@ msgstr "Alere Q HIV-1/2 VL-Plasma"
 msgid "Alerts"
 msgstr "Benachrichtigungen"
 
-#. [filter.AssaySelectField.All]
-#. defaultMessage is:
-#. All
-#. [filter.clientSideFilterSelect.selectAll]
-#. defaultMessage is:
-#. All
-#. [pages.TablePaginator.all]
-#. defaultMessage is:
-#. All
-#. [pages.PersonDetails.all]
-#. defaultMessage is:
-#. All
-#. [pages.TablePagination.all]
-#. defaultMessage is:
-#. All
 #. [filter.popover.all]
+#. defaultMessage is:
+#. All
+#. [filter.AssaySelectField.All]
 #. defaultMessage is:
 #. All
 #. [pages.connectorStatusSelectField.all]
 #. defaultMessage is:
 #. All
 #. [pages.DeviceStatusSelectField.all]
+#. defaultMessage is:
+#. All
+#. [pages.displayResultSelectField.All]
+#. defaultMessage is:
+#. All
+#. [filter.btnGroup.all]
+#. defaultMessage is:
+#. All
+#. [pages.TablePaginator.all]
+#. defaultMessage is:
+#. All
+#. [filter.clientSideFilterSelect.selectAll]
+#. defaultMessage is:
+#. All
+#. [pages.PersonDetails.all]
+#. defaultMessage is:
+#. All
+#. [pages.TablePagination.all]
 #. defaultMessage is:
 #. All
 #: extracted_strings.json
@@ -680,14 +709,14 @@ msgstr "Alle Staaten"
 
 #. [pages.ReportIndex.all_results_description]
 #. defaultMessage is:
-#. All test results in the system (up to 50.000 records). One row per result with all the fields needed.
+#. All test results in the system. One row per result with all the fields needed.
 #: extracted_strings.json
 msgid ""
-"All test results in the system (up to 50.000 records). One row per result "
-"with all the fields needed."
+"All test results in the system. One row per result with all the fields "
+"needed."
 msgstr ""
-"Alle Testergebnisse im System (bis zu 50.000 Datensätze). Eine Zeile pro "
-"Ergebnis mit allen erforderlichen Feldern."
+"Alle Testergebnisse im System. Eine Zeile pro Ergebnis mit allen benötigten "
+"Feldern."
 
 #. [pages.TaskList.taskListOptionsAllTopics]
 #. defaultMessage is:
@@ -703,27 +732,12 @@ msgstr "Alle Themen"
 msgid "Alternate Email"
 msgstr "Alternative E-Mail"
 
-#. [errorResponseMessages.deleteSingleSite.DELETE.default.title]
-#. defaultMessage is:
-#. An Error Occurred When Trying to Delete the Site
-#: extracted_strings.json
-msgid "An Error Occurred When Trying to Delete the Site"
-msgstr "Beim Versuch, die Site zu speichern, ist ein Fehler aufgetreten"
-
 #. [errorResponseMessages.updateSingleDevice.PUT.default.title]
 #. defaultMessage is:
 #. An Error Occurred When Trying to Save the Device
 #: extracted_strings.json
 msgid "An Error Occurred When Trying to Save the Device"
 msgstr "Beim Versuch, das Gerät zu speichern, ist ein Fehler aufgetreten"
-
-#. [errorResponseMessages.updateSingleDeviceApiKey.PUT.default.title]
-#. defaultMessage is:
-#. An Error Occurred When Trying to Save the DeviceApiKey
-#: extracted_strings.json
-msgid "An Error Occurred When Trying to Save the DeviceApiKey"
-msgstr ""
-"Beim Versuch, den DeviceApiKey zu speichern, ist ein Fehler aufgetreten"
 
 #. [errorResponseMessages.updateSingleResult.PUT.default.title]
 #. defaultMessage is:
@@ -732,49 +746,12 @@ msgstr ""
 msgid "An Error Occurred When Trying to Save the Result"
 msgstr "Beim Versuch, das Ergebnis zu speichern, ist ein Fehler aufgetreten"
 
-#. [errorResponseMessages.updateSingleRouter.PUT.default.title]
-#. defaultMessage is:
-#. An Error Occurred When Trying to Save the Router
-#: extracted_strings.json
-msgid "An Error Occurred When Trying to Save the Router"
-msgstr "Beim Versuch, den Router zu speichern, ist ein Fehler aufgetreten"
-
-#. [errorResponseMessages.updateSingleSite.PUT.default.title]
-#. defaultMessage is:
-#. An Error Occurred When Trying to Save the Site
-#: extracted_strings.json
-msgid "An Error Occurred When Trying to Save the Site"
-msgstr "Beim Versuch, die Site zu speichern, ist ein Fehler aufgetreten"
-
-#. [errorResponseMessages.updateResultWorkflowStatus.PUT.default.title]
-#. defaultMessage is:
-#. An Error Occurred When Trying to Save the Workflow Status
-#: extracted_strings.json
-msgid "An Error Occurred When Trying to Save the Workflow Status"
-msgstr ""
-"Beim Versuch, den Workflow-Status zu speichern, ist ein Fehler aufgetreten"
-
-#. [errorResponseMessages.updateTags.PUT.default.title]
-#. defaultMessage is:
-#. An Error Occurred When Trying to Update Tags
-#: extracted_strings.json
-msgid "An Error Occurred When Trying to Update Tags"
-msgstr "Beim Versuch, Tags zu aktualisieren, trat ein Fehler auf"
-
 #. [pages.ResetPassword.emailSent]
 #. defaultMessage is:
 #. An email has been sent to you
 #: extracted_strings.json
 msgid "An email has been sent to you"
 msgstr "Es wurde eine E-Mail an Sie gesendet"
-
-#. [errorResponseMessages.saveResultFormDataValue.PUT.default.title]
-#. defaultMessage is:
-#. An error occurred when trying to update the result.
-#: extracted_strings.json
-msgid "An error occurred when trying to update the result."
-msgstr ""
-"Beim Versuch, das Ergebnis zu aktualisieren, ist ein Fehler aufgetreten."
 
 #. [pages.ReportIndex.devicesAndSites_description]
 #. defaultMessage is:
@@ -799,6 +776,9 @@ msgstr "Beliebig"
 #. [filter.popover.applyFilters]
 #. defaultMessage is:
 #. Apply Filters
+#. [filter.popover.apply]
+#. defaultMessage is:
+#. Apply Filters
 #: extracted_strings.json
 msgid "Apply Filters"
 msgstr "Filter anwenden"
@@ -813,9 +793,6 @@ msgstr "Filter anwenden"
 msgid "Approval"
 msgstr "Freigabe"
 
-#. [pages.RouterList.approval]
-#. defaultMessage is:
-#. Approval Status
 #. [pages.DeviceList.approvalStatus]
 #. defaultMessage is:
 #. Approval Status
@@ -824,9 +801,6 @@ msgid "Approval Status"
 msgstr "Genehmigungsstatus"
 
 #. [pages.shared.deviceApproval.approved]
-#. defaultMessage is:
-#. Approved
-#. [pages.RouterDetail.approved]
 #. defaultMessage is:
 #. Approved
 #: extracted_strings.json
@@ -859,6 +833,20 @@ msgstr ""
 "Sind Sie sicher, dass Sie diese Website löschen möchten? Diese Aktion ist "
 "nur für Test-Sites gedacht, alle Site-Daten gehen dabei verloren."
 
+#. [p.PkDashboard.aspectDashboard]
+#. defaultMessage is:
+#. Aspect Dashboard
+#: extracted_strings.json
+msgid "Aspect Dashboard"
+msgstr "Dashboard"
+
+#. [jobFunction.aspectTester]
+#. defaultMessage is:
+#. Aspect Tester
+#: extracted_strings.json
+msgid "Aspect Tester"
+msgstr "Aspect ist auf ein Problem gestoßen."
+
 #. [errorResponseMessages.generic.title]
 #. defaultMessage is:
 #. Aspect has Encountered a Problem.
@@ -866,6 +854,9 @@ msgstr ""
 msgid "Aspect has Encountered a Problem."
 msgstr "Aspect ist auf ein Problem gestoßen."
 
+#. [filter.popover.assay]
+#. defaultMessage is:
+#. Assay
 #. [forms.formItem.assay]
 #. defaultMessage is:
 #. Assay
@@ -876,9 +867,6 @@ msgstr "Aspect ist auf ein Problem gestoßen."
 #. defaultMessage is:
 #. Assay
 #. [pages.JobAssignments.assay]
-#. defaultMessage is:
-#. Assay
-#. [filter.popover.assay]
 #. defaultMessage is:
 #. Assay
 #. [pages.ResultList.assayName]
@@ -907,13 +895,6 @@ msgstr "Assay-Typ"
 #: extracted_strings.json
 msgid "Assay Type:"
 msgstr "Assay-Typ:"
-
-#. [pages.Result.assayRequired]
-#. defaultMessage is:
-#. Assay is required
-#: extracted_strings.json
-msgid "Assay is required"
-msgstr "Assay ist erforderlich"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -945,16 +926,6 @@ msgstr "Nicht im Inventar"
 #: extracted_strings.json
 msgid "Assign"
 msgstr "Zuordnen"
-
-#. [errorResponseMessages.assignDeviceApiKeys.POST.400.title]
-#. defaultMessage is:
-#. Assign DeviceApiKeys Failed
-#. [errorResponseMessages.assignDeviceApiKeys.POST.default.title]
-#. defaultMessage is:
-#. Assign DeviceApiKeys Failed
-#: extracted_strings.json
-msgid "Assign DeviceApiKeys Failed"
-msgstr "Zuweisen von DeviceApiKeys fehlgeschlagen"
 
 #. [pages.DeviceApiKeyList.assignerDialogTitle]
 #. defaultMessage is:
@@ -1069,12 +1040,26 @@ msgstr "Durchschnittliche monatliche TB-Erkennungsrate"
 msgid "Average Monthly Tests Performed"
 msgstr "Durchschnittlich durchgeführte monatliche Tests"
 
+#. [p.PkDashboard.RRPerMonth]
+#. defaultMessage is:
+#. Average RR cases diagnosed per month
+#: extracted_strings.json
+msgid "Average RR cases diagnosed per month"
+msgstr "Durchschnittlich diagnostizierte RR-Fälle pro Monat"
+
 #. [component.Widget.averageRecipientsOfSms]
 #. defaultMessage is:
 #. Average SMS recipients per positive result
 #: extracted_strings.json
 msgid "Average SMS recipients per positive result"
 msgstr "Durchschnittliche SMS-Empfänger pro positivem Ergebnis"
+
+#. [p.PkDashboard.xdrAverageMoth]
+#. defaultMessage is:
+#. Average TB cases diagnosed per month
+#: extracted_strings.json
+msgid "Average TB cases diagnosed per month"
+msgstr "Durchschnittlich diagnostizierte TB-Fälle pro Monat"
 
 #. [component.Widget.averageDaysModuleSwap]
 #. defaultMessage is:
@@ -1111,6 +1096,15 @@ msgstr ""
 #. Average number of tests per weekday conducted this month.
 #: extracted_strings.json
 msgid "Average number of tests per weekday conducted this month."
+msgstr ""
+"Durchschnittliche Anzahl von Tests pro Tag, die im aktuellen Monat gemeldet "
+"wurden."
+
+#. [p.PkDashboard.testPerMonth]
+#. defaultMessage is:
+#. Average tests performed per month
+#: extracted_strings.json
+msgid "Average tests performed per month"
 msgstr ""
 "Durchschnittliche Anzahl von Tests pro Tag, die im aktuellen Monat gemeldet "
 "wurden."
@@ -1253,6 +1247,13 @@ msgstr "Durch Los ausbrechen"
 #: extracted_strings.json
 msgid "Browse"
 msgstr "Blättern"
+
+#. [pages.NotificationDetail.New.buildNotification]
+#. defaultMessage is:
+#. Build Notification
+#: extracted_strings.json
+msgid "Build Notification"
+msgstr "Benachrichtigung"
 
 #. [results.categoryTypeCAPResistanceI18nKey]
 #. defaultMessage is:
@@ -1480,7 +1481,7 @@ msgstr "CSV"
 msgid "Calibrated When Due"
 msgstr "Bei Fälligkeit kalibriert"
 
-#. [pages.RouterDetail.detailCalibration]
+#. [pages.resultEdit.Calibration]
 #. defaultMessage is:
 #. Calibration
 #. [pages.DeviceDetailProfile.calibration]
@@ -1528,6 +1529,9 @@ msgstr "Kalibrierung überfällig"
 msgid "Can't be edited"
 msgstr "Kann nicht bearbeitet werden"
 
+#. [filter.popover.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [button_Cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1546,12 +1550,6 @@ msgstr "Kann nicht bearbeitet werden"
 #. [pages.InventoryAdjustmentDialogForm.cancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.PersonList.cancel]
-#. defaultMessage is:
-#. Cancel
-#. [pages.RouterDetail.cancel]
-#. defaultMessage is:
-#. Cancel
 #. [pages.BaseDialog.cancel]
 #. defaultMessage is:
 #. Cancel
@@ -1561,19 +1559,22 @@ msgstr "Kann nicht bearbeitet werden"
 #. [pages.transferResult.buttonCancel]
 #. defaultMessage is:
 #. Cancel
+#. [pages.PersonList.cancel]
+#. defaultMessage is:
+#. Cancel
 #. [pages.SiteDetail.disable.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [pages.DailyStatusDialog.cancel]
 #. defaultMessage is:
 #. Cancel
-#. [pages.PersonList.disabled.cancel]
-#. defaultMessage is:
-#. Cancel
 #. [pages.Notifications.table.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
+#. defaultMessage is:
+#. Cancel
+#. [pages.PersonList.disabled.cancel]
 #. defaultMessage is:
 #. Cancel
 #: extracted_strings.json
@@ -1600,17 +1601,11 @@ msgstr "Erfasst"
 #. [forms.formItem.caseId]
 #. defaultMessage is:
 #. Case ID
-#. [pages.CasesList.caseId]
-#. defaultMessage is:
-#. Case ID
 #: extracted_strings.json
 msgid "Case ID"
 msgstr "Fall-ID"
 
 #. [browsePage.browseDropdown.cases]
-#. defaultMessage is:
-#. Cases
-#. [pages.CaseList.title]
 #. defaultMessage is:
 #. Cases
 #: extracted_strings.json
@@ -1647,6 +1642,13 @@ msgstr "Kategorie 2"
 #: extracted_strings.json
 msgid "Category I"
 msgstr "Kategorie I"
+
+#. [pages.resultEdit.PatientPhoneNumberi18nkey]
+#. defaultMessage is:
+#. Cellphone Number
+#: extracted_strings.json
+msgid "Cellphone Number"
+msgstr "Anzahl der Geräte"
 
 #. [pages.NotificationDetail.actionChange]
 #. defaultMessage is:
@@ -1772,10 +1774,10 @@ msgstr "Klinische Indikatoren"
 msgid "Clinician"
 msgstr "Kliniker"
 
-#. [errorResponseMessages.generic.closeText]
+#. [filter.popover.close]
 #. defaultMessage is:
 #. Close
-#. [filter.popover.close]
+#. [errorResponseMessages.generic.closeText]
 #. defaultMessage is:
 #. Close
 #. [pages.ResetPassword.adminHelpClose]
@@ -1827,13 +1829,6 @@ msgstr "Genommen am"
 msgid "Collected On:"
 msgstr "Gesammelt am:"
 
-#. [pages.Result.collectedOnRequired]
-#. defaultMessage is:
-#. CollectedOn date is required
-#: extracted_strings.json
-msgid "CollectedOn date is required"
-msgstr "CollectedOn-Datum ist erforderlich"
-
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
 #. Collection of Results
@@ -1868,13 +1863,6 @@ msgstr "Abschlussquote Prozentsatz"
 #: extracted_strings.json
 msgid "Conditions Should be Fulfilled"
 msgstr "Bedingungen sollten erfüllt sein"
-
-#. [pages.RouterDetail.fieldConfiguration]
-#. defaultMessage is:
-#. Configuration
-#: extracted_strings.json
-msgid "Configuration"
-msgstr "Konfiguration"
 
 #. [pages.resultTreatmentPanel.confirm]
 #. defaultMessage is:
@@ -1927,26 +1915,19 @@ msgstr "Bestätigt"
 msgid "Confirmed cases"
 msgstr "Bestätigte Fälle"
 
-#. [pages.RouterDetail.fieldFirstConnected]
-#. defaultMessage is:
-#. Connected
-#: extracted_strings.json
-msgid "Connected"
-msgstr "Verbunden"
-
 #. [pages.shared.deviceStatus.inactiveConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
+#. [pages.TaskList.taskListOptionsConnectivity]
+#. defaultMessage is:
+#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivityHealth]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.TaskList.taskListOptionsConnectivity]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.SiteList.issueCategoryConnectivityHealth]
@@ -1993,10 +1974,10 @@ msgstr "Status des Anschlusses ist {connectorStatus}"
 msgid "Connector Version"
 msgstr "Stecker Version"
 
-#. [consumable.consumable]
+#. [filter.popover.consumable]
 #. defaultMessage is:
 #. Consumable
-#. [filter.popover.consumable]
+#. [consumable.consumable]
 #. defaultMessage is:
 #. Consumable
 #. [pages.InventoryAdjustmentDialogForm.consumable]
@@ -2078,19 +2059,16 @@ msgstr "Kontaktdetails erfolgreich erstellt"
 msgid "Contact name/email"
 msgstr "Kontaktperson Name/E-Mail"
 
-#. [component.Widget.personTitle]
-#. defaultMessage is:
-#. Contacts
 #. [browsePage.browseDropdown.contacts]
 #. defaultMessage is:
 #. Contacts
-#. [pages.PersonList.title]
-#. defaultMessage is:
-#. Contacts
-#. [pages.RouterDetail.detailContacts]
+#. [component.Widget.personTitle]
 #. defaultMessage is:
 #. Contacts
 #. [pages.Notifications.table.contactsHeader]
+#. defaultMessage is:
+#. Contacts
+#. [pages.PersonList.title]
 #. defaultMessage is:
 #. Contacts
 #: extracted_strings.json
@@ -2127,27 +2105,6 @@ msgstr "Kopien/ML"
 #: extracted_strings.json
 msgid "Copy"
 msgstr "Kopieren"
-
-#. [errorResponseMessages.fetchSingleDevice.GET.404.title]
-#. defaultMessage is:
-#. Could Not Find Device Details
-#: extracted_strings.json
-msgid "Could Not Find Device Details"
-msgstr "Konnte keine Gerätedetails finden"
-
-#. [errorResponseMessages.fetchSingleRouter.GET.404.title]
-#. defaultMessage is:
-#. Could Not Find Router Details
-#: extracted_strings.json
-msgid "Could Not Find Router Details"
-msgstr "Router-Details konnten nicht gefunden werden"
-
-#. [errorResponseMessages.fetchSingleSite.GET.404.title]
-#. defaultMessage is:
-#. Could Not Find Site Details
-#: extracted_strings.json
-msgid "Could Not Find Site Details"
-msgstr "Konnte keine Standort-Details finden"
 
 #. [errorResponseMessages.fetchResultsDetail.GET.404.title]
 #. defaultMessage is:
@@ -2191,16 +2148,16 @@ msgstr "Konnte sich nicht mit Ihren Anmeldedaten anmelden"
 msgid "Count (1-100)"
 msgstr "Anzahl (1-100)"
 
-#. [forms.formItem.country]
+#. [filter.popover.country]
 #. defaultMessage is:
 #. Country
 #. [pages.LocationSelector.country]
 #. defaultMessage is:
 #. Country
-#. [pages.PersonDetails.country]
+#. [forms.formItem.country]
 #. defaultMessage is:
 #. Country
-#. [filter.popover.country]
+#. [pages.PersonDetails.country]
 #. defaultMessage is:
 #. Country
 #. [pages.DeviceApiKeyList.countryId]
@@ -2265,6 +2222,16 @@ msgstr ""
 msgid "County"
 msgstr "Landkreis"
 
+#. [p.PkDashboard.titlecoverage]
+#. defaultMessage is:
+#. Coverage
+#: extracted_strings.json
+msgid "Coverage"
+msgstr "Presse"
+
+#. [p.PkDashboard.covid]
+#. defaultMessage is:
+#. Covid
 #. [pages.ResultList.resultCategoryCovid19]
 #. defaultMessage is:
 #. Covid
@@ -2328,6 +2295,9 @@ msgid "Critical Error"
 msgstr "Kritischer Fehler"
 
 #. [pages.ReportIndex.Critical_Errors_By_Device]
+#. defaultMessage is:
+#. Critical Errors By Device
+#. [pages.ResultList.critical_errors_by_device]
 #. defaultMessage is:
 #. Critical Errors By Device
 #: extracted_strings.json
@@ -2427,6 +2397,34 @@ msgstr "Kultur Ergebnis Unbekannt"
 msgid "Current Active Devices"
 msgstr "Aktuelle aktive Geräte"
 
+#. [p.PkDashboard.xdrCurrentDiagnosisTitle]
+#. defaultMessage is:
+#. Current Diagnosis
+#: extracted_strings.json
+msgid "Current Diagnosis"
+msgstr "Aktuelles Passwort"
+
+#. [p.PkDashboard.FQCurrent]
+#. defaultMessage is:
+#. Current FQ Trends
+#: extracted_strings.json
+msgid "Current FQ Trends"
+msgstr "FQ-R Erkannt"
+
+#. [p.PkDashboard.xdrCurrentTitle]
+#. defaultMessage is:
+#. Current GX-10CX Testing performed in
+#: extracted_strings.json
+msgid "Current GX-10CX Testing performed in"
+msgstr "Aktueller GX-10CX Test durchgeführt in"
+
+#. [p.PkDashboard.DCurrent]
+#. defaultMessage is:
+#. Current MTB Detection
+#: extracted_strings.json
+msgid "Current MTB Detection"
+msgstr "MTB"
+
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
 #. Current Network Status
@@ -2440,6 +2438,48 @@ msgstr "Aktueller Netzwerkstatus"
 #: extracted_strings.json
 msgid "Current Password"
 msgstr "Aktuelles Passwort"
+
+#. [p.PkDashboard.RRCurrent]
+#. defaultMessage is:
+#. Current RRTB Diagnosis
+#: extracted_strings.json
+msgid "Current RRTB Diagnosis"
+msgstr "Aktuelle RRTB-Diagnose"
+
+#. [p.PkDashboard.rifCurrentRRTBDiagnosisTitle]
+#. defaultMessage is:
+#. Current Rifampicin Resistance Diagnosis Trends
+#: extracted_strings.json
+msgid "Current Rifampicin Resistance Diagnosis Trends"
+msgstr "Aktuelle Trends bei der Diagnose von Rifampicin-Resistenz"
+
+#. [p.PkDashboard.TbDCurrent]
+#. defaultMessage is:
+#. Current TB Diagnosis
+#: extracted_strings.json
+msgid "Current TB Diagnosis"
+msgstr "TB-Registrierungsnummer - aktuell"
+
+#. [p.PkDashboard.TbCurrent]
+#. defaultMessage is:
+#. Current TB Testing Trends
+#: extracted_strings.json
+msgid "Current TB Testing Trends"
+msgstr "Aktuelle Trends bei TB-Tests"
+
+#. [p.PkDashboard.TCurrent]
+#. defaultMessage is:
+#. Current Testing
+#: extracted_strings.json
+msgid "Current Testing"
+msgstr "Aktuelle Tests"
+
+#. [p.PkDashboard.rifCurrentTitle]
+#. defaultMessage is:
+#. Current Testing of MTB/RIF performed in
+#: extracted_strings.json
+msgid "Current Testing of MTB/RIF performed in"
+msgstr "Derzeitige Tests von MTB/RIF in"
 
 #. [pages.Notifications.optionPersonRoleNotSet]
 #. defaultMessage is:
@@ -2455,6 +2495,9 @@ msgstr "Derzeit nicht auswählbar - fehlende Rolle"
 msgid "Custom"
 msgstr "Benutzerdefiniert"
 
+#. [placeholder.result.placeholderCustomFields]
+#. defaultMessage is:
+#. Custom Fields
 #. [pages.resultEdit.customFields]
 #. defaultMessage is:
 #. Custom Fields
@@ -2489,6 +2532,28 @@ msgstr "Dezember"
 #: extracted_strings.json
 msgid "DELETE"
 msgstr "LÖSCHEN"
+
+#. [pages.ReportIndex.reportDrTb10a10bCovidDescription]
+#. defaultMessage is:
+#. DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results
+#: extracted_strings.json
+msgid ""
+"DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert "
+"Results"
+msgstr ""
+"DR-TB 10A-10B und Covid Berichtsformat für den monatlichen Bericht über "
+"Xpert-Ergebnisse"
+
+#. [pages.ReportIndex.reportDrTb10a10bCovidNtpUse_description]
+#. defaultMessage is:
+#. DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert Results- NTP Use.
+#: extracted_strings.json
+msgid ""
+"DR-TB 10A-10B and Covid reporting format for the Monthly report on Xpert "
+"Results- NTP Use."
+msgstr ""
+"DR-TB 10A-10B und Covid-Berichtsformat für den monatlichen Bericht über "
+"Xpert-Ergebnisse - NTP-Verwendung."
 
 #. [pages.ResultList.assayGenericDst]
 #. defaultMessage is:
@@ -2577,10 +2642,17 @@ msgstr "Schaden"
 msgid "Dashboard"
 msgstr "Dashboard"
 
-#. [pages.DeviceList.dataHealth]
+#. [header.link.dashboardv2.title]
+#. defaultMessage is:
+#. Dashboard v2
+#: extracted_strings.json
+msgid "Dashboard v2"
+msgstr "Dashboard"
+
+#. [pages.TaskList.taskListOptionsData]
 #. defaultMessage is:
 #. Data
-#. [pages.TaskList.taskListOptionsData]
+#. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
 #. Data
 #. [pages.SiteList.issueCategoryDataHealth]
@@ -2607,16 +2679,13 @@ msgstr "Datenextrakt für Tableau"
 msgid "Data Health"
 msgstr "Datengesundheit"
 
-#. [forms.formSectionHeader.date]
-#. defaultMessage is:
-#. Date
 #. [filter.popover.date]
 #. defaultMessage is:
 #. Date
-#. [component.DateTimeInput.date.placeholder]
+#. [forms.formSectionHeader.date]
 #. defaultMessage is:
 #. Date
-#. [pages.CaseList.createdOn]
+#. [component.DateTimeInput.date.placeholder]
 #. defaultMessage is:
 #. Date
 #. [pages.InventoryLog.date]
@@ -2821,9 +2890,6 @@ msgstr "Dengue"
 #. [filter.DiseaseSelectField.diseaseNameDengueFever]
 #. defaultMessage is:
 #. Dengue Fever
-#. [pages.caseRow.diseaseNameDengueFever]
-#. defaultMessage is:
-#. Dengue Fever
 #: extracted_strings.json
 msgid "Dengue Fever"
 msgstr "Dengue-Fieber"
@@ -2859,6 +2925,9 @@ msgstr "Details..."
 msgid "Detected"
 msgstr "Erkannt"
 
+#. [filter.popover.deviceName]
+#. defaultMessage is:
+#. Device
 #. [forms.formSectionHeader.device]
 #. defaultMessage is:
 #. Device
@@ -2866,9 +2935,6 @@ msgstr "Erkannt"
 #. defaultMessage is:
 #. Device
 #. [placeholder.device]
-#. defaultMessage is:
-#. Device
-#. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceApiKeyList.deviceId]
@@ -2880,13 +2946,13 @@ msgstr "Erkannt"
 #. [pages.ResultList.deviceName]
 #. defaultMessage is:
 #. Device
+#. [pages.TaskList.taskListOptionsDevice]
+#. defaultMessage is:
+#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.deviceHealth]
-#. defaultMessage is:
-#. Device
-#. [pages.TaskList.taskListOptionsDevice]
 #. defaultMessage is:
 #. Device
 #. [pages.SiteList.issueCategoryDeviceHealth]
@@ -2919,11 +2985,17 @@ msgstr "Geräte-API-Schlüssel-Generator"
 #. [pages.ReportIndex.deviceActivityReport]
 #. defaultMessage is:
 #. Device Activity
+#. [pages.ReportIndex.device_activity]
+#. defaultMessage is:
+#. Device Activity
 #: extracted_strings.json
 msgid "Device Activity"
 msgstr "Gerätetyp"
 
 #. [pages.ReportIndex.deviceActivityPercentReport]
+#. defaultMessage is:
+#. Device Activity (Percent)
+#. [pages.ReportIndex.device_activity_percent]
 #. defaultMessage is:
 #. Device Activity (Percent)
 #: extracted_strings.json
@@ -2940,6 +3012,9 @@ msgstr "Geräte Level"
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
 #. Device Average Utilization per Month
+#. [pages.ReportIndex.device_utilization]
+#. defaultMessage is:
+#. Device Average Utilization per Month
 #: extracted_strings.json
 msgid "Device Average Utilization per Month"
 msgstr "Durchschnittliche Nutzung des Geräts pro Monat"
@@ -2952,6 +3027,9 @@ msgid "Device Calibration"
 msgstr "Gerätekalibrierung"
 
 #. [pages.ReportIndex.Device_Calibration_Report]
+#. defaultMessage is:
+#. Device Calibration Report
+#. [pages.ReportIndex.device_calibration_report]
 #. defaultMessage is:
 #. Device Calibration Report
 #: extracted_strings.json
@@ -3006,6 +3084,13 @@ msgstr "Gerätehersteller"
 msgid "Device Name"
 msgstr "Name des Geräts"
 
+#. [pages.ReportIndex.devicePerformance]
+#. defaultMessage is:
+#. Device Performance
+#: extracted_strings.json
+msgid "Device Performance"
+msgstr "Leistung des Geräts"
+
 #. [forms.formItem.deviceSerial]
 #. defaultMessage is:
 #. Device Serial
@@ -3023,13 +3108,23 @@ msgstr "Seriennummer des Geräts"
 msgid "Device Status"
 msgstr "Gerätestatus"
 
+#. [pages.ReportIndex.deviceSummaryReport]
+#. defaultMessage is:
+#. Device Summary Report
+#. [pages.ReportIndex.device_summary_report]
+#. defaultMessage is:
+#. Device Summary Report
+#: extracted_strings.json
+msgid "Device Summary Report"
+msgstr "Gerätezusammenfassungsbericht"
+
+#. [filter.popover.deviceType]
+#. defaultMessage is:
+#. Device Type
 #. [forms.formItem.deviceType]
 #. defaultMessage is:
 #. Device Type
 #. [pages.JobAssignments.deviceType]
-#. defaultMessage is:
-#. Device Type
-#. [filter.popover.deviceType]
 #. defaultMessage is:
 #. Device Type
 #. [pages.DeviceDetailEdit.deviceType]
@@ -3067,13 +3162,6 @@ msgstr "Gerät Arbeitsbelastung"
 msgid "Device from State"
 msgstr "Gerät aus Zustand"
 
-#. [pages.Result.deviceRequired]
-#. defaultMessage is:
-#. Device is required
-#: extracted_strings.json
-msgid "Device is required"
-msgstr "Gerät ist erforderlich"
-
 #. [pages.DeviceDetailProfile.deviceLogs]
 #. defaultMessage is:
 #. Device logs
@@ -3088,6 +3176,9 @@ msgstr "Geräteprotokolle"
 msgid "Device type"
 msgstr "Gerätetyp"
 
+#. [browsePage.browseDropdown.devices]
+#. defaultMessage is:
+#. Devices
 #. [pages.Status.summaryWidgetGroup.devices]
 #. defaultMessage is:
 #. Devices
@@ -3095,9 +3186,6 @@ msgstr "Gerätetyp"
 #. defaultMessage is:
 #. Devices
 #. [legends.Unknown.devices]
-#. defaultMessage is:
-#. Devices
-#. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.DeviceList.devicesTitle]
@@ -3135,6 +3223,9 @@ msgid "Devices With Service Interruption"
 msgstr "Geräte mit Betriebsunterbrechung"
 
 #. [pages.ReportIndex.devicesAndSitesOverview]
+#. defaultMessage is:
+#. Devices and Sites Overview
+#. [pages.ReportIndex.devices_and_sites_overview]
 #. defaultMessage is:
 #. Devices and Sites Overview
 #: extracted_strings.json
@@ -3203,13 +3294,10 @@ msgstr "Verwerfen"
 msgid "Discordant"
 msgstr "Diskordant"
 
-#. [pages.JobAssignments.disease]
-#. defaultMessage is:
-#. Disease
 #. [filter.popover.disease]
 #. defaultMessage is:
 #. Disease
-#. [pages.CasesList.diseaseName]
+#. [pages.JobAssignments.disease]
 #. defaultMessage is:
 #. Disease
 #: extracted_strings.json
@@ -3365,6 +3453,13 @@ msgstr "Bald fällig"
 msgid "EID"
 msgstr "EID"
 
+#. [pages.resultEdit.EQA]
+#. defaultMessage is:
+#. EQA
+#: extracted_strings.json
+msgid "EQA"
+msgstr "EQA"
+
 #. [results.categoryTypeETHResistanceI18nKey]
 #. defaultMessage is:
 #. ETH Resistance
@@ -3378,9 +3473,6 @@ msgstr "ETH Widerstand"
 #. [filter.DiseaseSelectField.diseaseNameEbola]
 #. defaultMessage is:
 #. Ebola
-#. [pages.caseRow.diseaseNameEbola]
-#. defaultMessage is:
-#. Ebola
 #: extracted_strings.json
 msgid "Ebola"
 msgstr "Ebola"
@@ -3389,9 +3481,6 @@ msgstr "Ebola"
 #. defaultMessage is:
 #. Edit
 #. [pages.NotificationDetail.edit]
-#. defaultMessage is:
-#. Edit
-#. [pages.RouterDetail.editTooltip]
 #. defaultMessage is:
 #. Edit
 #. [pages.DeviceDetail.edit]
@@ -3407,6 +3496,9 @@ msgstr "Ebola"
 msgid "Edit"
 msgstr "Bearbeiten"
 
+#. [pages.NotificationDetail.New.editNotification]
+#. defaultMessage is:
+#. Edit Notification
 #. [pages.NotificationDetail.Edit.title]
 #. defaultMessage is:
 #. Edit Notification
@@ -3544,20 +3636,6 @@ msgstr "Ermöglicht"
 msgid "End Date"
 msgstr "Enddatum"
 
-#. [pages.Result.endedOnRequired]
-#. defaultMessage is:
-#. End date is required
-#: extracted_strings.json
-msgid "End date is required"
-msgstr "Enddatum ist erforderlich"
-
-#. [pages.Result.endedOnCannotBeBeforeStartedOn]
-#. defaultMessage is:
-#. End time cannot be before Start time
-#: extracted_strings.json
-msgid "End time cannot be before Start time"
-msgstr "Die Endzeit darf nicht vor der Startzeit liegen"
-
 #. [pages.UpdateLoginDetails.currentPasswordDialogHeader]
 #. defaultMessage is:
 #. Enter Current Password
@@ -3642,13 +3720,6 @@ msgstr "Patienten-ID eingeben..."
 msgid "Enter patient/case ID..."
 msgstr "Patienten-/Fall-ID eingeben..."
 
-#. [filter.popover.enterReportName]
-#. defaultMessage is:
-#. Enter report name...
-#: extracted_strings.json
-msgid "Enter report name..."
-msgstr "Berichtnamen eingeben…"
-
 #. [filter.popover.enterReportableSiteName]
 #. defaultMessage is:
 #. Enter reportable site name...
@@ -3713,13 +3784,13 @@ msgstr "Standortnamen eingeben..."
 msgid "Error"
 msgstr "Error"
 
+#. [filter.popover.errorCode]
+#. defaultMessage is:
+#. Error Code
 #. [forms.formItem.errorCode]
 #. defaultMessage is:
 #. Error Code
 #. [placeholder.result.error.code]
-#. defaultMessage is:
-#. Error Code
-#. [filter.popover.errorCode]
 #. defaultMessage is:
 #. Error Code
 #. [pages.ResultList.errorCode]
@@ -3731,13 +3802,6 @@ msgstr "Error"
 #: extracted_strings.json
 msgid "Error Code"
 msgstr "Fehlercode"
-
-#. [pages.Result.errorCode]
-#. defaultMessage is:
-#. Error Code must be a positive integer with max 5 digits
-#: extracted_strings.json
-msgid "Error Code must be a positive integer with max 5 digits"
-msgstr "Fehlercode muss eine positive ganze Zahl mit maximal 5 Stellen sein"
 
 #. [queryFetch.errorResponseMessages.GET.default.title]
 #. defaultMessage is:
@@ -3767,20 +3831,6 @@ msgstr "Fehler beim Laden von Gebieten für {stateName}"
 msgid "Error Loading Countries"
 msgstr "Fehler beim Laden von Ländern"
 
-#. [errorResponseMessages.fetchSingleDevice.GET.default.title]
-#. defaultMessage is:
-#. Error Loading Device Details
-#: extracted_strings.json
-msgid "Error Loading Device Details"
-msgstr "Fehler beim Laden von Gerätedetails"
-
-#. [errorResponseMessages.fetchPerformanceReport.GET.default.title]
-#. defaultMessage is:
-#. Error Loading Device profile performance report
-#: extracted_strings.json
-msgid "Error Loading Device profile performance report"
-msgstr "Fehler beim Laden des Geräteprofil-Leistungsberichts"
-
 #. [errorResponseMessages.fetchPartnersAndJobFunctionsForSelectList.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Partners And Job Functions
@@ -3802,20 +3852,6 @@ msgstr "Fehler beim Laden von Ergebnisdetails"
 msgid "Error Loading Result Logs"
 msgstr "Fehler beim Laden von Ergebnisprotokollen"
 
-#. [errorResponseMessages.fetchSingleRouter.GET.default.title]
-#. defaultMessage is:
-#. Error Loading Router Details
-#: extracted_strings.json
-msgid "Error Loading Router Details"
-msgstr "Fehler beim Laden von Router-Details"
-
-#. [errorResponseMessages.fetchSingleSite.GET.default.title]
-#. defaultMessage is:
-#. Error Loading Site Details
-#: extracted_strings.json
-msgid "Error Loading Site Details"
-msgstr "Fehler beim Laden der Standort-Details"
-
 #. [errorResponseMessages.fetchStatesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading States for {countryName}
@@ -3823,7 +3859,13 @@ msgstr "Fehler beim Laden der Standort-Details"
 msgid "Error Loading States for {countryName}"
 msgstr "Fehler beim Laden von Staaten für {countryName}"
 
+#. [pages.ReportIndex.error_rate]
+#. defaultMessage is:
+#. Error Rate
 #. [component.Widget.errorRateTitle]
+#. defaultMessage is:
+#. Error Rate
+#. [p.PkDashboard.errorRate]
 #. defaultMessage is:
 #. Error Rate
 #. [pages.DeviceDetailProfile.errorRate]
@@ -3832,13 +3874,6 @@ msgstr "Fehler beim Laden von Staaten für {countryName}"
 #: extracted_strings.json
 msgid "Error Rate"
 msgstr "Fehlerrate"
-
-#. [pages.RouterDetail.detailErrorOverTime]
-#. defaultMessage is:
-#. Error Rates Over Time
-#: extracted_strings.json
-msgid "Error Rates Over Time"
-msgstr "Fehlerraten im Zeitverlauf"
 
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
@@ -3882,12 +3917,29 @@ msgstr "Jeder Wochentag"
 msgid "Excel"
 msgstr "Excel"
 
+#. [pages.Result.resultTypeId]
+#. defaultMessage is:
+#. Exclude reason is required
+#: extracted_strings.json
+msgid "Exclude reason is required"
+msgstr "Grund ausschließen ist erforderlich"
+
 #. [pages.displayResultSelectField.Excluded]
+#. defaultMessage is:
+#. Excluded
+#. [forms.formItem.excluded]
 #. defaultMessage is:
 #. Excluded
 #: extracted_strings.json
 msgid "Excluded"
 msgstr "Ausgeschlossen"
+
+#. [forms.formItem.excludeReason]
+#. defaultMessage is:
+#. Excluded Reason
+#: extracted_strings.json
+msgid "Excluded Reason"
+msgstr "Ausgeschlossen Grund"
 
 #. [filter.btnGroup.displayExcludedResults]
 #. defaultMessage is:
@@ -3961,22 +4013,15 @@ msgstr "Abgelaufen"
 msgid "Expires"
 msgstr "Läuft ab"
 
-#. [pages.InventoryItemsList.expiresOn]
+#. [pages.InventoryLog.expiresOn]
 #. defaultMessage is:
 #. Expires On
-#. [pages.InventoryLog.expiresOn]
+#. [pages.InventoryItemsList.expiresOn]
 #. defaultMessage is:
 #. Expires On
 #: extracted_strings.json
 msgid "Expires On"
 msgstr "Läuft ab am"
-
-#. [pages.RouterDetail.detailWarrantyExpire]
-#. defaultMessage is:
-#. Expires {date}
-#: extracted_strings.json
-msgid "Expires {date}"
-msgstr "Läuft am {date} ab"
 
 #. [pages.NotificationDetail.stockExpiringDays]
 #. defaultMessage is:
@@ -4029,16 +4074,6 @@ msgstr "Exportieren von Geräte-Workloads fehlgeschlagen"
 msgid "Exporting DeviceApiKeys Failed"
 msgstr "Exportieren von Geräte-API-Schlüssel fehlgeschlagen"
 
-#. [errorResponseMessages.exportDevices.GET.400.title]
-#. defaultMessage is:
-#. Exporting Devices Failed
-#. [errorResponseMessages.exportDevices.GET.default.title]
-#. defaultMessage is:
-#. Exporting Devices Failed
-#: extracted_strings.json
-msgid "Exporting Devices Failed"
-msgstr "Exportieren von Geräten fehlgeschlagen"
-
 #. [errorResponseMessages.exportResults.GET.400.title]
 #. defaultMessage is:
 #. Exporting Results Failed
@@ -4048,16 +4083,6 @@ msgstr "Exportieren von Geräten fehlgeschlagen"
 #: extracted_strings.json
 msgid "Exporting Results Failed"
 msgstr "Exportieren von Ergebnissen fehlgeschlagen"
-
-#. [errorResponseMessages.exportRouters.GET.400.title]
-#. defaultMessage is:
-#. Exporting Routers Failed
-#. [errorResponseMessages.exportRouters.GET.default.title]
-#. defaultMessage is:
-#. Exporting Routers Failed
-#: extracted_strings.json
-msgid "Exporting Routers Failed"
-msgstr "Exportieren von Routern fehlgeschlagen"
 
 #. [errorResponseMessages.exportSites.GET.400.title]
 #. defaultMessage is:
@@ -4109,6 +4134,13 @@ msgstr "Februar"
 #: extracted_strings.json
 msgid "FLQ Resistance"
 msgstr "FLQ Widerstand"
+
+#. [p.PkDashboard.mtbXdrFQResistance]
+#. defaultMessage is:
+#. FQ Resistance
+#: extracted_strings.json
+msgid "FQ Resistance"
+msgstr "FQ-Widerstand"
 
 #. [legends.Unknown.FQRPercent]
 #. defaultMessage is:
@@ -4190,13 +4222,6 @@ msgstr "Feld kann nicht weniger als {total} Zeichen enthalten"
 msgid "Field cannot contain more than {total} characters"
 msgstr "Feld kann nicht mehr als {total} Zeichen enthalten"
 
-#. [pages.Result.resultCategory1]
-#. defaultMessage is:
-#. Field is required
-#: extracted_strings.json
-msgid "Field is required"
-msgstr "Dieses Feld ist erforderlich"
-
 #. [pages.ResultList.resultCategoryFinalResult]
 #. defaultMessage is:
 #. Final Result
@@ -4234,20 +4259,6 @@ msgstr "Firmware"
 #: extracted_strings.json
 msgid "First"
 msgstr "Erste"
-
-#. [pages.RouterDetail.fieldFirstApprovedBy]
-#. defaultMessage is:
-#. First Approved By
-#: extracted_strings.json
-msgid "First Approved By"
-msgstr "Erste Freigabe durch"
-
-#. [pages.RouterDetail.fieldFirstApprovedOn]
-#. defaultMessage is:
-#. First Approved On
-#: extracted_strings.json
-msgid "First Approved On"
-msgstr "Erste Freigabe am"
 
 #. [pages.workload.firstResultEndedOn]
 #. defaultMessage is:
@@ -4413,6 +4424,13 @@ msgstr "GP nicht erkannt - NP erkannt"
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP nicht erkannt - NP nicht erkannt"
 
+#. [p.PkDashboard.DTestingDiagnosis]
+#. defaultMessage is:
+#. GX-10C Testing & Diagnosis
+#: extracted_strings.json
+msgid "GX-10C Testing & Diagnosis"
+msgstr "GX-10C Prüfung und Diagnose"
+
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
 #. Gastric Lavage
@@ -4420,6 +4438,9 @@ msgstr "GP nicht erkannt - NP nicht erkannt"
 msgid "Gastric Lavage"
 msgstr "Magenspülung"
 
+#. [pages.resultEdit.Genderi18nKey]
+#. defaultMessage is:
+#. Gender
 #. [pages.resultEdit.Genderi18nCaptionKey]
 #. defaultMessage is:
 #. Gender
@@ -4447,6 +4468,13 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "GeneXpert TB Kartusche"
 
+#. [p.PkDashboard.genExpert]
+#. defaultMessage is:
+#. GeneXpert Device Coverage
+#: extracted_strings.json
+msgid "GeneXpert Device Coverage"
+msgstr "GeneXpert Geräteabdeckung"
+
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
 #. GeneXpert Devices
@@ -4461,6 +4489,9 @@ msgstr "GeneXpert-Geräte"
 #. defaultMessage is:
 #. GeneXpert Ebola
 #. [pages.ResultList.assayGeneXpertEbola]
+#. defaultMessage is:
+#. GeneXpert Ebola
+#. [pages.ResultList.GxEbola]
 #. defaultMessage is:
 #. GeneXpert Ebola
 #: extracted_strings.json
@@ -4483,6 +4514,9 @@ msgstr "GeneXpert Ebola Kartusche"
 #. [pages.ResultList.assayGeneXpertHcv]
 #. defaultMessage is:
 #. GeneXpert HCV
+#. [pages.ResultList.GxHcv]
+#. defaultMessage is:
+#. GeneXpert HCV
 #: extracted_strings.json
 msgid "GeneXpert HCV"
 msgstr "GeneXpert HCV"
@@ -4494,6 +4528,9 @@ msgstr "GeneXpert HCV"
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
 #. [pages.ResultList.assayGeneXpertHiv1Qual]
+#. defaultMessage is:
+#. GeneXpert HIV-1 Qual
+#. [pages.ResultList.GxHiv1Qual]
 #. defaultMessage is:
 #. GeneXpert HIV-1 Qual
 #: extracted_strings.json
@@ -4509,6 +4546,9 @@ msgstr "GeneXpert HIV-1 Qual"
 #. [pages.ResultList.assayGeneXpertHiv1Vl]
 #. defaultMessage is:
 #. GeneXpert HIV-1 VL
+#. [pages.ResultList.GxHiv1Vl]
+#. defaultMessage is:
+#. GeneXpert HIV-1 VL
 #: extracted_strings.json
 msgid "GeneXpert HIV-1 VL"
 msgstr "GeneXpert HIV-1 VL"
@@ -4520,6 +4560,13 @@ msgstr "GeneXpert HIV-1 VL"
 msgid "GeneXpert Issues"
 msgstr "GeneXpert-Geräte"
 
+#. [p.PkDashboard.utilizationTitle]
+#. defaultMessage is:
+#. GeneXpert MTB-RIF/Ultra Device Utilization
+#: extracted_strings.json
+msgid "GeneXpert MTB-RIF/Ultra Device Utilization"
+msgstr "GeneXpert MTB-RIF/Ultra Geräteverwendung"
+
 #. [filter.AssaySelectField.assayGeneXpertMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
@@ -4527,6 +4574,9 @@ msgstr "GeneXpert-Geräte"
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
 #. [pages.ResultList.assayGeneXpertMtbRif]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif
+#. [pages.ResultList.GxMtbRif]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif
 #: extracted_strings.json
@@ -4542,6 +4592,9 @@ msgstr "GeneXpert MTB/Rif"
 #. [pages.ResultList.assayGeneXpertMtbRifUltra]
 #. defaultMessage is:
 #. GeneXpert MTB/Rif Ultra
+#. [pages.ResultList.GxMtbRifUltra]
+#. defaultMessage is:
+#. GeneXpert MTB/Rif Ultra
 #: extracted_strings.json
 msgid "GeneXpert MTB/Rif Ultra"
 msgstr "GeneXpert MTB/Rif Ultra"
@@ -4553,6 +4606,9 @@ msgstr "GeneXpert MTB/Rif Ultra"
 #. defaultMessage is:
 #. GeneXpert MTB/XDR
 #. [pages.ResultList.assayGeneXpertMtbXdr]
+#. defaultMessage is:
+#. GeneXpert MTB/XDR
+#. [pages.ResultList.GxMtbXdr]
 #. defaultMessage is:
 #. GeneXpert MTB/XDR
 #: extracted_strings.json
@@ -4583,6 +4639,9 @@ msgstr "GeneXpert TB Ultra Kartusche"
 #. [pages.ReportIndex.geneXpertTbWorkloadReport]
 #. defaultMessage is:
 #. GeneXpert TB Workload
+#. [pages.ReportIndex.genxpert_tb_workload_report]
+#. defaultMessage is:
+#. GeneXpert TB Workload
 #: extracted_strings.json
 msgid "GeneXpert TB Workload"
 msgstr "GeneXpert TB Arbeitsbelastung"
@@ -4596,6 +4655,9 @@ msgstr "GeneXpert TB Arbeitsbelastung"
 #. [pages.ResultList.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
+#. [pages.ResultList.GxUnknown]
+#. defaultMessage is:
+#. GeneXpert Unknown
 #: extracted_strings.json
 msgid "GeneXpert Unknown"
 msgstr "GeneXpert Unbekannt"
@@ -4606,16 +4668,6 @@ msgstr "GeneXpert Unbekannt"
 #: extracted_strings.json
 msgid "Generate"
 msgstr "Generieren"
-
-#. [errorResponseMessages.generateDeviceApiKeys.POST.400.title]
-#. defaultMessage is:
-#. Generate DeviceApiKeys Failed
-#. [errorResponseMessages.generateDeviceApiKeys.POST.default.title]
-#. defaultMessage is:
-#. Generate DeviceApiKeys Failed
-#: extracted_strings.json
-msgid "Generate DeviceApiKeys Failed"
-msgstr "Generieren von Geräte-API-Schlüssel fehlgeschlagen"
 
 #. [filter.AssaySelectField.genericRdt]
 #. defaultMessage is:
@@ -4714,16 +4766,6 @@ msgstr "GenoType MTBDRsl VER 2.0 Teststreifen"
 msgid "GenoType Test Strip"
 msgstr "GenoType Teststreifen"
 
-#. [errorResponseMessages.getReportFile.GET.400.title]
-#. defaultMessage is:
-#. Getting Report File Failed
-#. [errorResponseMessages.getReportFile.GET.default.title]
-#. defaultMessage is:
-#. Getting Report File Failed
-#: extracted_strings.json
-msgid "Getting Report File Failed"
-msgstr "Abrufen der Reportdatei fehlgeschlagen"
-
 #. [pages.OperationalDashboard.dailyStatusNav]
 #. defaultMessage is:
 #. Go To Daily Status
@@ -4737,20 +4779,6 @@ msgstr "Zum Tagesstatus gehen"
 #: extracted_strings.json
 msgid "Go To Dashboard"
 msgstr "Zurück zum Dashboard"
-
-#. [pages.InventoryDashboard.inventoryLogNav]
-#. defaultMessage is:
-#. Go To Inventory Log
-#: extracted_strings.json
-msgid "Go To Inventory Log"
-msgstr "Zum Inventarprotokoll gehen"
-
-#. [pages.InventoryDashboard.suppliesNav]
-#. defaultMessage is:
-#. Go To Supplies
-#: extracted_strings.json
-msgid "Go To Supplies"
-msgstr "Gehe zu Zubehör"
 
 #. [pages.TableHeader.groupByColumn]
 #. defaultMessage is:
@@ -5096,9 +5124,6 @@ msgstr "HIV nicht erkannt"
 #. [filter.DiseaseSelectField.diseaseNameHIVAIDS]
 #. defaultMessage is:
 #. HIV/AIDS
-#. [pages.caseRow.diseaseNameHIVAIDS]
-#. defaultMessage is:
-#. HIV/AIDS
 #: extracted_strings.json
 msgid "HIV/AIDS"
 msgstr "HIV/AIDS"
@@ -5141,17 +5166,11 @@ msgstr "Hat ein Sonderzeichen (%!$*...)"
 #. [filter.DiseaseSelectField.diseaseNameHepatitisB]
 #. defaultMessage is:
 #. Hepatitis B
-#. [pages.caseRow.diseaseNameHepatitisB]
-#. defaultMessage is:
-#. Hepatitis B
 #: extracted_strings.json
 msgid "Hepatitis B"
 msgstr "Hepatitis B"
 
 #. [filter.DiseaseSelectField.diseaseNameHepatitisC]
-#. defaultMessage is:
-#. Hepatitis C
-#. [pages.caseRow.diseaseNameHepatitisC]
 #. defaultMessage is:
 #. Hepatitis C
 #: extracted_strings.json
@@ -5179,6 +5198,13 @@ msgstr "Spalte ausblenden"
 msgid "History"
 msgstr "Verlauf"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. Hiv
+#: extracted_strings.json
+msgid "Hiv"
+msgstr "HIV"
+
 #. [header.link.home.title]
 #. defaultMessage is:
 #. Home
@@ -5199,13 +5225,6 @@ msgstr "Host"
 #: extracted_strings.json
 msgid "Host ID"
 msgstr "Gastgeber-ID"
-
-#. [pages.RouterDetail.fieldHostId]
-#. defaultMessage is:
-#. Host Id
-#: extracted_strings.json
-msgid "Host Id"
-msgstr "Host-ID"
 
 #. [components.shared.hours]
 #. defaultMessage is:
@@ -5426,25 +5445,16 @@ msgstr "Ersetztes Instrument"
 msgid "Instrument Serial"
 msgstr "Seriennummer"
 
-#. [errorResponseMessages.fetchPersons.GET.403.title]
+#. [errorResponseMessages.fetchPatientDetails.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
-#. [errorResponseMessages.fetchPatientDetails.GET.403.title]
+#. [errorResponseMessages.fetchPersons.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
 #. [errorResponseMessages.exportContacts.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
 #. [errorResponseMessages.fetchAvailablePersons.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
-#. [errorResponseMessages.fetchReports.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
-#. [errorResponseMessages.getReportFile.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
-#. [errorResponseMessages.exportPersons.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
@@ -5473,13 +5483,6 @@ msgstr "Ungültig"
 #: extracted_strings.json
 msgid "Invalid Credentials"
 msgstr "Ungültige Anmeldeinformationen"
-
-#. [errorResponseMessages.saveLoginDetails.PUT.403.title]
-#. defaultMessage is:
-#. Invalid Password
-#: extracted_strings.json
-msgid "Invalid Password"
-msgstr "Ungültiges Kennwort"
 
 #. [errorResponseMessages.common.unauthorized.resolution]
 #. defaultMessage is:
@@ -5530,6 +5533,9 @@ msgstr "Ungültige Webhook-URL"
 #. [pages.Status.summaryWidgetGroup.inventory]
 #. defaultMessage is:
 #. Inventory
+#. [p.PkDashboard.titleinventory]
+#. defaultMessage is:
+#. Inventory
 #: extracted_strings.json
 msgid "Inventory"
 msgstr "Inventar"
@@ -5551,12 +5557,25 @@ msgstr "Inventarartikel"
 #. [pages.ReportIndex.inventoryLog]
 #. defaultMessage is:
 #. Inventory Log
+#. [browsePage.browseDropdown.inventoryLog]
+#. defaultMessage is:
+#. Inventory Log
 #. [pages.InventoryLog.inventoryLogTitle]
+#. defaultMessage is:
+#. Inventory Log
+#. [pages.ReportIndex.inventory_log]
 #. defaultMessage is:
 #. Inventory Log
 #: extracted_strings.json
 msgid "Inventory Log"
 msgstr "Bericht"
+
+#. [p.PkDashboard.overview]
+#. defaultMessage is:
+#. Inventory Overview
+#: extracted_strings.json
+msgid "Inventory Overview"
+msgstr "Inventarübersicht"
 
 #. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
 #. defaultMessage is:
@@ -5568,6 +5587,9 @@ msgstr "Bericht"
 msgid "Inventory levels have been adjusted successfully"
 msgstr "Der Lagerbestand wurde erfolgreich angepasst"
 
+#. [browsePage.browseDropdown.inventoryItems]
+#. defaultMessage is:
+#. Inventory on Hand
 #. [pages.InventoryItemsList.inventoryItemsTitle]
 #. defaultMessage is:
 #. Inventory on Hand
@@ -5797,10 +5819,23 @@ msgstr "Sprache & Zeitzone"
 msgid "Last"
 msgstr "Letzte"
 
-#. [component.Widget.last30Days]
+#. [p.PkDashboard.molecularAssay24]
+#. defaultMessage is:
+#. Last 24 hours
+#. [p.PkDashboard.TB24]
+#. defaultMessage is:
+#. Last 24 hours
+#. [p.PkDashboard.RTTB24]
+#. defaultMessage is:
+#. Last 24 hours
+#: extracted_strings.json
+msgid "Last 24 hours"
+msgstr "Letzten 24 Stunden"
+
+#. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
-#. [pages.dateRangeSelector.last30Days]
+#. [component.Widget.last30Days]
 #. defaultMessage is:
 #. Last 30 Days
 #. [component.DateTimeInput.Last30Days]
@@ -5855,12 +5890,6 @@ msgstr "Letztes Ergebnis"
 msgid "Last Result Conducted On"
 msgstr "Letztes Ergebnis durchgeführt am"
 
-#. [pages.RouterDetail.fieldLastSeen]
-#. defaultMessage is:
-#. Last Seen
-#. [pages.RouterList.lastSeen]
-#. defaultMessage is:
-#. Last Seen
 #. [pages.DeviceList.lastSeen]
 #. defaultMessage is:
 #. Last Seen
@@ -5891,13 +5920,6 @@ msgstr "Letzte Woche"
 #: extracted_strings.json
 msgid "Last Year"
 msgstr "Letztes Jahr"
-
-#. [pages.RouterDetail.detailCalibrationDate]
-#. defaultMessage is:
-#. Last calibrated {date}
-#: extracted_strings.json
-msgid "Last calibrated {date}"
-msgstr "Zuletzt kalibriert {date}"
 
 #. [components.shared.lastDayofQuarter]
 #. defaultMessage is:
@@ -5986,6 +6008,16 @@ msgstr "In Behandlung"
 msgid "Lipid Panel"
 msgstr "Lipid-Panel"
 
+#. [pages.ReportIndex.missing_cartridges_report]
+#. defaultMessage is:
+#. List of Missing Lots
+#. [pages.ReportIndex.pk_missing_cartridges_report]
+#. defaultMessage is:
+#. List of Missing Lots
+#: extracted_strings.json
+msgid "List of Missing Lots"
+msgstr "Liste der fehlenden Lose"
+
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
 #. List-R Resistant Test Report
@@ -6042,33 +6074,12 @@ msgstr ""
 "Anzahl der Module, die in einem durch Filter definierten Zeitraum ersetzt "
 "wurden"
 
-#. [errorResponseMessages.fetchAccountDetails.GET.default.title]
-#. defaultMessage is:
-#. Loading Account Details Failed
-#: extracted_strings.json
-msgid "Loading Account Details Failed"
-msgstr "Laden der Kontodaten fehlgeschlagen"
-
-#. [errorResponseMessages.fetchAssayTypes.GET.default.title]
-#. defaultMessage is:
-#. Loading Assay Types Failed
-#: extracted_strings.json
-msgid "Loading Assay Types Failed"
-msgstr "Laden von Assay-Typen fehlgeschlagen"
-
 #. [errorResponseMessages.fetchAssays.GET.default.title]
 #. defaultMessage is:
 #. Loading Assays Failed
 #: extracted_strings.json
 msgid "Loading Assays Failed"
 msgstr "Lade-Assays fehlgeschlagen"
-
-#. [errorResponseMessages.fetchCases.GET.default.title]
-#. defaultMessage is:
-#. Loading Cases Failed
-#: extracted_strings.json
-msgid "Loading Cases Failed"
-msgstr "Laden von Fällen fehlgeschlagen"
 
 #. [errorResponseMessages.fetchConsumableReasons.GET.default.title]
 #. defaultMessage is:
@@ -6098,22 +6109,12 @@ msgstr "Laden von Kontakten fehlgeschlagen"
 msgid "Loading Device Approval Statuses Failed"
 msgstr "Laden von Gerätefreigabestatus fehlgeschlagen"
 
-#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.default.title]
-#. defaultMessage is:
-#. Loading Device Maintenance Status Failed
 #. [errorResponseMessages.fetchResultCategoryGroup.GET.default.title]
 #. defaultMessage is:
 #. Loading Device Maintenance Status Failed
 #: extracted_strings.json
 msgid "Loading Device Maintenance Status Failed"
 msgstr "Laden des Gerätewartungsstatus fehlgeschlagen"
-
-#. [errorResponseMessages.fetchDeviceApiKeys.GET.default.title]
-#. defaultMessage is:
-#. Loading DeviceApiKeys Failed
-#: extracted_strings.json
-msgid "Loading DeviceApiKeys Failed"
-msgstr "Laden von Geräte-API-Schlüsseln fehlgeschlagen"
 
 #. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
 #. defaultMessage is:
@@ -6129,9 +6130,6 @@ msgstr "Laden von Gerätevorgängen fehlgeschlagen"
 msgid "Loading DeviceTypes Failed"
 msgstr "Laden von Gerätearten fehlgeschlagen"
 
-#. [errorResponseMessages.fetchDevices.GET.default.title]
-#. defaultMessage is:
-#. Loading Devices Failed
 #. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
 #. defaultMessage is:
 #. Loading Devices Failed
@@ -6153,36 +6151,12 @@ msgstr "Laden von Krankheiten fehlgeschlagen"
 msgid "Loading Patient results details Failed"
 msgstr "Laden von Patientenergebnisdetails fehlgeschlagen"
 
-#. [errorResponseMessages.fetchPossibleTags.GET.default.title]
-#. defaultMessage is:
-#. Loading Possible Tags Failed
-#: extracted_strings.json
-msgid "Loading Possible Tags Failed"
-msgstr "Laden möglicher Tags fehlgeschlagen"
-
-#. [errorResponseMessages.fetchReports.GET.default.title]
-#. defaultMessage is:
-#. Loading Reports Failed
-#. [errorResponseMessages.fetchReportsForSelectList.GET.default.title]
-#. defaultMessage is:
-#. Loading Reports Failed
-#: extracted_strings.json
-msgid "Loading Reports Failed"
-msgstr "Laden von Berichten fehlgeschlagen"
-
 #. [errorResponseMessages.fetchTreatmentStatuses.GET.default.title]
 #. defaultMessage is:
 #. Loading Result Treatment Statuses Failed
 #: extracted_strings.json
 msgid "Loading Result Treatment Statuses Failed"
 msgstr "Laden von Ergebnis-Behandlungszuständen fehlgeschlagen"
-
-#. [errorResponseMessages.fetchWorkflowLogs.GET.default.title]
-#. defaultMessage is:
-#. Loading Result Workflow Status Logs Failed
-#: extracted_strings.json
-msgid "Loading Result Workflow Status Logs Failed"
-msgstr "Laden von Ergebnis-Workflow-Statusprotokollen fehlgeschlagen"
 
 #. [errorResponseMessages.fetchWorkflowStatuses.GET.default.title]
 #. defaultMessage is:
@@ -6198,26 +6172,12 @@ msgstr "Laden von Ergebnis-Workflow-Zuständen fehlgeschlagen"
 msgid "Loading Results Failed"
 msgstr "Laden der Ergebnisse fehlgeschlagen"
 
-#. [errorResponseMessages.fetchRouters.GET.default.title]
-#. defaultMessage is:
-#. Loading Routers Failed
-#: extracted_strings.json
-msgid "Loading Routers Failed"
-msgstr "Laden von Routern fehlgeschlagen"
-
 #. [errorResponseMessages.fetchSites.GET.default.title]
 #. defaultMessage is:
 #. Loading Sites Failed
 #: extracted_strings.json
 msgid "Loading Sites Failed"
 msgstr "Laden von Standorten fehlgeschlagen"
-
-#. [errorResponseMessages.fetchTags.GET.default.title]
-#. defaultMessage is:
-#. Loading Tags Failed
-#: extracted_strings.json
-msgid "Loading Tags Failed"
-msgstr "Laden von Tags fehlgeschlagen"
 
 #. [errorResponseMessages.fetchTask.GET.default.title]
 #. defaultMessage is:
@@ -6403,9 +6363,6 @@ msgstr "MTB kontaminiert"
 #. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
 #. defaultMessage is:
 #. MTB Detected
-#. [legends.Unknown.MtbDetected]
-#. defaultMessage is:
-#. MTB Detected
 #. [pages.filters.gxMtbRifMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -6416,6 +6373,9 @@ msgstr "MTB kontaminiert"
 #. defaultMessage is:
 #. MTB Detected
 #. [assayGenericDstResultCategoryDetected]
+#. defaultMessage is:
+#. MTB Detected
+#. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
 #: extracted_strings.json
@@ -6485,6 +6445,9 @@ msgstr "MTB erkannt RIF nicht erkannt"
 #. [pages.ReportIndex.MTB_Detected_RR_Detected]
 #. defaultMessage is:
 #. MTB Detected RR Detected
+#. [pages.ReportIndex.mtb_detected_rr_detected]
+#. defaultMessage is:
+#. MTB Detected RR Detected
 #: extracted_strings.json
 msgid "MTB Detected RR Detected"
 msgstr "MTB erkannt RIF erkannt"
@@ -6533,6 +6496,13 @@ msgstr "MTB Erkannt XDR Unbestimmt"
 msgid "MTB Detected XDR Not Detected"
 msgstr "MTB erkannt XDR nicht erkannt"
 
+#. [p.PkDashboard.mtbXdrmtbDetection]
+#. defaultMessage is:
+#. MTB Detection
+#: extracted_strings.json
+msgid "MTB Detection"
+msgstr "MTB-Erkennung"
+
 #. [resultCategoryGroup.gxMtbRifMtbError]
 #. defaultMessage is:
 #. MTB Error
@@ -6563,6 +6533,13 @@ msgstr "MTB erkannt XDR nicht erkannt"
 #: extracted_strings.json
 msgid "MTB Error"
 msgstr "MTB-Fehler"
+
+#. [pages.filters.GxMtbRifMTBErrorRifError]
+#. defaultMessage is:
+#. MTB Error Rif Error
+#: extracted_strings.json
+msgid "MTB Error Rif Error"
+msgstr "MTB-Fehler Rif-Fehler"
 
 #. [resultCategoryGroup.gxMtbRifMtbInvalid]
 #. defaultMessage is:
@@ -6670,6 +6647,13 @@ msgstr "MTB Kein Ergebnis"
 msgid "MTB Not Detected"
 msgstr "MTB nicht erkannt"
 
+#. [pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected Drug Resistance Not Detected
+#: extracted_strings.json
+msgid "MTB Not Detected Drug Resistance Not Detected"
+msgstr "MTB nicht nachgewiesen Medikamentenresistenz nicht nachgewiesen"
+
 #. [assayGenericDstresultCategoryPositiveMOTT]
 #. defaultMessage is:
 #. MTB Positive MOTT
@@ -6745,6 +6729,20 @@ msgstr "MTB Erfolg Resistenz Anfällig"
 msgid "MTB Trace Detected"
 msgstr "MTB-Trace erkannt"
 
+#. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
+#. defaultMessage is:
+#. MTB Trace Detected Rif Indeterminate
+#: extracted_strings.json
+msgid "MTB Trace Detected Rif Indeterminate"
+msgstr "MTB-Spuren nachgewiesen Rif unbestimmt"
+
+#. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult]
+#. defaultMessage is:
+#. MTB Trace Detected Rif No Result
+#: extracted_strings.json
+msgid "MTB Trace Detected Rif No Result"
+msgstr "MTB-Spur entdeckt Rif Kein Ergebnis"
+
 #. [assayGenericDstresultCategoryUnknown]
 #. defaultMessage is:
 #. MTB Unknown
@@ -6776,6 +6774,13 @@ msgstr "MTB+"
 msgid "MTB+ Trends In Year"
 msgstr "MTB+ Trends im Jahr"
 
+#. [p.PkDashboard.titlemtbRif]
+#. defaultMessage is:
+#. MTB/RIF
+#: extracted_strings.json
+msgid "MTB/RIF"
+msgstr "MTB/Rif"
+
 #. [filter.AssayTypeSelectField.assayTypeMtbRif]
 #. defaultMessage is:
 #. MTB/Rif
@@ -6784,6 +6789,9 @@ msgid "MTB/Rif"
 msgstr "MTB/Rif"
 
 #. [filter.AssayTypeSelectField.assayTypeMtbXdr]
+#. defaultMessage is:
+#. MTB/XDR
+#. [p.PkDashboard.titlemtbXdr]
 #. defaultMessage is:
 #. MTB/XDR
 #: extracted_strings.json
@@ -6930,6 +6938,9 @@ msgstr "Modul"
 #. [pages.ReportIndex.moduleActivityReport]
 #. defaultMessage is:
 #. Module Activity Report
+#. [pages.ReportIndex.module_activity_report]
+#. defaultMessage is:
+#. Module Activity Report
 #: extracted_strings.json
 msgid "Module Activity Report"
 msgstr "Modul-Aktivitätsbericht"
@@ -6971,6 +6982,9 @@ msgstr "Seriennummer des Moduls"
 #. [pages.ReportIndex.moduleStatusReport]
 #. defaultMessage is:
 #. Module Status Report
+#. [pages.ReportIndex.module_status_report]
+#. defaultMessage is:
+#. Module Status Report
 #: extracted_strings.json
 msgid "Module Status Report"
 msgstr "Modul-Statusbericht"
@@ -6979,6 +6993,9 @@ msgstr "Modul-Statusbericht"
 #. defaultMessage is:
 #. Module Swaps
 #. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps
+#. [pages.ReportIndex.module_swaps]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
@@ -7116,16 +7133,16 @@ msgstr "NTP"
 #. [placeholder.name]
 #. defaultMessage is:
 #. Name
-#. [pages.PersonList.personName]
-#. defaultMessage is:
-#. Name
-#. [pages.RouterDetail.fieldName]
+#. [pages.resultEdit.NameFieldi18nKey]
 #. defaultMessage is:
 #. Name
 #. [pages.NotificationDetail.fieldName]
 #. defaultMessage is:
 #. Name
 #. [pages.Notifications.table.nameHeader]
+#. defaultMessage is:
+#. Name
+#. [pages.PersonList.personName]
 #. defaultMessage is:
 #. Name
 #. [pages.SiteDetail.fieldName]
@@ -7162,6 +7179,51 @@ msgstr "Bundesweit"
 msgid "National Contacts"
 msgstr "Kontakte"
 
+#. [p.PkDashboard.FQNationalTrend]
+#. defaultMessage is:
+#. National FQ Trend
+#: extracted_strings.json
+msgid "National FQ Trend"
+msgstr "Nationaler FQ-Trend"
+
+#. [p.PkDashboard.GXTbNationalTrend]
+#. defaultMessage is:
+#. National GX-10C Testing Trends
+#: extracted_strings.json
+msgid "National GX-10C Testing Trends"
+msgstr "Nationale GX-10C-Prüfungstendenzen"
+
+#. [p.PkDashboard.RRNationalTrend]
+#. defaultMessage is:
+#. National RRTB Trends
+#: extracted_strings.json
+msgid "National RRTB Trends"
+msgstr "Nationale RRTB-Trends"
+
+#. [p.PkDashboard.TbDNationalTrend]
+#. defaultMessage is:
+#. National TB Diagnosis Trends
+#. [p.PkDashboard.DNationalTrend]
+#. defaultMessage is:
+#. National TB Diagnosis Trends
+#: extracted_strings.json
+msgid "National TB Diagnosis Trends"
+msgstr "Nationale TB-Diagnosetrends"
+
+#. [p.PkDashboard.TbNationalTrend]
+#. defaultMessage is:
+#. National TB Testing Trends
+#: extracted_strings.json
+msgid "National TB Testing Trends"
+msgstr "Nationale TB-Test-Trends"
+
+#. [p.PkDashboard.TNationalTrend]
+#. defaultMessage is:
+#. National Testing Trends
+#: extracted_strings.json
+msgid "National Testing Trends"
+msgstr "Nationale Trends bei Tests"
+
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
 #. Needs Repair
@@ -7172,10 +7234,10 @@ msgstr "Benötigt Reparatur"
 #. [legends.Unknown.resultCategoryNegative]
 #. defaultMessage is:
 #. Negative
-#. [pages.resultEdit.positive]
+#. [pages.deviceDetail.resultCategoryNegative]
 #. defaultMessage is:
 #. Negative
-#. [pages.deviceDetail.resultCategoryNegative]
+#. [pages.resultEdit.positive]
 #. defaultMessage is:
 #. Negative
 #: extracted_strings.json
@@ -7270,6 +7332,9 @@ msgstr "Neuer"
 msgid "Next"
 msgstr "Weiter"
 
+#. [pages.NotificationDetail.New.no]
+#. defaultMessage is:
+#. No
 #. [pages.Notifications.table.createButton.group.no]
 #. defaultMessage is:
 #. No
@@ -7283,10 +7348,10 @@ msgstr "Weiter"
 msgid "No"
 msgstr "Nein"
 
-#. [legends.Unknown.noConsumption]
+#. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
-#. [filter.btnGroup.daysStockLeft.noConsumption]
+#. [legends.Unknown.noConsumption]
 #. defaultMessage is:
 #. No Consumption
 #. [pages.InventoryItemsList.noConsumption]
@@ -7320,6 +7385,13 @@ msgstr "Keine benutzerdefinierten Felder definiert"
 msgid "No Data Available"
 msgstr "Keine Daten verfügbar"
 
+#. [filter.btnGroup.noFilters]
+#. defaultMessage is:
+#. No Filters Applied
+#: extracted_strings.json
+msgid "No Filters Applied"
+msgstr "Keine Filter angewendet"
+
 #. [pages.shared.deviceStatus.inactiveNoPower]
 #. defaultMessage is:
 #. No Power
@@ -7327,10 +7399,10 @@ msgstr "Keine Daten verfügbar"
 msgid "No Power"
 msgstr "Keine Energie"
 
-#. [pages.NotificationDetail.type.NoResult]
+#. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
 #. No Result
-#. [pages.deviceDetail.resultCategoryNoResult]
+#. [pages.NotificationDetail.type.NoResult]
 #. defaultMessage is:
 #. No Result
 #: extracted_strings.json
@@ -7441,10 +7513,10 @@ msgstr "Nichtumwandler der Kategorie I"
 msgid "Non converters of Retreatment"
 msgstr "Nichtumwandler von Retreatment"
 
-#. [pages.PersonDetails.none]
+#. [filter.popover.none]
 #. defaultMessage is:
 #. None
-#. [filter.popover.none]
+#. [pages.PersonDetails.none]
 #. defaultMessage is:
 #. None
 #: extracted_strings.json
@@ -7505,10 +7577,10 @@ msgstr "Nicht gefunden"
 msgid "Not Possible"
 msgstr "Nicht möglich"
 
-#. [legends.Unknown.notRecorded]
+#. [filter.btnGroup.daysStockLeft.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
-#. [filter.btnGroup.daysStockLeft.notRecorded]
+#. [legends.Unknown.notRecorded]
 #. defaultMessage is:
 #. Not Recorded
 #. [pages.InventoryItemsList.notRecorded]
@@ -7565,9 +7637,6 @@ msgstr "Notieren"
 #. defaultMessage is:
 #. Notes
 #. [pages.InventoryLog.notes]
-#. defaultMessage is:
-#. Notes
-#. [pages.RouterDetail.fieldNotes]
 #. defaultMessage is:
 #. Notes
 #. [pages.BaseDialog.notes]
@@ -7739,10 +7808,10 @@ msgstr "Oktober"
 msgid "OK"
 msgstr "OK"
 
-#. [filter.btnGroup.offline]
+#. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
 #. Offline
-#. [pages.connectorStatusSelectField.offline]
+#. [filter.btnGroup.offline]
 #. defaultMessage is:
 #. Offline
 #. [pages.DeviceList.offline]
@@ -7786,10 +7855,10 @@ msgstr "Zur Behandlung"
 msgid "On the last weekday of every month"
 msgstr "Am letzten Werktag eines jeden Monats"
 
-#. [filter.btnGroup.online]
+#. [pages.connectorStatusSelectField.online]
 #. defaultMessage is:
 #. Online
-#. [pages.connectorStatusSelectField.online]
+#. [filter.btnGroup.online]
 #. defaultMessage is:
 #. Online
 #. [pages.DeviceList.online]
@@ -7885,6 +7954,9 @@ msgstr "Bestellt"
 #. [filter.sampleType.sampleTypeOther]
 #. defaultMessage is:
 #. Other
+#. [p.PkDashboard.titleother]
+#. defaultMessage is:
+#. Other
 #: extracted_strings.json
 msgid "Other"
 msgstr "Andere"
@@ -7935,10 +8007,10 @@ msgstr ""
 msgid "Out of Inventory"
 msgstr "Nicht im Inventar"
 
-#. [legends.Unknown.outOfStock]
+#. [filter.btnGroup.daysStockLeft.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
-#. [filter.btnGroup.daysStockLeft.outOfStock]
+#. [legends.Unknown.outOfStock]
 #. defaultMessage is:
 #. Out of Stock
 #: extracted_strings.json
@@ -7980,10 +8052,10 @@ msgstr "Gesamtnetzwerkzustand Täglich"
 msgid "Overdue"
 msgstr "Überfällig"
 
-#. [pages.AccountDetails.partner]
+#. [filter.popover.partner]
 #. defaultMessage is:
 #. Partner
-#. [filter.popover.partner]
+#. [pages.AccountDetails.partner]
 #. defaultMessage is:
 #. Partner
 #. [pages.DeviceApiKeyList.partnerId]
@@ -8044,13 +8116,10 @@ msgstr "Patient"
 msgid "Patient Data"
 msgstr "Patientendaten"
 
-#. [forms.formItem.patientId]
-#. defaultMessage is:
-#. Patient ID
 #. [filter.popover.patientOrResearchId]
 #. defaultMessage is:
 #. Patient ID
-#. [pages.CasesList.patientId]
+#. [forms.formItem.patientId]
 #. defaultMessage is:
 #. Patient ID
 #. [pages.ResultList.patientId]
@@ -8101,12 +8170,27 @@ msgstr "Patienten-/Fall-ID"
 msgid "Pending"
 msgstr "Ausstehend"
 
+#. [page.contacts.person.pendingChanges]
+#. defaultMessage is:
+#. Pending changes
+#: extracted_strings.json
+msgid "Pending changes"
+msgstr "Anstehende Änderungen"
+
 #. [pages.TaskDetail.peopleAlerted]
 #. defaultMessage is:
 #. People alerted
 #: extracted_strings.json
 msgid "People alerted"
 msgstr "Personen alarmiert"
+
+#. [p.PkDashboard.molecularAssay]
+#. defaultMessage is:
+#. People tested for TB using MTB/Rif assay in current year
+#: extracted_strings.json
+msgid "People tested for TB using MTB/Rif assay in current year"
+msgstr ""
+"Personen, die im laufenden Jahr mit dem MTB/Rif-Assay auf TB getestet wurden"
 
 #. [pages.OperationalData.percentPositive]
 #. defaultMessage is:
@@ -8123,6 +8207,9 @@ msgid "Percent Reported"
 msgstr "Prozent berichtet"
 
 #. [pages.ReportIndex.reportCustomFieldsCompletion]
+#. defaultMessage is:
+#. Percent of custom fields completion for the MTB form
+#. [pages.ReportIndex.report_custom_fields_completion]
 #. defaultMessage is:
 #. Percent of custom fields completion for the MTB form
 #: extracted_strings.json
@@ -8156,6 +8243,9 @@ msgstr ""
 "Gültige Ergebnisse umfassen alle Ergebnisse, die nicht zu \"Fehler\", \"Kein "
 "Ergebnis\" oder \"Ungültig\" geführt haben."
 
+#. [p.PkDashboard.coverageperformance]
+#. defaultMessage is:
+#. Performance
 #. [pages.DeviceDetailProfile.performanceTitle]
 #. defaultMessage is:
 #. Performance
@@ -8400,24 +8490,6 @@ msgstr "Bitte geben Sie die zu entfernende Menge an"
 msgid "Please specify the quantity to transfer"
 msgstr "Bitte geben Sie die zu übertragende Menge an"
 
-#. [errorResponseMessages.saveLoginDetails.PUT.409.resolution]
-#. defaultMessage is:
-#. Please try another username
-#: extracted_strings.json
-msgid "Please try another username"
-msgstr "Bitte versuchen Sie einen anderen Benutzernamen"
-
-#. [errorResponseMessages.saveLoginDetails.PUT.403.resolution]
-#. defaultMessage is:
-#. Please try re-entering your password or contact us to reset your login details
-#: extracted_strings.json
-msgid ""
-"Please try re-entering your password or contact us to reset your login "
-"details"
-msgstr ""
-"Bitte versuchen Sie, Ihr Passwort erneut einzugeben oder kontaktieren Sie "
-"uns, um Ihre Anmeldedaten zurückzusetzen"
-
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution]
 #. defaultMessage is:
 #. Please, change the date range. Some of the selected days are set to status Active, and they can't be changed
@@ -8621,6 +8693,13 @@ msgstr "Mutmaßliche TB"
 msgid "Preview"
 msgstr "Vorschau"
 
+#. [pages.NotificationDetail.New.previewNotification]
+#. defaultMessage is:
+#. Preview Notification
+#: extracted_strings.json
+msgid "Preview Notification"
+msgstr "Vorschau Benachrichtigung"
+
 #. [pages.TablePaginator.previous]
 #. defaultMessage is:
 #. Previous
@@ -8745,6 +8824,44 @@ msgstr "Provinz"
 msgid "Province/Region"
 msgstr "Provinz/Region"
 
+#. [p.PkDashboard.FQProvincialComparison]
+#. defaultMessage is:
+#. Provincial FQ trends Comparison
+#: extracted_strings.json
+msgid "Provincial FQ trends Comparison"
+msgstr "FQ-Trends der Provinzen Vergleich"
+
+#. [p.PkDashboard.RRProvincialComparison]
+#. defaultMessage is:
+#. Provincial RRTB Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "Provincial RRTB Diagnosis Trends Comparison"
+msgstr "Vergleich der RRTB-Diagnosetrends in den Provinzen"
+
+#. [p.PkDashboard.TbDProvincialComparison]
+#. defaultMessage is:
+#. Provincial TB Diagnosis Trends Comparison
+#. [p.PkDashboard.DProvincialComparison]
+#. defaultMessage is:
+#. Provincial TB Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "Provincial TB Diagnosis Trends Comparison"
+msgstr "Vergleich der TB-Diagnosetrends in den Provinzen"
+
+#. [p.PkDashboard.TbProvincialComparison]
+#. defaultMessage is:
+#. Provincial TB Testing Trend comparison
+#: extracted_strings.json
+msgid "Provincial TB Testing Trend comparison"
+msgstr "Trendvergleich der TB-Tests in den Provinzen"
+
+#. [p.PkDashboard.TProvincialComparison]
+#. defaultMessage is:
+#. Provincial Trend Comparison
+#: extracted_strings.json
+msgid "Provincial Trend Comparison"
+msgstr "Vergleich der Trends in den Provinzen"
+
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
 #. Provisioned
@@ -8784,6 +8901,9 @@ msgstr "Q"
 #. defaultMessage is:
 #. Q HIV VL
 #. [legends.Unknown.QHivVL]
+#. defaultMessage is:
+#. Q HIV VL
+#. [filter.AssaySelectField.QHivVL]
 #. defaultMessage is:
 #. Q HIV VL
 #: extracted_strings.json
@@ -8879,9 +8999,26 @@ msgstr "RIF Widerstand"
 #. [pages.ReportIndex.RIF_Resistance_Rate]
 #. defaultMessage is:
 #. RIF Resistance Rate (%positive results)
+#. [pages.ReportIndex.rif_resistance_rate]
+#. defaultMessage is:
+#. RIF Resistance Rate (%positive results)
 #: extracted_strings.json
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Die Anzahl der positiven Ergebnisse"
+
+#. [p.PkDashboard.RRPerDay]
+#. defaultMessage is:
+#. RR cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "RR cases diagnosed in last 24 hours"
+msgstr "In den letzten 24 Stunden diagnostizierte RR-Fälle"
+
+#. [p.PkDashboard.RRPerYear]
+#. defaultMessage is:
+#. RR cases diagnosed this year
+#: extracted_strings.json
+msgid "RR cases diagnosed this year"
+msgstr "In diesem Jahr diagnostizierte RR-Fälle"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -8911,6 +9048,20 @@ msgstr "RRD#"
 msgid "RRD%"
 msgstr "RRD%"
 
+#. [p.PkDashboard.RTTB]
+#. defaultMessage is:
+#. RRTB Cases Diagnosed in current year
+#: extracted_strings.json
+msgid "RRTB Cases Diagnosed in current year"
+msgstr "RRTB-Fälle, die im laufenden Jahr diagnostiziert wurden"
+
+#. [p.PkDashboard.mtbRifRrtbDiagnosis]
+#. defaultMessage is:
+#. RRTB Diagnosis
+#: extracted_strings.json
+msgid "RRTB Diagnosis"
+msgstr "RRTB-Diagnose"
+
 #. [pages.deviceDetail.ResultWorkflowStatusDeliverable]
 #. defaultMessage is:
 #. Ready for delivery
@@ -8918,10 +9069,10 @@ msgstr "RRD%"
 msgid "Ready for delivery"
 msgstr "Lieferbereit"
 
-#. [pages.DeviceList.reagentHealth]
+#. [pages.TaskList.taskListOptionsReagent]
 #. defaultMessage is:
 #. Reagent
-#. [pages.TaskList.taskListOptionsReagent]
+#. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
 #. Reagent
 #. [pages.SiteList.issueCategoryReagentHealth]
@@ -8999,6 +9150,15 @@ msgstr "Wiederhergestellte Fälle"
 msgid "Recovery Rates by Gender"
 msgstr "Erholungsraten nach Geschlecht"
 
+#. [pages.resultEdit.ReferringClinicianI18nkey]
+#. defaultMessage is:
+#. Referring Clinician or Facility Phone Number (if known)
+#: extracted_strings.json
+msgid "Referring Clinician or Facility Phone Number (if known)"
+msgstr ""
+"Telefonnummer des überweisenden Klinikers oder der Einrichtung (falls "
+"bekannt)"
+
 #. [pages.resultEdit.ReferringFacilityI18nkey]
 #. defaultMessage is:
 #. Referring Facility
@@ -9019,13 +9179,6 @@ msgstr "Region"
 #: extracted_strings.json
 msgid "Region n"
 msgstr "Region n"
-
-#. [pages.SiteDropdown.allSites]
-#. defaultMessage is:
-#. Region: {region}
-#: extracted_strings.json
-msgid "Region: {region}"
-msgstr "Region: {region}"
 
 #. [jobFunction.regionalOfficer]
 #. defaultMessage is:
@@ -9093,10 +9246,10 @@ msgstr "Wiederholung der Baseline"
 msgid "Repeat Test"
 msgstr "Test wiederholen"
 
-#. [placeholder.report]
+#. [filter.popover.reportName]
 #. defaultMessage is:
 #. Report
-#. [filter.popover.reportName]
+#. [placeholder.report]
 #. defaultMessage is:
 #. Report
 #. [pages.Notification.type.Report]
@@ -9116,17 +9269,47 @@ msgstr "Bericht"
 msgid "Report Based"
 msgstr "Bericht basiert"
 
+#. [pages.ReportIndex.error_rate_description]
+#. defaultMessage is:
+#. Report error rates per quarter, break them down by devices, modules and users
+#: extracted_strings.json
+msgid ""
+"Report error rates per quarter, break them down by devices, modules and users"
+msgstr ""
+"Bericht der Fehlerquoten pro Quartal, aufgeschlüsselt nach Geräten, Modulen "
+"und Benutzern"
+
 #. [pages.ReportIndex.reportTBWorkloadSummary]
+#. defaultMessage is:
+#. Report of TB Workload Summary
+#. [pages.ReportIndex.tb_workload_summary]
 #. defaultMessage is:
 #. Report of TB Workload Summary
 #: extracted_strings.json
 msgid "Report of TB Workload Summary"
 msgstr "Bericht über die Zusammenfassung der TB-Arbeitsbelastung"
 
-#. [forms.formItem.reportableSite]
+#. [pages.ReportIndex.reportDrTb10a10bCovid]
+#. defaultMessage is:
+#. Report on Xpert MTB/RIF and Covid
+#. [pages.ReportIndex.results_10a_10b_covid]
+#. defaultMessage is:
+#. Report on Xpert MTB/RIF and Covid
+#: extracted_strings.json
+msgid "Report on Xpert MTB/RIF and Covid"
+msgstr "Bericht über Xpert MTB/RIF und Covid"
+
+#. [pages.ReportIndex.results_10a_10b_covid_ntp_use]
+#. defaultMessage is:
+#. Report on Xpert MTB/RIF and Covid - NTP Use
+#: extracted_strings.json
+msgid "Report on Xpert MTB/RIF and Covid - NTP Use"
+msgstr "Bericht über Xpert MTB/RIF und Covid - NTP-Verwendung"
+
+#. [filter.popover.site]
 #. defaultMessage is:
 #. Reportable Site
-#. [filter.popover.site]
+#. [forms.formItem.reportableSite]
 #. defaultMessage is:
 #. Reportable Site
 #: extracted_strings.json
@@ -9146,6 +9329,9 @@ msgstr "Gemeldet Aktiv"
 #. [legends.Unknown.ReporterEID]
 #. defaultMessage is:
 #. Reporter EID
+#. [filter.AssaySelectField.ReporterEID]
+#. defaultMessage is:
+#. Reporter EID
 #: extracted_strings.json
 msgid "Reporter EID"
 msgstr "Reporter EID"
@@ -9154,6 +9340,9 @@ msgstr "Reporter EID"
 #. defaultMessage is:
 #. Reporter HIV VL
 #. [legends.Unknown.ReporterHivVL]
+#. defaultMessage is:
+#. Reporter HIV VL
+#. [filter.AssaySelectField.ReporterHivVL]
 #. defaultMessage is:
 #. Reporter HIV VL
 #: extracted_strings.json
@@ -9177,9 +9366,6 @@ msgstr "Reporter Standort"
 msgid "Reporters"
 msgstr "Reporter"
 
-#. [pages.RouterList.reportingFor]
-#. defaultMessage is:
-#. Reporting Since
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
 #. Reporting Since
@@ -9235,11 +9421,15 @@ msgstr ""
 #. defaultMessage is:
 #. Represents the number of results conducted from {startDate} to {endDate}
 #: extracted_strings.json
+#, fuzzy
+#| msgid ""
+#| "Represents the number of results conducted from {startDate} to {endDate} "
+#| "(Month to Date)"
 msgid ""
 "Represents the number of results conducted from {startDate} to {endDate}"
 msgstr ""
 "Stellt die Anzahl der durchgeführten Ergebnisse von {startDate} bis "
-"{endDate} dar"
+"{endDate} dar (Monat bis Datum)"
 
 #. [pages.DeviceList.deviceStatusDescription]
 #. defaultMessage is:
@@ -9348,13 +9538,13 @@ msgstr "Beständig"
 msgid "Resolved"
 msgstr "Behoben"
 
+#. [filter.popover.result]
+#. defaultMessage is:
+#. Result
 #. [forms.formSectionHeader.result]
 #. defaultMessage is:
 #. Result
 #. [placeholder.result]
-#. defaultMessage is:
-#. Result
-#. [filter.popover.result]
 #. defaultMessage is:
 #. Result
 #. [pages.Milestones.resultNotes]
@@ -9441,6 +9631,13 @@ msgstr "Erkanntes Ergebnis"
 msgid "Result Error"
 msgstr "Ergebnis Fehler"
 
+#. [filter.popover.resultGroup]
+#. defaultMessage is:
+#. Result Group
+#: extracted_strings.json
+msgid "Result Group"
+msgstr "Ergebnis Gruppe"
+
 #. [resultCategoryGroup.assayBdMgitAstresultCategoryMissing]
 #. defaultMessage is:
 #. Result Missing
@@ -9478,6 +9675,9 @@ msgid "Result Not Detected"
 msgstr "Ergebnis nicht erkannt"
 
 #. [pages.ReportIndex.result_notifications_report]
+#. defaultMessage is:
+#. Result Notifications Report
+#. [pages.ReportIndex.result_notifications]
 #. defaultMessage is:
 #. Result Notifications Report
 #: extracted_strings.json
@@ -9663,10 +9863,10 @@ msgstr "Ergebnis wird erstellt oder aktualisiert"
 msgid "Result is Updated"
 msgstr "Ergebnis wird aktualisiert"
 
-#. [component.Widget.resultsTitle]
+#. [browsePage.browseDropdown.results]
 #. defaultMessage is:
 #. Results
-#. [browsePage.browseDropdown.results]
+#. [component.Widget.resultsTitle]
 #. defaultMessage is:
 #. Results
 #. [pages.ResultList.title]
@@ -9684,6 +9884,9 @@ msgid "Results Transmitted"
 msgstr "Übertragene Ergebnisse"
 
 #. [pages.ReportIndex.Results_HIV_Not_Suppressed]
+#. defaultMessage is:
+#. Results with HIV Not Suppressed
+#. [pages.ReportIndex.results_hiv_not_suppressed]
 #. defaultMessage is:
 #. Results with HIV Not Suppressed
 #: extracted_strings.json
@@ -9759,24 +9962,7 @@ msgstr "Rif-Beständig"
 msgid "Rif Susceptible"
 msgstr "Rif-empfindlich"
 
-#. [pages.RouterList.router]
-#. defaultMessage is:
-#. Router
-#: extracted_strings.json
-msgid "Router"
-msgstr "Router"
-
-#. [pages.RouterDetail.title]
-#. defaultMessage is:
-#. Router Detail
-#: extracted_strings.json
-msgid "Router Detail"
-msgstr "Router Detail"
-
 #. [browsePage.browseDropdown.routers]
-#. defaultMessage is:
-#. Routers
-#. [pages.RouterList.routersTitle]
 #. defaultMessage is:
 #. Routers
 #: extracted_strings.json
@@ -9784,9 +9970,6 @@ msgid "Routers"
 msgstr "Router"
 
 #. [filter.DiseaseSelectField.diseaseNameCovid19]
-#. defaultMessage is:
-#. SARS-CoV-2 (COVID-19)
-#. [pages.caseRow.diseaseNameCovid19]
 #. defaultMessage is:
 #. SARS-CoV-2 (COVID-19)
 #: extracted_strings.json
@@ -9828,6 +10011,13 @@ msgstr "Gesendete SMS"
 msgid "SMS Sent MTD"
 msgstr "SMS gesendet diesen Monat"
 
+#. [pages.ReportIndex.szSmsStats]
+#. defaultMessage is:
+#. SMS Stats
+#: extracted_strings.json
+msgid "SMS Stats"
+msgstr "SMS-Statistiken"
+
 #. [pages.Notifications.table.smsSentTo]
 #. defaultMessage is:
 #. SMS was sent to:
@@ -9862,9 +10052,6 @@ msgstr "Datum der Probenentnahme"
 #. [forms.formItem.sampleCollectionSite]
 #. defaultMessage is:
 #. Sample Collection Site
-#. [pages.CasesList.sampleOriginSite]
-#. defaultMessage is:
-#. Sample Collection Site
 #. [pages.ResultList.sampleOriginSiteName]
 #. defaultMessage is:
 #. Sample Collection Site
@@ -9882,10 +10069,10 @@ msgstr "Ort der Probenentnahme"
 msgid "Sample Collection Site:"
 msgstr "Ort der Probenentnahme:"
 
-#. [forms.formItem.sampleId]
+#. [filter.popover.sampleId]
 #. defaultMessage is:
 #. Sample ID
-#. [filter.popover.sampleId]
+#. [forms.formItem.sampleId]
 #. defaultMessage is:
 #. Sample ID
 #. [pages.ResultList.sampleId]
@@ -9979,33 +10166,12 @@ msgstr "Speichern & Zurück zur Tabelle"
 msgid "Save & Next"
 msgstr "speichern & weiter"
 
-#. [errorResponseMessages.saveContactDetails.PUT.default.title]
-#. defaultMessage is:
-#. Saving Contact Details Failed
-#: extracted_strings.json
-msgid "Saving Contact Details Failed"
-msgstr "Speichern der Kontaktdetails fehlgeschlagen"
-
-#. [errorResponseMessages.saveLoginDetails.PUT.default.title]
-#. defaultMessage is:
-#. Saving Login Details Failed
-#: extracted_strings.json
-msgid "Saving Login Details Failed"
-msgstr "Speichern der Anmeldedaten fehlgeschlagen"
-
 #. [errorResponseMessages.updateSite.PUT.default.title]
 #. defaultMessage is:
 #. Saving Site Failed
 #: extracted_strings.json
 msgid "Saving Site Failed"
 msgstr "Speichern der Seite fehlgeschlagen"
-
-#. [errorResponseMessages.saveUserPreferences.PUT.default.title]
-#. defaultMessage is:
-#. Saving User Preferences Failed
-#: extracted_strings.json
-msgid "Saving User Preferences Failed"
-msgstr "Speichern der Benutzereinstellungen fehlgeschlagen"
 
 #. [legends.Unknown.resultCategoryScanty]
 #. defaultMessage is:
@@ -10033,12 +10199,12 @@ msgstr ""
 "Tests hochgeladen haben (Aktiv), im Vergleich zur Anzahl der Geräte, die "
 "Aspect angepiept haben (Online)."
 
-#. [errorResponseMessages.fetchAssayTypes.GET.400.title]
+#. [p.PkDashboard.incompleteScreen]
 #. defaultMessage is:
-#. Searching Assay Types Failed
+#. Screen is not yet complete
 #: extracted_strings.json
-msgid "Searching Assay Types Failed"
-msgstr "Suche nach Assay-Typen fehlgeschlagen"
+msgid "Screen is not yet complete"
+msgstr "Bildschirm ist noch nicht vollständig"
 
 #. [errorResponseMessages.fetchAssays.GET.400.title]
 #. defaultMessage is:
@@ -10046,13 +10212,6 @@ msgstr "Suche nach Assay-Typen fehlgeschlagen"
 #: extracted_strings.json
 msgid "Searching Assays Failed"
 msgstr "Suche nach Assays fehlgeschlagen"
-
-#. [errorResponseMessages.fetchCases.GET.400.title]
-#. defaultMessage is:
-#. Searching Cases Failed
-#: extracted_strings.json
-msgid "Searching Cases Failed"
-msgstr "Suche nach Fällen fehlgeschlagen"
 
 #. [errorResponseMessages.fetchConsumables.GET.400.title]
 #. defaultMessage is:
@@ -10075,9 +10234,6 @@ msgstr "Suche nach Kontakten fehlgeschlagen"
 msgid "Searching Device Approvals Failed"
 msgstr "Suche nach Gerätezulassungen fehlgeschlagen"
 
-#. [errorResponseMessages.fetchDeviceMaintenanceStatus.GET.400.title]
-#. defaultMessage is:
-#. Searching Device Maintenance status Failed
 #. [errorResponseMessages.fetchResultCategoryGroup.GET.400.title]
 #. defaultMessage is:
 #. Searching Device Maintenance status Failed
@@ -10085,26 +10241,12 @@ msgstr "Suche nach Gerätezulassungen fehlgeschlagen"
 msgid "Searching Device Maintenance status Failed"
 msgstr "Suche nach Gerät Wartungsstatus fehlgeschlagen"
 
-#. [errorResponseMessages.fetchDeviceApiKeys.GET.400.title]
-#. defaultMessage is:
-#. Searching DeviceApiKeys Failed
-#: extracted_strings.json
-msgid "Searching DeviceApiKeys Failed"
-msgstr "Suche nach Geräte-API-Schlüsseln fehlgeschlagen"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
 #. defaultMessage is:
 #. Searching DeviceOperations Failed
 #: extracted_strings.json
 msgid "Searching DeviceOperations Failed"
 msgstr "Suche nach Geräteoperationen fehlgeschlagen"
-
-#. [errorResponseMessages.fetchDevices.GET.400.title]
-#. defaultMessage is:
-#. Searching Devices Failed
-#: extracted_strings.json
-msgid "Searching Devices Failed"
-msgstr "Suche nach Geräten fehlgeschlagen"
 
 #. [errorResponseMessages.fetchDiseases.GET.400.title]
 #. defaultMessage is:
@@ -10120,26 +10262,12 @@ msgstr "Suche nach Krankheiten fehlgeschlagen"
 msgid "Searching Patient Result Failed"
 msgstr "Suche nach Patientenergebnis fehlgeschlagen"
 
-#. [errorResponseMessages.fetchReports.GET.400.title]
-#. defaultMessage is:
-#. Searching Reports Failed
-#: extracted_strings.json
-msgid "Searching Reports Failed"
-msgstr "Suche nach Berichten fehlgeschlagen"
-
 #. [errorResponseMessages.fetchTreatmentStatuses.GET.400.title]
 #. defaultMessage is:
 #. Searching Result Treatment Statuses Failed
 #: extracted_strings.json
 msgid "Searching Result Treatment Statuses Failed"
 msgstr "Suchergebnis Behandlungszustände fehlgeschlagen"
-
-#. [errorResponseMessages.fetchWorkflowLogs.GET.400.title]
-#. defaultMessage is:
-#. Searching Result Workflow Status Logs Failed
-#: extracted_strings.json
-msgid "Searching Result Workflow Status Logs Failed"
-msgstr "Suchergebnis Workflow-Statusprotokolle fehlgeschlagen"
 
 #. [errorResponseMessages.fetchWorkflowStatuses.GET.400.title]
 #. defaultMessage is:
@@ -10154,20 +10282,6 @@ msgstr "Suchergebnis Workflow-Status fehlgeschlagen"
 #: extracted_strings.json
 msgid "Searching Results Failed"
 msgstr "Suchergebnisse fehlgeschlagen"
-
-#. [errorResponseMessages.fetchRouters.GET.400.title]
-#. defaultMessage is:
-#. Searching Routers Failed
-#: extracted_strings.json
-msgid "Searching Routers Failed"
-msgstr "Suche nach Routern fehlgeschlagen"
-
-#. [errorResponseMessages.fetchSites.GET.400.title]
-#. defaultMessage is:
-#. Searching Sites Failed
-#: extracted_strings.json
-msgid "Searching Sites Failed"
-msgstr "Suche nach Sites fehlgeschlagen"
 
 #. [errorResponseMessages.getTasksByStatus.GET.400.title]
 #. defaultMessage is:
@@ -10429,6 +10543,9 @@ msgstr "Wählbar"
 #. [pages.ResultList.assaySenaiteLIMSSmearMicroscopy]
 #. defaultMessage is:
 #. Senaite LIMS Smear Microscopy
+#. [filter.AssaySelectField.senaiteSmearMicroscopy]
+#. defaultMessage is:
+#. Senaite LIMS Smear Microscopy
 #: extracted_strings.json
 msgid "Senaite LIMS Smear Microscopy"
 msgstr "Senaite LIMS Ausstrichmikroskopie"
@@ -10442,6 +10559,9 @@ msgstr "Senaite LIMS Ausstrichmikroskopie"
 #. [pages.ResultList.assaySenaiteLIMSTbCulture]
 #. defaultMessage is:
 #. Senaite LIMS TB Culture
+#. [filter.AssaySelectField.senaiteTbCulture]
+#. defaultMessage is:
+#. Senaite LIMS TB Culture
 #: extracted_strings.json
 msgid "Senaite LIMS TB Culture"
 msgstr "Senaite LIMS TB Kultur"
@@ -10453,6 +10573,9 @@ msgstr "Senaite LIMS TB Kultur"
 #. defaultMessage is:
 #. Senaite LIMS Unknown
 #. [pages.ResultList.assaySenaiteLIMSUnknown]
+#. defaultMessage is:
+#. Senaite LIMS Unknown
+#. [filter.AssaySelectField.senaiteUnknown]
 #. defaultMessage is:
 #. Senaite LIMS Unknown
 #: extracted_strings.json
@@ -10510,13 +10633,6 @@ msgstr "Per E-Mail gesendet"
 #: extracted_strings.json
 msgid "Sent via SMS"
 msgstr "Per SMS gesendet"
-
-#. [pages.RouterDetail.fieldSerial]
-#. defaultMessage is:
-#. Serial
-#: extracted_strings.json
-msgid "Serial"
-msgstr "Seriennummer"
 
 #. [pages.DeviceDetailProfile.serial]
 #. defaultMessage is:
@@ -10618,9 +10734,6 @@ msgstr "Kurzer Name"
 msgid "Short name is already in use"
 msgstr "Kurzname ist bereits in Gebrauch"
 
-#. [pages.RouterDetail.fieldShortName]
-#. defaultMessage is:
-#. ShortName
 #. [pages.NotificationDetail.fieldShortName]
 #. defaultMessage is:
 #. ShortName
@@ -10698,17 +10811,6 @@ msgstr ""
 "Zeigt alle Standorte/Geräte und die Anzahl der Tage, an denen sie im letzten "
 "Monat keinen Bestand hatten."
 
-#. [pages.CaseList.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} other {# cases} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# case} "
-"other {# cases} }"
-msgstr ""
-"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# Fall} "
-"other {# Fällen} }"
-
 #. [pages.PersonList.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# contact} other {# contacts} }
@@ -10756,6 +10858,17 @@ msgstr ""
 "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
 "Protokoll} other {# Protokollen} }"
 
+#. [pages.Notification.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# notification} other {# notifications} }
+#: extracted_strings.json
+msgid ""
+"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+"notification} other {# notifications} }"
+msgstr ""
+"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+"Benachrichtigung} other {# Benachrichtigungen} }"
+
 #. [pages.DeviceDetailOperation.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# record} other {# records} }
@@ -10791,17 +10904,6 @@ msgid ""
 msgstr ""
 "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
 "Ergebnis} other {# Ergebnissen} }"
-
-#. [pages.RouterList.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# router} other {# routers} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-"router} other {# routers} }"
-msgstr ""
-"Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
-"Router} other {# Routern} }"
 
 #. [pages.SiteList.paginatorStatus]
 #. defaultMessage is:
@@ -10871,6 +10973,9 @@ msgstr "Zeigt Statistiken über die Nutzung des Systems an."
 msgid "Sign Out"
 msgstr "Ausloggen"
 
+#. [filter.popover.siteName]
+#. defaultMessage is:
+#. Site
 #. [forms.formSectionHeader.site]
 #. defaultMessage is:
 #. Site
@@ -10880,22 +10985,16 @@ msgstr "Ausloggen"
 #. [pages.JobAssignments.site]
 #. defaultMessage is:
 #. Site
-#. [filter.popover.siteName]
-#. defaultMessage is:
-#. Site
 #. [pages.DeviceApiKeyList.siteId]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceApiKeyList.site]
 #. defaultMessage is:
 #. Site
-#. [pages.RouterDetail.fieldSiteId]
+#. [pages.TaskList.site]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceList.site]
-#. defaultMessage is:
-#. Site
-#. [pages.TaskList.site]
 #. defaultMessage is:
 #. Site
 #. [pages.NotificationDetail.siteTitle]
@@ -11005,13 +11104,6 @@ msgstr "Arbeitszeiten vor Ort"
 msgid "Site contact"
 msgstr "Standortkontakt"
 
-#. [pages.Result.siteRequired]
-#. defaultMessage is:
-#. Site is required
-#: extracted_strings.json
-msgid "Site is required"
-msgstr "Standort ist erforderlich"
-
 #. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
 #. defaultMessage is:
 #. Site name is already in use
@@ -11019,10 +11111,10 @@ msgstr "Standort ist erforderlich"
 msgid "Site name is already in use"
 msgstr "Der Name der Website ist bereits in Gebrauch"
 
-#. [component.Widget.sitesTitle]
+#. [browsePage.browseDropdown.sites]
 #. defaultMessage is:
 #. Sites
-#. [browsePage.browseDropdown.sites]
+#. [component.Widget.sitesTitle]
 #. defaultMessage is:
 #. Sites
 #. [pages.SiteList.title]
@@ -11150,20 +11242,6 @@ msgstr "Sputum"
 msgid "Start Date"
 msgstr "Startdatum"
 
-#. [pages.Result.startedOnRequired]
-#. defaultMessage is:
-#. Start date is required
-#: extracted_strings.json
-msgid "Start date is required"
-msgstr "Startdatum ist erforderlich"
-
-#. [pages.Result.startedOnCannotBeAfterEndedOn]
-#. defaultMessage is:
-#. Start time cannot be after End time
-#: extracted_strings.json
-msgid "Start time cannot be after End time"
-msgstr "Die Startzeit darf nicht nach der Endzeit liegen"
-
 #. [pages.Notifications.startingDayOfTheWeekTitle]
 #. defaultMessage is:
 #. Starting Day of the Week
@@ -11204,9 +11282,13 @@ msgstr "Kontakte"
 msgid "State/Region"
 msgstr "Bundesland/Region"
 
-#. [pages.CasesList.status]
+#. [pages.ReportIndex.szSmsStatsDescription]
 #. defaultMessage is:
-#. Status
+#. Stats about SMS notifications sent.
+#: extracted_strings.json
+msgid "Stats about SMS notifications sent."
+msgstr "Statistiken über gesendete SMS-Benachrichtigungen."
+
 #. [pages.Status.title]
 #. defaultMessage is:
 #. Status
@@ -11214,9 +11296,6 @@ msgstr "Bundesland/Region"
 #. defaultMessage is:
 #. Status
 #. [pages.ResultList.resultCategoryStatus]
-#. defaultMessage is:
-#. Status
-#. [pages.RouterDetail.fieldStatus]
 #. defaultMessage is:
 #. Status
 #. [pages.TaskDetail.status]
@@ -11270,6 +11349,20 @@ msgstr "Gestohlen"
 msgid "Strong"
 msgstr "Stark"
 
+#. [pages.resultEdit.Study]
+#. defaultMessage is:
+#. Study/Research
+#: extracted_strings.json
+msgid "Study/Research"
+msgstr "Studium/Forschung"
+
+#. [p.PkDashboard.TbSubprovincialTrend]
+#. defaultMessage is:
+#. Sub-Provincial TB Testing Trends
+#: extracted_strings.json
+msgid "Sub-Provincial TB Testing Trends"
+msgstr "Trends bei TB-Tests in den Teilprovinzen"
+
 #. [button_Submit]
 #. defaultMessage is:
 #. Submit
@@ -11322,6 +11415,9 @@ msgstr ""
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
 #. Summary table for XDR devices
+#. [pages.ReportIndex.xdr_devices_summary]
+#. defaultMessage is:
+#. Summary table for XDR devices
 #: extracted_strings.json
 msgid "Summary table for XDR devices"
 msgstr "Übersichtstabelle für XDR-Geräte"
@@ -11350,6 +11446,13 @@ msgstr "Exportieren von Lieferungen fehlgeschlagen"
 msgid "Supply in Stock"
 msgstr "Inventar auf Lager"
 
+#. [pages.resultEdit.SurenameFieldi18nKey]
+#. defaultMessage is:
+#. Surname
+#: extracted_strings.json
+msgid "Surname"
+msgstr "Nachname"
+
 #. [legends.Unknown.resultCategorySusceptible]
 #. defaultMessage is:
 #. Susceptible
@@ -11360,12 +11463,26 @@ msgstr "Inventar auf Lager"
 msgid "Susceptible"
 msgstr "Anfällig"
 
+#. [p.PkDashboard.RRTestingDiagnosis]
+#. defaultMessage is:
+#. TB & RRTB Diagnosis
+#: extracted_strings.json
+msgid "TB & RRTB Diagnosis"
+msgstr "TB- und RRTB-Diagnose"
+
 #. [filter.AssayTypeSelectField.assayTypeTbAst]
 #. defaultMessage is:
 #. TB AST
 #: extracted_strings.json
 msgid "TB AST"
 msgstr "TB AST"
+
+#. [p.PkDashboard.TB]
+#. defaultMessage is:
+#. TB Cases Diagnosed in current year
+#: extracted_strings.json
+msgid "TB Cases Diagnosed in current year"
+msgstr "Im laufenden Jahr diagnostizierte TB-Fälle"
 
 #. [filter.AssaySelectField.assayGenericDst]
 #. defaultMessage is:
@@ -11376,6 +11493,13 @@ msgstr "TB AST"
 #: extracted_strings.json
 msgid "TB DST"
 msgstr "TB DST"
+
+#. [p.PkDashboard.mtbRifTbDiagnosis]
+#. defaultMessage is:
+#. TB Diagnosis
+#: extracted_strings.json
+msgid "TB Diagnosis"
+msgstr "TB-Diagnose"
 
 #. [filter.AssayTypeSelectField.assayTypeTbGnd]
 #. defaultMessage is:
@@ -11429,12 +11553,33 @@ msgstr "TB-Ergebnisse"
 msgid "TB Rif Resistance"
 msgstr "TB Rif-Resistenz"
 
+#. [p.PkDashboard.mtbRifTbTesting]
+#. defaultMessage is:
+#. TB Testing
+#: extracted_strings.json
+msgid "TB Testing"
+msgstr "TB-Tests"
+
+#. [p.PkDashboard.TbDTestingDiagnosis]
+#. defaultMessage is:
+#. TB Testing & Diagnosis Trends
+#: extracted_strings.json
+msgid "TB Testing & Diagnosis Trends"
+msgstr "Trends bei TB-Tests und -Diagnosen"
+
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
 #. TB XDR Drug Resistances
 #: extracted_strings.json
 msgid "TB XDR Drug Resistances"
 msgstr "TB XDR-Medikamentenresistenzen"
+
+#. [p.PkDashboard.rifCurrentDiagnosisTitle]
+#. defaultMessage is:
+#. TB cases diagnosed in
+#: extracted_strings.json
+msgid "TB cases diagnosed in"
+msgstr "TB-Fälle diagnostiziert in"
 
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
@@ -11446,10 +11591,10 @@ msgstr "TB LAMP"
 #. [pages.UserPreferences.tags]
 #. defaultMessage is:
 #. Tags
-#. [pages.PersonList.tags]
+#. [pages.NotificationDetail.fieldTags]
 #. defaultMessage is:
 #. Tags
-#. [pages.NotificationDetail.fieldTags]
+#. [pages.PersonList.tags]
 #. defaultMessage is:
 #. Tags
 #. [pages.SiteDetail.fieldTags]
@@ -11500,6 +11645,20 @@ msgstr "Aufgabenliste"
 msgid "Tasks"
 msgstr "Aufgaben"
 
+#. [p.PkDashboard.xdrLastDay]
+#. defaultMessage is:
+#. Tb cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "Tb cases diagnosed in last 24 hours"
+msgstr "In den letzten 24 Stunden diagnostizierte Tb-Fälle"
+
+#. [p.PkDashboard.xdrCasesPerYear]
+#. defaultMessage is:
+#. Tb cases diagnosed this year
+#: extracted_strings.json
+msgid "Tb cases diagnosed this year"
+msgstr "In diesem Jahr diagnostizierte Tb-Fälle"
+
 #. [forms.formItem.technicalDetails]
 #. defaultMessage is:
 #. Technical Details
@@ -11509,13 +11668,6 @@ msgstr "Aufgaben"
 #: extracted_strings.json
 msgid "Technical Details"
 msgstr "Technische Details"
-
-#. [pages.RouterDetail.detailTechInfo]
-#. defaultMessage is:
-#. Technical information
-#: extracted_strings.json
-msgid "Technical information"
-msgstr "Technische Information"
 
 #. [jobFunction.technician]
 #. defaultMessage is:
@@ -11590,6 +11742,20 @@ msgstr "Testfehler"
 msgid "Test history"
 msgstr "Testverlauf"
 
+#. [p.PkDashboard.mtbXdrTesting]
+#. defaultMessage is:
+#. Testing
+#: extracted_strings.json
+msgid "Testing"
+msgstr "Testen"
+
+#. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
+#. defaultMessage is:
+#. Testing & Diagnosis Trends using MTB/XDR Assay
+#: extracted_strings.json
+msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
+msgstr "Trends bei Tests und Diagnosen mit MTB/XDR-Assay"
+
 #. [pages.Status.TB.testingTrendsInYear.title]
 #. defaultMessage is:
 #. Testing Trends In Year
@@ -11601,9 +11767,6 @@ msgstr "Testtrends im Jahr"
 #. defaultMessage is:
 #. Tests
 #. [component.Widget.dashboardWidgetUnitTests]
-#. defaultMessage is:
-#. Tests
-#. [pages.RouterDetail.fieldTotalNumberOfTests]
 #. defaultMessage is:
 #. Tests
 #. [pages.DailyStatus.ClinicRow.totalTests]
@@ -11633,6 +11796,32 @@ msgstr "Durchgeführte Tests"
 #: extracted_strings.json
 msgid "Tests Run Between"
 msgstr "Tests zwischen"
+
+#. [pages.ReportIndex.missing_cartridges_report_description]
+#. defaultMessage is:
+#. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
+#: extracted_strings.json
+msgid ""
+"Tests detected for following expiration dates where inventory is not tracked "
+"at the device's location or the warehouse that serves that location."
+msgstr ""
+"Tests zur Überprüfung der Einhaltung von Verfallsdaten, wenn der Bestand am "
+"Standort des Geräts oder in dem Lager, das diesen Standort beliefert, nicht "
+"verfolgt wird."
+
+#. [p.PkDashboard.testPerDay]
+#. defaultMessage is:
+#. Tests performed in last 24 hours
+#: extracted_strings.json
+msgid "Tests performed in last 24 hours"
+msgstr "In den letzten 24 Stunden durchgeführte Tests"
+
+#. [p.PkDashboard.testPerYear]
+#. defaultMessage is:
+#. Tests performed this year
+#: extracted_strings.json
+msgid "Tests performed this year"
+msgstr "In diesem Jahr durchgeführte Tests"
 
 #. [component.Widget.bangladeshAverageCompletionDescription]
 #. defaultMessage is:
@@ -11763,13 +11952,6 @@ msgid "The average uptime of the Aspect server this month."
 msgstr ""
 "Die durchschnittliche Verfügbarkeit des Aspect-Servers in diesem Monat."
 
-#. [errorResponseMessages.saveLoginDetails.PUT.403.message]
-#. defaultMessage is:
-#. The current password that you have entered is incorrect.
-#: extracted_strings.json
-msgid "The current password that you have entered is incorrect."
-msgstr "Das aktuelle Passwort, das Sie eingegeben haben, ist falsch."
-
 #. [legends.Unknown.hover]
 #. defaultMessage is:
 #. The device hasn't connected to Aspect for several days. It may be running tests, but the tests aren't uploaded to Aspect yet.
@@ -11828,11 +12010,14 @@ msgstr ""
 
 #. [component.Widget.devicesDescription]
 #. defaultMessage is:
-#. The number of approved lab devices (excluding decommissioned devices)
+#. The number of approved devices that perform results (excluding decommissioned devices)
 #: extracted_strings.json
-msgid "The number of approved lab devices (excluding decommissioned devices)"
+msgid ""
+"The number of approved devices that perform results (excluding "
+"decommissioned devices)"
 msgstr ""
-"Die Anzahl der zugelassenen Laborgeräte (ausgenommen stillgelegte Geräte)"
+"Die Anzahl der zugelassenen GeneXpert-Geräte (ausgenommen stillgelegte "
+"Geräte)."
 
 #. [component.Widget.personDescription]
 #. defaultMessage is:
@@ -12062,6 +12247,28 @@ msgstr ""
 "verbrauchenden Patronen immer diejenigen sind, die näher an ihrem "
 "Verfallsdatum liegen"
 
+#. [pages.Notification.type.notificationTypeResultBasedMessage]
+#. defaultMessage is:
+#. The result based notification can be sent on test creation or on test creation and update. Also, a test is only going to trigger a notification if it is less than {daysLimitToNotifyResults} days old, it was done before the last update of this notification, and if any of the next conditions are accomplished: - All the custom fields referenced in the templates of the notification were filled in the test - {hoursNotificationsShouldWaitForCustomFields} hours passed since the test was done
+#: extracted_strings.json
+msgid ""
+"The result based notification can be sent on test creation or on test "
+"creation and update. Also, a test is only going to trigger a notification if "
+"it is less than {daysLimitToNotifyResults} days old, it was done before the "
+"last update of this notification, and if any of the next conditions are "
+"accomplished: - All the custom fields referenced in the templates of the "
+"notification were filled in the test - "
+"{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
+"was done"
+msgstr ""
+"Die ergebnisbasierte Benachrichtigung kann bei der Testerstellung oder bei "
+"der Testerstellung und -aktualisierung gesendet werden. Außerdem wird ein "
+"Test nur dann eine Benachrichtigung auslösen, wenn er weniger als "
+"{daysLimitToNotifyResults} Tage alt ist, vor der letzten Aktualisierung "
+"dieser Benachrichtigung durchgeführt wurde und wenn eine der folgenden "
+"Bedingungen erfüllt ist: - Alle benutzerdefinierten Felder, auf die in den "
+"Vorlagen der Benachrichtigung verwiesen wird, wurden im Test ausgefüllt"
+
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
 #. The server rejected the values specified in these filter fields. Our technical team has been notified and will attend to the problem as soon as possible.
@@ -12124,17 +12331,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "The total number of text messages sent in the month"
 msgstr "Die Gesamtzahl der im Monat gesendeten SMS"
-
-#. [errorResponseMessages.saveLoginDetails.PUT.409.message]
-#. defaultMessage is:
-#. The username that you have entered is already in use by another user on the system
-#: extracted_strings.json
-msgid ""
-"The username that you have entered is already in use by another user on the "
-"system"
-msgstr ""
-"Der von Ihnen eingegebene Benutzername wird bereits von einem anderen "
-"Benutzer im System verwendet"
 
 #. [component.Widget.utilizationRateDescription]
 #. defaultMessage is:
@@ -12231,13 +12427,6 @@ msgstr "Diesen Monat ({minDate} - {maxDate})"
 msgid "This Quarter"
 msgstr "Dieses Quartal"
 
-#. [errorResponseMessages.saveLoginDetails.PUT.409.title]
-#. defaultMessage is:
-#. This Username is Unavailable
-#: extracted_strings.json
-msgid "This Username is Unavailable"
-msgstr "Dieser Benutzername ist nicht verfügbar"
-
 #. [pages.dateRangeSelector.thisWeek]
 #. defaultMessage is:
 #. This Week
@@ -12305,18 +12494,6 @@ msgstr ""
 "benutzerdefinierte Felder in Ihrem Land festgelegt haben. Wenden Sie sich "
 "bitte an Ihren Administrator, bevor Sie sie verwenden."
 
-#. [pages.Notification.type.notificationTypeResultBasedMessage]
-#. defaultMessage is:
-#. This notification will be triggered for results ended on within last 30 days period. For older results notification will not trigger.
-#: extracted_strings.json
-msgid ""
-"This notification will be triggered for results ended on within last 30 days "
-"period. For older results notification will not trigger."
-msgstr ""
-"Diese Benachrichtigung wird für Ergebnisse ausgelöst, die innerhalb der "
-"letzten 30 Tage erzielt wurden. Für ältere Ergebnisse wird die "
-"Benachrichtigung nicht ausgelöst."
-
 #. [pages.Notification.type.notificationTypeDeviceOffline]
 #. defaultMessage is:
 #. This notification will trigger once a device connector, for example GxConnect, remains offline for 7 days.
@@ -12363,6 +12540,20 @@ msgid ""
 msgstr ""
 "Dieser Bericht zeigt alle Modultauschvorgänge in Geräten an. Der Bericht "
 "zeigt Ihnen standardmäßig die letzten 12 Monate"
+
+#. [pages.ReportIndex.devicePerformance_description]
+#. defaultMessage is:
+#. This report shows performance rates by device and assay, including: errors, activity, utilization, days offline, and average delay to upload tests. Scoped only to Cepheid GeneXpert devices.
+#: extracted_strings.json
+msgid ""
+"This report shows performance rates by device and assay, including: errors, "
+"activity, utilization, days offline, and average delay to upload tests. "
+"Scoped only to Cepheid GeneXpert devices."
+msgstr ""
+"Dieser Bericht zeigt die Leistungsraten nach Gerät und Assay, "
+"einschließlich: Fehler, Aktivität, Auslastung, Offline-Tage und "
+"durchschnittliche Verzögerung beim Hochladen von Tests. Nur auf Cepheid "
+"GeneXpert-Geräte beschränkt."
 
 #. [pages.ReportIndex.device_activity_description]
 #. defaultMessage is:
@@ -12498,13 +12689,6 @@ msgstr "Zeit"
 #: extracted_strings.json
 msgid "Time Zone"
 msgstr "Zeitzone"
-
-#. [pages.Result.timeCannotBeGreaterThanNow]
-#. defaultMessage is:
-#. Time cannot be greater than current time
-#: extracted_strings.json
-msgid "Time cannot be greater than current time"
-msgstr "Die Zeit kann nicht größer sein als die aktuelle Zeit"
 
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
@@ -12660,6 +12844,13 @@ msgstr "Auslöser insgesamt"
 msgid "Trace Detected"
 msgstr "Spur erkannt"
 
+#. [pages.resultEdit.Training]
+#. defaultMessage is:
+#. Training
+#: extracted_strings.json
+msgid "Training"
+msgstr "Schulung"
+
 #. [pages.InventoryLog.ConsumableReason_TransferReceived]
 #. defaultMessage is:
 #. Tranfer received from {refSiteName}
@@ -12746,6 +12937,13 @@ msgstr "Ergebnis übertragen"
 #: extracted_strings.json
 msgid "Transferring Inventory Failed"
 msgstr "Übertragen von Inventar fehlgeschlagen"
+
+#. [browsePage.browseDropdown.inventoryTransfers]
+#. defaultMessage is:
+#. Transfers
+#: extracted_strings.json
+msgid "Transfers"
+msgstr "Umbuchungen"
 
 #. [pages.Milestones.resultTreatmentName]
 #. defaultMessage is:
@@ -12882,9 +13080,6 @@ msgstr "Truenat® Unknown Test Type"
 #. [filter.DiseaseSelectField.diseaseNameTuberculosis]
 #. defaultMessage is:
 #. Tuberculosis
-#. [pages.caseRow.diseaseNameTuberculosis]
-#. defaultMessage is:
-#. Tuberculosis
 #: extracted_strings.json
 msgid "Tuberculosis"
 msgstr "Tuberkulose"
@@ -12946,6 +13141,9 @@ msgstr "Auflösen der Gruppenspalte"
 #. [pages.DeviceStatusSelectField.unknown]
 #. defaultMessage is:
 #. Unknown
+#. [pages.deviceDetail.resultCategoryUnknown]
+#. defaultMessage is:
+#. Unknown
 #. [pages.DeviceList.unknown]
 #. defaultMessage is:
 #. Unknown
@@ -12953,9 +13151,6 @@ msgstr "Auflösen der Gruppenspalte"
 #. defaultMessage is:
 #. Unknown
 #. [pages.DailyStatusDialog.siteWorkingHoursUnknown]
-#. defaultMessage is:
-#. Unknown
-#. [pages.deviceDetail.resultCategoryUnknown]
 #. defaultMessage is:
 #. Unknown
 #: extracted_strings.json
@@ -12979,9 +13174,6 @@ msgstr "Entsperrt"
 msgid "Up"
 msgstr "Nach oben"
 
-#. [pages.RouterDetail.update]
-#. defaultMessage is:
-#. Update
 #. [pages.NotificationDetail.actionUpdate]
 #. defaultMessage is:
 #. Update
@@ -13003,6 +13195,9 @@ msgid "Upper and Lower Case mix"
 msgstr "Groß- und Kleinschreibung mischen"
 
 #. [pages.ReportIndex.usageStatistics]
+#. defaultMessage is:
+#. Usage Statistics Report
+#. [pages.ReportIndex.usage_statistics_report]
 #. defaultMessage is:
 #. Usage Statistics Report
 #: extracted_strings.json
@@ -13040,6 +13235,13 @@ msgstr "Benutzereinstellungen erfolgreich geändert"
 msgid "Username"
 msgstr "Benutzername"
 
+#. [p.PkDashboard.utilization]
+#. defaultMessage is:
+#. Utilization
+#: extracted_strings.json
+msgid "Utilization"
+msgstr "Verwendung"
+
 #. [component.Widget.utilizationRateTitle]
 #. defaultMessage is:
 #. Utilization Rate
@@ -13049,13 +13251,6 @@ msgstr "Benutzername"
 #: extracted_strings.json
 msgid "Utilization Rate"
 msgstr "Auslastungsrate"
-
-#. [pages.RouterDetail.detailUtilOverTime]
-#. defaultMessage is:
-#. Utilization Rate Over Time
-#: extracted_strings.json
-msgid "Utilization Rate Over Time"
-msgstr "Nutzungsrate im Zeitverlauf"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -13120,9 +13315,6 @@ msgstr "Betrachten Protokoll"
 msgid "Voltage"
 msgstr "Spannung"
 
-#. [pages.RouterDetail.detailWarranty]
-#. defaultMessage is:
-#. Warranty
 #. [pages.DeviceList.warranty]
 #. defaultMessage is:
 #. Warranty
@@ -13385,12 +13577,40 @@ msgstr "GeneXpert HIV-1 Qual Kartusche"
 msgid "Xpert HIV-1 Viral Load Cartridge"
 msgstr "Xpert HIV-1 Viruslastpatrone"
 
+#. [pages.ReportIndex.xpert_site_detailed_report_description]
+#. defaultMessage is:
+#. Xpert Implementation Site (XIS) Performance Report.
+#: extracted_strings.json
+msgid "Xpert Implementation Site (XIS) Performance Report."
+msgstr "Xpert Implementation Site (XIS) Leistungsbericht."
+
+#. [p.PkDashboard.coverageTitle]
+#. defaultMessage is:
+#. Xpert MTB/RIF Coverage
+#: extracted_strings.json
+msgid "Xpert MTB/RIF Coverage"
+msgstr "Xpert MTB/RIF-Abdeckung"
+
+#. [pages.ReportIndex.reportDrTb10a10bCovidNtpUse]
+#. defaultMessage is:
+#. Xpert MTB/RIF and Covid - NTP Use
+#: extracted_strings.json
+msgid "Xpert MTB/RIF and Covid - NTP Use"
+msgstr "Xpert MTB/RIF und Covid - NTP-Verwendung"
+
 #. [pages.ReportIndex.xpertPatientsReport]
 #. defaultMessage is:
 #. Xpert Patients Report
 #: extracted_strings.json
 msgid "Xpert Patients Report"
 msgstr "Xpert-Patientenbericht"
+
+#. [pages.ReportIndex.xpert_site_detailed_report]
+#. defaultMessage is:
+#. Xpert Site Detailed Report
+#: extracted_strings.json
+msgid "Xpert Site Detailed Report"
+msgstr "Xpert Site Detaillierter Bericht"
 
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
@@ -13409,10 +13629,13 @@ msgstr "Rapport Xpert-testactiviteiten"
 msgid "Year"
 msgstr "Jahr"
 
-#. [pages.PersonList.confirm]
+#. [pages.NotificationDetail.New.yes]
 #. defaultMessage is:
 #. Yes
 #. [pages.Notifications.table.createButton.group.yes]
+#. defaultMessage is:
+#. Yes
+#. [pages.PersonList.confirm]
 #. defaultMessage is:
 #. Yes
 #. [pages.resultEdit.yes]
@@ -13424,10 +13647,10 @@ msgstr "Jahr"
 #. [pages.NotificationList.yes]
 #. defaultMessage is:
 #. Yes
-#. [pages.PersonList.disabled.yes]
+#. [contextualMenu.notifications.yes]
 #. defaultMessage is:
 #. Yes
-#. [contextualMenu.notifications.yes]
+#. [pages.PersonList.disabled.yes]
 #. defaultMessage is:
 #. Yes
 #: extracted_strings.json
@@ -13632,9 +13855,6 @@ msgid "Zika"
 msgstr "Zika"
 
 #. [filter.DiseaseSelectField.diseaseNameZikaFever]
-#. defaultMessage is:
-#. Zika Fever
-#. [pages.caseRow.diseaseNameZikaFever]
 #. defaultMessage is:
 #. Zika Fever
 #: extracted_strings.json
@@ -14114,13 +14334,6 @@ msgstr "Workflow-Status ist {workflowStatusName}"
 msgid "{alertCount, plural, one {# alert} other {# alerts} }"
 msgstr "{alertCount, plural, one {# Warnung} other {# Warnungen} }"
 
-#. [pages.RouterDetail.nestedDataSubtitle]
-#. defaultMessage is:
-#. {count} fields
-#: extracted_strings.json
-msgid "{count} fields"
-msgstr "{count} Felder"
-
 #. [pages.DeviceList.errorOfTotal]
 #. defaultMessage is:
 #. {count} of {total}
@@ -14210,6 +14423,13 @@ msgstr ""
 "{maintenanceStatusName} ({totalResults}) für {daysInSameStatus, plural, one "
 "{# Tag} other {# Tage} }"
 
+#. [pages.DeviceDetailProfile.deviceCapacityModules]
+#. defaultMessage is:
+#. {numberOfModules, plural, one {# module} other {# modules} }
+#: extracted_strings.json
+msgid "{numberOfModules, plural, one {# module} other {# modules} }"
+msgstr "{numberOfModules, plural, one {# Modul} other {# Module} }"
+
 #. [component.Widget.ytd]
 #. defaultMessage is:
 #. {unit} YTD
@@ -14255,6 +14475,283 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "Acknowledging Issue Failed"
+#~ msgstr "Problembestätigung fehlgeschlagen"
+
+#~ msgid "An Error Occurred When Trying to Delete the Site"
+#~ msgstr "Beim Versuch, die Site zu speichern, ist ein Fehler aufgetreten"
+
+#~ msgid "An Error Occurred When Trying to Save the DeviceApiKey"
+#~ msgstr ""
+#~ "Beim Versuch, den DeviceApiKey zu speichern, ist ein Fehler aufgetreten"
+
+#~ msgid "An Error Occurred When Trying to Save the Router"
+#~ msgstr "Beim Versuch, den Router zu speichern, ist ein Fehler aufgetreten"
+
+#~ msgid "An Error Occurred When Trying to Save the Site"
+#~ msgstr "Beim Versuch, die Site zu speichern, ist ein Fehler aufgetreten"
+
+#~ msgid "An Error Occurred When Trying to Save the Workflow Status"
+#~ msgstr ""
+#~ "Beim Versuch, den Workflow-Status zu speichern, ist ein Fehler aufgetreten"
+
+#~ msgid "An Error Occurred When Trying to Update Tags"
+#~ msgstr "Beim Versuch, Tags zu aktualisieren, trat ein Fehler auf"
+
+#~ msgid "An error occurred when trying to update the result."
+#~ msgstr ""
+#~ "Beim Versuch, das Ergebnis zu aktualisieren, ist ein Fehler aufgetreten."
+
+#~ msgid "Assign DeviceApiKeys Failed"
+#~ msgstr "Zuweisen von DeviceApiKeys fehlgeschlagen"
+
+#~ msgid "Configuration"
+#~ msgstr "Konfiguration"
+
+#~ msgid "Connected"
+#~ msgstr "Verbunden"
+
+#~ msgid "Could Not Find Device Details"
+#~ msgstr "Konnte keine Gerätedetails finden"
+
+#~ msgid "Could Not Find Router Details"
+#~ msgstr "Router-Details konnten nicht gefunden werden"
+
+#~ msgid "Could Not Find Site Details"
+#~ msgstr "Konnte keine Standort-Details finden"
+
+#~ msgid "Enter report name..."
+#~ msgstr "Berichtnamen eingeben…"
+
+#~ msgid "Error Loading Device Details"
+#~ msgstr "Fehler beim Laden von Gerätedetails"
+
+#~ msgid "Error Loading Device profile performance report"
+#~ msgstr "Fehler beim Laden des Geräteprofil-Leistungsberichts"
+
+#~ msgid "Error Loading Router Details"
+#~ msgstr "Fehler beim Laden von Router-Details"
+
+#~ msgid "Error Loading Site Details"
+#~ msgstr "Fehler beim Laden der Standort-Details"
+
+#~ msgid "Error Rates Over Time"
+#~ msgstr "Fehlerraten im Zeitverlauf"
+
+#~ msgid "Expires {date}"
+#~ msgstr "Läuft am {date} ab"
+
+#~ msgid "Exporting Devices Failed"
+#~ msgstr "Exportieren von Geräten fehlgeschlagen"
+
+#~ msgid "Exporting Routers Failed"
+#~ msgstr "Exportieren von Routern fehlgeschlagen"
+
+#~ msgid "First Approved By"
+#~ msgstr "Erste Freigabe durch"
+
+#~ msgid "First Approved On"
+#~ msgstr "Erste Freigabe am"
+
+#~ msgid "Generate DeviceApiKeys Failed"
+#~ msgstr "Generieren von Geräte-API-Schlüssel fehlgeschlagen"
+
+#~ msgid "Getting Report File Failed"
+#~ msgstr "Abrufen der Reportdatei fehlgeschlagen"
+
+#~ msgid "Host Id"
+#~ msgstr "Host-ID"
+
+#~ msgid "Invalid Password"
+#~ msgstr "Ungültiges Kennwort"
+
+#~ msgid "Inventory Transfer"
+#~ msgstr "Übertragung des Inventars"
+
+#~ msgid "Last calibrated {date}"
+#~ msgstr "Zuletzt kalibriert {date}"
+
+#~ msgid "Loading Account Details Failed"
+#~ msgstr "Laden der Kontodaten fehlgeschlagen"
+
+#~ msgid "Loading Assay Types Failed"
+#~ msgstr "Laden von Assay-Typen fehlgeschlagen"
+
+#~ msgid "Loading Cases Failed"
+#~ msgstr "Laden von Fällen fehlgeschlagen"
+
+#~ msgid "Loading DeviceApiKeys Failed"
+#~ msgstr "Laden von Geräte-API-Schlüsseln fehlgeschlagen"
+
+#~ msgid "Loading Possible Tags Failed"
+#~ msgstr "Laden möglicher Tags fehlgeschlagen"
+
+#~ msgid "Loading Reports Failed"
+#~ msgstr "Laden von Berichten fehlgeschlagen"
+
+#~ msgid "Loading Result Workflow Status Logs Failed"
+#~ msgstr "Laden von Ergebnis-Workflow-Statusprotokollen fehlgeschlagen"
+
+#~ msgid "Loading Routers Failed"
+#~ msgstr "Laden von Routern fehlgeschlagen"
+
+#~ msgid "Loading Tags Failed"
+#~ msgstr "Laden von Tags fehlgeschlagen"
+
+#~ msgid "Please try another username"
+#~ msgstr "Bitte versuchen Sie einen anderen Benutzernamen"
+
+#~ msgid ""
+#~ "Please try re-entering your password or contact us to reset your login "
+#~ "details"
+#~ msgstr ""
+#~ "Bitte versuchen Sie, Ihr Passwort erneut einzugeben oder kontaktieren Sie "
+#~ "uns, um Ihre Anmeldedaten zurückzusetzen"
+
+#~ msgid "Received On"
+#~ msgstr "Empfangen am"
+
+#~ msgid "Region: {region}"
+#~ msgstr "Region: {region}"
+
+#~ msgid "Router"
+#~ msgstr "Router"
+
+#~ msgid "Router Detail"
+#~ msgstr "Router Detail"
+
+#~ msgid "Saving Contact Details Failed"
+#~ msgstr "Speichern der Kontaktdetails fehlgeschlagen"
+
+#~ msgid "Saving Login Details Failed"
+#~ msgstr "Speichern der Anmeldedaten fehlgeschlagen"
+
+#~ msgid "Saving User Preferences Failed"
+#~ msgstr "Speichern der Benutzereinstellungen fehlgeschlagen"
+
+#~ msgid "Searching Assay Types Failed"
+#~ msgstr "Suche nach Assay-Typen fehlgeschlagen"
+
+#~ msgid "Searching Cases Failed"
+#~ msgstr "Suche nach Fällen fehlgeschlagen"
+
+#~ msgid "Searching DeviceApiKeys Failed"
+#~ msgstr "Suche nach Geräte-API-Schlüsseln fehlgeschlagen"
+
+#~ msgid "Searching Devices Failed"
+#~ msgstr "Suche nach Geräten fehlgeschlagen"
+
+#~ msgid "Searching Reports Failed"
+#~ msgstr "Suche nach Berichten fehlgeschlagen"
+
+#~ msgid "Searching Result Workflow Status Logs Failed"
+#~ msgstr "Suchergebnis Workflow-Statusprotokolle fehlgeschlagen"
+
+#~ msgid "Searching Routers Failed"
+#~ msgstr "Suche nach Routern fehlgeschlagen"
+
+#~ msgid "Searching Sites Failed"
+#~ msgstr "Suche nach Sites fehlgeschlagen"
+
+#~ msgid "Sent On"
+#~ msgstr "Gesendet am"
+
+#~ msgid "Sent Qty"
+#~ msgstr "Gesendete Menge"
+
+#~ msgid "Serial"
+#~ msgstr "Seriennummer"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "Transfer} other {# Transfers} }"
+#~ msgstr ""
+#~ "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+#~ "Überweisung} other {# Überweisungen} }"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "case} other {# cases} }"
+#~ msgstr ""
+#~ "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+#~ "Fall} other {# Fällen} }"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "router} other {# routers} }"
+#~ msgstr ""
+#~ "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
+#~ "Router} other {# Routern} }"
+
+#~ msgid "Technical information"
+#~ msgstr "Technische Information"
+
+#~ msgid "The current password that you have entered is incorrect."
+#~ msgstr "Das aktuelle Passwort, das Sie eingegeben haben, ist falsch."
+
+#~ msgid ""
+#~ "The username that you have entered is already in use by another user on "
+#~ "the system"
+#~ msgstr ""
+#~ "Der von Ihnen eingegebene Benutzername wird bereits von einem anderen "
+#~ "Benutzer im System verwendet"
+
+#~ msgid "This Username is Unavailable"
+#~ msgstr "Dieser Benutzername ist nicht verfügbar"
+
+#~ msgid "Utilization Rate Over Time"
+#~ msgstr "Nutzungsrate im Zeitverlauf"
+
+#~ msgid "{count} fields"
+#~ msgstr "{count} Felder"
+
+#~ msgid "#Results (Preceding 30 Days)"
+#~ msgstr "#Ergebnisse (vor 30 Tagen)"
+
+#~ msgid "Assay is required"
+#~ msgstr "Assay ist erforderlich"
+
+#~ msgid "CollectedOn date is required"
+#~ msgstr "CollectedOn-Datum ist erforderlich"
+
+#~ msgid "Device is required"
+#~ msgstr "Gerät ist erforderlich"
+
+#~ msgid "End time cannot be before Start time"
+#~ msgstr "Die Endzeit darf nicht vor der Startzeit liegen"
+
+#~ msgid "Error Code must be a positive integer with max 5 digits"
+#~ msgstr "Fehlercode muss eine positive ganze Zahl mit maximal 5 Stellen sein"
+
+#~ msgid "Field is required"
+#~ msgstr "Dieses Feld ist erforderlich"
+
+#~ msgid "Go To Inventory Log"
+#~ msgstr "Zum Inventarprotokoll gehen"
+
+#~ msgid "Go To Supplies"
+#~ msgstr "Gehe zu Zubehör"
+
+#~ msgid "Site is required"
+#~ msgstr "Standort ist erforderlich"
+
+#~ msgid "Start date is required"
+#~ msgstr "Startdatum ist erforderlich"
+
+#~ msgid "Start time cannot be after End time"
+#~ msgstr "Die Startzeit darf nicht nach der Endzeit liegen"
+
+#~ msgid ""
+#~ "This notification will be triggered for results ended on within last 30 "
+#~ "days period. For older results notification will not trigger."
+#~ msgstr ""
+#~ "Diese Benachrichtigung wird für Ergebnisse ausgelöst, die innerhalb der "
+#~ "letzten 30 Tage erzielt wurden. Für ältere Ergebnisse wird die "
+#~ "Benachrichtigung nicht ausgelöst."
+
+#~ msgid "Time cannot be greater than current time"
+#~ msgstr "Die Zeit kann nicht größer sein als die aktuelle Zeit"
 
 #~ msgid "A person with the same email exists. Please use a different email."
 #~ msgstr ""
@@ -14471,13 +14968,6 @@ msgstr ""
 
 #~ msgid "Last triggered"
 #~ msgstr "Zuletzt ausgelöst"
-
-#~ msgid ""
-#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#~ "notification} other {# notifications} }"
-#~ msgstr ""
-#~ "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
-#~ "Benachrichtigung} other {# Benachrichtigungen} }"
 
 #~ msgid "Total triggers"
 #~ msgstr "Auslöser Insgesamt"

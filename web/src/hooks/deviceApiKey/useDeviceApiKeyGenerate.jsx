@@ -6,7 +6,7 @@ const generateApiKey = async data => {
   return fetchWrapperForQueries({
     endpoint: DEVICE_KEY_GENERATE_ENDPOINT,
     method: 'POST',
-    body: JSON.stringify(data),
+    params: data,
   })
 }
 
