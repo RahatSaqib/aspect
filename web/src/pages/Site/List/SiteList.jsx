@@ -74,7 +74,7 @@ export const SiteList = ({ navigate, location }) => {
 
   const onExportClick = formatType => {
     setIsLoading(true)
-    return getExportableFile(filters, formatType, sortCol, sortDir, 'sites')
+    return getExportableFile(filters, formatType, sortCol, sortDir, data.total, 'sites')
       .then(response => {
         setIsLoading(false)
         return response

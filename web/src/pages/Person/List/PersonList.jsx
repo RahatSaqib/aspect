@@ -50,7 +50,7 @@ export const PersonList = () => {
 
   const onExportClick = formatType => {
     setIsLoading(true)
-    return getExportableFile(filters, formatType, sortCol, sortDir, 0, total, 'contacts')
+    return getExportableFile(filters, formatType, sortCol, sortDir, total, 'contacts')
       .then(response => {
         setIsLoading(false)
         return response

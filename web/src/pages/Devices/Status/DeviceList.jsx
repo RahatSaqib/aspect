@@ -209,7 +209,7 @@ const DeviceList = () => {
 
   const onExportClick = formatType => {
     setIsLoading(true)
-    return getExportableFile(filters, formatType, sortCol, sortDir, 0, total, 'devices')
+    return getExportableFile(filters, formatType, sortCol, sortDir, total, 'devices')
       .then(response => {
         setIsLoading(false)
         return response

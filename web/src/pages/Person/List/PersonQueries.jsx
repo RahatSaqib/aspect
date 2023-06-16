@@ -1,9 +1,9 @@
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 
-async function getExportableFile(filters, fileFormat, sortCol, sortDir, reportName) {
+async function getExportableFile(filters, fileFormat, sortCol, sortDir, size, reportName) {
   const elem = await fetchWrapperForQueries({
     endpoint: '/person/export',
-    params: { sortCol, sortDir, format: fileFormat, ...filters },
+    params: { sortCol, sortDir, format: fileFormat, size, ...filters },
   })
 
   return { elem, fileFormat, reportName }

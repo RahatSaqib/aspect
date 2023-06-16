@@ -322,7 +322,7 @@ export const InventoryItemsList = () => {
 
   const onExportClick = formatType => {
     setIsLoading(true)
-    return getExportableFile(filter, formatType, sortCol, sortDir, 'supplies')
+    return getExportableFile(filter, formatType, sortCol, sortDir, data.total, 'supplies')
       .then(response => {
         setIsLoading(false)
         return response
