@@ -19,6 +19,7 @@ import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.css'
+import getExportableFile from './SiteQueries'
 
 const cssClasses = classnames.bind(styles)
 
@@ -29,7 +30,11 @@ export const SiteList = ({ navigate, location }) => {
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
 
-  const { data, isLoading } = useSites({ sortCol, sortDir, pageAt, pageSize, filters }, { enabled: !!sortCol })
+  const {
+    data,
+    isLoading: tableLoading,
+    total,
+  } = useSites({ sortCol, sortDir, pageAt, pageSize, filters }, { enabled: !!sortCol })
   useSitesDownload({
     filtersParams: filters,
     sortCol,
@@ -38,6 +43,12 @@ export const SiteList = ({ navigate, location }) => {
     pageSize,
     ...download,
   })
+
+  useEffect(() => {
+    setIsLoading(tableLoading)
+  }, [tableLoading])
+
+  const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
     if (download.enabled) setDownload({ enabled: false })
@@ -62,9 +73,22 @@ export const SiteList = ({ navigate, location }) => {
     navigate(`/browse/site/${siteId}/alerts`)
   }
 
-  const onExcelClick = formatType => {
-    setDownload({ fileFormat: formatType, enabled: true })
+  const onExportClick = formatType => {
+    setIsLoading(true)
+    return getExportableFile(filters, formatType, sortCol, sortDir, 0, total, 'sites')
+      .then(response => {
+        setIsLoading(false)
+        return response
+      })
+      .catch(error => {
+        setIsLoading(false)
+        throw error
+      })
   }
+
+  // const onExcelClick = formatType => {
+  //   setDownload({ fileFormat: formatType, enabled: true })
+  // }
 
   const onRowClick = ({
     currentTarget: {
@@ -72,9 +96,7 @@ export const SiteList = ({ navigate, location }) => {
     },
   }) => navigate(`/browse/site/${siteId}`)
 
-  return isLoading ? (
-    <LinearProgress />
-  ) : (
+  return (
     <>
       <DetailHeader name={intl.formatMessage(messages.sitesTitle)} disableBack>
         <AspectButton
@@ -92,9 +114,10 @@ export const SiteList = ({ navigate, location }) => {
         <SiteFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <AspectExportListButton onExport={onExcelClick} reportName="Sites" visible />
+            <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
           </div>
-          {data.siteList.length === 0 ? (
+          {isLoading ? <LinearProgress /> : null}
+          {!data || !data.siteList || data.siteList.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
@@ -107,7 +130,7 @@ export const SiteList = ({ navigate, location }) => {
                   columns={tableColumns}
                 />
                 <TableBody>
-                  {data.siteList.map(site => (
+                  {data?.siteList?.map(site => (
                     <SiteDataTableRow
                       key={site.id}
                       site={site}
