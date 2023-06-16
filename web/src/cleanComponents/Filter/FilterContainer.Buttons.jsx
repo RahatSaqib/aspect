@@ -242,7 +242,11 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
   const { data: assays } = useAssayList()
   if (resultCategoryId && assays) {
     const rcName = assays
-      .find(a => (isArray(assayId) ? a.id === assayId[0] : a.id === assayId))
+      .find(
+        a =>
+          (isArray(assayId) ? assayId.includes(a.id) : a.id === assayId) &&
+          a.resultCategories.find(rc => rc.id === resultCategoryId)
+      )
       .resultCategories.find(rc => rc.id === resultCategoryId).i18nKey
     // diseaseId here is used to fix filtering from HIV graph
     const rcdName = (
