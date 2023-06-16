@@ -36,6 +36,14 @@ const messages = {
       id: 'filter.popover.siteName',
       defaultMessage: 'Site',
     },
+    originSiteName: {
+      id: 'filter.popover.originSiteName',
+      defaultMessage: 'Origin Site',
+    },
+    destinationSiteName: {
+      id: 'filter.popover.destinationSiteName',
+      defaultMessage: 'Destination Site',
+    },
     reportableSite: {
       id: 'filter.popover.site',
       defaultMessage: 'Reportable Site',
