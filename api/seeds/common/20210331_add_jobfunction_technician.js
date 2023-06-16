@@ -1,9 +1,9 @@
 const { upsertJobFunctionFixture } = require('../common')
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 const { labUser, technician } = require('../fixtures/jobFunctionBase')
 
-module.exports = async (knex, partnerName, jobFunctionFixture) => {
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+module.exports = async (knex, partnerExternalId, jobFunctionFixture) => {
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
 
   /**
    * Make sure `labUser` and `technician` job functions exist in db.

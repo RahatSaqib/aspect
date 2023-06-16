@@ -148,7 +148,11 @@ function configureOptional(config) {
   // set knex seeds
   const seedsDirectory = process.env['seeds.directory']
   if (seedsDirectory) {
-    if (!_.includes(seedsDirectory, '/test') && !_.includes(seedsDirectory, '/development'))
+    if (
+      !_.includes(seedsDirectory, '/test') &&
+      !_.includes(seedsDirectory, '/development') &&
+      !_.includes(seedsDirectory, '/daily_new_results')
+    )
       config.seeds = { directory: [seedsDirectory, './seeds/zz_shared/'] }
     else config.seeds = { directory: [seedsDirectory] }
   }

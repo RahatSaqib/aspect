@@ -27,7 +27,7 @@ const notificationTypeCategories = require('../fixtures/NotificationTypeCategory
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const now = new Date()
 const {
-  partnerName,
+  partner: { externalId: partnerExternalId, name: partnerName },
   serverUrl,
   adminUserName,
   adminPassword,
@@ -84,6 +84,7 @@ async function seed(knex) {
       },
       partner: {
         name: partnerName,
+        externalId: partnerExternalId,
         serverUrl,
       },
       geographyFromGxAlert: geography,
@@ -99,12 +100,12 @@ async function seed(knex) {
   )
 
   await upsertDashboardWidgets(knex, partnerId)
-  await updateReportsAndJobFunctions(knex, jobFunctionsFixture, partnerName)
+  await updateReportsAndJobFunctions(knex, jobFunctionsFixture, partnerExternalId)
   await addDeviceCapacities(knex)
   await setCapacityForExistingDevices(knex)
   await upsertMessageAndNotificationTypes(knex, partnerId, adminId)
-  await upsertTags(knex, partnerName)
+  await upsertTags(knex, partnerExternalId)
   await upsertFixture(knex, notificationTypeCategories, 'NotificationTypeCategory')
-  await upsertIssueEventTrigger(knex, partnerName)
+  await upsertIssueEventTrigger(knex, partnerExternalId)
   await seedModuleDisabledIssue(knex, partnerData)
 }

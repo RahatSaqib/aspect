@@ -5,7 +5,7 @@ const Promise = require('bluebird')
 
 const { addCovidResults } = require('../commonGenerateResults')
 
-const { getPartnerByName } = require('../utils')
+const { getPartnerByExternalId } = require('../utils')
 
 const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 
@@ -22,7 +22,7 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const { id: partnerId } = await getPartnerByName(knex, 'Partner One')
+  const { id: partnerId } = await getPartnerByExternalId(knex, 'partnerOne')
 
   const m2000DeviceTypeId = await deviceTypeToId('AbbottM2000')
 

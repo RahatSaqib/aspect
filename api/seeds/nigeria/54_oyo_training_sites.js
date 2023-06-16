@@ -7,7 +7,7 @@ const deduplicateStatesAndLgas = require('../common/20220308_deduplicate_states_
 
 async function seed(knex) {
   const { id: countryId } = await knex('Country').where({ abbreviation: partnerData.partnerAbbreviation }).first()
-  const { id: partnerId } = await knex('Partner').where({ name: partnerData.partnerName }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerData.partner.externalId }).first()
   await insertSites(knex, partnerId, countryId, sites)
 
   await deduplicateStatesAndLgas(knex, countryId)

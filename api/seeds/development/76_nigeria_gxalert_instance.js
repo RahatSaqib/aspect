@@ -1,4 +1,4 @@
-const { adminName } = require('./fixtures/partnerData')
+const { adminUserName } = require('./fixtures/partnerData')
 const { upsertGxAlertDevice } = require('../common')
 
 module.exports = require('../utils').seed(seed, __filename)
@@ -6,7 +6,7 @@ module.exports = require('../utils').seed(seed, __filename)
 async function seed(knex) {
   const { id: countryId } = await knex('Country').where('abbreviation', 'NG').first('id')
   const { id: partnerId } = await knex('Partner').where('name', 'Partner One').first()
-  const { id: adminId } = await knex('User').where('name', adminName).first('id')
+  const { id: adminId } = await knex('User').where('name', adminUserName).first('id')
   const now = new Date()
   const auditFields = {
     createdOn: now,

@@ -8,7 +8,7 @@ import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
-import { StateSelect, LgaSelect, AssaySelect, ConsumableSelect, PeriodSelector, ReportSelector } from '../index'
+import { AssaySelect, ConsumableSelect, LgaSelect, PeriodSelector, ReportSelector, StateSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const ReportsFilter = () => {
@@ -51,9 +51,10 @@ const ReportsFilter = () => {
         </Grid>
         <Grid item xs={3}>
           <ConsumableSelect
+            valueBy="id"
             label={formatMessage(messages.consumable)}
             value={state.consumableId}
-            onChange={e => setState({ ...state, consumableId: e.target.value })}
+            onChange={value => setState({ ...state, consumableId: value })}
           />
         </Grid>
         {allowed(['site:view']) ? (

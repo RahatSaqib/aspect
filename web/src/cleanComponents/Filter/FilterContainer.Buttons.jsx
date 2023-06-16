@@ -31,7 +31,9 @@ const filtersOrdering = {
   deviceName: 10,
   siteName: 11,
   sampleOriginSite: 12,
+  originSiteName: 13,
   contactNameOrEmail: 13,
+  destinationSiteName: 14,
   externalId: 14,
   contactStatus: 15,
   workflowStatusId: 16,
@@ -84,6 +86,10 @@ const buttonMapping = {
   stateId: ({ countryId, stateId, remove }) => <StateId countryId={countryId} stateId={stateId} remove={remove} />,
   lgaId: ({ stateId, lgaId, remove }) => <LgaId stateId={stateId} lgaId={lgaId} remove={remove} />,
   siteName: ({ siteName, remove }) => <SiteName siteName={siteName} remove={remove} />,
+  originSiteName: ({ originSiteName, remove }) => <OriginSiteName originSiteName={originSiteName} remove={remove} />,
+  destinationSiteName: ({ destinationSiteName, remove }) => (
+    <DestinationSiteName destinationSiteName={destinationSiteName} remove={remove} />
+  ),
   assayId: ({ assayId, remove }) => <AssayId assayId={assayId} remove={remove} />,
   resultCategoryId: ({ resultCategoryId, assayOverride, assayId, diseaseId, remove }) => (
     <ResultCategoryId
@@ -194,6 +200,27 @@ const SiteName = ({ siteName, remove }) => {
   return <Btn lbl={formatMessage(messages.whereSiteNameIncludes, { siteName })} del={() => remove(['siteName'])} />
 }
 
+const OriginSiteName = ({ originSiteName, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereOriginSiteNameIncludes, { originSiteName })}
+      del={() => remove(['originSiteName'])}
+    />
+  )
+}
+
+const DestinationSiteName = ({ destinationSiteName, remove }) => {
+  const { formatMessage } = useI18n()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereDestinationSiteNameIncludes, { destinationSiteName })}
+      del={() => remove(['destinationSiteName'])}
+    />
+  )
+}
 const AssayId = ({ assayId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useAssayList()

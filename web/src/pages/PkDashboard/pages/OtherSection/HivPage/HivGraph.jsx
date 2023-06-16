@@ -36,6 +36,7 @@ const HivGraphPage = () => {
 
   return (
     <PkPage
+      isMocked
       title={`${formatMessage(messages.hiv)} / ${formatMessage(graphMessages.clinicalIndicatorsVLTitle)}`}
       filters={
         <FormControlLabel

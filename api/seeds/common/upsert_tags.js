@@ -21,8 +21,8 @@ const references = {
   },
 }
 
-module.exports = async (knex, partnerName, fixture = defaultFixture) => {
-  const { id: partnerId } = await knex('Partner').where({ name: partnerName }).first('id')
+module.exports = async (knex, partnerExternalId, fixture = defaultFixture) => {
+  const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first('id')
   const tags = fixture.map(({ title }) => {
     return {
       title,

@@ -66,6 +66,7 @@ async function seed(knex) {
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
     name: 'Myanmar',
+    externalId: 'myanmar',
     partnerTypeId: await partnerTypeToId('operating'),
     plugin: 'myanmar',
     deviceLogHistoryDays: 365,
@@ -859,7 +860,7 @@ async function seed(knex) {
 
   await seedIssues(knex, baseProps)
 
-  await seedDataCategory(knex, 'Myanmar')
+  await seedDataCategory(knex, 'Myanmar', 'myanmar')
 }
 
 function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {

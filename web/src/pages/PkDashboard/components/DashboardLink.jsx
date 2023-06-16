@@ -5,7 +5,7 @@ import DataRow from './DataRow'
 const DashboardLink = ({ label, value, to }) => {
   return (
     <Link to={to} style={{ textDecoration: 'none' }}>
-      <DataRow label={label} value={value} />
+      <DataRow label={to ? label : `${label} (Pending)`} value={value} />
     </Link>
   )
 }

@@ -17,18 +17,19 @@ const maxDate = endOfDay(now)
 
 // TODO: remove pagination from URL
 const defaultFilter = {
+  '/browse/deviceApiKey': {},
   '/browse/device/list': {},
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 },
-  '/browse/deviceApiKey': {},
-  '/browse/inventory/supplies': { hasStock: true },
   '/browse/inventory/log': { minDate, maxDate },
+  '/browse/inventory/supplies': { hasStock: true },
+  '/browse/inventory/transfers': {},
   '/browse/notification': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
   '/browse/result': {},
   '/browse/site': {},
-  '/reports': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate },
+  '/reports': {},
 }
 
 const FilterContext = createContext()

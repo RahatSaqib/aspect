@@ -5,6 +5,7 @@ const config = require('../../src/config')
 const geography = require('./fixtures/geography.json')
 const { commonUpserts } = require('../common')
 const jobFunctionsPartnerOne = require('./fixtures/jobFunctions_partnerOne')
+const { partner } = require('./fixtures/partnerData')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -22,7 +23,7 @@ async function seed(knex) {
     failedPasswordAttempts: 0,
   })
 
-  const { id: partnerId } = await knex('Partner').where({ isDefault: true }).first('id')
+  const { id: partnerId } = await knex('Partner').where({ externalId: partner.externalId }).first('id')
 
   await commonUpserts(
     knex,

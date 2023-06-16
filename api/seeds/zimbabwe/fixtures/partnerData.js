@@ -1,7 +1,10 @@
 const jobFunctions = require('./jobFunctions')
 
 module.exports = {
-  partnerName: 'Zimbabwe',
+  partner: {
+    name: 'Zimbabwe',
+    externalId: 'zimbabwe',
+  },
   partnerAbbreviation: 'ZW',
   adminUserName: 'admin',
   adminPassword: '54wzDZPtOs',

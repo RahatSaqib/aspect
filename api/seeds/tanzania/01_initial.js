@@ -18,6 +18,9 @@ const now = new Date()
 const { adminUserName, adminPassword, deviceApiToken, partnerAbbreviation } = partnerData
 
 async function seed(knex) {
+  const {
+    partner: { externalId: partnerExternalId, name: partnerName },
+  } = partnerData
   const partnerId = await upsertPartnerData(knex, {
     ...partnerData,
     partnerTypeId: await partnerTypeToId('operating'),
@@ -40,7 +43,8 @@ async function seed(knex) {
         password: adminPassword,
       },
       partner: {
-        name: partnerData.partnerName,
+        externalId: partnerExternalId,
+        name: partnerName,
         serverUrl: partnerData.serverUrl,
       },
       geographyFromGxAlert: geography,
