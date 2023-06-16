@@ -245,7 +245,7 @@ const ResultList = () => {
   // >>>>>> Callbacks <<<<<<
   const onExportClick = formatType => {
     setIsLoading(true)
-    return getExportableFile(filters, formatType, sortCol, sortDir, 0, Math.min(total, 50000), 'results')
+    return getExportableFile(filters, formatType, sortCol, sortDir, 'results')
       .then(response => {
         setIsLoading(false)
         return response

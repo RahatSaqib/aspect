@@ -77,7 +77,7 @@ export const PersonList = () => {
             <AspectExportListButton onExport={onExportClick} visible={data.data.length !== 0} />
           </div>
           {isLoading ? <LinearProgress /> : null}
-          {data.data?.length === 0 ? (
+          {!data || !data.data || data.data.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
