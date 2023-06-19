@@ -27,6 +27,7 @@ const SiteTagInput = props => {
       filterOptions={getFilterOptions}
       freeSolo
       multiple
+      isOptionEqualToValue={(option, value) => option.id === value.id}
       autoHighlight
       filterSelectedOptions
       {...props}
