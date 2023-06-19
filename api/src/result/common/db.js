@@ -592,6 +592,14 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       if (query.size) _q.modify(pageParams, query)
     })
 
+  const totals = {}
+  data.forEach(qty => {
+    Object.keys(_.omit(qty, 'locationName')).forEach(key => {
+      totals[key] = totals[key] ? totals[key] + (qty[key] ?? 0) : qty[key] ?? 0
+    })
+  })
+  data.unshift({ locationName: 'TOTAL', ...totals })
+
   return { total, data, length: data.length }
 }
 
