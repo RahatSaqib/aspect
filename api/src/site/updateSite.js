@@ -14,6 +14,12 @@ module.exports = async function (request) {
     payload: { tags, ...payload },
   } = request
 
+  const tagType = 'site'
+
+  if (!canEdit(auth, `${tagType}:`)) {
+    return Boom.forbidden(`You are not permitted to update tags to this ${tagType}`)
+  }
+
   const user = await getUserFromCredentials(auth.credentials)
 
   const siteParams = await normalizeParameters(payload, user.countryId)
@@ -21,12 +27,6 @@ module.exports = async function (request) {
   await validate(params.siteId, auth.credentials, siteParams)
 
   await updateSite(params.siteId, siteParams)
-
-  const tagType = 'site'
-
-  if (!canEdit(auth, `${tagType}:`)) {
-    return Boom.forbidden(`You are not permitted to update tags to this ${tagType}`)
-  }
 
   await updateTagsById(params.siteId, tagType, tags, auth)
 
