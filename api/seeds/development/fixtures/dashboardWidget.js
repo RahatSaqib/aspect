@@ -48,7 +48,7 @@ module.exports = {
     },
     {
       ...dashboardWidgetTitleTotalDeaths,
-      partnerNames: ['Wakanda'],
+      partnerExternalIds: ['wakanda'],
     },
     geneXpertDevices,
     gxPositiveResultsNotified,
@@ -79,15 +79,15 @@ module.exports = {
     sitesTitle,
     {
       ...dashboardWidgetTitleConfirmedCases,
-      partnerNames: ['Wakanda'],
+      partnerExternalIds: ['wakanda'],
     },
     {
       ...dashboardWidgetTitleTotalActiveCases,
-      partnerNames: ['Wakanda'],
+      partnerExternalIds: ['wakanda'],
     },
     {
       ...dashboardWidgetTitleTotalRecoveredCases,
-      partnerNames: ['Wakanda'],
+      partnerExternalIds: ['wakanda'],
     },
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,

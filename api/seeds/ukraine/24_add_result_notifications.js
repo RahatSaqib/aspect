@@ -1,17 +1,20 @@
 module.exports = require('../utils').seed(seed, __filename)
 
 const {
-  getPartnerByName,
+  getPartnerByExternalId,
   seedIssueEventTriggersForPartner,
   seedIssueEscalationTriggersForPartner,
 } = require('../utils')
 
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 
-const { partnerName, adminUserName } = require('./fixtures/partnerData')
+const {
+  partner: { externalId: partnerExternalId },
+  adminUserName,
+} = require('./fixtures/partnerData')
 
 async function seed(knex) {
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
 
   const { id: adminId } = await knex('User').where('name', adminUserName).first('id')
 

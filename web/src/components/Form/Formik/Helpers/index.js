@@ -5,6 +5,7 @@ import isArray from 'lodash/isArray'
 import isBoolean from 'lodash/isBoolean'
 import isEmpty from 'lodash/isEmpty'
 import isFunction from 'lodash/isFunction'
+import isNil from 'lodash/isNil'
 import isPlainObject from 'lodash/isPlainObject'
 import range from 'lodash/range'
 import set from 'lodash/set'
@@ -93,7 +94,11 @@ const getInitialValuesFromFormConfig = (config, savedValues) => {
           const savedValue = savedValues ? get(savedValues, fieldName) : null
           let value
           if (component === 'checkbox') {
-            value = savedValue ? (isBoolean(savedValue) ? savedValue : Boolean(savedValue)) : Boolean(initialValue)
+            value = !isNil(savedValue)
+              ? isBoolean(savedValue)
+                ? savedValue
+                : Boolean(savedValue)
+              : Boolean(initialValue)
           } else {
             value = savedValue || initialValue || ''
           }

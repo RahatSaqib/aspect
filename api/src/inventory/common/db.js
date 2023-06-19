@@ -260,6 +260,7 @@ async function getInventoryTransfer(query, dataConstraints, querySelector = INVE
     .modify(filterParams, query, {
       originSiteName: 'originSite.name',
       destinationSiteName: 'destinationSite.name',
+      consumableId: 'c.id',
       consumableName: 'c.name',
       countryId: 'g.countryId',
       stateId: 'g.stateId',

@@ -1,11 +1,13 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const { getPartnerByName, seedIssueEscalationTriggersForPartner } = require('../utils')
+const { getPartnerByExternalId, seedIssueEscalationTriggersForPartner } = require('../utils')
 
-const { partnerName } = require('./fixtures/partnerData')
+const {
+  partner: { externalId: partnerExternalId },
+} = require('./fixtures/partnerData')
 
 async function seed(knex) {
-  const { id: partnerId } = await getPartnerByName(knex, partnerName)
+  const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
 
   // use escalation triggers to notify about new MTB+ Rif- and MTB+ Rif+ results:
   await seedIssueEscalationTriggersForPartner(knex, partnerId, [

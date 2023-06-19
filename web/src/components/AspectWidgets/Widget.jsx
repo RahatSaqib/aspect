@@ -5,7 +5,7 @@ import { bool, func, number, object, oneOfType, shape, string } from 'prop-types
 import { useNavigate } from 'react-router'
 import useI18n from '../../hooks/useI18n'
 import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
-import { useFilterUpdate, useFilterValues } from '../../providers/FilterProvider'
+import { useFilterUpdate } from '../../providers/FilterProvider'
 import IconProvider from '../IconProvider'
 import WidgetAlert from './Alerts'
 import { buildWidgetParams, translate } from './Helpers'
@@ -41,7 +41,6 @@ const AspectWidget = ({
   },
 }) => {
   const { formatMessage } = useI18n()
-  const filter = useFilterValues(link)
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
   const translator = { formatMessage, messages }
@@ -50,7 +49,7 @@ const AspectWidget = ({
 
   const goToLink = () => {
     if (link) {
-      addFilter({ ...filter, ...params }, link)
+      addFilter({ ...params }, link)
       navigate(link)
     }
   }

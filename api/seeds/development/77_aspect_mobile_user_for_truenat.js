@@ -1,7 +1,7 @@
 const isEmpty = require('lodash/isEmpty')
 const { hashSync } = require('bcrypt')
 const Promise = require('bluebird')
-const { adminName } = require('./fixtures/partnerData')
+const { adminUserName } = require('./fixtures/partnerData')
 const config = require('../../src/config')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -38,7 +38,7 @@ async function seed(knex) {
     )
     .distinct()
   if (!isEmpty(truenatResultSites)) {
-    const { id: adminId } = await knex('User').where('name', adminName).first('id')
+    const { id: adminId } = await knex('User').where('name', adminUserName).first('id')
     const now = new Date()
     const auditFields = {
       createdOn: now,

@@ -12,8 +12,10 @@ import {
   Typography,
 } from '@mui/material'
 import classnames from 'classnames/bind'
+import endOfMonth from 'date-fns/endOfMonth'
 import format from 'date-fns/format'
-import subDays from 'date-fns/subDays'
+import startOfMonth from 'date-fns/startOfMonth'
+import subMonths from 'date-fns/subMonths'
 import Immutable from 'immutable'
 import flowRight from 'lodash/flowRight'
 import isEmpty from 'lodash/isEmpty'
@@ -123,8 +125,8 @@ const getColumns = formatMessage => [
     label: formatMessage(messages.lastMonth),
     hiddenOn: 'lg',
     tooltip: formatMessage(messages.resultCountDescription, {
-      startDate: format(subDays(new Date(), 60 + 1), dateFormat),
-      endDate: format(subDays(new Date(), 30 + 1), dateFormat),
+      startDate: format(startOfMonth(subMonths(new Date(), 1)), dateFormat),
+      endDate: format(endOfMonth(subMonths(new Date(), 1)), dateFormat),
     }),
   },
   {
@@ -133,7 +135,7 @@ const getColumns = formatMessage => [
     label: formatMessage(messages.thisMonth),
     hiddenOn: 'lg',
     tooltip: formatMessage(messages.resultCountDescription, {
-      startDate: format(subDays(new Date(), 30), dateFormat),
+      startDate: format(startOfMonth(new Date()), dateFormat),
       endDate: format(new Date(), dateFormat),
     }),
   },

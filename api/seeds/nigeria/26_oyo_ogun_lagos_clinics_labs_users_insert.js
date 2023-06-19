@@ -15,7 +15,7 @@ async function seed(knex) {
 
   await upsertStatesAndLgas(knex, countryId, geography.countries[0].states)
 
-  const { id: partnerId } = await knex('Partner').where('name', partnerData.partnerName).first('id')
+  const { id: partnerId } = await knex('Partner').where('externalId', partnerData.partner.externalId).first('id')
 
   await insertSites(knex, partnerId, countryId, sites)
   await upsertContacts(knex, partnerData, contacts)

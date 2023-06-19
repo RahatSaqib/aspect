@@ -9,5 +9,5 @@ const partnerData = require('./fixtures/partnerData')
 async function seed(knex) {
   await upsertContacts(knex, partnerData, contacts)
   // Needed for adding Regional Officer access to the Reporter List
-  await upsertJobFunctions(knex, jobFunctionFixture, partnerData.partnerName)
+  await upsertJobFunctions(knex, jobFunctionFixture, partnerData.partner.externalId)
 }

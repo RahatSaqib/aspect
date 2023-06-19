@@ -44,7 +44,8 @@ async function seed(knex) {
   }
 
   await knex('Partner').where('name', 'Lesotho').update({
-    name: tbPartnerVariables.partnerName,
+    name: tbPartnerVariables.partner.name,
+    externalId: tbPartnerVariables.partner.externalId,
   })
   const hivPartnerId = await upsertPartnerData(knex, {
     ...hivPartnerVariables,
@@ -77,7 +78,8 @@ async function seed(knex) {
   const tbPartnerId = await upsertPartnerData(knex, {
     ...tbPartnerVariables,
     partnerTypeId: await partnerTypeToId('operating'),
-    name: tbPartnerVariables.partnerName,
+    name: tbPartnerVariables.partner.name,
+    externalId: tbPartnerVariables.partner.externalId,
   })
 
   await commonUpserts(knex, tbPartnerId, tbAdminId, geography, 'LS', tbPartnerVariables.gxAlertDeviceApiKey)

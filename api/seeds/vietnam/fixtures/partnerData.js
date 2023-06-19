@@ -3,7 +3,10 @@ const jobFunctions = require('./jobFunctions')
 module.exports = {
   adminUserName: 'admin',
   adminPassword: 'v4zk75io79',
-  partnerName: 'Vietnam',
+  partner: {
+    name: 'Vietnam',
+    externalId: 'vietnam',
+  },
   deviceApiToken: 'q9weva3thrtdeb8ukat4',
   partnerAbbreviation: 'VN',
   lowerLevelUserPassword: '4r5uov8rt3',
