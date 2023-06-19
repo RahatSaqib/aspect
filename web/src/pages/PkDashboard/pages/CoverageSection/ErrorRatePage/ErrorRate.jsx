@@ -40,7 +40,7 @@ const createNode = (name, parent) => {
   )
   const errorRate = data?.cntMtbError / data?.cntMtbResults
 
-  return { ...data, percentMtbError: Number.isNaN(errorRate) ? 0 : errorRate.toPrecision(2) }
+  return { ...data, percentMtbError: Number.isNaN(errorRate) ? 0 : errorRate.toPrecision(1) }
 }
 
 const makeNestedData = array => {
