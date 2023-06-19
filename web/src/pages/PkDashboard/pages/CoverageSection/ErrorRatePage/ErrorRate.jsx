@@ -1,48 +1,91 @@
 import React from 'react'
+import entries from 'lodash/entries'
+import get from 'lodash/get'
+import groupBy from 'lodash/groupBy'
+import set from 'lodash/set'
+import { useLocation } from 'react-router'
+import ErrorRateFilter from '../../../../../cleanComponents/Filter/ErrorRateFilter'
+import Loading from '../../../../../cleanComponents/Loading'
 import useI18n from '../../../../../hooks/useI18n'
+import { useFilterValues } from '../../../../../providers/FilterProvider'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
+import useDeviceErrors from '../../../hooks/useDeviceError'
 import messages from '../../../PkDashboard.Messages'
 
-const rnd = max => (Math.random() * max).toFixed(2)
+const values = ['numberOfModules', 'cntMtbResults', 'cntMtbError', 'cntMtbInvalid', 'cntMtbNoResult']
+
+const columns = [
+  { name: 'Devices', prop: 'name' },
+  { name: 'Total Modules', prop: 'numberOfModules' },
+  { name: 'Total Tests', prop: 'cntMtbResults' },
+  { name: 'Error Rate', prop: 'percentMtbError' },
+  { name: 'Errors', prop: 'cntMtbError' },
+  { name: 'Invalid', prop: 'cntMtbInvalid' },
+  { name: 'No Res', prop: 'cntMtbNoResult' },
+]
+
+const childrenKey = 'children'
+
+const createNode = (name, parent) => {
+  const data = parent.reduce(
+    (prev, curr) => {
+      values.forEach(key => {
+        const sum = (prev?.[key] ?? 0) + (curr?.[key] ?? 0)
+        set(prev, key, Number(sum.toFixed(2)))
+      })
+      return prev
+    },
+    { name, id: name }
+  )
+  const errorRate = data?.cntMtbError / data?.cntMtbResults
+
+  return { ...data, percentMtbError: Number.isNaN(errorRate) ? 0 : errorRate.toPrecision(1) }
+}
+
+const makeNestedData = array => {
+  const result = []
+
+  entries(groupBy(array, 'stateName')).forEach(([stateName, stateValues]) => {
+    const state = createNode(stateName, stateValues)
+
+    if (state.name === 'null') {
+      result.push({ ...state, name: 'N/A', [childrenKey]: stateValues })
+      return
+    }
+
+    entries(groupBy(stateValues, 'lgaName')).forEach(([lgaName, lgaValues]) => {
+      const lga = createNode(lgaName, lgaValues)
+
+      entries(groupBy(lgaValues, 'name')).forEach(([typeName, typeValues]) => {
+        const type = createNode(typeName, typeValues)
+        set(lga, childrenKey, [...get(lga, childrenKey, []), type])
+      })
+
+      set(state, childrenKey, [...get(state, childrenKey, []), lga])
+    })
+
+    result.push(state)
+  })
+
+  return result
+}
 
 const ErrorRatePage = () => {
   const { formatMessage } = useI18n()
-
-  const data = new Array(43)
-    .fill({})
-    .map((i, idx) => createData(idx, `City ${idx}`, rnd(159), rnd(6), rnd(24), rnd(9), rnd(5)))
-
-  const columns = [
-    { name: 'Name', prop: 'name' },
-    { name: 'Current Qty.', prop: 'quantity' },
-    { name: 'Last 6 Months', prop: 'lastSixMonths' },
-    { name: 'Used', prop: 'used' },
-    { name: 'Consumption Rate', prop: 'rate' },
-    { name: 'Days Left', prop: 'left' },
-  ]
+  const location = useLocation()
+  const filter = useFilterValues(location.pathname)
+  const { data, isLoading } = useDeviceErrors(filter)
 
   return (
-    <PkPage isMocked title={formatMessage(messages.errorRateTitle)}>
-      <NestedTable columns={columns} rows={data} hasDetail />
+    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.errorRateTitle)}>
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <NestedTable columns={columns} perPage={9999} rows={makeNestedData(data ?? [])} hasDetail />
+      )}
     </PkPage>
   )
 }
 
 export default ErrorRatePage
-
-function createData(id, name, quantity, lastSixMonths, used, rate, left) {
-  return {
-    id,
-    name,
-    quantity,
-    lastSixMonths,
-    used,
-    rate,
-    left,
-    children: [
-      { id: `${id}${id}`, name, quantity, lastSixMonths, used, rate, left },
-      { id: `${id}${id}2`, name, quantity, lastSixMonths, used, rate, left },
-    ],
-  }
-}

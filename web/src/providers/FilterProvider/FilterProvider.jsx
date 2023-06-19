@@ -28,6 +28,7 @@ const defaultFilter = {
   '/browse/result': {},
   '/browse/site': {},
   '/reports': {},
+  '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
 }
 
 const FilterContext = createContext()

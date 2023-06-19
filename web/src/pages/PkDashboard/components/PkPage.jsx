@@ -8,14 +8,19 @@ const baseStyle = { pb: 3, paddingLeft: '8px !important', paddingRight: '8px !im
 const normalHeight = { height: 'calc(100vh - 128px)' }
 const fullHeight = { height: 'calc(100vh - 64px)' }
 const gridStyle = { padding: '16px 8px 0' }
+const headerStyle = { mr: '16px', mt: '8px' }
 const filterStyle = { width: '50%', float: 'left' }
 
-const PkPage = ({ title, filters, filter, children, full, isMocked }) => {
+const PkPage = ({ title, filters, header, filter, children, full, isMocked }) => {
   useDocumentTitle(`${title} - Aspect`) // no need for helmet
   return (
     <>
       <DetailHeader name={title} disableBack={full} />
       {isMocked ? <IncompleteScreenBadge /> : null}
+
+      <Grid item xs={12} sx={headerStyle}>
+        {header}
+      </Grid>
 
       <Container maxWidth="xxl" sx={full ? { ...baseStyle, ...fullHeight } : { ...baseStyle, ...normalHeight }}>
         {full ? (
