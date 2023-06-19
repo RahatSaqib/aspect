@@ -17,6 +17,7 @@ const {
   differenceInDays,
   min,
   max,
+  addMonths,
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
@@ -342,6 +343,16 @@ function arrayofIANATimezone(timezone) {
   return findIana(timezone)
 }
 
+function getAllMonthsInRange(minDate, maxDate) {
+  let allRanges = []
+  let currentMonth = getLocalDateTimeStringInUtc(minDate)
+  while (currentMonth <= getLocalDateTimeStringInUtc(maxDate)) {
+    allRanges = [...allRanges, format(currentMonth, 'yyyy-MM')]
+    currentMonth = addMonths(currentMonth, 1)
+  }
+  return allRanges.sort()
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -377,4 +388,5 @@ module.exports = {
   convertTimezonetoWindowsIANA,
   daysBetweenDates,
   arrayofIANATimezone,
+  getAllMonthsInRange,
 }
