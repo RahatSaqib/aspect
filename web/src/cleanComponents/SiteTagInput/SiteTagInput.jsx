@@ -6,25 +6,29 @@ import AspectSelect from '../AspectSelect'
 
 const filter = createFilterOptions()
 
+function getFilterOptions(options, params) {
+  const filtered = filter(options, params)
+  const { inputValue } = params
+  const isExisting = options.some(option => inputValue === option.title)
+  if (inputValue !== '' && !isExisting)
+    filtered.push({
+      title: inputValue,
+    })
+
+  return filtered
+}
+
 const SiteTagInput = props => {
   const { data: possibleTags } = useTagByType('site')
   return (
     <AspectSelect
       options={possibleTags ?? []}
       itemToString={i => i?.title ?? ''}
-      filterOptions={(options, params) => {
-        const filtered = filter(options, params)
-        const { inputValue } = params
-        const isExisting = options.some(option => inputValue === option.title)
-        if (inputValue !== '' && !isExisting) {
-          filtered.push({
-            title: inputValue,
-          })
-        }
-        return filtered
-      }}
+      filterOptions={getFilterOptions}
       freeSolo
       multiple
+      autoHighlight
+      filterSelectedOptions
       {...props}
     />
   )
