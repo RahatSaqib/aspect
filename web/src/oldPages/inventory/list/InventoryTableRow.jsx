@@ -10,9 +10,9 @@ import { useDispatch } from 'react-redux'
 import AspectVertMenu from '../../../components/AspectVertMenu'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
-import { usePakistan } from '../../../hooks/usePakistan'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
+import { useAuthState } from '../../../providers/AuthProvider'
 import {
   modifyInventoryOnHand,
   showAddInventoryDialog,
@@ -27,7 +27,7 @@ const cssClasses = classnames.bind(styles)
 const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refetch }) => {
   const { formatMessage, formatNumber } = useI18n()
 
-  const { isPakistan } = usePakistan()
+  const { isPakistan } = useAuthState()
   const [newQtyOnHand, setNewQtyOnHand] = useState('')
   const [newQtyOnHandError, setNewQtyOnHandError] = useState(false)
   const [showCheck, setShowCheck] = useState(false)

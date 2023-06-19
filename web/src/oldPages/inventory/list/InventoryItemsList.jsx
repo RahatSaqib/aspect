@@ -16,12 +16,12 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
 import useI18n from '../../../hooks/useI18n'
-import { usePakistan } from '../../../hooks/usePakistan'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
+import { useAuthState } from '../../../providers/AuthProvider'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
 import { fetchConsumables } from '../../../store/ConsumableRedux'
@@ -102,7 +102,7 @@ export const InventoryItemsListWithProps = ({
 }) => {
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
 
-  const { isPakistan } = usePakistan()
+  const { isPakistan } = useAuthState()
 
   const columns = [
     {
