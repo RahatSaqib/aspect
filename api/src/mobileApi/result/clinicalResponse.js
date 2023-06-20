@@ -32,6 +32,10 @@ const { getAcknowledgementsByResultIds } = require('../entries/result/common/db'
 const ACKNOWLEDGED = 'Acknowledged'
 
 async function clinicalResponse(request) {
+  const result = await showResult(request)
+  if (result?.isBoom) {
+    throw result
+  }
   const { payload, params } = request
   const { resultId } = params
   const clinicalResponseData = payload
@@ -275,12 +279,12 @@ async function showResult(request) {
   const myResultQuery = generateResultQueryV2(false, dataConstraints, resultId)
   // return result when both queries are finished
   const [data] = await getItemsV2(myResultQuery, resultId)
-  const [acknowledgement] = await getAcknowledgementsByResultIds([data])
+  if (!data) return Boom.notFound()
+  const [acknowledgement] = await getAcknowledgementsByResultIds([data].filter(_.identity))
   // get follow-ups for all result in the response for performance (filter later)
   const followUps = await getFollowUpsOfResultById(data)
   // get comments for all result in the response for performance (filter later)
   const comments = await getCommentsOfResultById(data)
-
   const result = await getResultItemTransformedDataV2(data, true, followUps, comments, acknowledgement)
   return result || Boom.notFound()
 }
