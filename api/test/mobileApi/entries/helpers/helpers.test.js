@@ -521,8 +521,8 @@ describe('Entries helpers', () => {
 
   describe('transformResultResponse', () => {
     it('correctly transform results', async () => {
-      const entry347 = transFormResultResponse([data347], [], [])
-      const entry450 = transFormResultResponse([data450], followUp450, [])
+      const entry347 = transformResultResponse([data347], [], [])
+      const entry450 = transformResultResponse([data450], followUp450, [])
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
     })
