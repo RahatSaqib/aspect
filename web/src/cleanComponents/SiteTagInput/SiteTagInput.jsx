@@ -1,75 +1,44 @@
 import React from 'react'
-import { Select, MenuItem, Box, Chip } from '@mui/material'
+import { createFilterOptions } from '@mui/material/Autocomplete'
 import PropTypes from 'prop-types'
 import useTagByType from '../../hooks/tag/useTagByType'
+import AspectSelect from '../AspectSelect'
 
-const MAX_TAGS = 10
+const filter = createFilterOptions()
 
-const SiteTagInput = ({ value, onTagChange }) => {
+function getFilterOptions(options, params) {
+  const filtered = filter(options, params)
+  const { inputValue } = params
+  const isExisting = options.some(option => inputValue === option.title)
+  if (inputValue !== '' && !isExisting)
+    filtered.push({
+      title: inputValue,
+    })
+
+  return filtered
+}
+
+const SiteTagInput = props => {
   const { data: possibleTags } = useTagByType('site')
-  const [open, setOpen] = React.useState(false)
-
-  const handleClose = () => setOpen(false)
-  const handleOpen = () => setOpen(true)
-
-  const onChange = e => {
-    if (e.target.value.length < MAX_TAGS) {
-      const newValues = e.target.value
-        .map(v => (typeof v === 'string' ? possibleTags.find(t => t.id === v).title : v.title))
-        .join()
-      onTagChange(newValues)
-    }
-  }
-
-  const handleDelete = id => {
-    const newValues = value
-      .filter(v => v.id !== id)
-      .map(v => (typeof v === 'string' ? possibleTags.find(t => t.id === v).title : v.title))
-      .join()
-    onTagChange(newValues)
-  }
-
   return (
-    <Select
+    <AspectSelect
+      options={possibleTags ?? []}
+      itemToString={i => i?.title ?? ''}
+      filterOptions={getFilterOptions}
+      freeSolo
       multiple
-      fullWidth
-      variant="standard"
-      value={value}
-      onChange={onChange}
-      open={open}
-      onClose={handleClose}
-      onOpen={handleOpen}
-      onClick={handleClose}
-      renderValue={selected => (
-        <Box sx={{ display: 'flex', flexWrap: 'wrap', gap: 0.5 }}>
-          {selected.map(value => (
-            <Chip
-              key={value.id}
-              label={value.title}
-              onDelete={() => handleDelete(value.id)}
-              onMouseDown={event => {
-                const isDelete = event.currentTarget.attributes.class.value.includes('deletable')
-                if (isDelete) {
-                  event.stopPropagation()
-                }
-              }}
-            />
-          ))}
-        </Box>
-      )}
-    >
-      {(possibleTags || []).slice(0, MAX_TAGS).map(tag => (
-        <MenuItem key={tag.id} value={tag.id}>
-          {tag.title}
-        </MenuItem>
-      ))}
-    </Select>
+      isOptionEqualToValue={(option, value) => option.id === value.id}
+      autoHighlight
+      filterSelectedOptions
+      disabled={false}
+      {...props}
+    />
   )
 }
 
 SiteTagInput.propTypes = {
-  value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  onTagChange: PropTypes.func.isRequired,
+  value: PropTypes.oneOfType([PropTypes.array]).isRequired,
+  onChange: PropTypes.func.isRequired,
 }
 
 export default SiteTagInput

@@ -162,4 +162,5 @@ module.exports = {
   updateTags,
   updateTagsById,
   tagsAreEqual,
+  getTagsById,
 }

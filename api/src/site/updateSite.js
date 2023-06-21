@@ -4,9 +4,21 @@ const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
 const { getExistingSiteExcludingCurrent, updateSite, checkSiteAccess } = require('./common/db')
 const { throwExistingSiteError } = require('./common/validations')
+const { canEdit } = require('../auth/constraints')
+const { updateTagsById } = require('../tag/service')
 
 module.exports = async function (request) {
-  const { auth, params, payload } = request
+  const {
+    auth,
+    params,
+    payload: { tags, ...payload },
+  } = request
+
+  const tagType = 'site'
+
+  if (!canEdit(auth, `${tagType}:`)) {
+    return Boom.forbidden(`You are not permitted to update tags to this ${tagType}`)
+  }
 
   const user = await getUserFromCredentials(auth.credentials)
 
@@ -15,6 +27,8 @@ module.exports = async function (request) {
   await validate(params.siteId, auth.credentials, siteParams)
 
   await updateSite(params.siteId, siteParams)
+
+  await updateTagsById(params.siteId, tagType, tags, auth)
 
   return params.siteId
 }

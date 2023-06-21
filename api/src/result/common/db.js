@@ -558,7 +558,6 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
         qb.leftJoin(countsBase.as('_sub'), '_sub.stateId', 'location.id')
         qb.whereNull('g.lgaId')
       }
-      qb.groupBy('location.id')
     })
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .modify(filterParams, query, {
@@ -567,9 +566,29 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       lgaId: 'g.lgaId',
     })
 
-  const total = (await baseQuery.clone()).length
+  const [totals] = await baseQuery
+    .clone()
+    .select(
+      knex.raw(`'TOTAL' as locationName`),
+      knex.raw(`COUNT(DISTINCT location.id) as totalRecords`),
+      counterField('totalPmdtSites'),
+      counterField('totalXdrSites'),
+      counterField('cntAll'),
+      counterField('cnt_mtb'),
+      counterField('cnt_inh'),
+      counterField('cnt_flq'),
+      counterField('cnt_amk'),
+      counterField('cnt_kan'),
+      counterField('cnt_cap'),
+      counterField('cnt_eth'),
+      counterField('cnt_Invalid'),
+      counterField('cnt_NoResult'),
+      counterField('cnt_Error')
+    )
+
   const data = await baseQuery
     .clone()
+    .groupBy('location.id')
     .select(
       `location.name as locationName`,
       counterField('totalPmdtSites'),
@@ -592,7 +611,8 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       if (query.size) _q.modify(pageParams, query)
     })
 
-  return { total, data, length: data.length }
+  data.unshift(_.omit(totals, 'totalRecords'))
+  return { total: totals.totalRecords, data, length: data.length }
 }
 
 module.exports = {

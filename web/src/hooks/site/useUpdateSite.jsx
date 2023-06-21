@@ -2,11 +2,11 @@ import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
-import { inlineWarning, errorPleaseTryAgainInAFewMinutes } from '../../utils/error/CommonErrorNotifications'
+import { errorPleaseTryAgainInAFewMinutes, inlineWarning } from '../../utils/error/CommonErrorNotifications'
 import { SITE_KEY, SITE_KEY_BY_ID_ENDPOINT } from './siteKeys.js'
 
 const updateSiteById = async (site, siteId) => {
-  const submitSite = { ...site }
+  const submitSite = { ...site, tags: site?.tags.map(t => t?.title)?.join(',') }
   delete submitSite.id
   delete submitSite.country
   delete submitSite.createdOn

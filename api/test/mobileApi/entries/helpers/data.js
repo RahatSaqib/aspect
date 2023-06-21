@@ -62,6 +62,9 @@ const expected347 = [
       resultId: 347,
       recorded: false,
     },
+    hasFollowUp: false,
+    requiresFollowUp: false,
+    noFollowUpPossible: false,
     comments: [],
     followUps: [],
     history: [
@@ -123,6 +126,9 @@ const expected347 = [
         treatmentStatus: '',
         transferStatus: 'awayTransfer',
         assayType: 'GxMtbRif',
+        hasFollowUp: false,
+        requiresFollowUp: false,
+        noFollowUpPossible: false,
       },
     },
     testInformation: [
@@ -236,6 +242,9 @@ const expected450 = [
       treatment: 'dstb-2rhze',
       treatmentStarted: '2023-05-20T19:45:55.000Z',
     },
+    hasFollowUp: true,
+    requiresFollowUp: false,
+    noFollowUpPossible: false,
     comments: [],
     followUps: [
       {
@@ -340,6 +349,9 @@ const expected450 = [
         treatmentStatus: 'AwaitingTreatment',
         transferStatus: '',
         assayType: 'GxMtbRifUltra',
+        hasFollowUp: true,
+        requiresFollowUp: false,
+        noFollowUpPossible: false,
       },
     },
     testInformation: [

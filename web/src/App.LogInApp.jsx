@@ -65,6 +65,7 @@ const ProvincialRIFTestingTrendRRTB = lazy(() =>
   import('./pages/PkDashboard/pages/MtbRifSection/ProvincialRRTBDiagnosisTrendPage')
 )
 
+const XDRByDevice = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/XDRByDevice'))
 const NationalGXTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalTestingTrendsPage'))
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
@@ -142,9 +143,9 @@ const LogInApp = () => {
               <>
                 <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
                 <Route path="/dashboard" element={<Status />} />
-                {isPakistan ? <Route path="/dashboard-v2" element={<PkDashboard />} /> : null}
                 {isPakistan ? (
                   <>
+                    <Route path="/dashboard-v2" element={<PkDashboard />} />
                     <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
                     <Route path="/dashboard/rif/national-diagnosis" element={<NationalDiagnosisRif />} />
                     <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
@@ -159,6 +160,7 @@ const LogInApp = () => {
                       element={<ProvincialRIFTestingTrendRRTB />}
                     />
 
+                    <Route path="/dashboard/xdr/by-device" element={<XDRByDevice />} />
                     <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
                     <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                     <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />

@@ -10,7 +10,7 @@ const {
 const { getAllSamplesRegistered } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
-const { transFormResultResponse } = require('./helpers/transFormResultResponse')
+const { transformResultResponse } = require('./helpers/transformResultResponse')
 const { getConstraints } = require('../../../../auth/constraints')
 const { getUser } = require('../../../../auth/service')
 const {
@@ -57,7 +57,7 @@ async function fetchEntriesServiceHandler(request) {
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
   const acknowledgedId = await resultWorkflowStatusToId('Acknowledged')
-  const transformedResults = transFormResultResponse(results, followUps, comments, acknowledgedId)
+  const transformedResults = transformResultResponse(results, followUps, comments, acknowledgedId)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
   const entries = _.orderBy(_.uniqBy(_.concat(transformedResults, transformedSamples), 'id'), ['updatedOn'], ['desc'])
 

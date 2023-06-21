@@ -4,6 +4,7 @@ import PeriodSelector from '../../../../../oldPages/dashboard/Graphs/PeriodSelec
 import DATE_CONSTS from '../../../../../utils/consts/DateTime/CONSTS'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
+import UtilizationGraph from '../../../components/UtilizationGraph'
 import messages from '../../../PkDashboard.Messages'
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
@@ -23,6 +24,23 @@ const UtilizationPage = () => {
     { name: 'Days Left', prop: 'left' },
   ]
 
+  const datum = [
+    { total: 'total', 2017: 19, 2018: 19, 2019: 23 },
+    { province: 'Pakistan', 2017: 22, 2018: 80, 2019: 75 },
+    { province: 'BTAN', 2017: 20, 2018: 80, 2019: 75 },
+    { province: 'KP', 2017: 21, 2018: 80, 2019: 75 },
+    { province: 'Punjab', 2017: 19, 2018: 80, 2019: 75 },
+    { province: 'Sindh', 2017: 25, 2018: 80, 2019: 75 },
+  ]
+
+  const indexByFirst = 'total'
+  const dataFirst = datum.filter(r => !!r[indexByFirst])
+  const keyFirst = Object.keys(dataFirst[0]).filter(k => k !== indexByFirst)
+
+  const indexByRest = 'province'
+  const dataRest = datum.filter(r => !!r[indexByRest])
+  const keyRest = Object.keys(dataRest[0]).filter(k => k !== indexByRest)
+
   return (
     <PkPage
       isMocked
@@ -30,6 +48,12 @@ const UtilizationPage = () => {
       filter={<PeriodSelector onChange={setFilter} initialValue={DATE_RANGE_OPTIONS.LAST_MONTH} />}
     >
       <NestedTable columns={columns} rows={data} hasDetail />
+      <div style={{ height: '500px' }}>
+        <UtilizationGraph data={dataFirst} keys={keyFirst} indexBy={indexByFirst} />
+      </div>
+      <div style={{ height: '500px' }}>
+        <UtilizationGraph data={dataRest} keys={keyRest} indexBy={indexByRest} />
+      </div>
     </PkPage>
   )
 }

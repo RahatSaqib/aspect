@@ -44,6 +44,58 @@ const xpertSiteDetailedReport = {
   ],
 }
 
+const xpertSiteSummaryReportSiteWise = {
+  name: 'Xpert Site Summary Report - Site Wise',
+  description: 'List of sites with counts of the results of different types from all devices at the site',
+  i18nKey: 'xpert_site_summary_site_wise_report',
+  i18nKeyDescription: 'xpert_site_summary_site_wise_report_description',
+  externalId: 'pk_xpert_site_summary_site_wise_report', // folder name in /templates with low dash casing
+  fileName: 'xpertSiteSummaryReportSiteWise',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 0,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReportsPakistan',
+      functionName: 'xpertSiteSummarySiteWiseReport',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
+const xpertWorkloadSummaryReport = {
+  name: 'Xpert Workload Summary Report',
+  description: 'A list of all devices in the system and results aggregated by assay and by month.',
+  i18nKey: 'xpert_workload_summary_report',
+  i18nKeyDescription: 'xpert_workload_summary_report_description',
+  externalId: 'pk_xpert_workload_summary_report', // folder name in /templates with low dash casing
+  fileName: 'xpertWorkloadSummaryReport',
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 0,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/serviceReportsPakistan/xpertWorkloadSummaryReport',
+      functionName: 'xpertWorkloadSummaryReportByDevice',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'device/serviceReportsPakistan/xpertWorkloadSummaryReport',
+      functionName: 'xpertWorkloadSummaryReportByDistrict',
+      query: {
+        avoidStreaming: true,
+      },
+    },
+  ],
+}
+
 const missingCartridgesReport = {
   name: 'List of Missing Lots',
   description:
@@ -70,5 +122,7 @@ const missingCartridgesReport = {
 module.exports = {
   deviceSummaryReport,
   xpertSiteDetailedReport,
+  xpertSiteSummaryReportSiteWise,
+  xpertWorkloadSummaryReport,
   missingCartridgesReport,
 }
