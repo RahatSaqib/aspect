@@ -418,7 +418,9 @@ const start = async () => {
   // =======================
   try {
     await server.start()
-    logger.info(`Magic happens at http://localhost:${port}`)
+    const useUnixSocket = _.isString(port) && port.includes('/')
+    const address = useUnixSocket ? port : `http://localhost:${port}`
+    logger.info(`Server running on ${address}`)
   } catch (err) {
     logger.error(err)
     Sentry.captureException(err)
