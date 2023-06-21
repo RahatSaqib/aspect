@@ -126,7 +126,7 @@ const validationSchema = formatMessage =>
             tags: Yup.array().of(Yup.object().shape({ label: Yup.string(), value: Yup.number().required() })),
           })
         ),
-      persons: Yup.array().required(),
+      persons: Yup.array().nullable(),
       sendEmail: Yup.boolean(),
       sendSms: Yup.boolean(),
       sendWeb: Yup.boolean(),
