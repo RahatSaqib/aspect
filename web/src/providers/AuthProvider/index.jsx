@@ -14,6 +14,12 @@ const AuthProvider = ({ children }) => {
   const jwtExp = user.jwt.exp
 
   let isLoggedOut = false
+
+  const isPakistan = useMemo(
+    () => localStorage.getItem('<showPkDashboard>') || user?.countryAbbreviation === 'PK',
+    [user.countryAbbreviation]
+  )
+
   if (isNumber(jwtExp) && lastServerResponseTime) {
     const isExpired = jwtExp < lastServerResponseTime.getTime() / 1000
     if (isExpired) {
@@ -22,7 +28,7 @@ const AuthProvider = ({ children }) => {
   } else {
     isLoggedOut = true
   }
-  const userData = Object.freeze({ ...user, userPermissions: user.jwt.permissions, isLoggedOut })
+  const userData = Object.freeze({ ...user, userPermissions: user.jwt.permissions, isLoggedOut, isPakistan })
 
   return <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
 }
