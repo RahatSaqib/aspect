@@ -23,8 +23,8 @@ const {
   transformTreatmentStatus,
 } = require('../../../../src/mobileApi/entries/result/common/helpers/transformTreatmentStatus')
 const {
-  transFormResultResponse,
-} = require('../../../../src/mobileApi/entries/result/common/helpers/transFormResultResponse')
+  transformResultResponse,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformResultResponse')
 const {
   transformTestInformation,
 } = require('../../../../src/mobileApi/entries/result/common/helpers/transformTestInformation')
@@ -520,10 +520,10 @@ describe('Entries helpers', () => {
     })
   })
 
-  describe('transFormResultResponse', () => {
+  describe('transformResultResponse', () => {
     it('correctly transform results', async () => {
-      const entry347 = transFormResultResponse([data347], [], [], 9)
-      const entry450 = transFormResultResponse([data450], followUp450, [], 9)
+      const entry347 = transformResultResponse([data347], [], [], 9)
+      const entry450 = transformResultResponse([data450], followUp450, [], 9)
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
     })

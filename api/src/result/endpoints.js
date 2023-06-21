@@ -1095,7 +1095,7 @@ const routes = [
         query: {
           ...validateAllGeographyFilterParams(),
           ...validateDateRangeParams(),
-          ...validateSortPageParams('locationName'),
+          ...validateSortPageParams('locationName', 'cntAll'),
         },
       },
       response: {

@@ -66,7 +66,6 @@ const xpertSiteSummaryReportSiteWise = {
   ],
 }
 
-
 const xpertWorkloadSummaryReport = {
   name: 'Xpert Workload Summary Report',
   description: 'A list of all devices in the system and results aggregated by assay and by month.',

@@ -61,6 +61,7 @@ const enhance = compose(
     intl: PropTypes.object.isRequired,
     onConsumableReasonIdChange: PropTypes.func.isRequired,
     value: PropTypes.string,
+    returnItem: PropTypes.bool,
   }),
   connect(
     state => ({
@@ -74,7 +75,12 @@ const enhance = compose(
     UNSAFE_componentWillMount() {
       this.setState({
         onChange: ({ target: { value } }) => {
-          this.props.onConsumableReasonIdChange(value === 'all' ? undefined : value)
+          const { returnItem, consumableReasons } = this.props
+          const id = value === 'all' ? undefined : value
+          this.props.onConsumableReasonIdChange(
+            id,
+            returnItem ? consumableReasons?.toJS()?.items.find(i => i.id === id) : undefined
+          )
         },
       })
     },
