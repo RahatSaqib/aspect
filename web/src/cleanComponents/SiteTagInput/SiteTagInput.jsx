@@ -12,6 +12,7 @@ function getFilterOptions(options, params) {
   const isExisting = options.some(option => inputValue === option.title)
   if (inputValue !== '' && !isExisting)
     filtered.push({
+      id: inputValue,
       title: inputValue,
     })
 
