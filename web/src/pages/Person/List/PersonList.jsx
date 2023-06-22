@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import { TableBody, LinearProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
@@ -17,11 +17,11 @@ import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { useFilterValues } from '../../../providers/FilterProvider'
-import { exportContacts } from '../../../store/PersonRedux'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import { PersonDataTable, PersonDataTableHead, PersonDataTableRow } from './PersonDataTable'
 import styles from './PersonList.css'
+import getExportableFile from './PersonQueries'
 
 const cssClasses = classnames.bind(styles)
 
@@ -34,13 +34,33 @@ export const PersonList = () => {
   const sortPage = makeSortPageSelector({ sortCol: 'name' })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
 
-  const { isLoading, data } = usePersons({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
+  const [isLoading, setIsLoading] = useState(true)
+
+  const {
+    isLoading: tableLoading,
+    data = { data: [] },
+    total,
+  } = usePersons({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters })
+
+  useEffect(() => {
+    setIsLoading(tableLoading)
+  }, [tableLoading])
 
   const isEditAllow = isPermittedUser(userPermissions, { required: ['person:edit'] })
 
-  return isLoading ? (
-    <LinearProgress />
-  ) : (
+  const onExportClick = formatType => {
+    setIsLoading(true)
+    return getExportableFile(filters, formatType, sortCol, sortDir, total, 'contacts')
+      .then(response => {
+        setIsLoading(false)
+        return response
+      })
+      .catch(error => {
+        setIsLoading(false)
+        throw error
+      })
+  }
+  return (
     <>
       <DetailHeader name={formatMessage(messages.contactsTitle)} disableBack>
         <PermissionChecker permissions={['person:edit']}>
@@ -54,15 +74,10 @@ export const PersonList = () => {
         <PersonFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <AspectExportListButton
-              onExport={formatType => {
-                const format = formatType
-                exportContacts(filters, sortCol, sortDir, pageAt, data.total, format, 'contacts')
-              }}
-              visible={data.data.length !== 0}
-            />
+            <AspectExportListButton onExport={onExportClick} visible={data.data.length !== 0} />
           </div>
-          {data.data.length === 0 ? (
+          {isLoading ? <LinearProgress /> : null}
+          {!data || !data.data || data.data.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
