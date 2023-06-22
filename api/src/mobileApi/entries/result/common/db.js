@@ -105,6 +105,19 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
   return knexQuery
 }
 
+const getAcknowledgementsByResultIds = results => {
+  const knexQuery = knex('ResultWorkflowLog as rwl')
+    .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
+    .whereIn(
+      'rwl.resultId',
+      _.map(results, r => r.id)
+    )
+    .andWhere('rws.externalId', 'Acknowledged')
+    .select('rwl.resultId', knex.raw('MAX(rwl.changedOn) as acknowledgedOn'))
+    .groupBy('rwl.resultId')
+  return knexQuery
+}
+
 const getFollowUpsByResultIds = results => {
   const knexQuery = knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
@@ -186,4 +199,5 @@ module.exports = {
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
+  getAcknowledgementsByResultIds,
 }

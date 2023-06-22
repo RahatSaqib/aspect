@@ -30,6 +30,7 @@ const SiteTagInput = props => {
       isOptionEqualToValue={(option, value) => option.id === value.id}
       autoHighlight
       filterSelectedOptions
+      disabled={false}
       {...props}
     />
   )
