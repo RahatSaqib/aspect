@@ -131,7 +131,7 @@ function getSite(siteId, dataConstraints) {
   return knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .join('SiteType as t', 't.id', 's.siteTypeId')
+    .leftOuterJoin('SiteType as t', 't.id', 's.siteTypeId')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('s.id', siteId)
