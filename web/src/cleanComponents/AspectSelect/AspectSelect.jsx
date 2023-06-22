@@ -8,8 +8,6 @@ export default function AspectSelect(props) {
 
   return (
     <Autocomplete
-      {...rest}
-      onChange={(_, newValue) => onChange(valueBy ? newValue?.[valueBy] : newValue)}
       getOptionLabel={itemToString}
       renderInput={params => (
         <TextField
@@ -23,6 +21,8 @@ export default function AspectSelect(props) {
       )}
       options={options}
       disabled={!options?.length}
+      {...rest}
+      onChange={(_, newValue) => onChange(valueBy ? newValue?.[valueBy] : newValue)}
       value={valueBy ? options?.find(option => option[valueBy] === value) : value}
     />
   )

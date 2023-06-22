@@ -18,6 +18,9 @@ const sampleRegistrationPayloadValidation = () => {
         'Optional: Sample Collected from Patient ID, not to be confused with the current patientId column as this is an index from the Patient table'
       ),
     originSiteId: Joi.number().required().description('Site where the Sample was Collected'),
+    sampleTypeExternalId: Joi.string()
+      .allow(null, '')
+      .description('Optional Sample Type Defaults to Sputum when not Specified or Other when Unrecognised'),
   })
 }
 
