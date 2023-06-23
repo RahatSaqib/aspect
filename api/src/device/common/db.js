@@ -170,13 +170,20 @@ function getDeviceByIdBaseQuery(
 function getDeviceBaseExtendedQuery(
   query,
   dataConstraints,
-  showUnapprovedDevices = false,
-  showDecommissionedDevices = false,
-  excludeInternalDevices = true
+  {
+    showUnapprovedDevices = false,
+    showDecommissionedDevices = false,
+    excludeInternalDevices = true,
+    extendJoinToAssays = false,
+  } = {
+    showUnapprovedDevices: false,
+    showDecommissionedDevices: false,
+    excludeInternalDevices: true,
+    extendJoinToAssays: false,
+  }
 ) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
@@ -190,7 +197,8 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (query.assayExternalId)
+      if (extendJoinToAssays) queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+      else if (query.assayExternalId)
         queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId').where('a.externalId', query.assayExternalId)
 
       if (query.resultCategoryId)
@@ -238,7 +246,7 @@ function getDeviceBaseExtendedQuery(
 
 async function getBasicsForDevicesReport(dataConstraints, query) {
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
 
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()

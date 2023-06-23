@@ -400,7 +400,8 @@ async function getDevicesForRifResistanceReport(auth, query) {
       hasResults: 1,
       ...query,
     },
-    dataConstraints
+    dataConstraints,
+    { extendJoinToAssays: true }
   )
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     // Group for avoiding join duplications
@@ -1123,7 +1124,7 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
 
 async function getDeviceCalibrationsForReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()
