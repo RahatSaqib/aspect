@@ -209,11 +209,13 @@ async function getStates(dataConstraints, { stateId }) {
 }
 
 async function lgaSelectList(request) {
-  const { params } = request
+  const { params, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
   const lgas = await query('Get LGAs for select list')
     .from('Lga as l')
     .innerJoin('Geography as g', 'g.lgaId', 'l.id')
     .where('g.stateId', params.stateId)
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
     .orderBy(['l.name'], 'asc')
     .distinct('l.id', 'l.name')
 

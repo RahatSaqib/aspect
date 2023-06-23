@@ -61,7 +61,7 @@ const routes = [
   {
     method: 'GET',
     path: '/geography/states/{stateId?}',
-    handler: asyncHandler(stateSelectListForUser),
+    handler: asyncHandler(stateSelectList),
     config: {
       description: 'State List',
       notes: 'List of state IDs and Names',
@@ -76,7 +76,7 @@ const routes = [
   {
     method: 'GET',
     path: '/geography/state-select-list/{countryId}',
-    handler: asyncHandler(stateSelectList),
+    handler: asyncHandler(stateSelectListForUser),
     config: {
       description: 'State List',
       notes: 'List of state IDs and Names',
