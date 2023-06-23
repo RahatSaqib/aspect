@@ -24,4 +24,13 @@ module.exports = [
   resultViewerNo,
   resultViewerYes,
   technician,
+  {
+    name: 'Pakistan Dashboard Testing',
+    permissions: [
+      {
+        module: 'dashboard-v2',
+        activity: 'view',
+      },
+    ],
+  },
 ]
