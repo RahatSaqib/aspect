@@ -5,6 +5,7 @@ const _ = require('lodash')
 const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
 const Sentry = require('@sentry/node')
+const fs = require('fs')
 const config = require('./config')
 const { version } = require('../package.json')
 const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes, asyncHandler } = require('./routes')
@@ -413,13 +414,24 @@ const start = async () => {
     }
   )
 
-  // =======================
-  // start the server ======
-  // =======================
+  const useUnixSocket = _.isString(port) && port.includes('/')
+  const address = useUnixSocket ? port : `http://localhost:${port}`
+
+  // Delete previous socket
+  if (useUnixSocket) {
+    try {
+      await fs.promises.unlink(address)
+    } catch (err) {
+      // If file doesn't exist then ignore error
+      if (err.code !== 'ENOENT') {
+        logger.error(err)
+      }
+    }
+  }
+
+  // Start the server
   try {
     await server.start()
-    const useUnixSocket = _.isString(port) && port.includes('/')
-    const address = useUnixSocket ? port : `http://localhost:${port}`
     logger.info(`Server running on ${address}`)
   } catch (err) {
     logger.error(err)
