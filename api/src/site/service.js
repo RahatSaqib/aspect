@@ -3,6 +3,7 @@ const _ = require('lodash')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { getUser } = require('../auth/service')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getTagsById } = require('../tag/service')
 const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
@@ -130,7 +131,7 @@ function getSite(siteId, dataConstraints) {
   return knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .join('SiteType as t', 't.id', 's.siteTypeId')
+    .leftOuterJoin('SiteType as t', 't.id', 's.siteTypeId')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('s.id', siteId)
@@ -153,10 +154,13 @@ async function showSite(request) {
   if (!site) {
     return Boom.notFound()
   }
+
+  const tags = (await getTagsById(auth, site.id, 'site')) ?? []
+
   site.devices = await getNotDecommissionedDevices(dataConstraints)
     .where('siteId', params.siteId)
     .select('d.id', 'd.name', 'd.shortName', 'dt.id as deviceTypeId', 'dt.name as deviceTypeName', 'dtc.id as category')
-  const result = { ok: true, data: site }
+  const result = { ok: true, data: { ...site, tags } }
 
   return result
 }

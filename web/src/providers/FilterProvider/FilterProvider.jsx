@@ -3,6 +3,7 @@ import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
+import startOfYear from 'date-fns/startOfYear'
 import subtractDays from 'date-fns/subDays'
 import isArray from 'lodash/isArray'
 import { useLocation } from 'react-router-dom'
@@ -16,17 +17,20 @@ const maxDate = endOfDay(now)
 
 // TODO: remove pagination from URL
 const defaultFilter = {
-  '/browse/device/list': {}, // done
-  '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 }, // done
-  '/browse/deviceApiKey': {}, // done
-  '/browse/inventory/supplies': { hasStock: true }, // done
-  '/browse/inventory/log': { minDate, maxDate }, // done
-  '/browse/notification': {}, // done
-  '/browse/person': { contactStatus: 0 }, // done
-  '/browse/reporter': { minDate, maxDate }, // done
-  '/browse/result': {}, // done
-  '/browse/site': {}, // done
-  '/reports': {}, // done
+  '/browse/deviceApiKey': {},
+  '/browse/device/list': {},
+  '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 },
+  '/browse/inventory/log': { minDate, maxDate },
+  '/browse/inventory/supplies': { hasStock: true },
+  '/browse/inventory/transfers': {},
+  '/browse/notification': {},
+  '/browse/person': { contactStatus: 0 },
+  '/browse/reporter': { minDate, maxDate },
+  '/browse/result': {},
+  '/browse/site': {},
+  '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate },
+  '/reports': {},
+  '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
 }
 
 const FilterContext = createContext()

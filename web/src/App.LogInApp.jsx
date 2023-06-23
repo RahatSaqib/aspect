@@ -65,6 +65,7 @@ const ProvincialRIFTestingTrendRRTB = lazy(() =>
   import('./pages/PkDashboard/pages/MtbRifSection/ProvincialRRTBDiagnosisTrendPage')
 )
 
+const XDRByDevice = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/XDRByDevice'))
 const NationalGXTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalTestingTrendsPage'))
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
@@ -158,6 +159,7 @@ const LogInApp = () => {
                       element={<ProvincialRIFTestingTrendRRTB />}
                     />
 
+                    <Route path="/dashboard/xdr/by-device" element={<XDRByDevice />} />
                     <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
                     <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                     <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />

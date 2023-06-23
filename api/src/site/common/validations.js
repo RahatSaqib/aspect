@@ -19,6 +19,7 @@ const entitySchema = {
   timezone: Joi.string().allow('', null),
   hoursStart: Joi.number().allow('', null),
   hoursEnd: Joi.number().allow('', null),
+  tags: Joi.string().allow('', null),
   siteTypeId: Joi.number().integer().positive().required(),
   parentWarehouseId: Joi.number().integer().positive().allow('', null),
 }

@@ -12,31 +12,42 @@ const { transformSampleData } = require('./transformSample')
 const { transformTestInformation } = require('./transformTestInformation')
 const { transformTreatmentStatus } = require('./transformTreatmentStatus')
 
-function transFormResultResponse(data, followUps, comments, acknowledgedId) {
-  const output = []
+function transformResultResponse(data, followUps, comments, acknowledgements) {
   if (_.isEmpty(data)) return
-  _.map(data, result => {
+  return _.map(data, result => {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
     const patientData = JSON.parse(result?.patientData)
-    output.push({
+    const acknowledgement = acknowledgements?.find(ack => ack.resultId === result.id)
+    const requiresFollowUp = !!(
+      result?.resultCategoryAssay1RequiresTreatment || result?.resultCategoryAssay2RequiresTreatment
+    )
+    const clinicalResponse = transformClinicalResponse(result, resultFollowUps, acknowledgement)
+    const hasFollowUp = !!(!!clinicalResponse?.treatment || !!clinicalResponse?.outcome)
+    const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
+    const clinicalFollowUpFlags = {
+      requiresFollowUp: requiresFollowUp && !hasFollowUp && !noFollowUpPossible,
+      hasFollowUp: requiresFollowUp && hasFollowUp && !noFollowUpPossible,
+      noFollowUpPossible,
+    }
+    return {
       id: result.id,
       assayAvatar: transformAssayAvatar(result),
-      clinicalResponse: transformClinicalResponse(result, resultFollowUps, acknowledgedId),
+      clinicalResponse,
       comments: extractFromDataById(comments, 'resultId', result.id),
       followUps: resultFollowUps,
       history: buildHistoryTimeline(result, resultFollowUps, comments),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
       patientId: patientData?.id,
       sample: transformSampleData(result),
-      searchSchema: generateSearchKeys(result, patientData?.id),
+      ...clinicalFollowUpFlags,
+      searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),
       transferStatus: generateTransferStatus(result),
       treatmentStatus: transformTreatmentStatus(result, resultFollowUps),
       updatedOn: getResultUpdatedOnDate(result, resultFollowUps, comments),
-    })
+    }
   })
-  return output
 }
 
-module.exports = { transFormResultResponse }
+module.exports = { transformResultResponse }

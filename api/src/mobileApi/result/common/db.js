@@ -593,6 +593,14 @@ const insertResultWorkflowLog = resultWorkflowLogEntry => {
 }
 
 // feature: clinical response
+const deleteResultWorkflowLogs = (resultId, resultWorkflowStatusId) => {
+  return knex('ResultWorkflowLog')
+    .where('resultId', resultId)
+    .andWhere('resultWorkflowStatusId', resultWorkflowStatusId)
+    .delete()
+}
+
+// feature: clinical response
 const updateResultWithResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, now) => {
   return knex('Result').where('id', resultWorkflowLogEntry.resultId).update({
     resultWorkflowStatusLogId: lastLogId,
@@ -642,6 +650,7 @@ module.exports = {
   getTreatmentStatus,
   getTreatmentStatusLogId,
   insertResultWorkflowLog,
+  deleteResultWorkflowLogs,
   insertResultWorkflowLogQuery,
   setTreatmentStatusLog,
   updateFollowUpDate,

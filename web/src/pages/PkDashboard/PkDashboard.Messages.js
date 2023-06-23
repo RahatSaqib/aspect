@@ -82,6 +82,10 @@ const messages = {
       id: 'p.PkDashboard.mtbXdrTestingDiagnosisTrends',
       defaultMessage: 'Testing & Diagnosis Trends using MTB/XDR Assay',
     },
+    XDRByDevice: {
+      id: 'p.PkDashboard.XDRByDevice',
+      defaultMessage: 'XDR Assay Summary Result by device',
+    },
     TCurrent: { id: 'p.PkDashboard.TCurrent', defaultMessage: 'Current Testing' },
     TNationalTrend: { id: 'p.PkDashboard.TNationalTrend', defaultMessage: 'National Testing Trends' },
     TProvincialComparison: {

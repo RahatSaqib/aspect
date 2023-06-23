@@ -27,6 +27,11 @@ const downloadEntriesResponseValidation = () => {
                 .optional()
                 .allow(null, '')
                 .description('Unique ID of the patient for this entry if available'),
+              requiresFollowUp: Joi.bool().required().description('Whether the entry requires a follow-up'),
+              hasFollowUp: Joi.bool().required().description('Whether the entry has been followed up on'),
+              noFollowUpPossible: Joi.bool()
+                .required()
+                .description('Whether it is possible for a follow-up to be done on the entry'),
               updatedOn: Joi.date().required().description('When the entry was last updated in the Aspect database'),
               collectedOn: Joi.optional()
                 .allow(null, '')

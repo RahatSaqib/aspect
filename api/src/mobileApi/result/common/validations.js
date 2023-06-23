@@ -538,7 +538,9 @@ const addClinicalResponsePayloadValidation = () => {
         ),
       value: [
         Joi.string().allow('', null).description('The ID of the follow up'),
-        Joi.bool().allow('', null).description('The ID of the follow up'),
+        Joi.bool()
+          .allow('', null)
+          .description('The boolean value of whether the result has been recorded in the register'),
       ],
       clientTime: Joi.date().iso().optional().allow(null).description('This is the date when the follow up happened'),
     })

@@ -23,8 +23,8 @@ const {
   transformTreatmentStatus,
 } = require('../../../../src/mobileApi/entries/result/common/helpers/transformTreatmentStatus')
 const {
-  transFormResultResponse,
-} = require('../../../../src/mobileApi/entries/result/common/helpers/transFormResultResponse')
+  transformResultResponse,
+} = require('../../../../src/mobileApi/entries/result/common/helpers/transformResultResponse')
 const {
   transformTestInformation,
 } = require('../../../../src/mobileApi/entries/result/common/helpers/transformTestInformation')
@@ -279,10 +279,8 @@ describe('Entries helpers', () => {
 
   describe('transformClinicalResponse', () => {
     it('should transform clinical response correctly when result is recorded and treatment and outcome are present', () => {
-      const acknowledgedId = 456
       const data = {
         id: 123,
-        resultWorkflowStatusId: 456,
         resultWorkflowStatusChangedOn: '2023-01-01T00:00:00Z',
       }
 
@@ -306,26 +304,27 @@ describe('Entries helpers', () => {
         recorded: true,
         treatmentStarted: '2023-02-01T00:00:00Z',
       }
-
-      const result = transformClinicalResponse(data, followUps, acknowledgedId)
+      const acknowledgement = {
+        resultId: 123,
+        acknowledgedOn: '2023-01-01T00:00:00Z',
+      }
+      const result = transformClinicalResponse(data, followUps, acknowledgement)
       expect(result).to.eql(expectedOutput)
     })
 
     it('should return object when result is not recorded and treatment and outcome are not present', () => {
       const data = {
         id: 123,
-        resultWorkflowStatusId: 456,
       }
 
       const followUps = []
-      const acknowledgedId = 789
 
       const expectedOutput = {
         recorded: false,
         resultId: 123,
       }
 
-      const result = transformClinicalResponse(data, followUps, acknowledgedId)
+      const result = transformClinicalResponse(data, followUps)
       expect(result).to.eql(expectedOutput)
     })
   })
@@ -520,10 +519,10 @@ describe('Entries helpers', () => {
     })
   })
 
-  describe('transFormResultResponse', () => {
+  describe('transformResultResponse', () => {
     it('correctly transform results', async () => {
-      const entry347 = transFormResultResponse([data347], [], [], 9)
-      const entry450 = transFormResultResponse([data450], followUp450, [], 9)
+      const entry347 = transformResultResponse([data347], [], [])
+      const entry450 = transformResultResponse([data450], followUp450, [])
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
     })
