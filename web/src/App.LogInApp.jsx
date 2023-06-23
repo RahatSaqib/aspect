@@ -132,7 +132,6 @@ const LogInApp = () => {
 
   const a = r => isPermittedUser(userPermissions, { required: r })
 
-  const isPakistan = localStorage.getItem('<showPkDashboard>') || countryAbbreviation === 'PK' // countryAbbreviation === 'PK' // to ensure no one access it before completing the feature
   return (
     <LoggedInLayout>
       <ErrorBoundary>
@@ -142,9 +141,9 @@ const LogInApp = () => {
               <>
                 <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
                 <Route path="/dashboard" element={<Status />} />
-                {isPakistan ? <Route path="/dashboard-v2" element={<PkDashboard />} /> : null}
-                {isPakistan ? (
+                {a(['dashboard-v2:view']) ? (
                   <>
+                    <Route path="/dashboard-v2" element={<PkDashboard />} />
                     <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
                     <Route path="/dashboard/rif/national-diagnosis" element={<NationalDiagnosisRif />} />
                     <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
