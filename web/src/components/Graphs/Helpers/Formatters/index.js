@@ -41,6 +41,7 @@ import {
 import {
   groupByKey,
   groupForPie,
+  groupForPieRow,
   groupForDivergent,
   groupForInventoryStatusAPI,
   groupForOldTreatmentAPI,
@@ -293,7 +294,7 @@ const removeStringsFromArray = string => {
 
 const translateLabel = (string, assaysFromState, formatMessage, intlMessages, i18nKeys) => {
   const dictionary = []
-  assaysFromState?.map(
+  assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
       resultCategories.map(
@@ -371,6 +372,10 @@ const formatDataByGraphType = (
 
     case 'pie':
       grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
+      break
+
+    case 'pieRow':
+      grouped = groupForPieRow(data, mergedParams)
       break
 
     case 'line-trends': {
@@ -503,6 +508,7 @@ export {
   groupForOldTreatmentAPI,
   groupForPie,
   groupForPieOldTreatmentAPI,
+  groupForPieRow,
   negateTimeZoneOffset,
   normaliseKeys,
   percentageOrActualForPie,
