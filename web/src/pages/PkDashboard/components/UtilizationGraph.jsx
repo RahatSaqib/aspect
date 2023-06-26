@@ -34,6 +34,10 @@ const UtilizationGraph = ({ data, keys, indexBy }) => {
       indexScale={{ type: 'band', round: true }}
       fill={fill}
       defs={defs}
+      label={d => `${d.id} (${d.value}%)`}
+      axisBottom={{ format: v => `${v}%` }}
+      maxValue={100}
+      enableGridX
     />
   )
 }

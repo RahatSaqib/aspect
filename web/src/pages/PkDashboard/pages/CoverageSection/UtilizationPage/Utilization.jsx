@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { Typography } from '@mui/material'
 import useI18n from '../../../../../hooks/useI18n'
 import PeriodSelector from '../../../../../oldPages/dashboard/Graphs/PeriodSelector'
 import DATE_CONSTS from '../../../../../utils/consts/DateTime/CONSTS'
@@ -25,7 +26,7 @@ const UtilizationPage = () => {
   ]
 
   const datum = [
-    { total: 'total', 2017: 19, 2018: 19, 2019: 23 },
+    { total: 'Total', 2017: 19, 2018: 19, 2019: 23 },
     { province: 'Pakistan', 2017: 22, 2018: 80, 2019: 75 },
     { province: 'BTAN', 2017: 20, 2018: 80, 2019: 75 },
     { province: 'KP', 2017: 21, 2018: 80, 2019: 75 },
@@ -48,10 +49,16 @@ const UtilizationPage = () => {
       filter={<PeriodSelector onChange={setFilter} initialValue={DATE_RANGE_OPTIONS.LAST_MONTH} />}
     >
       <NestedTable columns={columns} rows={data} hasDetail />
-      <div style={{ height: '500px' }}>
+      <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+        National Trends in Annual Utilization Rates
+      </Typography>
+      <div style={{ height: '300px', marginTop: 32 }}>
         <UtilizationGraph data={dataFirst} keys={keyFirst} indexBy={indexByFirst} />
       </div>
-      <div style={{ height: '500px' }}>
+      <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+        Provincial Trends in Annual Utilization Rates
+      </Typography>
+      <div style={{ height: '800px', marginTop: 32 }}>
         <UtilizationGraph data={dataRest} keys={keyRest} indexBy={indexByRest} />
       </div>
     </PkPage>

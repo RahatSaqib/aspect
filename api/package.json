@@ -4,9 +4,6 @@
   "version": "1.8.0",
   "description": "The API for aspect clients",
   "main": "server.js",
-  "engines": {
-    "node": "14"
-  },
   "scripts": {
     "db:recreate": "node ./migrations/utils/recreateDB",
     "db:recreateCI": "node ./migrations/utils/recreateDBCI",

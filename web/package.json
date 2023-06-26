@@ -7,9 +7,6 @@
   "repository": "",
   "keywords": [],
   "author": "SystemOne",
-  "engines": {
-    "node": "14"
-  },
   "scripts": {
     "start": "webpack serve --config cfg/dev.js --open --hot",
     "start:fresh": "yarn && yarn start",
