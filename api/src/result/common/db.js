@@ -520,7 +520,9 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
     .select(`s.id as siteId`, 'g.stateId', 'g.lgaId')
     .groupBy('s.id')
     .count({
-      totalPmdtSites: counter('s.id', `t.title = 'PMDT'`),
+      totalPmdtSites: knex.raw(
+        `DISTINCT CASE WHEN s.id = sita.siteId AND sita.tagId = t.id AND t.title= 'PMDT' THEN 1 ELSE null END `
+      ),
       totalXdrSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
       cntAll: knex.raw('DISTINCT r.id'),
       cnt_mtb: counter('r.id', mtbDetected),
@@ -558,11 +560,7 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       }
     })
     .modify(addConstraints, dataConstraints, { geography: 'g' })
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-    })
+    .modify(filterParams, query, { countryId: 'g.countryId', stateId: 'g.stateId', lgaId: 'g.lgaId' })
 
   const [totals] = await baseQuery
     .clone()
