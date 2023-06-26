@@ -504,14 +504,12 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('SiteTag as sita', 's.id', 'sita.siteId')
+    .leftOuterJoin('Tag as t', 't.id', 'sita.tagId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .whereIn('a.id', [assayIds.GxMtbXdr])
-    .modify(addConstraints, dataConstraints, {
-      site: 's',
-      geography: 'g',
-      result: 'r',
-    })
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g', result: 'r' })
     .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -522,7 +520,7 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
     .select(`s.id as siteId`, 'g.stateId', 'g.lgaId')
     .groupBy('s.id')
     .count({
-      totalPmdtSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
+      totalPmdtSites: counter('s.id', `t.title = 'PMDT'`),
       totalXdrSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
       cntAll: knex.raw('DISTINCT r.id'),
       cnt_mtb: counter('r.id', mtbDetected),
