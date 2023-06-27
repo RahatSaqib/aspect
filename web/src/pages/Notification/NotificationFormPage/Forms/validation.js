@@ -133,14 +133,14 @@ const validationSchema = formatMessage =>
       emailSubject: Yup.string().when('sendEmail', optionsForSendXXX(formatMessage(messages.emailSubjectRequired))),
       emailBody: Yup.string()
         .when('sendEmail', optionsForSendXXX(formatMessage(messages.emailBodyRequired)))
-        .when('notificationType', {
-          is: 'reportBased',
+        .when(['notificationType', 'sendEmail'], {
+          is: (notificationType, sendEmail) => notificationType === 'reportBased' && sendEmail,
           then: Yup.string()
             .matches(/{{report.downloadLink}}/, formatMessage(messages.emailBodyMustContainDownloadLink))
             .required(),
         })
-        .when('notificationType', {
-          is: 'SiteWithLowFieldCompletionRate',
+        .when(['notificationType', 'sendEmail'], {
+          is: (notificationType, sendEmail) => notificationType === 'SiteWithLowFieldCompletionRate' && sendEmail,
           then: Yup.string()
             .matches(
               /{{site.completionRatePercentage}}/,
