@@ -520,9 +520,7 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
     .select(`s.id as siteId`, 'g.stateId', 'g.lgaId')
     .groupBy('s.id')
     .count({
-      totalPmdtSites: knex.raw(
-        `DISTINCT CASE WHEN s.id = sita.siteId AND sita.tagId = t.id AND t.title= 'PMDT' THEN 1 ELSE null END `
-      ),
+      isPmdt: knex.raw(`DISTINCT CASE WHEN t.title = 'PMDT' THEN 1 ELSE null END `),
       totalXdrSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
       cntAll: knex.raw('DISTINCT r.id'),
       cnt_mtb: counter('r.id', mtbDetected),
@@ -567,7 +565,7 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
     .select(
       knex.raw(`'TOTAL' as locationName`),
       knex.raw(`COUNT(DISTINCT location.id) as totalRecords`),
-      counterField('totalPmdtSites'),
+      counterField('isPmdt'),
       counterField('totalXdrSites'),
       counterField('cntAll'),
       counterField('cnt_mtb'),
@@ -587,7 +585,7 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
     .groupBy('location.id')
     .select(
       `location.name as locationName`,
-      counterField('totalPmdtSites'),
+      counterField('isPmdt'),
       counterField('totalXdrSites'),
       counterField('cntAll'),
       counterField('cnt_mtb'),

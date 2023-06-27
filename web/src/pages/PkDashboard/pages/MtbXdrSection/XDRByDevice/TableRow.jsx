@@ -11,7 +11,7 @@ const TableRow = ({ item, isDistrict }) => {
       <Td className={cssClasses('TableCell')}>{item.locationName}</Td>
       {!isDistrict ? (
         <>
-          <Td className={cssClasses('TableCell')}>{item.totalPmdtSites}</Td>
+          <Td className={cssClasses('TableCell')}>{item.isPmdt}</Td>
           <Td className={cssClasses('TableCell')}>{item.totalXdrSites}</Td>
         </>
       ) : null}

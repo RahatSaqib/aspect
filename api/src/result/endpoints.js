@@ -1111,7 +1111,7 @@ const routes = [
             .items(
               Joi.object().keys({
                 locationName: Joi.string().description('The location name (Site / LGA / State)'),
-                totalPmdtSites: Joi.number().description('Number of PMDT Sites with 10 C GX'),
+                isPmdt: Joi.number().description('Number of PMDT Sites with 10 C GX'),
                 totalXdrSites: Joi.number().description('Number of sites tested MTB/XDR Assay'),
                 cntAll: Joi.number().description('Total Tests'),
                 cnt_mtb: Joi.number().description('Number of MTB+'),
