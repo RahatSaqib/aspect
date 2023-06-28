@@ -155,13 +155,8 @@ async function stateSelectListForUser(request) {
 }
 
 async function stateSelectList(request) {
-  const { countryId, stateId } = request.params
-  const dataConstraints = {
-    country: {
-      id: countryId,
-    },
-  }
-  return getStates(dataConstraints, { stateId })
+  const { stateId } = request.params
+  return getStates(null, { stateId })
 }
 
 async function getStates(dataConstraints, { countryId, stateId }) {
@@ -180,7 +175,9 @@ async function getStates(dataConstraints, { countryId, stateId }) {
     .modify(q => {
       if (countryId) q.where('g.countryId', countryId)
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(q => {
+      if (dataConstraints) q.modify(addConstraints, dataConstraints, { geography: 'g' })
+    })
     .orderBy(['s.name'], 'asc')
     .distinct('s.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
 
