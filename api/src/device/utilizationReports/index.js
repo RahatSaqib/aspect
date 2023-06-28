@@ -4,12 +4,11 @@ const { format, parseISO, addMonths, startOfYear, subYears } = require('date-fns
 const locales = require('date-fns/locale')
 const { knex, filterParams } = require('../../db')
 const { getConstraints, canViewResults, addConstraints } = require('../../auth/constraints')
-const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../shared/query')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 const { getPersonByPersonId } = require('../../auth/service')
 
 const WORKING_DAYS_IN_YEAR = 252
 
-// -----------------------------------------------------------------------
 async function getAnnualUtilizationData(auth, query, { timeFrame }) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
@@ -71,7 +70,6 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
   return { deviceMap, devices, deviceCountsByPeriod, culture, minDate, maxDate }
 }
 
-// -----------------------------------------------------------------------
 async function getAnnualUtilizationRatesNationalBase(auth, query) {
   if (!canViewResults(auth)) {
     return Boom.forbidden('You do not have access to results')
@@ -118,7 +116,6 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
   }
 }
 
-// -----------------------------------------------------------------------
 async function getAnnualUtilizationRatesProvincialBase(auth, query) {
   if (!canViewResults(auth)) {
     return Boom.forbidden('You do not have access to results')
@@ -206,7 +203,6 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
   }
 }
 
-// -----------------------------------------------------------------------
 async function getAnnualUtilizationRatesNational(auth, query) {
   const res = await getAnnualUtilizationRatesNationalBase(auth, query)
   if (Boom.isBoom(res)) return res
@@ -221,7 +217,6 @@ async function getAnnualUtilizationRatesNational(auth, query) {
   return res
 }
 
-// -----------------------------------------------------------------------
 async function getAnnualUtilizationRatesProvincial(auth, query) {
   const res = await getAnnualUtilizationRatesProvincialBase(auth, query)
   if (Boom.isBoom(res)) return res
@@ -236,7 +231,6 @@ async function getAnnualUtilizationRatesProvincial(auth, query) {
   return res
 }
 
-// -----------------------------------------------------------------------
 function getDynamicColumnsForTimeFrame(timeFrame, minDate, maxDate, culture) {
   /**
    * dynamicColumns
@@ -278,7 +272,6 @@ function getDynamicColumnsForTimeFrame(timeFrame, minDate, maxDate, culture) {
   return dynamicColumns
 }
 
-// -----------------------------------------------------------------------
 async function listAnnualUtilizationRateNational(request) {
   const { query, auth } = request
   const res = await getAnnualUtilizationRatesNationalBase(auth, query)
@@ -286,7 +279,6 @@ async function listAnnualUtilizationRateNational(request) {
   return _.omit(res, ['dynamicColumns'])
 }
 
-// -----------------------------------------------------------------------
 async function listAnnualUtilizationRateProvincial(request) {
   const { query, auth } = request
   const res = await getAnnualUtilizationRatesProvincialBase(auth, query)

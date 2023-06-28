@@ -31,7 +31,7 @@ const {
   resultCategoryToId,
 } = require('../shared/dictionary')
 const { getDatesFromQuery } = require('../shared/date')
-const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../shared/query')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
