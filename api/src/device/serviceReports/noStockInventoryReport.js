@@ -54,9 +54,6 @@ async function getNoStockInventoryReport(dataConstraints, query) {
     .select('deviceId')
 
   const devicesRaw = await getDeviceBaseExtendedQuery(query, dataConstraints, {
-    showUnapprovedDevices: false,
-    showDecommissionedDevices: false,
-    excludeInternalDevices: true,
     extendJoinToAssays: true,
   })
     .leftJoin('ConsumableAssay as ca', 'ca.assayId', 'a.id')
