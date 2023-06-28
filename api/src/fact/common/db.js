@@ -60,7 +60,6 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
       }
     })
     .where('r.timeFrame', 'month')
-    .orderBy('r.startedOn')
     .sum('r.resultCount as cnt')
 }
 
