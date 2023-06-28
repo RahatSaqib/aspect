@@ -149,9 +149,9 @@ async function countrySelectList(request) {
 }
 
 async function stateSelectListForUser(request) {
-  const { stateId } = request.params
+  const { countryId } = request.params
   const dataConstraints = await getConstraints(request.auth.credentials)
-  return getStates(dataConstraints, { stateId })
+  return getStates(dataConstraints, { countryId })
 }
 
 async function stateSelectList(request) {
@@ -164,7 +164,7 @@ async function stateSelectList(request) {
   return getStates(dataConstraints, { stateId })
 }
 
-async function getStates(dataConstraints, { stateId }) {
+async function getStates(dataConstraints, { countryId, stateId }) {
   let states = []
   const statesAndLgas = await query(
     stateId ? 'Get states and state LGAs for select lists' : 'Get states for select list'
@@ -176,6 +176,9 @@ async function getStates(dataConstraints, { stateId }) {
       if (stateId) {
         this.andOn({ 'g.stateId': knex.raw(stateId) })
       }
+    })
+    .modify(q => {
+      if (countryId) q.where('g.countryId', countryId)
     })
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .orderBy(['s.name'], 'asc')
