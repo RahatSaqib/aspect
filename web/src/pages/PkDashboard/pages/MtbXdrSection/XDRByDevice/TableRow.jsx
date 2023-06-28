@@ -12,7 +12,7 @@ const TableRow = ({ item, isDistrict }) => {
       {!isDistrict ? (
         <>
           <Td className={cssClasses('TableCell')}>{item.isPmdt}</Td>
-          <Td className={cssClasses('TableCell')}>{item.totalXdrSites}</Td>
+          <Td className={cssClasses('TableCell')}>{item.hasPerformedXdr}</Td>
         </>
       ) : null}
       <Td className={cssClasses('TableCell')}>{item.cntAll}</Td>
