@@ -11,6 +11,7 @@ import DeviceStatusSelect from './DeviceStatusSelect'
 import DeviceTypeSelect from './DeviceTypeSelect'
 import DiseaseSelect from './DiseaseSelect'
 import DisplayResultSelect from './DisplayResultSelect'
+import ImplementingPartnerSelect from './ImplementingPartnerSelect'
 import InputPassword from './InputPassword'
 import JobSelect from './JobSelect'
 import LabeledSwitch from './LabeledSwitch'
@@ -49,6 +50,7 @@ export {
   LanguageSelect,
   LgaSelect,
   PartnerSelect,
+  ImplementingPartnerSelect,
   PeriodSelector,
   ReportSelector,
   ResultCategoryGroupSelect,
