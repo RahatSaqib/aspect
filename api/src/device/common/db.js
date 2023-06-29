@@ -15,6 +15,8 @@ const SELECT_SHOW_FIELDS = [
   'd.createdOn',
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',
+  'd.implementingPartnerId',
+  'ip.name as implementingPartnerName',
   'da.name as approval',
   'dms.externalId as maintenanceStatus',
   'dms.i18nKey as maintenanceStatusI18nKey',
@@ -97,6 +99,7 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
     .modify(
       addConstraints,
       dataConstraints,

@@ -473,6 +473,12 @@ const DeviceDetailProfile = ({
                   : '')
               }
             />
+
+            <Summary
+              title={formatMessage(messages.partner)}
+              description={device.get('implementingPartnerName') ?? 'n/a'}
+            />
+
             <Summary title={formatMessage(messages.notes)} description={device.get('notes')} cols="1" />
           </div>
         </Card>

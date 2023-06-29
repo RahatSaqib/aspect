@@ -1,14 +1,19 @@
 import React from 'react'
 import { Autocomplete, LinearProgress, TextField } from '@mui/material'
+import get from 'lodash/get'
 
 export default function AspectSelect(props) {
-  const { label, itemToString, onChange, isLoading, valueBy, value, error, options, ...rest } = props
+  const { label, itemToString, onChange, isLoading, valueBy, error, options, ...rest } = props
 
   if (isLoading) return <LinearProgress />
 
   return (
     <Autocomplete
-      getOptionLabel={itemToString}
+      getOptionLabel={i => {
+        if (valueBy && !get(i, valueBy)) i = options.find(o => o[valueBy] === i)
+        return itemToString(i)
+      }}
+      isOptionEqualToValue={valueBy ? (option, value) => option[valueBy] === value : undefined}
       renderInput={params => (
         <TextField
           {...params}
@@ -23,7 +28,6 @@ export default function AspectSelect(props) {
       disabled={!options?.length}
       {...rest}
       onChange={(_, newValue) => onChange(valueBy ? newValue?.[valueBy] : newValue)}
-      value={valueBy ? options?.find(option => option[valueBy] === value) : value}
     />
   )
 }
