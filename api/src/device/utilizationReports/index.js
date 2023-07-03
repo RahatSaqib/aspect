@@ -8,6 +8,8 @@ const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/comm
 const { getPersonByPersonId } = require('../../auth/service')
 
 const WORKING_DAYS_IN_YEAR = 252
+const DEFAULT_MODULES = 4
+const DEFAULT_DAILY_CAPACITY = DEFAULT_MODULES * 3
 
 async function getAnnualUtilizationData(auth, query, { timeFrame }) {
   // get data constraints
@@ -39,12 +41,20 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
   /**
    * get all devices recorded in FactResultsDeviceByTimeFrame during whole period
    */
-  const devices = await factTableQuery
+  let devices = await factTableQuery
     .clone()
-    .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
+    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
     .groupBy('d.id')
     .select('d.name', 'd.id', 'dcap.modules', 'dcap.dailyCapacity', 'st.id as stateId', 'st.name as stateName')
+  devices = devices.map(device => {
+    const { dailyCapacity = DEFAULT_DAILY_CAPACITY, modules = DEFAULT_MODULES } = device
+    return {
+      ...device,
+      dailyCapacity,
+      modules,
+    }
+  })
   /**
    * get counts item by device and timeFrame
    */
