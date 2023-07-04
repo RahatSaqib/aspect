@@ -2,7 +2,11 @@ import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import fetchWrapperForQueries from '../components/QueryFetch'
 import { getFilters } from '../oldComponents/utils'
-import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
+import {
+  badRequestBuilder,
+  filterFieldsRejectedError,
+  errorPleaseTryAgainInAFewMinutes,
+} from '../utils/error/CommonErrorNotifications'
 import { receiveList, Items } from '../utils/metaReducers/groupedItems'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/groupedTable'
 import { receivedExportResponse } from './GlobalsRedux'
@@ -23,6 +27,35 @@ export const types = {
 
   HIDE_ADJUST_INVENTORY_DIALOG: 'HIDE_ADJUST_INVENTORY_DIALOG',
 }
+
+function getErrors(action) {
+  const title = {
+    id: `errorResponseMessages.${action}Inventory.PUT.title`,
+    defaultMessage: action === 'remove' ? 'Removing Inventory Failed' : 'Transferring Inventory Failed',
+  }
+  return {
+    404: badRequestBuilder({
+      ...defineMessages({
+        notExistedTitle: title,
+        notExisted: {
+          id: `errorResponseMessages.${action}Inventory.PUT.notExisted.resolution`,
+          defaultMessage: 'Can not deduct from non-existed inventory item.',
+        },
+        negativeQuantityTitle: title,
+        negativeQuantity: {
+          id: `errorResponseMessages.${action}Inventory.PUT.negativeQuantity.resolution`,
+          defaultMessage: 'Quantity is negative for current inventory.',
+        },
+        notEnoughInventoryTitle: title,
+        notEnoughInventory: {
+          id: `errorResponseMessages.${action}Inventory.PUT.notEnoughInventory.resolution`,
+          defaultMessage: 'Not enough inventory items on the site to remove.',
+        },
+      }),
+    }),
+  }
+}
+
 /*
  * ---------------- Action Creators -----------------
  */
@@ -158,6 +191,7 @@ function removeInventory(data, dispatch, inventoryState) {
       consumableId,
     },
     customErrorNotifications: {
+      ...getErrors('remove'),
       default: errorPleaseTryAgainInAFewMinutes({
         ...defineMessages({
           title: {
@@ -191,6 +225,7 @@ function transferInventory(data, dispatch, inventoryState) {
       consumableId,
     },
     customErrorNotifications: {
+      ...getErrors('transfer'),
       default: errorPleaseTryAgainInAFewMinutes({
         ...defineMessages({
           title: {
