@@ -373,13 +373,14 @@ export const InventoryItemsList = () => {
     isLoading,
     data = false,
     error,
+    refetch,
   } = useQuery([INVENTORY_LIST.KEY, params, filter], async () =>
     fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
   // >>>>>> Defining mutations <<<<<<
   // onSuccess
   const onSuccess = () => {
-    queryClient.invalidateQueries(INVENTORY_LIST.KEY)
+    refetch()
     onAdjustInventorySucceeded()
   }
 
