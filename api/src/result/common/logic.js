@@ -1,6 +1,14 @@
 const _ = require('lodash')
 const crypto = require('crypto')
+const Boom = require('@hapi/boom')
 const { isJson, deepMerge } = require('../../shared/json')
+const { GRAPH_FLAGS } = require('../../shared/constants')
+const {
+  processGroupedQuery,
+  getClinicalIndicatorQueryForFactTable,
+  getClinicalIndicatorQueryForResultsTable,
+} = require('./db')
+const { canViewResults, getConstraints } = require('../../auth/constraints')
 
 const plainToDeepObjectResult = result => {
   if (!result) return null
@@ -81,8 +89,75 @@ const mergeResultWithPayload = (existingResult, payload) => {
   return { resultData, resultDataHash, shouldTriggerResultNotification }
 }
 
+async function clinicalIndicatorAggregations(request) {
+  const { auth, query } = request
+
+  if (!canViewResults(auth)) {
+    throw Boom.forbidden('You do not have access to results')
+  }
+
+  let assay = null
+  if (query.assay && !Array.isArray(query.assay)) {
+    assay = [query.assay]
+  } else if (query.assay) {
+    assay = query.assay
+  }
+
+  // if no group is specified, use result category
+  const groupBy = getGroupBy(query)
+
+  // optional flags
+  let flags = []
+  if (query.flags) {
+    flags = _.isArray(query.flags) ? query.flags : [query.flags]
+  }
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  // if grouping only by month and assay, resultCategory1, resultCategory2 (the most common case),
+  // we can query the fact tables for much better performance
+  const factTableDataGroups = ['month', 'assay', 'resultCategory1', 'resultCategory2']
+
+  const resp = {}
+  if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
+    const factTableQuery = getClinicalIndicatorQueryForFactTable(dataConstraints, assay, groupBy, query)
+
+    if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
+      const [{ cnt }] = await factTableQuery.clone()
+      resp.totalResults = cnt
+    }
+
+    resp.data = await processGroupedQuery(factTableQuery, groupBy, 'r.startedOn')
+    return resp
+  }
+
+  const resultQuery = getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupBy, query)
+
+  if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
+    const [{ cnt }] = await resultQuery.clone()
+    resp.totalResults = cnt
+  }
+
+  resp.data = await processGroupedQuery(resultQuery, groupBy)
+  return resp
+}
+
+function getGroupBy(query) {
+  if (!query.groupBy) {
+    // if no group is specified, use result category
+    return ['resultCategory1']
+  }
+  if (!_.isArray(query.groupBy)) {
+    return [query.groupBy]
+  }
+  return query.groupBy
+}
+
 module.exports = {
   plainToDeepObjectResult,
   getMissingResultValues,
   mergeResultWithPayload,
+  clinicalIndicatorAggregations,
+  getGroupBy,
 }

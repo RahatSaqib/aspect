@@ -12,7 +12,7 @@ import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatte
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
-import { graphMessages, getCustomMessage, months } from '../../../../../messages'
+import { graphMessages, getCustomMessage } from '../../../../../messages'
 import {
   MtbToTotalPercentage,
   MtbToTotalPercentageWithLabel,
@@ -37,7 +37,7 @@ const baseConfig = {
 
 const endpointParams = [
   { groupBy: 'resultCategory1' },
-  { minDate: '2019-01-01' },
+  { minDate: getTimePeriod(5, 'years', 'yyyy-MM-dd') }, // five years ago
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
 ]
 
@@ -58,7 +58,7 @@ const TestDiagTrendPage = () => {
   const { isLoading, data } = useQuery(
     ['tbMtbDetectedQuarterlyTrends', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/trend-in-quarters-mtb-detected', params: mergedParams })
+      fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
   useEffect(() => {
@@ -110,11 +110,7 @@ const TestDiagTrendPage = () => {
                 }}
                 data={graphData}
                 keys={graphKeys}
-                indexBy="quarter"
-                formatDate={value => {
-                  const [yyyy, qq] = `${value}`.split('-')
-                  return `${formatMessage(months.QUARTER)}${qq}-${yyyy.substring(2)}`
-                }}
+                indexBy="year"
                 tickValuesYShape="twos"
                 tickValuesXShape="all"
                 displayMethod="actual"
