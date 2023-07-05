@@ -99,7 +99,10 @@ const AspectSelect = props => {
             }
             return
           }
-          const value = action === 'clear' ? null : getValue(selectedOption, formik, id)
+          const value =
+            action === 'clear' || (action === 'remove-value' && !selectedOption.length)
+              ? null
+              : getValue(selectedOption, formik, id)
 
           updateField(identifier, value, { formik, toggleEdit })
 
