@@ -440,6 +440,22 @@ function treatmentTrackingValidationQuery() {
   }
 }
 
+function validateResponseResultCounts() {
+  return {
+    cntAll: Joi.number().description('Total Tests'),
+    cnt_mtb: Joi.number().description('Number of MTB+'),
+    cnt_inh: Joi.number().description('Number of INH Resistance'),
+    cnt_flq: Joi.number().description('Number of FLQ Resistance'),
+    cnt_amk: Joi.number().description('Number of AMK Resistance'),
+    cnt_kan: Joi.number().description('Number of KAN Resistance'),
+    cnt_cap: Joi.number().description('Number of CAP Resistance'),
+    cnt_eth: Joi.number().description('Number of ETH Resistance'),
+    cnt_Invalid: Joi.number().description('Number of Invalid'),
+    cnt_NoResult: Joi.number().description('Number of No Result'),
+    cnt_Error: Joi.number().description('Number of Errors'),
+  }
+}
+
 module.exports = {
   listResultsBaseConfig,
   getResponseForComments,
@@ -452,4 +468,6 @@ module.exports = {
   resultCreatePayload,
   treatmentTrackingValidationQuery,
   currentTestingValidGroups,
+  validateResponseResultCounts,
+  optionalId,
 }
