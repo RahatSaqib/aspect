@@ -8,7 +8,7 @@ const { asyncHandler } = require('../../routes')
 const routes = [
   {
     method: 'GET',
-    path: '/v4/follow-up/treatments',
+    path: '/v4/followup/treatments',
     handler: asyncHandler(fetchTreatmentFollowUpsServiceHandler),
     config: {
       description: 'Endpoint for retrieving follow-ups of type treatment',
@@ -22,7 +22,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/v4/follow-up/outcomes',
+    path: '/v4/followup/outcomes',
     handler: asyncHandler(fetchOutcomeFollowUpsServiceHandler),
     config: {
       description: 'Endpoint for retrieving follow-ups of type outcome',
