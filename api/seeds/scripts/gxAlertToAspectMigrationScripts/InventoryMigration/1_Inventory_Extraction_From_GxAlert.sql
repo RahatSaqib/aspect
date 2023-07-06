@@ -18,7 +18,7 @@ SELECT il.inventory_location_id gxAlertInventoryLocationId,
     ELSE ii.externalId END) as consumableExternalId,
     l.externalId as siteExternalId,
     il.expiration_date as expiresOn,
-    il.updated_on as createdOn,
+    il.created_on as createdOn,
     il.updated_on as updatedOn,
     SUM(il.current_quantity) as quantityOnHand
 FROM
@@ -34,7 +34,7 @@ GROUP BY il.inventory_item_id, il.location_id, il.expiration_date, il.updated_on
 SELECT
 	ilog.inventory_location_id,
 	ilog.id as inventory_log_id,
-    ir.externalId inventory_reason_externalId,
+    ir.externalId inventory_reason_externalId, -- will be always 'received'
     (CASE
         WHEN ii.externalId = 'cartridge-tb' THEN 'GxMtbRifCartridge'
         WHEN ii.externalId = 'cartridge-ebola' THEN 'GxEbolaCartridge'
