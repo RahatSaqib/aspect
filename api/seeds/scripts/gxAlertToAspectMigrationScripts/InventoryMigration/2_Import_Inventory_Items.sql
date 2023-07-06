@@ -28,7 +28,7 @@ create table mig_InventoryItemPivot
     errorMessage               varchar(2048)                           null
 );
 
---  ------------------------------------------------------------------ !!!!!!!!!!!! ----------------> MANUAL STEP: [Import Inventory Item Extraction into mig_InventoryItemPivot]
+--  👉👉👉 -------------------------> MANUAL STEP: Import Inventory Item Extraction into `mig_InventoryItemPivot`
 
 -- ------------------------ Mark wrong inventory items
 SET SQL_SAFE_UPDATES = 0;
@@ -44,9 +44,9 @@ set errorMessage = concat(ifnull(errorMessage, ''), ' /  Consumable "', consumab
 where consumableExternalId not in (select externalId from Consumable);
 
 -- --> Negative QoH: (Better to leave negative?)
-# update mig_InventoryItemPivot
-# set errorMessage = concat(ifnull(errorMessage, ''), ' / Negative QoH from GxAlert')
-# where quantityOnHand < 0;
+-- update mig_InventoryItemPivot
+-- set errorMessage = concat(ifnull(errorMessage, ''), ' / Negative QoH from GxAlert')
+-- where quantityOnHand < 0;
 
 -- --> Just styling
 update mig_InventoryItemPivot
@@ -54,9 +54,9 @@ set errorMessage = substring(errorMessage, 3)
 where errorMessage like ' /%';
 
 SET SQL_SAFE_UPDATES = 1;
-# select *
-# from mig_InventoryItemPivot
-# where length(errorMessage) > 0;
+-- select *
+-- from mig_InventoryItemPivot
+-- where length(errorMessage) > 0;
 -- ------------------------ /Mark wrong inventory items
 
 -- Insert inventory items

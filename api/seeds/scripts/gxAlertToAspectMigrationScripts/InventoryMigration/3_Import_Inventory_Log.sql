@@ -15,11 +15,12 @@ create table mig_gxalert_transfers
 );
 
 
--- --------------------------------------------------------- Import Manually Here -------------------------------------------------------------------------
-# select *
-# from mig_gxalert_transfers;
+-- 👉👉👉 -----------------> MANUAL STEP: Import Inventory logs here into `mig_gxAlert_transfer` table
+
+-- select *
+-- from mig_gxalert_transfers;
 -- update mig_gxalert_transfers set errorMessage = null where mig_gxalert_transfers.gxAlertInventoryLogId > 0;
--- ------ Mark wrong inventory logs
+-- ------ Mark wrong pivot inventory logs (the ones that we will not be able to migrate)
 
 -- ------> Nonexistent consumable
 update mig_gxalert_transfers
@@ -48,11 +49,13 @@ set errorMessage = substring(errorMessage, 3)
 where errorMessage like ' /%';
 
 
--- -------> Select grouped errors
+-- 👉 Select grouped errors (check this and review case by case after the process, when you do so, note
+-- that the adjustment process will have already generated a compensation Inventory Log for any Inventory Item involved.)
 select errorMessage, count(errorMessage)
 from mig_gxalert_transfers
 where length(errorMessage) > 0
 group by errorMessage;
+
 -- ------ /Mark wrong inventory logs
 
 set @reasonTransferSent = (select id
@@ -78,9 +81,9 @@ where id in (select il.id
 
 -- ----> Update movements matching InventoryItems from GxAlert, to the correct InventoryItem Id.
 update InventoryLog il
-join InventoryItem ii on ii.consumableId = il.consumableId
-                                    and ii.expiresOn = il.expiresOn
-                                    and ii.siteId = il.siteId
+    join InventoryItem ii on ii.consumableId = il.consumableId
+        and ii.expiresOn = il.expiresOn
+        and ii.siteId = il.siteId
 set il.inventoryItemId = ii.id;
 
 -- ----> Insert movements not from use.
@@ -102,14 +105,15 @@ from (select 0                       as id,
              null                    as adjustedTo,
              m.createdOn,
              1                       as createdBy,
-             null                    as referencedSiteId,
-             true                    as isAutomatic,
+             refSite.id              as referencedSiteId,
+             false                   as isAutomatic,
              m.updatedOn             as effectiveDate,
              m.gxAlertInventoryLogId
       from mig_gxalert_transfers m
                join InventoryItem ii on m.gxAlertInventoryLocationId = ii.gxAlertInventoryLocationId
                join Consumable c on m.consumableExternalId = c.externalId
                join Site s on m.sourceSiteExternalId = s.externalId
+               join Site refSite on m.destinationSiteExternalId = s.externalId
       where m.errorMessage is null
         and m.sourceSiteExternalId is not null
       union
@@ -129,14 +133,15 @@ from (select 0                       as id,
              null                    as adjustedTo,
              m.createdOn,
              1                       as createdBy,
-             null                    as referencedSiteId,
-             true                    as isAutomatic,
+             refSite.id              as referencedSiteId,
+             false                   as isAutomatic,
              m.updatedOn             as effectiveDate,
              m.gxAlertInventoryLogId
       from mig_gxalert_transfers m
                join InventoryItem ii on m.gxAlertInventoryLocationId = ii.gxAlertInventoryLocationId
                join Consumable c on m.consumableExternalId = c.externalId
                join Site s on m.destinationSiteExternalId = s.externalId
+               join Site refSite on m.sourceSiteExternalId = s.externalId
       where m.errorMessage is null
         and m.destinationSiteExternalId is not null
       union
@@ -156,16 +161,17 @@ from (select 0                       as id,
              null                    as adjustedTo,
              m.createdOn,
              1                       as createdBy,
-             null                    as referencedSiteId,
-             true                    as isAutomatic,
-             m.updatedOn             as effectiveDate,
+             refSite.id              as referencedSiteId,
+             false                   as isAutomatic,
+             m.effectiveDate         as effectiveDate,
              m.gxAlertInventoryLogId
       from mig_gxalert_transfers m
                join InventoryItem ii
                     on m.gxAlertInventoryLocationId = ii.gxAlertInventoryLocationId
                join Consumable c on m.consumableExternalId = c.externalId
-               join Site s on m.destinationSiteExternalId = s.externalId
                join ConsumableReason as cr on cr.externalId = m.inventoryReasonExternalId
+               join Site s on m.destinationSiteExternalId = s.externalId
+               join Site refSite on m.sourceSiteExternalId = s.externalId
       where m.errorMessage is null
         and m.destinationSiteExternalId is null
         and m.sourceSiteExternalId is null) as t
@@ -181,26 +187,31 @@ from mig_gxalert_transfers as m
 -- initial adjustment to match GxAlert quantity on InventoryItem
 insert into InventoryLog
 select *
-from (select 0                                    as id,
-             ii.id                                as inventoryItemId,
-             ii.consumableId                      as consumableId,
-             ii.siteId                            as siteId,
-             4                                    as consumableReasonId,
-             null                                 as resultId,
-             'migration adjustment'               as operation,
-             null                                 as lotnumber,
+from (select 0                                              as id,
+             ii.id                                          as inventoryItemId,
+             ii.consumableId                                as consumableId,
+             ii.siteId                                      as siteId,
+             cr.id                                          as consumableReasonId,
+             null                                           as resultId,
+             'migration adjustment'                         as operation,
+             null                                           as lotnumber,
              ii.expiresOn,
-             sum(il.quantity) - ii.quantityOnHand as quantity,
-             'migrated from Gxalert'              as notes,
-             null                                 as adjustedFrom,
-             null                                 as adjustedTo,
-             adddate(min(il.createdOn), -1)          createdOn,
-             1                                    as createdBy,
-             null                                 as referencedSiteId,
-             true                                 as isAutomatic,
-             adddate(min(il.createdOn), -1)       as effectiveDate,
-             null                                    gxAlertInventoryLogId
+             ii.quantityOnHand - sum(il.quantity)           as quantity, 
+             'adjustment by migration process from Gxalert' as notes,
+             null                                           as adjustedFrom,
+             null                                           as adjustedTo,
+             adddate(min(il.createdOn), -1)                    createdOn,
+             1                                              as createdBy,
+             null                                           as referencedSiteId,
+             false                                           as isAutomatic,
+             adddate(min(il.createdOn), -1)                 as effectiveDate,
+             null                                              gxAlertInventoryLogId
       from InventoryItem as ii
                left join InventoryLog il on ii.id = il.inventoryItemId
+               left join ConsumableReason cr on case
+                                                    when case
+                                                             when sum(il.quantity) - ii.quantityOnHand > 0
+                                                                 then cr.externalId = 'asserted_increase'
+                                                             else 'asserted_decrease' end
       group by il.inventoryItemId) T
 where quantity <> 0;
