@@ -20,7 +20,7 @@ const Checkbox = props => {
         label={label}
         name={id}
         onChange={event => {
-          updateField(id, event.target.checked, { formik, toggleEdit })
+          updateField(id, event.target.checked, { formik, toggleEdit, shouldValidate: true })
         }}
         disabled={props.InputProps.readOnly}
       />
