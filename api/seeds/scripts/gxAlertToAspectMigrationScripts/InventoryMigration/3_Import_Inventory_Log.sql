@@ -8,6 +8,7 @@ create table mig_gxalert_transfers
     expiresOn                  datetime                               not null,
     sourceSiteExternalId       varchar(50) collate utf8mb4_unicode_ci not null,
     destinationSiteExternalId  varchar(50) collate utf8mb4_unicode_ci not null,
+    effective_date             datetime                               not null,
     updatedOn                  datetime                               not null,
     createdOn                  datetime                               not null,
     quantity                   float(8, 2)                            not null,

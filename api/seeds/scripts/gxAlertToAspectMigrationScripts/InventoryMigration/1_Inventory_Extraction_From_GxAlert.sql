@@ -1,6 +1,6 @@
 /*
 Note:
- Consumtions from use are already procesed in Aspect, as we imported the results using the Api, which impact on inventory. 
+ Consumtions from use are already procesed in Aspect, as we imported the results using the Api, which impact on inventory.
  At the moment of wipe the inventory records in Aspect, movements that came from use will be preservated.
  As for Missing Lots, they should be compensated when the scheduler run after the migration.
 */
@@ -32,8 +32,8 @@ GROUP BY il.inventory_item_id, il.location_id, il.expiration_date, il.updated_on
 -- Export to generate inventory logs about any other transactions than transfers and use
 -- this will be used for generating transfers, outcome inventory logs, and income inventory logs
 SELECT ilog.inventory_location_id,
-       ilog.id            as inventory_log_id,
-       ir.externalId         inventory_reason_externalId, -- will be always 'received'
+       ilog.id             as inventory_log_id,
+       ir.externalId          inventory_reason_externalId, -- will be always 'received'
        (CASE
             WHEN ii.externalId = 'cartridge-tb' THEN 'GxMtbRifCartridge'
             WHEN ii.externalId = 'cartridge-ebola' THEN 'GxEbolaCartridge'
@@ -43,13 +43,14 @@ SELECT ilog.inventory_location_id,
             WHEN ii.externalId = 'cartridge-hiv-vl' THEN 'GxHiv1VlCartridge'
             WHEN ii.externalId IS NULL THEN 'assayGXCovid19Cartridge'
             ELSE 'UNKNOWN!'
-           END)           AS consumableExternalId,
-       il.expiration_date AS expiresOn,
-       sl.externalId      AS sourceSiteExternalId,
-       dl.externalId      AS destinationSiteExternalId,
-       ilog.quantity      AS quantity,
-       ilog.created_on    AS createdOn,
-       ilog.created_on    AS updatedOn
+           END)            AS consumableExternalId,
+       il.expiration_date  AS expiresOn,
+       sl.externalId       AS sourceSiteExternalId,
+       dl.externalId       AS destinationSiteExternalId,
+       ilog.quantity       AS quantity,
+       ilog.effective_date AS effectiveDate,
+       ilog.created_on     AS createdOn,
+       ilog.updated_on     AS updatedOn
 FROM bigpicture.inventory_log AS ilog
          INNER JOIN
      bigpicture.inventory_reason AS ir ON ilog.reason_id = ir.id
@@ -66,8 +67,8 @@ WHERE source_location_id IS NOT NULL
 union
 -- Export to generate inventory logs about any other transactions than transfers and use
 SELECT ilog.inventory_location_id,
-       ilog.id            as inventory_log_id,
-       ir.externalId         inventory_reason_externalId,
+       ilog.id             as inventory_log_id,
+       ir.externalId          inventory_reason_externalId,
        (CASE
             WHEN ii.externalId = 'cartridge-tb' THEN 'GxMtbRifCartridge'
             WHEN ii.externalId = 'cartridge-ebola' THEN 'GxEbolaCartridge'
@@ -77,13 +78,14 @@ SELECT ilog.inventory_location_id,
             WHEN ii.externalId = 'cartridge-hiv-vl' THEN 'GxHiv1VlCartridge'
             WHEN ii.externalId IS NULL THEN 'assayGXCovid19Cartridge'
             ELSE 'UNKNOWN!'
-           END)           AS consumableExternalId,
-       il.expiration_date AS expiresOn,
-       null               AS sourceSiteExternalId,
-       null               AS destinationSiteExternalId,
-       ilog.quantity      AS quantity,
-       ilog.created_on    AS createdOn,
-       ilog.created_on    AS updatedOn
+           END)            AS consumableExternalId,
+       il.expiration_date  AS expiresOn,
+       null                AS sourceSiteExternalId,
+       null                AS destinationSiteExternalId,
+       ilog.quantity       AS quantity,
+       ilog.effective_date AS effectiveDate,
+       ilog.created_on     AS createdOn,
+       ilog.updated_on     AS updatedOn
 FROM bigpicture.inventory_log AS ilog
          INNER JOIN
      bigpicture.inventory_reason AS ir ON ilog.reason_id = ir.id
