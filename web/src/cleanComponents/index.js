@@ -11,6 +11,7 @@ import DeviceStatusSelect from './DeviceStatusSelect'
 import DeviceTypeSelect from './DeviceTypeSelect'
 import DiseaseSelect from './DiseaseSelect'
 import DisplayResultSelect from './DisplayResultSelect'
+import ErrorBoundary from './ErrorBoundary'
 import ImplementingPartnerSelect from './ImplementingPartnerSelect'
 import InputPassword from './InputPassword'
 import JobSelect from './JobSelect'
@@ -46,6 +47,7 @@ export {
   DeviceTypeSelect,
   DiseaseSelect,
   DisplayResultSelect,
+  ErrorBoundary,
   InputPassword,
   JobSelect,
   LabeledSwitch,

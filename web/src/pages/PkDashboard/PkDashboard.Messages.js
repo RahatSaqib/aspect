@@ -122,6 +122,10 @@ const messages = {
     covid: { id: 'p.PkDashboard.covid', defaultMessage: 'Covid' },
     hiv: { id: 'p.PkDashboard.hiv', defaultMessage: 'Hiv' },
     incompleteScreen: { id: 'p.PkDashboard.incompleteScreen', defaultMessage: 'Screen is not yet complete' },
+    date: {
+      id: 'forms.formSectionHeader.date',
+      defaultMessage: 'Date',
+    },
   }),
 }
 
