@@ -25,7 +25,9 @@ import ResultCategorySelect from './ResultCategorySelect'
 import ResultTreatmentStatusSelect from './ResultTreatmentStatusSelect'
 import ResultWorkflowStatusSelect from './ResultWorkflowStatusSelect'
 import RevokeSelect from './RevokeSelect'
+import SiteListSelect from './SiteListSelect'
 import SiteSelect from './SiteSelect'
+import SiteTagInput from './SiteTagInput'
 import StateSelect from './StateSelect'
 import TagSelect from './TagSelect'
 import TimezoneSelect from './TimezoneSelect'
@@ -58,7 +60,9 @@ export {
   ResultTreatmentStatusSelect,
   ResultWorkflowStatusSelect,
   RevokeSelect,
+  SiteListSelect,
   SiteSelect,
+  SiteTagInput,
   StateSelect,
   TagSelect,
   TimezoneSelect,

@@ -16,7 +16,6 @@ import Results from '../../../../oldPages/result/historyResults/HistoryResults'
 import resultMessages from '../../../../oldPages/result/list/messages.js'
 import { useAuthState } from '../../../../providers/AuthProvider'
 import { useFilterUpdate, useFilterValues } from '../../../../providers/FilterProvider'
-import { tokens } from '../../../../store/DeviceApprovalRedux'
 import {
   showDialog,
   hideDialog,
@@ -39,6 +38,13 @@ import messages from './messages'
 import PerformanceReport from './PerformanceReport'
 
 const cssClasses = classnames.bind(styles)
+
+const tokens = {
+  PROVISIONED: 'provisioned',
+  ASSIGNED: 'assigned',
+  APPROVED: 'approved',
+  DECOMMISSIONED: 'decommissioned',
+}
 
 const FILTERS_CONFIG = {
   geography: true,

@@ -10,9 +10,6 @@ import isPlainObject from 'lodash/isPlainObject'
 import range from 'lodash/range'
 import set from 'lodash/set'
 import uniqueId from 'lodash/uniqueId'
-import * as Yup from 'yup'
-import { isUrl } from '../../../../utils/utils/validate'
-import messages from '../messages'
 
 const mergeFormConfigWithData = (data, config, messages) => {
   const configToMutate = {
@@ -151,65 +148,6 @@ const pickItems = sections => {
   return items
 }
 
-const buildErrorMessage = (formik, id) => {
-  let errorObject = {}
-  const { touched, errors, validateOnMount } = formik
-
-  switch (true) {
-    case !!(validateOnMount && errors[id]):
-      errorObject = { error: true, helperText: errors[id] }
-      break
-
-    case !!(!validateOnMount && errors[id] && touched[id]):
-      errorObject = { error: true, helperText: errors[id] }
-      break
-
-    default:
-      errorObject = { error: false, helperText: null }
-      break
-  }
-
-  return errorObject
-}
-
-const createValidationSchema = (fields, intlFormatMessage) => {
-  const yepSchema = fields.reduce((acc, curr) => {
-    const { id, validationType, validation = [] } = curr
-    if (Yup[validationType]) {
-      let validator = Yup[validationType]()
-      validation.forEach(item => {
-        const { params, type } = item
-        const { constraint, messageId } = params
-
-        switch (true) {
-          case type === 'matches' && Array.isArray(constraint):
-            validator = validator[type](
-              ...[
-                // eslint-disable-next-line security/detect-non-literal-regexp
-                new RegExp(`(${constraint.join('|')})`, 'gi'),
-                intlFormatMessage(messages[messageId], {
-                  options: constraint.join(', '),
-                }),
-              ].filter(p => p)
-            )
-
-            break
-
-          default:
-            validator = validator[type](
-              ...[constraint, intlFormatMessage(messages[messageId], { total: constraint })].filter(p => p)
-            )
-            break
-        }
-      })
-      acc[id] = validator
-    }
-    return acc
-  }, {})
-
-  return Yup.object().shape(yepSchema)
-}
-
 const buildLabel = (label, validation) => {
   const isrequired =
     validation && validation.length ? validation.filter(item => item.type === 'required').length > 0 : false
@@ -247,23 +185,6 @@ const getFieldErrorProps = (formik, id) => ({
   error: get(formik.touched, id) && get(formik.errors, id)?.length > 0,
   helperText: get(formik.touched, id) && get(formik.errors, id),
 })
-
-const getBaseValidation = (formatMessage, messages) => {
-  const requiredBase = (value, i18nKey) => (value ? '' : formatMessage(messages[i18nKey]))
-
-  return {
-    required: value => requiredBase(value, 'required'),
-    checked: requiredBase,
-    requiredLimitLength: (value, maxLength, i18nLimitLength) => {
-      if (!value) return formatMessage(messages.required)
-      return value.length > maxLength ? formatMessage(messages[i18nLimitLength]) : ''
-    },
-    requiredValidUrl: value => {
-      if (!value) return formatMessage(messages.required)
-      return isUrl(value) ? '' : formatMessage(messages.webUrlInvalid)
-    },
-  }
-}
 
 const getVisibleRows = (rows, values, toggleEdit) => {
   return rows.map(row => {
@@ -335,9 +256,6 @@ const sanitizeFormValues = (values, { formConfig, removeReadOnly = true }) => {
 }
 
 export {
-  buildErrorMessage,
-  buildLabel,
-  createValidationSchema,
   getBaseData,
   getFieldErrorProps,
   getFormattedString,
@@ -346,7 +264,6 @@ export {
   mergeFormConfigWithData,
   pickItems,
   pickKeys,
-  getBaseValidation,
   sanitizeFormValues,
   getVisibleRows,
 }
