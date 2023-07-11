@@ -108,7 +108,7 @@ from (select 0                       as id,
              1                       as createdBy,
              refSite.id              as referencedSiteId,
              false                   as isAutomatic,
-             m.updatedOn             as effectiveDate,
+             m.effective_date        as effectiveDate,
              m.gxAlertInventoryLogId
       from mig_gxalert_transfers m
                join InventoryItem ii on m.gxAlertInventoryLocationId = ii.gxAlertInventoryLocationId
@@ -136,7 +136,7 @@ from (select 0                       as id,
              1                       as createdBy,
              refSite.id              as referencedSiteId,
              false                   as isAutomatic,
-             m.updatedOn             as effectiveDate,
+             m.effective_date        as effectiveDate,
              m.gxAlertInventoryLogId
       from mig_gxalert_transfers m
                join InventoryItem ii on m.gxAlertInventoryLocationId = ii.gxAlertInventoryLocationId
@@ -164,7 +164,7 @@ from (select 0                       as id,
              1                       as createdBy,
              refSite.id              as referencedSiteId,
              false                   as isAutomatic,
-             m.effectiveDate         as effectiveDate,
+             m.effective_date        as effectiveDate,
              m.gxAlertInventoryLogId
       from mig_gxalert_transfers m
                join InventoryItem ii
