@@ -162,7 +162,7 @@ from (select 0                       as id,
              null                    as adjustedTo,
              m.createdOn,
              1                       as createdBy,
-             refSite.id              as referencedSiteId,
+             null                    as referencedSiteId,
              false                   as isAutomatic,
              m.effective_date        as effectiveDate,
              m.gxAlertInventoryLogId
@@ -171,8 +171,7 @@ from (select 0                       as id,
                     on m.gxAlertInventoryLocationId = ii.gxAlertInventoryLocationId
                join Consumable c on m.consumableExternalId = c.externalId
                join ConsumableReason as cr on cr.externalId = m.inventoryReasonExternalId
-               join Site s on m.destinationSiteExternalId = s.externalId
-               join Site refSite on m.sourceSiteExternalId = s.externalId
+
       where m.errorMessage is null
         and m.destinationSiteExternalId is null
         and m.sourceSiteExternalId is null) as t
@@ -201,12 +200,12 @@ from (select 0                                              as id,
              'adjustment by migration process from Gxalert' as notes,
              null                                           as adjustedFrom,
              null                                           as adjustedTo,
-             adddate(min(il.createdOn), -1)                    createdOn,
+             adddate(min(il.createdOn), -1)                 as createdOn,
              1                                              as createdBy,
              null                                           as referencedSiteId,
-             false                                           as isAutomatic,
+             false                                          as isAutomatic,
              adddate(min(il.createdOn), -1)                 as effectiveDate,
-             null                                              gxAlertInventoryLogId
+             null                                           as gxAlertInventoryLogId
       from InventoryItem as ii
                left join InventoryLog il on ii.id = il.inventoryItemId
                left join ConsumableReason cr on case
@@ -214,5 +213,5 @@ from (select 0                                              as id,
                                                              when sum(il.quantity) - ii.quantityOnHand > 0
                                                                  then cr.externalId = 'asserted_increase'
                                                              else 'asserted_decrease' end
-      group by il.inventoryItemId) T
-where quantity <> 0;
+      group by il.inventoryItemId) as t
+where t.quantity <> 0;
