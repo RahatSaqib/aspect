@@ -4,14 +4,14 @@ const downloadApplicationConfigResponseValidation = () => {
   return Joi.object().keys({
     ok: Joi.bool().required().description('False if there was some sort of problem'),
     data: Joi.object().keys({
-      treatmentStatusList: Joi.array()
+      followUpStatusList: Joi.array()
         .required()
         .description('All of the treatment statuses that an entry can be in')
         .items(
           Joi.object().keys({
-            id: Joi.string().required().description('External ID of the treatment status, example AwaitingTreatment'),
-            name: Joi.string().required().description('Name of the treatment status, example Awaiting Treatment'),
-            i18nKey: Joi.string().required().description('Treatment status i18nKey used, example AwaitingTreatment'),
+            id: Joi.string().required().description('External ID of the follow-up status, example AwaitingFollowUp'),
+            name: Joi.string().required().description('Name of the treatment status, example Awaiting Follow-up'),
+            i18nKey: Joi.string().required().description('Treatment status i18nKey used, example AwaitingFollowUp'),
           })
         ),
       transferStatusList: Joi.array()
@@ -42,23 +42,21 @@ const downloadSystemConfigResponseValidation = () => {
   return Joi.object().keys({
     ok: Joi.bool().required().description('False if there was some sort of problem'),
     data: Joi.object().keys({
-      systemConfig: Joi.object().keys({
-        fetchIntervals: Joi.array()
-          .required()
-          .description('All of the treatment statuses that an entry can be in')
-          .items(
-            Joi.object().keys({
-              operation: Joi.string()
-                .required()
-                .description('Name of the Endpoint, example Entries, Sites, Treatments, Outcomes'),
-              interval: Joi.number()
-                .required()
-                .description(
-                  'Number of seconds to wait between calling the endpoint to refresh locally stored data in the app'
-                ),
-            })
-          ),
-      }),
+      fetchIntervals: Joi.array()
+        .required()
+        .description('All of the treatment statuses that an entry can be in')
+        .items(
+          Joi.object().keys({
+            operation: Joi.string()
+              .required()
+              .description('Name of the Endpoint, example Entries, Sites, Treatments, Outcomes'),
+            interval: Joi.number()
+              .required()
+              .description(
+                'Number of seconds to wait between calling the endpoint to refresh locally stored data in the app'
+              ),
+          })
+        ),
     }),
   })
 }

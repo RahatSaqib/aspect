@@ -41,6 +41,18 @@ async function fetchApplicationConfigServiceHandler() {
           i18nKey: 'NotTransferred',
         },
       ],
+      entryTypeList: [
+        {
+          id: 'Sample',
+          name: 'Sample',
+          i18nKey: 'Sample',
+        },
+        {
+          id: 'TestResult',
+          name: 'Test Result',
+          i18nKey: 'TestResult',
+        },
+      ],
     },
   })
 }
@@ -48,24 +60,26 @@ async function fetchApplicationConfigServiceHandler() {
 async function fetchSystemConfigServiceHandler() {
   return Promise.resolve({
     ok: true,
-    data: [
-      {
-        operation: 'Entries',
-        interval: 300,
-      },
-      {
-        operation: 'Sites',
-        interval: 3600,
-      },
-      {
-        operation: 'Treatments',
-        interval: 3600,
-      },
-      {
-        operation: 'Outcomes',
-        interval: 3600,
-      },
-    ],
+    data: {
+      fetchIntervals: [
+        {
+          operation: 'Entries',
+          interval: 300,
+        },
+        {
+          operation: 'Sites',
+          interval: 3600,
+        },
+        {
+          operation: 'Treatments',
+          interval: 3600,
+        },
+        {
+          operation: 'Outcomes',
+          interval: 3600,
+        },
+      ],
+    },
   })
 }
 
