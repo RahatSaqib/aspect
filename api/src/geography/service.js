@@ -149,22 +149,17 @@ async function countrySelectList(request) {
 }
 
 async function stateSelectListForUser(request) {
-  const { stateId } = request.params
+  const { countryId } = request.params
   const dataConstraints = await getConstraints(request.auth.credentials)
-  return getStates(dataConstraints, { stateId })
+  return getStates(dataConstraints, { countryId })
 }
 
 async function stateSelectList(request) {
-  const { countryId, stateId } = request.params
-  const dataConstraints = {
-    country: {
-      id: countryId,
-    },
-  }
-  return getStates(dataConstraints, { stateId })
+  const { stateId } = request.params
+  return getStates(null, { stateId })
 }
 
-async function getStates(dataConstraints, { stateId }) {
+async function getStates(dataConstraints, { countryId, stateId }) {
   let states = []
   const statesAndLgas = await query(
     stateId ? 'Get states and state LGAs for select lists' : 'Get states for select list'
@@ -177,7 +172,12 @@ async function getStates(dataConstraints, { stateId }) {
         this.andOn({ 'g.stateId': knex.raw(stateId) })
       }
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(q => {
+      if (countryId) q.where('g.countryId', countryId)
+    })
+    .modify(q => {
+      if (dataConstraints) q.modify(addConstraints, dataConstraints, { geography: 'g' })
+    })
     .orderBy(['s.name'], 'asc')
     .distinct('s.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
 
@@ -209,11 +209,13 @@ async function getStates(dataConstraints, { stateId }) {
 }
 
 async function lgaSelectList(request) {
-  const { params } = request
+  const { params, auth } = request
+  const dataConstraints = await getConstraints(auth.credentials)
   const lgas = await query('Get LGAs for select list')
     .from('Lga as l')
     .innerJoin('Geography as g', 'g.lgaId', 'l.id')
     .where('g.stateId', params.stateId)
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
     .orderBy(['l.name'], 'asc')
     .distinct('l.id', 'l.name')
 

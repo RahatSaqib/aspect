@@ -119,10 +119,43 @@ const missingCartridgesReport = {
   ],
 }
 
+const annualUtilizationRates = {
+  name: 'National and Provincial Trends in Annual Utilization Rates',
+  description:
+    'The National and Provincial Trends in annual utilization rates displays the percentage of utilization for the current year and the previous 5 years of data.',
+  i18nKey: 'annualUtilizationRates',
+  externalId: 'pk_annual_utilization_rates',
+  i18nKeyDescription: 'annual_utilization_rates_description',
+  fileName: 'annualUtilizationRates',
+  availableForNotification: 1,
+  exportCsv: false,
+  exportExcel: true,
+  sortOrder: 0,
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/utilizationReports',
+      functionName: 'getAnnualUtilizationRatesNational',
+      query: {
+        hasResults: 1,
+      },
+    },
+    {
+      sortOrder: 1,
+      moduleName: 'device/utilizationReports',
+      functionName: 'getAnnualUtilizationRatesProvincial',
+      query: {
+        hasResults: 1,
+      },
+    },
+  ],
+}
+
 module.exports = {
   deviceSummaryReport,
   xpertSiteDetailedReport,
   xpertSiteSummaryReportSiteWise,
   xpertWorkloadSummaryReport,
   missingCartridgesReport,
+  annualUtilizationRates,
 }

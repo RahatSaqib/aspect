@@ -1,5 +1,5 @@
-import React, { useCallback, useEffect, useState } from 'react'
-import { FormControlLabel, Switch, TableBody } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { FormControlLabel, Switch, TableBody, LinearProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import omit from 'lodash/omit'
@@ -20,14 +20,12 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
 import { fetchConsumables } from '../../../store/ConsumableRedux'
 import {
   addInventory,
-  exportSupplies,
   hideAdjustInventoryDialog,
   receiveInventory,
   receiveInventoryItems,
@@ -36,11 +34,7 @@ import {
   transferInventory,
   types,
 } from '../../../store/InventoryRedux'
-import {
-  composeSanitizer,
-  makeSearchParamsSanitizer,
-  makeSortPageSelector,
-} from '../../../utils/selectors/searchParams'
+import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import AddInventoryDialogForm from '../adjustment/AddInventoryDialogForm'
 import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
 import NewInventoryDialogForm from '../adjustment/NewInventoryDialogForm'
@@ -50,6 +44,7 @@ import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
 import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
 import styles from './InventoryItemsList.css'
+import getExportableFile from './InventoryItemsQueries'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
@@ -76,9 +71,6 @@ const availableSortCol = [
   },
 ]
 
-const searchSanitizer = makeSearchParamsSanitizer({ availableSortCol })
-const filtersFromLocation = composeSanitizer(searchSanitizer)
-
 export const InventoryItemsListWithProps = ({
   intl,
   navigate,
@@ -86,7 +78,7 @@ export const InventoryItemsListWithProps = ({
   filter,
   dispatch,
   isLoading,
-  onExcelClick,
+  onExportClick,
   items,
   sortCol,
   sortDir,
@@ -216,9 +208,9 @@ export const InventoryItemsListWithProps = ({
                 />
               </PermissionChecker>
             ) : null}
-            <AspectExportListButton onExport={onExcelClick} visible={!items.currentIdList.isEmpty()} />
+            <AspectExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
           </div>
-          <DataTableProgressBar disabled={!isLoading} />
+          {isLoading ? <LinearProgress /> : null}
           {items.currentIdList.length === 0 ? (
             <BrowseEmptyList />
           ) : (
@@ -320,6 +312,8 @@ export const InventoryItemsList = () => {
   const dispatch = useDispatch()
   const intl = useI18n()
 
+  const [isLoading, setIsLoading] = useState(true)
+
   // >>>>>> Defining selectors <<<<<<
   const inventory = useSelector(state => state.inventory)
 
@@ -333,27 +327,6 @@ export const InventoryItemsList = () => {
     dependencies: { breakOutByLot: filter.breakOutByLot },
   })
   // >>>>>> Defining callbacks <<<<<<
-  const onExcelClick = useCallback(
-    formatType => {
-      const format = formatType
-      const { sanitized, value: filtersParams } = filtersFromLocation(location)
-      if (!sanitized) {
-        exportSupplies(
-          filtersParams,
-          filter.breakOutByLot,
-          sortCol,
-          sortDir,
-          pageAt,
-          table.get('total') > 0 ? table.get('total') : 1,
-          format,
-          'supplies',
-          dispatch
-        )
-      }
-    },
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [location, filter.breakOutByLot, sortCol, sortDir, pageAt, table]
-  )
   const onAdjustInventorySucceeded = () => {
     showAcknowledgement({
       title: messages.inventoryAdjustedSuccessfully,
@@ -370,13 +343,31 @@ export const InventoryItemsList = () => {
   }
   const {
     isError,
-    isLoading,
+    isLoading: tableLoading,
     data = false,
     error,
     refetch,
   } = useQuery([INVENTORY_LIST.KEY, params, filter], async () =>
     fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
+
+  useEffect(() => {
+    setIsLoading(tableLoading)
+  }, [tableLoading])
+
+  const onExportClick = formatType => {
+    setIsLoading(true)
+    return getExportableFile(filter, formatType, sortCol, sortDir, data.total, 'supplies')
+      .then(response => {
+        setIsLoading(false)
+        return response
+      })
+      .catch(error => {
+        setIsLoading(false)
+        throw error
+      })
+  }
+
   // >>>>>> Defining mutations <<<<<<
   // onSuccess
   const onSuccess = () => {
@@ -435,7 +426,7 @@ export const InventoryItemsList = () => {
     filter,
     dispatch,
     isLoading,
-    onExcelClick,
+    onExportClick,
     items,
     sortCol,
     sortDir,

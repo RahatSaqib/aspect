@@ -4,7 +4,7 @@ import styles from '../NotificationFormPage.css'
 
 const cssClasses = classnames.bind(styles)
 
-const notificationTypeSection = (formatMessage, partner) => ({
+const notificationTypeSection = (formatMessage, partner, isEdit) => ({
   id: 'section_notificationType',
   label: 'Notification Type',
   labelI18nKey: 'notificationType',
@@ -14,6 +14,7 @@ const notificationTypeSection = (formatMessage, partner) => ({
       items: [
         {
           id: 'notificationType',
+          type: isEdit ? 'readOnly' : undefined,
           controlType: {
             component: 'select',
             hideIfNoOptions: false,

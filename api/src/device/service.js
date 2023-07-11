@@ -321,73 +321,100 @@ async function getDevicePerformance(request) {
 // ---------------------------------
 async function getDevicesForReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { getCount, queryResults, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(
-    dataConstraints,
-    query
-  )
+  const { getCount, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(dataConstraints, query)
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
 
-  // get rows
-  const getItems = deviceQuery
+  /**
+   * base query for list of devices
+   */
+  const getDevices = deviceQuery
     .clone()
     .modify(sortPageParams, query, 'name')
     .distinct([
       ..._.filter(getSelectListFields(userTimeOffset), elem => _.isString(elem) && elem.indexOf('dms.') < 0),
       'd.serial',
-      'd.id',
-      queryResults.clone().countDistinct('r.id').as('totalResults'),
-      queryResults.clone().where('r.resultCategory1', resultCategoryIds.Error).countDistinct('r.id').as('totalErrors'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.Invalid)
-        .countDistinct('r.id')
-        .as('totalInvalid'),
-      /**
-       * old way to get loastUploadOn was via ResultWorkflowLog.changedOn
-       * Leave it here commented out for the case when we still need to use
-       * approach with table ResultWorkflowLog
-       */
-      // queryResults
-      //   .clone()
-      //   .innerJoin('ResultWorkflowLog as rl', 'r.resultWorkflowStatusLogId', 'rl.id')
-      //   .max('rl.changedOn')
-      //   .as('lastUploadOn'),
-      queryResults.clone().max('r.updatedOn').as('lastUploadOn'),
-
-      queryResults
-        .clone()
-        .whereRaw('sa.originSiteId = d.siteId')
-        .countDistinct('r.id')
-        .as('totalResults_sameOriginSite'),
-      queryResults
-        .clone()
-        .whereRaw('sa.originSiteId = d.siteId')
-        .where('r.resultCategory1', resultCategoryIds.Error)
-        .countDistinct('r.id')
-        .as('totalErrors_sameOriginSite'),
-      queryResults
-        .clone()
-        .whereRaw('sa.originSiteId = d.siteId')
-        .where('r.resultCategory1', resultCategoryIds.Invalid)
-        .countDistinct('r.id')
-        .as('totalInvalid_sameOriginSite'),
+      'd.siteId',
     ])
+  /**
+   * get actual list of devices and value `total`
+   */
+  const [{ count: total }, dataRaw] = await Promise.all([getCount, getDevices])
+  /**
+   * lists of device id's and site id's
+   */
+  const deviceIds = _.uniq(dataRaw.map(x => x.id))
+  const siteIds = _.uniq(dataRaw.map(x => x.siteId)).join(',')
+  /**
+   * base query with all result counts for target device id's and site id's
+   */
+  const queryResults = knex('Result as r')
+    .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      sample: 'sa',
+    })
+    .whereIn('r.deviceId', deviceIds)
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .select(
+      'r.deviceId',
+      /**
+       * old way to get lastUploadOn was via ResultWorkflowLog.changedOn
+       */
+      knex.raw('MAX(r.updatedOn) as lastUploadOn')
+    )
+    .groupBy('r.deviceId')
+    .count({
+      totalResults: knex.raw('DISTINCT r.id'),
+      totalErrors: knex.raw(`DISTINCT CASE WHEN r.resultCategory1 = ? THEN r.id ELSE null END`, [
+        resultCategoryIds.Error,
+      ]),
+      totalInvalid: knex.raw(`DISTINCT CASE WHEN r.resultCategory1 = ? THEN r.id ELSE null END`, [
+        resultCategoryIds.Invalid,
+      ]),
+      totalResults_sameOriginSite: knex.raw(
+        `DISTINCT
+        CASE WHEN sa.originSiteId IN (${siteIds}) THEN r.id ELSE null END`
+      ),
+      totalErrors_sameOriginSite: knex.raw(
+        `DISTINCT
+        CASE
+        WHEN sa.originSiteId IN (${siteIds}) and r.resultCategory1 = ?
+        THEN r.id ELSE null
+        END`,
+        [resultCategoryIds.Error]
+      ),
+      totalInvalid_sameOriginSite: knex.raw(
+        `DISTINCT
+        CASE
+        WHEN sa.originSiteId IN (${siteIds}) and r.resultCategory1 = ?
+        THEN r.id ELSE null
+        END`,
+        [resultCategoryIds.Invalid]
+      ),
+    })
+  const results = await queryResults
 
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
-
-  const getPercentage = (totalResults, totalErrors) => {
-    return Math.round(100 * (totalResults ? totalErrors / totalResults : 0)) / 100
+  /**
+   * helper func to calculate percentage
+   */
+  const getPercentage = (total, value) => {
+    return Math.round(100 * (total ? value / total : 0)) / 100
   }
-  // add more fields which depend on aggregations
-  data.forEach(async it => {
+  /**
+   * add more fields which depend on aggregations
+   */
+  const data = dataRaw.map(device => {
+    const resultCounts = results.find(x => x.deviceId === device.id) || {}
+    const it = {
+      ...device,
+      ..._.omit(resultCounts, ['deviceId']),
+    }
     it.errorRate = getPercentage(it.totalResults, it.totalErrors)
     it.errorRate_sameOriginSite = getPercentage(it.totalResults_sameOriginSite, it.totalErrors_sameOriginSite)
+    return it
   })
 
-  const result = { ok: true, total, length: data.length, data }
-
-  return result
+  return { ok: true, total, length: data.length, data }
 }
 
 async function getDevicesForRifResistanceReport(auth, query) {
@@ -400,7 +427,8 @@ async function getDevicesForRifResistanceReport(auth, query) {
       hasResults: 1,
       ...query,
     },
-    dataConstraints
+    dataConstraints,
+    { extendJoinToAssays: true }
   )
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     // Group for avoiding join duplications
@@ -1123,7 +1151,7 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
 
 async function getDeviceCalibrationsForReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
   // get total count for paging
   const getCount = deviceQuery.clone().count('d.id as count').first()

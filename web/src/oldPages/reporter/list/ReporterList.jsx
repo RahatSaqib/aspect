@@ -214,7 +214,7 @@ const ReporterList = () => {
   }, [data])
 
   const onExportClick = formatType => {
-    return getExportableFile(filters, formatType, sortCol, sortDir, 0, total, 'Reporters')
+    return getExportableFile(filters, formatType, sortCol, sortDir, data.total, 'Reporters')
   }
 
   const baseProps = {
