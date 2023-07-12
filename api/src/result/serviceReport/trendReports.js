@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { endOfMonth, startOfMonth, startOfYear, subMonths } = require('date-fns')
+const { startOfDay, endOfDay, subDays, endOfMonth, startOfMonth, startOfYear, subMonths } = require('date-fns')
 
 const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
@@ -49,31 +49,41 @@ async function gx10CBaseQueryProvincial(auth, query) {
   /**
    * based on minDate or maxDate define timezone `offset` to correctly group by month
    */
-  let { minDate, maxDate } = query
-  const someDateFromUser = minDate || maxDate
+  const someDateFromUser = query.minDate || query.maxDate
   const offset = getOffsetFromIsoDateString(someDateFromUser)
   /**
-   * explicitly set date range as of this and last year
+   * helper func to return base query for specified dates
    */
-  const dateTo = endOfMonth(now)
-  const dateFrom = startOfYear(subMonths(now, 12)) // from the start of previous year
-  minDate = knex.raw(`'${new Date(dateFrom).toISOString()}'`)
-  maxDate = knex.raw(`'${new Date(dateTo).toISOString()}'`)
-  /**
-   * base query grouped by month
-   */
-  const baseQuery = getXdrResultCountBase({ minDate, maxDate, resultCategoryIds, dataConstraints, query })
+  const getBaseQuery = ({ dateFrom, dateTo }) => {
+    const minDate = knex.raw(`'${new Date(dateFrom).toISOString()}'`)
+    const maxDate = knex.raw(`'${new Date(dateTo).toISOString()}'`)
     /**
-     * group by month and state
+     * base query grouped by month
      */
-    .select(
-      getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'yearAndMonth', offset),
-      'g.stateId',
-      'st.name as locationName' // state name
-    )
-    .whereNotNull('g.stateId')
-    .groupBy('g.stateId', 'yearAndMonth')
-  return baseQuery
+    const baseQuery = getXdrResultCountBase({ minDate, maxDate, resultCategoryIds, dataConstraints, query })
+      /**
+       * group by month and state
+       */
+      .select(
+        getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'yearAndMonth', offset),
+        'g.stateId',
+        'st.name as locationName' // state name
+      )
+      .whereNotNull('g.stateId')
+      .groupBy('g.stateId', 'yearAndMonth')
+    return baseQuery
+  }
+
+  return {
+    baseQuerySinceLastYear: getBaseQuery({
+      dateFrom: startOfYear(subMonths(now, 12)), // from the start of previous year
+      dateTo: endOfMonth(now),
+    }),
+    baseQueryLast24h: getBaseQuery({
+      dateFrom: startOfDay(subDays(now, 1)), // from the start of yesterday
+      dateTo: endOfDay(now),
+    }),
+  }
 }
 
 /**
@@ -93,8 +103,9 @@ async function listGx10CTrendsNational({ auth, query }) {
  */
 async function listGx10CTrendsProvincial({ auth, query }) {
   const now = new Date()
-  const baseQuery = await gx10CBaseQueryProvincial(auth, query)
-  const rawData = await baseQuery
+  const { baseQuerySinceLastYear, baseQueryLast24h } = await gx10CBaseQueryProvincial(auth, query)
+  const rawSinceLastYear = await baseQuerySinceLastYear
+  const rawLast24h = await baseQueryLast24h
 
   const emptyCounts = {
     cntAll: 0,
@@ -112,8 +123,8 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const counterNames = _.keys(emptyCounts)
   const currentYear = now.getFullYear()
   const previousYear = now.getFullYear() - 1
-  const grouped = _.reduce(
-    rawData,
+  const groupedSinceLastYear = _.reduce(
+    rawSinceLastYear,
     (acc, item) => {
       const { stateId, yearAndMonth, locationName } = item
       const [year, month] = yearAndMonth.split('-')
@@ -127,10 +138,22 @@ async function listGx10CTrendsProvincial({ auth, query }) {
     },
     {}
   )
+  const groupedLast24h = _.reduce(
+    rawLast24h,
+    (acc, item) => {
+      const { stateId, locationName } = item
+      acc[stateId] = acc[stateId] || { locationName, ...emptyCounts }
+      counterNames.forEach(counterName => {
+        acc[stateId][counterName] += item[counterName]
+      })
+      return acc
+    },
+    {}
+  )
   const data = _.reduce(
-    _.keys(grouped),
+    _.keys(groupedSinceLastYear),
     (acc, stateId) => {
-      const byState = grouped[stateId]
+      const byState = groupedSinceLastYear[stateId]
       const byCurrYear = byState[currentYear]
       const byPrevYear = byState[previousYear]
       const currYearTotals = { ...emptyCounts }
@@ -144,7 +167,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
           prevYearMeanPerMonth[counterName] += byPrevYear[month][counterName]
         })
         /**
-         * check if `mean` to calculate per only months with tests
+         * check if `mean` to calculate per only months with at least one test
          */
         // const totalMonths = _.keys(byPrevYear).length
         // if (totalMonths > 0) {
@@ -166,6 +189,17 @@ async function listGx10CTrendsProvincial({ auth, query }) {
     },
     []
   )
+
+  /**
+   * for each state - add field `last24h` with counts since start of yesterday
+   */
+  _.forEach(data, d => {
+    const byState = groupedLast24h[d.stateId]
+    d.last24h = { ...emptyCounts }
+    counterNames.forEach(counterName => {
+      d.last24h[counterName] += byState[counterName]
+    })
+  })
 
   return {
     ok: true,
