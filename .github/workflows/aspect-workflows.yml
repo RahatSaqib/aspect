@@ -172,7 +172,6 @@ jobs:
 
       - id: set-test-chunks
         name: Set Chunks
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: echo "::set-output name=test-chunks::$(node ./api/test/ciFindAllTests.js arrayAllTests --path './api/test/')"
         env:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
