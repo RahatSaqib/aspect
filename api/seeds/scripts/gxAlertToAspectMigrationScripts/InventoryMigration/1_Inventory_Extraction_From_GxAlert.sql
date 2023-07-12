@@ -45,6 +45,7 @@ SELECT ilog.inventory_location_id,
             ELSE 'UNKNOWN!'
            END)            AS consumableExternalId,
        il.expiration_date  AS expiresOn,
+       null                AS locationId,
        sl.externalId       AS sourceSiteExternalId,
        dl.externalId       AS destinationSiteExternalId,
        ilog.quantity       AS quantity,
@@ -80,6 +81,7 @@ SELECT ilog.inventory_location_id,
             ELSE 'UNKNOWN!'
            END)            AS consumableExternalId,
        il.expiration_date  AS expiresOn,
+       l.externalId        AS location_id,
        null                AS sourceSiteExternalId,
        null                AS destinationSiteExternalId,
        ilog.quantity       AS quantity,
@@ -93,4 +95,6 @@ FROM bigpicture.inventory_log AS ilog
      bigpicture.inventory_location AS il ON ilog.inventory_location_id = il.inventory_location_id
          INNER JOIN
      bigpicture.inventory_item AS ii ON il.inventory_item_id = ii.id
+          INNER JOIN
+     bigpicture.location AS l ON ilog.location_id = l.id
 WHERE ir.externalId NOT IN ('received', 'used', 'sent');
