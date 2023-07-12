@@ -148,7 +148,12 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
           {
             disabled: !formik.dirty || !formik.isValid,
             label: intl.formatMessage(messages.save),
-            onClick: () => onSubmit(formik, meta),
+            onClick: async () => {
+              const errors = await formik.validateForm()
+              if (isEmpty(errors)) {
+                onSubmit(formik, meta)
+              }
+            },
           },
         ].map(({ label, onClick, disabled = false }) => (
           <AspectButton
