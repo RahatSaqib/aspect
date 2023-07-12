@@ -5,80 +5,113 @@ on:
   pull_request:
 
 env:
-  dbname: "aspect"
-  dbuser: "root"
-  dbpassword: "root"
-  rabbitUser: "guest"
-  rabbitPassword: "guest"
+  dbname: 'aspect'
+  dbuser: 'root'
+  dbpassword: 'root'
+  rabbitUser: 'guest'
+  rabbitPassword: 'guest'
 
 jobs:
-  fe-lint:
-    name: "Lint (WEB)"
+  check-changes:
     runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+    # Set job outputs to values from filter step
+    outputs:
+      api-changed: ${{ steps.filter.outputs.api-changed }}
+      web-changed: ${{ steps.filter.outputs.web-changed }}
+    steps:
+      # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            api-changed:
+              - './api/**'
+            web-changed:
+              - './web/**'
+
+  fe-lint:
+    name: 'Lint (WEB)'
+    runs-on: ubuntu-latest
+    needs: check-changes
     steps:
       - uses: actions/checkout@v3
       - name: Clone and install backend environment
+        if: ${{ needs.check-changes.outputs.web-changed == 'true' }}
         uses: ./.github/workflows/setups/front-end-setup
-
+   
       - name: Lint code
+        if: ${{ needs.check-changes.outputs.web-changed == 'true' }}
         run: |
           yarn web:lint --fix
 
   fe-test:
-    name: "Tests (WEB)"
+    name: 'Tests (WEB)'
     runs-on: ubuntu-latest
-    needs: fe-lint
+    needs: [fe-lint, check-changes]
     steps:
       - uses: actions/checkout@v3
       - id: install-aspect
         uses: ./.github/workflows/setups/front-end-setup
+        if: ${{ needs.check-changes.outputs.web-changed == 'true' }}
 
-      - name: "Run Tests"
+      - name: 'Run Tests'
+        if: ${{ needs.check-changes.outputs.web-changed == 'true' }}
         run: yarn web:test
 
   be-lint:
-    name: "Lint (API)"
+    name: 'Lint (API)'
     runs-on: ubuntu-latest
+    needs: check-changes
     steps:
       - uses: actions/checkout@v3
       - name: Clone and install backend environment
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-setup
 
       - name: Lint code
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: |
           yarn api:lint --fix
 
   be-unit-test:
-    name: "Unit Tests (API)"
+    name: 'Unit Tests (API)'
     runs-on: ubuntu-latest
-    needs: be-lint
+    needs: [be-lint, check-changes]
     steps:
       - name: Setup MySQL
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         uses: haltuf/mysql-action@master
         with:
-          character set server: "utf8"
-          collation server: "utf8_general_ci"
-          mysql version: "8.0"
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql version: '8.0'
           mysql database: ${{ env.dbname }}
           mysql root password: ${{ env.dbpassword }}
-          authentication plugin: "mysql_native_password"
+          authentication plugin: 'mysql_native_password'
 
-      - name: "Setup RabbitMQ"
+      - name: 'Setup RabbitMQ'
         uses: mer-team/rabbitmq-mng-action@v1.2
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         with:
           RABBITMQ_USER: $rabbitUser
           RABBITMQ_PASS: $rabbitPassword
           RABBITMQ_PORT: 5672
           RABBITMQ_MNG_PORT: 15672
-          RABBITMQ_TAG: "3-management-alpine"
+          RABBITMQ_TAG: '3-management-alpine'
 
       - uses: actions/checkout@v3
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
 
       - name: Clone and install backend environment
         uses: ./.github/workflows/setups/back-end-setup
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
 
       - name: Create .env file
         uses: ./.github/workflows/setups/back-end-env
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         with:
           dbname: ${{ env.dbname }}
           dbuser: ${{ env.dbuser }}
@@ -91,37 +124,41 @@ jobs:
           PUSHNOTIFICATIONTESTDEVICETOKENID: ${{secrets.PUSHNOTIFICATIONTESTDEVICETOKENID}}
           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
 
-      - name: "Seed DB & Run Migrations"
+      - name: 'Seed DB & Run Migrations'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: yarn start:api:seed
         shell: bash
 
-      - name: "Run Server"
+      - name: 'Run Server'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: yarn start:api:bg
         shell: bash
 
-      - name: "Run API Unit Tests"
+      - name: 'Run API Unit Tests'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: yarn api:unit
         shell: bash
 
-      - name: "Unit Test Report"
+      - name: 'Unit Test Report'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         uses: dorny/test-reporter@v1
         env:
           GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        if: success() || failure()
         with:
           name: Unit Tests Report
-          path: "api/unit-test-results.json"
+          path: 'api/unit-test-results.json'
           reporter: mocha-json
-          fail-on-error: "false"
+          fail-on-error: 'false'
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Stop Server"
+      - name: 'Stop Server'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: yarn stop:api:bg
 
   be-contract-chunks:
-    name: "Chunk Contract Tests (API)"
+    name: 'Chunk Contract Tests (API)'
     runs-on: ubuntu-latest
-    needs: be-lint
+    needs: [be-lint, check-changes]
     outputs:
       test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
     steps:
@@ -138,39 +175,44 @@ jobs:
           CHUNKS: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
 
   be-contract-test:
-    name: "Contract Tests (API) - (chunk ${{ strategy.job-index }})"
+    name: 'Contract Tests (API) - (chunk ${{ strategy.job-index }})'
     runs-on: ubuntu-latest
-    needs: be-contract-chunks
+    needs: [be-contract-chunks, check-changes]
     strategy:
       fail-fast: false
       matrix:
         chunk: ${{ fromJson(needs.be-contract-chunks.outputs.test-chunks) }}
     steps:
       - name: Setup MySQL
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         uses: haltuf/mysql-action@master
         with:
-          character set server: "utf8"
-          collation server: "utf8_general_ci"
-          mysql version: "8.0"
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql version: '8.0'
           mysql database: ${{ env.dbname }}
           mysql root password: ${{ env.dbpassword }}
-          authentication plugin: "mysql_native_password"
+          authentication plugin: 'mysql_native_password'
 
-      - name: "Setup RabbitMQ"
+      - name: 'Setup RabbitMQ'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         uses: mer-team/rabbitmq-mng-action@v1.2
         with:
           RABBITMQ_USER: $rabbitUser
           RABBITMQ_PASS: $rabbitPassword
           RABBITMQ_PORT: 5672
           RABBITMQ_MNG_PORT: 15672
-          RABBITMQ_TAG: "3-management-alpine"
+          RABBITMQ_TAG: '3-management-alpine'
 
       - uses: actions/checkout@v3
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
 
       - name: Clone and install backend environment
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-setup
 
       - name: Create .env file
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-env
         with:
           dbname: ${{ env.dbname }}
@@ -184,32 +226,36 @@ jobs:
           PUSHNOTIFICATIONTESTDEVICETOKENID: ${{secrets.PUSHNOTIFICATIONTESTDEVICETOKENID}}
           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
 
-      - name: "Seed DB & Run Migrations"
+      - name: 'Seed DB & Run Migrations'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: yarn start:api:seed
         shell: bash
 
-      - name: "Run Server"
+      - name: 'Run Server'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: yarn start:api:bg
         shell: bash
 
-      - name: "Run API Contract Tests"
+      - name: 'Run API Contract Tests'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: |
           yarn api:contract --spec ${{ matrix.chunk }}
         env:
           CHUNKS: ${{ needs.be-contract-chunks.outputs['test-chunks'] }}
         shell: bash
 
-      - name: "Contract Test Report"
+      - name: 'Contract Test Report'
         uses: dorny/test-reporter@v1
         env:
           GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        if: success() || failure()
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         with:
-          name: "Contract Tests Report - (chunk ${{ strategy.job-index }})"
-          path: "api/contract-test-results.json"
+          name: 'Contract Tests Report - (chunk ${{ strategy.job-index }})'
+          path: 'api/contract-test-results.json'
           reporter: mocha-json
-          fail-on-error: "false"
+          fail-on-error: 'false'
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: "Stop Server"
+      - name: 'Stop Server'
+        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: yarn stop:api:bg
