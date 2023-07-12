@@ -27,6 +27,7 @@ const {
 const exportWorkload = require('./exportWorkload')
 const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
+const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 
 const routes = [
   {
@@ -596,6 +597,98 @@ const routes = [
                 percentMtbNoResult: Joi.number()
                   .allow(null)
                   .description('Percent of NoResults for MTB and MTB-Ultra results'),
+              })
+            ),
+        }),
+      },
+    },
+  },
+
+  {
+    method: 'GET',
+    path: '/device/annual-utilization-rate-national',
+    handler: asyncHandler(listAnnualUtilizationRateNational),
+    config: {
+      description: 'National Trends in Annual Utilization Rates',
+      notes:
+        'The National Trends in annual utilization rates displays the percentage of utilization for the current year and the previous 5 years of data',
+      ...listDevicesBaseRequest(true),
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of items that match the given filters'),
+          length: Joi.number().required().description('The number of items included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The devices with rates details')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().required().description('The ID of the device'),
+                name: Joi.string().required().description('The name of the device'),
+                cnt: Joi.number().required().description('Number of tests by device in whole date range (all periods)'),
+                stateId: Joi.number().allow(null).description('The ID of the state'),
+                modules: Joi.number().allow(null).description('Number of modules in device'),
+                dailyCapacity: Joi.number().required().description('Daily capacity of the device'),
+                shortName: Joi.string().allow('', null).description('The short name of the device'),
+                type: Joi.string().allow('', null).description('The type of the device'),
+                stateName: Joi.string().allow('', null).description('The state where the device is located'),
+                lgaName: Joi.string().allow('', null).description('The lga where the device is located'),
+                siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
+                rates: Joi.array()
+                  .required()
+                  .description('The rates of device for all periods in date range')
+                  .items(
+                    Joi.object().keys({
+                      year: Joi.string().required().description('The year period'),
+                      count: Joi.number().required().description('Total tests accomplished by device in the period'),
+                      rate: Joi.number().required().description('Device utilization rate in the period'),
+                    })
+                  ),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/annual-utilization-rate-provincial',
+    handler: asyncHandler(listAnnualUtilizationRateProvincial),
+    config: {
+      description: 'Provincial Trends in Annual Utilization Rates',
+      notes:
+        'The Provincial Trends in annual utilization rates displays the percentage of utilization for the current year and the previous 5 years of data',
+      ...listDevicesBaseRequest(true),
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of items that match the given filters'),
+          length: Joi.number().required().description('The number of items included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The states with rates details for all their devices')
+            .items(
+              Joi.object().keys({
+                stateId: Joi.number().allow(null).description('The ID of the state'),
+                stateName: Joi.string().allow('', null).description('The state where the device is located'),
+                modules: Joi.number().required().description('Total number of modules across all devices in the state'),
+                dailyCapacity: Joi.number().required().description('Daily capacity of all devices in the state'),
+                rates: Joi.array()
+                  .required()
+                  .description('The rates of device for all periods in date range')
+                  .items(
+                    Joi.object().keys({
+                      year: Joi.string().required().description('The year period'),
+                      count: Joi.number().required().description('Total tests accomplished by device in the period'),
+                      rate: Joi.number().required().description('Device utilization rate in the period'),
+                    })
+                  ),
               })
             ),
         }),

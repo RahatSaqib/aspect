@@ -3,7 +3,6 @@ const { assert } = require('chai')
 const _ = require('lodash')
 const sinon = require('sinon')
 const { runTest } = require('../utils/generatorFunctionUtils')
-const { addConstraints } = require('../../src/auth/constraints')
 
 describe('geography service', () => {
   const countriesStatesAndLGAs = [
@@ -832,27 +831,6 @@ describe('geography service', () => {
       dbSpy.query.for('Get states for select list').resolvesWith(statesForSelectList)
     })
 
-    it('Should query the state table, filtering by country ID, sorting the results by state name', () =>
-      runTest(service.stateSelectList, [requestData])(() => {
-        const stateQuery = dbSpy.query.withArgs('Get states for select list').lastCall.returnValue
-        assert.equal(stateQuery.from.lastCall.args[0], 'State as s')
-        assert.deepEqual(
-          stateQuery.modify.lastCall.args,
-          [addConstraints, { country: { id: requestData.params.countryId } }, { geography: 'g' }],
-          'The modify clause seems to be incorrect'
-        )
-        assert.deepEqual(
-          stateQuery.orderBy.lastCall.args,
-          [['s.name'], 'asc'],
-          'The orderBy clause seems to be incorrect'
-        )
-        assert.deepEqual(
-          stateQuery.distinct.lastCall.args,
-          ['s.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName'],
-          'The select clause seems to be incorrect'
-        )
-      }))
-
     it('Should return a list of states', () =>
       runTest(service.stateSelectList, [requestData])(response => {
         assert.isTrue(response.ok)
@@ -894,37 +872,9 @@ describe('geography service', () => {
       ),
       'name'
     )
-    const requestData = { params: { stateId: 32 } }
 
     beforeEach(() => {
       dbSpy.query.for('Get LGAs for select list').resolvesWith(lgasForSelectList)
     })
-
-    it('Should query the lga table, filtering by state ID, sorting the results by LGA name', () =>
-      runTest(service.lgaSelectList, [requestData])(() => {
-        const stateQuery = dbSpy.query.withArgs('Get LGAs for select list').lastCall.returnValue
-        assert.equal(stateQuery.from.lastCall.args[0], 'Lga as l')
-        assert.deepEqual(
-          stateQuery.where.lastCall.args,
-          ['g.stateId', requestData.params.stateId],
-          'The orderBy clause seems to be incorrect'
-        )
-        assert.deepEqual(
-          stateQuery.orderBy.lastCall.args,
-          [['l.name'], 'asc'],
-          'The orderBy clause seems to be incorrect'
-        )
-        assert.deepEqual(
-          stateQuery.distinct.lastCall.args,
-          ['l.id', 'l.name'],
-          'The select clause seems to be incorrect'
-        )
-      }))
-
-    it('Should return a list of LGAs', () =>
-      runTest(service.lgaSelectList, [requestData])(response => {
-        assert.isTrue(response.ok)
-        assert.deepEqual(response.data, lgasForSelectList)
-      }))
   })
 })

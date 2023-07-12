@@ -41,6 +41,7 @@ import {
 import {
   groupByKey,
   groupForPie,
+  groupForPieRow,
   groupForDivergent,
   groupForInventoryStatusAPI,
   groupForOldTreatmentAPI,
@@ -222,19 +223,6 @@ const filterColour = (valueId, graphId) => {
 const generateColorForValue = (valueId, graphId) => filterColour(valueId, graphId)
 const generateColorForLegend = (valueId, graphId) => filterColour(valueId, graphId)
 
-const generateMargin = (tickValuesYShape, legend, type = false) => {
-  const shouldMargin = tickValuesYShape !== 'none'
-  const bleedForLegends = type === 'stackedDeviceActivity' ? 30 : 0
-  const margin = {
-    top: 5,
-    right: shouldMargin ? 20 + bleedForLegends : 0 + bleedForLegends,
-    bottom: legend ? 60 + bleedForLegends : 0 + bleedForLegends,
-    left: shouldMargin ? 40 + bleedForLegends : 0 + bleedForLegends,
-  }
-
-  return margin
-}
-
 const generateToolTip = (
   item,
   displayMethod,
@@ -293,7 +281,7 @@ const removeStringsFromArray = string => {
 
 const translateLabel = (string, assaysFromState, formatMessage, intlMessages, i18nKeys) => {
   const dictionary = []
-  assaysFromState?.map(
+  assaysFromState.map(
     ({ resultCategories }) =>
       Array.isArray(resultCategories) &&
       resultCategories.map(
@@ -371,6 +359,10 @@ const formatDataByGraphType = (
 
     case 'pie':
       grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
+      break
+
+    case 'pieRow':
+      grouped = groupForPieRow(data, mergedParams)
       break
 
     case 'line-trends': {
@@ -461,16 +453,12 @@ const prepParamsForEndPoint = (urlParams, updatedParams) => {
   return params
 }
 
-const getPropByFieldName = (propName, fields, fieldName) => {
+const getColorIdByFieldName = (fields, fieldName) => {
   if (isArray(fields)) {
     const [field = {}] = fields?.filter(it => it.name === fieldName) || {}
-    return field[propName]
+    return field.colorId
   }
   return null
-}
-
-const getColorIdByFieldName = (fields, fieldName) => {
-  return getPropByFieldName('colorId', fields, fieldName)
 }
 
 export {
@@ -485,7 +473,6 @@ export {
   generateColorForLegend,
   generateColorForValue,
   generateLegendIntl,
-  generateMargin,
   generateTickValues,
   generateToolTip,
   getAllDaysInCurrentMonth,
@@ -503,12 +490,12 @@ export {
   groupForOldTreatmentAPI,
   groupForPie,
   groupForPieOldTreatmentAPI,
+  groupForPieRow,
   negateTimeZoneOffset,
   normaliseKeys,
   percentageOrActualForPie,
   prepAssaysForParams,
   prepParamsForEndPoint,
   validateGraphConfig,
-  getPropByFieldName,
   getColorIdByFieldName,
 }

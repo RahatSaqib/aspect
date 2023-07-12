@@ -23,7 +23,7 @@ function generateSearchKeys(result, patientId, clinicalFollowUpFlags = {}) {
   _.set(output, 'sampleIdFlat', _.toLower(result?.sampleExternalId?.replace(/[^a-zA-Z0-9]+/g, '')))
   _.set(output, 'sampleSite', _.toLower(result?.sampleSiteName))
 
-  _.set(output, 'patientId', patientId?.replace(/[^a-zA-Z0-9]+/g, ''))
+  _.set(output, 'patientId', patientId)
   _.set(output, 'platform', 'aspect-mobile')
   _.set(output, 'filterMeta', filterMeta)
   return _.pickBy(output, _.identity)

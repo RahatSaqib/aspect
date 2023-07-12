@@ -4,6 +4,7 @@ const chai = require('chai')
 const shared = require('../utils/sharedToken')
 
 const server = require('../utils/testUtils')
+const { getUserByToken } = require('../utils/authUtils')
 
 const { assert } = chai
 
@@ -191,34 +192,27 @@ describe('Geography routes', () => {
     const path = '/api/geography/state-select-list/'
 
     describe('GET', () => {
-      it('should return a list of state IDs and names for the country ordered by name', done => {
+      it('should return a list of state IDs and names for the country ordered by name', async () => {
+        const { countryId } = await getUserByToken(shared.token)
         // First get the full country/state/LGA tree so that we can pick a countryId to query
-        server
-          .get('/api/geography/select-list')
-          .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            const countryWithStates = _.find(res.body.data, country => country.states.length > 0)
-            server
-              .get(path + countryWithStates.id)
-              .set('Authorization', `Bearer ${shared.token}`)
-              .end((err, res) => {
-                assert.equal(res.status, 200)
-                assert.typeOf(res.body, 'Object')
-                assert.property(res.body, 'data')
-                assert.typeOf(res.body.data, 'array')
-                assert.isAtLeast(res.body.data.length, 1)
-                const expectedStatesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
-                assert.isTrue(
-                  _.isEqual(res.body.data, expectedStatesInAlphabeticalOrder),
-                  `States returned are not in alphabetical order ${JSON.stringify(res.body.data)}`
-                )
-                _.each(res.body.data, state => {
-                  assert.property(state, 'id')
-                  assert.property(state, 'name')
-                })
-                done()
-              })
-          })
+        const res = await server.get('/api/geography/select-list').set('Authorization', `Bearer ${shared.token}`)
+
+        const countryWithStates = _.find(res.body.data, country => country.id === countryId)
+        const res2 = await server.get(path + countryWithStates.id).set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res2.status, 200)
+        assert.typeOf(res2.body, 'Object')
+        assert.property(res2.body, 'data')
+        assert.typeOf(res2.body.data, 'array')
+        assert.isAtLeast(res2.body.data.length, 1)
+        const expectedStatesInAlphabeticalOrder = _.orderBy(res2.body.data, 'name', 'asc')
+        assert.isTrue(
+          _.isEqual(res2.body.data, expectedStatesInAlphabeticalOrder),
+          `States returned are not in alphabetical order ${JSON.stringify(res2.body.data)}`
+        )
+        _.each(res2.body.data, state => {
+          assert.property(state, 'id')
+          assert.property(state, 'name')
+        })
       })
     })
   })
@@ -227,37 +221,32 @@ describe('Geography routes', () => {
     const path = '/api/geography/lga-select-list/'
 
     describe('GET', () => {
-      it('should return a list of LGA IDs and names for the country ordered by name', done => {
+      it('should return a list of LGA IDs and names for the country ordered by name', async () => {
         // First get the full country/state/LGA tree so that we can pick a stateId to query
-        server
-          .get('/api/geography/select-list')
-          .set('Authorization', `Bearer ${shared.token}`)
-          .end((err, res) => {
-            const stateWithLgas = _.find(
-              _.find(res.body.data, country => _.some(country.states, state => state.lgas.length > 0)).states,
-              state => state.lgas.length > 0
-            )
-            server
-              .get(path + stateWithLgas.id)
-              .set('Authorization', `Bearer ${shared.token}`)
-              .end((err, res) => {
-                assert.equal(res.status, 200)
-                assert.typeOf(res.body, 'Object')
-                assert.property(res.body, 'data')
-                assert.typeOf(res.body.data, 'array')
-                assert.isAtLeast(res.body.data.length, 1)
-                const expectedStatesInAlphabeticalOrder = _.orderBy(res.body.data, 'name', 'asc')
-                assert.isTrue(
-                  _.isEqual(res.body.data, expectedStatesInAlphabeticalOrder),
-                  `LGAs returned are not in alphabetical order ${JSON.stringify(res.body.data)}`
-                )
-                _.each(res.body.data, state => {
-                  assert.property(state, 'id')
-                  assert.property(state, 'name')
-                })
-                done()
-              })
-          })
+        const { countryId } = await getUserByToken(shared.token)
+        const res = await server.get('/api/geography/select-list').set('Authorization', `Bearer ${shared.token}`)
+        const stateWithLgas = _.find(
+          _.find(
+            res.body.data,
+            country => country.id === countryId && _.some(country.states, state => state.lgas.length > 0)
+          ).states,
+          state => state.lgas.length > 0
+        )
+        const res2 = await server.get(path + stateWithLgas.id).set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(res2.status, 200)
+        assert.typeOf(res2.body, 'Object')
+        assert.property(res2.body, 'data')
+        assert.typeOf(res2.body.data, 'array')
+        assert.isAtLeast(res2.body.data.length, 1)
+        const expectedStatesInAlphabeticalOrder = _.orderBy(res2.body.data, 'name', 'asc')
+        assert.isTrue(
+          _.isEqual(res2.body.data, expectedStatesInAlphabeticalOrder),
+          `LGAs returned are not in alphabetical order ${JSON.stringify(res2.body.data)}`
+        )
+        _.each(res2.body.data, state => {
+          assert.property(state, 'id')
+          assert.property(state, 'name')
+        })
       })
     })
   })

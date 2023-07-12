@@ -54,6 +54,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.site',
       defaultMessage: 'Site',
     },
+    partner: {
+      id: 'pages.DeviceDetailProfile.partner',
+      defaultMessage: 'Implementing Partner',
+    },
     connectivity: {
       id: 'pages.DeviceDetailProfile.connectivity',
       defaultMessage: 'Connectivity',

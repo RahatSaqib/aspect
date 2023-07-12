@@ -10,8 +10,8 @@ const messages = {
     goTo: { id: 'pages.XDR.goTo', defaultMessage: 'Go to XDR assay result summary by device' },
 
     site: { id: 'pages.XDR.site', defaultMessage: 'Site' },
-    totalPmdtSites: { id: 'pages.XDR.totalPmdtSites', defaultMessage: 'Number of PMDT Sites with 10 C GX' },
-    totalXdrSites: { id: 'pages.XDR.totalXdrSites', defaultMessage: 'Number of sites tested MTB/XDR Assay' },
+    isPmdt: { id: 'pages.XDR.isPmdt', defaultMessage: 'Number of PMDT Sites with 10 C GX' },
+    hasPerformedXdr: { id: 'pages.XDR.hasPerformedXdr', defaultMessage: 'Number of sites tested MTB/XDR Assay' },
     totalConducted: { id: 'pages.XDR.totalConducted', defaultMessage: '# of sites tested MTB/XDR Assay' },
     cntAll: { id: 'pages.XDR.cntAll', defaultMessage: 'Total Tests' },
     cnt_mtb: { id: 'pages.XDR.cnt_mtb', defaultMessage: 'MTB+' },

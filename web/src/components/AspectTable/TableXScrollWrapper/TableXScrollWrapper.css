@@ -1,8 +1,0 @@
-.datatable_scroll__outer {
-  display: flex;
-  overflow-x: auto;
-}
-
-.datatable_scroll__inner {
-  flex: 0 0 100%;
-}
