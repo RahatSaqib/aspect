@@ -119,7 +119,7 @@ const expected347 = [
       sampleId: 'SMP-TB-31',
       sampleIdFlat: 'smptb31',
       sampleSite: 'oden lab',
-      patientId: '571586406',
+      patientId: '57-158-6406',
       platform: 'aspect-mobile',
       filterMeta: {
         entryType: 'testResult',
@@ -342,7 +342,7 @@ const expected450 = [
       sampleId: 'SMP-TB-14',
       sampleIdFlat: 'smptb14',
       sampleSite: 'atlanta nmrl',
-      patientId: '846873493',
+      patientId: '84-687-3493',
       platform: 'aspect-mobile',
       filterMeta: {
         entryType: 'testResult',
@@ -389,7 +389,7 @@ const searchKeys450 = {
   sampleId: 'SMP-TB-14',
   sampleIdFlat: 'smptb14',
   sampleSite: 'atlanta nmrl',
-  patientId: '846873493',
+  patientId: '84-687-3493',
   platform: 'aspect-mobile',
   filterMeta: {
     entryType: 'testResult',
