@@ -2,14 +2,14 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const _ = require('lodash')
 
-const { addFollowUps } = require('../utils')
+const { upsertFollowUps } = require('../utils')
 const followUp = require('../fixtures/FollowUp.json')
 
 async function seed(knex) {
   const now = new Date()
 
   const partnerIds = await knex('Partner').pluck('id')
-  await addFollowUps(knex, followUp, partnerIds)
+  await upsertFollowUps(knex, followUp, partnerIds)
 
   const { id: userId } = await knex('User').where('name', 'admin').first('id')
 
