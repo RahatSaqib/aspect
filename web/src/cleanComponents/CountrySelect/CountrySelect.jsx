@@ -5,8 +5,8 @@ import Flags from 'country-flag-icons/react/3x2'
 import useCountries from '../../hooks/geography/useCountries'
 
 // the Flags from country-flag-icons are used to keep it consistent with the flags from the MuiPhoneNumber component
-const CountrySelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
-  const { isLoading: isCountryLoading, data: countries } = useCountries()
+const CountrySelect = ({ id, name, label, value, onChange, error, helperText, disabled, returnAll = false }) => {
+  const { isLoading: isCountryLoading, data: countries } = useCountries(returnAll)
 
   return isCountryLoading ? (
     <LinearProgress />
