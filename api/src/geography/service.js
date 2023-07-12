@@ -63,7 +63,7 @@ async function countrySelectList(request) {
     countries = await query('Get countries for select list')
       .from('Country as c')
       .leftJoin('Geography as g', 'g.countryId', 'c.id')
-      .modify(addConstraintsLocal, dataConstraints, { geography: 'g' })
+      .modify(addConstraintsLocal, dataConstraints, request?.query?.all ? {} : { geography: 'g' })
       .whereNull('g.stateId')
       .whereNull('g.lgaId')
       .orderBy(['c.name'], 'asc')
@@ -150,8 +150,9 @@ async function countrySelectList(request) {
 
 async function stateSelectListForUser(request) {
   const { countryId } = request.params
+  const { all } = request.query
   const dataConstraints = await getConstraints(request.auth.credentials)
-  return getStates(dataConstraints, { countryId })
+  return getStates(dataConstraints, { countryId, all })
 }
 
 async function stateSelectList(request) {
@@ -159,7 +160,7 @@ async function stateSelectList(request) {
   return getStates(null, { stateId })
 }
 
-async function getStates(dataConstraints, { countryId, stateId }) {
+async function getStates(dataConstraints, { countryId, stateId, all }) {
   let states = []
   const statesAndLgas = await query(
     stateId ? 'Get states and state LGAs for select lists' : 'Get states for select list'
@@ -176,7 +177,7 @@ async function getStates(dataConstraints, { countryId, stateId }) {
       if (countryId) q.where('g.countryId', countryId)
     })
     .modify(q => {
-      if (dataConstraints) q.modify(addConstraints, dataConstraints, { geography: 'g' })
+      if (dataConstraints) q.modify(addConstraints, dataConstraints, all ? {} : { geography: 'g' })
     })
     .orderBy(['s.name'], 'asc')
     .distinct('s.id as stateId', 's.name as stateName', 'l.id as lgaId', 'l.name as lgaName')
@@ -210,12 +211,13 @@ async function getStates(dataConstraints, { countryId, stateId }) {
 
 async function lgaSelectList(request) {
   const { params, auth } = request
+  const { all } = request.query
   const dataConstraints = await getConstraints(auth.credentials)
   const lgas = await query('Get LGAs for select list')
     .from('Lga as l')
     .innerJoin('Geography as g', 'g.lgaId', 'l.id')
     .where('g.stateId', params.stateId)
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .modify(addConstraints, dataConstraints, all ? {} : { geography: 'g' })
     .orderBy(['l.name'], 'asc')
     .distinct('l.id', 'l.name')
 
