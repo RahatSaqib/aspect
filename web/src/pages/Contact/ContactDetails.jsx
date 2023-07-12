@@ -32,8 +32,8 @@ const ContactDetails = ({ setStep }) => {
 
   const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
-  const { formatMessage } = useI18n()
   const { countryAbbreviation, countryId } = useAuthState()
+  const { formatMessage } = useI18n()
 
   const { isLoading, data: person } = usePerson(id)
 
