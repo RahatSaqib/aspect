@@ -7,7 +7,7 @@ const getResultCategoryGroup = async assayId =>
     response => response.data
   )
 
-const useResultCategoryGroup = assayId =>
-  useQuery([RESULT_KEY, 'category-group'], () => getResultCategoryGroup(assayId))
+const useResultCategoryGroup = (assayId, options) =>
+  useQuery([RESULT_KEY, 'category-group'], () => getResultCategoryGroup(assayId), options)
 
 export default useResultCategoryGroup
