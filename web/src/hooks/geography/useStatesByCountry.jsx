@@ -9,7 +9,7 @@ const getStatesByCountryId = async (countryId, returnAll) =>
     params: { all: returnAll },
   }).then(response => response.data)
 
-const useStatesByCountry = ({ countryId, returnAll }, options) =>
+const useStatesByCountry = ({ countryId, returnAll = false }, options) =>
   useQuery([STATE_KEY, countryId, returnAll], () => getStatesByCountryId(countryId, returnAll), options)
 
 export default useStatesByCountry
