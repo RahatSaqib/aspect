@@ -88,6 +88,7 @@ from InventoryLog il
                    on ii.consumableId = il.consumableId
                        and ii.expiresOn = il.expiresOn
                        and ii.siteId = il.siteId
+                       and ii.lotNumber is null
 where ii.id is null;
 
 -- ----> Update existing Aspect movements matching InventoryItems from GxAlert, to the correct InventoryItem Id.
