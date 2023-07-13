@@ -2,7 +2,7 @@
 import { defineMessages } from 'react-intl'
 import { deviceStatusMessages } from '../../messages'
 
-export const messages = {
+const messages = {
   ...deviceStatusMessages,
   ...defineMessages({
     statusUnknownLegend: {

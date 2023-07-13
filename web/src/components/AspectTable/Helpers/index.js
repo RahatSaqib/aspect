@@ -1,92 +1,19 @@
-import addMinutes from 'date-fns/addMinutes'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import isPast from 'date-fns/isPast'
 import parseISO from 'date-fns/parseISO'
-import subMinutes from 'date-fns/subMinutes'
 import chunk from 'lodash/chunk'
 import filter from 'lodash/filter'
 import find from 'lodash/find'
 import get from 'lodash/get'
-import identity from 'lodash/identity'
-import isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
 import map from 'lodash/map'
 import max from 'lodash/max'
 import min from 'lodash/min'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
-import pickBy from 'lodash/pickBy'
-import random from 'lodash/random'
 import range from 'lodash/range'
-import times from 'lodash/times'
 import { dateFNSLocales } from '../../../providers/I18nProvider'
-
-const mockedDataNames = [
-  'Amherst',
-  'Atlanta',
-  'Beaverton',
-  'Boston',
-  'Carter',
-  'Clearwater',
-  'Deerfield',
-  'Exeter',
-  'Lowell',
-  'Selma',
-  'Warren',
-  'Winston',
-]
-
-const mockedDataContacts = [
-  'Giada Cutler',
-  'Sayuri Landa',
-  'Fay Morello',
-  'Phinehas Casares',
-  'Kolbe Weigel',
-  'Mattilyn Dills',
-  'Adel Peirce',
-  'Nylan Buster',
-  'Isreal Tribble',
-  'Aleida Mcdougall',
-  'Addisen Woodrum',
-  'Lamont Koontz',
-  'Lleyton Arms',
-  'Rylinn Das',
-  'Railyn Hatten',
-  'Jailynn Dupuis',
-  'Jacori Hiner',
-  'Brynleigh Clinton',
-  'Emin Daum',
-  'Newton Alderete',
-  'Omere Koo',
-  'Kameron Deleon',
-  'Janya Hunley',
-  'Lillee Slayton',
-  'Darla Sebastian',
-  'Jamie Carmona',
-  'Ayat Rahn',
-]
-
-function mockDatafetch(cnt = 10) {
-  const data = []
-  times(cnt, index => {
-    const contacts = []
-    const mutatedDate =
-      random(0, 1) === 0 ? subMinutes(new Date(), random(0, 35000)) : addMinutes(new Date(), random(0, 35000))
-    const triggerRandom = random(0, 120000)
-    times(random(0, 9), i => contacts.push(mockedDataContacts[i]))
-    data.push({
-      id: index.toString(),
-      name: `Notification trigger ${mockedDataNames[random(0, 11)]}`,
-      totalTriggers: triggerRandom,
-      alertCount: triggerRandom,
-      contactsCount: contacts.length,
-      contacts: contacts.join(','),
-      lastTriggeredOn: mutatedDate.toISOString(),
-    })
-  })
-  return { data }
-}
 
 function buildColumnsFromData({ columns, columnOrder, contextualMenu = false }) {
   const output = []
@@ -135,17 +62,6 @@ function getCurrentColumnIndexAndShift(visibleColumns, direction, index) {
   return columns
 }
 
-function timeClassification(vals) {
-  const future = []
-  const past = []
-  vals.map(val => (isPast(parseISO(val)) ? past.push(val) : future.push(val)))
-  return [past.length, future.length]
-}
-
-function totalItemCount(vals) {
-  return vals.reduce((acc, curr) => acc + curr.length, 0)
-}
-
 function timeSinceFromUTC(val, locale) {
   const date = parseISO(val)
   const dateFNSLocale = dateFNSLocales[locale]
@@ -163,32 +79,12 @@ function timeAndDate(val, dateFormat) {
   return format(new Date(date), dateFormat)
 }
 
-async function shapeTableParamsForApi({ pageIndex, pageSize, sortBy, initialOrder }) {
-  const page = pageIndex
-  const size = pageSize
-  const sortCol = sortBy.length ? sortBy[0].id : initialOrder[0]
-  const sortDir = sortBy.length ? (sortBy[0].desc ? 'desc' : 'asc') : 'asc'
-  return pickBy({ page, size, sortCol, sortDir }, identity)
-}
-
 function removeNullFromCollection(collection) {
   return omitBy(collection, isNil)
 }
 
 function determineSortDirection(direction) {
   return (direction && direction === 'desc') || false
-}
-
-function getParamsFromUrl(query, search) {
-  const output = {}
-  const queryKeys = new URLSearchParams(search)
-  for (const key of queryKeys.keys()) {
-    const queryParam = query.get(key)
-    const parsedParam = parseInt(queryParam, 10)
-    output[key] = isNaN(parsedParam) ? queryParam : parsedParam
-  }
-
-  return output
 }
 
 function useUrlQuery(search) {
@@ -243,14 +139,9 @@ export {
   getColumnIdFromFilterKey,
   getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
-  getParamsFromUrl,
-  mockDatafetch,
   removeNullFromCollection,
-  shapeTableParamsForApi,
   timeAndDate,
-  timeClassification,
   timeSinceFromUTC,
-  totalItemCount,
   useUrlQuery,
   getReturnUrl,
   translate,

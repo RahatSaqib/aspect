@@ -1,18 +1,19 @@
 import React, { useState } from 'react'
 import { Typography } from '@mui/material'
+import { PeriodSelector } from '../../../../../cleanComponents'
+import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import useI18n from '../../../../../hooks/useI18n'
-import PeriodSelector from '../../../../../oldPages/dashboard/Graphs/PeriodSelector'
-import DATE_CONSTS from '../../../../../utils/consts/DateTime/CONSTS'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import UtilizationGraph from '../../../components/UtilizationGraph'
 import messages from '../../../PkDashboard.Messages'
 
-const { DATE_RANGE_OPTIONS } = DATE_CONSTS
-
 const UtilizationPage = () => {
   const { formatMessage } = useI18n()
-  const [, setFilter] = useState()
+  const [filter, setFilter] = useState({
+    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
+    maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+  })
 
   const data = new Array(111).fill({}).map((i, idx) => createData(idx, `City ${idx}`, 159, 6, 24, 9, 5))
 
@@ -46,7 +47,14 @@ const UtilizationPage = () => {
     <PkPage
       isMocked
       title={formatMessage(messages.utilizationTitle)}
-      filter={<PeriodSelector onChange={setFilter} initialValue={DATE_RANGE_OPTIONS.LAST_MONTH} />}
+      filter={
+        <PeriodSelector
+          label={formatMessage(messages.date)}
+          minDate={filter.minDate || null}
+          maxDate={filter.maxDate || null}
+          onChange={dateValues => setFilter({ ...filter, ...dateValues })}
+        />
+      }
     >
       <NestedTable columns={columns} rows={data} hasDetail />
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
