@@ -713,7 +713,7 @@ async function upsertGeneXpertDeviceTypeAndAssays(
 
   await utils.seedPartnerAssay(knex)
   await utils.seedPartnerDisease(knex)
-  await utils.addFollowUps(knex, followUpFixture, null, assayExternalIds)
+  await utils.upsertFollowUps(knex, followUpFixture, null, assayExternalIds)
 
   const existingAssayExternalIds = await knex('Assay').whereIn('externalId', assayExternalIds).pluck('externalId')
   await upsertResultCategoryGroup(knex, resultCategoryGroups, existingAssayExternalIds)
