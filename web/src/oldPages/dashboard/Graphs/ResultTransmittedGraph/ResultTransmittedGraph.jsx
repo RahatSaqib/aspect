@@ -39,7 +39,13 @@ const ResultTransmittedGraph = () => {
                         label={formatMessage(graphMessages.date)}
                         minDate={filter.minDate || null}
                         maxDate={filter.maxDate || null}
-                        onChange={dateValues => setFilter({ ...filter, ...dateValues })}
+                        onChange={dateValues => {
+                          const newValues = Object.keys(dateValues).map(
+                            // eslint-disable-next-line prefer-destructuring
+                            key => (dateValues[key] = dateValues[key].toISOString().split('T')[0])
+                          )
+                          setFilter({ ...filter, ...newValues })
+                        }}
                       />
                     </Grid>
                   </Grid>
