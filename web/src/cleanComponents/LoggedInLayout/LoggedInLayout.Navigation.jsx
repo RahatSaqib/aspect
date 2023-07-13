@@ -98,9 +98,9 @@ const getRawLinks = f => [
       { href: '/browse/device/workload', label: f(messages.devicesWorkload), perm: ['device'] },
     ],
   },
-  { href: '/browse/site', label: f(messages.sites), perm: ['browse', 'site'] },
   { href: '/browse/result', label: f(messages.results), perm: ['browse', 'result'] },
   { href: '/browse/person', label: f(messages.contacts), perm: ['browse', 'person'] },
+  { href: '/browse/site', label: f(messages.sites), perm: ['browse', 'site'] },
   {
     href: '/browse/inventory',
     label: f(messages.supplies),
