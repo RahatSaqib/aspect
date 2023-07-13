@@ -328,7 +328,7 @@ async function seed(knex) {
   )
 
   // add follow ups
-  await utils.addFollowUps(knex, followUp, [partnerId])
+  await utils.upsertFollowUps(knex, followUp, [partnerId])
 
   const statWidgets = await knex('DashboardWidget')
     .whereIn('titleI18nKey', [

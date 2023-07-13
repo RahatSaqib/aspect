@@ -1,7 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 
-const { addFollowUps, removeFollowUps } = require('../utils')
+const { upsertFollowUps, removeFollowUps } = require('../utils')
 const followUp = require('./fixtures/FollowUp.json')
 
 async function seed(knex) {
@@ -13,5 +13,5 @@ async function seed(knex) {
     await removeFollowUps(knex, [partnerId], externalId)
   })
 
-  await addFollowUps(knex, followUp, [partnerId])
+  await upsertFollowUps(knex, followUp, [partnerId])
 }

@@ -1,23 +1,23 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
-import ErrorBoundary from '../../../../cleanComponents/ErrorBoundary'
+import { PeriodSelector, ErrorBoundary } from '../../../../cleanComponents'
+import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages } from '../../../../messages'
-import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
-import PeriodSelector from '../PeriodSelector'
 import styles from '../styles.css'
 import DeviceStatusGraphMain from './DeviceStatusGraph.Main'
 
 const cssClasses = classnames.bind(styles)
 
-const { DATE_RANGE_OPTIONS } = DATE_CONSTS
-
 const DeviceStatusGraph = ({ assaysFromState }) => {
   const { formatMessage } = useI18n()
 
   const [showLabel, setShowLabel] = useState(false)
-  const [filter, setFilter] = useState()
+  const [filter, setFilter] = useState({
+    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
+    maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+  })
   return (
     <ErrorBoundary>
       <Grid container className={cssClasses('Graph_Container')}>
@@ -35,7 +35,12 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
                       />
                     </Grid>
                     <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
-                      <PeriodSelector onChange={setFilter} initialValue={DATE_RANGE_OPTIONS.LAST_MONTH} />
+                      <PeriodSelector
+                        label={formatMessage(graphMessages.date)}
+                        minDate={filter.minDate || null}
+                        maxDate={filter.maxDate || null}
+                        onChange={dateValues => setFilter({ ...filter, ...dateValues })}
+                      />
                     </Grid>
                   </Grid>
                 </Grid>
