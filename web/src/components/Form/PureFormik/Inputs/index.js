@@ -1,5 +1,0 @@
-export { default as PureTextInput } from './TextInput'
-export { default as PureCheckboxInput } from './CheckBox'
-export { default as PureChip } from './Chips'
-export { default as PurePhoneNumber } from './PhoneNumber'
-export { default as PureSelect } from './Select'

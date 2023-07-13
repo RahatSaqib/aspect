@@ -9,7 +9,7 @@ import {
   resultWorkflowStatusMessages,
 } from '../../messages'
 
-export const messages = {
+const messages = {
   ...consumableMessages,
   ...resultCategory,
   ...resultWorkflowStatusMessages,

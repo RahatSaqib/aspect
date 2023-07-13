@@ -1,5 +1,5 @@
 import React from 'react'
-import { Button, Card } from '@mui/material'
+import { Box, Button, Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import get from 'lodash/get'
@@ -9,7 +9,6 @@ import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { Unit } from '../../../oldComponents/pureGrids'
 import { fetchLicense, userRequestedLogout, acceptLicenseStart } from '../../../store/AuthRedux'
 import styles from './License.css'
 import messages from './messages'
@@ -72,8 +71,7 @@ export const License = ({ intl, licenseContent, onDoNotAcceptClick, onAcceptClic
   <div className={cssClasses('Background')}>
     <Helmet title={intl.formatMessage(messages.title)} />
     <div>
-      <Unit sm="1-24" md="1-12" lg="1-12" xl="1-6" />
-      <Unit sm="11-12" md="5-6" lg="5-6" xl="2-3">
+      <Box sx={{ margin: '0 auto', width: { sm: '90%', md: '80%', xl: '66%' } }}>
         <Card>
           <div className={cssClasses('Logo__Container')}>
             <AspectLogo />
@@ -96,7 +94,7 @@ export const License = ({ intl, licenseContent, onDoNotAcceptClick, onAcceptClic
             </div>
           </div>
         </Card>
-      </Unit>
+      </Box>
     </div>
   </div>
 )

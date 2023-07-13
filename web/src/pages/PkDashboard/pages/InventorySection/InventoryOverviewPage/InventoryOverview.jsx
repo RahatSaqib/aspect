@@ -1,16 +1,13 @@
 import React, { useState } from 'react'
 import { LinearProgress } from '@mui/material'
+import { PeriodSelector } from '../../../../../cleanComponents'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import useI18n from '../../../../../hooks/useI18n'
 import ConsumableSelector from '../../../../../oldPages/dashboard/Graphs/ConsumableSelector'
-import PeriodSelector from '../../../../../oldPages/dashboard/Graphs/PeriodSelector'
-import DATE_CONSTS from '../../../../../utils/consts/DateTime/CONSTS'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 import useInventoryOverview from './useInventoryOverview'
-
-const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 
 function transformInventory(data) {
   return data?.map(item => ({
@@ -48,7 +45,12 @@ const InventoryOverviewPage = () => {
       filters={
         <>
           <ConsumableSelector onChange={e => setConsumableExternalId(e.consumableExternalId)} />
-          <PeriodSelector onChange={setFilter} initialValue={DATE_RANGE_OPTIONS.LAST_MONTH} />
+          <PeriodSelector
+            label={formatMessage(messages.date)}
+            minDate={filter.minDate || null}
+            maxDate={filter.maxDate || null}
+            onChange={dateValues => setFilter({ ...filter, ...dateValues })}
+          />
         </>
       }
     >
