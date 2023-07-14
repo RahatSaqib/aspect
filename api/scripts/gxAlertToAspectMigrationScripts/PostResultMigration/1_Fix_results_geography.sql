@@ -2,7 +2,7 @@
 -- Query mismatches by externalId
 SELECT count(*) -- 348469
 FROM Result r
-         JOIN mig_all_results_202306 x ON x.uniqueId = r.externalId or x.CartridgeSerial = r.consumableSerial
+         JOIN mig_all_results x ON x.uniqueId = r.externalId or x.CartridgeSerial = r.consumableSerial
          LEFT JOIN Geography g ON r.geographyId = g.id
          LEFT JOIN Lga l ON g.lgaId = l.id
          LEFT JOIN State s ON s.id = g.stateId
@@ -26,7 +26,7 @@ from (select ts.id       aspectTargetStateId,
              x.lga       gxLga,
              count(r.id) count
       from Result r
-               join mig_all_results_202306 x on x.CartridgeSerial = r.consumableSerial
+               join mig_all_results x on x.CartridgeSerial = r.consumableSerial
                left join Geography g on r.geographyId = g.id
                left join Lga l on g.lgaId = l.id
                left join State s on s.id = g.stateId
@@ -46,7 +46,7 @@ create table mig_tmp_result_geography_pivot as
 select r.id  resultId,
        tg.id geographyId
 from Result r
-         join mig_all_results_202306 x on x.UniqueId = r.externalId
+         join mig_all_results x on x.UniqueId = r.externalId
          left join Geography g on r.geographyId = g.id
          left join Lga l on g.lgaId = l.id
          left join State s on s.id = g.stateId
@@ -65,7 +65,7 @@ insert into mig_tmp_result_geography_pivot
 select r.id  resultId,
        tg.id geographyId
 from Result r
-         join mig_all_results_202306 x on x.CartridgeSerial = r.consumableSerial
+         join mig_all_results x on x.CartridgeSerial = r.consumableSerial
          left join Geography g on r.geographyId = g.id
          left join Lga l on g.lgaId = l.id
          left join State s on s.id = g.stateId
