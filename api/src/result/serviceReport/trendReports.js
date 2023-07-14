@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { startOfDay, endOfDay, subDays, endOfMonth, startOfMonth, startOfYear, subMonths } = require('date-fns')
+const { startOfDay, endOfDay, subDays, endOfMonth, startOfYear, subMonths } = require('date-fns')
 
 const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
@@ -24,7 +24,13 @@ async function gx10CBaseQueryNational(auth, query) {
    * explicitly set date range as of last 5 years
    */
   const dateTo = endOfMonth(now)
-  const dateFrom = startOfMonth(subMonths(now, 60))
+  const currentYear = now.getFullYear()
+  /**
+   * we need full last 5 years, i.e. if now is 2023, then we need 2018-2022,
+   * plus current year
+   */
+  const startYear = currentYear - 5
+  const dateFrom = `${startYear}-01-01`
   minDate = knex.raw(`'${new Date(dateFrom).toISOString()}'`)
   maxDate = knex.raw(`'${new Date(dateTo).toISOString()}'`)
   /**
@@ -194,7 +200,12 @@ async function listGx10CTrendsProvincial({ auth, query }) {
    * for each state - add field `last24h` with counts since start of yesterday
    */
   _.forEach(data, d => {
-    const byState = groupedLast24h[d.stateId]
+    /**
+     * notice that data for last 24 hours (groupedLast24h) may not contain stateId
+     * from last 2 years (data), and because of that set it to `emptyCounts` if
+     * stateId is missing in `groupedLast24h`
+     */
+    const byState = groupedLast24h[d.stateId] || emptyCounts
     d.last24h = { ...emptyCounts }
     counterNames.forEach(counterName => {
       d.last24h[counterName] += byState[counterName]
