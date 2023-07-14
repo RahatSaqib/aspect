@@ -1,28 +1,31 @@
 import React from 'react'
+import { Grid } from '@mui/material'
 import PropTypes from 'prop-types'
-import { Unit } from '../../oldComponents/pureGrids'
 import Group from './Group'
 import { AspectWidget, EmptyWidget } from './Widget'
 
-const EmptyWidgets = () =>
-  [0, 1, 2, 3].map(key => (
-    <Unit key={key} sm="1-2" lg="1-4">
-      <EmptyWidget />
-    </Unit>
-  ))
+const EmptyWidgets = () => (
+  <Grid container spacing={2}>
+    {[0, 1, 2].map(key => (
+      <Grid item sm={4} key={key}>
+        <EmptyWidget />
+      </Grid>
+    ))}
+  </Grid>
+)
 
 const AspectWidgets = ({ data: { widgetGroups, nonGroupedWidgets } }) => {
   return (
-    <>
+    <Grid container spacing={2}>
       {widgetGroups && widgetGroups.length ? <Group data={widgetGroups} /> : null}
       {nonGroupedWidgets && nonGroupedWidgets.length
         ? nonGroupedWidgets.map(widget => (
-            <Unit key={widget.id} sm="1-2" lg="1-4">
+            <Grid item sm={4} key={widget.id} style={{ padding: 0 }}>
               <AspectWidget data={widget} />
-            </Unit>
+            </Grid>
           ))
         : null}
-    </>
+    </Grid>
   )
 }
 

@@ -314,7 +314,7 @@ async function getExistingSample(knex, payload, existingResult, opts) {
 }
 
 // ----------------------------------------------------------
-async function getSiteAdAssays(knex, payload, existingResult, deviceId) {
+async function getSiteAndAssays(knex, payload, existingResult, deviceId) {
   const assayQ = knex('Assay as a')
     .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
     .where({ 'd.id': deviceId })
@@ -360,7 +360,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   const { categoryIds, resultCategory1, resultCategory2 } = await getResultCategories(payload, existingResult)
 
   //
-  const { assays, site } = await getSiteAdAssays(knex, payload, existingResult, deviceId)
+  const { assays, site } = await getSiteAndAssays(knex, payload, existingResult, deviceId)
   // exit on any error
   const requestErrors = await getResultErrors({ site, resultTypeId, resultCategory1, assays, categoryIds, payload })
   if (!_.isEmpty(requestErrors)) {

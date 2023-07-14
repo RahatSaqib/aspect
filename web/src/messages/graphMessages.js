@@ -136,6 +136,10 @@ const messages = defineMessages({
     id: 'pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title',
     defaultMessage: 'XDR FLQ Resistance',
   },
+  date: {
+    id: 'forms.formSectionHeader.date',
+    defaultMessage: 'Date',
+  },
 })
 
 export default messages
