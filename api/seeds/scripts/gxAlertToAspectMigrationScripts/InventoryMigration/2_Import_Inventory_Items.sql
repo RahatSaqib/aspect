@@ -59,6 +59,30 @@ SET SQL_SAFE_UPDATES = 1;
 -- where length(errorMessage) > 0;
 -- ------------------------ /Mark wrong inventory items
 
+-- update existing Inventory Items
+update InventoryItem ii, (select m.quantityOnHand,
+                                 c.id consumableId,
+                                 s.id siteId,
+                                 m.expiresOn,
+                                 m.createdOn,
+                                 m.updatedOn,
+                                 m.gxAlertInventoryLocationId
+                          from mig_InventoryItemPivot m
+                                   join Consumable c
+                                        on c.externalId = m.consumableExternalId
+                                   join Site as s
+                                        on s.externalId = m.siteExternalId
+                          where m.errorMessage is null) as src
+set ii.quantityOnHand             = src.quantityOnHand,
+    ii.createdOn                  = src.createdOn,
+    ii.updatedOn                  = src.updatedOn,
+    ii.gxAlertInventoryLocationId = src.gxAlertInventoryLocationId
+where ii.consumableId = src.consumableId
+  and ii.siteId = src.siteId
+  and ii.expiresOn = src.expiresOn
+  and inTransitFromSiteId is null
+  and lotNumber is null;
+
 -- Insert inventory items
 insert into InventoryItem
 select 0    as                      id,
@@ -76,4 +100,11 @@ select 0    as                      id,
 from mig_InventoryItemPivot m
          join Consumable c on c.externalId = m.consumableExternalId
          join Site as s on s.externalId = m.siteExternalId
-where errorMessage is null;
+where errorMessage is null
+  and not exists (select id
+                  from InventoryItem ii
+                           join Consumable ec on ec.id = ii.consumableId
+                           join Site es on es.id = ii.siteId
+                  where ec.externalId = m.consumableExternalId
+                    and es.externalId = m.siteExternalId
+                    and ii.expiresOn = m.expiresOn);
