@@ -22,7 +22,9 @@ async function seed(knex) {
   const mercyCorpsDevices = await knex('Device as d')
     .join('Site as s', 'd.siteId', 's.id')
     .whereNull('d.implementingPartnerId')
-    .andWhere('d.name', 'like', '%-MC')
+    .andWhere(qb => {
+      qb.where('d.name', 'like', '%-MC').orWhere('d.name', 'like', '%-(MC)')
+    })
     .select({
       deviceId: 'd.id',
       siteId: 's.id',
@@ -34,7 +36,9 @@ async function seed(knex) {
 
   const sitesOfMercyCorpsDevices = _.uniq(
     // Skip sites that already finish in -MC
-    mercyCorpsDevices.filter(mcd => !mcd.siteName.endsWith('-MC')).map(mcd => mcd.siteId)
+    mercyCorpsDevices
+      .filter(mcd => !mcd.siteName.endsWith('-MC') && !mcd.siteName.endsWith('-(MC)'))
+      .map(mcd => mcd.siteId)
   )
 
   /* eslint-disable no-await-in-loop */
@@ -45,8 +49,7 @@ async function seed(knex) {
 
     const devicesWithIP = devices.filter(d => d.hasImplementingPartner).map(d => d.deviceId)
     const devicesWithoutIP = devices.filter(d => !d.hasImplementingPartner).map(d => d.deviceId)
-
-    if (devicesWithoutIP.length > 0) {
+    if (devicesWithoutIP.length > 0 && devicesWithIP.length > 0) {
       // If at least one of the other devices is not Mercy Corps,
       // then duplicate the site with the name "[OLD NAME]-MC" and reassign the MC device to this new "MC" version of the site
       const clonedSiteId = await cloneSite(knex, siteId)
