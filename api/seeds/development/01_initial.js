@@ -5095,7 +5095,6 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devicesTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.resultsTitle },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.personTitle },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.utilizationRate },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.activeDevices },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.stockouts },
@@ -5135,7 +5134,6 @@ async function seed(knex) {
 
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sitesTitle },
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devicesTitle },
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.personTitle },
     {
       jobFunctionId: jobFunctionIdManager,
       widgetId: widgetIds.utilizationRate,
@@ -5166,10 +5164,6 @@ async function seed(knex) {
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
       widgetId: widgetIds.devicesTitle,
-    },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      widgetId: widgetIds.personTitle,
     },
     {
       jobFunctionId: jobFunctionIdPartnerTwo,
