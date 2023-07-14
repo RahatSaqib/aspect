@@ -19,7 +19,7 @@ SELECT il.inventory_location_id        gxAlertInventoryLocationId,
             ELSE ii.externalId END) as consumableExternalId,
        l.externalId                 as siteExternalId,
        il.expiration_date           as expiresOn,
-       il.created_on                as createdOn,
+       il.updated_on                as createdOn,
        il.updated_on                as updatedOn,
        SUM(il.current_quantity)     as quantityOnHand
 FROM bigpicture.inventory_location il
@@ -51,7 +51,7 @@ SELECT ilog.inventory_location_id,
        ilog.quantity       AS quantity,
        ilog.effective_date AS effectiveDate,
        ilog.created_on     AS createdOn,
-       ilog.updated_on     AS updatedOn
+       ilog.created_on     AS updatedOn
 FROM bigpicture.inventory_log AS ilog
          INNER JOIN
      bigpicture.inventory_reason AS ir ON ilog.reason_id = ir.id
@@ -87,7 +87,7 @@ SELECT ilog.inventory_location_id,
        ilog.quantity       AS quantity,
        ilog.effective_date AS effectiveDate,
        ilog.created_on     AS createdOn,
-       ilog.updated_on     AS updatedOn
+       ilog.created_on     AS updatedOn
 FROM bigpicture.inventory_log AS ilog
          INNER JOIN
      bigpicture.inventory_reason AS ir ON ilog.reason_id = ir.id
@@ -96,5 +96,5 @@ FROM bigpicture.inventory_log AS ilog
          INNER JOIN
      bigpicture.inventory_item AS ii ON il.inventory_item_id = ii.id
           INNER JOIN
-     bigpicture.location AS l ON ilog.location_id = l.id
+     bigpicture.location AS l ON il.location_id = l.id
 WHERE ir.externalId NOT IN ('received', 'used', 'sent');
