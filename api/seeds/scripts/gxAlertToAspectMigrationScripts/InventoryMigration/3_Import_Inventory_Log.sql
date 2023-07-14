@@ -193,8 +193,12 @@ order by createdOn, siteId;
 insert into InventoryTransfer
 select 0 as id, olog.id, ilog.id, null, olog.createdOn, m.updatedOn
 from mig_gxalert_transfers as m
-         join InventoryLog as olog on olog.gxAlertInventoryLogId = m.gxAlertInventoryLogId
-         join InventoryLog as ilog on ilog.gxAlertInventoryLogId = m.gxAlertInventoryLogId;
+         join InventoryLog as olog
+              on olog.gxAlertInventoryLogId = m.gxAlertInventoryLogId
+                  and olog.consumableReasonId = @reasonTransferSent
+         join InventoryLog as ilog
+              on ilog.gxAlertInventoryLogId = m.gxAlertInventoryLogId
+                  and ilog.consumableReasonId = @reasonTransferReceived;
 
 -- initial adjustment to match GxAlert quantity on InventoryItem
 insert into InventoryLog
