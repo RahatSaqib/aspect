@@ -486,6 +486,7 @@ describe('Entries helpers', () => {
         sampleExternalId: 'SAMPLE01',
         sampleSiteId: 2,
         sampleSiteName: 'Sample Site',
+        sampleSiteStateName: 'Sample State',
         sampleSiteExternalId: 'sample_site',
         sampleTypeName: 'Sputum',
         sampleTypeI18nKey: 'sampleTypeSputum',
@@ -497,7 +498,7 @@ describe('Entries helpers', () => {
       const expectedOutput = {
         id: 1,
         externalId: 'SAMPLE01',
-        originSite: { id: 2, name: 'Sample Site', externalId: 'sample_site' },
+        originSite: { id: 2, name: 'Sample Site', externalId: 'sample_site', stateName: 'Sample State' },
         sampleType: { name: 'Sputum', i18nKey: 'sampleTypeSputum', externalId: 'Sputum' },
         status: {
           id: 'SAMPLE_RECEIVED_AT_LAB',
@@ -505,6 +506,7 @@ describe('Entries helpers', () => {
           label: 'Received',
           i18nKey: 'received_at_lab',
         },
+        clinicianName: null,
         collectedOn: '2023-04-21T07:34:00.000Z',
         updatedOn: null,
       }
