@@ -37,7 +37,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
       followUps: resultFollowUps,
       history: buildHistoryTimeline(result, resultFollowUps, comments),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
-      patientId: patientData?.id,
+      patientId: patientData?.id || null,
       sample: transformSampleData(result),
       ...clinicalFollowUpFlags,
       searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags),

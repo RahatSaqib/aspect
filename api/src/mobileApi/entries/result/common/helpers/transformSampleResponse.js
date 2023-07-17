@@ -20,6 +20,7 @@ function transformSampleResponse(query, data, results) {
     }
     return {
       id: sample.id,
+      patientId: sample?.sampleData?.patientId || null,
       sample: transformSampleData(sample),
       testType: transformEntryType(),
       dbUpdatedOn: sample.updatedOn,
