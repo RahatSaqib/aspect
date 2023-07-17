@@ -1,5 +1,5 @@
 import React, { PureComponent } from 'react'
-import { Button, LinearProgress, Paper, Step, StepLabel, Stepper } from '@mui/material'
+import { Box, Button, LinearProgress, Paper, Step, StepLabel, Stepper } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { FormattedMessage, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
@@ -7,7 +7,6 @@ import { Link } from 'react-router-dom'
 import { compose, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
 import config from '../../../config'
-import { Unit, Hidden } from '../../../oldComponents/pureGrids'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import { showError, showAcknowledgement } from '../../../store/AppNotificationRedux'
 import { resetPasswordEnterEmailAddress, resetPasswordEnterPassword } from '../../../store/AuthRedux'
@@ -172,10 +171,13 @@ export class ResetPassword extends PureComponent {
         <Helmet title={formatMessage(messages.title)} />
         <div className={styles.Content}>
           <div>
-            <Unit xs="1-24" md="1-12" xl="1-4" />
-            <Unit xs="11-12" md="5-6" xl="1-2">
+            <Box sx={{ margin: '0 auto', width: { xs: '90%', md: '80%', xl: '50%' } }}>
               <Paper>
-                <Hidden xs sm className={styles.LargeConten}>
+                <Box
+                  component="div"
+                  sx={{ display: { xs: 'none', sm: 'none', md: 'block' } }}
+                  className={styles.LargeConten}
+                >
                   <Stepper activeStep={stepIndex} orientation="horizontal" style={{ padding: 24 }}>
                     <Step>
                       <StepLabel>{formatMessage(messages.enterEmailAddress)}</StepLabel>
@@ -238,9 +240,9 @@ export class ResetPassword extends PureComponent {
                       </div>
                     </div>
                   )}
-                </Hidden>
+                </Box>
               </Paper>
-            </Unit>
+            </Box>
           </div>
         </div>
         <AspectDialog
@@ -250,12 +252,7 @@ export class ResetPassword extends PureComponent {
           open={this.state.showAdminHelpDialog}
           onRequestClose={this.closeAdminHelpDialog}
         >
-          <FormattedMessage
-            {...messages.adminHelpContent}
-            values={{
-              supportEmail: config.supportEmail,
-            }}
-          />
+          <FormattedMessage {...messages.adminHelpContent} values={{ supportEmail: config.supportEmail }} />
         </AspectDialog>
       </div>
     )
