@@ -39,7 +39,7 @@ function caseUpdated(caseId) {
 }
 
 module.exports = {
-  types,
   caseAdded,
   caseUpdated,
+  types,
 }

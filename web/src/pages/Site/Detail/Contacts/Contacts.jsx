@@ -5,7 +5,6 @@ import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import ContactTagInput from '../../../../cleanComponents/ContactTagInput'
-import { Unit } from '../../../../oldComponents/pureGrids'
 import { ReadOnlyField } from '../../../../oldComponents/shared/ReadOnlyFields'
 import styles from '../../../../oldComponents/Summary.css'
 import messages from '../messages'
@@ -16,7 +15,7 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
   const [edit, setEdit] = useState(false)
 
   return (
-    <Unit sm="1-1" className={cssClasses('Summary')}>
+    <div className={cssClasses('Summary')}>
       <div className={cssClasses('Summary__Title')}>{title}</div>
       {edit ? (
         <div className={cssClasses('Summary__Tags__Wrap')}>
@@ -51,7 +50,7 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
           </span>
         </div>
       )}
-    </Unit>
+    </div>
   )
 }
 Contacts.defaultProps = {

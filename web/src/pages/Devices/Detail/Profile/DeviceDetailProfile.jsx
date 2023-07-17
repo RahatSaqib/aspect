@@ -510,14 +510,12 @@ const DeviceDetailProfile = ({
 
       <PerformanceReport
         performanceReport={devicePerformance}
-        // ma-tch={m-atch}
         dailyCapacity={dailyCapacity || 0}
         location={location}
         culture={culture}
       />
 
       <AuthenticatedResults
-        // ma-tch={m-atch}
         navigate={navigate}
         location={location}
         sortDir={sortDir}
