@@ -6,7 +6,12 @@ function transformSampleData(data) {
   const output = {
     id: data?.id,
     externalId: data?.sampleExternalId,
-    originSite: { id: data?.sampleSiteId, name: data?.sampleSiteName, externalId: data?.sampleSiteExternalId },
+    originSite: {
+      id: data?.sampleSiteId,
+      name: data?.sampleSiteName,
+      stateName: data?.sampleSiteStateName,
+      externalId: data?.sampleSiteExternalId,
+    },
     clinicianName: data?.sampleData?.clinicianName || null,
     sampleType: {
       name: data?.sampleTypeName,

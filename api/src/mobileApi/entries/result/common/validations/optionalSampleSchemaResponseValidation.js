@@ -2,6 +2,7 @@ const Joi = require('@hapi/joi')
 
 const originSite = Joi.object({
   id: Joi.number().required().description('The ID of the origin site.'),
+  stateName: Joi.string().required().description('The name of the state where the origin site is located.'),
   name: Joi.string().required().description('The name of the origin site.'),
   externalId: Joi.string().required().description('The external ID of the origin site.'),
 })
