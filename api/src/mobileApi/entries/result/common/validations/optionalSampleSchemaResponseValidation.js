@@ -23,6 +23,10 @@ const baseSampleSchemaResponseValidation = Joi.object().keys({
   id: Joi.number().required().description('The ID of the sample.'),
   externalId: Joi.string().required().description('The external ID of the sample.'),
   originSite: originSite.allow(null, '').required().description('The origin site of the sample.'),
+  clinicianName: Joi.string()
+    .required()
+    .allow(null, '')
+    .description('The name of the clinician who registered the sample.'),
   sampleType: sampleType.allow(null, '').description('The type of the sample.'),
   status: status.allow(null, '').description('The status of the sample.'),
   collectedOn: Joi.allow(null, '').description('The date and time when the sample was collected in ISO 8601 format.'),

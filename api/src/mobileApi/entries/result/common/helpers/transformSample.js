@@ -7,6 +7,7 @@ function transformSampleData(data) {
     id: data?.id,
     externalId: data?.sampleExternalId,
     originSite: { id: data?.sampleSiteId, name: data?.sampleSiteName, externalId: data?.sampleSiteExternalId },
+    clinicianName: data?.sampleData?.clinicianName || null,
     sampleType: {
       name: data?.sampleTypeName,
       i18nKey: data?.sampleTypeI18nKey,
