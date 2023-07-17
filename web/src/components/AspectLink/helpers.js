@@ -44,7 +44,7 @@ export const buildURL = (baseUrl, params = {}) => {
  * @param {string} query The URL query to be parsed
  * @returns The object containing the key-value pairs
  */
-export const getParamsFromQuery = query =>
+const getParamsFromQuery = query =>
   query
     ? JSON.parse(`{"${query.replace(/&/g, '","').replace(/=/g, '":"')}"}`, function (key, value) {
         return key === '' ? value : decodeURIComponent(value)

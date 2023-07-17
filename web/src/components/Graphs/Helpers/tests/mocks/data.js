@@ -25,7 +25,6 @@ import {
 import { groupByKeyGrouped, mockedDeviceStatus, mockedDeviceStatusOut } from './deviceData'
 import { divergentDataFromAPIIn, divergentDataFromAPIOut } from './divergentData'
 import { pieDataActualFromAPIIn, pieDataActualFromAPIOut } from './pieData'
-import { pieRowDataFromAPIIn, pieRowDataFromAPIOut } from './pieRowData'
 
 export {
   barDataActualFromAPIIn,
@@ -43,8 +42,6 @@ export {
   mockedDeviceStatusOut,
   pieDataActualFromAPIIn,
   pieDataActualFromAPIOut,
-  pieRowDataFromAPIIn,
-  pieRowDataFromAPIOut,
   tickDataForBarDisplayMethodPercentageIn,
   tickDataForBarDisplayMethodActualIn,
   tickDataForBarYAxisShapeBookendsDisplayPercentageOut,

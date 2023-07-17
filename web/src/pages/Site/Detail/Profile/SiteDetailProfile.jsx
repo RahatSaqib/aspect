@@ -65,8 +65,6 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
   )
 }
 
-SiteDetailProfile.defaultProps = {}
-
 SiteDetailProfile.propTypes = {
   formatMessage: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
