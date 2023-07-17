@@ -49,7 +49,7 @@ async function seed(knex) {
 
     const devicesWithIP = devices.filter(d => d.hasImplementingPartner).map(d => d.deviceId)
     const devicesWithoutIP = devices.filter(d => !d.hasImplementingPartner).map(d => d.deviceId)
-    if (devicesWithoutIP.length > 0 && devicesWithIP.length > 0) {
+    if (devicesWithoutIP.length > 0) {
       // If at least one of the other devices is not Mercy Corps,
       // then duplicate the site with the name "[OLD NAME]-MC" and reassign the MC device to this new "MC" version of the site
       const clonedSiteId = await cloneSite(knex, siteId)
