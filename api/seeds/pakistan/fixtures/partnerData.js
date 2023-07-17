@@ -23,6 +23,16 @@ module.exports = {
     'GxEbola',
     'assayGXCovid19',
   ],
+  consumableStrategies: {
+    GxMtbRifCartridge: 'withExpirationDateStrategy',
+    GxMtbRifUltraCartridge: 'withExpirationDateStrategy',
+    GxHiv1VlCartridge: 'withExpirationDateStrategy',
+    GxHiv1QualCartridge: 'withExpirationDateStrategy',
+    GxEbolaCartridge: 'withExpirationDateStrategy',
+    assayGXCovid19Cartridge: 'withExpirationDateStrategy',
+    GxMtbXdrCartridge: 'withExpirationDateStrategy',
+    GxHCVCartridge: 'withExpirationDateStrategy',
+  },
   fixtures: {
     jobFunctions,
   },
