@@ -31,6 +31,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
     }
     return {
       id: result.id,
+      assayExternalId: result.assayExternalId,
       assayAvatar: transformAssayAvatar(result),
       clinicalResponse,
       comments: extractFromDataById(comments, 'resultId', result.id),
