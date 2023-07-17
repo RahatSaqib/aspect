@@ -17,7 +17,6 @@ import format from 'date-fns/format'
 import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import Immutable from 'immutable'
-import flowRight from 'lodash/flowRight'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useQuery, useQueryClient } from 'react-query'
@@ -41,39 +40,13 @@ import { useFilterValues } from '../../../providers/FilterProvider'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
-import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
-  composeSanitizer,
-} from '../../../utils/selectors/searchParams'
+import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
 import styles from './DeviceList.css'
 import getExportableFile from './DeviceQueries'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
-
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: [
-    'name',
-    'siteName',
-    'maintenanceStatusI18nKey',
-    'approvalStatusI18nKey',
-    'availabilityRate',
-    'errorRate',
-    'createdOn',
-    'lastPingOn',
-    'resultCountLastMonth',
-    'resultCountThisMonth',
-    'deviceStatus',
-    'connectorVersion',
-    'lastResultConductedOn',
-  ],
-})
-const filtersFromLocation = composeSanitizer(
-  flowRight(searchParams => searchParams.get('filters') || ''),
-  searchSanitizer
-)
 
 const { dateFormat } = getAspectDisplayPreferences().toJS()
 
@@ -167,6 +140,7 @@ const DeviceList = () => {
     setConfirmationVisible(false)
   }
 
+  const [isLoading, setIsLoading] = useState(false)
   const [items, setItems] = useState(new Items())
   const [table, setTable] = useState(new Table())
   const [total, setTotal] = useState()
@@ -201,14 +175,23 @@ const DeviceList = () => {
     navigate(`/browse/device/list/${deviceId}/alerts`)
   }
 
-  const { data, isError, error, isLoading } = useQuery(
+  const {
+    data,
+    isError,
+    error,
+    isLoading: tableLoading,
+  } = useQuery(
     [DEVICE_LIST.KEY, { params }],
     async () => fetchWrapperForQueries({ endpoint: DEVICE_LIST.ENDPOINT, params: { ...params, hasResults: 1 } }),
     { enabled: !isEmpty(params) }
   )
 
   useEffect(() => {
-    if (!isLoading && data) {
+    setIsLoading(tableLoading)
+  }, [tableLoading])
+
+  useEffect(() => {
+    if (!tableLoading && data) {
       const { data: list, total: totalItems } = data
       setItems(receiveListWithSet(items, Immutable.fromJS(list)))
       setTotal(totalItems)
@@ -225,10 +208,16 @@ const DeviceList = () => {
   }, [location])
 
   const onExportClick = formatType => {
-    const { sanitized, value: filtersParams } = filtersFromLocation(location)
-    if (!sanitized) {
-      return getExportableFile(filtersParams, formatType, sortCol, sortDir, 0, total, 'devices')
-    }
+    setIsLoading(true)
+    return getExportableFile(filters, formatType, sortCol, sortDir, total, 'devices')
+      .then(response => {
+        setIsLoading(false)
+        return response
+      })
+      .catch(error => {
+        setIsLoading(false)
+        throw error
+      })
   }
 
   if (isError) {
@@ -238,7 +227,7 @@ const DeviceList = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.devicesTitle)} disableBack>
-        <PermissionChecker permissions={['device:admin']}>
+        <PermissionChecker permissions={['device:edit']}>
           <AspectButton
             onClick={() => {
               setConfirmationVisible(false)

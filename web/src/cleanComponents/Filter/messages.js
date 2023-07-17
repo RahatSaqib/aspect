@@ -9,7 +9,7 @@ import {
   resultWorkflowStatusMessages,
 } from '../../messages'
 
-export const messages = {
+const messages = {
   ...consumableMessages,
   ...resultCategory,
   ...resultWorkflowStatusMessages,
@@ -73,6 +73,14 @@ export const messages = {
     whereSiteNameIncludes: {
       id: 'filter.btnGroup.whereSiteNameIncludes',
       defaultMessage: 'site name includes "{siteName}"',
+    },
+    whereOriginSiteNameIncludes: {
+      id: 'filter.btnGroup.whereOriginSiteNameIncludes',
+      defaultMessage: 'origin site name includes "{originSiteName}"',
+    },
+    whereDestinationSiteNameIncludes: {
+      id: 'filter.btnGroup.whereDestinationSiteNameIncludes',
+      defaultMessage: 'destination site name includes "{destinationSiteName}"',
     },
     whereSiteIdIncludes: {
       id: 'filter.btnGroup.whereSiteIdIncludes',

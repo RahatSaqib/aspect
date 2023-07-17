@@ -265,7 +265,7 @@ describe('Site routes', () => {
           'contacts',
           'siteType',
         ])
-        const params = { ...newSiteData, street2: newStreet2 }
+        const params = { ...newSiteData, street2: newStreet2, tags: 'Tag' }
         const updateSiteResponse = await server
           .put(`${path}/${siteId}`)
           .send(params)

@@ -1,16 +1,16 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { resultWorkflowStatusToId } = require('../../../../shared/dictionary')
 const {
   countAllAwaitingTreatment,
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
+  getAcknowledgementsByResultIds,
 } = require('./db')
 const { getAllSamplesRegistered } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
-const { transFormResultResponse } = require('./helpers/transFormResultResponse')
+const { transformResultResponse } = require('./helpers/transformResultResponse')
 const { getConstraints } = require('../../../../auth/constraints')
 const { getUser } = require('../../../../auth/service')
 const {
@@ -44,6 +44,7 @@ async function fetchEntriesServiceHandler(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const samples = await getAllSamplesRegistered(query, dataConstraints)
   const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
+  const acknowledgements = await getAcknowledgementsByResultIds(results)
   const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
   const user = await getUser(auth.credentials.name)
   await addResultDownloadLog(resultIdsToBeRegistered, user.id)
@@ -56,10 +57,13 @@ async function fetchEntriesServiceHandler(request) {
   const followUps = await getFollowUpsByResultIds(results)
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
-  const acknowledgedId = await resultWorkflowStatusToId('Acknowledged')
-  const transformedResults = transFormResultResponse(results, followUps, comments, acknowledgedId)
+  const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
-  const entries = _.orderBy(_.uniqBy(_.concat(transformedResults, transformedSamples), 'id'), ['updatedOn'], ['desc'])
+  const entries = _.orderBy(
+    _.uniqBy(_.concat(transformedResults, transformedSamples).filter(_.identity), 'id'),
+    ['updatedOn'],
+    ['desc']
+  )
 
   return {
     ok: !!entries,

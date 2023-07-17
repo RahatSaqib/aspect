@@ -4,6 +4,7 @@ const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('.
 const { allResultCategoryToId, resultCategoryToId, deviceMaintenanceTypeToId } = require('../../shared/dictionary')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
+const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { usedAssay } = require('../../assay/common/db')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 
@@ -14,6 +15,8 @@ const SELECT_SHOW_FIELDS = [
   'd.createdOn',
   'd.lastPingOn',
   'd.lastSeenOn as lastSeen',
+  'd.implementingPartnerId',
+  'ip.name as implementingPartnerName',
   'da.name as approval',
   'dms.externalId as maintenanceStatus',
   'dms.i18nKey as maintenanceStatusI18nKey',
@@ -96,6 +99,7 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
     .modify(
       addConstraints,
       dataConstraints,
@@ -169,13 +173,20 @@ function getDeviceByIdBaseQuery(
 function getDeviceBaseExtendedQuery(
   query,
   dataConstraints,
-  showUnapprovedDevices = false,
-  showDecommissionedDevices = false,
-  excludeInternalDevices = true
+  {
+    showUnapprovedDevices = false,
+    showDecommissionedDevices = false,
+    excludeInternalDevices = true,
+    extendJoinToAssays = false,
+  } = {
+    showUnapprovedDevices: false,
+    showDecommissionedDevices: false,
+    excludeInternalDevices: true,
+    extendJoinToAssays: false,
+  }
 ) {
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
@@ -189,7 +200,8 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (query.assayExternalId)
+      if (extendJoinToAssays) queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+      else if (query.assayExternalId)
         queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId').where('a.externalId', query.assayExternalId)
 
       if (query.resultCategoryId)
@@ -237,7 +249,7 @@ function getDeviceBaseExtendedQuery(
 
 async function getBasicsForDevicesReport(dataConstraints, query) {
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
 
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
@@ -256,6 +268,18 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
     deviceQuery,
     resultCategoryIds,
   }
+}
+
+async function getLastUploadDateBySites(siteIds, timeOffset) {
+  return knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .whereIn('s.id', siteIds)
+    .groupBy('s.id')
+    .select({
+      siteId: 's.id',
+      lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.endedOn)', timeOffset),
+    })
 }
 
 async function getSourceDevices(sourceDevicesIds) {
@@ -750,4 +774,5 @@ module.exports = {
   moduleDisabledIssues,
   modulesWithLastResultBeforeMinDate,
   getDeviceByIdBaseQuery,
+  getLastUploadDateBySites,
 }

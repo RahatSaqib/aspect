@@ -499,20 +499,24 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
   `
     )
 
-  return knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+  return knex('Site as s')
+    .innerJoin('Device as d', 's.id', 'd.siteId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Result as r', onQuery => {
+      onQuery
+        .on('d.id', 'r.deviceId')
+        .andOn('r.endedOn', '>=', knex.raw(`'${new Date(dateFrom).toISOString()}'`))
+        .andOn('r.endedOn', '<', knex.raw(`'${new Date(dateTo).toISOString()}'`))
+    })
+    .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('SiteTag as sita', 's.id', 'sita.siteId')
+    .leftOuterJoin('Tag as t', 't.id', 'sita.tagId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .whereIn('a.id', [assayIds.GxMtbXdr])
-    .modify(addConstraints, dataConstraints, {
-      site: 's',
-      geography: 'g',
-      result: 'r',
+    .where(qWhere => {
+      qWhere.whereIn('a.id', [assayIds.GxMtbXdr]).orWhereNull('a.id')
     })
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -521,9 +525,9 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
     })
     .select(`s.id as siteId`, 'g.stateId', 'g.lgaId')
     .groupBy('s.id')
+    .select(knex.raw('CASE WHEN COUNT(r.id) IS NOT NULL AND COUNT(r.id) > 0 THEN 1 ELSE 0 END as hasPerformedXdr')) // -> to be changed in follow-up
     .count({
-      totalPmdtSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
-      totalXdrSites: knex.raw('DISTINCT s.id'), // -> to be changed in follow-up
+      isPmdt: knex.raw(`DISTINCT CASE WHEN t.title = 'PMDT' THEN 1 ELSE null END`),
       cntAll: knex.raw('DISTINCT r.id'),
       cnt_mtb: counter('r.id', mtbDetected),
       cnt_inh: countXdr('INH'),
@@ -558,22 +562,37 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
         qb.leftJoin(countsBase.as('_sub'), '_sub.stateId', 'location.id')
         qb.whereNull('g.lgaId')
       }
-      qb.groupBy('location.id')
     })
     .modify(addConstraints, dataConstraints, { geography: 'g' })
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-    })
+    .modify(filterParams, query, { countryId: 'g.countryId', stateId: 'g.stateId', lgaId: 'g.lgaId' })
 
-  const total = (await baseQuery.clone()).length
-  const data = await baseQuery
+  const [totals] = await baseQuery
     .clone()
     .select(
+      knex.raw(`'TOTAL' as locationName`),
+      knex.raw(`COUNT(DISTINCT location.id) as totalRecords`),
+      counterField('isPmdt'),
+      counterField('hasPerformedXdr'),
+      counterField('cntAll'),
+      counterField('cnt_mtb'),
+      counterField('cnt_inh'),
+      counterField('cnt_flq'),
+      counterField('cnt_amk'),
+      counterField('cnt_kan'),
+      counterField('cnt_cap'),
+      counterField('cnt_eth'),
+      counterField('cnt_Invalid'),
+      counterField('cnt_NoResult'),
+      counterField('cnt_Error')
+    )
+
+  const data = await baseQuery
+    .clone()
+    .groupBy('location.id')
+    .select(
       `location.name as locationName`,
-      counterField('totalPmdtSites'),
-      counterField('totalXdrSites'),
+      counterField('isPmdt'),
+      counterField('hasPerformedXdr'),
       counterField('cntAll'),
       counterField('cnt_mtb'),
       counterField('cnt_inh'),
@@ -592,7 +611,8 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       if (query.size) _q.modify(pageParams, query)
     })
 
-  return { total, data, length: data.length }
+  data.unshift(_.omit(totals, 'totalRecords'))
+  return { total: totals.totalRecords, data, length: data.length }
 }
 
 module.exports = {

@@ -409,8 +409,8 @@ function transformPatientDataBySchema(patientData, patientDataSchema) {
   return _.orderBy(transformedData, ['order'], ['asc'])
 }
 
-// Trasnformed data v2 for result by Id
-const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, comments) => {
+// Transformed data v2 for result by Id
+const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, comments, acknowledgement) => {
   const assayAvatar = assayAvatarColorsIcon[data.diseaseExternalId]
     ? assayAvatarColorsIcon[data.diseaseExternalId]
     : assayAvatarColorsIcon.default
@@ -419,10 +419,8 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     ['date', 'updatedOn']
   )
   const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
-  const acknowledgedId = await resultWorkflowStatusToId(ACKNOWLEDGED)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
   const patientDataSchema = data.patientDataSchema ? JSON.parse(data.patientDataSchema) : null
-  const isRecorded = data.resultWorkflowStatusId === acknowledgedId
   const resultData = data.resultData
     ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
     : null
@@ -509,8 +507,8 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
       contentIcon: assayAvatar.contentIcon,
     },
     clinicalResponse: {
-      recorded: isRecorded,
-      confirmedOn: isRecorded ? data.resultWorkflowStatusChangedOn : null,
+      recorded: !!acknowledgement,
+      confirmedOn: acknowledgement?.acknowledgedOn ?? null,
     },
     testInformation: [],
   }
@@ -555,6 +553,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     }
     mainData.testInformation.push(testInfo3)
   }
+
   return mainData
 }
 

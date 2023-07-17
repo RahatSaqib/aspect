@@ -12,6 +12,13 @@ import { INVENTORY_KEY } from './inventoryKeys.js'
 
 const getDownload = async restParams => {
   const { fileFormat, ...rest } = restParams
+  if (rest.minDate) {
+    rest.minDate = rest.minDate.toISOString()
+  }
+  if (rest.maxDate) {
+    rest.maxDate = rest.maxDate.toISOString()
+  }
+
   return aspectFetch(`/inventory/transfer/export?${stringify({ ...rest, format: fileFormat })}`, {
     errorNotifications: {
       400: filterFieldsRejectedError(

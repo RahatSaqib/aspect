@@ -62,6 +62,9 @@ const expected347 = [
       resultId: 347,
       recorded: false,
     },
+    hasFollowUp: false,
+    requiresFollowUp: false,
+    noFollowUpPossible: false,
     comments: [],
     followUps: [],
     history: [
@@ -116,13 +119,16 @@ const expected347 = [
       sampleId: 'SMP-TB-31',
       sampleIdFlat: 'smptb31',
       sampleSite: 'oden lab',
-      patientId: '571586406',
+      patientId: '57-158-6406',
       platform: 'aspect-mobile',
       filterMeta: {
         entryType: 'testResult',
         treatmentStatus: '',
         transferStatus: 'awayTransfer',
         assayType: 'GxMtbRif',
+        hasFollowUp: false,
+        requiresFollowUp: false,
+        noFollowUpPossible: false,
       },
     },
     testInformation: [
@@ -236,6 +242,9 @@ const expected450 = [
       treatment: 'dstb-2rhze',
       treatmentStarted: '2023-05-20T19:45:55.000Z',
     },
+    hasFollowUp: true,
+    requiresFollowUp: false,
+    noFollowUpPossible: false,
     comments: [],
     followUps: [
       {
@@ -333,13 +342,16 @@ const expected450 = [
       sampleId: 'SMP-TB-14',
       sampleIdFlat: 'smptb14',
       sampleSite: 'atlanta nmrl',
-      patientId: '846873493',
+      patientId: '84-687-3493',
       platform: 'aspect-mobile',
       filterMeta: {
         entryType: 'testResult',
         treatmentStatus: 'AwaitingTreatment',
         transferStatus: '',
         assayType: 'GxMtbRifUltra',
+        hasFollowUp: true,
+        requiresFollowUp: false,
+        noFollowUpPossible: false,
       },
     },
     testInformation: [
@@ -377,7 +389,7 @@ const searchKeys450 = {
   sampleId: 'SMP-TB-14',
   sampleIdFlat: 'smptb14',
   sampleSite: 'atlanta nmrl',
-  patientId: '846873493',
+  patientId: '84-687-3493',
   platform: 'aspect-mobile',
   filterMeta: {
     entryType: 'testResult',

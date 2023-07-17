@@ -46,7 +46,7 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
   },
   sections: [
     enabledSection(formatMessage),
-    notificationTypeSection(formatMessage, partner), // notification header (enabled/type)
+    notificationTypeSection(formatMessage, partner, isEdit), // notification header (enabled/type)
     issueBasedSection(formatMessage), // only for ['issueBased]
     resultBasedSection(formatMessage, partner), // only for ['resultBased']
     ...reportBasedSection(formatMessage),

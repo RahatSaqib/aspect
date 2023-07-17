@@ -254,6 +254,7 @@ const deviceDetailsResponseFields = Joi.object()
     state: Joi.string().allow('', null).description('The state where the device is located'),
     siteId: Joi.number().allow('', null).description('The ID of the site where the device is located'),
     implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
+    implementingPartnerName: Joi.string().allow('', null).description('Implementing partner name'),
     siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
     hostId: Joi.string().allow('', null).description('The host ID of the device'),
     deviceType: Joi.object()

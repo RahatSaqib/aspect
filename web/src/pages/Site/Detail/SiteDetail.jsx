@@ -1,15 +1,14 @@
 import React, { useEffect, useState } from 'react'
-import { LinearProgress, Paper, Box } from '@mui/material'
+import { Box, LinearProgress, Paper } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useSelector } from 'react-redux'
-import { Routes, Route, Navigate, useParams } from 'react-router-dom'
+import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
 import useSite from '../../../hooks/site/useSite'
-import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import TaskList from '../../../oldPages/task/list/TaskList'
@@ -31,14 +30,12 @@ const titleMessages = defineMessages({
 export const SiteDetail = ({ navigate, location }) => {
   const intl = useI18n()
   const { siteId } = useParams()
-  const { isLoading: isSiteLoading, data: site } = useSite(siteId)
-  const { isLoading: isTagLoading, data: siteTags } = useTagByTypeAndId('site', siteId)
+  const { isLoading, data: site } = useSite(siteId)
   const { editable, user } = useSelector(state => ({
     editable: isEditable(state.user, 'site'),
     user: state.user.toJS(),
   }))
   const [latLong, setLatLong] = useState({ lat: 0, lng: 0 })
-  const isLoading = isSiteLoading || isTagLoading
 
   useEffect(() => {
     setLatLong({ lat: site?.latitude, lng: site?.longitude })
@@ -76,13 +73,7 @@ export const SiteDetail = ({ navigate, location }) => {
             <Route
               path=""
               element={
-                <SiteDetailProfile
-                  formatMessage={intl.formatMessage}
-                  disabled={!editable}
-                  site={site}
-                  siteTags={siteTags}
-                  user={user}
-                />
+                <SiteDetailProfile formatMessage={intl.formatMessage} disabled={!editable} site={site} user={user} />
               }
             />
             <Route
@@ -96,11 +87,7 @@ export const SiteDetail = ({ navigate, location }) => {
             <Route
               path="edit"
               element={
-                editable ? (
-                  <SiteForm site={site} siteTags={siteTags} onLatLongChange={setLatLong} />
-                ) : (
-                  <Navigate replace to={location} />
-                )
+                editable ? <SiteForm site={site} onLatLongChange={setLatLong} /> : <Navigate replace to={location} />
               }
             />
           </Routes>

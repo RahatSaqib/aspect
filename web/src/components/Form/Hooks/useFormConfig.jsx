@@ -118,15 +118,15 @@ export const useFormConfig = formConfig => {
   )
 
   const updateField = useCallback(
-    (fieldName, value, { formik, toggleEdit = true, isTouched = true }) => {
+    (fieldName, value, { formik, toggleEdit = true, isTouched = true, shouldValidate = false }) => {
       /**
        * 1. set field 'touched' and do NOT run validation (3rd param is 'false')
        */
-      formik.setFieldTouched(fieldName, isTouched, false)
+      formik.setFieldTouched(fieldName, isTouched, shouldValidate)
       /**
        * 2. set new value to the field and do NOT run validation (3rd param is 'false')
        */
-      formik.setFieldValue(fieldName, value, false)
+      formik.setFieldValue(fieldName, value, shouldValidate)
       /**
        * 3. assemble latest set of `values`
        * (formik.values is not yet up-to-date because it is updated asynchronously by formik engine)

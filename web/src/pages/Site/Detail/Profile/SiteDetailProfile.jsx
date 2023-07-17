@@ -13,7 +13,7 @@ const cssClasses = classnames.bind(styles)
 
 const messages = { ...commonDefinitions, ...localMessages }
 
-const SiteDetailProfile = ({ site, siteTags, formatMessage, disabled, user }) => {
+const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
   const { data: siteContacts } = useContactBySite(site.id)
 
   const fields = [
@@ -42,7 +42,7 @@ const SiteDetailProfile = ({ site, siteTags, formatMessage, disabled, user }) =>
           to: `/browse/device/list/${device.id}`,
         })),
     },
-    { label: formatMessage(messages.fieldTags), value: siteTags.map(tag => tag.title).join(', ') },
+    { label: formatMessage(messages.fieldTags), value: site?.tags.map(tag => tag.title).join(', ') },
   ]
   return (
     <div>
@@ -65,16 +65,11 @@ const SiteDetailProfile = ({ site, siteTags, formatMessage, disabled, user }) =>
   )
 }
 
-SiteDetailProfile.defaultProps = {
-  siteTags: [],
-}
-
 SiteDetailProfile.propTypes = {
   formatMessage: PropTypes.func.isRequired,
   // eslint-disable-next-line react/forbid-prop-types
   site: PropTypes.object.isRequired,
   disabled: PropTypes.bool.isRequired,
-  siteTags: PropTypes.arrayOf(PropTypes.object),
   user: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 

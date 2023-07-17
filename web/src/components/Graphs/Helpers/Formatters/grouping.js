@@ -10,14 +10,15 @@ import sortBy from 'lodash/sortBy'
 import sumBy from 'lodash/sumBy'
 import times from 'lodash/times'
 import uniqBy from 'lodash/uniqBy'
-import graphColorMap from '../Variables'
 import {
+  dateRangeOptions,
   calcPercentageSplitBar,
   normaliseKeys,
   filterByMultiple,
   calcPercentageForGraphs,
   negateTimeZoneOffset,
-} from './index'
+} from '.'
+import graphColorMap from '../Variables'
 
 const groupByKey = (data, indexBy, keyToConsume = false, displayMethod = 'actual', formatDate = false, filterBy) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
@@ -188,6 +189,157 @@ const groupForInventoryStatusAPI = (data, i18nKeys, formatMessage, messages) => 
   return grouped
 }
 
+const groupForPieRow = (data, mergedParams) => {
+  const keysToRenderOrder = [
+    'assayName',
+    'cntAll',
+    'cntPositive',
+    'percentPositive',
+    'percentReported',
+    'percentViaSms',
+    'percentViaEmail',
+    'percentWithin2Hours',
+  ]
+
+  const pieValueFormat = key => {
+    let type
+    switch (true) {
+      case key.includes('percent'):
+        type = 'percent'
+        break
+      case key.includes('cnt'):
+        type = 'int'
+        break
+
+      default:
+        type = 'string'
+        break
+    }
+    return type
+  }
+
+  const pieWidgetType = (_key, value, difference) => {
+    let type
+    switch (true) {
+      case typeof value === 'number' && difference !== undefined:
+        type = 'doughnut'
+        break
+
+      case typeof value === 'string':
+        type = 'string'
+        break
+
+      default:
+        type = 'solid'
+        break
+    }
+    return type
+  }
+
+  const buildLink = (id, assayId, resultCategoryPositiveId, mergedParams) => {
+    let link
+    const { dateRanges } = dateRangeOptions('dateRanges')
+    // const dateRanges = getDateRanges[Object.keys(getDateRanges)]
+    const dateMonthStart = mergedParams && mergedParams.length ? mergedParams[0].currentMonth : false
+    const dateMonthEnd =
+      dateRanges && dateRanges.length
+        ? filter(dateRanges, {
+            value: { minDate: dateMonthStart },
+          })[0].value.maxDate
+        : false
+
+    const linkBase = '/browse/result?filters='
+    const assayUrl = `assayId%3D${assayId}`
+    const minDateUrl = `minDate%3D${dateMonthStart}`
+    const maxDateUrl = `maxDate%3D${dateMonthEnd}`
+    const resultCategoryUrl = `resultCategoryId%3D${resultCategoryPositiveId}`
+
+    switch (true) {
+      case id === 'cntAll':
+        link = `${linkBase}${assayUrl}%26${minDateUrl}%26${maxDateUrl}`
+        break
+
+      case id === 'cntPositive':
+        link = `${linkBase}${assayUrl}%26${minDateUrl}%26${maxDateUrl}%26${resultCategoryUrl}`
+        break
+
+      default:
+        link = false
+        break
+    }
+
+    return link
+  }
+
+  const valueSplit = (key, value, type, difference) => {
+    const diffs = difference !== undefined ? { difference } : {}
+    switch (true) {
+      case type === 'doughnut':
+        return [
+          {
+            id: key,
+            label: key,
+            value,
+            ...diffs,
+          },
+          {
+            id: 'noData',
+            label: 'noData',
+            value: 100 - value,
+            ...diffs,
+          },
+        ]
+
+      case type === 'string':
+        return [
+          {
+            id: key,
+            label: key,
+            value: value.replace(/(^|\s)GeneXpert(\s|$)/gm, ''),
+          },
+        ]
+
+      default:
+        return [
+          {
+            id: key,
+            label: key,
+            value: value > 0 ? value : 100,
+            valueLabel: value,
+            ...diffs,
+          },
+        ]
+    }
+  }
+
+  const pieRows = []
+
+  data.map(({ assayId, resultCategoryPositiveId, ...rest }) => {
+    const pieRow = {}
+    for (const [key, value] of Object.entries(rest)) {
+      if (keysToRenderOrder.includes(key)) {
+        const hasChange = rest[`${key}Change`]
+        const type = pieWidgetType(key, value, hasChange)
+        const format = pieValueFormat(key)
+        const link = buildLink(key, assayId, resultCategoryPositiveId, mergedParams)
+        pieRow[key] = {
+          heading: `${key}`,
+          type,
+          format,
+          link,
+          value: valueSplit(key, value, type, hasChange),
+        }
+      }
+    }
+    return pieRows.push(
+      Object.keys(pieRow).reduce((r, k) => {
+        return r.concat(pieRow[k])
+      }, [])
+    )
+  })
+  return pieRows
+}
+
 export {
   groupByKey,
   groupForPie,
@@ -196,4 +348,5 @@ export {
   groupForOldTreatmentAPI,
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,
+  groupForPieRow,
 }

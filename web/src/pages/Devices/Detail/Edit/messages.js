@@ -5,6 +5,7 @@ export default defineMessages({
   shortName: { id: 'pages.DeviceDetailEdit.shortName', defaultMessage: 'Short Name' },
   location: { id: 'pages.DeviceDetailEdit.location', defaultMessage: 'Site' },
   capacity: { id: 'pages.DeviceDetailEdit.capacity', defaultMessage: 'Capacity' },
+  partner: { id: 'pages.DeviceDetailEdit.partner', defaultMessage: 'Implementing Partner' },
   notes: { id: 'pages.DeviceDetailEdit.notes', defaultMessage: 'Notes' },
   deviceType: { id: 'pages.DeviceDetailEdit.deviceType', defaultMessage: 'Device Type' },
   serial: { id: 'pages.DeviceDetailEdit.serial', defaultMessage: 'Serial Number' },

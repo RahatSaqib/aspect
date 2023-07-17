@@ -230,12 +230,22 @@ async function removeUser(userId) {
   await knex('User').where({ id: userId }).del()
 }
 
+async function getUserByToken(token) {
+  const response = await server
+    .get('/api/account-details/current')
+    .set('Authorization', `Bearer ${token}`)
+    .send()
+    .then(res => res.body.data)
+  return response
+}
+
 async function getAdminId() {
   const { id: adminId } = await knex('User').where({ name: 'admin' }).first()
   return adminId
 }
 
 module.exports = {
+  getUserByToken,
   getAccessToken,
   createUser,
   removeUser,

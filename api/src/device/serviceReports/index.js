@@ -79,10 +79,10 @@ function getMonthsDatefields(minDate, maxDate, culture) {
 async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getPersonByPersonId(auth.credentials.personId)
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints).whereNotIn('dt.externalId', [
-    'Aspect',
-    'GxAlert',
-  ])
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true }).whereNotIn(
+    'dt.externalId',
+    ['Aspect', 'GxAlert']
+  )
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
@@ -283,7 +283,7 @@ async function getDeviceCapacityReport(auth, query) {
 
   minDate = minDate || addMonths(new Date(), -12).toISOString()
 
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints)
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
   const monthlyCapacity = deviceQuery
     .clone()
     .join('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
@@ -492,7 +492,8 @@ async function getErrorRateByUserReport(auth, query) {
 async function getAllDeviceReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
-  const rows = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const rows = await builder
 
   return {
     ok: true,
