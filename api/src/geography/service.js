@@ -63,7 +63,7 @@ async function countrySelectList(request) {
     countries = await query('Get countries for select list')
       .from('Country as c')
       .leftJoin('Geography as g', 'g.countryId', 'c.id')
-      .modify(addConstraintsLocal, dataConstraints, request?.query?.all ? {} : { geography: 'g' })
+      .modify(addConstraintsLocal, dataConstraints, request.query?.all ? {} : { geography: 'g' })
       .whereNull('g.stateId')
       .whereNull('g.lgaId')
       .orderBy(['c.name'], 'asc')
