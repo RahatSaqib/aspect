@@ -1277,18 +1277,12 @@ async function seed(knex) {
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.devices },
     { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.results },
-    { jobFunctionId: jobFunctionIdAdmin, widgetId: widgetIds.contacts },
 
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.devices },
-    { jobFunctionId: jobFunctionIdManager, widgetId: widgetIds.contacts },
 
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdPartnerTwo, widgetId: widgetIds.devices },
-    {
-      jobFunctionId: jobFunctionIdPartnerTwo,
-      widgetId: widgetIds.contacts,
-    },
 
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.sites },
     { jobFunctionId: jobFunctionIdClinician, widgetId: widgetIds.devices },

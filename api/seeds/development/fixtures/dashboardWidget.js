@@ -25,7 +25,6 @@ const {
     numberOfDevicesExperiencingServiceInterruption,
     averageDurationServiceInterruption,
     percentageOfDaysWithServiceInterruption,
-    personTitle,
     devicesTitle,
     sitesTitle,
     resultsTitle,
@@ -74,7 +73,6 @@ module.exports = {
     numberOfDevicesExperiencingServiceInterruption,
     averageDurationServiceInterruption,
     percentageOfDaysWithServiceInterruption,
-    personTitle,
     devicesTitle,
     sitesTitle,
     {
