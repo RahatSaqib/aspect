@@ -424,7 +424,8 @@ const inventoryLog = {
 
 const tbWorkloadSummary = {
   name: 'Report of TB Workload Summary',
-  description: 'Summary of TB Workload grouped by month, quarter and year for all regions',
+  description:
+    'Summary of TB Workload (MTB RIf and Ultra only for last 5 years) grouped by month, quarter and year for all regions.',
   i18nKey: 'reportTBWorkloadSummary',
   externalId: 'tb_workload_summary', // folder name in /templates
   i18nKeyDescription: 'reportTBWorkloadSummaryDescription',
