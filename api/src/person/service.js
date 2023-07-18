@@ -221,15 +221,20 @@ async function validateContact(request) {
 async function getPersonDetails(personId, dataConstraints) {
   const personDetails = await query('Get person details')
     .from('Person as p')
+    .leftJoin('Geography as g', 'p.geographyId', 'g.id')
     .leftOuterJoin('Job as j', 'p.id', 'j.personId')
     .leftOuterJoin('JobContext as jc', 'jc.jobId', 'j.id')
-    .leftOuterJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .leftOuterJoin('Geography as jg', 'jc.geographyId', 'jg.id')
     .leftJoin('User as u', 'p.userId', 'u.id')
     .leftOuterJoin('State as s', 'g.stateId', 's.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .where({ 'p.id': personId })
-    .where(q => q.modify(addConstraints, dataConstraints, { geography: 'g' }).orWhereRaw('jc.id IS NULL'))
+    .where(q =>
+      q
+        .modify(addConstraints, dataConstraints, { geography: 'jg' })
+        .orWhereRaw('jc.id IS NULL')
+        .orWhereRaw('jg.id IS NULL')
+    )
     .where({ 'p.id': personId })
     .first(
       'p.id',
@@ -262,6 +267,7 @@ async function getPersonDetails(personId, dataConstraints) {
       'p.disabledOn',
       'j.id as jobId'
     )
+
   if (personDetails) {
     const tags = await query('Get person tags')
       .from('Person as p')
