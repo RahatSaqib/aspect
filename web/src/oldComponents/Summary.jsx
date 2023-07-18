@@ -1,8 +1,8 @@
 import React, { Fragment } from 'react'
+import { Box } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
-import { Unit } from './pureGrids'
 import styles from './Summary.css'
 
 const cssClasses = classnames.bind(styles)
@@ -16,14 +16,14 @@ const descriptionSection = (description, to, action) => (
 )
 
 const Summary = ({ title, description, to, action, cols }) => (
-  <Unit sm={`1-${cols}`} className={cssClasses('Summary')}>
+  <Box sx={{ margin: '0 auto', width: `${100 / cols}%` }} className={cssClasses('Summary')}>
     <div className={cssClasses('Summary__Title')}>{title}</div>
     {Array.isArray(description)
       ? description.map(item => (
           <Fragment key={item.description}>{descriptionSection(item.description, item.to, item.action)}</Fragment>
         ))
       : descriptionSection(description, to, action)}
-  </Unit>
+  </Box>
 )
 
 Summary.propTypes = {

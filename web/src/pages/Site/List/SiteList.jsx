@@ -60,7 +60,6 @@ export const SiteList = ({ navigate, location }) => {
     { key: 'externalId', label: intl.formatMessage(messages.externalId), sortable: true },
     { key: 'totalDevices', label: intl.formatMessage(messages.totalDevices), sortable: true },
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
-    { key: 'siteIssues', label: intl.formatMessage(messages.siteIssues) },
   ]
 
   const onAlertClick = event => {
@@ -84,10 +83,6 @@ export const SiteList = ({ navigate, location }) => {
         throw error
       })
   }
-
-  // const onExcelClick = formatType => {
-  //   setDownload({ fileFormat: formatType, enabled: true })
-  // }
 
   const onRowClick = ({
     currentTarget: {

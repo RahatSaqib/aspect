@@ -17,7 +17,6 @@ const SELECT_LIST_FIELDS = [
   'l.name as lga',
   's.createdOn',
   's.externalId',
-  'activeIssues.siteIssues',
   knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
 ]
 
@@ -61,18 +60,6 @@ async function listSites(request) {
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
-    .leftOuterJoin(
-      knex('Issue as i')
-        .select('i.siteId', knex.raw("GROUP_CONCAT(DISTINCT ic.i18nKey SEPARATOR ',') as siteIssues"))
-        .innerJoin('IssueStatus as ist', 'ist.id', 'i.issuestatusid ')
-        .innerJoin('IssueType as it', 'i.issueTypeId', 'it.id')
-        .innerJoin('IssueCategory as ic', 'it.issueCategoryId', 'ic.id')
-        .whereNotIn('ist.name', ['OK', 'Resolved'])
-        .groupBy('i.siteId')
-        .as('activeIssues'),
-      'activeIssues.siteId',
-      's.id'
-    )
     .where(function () {
       if (!query.siteIds) {
         return
@@ -120,9 +107,6 @@ async function listSites(request) {
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
-  data.forEach(site => {
-    if (site.siteIssues) site.siteIssues = site.siteIssues.split(',')
-  })
   const result = { ok: true, total, length: data.length, data }
   return result
 }
