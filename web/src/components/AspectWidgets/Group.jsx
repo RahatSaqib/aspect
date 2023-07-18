@@ -1,10 +1,9 @@
 import React from 'react'
-import { Card } from '@mui/material'
+import { Card, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
-import { Unit } from '../../oldComponents/pureGrids'
 import messages from './messages'
 import { AspectWidget } from './Widget'
 import styles from './Widgets.css'
@@ -20,16 +19,18 @@ const AspectWidgetGroup = ({ data }) => {
   const { formatMessage: intlFormatMessage } = useI18n()
   return (
     <Card className={cssClasses('summary__groupCard')}>
-      {data.map(({ groupI18nKey, items }) => (
-        <Unit key={groupI18nKey} sm="1-2" lg="1-4" className={cssClasses('summary__groupWrapper')}>
-          <div className={cssClasses('summary__groupContainer')}>
-            <div className={cssClasses('summary__groupTitle')}>{intlFormatMessage(messages[groupI18nKey])}</div>
-            <div className={cssClasses('summary__groupWidgets')}>
-              <OrderedAspectWidget items={items} />
+      <Grid container spacing={2}>
+        {data.map(({ groupI18nKey, items }) => (
+          <Grid item sm={6} md={3} key={groupI18nKey} className={cssClasses('summary__groupWrapper')}>
+            <div className={cssClasses('summary__groupContainer')}>
+              <div className={cssClasses('summary__groupTitle')}>{intlFormatMessage(messages[groupI18nKey])}</div>
+              <div className={cssClasses('summary__groupWidgets')}>
+                <OrderedAspectWidget items={items} />
+              </div>
             </div>
-          </div>
-        </Unit>
-      ))}
+          </Grid>
+        ))}
+      </Grid>
     </Card>
   )
 }

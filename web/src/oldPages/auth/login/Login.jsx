@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Card, LinearProgress, TextField } from '@mui/material'
+import { Box, Button, Card, LinearProgress, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import get from 'lodash/get'
@@ -9,7 +9,6 @@ import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { Link, useNavigate, useLocation } from 'react-router-dom'
 import { compose } from 'recompose'
-import { Unit } from '../../../oldComponents/pureGrids'
 import recomposeForm, { errorProps } from '../../../oldComponents/recomposeForm'
 import { loginStart } from '../../../store/AuthRedux'
 import { reasonTypes } from '../loggedOutReasons'
@@ -88,8 +87,7 @@ export const Login = ({ intl, location, form, meta, values, onUserChange, onPass
   <div className={cssClasses('Background')}>
     <Helmet title={intl.formatMessage(messages.title)} />
     <div>
-      <Unit sm="1-24" md="1-6" lg="1-3" xl="1-3" />
-      <Unit sm="11-12" md="2-3" lg="1-3" xl="1-3">
+      <Box sx={{ margin: '0 auto', width: { sm: '90%', md: '66%', lg: '33%' } }}>
         <Card>
           <div className={cssClasses('Logo__Container')}>
             <AspectLogo />
@@ -140,7 +138,7 @@ export const Login = ({ intl, location, form, meta, values, onUserChange, onPass
           </form>
           {form.submitting && <LinearProgress className={cssClasses('Progress')} />}
         </Card>
-      </Unit>
+      </Box>
     </div>
   </div>
 )
