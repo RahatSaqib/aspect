@@ -24,7 +24,7 @@ const downloadEntriesResponseValidation = () => {
             .keys({
               id: Joi.number().required().description('Unique ID of the result for this instance of Aspect'),
               patientId: Joi.string()
-                .optional()
+                .required()
                 .allow(null, '')
                 .description('Unique ID of the patient for this entry if available'),
               requiresFollowUp: Joi.bool().required().description('Whether the entry requires a follow-up'),
