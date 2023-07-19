@@ -68,35 +68,6 @@ const geneXpertDevices = {
   },
 }
 
-const personTitle = {
-  jobFunctions: ['all'],
-  icon: 'MdPermIdentity',
-  title: 'Contacts',
-  titleI18nKey: 'personTitle',
-  subTitle: null,
-  subTitleI18nKey: null,
-  sqlForIndicator: `select count(distinct p.id) as cnt 
-  from Person as p 
-    inner join Partner on p.partnerId is NULL or p.partnerId = Partner.id 
-    left outer join Geography as g on p.geographyId = g.id 
-    left Join Job as j on p.id = j.personId
-    left Join JobContext as jc on jc.jobId = j.id
-    left Join Site as s on jc.siteId = s.id
-  where p.disabled = 0
-    and (s.id is null or s.disabled = 0)`,
-  link: '/browse/person',
-  linkParams: {
-    contactStatus: WIDGET_FILTER_KEYS.PERSON_DISABLED,
-  },
-  sortOrder: 3,
-  externalId: 'personTitle',
-  description: 'The number of contacts in the system.',
-  descriptionI18nKey: 'personDescription',
-  dashboards: {
-    home: {},
-  },
-}
-
 const devicesTitle = {
   jobFunctions: ['all'],
   icon: 'MdDesktopWindows',
@@ -2102,7 +2073,6 @@ module.exports = {
   WIDGET_FILTER_KEYS,
   stat: {
     resultsTitle,
-    personTitle,
     dashboardWidgetTestsPerDayTitle,
     dashboardWidgetValidResultsPc,
     utilizationRate,
