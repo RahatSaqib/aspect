@@ -2468,6 +2468,7 @@ async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collecte
     collectedOn,
     sampleTypeId,
     originSiteId,
+    registeredInAspect: true,
   }
 
   if (sampleId) {
