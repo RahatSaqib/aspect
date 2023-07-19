@@ -8,7 +8,6 @@ module.exports = {
       'sitesTitle',
       'devicesTitle',
       'resultsTitle',
-      'personTitle',
       'geneXpertDevices',
       'gxPositiveResultsNotified',
       'dashboardWidgetTestsPerDayTitle',
