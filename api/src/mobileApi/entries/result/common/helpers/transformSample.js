@@ -7,7 +7,7 @@ function transformSampleData(data) {
     data.sampleData = JSON.parse(data?.sampleData)
   }
   return {
-    id: data?.id,
+    id: data?.sampleId,
     externalId: data?.sampleExternalId,
     originSite: {
       id: data?.sampleSiteId,
