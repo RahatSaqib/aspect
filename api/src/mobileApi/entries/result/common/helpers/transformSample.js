@@ -3,10 +3,19 @@ const { transformSampleStatus } = require('./transformSampleStatus')
 
 function transformSampleData(data) {
   if (_.isNil(data)) return null
-  const output = {
-    id: data?.id,
+  if (data?.sampleData && typeof data?.sampleData === 'string') {
+    data.sampleData = JSON.parse(data?.sampleData)
+  }
+  return {
+    id: data?.sampleId,
     externalId: data?.sampleExternalId,
-    originSite: { id: data?.sampleSiteId, name: data?.sampleSiteName, externalId: data?.sampleSiteExternalId },
+    originSite: {
+      id: data?.sampleSiteId,
+      name: data?.sampleSiteName,
+      stateName: data?.sampleSiteStateName,
+      externalId: data?.sampleSiteExternalId,
+    },
+    clinicianName: data?.sampleData?.clinicianName || null,
     sampleType: {
       name: data?.sampleTypeName,
       i18nKey: data?.sampleTypeI18nKey,
@@ -16,7 +25,6 @@ function transformSampleData(data) {
     collectedOn: data?.sampleCollectedOn,
     updatedOn: data?.sampleUpdatedOn,
   }
-  return output
 }
 
 module.exports = { transformSampleData }
