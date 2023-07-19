@@ -11,5 +11,5 @@ function exists(path) {
 module.exports = require('../utils').seed(async knex => {
   const { id: partnerId } = await knex('Partner').where({ externalId: partner.externalId }).first()
   const fixture = (await exists(absolutePath)) ? require(relativeReportPath) : {}
-  await upsertDashboardWidgets(knex, partnerId, fixture, ['personTitle'])
+  await upsertDashboardWidgets(knex, partnerId, fixture)
 }, __filename)

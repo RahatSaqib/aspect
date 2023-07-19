@@ -48,16 +48,18 @@ async function getNewQuantityOnHand(
       else {
         // case of ui operation
         if (!inventoryItem) {
-          return Boom.notFound('Can not deduct from non-existed inventory item')
+          return Boom.notFound('Can not deduct from non-existed inventory item', { errorKeyCode: 'notExisted' })
         }
         if (inventoryItem.quantityOnHand < 0) {
           return Boom.notFound(
-            `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`
+            `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`,
+            { errorKeyCode: 'negativeQuantity' }
           )
         }
         if (inventoryItem.quantityOnHand < quantity) {
           return Boom.notFound(
-            `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`
+            `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`,
+            { errorKeyCode: 'notEnoughInventory' }
           )
         }
         newQuantityOnHand -= quantity
