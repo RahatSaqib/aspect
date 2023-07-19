@@ -103,7 +103,7 @@ const expected347 = [
     ],
     patientId: '57-158-6406',
     sample: {
-      id: 347,
+      id: 172,
       externalId: 'SMP-TB-31',
       originSite: { id: 47, name: 'Oden Lab', externalId: 'Idaho_4', stateName: 'Idaho' },
       sampleType: { name: 'DBS', i18nKey: 'sampleTypeDBS', externalId: 'DBS' },
@@ -321,7 +321,7 @@ const expected450 = [
     ],
     patientId: '84-687-3493',
     sample: {
-      id: 450,
+      id: 155,
       externalId: 'SMP-TB-14',
       originSite: {
         id: 30,

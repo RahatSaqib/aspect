@@ -483,6 +483,7 @@ describe('Entries helpers', () => {
     it('returns a transformed sample data object when given valid input', () => {
       const data = {
         id: 1,
+        sampleId: 2,
         sampleExternalId: 'SAMPLE01',
         sampleSiteId: 2,
         sampleSiteName: 'Sample Site',
@@ -496,7 +497,7 @@ describe('Entries helpers', () => {
         sampleUpdatedOn: null,
       }
       const expectedOutput = {
-        id: 1,
+        id: 2,
         externalId: 'SAMPLE01',
         originSite: { id: 2, name: 'Sample Site', externalId: 'sample_site', stateName: 'Sample State' },
         sampleType: { name: 'Sputum', i18nKey: 'sampleTypeSputum', externalId: 'Sputum' },
