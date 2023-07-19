@@ -13,9 +13,7 @@ const GXTestingAndDiagnosisGraph = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter] = useState(undefined)
-  const [state, setState] = useState()
-  const [, setLga] = useState()
+  const [filter, setFilter] = useState(undefined)
   const { data: assays } = useAssayList()
 
   return (
@@ -29,20 +27,26 @@ const GXTestingAndDiagnosisGraph = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
+            value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
+            onChange={e => setFilter(prv => ({ ...prv, stateId: e.target.value }))}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
-            onChange={e => setLga(e.target.value)}
+            value={filter?.lgaId ?? ''}
+            stateId={filter?.stateId}
+            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
     >
       <Grid container>
-        <XDRFLQResistanceGraphMain assaysFromState={assays} showLabel={showLabel} filterSelection={filter} />
+        <XDRFLQResistanceGraphMain
+          assaysFromState={assays ?? []}
+          showLabel={showLabel}
+          filterSelection={Object.entries(filter ?? {}).map(([name, value]) => ({ [name]: value }))}
+        />
       </Grid>
     </PkPage>
   )
