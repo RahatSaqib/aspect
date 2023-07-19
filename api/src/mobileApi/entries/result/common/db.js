@@ -18,6 +18,8 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
     .leftJoin('Sample as sample', 'result.sampleId', 'sample.id')
     .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
     .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
+    .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
+    .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
     .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'result.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
     .leftJoin(
       'ResultWorkflowStatus as resultWorkflowStatus',
@@ -95,6 +97,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'sampleOriginSite.externalId as sampleSiteExternalId',
       'sampleOriginSite.id as sampleSiteId',
       'sampleOriginSite.name as sampleSiteName',
+      'sampleOriginState.name as sampleSiteStateName',
       'sampleType.externalId as sampleTypeExternalId',
       'sampleType.i18nKey as sampleTypeI18nKey',
       'sampleType.name as sampleTypeName',
