@@ -36,6 +36,9 @@ const baseConfig = {
 }
 
 const endpointParams = [
+  { source: 'tbDetection' },
+  { assay: 'GxMtbRif' },
+  { assay: 'GxMtbRifUltra' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(5, 'years', 'yyyy-MM-dd') }, // five years ago
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },

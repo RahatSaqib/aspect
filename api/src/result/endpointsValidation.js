@@ -4,8 +4,10 @@ const { validateDateRangeParams, validateSortPageParams } = require('../routes')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 
 const asPositiveInteger = Joi.number().integer().positive()
+
 const getResultAggregationsValidate = validGroups => ({
   ...validateDateRangeParams(),
+  source: Joi.string().description('Source type for the detection in place'),
   assayType: Joi.string().allow(null, '').description('Filter for assay type'),
   assay: Joi.alternatives().try(Joi.array(), Joi.string()).description('Filter for assay'),
   resultCategory1: Joi.string().allow(null, '').description('Filter for result category 1'),

@@ -1,4 +1,6 @@
+const Boom = require('@hapi/boom')
 const { getGroupBy, clinicalIndicatorAggregations } = require('../common/logic')
+
 /**
  * query reducer for PK dashboard endpoint '/result/tb-testing-diagnosis-trend'
  * @param {*} request
@@ -12,25 +14,19 @@ const { getGroupBy, clinicalIndicatorAggregations } = require('../common/logic')
  */
 async function trendInYears(request) {
   const { query } = request
-  let groupBy = [...getGroupBy(query), 'year']
+  const groupBy = [...getGroupBy(query), 'year']
 
   request.query = { ...request.query, groupBy }
 
   // get data grouped by month via using Fact table
   const resp = await clinicalIndicatorAggregations(request)
 
-  // remove `month` from groupBy array to use rest of groupBy items
-  groupBy = groupBy.filter(it => it !== 'year')
-
   return resp.data
 }
 
-async function getTbTestingDiagnosisTrend(request) {
-  const dataRaw = await trendInYears(request)
-  const DETECTED = 'Detected'
-
-  // get final data set groped by rest of items
+const reduceByTbDetected = dataRaw => {
   let yearsList = []
+  const DETECTED = 'Detected'
 
   const reducedYears = dataRaw.reduce((acc, it) => {
     const year = acc[it.year] || { year: it.year, MtbDetected: 0, Total: 0 }
@@ -41,7 +37,6 @@ async function getTbTestingDiagnosisTrend(request) {
     return { ...acc, [it.year]: year }
   }, {})
 
-  // years
   Object.keys(reducedYears).forEach(yyyy => {
     yearsList = [...yearsList, reducedYears[yyyy]]
   })
@@ -51,14 +46,35 @@ async function getTbTestingDiagnosisTrend(request) {
     year.MtbToTotalPercentage = year.Total === 0 ? 0 : (100 * year.MtbDetected) / year.Total
   })
 
-  return {
-    grouped: yearsList, // []
-    keysFromGrouped: ['Total', 'MtbDetected', 'MtbToTotalPercentage'], // series
-    i18nKeys: {
-      MtbDetected: 'MTBPlus',
-      Total: 'Total',
-      MtbToTotalPercentage: 'MTBPercent',
-    },
+  return yearsList
+}
+
+async function getTbTestingDiagnosisTrend(request) {
+  const dataRaw = await trendInYears(request)
+
+  if (request.query.source === 'tbDetection') {
+    if (request.query.assay.includes('GxMtbXdr')) {
+      // yearsList = reduceByTbDetected2(dataRaw)
+      return {}
+    }
+    if (request.query.assay.includes('GxMtbRif')) {
+      // OK
+      return {
+        grouped: reduceByTbDetected(dataRaw),
+        keysFromGrouped: ['Total', 'MtbDetected', 'MtbToTotalPercentage'], // series
+        i18nKeys: {
+          MtbDetected: 'MTBPlus',
+          Total: 'Total',
+          MtbToTotalPercentage: 'MTBPercent',
+        },
+      }
+    }
+    throw Boom.badRequest('Source is not valid')
+  }
+
+  if (request.query.source === 'rrDetection') {
+    // yearsList = reduceByTbDetected3(dataRaw)
+    return {}
   }
 }
 
