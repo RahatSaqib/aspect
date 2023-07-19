@@ -40,7 +40,9 @@ const getBaseAllSamplesRegistered = dataConstraints => {
 const getAllSamplesRegistered = (query, dataConstraints) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
   const knexQuery = getBaseAllSamplesRegistered(dataConstraints).where(queryBuilder =>
-    queryBuilder.where('sample.collectedOn', '>=', minUpdatedOn).orWhere('sample.updatedOn', '>=', minUpdatedOn)
+    queryBuilder
+      .where(qb => qb.where('sample.collectedOn', '>=', minUpdatedOn).orWhere('sample.updatedOn', '>=', minUpdatedOn))
+      .andWhere('sample.registeredInAspect', true)
   )
   return knexQuery
 }

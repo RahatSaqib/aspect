@@ -57,6 +57,12 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
     })
     .where('result.updatedOn', '>', minUpdatedOn)
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
+    .andWhere(qb =>
+      qb
+        .where('sample.registeredInAspect', true)
+        .orWhere('resultCategoryAssay1.requiresTreatment', true)
+        .orWhere('resultCategoryAssay2.requiresTreatment', true)
+    )
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
