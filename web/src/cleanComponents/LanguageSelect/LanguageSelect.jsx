@@ -17,7 +17,7 @@ const LanguageSelect = ({ id, name, label, value, onChange, error, helperText })
       options={languages}
       disableClearable
       getOptionLabel={option =>
-        option.languageName ? option.languageName : languages.find(l => l.culture === option).languageName
+        option.languageName ? option.languageName : languages.find(l => l.culture === option)?.languageName
       }
       isOptionEqualToValue={(o, val) => o.culture === (val.culture || val)}
       onChange={(e, value) => onChange({ target: { name, value: value.culture } })}

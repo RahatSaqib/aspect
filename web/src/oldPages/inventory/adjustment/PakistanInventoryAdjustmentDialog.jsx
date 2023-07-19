@@ -66,8 +66,7 @@ export function PakistanInventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {(actionType === types.SHOW_NEW_INVENTORY_DIALOG && values?.consumable?.showLot) ||
-                inventory?.lotNumber ? (
+                {values?.consumable?.showLot || inventory?.lotNumber ? (
                   <TextField
                     fullWidth
                     type="text"
@@ -85,8 +84,7 @@ export function PakistanInventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {(actionType === types.SHOW_NEW_INVENTORY_DIALOG && values?.consumable?.showExpirationDate) ||
-                inventory?.expiresOn ? (
+                {values?.consumable?.showExpirationDate || inventory?.expiresOn ? (
                   <FormGroup label={formatMessage(messages.expiryDate)}>
                     <DateTimeInput
                       fullWidth
