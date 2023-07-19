@@ -20,6 +20,7 @@ const getBaseAllSamplesRegistered = dataConstraints => {
       'sampleOriginSite.externalId as sampleSiteExternalId',
       'sampleOriginSite.id as sampleSiteId',
       'sampleOriginSite.name as sampleSiteName',
+      'state.name as sampleSiteStateName',
       'sampleType.externalId as sampleTypeExternalId',
       'sampleType.i18nKey as sampleTypeI18nKey',
       'sampleType.name as sampleTypeName'
@@ -27,6 +28,7 @@ const getBaseAllSamplesRegistered = dataConstraints => {
     .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
     .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
     .leftJoin('Geography as geography', 'sampleOriginSite.geographyId', 'geography.id')
+    .leftJoin('State as state', 'geography.stateId', 'state.id')
     .modify(addConstraints, dataConstraints, {
       site: 'sampleOriginSite',
       sample: 'sample',
