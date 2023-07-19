@@ -60,7 +60,7 @@ async function fetchEntriesServiceHandler(request) {
   const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
   const entries = _.orderBy(
-    _.uniqBy(_.concat(transformedResults, transformedSamples).filter(_.identity), 'id'),
+    _.concat(_.uniqBy(transformedResults, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
     ['updatedOn'],
     ['desc']
   )
