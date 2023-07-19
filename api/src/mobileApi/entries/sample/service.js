@@ -32,6 +32,7 @@ async function registerNewSample(request) {
   const now = new Date()
   const payloadForDb = {
     externalId: payload.externalId,
+    registeredInAspect: true,
     updatedBy: currentlyLoggedInUser.id,
     updatedOn: now,
   }
