@@ -51,7 +51,6 @@ async function seed(knex) {
       { jobFunctionId: jf.id, widgetId: widgetIds.sites },
       { jobFunctionId: jf.id, widgetId: widgetIds.devices },
       { jobFunctionId: jf.id, widgetId: widgetIds.results },
-      { jobFunctionId: jf.id, widgetId: widgetIds.contacts },
     ])
   })
 
