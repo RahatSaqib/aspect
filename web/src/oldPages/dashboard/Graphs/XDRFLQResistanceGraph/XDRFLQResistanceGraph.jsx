@@ -42,7 +42,7 @@ const XDRFLQResistanceGraph = ({ assaysFromState }) => {
                     <XDRFLQResistanceGraphMain
                       assaysFromState={assaysFromState}
                       showLabel={showLabel}
-                      filterSelection={filter}
+                      filterSelection={filter && [filter]}
                     />
                   </Grid>
                 </Grid>
