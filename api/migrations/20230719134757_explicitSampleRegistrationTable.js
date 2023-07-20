@@ -1,6 +1,4 @@
-module.exports = require('../src/db').migration(up)
-
-async function up(knex) {
+exports.up = async function (knex) {
   await knex.schema.alterTable('Sample', table => {
     table.integer('updatedBy').unsigned().index().references('id').inTable('User').alter()
 
