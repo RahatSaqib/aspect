@@ -4,17 +4,83 @@ SET SQL_SAFE_UPDATES = 0;
 set @reasonUsed = (select id
                    from ConsumableReason
                    where externalId = 'used');
+
+-- Backup pre-mig data
+create table mig_bkp_InventoryItem as select * from InventoryItem;
+create table mig_bkp_InventoryLog as select * from InventoryLog;
+
+-- DON'T RUN THIS IN COUNTRIES USING LOT NUMBER ------------------------------------------------------------------------------------
+-- Inventory Items could be repeated with different lot numbers, but PK doesn't use lot numbers, so:
+
+-- Update InventoryLogs to point same Inventory Item if they match by candidate key.
+update InventoryLog as il
+    join (select consumableId,
+                 expiresOn,
+                 siteId,
+                 min(id) as minId
+          from InventoryItem
+          group by consumableId, expiresOn, siteId) as acc
+    on il.consumableId = acc.consumableId
+        and il.expiresOn = acc.expiresOn
+        and il.siteId = acc.siteId
+set il.lotNumber       = null,
+    il.inventoryItemId = acc.minId where id > 0;
+
+-- Update the first record of each scattered InventoryItem, sum the qoh, clear lotNumber (after 
+update InventoryItem as ii
+    join (select consumableId,
+                 expiresOn,
+                 siteId,
+                 sum(quantityOnHand) as qoh,
+                 min(createdOn)      as createdOn,
+                 max(updatedOn)      as updatedOn,
+                 min(lotNumber)      as lotNumber,
+                 min(id)             as minId,
+                 count(id) - 1       as dups
+          from InventoryItem
+          group by consumableId, expiresOn, siteId) as acc
+    on ii.consumableId = acc.consumableId
+        and ii.expiresOn = acc.expiresOn
+        and ii.siteId = acc.siteId
+set ii.lotNumber      = null,
+    ii.quantityOnHand = acc.qoh,
+    ii.createdOn      = acc.createdOn,
+    ii.updatedOn      = acc.updatedOn
+where ii.id = acc.minId
+  -- No need to update solo records, except we need to clear lotNumber:
+  and (dups > 0 or acc.lotNumber is not null);
+
+-- Delete all scattered Inventory Items but the updated one.
+delete ii
+from InventoryItem ii
+         join (select consumableId,
+                      expiresOn,
+                      siteId,
+                      min(id) as minId
+               from InventoryItem
+               group by consumableId, expiresOn, siteId) as acc
+              on ii.consumableId = acc.consumableId
+                  and ii.expiresOn = acc.expiresOn
+                  and ii.siteId = acc.siteId
+where ii.id <> acc.minId;
+-- /DON'T RUN THIS IN COUNTRIES USING LOT NUMBER ------------------------------------------------------------------------------------
+
+-- Remove all Inventory Logs other than consumptions, as we are going to import them from GxAlert
 delete
 from InventoryLog
 where consumableReasonId <> @reasonUsed;
 
+-- Inventory Logs will be used after migration.
 delete
 from MissingInventoryLots;
 
+-- FactInventoryConsumptionRate will be recalculated by the scheduler or a restart.
 delete
 from FactInventoryConsumptionRate;
 SET SQL_SAFE_UPDATES = 1;
 
+
+-- Create pivot table to import 
 drop table if exists mig_InventoryItemPivot;
 create table mig_InventoryItemPivot
 (
