@@ -15,7 +15,6 @@ const { getDevice } = require('../device/service')
 const inventoryUtils = require('../inventory/common/logic')
 const { mergeResultWithPayload } = require('../result/common/logic')
 
-// ----------------------------------------------------------
 async function getExistingResult(knex, payload, deviceId) {
   let existingResult = null
   if (payload.id) {
@@ -29,7 +28,6 @@ async function getExistingResult(knex, payload, deviceId) {
   return existingResult
 }
 
-// ----------------------------------------------------------
 async function getResultTypeId(payload, existingResult) {
   let resultTypeId = null
   if (_.has(payload, 'type.id')) {
@@ -42,7 +40,6 @@ async function getResultTypeId(payload, existingResult) {
   return resultTypeId
 }
 
-// ----------------------------------------------------------
 async function getResultWorkflowStatusId(knex, payload, existingResult) {
   let resultWorkflowStatusId = null
   if (_.has(payload, 'workflow.status.id')) {
@@ -60,7 +57,6 @@ async function getResultWorkflowStatusId(knex, payload, existingResult) {
   return resultWorkflowStatusId
 }
 
-// ----------------------------------------------------------
 async function getResultCategories(payload, existingResult) {
   const categoryIds = _.map(payload.category, 'id')
   let resultCategory1 = null
@@ -82,7 +78,6 @@ async function getResultCategories(payload, existingResult) {
   return { categoryIds, resultCategory1, resultCategory2 }
 }
 
-// ----------------------------------------------------------
 async function getResultErrors({ site, resultTypeId, resultCategory1, assays, categoryIds, payload }) {
   const requestErrors = []
   if (!site) {
@@ -100,7 +95,6 @@ async function getResultErrors({ site, resultTypeId, resultCategory1, assays, ca
   return requestErrors
 }
 
-// ----------------------------------------------------------
 async function getResultSourceId(payload, existingResult, assay) {
   let resultSourceId = null
   if (_.has(payload, 'source.id')) {
@@ -116,7 +110,6 @@ async function getResultSourceId(payload, existingResult, assay) {
   return resultSourceId
 }
 
-// ----------------------------------------------------------
 async function getSiteIdVarieties(knex, payload, site, now) {
   let sampleOriginSiteId = site.id
   let reportableSiteId = site.id
@@ -279,7 +272,37 @@ async function getSiteIdVarieties(knex, payload, site, now) {
   return { sampleOriginSiteId, reportableSiteId, payloadOriginSiteId }
 }
 
-// ----------------------------------------------------------
+async function getExistingSampleIdInCountry(knex, countryId, sampleExternalId, sampleTypeExternalId, testStartedOn) {
+  const samplesOfType = await knex('Sample as s')
+    .join('Site as site', 's.originSiteId', 'site.id')
+    .join('Geography as g', 'site.geographyId', 'g.id')
+    .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
+    .where('s.externalId', sampleExternalId)
+    .andWhere('g.countryId', countryId)
+    .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
+    .orderBy('s.collectedOn', 'desc')
+    .select('s.id', 'st.externalId as sampleTypeExternalId', 's.collectedOn')
+  if (samplesOfType.length === 1) {
+    return samplesOfType[0].id
+  }
+  if (samplesOfType.length > 1) {
+    if (sampleTypeExternalId) {
+      const samplesWithMatchingTypes = samplesOfType.filter(s => s.sampleTypeExternalId === sampleTypeExternalId)
+      if (samplesWithMatchingTypes.length > 0) {
+        return samplesWithMatchingTypes[0].id
+      }
+    } else {
+      const samplesWithMatchingTypes = samplesOfType.filter(
+        s => s.sampleTypeExternalId === 'Sputum' || _.isNil(s.sampleTypeExternalId)
+      )
+      if (samplesWithMatchingTypes.length > 0) {
+        return samplesWithMatchingTypes[0].id
+      }
+    }
+  }
+  return null
+}
+
 async function getExistingSample(knex, payload, existingResult, opts) {
   let { sampleId } = opts
   const { sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId } = opts
@@ -313,7 +336,6 @@ async function getExistingSample(knex, payload, existingResult, opts) {
   return { existingSample, sampleId }
 }
 
-// ----------------------------------------------------------
 async function getSiteAndAssays(knex, payload, existingResult, deviceId) {
   const assayQ = knex('Assay as a')
     .join('Device as d', 'a.deviceTypeId', 'd.deviceTypeId')
@@ -345,7 +367,6 @@ async function getSiteAndAssays(knex, payload, existingResult, deviceId) {
   return { assays, site }
 }
 
-// ----------------------------------------------------------
 async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId = null } = {}) {
   // Look up existing result matching external id if specified
   const existingResult = await getExistingResult(knex, payload, deviceId)
@@ -359,9 +380,10 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   // Categories if specified, otherwise Error or Success depending on error payload
   const { categoryIds, resultCategory1, resultCategory2 } = await getResultCategories(payload, existingResult)
 
-  //
+  // Gets the site that is linked to the device as well as the valid types of assays that can be used on the device
   const { assays, site } = await getSiteAndAssays(knex, payload, existingResult, deviceId)
-  // exit on any error
+
+  // Exit on any error
   const requestErrors = await getResultErrors({ site, resultTypeId, resultCategory1, assays, categoryIds, payload })
   if (!_.isEmpty(requestErrors)) {
     throw Boom.badRequest(`Cannot find ${requestErrors.join(', ')}`)
@@ -381,7 +403,6 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     }
   }
 
-  //
   const { sampleOriginSiteId, reportableSiteId, payloadOriginSiteId } = await getSiteIdVarieties(
     knex,
     payload,
@@ -389,12 +410,20 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     now
   )
 
-  //
-  const opts = { sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId }
+  if (!sampleId) {
+    sampleId = await getExistingSampleIdInCountry(
+      knex,
+      site.countryId,
+      _.get(payload, 'sample.id', null),
+      payloadSampleTypeId,
+      _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null))
+    )
+  }
+
+  const opts = { sampleId, sampleTypeId, sampleOriginSiteId, payloadOriginSiteId, payloadSampleTypeId }
   const existingSampleDetails = await getExistingSample(knex, payload, existingResult, opts)
   ;({ sampleId } = existingSampleDetails)
 
-  //
   const { resultData, resultDataHash, shouldTriggerResultNotification } = mergeResultWithPayload(
     existingResult,
     payload
