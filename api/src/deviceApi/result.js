@@ -272,12 +272,16 @@ async function getSiteIdVarieties(knex, payload, site, now) {
   return { sampleOriginSiteId, reportableSiteId, payloadOriginSiteId }
 }
 
-async function getExistingSampleIdInCountry(knex, countryId, sampleExternalId, sampleTypeExternalId, testStartedOn) {
+async function getExistingSampleIdInCountry(knex, sampleExternalId, sampleTypeExternalId, countryId, testStartedOn) {
+  if (!sampleExternalId) {
+    return Promise.resolve(null)
+  }
   const samplesOfType = await knex('Sample as s')
     .join('Site as site', 's.originSiteId', 'site.id')
     .join('Geography as g', 'site.geographyId', 'g.id')
     .leftJoin('SampleType as st', 's.sampleTypeId', 'st.id')
     .where('s.externalId', sampleExternalId)
+    .andWhere('s.registeredInAspect', true)
     .andWhere('g.countryId', countryId)
     .andWhere(qb => qb.whereNull('s.collectedOn').orWhere('s.collectedOn', '<=', testStartedOn))
     .orderBy('s.collectedOn', 'desc')
@@ -368,9 +372,10 @@ async function getSiteAndAssays(knex, payload, existingResult, deviceId) {
 }
 
 async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId = null } = {}) {
+  const sampleExternalId = _.get(payload, 'sample.id', null)
   // Look up existing result matching external id if specified
   const existingResult = await getExistingResult(knex, payload, deviceId)
-
+  const testStartedOn = _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null))
   // Select ResultType if specified, otherwise Patient
   const resultTypeId = await getResultTypeId(payload, existingResult)
 
@@ -413,10 +418,10 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   if (!sampleId) {
     sampleId = await getExistingSampleIdInCountry(
       knex,
-      site.countryId,
-      _.get(payload, 'sample.id', null),
+      sampleExternalId,
       payloadSampleTypeId,
-      _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null))
+      site.countryId,
+      testStartedOn
     )
   }
 
@@ -456,7 +461,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     resultCategory2,
     resultData: JSON.stringify(resultData),
     resultDataHash,
-    startedOn: _.get(payload, 'startedOn', _.get(existingResult, 'startedOn', null)),
+    startedOn: testStartedOn,
     endedOn: _.get(payload, 'endedOn', _.get(existingResult, 'endedOn', null)),
     consumableSerial: _.get(payload, 'consumable[0].serial', _.get(existingResult, 'consumableSerial', null)),
     consumableExpirationDate: _.get(
@@ -480,7 +485,6 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     updatedOn: now,
     createdOn: _.get(existingResult, 'createdOn', now),
     reportableSiteId,
-
     gxAlertTestId,
     gxAlertSyncedOn,
   }
@@ -526,10 +530,6 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     processedResult,
     existingResult,
     shouldTriggerResultNotification,
-    // changeFlags: {
-    //   sampleIdHasChanged: _.get(payload, 'sample.id', existingSample.externalId) !== existingSample.externalId,
-    //   patientIdHasChanged: _.get(payload, 'patient.id', existingResultPatient.id) !== existingResultPatient.id,
-    // },
   }
 }
 
