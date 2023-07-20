@@ -65,6 +65,13 @@ from InventoryItem ii
 where ii.id <> acc.minId;
 -- /DON'T RUN THIS IN COUNTRIES USING LOT NUMBER ------------------------------------------------------------------------------------
 
+-- Delete Inventory Items without Inventory Logs pointing to them
+delete ii
+from InventoryItem ii
+         left join InventoryLog as il
+              on ii.id = il.inventoryItemId
+where il.id is null;
+
 -- Remove all Inventory Logs other than consumptions, as we are going to import them from GxAlert
 delete
 from InventoryLog
