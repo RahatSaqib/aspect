@@ -3,10 +3,12 @@ const Joi = require('@hapi/joi')
 const downloadSitesRequestValidationV4 = () => {
   return {
     query: {
-      type: Joi.string()
+      type: Joi.array()
+        .single()
+        .items(Joi.string())
         .optional()
         .allow(null, '')
-        .description('The type of site (lab, clinic or warehouse) Defaults to clinic'),
+        .description('The types of site (lab, clinic or warehouse) Defaults to clinic'),
       stateId: Joi.number()
         .optional()
         .allow(null, '')

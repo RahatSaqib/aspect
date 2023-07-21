@@ -7,7 +7,7 @@ async function listSites(request) {
     query: { stateId, type },
   } = request
   const user = await getUserFromCredentials(credentials)
-  const sitesInState = await getSitesInState(user.partnerId, stateId || user.stateId, type || 'clinic')
+  const sitesInState = await getSitesInState(user.partnerId, stateId ?? user.stateId, type || ['clinic', 'lab'])
   return { ok: true, data: sitesInState }
 }
 
