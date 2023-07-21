@@ -26,7 +26,7 @@ from (select ts.id       aspectTargetStateId,
              x.lga       gxLga,
              count(r.id) count
       from Result r
-               join mig_all_results x on x.CartridgeSerial = r.consumableSerial
+               join mig_all_results x on x.uniqueId = r.externalId
                left join Geography g on r.geographyId = g.id
                left join Lga l on g.lgaId = l.id
                left join State s on s.id = g.stateId
