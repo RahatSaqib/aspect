@@ -551,6 +551,13 @@ const getXdrResultCountBase = ({ minDate, maxDate, resultCategoryIds, dataConstr
           queryBuilder.where('rc2.externalId', filterValue)
         }
       },
+      xdrResistance: (queryBuilder, filterValue) => {
+        queryBuilder.whereRaw(`JSON_SEARCH(
+          r.resultData ->> '$.detectedResistance[*]',
+          'one',
+          '${filterValue}'
+        ) IS NOT NULL`)
+      },
     })
     .count({
       ...getResultCountersBase(resultCategoryIds, positiveResultCategories),

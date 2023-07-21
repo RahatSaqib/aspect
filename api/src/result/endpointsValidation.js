@@ -25,6 +25,10 @@ const getResultAggregationsValidate = validGroups => ({
     .try(Joi.array().items(Joi.string().valid(...validGroups)), Joi.string().valid(...validGroups))
     .description('Array of fields to group by'),
   flags: Joi.alternatives().allow(null, '').try(Joi.array(), Joi.string()).description('Flags in csv'),
+  xdrResistance: Joi.alternatives()
+    .allow(null, '')
+    .try(Joi.array().items(Joi.string()), Joi.string())
+    .description('XDR Resistance value or array of values'),
 })
 
 const resultAggregationsValidGroups = [

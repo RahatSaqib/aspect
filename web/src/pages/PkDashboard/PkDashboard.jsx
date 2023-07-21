@@ -109,7 +109,10 @@ const PkDashboard = () => {
           <DashboardCard title={formatMessage(messages.mtbXdrFQResistance)}>
             <DashboardLink to="" label={formatMessage(messages.FQCurrent)} />
             <DashboardLink to="" label={formatMessage(messages.FQNationalTrend)} />
-            <DashboardLink to="" label={formatMessage(messages.FQProvincialComparison)} />
+            <DashboardLink
+              to="/dashboard/xdr/provincial-fq-diagnosis-trend"
+              label={formatMessage(messages.FQProvincialComparison)}
+            />
           </DashboardCard>
         </Grid>
         <Grid item lg={4} style={{ padding: '8px 8px 0' }}>
