@@ -9,6 +9,19 @@ set @reasonUsed = (select id
 create table mig_bkp_InventoryItem as select * from InventoryItem;
 create table mig_bkp_InventoryLog as select * from InventoryLog;
 
+-- Delete Inventory Items without Inventory Logs pointing to them
+delete ii
+from InventoryItem ii
+         left join InventoryLog as il
+              on ii.id = il.inventoryItemId
+where il.id is null;
+
+-- Remove all Inventory Logs other than consumptions, as we are going to import them from GxAlert
+delete
+from InventoryLog
+where consumableReasonId <> @reasonUsed;
+
+
 -- DON'T RUN THIS IN COUNTRIES USING LOT NUMBER ------------------------------------------------------------------------------------
 -- Inventory Items could be repeated with different lot numbers, but PK doesn't use lot numbers, so:
 
@@ -53,31 +66,11 @@ where ii.id = acc.minId
 -- Delete all scattered Inventory Items but the updated one.
 delete ii
 from InventoryItem ii
-         join (select consumableId,
-                      expiresOn,
-                      siteId,
-                      min(id) as minId
-               from InventoryItem
-               group by consumableId, expiresOn, siteId) as acc
-              on ii.consumableId = acc.consumableId
-                  and ii.expiresOn = acc.expiresOn
-                  and ii.siteId = acc.siteId
-where ii.id <> acc.minId;
+       where lotNumber is not null
 -- /DON'T RUN THIS IN COUNTRIES USING LOT NUMBER ------------------------------------------------------------------------------------
 
--- Delete Inventory Items without Inventory Logs pointing to them
-delete ii
-from InventoryItem ii
-         left join InventoryLog as il
-              on ii.id = il.inventoryItemId
-where il.id is null;
 
--- Remove all Inventory Logs other than consumptions, as we are going to import them from GxAlert
-delete
-from InventoryLog
-where consumableReasonId <> @reasonUsed;
-
--- Inventory Logs will be used after migration.
+-- Missing Inventory Logs will be used by the customer only after migration. They aren't in use in GxAlert.
 delete
 from MissingInventoryLots;
 
