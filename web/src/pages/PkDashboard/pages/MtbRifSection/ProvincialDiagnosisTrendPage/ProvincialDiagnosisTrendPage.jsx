@@ -19,7 +19,7 @@ const ProvincialDiagnosisTrendPage = () => {
   const mergedParams = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }, { resultCategory1: 'Detected' }]
 
   const { isLoading, data: { data = [] } = {} } = useQuery(
-    ['ProvincialDiagnosisTrendPage', { mergedParams }],
+    ['ProvincialDiagnosisTrendPage_Mtb', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-provincial', params: mergedParams })
   )
