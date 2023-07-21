@@ -528,6 +528,9 @@ const getXdrResultCountBase = ({ minDate, maxDate, resultCategoryIds, dataConstr
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
+      assay: (queryBuilder, filterValue) => {
+        queryBuilder.whereIn('a.externalId', _.isArray(filterValue) ? filterValue : [filterValue])
+      },
     })
     .count({
       ...getResultCountersBase(resultCategoryIds, positiveResultCategories),

@@ -16,7 +16,7 @@ const ProvincialTestingTrendPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [states, setState] = useState([])
-  const mergedParams = []
+  const mergedParams = [{ assay: 'GxMtbXdr' }]
 
   const { isLoading, data: { data = [] } = {} } = useQuery(
     ['tblProvincialTrends', { mergedParams }],
