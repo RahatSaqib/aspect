@@ -1147,8 +1147,7 @@ const routes = [
             .allow(null)
             .items(
               Joi.object().keys({
-                yearAndMonth: Joi.string().description('Grouping Year and month'),
-                ...validateResponseResultCounts(),
+                ...resultAggregationsResponseItem,
               })
             ),
         }),
@@ -1189,6 +1188,14 @@ const routes = [
                 last24h: Joi.object().keys({
                   ...validateResponseResultCounts(),
                 }),
+                trends: Joi.array()
+                  .allow(null)
+                  .items(
+                    Joi.object().keys({
+                      year: Joi.number().allow(null).description('Year'),
+                      ...validateResponseResultCounts(),
+                    })
+                  ),
               })
             ),
         }),

@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { startOfDay, endOfDay, subDays, endOfMonth, startOfYear, subMonths } = require('date-fns')
+const { startOfDay, endOfDay, subDays, endOfMonth } = require('date-fns')
 
 const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
@@ -8,7 +8,7 @@ const { getOffsetFromIsoDateString, getMonthYearUserTimeZoneField } = require('.
 const { getXdrResultCountBase } = require('../common/db')
 
 /**
- * reportGx10CBaseQueryNational
+ * gx10CBaseQueryNational
  */
 async function gx10CBaseQueryNational(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -46,7 +46,7 @@ async function gx10CBaseQueryNational(auth, query) {
 }
 
 /**
- * reportGx10CBaseQueryProvincial
+ * gx10CBaseQueryProvincial
  */
 async function gx10CBaseQueryProvincial(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -80,9 +80,17 @@ async function gx10CBaseQueryProvincial(auth, query) {
     return baseQuery
   }
 
+  /**
+   * explicitly set date range as of last 5 years.
+   * we need full last 5 years, i.e. if now is 2023, then we need 2018-2022,
+   * plus current year
+   */
+  const currentYear = now.getFullYear()
+  const startYear = currentYear - 5
+
   return {
-    baseQuerySinceLastYear: getBaseQuery({
-      dateFrom: startOfYear(subMonths(now, 12)), // from the start of previous year
+    baseQuerySince5YearsAgo: getBaseQuery({
+      dateFrom: new Date(`${startYear}-01-01`), // from the start of 5 years ago
       dateTo: endOfMonth(now),
     }),
     baseQueryLast24h: getBaseQuery({
@@ -97,7 +105,16 @@ async function gx10CBaseQueryProvincial(auth, query) {
  */
 async function listGx10CTrendsNational({ auth, query }) {
   const baseQuery = await gx10CBaseQueryNational(auth, query)
-  const data = await baseQuery
+  let data = await baseQuery
+  /**
+   * for National Trend report use `count all results` value
+   */
+  data = data.map(d => {
+    return {
+      cnt: d.cntAll,
+      month: d.yearAndMonth,
+    }
+  })
   return {
     ok: true,
     data,
@@ -109,8 +126,8 @@ async function listGx10CTrendsNational({ auth, query }) {
  */
 async function listGx10CTrendsProvincial({ auth, query }) {
   const now = new Date()
-  const { baseQuerySinceLastYear, baseQueryLast24h } = await gx10CBaseQueryProvincial(auth, query)
-  const rawSinceLastYear = await baseQuerySinceLastYear
+  const { baseQuerySince5YearsAgo, baseQueryLast24h } = await gx10CBaseQueryProvincial(auth, query)
+  const rawSince5YearsAgo = await baseQuerySince5YearsAgo
   const rawLast24h = await baseQueryLast24h
 
   const emptyCounts = {
@@ -129,8 +146,9 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const counterNames = _.keys(emptyCounts)
   const currentYear = now.getFullYear()
   const previousYear = now.getFullYear() - 1
-  const groupedSinceLastYear = _.reduce(
-    rawSinceLastYear,
+
+  const groupedSince5YearsAgo = _.reduce(
+    rawSince5YearsAgo,
     (acc, item) => {
       const { stateId, yearAndMonth, locationName } = item
       const [year, month] = yearAndMonth.split('-')
@@ -157,30 +175,50 @@ async function listGx10CTrendsProvincial({ auth, query }) {
     {}
   )
   const data = _.reduce(
-    _.keys(groupedSinceLastYear),
+    _.keys(groupedSince5YearsAgo),
     (acc, stateId) => {
-      const byState = groupedSinceLastYear[stateId]
+      const byState = groupedSince5YearsAgo[stateId]
       const byCurrYear = byState[currentYear]
       const byPrevYear = byState[previousYear]
       const currYearTotals = { ...emptyCounts }
       const prevYearMeanPerMonth = { ...emptyCounts }
+      const byYear = {}
 
       counterNames.forEach(counterName => {
-        _.keys(byCurrYear).forEach(month => {
-          currYearTotals[counterName] += byCurrYear[month][counterName]
-        })
-        _.keys(byPrevYear).forEach(month => {
-          prevYearMeanPerMonth[counterName] += byPrevYear[month][counterName]
-        })
         /**
-         * check if `mean` to calculate per only months with at least one test
+         *
          */
-        // const totalMonths = _.keys(byPrevYear).length
-        // if (totalMonths > 0) {
-        //   prevYear[counterName] /= totalMonths
-        // }
+        _.keys(byState)
+          .filter(key => key !== 'locationName')
+          .forEach(key => {
+            const year = +key
+            byYear[year] = byYear[year] || { ...emptyCounts }
+            _.keys(byState[year]).forEach(month => {
+              byYear[year][counterName] += byState[year][month][counterName]
+              if (year === currentYear) {
+                currYearTotals[counterName] += byCurrYear[month][counterName]
+              } else if (year === previousYear) {
+                prevYearMeanPerMonth[counterName] += byPrevYear[month][counterName]
+              }
+            })
+          })
         prevYearMeanPerMonth[counterName] /= 12
       })
+
+      const trends = _.reduce(
+        _.keys(byYear),
+        (acc, year) => {
+          acc = [
+            ...acc,
+            {
+              year: +year,
+              ...byYear[year],
+            },
+          ]
+          return acc
+        },
+        []
+      )
 
       acc = [
         ...acc,
@@ -189,6 +227,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
           locationName: byState.locationName,
           currYearTotals,
           prevYearMeanPerMonth,
+          trends,
         },
       ]
       return acc
@@ -202,7 +241,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   _.forEach(data, d => {
     /**
      * notice that data for last 24 hours (groupedLast24h) may not contain stateId
-     * from last 2 years (data), and because of that set it to `emptyCounts` if
+     * from last 5 years (data), and because of that set it to `emptyCounts` if
      * stateId is missing in `groupedLast24h`
      */
     const byState = groupedLast24h[d.stateId] || emptyCounts
