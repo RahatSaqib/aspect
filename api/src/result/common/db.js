@@ -511,6 +511,8 @@ const getXdrResultCountBase = ({ minDate, maxDate, resultCategoryIds, dataConstr
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .innerJoin('Site as s', 's.id', 'd.siteId')
+    .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+    .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
@@ -529,7 +531,25 @@ const getXdrResultCountBase = ({ minDate, maxDate, resultCategoryIds, dataConstr
       lgaId: 'g.lgaId',
       siteName: 's.name',
       assay: (queryBuilder, filterValue) => {
-        queryBuilder.whereIn('a.externalId', _.isArray(filterValue) ? filterValue : [filterValue])
+        if (_.isArray(filterValue)) {
+          queryBuilder.whereIn('a.externalId', filterValue)
+        } else {
+          queryBuilder.where('a.externalId', filterValue)
+        }
+      },
+      resultCategory1: (queryBuilder, filterValue) => {
+        if (_.isArray(filterValue)) {
+          queryBuilder.whereIn('rc1.externalId', filterValue)
+        } else {
+          queryBuilder.where('rc1.externalId', filterValue)
+        }
+      },
+      resultCategory2: (queryBuilder, filterValue) => {
+        if (_.isArray(filterValue)) {
+          queryBuilder.whereIn('rc2.externalId', filterValue)
+        } else {
+          queryBuilder.where('rc2.externalId', filterValue)
+        }
       },
     })
     .count({
