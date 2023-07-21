@@ -1,4 +1,4 @@
-const { downloadSitesResponseValidationV4 } = require('./common/validations')
+const { downloadSitesResponseValidationV4, downloadSitesRequestValidationV4 } = require('./common/validations')
 const { listSites } = require('./common/service')
 const { asyncHandler } = require('../../routes')
 
@@ -8,12 +8,13 @@ const { asyncHandler } = require('../../routes')
 const routes = [
   {
     method: 'GET',
-    path: '/v4/site',
+    path: '/v4/sites',
     handler: asyncHandler(listSites),
     config: {
-      description: 'Site List',
+      description: 'State Healthcare Facilities',
       notes: 'List of sites in the same state as the currently logged in user',
       auth: { scope: ['site'] },
+      validate: downloadSitesRequestValidationV4(),
       response: {
         options: {
           allowUnknown: false,
