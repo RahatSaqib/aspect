@@ -532,17 +532,62 @@ const addClinicalResponsePayloadValidation = () => {
   return Joi.array().items(
     Joi.object().keys({
       fieldName: Joi.string()
-        .allow('', null)
+        .valid(
+          'confirmed',
+          'treatment',
+          'treatmentOccurred',
+          'outcome',
+          'outcomeOccurred',
+          'followUpNotPossible',
+          'followUpNotPossibleReason'
+        )
         .description(
-          'Optional externalId of the result follow up. This is mostly for app-use so apps can uniquely identify a follow up record that they created.'
+          'Optional either confirmed, treatment, treatmentOccurred, outcome, outcomeOccurred, followUpNotPossible or followUpNotPossibleReason.'
         ),
-      value: [
-        Joi.string().allow('', null).description('The ID of the follow up'),
-        Joi.bool()
-          .allow('', null)
-          .description('The boolean value of whether the result has been recorded in the register'),
-      ],
-      clientTime: Joi.date().iso().optional().allow(null).description('This is the date when the follow up happened'),
+      value: Joi.alternatives()
+        .when('fieldName', {
+          is: 'confirmed',
+          then: Joi.bool().required().description('The boolean value of whether the result has been confirmed'),
+        })
+        .when('fieldName', {
+          is: 'followUpNotPossible',
+          then: Joi.bool().required().description('The boolean value of whether the follow up is not possible'),
+        })
+        .when('fieldName', {
+          is: 'followUpNotPossibleReason',
+          then: Joi.string()
+            .allow('', null)
+            .description('The free text reason/explanation for why a follow up is not possible'),
+        })
+        .when('fieldName', {
+          is: 'treatment',
+          then: Joi.string().allow('', null).description('The external ID of the treatment follow up'),
+        })
+        .when('fieldName', {
+          is: 'outcome',
+          then: Joi.string().allow('', null).description('The external ID of the outcome follow up'),
+        })
+        .when('fieldName', {
+          is: 'treatmentOccurred',
+          then: Joi.date()
+            .required()
+            .allow('', null)
+            .iso()
+            .description('The date/time value when fieldName is treatmentOccurred'),
+        })
+        .when('fieldName', {
+          is: 'outcomeOccurred',
+          then: Joi.date()
+            .required()
+            .allow('', null)
+            .iso()
+            .description('The date/time value when fieldName is outcomeOccurred'),
+        }),
+      clientTime: Joi.date()
+        .iso()
+        .optional()
+        .allow('', null)
+        .description('This is the local time when the follow up was recorded'),
     })
   )
 }
