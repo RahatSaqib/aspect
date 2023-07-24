@@ -14,8 +14,8 @@ import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import {
-  MtbToTotalPercentage,
-  MtbToTotalPercentageWithLabel,
+  lineForProp,
+  lineForPropWithLabel,
 } from '../../../../../oldPages/dashboard/Graphs/QuartersMtbDetectedGraph/QuartersMtbDetectedGraph.Main.Layers'
 import styles from '../../../../../oldPages/dashboard/Graphs/styles.css'
 import { useAuthState } from '../../../../../providers/AuthProvider'
@@ -33,6 +33,7 @@ const baseConfig = {
     { name: 'MtbToTotalPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
   ],
   clickThrough: false,
+  axisRightProps: { fieldName: 'MtbToTotalPercentage' },
 }
 
 const endpointParams = [
@@ -105,7 +106,10 @@ const XDRTestingDiagnosisTrendPage = () => {
                 assaysFromState={assays}
                 config={{
                   ...baseConfig,
-                  layers: [showLabel ? MtbToTotalPercentageWithLabel : MtbToTotalPercentage, AxisRightLayer],
+                  layers: [
+                    showLabel ? lineForPropWithLabel('MtbToTotalPercentage') : lineForProp('MtbToTotalPercentage'),
+                    AxisRightLayer,
+                  ],
                   showLabel,
                   showDecimals: 0,
                   labelTextColor: '#333',
@@ -114,7 +118,7 @@ const XDRTestingDiagnosisTrendPage = () => {
                 keys={graphKeys}
                 indexBy="year"
                 tickValuesYShape="twos"
-                tickValuesXShape="all"
+                tickValuesXShape="bookends"
                 displayMethod="actual"
                 displayLegend
                 type="bar-line"

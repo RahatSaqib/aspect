@@ -83,6 +83,151 @@ const formatAxisLabel = (v, type, displayMethod, i18n) => {
   return type === 'stackedDeviceActivity' ? v.replace(/\D/g, '') : formatValuesForGraphs(v, displayMethod, i18n)
 }
 
+const generateConfig = (
+  type,
+  data,
+  tickValuesXShape,
+  indexBy,
+  tickValuesYShape,
+  keys,
+  keysForBars,
+  layers,
+  formatMessage
+) => {
+  switch (true) {
+    case type === 'divergent': {
+      return {
+        legend: `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
+        ylegend: false,
+        yTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
+        xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
+        gridYValues: null,
+        extraConfig: {
+          ...getMaxValueForDivergent(data, 'value'),
+          layout: 'horizontal',
+        },
+        layout: 'horizontal',
+        padding: 0.3,
+        translateX: -25,
+        itemWidth: 120,
+        itemDirection: 'right-to-left',
+        symbolShape: 'circle',
+        theme: {},
+        enableGridY: false,
+        enableGridX: false,
+        layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
+        margin: { top: 5, right: 0, bottom: 60, left: 0 },
+        markers: [],
+      }
+    }
+    case type === 'barInventory': {
+      const yAxisValues = generateTickValues(data, tickValuesYShape, keys, 'Y', true)
+      return {
+        legend: formatMessage(messages.inventoryGraphStatusXAxisLegend),
+        ylegend: formatMessage(messages.inventoryGraphStatusYAxisLegend),
+        gridYValues: yAxisValues,
+        enableGridY: true,
+        yTickValues: yAxisValues,
+        enableGridX: true,
+        xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
+        translateX: -25,
+        layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
+        extraConfig: {},
+        itemWidth: 120,
+        itemDirection: 'right-to-left',
+        symbolShape: 'circle',
+        padding: 0.3,
+        margin: { top: 30, right: 0, bottom: 60, left: 100 },
+        markers: [],
+      }
+    }
+    case type === 'stackedDeviceActivity': {
+      return {
+        legend: false,
+        ylegend: false,
+        yTickValues: generateTickValues(data, tickValuesYShape, keys, 'Y', true),
+        gridYValues: null,
+        xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
+        extraConfig: {},
+        padding: 0.03,
+        translateX: 15,
+        itemWidth: 140,
+        itemDirection: 'left-to-right',
+        symbolShape: 'square',
+        theme: { grid: { line: { stroke: 'white', strokeWidth: 2 } } },
+        enableGridY: true,
+        enableGridX: false,
+        layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
+        margin: { top: 5, right: 70, bottom: 100, left: 70 },
+        markers: [
+          {
+            axis: 'y',
+            value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data, {
+              weekendOrHoliday: 0,
+            }),
+            lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
+            legendOrientation: 'horizontal',
+            legend: `${calcOverallRate('devicesActiveRaw', 'devicesTotal', data, { weekendOrHoliday: 0 }).toFixed(0)}%`,
+            legendOffsetX: -30,
+            legendOffsetY: 0,
+            textStyle: {
+              fill: 'rgba(32, 161, 179, 1)',
+              fontWeight: 'bold',
+            },
+          },
+        ],
+      }
+    }
+    case type === 'bar-line': {
+      const groupMode = 'grouped'
+      const yAxisValues = generateTickValues(data, tickValuesYShape, keysForBars, 'Y', true, { groupMode })
+      const xTickValues = generateTickValues(data, tickValuesXShape, indexBy, 'X')
+      return {
+        legend: false,
+        ylegend: false,
+        gridYValues: yAxisValues,
+        enableGridY: true,
+        yTickValues: yAxisValues,
+        enableGridX: true,
+        xTickValues,
+        extraConfig: {},
+        padding: 0.3,
+        translateX: -25,
+        itemWidth: 120,
+        layers: ['axes', 'grid', 'bars', 'markers', GraphLegend, ...layers],
+        itemDirection: 'left-to-right',
+        symbolShape: 'square',
+        theme: { axis: { ticks: { text: { fontSize: 12 } } } },
+        markers: [],
+        groupMode,
+        margin: { top: 40, right: 60, bottom: 60, left: 60 },
+      }
+    }
+    default:
+      return {
+        legend: false,
+        ylegend: false,
+        yTickValues: generateTickValues(data, tickValuesYShape, keys, 'Y', true),
+        gridYValues: null,
+        xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
+        extraConfig: {},
+        padding: 0.3,
+        translateX: -25,
+        itemWidth: 120,
+        layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
+        itemDirection: 'right-to-left',
+        symbolShape: 'circle',
+        theme: {
+          axis: { ticks: { text: { fontSize: 14 } } },
+        },
+        enableGridY: false,
+        enableGridX: false,
+        margin: { top: 5, right: 0, bottom: 60, left: 0 },
+        markers: [],
+      }
+  }
+}
+
 /** ***********************************************************
  *
  * AspectResponsiveBar
@@ -106,8 +251,7 @@ const AspectResponsiveBar = props => {
     i18nKeys,
   } = props
   // if we dont have a clickThrough we mock the setValue and dont use the hook
-  // eslint-disable-next-line react-hooks/rules-of-hooks
-  const { setValue } = baseConfig.clickThrough ? useGraphClickThrough(baseConfig) : { setValue: () => {} }
+  const { setValue } = useGraphClickThrough(baseConfig.clickThrough ? baseConfig : { clickThrough: false })
   const i18n = useI18n()
   const { format, formatMessage } = i18n
 
@@ -123,144 +267,17 @@ const AspectResponsiveBar = props => {
   } = baseConfig
   const keysForBars = fields ? fields.filter(it => it.target === 'bar').map(it => it.name) : keys
   const filteredData = normalizeData(data, { sortByKeys })
-  const generateConfig = (type, data) => {
-    switch (true) {
-      case type === 'divergent': {
-        return {
-          legend: `Percent of Monthly Status: ${data[0].date.split(' ')[0]}`,
-          ylegend: false,
-          yTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
-          gridYValues: null,
-          extraConfig: {
-            ...getMaxValueForDivergent(data, 'value'),
-            layout: 'horizontal',
-          },
-          layout: 'horizontal',
-          padding: 0.3,
-          translateX: -25,
-          itemWidth: 120,
-          itemDirection: 'right-to-left',
-          symbolShape: 'circle',
-          theme: {},
-          enableGridY: false,
-          enableGridX: false,
-          layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
-          margin: { top: 5, right: 0, bottom: 60, left: 0 },
-          markers: [],
-        }
-      }
-      case type === 'barInventory': {
-        const yAxisValues = generateTickValues(data, tickValuesYShape, keys, 'Y', true)
-        return {
-          legend: formatMessage(messages.inventoryGraphStatusXAxisLegend),
-          ylegend: formatMessage(messages.inventoryGraphStatusYAxisLegend),
-          gridYValues: yAxisValues,
-          enableGridY: true,
-          yTickValues: yAxisValues,
-          enableGridX: true,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
-          translateX: -25,
-          layers: ['markers', 'axes', 'grid', GraphLegend, 'bars'],
-          extraConfig: {},
-          itemWidth: 120,
-          itemDirection: 'right-to-left',
-          symbolShape: 'circle',
-          padding: 0.3,
-          margin: { top: 30, right: 0, bottom: 60, left: 100 },
-          markers: [],
-        }
-      }
-      case type === 'stackedDeviceActivity': {
-        return {
-          legend: false,
-          ylegend: false,
-          yTickValues: generateTickValues(data, tickValuesYShape, keys, 'Y', true),
-          gridYValues: null,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
-          extraConfig: {},
-          padding: 0.03,
-          translateX: 15,
-          itemWidth: 140,
-          itemDirection: 'left-to-right',
-          symbolShape: 'square',
-          theme: { grid: { line: { stroke: 'white', strokeWidth: 2 } } },
-          enableGridY: true,
-          enableGridX: false,
-          layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
-          margin: { top: 5, right: 70, bottom: 100, left: 70 },
-          markers: [
-            {
-              axis: 'y',
-              value: calcOverallRate('devicesActiveRaw', 'devicesTotal', data, {
-                weekendOrHoliday: 0,
-              }),
-              lineStyle: { stroke: 'rgba(32, 161, 179, 1)', strokeWidth: 3 },
-              legendOrientation: 'horizontal',
-              legend: `${calcOverallRate('devicesActiveRaw', 'devicesTotal', data, { weekendOrHoliday: 0 }).toFixed(
-                0
-              )}%`,
-              legendOffsetX: -30,
-              legendOffsetY: 0,
-              textStyle: {
-                fill: 'rgba(32, 161, 179, 1)',
-                fontWeight: 'bold',
-              },
-            },
-          ],
-        }
-      }
-      case type === 'bar-line': {
-        const groupMode = 'grouped'
-        const yAxisValues = generateTickValues(data, tickValuesYShape, keysForBars, 'Y', true, { groupMode })
-        return {
-          legend: false,
-          ylegend: false,
-          gridYValues: yAxisValues,
-          enableGridY: true,
-          yTickValues: yAxisValues,
-          enableGridX: true,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
-          extraConfig: {},
-          padding: 0.3,
-          translateX: -25,
-          itemWidth: 120,
-          layers: ['axes', 'grid', 'bars', 'markers', GraphLegend, ...layers],
-          itemDirection: 'left-to-right',
-          symbolShape: 'square',
-          theme: {
-            axis: { ticks: { text: { fontSize: 12 } } },
-          },
-          markers: [],
-          groupMode,
-          margin: { top: 40, right: 60, bottom: 60, left: 60 },
-        }
-      }
-      default:
-        return {
-          legend: false,
-          ylegend: false,
-          yTickValues: generateTickValues(data, tickValuesYShape, keys, 'Y', true),
-          gridYValues: null,
-          xTickValues: generateTickValues(data, tickValuesXShape, indexBy, 'X', false),
-          extraConfig: {},
-          padding: 0.3,
-          translateX: -25,
-          itemWidth: 120,
-          layers: ['axes', 'bars', 'grid', 'markers', GraphLegend],
-          itemDirection: 'right-to-left',
-          symbolShape: 'circle',
-          theme: {
-            axis: { ticks: { text: { fontSize: 14 } } },
-          },
-          enableGridY: false,
-          enableGridX: false,
-          margin: { top: 5, right: 0, bottom: 60, left: 0 },
-          markers: [],
-        }
-    }
-  }
-  const config = generateConfig(type, filteredData)
+  const config = generateConfig(
+    type,
+    filteredData,
+    tickValuesXShape,
+    indexBy,
+    tickValuesYShape,
+    keys,
+    keysForBars,
+    layers,
+    formatMessage
+  )
   const baseLegend = getLegend(props, config, { formatMessage })
 
   return (
@@ -301,8 +318,8 @@ const AspectResponsiveBar = props => {
             return generateColorForValue(valueId, graphId)
           }}
           margin={config.margin}
-          tooltip={v =>
-            v && legendsNotToRender.includes(v.id) ? (
+          tooltip={v => {
+            return v && legendsNotToRender.includes(v.id) ? (
               <EmptyTooltip title={v.id} />
             ) : (
               <GraphToolTip
@@ -320,7 +337,7 @@ const AspectResponsiveBar = props => {
                 )}
               />
             )
-          }
+          }}
           axisLeft={{
             tickSize: 5,
             tickValues: config.yTickValues,

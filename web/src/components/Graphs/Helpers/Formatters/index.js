@@ -147,22 +147,9 @@ const incrementSplit = (boundaries, increment) => {
 
 const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut = false, { groupMode } = {}) => {
   let values
-  let dynamicAxesTicks
-  const boundaries = getBoundaries(data, keys, {
-    whichAxes,
-    zeroOut,
-    groupMode,
-  })
+  const boundaries = getBoundaries(data, keys, { whichAxes, zeroOut, groupMode })
   const upperBoundary = boundaries[1] || 0
-
-  switch (true) {
-    case upperBoundary > 40 && axesTicks !== 'none' && axesTicks !== 'bookends':
-      dynamicAxesTicks = 'clubsandwich'
-      break
-
-    default:
-      dynamicAxesTicks = axesTicks
-  }
+  const dynamicAxesTicks = upperBoundary > 40 && !['none', 'bookends'].includes(axesTicks) ? 'clubsandwich' : axesTicks
 
   switch (dynamicAxesTicks) {
     case 'none':
