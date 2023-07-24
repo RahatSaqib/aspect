@@ -2703,7 +2703,7 @@ async function xdrAssayGraphAggregations(request) {
   return {
     grouped: data,
     // series
-    keysFromGrouped: ['TotalTests', 'MtbDetected', 'FqrDetected', 'FqrToMtbPercentage', 'InhDetected'],
+    keysFromGrouped: ['TotalTests', 'MtbDetected', 'FqrDetected', 'InhDetected', 'FqrToMtbPercentage'],
     i18nKeys: {
       TotalTests: 'TotalTests',
       MtbDetected: 'MtbDetected',
