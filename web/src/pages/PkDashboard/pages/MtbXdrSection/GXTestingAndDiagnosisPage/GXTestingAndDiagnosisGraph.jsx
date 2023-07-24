@@ -1,5 +1,7 @@
 import React, { useState } from 'react'
 import { FormControlLabel, Grid, Switch } from '@mui/material'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
@@ -45,7 +47,7 @@ const GXTestingAndDiagnosisGraph = () => {
         <XDRFLQResistanceGraphMain
           assaysFromState={assays ?? []}
           showLabel={showLabel}
-          filterSelection={Object.entries(filter ?? {}).map(([name, value]) => ({ [name]: value }))}
+          filterSelection={Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))}
         />
       </Grid>
     </PkPage>
