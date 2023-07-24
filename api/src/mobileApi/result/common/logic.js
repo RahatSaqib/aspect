@@ -418,7 +418,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     _.filter(followUps, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
     ['date', 'updatedOn']
   )
-  const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
+  const latestFollowUps = getLatestFollowUpsFromFollowUps(followUpList)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
   const patientDataSchema = data.patientDataSchema ? JSON.parse(data.patientDataSchema) : null
   const resultData = data.resultData
@@ -557,7 +557,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   return mainData
 }
 
-const getLatestFollowUpsFromFolloups = followUps => {
+const getLatestFollowUpsFromFollowUps = followUps => {
   const treatment = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment)
   const outcome = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome)
   const latestTreatment = !_.isEmpty(treatment)
@@ -576,6 +576,6 @@ module.exports = {
   getResultItemTransformedData,
   getResultItemTransformedDataV2,
   fieldNameToFollowUpTypeIdMappings,
-  getLatestFollowUpsFromFolloups,
+  getLatestFollowUpsFromFollowUps,
   getCustomFieldsForResult,
 }

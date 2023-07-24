@@ -4,7 +4,7 @@ const { getUser } = require('../../auth/service')
 const {
   getResultItemTransformedDataV2,
   fieldNameToFollowUpTypeIdMappings,
-  getLatestFollowUpsFromFolloups,
+  getLatestFollowUpsFromFollowUps,
 } = require('./common/logic')
 const { updateResultWorkflowStatusByResultId } = require('./updateWorkflowStatus')
 const { getConstraints } = require('../../auth/constraints')
@@ -44,7 +44,7 @@ async function clinicalResponse(request) {
   const clinicalResponseData = payload
   // get follow-ups for a single result
   const followUps = await getFollowUpsOfResultById({ id: resultId })
-  const latestFollowUps = getLatestFollowUpsFromFolloups(followUps)
+  const latestFollowUps = getLatestFollowUpsFromFollowUps(followUps)
   let response
   await Promise.all(
     clinicalResponseData.map(async data => {
@@ -53,7 +53,7 @@ async function clinicalResponse(request) {
         f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings[data.fieldName]
       )
       if (
-        (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
+        (latestFollowUp?.updatedOn < data.clientTime || _.isEmpty(latestFollowUp)) &&
         ['treatment', 'outcome'].includes(fieldNameToFollowUpTypeIdMappings[data.fieldName])
       ) {
         response = await addClinicalResponse(request, data)
@@ -64,10 +64,7 @@ async function clinicalResponse(request) {
           response = await unAcknowledgeResult(request)
         }
       } else if (data.fieldName === 'followUpNotPossible') {
-        if (
-          (latestFollowUp?.updatedOn < data.clientTime || !latestFollowUp) &&
-          ['treatment', 'outcome'].includes(fieldNameToFollowUpTypeIdMappings[data.fieldName])
-        ) {
+        if (latestFollowUp?.updatedOn < data.clientTime || _.isEmpty(latestFollowUp)) {
           const { auth } = request
           const { id: currentUserId } = await getUser(auth.credentials.name)
           if (data.value) {
@@ -86,7 +83,7 @@ async function clinicalResponse(request) {
   ).then(async () => {
     // get follow-ups for a single result
     const followUps = await getFollowUpsOfResultById({ id: resultId })
-    const latestFollowUps = getLatestFollowUpsFromFolloups(followUps)
+    const latestFollowUps = getLatestFollowUpsFromFollowUps(followUps)
     clinicalResponseData.map(async data => {
       if (['treatmentStarted', 'outcomeOccurred'].includes(data.fieldName)) {
         response = await updateResultFollowUp(request, data, latestFollowUps)
