@@ -544,45 +544,21 @@ const addClinicalResponsePayloadValidation = () => {
         .description(
           'Optional either confirmed, treatment, treatmentOccurred, outcome, outcomeOccurred, followUpNotPossible or followUpNotPossibleReason.'
         ),
-      value: Joi.alternatives()
-        .when('fieldName', {
-          is: 'confirmed',
-          then: Joi.bool().required().description('The boolean value of whether the result has been confirmed'),
-        })
-        .when('fieldName', {
-          is: 'followUpNotPossible',
-          then: Joi.bool().required().description('The boolean value of whether the follow up is not possible'),
-        })
-        .when('fieldName', {
-          is: 'followUpNotPossibleReason',
-          then: Joi.string()
-            .allow('', null)
-            .description('The free text reason/explanation for why a follow up is not possible'),
-        })
-        .when('fieldName', {
-          is: 'treatment',
-          then: Joi.string().allow('', null).description('The external ID of the treatment follow up'),
-        })
-        .when('fieldName', {
-          is: 'outcome',
-          then: Joi.string().allow('', null).description('The external ID of the outcome follow up'),
-        })
-        .when('fieldName', {
-          is: 'treatmentOccurred',
-          then: Joi.date()
-            .required()
-            .allow('', null)
-            .iso()
-            .description('The date/time value when fieldName is treatmentOccurred'),
-        })
-        .when('fieldName', {
-          is: 'outcomeOccurred',
-          then: Joi.date()
-            .required()
-            .allow('', null)
-            .iso()
-            .description('The date/time value when fieldName is outcomeOccurred'),
-        }),
+      value: [
+        Joi.bool()
+          .required()
+          .description('The boolean value of whether the result has been confirmed or the follow up is not possible'),
+        Joi.string()
+          .allow('', null)
+          .description(
+            'The external ID of the follow up or the free text reason/explanation for why a follow up is not possible'
+          ),
+        Joi.date()
+          .required()
+          .allow('', null)
+          .iso()
+          .description('The date/time value when fieldName is treatmentOccurred or outcomeOccurred'),
+      ],
       clientTime: Joi.date()
         .iso()
         .optional()
