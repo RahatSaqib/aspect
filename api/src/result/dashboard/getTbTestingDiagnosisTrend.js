@@ -49,18 +49,18 @@ const reduceByTbDetected = dataRaw => {
   return yearsList
 }
 
-// tbDetection && GxMtbXdr
+// rrDetection && GxMtbRif + GxMtbRifUltra
 const reduceByRrDetected = dataRaw => {
   let yearsList = []
   const DETECTED = 'Detected'
 
   const reducedYears = dataRaw.reduce((acc, it) => {
-    const year = acc[it.year] || { year: it.year, MtbDetected: 0, Total: 0 }
+    const year = acc[it.year] || { year: it.year, rrDetected: 0, tbTotal: 0 }
     if (it.resultCategory2 === DETECTED) {
-      year.MtbDetected = it.cnt
+      year.rrDetected = it.cnt
     }
     if (it.resultCategory1 === DETECTED) {
-      year.Total += it.cnt
+      year.tbTotal += it.cnt
     }
     return { ...acc, [it.year]: year }
   }, {})
@@ -71,7 +71,7 @@ const reduceByRrDetected = dataRaw => {
 
   yearsList = yearsList.sort((a, b) => a.year - b.year)
   yearsList.forEach(year => {
-    year.MtbToTotalPercentage = year.Total === 0 ? 0 : (100 * year.MtbDetected) / year.Total
+    year.rrToTbTotalPercentage = year.tbTotal === 0 ? 0 : (100 * year.rrDetected) / year.tbTotal
   })
 
   return yearsList
@@ -96,11 +96,11 @@ async function getTbTestingDiagnosisTrend(request) {
   if (request.query.source === 'rrDetection') {
     return {
       grouped: reduceByRrDetected(dataRaw),
-      keysFromGrouped: ['Total', 'MtbDetected', 'MtbToTotalPercentage'], // series
+      keysFromGrouped: ['tbTotal', 'rrDetected', 'rrToTbTotalPercentage'], // series
       i18nKeys: {
-        MtbDetected: 'MTBPlus',
-        Total: 'Total',
-        MtbToTotalPercentage: 'MTBPercent',
+        rrDetected: 'rrDetected',
+        tbTotal: 'TbTotal',
+        rrToTbTotalPercentage: 'rrToTbTotalPercentage',
       },
     }
   }
