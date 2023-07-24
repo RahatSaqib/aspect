@@ -11,11 +11,12 @@ import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
+const defaultFilters = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }]
 const NationalTestingTrendsGraph = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState([])
+  const [filter, setFilter] = useState()
   const { data: assays } = useAssayList()
 
   return (
@@ -47,7 +48,9 @@ const NationalTestingTrendsGraph = () => {
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}
-        filterSelection={Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))}
+        filterSelection={Object.entries(omitBy(filter, isNil))
+          .map(([name, value]) => ({ [name]: value }))
+          .concat(defaultFilters)}
       />
     </PkPage>
   )

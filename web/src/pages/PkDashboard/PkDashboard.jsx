@@ -96,7 +96,7 @@ const PkDashboard = () => {
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
             <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrent)} />
-            <DashboardLink to="" label={formatMessage(messages.DNationalTrend)} />
+            <DashboardLink to="/dashboard/xdr/national-diagnosis" label={formatMessage(messages.DNationalTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-diagnosis-trend"
               label={formatMessage(messages.DProvincialComparison)}
