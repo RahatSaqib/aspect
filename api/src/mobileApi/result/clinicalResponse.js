@@ -64,7 +64,7 @@ async function clinicalResponse(request) {
           response = await unAcknowledgeResult(request)
         }
       } else if (data.fieldName === 'followUpNotPossible') {
-        if (latestFollowUp?.updatedOn < data.clientTime || _.isEmpty(latestFollowUp)) {
+        if (latestFollowUp?.updatedOn <= data.clientTime || _.isEmpty(latestFollowUp)) {
           const { auth } = request
           const { id: currentUserId } = await getUser(auth.credentials.name)
           if (data.value) {
@@ -73,9 +73,29 @@ async function clinicalResponse(request) {
             const followUpNotPossibleReason =
               clinicalResponseData.find(formVal => formVal.fieldName === 'followUpNotPossibleReason') || {}
             response = await flagResult(resultId, currentUserId, followUpNotPossibleReason.value, data.clientTime)
+            await updateTreatmentStatusByResultId(
+              currentUserId,
+              data.clientTime,
+              resultId,
+              'NotPossible',
+              null,
+              null,
+              'Client API',
+              data.clientTime
+            )
           } else {
             await deleteResultFollowUp(resultId, fieldNameToFollowUpTypeIdMappings.treatment, data.clientTime)
             response = await unflagResult(resultId, currentUserId, data.clientTime)
+            await updateTreatmentStatusByResultId(
+              currentUserId,
+              data.clientTime,
+              resultId,
+              'AwaitingTreatment',
+              null,
+              null,
+              'Client API',
+              data.clientTime
+            )
           }
         }
       }
@@ -293,7 +313,8 @@ async function updateTreatmentStatusByResultId(
     treatmentStatusId = resultTreatmentStatusId
   }
   let lastTreatment = await getLastTreatmentStatusByResult(resultId)
-  if (treatmentStatusId && lastTreatment) {
+
+  if (treatmentStatusId) {
     const [treatmentStatusLogId] = await setTreatmentStatusLog(
       resultId,
       treatmentStatusId,
@@ -303,7 +324,6 @@ async function updateTreatmentStatusByResultId(
       userId,
       now
     )
-
     if (!lastTreatment) {
       await updateResult(resultId, treatmentStatusLogId, userId, now)
       lastTreatment = await getLastTreatmentStatusByResult(resultId)
