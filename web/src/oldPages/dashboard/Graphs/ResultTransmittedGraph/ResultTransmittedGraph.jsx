@@ -18,6 +18,7 @@ const ResultTransmittedGraph = () => {
     minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
+
   return (
     <ErrorBoundary>
       <Grid container className={cssClasses('Graph_Container')}>
@@ -37,14 +38,24 @@ const ResultTransmittedGraph = () => {
                     <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
                       <PeriodSelector
                         label={formatMessage(graphMessages.date)}
+                        noAny
+                        noDay
+                        noWeek
+                        noQuarter
+                        noYear
+                        noCustom
                         minDate={filter.minDate || null}
                         maxDate={filter.maxDate || null}
                         onChange={dateValues => {
-                          const newValues = Object.keys(dateValues).map(
-                            // eslint-disable-next-line prefer-destructuring
-                            key => (dateValues[key] = dateValues[key].toISOString().split('T')[0])
-                          )
-                          setFilter({ ...filter, ...newValues })
+                          setFilter({
+                            ...filter,
+                            minDate: dateValues.minDate
+                              ? dateValues.minDate.toISOString().split('T')[0]
+                              : filter.minDate,
+                            maxDate: dateValues.maxDate
+                              ? dateValues.maxDate.toISOString().split('T')[0]
+                              : filter.minDate,
+                          })
                         }}
                       />
                     </Grid>
