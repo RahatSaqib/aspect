@@ -68,6 +68,7 @@ const ProvincialRIFTestingTrendRRTB = lazy(() =>
 
 const XDRByDevice = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/XDRByDevice'))
 const NationalGXTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalTestingTrendsPage'))
+const NationalFQTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalFQTrendPage'))
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
@@ -163,6 +164,7 @@ const LogInApp = () => {
                     <Route path="/dashboard/xdr/by-device" element={<XDRByDevice />} />
                     <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
                     <Route path="/dashboard/xdr/national-diagnosis" element={<NationalDiagnosisXdr />} />
+                    <Route path="/dashboard/xdr/national-fq" element={<NationalFQTrends />} />
                     <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                     <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
                     <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
