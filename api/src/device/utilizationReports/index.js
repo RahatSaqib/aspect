@@ -123,6 +123,7 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
     length: data.length,
     data: _.orderBy(data, 'name'),
     dynamicColumns,
+    WORKING_DAYS_IN_YEAR,
   }
 }
 
