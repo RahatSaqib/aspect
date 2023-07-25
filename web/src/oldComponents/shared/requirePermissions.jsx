@@ -22,11 +22,8 @@ export const NESTED_ACCESS_LEVELS_FOR = {
   // propName is a permission access level
   // array in propValue lists all access levels which are nested in propName
   // another words - propName is greater than any access level in propValue
-  admin: ['view', 'create', 'update', 'delete'],
-  edit: ['view', 'create', 'update', 'delete'],
-  create: ['view'],
-  update: ['view'],
-  delete: ['view'],
+  admin: ['view', 'edit'],
+  edit: ['view'],
   view: [], // this is a minimal access level, so no any weaker
 }
 
