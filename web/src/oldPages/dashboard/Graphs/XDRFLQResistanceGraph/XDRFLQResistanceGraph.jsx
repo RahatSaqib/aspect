@@ -42,6 +42,8 @@ const XDRFLQResistanceGraph = ({ assaysFromState }) => {
                     <XDRFLQResistanceGraphMain
                       assaysFromState={assaysFromState}
                       showLabel={showLabel}
+                      // if you want to pass multiple filters please change below line to :
+                      // filterSelection={Object.entries(filter ?? {}).map(([name, value]) => ({ [name]: value }))}
                       filterSelection={filter && [filter]}
                     />
                   </Grid>
