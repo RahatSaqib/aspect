@@ -20,26 +20,6 @@ const messages = {
       id: 'pages.SiteList.externalId',
       defaultMessage: 'Site ID',
     },
-    siteIssues: {
-      id: 'pages.SiteList.siteIssues',
-      defaultMessage: 'Issues',
-    },
-    issueCategoryDeviceHealth: {
-      id: 'pages.SiteList.issueCategoryDeviceHealth',
-      defaultMessage: 'Device',
-    },
-    issueCategoryReagentHealth: {
-      id: 'pages.SiteList.issueCategoryReagentHealth',
-      defaultMessage: 'Reagent',
-    },
-    issueCategoryDataHealth: {
-      id: 'pages.SiteList.issueCategoryDataHealth',
-      defaultMessage: 'Data',
-    },
-    issueCategoryConnectivityHealth: {
-      id: 'pages.SiteList.issueCategoryConnectivityHealth',
-      defaultMessage: 'Connectivity',
-    },
     paginatorStatus: {
       id: 'pages.SiteList.paginatorStatus',
       defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
