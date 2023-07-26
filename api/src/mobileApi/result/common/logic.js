@@ -557,15 +557,15 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   return mainData
 }
 
-const getLatestFollowUpsFromFollowUps = followUps => {
-  const treatment = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment)
-  const outcome = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome)
-  const latestTreatment = !_.isEmpty(treatment)
-    ? treatment?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
-    : {}
-  const latestOutcome = !_.isEmpty(outcome)
-    ? outcome?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
-    : {}
+const getLatestFollowUpsFromFollowUps = (followUps = []) => {
+  const latestTreatment = _.sortBy(
+    followUps.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment),
+    f => f.date
+  ).reverse()[0]
+  const latestOutcome = _.sortBy(
+    followUps.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome),
+    f => f.date
+  ).reverse()[0]
   return [latestTreatment, latestOutcome]
 }
 
