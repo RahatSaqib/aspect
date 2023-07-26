@@ -31,7 +31,7 @@ const GXTestingAndDiagnosisGraph = () => {
           <StateSelect
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setFilter(prv => ({ ...prv, stateId: e.target.value }))}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
