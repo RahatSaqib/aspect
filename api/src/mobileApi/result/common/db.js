@@ -496,27 +496,23 @@ const getFollowUpsForResultFollowup = followUpExternalId => {
     .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
 }
 
-const deleteResultFollowUpNotPossible = (resultId, date) => {
+const deleteResultFollowUpNotPossible = async (resultId, date) => {
+  const { id: notPossibleFollowUpId } = await knex('FollowUp').where('externalId', 'notPossible').first('id')
   return knex('ResultFollowUp')
-    .join('FollowUp as f', 'ResultFollowUp.followUpId', 'f.id')
-    .where('f.externalId', 'notPossible')
-    .andWhere('ResultFollowUp.updatedOn', '<=', date)
+    .where('followUpId', notPossibleFollowUpId)
+    .andWhere('resultId', resultId)
+    .andWhere('date', '<=', date)
     .update({
       isDeleted: 1,
     })
 }
 
 const getLastTreatmentStatusByResult = resultId => {
-  return knex('Result as r')
-    .innerJoin('ResultTreatmentStatusLog as rtl', 'r.treatmentStatusLogId', 'rtl.id')
+  return knex('ResultTreatmentStatusLog as rtl')
     .innerJoin('ResultTreatmentStatus as ts', 'rtl.resultTreatmentStatusId', 'ts.id')
     .where('rtl.resultId', resultId)
     .orderBy('rtl.changedOn', 'desc')
     .first('rtl.changedOn', 'ts.name', 'ts.externalId', 'ts.i18nKey')
-}
-
-const getTreatmentStatus = resultTreatmentStatusId => {
-  return knex('ResultTreatmentStatus').where('id', resultTreatmentStatusId).first()
 }
 
 const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, changedOn, userId, now) => {
@@ -552,10 +548,6 @@ const updateResult = (resultId, treatmentStatusLogId, userId, now) => {
   })
 }
 
-const getTreatmentStatusLogId = resultId => {
-  return knex('Result').where('id', resultId).select('treatmentStatusLogId')
-}
-
 const insertResultWorkflowLog = resultWorkflowLogEntry => {
   return knex('ResultWorkflowLog').insert(resultWorkflowLogEntry)
 }
@@ -572,13 +564,6 @@ const updateResultWithResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, no
     resultWorkflowStatusLogId: lastLogId,
     updatedBy: resultWorkflowLogEntry.createdBy,
     updatedOn: now,
-  })
-}
-
-const updateResultTreatmentStatusLog = (treatmentStatusLogId, data, changedOn) => {
-  return knex('ResultTreatmentStatusLog').where('id', treatmentStatusLogId).update({
-    data,
-    changedOn,
   })
 }
 
@@ -627,15 +612,12 @@ module.exports = {
   getLatestResultWorkflowLog,
   getLatestResultWorkflowLogBefore,
   getResultWorkflowStatusQuery,
-  getTreatmentStatus,
-  getTreatmentStatusLogId,
   insertResultWorkflowLog,
   deleteResultWorkflowLogs,
   deleteResultFollowUpNotPossible,
   insertResultWorkflowLogQuery,
   setTreatmentStatusLog,
   updateResult,
-  updateResultTreatmentStatusLog,
   updateResultWithResultWorkflowLog,
   updateResultWorkflowLogQuery,
   getCurrentResultWorkflowStatus,

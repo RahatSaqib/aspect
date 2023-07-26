@@ -23,6 +23,7 @@ const TESTTYPE = {
 }
 
 const ACKNOWLEDGED = 'Acknowledged'
+const NOT_POSSIBLE_FOLLOW_UP_TYPE = 'notPossible'
 
 const fieldNameToFollowUpTypeIdMappings = {
   treatment: 'treatment',
@@ -513,8 +514,11 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     testInformation: [],
   }
   if (latestFollowUps.length > 0) {
-    const treatment = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'treatment')
-    const outcome = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'outcome')
+    const treatment = _.find(
+      latestFollowUps,
+      f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment
+    )
+    const outcome = _.find(latestFollowUps, f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome)
     mainData.clinicalResponse = {
       ...mainData.clinicalResponse,
       treatment: treatment?.externalId || null,
@@ -566,7 +570,7 @@ const getLatestFollowUpsFromFollowUps = (followUps = []) => {
     followUps.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome),
     f => f.date
   ).reverse()[0]
-  return [latestTreatment, latestOutcome]
+  return [latestTreatment, latestOutcome].filter(_.identity)
 }
 
 module.exports = {
@@ -578,4 +582,6 @@ module.exports = {
   fieldNameToFollowUpTypeIdMappings,
   getLatestFollowUpsFromFollowUps,
   getCustomFieldsForResult,
+  ACKNOWLEDGED,
+  NOT_POSSIBLE_FOLLOW_UP_TYPE,
 }

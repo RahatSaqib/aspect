@@ -2,18 +2,20 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { getUser } = require('../../auth/service')
-const { getResultItemTransformedDataV2, fieldNameToFollowUpTypeIdMappings } = require('./common/logic')
+const {
+  getResultItemTransformedDataV2,
+  fieldNameToFollowUpTypeIdMappings,
+  ACKNOWLEDGED,
+  NOT_POSSIBLE_FOLLOW_UP_TYPE,
+} = require('./common/logic')
 const { updateResultWorkflowStatusByResultId } = require('./updateWorkflowStatus')
 const { getConstraints } = require('../../auth/constraints')
 const { resultTreatmentStatusToId, resultWorkflowStatusToId } = require('../../shared/dictionary')
 const {
   getFollowUpsForResultFollowup,
   getLastTreatmentStatusByResult,
-  getTreatmentStatus,
   setTreatmentStatusLog,
   updateResult,
-  getTreatmentStatusLogId,
-  updateResultTreatmentStatusLog,
   addResultFollowUp,
   deleteResultFollowUpNotPossible,
   insertResultWorkflowLog,
@@ -29,9 +31,7 @@ const {
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
 
-const ACKNOWLEDGED = 'Acknowledged'
 const ACKNOWLEDGED_FIELD_NAME = 'confirmed'
-const NOT_POSSIBLE_FOLLOW_UP_TYPE = 'notPossible'
 const NOT_POSSIBLE_FIELD_NAME = 'followUpNotPossible'
 const NOT_POSSIBLE_REASON_FIELD_NAME = 'followUpNotPossibleReason'
 
@@ -122,11 +122,11 @@ async function clinicalResponse(request) {
           value: null,
           clientTime: mostRecentNotPossibleValueCaptured.clientTime,
         }
-        const followUpId = await getFollowUpsForResultFollowup(NOT_POSSIBLE_FOLLOW_UP_TYPE)
+        const followUp = await getFollowUpsForResultFollowup(NOT_POSSIBLE_FOLLOW_UP_TYPE)
         await addResultFollowUp(
           resultId,
           NOT_POSSIBLE_FOLLOW_UP_TYPE,
-          followUpId,
+          followUp.id,
           mostRecentNotPossibleValueCaptured.clientTime,
           currentUserId,
           currentUserId
@@ -142,9 +142,6 @@ async function clinicalResponse(request) {
           mostRecentNotPossibleValueCaptured.clientTime,
           resultId,
           'NotPossible',
-          null,
-          null,
-          'Client API',
           mostRecentNotPossibleValueCaptured.clientTime
         )
       }
@@ -161,9 +158,6 @@ async function clinicalResponse(request) {
         mostRecentNotPossibleValueCaptured.clientTime,
         resultId,
         _.isNil(latestTreatment) ? 'AwaitingTreatment' : 'OnTreatment',
-        null,
-        null,
-        'Client API',
         mostRecentNotPossibleValueCaptured.clientTime
       )
       response = await unflagResult(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
@@ -239,51 +233,23 @@ async function updateTreatmentStatusByResultId(
   now,
   resultId,
   resultTreatmentStatusExternalId,
-  resultTreatmentStatusId,
-  data,
-  method,
   changedOn = new Date()
 ) {
-  let treatmentStatusId = null
-  // check if a externalId is provided
-  if (resultTreatmentStatusExternalId) {
-    treatmentStatusId = await resultTreatmentStatusToId(resultTreatmentStatusExternalId)
-    if (!treatmentStatusId) {
-      return Boom.badRequest('Invalid externalId')
-    }
-  } else if (resultTreatmentStatusId) {
-    // check if value of resultTreatmentStatusId is valid
-    const treatmentStatus = await getTreatmentStatus(resultTreatmentStatusId)
-    if (!treatmentStatus) {
-      return Boom.badRequest('Invalid resultTreatmentStatusId')
-    }
-    treatmentStatusId = resultTreatmentStatusId
+  const treatmentStatusId = await resultTreatmentStatusToId(resultTreatmentStatusExternalId)
+  if (!treatmentStatusId) {
+    throw Boom.badRequest('Invalid externalId')
   }
-  let lastTreatment = await getLastTreatmentStatusByResult(resultId)
-
-  if (treatmentStatusId) {
-    const [treatmentStatusLogId] = await setTreatmentStatusLog(
-      resultId,
-      treatmentStatusId,
-      method,
-      data,
-      changedOn,
-      userId,
-      now
-    )
-    if (!lastTreatment) {
-      await updateResult(resultId, treatmentStatusLogId, userId, now)
-      lastTreatment = await getLastTreatmentStatusByResult(resultId)
-    }
-  }
-
-  if (data) {
-    const [{ treatmentStatusLogId }] = await getTreatmentStatusLogId(resultId)
-    await updateResultTreatmentStatusLog(treatmentStatusLogId, data, changedOn)
-    await updateResult(resultId, treatmentStatusLogId, userId, now)
-  }
-
-  return lastTreatment
+  const [treatmentStatusLogId] = await setTreatmentStatusLog(
+    resultId,
+    treatmentStatusId,
+    'Client API',
+    null,
+    changedOn,
+    userId,
+    now
+  )
+  await updateResult(resultId, treatmentStatusLogId, userId, now)
+  return getLastTreatmentStatusByResult(resultId)
 }
 
 // update result workflow
