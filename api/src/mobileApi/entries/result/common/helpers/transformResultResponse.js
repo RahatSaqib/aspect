@@ -24,7 +24,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
     const clinicalResponse = transformClinicalResponse(result, resultFollowUps, acknowledgement)
     const hasFollowUp = !!(!!clinicalResponse?.treatment || !!clinicalResponse?.outcome)
     const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
-    const noFollowUpPossibleReason = noFollowUpPossible ? result?.resultWorkflowStatusReason : undefined
+    const noFollowUpPossibleComment = noFollowUpPossible ? result?.resultWorkflowStatusReason : undefined
     const clinicalFollowUpFlags = {
       requiresFollowUp: requiresFollowUp && !hasFollowUp && !noFollowUpPossible,
       hasFollowUp: requiresFollowUp && hasFollowUp && !noFollowUpPossible,
@@ -42,7 +42,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
       patientId: patientData?.id || null,
       sample: transformSampleData(result),
       ...clinicalFollowUpFlags,
-      noFollowUpPossibleComment: noFollowUpPossibleReason,
+      noFollowUpPossibleComment,
       searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),

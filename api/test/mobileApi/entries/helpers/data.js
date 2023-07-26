@@ -67,6 +67,7 @@ const expected347 = [
     hasFollowUp: false,
     requiresFollowUp: false,
     noFollowUpPossible: false,
+    noFollowUpPossibleComment: undefined,
     comments: [],
     followUps: [],
     history: [
@@ -250,6 +251,7 @@ const expected450 = [
     hasFollowUp: true,
     requiresFollowUp: false,
     noFollowUpPossible: false,
+    noFollowUpPossibleComment: undefined,
     comments: [],
     followUps: [
       {
