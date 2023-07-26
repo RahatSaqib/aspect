@@ -143,7 +143,7 @@ async function flagResult(resultId, currentUserId, reason, date) {
   }
 }
 
-async function unflagResult(request, resultId, currentUserId, reason, date) {
+async function unflagResult(resultId, currentUserId, date) {
   const previousResultWorkflowStatus = (await getLatestResultWorkflowLogBefore(resultId, FLAGGED_EXTERNALID)) || {}
   if (!previousResultWorkflowStatus.resultWorkflowStatusId) {
     const deliveredId = await resultWorkflowStatusToId(DELIVERED_EXTERNALID)
