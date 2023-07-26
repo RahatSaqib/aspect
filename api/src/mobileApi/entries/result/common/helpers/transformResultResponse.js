@@ -29,7 +29,6 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
       requiresFollowUp: requiresFollowUp && !hasFollowUp && !noFollowUpPossible,
       hasFollowUp: requiresFollowUp && hasFollowUp && !noFollowUpPossible,
       noFollowUpPossible,
-      noFollowUpPossibleReason,
     }
     return {
       id: result.id,
@@ -43,6 +42,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
       patientId: patientData?.id || null,
       sample: transformSampleData(result),
       ...clinicalFollowUpFlags,
+      noFollowUpPossibleComment: noFollowUpPossibleReason,
       searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),
