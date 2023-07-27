@@ -117,7 +117,7 @@ async function clinicalIndicatorAggregations(request) {
 
   // if grouping only by month and assay, resultCategory1, resultCategory2 (the most common case),
   // we can query the fact tables for much better performance
-  const factTableDataGroups = ['month', 'assay', 'resultCategory1', 'resultCategory2']
+  const factTableDataGroups = ['year', 'month', 'assay', 'resultCategory1', 'resultCategory2']
 
   const resp = {}
   if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
