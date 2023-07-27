@@ -1,3 +1,4 @@
+const { getYear } = require('../../shared/date.js')
 const { getGroupBy, clinicalIndicatorAggregations } = require('../common/logic')
 
 /**
@@ -24,18 +25,27 @@ async function trendInYears(request) {
 }
 
 // tbDetection && (GxMtbRif + GxMtbRifUltra) || GxMtbXdr
-const reduceByTbDetected = dataRaw => {
+const reduceByTbDetected = (dataRaw, fromYear, toYear) => {
   let yearsList = []
+  const initialResponse = {}
+  for (const y of [...Array(toYear - fromYear + 1).keys()]) {
+    initialResponse[`${y + fromYear}`] = {
+      year: y + fromYear,
+      MtbDetected: 0,
+      Total: 0,
+    }
+  }
+
   const DETECTED = 'Detected'
 
   const reducedYears = dataRaw.reduce((acc, it) => {
-    const year = acc[it.year] || { year: it.year, MtbDetected: 0, Total: 0 }
+    const year = acc[it.year]
     if (it.resultCategory1 === DETECTED) {
       year.MtbDetected = it.cnt
     }
     year.Total += it.cnt
     return { ...acc, [it.year]: year }
-  }, {})
+  }, initialResponse)
 
   Object.keys(reducedYears).forEach(yyyy => {
     yearsList = [...yearsList, reducedYears[yyyy]]
@@ -83,7 +93,7 @@ async function getTbTestingDiagnosisTrend(request) {
   if (request.query.source === 'tbDetection') {
     // OK
     return {
-      grouped: reduceByTbDetected(dataRaw),
+      grouped: reduceByTbDetected(dataRaw, getYear(request.query.minDate), getYear(request.query.maxDate)),
       keysFromGrouped: ['Total', 'MtbDetected', 'MtbToTotalPercentage'], // series
       i18nKeys: {
         MtbDetected: 'MTBPlus',
