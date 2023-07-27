@@ -410,6 +410,10 @@ const messages = {
       id: 'legends.Unknown.FqrDetected',
       defaultMessage: 'FQ-R Detected',
     },
+    InhDetected: {
+      id: 'legends.Unknown.InhDetected',
+      defaultMessage: 'INH Detected',
+    },
     FQRPercent: {
       id: 'legends.Unknown.FQRPercent',
       defaultMessage: 'FQ-R %',
