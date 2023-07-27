@@ -27,6 +27,9 @@ const downloadEntriesResponseValidation = () => {
                 .required()
                 .allow(null, '')
                 .description('Unique ID of the patient for this entry if available'),
+              resultRequiresTreatment: Joi.bool()
+                .required()
+                .description('Whether the result requires a type of treatment response'),
               requiresFollowUp: Joi.bool().required().description('Whether the entry requires a follow-up'),
               hasFollowUp: Joi.bool().required().description('Whether the entry has been followed up on'),
               noFollowUpPossible: Joi.bool()
