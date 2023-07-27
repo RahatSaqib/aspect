@@ -381,6 +381,7 @@ const getItemsV2 = (resultQuery, query) => {
       'rslog.createdOn as transferredOn',
       'ptr.name as transferredBy',
       'rca.requiresTreatment as requiresTreatment',
+      'rca2.requiresTreatment as requiresTreatment2',
       'rca.reportable as reportable',
       'r.id as resultId',
       'a.resultCategory1Label',
@@ -454,6 +455,7 @@ const getFollowUpsOfResultById = resultId => {
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
     .where({ 'rfu.resultId': resultId })
     .andWhere('rfu.isDeleted', false)
+    .orderBy('rfu.updatedOn', 'asc')
     .select(
       'rfu.resultId',
       'rfu.id',

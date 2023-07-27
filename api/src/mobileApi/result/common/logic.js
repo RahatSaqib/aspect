@@ -426,6 +426,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
     : null
   const severity = getSeverity(data, followUps)
+  const resultRequiresTreatment = !!(data.requiresTreatment || data.requiresTreatment2)
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -512,6 +513,7 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
       confirmedOn: acknowledgement?.acknowledgedOn ?? null,
     },
     testInformation: [],
+    resultRequiresTreatment,
   }
   if (latestFollowUps.length > 0) {
     const treatment = _.find(

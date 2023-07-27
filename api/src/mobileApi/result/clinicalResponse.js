@@ -113,7 +113,7 @@ async function clinicalResponse(request) {
         resultEntry.followUps.filter(
           fu =>
             fu.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment &&
-            fu.updatedOn.toISOString() >= mostRecentTreatmentInPayload.clientTime.toIsoString()
+            fu.updatedOn.toISOString() >= mostRecentTreatmentInPayload.updatedOn.toISOString()
         ),
         fu => fu.updatedOn
       )[0]
@@ -162,7 +162,7 @@ async function clinicalResponse(request) {
         resultEntry.followUps.filter(
           fu =>
             fu.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome &&
-            fu.updatedOn.toISOString() >= mostRecentOutcomeInPayload.clientTime.toIsoString()
+            fu.updatedOn.toISOString() >= mostRecentOutcomeInPayload.updatedOn.toISOString()
         ),
         fu => fu.updatedOn
       )[0]
@@ -240,26 +240,34 @@ async function clinicalResponse(request) {
             currentUserId,
             mostRecentNotPossibleValueCaptured.clientTime
           )
-          resultEntry = await flagResult(
+          await flagResult(
             resultId,
             currentUserId,
             notPossibleReasonValueCaptured.value,
             mostRecentNotPossibleValueCaptured.clientTime
           )
+          resultEntry = await showResult(resultId, dataConstraints)
         }
       } else {
         await deleteResultFollowUpNotPossible(resultId, mostRecentNotPossibleValueCaptured.clientTime)
-        resultEntry = await unflagResult(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
+        await unflagResult(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
+        resultEntry = await showResult(resultId, dataConstraints)
       }
     }
+    const resultFollowUps = await getFollowUpsOfResultById(resultId)
+    const latestTreatment =
+      _.sortBy(
+        resultFollowUps.filter(rfu => rfu.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment),
+        rfu => rfu.updatedOn
+      ).reverse()[0] || {}
     const expectedTreatmentStatus =
-      resultEntry.resultRequiresTreatment && !resultEntry.clinicalResponse?.treatment
+      resultEntry.resultRequiresTreatment && !latestTreatment.externalId
         ? 'AwaitingTreatment'
         : resultEntry.resultRequiresTreatment &&
-          resultEntry.clinicalResponse?.treatment &&
-          resultEntry.clinicalResponse?.treatment !== NOT_POSSIBLE_FOLLOW_UP_TYPE
+          latestTreatment.externalId &&
+          latestTreatment.externalId !== NOT_POSSIBLE_FOLLOW_UP_TYPE
         ? 'OnTreatment'
-        : resultEntry.clinicalResponse?.treatment === NOT_POSSIBLE_FOLLOW_UP_TYPE
+        : latestTreatment.externalId === NOT_POSSIBLE_FOLLOW_UP_TYPE
         ? 'NotPossible'
         : null
     if (resultEntry.treatmentStatus?.externalId !== expectedTreatmentStatus) {
