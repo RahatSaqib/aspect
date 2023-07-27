@@ -205,7 +205,7 @@ async function clinicalResponse(request) {
       payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_FIELD_NAME),
       fuv => fuv.clientTime
     ).reverse()[0]
-    if (mostRecentTreatmentInPayload || mostRecentOutcomeInPayload) {
+    if (mostRecentValueCaptured) {
       resultEntry = await showResult(resultId, dataConstraints)
     }
     if (mostRecentNotPossibleValueCaptured) {
@@ -253,16 +253,16 @@ async function clinicalResponse(request) {
       }
     }
     const expectedTreatmentStatus =
-      resultEntry.resultRequiresTreatment && !resultEntry.clinicalResponse.treatment
+      resultEntry.resultRequiresTreatment && !resultEntry.clinicalResponse?.treatment
         ? 'AwaitingTreatment'
         : resultEntry.resultRequiresTreatment &&
-          resultEntry.clinicalResponse.treatment &&
-          resultEntry.clinicalResponse.treatment !== NOT_POSSIBLE_FOLLOW_UP_TYPE
+          resultEntry.clinicalResponse?.treatment &&
+          resultEntry.clinicalResponse?.treatment !== NOT_POSSIBLE_FOLLOW_UP_TYPE
         ? 'OnTreatment'
-        : resultEntry.clinicalResponse.treatment === NOT_POSSIBLE_FOLLOW_UP_TYPE
+        : resultEntry.clinicalResponse?.treatment === NOT_POSSIBLE_FOLLOW_UP_TYPE
         ? 'NotPossible'
         : null
-    if (resultEntry.treatmentStatus.externalId !== expectedTreatmentStatus) {
+    if (resultEntry.treatmentStatus?.externalId !== expectedTreatmentStatus) {
       if (expectedTreatmentStatus) {
         await updateTreatmentStatusByResultId(
           currentUserId,
