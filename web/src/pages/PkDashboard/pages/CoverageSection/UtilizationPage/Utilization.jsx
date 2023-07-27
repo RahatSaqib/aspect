@@ -96,7 +96,6 @@ const UtilizationPage = () => {
 
   return (
     <PkPage
-      isMocked
       title={formatMessage(messages.utilizationTitle)}
       filter={
         <PeriodSelector

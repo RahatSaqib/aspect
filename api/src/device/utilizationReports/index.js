@@ -38,13 +38,13 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
     assay,
     query,
   })
+    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
+    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
   /**
    * get all devices recorded in FactResultsDeviceByTimeFrame during whole period
    */
   let devices = await factTableQuery
     .clone()
-    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
-    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
     .groupBy('d.id')
     .select('d.name', 'd.id', 'dcap.modules', 'dcap.dailyCapacity', 'st.id as stateId', 'st.name as stateName')
   devices = devices.map(device => {
