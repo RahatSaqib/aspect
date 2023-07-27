@@ -49,15 +49,15 @@ const TestDiagTrendPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [state, setState] = useState()
-  const [lga, setLga] = useState()
+  const [stateId, setState] = useState()
+  const [lgaId, setLga] = useState()
   const { data: assays } = useAssayList()
 
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
 
-  const mergedParams = state ? [...endpointParams, { ...state, ...lga }] : [...endpointParams]
+  const mergedParams = stateId ? [...endpointParams, { stateId, lgaId }] : [...endpointParams]
 
   const { isLoading, data } = useQuery(
     ['tbMtbDetectedQuarterlyTrends', { mergedParams }],
@@ -90,7 +90,7 @@ const TestDiagTrendPage = () => {
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
+            stateId={stateId}
             onChange={e => setLga(e.target.value)}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
@@ -100,9 +100,9 @@ const TestDiagTrendPage = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <Grid item xs={12} md={12} lg={10}>
+        <Grid item xs={12}>
           <div className={cssClasses('Graph_Wrapper')}>
-            {graphData && !isEmpty(graphData) ? (
+            {graphData && !isEmpty(graphData) && assays ? (
               <AspectResponsiveBar
                 assaysFromState={assays}
                 config={{
