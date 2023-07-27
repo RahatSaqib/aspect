@@ -21,6 +21,7 @@ const baseConfig = {
     { name: 'TotalTests', colorId: 'caseTotal', target: 'bar' },
     { name: 'MtbDetected', colorId: '--aspect-color-slate', target: 'bar' },
     { name: 'FqrDetected', colorId: 'caseDetected', target: 'bar' },
+    { name: 'InhDetected', colorId: 'casePercentDetectedOfTotal', target: 'bar' },
     { name: 'FqrToMtbPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
   ],
   clickThrough: false,
@@ -39,7 +40,7 @@ const XDRFLQResistanceGraphMain = ({ assaysFromState, showLabel, filterSelection
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
 
-  const mergedParams = filterSelection ? [...endpointParams, filterSelection] : [...endpointParams]
+  const mergedParams = filterSelection ? [...endpointParams, ...filterSelection] : [...endpointParams]
 
   const { isLoading, data } = useQuery(
     ['xdrAssayGraph', { mergedParams }],
