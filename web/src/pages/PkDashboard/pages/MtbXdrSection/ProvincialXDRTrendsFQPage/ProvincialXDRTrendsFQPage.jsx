@@ -43,7 +43,7 @@ const ProvincialXDRTrendsFQPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.mtbXdrFQResistance)}`}
+      title={`${formatMessage(messages.FQProvincialComparison)}`}
       filters={
         <StateAutocomplete
           fullWidth
