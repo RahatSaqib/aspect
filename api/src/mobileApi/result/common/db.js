@@ -489,10 +489,9 @@ const getCommentsOfResultById = data => {
     )
 }
 
-const getFollowUpsForResultFollowup = followUpExternalId => {
+const getFollowUpByExternalId = followUpExternalId => {
   return knex('FollowUp as fu')
-    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .where('fu.externalId', followUpExternalId || -1)
+    .where('fu.externalId', followUpExternalId)
     .first('fu.id', 'fu.externalId', 'fu.followUpTypeId')
 }
 
@@ -505,6 +504,28 @@ const deleteResultFollowUpNotPossible = async (resultId, date) => {
     .update({
       isDeleted: 1,
     })
+}
+
+const deleteResultFollowUps = async (resultId, followUpTypeExternalId, updatedBy, updatedOn) => {
+  const resultFollowUpIds = await knex('ResultFollowUp as rfu')
+    .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .where('rfu.resultId', resultId)
+    .andWhere('fut.externalId', followUpTypeExternalId)
+    .select('rfu.id')
+  if (resultFollowUpIds.length > 0) {
+    await knex('ResultFollowUp')
+      .whereIn(
+        'id',
+        resultFollowUpIds.map(rfu => rfu.id)
+      )
+      .andWhere('isDeleted', false)
+      .update({
+        isDeleted: 1,
+        updatedBy,
+        updatedOn,
+      })
+  }
 }
 
 const getLastTreatmentStatusByResult = resultId => {
@@ -527,16 +548,16 @@ const setTreatmentStatusLog = (resultId, treatmentStatusId, method, data, change
   })
 }
 
-const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, updatedBy) => {
+const addResultFollowUp = (resultId, externalId, followUpId, date, createdBy, createdOn, updatedBy, updatedOn) => {
   return knex('ResultFollowUp').insert({
     resultId,
     externalId,
     followUpId,
     date,
     createdBy,
-    createdOn: new Date(),
+    createdOn,
     updatedBy,
-    updatedOn: date,
+    updatedOn,
   })
 }
 
@@ -567,10 +588,40 @@ const updateResultWithResultWorkflowLog = (resultWorkflowLogEntry, lastLogId, no
   })
 }
 
+const updateMostRecentResultFollowUp = async (resultId, followUpExternalId, date, updatedBy, updatedOn) => {
+  let { id: resultFollowUpId } =
+    (await knex('ResultFollowUp as rfu')
+      .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+      .whereNull('rfu.date')
+      .andWhere('rfu.resultId', resultId)
+      .andWhere('fu.externalId', followUpExternalId)
+      .andWhere('isDeleted', false)
+      .orderBy('rfu.updatedOn', 'desc')
+      .first('rfu.id')) || {}
+  if (!resultFollowUpId) {
+    ;({ id: resultFollowUpId } =
+      (await knex('ResultFollowUp as rfu')
+        .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+        .whereNull('rfu.date')
+        .andWhere('rfu.resultId', resultId)
+        .andWhere('fu.externalId', followUpExternalId)
+        .andWhere('isDeleted', false)
+        .orderBy('rfu.date', 'desc')
+        .first('rfu.id')) || {})
+  }
+  if (resultFollowUpId) {
+    await knex('ResultFollowUp').where('id', resultFollowUpId).update({
+      date,
+      updatedBy,
+      updatedOn,
+    })
+  }
+}
+
 const getCurrentResultWorkflowStatus = resultId => {
-  return knex('Resul as r')
+  return knex('Result as r')
     .leftJoin('ResultWorkflowLog as rwl', 'r.resultWorkflowStatusLogId', 'rwl.id')
-    .leftJoin('ResultWorkflowStatus as rws', 'rws.resultWorkflowStatusId', 'rws.id')
+    .leftJoin('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
     .where('r.id', resultId)
     .first('rws.*')
 }
@@ -603,7 +654,7 @@ module.exports = {
   getCount,
   getCountV2,
   getFollowUps,
-  getFollowUpsForResultFollowup,
+  getFollowUpByExternalId,
   getFollowUpsOfResultById,
   getFollowUpsV2,
   getItems,
@@ -615,10 +666,12 @@ module.exports = {
   insertResultWorkflowLog,
   deleteResultWorkflowLogs,
   deleteResultFollowUpNotPossible,
+  deleteResultFollowUps,
   insertResultWorkflowLogQuery,
   setTreatmentStatusLog,
   updateResult,
   updateResultWithResultWorkflowLog,
   updateResultWorkflowLogQuery,
+  updateMostRecentResultFollowUp,
   getCurrentResultWorkflowStatus,
 }
