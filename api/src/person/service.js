@@ -26,7 +26,7 @@ async function listPeople(request) {
       siteId: 'jc.siteId',
       contactStatus: 'p.disabled',
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
+    .modify(addConstraints, dataConstraints, { geography: 'jcg', site: 's' })
     .where(qb => {
       if (dataConstraints.partner.id) {
         qb.whereNull('p.partnerId').orWhere('p.partnerId', dataConstraints.partner.id)
