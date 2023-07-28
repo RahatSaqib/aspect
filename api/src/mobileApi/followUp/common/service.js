@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { getConstraints } = require('../../../auth/constraints')
+const { fieldNameToFollowUpTypeIdMappings, NOT_POSSIBLE_FOLLOW_UP_TYPE } = require('../../result/common/logic')
 const { getFollowUps } = require('./db')
 
 const getFollowUpsForUser = async (request, followUpTypeExternalId) => {
@@ -23,15 +24,18 @@ const normalizeFollowUpTypes = denormalizedFollowUpRecords =>
   })
 
 async function fetchTreatmentFollowUpsServiceHandler(request) {
-  const treatmentFollowUps = await getFollowUpsForUser(request, 'treatment')
+  const treatmentFollowUps = await getFollowUpsForUser(request, fieldNameToFollowUpTypeIdMappings.treatment)
   if (_.isEmpty(treatmentFollowUps)) {
     throw Boom.notFound('Treatments not found')
   }
-  return { ok: true, data: normalizeFollowUpTypes(treatmentFollowUps) }
+  return {
+    ok: true,
+    data: normalizeFollowUpTypes(treatmentFollowUps.filter(tfu => tfu.id !== NOT_POSSIBLE_FOLLOW_UP_TYPE)),
+  }
 }
 
 async function fetchOutcomeFollowUpsServiceHandler(request) {
-  const outcomeFollowUps = await getFollowUpsForUser(request, 'outcome')
+  const outcomeFollowUps = await getFollowUpsForUser(request, fieldNameToFollowUpTypeIdMappings.outcome)
   if (_.isEmpty(outcomeFollowUps)) {
     throw Boom.notFound('Outcomes not found')
   }
