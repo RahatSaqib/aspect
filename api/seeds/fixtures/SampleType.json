@@ -59,6 +59,11 @@
       "name": "Nasal Swab",
       "externalId": "Nasal Swab",
       "i18nKey": "sampleTypeNasalSwab"
+    },
+    {
+      "name": "Stool",
+      "externalId": "Stool",
+      "i18nKey": "sampleTypeStool"
     }
   ]
 }
