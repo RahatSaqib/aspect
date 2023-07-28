@@ -48,7 +48,8 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
     .groupBy('d.id')
     .select('d.name', 'd.id', 'dcap.modules', 'dcap.dailyCapacity', 'st.id as stateId', 'st.name as stateName')
   devices = devices.map(device => {
-    const { dailyCapacity = DEFAULT_DAILY_CAPACITY, modules = DEFAULT_MODULES } = device
+    const dailyCapacity = device.dailyCapacity || DEFAULT_DAILY_CAPACITY
+    const modules = device.modules || DEFAULT_MODULES
     return {
       ...device,
       dailyCapacity,
