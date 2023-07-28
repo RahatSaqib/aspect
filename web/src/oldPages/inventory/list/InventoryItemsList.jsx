@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
-import { useMutation, useQuery, useQueryClient } from 'react-query'
+import { useMutation, useQuery } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
@@ -304,7 +304,6 @@ export const InventoryItemsListWithProps = ({
 }
 
 export const InventoryItemsList = () => {
-  const queryClient = useQueryClient()
   const location = useLocation()
   const navigate = useNavigate()
   const filter = useFilterValues(location.pathname)
@@ -346,6 +345,7 @@ export const InventoryItemsList = () => {
     isLoading: tableLoading,
     data = false,
     error,
+    refetch,
   } = useQuery([INVENTORY_LIST.KEY, params, filter], async () =>
     fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
@@ -370,7 +370,7 @@ export const InventoryItemsList = () => {
   // >>>>>> Defining mutations <<<<<<
   // onSuccess
   const onSuccess = () => {
-    queryClient.invalidateQueries(INVENTORY_LIST.KEY)
+    refetch()
     onAdjustInventorySucceeded()
   }
 

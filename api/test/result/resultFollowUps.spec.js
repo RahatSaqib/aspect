@@ -71,7 +71,7 @@ describe('Result Follow Up', () => {
       assert.property(res.body, 'data')
       assert.typeOf(res.body.data, 'array')
       assert.property(res.body, 'total')
-      assert.isAtLeast(res.body.data.length, 5)
+      assert.isAtLeast(res.body.data.length, 6)
       assert.property(res.body.data[0], 'id')
       assert.property(res.body.data[0], 'name')
       assert.property(res.body.data[0], 'externalId')
@@ -87,7 +87,7 @@ describe('Result Follow Up', () => {
       assert.isAtLeast(
         _.intersection(
           _.map(res.body.data, elem => elem.externalId),
-          ['rrvl', 'iaac', 'st2o3lr', 'mcr', 'cured', 'died']
+          ['rrvl', 'iaac', 'st2o3lr', 'mcr', 'cured', 'died', 'notPossible']
         ).length,
         6
       )

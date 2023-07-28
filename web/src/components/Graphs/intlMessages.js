@@ -2,7 +2,7 @@
 import { defineMessages } from 'react-intl'
 import { deviceStatusMessages } from '../../messages'
 
-export const messages = {
+const messages = {
   ...deviceStatusMessages,
   ...defineMessages({
     statusUnknownLegend: {
@@ -409,6 +409,10 @@ export const messages = {
     FqrDetected: {
       id: 'legends.Unknown.FqrDetected',
       defaultMessage: 'FQ-R Detected',
+    },
+    InhDetected: {
+      id: 'legends.Unknown.InhDetected',
+      defaultMessage: 'INH Detected',
     },
     FQRPercent: {
       id: 'legends.Unknown.FQRPercent',

@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.8.0",
+  "version": "1.8.1",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
@@ -9,6 +9,7 @@
     "db:recreateCI": "node ./migrations/utils/recreateDBCI",
     "db:reseed": "npm-run-all db:recreate knex:migrate:latest knex:seed:run",
     "db:reseedCI": "npm-run-all db:recreateCI knex:migrate:latest knex:seed:run",
+    "db:drop": "node ./migrations/utils/dropDB",
     "debug": "nodemon --inspect src/server.js",
     "knex": "knex",
     "knex:migrate:latest": "knex migrate:latest",

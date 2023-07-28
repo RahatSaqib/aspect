@@ -63,8 +63,8 @@ const XdrByDevice = () => {
 
   const columns = [
     { key: 'locationName', label },
-    { key: 'totalPmdtSites', label: formatMessage(messages.totalPmdtSites) },
-    { key: 'totalXdrSites', label: formatMessage(messages.totalConducted) },
+    { key: 'isPmdt', label: formatMessage(messages.isPmdt) },
+    { key: 'hasPerformedXdr', label: formatMessage(messages.totalConducted) },
     { key: 'cntAll', label: formatMessage(messages.cntAll) },
     { key: 'cnt_mtb', label: formatMessage(messages.cnt_mtb) },
     { key: 'cnt_mtb_p', label: formatMessage(messages.cnt_mtb_p) },

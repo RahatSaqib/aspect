@@ -29,5 +29,3 @@ export const getFormConfig = (formConfig, statuses, data) => {
 
   return formConfig
 }
-
-export default { getFormConfig, MODE }

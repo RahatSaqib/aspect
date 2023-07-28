@@ -41,6 +41,7 @@ const data347 = {
   sampleSiteExternalId: 'Idaho_4',
   sampleSiteId: 47,
   sampleSiteName: 'Oden Lab',
+  sampleSiteStateName: 'Idaho',
   sampleTypeExternalId: 'DBS',
   sampleTypeI18nKey: 'sampleTypeDBS',
   sampleTypeName: 'DBS',
@@ -51,6 +52,7 @@ const data347 = {
 const expected347 = [
   {
     id: 347,
+    assayExternalId: 'GxMtbRif',
     assayAvatar: {
       resultId: 347,
       contentI18nKey: 'assayTypeMtbRif',
@@ -101,9 +103,9 @@ const expected347 = [
     ],
     patientId: '57-158-6406',
     sample: {
-      id: 347,
+      id: 172,
       externalId: 'SMP-TB-31',
-      originSite: { id: 47, name: 'Oden Lab', externalId: 'Idaho_4' },
+      originSite: { id: 47, name: 'Oden Lab', externalId: 'Idaho_4', stateName: 'Idaho' },
       sampleType: { name: 'DBS', i18nKey: 'sampleTypeDBS', externalId: 'DBS' },
       status: {
         id: 'SAMPLE_STATUS_UNKNOWN',
@@ -111,6 +113,7 @@ const expected347 = [
         label: 'Unknown',
         i18nKey: 'sample_status_unknown',
       },
+      clinicianName: null,
       collectedOn: '2022-11-01T16:16:39.000Z',
       updatedOn: null,
     },
@@ -119,7 +122,7 @@ const expected347 = [
       sampleId: 'SMP-TB-31',
       sampleIdFlat: 'smptb31',
       sampleSite: 'oden lab',
-      patientId: '571586406',
+      patientId: '57-158-6406',
       platform: 'aspect-mobile',
       filterMeta: {
         entryType: 'testResult',
@@ -202,6 +205,7 @@ const data450 = {
   sampleSiteExternalId: 'Georgia_1',
   sampleSiteId: 30,
   sampleSiteName: 'Atlanta NMRL',
+  sampleSiteStateName: 'Georgia',
   sampleTypeExternalId: 'DBS',
   sampleTypeI18nKey: 'sampleTypeDBS',
   sampleTypeName: 'DBS',
@@ -229,6 +233,7 @@ const followUp450 = [
 const expected450 = [
   {
     id: 450,
+    assayExternalId: 'GxMtbRifUltra',
     assayAvatar: {
       resultId: 450,
       contentI18nKey: 'assayTypeMtbRif',
@@ -316,12 +321,13 @@ const expected450 = [
     ],
     patientId: '84-687-3493',
     sample: {
-      id: 450,
+      id: 155,
       externalId: 'SMP-TB-14',
       originSite: {
         id: 30,
         name: 'Atlanta NMRL',
         externalId: 'Georgia_1',
+        stateName: 'Georgia',
       },
       sampleType: {
         name: 'DBS',
@@ -334,6 +340,7 @@ const expected450 = [
         label: 'Unknown',
         i18nKey: 'sample_status_unknown',
       },
+      clinicianName: null,
       collectedOn: '2022-08-04T16:16:37.000Z',
       updatedOn: null,
     },
@@ -342,7 +349,7 @@ const expected450 = [
       sampleId: 'SMP-TB-14',
       sampleIdFlat: 'smptb14',
       sampleSite: 'atlanta nmrl',
-      patientId: '846873493',
+      patientId: '84-687-3493',
       platform: 'aspect-mobile',
       filterMeta: {
         entryType: 'testResult',
@@ -389,7 +396,7 @@ const searchKeys450 = {
   sampleId: 'SMP-TB-14',
   sampleIdFlat: 'smptb14',
   sampleSite: 'atlanta nmrl',
-  patientId: '846873493',
+  patientId: '84-687-3493',
   platform: 'aspect-mobile',
   filterMeta: {
     entryType: 'testResult',

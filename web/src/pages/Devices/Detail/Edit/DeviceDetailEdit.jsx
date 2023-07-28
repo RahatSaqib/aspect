@@ -6,6 +6,7 @@ import isEqual from 'lodash/isEqual'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
+import { ImplementingPartnerSelect } from '../../../../cleanComponents'
 import DeviceCapacitySelect from '../../../../cleanComponents/DeviceCapacitySelect'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
@@ -94,6 +95,13 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               fullWidth
               tabIndex="0"
               aria-haspopup
+            />
+
+            <ImplementingPartnerSelect
+              valueBy="value"
+              label={intl.formatMessage(messages.partner)}
+              value={editDevice?.implementingPartnerId ?? null}
+              onChange={implementingPartnerId => setEditDevice(prv => ({ ...prv, implementingPartnerId }))}
             />
             <DeviceCapacitySelect
               name="capacity"

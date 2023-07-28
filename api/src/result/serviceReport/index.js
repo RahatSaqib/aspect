@@ -10,13 +10,14 @@ const { knex } = require('../../db')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
 const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../../shared/excel')
+const { processGroupedQuery } = require('../../shared/query')
 
 const { getAllAssaySchemas } = require('../../assay/service')
 
 const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
 const getDataExtractReport = require('./dataExtractForTableau')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
-const { getGroupBy, getClinicalIndicatorQueryForResultsTable, processGroupedQuery } = require('../service')
+const { getGroupBy, getClinicalIndicatorQueryForResultsTable } = require('../service')
 
 /**
  * 'header' is for 1st row in CSV file,
@@ -443,7 +444,7 @@ async function getReportWorkloadSummary(auth, query) {
    */
   const resultQuery = getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupBy, query)
 
-  let data = await processGroupedQuery(resultQuery, groupBy)
+  let data = await processGroupedQuery(knex, resultQuery, groupBy)
   data = _.sortBy(data, ['state', 'month'])
 
   /**

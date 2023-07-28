@@ -597,7 +597,7 @@ async function seedStaticDataPermission(knex, { modules }) {
   }
 }
 
-async function addFollowUps(knex, fixture, partnerIds = [], assaysWhitelist = []) {
+async function upsertFollowUps(knex, fixture, partnerIds = [], assaysWhitelist = []) {
   let { data } = fixture
 
   if (!partnerIds || partnerIds.length === 0) partnerIds = await knex('Partner').pluck('id')
@@ -610,9 +610,11 @@ async function addFollowUps(knex, fixture, partnerIds = [], assaysWhitelist = []
 
   if (assaysWhitelist.length === 0) assaysWhitelist = assaysDb.map(a => a.externalId)
 
-  // Re-set as data all the follow ups that contains any whitelisted assays
-  data = data.filter(followUp =>
-    followUp.assays.filter(assayExternalId => assaysDb.map(a => a.externalId).includes(assayExternalId).length > 0)
+  // Re-set as data all the follow-ups that contains any whitelisted assays
+  data = data.filter(
+    followUp =>
+      _.isNil(followUp.assays) ||
+      followUp.assays?.filter(assayExternalId => assaysDb.map(a => a.externalId).includes(assayExternalId).length > 0)
   )
 
   const typesDb = await knex('FollowUpType').select('id', 'externalId')
@@ -626,11 +628,11 @@ async function addFollowUps(knex, fixture, partnerIds = [], assaysWhitelist = []
     } else {
       followUpId = existingFollowUp.id
     }
-
+    const assaysWithFollowUp = _.isNil(assays) ? assaysWhitelist : assays
     /* eslint-disable no-await-in-loop */
     for (const partnerId of partnerIds) {
-      if (assays && assays.length > 0) {
-        for (const assay of assays) {
+      if (assaysWithFollowUp && assaysWithFollowUp.length > 0) {
+        for (const assay of assaysWithFollowUp) {
           const assayDb = _.find(assaysDb, { externalId: assay })
           if (!assayDb) continue // eslint-disable-line no-continue
           const followUpAssay = {
@@ -3140,7 +3142,7 @@ module.exports = {
   updateAssayResultCategoryTreatmentEmphasize,
   insertSites,
 
-  addFollowUps,
+  upsertFollowUps,
   removeFollowUps,
 
   initDataFromFixture,
@@ -3164,7 +3166,7 @@ module.exports = {
   removeAndReplaceActivity,
   removePermissions,
   updatePermissions,
-
+  getSeedsFolder,
   seedIssueType,
   seedIssueEscalationTriggersForPartner,
   deleteIssueTypes,

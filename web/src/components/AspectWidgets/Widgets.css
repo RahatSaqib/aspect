@@ -3,6 +3,7 @@
 .summary__groupCard {
   padding: 5px 15px;
   line-height: 36px;
+  width: 100%;
 }
 
 .summary__groupWrapper:nth-of-type(2n + 1) .summary__groupWidgets {

@@ -177,7 +177,7 @@ const Line = barGraphProps => {
         <Fragment key={index}>
           {showLabel ? (
             <text x={coordinates[index].x + 10} y={coordinates[index].y - 5} fill="#000">
-              {parseFloat(barGraphProps.data[index][barGraphProps?.layerProps?.valueFieldName]).toFixed(showDecimals)}%
+              {parseFloat(bar.data.data[barGraphProps?.layerProps?.valueFieldName]).toFixed(showDecimals)}%
             </text>
           ) : null}
           <g key={bar.key} transform={`translate(${coordinates[index].x}, ${coordinates[index].y})`}>

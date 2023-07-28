@@ -1,3 +1,5 @@
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { object, string } from 'yup'
 import { types } from '../../../store/InventoryRedux'
 import {
@@ -9,11 +11,14 @@ import {
 
 export function transformValues(values) {
   const { consumable, reason, ...rest } = values
-  return {
-    ...rest,
-    consumableId: consumable?.id,
-    reasonId: reason?.id,
-  }
+  return omitBy(
+    {
+      ...rest,
+      consumableId: consumable?.id,
+      reasonId: reason?.id,
+    },
+    isNil
+  )
 }
 
 export function getValidations(format, actionType) {
