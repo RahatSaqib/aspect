@@ -118,7 +118,7 @@ const XDRTestingDiagnosisTrendPage = () => {
                 keys={graphKeys}
                 indexBy="year"
                 tickValuesYShape="twos"
-                tickValuesXShape="bookends"
+                tickValuesXShape="all"
                 displayMethod="actual"
                 displayLegend
                 type="bar-line"

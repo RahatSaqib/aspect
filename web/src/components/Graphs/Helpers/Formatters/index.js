@@ -146,6 +146,10 @@ const incrementSplit = (boundaries, increment) => {
 }
 
 const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut = false, { groupMode } = {}) => {
+  if (axesTicks === 'all') {
+    return data.map(d => d[keys])
+  }
+
   let values
   const boundaries = getBoundaries(data, keys, { whichAxes, zeroOut, groupMode })
   const upperBoundary = boundaries[1] || 0
