@@ -23,6 +23,7 @@ const TESTTYPE = {
 }
 
 const ACKNOWLEDGED = 'Acknowledged'
+const NOT_POSSIBLE_FOLLOW_UP_TYPE = 'notPossible'
 
 const fieldNameToFollowUpTypeIdMappings = {
   treatment: 'treatment',
@@ -418,13 +419,14 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
     _.filter(followUps, { resultId: data.id }).map(f => _.omit(f, 'resultId')),
     ['date', 'updatedOn']
   )
-  const latestFollowUps = getLatestFollowUpsFromFolloups(followUpList)
+  const latestFollowUps = getLatestFollowUpsFromFollowUps(followUpList)
   const patientData = data.patientData ? JSON.parse(data.patientData) : null
   const patientDataSchema = data.patientDataSchema ? JSON.parse(data.patientDataSchema) : null
   const resultData = data.resultData
     ? _.pick(JSON.parse(data.resultData), ['resultText', 'copies', 'log', 'detectedResistance'])
     : null
   const severity = getSeverity(data, followUps)
+  const resultRequiresTreatment = !!(data.requiresTreatment || data.requiresTreatment2)
   const mainData = {
     id: data.id,
     externalId: data.externalId,
@@ -511,10 +513,14 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
       confirmedOn: acknowledgement?.acknowledgedOn ?? null,
     },
     testInformation: [],
+    resultRequiresTreatment,
   }
   if (latestFollowUps.length > 0) {
-    const treatment = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'treatment')
-    const outcome = _.find(latestFollowUps, f => f.followUpTypeExternalId === 'outcome')
+    const treatment = _.find(
+      latestFollowUps,
+      f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment
+    )
+    const outcome = _.find(latestFollowUps, f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome)
     mainData.clinicalResponse = {
       ...mainData.clinicalResponse,
       treatment: treatment?.externalId || null,
@@ -557,16 +563,16 @@ const getResultItemTransformedDataV2 = async (data, setDelivered, followUps, com
   return mainData
 }
 
-const getLatestFollowUpsFromFolloups = followUps => {
-  const treatment = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment)
-  const outcome = followUps?.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome)
-  const latestTreatment = !_.isEmpty(treatment)
-    ? treatment?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
-    : {}
-  const latestOutcome = !_.isEmpty(outcome)
-    ? outcome?.reduce((a, b) => (a.updatedOn && a.date > b.updatedOn && b.date ? a : b))
-    : {}
-  return [latestTreatment, latestOutcome]
+const getLatestFollowUpsFromFollowUps = (followUps = []) => {
+  const latestTreatment = _.sortBy(
+    followUps.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.treatment),
+    f => f.date
+  ).reverse()[0]
+  const latestOutcome = _.sortBy(
+    followUps.filter(f => f.followUpTypeExternalId === fieldNameToFollowUpTypeIdMappings.outcome),
+    f => f.date
+  ).reverse()[0]
+  return [latestTreatment, latestOutcome].filter(_.identity)
 }
 
 module.exports = {
@@ -576,6 +582,8 @@ module.exports = {
   getResultItemTransformedData,
   getResultItemTransformedDataV2,
   fieldNameToFollowUpTypeIdMappings,
-  getLatestFollowUpsFromFolloups,
+  getLatestFollowUpsFromFollowUps,
   getCustomFieldsForResult,
+  ACKNOWLEDGED,
+  NOT_POSSIBLE_FOLLOW_UP_TYPE,
 }

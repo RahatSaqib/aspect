@@ -27,7 +27,7 @@ async function getDownloadResultById(resultId, auth, setDelivered = false) {
 
   if (data) {
     // get follow ups for a single result
-    const followUps = await getFollowUpsOfResultById(data)
+    const followUps = await getFollowUpsOfResultById(resultId)
     // get comments for for a single result
     const comments = await getCommentsOfResultById(data)
 

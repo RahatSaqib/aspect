@@ -16,15 +16,20 @@ async function importZipFilesFromGxAlert() {
     return { error }
   }
 
-  const totalFilesSaved = await decompressAllZipFiles(folderAbsolutePath)
+  const connection = await knex.client.acquireConnection()
+  try {
+    const totalFilesSaved = await decompressAllZipFiles(folderAbsolutePath, connection)
 
-  return {
-    totalFilesSaved,
+    return {
+      totalFilesSaved,
+    }
+  } finally {
+    knex.client.releaseConnection(connection)
   }
 }
 
 // ------------------------------------------------------------------------
-async function decompressAllZipFiles(folderAbsolutePath) {
+async function decompressAllZipFiles(folderAbsolutePath, connection) {
   const reLabel = 'gxAlertImport:decompressZip'
   logger.info(`Start processing folder '${folderAbsolutePath}' with GxAlert zip files`, {
     reLabel,
@@ -57,6 +62,7 @@ async function decompressAllZipFiles(folderAbsolutePath) {
       await Promise.all(
         zipEntries.map(async (zipEntry, jsonFileIndex) => {
           if (!zipEntry.isDirectory && zipEntry.entryName.endsWith('.json')) {
+            logger.info(`Processing file ${jsonFileIndex} of ${zipEntries.length} - ${zipEntry.entryName}`)
             const now = new Date()
             const fileAbsolutePath = path.join(dirAbsolutePath, zipEntry.entryName)
             const content = zipEntry.getData().toString('utf8')
@@ -83,12 +89,12 @@ async function decompressAllZipFiles(folderAbsolutePath) {
                   createdOn: now,
                 }
                 const fileNumberOutOf = `${jsonFileIndex + 1} / ${zipEntries.length}`
-                const id = await knex('GxAlertImport').where({ gxAlertTestId }).first('id')
+                const id = await knex('GxAlertImport').connection(connection).where({ gxAlertTestId }).first('id')
                 if (id) {
-                  await knex('GxAlertImport').update(payload).where({ gxAlertTestId })
+                  await knex('GxAlertImport').connection(connection).update(payload).where({ gxAlertTestId })
                   logger.info(`Updated - (${fileNumberOutOf}) ${fileAbsolutePath}.`, { reLabel })
                 } else {
-                  await knex('GxAlertImport').insert(payload)
+                  await knex('GxAlertImport').connection(connection).insert(payload)
                   logger.info(`Inserted - (${fileNumberOutOf}) ${fileAbsolutePath}.`, { reLabel })
                 }
               }
