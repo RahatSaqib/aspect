@@ -41,7 +41,7 @@ const reduceByTbDetected = (dataRaw, fromYear, toYear) => {
   const reducedYears = dataRaw.reduce((acc, it) => {
     const year = acc[it.year]
     if (it.resultCategory1 === DETECTED) {
-      year.MtbDetected = it.cnt
+      year.MtbDetected += it.cnt
     }
     year.Total += it.cnt
     return { ...acc, [it.year]: year }
@@ -60,20 +60,29 @@ const reduceByTbDetected = (dataRaw, fromYear, toYear) => {
 }
 
 // rrDetection && GxMtbRif + GxMtbRifUltra
-const reduceByRrDetected = dataRaw => {
-  let yearsList = []
+const reduceByRrDetected = (dataRaw, fromYear, toYear) => {
   const DETECTED = 'Detected'
+  let yearsList = []
+
+  const initialResponse = {}
+  for (const y of [...Array(toYear - fromYear + 1).keys()]) {
+    initialResponse[`${y + fromYear}`] = {
+      year: y + fromYear,
+      rrDetected: 0,
+      tbTotal: 0,
+    }
+  }
 
   const reducedYears = dataRaw.reduce((acc, it) => {
     const year = acc[it.year] || { year: it.year, rrDetected: 0, tbTotal: 0 }
     if (it.resultCategory2 === DETECTED) {
-      year.rrDetected = it.cnt
+      year.rrDetected += it.cnt
     }
     if (it.resultCategory1 === DETECTED) {
       year.tbTotal += it.cnt
     }
     return { ...acc, [it.year]: year }
-  }, {})
+  }, initialResponse)
 
   Object.keys(reducedYears).forEach(yyyy => {
     yearsList = [...yearsList, reducedYears[yyyy]]
@@ -105,7 +114,7 @@ async function getTbTestingDiagnosisTrend(request) {
 
   if (request.query.source === 'rrDetection') {
     return {
-      grouped: reduceByRrDetected(dataRaw),
+      grouped: reduceByRrDetected(dataRaw, getYear(request.query.minDate), getYear(request.query.maxDate)),
       keysFromGrouped: ['tbTotal', 'rrDetected', 'rrToTbTotalPercentage'], // series
       i18nKeys: {
         rrDetected: 'rrDetected',
