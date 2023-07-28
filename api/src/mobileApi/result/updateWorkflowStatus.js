@@ -15,7 +15,7 @@ async function updateWorkflowStatusToFlagged(request) {
   const { resultId } = params
   const { id: currentUserId } = await getUser(auth.credentials.name)
 
-  // get the result so we can check access and if status changed
+  // get the result so that we can check access and if status changed
   const result = await getLatestResultWorkflowLog(resultId)
   const flaggedId = await resultWorkflowStatusToId(FLAGGED_EXTERNALID)
   const resultWorkflowLogEntry = {
@@ -52,4 +52,5 @@ async function updateResultWorkflowStatusByResultId(resultWorkflowLogEntry, clie
 
 module.exports = {
   updateWorkflowStatusToFlagged,
+  updateResultWorkflowStatusByResultId,
 }

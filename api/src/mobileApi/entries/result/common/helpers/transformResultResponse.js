@@ -18,15 +18,16 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
     const patientData = JSON.parse(result?.patientData)
     const acknowledgement = acknowledgements?.find(ack => ack.resultId === result.id)
-    const requiresFollowUp = !!(
+    const resultRequiresTreatment = !!(
       result?.resultCategoryAssay1RequiresTreatment || result?.resultCategoryAssay2RequiresTreatment
     )
     const clinicalResponse = transformClinicalResponse(result, resultFollowUps, acknowledgement)
-    const hasFollowUp = !!(!!clinicalResponse?.treatment || !!clinicalResponse?.outcome)
+    const hasFollowUp = !!clinicalResponse?.treatment
     const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
+    const noFollowUpPossibleComment = noFollowUpPossible ? result?.resultWorkflowStatusReason : undefined
     const clinicalFollowUpFlags = {
-      requiresFollowUp: requiresFollowUp && !hasFollowUp && !noFollowUpPossible,
-      hasFollowUp: requiresFollowUp && hasFollowUp && !noFollowUpPossible,
+      requiresFollowUp: resultRequiresTreatment && !hasFollowUp && !noFollowUpPossible,
+      hasFollowUp: resultRequiresTreatment && hasFollowUp && !noFollowUpPossible,
       noFollowUpPossible,
     }
     return {
@@ -40,7 +41,9 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
       patientId: patientData?.id || null,
       sample: transformSampleData(result),
+      resultRequiresTreatment,
       ...clinicalFollowUpFlags,
+      noFollowUpPossibleComment,
       searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),

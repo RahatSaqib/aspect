@@ -27,6 +27,7 @@ function transformSampleResponse(query, data, results) {
       sample: transformSampleData(sample),
       testType: transformEntryType(),
       dbUpdatedOn: sample.updatedOn,
+      resultRequiresTreatment: false,
       ...clinicalResponseFlags,
       searchSchema: generateSearchKeys(sample, sample?.sampleData?.patientExternalId, clinicalResponseFlags),
       updatedOn: getSampleUpdatedOnDate(sample),
