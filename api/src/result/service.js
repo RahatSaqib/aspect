@@ -2680,13 +2680,14 @@ async function xdrAssayGraphAggregations(request) {
       TotalTests: knex.raw('DISTINCT r.id'),
       MtbDetected: caseCondition('r.id', `r.resultCategory1 IN (${positiveResultCategories})`),
       FqrDetected: countXdr('FLQ'),
+      InhDetected: countXdr('INH'),
     })
     .orderBy('month')
 
   data = months.map(monthDate => {
     const month = format(monthDate, 'yyyy-MM')
     const item = data.find(it => it.month === month)
-    const { TotalTests = 0, MtbDetected = 0, FqrDetected = 0 } = item || {}
+    const { TotalTests = 0, MtbDetected = 0, FqrDetected = 0, InhDetected = 0 } = item || {}
     const FqrToMtbPercentage = MtbDetected === 0 ? 0 : (100 * FqrDetected) / MtbDetected
 
     return {
@@ -2694,6 +2695,7 @@ async function xdrAssayGraphAggregations(request) {
       TotalTests,
       MtbDetected,
       FqrDetected,
+      InhDetected,
       FqrToMtbPercentage,
     }
   })
@@ -2701,11 +2703,12 @@ async function xdrAssayGraphAggregations(request) {
   return {
     grouped: data,
     // series
-    keysFromGrouped: ['TotalTests', 'MtbDetected', 'FqrDetected', 'FqrToMtbPercentage'],
+    keysFromGrouped: ['TotalTests', 'MtbDetected', 'FqrDetected', 'InhDetected', 'FqrToMtbPercentage'],
     i18nKeys: {
       TotalTests: 'TotalTests',
       MtbDetected: 'MtbDetected',
       FqrDetected: 'FqrDetected',
+      InhDetected: 'InhDetected',
       FqrToMtbPercentage: 'FQRPercent',
     },
   }
