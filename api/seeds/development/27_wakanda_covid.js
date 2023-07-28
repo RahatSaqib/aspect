@@ -4,7 +4,7 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addForms } = require('../relativeObjectsSeeds')
-const { resultCategoryToId } = require('../../src/shared/dictionary')
+const { resultCategoryToId, allSiteTypeToId } = require('../../src/shared/dictionary')
 const { commonUpserts } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const { normalizeTreatmentStatusDistributionByResults, addCovidResults } = require('../commonGenerateResults')
@@ -115,6 +115,7 @@ async function seed(knex) {
   countryData.devices = []
 
   const deviceApprovalApprovedId = await deviceApprovalToId('approved')
+  const siteTypeIds = await allSiteTypeToId()
 
   await Promise.all(
     _.map(countryWakanda.states, async state => {
@@ -183,6 +184,7 @@ async function seed(knex) {
                   street1: `${lga.name} Street`,
                   longitude: _.random(9, 12, true),
                   latitude: _.random(-20, -23, true),
+                  siteTypeId: siteTypeIds.clinic,
                   ...auditFields,
                 }
 

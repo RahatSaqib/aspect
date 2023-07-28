@@ -36,6 +36,7 @@ const personProps = [
   'p.id as personId',
   'p.lastPartnerId as partnerId',
   'p.lastCountryId as countryId',
+  'g.stateId',
   'p.userId',
   'p.id as personId',
   'c.abbreviation as countryAbbreviation',
@@ -62,6 +63,7 @@ function getUser(username, options = {}) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'u.name': username })
     .modify(q => {
       if (partnerId) q.where('p.lastPartnerId', partnerId)
@@ -74,6 +76,7 @@ function getUserByPersonId(personId) {
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'p.id': personId })
     .first(userProps)
 }
@@ -82,6 +85,7 @@ function getPersonByPersonId(personId) {
   return query('Get user details for person')
     .from('Person as p')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'p.id': personId })
     .first(personProps)
 }
@@ -91,6 +95,7 @@ function getUserByUserId(userId) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'u.id': userId })
     .first(userProps)
 }
