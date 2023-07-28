@@ -50,6 +50,7 @@ const cacheConfig = {
   ResultWorkflowStatus: {},
   Report: {},
   SampleType: {},
+  SiteType: {},
   TimeZone: {
     keyColumn: 'timeZone',
   },

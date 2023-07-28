@@ -89,6 +89,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'resultTreatmentStatusLog.changedOn as resultTreatmentStatusChangedOn',
       'resultWorkflowLog.changedOn as resultWorkflowStatusChangedOn',
       'resultWorkflowLog.resultWorkflowStatusId as resultWorkflowStatusId',
+      'resultWorkflowLog.reason as resultWorkflowStatusReason',
       'sample.externalId as sampleExternalId',
       'sample.id as sampleId',
       'sample.sampleStatus as sampleStatus',
