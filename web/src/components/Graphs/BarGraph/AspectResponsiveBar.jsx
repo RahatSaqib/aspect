@@ -311,11 +311,10 @@ const AspectResponsiveBar = props => {
           baseConfig={baseConfig} // original graphType object to pass to layer
           groupMode={groupMode}
           colors={v => {
-            let valueId = v.id
-            if (fields) {
-              ;[{ colorId: valueId }] = fields.filter(it => it.target === 'bar' && it.name === v.id)
-            }
-            return generateColorForValue(valueId, graphId)
+            return generateColorForValue(
+              fields ? fields.filter(it => it.target === 'bar' && it.name === v.id)[0].colorId : v.id,
+              graphId
+            )
           }}
           margin={config.margin}
           tooltip={v => {

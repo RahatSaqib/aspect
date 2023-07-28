@@ -144,37 +144,41 @@ const LogInApp = () => {
               <>
                 <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
                 <Route path="/dashboard" element={<Status />} />
-                <Route path="/dashboard-v2" element={<PkDashboard />} />
-                <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
-                <Route path="/dashboard/rif/national-diagnosis" element={<NationalDiagnosisRif />} />
-                <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
-                <Route path="/dashboard/rif/national-testing-trend" element={<NationalTestingTrends />} />
-                <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
-                <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
-                <Route path="/dashboard/rif/test-diag-trend" element={<TestDiagTrend />} />
-                <Route path="/dashboard/rif/provincial-testing-trend" element={<ProvincialRIFTestingTrend />} />
-                <Route path="/dashboard/rif/provincial-diagnosis-trend" element={<ProvincialRIFDiagnosisTrend />} />
-                <Route
-                  path="/dashboard/rif/provincial-rrtb-trend-comparison"
-                  element={<ProvincialRIFTestingTrendRRTB />}
-                />
-                <Route path="/dashboard/rif/rrtb-test-diagnosis" element={<RrtbTestDiagnosis />} />
+                {a(['dashboard-v2:view']) ? (
+                  <>
+                    <Route path="/dashboard-v2" element={<PkDashboard />} />
+                    <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
+                    <Route path="/dashboard/rif/national-diagnosis" element={<NationalDiagnosisRif />} />
+                    <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
+                    <Route path="/dashboard/rif/national-testing-trend" element={<NationalTestingTrends />} />
+                    <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
+                    <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
+                    <Route path="/dashboard/rif/test-diag-trend" element={<TestDiagTrend />} />
+                    <Route path="/dashboard/rif/provincial-testing-trend" element={<ProvincialRIFTestingTrend />} />
+                    <Route path="/dashboard/rif/provincial-diagnosis-trend" element={<ProvincialRIFDiagnosisTrend />} />
+                    <Route
+                      path="/dashboard/rif/provincial-rrtb-trend-comparison"
+                      element={<ProvincialRIFTestingTrendRRTB />}
+                    />
+                    <Route path="/dashboard/rif/rrtb-test-diagnosis" element={<RrtbTestDiagnosis />} />
 
-                <Route path="/dashboard/xdr/by-device" element={<XDRByDevice />} />
-                <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
-                <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
-                <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
-                <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
-                <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
-                <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
-                <Route path="/dashboard/xdr/testing-diagnosis-trend" element={<XDRTestingDiagnosisTrend />} />
+                    <Route path="/dashboard/xdr/by-device" element={<XDRByDevice />} />
+                    <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
+                    <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
+                    <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
+                    <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
+                    <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
+                    <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
+                    <Route path="/dashboard/xdr/testing-diagnosis-trend" element={<XDRTestingDiagnosisTrend />} />
 
-                <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
-                <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
-                <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />
-                <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
-                <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
-                <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
+                    <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
+                    <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
+                    <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />
+                    <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
+                    <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
+                    <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
+                  </>
+                ) : null}
               </>
             ) : null}
             {a(['operationalData']) ? (
