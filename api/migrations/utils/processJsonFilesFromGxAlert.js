@@ -6,9 +6,9 @@ const { knex } = require('../../src/db')
 const logger = require('../../src/shared/logger')
 const config = require('../../src/config')
 
-async function handleAllUnprocessedJsonFiles() {
+async function handleAllUnprocessedJsonFiles(connection) {
   const reLabel = 'gx:processZip'
-  const items = await knex('GxAlertImport').where({ status: null }).select('*')
+  const items = await knex('GxAlertImport').connection(connection).where({ status: null }).select('*')
 
   await Promise.each(items, async item => {
     const { fileFullPath, gxAlertTestId, id } = item
@@ -23,7 +23,7 @@ async function handleAllUnprocessedJsonFiles() {
         aspectResultId: null,
         updatedOn: now,
       }
-      await knex('GxAlertImport').where({ id }).update(payload)
+      await knex('GxAlertImport').connection(connection).where({ id }).update(payload)
       return
     }
     /**
@@ -71,16 +71,22 @@ async function handleAllUnprocessedJsonFiles() {
         updatedOn: now,
       }
     }
-    await knex('GxAlertImport').where({ gxAlertTestId }).update(payload)
+    await knex('GxAlertImport').connection(connection).where({ gxAlertTestId }).update(payload)
     // show progress in console
     logger.info(`Processed file ${fileFullPath}.`, { reLabel })
   })
 }
 
-handleAllUnprocessedJsonFiles().then(
-  () => process.exit(0),
-  err => {
-    logger.error(err)
-    process.exit(1)
-  }
-)
+knex.client.acquireConnection().then(connection => {
+  handleAllUnprocessedJsonFiles(connection).then(
+    () => {
+      knex.client.releaseConnection(connection)
+      process.exit(0)
+    },
+    err => {
+      knex.client.releaseConnection(connection)
+      logger.error(err)
+      process.exit(1)
+    }
+  )
+})
