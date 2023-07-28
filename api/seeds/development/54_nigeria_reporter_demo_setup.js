@@ -5,6 +5,7 @@ const random = require('lodash/random')
 const { insertSites } = require('../utils')
 const upsertContacts = require('../common/upsert_contacts')
 const partnerData = require('./fixtures/partnerData')
+const { allSiteTypeToId } = require('../../src/shared/dictionary')
 
 const NUMBER_OF_SITES = 50
 
@@ -18,6 +19,7 @@ async function seed(knex) {
     .innerJoin('State as s', 'g.stateId', 's.id')
     .select('g.id as geographyId', 'l.name as lgaName', 's.name as stateName')
 
+  const siteTypeIds = await allSiteTypeToId()
   // Insert sites
   const sites = []
   range(NUMBER_OF_SITES).forEach(num => {
@@ -34,6 +36,7 @@ async function seed(knex) {
       lgaName,
       timeZoneId: 'W. Central Africa Standard Time',
       tags: ['Clinic', 'Primary'],
+      siteTypeId: siteTypeIds.clinic,
     })
   })
   await insertSites(knex, partnerId, countryId, sites)

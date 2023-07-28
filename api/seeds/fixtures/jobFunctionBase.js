@@ -1328,23 +1328,8 @@ const mergeJobFunctions = (jf1, jf2) => {
 
   const finalJobFunction = { ...plainObject }
 
-  const modulesToNotReduce = ['dashboard']
-
   if (reports.length) finalJobFunction.reports = reports
-  if (permissions.length)
-    finalJobFunction.permissions = _.reduce(
-      permissions,
-      (result, curr) => {
-        const lastPermission = _.last(result)
-        if (!lastPermission) result.push(curr)
-        else if (modulesToNotReduce.includes(lastPermission.module) || lastPermission.module !== curr.module)
-          result.push(curr)
-        return result
-      },
-      []
-    )
-
-  return finalJobFunction
+  return reduceToSinglePermissionByModule(permissions, finalJobFunction)
 }
 
 /**
@@ -1380,4 +1365,36 @@ module.exports = {
   labAdmin,
   mergeJobFunctions,
   countryReportsDecorator,
+}
+
+/**
+ * Add permissions to a jobFuncion, reduced to only the one highest access per each module
+ * @param { Array } permissions - Sorted by access level array of permissions
+ * @param { Object } finalJobFunction - Job function object to load permissions into
+ * @returns The same jobFunction received with a reduces permission list loaded.
+ * @description The permissions array should be ordered by module and activity,
+ * as activity cases are 'admin', 'edit', 'view', the alphabetic order matches the access level priority [sic].
+ * Then in {@link https://github.com/SystemOneId/aspect/blob/a61524d54baf01a5239f641a7106489534280fd3/web/src/oldComponents/shared/requirePermissions.jsx#L103 | requirePermissions.jsx } in frontend,
+ * and {@link https://github.com/SystemOneId/aspect/blob/a61524d54baf01a5239f641a7106489534280fd3/api/src/routes.js#L110 | routes.js } in backend, the system will scale required permissions for users with higher access level
+ * for the module that the required one.
+ */
+function reduceToSinglePermissionByModule(permissions, finalJobFunction) {
+  const modulesToNotReduce = ['dashboard']
+
+  if (permissions.length)
+    // Access levels (admin, edit, view) are
+    finalJobFunction.permissions = _.reduce(
+      permissions,
+      (result, curr) => {
+        const lastPermission = _.last(result)
+        if (!lastPermission) result.push(curr)
+        else if (modulesToNotReduce.includes(lastPermission.module) || lastPermission.module !== curr.module) {
+          result.push(curr)
+        }
+        return result
+      },
+      []
+    )
+
+  return finalJobFunction
 }

@@ -20,6 +20,7 @@ const {
   deviceApprovalToId,
   resultSourceToId,
   resultTypeToId,
+  siteTypeToId,
 } = require('../../src/shared/dictionary')
 const jobFunctionsFixtureReporter = require('./fixtures/jobFunctions_reporter')
 
@@ -288,6 +289,7 @@ async function seed(knex) {
 
   const approvedDeviceApprovalId = await deviceApprovalToId('approved')
 
+  const clinicSiteTypeId = await siteTypeToId('clinic')
   // every clinic has a site and a Reporter device
   await Promise.all(
     _.map(labClinic.clinics, async clinic => {
@@ -307,6 +309,7 @@ async function seed(knex) {
         externalId: clinic.externalId,
         latitude: clinic.latitude,
         longitude: clinic.longitude,
+        siteTypeId: clinicSiteTypeId,
         ...auditFields,
       }
       const [siteId] = await knex('Site').insert(siteData)
@@ -364,6 +367,7 @@ async function seed(knex) {
     })
   )
 
+  const labSiteTypeId = await siteTypeToId('lab')
   // Labs have m2000 and modem
   await Promise.all(
     _.map(labClinic.labs, async lab => {
@@ -376,6 +380,7 @@ async function seed(knex) {
         externalId: lab.externalId,
         latitude: lab.latitude,
         longitude: lab.longitude,
+        siteTypeId: labSiteTypeId,
         ...auditFields,
       }
       const [siteId] = await knex('Site').insert(siteData)

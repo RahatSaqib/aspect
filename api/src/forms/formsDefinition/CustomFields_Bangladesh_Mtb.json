@@ -453,6 +453,11 @@
           "key": "extra",
           "value": "Extra-pulmonary",
           "order": 20
+        },
+        {
+          "key": "stool",
+          "value": "Stool",
+          "order": 30
         }
       ],
       "mandatory": true
