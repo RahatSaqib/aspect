@@ -31,12 +31,16 @@ async function gx10CBaseQueryNational(auth, query) {
    */
   const startYear = currentYear - 5
   const dateFrom = `${startYear}-01-01`
-  minDate = knex.raw(`'${new Date(dateFrom).toISOString()}'`)
-  maxDate = knex.raw(`'${new Date(dateTo).toISOString()}'`)
+  minDate = new Date(dateFrom)
+  maxDate = new Date(dateTo)
   /**
    * base query grouped by month
    */
-  const baseQuery = getXdrResultCountBase({ minDate, maxDate, resultCategoryIds, dataConstraints, query })
+  const baseQuery = getXdrResultCountBase({
+    resultCategoryIds,
+    dataConstraints,
+    query: { ...query, minDate, maxDate },
+  })
     /**
      * group by month
      */
@@ -60,16 +64,15 @@ async function gx10CBaseQueryProvincial(auth, query) {
   /**
    * helper func to return base query for specified dates
    */
-  const getBaseQuery = ({ dateFrom, dateTo }) => {
-    const minDate = knex.raw(`'${new Date(dateFrom).toISOString()}'`)
-    const maxDate = knex.raw(`'${new Date(dateTo).toISOString()}'`)
+  const getBaseQuery = ({ minDate, maxDate }) => {
     /**
      * base query grouped by month
      */
-    const baseQuery = getXdrResultCountBase({ minDate, maxDate, resultCategoryIds, dataConstraints, query })
-      /**
-       * group by month and state
-       */
+    const baseQuery = getXdrResultCountBase({
+      resultCategoryIds,
+      dataConstraints,
+      query: { ...query, minDate, maxDate },
+    })
       .select(
         getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'yearAndMonth', offset),
         'g.stateId',
@@ -90,12 +93,12 @@ async function gx10CBaseQueryProvincial(auth, query) {
 
   return {
     baseQuerySince5YearsAgo: getBaseQuery({
-      dateFrom: new Date(`${startYear}-01-01`), // from the start of 5 years ago
-      dateTo: endOfMonth(now),
+      minDate: new Date(`${startYear}-01-01`), // from the start of 5 years ago
+      maxDate: endOfMonth(now),
     }),
     baseQueryLast24h: getBaseQuery({
-      dateFrom: startOfDay(subDays(now, 1)), // from the start of yesterday
-      dateTo: endOfDay(now),
+      minDate: startOfDay(subDays(now, 1)), // from the start of yesterday
+      maxDate: endOfDay(now),
     }),
   }
 }

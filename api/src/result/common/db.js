@@ -504,27 +504,10 @@ const getResultCountersBase = (resultCategoryIds, positiveResultCategories) => {
   }
 }
 
-const getXdrResultCountBase = ({ minDate, maxDate, resultCategoryIds, dataConstraints, query }) => {
+const getXdrResultCountBase = ({ resultCategoryIds, dataConstraints, query }) => {
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
 
-  return knex('Result as r')
-    .innerJoin('Device as d', 'd.id', 'r.deviceId')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('Site as s', 's.id', 'd.siteId')
-    .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Geography as g', 'd.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .where('r.startedOn', '>=', minDate)
-    .where('r.startedOn', '<=', maxDate)
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      assay: 'a',
-      result: 'r',
-    })
+  return getQueryForResultsListAndExport(query, dataConstraints)
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
