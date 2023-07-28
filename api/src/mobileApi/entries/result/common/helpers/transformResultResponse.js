@@ -24,7 +24,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
     const clinicalResponse = transformClinicalResponse(result, resultFollowUps, acknowledgement)
     const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
     const noFollowUpPossibleComment = noFollowUpPossible ? result?.resultWorkflowStatusReason : undefined
-    const hasFollowUp = !!clinicalResponse?.treatment && requiresFollowUp && !noFollowUpPossible
+    const hasFollowUp = !!clinicalResponse?.treatment && resultRequiresTreatment && !noFollowUpPossible
     const clinicalFollowUpFlags = {
       requiresFollowUp: resultRequiresTreatment && !hasFollowUp && !noFollowUpPossible,
       hasFollowUp: resultRequiresTreatment && hasFollowUp && !noFollowUpPossible,
