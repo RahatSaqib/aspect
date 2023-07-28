@@ -36,6 +36,7 @@ const {
   allResultSourceToId,
   resultCategoryToId,
   partnerTypeToId,
+  siteTypeToId,
 } = require('../src/shared/dictionary')
 const upsertConsumables = require('./common/upsert_consumables')
 
@@ -50,7 +51,6 @@ async function upsertGeography(knex, geography) {
       'culture',
       'countryCode',
       'timezone',
-      // 'portNumber', ??
       'exportColumns',
       'inventoryDaysThreshold',
       'monthStartsOnDay',
@@ -1490,8 +1490,9 @@ async function seedLabClinicFixture(
     updatedBy: adminId,
   }
   const approvedDeviceApprovalId = await deviceApprovalToId('approved')
+  const clinicSiteTypeId = await siteTypeToId('clinic')
 
-  await Promise.all(
+  await Promise.each(
     _.map(labClinics.clinics || [], async clinic => {
       const state = clinic.stateName
         ? statesByName[clinic.stateName.toLowerCase()] || {
@@ -1525,6 +1526,7 @@ async function seedLabClinicFixture(
         externalId: clinic.externalId,
         latitude: clinic.latitude,
         longitude: clinic.longitude,
+        siteTypeId: clinicSiteTypeId,
         ...auditFields,
       }
       const existingClinic = await knex('Site as s')
@@ -1545,6 +1547,7 @@ async function seedLabClinicFixture(
     })
   )
 
+  const labSiteTypeId = await siteTypeToId('lab')
   await Promise.all(
     _.map(labClinics.labs || [], async lab => {
       const state = lab.stateName
@@ -1579,6 +1582,7 @@ async function seedLabClinicFixture(
         externalId: lab.externalId,
         latitude: lab.latitude,
         longitude: lab.longitude,
+        siteTypeId: labSiteTypeId,
         ...auditFields,
       }
 
