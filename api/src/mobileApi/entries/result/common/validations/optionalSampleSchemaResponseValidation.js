@@ -7,7 +7,7 @@ const originSite = Joi.object({
     .required()
     .description('The name of the state where the origin site is located.'),
   name: Joi.string().required().description('The name of the origin site.'),
-  externalId: Joi.string().required().description('The external ID of the origin site.'),
+  externalId: Joi.string().allow(null, '').required().description('The external ID of the origin site.'),
 })
 
 const sampleType = Joi.object({

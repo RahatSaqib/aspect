@@ -57,6 +57,12 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
     })
     .where('result.updatedOn', '>', minUpdatedOn)
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
+    .andWhere(qb =>
+      qb
+        .where('sample.registeredInAspect', true)
+        .orWhere('resultCategoryAssay1.requiresTreatment', true)
+        .orWhere('resultCategoryAssay2.requiresTreatment', true)
+    )
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
@@ -173,7 +179,8 @@ const getCommentsOfResultById = comments => {
   return knexQuery
 }
 
-const countAllAwaitingTreatment = dataConstraints => {
+const countAllAwaitingTreatment = (query, dataConstraints) => {
+  const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
   const knexQuery = knex('Result as result')
     .join(
       'ResultTreatmentStatusLog as resultTreatmentStatusLog',
@@ -187,12 +194,33 @@ const countAllAwaitingTreatment = dataConstraints => {
     )
     .leftJoin('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
     .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
+    .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'result.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
+    .leftJoin(
+      'ResultWorkflowStatus as resultWorkflowStatus',
+      'resultWorkflowLog.resultWorkflowStatusId',
+      'resultWorkflowStatus.id'
+    )
+    .leftJoin('ResultCategoryAssay as resultCategoryAssay1', queryBuilder =>
+      queryBuilder
+        .on('result.assayId', 'resultCategoryAssay1.assayId')
+        .andOn('result.resultCategory1', 'resultCategoryAssay1.resultCategoryId')
+    )
+    .leftJoin('ResultCategoryAssay as resultCategoryAssay2', queryBuilder =>
+      queryBuilder
+        .on('result.assayId', 'resultCategoryAssay2.assayId')
+        .andOn('result.resultCategory2', 'resultCategoryAssay2.resultCategoryId')
+    )
     .where('resultTreatmentStatus.externalId', 'AwaitingTreatment')
     .modify(addConstraints, dataConstraints, {
       site: 'reportableSite',
       geography: 'reportableSiteGeography',
       result: 'result',
     })
+    .where('result.updatedOn', '>', minUpdatedOn)
+    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
+    .andWhere(qb =>
+      qb.orWhere('resultCategoryAssay1.requiresTreatment', true).orWhere('resultCategoryAssay2.requiresTreatment', true)
+    )
     .countDistinct('result.id as count')
     .first()
   return knexQuery
