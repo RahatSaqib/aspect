@@ -64,9 +64,11 @@ const expected347 = [
       resultId: 347,
       recorded: false,
     },
+    resultRequiresTreatment: false,
     hasFollowUp: false,
     requiresFollowUp: false,
     noFollowUpPossible: false,
+    noFollowUpPossibleComment: undefined,
     comments: [],
     followUps: [],
     history: [
@@ -247,9 +249,11 @@ const expected450 = [
       treatment: 'dstb-2rhze',
       treatmentStarted: '2023-05-20T19:45:55.000Z',
     },
+    resultRequiresTreatment: true,
     hasFollowUp: true,
     requiresFollowUp: false,
     noFollowUpPossible: false,
+    noFollowUpPossibleComment: undefined,
     comments: [],
     followUps: [
       {
