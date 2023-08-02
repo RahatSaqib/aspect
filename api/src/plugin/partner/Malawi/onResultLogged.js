@@ -140,7 +140,7 @@ async function mergeReporterToChaiResult(knex, actions, resultId, sampleSiteId, 
     _.map(chaiDevices, async device => {
       const { deviceId } = device
 
-      const { processedResult, existingResult } = await mergeResult(knex, deviceId, payload, now)
+      const { processedResult, existingResult } = await mergeResult(knex, deviceId, payload, { now })
       const workflowChanged = await addResultWorkflowLogIfChanged(
         knex,
         payload,
