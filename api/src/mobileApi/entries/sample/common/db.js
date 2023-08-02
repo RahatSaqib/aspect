@@ -1,4 +1,6 @@
 const subMonths = require('date-fns/subMonths')
+const addDays = require('date-fns/addDays')
+const { format } = require('date-fns')
 const { knex } = require('../../../../db')
 const { addConstraints, getConstraints } = require('../../../../auth/constraints')
 const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
@@ -40,7 +42,9 @@ const getBaseAllSamplesRegistered = dataConstraints => {
 const getAllSamplesRegistered = (query, dataConstraints) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
   const knexQuery = getBaseAllSamplesRegistered(dataConstraints).where(queryBuilder =>
-    queryBuilder.where('sample.collectedOn', '>=', minUpdatedOn).orWhere('sample.updatedOn', '>=', minUpdatedOn)
+    queryBuilder
+      .where(qb => qb.where('sample.collectedOn', '>=', minUpdatedOn).orWhere('sample.updatedOn', '>=', minUpdatedOn))
+      .andWhere('sample.registeredInAspect', true)
   )
   return knexQuery
 }
@@ -70,7 +74,14 @@ const getSamplesRegisteredAtSiteOnDayWithSampleId = async (
     }
     if (collectedOn) {
       qb.andWhere(collectedOnQb =>
-        collectedOnQb.whereNull('sample.collectedOn').orWhere('sample.collectedOn', collectedOn)
+        collectedOnQb
+          .whereNull('sample.collectedOn')
+          .orWhere(collectedOnQbBetween =>
+            collectedOnQbBetween.whereBetween('sample.collectedOn', [
+              format(collectedOn, 'yyyy-MM-dd'),
+              format(addDays(collectedOn, 1), 'yyyy-MM-dd'),
+            ])
+          )
       )
     }
   })
