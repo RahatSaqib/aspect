@@ -1,5 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { FormControlLabel, Grid, Switch } from '@mui/material'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
@@ -13,10 +15,14 @@ const NationalTestingTrendsGraph = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter] = useState()
-  const [state, setState] = useState()
-  const [, setLga] = useState()
+  const [filter, setFilter] = useState({})
   const { data: assays } = useAssayList()
+
+  const onChangeState = useCallback(
+    e => setFilter(prev => ({ ...prev, stateId: e.target.value, lgaId: undefined })),
+    []
+  )
+  const onChangeLga = useCallback(e => setFilter(prev => ({ ...prev, lgaId: e.target.value })), [])
 
   return (
     <PkPage
@@ -30,19 +36,23 @@ const NationalTestingTrendsGraph = () => {
           />
           <StateSelect
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
+            onChange={onChangeState}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
-            onChange={e => setLga(e.target.value)}
+            stateId={filter.stateId}
+            onChange={onChangeLga}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
     >
       <Grid container sx={{ mt: 2 }}>
-        <TrendInYearsAllTestsGraph assaysFromState={assays} showLabel={showLabel} filterSelection={filter} />
+        <TrendInYearsAllTestsGraph
+          assaysFromState={assays}
+          showLabel={showLabel}
+          filterSelection={Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))}
+        />
       </Grid>
     </PkPage>
   )

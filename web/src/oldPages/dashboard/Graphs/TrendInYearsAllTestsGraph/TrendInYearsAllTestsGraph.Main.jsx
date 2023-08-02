@@ -26,7 +26,7 @@ const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelec
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
 
-  const mergedParams = filterSelection ? [...endpointParams, filterSelection] : [...endpointParams]
+  const mergedParams = filterSelection ? [...endpointParams, ...filterSelection] : [...endpointParams]
 
   const { isLoading, data } = useQuery(
     ['tbAllTestsYearlyTrends', { mergedParams }],
