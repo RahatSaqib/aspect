@@ -14,7 +14,7 @@ const cardContentStyle = {
   p: '16px !important',
 }
 
-const FilterContainer = ({ children, state, setState }) => {
+const FilterContainer = ({ children, state, setState, blocked }) => {
   const { formatMessage } = useI18n()
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
@@ -34,18 +34,20 @@ const FilterContainer = ({ children, state, setState }) => {
   }
 
   const remove = keys => {
-    removeFilter(keys, location.pathname)
-
-    const newState = { ...state }
-    keys.forEach(k => {
-      if (k.includes('.')) {
-        const [key, value] = k.split('.')
-        newState[key] = newState[key].filter(v => v !== value)
-      } else {
-        delete newState[k]
-      }
-    })
-    setState(newState)
+    const cleaned = keys.filter(el => !blocked.includes(el))
+    if (cleaned.length) {
+      removeFilter(keys, location.pathname)
+      const newState = { ...state }
+      keys.forEach(k => {
+        if (k.includes('.')) {
+          const [key, value] = k.split('.')
+          newState[key] = newState[key].filter(v => v !== value)
+        } else {
+          delete newState[k]
+        }
+      })
+      setState(newState)
+    }
   }
 
   return (
