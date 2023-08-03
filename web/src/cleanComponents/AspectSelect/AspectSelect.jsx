@@ -1,9 +1,11 @@
 import React from 'react'
 import { Autocomplete, LinearProgress, TextField } from '@mui/material'
 import get from 'lodash/get'
+import isArray from 'lodash/isArray'
+import map from 'lodash/map'
 
 export default function AspectSelect(props) {
-  const { label, itemToString, onChange, isLoading, valueBy, error, options, ...rest } = props
+  const { label, itemToString, onChange, isLoading, valueBy, multiple, error, options, ...rest } = props
 
   if (isLoading) return <LinearProgress />
 
@@ -25,9 +27,12 @@ export default function AspectSelect(props) {
         />
       )}
       options={options}
+      multiple={multiple}
       disabled={!options?.length}
       {...rest}
-      onChange={(_, newValue) => onChange(valueBy ? newValue?.[valueBy] : newValue)}
+      onChange={(_, newValue) =>
+        onChange(valueBy ? (multiple ? map(newValue, i => get(i, valueBy, i)) : newValue?.[valueBy]) : newValue)
+      }
     />
   )
 }
