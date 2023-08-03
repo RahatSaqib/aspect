@@ -38,17 +38,18 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
     assay,
     query,
   })
+    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
+    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
   /**
    * get all devices recorded in FactResultsDeviceByTimeFrame during whole period
    */
   let devices = await factTableQuery
     .clone()
-    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
-    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
     .groupBy('d.id')
     .select('d.name', 'd.id', 'dcap.modules', 'dcap.dailyCapacity', 'st.id as stateId', 'st.name as stateName')
   devices = devices.map(device => {
-    const { dailyCapacity = DEFAULT_DAILY_CAPACITY, modules = DEFAULT_MODULES } = device
+    const dailyCapacity = device.dailyCapacity || DEFAULT_DAILY_CAPACITY
+    const modules = device.modules || DEFAULT_MODULES
     return {
       ...device,
       dailyCapacity,
@@ -123,6 +124,7 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
     length: data.length,
     data: _.orderBy(data, 'name'),
     dynamicColumns,
+    WORKING_DAYS_IN_YEAR,
   }
 }
 
