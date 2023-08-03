@@ -3,8 +3,8 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 
-const LgaSelect = ({ id, name, label, value, onChange, error, helperText, stateId }) => {
-  const { isLoading: isLgaLoading, data: lgas } = useLgaByState(stateId, { enabled: !!stateId })
+const LgaSelect = ({ id, name, label, value, onChange, error, helperText, stateId, returnAll }) => {
+  const { isLoading: isLgaLoading, data: lgas } = useLgaByState({ stateId, returnAll }, { enabled: !!stateId })
 
   return isLgaLoading ? (
     <LinearProgress />

@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 
 const StateSelectField = ({ allItemText, countryId, stateId, onStateIdChange, floatingLabelText }) => {
-  const { isLoading: isStateLoading, data: states } = useStatesByCountry(countryId, { enabled: !!countryId })
+  const { isLoading: isStateLoading, data: states } = useStatesByCountry({ countryId }, { enabled: !!countryId })
 
   const handleSelectFieldChange = ({ target: { value } }) => {
     onStateIdChange(value === 'all' ? undefined : { id: value, name: states.find(s => s.id === value).name })
