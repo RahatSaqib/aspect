@@ -24,6 +24,11 @@ const routes = [
     path: '/geography/country-select-list',
     handler: asyncHandler(countrySelectList),
     config: {
+      validate: {
+        query: {
+          all: Joi.boolean().description('Should return all of countries').allow(null),
+        },
+      },
       description: 'Country List',
       notes: 'List of country IDs and Names',
     },
@@ -81,6 +86,9 @@ const routes = [
       description: 'State List',
       notes: 'List of state IDs and Names',
       validate: {
+        query: {
+          all: Joi.boolean().description('Should return all of states').allow(null),
+        },
         params: {
           countryId: Joi.number().description('Country ID').required(),
         },
@@ -110,6 +118,9 @@ const routes = [
       description: 'LGA List',
       notes: 'List of LGA IDs and Names',
       validate: {
+        query: {
+          all: Joi.boolean().description('Should return all of LGAs').allow(null),
+        },
         params: {
           stateId: Joi.number().description('State ID').required(),
         },
