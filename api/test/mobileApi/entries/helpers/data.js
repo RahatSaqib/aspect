@@ -41,6 +41,7 @@ const data347 = {
   sampleSiteExternalId: 'Idaho_4',
   sampleSiteId: 47,
   sampleSiteName: 'Oden Lab',
+  sampleSiteStateName: 'Idaho',
   sampleTypeExternalId: 'DBS',
   sampleTypeI18nKey: 'sampleTypeDBS',
   sampleTypeName: 'DBS',
@@ -51,6 +52,7 @@ const data347 = {
 const expected347 = [
   {
     id: 347,
+    assayExternalId: 'GxMtbRif',
     assayAvatar: {
       resultId: 347,
       contentI18nKey: 'assayTypeMtbRif',
@@ -62,9 +64,11 @@ const expected347 = [
       resultId: 347,
       recorded: false,
     },
+    resultRequiresTreatment: false,
     hasFollowUp: false,
     requiresFollowUp: false,
     noFollowUpPossible: false,
+    noFollowUpPossibleComment: undefined,
     comments: [],
     followUps: [],
     history: [
@@ -101,9 +105,9 @@ const expected347 = [
     ],
     patientId: '57-158-6406',
     sample: {
-      id: 347,
+      id: 172,
       externalId: 'SMP-TB-31',
-      originSite: { id: 47, name: 'Oden Lab', externalId: 'Idaho_4' },
+      originSite: { id: 47, name: 'Oden Lab', externalId: 'Idaho_4', stateName: 'Idaho' },
       sampleType: { name: 'DBS', i18nKey: 'sampleTypeDBS', externalId: 'DBS' },
       status: {
         id: 'SAMPLE_STATUS_UNKNOWN',
@@ -111,6 +115,7 @@ const expected347 = [
         label: 'Unknown',
         i18nKey: 'sample_status_unknown',
       },
+      clinicianName: null,
       collectedOn: '2022-11-01T16:16:39.000Z',
       updatedOn: null,
     },
@@ -202,6 +207,7 @@ const data450 = {
   sampleSiteExternalId: 'Georgia_1',
   sampleSiteId: 30,
   sampleSiteName: 'Atlanta NMRL',
+  sampleSiteStateName: 'Georgia',
   sampleTypeExternalId: 'DBS',
   sampleTypeI18nKey: 'sampleTypeDBS',
   sampleTypeName: 'DBS',
@@ -229,6 +235,7 @@ const followUp450 = [
 const expected450 = [
   {
     id: 450,
+    assayExternalId: 'GxMtbRifUltra',
     assayAvatar: {
       resultId: 450,
       contentI18nKey: 'assayTypeMtbRif',
@@ -242,9 +249,11 @@ const expected450 = [
       treatment: 'dstb-2rhze',
       treatmentStarted: '2023-05-20T19:45:55.000Z',
     },
+    resultRequiresTreatment: true,
     hasFollowUp: true,
     requiresFollowUp: false,
     noFollowUpPossible: false,
+    noFollowUpPossibleComment: undefined,
     comments: [],
     followUps: [
       {
@@ -316,12 +325,13 @@ const expected450 = [
     ],
     patientId: '84-687-3493',
     sample: {
-      id: 450,
+      id: 155,
       externalId: 'SMP-TB-14',
       originSite: {
         id: 30,
         name: 'Atlanta NMRL',
         externalId: 'Georgia_1',
+        stateName: 'Georgia',
       },
       sampleType: {
         name: 'DBS',
@@ -334,6 +344,7 @@ const expected450 = [
         label: 'Unknown',
         i18nKey: 'sample_status_unknown',
       },
+      clinicianName: null,
       collectedOn: '2022-08-04T16:16:37.000Z',
       updatedOn: null,
     },

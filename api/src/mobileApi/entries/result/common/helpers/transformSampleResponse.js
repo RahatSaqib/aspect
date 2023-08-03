@@ -13,6 +13,9 @@ function transformSampleResponse(query, data, results) {
   return _.map(data, sample => {
     if (!_.isEmpty(_.find(results, { sample: { id: sample.id } }))) return
     if (_.lt(new Date(sample.collectedOn), minUpdatedOn)) return
+    if (sample?.sampleData && typeof sample?.sampleData === 'string') {
+      sample.sampleData = JSON.parse(sample?.sampleData)
+    }
     const clinicalResponseFlags = {
       requiresFollowUp: false,
       hasFollowUp: false,
@@ -20,11 +23,13 @@ function transformSampleResponse(query, data, results) {
     }
     return {
       id: sample.id,
+      patientId: sample?.sampleData?.patientExternalId || null,
       sample: transformSampleData(sample),
       testType: transformEntryType(),
       dbUpdatedOn: sample.updatedOn,
+      resultRequiresTreatment: false,
       ...clinicalResponseFlags,
-      searchSchema: generateSearchKeys(sample, sample?.sampleData?.patientId, clinicalResponseFlags),
+      searchSchema: generateSearchKeys(sample, sample?.sampleData?.patientExternalId, clinicalResponseFlags),
       updatedOn: getSampleUpdatedOnDate(sample),
       collectedOn: sample.sampleCollectedOn,
     }

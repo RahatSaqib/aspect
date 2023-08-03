@@ -8,17 +8,18 @@ const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
 const countrySpecificReportFixture = require('./fixtures/reports')
 const {
-  allAssayTypeToId,
   allAssayToId,
+  allAssayTypeToId,
+  allConsumableToId,
   allDeviceApprovalToId,
   allDeviceTypeCategoryToId,
   allPartnerTypeToId,
   allResultCategoryToId,
-  allResultStatusToId,
   allResultSourceToId,
+  allResultStatusToId,
   allResultWorkflowStatusToId,
   allSampleTypeToId,
-  allConsumableToId,
+  allSiteTypeToId,
   assayTypeToId,
   resultSourceToId,
   resultTypeToId,
@@ -3200,7 +3201,7 @@ async function seed(knex) {
   const geographies = []
   const preventRandomSitesForCountries = ['ZANHLS', 'MZ']
   const modules = ['A', 'B', 'C', 'D']
-
+  const siteTypeIds = await allSiteTypeToId()
   await Promise.all(
     _.map(geography.countries, async country => {
       const countryData = _.pick(country, [
@@ -3268,6 +3269,7 @@ async function seed(knex) {
                       name: city
                         ? `${city} ${labStrings[_.random(0, labStrings.length - 1)]}`
                         : `${lga.name} County ${siteNumber % 2 ? 'Lab' : 'Clinic'} ${siteNumber}`,
+                      siteTypeId: siteTypeIds[siteNumber % 2 ? 'lab' : 'clinic'],
                       shortName: city || `${lga.name}, ${stateKey} ${siteNumber}`,
                       city: city || `${lga.name} City`,
                       street1: `${lgaData.id} Main Street`,

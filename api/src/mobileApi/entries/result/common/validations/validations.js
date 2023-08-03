@@ -24,14 +24,21 @@ const downloadEntriesResponseValidation = () => {
             .keys({
               id: Joi.number().required().description('Unique ID of the result for this instance of Aspect'),
               patientId: Joi.string()
-                .optional()
+                .required()
                 .allow(null, '')
                 .description('Unique ID of the patient for this entry if available'),
+              resultRequiresTreatment: Joi.bool()
+                .required()
+                .description('Whether the result requires a type of treatment response'),
               requiresFollowUp: Joi.bool().required().description('Whether the entry requires a follow-up'),
               hasFollowUp: Joi.bool().required().description('Whether the entry has been followed up on'),
               noFollowUpPossible: Joi.bool()
                 .required()
                 .description('Whether it is possible for a follow-up to be done on the entry'),
+              noFollowUpPossibleComment: Joi.string()
+                .optional()
+                .allow(null, '')
+                .description('The text that the user entered when flagging the follow up as not possible'),
               updatedOn: Joi.date().required().description('When the entry was last updated in the Aspect database'),
               collectedOn: Joi.optional()
                 .allow(null, '')
