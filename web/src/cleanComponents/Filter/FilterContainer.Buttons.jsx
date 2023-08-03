@@ -181,14 +181,14 @@ const Btn = ({ lbl, del }) => {
 }
 
 const StateId = ({ countryId, stateId, remove }) => {
-  const { data } = useStatesByCountry(countryId)
+  const { data } = useStatesByCountry({ countryId })
   const lbl = data?.find(s => s.id === stateId)?.name
 
   return lbl && stateId ? <Btn lbl={lbl} del={() => remove(['stateId', 'lgaId'])} /> : null
 }
 
 const LgaId = ({ stateId, lgaId, remove }) => {
-  const { data } = useLgaByState(stateId)
+  const { data } = useLgaByState({ stateId })
   const lbl = data?.find(s => s.id === lgaId)?.name
 
   return lbl && lgaId ? <Btn lbl={lbl} del={() => remove(['lgaId'])} /> : null

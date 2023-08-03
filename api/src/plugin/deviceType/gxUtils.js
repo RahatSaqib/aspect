@@ -28,7 +28,7 @@ even when the site is unknown to Aspect
 If the device is unknown, ignore this request
 If the site for the device in unknown, create a site and link it to the device
 */
-async function preProcessAddDeviceData({ knex, device, payload, now, messageContext }) {
+async function preProcessAddDeviceData({ knex, device, payload, now, messageContext, isFastImport }) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${JSON.stringify(device)}`)
   }
@@ -59,7 +59,11 @@ async function preProcessAddDeviceData({ knex, device, payload, now, messageCont
   ) {
     deviceDetails.lastPingOn = parseDateOrDefault(configurationData.lastPingOn, now)
   }
-  await knex.from('Device').where({ id: device.id }).update(deviceDetails)
+
+  if (!isFastImport) {
+    await knex.from('Device').where({ id: device.id }).update(deviceDetails)
+  }
+
   if (configurationData.disabledModules) {
     await Promise.each(configurationData.disabledModules, modules =>
       shouldTriggerModuleDisabled(knex, messageContext, device, modules)
@@ -279,7 +283,7 @@ async function postProcessAddDeviceOperation({ device, payload, now, messageCont
   }
 }
 
-async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now }) {
+async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { id: deviceId }, now, isFastImport }) {
   let device = {}
   if (!_.isEmpty(_.get(payload, 'data'))) {
     const {
@@ -372,7 +376,7 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
         }
       }
     }
-    device = await updateDeviceDetails(knex, deviceId, _.omitBy(deviceDetails, _.isNil), now)
+    device = await updateDeviceDetails(knex, deviceId, _.omitBy(deviceDetails, _.isNil), now, isFastImport)
   }
   return { device }
 }
