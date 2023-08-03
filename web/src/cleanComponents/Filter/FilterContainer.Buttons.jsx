@@ -225,7 +225,7 @@ const AssayId = ({ assayId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useAssayList()
 
-  const del = { del: remove ? () => remove(['assayId', 'resultCategoryId']) : undefined } // singleAssayId has no delete option
+  const del = { del: remove ? () => remove(['assayId', 'resultCategoryId', 'resultCategoryGroupId']) : undefined } // singleAssayId has no delete option
 
   if (!data) {
     return null
