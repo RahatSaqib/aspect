@@ -269,7 +269,7 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, 
   if (resultCategoryGroupId && resultCategoryGroups) {
     const msg = assayOverride
       ? `"${startCase(assayOverride)}"`
-      : formatMessage(messages[resultCategoryGroups.find(it => it.externalId === resultCategoryGroupId).i18nKey])
+      : formatMessage(messages[resultCategoryGroups.find(it => it.externalId === resultCategoryGroupId)?.i18nKey])
 
     return (
       <Btn
