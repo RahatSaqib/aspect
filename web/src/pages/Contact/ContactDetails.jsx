@@ -225,6 +225,7 @@ const ContactDetails = ({ setStep }) => {
                   <CountrySelect
                     id="countryId"
                     name="countryId"
+                    returnAll
                     label={formatMessage(messages.country)}
                     value={values.countryId}
                     onChange={handleChange}
@@ -236,6 +237,7 @@ const ContactDetails = ({ setStep }) => {
                   <StateSelect
                     id="stateId"
                     name="stateId"
+                    returnAll
                     label={getCustomMessage(messages, 'state', { countryAbbreviation })}
                     value={values.stateId || ''}
                     onChange={handleChange}
@@ -248,6 +250,7 @@ const ContactDetails = ({ setStep }) => {
                   <LgaSelect
                     id="lgaId"
                     name="lgaId"
+                    returnAll
                     label={getCustomMessage(messages, 'lga', { countryAbbreviation })}
                     value={values.lgaId || ''}
                     onChange={handleChange}
