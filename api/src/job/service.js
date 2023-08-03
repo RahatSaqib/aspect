@@ -345,9 +345,9 @@ async function assignPersonTo(request) {
   // ----------------
   const { personId, jobFunctionId } = payload
   const { auth } = request
-  const validator = await validateJobData({ personId, jobFunctionId, auth })
-  if (validator.isBoom) {
-    return validator
+  const creator = await validateJobData({ personId, jobFunctionId, auth })
+  if (creator.isBoom) {
+    return creator
   }
   let jobId
   const jobProps = { personId, jobFunctionId }
@@ -360,10 +360,19 @@ async function assignPersonTo(request) {
   // ----------------
   // siteId or geographyId
   // ----------------
+
+  // This will used as default value for geography of assigment
+  const creatorGeography = await knex('Job as j')
+    .where({ personId: creator.personId })
+    .leftJoin('JobContext as jc', 'j.id', 'jc.jobId')
+    .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
+    .select('g.stateId', 'g.countryId', 'g.lgaId')
+    .first()
+
   const {
     countryId,
-    stateId = null,
-    lgaId = null,
+    stateId = creatorGeography?.stateId ?? null,
+    lgaId = creatorGeography?.lgaId ?? null,
     siteId = null,
     diseaseId = null,
     assayTypeId = null,
@@ -624,11 +633,11 @@ async function getAssignments({ auth, personId }) {
 
 // ----------------------------------------------------------------------------------------
 async function validateJobData({ personId, jobFunctionId, auth }) {
-  const { partnerId, countryId } = await getUser(auth.credentials.name)
+  const creator = await getUser(auth.credentials.name)
 
   // should be same 'partnerId' in requested jobFunction and current user
   const err = 'Only Admin with same partnerId as JobFunction can manage Jobs'
-  const jf = await getJobFunction(jobFunctionId, partnerId, err)
+  const jf = await getJobFunction(jobFunctionId, creator.partnerId, err)
   if (jf.isBoom) {
     return jf
   }
@@ -643,13 +652,13 @@ async function validateJobData({ personId, jobFunctionId, auth }) {
   if (!person.countryId) {
     return Boom.badData('Requested person does not have countryId')
   }
-  if (person.countryId !== countryId) {
+  if (person.countryId !== creator.countryId) {
     return Boom.badData(
-      `Different countryIds in current Admin user (${countryId}) and requested person ${person.countryId}`
+      `Different countryIds in current Admin user (${creator.countryId}) and requested person ${person.countryId}`
     )
   }
 
-  return true
+  return creator
 }
 
 // ----------------------------------------------------------------------------------------
@@ -696,6 +705,7 @@ async function removePersonAssignment(request) {
   const personAssignments = await getAssignments({ auth, personId })
   return { ok: true, data: personAssignments }
 }
+
 // ----------------------------------------------------------------------------------------
 
 module.exports = {
