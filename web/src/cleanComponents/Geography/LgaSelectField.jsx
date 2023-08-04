@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 
 const LgaSelectField = ({ allItemText, lgaId, stateId, onLgaIdChange, floatingLabelText }) => {
-  const { isLoading: isLgaLoading, data: lgas } = useLgaByState(stateId, { enabled: !!stateId })
+  const { isLoading: isLgaLoading, data: lgas } = useLgaByState({ stateId }, { enabled: !!stateId })
 
   const handleSelectFieldChange = ({ target: { value } }) => {
     onLgaIdChange(value === 'all' ? undefined : { id: value, name: lgas.find(s => s.id === value).name })

@@ -1,7 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useMemo } from 'react'
 import { Typography } from '@mui/material'
+import keys from 'lodash/keys'
+import reduce from 'lodash/reduce'
+import round from 'lodash/round'
+import { useQuery } from 'react-query'
 import { PeriodSelector } from '../../../../../cleanComponents'
+import Loading from '../../../../../cleanComponents/Loading'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
+import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
@@ -17,6 +23,68 @@ const UtilizationPage = () => {
 
   const data = new Array(111).fill({}).map((i, idx) => createData(idx, `City ${idx}`, 159, 6, 24, 9, 5))
 
+  const mergedParams = []
+
+  const { isLoading: isLoadingNational, data: { data: rawNational = [], WORKING_DAYS_IN_YEAR } = {} } = useQuery(
+    ['tblUtilizationPage_National', { mergedParams }],
+    async ({ queryKey: [, { mergedParams }] }) =>
+      fetchWrapperForQueries({ endpoint: '/device/annual-utilization-rate-national', params: mergedParams })
+  )
+  const { isLoading: isLoadingProvincial, data: { data: rawProvincial = [] } = {} } = useQuery(
+    ['tblUtilizationPage_Provincial', { mergedParams }],
+    async ({ queryKey: [, { mergedParams }] }) =>
+      fetchWrapperForQueries({ endpoint: '/device/annual-utilization-rate-provincial', params: mergedParams })
+  )
+
+  const national = useMemo(() => {
+    const allYearsSet = new Set()
+    /**
+     * go through all devices and count their tests per each year and
+     * then calculate rates for each year
+     */
+    const byYearCounts = {}
+    rawNational.forEach(device => {
+      const { dailyCapacity, rates } = device
+      rates.forEach(({ year, count }) => {
+        allYearsSet.add(year)
+        byYearCounts[year] = byYearCounts[year] || { capacityCounts: 0, actualCounts: 0 }
+        byYearCounts[year].actualCounts += count
+        byYearCounts[year].capacityCounts += dailyCapacity * WORKING_DAYS_IN_YEAR
+      })
+    })
+    const data = [
+      reduce(
+        keys(byYearCounts),
+        (acc, year) => {
+          const { actualCounts, capacityCounts } = byYearCounts[year]
+          const percent = (actualCounts * 100) / Math.max(capacityCounts, 1)
+          const rate = round(percent, 2)
+          acc = { ...acc, [+year]: rate }
+          return acc
+        },
+        { total: 'Total' }
+      ),
+    ]
+    return { data, keys: [...allYearsSet].sort(), indexBy: 'total' }
+  }, [rawNational, WORKING_DAYS_IN_YEAR])
+
+  const provincial = useMemo(() => {
+    const allYearsSet = new Set()
+    const data = reduce(
+      rawProvincial,
+      (acc, { stateName, rates }) => {
+        const item = { stateName }
+        rates.forEach(({ rate, year }) => {
+          allYearsSet.add(year)
+          item[+year] = rate
+        })
+        return [...acc, item]
+      },
+      []
+    )
+    return { data, keys: [...allYearsSet].sort(), indexBy: 'stateName' }
+  }, [rawProvincial])
+
   const columns = [
     { name: 'Name', prop: 'name' },
     { name: 'Current Qty.', prop: 'quantity' },
@@ -26,26 +94,8 @@ const UtilizationPage = () => {
     { name: 'Days Left', prop: 'left' },
   ]
 
-  const datum = [
-    { total: 'Total', 2017: 19, 2018: 19, 2019: 23 },
-    { province: 'Pakistan', 2017: 22, 2018: 80, 2019: 75 },
-    { province: 'BTAN', 2017: 20, 2018: 80, 2019: 75 },
-    { province: 'KP', 2017: 21, 2018: 80, 2019: 75 },
-    { province: 'Punjab', 2017: 19, 2018: 80, 2019: 75 },
-    { province: 'Sindh', 2017: 25, 2018: 80, 2019: 75 },
-  ]
-
-  const indexByFirst = 'total'
-  const dataFirst = datum.filter(r => !!r[indexByFirst])
-  const keyFirst = Object.keys(dataFirst[0]).filter(k => k !== indexByFirst)
-
-  const indexByRest = 'province'
-  const dataRest = datum.filter(r => !!r[indexByRest])
-  const keyRest = Object.keys(dataRest[0]).filter(k => k !== indexByRest)
-
   return (
     <PkPage
-      isMocked
       title={formatMessage(messages.utilizationTitle)}
       filter={
         <PeriodSelector
@@ -60,14 +110,22 @@ const UtilizationPage = () => {
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
         National Trends in Annual Utilization Rates
       </Typography>
-      <div style={{ height: '300px', marginTop: 32 }}>
-        <UtilizationGraph data={dataFirst} keys={keyFirst} indexBy={indexByFirst} />
+      <div style={{ height: '400px', marginTop: 32 }}>
+        {isLoadingNational ? (
+          <Loading />
+        ) : (
+          <UtilizationGraph data={national.data} keys={national.keys} indexBy={national.indexBy} />
+        )}
       </div>
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
         Provincial Trends in Annual Utilization Rates
       </Typography>
       <div style={{ height: '800px', marginTop: 32 }}>
-        <UtilizationGraph data={dataRest} keys={keyRest} indexBy={indexByRest} />
+        {isLoadingProvincial ? (
+          <Loading />
+        ) : (
+          <UtilizationGraph data={provincial.data} keys={provincial.keys} indexBy={provincial.indexBy} />
+        )}
       </div>
     </PkPage>
   )
