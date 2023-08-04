@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
 import { FormControlLabel, Switch } from '@mui/material'
-import isNil from 'lodash/isNil'
-import omitBy from 'lodash/omitBy'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
@@ -10,6 +8,7 @@ import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
+import { objectToArray } from '../../../../../utils/utils/misc'
 
 const defaultFilters = [{ assay: 'GxMtbXdr' }, { resultCategory1: 'Detected' }]
 const NationalDiagnosisGraph = () => {
@@ -32,7 +31,7 @@ const NationalDiagnosisGraph = () => {
           <StateSelect
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setFilter(prv => ({ ...prv, stateId: e.target.value }))}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
@@ -48,9 +47,7 @@ const NationalDiagnosisGraph = () => {
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}
-        filterSelection={Object.entries(omitBy(filter, isNil))
-          .map(([name, value]) => ({ [name]: value }))
-          .concat(defaultFilters)}
+        filterSelection={objectToArray(filter).concat(defaultFilters)}
       />
     </PkPage>
   )

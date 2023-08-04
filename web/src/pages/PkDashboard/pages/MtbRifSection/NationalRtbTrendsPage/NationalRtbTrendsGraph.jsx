@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { FormControlLabel, Grid, Switch } from '@mui/material'
+import { FormControlLabel, Switch } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
@@ -8,6 +8,7 @@ import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/TrendInYearsAllTestsGraph/TrendInYearsAllTestsGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -37,7 +38,7 @@ const NationalRtbTrendsGraph = () => {
           <StateSelect
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setFilter(prv => ({ ...prv, stateId: e.target.value }))}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
@@ -53,9 +54,7 @@ const NationalRtbTrendsGraph = () => {
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}
-        filterSelection={Object.entries(omitBy(filter, isNil))
-          .map(([name, value]) => ({ [name]: value }))
-          .concat(defaultFilters)}
+        filterSelection={objectToArray(filter).concat(defaultFilters)}
       />
     </PkPage>
   )
