@@ -36,7 +36,7 @@ const ResultCategoryGroupSelect = ({ id, name, label, value, onChange, error, he
           ),
         }}
       >
-        {resultCategoryGroups.map(c => (
+        {resultCategoryGroups?.map(c => (
           <MenuItem key={c.externalId} value={c.externalId}>
             {formatMessage(messages[c.i18nKey])}
           </MenuItem>
