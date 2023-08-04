@@ -129,8 +129,6 @@ async function listGx10CTrendsNational({ auth, query }) {
  */
 async function listGx10CTrendsProvincial({ auth, query }) {
   const now = new Date()
-  // const totalDaysCurrYear = getDaysInYear(now)
-  // const totalDaysPrevYear = getDaysInYear(subYears(now, 1))
   const denominator = (getDayOfYear(now) / getDaysInYear(now)) * 12
   const { baseQuerySince5YearsAgo, baseQueryLast24h } = await gx10CBaseQueryProvincial(auth, query)
   const rawSince5YearsAgo = await baseQuerySince5YearsAgo

@@ -1182,6 +1182,9 @@ const routes = [
                 currYearTotals: Joi.object().keys({
                   ...validateResponseResultCounts(),
                 }),
+                currYearMeanPerMonth: Joi.object().keys({
+                  ...validateResponseResultCounts(),
+                }),
                 prevYearMeanPerMonth: Joi.object().keys({
                   ...validateResponseResultCounts(),
                 }),
