@@ -3,9 +3,9 @@ const { differenceInDays } = require('date-fns')
 const { generateTransferStatus } = require('./generateTransferStatus')
 const { generateSeverity } = require('./generateSeverity')
 
-function transformTreatmentStatus(data, followUps) {
+function transformTreatmentStatus(data, followUps, userSiteIds) {
   if (_.isEmpty(data)) return {}
-  const { canBeTransferred } = generateTransferStatus(data)
+  const { canBeTransferred } = generateTransferStatus(data, userSiteIds)
   const daysInCurrentStatus = differenceInDays(new Date(), new Date(data?.resultTreatmentStatusChangedOn ?? new Date()))
   const changedOn = data.resultTreatmentStatusChangedOn
   if (_.isNil(changedOn) && daysInCurrentStatus === 0) return {}

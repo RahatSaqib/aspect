@@ -3,6 +3,7 @@ const subMonths = require('date-fns/subMonths')
 const { knex } = require('../../../../db')
 const { MONTHS_HISTORY_TO_LOOK_UP, deliverableResultWorkflowStatuses } = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
+const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 
 const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
@@ -226,10 +227,23 @@ const countAllAwaitingTreatment = (query, dataConstraints) => {
   return knexQuery
 }
 
+const getUserSiteIds = async dataConstraints => {
+  const sites = await knex('Site as s')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
+    .groupBy(['s.id'])
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .select('s.id')
+  return sites.map(s => s.id)
+}
+
 module.exports = {
   countAllAwaitingTreatment,
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
+  getUserSiteIds,
 }

@@ -171,10 +171,8 @@ describe('Entries helpers', () => {
   describe('generateTransferStatus', () => {
     it('should generate the correct transfer data.transferStatusLogData is nil', () => {
       const data = {}
-      const expectedOutput = { canBeTransferred: true }
-
       const result = generateTransferStatus(data)
-      expect(result).to.eql(expectedOutput)
+      expect(result.canBeTransferred).to.eq(true)
     })
 
     it('should generate TRANSFERRED.AWAY when siteId equals previousReportableSiteId and not reportableSiteId', () => {
@@ -208,12 +206,16 @@ describe('Entries helpers', () => {
     })
 
     it('should generate TRANSFERRED.HERE when siteId equals reportableSiteId and not previousReportableSiteId', () => {
+      const labSiteId = 1
+      const initialClinicSiteId = 2
+      const transferToClinicSiteId = 3
+      const userSiteIds = [labSiteId, initialClinicSiteId, transferToClinicSiteId]
       const data = {
         id: 123,
         transferStatusLogData: JSON.stringify({
-          siteId: 1,
-          reportableSiteId: 1,
-          previousReportableSiteId: 2,
+          siteId: labSiteId,
+          reportableSiteId: transferToClinicSiteId,
+          previousReportableSiteId: initialClinicSiteId,
         }),
         transferredBy: 'user1',
         transferredOn: '2023-01-01T00:00:00Z',
@@ -222,8 +224,8 @@ describe('Entries helpers', () => {
 
       const expectedOutput = {
         canBeTransferred: true,
-        previousReportableSiteId: 2,
-        reportableSiteId: 1,
+        previousReportableSiteId: initialClinicSiteId,
+        reportableSiteId: transferToClinicSiteId,
         resultId: 123,
         siteId: 1,
         comment: undefined,
@@ -233,7 +235,7 @@ describe('Entries helpers', () => {
         transferredOn: '2023-01-01T00:00:00Z',
       }
 
-      const result = generateTransferStatus(data)
+      const result = generateTransferStatus(data, userSiteIds)
       expect(result).to.eql(expectedOutput)
     })
   })

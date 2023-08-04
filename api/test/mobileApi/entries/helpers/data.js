@@ -389,6 +389,11 @@ const expected450 = [
     },
     transferStatus: {
       canBeTransferred: true,
+      resultId: 450,
+      siteName: 'Marden Hospital',
+      transferStatus: null,
+      transferredBy: null,
+      transferredOn: null,
     },
     treatmentStatus: {},
     updatedOn: '2023-05-20T19:45:55.000Z',
