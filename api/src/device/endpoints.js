@@ -649,6 +649,7 @@ const routes = [
                   ),
               })
             ),
+          WORKING_DAYS_IN_YEAR: Joi.number().required().description('Number of working days per year'),
         }),
       },
     },
