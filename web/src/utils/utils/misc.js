@@ -16,6 +16,7 @@ export function getItemsForTrendsGraph(data, states) {
       return {
         locationName: name,
         currYearTotals: { cntAll: 0 },
+        currYearMeanPerMonth: { cntAll: 0 },
         prevYearMeanPerMonth: { cntAll: 0 },
         last24h: { cntAll: 0 },
         trends: [{ year: new Date().getFullYear() }],
@@ -34,7 +35,7 @@ export function getItemsForTrendsGraph(data, states) {
       return {
         province: it.locationName,
         perYear: it.currYearTotals.cntAll,
-        monthlyAverage: Math.round(it.prevYearMeanPerMonth.cntAll),
+        monthlyAverage: Math.round(it.currYearMeanPerMonth.cntAll),
         perDay: it.last24h.cntAll,
         trends,
       }

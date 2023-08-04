@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { startOfDay, endOfDay, subDays, endOfMonth } = require('date-fns')
+const { startOfDay, endOfDay, subDays, endOfMonth, getDayOfYear, getDaysInYear } = require('date-fns')
 
 const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
@@ -129,6 +129,9 @@ async function listGx10CTrendsNational({ auth, query }) {
  */
 async function listGx10CTrendsProvincial({ auth, query }) {
   const now = new Date()
+  // const totalDaysCurrYear = getDaysInYear(now)
+  // const totalDaysPrevYear = getDaysInYear(subYears(now, 1))
+  const denominator = (getDayOfYear(now) / getDaysInYear(now)) * 12
   const { baseQuerySince5YearsAgo, baseQueryLast24h } = await gx10CBaseQueryProvincial(auth, query)
   const rawSince5YearsAgo = await baseQuerySince5YearsAgo
   const rawLast24h = await baseQueryLast24h
@@ -184,6 +187,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
       const byCurrYear = byState[currentYear]
       const byPrevYear = byState[previousYear]
       const currYearTotals = { ...emptyCounts }
+      const currYearMeanPerMonth = { ...emptyCounts }
       const prevYearMeanPerMonth = { ...emptyCounts }
       const byYear = {}
 
@@ -205,6 +209,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
               }
             })
           })
+        currYearMeanPerMonth[counterName] = currYearTotals[counterName] / denominator
         prevYearMeanPerMonth[counterName] /= 12
       })
 
@@ -229,6 +234,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
           stateId,
           locationName: byState.locationName,
           currYearTotals,
+          currYearMeanPerMonth,
           prevYearMeanPerMonth,
           trends,
         },
