@@ -259,6 +259,10 @@ const messages = {
       id: 'pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate',
       defaultMessage: 'MTB Detected - Rif Indeterminate',
     },
+    GxMtbRifUltraMTBTraceDetectedRifIndeterminate: {
+      id: 'pages.filters.GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
+      defaultMessage: 'MTB Trace Detected Rif Indeterminate',
+    },
     GxMtbRifUltraMTBTraceDetectedRifNoResult: {
       id: 'pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult',
       defaultMessage: 'MTB Trace Detected Rif No Result',
