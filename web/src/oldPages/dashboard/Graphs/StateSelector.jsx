@@ -8,7 +8,7 @@ import { useAuthState } from '../../../providers/AuthProvider'
 
 const StateSelector = ({ onChange }) => {
   const { countryId } = useAuthState()
-  const { data, isLoading } = useStatesByCountry(countryId)
+  const { data, isLoading } = useStatesByCountry({ countryId })
   const [innerValue, setInnerValue] = useState('')
   const user = useAuthState()
   const manageValue = val => {
