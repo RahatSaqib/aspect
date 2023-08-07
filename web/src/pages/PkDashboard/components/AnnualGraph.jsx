@@ -29,12 +29,12 @@ const graphData = [
 
 const keys = ['Annual']
 
-const AnnualGraph = ({ showLabel }) => {
+const AnnualGraph = ({ showLabel, data = graphData }) => {
   return (
     <Grid item xs={12} md={4} lg={4} sx={{ p: 1 }}>
       <div className={cssClasses('Graph_Wrapper')}>
-        {graphData && !isEmpty(graphData) ? (
-          <SimpleBarGraph data={graphData} keys={keys} indexBy="year" enableLabel={showLabel} />
+        {data && !isEmpty(data) ? (
+          <SimpleBarGraph data={data} keys={keys} indexBy="year" enableLabel={showLabel} />
         ) : (
           <EmptyGraph type="bar" />
         )}
