@@ -197,46 +197,27 @@ function PeriodSelector({
                     <TreeItem label={<TreeLabel label={formatMessage(messages.custom)} />} nodeId="custom">
                       <TreeItem
                         label={
-                          <div style={{ width: '95%' }}>
-                            <DesktopDatePicker
-                              label={formatMessage(messages.fromDate)}
-                              value={range.minDate || null}
-                              onChange={minDate => {
-                                if (range.maxDate !== null) {
-                                  setValueLabel(customFormat(minDate, range.maxDate))
-                                  setRange({ ...range, minDate })
-                                  onChange({ minDate: minDate.toISOString(), maxDate: range.maxDate.toISOString() })
-                                  handleToggle()
-                                } else {
-                                  setRange({ ...range, minDate })
-                                }
-                              }}
-                              renderInput={params => <TextField {...params} />}
-                            />
-                          </div>
+                          <CustomMinDatePicker
+                            formatMessage={formatMessage}
+                            range={range}
+                            setValueLabel={setValueLabel}
+                            setRange={setRange}
+                            onChange={onChange}
+                            handleToggle={handleToggle}
+                          />
                         }
                         nodeId="custom-start"
                       />
                       <TreeItem
                         label={
-                          <div style={{ width: '95%' }}>
-                            <DesktopDatePicker
-                              label={formatMessage(messages.toDate)}
-                              value={range.maxDate}
-                              minDate={range.minDate}
-                              onChange={maxDate => {
-                                if (range.minDate !== null) {
-                                  setValueLabel(customFormat(range.minDate, maxDate))
-                                  setRange({ ...range, maxDate })
-                                  onChange({ minDate: range.minDate.toISOString(), maxDate: maxDate.toISOString() })
-                                  handleToggle()
-                                } else {
-                                  setRange({ ...range, maxDate })
-                                }
-                              }}
-                              renderInput={params => <TextField {...params} />}
-                            />
-                          </div>
+                          <CustomMaxDatePicker
+                            formatMessage={formatMessage}
+                            range={range}
+                            setValueLabel={setValueLabel}
+                            setRange={setRange}
+                            onChange={onChange}
+                            handleToggle={handleToggle}
+                          />
                         }
                         nodeId="custom-end"
                       />
@@ -261,3 +242,48 @@ const TreeLabel = ({ label }) => (
     </Typography>
   </Box>
 )
+
+const CustomMinDatePicker = ({ formatMessage, range, setValueLabel, setRange, onChange, handleToggle }) => {
+  return (
+    <div style={{ width: '95%' }}>
+      <DesktopDatePicker
+        label={formatMessage(messages.fromDate)}
+        value={range.minDate || null}
+        onChange={minDate => {
+          if (range.maxDate !== null) {
+            setValueLabel(customFormat(minDate, range.maxDate))
+            setRange({ ...range, minDate })
+            onChange({ minDate: minDate.toISOString(), maxDate: range.maxDate.toISOString() })
+            handleToggle()
+          } else {
+            setRange({ ...range, minDate })
+          }
+        }}
+        renderInput={params => <TextField {...params} />}
+      />
+    </div>
+  )
+}
+
+const CustomMaxDatePicker = ({ formatMessage, range, setValueLabel, setRange, onChange, handleToggle }) => {
+  return (
+    <div style={{ width: '95%' }}>
+      <DesktopDatePicker
+        label={formatMessage(messages.toDate)}
+        value={range.maxDate}
+        minDate={range.minDate}
+        onChange={maxDate => {
+          if (range.minDate !== null) {
+            setValueLabel(customFormat(range.minDate, maxDate))
+            setRange({ ...range, maxDate })
+            onChange({ minDate: range.minDate.toISOString(), maxDate: maxDate.toISOString() })
+            handleToggle()
+          } else {
+            setRange({ ...range, maxDate })
+          }
+        }}
+        renderInput={params => <TextField {...params} />}
+      />
+    </div>
+  )
+}
