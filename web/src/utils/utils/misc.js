@@ -1,4 +1,5 @@
 import flatten from 'lodash/flatten'
+import round from 'lodash/round'
 
 export function getItemsForTrendsGraph(data, states) {
   let actualData = data
@@ -15,18 +16,20 @@ export function getItemsForTrendsGraph(data, states) {
       }
       return {
         locationName: name,
-        currYearTotals: { cntAll: 0 },
-        currYearMeanPerMonth: { cntAll: 0 },
-        prevYearMeanPerMonth: { cntAll: 0 },
-        last24h: { cntAll: 0 },
+        currYearTotals: { cntAll: '-' },
+        currYearMeanPerMonth: { cntAll: '-' },
+        prevYearMeanPerMonth: { cntAll: '-' },
+        last24h: { cntAll: '-' },
         trends: [{ year: new Date().getFullYear() }],
+        noDataAvailable: true,
       }
     })
   }
   const yearSet = new Set(flatten(actualData?.map(it => it.trends.map(d => d.year))))
   const years = [...yearSet]
   years.sort()
-  return (
+
+  const tableData =
     actualData?.map(it => {
       const trends = years.map(year => {
         const y = it.trends.find(x => x.year === year)?.cntAll || 0
@@ -35,10 +38,20 @@ export function getItemsForTrendsGraph(data, states) {
       return {
         province: it.locationName,
         perYear: it.currYearTotals.cntAll,
-        monthlyAverage: Math.round(it.currYearMeanPerMonth.cntAll),
+        monthlyAverage: it.noDataAvailable ? '-' : round(it.currYearMeanPerMonth.cntAll, 2),
         perDay: it.last24h.cntAll,
         trends,
+        noDataAvailable: it.noDataAvailable,
       }
     }) || []
-  )
+  let graphData = tableData?.map(({ province, trends, noDataAvailable }) => ({
+    id: province,
+    data: trends,
+    noDataAvailable,
+  }))
+  if (graphData.length === graphData.filter(it => it.noDataAvailable).length) {
+    graphData = []
+  }
+
+  return { graphData, tableData }
 }

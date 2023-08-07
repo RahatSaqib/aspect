@@ -1,8 +1,10 @@
 import React, { useMemo, useState } from 'react'
 import { Grid } from '@mui/material'
+import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'
 import Loading from '../../../../../cleanComponents/Loading'
 import StateAutocomplete from '../../../../../cleanComponents/StateAutocomplete'
+import EmptyGraph from '../../../../../components/Graphs/EmptyData'
 import SimpleBarLine from '../../../../../components/Graphs/SimpleBarLine'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
@@ -25,7 +27,7 @@ const ProvincialDiagnosisTrendPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-provincial', params: mergedParams })
   )
 
-  const items = useMemo(() => getItemsForTrendsGraph(data, states), [data, states])
+  const { graphData, tableData } = useMemo(() => getItemsForTrendsGraph(data, states), [data, states])
 
   return (
     <PkPage
@@ -45,10 +47,10 @@ const ProvincialDiagnosisTrendPage = () => {
       ) : (
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
-            <SimpleBarLine data={items?.map(({ province, trends }) => ({ id: province, data: trends }))} />
+            {graphData && !isEmpty(graphData) ? <SimpleBarLine data={graphData} /> : <EmptyGraph type="bar" />}
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            <ProvinceTrendTable rows={items} />
+            <ProvinceTrendTable rows={tableData} />
           </Grid>
         </Grid>
       )}
