@@ -10,10 +10,9 @@ async function dropDB() {
     connection: dbConfigWithoutDatabase,
   })
 
-  const schema = database.replace(/[^_a-zA-Z0-9$_]/g, '_')
   // eslint-disable-next-line no-console
-  console.log('\x1b[1;36m', '⚙️ Dropping db Schema ➜', schema)
-  await knex.raw(`DROP DATABASE IF EXISTS ${schema};`)
+  console.log('\x1b[1;36m', '⚙️ Dropping db Schema ➜', database)
+  await knex.raw(`DROP DATABASE IF EXISTS \`${database}\`;`)
 }
 
 dropDB().then(
