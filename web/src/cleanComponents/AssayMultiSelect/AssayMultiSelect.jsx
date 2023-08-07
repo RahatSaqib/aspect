@@ -30,6 +30,7 @@ export function AssayMultiSelect(props) {
   return (
     <AspectSelect
       {...rest}
+      multiple
       label={formatMessage(messages.assay)}
       options={options}
       isLoading={isLoading}
