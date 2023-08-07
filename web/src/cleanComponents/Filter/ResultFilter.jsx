@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
@@ -27,10 +27,6 @@ const ResultFilter = () => {
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
-
-  console.log('state', state)
-  const [categoryDisplay, setCategoryDisplay] = useState(null)
-
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
@@ -58,7 +54,6 @@ const ResultFilter = () => {
               <AssayMultiSelect
                 valueBy="id"
                 value={state?.assayId ?? []}
-                multiple
                 onChange={val => setState({ ...state, assayId: val, resultCategoryGroupId: null })}
                 filters={{
                   hasResults: true,
@@ -68,11 +63,11 @@ const ResultFilter = () => {
 
             <Grid item xs={3}>
               <ResultCategoryGroupSelect
-                disabled={!state.assayId}
+                valueBy="externalId"
                 label={formatMessage(messages.resultGroup)}
-                value={state?.resultCategoryGroupId}
-                onChange={e => setState({ ...state, resultCategoryGroupId: e.target.value })}
-                assayId={state.assayId}
+                value={state?.resultCategoryGroupId ?? []}
+                onChange={e => setState({ ...state, resultCategoryGroupId: e })}
+                assayId={state?.assayId}
               />
             </Grid>
           </>
