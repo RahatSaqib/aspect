@@ -4,22 +4,22 @@ const { generateTransferStatus } = require('./generateTransferStatus')
 const { generateSeverity } = require('./generateSeverity')
 
 function transformTreatmentStatus(data, followUps, userSiteIds) {
-  if (_.isEmpty(data)) return {}
-  const { canBeTransferred } = generateTransferStatus(data, userSiteIds)
-  const daysInCurrentStatus = differenceInDays(new Date(), new Date(data?.resultTreatmentStatusChangedOn ?? new Date()))
-  const changedOn = data.resultTreatmentStatusChangedOn
-  if (_.isNil(changedOn) && daysInCurrentStatus === 0) return {}
-  return {
-    changedOn,
-    resultId: data.id,
-    name: data.resultTreatmentStatusName,
-    externalId: data.resultTreatmentStatusExternalId,
-    i18nKey: data.resultTreatmentStatusI18nKey,
-    visible:
-      canBeTransferred && (data.resultCategoryAssay1RequiresTreatment || data.resultCategoryAssay2RequiresTreatment),
-    severity: generateSeverity(data, followUps),
-    daysInCurrentStatus,
+  const treatmentStatus = {
+    daysInCurrentStatus: differenceInDays(new Date(), new Date(data?.resultTreatmentStatusChangedOn ?? new Date())),
+    visible: true,
   }
+  if (!_.isEmpty(data)) {
+    const { canBeTransferred } = generateTransferStatus(data, userSiteIds)
+    treatmentStatus.changedOn = data.resultTreatmentStatusChangedOn
+    treatmentStatus.resultId = data.id
+    treatmentStatus.name = data.resultTreatmentStatusName
+    treatmentStatus.externalId = data.resultTreatmentStatusExternalId
+    treatmentStatus.i18nKey = data.resultTreatmentStatusI18nKey
+    treatmentStatus.visible =
+      canBeTransferred && (data.resultCategoryAssay1RequiresTreatment || data.resultCategoryAssay2RequiresTreatment)
+    treatmentStatus.severity = generateSeverity(data, followUps)
+  }
+  return treatmentStatus
 }
 
 module.exports = { transformTreatmentStatus }
