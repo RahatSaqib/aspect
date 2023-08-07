@@ -1,4 +1,6 @@
 import flatten from 'lodash/flatten'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import round from 'lodash/round'
 
 export function getItemsForTrendsGraph(data, states) {
@@ -54,4 +56,8 @@ export function getItemsForTrendsGraph(data, states) {
   }
 
   return { graphData, tableData }
+}
+
+export function objectToArray(object) {
+  return Object.entries(omitBy(object, isNil)).map(([name, value]) => ({ [name]: value }))
 }
