@@ -50,6 +50,10 @@ const messages = {
     TbCurrent: { id: 'p.PkDashboard.TbCurrent', defaultMessage: 'Current TB Testing Trends' },
     TbNationalTrend: { id: 'p.PkDashboard.TbNationalTrend', defaultMessage: 'National TB Testing Trends' },
     GXTbNationalTrend: { id: 'p.PkDashboard.GXTbNationalTrend', defaultMessage: 'National GX-10C Testing Trends' },
+    GXTbNationalDiagnosis: {
+      id: 'p.PkDashboard.GXTbNationalDiagnosis',
+      defaultMessage: 'National GX-10C Diagnosed Trends in',
+    },
     TbProvincialComparison: {
       id: 'p.PkDashboard.TbProvincialComparison',
       defaultMessage: 'Provincial TB Testing Trend comparison',
