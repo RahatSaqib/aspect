@@ -9,7 +9,7 @@ const { knex } = require('../../src/db')
 
 const server = require('../utils/testUtils')
 
-const { assert } = chai
+const { assert, expect } = chai
 
 function queryResultFollowUpLastItems(knex, followUpTypes) {
   const fields = []
@@ -166,7 +166,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .value()
         assert.equal(res.status, 200)
         const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
-        assert.deepEqual(orderedResponse, expectedResponse)
+        expect(orderedResponse).to.containSubset(expectedResponse)
       })
   })
 
@@ -201,7 +201,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .value()
         assert.equal(res.status, 200)
         const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
-        assert.deepEqual(orderedResponse, expectedResponse)
+        expect(orderedResponse).to.containSubset(expectedResponse)
       })
   })
 

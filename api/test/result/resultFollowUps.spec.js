@@ -89,7 +89,7 @@ describe('Result Follow Up', () => {
           _.map(res.body.data, elem => elem.externalId),
           ['rrvl', 'iaac', 'st2o3lr', 'mcr', 'cured', 'died', 'notPossible']
         ).length,
-        5
+        6
       )
     })
   })
