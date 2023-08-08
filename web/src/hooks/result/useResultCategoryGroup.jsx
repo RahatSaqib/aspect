@@ -3,7 +3,6 @@ import fetchWrapperForQueries from '../../components/QueryFetch'
 import { assay, resultCategory } from '../../messages'
 import useI18n from '../useI18n'
 import { RESULT_KEY, RESULT_KEY_RESULT_CATEGORY_GROUP_ENDPOINT } from './resultKeys.js'
-import isArray from 'lodash/isArray'
 
 const getResultCategoryGroup = async assayId =>
   fetchWrapperForQueries({
