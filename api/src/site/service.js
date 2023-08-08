@@ -49,24 +49,33 @@ const SELECT_SHOW_FIELDS = [
   's.hoursEnd',
 ]
 
+function getSitesQuery(dataConstraints) {
+  return knex('Site as s')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
+    .groupBy(['s.id'])
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+}
+
 async function listSites(request) {
   const { query, auth } = request
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const siteQuery = knex('Site as s')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+  const baseSiteQuery = getSitesQuery(dataConstraints)
+  const siteQuery = baseSiteQuery
+    .clone()
     .where(function () {
       if (!query.siteIds) {
         return
       }
       this.whereIn('s.id', query.siteIds.split(','))
     })
-    .where(function () {
+    .andWhere(function () {
       if (!query.deviceName) {
         return
       }
@@ -80,8 +89,6 @@ async function listSites(request) {
 
       this.whereIn('s.id', deviceQuery)
     })
-    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
-    .groupBy(['s.id'])
     .modify(filterDateRangeParams, query, 's.createdOn')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -90,7 +97,6 @@ async function listSites(request) {
       siteName: 's.name',
       externalId: 's.externalId',
     })
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
 
   const getCount = knex
     .count('siteId as count')
@@ -404,6 +410,7 @@ async function listSitesWithReporters(request) {
 }
 
 module.exports = {
+  getSitesQuery,
   listSites,
   getSite,
   getSiteByPartnerCountry,

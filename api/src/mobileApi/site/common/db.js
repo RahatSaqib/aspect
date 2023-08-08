@@ -1,4 +1,7 @@
 const { knex } = require('../../../db')
+const { getSitesQuery } = require('../../../site/service')
+
+const SELECT_LIST_FIELDS = ['s.id', 's.name', 's.shortName', 'st.name as state', 'l.name as lga', 's.externalId']
 
 const getSitesInState = (partnerId, stateId, type) => {
   return knex('Site as s')
@@ -15,7 +18,19 @@ const getSitesInState = (partnerId, stateId, type) => {
         qb.andWhere(qbSiteType => qbSiteType.whereIn('st.externalId', type))
       }
     })
-    .select('s.id', 's.name', 's.shortName', 'sta.name as state', 'l.name as lga', 's.externalId')
+    .select(SELECT_LIST_FIELDS)
 }
 
-module.exports = { getSitesInState }
+const getUserSites = (dataConstraints, type) => {
+  const userSitesQuery = getSitesQuery(dataConstraints)
+  return userSitesQuery
+    .clone()
+    .modify(qb => {
+      if (type) {
+        qb.andWhere(qbSiteType => qbSiteType.whereIn('st.externalId', type))
+      }
+    })
+    .select(SELECT_LIST_FIELDS)
+}
+
+module.exports = { getSitesInState, getUserSites }
