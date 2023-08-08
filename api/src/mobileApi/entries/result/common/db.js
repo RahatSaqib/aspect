@@ -1,7 +1,11 @@
 const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex } = require('../../../../db')
-const { MONTHS_HISTORY_TO_LOOK_UP, deliverableResultWorkflowStatuses } = require('../../common/consts')
+const {
+  MONTHS_HISTORY_TO_LOOK_UP,
+  MOBILE_APP_ALLOWED_ASSAYS,
+  deliverableResultWorkflowStatuses,
+} = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 
@@ -65,6 +69,11 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
         .orWhere('resultCategoryAssay1.requiresTreatment', true)
         .orWhere('resultCategoryAssay2.requiresTreatment', true)
     )
+    .modify(qb => {
+      if (!_.isEmpty(MOBILE_APP_ALLOWED_ASSAYS)) {
+        qb.whereIn('assay.externalId', MOBILE_APP_ALLOWED_ASSAYS)
+      }
+    })
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
