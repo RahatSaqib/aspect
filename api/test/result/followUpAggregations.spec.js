@@ -166,7 +166,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .value()
         assert.equal(res.status, 200)
         const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
-        expect(orderedResponse).to.containSubset(expectedResponse)
+        expect(expectedResponse).to.containSubset(orderedResponse)
       })
   })
 
@@ -201,7 +201,7 @@ describe('Result Follow-Up Aggregations for reports', () => {
           .value()
         assert.equal(res.status, 200)
         const orderedResponse = _.chain(res.body.data).orderBy(groupNames).value()
-        expect(orderedResponse).to.containSubset(expectedResponse)
+        expect(expectedResponse).to.containSubset(orderedResponse)
       })
   })
 
