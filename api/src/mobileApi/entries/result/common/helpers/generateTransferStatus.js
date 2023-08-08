@@ -10,6 +10,7 @@ const { TRANSFERRED } = require('../../../common/consts')
 function generateTransferStatus(data, userSiteIds) {
   const transferStatus = {
     resultId: data.id,
+    siteExternalId: data.reportableSiteExternalId,
     siteName: data.reportableSiteName,
     canBeTransferred: true,
     transferStatus: null,

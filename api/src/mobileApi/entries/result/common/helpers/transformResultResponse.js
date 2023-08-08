@@ -50,6 +50,16 @@ function transformResultResponse(data, followUps, comments, acknowledgements, us
       transferStatus: generateTransferStatus(result, userSiteIds),
       treatmentStatus: transformTreatmentStatus(result, resultFollowUps, userSiteIds),
       updatedOn: getResultUpdatedOnDate(result, resultFollowUps, comments),
+      reportableSite: {
+        id: result.reportableSiteId,
+        name: result.reportableSiteName,
+        externalId: result.reportableSiteExternalId,
+      },
+      laboratorySite: {
+        id: result.laboratorySiteId,
+        name: result.laboratorySiteName,
+        externalId: result.laboratorySiteExternalId,
+      },
     }
   })
 }

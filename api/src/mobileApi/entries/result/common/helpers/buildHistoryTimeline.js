@@ -32,7 +32,7 @@ function buildHistoryTimeline(data, followUps, userSiteIds) {
       resultId: data.id,
       event: 'sampleTested',
       name: data.sampleTypeExternalId,
-      siteName: data?.reportableSiteName,
+      siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
     })
   }

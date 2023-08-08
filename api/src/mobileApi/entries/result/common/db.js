@@ -10,6 +10,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
 
   const knexQuery = knex('Result as result')
     .join('Device as device', 'result.deviceId', 'device.id')
+    .join('Site as laboratory', 'result.siteId', 'laboratory.id')
     .join('Assay as assay', 'result.assayId', 'assay.id')
     .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
     .leftJoin('ResultCategory as resultCategory1', 'result.resultCategory1', 'resultCategory1.id')
@@ -110,7 +111,11 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'sampleType.i18nKey as sampleTypeI18nKey',
       'sampleType.name as sampleTypeName',
       'reportableSite.id as reportableSiteId',
+      'reportableSite.externalId as reportableSiteExternalId',
       'reportableSite.name as reportableSiteName',
+      'laboratory.id as laboratorySiteId',
+      'laboratory.externalId as laboratorySiteExternalId',
+      'laboratory.name as laboratorySiteName',
       'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId'
     )
   return knexQuery

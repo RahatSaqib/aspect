@@ -46,7 +46,11 @@ const data347 = {
   sampleTypeI18nKey: 'sampleTypeDBS',
   sampleTypeName: 'DBS',
   reportableSiteId: 61,
+  reportableSiteExternalId: 'Lancaster-Clinic',
   reportableSiteName: 'Lancaster Clinic',
+  laboratorySiteId: 62,
+  laboratorySiteExternalId: 'Lancaster-Lab',
+  laboratorySiteName: 'Lancaster Clinic Laboratory',
 }
 
 const expected347 = [
@@ -85,7 +89,7 @@ const expected347 = [
         resultId: 347,
         event: 'sampleTested',
         name: 'DBS',
-        siteName: 'Lancaster Clinic',
+        siteName: 'Lancaster Clinic Laboratory',
         updatedOn: '2023-05-03T17:55:57.000Z',
       },
       {
@@ -118,6 +122,16 @@ const expected347 = [
       clinicianName: null,
       collectedOn: '2022-11-01T16:16:39.000Z',
       updatedOn: null,
+    },
+    laboratorySite: {
+      externalId: 'Lancaster-Lab',
+      id: 62,
+      name: 'Lancaster Clinic Laboratory',
+    },
+    reportableSite: {
+      externalId: 'Lancaster-Clinic',
+      id: 61,
+      name: 'Lancaster Clinic',
     },
     searchSchema: {
       id: '347',
@@ -153,13 +167,23 @@ const expected347 = [
       reportableSiteId: 61,
       resultId: 347,
       siteId: 32,
+      siteExternalId: 'Lancaster-Clinic',
       comment: undefined,
       siteName: 'Lancaster Clinic',
       transferStatus: 'awayTransfer',
       transferredBy: 'Admin',
       transferredOn: '2023-05-03T18:15:57.000Z',
     },
-    treatmentStatus: {},
+    treatmentStatus: {
+      changedOn: null,
+      daysInCurrentStatus: 0,
+      externalId: null,
+      i18nKey: null,
+      name: null,
+      resultId: 347,
+      severity: 'danger',
+      visible: false,
+    },
     updatedOn: '2023-05-03T19:15:57.000Z',
   },
 ]
@@ -212,7 +236,11 @@ const data450 = {
   sampleTypeI18nKey: 'sampleTypeDBS',
   sampleTypeName: 'DBS',
   reportableSiteId: 64,
+  reportableSiteExternalId: 'Marden-Hospital',
   reportableSiteName: 'Marden Hospital',
+  laboratorySiteId: 65,
+  laboratorySiteExternalId: 'Marden-Lab',
+  laboratorySiteName: 'Marden Hospital Laboratory',
 }
 
 const followUp450 = [
@@ -285,7 +313,7 @@ const expected450 = [
         resultId: 450,
         event: 'sampleTested',
         name: 'DBS',
-        siteName: 'Marden Hospital',
+        siteName: 'Marden Hospital Laboratory',
         updatedOn: '2023-05-20T17:55:55.000Z',
       },
       {
@@ -390,12 +418,32 @@ const expected450 = [
     transferStatus: {
       canBeTransferred: true,
       resultId: 450,
+      siteExternalId: 'Marden-Hospital',
       siteName: 'Marden Hospital',
       transferStatus: null,
       transferredBy: null,
       transferredOn: null,
     },
-    treatmentStatus: {},
+    laboratorySite: {
+      externalId: 'Marden-Lab',
+      id: 65,
+      name: 'Marden Hospital Laboratory',
+    },
+    reportableSite: {
+      externalId: 'Marden-Hospital',
+      id: 64,
+      name: 'Marden Hospital',
+    },
+    treatmentStatus: {
+      changedOn: null,
+      daysInCurrentStatus: 0,
+      externalId: 'AwaitingTreatment',
+      i18nKey: 'ResultTreatmentStatusAwaitingTreatment',
+      name: 'Awaiting Treatment',
+      resultId: 450,
+      severity: 'success',
+      visible: true,
+    },
     updatedOn: '2023-05-20T19:45:55.000Z',
   },
 ]
@@ -462,7 +510,11 @@ const data558 = {
   sampleTypeI18nKey: 'sampleTypeDBS',
   sampleTypeName: 'DBS',
   reportableSiteId: 52,
+  reportableSiteExternalId: 'Northampton-NMRL',
   reportableSiteName: 'Northampton NMRL',
+  laboratorySiteId: 52,
+  laboratorySiteExternalId: 'Northampton-NMRL',
+  laboratorySiteName: 'Northampton NMRL',
 }
 
 const followUp558 = [

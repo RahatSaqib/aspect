@@ -16,7 +16,8 @@ function transformTreatmentStatus(data, followUps, userSiteIds) {
     treatmentStatus.externalId = data.resultTreatmentStatusExternalId
     treatmentStatus.i18nKey = data.resultTreatmentStatusI18nKey
     treatmentStatus.visible =
-      canBeTransferred && (data.resultCategoryAssay1RequiresTreatment || data.resultCategoryAssay2RequiresTreatment)
+      canBeTransferred &&
+      (data.resultCategoryAssay1RequiresTreatment === 1 || data.resultCategoryAssay2RequiresTreatment === 1)
     treatmentStatus.severity = generateSeverity(data, followUps)
   }
   return treatmentStatus

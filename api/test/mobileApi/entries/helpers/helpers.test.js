@@ -71,7 +71,8 @@ describe('Entries helpers', () => {
         sampleSiteName: 'Lab1',
         resultSampleId: 456,
         sampleTypeExternalId: 'SampleType1',
-        reportableSiteName: 'ReportLab1',
+        laboratorySiteName: 'ReportLab1',
+        reportableSiteName: 'ReportClinic1',
         testDate: '2023-05-02T00:00:00Z',
       }
 
@@ -83,7 +84,7 @@ describe('Entries helpers', () => {
           resultId: 123,
           event: 'followUpCreated',
           name: 'FollowUp1',
-          siteName: 'ReportLab1',
+          siteName: 'ReportClinic1',
           updatedOn: '2023-05-03T00:00:00Z',
         },
         {
@@ -185,6 +186,7 @@ describe('Entries helpers', () => {
         }),
         transferredBy: 'user1',
         transferredOn: '2023-01-01T00:00:00Z',
+        reportableSiteExternalId: 'SiteId1',
         reportableSiteName: 'SiteName1',
       }
 
@@ -195,6 +197,7 @@ describe('Entries helpers', () => {
         resultId: 123,
         siteId: 1,
         comment: undefined,
+        siteExternalId: 'SiteId1',
         siteName: 'SiteName1',
         transferStatus: TRANSFERRED.AWAY,
         transferredBy: 'user1',
@@ -219,6 +222,7 @@ describe('Entries helpers', () => {
         }),
         transferredBy: 'user1',
         transferredOn: '2023-01-01T00:00:00Z',
+        reportableSiteExternalId: 'SiteId1',
         reportableSiteName: 'SiteName1',
       }
 
@@ -229,6 +233,7 @@ describe('Entries helpers', () => {
         resultId: 123,
         siteId: 1,
         comment: undefined,
+        siteExternalId: 'SiteId1',
         siteName: 'SiteName1',
         transferStatus: TRANSFERRED.HERE,
         transferredBy: 'user1',
@@ -464,7 +469,7 @@ describe('Entries helpers', () => {
         name: 'On Treatment',
         externalId: 'OnTreatment',
         i18nKey: 'ResultTreatmentStatusOnTreatment',
-        visible: 1,
+        visible: true,
         severity: 'success',
         daysInCurrentStatus: differenceInDays(new Date(), new Date(changedOn)),
       }
