@@ -2,12 +2,9 @@ import React from 'react'
 import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import AspectSelect from '../AspectSelect'
 
-const ResultCategoryGroupSelect = props => {
+export default function ResultCategoryGroupSelect(props) {
   const { assayId, ...rest } = props
-  const { isLoading, data: resultCategoryGroups } = useResultCategoryGroup(assayId, {
-    enabled: assayId?.length > 0,
-  })
-
+  const { isLoading, data: resultCategoryGroups } = useResultCategoryGroup(assayId)
   return (
     <AspectSelect
       {...rest}
@@ -19,5 +16,3 @@ const ResultCategoryGroupSelect = props => {
     />
   )
 }
-
-export default ResultCategoryGroupSelect

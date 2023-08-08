@@ -11,16 +11,16 @@ const getResultCategoryGroup = async assayId =>
   }).then(response => response.data)
 
 const useResultCategoryGroup = (assayIds, options) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage: t } = useI18n()
+  const assayIdsLength = assayIds?.length
 
   return useQuery([RESULT_KEY, 'category-group', assayIds], () => getResultCategoryGroup(assayIds), {
     ...options,
-    select: data =>
-      data?.map(i => ({
+    enabled: !!assayIdsLength,
+    select: d =>
+      d?.map(i => ({
         ...i,
-        name: `${assayIds?.length > 1 ? `${formatMessage(assay[i?.assayI18nKey])} - ` : ''}${formatMessage(
-          resultCategory[i?.i18nKey]
-        )}`,
+        name: `${assayIdsLength > 1 ? `${t(assay[i?.assayI18nKey])} - ` : ''}${t(resultCategory[i?.i18nKey])}`,
       })),
   })
 }

@@ -1,6 +1,5 @@
 import React, { useMemo } from 'react'
-import isNil from 'lodash/isNil'
-import omitBy from 'lodash/omitBy'
+import isMatch from 'lodash/isMatch'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useI18n from '../../hooks/useI18n'
 import { assay } from '../../messages'
@@ -14,19 +13,8 @@ export function AssayMultiSelect(props) {
 
   const { formatMessage } = useI18n()
 
-  const options = useMemo(
-    () =>
-      data?.reduce((prev, c) => {
-        let output = c
-        Object.entries(omitBy(filters, isNil)).forEach(([name, value]) => {
-          if (c[name] !== value) {
-            output = []
-          }
-        })
-        return prev.concat(output)
-      }, []),
-    [data, filters]
-  )
+  const options = useMemo(() => data?.filter(item => isMatch(item, filters)), [data, filters])
+
   return (
     <AspectSelect
       {...rest}
