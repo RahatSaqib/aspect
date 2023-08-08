@@ -13,7 +13,7 @@ const SELECT_LIST_FIELDS = [
   's.id',
   's.name',
   's.shortName',
-  'st.name as state',
+  'sta.name as state',
   'l.name as lga',
   's.createdOn',
   's.externalId',
@@ -25,7 +25,7 @@ const SELECT_SHOW_FIELDS = [
   's.name',
   's.shortName',
   's.externalId',
-  'st.name as state',
+  'sta.name as state',
   'l.name as lga',
   'ct.name as country',
   's.createdOn',
@@ -51,8 +51,9 @@ const SELECT_SHOW_FIELDS = [
 
 function getSitesQuery(dataConstraints) {
   return knex('Site as s')
+    .join('SiteType as st', 's.siteTypeId', 'st.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
@@ -119,9 +120,9 @@ async function listSites(request) {
 
 function getSite(siteId, dataConstraints) {
   return knex('Site as s')
+    .join('SiteType as st', 's.siteTypeId', 'st.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .leftOuterJoin('SiteType as t', 't.id', 's.siteTypeId')
+    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('s.id', siteId)
@@ -130,7 +131,7 @@ function getSite(siteId, dataConstraints) {
       ...SELECT_SHOW_FIELDS,
       getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
     ])
-    .select('t.name as siteType')
+    .select('st.name as siteType')
 }
 
 async function showSite(request) {
@@ -295,8 +296,9 @@ function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
     },
   }
   return knex('Site as s')
+    .join('SiteType as st', 's.siteTypeId', 'st.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .where('s.id', siteId)

@@ -43,7 +43,9 @@ module.exports = seed(async knex => {
     jobFunctionId: clinicianJobFunction.id,
     personId: jonPerson.id,
   })
-  await Promise.each([...alabamaClinics.map(ac => ac.id), ohioClinics[0].id], async clinicId =>
+  const alabamaClinicIds = alabamaClinics.map(ac => ac.id)
+  const jonClinicIds = ohioClinics[0] ? [...alabamaClinicIds, ohioClinics[0].id] : alabamaClinicIds
+  await Promise.each(jonClinicIds, async clinicId =>
     knex('JobContext').insert({
       jobId: jonsNewJobId,
       siteId: clinicId,

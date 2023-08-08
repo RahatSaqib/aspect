@@ -15,7 +15,7 @@ async function listSites(request) {
     .filter(ss => !userSites.map(us => us.id).includes(ss.id))
     .map(ss => ({ ...ss, sampleRegistrationAllowed: false }))
   const totalSites = _.sortBy(
-    [...nonUserSitesInState, userSites.map(us => ({ ...us, sampleRegistrationAllowed: true }))],
+    [...nonUserSitesInState, ...userSites.map(us => ({ ...us, sampleRegistrationAllowed: true }))],
     'name'
   )
   return { ok: true, data: totalSites }
