@@ -1199,17 +1199,19 @@ async function setTreatmentStatusToResults(knex, resultsToUpdate, treatmentStatu
           return f.followUpTypeExternalId === 'outcome' && (f.assayId === result.assayId || !f.assayId)
         })
       )
-      const outcomeDateTime = addDays(treatmentDateTime, 7) > now ? now : addDays(treatmentDateTime, 7)
-      await knex('ResultFollowUp').insert({
-        resultId: result.id,
-        externalId: outcome.externalId,
-        followUpId: outcome.id,
-        date: outcomeDateTime,
-        createdOn: outcomeDateTime,
-        createdBy: result.createdBy,
-        updatedOn: outcomeDateTime,
-        updatedBy: result.createdBy,
-      })
+      if (outcome) {
+        const outcomeDateTime = addDays(treatmentDateTime, 7) > now ? now : addDays(treatmentDateTime, 7)
+        await knex('ResultFollowUp').insert({
+          resultId: result.id,
+          externalId: outcome.externalId,
+          followUpId: outcome.id,
+          date: outcomeDateTime,
+          createdOn: outcomeDateTime,
+          createdBy: result.createdBy,
+          updatedOn: outcomeDateTime,
+          updatedBy: result.createdBy,
+        })
+      }
     }
   })
 }
