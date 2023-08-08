@@ -726,6 +726,15 @@ function getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupB
       if (query.resultCategory2) {
         qb.where('rc2.externalId', '=', query.resultCategory2)
       }
+      if (query.resistance) {
+        qb.whereRaw(`
+      JSON_SEARCH(
+        r.resultData ->> '$.detectedResistance[*]',
+        'one',
+        '${query.resistance}'
+      ) IS NOT NULL
+    `)
+      }
     })
     .where(function () {
       // skip filtering by 'rca.reportable' if grouping by 'assay'

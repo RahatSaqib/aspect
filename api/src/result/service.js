@@ -1703,7 +1703,6 @@ async function getResultsForReport(auth, query) {
   return getListResults(query, auth, getReportCommonFieldsTZ(userTimeOffset))
 }
 
-// ---------------------------------------------------------------
 async function currentResultAggregations(request) {
   const { auth, query } = request
 

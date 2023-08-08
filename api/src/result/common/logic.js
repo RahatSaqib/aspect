@@ -120,7 +120,7 @@ async function clinicalIndicatorAggregations(request) {
   const factTableDataGroups = ['year', 'month', 'assay', 'resultCategory1', 'resultCategory2']
 
   const resp = {}
-  if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
+  if (_.every(groupBy, group => _.includes(factTableDataGroups, group)) && !query.resistance) {
     const factTableQuery = getClinicalIndicatorQueryForFactTable(dataConstraints, assay, groupBy, query)
 
     if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
