@@ -1,56 +1,56 @@
 {
   "data": [
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatMtbPlus", "assayTruenatRif"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "treatment",
       "name": "DSTB - 2RHZE",
       "externalId": "dstb-2rhze",
       "i18nKey": "dstb-2rhze"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "treatment",
       "name": "DSTB - 4RH",
       "externalId": "dstb-4rh",
       "i18nKey": "dstb-4rh"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "treatment",
       "name": "DRTB - Bedaquiline Based shorter regimen",
       "externalId": "drtb-bbsr",
       "i18nKey": "drtb-bbsr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "treatment",
       "name": "DRTB - Injection Based shorter regimen",
       "externalId": "drtb-ibsr",
       "i18nKey": "drtb-ibsr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "treatment",
       "name": "DRTB - Long Oral MDT-TB regimen and Pre XDR-TB",
       "externalId": "drtb-lomr",
       "i18nKey": "drtb-lomr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "treatment",
       "name": "DRTB - Pre XDR-TB (RES FQ) regimen/XDR-TB",
       "externalId": "drtb-prexdr",
       "i18nKey": "drtb-prexdr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "treatment",
       "name": "DRTB - Beyond XDR-TB (Individualized)",
       "externalId": "drtb-bxdr",
       "i18nKey": "drtb-bxdr"
     },
     {
-      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "treatment",
       "name": "DRTB - Beyond XDR-TB (Individualized)",
       "externalId": "drtb-bxdr",
@@ -92,7 +92,7 @@
       "i18nKey": "cured"
     },
     {
-      "assays": [],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "outcome",
       "name": "Died",
       "externalId": "died",
@@ -120,11 +120,18 @@
       "i18nKey": "unknown"
     },
     {
-      "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
       "type": "outcome",
       "name": "Other",
       "externalId": "other",
       "i18nKey": "other"
+    },
+    {
+      "assays": ["GxMtbRif", "GxMtbRifUltra", "GxMtbXdr", "assayTruenatMtb", "assayTruenatMtbPlus", "assayTruenatRif", "assayLPA", "assaySmear", "assayBdMgitAst", "assayBdMgitGnd", "assayGenericDst", "assayGenericCulture"],
+      "type": "outcome",
+      "name": "Treatment Complete",
+      "externalId": "treatmentComplete",
+      "i18nKey": "treatmentComplete"
     },
     {
       "assays": ["assayGenericCovid19", "assayMP96Covid19", "assayQS7Covid19", "assayGXCovid19"],

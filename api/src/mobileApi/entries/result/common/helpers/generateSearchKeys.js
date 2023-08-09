@@ -9,12 +9,12 @@ const { generateTransferStatus } = require('./generateTransferStatus')
  * @returns {object} - Object containing the search keys extracted from the given result and followups.
  */
 
-function generateSearchKeys(result, patientId, clinicalFollowUpFlags = {}) {
+function generateSearchKeys(result, patientId, clinicalFollowUpFlags = {}, userSiteIds = []) {
   const output = {}
   const filterMeta = {
     entryType: transformEntryType(result)?.i18nKey,
     treatmentStatus: result.resultTreatmentStatusExternalId ?? '',
-    transferStatus: generateTransferStatus(result)?.transferStatus ?? '',
+    transferStatus: generateTransferStatus(result, userSiteIds)?.transferStatus ?? '',
     assayType: result?.assayExternalId ?? '',
     ...clinicalFollowUpFlags,
   }
