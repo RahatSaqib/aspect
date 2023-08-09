@@ -6,6 +6,7 @@ const {
   getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
+  getUserSiteIds,
 } = require('./db')
 const { getAllSamplesRegistered } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
@@ -45,6 +46,7 @@ async function fetchEntriesServiceHandler(request) {
   const samples = await getAllSamplesRegistered(query, dataConstraints)
   const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
   const acknowledgements = await getAcknowledgementsByResultIds(results)
+  const userSiteIds = await getUserSiteIds(dataConstraints)
   const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
   const user = await getUser(auth.credentials.name)
   await addResultDownloadLog(resultIdsToBeRegistered, user.id)
@@ -57,7 +59,7 @@ async function fetchEntriesServiceHandler(request) {
   const followUps = await getFollowUpsByResultIds(results)
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
-  const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements)
+  const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, userSiteIds)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
   const entries = _.orderBy(
     _.concat(_.uniqBy(transformedResults, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
