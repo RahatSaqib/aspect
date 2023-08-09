@@ -7,20 +7,22 @@ import { RESULT_KEY, RESULT_KEY_RESULT_CATEGORY_GROUP_ENDPOINT } from './resultK
 const getResultCategoryGroup = async assayId =>
   fetchWrapperForQueries({
     endpoint: RESULT_KEY_RESULT_CATEGORY_GROUP_ENDPOINT,
-    params: assayId?.map(i => ({ assayId: i })),
+    params: assayId?.map(id => ({ assayId: id })),
   }).then(response => response.data)
 
 const useResultCategoryGroup = (assayIds, options) => {
-  const { formatMessage: t } = useI18n()
+  const { formatMessage } = useI18n()
   const assayIdsLength = assayIds?.length
 
   return useQuery([RESULT_KEY, 'category-group', assayIds], () => getResultCategoryGroup(assayIds), {
     ...options,
     enabled: !!assayIdsLength,
-    select: d =>
-      d?.map(i => ({
-        ...i,
-        name: `${assayIdsLength > 1 ? `${t(assay[i?.assayI18nKey])} - ` : ''}${t(resultCategory[i?.i18nKey])}`,
+    select: data =>
+      data?.map(category => ({
+        ...category,
+        name: `${assayIdsLength > 1 ? `${formatMessage(assay[category?.assayI18nKey])} - ` : ''}${formatMessage(
+          resultCategory[category?.i18nKey]
+        )}`,
       })),
   })
 }
