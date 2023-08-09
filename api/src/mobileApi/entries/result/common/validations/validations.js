@@ -12,6 +12,7 @@ const { optionalTestInformationResponseValidation } = require('./optionalTestInf
 const { optionalTreatmentResponseValidation } = require('./optionalTreatmentResponseValidation')
 const { serverTransferResponseValidation } = require('./serverTransferResponseValidation')
 const { serverBaseResponseValidation } = require('./serverBaseResponseValidation')
+const { returnSiteValidationSchema } = require('./sitePropertyValidation')
 
 const downloadEntriesResponseValidation = () => {
   return Joi.object()
@@ -46,6 +47,8 @@ const downloadEntriesResponseValidation = () => {
               dbUpdatedOn: Joi.optional()
                 .allow(null, '')
                 .description('When the entry was last updated in the Aspect database'),
+              reportableSite: returnSiteValidationSchema(),
+              laboratorySite: returnSiteValidationSchema(),
             })
             .concat(optionalAssayAvatarResponseValidation)
             .concat(optionalClinicalResponseResponseValidation)

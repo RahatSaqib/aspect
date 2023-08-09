@@ -1,14 +1,20 @@
 const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex } = require('../../../../db')
-const { MONTHS_HISTORY_TO_LOOK_UP, deliverableResultWorkflowStatuses } = require('../../common/consts')
+const {
+  MONTHS_HISTORY_TO_LOOK_UP,
+  MOBILE_APP_ALLOWED_ASSAYS,
+  deliverableResultWorkflowStatuses,
+} = require('../../common/consts')
 const { addConstraints } = require('../../../../auth/constraints')
+const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 
 const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const knexQuery = knex('Result as result')
     .join('Device as device', 'result.deviceId', 'device.id')
+    .join('Site as laboratory', 'result.siteId', 'laboratory.id')
     .join('Assay as assay', 'result.assayId', 'assay.id')
     .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
     .leftJoin('ResultCategory as resultCategory1', 'result.resultCategory1', 'resultCategory1.id')
@@ -63,6 +69,11 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
         .orWhere('resultCategoryAssay1.requiresTreatment', true)
         .orWhere('resultCategoryAssay2.requiresTreatment', true)
     )
+    .modify(qb => {
+      if (!_.isEmpty(MOBILE_APP_ALLOWED_ASSAYS)) {
+        qb.whereIn('assay.externalId', MOBILE_APP_ALLOWED_ASSAYS)
+      }
+    })
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
@@ -109,7 +120,11 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'sampleType.i18nKey as sampleTypeI18nKey',
       'sampleType.name as sampleTypeName',
       'reportableSite.id as reportableSiteId',
+      'reportableSite.externalId as reportableSiteExternalId',
       'reportableSite.name as reportableSiteName',
+      'laboratory.id as laboratorySiteId',
+      'laboratory.externalId as laboratorySiteExternalId',
+      'laboratory.name as laboratorySiteName',
       'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId'
     )
   return knexQuery
@@ -226,10 +241,23 @@ const countAllAwaitingTreatment = (query, dataConstraints) => {
   return knexQuery
 }
 
+const getUserSiteIds = async dataConstraints => {
+  const sites = await knex('Site as s')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
+    .groupBy(['s.id'])
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .select('s.id')
+  return sites.map(s => s.id)
+}
+
 module.exports = {
   countAllAwaitingTreatment,
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
+  getUserSiteIds,
 }
