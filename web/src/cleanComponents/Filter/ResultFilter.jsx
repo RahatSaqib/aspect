@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useState } from 'react'
 import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
