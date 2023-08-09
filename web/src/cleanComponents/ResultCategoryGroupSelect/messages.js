@@ -47,15 +47,15 @@ const messages = defineMessages({
   },
   gxMtbRifMtbDetectedRifDetected: {
     id: 'pages.filters.gxMtbRifMtbDetectedRifDetected',
-    defaultMessage: 'MTB Detected RIF Detected',
+    defaultMessage: 'MTB Detected Rif Detected',
   },
   gxMtbRifMtbDetectedRifNotDetected: {
     id: 'pages.filters.gxMtbRifMtbDetectedRifNotDetected',
-    defaultMessage: 'MTB Detected RIF Not Detected',
+    defaultMessage: 'MTB Detected Rif Not Detected',
   },
   gxMtbRifMtbDetectedRifIndeterminate: {
     id: 'pages.filters.gxMtbRifMtbDetectedRifIndeterminate',
-    defaultMessage: 'MTB Detected RIF Indeterminate',
+    defaultMessage: 'MTB Detected Rif Indeterminate',
   },
   gxMtbRifMtbInvalid: {
     id: 'pages.filters.gxMtbRifMtbInvalid',
@@ -87,15 +87,15 @@ const messages = defineMessages({
   },
   gxMtbRifUltraMtbDetectedRifNotDetected: {
     id: 'pages.filters.gxMtbRifUltraMtbDetectedRifNotDetected',
-    defaultMessage: 'MTB Detected - Rif Not Detected',
+    defaultMessage: 'MTB Detected Rif Not Detected',
   },
   gxMtbRifUltraMtbDetectedRifDetected: {
     id: 'pages.filters.gxMtbRifUltraMtbDetectedRifDetected',
-    defaultMessage: 'MTB Detected - Rif Detected',
+    defaultMessage: 'MTB Detected Rif Detected',
   },
   gxMtbRifUltraMtbDetectedRifIndeterminate: {
     id: 'pages.filters.gxMtbRifUltraMtbDetectedRifIndeterminate',
-    defaultMessage: 'MTB Detected - Rif Indeterminate',
+    defaultMessage: 'MTB Detected Rif Indeterminate',
   },
   gxMtbRifUltraMtbInvalid: {
     id: 'pages.filters.gxMtbRifUltraMtbInvalid',
