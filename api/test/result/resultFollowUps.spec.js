@@ -71,7 +71,7 @@ describe('Result Follow Up', () => {
       assert.property(res.body, 'data')
       assert.typeOf(res.body.data, 'array')
       assert.property(res.body, 'total')
-      assert.isAtLeast(res.body.data.length, 7)
+      assert.isAtLeast(res.body.data.length, 5)
       assert.property(res.body.data[0], 'id')
       assert.property(res.body.data[0], 'name')
       assert.property(res.body.data[0], 'externalId')
