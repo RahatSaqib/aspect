@@ -29,7 +29,7 @@ function transformSampleResponse(query, data, results) {
       dbUpdatedOn: sample.updatedOn,
       resultRequiresTreatment: false,
       ...clinicalResponseFlags,
-      searchSchema: generateSearchKeys(sample, sample?.sampleData?.patientExternalId, clinicalResponseFlags),
+      searchSchema: generateSearchKeys(sample, sample?.sampleData?.patientExternalId, clinicalResponseFlags, []),
       updatedOn: getSampleUpdatedOnDate(sample),
       collectedOn: sample.sampleCollectedOn,
     }
