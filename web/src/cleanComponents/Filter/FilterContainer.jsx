@@ -48,10 +48,16 @@ const FilterContainer = ({ children, state, setState }) => {
     setState(newState)
   }
 
+  const append = update => {
+    const filters = { ...state, ...update }
+    addFilter(filters, location.pathname)
+    setState(filters)
+  }
+
   return (
     <Card sx={{ mb: 1 }}>
       <CardContent sx={cardContentStyle}>
-        <FilterButtons filters={filter} remove={remove} />
+        <FilterButtons filters={filter} remove={remove} append={append} />
         <Button variant="contained" color="secondary" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>
           {expanded ? <MdArrowUpward /> : <MdArrowDownward />}
         </Button>

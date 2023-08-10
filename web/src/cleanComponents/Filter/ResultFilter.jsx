@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Grid, TextField, Checkbox, FormControlLabel } from '@mui/material'
+import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useI18n from '../../hooks/useI18n'
@@ -8,17 +8,16 @@ import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
+import { AssayMultiSelect } from '../AssayMultiSelect/AssayMultiSelect'
 import {
-  StateSelect,
-  LgaSelect,
-  AssaySelect,
-  PeriodSelector,
   DeviceTypeSelect,
-  ResultWorkflowStatusSelect,
-  ResultTreatmentStatusSelect,
   DisplayResultSelect,
-  ResultCategorySelect,
+  LgaSelect,
+  PeriodSelector,
   ResultCategoryGroupSelect,
+  ResultTreatmentStatusSelect,
+  ResultWorkflowStatusSelect,
+  StateSelect,
 } from '../index'
 import FilterContainer from './FilterContainer'
 
@@ -28,8 +27,6 @@ const ResultFilter = () => {
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
-  const [categoryDisplay, setCategoryDisplay] = useState(null)
-
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
@@ -54,38 +51,25 @@ const ResultFilter = () => {
         {allowed(['assay:view']) ? (
           <>
             <Grid item xs={3}>
-              <AssaySelect
-                label={formatMessage(messages.assay)}
-                value={state.assayId}
-                onChange={e => {
-                  const val = e.target.value
-                  setCategoryDisplay(val.resultCategory2Label)
-                  setState({ ...state, assayId: val.id, resultCategoryId: null, resultCategoryGroupId: null })
+              <AssayMultiSelect
+                valueBy="id"
+                value={state?.assayId ?? []}
+                onChange={val => setState({ ...state, assayId: val, resultCategoryGroupId: null })}
+                filters={{
+                  hasResults: true,
                 }}
-                onlyResults
-                reportGroup
               />
             </Grid>
-            {!categoryDisplay || state.resultCategoryId ? (
-              <Grid item xs={3}>
-                <ResultCategorySelect
-                  label={formatMessage(messages.result)}
-                  value={state.resultCategoryId}
-                  onChange={e => setState({ ...state, resultCategoryId: e.target.value })}
-                  assayId={state.assayId}
-                />
-              </Grid>
-            ) : null}
-            {categoryDisplay || state.resultCategoryGroupId ? (
-              <Grid item xs={3}>
-                <ResultCategoryGroupSelect
-                  label={formatMessage(messages.resultGroup)}
-                  value={state.resultCategoryGroupId}
-                  onChange={e => setState({ ...state, resultCategoryGroupId: e.target.value })}
-                  assayId={state.assayId}
-                />
-              </Grid>
-            ) : null}
+
+            <Grid item xs={3}>
+              <ResultCategoryGroupSelect
+                valueBy="externalId"
+                label={formatMessage(messages.resultGroup)}
+                value={state?.resultCategoryGroupId ?? []}
+                onChange={e => setState({ ...state, resultCategoryGroupId: e })}
+                assayId={state?.assayId}
+              />
+            </Grid>
           </>
         ) : null}
         <Grid item xs={3}>
