@@ -63,7 +63,7 @@ const emptyFilter = filter => {
   return keys.length === 0 || (keys.length === 1 && keys.includes('countryId'))
 }
 
-const FilterButtons = ({ filters, remove, set }) => {
+const FilterButtons = ({ filters, remove, append }) => {
   const { formatMessage } = useI18n()
   return (
     <span>
@@ -75,7 +75,7 @@ const FilterButtons = ({ filters, remove, set }) => {
           .sortBy(filterKey => filtersOrdering[filterKey])
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
-            return <Comp {...filters} remove={remove} set={set} key={key} />
+            return <Comp {...filters} remove={remove} append={append} key={key} />
           })
       )}
     </span>
@@ -91,8 +91,8 @@ const buttonMapping = {
   destinationSiteName: ({ destinationSiteName, remove }) => (
     <DestinationSiteName destinationSiteName={destinationSiteName} remove={remove} />
   ),
-  assayId: ({ assayId, remove, set, resultCategoryGroupId }) => (
-    <AssayId assayId={assayId} remove={remove} set={set} resultCategoryGroupId={resultCategoryGroupId} />
+  assayId: ({ assayId, remove, append, resultCategoryGroupId }) => (
+    <AssayId assayId={assayId} remove={remove} append={append} resultCategoryGroupId={resultCategoryGroupId} />
   ),
   resultCategoryId: ({ resultCategoryId, assayOverride, assayId, diseaseId, remove }) => (
     <ResultCategoryId
@@ -103,13 +103,13 @@ const buttonMapping = {
       remove={remove}
     />
   ),
-  resultCategoryGroupId: ({ resultCategoryGroupId, assayId, assayOverride, remove, set }) => (
+  resultCategoryGroupId: ({ resultCategoryGroupId, assayId, assayOverride, remove, append }) => (
     <ResultCategoryGroupId
       resultCategoryGroupId={resultCategoryGroupId}
       assayId={assayId}
       assayOverride={assayOverride}
       remove={remove}
-      set={set}
+      append={append}
     />
   ),
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
@@ -225,7 +225,7 @@ const DestinationSiteName = ({ destinationSiteName, remove }) => {
     />
   )
 }
-const AssayId = ({ assayId, remove, set, resultCategoryGroupId }) => {
+const AssayId = ({ assayId, remove, append, resultCategoryGroupId }) => {
   const { formatMessage } = useI18n()
   const { data } = useAssayList()
   const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
@@ -242,7 +242,7 @@ const AssayId = ({ assayId, remove, set, resultCategoryGroupId }) => {
         key={id}
         del={() => {
           if (assayId?.length > 1)
-            set({
+            append({
               assayId: pull(assayId, id),
               resultCategoryGroupId: resultCategory.filter(i => i.assayId !== id).map(c => c.externalId),
             })
@@ -282,7 +282,7 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
   return null
 }
 
-const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, remove, set }) => {
+const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, remove, append }) => {
   const { formatMessage } = useI18n()
 
   const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
@@ -297,7 +297,7 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, 
       resultCategoryGroupId.map(id => (
         <Btn
           del={() => {
-            if (resultCategoryGroupId.length > 1) set({ resultCategoryGroupId: pull(resultCategoryGroupId, id) })
+            if (resultCategoryGroupId.length > 1) append({ resultCategoryGroupId: pull(resultCategoryGroupId, id) })
             else del.del()
           }}
           lbl={formatMessage(messages.withResultCategoryGroup, { resultCategoryGroupName: msg(id) })}
