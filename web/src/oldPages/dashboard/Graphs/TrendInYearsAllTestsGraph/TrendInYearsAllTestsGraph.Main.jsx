@@ -103,7 +103,11 @@ const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelec
       </Grid>
     </Grid>
   ) : (
-    renderLineGraph()
+    <Grid container sx={{ mt: 2 }}>
+      <Grid item container>
+        {renderLineGraph()}
+      </Grid>
+    </Grid>
   )
 }
 

@@ -47,7 +47,6 @@ const NationalTestingTrendsGraph = () => {
       }
     >
       <TrendInYearsAllTestsGraph
-        withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}
         filterSelection={objectToArray(filter).concat(defaultFilters)}
