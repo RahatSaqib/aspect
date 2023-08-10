@@ -338,9 +338,10 @@ function listResultsBaseConfig() {
         diseaseId: asPositiveInteger.optional().description('The disease ID'),
         resultCategoryId: Joi.number().allow(null, '').description('Result-1 Category ID'),
         resultCategory2Id: Joi.number().allow(null, '').description('Result-2 Category ID'),
-        resultCategoryGroupId: Joi.string()
+        resultCategoryGroupId: Joi.alternatives()
+          .try(Joi.array().items(Joi.string()), Joi.string())
           .allow(null, '')
-          .description('Result Category Group external id for assays with multiple results'),
+          .description('Result Category Group external ID(s) for assays with multiple results'),
         errorCode: Joi.string().allow(null, '').description('Filter error code'),
         deviceName: Joi.string().allow(null, '').description('Filter for device name'),
         deviceType: Joi.string().allow(null, '').description('Filter for device type ExternalId'),
