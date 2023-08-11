@@ -10,7 +10,7 @@ const { generateTransferStatus } = require('./generateTransferStatus')
  * @returns {array} - An array of objects containing the history timeline, sorted by update date in descending order.
  */
 
-function buildHistoryTimeline(data, followUps, userSiteIds) {
+function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
@@ -48,7 +48,8 @@ function buildHistoryTimeline(data, followUps, userSiteIds) {
     })
   }
 
-  _.map(resultFollowUps, followUp =>
+  _.map(resultFollowUps, followUp => {
+    const matchingFlag = resultFlags?.find(rf => rf.changedOn === followUp.date)
     output.push({
       id: followUp.id,
       resultId: data.id,
@@ -56,8 +57,9 @@ function buildHistoryTimeline(data, followUps, userSiteIds) {
       name: followUp.followUpName,
       siteName: data?.reportableSiteName,
       updatedOn: followUp.updatedOn,
+      reason: matchingFlag?.reason,
     })
-  )
+  })
 
   return _.sortBy(output, ['updatedOn']).reverse()
 }

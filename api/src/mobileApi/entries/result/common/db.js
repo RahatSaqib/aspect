@@ -2,6 +2,8 @@ const _ = require('lodash')
 const subMonths = require('date-fns/subMonths')
 const { knex } = require('../../../../db')
 const {
+  ACKNOWLEDGED,
+  FLAGGED,
   MONTHS_HISTORY_TO_LOOK_UP,
   MOBILE_APP_ALLOWED_ASSAYS,
   deliverableResultWorkflowStatuses,
@@ -131,17 +133,27 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
   return knexQuery
 }
 
-const getAcknowledgementsByResultIds = results => {
-  const knexQuery = knex('ResultWorkflowLog as rwl')
+const getWorkflowLogsByResultIds = (results, resultWorkflowStatusExternalId) => {
+  return knex('ResultWorkflowLog as rwl')
     .join('ResultWorkflowStatus as rws', 'rwl.resultWorkflowStatusId', 'rws.id')
     .whereIn(
       'rwl.resultId',
       _.map(results, r => r.id)
     )
-    .andWhere('rws.externalId', 'Acknowledged')
+    .andWhere('rws.externalId', resultWorkflowStatusExternalId)
+}
+
+const getAcknowledgementsByResultIds = results => {
+  return getWorkflowLogsByResultIds(results, ACKNOWLEDGED)
     .select('rwl.resultId', knex.raw('MAX(rwl.changedOn) as acknowledgedOn'))
     .groupBy('rwl.resultId')
-  return knexQuery
+}
+
+const getFlagsByResultIds = results => {
+  return getWorkflowLogsByResultIds(results, FLAGGED)
+    .whereNotNull('rwl.reason')
+    .andWhere('rwl.reason', '<>', '')
+    .distinct('rwl.resultId', 'rwl.changedOn as flaggedOn', 'rwl.reason')
 }
 
 const getFollowUpsByResultIds = results => {
@@ -260,5 +272,6 @@ module.exports = {
   getCommentsOfResultById,
   getFollowUpsByResultIds,
   getAcknowledgementsByResultIds,
+  getFlagsByResultIds,
   getUserSiteIds,
 }
