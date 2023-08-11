@@ -1,54 +1,44 @@
-import React, { useState, useEffect } from 'react'
-import { Switch, FormControlLabel, Grid } from '@mui/material'
-import { useQuery } from 'react-query'
-import { StateSelect, LgaSelect } from '../../../../../cleanComponents'
+import React, { useState } from 'react'
+import { FormControlLabel, Grid, Switch } from '@mui/material'
+import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import Loading from '../../../../../cleanComponents/Loading'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
-import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
-import { graphMessages, getCustomMessage } from '../../../../../messages'
+import { getCustomMessage, graphMessages } from '../../../../../messages'
 import TestsOverTimeGraphMain from '../../../../../oldPages/dashboard/Graphs/TestsOverTimeGraph/TestsOverTimeGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
+import { useMtpRifResults } from '../../../hooks/useMtpRifResults'
 import messages from '../../../PkDashboard.Messages'
 import TestsOverTimeGraphHalf from './CurrentDiagnosisGraph.Half'
 
-const endPointParams = [
-  { assay: 'GxMtbRif' },
-  { assay: 'GxMtbRifUltra' },
+const minDate = getTimePeriod(12, 'months', 'yyyy-MM-dd')
+
+const maxDate = getTimePeriod(0, 'day', 'yyyy-MM-dd')
+
+const mainGraphParams = [
   { groupBy: 'month' },
   { groupBy: 'assay' },
-  { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { minDate },
+  { maxDate },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
   { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
+const pieGraphParams = [{ groupBy: 'resultCategory1' }, { minDate }, { maxDate }]
+
 const CurrentDiagnosisGraphPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState([])
-  const [state, setState] = useState()
-  const [, setLga] = useState()
+  const [filter, setFilter] = useState()
   const { data: assays } = useAssayList()
-
-  useEffect(() => {
-    if (assays) {
-      const seriesAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
-      const defaultFilter = seriesAssays.length > 0 ? seriesAssays : assays
-      setFilter(defaultFilter)
-    }
-  }, [assays])
-
-  const { data, isLoading } = useQuery(
-    ['testPerformedMonthlyPercentage', { endPointParams }],
-    async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
-  )
+  const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filter).concat(mainGraphParams))
+  const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filter).concat(pieGraphParams))
 
   return (
     <PkPage
@@ -61,52 +51,51 @@ const CurrentDiagnosisGraphPage = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
+            value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
+            onChange={e => setFilter({ stateId: e.target.value, lgaId: null })}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
-            onChange={e => setLga(e.target.value)}
+            value={filter?.lgaId ?? ''}
+            stateId={filter?.stateId}
+            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
     >
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <Grid container sx={{ mt: 2 }}>
-          <TestsOverTimeGraphMain
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
-          />
-          <TripleCardSide
-            data={[
-              { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.testPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
-              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
-            ]}
-          />
+      <Grid container sx={{ mt: 2 }}>
+        {isLoadingMain ? (
+          <Loading />
+        ) : (
+          <>
+            <TestsOverTimeGraphMain data={mainData.data} assaysFromState={assays} showLabel={showLabel} />
+            <TripleCardSide
+              data={[
+                { label: formatMessage(messages.testPerYear), value: `${mainData?.totalResultsCurrentYear}` },
+                {
+                  label: formatMessage(messages.testPerMonth),
+                  value: `${mainData?.averageTestsPerMonthCurrentYear}`,
+                },
+                { label: formatMessage(messages.testPerDay), value: `${mainData?.totalResultsInLast24Hours}` },
+              ]}
+            />
+          </>
+        )}
+
+        {isLoadingPie ? (
+          <Loading />
+        ) : (
           <TestsOverTimeGraphHalf
-            data={data.data}
-            endPointParams={endPointParams}
+            data={pieData?.data}
+            endPointParams={mainGraphParams}
             assaysFromState={assays}
             showLabel={showLabel}
             filterSelection={filter}
           />
-          <TestsOverTimeGraphHalf
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
-          />
-        </Grid>
-      )}
+        )}
+      </Grid>
     </PkPage>
   )
 }
