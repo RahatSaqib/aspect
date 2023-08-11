@@ -26,7 +26,7 @@ const defaultFilter = {
   '/browse/notification': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
-  '/browse/result': {},
+  '/browse/result': { minDate, maxDate },
   '/browse/site': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate },
   '/reports': {},
