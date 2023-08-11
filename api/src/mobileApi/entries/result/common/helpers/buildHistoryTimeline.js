@@ -50,18 +50,21 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   }
 
   _.map(resultFollowUps, followUp => {
-    const matchingFlag = resultFlags?.find(
-      rf => format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
-    )
-    output.push({
+    const followUpHistoryItem = {
       id: followUp.id,
       resultId: data.id,
       event: 'followUpCreated',
       name: followUp.followUpName,
       siteName: data?.reportableSiteName,
       updatedOn: followUp.updatedOn,
-      reason: matchingFlag?.reason,
-    })
+    }
+    const matchingFlag = resultFlags?.find(
+      rf => format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
+    )
+    if (matchingFlag?.reason) {
+      followUpHistoryItem.reason = matchingFlag.reason
+    }
+    output.push(followUpHistoryItem)
   })
 
   return _.sortBy(output, ['updatedOn']).reverse()
