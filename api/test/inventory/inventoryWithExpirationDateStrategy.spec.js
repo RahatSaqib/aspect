@@ -15,6 +15,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
   const getScopedSites = async () => {
     const dataConstraints = await getConstraints({ name: 'admin' })
     const [site1, site2] = await knex('Site as s')
+      .join('SiteType as type', 's.siteTypeId', 'type.id')
       .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
       .leftOuterJoin('State as st', 'g.stateId', 'st.id')
       .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
@@ -23,6 +24,7 @@ describe('Inventory Routes With Expiration Date Strategy', () => {
         site: 's',
         geography: 'g',
       })
+      .where('type.externalId', 'lab')
       .select('s.*')
     await knex('Site').insert([
       {
