@@ -458,6 +458,95 @@ function getQueryForDataExtract(query, dataConstraints) {
   return resultQuery
 }
 
+const getResultCountersBase = (resultCategoryIds, positiveResultCategories) => {
+  const whereMtbDetected = positiveResultCategories => `
+    JSON_SEARCH(
+      r.resultData ->> '$.detectedResistance[*]',
+      'one',
+      'MTB'
+    ) IS NOT NULL
+    OR
+    r.resultCategory1 IN (${positiveResultCategories})
+  `
+  const counter = (id, condition) =>
+    knex.raw(`
+      DISTINCT
+      CASE
+        WHEN ${condition}
+        THEN ${id}
+        ELSE null
+      END
+    `)
+  const countXdr = value =>
+    counter(
+      'r.id',
+      `
+      JSON_SEARCH(
+        r.resultData ->> '$.detectedResistance[*]',
+        'one',
+        '${value}'
+      ) IS NOT NULL
+      `
+    )
+
+  return {
+    cntAll: knex.raw('DISTINCT r.id'),
+    cnt_mtb: counter('r.id', whereMtbDetected(positiveResultCategories)),
+    cnt_inh: countXdr('INH'),
+    cnt_flq: countXdr('FLQ'),
+    cnt_amk: countXdr('AMK'),
+    cnt_kan: countXdr('KAN'),
+    cnt_cap: countXdr('CAP'),
+    cnt_eth: countXdr('ETH'),
+    cnt_Invalid: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Invalid}`),
+    cnt_NoResult: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.NoResult}`),
+    cnt_Error: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Error}`),
+  }
+}
+
+const getXdrResultCountBase = ({ resultCategoryIds, dataConstraints, query }) => {
+  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
+
+  return getQueryForResultsListAndExport(query, dataConstraints)
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+      assay: (queryBuilder, filterValue) => {
+        if (_.isArray(filterValue)) {
+          queryBuilder.whereIn('a.externalId', filterValue)
+        } else {
+          queryBuilder.where('a.externalId', filterValue)
+        }
+      },
+      resultCategory1: (queryBuilder, filterValue) => {
+        if (_.isArray(filterValue)) {
+          queryBuilder.whereIn('rc1.externalId', filterValue)
+        } else {
+          queryBuilder.where('rc1.externalId', filterValue)
+        }
+      },
+      resultCategory2: (queryBuilder, filterValue) => {
+        if (_.isArray(filterValue)) {
+          queryBuilder.whereIn('rc2.externalId', filterValue)
+        } else {
+          queryBuilder.where('rc2.externalId', filterValue)
+        }
+      },
+      xdrResistance: (queryBuilder, filterValue) => {
+        queryBuilder.whereRaw(`JSON_SEARCH(
+          r.resultData ->> '$.detectedResistance[*]',
+          'one',
+          '${filterValue}'
+        ) IS NOT NULL`)
+      },
+    })
+    .count({
+      ...getResultCountersBase(resultCategoryIds, positiveResultCategories),
+    })
+}
+
 const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstraints, query) => {
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
@@ -467,37 +556,6 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
   }
 
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
-  const mtbDetected = `
-    JSON_SEARCH(
-      r.resultData ->> '$.detectedResistance[*]',
-      'one',
-      'MTB'
-    ) IS NOT NULL
-    OR
-    r.resultCategory1 IN (${positiveResultCategories})
-  `
-
-  const counter = (id, condition) =>
-    knex.raw(`
-    DISTINCT
-    CASE
-      WHEN ${condition}
-      THEN ${id}
-      ELSE null
-    END
-  `)
-
-  const countXdr = value =>
-    counter(
-      'r.id',
-      `
-    JSON_SEARCH(
-      r.resultData ->> '$.detectedResistance[*]',
-      'one',
-      '${value}'
-    ) IS NOT NULL
-  `
-    )
 
   return knex('Site as s')
     .innerJoin('Device as d', 's.id', 'd.siteId')
@@ -528,17 +586,7 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
     .select(knex.raw('CASE WHEN COUNT(r.id) IS NOT NULL AND COUNT(r.id) > 0 THEN 1 ELSE 0 END as hasPerformedXdr')) // -> to be changed in follow-up
     .count({
       isPmdt: knex.raw(`DISTINCT CASE WHEN t.title = 'PMDT' THEN 1 ELSE null END`),
-      cntAll: knex.raw('DISTINCT r.id'),
-      cnt_mtb: counter('r.id', mtbDetected),
-      cnt_inh: countXdr('INH'),
-      cnt_flq: countXdr('FLQ'),
-      cnt_amk: countXdr('AMK'),
-      cnt_kan: countXdr('KAN'),
-      cnt_cap: countXdr('CAP'),
-      cnt_eth: countXdr('ETH'),
-      cnt_Invalid: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Invalid}`),
-      cnt_NoResult: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.NoResult}`),
-      cnt_Error: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Error}`),
+      ...getResultCountersBase(resultCategoryIds, positiveResultCategories),
     })
     .clone()
 }
@@ -624,4 +672,5 @@ module.exports = {
   getQueryForDataExtract,
   getCustomFieldsForResult,
   getXdrDevicesSummary,
+  getXdrResultCountBase,
 }
