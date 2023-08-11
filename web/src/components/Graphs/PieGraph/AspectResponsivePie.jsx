@@ -67,7 +67,7 @@ const AspectResponsivePie = ({
         innerRadius={config(type).radius}
         enableRadialLabels={false}
         enableSlicesLabels={!!showLabel}
-        sliceLabel={d => `${parseFloat(d.value).toFixed(showDecimals)}%`}
+        sliceLabel={d => `${parseFloat(d.value).toFixed(showDecimals)}${displayMethod === 'percentage' ? '%' : ''}`}
         slicesLabelsTextColor={labelTextColor}
         padAngle={-1}
         startAngle={0}
@@ -140,6 +140,7 @@ AspectResponsivePie.propTypes = {
 
 const Legend = ({ data, graphId }) => {
   const { formatMessage } = useI18n()
+
   return (
     <div
       style={{
@@ -153,7 +154,7 @@ const Legend = ({ data, graphId }) => {
       {data.map(item => (
         <div key={item.id} style={{ display: 'flex', flexDirection: 'row', alignItems: 'center' }}>
           <span style={{ fontSize: '2rem', color: generateColorForValue(item.id, graphId) }}>•</span>{' '}
-          <span>{formatMessage(messages[item.label])}</span>
+          <span>{item.id}</span>
         </div>
       ))}
     </div>
