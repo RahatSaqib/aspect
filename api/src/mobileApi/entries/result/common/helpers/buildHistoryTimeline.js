@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const format = require('date-fns/format')
 const { extractFromDataById } = require('./extractFromDataById')
 const { generateTransferStatus } = require('./generateTransferStatus')
 
@@ -49,7 +50,9 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   }
 
   _.map(resultFollowUps, followUp => {
-    const matchingFlag = resultFlags?.find(rf => rf.changedOn === followUp.date)
+    const matchingFlag = resultFlags?.find(
+      rf => format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
+    )
     output.push({
       id: followUp.id,
       resultId: data.id,

@@ -18,7 +18,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
     const patientData = JSON.parse(result?.patientData)
     const acknowledgement = acknowledgements?.find(ack => ack.resultId === result.id)
-    const resultFlags = flags.filter(flag => flag.resultId === result.resultId)
+    const resultFlags = flags.filter(flag => flag.resultId === result.id)
     const resultRequiresTreatment = !!(
       result?.resultCategoryAssay1RequiresTreatment || result?.resultCategoryAssay2RequiresTreatment
     )
