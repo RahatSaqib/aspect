@@ -62,7 +62,6 @@ const PkDashboard = () => {
               to="/dashboard/rif/provincial-testing-trend"
               label={formatMessage(messages.TbProvincialComparison)}
             />
-            <DashboardLink to="" label={formatMessage(messages.TbSubprovincialTrend)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbRifTbDiagnosis)}>
             <DashboardLink to="/dashboard/rif/current-diagnosis" label={formatMessage(messages.TbDCurrent)} />

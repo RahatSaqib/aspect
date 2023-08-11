@@ -58,10 +58,6 @@ const messages = {
       id: 'p.PkDashboard.TbProvincialComparison',
       defaultMessage: 'Provincial TB Testing Trend comparison',
     },
-    TbSubprovincialTrend: {
-      id: 'p.PkDashboard.TbSubprovincialTrend',
-      defaultMessage: 'Sub-Provincial TB Testing Trends',
-    },
     TbDCurrent: { id: 'p.PkDashboard.TbDCurrent', defaultMessage: 'Current TB Diagnosis' },
     TbDNationalTrend: { id: 'p.PkDashboard.TbDNationalTrend', defaultMessage: 'National TB Diagnosis Trends' },
     TbDProvincialComparison: {
