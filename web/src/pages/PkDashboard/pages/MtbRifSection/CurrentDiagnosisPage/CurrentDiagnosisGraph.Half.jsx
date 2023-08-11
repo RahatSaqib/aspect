@@ -1,10 +1,8 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react'
-import { Grid } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { FormControlLabel, Grid, Switch } from '@mui/material'
 import classnames from 'classnames/bind'
-import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
-import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import ErrorBoundary from '../../../../../cleanComponents/ErrorBoundary'
 import EmptyGraph from '../../../../../components/Graphs/EmptyData'
@@ -12,35 +10,24 @@ import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../../c
 import messages from '../../../../../components/Graphs/intlMessages'
 import AspectResponsivePie from '../../../../../components/Graphs/PieGraph/AspectResponsivePie'
 import useI18n from '../../../../../hooks/useI18n'
+import { graphMessages } from '../../../../../messages'
 import styles from '../../../../../oldPages/dashboard/Graphs/styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-const filterFunction = (data, props) => {
-  const newData = []
-  const keys = []
-  map(props, ({ externalId }) => keys.push(externalId))
-  map(keys, key => {
-    const found = filter(data, { id: key })[0]
-    if (!isEmpty(found)) {
-      return newData.push(found)
-    }
-  })
-  return newData
-}
-
-const TestsOverTimeGraphHalf = ({ assaysFromState, data, endPointParams, showLabel, filterSelection }) => {
+const TestsOverTimeGraphHalf = ({ assaysFromState, data, endPointParams, showLabel }) => {
   const { formatMessage } = useI18n()
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
+  const [showPercentage, setShowPercentage] = useState()
 
   function buildI18nKeys() {
     let i18nKeysCollection = {}
     i18nKeysCollection = reduce(
       data,
       (acc, curr) => {
-        acc[curr.assay] = curr.assayI18nKey
+        acc[curr.resultCategory1] = curr.resultCategory1I18nKey
         return acc
       },
       {}
@@ -54,11 +41,11 @@ const TestsOverTimeGraphHalf = ({ assaysFromState, data, endPointParams, showLab
 
     return formatDataByGraphType(
       data,
-      'percentage',
+      showPercentage ? 'percentage' : 'actual',
       false,
       'MMM yy',
       'cnt',
-      'assay',
+      'resultCategory1',
       i18nKeysCollection,
       'pie',
       endPointParams,
@@ -75,30 +62,32 @@ const TestsOverTimeGraphHalf = ({ assaysFromState, data, endPointParams, showLab
 
   useEffect(() => {
     const grouped = formatRawData()
-    if (grouped) {
-      const groupedFiltered = filterFunction(grouped, filterSelection)
-      setNewData(groupedFiltered)
-    }
-  }, [data, filterSelection])
+    setNewData(grouped)
+  }, [data])
 
   return (
     <ErrorBoundary>
-      <Grid item xs={12} md={6} lg={6} sx={{ p: 1, mt: 1 }}>
+      <Grid item xs={12}>
         <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
             <AspectResponsivePie
-              config={{ id: 'testPerformedMonthlytotal', showLabel, labelTextColor: '#FFF' }}
+              config={{ id: 'testPerformedMonthlytotal', showLabel, labelTextColor: '#333' }}
               assaysFromState={assaysFromState}
               data={graphData}
               keys={graphKeys}
               i18nKeys={i18nKeys}
-              displayMethod="percentage"
+              displayMethod={showPercentage ? 'percentage' : 'actual'}
               componentClasses={['piegraph__container']}
               sideLegend
             />
           ) : (
             <EmptyGraph type="pie" />
           )}
+          <FormControlLabel
+            sx={{ minWidth: '145px' }}
+            label={formatMessage(graphMessages.showPercentage)}
+            control={<Switch checked={showPercentage} onChange={e => setShowPercentage(e.target.checked)} />}
+          />
         </div>
       </Grid>
     </ErrorBoundary>
