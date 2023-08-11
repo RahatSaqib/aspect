@@ -139,8 +139,6 @@ AspectResponsivePie.propTypes = {
 }
 
 const Legend = ({ data, graphId }) => {
-  const { formatMessage } = useI18n()
-
   return (
     <div
       style={{
