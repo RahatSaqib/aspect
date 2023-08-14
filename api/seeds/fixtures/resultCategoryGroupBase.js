@@ -93,7 +93,7 @@ const GxMtbRifMtbDetected = {
 const GxMtbRifMtbDetectedRifNotDetected = {
   externalId: 'GxMtbRifMtbDetectedRifNotDetected',
   i18nKey: 'gxMtbRifMtbDetectedRifNotDetected',
-  name: 'MTB Detected RIF Not Detected',
+  name: 'MTB Detected Rif Not Detected',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbRif',
@@ -102,7 +102,7 @@ const GxMtbRifMtbDetectedRifNotDetected = {
 const GxMtbRifMtbDetectedRifDetected = {
   externalId: 'GxMtbRifMtbDetectedRifDetected',
   i18nKey: 'gxMtbRifMtbDetectedRifDetected',
-  name: 'MTB Detected RIF Detected',
+  name: 'MTB Detected Rif Detected',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Detected',
   assayExternalId: 'GxMtbRif',
@@ -111,7 +111,7 @@ const GxMtbRifMtbDetectedRifDetected = {
 const GxMtbRifMtbDetectedRifIndeterminate = {
   externalId: 'GxMtbRifMtbDetectedRifIndeterminate',
   i18nKey: 'gxMtbRifMtbDetectedRifIndeterminate',
-  name: 'MTB Detected RIF Indeterminate',
+  name: 'MTB Detected Rif Indeterminate',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Indeterminate',
   assayExternalId: 'GxMtbRif',
@@ -168,7 +168,7 @@ const GxMtbRifUltraMtbDetected = {
 const GxMtbRifUltraMtbDetectedRifNotDetected = {
   externalId: 'GxMtbRifUltraMtbDetectedRifNotDetected',
   i18nKey: 'gxMtbRifUltraMtbDetectedRifNotDetected',
-  name: 'MTB Detected - Rif Not Detected',
+  name: 'MTB Detected Rif Not Detected',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbRifUltra',
@@ -177,7 +177,7 @@ const GxMtbRifUltraMtbDetectedRifNotDetected = {
 const GxMtbRifUltraMtbDetectedRifDetected = {
   externalId: 'GxMtbRifUltraMtbDetectedRifDetected',
   i18nKey: 'gxMtbRifUltraMtbDetectedRifDetected',
-  name: 'MTB Detected - Rif Detected',
+  name: 'MTB Detected Rif Detected',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Detected',
   assayExternalId: 'GxMtbRifUltra',
@@ -186,7 +186,7 @@ const GxMtbRifUltraMtbDetectedRifDetected = {
 const GxMtbRifUltraMtbDetectedRifIndeterminate = {
   externalId: 'GxMtbRifUltraMtbDetectedRifIndeterminate',
   i18nKey: 'gxMtbRifUltraMtbDetectedRifIndeterminate',
-  name: 'MTB Detected - Rif Indeterminate',
+  name: 'MTB Detected Rif Indeterminate',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Indeterminate',
   assayExternalId: 'GxMtbRifUltra',

@@ -96,7 +96,7 @@ const PkDashboard = () => {
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
             <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrent)} />
-            <DashboardLink to="" label={formatMessage(messages.DNationalTrend)} />
+            <DashboardLink to="/dashboard/xdr/national-diagnosis" label={formatMessage(messages.DNationalTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-diagnosis-trend"
               label={formatMessage(messages.DProvincialComparison)}
@@ -108,8 +108,11 @@ const PkDashboard = () => {
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrFQResistance)}>
             <DashboardLink to="" label={formatMessage(messages.FQCurrent)} />
-            <DashboardLink to="" label={formatMessage(messages.FQNationalTrend)} />
-            <DashboardLink to="" label={formatMessage(messages.FQProvincialComparison)} />
+            <DashboardLink to="/dashboard/xdr/national-fq" label={formatMessage(messages.FQNationalTrend)} />
+            <DashboardLink
+              to="/dashboard/xdr/provincial-fq-diagnosis-trend"
+              label={formatMessage(messages.FQProvincialComparison)}
+            />
           </DashboardCard>
         </Grid>
         <Grid item lg={4} style={{ padding: '8px 8px 0' }}>

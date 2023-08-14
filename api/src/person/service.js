@@ -15,7 +15,7 @@ async function listPeople(request) {
   const { geographicLevel, tags } = query
 
   const personQuery = getPeopleBase()
-    .leftJoin('Geography as jcg', 'jc.geographyId', 'jcg.id')
+    .leftJoin('Geography as jcg', qb => qb.on('jc.geographyId', 'jcg.id').orOn('s.geographyId', 'jcg.id'))
     .leftJoin('PersonTag as pt', 'p.id', 'pt.personId')
     .leftJoin('Tag as t', 'pt.tagId', 't.id')
     .modify(filterParams, query, {
@@ -26,7 +26,7 @@ async function listPeople(request) {
       siteId: 'jc.siteId',
       contactStatus: 'p.disabled',
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g', site: 's' })
+    .modify(addConstraints, dataConstraints, { geography: 'jcg', site: 's' })
     .where(qb => {
       if (dataConstraints.partner.id) {
         qb.whereNull('p.partnerId').orWhere('p.partnerId', dataConstraints.partner.id)
@@ -222,12 +222,19 @@ async function getPersonDetails(personId, dataConstraints) {
   const personDetails = await query('Get person details')
     .from('Person as p')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
+    .leftOuterJoin('Job as j', 'p.id', 'j.personId')
+    .leftOuterJoin('JobContext as jc', 'jc.jobId', 'j.id')
+    .leftOuterJoin('Geography as jg', 'jc.geographyId', 'jg.id')
     .leftJoin('User as u', 'p.userId', 'u.id')
     .leftOuterJoin('State as s', 'g.stateId', 's.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('Job as j', 'p.id', 'j.personId')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .where(q =>
+      q
+        .modify(addConstraints, dataConstraints, { geography: 'jg' })
+        .orWhereRaw('jc.id IS NULL')
+        .orWhereRaw('jg.id IS NULL')
+    )
     .where({ 'p.id': personId })
     .first(
       'p.id',
@@ -260,6 +267,7 @@ async function getPersonDetails(personId, dataConstraints) {
       'p.disabledOn',
       'j.id as jobId'
     )
+
   if (personDetails) {
     const tags = await query('Get person tags')
       .from('Person as p')

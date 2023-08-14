@@ -42,7 +42,7 @@ const TrendInYearsAllTestsGraph = ({ assaysFromState }) => {
                     <TrendInYearsAllTestsGraphMain
                       assaysFromState={assaysFromState}
                       showLabel={showLabel}
-                      filterSelection={filter}
+                      filterSelection={[filter]}
                     />
                   </Grid>
                 </Grid>
