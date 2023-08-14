@@ -259,7 +259,7 @@ const CustomMinDatePicker = ({ formatMessage, range, setValueLabel, setRange, on
             setRange({ ...range, minDate })
           }
         }}
-        renderInput={params => <TextField {...params} />}
+        renderInput={params => <TextField {...params} disabled onKeyDown={e => e.preventDefault()} />}
       />
     </div>
   )
@@ -282,7 +282,7 @@ const CustomMaxDatePicker = ({ formatMessage, range, setValueLabel, setRange, on
             setRange({ ...range, maxDate })
           }
         }}
-        renderInput={params => <TextField {...params} />}
+        renderInput={params => <TextField {...params} disabled onKeyDown={e => e.preventDefault()} />}
       />
     </div>
   )
