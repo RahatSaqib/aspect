@@ -12,7 +12,7 @@ async function dropDB() {
 
   // eslint-disable-next-line no-console
   console.log('\x1b[1;36m', '⚙️ Dropping db Schema ➜', database)
-  await knex.raw(`DROP DATABASE IF EXISTS ${database};`)
+  await knex.raw(`DROP DATABASE IF EXISTS \`${database}\`;`)
 }
 
 dropDB().then(
