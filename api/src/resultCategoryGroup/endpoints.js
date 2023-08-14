@@ -13,7 +13,10 @@ const routes = [
       auth: { scope: ['browse', 'result'] },
       validate: {
         query: {
-          assayId: Joi.number(),
+          assayId: Joi.alternatives()
+            .try(Joi.array().items(Joi.number()), Joi.number())
+            .allow(null, '')
+            .description('Filter for assay ID(s)'),
         },
       },
     },

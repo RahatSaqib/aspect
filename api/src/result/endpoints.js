@@ -12,6 +12,8 @@ const {
   resultCreatePayload,
   treatmentTrackingValidationQuery,
   currentTestingValidGroups,
+  validateResponseResultCounts,
+  optionalId,
 } = require('./endpointsValidation')
 const {
   listResults,
@@ -50,6 +52,7 @@ const { exportResults } = require('./serviceReport')
 const { updateResult } = require('./updateResult')
 const { getResultsOverview } = require('./dashboard/getResultsOverview')
 const { xdrDevicesSummaryList } = require('./xdrDevicesSummaryList')
+const { listGx10CTrendsNational, listGx10CTrendsProvincial } = require('./serviceReport/trendReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { getTbTestingDiagnosisTrend } = require('./dashboard/getTbTestingDiagnosisTrend')
 const { clinicalIndicatorAggregations } = require('./common/logic')
@@ -1114,17 +1117,89 @@ const routes = [
                 locationName: Joi.string().description('The location name (Site / LGA / State)'),
                 isPmdt: Joi.number().description('Number of PMDT Sites with 10 C GX'),
                 hasPerformedXdr: Joi.number().description('Number of sites tested MTB/XDR Assay'),
-                cntAll: Joi.number().description('Total Tests'),
-                cnt_mtb: Joi.number().description('Number of MTB+'),
-                cnt_inh: Joi.number().description('Number of INH Resistance'),
-                cnt_flq: Joi.number().description('Number of FLQ Resistance'),
-                cnt_amk: Joi.number().description('Number of AMK Resistance'),
-                cnt_kan: Joi.number().description('Number of KAN Resistance'),
-                cnt_cap: Joi.number().description('Number of CAP Resistance'),
-                cnt_eth: Joi.number().description('Number of ETH Resistance'),
-                cnt_Invalid: Joi.number().description('Number of Invalid'),
-                cnt_NoResult: Joi.number().description('Number of No Result'),
-                cnt_Error: Joi.number().description('Number of Errors'),
+                ...validateResponseResultCounts(),
+              })
+            ),
+        }),
+      },
+    },
+  },
+
+  {
+    method: 'GET',
+    path: '/result/gx-10c-trends-national',
+    handler: asyncHandler(listGx10CTrendsNational),
+    config: {
+      description: 'National GX-10C Trends',
+      notes: 'Returns the number of results per month, for the last 5 years + current year for all regions',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate([]),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                ...resultAggregationsResponseItem,
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/gx-10c-trends-provincial',
+    handler: asyncHandler(listGx10CTrendsProvincial),
+    config: {
+      description: 'Provincial GX-10C Trends',
+      notes: 'Returns the number of results per state and month, for the last 5 years + current year for all regions',
+      auth: { scope: ['site', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate([]),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                locationName: Joi.string().description('The location name (Site / LGA / State)'),
+                stateId: optionalId('The id of the State'),
+                currYearTotals: Joi.object().keys({
+                  ...validateResponseResultCounts(),
+                }),
+                currYearMeanPerMonth: Joi.object().keys({
+                  ...validateResponseResultCounts(),
+                }),
+                prevYearMeanPerMonth: Joi.object().keys({
+                  ...validateResponseResultCounts(),
+                }),
+                last24h: Joi.object().keys({
+                  ...validateResponseResultCounts(),
+                }),
+                trends: Joi.array()
+                  .allow(null)
+                  .items(
+                    Joi.object().keys({
+                      year: Joi.number().allow(null).description('Year'),
+                      ...validateResponseResultCounts(),
+                    })
+                  ),
               })
             ),
         }),

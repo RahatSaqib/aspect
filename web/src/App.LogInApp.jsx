@@ -79,6 +79,7 @@ const ProvincialXDRTestingTrend = lazy(() =>
 const ProvincialXDRDiagnosisTrend = lazy(() =>
   import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialDiagnosisTrendPage')
 )
+const ProvincialXDRTrendsFQ = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialXDRTrendsFQPage'))
 const XDRTestingDiagnosisTrend = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/XDRTestingDiagnosisTrend'))
 
 const LogInApp = () => {
@@ -173,6 +174,7 @@ const LogInApp = () => {
                     <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
                     <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
                     <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
+                    <Route path="/dashboard/xdr/provincial-fq-diagnosis-trend" element={<ProvincialXDRTrendsFQ />} />
                     <Route path="/dashboard/xdr/testing-diagnosis-trend" element={<XDRTestingDiagnosisTrend />} />
 
                     <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />

@@ -15,7 +15,7 @@ async function listPeople(request) {
   const { geographicLevel, tags } = query
 
   const personQuery = getPeopleBase()
-    .leftJoin('Geography as jcg', 'jc.geographyId', 'jcg.id')
+    .leftJoin('Geography as jcg', qb => qb.on('jc.geographyId', 'jcg.id').orOn('s.geographyId', 'jcg.id'))
     .leftJoin('PersonTag as pt', 'p.id', 'pt.personId')
     .leftJoin('Tag as t', 'pt.tagId', 't.id')
     .modify(filterParams, query, {
