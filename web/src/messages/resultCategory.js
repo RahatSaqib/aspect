@@ -213,6 +213,10 @@ export default defineMessages({
     id: 'resultCategoryGroup.gxMtbRifMtbError',
     defaultMessage: 'MTB Error',
   },
+  GxMtbRifMTBErrorRifError: {
+    id: 'resultCategoryGroup.GxMtbRifMTBErrorRifError',
+    defaultMessage: 'MTB Error Rif Error',
+  },
   gxMtbRifMtbNoResult: {
     id: 'resultCategoryGroup.gxMtbRifMtbNoResult',
     defaultMessage: 'MTB No Result',
@@ -281,9 +285,21 @@ export default defineMessages({
     id: 'resultCategoryGroup.gxMtbXdrMtbError',
     defaultMessage: 'MTB Error',
   },
+  GxMtbXdrMTBNotDetectedDrugResistanceNotDetected: {
+    id: 'resultCategoryGroup.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
+    defaultMessage: 'MTB Not Detected Drug Resistance Not Detected',
+  },
   gxMtbXdrMtbNoResult: {
     id: 'resultCategoryGroup.gxMtbXdrMtbNoResult',
     defaultMessage: 'MTB No Result',
+  },
+  GxMtbRifUltraMTBTraceDetectedRifNoResult: {
+    id: 'resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifNoResult',
+    defaultMessage: 'MTB Trace Detected Rif No Result',
+  },
+  GxMtbRifUltraMTBTraceDetectedRifIndeterminate: {
+    id: 'resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
+    defaultMessage: 'MTB Trace Detected Rif Indeterminate',
   },
   AssayAbbottM2000DaanNCOVID19resultCategoryError: {
     id: 'resultCategoryGroup.AssayAbbottM2000DaanNCOVID19resultCategoryError',

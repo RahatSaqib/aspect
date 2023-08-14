@@ -32,7 +32,7 @@ const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelec
   const { isLoading, data } = useQuery(
     ['tbAllTestsYearlyTrends', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: mergedParams })
+      fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-national', params: mergedParams })
   )
 
   useEffect(() => {
@@ -103,7 +103,11 @@ const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelec
       </Grid>
     </Grid>
   ) : (
-    renderLineGraph()
+    <Grid container sx={{ mt: 2 }}>
+      <Grid item container>
+        {renderLineGraph()}
+      </Grid>
+    </Grid>
   )
 }
 

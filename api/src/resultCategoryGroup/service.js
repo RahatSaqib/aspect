@@ -1,3 +1,4 @@
+const isArray = require('lodash/isArray')
 const { knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 
@@ -11,8 +12,11 @@ async function listResultCategoryGroupsForSelectList(request) {
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
     })
-    .select(['rcg.externalId', 'rcg.name', 'rcg.i18nKey'])
-    .where('rcg.assayId', assayId)
+    .modify(qb => {
+      if (isArray(assayId)) qb.whereIn('rcg.assayId', assayId)
+      else qb.where('rcg.assayId', assayId)
+    })
+    .select(['a.i18nKey as assayI18nKey', 'rcg.assayId', 'rcg.externalId', 'rcg.name', 'rcg.i18nKey'])
 
   return { ok: true, data }
 }

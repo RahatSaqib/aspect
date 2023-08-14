@@ -8,7 +8,7 @@ async function up(knex) {
    * There will be an update in our current devops script to set up all this things as a default
    */
 
-  await knex.raw(`ALTER DATABASE ${config.db.database} CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`)
+  await knex.raw(`ALTER DATABASE \`${config.db.database}\` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;`)
 
   const [alterTableQueries] = await knex.raw(
     "SELECT CONCAT('ALTER TABLE `', tbl.`TABLE_SCHEMA`, '`.`', tbl.`TABLE_NAME`, '` CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;') as query FROM `information_schema`.`TABLES` tbl WHERE tbl.`TABLE_SCHEMA` = ? AND TABLE_COLLATION<>'utf8mb4_unicode_ci';",
@@ -17,7 +17,7 @@ async function up(knex) {
 
   const [alterColumnQueries] = await knex.raw(
     // eslint-disable-next-line no-useless-escape
-    "SELECT CONCAT('ALTER TABLE ', col.`TABLE_SCHEMA`, '.', col.`TABLE_NAME`, ' change column `',col.COLUMN_NAME, '` ','`',col.COLUMN_NAME ,'` varchar(',character_maximum_length,') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ', CASE col.IS_NULLABLE WHEN 'NO' THEN 'NOT NULL' ELSE 'NULL' END, CASE WHEN column_default IS NOT NULL THEN CONCAT( ' DEFAULT ', ? ,column_default, ? ) ELSE '' END) as query FROM INFORMATION_SCHEMA.COLUMNS col WHERE col.DATA_TYPE = 'varchar' AND TABLE_SCHEMA=? AND (COLLATION_NAME<>'utf8mb4_unicode_ci' OR CHARACTER_SET_NAME<>'utf8mb4');",
+    "SELECT CONCAT('ALTER TABLE `', col.`TABLE_SCHEMA`, '`.`', col.`TABLE_NAME`, '` change column `',col.COLUMN_NAME, '` ','`',col.COLUMN_NAME ,'` varchar(',character_maximum_length,') CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci ', CASE col.IS_NULLABLE WHEN 'NO' THEN 'NOT NULL' ELSE 'NULL' END, CASE WHEN column_default IS NOT NULL THEN CONCAT( ' DEFAULT ', ? ,column_default, ? ) ELSE '' END) as query FROM INFORMATION_SCHEMA.COLUMNS col WHERE col.DATA_TYPE = 'varchar' AND TABLE_SCHEMA=? AND (COLLATION_NAME<>'utf8mb4_unicode_ci' OR CHARACTER_SET_NAME<>'utf8mb4');",
     ["'", "'", config.db.database]
   )
 
