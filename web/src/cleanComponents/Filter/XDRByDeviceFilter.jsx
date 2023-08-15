@@ -14,10 +14,11 @@ const XDRByDeviceFilter = () => {
   const user = useAuthState()
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
+
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
 
   return (
-    <FilterContainer state={state} setState={setState}>
+    <FilterContainer state={state} setState={setState} blocked={['minDate']}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect

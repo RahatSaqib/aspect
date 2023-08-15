@@ -53,6 +53,7 @@ const CurrentRRTBDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbRif
 const TestDiagTrend = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/TestDiagTrendPage'))
 const CurrentTesting = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/CurrentTestingPage'))
 const NationalDiagnosisRif = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalDiagnosisPage'))
+const NationalDiagnosisXdr = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalDiagnosisPage'))
 const NationalRtbTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalRtbTrendsPage'))
 const NationalTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbRifSection/NationalTestingTrendsPage'))
 const ProvincialRIFTestingTrend = lazy(() =>
@@ -67,6 +68,7 @@ const ProvincialRIFTestingTrendRRTB = lazy(() =>
 
 const XDRByDevice = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/XDRByDevice'))
 const NationalGXTestingTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalTestingTrendsPage'))
+const NationalFQTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalFQTrendPage'))
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
@@ -76,6 +78,7 @@ const ProvincialXDRTestingTrend = lazy(() =>
 const ProvincialXDRDiagnosisTrend = lazy(() =>
   import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialDiagnosisTrendPage')
 )
+const ProvincialXDRTrendsFQ = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialXDRTrendsFQPage'))
 
 const LogInApp = () => {
   const dispatch = useDispatch()
@@ -161,11 +164,14 @@ const LogInApp = () => {
 
                     <Route path="/dashboard/xdr/by-device" element={<XDRByDevice />} />
                     <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
+                    <Route path="/dashboard/xdr/national-diagnosis" element={<NationalDiagnosisXdr />} />
+                    <Route path="/dashboard/xdr/national-fq" element={<NationalFQTrends />} />
                     <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                     <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
                     <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
                     <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
                     <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
+                    <Route path="/dashboard/xdr/provincial-fq-diagnosis-trend" element={<ProvincialXDRTrendsFQ />} />
 
                     <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
                     <Route path="/dashboard/coverage/utilization" element={<Utilization />} />

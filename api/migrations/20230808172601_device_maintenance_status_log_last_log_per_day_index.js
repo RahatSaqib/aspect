@@ -1,7 +1,7 @@
 async function up(knex) {
-  await knex.schema.raw(
-    `ALTER TABLE DeviceMaintenanceStatusLog ADD INDEX devicemaintenancestatuslog_deviceid_day_createdon_id_index (deviceId, day, createdOn, id)`
-  )
+  await knex.schema.alterTable('DeviceMaintenanceStatusLog', function (table) {
+    table.index(`deviceId`, 'devicemaintenancestatuslog_deviceid_day_createdon_id_index')
+  })
 }
 
 async function down(knex) {

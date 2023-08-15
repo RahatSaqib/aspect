@@ -6,13 +6,14 @@ const { generateTransferStatus } = require('./generateTransferStatus')
  * A function that builds a history timeline for a given data object and list of follow-ups.
  * @param {object} data - The entries data object to build the timeline for.
  * @param {array} followUps - The array of follow-up data objects.
+ * @param {Array} userSiteIds - The array of IDs that the user is able to record follow-ups for.
  * @returns {array} - An array of objects containing the history timeline, sorted by update date in descending order.
  */
 
-function buildHistoryTimeline(data, followUps) {
+function buildHistoryTimeline(data, followUps, userSiteIds) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
-  const transferStatus = generateTransferStatus(data)
+  const transferStatus = generateTransferStatus(data, userSiteIds)
 
   if (data.sampleCollectedOn || data.sampleSiteName) {
     output.push({
@@ -31,7 +32,7 @@ function buildHistoryTimeline(data, followUps) {
       resultId: data.id,
       event: 'sampleTested',
       name: data.sampleTypeExternalId,
-      siteName: data?.reportableSiteName,
+      siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
     })
   }
