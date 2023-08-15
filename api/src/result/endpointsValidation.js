@@ -26,6 +26,10 @@ const getResultAggregationsValidate = validGroups => ({
     .try(Joi.array().items(Joi.string().valid(...validGroups)), Joi.string().valid(...validGroups))
     .description('Array of fields to group by'),
   flags: Joi.alternatives().allow(null, '').try(Joi.array(), Joi.string()).description('Flags in csv'),
+  xdrResistance: Joi.alternatives()
+    .allow(null, '')
+    .try(Joi.array().items(Joi.string()), Joi.string())
+    .description('XDR Resistance value or array of values'),
 })
 
 const resultAggregationsValidGroups = [
@@ -442,6 +446,22 @@ function treatmentTrackingValidationQuery() {
   }
 }
 
+function validateResponseResultCounts() {
+  return {
+    cntAll: Joi.number().description('Total Tests'),
+    cnt_mtb: Joi.number().description('Number of MTB+'),
+    cnt_inh: Joi.number().description('Number of INH Resistance'),
+    cnt_flq: Joi.number().description('Number of FLQ Resistance'),
+    cnt_amk: Joi.number().description('Number of AMK Resistance'),
+    cnt_kan: Joi.number().description('Number of KAN Resistance'),
+    cnt_cap: Joi.number().description('Number of CAP Resistance'),
+    cnt_eth: Joi.number().description('Number of ETH Resistance'),
+    cnt_Invalid: Joi.number().description('Number of Invalid'),
+    cnt_NoResult: Joi.number().description('Number of No Result'),
+    cnt_Error: Joi.number().description('Number of Errors'),
+  }
+}
+
 module.exports = {
   listResultsBaseConfig,
   getResponseForComments,
@@ -454,4 +474,6 @@ module.exports = {
   resultCreatePayload,
   treatmentTrackingValidationQuery,
   currentTestingValidGroups,
+  validateResponseResultCounts,
+  optionalId,
 }
