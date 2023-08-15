@@ -1,22 +1,25 @@
-import React, { useState } from 'react'
-import { FormControlLabel, Grid, Switch } from '@mui/material'
+import React, { useState, useCallback } from 'react'
+import { FormControlLabel, Switch } from '@mui/material'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/TrendInYearsAllTestsGraph/TrendInYearsAllTestsGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
+const defaultFilters = [{ assay: 'GxMtbXdr' }]
 const NationalTestingTrendsGraph = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter] = useState()
-  const [state, setState] = useState()
-  const [, setLga] = useState()
+  const [filter, setFilter] = useState({})
   const { data: assays } = useAssayList()
+
+  const onChangeState = useCallback(e => setFilter({ stateId: e.target.value }), [])
+  const onChangeLga = useCallback(e => setFilter(prev => ({ ...prev, lgaId: e.target.value })), [])
 
   return (
     <PkPage
@@ -29,21 +32,25 @@ const NationalTestingTrendsGraph = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
+            value={filter.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
+            onChange={onChangeState}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
-            onChange={e => setLga(e.target.value)}
+            value={filter.lgaId ?? ''}
+            stateId={filter.stateId}
+            onChange={onChangeLga}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
     >
-      <Grid container sx={{ mt: 2 }}>
-        <TrendInYearsAllTestsGraph assaysFromState={assays} showLabel={showLabel} filterSelection={filter} />
-      </Grid>
+      <TrendInYearsAllTestsGraph
+        assaysFromState={assays ?? []}
+        showLabel={showLabel}
+        filterSelection={objectToArray(filter).concat(defaultFilters)}
+      />
     </PkPage>
   )
 }

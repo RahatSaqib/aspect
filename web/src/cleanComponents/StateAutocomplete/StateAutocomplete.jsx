@@ -4,7 +4,7 @@ import Autocomplete from '@mui/material/Autocomplete'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 
 const StateAutocomplete = ({ label, countryId, ...rest }) => {
-  const { isLoading: isStateLoading, data: states } = useStatesByCountry(countryId, { enabled: !!countryId })
+  const { isLoading: isStateLoading, data: states } = useStatesByCountry({ countryId }, { enabled: !!countryId })
 
   return isStateLoading ? (
     <LinearProgress />

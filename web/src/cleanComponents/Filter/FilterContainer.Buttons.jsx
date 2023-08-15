@@ -1,6 +1,7 @@
 import React from 'react'
 import { Button } from '@mui/material'
 import Immutable from 'immutable'
+import { pull } from 'lodash/array'
 import isArray from 'lodash/isArray'
 import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
@@ -62,7 +63,7 @@ const emptyFilter = filter => {
   return keys.length === 0 || (keys.length === 1 && keys.includes('countryId'))
 }
 
-const FilterButtons = ({ filters, remove }) => {
+const FilterButtons = ({ filters, remove, append }) => {
   const { formatMessage } = useI18n()
   return (
     <span>
@@ -74,7 +75,7 @@ const FilterButtons = ({ filters, remove }) => {
           .sortBy(filterKey => filtersOrdering[filterKey])
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
-            return <Comp {...filters} remove={remove} key={key} />
+            return <Comp {...filters} remove={remove} append={append} key={key} />
           })
       )}
     </span>
@@ -90,7 +91,9 @@ const buttonMapping = {
   destinationSiteName: ({ destinationSiteName, remove }) => (
     <DestinationSiteName destinationSiteName={destinationSiteName} remove={remove} />
   ),
-  assayId: ({ assayId, remove }) => <AssayId assayId={assayId} remove={remove} />,
+  assayId: ({ assayId, remove, append, resultCategoryGroupId }) => (
+    <AssayId assayId={assayId} remove={remove} append={append} resultCategoryGroupId={resultCategoryGroupId} />
+  ),
   resultCategoryId: ({ resultCategoryId, assayOverride, assayId, diseaseId, remove }) => (
     <ResultCategoryId
       resultCategoryId={resultCategoryId}
@@ -100,12 +103,13 @@ const buttonMapping = {
       remove={remove}
     />
   ),
-  resultCategoryGroupId: ({ resultCategoryGroupId, assayId, assayOverride, remove }) => (
+  resultCategoryGroupId: ({ resultCategoryGroupId, assayId, assayOverride, remove, append }) => (
     <ResultCategoryGroupId
       resultCategoryGroupId={resultCategoryGroupId}
       assayId={assayId}
       assayOverride={assayOverride}
       remove={remove}
+      append={append}
     />
   ),
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
@@ -181,14 +185,14 @@ const Btn = ({ lbl, del }) => {
 }
 
 const StateId = ({ countryId, stateId, remove }) => {
-  const { data } = useStatesByCountry(countryId)
+  const { data } = useStatesByCountry({ countryId })
   const lbl = data?.find(s => s.id === stateId)?.name
 
   return lbl && stateId ? <Btn lbl={lbl} del={() => remove(['stateId', 'lgaId'])} /> : null
 }
 
 const LgaId = ({ stateId, lgaId, remove }) => {
-  const { data } = useLgaByState(stateId)
+  const { data } = useLgaByState({ stateId })
   const lbl = data?.find(s => s.id === lgaId)?.name
 
   return lbl && lgaId ? <Btn lbl={lbl} del={() => remove(['lgaId'])} /> : null
@@ -221,19 +225,34 @@ const DestinationSiteName = ({ destinationSiteName, remove }) => {
     />
   )
 }
-const AssayId = ({ assayId, remove }) => {
+const AssayId = ({ assayId, remove, append, resultCategoryGroupId }) => {
   const { formatMessage } = useI18n()
   const { data } = useAssayList()
+  const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
 
-  const del = { del: remove ? () => remove(['assayId', 'resultCategoryId']) : undefined } // singleAssayId has no delete option
+  const del = { del: remove ? () => remove(['assayId', 'resultCategoryId', 'resultCategoryGroupId']) : undefined } // singleAssayId has no delete option
 
-  if (!data) {
-    return null
-  }
+  if (!data) return null
+
+  const resultCategory = resultCategoryGroups?.filter(i => resultCategoryGroupId?.includes(i.externalId))
+
   return isArray(assayId) ? (
-    assayId.map(id => <Btn key={id} lbl={formatMessage(messages[data.find(a => a.id === id).i18nKey])} {...del} />)
+    assayId?.map(id => (
+      <Btn
+        key={id}
+        del={() => {
+          if (assayId?.length > 1)
+            append({
+              assayId: pull(assayId, id),
+              resultCategoryGroupId: resultCategory.filter(i => i.assayId !== id).map(c => c.externalId),
+            })
+          else del?.del()
+        }}
+        lbl={formatMessage(messages[data?.find(a => a.id === id)?.i18nKey])}
+      />
+    ))
   ) : assayId !== -1 ? (
-    <Btn lbl={formatMessage(messages[data.find(a => a.id === assayId).i18nKey])} {...del} />
+    <Btn lbl={formatMessage(messages[data?.find(a => a.id === assayId)?.i18nKey])} {...del} />
   ) : null
 }
 
@@ -263,18 +282,31 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
   return null
 }
 
-const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, remove }) => {
+const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, remove, append }) => {
   const { formatMessage } = useI18n()
-  const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
-  if (resultCategoryGroupId && resultCategoryGroups) {
-    const msg = assayOverride
-      ? `"${startCase(assayOverride)}"`
-      : formatMessage(messages[resultCategoryGroups.find(it => it.externalId === resultCategoryGroupId).i18nKey])
 
-    return (
+  const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
+
+  if (resultCategoryGroupId && resultCategoryGroups) {
+    const msg = id =>
+      assayOverride ? `"${startCase(assayOverride)}"` : resultCategoryGroups.find(it => it.externalId === id)?.name
+
+    const del = { del: remove ? () => remove(['resultCategoryGroupId']) : undefined }
+
+    return isArray(resultCategoryGroupId) ? (
+      resultCategoryGroupId.map(id => (
+        <Btn
+          del={() => {
+            if (resultCategoryGroupId.length > 1) append({ resultCategoryGroupId: pull(resultCategoryGroupId, id) })
+            else del.del()
+          }}
+          lbl={formatMessage(messages.withResultCategoryGroup, { resultCategoryGroupName: msg(id) })}
+        />
+      ))
+    ) : (
       <Btn
-        lbl={formatMessage(messages.withResultCategoryGroup, { resultCategoryGroupName: msg })}
-        del={() => remove(['resultCategoryGroupId'])}
+        lbl={formatMessage(messages.withResultCategoryGroup, { resultCategoryGroupName: msg(resultCategoryGroupId) })}
+        {...del}
       />
     )
   }

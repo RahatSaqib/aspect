@@ -34,6 +34,9 @@ const downloadSitesResponseValidationV4 = () => {
             .allow('', null)
             .description('The name of the local geographic location where the site is located'),
           externalId: Joi.string().required().allow('', null).description('The text based natural ID of the site'),
+          sampleRegistrationAllowed: Joi.bool()
+            .required()
+            .description('Whether the user is allowed to regsiter samples from the site'),
         })
       ),
   })
