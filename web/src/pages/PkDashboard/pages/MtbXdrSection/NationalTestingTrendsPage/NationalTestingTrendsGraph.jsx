@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { FormControlLabel, Switch } from '@mui/material'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
@@ -15,8 +15,11 @@ const NationalTestingTrendsGraph = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState()
+  const [filter, setFilter] = useState({})
   const { data: assays } = useAssayList()
+
+  const onChangeState = useCallback(e => setFilter({ stateId: e.target.value }), [])
+  const onChangeLga = useCallback(e => setFilter(prev => ({ ...prev, lgaId: e.target.value })), [])
 
   return (
     <PkPage
@@ -29,22 +32,21 @@ const NationalTestingTrendsGraph = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
-            value={filter?.stateId ?? ''}
+            value={filter.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setFilter({ stateId: e.target.value })}
+            onChange={onChangeState}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter?.lgaId ?? ''}
-            stateId={filter?.stateId}
-            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
+            value={filter.lgaId ?? ''}
+            stateId={filter.stateId}
+            onChange={onChangeLga}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
     >
       <TrendInYearsAllTestsGraph
-        withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}
         filterSelection={objectToArray(filter).concat(defaultFilters)}

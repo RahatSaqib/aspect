@@ -1,42 +1,36 @@
 import React, { useMemo, useState } from 'react'
 import { Grid } from '@mui/material'
-import random from 'lodash/random'
+import isEmpty from 'lodash/isEmpty'
+import { useQuery } from 'react-query'
+import Loading from '../../../../../cleanComponents/Loading'
 import StateAutocomplete from '../../../../../cleanComponents/StateAutocomplete'
+import EmptyGraph from '../../../../../components/Graphs/EmptyData'
 import SimpleBarLine from '../../../../../components/Graphs/SimpleBarLine'
+import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { getItemsForTrendsGraph } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
-
-function generate() {
-  return ['Alabama', 'Alaska', 'California', 'Colorado'].map(i => ({
-    province: i,
-    perYear: random(100, 200),
-    monthlyAverage: random(10, 100),
-    perDay: random(1, 10),
-    trends: ['2020', '2001', '2022', '2023'].map(year => ({
-      x: year,
-      y: random(1000, 10000),
-    })),
-  }))
-}
-
-const data = generate()
 
 const ProvincialDiagnosisTrendPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [states, setState] = useState([])
-  const items = useMemo(
-    () => (states.length ? data.filter(({ province }) => states.map(({ name }) => name).includes(province)) : data),
-    [states]
+  const mergedParams = [{ assay: 'GxMtbXdr' }, { resultCategory1: 'Detected' }]
+
+  const { isLoading, data: { data = [] } = {} } = useQuery(
+    ['ProvincialDiagnosisTrendPage_Xdr', { mergedParams }],
+    async ({ queryKey: [, { mergedParams }] }) =>
+      fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-provincial', params: mergedParams })
   )
+
+  const { graphData, tableData } = useMemo(() => getItemsForTrendsGraph(data, states), [data, states])
 
   return (
     <PkPage
-      isMocked
       title={`${formatMessage(messages.TbDProvincialComparison)}`}
       filters={
         <StateAutocomplete
@@ -48,14 +42,18 @@ const ProvincialDiagnosisTrendPage = () => {
         />
       }
     >
-      <Grid container sx={{ mt: 2 }}>
-        <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
-          <SimpleBarLine data={items?.map(({ province, trends }) => ({ id: province, data: trends }))} />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <Grid container sx={{ mt: 2 }}>
+          <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
+            {graphData && !isEmpty(graphData) ? <SimpleBarLine data={graphData} /> : <EmptyGraph type="bar" />}
+          </Grid>
+          <Grid item xs={12} md={4} lg={4} container>
+            <ProvinceTrendTable rows={tableData} />
+          </Grid>
         </Grid>
-        <Grid item xs={12} md={4} lg={4} container>
-          <ProvinceTrendTable rows={items} />
-        </Grid>
-      </Grid>
+      )}
     </PkPage>
   )
 }
