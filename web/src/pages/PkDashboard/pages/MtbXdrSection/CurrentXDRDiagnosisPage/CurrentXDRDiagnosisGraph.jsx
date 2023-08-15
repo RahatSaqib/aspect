@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useQuery } from 'react-query'
 import { StateSelect, LgaSelect } from '../../../../../cleanComponents'
