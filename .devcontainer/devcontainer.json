@@ -1,0 +1,43 @@
+{
+	"name": "aspect",
+	"dockerComposeFile": "docker-compose.yml",
+	"service": "api-app",
+	"workspaceFolder": "/app",
+
+	// Use this environment variable if you need to bind mount your local source code into a new container.
+	"remoteEnv": {
+		"LOCAL_WORKSPACE_FOLDER": "/app"
+	},
+
+	// Use 'forwardPorts' to make a list of ports inside the container available locally.
+	"forwardPorts": [8000, 8080, 3306, 5672, 15672],
+
+	"portsAttributes": {
+		"8000": {
+			"label": "web-app",
+			"requireLocalPort": true
+		},
+		"8080": {
+			"label": "api-app",
+			"requireLocalPort": true
+		},
+		"3306": {
+			"label": "mysql-service",
+			"requireLocalPort": true
+		},
+		"5672": {
+			"label": "rabbitmq-service",
+			"requireLocalPort": true
+		},
+		"15672": {
+			"label": "rabbitmq-admin",
+			"requireLocalPort": true
+		}
+	}
+
+	// Use 'postCreateCommand' to run commands after the container is created.
+	// "postCreateCommand": "docker --version",
+
+	// Uncomment to connect as root instead. More info: https://aka.ms/dev-containers-non-root.
+	// "remoteUser": "root"
+}
