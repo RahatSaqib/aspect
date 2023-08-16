@@ -20,7 +20,7 @@ const NationalTestingTrendsGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.TbNationalTrend)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.TbNationalTrend)}
       filters={
         <>
           <FormControlLabel
@@ -44,6 +44,7 @@ const NationalTestingTrendsGraph = () => {
       }
     >
       <TrendInYearsAllTestsGraph
+        withTitles
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}

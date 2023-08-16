@@ -1,5 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react'
-import { Grid } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import reduce from 'lodash/reduce'
@@ -14,6 +14,8 @@ import useI18n from '../../../../hooks/useI18n'
 import { months } from '../../../../messages'
 import AnnualGraph from '../../../../pages/PkDashboard/components/AnnualGraph'
 import styles from '../styles.css'
+import messages from '../../../../pages/PkDashboard/PkDashboard.Messages'
+import GraphTitle from '../../../../pages/PkDashboard/components/GraphTitle'
 
 const cssClasses = classnames.bind(styles)
 
@@ -21,7 +23,7 @@ const maxDate = new Date()
 
 const endpointParams = [{ groupBy: 'month' }, { minDate: `${maxDate.getFullYear() - 5}-01-01` }, { maxDate }]
 
-const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelection, withAnnual }) => {
+const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelection, withAnnual, withTitles }) => {
   const { formatMessage } = useI18n()
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
@@ -70,34 +72,41 @@ const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelec
       <Grid item xs={12} md={12} lg={12}>
         <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
-            <AspectResponsiveLine
-              assaysFromState={assaysFromState}
-              config={{ id: 'tbAllTestsYearlyTrends', showLabel, showDecimals: 0 }}
-              data={graphData}
-              keys={graphKeys}
-              indexBy="month"
-              formatDate="MMM"
-              tickValuesYShape="none"
-              tickValuesXShape="all"
-              displayMethod="actual"
-              displayLegend
-              type="line-trends"
-              i18nKeys={[]}
-            />
+            <>
+              {withTitles ? <GraphTitle>{formatMessage(messages.monthlyTestingTrends)}</GraphTitle> : null}
+              <AspectResponsiveLine
+                assaysFromState={assaysFromState}
+                config={{ id: 'tbAllTestsYearlyTrends', showLabel, showDecimals: 0 }}
+                data={graphData}
+                keys={graphKeys}
+                indexBy="month"
+                formatDate="MMM"
+                tickValuesYShape="none"
+                tickValuesXShape="all"
+                displayMethod="actual"
+                displayLegend
+                type="line-trends"
+                i18nKeys={[]}
+              />
+            </>
           ) : (
             <EmptyGraph type="bar" />
           )}
         </div>
       </Grid>
     ),
-    [assaysFromState, graphData, graphKeys, showLabel]
+    [assaysFromState, graphData, graphKeys, showLabel, withTitles]
   )
 
   return isLoading ? (
     <Loading />
   ) : withAnnual ? (
     <Grid container sx={{ mt: 2 }}>
-      <AnnualGraph data={annual} showLabel={showLabel} />
+      <AnnualGraph
+        title={withTitles ? formatMessage(messages.annualTestingTrends) : null}
+        data={annual}
+        showLabel={showLabel}
+      />
       <Grid item xs={12} md={8} lg={8} container>
         {renderLineGraph()}
       </Grid>

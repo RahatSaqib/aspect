@@ -20,7 +20,7 @@ const NationalDiagnosisGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.rifCurrentDiagnosisTitle)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.nationalMtbRifDiagnosed)}
       filters={
         <>
           <FormControlLabel
@@ -44,6 +44,7 @@ const NationalDiagnosisGraph = () => {
       }
     >
       <TrendInYearsAllTestsGraph
+        withTitles
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}

@@ -20,7 +20,7 @@ const NationalDiagnosisGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.GXTbNationalDiagnosis)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.nationalMtbXdrDiagnosed)}
       filters={
         <>
           <FormControlLabel
@@ -45,6 +45,7 @@ const NationalDiagnosisGraph = () => {
     >
       <TrendInYearsAllTestsGraph
         withAnnual
+        withTitles
         assaysFromState={assays ?? []}
         showLabel={showLabel}
         filterSelection={objectToArray(filter).concat(defaultFilters)}

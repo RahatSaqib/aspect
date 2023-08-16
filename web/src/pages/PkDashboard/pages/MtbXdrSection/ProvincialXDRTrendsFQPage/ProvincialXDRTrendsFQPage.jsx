@@ -31,7 +31,7 @@ const ProvincialXDRTrendsFQPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.FQProvincialComparison)}`}
+      title={formatMessage(messages.provincialDistrictFqrDiagnosisTrends)}
       filters={
         <StateAutocomplete
           fullWidth
@@ -47,10 +47,17 @@ const ProvincialXDRTrendsFQPage = () => {
       ) : (
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
-            {graphData && !isEmpty(graphData) ? <SimpleBarLine data={graphData} /> : <EmptyGraph type="bar" />}
+            {graphData && !isEmpty(graphData) ? (
+              <SimpleBarLine title={formatMessage(messages.provincialFqrDiagnosisTrends)} data={graphData} />
+            ) : (
+              <EmptyGraph type="bar" />
+            )}
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            <ProvinceTrendTable rows={tableData} />
+            <ProvinceTrendTable
+              title={`${formatMessage(messages.provincialFqrDiagnosisTrends)} ${formatMessage(messages.currentYear)}`}
+              rows={tableData}
+            />
           </Grid>
         </Grid>
       )}

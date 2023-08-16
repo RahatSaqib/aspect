@@ -43,7 +43,7 @@ const CurrentDiagnosisGraphPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.rifCurrentDiagnosisTitle)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.peopleDiagnosedRif)}
       filters={
         <>
           <FormControlLabel

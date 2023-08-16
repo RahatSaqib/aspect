@@ -13,6 +13,102 @@ const messages = {
     },
     coverageTitle: { id: 'p.PkDashboard.coverageTitle', defaultMessage: 'Xpert MTB/RIF Coverage' },
     rifCurrentTitle: { id: 'p.PkDashboard.rifCurrentTitle', defaultMessage: 'Current Testing of MTB/RIF performed in' },
+    currentYear: {
+      id: 'p.PkDashboard.CurrentYear',
+      defaultMessage: 'current Year',
+    },
+    annualTestingTrends: {
+      id: 'p.PkDashboard.annualTestingTrends',
+      defaultMessage: 'Annual Testing Trends',
+    },
+    monthlyTestingTrends: {
+      id: 'p.PkDashboard.monthlyTestingTrends',
+      defaultMessage: 'Monthly Testing Trends',
+    },
+    peopleTestedRif: {
+      id: 'p.PkDashboard.peopleTestedRif',
+      defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
+    },
+    peopleTestedXdr: {
+      id: 'p.PkDashboard.peopleTestedXdr',
+      defaultMessage: 'People tested using MTB/XDR assay in current year',
+    },
+    peopleDiagnosedRif: {
+      id: 'p.PkDashboard.peopleDiagnosedRif',
+      defaultMessage: 'People diagnosed for TB using MTB/Rif assay in current year',
+    },
+    peopleDiagnosedXdr: {
+      id: 'p.PkDashboard.peopleDiagnosedXdr',
+      defaultMessage: 'People diagnosed using MTB/XDR assay in current year',
+    },
+    testsPerformedYear: {
+      id: 'p.PkDashboard.testsPerformedYear',
+      defaultMessage: 'Tests Performed in current year',
+    },
+    mtbRifTestingDiagnosed: {
+      id: 'p.PkDashboard.mtbRifTestingDiagnosed',
+      defaultMessage: 'TB Testing & Diagnosis Trends using MTB/Rif Assay',
+    },
+    provincialTestingTrends: {
+      id: 'p.PkDashboard.provincialTestingTrends',
+      defaultMessage: 'Provincial/District Testing Trends',
+    },
+    provincialXdrTestingTrends: {
+      id: 'p.PkDashboard.provincialXdrTestingTrends',
+      defaultMessage: 'Provincial/District Testing Trends using MTB/XDR Assay in current year',
+    },
+    provincialDiagnosisTrends: {
+      id: 'p.PkDashboard.provincialDiagnosisTrends',
+      defaultMessage: 'Provincial TB Diagnosis Trends using MTB/Rif Assay',
+    },
+    provincialDiagnosisTrendsComparison: {
+      id: 'p.PkDashboard.provincialDiagnosisTrendsComparison',
+      defaultMessage: 'Provincial Diagnosis Trends Comparison',
+    },
+    provincialXdrDiagnosisTrends: {
+      id: 'p.PkDashboard.provincialXdrDiagnosisTrends',
+      defaultMessage: 'Provincial/District Diagnosis Trends using MTB/XDR Assay',
+    },
+    provincialTestingTrendsYear: {
+      id: 'p.PkDashboard.provincialTestingTrendsYear',
+      defaultMessage: 'Provincial Testing in current year',
+    },
+    provincialDistrictFqrDiagnosisTrends: {
+      id: 'p.PkDashboard.provincialFqrDiagnosisTrends',
+      defaultMessage: 'Provincial/District FQ Diagnosis Trends',
+    },
+    provincialFqrDiagnosisTrends: {
+      id: 'p.PkDashboard.provincialFqrDiagnosisTrends',
+      defaultMessage: 'Provincial FQ Diagnosis Trends',
+    },
+    nationalMtbRifDiagnosed: {
+      id: 'p.PkDashboard.nationalMtbRifDiagnosed',
+      defaultMessage: 'National TB Diagnosis Trends using MTB/Rif Assay',
+    },
+    nationalMtbXdrDiagnosed: {
+      id: 'p.PkDashboard.nationalMtbRifDiagnosed',
+      defaultMessage: 'National TB Diagnosis Trends using MTB/XDR Assay',
+    },
+    nationalXdrTestingTrends: {
+      id: 'p.PkDashboard.nationalMtbRifDiagnosed',
+      defaultMessage: 'National Testing Trends using MTB/XDR Assay',
+    },
+    nationalFqrResistanceTrend: {
+      id: 'p.PkDashboard.nationalFqrResistanceTrend',
+      defaultMessage: 'National FQ-R Resistance Trend',
+    },
+    rrtbDiagnosisTitle: {
+      id: 'p.PkDashboard.rrtbDiagnosisTitle',
+      defaultMessage: 'Current Rifampicin Resistance Diagnosis using MTB/Rif Assay',
+    },
+    rrtbNationalDiagnosisTrendsTitle: {
+      id: 'p.PkDashboard.rrtbNationalDiagnosisTrendsTitle',
+      defaultMessage: 'National Rifampicin Resistance Diagnosis Trends',
+    },
+    provincialRRDiagnosisTrends: {
+      id: 'p.PkDashboard.provincialRRDiagnosisTrends',
+      defaultMessage: 'Provincial RR Diagnosis Trends',
+    },
     rifCurrentDiagnosisTitle: { id: 'p.PkDashboard.rifCurrentDiagnosisTitle', defaultMessage: 'TB cases diagnosed in' },
     rifCurrentRRTBDiagnosisTitle: {
       id: 'p.PkDashboard.rifCurrentRRTBDiagnosisTitle',
