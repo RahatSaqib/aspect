@@ -1,5 +1,6 @@
 const { subDays, subMonths } = require('date-fns')
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
 const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
 const { SELECT_FIELDS_UTC } = require('../query')
@@ -593,6 +594,9 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
 
 const getXdrDevicesSummary = async (dataConstraints, query) => {
   const assayIds = await allAssayToId()
+  if (!assayIds.GxMtbXdr) {
+    return Boom.badRequest('Xdr assays are not supported in this instance')
+  }
   const resultCategoryIds = await allResultCategoryToId()
   const countsBase = getResultCountBaseGroupBySiteId(assayIds, resultCategoryIds, dataConstraints, query)
 
