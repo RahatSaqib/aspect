@@ -23,6 +23,8 @@ const TEST_TYPE = {
 
 const ACKNOWLEDGED = 'Acknowledged'
 
+const FLAGGED = 'Flagged'
+
 const FOLLOW_UP_TYPES = {
   TREATMENT: 'treatment',
   OUTCOME: 'outcome',
@@ -76,6 +78,7 @@ const MOBILE_APP_ALLOWED_ASSAYS = ['GxMtbXdr', 'GxMtbRifUltra', 'GxMtbRif']
 
 module.exports = {
   ACKNOWLEDGED,
+  FLAGGED,
   MONTHS_HISTORY_TO_LOOK_UP,
   FOLLOW_UP_TYPES,
   SEVERITY_THRESHOLDS,

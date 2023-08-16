@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useQuery } from 'react-query'
 import { StateSelect, LgaSelect } from '../../../../../cleanComponents'
@@ -10,14 +10,16 @@ import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import TestsOverTimeGraphMain from '../../../../../oldPages/dashboard/Graphs/TestsOverTimeGraph/TestsOverTimeGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
-const endPointParams = [
+const defaultFilters = [
   { assay: 'GxMtbXdr' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
+  { resultCategory1: 'Detected' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
@@ -30,20 +32,9 @@ const CurrentXDRDiagnosisPage = () => {
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState([])
-  const [state, setState] = useState()
-  const [, setLga] = useState()
   const { data: assays } = useAssayList()
-
-  useEffect(() => {
-    if (assays) {
-      const tbAssays = assays.filter(a => a.assayTypeAbbreviation === 'XDR')
-      const defaultFilter = tbAssays.length > 0 ? tbAssays : assays
-      setFilter(defaultFilter)
-    }
-  }, [assays])
-
   const { data, isLoading } = useQuery(
-    ['testPerformedMonthlyPercentage', { endPointParams }],
+    ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
@@ -59,13 +50,15 @@ const CurrentXDRDiagnosisPage = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
+            value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
-            onChange={e => setLga(e.target.value)}
+            value={filter?.lgaId ?? ''}
+            stateId={filter?.stateId}
+            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
@@ -75,13 +68,7 @@ const CurrentXDRDiagnosisPage = () => {
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
-          <TestsOverTimeGraphMain
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
-          />
+          <TestsOverTimeGraphMain data={data.data} assaysFromState={assays} showLabel={showLabel} />
           <TripleCardSide
             data={[
               { label: formatMessage(messages.xdrCasesPerYear), value: `${data.totalResultsCurrentYear}` },

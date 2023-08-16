@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import filter from 'lodash/filter'
@@ -75,9 +75,11 @@ const TestsOverTimeGraphHalf = ({ assaysFromState, data, endPointParams, showLab
 
   useEffect(() => {
     const grouped = formatRawData()
-    if (grouped) {
+    if (grouped && filterSelection) {
       const groupedFiltered = filterFunction(grouped, filterSelection)
       setNewData(groupedFiltered)
+    } else {
+      setNewData(grouped)
     }
   }, [data, filterSelection])
 

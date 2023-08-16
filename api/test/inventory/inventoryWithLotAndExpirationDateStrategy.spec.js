@@ -45,6 +45,7 @@ describe('Inventory Routes', () => {
   const getScopedSites = async () => {
     const dataConstraints = await getConstraints({ name: 'admin' })
     const [site1, site2] = await knex('Site as s')
+      .join('SiteType as type', 's.siteTypeId', 'type.id')
       .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
       .leftOuterJoin('State as st', 'g.stateId', 'st.id')
       .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
@@ -53,6 +54,7 @@ describe('Inventory Routes', () => {
         site: 's',
         geography: 'g',
       })
+      .where('type.externalId', 'lab')
       .select('s.*')
 
     await knex('Site').insert([
@@ -258,7 +260,7 @@ describe('Inventory Routes', () => {
         })
 
         it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 1', async () => {
-          const res = await server.get(`${path}?size=500`).set('Authorization', `Bearer ${shared.token}`)
+          const res = await server.get(`${path}?siteName=test%20site`).set('Authorization', `Bearer ${shared.token}`)
 
           assertBodyAndInventoryItems(res)
 
@@ -292,7 +294,9 @@ describe('Inventory Routes', () => {
         })
 
         it('should return a list of inventory items, apply in-query ordering by consumable name', async () => {
-          const res = await server.get(`${path}?sortCol=consumableName`).set('Authorization', `Bearer ${shared.token}`)
+          const res = await server
+            .get(`${path}?siteName=test%20site&sortCol=consumableName`)
+            .set('Authorization', `Bearer ${shared.token}`)
 
           assert.equal(res.body.data[0].consumableName, res.body.data[1].consumableName)
           assert.isTrue(res.body.data[0].consumableName < res.body.data[res.body.data.length - 1].consumableName)
@@ -355,7 +359,7 @@ describe('Inventory Routes', () => {
           assert.equal(res.status, 200)
           res.body.data.forEach(inventoryItem => {
             assert.equal(inventoryItem.consumableId, consumableId)
-            assert.includes(inventoryItem.siteName.toLowerCase(), siteNameFilter.toLowerCase())
+            assert.include(inventoryItem.siteName.toLowerCase(), siteNameFilter.toLowerCase())
           })
         })
       })
@@ -414,7 +418,7 @@ describe('Inventory Routes', () => {
       })
 
       it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 2', async () => {
-        const res = await server.get(`${path}`).set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(`${path}&siteName=test%20site`).set('Authorization', `Bearer ${shared.token}`)
         assertBodyAndInventoryItems(res)
         const inventoryItems = res.body.data.filter(ii => ii.siteId === site1Id && ii.consumableId === consumableId)
         // Only one row per site and consumable
