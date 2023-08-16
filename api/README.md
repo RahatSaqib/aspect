@@ -65,8 +65,21 @@ ALTER USER 'username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'pass
 flush privileges;
 
 # MySQL set-mode & log_bin_trust_function_creators, open the local MySQL config (MacOS: /etc/my.cnf, WAMP: C:\wamp64\bin\mysql\mysql8.x.x\my.ini) and add these settings.
+[mysqld]
 sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
 log_bin_trust_function_creators=1
+
+# Create new db user
+CREATE USER 'aspectapi'@'localhost' IDENTIFIED BY 'mypassword';
+
+# Grant user full privilege
+GRANT ALL PRIVILEGES ON *.* TO 'aspectapi'@'localhost';
+
+# Apply changes
+FLUSH PRIVILEGES;
+
+# create database
+yarn run db:recreate
 
 # Run migrations
 yarn run knex migrate:latest
