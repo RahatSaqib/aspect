@@ -92,6 +92,10 @@ const messages = {
       id: 'p.PkDashboard.TProvincialComparisonPending',
       defaultMessage: 'Provincial Trend Comparison (Pending)',
     },
+    XDRTestingDiagnosisTrend: {
+      id: 'p.PkDashboard.XDRTestingDiagnosisTrend',
+      defaultMessage: 'XDR Testing and Diagnosis Trend',
+    },
     DCurrent: { id: 'p.PkDashboard.DCurrent', defaultMessage: 'Current MTB Detection' },
     DNationalTrend: { id: 'p.PkDashboard.DNationalTrend', defaultMessage: 'National TB Diagnosis Trends' },
     DProvincialComparison: {
