@@ -116,7 +116,7 @@ const messages = {
     titlecoverage: { id: 'p.PkDashboard.titlecoverage', defaultMessage: 'Coverage' },
     coverageperformance: { id: 'p.PkDashboard.coverageperformance', defaultMessage: 'Performance' },
     genExpert: { id: 'p.PkDashboard.genExpertPending', defaultMessage: 'GeneXpert Device Coverage (Pending)' },
-    utilization: { id: 'p.PkDashboard.utilization', defaultMessage: 'Utilization' },
+    utilization: { id: 'p.PkDashboard.utilizationPending', defaultMessage: 'Utilization (Pending)' },
     errorRate: { id: 'p.PkDashboard.errorRate', defaultMessage: 'Error Rate' },
     // 4th column
     titleinventory: { id: 'p.PkDashboard.titleinventory', defaultMessage: 'Inventory' },
