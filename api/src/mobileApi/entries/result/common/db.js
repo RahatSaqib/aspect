@@ -109,6 +109,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'resultWorkflowLog.reason as resultWorkflowStatusReason',
       'sample.externalId as sampleExternalId',
       'sample.id as sampleId',
+      'sample.sampleData',
       'sample.sampleStatus as sampleStatus',
       'sample.updatedOn as sampleUpdatedOn',
       'sample.collectedOn as sampleCollectedOn',

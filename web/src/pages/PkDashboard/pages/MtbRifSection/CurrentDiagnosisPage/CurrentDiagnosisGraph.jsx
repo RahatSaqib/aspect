@@ -15,13 +15,12 @@ import { useMtpRifResults } from '../../../hooks/useMtpRifResults'
 import messages from '../../../PkDashboard.Messages'
 import TestsOverTimeGraphHalf from './CurrentDiagnosisGraph.Half'
 
-const minDate = getTimePeriod(12, 'months', 'yyyy-MM-dd')
-
-const maxDate = getTimePeriod(0, 'day', 'yyyy-MM-dd')
-
-const mainGraphParams = [
+const defaultFilters = [
+  { assay: 'GxMtbRif' },
+  { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
+  { resultCategory1: 'Detected' },
   { minDate },
   { maxDate },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
