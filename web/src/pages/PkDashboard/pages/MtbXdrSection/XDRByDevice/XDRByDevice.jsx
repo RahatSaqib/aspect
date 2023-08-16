@@ -87,7 +87,7 @@ const XdrByDevice = () => {
 
   return (
     <>
-      <DetailHeader name={formatMessage(messages.XDRAssayResultsSummary)} disableBack />
+      <DetailHeader name={formatMessage(messages.XDRAssayResultsSummary)} />
       <div className={cssClasses('Container')}>
         <Helmet title={formatMessage(messages.XDRAssayResultsSummary)} />
         <XDRByDeviceFilter />
