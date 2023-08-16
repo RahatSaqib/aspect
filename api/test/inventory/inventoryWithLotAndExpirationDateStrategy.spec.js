@@ -418,7 +418,7 @@ describe('Inventory Routes', () => {
       })
 
       it('should return a list of inventory items, correctly calculate days stock left and stock to be wasted 2', async () => {
-        const res = await server.get(`${path}?siteName=test%20site`).set('Authorization', `Bearer ${shared.token}`)
+        const res = await server.get(`${path}&siteName=test%20site`).set('Authorization', `Bearer ${shared.token}`)
         assertBodyAndInventoryItems(res)
         const inventoryItems = res.body.data.filter(ii => ii.siteId === site1Id && ii.consumableId === consumableId)
         // Only one row per site and consumable
