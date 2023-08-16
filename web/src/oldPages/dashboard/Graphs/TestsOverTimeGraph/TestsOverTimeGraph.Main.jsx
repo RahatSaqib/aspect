@@ -81,9 +81,11 @@ const TestsOverTimeGraphMain = ({ assaysFromState, data, endPointParams, showLab
 
   useEffect(() => {
     const grouped = formatRawData()
-    if (grouped) {
+    if (grouped && filterSelection) {
       const groupedFiltered = filterFunction(grouped, filterSelection)
       setNewData(groupedFiltered)
+    } else {
+      setNewData(grouped)
     }
   }, [data, filterSelection])
 
