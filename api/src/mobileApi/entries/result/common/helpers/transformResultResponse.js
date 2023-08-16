@@ -12,12 +12,13 @@ const { transformSampleData } = require('./transformSample')
 const { transformTestInformation } = require('./transformTestInformation')
 const { transformTreatmentStatus } = require('./transformTreatmentStatus')
 
-function transformResultResponse(data, followUps, comments, acknowledgements) {
+function transformResultResponse(data, followUps, comments, acknowledgements, flags, userSiteIds) {
   if (_.isEmpty(data)) return
   return _.map(data, result => {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
     const patientData = JSON.parse(result?.patientData)
     const acknowledgement = acknowledgements?.find(ack => ack.resultId === result.id)
+    const resultFlags = flags?.filter(flag => flag.resultId === result.id)
     const resultRequiresTreatment = !!(
       result?.resultCategoryAssay1RequiresTreatment || result?.resultCategoryAssay2RequiresTreatment
     )
@@ -37,19 +38,29 @@ function transformResultResponse(data, followUps, comments, acknowledgements) {
       clinicalResponse,
       comments: extractFromDataById(comments, 'resultId', result.id),
       followUps: resultFollowUps,
-      history: buildHistoryTimeline(result, resultFollowUps, comments),
+      history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
       patientId: patientData?.id || null,
       sample: transformSampleData(result),
       resultRequiresTreatment,
       ...clinicalFollowUpFlags,
       noFollowUpPossibleComment,
-      searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags),
+      searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags, userSiteIds),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),
-      transferStatus: generateTransferStatus(result),
-      treatmentStatus: transformTreatmentStatus(result, resultFollowUps),
+      transferStatus: generateTransferStatus(result, userSiteIds),
+      treatmentStatus: transformTreatmentStatus(result, resultFollowUps, userSiteIds),
       updatedOn: getResultUpdatedOnDate(result, resultFollowUps, comments),
+      reportableSite: {
+        id: result.reportableSiteId,
+        name: result.reportableSiteName,
+        externalId: result.reportableSiteExternalId,
+      },
+      laboratorySite: {
+        id: result.laboratorySiteId,
+        name: result.laboratorySiteName,
+        externalId: result.laboratorySiteExternalId,
+      },
     }
   })
 }

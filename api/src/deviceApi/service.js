@@ -53,6 +53,7 @@ const getResultHandler = deviceApiHandler(getDeviceDataWithContext, {
 })
 
 const addDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext)
+const addDeviceDataFastHandler = deviceApiHandler(addDeviceDataWithContext, {}, true)
 
 const addPluginDeviceDataHandler = deviceApiHandler(addDeviceDataWithContext, {
   transformInitialPayload: true,
@@ -112,7 +113,7 @@ async function getHandlerOptionsFromRequest(
   return _.merge({}, defaultHandlerOptions, handlerOptionGroups[handler.name] || {})
 }
 
-function deviceApiHandler(handler, defaultHandlerOptions = {}) {
+function deviceApiHandler(handler, defaultHandlerOptions = {}, isFastImport = false) {
   return asyncHandler(async request => {
     logger.debug('createDeviceApiContext', {
       reLabel: 'deviceApi:createDeviceApiContext',
@@ -162,10 +163,13 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
     await context.messageContext.transact(async knex => {
       context.knex = knex
       context.deviceLogId = deviceLogId
+      context.isFastImport = isFastImport
 
       // update timestamps as necessary for original device
       const originalDeviceId = context.device.id
-      await updateDeviceData(context, handlerOptions, remoteAddress)
+      if (!isFastImport) {
+        await updateDeviceData(context, handlerOptions, remoteAddress)
+      }
 
       // invoke delegate handler
       response = await handler(context)
@@ -174,13 +178,15 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}) {
       // for new device as necessary
       if (context.device.id !== originalDeviceId) {
         handlerOptions = await getHandlerOptionsFromContext(handler, context, defaultHandlerOptions)
-        await updateDeviceData(context, handlerOptions, remoteAddress)
+        if (!isFastImport) {
+          await updateDeviceData(context, handlerOptions, remoteAddress)
+        }
       }
 
       // Update DeviceLog with changes added to context when calling handler
       if (deviceLogId !== null) {
         const { deviceLogUpdate } = context
-        if (deviceLogUpdate != null) {
+        if (deviceLogUpdate != null && !isFastImport) {
           await knex('DeviceLog').where({ id: deviceLogId }).update(deviceLogUpdate)
         }
       }
@@ -532,7 +538,9 @@ async function updateDeviceConfigurationWithContext(context) {
   const preProcess = await loadPlugin(plugins, 'preProcessUpdateDeviceConfiguration')
   await preProcess(context)
 
-  await updateDeviceConfiguration(knex, deviceId, payload, now, messageContext)
+  if (!context.isFastImport) {
+    await updateDeviceConfiguration(knex, deviceId, payload, now, messageContext)
+  }
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
   const postProcess = await loadPlugin(plugins, 'postProcessUpdateDeviceConfiguration')
   const postProcessResult = await postProcess(context)
@@ -673,7 +681,7 @@ async function mergeResultWithContext(context) {
   // const result = plainToDeepObjectResult(plainResult)
   // const previousResult = plainToDeepObjectResult(plainPreviousResult)
 
-  if (shouldTriggerResultNotification) {
+  if (shouldTriggerResultNotification && !context.isFastImport) {
     context.messageContext.bindActionCreators({ resultReadyForNotification })
     const isResultUpdated = !!plainPreviousResult
     context.messageContext.resultReadyForNotification(plainResult.id, isResultUpdated)
@@ -1190,6 +1198,7 @@ module.exports = {
   getDeviceOperationHandler,
   getResultHandler,
   addDeviceDataHandler,
+  addDeviceDataFastHandler,
   addPluginDeviceDataHandler,
   updateDeviceConfigurationHandler,
   addDeviceOperationHandler,

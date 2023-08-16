@@ -340,13 +340,13 @@ const SiteForm = ({ site, onLatLongChange }) => {
               </TextField>
             </span>
           </div>
-          {isNew ? null : (
-            <SiteTagInput
-              label={formatMessage(messages.fieldTags)}
-              onChange={tags => setEditSite(prv => ({ ...prv, tags }))}
-              value={editSite?.tags ?? []}
-            />
-          )}
+
+          <SiteTagInput
+            label={formatMessage(messages.fieldTags)}
+            onChange={tags => setEditSite(prv => ({ ...prv, tags }))}
+            value={editSite?.tags ?? []}
+          />
+
           <div className={cssClasses('container', 'coordinate')}>
             <TextField
               label={formatMessage(messages.fieldNotes)}
