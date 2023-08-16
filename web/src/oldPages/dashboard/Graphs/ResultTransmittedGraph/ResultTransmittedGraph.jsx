@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import { PeriodSelector, ErrorBoundary } from '../../../../cleanComponents'
-import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
+import { getTimePeriod, formatDateToYYYYMMDD } from '../../../../components/Graphs/Helpers/Formatters'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages } from '../../../../messages'
 import styles from '../styles.css'
@@ -49,12 +49,8 @@ const ResultTransmittedGraph = () => {
                         onChange={dateValues => {
                           setFilter({
                             ...filter,
-                            minDate: dateValues.minDate
-                              ? dateValues.minDate.toISOString().split('T')[0]
-                              : filter.minDate,
-                            maxDate: dateValues.maxDate
-                              ? dateValues.maxDate.toISOString().split('T')[0]
-                              : filter.minDate,
+                            minDate: dateValues.minDate ? formatDateToYYYYMMDD(dateValues.minDate) : filter.minDate,
+                            maxDate: dateValues.maxDate ? formatDateToYYYYMMDD(dateValues.maxDate) : filter.minDate,
                           })
                         }}
                       />
