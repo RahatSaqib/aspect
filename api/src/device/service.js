@@ -720,13 +720,7 @@ async function onResultLogged(action, { messageContext }) {
 async function onDeviceMaintenanceResolved(action, { messageContext }) {
   const { deviceId } = action
   if (deviceId) {
-    return automaticallySetDeviceMaintenanceStatus(
-      deviceId,
-      startOfTodayUtc(),
-      'reportedActive',
-      action,
-      messageContext
-    )
+    return automaticallySetDeviceMaintenanceStatus(deviceId, startOfTodayUtc(), 'active', action, messageContext)
   }
   return Promise.resolve()
 }
