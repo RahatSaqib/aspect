@@ -39,7 +39,6 @@ const {
   deleteResultNote,
   transferResult,
   updateTransferNotification,
-  clinicalIndicatorAggregations,
   followUpAggregations,
   createResult,
   listSampleTypes,
@@ -55,6 +54,8 @@ const { getResultsOverview } = require('./dashboard/getResultsOverview')
 const { xdrDevicesSummaryList } = require('./xdrDevicesSummaryList')
 const { listGx10CTrendsNational, listGx10CTrendsProvincial } = require('./serviceReport/trendReports')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const { getTbTestingDiagnosisTrend } = require('./dashboard/getTbTestingDiagnosisTrend')
+const { clinicalIndicatorAggregations } = require('./common/logic')
 
 const configs = {
   trendInQuarters: {
@@ -1201,6 +1202,31 @@ const routes = [
                   ),
               })
             ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/result/tb-testing-diagnosis-trend',
+    handler: asyncHandler(getTbTestingDiagnosisTrend),
+    config: {
+      description: 'TB Testing Diagnosis Trend Screen',
+      notes: 'TB Testing Diagnosis Trend Screen for PK Dashboard',
+      auth: { scope: ['dashboard', 'result'] },
+      validate: {
+        query: {
+          ...getResultAggregationsValidate(clinicalIndicatorsValidGroups),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          grouped: Joi.array().required().description('List of prepared data for the graph'),
+          keysFromGrouped: Joi.array().required().description('List of keys for series'),
+          i18nKeys: Joi.object().required().description('Intl keys for axis X'),
         }),
       },
     },
