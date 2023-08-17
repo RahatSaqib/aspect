@@ -332,7 +332,6 @@ async function getExistingSample(knex, payload, existingResult, opts) {
         .update({
           externalId: _.get(payload, 'sample.id', existingSample.externalId),
           collectedOn: payload.sample.collectedOn || existingSample.collectedOn || null,
-          // collectedOn: _.get(payload, 'sample.collectedOn', _.get(existingSample, 'collectedOn', null)),
           sampleTypeId: payloadSampleTypeId ? sampleTypeId : existingSample.sampleTypeId,
           originSiteId: payloadOriginSiteId ? sampleOriginSiteId : existingSample.originSiteId,
         })
