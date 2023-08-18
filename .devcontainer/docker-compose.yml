@@ -7,7 +7,7 @@ services:
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
-      yarn install
+      yarn install --frozen-lockfile
       yarn db:reseed
       yarn start
     volumes:
@@ -23,7 +23,7 @@ services:
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
-      yarn install
+      yarn install --frozen-lockfile
       yarn start
     volumes:
       - ../:/app
