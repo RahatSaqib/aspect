@@ -7,6 +7,7 @@ services:
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
+      cp -n .env.example .env
       yarn install --frozen-lockfile
       yarn db:reseed
       yarn start
@@ -15,6 +16,8 @@ services:
     depends_on:
       - mysql
       - rabbitmq
+    env_file:
+      - env.yml
     network_mode: service:mysql
 
   web-app:
