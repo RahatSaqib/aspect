@@ -41,8 +41,12 @@ async function activityOverTimeDashboard(request) {
     .whereNot('da.token', 'decommissioned')
     // explicitly limit device type categories (skip Connector)
     .whereIn('dtc.name', ['Lab', 'Integrated', 'Information System'])
-    // only for Cepheid GX
-    .where('dt.externalId', 'CepheidGeneXpert')
+    /**
+     * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
+     * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
+     * in `api/src/auth/constraints.js` where user permitted deviceType is used
+     */
+    .whereNot('dt.externalId', 'GxAlert')
     // apply constraints
     .modify(addConstraints, dataConstraints, {
       site: 's',
