@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const format = require('date-fns/format')
 const { extractFromDataById } = require('./extractFromDataById')
 const { generateTransferStatus } = require('./generateTransferStatus')
 
@@ -10,7 +11,7 @@ const { generateTransferStatus } = require('./generateTransferStatus')
  * @returns {array} - An array of objects containing the history timeline, sorted by update date in descending order.
  */
 
-function buildHistoryTimeline(data, followUps, userSiteIds) {
+function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
@@ -48,16 +49,23 @@ function buildHistoryTimeline(data, followUps, userSiteIds) {
     })
   }
 
-  _.map(resultFollowUps, followUp =>
-    output.push({
+  _.map(resultFollowUps, followUp => {
+    const followUpHistoryItem = {
       id: followUp.id,
       resultId: data.id,
       event: 'followUpCreated',
       name: followUp.followUpName,
       siteName: data?.reportableSiteName,
       updatedOn: followUp.updatedOn,
-    })
-  )
+    }
+    const matchingFlag = resultFlags?.find(
+      rf => format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
+    )
+    if (matchingFlag?.reason) {
+      followUpHistoryItem.reason = matchingFlag.reason
+    }
+    output.push(followUpHistoryItem)
+  })
 
   return _.sortBy(output, ['updatedOn']).reverse()
 }

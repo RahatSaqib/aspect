@@ -84,10 +84,10 @@ const DailyStatus = () => {
             </TextField>
             <DailyStatusFilters toggleAll={toggleAll} statuses={visibleStatuses} action={toggleStatusVisibility} />
             <DateRanges data={dateRanges} consts={GRAPH_CONSTS} />
-            {devicesDaily.map(({ id: deviceId, name, shortName, maintenanceStatusHistory, totalResults }) => (
+            {devicesDaily.map(({ id: deviceId, name, maintenanceStatusHistory, totalResults }) => (
               <DailyStatusClinic
                 key={deviceId}
-                name={shortName || name}
+                name={name}
                 data={maintenanceStatusHistory}
                 total={totalResults}
                 statuses={visibleStatuses}

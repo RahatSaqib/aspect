@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useQuery } from 'react-query'
 import { StateSelect, LgaSelect } from '../../../../../cleanComponents'
@@ -10,11 +10,12 @@ import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import TestsOverTimeGraphMain from '../../../../../oldPages/dashboard/Graphs/TestsOverTimeGraph/TestsOverTimeGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
-const endPointParams = [
+const defaultFilters = [
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
@@ -32,21 +33,10 @@ const CurrentDiagnosisGraphPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState([])
-  const [state, setState] = useState()
-  const [, setLga] = useState()
+  const [filter, setFilter] = useState({})
   const { data: assays } = useAssayList()
-
-  useEffect(() => {
-    if (assays) {
-      const tbAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
-      const defaultFilter = tbAssays.length > 0 ? tbAssays : assays
-      setFilter(defaultFilter)
-    }
-  }, [assays])
-
   const { data, isLoading } = useQuery(
-    ['testPerformedMonthlyPercentage', { endPointParams }],
+    ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
@@ -62,13 +52,15 @@ const CurrentDiagnosisGraphPage = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
+            value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
-            onChange={e => setLga(e.target.value)}
+            value={filter?.lgaId ?? ''}
+            stateId={filter?.stateId}
+            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
@@ -78,13 +70,7 @@ const CurrentDiagnosisGraphPage = () => {
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
-          <TestsOverTimeGraphMain
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
-          />
+          <TestsOverTimeGraphMain data={data.data} assaysFromState={assays} showLabel={showLabel} />
           <TripleCardSide
             data={[
               { label: formatMessage(messages.RRPerYear), value: `${data.totalResultsCurrentYear}` },
