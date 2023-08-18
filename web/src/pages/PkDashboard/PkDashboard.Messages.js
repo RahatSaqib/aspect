@@ -47,7 +47,7 @@ const messages = {
     mtbRifTbTesting: { id: 'p.PkDashboard.mtbRifTbTesting', defaultMessage: 'TB Testing' },
     mtbRifTbDiagnosis: { id: 'p.PkDashboard.mtbRifTbDiagnosis', defaultMessage: 'TB Diagnosis' },
     mtbRifRrtbDiagnosis: { id: 'p.PkDashboard.mtbRifRrtbDiagnosis', defaultMessage: 'RRTB Diagnosis' },
-    TbCurrent: { id: 'p.PkDashboard.TbCurrent', defaultMessage: 'Current TB Testing Trends' },
+    TbCurrent: { id: 'p.PkDashboard.TbCurrent', defaultMessage: 'Current TB Testing' },
     TbNationalTrend: { id: 'p.PkDashboard.TbNationalTrend', defaultMessage: 'National TB Testing Trends' },
     GXTbNationalTrend: { id: 'p.PkDashboard.GXTbNationalTrend', defaultMessage: 'National GX-10C Testing Trends' },
     GXTbNationalDiagnosis: {
@@ -69,7 +69,7 @@ const messages = {
     RRNationalTrend: { id: 'p.PkDashboard.RRNationalTrend', defaultMessage: 'National RRTB Trends' },
     RRProvincialComparison: {
       id: 'p.PkDashboard.RRProvincialComparisonPending',
-      defaultMessage: 'Provincial RRTB Diagnosis Trends Comparison (Pending)',
+      defaultMessage: 'Provincial RRTB Diagnosis Trends (Pending)',
     },
     RRTestingDiagnosis: { id: 'p.PkDashboard.RRTestingDiagnosis', defaultMessage: 'TB & RRTB Diagnosis' },
 
@@ -90,7 +90,7 @@ const messages = {
     TNationalTrend: { id: 'p.PkDashboard.TNationalTrend', defaultMessage: 'National Testing Trends' },
     TProvincialComparison: {
       id: 'p.PkDashboard.TProvincialComparisonPending',
-      defaultMessage: 'Provincial Trend Comparison (Pending)',
+      defaultMessage: 'Provincial Testing Trend (Pending)',
     },
     XDRTestingDiagnosisTrend: {
       id: 'p.PkDashboard.XDRTestingDiagnosisTrend',
@@ -104,13 +104,13 @@ const messages = {
     },
     DTestingDiagnosis: {
       id: 'p.PkDashboard.DTestingDiagnosis',
-      defaultMessage: 'GX-10C Testing & Diagnosis',
+      defaultMessage: 'FQ & INH Testing & Diagnosis',
     },
-    FQCurrent: { id: 'p.PkDashboard.FQCurrent', defaultMessage: 'Current FQ Trends' },
-    FQNationalTrend: { id: 'p.PkDashboard.FQNationalTrend', defaultMessage: 'National FQ Trend' },
+    FQCurrent: { id: 'p.PkDashboard.FQCurrent', defaultMessage: 'Current FQ Detection' },
+    FQNationalTrend: { id: 'p.PkDashboard.FQNationalTrend', defaultMessage: 'National FQ Resistance Trend' },
     FQProvincialComparison: {
       id: 'p.PkDashboard.FQProvincialComparison',
-      defaultMessage: 'Provincial FQ trends Comparison',
+      defaultMessage: 'Provincial FQ Diagnosis Trends',
     },
     // 3rd column
     titlecoverage: { id: 'p.PkDashboard.titlecoverage', defaultMessage: 'Coverage' },
@@ -123,8 +123,8 @@ const messages = {
     overview: { id: 'p.PkDashboard.overview', defaultMessage: 'Inventory Overview' },
     // 5th column
     titleother: { id: 'p.PkDashboard.titleother', defaultMessage: 'Other' },
-    covid: { id: 'p.PkDashboard.covidPending', defaultMessage: 'Covid (Pending)' },
-    hiv: { id: 'p.PkDashboard.hivPending', defaultMessage: 'Hiv (Pending)' },
+    covid: { id: 'p.PkDashboard.covidPending', defaultMessage: 'Covid Testing (Pending)' },
+    hiv: { id: 'p.PkDashboard.hivPending', defaultMessage: 'HIV (Pending)' },
     incompleteScreen: { id: 'p.PkDashboard.incompleteScreen', defaultMessage: 'Screen is not yet complete' },
     date: {
       id: 'forms.formSectionHeader.date',
