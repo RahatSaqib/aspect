@@ -9,6 +9,7 @@ const { getDatesFromQuery } = require('../../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { pageParams, sortParams } = require('../../db')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -713,6 +714,136 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
   return { total: totals.totalRecords, data, length: data.length }
 }
 
+async function processGroupedQuery(resultQuery, groupBy, dateColumn = 'IFNULL(r.endedOn, r.startedOn)') {
+  // handle possible groups:
+  const paramToDb = {
+    resultCategory1: ['rc1.externalId as resultCategory1', 'rc1.i18nKey as resultCategory1I18nKey '],
+    resultCategory2: ['rc2.externalId as resultCategory2', 'rc2.i18nKey as resultCategory2I18nKey '],
+    assay: ['a.externalId as assay', 'a.i18nKey as assayI18nKey'],
+
+    week: knex.raw(`DATE_FORMAT(${dateColumn}, "%x-%v") as week_value`),
+    month: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m") as month_value`),
+    quarter: knex.raw(`CONCAT( YEAR(${dateColumn}),'-',QUARTER(${dateColumn}) ) as quarter_value`),
+    year: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y") as year_value`),
+    day: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m-%d") as day_value`),
+
+    gender: knex.raw('replace(r.patientData ->> "$.gender", "null", null) as gender'),
+    age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
+    state: 'st.name as state',
+    followUp: [`fu.externalId as followUp`, `fu.i18nKey as followUpI18nKey`],
+  }
+
+  const reservedWords = ['day', 'month', 'quarter', 'week', 'year']
+
+  groupBy.forEach(g => {
+    resultQuery.modify(qb => {
+      const name = reservedWords.includes(g) ? `${g}_value` : g
+      qb.select(paramToDb[g])
+      qb.groupBy(name)
+      qb.orderBy(name)
+    })
+  })
+
+  const data = (await resultQuery).map(item => {
+    groupBy.forEach(g => {
+      if (reservedWords.includes(g)) {
+        // set value for originally intended prop name and delete temporal prop
+        item[g] = item[`${g}_value`]
+        delete item[`${g}_value`]
+      }
+    })
+    return item
+  })
+
+  return data
+}
+
+function getClinicalIndicatorQueryForFactTable(dataConstraints, assay, groupBy, query) {
+  return getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    assay,
+    query,
+  }).where(function () {
+    // skip filtering by 'rca.reportable' if grouping by 'assay'
+    if (!groupBy.includes('assay')) {
+      this.where('rca.reportable', true)
+    }
+  })
+}
+
+function getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupBy, query) {
+  return knex('Result as r')
+    .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('Site as s', 's.id', 'r.siteId')
+    .innerJoin('Assay as a', 'a.id', 'r.assayId')
+    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+    .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
+    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'st.id', 'g.stateId')
+    .innerJoin('ResultCategoryAssay as rca', function () {
+      this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
+    })
+    .modify(addConstraints, dataConstraints, {
+      assay: 'a',
+      assayType: 'at',
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      result: 'r',
+    })
+    .modify(filterParams, query, {
+      assay: 'a.externalId',
+      countryId: 'g.countryId',
+      partnerId: 'g.partnerId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+      deviceName: 'd.name',
+      deviceType: 'dt.externalId',
+    })
+    .modify(qb => {
+      if (query.minDate) {
+        qb.where('r.startedOn', '>=', query.minDate)
+      }
+      if (query.maxDate) {
+        qb.where('r.startedOn', '<=', query.maxDate)
+      }
+      if (!query.assay && assay) {
+        qb.whereIn('a.externalId', assay)
+      }
+      if (query.assayType) {
+        qb.where('at.externalId', '=', query.assayType)
+      }
+      if (query.resultCategory1) {
+        qb.where('rc1.externalId', '=', query.resultCategory1)
+      }
+      if (query.resultCategory2) {
+        qb.where('rc2.externalId', '=', query.resultCategory2)
+      }
+      if (query.resistance) {
+        qb.whereRaw(`
+      JSON_SEARCH(
+        r.resultData ->> '$.detectedResistance[*]',
+        'one',
+        '${query.resistance}'
+      ) IS NOT NULL
+    `)
+      }
+    })
+    .where(function () {
+      // skip filtering by 'rca.reportable' if grouping by 'assay'
+      if (!groupBy.includes('assay')) {
+        this.where('rca.reportable', true)
+      }
+    })
+    .orderBy('r.startedOn', 'r.endedOn')
+    .count('r.id as cnt')
+}
+
 module.exports = {
   getResultByResultId,
   getQueryForResultsListAndExport,
@@ -723,4 +854,7 @@ module.exports = {
   getCustomFieldsForResult,
   getXdrDevicesSummary,
   getXdrResultCountBase,
+  processGroupedQuery,
+  getClinicalIndicatorQueryForFactTable,
+  getClinicalIndicatorQueryForResultsTable,
 }
