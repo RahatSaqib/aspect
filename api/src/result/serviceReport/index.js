@@ -59,6 +59,7 @@ async function getAllResultsForExport(auth, query) {
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
   const columnsFromResultForms = await getColumnsFromResultForms(props)
+
   const columns = [
     ..._.map(extraColumns, column => ({
       key: column.db,
@@ -84,6 +85,12 @@ async function getAllResultsForExport(auth, query) {
     { key: 'errorNotes', header: 'Error notes' },
     { key: 'notes', header: 'Notes' },
     { key: 'assayName', header: 'Assay' },
+    { key: 'followUpName', header: 'Follow Up' },
+    { key: 'followUpDate', header: 'Follow Up Date' },
+    { key: 'followUpComment', header: 'Follow Up Comment' },
+    { key: 'followUpStatus', header: 'Follow Up Status' },
+    { key: 'recordedInRegister', header: 'Recorded in Register' },
+
     // dynamic columns from different schema json fields
     ...columnsFromAssaySchema,
     ...columnsFromResultForms,
@@ -106,7 +113,7 @@ async function getAllResultsForExport(auth, query) {
       { key: 'assayName', header: 'Assay' },
       { key: 'errorCode', header: 'Error Code' },
       { key: 'resultWorkflowStatus', header: 'Workflow Status' },
-      { key: 'resultTreatmentStatus', header: 'Treatment Status' },
+      // { key: 'resultTreatmentStatus', header: 'Treatment Status' },
       { key: 'patientId', header: 'Patient Id' },
     ],
     dataSelector: (
