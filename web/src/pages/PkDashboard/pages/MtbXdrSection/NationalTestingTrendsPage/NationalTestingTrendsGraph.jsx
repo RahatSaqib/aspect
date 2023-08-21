@@ -49,7 +49,8 @@ const NationalTestingTrendsGraph = () => {
       <TrendInYearsAllTestsGraph
         assaysFromState={assays ?? []}
         showLabel={showLabel}
-        withTitles
+        yearTitle={formatMessage(messages.annualTestingTrends)}
+        monthTitle={formatMessage(messages.monthlyTestingTrends)}
         filterSelection={objectToArray(filter).concat(defaultFilters)}
       />
     </PkPage>

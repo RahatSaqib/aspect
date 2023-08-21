@@ -13,9 +13,8 @@ import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
 import { months } from '../../../../messages'
 import AnnualGraph from '../../../../pages/PkDashboard/components/AnnualGraph'
-import styles from '../styles.css'
-import messages from '../../../../pages/PkDashboard/PkDashboard.Messages'
 import GraphTitle from '../../../../pages/PkDashboard/components/GraphTitle'
+import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -23,7 +22,14 @@ const maxDate = new Date()
 
 const endpointParams = [{ groupBy: 'month' }, { minDate: `${maxDate.getFullYear() - 5}-01-01` }, { maxDate }]
 
-const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelection, withAnnual, withTitles }) => {
+const TrendInYearsAllTestsGraphMain = ({
+  assaysFromState,
+  showLabel,
+  filterSelection,
+  withAnnual,
+  monthTitle,
+  yearTitle,
+}) => {
   const { formatMessage } = useI18n()
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
@@ -73,7 +79,7 @@ const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelec
         <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
             <>
-              {withTitles ? <GraphTitle>{formatMessage(messages.monthlyTestingTrends)}</GraphTitle> : null}
+              {monthTitle ? <GraphTitle>{monthTitle}</GraphTitle> : null}
               <AspectResponsiveLine
                 assaysFromState={assaysFromState}
                 config={{ id: 'tbAllTestsYearlyTrends', showLabel, showDecimals: 0 }}
@@ -95,18 +101,14 @@ const TrendInYearsAllTestsGraphMain = ({ assaysFromState, showLabel, filterSelec
         </div>
       </Grid>
     ),
-    [assaysFromState, graphData, graphKeys, showLabel, withTitles]
+    [assaysFromState, graphData, graphKeys, monthTitle, showLabel]
   )
 
   return isLoading ? (
     <Loading />
   ) : withAnnual ? (
     <Grid container sx={{ mt: 2 }}>
-      <AnnualGraph
-        title={withTitles ? formatMessage(messages.annualTestingTrends) : null}
-        data={annual}
-        showLabel={showLabel}
-      />
+      <AnnualGraph title={yearTitle ?? null} data={annual} showLabel={showLabel} />
       <Grid item xs={12} md={8} lg={8} container>
         {renderLineGraph()}
       </Grid>

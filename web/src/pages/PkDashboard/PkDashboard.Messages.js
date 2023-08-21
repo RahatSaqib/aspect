@@ -15,7 +15,7 @@ const messages = {
     rifCurrentTitle: { id: 'p.PkDashboard.rifCurrentTitle', defaultMessage: 'Current Testing of MTB/RIF performed in' },
     currentYear: {
       id: 'p.PkDashboard.CurrentYear',
-      defaultMessage: 'current Year',
+      defaultMessage: 'in current year',
     },
     annualTestingTrends: {
       id: 'p.PkDashboard.annualTestingTrends',
@@ -24,6 +24,22 @@ const messages = {
     monthlyTestingTrends: {
       id: 'p.PkDashboard.monthlyTestingTrends',
       defaultMessage: 'Monthly Testing Trends',
+    },
+    annualDiagnosedTrends: {
+      id: 'p.PkDashboard.annualDiagnosedTrends',
+      defaultMessage: 'Annual diagnosis Trends',
+    },
+    monthlyDiagnosedTrends: {
+      id: 'p.PkDashboard.monthlyDiagnosedTrends',
+      defaultMessage: 'Monthly diagnosis Trends',
+    },
+    annualMTBDiagnosedTrends: {
+      id: 'p.PkDashboard.annualMTBDiagnosedTrends',
+      defaultMessage: 'MTB+ Trends In Year',
+    },
+    monthlyMTBDiagnosedTrends: {
+      id: 'p.PkDashboard.monthlyMTBDiagnosedTrends',
+      defaultMessage: 'MTB+ Trends In Month',
     },
     peopleTestedRif: {
       id: 'p.PkDashboard.peopleTestedRif',

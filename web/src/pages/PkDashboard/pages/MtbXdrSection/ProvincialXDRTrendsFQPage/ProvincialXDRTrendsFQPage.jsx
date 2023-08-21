@@ -55,7 +55,7 @@ const ProvincialXDRTrendsFQPage = () => {
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
             <ProvinceTrendTable
-              title={`${formatMessage(messages.provincialFqrDiagnosisTrends)} ${formatMessage(messages.currentYear)}`}
+              title={`${formatMessage(messages.provincialFqrDiagnosisTrends)} in current year`}
               rows={tableData}
             />
           </Grid>

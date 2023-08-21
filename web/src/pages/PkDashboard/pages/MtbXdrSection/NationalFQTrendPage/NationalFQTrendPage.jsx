@@ -44,7 +44,8 @@ const NationalFQTrendPage = () => {
       }
     >
       <TrendInYearsAllTestsGraph
-        withTitles
+        yearTitle={formatMessage(messages.annualDiagnosedTrends)}
+        monthTitle={formatMessage(messages.monthlyDiagnosedTrends)}
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}

@@ -44,7 +44,8 @@ const NationalTestingTrendsGraph = () => {
       }
     >
       <TrendInYearsAllTestsGraph
-        withTitles
+        yearTitle={formatMessage(messages.annualTestingTrends)}
+        monthTitle={formatMessage(messages.monthlyTestingTrends)}
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}
