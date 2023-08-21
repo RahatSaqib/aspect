@@ -2,10 +2,10 @@ import React, { useState } from 'react'
 import { FormControlLabel, Grid, Switch } from '@mui/material'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import Loading from '../../../../../cleanComponents/Loading'
-import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
+import { getCurrentYear } from '../../../../../oldComponents/shared/DateTimeInput/utils/date'
 import TestsOverTimeGraphMain from '../../../../../oldPages/dashboard/Graphs/TestsOverTimeGraph/TestsOverTimeGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import { objectToArray } from '../../../../../utils/utils/misc'
@@ -15,9 +15,9 @@ import { useMtpRifResults } from '../../../hooks/useMtpRifResults'
 import messages from '../../../PkDashboard.Messages'
 import TestsOverTimeGraphHalf from './CurrentDiagnosisGraph.Half'
 
+const { startDate: minDate, endDate: maxDate } = getCurrentYear('yyyy-MM-dd')
+
 const defaultFilters = [
-  { assay: 'GxMtbRif' },
-  { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { resultCategory1: 'Detected' },
@@ -36,7 +36,7 @@ const CurrentDiagnosisGraphPage = () => {
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState()
   const { data: assays } = useAssayList()
-  const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filter).concat(mainGraphParams))
+  const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filter).concat(defaultFilters))
   const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filter).concat(pieGraphParams))
 
   return (
@@ -52,7 +52,7 @@ const CurrentDiagnosisGraphPage = () => {
           <StateSelect
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setFilter({ stateId: e.target.value, lgaId: null })}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
@@ -86,13 +86,7 @@ const CurrentDiagnosisGraphPage = () => {
         {isLoadingPie ? (
           <Loading />
         ) : (
-          <TestsOverTimeGraphHalf
-            data={pieData?.data}
-            endPointParams={mainGraphParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
-          />
+          <TestsOverTimeGraphHalf data={pieData?.data} assaysFromState={assays} showLabel={showLabel} />
         )}
       </Grid>
     </PkPage>

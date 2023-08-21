@@ -236,6 +236,17 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   }
   return format(timePeriod, dateFormat)
 }
+
+const getCurrentYear = dateFormat => {
+  const date = new Date()
+  const startDate = format(new Date(date.getFullYear(), 0, 1), dateFormat)
+  const endDate = format(new Date(date.getFullYear(), 11, 31), dateFormat)
+  return {
+    endDate,
+    startDate,
+  }
+}
+
 const startOfMonthUTC = dateString => {
   const [datepart, time] = dateString.split('T')
 
@@ -357,6 +368,7 @@ const checkIfParamsIsDate = (params, encode = true) => {
 const forceBaseFormatDate = date => format(parseISO(date), 'yyyy-MM-dd')
 
 export {
+  getCurrentYear,
   checkIfParamsIsDate,
   dateRangeOptions,
   forceBaseFormatDate,
