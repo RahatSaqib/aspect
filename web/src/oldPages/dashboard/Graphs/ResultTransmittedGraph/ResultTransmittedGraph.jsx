@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import { PeriodSelector, ErrorBoundary } from '../../../../cleanComponents'
-import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
+import { getTimePeriod, formatDateToYYYYMMDD } from '../../../../components/Graphs/Helpers/Formatters'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages } from '../../../../messages'
 import styles from '../styles.css'
@@ -18,6 +18,7 @@ const ResultTransmittedGraph = () => {
     minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
+
   return (
     <ErrorBoundary>
       <Grid container className={cssClasses('Graph_Container')}>
@@ -37,9 +38,21 @@ const ResultTransmittedGraph = () => {
                     <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
                       <PeriodSelector
                         label={formatMessage(graphMessages.date)}
+                        noAny
+                        noDay
+                        noWeek
+                        noQuarter
+                        noYear
+                        noCustom
                         minDate={filter.minDate || null}
                         maxDate={filter.maxDate || null}
-                        onChange={dateValues => setFilter({ ...filter, ...dateValues })}
+                        onChange={dateValues => {
+                          setFilter({
+                            ...filter,
+                            minDate: dateValues.minDate ? formatDateToYYYYMMDD(dateValues.minDate) : filter.minDate,
+                            maxDate: dateValues.maxDate ? formatDateToYYYYMMDD(dateValues.maxDate) : filter.minDate,
+                          })
+                        }}
                       />
                     </Grid>
                   </Grid>

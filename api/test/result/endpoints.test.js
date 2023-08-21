@@ -4,9 +4,9 @@ const _ = require('lodash')
 const endpointUtils = require('../utils/endpointUtils')
 
 describe('result endpoints', () => {
-  function setupRoute(method, path, serviceStub) {
+  function setupRoute(method, path, stub, serviceToStub = './service') {
     const endpoints = proxyquire('../../src/result/endpoints', {
-      './service': serviceStub,
+      [serviceToStub]: stub,
     })
     return _.find(endpoints.routes, { method, path })
   }
@@ -226,11 +226,16 @@ describe('result endpoints', () => {
       const expectedResponse = { value: 'Expected result' }
 
       beforeEach(() => {
-        endpoint = setupRoute('GET', '/result/clinical-indicator-aggregations', {
-          async clinicalIndicatorAggregations() {
-            return expectedResponse
+        endpoint = setupRoute(
+          'GET',
+          '/result/clinical-indicator-aggregations',
+          {
+            async clinicalIndicatorAggregations() {
+              return expectedResponse
+            },
           },
-        })
+          './common/logic'
+        )
       })
 
       it('Should respond with the data returned from the service', done => {
