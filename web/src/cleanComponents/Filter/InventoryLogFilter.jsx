@@ -22,7 +22,7 @@ const InventoryLogFilter = () => {
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
-    <FilterContainer state={state} setState={setState}>
+    <FilterContainer state={state} setState={setState} blocked={['minExpirationDate', 'maxExpirationDate']}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
