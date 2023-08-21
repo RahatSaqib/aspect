@@ -145,6 +145,10 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
     : dates.map(d => parseISO(d))
 }
 
+function getYear(date) {
+  return parseDateOrDefault(date).getYear() + 1900
+}
+
 // Returns the UTC equivalent of the passed in date/time string
 // based on the timezone parameter
 function getLocalDateTimeStringInUtc(dateString, timeZone = 'UTC') {
@@ -360,6 +364,7 @@ module.exports = {
   returnIso8601StringWithoutTimeZoneOffset,
   dateEqual,
   getArrayOfDaysInRange,
+  getYear,
   getLocalDateTimeStringInUtc,
   getLocalDateInUtc,
   getTimeZoneById,
