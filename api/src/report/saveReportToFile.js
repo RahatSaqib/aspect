@@ -12,7 +12,7 @@ const { getReportDetails } = require('./service')
 async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = false) {
   const user = await getUserFromCredentials(auth.credentials)
 
-  const { fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId: user.personId })
+  const { fileNamePrefix, exportExcel, sheets } = await getReportDetails(externalId, { personId: user.personId })
 
   // default to `xlsx`, notice that query validation allows only 'xlsx', 'csv', or empty/no param
   const extension = query.format === 'csv' || !exportExcel ? 'csv' : 'xlsx'
@@ -42,6 +42,7 @@ async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = f
       userPlaceHolders,
       fullPath,
       extension,
+      sheets,
     },
   })
 

@@ -5,7 +5,6 @@ const _ = require('lodash')
 const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
 const { knex, filterParams } = require('../db')
-const { getReportDetails } = require('./service')
 const {
   getMaxLimitPlaceHolders,
   getAdministrativeDivisionLabelPlaceHolders,
@@ -204,10 +203,8 @@ async function getAllSheetsData(auth, query, sheets) {
   return dataSet
 }
 
-async function generateReport(externalId, query, auth, user, userPlaceHolders, extension) {
-  // query: {...filters}
-  const { countryAbbreviation, culture, partnerId, userName, personId } = user
-  const { sheets } = await getReportDetails(externalId, { personId })
+async function generateReport(externalId, query, auth, user, userPlaceHolders, extension, sheets) {
+  const { countryAbbreviation, culture, partnerId, userName } = user
 
   const data = await getAllSheetsData(auth, query, sheets)
   if (Boom.isBoom(data)) {
