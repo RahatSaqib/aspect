@@ -74,7 +74,7 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
     .leftJoin(deviceInactiveDays.as('deviceInactiveDays'), function () {
       this.on('deviceInactiveDays.deviceId', 'd.id')
     })
-    .where('dt.externalId', 'CepheidGeneXpert')
+    .whereNot('dt.externalId', 'GxAlert')
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
     .select([

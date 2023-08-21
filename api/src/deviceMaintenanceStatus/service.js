@@ -47,7 +47,12 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
       .where('dmsl.day', '<=', maxDateStatus)
       // Only get the devices of category types that perform tests
       .where('dtc.hasResults', 1)
-      .where('dt.externalId', 'CepheidGeneXpert')
+      /**
+       * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
+       * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
+       * in `api/src/auth/constraints.js` where user permitted deviceType is used
+       */
+      .whereNot('dt.externalId', 'GxAlert')
       // Only get the current device maintenance status log if the device hasn't any newer statuses the same day
       // (Only the last status of each device and day)
       .whereNull('newerDmslOnSameDay.id')
@@ -393,7 +398,12 @@ async function deviceStatusLastReported(request) {
     .groupBy('d.id')
     // Only get the devices of category types that perform tests
     .where('dtc.hasResults', 1)
-    .where('dt.externalId', 'CepheidGeneXpert')
+    /**
+     * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
+     * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
+     * in `api/src/auth/constraints.js` where user permitted deviceType is used
+     */
+    .whereNot('dt.externalId', 'GxAlert')
     .modify(query => {
       if (excludeNotLocalizableDevices) {
         query.whereNotNull('s.longitude').whereNotNull('s.latitude')
