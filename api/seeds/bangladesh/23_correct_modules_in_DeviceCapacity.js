@@ -18,8 +18,10 @@ async function seed(knex) {
           .where({ id })
       }
       if (name === 'BD MGIT') {
+        modules = modules || 8
         return knex('DeviceCapacity')
           .update({
+            modules,
             externalId: `deviceCapacityModules${modules}MGIT`,
             i18nKey: `deviceCapacityModules${modules}MGIT`,
           })
