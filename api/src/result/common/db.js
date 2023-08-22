@@ -165,54 +165,54 @@ const getBaseResults = () =>
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'd.siteId', 'si.id')
 
-// const getFollowUpResults = () =>
-//   getBaseResults()
-//     .leftJoin(
-//       function () {
-//         this.from('ResultFollowUp')
-//           .select('resultId', knex.raw('MAX(createdOn) as latestFollowUp'))
-//           .groupBy('resultId')
-//           .as('latestFollowUpSub')
-//       },
-//       function () {
-//         this.on('latestFollowUpSub.resultId', '=', 'r.id')
-//       }
-//     )
-//     .leftJoin('ResultFollowUp as rfl', function () {
-//       this.on('rfl.resultId', '=', 'latestFollowUpSub.resultId').andOn(
-//         'rfl.createdOn',
-//         '=',
-//         'latestFollowUpSub.latestFollowUp'
-//       )
-//     })
-//     .leftJoin(
-//       function () {
-//         this.from('ResultWorkflowLog')
-//           .select('resultId', knex.raw('MAX(createdOn) as latestWorkflowLog'))
-//           .groupBy('resultId')
-//           .as('latestWorkflowLogSub')
-//       },
-//       'r.id',
-//       'latestWorkflowLogSub.resultId'
-//     )
-//     .leftJoin('ResultWorkflowLog as rwl', function () {
-//       this.on('rwl.resultId', '=', 'latestWorkflowLogSub.resultId').andOn(
-//         'rwl.createdOn',
-//         '=',
-//         'latestWorkflowLogSub.latestWorkflowLog'
-//       )
-//     })
-//     .leftJoin('FollowUp as fp', 'rfl.followUpId', 'fp.id')
-//     .leftJoin('ResultWorkflowStatus as rws', 'rws.id', 'rwl.resultWorkflowStatusId')
-//     .andWhere(builder => {
-//       builder
-//         .whereNull('rws.id')
-//         .orWhere('rws.externalId', '=', 'Acknowledged')
-//         .orWhere('rws.externalId', '=', 'Flagged')
-//     })
+const getFollowUpResults = () =>
+  getBaseResults()
+    .leftJoin(
+      function () {
+        this.from('ResultFollowUp')
+          .select('resultId', knex.raw('MAX(createdOn) as latestFollowUp'))
+          .groupBy('resultId')
+          .as('latestFollowUpSub')
+      },
+      function () {
+        this.on('latestFollowUpSub.resultId', '=', 'r.id')
+      }
+    )
+    .leftJoin('ResultFollowUp as rfl', function () {
+      this.on('rfl.resultId', '=', 'latestFollowUpSub.resultId').andOn(
+        'rfl.createdOn',
+        '=',
+        'latestFollowUpSub.latestFollowUp'
+      )
+    })
+    .leftJoin(
+      function () {
+        this.from('ResultWorkflowLog')
+          .select('resultId', knex.raw('MAX(createdOn) as latestWorkflowLog'))
+          .groupBy('resultId')
+          .as('latestWorkflowLogSub')
+      },
+      'r.id',
+      'latestWorkflowLogSub.resultId'
+    )
+    .leftJoin('ResultWorkflowLog as rwl', function () {
+      this.on('rwl.resultId', '=', 'latestWorkflowLogSub.resultId').andOn(
+        'rwl.createdOn',
+        '=',
+        'latestWorkflowLogSub.latestWorkflowLog'
+      )
+    })
+    .leftJoin('FollowUp as fp', 'rfl.followUpId', 'fp.id')
+    .leftJoin('ResultWorkflowStatus as rws', 'rws.id', 'rwl.resultWorkflowStatusId')
+    .andWhere(builder => {
+      builder
+        .whereNull('rws.id')
+        .orWhere('rws.externalId', '=', 'Acknowledged')
+        .orWhere('rws.externalId', '=', 'Flagged')
+    })
 
 const getBaseQueryForResults = () =>
-  getBaseResults()
+  getFollowUpResults()
     .leftJoin('ResultCategoryAssay as rca', q => {
       q.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
     })
