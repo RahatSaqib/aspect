@@ -207,6 +207,7 @@ export function loginStart({ user, password }) {
             displayPreferences: Immutable.Map(json.displayPreferences),
             loggedOutReason: '',
             userId: json.userId,
+            personId: json.personId,
           })
         )
       )
@@ -266,6 +267,7 @@ export function refreshStart() {
             timezoneId: json.timezone,
             displayPreferences: Immutable.Map(json.displayPreferences),
             userId: json.userId,
+            personId: json.personId,
           })
         )
       )
@@ -455,6 +457,7 @@ const User = Immutable.Record({
   licenseContent: undefined,
   countryId: undefined,
   userId: undefined,
+  personId: undefined,
 })
 
 const initialState = new User()
