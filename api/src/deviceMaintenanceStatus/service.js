@@ -398,12 +398,7 @@ async function deviceStatusLastReported(request) {
     .groupBy('d.id')
     // Only get the devices of category types that perform tests
     .where('dtc.hasResults', 1)
-    /**
-     * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
-     * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
-     * in `api/src/auth/constraints.js` where user permitted deviceType is used
-     */
-    .whereNot('dt.externalId', 'GxAlert')
+    .where('dt.externalId', 'CepheidGeneXpert')
     .modify(query => {
       if (excludeNotLocalizableDevices) {
         query.whereNotNull('s.longitude').whereNotNull('s.latitude')
