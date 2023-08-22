@@ -74,9 +74,9 @@ const COMMON_LIST_FIELDS_UTC = {
   resultTreatmentStatusChangedOn: 'rtsl.changedOn',
   transferredOn: 'rslog.createdOn',
   firstViewedOn: 'r.firstViewedOn',
-  // followUpName: 'fp.name',
-  // followUpComment: 'rwl.reason',
-  // followUpStatus: 'rws.name',
+  followUpName: 'fp.name',
+  followUpComment: 'rwl.reason',
+  followUpStatus: 'rws.name',
 }
 
 /**
@@ -121,8 +121,8 @@ const getSelectCommonListFieldsTZ = userTimeOffset => ({
   resultTreatmentStatusChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rtsl.changedOn', userTimeOffset),
   transferredOn: getDateTimeProjectionInUserTimeZone(knex, 'rslog.createdOn', userTimeOffset),
   firstViewedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.firstViewedOn', userTimeOffset),
-  // recordedInRegister: getDateTimeProjectionInUserTimeZone(knex, 'rwl.changedOn', userTimeOffset),
-  // followUpDate: getDateTimeProjectionInUserTimeZone(knex, 'rfl.date', userTimeOffset),
+  recordedInRegister: getDateTimeProjectionInUserTimeZone(knex, 'rwl.changedOn', userTimeOffset),
+  followUpDate: getDateTimeProjectionInUserTimeZone(knex, 'rfl.date', userTimeOffset),
 })
 
 /**
