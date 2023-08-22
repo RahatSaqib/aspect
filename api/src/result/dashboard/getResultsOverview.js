@@ -9,7 +9,12 @@ const { mtbDetectedTraceDetected, mtbDetectedRifDetected, mtbValid } = SELECT_GX
 const getResultCount = (dataConstraints, minDate, maxDate) =>
   getBaseQueryForResults()
     .clone()
-    .where('dt.externalId', 'CepheidGeneXpert')
+    /**
+     * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
+     * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
+     * in `api/src/auth/constraints.js` where user permitted deviceType is used
+     */
+    .whereNot('dt.externalId', 'GxAlert')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .whereBetween('r.endedOn', [minDate, maxDate])
     .first({

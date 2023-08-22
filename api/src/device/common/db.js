@@ -687,7 +687,7 @@ function getResultCategoryGroupColumns(dataConstraints, query) {
         'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), ""))'
       )
     ) // Equal to columnName
-    .where('dt.externalId', 'CepheidGeneXpert')
+    .whereNot('dt.externalId', 'GxAlert')
     .modify(filterParams, query, {
       assayId: 'a.id',
     })
