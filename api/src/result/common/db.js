@@ -204,12 +204,12 @@ const getFollowUpResults = () =>
     })
     .leftJoin('FollowUp as fp', 'rfl.followUpId', 'fp.id')
     .leftJoin('ResultWorkflowStatus as rws', 'rws.id', 'rwl.resultWorkflowStatusId')
-    .andWhere(builder => {
-      builder
-        .whereNull('rws.id')
-        .orWhere('rws.externalId', '=', 'Acknowledged')
-        .orWhere('rws.externalId', '=', 'Flagged')
-    })
+// .andWhere(builder => {
+//   builder
+//     .whereNull('rws.id')
+//     .orWhere('rws.externalId', '=', 'Acknowledged')
+//     .orWhere('rws.externalId', '=', 'Flagged')
+// })
 
 const getBaseQueryForResults = () =>
   getFollowUpResults()
