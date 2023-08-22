@@ -38,7 +38,6 @@ const personProps = [
   'p.lastCountryId as countryId',
   'g.stateId',
   'p.userId',
-  'p.id as personId',
   'c.abbreviation as countryAbbreviation',
   'p.phone',
   'p.cell',
@@ -243,6 +242,7 @@ async function authenticate(request, response) {
     countryAbbreviation: user.countryAbbreviation,
     deviceTokenId,
     userId: user.id,
+    personId: user.personId,
   }
 }
 
@@ -349,7 +349,8 @@ async function refreshToken(request) {
     timezone: data.timezone || 'Eastern Standard Time',
     displayPreferences,
     countryAbbreviation: data.countryAbbreviation,
-    userId: data.id,
+    userId: data.userId,
+    personId: data.personId,
   }
 }
 

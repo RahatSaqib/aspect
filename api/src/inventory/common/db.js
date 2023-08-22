@@ -348,7 +348,12 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
     .innerJoin('Assay as a', 'ca.assayId', 'a.id')
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
-    .where('dt.externalId', 'CepheidGeneXpert')
+    /**
+     * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
+     * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
+     * in `api/src/auth/constraints.js` where user permitted deviceType is used
+     */
+    .whereNot('dt.externalId', 'GxAlert')
     .modify(filterParams, request.query, {
       assayId: 'a.id',
     })

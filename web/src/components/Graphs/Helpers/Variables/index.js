@@ -204,6 +204,11 @@ const graphColorMap = [
   { id: 202, externalId: 'assayLPA', color: assayHitGray },
   { id: 204, externalId: 'assayTbLamp', color: assayRollingStone },
 
+  { id: 220, externalId: 'assayTruenatMtb', color: covid4 },
+  { id: 221, externalId: 'assayTruenatRif', color: covid5 },
+  { id: 222, externalId: 'assayTruenatUnknown', color: webOrange },
+  { id: 223, externalId: 'assayTruenatMtbPlus', color: covid3 },
+
   { id: 301, externalId: '2010', color: covid1 },
   { id: 301, externalId: '2011', color: colorMandy },
   { id: 302, externalId: '2012', color: webOrange },
