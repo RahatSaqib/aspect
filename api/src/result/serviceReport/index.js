@@ -84,11 +84,11 @@ async function getAllResultsForExport(auth, query) {
     { key: 'errorNotes', header: 'Error notes' },
     { key: 'notes', header: 'Notes' },
     { key: 'assayName', header: 'Assay' },
-    { key: 'followUpName', header: 'Follow Up' },
-    { key: 'followUpDate', header: 'Follow Up Date' },
-    { key: 'followUpComment', header: 'Follow Up Comment' },
-    { key: 'followUpStatus', header: 'Follow Up Status' },
-    { key: 'recordedInRegister', header: 'Recorded In Register' },
+    // { key: 'followUpName', header: 'Follow Up' },
+    // { key: 'followUpDate', header: 'Follow Up Date' },
+    // { key: 'followUpComment', header: 'Follow Up Comment' },
+    // { key: 'followUpStatus', header: 'Follow Up Status' },
+    // { key: 'recordedInRegister', header: 'Recorded In Register' },
 
     // dynamic columns from different schema json fields
     ...columnsFromAssaySchema,
