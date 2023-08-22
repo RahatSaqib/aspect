@@ -203,7 +203,14 @@ const getFollowUpResults = () =>
       )
     })
     .leftJoin('FollowUp as fp', 'rfl.followUpId', 'fp.id')
-    .leftJoin('ResultWorkflowStatus as rws', 'rws.id', 'rwl.resultWorkflowStatusId')
+    // .leftJoin('ResultWorkflowStatus as rws', 'rws.id', 'rwl.resultWorkflowStatusId')
+    .leftJoin(
+      knex.raw(
+        "(SELECT * FROM ResultWorkflowStatus WHERE id IS NULL OR externalId = 'Acknowledged' OR externalId = 'Flagged') as rws"
+      ),
+      'rws.id',
+      'rwl.resultWorkflowStatusId'
+    )
 // .andWhere(builder => {
 //   builder
 //     .whereNull('rws.id')
