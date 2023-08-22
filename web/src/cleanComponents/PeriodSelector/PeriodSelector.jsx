@@ -87,7 +87,8 @@ function PeriodSelector({
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
-        placement="bottom-start"
+        placement="bottom"
+        popperOptions={{ placement: 'bottom', strategy: 'fixed', modifiers: [{ name: 'flip', enabled: false }] }}
         transition
         disablePortal
         sx={{ width: '25%', zIndex: 10, flexGrow: 1, overflowY: 'auto', maxHeight: '477px' }}
@@ -250,13 +251,15 @@ const CustomMinDatePicker = ({ formatMessage, range, setValueLabel, setRange, on
         label={formatMessage(messages.fromDate)}
         value={range.minDate || null}
         onChange={minDate => {
-          if (range.maxDate !== null) {
-            setValueLabel(customFormat(minDate, range.maxDate))
-            setRange({ ...range, minDate })
-            onChange({ minDate: minDate.toISOString(), maxDate: range.maxDate.toISOString() })
-            handleToggle()
-          } else {
-            setRange({ ...range, minDate })
+          if (minDate) {
+            if (range.maxDate !== null) {
+              setValueLabel(customFormat(minDate, range.maxDate))
+              setRange({ ...range, minDate })
+              onChange({ minDate: minDate.toISOString(), maxDate: range.maxDate.toISOString() })
+              handleToggle()
+            } else {
+              setRange({ ...range, minDate })
+            }
           }
         }}
         renderInput={params => <TextField {...params} disabled onKeyDown={e => e.preventDefault()} />}
@@ -273,13 +276,15 @@ const CustomMaxDatePicker = ({ formatMessage, range, setValueLabel, setRange, on
         value={range.maxDate}
         minDate={range.minDate}
         onChange={maxDate => {
-          if (range.minDate !== null) {
-            setValueLabel(customFormat(range.minDate, maxDate))
-            setRange({ ...range, maxDate })
-            onChange({ minDate: range.minDate.toISOString(), maxDate: maxDate.toISOString() })
-            handleToggle()
-          } else {
-            setRange({ ...range, maxDate })
+          if (maxDate) {
+            if (range.minDate !== null) {
+              setValueLabel(customFormat(range.minDate, maxDate))
+              setRange({ ...range, maxDate })
+              onChange({ minDate: range.minDate.toISOString(), maxDate: maxDate.toISOString() })
+              handleToggle()
+            } else {
+              setRange({ ...range, maxDate })
+            }
           }
         }}
         renderInput={params => <TextField {...params} disabled onKeyDown={e => e.preventDefault()} />}
