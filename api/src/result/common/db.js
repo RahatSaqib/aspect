@@ -165,7 +165,7 @@ const getBaseResults = () =>
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'd.siteId', 'si.id')
 
-const getFollowUpResults = () =>
+const getBaseQueryForResultsWithFollowUp = () =>
   getBaseQueryForResults()
     .leftJoin(
       function () {
@@ -236,7 +236,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
-  const resultQuery = getFollowUpResults()
+  const resultQuery = getBaseQueryForResultsWithFollowUp()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
     .leftJoin('Geography as gdpn', 'sdpn.geographyId', 'gdpn.id')
     .leftJoin('State as stdpn', 'stdpn.id', 'gdpn.stateId')
