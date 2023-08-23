@@ -205,7 +205,7 @@ const getBaseQueryForResultsWithFollowUp = () =>
     .leftJoin('FollowUp as fp', 'rfl.followUpId', 'fp.id')
     .leftJoin(
       knex.raw(
-        "(SELECT * FROM ResultWorkflowStatus WHERE id IS NULL OR externalId = 'Acknowledged' OR externalId = 'Flagged') as rws"
+        "(SELECT id, name FROM ResultWorkflowStatus WHERE id IS NULL OR externalId = 'Acknowledged' OR externalId = 'Flagged') as rws"
       ),
       'rws.id',
       'rwl.resultWorkflowStatusId'
