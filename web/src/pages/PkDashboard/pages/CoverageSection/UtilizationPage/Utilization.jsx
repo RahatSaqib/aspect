@@ -1,7 +1,5 @@
 import React, { useState, useMemo } from 'react'
 import { Typography } from '@mui/material'
-import keys from 'lodash/keys'
-import reduce from 'lodash/reduce'
 import round from 'lodash/round'
 import { useQuery } from 'react-query'
 import { PeriodSelector } from '../../../../../cleanComponents'
@@ -46,43 +44,33 @@ const UtilizationPage = () => {
     rawNational.forEach(device => {
       const { dailyCapacity, rates } = device
       rates.forEach(({ year, count }) => {
-        allYearsSet.add(year)
+        allYearsSet.add(+year)
         byYearCounts[year] = byYearCounts[year] || { capacityCounts: 0, actualCounts: 0 }
         byYearCounts[year].actualCounts += count
         byYearCounts[year].capacityCounts += dailyCapacity * WORKING_DAYS_IN_YEAR
       })
     })
-    const data = [
-      reduce(
-        keys(byYearCounts),
-        (acc, year) => {
-          const { actualCounts, capacityCounts } = byYearCounts[year]
-          const percent = (actualCounts * 100) / Math.max(capacityCounts, 1)
-          const rate = round(percent, 2)
-          acc = { ...acc, [+year]: rate }
-          return acc
-        },
-        { total: 'Total' }
-      ),
-    ]
-    return { data, keys: [...allYearsSet].sort(), indexBy: 'total' }
+    const data = Object.keys(byYearCounts).reduce((acc, year) => {
+      const { actualCounts, capacityCounts } = byYearCounts[year]
+      const percent = (actualCounts * 100) / Math.max(capacityCounts, 1)
+      const rate = round(percent, 2)
+      acc = [...acc, { year, total: rate }]
+      return acc
+    }, [])
+
+    return { data, keys: ['total'], indexBy: 'year' }
   }, [rawNational, WORKING_DAYS_IN_YEAR])
 
   const provincial = useMemo(() => {
-    const allYearsSet = new Set()
-    const data = reduce(
-      rawProvincial,
-      (acc, { stateName, rates }) => {
-        const item = { stateName }
-        rates.forEach(({ rate, year }) => {
-          allYearsSet.add(year)
-          item[+year] = rate
-        })
-        return [...acc, item]
-      },
-      []
-    )
-    return { data, keys: [...allYearsSet].sort(), indexBy: 'stateName' }
+    const currentYear = new Date().getFullYear()
+    const data = rawProvincial.map(province => {
+      const { stateName, rates } = province
+      const currentYearRate = rates.find(r => +r.year === currentYear)
+      const rate = currentYearRate ? currentYearRate.rate : 0
+      return { stateName, rate }
+    })
+
+    return { data, keys: ['rate'], indexBy: 'stateName' }
   }, [rawProvincial])
 
   const columns = [
@@ -107,20 +95,20 @@ const UtilizationPage = () => {
       }
     >
       <NestedTable columns={columns} rows={data} hasDetail />
-      <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+      <Typography variant="h5" color="primary" style={{ margin: '20px 16px' }}>
         National Trends in Annual Utilization Rates
       </Typography>
-      <div style={{ height: '400px', marginTop: 32 }}>
+      <div style={{ height: '400px' }}>
         {isLoadingNational ? (
           <Loading />
         ) : (
           <UtilizationGraph data={national.data} keys={national.keys} indexBy={national.indexBy} />
         )}
       </div>
-      <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+      <Typography variant="h5" color="primary" style={{ margin: '20px 16px ' }}>
         Provincial Trends in Annual Utilization Rates
       </Typography>
-      <div style={{ height: '800px', marginTop: 32 }}>
+      <div style={{ height: '400px' }}>
         {isLoadingProvincial ? (
           <Loading />
         ) : (

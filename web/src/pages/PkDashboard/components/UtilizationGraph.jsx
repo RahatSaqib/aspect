@@ -27,12 +27,12 @@ const UtilizationGraph = ({ data, keys, indexBy }) => {
       keys={keys}
       indexBy={indexBy}
       margin={{ top: 50, right: 130, bottom: 50, left: 60 }}
-      padding={0.5}
+      padding={0.2}
       groupMode="grouped"
       layout="horizontal"
       fill={fill}
       defs={defs}
-      label={d => `${d.id} (${d.value}%)`}
+      label={d => `${d.indexValue} (${d.value}%)`}
       tooltipFormat={v => `${v}%`}
       axisBottom={{ format: v => `${v}%` }}
       maxValue={100}
