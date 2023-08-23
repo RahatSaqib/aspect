@@ -54,10 +54,7 @@ const ProvincialDiagnosisTrendPage = () => {
             )}
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            <ProvinceTrendTable
-              title={`${formatMessage(messages.provincialDiagnosisTrendsComparison)} ${new Date().getFullYear()}`}
-              rows={tableData}
-            />
+            <ProvinceTrendTable title={formatMessage(messages.provincialDiagnosisTrendsCurrentYear)} rows={tableData} />
           </Grid>
         </Grid>
       )}

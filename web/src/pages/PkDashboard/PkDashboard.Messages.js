@@ -6,7 +6,7 @@ const messages = {
   ...defineMessages({
     // page titles
     aspectDashboard: { id: 'p.PkDashboard.aspectDashboard', defaultMessage: 'Aspect Dashboard' },
-    errorRateTitle: { id: 'p.PkDashboard.errorRate', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
+    errorRateTitle: { id: 'p.PkDashboard.errorRateTitle', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
     utilizationTitle: {
       id: 'p.PkDashboard.utilizationTitle',
       defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Utilization',
@@ -25,9 +25,22 @@ const messages = {
       id: 'p.PkDashboard.monthlyTestingTrends',
       defaultMessage: 'Monthly Testing Trends',
     },
+    annualRRDiagnosedTrends: {
+      id: 'p.PkDashboard.annualRRDiagnosedTrends',
+      defaultMessage: 'Annual RR Diagnosis',
+    },
+
     annualDiagnosedTrends: {
       id: 'p.PkDashboard.annualDiagnosedTrends',
       defaultMessage: 'Annual diagnosis Trends',
+    },
+    annualFQRDiagnosed: {
+      id: 'p.PkDashboard.annualFQRDiagnosed',
+      defaultMessage: 'Annual FQ-R Diagnosis',
+    },
+    monthlyFQRDiagnosed: {
+      id: 'p.PkDashboard.monthlyFQRDiagnosed',
+      defaultMessage: 'Monthly FQ-R Diagnosis',
     },
     monthlyDiagnosedTrends: {
       id: 'p.PkDashboard.monthlyDiagnosedTrends',
@@ -44,6 +57,14 @@ const messages = {
     peopleTestedRif: {
       id: 'p.PkDashboard.peopleTestedRif',
       defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
+    },
+    peopleTestedCovid: {
+      id: 'p.PkDashboard.peopleTestedCovid',
+      defaultMessage: 'People tested for Covid in current year',
+    },
+    peopleTestedHiv: {
+      id: 'p.PkDashboard.peopleTestedHiv',
+      defaultMessage: 'People tested for HIV in current year',
     },
     peopleTestedXdr: {
       id: 'p.PkDashboard.peopleTestedXdr',
@@ -69,17 +90,41 @@ const messages = {
       id: 'p.PkDashboard.provincialTestingTrends',
       defaultMessage: 'Provincial/District Testing Trends',
     },
+    provincialTBTestingTrends: {
+      id: 'p.PkDashboard.provincialTBTestingTrends',
+      defaultMessage: 'Provincial/District TB Testing Trends',
+    },
+    tbCasesDiagnosed: {
+      id: 'p.PkDashboard.tbCasesDiagnosed',
+      defaultMessage: 'TB Cases Diagnosed',
+    },
+    provincialDiagnosisTrendsCurrentYear: {
+      id: 'p.PkDashboard.tbCasesDiagnosed',
+      defaultMessage: 'Provincial Diagnosis Trends for the current year',
+    },
     provincialXdrTestingTrends: {
       id: 'p.PkDashboard.provincialXdrTestingTrends',
       defaultMessage: 'Provincial/District Testing Trends using MTB/XDR Assay in current year',
     },
-    provincialDiagnosisTrends: {
+    provincialDiagnosisTrendsMtbRif: {
       id: 'p.PkDashboard.provincialDiagnosisTrends',
-      defaultMessage: 'Provincial TB Diagnosis Trends using MTB/Rif Assay',
+      defaultMessage: 'Provincial/District TB Diagnosis Trends using MTB/Rif Assay',
     },
     provincialDiagnosisTrendsComparison: {
       id: 'p.PkDashboard.provincialDiagnosisTrendsComparison',
       defaultMessage: 'Provincial Diagnosis Trends Comparison',
+    },
+    provincialDiagnosisTrendsRRTBComparison: {
+      id: 'p.PkDashboard.provincialDiagnosisTrendsRRTBComparison',
+      defaultMessage: 'Provincial/District RR Diagnosis Trends',
+    },
+    testingDiagnosisTrendsRR: {
+      id: 'p.PkDashboard.testingDiagnosisTrendsRR',
+      defaultMessage: 'TB and RRTB Diagnosis Trends',
+    },
+    provincialDiagnosisTrends: {
+      id: 'p.PkDashboard.provincialDiagnosisTrends',
+      defaultMessage: 'Provincial Diagnosis Trends',
     },
     provincialXdrDiagnosisTrends: {
       id: 'p.PkDashboard.provincialXdrDiagnosisTrends',
@@ -232,6 +277,7 @@ const messages = {
     titlecoverage: { id: 'p.PkDashboard.titlecoverage', defaultMessage: 'Coverage' },
     coverageperformance: { id: 'p.PkDashboard.coverageperformance', defaultMessage: 'Performance' },
     genExpert: { id: 'p.PkDashboard.genExpert', defaultMessage: 'GeneXpert Device Coverage' },
+    genExpertError: { id: 'p.PkDashboard.genExpertError', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
     utilization: { id: 'p.PkDashboard.utilization', defaultMessage: 'Utilization' },
     errorRate: { id: 'p.PkDashboard.errorRate', defaultMessage: 'Error Rate' },
     // 4th column

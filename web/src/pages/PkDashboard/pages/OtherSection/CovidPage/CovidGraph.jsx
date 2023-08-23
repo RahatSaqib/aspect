@@ -38,7 +38,7 @@ const CovidGraphPage = () => {
   return (
     <PkPage
       isMocked
-      title={`${formatMessage(messages.covid)} / ${formatMessage(graphMessages.clinicalIndicatorsCovidTitle)}`}
+      title={formatMessage(messages.peopleTestedCovid)}
       filters={
         <FormControlLabel
           sx={{ minWidth: '145px' }}
@@ -53,6 +53,7 @@ const CovidGraphPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <CovidResultGraphMain
             data={data.data}
+            title={formatMessage(messages.testsPerformedYear)}
             endPointParams={endPointParams}
             assaysFromState={assays}
             showLabel={showLabel}

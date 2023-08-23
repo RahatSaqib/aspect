@@ -50,8 +50,8 @@ const NationalRtbTrendsGraph = () => {
     >
       <TrendInYearsAllTestsGraph
         withAnnual
-        yearTitle={formatMessage(messages.annualTestingTrends)}
-        monthTitle={formatMessage(messages.monthlyTestingTrends)}
+        yearTitle={formatMessage(messages.annualRRDiagnosedTrends)}
+        monthTitle={formatMessage(messages.monthlyDiagnosedTrends)}
         assaysFromState={assays ?? []}
         showLabel={showLabel}
         filterSelection={objectToArray(filter).concat(defaultFilters)}
