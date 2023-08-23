@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-15T13:23:02.113Z\n"
+"POT-Creation-Date: 2023-08-21T20:06:25.401Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.2.2\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -6684,7 +6684,6 @@ msgstr "MTB+"
 #. defaultMessage is:
 #. MTB+ %
 #: extracted_strings.json
-#| msgid "MTB+"
 msgid "MTB+ %"
 msgstr "MTB+ %"
 
@@ -13264,6 +13263,13 @@ msgstr "XDR Assay Zusammenfassung Ergebnis nach Gerät"
 #: extracted_strings.json
 msgid "XDR FLQ Resistance"
 msgstr "XDR FLQ-Widerstand"
+
+#. [p.PkDashboard.XDRTestingDiagnosisTrend]
+#. defaultMessage is:
+#. XDR Testing and Diagnosis Trend
+#: extracted_strings.json
+msgid "XDR Testing and Diagnosis Trend"
+msgstr "Trend zu XDR-Tests und -Diagnosen"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
