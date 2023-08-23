@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-15T13:23:02.113Z\n"
+"POT-Creation-Date: 2023-08-21T20:06:25.401Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -6677,7 +6677,6 @@ msgstr "MTB+"
 #. defaultMessage is:
 #. MTB+ %
 #: extracted_strings.json
-#| msgid "MTB+"
 msgid "MTB+ %"
 msgstr "MTB+ %"
 
@@ -13213,6 +13212,13 @@ msgstr "XDR Assay Summary Result by device"
 #: extracted_strings.json
 msgid "XDR FLQ Resistance"
 msgstr "Опір XDR FLQ"
+
+#. [p.PkDashboard.XDRTestingDiagnosisTrend]
+#. defaultMessage is:
+#. XDR Testing and Diagnosis Trend
+#: extracted_strings.json
+msgid "XDR Testing and Diagnosis Trend"
+msgstr "Тенденція тестування та діагностики XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
