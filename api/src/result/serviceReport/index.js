@@ -112,7 +112,6 @@ async function getAllResultsForExport(auth, query) {
       { key: 'assayName', header: 'Assay' },
       { key: 'errorCode', header: 'Error Code' },
       { key: 'resultWorkflowStatus', header: 'Workflow Status' },
-      { key: 'resultTreatmentStatus', header: 'Treatment Status' },
       { key: 'patientId', header: 'Patient Id' },
     ],
     dataSelector: (
