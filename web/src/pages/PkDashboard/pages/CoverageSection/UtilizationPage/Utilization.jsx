@@ -1,5 +1,6 @@
 import React, { useState, useMemo } from 'react'
 import { Typography } from '@mui/material'
+import subYears from 'date-fns/subYears'
 import round from 'lodash/round'
 import { useQuery } from 'react-query'
 import { PeriodSelector } from '../../../../../cleanComponents'
@@ -21,17 +22,27 @@ const UtilizationPage = () => {
 
   const data = new Array(111).fill({}).map((i, idx) => createData(idx, `City ${idx}`, 159, 6, 24, 9, 5))
 
-  const mergedParams = []
+  const now = new Date()
+  const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
 
   const { isLoading: isLoadingNational, data: { data: rawNational = [], WORKING_DAYS_IN_YEAR } = {} } = useQuery(
-    ['tblUtilizationPage_National', { mergedParams }],
-    async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/device/annual-utilization-rate-national', params: mergedParams })
+    ['tblUtilizationPage_National'],
+    async () =>
+      fetchWrapperForQueries({
+        endpoint: '/device/annual-utilization-rate-national',
+        params: {
+          minDate: subYears(startOfYearUTC, 5),
+          maxDate: now,
+        },
+      })
   )
   const { isLoading: isLoadingProvincial, data: { data: rawProvincial = [] } = {} } = useQuery(
-    ['tblUtilizationPage_Provincial', { mergedParams }],
-    async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/device/annual-utilization-rate-provincial', params: mergedParams })
+    ['tblUtilizationPage_Provincial'],
+    async () =>
+      fetchWrapperForQueries({
+        endpoint: '/device/annual-utilization-rate-provincial',
+        params: { minDate: startOfYearUTC, maxDate: now },
+      })
   )
 
   const national = useMemo(() => {
