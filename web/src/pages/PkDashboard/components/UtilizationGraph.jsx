@@ -27,7 +27,7 @@ const UtilizationGraph = ({ data, keys, indexBy }) => {
       keys={keys}
       indexBy={indexBy}
       margin={{ top: 50, right: 240, bottom: 50, left: 240 }}
-      labelSkipWidth={20}
+      labelSkipWidth={30}
       padding={0.2}
       groupMode="grouped"
       layout="horizontal"
