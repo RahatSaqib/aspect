@@ -168,16 +168,17 @@ const getBaseResults = () =>
 const getBaseQueryForResultsWithFollowUp = () =>
   getBaseQueryForResults()
     .leftJoin(
-      builder => {
-        builder
-          .from('ResultFollowUp')
-          .select('resultId', knex.raw('MAX(createdOn) as latestFollowUp'))
-          .groupBy('resultId')
-          .as('latestFollowUpSub')
-      },
-      builder => {
-        builder.on('latestFollowUpSub.resultId', '=', 'r.id')
-      }
+      knex.raw(`
+      (SELECT rf1.resultId, MAX(rf1.createdOn) as latestFollowUp
+       FROM ResultFollowUp rf1
+       JOIN (
+         SELECT resultId, MAX(createdOn) AS maxCreatedOn
+         FROM ResultFollowUp
+         GROUP BY resultId
+       ) rf2 ON rf1.resultId = rf2.resultId AND rf1.createdOn = rf2.maxCreatedOn
+       GROUP BY rf1.resultId) as latestFollowUpSub`),
+      'latestFollowUpSub.resultId',
+      'r.id'
     )
     .leftJoin('ResultFollowUp as rfl', builder => {
       builder
