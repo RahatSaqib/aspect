@@ -168,48 +168,28 @@ const getBaseResults = () =>
 const getBaseQueryForResultsWithFollowUp = () =>
   getBaseQueryForResults()
     .leftJoin(
-      function () {
-        this.from('ResultFollowUp')
+      builder => {
+        builder
+          .from('ResultFollowUp')
           .select('resultId', knex.raw('MAX(createdOn) as latestFollowUp'))
           .groupBy('resultId')
           .as('latestFollowUpSub')
       },
-      function () {
-        this.on('latestFollowUpSub.resultId', '=', 'r.id')
+      builder => {
+        builder.on('latestFollowUpSub.resultId', '=', 'r.id')
       }
     )
-    .leftJoin('ResultFollowUp as rfl', function () {
-      this.on('rfl.resultId', '=', 'latestFollowUpSub.resultId').andOn(
-        'rfl.createdOn',
-        '=',
-        'latestFollowUpSub.latestFollowUp'
-      )
-    })
-    .leftJoin(
-      function () {
-        this.from('ResultWorkflowLog')
-          .select('resultId', knex.raw('MAX(createdOn) as latestWorkflowLog'))
-          .groupBy('resultId')
-          .as('latestWorkflowLogSub')
-      },
-      'r.id',
-      'latestWorkflowLogSub.resultId'
-    )
-    .leftJoin('ResultWorkflowLog as rwl', function () {
-      this.on('rwl.resultId', '=', 'latestWorkflowLogSub.resultId').andOn(
-        'rwl.createdOn',
-        '=',
-        'latestWorkflowLogSub.latestWorkflowLog'
-      )
+    .leftJoin('ResultFollowUp as rfl', builder => {
+      builder
+        .on('rfl.resultId', '=', 'latestFollowUpSub.resultId')
+        .andOn('rfl.createdOn', '=', 'latestFollowUpSub.latestFollowUp')
     })
     .leftJoin('FollowUp as fp', 'rfl.followUpId', 'fp.id')
-    .leftJoin(
-      knex.raw(
-        "(SELECT id, name FROM ResultWorkflowStatus WHERE id IS NULL OR externalId = 'Acknowledged' OR externalId = 'Flagged') as rws"
-      ),
-      'rws.id',
-      'rwl.resultWorkflowStatusId'
-    )
+    .leftJoin('ResultWorkflowStatus as rws', builder => {
+      builder.on('rws.id', 'rsl.resultWorkflowStatusId').andOn(innerQuery => {
+        innerQuery.on('rws.externalId', knex.raw("'Acknowledged'")).orOn('rws.externalId', knex.raw("'Flagged'"))
+      })
+    })
 
 const getBaseQueryForResults = () =>
   getBaseResults()

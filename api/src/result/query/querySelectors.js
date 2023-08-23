@@ -106,7 +106,7 @@ const getReportCommonFieldsTZ = userTimeOffset => ({
 const getSelectCommonListFieldsTZ = userTimeOffset => ({
   ...COMMON_LIST_FIELDS_UTC,
   followUpName: 'fp.name',
-  followUpComment: 'rwl.reason',
+  followUpComment: 'rsl.reason',
   followUpStatus: 'rws.name',
   // override datetime fields with user time offset:
   startedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.startedOn', userTimeOffset),
@@ -121,7 +121,7 @@ const getSelectCommonListFieldsTZ = userTimeOffset => ({
   resultTreatmentStatusChangedOn: getDateTimeProjectionInUserTimeZone(knex, 'rtsl.changedOn', userTimeOffset),
   transferredOn: getDateTimeProjectionInUserTimeZone(knex, 'rslog.createdOn', userTimeOffset),
   firstViewedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.firstViewedOn', userTimeOffset),
-  recordedInRegister: getDateTimeProjectionInUserTimeZone(knex, 'rwl.changedOn', userTimeOffset),
+  recordedInRegister: getDateTimeProjectionInUserTimeZone(knex, 'rsl.changedOn', userTimeOffset),
   followUpDate: getDateTimeProjectionInUserTimeZone(knex, 'rfl.date', userTimeOffset),
 })
 
