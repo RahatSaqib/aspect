@@ -3,7 +3,7 @@ const { writeDataToFile } = require('../shared/io')
 const { generateReport } = require('./serviceReports')
 
 async function start() {
-  const { externalId, query, auth, user, userPlaceHolders, fullPath, extension } = workerData
+  const { externalId, query, auth, user, userPlaceHolders, fullPath, extension, sheets } = workerData
 
   const { dataBuffer, streamResponse } = await generateReport(
     externalId,
@@ -11,7 +11,8 @@ async function start() {
     auth,
     user,
     userPlaceHolders,
-    extension
+    extension,
+    sheets
   )
 
   await writeDataToFile(fullPath, dataBuffer)
