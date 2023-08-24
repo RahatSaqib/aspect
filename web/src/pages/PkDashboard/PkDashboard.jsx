@@ -94,7 +94,7 @@ const PkDashboard = () => {
             <DashboardLink to="/dashboard/xdr/by-device" label={formatMessage(messages.XDRByDevice)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
-            <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrent)} />
+            <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrentPending)} />
             <DashboardLink to="/dashboard/xdr/national-diagnosis" label={formatMessage(messages.DNationalTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-diagnosis-trend"
@@ -114,7 +114,7 @@ const PkDashboard = () => {
             />
             <DashboardLink
               to="/dashboard/xdr/gx-testing-and-diagnosis"
-              label={formatMessage(messages.DTestingDiagnosis)}
+              label={formatMessage(messages.fqInhTestingDiagnosis)}
             />
           </DashboardCard>
         </Grid>
