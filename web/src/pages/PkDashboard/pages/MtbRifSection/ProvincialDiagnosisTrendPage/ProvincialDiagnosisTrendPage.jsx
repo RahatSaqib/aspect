@@ -46,7 +46,7 @@ const ProvincialDiagnosisTrendPage = () => {
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
-          <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
+          <Grid item xs={12} md={8} lg={8} container>
             {graphData && !isEmpty(graphData) ? (
               <SimpleBarLine title={formatMessage(messages.provincialDiagnosisTrends)} data={graphData} />
             ) : (

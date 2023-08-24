@@ -1,5 +1,5 @@
 import * as React from 'react'
-import { Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import { Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
 import useI18n from '../../../hooks/useI18n'
 import messages from '../PkDashboard.Messages'
 import GraphTitle from './GraphTitle'
@@ -9,7 +9,7 @@ const ProvinceTrendTable = props => {
   const { formatMessage } = useI18n()
 
   return (
-    <>
+    <Box>
       {title ? <GraphTitle>{title}</GraphTitle> : null}
       <Table aria-label="simple-table">
         <TableHead>
@@ -35,7 +35,7 @@ const ProvinceTrendTable = props => {
           ))}
         </TableBody>
       </Table>
-    </>
+    </Box>
   )
 }
 

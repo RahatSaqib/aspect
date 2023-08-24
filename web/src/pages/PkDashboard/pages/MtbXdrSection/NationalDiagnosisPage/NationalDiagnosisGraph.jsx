@@ -45,8 +45,8 @@ const NationalDiagnosisGraph = () => {
     >
       <TrendInYearsAllTestsGraph
         withAnnual
-        yearTitle={formatMessage(messages.annualMTBDiagnosedTrends)}
-        monthTitle={formatMessage(messages.monthlyMTBDiagnosedTrends)}
+        yearTitle={formatMessage(messages.annualDiagnosedTrends)}
+        monthTitle={formatMessage(messages.monthlyDiagnosedTrends)}
         assaysFromState={assays ?? []}
         showLabel={showLabel}
         filterSelection={objectToArray(filter).concat(defaultFilters)}

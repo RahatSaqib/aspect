@@ -98,6 +98,14 @@ const messages = {
       id: 'p.PkDashboard.tbCasesDiagnosed',
       defaultMessage: 'TB Cases Diagnosed',
     },
+    rrCasesDiagnosed: {
+      id: 'p.PkDashboard.rrCasesDiagnosed',
+      defaultMessage: 'RR cases diagnosed',
+    },
+    testingAndDiagnosisUsingXdr: {
+      id: 'p.PkDashboard.testingAndDiagnosisUsingXdr',
+      defaultMessage: 'Testing & Diagnosis Trends using MTB/XDR Assay',
+    },
     provincialDiagnosisTrendsCurrentYear: {
       id: 'p.PkDashboard.tbCasesDiagnosed',
       defaultMessage: 'Provincial Diagnosis Trends for the current year',
@@ -258,7 +266,7 @@ const messages = {
       defaultMessage: 'XDR Testing and Diagnosis Trend',
     },
     DCurrent: { id: 'p.PkDashboard.DCurrent', defaultMessage: 'Current MTB Detection' },
-    DCurrentPending: { id: 'p.PkDashboard.DCurrentPending', defaultMessage: 'Current MTB Detection (Pending)' },
+    DCurrentPending: { id: 'p.PkDashboard.DCurrentPending', defaultMessage: 'Current MTB Detection' },
     DNationalTrend: { id: 'p.PkDashboard.DNationalTrend', defaultMessage: 'National TB Diagnosis Trends' },
     DProvincialComparison: {
       id: 'p.PkDashboard.DProvincialComparison',
