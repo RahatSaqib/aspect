@@ -106,8 +106,8 @@ const UtilizationPage = () => {
       }
     >
       <NestedTable columns={columns} rows={data} hasDetail />
-      <Typography variant="h5" color="primary" style={{ margin: '20px 16px' }}>
-        National Trends in Annual Utilization Rates
+      <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+        {formatMessage(messages.nationalUtilizationTrendsAnnual)}
       </Typography>
       <div style={{ height: '400px' }}>
         {isLoadingNational ? (
@@ -116,8 +116,8 @@ const UtilizationPage = () => {
           <UtilizationGraph data={national.data} keys={national.keys} indexBy={national.indexBy} />
         )}
       </div>
-      <Typography variant="h5" color="primary" style={{ margin: '20px 16px ' }}>
-        Provincial Trends in Annual Utilization Rates
+      <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+        {formatMessage(messages.provincesUtilizationTrendsAnnual)}
       </Typography>
       <div style={{ height: '400px' }}>
         {isLoadingProvincial ? (

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
@@ -11,6 +11,7 @@ import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import styles from '../styles.css'
 import { FqrToMtbPercentageLine, FqrToMtbPercentageLineWithLabel } from './XDRFLQResistanceGraph.Main.Layers'
+import GraphTitle from '../../../../pages/PkDashboard/components/GraphTitle'
 
 const cssClasses = classnames.bind(styles)
 
@@ -35,7 +36,7 @@ const endpointParams = [
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
 ]
 
-const XDRFLQResistanceGraphMain = ({ assaysFromState, showLabel, filterSelection }) => {
+const XDRFLQResistanceGraphMain = ({ assaysFromState, showLabel, filterSelection, title }) => {
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
@@ -63,33 +64,36 @@ const XDRFLQResistanceGraphMain = ({ assaysFromState, showLabel, filterSelection
     <Grid item xs={12} md={12} lg={10}>
       <div className={cssClasses('Graph_Wrapper')}>
         {graphData && !isEmpty(graphData) ? (
-          <AspectResponsiveBar
-            assaysFromState={assaysFromState}
-            config={{
-              ...baseConfig,
-              layers: [showLabel ? FqrToMtbPercentageLineWithLabel : FqrToMtbPercentageLine, AxisRightLayer],
-              showLabel,
-              showDecimals: 0,
-              labelTextColor: '#333',
-            }}
-            data={graphData}
-            keys={graphKeys}
-            indexBy="month"
-            formatDate={(value, i18n) =>
-              /**
-               * 'value' has pattern `yyyy-mm` (i.e. `2022-07`), and to correctly
-               * format it to `Jul-22` with taking into account timezones, let's
-               * consider mid-month date - so, convert `yyyy-mm` to `yyyy-mm-15`
-               */
-              i18n.format(new Date(`${value}-15`), 'MMM-yy')
-            }
-            tickValuesYShape="twos"
-            tickValuesXShape="all"
-            displayMethod="actual"
-            displayLegend
-            type="bar-line"
-            i18nKeys={i18nKeys}
-          />
+          <>
+            {title ? <GraphTitle sx={{ mt: '10px' }}>{title}</GraphTitle> : null}
+            <AspectResponsiveBar
+              assaysFromState={assaysFromState}
+              config={{
+                ...baseConfig,
+                layers: [showLabel ? FqrToMtbPercentageLineWithLabel : FqrToMtbPercentageLine, AxisRightLayer],
+                showLabel,
+                showDecimals: 0,
+                labelTextColor: '#333',
+              }}
+              data={graphData}
+              keys={graphKeys}
+              indexBy="month"
+              formatDate={(value, i18n) =>
+                /**
+                 * 'value' has pattern `yyyy-mm` (i.e. `2022-07`), and to correctly
+                 * format it to `Jul-22` with taking into account timezones, let's
+                 * consider mid-month date - so, convert `yyyy-mm` to `yyyy-mm-15`
+                 */
+                i18n.format(new Date(`${value}-15`), 'MMM-yy')
+              }
+              tickValuesYShape="twos"
+              tickValuesXShape="all"
+              displayMethod="actual"
+              displayLegend
+              type="bar-line"
+              i18nKeys={i18nKeys}
+            />
+          </>
         ) : (
           <EmptyGraph type="bar" />
         )}

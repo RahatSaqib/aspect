@@ -23,7 +23,7 @@ const NationalTestingTrendsGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.GXTbNationalTrend)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.nationalXdrTestingTrends)}
       filters={
         <>
           <FormControlLabel
@@ -49,6 +49,8 @@ const NationalTestingTrendsGraph = () => {
       <TrendInYearsAllTestsGraph
         assaysFromState={assays ?? []}
         showLabel={showLabel}
+        yearTitle={formatMessage(messages.annualTestingTrends)}
+        monthTitle={formatMessage(messages.monthlyTestingTrends)}
         filterSelection={objectToArray(filter).concat(defaultFilters)}
       />
     </PkPage>

@@ -41,7 +41,7 @@ const RifCurrentGraphPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.rifCurrentTitle)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.peopleTestedRif)}
       filters={
         <>
           <FormControlLabel
@@ -68,7 +68,12 @@ const RifCurrentGraphPage = () => {
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
-          <TestsOverTimeGraphMain data={data.data} assaysFromState={assays} showLabel={showLabel} />
+          <TestsOverTimeGraphMain
+            title={formatMessage(messages.testsPerformedYear)}
+            data={data.data}
+            assaysFromState={assays}
+            showLabel={showLabel}
+          />
           <TripleCardSide
             data={[
               { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },

@@ -62,7 +62,6 @@ const PkDashboard = () => {
               to="/dashboard/rif/provincial-testing-trend"
               label={formatMessage(messages.TbProvincialComparison)}
             />
-            <DashboardLink to="" label={formatMessage(messages.TbSubprovincialTrend)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbRifTbDiagnosis)}>
             <DashboardLink to="/dashboard/rif/current-diagnosis" label={formatMessage(messages.TbDCurrent)} />
@@ -86,28 +85,24 @@ const PkDashboard = () => {
         <Grid item lg={4} style={{ padding: '8px 8px 0' }}>
           <ColumnName title={formatMessage(messages.titlemtbXdr)} />
           <DashboardCard title={formatMessage(messages.mtbXdrTesting)}>
-            <DashboardLink to="/dashboard/xdr/by-device" label={formatMessage(messages.XDRByDevice)} />
             <DashboardLink to="/dashboard/xdr/current-testing" label={formatMessage(messages.TCurrent)} />
             <DashboardLink to="/dashboard/xdr/national-testing-trend" label={formatMessage(messages.TNationalTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-testing-trend"
               label={formatMessage(messages.TProvincialComparison)}
             />
-            <DashboardLink
-              to="/dashboard/xdr/testing-diagnosis-trend"
-              label={formatMessage(messages.XDRTestingDiagnosisTrend)}
-            />
+            <DashboardLink to="/dashboard/xdr/by-device" label={formatMessage(messages.XDRByDevice)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
-            <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrent)} />
+            <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrentPending)} />
             <DashboardLink to="/dashboard/xdr/national-diagnosis" label={formatMessage(messages.DNationalTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-diagnosis-trend"
               label={formatMessage(messages.DProvincialComparison)}
             />
             <DashboardLink
-              to="/dashboard/xdr/gx-testing-and-diagnosis"
-              label={formatMessage(messages.DTestingDiagnosis)}
+              to="/dashboard/xdr/testing-diagnosis-trend"
+              label={formatMessage(messages.XDRTestingDiagnosisTrend)}
             />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrFQResistance)}>
@@ -116,6 +111,10 @@ const PkDashboard = () => {
             <DashboardLink
               to="/dashboard/xdr/provincial-fq-diagnosis-trend"
               label={formatMessage(messages.FQProvincialComparison)}
+            />
+            <DashboardLink
+              to="/dashboard/xdr/gx-testing-and-diagnosis"
+              label={formatMessage(messages.fqInhTestingDiagnosis)}
             />
           </DashboardCard>
         </Grid>
