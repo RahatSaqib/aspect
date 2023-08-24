@@ -167,24 +167,25 @@ const getBaseResults = () =>
 
 const getBaseQueryForResultsWithFollowUp = () =>
   getBaseQueryForResults()
-    .leftJoin(
+    .with(
+      'LatestFollowUp',
       knex.raw(`
-      (SELECT rf1.resultId, MAX(rf1.createdOn) as latestFollowUp
-       FROM ResultFollowUp rf1
-       JOIN (
-         SELECT resultId, MAX(createdOn) AS maxCreatedOn
-         FROM ResultFollowUp
-         GROUP BY resultId
-       ) rf2 ON rf1.resultId = rf2.resultId AND rf1.createdOn = rf2.maxCreatedOn
-       GROUP BY rf1.resultId) as latestFollowUpSub`),
-      'latestFollowUpSub.resultId',
+        SELECT
+          rf.resultId,
+          rf.followUpId,
+          rf.date,
+          rf.createdOn,
+          ROW_NUMBER() OVER (PARTITION BY rf.resultId ORDER BY rf.createdOn DESC) AS rn
+        FROM ResultFollowUp as rf
+        JOIN FollowUpType ft ON rf.followUpId = ft.id
+        WHERE ft.name = 'Treatment'
+      `)
+    )
+    .leftJoin(
+      knex.raw('(SELECT resultId, followUpId, date, rn FROM LatestFollowUp WHERE rn = 1) as rfl'),
+      'rfl.resultId',
       'r.id'
     )
-    .leftJoin('ResultFollowUp as rfl', builder => {
-      builder
-        .on('rfl.resultId', '=', 'latestFollowUpSub.resultId')
-        .andOn('rfl.createdOn', '=', 'latestFollowUpSub.latestFollowUp')
-    })
     .leftJoin('FollowUp as fp', 'rfl.followUpId', 'fp.id')
     .leftJoin('ResultWorkflowStatus as rws', builder => {
       builder.on('rws.id', 'rsl.resultWorkflowStatusId').andOn(innerQuery => {
