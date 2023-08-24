@@ -102,6 +102,18 @@ const messages = {
       id: 'p.PkDashboard.rrCasesDiagnosed',
       defaultMessage: 'RR cases diagnosed',
     },
+    xdrFlqResistance: {
+      id: 'p.PkDashboard.xdrFlqResistance',
+      defaultMessage: 'XDR FLQ Resistance',
+    },
+    nationalUtilizationTrendsAnnual: {
+      id: 'p.PkDashboard.nationalTrendsAnnual',
+      defaultMessage: 'National annual utilization rates',
+    },
+    provincesUtilizationTrendsAnnual: {
+      id: 'p.PkDashboard.nationalTrendsAnnual',
+      defaultMessage: 'Provinces annual utilization rates',
+    },
     testingAndDiagnosisUsingXdr: {
       id: 'p.PkDashboard.testingAndDiagnosisUsingXdr',
       defaultMessage: 'Testing & Diagnosis Trends using MTB/XDR Assay',
