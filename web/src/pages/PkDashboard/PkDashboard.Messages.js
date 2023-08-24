@@ -258,17 +258,18 @@ const messages = {
       defaultMessage: 'XDR Testing and Diagnosis Trend',
     },
     DCurrent: { id: 'p.PkDashboard.DCurrent', defaultMessage: 'Current MTB Detection' },
+    DCurrentPending: { id: 'p.PkDashboard.DCurrentPending', defaultMessage: 'Current MTB Detection (Pending)' },
     DNationalTrend: { id: 'p.PkDashboard.DNationalTrend', defaultMessage: 'National TB Diagnosis Trends' },
     DProvincialComparison: {
       id: 'p.PkDashboard.DProvincialComparison',
       defaultMessage: 'Provincial TB Diagnosis Trends Comparison',
     },
-    DTestingDiagnosis: {
-      id: 'p.PkDashboard.DTestingDiagnosis',
-      defaultMessage: 'GX-10C Testing & Diagnosis',
+    fqInhTestingDiagnosis: {
+      id: 'p.PkDashboard.fqInhTestingDiagnosis',
+      defaultMessage: 'FQ & INH Testing & Diagnosis',
     },
     FQCurrent: { id: 'p.PkDashboard.FQCurrent', defaultMessage: 'Current FQ Trends' },
-    FQNationalTrend: { id: 'p.PkDashboard.FQNationalTrend', defaultMessage: 'National FQ Trend' },
+    FQNationalTrend: { id: 'p.PkDashboard.FQNationalTrend', defaultMessage: 'National FQ Resistance Trend' },
     FQProvincialComparison: {
       id: 'p.PkDashboard.FQProvincialComparison',
       defaultMessage: 'Provincial FQ trends Comparison',
