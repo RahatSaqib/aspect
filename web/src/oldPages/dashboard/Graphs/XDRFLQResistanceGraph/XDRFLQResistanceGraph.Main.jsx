@@ -9,9 +9,9 @@ import AxisRightLayer from '../../../../components/Graphs/BarGraph/AxisRightLaye
 import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
+import GraphTitle from '../../../../pages/PkDashboard/components/GraphTitle'
 import styles from '../styles.css'
 import { FqrToMtbPercentageLine, FqrToMtbPercentageLineWithLabel } from './XDRFLQResistanceGraph.Main.Layers'
-import GraphTitle from '../../../../pages/PkDashboard/components/GraphTitle'
 
 const cssClasses = classnames.bind(styles)
 
