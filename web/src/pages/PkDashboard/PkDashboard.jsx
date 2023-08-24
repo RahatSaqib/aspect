@@ -56,11 +56,11 @@ const PkDashboard = () => {
         <Grid item lg={4} style={{ padding: '8px 8px 0' }}>
           <ColumnName title={formatMessage(messages.titlemtbRif)} />
           <DashboardCard title={formatMessage(messages.mtbRifTbTesting)}>
-            <DashboardLink to="/dashboard/rif/current-testing" label={formatMessage(messages.TbCurrent)} />
+            <DashboardLink to="/dashboard/rif/current-testing" label={formatMessage(messages.CurrentTBTesting)} />
             <DashboardLink to="/dashboard/rif/national-testing-trend" label={formatMessage(messages.TbNationalTrend)} />
             <DashboardLink
               to="/dashboard/rif/provincial-testing-trend"
-              label={formatMessage(messages.TbProvincialComparison)}
+              label={formatMessage(messages.ProvincialTBTestingTrend)}
             />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbRifTbDiagnosis)}>
@@ -68,7 +68,7 @@ const PkDashboard = () => {
             <DashboardLink to="/dashboard/rif/national-diagnosis" label={formatMessage(messages.TbDNationalTrend)} />
             <DashboardLink
               to="/dashboard/rif/provincial-diagnosis-trend"
-              label={formatMessage(messages.TbDProvincialComparison)}
+              label={formatMessage(messages.ProvincialTBDiagnosisTrendsComparison)}
             />
             <DashboardLink to="/dashboard/rif/test-diag-trend" label={formatMessage(messages.TbDTestingDiagnosis)} />
           </DashboardCard>
@@ -77,7 +77,7 @@ const PkDashboard = () => {
             <DashboardLink to="/dashboard/rif/national-rtb-trends" label={formatMessage(messages.RRNationalTrend)} />
             <DashboardLink
               to="/dashboard/rif/provincial-rrtb-trend-comparison"
-              label={formatMessage(messages.RRProvincialComparison)}
+              label={formatMessage(messages.ProvincialRRTBDiagnosisTrends)}
             />
             <DashboardLink to="/dashboard/rif/rrtb-test-diagnosis" label={formatMessage(messages.RRTestingDiagnosis)} />
           </DashboardCard>
@@ -89,7 +89,7 @@ const PkDashboard = () => {
             <DashboardLink to="/dashboard/xdr/national-testing-trend" label={formatMessage(messages.TNationalTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-testing-trend"
-              label={formatMessage(messages.TProvincialComparison)}
+              label={formatMessage(messages.ProvincialTestingTrend)}
             />
             <DashboardLink to="/dashboard/xdr/by-device" label={formatMessage(messages.XDRByDevice)} />
           </DashboardCard>
@@ -98,19 +98,19 @@ const PkDashboard = () => {
             <DashboardLink to="/dashboard/xdr/national-diagnosis" label={formatMessage(messages.DNationalTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-diagnosis-trend"
-              label={formatMessage(messages.DProvincialComparison)}
+              label={formatMessage(messages.ProvincialTBDiagnosisTrendsComparison)}
             />
             <DashboardLink
               to="/dashboard/xdr/testing-diagnosis-trend"
-              label={formatMessage(messages.XDRTestingDiagnosisTrend)}
+              label={formatMessage(messages.XDRTestingandDiagnosisTrends)}
             />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrFQResistance)}>
-            <DashboardLink to="" label={formatMessage(messages.FQCurrent)} />
-            <DashboardLink to="/dashboard/xdr/national-fq" label={formatMessage(messages.FQNationalTrend)} />
+            <DashboardLink to="" label={formatMessage(messages.CurrentFQDetection)} />
+            <DashboardLink to="/dashboard/xdr/national-fq" label={formatMessage(messages.NationalFQResistanceTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-fq-diagnosis-trend"
-              label={formatMessage(messages.FQProvincialComparison)}
+              label={formatMessage(messages.ProvincialFQDiagnosisTrends)}
             />
             <DashboardLink
               to="/dashboard/xdr/gx-testing-and-diagnosis"
