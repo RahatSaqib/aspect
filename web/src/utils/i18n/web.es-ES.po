@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-15T13:23:02.113Z\n"
+"POT-Creation-Date: 2023-08-21T20:06:25.401Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3316,14 +3316,14 @@ msgstr "División"
 #. Do you want to disable
 #: extracted_strings.json
 msgid "Do you want to disable"
-msgstr "¿Desea desactivar"
+msgstr "¿Desea desactivar?"
 
 #. [pages.PersonList.enable]
 #. defaultMessage is:
 #. Do you want to enable
 #: extracted_strings.json
 msgid "Do you want to enable"
-msgstr "¿Desea habilitar"
+msgstr "¿Desea habilitar?"
 
 #. [page.contacts.person.removeAssignment]
 #. defaultMessage is:
@@ -6685,7 +6685,6 @@ msgstr "MTB+"
 #. defaultMessage is:
 #. MTB+ %
 #: extracted_strings.json
-#| msgid "MTB+"
 msgid "MTB+ %"
 msgstr "MTB+ %"
 
@@ -13251,6 +13250,13 @@ msgstr "Resultado resumido del ensayo XDR por dispositivo"
 #: extracted_strings.json
 msgid "XDR FLQ Resistance"
 msgstr "Resistencia XDR FLQ"
+
+#. [p.PkDashboard.XDRTestingDiagnosisTrend]
+#. defaultMessage is:
+#. XDR Testing and Diagnosis Trend
+#: extracted_strings.json
+msgid "XDR Testing and Diagnosis Trend"
+msgstr "Tendencia de pruebas y diagnóstico XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
