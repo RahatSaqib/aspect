@@ -16,6 +16,15 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
 
+  let statusLogData
+  let comment
+  const { transferredBy, transferStatusLogData } = data
+
+  if (transferStatusLogData) {
+    statusLogData = JSON.parse(data.transferStatusLogData)
+    comment = statusLogData?.comment
+  }
+
   if (data.sampleCollectedOn || data.sampleSiteName) {
     output.push({
       id: data.resultSampleId,
@@ -24,6 +33,8 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: data.sampleTypeExternalId,
       siteName: data?.sampleSiteName,
       updatedOn: data.sampleCollectedOn,
+      comment,
+      transferredBy,
     })
   }
 
@@ -35,6 +46,8 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: data.sampleTypeExternalId,
       siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
+      comment,
+      transferredBy,
     })
   }
 
