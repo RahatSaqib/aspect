@@ -77,7 +77,10 @@ const CurrentXDRDiagnosisPage = () => {
           <TripleCardSide
             data={[
               { label: formatMessage(messages.xdrCasesPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.xdrAverageMoth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              {
+                label: formatMessage(messages.xdrAverageMoth),
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+              },
               { label: formatMessage(messages.xdrLastDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />

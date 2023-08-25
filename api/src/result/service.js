@@ -1787,7 +1787,7 @@ async function currentResultAggregations(request) {
       },
       0
     )
-    resp.averageTestsPerMonthCurrentYear = Math.floor(totalResultsCurrentYear / currentMonth)
+    resp.averageTestsPerMonthCurrentYear = totalResultsCurrentYear / currentMonth
   }
   /**
    * Total tests in the last 24 hours

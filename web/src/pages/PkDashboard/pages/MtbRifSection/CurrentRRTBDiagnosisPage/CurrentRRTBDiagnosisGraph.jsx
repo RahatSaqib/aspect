@@ -116,7 +116,10 @@ const CurrentDiagnosisGraphPage = () => {
           <TripleCardSide
             data={[
               { label: formatMessage(messages.RRPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.RRPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              {
+                label: formatMessage(messages.RRPerMonth),
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+              },
               { label: formatMessage(messages.RRPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
