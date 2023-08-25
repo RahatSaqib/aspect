@@ -69,7 +69,12 @@ const CurrentDiagnosisGraphPage = () => {
           <Loading />
         ) : (
           <>
-            <TestsOverTimeGraphMain             title={formatMessage(messages.tbCasesDiagnosed)} data={mainData.data} assaysFromState={assays} showLabel={showLabel} />
+            <TestsOverTimeGraphMain
+              title={formatMessage(messages.tbCasesDiagnosed)}
+              data={mainData.data}
+              assaysFromState={assays}
+              showLabel={showLabel}
+            />
             <TripleCardSide
               data={[
                 { label: formatMessage(messages.xdrCasesPerYear), value: `${mainData?.totalResultsCurrentYear}` },
