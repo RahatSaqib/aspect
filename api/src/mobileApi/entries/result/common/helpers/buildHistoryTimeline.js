@@ -21,7 +21,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   const { transferredBy, transferStatusLogData } = data
 
   if (transferStatusLogData) {
-    statusLogData = JSON.parse(data.transferStatusLogData)
+    statusLogData = JSON.parse(transferStatusLogData)
     comment = statusLogData?.comment
   }
 
