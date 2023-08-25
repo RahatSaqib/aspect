@@ -43,7 +43,7 @@ const CurrentDiagnosisGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.rifCurrentRRTBDiagnosisTitle)}
+      title={formatMessage(messages.rrtbDiagnosisTitle)}
       filters={
         <>
           <FormControlLabel
@@ -70,7 +70,12 @@ const CurrentDiagnosisGraphPage = () => {
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
-          <TestsOverTimeGraphMain data={data.data} assaysFromState={assays} showLabel={showLabel} />
+          <TestsOverTimeGraphMain
+            title={`${formatMessage(messages.rrCasesDiagnosed)} ${formatMessage(messages.currentYear)}`}
+            data={data.data}
+            assaysFromState={assays}
+            showLabel={showLabel}
+          />
           <TripleCardSide
             data={[
               { label: formatMessage(messages.RRPerYear), value: `${data.totalResultsCurrentYear}` },

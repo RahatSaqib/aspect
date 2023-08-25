@@ -31,7 +31,7 @@ const ProvincialTestingTrendPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.TbDProvincialComparison)}`}
+      title={`${formatMessage(messages.provincialXdrTestingTrends)}`}
       filters={
         <StateAutocomplete
           fullWidth

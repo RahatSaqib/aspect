@@ -75,7 +75,7 @@ const XDRTestingDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.XDRTestingDiagnosisTrend)}
+      title={formatMessage(messages.testingAndDiagnosisUsingXdr)}
       filters={
         <>
           <FormControlLabel

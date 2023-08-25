@@ -43,7 +43,7 @@ const CurrentDiagnosisGraphPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.rifCurrentDiagnosisTitle)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.peopleDiagnosedRif)}
       filters={
         <>
           <FormControlLabel
@@ -70,12 +70,17 @@ const CurrentDiagnosisGraphPage = () => {
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
-          <TestsOverTimeGraphMain data={data.data} assaysFromState={assays} showLabel={showLabel} />
+          <TestsOverTimeGraphMain
+            title={formatMessage(messages.tbCasesDiagnosed)}
+            data={data.data}
+            assaysFromState={assays}
+            showLabel={showLabel}
+          />
           <TripleCardSide
             data={[
-              { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.testPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
-              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.xdrCasesPerYear), value: `${data.totalResultsCurrentYear}` },
+              { label: formatMessage(messages.xdrAverageMoth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              { label: formatMessage(messages.xdrLastDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
           <TestsOverTimeGraphHalf data={data.data} assaysFromState={assays} showLabel={showLabel} />

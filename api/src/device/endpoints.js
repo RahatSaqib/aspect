@@ -612,7 +612,10 @@ const routes = [
       description: 'National Trends in Annual Utilization Rates',
       notes:
         'The National Trends in annual utilization rates displays the percentage of utilization for the current year and the previous 5 years of data',
-      ...listDevicesBaseRequest(true),
+      auth: { scope: ['device:view', 'operationalData:view'] },
+      validate: {
+        query: { ...validateDateRangeParams(false) },
+      },
       response: {
         options: {
           allowUnknown: false,
@@ -662,7 +665,10 @@ const routes = [
       description: 'Provincial Trends in Annual Utilization Rates',
       notes:
         'The Provincial Trends in annual utilization rates displays the percentage of utilization for the current year and the previous 5 years of data',
-      ...listDevicesBaseRequest(true),
+      auth: { scope: ['device:view', 'operationalData:view'] },
+      validate: {
+        query: { ...validateDateRangeParams(false) },
+      },
       response: {
         options: {
           allowUnknown: false,
