@@ -3,7 +3,7 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { format, subMonths, subHours, eachMonthOfInterval } = require('date-fns')
 const Promise = require('bluebird')
-const { getOffsetFromIsoDateString } = require('../shared/date')
+const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
 const {
   getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
@@ -1747,7 +1747,19 @@ async function currentResultAggregations(request) {
   /**
    * List of the number of tests in date range groupped by xxx
    */
-  resp.data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+  const data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+
+  if (query.minDate && query.maxDate) {
+    // Get all months in date range (YYYY-MM)
+    const months = getAllMonthsInRange(query.minDate, query.maxDate)
+
+    resp.data = months.map(month => {
+      const monthInData = data.find(d => d.month === month)
+      return monthInData ?? { cnt: 0, month }
+    })
+  } else {
+    resp.data = data
+  }
 
   /**
    * Total tests of the current year
