@@ -78,7 +78,7 @@ const ErrorRatePage = () => {
   const { data, isLoading } = useDeviceErrors(filter)
 
   return (
-    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.errorRateTitle)}>
+    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.genExpertError)}>
       {isLoading ? (
         <Loading />
       ) : (

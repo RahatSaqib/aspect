@@ -41,7 +41,7 @@ const CurrentDiagnosisGraphPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.rifCurrentDiagnosisTitle)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.peopleDiagnosedRif)}
       filters={
         <>
           <FormControlLabel
@@ -69,15 +69,15 @@ const CurrentDiagnosisGraphPage = () => {
           <Loading />
         ) : (
           <>
-            <TestsOverTimeGraphMain data={mainData.data} assaysFromState={assays} showLabel={showLabel} />
+            <TestsOverTimeGraphMain             title={formatMessage(messages.tbCasesDiagnosed)} data={mainData.data} assaysFromState={assays} showLabel={showLabel} />
             <TripleCardSide
               data={[
-                { label: formatMessage(messages.testPerYear), value: `${mainData?.totalResultsCurrentYear}` },
+                { label: formatMessage(messages.xdrCasesPerYear), value: `${mainData?.totalResultsCurrentYear}` },
                 {
-                  label: formatMessage(messages.testPerMonth),
+                  label: formatMessage(messages.xdrAverageMoth),
                   value: `${mainData?.averageTestsPerMonthCurrentYear}`,
                 },
-                { label: formatMessage(messages.testPerDay), value: `${mainData?.totalResultsInLast24Hours}` },
+                { label: formatMessage(messages.xdrLastDay), value: `${mainData?.totalResultsInLast24Hours}` },
               ]}
             />
           </>
