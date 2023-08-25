@@ -75,7 +75,7 @@ const CurrentDiagnosisGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.rifCurrentRRTBDiagnosisTitle)}
+      title={formatMessage(messages.rrtbDiagnosisTitle)}
       filters={
         <>
           <FormControlLabel

@@ -25,7 +25,7 @@ const NationalRtbTrendsGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.RRNationalTrend)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.rrtbNationalDiagnosisTrendsTitle)}
       filters={
         <>
           <FormControlLabel
@@ -50,6 +50,8 @@ const NationalRtbTrendsGraph = () => {
     >
       <TrendInYearsAllTestsGraph
         withAnnual
+        yearTitle={formatMessage(messages.annualRRDiagnosedTrends)}
+        monthTitle={formatMessage(messages.monthlyDiagnosedTrends)}
         assaysFromState={assays ?? []}
         showLabel={showLabel}
         filterSelection={objectToArray(filter).concat(defaultFilters)}

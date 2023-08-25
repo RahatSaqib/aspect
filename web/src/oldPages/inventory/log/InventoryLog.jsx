@@ -147,8 +147,8 @@ const InventoryLog = () => {
   const apiFilters = { ...filters }
 
   if (Object.keys(apiFilters).includes('maxExpirationDate')) {
-    apiFilters.maxExpirationDate = apiFilters.maxExpirationDate.toISOString()
-    apiFilters.minExpirationDate = apiFilters.minExpirationDate.toISOString()
+    apiFilters.maxExpirationDate = new Date(apiFilters.maxExpirationDate).toISOString()
+    apiFilters.minExpirationDate = new Date(apiFilters.minExpirationDate).toISOString()
   }
 
   const {

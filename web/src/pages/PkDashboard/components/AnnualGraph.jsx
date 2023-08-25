@@ -5,6 +5,7 @@ import isEmpty from 'lodash/isEmpty'
 import EmptyGraph from '../../../components/Graphs/EmptyData'
 import SimpleBarGraph from '../../../components/Graphs/SimpleBarGraph'
 import styles from '../../../oldPages/dashboard/Graphs/styles.css'
+import GraphTitle from './GraphTitle'
 
 const cssClasses = classnames.bind(styles)
 
@@ -29,9 +30,10 @@ const graphData = [
 
 const keys = ['Annual']
 
-const AnnualGraph = ({ showLabel, data = graphData }) => {
+const AnnualGraph = ({ showLabel, data = graphData, title }) => {
   return (
-    <Grid item xs={12} md={4} lg={4} sx={{ p: 1 }}>
+    <Grid item xs={12} md={4} lg={4}>
+      {title ? <GraphTitle>{title}</GraphTitle> : null}
       <div className={cssClasses('Graph_Wrapper')}>
         {data && !isEmpty(data) ? (
           <SimpleBarGraph data={data} keys={keys} indexBy="year" enableLabel={showLabel} />
