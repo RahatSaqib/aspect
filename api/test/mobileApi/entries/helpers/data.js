@@ -91,6 +91,8 @@ const expected347 = [
         name: 'DBS',
         siteName: 'Lancaster Clinic Laboratory',
         updatedOn: '2023-05-03T17:55:57.000Z',
+        transferredBy: 'Admin',
+        comment: undefined,
       },
       {
         id: 172,
@@ -99,6 +101,8 @@ const expected347 = [
         name: 'DBS',
         siteName: 'Oden Lab',
         updatedOn: '2022-11-01T16:16:39.000Z',
+        transferredBy: 'Admin',
+        comment: undefined,
       },
     ],
     patientData: [
@@ -315,6 +319,8 @@ const expected450 = [
         name: 'DBS',
         siteName: 'Marden Hospital Laboratory',
         updatedOn: '2023-05-20T17:55:55.000Z',
+        comment: undefined,
+        transferredBy: null,
       },
       {
         id: 155,
@@ -323,6 +329,8 @@ const expected450 = [
         name: 'DBS',
         siteName: 'Atlanta NMRL',
         updatedOn: '2022-08-04T16:16:37.000Z',
+        comment: undefined,
+        transferredBy: null,
       },
     ],
     patientData: [

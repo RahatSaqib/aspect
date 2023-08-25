@@ -74,6 +74,10 @@ describe('Entries helpers', () => {
         laboratorySiteName: 'ReportLab1',
         reportableSiteName: 'ReportClinic1',
         testDate: '2023-05-02T00:00:00Z',
+        transferredBy: 'testuser',
+        transferStatusLogData:
+          '{"siteId":261,"reportableSiteId":436,"previousReportableSiteId":261,"comment":"test comment"}',
+        transferredOn: '2023-05-02T00:00:00Z',
       }
 
       const followUps = [{ id: 789, resultId: 123, followUpName: 'FollowUp1', updatedOn: '2023-05-03T00:00:00Z' }]
@@ -88,12 +92,22 @@ describe('Entries helpers', () => {
           updatedOn: '2023-05-03T00:00:00Z',
         },
         {
+          id: 123,
+          resultId: 123,
+          event: 'transferEvent',
+          name: 'awayTransfer',
+          siteName: 'ReportClinic1',
+          updatedOn: '2023-05-02T00:00:00Z',
+        },
+        {
           id: 456,
           resultId: 123,
           event: 'sampleTested',
           name: 'SampleType1',
           siteName: 'ReportLab1',
           updatedOn: '2023-05-02T00:00:00Z',
+          transferredBy: 'testuser',
+          comment: 'test comment',
         },
         {
           id: 456,
@@ -102,6 +116,8 @@ describe('Entries helpers', () => {
           name: 'SampleType1',
           siteName: 'Lab1',
           updatedOn: '2023-05-01T00:00:00Z',
+          transferredBy: 'testuser',
+          comment: 'test comment',
         },
       ]
 
