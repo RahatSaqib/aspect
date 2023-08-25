@@ -107,7 +107,6 @@ const getSelectCommonListFieldsTZ = userTimeOffset => ({
   ...COMMON_LIST_FIELDS_UTC,
   followUpName: 'fp.name',
   followUpComment: 'rsl.reason',
-  followUpStatus: 'rws.name',
   // override datetime fields with user time offset:
   startedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.startedOn', userTimeOffset),
   endedOn: getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', userTimeOffset),

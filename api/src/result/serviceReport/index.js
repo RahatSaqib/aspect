@@ -71,6 +71,7 @@ async function getAllResultsForExport(auth, query) {
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
     { key: 'resultWorkflowStatus', header: 'Result Status' },
+    { key: 'resultTreatmentStatus', header: 'Follow Up Status' },
     { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
     { key: 'consumableSerial', header: 'Consumable Serial' },
     { key: 'consumableLot', header: 'Consumable Lot' },
@@ -87,7 +88,6 @@ async function getAllResultsForExport(auth, query) {
     { key: 'followUpName', header: 'Follow Up' },
     { key: 'followUpDate', header: 'Follow Up Date' },
     { key: 'followUpComment', header: 'Follow Up Comment' },
-    { key: 'followUpStatus', header: 'Follow Up Status' },
     { key: 'recordedInRegister', header: 'Recorded In Register' },
 
     // dynamic columns from different schema json fields
