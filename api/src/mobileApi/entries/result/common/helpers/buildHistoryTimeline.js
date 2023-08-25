@@ -16,14 +16,6 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
 
-  // let statusLogData
-  // let comment
-
-  // if (transferStatusLogData) {
-  //   statusLogData = JSON.parse(transferStatusLogData)
-  //   comment = statusLogData?.comment
-  // }
-
   if (data.sampleCollectedOn || data.sampleSiteName) {
     output.push({
       id: data.resultSampleId,
