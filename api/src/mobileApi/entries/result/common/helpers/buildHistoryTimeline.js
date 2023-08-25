@@ -16,14 +16,13 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
 
-  let statusLogData
-  let comment
-  const { transferredBy, transferStatusLogData } = data
+  // let statusLogData
+  // let comment
 
-  if (transferStatusLogData) {
-    statusLogData = JSON.parse(transferStatusLogData)
-    comment = statusLogData?.comment
-  }
+  // if (transferStatusLogData) {
+  //   statusLogData = JSON.parse(transferStatusLogData)
+  //   comment = statusLogData?.comment
+  // }
 
   if (data.sampleCollectedOn || data.sampleSiteName) {
     output.push({
@@ -33,8 +32,6 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: data.sampleTypeExternalId,
       siteName: data?.sampleSiteName,
       updatedOn: data.sampleCollectedOn,
-      comment,
-      transferredBy,
     })
   }
 
@@ -46,12 +43,18 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: data.sampleTypeExternalId,
       siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
-      comment,
-      transferredBy,
     })
   }
 
   if (!_.isNil(transferStatus?.transferStatus)) {
+    const { transferredBy, transferStatusLogData } = data
+
+    let statusLogData
+    let comment
+    if (transferStatusLogData) {
+      statusLogData = JSON.parse(transferStatusLogData)
+      comment = statusLogData?.comment
+    }
     output.push({
       id: data.id,
       resultId: data.id,
@@ -59,6 +62,8 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: transferStatus.transferStatus,
       siteName: data?.reportableSiteName,
       updatedOn: transferStatus.transferredOn,
+      comment,
+      transferredBy,
     })
   }
 

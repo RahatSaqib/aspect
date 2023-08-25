@@ -98,6 +98,8 @@ describe('Entries helpers', () => {
           name: 'awayTransfer',
           siteName: 'ReportClinic1',
           updatedOn: '2023-05-02T00:00:00Z',
+          comment: 'test comment',
+          transferredBy: 'testuser',
         },
         {
           id: 456,
@@ -106,8 +108,6 @@ describe('Entries helpers', () => {
           name: 'SampleType1',
           siteName: 'ReportLab1',
           updatedOn: '2023-05-02T00:00:00Z',
-          transferredBy: 'testuser',
-          comment: 'test comment',
         },
         {
           id: 456,
@@ -116,8 +116,6 @@ describe('Entries helpers', () => {
           name: 'SampleType1',
           siteName: 'Lab1',
           updatedOn: '2023-05-01T00:00:00Z',
-          transferredBy: 'testuser',
-          comment: 'test comment',
         },
       ]
 
