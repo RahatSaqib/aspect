@@ -165,33 +165,22 @@ const getBaseResults = () =>
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'd.siteId', 'si.id')
 
+const latestFollowUpCTE = knex
+  .select('rf.resultId', 'rf.followUpId', 'rf.date', knex.raw('MAX(rf.createdOn) AS latestFollowUpCreatedOn'))
+  .from('ResultFollowUp AS rf')
+  .groupBy('rf.resultId')
+  .as('lfu')
+
+const followUpTreatmentCTE = knex
+  .select('lfu.resultId', 'fp.name', 'lfu.date')
+  .from(latestFollowUpCTE)
+  .join('FollowUp AS fp', 'lfu.followUpId', 'fp.id')
+  .join('FollowUpType AS fup', 'fp.followUpTypeId', 'fup.id')
+  .where('fup.externalId', '=', 'treatment')
+  .as('flt')
+
 const getBaseQueryForResultsWithFollowUp = () =>
-  getBaseQueryForResults()
-    .with(
-      'LatestFollowUp',
-      knex.raw(`
-        SELECT
-          rf.resultId,
-          rf.followUpId,
-          rf.date,
-          rf.createdOn,
-          ROW_NUMBER() OVER (PARTITION BY rf.resultId ORDER BY rf.createdOn DESC) AS rn
-        FROM ResultFollowUp as rf
-        JOIN FollowUpType ft ON rf.followUpId = ft.id
-        WHERE ft.name = 'Treatment'
-      `)
-    )
-    .leftJoin(
-      knex.raw('(SELECT resultId, followUpId, date, rn FROM LatestFollowUp WHERE rn = 1) as rfl'),
-      'rfl.resultId',
-      'r.id'
-    )
-    .leftJoin('FollowUp as fp', 'rfl.followUpId', 'fp.id')
-    .leftJoin('ResultWorkflowStatus as rws', builder => {
-      builder.on('rws.id', 'rsl.resultWorkflowStatusId').andOn(innerQuery => {
-        innerQuery.on('rws.externalId', knex.raw("'Acknowledged'")).orOn('rws.externalId', knex.raw("'Flagged'"))
-      })
-    })
+  getBaseQueryForResults().leftJoin(followUpTreatmentCTE, 'flt.resultId', 'r.id')
 
 const getBaseQueryForResults = () =>
   getBaseResults()

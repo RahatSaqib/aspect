@@ -72,6 +72,10 @@ async function getAllResultsForExport(auth, query) {
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
     { key: 'resultWorkflowStatus', header: 'Result Status' },
     { key: 'resultTreatmentStatus', header: 'Follow Up Status' },
+    { key: 'followUpName', header: 'Follow Up' },
+    { key: 'followUpDate', header: 'Follow Up Date' },
+    { key: 'followUpComment', header: 'Follow Up Comment' },
+    { key: 'recordedInRegister', header: 'Recorded In Register' },
     { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
     { key: 'consumableSerial', header: 'Consumable Serial' },
     { key: 'consumableLot', header: 'Consumable Lot' },
@@ -85,10 +89,6 @@ async function getAllResultsForExport(auth, query) {
     { key: 'errorNotes', header: 'Error notes' },
     { key: 'notes', header: 'Notes' },
     { key: 'assayName', header: 'Assay' },
-    { key: 'followUpName', header: 'Follow Up' },
-    { key: 'followUpDate', header: 'Follow Up Date' },
-    { key: 'followUpComment', header: 'Follow Up Comment' },
-    { key: 'recordedInRegister', header: 'Recorded In Register' },
 
     // dynamic columns from different schema json fields
     ...columnsFromAssaySchema,
