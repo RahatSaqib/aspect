@@ -12,7 +12,7 @@ import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
 import { months } from '../../../../messages'
 import styles from '../styles.css'
-import { MtbToTotalPercentage, MtbToTotalPercentageWithLabel } from './QuartersMtbDetectedGraph.Main.Layers'
+import { lineForPropWithLabel, lineForProp } from './QuartersMtbDetectedGraph.Main.Layers'
 
 const cssClasses = classnames.bind(styles)
 
@@ -66,7 +66,10 @@ const QuartersMtbDetectedGraphMain = ({ assaysFromState, showLabel, filterSelect
             assaysFromState={assaysFromState}
             config={{
               ...baseConfig,
-              layers: [showLabel ? MtbToTotalPercentageWithLabel : MtbToTotalPercentage, AxisRightLayer],
+              layers: [
+                showLabel ? lineForPropWithLabel('MtbToTotalPercentage') : lineForProp('MtbToTotalPercentage'),
+                AxisRightLayer,
+              ],
               showLabel,
               showDecimals: 0,
               labelTextColor: '#333',

@@ -23,7 +23,7 @@ async function getModuleStatusReportData(dataConstraints, query) {
     .leftJoin(moduleReplacedIssuesForPeriod.as('mr'), function () {
       this.on('mr.deviceId', 'd.id')
     })
-    .where('dt.externalId', 'CepheidGeneXpert')
+    .whereNot('dt.externalId', 'GxAlert')
     .select([
       'd.name as deviceName',
       'd.serial as deviceSerial',

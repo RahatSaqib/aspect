@@ -1,16 +1,14 @@
 import React, { useState } from 'react'
 import { FormControlLabel, Switch } from '@mui/material'
-import isNil from 'lodash/isNil'
-import omitBy from 'lodash/omitBy'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/TrendInYearsAllTestsGraph/TrendInYearsAllTestsGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
-import { objectToArray } from '../../../../../utils/utils/misc'
 
 const defaultFilters = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }, { resultCategory1: 'Detected' }]
 const NationalDiagnosisGraph = () => {
@@ -22,7 +20,7 @@ const NationalDiagnosisGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.rifCurrentDiagnosisTitle)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.nationalMtbRifDiagnosed)}
       filters={
         <>
           <FormControlLabel
@@ -46,6 +44,8 @@ const NationalDiagnosisGraph = () => {
       }
     >
       <TrendInYearsAllTestsGraph
+        yearTitle={formatMessage(messages.annualDiagnosedTrends)}
+        monthTitle={formatMessage(messages.annualMTBDiagnosedTrends)}
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}

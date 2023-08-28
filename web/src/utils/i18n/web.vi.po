@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-06-12T19:27:42.246Z\n"
+"POT-Creation-Date: 2023-08-21T20:06:25.401Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -41,6 +41,13 @@ msgstr "# Kết quả Tháng hiện tại"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "# Kết Quả Tháng Trước"
+
+#. [pages.XDR.totalConducted]
+#. defaultMessage is:
+#. # of sites tested MTB/XDR Assay
+#: extracted_strings.json
+msgid "# of sites tested MTB/XDR Assay"
+msgstr "# địa điểm được thử nghiệm Xét nghiệm MTB/XDR"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -250,6 +257,20 @@ msgstr ""
 msgid "A username is required"
 msgstr "Yêu cầu tên người dùng"
 
+#. [pages.XDR.cnt_amk]
+#. defaultMessage is:
+#. AMK R
+#: extracted_strings.json
+msgid "AMK R"
+msgstr "AMK R"
+
+#. [pages.XDR.cnt_amk_p]
+#. defaultMessage is:
+#. AMK R %
+#: extracted_strings.json
+msgid "AMK R %"
+msgstr "AMK R %"
+
 #. [results.categoryTypeAMKResistanceI18nKey]
 #. defaultMessage is:
 #. AMK Resistance
@@ -450,13 +471,6 @@ msgstr "Thêm bài tập"
 msgid "Add Inventory"
 msgstr "Thêm sinh phẩm"
 
-#. [pages.resultTreatmentPanel.addNote]
-#. defaultMessage is:
-#. Add Note
-#: extracted_strings.json
-msgid "Add Note"
-msgstr "Thêm ghi chú"
-
 #. [pages.DeviceDetailProfile.buttonAddRecord]
 #. defaultMessage is:
 #. Add Record
@@ -480,13 +494,6 @@ msgstr "Thêm dòng"
 #: extracted_strings.json
 msgid "Add {consumableName}"
 msgstr "Thêm {consumableName}"
-
-#. [errorResponseMessages.addInventory.PUT.default.title]
-#. defaultMessage is:
-#. Adding Inventory Failed
-#: extracted_strings.json
-msgid "Adding Inventory Failed"
-msgstr "Thêm khoảng không quảng cáo không thành công"
 
 #. [pages.NotificationDetail.fieldAddress]
 #. defaultMessage is:
@@ -617,9 +624,6 @@ msgstr "Cảnh báo"
 #. [pages.TablePaginator.all]
 #. defaultMessage is:
 #. All
-#. [filter.clientSideFilterSelect.selectAll]
-#. defaultMessage is:
-#. All
 #. [pages.PersonDetails.all]
 #. defaultMessage is:
 #. All
@@ -738,13 +742,6 @@ msgstr "Email thay thế"
 #: extracted_strings.json
 msgid "An Error Occurred When Trying to Save the Device"
 msgstr "Đã xảy ra lỗi khi cố gắng lưu thiết bị"
-
-#. [errorResponseMessages.updateSingleResult.PUT.default.title]
-#. defaultMessage is:
-#. An Error Occurred When Trying to Save the Result
-#: extracted_strings.json
-msgid "An Error Occurred When Trying to Save the Result"
-msgstr "Đã xảy ra lỗi khi cố gắng lưu kết quả"
 
 #. [pages.ResetPassword.emailSent]
 #. defaultMessage is:
@@ -888,13 +885,6 @@ msgstr "Khảo nghiệm"
 msgid "Assay Type"
 msgstr "Loại thử nghiệm"
 
-#. [pages.Milestones.assayType]
-#. defaultMessage is:
-#. Assay Type:
-#: extracted_strings.json
-msgid "Assay Type:"
-msgstr "Loại thử nghiệm:"
-
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
 #. Asserted inventory on hand decrease
@@ -908,6 +898,20 @@ msgstr "Đã xác nhận hàng tồn kho trên tay"
 #: extracted_strings.json
 msgid "Asserted inventory on hand increase"
 msgstr "Hàng tồn kho được xác nhận tăng"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedInventoryOnHandAdd]
+#. defaultMessage is:
+#. Asserted inventory on hand increase ( Add )
+#: extracted_strings.json
+msgid "Asserted inventory on hand increase ( Add )"
+msgstr "Khoảng không quảng cáo được xác nhận tăng trong tay ( Thêm )"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedInventoryOnHandRemove]
+#. defaultMessage is:
+#. Asserted inventory on hand increase ( Remove )
+#: extracted_strings.json
+msgid "Asserted inventory on hand increase ( Remove )"
+msgstr "Khoảng không quảng cáo được xác nhận tăng trong tay ( Xóa )"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
 #. defaultMessage is:
@@ -1658,13 +1662,6 @@ msgstr "Số điện thoại di động"
 msgid "Change"
 msgstr "Thay đổi"
 
-#. [pages.ResultWorkflowStatusLog.logChangedOn]
-#. defaultMessage is:
-#. Changed On
-#: extracted_strings.json
-msgid "Changed On"
-msgstr "Đã thay đổi trên"
-
 #. [pages.ResetPassword.checkEmail]
 #. defaultMessage is:
 #. Check Inbox
@@ -1748,13 +1745,6 @@ msgstr "Bỏ bộ lọc"
 msgid "Click to view results in table format"
 msgstr "Nhấp để xem kết quả ở định dạng bảng"
 
-#. [pages.ClinicalHistory.clinicalHistory]
-#. defaultMessage is:
-#. Clinical History
-#: extracted_strings.json
-msgid "Clinical History"
-msgstr "Lịch sử lâm sàng"
-
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
 #. Clinical Indicators
@@ -1817,13 +1807,6 @@ msgstr "Được thu thập bởi"
 msgid "Collected On"
 msgstr "Đã thu thập vào"
 
-#. [pages.Milestones.sampleCollectedOn]
-#. defaultMessage is:
-#. Collected On:
-#: extracted_strings.json
-msgid "Collected On:"
-msgstr "Đã thu thập vào:"
-
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
 #. Collection of Results
@@ -1859,9 +1842,6 @@ msgstr "Tỷ lệ hoàn thành Tỷ lệ phần trăm"
 msgid "Conditions Should be Fulfilled"
 msgstr "Điều kiện nên được thực hiện"
 
-#. [pages.resultTreatmentPanel.confirm]
-#. defaultMessage is:
-#. Confirm
 #. [pages.DeviceList.buttonConfirmMerge]
 #. defaultMessage is:
 #. Confirm
@@ -1923,9 +1903,6 @@ msgstr "Các trường hợp xác nhận"
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivityHealth]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.SiteList.issueCategoryConnectivityHealth]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceDetailProfile.connectivity]
@@ -2273,13 +2250,6 @@ msgstr "Tạo site"
 #: extracted_strings.json
 msgid "Created On"
 msgstr "Được tạo"
-
-#. [pages.Milestones.followUpCreatedOn]
-#. defaultMessage is:
-#. Created On:
-#: extracted_strings.json
-msgid "Created On:"
-msgstr "Được tạo ra:"
 
 #. [pages.Notification.type.CriticalError]
 #. defaultMessage is:
@@ -2649,9 +2619,6 @@ msgstr "Bảng điều khiển v2"
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
 #. Data
-#. [pages.SiteList.issueCategoryDataHealth]
-#. defaultMessage is:
-#. Data
 #: extracted_strings.json
 msgid "Data"
 msgstr "Dữ liệu"
@@ -2683,9 +2650,6 @@ msgstr "Tình trạng dữ liệu"
 #. defaultMessage is:
 #. Date
 #. [pages.InventoryLog.date]
-#. defaultMessage is:
-#. Date
-#. [pages.Milestones.date]
 #. defaultMessage is:
 #. Date
 #. [pages.Notifications.table.dateHeader]
@@ -2888,12 +2852,12 @@ msgstr "Sốt xuất huyết"
 msgid "Dengue Fever"
 msgstr "Bệnh sốt xuất huyết"
 
-#. [pages.Milestones.notes]
+#. [filter.popover.destinationSiteName]
 #. defaultMessage is:
-#. Description:
+#. Destination Site
 #: extracted_strings.json
-msgid "Description:"
-msgstr "Mô tả:"
+msgid "Destination Site"
+msgstr "Trang web đích"
 
 #. [pages.PersonDetails.detailsUpdatedSuccessfully]
 #. defaultMessage is:
@@ -2947,9 +2911,6 @@ msgstr "Đã phát hiện"
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.deviceHealth]
-#. defaultMessage is:
-#. Device
-#. [pages.SiteList.issueCategoryDeviceHealth]
 #. defaultMessage is:
 #. Device
 #. [pages.DailyStatusDialog.deviceLabel]
@@ -3247,13 +3208,6 @@ msgstr "Phòng thí nghiệm:"
 msgid "Devices with Unused Modules"
 msgstr "Thiết bị có mô-đun không sử dụng"
 
-#. [forms.PhoneNumber.dialCode]
-#. defaultMessage is:
-#. Dial Code
-#: extracted_strings.json
-msgid "Dial Code"
-msgstr "Quay số mã"
-
 #. [contextualMenu.notifications.disable.status.title]
 #. defaultMessage is:
 #. Disable
@@ -3453,6 +3407,20 @@ msgstr "EID"
 msgid "EQA"
 msgstr "cân bằng"
 
+#. [pages.XDR.cnt_eth]
+#. defaultMessage is:
+#. ETH R
+#: extracted_strings.json
+msgid "ETH R"
+msgstr "ETH R"
+
+#. [pages.XDR.cnt_eth_p]
+#. defaultMessage is:
+#. ETH R %
+#: extracted_strings.json
+msgid "ETH R %"
+msgstr "ETH R %"
+
 #. [results.categoryTypeETHResistanceI18nKey]
 #. defaultMessage is:
 #. ETH Resistance
@@ -3471,9 +3439,6 @@ msgid "Ebola"
 msgstr "Ebola"
 
 #. [button_Edit]
-#. defaultMessage is:
-#. Edit
-#. [pages.NotificationDetail.edit]
 #. defaultMessage is:
 #. Edit
 #. [pages.DeviceDetail.edit]
@@ -3775,6 +3740,13 @@ msgstr "Nhập tên đơn vị..."
 msgid "Error"
 msgstr "Lỗi"
 
+#. [pages.XDR.error]
+#. defaultMessage is:
+#. Error #
+#: extracted_strings.json
+msgid "Error #"
+msgstr "Lỗi #"
+
 #. [filter.popover.errorCode]
 #. defaultMessage is:
 #. Error Code
@@ -3808,13 +3780,6 @@ msgstr "Lỗi khi tìm nạp điểm cuối"
 msgid "Error Loading All Sites"
 msgstr "Lỗi khi tải tất cả các đơn vị"
 
-#. [errorResponseMessages.fetchLgasForLocationSelector.GET.default.title]
-#. defaultMessage is:
-#. Error Loading Areas for {stateName}
-#: extracted_strings.json
-msgid "Error Loading Areas for {stateName}"
-msgstr "Lỗi khi tải khu vực cho {stateName}"
-
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Countries
@@ -3835,20 +3800,6 @@ msgstr "Lỗi khi tải đối tác và chức năng công việc"
 #: extracted_strings.json
 msgid "Error Loading Result Details"
 msgstr "Lỗi khi tải chi tiết kết quả"
-
-#. [errorResponseMessages.fetchDeviceLog.GET.default.title]
-#. defaultMessage is:
-#. Error Loading Result Logs
-#: extracted_strings.json
-msgid "Error Loading Result Logs"
-msgstr "Lỗi khi tải nhật ký kết quả"
-
-#. [errorResponseMessages.fetchStatesForLocationSelector.GET.default.title]
-#. defaultMessage is:
-#. Error Loading States for {countryName}
-#: extracted_strings.json
-msgid "Error Loading States for {countryName}"
-msgstr "Lỗi khi tải các tiểu bang cho {countryName}"
 
 #. [pages.ReportIndex.error_rate]
 #. defaultMessage is:
@@ -4035,16 +3986,6 @@ msgstr "Ngày hết hạn"
 msgid "Export device list"
 msgstr "Xuất danh sách thiết bị"
 
-#. [errorResponseMessages.exportContacts.GET.400.title]
-#. defaultMessage is:
-#. Exporting Contacts Failed
-#. [errorResponseMessages.exportContacts.GET.default.title]
-#. defaultMessage is:
-#. Exporting Contacts Failed
-#: extracted_strings.json
-msgid "Exporting Contacts Failed"
-msgstr "Xuất Danh bạ Không thành công"
-
 #. [errorResponseMessages.exportWorkload.GET.400.title]
 #. defaultMessage is:
 #. Exporting Device Workload Failed
@@ -4085,16 +4026,6 @@ msgstr "Xuất kết quả không thành công"
 msgid "Exporting Sites Failed"
 msgstr "Xuất trang không thành công"
 
-#. [errorResponseMessages.exportSupplies.GET.400.title]
-#. defaultMessage is:
-#. Exporting Supplies Failed
-#. [errorResponseMessages.exportSupplies.GET.default.title]
-#. defaultMessage is:
-#. Exporting Supplies Failed
-#: extracted_strings.json
-msgid "Exporting Supplies Failed"
-msgstr "Xuất Nguồn cung cấp Không thành công"
-
 #. [pages.resultEdit.extra]
 #. defaultMessage is:
 #. Extra-pulmonary
@@ -4123,6 +4054,20 @@ msgstr "tháng hai"
 #: extracted_strings.json
 msgid "FLQ Resistance"
 msgstr "Kháng FLQ"
+
+#. [pages.XDR.cnt_flq]
+#. defaultMessage is:
+#. FQ R
+#: extracted_strings.json
+msgid "FQ R"
+msgstr "FQ R"
+
+#. [pages.XDR.cnt_flq_p]
+#. defaultMessage is:
+#. FQ R %
+#: extracted_strings.json
+msgid "FQ R %"
+msgstr "FQ R %"
 
 #. [p.PkDashboard.mtbXdrFQResistance]
 #. defaultMessage is:
@@ -4195,20 +4140,6 @@ msgstr "Sai"
 #: extracted_strings.json
 msgid "Female"
 msgstr "Nữ"
-
-#. [forms.minAllowed]
-#. defaultMessage is:
-#. Field cannot contain less than {total} characters
-#: extracted_strings.json
-msgid "Field cannot contain less than {total} characters"
-msgstr "Trường không được chứa ít hơn {total} ký tự"
-
-#. [forms.maxAllowed]
-#. defaultMessage is:
-#. Field cannot contain more than {total} characters
-#: extracted_strings.json
-msgid "Field cannot contain more than {total} characters"
-msgstr "Trường không được chứa nhiều hơn {total} ký tự"
 
 #. [pages.ResultList.resultCategoryFinalResult]
 #. defaultMessage is:
@@ -4768,6 +4699,13 @@ msgstr "Chuyển đến trạng thái hàng ngày"
 msgid "Go To Dashboard"
 msgstr "Quay lại bảng điều khiển"
 
+#. [pages.XDR.goTo]
+#. defaultMessage is:
+#. Go to XDR assay result summary by device
+#: extracted_strings.json
+msgid "Go to XDR assay result summary by device"
+msgstr "Chuyển đến phần tóm tắt kết quả xét nghiệm XDR theo thiết bị"
+
 #. [pages.TableHeader.groupByColumn]
 #. defaultMessage is:
 #. Group By Column
@@ -5179,13 +5117,6 @@ msgstr "Các cột ẩn:"
 msgid "Hide Column"
 msgstr "Ẩn cột"
 
-#. [pages.NotificationDetail.history]
-#. defaultMessage is:
-#. History
-#: extracted_strings.json
-msgid "History"
-msgstr "Lịch sử"
-
 #. [p.PkDashboard.hiv]
 #. defaultMessage is:
 #. Hiv
@@ -5287,6 +5218,27 @@ msgstr "ID"
 msgid "ID includes \"{externalId}\""
 msgstr "ID bao gồm \"{externalId}\""
 
+#. [legends.Unknown.InhDetected]
+#. defaultMessage is:
+#. INH Detected
+#: extracted_strings.json
+msgid "INH Detected"
+msgstr "INH được phát hiện"
+
+#. [pages.XDR.cnt_inh]
+#. defaultMessage is:
+#. INH R
+#: extracted_strings.json
+msgid "INH R"
+msgstr "INH R"
+
+#. [pages.XDR.cnt_inh_p]
+#. defaultMessage is:
+#. INH R %
+#: extracted_strings.json
+msgid "INH R %"
+msgstr "INH R %"
+
 #. [results.categoryTypeINHResistanceI18nKey]
 #. defaultMessage is:
 #. INH Resistance
@@ -5306,6 +5258,16 @@ msgstr ""
 "Nếu bạn cần trợ giúp để khôi phục chi tiết đăng nhập, vui lòng liên hệ với "
 "chúng tôi để chúng tôi có thể hỗ trợ bạn. Bạn có thể yêu cầu sự trợ giúp của "
 "chúng tôi bằng cách gửi email tới {supportEmail}"
+
+#. [pages.DeviceDetailEdit.partner]
+#. defaultMessage is:
+#. Implementing Partner
+#. [pages.DeviceDetailProfile.partner]
+#. defaultMessage is:
+#. Implementing Partner
+#: extracted_strings.json
+msgid "Implementing Partner"
+msgstr "Đối tác triển khai"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
 #. defaultMessage is:
@@ -5431,16 +5393,7 @@ msgstr "Sê-ri dụng cụ"
 msgid "Instrument Serial"
 msgstr "Sê-ri dụng cụ"
 
-#. [errorResponseMessages.fetchPatientDetails.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
 #. [errorResponseMessages.fetchPersons.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
-#. [errorResponseMessages.exportContacts.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
-#. [errorResponseMessages.fetchAvailablePersons.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
@@ -5462,6 +5415,13 @@ msgstr "Không đủ quyền"
 #: extracted_strings.json
 msgid "Invalid"
 msgstr "Không hợp lệ"
+
+#. [pages.XDR.invalid]
+#. defaultMessage is:
+#. Invalid #
+#: extracted_strings.json
+msgid "Invalid #"
+msgstr "Không hợp lệ #"
 
 #. [queryFetch.errorResponseMessages.GET.401.title]
 #. defaultMessage is:
@@ -5616,9 +5576,6 @@ msgstr "Dựa trên vấn đề"
 #. [pages.DeviceList.issueCategory]
 #. defaultMessage is:
 #. Issues
-#. [pages.SiteList.siteIssues]
-#. defaultMessage is:
-#. Issues
 #: extracted_strings.json
 msgid "Issues"
 msgstr "Vấn đề phát sinh"
@@ -5759,13 +5716,6 @@ msgstr "Phòng thí nghiệm:"
 #: extracted_strings.json
 msgid "Lab User"
 msgstr "Người dùng phòng thí nghiệm"
-
-#. [pages.Milestones.resultSiteName]
-#. defaultMessage is:
-#. Lab:
-#: extracted_strings.json
-msgid "Lab:"
-msgstr "Phòng thí nghiệm:"
 
 #. [pages.NotificationDetail.Area.Laboratory]
 #. defaultMessage is:
@@ -5980,13 +5930,6 @@ msgstr "Dưới 550 cp / mL"
 msgid "License"
 msgstr "Giấy phép"
 
-#. [pages.resultTreatmentPanel.linkedToTreatment]
-#. defaultMessage is:
-#. Linked to treatment
-#: extracted_strings.json
-msgid "Linked to treatment"
-msgstr "Liên quan đến điều trị"
-
 #. [filter.AssayTypeSelectField.assayTypeLipidPanel]
 #. defaultMessage is:
 #. Lipid Panel
@@ -6087,33 +6030,12 @@ msgstr "Nạp vật tư tiêu hao không thành công"
 msgid "Loading Contacts Failed"
 msgstr "Tải Danh bạ Không thành công"
 
-#. [errorResponseMessages.fetchDeviceApprovals.GET.default.title]
-#. defaultMessage is:
-#. Loading Device Approval Statuses Failed
-#: extracted_strings.json
-msgid "Loading Device Approval Statuses Failed"
-msgstr "Tải trạng thái phê duyệt thiết bị không thành công"
-
-#. [errorResponseMessages.fetchResultCategoryGroup.GET.default.title]
-#. defaultMessage is:
-#. Loading Device Maintenance Status Failed
-#: extracted_strings.json
-msgid "Loading Device Maintenance Status Failed"
-msgstr "Tải trạng thái bảo trì thiết bị không thành công"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
 #. defaultMessage is:
 #. Loading DeviceOperations Failed
 #: extracted_strings.json
 msgid "Loading DeviceOperations Failed"
 msgstr "Tải thiết bị hoạt động không thành công"
-
-#. [errorResponseMessages.fetchDeviceTypes.GET.default.title]
-#. defaultMessage is:
-#. Loading DeviceTypes Failed
-#: extracted_strings.json
-msgid "Loading DeviceTypes Failed"
-msgstr "Tải DeviceTypes không thành công"
 
 #. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
 #. defaultMessage is:
@@ -6129,26 +6051,12 @@ msgstr "Tải thiết bị không thành công"
 msgid "Loading Diseases Failed"
 msgstr "Tải bệnh không thành công"
 
-#. [errorResponseMessages.fetchPatientDetails.GET.default.title]
-#. defaultMessage is:
-#. Loading Patient results details Failed
-#: extracted_strings.json
-msgid "Loading Patient results details Failed"
-msgstr "Tải chi tiết kết quả về Bệnh nhân không thành công"
-
 #. [errorResponseMessages.fetchTreatmentStatuses.GET.default.title]
 #. defaultMessage is:
 #. Loading Result Treatment Statuses Failed
 #: extracted_strings.json
 msgid "Loading Result Treatment Statuses Failed"
 msgstr "Tải các trạng thái xử lý kết quả không thành công"
-
-#. [errorResponseMessages.fetchWorkflowStatuses.GET.default.title]
-#. defaultMessage is:
-#. Loading Result Workflow Statuses Failed
-#: extracted_strings.json
-msgid "Loading Result Workflow Statuses Failed"
-msgstr "Tải trạng thái quy trình làm việc kết quả không thành công"
 
 #. [errorResponseMessages.fetchResults.GET.default.title]
 #. defaultMessage is:
@@ -6164,16 +6072,6 @@ msgstr "Tải kết quả không thành công"
 msgid "Loading Sites Failed"
 msgstr "Tải đơn vị không thành công"
 
-#. [errorResponseMessages.fetchTask.GET.default.title]
-#. defaultMessage is:
-#. Loading Task Failed
-#: extracted_strings.json
-msgid "Loading Task Failed"
-msgstr "Tải tác vụ không thành công"
-
-#. [errorResponseMessages.getTasksByStatus.GET.default.title]
-#. defaultMessage is:
-#. Loading Tasks Failed
 #. [errorResponseMessages.fetchTasks.GET.default.title]
 #. defaultMessage is:
 #. Loading Tasks Failed
@@ -6519,6 +6417,9 @@ msgstr "Phát hiện MTB"
 msgid "MTB Error"
 msgstr "Lỗi MTB"
 
+#. [resultCategoryGroup.GxMtbRifMTBErrorRifError]
+#. defaultMessage is:
+#. MTB Error Rif Error
 #. [pages.filters.GxMtbRifMTBErrorRifError]
 #. defaultMessage is:
 #. MTB Error Rif Error
@@ -6632,6 +6533,9 @@ msgstr "MTB Không có kết quả"
 msgid "MTB Not Detected"
 msgstr "MTB không được phát hiện"
 
+#. [resultCategoryGroup.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected Drug Resistance Not Detected
 #. [pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected Drug Resistance Not Detected
@@ -6714,6 +6618,9 @@ msgstr "MTB Thành công Kháng chiến Nhạy cảm"
 msgid "MTB Trace Detected"
 msgstr "Đã phát hiện theo dõi MTB"
 
+#. [resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
+#. defaultMessage is:
+#. MTB Trace Detected Rif Indeterminate
 #. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
 #. defaultMessage is:
 #. MTB Trace Detected Rif Indeterminate
@@ -6721,6 +6628,9 @@ msgstr "Đã phát hiện theo dõi MTB"
 msgid "MTB Trace Detected Rif Indeterminate"
 msgstr "Phát hiện dấu vết MTB Rif không xác định"
 
+#. [resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifNoResult]
+#. defaultMessage is:
+#. MTB Trace Detected Rif No Result
 #. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult]
 #. defaultMessage is:
 #. MTB Trace Detected Rif No Result
@@ -6748,9 +6658,20 @@ msgstr "MTB%"
 #. [legends.Unknown.MTBPlus]
 #. defaultMessage is:
 #. MTB+
+#. [pages.XDR.cnt_mtb]
+#. defaultMessage is:
+#. MTB+
 #: extracted_strings.json
 msgid "MTB+"
 msgstr "MTB +"
+
+#. [pages.XDR.cnt_mtb_p]
+#. defaultMessage is:
+#. MTB+ %
+#: extracted_strings.json
+#| msgid "MTB+"
+msgid "MTB+ %"
+msgstr "MTB+ %"
 
 #. [pages.Status.TB.mtbDetectedTrendsInYear.title]
 #. defaultMessage is:
@@ -7079,13 +7000,6 @@ msgstr "Di chuyển cột sang phải"
 msgid "N/A"
 msgstr "N/A"
 
-#. [pages.resultTreatmentPanel.note]
-#. defaultMessage is:
-#. NOTE:
-#: extracted_strings.json
-msgid "NOTE:"
-msgstr "CHÚ Ý:"
-
 #. [months.november]
 #. defaultMessage is:
 #. NOV
@@ -7172,6 +7086,13 @@ msgstr "Liên hệ quốc gia"
 #: extracted_strings.json
 msgid "National FQ Trend"
 msgstr "Xu hướng FQ quốc gia"
+
+#. [p.PkDashboard.GXTbNationalDiagnosis]
+#. defaultMessage is:
+#. National GX-10C Diagnosed Trends in
+#: extracted_strings.json
+msgid "National GX-10C Diagnosed Trends in"
+msgstr "Xu hướng chẩn đoán GX-10C quốc gia trong"
 
 #. [p.PkDashboard.GXTbNationalTrend]
 #. defaultMessage is:
@@ -7328,9 +7249,6 @@ msgstr "Tiếp"
 #. [pages.resultEdit.no]
 #. defaultMessage is:
 #. No
-#. [pages.NotificationList.no]
-#. defaultMessage is:
-#. No
 #: extracted_strings.json
 msgid "No"
 msgstr "Không"
@@ -7396,6 +7314,13 @@ msgstr "Không có điện"
 msgid "No Result"
 msgstr "Không có kết quả"
 
+#. [pages.XDR.noResult]
+#. defaultMessage is:
+#. No Result #
+#: extracted_strings.json
+msgid "No Result #"
+msgstr "Không kết quả #"
+
 #. [pages.shared.deviceStatus.inactiveNoResultsReported]
 #. defaultMessage is:
 #. No Results Reported
@@ -7445,13 +7370,6 @@ msgstr ""
 "Không có vị trí nào được đặt cho đơn vị này - Vui lòng chỉnh sửa để gán các "
 "trường kinh độ và vĩ độ."
 
-#. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
-#. defaultMessage is:
-#. No logs for this result.
-#: extracted_strings.json
-msgid "No logs for this result."
-msgstr "Không có nhật ký cho kết quả này."
-
 #. [pages.NotificationDetail.fieldNoMatch]
 #. defaultMessage is:
 #. No matching results found
@@ -7463,9 +7381,6 @@ msgid "No matching results found"
 msgstr "Không tìm thấy kết quả phù hợp"
 
 #. [base.noOptionsMessage]
-#. defaultMessage is:
-#. No options
-#. [form.noOptions]
 #. defaultMessage is:
 #. No options
 #: extracted_strings.json
@@ -7544,9 +7459,6 @@ msgstr "Không được xác nhận"
 msgid "Not Detected"
 msgstr "Không được phát hiện"
 
-#. [errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title]
-#. defaultMessage is:
-#. Not Found
 #. [pages.NotFound.title]
 #. defaultMessage is:
 #. Not Found
@@ -7583,26 +7495,12 @@ msgstr "Không thể"
 msgid "Not Recorded"
 msgstr "Không được ghi lại"
 
-#. [pages.resultTreatmentPanel.notPossible]
-#. defaultMessage is:
-#. Not possible
-#: extracted_strings.json
-msgid "Not possible"
-msgstr "Không khả thi"
-
 #. [page.contacts.person.notSpecified]
 #. defaultMessage is:
 #. Not specified
 #: extracted_strings.json
 msgid "Not specified"
 msgstr "Không được chỉ định"
-
-#. [pages.resultTreatmentPanel.notYetConfirmedOnTreatment]
-#. defaultMessage is:
-#. Not yet confirmed on treatment
-#: extracted_strings.json
-msgid "Not yet confirmed on treatment"
-msgstr "Chưa được xác nhận về điều trị"
 
 #. [pages.DailyStatusDialog.note]
 #. defaultMessage is:
@@ -7731,6 +7629,13 @@ msgstr "Số lượng thiết bị"
 msgid "Number of Locations"
 msgstr "Số lượng địa điểm"
 
+#. [pages.XDR.isPmdt]
+#. defaultMessage is:
+#. Number of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "Number of PMDT Sites with 10 C GX"
+msgstr "Số lượng trang web PMDT với 10 C GX"
+
 #. [pages.ReportIndex.resultCountsByHIVStatus_description]
 #. defaultMessage is:
 #. Number of TB results grouped by patient HIV status
@@ -7762,6 +7667,13 @@ msgid ""
 msgstr ""
 "Số kết quả trong 30 ngày qua chia cho công suất hàng ngày của công cụ nhân "
 "với 30 ngày"
+
+#. [pages.XDR.hasPerformedXdr]
+#. defaultMessage is:
+#. Number of sites tested MTB/XDR Assay
+#: extracted_strings.json
+msgid "Number of sites tested MTB/XDR Assay"
+msgstr "Số lượng địa điểm được xét nghiệm Xét nghiệm MTB/XDR"
 
 #. [component.InputPassword.numbersIncluded]
 #. defaultMessage is:
@@ -7919,19 +7831,19 @@ msgstr "Thao tác"
 msgid "Operational Data"
 msgstr "Dữ liệu hoạt động"
 
-#. [pages.ResultWorkflowStatusLog.logOperator]
-#. defaultMessage is:
-#. Operator
-#: extracted_strings.json
-msgid "Operator"
-msgstr "Nhà điều hành"
-
 #. [pages.deviceDetail.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
 #: extracted_strings.json
 msgid "Ordered"
 msgstr "Đã đặt hàng"
+
+#. [filter.popover.originSiteName]
+#. defaultMessage is:
+#. Origin Site
+#: extracted_strings.json
+msgid "Origin Site"
+msgstr "trang web gốc"
 
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
@@ -8002,20 +7914,6 @@ msgstr "Hết hàng tồn kho"
 msgid "Out of Stock"
 msgstr "Hết hàng"
 
-#. [pages.Milestones.followUpName]
-#. defaultMessage is:
-#. Outcome
-#: extracted_strings.json
-msgid "Outcome"
-msgstr "Kết quả"
-
-#. [pages.Milestones.followUpTypeName]
-#. defaultMessage is:
-#. Outcome type:
-#: extracted_strings.json
-msgid "Outcome type:"
-msgstr "Loại kết quả:"
-
 #. [pages.Status.deviceStatusTitle.graph]
 #. defaultMessage is:
 #. Overall Activity Rate
@@ -8036,6 +7934,13 @@ msgstr "Tình trạng tổng thể hệ thống hàng ngày"
 #: extracted_strings.json
 msgid "Overdue"
 msgstr "Quá hạn"
+
+#. [jobFunction.pakistanDashboardTesting]
+#. defaultMessage is:
+#. Pakistan Dashboard Testing
+#: extracted_strings.json
+msgid "Pakistan Dashboard Testing"
+msgstr "Pakistan Dashboard Testing"
 
 #. [filter.popover.partner]
 #. defaultMessage is:
@@ -8087,19 +7992,9 @@ msgstr "Không có kết quả nào phù hợp với các bộ lọc đã chọn
 #. [forms.formSectionHeader.patient]
 #. defaultMessage is:
 #. Patient
-#. [pages.ClinicalHistory.patient]
-#. defaultMessage is:
-#. Patient
 #: extracted_strings.json
 msgid "Patient"
 msgstr "Bệnh nhân"
-
-#. [pages.ClinicalHistory.patientData]
-#. defaultMessage is:
-#. Patient Data
-#: extracted_strings.json
-msgid "Patient Data"
-msgstr "Dữ liệu bệnh nhân"
 
 #. [filter.popover.patientOrResearchId]
 #. defaultMessage is:
@@ -8161,13 +8056,6 @@ msgstr "Đang chờ xử lý"
 #: extracted_strings.json
 msgid "Pending changes"
 msgstr "Các thay đổi đang chờ xử lý"
-
-#. [pages.TaskDetail.peopleAlerted]
-#. defaultMessage is:
-#. People alerted
-#: extracted_strings.json
-msgid "People alerted"
-msgstr "Mọi người đã cảnh báo"
 
 #. [p.PkDashboard.molecularAssay]
 #. defaultMessage is:
@@ -8442,10 +8330,14 @@ msgstr "Vui lòng chỉ định một ngày"
 msgid "Please specify an expiry date"
 msgstr "Vui lòng chỉ định ngày hết hạn"
 
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
 #. [pages.NewInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity
+#: extracted_strings.json
+msgid "Please specify the quantity"
+msgstr "Vui lòng ghi rõ số lượng"
+
+#. [pages.AddInventoryDialogForm.quantityRequired]
 #. defaultMessage is:
 #. Please specify the quantity to add
 #: extracted_strings.json
@@ -8627,9 +8519,6 @@ msgid "Positives"
 msgstr "Ưu điểm"
 
 #. [pages.UserPreferences.fieldNoMatchTags]
-#. defaultMessage is:
-#. Press enter to add tag
-#. [forms.Chips.createTags]
 #. defaultMessage is:
 #. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
@@ -9055,9 +8944,6 @@ msgstr "Sẵn sàng để giao hàng"
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
 #. Reagent
-#. [pages.SiteList.issueCategoryReagentHealth]
-#. defaultMessage is:
-#. Reagent
 #: extracted_strings.json
 msgid "Reagent"
 msgstr "Thuốc thử"
@@ -9101,13 +8987,6 @@ msgstr "Nhận hàng tồn kho trong quá trình vận chuyển"
 #: extracted_strings.json
 msgid "Receive {consumableName}"
 msgstr "Nhận {consumableName}"
-
-#. [errorResponseMessages.receiveInventory.PUT.default.title]
-#. defaultMessage is:
-#. Receiving Inventory Failed
-#: extracted_strings.json
-msgid "Receiving Inventory Failed"
-msgstr "Nhận được khoảng không quảng cáo không thành công"
 
 #. [pages.Notifications.table.recipients]
 #. defaultMessage is:
@@ -9202,13 +9081,6 @@ msgstr "Bỏ dòng"
 #: extracted_strings.json
 msgid "Remove {consumableName}"
 msgstr "Xóa {consumableName}"
-
-#. [errorResponseMessages.removeInventory.PUT.default.title]
-#. defaultMessage is:
-#. Removing Inventory Failed
-#: extracted_strings.json
-msgid "Removing Inventory Failed"
-msgstr "Xóa khoảng không quảng cáo không thành công"
 
 #. [pages.resultEdit.repeatBaseline]
 #. defaultMessage is:
@@ -9518,9 +9390,6 @@ msgstr "Giải quyết"
 #. [placeholder.result]
 #. defaultMessage is:
 #. Result
-#. [pages.Milestones.resultNotes]
-#. defaultMessage is:
-#. Result
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
@@ -9785,23 +9654,6 @@ msgstr "Trình xem kết quả - Có"
 msgid "Result Workflow Status"
 msgstr "Trạng thái Dòng công việc Kết quả"
 
-#. [pages.ResultWorkflowStatusLog.totalWorkflowStatusLog]
-#. defaultMessage is:
-#. Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }
-#: extracted_strings.json
-msgid ""
-"Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }"
-msgstr ""
-"Kết quả Nhật ký Trạng thái Dòng công việc {itemCount, plural, = 0 {} other "
-"{({itemCount})}}"
-
-#. [pages.Milestones.resultEndedOn]
-#. defaultMessage is:
-#. Result ended on:
-#: extracted_strings.json
-msgid "Result ended on:"
-msgstr "Kết quả đã kết thúc vào:"
-
 #. [pages.transferResult.successMessagePatient]
 #. defaultMessage is:
 #. Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"
@@ -10006,9 +9858,6 @@ msgstr "Nước bọt"
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
 #. Sample
-#. [pages.MilestonesSample.sampleId]
-#. defaultMessage is:
-#. Sample
 #: extracted_strings.json
 msgid "Sample"
 msgstr "Bản mẫu"
@@ -10032,13 +9881,6 @@ msgstr "Ngày thu thập mẫu"
 #: extracted_strings.json
 msgid "Sample Collection Site"
 msgstr "Đơn vị thu thập mẫu"
-
-#. [pages.Milestones.originalSiteName]
-#. defaultMessage is:
-#. Sample Collection Site:
-#: extracted_strings.json
-msgid "Sample Collection Site:"
-msgstr "Đơn vị thu thập mẫu:"
 
 #. [filter.popover.sampleId]
 #. defaultMessage is:
@@ -10082,13 +9924,6 @@ msgstr "Đơn vị nguồn gốc mẫu"
 #: extracted_strings.json
 msgid "Sample Type"
 msgstr "Loại mẫu"
-
-#. [pages.Milestones.sampleType]
-#. defaultMessage is:
-#. Sample Type:
-#: extracted_strings.json
-msgid "Sample Type:"
-msgstr "Loại mẫu:"
 
 #. [filter.popover.sampleOriginSite]
 #. defaultMessage is:
@@ -10198,20 +10033,6 @@ msgstr "Tìm kiếm vật tư tiêu hao không thành công"
 msgid "Searching Contacts Failed"
 msgstr "Tìm kiếm Danh bạ Không thành công"
 
-#. [errorResponseMessages.fetchDeviceApprovals.GET.400.title]
-#. defaultMessage is:
-#. Searching Device Approvals Failed
-#: extracted_strings.json
-msgid "Searching Device Approvals Failed"
-msgstr "Tìm kiếm Phê duyệt thiết bị không thành công"
-
-#. [errorResponseMessages.fetchResultCategoryGroup.GET.400.title]
-#. defaultMessage is:
-#. Searching Device Maintenance status Failed
-#: extracted_strings.json
-msgid "Searching Device Maintenance status Failed"
-msgstr "Tìm kiếm tình trạng bảo trì thiết bị không thành công"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
 #. defaultMessage is:
 #. Searching DeviceOperations Failed
@@ -10226,13 +10047,6 @@ msgstr "Tìm kiếm thiết bị hoạt động không thành công"
 msgid "Searching Diseases Failed"
 msgstr "Tìm kiếm bệnh không thành công"
 
-#. [errorResponseMessages.fetchPatientResult.GET.400.title]
-#. defaultMessage is:
-#. Searching Patient Result Failed
-#: extracted_strings.json
-msgid "Searching Patient Result Failed"
-msgstr "Kết quả Tìm kiếm Bệnh nhân Không thành công"
-
 #. [errorResponseMessages.fetchTreatmentStatuses.GET.400.title]
 #. defaultMessage is:
 #. Searching Result Treatment Statuses Failed
@@ -10240,29 +10054,12 @@ msgstr "Kết quả Tìm kiếm Bệnh nhân Không thành công"
 msgid "Searching Result Treatment Statuses Failed"
 msgstr "Tìm kiếm Trạng thái Xử lý Kết quả Không thành công"
 
-#. [errorResponseMessages.fetchWorkflowStatuses.GET.400.title]
-#. defaultMessage is:
-#. Searching Result Workflow Statuses Failed
-#: extracted_strings.json
-msgid "Searching Result Workflow Statuses Failed"
-msgstr "Tìm kiếm Trạng thái Dòng công việc Kết quả Không thành công"
-
 #. [errorResponseMessages.fetchResults.GET.400.title]
 #. defaultMessage is:
 #. Searching Results Failed
 #: extracted_strings.json
 msgid "Searching Results Failed"
 msgstr "Kết quả tìm kiếm không thành công"
-
-#. [errorResponseMessages.getTasksByStatus.GET.400.title]
-#. defaultMessage is:
-#. Searching Task Failed
-#. [errorResponseMessages.fetchTask.GET.400.title]
-#. defaultMessage is:
-#. Searching Task Failed
-#: extracted_strings.json
-msgid "Searching Task Failed"
-msgstr "Tác vụ Tìm kiếm Không thành công"
 
 #. [errorResponseMessages.fetchTasks.GET.400.title]
 #. defaultMessage is:
@@ -10348,13 +10145,6 @@ msgstr "Chọn loại kết quả ..."
 msgid "Select Site..."
 msgstr "Chọn trang ..."
 
-#. [filter.clientSideFilterSelect.selectState]
-#. defaultMessage is:
-#. Select State
-#: extracted_strings.json
-msgid "Select State"
-msgstr "Chọn Quận/Huyện"
-
 #. [pages.dateRangeSelector.selectWeek]
 #. defaultMessage is:
 #. Select Week...
@@ -10368,13 +10158,6 @@ msgstr "Chọn Tuần ..."
 #: extracted_strings.json
 msgid "Select Year..."
 msgstr "Chọn năm ..."
-
-#. [filter.clientSideFilterSelect.selectAssay]
-#. defaultMessage is:
-#. Select an Assay
-#: extracted_strings.json
-msgid "Select an Assay"
-msgstr "Chọn xét nghiệm"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -10817,17 +10600,6 @@ msgstr ""
 "Hiển thị {firstItemIndex} - {lastItemIndex} trong tổng số {itemCount, "
 "plural, one {# device} other {# device}}"
 
-#. [pages.ResultWorkflowStatusLog.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} other {# logs} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
-"other {# logs} }"
-msgstr ""
-"Hiển thị {firstItemIndex} - {lastItemIndex} trong tổng số {itemCount, "
-"plural, one {# log} other {# logs}}"
-
 #. [pages.Notification.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# notification} other {# notifications} }
@@ -10865,6 +10637,9 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
 #. [pages.DeviceDetailProfile.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
+#. [pages.XDR.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
 #: extracted_strings.json
@@ -10979,6 +10754,9 @@ msgstr "Đăng xuất"
 #. [pages.DeviceDetailProfile.site]
 #. defaultMessage is:
 #. Site
+#. [pages.XDR.site]
+#. defaultMessage is:
+#. Site
 #: extracted_strings.json
 msgid "Site"
 msgstr "Đơn vị"
@@ -11066,13 +10844,6 @@ msgstr "Loại trang web"
 #: extracted_strings.json
 msgid "Site Working Hours"
 msgstr "Giờ làm việc của trang web"
-
-#. [pages.TaskDetail.siteContact]
-#. defaultMessage is:
-#. Site contact
-#: extracted_strings.json
-msgid "Site contact"
-msgstr "Địa chỉ liên hệ"
 
 #. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
 #. defaultMessage is:
@@ -11262,13 +11033,7 @@ msgstr "Thống kê về các thông báo SMS đã gửi."
 #. [pages.Status.title]
 #. defaultMessage is:
 #. Status
-#. [pages.ResultWorkflowStatusLog.logStatus]
-#. defaultMessage is:
-#. Status
 #. [pages.ResultList.resultCategoryStatus]
-#. defaultMessage is:
-#. Status
-#. [pages.TaskDetail.status]
 #. defaultMessage is:
 #. Status
 #. [pages.workload.deviceStatus]
@@ -11487,13 +11252,6 @@ msgstr "TB G&D"
 msgid "TB LAMP"
 msgstr "ĐÈN TB"
 
-#. [pages.NotificationDetail.title]
-#. defaultMessage is:
-#. TB MTB+ Rif+ in Western Region
-#: extracted_strings.json
-msgid "TB MTB+ Rif+ in Western Region"
-msgstr "TB MTB + Rif + ở Miền Tây"
-
 #. [pages.resultEdit.TBRegistrationNumberCurrentI18nKey]
 #. defaultMessage is:
 #. TB Registration Number - Current
@@ -11590,9 +11348,6 @@ msgstr "Mục tiêu"
 msgid "Target device"
 msgstr "Thiết bị mục tiêu"
 
-#. [pages.TaskDetail.title]
-#. defaultMessage is:
-#. Task
 #. [pages.TaskAggre.title]
 #. defaultMessage is:
 #. Task
@@ -12008,8 +11763,8 @@ msgid ""
 "\"Down for repair\" for it maintenance status."
 msgstr ""
 "Số lượng thiết bị gặp sự cố gián đoạn dịch vụ vào tháng này và tháng trước. "
-"Một thiết bị bị gián đoạn dịch vụ khi nó được gắn cờ là \"Không sửa chữa được"
-"\" cho trạng thái bảo trì của thiết bị."
+"Một thiết bị bị gián đoạn dịch vụ khi nó được gắn cờ là \"Không sửa chữa "
+"được\" cho trạng thái bảo trì của thiết bị."
 
 #. [component.Widget.deviceCalibrationPastDueDescription]
 #. defaultMessage is:
@@ -12397,20 +12152,6 @@ msgstr "Người liên hệ này có thể đăng nhập với tư cách ngườ
 msgid "This contact is assigned to:"
 msgstr "Địa chỉ liên hệ này được chỉ định cho:"
 
-#. [forms.validEmail]
-#. defaultMessage is:
-#. This email is not valid
-#: extracted_strings.json
-msgid "This email is not valid"
-msgstr "Email này không hợp lệ"
-
-#. [forms.isRequired]
-#. defaultMessage is:
-#. This field is required
-#: extracted_strings.json
-msgid "This field is required"
-msgstr "Trường này là bắt buộc"
-
 #. [pages.InventoryItemsList.inventoryOnHand.mandatoryNote]
 #. defaultMessage is:
 #. This is a mandatory field its mandatory and must be at least 3 characters long
@@ -12762,6 +12503,9 @@ msgstr "Tổng kết quả"
 #. [pages.workload.totalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [pages.XDR.cntAll]
+#. defaultMessage is:
+#. Total Tests
 #: extracted_strings.json
 msgid "Total Tests"
 msgstr "Tổng số đề thi"
@@ -12870,26 +12614,12 @@ msgstr "Chuyển {consumableName}"
 msgid "Transferred Out"
 msgstr "Chuyển ra"
 
-#. [errorResponseMessages.transferInventory.PUT.default.title]
-#. defaultMessage is:
-#. Transferring Inventory Failed
-#: extracted_strings.json
-msgid "Transferring Inventory Failed"
-msgstr "Chuyển khoảng không quảng cáo không thành công"
-
 #. [browsePage.browseDropdown.inventoryTransfers]
 #. defaultMessage is:
 #. Transfers
 #: extracted_strings.json
 msgid "Transfers"
 msgstr "Chuyển kho"
-
-#. [pages.Milestones.resultTreatmentName]
-#. defaultMessage is:
-#. Treatment
-#: extracted_strings.json
-msgid "Treatment"
-msgstr "Sự đối đãi"
 
 #. [filter.popover.treatmentStatus]
 #. defaultMessage is:
@@ -12907,27 +12637,6 @@ msgstr "Tình trạng điều trị"
 #: extracted_strings.json
 msgid "Treatment after loss to follow up"
 msgstr "Điều trị sau khi mất để theo dõi"
-
-#. [pages.Milestones.resultTreatmentStatusLogCreatedBy]
-#. defaultMessage is:
-#. Treatment created by:
-#: extracted_strings.json
-msgid "Treatment created by:"
-msgstr "Điều trị được tạo ra bởi:"
-
-#. [pages.Milestones.resultTreatmentStatusLogData]
-#. defaultMessage is:
-#. Treatment date:
-#: extracted_strings.json
-msgid "Treatment date:"
-msgstr "Ngày điều trị:"
-
-#. [pages.Milestones.resultTreatmentStatusLogMethod]
-#. defaultMessage is:
-#. Treatment method:
-#: extracted_strings.json
-msgid "Treatment method:"
-msgstr "Phương pháp điều trị:"
 
 #. [pages.Notifications.triggerConditionTitle]
 #. defaultMessage is:
@@ -13226,20 +12935,6 @@ msgstr "Đã duyệt"
 msgid "Validation error"
 msgstr "Lỗi kiểm soát hợp lệ"
 
-#. [forms.mustMatch]
-#. defaultMessage is:
-#. Value is not valid. Try {options}.
-#: extracted_strings.json
-msgid "Value is not valid. Try {options}."
-msgstr "Giá trị không hợp lệ. Hãy thử {options}."
-
-#. [pages.NotificationDetail.view]
-#. defaultMessage is:
-#. View
-#: extracted_strings.json
-msgid "View"
-msgstr "Xem"
-
 #. [contextualMenu.notifications.viewLog.title]
 #. defaultMessage is:
 #. View Log
@@ -13487,12 +13182,33 @@ msgstr "Trạng thái quy trình làm việc"
 msgid "Workload"
 msgstr "Khối lượng công việc"
 
+#. [pages.XDR.AssayResultsSummary]
+#. defaultMessage is:
+#. XDR Assay Results Summary
+#: extracted_strings.json
+msgid "XDR Assay Results Summary"
+msgstr "Tóm tắt kết quả xét nghiệm XDR"
+
+#. [p.PkDashboard.XDRByDevice]
+#. defaultMessage is:
+#. XDR Assay Summary Result by device
+#: extracted_strings.json
+msgid "XDR Assay Summary Result by device"
+msgstr "Kết quả tóm tắt xét nghiệm XDR theo thiết bị"
+
 #. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
 #. defaultMessage is:
 #. XDR FLQ Resistance
 #: extracted_strings.json
 msgid "XDR FLQ Resistance"
 msgstr "Kháng XDR FLQ"
+
+#. [p.PkDashboard.XDRTestingDiagnosisTrend]
+#. defaultMessage is:
+#. XDR Testing and Diagnosis Trend
+#: extracted_strings.json
+msgid "XDR Testing and Diagnosis Trend"
+msgstr "Xu hướng kiểm tra và chẩn đoán XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -13580,9 +13296,6 @@ msgstr "Năm"
 #. defaultMessage is:
 #. Yes
 #. [pages.SiteDetail.disable.yes]
-#. defaultMessage is:
-#. Yes
-#. [pages.NotificationList.yes]
 #. defaultMessage is:
 #. Yes
 #. [contextualMenu.notifications.yes]
@@ -13883,12 +13596,12 @@ msgstr "thời gian trung bình để thay thế các mô-đun bị vô hiệu h
 msgid "data"
 msgstr "dữ liệu"
 
-#. [pages.resultTreatmentPanel.days]
+#. [filter.btnGroup.whereDestinationSiteNameIncludes]
 #. defaultMessage is:
-#. days
+#. destination site name includes "{destinationSiteName}"
 #: extracted_strings.json
-msgid "days"
-msgstr "ngày"
+msgid "destination site name includes \"{destinationSiteName}\""
+msgstr "tên trang web đích bao gồm \"{destinationSiteName}\""
 
 #. [filter.btnGroup.whereDeviceNameIncludes]
 #. defaultMessage is:
@@ -14050,6 +13763,13 @@ msgstr "trong số {unit} thiết bị trực tuyến"
 #: extracted_strings.json
 msgid "of {unit} total modules"
 msgstr "trong tổng số {unit} mô-đun"
+
+#. [filter.btnGroup.whereOriginSiteNameIncludes]
+#. defaultMessage is:
+#. origin site name includes "{originSiteName}"
+#: extracted_strings.json
+msgid "origin site name includes \"{originSiteName}\""
+msgstr "tên trang gốc bao gồm \"{originSiteName}\""
 
 #. [filter.btnGroup.partnerId]
 #. defaultMessage is:
@@ -14233,13 +13953,6 @@ msgstr "cho đến {date}"
 msgid "utilization rate"
 msgstr "tỷ lệ sử dụng"
 
-#. [pages.Milestones.viewResultsDetails]
-#. defaultMessage is:
-#. view Results Details
-#: extracted_strings.json
-msgid "view Results Details"
-msgstr "xem chi tiết kết quả"
-
 #. [filter.btnGroup.withResultCategoryGroup]
 #. defaultMessage is:
 #. with result {resultCategoryGroupName}
@@ -14410,6 +14123,200 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, plural, one {# kết quả} other {# kết quả}})"
+
+#~ msgid "Add Note"
+#~ msgstr "Thêm ghi chú"
+
+#~ msgid "Adding Inventory Failed"
+#~ msgstr "Thêm khoảng không quảng cáo không thành công"
+
+#~ msgid "An Error Occurred When Trying to Save the Result"
+#~ msgstr "Đã xảy ra lỗi khi cố gắng lưu kết quả"
+
+#~ msgid "Assay Type:"
+#~ msgstr "Loại thử nghiệm:"
+
+#~ msgid "Changed On"
+#~ msgstr "Đã thay đổi trên"
+
+#~ msgid "Clinical History"
+#~ msgstr "Lịch sử lâm sàng"
+
+#~ msgid "Collected On:"
+#~ msgstr "Đã thu thập vào:"
+
+#~ msgid "Created On:"
+#~ msgstr "Được tạo ra:"
+
+#~ msgid "Description:"
+#~ msgstr "Mô tả:"
+
+#~ msgid "Dial Code"
+#~ msgstr "Quay số mã"
+
+#~ msgid "Error Loading Areas for {stateName}"
+#~ msgstr "Lỗi khi tải khu vực cho {stateName}"
+
+#~ msgid "Error Loading Result Logs"
+#~ msgstr "Lỗi khi tải nhật ký kết quả"
+
+#~ msgid "Error Loading States for {countryName}"
+#~ msgstr "Lỗi khi tải các tiểu bang cho {countryName}"
+
+#~ msgid "Exporting Contacts Failed"
+#~ msgstr "Xuất Danh bạ Không thành công"
+
+#~ msgid "Exporting Supplies Failed"
+#~ msgstr "Xuất Nguồn cung cấp Không thành công"
+
+#~ msgid "Field cannot contain less than {total} characters"
+#~ msgstr "Trường không được chứa ít hơn {total} ký tự"
+
+#~ msgid "Field cannot contain more than {total} characters"
+#~ msgstr "Trường không được chứa nhiều hơn {total} ký tự"
+
+#~ msgid "History"
+#~ msgstr "Lịch sử"
+
+#~ msgid "Lab:"
+#~ msgstr "Phòng thí nghiệm:"
+
+#~ msgid "Linked to treatment"
+#~ msgstr "Liên quan đến điều trị"
+
+#~ msgid "Loading Device Approval Statuses Failed"
+#~ msgstr "Tải trạng thái phê duyệt thiết bị không thành công"
+
+#~ msgid "Loading Device Maintenance Status Failed"
+#~ msgstr "Tải trạng thái bảo trì thiết bị không thành công"
+
+#~ msgid "Loading DeviceTypes Failed"
+#~ msgstr "Tải DeviceTypes không thành công"
+
+#~ msgid "Loading Patient results details Failed"
+#~ msgstr "Tải chi tiết kết quả về Bệnh nhân không thành công"
+
+#~ msgid "Loading Result Workflow Statuses Failed"
+#~ msgstr "Tải trạng thái quy trình làm việc kết quả không thành công"
+
+#~ msgid "Loading Task Failed"
+#~ msgstr "Tải tác vụ không thành công"
+
+#~ msgid "NOTE:"
+#~ msgstr "CHÚ Ý:"
+
+#~ msgid "No logs for this result."
+#~ msgstr "Không có nhật ký cho kết quả này."
+
+#~ msgid "Not possible"
+#~ msgstr "Không khả thi"
+
+#~ msgid "Not yet confirmed on treatment"
+#~ msgstr "Chưa được xác nhận về điều trị"
+
+#~ msgid "Operator"
+#~ msgstr "Nhà điều hành"
+
+#~ msgid "Outcome"
+#~ msgstr "Kết quả"
+
+#~ msgid "Outcome type:"
+#~ msgstr "Loại kết quả:"
+
+#~ msgid "Patient Data"
+#~ msgstr "Dữ liệu bệnh nhân"
+
+#~ msgid "People alerted"
+#~ msgstr "Mọi người đã cảnh báo"
+
+#~ msgid "Receiving Inventory Failed"
+#~ msgstr "Nhận được khoảng không quảng cáo không thành công"
+
+#~ msgid "Removing Inventory Failed"
+#~ msgstr "Xóa khoảng không quảng cáo không thành công"
+
+#~ msgid ""
+#~ "Result Workflow Status Log {itemCount, plural, =0 {} other "
+#~ "{({itemCount})} }"
+#~ msgstr ""
+#~ "Kết quả Nhật ký Trạng thái Dòng công việc {itemCount, plural, = 0 {} "
+#~ "other {({itemCount})}}"
+
+#~ msgid "Result ended on:"
+#~ msgstr "Kết quả đã kết thúc vào:"
+
+#~ msgid "Sample Collection Site:"
+#~ msgstr "Đơn vị thu thập mẫu:"
+
+#~ msgid "Sample Type:"
+#~ msgstr "Loại mẫu:"
+
+#~ msgid "Searching Device Approvals Failed"
+#~ msgstr "Tìm kiếm Phê duyệt thiết bị không thành công"
+
+#~ msgid "Searching Device Maintenance status Failed"
+#~ msgstr "Tìm kiếm tình trạng bảo trì thiết bị không thành công"
+
+#~ msgid "Searching Patient Result Failed"
+#~ msgstr "Kết quả Tìm kiếm Bệnh nhân Không thành công"
+
+#~ msgid "Searching Result Workflow Statuses Failed"
+#~ msgstr "Tìm kiếm Trạng thái Dòng công việc Kết quả Không thành công"
+
+#~ msgid "Searching Task Failed"
+#~ msgstr "Tác vụ Tìm kiếm Không thành công"
+
+#~ msgid "Select State"
+#~ msgstr "Chọn Quận/Huyện"
+
+#~ msgid "Select an Assay"
+#~ msgstr "Chọn xét nghiệm"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "log} other {# logs} }"
+#~ msgstr ""
+#~ "Hiển thị {firstItemIndex} - {lastItemIndex} trong tổng số {itemCount, "
+#~ "plural, one {# log} other {# logs}}"
+
+#~ msgid "Site contact"
+#~ msgstr "Địa chỉ liên hệ"
+
+#~ msgid "TB MTB+ Rif+ in Western Region"
+#~ msgstr "TB MTB + Rif + ở Miền Tây"
+
+#~ msgid "This email is not valid"
+#~ msgstr "Email này không hợp lệ"
+
+#~ msgid "This field is required"
+#~ msgstr "Trường này là bắt buộc"
+
+#~ msgid "Transferring Inventory Failed"
+#~ msgstr "Chuyển khoảng không quảng cáo không thành công"
+
+#~ msgid "Treatment"
+#~ msgstr "Sự đối đãi"
+
+#~ msgid "Treatment created by:"
+#~ msgstr "Điều trị được tạo ra bởi:"
+
+#~ msgid "Treatment date:"
+#~ msgstr "Ngày điều trị:"
+
+#~ msgid "Treatment method:"
+#~ msgstr "Phương pháp điều trị:"
+
+#~ msgid "Value is not valid. Try {options}."
+#~ msgstr "Giá trị không hợp lệ. Hãy thử {options}."
+
+#~ msgid "View"
+#~ msgstr "Xem"
+
+#~ msgid "days"
+#~ msgstr "ngày"
+
+#~ msgid "view Results Details"
+#~ msgstr "xem chi tiết kết quả"
 
 #~ msgid "Acknowledging Issue Failed"
 #~ msgstr "Xác nhận vấn đề không thành công"
@@ -14771,8 +14678,8 @@ msgstr ""
 #~ msgstr "Hướng dẫn mẫu"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for repair"
-#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for "
+#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."

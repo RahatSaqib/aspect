@@ -1,25 +1,27 @@
-import React, { useState, useEffect } from 'react'
-import { Switch, FormControlLabel, Grid } from '@mui/material'
+import React, { useState } from 'react'
+import { FormControlLabel, Grid, Switch } from '@mui/material'
 import { useQuery } from 'react-query'
-import { StateSelect, LgaSelect } from '../../../../../cleanComponents'
+import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import Loading from '../../../../../cleanComponents/Loading'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
-import { graphMessages, getCustomMessage } from '../../../../../messages'
+import { getCustomMessage, graphMessages } from '../../../../../messages'
 import TestsOverTimeGraphMain from '../../../../../oldPages/dashboard/Graphs/TestsOverTimeGraph/TestsOverTimeGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 import TestsOverTimeGraphHalf from './CurrentDiagnosisGraph.Half'
 
-const endPointParams = [
+const defaultFilters = [
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
+  { resultCategory1: 'Detected' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
@@ -31,28 +33,17 @@ const CurrentDiagnosisGraphPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState([])
-  const [state, setState] = useState()
-  const [, setLga] = useState()
   const { data: assays } = useAssayList()
-
-  useEffect(() => {
-    if (assays) {
-      const seriesAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
-      const defaultFilter = seriesAssays.length > 0 ? seriesAssays : assays
-      setFilter(defaultFilter)
-    }
-  }, [assays])
-
+  const [filter, setFilter] = useState({})
   const { data, isLoading } = useQuery(
-    ['testPerformedMonthlyPercentage', { endPointParams }],
+    ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
 
   return (
     <PkPage
-      title={`${formatMessage(messages.rifCurrentDiagnosisTitle)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.peopleDiagnosedRif)}
       filters={
         <>
           <FormControlLabel
@@ -61,13 +52,15 @@ const CurrentDiagnosisGraphPage = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
+            value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
-            onChange={e => setLga(e.target.value)}
+            value={filter?.lgaId ?? ''}
+            stateId={filter?.stateId}
+            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
@@ -78,33 +71,23 @@ const CurrentDiagnosisGraphPage = () => {
       ) : (
         <Grid container sx={{ mt: 2 }}>
           <TestsOverTimeGraphMain
+            title={formatMessage(messages.tbCasesDiagnosed)}
             data={data.data}
-            endPointParams={endPointParams}
             assaysFromState={assays}
             showLabel={showLabel}
-            filterSelection={filter}
           />
           <TripleCardSide
             data={[
-              { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.testPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
-              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.xdrCasesPerYear), value: `${data.totalResultsCurrentYear}` },
+              {
+                label: formatMessage(messages.xdrAverageMoth),
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+              },
+              { label: formatMessage(messages.xdrLastDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
-          <TestsOverTimeGraphHalf
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
-          />
-          <TestsOverTimeGraphHalf
-            data={data.data}
-            endPointParams={endPointParams}
-            assaysFromState={assays}
-            showLabel={showLabel}
-            filterSelection={filter}
-          />
+          <TestsOverTimeGraphHalf data={data.data} assaysFromState={assays} showLabel={showLabel} />
+          <TestsOverTimeGraphHalf data={data.data} assaysFromState={assays} showLabel={showLabel} />
         </Grid>
       )}
     </PkPage>

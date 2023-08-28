@@ -20,7 +20,7 @@ const NationalFQTrendPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.FQNationalTrend)}`}
+      title={formatMessage(messages.nationalFqrResistanceTrend)}
       filters={
         <>
           <FormControlLabel
@@ -44,6 +44,8 @@ const NationalFQTrendPage = () => {
       }
     >
       <TrendInYearsAllTestsGraph
+        yearTitle={formatMessage(messages.annualFQRDiagnosed)}
+        monthTitle={formatMessage(messages.monthlyDiagnosedTrends)}
         withAnnual
         assaysFromState={assays ?? []}
         showLabel={showLabel}

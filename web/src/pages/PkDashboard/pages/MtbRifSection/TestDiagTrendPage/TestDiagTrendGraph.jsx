@@ -12,10 +12,10 @@ import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatte
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
-import { graphMessages, getCustomMessage, months } from '../../../../../messages'
+import { graphMessages, getCustomMessage } from '../../../../../messages'
 import {
-  MtbToTotalPercentage,
-  MtbToTotalPercentageWithLabel,
+  lineForPropWithLabel,
+  lineForProp,
 } from '../../../../../oldPages/dashboard/Graphs/QuartersMtbDetectedGraph/QuartersMtbDetectedGraph.Main.Layers'
 import styles from '../../../../../oldPages/dashboard/Graphs/styles.css'
 import { useAuthState } from '../../../../../providers/AuthProvider'
@@ -33,11 +33,15 @@ const baseConfig = {
     { name: 'MtbToTotalPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
   ],
   clickThrough: false,
+  axisRightProps: { fieldName: 'MtbToTotalPercentage' },
 }
 
 const endpointParams = [
+  { source: 'tbDetection' },
+  { assay: 'GxMtbRif' },
+  { assay: 'GxMtbRifUltra' },
   { groupBy: 'resultCategory1' },
-  { minDate: '2019-01-01' },
+  { minDate: getTimePeriod(5, 'years', 'yyyy-MM-dd') }, // five years ago
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
 ]
 
@@ -45,20 +49,20 @@ const TestDiagTrendPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [state, setState] = useState()
-  const [lga, setLga] = useState()
+  const [stateId, setState] = useState()
+  const [lgaId, setLga] = useState()
   const { data: assays } = useAssayList()
 
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
   const [graphKeys, setGraphKeys] = useState(false)
 
-  const mergedParams = state ? [...endpointParams, { ...state, ...lga }] : [...endpointParams]
+  const mergedParams = stateId ? [...endpointParams, { stateId, lgaId }] : [...endpointParams]
 
   const { isLoading, data } = useQuery(
     ['tbMtbDetectedQuarterlyTrends', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/trend-in-quarters-mtb-detected', params: mergedParams })
+      fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
   useEffect(() => {
@@ -72,7 +76,7 @@ const TestDiagTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.TbDTestingDiagnosis)}
+      title={formatMessage(messages.mtbRifTestingDiagnosed)}
       filters={
         <>
           <FormControlLabel
@@ -86,7 +90,7 @@ const TestDiagTrendPage = () => {
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={state}
+            stateId={stateId}
             onChange={e => setLga(e.target.value)}
             label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
@@ -96,25 +100,24 @@ const TestDiagTrendPage = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <Grid item xs={12} md={12} lg={10}>
+        <Grid item xs={12}>
           <div className={cssClasses('Graph_Wrapper')}>
-            {graphData && !isEmpty(graphData) ? (
+            {graphData && !isEmpty(graphData) && assays ? (
               <AspectResponsiveBar
                 assaysFromState={assays}
                 config={{
                   ...baseConfig,
-                  layers: [showLabel ? MtbToTotalPercentageWithLabel : MtbToTotalPercentage, AxisRightLayer],
+                  layers: [
+                    showLabel ? lineForPropWithLabel('MtbToTotalPercentage') : lineForProp('MtbToTotalPercentage'),
+                    AxisRightLayer,
+                  ],
                   showLabel,
                   showDecimals: 0,
                   labelTextColor: '#333',
                 }}
                 data={graphData}
                 keys={graphKeys}
-                indexBy="quarter"
-                formatDate={value => {
-                  const [yyyy, qq] = `${value}`.split('-')
-                  return `${formatMessage(months.QUARTER)}${qq}-${yyyy.substring(2)}`
-                }}
+                indexBy="year"
                 tickValuesYShape="twos"
                 tickValuesXShape="all"
                 displayMethod="actual"
