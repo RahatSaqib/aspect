@@ -171,16 +171,13 @@ const latestFollowUpCTE = knex
   .groupBy('rf.resultId')
   .as('lfu')
 
-const followUpTreatmentCTE = knex
-  .select('lfu.resultId', 'fp.name', 'lfu.date')
-  .from(latestFollowUpCTE)
-  .join('FollowUp AS fp', 'lfu.followUpId', 'fp.id')
-  .join('FollowUpType AS fup', 'fp.followUpTypeId', 'fup.id')
-  .where('fup.externalId', '=', 'treatment')
-  .as('flt')
-
 const getBaseQueryForResultsWithFollowUp = () =>
-  getBaseQueryForResults().leftJoin(followUpTreatmentCTE, 'flt.resultId', 'r.id')
+  getBaseQueryForResults()
+    .leftJoin(latestFollowUpCTE, 'lfu.resultId', 'r.id')
+    .leftJoin('FollowUp as fp', 'fp.id', 'lfu.followUpId')
+    .leftJoin('FollowUpType as ftp', builder => {
+      builder.on('fp.id', 'fp.followUpTypeId').andOn('ftp.externalId', '=', knex.raw('?', ['treatment']))
+    })
 
 const getBaseQueryForResults = () =>
   getBaseResults()
