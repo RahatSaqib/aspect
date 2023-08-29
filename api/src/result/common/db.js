@@ -186,7 +186,7 @@ const getBaseQueryForResults = () =>
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
-function getQueryForResultsListAndExport(query, dataConstraints) {
+function getQueryForResultsListAndExport(query, dataConstraints, includesCategoryGroup) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
@@ -196,16 +196,13 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
     .leftJoin('State as stdpn', 'stdpn.id', 'gdpn.stateId')
     .modify(queryBuilder => {
       // this join is very expensive (doubles query time) and we're only using it for filtering, so only join on demand
-      if (resultCategoryGroupId) {
-        queryBuilder.leftJoin('ResultCategoryGroup as rcg', qbRcg => {
-          qbRcg
-            .on('r.assayId', 'rcg.assayId')
-            .andOn(qbAndOn => {
-              qbAndOn.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn('r.resultCategory1', 'rcg.resultCategory1Id')
-            })
-            .andOn(qbAndOn => {
-              qbAndOn.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn('r.resultCategory2', 'rcg.resultCategory2Id')
-            })
+      // Use resultCategoryGroupId to filter base on category group id
+      // Use includesCategoryGroup to include category group on result
+      if (includesCategoryGroup || resultCategoryGroupId) {
+        queryBuilder.leftJoin('ResultCategoryGroup as rcg', join => {
+          join.on('r.resultCategory1', 'rcg.resultCategory1Id')
+          join.andOn(knex.raw('r.resultCategory2 <=> rcg.resultCategory2Id'))
+          join.andOn('r.assayId', 'rcg.assayId')
         })
       }
       if (query.consumableId)
