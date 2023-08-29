@@ -63,8 +63,20 @@ async function fetchEntriesServiceHandler(request) {
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
   const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
+
+  const mergedData = transformedResults.reduce((elem, obj) => {
+    const existingObj = elem.find(item => item.id === obj.id)
+
+    if (existingObj) {
+      existingObj.history.push(...obj.history.filter(history => history.event === 'transferEvent'))
+    } else {
+      elem.push(obj)
+    }
+    return elem
+  }, [])
+
   const entries = _.orderBy(
-    _.concat(_.uniqBy(transformedResults, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
+    _.concat(_.uniqBy(mergedData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
     ['updatedOn'],
     ['desc']
   )
