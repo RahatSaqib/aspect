@@ -36,7 +36,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.RRProvincialComparison)}`}
+      title={`${formatMessage(messages.provincialDiagnosisTrendsRRTBComparison)}`}
       filters={
         <StateAutocomplete
           fullWidth
@@ -51,11 +51,18 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
-          <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
-            {graphData && !isEmpty(graphData) ? <SimpleBarLine data={graphData} /> : <EmptyGraph type="bar" />}
+          <Grid item xs={12} md={8} lg={8} container>
+            {graphData && !isEmpty(graphData) ? (
+              <SimpleBarLine title={formatMessage(messages.provincialRRDiagnosisTrends)} data={graphData} />
+            ) : (
+              <EmptyGraph type="bar" />
+            )}
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            <ProvinceTrendTable rows={tableData} />
+            <ProvinceTrendTable
+              title={`${formatMessage(messages.provincialRRDiagnosisTrends)} ${new Date().getFullYear()}`}
+              rows={tableData}
+            />
           </Grid>
         </Grid>
       )}

@@ -45,6 +45,7 @@ const GXTestingAndDiagnosisGraph = () => {
     >
       <Grid container>
         <XDRFLQResistanceGraphMain
+          title={formatMessage(messages.xdrFlqResistance)}
           assaysFromState={assays ?? []}
           showLabel={showLabel}
           filterSelection={Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))}

@@ -29,9 +29,10 @@ import messages from './messages'
 
 const JobAssigment = ({ setStep }) => {
   const { id, isAdding } = useContext(FormStatusContext)
-  const { countryAbbreviation, countryId } = useAuthState()
+  const auth = useAuthState()
+  const { countryAbbreviation, countryId } = auth
   const { formatMessage } = useI18n()
-  const { personId } = useParams()
+  const { personId = auth.personId } = useParams()
   const navigate = useNavigate()
   const { isLoading, data: assignment } = usePersonAssignment(personId)
 

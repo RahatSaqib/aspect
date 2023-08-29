@@ -17,9 +17,6 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
 
   const { culture } = await getPersonByPersonId(auth.credentials.personId)
 
-  const now = new Date()
-  query.minDate = startOfYear(subYears(now, 5)).toISOString()
-  query.maxDate = now.toISOString()
   const { minDate, maxDate } = query
 
   let assay = null
@@ -216,6 +213,10 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
 }
 
 async function getAnnualUtilizationRatesNational(auth, query) {
+  const now = new Date()
+  query.minDate = startOfYear(subYears(now, 5)).toISOString()
+  query.maxDate = now.toISOString()
+
   const res = await getAnnualUtilizationRatesNationalBase(auth, query)
   if (Boom.isBoom(res)) return res
   /**
@@ -230,6 +231,10 @@ async function getAnnualUtilizationRatesNational(auth, query) {
 }
 
 async function getAnnualUtilizationRatesProvincial(auth, query) {
+  const now = new Date()
+  query.minDate = startOfYear(subYears(now, 5)).toISOString()
+  query.maxDate = now.toISOString()
+
   const res = await getAnnualUtilizationRatesProvincialBase(auth, query)
   if (Boom.isBoom(res)) return res
   /**
