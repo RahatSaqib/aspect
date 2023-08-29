@@ -13,7 +13,7 @@ async function getDoNotUseModulesReportData(minDate, dataConstraints, query) {
     .innerJoin(moduleDisabledIssues(true), function () {
       this.on('i.deviceId', 'r.deviceId').andOn('i.moduleName', 'r.moduleName')
     })
-    .where('dt.externalId', 'CepheidGeneXpert')
+    .whereNot('dt.externalId', 'GxAlert')
     .distinct([
       'd.name as deviceName',
       knex.raw(`ifnull(r.moduleName, 'N/A') as moduleName`),

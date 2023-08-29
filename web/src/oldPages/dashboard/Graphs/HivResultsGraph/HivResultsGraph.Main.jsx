@@ -10,6 +10,7 @@ import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
 import messages from '../../../../components/Graphs/intlMessages'
 import useI18n from '../../../../hooks/useI18n'
+import GraphTitle from '../../../../pages/PkDashboard/components/GraphTitle'
 import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
@@ -30,7 +31,7 @@ const getBaseConfig = (assays = []) => {
   }
 }
 
-const HivResultsGraphMain = ({ assaysFromState, data, endPointParams, showLabel }) => {
+const HivResultsGraphMain = ({ assaysFromState, data, endPointParams, showLabel, title }) => {
   const { formatMessage } = useI18n()
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
@@ -88,20 +89,23 @@ const HivResultsGraphMain = ({ assaysFromState, data, endPointParams, showLabel 
       <Grid item xs={12} md={8} lg={8}>
         <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
-            <AspectResponsiveBar
-              assaysFromState={assaysFromState}
-              config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#333' }}
-              data={graphData}
-              keys={graphKeys}
-              indexBy="month"
-              formatDate="MMM"
-              tickValuesYShape="none"
-              tickValuesXShape="all"
-              displayMethod="percentage"
-              displayLegend
-              type="bar"
-              i18nKeys={i18nKeys}
-            />
+            <>
+              {title ? <GraphTitle>{title}</GraphTitle> : null}
+              <AspectResponsiveBar
+                assaysFromState={assaysFromState}
+                config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#333' }}
+                data={graphData}
+                keys={graphKeys}
+                indexBy="month"
+                formatDate="MMM"
+                tickValuesYShape="none"
+                tickValuesXShape="all"
+                displayMethod="percentage"
+                displayLegend
+                type="bar"
+                i18nKeys={i18nKeys}
+              />
+            </>
           ) : (
             <EmptyGraph type="bar" />
           )}

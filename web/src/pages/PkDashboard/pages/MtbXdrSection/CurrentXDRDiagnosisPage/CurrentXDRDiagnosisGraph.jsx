@@ -41,7 +41,7 @@ const CurrentXDRDiagnosisPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.xdrCurrentDiagnosisTitle)}`}
+      title={`${formatMessage(messages.peopleDiagnosedXdr)}`}
       filters={
         <>
           <FormControlLabel
@@ -68,11 +68,19 @@ const CurrentXDRDiagnosisPage = () => {
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
-          <TestsOverTimeGraphMain data={data.data} assaysFromState={assays} showLabel={showLabel} />
+          <TestsOverTimeGraphMain
+            title={formatMessage(messages.tbCasesDiagnosed)}
+            data={data.data}
+            assaysFromState={assays}
+            showLabel={showLabel}
+          />
           <TripleCardSide
             data={[
               { label: formatMessage(messages.xdrCasesPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.xdrAverageMoth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              {
+                label: formatMessage(messages.xdrAverageMoth),
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+              },
               { label: formatMessage(messages.xdrLastDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />

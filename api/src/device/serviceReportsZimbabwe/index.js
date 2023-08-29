@@ -30,7 +30,7 @@ function getResultsBaseQuery(query) {
     .leftOuterJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .where('dt.externalId', 'CepheidGeneXpert')
+    .whereNot('dt.externalId', 'GxAlert')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -73,8 +73,13 @@ function getMaintenanceBaseQuery(dataConstraints, query) {
           })
       })
       .leftOuterJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+      /**
+       * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
+       * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
+       * in `api/src/auth/constraints.js` where user permitted deviceType is used
+       */
+      .whereNot('dt.externalId', 'GxAlert')
       // Get only the latest log of the day
-      .where('dt.externalId', 'CepheidGeneXpert')
       .whereNull('dmslNewer.id')
       .whereRaw(`DAYOFWEEK(dmsl.day) <> 1 AND DAYOFWEEK(dmsl.day) <> 7`)
       .modify(addConstraints, dataConstraints, {

@@ -37,7 +37,7 @@ const HivGraphPage = () => {
   return (
     <PkPage
       isMocked
-      title={`${formatMessage(messages.hiv)} / ${formatMessage(graphMessages.clinicalIndicatorsVLTitle)}`}
+      title={formatMessage(messages.peopleTestedHiv)}
       filters={
         <FormControlLabel
           sx={{ minWidth: '145px' }}
@@ -52,6 +52,7 @@ const HivGraphPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <HivResultsGraphMain
             data={data.data}
+            title={formatMessage(messages.testsPerformedYear)}
             endPointParams={endPointParams}
             assaysFromState={assays}
             showLabel={showLabel}
@@ -59,7 +60,10 @@ const HivGraphPage = () => {
           <TripleCardSide
             data={[
               { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.testPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              {
+                label: formatMessage(messages.testPerMonth),
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+              },
               { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />
