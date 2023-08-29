@@ -32,6 +32,7 @@
     "release:patch": "npm version patch && npm publish && git push --follow-tags"
   },
   "dependencies": {
+    "@ant-design/charts": "^1.4.2",
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
     "@mui/icons-material": "^5.10.14",

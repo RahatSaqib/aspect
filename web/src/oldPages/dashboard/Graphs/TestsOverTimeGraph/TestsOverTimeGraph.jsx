@@ -11,16 +11,27 @@ import {
   TextField,
 } from '@mui/material'
 import classnames from 'classnames/bind'
+import filter from 'lodash/filter'
+import isEmpty from 'lodash/isEmpty'
+import map from 'lodash/map'
+import reduce from 'lodash/reduce'
 import { useQuery } from 'react-query'
 import ErrorBoundary from '../../../../cleanComponents/ErrorBoundary'
+import { DonutGraph } from '../../../../cleanComponents/Graphs'
 import Loading from '../../../../cleanComponents/Loading'
-import { getTimePeriod } from '../../../../components/Graphs/Helpers/Formatters'
+import {
+  getTimePeriod,
+  formatDataByGraphType,
+  getAverageFromData,
+  calcPercentageForGraphs,
+  translateLabel as genLabel,
+} from '../../../../components/Graphs/Helpers/Formatters'
+import messages from '../../../../components/Graphs/intlMessages'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
 import useI18n from '../../../../hooks/useI18n'
 import { graphMessages, assay } from '../../../../messages'
 import styles from '../styles.css'
 import TestsOverTimeGraphMain from './TestsOverTimeGraph.Main'
-import TestsOverTimeGraphSide from './TestsOverTimeGraph.Side'
 
 const cssClasses = classnames.bind(styles)
 
@@ -31,22 +42,76 @@ const endPointParams = [
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
 ]
 
-const TestsOverTimeGraph = ({ assaysFromState }) => {
+const filterFunctionPie = (data, props) => {
+  const newData = []
+  const keys = []
+  map(props, ({ externalId }) => keys.push(externalId))
+  map(keys, key => {
+    const found = filter(data, { id: key })[0]
+    if (!isEmpty(found)) {
+      return newData.push(found)
+    }
+  })
+  return newData
+}
+
+const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
   const { formatMessage } = useI18n()
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState([])
 
   useEffect(() => {
-    const tbAssays = assaysFromState.filter(a => a.assayTypeAbbreviation === 'TB')
-    const defaultFilter = tbAssays.length > 0 ? tbAssays : assaysFromState
+    const tbAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
+    const defaultFilter = tbAssays.length > 0 ? tbAssays : assays
     setFilter(defaultFilter)
-  }, [assaysFromState])
+  }, [assays])
 
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
   )
+
+  const [donutData, setDonutData] = useState({})
+
+  useEffect(() => {
+    if (data && data.data) {
+      const info = data.data
+      const i18nKeys = reduce(
+        info,
+        (acc, curr) => {
+          acc[curr.assay] = curr.assayI18nKey
+          return acc
+        },
+        {}
+      )
+      // code for donut
+      const groupedForPie = formatDataByGraphType(
+        info,
+        'percentage',
+        false,
+        'MMM yy',
+        'cnt',
+        'assay',
+        i18nKeys,
+        'pie',
+        endPointParams,
+        formatMessage,
+        messages
+      )
+      const pieData = filterFunctionPie(groupedForPie, filter)
+      const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
+      const { totals: pieAverage } = getAverageFromData(pieData, 'value', '*', 'standard')
+      const pie = pieData.map(d => ({
+        ...d,
+        label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+      }))
+
+      setDonutData({ data: pie, total: pieAverage })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, filter])
 
   return isLoading || !filter.length ? (
     <Loading />
@@ -67,7 +132,7 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
                       />
                     </Grid>
                     <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
-                      <AssayAutocomplete assaysFromState={assaysFromState} value={filter} onChange={setFilter} />
+                      <AssayAutocomplete assaysFromState={assays} value={filter} onChange={setFilter} />
                     </Grid>
                   </Grid>
                 </Grid>
@@ -76,17 +141,36 @@ const TestsOverTimeGraph = ({ assaysFromState }) => {
                     <TestsOverTimeGraphMain
                       data={data.data}
                       endPointParams={endPointParams}
-                      assaysFromState={assaysFromState}
+                      assaysFromState={assays}
                       showLabel={showLabel}
                       filterSelection={filter}
                     />
-                    <TestsOverTimeGraphSide
-                      data={data.data}
-                      endPointParams={endPointParams}
-                      assaysFromState={assaysFromState}
-                      showLabel={showLabel}
-                      filterSelection={filter}
-                    />
+                    {donutData.data && donutData.data.length ? (
+                      <Grid item xs={12} md={4} lg={4}>
+                        <DonutGraph
+                          data={donutData.data}
+                          total={donutData.total}
+                          graphId="testPerformedMonthlytotal"
+                          graphTitle={[
+                            formatMessage(graphMessages.testsOverTimeAvgTitle)
+                              .split(' ')
+                              .splice(
+                                0,
+                                Math.ceil(formatMessage(graphMessages.testsOverTimeAvgTitle).split(' ').length / 2)
+                              )
+                              .join(' '),
+                            formatMessage(graphMessages.testsOverTimeAvgTitle)
+                              .split(' ')
+                              .splice(
+                                Math.ceil(formatMessage(graphMessages.testsOverTimeAvgTitle).split(' ').length / 2)
+                              )
+                              .join(' '),
+                          ].join('<br/>')} // "Average Monthly<br/>Test Performed"
+                          legend={false}
+                          showLabel={showLabel}
+                        />
+                      </Grid>
+                    ) : null}
                   </Grid>
                 </Grid>
               </Grid>
