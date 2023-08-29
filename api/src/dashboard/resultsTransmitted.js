@@ -34,7 +34,7 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
     )
     .whereIn('a.id', knex('Result').select('assayId').distinct())
     .where('a.externalId', '!=', 'GxUnknown')
-    .where('dt.externalId', 'CepheidGeneXpert')
+    .whereNot('dt.externalId', 'GxAlert')
     .orderBy('a.name')
     .groupBy('a.id', 'a.name', 'a.externalId', 'a.i18nKey')
 }
@@ -74,7 +74,12 @@ async function getResultQuery(query, dataConstraints, positiveResultCategories, 
         subMonths(endOfMonthUTC(currentMonth), 1),
       ]
     )
-    .where('dt.externalId', 'CepheidGeneXpert')
+    /**
+     * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
+     * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
+     * in `api/src/auth/constraints.js` where user permitted deviceType is used
+     */
+    .whereNot('dt.externalId', 'GxAlert')
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',

@@ -16,7 +16,20 @@ import {
   customFormat,
 } from './periodOptions'
 
-function PeriodSelector({ minDate, maxDate, onChange, label, noDay, noWeek, noMonth, noQuarter, customMaxYear }) {
+function PeriodSelector({
+  minDate,
+  maxDate,
+  onChange,
+  label,
+  noAny,
+  noDay,
+  noWeek,
+  noMonth,
+  noQuarter,
+  noYear,
+  noCustom,
+  customMaxYear,
+}) {
   const intl = useI18n()
   const { formatMessage } = intl
   const day = dayOptions(intl)
@@ -74,7 +87,8 @@ function PeriodSelector({ minDate, maxDate, onChange, label, noDay, noWeek, noMo
         open={open}
         anchorEl={anchorRef.current}
         role={undefined}
-        placement="bottom-start"
+        placement="bottom"
+        popperOptions={{ placement: 'bottom', strategy: 'fixed', modifiers: [{ name: 'flip', enabled: false }] }}
         transition
         disablePortal
         sx={{ width: '25%', zIndex: 10, flexGrow: 1, overflowY: 'auto', maxHeight: '477px' }}
@@ -89,15 +103,17 @@ function PeriodSelector({ minDate, maxDate, onChange, label, noDay, noWeek, noMo
                   defaultEndIcon={<div style={{ width: 24 }} />}
                   onKeyDown={handleListKeyDown}
                 >
-                  <TreeItem
-                    label={<TreeLabel label={formatMessage(messages.any)} />}
-                    nodeId="any"
-                    onClick={() => {
-                      setValueLabel(formatMessage(messages.any))
-                      onChange({ minDate: null, maxDate: null })
-                      handleToggle()
-                    }}
-                  />
+                  {noAny ? null : (
+                    <TreeItem
+                      label={<TreeLabel label={formatMessage(messages.any)} />}
+                      nodeId="any"
+                      onClick={() => {
+                        setValueLabel(formatMessage(messages.any))
+                        onChange({ minDate: null, maxDate: null })
+                        handleToggle()
+                      }}
+                    />
+                  )}
                   {noDay ? null : (
                     <TreeItem label={<TreeLabel label={formatMessage(messages.day)} />} nodeId="day">
                       {day.map(option => (
@@ -162,67 +178,52 @@ function PeriodSelector({ minDate, maxDate, onChange, label, noDay, noWeek, noMo
                       ))}
                     </TreeItem>
                   )}
-                  <TreeItem label={<TreeLabel label={formatMessage(messages.year)} />} nodeId="year">
-                    {year.map(option => (
+                  {noYear ? null : (
+                    <TreeItem label={<TreeLabel label={formatMessage(messages.year)} />} nodeId="year">
+                      {year.map(option => (
+                        <TreeItem
+                          label={<TreeLabel label={option.label} />}
+                          nodeId={`year-${option.id}`}
+                          key={`year-${option.id}`}
+                          onClick={() => {
+                            setValueLabel(option.label)
+                            onChange(option.value)
+                            handleToggle()
+                          }}
+                        />
+                      ))}
+                    </TreeItem>
+                  )}
+                  {noCustom ? null : (
+                    <TreeItem label={<TreeLabel label={formatMessage(messages.custom)} />} nodeId="custom">
                       <TreeItem
-                        label={<TreeLabel label={option.label} />}
-                        nodeId={`year-${option.id}`}
-                        key={`year-${option.id}`}
-                        onClick={() => {
-                          setValueLabel(option.label)
-                          onChange(option.value)
-                          handleToggle()
-                        }}
+                        label={
+                          <CustomMinDatePicker
+                            formatMessage={formatMessage}
+                            range={range}
+                            setValueLabel={setValueLabel}
+                            setRange={setRange}
+                            onChange={onChange}
+                            handleToggle={handleToggle}
+                          />
+                        }
+                        nodeId="custom-start"
                       />
-                    ))}
-                  </TreeItem>
-                  <TreeItem label={<TreeLabel label={formatMessage(messages.custom)} />} nodeId="custom">
-                    <TreeItem
-                      label={
-                        <div style={{ width: '95%' }}>
-                          <DesktopDatePicker
-                            label={formatMessage(messages.fromDate)}
-                            value={range.minDate || null}
-                            onChange={minDate => {
-                              if (range.maxDate !== null) {
-                                setValueLabel(customFormat(minDate, range.maxDate))
-                                setRange({ ...range, minDate })
-                                onChange({ minDate: minDate.toISOString(), maxDate: range.maxDate.toISOString() })
-                                handleToggle()
-                              } else {
-                                setRange({ ...range, minDate })
-                              }
-                            }}
-                            renderInput={params => <TextField {...params} />}
+                      <TreeItem
+                        label={
+                          <CustomMaxDatePicker
+                            formatMessage={formatMessage}
+                            range={range}
+                            setValueLabel={setValueLabel}
+                            setRange={setRange}
+                            onChange={onChange}
+                            handleToggle={handleToggle}
                           />
-                        </div>
-                      }
-                      nodeId="custom-start"
-                    />
-                    <TreeItem
-                      label={
-                        <div style={{ width: '95%' }}>
-                          <DesktopDatePicker
-                            label={formatMessage(messages.toDate)}
-                            value={range.maxDate}
-                            minDate={range.minDate}
-                            onChange={maxDate => {
-                              if (range.minDate !== null) {
-                                setValueLabel(customFormat(range.minDate, maxDate))
-                                setRange({ ...range, maxDate })
-                                onChange({ minDate: range.minDate.toISOString(), maxDate: maxDate.toISOString() })
-                                handleToggle()
-                              } else {
-                                setRange({ ...range, maxDate })
-                              }
-                            }}
-                            renderInput={params => <TextField {...params} />}
-                          />
-                        </div>
-                      }
-                      nodeId="custom-end"
-                    />
-                  </TreeItem>
+                        }
+                        nodeId="custom-end"
+                      />
+                    </TreeItem>
+                  )}
                 </TreeView>
               </ClickAwayListener>
             </Paper>
@@ -242,3 +243,52 @@ const TreeLabel = ({ label }) => (
     </Typography>
   </Box>
 )
+
+const CustomMinDatePicker = ({ formatMessage, range, setValueLabel, setRange, onChange, handleToggle }) => {
+  return (
+    <div style={{ width: '95%' }}>
+      <DesktopDatePicker
+        label={formatMessage(messages.fromDate)}
+        value={range.minDate || null}
+        onChange={minDate => {
+          if (minDate) {
+            if (range.maxDate !== null) {
+              setValueLabel(customFormat(minDate, range.maxDate))
+              setRange({ ...range, minDate })
+              onChange({ minDate: minDate.toISOString(), maxDate: range.maxDate.toISOString() })
+              handleToggle()
+            } else {
+              setRange({ ...range, minDate })
+            }
+          }
+        }}
+        renderInput={params => <TextField {...params} disabled onKeyDown={e => e.preventDefault()} />}
+      />
+    </div>
+  )
+}
+
+const CustomMaxDatePicker = ({ formatMessage, range, setValueLabel, setRange, onChange, handleToggle }) => {
+  return (
+    <div style={{ width: '95%' }}>
+      <DesktopDatePicker
+        label={formatMessage(messages.toDate)}
+        value={range.maxDate}
+        minDate={range.minDate}
+        onChange={maxDate => {
+          if (maxDate) {
+            if (range.minDate !== null) {
+              setValueLabel(customFormat(range.minDate, maxDate))
+              setRange({ ...range, maxDate })
+              onChange({ minDate: range.minDate.toISOString(), maxDate: maxDate.toISOString() })
+              handleToggle()
+            } else {
+              setRange({ ...range, maxDate })
+            }
+          }
+        }}
+        renderInput={params => <TextField {...params} disabled onKeyDown={e => e.preventDefault()} />}
+      />
+    </div>
+  )
+}

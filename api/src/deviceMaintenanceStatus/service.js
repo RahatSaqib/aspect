@@ -47,7 +47,12 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
       .where('dmsl.day', '<=', maxDateStatus)
       // Only get the devices of category types that perform tests
       .where('dtc.hasResults', 1)
-      .where('dt.externalId', 'CepheidGeneXpert')
+      /**
+       * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
+       * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
+       * in `api/src/auth/constraints.js` where user permitted deviceType is used
+       */
+      .whereNot('dt.externalId', 'GxAlert')
       // Only get the current device maintenance status log if the device hasn't any newer statuses the same day
       // (Only the last status of each device and day)
       .whereNull('newerDmslOnSameDay.id')
@@ -107,24 +112,17 @@ async function getDeviceStatusOverTime(auth, query) {
       'externalId as maintenanceStatusExternalId'
     )
     .first()
-  // generic query for devices grouped by id with counts of tests
+
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Result as r', joinQuery => {
-      joinQuery
-        .on('d.id', 'r.deviceId')
-        .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
-        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
-    })
     .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
       geography: 'g',
-      result: 'r',
       site: 's',
       device: 'd',
     })
@@ -145,12 +143,27 @@ async function getDeviceStatusOverTime(auth, query) {
       's.longitude',
       's.latitude',
       's.hoursStart',
-      's.hoursEnd',
-      knex.raw('COUNT(r.id) as totalResults')
+      's.hoursEnd'
     )
-
+  devices.forEach(device => {
+    device.totalResults = 0
+  })
   const deviceIds = uniq(devices.map(({ id }) => id))
   const siteIds = uniq(devices.map(({ siteId }) => siteId))
+
+  const results = await knex('Result as r')
+    .whereIn('r.deviceId', deviceIds)
+    .where('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
+    .where('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+    })
+    .groupBy('r.deviceId')
+    .select('r.deviceId', knex.raw('COUNT(r.id) as totalResults'))
+
+  results.forEach(({ deviceId, totalResults }) => {
+    devices.find(d => d.id === deviceId).totalResults = totalResults
+  })
 
   let devicesByDay = await knex('Device as d')
     .leftJoin('Result as r', joinQuery => {

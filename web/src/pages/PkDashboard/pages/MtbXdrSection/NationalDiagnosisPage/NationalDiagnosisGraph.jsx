@@ -6,9 +6,9 @@ import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/TrendInYearsAllTestsGraph/TrendInYearsAllTestsGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
+import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
-import { objectToArray } from '../../../../../utils/utils/misc'
 
 const defaultFilters = [{ assay: 'GxMtbXdr' }, { resultCategory1: 'Detected' }]
 const NationalDiagnosisGraph = () => {
@@ -20,7 +20,7 @@ const NationalDiagnosisGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.GXTbNationalDiagnosis)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.nationalMtbXdrDiagnosed)}
       filters={
         <>
           <FormControlLabel
@@ -45,6 +45,8 @@ const NationalDiagnosisGraph = () => {
     >
       <TrendInYearsAllTestsGraph
         withAnnual
+        yearTitle={formatMessage(messages.annualDiagnosedTrends)}
+        monthTitle={formatMessage(messages.monthlyDiagnosedTrends)}
         assaysFromState={assays ?? []}
         showLabel={showLabel}
         filterSelection={objectToArray(filter).concat(defaultFilters)}

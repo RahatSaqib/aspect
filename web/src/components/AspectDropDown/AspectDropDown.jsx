@@ -15,6 +15,7 @@ import UI_CONSTS from '../../utils/consts/UI'
 import IconProvider from '../IconProvider'
 import fetchWrapperForQueries from '../QueryFetch'
 import SelectComponent, { getSelectedOptions } from './AspectDropDown.SelectComponent'
+import isNil from 'lodash/isNil'
 
 const getActualData = ({ data, reduxStateId, sortByKeys }) => {
   const actualData = get(data, reduxStateId)
@@ -184,7 +185,13 @@ const AspectDropDown = ({
         const initialValue = get(formik?.initialValues, identifier)
         const currentValue = get(formik?.values, identifier)
         const actualValue = getActualValue(options, currentValue, initialValue)
-        if (formik && currentValue !== initialValue && isArray(options) && !isEqual(currentValue, actualValue)) {
+        if (
+          formik &&
+          !isNil(currentValue) &&
+          currentValue !== initialValue &&
+          isArray(options) &&
+          !isEqual(currentValue, actualValue)
+        ) {
           updateField(identifier, actualValue, { formik })
         }
       } else {

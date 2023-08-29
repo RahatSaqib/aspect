@@ -3,7 +3,7 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { format, subMonths, subHours, eachMonthOfInterval } = require('date-fns')
 const Promise = require('bluebird')
-const { getOffsetFromIsoDateString } = require('../shared/date')
+const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
 const {
   getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
@@ -31,7 +31,6 @@ const {
   resultCategoryToId,
 } = require('../shared/dictionary')
 const { getDatesFromQuery } = require('../shared/date')
-const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
@@ -54,6 +53,12 @@ const {
   getResultNotesByResultId,
 } = require('./common/db')
 const { getDeviceByDeviceId } = require('../device/service')
+const { getGroupBy, clinicalIndicatorAggregations } = require('./common/logic')
+const {
+  processGroupedQuery,
+  getClinicalIndicatorQueryForFactTable,
+  getClinicalIndicatorQueryForResultsTable,
+} = require('./common/db')
 
 async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
@@ -1698,74 +1703,6 @@ async function getResultsForReport(auth, query) {
   return getListResults(query, auth, getReportCommonFieldsTZ(userTimeOffset))
 }
 
-// ---------------------------------------------------------------
-function getGroupBy(query) {
-  if (!query.groupBy) {
-    // if no group is specified, use result category
-    return ['resultCategory1']
-  }
-  if (!_.isArray(query.groupBy)) {
-    return [query.groupBy]
-  }
-  return query.groupBy
-}
-
-// ---------------------------------------------------------------
-async function clinicalIndicatorAggregations(request) {
-  const { auth, query } = request
-
-  if (!canViewResults(auth)) {
-    throw Boom.forbidden('You do not have access to results')
-  }
-
-  let assay = null
-  if (query.assay && !Array.isArray(query.assay)) {
-    assay = [query.assay]
-  } else if (query.assay) {
-    assay = query.assay
-  }
-
-  // if no group is specified, use result category
-  const groupBy = getGroupBy(query)
-
-  // optional flags
-  let flags = []
-  if (query.flags) {
-    flags = _.isArray(query.flags) ? query.flags : [query.flags]
-  }
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  // if grouping only by month and assay, resultCategory1, resultCategory2 (the most common case),
-  // we can query the fact tables for much better performance
-  const factTableDataGroups = ['month', 'assay', 'resultCategory1', 'resultCategory2']
-
-  const resp = {}
-  if (_.every(groupBy, group => _.includes(factTableDataGroups, group)) && !query.resistance) {
-    const factTableQuery = getClinicalIndicatorQueryForFactTable(dataConstraints, assay, groupBy, query)
-
-    if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
-      const [{ cnt }] = await factTableQuery.clone()
-      resp.totalResults = cnt
-    }
-
-    resp.data = await processGroupedQuery(factTableQuery, groupBy, 'r.startedOn')
-    return resp
-  }
-
-  const resultQuery = getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupBy, query)
-
-  if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS)) {
-    const [{ cnt }] = await resultQuery.clone()
-    resp.totalResults = cnt
-  }
-
-  resp.data = await processGroupedQuery(resultQuery, groupBy)
-  return resp
-}
-
-// ---------------------------------------------------------------
 async function currentResultAggregations(request) {
   const { auth, query } = request
 
@@ -1775,6 +1712,7 @@ async function currentResultAggregations(request) {
 
   const now = new Date()
   const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth() + 1
 
   // optional flags
   const { flags = [] } = query
@@ -1809,13 +1747,25 @@ async function currentResultAggregations(request) {
   /**
    * List of the number of tests in date range groupped by xxx
    */
-  resp.data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+  const data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+
+  if (query.minDate && query.maxDate) {
+    // Get all months in date range (YYYY-MM)
+    const months = getAllMonthsInRange(query.minDate, query.maxDate)
+
+    resp.data = months.map(month => {
+      const monthInData = data.find(d => d.month === month)
+      return monthInData ?? { cnt: 0, month }
+    })
+  } else {
+    resp.data = data
+  }
 
   /**
    * Total tests of the current year
    */
   if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS_IN_CURRENT_YEAR)) {
-    resp.totalResultsCurrentYear = _.reduce(
+    const totalResultsCurrentYear = _.reduce(
       resp.data.filter(x => _.startsWith(x.month, `${currentYear}-`)),
       (acc, { cnt }) => {
         acc += cnt
@@ -1823,21 +1773,21 @@ async function currentResultAggregations(request) {
       },
       0
     )
+    resp.totalResultsCurrentYear = totalResultsCurrentYear
   }
   /**
    * Average tests per month during the current year
    */
   if (flags.includes(GRAPH_FLAGS.GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR)) {
-    let cntTests = 0
-    const months = new Set()
-    _.each(
+    const totalResultsCurrentYear = _.reduce(
       resp.data.filter(x => _.startsWith(x.month, `${currentYear}-`)),
-      x => {
-        months.add(x.month)
-        cntTests += x.cnt
-      }
+      (acc, { cnt }) => {
+        acc += cnt
+        return acc
+      },
+      0
     )
-    resp.averageTestsPerMonthCurrentYear = months.size === 0 ? cntTests : Math.floor(cntTests / months.size)
+    resp.averageTestsPerMonthCurrentYear = totalResultsCurrentYear / currentMonth
   }
   /**
    * Total tests in the last 24 hours
@@ -2017,137 +1967,6 @@ async function trendInQuartersRifDetected(request) {
       RrdToMtbPercentage: 'RRDPercent',
     },
   }
-}
-
-// ---------------------------------------------------------------
-function getClinicalIndicatorQueryForFactTable(dataConstraints, assay, groupBy, query) {
-  return getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
-    addConstraints,
-    dataConstraints,
-    filterParams,
-    assay,
-    query,
-  }).where(function () {
-    // skip filtering by 'rca.reportable' if grouping by 'assay'
-    if (!groupBy.includes('assay')) {
-      this.where('rca.reportable', true)
-    }
-  })
-}
-
-function getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupBy, query) {
-  return knex('Result as r')
-    .innerJoin('Device as d', 'd.id', 'r.deviceId')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('Site as s', 's.id', 'r.siteId')
-    .innerJoin('Assay as a', 'a.id', 'r.assayId')
-    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
-    .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'st.id', 'g.stateId')
-    .innerJoin('ResultCategoryAssay as rca', function () {
-      this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
-    })
-    .modify(addConstraints, dataConstraints, {
-      assay: 'a',
-      assayType: 'at',
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      result: 'r',
-    })
-    .modify(filterParams, query, {
-      assay: 'a.externalId',
-      countryId: 'g.countryId',
-      partnerId: 'g.partnerId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-      deviceName: 'd.name',
-      deviceType: 'dt.externalId',
-    })
-    .modify(qb => {
-      if (query.minDate) {
-        qb.where('r.startedOn', '>=', query.minDate)
-      }
-      if (query.maxDate) {
-        qb.where('r.startedOn', '<=', query.maxDate)
-      }
-      if (!query.assay && assay) {
-        qb.whereIn('a.externalId', assay)
-      }
-      if (query.assayType) {
-        qb.where('at.externalId', '=', query.assayType)
-      }
-      if (query.resultCategory1) {
-        qb.where('rc1.externalId', '=', query.resultCategory1)
-      }
-      if (query.resultCategory2) {
-        qb.where('rc2.externalId', '=', query.resultCategory2)
-      }
-      if (query.resistance) {
-        qb.whereRaw(`
-      JSON_SEARCH(
-        r.resultData ->> '$.detectedResistance[*]',
-        'one',
-        '${query.resistance}'
-      ) IS NOT NULL
-    `)
-      }
-    })
-    .where(function () {
-      // skip filtering by 'rca.reportable' if grouping by 'assay'
-      if (!groupBy.includes('assay')) {
-        this.where('rca.reportable', true)
-      }
-    })
-    .orderBy('r.startedOn', 'r.endedOn')
-    .count('r.id as cnt')
-}
-
-async function processGroupedQuery(resultQuery, groupBy, dateColumn = 'IFNULL(r.endedOn, r.startedOn)') {
-  // handle possible groups:
-  const paramToDb = {
-    resultCategory1: ['rc1.externalId as resultCategory1', 'rc1.i18nKey as resultCategory1I18nKey '],
-    resultCategory2: ['rc2.externalId as resultCategory2', 'rc2.i18nKey as resultCategory2I18nKey '],
-    assay: ['a.externalId as assay', 'a.i18nKey as assayI18nKey'],
-
-    week: knex.raw(`DATE_FORMAT(${dateColumn}, "%x-%v") as week_value`),
-    month: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m") as month_value`),
-    quarter: knex.raw(`CONCAT( YEAR(${dateColumn}),'-',QUARTER(${dateColumn}) ) as quarter_value`),
-    year: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y") as year_value`),
-    day: knex.raw(`DATE_FORMAT(${dateColumn}, "%Y-%m-%d") as day_value`),
-
-    gender: knex.raw('replace(r.patientData ->> "$.gender", "null", null) as gender'),
-    age: knex.raw('replace(r.patientData ->> "$.age", "null", null) as age'),
-    state: 'st.name as state',
-    followUp: [`fu.externalId as followUp`, `fu.i18nKey as followUpI18nKey`],
-  }
-
-  const reservedWords = ['day', 'month', 'quarter', 'week', 'year']
-
-  groupBy.forEach(g => {
-    resultQuery.modify(qb => {
-      const name = reservedWords.includes(g) ? `${g}_value` : g
-      qb.select(paramToDb[g])
-      qb.groupBy(name)
-      qb.orderBy(name)
-    })
-  })
-
-  const data = (await resultQuery).map(item => {
-    groupBy.forEach(g => {
-      if (reservedWords.includes(g)) {
-        // set value for originally intended prop name and delete temporal prop
-        item[g] = item[`${g}_value`]
-        delete item[`${g}_value`]
-      }
-    })
-    return item
-  })
-
-  return data
 }
 
 function queryResultFollowUpLastItems(followUpType) {
@@ -2752,7 +2571,6 @@ module.exports = {
   deleteResultNote,
   allResultNotes,
   transferResult,
-  clinicalIndicatorAggregations,
   currentResultAggregations,
   followUpAggregations,
   queryResultFollowUpLastItems,
@@ -2768,7 +2586,7 @@ module.exports = {
 
   xdrAssayGraphAggregations,
 
-  getGroupBy,
   getClinicalIndicatorQueryForResultsTable,
   processGroupedQuery,
+  getQuarterByMonth,
 }

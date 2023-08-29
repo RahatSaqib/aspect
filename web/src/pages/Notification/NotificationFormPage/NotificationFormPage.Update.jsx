@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import { CircularProgress, Box, Card, CardContent, Grid } from '@mui/material'
 import { useFormikContext } from 'formik'
+import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import './NotificationFormPage.css'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
@@ -148,7 +149,12 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
           {
             disabled: !formik.dirty || !formik.isValid,
             label: intl.formatMessage(messages.save),
-            onClick: () => onSubmit(formik, meta),
+            onClick: async () => {
+              const errors = await formik.validateForm()
+              if (isEmpty(errors)) {
+                onSubmit(formik, meta)
+              }
+            },
           },
         ].map(({ label, onClick, disabled = false }) => (
           <AspectButton
