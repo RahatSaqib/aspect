@@ -3,7 +3,7 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { format, subMonths, subHours, eachMonthOfInterval } = require('date-fns')
 const Promise = require('bluebird')
-const { getOffsetFromIsoDateString } = require('../shared/date')
+const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
 const {
   getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
@@ -1712,6 +1712,7 @@ async function currentResultAggregations(request) {
 
   const now = new Date()
   const currentYear = now.getFullYear()
+  const currentMonth = now.getMonth() + 1
 
   // optional flags
   const { flags = [] } = query
@@ -1746,13 +1747,25 @@ async function currentResultAggregations(request) {
   /**
    * List of the number of tests in date range groupped by xxx
    */
-  resp.data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+  const data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+
+  if (query.minDate && query.maxDate) {
+    // Get all months in date range (YYYY-MM)
+    const months = getAllMonthsInRange(query.minDate, query.maxDate)
+
+    resp.data = months.map(month => {
+      const monthInData = data.find(d => d.month === month)
+      return monthInData ?? { cnt: 0, month }
+    })
+  } else {
+    resp.data = data
+  }
 
   /**
    * Total tests of the current year
    */
   if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS_IN_CURRENT_YEAR)) {
-    resp.totalResultsCurrentYear = _.reduce(
+    const totalResultsCurrentYear = _.reduce(
       resp.data.filter(x => _.startsWith(x.month, `${currentYear}-`)),
       (acc, { cnt }) => {
         acc += cnt
@@ -1760,21 +1773,21 @@ async function currentResultAggregations(request) {
       },
       0
     )
+    resp.totalResultsCurrentYear = totalResultsCurrentYear
   }
   /**
    * Average tests per month during the current year
    */
   if (flags.includes(GRAPH_FLAGS.GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR)) {
-    let cntTests = 0
-    const months = new Set()
-    _.each(
+    const totalResultsCurrentYear = _.reduce(
       resp.data.filter(x => _.startsWith(x.month, `${currentYear}-`)),
-      x => {
-        months.add(x.month)
-        cntTests += x.cnt
-      }
+      (acc, { cnt }) => {
+        acc += cnt
+        return acc
+      },
+      0
     )
-    resp.averageTestsPerMonthCurrentYear = months.size === 0 ? cntTests : Math.floor(cntTests / months.size)
+    resp.averageTestsPerMonthCurrentYear = totalResultsCurrentYear / currentMonth
   }
   /**
    * Total tests in the last 24 hours
