@@ -1,6 +1,6 @@
 async function up(knex) {
   await knex.schema.alterTable('DeviceMaintenanceStatusLog', function (table) {
-    table.index(`deviceId`, 'devicemaintenancestatuslog_deviceid_day_createdon_id_index')
+    table.index(['deviceId', 'day', 'createdOn', 'id'], 'devicemaintenancestatuslog_deviceid_day_createdon_id_index')
   })
 }
 

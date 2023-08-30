@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
@@ -12,6 +12,7 @@ import EmptyGraph from '../../../../components/Graphs/EmptyData'
 import { formatDataByGraphType, getGraphKeysFromResults } from '../../../../components/Graphs/Helpers/Formatters'
 import messages from '../../../../components/Graphs/intlMessages'
 import useI18n from '../../../../hooks/useI18n'
+import GraphTitle from '../../../../pages/PkDashboard/components/GraphTitle'
 import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
@@ -35,7 +36,7 @@ const filterFunction = (data, props) => {
   return newData
 }
 
-const TestsOverTimeGraphMain = ({ assaysFromState, data, endPointParams, showLabel, filterSelection }) => {
+const TestsOverTimeGraphMain = ({ assaysFromState, data, endPointParams, showLabel, filterSelection, title }) => {
   const { formatMessage } = useI18n()
   const [i18nKeys, setI18nKeys] = useState([])
   const [graphData, setGraphData] = useState(false)
@@ -94,20 +95,23 @@ const TestsOverTimeGraphMain = ({ assaysFromState, data, endPointParams, showLab
       <Grid item xs={12} md={8} lg={8}>
         <div className={cssClasses('Graph_Wrapper')}>
           {graphData && !isEmpty(graphData) ? (
-            <AspectResponsiveBar
-              config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#FFF' }}
-              assaysFromState={assaysFromState}
-              data={graphData}
-              keys={graphKeys}
-              i18nKeys={i18nKeys}
-              indexBy="month"
-              formatDate="MMM"
-              tickValuesYShape="none"
-              tickValuesXShape="all"
-              displayMethod="actual"
-              displayLegend
-              type="bar"
-            />
+            <>
+              {title ? <GraphTitle>{title}</GraphTitle> : null}
+              <AspectResponsiveBar
+                config={{ ...baseConfig, showLabel, showDecimals: 0, labelTextColor: '#FFF' }}
+                assaysFromState={assaysFromState}
+                data={graphData}
+                keys={graphKeys}
+                i18nKeys={i18nKeys}
+                indexBy="month"
+                formatDate="MMM"
+                tickValuesYShape="none"
+                tickValuesXShape="all"
+                displayMethod="actual"
+                displayLegend
+                type="bar"
+              />
+            </>
           ) : (
             <EmptyGraph type="bar" />
           )}

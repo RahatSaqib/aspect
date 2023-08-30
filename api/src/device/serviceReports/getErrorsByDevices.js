@@ -39,7 +39,7 @@ async function getErrorsByDevices(dataConstraints, query) {
     .leftJoin(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
-    .where('dt.externalId', 'CepheidGeneXpert')
+    .whereNot('dt.externalId', 'GxAlert')
     .groupBy('d.id')
     .modify(sortPageParams, query, 'deviceName')
     .select([

@@ -2,16 +2,18 @@ import React from 'react'
 import { useTheme } from '@mui/material'
 import { ResponsiveLine } from '@nivo/line'
 import classnames from 'classnames/bind'
+import GraphTitle from '../../../pages/PkDashboard/components/GraphTitle'
 import { legend, margin } from './constants'
 import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
 const SimpleBarLine = props => {
-  const { data, ...rest } = props
+  const { data, title, ...rest } = props
   const { palette } = useTheme()
   return (
     <div className={cssClasses('simple-par-line-container')}>
+      {title ? <GraphTitle>{title}</GraphTitle> : null}
       <ResponsiveLine
         data={data}
         animate={false}
