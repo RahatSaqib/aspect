@@ -56,9 +56,7 @@ async function getAllResultsForExport(auth, query) {
 
   const { data: resultFromBaseQuery, extraColumns = [], total } = await getResultsForExport(auth, query)
 
-  const resultIds = resultFromBaseQuery.map(result => {
-    return result.id
-  })
+  const resultIds = _.map(resultFromBaseQuery, result => result.id)
 
   // get follow ups using the resultId from initial query
   const followUps = await getFollowUpsByResultIds(resultIds)
@@ -67,7 +65,7 @@ async function getAllResultsForExport(auth, query) {
   const resultWorkflowData = await getResultWorkflowLogByResultIds(resultIds)
 
   // merge the responses above to the original result
-  const data = resultFromBaseQuery.map(resultItem => {
+  const data = _.map(resultFromBaseQuery, resultItem => {
     const matchedFollowUp = followUps.find(followUp => followUp.resultId === resultItem.id)
 
     const matchedWorkflow = resultWorkflowData.find(workflow => workflow.resultId === resultItem.id)
