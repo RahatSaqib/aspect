@@ -235,7 +235,7 @@ async function getResultsForExport(auth, query) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints, true)
+  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
 
   const getCount = resultQuery.clone().count('r.id as total').first()
 
