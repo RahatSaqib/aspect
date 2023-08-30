@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
 import { useQuery } from 'react-query'
-import ErrorBoundary from '../../../../cleanComponents/ErrorBoundary'
-import DonutGraph from '../../../../cleanComponents/Graphs/DonutGraph/DonutGraph'
-import Loading from '../../../../cleanComponents/Loading'
+import { useNavigate } from 'react-router-dom'
+import { DonutGraph, BarGraph } from '..'
 import {
   getTimePeriod,
   formatDataByGraphType,
   getAverageFromData,
   calcPercentageForGraphs,
-  translateLabel,
-} from '../../../../components/Graphs/Helpers/Formatters'
-import messages from '../../../../components/Graphs/intlMessages'
-import fetchWrapperForQueries from '../../../../components/QueryFetch'
-import useI18n from '../../../../hooks/useI18n'
-import { graphMessages } from '../../../../messages'
-import styles from '../styles.css'
-import TbDetectedGraphMain from './TbDetectedGraph.Main'
+  translateLabel as genLabel,
+} from '../../../components/Graphs/Helpers/Formatters'
+import messages from '../../../components/Graphs/intlMessages'
+import fetchWrapperForQueries from '../../../components/QueryFetch'
+import { flattenAssaysStructure } from '../../../hooks/useGraphClickThrough'
+import useI18n from '../../../hooks/useI18n'
+import { graphMessages } from '../../../messages'
+import { negateTimeZoneOffset } from '../../../oldComponents/shared/DateTimeInput/utils/date'
+import { useFilterUpdate } from '../../../providers/FilterProvider'
+import ErrorBoundary from '../../ErrorBoundary'
+import Loading from '../../Loading'
+import styles from '../graphStyles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -33,9 +38,11 @@ const endPointParams = [
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
-const TbDetectedGraph = ({ assaysFromState }) => {
-  const { formatMessage } = useI18n()
+const TbDetectedGraph = ({ assaysFromState: assays }) => {
+  const { formatMessage, format } = useI18n()
   const [showLabel, setShowLabel] = useState(false)
+  const navigate = useNavigate()
+  const [addFilter] = useFilterUpdate()
 
   const { data, isLoading } = useQuery(
     ['tbResultsByCategory1Monthly', { endPointParams }],
@@ -43,13 +50,12 @@ const TbDetectedGraph = ({ assaysFromState }) => {
       fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
   )
 
-  // code for donut
   const [donutData, setDonutData] = useState({})
-
+  const [barData, setBarData] = useState({})
   useEffect(() => {
     if (data && data.data) {
       const info = data.data
-      const i18nKeysCollection = reduce(
+      const i18nKeys = reduce(
         info,
         (acc, curr) => {
           acc[curr.resultCategory1] = curr.resultCategory1I18nKey
@@ -57,32 +63,57 @@ const TbDetectedGraph = ({ assaysFromState }) => {
         },
         {}
       )
-      const groupedForPie = formatDataByGraphType(
+      // code for donut
+      const pieData = formatDataByGraphType(
         info,
         'percentage',
         false,
         'MMM yy',
         'cnt',
         'resultCategory1',
-        i18nKeysCollection,
+        i18nKeys,
         'pie',
         endPointParams,
         formatMessage,
         messages
       )
-      const translations = groupedForPie.map(g => ({
-        id: g.id,
-        t: translateLabel(g.id, assaysFromState, formatMessage, messages, i18nKeysCollection),
-      }))
-      const total = groupedForPie.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg } = getAverageFromData(groupedForPie, 'value', ['Detected', 'Trace Detected'], 'standard')
-      const parsedData = groupedForPie.map(d => ({
+      const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
+      const { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Detected', 'Trace Detected'], 'standard')
+      const pie = pieData.map(d => ({
         ...d,
-        label: translations.filter(t => t.id === d.id)[0].t,
-        value: total < 1 ? total : +calcPercentageForGraphs(d.value, total, 2),
+        label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
       }))
-
-      setDonutData({ data: parsedData, total: `${avg}%` })
+      // code for column
+      const groupedForBar = formatDataByGraphType(
+        info,
+        'percentage',
+        {},
+        'MMM',
+        'month',
+        'resultCategory1',
+        i18nKeys,
+        'bar',
+        endPointParams,
+        formatMessage,
+        messages
+      )
+      const expandedBarData = []
+      groupedForBar.map(result => {
+        const allKeysButMonth = Object.keys(result).filter(key => key !== 'month' && key !== 'totalCnt')
+        allKeysButMonth.map(key =>
+          expandedBarData.push({
+            id: key,
+            month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
+            value: +result[key].toFixed(2),
+            type: genLabel(key, assays, formatMessage, messages, i18nKeys),
+            originalMonth: result.month,
+          })
+        )
+        return result
+      })
+      setBarData({ data: expandedBarData })
+      setDonutData({ data: pie, total: `${pieAvg}%` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
@@ -109,12 +140,37 @@ const TbDetectedGraph = ({ assaysFromState }) => {
                 </Grid>
                 <Grid item xs={12} md={12} lg={10}>
                   <Grid container>
-                    <TbDetectedGraphMain
-                      data={data.data}
-                      endPointParams={endPointParams}
-                      assaysFromState={assaysFromState}
-                      showLabel={showLabel}
-                    />
+                    {barData.data && barData.data.length ? (
+                      <Grid item xs={12} md={8}>
+                        <BarGraph
+                          data={barData.data}
+                          graphId="tbResultsByCategory1Monthly"
+                          xField="month"
+                          legend={false}
+                          showLabel={showLabel}
+                          isPercentage
+                          onReady={plot => {
+                            plot.on('plot:click', evt => {
+                              const base = 'yyyy-MM-dd'
+                              const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+
+                              const params = {
+                                assayId: assays
+                                  .filter(it => ['GxMtbRif', 'GxMtbRifUltra'].includes(it.externalId))
+                                  .map(it => it.id),
+                                maxDate: format(endOfMonth(parsedDate), base),
+                                minDate: format(startOfMonth(parsedDate), base),
+                                resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
+                                  a => a.externalId === evt.data.data.id
+                                )[0].id,
+                              }
+                              addFilter({ ...params }, '/browse/result')
+                              navigate('/browse/result')
+                            })
+                          }}
+                        />
+                      </Grid>
+                    ) : null}
                     {donutData.data && donutData.data.length ? (
                       <Grid item xs={12} md={4} lg={4}>
                         <DonutGraph

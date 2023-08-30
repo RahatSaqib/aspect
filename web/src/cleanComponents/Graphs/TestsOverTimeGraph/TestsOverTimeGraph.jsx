@@ -11,27 +11,32 @@ import {
   TextField,
 } from '@mui/material'
 import classnames from 'classnames/bind'
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
+import pick from 'lodash/pick'
 import reduce from 'lodash/reduce'
 import { useQuery } from 'react-query'
-import ErrorBoundary from '../../../../cleanComponents/ErrorBoundary'
-import { DonutGraph } from '../../../../cleanComponents/Graphs'
-import Loading from '../../../../cleanComponents/Loading'
+import { useNavigate } from 'react-router-dom'
+import { BarGraph, DonutGraph } from '..'
 import {
   getTimePeriod,
   formatDataByGraphType,
   getAverageFromData,
   calcPercentageForGraphs,
   translateLabel as genLabel,
-} from '../../../../components/Graphs/Helpers/Formatters'
-import messages from '../../../../components/Graphs/intlMessages'
-import fetchWrapperForQueries from '../../../../components/QueryFetch'
-import useI18n from '../../../../hooks/useI18n'
-import { graphMessages, assay } from '../../../../messages'
-import styles from '../styles.css'
-import TestsOverTimeGraphMain from './TestsOverTimeGraph.Main'
+} from '../../../components/Graphs/Helpers/Formatters'
+import messages from '../../../components/Graphs/intlMessages'
+import fetchWrapperForQueries from '../../../components/QueryFetch'
+import useI18n from '../../../hooks/useI18n'
+import { graphMessages, assay } from '../../../messages'
+import { negateTimeZoneOffset } from '../../../oldComponents/shared/DateTimeInput/utils/date'
+import { useFilterUpdate } from '../../../providers/FilterProvider'
+import ErrorBoundary from '../../ErrorBoundary'
+import Loading from '../../Loading'
+import styles from '../graphStyles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -55,10 +60,20 @@ const filterFunctionPie = (data, props) => {
   return newData
 }
 
+const filterFunctionBar = (data, props) => {
+  const newData = []
+  const keys = ['month']
+  map(props, ({ externalId }) => keys.push(externalId))
+  map(data, row => newData.push(pick(row, keys)))
+  return newData
+}
+
 const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage, format } = useI18n()
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState([])
+  const navigate = useNavigate()
+  const [addFilter] = useFilterUpdate()
 
   useEffect(() => {
     const tbAssays = assays.filter(a => a.assayTypeAbbreviation === 'TB')
@@ -71,9 +86,8 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
   )
-
   const [donutData, setDonutData] = useState({})
-
+  const [barData, setBarData] = useState({})
   useEffect(() => {
     if (data && data.data) {
       const info = data.data
@@ -107,7 +121,36 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
         value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
       }))
+      // code for column
+      const groupedForBar = formatDataByGraphType(
+        info,
+        'actual',
+        false,
+        'MMM',
+        'month',
+        'assay',
+        i18nKeys,
+        'bar',
+        endPointParams,
+        formatMessage,
+        messages
+      )
+      const expandedBarData = []
+      filterFunctionBar(groupedForBar, filter).map(result => {
+        const allKeysButMonth = Object.keys(result).filter(key => key !== 'month')
+        allKeysButMonth.map(key =>
+          expandedBarData.push({
+            id: key,
+            month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
+            value: result[key],
+            type: genLabel(key, assays, formatMessage, messages, i18nKeys),
+            originalMonth: result.month,
+          })
+        )
+        return result
+      })
 
+      setBarData({ data: expandedBarData })
       setDonutData({ data: pie, total: pieAverage })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -138,13 +181,33 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                 </Grid>
                 <Grid item xs={12} md={12} lg={10}>
                   <Grid container>
-                    <TestsOverTimeGraphMain
-                      data={data.data}
-                      endPointParams={endPointParams}
-                      assaysFromState={assays}
-                      showLabel={showLabel}
-                      filterSelection={filter}
-                    />
+                    {barData.data && barData.data.length ? (
+                      <Grid item xs={12} md={8}>
+                        <BarGraph
+                          data={barData.data}
+                          graphId="testPerformedMonthlyPercentage"
+                          xField="month"
+                          legend={false}
+                          showLabel={showLabel}
+                          onReady={plot => {
+                            plot.on('plot:click', evt => {
+                              const base = 'yyyy-MM-dd'
+                              const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+
+                              const params = {
+                                displayResult: 'actual',
+                                maxDate: format(endOfMonth(parsedDate), base),
+                                minDate: format(startOfMonth(parsedDate), base),
+                                onlyReportableResults: true,
+                                assayId: assays.filter(a => a.externalId === evt.data.data.type)[0].id,
+                              }
+                              addFilter({ ...params }, '/browse/result')
+                              navigate('/browse/result')
+                            })
+                          }}
+                        />
+                      </Grid>
+                    ) : null}
                     {donutData.data && donutData.data.length ? (
                       <Grid item xs={12} md={4} lg={4}>
                         <DonutGraph
