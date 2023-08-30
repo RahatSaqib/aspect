@@ -64,15 +64,15 @@ async function fetchEntriesServiceHandler(request) {
   const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
 
-  const mergedData = transformedResults.reduce((elem, obj) => {
-    const existingObj = elem.find(item => item.id === obj.id)
+  const mergedData = transformedResults.reduce((mergedResults, result) => {
+    const existingObj = mergedResults.find(item => item.id === result.id)
 
     if (existingObj) {
-      existingObj.history.push(...obj.history.filter(history => history.event === 'transferEvent'))
+      existingObj.history.push(...result.history.filter(history => history.event === 'transferEvent'))
     } else {
-      elem.push(obj)
+      mergedResults.push(result)
     }
-    return elem
+    return mergedResults
   }, [])
 
   const entries = _.orderBy(
