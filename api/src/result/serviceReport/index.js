@@ -54,7 +54,31 @@ async function getAllResultsForExport(auth, query) {
   // For performance issues this enforce to use the result_partner_endedOn_index Index, because it helps to reduce query time down to  60%
   if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 360)
 
-  const { data, extraColumns = [], total } = await getResultsForExport(auth, query)
+  const { data: resultFromBaseQuery, extraColumns = [], total } = await getResultsForExport(auth, query)
+
+  const resultIds = resultFromBaseQuery.map(result => {
+    return result.id
+  })
+
+  // get follow ups using the resultId from initial query
+  const followUps = await getFollowUps(resultIds)
+
+  // get result workflow log using the resultId from initial query
+  const resultWorkflowData = await getResultWorkflow(resultIds)
+
+  // merge the responses above to the original result
+  const data = resultFromBaseQuery.map(resultItem => {
+    const matchedFollowUp = followUps.find(followUp => followUp.resultId === resultItem.id)
+
+    const matchedWorkflow = resultWorkflowData.find(workflow => workflow.resultId === resultItem.id)
+
+    return {
+      ...resultItem,
+      ...matchedFollowUp,
+      ...matchedWorkflow,
+    }
+  })
+
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
@@ -602,6 +626,42 @@ async function getReportWorkloadSummaryByYear(auth, query, options) {
     ...result,
     dynamicColumns,
   }
+}
+
+const getFollowUps = async ids => {
+  const subQuery = knex('ResultFollowUp')
+    .select('resultId', 'followUpId', 'date', 'updatedOn')
+    .whereIn('resultId', ids)
+    .andWhere('isDeleted', false)
+    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY updatedOn DESC) AS rn'))
+
+  const result = await knex('FollowUp as fup')
+    .select('rf.resultId', 'fup.name as followUpName', 'rf.date as followUpDate')
+    .from(subQuery.as('rf'))
+    .leftJoin('FollowUp as fup', 'rf.followUpId', 'fup.id')
+    .join('FollowUpType as fut', 'fut.id', 'fup.followUpTypeId')
+    .where('rf.rn', 1)
+    .andWhere('fut.externalId', 'treatment')
+
+  return result
+}
+
+const getResultWorkflow = async ids => {
+  const subQuery = knex('ResultWorkflowLog')
+    .select('resultId', 'resultWorkflowStatusId', 'reason', 'changedOn', 'createdOn')
+    .whereIn('resultId', ids)
+    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY createdOn DESC) AS rn'))
+
+  const result = await knex('ResultWorkflowStatus')
+    .select('rwl.resultId', 'rwl.reason as followUpComment', 'rwl.changedOn as recordedInRegister')
+    .from(subQuery.as('rwl'))
+    .leftJoin('ResultWorkflowStatus as rwsInner', 'rwl.resultWorkflowStatusId', 'rwsInner.id')
+    .where('rwl.rn', 1)
+    .andWhere(builder => {
+      builder.orWhereIn('rwsInner.externalId', ['flagged', 'acknowledged'])
+    })
+
+  return result
 }
 
 module.exports = {

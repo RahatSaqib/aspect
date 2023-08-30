@@ -165,20 +165,6 @@ const getBaseResults = () =>
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
     .leftJoin('Site as si', 'd.siteId', 'si.id')
 
-const latestFollowUpCTE = knex
-  .select('rf.resultId', 'rf.followUpId', 'rf.date', knex.raw('MAX(rf.createdOn) AS latestFollowUpCreatedOn'))
-  .from('ResultFollowUp AS rf')
-  .groupBy('rf.resultId')
-  .as('lfu')
-
-const getBaseQueryForResultsWithFollowUp = () =>
-  getBaseQueryForResults()
-    .leftJoin(latestFollowUpCTE, 'lfu.resultId', 'r.id')
-    .leftJoin('FollowUp as fp', 'fp.id', 'lfu.followUpId')
-    .leftJoin('FollowUpType as ftp', builder => {
-      builder.on('fp.id', 'fp.followUpTypeId').andOn('ftp.externalId', '=', knex.raw('?', ['treatment']))
-    })
-
 const getBaseQueryForResults = () =>
   getBaseResults()
     .leftJoin('ResultCategoryAssay as rca', q => {
@@ -204,7 +190,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
-  const resultQuery = getBaseQueryForResultsWithFollowUp()
+  const resultQuery = getBaseQueryForResults()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
     .leftJoin('Geography as gdpn', 'sdpn.geographyId', 'gdpn.id')
     .leftJoin('State as stdpn', 'stdpn.id', 'gdpn.stateId')
