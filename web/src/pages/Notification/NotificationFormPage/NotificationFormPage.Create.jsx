@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { CircularProgress, Box, Card, CardContent, Grid } from '@mui/material'
 import { useFormikContext } from 'formik'
 import './NotificationFormPage.css'
+import isEmpty from 'lodash/isEmpty'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import AspectForm from '../../../components/Form'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
@@ -46,7 +47,12 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
           {
             disabled: !formik.dirty || !formik.isValid,
             label: intl.formatMessage(messages.save),
-            onClick: () => onSubmit(formik, meta),
+            onClick: async () => {
+              const errors = await formik.validateForm()
+              if (isEmpty(errors)) {
+                onSubmit(formik, meta)
+              }
+            },
           },
         ].map(({ label, onClick, disabled }) => (
           <AspectButton

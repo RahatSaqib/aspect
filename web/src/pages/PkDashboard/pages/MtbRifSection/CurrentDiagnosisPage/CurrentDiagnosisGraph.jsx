@@ -1,45 +1,43 @@
 import React, { useState } from 'react'
 import { FormControlLabel, Grid, Switch } from '@mui/material'
-import { useQuery } from 'react-query'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import Loading from '../../../../../cleanComponents/Loading'
-import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
-import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
+import { getCurrentYear } from '../../../../../oldComponents/shared/DateTimeInput/utils/date'
 import TestsOverTimeGraphMain from '../../../../../oldPages/dashboard/Graphs/TestsOverTimeGraph/TestsOverTimeGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
+import { useMtpRifResults } from '../../../hooks/useMtpRifResults'
 import messages from '../../../PkDashboard.Messages'
 import TestsOverTimeGraphHalf from './CurrentDiagnosisGraph.Half'
 
+const { startDate: minDate, endDate: maxDate } = getCurrentYear('yyyy-MM-dd')
+
 const defaultFilters = [
-  { assay: 'GxMtbRif' },
-  { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { resultCategory1: 'Detected' },
-  { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { minDate },
+  { maxDate },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
   { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
+const pieGraphParams = [{ groupBy: 'resultCategory1' }, { minDate }, { maxDate }]
+
 const CurrentDiagnosisGraphPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
+  const [filter, setFilter] = useState()
   const { data: assays } = useAssayList()
-  const [filter, setFilter] = useState({})
-  const { data, isLoading } = useQuery(
-    ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
-    async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
-  )
+  const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filter).concat(defaultFilters))
+  const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filter).concat(pieGraphParams))
 
   return (
     <PkPage
@@ -66,27 +64,36 @@ const CurrentDiagnosisGraphPage = () => {
         </>
       }
     >
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <Grid container sx={{ mt: 2 }}>
-          <TestsOverTimeGraphMain
-            title={formatMessage(messages.tbCasesDiagnosed)}
-            data={data.data}
-            assaysFromState={assays}
-            showLabel={showLabel}
-          />
-          <TripleCardSide
-            data={[
-              { label: formatMessage(messages.xdrCasesPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.xdrAverageMoth), value: `${data.averageTestsPerMonthCurrentYear}` },
-              { label: formatMessage(messages.xdrLastDay), value: `${data.totalResultsInLast24Hours}` },
-            ]}
-          />
-          <TestsOverTimeGraphHalf data={data.data} assaysFromState={assays} showLabel={showLabel} />
-          <TestsOverTimeGraphHalf data={data.data} assaysFromState={assays} showLabel={showLabel} />
-        </Grid>
-      )}
+      <Grid container sx={{ mt: 2 }}>
+        {isLoadingMain ? (
+          <Loading />
+        ) : (
+          <>
+            <TestsOverTimeGraphMain
+              title={formatMessage(messages.tbCasesDiagnosed)}
+              data={mainData.data}
+              assaysFromState={assays}
+              showLabel={showLabel}
+            />
+            <TripleCardSide
+              data={[
+                { label: formatMessage(messages.xdrCasesPerYear), value: `${mainData?.totalResultsCurrentYear}` },
+                {
+                  label: formatMessage(messages.xdrAverageMoth),
+                  value: `${mainData?.averageTestsPerMonthCurrentYear}`,
+                },
+                { label: formatMessage(messages.xdrLastDay), value: `${mainData?.totalResultsInLast24Hours}` },
+              ]}
+            />
+          </>
+        )}
+
+        {isLoadingPie ? (
+          <Loading />
+        ) : (
+          <TestsOverTimeGraphHalf data={pieData?.data} assaysFromState={assays} showLabel={showLabel} />
+        )}
+      </Grid>
     </PkPage>
   )
 }
