@@ -61,10 +61,10 @@ async function getAllResultsForExport(auth, query) {
   })
 
   // get follow ups using the resultId from initial query
-  const followUps = await getFollowUps(resultIds)
+  const followUps = await getFollowUpsByResultIds(resultIds)
 
   // get result workflow log using the resultId from initial query
-  const resultWorkflowData = await getResultWorkflow(resultIds)
+  const resultWorkflowData = await getResultWorkflowLogByResultIds(resultIds)
 
   // merge the responses above to the original result
   const data = resultFromBaseQuery.map(resultItem => {
@@ -628,10 +628,10 @@ async function getReportWorkloadSummaryByYear(auth, query, options) {
   }
 }
 
-const getFollowUps = async ids => {
+const getFollowUpsByResultIds = async resultIds => {
   const subQuery = knex('ResultFollowUp')
     .select('resultId', 'followUpId', 'date', 'updatedOn')
-    .whereIn('resultId', ids)
+    .whereIn('resultId', resultIds)
     .andWhere('isDeleted', false)
     .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY updatedOn DESC) AS rn'))
 
@@ -646,10 +646,10 @@ const getFollowUps = async ids => {
   return result
 }
 
-const getResultWorkflow = async ids => {
+const getResultWorkflowLogByResultIds = async resultIds => {
   const subQuery = knex('ResultWorkflowLog')
     .select('resultId', 'resultWorkflowStatusId', 'reason', 'changedOn', 'createdOn')
-    .whereIn('resultId', ids)
+    .whereIn('resultId', resultIds)
     .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY createdOn DESC) AS rn'))
 
   const result = await knex('ResultWorkflowStatus')
