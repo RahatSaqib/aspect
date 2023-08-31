@@ -631,14 +631,14 @@ const getLatestFollowUpsByResultIds = async resultIds => {
     .select('resultId', 'followUpId', 'date', 'updatedOn')
     .whereIn('resultId', resultIds)
     .andWhere('isDeleted', false)
-    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY updatedOn DESC) AS rn'))
+    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY updatedOn DESC) AS rowNumber'))
 
   const result = await knex('FollowUp as fup')
     .select('rf.resultId', 'fup.name as followUpName', 'rf.date as followUpDate')
     .from(subQuery.as('rf'))
     .leftJoin('FollowUp as fup', 'rf.followUpId', 'fup.id')
     .join('FollowUpType as fut', 'fut.id', 'fup.followUpTypeId')
-    .where('rf.rn', 1)
+    .where('rf.rowNumber', 1)
     .andWhere('fut.externalId', 'treatment')
 
   return result
@@ -648,13 +648,13 @@ const getLatestResultWorkflowLogByResultIds = async resultIds => {
   const subQuery = knex('ResultWorkflowLog')
     .select('resultId', 'resultWorkflowStatusId', 'reason', 'changedOn', 'createdOn')
     .whereIn('resultId', resultIds)
-    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY createdOn DESC) AS rn'))
+    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY createdOn DESC) AS rowNumber'))
 
   const result = await knex('ResultWorkflowStatus')
     .select('rwl.resultId', 'rwl.reason as followUpComment', 'rwl.changedOn as recordedInRegister')
     .from(subQuery.as('rwl'))
     .leftJoin('ResultWorkflowStatus as rwsInner', 'rwl.resultWorkflowStatusId', 'rwsInner.id')
-    .where('rwl.rn', 1)
+    .where('rwl.rowNumber', 1)
     .andWhere(builder => {
       builder.orWhereIn('rwsInner.externalId', ['flagged', 'acknowledged'])
     })
