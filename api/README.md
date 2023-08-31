@@ -295,7 +295,7 @@ seeds.directory='./seeds/development'
 ```
 
 ```env
-# in .env for test
+# in .env, for test
 seeds.directory='./seeds/test'
 ```
 
