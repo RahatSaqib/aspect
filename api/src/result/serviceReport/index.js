@@ -59,10 +59,10 @@ async function getAllResultsForExport(auth, query) {
   const resultIds = _.map(resultFromBaseQuery, result => result.id)
 
   // get follow ups using the resultId from initial query
-  const followUps = await getFollowUpsByResultIds(resultIds)
+  const followUps = await getLatestFollowUpsByResultIds(resultIds)
 
   // get result workflow log using the resultId from initial query
-  const resultWorkflowData = await getResultWorkflowLogByResultIds(resultIds)
+  const resultWorkflowData = await getLatestResultWorkflowLogByResultIds(resultIds)
 
   // merge the responses above to the original result
   const data = _.map(resultFromBaseQuery, resultItem => {
@@ -626,7 +626,7 @@ async function getReportWorkloadSummaryByYear(auth, query, options) {
   }
 }
 
-const getFollowUpsByResultIds = async resultIds => {
+const getLatestFollowUpsByResultIds = async resultIds => {
   const subQuery = knex('ResultFollowUp')
     .select('resultId', 'followUpId', 'date', 'updatedOn')
     .whereIn('resultId', resultIds)
@@ -644,7 +644,7 @@ const getFollowUpsByResultIds = async resultIds => {
   return result
 }
 
-const getResultWorkflowLogByResultIds = async resultIds => {
+const getLatestResultWorkflowLogByResultIds = async resultIds => {
   const subQuery = knex('ResultWorkflowLog')
     .select('resultId', 'resultWorkflowStatusId', 'reason', 'changedOn', 'createdOn')
     .whereIn('resultId', resultIds)
