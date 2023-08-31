@@ -58,13 +58,13 @@ async function getAllResultsForExport(auth, query) {
 
   const resultIds = _.map(resultFromBaseQuery, result => result.id)
 
-  // get follow ups using the resultId from initial query
+  // get follow ups using the resultIds from initial query
   const followUps = await getLatestFollowUpsByResultIds(resultIds)
 
   // get result workflow log using the resultId from initial query
   const resultWorkflowData = await getLatestResultWorkflowLogByResultIds(resultIds)
 
-  // merge the responses above to the original result
+  // merge the responses above to the original results
   const data = _.map(resultFromBaseQuery, resultItem => {
     const matchedFollowUp = followUps.find(followUp => followUp.resultId === resultItem.id)
 
