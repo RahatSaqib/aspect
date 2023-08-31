@@ -160,7 +160,7 @@ async function getModuleSwapsReport(auth, query) {
 
   const issueTypeId = await issueTypeToId('ModuleReplaced')
   // get rows
-  const devices = await getDeviceBaseExtendedQuery(query, dataConstraints)
+  const swaps = await getDeviceBaseExtendedQuery(query, dataConstraints)
     .clone()
     .innerJoin('Issue as i', 'i.deviceId', 'd.id')
     .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
@@ -168,6 +168,8 @@ async function getModuleSwapsReport(auth, query) {
     .select(
       'd.name as deviceName',
       'd.serial',
+      's.id as siteId',
+      's.name as siteName',
       'newModuleResult.moduleName',
       'newModuleResult.instrumentSerial',
       'newModuleResult.moduleSerial as newModuleSerial',
@@ -182,11 +184,19 @@ async function getModuleSwapsReport(auth, query) {
     .andWhere(knex.raw('i.createdOn between ? and ?', [minDateFormatted, maxDateFormatted]))
     .andWhere('i.issueTypeId', issueTypeId)
     .modify(sortPageParams, query, 'name')
+
+  const totalModuleSwaps = swaps.length
+  const numberOfSites = new Set(swaps.map(s => s.siteId)).size
+
   const dataset = {
     ok: true,
-    total: devices.length,
-    length: devices.length,
-    data: devices,
+    total: swaps.length,
+    length: swaps.length,
+    data: {
+      rows: swaps,
+      totalModuleSwaps,
+      numberOfSites,
+    },
   }
   return dataset
 }
