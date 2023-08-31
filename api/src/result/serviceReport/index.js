@@ -90,8 +90,6 @@ async function getAllResultsForExport(auth, query) {
     ...columnsFromResultForms,
   ]
 
-  if (extraColumns.length === 0) columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
-
   const dataset = {
     ok: true,
     total,

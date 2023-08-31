@@ -187,10 +187,8 @@ async function getResultsForExport(auth, query) {
   const offset = getOffsetFromIsoDateString(query.maxDate)
   const selectFields = {
     ...getSelectCommonListFieldsTZ(offset),
-    resultText: knex.raw(
-      `CONCAT(a.resultCategory1label,':',IFNULL(rc1.name, ''), '|', a.resultCategory2label ,':',IFNULL(rc2.name, '-'))`
-    ),
     deviceStateName: 'stdpn.name',
+    resultCategoryGroup: 'rcg.name',
   }
   const sortableFields = [...SORT_FIELDS]
 
@@ -238,6 +236,7 @@ async function getResultsForExport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
+
   const getCount = resultQuery.clone().count('r.id as total').first()
 
   const getData = resultQuery.clone().groupBy('r.id').modify(sortPageParams, query, 'endedOn').select(selectFields)
