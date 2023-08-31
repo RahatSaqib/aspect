@@ -6,7 +6,9 @@ const BarGraph = ({ data, graphId, xField, showLabel, onReady, isPercentage }) =
   const config = {
     data,
     color: datum => generateColorForValue(data.find(d => d.type === datum.type).id, graphId),
-    label: showLabel ? { position: 'middle' } : false, // format for label on top of section
+    label: showLabel
+      ? { position: 'middle', content: originData => (isPercentage ? `${originData.value}%` : originData.value) }
+      : false, // format for label on top of section
     isStack: true,
     xField,
     yField: 'value',
