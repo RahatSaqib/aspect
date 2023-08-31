@@ -5,7 +5,7 @@ import { inlineWarning, errorPleaseTryAgainInAFewMinutes } from '../../utils/err
 import { SITE_KEY, SITE_KEY_SITE_ENDPOINT } from './siteKeys.js'
 
 const createSite = async site => {
-  const submitSite = { ...site, tags: site?.tags.map(t => t?.title)?.join(',') }
+  const submitSite = { ...site, tags: site?.tags?.map(t => t?.title)?.join(',') }
   delete submitSite.id
   delete submitSite.country
   delete submitSite.createdOn

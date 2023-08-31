@@ -187,27 +187,19 @@ const getBaseQueryForResults = () =>
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false, resultCategoryGroupId, assayId } = query
+  const { showUnapprovedDevices = false, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseQueryForResults()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
     .leftJoin('Geography as gdpn', 'sdpn.geographyId', 'gdpn.id')
     .leftJoin('State as stdpn', 'stdpn.id', 'gdpn.stateId')
+    .leftJoin('ResultCategoryGroup as rcg', join => {
+      join.on('r.resultCategory1', 'rcg.resultCategory1Id')
+      join.andOn(knex.raw('r.resultCategory2 <=> rcg.resultCategory2Id'))
+      join.andOn('r.assayId', 'rcg.assayId')
+    })
     .modify(queryBuilder => {
-      // this join is very expensive (doubles query time) and we're only using it for filtering, so only join on demand
-      if (resultCategoryGroupId) {
-        queryBuilder.leftJoin('ResultCategoryGroup as rcg', qbRcg => {
-          qbRcg
-            .on('r.assayId', 'rcg.assayId')
-            .andOn(qbAndOn => {
-              qbAndOn.on(knex.raw('rcg.resultCategory1Id IS NULL')).orOn('r.resultCategory1', 'rcg.resultCategory1Id')
-            })
-            .andOn(qbAndOn => {
-              qbAndOn.on(knex.raw('rcg.resultCategory2Id IS NULL')).orOn('r.resultCategory2', 'rcg.resultCategory2Id')
-            })
-        })
-      }
       if (query.consumableId)
         queryBuilder.join('InventoryLog as il', 'il.resultId', 'r.id').where('il.consumableId', query.consumableId)
       if (!_.isEmpty(assayId)) queryBuilder.whereIn('r.assayId', assayId)
