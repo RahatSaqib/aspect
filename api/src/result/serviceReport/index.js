@@ -89,6 +89,7 @@ async function getAllResultsForExport(auth, query) {
     // TODO: move below items to Excel template for better formatting and translations
     { key: 'deviceStateName', header: 'State' },
     { key: 'caseExternalId', header: 'Case ID' },
+    { key: 'resultCategoryGroup', header: 'Result Category Group' },
     { key: 'sampleId', header: 'Sample Id' },
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
@@ -116,8 +117,6 @@ async function getAllResultsForExport(auth, query) {
     ...columnsFromAssaySchema,
     ...columnsFromResultForms,
   ]
-
-  if (extraColumns.length === 0) columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
 
   const dataset = {
     ok: true,
