@@ -22,7 +22,6 @@ import useI18n from '../../hooks/useI18n'
 import { getCustomMessage } from '../../messages'
 import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
 import { useAuthState } from '../../providers/AuthProvider'
-import withPermission from '../../utils/hoc'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -244,4 +243,4 @@ const JobAssigment = ({ setStep }) => {
   )
 }
 
-export default withPermission(JobAssigment, ['person:edit', 'admin', 'person:admin'])
+export default JobAssigment

@@ -23,7 +23,7 @@ const ContactStepper = ({ step, full, isUpdate, onChange }) => {
           { step: 0, title: 'accountDetails' },
           { step: 2, title: 'systemAccessControl' },
         ]
-  ).filter(o => (o?.permissions ? checkPermission(o?.permissions) : true))
+  ).filter(o => (o?.permissions ? checkPermission(o.permissions) : true))
 
   if (isUpdate && !isRecentlyAdd)
     return (

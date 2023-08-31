@@ -2,6 +2,7 @@ import React from 'react'
 import { Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
+import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
 import Contacts from '../Contacts/Contacts'
@@ -48,13 +49,14 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
           {fields.map(({ label, value }) => (
             <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="4" />
           ))}
-
-          <Contacts
-            id={site.id}
-            formatMessage={formatMessage}
-            title={formatMessage(messages.fieldContact)}
-            disabled={disabled}
-          />
+          <PermissionChecker permissions={['person:view', 'admin', 'person:admin', 'person:edit']}>
+            <Contacts
+              id={site.id}
+              formatMessage={formatMessage}
+              title={formatMessage(messages.fieldContact)}
+              disabled={disabled}
+            />
+          </PermissionChecker>
         </Card>
       </section>
     </div>

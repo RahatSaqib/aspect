@@ -8,7 +8,6 @@ import ContactTagInput from '../../../../cleanComponents/ContactTagInput'
 import useContactBySite from '../../../../hooks/person/useContactBySite'
 import { ReadOnlyField } from '../../../../oldComponents/shared/ReadOnlyFields'
 import styles from '../../../../oldComponents/Summary.css'
-import withPermission from '../../../../utils/hoc'
 import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
@@ -66,4 +65,4 @@ Contacts.propTypes = {
   disabled: PropTypes.bool,
 }
 
-export default withPermission(Contacts, ['person:view', 'admin', 'person:admin', 'person:edit'])
+export default Contacts
