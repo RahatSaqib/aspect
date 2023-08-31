@@ -1,4 +1,5 @@
-import BarGraph from './BarGraph/BarGraph'
-import DonutGraph from './DonutGraph/DonutGraph'
+import BarGraph from './BarGraph'
+import DonutGraph from './DonutGraph'
+import LineGraph from './LineGraph'
 
-export { BarGraph, DonutGraph }
+export { BarGraph, DonutGraph, LineGraph }

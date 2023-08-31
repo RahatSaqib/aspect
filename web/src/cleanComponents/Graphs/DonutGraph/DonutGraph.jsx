@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-properties */
 import React from 'react'
 import { Pie, measureTextWidth } from '@ant-design/plots'
-import { generateColorForValue } from '../../../components/Graphs/Helpers/Formatters'
+import { filterColour } from '../graphUtils'
 
 function renderStatistic(containerWidth, text, style) {
   const { width: textWidth, height: textHeight } = measureTextWidth(text, style)
@@ -21,7 +21,7 @@ function renderStatistic(containerWidth, text, style) {
 const DonutGraph = ({ data, graphId, legend, showLabel, graphTitle, total }) => {
   const config = {
     data,
-    color: datum => generateColorForValue(data.find(d => d.label === datum.label).id, graphId),
+    color: datum => filterColour(data.find(d => d.label === datum.label).id, graphId),
     legend,
     label: showLabel
       ? { type: 'inner', offset: '-50%', style: { textAlign: 'center' }, autoRotate: false, content: `{value} %` }

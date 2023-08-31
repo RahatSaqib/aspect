@@ -1,11 +1,11 @@
 import React from 'react'
 import { Column } from '@ant-design/plots'
-import { generateColorForValue } from '../../../components/Graphs/Helpers/Formatters'
+import { filterColour } from '../graphUtils'
 
 const BarGraph = ({ data, graphId, xField, showLabel, onReady, isPercentage }) => {
   const config = {
     data,
-    color: datum => generateColorForValue(data.find(d => d.type === datum.type).id, graphId),
+    color: datum => filterColour(data.find(d => d.type === datum.type).id, graphId),
     label: showLabel
       ? { position: 'middle', content: originData => (isPercentage ? `${originData.value}%` : originData.value) }
       : false, // format for label on top of section

@@ -7,24 +7,24 @@ import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { DonutGraph, BarGraph } from '..'
-import {
-  getTimePeriod,
-  formatDataByGraphType,
-  getAverageFromData,
-  calcPercentageForGraphs,
-  translateLabel as genLabel,
-} from '../../../components/Graphs/Helpers/Formatters'
-import messages from '../../../components/Graphs/intlMessages'
+import { formatDataByGraphType } from '../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import { flattenAssaysStructure } from '../../../hooks/useGraphClickThrough'
 import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
-import { negateTimeZoneOffset } from '../../../oldComponents/shared/DateTimeInput/utils/date'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
 import ErrorBoundary from '../../ErrorBoundary'
 import Loading from '../../Loading'
+import messages from '../graphMessages'
 import styles from '../graphStyles.css'
+import {
+  getTimePeriod,
+  genLabel,
+  calcPercentageForGraphs,
+  getAverageFromData,
+  flattenAssaysStructure,
+  negateTimeZoneOffset,
+} from '../graphUtils'
+import { DonutGraph, BarGraph } from '../index'
 
 const cssClasses = classnames.bind(styles)
 
