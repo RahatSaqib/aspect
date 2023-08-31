@@ -68,7 +68,14 @@ async function fetchEntriesServiceHandler(request) {
     const existingObj = mergedResults.find(item => item.id === result.id)
 
     if (existingObj) {
-      existingObj.history.push(...result.history.filter(history => history.event === 'transferEvent'))
+      const uniqueHistory = new Set(existingObj.history.map(JSON.stringify))
+
+      result.history.forEach(history => {
+        if (history.event === 'transferEvent' && !uniqueHistory.has(JSON.stringify(history))) {
+          uniqueHistory.add(JSON.stringify(history))
+          existingObj.history.push(history)
+        }
+      })
     } else {
       mergedResults.push(result)
     }
