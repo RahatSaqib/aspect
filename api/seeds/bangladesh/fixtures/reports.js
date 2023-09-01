@@ -13,14 +13,21 @@ const resultsDrTb10A10BCovid = {
       sortOrder: 0,
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getDataForReportDrTb10A',
+      nameOfSharedData: 'results_10a',
     },
     {
-      sortOrder: 1,
+      sortOrder: 10,
+      moduleName: 'result/serviceReportBangladesh',
+      functionName: 'getDataForReportDrTb10AStool',
+      useNamedData: 'results_10a',
+    },
+    {
+      sortOrder: 20,
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getDataForReportDrTb10B',
     },
     {
-      sortOrder: 2,
+      sortOrder: 30,
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getDataForReportCovid19',
     },
