@@ -332,6 +332,25 @@ const startOfMonthUTC = dateString => {
   )
 }
 
+const fillYear = data => {
+  const result = []
+  const yearMap = {}
+  const monthMap = { JAN: 0, FEB: 0, MAR: 0, APR: 0, MAY: 0, JUN: 0, JUL: 0, AUG: 0, SEP: 0, OCT: 0, NOV: 0, DEC: 0 }
+
+  for (const item of data) {
+    const { year, month, value } = item
+    if (!yearMap[year]) {
+      yearMap[year] = { ...monthMap }
+    }
+    yearMap[year][month] = value
+  }
+
+  Object.keys(yearMap).map(year =>
+    Object.keys(monthMap).map(month => result.push({ year, month, value: yearMap[year][month] }))
+  )
+  return result
+}
+
 export {
   filterColour,
   getTimePeriod,
@@ -340,4 +359,5 @@ export {
   getAverageFromData,
   flattenAssaysStructure,
   negateTimeZoneOffset,
+  fillYear,
 }

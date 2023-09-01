@@ -9,6 +9,7 @@ import StateSelector from '../../../oldPages/dashboard/Graphs/StateSelector'
 import ErrorBoundary from '../../ErrorBoundary'
 import Loading from '../../Loading'
 import styles from '../graphStyles.css'
+import { fillYear } from '../graphUtils'
 import { LineGraph } from '../index'
 
 const cssClasses = classnames.bind(styles)
@@ -41,7 +42,7 @@ const TrendInYearsAllTestsGraph = () => {
         .map(item => ({ ...item, month: `${formatMessage(months[item.month - 1])}` }))
 
       if (grouped) {
-        setGraphData(grouped)
+        setGraphData(fillYear(grouped))
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
