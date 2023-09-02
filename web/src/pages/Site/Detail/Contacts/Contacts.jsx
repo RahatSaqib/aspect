@@ -1,18 +1,20 @@
-import React, { useState, Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import ContactTagInput from '../../../../cleanComponents/ContactTagInput'
+import useContactBySite from '../../../../hooks/person/useContactBySite'
 import { ReadOnlyField } from '../../../../oldComponents/shared/ReadOnlyFields'
 import styles from '../../../../oldComponents/Summary.css'
 import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
 
-const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
+const Contacts = ({ id, title, formatMessage, disabled }) => {
   const [edit, setEdit] = useState(false)
+  const { data: contacts } = useContactBySite(id)
 
   return (
     <div className={cssClasses('Summary')}>
@@ -31,8 +33,8 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
         </div>
       ) : (
         <div className={cssClasses('Summary__Description')}>
-          {contacts.length ? (
-            contacts.map(contact => (
+          {contacts?.length ? (
+            contacts?.map(contact => (
               <Fragment key={contact.id}>
                 {contact.name}
                 <Link to={`/browse/person/${contact.id}`} className={cssClasses('Summary__Description__Link')}>
@@ -45,7 +47,7 @@ const Contacts = ({ id, title, contacts, formatMessage, disabled }) => {
           )}
           <span className={cssClasses('Summary__Description__Action')}>
             <Button variant="contained" onClick={() => setEdit(true)} disabled={disabled}>
-              {contacts.length ? formatMessage(messages.actionUpdate) : formatMessage(messages.actionAdd)}
+              {contacts?.length ? formatMessage(messages.actionUpdate) : formatMessage(messages.actionAdd)}
             </Button>
           </span>
         </div>
@@ -59,7 +61,6 @@ Contacts.defaultProps = {
 Contacts.propTypes = {
   id: PropTypes.string.isRequired,
   title: PropTypes.string.isRequired,
-  contacts: PropTypes.array.isRequired, // eslint-disable-line react/forbid-prop-types
   formatMessage: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
 }
