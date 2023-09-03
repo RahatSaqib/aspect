@@ -1,16 +1,10 @@
 import { memo } from 'react'
-import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
-import { getPermissions, groupByPermissionTypes, isPermittedUser } from '../../oldComponents/shared/requirePermissions'
-import { useAuthState } from '../../providers/AuthProvider'
+import usePermissions from '../../hooks/person/usePermissions'
 
 const PermissionChecker = ({ permissions, override, extra, children }) => {
-  const {
-    jwt: { permissions: userPermissions },
-  } = useAuthState()
-  const permissionsByTypes = flowRight([groupByPermissionTypes, getPermissions])(permissions, override, extra)
-  const isPermitted = isPermittedUser(userPermissions, permissionsByTypes)
-
+  const { checkPermission } = usePermissions()
+  const isPermitted = checkPermission(permissions, override, extra)
   return isPermitted ? children : null
 }
 

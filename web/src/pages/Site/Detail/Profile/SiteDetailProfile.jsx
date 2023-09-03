@@ -2,8 +2,8 @@ import React from 'react'
 import { Card } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import useContactBySite from '../../../../hooks/person/useContactBySite'
-import { getCustomMessage, commonDefinitions } from '../../../../messages/customMessages'
+import PermissionChecker from '../../../../components/PermissionChecker'
+import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
@@ -14,8 +14,6 @@ const cssClasses = classnames.bind(styles)
 const messages = { ...commonDefinitions, ...localMessages }
 
 const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
-  const { data: siteContacts } = useContactBySite(site.id)
-
   const fields = [
     { label: formatMessage(messages.fieldName), value: site.name },
     { label: formatMessage(messages.fieldShortName), value: site.shortName },
@@ -51,14 +49,14 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
           {fields.map(({ label, value }) => (
             <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="4" />
           ))}
-
-          <Contacts
-            id={site.id}
-            formatMessage={formatMessage}
-            title={formatMessage(messages.fieldContact)}
-            contacts={siteContacts || []}
-            disabled={disabled}
-          />
+          <PermissionChecker permissions={['person:view', 'admin', 'person:admin', 'person:edit']}>
+            <Contacts
+              id={site.id}
+              formatMessage={formatMessage}
+              title={formatMessage(messages.fieldContact)}
+              disabled={disabled}
+            />
+          </PermissionChecker>
         </Card>
       </section>
     </div>

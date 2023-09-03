@@ -20,6 +20,7 @@ import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.css'
 import getExportableFile from './SiteQueries'
+import PermissionChecker from '../../../components/PermissionChecker'
 
 const cssClasses = classnames.bind(styles)
 
@@ -93,15 +94,17 @@ export const SiteList = ({ navigate, location }) => {
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.sitesTitle)} disableBack>
-        <AspectButton
-          type="button"
-          color="primary"
-          variant="contained"
-          browseButton
-          onClick={() => navigate('/browse/site/create')}
-        >
-          {intl.formatMessage(messages.createSite)}
-        </AspectButton>
+        <PermissionChecker permissions={['site:admin']}>
+          <AspectButton
+            type="button"
+            color="primary"
+            variant="contained"
+            browseButton
+            onClick={() => navigate('/browse/site/create')}
+          >
+            {intl.formatMessage(messages.createSite)}
+          </AspectButton>
+        </PermissionChecker>
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
