@@ -66,9 +66,10 @@ const getFilters = (urlSearchParams, deviceTypes) => {
 function FilterProvider({ children }) {
   const { pathname, search } = useLocation()
   const [filterState, setFilterState] = useState(defaultFilter)
-  const user = useAuthState()
-  const { data: deviceTypes } = useDeviceTypeList({ enabled: !user.isLoggedOut })
-  const { data: assays } = useAssayList({ enabled: !user.isLoggedOut })
+  const { isLoggedOut, jwt } = useAuthState()
+  const isUserReady = !isLoggedOut && !jwt.hasToAcceptLicenseId
+  const { data: deviceTypes } = useDeviceTypeList({ enabled: isUserReady })
+  const { data: assays } = useAssayList({ enabled: isUserReady })
 
   useEffect(() => {
     const filters = { ...filterState }
