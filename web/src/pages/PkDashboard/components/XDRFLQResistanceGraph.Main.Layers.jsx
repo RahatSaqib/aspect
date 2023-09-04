@@ -1,5 +1,5 @@
 import React from 'react'
-import Line from '../../../../components/Graphs/BarGraph/LineLayer'
+import Line from '../../../components/Graphs/BarGraph/LineLayer'
 
 const layerProps = {
   pointProps: {
@@ -34,17 +34,19 @@ const layerProps = {
   strokeWidth: 3,
 }
 
-const RrdToMtbPercentage = propsFromBarGraph => (
-  <Line {...propsFromBarGraph} layerProps={{ ...layerProps, valueFieldName: 'RrdToMtbPercentage' }} />
-)
+const FqrToMtbPercentageLine = propsFromBarGraph => {
+  return <Line {...propsFromBarGraph} layerProps={{ ...layerProps, valueFieldName: 'FqrToMtbPercentage' }} />
+}
 
-const RrdToMtbPercentageWithLabel = propsFromBarGraph => (
-  <Line
-    {...propsFromBarGraph}
-    showLabel
-    showDecimals={2}
-    layerProps={{ ...layerProps, valueFieldName: 'RrdToMtbPercentage' }}
-  />
-)
+const FqrToMtbPercentageLineWithLabel = propsFromBarGraph => {
+  return (
+    <Line
+      {...propsFromBarGraph}
+      showLabel
+      showDecimals={2}
+      layerProps={{ ...layerProps, valueFieldName: 'FqrToMtbPercentage' }}
+    />
+  )
+}
 
-export { RrdToMtbPercentage, RrdToMtbPercentageWithLabel }
+export { FqrToMtbPercentageLine, FqrToMtbPercentageLineWithLabel }

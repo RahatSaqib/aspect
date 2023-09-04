@@ -77,7 +77,17 @@ const QuartersMtbDetectedGraph = () => {
                 <Grid item xs={12} md={12} lg={10}>
                   <Grid container>
                     <Grid item xs={12} md={12} lg={12}>
-                      <BarLineGraph data={graphData} showLabel={showLabel} graphId="tbMtbDetectedQuarterlyTrends" />
+                      <BarLineGraph
+                        data={graphData}
+                        showLabel={showLabel}
+                        graphId="tbMtbDetectedQuarterlyTrends"
+                        colors={[
+                          { name: 'MtbDetected', colorId: 'caseDetected' },
+                          { name: 'Total', colorId: 'caseTotal' },
+                          { name: 'percentage', colorId: 'casePercentDetectedOfTotal' },
+                        ]}
+                        xField="quarter"
+                      />
                     </Grid>
                   </Grid>
                 </Grid>

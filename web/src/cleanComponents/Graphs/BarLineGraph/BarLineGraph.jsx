@@ -2,14 +2,14 @@ import React from 'react'
 import { DualAxes } from '@ant-design/plots'
 import { filterColour } from '../graphUtils'
 
-const BarLineGraph = ({ data, graphId, showLabel }) => {
+const BarLineGraph = ({ data, colors, graphId, showLabel, xField }) => {
   const config = {
     data, // [bar, line]
-    xField: 'quarter',
+    xField,
     yField: ['value', 'percentage'],
     geometryOptions: [
       {
-        color: datum => filterColour(datum.type === 'MtbDetected' ? 'caseDetected' : 'caseTotal', graphId),
+        color: datum => filterColour(colors.find(c => c.name === datum.type).colorId, graphId),
         geometry: 'column',
         isGroup: true,
         seriesField: 'type',
@@ -17,7 +17,7 @@ const BarLineGraph = ({ data, graphId, showLabel }) => {
       },
       {
         geometry: 'line',
-        color: () => filterColour('casePercentDetectedOfTotal', graphId),
+        color: () => filterColour(colors.find(c => c.name === 'percentage').colorId, graphId),
         label: showLabel ? { content: originData => `${originData.percentage}%` } : undefined, // format for label on top of section
         point: {
           size: 3,
