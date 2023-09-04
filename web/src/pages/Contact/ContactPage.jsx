@@ -1,6 +1,7 @@
 import React, { lazy, Suspense, useState } from 'react'
 import { Box, Card, CardContent } from '@mui/material'
 import { Helmet } from 'react-helmet'
+import PermissionChecker from '../../components/PermissionChecker'
 import useI18n from '../../hooks/useI18n'
 import { DirtyStepsProvider, FormStatusProvider } from './context'
 import messages from './messages'
@@ -26,9 +27,11 @@ const ContactPage = () => {
                   <Step step={step} value={0}>
                     <ContactDetails setStep={setStep} />
                   </Step>
-                  <Step step={step} value={1}>
-                    <JobAssigment setStep={setStep} />
-                  </Step>
+                  <PermissionChecker permissions={['person:edit', 'admin', 'person:admin']}>
+                    <Step step={step} value={1}>
+                      <JobAssigment setStep={setStep} />
+                    </Step>
+                  </PermissionChecker>
                   <Step step={step} value={2}>
                     <Login setStep={setStep} />
                   </Step>
