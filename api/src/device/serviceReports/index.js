@@ -3,7 +3,7 @@ const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = req
 const locales = require('date-fns/locale')
 const { getDeviceBaseExtendedQuery } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
-const { issueCategoryIntlToShortname, issueTypeToId } = require('../../shared/dictionary')
+const { issueCategoryIntlToShortname } = require('../../shared/dictionary')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../../db')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const {
@@ -23,6 +23,7 @@ const { getErrorsByDevices } = require('./getErrorsByDevices')
 const { getErrorRateByDevice, getErrorRateByModule, getErrorRateByUser } = require('./errorRatesReport')
 const { getNoStockInventoryReport } = require('./noStockInventoryReport')
 const { listDevices } = require('../listDevices')
+const { getModuleSwapsReportData } = require('./moduleSwapsReport')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -151,52 +152,14 @@ async function getDeviceActivityReport(auth, query) {
 
 async function getModuleSwapsReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const {
-    minDate,
-    maxDate,
-    minDateFormatted = minDate ? parseISO(minDate) : subMonths(new Date(), 12),
-    maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
-  } = query
 
-  const issueTypeId = await issueTypeToId('ModuleReplaced')
-  // get rows
-  const swaps = await getDeviceBaseExtendedQuery(query, dataConstraints)
-    .clone()
-    .innerJoin('Issue as i', 'i.deviceId', 'd.id')
-    .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
-    .join('Result as oldResult', builder => builder.on(knex.raw('i.data->>"$.oldResultId" = oldResult.id ')))
-    .select(
-      'd.name as deviceName',
-      'd.serial',
-      's.id as siteId',
-      's.name as siteName',
-      'newModuleResult.moduleName',
-      'newModuleResult.instrumentSerial',
-      'newModuleResult.moduleSerial as newModuleSerial',
-      'oldResult.moduleSerial as oldModuleSerial',
-      knex.raw(
-        'DATEDIFF(COALESCE(newModuleResult.endedOn,newModuleResult.startedOn), COALESCE(oldResult.endedOn,oldResult.startedOn)) as daysDifference'
-      ),
-      'da.name as deviceApprovalStatus',
-      knex.raw('COALESCE(newModuleResult.endedOn,newModuleResult.startedOn) as lastResultNewModule'),
-      knex.raw('COALESCE(oldResult.endedOn,oldResult.startedOn) as lastResultOldModule')
-    )
-    .andWhere(knex.raw('i.createdOn between ? and ?', [minDateFormatted, maxDateFormatted]))
-    .andWhere('i.issueTypeId', issueTypeId)
-    .modify(sortPageParams, query, 'name')
-
-  const totalModuleSwaps = swaps.length
-  const numberOfSites = new Set(swaps.map(s => s.siteId)).size
+  const moduleSwapsReport = await getModuleSwapsReportData(dataConstraints, query)
 
   const dataset = {
     ok: true,
-    total: swaps.length,
-    length: swaps.length,
-    data: {
-      rows: swaps,
-      totalModuleSwaps,
-      numberOfSites,
-    },
+    total: moduleSwapsReport.data.rows.length,
+    length: moduleSwapsReport.data.rows.length,
+    ...moduleSwapsReport,
   }
   return dataset
 }
