@@ -15,6 +15,7 @@ const optionalHistoryResponseValidation = Joi.object()
           siteName: Joi.string().required().description('Entry event site name derived from siteId'),
           updatedOn: Joi.required().description('When the entry event was last updated in the Aspect database'),
           reason: Joi.optional().allow('', null).description('The reason for the follow up being recorded'),
+          clinicianName: Joi.optional().allow('', null).description('The name of clinician who took the action'),
         })
       ),
   })

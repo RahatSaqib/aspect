@@ -24,6 +24,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: data.sampleTypeExternalId,
       siteName: data?.sampleSiteName,
       updatedOn: data.sampleCollectedOn,
+      clinicianName: data.sampleClinicianName,
     })
   }
 

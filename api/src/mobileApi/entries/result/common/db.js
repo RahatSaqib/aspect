@@ -63,6 +63,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       geography: 'reportableSiteGeography',
       result: 'result',
     })
+    .leftJoin('Person as sampleCollectedBy', 'sample.collectedBy', 'sampleCollectedBy.createdBy')
     .where('result.updatedOn', '>', minUpdatedOn)
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .andWhere(qb =>
@@ -91,6 +92,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'result.resultData as resultData',
       'result.sampleId as resultSampleId',
       'result.updatedOn as updatedOn',
+      'result.senderOperator as senderOperator',
       knex.raw('COALESCE(result.endedOn, result.startedOn) as testDate'),
       'resultCategory1.i18nKey as resultCategory1ValueI18nKey',
       'resultCategory1.name as resultCategory1Name',
@@ -128,7 +130,9 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'laboratory.id as laboratorySiteId',
       'laboratory.externalId as laboratorySiteExternalId',
       'laboratory.name as laboratorySiteName',
-      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId'
+      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
+      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
+      'sampleCollectedBy.name as sampleClinicianName'
     )
   return knexQuery
 }
@@ -160,6 +164,7 @@ const getFollowUpsByResultIds = results => {
   const knexQuery = knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .leftJoin('Person as p', 'p.id', 'rfu.createdBy')
     .whereIn(
       'rfu.resultId',
       _.map(results, r => r.id)
@@ -177,7 +182,8 @@ const getFollowUpsByResultIds = results => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypeI18nKey'
+      'fut.i18nKey as followUpTypeI18nKey',
+      'p.name as clinicianName'
     )
   return knexQuery
 }
