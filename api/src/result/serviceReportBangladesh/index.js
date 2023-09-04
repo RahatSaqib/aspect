@@ -930,7 +930,12 @@ async function getDataForReportDrTb10B(auth, query) {
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
-
+  const checkResistance = (resistance, key) => `CASE
+          WHEN JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
+          THEN 'X'
+          ELSE ' '
+          END as ${key}
+       `
   const data = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -973,6 +978,21 @@ async function getDataForReportDrTb10B(auth, query) {
         ) as patientAge`
       ),
       knex.raw(
+        `COALESCE(
+          r.patientData ->> '$.TypeOfPatient',
+        ) as patientType`
+      ),
+      knex.raw(
+        `COALESCE(
+          r.patientData ->> '$.SampleType',
+        ) as sampleType`
+      ),
+      knex.raw(
+        `COALESCE(
+          r.patientData ->> '$.TBRegistrationNumberCurrent',
+        ) as tbRegistrationNumber`
+      ),
+      knex.raw(
         `
         CASE
           COALESCE(
@@ -985,6 +1005,12 @@ async function getDataForReportDrTb10B(auth, query) {
         END as gender
         `
       ),
+      knex.raw(checkResistance('INH', 'inhDetected')),
+      knex.raw(checkResistance('FLQ', 'flqDetected')),
+      knex.raw(checkResistance('AMK', 'amkDetected')),
+      knex.raw(checkResistance('KAN', 'kanDetected')),
+      knex.raw(checkResistance('CAP', 'capDetected')),
+      knex.raw(checkResistance('ETH', 'ethDetected')),
       knex.raw(
         `CONCAT(
           IFNULL(r.patientData ->> '$.address', ''),
