@@ -977,21 +977,9 @@ async function getDataForReportDrTb10B(auth, query) {
           r.patientData ->> '$.age'
         ) as patientAge`
       ),
-      knex.raw(
-        `COALESCE(
-          r.patientData ->> '$.TypeOfPatient',
-        ) as patientType`
-      ),
-      knex.raw(
-        `COALESCE(
-          r.patientData ->> '$.SampleType',
-        ) as sampleType`
-      ),
-      knex.raw(
-        `COALESCE(
-          r.patientData ->> '$.TBRegistrationNumberCurrent',
-        ) as tbRegistrationNumber`
-      ),
+      knex.raw(`r.patientData ->> '$.TypeOfPatient' as patientType`),
+      knex.raw(`r.patientData ->> '$.SampleType' as sampleType`),
+      knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
       knex.raw(
         `
         CASE
