@@ -13,13 +13,17 @@ const resultsDrTb10A10BCovid = {
       sortOrder: 0,
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getDataForReportDrTb10A',
-      nameOfSharedData: 'results_10a',
+      query: {
+        nameOfSharedData: 'results_10a',
+      },
     },
     {
       sortOrder: 10,
       moduleName: 'result/serviceReportBangladesh',
       functionName: 'getDataForReportDrTb10AStool',
-      useNamedData: 'results_10a',
+      query: {
+        useNamedData: 'results_10a',
+      },
     },
     {
       sortOrder: 20,
