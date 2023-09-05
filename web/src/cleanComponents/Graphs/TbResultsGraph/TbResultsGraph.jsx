@@ -107,7 +107,7 @@ const TbResultsGraph = ({ assaysFromState: assays }) => {
           expandedBarData.push({
             id: key,
             month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: +result[key].toFixed(2),
+            value: +result[key].toFixed(3).slice(0, -1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.month,
           })
@@ -148,7 +148,8 @@ const TbResultsGraph = ({ assaysFromState: assays }) => {
                           data={barData.data}
                           graphId="tbByCategory1Monthly"
                           xField="month"
-                          legend={false}
+                          yField="value"
+                          seriesField="type"
                           showLabel={showLabel}
                           isPercentage
                           onReady={plot => {

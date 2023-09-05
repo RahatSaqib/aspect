@@ -1,6 +1,6 @@
 import React from 'react'
 import { Line } from '@ant-design/plots'
-import { filterColour } from '../graphUtils'
+import { filterColour } from '../../graphUtils'
 
 const LineGraph = ({ data, graphId, showLabel }) => {
   const config = {

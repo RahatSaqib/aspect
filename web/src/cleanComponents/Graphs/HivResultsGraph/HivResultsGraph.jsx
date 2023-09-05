@@ -1,25 +1,30 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
 import { useQuery } from 'react-query'
-import ErrorBoundary from '../../../../cleanComponents/ErrorBoundary'
-import DonutGraph from '../../../../cleanComponents/Graphs/DonutGraph/DonutGraph'
-import Loading from '../../../../cleanComponents/Loading'
+import { useNavigate } from 'react-router-dom'
+import { formatDataByGraphType } from '../../../components/Graphs/Helpers/Formatters'
+import messages from '../../../components/Graphs/intlMessages'
+import fetchWrapperForQueries from '../../../components/QueryFetch'
+import useI18n from '../../../hooks/useI18n'
+import { graphMessages } from '../../../messages'
+import { useFilterUpdate } from '../../../providers/FilterProvider'
+import ErrorBoundary from '../../ErrorBoundary'
+import Loading from '../../Loading'
+import styles from '../graphStyles.css'
 import {
   getTimePeriod,
-  formatDataByGraphType,
-  getAverageFromData,
+  genLabel,
   calcPercentageForGraphs,
-  translateLabel,
-} from '../../../../components/Graphs/Helpers/Formatters'
-import messages from '../../../../components/Graphs/intlMessages'
-import fetchWrapperForQueries from '../../../../components/QueryFetch'
-import useI18n from '../../../../hooks/useI18n'
-import { graphMessages } from '../../../../messages'
-import styles from '../styles.css'
-import HivResultsGraphMain from './HivResultsGraph.Main'
+  getAverageFromData,
+  flattenAssaysStructure,
+  negateTimeZoneOffset,
+} from '../graphUtils'
+import { DonutGraph, BarGraph } from '../index'
 
 const cssClasses = classnames.bind(styles)
 
@@ -32,9 +37,11 @@ const endPointParams = [
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
-const HivResultsGraph = ({ assaysFromState }) => {
-  const { formatMessage } = useI18n()
+const HivResultsGraph = ({ assaysFromState: assays }) => {
+  const { formatMessage, format } = useI18n()
   const [showLabel, setShowLabel] = useState(false)
+  const navigate = useNavigate()
+  const [addFilter] = useFilterUpdate()
 
   const { data, isLoading } = useQuery(
     ['hivByCategory1Monthly', { endPointParams }],
@@ -44,10 +51,11 @@ const HivResultsGraph = ({ assaysFromState }) => {
 
   // code for donut
   const [donutData, setDonutData] = useState({})
+  const [barData, setBarData] = useState({})
   useEffect(() => {
     if (data && data.data) {
       const info = data.data
-      const i18nKeysCollection = reduce(
+      const i18nKeys = reduce(
         data,
         (acc, curr) => {
           acc[curr.resultCategory1] = curr.resultCategory1I18nKey
@@ -55,31 +63,61 @@ const HivResultsGraph = ({ assaysFromState }) => {
         },
         {}
       )
-      const graphData = formatDataByGraphType(
+      const pieData = formatDataByGraphType(
         info,
         'percentage',
         false,
         'MMM yy',
         'cnt',
         'resultCategory1',
-        i18nKeysCollection,
+        i18nKeys,
         'pie',
         endPointParams,
         formatMessage,
         messages
       )
-      const translations = graphData.map(g => ({
-        id: g.id,
-        t: translateLabel(g.id, assaysFromState, formatMessage, messages, i18nKeysCollection),
-      }))
-      const total = graphData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg } = getAverageFromData(graphData, 'value', ['LessThan40', 'LessThan1000', 'NotDetected'], 'standard')
-      const parsedData = graphData.map(d => ({
+      const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
+      const { avg: pieAvg } = getAverageFromData(
+        pieData,
+        'value',
+        ['LessThan40', 'LessThan1000', 'NotDetected'],
+        'standard'
+      )
+      const parsedData = pieData.map(d => ({
         ...d,
-        label: translations.filter(t => t.id === d.id)[0].t,
-        value: total < 1 ? total : +calcPercentageForGraphs(d.value, total, 2),
+        label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
       }))
-      setDonutData({ data: parsedData, total: `${avg}%` })
+      // code for column
+      const groupedForBar = formatDataByGraphType(
+        info,
+        'percentage',
+        false,
+        'MMM',
+        'month',
+        'resultCategory1',
+        i18nKeys,
+        'bar',
+        endPointParams,
+        formatMessage,
+        messages
+      )
+      const expandedBarData = []
+      groupedForBar.map(result => {
+        const allKeysButMonth = Object.keys(result).filter(key => key !== 'month' && key !== 'totalCnt')
+        allKeysButMonth.map(key =>
+          expandedBarData.push({
+            id: key,
+            month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
+            value: +result[key].toFixed(3).slice(0, -1),
+            type: genLabel(key, assays, formatMessage, messages, i18nKeys),
+            originalMonth: result.month,
+          })
+        )
+        return result
+      })
+      setBarData({ data: expandedBarData })
+      setDonutData({ data: parsedData, total: `${pieAvg}%` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
@@ -106,12 +144,36 @@ const HivResultsGraph = ({ assaysFromState }) => {
                 </Grid>
                 <Grid item xs={12} md={12} lg={10}>
                   <Grid container>
-                    <HivResultsGraphMain
-                      data={data.data}
-                      endPointParams={endPointParams}
-                      assaysFromState={assaysFromState}
-                      showLabel={showLabel}
-                    />
+                    {barData.data && barData.data.length ? (
+                      <Grid item xs={12} md={8}>
+                        <BarGraph
+                          data={barData.data}
+                          graphId="hivByCategory1Monthly"
+                          xField="month"
+                          yField="value"
+                          seriesField="type"
+                          showLabel={showLabel}
+                          isPercentage
+                          onReady={plot => {
+                            plot.on('plot:click', evt => {
+                              const base = 'yyyy-MM-dd'
+                              const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+
+                              const params = {
+                                assayId: assays.filter(it => ['GxHiv1Vl'].includes(it.externalId)).map(it => it.id),
+                                maxDate: format(endOfMonth(parsedDate), base),
+                                minDate: format(startOfMonth(parsedDate), base),
+                                resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
+                                  a => a.externalId === evt.data.data.id
+                                )[0].id,
+                              }
+                              addFilter({ ...params }, '/browse/result')
+                              navigate('/browse/result')
+                            })
+                          }}
+                        />
+                      </Grid>
+                    ) : null}
                     {donutData.data && donutData.data.length ? (
                       <Grid item xs={12} md={4} lg={4}>
                         <DonutGraph
@@ -141,9 +203,7 @@ const HivResultsGraph = ({ assaysFromState }) => {
                           showLabel={showLabel}
                         />
                       </Grid>
-                    ) : (
-                      <Loading />
-                    )}
+                    ) : null}
                   </Grid>
                 </Grid>
               </Grid>

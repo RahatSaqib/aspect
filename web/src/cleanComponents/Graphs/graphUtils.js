@@ -2,6 +2,8 @@ import { subDays, subMonths, format, addMinutes, subMinutes, getYear, subYears, 
 import filter from 'lodash/filter'
 import get from 'lodash/get'
 import includes from 'lodash/includes'
+import isArray from 'lodash/isArray'
+import isNull from 'lodash/isNull'
 import map from 'lodash/map'
 import nth from 'lodash/nth'
 import pick from 'lodash/pick'
@@ -246,7 +248,9 @@ const genLabel = (string, assaysFromState, formatMessage, intlMessages, i18nKeys
     : startCase(removeStringsFromArray(string))
 }
 
-const calcPercentageForGraphs = (value, total, precision = 4) => ((value / total) * 100).toFixed(precision)
+const calcPercentageForGraphs = (value, total, precision = 4) => {
+  return ((value / total) * 100).toFixed(precision)
+}
 
 const getAverageFromData = (data, value, which, notation, culture) => {
   if (data.length && which) {
@@ -351,6 +355,22 @@ const fillYear = data => {
   return result
 }
 
+const prepAssaysForParams = whiteListed => {
+  const assays = []
+  map(whiteListed, value => assays.push({ assay: value }))
+  return assays
+}
+
+const prepParamsForEndPoint = (urlParams, updatedParams) => {
+  const params = []
+  const paramsToUse = updatedParams && !isNull(values(updatedParams)[0]) ? updatedParams : urlParams
+
+  map(paramsToUse, (value, key) =>
+    isArray(value) ? map(value, v => params.push({ [key]: v })) : params.push({ [key]: value })
+  )
+  return params
+}
+
 export {
   filterColour,
   getTimePeriod,
@@ -360,4 +380,6 @@ export {
   flattenAssaysStructure,
   negateTimeZoneOffset,
   fillYear,
+  prepAssaysForParams,
+  prepParamsForEndPoint,
 }

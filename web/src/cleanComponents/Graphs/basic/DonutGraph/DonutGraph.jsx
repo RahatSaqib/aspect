@@ -1,7 +1,7 @@
 /* eslint-disable no-restricted-properties */
 import React from 'react'
 import { Pie, measureTextWidth } from '@ant-design/plots'
-import { filterColour } from '../graphUtils'
+import { filterColour } from '../../graphUtils'
 
 function renderStatistic(containerWidth, text, style) {
   const { width: textWidth, height: textHeight } = measureTextWidth(text, style)

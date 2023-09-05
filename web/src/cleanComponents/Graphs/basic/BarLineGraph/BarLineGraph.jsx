@@ -1,6 +1,6 @@
 import React from 'react'
 import { DualAxes } from '@ant-design/plots'
-import { filterColour } from '../graphUtils'
+import { filterColour } from '../../graphUtils'
 
 const BarLineGraph = ({ data, colors, graphId, showLabel, xField }) => {
   const config = {

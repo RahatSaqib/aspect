@@ -1,8 +1,8 @@
 import React from 'react'
 import { Column } from '@ant-design/plots'
-import { filterColour } from '../graphUtils'
+import { filterColour } from '../../graphUtils'
 
-const BarGraph = ({ data, graphId, xField, showLabel, onReady, isPercentage }) => {
+const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onReady, isPercentage }) => {
   const config = {
     data,
     color: datum => filterColour(data.find(d => d.type === datum.type).id, graphId),
@@ -11,8 +11,8 @@ const BarGraph = ({ data, graphId, xField, showLabel, onReady, isPercentage }) =
       : false, // format for label on top of section
     isStack: true,
     xField,
-    yField: 'value',
-    seriesField: 'type',
+    yField,
+    seriesField,
     animation: false,
     legend: { position: 'bottom', maxRow: 3 },
     tooltip: {

@@ -105,7 +105,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
           expandedBarData.push({
             id: key,
             month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: +result[key].toFixed(2),
+            value: +result[key].toFixed(3).slice(0, -1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.month,
           })
@@ -146,6 +146,8 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                           data={barData.data}
                           graphId="xdrByCategory1Monthly"
                           xField="month"
+                          yField="value"
+                          seriesField="type"
                           legend={false}
                           showLabel={showLabel}
                           isPercentage

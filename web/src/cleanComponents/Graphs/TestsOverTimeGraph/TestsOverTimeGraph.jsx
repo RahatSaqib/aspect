@@ -142,7 +142,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
           expandedBarData.push({
             id: key,
             month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: result[key],
+            value: +result[key].toFixed(3).slice(0, -1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.month,
           })
@@ -187,7 +187,8 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                           data={barData.data}
                           graphId="testPerformedMonthlyPercentage"
                           xField="month"
-                          legend={false}
+                          yField="value"
+                          seriesField="type"
                           showLabel={showLabel}
                           onReady={plot => {
                             plot.on('plot:click', evt => {
