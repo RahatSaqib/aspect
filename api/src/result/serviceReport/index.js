@@ -643,22 +643,34 @@ const getLatestFollowUpsByResultIds = async resultIds => {
   return result
 }
 
+const getWorkflowStatus = async (externalId, subQuery) => {
+  let query = knex('ResultWorkflowStatus')
+    .select('rwl.resultId', 'rwl.reason as followUpComment')
+    .from(subQuery.as('rwl'))
+    .leftJoin('ResultWorkflowStatus as rwsInner', 'rwl.resultWorkflowStatusId', 'rwsInner.id')
+    .where('rwl.rowNumber', 1)
+    .andWhere(builder => {
+      builder.where('rwsInner.externalId', externalId)
+    })
+
+  if (externalId === 'acknowledged') {
+    query = query.select('rwl.changedOn as recordedInRegister')
+  }
+
+  return query
+}
+
 const getLatestResultWorkflowLogByResultIds = async resultIds => {
   const subQuery = knex('ResultWorkflowLog')
     .select('resultId', 'resultWorkflowStatusId', 'reason', 'changedOn', 'createdOn')
     .whereIn('resultId', resultIds)
     .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY createdOn DESC) AS rowNumber'))
 
-  const result = await knex('ResultWorkflowStatus')
-    .select('rwl.resultId', 'rwl.reason as followUpComment', 'rwl.changedOn as recordedInRegister')
-    .from(subQuery.as('rwl'))
-    .leftJoin('ResultWorkflowStatus as rwsInner', 'rwl.resultWorkflowStatusId', 'rwsInner.id')
-    .where('rwl.rowNumber', 1)
-    .andWhere(builder => {
-      builder.orWhereIn('rwsInner.externalId', ['flagged', 'acknowledged'])
-    })
+  const acknowledgedWorkflow = await getWorkflowStatus('acknowledged', subQuery)
 
-  return result
+  const flaggedWorkflow = await getWorkflowStatus('flagged', subQuery)
+
+  return [...acknowledgedWorkflow, ...flaggedWorkflow]
 }
 
 module.exports = {
