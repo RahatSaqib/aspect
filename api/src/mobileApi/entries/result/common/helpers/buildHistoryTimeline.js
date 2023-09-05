@@ -58,6 +58,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: followUp.followUpName,
       siteName: data?.reportableSiteName,
       updatedOn: followUp.updatedOn,
+      type: followUp.followUpTypeName,
     }
     const matchingFlag = resultFlags?.find(
       rf => format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
