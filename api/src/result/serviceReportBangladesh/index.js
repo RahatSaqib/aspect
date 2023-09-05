@@ -944,7 +944,7 @@ async function getDataForReportDrTb10B(auth, query) {
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     // scope Mtb and Mtb-Ultra assays
-    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
