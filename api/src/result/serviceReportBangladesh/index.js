@@ -980,6 +980,7 @@ async function getDataForReportDrTb10B(auth, query) {
       knex.raw(`r.patientData ->> '$.TypeOfPatient' as patientType`),
       knex.raw(`r.patientData ->> '$.SampleType' as sampleType`),
       knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
+      knex.raw(`rc1.name as mtbDetected`),
       knex.raw(
         `
         CASE
