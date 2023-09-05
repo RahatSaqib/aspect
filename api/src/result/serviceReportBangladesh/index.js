@@ -8,8 +8,6 @@ const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('.
 const { getDatesFromQuery } = require('../../shared/date')
 const { allAssayToId, allResultCategoryToId, allSampleTypeToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
-const logger = require('../../shared/logger')
-const { RELABEL_EXCEL } = require('../../shared/constants')
 const { createFormObject } = require('../../forms/service')
 
 /**
@@ -980,7 +978,7 @@ async function getDataForReportDrTb10B(auth, query) {
       knex.raw(`r.patientData ->> '$.TypeOfPatient' as patientType`),
       knex.raw(`r.patientData ->> '$.SampleType' as sampleType`),
       knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
-      knex.raw(`rc1.name as mtbDetected`),
+      knex.raw(`CASE WHEN a.id = ${assayIds.GxMtbXdr} THEN rc1.name ELSE '' END as mtbDetected`),
       knex.raw(
         `
         CASE
@@ -1036,28 +1034,30 @@ async function getDataForReportDrTb10B(auth, query) {
        * I = invalid/ no result/ error
        */
       knex.raw(`
-          CASE
-          WHEN r.resultCategory1 IN (${positiveResultCategories})
-                AND
-                r.resultCategory2 = ${resultCategoryIds.NotDetected} THEN 'T'
-          WHEN r.resultCategory1 IN (${positiveResultCategories})
-                AND
-                r.resultCategory2 IN (${positiveResultCategories}) THEN 'RR'
-          WHEN r.resultCategory1 IN (${positiveResultCategories})
-                AND
-                r.resultCategory2 = ${resultCategoryIds.Indeterminate} THEN 'TI'
-          WHEN r.resultCategory1 = ${resultCategoryIds.NotDetected} THEN 'N'
-          WHEN r.resultCategory1 IN (
-                  ${resultCategoryIds.Invalid},
-                  ${resultCategoryIds.Error},
-                  ${resultCategoryIds.NoResult}
-                ) THEN 'I'
-          ELSE '-'
+          CASE WHEN a.id IN (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})
+          THEN 
+            (CASE
+              WHEN r.resultCategory1 IN (${positiveResultCategories})
+                    AND
+                    r.resultCategory2 = ${resultCategoryIds.NotDetected} THEN 'T'
+              WHEN r.resultCategory1 IN (${positiveResultCategories})
+                    AND
+                    r.resultCategory2 IN (${positiveResultCategories}) THEN 'RR'
+              WHEN r.resultCategory1 IN (${positiveResultCategories})
+                    AND
+                    r.resultCategory2 = ${resultCategoryIds.Indeterminate} THEN 'TI'
+              WHEN r.resultCategory1 = ${resultCategoryIds.NotDetected} THEN 'N'
+              WHEN r.resultCategory1 IN (
+                      ${resultCategoryIds.Invalid},
+                      ${resultCategoryIds.Error},
+                      ${resultCategoryIds.NoResult}
+                    ) THEN 'I'
+              ELSE '-'
+            END)
+          ELSE ''
           END as resultMtbRif
       `)
     )
-
-  logger.debug(`Total records: ${data.length}`, RELABEL_EXCEL)
 
   return {
     ok: true,
