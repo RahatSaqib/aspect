@@ -1,3 +1,4 @@
+import isNil from 'lodash/isNil'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { DEVICE_KEY } from '../device/deviceKeys'
@@ -17,7 +18,7 @@ const getDeviceWorkload = async originalParams => {
 
 const useWorkload = params =>
   useQuery([DEVICE_KEY, params], () => getDeviceWorkload(params), {
-    enabled: !!(params && params.singleAssayId !== -1),
+    enabled: !!(params && params.singleAssayId !== -1 && !isNil(params.singleAssayId)),
   })
 
 export default useWorkload

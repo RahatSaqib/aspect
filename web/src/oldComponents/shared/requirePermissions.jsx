@@ -40,11 +40,11 @@ export function getPermissions(permissionsInConfig, overriddenPermissions, extra
 // !name:activity => forbidden
 // name:activity => optional
 export function groupByPermissionTypes(permissions) {
-  const requiredPermissions = permissions.filter(it => it[0] === '+').map(it => it.substr(1))
+  const requiredPermissions = permissions.filter(it => it?.[0] === '+').map(it => it.substr(1))
 
-  const forbiddenPermissions = permissions.filter(it => it[0] === '!').map(it => it.substr(1))
+  const forbiddenPermissions = permissions.filter(it => it?.[0] === '!').map(it => it.substr(1))
 
-  const optionalPermissions = permissions.filter(it => it[0] !== '+' && it[0] !== '!')
+  const optionalPermissions = permissions.filter(it => it?.[0] !== '+' && it?.[0] !== '!')
 
   return {
     required: requiredPermissions,
