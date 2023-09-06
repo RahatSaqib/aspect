@@ -2,11 +2,11 @@ import React from 'react'
 import { DualAxes } from '@ant-design/plots'
 import { filterColour } from '../../graphUtils'
 
-const BarLineGraph = ({ data, colors, graphId, showLabel, xField }) => {
+const BarLineGraph = ({ data, colors, graphId, showLabel, xField, yField }) => {
   const config = {
     data, // [bar, line]
     xField,
-    yField: ['value', 'percentage'],
+    yField, // percentage translated field must be always the last value of the array
     geometryOptions: [
       {
         color: datum => filterColour(colors.find(c => c.name === datum.type).colorId, graphId),
@@ -17,7 +17,7 @@ const BarLineGraph = ({ data, colors, graphId, showLabel, xField }) => {
       },
       {
         geometry: 'line',
-        color: () => filterColour(colors.find(c => c.name === 'percentage').colorId, graphId),
+        color: () => filterColour(colors.find(c => c.name === yField[1]).colorId, graphId),
         label: showLabel ? { content: originData => `${originData.percentage}%` } : undefined, // format for label on top of section
         point: {
           size: 3,
@@ -28,8 +28,8 @@ const BarLineGraph = ({ data, colors, graphId, showLabel, xField }) => {
     ],
     tooltip: {
       formatter: datum =>
-        datum.percentage
-          ? { name: `Percentage`, value: `${datum.percentage}%` }
+        datum[yField[1]] >= 0
+          ? { name: `${yField[1]}`, value: `${datum[yField[1]]}%` }
           : { name: `${datum.type}`, value: `${datum.value}` },
     },
     yAxis: {

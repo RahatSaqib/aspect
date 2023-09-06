@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
+import messages from '../../../components/Graphs/intlMessages'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
@@ -33,17 +34,23 @@ const XDRFLQResistanceGraph = () => {
       fetchWrapperForQueries({ endpoint: '/result/xdr-assay-graph', params: mergedParams })
   )
 
+  const mtbDetectedMessage = formatMessage(messages.MtbDetected)
+  const inhDetectedMessage = formatMessage(messages.InhDetected)
+  const fqrDetectedMessage = formatMessage(messages.FqrDetected)
+  const totalTestsMessage = formatMessage(messages.TotalTests)
+  const FQRPercentMessage = formatMessage(messages.FQRPercent)
+
   const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
       const line = []
       const bar = []
       data.grouped.map(({ month, FqrToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected }) => {
-        line.push({ month, percentage: +FqrToMtbPercentage.toFixed(2) })
-        bar.push({ month, value: TotalTests, type: 'TotalTests' })
-        bar.push({ month, value: MtbDetected, type: 'MtbDetected' })
-        bar.push({ month, value: FqrDetected, type: 'FqrDetected' })
-        bar.push({ month, value: InhDetected, type: 'InhDetected' })
+        line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+        bar.push({ month, value: TotalTests, type: totalTestsMessage })
+        bar.push({ month, value: MtbDetected, type: mtbDetectedMessage })
+        bar.push({ month, value: FqrDetected, type: fqrDetectedMessage })
+        bar.push({ month, value: InhDetected, type: inhDetectedMessage })
         return {}
       })
 
@@ -83,13 +90,14 @@ const XDRFLQResistanceGraph = () => {
                         showLabel={showLabel}
                         graphId="xdrAssayGraph"
                         colors={[
-                          { name: 'TotalTests', colorId: 'caseTotal' },
-                          { name: 'MtbDetected', colorId: '--aspect-color-slate' },
-                          { name: 'FqrDetected', colorId: 'caseDetected' },
-                          { name: 'InhDetected', colorId: 'casePercentDetectedOfTotal' },
-                          { name: 'percentage', colorId: 'casePercentDetectedOfTotal' },
+                          { name: totalTestsMessage, colorId: 'caseTotal' },
+                          { name: mtbDetectedMessage, colorId: '--aspect-color-slate' },
+                          { name: fqrDetectedMessage, colorId: 'caseDetected' },
+                          { name: inhDetectedMessage, colorId: 'casePercentDetectedOfTotal' },
+                          { name: FQRPercentMessage, colorId: 'casePercentDetectedOfTotal' },
                         ]}
                         xField="month"
+                        yField={['value', FQRPercentMessage]}
                       />
                     </Grid>
                   </Grid>

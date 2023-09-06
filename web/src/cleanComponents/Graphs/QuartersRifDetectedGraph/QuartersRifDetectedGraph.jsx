@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
+import messages from '../../../components/Graphs/intlMessages'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
@@ -35,15 +36,19 @@ const QuartersRifDetectedGraph = () => {
       fetchWrapperForQueries({ endpoint: '/result/trend-in-quarters-rif-detected', params: mergedParams })
   )
 
+  const mtbDetectedMessage = formatMessage(messages.MtbDetected)
+  const rrdDetectedMessage = formatMessage(messages.RRDHash)
+  const percentageMessage = formatMessage(messages.RRDPercent)
+
   const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
       const line = []
       const bar = []
       data.grouped.map(({ quarter, RrdToMtbPercentage, RrdDetected, MtbDetected }) => {
-        line.push({ quarter, percentage: +RrdToMtbPercentage.toFixed(2) })
-        bar.push({ quarter, value: MtbDetected, type: 'MtbDetected' })
-        bar.push({ quarter, value: RrdDetected, type: 'RrdDetected' })
+        line.push({ quarter, [percentageMessage]: +RrdToMtbPercentage.toFixed(2) })
+        bar.push({ quarter, value: MtbDetected, type: mtbDetectedMessage })
+        bar.push({ quarter, value: RrdDetected, type: rrdDetectedMessage })
         return {}
       })
 
@@ -83,11 +88,12 @@ const QuartersRifDetectedGraph = () => {
                         showLabel={showLabel}
                         graphId="tbRifDetectedQuarterlyTrends"
                         colors={[
-                          { name: 'MtbDetected', colorId: 'caseTotal' },
-                          { name: 'RrdDetected', colorId: 'caseDetected' },
-                          { name: 'percentage', colorId: 'casePercentDetectedOfTotal' },
+                          { name: mtbDetectedMessage, colorId: 'caseTotal' },
+                          { name: rrdDetectedMessage, colorId: 'caseDetected' },
+                          { name: percentageMessage, colorId: 'casePercentDetectedOfTotal' },
                         ]}
                         xField="quarter"
+                        yField={['value', percentageMessage]}
                       />
                     </Grid>
                   </Grid>
