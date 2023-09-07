@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-29T12:46:49.806Z\n"
+"POT-Creation-Date: 2023-09-07T02:37:24.870Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10815,6 +10815,13 @@ msgstr "Afficher uniquement les résultats avec traitement requis"
 #: extracted_strings.json
 msgid "Show Only Transfers"
 msgstr "Afficher uniquement les transferts"
+
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Afficher le pourcentage"
 
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
