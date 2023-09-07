@@ -200,7 +200,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                                 maxDate: format(endOfMonth(parsedDate), base),
                                 minDate: format(startOfMonth(parsedDate), base),
                                 onlyReportableResults: true,
-                                assayId: assays.filter(a => a.externalId === evt.data.data.type)[0].id,
+                                assayId: assays.find(a => a.externalId === evt.data.data.id).id,
                               }
                               addFilter({ ...params }, '/browse/result')
                               navigate('/browse/result')
