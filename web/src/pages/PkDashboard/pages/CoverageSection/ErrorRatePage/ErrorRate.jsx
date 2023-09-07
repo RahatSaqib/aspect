@@ -22,7 +22,7 @@ const columns = [
   { name: 'Error Rate', prop: 'percentMtbError' },
   { name: 'Errors', prop: 'cntMtbError' },
   { name: 'Invalid', prop: 'cntMtbInvalid' },
-  { name: 'No Res', prop: 'cntMtbNoResult' },
+  { name: 'No Result', prop: 'cntMtbNoResult' },
 ]
 
 const childrenKey = 'children'
