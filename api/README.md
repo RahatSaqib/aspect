@@ -290,8 +290,13 @@ delete from knex_migrations where name='20160913144739_permissions.js';
 Seed files populate your database with test or development seed data. They are not configured by default. If you would like to use them, edit your `.env` file and set your seeds directory containing the scripts that populate your database.
 
 ```env
-# in .env
+# in .env, for development
 seeds.directory='./seeds/development'
+```
+
+```env
+# in .env, for test
+seeds.directory='./seeds/test'
 ```
 
 Now you can run all seed files within that directory (alphabetical order).
