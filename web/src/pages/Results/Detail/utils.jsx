@@ -160,13 +160,14 @@ const evaluateEnabledState = (itemBase, formik) => {
 
 // start filter logic
 const applyFilterToOption = (filter, option, formik, sourcePath) => {
-  const cleanList = isArray(option[filter.fieldToCompare])
-    ? option[filter.fieldToCompare].map(o => o.toLowerCase())
-    : option[filter.fieldToCompare].toLowerCase()
+  const data = option[filter.fieldToCompare]
+  if (!data) return
+
+  const cleanList = isArray(data) ? data : [data]
   const cleanValue = sanitizeValue(formik.values[sourcePath[0]][filter.propToCompare]).toLowerCase()
   switch (filter.operator) {
     case 'in':
-      return cleanList.includes(cleanValue)
+      return cleanList.map(o => o.toLowerCase()).includes(cleanValue)
     default:
   }
 }
