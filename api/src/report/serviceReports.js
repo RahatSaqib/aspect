@@ -5,7 +5,6 @@ const _ = require('lodash')
 const { formatInTimeZone } = require('date-fns-tz')
 const csv = require('fast-csv')
 const { knex, filterParams } = require('../db')
-const { getReportDetails } = require('./service')
 const {
   getMaxLimitPlaceHolders,
   getAdministrativeDivisionLabelPlaceHolders,
@@ -15,6 +14,7 @@ const {
   renderExcelTemplateToCsv,
 } = require('../shared/excel')
 const logger = require('../shared/logger')
+const { getReportDetails } = require('./service')
 
 /**
  * constants for statuses of report processing
@@ -205,8 +205,8 @@ async function getAllSheetsData(auth, query, sheets) {
 }
 
 async function generateReport(externalId, query, auth, user, userPlaceHolders, extension) {
-  // query: {...filters}
   const { countryAbbreviation, culture, partnerId, userName, personId } = user
+
   const { sheets } = await getReportDetails(externalId, { personId })
 
   const data = await getAllSheetsData(auth, query, sheets)

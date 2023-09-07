@@ -83,6 +83,8 @@ const expected347 = [
         name: 'awayTransfer',
         siteName: 'Lancaster Clinic',
         updatedOn: '2023-05-03T18:15:57.000Z',
+        transferredBy: 'Admin',
+        comment: undefined,
       },
       {
         id: 172,

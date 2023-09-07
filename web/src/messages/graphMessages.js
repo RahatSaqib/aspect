@@ -5,6 +5,10 @@ const messages = defineMessages({
     id: 'pages.Status.showValuesLabel',
     defaultMessage: 'Show Label',
   },
+  showPercentage: {
+    id: 'pages.Status.showPercentage',
+    defaultMessage: 'Show Percentage',
+  },
   clinicalIndicatorsPieLegend: {
     id: 'pages.Status.clinicalIndicatorsPieLegend',
     defaultMessage: 'Average Monthly Suppression Rate',

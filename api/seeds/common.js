@@ -1492,169 +1492,165 @@ async function seedLabClinicFixture(
   const approvedDeviceApprovalId = await deviceApprovalToId('approved')
   const clinicSiteTypeId = await siteTypeToId('clinic')
 
-  await Promise.each(
-    _.map(labClinics.clinics || [], async clinic => {
-      const state = clinic.stateName
-        ? statesByName[clinic.stateName.toLowerCase()] || {
+  await Promise.map(labClinics.clinics || [], async clinic => {
+    const state = clinic.stateName
+      ? statesByName[clinic.stateName.toLowerCase()] || {
+          id: null,
+          lgas: {},
+        }
+      : {
+          id: null,
+          lgas: {},
+        }
+    const district =
+      state.lgas && clinic.lgaName
+        ? state.lgas[clinic.lgaName.toLowerCase()] || {
             id: null,
-            lgas: {},
           }
         : {
             id: null,
-            lgas: {},
           }
-      const district =
-        state.lgas && clinic.lgaName
-          ? state.lgas[clinic.lgaName.toLowerCase()] || {
-              id: null,
-            }
-          : {
-              id: null,
-            }
-      const { id: clinicGeographyId } = await knex('Geography')
-        .where({
-          countryId,
-          stateId: state.id,
-          lgaId: district.id,
+    const { id: clinicGeographyId } = await knex('Geography')
+      .where({
+        countryId,
+        stateId: state.id,
+        lgaId: district.id,
+      })
+      .first()
+    const siteData = {
+      partnerId,
+      geographyId: clinicGeographyId,
+      name: clinic.name,
+      shortName: clinic.shortName,
+      externalId: clinic.externalId,
+      latitude: clinic.latitude,
+      longitude: clinic.longitude,
+      siteTypeId: clinicSiteTypeId,
+      ...auditFields,
+    }
+    const existingClinic = await knex('Site as s')
+      .join('Geography as g', 's.geographyId', 'g.id')
+      .where('g.countryId', countryId)
+      .andWhere('s.externalId', clinic.externalId)
+      .first('s.*')
+    if (existingClinic) {
+      await knex('Site')
+        .where('id', existingClinic.id)
+        .update({
+          ...existingClinic,
+          ...siteData,
         })
-        .first()
-      const siteData = {
-        partnerId,
-        geographyId: clinicGeographyId,
-        name: clinic.name,
-        shortName: clinic.shortName,
-        externalId: clinic.externalId,
-        latitude: clinic.latitude,
-        longitude: clinic.longitude,
-        siteTypeId: clinicSiteTypeId,
-        ...auditFields,
-      }
-      const existingClinic = await knex('Site as s')
-        .join('Geography as g', 's.geographyId', 'g.id')
-        .where('g.countryId', countryId)
-        .andWhere('s.externalId', clinic.externalId)
-        .first('s.*')
-      if (existingClinic) {
-        await knex('Site')
-          .where('id', existingClinic.id)
-          .update({
-            ...existingClinic,
-            ...siteData,
-          })
-      } else {
-        await knex('Site').insert(siteData)
-      }
-    })
-  )
+    } else {
+      await knex('Site').insert(siteData)
+    }
+  })
 
   const labSiteTypeId = await siteTypeToId('lab')
-  await Promise.all(
-    _.map(labClinics.labs || [], async lab => {
-      const state = lab.stateName
-        ? statesByName[lab.stateName.toLowerCase()] || {
+  await Promise.map(labClinics.labs || [], async lab => {
+    const state = lab.stateName
+      ? statesByName[lab.stateName.toLowerCase()] || {
+          id: null,
+          lgas: {},
+        }
+      : {
+          id: null,
+          lgas: {},
+        }
+    const district =
+      state.lgas && lab.lgaName
+        ? state.lgas[lab.lgaName.toLowerCase()] || {
             id: null,
-            lgas: {},
           }
         : {
             id: null,
-            lgas: {},
           }
-      const district =
-        state.lgas && lab.lgaName
-          ? state.lgas[lab.lgaName.toLowerCase()] || {
-              id: null,
-            }
-          : {
-              id: null,
-            }
-      const { id: labGeographyId } = await knex('Geography')
-        .where({
-          countryId,
-          stateId: state.id,
-          lgaId: district.id,
+    const { id: labGeographyId } = await knex('Geography')
+      .where({
+        countryId,
+        stateId: state.id,
+        lgaId: district.id,
+      })
+      .first()
+    const siteData = {
+      partnerId,
+      geographyId: labGeographyId,
+      name: lab.name,
+      shortName: lab.shortName,
+      externalId: lab.externalId,
+      latitude: lab.latitude,
+      longitude: lab.longitude,
+      siteTypeId: labSiteTypeId,
+      ...auditFields,
+    }
+
+    const existingLab = await knex('Site as s')
+      .join('Geography as g', 's.geographyId', 'g.id')
+      .where('g.countryId', countryId)
+      .andWhere('s.externalId', lab.externalId)
+      .first('s.*')
+    let siteId
+    if (existingLab) {
+      siteId = existingLab.id
+      await knex('Site')
+        .where('id', existingLab.id)
+        .update({
+          ...existingLab,
+          ...siteData,
         })
-        .first()
-      const siteData = {
-        partnerId,
-        geographyId: labGeographyId,
-        name: lab.name,
-        shortName: lab.shortName,
-        externalId: lab.externalId,
-        latitude: lab.latitude,
-        longitude: lab.longitude,
-        siteTypeId: labSiteTypeId,
-        ...auditFields,
-      }
+    } else {
+      ;[siteId] = await knex('Site').insert(siteData)
+    }
+    siteData.id = siteId
 
-      const existingLab = await knex('Site as s')
-        .join('Geography as g', 's.geographyId', 'g.id')
-        .where('g.countryId', countryId)
-        .andWhere('s.externalId', lab.externalId)
-        .first('s.*')
-      let siteId
-      if (existingLab) {
-        siteId = existingLab.id
-        await knex('Site')
-          .where('id', existingLab.id)
-          .update({
-            ...existingLab,
-            ...siteData,
-          })
-      } else {
-        ;[siteId] = await knex('Site').insert(siteData)
-      }
-      siteData.id = siteId
-
-      if (lab.devices) {
-        await Promise.all(
-          _.map(lab.devices, async device => {
-            const deviceApiKeyToken = device.deviceApiKey
-            const deviceData =
-              (await knex('DeviceApiKey as dak')
-                .join('Device as d', 'dak.deviceId', 'd.id')
-                .where('dak.token', deviceApiKeyToken)
-                .first('d.*')) || {}
-            if (_.isEmpty(deviceData)) {
-              const lastDeviceActivity = now
-              deviceData.partnerId = partnerId
-              deviceData.geographyId = siteData.geographyId
-              deviceData.siteId = siteData.id
-              const { id: deviceTypeId } = await knex('DeviceType')
-                .where('externalId', device.deviceTypeId || 'CepheidGeneXpert')
-                .first('id')
-              deviceData.deviceTypeId = deviceTypeId
-              deviceData.deviceApprovalId = approvedDeviceApprovalId
-              deviceData.name = device.name
-              deviceData.shortName = device.shortName
-              deviceData.macAddress = device.macAddress
-              deviceData.serial = device.deviceSerial
-              deviceData.hostId = device.hostId
-              deviceData.lastSeenOn = lastDeviceActivity
-              deviceData.lastPingOn = lastDeviceActivity
-              deviceData.lastPingFromIp = device.lastPingFromIp
-              deviceData.putInService = now
-              deviceData.putInServiceSource = 'Installed at lab'
-              deviceData.configurationData = '{}'
-              const [deviceId] = await knex('Device').insert({
-                ...deviceData,
-                ...auditFields,
-              })
-              deviceData.id = deviceId
-              await knex('DeviceApiKey').insert({
-                token: deviceApiKeyToken,
-                revoked: 0,
-                partnerId,
-                geographyId: labGeographyId,
-                siteId,
-                deviceId,
-                ...auditFields,
-              })
-            }
-          })
-        )
-      }
-    })
-  )
+    if (lab.devices) {
+      await Promise.all(
+        _.map(lab.devices, async device => {
+          const deviceApiKeyToken = device.deviceApiKey
+          const deviceData =
+            (await knex('DeviceApiKey as dak')
+              .join('Device as d', 'dak.deviceId', 'd.id')
+              .where('dak.token', deviceApiKeyToken)
+              .first('d.*')) || {}
+          if (_.isEmpty(deviceData)) {
+            const lastDeviceActivity = now
+            deviceData.partnerId = partnerId
+            deviceData.geographyId = siteData.geographyId
+            deviceData.siteId = siteData.id
+            const { id: deviceTypeId } = await knex('DeviceType')
+              .where('externalId', device.deviceTypeId || 'CepheidGeneXpert')
+              .first('id')
+            deviceData.deviceTypeId = deviceTypeId
+            deviceData.deviceApprovalId = approvedDeviceApprovalId
+            deviceData.name = device.name
+            deviceData.shortName = device.shortName
+            deviceData.macAddress = device.macAddress
+            deviceData.serial = device.deviceSerial
+            deviceData.hostId = device.hostId
+            deviceData.lastSeenOn = lastDeviceActivity
+            deviceData.lastPingOn = lastDeviceActivity
+            deviceData.lastPingFromIp = device.lastPingFromIp
+            deviceData.putInService = now
+            deviceData.putInServiceSource = 'Installed at lab'
+            deviceData.configurationData = '{}'
+            const [deviceId] = await knex('Device').insert({
+              ...deviceData,
+              ...auditFields,
+            })
+            deviceData.id = deviceId
+            await knex('DeviceApiKey').insert({
+              token: deviceApiKeyToken,
+              revoked: 0,
+              partnerId,
+              geographyId: labGeographyId,
+              siteId,
+              deviceId,
+              ...auditFields,
+            })
+          }
+        })
+      )
+    }
+  })
 }
 
 async function ensureResultTreatmentStatuses(knex, treatmentStatuses = resultTreatmentStatuses) {
