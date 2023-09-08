@@ -25,6 +25,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
     .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .leftJoin('Sample as sample', 'result.sampleId', 'sample.id')
     .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
+    .leftJoin('Person as sampleCollectedBy', 'sample.collectedBy', 'sampleCollectedBy.userId')
     .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
     .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
     .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
@@ -63,7 +64,6 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       geography: 'reportableSiteGeography',
       result: 'result',
     })
-    .leftJoin('Person as sampleCollectedBy', 'sample.collectedBy', 'sampleCollectedBy.createdBy')
     .where('result.updatedOn', '>', minUpdatedOn)
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .andWhere(qb =>
