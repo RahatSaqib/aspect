@@ -88,6 +88,7 @@ describe('Entries helpers', () => {
           followUpName: 'FollowUp1',
           updatedOn: '2023-05-03T00:00:00Z',
           followUpTypeName: 'sample follow up type',
+          clinicianName: 'test clinician',
         },
       ]
 
@@ -100,6 +101,7 @@ describe('Entries helpers', () => {
           siteName: 'ReportClinic1',
           type: 'sample follow up type',
           updatedOn: '2023-05-03T00:00:00Z',
+          clinicianName: 'test clinician',
         },
         {
           id: 123,

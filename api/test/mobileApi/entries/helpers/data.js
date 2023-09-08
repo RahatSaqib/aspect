@@ -303,17 +303,19 @@ const expected450 = [
         followUpTypeName: 'Treatment',
         followUpTypeExternalId: 'treatment',
         followUpTypeI18nKey: 'treatment',
+        clinicianName: 'test clinician',
       },
     ],
     history: [
       {
         id: 23,
         resultId: 450,
-        clinicianName: 'test clinician',
         event: 'followUpCreated',
         name: 'DSTB - 2RHZE',
         siteName: 'Marden Hospital',
         updatedOn: '2023-05-20T19:45:55.000Z',
+        clinicianName: 'test clinician',
+        type: 'Treatment',
       },
       {
         id: 155,
