@@ -51,6 +51,7 @@ const data347 = {
   laboratorySiteId: 62,
   laboratorySiteExternalId: 'Lancaster-Lab',
   laboratorySiteName: 'Lancaster Clinic Laboratory',
+  sampleClinicianName: 'test clinician',
 }
 
 const expected347 = [
@@ -97,6 +98,7 @@ const expected347 = [
       {
         id: 172,
         resultId: 347,
+        clinicianName: 'test clinician',
         event: 'sampleCollected',
         name: 'DBS',
         siteName: 'Oden Lab',

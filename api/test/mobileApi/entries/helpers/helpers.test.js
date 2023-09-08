@@ -78,9 +78,18 @@ describe('Entries helpers', () => {
         transferStatusLogData:
           '{"siteId":261,"reportableSiteId":436,"previousReportableSiteId":261,"comment":"test comment"}',
         transferredOn: '2023-05-02T00:00:00Z',
+        sampleClinicianName: 'test clinician',
       }
 
-      const followUps = [{ id: 789, resultId: 123, followUpName: 'FollowUp1', updatedOn: '2023-05-03T00:00:00Z' }]
+      const followUps = [
+        {
+          id: 789,
+          resultId: 123,
+          followUpName: 'FollowUp1',
+          updatedOn: '2023-05-03T00:00:00Z',
+          followUpTypeName: 'sample follow up type',
+        },
+      ]
 
       const expectedOutput = [
         {
@@ -89,6 +98,7 @@ describe('Entries helpers', () => {
           event: 'followUpCreated',
           name: 'FollowUp1',
           siteName: 'ReportClinic1',
+          type: 'sample follow up type',
           updatedOn: '2023-05-03T00:00:00Z',
         },
         {
@@ -116,6 +126,7 @@ describe('Entries helpers', () => {
           name: 'SampleType1',
           siteName: 'Lab1',
           updatedOn: '2023-05-01T00:00:00Z',
+          clinicianName: 'test clinician',
         },
       ]
 
