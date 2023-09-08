@@ -89,7 +89,7 @@ async function getAllResultsForExport(auth, query) {
     // TODO: move below items to Excel template for better formatting and translations
     { key: 'deviceStateName', header: 'State' },
     { key: 'caseExternalId', header: 'Case ID' },
-    { key: 'resultCategoryGroup', header: 'Result Category Group' },
+    { key: 'resultCategoryGroup', header: 'Result' },
     { key: 'sampleId', header: 'Sample Id' },
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
