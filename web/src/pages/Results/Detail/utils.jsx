@@ -165,10 +165,8 @@ const applyFilterToOption = (filter, option, formik, sourcePath) => {
 
   const cleanList = isArray(data) ? data : [data]
   const cleanValue = sanitizeValue(formik.values[sourcePath[0]][filter.propToCompare]).toLowerCase()
-  switch (filter.operator) {
-    case 'in':
-      return cleanList.map(o => o.toLowerCase()).includes(cleanValue)
-    default:
+  if (filter.operator === 'in') {
+    return cleanList.map(o => o.toLowerCase()).includes(cleanValue)
   }
 }
 
