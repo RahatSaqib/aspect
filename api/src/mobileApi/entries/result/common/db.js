@@ -92,7 +92,6 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'result.resultData as resultData',
       'result.sampleId as resultSampleId',
       'result.updatedOn as updatedOn',
-      'result.senderOperator as senderOperator',
       knex.raw('COALESCE(result.endedOn, result.startedOn) as testDate'),
       'resultCategory1.i18nKey as resultCategory1ValueI18nKey',
       'resultCategory1.name as resultCategory1Name',
