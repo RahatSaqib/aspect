@@ -245,6 +245,7 @@ const data450 = {
   laboratorySiteId: 65,
   laboratorySiteExternalId: 'Marden-Lab',
   laboratorySiteName: 'Marden Hospital Laboratory',
+  sampleClinicianName: 'test clinician',
 }
 
 const followUp450 = [
@@ -261,6 +262,7 @@ const followUp450 = [
     followUpTypeName: 'Treatment',
     followUpTypeExternalId: 'treatment',
     followUpTypeI18nKey: 'treatment',
+    clinicianName: 'test clinician',
   },
 ]
 
@@ -307,6 +309,7 @@ const expected450 = [
       {
         id: 23,
         resultId: 450,
+        clinicianName: 'test clinician',
         event: 'followUpCreated',
         name: 'DSTB - 2RHZE',
         siteName: 'Marden Hospital',
@@ -323,6 +326,7 @@ const expected450 = [
       {
         id: 155,
         resultId: 450,
+        clinicianName: 'test clinician',
         event: 'sampleCollected',
         name: 'DBS',
         siteName: 'Atlanta NMRL',
