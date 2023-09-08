@@ -17,6 +17,10 @@ const optionalHistoryResponseValidation = Joi.object()
           reason: Joi.optional().allow('', null).description('The reason for the follow up being recorded'),
           clinicianName: Joi.optional().allow('', null).description('The name of clinician who took the action'),
           type: Joi.optional().allow('', null).description('The follow up type'),
+          transferredBy: Joi.optional()
+            .allow('', null)
+            .description('The full name of the user who transferred the result'),
+          comment: Joi.optional().allow('', null).description('The comment made when result was transferred'),
         })
       ),
   })

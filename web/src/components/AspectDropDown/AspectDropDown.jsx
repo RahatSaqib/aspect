@@ -5,6 +5,7 @@ import get from 'lodash/get'
 import intersectionWith from 'lodash/intersectionWith'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
+import isNil from 'lodash/isNil'
 import keys from 'lodash/keys'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
@@ -15,7 +16,6 @@ import UI_CONSTS from '../../utils/consts/UI'
 import IconProvider from '../IconProvider'
 import fetchWrapperForQueries from '../QueryFetch'
 import SelectComponent, { getSelectedOptions } from './AspectDropDown.SelectComponent'
-import isNil from 'lodash/isNil'
 
 const getActualData = ({ data, reduxStateId, sortByKeys }) => {
   const actualData = get(data, reduxStateId)

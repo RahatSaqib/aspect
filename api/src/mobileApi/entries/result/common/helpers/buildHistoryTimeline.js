@@ -40,6 +40,14 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   }
 
   if (!_.isNil(transferStatus?.transferStatus)) {
+    const { transferredBy, transferStatusLogData } = data
+
+    let statusLogData
+    let comment
+    if (transferStatusLogData) {
+      statusLogData = JSON.parse(transferStatusLogData)
+      comment = statusLogData?.comment
+    }
     output.push({
       id: data.id,
       resultId: data.id,
@@ -47,6 +55,8 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: transferStatus.transferStatus,
       siteName: data?.reportableSiteName,
       updatedOn: transferStatus.transferredOn,
+      comment,
+      transferredBy,
     })
   }
 
