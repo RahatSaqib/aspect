@@ -130,7 +130,6 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'laboratory.externalId as laboratorySiteExternalId',
       'laboratory.name as laboratorySiteName',
       'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
-      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
       'sampleCollectedBy.name as sampleClinicianName'
     )
   return knexQuery
