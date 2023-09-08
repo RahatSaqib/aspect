@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-29T12:46:49.806Z\n"
+"POT-Creation-Date: 2023-09-07T02:37:24.870Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10813,6 +10813,13 @@ msgstr "Laden von Ergebnis-Behandlungszuständen fehlgeschlagen"
 #: extracted_strings.json
 msgid "Show Only Transfers"
 msgstr "Nur Übertragungen anzeigen"
+
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Angabe in Prozent"
 
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
