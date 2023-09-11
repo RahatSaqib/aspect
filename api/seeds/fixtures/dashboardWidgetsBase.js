@@ -360,10 +360,11 @@ const activeDevices = {
   INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
   INNER JOIN Device AS d ON dml.deviceId = d.id
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site AS s ON s.id = d.siteId
   INNER JOIN Partner AS p ON s.partnerId = p.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  WHERE dt.externalId = 'CepheidGeneXpert'
+  WHERE dtc.hasResults = 1
   AND ISNULL(dms2.id)
   AND dml.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
   AND DAYOFWEEK(dml.day) <> 1
@@ -374,10 +375,11 @@ const activeDevices = {
   INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
   INNER JOIN Device AS d ON dml.deviceId = d.id
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site AS s ON s.id = d.siteId
   INNER JOIN Partner AS p ON s.partnerId = p.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  WHERE dt.externalId = 'CepheidGeneXpert'
+  WHERE dtc.hasResults = 1
   AND ISNULL(dms2.id)
   AND dml.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
   AND dml.day < DATE_FORMAT(NOW(),"%Y-%m-01")
