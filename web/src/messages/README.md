@@ -40,6 +40,7 @@ Updating `.po` files means updating existing translations with newly added messa
 3. Select `src/utils/i18n/web.${LOCALE_NAME}.po` from the file dialog
 4. Click `Catalog > Update from POT file`
 5. Select `src/utils/i18n/diff.pot` from the file dialog
+   1. In order to navigate to the following text that needs translation you can press `Ctrl` + `Enter`
 6. Update translations for each items inside the window
 7. When done, click `File > Save`
 

@@ -5,7 +5,6 @@ const { normalizeSiteParameters } = require('./common/logic')
 const { getUserFromCredentials } = require('../auth/constraints')
 const { getExistingSite } = require('./common/db')
 const { throwExistingSiteError } = require('./common/validations')
-const { canEdit } = require('../auth/constraints')
 const { updateTagsById } = require('../tag/service')
 
 module.exports = async function (request) {
@@ -14,10 +13,6 @@ module.exports = async function (request) {
     auth,
   } = request
   const tagType = 'site'
-
-  if (tags && !canEdit(auth, `${tagType}:`)) {
-    return Boom.forbidden(`You are not permitted to update tags to this ${tagType}`)
-  }
 
   await validate(payload)
 

@@ -4,10 +4,10 @@ import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
-import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/TrendInYearsAllTestsGraph/TrendInYearsAllTestsGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
+import TrendInYearsAllTestsGraph from '../../../components/TrendInYearsAllTestsGraph.Main'
 import messages from '../../../PkDashboard.Messages'
 
 const defaultFilters = [{ assay: 'GxMtbXdr' }]
@@ -23,7 +23,7 @@ const NationalTestingTrendsGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.GXTbNationalTrend)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.nationalXdrTestingTrends)}
       filters={
         <>
           <FormControlLabel
@@ -49,6 +49,8 @@ const NationalTestingTrendsGraph = () => {
       <TrendInYearsAllTestsGraph
         assaysFromState={assays ?? []}
         showLabel={showLabel}
+        yearTitle={formatMessage(messages.annualTestingTrends)}
+        monthTitle={formatMessage(messages.monthlyTestingTrends)}
         filterSelection={objectToArray(filter).concat(defaultFilters)}
       />
     </PkPage>

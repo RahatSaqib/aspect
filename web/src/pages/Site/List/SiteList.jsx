@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import SiteFilter from '../../../cleanComponents/Filter/SiteFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useI18n from '../../../hooks/useI18n'
@@ -93,15 +94,17 @@ export const SiteList = ({ navigate, location }) => {
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.sitesTitle)} disableBack>
-        <AspectButton
-          type="button"
-          color="primary"
-          variant="contained"
-          browseButton
-          onClick={() => navigate('/browse/site/create')}
-        >
-          {intl.formatMessage(messages.createSite)}
-        </AspectButton>
+        <PermissionChecker permissions={['site:admin']}>
+          <AspectButton
+            type="button"
+            color="primary"
+            variant="contained"
+            browseButton
+            onClick={() => navigate('/browse/site/create')}
+          >
+            {intl.formatMessage(messages.createSite)}
+          </AspectButton>
+        </PermissionChecker>
       </DetailHeader>
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
@@ -110,8 +113,9 @@ export const SiteList = ({ navigate, location }) => {
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
           </div>
-          {isLoading ? <LinearProgress /> : null}
-          {!data || !data.siteList || data.siteList.length === 0 ? (
+          {isLoading ? (
+            <LinearProgress />
+          ) : !data || !data.siteList || data.siteList.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>

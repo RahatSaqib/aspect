@@ -19,10 +19,12 @@ const columns = [
   { name: 'Devices', prop: 'name' },
   { name: 'Total Modules', prop: 'numberOfModules' },
   { name: 'Total Tests', prop: 'cntMtbResults' },
-  { name: 'Error Rate', prop: 'percentMtbError' },
-  { name: 'Errors', prop: 'cntMtbError' },
-  { name: 'Invalid', prop: 'cntMtbInvalid' },
-  { name: 'No Res', prop: 'cntMtbNoResult' },
+  { name: '# Errors', prop: 'cntMtbError' },
+  { name: '% Errors', prop: 'errorPercent' },
+  { name: '# Invalid', prop: 'cntMtbInvalid' },
+  { name: '% Invalid', prop: 'invalidPercent' },
+  { name: '# No Result', prop: 'cntMtbNoResult' },
+  { name: '% No Result', prop: 'noResultPercent' },
 ]
 
 const childrenKey = 'children'
@@ -38,9 +40,16 @@ const createNode = (name, parent) => {
     },
     { name, id: name }
   )
-  const errorRate = data?.cntMtbError / data?.cntMtbResults
+  const errorPercent = (data?.cntMtbError / data?.cntMtbResults) * 100
+  const invalidPercent = (data?.cntMtbInvalid / data?.cntMtbResults) * 100
+  const noResultPercent = (data?.cntMtbNoResult / data?.cntMtbResults) * 100
 
-  return { ...data, percentMtbError: Number.isNaN(errorRate) ? 0 : errorRate.toPrecision(1) }
+  return {
+    ...data,
+    errorPercent: `${errorPercent.toPrecision(3)} %`,
+    invalidPercent: `${invalidPercent.toPrecision(3)} %`,
+    noResultPercent: `${noResultPercent.toPrecision(3)} %`,
+  }
 }
 
 const makeNestedData = array => {
@@ -78,7 +87,7 @@ const ErrorRatePage = () => {
   const { data, isLoading } = useDeviceErrors(filter)
 
   return (
-    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.errorRateTitle)}>
+    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.genExpertError)}>
       {isLoading ? (
         <Loading />
       ) : (

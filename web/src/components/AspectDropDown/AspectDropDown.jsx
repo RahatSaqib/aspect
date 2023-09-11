@@ -5,6 +5,7 @@ import get from 'lodash/get'
 import intersectionWith from 'lodash/intersectionWith'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
+import isNil from 'lodash/isNil'
 import keys from 'lodash/keys'
 import pick from 'lodash/pick'
 import sortBy from 'lodash/sortBy'
@@ -184,7 +185,13 @@ const AspectDropDown = ({
         const initialValue = get(formik?.initialValues, identifier)
         const currentValue = get(formik?.values, identifier)
         const actualValue = getActualValue(options, currentValue, initialValue)
-        if (formik && currentValue !== initialValue && isArray(options) && !isEqual(currentValue, actualValue)) {
+        if (
+          formik &&
+          !isNil(currentValue) &&
+          currentValue !== initialValue &&
+          isArray(options) &&
+          !isEqual(currentValue, actualValue)
+        ) {
           updateField(identifier, actualValue, { formik })
         }
       } else {

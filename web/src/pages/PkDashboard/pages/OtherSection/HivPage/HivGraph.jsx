@@ -7,13 +7,14 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages } from '../../../../../messages'
-import HivResultsGraphMain from '../../../../../oldPages/dashboard/Graphs/HivResultsGraph/HivResultsGraph.Main'
+import HivResultsGraphMain from '../../../components/HivResultsGraph.Main'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
 const endPointParams = [
   { assay: 'GxHiv1Vl' },
+  { assay: 'GxHiv1Qual' },
   { groupBy: 'month' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
@@ -36,8 +37,7 @@ const HivGraphPage = () => {
 
   return (
     <PkPage
-      isMocked
-      title={`${formatMessage(messages.hiv)} / ${formatMessage(graphMessages.clinicalIndicatorsVLTitle)}`}
+      title={formatMessage(messages.peopleTestedHiv)}
       filters={
         <FormControlLabel
           sx={{ minWidth: '145px' }}
@@ -52,6 +52,7 @@ const HivGraphPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <HivResultsGraphMain
             data={data.data}
+            title={formatMessage(messages.testsPerformedYear)}
             endPointParams={endPointParams}
             assaysFromState={assays}
             showLabel={showLabel}
@@ -59,7 +60,10 @@ const HivGraphPage = () => {
           <TripleCardSide
             data={[
               { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
-              { label: formatMessage(messages.testPerMonth), value: `${data.averageTestsPerMonthCurrentYear}` },
+              {
+                label: formatMessage(messages.testPerMonth),
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+              },
               { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
           />

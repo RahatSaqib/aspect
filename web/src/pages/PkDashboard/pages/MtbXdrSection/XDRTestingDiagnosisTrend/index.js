@@ -1,0 +1,3 @@
+import XDRTestingDiagnosisTrendPage from './XDRTestingDiagnosisTrendPageGraph'
+
+export default XDRTestingDiagnosisTrendPage

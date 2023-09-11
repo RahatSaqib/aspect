@@ -1,15 +1,13 @@
 import React, { useState } from 'react'
 import { FormControlLabel, Switch } from '@mui/material'
-import isNil from 'lodash/isNil'
-import omitBy from 'lodash/omitBy'
 import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
-import TrendInYearsAllTestsGraph from '../../../../../oldPages/dashboard/Graphs/TrendInYearsAllTestsGraph/TrendInYearsAllTestsGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
+import TrendInYearsAllTestsGraph from '../../../components/TrendInYearsAllTestsGraph.Main'
 import messages from '../../../PkDashboard.Messages'
 
 const defaultFilters = [
@@ -27,7 +25,7 @@ const NationalRtbTrendsGraph = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.RRNationalTrend)} ${new Date().getFullYear()}`}
+      title={formatMessage(messages.rrtbNationalDiagnosisTrendsTitle)}
       filters={
         <>
           <FormControlLabel
@@ -52,6 +50,8 @@ const NationalRtbTrendsGraph = () => {
     >
       <TrendInYearsAllTestsGraph
         withAnnual
+        yearTitle={formatMessage(messages.annualRRDiagnosedTrends)}
+        monthTitle={formatMessage(messages.monthlyDiagnosedTrends)}
         assaysFromState={assays ?? []}
         showLabel={showLabel}
         filterSelection={objectToArray(filter).concat(defaultFilters)}

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-06-12T19:27:42.246Z\n"
+"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.0.1\n"
+"X-Generator: Poedit 3.3.2\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -41,6 +41,20 @@ msgstr "# Натиҷаҳои моҳи ҷорӣ"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "# Натичахои мохи гузашта"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "# сайтҳои PMDT бо 10 C GX"
+
+#. [pages.XDR.totalConducted]
+#. defaultMessage is:
+#. # of sites tested MTB/XDR Assay
+#: extracted_strings.json
+msgid "# of sites tested MTB/XDR Assay"
+msgstr "# сайтҳои санҷиши MTB/XDR"
 
 #. [pages.AddInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
@@ -80,7 +94,7 @@ msgstr ""
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{тамос, plural, one {# other {name}} other {# other {name}с} }"
+msgstr "...{тамос, ҷамъ, як {# дигар {name}} дигар {# дигар {name}} }"
 
 #. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
@@ -249,6 +263,20 @@ msgstr ""
 #: extracted_strings.json
 msgid "A username is required"
 msgstr "Номи корбар лозим аст"
+
+#. [pages.XDR.cnt_amk]
+#. defaultMessage is:
+#. AMK R
+#: extracted_strings.json
+msgid "AMK R"
+msgstr "AMK R"
+
+#. [pages.XDR.cnt_amk_p]
+#. defaultMessage is:
+#. AMK R %
+#: extracted_strings.json
+msgid "AMK R %"
+msgstr "AMK R %"
 
 #. [results.categoryTypeAMKResistanceI18nKey]
 #. defaultMessage is:
@@ -450,13 +478,6 @@ msgstr "Илова кардани супориш"
 msgid "Add Inventory"
 msgstr "Илова кардани инвентаризатсия"
 
-#. [pages.resultTreatmentPanel.addNote]
-#. defaultMessage is:
-#. Add Note
-#: extracted_strings.json
-msgid "Add Note"
-msgstr "Иловаи ёддошт"
-
 #. [pages.DeviceDetailProfile.buttonAddRecord]
 #. defaultMessage is:
 #. Add Record
@@ -480,13 +501,6 @@ msgstr "Иловаи сатр"
 #: extracted_strings.json
 msgid "Add {consumableName}"
 msgstr "Илова кардани {consumableName}"
-
-#. [errorResponseMessages.addInventory.PUT.default.title]
-#. defaultMessage is:
-#. Adding Inventory Failed
-#: extracted_strings.json
-msgid "Adding Inventory Failed"
-msgstr "Илова кардани инвентаризатсия иҷро нашуд"
 
 #. [pages.NotificationDetail.fieldAddress]
 #. defaultMessage is:
@@ -617,9 +631,6 @@ msgstr "Огоҳӣ"
 #. [pages.TablePaginator.all]
 #. defaultMessage is:
 #. All
-#. [filter.clientSideFilterSelect.selectAll]
-#. defaultMessage is:
-#. All
 #. [pages.PersonDetails.all]
 #. defaultMessage is:
 #. All
@@ -739,13 +750,6 @@ msgstr "Имейли иловагӣ"
 msgid "An Error Occurred When Trying to Save the Device"
 msgstr "Ҳангоми кӯшиши захира кардани дастгоҳ хатогӣ рух дод"
 
-#. [errorResponseMessages.updateSingleResult.PUT.default.title]
-#. defaultMessage is:
-#. An Error Occurred When Trying to Save the Result
-#: extracted_strings.json
-msgid "An Error Occurred When Trying to Save the Result"
-msgstr "Ҳангоми кӯшиши захира кардани натиҷа хатогӣ рух дод"
-
 #. [pages.ResetPassword.emailSent]
 #. defaultMessage is:
 #. An email has been sent to you
@@ -765,6 +769,34 @@ msgstr ""
 "Баррасии ҳамаи дастгоҳҳои система, маълумот дар бораи инвентаризатсия дар "
 "сайтҳо ва натиҷаҳои санҷиши маҷмӯии ҳар як дастгоҳ. Ин гузориши кӯҳна ва "
 "такмилёфтаи GxAlert бо номи \"Ҳама дастгоҳҳо\" мебошад"
+
+#. [p.PkDashboard.annualFQRDiagnosed]
+#. defaultMessage is:
+#. Annual FQ-R Diagnosis
+#: extracted_strings.json
+msgid "Annual FQ-R Diagnosis"
+msgstr "Ташхиси солонаи FQ-R"
+
+#. [p.PkDashboard.annualRRDiagnosedTrends]
+#. defaultMessage is:
+#. Annual RR Diagnosis
+#: extracted_strings.json
+msgid "Annual RR Diagnosis"
+msgstr "Ташхиси солонаи RR"
+
+#. [p.PkDashboard.annualTestingTrends]
+#. defaultMessage is:
+#. Annual Testing Trends
+#: extracted_strings.json
+msgid "Annual Testing Trends"
+msgstr "Тамоюлҳои санҷиши солона"
+
+#. [p.PkDashboard.annualDiagnosedTrends]
+#. defaultMessage is:
+#. Annual diagnosis Trends
+#: extracted_strings.json
+msgid "Annual diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси солона"
 
 #. [pages.dateRangeSelector.any]
 #. defaultMessage is:
@@ -888,13 +920,6 @@ msgstr "Таҳлил"
 msgid "Assay Type"
 msgstr "Навъи таҳлил"
 
-#. [pages.Milestones.assayType]
-#. defaultMessage is:
-#. Assay Type:
-#: extracted_strings.json
-msgid "Assay Type:"
-msgstr "Навъи таҳлил:"
-
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
 #. Asserted inventory on hand decrease
@@ -908,6 +933,20 @@ msgstr "Инвентаризатсияи тасдиқшуда дар коҳиш�
 #: extracted_strings.json
 msgid "Asserted inventory on hand increase"
 msgstr "Инвентаризатсияи тасдиқшуда дар даст"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedInventoryOnHandAdd]
+#. defaultMessage is:
+#. Asserted inventory on hand increase ( Add )
+#: extracted_strings.json
+msgid "Asserted inventory on hand increase ( Add )"
+msgstr "Инвентаризатсияи тасдиқшуда дар афзоиши дастӣ (Илова кардан)"
+
+#. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedInventoryOnHandRemove]
+#. defaultMessage is:
+#. Asserted inventory on hand increase ( Remove )
+#: extracted_strings.json
+msgid "Asserted inventory on hand increase ( Remove )"
+msgstr "Инвентаризатсияи тасдиқшуда дар афзоиши дастӣ (Нест кардан)"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReason_AssertedZeroInventory]
 #. defaultMessage is:
@@ -1654,13 +1693,6 @@ msgstr "Рақами телефони мобилӣ"
 msgid "Change"
 msgstr "Тағйир"
 
-#. [pages.ResultWorkflowStatusLog.logChangedOn]
-#. defaultMessage is:
-#. Changed On
-#: extracted_strings.json
-msgid "Changed On"
-msgstr "Тағйир дода шуд"
-
 #. [pages.ResetPassword.checkEmail]
 #. defaultMessage is:
 #. Check Inbox
@@ -1744,13 +1776,6 @@ msgstr "Филтрҳоро тоза кунед"
 msgid "Click to view results in table format"
 msgstr "Барои дидани натиҷаҳо дар формати ҷадвал клик кунед"
 
-#. [pages.ClinicalHistory.clinicalHistory]
-#. defaultMessage is:
-#. Clinical History
-#: extracted_strings.json
-msgid "Clinical History"
-msgstr "Таърихи клиникӣ"
-
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
 #. Clinical Indicators
@@ -1813,13 +1838,6 @@ msgstr "Ҷамъоварӣ аз ҷониби"
 msgid "Collected On"
 msgstr "Дар ҷамъоварӣ"
 
-#. [pages.Milestones.sampleCollectedOn]
-#. defaultMessage is:
-#. Collected On:
-#: extracted_strings.json
-msgid "Collected On:"
-msgstr "Ҷамъоварӣ:"
-
 #. [pages.ResultList.collectionOfResults]
 #. defaultMessage is:
 #. Collection of Results
@@ -1855,9 +1873,6 @@ msgstr "Фоизи иҷроиш"
 msgid "Conditions Should be Fulfilled"
 msgstr "Шартҳо бояд иҷро шаванд"
 
-#. [pages.resultTreatmentPanel.confirm]
-#. defaultMessage is:
-#. Confirm
 #. [pages.DeviceList.buttonConfirmMerge]
 #. defaultMessage is:
 #. Confirm
@@ -1919,9 +1934,6 @@ msgstr "Ҳодисаҳои тасдиқшуда"
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceList.connectivityHealth]
-#. defaultMessage is:
-#. Connectivity
-#. [pages.SiteList.issueCategoryConnectivityHealth]
 #. defaultMessage is:
 #. Connectivity
 #. [pages.DeviceDetailProfile.connectivity]
@@ -2220,9 +2232,6 @@ msgstr "Шаҳристон"
 msgid "Coverage"
 msgstr "Фарогирӣ"
 
-#. [p.PkDashboard.covid]
-#. defaultMessage is:
-#. Covid
 #. [pages.ResultList.resultCategoryCovid19]
 #. defaultMessage is:
 #. Covid
@@ -2236,6 +2245,13 @@ msgstr "Ковид"
 #: extracted_strings.json
 msgid "Covid 19"
 msgstr "Ковид - 19"
+
+#. [p.PkDashboard.covidPending]
+#. defaultMessage is:
+#. Covid Testing (Pending)
+#: extracted_strings.json
+msgid "Covid Testing (Pending)"
+msgstr "Санҷиши Ковид (Интизори)"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -2270,13 +2286,6 @@ msgstr "Эҷод кунед"
 #: extracted_strings.json
 msgid "Created On"
 msgstr "Сохта шудааст"
-
-#. [pages.Milestones.followUpCreatedOn]
-#. defaultMessage is:
-#. Created On:
-#: extracted_strings.json
-msgid "Created On:"
-msgstr "Таърихи:"
 
 #. [pages.Notification.type.CriticalError]
 #. defaultMessage is:
@@ -2395,12 +2404,12 @@ msgstr "Дастгоҳҳои фаъоли ҷорӣ"
 msgid "Current Diagnosis"
 msgstr "Ташхиси ҷорӣ"
 
-#. [p.PkDashboard.FQCurrent]
+#. [p.PkDashboard.CurrentFQDetectionPending]
 #. defaultMessage is:
-#. Current FQ Trends
+#. Current FQ Detection (Pending)
 #: extracted_strings.json
-msgid "Current FQ Trends"
-msgstr "Тамоюлҳои кунунии FQ"
+msgid "Current FQ Detection (Pending)"
+msgstr "Муайянкунии FQ-и ҷорӣ (Интизори)"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2410,6 +2419,9 @@ msgid "Current GX-10CX Testing performed in"
 msgstr "Озмоиши кунунии GX-10CX дар"
 
 #. [p.PkDashboard.DCurrent]
+#. defaultMessage is:
+#. Current MTB Detection
+#. [p.PkDashboard.DCurrentPending]
 #. defaultMessage is:
 #. Current MTB Detection
 #: extracted_strings.json
@@ -2444,6 +2456,13 @@ msgstr "Ташхиси кунунии RRTB"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Тамоюлҳои ташхиси муқовимат ба рифампицин"
 
+#. [p.PkDashboard.rrtbDiagnosisTitle]
+#. defaultMessage is:
+#. Current Rifampicin Resistance Diagnosis using MTB/Rif Assay
+#: extracted_strings.json
+msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Assay"
+msgstr "Ташхиси муқовимати кунунии рифампицин бо истифода аз MTB/Rif Assay"
+
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
 #. Current TB Diagnosis
@@ -2451,12 +2470,12 @@ msgstr "Тамоюлҳои ташхиси муқовимат ба рифампи
 msgid "Current TB Diagnosis"
 msgstr "Ташхиси ҳозираи бемории сил"
 
-#. [p.PkDashboard.TbCurrent]
+#. [p.PkDashboard.CurrentTBTesting]
 #. defaultMessage is:
-#. Current TB Testing Trends
+#. Current TB Testing
 #: extracted_strings.json
-msgid "Current TB Testing Trends"
-msgstr "Тамоюлҳои ҷорӣ оид ба санҷиши бемории сил"
+msgid "Current TB Testing"
+msgstr "Санҷиши кунунии бемории сил"
 
 #. [p.PkDashboard.TCurrent]
 #. defaultMessage is:
@@ -2646,9 +2665,6 @@ msgstr "Панели идоракунӣ v2"
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
 #. Data
-#. [pages.SiteList.issueCategoryDataHealth]
-#. defaultMessage is:
-#. Data
 #: extracted_strings.json
 msgid "Data"
 msgstr "Маълумот"
@@ -2680,9 +2696,6 @@ msgstr "Тандурустии маълумот"
 #. defaultMessage is:
 #. Date
 #. [pages.InventoryLog.date]
-#. defaultMessage is:
-#. Date
-#. [pages.Milestones.date]
 #. defaultMessage is:
 #. Date
 #. [pages.Notifications.table.dateHeader]
@@ -2885,12 +2898,12 @@ msgstr "Денге"
 msgid "Dengue Fever"
 msgstr "Табларзаи Денге"
 
-#. [pages.Milestones.notes]
+#. [filter.popover.destinationSiteName]
 #. defaultMessage is:
-#. Description:
+#. Destination Site
 #: extracted_strings.json
-msgid "Description:"
-msgstr "Тавсифи:"
+msgid "Destination Site"
+msgstr "Сайти таъинот"
 
 #. [pages.PersonDetails.detailsUpdatedSuccessfully]
 #. defaultMessage is:
@@ -2944,9 +2957,6 @@ msgstr "Муайян карда шуд"
 #. defaultMessage is:
 #. Device
 #. [pages.DeviceList.deviceHealth]
-#. defaultMessage is:
-#. Device
-#. [pages.SiteList.issueCategoryDeviceHealth]
 #. defaultMessage is:
 #. Device
 #. [pages.DailyStatusDialog.deviceLabel]
@@ -3244,13 +3254,6 @@ msgstr "Дастгоҳҳо аз лаборатория"
 msgid "Devices with Unused Modules"
 msgstr "Дастгоҳҳо бо модулҳои истифоданашуда"
 
-#. [forms.PhoneNumber.dialCode]
-#. defaultMessage is:
-#. Dial Code
-#: extracted_strings.json
-msgid "Dial Code"
-msgstr "Рақами рақам"
-
 #. [contextualMenu.notifications.disable.status.title]
 #. defaultMessage is:
 #. Disable
@@ -3451,6 +3454,20 @@ msgstr "ИИД"
 msgid "EQA"
 msgstr "EQA"
 
+#. [pages.XDR.cnt_eth]
+#. defaultMessage is:
+#. ETH R
+#: extracted_strings.json
+msgid "ETH R"
+msgstr "ETH R"
+
+#. [pages.XDR.cnt_eth_p]
+#. defaultMessage is:
+#. ETH R %
+#: extracted_strings.json
+msgid "ETH R %"
+msgstr "ETH R %"
+
 #. [results.categoryTypeETHResistanceI18nKey]
 #. defaultMessage is:
 #. ETH Resistance
@@ -3469,9 +3486,6 @@ msgid "Ebola"
 msgstr "Эбола"
 
 #. [button_Edit]
-#. defaultMessage is:
-#. Edit
-#. [pages.NotificationDetail.edit]
 #. defaultMessage is:
 #. Edit
 #. [pages.DeviceDetail.edit]
@@ -3775,6 +3789,13 @@ msgstr "Номи сайтро ворид кунед..."
 msgid "Error"
 msgstr "Хатогӣ"
 
+#. [pages.XDR.error]
+#. defaultMessage is:
+#. Error #
+#: extracted_strings.json
+msgid "Error #"
+msgstr "Хатогӣ #"
+
 #. [filter.popover.errorCode]
 #. defaultMessage is:
 #. Error Code
@@ -3808,13 +3829,6 @@ msgstr "Хатогӣ ҳангоми гирифтани нуқтаи ниҳоӣ"
 msgid "Error Loading All Sites"
 msgstr "Хатогӣ ҳангоми боркунии ҳама сайтҳо"
 
-#. [errorResponseMessages.fetchLgasForLocationSelector.GET.default.title]
-#. defaultMessage is:
-#. Error Loading Areas for {stateName}
-#: extracted_strings.json
-msgid "Error Loading Areas for {stateName}"
-msgstr "Хатогӣ ҳангоми боркунии минтақаҳо барои {stateName}"
-
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Countries
@@ -3836,27 +3850,10 @@ msgstr "Хатогӣ ҳангоми боркунии шарикон ва ваз�
 msgid "Error Loading Result Details"
 msgstr "Хатогӣ ҳангоми боркунии тафсилоти натиҷа"
 
-#. [errorResponseMessages.fetchDeviceLog.GET.default.title]
-#. defaultMessage is:
-#. Error Loading Result Logs
-#: extracted_strings.json
-msgid "Error Loading Result Logs"
-msgstr "Хатогӣ ҳангоми боркунии гузоришҳои натиҷа"
-
-#. [errorResponseMessages.fetchStatesForLocationSelector.GET.default.title]
-#. defaultMessage is:
-#. Error Loading States for {countryName}
-#: extracted_strings.json
-msgid "Error Loading States for {countryName}"
-msgstr "Хатогӣ ҳангоми боркунии давлатҳо барои {countryName}"
-
 #. [pages.ReportIndex.error_rate]
 #. defaultMessage is:
 #. Error Rate
 #. [component.Widget.errorRateTitle]
-#. defaultMessage is:
-#. Error Rate
-#. [p.PkDashboard.errorRate]
 #. defaultMessage is:
 #. Error Rate
 #. [pages.DeviceDetailProfile.errorRate]
@@ -3865,6 +3862,13 @@ msgstr "Хатогӣ ҳангоми боркунии давлатҳо барои
 #: extracted_strings.json
 msgid "Error Rate"
 msgstr "Сатҳи хатогиҳо"
+
+#. [p.PkDashboard.errorRatePending]
+#. defaultMessage is:
+#. Error Rate (Pending)
+#: extracted_strings.json
+msgid "Error Rate (Pending)"
+msgstr "Сатҳи хатогиҳо (интизор аст)"
 
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
@@ -4035,16 +4039,6 @@ msgstr "Санаи поёни бақо"
 msgid "Export device list"
 msgstr "Рӯйхати дастгоҳҳои содиротӣ"
 
-#. [errorResponseMessages.exportContacts.GET.400.title]
-#. defaultMessage is:
-#. Exporting Contacts Failed
-#. [errorResponseMessages.exportContacts.GET.default.title]
-#. defaultMessage is:
-#. Exporting Contacts Failed
-#: extracted_strings.json
-msgid "Exporting Contacts Failed"
-msgstr "Содироти мухотибон ноком шуд"
-
 #. [errorResponseMessages.exportWorkload.GET.400.title]
 #. defaultMessage is:
 #. Exporting Device Workload Failed
@@ -4085,16 +4079,6 @@ msgstr "Натоиҷи содирот ноком шуд"
 msgid "Exporting Sites Failed"
 msgstr "Содироти сайтҳо ноком шуд"
 
-#. [errorResponseMessages.exportSupplies.GET.400.title]
-#. defaultMessage is:
-#. Exporting Supplies Failed
-#. [errorResponseMessages.exportSupplies.GET.default.title]
-#. defaultMessage is:
-#. Exporting Supplies Failed
-#: extracted_strings.json
-msgid "Exporting Supplies Failed"
-msgstr "Содироти мавод ноком шуд"
-
 #. [pages.resultEdit.extra]
 #. defaultMessage is:
 #. Extra-pulmonary
@@ -4125,6 +4109,27 @@ msgstr "феврал"
 #: extracted_strings.json
 msgid "FLQ Resistance"
 msgstr "Муқовимат ба FLQ"
+
+#. [p.PkDashboard.fqInhTestingDiagnosis]
+#. defaultMessage is:
+#. FQ & INH Testing & Diagnosis
+#: extracted_strings.json
+msgid "FQ & INH Testing & Diagnosis"
+msgstr "Санҷиш ва ташхиси FQ & INH"
+
+#. [pages.XDR.cnt_flq]
+#. defaultMessage is:
+#. FQ R
+#: extracted_strings.json
+msgid "FQ R"
+msgstr "FQ R"
+
+#. [pages.XDR.cnt_flq_p]
+#. defaultMessage is:
+#. FQ R %
+#: extracted_strings.json
+msgid "FQ R %"
+msgstr "FQ R %"
 
 #. [p.PkDashboard.mtbXdrFQResistance]
 #. defaultMessage is:
@@ -4197,20 +4202,6 @@ msgstr "Дурӯғ"
 #: extracted_strings.json
 msgid "Female"
 msgstr "Зан"
-
-#. [forms.minAllowed]
-#. defaultMessage is:
-#. Field cannot contain less than {total} characters
-#: extracted_strings.json
-msgid "Field cannot contain less than {total} characters"
-msgstr "Майдон набояд камтар аз {total} аломат дошта бошад"
-
-#. [forms.maxAllowed]
-#. defaultMessage is:
-#. Field cannot contain more than {total} characters
-#: extracted_strings.json
-msgid "Field cannot contain more than {total} characters"
-msgstr "Майдон набояд бештар аз {total} аломат дошта бошад"
 
 #. [pages.ResultList.resultCategoryFinalResult]
 #. defaultMessage is:
@@ -4414,13 +4405,6 @@ msgstr "GP ошкор нашудааст - NP ошкор"
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP ошкор нашудааст - NP ошкор нашудааст"
 
-#. [p.PkDashboard.DTestingDiagnosis]
-#. defaultMessage is:
-#. GX-10C Testing & Diagnosis
-#: extracted_strings.json
-msgid "GX-10C Testing & Diagnosis"
-msgstr "Санҷиш ва ташхиси GX-10C"
-
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
 #. Gastric Lavage
@@ -4458,12 +4442,12 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "Картриджи GeneXpert COVID-19"
 
-#. [p.PkDashboard.genExpert]
+#. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
-#. GeneXpert Device Coverage
+#. GeneXpert Device Coverage (Pending)
 #: extracted_strings.json
-msgid "GeneXpert Device Coverage"
-msgstr "Фарогирии дастгоҳи GeneXpert"
+msgid "GeneXpert Device Coverage (Pending)"
+msgstr "Фарогирии дастгоҳи GeneXpert (Интизори)"
 
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
@@ -4549,6 +4533,16 @@ msgstr "GeneXpert HIV-1 VL"
 #: extracted_strings.json
 msgid "GeneXpert Issues"
 msgstr "Масъалаҳои GeneXpert"
+
+#. [p.PkDashboard.errorRateTitle]
+#. defaultMessage is:
+#. GeneXpert MTB-RIF/Ultra Device Errors
+#. [p.PkDashboard.genExpertError]
+#. defaultMessage is:
+#. GeneXpert MTB-RIF/Ultra Device Errors
+#: extracted_strings.json
+msgid "GeneXpert MTB-RIF/Ultra Device Errors"
+msgstr "Хатогиҳои дастгоҳи GeneXpert MTB-RIF/Ultra"
 
 #. [p.PkDashboard.utilizationTitle]
 #. defaultMessage is:
@@ -4770,6 +4764,13 @@ msgstr "Ба ҳолати ҳаррӯза гузаред"
 msgid "Go To Dashboard"
 msgstr "Ба панели идоракунӣ равед"
 
+#. [pages.XDR.goTo]
+#. defaultMessage is:
+#. Go to XDR assay result summary by device
+#: extracted_strings.json
+msgid "Go to XDR assay result summary by device"
+msgstr "Ба хулосаи натиҷаҳои таҳлили XDR аз рӯи дастгоҳ гузаред"
+
 #. [pages.TableHeader.groupByColumn]
 #. defaultMessage is:
 #. Group By Column
@@ -4878,6 +4879,9 @@ msgstr "HCV натиҷа нест"
 msgid "HCV Not Detected"
 msgstr "HCV ошкор нашудааст"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
@@ -5181,20 +5185,6 @@ msgstr "Сутунҳои пинҳоншуда:"
 msgid "Hide Column"
 msgstr "Пинҳон кардани сутун"
 
-#. [pages.NotificationDetail.history]
-#. defaultMessage is:
-#. History
-#: extracted_strings.json
-msgid "History"
-msgstr "Таърих"
-
-#. [p.PkDashboard.hiv]
-#. defaultMessage is:
-#. Hiv
-#: extracted_strings.json
-msgid "Hiv"
-msgstr "ВИЧ"
-
 #. [header.link.home.title]
 #. defaultMessage is:
 #. Home
@@ -5289,6 +5279,27 @@ msgstr "ID"
 msgid "ID includes \"{externalId}\""
 msgstr "ID дорои \"{externalId}\""
 
+#. [legends.Unknown.InhDetected]
+#. defaultMessage is:
+#. INH Detected
+#: extracted_strings.json
+msgid "INH Detected"
+msgstr "INH ошкор карда шуд"
+
+#. [pages.XDR.cnt_inh]
+#. defaultMessage is:
+#. INH R
+#: extracted_strings.json
+msgid "INH R"
+msgstr "INH R"
+
+#. [pages.XDR.cnt_inh_p]
+#. defaultMessage is:
+#. INH R %
+#: extracted_strings.json
+msgid "INH R %"
+msgstr "INH R %"
+
 #. [results.categoryTypeINHResistanceI18nKey]
 #. defaultMessage is:
 #. INH Resistance
@@ -5308,6 +5319,16 @@ msgstr ""
 "Агар ба шумо барои барқарор кардани тафсилоти воридшавӣ ба шумо кӯмак лозим "
 "бошад, лутфан бо мо тамос гиред, то мо ба шумо кумак кунем. Шумо метавонед "
 "тавассути ирсоли почтаи электронӣ ба {supportEmail} кӯмаки моро дархост кунед"
+
+#. [pages.DeviceDetailEdit.partner]
+#. defaultMessage is:
+#. Implementing Partner
+#. [pages.DeviceDetailProfile.partner]
+#. defaultMessage is:
+#. Implementing Partner
+#: extracted_strings.json
+msgid "Implementing Partner"
+msgstr "Шарики иҷрокунанда"
 
 #. [filter.ConsumableReasonSelectField.ConsumableReasonImported]
 #. defaultMessage is:
@@ -5435,16 +5456,7 @@ msgstr "Асбоб иваз карда шуд"
 msgid "Instrument Serial"
 msgstr "Силсилаи асбобҳо"
 
-#. [errorResponseMessages.fetchPatientDetails.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
 #. [errorResponseMessages.fetchPersons.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
-#. [errorResponseMessages.exportContacts.GET.403.title]
-#. defaultMessage is:
-#. Insufficient Permissions
-#. [errorResponseMessages.fetchAvailablePersons.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
 #. [errorResponseMessages.exportSites.GET.403.title]
@@ -5466,6 +5478,13 @@ msgstr "Иҷозатҳои нокифоя"
 #: extracted_strings.json
 msgid "Invalid"
 msgstr "Беэътибор"
+
+#. [pages.XDR.invalid]
+#. defaultMessage is:
+#. Invalid #
+#: extracted_strings.json
+msgid "Invalid #"
+msgstr "Беэътибор #"
 
 #. [queryFetch.errorResponseMessages.GET.401.title]
 #. defaultMessage is:
@@ -5620,9 +5639,6 @@ msgstr "Масъала дар асоси"
 #. [pages.DeviceList.issueCategory]
 #. defaultMessage is:
 #. Issues
-#. [pages.SiteList.siteIssues]
-#. defaultMessage is:
-#. Issues
 #: extracted_strings.json
 msgid "Issues"
 msgstr "Масъалаҳо"
@@ -5763,13 +5779,6 @@ msgstr "Мудири лаборатория"
 #: extracted_strings.json
 msgid "Lab User"
 msgstr "Корбари лаборатория"
-
-#. [pages.Milestones.resultSiteName]
-#. defaultMessage is:
-#. Lab:
-#: extracted_strings.json
-msgid "Lab:"
-msgstr "Лаборатория:"
 
 #. [pages.NotificationDetail.Area.Laboratory]
 #. defaultMessage is:
@@ -5984,13 +5993,6 @@ msgstr "Камтар аз 550 cp/mL"
 msgid "License"
 msgstr "Иҷозатнома"
 
-#. [pages.resultTreatmentPanel.linkedToTreatment]
-#. defaultMessage is:
-#. Linked to treatment
-#: extracted_strings.json
-msgid "Linked to treatment"
-msgstr "Бо табобат алоқаманд аст"
-
 #. [filter.AssayTypeSelectField.assayTypeLipidPanel]
 #. defaultMessage is:
 #. Lipid Panel
@@ -6092,33 +6094,12 @@ msgstr "Боркунии масолеҳи масрафӣ иҷро нашуд"
 msgid "Loading Contacts Failed"
 msgstr "Боркунии алоқаҳо ноком шуд"
 
-#. [errorResponseMessages.fetchDeviceApprovals.GET.default.title]
-#. defaultMessage is:
-#. Loading Device Approval Statuses Failed
-#: extracted_strings.json
-msgid "Loading Device Approval Statuses Failed"
-msgstr "Боркунии ҳолати тасдиқи дастгоҳ иҷро нашуд"
-
-#. [errorResponseMessages.fetchResultCategoryGroup.GET.default.title]
-#. defaultMessage is:
-#. Loading Device Maintenance Status Failed
-#: extracted_strings.json
-msgid "Loading Device Maintenance Status Failed"
-msgstr "Боркунии ҳолати нигоҳдории дастгоҳ иҷро нашуд"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.default.title]
 #. defaultMessage is:
 #. Loading DeviceOperations Failed
 #: extracted_strings.json
 msgid "Loading DeviceOperations Failed"
 msgstr "Боркунии DeviceOperations иҷро нашуд"
-
-#. [errorResponseMessages.fetchDeviceTypes.GET.default.title]
-#. defaultMessage is:
-#. Loading DeviceTypes Failed
-#: extracted_strings.json
-msgid "Loading DeviceTypes Failed"
-msgstr "Боркунии намудҳои дастгоҳ иҷро нашуд"
 
 #. [errorResponseMessages.fetchDevicesForSelectList.GET.default.title]
 #. defaultMessage is:
@@ -6134,26 +6115,12 @@ msgstr "Боркунии дастгоҳҳо ноком шуд"
 msgid "Loading Diseases Failed"
 msgstr "Боркунии бемориҳо муваффақ нашуд"
 
-#. [errorResponseMessages.fetchPatientDetails.GET.default.title]
-#. defaultMessage is:
-#. Loading Patient results details Failed
-#: extracted_strings.json
-msgid "Loading Patient results details Failed"
-msgstr "Боркунии тафсилоти натиҷаҳои бемор иҷро нашуд"
-
 #. [errorResponseMessages.fetchTreatmentStatuses.GET.default.title]
 #. defaultMessage is:
 #. Loading Result Treatment Statuses Failed
 #: extracted_strings.json
 msgid "Loading Result Treatment Statuses Failed"
 msgstr "Loading Statuss Result Failed"
-
-#. [errorResponseMessages.fetchWorkflowStatuses.GET.default.title]
-#. defaultMessage is:
-#. Loading Result Workflow Statuses Failed
-#: extracted_strings.json
-msgid "Loading Result Workflow Statuses Failed"
-msgstr "Боркунии Ҳолати ҷараёни кории натиҷа иҷро нашуд"
 
 #. [errorResponseMessages.fetchResults.GET.default.title]
 #. defaultMessage is:
@@ -6169,16 +6136,6 @@ msgstr "Натоиҷи боркунӣ иҷро нашуд"
 msgid "Loading Sites Failed"
 msgstr "Боркунии сайтҳо ноком шуд"
 
-#. [errorResponseMessages.fetchTask.GET.default.title]
-#. defaultMessage is:
-#. Loading Task Failed
-#: extracted_strings.json
-msgid "Loading Task Failed"
-msgstr "Боркунии супориш иҷро нашуд"
-
-#. [errorResponseMessages.getTasksByStatus.GET.default.title]
-#. defaultMessage is:
-#. Loading Tasks Failed
 #. [errorResponseMessages.fetchTasks.GET.default.title]
 #. defaultMessage is:
 #. Loading Tasks Failed
@@ -6524,6 +6481,9 @@ msgstr "Муайянкунии MTB"
 msgid "MTB Error"
 msgstr "Хатогии MTB"
 
+#. [resultCategoryGroup.GxMtbRifMTBErrorRifError]
+#. defaultMessage is:
+#. MTB Error Rif Error
 #. [pages.filters.GxMtbRifMTBErrorRifError]
 #. defaultMessage is:
 #. MTB Error Rif Error
@@ -6637,6 +6597,9 @@ msgstr "MTB натиҷа нест"
 msgid "MTB Not Detected"
 msgstr "MTB ошкор нашудааст"
 
+#. [resultCategoryGroup.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
+#. defaultMessage is:
+#. MTB Not Detected Drug Resistance Not Detected
 #. [pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected]
 #. defaultMessage is:
 #. MTB Not Detected Drug Resistance Not Detected
@@ -6719,6 +6682,9 @@ msgstr "Муқовимати муваффақияти MTB ҳассос аст"
 msgid "MTB Trace Detected"
 msgstr "MTB Trace муайян карда шуд"
 
+#. [resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
+#. defaultMessage is:
+#. MTB Trace Detected Rif Indeterminate
 #. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifIndeterminate]
 #. defaultMessage is:
 #. MTB Trace Detected Rif Indeterminate
@@ -6726,6 +6692,9 @@ msgstr "MTB Trace муайян карда шуд"
 msgid "MTB Trace Detected Rif Indeterminate"
 msgstr "MTB Trace Detected Rif Indeterminate"
 
+#. [resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifNoResult]
+#. defaultMessage is:
+#. MTB Trace Detected Rif No Result
 #. [pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult]
 #. defaultMessage is:
 #. MTB Trace Detected Rif No Result
@@ -6753,11 +6722,31 @@ msgstr "MTB%"
 #. [legends.Unknown.MTBPlus]
 #. defaultMessage is:
 #. MTB+
+#. [pages.XDR.cnt_mtb]
+#. defaultMessage is:
+#. MTB+
 #: extracted_strings.json
 msgid "MTB+"
 msgstr "MTB+"
 
+#. [pages.XDR.cnt_mtb_p]
+#. defaultMessage is:
+#. MTB+ %
+#: extracted_strings.json
+msgid "MTB+ %"
+msgstr "MTB+ %"
+
+#. [p.PkDashboard.monthlyMTBDiagnosedTrends]
+#. defaultMessage is:
+#. MTB+ Trends In Month
+#: extracted_strings.json
+msgid "MTB+ Trends In Month"
+msgstr "Тамоюлҳои MTB + дар моҳ"
+
 #. [pages.Status.TB.mtbDetectedTrendsInYear.title]
+#. defaultMessage is:
+#. MTB+ Trends In Year
+#. [p.PkDashboard.annualMTBDiagnosedTrends]
 #. defaultMessage is:
 #. MTB+ Trends In Year
 #: extracted_strings.json
@@ -7023,6 +7012,27 @@ msgstr "Мох"
 msgid "Monthly"
 msgstr "Меъёри миёнаи ҳармоҳаи муқовимати Rif"
 
+#. [p.PkDashboard.monthlyFQRDiagnosed]
+#. defaultMessage is:
+#. Monthly FQ-R Diagnosis
+#: extracted_strings.json
+msgid "Monthly FQ-R Diagnosis"
+msgstr "Ташхиси ҳармоҳаи FQ-R"
+
+#. [p.PkDashboard.monthlyTestingTrends]
+#. defaultMessage is:
+#. Monthly Testing Trends
+#: extracted_strings.json
+msgid "Monthly Testing Trends"
+msgstr "Тамоюлҳои санҷиши моҳона"
+
+#. [p.PkDashboard.monthlyDiagnosedTrends]
+#. defaultMessage is:
+#. Monthly diagnosis Trends
+#: extracted_strings.json
+msgid "Monthly diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси моҳона"
+
 #. [legends.Unknown.resultCategoryMoreThan1000]
 #. defaultMessage is:
 #. More Than 1000 cp/mL
@@ -7081,13 +7091,6 @@ msgstr "Сутунро ба рост ҳаракат кунед"
 #: extracted_strings.json
 msgid "N/A"
 msgstr "Н/А"
-
-#. [pages.resultTreatmentPanel.note]
-#. defaultMessage is:
-#. NOTE:
-#: extracted_strings.json
-msgid "NOTE:"
-msgstr "ШАРҲ:"
 
 #. [months.november]
 #. defaultMessage is:
@@ -7169,12 +7172,26 @@ msgstr "Миллӣ"
 msgid "National Contacts"
 msgstr "Тамосҳои миллӣ"
 
-#. [p.PkDashboard.FQNationalTrend]
+#. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
-#. National FQ Trend
+#. National FQ Resistance Trend
 #: extracted_strings.json
-msgid "National FQ Trend"
-msgstr "Тамоюли миллии FQ"
+msgid "National FQ Resistance Trend"
+msgstr "Тамоюли муқовимати миллии FQ"
+
+#. [p.PkDashboard.nationalFqrResistanceTrend]
+#. defaultMessage is:
+#. National FQ-R Resistance Trend
+#: extracted_strings.json
+msgid "National FQ-R Resistance Trend"
+msgstr "Тамоюли муқовимати миллии FQ-R"
+
+#. [p.PkDashboard.GXTbNationalDiagnosis]
+#. defaultMessage is:
+#. National GX-10C Diagnosed Trends in
+#: extracted_strings.json
+msgid "National GX-10C Diagnosed Trends in"
+msgstr "Тамоюлҳои ташхиси миллии GX-10C дар"
 
 #. [p.PkDashboard.GXTbNationalTrend]
 #. defaultMessage is:
@@ -7189,6 +7206,13 @@ msgstr "Тамоюлҳои миллии санҷиши GX-10C"
 #: extracted_strings.json
 msgid "National RRTB Trends"
 msgstr "Тамоюлҳои миллии RRTB"
+
+#. [p.PkDashboard.rrtbNationalDiagnosisTrendsTitle]
+#. defaultMessage is:
+#. National Rifampicin Resistance Diagnosis Trends
+#: extracted_strings.json
+msgid "National Rifampicin Resistance Diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси муқовимати миллии рифампицин"
 
 #. [p.PkDashboard.TbDNationalTrend]
 #. defaultMessage is:
@@ -7213,6 +7237,13 @@ msgstr "Тамоюлҳои миллии санҷиши бемории сил"
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Тамоюлҳои имтиҳони миллӣ"
+
+#. [p.PkDashboard.nationalMtbRifDiagnosed]
+#. defaultMessage is:
+#. National Testing Trends using MTB/XDR Assay
+#: extracted_strings.json
+msgid "National Testing Trends using MTB/XDR Assay"
+msgstr "Тамоюлҳои миллии тестӣ бо истифода аз MTB/XDR Assay"
 
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
@@ -7331,9 +7362,6 @@ msgstr "Баъдӣ"
 #. [pages.resultEdit.no]
 #. defaultMessage is:
 #. No
-#. [pages.NotificationList.no]
-#. defaultMessage is:
-#. No
 #: extracted_strings.json
 msgid "No"
 msgstr "Не"
@@ -7399,6 +7427,13 @@ msgstr "Не қудрат"
 msgid "No Result"
 msgstr "Натиҷа нест"
 
+#. [pages.XDR.noResult]
+#. defaultMessage is:
+#. No Result #
+#: extracted_strings.json
+msgid "No Result #"
+msgstr "Натижа #"
+
 #. [pages.shared.deviceStatus.inactiveNoResultsReported]
 #. defaultMessage is:
 #. No Results Reported
@@ -7448,13 +7483,6 @@ msgstr ""
 "Ягон маконе барои ин сайт таъин нашудааст - Лутфан, барои таъин кардани "
 "майдонҳои арз ва тулӣ таҳрир кунед."
 
-#. [pages.ResultWorkflowStatusLog.noWorkflowStatusLog]
-#. defaultMessage is:
-#. No logs for this result.
-#: extracted_strings.json
-msgid "No logs for this result."
-msgstr "Барои ин натиҷа сабт нест."
-
 #. [pages.NotificationDetail.fieldNoMatch]
 #. defaultMessage is:
 #. No matching results found
@@ -7466,9 +7494,6 @@ msgid "No matching results found"
 msgstr "Ягон натиҷаи мувофиқе ёфт нашуд"
 
 #. [base.noOptionsMessage]
-#. defaultMessage is:
-#. No options
-#. [form.noOptions]
 #. defaultMessage is:
 #. No options
 #: extracted_strings.json
@@ -7547,9 +7572,6 @@ msgstr "Тасдиқ нашудааст"
 msgid "Not Detected"
 msgstr "Муайян карда нашудааст"
 
-#. [errorResponseMessages.fetchUpdateSiteContacts.PUT.404.title]
-#. defaultMessage is:
-#. Not Found
 #. [pages.NotFound.title]
 #. defaultMessage is:
 #. Not Found
@@ -7586,26 +7608,12 @@ msgstr "Мумкин нест"
 msgid "Not Recorded"
 msgstr "Сабт карда нашудааст"
 
-#. [pages.resultTreatmentPanel.notPossible]
-#. defaultMessage is:
-#. Not possible
-#: extracted_strings.json
-msgid "Not possible"
-msgstr "Мумкин нест"
-
 #. [page.contacts.person.notSpecified]
 #. defaultMessage is:
 #. Not specified
 #: extracted_strings.json
 msgid "Not specified"
 msgstr "Муайян нашудааст"
-
-#. [pages.resultTreatmentPanel.notYetConfirmedOnTreatment]
-#. defaultMessage is:
-#. Not yet confirmed on treatment
-#: extracted_strings.json
-msgid "Not yet confirmed on treatment"
-msgstr "Дар бораи табобат ҳанӯз тасдиқ нашудааст"
 
 #. [pages.DailyStatusDialog.note]
 #. defaultMessage is:
@@ -7734,6 +7742,13 @@ msgstr "Шумораи Дастгоҳҳо"
 msgid "Number of Locations"
 msgstr "Шумораи ҷойҳо"
 
+#. [pages.XDR.isPmdt]
+#. defaultMessage is:
+#. Number of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "Number of PMDT Sites with 10 C GX"
+msgstr "Шумораи сайтҳои PMDT бо 10 C GX"
+
 #. [pages.ReportIndex.resultCountsByHIVStatus_description]
 #. defaultMessage is:
 #. Number of TB results grouped by patient HIV status
@@ -7768,6 +7783,13 @@ msgid ""
 msgstr ""
 "Шумораи натиҷаҳо дар 30 рӯзи охир ба иқтидори ҳаррӯзаи асбоб ба 30 рӯзи зарб "
 "тақсим карда мешавад"
+
+#. [pages.XDR.hasPerformedXdr]
+#. defaultMessage is:
+#. Number of sites tested MTB/XDR Assay
+#: extracted_strings.json
+msgid "Number of sites tested MTB/XDR Assay"
+msgstr "Шумораи сайтҳои санҷидашудаи MTB/XDR Assay"
 
 #. [component.InputPassword.numbersIncluded]
 #. defaultMessage is:
@@ -7925,19 +7947,19 @@ msgstr "Амалиёт"
 msgid "Operational Data"
 msgstr "Маълумоти амалиётӣ"
 
-#. [pages.ResultWorkflowStatusLog.logOperator]
-#. defaultMessage is:
-#. Operator
-#: extracted_strings.json
-msgid "Operator"
-msgstr "Оператор"
-
 #. [pages.deviceDetail.ResultWorkflowStatusOrdered]
 #. defaultMessage is:
 #. Ordered
 #: extracted_strings.json
 msgid "Ordered"
 msgstr "Фармоиш дод"
+
+#. [filter.popover.originSiteName]
+#. defaultMessage is:
+#. Origin Site
+#: extracted_strings.json
+msgid "Origin Site"
+msgstr "Сайти пайдоиш"
 
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
@@ -8008,20 +8030,6 @@ msgstr "Аз инвентаризатсия"
 msgid "Out of Stock"
 msgstr "Батамом фурӯхта шудааст"
 
-#. [pages.Milestones.followUpName]
-#. defaultMessage is:
-#. Outcome
-#: extracted_strings.json
-msgid "Outcome"
-msgstr "Натиҷа"
-
-#. [pages.Milestones.followUpTypeName]
-#. defaultMessage is:
-#. Outcome type:
-#: extracted_strings.json
-msgid "Outcome type:"
-msgstr "Навъи натиҷа:"
-
 #. [pages.Status.deviceStatusTitle.graph]
 #. defaultMessage is:
 #. Overall Activity Rate
@@ -8042,6 +8050,13 @@ msgstr "Ҳамарӯза саломатии шабакавӣ"
 #: extracted_strings.json
 msgid "Overdue"
 msgstr "Муддат гузаштааст"
+
+#. [jobFunction.pakistanDashboardTesting]
+#. defaultMessage is:
+#. Pakistan Dashboard Testing
+#: extracted_strings.json
+msgid "Pakistan Dashboard Testing"
+msgstr "Pakistan Dashboard Testing"
 
 #. [filter.popover.partner]
 #. defaultMessage is:
@@ -8093,19 +8108,9 @@ msgstr "Рамз бояд мувофиқат кунад"
 #. [forms.formSectionHeader.patient]
 #. defaultMessage is:
 #. Patient
-#. [pages.ClinicalHistory.patient]
-#. defaultMessage is:
-#. Patient
 #: extracted_strings.json
 msgid "Patient"
 msgstr "Бемор"
-
-#. [pages.ClinicalHistory.patientData]
-#. defaultMessage is:
-#. Patient Data
-#: extracted_strings.json
-msgid "Patient Data"
-msgstr "Маълумоти беморон"
 
 #. [filter.popover.patientOrResearchId]
 #. defaultMessage is:
@@ -8168,13 +8173,41 @@ msgstr "Дар интизорӣ"
 msgid "Pending changes"
 msgstr "Тағйироти интизорӣ"
 
-#. [pages.TaskDetail.peopleAlerted]
+#. [p.PkDashboard.peopleDiagnosedRif]
 #. defaultMessage is:
-#. People alerted
+#. People diagnosed for TB using MTB/Rif assay in current year
 #: extracted_strings.json
-msgid "People alerted"
-msgstr "Одамон огох карданд"
+msgid "People diagnosed for TB using MTB/Rif assay in current year"
+msgstr ""
+"Одамоне, ки дар соли ҷорӣ бо истифода аз таҳлили MTB/Rif гирифтори бемории "
+"сил ташхис шудаанд"
 
+#. [p.PkDashboard.peopleDiagnosedXdr]
+#. defaultMessage is:
+#. People diagnosed using MTB/XDR assay in current year
+#: extracted_strings.json
+msgid "People diagnosed using MTB/XDR assay in current year"
+msgstr ""
+"Одамоне, ки дар соли ҷорӣ бо истифода аз ташхиси MTB/XDR ташхис шудаанд"
+
+#. [p.PkDashboard.peopleTestedCovid]
+#. defaultMessage is:
+#. People tested for Covid in current year
+#: extracted_strings.json
+msgid "People tested for Covid in current year"
+msgstr ""
+"Одамоне, ки дар соли ҷорӣ бо истифода аз ташхиси MTB/XDR ташхис шудаанд"
+
+#. [p.PkDashboard.peopleTestedHiv]
+#. defaultMessage is:
+#. People tested for HIV in current year
+#: extracted_strings.json
+msgid "People tested for HIV in current year"
+msgstr "Одамоне, ки дар соли ҷорӣ барои ВНМО аз санҷиш гузаштаанд"
+
+#. [p.PkDashboard.peopleTestedRif]
+#. defaultMessage is:
+#. People tested for TB using MTB/Rif assay in current year
 #. [p.PkDashboard.molecularAssay]
 #. defaultMessage is:
 #. People tested for TB using MTB/Rif assay in current year
@@ -8183,6 +8216,13 @@ msgid "People tested for TB using MTB/Rif assay in current year"
 msgstr ""
 "Одамоне, ки дар соли ҷорӣ бо истифода аз MTB/Rif ташхиси бемории силро "
 "санҷидаанд"
+
+#. [p.PkDashboard.peopleTestedXdr]
+#. defaultMessage is:
+#. People tested using MTB/XDR assay in current year
+#: extracted_strings.json
+msgid "People tested using MTB/XDR assay in current year"
+msgstr "Одамоне, ки дар соли ҷорӣ бо истифода аз MTB/XDR санҷида шуданд"
 
 #. [pages.OperationalData.percentPositive]
 #. defaultMessage is:
@@ -8450,10 +8490,14 @@ msgstr "Лутфан санаро муайян кунед"
 msgid "Please specify an expiry date"
 msgstr "Лутфан санаи ба охир расидани мӯҳлатро муайян кунед"
 
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
 #. [pages.NewInventoryDialogForm.quantityRequired]
+#. defaultMessage is:
+#. Please specify the quantity
+#: extracted_strings.json
+msgid "Please specify the quantity"
+msgstr "Лутфан миқдорро муайян кунед"
+
+#. [pages.AddInventoryDialogForm.quantityRequired]
 #. defaultMessage is:
 #. Please specify the quantity to add
 #: extracted_strings.json
@@ -8638,9 +8682,6 @@ msgstr "Мусбат"
 #. [pages.UserPreferences.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
-#. [forms.Chips.createTags]
-#. defaultMessage is:
-#. Press enter to add tag
 #. [pages.NotificationDetail.fieldNoMatchTags]
 #. defaultMessage is:
 #. Press enter to add tag
@@ -8813,43 +8854,121 @@ msgstr "Вилоят"
 msgid "Province/Region"
 msgstr "Вилоят/минтақа"
 
-#. [p.PkDashboard.FQProvincialComparison]
+#. [p.PkDashboard.nationalTrendsAnnual]
 #. defaultMessage is:
-#. Provincial FQ trends Comparison
+#. Provinces annual utilization rates
 #: extracted_strings.json
-msgid "Provincial FQ trends Comparison"
-msgstr "Муқоисаи тамоюлҳои FQ-и музофотӣ"
+msgid "Provinces annual utilization rates"
+msgstr "Сатҳи солонаи истифодабарии вилоятҳо"
 
-#. [p.PkDashboard.RRProvincialComparison]
+#. [p.PkDashboard.provincialDiagnosisTrends]
 #. defaultMessage is:
-#. Provincial RRTB Diagnosis Trends Comparison
+#. Provincial Diagnosis Trends
 #: extracted_strings.json
-msgid "Provincial RRTB Diagnosis Trends Comparison"
-msgstr "Муқоисаи тамоюлҳои ташхиси вилоятии RRTB"
+msgid "Provincial Diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси музофотӣ"
 
-#. [p.PkDashboard.TbDProvincialComparison]
+#. [p.PkDashboard.provincialDiagnosisTrendsComparison]
 #. defaultMessage is:
-#. Provincial TB Diagnosis Trends Comparison
-#. [p.PkDashboard.DProvincialComparison]
+#. Provincial Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "Provincial Diagnosis Trends Comparison"
+msgstr "Муқоисаи тамоюлҳои ташхиси музофотӣ"
+
+#. [p.PkDashboard.tbCasesDiagnosed]
+#. defaultMessage is:
+#. Provincial Diagnosis Trends for the current year
+#: extracted_strings.json
+msgid "Provincial Diagnosis Trends for the current year"
+msgstr "Тамоюлҳои ташхиси музофотӣ барои соли ҷорӣ"
+
+#. [p.PkDashboard.provincialFqrDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial FQ Diagnosis Trends
+#. [p.PkDashboard.ProvincialFQDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial FQ Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial FQ Diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси вилоятии FQ"
+
+#. [p.PkDashboard.provincialRRDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial RR Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial RR Diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси вилоятии RR"
+
+#. [p.PkDashboard.ProvincialRRTBDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial RRTB Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial RRTB Diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси вилоятии RRTB"
+
+#. [p.PkDashboard.ProvincialTBDiagnosisTrendsComparison]
 #. defaultMessage is:
 #. Provincial TB Diagnosis Trends Comparison
 #: extracted_strings.json
 msgid "Provincial TB Diagnosis Trends Comparison"
 msgstr "Муқоисаи тамоюлҳои ташхиси бемории сил дар вилоят"
 
-#. [p.PkDashboard.TbProvincialComparison]
+#. [p.PkDashboard.ProvincialTBTestingTrend]
 #. defaultMessage is:
-#. Provincial TB Testing Trend comparison
+#. Provincial TB Testing Trend
 #: extracted_strings.json
-msgid "Provincial TB Testing Trend comparison"
-msgstr "Муқоисаи тамоюли санҷиши сил дар вилоят"
+msgid "Provincial TB Testing Trend"
+msgstr "Тамоюли санҷиши сил дар вилоят"
 
-#. [p.PkDashboard.TProvincialComparison]
+#. [p.PkDashboard.ProvincialTestingTrend]
 #. defaultMessage is:
-#. Provincial Trend Comparison
+#. Provincial Testing Trend
 #: extracted_strings.json
-msgid "Provincial Trend Comparison"
-msgstr "Муқоисаи тамоюли музофотӣ"
+msgid "Provincial Testing Trend"
+msgstr "Тамоюли санҷиши вилоят"
+
+#. [p.PkDashboard.provincialTestingTrendsYear]
+#. defaultMessage is:
+#. Provincial Testing in current year
+#: extracted_strings.json
+msgid "Provincial Testing in current year"
+msgstr "Имтиҳони вилоятӣ дар соли ҷорӣ"
+
+#. [p.PkDashboard.provincialXdrDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial/District Diagnosis Trends using MTB/XDR Assay
+#: extracted_strings.json
+msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
+msgstr "Тамоюлҳои ташхиси вилоятӣ/ноҳиявӣ бо истифода аз MTB/XDR Tahlil"
+
+#. [p.PkDashboard.provincialDiagnosisTrendsRRTBComparison]
+#. defaultMessage is:
+#. Provincial/District RR Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial/District RR Diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси вилоятӣ/ноҳиявии RR"
+
+#. [p.PkDashboard.provincialTBTestingTrends]
+#. defaultMessage is:
+#. Provincial/District TB Testing Trends
+#: extracted_strings.json
+msgid "Provincial/District TB Testing Trends"
+msgstr "Тамоюлҳои санҷиши бемории сил дар вилоят/ноҳия"
+
+#. [p.PkDashboard.provincialTestingTrends]
+#. defaultMessage is:
+#. Provincial/District Testing Trends
+#: extracted_strings.json
+msgid "Provincial/District Testing Trends"
+msgstr "Тамоюлҳои санҷиши бемории сил дар вилоят/ноҳия"
+
+#. [p.PkDashboard.provincialXdrTestingTrends]
+#. defaultMessage is:
+#. Provincial/District Testing Trends using MTB/XDR Assay in current year
+#: extracted_strings.json
+msgid "Provincial/District Testing Trends using MTB/XDR Assay in current year"
+msgstr ""
+"Тамоюлҳои санҷиши вилоятӣ/ноҳиявӣ бо истифода аз MTB/XDR Tahlil дар соли ҷорӣ"
 
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
@@ -8995,6 +9114,13 @@ msgstr "Муқовимати RIF"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Меъёри муқовимати RIF (%pнатиҷаҳои мусбат)"
 
+#. [p.PkDashboard.rrCasesDiagnosed]
+#. defaultMessage is:
+#. RR cases diagnosed
+#: extracted_strings.json
+msgid "RR cases diagnosed"
+msgstr "Ҳодисаҳои RR ташхис карда шуданд"
+
 #. [p.PkDashboard.RRPerDay]
 #. defaultMessage is:
 #. RR cases diagnosed in last 24 hours
@@ -9064,9 +9190,6 @@ msgstr "Барои таҳвил омода аст"
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
 #. Reagent
-#. [pages.SiteList.issueCategoryReagentHealth]
-#. defaultMessage is:
-#. Reagent
 #: extracted_strings.json
 msgid "Reagent"
 msgstr "Реактив"
@@ -9110,13 +9233,6 @@ msgstr "Инвентаризатсияро дар транзит қабул ку
 #: extracted_strings.json
 msgid "Receive {consumableName}"
 msgstr "Гирифтани {consumableName}"
-
-#. [errorResponseMessages.receiveInventory.PUT.default.title]
-#. defaultMessage is:
-#. Receiving Inventory Failed
-#: extracted_strings.json
-msgid "Receiving Inventory Failed"
-msgstr "Қабули инвентаризатсия ноком шуд"
 
 #. [pages.Notifications.table.recipients]
 #. defaultMessage is:
@@ -9211,13 +9327,6 @@ msgstr "Сатрро хориҷ кунед"
 #: extracted_strings.json
 msgid "Remove {consumableName}"
 msgstr "{consumableName}-ро нест кунед"
-
-#. [errorResponseMessages.removeInventory.PUT.default.title]
-#. defaultMessage is:
-#. Removing Inventory Failed
-#: extracted_strings.json
-msgid "Removing Inventory Failed"
-msgstr "Нест кардани инвентаризатсия ноком шуд"
 
 #. [pages.resultEdit.repeatBaseline]
 #. defaultMessage is:
@@ -9528,9 +9637,6 @@ msgstr "Хал карда шуд"
 #. [placeholder.result]
 #. defaultMessage is:
 #. Result
-#. [pages.Milestones.resultNotes]
-#. defaultMessage is:
-#. Result
 #. [pages.ResultList.resultText]
 #. defaultMessage is:
 #. Result
@@ -9795,22 +9901,6 @@ msgstr "Намоишгари натиҷа - Ҳа"
 msgid "Result Workflow Status"
 msgstr "Ҳолати ҷараёни кории натиҷа"
 
-#. [pages.ResultWorkflowStatusLog.totalWorkflowStatusLog]
-#. defaultMessage is:
-#. Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }
-#: extracted_strings.json
-msgid ""
-"Result Workflow Status Log {itemCount, plural, =0 {} other {({itemCount})} }"
-msgstr ""
-"Натиҷаи гузориши ҳолати кор {itemCount, ҷамъ, =0 {} other {({itemCount})} }"
-
-#. [pages.Milestones.resultEndedOn]
-#. defaultMessage is:
-#. Result ended on:
-#: extracted_strings.json
-msgid "Result ended on:"
-msgstr "Натиҷа ба анҷом расид:"
-
 #. [pages.transferResult.successMessagePatient]
 #. defaultMessage is:
 #. Result for patient "{patientId}" has been transferred from "{oldSiteName}" to "{newSiteName}"
@@ -10015,9 +10105,6 @@ msgstr "гилро"
 #. [forms.formSectionHeader.sample]
 #. defaultMessage is:
 #. Sample
-#. [pages.MilestonesSample.sampleId]
-#. defaultMessage is:
-#. Sample
 #: extracted_strings.json
 msgid "Sample"
 msgstr "Намуна"
@@ -10041,13 +10128,6 @@ msgstr "Санаи ҷамъоварии намуна"
 #: extracted_strings.json
 msgid "Sample Collection Site"
 msgstr "Сайти ҷамъоварии намуна"
-
-#. [pages.Milestones.originalSiteName]
-#. defaultMessage is:
-#. Sample Collection Site:
-#: extracted_strings.json
-msgid "Sample Collection Site:"
-msgstr "Сайти ҷамъоварии намуна:"
 
 #. [filter.popover.sampleId]
 #. defaultMessage is:
@@ -10091,13 +10171,6 @@ msgstr "Намунаи сайти пайдоиш"
 #: extracted_strings.json
 msgid "Sample Type"
 msgstr "Намунаи намуна"
-
-#. [pages.Milestones.sampleType]
-#. defaultMessage is:
-#. Sample Type:
-#: extracted_strings.json
-msgid "Sample Type:"
-msgstr "Навъи намуна:"
 
 #. [filter.popover.sampleOriginSite]
 #. defaultMessage is:
@@ -10207,20 +10280,6 @@ msgstr "Ҷустуҷӯи масолеҳи истеъмолӣ ноком шуд"
 msgid "Searching Contacts Failed"
 msgstr "Ҷустуҷӯи мухотибон ноком шуд"
 
-#. [errorResponseMessages.fetchDeviceApprovals.GET.400.title]
-#. defaultMessage is:
-#. Searching Device Approvals Failed
-#: extracted_strings.json
-msgid "Searching Device Approvals Failed"
-msgstr "Ҷустуҷӯи тасдиқҳои дастгоҳ ноком шуд"
-
-#. [errorResponseMessages.fetchResultCategoryGroup.GET.400.title]
-#. defaultMessage is:
-#. Searching Device Maintenance status Failed
-#: extracted_strings.json
-msgid "Searching Device Maintenance status Failed"
-msgstr "Ҷустуҷӯи ҳолати нигоҳдории дастгоҳ иҷро нашуд"
-
 #. [errorResponseMessages.fetchDeviceOperations.GET.400.title]
 #. defaultMessage is:
 #. Searching DeviceOperations Failed
@@ -10235,13 +10294,6 @@ msgstr "Ҷустуҷӯи амалиёти дастгоҳ ноком шуд"
 msgid "Searching Diseases Failed"
 msgstr "Ҷустуҷӯи бемориҳо муваффақ нашуд"
 
-#. [errorResponseMessages.fetchPatientResult.GET.400.title]
-#. defaultMessage is:
-#. Searching Patient Result Failed
-#: extracted_strings.json
-msgid "Searching Patient Result Failed"
-msgstr "Натоиҷи ҷустуҷӯи бемор"
-
 #. [errorResponseMessages.fetchTreatmentStatuses.GET.400.title]
 #. defaultMessage is:
 #. Searching Result Treatment Statuses Failed
@@ -10249,29 +10301,12 @@ msgstr "Натоиҷи ҷустуҷӯи бемор"
 msgid "Searching Result Treatment Statuses Failed"
 msgstr "Ҷустуҷӯи ҳолати муолиҷаи натиҷа ноком шуд"
 
-#. [errorResponseMessages.fetchWorkflowStatuses.GET.400.title]
-#. defaultMessage is:
-#. Searching Result Workflow Statuses Failed
-#: extracted_strings.json
-msgid "Searching Result Workflow Statuses Failed"
-msgstr "Ҷустуҷӯи Ҳолати ҷараёни кории натиҷа ноком шуд"
-
 #. [errorResponseMessages.fetchResults.GET.400.title]
 #. defaultMessage is:
 #. Searching Results Failed
 #: extracted_strings.json
 msgid "Searching Results Failed"
 msgstr "Натоиҷи ҷустуҷӯ"
-
-#. [errorResponseMessages.getTasksByStatus.GET.400.title]
-#. defaultMessage is:
-#. Searching Task Failed
-#. [errorResponseMessages.fetchTask.GET.400.title]
-#. defaultMessage is:
-#. Searching Task Failed
-#: extracted_strings.json
-msgid "Searching Task Failed"
-msgstr "Ҷустуҷӯи супориш ноком шуд"
 
 #. [errorResponseMessages.fetchTasks.GET.400.title]
 #. defaultMessage is:
@@ -10357,13 +10392,6 @@ msgstr "Категорияи натиҷаро интихоб кунед ..."
 msgid "Select Site..."
 msgstr "Сайтро интихоб кунед..."
 
-#. [filter.clientSideFilterSelect.selectState]
-#. defaultMessage is:
-#. Select State
-#: extracted_strings.json
-msgid "Select State"
-msgstr "Ҳолатро интихоб кунед"
-
 #. [pages.dateRangeSelector.selectWeek]
 #. defaultMessage is:
 #. Select Week...
@@ -10377,13 +10405,6 @@ msgstr "Ҳафтаро интихоб кунед..."
 #: extracted_strings.json
 msgid "Select Year..."
 msgstr "Солро интихоб кунед..."
-
-#. [filter.clientSideFilterSelect.selectAssay]
-#. defaultMessage is:
-#. Select an Assay
-#: extracted_strings.json
-msgid "Select an Assay"
-msgstr "Таҳлилро интихоб кунед"
 
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
@@ -10782,6 +10803,13 @@ msgid "Show Only Transfers"
 msgstr ""
 "Танҳо натиҷаҳоро нишон диҳед, ки аз ҷониби хабарнигор бор карда шудааст"
 
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Нишон додани фоиз"
+
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
 #. Showing all sites/devices and the number of days which they had no stock in the last month.
@@ -10829,17 +10857,6 @@ msgstr ""
 "Намоиши {firstItemIndex}-{lastItemIndex} аз {itemCount, plural, one {# "
 "дастгоҳ} other {# дастгоҳ} }"
 
-#. [pages.ResultWorkflowStatusLog.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} other {# logs} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# log} "
-"other {# logs} }"
-msgstr ""
-"Намоиши {firstItemIndex}-{lastItemIndex} аз {itemCount, plural, one {# log} "
-"other {# гузориш} }"
-
 #. [pages.Notification.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# notification} other {# notifications} }
@@ -10877,6 +10894,9 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
 #. [pages.DeviceDetailProfile.paginatorStatus]
+#. defaultMessage is:
+#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
+#. [pages.XDR.paginatorStatus]
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# result} other {# results} }
 #: extracted_strings.json
@@ -10991,6 +11011,9 @@ msgstr "Баромадан"
 #. [pages.DeviceDetailProfile.site]
 #. defaultMessage is:
 #. Site
+#. [pages.XDR.site]
+#. defaultMessage is:
+#. Site
 #: extracted_strings.json
 msgid "Site"
 msgstr "Сайт"
@@ -11078,13 +11101,6 @@ msgstr "Навъи сайт"
 #: extracted_strings.json
 msgid "Site Working Hours"
 msgstr "Соатҳои кории сайт"
-
-#. [pages.TaskDetail.siteContact]
-#. defaultMessage is:
-#. Site contact
-#: extracted_strings.json
-msgid "Site contact"
-msgstr "Тамос бо сайт"
 
 #. [errorResponseMessages.updateSite.PUT.409.siteNameRepeated]
 #. defaultMessage is:
@@ -11274,13 +11290,7 @@ msgstr "Статистика дар бораи SMS огоҳиномаҳои фи
 #. [pages.Status.title]
 #. defaultMessage is:
 #. Status
-#. [pages.ResultWorkflowStatusLog.logStatus]
-#. defaultMessage is:
-#. Status
 #. [pages.ResultList.resultCategoryStatus]
-#. defaultMessage is:
-#. Status
-#. [pages.TaskDetail.status]
 #. defaultMessage is:
 #. Status
 #. [pages.workload.deviceStatus]
@@ -11337,13 +11347,6 @@ msgstr "Қавӣ"
 #: extracted_strings.json
 msgid "Study/Research"
 msgstr "Омӯзиш / Тадқиқот"
-
-#. [p.PkDashboard.TbSubprovincialTrend]
-#. defaultMessage is:
-#. Sub-Provincial TB Testing Trends
-#: extracted_strings.json
-msgid "Sub-Provincial TB Testing Trends"
-msgstr "Тамоюлҳои санҷиши бемории сил дар зервилоятҳо"
 
 #. [button_Submit]
 #. defaultMessage is:
@@ -11500,13 +11503,6 @@ msgstr "TB G&D"
 msgid "TB LAMP"
 msgstr "ЛАМПАИ сил"
 
-#. [pages.NotificationDetail.title]
-#. defaultMessage is:
-#. TB MTB+ Rif+ in Western Region
-#: extracted_strings.json
-msgid "TB MTB+ Rif+ in Western Region"
-msgstr "TB MTB+ Rif+ дар минтақаи ғарбӣ"
-
 #. [pages.resultEdit.TBRegistrationNumberCurrentI18nKey]
 #. defaultMessage is:
 #. TB Registration Number - Current
@@ -11549,12 +11545,26 @@ msgstr "Санҷиши бемории сил"
 msgid "TB Testing & Diagnosis Trends"
 msgstr "Тамоюлҳои санҷиш ва ташхиси сил"
 
+#. [p.PkDashboard.mtbRifTestingDiagnosed]
+#. defaultMessage is:
+#. TB Testing & Diagnosis Trends using MTB/Rif Assay
+#: extracted_strings.json
+msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
+msgstr "Тамоюлҳои санҷиш ва ташхиси сил бо истифода аз MTB/Rif Assay"
+
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
 #. TB XDR Drug Resistances
 #: extracted_strings.json
 msgid "TB XDR Drug Resistances"
 msgstr "Муқовимат ба маводи мухаддир TB XDR"
+
+#. [p.PkDashboard.testingDiagnosisTrendsRR]
+#. defaultMessage is:
+#. TB and RRTB Diagnosis Trends
+#: extracted_strings.json
+msgid "TB and RRTB Diagnosis Trends"
+msgstr "Тамоюлҳои ташхиси сил ва RRTB"
 
 #. [p.PkDashboard.rifCurrentDiagnosisTitle]
 #. defaultMessage is:
@@ -11603,9 +11613,6 @@ msgstr "Ҳадаф"
 msgid "Target device"
 msgstr "Дастгоҳи ҳадаф"
 
-#. [pages.TaskDetail.title]
-#. defaultMessage is:
-#. Task
 #. [pages.TaskAggre.title]
 #. defaultMessage is:
 #. Task
@@ -11731,6 +11738,9 @@ msgstr "Таърихи санҷиш"
 msgid "Testing"
 msgstr "Санҷиш"
 
+#. [p.PkDashboard.testingAndDiagnosisUsingXdr]
+#. defaultMessage is:
+#. Testing & Diagnosis Trends using MTB/XDR Assay
 #. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
 #. Testing & Diagnosis Trends using MTB/XDR Assay
@@ -11771,6 +11781,13 @@ msgstr "Санҷишҳо дар як рӯз"
 #: extracted_strings.json
 msgid "Tests Performed"
 msgstr "Санҷишҳо гузаронида шуданд"
+
+#. [p.PkDashboard.testsPerformedYear]
+#. defaultMessage is:
+#. Tests Performed in current year
+#: extracted_strings.json
+msgid "Tests Performed in current year"
+msgstr "Санҷишҳо дар соли ҷорӣ гузаронида шуданд"
 
 #. [pages.InventoryAdjustmentDialogForm.testsRunBetween]
 #. defaultMessage is:
@@ -11816,7 +11833,7 @@ msgid ""
 msgstr ""
 "Фоизи миёнаи анҷоми майдонҳои фармоишӣ дар моҳи ҷорӣ. Ҳисоб ба муқоисаи "
 "байни холҳои пуркардашудаи ҳар як майдони фармоишии натиҷа ва холҳои умумии "
-"майдонҳои ба таҳлил таъиншуда асос меёбад."
+"майдонҳои ба таҳлил таъиншуда асос меёбад"
 
 #. [component.Widget.activeDevicesDescription]
 #. defaultMessage is:
@@ -12422,20 +12439,6 @@ msgstr "Ин алоқа метавонад ҳамчун корбар ворид 
 msgid "This contact is assigned to:"
 msgstr "Ин алоқа ба:"
 
-#. [forms.validEmail]
-#. defaultMessage is:
-#. This email is not valid
-#: extracted_strings.json
-msgid "This email is not valid"
-msgstr "Ин почтаи электронӣ эътибор надорад"
-
-#. [forms.isRequired]
-#. defaultMessage is:
-#. This field is required
-#: extracted_strings.json
-msgid "This field is required"
-msgstr "Ин бахш ҳатмист"
-
 #. [pages.InventoryItemsList.inventoryOnHand.mandatoryNote]
 #. defaultMessage is:
 #. This is a mandatory field its mandatory and must be at least 3 characters long
@@ -12789,6 +12792,9 @@ msgstr "Натиҷаҳои умумӣ"
 #. [pages.workload.totalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [pages.XDR.cntAll]
+#. defaultMessage is:
+#. Total Tests
 #: extracted_strings.json
 msgid "Total Tests"
 msgstr "Санҷишҳои умумӣ"
@@ -12897,26 +12903,12 @@ msgstr "Интиқоли {consumableName}"
 msgid "Transferred Out"
 msgstr "Интиқол дода шуд"
 
-#. [errorResponseMessages.transferInventory.PUT.default.title]
-#. defaultMessage is:
-#. Transferring Inventory Failed
-#: extracted_strings.json
-msgid "Transferring Inventory Failed"
-msgstr "Интиқоли инвентаризатсия иҷро нашуд"
-
 #. [browsePage.browseDropdown.inventoryTransfers]
 #. defaultMessage is:
 #. Transfers
 #: extracted_strings.json
 msgid "Transfers"
 msgstr "Интиқолҳо"
-
-#. [pages.Milestones.resultTreatmentName]
-#. defaultMessage is:
-#. Treatment
-#: extracted_strings.json
-msgid "Treatment"
-msgstr "Табобат"
 
 #. [filter.popover.treatmentStatus]
 #. defaultMessage is:
@@ -12934,27 +12926,6 @@ msgstr "Ҳолати табобат"
 #: extracted_strings.json
 msgid "Treatment after loss to follow up"
 msgstr "Табобат пас аз талафот барои пайгирӣ"
-
-#. [pages.Milestones.resultTreatmentStatusLogCreatedBy]
-#. defaultMessage is:
-#. Treatment created by:
-#: extracted_strings.json
-msgid "Treatment created by:"
-msgstr "Табобат аз ҷониби:"
-
-#. [pages.Milestones.resultTreatmentStatusLogData]
-#. defaultMessage is:
-#. Treatment date:
-#: extracted_strings.json
-msgid "Treatment date:"
-msgstr "Санаи табобат:"
-
-#. [pages.Milestones.resultTreatmentStatusLogMethod]
-#. defaultMessage is:
-#. Treatment method:
-#: extracted_strings.json
-msgid "Treatment method:"
-msgstr "Усули табобат:"
 
 #. [pages.Notifications.triggerConditionTitle]
 #. defaultMessage is:
@@ -13201,12 +13172,12 @@ msgstr "Афзалиятҳои корбар бомуваффақият тағи�
 msgid "Username"
 msgstr "Номи корбар"
 
-#. [p.PkDashboard.utilization]
+#. [p.PkDashboard.utilizationPending]
 #. defaultMessage is:
-#. Utilization
+#. Utilization (Pending)
 #: extracted_strings.json
-msgid "Utilization"
-msgstr "Истифода"
+msgid "Utilization (Pending)"
+msgstr "Истифода (Интизори)"
 
 #. [component.Widget.utilizationRateTitle]
 #. defaultMessage is:
@@ -13252,20 +13223,6 @@ msgstr "Тасдиқ карда шудааст"
 #: extracted_strings.json
 msgid "Validation error"
 msgstr "Хатогии тасдиқ"
-
-#. [forms.mustMatch]
-#. defaultMessage is:
-#. Value is not valid. Try {options}.
-#: extracted_strings.json
-msgid "Value is not valid. Try {options}."
-msgstr "Арзиш эътибор надорад. {options}-ро санҷед."
-
-#. [pages.NotificationDetail.view]
-#. defaultMessage is:
-#. View
-#: extracted_strings.json
-msgid "View"
-msgstr "Намоиш"
 
 #. [contextualMenu.notifications.viewLog.title]
 #. defaultMessage is:
@@ -13468,7 +13425,7 @@ msgstr "Вақте ки саҳмияҳо ..."
 #. When the device didn't send results for more than ...
 #: extracted_strings.json
 msgid "When the device didn't send results for more than ..."
-msgstr "Вақте ки дастгоҳ зиёда аз ... натиҷа нафиристод"
+msgstr "Вақте ки дастгоҳ натиҷаҳои бештар аз ... нафиристод"
 
 #. [pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan]
 #. defaultMessage is:
@@ -13515,12 +13472,36 @@ msgstr "Ҳолати ҷараёни корӣ"
 msgid "Workload"
 msgstr "Сарбории кор"
 
+#. [pages.XDR.AssayResultsSummary]
+#. defaultMessage is:
+#. XDR Assay Results Summary
+#: extracted_strings.json
+msgid "XDR Assay Results Summary"
+msgstr "Хулосаи натиҷаҳои таҳлили XDR"
+
+#. [p.PkDashboard.XDRByDevice]
+#. defaultMessage is:
+#. XDR Assay Summary Result by device
+#: extracted_strings.json
+msgid "XDR Assay Summary Result by device"
+msgstr "Натиҷаи хулосаи таҳлили XDR аз рӯи дастгоҳ"
+
 #. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
+#. defaultMessage is:
+#. XDR FLQ Resistance
+#. [p.PkDashboard.xdrFlqResistance]
 #. defaultMessage is:
 #. XDR FLQ Resistance
 #: extracted_strings.json
 msgid "XDR FLQ Resistance"
 msgstr "Муқовимат ба XDR FLQ"
+
+#. [p.PkDashboard.XDRTestingandDiagnosisTrends]
+#. defaultMessage is:
+#. XDR Testing and Diagnosis Trends
+#: extracted_strings.json
+msgid "XDR Testing and Diagnosis Trends"
+msgstr "Тамоюлҳои санҷиш ва ташхиси XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -13608,9 +13589,6 @@ msgstr "Соли"
 #. defaultMessage is:
 #. Yes
 #. [pages.SiteDetail.disable.yes]
-#. defaultMessage is:
-#. Yes
-#. [pages.NotificationList.yes]
 #. defaultMessage is:
 #. Yes
 #. [contextualMenu.notifications.yes]
@@ -13911,12 +13889,12 @@ msgstr "вақти миёна барои иваз кардани модулҳо�
 msgid "data"
 msgstr "маълумот"
 
-#. [pages.resultTreatmentPanel.days]
+#. [filter.btnGroup.whereDestinationSiteNameIncludes]
 #. defaultMessage is:
-#. days
+#. destination site name includes "{destinationSiteName}"
 #: extracted_strings.json
-msgid "days"
-msgstr "рӯз"
+msgid "destination site name includes \"{destinationSiteName}\""
+msgstr "номи сайти таъинотӣ дорои \"{destinationSiteName}\""
 
 #. [filter.btnGroup.whereDeviceNameIncludes]
 #. defaultMessage is:
@@ -13980,6 +13958,13 @@ msgstr "барои {unit} MTB+"
 #: extracted_strings.json
 msgid "for {unit} Results"
 msgstr "барои {unit} Натиҷаҳо"
+
+#. [p.PkDashboard.CurrentYear]
+#. defaultMessage is:
+#. in current year
+#: extracted_strings.json
+msgid "in current year"
+msgstr "дар соли ҷорӣ"
 
 #. [widgetAlerts.defaultMessage]
 #. defaultMessage is:
@@ -14078,6 +14063,13 @@ msgstr "аз {unit} дастгоҳи онлайн"
 #: extracted_strings.json
 msgid "of {unit} total modules"
 msgstr "аз {unit} модули умумӣ"
+
+#. [filter.btnGroup.whereOriginSiteNameIncludes]
+#. defaultMessage is:
+#. origin site name includes "{originSiteName}"
+#: extracted_strings.json
+msgid "origin site name includes \"{originSiteName}\""
+msgstr "номи сайти ибтидоӣ дорои \"{originSiteName}\""
 
 #. [filter.btnGroup.partnerId]
 #. defaultMessage is:
@@ -14262,13 +14254,6 @@ msgstr "то {date}"
 msgid "utilization rate"
 msgstr "суръати истифода"
 
-#. [pages.Milestones.viewResultsDetails]
-#. defaultMessage is:
-#. view Results Details
-#: extracted_strings.json
-msgid "view Results Details"
-msgstr "дидани тафсилоти натиҷаҳо"
-
 #. [filter.btnGroup.withResultCategoryGroup]
 #. defaultMessage is:
 #. with result {resultCategoryGroupName}
@@ -14354,7 +14339,7 @@ msgstr "{itemCount, plural, one {# Ном} other {# Ном} }"
 #. {itemCount, plural, one {# Person} other {# Persons} }
 #: extracted_strings.json
 msgid "{itemCount, plural, one {# Person} other {# Persons} }"
-msgstr "{itemCount, plural, one {# шахс} other {# шахс} }"
+msgstr "{itemCount, ҷамъ, як {# Person} дигар {# Persons} }"
 
 #. [pages.Notifications.notificationsTableTotalTriggersCount]
 #. defaultMessage is:
@@ -14436,6 +14421,221 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, plural, one {# натиҷа} other {# натиҷа} })"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "ВИЧ (интизорӣ)"
+
+#~ msgid "Current FQ Trends"
+#~ msgstr "Тамоюлҳои кунунии FQ"
+
+#~ msgid "Current TB Testing Trends"
+#~ msgstr "Тамоюлҳои ҷорӣ оид ба санҷиши бемории сил"
+
+#~ msgid "Hiv"
+#~ msgstr "ВИЧ"
+
+#~ msgid "Provincial FQ trends Comparison"
+#~ msgstr "Муқоисаи тамоюлҳои FQ-и музофотӣ"
+
+#~ msgid "Provincial Trend Comparison"
+#~ msgstr "Муқоисаи тамоюли музофотӣ"
+
+#~ msgid "Utilization"
+#~ msgstr "Истифода"
+
+#~ msgid "Add Note"
+#~ msgstr "Иловаи ёддошт"
+
+#~ msgid "Adding Inventory Failed"
+#~ msgstr "Илова кардани инвентаризатсия иҷро нашуд"
+
+#~ msgid "An Error Occurred When Trying to Save the Result"
+#~ msgstr "Ҳангоми кӯшиши захира кардани натиҷа хатогӣ рух дод"
+
+#~ msgid "Assay Type:"
+#~ msgstr "Навъи таҳлил:"
+
+#~ msgid "Changed On"
+#~ msgstr "Тағйир дода шуд"
+
+#~ msgid "Clinical History"
+#~ msgstr "Таърихи клиникӣ"
+
+#~ msgid "Collected On:"
+#~ msgstr "Ҷамъоварӣ:"
+
+#~ msgid "Created On:"
+#~ msgstr "Таърихи:"
+
+#~ msgid "Description:"
+#~ msgstr "Тавсифи:"
+
+#~ msgid "Dial Code"
+#~ msgstr "Рақами рақам"
+
+#~ msgid "Error Loading Areas for {stateName}"
+#~ msgstr "Хатогӣ ҳангоми боркунии минтақаҳо барои {stateName}"
+
+#~ msgid "Error Loading Result Logs"
+#~ msgstr "Хатогӣ ҳангоми боркунии гузоришҳои натиҷа"
+
+#~ msgid "Error Loading States for {countryName}"
+#~ msgstr "Хатогӣ ҳангоми боркунии давлатҳо барои {countryName}"
+
+#~ msgid "Exporting Contacts Failed"
+#~ msgstr "Содироти мухотибон ноком шуд"
+
+#~ msgid "Exporting Supplies Failed"
+#~ msgstr "Содироти мавод ноком шуд"
+
+#~ msgid "Field cannot contain less than {total} characters"
+#~ msgstr "Майдон набояд камтар аз {total} аломат дошта бошад"
+
+#~ msgid "Field cannot contain more than {total} characters"
+#~ msgstr "Майдон набояд бештар аз {total} аломат дошта бошад"
+
+#~ msgid "History"
+#~ msgstr "Таърих"
+
+#~ msgid "Lab:"
+#~ msgstr "Лаборатория:"
+
+#~ msgid "Linked to treatment"
+#~ msgstr "Бо табобат алоқаманд аст"
+
+#~ msgid "Loading Device Approval Statuses Failed"
+#~ msgstr "Боркунии ҳолати тасдиқи дастгоҳ иҷро нашуд"
+
+#~ msgid "Loading Device Maintenance Status Failed"
+#~ msgstr "Боркунии ҳолати нигоҳдории дастгоҳ иҷро нашуд"
+
+#~ msgid "Loading DeviceTypes Failed"
+#~ msgstr "Боркунии намудҳои дастгоҳ иҷро нашуд"
+
+#~ msgid "Loading Patient results details Failed"
+#~ msgstr "Боркунии тафсилоти натиҷаҳои бемор иҷро нашуд"
+
+#~ msgid "Loading Result Workflow Statuses Failed"
+#~ msgstr "Боркунии Ҳолати ҷараёни кории натиҷа иҷро нашуд"
+
+#~ msgid "Loading Task Failed"
+#~ msgstr "Боркунии супориш иҷро нашуд"
+
+#~ msgid "NOTE:"
+#~ msgstr "ШАРҲ:"
+
+#~ msgid "No logs for this result."
+#~ msgstr "Барои ин натиҷа сабт нест."
+
+#~ msgid "Not possible"
+#~ msgstr "Мумкин нест"
+
+#~ msgid "Not yet confirmed on treatment"
+#~ msgstr "Дар бораи табобат ҳанӯз тасдиқ нашудааст"
+
+#~ msgid "Operator"
+#~ msgstr "Оператор"
+
+#~ msgid "Outcome"
+#~ msgstr "Натиҷа"
+
+#~ msgid "Outcome type:"
+#~ msgstr "Навъи натиҷа:"
+
+#~ msgid "Patient Data"
+#~ msgstr "Маълумоти беморон"
+
+#~ msgid "People alerted"
+#~ msgstr "Одамон огох карданд"
+
+#~ msgid "Receiving Inventory Failed"
+#~ msgstr "Қабули инвентаризатсия ноком шуд"
+
+#~ msgid "Removing Inventory Failed"
+#~ msgstr "Нест кардани инвентаризатсия ноком шуд"
+
+#~ msgid ""
+#~ "Result Workflow Status Log {itemCount, plural, =0 {} other "
+#~ "{({itemCount})} }"
+#~ msgstr ""
+#~ "Натиҷаи гузориши ҳолати кор {itemCount, ҷамъ, =0 {} other "
+#~ "{({itemCount})} }"
+
+#~ msgid "Result ended on:"
+#~ msgstr "Натиҷа ба анҷом расид:"
+
+#~ msgid "Sample Collection Site:"
+#~ msgstr "Сайти ҷамъоварии намуна:"
+
+#~ msgid "Sample Type:"
+#~ msgstr "Навъи намуна:"
+
+#~ msgid "Searching Device Approvals Failed"
+#~ msgstr "Ҷустуҷӯи тасдиқҳои дастгоҳ ноком шуд"
+
+#~ msgid "Searching Device Maintenance status Failed"
+#~ msgstr "Ҷустуҷӯи ҳолати нигоҳдории дастгоҳ иҷро нашуд"
+
+#~ msgid "Searching Patient Result Failed"
+#~ msgstr "Натоиҷи ҷустуҷӯи бемор"
+
+#~ msgid "Searching Result Workflow Statuses Failed"
+#~ msgstr "Ҷустуҷӯи Ҳолати ҷараёни кории натиҷа ноком шуд"
+
+#~ msgid "Searching Task Failed"
+#~ msgstr "Ҷустуҷӯи супориш ноком шуд"
+
+#~ msgid "Select State"
+#~ msgstr "Ҳолатро интихоб кунед"
+
+#~ msgid "Select an Assay"
+#~ msgstr "Таҳлилро интихоб кунед"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "log} other {# logs} }"
+#~ msgstr ""
+#~ "Намоиши {firstItemIndex}-{lastItemIndex} аз {itemCount, plural, one {# "
+#~ "log} other {# гузориш} }"
+
+#~ msgid "Site contact"
+#~ msgstr "Тамос бо сайт"
+
+#~ msgid "TB MTB+ Rif+ in Western Region"
+#~ msgstr "TB MTB+ Rif+ дар минтақаи ғарбӣ"
+
+#~ msgid "This email is not valid"
+#~ msgstr "Ин почтаи электронӣ эътибор надорад"
+
+#~ msgid "This field is required"
+#~ msgstr "Ин бахш ҳатмист"
+
+#~ msgid "Transferring Inventory Failed"
+#~ msgstr "Интиқоли инвентаризатсия иҷро нашуд"
+
+#~ msgid "Treatment"
+#~ msgstr "Табобат"
+
+#~ msgid "Treatment created by:"
+#~ msgstr "Табобат аз ҷониби:"
+
+#~ msgid "Treatment date:"
+#~ msgstr "Санаи табобат:"
+
+#~ msgid "Treatment method:"
+#~ msgstr "Усули табобат:"
+
+#~ msgid "Value is not valid. Try {options}."
+#~ msgstr "Арзиш эътибор надорад. {options}-ро санҷед."
+
+#~ msgid "View"
+#~ msgstr "Намоиш"
+
+#~ msgid "days"
+#~ msgstr "рӯз"
+
+#~ msgid "view Results Details"
+#~ msgstr "дидани тафсилоти натиҷаҳо"
 
 #~ msgid "Acknowledging Issue Failed"
 #~ msgstr "Эътироф кардани масъала ноком шуд"
@@ -14800,8 +15000,8 @@ msgstr "{value} ({records}/{ҳамагӣ, plural, one {# натиҷа} other {# 
 #~ msgstr "Дастури услуб"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for repair"
-#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for "
+#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."

@@ -24,7 +24,7 @@ import startOfMonth from 'date-fns/startOfMonth'
 import subDays from 'date-fns/subDays'
 import subMinutes from 'date-fns/subMinutes'
 import subMonths from 'date-fns/subMonths'
-import subtractYears from 'date-fns/subYears'
+import subYears from 'date-fns/subYears'
 import every from 'lodash/every'
 import isArray from 'lodash/isArray'
 import isDate from 'lodash/isDate'
@@ -43,8 +43,9 @@ import { getAspectDisplayPreferences } from '../../../../utils/LocalStorage'
 import messages from '../messages'
 
 const now = new Date()
-export const since = new Date(getYear(subtractYears(now, 10)), 0, 1)
-export const until = new Date(getYear(subtractYears(now, -10)), 11, 31)
+export const startOfYearsAgo = years => new Date(getYear(subYears(now, years)), 0, 1)
+export const since = new Date(getYear(subYears(now, 10)), 0, 1)
+export const until = new Date(getYear(subYears(now, -10)), 11, 31)
 export const rangeIncludeLast = (start, end) => range(start, end + 1)
 
 export const defaultYearList = rangeIncludeLast(getYear(since), getYear(until))
@@ -229,6 +230,9 @@ const getTimePeriod = (cnt, period, dateFormat) => {
     case period === 'months':
       timePeriod = startOfMonthUTC(subMonths(dateNow, cnt).toISOString())
       break
+    case period === 'years':
+      timePeriod = startOfYearsAgo(cnt)
+      break
 
     default:
       timePeriod = dateNow
@@ -236,6 +240,17 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   }
   return format(timePeriod, dateFormat)
 }
+
+const getCurrentYear = dateFormat => {
+  const date = new Date()
+  const startDate = format(new Date(date.getFullYear(), 0, 1), dateFormat)
+  const endDate = format(new Date(date.getFullYear(), 11, 31), dateFormat)
+  return {
+    endDate,
+    startDate,
+  }
+}
+
 const startOfMonthUTC = dateString => {
   const [datepart, time] = dateString.split('T')
 
@@ -357,6 +372,7 @@ const checkIfParamsIsDate = (params, encode = true) => {
 const forceBaseFormatDate = date => format(parseISO(date), 'yyyy-MM-dd')
 
 export {
+  getCurrentYear,
   checkIfParamsIsDate,
   dateRangeOptions,
   forceBaseFormatDate,

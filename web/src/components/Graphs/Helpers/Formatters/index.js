@@ -146,23 +146,14 @@ const incrementSplit = (boundaries, increment) => {
 }
 
 const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut = false, { groupMode } = {}) => {
-  let values
-  let dynamicAxesTicks
-  const boundaries = getBoundaries(data, keys, {
-    whichAxes,
-    zeroOut,
-    groupMode,
-  })
-  const upperBoundary = boundaries[1] || 0
-
-  switch (true) {
-    case upperBoundary > 40 && axesTicks !== 'none' && axesTicks !== 'bookends':
-      dynamicAxesTicks = 'clubsandwich'
-      break
-
-    default:
-      dynamicAxesTicks = axesTicks
+  if (axesTicks === 'all') {
+    return data.map(d => d[keys])
   }
+
+  let values
+  const boundaries = getBoundaries(data, keys, { whichAxes, zeroOut, groupMode })
+  const upperBoundary = boundaries[1] || 0
+  const dynamicAxesTicks = upperBoundary > 40 && !['none', 'bookends'].includes(axesTicks) ? 'clubsandwich' : axesTicks
 
   switch (dynamicAxesTicks) {
     case 'none':
@@ -461,6 +452,14 @@ const getColorIdByFieldName = (fields, fieldName) => {
   return null
 }
 
+const formatDateToYYYYMMDD = date => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are zero-based
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
 export {
   calcPercentageSplitBar,
   calcPercentageForGraphs,
@@ -498,4 +497,6 @@ export {
   prepParamsForEndPoint,
   validateGraphConfig,
   getColorIdByFieldName,
+  formatDateToYYYYMMDD,
+  translateLabel,
 }

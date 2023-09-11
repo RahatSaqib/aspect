@@ -12,13 +12,13 @@ import store from './store/store'
 import './index.css'
 
 const prepareApp = async () => {
-  // Sentry initiaization at the top level of application. I activated it only for production ENV
-  if (config.sentry && process.env.NODE_ENV === 'production') {
+  // Sentry initiaization at the top level of application.
+  if (config.sentry.dsn && config.sentry.tracingOrigins && config.sentry.tracesSampleRate) {
     Sentry.init({
       dsn: config.sentry.dsn,
       integrations: [
         new Integrations.BrowserTracing({
-          tracingOrigins: config.sentry.tracingOrigins || ['localhost:8000', '*.aspect.id'],
+          tracingOrigins: config.sentry.tracingOrigins,
         }),
       ],
       // Set tracesSampleRate to 1.0 to capture 100%
@@ -26,7 +26,7 @@ const prepareApp = async () => {
       // We recommend adjusting this value in production
       tracesSampleRate: config.sentry.tracesSampleRate,
     })
-    Sentry.setTag('Country', config.countryName || config.aspectApi)
+    Sentry.setTag('Country', config.aspectApi)
   }
 
   // get new access token

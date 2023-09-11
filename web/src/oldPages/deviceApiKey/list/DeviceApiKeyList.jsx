@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import DeviceApiKeyFilter from '../../../cleanComponents/Filter/DeviceApiKeyFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import PermissionChecker from '../../../components/PermissionChecker'
 import useDeviceApiKey from '../../../hooks/deviceApiKey/useDeviceApiKey'
 import useDeviceApiKeyAssign from '../../../hooks/deviceApiKey/useDeviceApiKeyAssign'
 import useDeviceApiKeyGenerate from '../../../hooks/deviceApiKey/useDeviceApiKeyGenerate'
@@ -130,9 +131,11 @@ export const DeviceApiKeyList = () => {
   return isLoading ? null : (
     <>
       <DetailHeader name={intl.formatMessage(messages.title)} disableBack>
-        <AspectButton onClick={onOpenGeneratorDialog} type="button" color="primary" variant="contained" browseButton>
-          {intl.formatMessage(messages.generate)}
-        </AspectButton>
+        <PermissionChecker permissions={['deviceApiKey:edit', 'deviceApiKey:admin']}>
+          <AspectButton onClick={onOpenGeneratorDialog} type="button" color="primary" variant="contained" browseButton>
+            {intl.formatMessage(messages.generate)}
+          </AspectButton>
+        </PermissionChecker>
         <AspectButton
           type="button"
           color="primary"

@@ -54,7 +54,29 @@ async function getAllResultsForExport(auth, query) {
   // For performance issues this enforce to use the result_partner_endedOn_index Index, because it helps to reduce query time down to  60%
   if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 360)
 
-  const { data, extraColumns = [], total } = await getResultsForExport(auth, query)
+  const { data: resultFromBaseQuery, extraColumns = [], total } = await getResultsForExport(auth, query)
+
+  const resultIds = _.map(resultFromBaseQuery, result => result.id)
+
+  // get follow ups using the resultIds from initial query
+  const followUps = await getLatestFollowUpsByResultIds(resultIds)
+
+  // get result workflow log using the resultId from initial query
+  const resultWorkflowData = await getLatestResultWorkflowLogByResultIds(resultIds)
+
+  // merge the responses above to the original results
+  const data = _.map(resultFromBaseQuery, resultItem => {
+    const matchedFollowUp = followUps.find(followUp => followUp.resultId === resultItem.id)
+
+    const matchedWorkflow = resultWorkflowData.find(workflow => workflow.resultId === resultItem.id)
+
+    return {
+      ...resultItem,
+      ...matchedFollowUp,
+      ...matchedWorkflow,
+    }
+  })
+
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
@@ -67,10 +89,16 @@ async function getAllResultsForExport(auth, query) {
     // TODO: move below items to Excel template for better formatting and translations
     { key: 'deviceStateName', header: 'State' },
     { key: 'caseExternalId', header: 'Case ID' },
+    { key: 'resultCategoryGroup', header: 'Result' },
     { key: 'sampleId', header: 'Sample Id' },
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
     { key: 'resultWorkflowStatus', header: 'Result Status' },
+    { key: 'resultTreatmentStatus', header: 'Follow Up Status' },
+    { key: 'followUpName', header: 'Follow Up' },
+    { key: 'followUpDate', header: 'Follow Up Date' },
+    { key: 'followUpComment', header: 'Follow Up Comment' },
+    { key: 'recordedInRegister', header: 'Recorded In Register' },
     { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
     { key: 'consumableSerial', header: 'Consumable Serial' },
     { key: 'consumableLot', header: 'Consumable Lot' },
@@ -84,12 +112,11 @@ async function getAllResultsForExport(auth, query) {
     { key: 'errorNotes', header: 'Error notes' },
     { key: 'notes', header: 'Notes' },
     { key: 'assayName', header: 'Assay' },
+
     // dynamic columns from different schema json fields
     ...columnsFromAssaySchema,
     ...columnsFromResultForms,
   ]
-
-  if (extraColumns.length === 0) columns.splice(0, 0, { key: 'resultText', header: 'Result Text' })
 
   const dataset = {
     ok: true,
@@ -106,7 +133,6 @@ async function getAllResultsForExport(auth, query) {
       { key: 'assayName', header: 'Assay' },
       { key: 'errorCode', header: 'Error Code' },
       { key: 'resultWorkflowStatus', header: 'Workflow Status' },
-      { key: 'resultTreatmentStatus', header: 'Treatment Status' },
       { key: 'patientId', header: 'Patient Id' },
     ],
     dataSelector: (
@@ -597,6 +623,54 @@ async function getReportWorkloadSummaryByYear(auth, query, options) {
     ...result,
     dynamicColumns,
   }
+}
+
+const getLatestFollowUpsByResultIds = async resultIds => {
+  const subQuery = knex('ResultFollowUp')
+    .select('resultId', 'followUpId', 'date', 'updatedOn')
+    .whereIn('resultId', resultIds)
+    .andWhere('isDeleted', false)
+    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY updatedOn DESC) AS rowNumber'))
+
+  const result = await knex('FollowUp as fup')
+    .select('rf.resultId', 'fup.name as followUpName', 'rf.date as followUpDate')
+    .from(subQuery.as('rf'))
+    .leftJoin('FollowUp as fup', 'rf.followUpId', 'fup.id')
+    .join('FollowUpType as fut', 'fut.id', 'fup.followUpTypeId')
+    .where('rf.rowNumber', 1)
+    .andWhere('fut.externalId', 'treatment')
+
+  return result
+}
+
+const getWorkflowStatus = async (externalId, subQuery) => {
+  let query = knex('ResultWorkflowStatus')
+    .select('rwl.resultId', 'rwl.reason as followUpComment')
+    .from(subQuery.as('rwl'))
+    .leftJoin('ResultWorkflowStatus as rwsInner', 'rwl.resultWorkflowStatusId', 'rwsInner.id')
+    .where('rwl.rowNumber', 1)
+    .andWhere(builder => {
+      builder.where('rwsInner.externalId', externalId)
+    })
+
+  if (externalId === 'acknowledged') {
+    query = query.select('rwl.changedOn as recordedInRegister')
+  }
+
+  return query
+}
+
+const getLatestResultWorkflowLogByResultIds = async resultIds => {
+  const subQuery = knex('ResultWorkflowLog')
+    .select('resultId', 'resultWorkflowStatusId', 'reason', 'changedOn', 'createdOn')
+    .whereIn('resultId', resultIds)
+    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY createdOn DESC) AS rowNumber'))
+
+  const acknowledgedWorkflow = await getWorkflowStatus('acknowledged', subQuery)
+
+  const flaggedWorkflow = await getWorkflowStatus('flagged', subQuery)
+
+  return [...acknowledgedWorkflow, ...flaggedWorkflow]
 }
 
 module.exports = {

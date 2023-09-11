@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const format = require('date-fns/format')
 const { extractFromDataById } = require('./extractFromDataById')
 const { generateTransferStatus } = require('./generateTransferStatus')
 
@@ -10,7 +11,7 @@ const { generateTransferStatus } = require('./generateTransferStatus')
  * @returns {array} - An array of objects containing the history timeline, sorted by update date in descending order.
  */
 
-function buildHistoryTimeline(data, followUps, userSiteIds) {
+function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds, originSites = {}) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
@@ -23,10 +24,14 @@ function buildHistoryTimeline(data, followUps, userSiteIds) {
       name: data.sampleTypeExternalId,
       siteName: data?.sampleSiteName,
       updatedOn: data.sampleCollectedOn,
+      clinicianName: data.sampleClinicianName,
+      sampleId: data.sampleExternalId,
     })
   }
 
   if (!_.isNil(data.testDate)) {
+    const patientData = data?.patientData
+    const parsedPatientData = patientData ? JSON.parse(patientData) : null
     output.push({
       id: data.resultSampleId,
       resultId: data.id,
@@ -34,10 +39,23 @@ function buildHistoryTimeline(data, followUps, userSiteIds) {
       name: data.sampleTypeExternalId,
       siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
+      sampleId: data.sampleExternalId,
+      patientId: parsedPatientData?.id || null,
     })
   }
 
   if (!_.isNil(transferStatus?.transferStatus)) {
+    const { transferredBy, transferStatusLogData } = data
+
+    let statusLogData
+    let comment
+    let originSiteName
+    if (transferStatusLogData) {
+      statusLogData = JSON.parse(transferStatusLogData)
+      originSiteName = originSites[statusLogData.sampleOriginSiteId] || null
+      comment = statusLogData?.comment
+    }
+
     output.push({
       id: data.id,
       resultId: data.id,
@@ -45,19 +63,31 @@ function buildHistoryTimeline(data, followUps, userSiteIds) {
       name: transferStatus.transferStatus,
       siteName: data?.reportableSiteName,
       updatedOn: transferStatus.transferredOn,
+      comment,
+      transferredBy,
+      originSiteName,
     })
   }
 
-  _.map(resultFollowUps, followUp =>
-    output.push({
+  _.map(resultFollowUps, followUp => {
+    const followUpHistoryItem = {
       id: followUp.id,
       resultId: data.id,
       event: 'followUpCreated',
       name: followUp.followUpName,
       siteName: data?.reportableSiteName,
       updatedOn: followUp.updatedOn,
-    })
-  )
+      type: followUp.followUpTypeName,
+      clinicianName: followUp.clinicianName,
+    }
+    const matchingFlag = resultFlags?.find(
+      rf => format(rf.flaggedOn, 'yyyyLLddHHmmss') === format(followUp.date, 'yyyyLLddHHmmss')
+    )
+    if (matchingFlag?.reason) {
+      followUpHistoryItem.reason = matchingFlag.reason
+    }
+    output.push(followUpHistoryItem)
+  })
 
   return _.sortBy(output, ['updatedOn']).reverse()
 }

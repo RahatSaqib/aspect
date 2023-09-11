@@ -92,29 +92,34 @@ const getRawLinks = f => [
   {
     href: '/browse/device',
     label: f(messages.devices),
-    perm: ['browse', 'device'],
+    perm: ['browse', '+device'],
     submenu: [
       { href: '/browse/device/list', label: f(messages.devicesList), perm: ['device'] },
       { href: '/browse/device/workload', label: f(messages.devicesWorkload), perm: ['device'] },
     ],
   },
-  { href: '/browse/site', label: f(messages.sites), perm: ['browse', 'site'] },
-  { href: '/browse/result', label: f(messages.results), perm: ['browse', 'result'] },
-  { href: '/browse/person', label: f(messages.contacts), perm: ['browse', 'person'] },
+  { href: '/browse/site', label: f(messages.sites), perm: ['browse', '+site'] },
+  { href: '/browse/result', label: f(messages.results), perm: ['browse', '+result'] },
+  {
+    href: '/browse/person',
+    label: f(messages.contacts),
+    perm: ['browse', '+person'],
+  },
   {
     href: '/browse/inventory',
     label: f(messages.supplies),
-    perm: ['browse', 'inventory'],
+    perm: ['browse', '+inventory'],
     submenu: [
       { href: '/browse/inventory/supplies', label: f(messages.inventoryItems), perm: ['inventory'] },
       { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },
       { href: '/browse/inventory/transfers', label: f(messages.inventoryTransfers), perm: ['inventory'] },
+      { href: '/browse/inventory/overview', label: f(messages.InventoryOverview), perm: ['inventory'] },
     ],
   },
-  { href: '/browse/reporter', label: f(messages.reporters), perm: ['browse', 'reporter'] },
-  { href: '/browse/notification', label: f(messages.notifications), perm: ['browse', 'notification'] },
-  { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', 'deviceApiKey'] },
-  { href: '/reports', label: f(messages.reportsTitle), perm: ['report'] },
+  { href: '/browse/reporter', label: f(messages.reporters), perm: ['browse', '+reporter'] },
+  { href: '/browse/notification', label: f(messages.notifications), perm: ['browse', '+notification'] },
+  { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', '+deviceApiKey'] },
+  { href: '/reports', label: f(messages.reportsTitle), perm: ['+report'] },
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },
 ]
 

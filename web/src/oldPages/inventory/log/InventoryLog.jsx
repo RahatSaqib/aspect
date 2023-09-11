@@ -1,5 +1,5 @@
 import React from 'react'
-import { TableBody } from '@mui/material'
+import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
@@ -13,7 +13,6 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
@@ -95,8 +94,9 @@ export const InventoryLogWithProps = ({
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
         <InventoryLogFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
-          <DataTableProgressBar disabled={!isLoading} />
-          {!hasItems ? (
+          {isLoading ? (
+            <LinearProgress />
+          ) : !hasItems ? (
             <BrowseEmptyList />
           ) : (
             <>
@@ -147,8 +147,8 @@ const InventoryLog = () => {
   const apiFilters = { ...filters }
 
   if (Object.keys(apiFilters).includes('maxExpirationDate')) {
-    apiFilters.maxExpirationDate = apiFilters.maxExpirationDate.toISOString()
-    apiFilters.minExpirationDate = apiFilters.minExpirationDate.toISOString()
+    apiFilters.maxExpirationDate = new Date(apiFilters.maxExpirationDate).toISOString()
+    apiFilters.minExpirationDate = new Date(apiFilters.minExpirationDate).toISOString()
   }
 
   const {

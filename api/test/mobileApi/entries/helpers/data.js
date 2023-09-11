@@ -51,6 +51,7 @@ const data347 = {
   laboratorySiteId: 62,
   laboratorySiteExternalId: 'Lancaster-Lab',
   laboratorySiteName: 'Lancaster Clinic Laboratory',
+  sampleClinicianName: 'test clinician',
 }
 
 const expected347 = [
@@ -83,6 +84,9 @@ const expected347 = [
         name: 'awayTransfer',
         siteName: 'Lancaster Clinic',
         updatedOn: '2023-05-03T18:15:57.000Z',
+        transferredBy: 'Admin',
+        comment: undefined,
+        originSiteName: null,
       },
       {
         id: 172,
@@ -91,14 +95,18 @@ const expected347 = [
         name: 'DBS',
         siteName: 'Lancaster Clinic Laboratory',
         updatedOn: '2023-05-03T17:55:57.000Z',
+        patientId: '57-158-6406',
+        sampleId: 'SMP-TB-31',
       },
       {
         id: 172,
         resultId: 347,
+        clinicianName: 'test clinician',
         event: 'sampleCollected',
         name: 'DBS',
         siteName: 'Oden Lab',
         updatedOn: '2022-11-01T16:16:39.000Z',
+        sampleId: 'SMP-TB-31',
       },
     ],
     patientData: [
@@ -148,6 +156,7 @@ const expected347 = [
         hasFollowUp: false,
         requiresFollowUp: false,
         noFollowUpPossible: false,
+        followUpStatus: 'followUpNotRequired',
       },
     },
     testInformation: [
@@ -241,6 +250,7 @@ const data450 = {
   laboratorySiteId: 65,
   laboratorySiteExternalId: 'Marden-Lab',
   laboratorySiteName: 'Marden Hospital Laboratory',
+  sampleClinicianName: 'test clinician',
 }
 
 const followUp450 = [
@@ -257,6 +267,7 @@ const followUp450 = [
     followUpTypeName: 'Treatment',
     followUpTypeExternalId: 'treatment',
     followUpTypeI18nKey: 'treatment',
+    clinicianName: 'test clinician',
   },
 ]
 
@@ -297,6 +308,7 @@ const expected450 = [
         followUpTypeName: 'Treatment',
         followUpTypeExternalId: 'treatment',
         followUpTypeI18nKey: 'treatment',
+        clinicianName: 'test clinician',
       },
     ],
     history: [
@@ -307,6 +319,8 @@ const expected450 = [
         name: 'DSTB - 2RHZE',
         siteName: 'Marden Hospital',
         updatedOn: '2023-05-20T19:45:55.000Z',
+        clinicianName: 'test clinician',
+        type: 'Treatment',
       },
       {
         id: 155,
@@ -315,14 +329,18 @@ const expected450 = [
         name: 'DBS',
         siteName: 'Marden Hospital Laboratory',
         updatedOn: '2023-05-20T17:55:55.000Z',
+        patientId: '84-687-3493',
+        sampleId: 'SMP-TB-14',
       },
       {
         id: 155,
         resultId: 450,
+        clinicianName: 'test clinician',
         event: 'sampleCollected',
         name: 'DBS',
         siteName: 'Atlanta NMRL',
         updatedOn: '2022-08-04T16:16:37.000Z',
+        sampleId: 'SMP-TB-14',
       },
     ],
     patientData: [
@@ -391,6 +409,7 @@ const expected450 = [
         hasFollowUp: true,
         requiresFollowUp: false,
         noFollowUpPossible: false,
+        followUpStatus: 'hasFollowUp',
       },
     },
     testInformation: [
