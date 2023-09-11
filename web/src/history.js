@@ -4,7 +4,7 @@ import config from './config'
 
 let history = createBrowserHistory() // eslint-disable-line import/no-mutable-exports
 
-if (config.piwik) {
+if (config.piwik.url && config.piwik.siteId) {
   // set up analytics
   history = piwikReactRouter({
     url: config.piwik.url,
