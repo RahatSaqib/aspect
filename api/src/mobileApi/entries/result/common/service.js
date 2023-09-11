@@ -76,6 +76,8 @@ async function fetchEntriesServiceHandler(request) {
           existingObj.history.push(history)
         }
       })
+
+      existingObj.history.sort((historyA, historyB) => new Date(historyB.updatedOn) - new Date(historyA.updatedOn))
     } else {
       mergedResults.push(result)
     }
