@@ -5,11 +5,7 @@ const filterMeta = Joi.object({
   treatmentStatus: Joi.string().allow(null, '').description('The treatment status for filtering.'),
   transferStatus: Joi.string().allow(null, '').description('The transfer status for filtering.'),
   assayType: Joi.string().allow(null, '').description('The assay type for filtering.'),
-  requiresFollowUp: Joi.bool().required().description('Whether the entry requires a follow-up for filtering'),
-  hasFollowUp: Joi.bool().required().description('Whether the entry has been followed up on for filtering'),
-  noFollowUpPossible: Joi.bool()
-    .required()
-    .description('Whether it is possible for a follow-up to be done on the entry for filtering'),
+  followUpStatus: Joi.string().required().description('Follow up status of the entry'),
 })
 
 const optionalSearchKeysResponseValidation = Joi.object()
