@@ -212,7 +212,7 @@ export const InventoryItemsListWithProps = ({
           </div>
           {isLoading ? <LinearProgress /> : null}
           {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList />
+            <BrowseEmptyList isLoadingData={isLoading} />
           ) : (
             <>
               <InventoryDataTable className={cssClasses('InventoryDataTable')}>

@@ -78,7 +78,7 @@ export const PersonList = () => {
           </div>
           {isLoading ? <LinearProgress /> : null}
           {!data || !data.data || data.data.length === 0 ? (
-            <BrowseEmptyList />
+            <BrowseEmptyList isLoadingData={isLoading} />
           ) : (
             <>
               <PersonDataTable className={cssClasses('PersonDataTable')}>

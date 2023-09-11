@@ -113,7 +113,7 @@ export const ReporterListWithProps = ({
           <DataTableProgressBar disabled={!isLoading} />
 
           {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList />
+            <BrowseEmptyList isLoadingData={isLoading} />
           ) : (
             <>
               <ReporterDataTable className={cssClasses('ReporterDataTable')}>

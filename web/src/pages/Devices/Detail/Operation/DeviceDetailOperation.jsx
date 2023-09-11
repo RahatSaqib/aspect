@@ -188,7 +188,7 @@ export const DeviceDetailOperation = ({
           </header>
           <div>
             <DataTableProgressBar disabled={!table.loading} />
-            {items.currentIdList.isEmpty() && <BrowseEmptyList />}
+            {items.currentIdList.isEmpty() && <BrowseEmptyList isLoadingData={table.loading} />}
             {!items.currentIdList.isEmpty() && (
               <DeviceOperationDataTable className={cssClasses('DeviceOperationDataTable')}>
                 <DeviceOperationDataTableHead

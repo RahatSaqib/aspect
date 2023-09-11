@@ -9,6 +9,7 @@ import { useLocation, useNavigate } from 'react-router'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import DeviceApiKeyFilter from '../../../cleanComponents/Filter/DeviceApiKeyFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import PermissionChecker from '../../../components/PermissionChecker'
 import useDeviceApiKey from '../../../hooks/deviceApiKey/useDeviceApiKey'
 import useDeviceApiKeyAssign from '../../../hooks/deviceApiKey/useDeviceApiKeyAssign'
 import useDeviceApiKeyGenerate from '../../../hooks/deviceApiKey/useDeviceApiKeyGenerate'
@@ -28,7 +29,6 @@ import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
 import styles from './DeviceApiKeyList.css'
 import DeviceApiKeyTableRow from './DeviceApiKeyTableRow'
 import messages from './messages'
-import PermissionChecker from '../../../components/PermissionChecker'
 
 const cssClasses = classnames.bind(styles)
 
@@ -178,7 +178,7 @@ export const DeviceApiKeyList = () => {
             />
           </div>
           {(data?.data || []).length === 0 ? (
-            <BrowseEmptyList />
+            <BrowseEmptyList isLoadingData={isLoading} />
           ) : (
             <>
               <Table className={cssClasses('DeviceApiKeyDataTable')}>

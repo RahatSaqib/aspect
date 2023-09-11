@@ -107,7 +107,7 @@ const XdrByDevice = () => {
           </div>
           <DataTableProgressBar disabled={!isLoading} />
           {XdrByDevice.length === 0 ? (
-            <BrowseEmptyList />
+            <BrowseEmptyList isLoadingData={isLoading} />
           ) : (
             <>
               <div>

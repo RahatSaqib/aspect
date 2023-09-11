@@ -5,6 +5,7 @@ import { Helmet } from 'react-helmet'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import SiteFilter from '../../../cleanComponents/Filter/SiteFilter'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useI18n from '../../../hooks/useI18n'
@@ -20,7 +21,6 @@ import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.css'
 import getExportableFile from './SiteQueries'
-import PermissionChecker from '../../../components/PermissionChecker'
 
 const cssClasses = classnames.bind(styles)
 
@@ -115,7 +115,7 @@ export const SiteList = ({ navigate, location }) => {
           </div>
           {isLoading ? <LinearProgress /> : null}
           {!data || !data.siteList || data.siteList.length === 0 ? (
-            <BrowseEmptyList />
+            <BrowseEmptyList isLoadingData={isLoading} />
           ) : (
             <>
               <SiteDataTable className={cssClasses('SiteDataTable')}>

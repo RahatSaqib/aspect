@@ -8,18 +8,22 @@ import { useFilterUpdate } from '../providers/FilterProvider'
 const messages = defineMessages({
   noResultsTitle: { id: 'shared.EmptyList.noResultsTitle', defaultMessage: 'No results match your selected filters' },
   clearFilters: { id: 'shared.EmptyList.clearFilters', defaultMessage: 'Clear filters' },
+  loading: { id: 'shared.EmptyList.loading', defaultMessage: 'Loading...' },
 })
 
-export const BrowseEmptyList = () => {
+export const BrowseEmptyList = ({ isLoadingData }) => {
   const { formatMessage } = useI18n()
   const location = useLocation()
   const [, , resetFilter] = useFilterUpdate()
+  const text = isLoadingData ? formatMessage(messages.loading) : formatMessage(messages.noResultsTitle)
   return (
     <div style={{ textAlign: 'center' }}>
-      <p>{formatMessage(messages.noResultsTitle)}</p>
-      <Button variant="text" onClick={() => resetFilter(location.pathname)}>
-        {formatMessage(messages.clearFilters)}
-      </Button>
+      <p>{text}</p>
+      {!isLoadingData && (
+        <Button variant="text" onClick={() => resetFilter(location.pathname)}>
+          {formatMessage(messages.clearFilters)}
+        </Button>
+      )}
     </div>
   )
 }

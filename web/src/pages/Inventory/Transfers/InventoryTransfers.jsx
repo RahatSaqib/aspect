@@ -68,7 +68,7 @@ export const InventoryTransfers = () => {
             {isLoading ? (
               <LinearProgress />
             ) : data.data.length === 0 ? (
-              <BrowseEmptyList />
+              <BrowseEmptyList isLoadingData={isLoading} />
             ) : (
               <>
                 <Table className={cssClasses('SiteDataTable')}>

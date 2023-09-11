@@ -255,7 +255,7 @@ const DeviceList = () => {
           </div>
           {isLoading ? <DataTableProgressBar /> : null}
           {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList />
+            <BrowseEmptyList isLoadingData={isLoading} />
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
