@@ -33,6 +33,16 @@
 			"label": "rabbitmq-admin",
 			"requireLocalPort": true
 		}
+	},
+	"customizations": {
+		"vscode": {
+			"extensions": [
+				"ms-azuretools.vscode-docker",
+				"dbaeumer.vscode-eslint",
+				"eamodio.gitlens",
+				"ChakrounAnas.turbo-console-log"
+			]
+		}
 	}
 
 	// Use 'postCreateCommand' to run commands after the container is created.

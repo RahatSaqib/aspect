@@ -6,4 +6,5 @@
     "./api",
     "./web"
   ],
+  "turboConsoleLog.logMessagePrefix": "\\x1b[1;36m\",\"🚀 hola",
 }
