@@ -36,7 +36,9 @@ exports[`Result List component should shallow render correctly when filter for a
           visible={false}
         />
       </div>
-      <BrowseEmptyList />
+      <BrowseEmptyList
+        isLoadingData={false}
+      />
     </DataTableCard>
   </div>
 </Fragment>
