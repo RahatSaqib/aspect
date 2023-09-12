@@ -2021,7 +2021,7 @@ const deviceCalibratedWhenDue = {
   jobFunctions: ['all'],
   sortOrder: 5,
   icon: 'MdBuild',
-  title: 'Calibrated When Due',
+  title: 'GeneXpert Calibrated When Due',
   titleI18nKey: 'deviceCalibratedWhenDueTitle',
   sqlForIndicator: `
     SELECT
@@ -2039,7 +2039,7 @@ const deviceCalibratedWhenDue = {
     ) AS sub;`,
   statUnit: '{unit} total calibrations',
   statUnitI18nKey: 'totalCalibrations',
-  description: `The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.`,
+  description: `The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.`,
   descriptionI18nKey: 'deviceCalibratedWhenDueDescription',
   link: '/reports',
   linkParams: {
