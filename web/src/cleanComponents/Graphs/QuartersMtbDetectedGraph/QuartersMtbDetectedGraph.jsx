@@ -75,7 +75,7 @@ const QuartersMtbDetectedGraph = () => {
                       />
                     </Grid>
                     <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
-                      <StateSelector onChange={setFilter} />
+                      <StateSelector filter={filter} onChange={setFilter} />
                     </Grid>
                   </Grid>
                 </Grid>
