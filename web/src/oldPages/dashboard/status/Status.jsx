@@ -28,7 +28,7 @@ import SummaryStatus from './SummaryStatus'
 
 const cssClasses = classnames.bind(styles)
 
-const Status = () => {
+const Status = ({ countryAbbreviation }) => {
   const { formatMessage } = useI18n()
   const dispatch = useDispatch()
 
@@ -97,7 +97,7 @@ const Status = () => {
             </PermissionChecker>
           ) : null}
 
-          {assays.some(a => covidPermissions.includes(a.externalId)) ? (
+          {assays.some(a => covidPermissions.includes(a.externalId)) && countryAbbreviation !== 'BD' ? (
             <PermissionChecker permissions={['dashboard']}>
               <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
             </PermissionChecker>
@@ -110,7 +110,7 @@ const Status = () => {
           ) : null}
 
           <PermissionChecker permissions={['dashboard', 'operationalData']}>
-            <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
+            {countryAbbreviation !== 'BD' && <DeviceStatusGraph assaysFromState={assays} />} {/* 13 */}
             <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
           </PermissionChecker>
 
