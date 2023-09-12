@@ -654,7 +654,7 @@ const errorRate = {
 const stockNotRecorded = {
   jobFunctions: ['all'],
   icon: 'MdInbox',
-  title: 'Stock not recorded',
+  title: 'Stock not recorded (GeneXpert only)',
   titleI18nKey: 'stockNotRecordedTitle',
   subTitle: null,
   subTitleI18nKey: null,

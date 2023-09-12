@@ -175,7 +175,7 @@ export const messages = defineMessages({
   },
   stockNotRecordedTitle: {
     id: 'component.Widget.stockNotRecordedTitle',
-    defaultMessage: 'Stock not recorded',
+    defaultMessage: 'Stock not recorded (GenXpert only)',
   },
   stockNotRecordedDescription: {
     id: 'component.Widget.stockNotRecordedDescription',
