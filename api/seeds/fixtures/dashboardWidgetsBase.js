@@ -1724,6 +1724,7 @@ const percentageOfDaysWithServiceInterruption = {
   '%') AS cnt
       FROM Device AS d
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN (
@@ -1739,7 +1740,7 @@ const percentageOfDaysWithServiceInterruption = {
         GROUP BY dmsl.deviceId
       ) AS down ON d.id = down.deviceId
       WHERE d.createdOn <= NOW()
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
   `,
   sqlForStatUnit: `
   SELECT CONCAT(
@@ -1759,6 +1760,7 @@ const percentageOfDaysWithServiceInterruption = {
   '%') AS cnt
     FROM Device AS d
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON s.id = d.siteId
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     LEFT OUTER JOIN (
@@ -1775,13 +1777,12 @@ const percentageOfDaysWithServiceInterruption = {
       GROUP BY dmsl.deviceId
     ) AS down ON d.id = down.deviceId
     WHERE d.createdOn <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/device/list',
   linkParams: {
-    deviceName: 'GeneXpert',
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
   },
   sortOrder: 2,
