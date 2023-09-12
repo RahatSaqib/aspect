@@ -140,17 +140,19 @@ const dashboardWidgetTestsPerDayTitle = {
   FROM Result as r
     INNER JOIN Device as d on d.id = r.deviceId
     INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site as s on s.id = d.siteId
     INNER JOIN Partner p on s.partnerId = p.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE
     r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND DAYOFWEEK(r.endedOn) NOT IN (1,7)
-    AND dt.externalId = 'CepheidGeneXpert'`,
+    AND dtc.hasResults = 1`,
   sqlForStatUnit: `SELECT ROUND(COUNT(r.id)/GetWeekdaysInRange(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'))) as cnt
   FROM Result as r
     INNER JOIN Device as d on d.id = r.deviceId
     INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site as s on s.id = d.siteId
     INNER JOIN Partner p on s.partnerId = p.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
@@ -158,12 +160,11 @@ const dashboardWidgetTestsPerDayTitle = {
     r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
     AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
     AND DAYOFWEEK(r.endedOn) NOT IN (1,7)
-    AND dt.externalId = 'CepheidGeneXpert'`,
+    AND dtc.hasResults = 1`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
-    deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 1,
