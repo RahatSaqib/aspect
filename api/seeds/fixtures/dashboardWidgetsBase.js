@@ -1623,6 +1623,7 @@ const averageDurationServiceInterruption = {
       INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
       INNER JOIN Device AS d ON dmsl.deviceId = d.id
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN
@@ -1630,13 +1631,13 @@ const averageDurationServiceInterruption = {
           SELECT  dmsl.deviceId, COUNT(dmsl.deviceId) AS times
           FROM DeviceMaintenanceStatusLog AS dmsl
           LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dmsl2 ON dmsl.deviceId = dmsl2.deviceId AND dmsl.day = DATE_SUB(dmsl2.day, INTERVAL 1 DAY) AND dmsl2.deviceMaintenanceStatusId <> dmsl.deviceMaintenanceStatusId
-              LEFT OUTER JOIN DeviceMaintenanceStatus AS dms ON dmsl2.deviceMaintenanceStatusId = dms.id
+          LEFT OUTER JOIN DeviceMaintenanceStatus AS dms ON dmsl2.deviceMaintenanceStatusId = dms.id
           WHERE dmsl.day >= DATE_FORMAT(NOW(),"%Y-%m-01")
               AND dms.externalId = 'inactiveDownForRepair'
           GROUP BY dmsl.deviceId) AS o ON dmsl.deviceId = o.deviceId
     WHERE dmsl.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND dms.externalId = 'inactiveDownForRepair'
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
     GROUP BY deviceId
     ORDER BY deviceId , minInactive) AS innerQuery
   `,
@@ -1651,6 +1652,7 @@ const averageDurationServiceInterruption = {
       INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
       INNER JOIN Device AS d ON dmsl.deviceId = d.id
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN
@@ -1666,7 +1668,7 @@ const averageDurationServiceInterruption = {
     WHERE dmsl.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
     AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
     AND dms.externalId = 'inactiveDownForRepair'
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
     GROUP BY deviceId
     ORDER BY deviceId , minInactive) AS innerQuery
   `,
