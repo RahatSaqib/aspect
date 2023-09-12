@@ -717,7 +717,7 @@ const stockNotRecorded = {
 const moduleSwaps = {
   jobFunctions: ['all'],
   icon: 'MdSwapVert',
-  title: 'Module Swaps',
+  title: 'Module Swaps (GeneXpert only)',
   titleI18nKey: 'moduleSwapsTitle',
   subTitle: null,
   subTitleI18nKey: null,
@@ -725,18 +725,12 @@ const moduleSwaps = {
   COUNT(*) AS cnt
     FROM
         Issue AS i
-            INNER JOIN
-        IssueType it ON i.issueTypeId = it.id
-            INNER JOIN
-        Device AS d ON d.id = i.deviceId
-            INNER JOIN
-        DeviceType as dt on dt.id = d.deviceTypeId
-            INNER JOIN
-        Site AS s ON s.id = d.siteId
-            INNER JOIN
-        Partner AS p ON s.partnerId = p.id
-            LEFT OUTER JOIN
-        Geography AS g ON s.geographyId = g.id
+            INNER JOIN IssueType it ON i.issueTypeId = it.id
+            INNER JOIN Device AS d ON d.id = i.deviceId
+            INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+            INNER JOIN Site AS s ON s.id = d.siteId
+            INNER JOIN Partner AS p ON s.partnerId = p.id
+            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE
         it.externalId = 'ModuleReplaced'
         AND dt.externalId = 'CepheidGeneXpert'
@@ -745,18 +739,12 @@ const moduleSwaps = {
   COUNT(*) AS cnt
     FROM
         Issue AS i
-            INNER JOIN
-        IssueType it ON i.issueTypeId = it.id
-            INNER JOIN
-        Device AS d ON d.id = i.deviceId
-            INNER JOIN
-        DeviceType as dt on dt.id = d.deviceTypeId
-            INNER JOIN
-        Site AS s ON s.id = d.siteId
-            INNER JOIN
-        Partner AS p ON s.partnerId = p.id
-            LEFT OUTER JOIN
-        Geography AS g ON s.geographyId = g.id
+            INNER JOIN IssueType it ON i.issueTypeId = it.id
+            INNER JOIN Device AS d ON d.id = i.deviceId
+            INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+            INNER JOIN Site AS s ON s.id = d.siteId
+            INNER JOIN Partner AS p ON s.partnerId = p.id
+            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE
         it.externalId = 'ModuleReplaced'
         AND dt.externalId = 'CepheidGeneXpert'
@@ -771,7 +759,7 @@ const moduleSwaps = {
   sortOrder: 6,
   externalId: 'moduleSwaps',
   description:
-    'The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
+    'The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
   descriptionI18nKey: 'moduleSwapsDescription',
   dashboards: {
     operational: {
@@ -1546,48 +1534,39 @@ const numberOfDevicesExperiencingServiceInterruption = {
     COUNT(DISTINCT d.id) AS cnt
   FROM
       Device AS d
-          INNER JOIN
-      Site AS s ON s.id = d.siteId
-          LEFT OUTER JOIN
-      Geography AS g ON s.geographyId = g.id
-          INNER JOIN
-      DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
-          INNER JOIN
-      DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
-          INNER JOIN
-      DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN Site AS s ON s.id = d.siteId
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          INNER JOIN DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
+          INNER JOIN DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   WHERE
       dms.externalId = 'inactiveDownForRepair'
       AND dmsl.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
-      AND dt.externalId = 'CepheidGeneXpert'
+      AND dtc.hasResults = 1
   `,
   sqlForStatUnit: `
   SELECT
     COUNT(DISTINCT d.id) AS cnt
   FROM
       Device AS d
-          INNER JOIN
-      Site AS s ON s.id = d.siteId
-          LEFT OUTER JOIN
-      Geography AS g ON s.geographyId = g.id
-          INNER JOIN
-      DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
-          INNER JOIN
-      DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
-          INNER JOIN
-      DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN Site AS s ON s.id = d.siteId
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          INNER JOIN DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
+          INNER JOIN DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   WHERE
       dms.externalId = 'inactiveDownForRepair'
       and dmsl.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
       AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
-      AND dt.externalId = 'CepheidGeneXpert'
+      AND dtc.hasResults = 1
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/device/list',
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
-    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',

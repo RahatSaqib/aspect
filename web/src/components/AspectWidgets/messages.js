@@ -184,12 +184,12 @@ export const messages = defineMessages({
   },
   moduleSwapsTitle: {
     id: 'component.Widget.moduleSwapsTitle',
-    defaultMessage: 'Module Swaps',
+    defaultMessage: 'Module Swaps (GeneXpert only)',
   },
   moduleSwapsDescription: {
     id: 'component.Widget.moduleSwapsDescription',
     defaultMessage:
-      'The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
+      'The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
   },
   gxPositiveResultsNotifiedTitle: {
     id: 'component.Widget.gxPositiveResultsNotifiedTitle',
