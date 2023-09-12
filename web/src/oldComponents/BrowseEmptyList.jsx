@@ -11,19 +11,17 @@ const messages = defineMessages({
   loading: { id: 'shared.EmptyList.loading', defaultMessage: 'Loading...' },
 })
 
-export const BrowseEmptyList = ({ isLoadingData }) => {
+export const BrowseEmptyList = () => {
   const { formatMessage } = useI18n()
   const location = useLocation()
   const [, , resetFilter] = useFilterUpdate()
-  const text = isLoadingData ? formatMessage(messages.loading) : formatMessage(messages.noResultsTitle)
+  const text = formatMessage(messages.noResultsTitle)
   return (
     <div style={{ textAlign: 'center' }}>
       <p>{text}</p>
-      {!isLoadingData && (
-        <Button variant="text" onClick={() => resetFilter(location.pathname)}>
-          {formatMessage(messages.clearFilters)}
-        </Button>
-      )}
+      <Button variant="text" onClick={() => resetFilter(location.pathname)}>
+        {formatMessage(messages.clearFilters)}
+      </Button>
     </div>
   )
 }

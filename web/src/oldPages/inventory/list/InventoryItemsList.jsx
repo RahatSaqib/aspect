@@ -210,9 +210,10 @@ export const InventoryItemsListWithProps = ({
             ) : null}
             <AspectExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
           </div>
-          {isLoading ? <LinearProgress /> : null}
-          {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList isLoadingData={isLoading} />
+          {isLoading ? (
+            <LinearProgress />
+          ) : items.currentIdList.length === 0 ? (
+            <BrowseEmptyList />
           ) : (
             <>
               <InventoryDataTable className={cssClasses('InventoryDataTable')}>

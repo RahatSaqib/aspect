@@ -120,10 +120,10 @@ export const ResultListWithProps = ({
           />
         </div>
 
-        {isLoading ? <DataTableProgressBar /> : null}
-
-        {items.currentIdList.isEmpty() ? (
-          <BrowseEmptyList isLoadingData={isLoading} />
+        {isLoading ? (
+          <DataTableProgressBar />
+        ) : items.currentIdList.isEmpty() ? (
+          <BrowseEmptyList />
         ) : (
           <>
             <ResultDataTable className={cssClasses('ResultDataTable')}>
@@ -230,7 +230,7 @@ const ResultList = () => {
 
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
-    if (data) {
+    if (!tableLoading && data) {
       const { data: list, total: totalItems, extraColumns } = data
       setItems(receiveListWithSet(items, Immutable.fromJS(list)))
       setTotal(totalItems)

@@ -95,9 +95,10 @@ export const InventoryLogWithProps = ({
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
         <InventoryLogFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
-          <DataTableProgressBar disabled={!isLoading} />
-          {!hasItems ? (
-            <BrowseEmptyList isLoadingData={isLoading} />
+          {isLoading ? (
+            <DataTableProgressBar disabled={!isLoading} />
+          ) : !hasItems ? (
+            <BrowseEmptyList />
           ) : (
             <>
               <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>

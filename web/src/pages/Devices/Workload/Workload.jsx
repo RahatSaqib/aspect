@@ -98,9 +98,10 @@ const Workload = () => {
             />
           </div>
 
-          <DataTableProgressBar disabled={!isLoading} />
-          {workloadList.length === 0 ? (
-            <BrowseEmptyList isLoadingData={isLoading} />
+          {isLoading ? (
+            <DataTableProgressBar disabled={!isLoading} />
+          ) : workloadList.length === 0 ? (
+            <BrowseEmptyList />
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>

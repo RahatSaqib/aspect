@@ -225,8 +225,11 @@ export const TaskList = ({
         </div>
       </div>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList isLoadingData={table.loading} />}
+        {table.loading ? (
+          <DataTableProgressBar disabled={!table.loading} />
+        ) : (
+          items.currentIdList.isEmpty() && <BrowseEmptyList />
+        )}
         {!items.currentIdList.isEmpty() && (
           <TaskDataTable className={cssClasses('TaskDataTable')}>
             <TaskDataTableHead

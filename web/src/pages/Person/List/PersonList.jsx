@@ -76,9 +76,10 @@ export const PersonList = () => {
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} visible={data.data.length !== 0} />
           </div>
-          {isLoading ? <LinearProgress /> : null}
-          {!data || !data.data || data.data.length === 0 ? (
-            <BrowseEmptyList isLoadingData={isLoading} />
+          {isLoading ? (
+            <LinearProgress />
+          ) : !data || !data.data || data.data.length === 0 ? (
+            <BrowseEmptyList />
           ) : (
             <>
               <PersonDataTable className={cssClasses('PersonDataTable')}>

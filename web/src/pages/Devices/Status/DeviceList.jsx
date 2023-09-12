@@ -253,9 +253,10 @@ const DeviceList = () => {
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
           </div>
-          {isLoading ? <DataTableProgressBar /> : null}
-          {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList isLoadingData={isLoading} />
+          {isLoading ? (
+            <DataTableProgressBar />
+          ) : items.currentIdList.length === 0 ? (
+            <BrowseEmptyList />
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>

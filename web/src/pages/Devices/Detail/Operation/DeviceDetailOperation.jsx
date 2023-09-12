@@ -187,9 +187,11 @@ export const DeviceDetailOperation = ({
             </div>
           </header>
           <div>
-            <DataTableProgressBar disabled={!table.loading} />
-            {items.currentIdList.isEmpty() && <BrowseEmptyList isLoadingData={table.loading} />}
-            {!items.currentIdList.isEmpty() && (
+            {table.loading ? (
+              <DataTableProgressBar disabled={!table.loading} />
+            ) : items.currentIdList.isEmpty() ? (
+              <BrowseEmptyList />
+            ) : (
               <DeviceOperationDataTable className={cssClasses('DeviceOperationDataTable')}>
                 <DeviceOperationDataTableHead
                   navigate={navigate}

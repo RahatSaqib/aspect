@@ -113,9 +113,10 @@ export const SiteList = ({ navigate, location }) => {
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
           </div>
-          {isLoading ? <LinearProgress /> : null}
-          {!data || !data.siteList || data.siteList.length === 0 ? (
-            <BrowseEmptyList isLoadingData={isLoading} />
+          {isLoading ? (
+            <LinearProgress />
+          ) : !data || !data.siteList || data.siteList.length === 0 ? (
+            <BrowseEmptyList />
           ) : (
             <>
               <SiteDataTable className={cssClasses('SiteDataTable')}>

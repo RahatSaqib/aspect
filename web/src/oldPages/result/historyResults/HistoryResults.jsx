@@ -48,8 +48,11 @@ export const Results = ({
           )}
         </header>
         <div>
-          <DataTableProgressBar disabled={!table.loading} />
-          {items.currentIdList.isEmpty() && <BrowseEmptyList isLoadingData={table.loading} />}
+          {table.loading ? (
+            <DataTableProgressBar disabled={!table.loading} />
+          ) : (
+            items.currentIdList.isEmpty() && <BrowseEmptyList />
+          )}
           {!items.currentIdList.isEmpty() && (
             <Table className={cssClasses('ResultDataTable')}>
               <DataTableHead

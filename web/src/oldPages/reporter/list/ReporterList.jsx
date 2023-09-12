@@ -110,10 +110,10 @@ export const ReporterListWithProps = ({
               reportName="Reporters"
             />
           </div>
-          <DataTableProgressBar disabled={!isLoading} />
-
-          {items.currentIdList.length === 0 ? (
-            <BrowseEmptyList isLoadingData={isLoading} />
+          {isLoading ? (
+            <DataTableProgressBar disabled={!isLoading} />
+          ) : items.currentIdList.length === 0 ? (
+            <BrowseEmptyList />
           ) : (
             <>
               <ReporterDataTable className={cssClasses('ReporterDataTable')}>
