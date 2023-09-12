@@ -947,32 +947,27 @@ FROM
           d.id,
           COUNT(DISTINCT r.moduleName) AS usedModulesInLast7Days,
           IFNULL(innerQuery.cnt,0) AS activeModules
-      FROM
-          Device AS d
-      LEFT JOIN (SELECT
-        r2.deviceId,
-        COUNT(DISTINCT r2.moduleName) AS cnt
-      FROM
-          Result AS r2
-      WHERE r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
-      GROUP BY r2.deviceId
-      ) AS innerQuery ON d.id = innerQuery.deviceId
+        FROM Device AS d
+        LEFT JOIN (SELECT r2.deviceId,
+          COUNT(DISTINCT r2.moduleName) AS cnt
+          FROM Result AS r2
+          WHERE r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+          GROUP BY r2.deviceId
+        ) AS innerQuery ON d.id = innerQuery.deviceId
       INNER JOIN Site AS s ON s.id = d.siteId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
       LEFT JOIN Geography AS g ON s.geographyId = g.id
       INNER JOIN Result AS r ON d.id = r.deviceId
-      WHERE
-          dc.hasResults = 1
-          AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
-          AND dt.externalId = 'CepheidGeneXpert'
+      WHERE dc.hasResults = 1
+        AND dt.externalId = 'CepheidGeneXpert'
+        AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
       GROUP BY d.id) AS q) AS q2`,
   sqlForStatUnit: `
   SELECT
     SUM(q2.totalModules) AS cnt
 FROM
-    (SELECT
-        q.id,
+    (SELECT q.id,
     CASE WHEN q.activeModules = 0 THEN 0 ELSE
 		(CASE
 			WHEN q.activeModules <= 4 THEN 4
@@ -985,17 +980,13 @@ FROM
 			END)
 		END) END AS totalModules
     FROM
-		(SELECT
-      d.id,
+		(SELECT d.id,
       COUNT(DISTINCT r.moduleName) AS usedModulesInLast7Days,
       IFNULL(innerQuery.cnt,0) AS activeModules
-  FROM
-      Device AS d
-  LEFT JOIN (SELECT
-    r2.deviceId,
-    COUNT(DISTINCT r2.moduleName) AS cnt
-  FROM
-      Result AS r2
+    FROM Device AS d
+    LEFT JOIN (SELECT r2.deviceId,
+                COUNT(DISTINCT r2.moduleName) AS cnt
+              FROM Result AS r2
   WHERE r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
   GROUP BY r2.deviceId
   ) AS innerQuery ON d.id = innerQuery.deviceId
@@ -1004,11 +995,9 @@ FROM
   INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
   LEFT JOIN Geography AS g ON s.geographyId = g.id
   INNER JOIN Result AS r ON d.id = r.deviceId
-
-  WHERE
-      dc.hasResults = 1
-          AND dt.externalId = 'CepheidGeneXpert'
-          AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+  WHERE dc.hasResults = 1
+         AND dt.externalId = 'CepheidGeneXpert'
+         AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
   GROUP BY d.id) AS q) AS q2
   `,
   statUnit: 'of {unit} total modules',
