@@ -1106,7 +1106,7 @@ const instrumentsReplaced = {
   sortOrder: 3,
   externalId: 'instrumentsReplaced',
   description:
-    'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting in the consecutive result conducted.',
+    'The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting in the consecutive result conducted.',
   descriptionI18nKey: 'instrumentsReplacedDescription',
   dashboards: {
     operational: {

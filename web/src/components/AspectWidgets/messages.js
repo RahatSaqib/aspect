@@ -224,7 +224,7 @@ export const messages = defineMessages({
   instrumentsReplacedDescription: {
     id: 'component.Widget.instrumentsReplacedDescription',
     defaultMessage:
-      'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
+      'The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
   },
   averageRecipientsOfEmail: {
     id: 'component.Widget.averageRecipientsOfEmail',
