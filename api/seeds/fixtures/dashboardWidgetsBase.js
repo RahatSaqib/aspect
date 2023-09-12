@@ -200,7 +200,6 @@ const dashboardWidgetValidResultsPc = {
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
-    deviceType: 'CepheidGeneXpert',
     onlyReportableResults: true,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -281,7 +280,6 @@ const utilizationRate = {
   statUnitI18nKey: 'lastMonth',
   link: '/browse/device/list',
   linkParams: {
-    deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 0,
@@ -628,7 +626,6 @@ const errorRate = {
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
-    deviceType: 'CepheidGeneXpert',
     workflowStatusId: 2,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -1646,7 +1643,6 @@ const averageDurationServiceInterruption = {
   link: '/browse/device/list',
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
-    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 1,
   externalId: 'averageDurationServiceInterruption',
