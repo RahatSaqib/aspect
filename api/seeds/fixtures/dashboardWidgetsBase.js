@@ -589,11 +589,12 @@ const errorRate = {
           INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
           INNER JOIN Device AS d ON d.id = r.deviceId
           INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
           INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
-        AND dt.externalId = 'CepheidGeneXpert'
+        AND dtc.hasResults = 1
         GROUP BY r.deviceId
       ) AS innerQuery`,
   sqlForStatUnit: `SELECT
@@ -612,13 +613,14 @@ const errorRate = {
           INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
           INNER JOIN Device AS d ON d.id = r.deviceId
           INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
           INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         WHERE DATE(r.endedOn)
               BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
               AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
-              AND dt.externalId = 'CepheidGeneXpert'
+              AND dtc.hasResults = 1
         GROUP BY r.deviceId, dc.dailyCapacity
       ) AS innerQuery`,
   statUnit: '{unit} last month',
