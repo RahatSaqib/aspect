@@ -1135,10 +1135,11 @@ const averageRecipientsOfEmail = {
         INNER JOIN EmailMessage AS em ON em.resultId = r.id
         INNER JOIN Device AS d ON d.id = em.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
         INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
           WHERE rc.externalid IN ${positiveResults}
-          AND dt.externalId = 'CepheidGeneXpert'
+          AND dtc.hasResults = 1
           AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND em.resultId IS NOT NULL
@@ -1154,10 +1155,11 @@ const averageRecipientsOfEmail = {
         INNER JOIN EmailMessage AS em ON em.resultId = r.id
         INNER JOIN Device AS d ON d.id = em.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
         INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
         WHERE rc.externalid IN ${positiveResults}
-          AND dt.externalId = 'CepheidGeneXpert'
+        AND dtc.hasResults = 1
           AND em.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
           AND em.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
@@ -1170,7 +1172,7 @@ const averageRecipientsOfEmail = {
   link: '/operational-data#resultsTransmitted',
   sortOrder: 9,
   externalId: 'averageRecipientsOfEmail',
-  description: 'The average number of email recipients per positive GeneXpert result.',
+  description: 'The average number of email recipients per positive result.',
   descriptionI18nKey: 'averageRecipientsOfEmailDescription',
   dashboards: {
     operational: {
