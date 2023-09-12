@@ -1255,11 +1255,12 @@ const averageLengthOfSms = {
   FROM SmsMessage AS sms
   INNER JOIN Device AS d ON d.id = sms.deviceId
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site AS s ON d.siteId = s.id
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE sms.createdOn >= DATE_FORMAT(NOW(),"%Y-%m-01")
   AND sms.resultId IS NOT NULL
-  AND dt.externalId = 'CepheidGeneXpert'
+  AND dtc.hasResults = 1
   GROUP BY sms.resultId
   ) AS innerQuery`,
   sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(messageLength)),0) AS cnt
@@ -1269,12 +1270,13 @@ const averageLengthOfSms = {
   FROM SmsMessage AS sms
   INNER JOIN Device AS d ON d.id = sms.deviceId
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site AS s ON d.siteId = s.id
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE sms.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
   AND sms.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
   AND sms.resultId IS NOT NULL
-  AND dt.externalId = 'CepheidGeneXpert'
+  AND dtc.hasResults = 1
   GROUP BY sms.resultId
   ) AS innerQuery`,
   statUnit: '{unit} last month',
@@ -1282,7 +1284,7 @@ const averageLengthOfSms = {
   link: '/browse/notification',
   sortOrder: 11,
   externalId: 'averageLengthOfSms',
-  description: 'The average number of characters in SMS messages sent about positive GeneXpert results.',
+  description: 'The average number of characters in SMS messages sent about positive results.',
   descriptionI18nKey: 'averageLengthOfSmsDescription',
   dashboards: {
     operational: {
