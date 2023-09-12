@@ -1197,10 +1197,11 @@ const averageRecipientsOfSms = {
         INNER JOIN SmsMessage AS sms ON sms.resultId = r.id
         INNER JOIN Device AS d ON d.id = sms.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
         INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
           WHERE rc.externalid IN ${positiveResults}
-          AND dt.externalId = 'CepheidGeneXpert'
+          AND dtc.hasResults = 1
           AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND sms.resultId IS NOT NULL
@@ -1216,11 +1217,12 @@ const averageRecipientsOfSms = {
         INNER JOIN SmsMessage AS sms ON sms.resultId = r.id
         INNER JOIN Device AS d ON d.id = sms.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
         INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
         WHERE rc.externalid IN ${positiveResults}
-          AND dt.externalId = 'CepheidGeneXpert'
-          and sms.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+          AND dtc.hasResults = 1
+          AND sms.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
           AND sms.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND sms.resultId IS NOT NULL
@@ -1232,7 +1234,7 @@ const averageRecipientsOfSms = {
   link: '/operational-data#resultsTransmitted',
   sortOrder: 10,
   externalId: 'averageRecipientsOfSms',
-  description: 'The average number of SMS recipients per positive GeneXpert result.',
+  description: 'The average number of SMS recipients per positive result.',
   descriptionI18nKey: 'averageRecipientsOfSmsDescription',
   dashboards: {
     operational: {
