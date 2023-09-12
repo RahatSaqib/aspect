@@ -44,7 +44,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'resultTreatmentStatusLog.resultTreatmentStatusId',
       'resultTreatmentStatus.id'
     )
-    .leftJoin('ResultStatusLog as resultStatusLog', 'result.resultStatusLogId', 'resultStatusLog.id')
+    .leftJoin('ResultStatusLog as resultStatusLog', 'result.id', 'resultStatusLog.resultId')
     .leftJoin('Person as personTransferred', 'resultStatusLog.createdBy', 'personTransferred.userId')
     .leftJoin('ResultCategoryAssay as resultCategoryAssay1', queryBuilder =>
       queryBuilder
