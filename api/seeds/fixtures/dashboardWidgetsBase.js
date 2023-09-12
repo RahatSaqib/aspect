@@ -1961,7 +1961,7 @@ const deviceCalibrationPastDue = {
   jobFunctions: ['all'],
   sortOrder: 4,
   icon: 'MdBuild',
-  title: 'Calibration Past Due',
+  title: 'GeneXpert Calibration Past Due',
   titleI18nKey: 'deviceCalibrationPastDueTitle',
   sqlForIndicator: `
     SELECT
@@ -1980,11 +1980,11 @@ const deviceCalibrationPastDue = {
     ) AS sub;`,
   statUnit: '{unit} of all devices',
   statUnitI18nKey: 'ofAllDevices',
-  description: `The number of instruments that had their last calibration more than one year ago.`,
+  description: `The number of GeneXpert instruments that had their last calibration more than one year ago.`,
   descriptionI18nKey: 'deviceCalibrationPastDueDescription',
   link: '/reports',
   linkParams: {
-    reportName: 'Device Calibration Report',
+    reportName: 'GeneXpert Device Calibration Report',
   },
   dashboards: {
     operational: {
@@ -2043,7 +2043,7 @@ const deviceCalibratedWhenDue = {
   descriptionI18nKey: 'deviceCalibratedWhenDueDescription',
   link: '/reports',
   linkParams: {
-    reportName: 'Device Calibration Report',
+    reportName: 'GeneXpert Device Calibration Report',
   },
   dashboards: {
     operational: {

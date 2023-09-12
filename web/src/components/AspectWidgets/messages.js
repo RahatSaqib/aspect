@@ -345,11 +345,11 @@ export const messages = defineMessages({
   },
   deviceCalibrationPastDueTitle: {
     id: 'component.Widget.deviceCalibrationPastDueTitle',
-    defaultMessage: 'Calibration Past Due',
+    defaultMessage: 'GeneXpert Calibration Past Due',
   },
   deviceCalibrationPastDueDescription: {
     id: 'component.Widget.deviceCalibrationPastDueDescription',
-    defaultMessage: 'The number of instruments that had their last calibration more than one year ago.',
+    defaultMessage: 'The number of GeneXpert instruments that had their last calibration more than one year ago.',
   },
   deviceCalibratedWhenDueTitle: {
     id: 'component.Widget.deviceCalibratedWhenDueTitle',
