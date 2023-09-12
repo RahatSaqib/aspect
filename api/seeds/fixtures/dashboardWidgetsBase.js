@@ -18,6 +18,7 @@ END as cnt
 FROM Result as r
   INNER JOIN Device as d on d.id = r.deviceId
   INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site as s on s.id = d.siteId
   INNER JOIN Partner p on s.partnerId = p.id
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
@@ -186,14 +187,13 @@ const dashboardWidgetValidResultsPc = {
   sqlForIndicator: `${partialValidResults}
     WHERE
       r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
-      AND
-      dt.externalId = 'CepheidGeneXpert'
+      AND dtc.hasResults = 1
     `,
   sqlForStatUnit: `${partialValidResults}
     WHERE
       r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
       AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
-      AND dt.externalId = 'CepheidGeneXpert'
+      AND dtc.hasResults = 1
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
