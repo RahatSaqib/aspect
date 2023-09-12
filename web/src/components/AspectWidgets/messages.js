@@ -232,7 +232,7 @@ export const messages = defineMessages({
   },
   averageRecipientsOfEmailDescription: {
     id: 'component.Widget.averageRecipientsOfEmailDescription',
-    defaultMessage: 'The average number of email recipients per positive GeneXpert result.',
+    defaultMessage: 'The average number of email recipients per positive result.',
   },
   averageRecipientsOfSms: {
     id: 'component.Widget.averageRecipientsOfSms',
@@ -240,7 +240,7 @@ export const messages = defineMessages({
   },
   averageRecipientsOfSmsDescription: {
     id: 'component.Widget.averageRecipientsOfSmsDescription',
-    defaultMessage: 'The average number of SMS recipients per positive GeneXpert result.',
+    defaultMessage: 'The average number of SMS recipients per positive result.',
   },
   averageLengthOfSms: {
     id: 'component.Widget.averageLengthOfSms',
@@ -248,7 +248,7 @@ export const messages = defineMessages({
   },
   averageLengthOfSmsDescription: {
     id: 'component.Widget.averageLengthOfSmsDescription',
-    defaultMessage: 'The average number of characters in SMS messages sent about positive GeneXpert results.',
+    defaultMessage: 'The average number of characters in SMS messages sent about positive results.',
   },
   dashboardWidgetSmsSentTitle: {
     id: 'component.Widget.dashboardWidgetSmsSentTitle',
