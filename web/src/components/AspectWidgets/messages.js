@@ -197,7 +197,7 @@ export const messages = defineMessages({
   },
   gxPositiveResultsNotifiedDescription: {
     id: 'component.Widget.gxPositiveResultsNotifiedDescription',
-    defaultMessage: `The percentage of positive GeneXpert's results that were notified via SMS or email.`,
+    defaultMessage: `The percentage of positive results that were notified via SMS or email.`,
   },
   avgTimeToUploadTitle: {
     id: 'component.Widget.avgTimeToUploadTitle',

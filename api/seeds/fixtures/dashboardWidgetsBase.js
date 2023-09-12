@@ -791,12 +791,13 @@ const gxPositiveResultsNotified = {
     FROM Result AS r
       INNER JOIN Device AS d ON d.id = r.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
       LEFT JOIN SmsMessage sm ON sm.resultId = r.id AND sm.messageStatusId = 3
       LEFT JOIN EmailMessage em ON em.resultId = r.id AND em.messageStatusId = 3
       LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
       WHERE rc.externalid IN ${positiveResults}
-        AND dt.externalId = 'CepheidGeneXpert'
+        AND dtc.hasResults = 1
         AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
         AND (da.token = 'approved' OR ISNULL(da.token))
     GROUP BY r.id
@@ -809,12 +810,13 @@ const gxPositiveResultsNotified = {
     FROM Result AS r
       INNER JOIN Device AS d ON d.id = r.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
       LEFT JOIN SmsMessage sm ON sm.resultId = r.id AND sm.messageStatusId = 3
       LEFT JOIN EmailMessage em ON em.resultId = r.id AND em.messageStatusId = 3
       LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
       WHERE rc.externalid IN ${positiveResults}
-        AND dt.externalId = 'CepheidGeneXpert'
+        AND dtc.hasResults = 1
         AND r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
         AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
         AND (da.token = 'approved' OR ISNULL(da.token))
@@ -824,7 +826,7 @@ const gxPositiveResultsNotified = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   sortOrder: 7,
-  description: "The percentage of positive GeneXpert's results that were notified via SMS or email.",
+  description: 'The percentage of positive results that were notified via SMS or email.',
   descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
   link: '/operational-data#resultsTransmitted',
   dashboards: {
