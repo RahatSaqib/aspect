@@ -1322,24 +1322,24 @@ const smsSent = {
   FROM SmsMessage AS sms
     INNER JOIN Device AS d ON d.id = sms.deviceId
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON d.siteId = s.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  WHERE
-    sms.createdOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
+  WHERE sms.createdOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND sms.resultId IS NOT NULL
-    AND dt.externalId = 'CepheidGeneXpert'`,
+    AND dtc.hasResults = 1`,
   sqlForStatUnit: `
   SELECT
     IFNULL(SUM(CEIL(LENGTH(message)/140)),0) as cnt
   FROM SmsMessage AS sms
     INNER JOIN Device AS d ON d.id = sms.deviceId
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON d.siteId = s.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-  WHERE
-    sms.createdOn>= DATE_FORMAT(NOW(),"%Y-01-01")
+  WHERE sms.createdOn>= DATE_FORMAT(NOW(),"%Y-01-01")
     AND sms.resultId IS NOT NULL
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
   `,
   statUnit: '{unit} YTD',
   statUnitI18nKey: 'ytd',
