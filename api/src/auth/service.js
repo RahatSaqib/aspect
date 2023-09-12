@@ -19,7 +19,6 @@ const { gxAlertAuthenticate } = require('./gxalert')
 const { getRemoteAddress } = require('../shared/request')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
-const { getAssignmentsForUser } = require('../shared/constraints')
 
 const clientTypes = {
   app: 'reporter_app',
@@ -230,8 +229,6 @@ async function authenticate(request, response) {
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
 
-  const assignments = await getAssignmentsForUser(user)
-
   return {
     access: accessToken,
     refresh: refreshToken,
@@ -246,7 +243,6 @@ async function authenticate(request, response) {
     deviceTokenId,
     userId: user.id,
     personId: user.personId,
-    assignments,
   }
 }
 
@@ -342,9 +338,6 @@ async function refreshToken(request) {
 
   const accessToken = await getAccessToken(data)
   const displayPreferences = await getDisplayPreferences(data)
-
-  const assignments = await getAssignmentsForUser(data)
-
   return {
     access: accessToken,
     refresh: refreshToken,
@@ -358,7 +351,6 @@ async function refreshToken(request) {
     countryAbbreviation: data.countryAbbreviation,
     userId: data.userId,
     personId: data.personId,
-    assignments,
   }
 }
 

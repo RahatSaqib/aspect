@@ -34,7 +34,7 @@ const JobAssigment = ({ setStep }) => {
   const { formatMessage } = useI18n()
   const { personId = auth.personId } = useParams()
   const navigate = useNavigate()
-  const { isLoading, data: assignment } = usePersonAssignment(personId, auth)
+  const { isLoading, data: assignment } = usePersonAssignment(personId)
 
   const initialValues = {
     jobFunctionId: '',
