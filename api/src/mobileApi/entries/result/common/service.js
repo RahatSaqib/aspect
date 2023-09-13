@@ -24,12 +24,21 @@ const {
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
-  return Promise.each(idsToBeRegistered, async resultId => addResultDownloadLogQuery(resultId, now, userId))
+  const resultDownloadLogs = idsToBeRegistered.map(resultId => {
+    return {
+      resultId,
+      createdOn: now,
+      createdBy: userId,
+    }
+  })
+
+  return addResultDownloadLogQuery(resultDownloadLogs)
 }
 
 const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkflowStatusExternalId) => {
   const { id: resultWorkflowStatusId } = await getResultWorkflowStatusQuery(resultWorkflowStatusExternalId)
   const now = new Date()
+
   return Promise.each(resultIdsToUpdate, async resultId => {
     const [resultWorkflowStatusLogId] = await insertResultWorkflowLogQuery(
       resultId,
@@ -46,21 +55,25 @@ async function fetchEntriesServiceHandler(request) {
   const dataConstraints = await getConstraints(auth.credentials)
   const samples = await getAllSamplesRegistered(query, dataConstraints)
   const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
+
   const acknowledgements = await getAcknowledgementsByResultIds(results)
   const flags = await getFlagsByResultIds(results)
   const userSiteIds = await getUserSiteIds(dataConstraints)
   const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
   const user = await getUser(auth.credentials.name)
   await addResultDownloadLog(resultIdsToBeRegistered, user.id)
+
   const resultIdsToUpdate = _.uniq(
     results
       .filter(result => setDeliveredResultWorkflowStatuses.includes(result.resultWorkflowStatusExternalId))
       .map(result => result.id)
   )
   await updateResultWorkflowStatus(resultIdsToUpdate, user.id, 'Delivered')
+
   const followUps = await getFollowUpsByResultIds(results)
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
+
   const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
 
