@@ -1,5 +1,5 @@
 import React from 'react'
-import { TableBody } from '@mui/material'
+import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
@@ -13,7 +13,6 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
@@ -96,7 +95,7 @@ export const InventoryLogWithProps = ({
         <InventoryLogFilter />
         <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
           {isLoading ? (
-            <DataTableProgressBar disabled={!isLoading} />
+            <LinearProgress />
           ) : !hasItems ? (
             <BrowseEmptyList />
           ) : (

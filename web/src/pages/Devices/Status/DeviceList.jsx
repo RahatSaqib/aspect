@@ -7,6 +7,7 @@ import {
   DialogContent,
   DialogContentText,
   DialogTitle,
+  LinearProgress,
   TableBody,
   TextField,
   Typography,
@@ -34,7 +35,6 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
@@ -254,7 +254,7 @@ const DeviceList = () => {
             <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
           </div>
           {isLoading ? (
-            <DataTableProgressBar />
+            <LinearProgress />
           ) : items.currentIdList.length === 0 ? (
             <BrowseEmptyList />
           ) : (
