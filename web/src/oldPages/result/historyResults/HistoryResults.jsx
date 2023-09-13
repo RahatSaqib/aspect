@@ -50,10 +50,9 @@ export const Results = ({
         <div>
           {table.loading ? (
             <DataTableProgressBar disabled={!table.loading} />
+          ) : items.currentIdList.isEmpty() ? (
+            <BrowseEmptyList />
           ) : (
-            items.currentIdList.isEmpty() && <BrowseEmptyList />
-          )}
-          {!items.currentIdList.isEmpty() && (
             <Table className={cssClasses('ResultDataTable')}>
               <DataTableHead
                 navigate={navigate}

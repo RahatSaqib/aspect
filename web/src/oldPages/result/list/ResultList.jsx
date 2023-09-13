@@ -120,7 +120,7 @@ export const ResultListWithProps = ({
           />
         </div>
 
-        {isLoading ? (
+        {isLoading || !columns.size ? (
           <DataTableProgressBar />
         ) : items.currentIdList.isEmpty() ? (
           <BrowseEmptyList />
@@ -230,7 +230,7 @@ const ResultList = () => {
 
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
-    if (!tableLoading && data) {
+    if (data) {
       const { data: list, total: totalItems, extraColumns } = data
       setItems(receiveListWithSet(items, Immutable.fromJS(list)))
       setTotal(totalItems)
