@@ -120,7 +120,7 @@ export const ResultListWithProps = ({
           />
         </div>
 
-        {isLoading || !columns.size ? (
+        {isLoading ? (
           <DataTableProgressBar />
         ) : items.currentIdList.isEmpty() ? (
           <BrowseEmptyList />
@@ -192,7 +192,7 @@ const ResultList = () => {
     })
   )
   const [total, setTotal] = useState()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [pagination, setPagination] = useState({})
   const [columns, setColumns] = useState([])
 
