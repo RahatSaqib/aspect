@@ -14,6 +14,7 @@ import messages from '../../../PkDashboard.Messages'
 
 const endPointParams = [
   { assay: 'GxHiv1Vl' },
+  { assay: 'GxHiv1Qual' },
   { groupBy: 'month' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
@@ -36,7 +37,6 @@ const HivGraphPage = () => {
 
   return (
     <PkPage
-      isMocked
       title={formatMessage(messages.peopleTestedHiv)}
       filters={
         <FormControlLabel
