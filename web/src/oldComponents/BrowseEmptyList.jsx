@@ -8,17 +8,15 @@ import { useFilterUpdate } from '../providers/FilterProvider'
 const messages = defineMessages({
   noResultsTitle: { id: 'shared.EmptyList.noResultsTitle', defaultMessage: 'No results match your selected filters' },
   clearFilters: { id: 'shared.EmptyList.clearFilters', defaultMessage: 'Clear filters' },
-  loading: { id: 'shared.EmptyList.loading', defaultMessage: 'Loading...' },
 })
 
 export const BrowseEmptyList = () => {
   const { formatMessage } = useI18n()
   const location = useLocation()
   const [, , resetFilter] = useFilterUpdate()
-  const text = formatMessage(messages.noResultsTitle)
   return (
     <div style={{ textAlign: 'center' }}>
-      <p>{text}</p>
+      <p>{formatMessage(messages.noResultsTitle)}</p>
       <Button variant="text" onClick={() => resetFilter(location.pathname)}>
         {formatMessage(messages.clearFilters)}
       </Button>
