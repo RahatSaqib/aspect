@@ -116,6 +116,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'sample.sampleStatus as sampleStatus',
       'sample.updatedOn as sampleUpdatedOn',
       'sample.collectedOn as sampleCollectedOn',
+      'sample.externalId as sampleExternalId',
       'sampleOriginSite.externalId as sampleSiteExternalId',
       'sampleOriginSite.id as sampleSiteId',
       'sampleOriginSite.name as sampleSiteName',

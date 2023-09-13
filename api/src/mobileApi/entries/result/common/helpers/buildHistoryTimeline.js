@@ -25,6 +25,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       siteName: data?.sampleSiteName,
       updatedOn: data.sampleCollectedOn,
       clinicianName: data.sampleClinicianName,
+      sampleId: data.sampleExternalId,
     })
   }
 
@@ -36,6 +37,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       name: data.sampleTypeExternalId,
       siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
+      sampleId: data.sampleExternalId,
     })
   }
 
