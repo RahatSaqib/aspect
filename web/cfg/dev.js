@@ -1,4 +1,5 @@
 const path = require('path')
+const Dotenv = require('dotenv-webpack')
 const webpack = require('webpack')
 const { merge } = require('webpack-merge')
 const base = require('./base')
@@ -32,7 +33,14 @@ const config = () => {
       runtimeChunk: 'single',
       usedExports: true,
     },
-    plugins: [new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET'])],
+    plugins: [
+      new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
+      new Dotenv({
+        path: './.env.development',
+        allowEmptyValues: true,
+        prefix: 'process.env.',
+      }),
+    ],
   }
 
   return merge(base(process.env.NODE_ENV), config)
