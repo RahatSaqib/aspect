@@ -1729,7 +1729,7 @@ async function currentResultAggregations(request) {
   const resp = {}
   let dateColumn
   let baseQuery
-  if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
+  if (_.every(groupBy, group => _.includes(factTableDataGroups, group)) && !query?.resistance) {
     baseQuery = getClinicalIndicatorQueryForFactTable(dataConstraints, null, groupBy, query)
     dateColumn = 'r.startedOn'
   } else {
