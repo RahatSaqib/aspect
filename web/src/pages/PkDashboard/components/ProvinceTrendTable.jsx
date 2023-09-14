@@ -16,9 +16,9 @@ const ProvinceTrendTable = props => {
           <TableRow>
             <TableCell>{formatMessage(messages.state_PK)}</TableCell>
             <TableCell align="right">{formatMessage(messages.testPerYear)}</TableCell>
-            <TableCell align="right">{`${formatMessage(
-              messages.testPerMonth
-            )} / ${new Date().getFullYear()}`}</TableCell>
+            <TableCell align="right">{`${formatMessage(messages.testPerMonth)} ${formatMessage(
+              messages.currentYear
+            )}`}</TableCell>
             <TableCell align="right">{formatMessage(messages.testPerDay)}</TableCell>
           </TableRow>
         </TableHead>

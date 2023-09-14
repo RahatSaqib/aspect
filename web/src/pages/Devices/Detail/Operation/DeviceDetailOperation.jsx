@@ -1,5 +1,5 @@
 import React from 'react'
-import { Card, IconButton, TableBody } from '@mui/material'
+import { Card, IconButton, LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import PropTypes from 'prop-types'
@@ -12,7 +12,6 @@ import { compose, withProps, withHandlers, lifecycle } from 'recompose'
 import useI18n from '../../../../hooks/useI18n'
 import BrowseEmptyList from '../../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../../oldComponents/BrowseTablePaginator'
-import DataTableProgressBar from '../../../../oldComponents/shared/DataTableProgressBar'
 import Summary from '../../../../oldComponents/Summary'
 import { fetchDeviceOperations } from '../../../../store/DeviceOperationRedux'
 import {
@@ -187,9 +186,11 @@ export const DeviceDetailOperation = ({
             </div>
           </header>
           <div>
-            <DataTableProgressBar disabled={!table.loading} />
-            {items.currentIdList.isEmpty() && <BrowseEmptyList />}
-            {!items.currentIdList.isEmpty() && (
+            {table.loading ? (
+              <LinearProgress />
+            ) : items.currentIdList.isEmpty() ? (
+              <BrowseEmptyList />
+            ) : (
               <DeviceOperationDataTable className={cssClasses('DeviceOperationDataTable')}>
                 <DeviceOperationDataTableHead
                   navigate={navigate}
