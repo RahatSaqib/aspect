@@ -1,4 +1,5 @@
 import React from 'react'
+import { LinearProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import identity from 'lodash/identity'
@@ -12,7 +13,6 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import StyledDropdown from '../../../oldComponents/shared/StyledDropdown'
 import { sanitizeFiltersStringBy } from '../../../oldComponents/utils'
 import { fetchTasks } from '../../../store/TaskRedux'
@@ -225,9 +225,11 @@ export const TaskList = ({
         </div>
       </div>
       <DataTableCard key={`DataTableCard--table-${location.key}`}>
-        <DataTableProgressBar disabled={!table.loading} />
-        {items.currentIdList.isEmpty() && <BrowseEmptyList />}
-        {!items.currentIdList.isEmpty() && (
+        {table.loading ? (
+          <LinearProgress />
+        ) : items.currentIdList.isEmpty() ? (
+          <BrowseEmptyList />
+        ) : (
           <TaskDataTable className={cssClasses('TaskDataTable')}>
             <TaskDataTableHead
               navigate={navigate}
