@@ -1589,7 +1589,7 @@ const averageDurationServiceInterruption = {
       INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
       INNER JOIN Device AS d ON dmsl.deviceId = d.id
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
+      INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN
