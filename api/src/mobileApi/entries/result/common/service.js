@@ -61,7 +61,16 @@ async function fetchEntriesServiceHandler(request) {
   const followUps = await getFollowUpsByResultIds(results)
   const comments = await getCommentsOfResultById(results)
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
-  const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
+  const promiseTransformedResults = transformResultResponse(
+    results,
+    followUps,
+    comments,
+    acknowledgements,
+    flags,
+    userSiteIds
+  )
+
+  const transformedResults = await Promise.all(promiseTransformedResults)
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
   const entries = _.orderBy(
     _.concat(_.uniqBy(transformedResults, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),

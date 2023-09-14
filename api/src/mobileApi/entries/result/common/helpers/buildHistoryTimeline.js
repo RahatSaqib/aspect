@@ -2,6 +2,7 @@ const _ = require('lodash')
 const format = require('date-fns/format')
 const { extractFromDataById } = require('./extractFromDataById')
 const { generateTransferStatus } = require('./generateTransferStatus')
+const { getSiteById } = require('../../../../../site/service')
 
 /**
  * A function that builds a history timeline for a given data object and list of follow-ups.
@@ -11,7 +12,7 @@ const { generateTransferStatus } = require('./generateTransferStatus')
  * @returns {array} - An array of objects containing the history timeline, sorted by update date in descending order.
  */
 
-function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
+async function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
@@ -30,6 +31,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   }
 
   if (!_.isNil(data.testDate)) {
+    const patientData = JSON.parse(data?.patientData)
     output.push({
       id: data.resultSampleId,
       resultId: data.id,
@@ -38,6 +40,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
       sampleId: data.sampleExternalId,
+      patientId: patientData?.id || null,
     })
   }
 
@@ -46,10 +49,16 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
 
     let statusLogData
     let comment
+    let originSiteName
     if (transferStatusLogData) {
       statusLogData = JSON.parse(transferStatusLogData)
+
+      const site = await getSiteById(statusLogData?.sampleOriginSiteId)
+      originSiteName = site?.length ? site[0].name : null
+
       comment = statusLogData?.comment
     }
+
     output.push({
       id: data.id,
       resultId: data.id,
@@ -59,6 +68,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       updatedOn: transferStatus.transferredOn,
       comment,
       transferredBy,
+      originSiteName,
     })
   }
 

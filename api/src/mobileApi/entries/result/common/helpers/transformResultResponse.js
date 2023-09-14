@@ -14,7 +14,7 @@ const { transformTreatmentStatus } = require('./transformTreatmentStatus')
 
 function transformResultResponse(data, followUps, comments, acknowledgements, flags, userSiteIds) {
   if (_.isEmpty(data)) return
-  return _.map(data, result => {
+  return _.map(data, async result => {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
     const patientData = JSON.parse(result?.patientData)
     const acknowledgement = acknowledgements?.find(ack => ack.resultId === result.id)
@@ -38,7 +38,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
       clinicalResponse,
       comments: extractFromDataById(comments, 'resultId', result.id),
       followUps: resultFollowUps,
-      history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds),
+      history: await buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
       patientId: patientData?.id || null,
       sample: transformSampleData(result),
