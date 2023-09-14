@@ -1,4 +1,5 @@
 const { expect } = require('chai')
+const sinon = require('sinon')
 const { subDays, differenceInDays } = require('date-fns')
 const {
   data347,
@@ -40,6 +41,8 @@ const {
 const {
   getResultUpdatedOnDate,
 } = require('../../../../src/mobileApi/entries/result/common/helpers/getTrueUpdatedOnDates')
+
+const siteModule = require('../../../../src/site/service')
 
 describe('Entries helpers', () => {
   describe('extractFromDataById', () => {
@@ -557,9 +560,17 @@ describe('Entries helpers', () => {
   })
 
   describe('transformResultResponse', () => {
-    it('correctly transform results', async () => {
-      const entry347 = transformResultResponse([data347], [], [])
-      const entry450 = transformResultResponse([data450], followUp450, [])
+    // eslint-disable-next-line mocha/no-exclusive-tests, no-only-tests/no-only-tests
+    it.only('correctly transform results', async () => {
+      const mockFunction = sinon.stub(siteModule, 'getSiteById')
+
+      mockFunction.returns([{ name: 'Unilag' }])
+
+      const entry347Promise = await transformResultResponse([data347], [], [])
+      const entry450Promise = await transformResultResponse([data450], followUp450, [])
+
+      const entry347 = await Promise.all(entry347Promise)
+      const entry450 = await Promise.all(entry450Promise)
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
     })

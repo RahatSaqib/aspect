@@ -94,6 +94,8 @@ const expected347 = [
         name: 'DBS',
         siteName: 'Lancaster Clinic Laboratory',
         updatedOn: '2023-05-03T17:55:57.000Z',
+        patientId: '57-158-6406',
+        sampleId: 'SMP-TB-31',
       },
       {
         id: 172,
@@ -103,6 +105,7 @@ const expected347 = [
         name: 'DBS',
         siteName: 'Oden Lab',
         updatedOn: '2022-11-01T16:16:39.000Z',
+        sampleId: 'SMP-TB-31',
       },
     ],
     patientData: [
