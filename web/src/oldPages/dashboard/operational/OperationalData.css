@@ -2,6 +2,7 @@
 
 .Container {
   padding: 0 10px;
+  width: 100%;
 }
 
 .Section--summary {
