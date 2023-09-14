@@ -21,6 +21,9 @@ const optionalHistoryResponseValidation = Joi.object()
             .allow('', null)
             .description('The full name of the user who transferred the result'),
           comment: Joi.optional().allow('', null).description('The comment made when result was transferred'),
+          originSiteName: Joi.optional().allow('', null).description('The site where the transferred was initiated'),
+          sampleId: Joi.optional().allow('', null).description('The id of the sample'),
+          patientId: Joi.optional().allow('', null).description('The id of the patient'),
         })
       ),
   })

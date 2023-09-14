@@ -86,6 +86,7 @@ const expected347 = [
         updatedOn: '2023-05-03T18:15:57.000Z',
         transferredBy: 'Admin',
         comment: undefined,
+        originSiteName: null,
       },
       {
         id: 172,
@@ -327,6 +328,8 @@ const expected450 = [
         name: 'DBS',
         siteName: 'Marden Hospital Laboratory',
         updatedOn: '2023-05-20T17:55:55.000Z',
+        patientId: '84-687-3493',
+        sampleId: 'SMP-TB-14',
       },
       {
         id: 155,
@@ -336,6 +339,7 @@ const expected450 = [
         name: 'DBS',
         siteName: 'Atlanta NMRL',
         updatedOn: '2022-08-04T16:16:37.000Z',
+        sampleId: 'SMP-TB-14',
       },
     ],
     patientData: [

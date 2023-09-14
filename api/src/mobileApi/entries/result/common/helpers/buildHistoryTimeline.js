@@ -31,7 +31,8 @@ async function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   }
 
   if (!_.isNil(data.testDate)) {
-    const patientData = JSON.parse(data?.patientData)
+    const patientData = data?.patientData
+    const parsedPatientData = patientData ? JSON.parse(patientData) : null
     output.push({
       id: data.resultSampleId,
       resultId: data.id,
@@ -40,7 +41,7 @@ async function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
       siteName: data?.laboratorySiteName,
       updatedOn: data.testDate,
       sampleId: data.sampleExternalId,
-      patientId: patientData?.id || null,
+      patientId: parsedPatientData?.id || null,
     })
   }
 
@@ -55,7 +56,6 @@ async function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
 
       const site = await getSiteById(statusLogData?.sampleOriginSiteId)
       originSiteName = site?.length ? site[0].name : null
-
       comment = statusLogData?.comment
     }
 

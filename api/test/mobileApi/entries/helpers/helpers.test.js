@@ -1,5 +1,4 @@
 const { expect } = require('chai')
-const sinon = require('sinon')
 const { subDays, differenceInDays } = require('date-fns')
 const {
   data347,
@@ -42,8 +41,6 @@ const {
   getResultUpdatedOnDate,
 } = require('../../../../src/mobileApi/entries/result/common/helpers/getTrueUpdatedOnDates')
 
-const siteModule = require('../../../../src/site/service')
-
 describe('Entries helpers', () => {
   describe('extractFromDataById', () => {
     const data = [
@@ -67,7 +64,7 @@ describe('Entries helpers', () => {
   })
 
   describe('buildHistoryTimeline', () => {
-    it('should build a correct timeline', () => {
+    it('should build a correct timeline', async () => {
       const data = {
         id: 123,
         sampleCollectedOn: '2023-05-01T00:00:00Z',
@@ -82,6 +79,8 @@ describe('Entries helpers', () => {
           '{"siteId":261,"reportableSiteId":436,"previousReportableSiteId":261,"comment":"test comment"}',
         transferredOn: '2023-05-02T00:00:00Z',
         sampleClinicianName: 'test clinician',
+        sampleExternalId: '123',
+        patientData: '{"id": "PATIENT-1"}',
       }
 
       const followUps = [
@@ -115,6 +114,7 @@ describe('Entries helpers', () => {
           updatedOn: '2023-05-02T00:00:00Z',
           comment: 'test comment',
           transferredBy: 'testuser',
+          originSiteName: null,
         },
         {
           id: 456,
@@ -123,6 +123,8 @@ describe('Entries helpers', () => {
           name: 'SampleType1',
           siteName: 'ReportLab1',
           updatedOn: '2023-05-02T00:00:00Z',
+          patientId: 'PATIENT-1',
+          sampleId: '123',
         },
         {
           id: 456,
@@ -132,19 +134,20 @@ describe('Entries helpers', () => {
           siteName: 'Lab1',
           updatedOn: '2023-05-01T00:00:00Z',
           clinicianName: 'test clinician',
+          sampleId: '123',
         },
       ]
 
-      const result = buildHistoryTimeline(data, followUps)
+      const result = await buildHistoryTimeline(data, followUps)
       expect(result).to.deep.eq(expectedOutput)
     })
 
-    it('should handle null/undefined values correctly', () => {
+    it('should handle null/undefined values correctly', async () => {
       const data = { id: 123 }
       const followUps = []
       const expectedOutput = []
 
-      const result = buildHistoryTimeline(data, followUps)
+      const result = await buildHistoryTimeline(data, followUps)
       expect(result).to.eql(expectedOutput)
     })
   })
@@ -560,12 +563,7 @@ describe('Entries helpers', () => {
   })
 
   describe('transformResultResponse', () => {
-    // eslint-disable-next-line mocha/no-exclusive-tests, no-only-tests/no-only-tests
-    it.only('correctly transform results', async () => {
-      const mockFunction = sinon.stub(siteModule, 'getSiteById')
-
-      mockFunction.returns([{ name: 'Unilag' }])
-
+    it('correctly transform results', async () => {
       const entry347Promise = await transformResultResponse([data347], [], [])
       const entry450Promise = await transformResultResponse([data450], followUp450, [])
 
