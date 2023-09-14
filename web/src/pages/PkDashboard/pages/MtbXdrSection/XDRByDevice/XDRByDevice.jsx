@@ -1,5 +1,5 @@
 import React from 'react'
-import { TableBody, Table, Button } from '@mui/material'
+import { TableBody, Table, Button, LinearProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
@@ -13,7 +13,6 @@ import { getCustomMessage } from '../../../../../messages/customMessages'
 import BrowseEmptyList from '../../../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../../../oldComponents/shared/DataTableProgressBar'
 import DataTableHead from '../../../../../oldComponents/shared/tableHead'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import { useFilterUpdate, useFilterValues } from '../../../../../providers/FilterProvider'
@@ -105,8 +104,9 @@ const XdrByDevice = () => {
               {formatMessage(messages.goTo)}
             </Button>
           </div>
-          <DataTableProgressBar disabled={!isLoading} />
-          {XdrByDevice.length === 0 ? (
+          {isLoading ? (
+            <LinearProgress />
+          ) : XdrByDevice.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
