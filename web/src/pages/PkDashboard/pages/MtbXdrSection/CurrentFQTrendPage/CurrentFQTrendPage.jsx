@@ -9,6 +9,7 @@ import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import { objectToArray } from '../../../../../utils/utils/misc'
+import GraphTitle from '../../../components/GraphTitle'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
@@ -69,6 +70,7 @@ const CurrentFQTrendPage = () => {
       ) : (
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8}>
+            <GraphTitle>{formatMessage(messages.FQRCurrentYear)}</GraphTitle>
             <SimpleBarGraph
               data={data?.data?.map(({ cnt, ...i }) => ({ 'FQ Detected': cnt, ...i }))}
               keys={['FQ Detected']}
