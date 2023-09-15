@@ -94,7 +94,7 @@ export const InventoryItemsListWithProps = ({
 }) => {
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
 
-  const { isPakistan } = useAuthState()
+  const { isCountry } = useAuthState()
 
   const columns = [
     {
@@ -252,7 +252,7 @@ export const InventoryItemsListWithProps = ({
           )}
         </DataTableCard>
 
-        {isPakistan && inventoryAdjustment.get('actionType') ? (
+        {isCountry('PK') && inventoryAdjustment.get('actionType') ? (
           <PakistanInventoryAdjustmentDialog
             actionType={inventoryAdjustment.get('actionType')}
             inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], undefined)}

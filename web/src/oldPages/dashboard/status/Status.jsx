@@ -5,6 +5,7 @@ import { useSelector, useDispatch } from 'react-redux'
 import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
+import { useAuthState } from '../../../providers/AuthProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
 import CovidResultGraph from '../Graphs/CovidResultGraph'
 import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
@@ -28,10 +29,10 @@ import SummaryStatus from './SummaryStatus'
 
 const cssClasses = classnames.bind(styles)
 
-const Status = ({ countryAbbreviation }) => {
+const Status = () => {
   const { formatMessage } = useI18n()
   const dispatch = useDispatch()
-
+  const { isCountry } = useAuthState()
   useEffect(() => {
     dispatch(fetchAssays(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,7 +98,7 @@ const Status = ({ countryAbbreviation }) => {
             </PermissionChecker>
           ) : null}
 
-          {assays.some(a => covidPermissions.includes(a.externalId)) && countryAbbreviation !== 'BD' ? (
+          {assays.some(a => covidPermissions.includes(a.externalId)) && !isCountry('BD') ? (
             <PermissionChecker permissions={['dashboard']}>
               <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
             </PermissionChecker>
@@ -110,7 +111,7 @@ const Status = ({ countryAbbreviation }) => {
           ) : null}
 
           <PermissionChecker permissions={['dashboard', 'operationalData']}>
-            {countryAbbreviation !== 'BD' && <DeviceStatusGraph assaysFromState={assays} />} {/* 13 */}
+            {!isCountry('BD') && <DeviceStatusGraph assaysFromState={assays} />} {/* 13 */}
             <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
           </PermissionChecker>
 
