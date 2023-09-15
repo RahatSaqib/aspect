@@ -172,7 +172,7 @@ async function commonUpserts(
   if (deviceApiToken) {
     await upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
   }
-  await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
+
   await ensureResultTreatmentStatuses(knex)
 
   if (usersInsertConfig)
