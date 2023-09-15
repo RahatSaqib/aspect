@@ -147,7 +147,7 @@ const expected347 = [
         treatmentStatus: '',
         transferStatus: 'awayTransfer',
         assayType: 'GxMtbRif',
-        followUpStatus: 'noFollowUpFound',
+        followUpStatus: 'followUpNotRequired',
       },
     },
     testInformation: [

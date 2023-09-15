@@ -43,7 +43,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
         ? 'hasFollowUp'
         : noFollowUpPossible
         ? 'noFollowUpPossible'
-        : 'noFollowUpFound',
+        : 'followUpNotRequired',
     }
 
     return {
