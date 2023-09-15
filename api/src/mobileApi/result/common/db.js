@@ -219,12 +219,8 @@ const getResultWorkflowStatusQuery = resultWorkflowStatusExternalId => {
   return knex('ResultWorkflowStatus').where('externalId', resultWorkflowStatusExternalId).first('id')
 }
 
-const addResultDownloadLogQuery = (resultId, now, userId) => {
-  return knex('ResultDownloadLog').insert({
-    resultId,
-    createdOn: now,
-    createdBy: userId,
-  })
+const addResultDownloadLogQuery = resultDownloadLogs => {
+  return knex('ResultDownloadLog').insert(resultDownloadLogs)
 }
 
 const generateResultQueryV2 = (query, dataConstraints, resultId) => {
