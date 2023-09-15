@@ -1,6 +1,6 @@
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
-import { Card, IconButton, Table, TableBody, Tooltip } from '@mui/material'
+import { Card, IconButton, LinearProgress, Table, TableBody, Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
@@ -8,7 +8,6 @@ import { MdFileDownload } from 'react-icons/md'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
@@ -48,9 +47,11 @@ export const Results = ({
           )}
         </header>
         <div>
-          <DataTableProgressBar disabled={!table.loading} />
-          {items.currentIdList.isEmpty() && <BrowseEmptyList />}
-          {!items.currentIdList.isEmpty() && (
+          {table.loading ? (
+            <LinearProgress />
+          ) : items.currentIdList.isEmpty() ? (
+            <BrowseEmptyList />
+          ) : (
             <Table className={cssClasses('ResultDataTable')}>
               <DataTableHead
                 navigate={navigate}

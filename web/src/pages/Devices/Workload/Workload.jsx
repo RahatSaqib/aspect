@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { TableBody, Table } from '@mui/material'
+import { TableBody, Table, LinearProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useLocation, useNavigate } from 'react-router'
@@ -13,7 +13,6 @@ import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import colMessages from '../../../oldPages/result/list/messages'
 import { useAuthState } from '../../../providers/AuthProvider'
@@ -98,8 +97,9 @@ const Workload = () => {
             />
           </div>
 
-          <DataTableProgressBar disabled={!isLoading} />
-          {workloadList.length === 0 ? (
+          {isLoading ? (
+            <LinearProgress />
+          ) : workloadList.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
