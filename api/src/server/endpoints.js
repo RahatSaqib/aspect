@@ -1,6 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
-const { getServersByPartner, getStatistics } = require('./service')
+const { getServersByPartner } = require('./getServersByPartner')
+const { getStatistics } = require('./getStatistics')
 
 const countryBase = {
   CountryId: Joi.number().integer().positive().required().description('Country Id'),
