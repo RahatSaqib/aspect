@@ -563,12 +563,10 @@ describe('Entries helpers', () => {
   })
 
   describe('transformResultResponse', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
     it('correctly transform results', async () => {
-      const entry347Promise = await transformResultResponse([data347], [], [])
-      const entry450Promise = await transformResultResponse([data450], followUp450, [])
-
-      const entry347 = await Promise.all(entry347Promise)
-      const entry450 = await Promise.all(entry450Promise)
+      const entry347 = transformResultResponse([data347], [], [])
+      const entry450 = transformResultResponse([data450], followUp450, [])
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
     })

@@ -2,7 +2,6 @@ const _ = require('lodash')
 const format = require('date-fns/format')
 const { extractFromDataById } = require('./extractFromDataById')
 const { generateTransferStatus } = require('./generateTransferStatus')
-const { getSiteById } = require('../../../../../site/service')
 
 /**
  * A function that builds a history timeline for a given data object and list of follow-ups.
@@ -12,7 +11,7 @@ const { getSiteById } = require('../../../../../site/service')
  * @returns {array} - An array of objects containing the history timeline, sorted by update date in descending order.
  */
 
-async function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
+function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds, originSites = {}) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
@@ -53,9 +52,7 @@ async function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
     let originSiteName
     if (transferStatusLogData) {
       statusLogData = JSON.parse(transferStatusLogData)
-
-      const site = await getSiteById(statusLogData?.sampleOriginSiteId)
-      originSiteName = site?.length ? site[0].name : null
+      originSiteName = originSites[statusLogData.sampleOriginSiteId] || null
       comment = statusLogData?.comment
     }
 
