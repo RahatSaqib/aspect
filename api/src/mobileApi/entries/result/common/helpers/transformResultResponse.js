@@ -38,6 +38,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
     }
 
     const clinicalFollowUpFilter = {
+      ...clinicalFollowUpFlags,
       followUpStatus: requiresFollowUp
         ? 'requiresFollowUp'
         : hasFollowUpEntry

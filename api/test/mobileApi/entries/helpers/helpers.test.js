@@ -566,7 +566,11 @@ describe('Entries helpers', () => {
         resultRequiresTreatment: true,
         searchSchema: {
           ...clonedExpected.searchSchema,
-          filterMeta: { ...clonedExpected.searchSchema.filterMeta, followUpStatus: 'requiresFollowUp' },
+          filterMeta: {
+            ...clonedExpected.searchSchema.filterMeta,
+            followUpStatus: 'requiresFollowUp',
+            requiresFollowUp: true,
+          },
         },
       }
       expect(requiresFollowUpEntry).to.deep.eq([requiresFollowUpExpectedResult])
@@ -589,6 +593,9 @@ describe('Entries helpers', () => {
             ...clonedExpected.searchSchema.filterMeta,
             followUpStatus: 'noFollowUpPossible',
             treatmentStatus: 'NotPossible',
+            hasFollowUp: false,
+            noFollowUpPossible: true,
+            requiresFollowUp: false,
           },
         },
         treatmentStatus: {
