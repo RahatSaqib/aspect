@@ -241,6 +241,9 @@ describe('Authentication routes', () => {
               assert.property(jwtdecoded, 'hasToAcceptLicenseId')
               assert.isNull(jwtdecoded.hasToAcceptLicenseId)
             })
+        }))
+      it('should return 417 and error message if user has no permissions defined', () =>
+        run(async () => {
           await server
             .post(authPath)
             .send({
@@ -250,10 +253,9 @@ describe('Authentication routes', () => {
               clientId: '9999-9999',
             })
             .then(res => {
-              assert.equal(res.status, 200)
-              const jwtdecoded = jwtDecode(res.body.access)
-              assert.property(jwtdecoded, 'hasToAcceptLicenseId')
-              assert.isNotNull(jwtdecoded.hasToAcceptLicenseId)
+              assert.equal(res.status, 417)
+              assert.isString(res.body.message)
+              assert.notEqual('', res.body.message)
             })
         }))
 
