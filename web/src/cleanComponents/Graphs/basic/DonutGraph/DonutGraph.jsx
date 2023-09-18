@@ -58,6 +58,9 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total }) => {
     innerRadius: 0.64,
     meta: { value: { formatter: v => `${v} %` } }, // format for hover tooltip
     animation: false,
+    legend: {
+      position: 'bottom',
+    },
   }
   return <Pie {...config} />
 }
