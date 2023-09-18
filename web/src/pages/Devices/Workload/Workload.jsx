@@ -47,7 +47,7 @@ const Workload = () => {
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
-  const { isError, isLoading, data = false, error } = useWorkload(filter)
+  const { isError, isLoading, data = false, error } = useWorkload({ ...filter, size: pageSize, page: pageAt })
 
   if (isError) throw new Error(error)
 
