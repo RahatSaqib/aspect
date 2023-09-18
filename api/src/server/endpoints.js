@@ -3,6 +3,7 @@ const { asyncHandler } = require('../routes')
 const { getServersByPartner } = require('./getServersByPartner')
 const { getStatistics } = require('./getStatistics')
 const { getVersion } = require('./getVersion')
+const { getStatus } = require('./getStatus')
 
 const countryBase = {
   CountryId: Joi.number().integer().positive().required().description('Country Id'),
@@ -142,6 +143,14 @@ const routes = [
     method: 'GET',
     path: '/version',
     handler: asyncHandler(getVersion),
+    config: {
+      auth: false,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/server/status',
+    handler: asyncHandler(getStatus),
     config: {
       auth: false,
     },
