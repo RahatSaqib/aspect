@@ -18,13 +18,18 @@ function renderStatistic(containerWidth, text, style) {
   </div>`
 }
 
-const DonutGraph = ({ data, graphId, legend, showLabel, graphTitle, total }) => {
+const DonutGraph = ({ data, graphId, showLabel, graphTitle, total }) => {
   const config = {
     data,
     color: datum => filterColour(data.find(d => d.label === datum.label).id, graphId),
-    legend,
     label: showLabel
-      ? { type: 'inner', offset: '-50%', style: { textAlign: 'center' }, autoRotate: false, content: `{value} %` }
+      ? {
+          type: 'inner',
+          offset: '-50%',
+          style: { textAlign: 'center' },
+          autoRotate: false,
+          content: obj => (obj.value < 1 ? '' : `${obj.value}%`),
+        }
       : false, // format for label on top of section
     statistic: {
       title: {

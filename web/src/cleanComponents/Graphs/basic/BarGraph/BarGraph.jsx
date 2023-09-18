@@ -7,7 +7,11 @@ const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onRea
     data,
     color: datum => filterColour(data.find(d => d.type === datum.type).id, graphId),
     label: showLabel
-      ? { position: 'middle', content: originData => (isPercentage ? `${originData.value}%` : originData.value) }
+      ? {
+          position: 'middle',
+          content: originData => (isPercentage ? `${originData.value}%` : originData.value),
+          layout: [{ type: 'interval-adjust-position' }, { type: 'interval-hide-overlap' }, { type: 'adjust-color' }],
+        }
       : false, // format for label on top of section
     isStack: true,
     xField,
