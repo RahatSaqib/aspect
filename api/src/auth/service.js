@@ -217,7 +217,7 @@ async function authenticate(request, response) {
   const permissions = await getUserPermissions(user.id, user.partnerId)
   if (_.isEmpty(permissions)) {
     return loginHistoryCodeDecorator(
-      Boom.expectationFailed('Your credentials were not configured properly. Contact your admin please.'),
+      Boom.expectationFailed('Your credentials were not configured properly. Please, contact your administrator.'),
       LOGIN_HISTORY_CODES.missingPermissions,
       user.id
     )
