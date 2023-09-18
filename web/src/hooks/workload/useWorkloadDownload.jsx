@@ -3,13 +3,14 @@ import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import {
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
   errorForbidden,
+  errorPleaseTryAgainInAFewMinutes,
+  filterFieldsRejectedError,
 } from '../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
 import { WORKLOAD_KEY, WORKLOAD_KEY_EXPORT_ENDPOINT } from './workloadKeys.js'
+import { getISOFromString } from '../../oldComponents/shared/DateTimeInput/utils/date'
 
 const getDownload = async (filtersParams, fileFormat) => {
   return aspectFetch(
@@ -52,7 +53,7 @@ const getDownload = async (filtersParams, fileFormat) => {
 }
 
 const useWorkloadDownload = requestParams => {
-  const { fileFormat, enabled, sortDir, sortCol, size, page, ...filtersParams } = requestParams
+  const { fileFormat, enabled, sortDir, sortCol, size, page, minDate, maxDate, ...filtersParams } = requestParams
   const assayId = filtersParams.singleAssayId
 
   filtersParams.assayId = assayId
@@ -60,13 +61,25 @@ const useWorkloadDownload = requestParams => {
   const queryClient = useQueryClient()
   const dispatch = useDispatch()
 
-  return useQuery([WORKLOAD_KEY, 'download'], () => getDownload(filtersParams, fileFormat), {
-    onSuccess: () => {
-      dispatch({ type: 'EXPORT_RESPONSE_FILE_RECEIVED' })
-      queryClient.invalidateQueries([WORKLOAD_KEY, 'download'])
-    },
-    enabled,
-  })
+  return useQuery(
+    [WORKLOAD_KEY, 'download'],
+    () =>
+      getDownload(
+        {
+          ...filtersParams,
+          minDate: getISOFromString(minDate?.toString()),
+          maxDate: getISOFromString(maxDate?.toString()),
+        },
+        fileFormat
+      ),
+    {
+      onSuccess: () => {
+        dispatch({ type: 'EXPORT_RESPONSE_FILE_RECEIVED' })
+        queryClient.invalidateQueries([WORKLOAD_KEY, 'download'])
+      },
+      enabled,
+    }
+  )
 }
 
 export default useWorkloadDownload
