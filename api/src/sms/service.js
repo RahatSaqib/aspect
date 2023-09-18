@@ -32,7 +32,7 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
   if (!_.isEmpty(phone)) {
     const messageStatusId = await messageStatusToId('Pending')
     const phoneNumber = normalizePhoneNumber(phone, countryCode)
-
+    if (!phoneNumber) return
     // store generated sms message into the same record and set messageStatusId
     await knex('SmsMessage').where({ id: smsMessageId }).update({
       message,
@@ -127,4 +127,5 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
 module.exports = {
   onSmsMessageCreated,
   onSmsMessageReadyForSending,
+  createSmsMessageFromTemplate,
 }
