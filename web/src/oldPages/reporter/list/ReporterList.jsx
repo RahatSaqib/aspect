@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { TableBody } from '@mui/material'
+import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import isEmpty from 'lodash/isEmpty'
@@ -15,7 +15,6 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { receiveList, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
@@ -110,9 +109,9 @@ export const ReporterListWithProps = ({
               reportName="Reporters"
             />
           </div>
-          <DataTableProgressBar disabled={!isLoading} />
-
-          {items.currentIdList.length === 0 ? (
+          {isLoading ? (
+            <LinearProgress />
+          ) : items.currentIdList.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>

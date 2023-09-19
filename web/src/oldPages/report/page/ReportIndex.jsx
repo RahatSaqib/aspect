@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Grid } from '@mui/material'
+import { Grid, LinearProgress } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
@@ -12,7 +12,6 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
 import useI18n from '../../../hooks/useI18n'
 import messages from '../../../messages/report'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { showError } from '../../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../../utils/utils/files'
@@ -106,22 +105,25 @@ const ReportIndex = () => {
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
         <ReportsFilter />
-        <DataTableProgressBar disabled={!showProgressBar} />
-        <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
-          {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (
-            <ReportCard
-              title={name}
-              description={description}
-              i18nKey={i18nKey}
-              i18nKeyDescription={i18nKeyDescription}
-              exportExcel={exportExcel}
-              exportCsv={exportCsv}
-              key={externalId}
-              onClick={(fileExtension, reportName) => onClickDownload(externalId, fileExtension, reportName)}
-              navigate={navigate}
-            />
-          ))}
-        </Grid>
+        {showProgressBar ? (
+          <LinearProgress />
+        ) : (
+          <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
+            {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (
+              <ReportCard
+                title={name}
+                description={description}
+                i18nKey={i18nKey}
+                i18nKeyDescription={i18nKeyDescription}
+                exportExcel={exportExcel}
+                exportCsv={exportCsv}
+                key={externalId}
+                onClick={(fileExtension, reportName) => onClickDownload(externalId, fileExtension, reportName)}
+                navigate={navigate}
+              />
+            ))}
+          </Grid>
+        )}
       </div>
     </>
   )
