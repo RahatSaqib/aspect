@@ -433,21 +433,6 @@ async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, devi
   }
 }
 
-async function ensureAspectDeviceExists(knex, countryId, partnerId, auditFields) {
-  return ensureCountryLevelInformationSystemExists(
-    knex,
-    countryId,
-    partnerId,
-    {
-      externalId: 'Aspect',
-      name: 'Aspect',
-      manufacturer: 'SystemOne',
-      plugin: 'aspectresultentry',
-    },
-    auditFields
-  )
-}
-
 async function ensureCountryLevelInformationSystemExists(knex, countryId, partnerId, deviceType, auditFields) {
   const { externalId, name, manufacturer, plugin } = deviceType
   let { id: deviceTypeId } = (await knex('DeviceType').where('externalId', externalId).first('id')) || {}
@@ -1966,7 +1951,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
-  ensureAspectDeviceExists,
   upsertJobFunctionPermission,
   upsertGeneXpertDeviceTypeAndAssays,
   upsertSites,
