@@ -59,7 +59,7 @@ async function getSheetData(auth, queryParams, sheet, sharedResults) {
 
   logger.debug(`Report moduleName='${moduleName}', functionName='${functionName}'`, RELABEL_EXCEL)
 
-  const result = await dataFunc(auth, query, { sharedResults, useNamedData })
+  const result = await dataFunc(auth, query, { sharedResults, useNamedData, nameOfSharedData })
   const {
     ok,
     data,
@@ -70,9 +70,10 @@ async function getSheetData(auth, queryParams, sheet, sharedResults) {
     dataSelector = null,
     sections = [],
     populator,
+    alreadyCachedSharedData = false,
   } = result
 
-  if (nameOfSharedData) {
+  if (nameOfSharedData && !alreadyCachedSharedData) {
     sharedResults[nameOfSharedData] = result
   }
 

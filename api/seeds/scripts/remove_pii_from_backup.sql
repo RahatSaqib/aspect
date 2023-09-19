@@ -25,9 +25,4 @@ delete from FormData where id > 0;
 
 update Patient set externalId = concat("PATIENT-ID-", id) where id > 0;
 
-update Person
-set email = null,
-phone = null,
-cell = null
-where email <> 'developer@systemone.id'
-and id > 0;
+update Person set email = null, email2 = null, phone = null, cell = null where email <> 'developer@systemone.id' OR email IS NULL and id > 0;
