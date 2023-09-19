@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-29T12:46:49.806Z\n"
+"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -41,6 +41,13 @@ msgstr "# Результати Поточний місяць"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "# Результати минулого місяця"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "# Кількість сайтів PMDT з 10 C GX"
 
 #. [pages.XDR.totalConducted]
 #. defaultMessage is:
@@ -4877,19 +4884,15 @@ msgstr "ВГС Немає результату"
 msgid "HCV Not Detected"
 msgstr "ВГС не виявлено"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "ВІЛ"
-
-#. [p.PkDashboard.hivPending]
-#. defaultMessage is:
-#. HIV (Pending)
-#: extracted_strings.json
-msgid "HIV (Pending)"
-msgstr "ВІЛ (на розгляді)"
 
 #. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
 #. defaultMessage is:
@@ -10796,6 +10799,13 @@ msgstr "Показати лише результати з необхідним �
 msgid "Show Only Transfers"
 msgstr "Показати тільки перекази"
 
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Показати відсоток"
+
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
 #. Showing all sites/devices and the number of days which they had no stock in the last month.
@@ -14399,6 +14409,9 @@ msgstr "{unit} загальна калібрування"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {total, plural, one {# результат} other {# результати}})"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "ВІЛ (на розгляді)"
 
 #~ msgid "Current FQ Trends"
 #~ msgstr "Поточні тенденції FQ"

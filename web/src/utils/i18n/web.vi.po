@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-21T20:06:25.401Z\n"
+"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -41,6 +41,13 @@ msgstr "# Kết quả Tháng hiện tại"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "# Kết Quả Tháng Trước"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "Số địa điểm PMDT có 10 C GX"
 
 #. [pages.XDR.totalConducted]
 #. defaultMessage is:
@@ -763,6 +770,34 @@ msgstr ""
 "quảng cáo trong trang web và kết quả kiểm tra tổng hợp trên mỗi thiết bị. "
 "Đây là báo cáo cũ và được cải tiến của GxAlert có tên là \"Tất cả thiết bị\""
 
+#. [p.PkDashboard.annualFQRDiagnosed]
+#. defaultMessage is:
+#. Annual FQ-R Diagnosis
+#: extracted_strings.json
+msgid "Annual FQ-R Diagnosis"
+msgstr "Chẩn đoán FQ-R hàng năm"
+
+#. [p.PkDashboard.annualRRDiagnosedTrends]
+#. defaultMessage is:
+#. Annual RR Diagnosis
+#: extracted_strings.json
+msgid "Annual RR Diagnosis"
+msgstr "Chẩn đoán RR hàng năm"
+
+#. [p.PkDashboard.annualTestingTrends]
+#. defaultMessage is:
+#. Annual Testing Trends
+#: extracted_strings.json
+msgid "Annual Testing Trends"
+msgstr "Xu hướng thử nghiệm hàng năm"
+
+#. [p.PkDashboard.annualDiagnosedTrends]
+#. defaultMessage is:
+#. Annual diagnosis Trends
+#: extracted_strings.json
+msgid "Annual diagnosis Trends"
+msgstr "Xu hướng chẩn đoán hàng năm"
+
 #. [pages.dateRangeSelector.any]
 #. defaultMessage is:
 #. Any
@@ -984,7 +1019,7 @@ msgstr "Phản hồi đã xác nhận trung bình"
 #. Average Days for Instrument Replacement.
 #: extracted_strings.json
 msgid "Average Days for Instrument Replacement."
-msgstr "Số ngày trung bình để thay thế dụng cụ"
+msgstr "Số ngày trung bình để thay thế dụng cụ."
 
 #. [component.Widget.avgTimeToUploadTitle]
 #. defaultMessage is:
@@ -1640,7 +1675,7 @@ msgstr "Hạng mục 2"
 #. Category I
 #: extracted_strings.json
 msgid "Category I"
-msgstr "loại tôi"
+msgstr "Loại I"
 
 #. [pages.resultEdit.PatientPhoneNumberi18nkey]
 #. defaultMessage is:
@@ -1937,7 +1972,7 @@ msgstr "Trạng thái trình kết nối"
 #. Connector Status is {connectorStatus}
 #: extracted_strings.json
 msgid "Connector Status is {connectorStatus}"
-msgstr "Tình trạng điều trị"
+msgstr "Trạng thái kết nối là {connectorStatus}"
 
 #. [pages.DeviceList.connectorVersion]
 #. defaultMessage is:
@@ -2200,9 +2235,6 @@ msgstr "Quận"
 msgid "Coverage"
 msgstr "Phủ sóng"
 
-#. [p.PkDashboard.covid]
-#. defaultMessage is:
-#. Covid
 #. [pages.ResultList.resultCategoryCovid19]
 #. defaultMessage is:
 #. Covid
@@ -2216,6 +2248,13 @@ msgstr "Covid"
 #: extracted_strings.json
 msgid "Covid 19"
 msgstr "Covid-19"
+
+#. [p.PkDashboard.covidPending]
+#. defaultMessage is:
+#. Covid Testing (Pending)
+#: extracted_strings.json
+msgid "Covid Testing (Pending)"
+msgstr "Xét nghiệm Covid (Đang chờ xử lý)"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -2368,12 +2407,12 @@ msgstr "Các thiết bị hoạt động hiện tại"
 msgid "Current Diagnosis"
 msgstr "Chẩn đoán hiện tại"
 
-#. [p.PkDashboard.FQCurrent]
+#. [p.PkDashboard.CurrentFQDetectionPending]
 #. defaultMessage is:
-#. Current FQ Trends
+#. Current FQ Detection (Pending)
 #: extracted_strings.json
-msgid "Current FQ Trends"
-msgstr "Xu hướng FQ hiện tại"
+msgid "Current FQ Detection (Pending)"
+msgstr "Phát hiện FQ hiện tại (Đang chờ xử lý)"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2383,6 +2422,9 @@ msgid "Current GX-10CX Testing performed in"
 msgstr "Thử nghiệm GX-10CX hiện tại được thực hiện trong"
 
 #. [p.PkDashboard.DCurrent]
+#. defaultMessage is:
+#. Current MTB Detection
+#. [p.PkDashboard.DCurrentPending]
 #. defaultMessage is:
 #. Current MTB Detection
 #: extracted_strings.json
@@ -2417,6 +2459,13 @@ msgstr "Chẩn đoán RRTB hiện tại"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Xu hướng chẩn đoán kháng Rifampicin hiện tại"
 
+#. [p.PkDashboard.rrtbDiagnosisTitle]
+#. defaultMessage is:
+#. Current Rifampicin Resistance Diagnosis using MTB/Rif Assay
+#: extracted_strings.json
+msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Assay"
+msgstr "Chẩn đoán kháng Rifampicin hiện tại bằng xét nghiệm MTB/Rif"
+
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
 #. Current TB Diagnosis
@@ -2424,12 +2473,12 @@ msgstr "Xu hướng chẩn đoán kháng Rifampicin hiện tại"
 msgid "Current TB Diagnosis"
 msgstr "Chẩn đoán bệnh lao hiện tại"
 
-#. [p.PkDashboard.TbCurrent]
+#. [p.PkDashboard.CurrentTBTesting]
 #. defaultMessage is:
-#. Current TB Testing Trends
+#. Current TB Testing
 #: extracted_strings.json
-msgid "Current TB Testing Trends"
-msgstr "Xu hướng xét nghiệm lao hiện tại"
+msgid "Current TB Testing"
+msgstr "Xét nghiệm bệnh lao hiện tại"
 
 #. [p.PkDashboard.TCurrent]
 #. defaultMessage is:
@@ -3192,14 +3241,14 @@ msgstr "Tổng quan về thiết bị và trang web"
 #. Devices from LGA
 #: extracted_strings.json
 msgid "Devices from LGA"
-msgstr "Từ..."
+msgstr "Thiết bị từ LGA"
 
 #. [pages.NotificationDetail.SelectLabTitle]
 #. defaultMessage is:
 #. Devices from Lab
 #: extracted_strings.json
 msgid "Devices from Lab"
-msgstr "Phòng thí nghiệm:"
+msgstr "Thiết bị từ phòng thí nghiệm"
 
 #. [component.Widget.unusedModulesTitle]
 #. defaultMessage is:
@@ -3807,15 +3856,19 @@ msgstr "Lỗi khi tải chi tiết kết quả"
 #. [component.Widget.errorRateTitle]
 #. defaultMessage is:
 #. Error Rate
-#. [p.PkDashboard.errorRate]
-#. defaultMessage is:
-#. Error Rate
 #. [pages.DeviceDetailProfile.errorRate]
 #. defaultMessage is:
 #. Error Rate
 #: extracted_strings.json
 msgid "Error Rate"
 msgstr "Tỷ lệ lỗi"
+
+#. [p.PkDashboard.errorRatePending]
+#. defaultMessage is:
+#. Error Rate (Pending)
+#: extracted_strings.json
+msgid "Error Rate (Pending)"
+msgstr "Tỷ lệ lỗi (Đang chờ xử lý)"
 
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
@@ -3902,14 +3955,14 @@ msgstr "Thi hành"
 #. Exp. since {date}
 #: extracted_strings.json
 msgid "Exp. since {date}"
-msgstr "kể từ {date}"
+msgstr "Exp. kể từ {date}"
 
 #. [filter.btnGroup.expDateTo]
 #. defaultMessage is:
 #. Exp. until {date}
 #: extracted_strings.json
 msgid "Exp. until {date}"
-msgstr "cho đến {date}"
+msgstr "Exp. cho đến {date}"
 
 #. [pages.TableCell.expandRow]
 #. defaultMessage is:
@@ -4031,7 +4084,7 @@ msgstr "Xuất trang không thành công"
 #. Extra-pulmonary
 #: extracted_strings.json
 msgid "Extra-pulmonary"
-msgstr "ngoài phổi"
+msgstr "Ngoài phổi"
 
 #. [pages.ReportIndex.data_extract_description]
 #. defaultMessage is:
@@ -4054,6 +4107,13 @@ msgstr "tháng hai"
 #: extracted_strings.json
 msgid "FLQ Resistance"
 msgstr "Kháng FLQ"
+
+#. [p.PkDashboard.fqInhTestingDiagnosis]
+#. defaultMessage is:
+#. FQ & INH Testing & Diagnosis
+#: extracted_strings.json
+msgid "FQ & INH Testing & Diagnosis"
+msgstr "Kiểm tra & chẩn đoán FQ & INH"
 
 #. [pages.XDR.cnt_flq]
 #. defaultMessage is:
@@ -4343,13 +4403,6 @@ msgstr "GP không được phát hiện - NP được phát hiện"
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP không được phát hiện - NP không được phát hiện"
 
-#. [p.PkDashboard.DTestingDiagnosis]
-#. defaultMessage is:
-#. GX-10C Testing & Diagnosis
-#: extracted_strings.json
-msgid "GX-10C Testing & Diagnosis"
-msgstr "Kiểm tra & Chẩn đoán GX-10C"
-
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
 #. Gastric Lavage
@@ -4387,12 +4440,12 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "Hộp mực GeneXpert COVID-19"
 
-#. [p.PkDashboard.genExpert]
+#. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
-#. GeneXpert Device Coverage
+#. GeneXpert Device Coverage (Pending)
 #: extracted_strings.json
-msgid "GeneXpert Device Coverage"
-msgstr "Bảo hiểm thiết bị GeneXpert"
+msgid "GeneXpert Device Coverage (Pending)"
+msgstr "Phạm vi phủ sóng thiết bị GeneXpert (Đang chờ xử lý)"
 
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
@@ -4478,6 +4531,16 @@ msgstr "GeneXpert HIV-1 VL"
 #: extracted_strings.json
 msgid "GeneXpert Issues"
 msgstr "Sự cố về GeneXpert"
+
+#. [p.PkDashboard.errorRateTitle]
+#. defaultMessage is:
+#. GeneXpert MTB-RIF/Ultra Device Errors
+#. [p.PkDashboard.genExpertError]
+#. defaultMessage is:
+#. GeneXpert MTB-RIF/Ultra Device Errors
+#: extracted_strings.json
+msgid "GeneXpert MTB-RIF/Ultra Device Errors"
+msgstr "Lỗi thiết bị GeneXpert MTB-RIF/Ultra"
 
 #. [p.PkDashboard.utilizationTitle]
 #. defaultMessage is:
@@ -4814,6 +4877,9 @@ msgstr "HCV Không có kết quả"
 msgid "HCV Not Detected"
 msgstr "HCV không được phát hiện"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
@@ -5116,13 +5182,6 @@ msgstr "Các cột ẩn:"
 #: extracted_strings.json
 msgid "Hide Column"
 msgstr "Ẩn cột"
-
-#. [p.PkDashboard.hiv]
-#. defaultMessage is:
-#. Hiv
-#: extracted_strings.json
-msgid "Hiv"
-msgstr "HIV"
 
 #. [header.link.home.title]
 #. defaultMessage is:
@@ -5491,7 +5550,7 @@ msgstr "Hàng tồn kho"
 #. Inventory Expiring
 #: extracted_strings.json
 msgid "Inventory Expiring"
-msgstr "sắp hết hạn"
+msgstr "Hàng tồn kho sắp hết hạn"
 
 #. [pages.NewInventoryDialogForm.defaultConsumableName]
 #. defaultMessage is:
@@ -5592,7 +5651,7 @@ msgstr "Các vấn đề có sẵn"
 #. Issues types
 #: extracted_strings.json
 msgid "Issues types"
-msgstr "các loại vấn đề"
+msgstr "Các loại vấn đề"
 
 #. [errorResponseMessages.common.notFound.message]
 #. defaultMessage is:
@@ -5708,7 +5767,7 @@ msgstr "Quản trị viên phòng thí nghiệm"
 #. Lab Manager
 #: extracted_strings.json
 msgid "Lab Manager"
-msgstr "Phòng thí nghiệm:"
+msgstr "Người quản lý phòng thí nghiệm"
 
 #. [jobFunction.labUser]
 #. defaultMessage is:
@@ -6669,11 +6728,20 @@ msgstr "MTB +"
 #. defaultMessage is:
 #. MTB+ %
 #: extracted_strings.json
-#| msgid "MTB+"
 msgid "MTB+ %"
 msgstr "MTB+ %"
 
+#. [p.PkDashboard.monthlyMTBDiagnosedTrends]
+#. defaultMessage is:
+#. MTB+ Trends In Month
+#: extracted_strings.json
+msgid "MTB+ Trends In Month"
+msgstr "# địa điểm được thử nghiệm Xét nghiệm MTB/XDR"
+
 #. [pages.Status.TB.mtbDetectedTrendsInYear.title]
+#. defaultMessage is:
+#. MTB+ Trends In Year
+#. [p.PkDashboard.annualMTBDiagnosedTrends]
 #. defaultMessage is:
 #. MTB+ Trends In Year
 #: extracted_strings.json
@@ -6856,9 +6924,7 @@ msgstr "Báo cáo hoạt động mô-đun"
 #. Module Disabled
 #: extracted_strings.json
 msgid "Module Disabled"
-msgstr ""
-"Thời gian trung bình (tính bằng ngày) từ khi mô-đun bị vô hiệu hóa đến khi "
-"phát hiện thấy nối tiếp mô-đun khác trong cùng một vị trí."
+msgstr "Mô-đun bị vô hiệu hóa"
 
 #. [forms.formItem.moduleName]
 #. defaultMessage is:
@@ -6940,6 +7006,27 @@ msgstr "Tháng"
 #: extracted_strings.json
 msgid "Monthly"
 msgstr "Hàng tháng"
+
+#. [p.PkDashboard.monthlyFQRDiagnosed]
+#. defaultMessage is:
+#. Monthly FQ-R Diagnosis
+#: extracted_strings.json
+msgid "Monthly FQ-R Diagnosis"
+msgstr "Chẩn đoán FQ-R hàng tháng"
+
+#. [p.PkDashboard.monthlyTestingTrends]
+#. defaultMessage is:
+#. Monthly Testing Trends
+#: extracted_strings.json
+msgid "Monthly Testing Trends"
+msgstr "Xu hướng kiểm tra hàng tháng"
+
+#. [p.PkDashboard.monthlyDiagnosedTrends]
+#. defaultMessage is:
+#. Monthly diagnosis Trends
+#: extracted_strings.json
+msgid "Monthly diagnosis Trends"
+msgstr "Xu hướng chẩn đoán hàng tháng"
 
 #. [legends.Unknown.resultCategoryMoreThan1000]
 #. defaultMessage is:
@@ -7080,12 +7167,19 @@ msgstr "Quốc gia"
 msgid "National Contacts"
 msgstr "Liên hệ quốc gia"
 
-#. [p.PkDashboard.FQNationalTrend]
+#. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
-#. National FQ Trend
+#. National FQ Resistance Trend
 #: extracted_strings.json
-msgid "National FQ Trend"
-msgstr "Xu hướng FQ quốc gia"
+msgid "National FQ Resistance Trend"
+msgstr "Xu hướng kháng FQ quốc gia"
+
+#. [p.PkDashboard.nationalFqrResistanceTrend]
+#. defaultMessage is:
+#. National FQ-R Resistance Trend
+#: extracted_strings.json
+msgid "National FQ-R Resistance Trend"
+msgstr "Xu hướng kháng FQ-R quốc gia"
 
 #. [p.PkDashboard.GXTbNationalDiagnosis]
 #. defaultMessage is:
@@ -7107,6 +7201,13 @@ msgstr "Xu hướng thử nghiệm GX-10C quốc gia"
 #: extracted_strings.json
 msgid "National RRTB Trends"
 msgstr "Xu hướng RRTB quốc gia"
+
+#. [p.PkDashboard.rrtbNationalDiagnosisTrendsTitle]
+#. defaultMessage is:
+#. National Rifampicin Resistance Diagnosis Trends
+#: extracted_strings.json
+msgid "National Rifampicin Resistance Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán kháng thuốc Rifampicin quốc gia"
 
 #. [p.PkDashboard.TbDNationalTrend]
 #. defaultMessage is:
@@ -7131,6 +7232,13 @@ msgstr "Xu hướng xét nghiệm lao quốc gia"
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Xu hướng thử nghiệm quốc gia"
+
+#. [p.PkDashboard.nationalMtbRifDiagnosed]
+#. defaultMessage is:
+#. National Testing Trends using MTB/XDR Assay
+#: extracted_strings.json
+msgid "National Testing Trends using MTB/XDR Assay"
+msgstr "Xu hướng Thử nghiệm Quốc gia sử dụng Xét nghiệm MTB/XDR"
 
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
@@ -7212,7 +7320,7 @@ msgstr "Kết quả mới"
 #. New recurrency
 #: extracted_strings.json
 msgid "New recurrency"
-msgstr "tiền tệ mới"
+msgstr "Tái phát mới"
 
 #. [pages.TablePaginator.newer]
 #. defaultMessage is:
@@ -8057,6 +8165,39 @@ msgstr "Đang chờ xử lý"
 msgid "Pending changes"
 msgstr "Các thay đổi đang chờ xử lý"
 
+#. [p.PkDashboard.peopleDiagnosedRif]
+#. defaultMessage is:
+#. People diagnosed for TB using MTB/Rif assay in current year
+#: extracted_strings.json
+msgid "People diagnosed for TB using MTB/Rif assay in current year"
+msgstr ""
+"Số người được chẩn đoán mắc bệnh lao bằng xét nghiệm MTB/Rif trong năm hiện "
+"tại"
+
+#. [p.PkDashboard.peopleDiagnosedXdr]
+#. defaultMessage is:
+#. People diagnosed using MTB/XDR assay in current year
+#: extracted_strings.json
+msgid "People diagnosed using MTB/XDR assay in current year"
+msgstr "Những người được chẩn đoán bằng xét nghiệm MTB/XDR trong năm hiện tại"
+
+#. [p.PkDashboard.peopleTestedCovid]
+#. defaultMessage is:
+#. People tested for Covid in current year
+#: extracted_strings.json
+msgid "People tested for Covid in current year"
+msgstr "Những người đã xét nghiệm Covid trong năm hiện tại"
+
+#. [p.PkDashboard.peopleTestedHiv]
+#. defaultMessage is:
+#. People tested for HIV in current year
+#: extracted_strings.json
+msgid "People tested for HIV in current year"
+msgstr "Số người được xét nghiệm HIV trong năm hiện tại"
+
+#. [p.PkDashboard.peopleTestedRif]
+#. defaultMessage is:
+#. People tested for TB using MTB/Rif assay in current year
 #. [p.PkDashboard.molecularAssay]
 #. defaultMessage is:
 #. People tested for TB using MTB/Rif assay in current year
@@ -8064,6 +8205,13 @@ msgstr "Các thay đổi đang chờ xử lý"
 msgid "People tested for TB using MTB/Rif assay in current year"
 msgstr ""
 "Những người được xét nghiệm lao bằng xét nghiệm MTB/Rif trong năm hiện tại"
+
+#. [p.PkDashboard.peopleTestedXdr]
+#. defaultMessage is:
+#. People tested using MTB/XDR assay in current year
+#: extracted_strings.json
+msgid "People tested using MTB/XDR assay in current year"
+msgstr "Những người được xét nghiệm bằng xét nghiệm MTB/XDR trong năm hiện tại"
 
 #. [pages.OperationalData.percentPositive]
 #. defaultMessage is:
@@ -8553,7 +8701,7 @@ msgstr "Các trường hợp lao âm tính phết tế bào phổi giả định
 #. Presumptive TB
 #: extracted_strings.json
 msgid "Presumptive TB"
-msgstr "nghi lao"
+msgstr "Bệnh lao giả định"
 
 #. [contextualMenu.notifications.preview.title]
 #. defaultMessage is:
@@ -8633,7 +8781,7 @@ msgstr "Năm trước"
 #. Previously treated
 #: extracted_strings.json
 msgid "Previously treated"
-msgstr "điều trị trước đây"
+msgstr "Đã từng điều trị"
 
 #. [errorResponseMessages.generic.proceedText]
 #. defaultMessage is:
@@ -8693,43 +8841,122 @@ msgstr "Tỉnh"
 msgid "Province/Region"
 msgstr "Tỉnh / Vùng"
 
-#. [p.PkDashboard.FQProvincialComparison]
+#. [p.PkDashboard.nationalTrendsAnnual]
 #. defaultMessage is:
-#. Provincial FQ trends Comparison
+#. Provinces annual utilization rates
 #: extracted_strings.json
-msgid "Provincial FQ trends Comparison"
-msgstr "Xu hướng FQ cấp tỉnh So sánh"
+msgid "Provinces annual utilization rates"
+msgstr "Tỷ lệ sử dụng hàng năm của các tỉnh"
 
-#. [p.PkDashboard.RRProvincialComparison]
+#. [p.PkDashboard.provincialDiagnosisTrends]
 #. defaultMessage is:
-#. Provincial RRTB Diagnosis Trends Comparison
+#. Provincial Diagnosis Trends
 #: extracted_strings.json
-msgid "Provincial RRTB Diagnosis Trends Comparison"
-msgstr "So sánh xu hướng chẩn đoán RRTB cấp tỉnh"
+msgid "Provincial Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán GX-10C quốc gia trong"
 
-#. [p.PkDashboard.TbDProvincialComparison]
+#. [p.PkDashboard.provincialDiagnosisTrendsComparison]
 #. defaultMessage is:
-#. Provincial TB Diagnosis Trends Comparison
-#. [p.PkDashboard.DProvincialComparison]
+#. Provincial Diagnosis Trends Comparison
+#: extracted_strings.json
+msgid "Provincial Diagnosis Trends Comparison"
+msgstr "So sánh xu hướng chẩn đoán cấp tỉnh"
+
+#. [p.PkDashboard.tbCasesDiagnosed]
+#. defaultMessage is:
+#. Provincial Diagnosis Trends for the current year
+#: extracted_strings.json
+msgid "Provincial Diagnosis Trends for the current year"
+msgstr "Xu hướng chẩn đoán cấp tỉnh trong năm hiện tại"
+
+#. [p.PkDashboard.provincialFqrDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial FQ Diagnosis Trends
+#. [p.PkDashboard.ProvincialFQDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial FQ Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial FQ Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán FQ cấp tỉnh"
+
+#. [p.PkDashboard.provincialRRDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial RR Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial RR Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán RR cấp tỉnh"
+
+#. [p.PkDashboard.ProvincialRRTBDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial RRTB Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial RRTB Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán RRTB cấp tỉnh"
+
+#. [p.PkDashboard.ProvincialTBDiagnosisTrendsComparison]
 #. defaultMessage is:
 #. Provincial TB Diagnosis Trends Comparison
 #: extracted_strings.json
 msgid "Provincial TB Diagnosis Trends Comparison"
 msgstr "So sánh xu hướng chẩn đoán bệnh lao cấp tỉnh"
 
-#. [p.PkDashboard.TbProvincialComparison]
+#. [p.PkDashboard.ProvincialTBTestingTrend]
 #. defaultMessage is:
-#. Provincial TB Testing Trend comparison
+#. Provincial TB Testing Trend
 #: extracted_strings.json
-msgid "Provincial TB Testing Trend comparison"
-msgstr "Xét nghiệm lao cấp tỉnh So sánh xu hướng"
+msgid "Provincial TB Testing Trend"
+msgstr "Xu hướng xét nghiệm lao cấp tỉnh"
 
-#. [p.PkDashboard.TProvincialComparison]
+#. [p.PkDashboard.ProvincialTestingTrend]
 #. defaultMessage is:
-#. Provincial Trend Comparison
+#. Provincial Testing Trend
 #: extracted_strings.json
-msgid "Provincial Trend Comparison"
-msgstr "So sánh xu hướng tỉnh"
+msgid "Provincial Testing Trend"
+msgstr "Xu hướng kiểm tra và chẩn đoán XDR"
+
+#. [p.PkDashboard.provincialTestingTrendsYear]
+#. defaultMessage is:
+#. Provincial Testing in current year
+#: extracted_strings.json
+msgid "Provincial Testing in current year"
+msgstr "Kiểm tra cấp tỉnh trong năm hiện tại"
+
+#. [p.PkDashboard.provincialXdrDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial/District Diagnosis Trends using MTB/XDR Assay
+#: extracted_strings.json
+msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
+msgstr "Xu hướng chẩn đoán cấp tỉnh/huyện sử dụng xét nghiệm MTB/XDR"
+
+#. [p.PkDashboard.provincialDiagnosisTrendsRRTBComparison]
+#. defaultMessage is:
+#. Provincial/District RR Diagnosis Trends
+#: extracted_strings.json
+msgid "Provincial/District RR Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán RR tỉnh/huyện"
+
+#. [p.PkDashboard.provincialTBTestingTrends]
+#. defaultMessage is:
+#. Provincial/District TB Testing Trends
+#: extracted_strings.json
+msgid "Provincial/District TB Testing Trends"
+msgstr "Xu hướng xét nghiệm lao cấp tỉnh/huyện"
+
+#. [p.PkDashboard.provincialTestingTrends]
+#. defaultMessage is:
+#. Provincial/District Testing Trends
+#: extracted_strings.json
+msgid "Provincial/District Testing Trends"
+msgstr "Xu hướng thi cấp tỉnh/huyện"
+
+#. [p.PkDashboard.provincialXdrTestingTrends]
+#. defaultMessage is:
+#. Provincial/District Testing Trends using MTB/XDR Assay in current year
+#: extracted_strings.json
+msgid "Provincial/District Testing Trends using MTB/XDR Assay in current year"
+msgstr ""
+"Xu hướng xét nghiệm cấp tỉnh/huyện sử dụng xét nghiệm MTB/XDR trong năm hiện "
+"tại"
 
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
@@ -8743,7 +8970,7 @@ msgstr "Đã cấp phép"
 #. Pulmonary
 #: extracted_strings.json
 msgid "Pulmonary"
-msgstr "phổi"
+msgstr "Phổi"
 
 #. [pages.deviceDetail.ResultWorkflowStatusPurged]
 #. defaultMessage is:
@@ -8874,6 +9101,13 @@ msgstr "RIF kháng"
 #: extracted_strings.json
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Tỷ lệ kháng Rif (% kết quả dương tính)"
+
+#. [p.PkDashboard.rrCasesDiagnosed]
+#. defaultMessage is:
+#. RR cases diagnosed
+#: extracted_strings.json
+msgid "RR cases diagnosed"
+msgstr "trường hợp RR được chẩn đoán"
 
 #. [p.PkDashboard.RRPerDay]
 #. defaultMessage is:
@@ -9059,7 +9293,7 @@ msgstr "Từ chối"
 #. Relapses
 #: extracted_strings.json
 msgid "Relapses"
-msgstr "tái phát"
+msgstr "Tái phát"
 
 #. [pages.InventoryItemsList.removeInventory]
 #. defaultMessage is:
@@ -9246,14 +9480,14 @@ msgstr "Báo cáo"
 #. Reports Available
 #: extracted_strings.json
 msgid "Reports Available"
-msgstr "báo cáo có sẵn"
+msgstr "Báo cáo có sẵn"
 
 #. [pages.Notifications.group.notificationCreateGroupForReport]
 #. defaultMessage is:
 #. Reports Notification
 #: extracted_strings.json
 msgid "Reports Notification"
-msgstr "báo cáo thông báo"
+msgstr "Thông báo báo cáo"
 
 #. [pages.DeviceList.lastSeenDescription]
 #. defaultMessage is:
@@ -9721,7 +9955,7 @@ msgstr "Kết quả với HIV không bị ức chế"
 #. Retreatment
 #: extracted_strings.json
 msgid "Retreatment"
-msgstr "rút lui"
+msgstr "Rút lui"
 
 #. [pages.resultEdit.RetreatCaseFieldi18nKey]
 #. defaultMessage is:
@@ -10553,6 +10787,13 @@ msgstr "Chỉ hiển thị kết quả khi cần điều trị"
 msgid "Show Only Transfers"
 msgstr "Chỉ hiển thị chuyển khoản"
 
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Hiển thị tỷ lệ phần trăm"
+
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
 #. Showing all sites/devices and the number of days which they had no stock in the last month.
@@ -11091,13 +11332,6 @@ msgstr "Mạnh"
 msgid "Study/Research"
 msgstr "Học tập/Nghiên cứu"
 
-#. [p.PkDashboard.TbSubprovincialTrend]
-#. defaultMessage is:
-#. Sub-Provincial TB Testing Trends
-#: extracted_strings.json
-msgid "Sub-Provincial TB Testing Trends"
-msgstr "Xu hướng xét nghiệm lao cấp tỉnh"
-
 #. [button_Submit]
 #. defaultMessage is:
 #. Submit
@@ -11294,12 +11528,26 @@ msgstr "xét nghiệm bệnh lao"
 msgid "TB Testing & Diagnosis Trends"
 msgstr "Xu hướng Xét nghiệm & Chẩn đoán Lao"
 
+#. [p.PkDashboard.mtbRifTestingDiagnosed]
+#. defaultMessage is:
+#. TB Testing & Diagnosis Trends using MTB/Rif Assay
+#: extracted_strings.json
+msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
+msgstr "Xu hướng xét nghiệm và chẩn đoán bệnh lao bằng xét nghiệm MTB/Rif"
+
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
 #. TB XDR Drug Resistances
 #: extracted_strings.json
 msgid "TB XDR Drug Resistances"
 msgstr "Lao XDR kháng thuốc"
+
+#. [p.PkDashboard.testingDiagnosisTrendsRR]
+#. defaultMessage is:
+#. TB and RRTB Diagnosis Trends
+#: extracted_strings.json
+msgid "TB and RRTB Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán bệnh lao và RRTB"
 
 #. [p.PkDashboard.rifCurrentDiagnosisTitle]
 #. defaultMessage is:
@@ -11473,6 +11721,9 @@ msgstr "Lịch sử kiểm tra"
 msgid "Testing"
 msgstr "Thử nghiệm"
 
+#. [p.PkDashboard.testingAndDiagnosisUsingXdr]
+#. defaultMessage is:
+#. Testing & Diagnosis Trends using MTB/XDR Assay
 #. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
 #. Testing & Diagnosis Trends using MTB/XDR Assay
@@ -11513,6 +11764,13 @@ msgstr "Số xét nghiệm trên ngày"
 #: extracted_strings.json
 msgid "Tests Performed"
 msgstr "Các xét nghiệm đã thực hiện"
+
+#. [p.PkDashboard.testsPerformedYear]
+#. defaultMessage is:
+#. Tests Performed in current year
+#: extracted_strings.json
+msgid "Tests Performed in current year"
+msgstr "Không có thử nghiệm nào được thực hiện"
 
 #. [pages.InventoryAdjustmentDialogForm.testsRunBetween]
 #. defaultMessage is:
@@ -12810,7 +13068,7 @@ msgstr "Không xác định"
 #. Unlocked
 #: extracted_strings.json
 msgid "Unlocked"
-msgstr "đã mở khóa"
+msgstr "Đã mở khóa"
 
 #. [pages.DeviceStatusSelectField.up]
 #. defaultMessage is:
@@ -12883,12 +13141,12 @@ msgstr "Tùy chọn người dùng đã thay đổi thành công"
 msgid "Username"
 msgstr "Tên đăng nhập"
 
-#. [p.PkDashboard.utilization]
+#. [p.PkDashboard.utilizationPending]
 #. defaultMessage is:
-#. Utilization
+#. Utilization (Pending)
 #: extracted_strings.json
-msgid "Utilization"
-msgstr "Sử dụng"
+msgid "Utilization (Pending)"
+msgstr "Sử dụng (Đang chờ xử lý)"
 
 #. [component.Widget.utilizationRateTitle]
 #. defaultMessage is:
@@ -13128,7 +13386,7 @@ msgstr "Đơn vị"
 #. When stock is...
 #: extracted_strings.json
 msgid "When stock is..."
-msgstr "hết hàng"
+msgstr "Khi có hàng..."
 
 #. [pages.NotificationDetail.whenDeviceDidNotSendResultsForMoreThan]
 #. defaultMessage is:
@@ -13199,16 +13457,19 @@ msgstr "Kết quả tóm tắt xét nghiệm XDR theo thiết bị"
 #. [pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title]
 #. defaultMessage is:
 #. XDR FLQ Resistance
+#. [p.PkDashboard.xdrFlqResistance]
+#. defaultMessage is:
+#. XDR FLQ Resistance
 #: extracted_strings.json
 msgid "XDR FLQ Resistance"
 msgstr "Kháng XDR FLQ"
 
-#. [p.PkDashboard.XDRTestingDiagnosisTrend]
+#. [p.PkDashboard.XDRTestingandDiagnosisTrends]
 #. defaultMessage is:
-#. XDR Testing and Diagnosis Trend
+#. XDR Testing and Diagnosis Trends
 #: extracted_strings.json
-msgid "XDR Testing and Diagnosis Trend"
-msgstr "Xu hướng kiểm tra và chẩn đoán XDR"
+msgid "XDR Testing and Diagnosis Trends"
+msgstr "Xu hướng chẩn đoán và kiểm tra XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -13666,6 +13927,13 @@ msgstr "cho {unit} MTB +"
 msgid "for {unit} Results"
 msgstr "cho {unit} kết quả"
 
+#. [p.PkDashboard.CurrentYear]
+#. defaultMessage is:
+#. in current year
+#: extracted_strings.json
+msgid "in current year"
+msgstr "trong năm hiện tại"
+
 #. [widgetAlerts.defaultMessage]
 #. defaultMessage is:
 #. indicator
@@ -13790,7 +14058,7 @@ msgstr "ID bệnh nhân bao gồm {patientOrResearchId}"
 #. patient/case ID includes {patientOrCaseId}
 #: extracted_strings.json
 msgid "patient/case ID includes {patientOrCaseId}"
-msgstr "ID bệnh nhân / trường hợp bao gồm {patientOrCaseId}"
+msgstr "ID bệnh nhân/trường hợp bao gồm {patientOrCaseId}"
 
 #. [widgetAlerts.percentageOfActiveDevices]
 #. defaultMessage is:
@@ -13874,7 +14142,7 @@ msgstr "đơn vị có thể báo cáo \"{reportableSiteName}\""
 #. reportable site ID includes "{reportableSiteId}"
 #: extracted_strings.json
 msgid "reportable site ID includes \"{reportableSiteId}\""
-msgstr "ID đơn vị có thể báo cáo bao gồm \"{reportableSiteId}\""
+msgstr "ID trang web có thể báo cáo bao gồm \"{reportableSiteId}\""
 
 #. [filter.btnGroup.whereReportableSiteNameIncludes]
 #. defaultMessage is:
@@ -13916,7 +14184,7 @@ msgstr "kể từ {date}"
 #. site ID is in ({joinedIds})
 #: extracted_strings.json
 msgid "site ID is in ({joinedIds})"
-msgstr "ID đơn vị ở ({joinedIds})"
+msgstr "ID trang web ở ({joinedIds})"
 
 #. [filter.btnGroup.whereSiteNameIncludes]
 #. defaultMessage is:
@@ -14123,6 +14391,27 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, plural, one {# kết quả} other {# kết quả}})"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "HIV (Đang chờ xử lý)"
+
+#~ msgid "Current FQ Trends"
+#~ msgstr "Xu hướng FQ hiện tại"
+
+#~ msgid "Current TB Testing Trends"
+#~ msgstr "Xu hướng xét nghiệm lao hiện tại"
+
+#~ msgid "Hiv"
+#~ msgstr "HIV"
+
+#~ msgid "Provincial FQ trends Comparison"
+#~ msgstr "Xu hướng FQ cấp tỉnh So sánh"
+
+#~ msgid "Provincial Trend Comparison"
+#~ msgstr "So sánh xu hướng tỉnh"
+
+#~ msgid "Utilization"
+#~ msgstr "Sử dụng"
 
 #~ msgid "Add Note"
 #~ msgstr "Thêm ghi chú"

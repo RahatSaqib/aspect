@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-29T12:46:49.806Z\n"
+"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -42,6 +42,13 @@ msgstr "Mois"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "Le mois dernier ({minDate} - {maxDate})"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "# Nombre de sites PMDT avec 10 C GX"
 
 #. [pages.XDR.totalConducted]
 #. defaultMessage is:
@@ -4883,19 +4890,15 @@ msgstr "VHC Aucun résultat"
 msgid "HCV Not Detected"
 msgstr "VHC non détecté"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "VIH"
-
-#. [p.PkDashboard.hivPending]
-#. defaultMessage is:
-#. HIV (Pending)
-#: extracted_strings.json
-msgid "HIV (Pending)"
-msgstr "VIH (en attente)"
 
 #. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
 #. defaultMessage is:
@@ -10816,6 +10819,13 @@ msgstr "Afficher uniquement les résultats avec traitement requis"
 msgid "Show Only Transfers"
 msgstr "Afficher uniquement les transferts"
 
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Afficher le pourcentage"
+
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
 #. Showing all sites/devices and the number of days which they had no stock in the last month.
@@ -14450,6 +14460,9 @@ msgstr "{unit} total des étalonnages"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "VIH (en attente)"
 
 #~ msgid "Current FQ Trends"
 #~ msgstr "Tendances actuelles du quotient familial"

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-29T12:46:49.806Z\n"
+"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -41,6 +41,13 @@ msgstr "# Results Current Month"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "# Results Last month"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "# of PMDT Sites with 10 C GX"
 
 #. [pages.XDR.totalConducted]
 #. defaultMessage is:
@@ -767,7 +774,6 @@ msgstr ""
 #. defaultMessage is:
 #. Annual FQ-R Diagnosis
 #: extracted_strings.json
-#| msgid "RRTB Diagnosis"
 msgid "Annual FQ-R Diagnosis"
 msgstr "Annual FQ-R Diagnosis"
 
@@ -775,7 +781,6 @@ msgstr "Annual FQ-R Diagnosis"
 #. defaultMessage is:
 #. Annual RR Diagnosis
 #: extracted_strings.json
-#| msgid "RRTB Diagnosis"
 msgid "Annual RR Diagnosis"
 msgstr "Annual RR Diagnosis"
 
@@ -783,7 +788,6 @@ msgstr "Annual RR Diagnosis"
 #. defaultMessage is:
 #. Annual Testing Trends
 #: extracted_strings.json
-#| msgid "National Testing Trends"
 msgid "Annual Testing Trends"
 msgstr "Annual Testing Trends"
 
@@ -791,7 +795,6 @@ msgstr "Annual Testing Trends"
 #. defaultMessage is:
 #. Annual diagnosis Trends
 #: extracted_strings.json
-#| msgid "National TB Diagnosis Trends"
 msgid "Annual diagnosis Trends"
 msgstr "Annual diagnosis Trends"
 
@@ -935,7 +938,6 @@ msgstr "Asserted inventory on hand increase"
 #. defaultMessage is:
 #. Asserted inventory on hand increase ( Add )
 #: extracted_strings.json
-#| msgid "Asserted inventory on hand increase"
 msgid "Asserted inventory on hand increase ( Add )"
 msgstr "Asserted inventory on hand increase ( Add )"
 
@@ -943,7 +945,6 @@ msgstr "Asserted inventory on hand increase ( Add )"
 #. defaultMessage is:
 #. Asserted inventory on hand increase ( Remove )
 #: extracted_strings.json
-#| msgid "Asserted inventory on hand increase"
 msgid "Asserted inventory on hand increase ( Remove )"
 msgstr "Asserted inventory on hand increase ( Remove )"
 
@@ -2407,7 +2408,6 @@ msgstr "Current Diagnosis"
 #. defaultMessage is:
 #. Current FQ Detection (Pending)
 #: extracted_strings.json
-#| msgid "Current MTB Detection"
 msgid "Current FQ Detection (Pending)"
 msgstr "Current FQ Detection (Pending)"
 
@@ -2460,7 +2460,6 @@ msgstr "Current Rifampicin Resistance Diagnosis Trends"
 #. defaultMessage is:
 #. Current Rifampicin Resistance Diagnosis using MTB/Rif Assay
 #: extracted_strings.json
-#| msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Assay"
 msgstr "Current Rifampicin Resistance Diagnosis using MTB/Rif Assay"
 
@@ -2475,7 +2474,6 @@ msgstr "Current TB Diagnosis"
 #. defaultMessage is:
 #. Current TB Testing
 #: extracted_strings.json
-#| msgid "Current Testing"
 msgid "Current TB Testing"
 msgstr "Current TB Testing"
 
@@ -2904,7 +2902,6 @@ msgstr "Dengue Fever"
 #. defaultMessage is:
 #. Destination Site
 #: extracted_strings.json
-#| msgid "Notification for Site"
 msgid "Destination Site"
 msgstr "Destination Site"
 
@@ -3793,7 +3790,6 @@ msgstr "Error"
 #. defaultMessage is:
 #. Error #
 #: extracted_strings.json
-#| msgid "Error"
 msgid "Error #"
 msgstr "Error #"
 
@@ -3868,7 +3864,6 @@ msgstr "Error Rate"
 #. defaultMessage is:
 #. Error Rate (Pending)
 #: extracted_strings.json
-#| msgid "Error Rate"
 msgid "Error Rate (Pending)"
 msgstr "Error Rate (Pending)"
 
@@ -4115,7 +4110,6 @@ msgstr "FLQ Resistance"
 #. defaultMessage is:
 #. FQ & INH Testing & Diagnosis
 #: extracted_strings.json
-#| msgid "GX-10C Testing & Diagnosis"
 msgid "FQ & INH Testing & Diagnosis"
 msgstr "FQ & INH Testing & Diagnosis"
 
@@ -4448,7 +4442,6 @@ msgstr "GeneXpert COVID-19 Cartridge"
 #. defaultMessage is:
 #. GeneXpert Device Coverage (Pending)
 #: extracted_strings.json
-#| msgid "GeneXpert Device Coverage"
 msgid "GeneXpert Device Coverage (Pending)"
 msgstr "GeneXpert Device Coverage (Pending)"
 
@@ -4544,7 +4537,6 @@ msgstr "GeneXpert Issues"
 #. defaultMessage is:
 #. GeneXpert MTB-RIF/Ultra Device Errors
 #: extracted_strings.json
-#| msgid "GeneXpert MTB-RIF/Ultra Device Utilization"
 msgid "GeneXpert MTB-RIF/Ultra Device Errors"
 msgstr "GeneXpert MTB-RIF/Ultra Device Errors"
 
@@ -4883,20 +4875,15 @@ msgstr "HCV No Result"
 msgid "HCV Not Detected"
 msgstr "HCV Not Detected"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "HIV"
-
-#. [p.PkDashboard.hivPending]
-#. defaultMessage is:
-#. HIV (Pending)
-#: extracted_strings.json
-#| msgid "Pending"
-msgid "HIV (Pending)"
-msgstr "HIV (Pending)"
 
 #. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
 #. defaultMessage is:
@@ -5292,7 +5279,6 @@ msgstr "ID includes \"{externalId}\""
 #. defaultMessage is:
 #. INH Detected
 #: extracted_strings.json
-#| msgid "NP Detected"
 msgid "INH Detected"
 msgstr "INH Detected"
 
@@ -5492,7 +5478,6 @@ msgstr "Invalid"
 #. defaultMessage is:
 #. Invalid #
 #: extracted_strings.json
-#| msgid "Invalid"
 msgid "Invalid #"
 msgstr "Invalid #"
 
@@ -6739,7 +6724,6 @@ msgstr "MTB+"
 #. defaultMessage is:
 #. MTB+ %
 #: extracted_strings.json
-#| msgid "MTB+"
 msgid "MTB+ %"
 msgstr "MTB+ %"
 
@@ -6747,7 +6731,6 @@ msgstr "MTB+ %"
 #. defaultMessage is:
 #. MTB+ Trends In Month
 #: extracted_strings.json
-#| msgid "MTB+ Trends In Year"
 msgid "MTB+ Trends In Month"
 msgstr "MTB+ Trends In Month"
 
@@ -7024,7 +7007,6 @@ msgstr "Monthly"
 #. defaultMessage is:
 #. Monthly FQ-R Diagnosis
 #: extracted_strings.json
-#| msgid "Current RRTB Diagnosis"
 msgid "Monthly FQ-R Diagnosis"
 msgstr "Monthly FQ-R Diagnosis"
 
@@ -7032,7 +7014,6 @@ msgstr "Monthly FQ-R Diagnosis"
 #. defaultMessage is:
 #. Monthly Testing Trends
 #: extracted_strings.json
-#| msgid "National Testing Trends"
 msgid "Monthly Testing Trends"
 msgstr "Monthly Testing Trends"
 
@@ -7040,7 +7021,6 @@ msgstr "Monthly Testing Trends"
 #. defaultMessage is:
 #. Monthly diagnosis Trends
 #: extracted_strings.json
-#| msgid "National TB Diagnosis Trends"
 msgid "Monthly diagnosis Trends"
 msgstr "Monthly diagnosis Trends"
 
@@ -7187,7 +7167,6 @@ msgstr "National Contacts"
 #. defaultMessage is:
 #. National FQ Resistance Trend
 #: extracted_strings.json
-#| msgid "National FQ Trend"
 msgid "National FQ Resistance Trend"
 msgstr "National FQ Resistance Trend"
 
@@ -7195,7 +7174,6 @@ msgstr "National FQ Resistance Trend"
 #. defaultMessage is:
 #. National FQ-R Resistance Trend
 #: extracted_strings.json
-#| msgid "National FQ Trend"
 msgid "National FQ-R Resistance Trend"
 msgstr "National FQ-R Resistance Trend"
 
@@ -7203,7 +7181,6 @@ msgstr "National FQ-R Resistance Trend"
 #. defaultMessage is:
 #. National GX-10C Diagnosed Trends in
 #: extracted_strings.json
-#| msgid "National GX-10C Testing Trends"
 msgid "National GX-10C Diagnosed Trends in"
 msgstr "National GX-10C Diagnosed Trends in"
 
@@ -7225,7 +7202,6 @@ msgstr "National RRTB Trends"
 #. defaultMessage is:
 #. National Rifampicin Resistance Diagnosis Trends
 #: extracted_strings.json
-#| msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgid "National Rifampicin Resistance Diagnosis Trends"
 msgstr "National Rifampicin Resistance Diagnosis Trends"
 
@@ -7257,7 +7233,6 @@ msgstr "National Testing Trends"
 #. defaultMessage is:
 #. National Testing Trends using MTB/XDR Assay
 #: extracted_strings.json
-#| msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
 msgid "National Testing Trends using MTB/XDR Assay"
 msgstr "National Testing Trends using MTB/XDR Assay"
 
@@ -7447,7 +7422,6 @@ msgstr "No Result"
 #. defaultMessage is:
 #. No Result #
 #: extracted_strings.json
-#| msgid "No Result"
 msgid "No Result #"
 msgstr "No Result #"
 
@@ -7972,7 +7946,6 @@ msgstr "Ordered"
 #. defaultMessage is:
 #. Origin Site
 #: extracted_strings.json
-#| msgid "Sample Origin Site"
 msgid "Origin Site"
 msgstr "Origin Site"
 
@@ -8192,7 +8165,6 @@ msgstr "Pending changes"
 #. defaultMessage is:
 #. People diagnosed for TB using MTB/Rif assay in current year
 #: extracted_strings.json
-#| msgid "People tested for TB using MTB/Rif assay in current year"
 msgid "People diagnosed for TB using MTB/Rif assay in current year"
 msgstr "People diagnosed for TB using MTB/Rif assay in current year"
 
@@ -8200,7 +8172,6 @@ msgstr "People diagnosed for TB using MTB/Rif assay in current year"
 #. defaultMessage is:
 #. People diagnosed using MTB/XDR assay in current year
 #: extracted_strings.json
-#| msgid "People tested for TB using MTB/Rif assay in current year"
 msgid "People diagnosed using MTB/XDR assay in current year"
 msgstr "People diagnosed using MTB/XDR assay in current year"
 
@@ -8208,7 +8179,6 @@ msgstr "People diagnosed using MTB/XDR assay in current year"
 #. defaultMessage is:
 #. People tested for Covid in current year
 #: extracted_strings.json
-#| msgid "People tested for TB using MTB/Rif assay in current year"
 msgid "People tested for Covid in current year"
 msgstr "People tested for Covid in current year"
 
@@ -8216,7 +8186,6 @@ msgstr "People tested for Covid in current year"
 #. defaultMessage is:
 #. People tested for HIV in current year
 #: extracted_strings.json
-#| msgid "People tested for TB using MTB/Rif assay in current year"
 msgid "People tested for HIV in current year"
 msgstr "People tested for HIV in current year"
 
@@ -8234,7 +8203,6 @@ msgstr "People tested for TB using MTB/Rif assay in current year"
 #. defaultMessage is:
 #. People tested using MTB/XDR assay in current year
 #: extracted_strings.json
-#| msgid "People tested for TB using MTB/Rif assay in current year"
 msgid "People tested using MTB/XDR assay in current year"
 msgstr "People tested using MTB/XDR assay in current year"
 
@@ -8504,7 +8472,6 @@ msgstr "Please specify an expiry date"
 #. defaultMessage is:
 #. Please specify the quantity
 #: extracted_strings.json
-#| msgid "Please specify the quantity to add"
 msgid "Please specify the quantity"
 msgstr "Please specify the quantity"
 
@@ -8868,7 +8835,6 @@ msgstr "Province/Region"
 #. defaultMessage is:
 #. Provinces annual utilization rates
 #: extracted_strings.json
-#| msgid "utilization rate"
 msgid "Provinces annual utilization rates"
 msgstr "Provinces annual utilization rates"
 
@@ -8876,7 +8842,6 @@ msgstr "Provinces annual utilization rates"
 #. defaultMessage is:
 #. Provincial Diagnosis Trends
 #: extracted_strings.json
-#| msgid "Provincial TB Diagnosis Trends Comparison"
 msgid "Provincial Diagnosis Trends"
 msgstr "Provincial Diagnosis Trends"
 
@@ -8884,7 +8849,6 @@ msgstr "Provincial Diagnosis Trends"
 #. defaultMessage is:
 #. Provincial Diagnosis Trends Comparison
 #: extracted_strings.json
-#| msgid "Provincial TB Diagnosis Trends Comparison"
 msgid "Provincial Diagnosis Trends Comparison"
 msgstr "Provincial Diagnosis Trends Comparison"
 
@@ -8892,7 +8856,6 @@ msgstr "Provincial Diagnosis Trends Comparison"
 #. defaultMessage is:
 #. Provincial Diagnosis Trends for the current year
 #: extracted_strings.json
-#| msgid "Provincial TB Diagnosis Trends Comparison"
 msgid "Provincial Diagnosis Trends for the current year"
 msgstr "Provincial Diagnosis Trends for the current year"
 
@@ -8903,7 +8866,6 @@ msgstr "Provincial Diagnosis Trends for the current year"
 #. defaultMessage is:
 #. Provincial FQ Diagnosis Trends
 #: extracted_strings.json
-#| msgid "Provincial TB Diagnosis Trends Comparison"
 msgid "Provincial FQ Diagnosis Trends"
 msgstr "Provincial FQ Diagnosis Trends"
 
@@ -8911,7 +8873,6 @@ msgstr "Provincial FQ Diagnosis Trends"
 #. defaultMessage is:
 #. Provincial RR Diagnosis Trends
 #: extracted_strings.json
-#| msgid "Provincial RRTB Diagnosis Trends Comparison"
 msgid "Provincial RR Diagnosis Trends"
 msgstr "Provincial RR Diagnosis Trends"
 
@@ -8919,7 +8880,6 @@ msgstr "Provincial RR Diagnosis Trends"
 #. defaultMessage is:
 #. Provincial RRTB Diagnosis Trends
 #: extracted_strings.json
-#| msgid "Provincial RRTB Diagnosis Trends Comparison"
 msgid "Provincial RRTB Diagnosis Trends"
 msgstr "Provincial RRTB Diagnosis Trends"
 
@@ -8934,7 +8894,6 @@ msgstr "Provincial TB Diagnosis Trends Comparison"
 #. defaultMessage is:
 #. Provincial TB Testing Trend
 #: extracted_strings.json
-#| msgid "Sub-Provincial TB Testing Trends"
 msgid "Provincial TB Testing Trend"
 msgstr "Provincial TB Testing Trend"
 
@@ -8942,7 +8901,6 @@ msgstr "Provincial TB Testing Trend"
 #. defaultMessage is:
 #. Provincial Testing Trend
 #: extracted_strings.json
-#| msgid "Sub-Provincial TB Testing Trends"
 msgid "Provincial Testing Trend"
 msgstr "Provincial Testing Trend"
 
@@ -8950,7 +8908,6 @@ msgstr "Provincial Testing Trend"
 #. defaultMessage is:
 #. Provincial Testing in current year
 #: extracted_strings.json
-#| msgid "Provincial TB Testing Trend comparison"
 msgid "Provincial Testing in current year"
 msgstr "Provincial Testing in current year"
 
@@ -8958,7 +8915,6 @@ msgstr "Provincial Testing in current year"
 #. defaultMessage is:
 #. Provincial/District Diagnosis Trends using MTB/XDR Assay
 #: extracted_strings.json
-#| msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
 msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
 msgstr "Provincial/District Diagnosis Trends using MTB/XDR Assay"
 
@@ -8966,7 +8922,6 @@ msgstr "Provincial/District Diagnosis Trends using MTB/XDR Assay"
 #. defaultMessage is:
 #. Provincial/District RR Diagnosis Trends
 #: extracted_strings.json
-#| msgid "Provincial RRTB Diagnosis Trends Comparison"
 msgid "Provincial/District RR Diagnosis Trends"
 msgstr "Provincial/District RR Diagnosis Trends"
 
@@ -8974,7 +8929,6 @@ msgstr "Provincial/District RR Diagnosis Trends"
 #. defaultMessage is:
 #. Provincial/District TB Testing Trends
 #: extracted_strings.json
-#| msgid "Sub-Provincial TB Testing Trends"
 msgid "Provincial/District TB Testing Trends"
 msgstr "Provincial/District TB Testing Trends"
 
@@ -8982,7 +8936,6 @@ msgstr "Provincial/District TB Testing Trends"
 #. defaultMessage is:
 #. Provincial/District Testing Trends
 #: extracted_strings.json
-#| msgid "Sub-Provincial TB Testing Trends"
 msgid "Provincial/District Testing Trends"
 msgstr "Provincial/District Testing Trends"
 
@@ -8990,7 +8943,6 @@ msgstr "Provincial/District Testing Trends"
 #. defaultMessage is:
 #. Provincial/District Testing Trends using MTB/XDR Assay in current year
 #: extracted_strings.json
-#| msgid "People tested for TB using MTB/Rif assay in current year"
 msgid "Provincial/District Testing Trends using MTB/XDR Assay in current year"
 msgstr "Provincial/District Testing Trends using MTB/XDR Assay in current year"
 
@@ -9142,7 +9094,6 @@ msgstr "RIF Resistance Rate (%positive results)"
 #. defaultMessage is:
 #. RR cases diagnosed
 #: extracted_strings.json
-#| msgid "TB cases diagnosed in"
 msgid "RR cases diagnosed"
 msgstr "RR cases diagnosed"
 
@@ -10823,6 +10774,13 @@ msgstr "Show Only Results With Treatment Required"
 msgid "Show Only Transfers"
 msgstr "Show Only Transfers"
 
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Show Percentage"
+
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
 #. Showing all sites/devices and the number of days which they had no stock in the last month.
@@ -11561,7 +11519,6 @@ msgstr "TB Testing & Diagnosis Trends"
 #. defaultMessage is:
 #. TB Testing & Diagnosis Trends using MTB/Rif Assay
 #: extracted_strings.json
-#| msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
 msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
 msgstr "TB Testing & Diagnosis Trends using MTB/Rif Assay"
 
@@ -11576,7 +11533,6 @@ msgstr "TB XDR Drug Resistances"
 #. defaultMessage is:
 #. TB and RRTB Diagnosis Trends
 #: extracted_strings.json
-#| msgid "National TB Diagnosis Trends"
 msgid "TB and RRTB Diagnosis Trends"
 msgstr "TB and RRTB Diagnosis Trends"
 
@@ -11800,7 +11756,6 @@ msgstr "Tests Performed"
 #. defaultMessage is:
 #. Tests Performed in current year
 #: extracted_strings.json
-#| msgid "Tests performed this year"
 msgid "Tests Performed in current year"
 msgstr "Tests Performed in current year"
 
@@ -13179,7 +13134,6 @@ msgstr "Username"
 #. defaultMessage is:
 #. Utilization (Pending)
 #: extracted_strings.json
-#| msgid "Utilization Rate"
 msgid "Utilization (Pending)"
 msgstr "Utilization (Pending)"
 
@@ -13501,7 +13455,6 @@ msgstr "XDR FLQ Resistance"
 #. defaultMessage is:
 #. XDR Testing and Diagnosis Trends
 #: extracted_strings.json
-#| msgid "TB Testing & Diagnosis Trends"
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "XDR Testing and Diagnosis Trends"
 
@@ -13889,7 +13842,6 @@ msgstr "data"
 #. defaultMessage is:
 #. destination site name includes "{destinationSiteName}"
 #: extracted_strings.json
-#| msgid "notification name includes \"{notificationName}\""
 msgid "destination site name includes \"{destinationSiteName}\""
 msgstr "destination site name includes \"{destinationSiteName}\""
 
@@ -13960,7 +13912,6 @@ msgstr "for {unit} Results"
 #. defaultMessage is:
 #. in current year
 #: extracted_strings.json
-#| msgid "TB Cases Diagnosed in current year"
 msgid "in current year"
 msgstr "in current year"
 
@@ -14066,7 +14017,6 @@ msgstr "of {unit} total modules"
 #. defaultMessage is:
 #. origin site name includes "{originSiteName}"
 #: extracted_strings.json
-#| msgid "site name includes \"{siteName}\""
 msgid "origin site name includes \"{originSiteName}\""
 msgstr "origin site name includes \"{originSiteName}\""
 
@@ -14418,6 +14368,9 @@ msgstr "{unit} total calibrations"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{total, plural, one {# result} other {# results} })"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "HIV (Pending)"
 
 #~ msgid "Add Note"
 #~ msgstr "Add Note"
