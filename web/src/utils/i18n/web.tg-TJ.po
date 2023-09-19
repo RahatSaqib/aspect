@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-09-07T02:37:24.870Z\n"
+"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -41,6 +41,13 @@ msgstr "# Натиҷаҳои моҳи ҷорӣ"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "# Натичахои мохи гузашта"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "# сайтҳои PMDT бо 10 C GX"
 
 #. [pages.XDR.totalConducted]
 #. defaultMessage is:
@@ -4872,19 +4879,15 @@ msgstr "HCV натиҷа нест"
 msgid "HCV Not Detected"
 msgstr "HCV ошкор нашудааст"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "ВИЧ"
-
-#. [p.PkDashboard.hivPending]
-#. defaultMessage is:
-#. HIV (Pending)
-#: extracted_strings.json
-msgid "HIV (Pending)"
-msgstr "ВИЧ (интизорӣ)"
 
 #. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
 #. defaultMessage is:
@@ -14418,6 +14421,9 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, plural, one {# натиҷа} other {# натиҷа} })"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "ВИЧ (интизорӣ)"
 
 #~ msgid "Current FQ Trends"
 #~ msgstr "Тамоюлҳои кунунии FQ"
