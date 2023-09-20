@@ -6,10 +6,8 @@ const { getUser } = require('../../auth/service')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../../db')
 const { getDatesFromQuery } = require('../../shared/date')
-const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
+const { allAssayToId, allResultCategoryToId, allSampleTypeToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
-const logger = require('../../shared/logger')
-const { RELABEL_EXCEL } = require('../../shared/constants')
 const { createFormObject } = require('../../forms/service')
 
 /**
@@ -98,6 +96,7 @@ const andByRetreatment = (typeOfPatientValue, patientRetreatmentValue, resultCat
   return counter('r.id', condition)
 }
 
+// ---------------------------------------------------------------------------
 const reportDrTb10ABaseQuery = async (auth, query) => {
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -121,6 +120,24 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
     and
     r.resultCategory2 IN (${positiveResultCategories})
   `
+
+  const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
+  const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
+
+  // const whereMtbDetected = `
+  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'MTB') IS NOT NULL
+  // `
+  const whereXdrDetected = `
+  (
+    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'INH') IS NOT NULL OR
+    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'FLQ') IS NOT NULL OR
+    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'AMK') IS NOT NULL OR
+    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'KAN') IS NOT NULL OR
+    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'CAP') IS NOT NULL OR
+    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'ETH') IS NOT NULL
+  )
+  `
+
   return {
     drTb10AData: knex('Result as r')
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -138,7 +155,9 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .leftJoin('ResultCategoryAssay as rca2', function () {
         this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
       })
-      .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+      .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+      .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+      .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
       .modify(addConstraints, dataConstraints, {
         device: 'd',
         site: 's',
@@ -155,6 +174,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       })
       .select(
         'r.deviceId',
+        'sp.sampleTypeId',
         /**
          * Notice that we below group by `deviceId`
          * only because we need to count number of modules
@@ -164,7 +184,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           ROUND(IFNULL(dc.dailyCapacity, 12) / 2, 0) as cntModules
         `)
       )
-      .groupBy('r.deviceId')
+      .groupBy('r.deviceId', 'sp.sampleTypeId')
       /**
        * get total results per each device per period
        *
@@ -177,17 +197,47 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         /**
          * Block 1
          */
-        cnt_Presumptive_TB_Cases_Invalid: inTypeOfPatient(
+        cnt_Presumptive_TB_Cases_Invalid_Mtb: inTypeOfPatient(
           presumptiveTbCases,
-          `r.resultCategory1 = ${resultCategoryIds.Invalid}`
+          `r.resultCategory1 = ${resultCategoryIds.Invalid}
+           and
+           ${assayMtb}
+          `
         ),
-        cnt_Presumptive_TB_Cases_NoResult: inTypeOfPatient(
+        cnt_Presumptive_TB_Cases_Invalid_Xdr: inTypeOfPatient(
           presumptiveTbCases,
-          `r.resultCategory1 = ${resultCategoryIds.NoResult}`
+          `r.resultCategory1 = ${resultCategoryIds.Invalid}
+           and
+           ${assayXdr}
+          `
         ),
-        cnt_Presumptive_TB_Cases_Error: inTypeOfPatient(
+        cnt_Presumptive_TB_Cases_NoResult_Mtb: inTypeOfPatient(
           presumptiveTbCases,
-          `r.resultCategory1 = ${resultCategoryIds.Error}`
+          `r.resultCategory1 = ${resultCategoryIds.NoResult}
+           and
+           ${assayMtb}
+          `
+        ),
+        cnt_Presumptive_TB_Cases_NoResult_Xdr: inTypeOfPatient(
+          presumptiveTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.NoResult}
+           and
+           ${assayXdr}
+          `
+        ),
+        cnt_Presumptive_TB_Cases_Error_Mtb: inTypeOfPatient(
+          presumptiveTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Error}
+           and
+           ${assayMtb}
+          `
+        ),
+        cnt_Presumptive_TB_Cases_Error_Xdr: inTypeOfPatient(
+          presumptiveTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Error}
+           and
+           ${assayXdr}
+          `
         ),
 
         cnt_Presumptive_DR_TB_Cases_Invalid: inTypeOfPatient(
@@ -221,18 +271,34 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_Presumptive_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
           presumptiveTbCases,
           `
-        r.resultCategory1 IN (${positiveResultCategories})
-        and
-        r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-      `
+          r.resultCategory1 IN (${positiveResultCategories})
+          and
+          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+        `
         ),
         cnt_Presumptive_DR_TB_Cases_MtbDetectedRifIndeterminate: inTypeOfPatient(
           presumptiveDrTbCases,
           `
-        r.resultCategory1 IN (${positiveResultCategories})
-        and
-        r.resultCategory2 = ${resultCategoryIds.Indeterminate}
-      `
+          r.resultCategory1 IN (${positiveResultCategories})
+          and
+          r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+        `
+        ),
+        cnt_Presumptive_TB_Cases_MtbDetectedRifTraces: inTypeOfPatient(
+          presumptiveTbCases,
+          `
+          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
+          or
+          r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
+        `
+        ),
+        cnt_Presumptive_DR_TB_Cases_MtbDetectedRifTraces: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `
+          r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
+          or
+          r.resultCategory2 = ${resultCategoryIds['Trace Detected']}
+        `
         ),
         cnt_Total_MtbDetectedRifNotDetected: counter(
           'r.id',
@@ -696,13 +762,26 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cntModulesActive: knex.raw(`DISTINCT
           CONCAT(r.deviceId, '-',  r.moduleName)
         `),
+
+        cnt_Tested_by_XDR_Cartridge: counter(
+          'r.id',
+          `
+          ${assayXdr}
+          or
+          ${whereXdrDetected}
+          `
+        ),
       }),
   }
 }
+
+// ---------------------------------------------------------------------------
 /**
  * getDataForReportDrTb10A
  */
-async function getDataForReportDrTb10A(auth, query) {
+async function getDataForReportDrTb10A(auth, query, options) {
+  const { sharedResults, nameOfSharedData } = options
+
   const { stateId, lgaId, siteName } = query
   const { userName, cell, phone, email } = await getUser(auth.credentials.name)
   const dates = getDatesFromQuery(query)
@@ -714,40 +793,76 @@ async function getDataForReportDrTb10A(auth, query) {
 
   const { drTb10AData } = await reportDrTb10ABaseQuery(auth, query)
   let data = await drTb10AData
+
+  sharedResults[nameOfSharedData] = data
+
+  const sampleTypeIds = await allSampleTypeToId()
+  data = await getDataForSheet1or2(
+    data,
+    { userName, cell, phone, email },
+    { stateId, lgaId, siteName },
+    /**
+     * for 1st worksheet use only sample type != `Stool` (see 2nd worksheet for `Stool`)
+     */
+    sampleTypeId => sampleTypeId !== sampleTypeIds.Stool
+  )
+
+  return {
+    ok: true,
+    data,
+    alreadyCachedSharedData: true,
+  }
+}
+
+// ---------------------------------------------------------------------------
+async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { stateId, lgaId, siteName }, condition) {
   let item
-  _.forEach(data, ({ deviceId, ...rest }) => {
-    const propNames = _.keys(rest) // i.e. all counters `cnt*`
-    if (!item) {
-      item = {
-        userName,
-        cell,
-        phone,
-        email,
-        devices: {}, // this is a temporal prop to collect distinct deviceId's
-      }
-      propNames.forEach(propName => {
-        item[propName] = 0
-      })
+  const [first] = rawData || []
+  if (first) {
+    item = {
+      userName,
+      cell,
+      phone,
+      email,
+      devices: new Set(), // this is a temporal prop to collect distinct deviceId's
     }
     /**
-     * increment all counters for current deviceId
+     * notice that variable `rest` below contains only counters - i.e. all keys starts with `cnt`
      */
+    // eslint-disable-next-line no-unused-vars
+    const { deviceId, sampleTypeId, ...rest } = first
+    const propNames = _.keys(rest) // i.e. all counters `cnt*`
     propNames.forEach(propName => {
+      item[propName] = 0
+    })
+  } else {
+    item = {}
+  }
+
+  _.forEach(rawData, ({ deviceId, sampleTypeId, ...rest }) => {
+    if (!condition(sampleTypeId)) {
+      return
+    }
+    /**
+     * --> notice that `rest` contains only counters - i.e. all keys starts with `cnt`.
+     * Increment all counters for current deviceId
+     */
+    _.keys(rest).forEach(propName => {
       item[propName] += rest[propName]
     })
     /**
-     * keep `deviceId`, we need only object keys
+     * unique deviceId's
      */
-    item.devices[deviceId] = null
+    item.devices.add(deviceId)
   })
-  data = item
+  let data = item
 
   if (_.isNil(data)) data = {}
   /**
    * set `cntDevices` and remove temporal prop `devices`
    */
   if (!_.isEmpty(data)) {
-    data.cntDevices = _.keys(data.devices).length
+    data.cntDevices = item.devices.size
   }
   delete data.devices
   /**
@@ -763,6 +878,29 @@ async function getDataForReportDrTb10A(auth, query) {
   if (lgaId) {
     ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
   }
+  return data
+}
+
+// ---------------------------------------------------------------------------
+async function getDataForReportDrTb10AStool(auth, query, options) {
+  const { sharedResults, useNamedData } = options
+
+  let data = sharedResults[useNamedData]
+
+  const { stateId, lgaId, siteName } = query
+  const { userName, cell, phone, email } = await getUser(auth.credentials.name)
+
+  const sampleTypeIds = await allSampleTypeToId()
+
+  data = await getDataForSheet1or2(
+    data,
+    { userName, cell, phone, email },
+    { stateId, lgaId, siteName },
+    /**
+     * for 2nd worksheet use only sample type `Stool`
+     */
+    sampleTypeId => sampleTypeId === sampleTypeIds.Stool
+  )
 
   return {
     ok: true,
@@ -770,6 +908,7 @@ async function getDataForReportDrTb10A(auth, query) {
   }
 }
 
+// ---------------------------------------------------------------------------
 /**
  * getDataForReportDrTb10B
  */
@@ -789,7 +928,12 @@ async function getDataForReportDrTb10B(auth, query) {
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
-
+  const checkResistance = (resistance, key) => `CASE
+          WHEN JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
+          THEN 'X'
+          ELSE ' '
+          END as ${key}
+       `
   const data = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -798,7 +942,7 @@ async function getDataForReportDrTb10B(auth, query) {
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     // scope Mtb and Mtb-Ultra assays
-    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
@@ -831,6 +975,10 @@ async function getDataForReportDrTb10B(auth, query) {
           r.patientData ->> '$.age'
         ) as patientAge`
       ),
+      knex.raw(`r.patientData ->> '$.TypeOfPatient' as patientType`),
+      knex.raw(`r.patientData ->> '$.SampleType' as sampleType`),
+      knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
+      knex.raw(`CASE WHEN a.id = ${assayIds.GxMtbXdr} THEN rc1.name ELSE '' END as mtbDetected`),
       knex.raw(
         `
         CASE
@@ -844,6 +992,12 @@ async function getDataForReportDrTb10B(auth, query) {
         END as gender
         `
       ),
+      knex.raw(checkResistance('INH', 'inhDetected')),
+      knex.raw(checkResistance('FLQ', 'flqDetected')),
+      knex.raw(checkResistance('AMK', 'amkDetected')),
+      knex.raw(checkResistance('KAN', 'kanDetected')),
+      knex.raw(checkResistance('CAP', 'capDetected')),
+      knex.raw(checkResistance('ETH', 'ethDetected')),
       knex.raw(
         `CONCAT(
           IFNULL(r.patientData ->> '$.address', ''),
@@ -880,28 +1034,30 @@ async function getDataForReportDrTb10B(auth, query) {
        * I = invalid/ no result/ error
        */
       knex.raw(`
-          CASE
-          WHEN r.resultCategory1 IN (${positiveResultCategories})
-                AND
-                r.resultCategory2 = ${resultCategoryIds.NotDetected} THEN 'T'
-          WHEN r.resultCategory1 IN (${positiveResultCategories})
-                AND
-                r.resultCategory2 IN (${positiveResultCategories}) THEN 'RR'
-          WHEN r.resultCategory1 IN (${positiveResultCategories})
-                AND
-                r.resultCategory2 = ${resultCategoryIds.Indeterminate} THEN 'TI'
-          WHEN r.resultCategory1 = ${resultCategoryIds.NotDetected} THEN 'N'
-          WHEN r.resultCategory1 IN (
-                  ${resultCategoryIds.Invalid},
-                  ${resultCategoryIds.Error},
-                  ${resultCategoryIds.NoResult}
-                ) THEN 'I'
-          ELSE '-'
+          CASE WHEN a.id IN (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})
+          THEN 
+            (CASE
+              WHEN r.resultCategory1 IN (${positiveResultCategories})
+                    AND
+                    r.resultCategory2 = ${resultCategoryIds.NotDetected} THEN 'T'
+              WHEN r.resultCategory1 IN (${positiveResultCategories})
+                    AND
+                    r.resultCategory2 IN (${positiveResultCategories}) THEN 'RR'
+              WHEN r.resultCategory1 IN (${positiveResultCategories})
+                    AND
+                    r.resultCategory2 = ${resultCategoryIds.Indeterminate} THEN 'TI'
+              WHEN r.resultCategory1 = ${resultCategoryIds.NotDetected} THEN 'N'
+              WHEN r.resultCategory1 IN (
+                      ${resultCategoryIds.Invalid},
+                      ${resultCategoryIds.Error},
+                      ${resultCategoryIds.NoResult}
+                    ) THEN 'I'
+              ELSE '-'
+            END)
+          ELSE ''
           END as resultMtbRif
       `)
     )
-
-  logger.debug(`Total records: ${data.length}`, RELABEL_EXCEL)
 
   return {
     ok: true,
@@ -1731,6 +1887,7 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
 
 module.exports = {
   getDataForReportDrTb10A,
+  getDataForReportDrTb10AStool,
   getDataForReportDrTb10B,
   getDataForReportCovid19,
   getReportDrTb10a10bCovidNtpUse,
