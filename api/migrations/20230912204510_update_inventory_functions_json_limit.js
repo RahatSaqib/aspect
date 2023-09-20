@@ -1,8 +1,8 @@
 module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
-  await knex.raw('DROP FUNCTION GetDaysStockLeft')
-  await knex.raw('DROP FUNCTION GetProjectedWaste')
+  await knex.raw('DROP FUNCTION IF EXISTS GetDaysStockLeft')
+  await knex.raw('DROP FUNCTION IF EXISTS GetProjectedWaste')
 
   await knex.raw(`
   CREATE FUNCTION GetDaysStockLeft(
