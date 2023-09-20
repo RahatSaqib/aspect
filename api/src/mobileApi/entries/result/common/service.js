@@ -57,18 +57,12 @@ async function fetchEntriesServiceHandler(request) {
   const samples = await getAllSamplesRegistered(query, dataConstraints)
   const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
 
-  const originSIteIds = []
+  // get origin Ids for each result
+  const originSiteIds = results
+    .filter(r => !!r.transferStatusLogData)
+    .map(r => JSON.parse(r.transferStatusLogData).sampleOriginSiteId)
 
-  // push origin Ids for each result in an array
-  _.forEach(results, elem => {
-    if (!_.isNil(elem.transferStatusLogData)) {
-      const parsedTransferStatusLogData = JSON.parse(elem.transferStatusLogData)
-      const originSiteId = parsedTransferStatusLogData.sampleOriginSiteId
-      originSIteIds.push(originSiteId)
-    }
-  })
-
-  const transferOriginIds = await getSiteByIds(originSIteIds)
+  const transferOriginIds = await getSiteByIds(originSiteIds)
 
   // map origin id to name
   const originSitesMap = _.reduce(
