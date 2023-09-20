@@ -26,6 +26,7 @@ const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onRea
       }),
     },
     onReady,
+    appendPadding: 20,
   }
 
   return <Column {...config} />

@@ -18,7 +18,7 @@ const BarLineGraph = ({ data, colors, graphId, showLabel, xField, yField }) => {
       {
         geometry: 'line',
         color: () => filterColour(colors.find(c => c.name === yField[1]).colorId, graphId),
-        label: showLabel ? { content: originData => `${originData.percentage}%` } : undefined, // format for label on top of section
+        label: showLabel ? { content: originData => `${originData[yField[1]]}%`, position: 'middle' } : undefined, // format for label on top of section
         point: {
           size: 3,
           shape: 'circle',
@@ -37,8 +37,13 @@ const BarLineGraph = ({ data, colors, graphId, showLabel, xField, yField }) => {
     },
     legend: { position: 'bottom', maxRow: 3 },
     animation: false,
+    appendPadding: 20,
   }
-  return data ? <DualAxes {...config} /> : null
+  return data ? (
+    <div style={{ margin: 10, padding: 10 }}>
+      <DualAxes {...config} />
+    </div>
+  ) : null
 }
 
 export default BarLineGraph

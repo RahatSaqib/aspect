@@ -20,6 +20,7 @@ const LineGraph = ({ data, graphId, showLabel }) => {
       },
     },
     animation: false,
+    appendPadding: 20,
   }
 
   return <Line {...config} />

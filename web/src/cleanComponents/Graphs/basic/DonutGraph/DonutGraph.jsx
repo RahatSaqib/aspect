@@ -51,7 +51,6 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total }) => {
       },
     },
     // basic config for graph, no need to update
-    appendPadding: 10,
     angleField: 'value',
     colorField: 'label',
     radius: 1,
@@ -61,6 +60,7 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total }) => {
     legend: {
       position: 'bottom',
     },
+    appendPadding: 10,
   }
   return <Pie {...config} />
 }
