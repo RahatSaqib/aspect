@@ -20,8 +20,7 @@ const Login = ({ setStep }) => {
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
-  const { userId: loggedInUserId } = useAuthState()
-
+  const { personId: loggedInPersonId } = useAuthState()
   const initialValues = {
     canLogIn: id === ACTION.SELF ? 1 : person?.canLogIn,
     username: person?.username || '',
@@ -52,7 +51,7 @@ const Login = ({ setStep }) => {
     userLockedOut: string().nullable(),
   })
 
-  const { mutate: updateLogin } = useUpdatePersonLogin(id === ACTION.SELF ? loggedInUserId : id)
+  const { mutate: updateLogin } = useUpdatePersonLogin(id === ACTION.SELF ? loggedInPersonId : id)
 
   return (
     <>

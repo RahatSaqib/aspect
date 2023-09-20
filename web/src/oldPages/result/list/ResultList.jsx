@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { TableBody } from '@mui/material'
+import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import filter from 'lodash/filter'
@@ -21,7 +21,6 @@ import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
@@ -120,9 +119,9 @@ export const ResultListWithProps = ({
           />
         </div>
 
-        {isLoading ? <DataTableProgressBar /> : null}
-
-        {items.currentIdList.isEmpty() ? (
+        {isLoading ? (
+          <LinearProgress />
+        ) : items.currentIdList.isEmpty() ? (
           <BrowseEmptyList />
         ) : (
           <>
@@ -192,7 +191,7 @@ const ResultList = () => {
     })
   )
   const [total, setTotal] = useState()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [pagination, setPagination] = useState({})
   const [columns, setColumns] = useState([])
 
