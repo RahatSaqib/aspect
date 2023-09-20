@@ -18,6 +18,7 @@ import XDRFLQResistanceGraph from '../../../cleanComponents/Graphs/XDRFLQResista
 import XDRResultsGraph from '../../../cleanComponents/Graphs/XDRResultsGraph'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
+import { useAuthState } from '../../../providers/AuthProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
 import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
 import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
@@ -31,7 +32,7 @@ const cssClasses = classnames.bind(styles)
 const Status = () => {
   const { formatMessage } = useI18n()
   const dispatch = useDispatch()
-
+  const { isCountry } = useAuthState()
   useEffect(() => {
     dispatch(fetchAssays(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -97,7 +98,7 @@ const Status = () => {
             </PermissionChecker>
           ) : null}
 
-          {assays.some(a => covidPermissions.includes(a.externalId)) ? (
+          {assays.some(a => covidPermissions.includes(a.externalId)) && !isCountry('BD') ? (
             <PermissionChecker permissions={['dashboard']}>
               <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
             </PermissionChecker>
@@ -110,7 +111,7 @@ const Status = () => {
           ) : null}
 
           <PermissionChecker permissions={['dashboard', 'operationalData']}>
-            <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
+            {!isCountry('BD') && <DeviceStatusGraph assaysFromState={assays} />} {/* 13 */}
             <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
           </PermissionChecker>
 
