@@ -10,19 +10,19 @@ export const FormStatusContext = React.createContext(undefined)
 
 export const FormStatusProvider = props => {
   const { personId } = useParams()
-  const { userId: loggedInUserId } = useAuthState()
+  const { personId: loggedInPersonId } = useAuthState()
   const { search } = useLocation()
   const isRecentlyAdd = useMemo(() => new URLSearchParams(search).get('add'), [search])
   const id = useMemo(
     () =>
       personId
-        ? personId === loggedInUserId
+        ? personId === loggedInPersonId
           ? ACTION.SELF
           : personId !== ACTION.ADD
           ? personId
           : ACTION.ADD
         : ACTION.SELF,
-    [loggedInUserId, personId]
+    [loggedInPersonId, personId]
   )
 
   const isAdding = useMemo(() => id === ACTION.ADD || isRecentlyAdd, [id, isRecentlyAdd])
