@@ -27,7 +27,7 @@ const cssClasses = classnames.bind(styles)
 const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refetch }) => {
   const { formatMessage, formatNumber } = useI18n()
 
-  const { isPakistan } = useAuthState()
+  const { isCountry } = useAuthState()
   const [newQtyOnHand, setNewQtyOnHand] = useState('')
   const [newQtyOnHandError, setNewQtyOnHandError] = useState(false)
   const [showCheck, setShowCheck] = useState(false)
@@ -37,7 +37,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
   const dispatch = useDispatch()
 
   const getActions = isInTransit => [
-    ...(!isPakistan
+    ...(!isCountry('PK')
       ? [
           {
             icon: 'FaCheck',
