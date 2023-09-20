@@ -7,6 +7,7 @@ import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 import { ImplementingPartnerSelect } from '../../../../cleanComponents'
+import AspectSelect from '../../../../cleanComponents/AspectSelect'
 import DeviceCapacitySelect from '../../../../cleanComponents/DeviceCapacitySelect'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
@@ -16,6 +17,7 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
+import { tokens } from '../Profile/DeviceDetailProfile'
 import styles from '../styles.css'
 import messages from './messages'
 
@@ -110,6 +112,16 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               value={editDevice.dailyCapacityId}
               onChange={dailyCapacityId => setEditDevice({ ...editDevice, dailyCapacityId })}
             />
+
+            <AspectSelect
+              options={[1, 2, 3, 4]}
+              disabled={device?.approvalToken !== tokens.APPROVED}
+              itemToString={i => i ?? ''}
+              label={intl.formatMessage(messages.instrumentsConnected)}
+              value={editDevice.instrumentsConnected}
+              onChange={v => setEditDevice({ ...editDevice, instrumentsConnected: v })}
+            />
+
             <TextField
               fullWidth
               id="notes"
