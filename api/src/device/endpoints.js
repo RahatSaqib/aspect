@@ -171,6 +171,10 @@ const routes = [
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number(),
           implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
+          instrumentsConnected: Joi.number()
+            .only()
+            .allow(1, 2, 3, 4, '', null)
+            .description('Number of connected instruments'),
           deviceCapacityId: Joi.number().allow(null).optional(),
         },
       },
