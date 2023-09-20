@@ -39,7 +39,7 @@ import PerformanceReport from './PerformanceReport'
 
 const cssClasses = classnames.bind(styles)
 
-const tokens = {
+export const tokens = {
   PROVISIONED: 'provisioned',
   ASSIGNED: 'assigned',
   APPROVED: 'approved',
@@ -478,6 +478,11 @@ const DeviceDetailProfile = ({
                     })})`
                   : '')
               }
+            />
+
+            <Summary
+              title={formatMessage(messages.instrumentsConnected)}
+              description={device.get('instrumentsConnected') ?? 'n/a'}
             />
 
             <Summary
