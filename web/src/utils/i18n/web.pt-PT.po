@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-09-07T02:37:24.870Z\n"
+"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -41,6 +41,13 @@ msgstr "# Resultados Mês actual"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "# Resultados Mês passado"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "# Número de sítios PMDT com 10 C GX"
 
 #. [pages.XDR.totalConducted]
 #. defaultMessage is:
@@ -4879,19 +4886,15 @@ msgstr "HCV sem resultado"
 msgid "HCV Not Detected"
 msgstr "HCV Não Detectado"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "HIV"
-
-#. [p.PkDashboard.hivPending]
-#. defaultMessage is:
-#. HIV (Pending)
-#: extracted_strings.json
-msgid "HIV (Pending)"
-msgstr "VIH (pendente)"
 
 #. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
 #. defaultMessage is:
@@ -14406,6 +14409,9 @@ msgstr "{unit} calibrações totais"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# resultado} other {# resultados} })"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "VIH (pendente)"
 
 #~ msgid "Current FQ Trends"
 #~ msgstr "Tendências actuais da FQ"
