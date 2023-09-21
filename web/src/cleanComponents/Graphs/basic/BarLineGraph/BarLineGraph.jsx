@@ -33,17 +33,17 @@ const BarLineGraph = ({ data, colors, graphId, showLabel, xField, yField }) => {
           : { name: `${datum.type}`, value: `${datum.value}` },
     },
     yAxis: {
-      percentage: { min: 0, max: 100 },
+      [yField[1]]: {
+        min: 0,
+        max: 100,
+        label: { formatter: text => `${text}%` },
+      },
     },
     legend: { position: 'bottom', maxRow: 3 },
     animation: false,
     appendPadding: 20,
   }
-  return data ? (
-    <div style={{ margin: 10, padding: 10 }}>
-      <DualAxes {...config} />
-    </div>
-  ) : null
+  return data ? <DualAxes {...config} /> : null
 }
 
 export default BarLineGraph
