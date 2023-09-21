@@ -108,6 +108,7 @@ describe('Authentication routes', () => {
           createdOn: new Date(),
           updatedOn: new Date(),
           geographyId: 98,
+          canLogIn: 1,
         })
       })
     })
