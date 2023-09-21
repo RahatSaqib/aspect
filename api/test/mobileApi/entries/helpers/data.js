@@ -150,6 +150,7 @@ const expected347 = [
         hasFollowUp: false,
         requiresFollowUp: false,
         noFollowUpPossible: false,
+        followUpStatus: 'followUpNotRequired',
       },
     },
     testInformation: [
@@ -393,6 +394,7 @@ const expected450 = [
         hasFollowUp: true,
         requiresFollowUp: false,
         noFollowUpPossible: false,
+        followUpStatus: 'hasFollowUp',
       },
     },
     testInformation: [
