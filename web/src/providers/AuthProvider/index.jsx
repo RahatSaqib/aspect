@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo } from 'react'
+import React, { createContext, useCallback, useContext, useMemo } from 'react'
 import isNumber from 'lodash/isNumber'
 import { useSelector } from 'react-redux'
 
@@ -15,8 +15,10 @@ const AuthProvider = ({ children }) => {
 
   let isLoggedOut = false
 
-  const isPakistan = useMemo(
-    () => localStorage.getItem('<showPkDashboard>') || user?.countryAbbreviation === 'PK',
+  const isCountry = useCallback(
+    countryAbbreviation => {
+      return localStorage.getItem('<showPkDashboard>') || user?.countryAbbreviation === countryAbbreviation
+    },
     [user.countryAbbreviation]
   )
 
@@ -28,7 +30,7 @@ const AuthProvider = ({ children }) => {
   } else {
     isLoggedOut = true
   }
-  const userData = Object.freeze({ ...user, userPermissions: user.jwt.permissions, isLoggedOut, isPakistan })
+  const userData = Object.freeze({ ...user, userPermissions: user.jwt.permissions, isLoggedOut, isCountry })
 
   return <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
 }
