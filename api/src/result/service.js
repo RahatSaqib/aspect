@@ -1584,6 +1584,9 @@ async function transferResult(request) {
         sampleOriginSiteId: result.data.sampleOriginSiteId,
         comment,
       }),
+      previousReportableSiteId: result.data.reportableSiteId,
+      sampleOriginSiteId: result.data.sampleOriginSiteId,
+      reportableSiteId: siteId,
       timestamp,
     })
     resultStatusLog = await knex('ResultStatusLog').where({ id: resultStatusLogId }).first('createdOn')

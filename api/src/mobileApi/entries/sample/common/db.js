@@ -99,9 +99,19 @@ const insertNewSample = (payload, auth) =>
     .insert({ ...payload })
     .then(async newSample => getSamplesRegisteredById(newSample[0], auth))
 
+const getTransferHistory = siteIdList => {
+  return knex
+    .distinct('resultId')
+    .from('ResultStatusLog')
+    .where(builder => {
+      builder.whereIn('previousReportableSiteId', siteIdList).orWhereIn('sampleOriginSiteId', siteIdList)
+    })
+}
+
 module.exports = {
   getAllSamplesRegistered,
   updateExistingSample,
   insertNewSample,
   getSamplesRegisteredAtSiteOnDayWithSampleId,
+  getTransferHistory,
 }

@@ -9,7 +9,7 @@ const {
   getFlagsByResultIds,
   getUserSiteIds,
 } = require('./db')
-const { getAllSamplesRegistered } = require('../../sample/common/db')
+const { getAllSamplesRegistered, getTransferHistory } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transformResultResponse } = require('./helpers/transformResultResponse')
@@ -53,8 +53,16 @@ const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkf
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
+
+  const clinicianSiteIds = dataConstraints.$or.map(item => item.site.id)
+
+  // get resultIds of transferred result
+  const resultTransferHistory = await getTransferHistory(clinicianSiteIds)
+
+  const transferredResultIds = resultTransferHistory.map(record => record.resultId)
+
   const samples = await getAllSamplesRegistered(query, dataConstraints)
-  const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
+  const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints, transferredResultIds)
 
   const acknowledgements = await getAcknowledgementsByResultIds(results)
   const flags = await getFlagsByResultIds(results)
