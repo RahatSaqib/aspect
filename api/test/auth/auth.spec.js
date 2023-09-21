@@ -21,8 +21,8 @@ const { assert } = chai
 describe('Authentication routes', () => {
   const adminUsername = 'admin'
   const adminPassword = 'test07'
-  const unlicensedUser = 'testuser'
-  const unlicensedPassword = 'test07'
+  const noPermsUser = 'testuser'
+  const noPermsPassword = 'test07'
   const authPath = '/api/auth'
   const webClientName = 'Mocha web'
   const webClientType = clientTypes.web
@@ -89,8 +89,8 @@ describe('Authentication routes', () => {
 
         const culture = 'en'
         const [id] = await knex('User').insert({
-          name: unlicensedUser.toLowerCase(),
-          password: bcrypt.hashSync(unlicensedPassword, saltRounds),
+          name: noPermsUser.toLowerCase(),
+          password: bcrypt.hashSync(noPermsPassword, saltRounds),
           legacyPassword: 0,
           approved: 1,
           lockedOut: 0,
@@ -100,7 +100,7 @@ describe('Authentication routes', () => {
 
         await knex('Person').insert({
           userId: id,
-          name: unlicensedUser,
+          name: noPermsUser,
           lastPartnerId,
           lastCountryId,
           timezone,
@@ -114,9 +114,9 @@ describe('Authentication routes', () => {
     after(() =>
       runTestWithKnex(async knex => {
         await knex('RefreshToken').whereIn('clientId', ['123123123-123123123', '9999-9999']).delete()
-        await knex('Person').where('name', unlicensedUser).delete()
+        await knex('Person').where('name', noPermsUser).delete()
         await knex('LoginHistory').where('userId', '>', 0).del()
-        await knex('User').where('name', unlicensedUser).delete()
+        await knex('User').where('name', noPermsUser).delete()
       })
     )
 
@@ -247,8 +247,8 @@ describe('Authentication routes', () => {
           await server
             .post(authPath)
             .send({
-              name: unlicensedUser,
-              password: unlicensedPassword,
+              name: noPermsUser,
+              password: noPermsPassword,
               clientName: webClientName,
               clientId: '9999-9999',
             })
