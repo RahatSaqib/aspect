@@ -2,8 +2,8 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   // Remove old version of these functions
-  await knex.raw('DROP FUNCTION GetDaysStockLeft')
-  await knex.raw('DROP FUNCTION GetProjectedWaste')
+  await knex.raw('DROP FUNCTION IF EXISTS GetDaysStockLeft')
+  await knex.raw('DROP FUNCTION IF EXISTS GetProjectedWaste')
 
   // New version of these functions
   await knex.raw(`
@@ -143,8 +143,8 @@ async function up(knex) {
 
 async function down(knex) {
   // Remove new version of these functions
-  await knex.raw('DROP FUNCTION GetDaysStockLeft')
-  await knex.raw('DROP FUNCTION GetProjectedWaste')
+  await knex.raw('DROP FUNCTION IF EXISTS GetDaysStockLeft')
+  await knex.raw('DROP FUNCTION IF EXISTS GetProjectedWaste')
 
   // Prev version of these functions
   await knex.raw(`
