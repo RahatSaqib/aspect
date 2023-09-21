@@ -6,9 +6,9 @@ import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
-import XDRFLQResistanceGraphMain from '../../../../../oldPages/dashboard/Graphs/XDRFLQResistanceGraph/XDRFLQResistanceGraph.Main'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
+import XDRFLQResistanceGraphMain from '../../../components/XDRFLQResistanceGraph.Main'
 import messages from '../../../PkDashboard.Messages'
 
 const GXTestingAndDiagnosisGraph = () => {
