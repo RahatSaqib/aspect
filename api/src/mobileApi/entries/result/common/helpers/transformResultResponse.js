@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const _ = require('lodash')
 const { buildHistoryTimeline } = require('./buildHistoryTimeline')
 const { extractFromDataById } = require('./extractFromDataById')
@@ -26,11 +27,27 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
     const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
     const noFollowUpPossibleComment = noFollowUpPossible ? result?.resultWorkflowStatusReason : undefined
     const hasFollowUp = !!clinicalResponse?.treatment && resultRequiresTreatment && !noFollowUpPossible
+
+    const requiresFollowUp = resultRequiresTreatment && !hasFollowUp && !noFollowUpPossible
+    const hasFollowUpEntry = resultRequiresTreatment && hasFollowUp && !noFollowUpPossible
+
     const clinicalFollowUpFlags = {
-      requiresFollowUp: resultRequiresTreatment && !hasFollowUp && !noFollowUpPossible,
-      hasFollowUp: resultRequiresTreatment && hasFollowUp && !noFollowUpPossible,
+      requiresFollowUp,
+      hasFollowUp: hasFollowUpEntry,
       noFollowUpPossible,
     }
+
+    const clinicalFollowUpFilter = {
+      ...clinicalFollowUpFlags,
+      followUpStatus: requiresFollowUp
+        ? 'requiresFollowUp'
+        : hasFollowUpEntry
+        ? 'hasFollowUp'
+        : noFollowUpPossible
+        ? 'noFollowUpPossible'
+        : 'followUpNotRequired',
+    }
+
     return {
       id: result.id,
       assayExternalId: result.assayExternalId,
@@ -45,7 +62,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
       resultRequiresTreatment,
       ...clinicalFollowUpFlags,
       noFollowUpPossibleComment,
-      searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags, userSiteIds),
+      searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFilter, userSiteIds),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),
       transferStatus: generateTransferStatus(result, userSiteIds),

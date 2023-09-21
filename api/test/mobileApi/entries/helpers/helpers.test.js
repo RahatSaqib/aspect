@@ -547,8 +547,63 @@ describe('Entries helpers', () => {
     it('correctly transform results', async () => {
       const entry347 = transformResultResponse([data347], [], [])
       const entry450 = transformResultResponse([data450], followUp450, [])
+
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
+    })
+
+    it('should return requiresFollowUp for followUpStatus', async () => {
+      const requiresFollowUpEntry = transformResultResponse(
+        [{ ...data347, resultCategoryAssay1RequiresTreatment: 1 }],
+        [],
+        []
+      )
+
+      const clonedExpected = expected347[0]
+      const requiresFollowUpExpectedResult = {
+        ...clonedExpected,
+        requiresFollowUp: true,
+        resultRequiresTreatment: true,
+        searchSchema: {
+          ...clonedExpected.searchSchema,
+          filterMeta: {
+            ...clonedExpected.searchSchema.filterMeta,
+            followUpStatus: 'requiresFollowUp',
+            requiresFollowUp: true,
+          },
+        },
+      }
+      expect(requiresFollowUpEntry).to.deep.eq([requiresFollowUpExpectedResult])
+    })
+
+    it('should return noFollowUpPossible for followUpStatus', async () => {
+      const noFollowUpPossibleEntry = transformResultResponse(
+        [{ ...data347, resultTreatmentStatusExternalId: 'NotPossible' }],
+        [],
+        []
+      )
+
+      const clonedExpected = expected347[0]
+      const noFollowUpPossibleEntryExpectedResult = {
+        ...clonedExpected,
+        noFollowUpPossible: true,
+        searchSchema: {
+          ...clonedExpected.searchSchema,
+          filterMeta: {
+            ...clonedExpected.searchSchema.filterMeta,
+            followUpStatus: 'noFollowUpPossible',
+            treatmentStatus: 'NotPossible',
+            hasFollowUp: false,
+            noFollowUpPossible: true,
+            requiresFollowUp: false,
+          },
+        },
+        treatmentStatus: {
+          ...clonedExpected.treatmentStatus,
+          externalId: 'NotPossible',
+        },
+      }
+      expect(noFollowUpPossibleEntry).to.deep.eq([noFollowUpPossibleEntryExpectedResult])
     })
   })
 })
