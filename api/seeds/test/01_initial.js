@@ -920,6 +920,7 @@ async function seed(knex) {
     timezone: countries.US.timezone,
     culture: countries.US.culture,
     geographyId,
+    canLogIn: true,
     ...auditFields,
   })
 
@@ -948,6 +949,7 @@ async function seed(knex) {
     timezone: countries.US.timezone,
     culture: countries.US.culture,
     geographyId,
+    canLogIn: true,
     ...auditFields,
   })
 
@@ -969,6 +971,7 @@ async function seed(knex) {
     timezone: countries.US.timezone,
     culture: countries.US.culture,
     geographyId,
+    canLogIn: true,
     ...auditFields,
   })
 

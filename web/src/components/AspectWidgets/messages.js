@@ -175,7 +175,7 @@ export const messages = defineMessages({
   },
   stockNotRecordedTitle: {
     id: 'component.Widget.stockNotRecordedTitle',
-    defaultMessage: 'Stock not recorded',
+    defaultMessage: 'Stock not recorded (GenXpert only)',
   },
   stockNotRecordedDescription: {
     id: 'component.Widget.stockNotRecordedDescription',
@@ -184,12 +184,12 @@ export const messages = defineMessages({
   },
   moduleSwapsTitle: {
     id: 'component.Widget.moduleSwapsTitle',
-    defaultMessage: 'Module Swaps',
+    defaultMessage: 'Module Swaps (GeneXpert only)',
   },
   moduleSwapsDescription: {
     id: 'component.Widget.moduleSwapsDescription',
     defaultMessage:
-      'The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
+      'The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
   },
   gxPositiveResultsNotifiedTitle: {
     id: 'component.Widget.gxPositiveResultsNotifiedTitle',
@@ -197,7 +197,7 @@ export const messages = defineMessages({
   },
   gxPositiveResultsNotifiedDescription: {
     id: 'component.Widget.gxPositiveResultsNotifiedDescription',
-    defaultMessage: `The percentage of positive GeneXpert's results that were notified via SMS or email.`,
+    defaultMessage: `The percentage of positive results that were notified via SMS or email.`,
   },
   avgTimeToUploadTitle: {
     id: 'component.Widget.avgTimeToUploadTitle',
@@ -224,7 +224,7 @@ export const messages = defineMessages({
   instrumentsReplacedDescription: {
     id: 'component.Widget.instrumentsReplacedDescription',
     defaultMessage:
-      'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
+      'The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number',
   },
   averageRecipientsOfEmail: {
     id: 'component.Widget.averageRecipientsOfEmail',
@@ -232,7 +232,7 @@ export const messages = defineMessages({
   },
   averageRecipientsOfEmailDescription: {
     id: 'component.Widget.averageRecipientsOfEmailDescription',
-    defaultMessage: 'The average number of email recipients per positive GeneXpert result.',
+    defaultMessage: 'The average number of email recipients per positive result.',
   },
   averageRecipientsOfSms: {
     id: 'component.Widget.averageRecipientsOfSms',
@@ -240,7 +240,7 @@ export const messages = defineMessages({
   },
   averageRecipientsOfSmsDescription: {
     id: 'component.Widget.averageRecipientsOfSmsDescription',
-    defaultMessage: 'The average number of SMS recipients per positive GeneXpert result.',
+    defaultMessage: 'The average number of SMS recipients per positive result.',
   },
   averageLengthOfSms: {
     id: 'component.Widget.averageLengthOfSms',
@@ -248,7 +248,7 @@ export const messages = defineMessages({
   },
   averageLengthOfSmsDescription: {
     id: 'component.Widget.averageLengthOfSmsDescription',
-    defaultMessage: 'The average number of characters in SMS messages sent about positive GeneXpert results.',
+    defaultMessage: 'The average number of characters in SMS messages sent about positive results.',
   },
   dashboardWidgetSmsSentTitle: {
     id: 'component.Widget.dashboardWidgetSmsSentTitle',
@@ -345,20 +345,20 @@ export const messages = defineMessages({
   },
   deviceCalibrationPastDueTitle: {
     id: 'component.Widget.deviceCalibrationPastDueTitle',
-    defaultMessage: 'Calibration Past Due',
+    defaultMessage: 'GeneXpert Calibration Past Due',
   },
   deviceCalibrationPastDueDescription: {
     id: 'component.Widget.deviceCalibrationPastDueDescription',
-    defaultMessage: 'The number of instruments that had their last calibration more than one year ago.',
+    defaultMessage: 'The number of GeneXpert instruments that had their last calibration more than one year ago.',
   },
   deviceCalibratedWhenDueTitle: {
     id: 'component.Widget.deviceCalibratedWhenDueTitle',
-    defaultMessage: 'Calibrated When Due',
+    defaultMessage: 'GeneXpert Calibrated When Due',
   },
   deviceCalibratedWhenDueDescription: {
     id: 'component.Widget.deviceCalibratedWhenDueDescription',
     defaultMessage:
-      'The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.',
+      'The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.',
   },
   unusedModulesTitle: {
     id: 'component.Widget.unusedModulesTitle',

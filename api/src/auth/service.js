@@ -43,6 +43,7 @@ const personProps = [
   'p.cell',
   'p.email',
   'p.disabled',
+  'p.canLogIn',
 ]
 
 const userProps = [
@@ -145,7 +146,7 @@ async function authenticate(request, response) {
     }
   }
 
-  if (user.lockedOut === 1 || user.disabled === 1) {
+  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
     return loginHistoryCodeDecorator(
       Boom.forbidden('Your account is locked.'),
       user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
@@ -208,6 +209,21 @@ async function authenticate(request, response) {
     deviceTokenId = null
   }
 
+  await query('Update failed password attempts to 0').from('User').where({ id: user.id }).update({
+    failedPasswordAttempts: 0,
+    lastLogin: now,
+    lastActive: now,
+  })
+
+  const permissions = await getUserPermissions(user.id, user.partnerId)
+  if (_.isEmpty(permissions)) {
+    return loginHistoryCodeDecorator(
+      Boom.expectationFailed('Your credentials were not configured properly. Please, contact your administrator.'),
+      LOGIN_HISTORY_CODES.missingPermissions,
+      user.id
+    )
+  }
+
   await setRefreshToken({
     clientId,
     clientName,
@@ -220,11 +236,6 @@ async function authenticate(request, response) {
   })
 
   response.user = user // to be consumed by loginHistoryWrapper
-  await query('Update failed password attempts to 0').from('User').where({ id: user.id }).update({
-    failedPasswordAttempts: 0,
-    lastLogin: now,
-    lastActive: now,
-  })
 
   const accessToken = await getAccessToken(user, clientType)
   const displayPreferences = await getDisplayPreferences(user)
@@ -371,16 +382,7 @@ async function hasPermissions(auth, modules) {
 
 // generate a new jwt for the given user data
 async function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
-  const permissions = await query('Get permissions for user and partner')
-    .from('Permission as p')
-    .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
-    .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
-    .where({ 'ps.userId': id, 'jf.partnerId': partnerId })
-    .orderBy(['p.module', 'p.activity'])
-    .distinct('p.module', 'p.activity')
-    .then(data => data.map(p => `${p.module}:${p.activity}`))
+  const permissions = await getUserPermissions(id, partnerId)
 
   const applicableLicense = await getApplicableLicense(personId, partnerId)
 
@@ -403,6 +405,19 @@ async function getAccessToken({ id, name, partnerId, personId }, clientType = 'w
   )
 
   return token
+}
+
+async function getUserPermissions(userId, partnerId) {
+  return query('Get permissions for user and partner')
+    .from('Permission as p')
+    .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
+    .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
+    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .where({ 'ps.userId': userId, 'jf.partnerId': partnerId })
+    .orderBy(['p.module', 'p.activity'])
+    .distinct('p.module', 'p.activity')
+    .then(data => data.map(p => `${p.module}:${p.activity}`))
 }
 
 function getGeographyAccess(personId, partnerId) {
