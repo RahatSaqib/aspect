@@ -43,6 +43,7 @@ const personProps = [
   'p.cell',
   'p.email',
   'p.disabled',
+  'p.canLogIn',
 ]
 
 const userProps = [
@@ -145,7 +146,7 @@ async function authenticate(request, response) {
     }
   }
 
-  if (user.lockedOut === 1 || user.disabled === 1) {
+  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
     return loginHistoryCodeDecorator(
       Boom.forbidden('Your account is locked.'),
       user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,

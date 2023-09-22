@@ -384,6 +384,7 @@ async function seed(knex) {
       cell: config.admin.cell,
       culture: myanmarCountry.culture,
       timezone: myanmarCountry.timezone,
+      canLogIn: true,
       ...auditFields,
     })
     const [jobIdLab] = await knex('Job').insert({
