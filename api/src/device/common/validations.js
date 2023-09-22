@@ -255,9 +255,7 @@ const deviceDetailsResponseFields = Joi.object()
     siteId: Joi.number().allow('', null).description('The ID of the site where the device is located'),
     implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
     implementingPartnerName: Joi.string().allow('', null).description('Implementing partner name'),
-    instrumentsConnected: Joi.number()
-      .allow('', null)
-      .description('The number of instruments connected to a single laptop'),
+    instrumentsConnected: Joi.number().description('The number of instruments assigned to the device or connector'),
     siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
     hostId: Joi.string().allow('', null).description('The host ID of the device'),
     deviceType: Joi.object()
