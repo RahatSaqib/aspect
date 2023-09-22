@@ -91,6 +91,7 @@ async function createUser(
       createdOn: new Date(),
       updatedOn: new Date(),
       geographyId: geography.id,
+      canLogIn: true,
     })
   } else {
     ;[personId] = await knex('Person').insert({
@@ -103,6 +104,7 @@ async function createUser(
       createdOn: new Date(),
       updatedOn: new Date(),
       geographyId: geography.id,
+      canLogIn: true,
     })
   }
   const licenseIds = await knex('License as l')

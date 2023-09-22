@@ -184,6 +184,28 @@ export function loginStart({ user, password }) {
             },
           },
         },
+        417: {
+          'Your credentials were not configured properly. Please, contact your administrator.': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id: 'errorResponseMessages.loginStart.POST.417.missingPermissions.title',
+                defaultMessage: 'Login failed',
+              },
+              message: {
+                id: 'errorResponseMessages.loginStart.POST.417.missingPermissions.message',
+                defaultMessage: 'Your credentials were not configured properly. Please, contact your administrator.',
+              },
+              resolution: {
+                id: 'errorResponseMessages.loginStart.POST.417.missingPermissions.resolution',
+                defaultMessage: 'You can contact us to check your account by email ({supportEmail})',
+              },
+            }),
+            messageValues: {
+              supportEmail: config.supportEmail,
+            },
+          },
+        },
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
