@@ -13,6 +13,7 @@ const LOGIN_HISTORY_CODES = {
   lockedOut: 'locked',
   disabled: 'disabled',
   unexpected: 'unexpected.error',
+  missingPermissions: 'missing.permissions',
 }
 
 /**
