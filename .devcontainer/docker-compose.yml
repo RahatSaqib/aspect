@@ -54,7 +54,12 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: roott
       TZ: UTC
+    volumes:
+      - ./data/db:/var/lib/mysql
     healthcheck:
       test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
       timeout: 20s
       retries: 10
+
+volumes:
+  dbdata:
