@@ -1,6 +1,9 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
-const { getServersByPartner, getStatistics } = require('./service')
+const { getServersByPartner } = require('./getServersByPartner')
+const { getStatistics } = require('./getStatistics')
+const { getVersion } = require('./getVersion')
+const { getStatus } = require('./getStatus')
 
 const countryBase = {
   CountryId: Joi.number().integer().positive().required().description('Country Id'),
@@ -134,6 +137,22 @@ const routes = [
           .required()
           .description('Data for graph on dstats.systemone.id'),
       },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/version',
+    handler: asyncHandler(getVersion),
+    config: {
+      auth: false,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/server/status',
+    handler: asyncHandler(getStatus),
+    config: {
+      auth: false,
     },
   },
 ]

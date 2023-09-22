@@ -20,8 +20,7 @@ const Login = ({ setStep }) => {
   const { formatMessage } = useI18n()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
-  const { userId: loggedInUserId } = useAuthState()
-
+  const { personId: loggedInPersonId, userPermissions } = useAuthState()
   const initialValues = {
     canLogIn: id === ACTION.SELF ? 1 : person?.canLogIn,
     username: person?.username || '',
@@ -52,13 +51,13 @@ const Login = ({ setStep }) => {
     userLockedOut: string().nullable(),
   })
 
-  const { mutate: updateLogin } = useUpdatePersonLogin(id === ACTION.SELF ? loggedInUserId : id)
+  const { mutate: updateLogin } = useUpdatePersonLogin(id === ACTION.SELF ? loggedInPersonId : id)
 
   return (
     <>
       <ContactStepper
         step={2}
-        full={id !== ACTION.SELF}
+        full={id !== ACTION.SELF && userPermissions.includes('person:edit')}
         isUpdate={id !== ACTION.ADD}
         onChange={(v, step) => setStep(step)}
       />

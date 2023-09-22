@@ -1,3 +1,4 @@
+/* eslint-disable no-console */
 const _ = require('lodash')
 const { buildHistoryTimeline } = require('./buildHistoryTimeline')
 const { extractFromDataById } = require('./extractFromDataById')
@@ -12,7 +13,7 @@ const { transformSampleData } = require('./transformSample')
 const { transformTestInformation } = require('./transformTestInformation')
 const { transformTreatmentStatus } = require('./transformTreatmentStatus')
 
-function transformResultResponse(data, followUps, comments, acknowledgements, flags, userSiteIds) {
+function transformResultResponse(data, followUps, comments, acknowledgements, flags, userSiteIds, originSites) {
   if (_.isEmpty(data)) return
   return _.map(data, result => {
     const resultFollowUps = extractFromDataById(followUps, 'resultId', result.id)
@@ -26,11 +27,27 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
     const noFollowUpPossible = result?.resultTreatmentStatusExternalId === 'NotPossible'
     const noFollowUpPossibleComment = noFollowUpPossible ? result?.resultWorkflowStatusReason : undefined
     const hasFollowUp = !!clinicalResponse?.treatment && resultRequiresTreatment && !noFollowUpPossible
+
+    const requiresFollowUp = resultRequiresTreatment && !hasFollowUp && !noFollowUpPossible
+    const hasFollowUpEntry = resultRequiresTreatment && hasFollowUp && !noFollowUpPossible
+
     const clinicalFollowUpFlags = {
-      requiresFollowUp: resultRequiresTreatment && !hasFollowUp && !noFollowUpPossible,
-      hasFollowUp: resultRequiresTreatment && hasFollowUp && !noFollowUpPossible,
+      requiresFollowUp,
+      hasFollowUp: hasFollowUpEntry,
       noFollowUpPossible,
     }
+
+    const clinicalFollowUpFilter = {
+      ...clinicalFollowUpFlags,
+      followUpStatus: requiresFollowUp
+        ? 'requiresFollowUp'
+        : hasFollowUpEntry
+        ? 'hasFollowUp'
+        : noFollowUpPossible
+        ? 'noFollowUpPossible'
+        : 'followUpNotRequired',
+    }
+
     return {
       id: result.id,
       assayExternalId: result.assayExternalId,
@@ -38,14 +55,14 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
       clinicalResponse,
       comments: extractFromDataById(comments, 'resultId', result.id),
       followUps: resultFollowUps,
-      history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds),
+      history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds, originSites),
       patientData: transformPatientDataBySchema(patientData, JSON.parse(result.patientDataSchema)),
       patientId: patientData?.id || null,
       sample: transformSampleData(result),
       resultRequiresTreatment,
       ...clinicalFollowUpFlags,
       noFollowUpPossibleComment,
-      searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFlags, userSiteIds),
+      searchSchema: generateSearchKeys(result, patientData?.id, clinicalFollowUpFilter, userSiteIds),
       testInformation: transformTestInformation(result),
       testType: transformEntryType(result),
       transferStatus: generateTransferStatus(result, userSiteIds),
