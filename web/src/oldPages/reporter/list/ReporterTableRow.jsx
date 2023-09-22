@@ -93,7 +93,6 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
         <LinkToResults
           params={{
             onlyDownloadedByReporter: true,
-            onlyEverTransferred: true,
             onlyTreatmentRequired: true,
           }}
         >
