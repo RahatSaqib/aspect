@@ -1,7 +1,7 @@
 {
 	"name": "aspect",
 	"dockerComposeFile": "docker-compose.yml",
-	"service": "api-app",
+	"service": "aspect-app",
 	"workspaceFolder": "/app",
 
 	// Use this environment variable if you need to bind mount your local source code into a new container.

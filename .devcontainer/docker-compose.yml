@@ -1,16 +1,20 @@
 version: '3'
 
 services:
-  api-app:
+  aspect-app:
     image: node:14-alpine
-    working_dir: /app/api
+    working_dir: /app
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
+      cd /app/api
       cp -n .env.example .env
       yarn install --frozen-lockfile
-      yarn db:reseed
-      yarn start
+
+      cd /app/web
+      yarn install --frozen-lockfile
+
+      sleep infinity
     volumes:
       - ../:/app
     depends_on:
@@ -18,18 +22,6 @@ services:
       - rabbitmq
     env_file:
       - env.yml
-    network_mode: service:mysql
-
-  web-app:
-    image: node:14-alpine
-    working_dir: /app/web
-    entrypoint: ["/bin/sh","-c"]
-    command:
-    - |
-      yarn install --frozen-lockfile
-      yarn start --host 0.0.0.0 --disable-host-check
-    volumes:
-      - ../:/app
     network_mode: service:mysql
 
   rabbitmq:
