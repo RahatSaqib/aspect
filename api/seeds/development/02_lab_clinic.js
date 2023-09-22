@@ -239,6 +239,7 @@ async function seed(knex) {
     geographyId,
     culture,
     timezone,
+    canLogIn: true,
     ...auditFields,
   })
 
