@@ -13,13 +13,10 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
-import {
-  lineForProp,
-  lineForPropWithLabel,
-} from '../../../../../oldPages/dashboard/Graphs/QuartersMtbDetectedGraph/QuartersMtbDetectedGraph.Main.Layers'
 import styles from '../../../../../oldPages/dashboard/Graphs/styles.css'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
+import { lineForProp, lineForPropWithLabel } from '../../../components/QuartersMtbDetectedGraph.Main.Layers'
 import messages from '../../../PkDashboard.Messages'
 
 const cssClasses = classnames.bind(styles)
