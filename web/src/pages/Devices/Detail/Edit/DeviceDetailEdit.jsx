@@ -3,11 +3,12 @@ import { Button, Card, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
+import isNil from 'lodash/isNil'
+import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
 import { ImplementingPartnerSelect } from '../../../../cleanComponents'
-import AspectSelect from '../../../../cleanComponents/AspectSelect'
 import DeviceCapacitySelect from '../../../../cleanComponents/DeviceCapacitySelect'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
@@ -32,9 +33,10 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const [editDevice, setEditDevice] = useState({ ...device })
   const [editDeviceTags, setEditDeviceTags] = useState([...deviceTags])
   const isPristine = isEqual(device, editDevice) && isEqual(deviceTags, editDeviceTags)
-  const [isError, setError] = useState(false)
+  const [error, setError] = useState({})
 
   const onDiscardClick = () => {
+    setError({})
     setEditDevice({ ...device })
     setEditDeviceTags([...deviceTags])
   }
@@ -113,13 +115,19 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               onChange={dailyCapacityId => setEditDevice({ ...editDevice, dailyCapacityId })}
             />
 
-            <AspectSelect
-              options={[1, 2, 3, 4]}
+            <TextField
               disabled={device?.approvalToken !== tokens.APPROVED}
-              itemToString={i => i ?? ''}
               label={intl.formatMessage(messages.instrumentsConnected)}
+              type="number"
+              error={error?.instrumentsConnected}
               value={editDevice.instrumentsConnected}
-              onChange={v => setEditDevice({ ...editDevice, instrumentsConnected: v })}
+              onChange={({ target: { value } }) => {
+                setError({ instrumentsConnected: Number(value) <= 0 })
+                setEditDevice({ ...editDevice, instrumentsConnected: value ? Number(value) : '' })
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
 
             <TextField
@@ -157,7 +165,12 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 >
                   {intl.formatMessage(messages.discard)}
                 </AspectButton>
-                <Button color="primary" variant="contained" onClick={handleSubmit} disabled={isPristine || isError}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={handleSubmit}
+                  disabled={isPristine || !values(error).every(v => v === false)}
+                >
                   {intl.formatMessage(messages.save)}
                 </Button>
               </ButtonGroup>
