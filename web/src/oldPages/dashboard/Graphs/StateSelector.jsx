@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { FormControl, InputLabel, MenuItem, Select, IconButton } from '@mui/material'
 import Loading from '../../../cleanComponents/Loading'
@@ -6,17 +6,22 @@ import useStatesByCountry from '../../../hooks/geography/useStatesByCountry'
 import { getCustomMessage, commonDefinitions as messages } from '../../../messages'
 import { useAuthState } from '../../../providers/AuthProvider'
 
-const StateSelector = ({ onChange }) => {
+const StateSelector = ({ filter, onChange }) => {
   const { countryId } = useAuthState()
   const { data, isLoading } = useStatesByCountry({ countryId })
   const [innerValue, setInnerValue] = useState('')
   const user = useAuthState()
+
+  useEffect(() => {
+    setInnerValue(filter?.stateId)
+  }, [filter])
+
   const manageValue = val => {
     if (val) {
       setInnerValue(val)
       onChange({ stateId: `${val}` })
     } else {
-      setInnerValue('')
+      setInnerValue(undefined)
       onChange(undefined)
     }
   }
@@ -25,22 +30,19 @@ const StateSelector = ({ onChange }) => {
     <Loading />
   ) : (
     <FormControl sx={{ width: '100%' }} variant="standard" size="small">
-      {innerValue === '' ? (
+      {innerValue === undefined ? (
         <InputLabel id="select-state">{getCustomMessage(messages, 'state', user)}</InputLabel>
       ) : null}
       <Select
         labelId="select-state"
-        label={innerValue !== '' ? getCustomMessage(messages, 'state', user) : ''}
+        label={innerValue !== undefined ? getCustomMessage(messages, 'state', user) : ''}
         value={innerValue}
         onChange={e => manageValue(e.target.value)}
         displayEmpty
         sx={{ '&.Mui-focused .MuiIconButton-root': { color: 'primary.main', maxWidth: 100 } }}
         endAdornment={
           <IconButton
-            sx={{
-              marginRight: '15px',
-              visibility: innerValue !== '' ? 'visible' : 'hidden',
-            }}
+            sx={{ marginRight: '15px', visibility: innerValue !== undefined ? 'visible' : 'hidden' }}
             onClick={() => manageValue(undefined)}
           >
             <ClearIcon />

@@ -10,6 +10,7 @@ const filterMeta = Joi.object({
   noFollowUpPossible: Joi.bool()
     .required()
     .description('Whether it is possible for a follow-up to be done on the entry for filtering'),
+  followUpStatus: Joi.string().required().description('Follow up status of the entry'),
 })
 
 const optionalSearchKeysResponseValidation = Joi.object()
