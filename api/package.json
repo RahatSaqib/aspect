@@ -7,8 +7,9 @@
   "scripts": {
     "db:recreate": "node ./migrations/utils/recreateDB",
     "db:recreateCI": "node ./migrations/utils/recreateDBCI",
-    "db:reseed": "npm-run-all db:recreate knex:migrate:latest knex:seed:run",
-    "db:reseedCI": "npm-run-all db:recreateCI knex:migrate:latest knex:seed:run",
+    "db:migrate": "npm-run-all knex:migrate:latest knex:seed:run",
+    "db:reseed": "npm-run-all db:recreate db:migrate",
+    "db:reseedCI": "npm-run-all db:recreateCI db:migrate",
     "db:drop": "node ./migrations/utils/dropDB",
     "debug": "nodemon --inspect src/server.js",
     "knex": "knex",
