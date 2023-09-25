@@ -2,35 +2,41 @@ import React from 'react'
 import classnames from 'classnames/bind'
 import { useLocation } from 'react-router-dom'
 import AspectLink from '../../../components/AspectLink'
-import { buildURL, getFiltersObjectFromLocation } from '../../../components/AspectLink/helpers'
+import { buildURL } from '../../../components/AspectLink/helpers'
 import styles from '../../../oldComponents/shared/DataTableRow.css'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
+import { useFilterUpdate, useFilterValues } from '../../../providers/FilterProvider'
 import ReporterLinkCell from './ReporterLinkCell'
 
 const cssClasses = classnames.bind(styles)
+const destinationPath = '/browse/result'
 
 const ReporterTableRow = ({ reporter, ...restProps }) => {
+  const [update] = useFilterUpdate()
   const location = useLocation()
-  // Get current filters - Needed for adding the selected date filters
-  const currentFilters = getFiltersObjectFromLocation(location)
+  const currentFilters = useFilterValues(location.pathname)
   const LinkToResults = ({ params = {}, children }) => (
     <AspectLink
-      to={buildURL('/browse/result', {
-        filters: {
-          ...currentFilters,
-          ...params,
-          /**
-           * when both `reportableSiteName` and `reportableSiteId` are specified then
-           * it means we fetch from API data for concrete site Id, and use name as initial text
-           * value for AutoComplete in filter panel and as label for filter button.
-           * So:
-           * - reportableSiteName - for initialInputValue in AutoComplete and to show in filter button
-           * - reportableSiteId - for payload to fetch data
-           */
-          reportableSiteName: reporter.get('siteName'),
-          reportableSiteId: reporter.get('siteId'),
-        },
-      })}
+      onClick={() =>
+        update(
+          {
+            ...currentFilters,
+            ...params,
+            /**
+             * when both `reportableSiteName` and `reportableSiteId` are specified then
+             * it means we fetch from API data for concrete site Id, and use name as initial text
+             * value for AutoComplete in filter panel and as label for filter button.
+             * So:
+             * - reportableSiteName - for initialInputValue in AutoComplete and to show in filter button
+             * - reportableSiteId - for payload to fetch data
+             */
+            reportableSiteName: reporter.get('siteName'),
+            reportableSiteId: reporter.get('siteId'),
+          },
+          destinationPath
+        )
+      }
+      to={buildURL(destinationPath)}
     >
       {children}
     </AspectLink>
@@ -87,7 +93,6 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
         <LinkToResults
           params={{
             onlyDownloadedByReporter: true,
-            onlyEverTransferred: true,
             onlyTreatmentRequired: true,
           }}
         >
