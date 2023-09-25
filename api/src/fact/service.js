@@ -706,7 +706,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     factDataCategoryLow,
   })
-  const { loadPlugin } = require('../plugin/registration')
+  const { loadPlugin } = require('../plugin/loadPlugin')
   const now = new Date()
   // calculate only for last 30 days
   const period = {

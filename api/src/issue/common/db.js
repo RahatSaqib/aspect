@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { loadPlugin } = require('../../plugin/registration')
+const { loadPlugin } = require('../../plugin/loadPlugin')
 const { parseDateOrDefault } = require('../../shared/date')
 const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../../shared/dictionary')
 

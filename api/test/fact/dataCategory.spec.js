@@ -16,7 +16,7 @@ const { factDataCategoryLow } = require('../../src/fact/actions')
 const { getDataCategoryStatus } = require('../../src/fact/service')
 const { escalateIssues, resolveIssues } = require('../../src/issue/actions')
 const { getPartner, getSite, cleanUpIssues } = require('../utils/issueUtils')
-const { loadPlugin } = require('../../src/plugin/registration')
+const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const {
   allResultCategoryToId,
   deviceTypeToId,

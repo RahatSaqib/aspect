@@ -5,7 +5,7 @@ const { sampleTypeToId, deviceTypeToPlugin } = require('../../../shared/dictiona
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
   const plugin = await deviceTypeToPlugin(deviceType)
-  const { loadPlugin } = require('../../registration')
+  const { loadPlugin } = require('../../loadPlugin')
   const deviceTypeTransformMergeResultPayload = await loadPlugin([plugin], 'transformMergeResultPayload')
   const transformedPayload = await deviceTypeTransformMergeResultPayload(context)
   if (deviceType === 'CepheidGeneXpert') {

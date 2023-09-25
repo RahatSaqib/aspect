@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { seedIssueEventTriggersForPartner } = require('./utils')
 const { allIssueCategoryToId, allMessageSeverityToId } = require('../src/shared/dictionary')
 const { cleanUpIssues } = require('../test/utils/issueUtils')
-const { loadPlugin } = require('../src/plugin/registration')
+const { loadPlugin } = require('../src/plugin/loadPlugin')
 
 const now = new Date()
 

@@ -23,7 +23,7 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 
-const { loadPlugin } = require('../../src/plugin/registration')
+const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()

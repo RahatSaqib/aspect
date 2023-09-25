@@ -26,7 +26,7 @@ const {
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
-const { loadPlugin } = require('../plugin/registration')
+const { loadPlugin } = require('../plugin/loadPlugin')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')

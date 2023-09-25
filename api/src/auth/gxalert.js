@@ -98,7 +98,7 @@ async function storeUser(knex, username, password, gxUser, partnerId, countryId,
   }
 
   // finally return User
-  const { loadPlugin } = require('../plugin/registration')
+  const { loadPlugin } = require('../plugin/loadPlugin')
   const onGxAlertAuthenticated = await loadPlugin([partnerPlugin], 'onGxAlertAuthenticated')
   await onGxAlertAuthenticated({ gxUser, partnerId, personId, knex })
 

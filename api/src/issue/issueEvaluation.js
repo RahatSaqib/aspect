@@ -61,7 +61,7 @@ async function evaluatePluginFunction(knex, issue, functionName, evaluationFunct
   if (partner == null) {
     return false
   }
-  const { loadPlugin } = require('../plugin/registration')
+  const { loadPlugin } = require('../plugin/loadPlugin')
   const resolutions = await loadPlugin([partner.plugin], 'issueResolutions')
   const escalations = await loadPlugin([partner.plugin], 'issueEscalations')
   const plugins = { ...resolutions, ...escalations }

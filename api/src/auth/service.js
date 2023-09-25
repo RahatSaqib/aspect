@@ -446,7 +446,7 @@ async function getDisplayPreferences({ partnerId }) {
     .first('p.plugin')
   // If we require onload we get a cycle. This is cached so is safe
   // But it likely could be replaced if we dynamically register plugins
-  const { loadPlugin } = require('../plugin/registration')
+  const { loadPlugin } = require('../plugin/loadPlugin')
   const { displayPreferences = {} } = await loadPlugin([_.get(prefs, 'plugin', null)], 'settings')
   return displayPreferences
 }

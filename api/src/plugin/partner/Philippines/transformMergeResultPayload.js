@@ -44,7 +44,7 @@ function setPatientNamesFromCustomFields(payload) {
 async function defaultOrDeviceTypeTransformMergeResultPayload(context) {
   const { deviceType } = context
   const plugin = await deviceTypeToPlugin(deviceType)
-  const { loadPlugin } = require('../../registration')
+  const { loadPlugin } = require('../../loadPlugin')
   const deviceTypeTransformMergeResultPayload = await loadPlugin([plugin], 'transformMergeResultPayload')
   const transformedPayload = await deviceTypeTransformMergeResultPayload(context)
   return transformedPayload

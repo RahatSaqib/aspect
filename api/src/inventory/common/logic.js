@@ -38,7 +38,7 @@ async function getInventoryStrategy({ partnerId, deviceId, userId }) {
   if (!inventoryStrategy) {
     const partnerPluginName = await getPartnerPluginName({ partnerId })
     const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
-    const { loadPlugin } = require('../../plugin/registration')
+    const { loadPlugin } = require('../../plugin/loadPlugin')
     const specificInventoryStrategy = await loadPlugin([partnerPluginName, deviceTypePluginName], 'inventoryStrategy')
     cachedInventoryStrategies[inventoryStrategyKey] = {
       /**
