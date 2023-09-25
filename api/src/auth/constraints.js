@@ -553,7 +553,7 @@ function addConstraints(
   addGeographyConstraints(queryBuilder, constraints, aliases)
   addOrConstraints(queryBuilder, constraints, aliases)
   addResultConstraints(queryBuilder, constraints, aliases, options)
-  addTransferLogConstraints(queryBuilder, constraints, aliases, options)
+  addTransferLogConstraints(queryBuilder, constraints, aliases)
 }
 
 function isNullInOrEqual(queryBuilder, columnName, value) {
