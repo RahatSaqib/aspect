@@ -56,7 +56,7 @@ const HivResultsGraph = ({ assaysFromState: assays }) => {
     if (data && data.data) {
       const info = data.data
       const i18nKeys = reduce(
-        data,
+        info,
         (acc, curr) => {
           acc[curr.resultCategory1] = curr.resultCategory1I18nKey
           return acc
