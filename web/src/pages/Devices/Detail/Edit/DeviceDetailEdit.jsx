@@ -3,7 +3,6 @@ import { Button, Card, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
-import isNil from 'lodash/isNil'
 import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
@@ -18,7 +17,6 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
-import { tokens } from '../Profile/DeviceDetailProfile'
 import styles from '../styles.css'
 import messages from './messages'
 
@@ -116,14 +114,13 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
             />
 
             <TextField
-              disabled={device?.approvalToken !== tokens.APPROVED}
               label={intl.formatMessage(messages.instrumentsConnected)}
               type="number"
               error={error?.instrumentsConnected}
               value={editDevice.instrumentsConnected}
               onChange={({ target: { value } }) => {
                 setError({ instrumentsConnected: Number(value) <= 0 })
-                setEditDevice({ ...editDevice, instrumentsConnected: value ? Number(value) : '' })
+                setEditDevice({ ...editDevice, instrumentsConnected: value ? parseInt(value, 10) : '' })
               }}
               InputLabelProps={{
                 shrink: true,

@@ -39,7 +39,7 @@ import PerformanceReport from './PerformanceReport'
 
 const cssClasses = classnames.bind(styles)
 
-export const tokens = {
+const tokens = {
   PROVISIONED: 'provisioned',
   ASSIGNED: 'assigned',
   APPROVED: 'approved',
