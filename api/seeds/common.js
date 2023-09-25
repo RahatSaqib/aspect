@@ -122,6 +122,7 @@ async function commonUpserts(
       .where({
         userId: adminId,
         geographyId,
+        canLogIn: true,
       })
       .first('id')) || {}
   if (!adminPersonId) {
@@ -132,6 +133,7 @@ async function commonUpserts(
       lastCountryId: countryId,
       geographyId,
       culture,
+      canLogIn: true,
       timezone,
       ...auditFields,
     })
@@ -214,6 +216,7 @@ async function upsertDemoUsersPerJobFunction(
     lastCountryId: countryId,
     geographyId,
     culture,
+    canLogIn: true,
     timezone,
     ...auditFields,
   }

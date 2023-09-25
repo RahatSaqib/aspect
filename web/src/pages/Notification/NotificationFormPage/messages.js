@@ -655,7 +655,7 @@ export default defineMessages({
   },
   smsBodyLimit: {
     id: 'pages.NotificationDetail.smsBodyLimit',
-    defaultMessage: 'Sms message should not be longer than 144 characters',
+    defaultMessage: 'Sms message should not be longer than 1000 characters',
   },
   web: {
     id: 'pages.NotificationDetail.web',

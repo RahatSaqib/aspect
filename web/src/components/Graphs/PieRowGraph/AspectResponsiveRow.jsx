@@ -1,17 +1,20 @@
 import React, { Fragment } from 'react'
+import { Pie } from '@ant-design/plots'
 import classnames from 'classnames/bind'
 import map from 'lodash/map'
 import PropTypes from 'prop-types'
+import { useNavigate } from 'react-router'
 import useI18n from '../../../hooks/useI18n'
 import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
-import AspectResponsivePie from '../PieGraph/AspectResponsivePie'
+import { generateColorForValue } from '../Helpers/Formatters'
 import messages from './messages'
 import styles from './PieRowGraph.css'
 
 const cssClasses = classnames.bind(styles)
 
-const AspectResponsiveRow = ({ data, componentClasses, config }) => {
+const AspectResponsiveRow = ({ data, componentClasses }) => {
   const { formatMessage: intlFormatMessage } = useI18n()
+  const navigate = useNavigate()
 
   const headings = graphData => map(graphData[0], 'heading')
   const getRowKey = rowIndex => `row-${rowIndex}`
@@ -39,26 +42,60 @@ const AspectResponsiveRow = ({ data, componentClasses, config }) => {
             <div key={getRowKey(rowIndex)} className={cssClasses('piegraphs__row')}>
               {row.map(pie => {
                 const { value, type, link, heading } = pie
-                const skipConfig = type === 'solid' || (type === 'doughnut' && value[0].value === 0)
                 return (
                   <div key={`${heading}-${type}`} className={cssClasses('piegraphs__column')}>
                     <div className={cssClasses('piegraphs__columnGraph')}>
                       {type === 'string' ? (
                         <div className={cssClasses('piegraphs__rowTitle')}>{value[0].value}</div>
                       ) : null}
-                      {type === 'doughnut' || type === 'solid' ? (
-                        <AspectResponsivePie
-                          assaysFromState={[]}
-                          averages={false}
-                          data={value}
-                          displayMethod="percentage"
-                          componentClasses={componentClasses}
-                          keys={[]}
-                          type={type}
-                          link={link}
-                          config={skipConfig ? {} : config}
-                        />
-                      ) : null}
+                      {type === 'doughnut' ? (
+                        <div className={cssClasses(componentClasses)} style={{ height: 120, width: 120 }}>
+                          <Pie
+                            {...{
+                              appendPadding: 10,
+                              data: [{ ...pie.value[0], id: intlFormatMessage(messages[pie.value[0].id]) }],
+                              angleField: 'value',
+                              colorField: 'id',
+                              radius: 1,
+                              innerRadius: 0.64,
+                              label: { content: '' },
+                              statistic: {
+                                title: { customHtml: () => `` },
+                                content: {
+                                  offsetY: -12,
+                                  style: { fontSize: '24px' },
+                                  customHtml: (_, __, datum, data) => `${data[0].value}`,
+                                },
+                              },
+                              legend: false,
+                              color: () => generateColorForValue(pie.value[0].id, undefined),
+                              animation: false,
+                            }}
+                            onReady={plot => plot.on('plot:click', () => navigate(link))}
+                          />
+                        </div>
+                      ) : (
+                        <div className={cssClasses(componentClasses)} style={{ height: 120, width: 120 }}>
+                          <Pie
+                            {...{
+                              appendPadding: 10,
+                              data: [{ ...pie.value[0], id: intlFormatMessage(messages[pie.value[0].id]) }],
+                              angleField: 'value',
+                              colorField: 'id',
+                              label: {
+                                type: 'inner',
+                                offset: '-99%',
+                                style: { textAlign: 'center', fontSize: 20 },
+                                autoRotate: false,
+                              },
+                              legend: false,
+                              color: () => generateColorForValue(pie.value[0].id, undefined),
+                              animation: false,
+                            }}
+                            onReady={plot => plot.on('plot:click', () => navigate(link))}
+                          />
+                        </div>
+                      )}
                     </div>
                   </div>
                 )
