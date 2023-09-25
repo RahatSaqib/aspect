@@ -383,7 +383,7 @@ async function processUsingDataSourceQuery(data, templateFields, auth) {
 async function getBaseDataSource(data, auth) {
   const d = data || {}
   const { loadPlugin } = require('../plugin/loadPlugin')
-  const { displayPreferences = {} } = await loadPlugin([d.partnerPlugin], 'settings')
+  const { displayPreferences = {} } = await loadPlugin(d.partnerPlugin, undefined, 'settings')
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}

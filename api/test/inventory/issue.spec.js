@@ -54,7 +54,7 @@ describe('Inventory Stock Issues Endpoint', () => {
     const resultId = await createTestResult(knex, device)
     resultIds.push(resultId)
 
-    const { displayPreferences = {} } = await loadPlugin([partner.plugin], 'settings')
+    const { displayPreferences = {} } = await loadPlugin(partner.plugin, undefined, 'settings')
     baseProps = {
       siteId,
       siteRegionalOfficer,

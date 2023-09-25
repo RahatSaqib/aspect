@@ -29,16 +29,17 @@ async function hasIssueEventTrigger(knex, { partnerId, issueType, issueEventStat
 }
 
 async function getIssueFilter(knex, partnerId, deviceId) {
-  let plugin
+  let partnerPluginName
+  let deviceTypePluginName
   if (partnerId) {
-    ;({ plugin } = await knex('Partner').where({ id: partnerId }).first('plugin'))
+    ;({ partnerPluginName } = await knex('Partner').where({ id: partnerId }).first('plugin'))
   } else if (deviceId) {
-    ;({ plugin } = await knex('Device as d')
+    ;({ deviceTypePluginName } = await knex('Device as d')
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .where({ 'd.id': deviceId })
       .first('dt.plugin'))
   }
-  return loadPlugin([plugin], 'filtersOpenIssues')
+  return loadPlugin(partnerPluginName, deviceTypePluginName, 'filtersOpenIssues')
 }
 
 async function findOpenIssue(knex, issueType, action, filterIssueCondition = {}) {

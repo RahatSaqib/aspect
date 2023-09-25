@@ -79,8 +79,8 @@ async function seed(knex) {
 
   // -------------------------
   // add and randomly populate DataCategory fields
-  const pluginName = 'myanmar'
-  const plugin = await loadPlugin([pluginName], 'dataCategories')
+  const partnerPluginName = 'myanmar'
+  const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { addDataCategoryFields } = plugin
   if (addDataCategoryFields) {
     patients = addDataCategoryFields(patients)
@@ -139,7 +139,7 @@ async function seed(knex) {
   }
   const baseProps = {
     partnerId,
-    pluginName,
+    pluginName: partnerPluginName,
     jobFunctionIds,
     auditFields,
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],

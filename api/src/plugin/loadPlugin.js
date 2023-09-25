@@ -17,7 +17,6 @@ const { pakistanPlugin } = require('./plugins/pakistanPlugin')
  * There are two types of plugins: partner plugins and device type plugins
  */
 const plugins = {
-  default: basePlugin,
   commcare: commcarePlugin,
   malawi: malawiPlugin,
   gxconnect: gxconnectPlugin,
@@ -36,19 +35,21 @@ const plugins = {
  * Loads a plugin by name and action see documentation for
  * default plugin in ./default.js for available actions
  *
- * Falls back to default plugin if action
- * with name not registered
+ * The action of the partnerPlugin have the highest priority
  *
  */
-async function loadPlugin(pluginNames, actionName) {
-  pluginNames = pluginNames || []
-  for (let i = 0; i < pluginNames.length; i++) {
-    const pluginAction = get(plugins, [pluginNames[i], actionName])
-    if (pluginAction) {
-      return pluginAction
-    }
+async function loadPlugin(partnerPluginName, deviceTypePluginName, actionName) {
+  const partnerPluginAction = get(plugins, [partnerPluginName, actionName])
+  if (partnerPluginAction) {
+    return partnerPluginAction
   }
-  return plugins.default[actionName]
+
+  const deviceTypePluginAction = get(plugins, [deviceTypePluginName, actionName])
+  if (deviceTypePluginAction) {
+    return deviceTypePluginAction
+  }
+
+  return basePlugin[actionName]
 }
 
 module.exports = {

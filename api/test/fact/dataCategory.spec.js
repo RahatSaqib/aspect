@@ -116,8 +116,8 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
   before(() =>
     run(async knex => {
       // get dataCategory definitions
-      const pluginName = partnerName.toLowerCase()
-      const plugin = (await loadPlugin([pluginName], 'dataCategories')) || {}
+      const partnerPluginName = partnerName.toLowerCase()
+      const plugin = (await loadPlugin(partnerPluginName, undefined, 'dataCategories')) || {}
       ;({ dataCategories = [] } = plugin)
 
       // get partnerId

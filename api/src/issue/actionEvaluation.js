@@ -75,7 +75,7 @@ async function evaluatePluginFunction(knex, action, partnerId, functionName, eva
     return false
   }
   const { loadPlugin } = require('../plugin/loadPlugin')
-  const plugins = await loadPlugin([partner.plugin], 'issueTriggers')
+  const plugins = await loadPlugin(partner.plugin, undefined, 'issueTriggers')
   const func = plugins[functionName]
   logger.debug(`${functionName} plugin function`, {
     reLabel: 'issues:evaluatePluginFunction',

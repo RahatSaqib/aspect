@@ -39,7 +39,7 @@ async function getInventoryStrategy({ partnerId, deviceId, userId }) {
     const partnerPluginName = await getPartnerPluginName({ partnerId })
     const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
     const { loadPlugin } = require('../../plugin/loadPlugin')
-    const specificInventoryStrategy = await loadPlugin([partnerPluginName, deviceTypePluginName], 'inventoryStrategy')
+    const specificInventoryStrategy = await loadPlugin(partnerPluginName, deviceTypePluginName, 'inventoryStrategy')
     cachedInventoryStrategies[inventoryStrategyKey] = {
       /**
        * first add all exported items for default strategy...
