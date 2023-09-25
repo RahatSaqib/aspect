@@ -55,20 +55,20 @@ async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const clinicianSiteIds = dataConstraints.$or.map(item => item.site.id)
-
   // get resultIds of transferred result
-  const resultTransferHistory = await getTransferHistory(clinicianSiteIds)
+  const resultTransferHistory = await getTransferHistory(dataConstraints)
 
-  const transferredResultIds = resultTransferHistory.map(record => record.resultId)
+  const userViewOnlyTransferredResultIds = resultTransferHistory.map(record => record.resultId)
 
   const samples = await getAllSamplesRegistered(query, dataConstraints)
-  const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints, transferredResultIds)
+  const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints, userViewOnlyTransferredResultIds)
 
   // get origin Ids for each result
   const originSiteIds = results
     .filter(r => !!r.transferStatusLogData)
-    .map(r => JSON.parse(r.transferStatusLogData).sampleOriginSiteId)
+    .map(r => {
+      return JSON.parse(r.transferStatusLogData).sampleOriginSiteId
+    })
 
   const transferOriginIds = await getSiteByIds(originSiteIds)
 
@@ -116,6 +116,9 @@ async function fetchEntriesServiceHandler(request) {
 
     if (existingObj) {
       const uniqueHistory = new Set(existingObj.history.map(JSON.stringify))
+
+      // use the latest transfer status
+      existingObj.transferStatus = result.transferStatus
 
       result.history.forEach(history => {
         if (history.event === 'transferEvent' && !uniqueHistory.has(JSON.stringify(history))) {

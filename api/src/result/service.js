@@ -1584,9 +1584,6 @@ async function transferResult(request) {
         sampleOriginSiteId: result.data.sampleOriginSiteId,
         comment,
       }),
-      previousReportableSiteId: result.data.reportableSiteId,
-      sampleOriginSiteId: result.data.sampleOriginSiteId,
-      reportableSiteId: siteId,
       timestamp,
     })
     resultStatusLog = await knex('ResultStatusLog').where({ id: resultStatusLogId }).first('createdOn')
@@ -1621,6 +1618,13 @@ async function transferResult(request) {
       firstViewedOn: null,
       updatedBy: currentUserId,
       updatedOn: now,
+    })
+
+    await knex('ResultTransferLog').insert({
+      resultId,
+      reportableSiteId: siteId,
+      sampleOriginSiteId: result.data.sampleOriginSiteId,
+      previousReportableSiteId: result.data.reportableSiteId,
     })
 
     result.data.reportableSiteId = siteId

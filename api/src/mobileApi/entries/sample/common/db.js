@@ -99,13 +99,11 @@ const insertNewSample = (payload, auth) =>
     .insert({ ...payload })
     .then(async newSample => getSamplesRegisteredById(newSample[0], auth))
 
-const getTransferHistory = siteIdList => {
-  return knex
-    .distinct('resultId')
-    .from('ResultStatusLog')
-    .where(builder => {
-      builder.whereIn('previousReportableSiteId', siteIdList).orWhereIn('sampleOriginSiteId', siteIdList)
-    })
+const getTransferHistory = dataConstraints => {
+  const query = knex.select('resultId').from('ResultTransferLog').modify(addConstraints, dataConstraints, {
+    transferLog: 'transferLog',
+  })
+  return query
 }
 
 module.exports = {
