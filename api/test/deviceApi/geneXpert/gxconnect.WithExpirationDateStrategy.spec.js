@@ -19,6 +19,7 @@ const { waitForApproximately } = require('../../utils/generatorFunctionUtils')
 const { getLocalDateInUtc } = require('../../../src/shared/date')
 
 const server = require('../../utils/testUtils')
+const { assayNameToExternalId } = require('../../../src/shared/assayNameToExternalId')
 
 const { assert, expect } = chai.use(chaiSubset)
 
@@ -108,6 +109,11 @@ describe('Device API routes for GxConnect Devices', () => {
                 assay: {
                   id: consumableAssay.assayId,
                   version: '2',
+                },
+                data: {
+                  assay: Object.keys(assayNameToExternalId).find(
+                    assayName => assayNameToExternalId[assayName] === consumableAssay.assayId
+                  ),
                 },
                 consumable: {
                   expirationDate: expiryDate,
@@ -215,6 +221,11 @@ describe('Device API routes for GxConnect Devices', () => {
                   assay: {
                     id: consumableAssay.assayId,
                     version: '2',
+                  },
+                  data: {
+                    assay: Object.keys(assayNameToExternalId).find(
+                      assayName => assayNameToExternalId[assayName] === consumableAssay.assayId
+                    ),
                   },
                   sample: { id: sampleId },
                   instrument: { serial: instrumentSerial },

@@ -42,6 +42,7 @@ const {
 const { knex } = require('../../../src/db')
 
 const server = require('../../utils/testUtils')
+const { assayNameToExternalId } = require('../../../src/shared/assayNameToExternalId')
 
 const { assert, expect } = chai.use(chaiSubset)
 
@@ -930,7 +931,12 @@ describe('Device API routes for GxConnect Devices', () => {
             result: {
               id: `new result ${Math.floor(Math.random() * 1000)}`,
               startedOn: subDays(new Date(), Math.floor(Math.random() * 100)),
-              data: { resultText },
+              data: {
+                resultText,
+                assay: Object.keys(assayNameToExternalId).find(
+                  assayName => assayNameToExternalId[assayName] === assayExternalId
+                ),
+              },
               assay: { id: assayExternalId },
               sample: {
                 id: `new sample ${Math.floor(Math.random() * 1000)}`,
@@ -1228,7 +1234,7 @@ describe('Device API routes for GxConnect Devices', () => {
               sample: {
                 id: "Bryan's Sputum",
               },
-              data: { a: 'b' },
+              data: { a: 'b', assay: 'HIV VL' },
               assay: { id: 'GxHiv1Vl' },
             },
           }),
@@ -1313,7 +1319,7 @@ describe('Device API routes for GxConnect Devices', () => {
           payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
             result: {
               id: dateFormat(new Date(), 'T'),
-              data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+              data: { a: 'b', c: 2, d: false, e: { f: 'g' }, assay: 'Xpert MTB-RIF' },
               type: { id: 'Study' },
               source: { id: 'EnteredByHand' },
               workflow: { status: { id: 'Acknowledged' } },
@@ -1734,6 +1740,9 @@ describe('Device API routes for GxConnect Devices', () => {
                     id: assayName,
                     version: assayVersion,
                   },
+                  data: {
+                    assay: 'New Assay Type',
+                  },
                 }),
               })
             )
@@ -1780,6 +1789,11 @@ describe('Device API routes for GxConnect Devices', () => {
                   assay: {
                     id: consumableAssay.assayId,
                     version: '2',
+                  },
+                  data: {
+                    assay: Object.keys(assayNameToExternalId).find(
+                      assayName => assayNameToExternalId[assayName] === consumableAssay.assayId
+                    ),
                   },
                 }),
               })
