@@ -111,14 +111,11 @@ async function fetchEntriesServiceHandler(request) {
 
   const transformedSamples = transformSampleResponse(query, samples, transformedResults)
 
-  const mergedData = transformedResults.reduce((mergedResults, result) => {
+  const mergedResultData = transformedResults.reduce((mergedResults, result) => {
     const existingObj = mergedResults.find(item => item.id === result.id)
 
     if (existingObj) {
       const uniqueHistory = new Set(existingObj.history.map(JSON.stringify))
-
-      // use the latest transfer status
-      existingObj.transferStatus = result.transferStatus
 
       result.history.forEach(history => {
         if (history.event === 'transferEvent' && !uniqueHistory.has(JSON.stringify(history))) {
@@ -135,7 +132,7 @@ async function fetchEntriesServiceHandler(request) {
   }, [])
 
   const entries = _.orderBy(
-    _.concat(_.uniqBy(mergedData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
+    _.concat(_.uniqBy(mergedResultData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
     ['updatedOn'],
     ['desc']
   )
