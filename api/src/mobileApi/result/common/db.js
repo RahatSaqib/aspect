@@ -640,6 +640,14 @@ const getLatestResultWorkflowLogBefore = (resultId, resultWorkflowStatusExternal
     .first('rwl.resultWorkflowStatusId', 'rwl.changedOn as resultWorkflowChangedOn')
 }
 
+const getFollowUpsNotPossibleByResultById = resultId => {
+  return knex('ResultFollowUp as rfu')
+    .where({ 'rfu.resultId': resultId })
+    .andWhere('rfu.isDeleted', false)
+    .andWhere({ 'rfu.externalId': 'notPossible' })
+    .first()
+}
+
 module.exports = {
   addResultDownloadLogQuery,
   addResultFollowUp,
@@ -672,4 +680,5 @@ module.exports = {
   updateResultWorkflowLogQuery,
   updateMostRecentResultFollowUp,
   getCurrentResultWorkflowStatus,
+  getFollowUpsNotPossibleByResultById,
 }
