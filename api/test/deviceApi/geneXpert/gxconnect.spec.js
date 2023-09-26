@@ -1702,6 +1702,45 @@ describe('Device API routes for GxConnect Devices', () => {
         expect(afterResultDetails.moduleName).to.equal('A3')
       }))
 
+    describe('when the assay in the result payload is HCV', () => {
+      it('should be created with the right assay', () =>
+        runTest(async () => {
+          const { basicDevicePayload, deviceAuth } = context
+
+          const testResultId = 'UNIQUE-ID-WITH-HCV-ASSAY-RESULT'
+
+          const testStartedOn = setMilliseconds(subDays(context.now, 3), 0)
+          const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
+          await server
+            .post('/device')
+            .set('Authorization', deviceAuth)
+            .send(
+              _.assign({}, _.assign({}, basicDevicePayload, basicResultPayload), {
+                result: _.assign({}, basicResultPayload.result, {
+                  id: testResultId,
+                  startedOn: testStartedOn,
+                  endedOn: testEndedOn,
+                  assay: {
+                    id: 'GxHcvVl',
+                    version: '1',
+                  },
+                  data: {
+                    assay: 'Xpert_HCV Viral Load',
+                  },
+                }),
+              })
+            )
+            .then(res => {
+              assert.equal(res.status, 200)
+              assert.typeOf(res.body, 'Object')
+            })
+            .catch(assert.fail)
+
+          const lastResult = await getLastResult()
+          assert.equal(lastResult.assay, 'GxHcv')
+        }))
+    })
+
     describe('when the assay in the result payload is unknown to Aspect', () => {
       const assayName = 'New Assay Type'
       after(() => run(async knex => knex('Assay').where({ externalId: assayName }).delete()))
