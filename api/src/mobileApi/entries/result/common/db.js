@@ -11,7 +11,7 @@ const {
 const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 
-const fetchResultsByUpdatedOnQuery = (query, dataConstraints, resultIds) => {
+const fetchResultsByUpdatedOnQuery = (query, dataConstraints, userViewOnlyTransferredResultIds) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const knexQuery = knex('Result as result')
@@ -78,7 +78,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints, resultIds) => {
       }
     })
     .orWhere(qb => {
-      qb.whereIn('result.id', resultIds)
+      qb.whereIn('result.id', userViewOnlyTransferredResultIds)
     })
     .select(
       'assay.externalId as assayExternalId',
