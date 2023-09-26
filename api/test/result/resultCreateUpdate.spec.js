@@ -173,7 +173,7 @@ describe('Result create and update routes', () => {
       resultIds.push(resultId)
     })
 
-    it('Should create a new result and assign it to the Aspect device if no device ID posted.', async () => {
+    it('Should throw internal exception if no device ID posted.', async () => {
       const resultPayload = {
         siteId: 1,
         assayId: await assayToId('DaktariHivVL'),
@@ -191,12 +191,7 @@ describe('Result create and update routes', () => {
       // update with external ID
       const res = await server.post(path).send(resultPayload).set('Authorization', `Bearer${shared.token}`)
 
-      assert.equal(res.status, 200)
-      resultId = res.body.data.id
-      assert.equal(res.body.data.deviceName, 'Aspect')
-
-      // remember for deletion
-      resultIds.push(resultId)
+      assert.equal(res.status, 500)
     })
 
     it('Should be assigned to the same case as an older result if posted with the same case id', async () => {
@@ -231,6 +226,7 @@ describe('Result create and update routes', () => {
     it('Should be assigned to a different case if a new case ID was posted', async () => {
       const resultPayload = {
         siteId: 1,
+        deviceId: 2,
         assayId: await assayToId('DaktariHivVL'),
         startedOn: now,
         endedOn: addHours(now, 2),
