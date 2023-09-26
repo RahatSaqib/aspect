@@ -9,8 +9,7 @@ function normalizePhoneNumber(phoneNumber, countryAbbreviation = 'US') {
   } catch (e) {
     Sentry.captureException(e, {
       extra: {
-        // Only report the first four characters of phone
-        phone: phoneNumber.slice(0, 4).concat([...Array(phoneNumber.length - 4).keys()].map(() => '*').join('')),
+        phone: `${phoneNumber.slice(0, phoneNumber.length - 4)}****`,
       },
     })
     return null
