@@ -1905,6 +1905,11 @@ describe('Device API routes for GxConnect Devices', () => {
                       id: consumableAssay.assayId,
                       version: '2',
                     },
+                    data: {
+                      assay: Object.keys(assayNameToExternalId).find(
+                        assayName => assayNameToExternalId[assayName] === consumableAssay.assayId
+                      ),
+                    },
                     sample: { id: sampleId },
                     instrument: { serial: instrumentSerial },
                     startedOn: testStartedOn,

@@ -268,6 +268,9 @@ describe('Device API routes for GxConnect Devices', () => {
 
           // Send second request for same test
           const newResultData = {
+            assay: Object.keys(assayNameToExternalId).find(
+              assayName => assayNameToExternalId[assayName] === consumableAssay.assayId
+            ),
             customFieldData: {
               1: {
                 notAvailable: false,
