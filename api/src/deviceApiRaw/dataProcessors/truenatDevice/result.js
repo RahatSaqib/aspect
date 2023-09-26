@@ -162,6 +162,7 @@ class TruenatResult extends SynchronousDataProcessor {
 
         const resultSourceId = await resultSourceToId('DiagnosticDevice')
         const resultTypeId = await resultTypeToId('Patient')
+        const resultText = (finalResult || '').trim() === '' ? ctResult3 : finalResult.trim()
         const newResultDetails = {
           partnerId,
           geographyId,
@@ -194,6 +195,7 @@ class TruenatResult extends SynchronousDataProcessor {
             ctResult3,
             labName,
             testName,
+            resultText,
           }),
           rawData: rawMessage,
           updatedOn: utcNow,
@@ -203,17 +205,17 @@ class TruenatResult extends SynchronousDataProcessor {
           notes,
           reportableSiteId: _.get(existingResult, 'reportableSiteId') || deviceDefaultReportableSiteId || siteId,
         }
-        if (resultTime) {
-          newResultDetails.startedOn = resultTime
-          if (['Complete', 'Aborted'].includes(resultStatus)) {
-            newResultDetails.endedOn = resultTime
-          }
-        }
         const result = {
           createdOn: utcNow,
           ...(existingResult || {}),
           ...newResultDetails,
           externalId: resultExternalId,
+        }
+        if (resultTime) {
+          resultTime.startedOn = resultTime
+          if (['Complete', 'Completed', 'Aborted'].includes(resultStatus)) {
+            resultTime.endedOn = resultTime
+          }
         }
         if (!result.id) {
           const [resultId] = await knex('Result').insert(result)
@@ -295,38 +297,37 @@ function getDetailsFromRequest(request) {
     plugins: { rawPayload },
   } = request
 
-  let finalResult = _.get(payload, 'FinalResult') ?? ''
-  finalResult = finalResult.trim()
+  let finalResult = _.get(payload, 'FinalResult')?.trim() ?? ''
   if (finalResult === '' || finalResult === 'null') {
     finalResult = null
   }
 
   return {
     rawMessage: JSON.stringify(rawPayload),
-    patientName: _.get(payload, 'PatientName'),
-    patientId: _.get(payload, 'PatientID'),
-    sampleTypeName: _.get(payload, 'SampleType'),
-    testName: _.get(payload, 'TestName'),
-    patientAge: _.get(payload, 'Age'),
-    patientGender: _.get(payload, 'Gender'),
-    resultStatus: _.get(payload, 'Status'),
+    patientName: _.get(payload, 'PatientName')?.trim(),
+    patientId: _.get(payload, 'PatientID')?.trim(),
+    sampleTypeName: _.get(payload, 'SampleType')?.trim(),
+    testName: _.get(payload, 'TestName')?.trim(),
+    patientAge: _.get(payload, 'Age')?.trim(),
+    patientGender: _.get(payload, 'Gender')?.trim(),
+    resultStatus: _.get(payload, 'Status')?.trim(),
     finalResult,
-    validityStatus: _.get(payload, 'ValidityStatus'),
-    senderOperator: _.get(payload, 'User'),
-    labName: _.get(payload, 'LabName'),
-    doctorName: _.get(payload, 'DoctorName'),
-    ctLabel1: _.get(payload, 'CtLabel1'),
-    ct1: _.get(payload, 'Ct1'),
-    ctResult1: _.get(payload, 'CtResult1'),
-    ctLabel2: _.get(payload, 'CtLabel2'),
-    ct2: _.get(payload, 'Ct2'),
-    ctResult2: _.get(payload, 'CtResult2'),
-    cLabel3: _.get(payload, 'CtLabel3'),
-    ct3: _.get(payload, 'Ct3'),
-    ctResult3: _.get(payload, 'CtResult3'),
-    notes: _.get(payload, 'Notes'),
-    date: _.get(payload, 'Date'),
-    time: _.get(payload, 'Time'),
+    validityStatus: _.get(payload, 'ValidityStatus')?.trim(),
+    senderOperator: _.get(payload, 'User')?.trim(),
+    labName: _.get(payload, 'LabName')?.trim(),
+    doctorName: _.get(payload, 'DoctorName')?.trim(),
+    ctLabel1: _.get(payload, 'CtLabel1')?.trim(),
+    ct1: _.get(payload, 'Ct1')?.trim(),
+    ctResult1: _.get(payload, 'CtResult1')?.trim(),
+    ctLabel2: _.get(payload, 'CtLabel2')?.trim(),
+    ct2: _.get(payload, 'Ct2')?.trim(),
+    ctResult2: _.get(payload, 'CtResult2')?.trim(),
+    cLabel3: _.get(payload, 'CtLabel3')?.trim(),
+    ct3: _.get(payload, 'Ct3')?.trim(),
+    ctResult3: _.get(payload, 'CtResult3')?.trim(),
+    notes: _.get(payload, 'Notes')?.trim(),
+    date: _.get(payload, 'Date')?.trim(),
+    time: _.get(payload, 'Time')?.trim(),
   }
 }
 
