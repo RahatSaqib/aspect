@@ -391,8 +391,10 @@ async function determineResultCategory1Id(
       : {
           Positive: resultCategoryIds.Detected,
           Detected: resultCategoryIds.Detected,
+          'Rif Resistance detected': resultCategoryIds.Detected,
           Negative: resultCategoryIds.NotDetected,
           'Not Detected': resultCategoryIds.NotDetected,
+          'Rif Resistance not detected': resultCategoryIds.NotDetected,
           Invalid: resultCategoryIds.Invalid,
           Indeterminate: resultCategoryIds.Indeterminate,
           Error: resultCategoryIds.Error,
@@ -402,10 +404,12 @@ async function determineResultCategory1Id(
 
   if (resultCategory1Id === resultCategoryIds.Missing) {
     if (testName === 'MTB' || testName === 'MTB Plus') {
-      if (resultStatus === 'Completed' && finalResult === null) {
-        if (validityStatus === 'Valid') {
-          if (ctResult3 && ctResult3.indexOf('NOT DETECTED') !== -1) {
+      if (['Completed', 'Complete'].includes(resultStatus) && !finalResult) {
+        if (validityStatus === 'Valid' && ctResult3) {
+          if (ctResult3.indexOf('NOT DETECTED') !== -1) {
             resultCategory1Id = resultCategoryIds.NotDetected
+          } else if (ctResult3.indexOf('DETECTED') !== -1) {
+            resultCategory1Id = resultCategoryIds.Detected
           }
         } else if (validityStatus === 'Invalid') {
           resultCategory1Id = resultCategoryIds.Invalid
