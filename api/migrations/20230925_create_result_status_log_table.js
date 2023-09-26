@@ -1,10 +1,11 @@
 async function up(knex) {
   await knex.schema.createTable('ResultTransferLog', resultTransferLog => {
     resultTransferLog.increments('id')
-    resultTransferLog.integer('resultId').unsigned().index().references('id').inTable('Result').onDelete('SET NULL')
-    resultTransferLog.integer('reportableSiteId').notNullable().index()
-    resultTransferLog.integer('sampleOriginSiteId').notNullable().index()
-    resultTransferLog.integer('previousReportableSiteId').notNullable().index()
+    resultTransferLog.integer('resultId').unsigned().index().references('id').inTable('Result')
+    resultTransferLog.integer('reportableSiteId').notNullable().index().references('id').inTable('Site')
+    resultTransferLog.integer('sampleOriginSiteId').notNullable().index().references('id').inTable('Site')
+    resultTransferLog.integer('previousReportableSiteId').notNullable().index().references('id').inTable('Site')
+    resultTransferLog.string('comment')
     resultTransferLog.dateTime('createdOn').notNullable().defaultTo(knex.fn.now())
   })
 }
