@@ -1,55 +1,58 @@
+// assayNames must be in Uppercase
 const assayNameToExternalId = {
-  'Xpert MTB-RIF': 'GxMtbRif',
-  'Xpert MTB-RIF Assay G4': 'GxMtbRif', // ??
-  'MTB-RIF Assay G4': 'GxMtbRif', // ??
-  'Xpert MTB-RIF G3': 'GxMtbRif', // ??
-  'Xpert MTB-RIF G2': 'GxMtbRif', // ??
+  'XPERT MTB-RIF': 'GxMtbRif',
+  'XPERT MTB-RIF ASSAY G4': 'GxMtbRif',
+  'MTB-RIF ASSAY G4': 'GxMtbRif',
+  'XPERT MTB-RIF G3': 'GxMtbRif',
+  'XPERT MTB-RIF G2': 'GxMtbRif',
+  'MTB-RIF': 'GxMtbRif',
+  'MBT-RIF': 'GxMtbRif',
+  'BMSH-PH': 'GxMtbRif',
 
-  'Xpert MTB-RIF Ultra': 'GxMtbRifUltra', // ??
-  'MTB-RIF ULTRA': 'GxMtbRifUltra', // ??
-  'MTB-RIF Ultra RUO 2': 'GxMtbRifUltra', // ??
+  'XPERT MTB-RIF ULTRA': 'GxMtbRifUltra',
+  'MTB-RIF ULTRA': 'GxMtbRifUltra',
+  'MTB-RIF ULTRA RUO 2': 'GxMtbRifUltra',
+  'MBT-RIF ULTRA': 'GxMtbRifUltra',
+  'MTB-RIF_ULTRA': 'GxMtbRifUltra',
 
-  'Xpert MTB-XDR': 'GxMtbXdr',
+  'XPERT MTB-XDR': 'GxMtbXdr',
 
   'HIV VL': 'GxHiv1Vl',
   'HIV-1 VL': 'GxHiv1Vl',
   'Xpert_HIV-1 Viral Load': 'GxHiv1Vl',
-  'Xpert HIV-1 Viral Load XC': 'GxHiv1Vl', // ??
+  'Xpert HIV-1 Viral Load XC': 'GxHiv1Vl',
+  'XPERT HIV-1 VIRAL LOAD': 'GxHiv1Vl',
+  'XPERT_HIV-1 VIRAL LOAD': 'GxHiv1Vl',
+  'HIV-1 VIRAL LOAD': 'GxHiv1Vl',
+  'HIV-1_VL': 'GxHiv1Vl',
 
-  'Xpert_HIV-1 Qual': 'GxHiv1Qual',
-  'Xpert HIV-1 Qual': 'GxHiv1Qual',
+  'XPERT_HIV-1 QUAL': 'GxHiv1Qual',
+  'XPERT HIV-1 QUAL': 'GxHiv1Qual',
   'HIV-1 QUAL': 'GxHiv1Qual',
-  'Xpert HIV-1 Qual XC WB': 'GxHiv1Qual', // ??
-  'Xpert HIV-1 Qual XC DBS': 'GxHiv1Qual', // ??
+  'XPERT HIV-1 QUAL XC WB': 'GxHiv1Qual',
+  'XPERT HIV-1 QUAL XC DBS': 'GxHiv1Qual',
+  'HIV-1 QUAL BETA': 'GxHiv1Qual',
+  'HIV-1_QUAL': 'GxHiv1Qual',
+  'HIV QUAL': 'GxHiv1Qual',
 
-  'Xpert Xpress SARS-CoV-2': 'assayGXCovid19',
+  'XPERT XPRESS SARS-COV-2': 'assayGXCovid19',
+  'SARS-COV-2': 'assayGXCovid19',
+  'XPERT SARS-COV-2': 'assayGXCovid19',
+  'XPRESS SARS-COV-2': 'assayGXCovid19',
 
-  'Xpert_HCV Viral Load': 'GxHcv',
-  'Xpert HCV Viral Load': 'GxHcv',
+  'XPERT_HCV VIRAL LOAD': 'GxHcv',
+  'XPERT HCV VIRAL LOAD': 'GxHcv',
+  'HCV VL': 'GxHcv',
+  'XPERT HCV VL': 'GxHcv',
 
-  // 'Xpert HCV VL Fingerstick': Note: this is NOT the same as Xpert HCV Viral Load
-
-  'Xpert Ebola CE-IVD': 'GxEbola',
-  'Ebola RUO': 'GxEbola', // ??
+  'XPERT EBOLA CE-IVD': 'GxEbola',
+  'EBOLA RUO': 'GxEbola',
   EBOLA: 'GxEbola',
+  P0644: 'GxEbola',
+  'XPERT P0644': 'GxEbola',
+  'XPERT EBOLA': 'GxEbola',
+  'XPERT EBOLA CE-IVD&1': 'GxEbola',
 }
-
-/*
- { 
-            { "MTB-RIF", Constants.TestTypes.MTB_RIF_ID },
-            { "MBT-RIF", Constants.TestTypes.MTB_RIF_ID },
-            { "BMSH-PH", Constants.TestTypes.MTB_RIF_ID },
-            { "P0644", Constants.TestTypes.EBOLA_ID },
-            { "XPERT P0644", Constants.TestTypes.EBOLA_ID },
-            { "XPERT EBOLA", Constants.TestTypes.EBOLA_ID },
-            { "HIV-1 QUAL BETA", Constants.TestTypes.HIV_1_QUAL_ID },
-            { "HIV QUAL", Constants.TestTypes.HIV_1_QUAL_ID },
-            { "XPERT HIV-1 VIRAL LOAD", Constants.TestTypes.HIV_1_VL_ID },
-            { "HIV-1 VIRAL LOAD", Constants.TestTypes.HIV_1_VL_ID },
-            { "HCV VL", Constants.TestTypes.HCV_VL_ID },
-            { "XPERT HCV VL", Constants.TestTypes.HCV_VL_ID },
-            { "XPERT HCV VIRAL LOAD", Constants.TestTypes.HCV_VL_ID },
-*/
 
 module.exports = {
   assayNameToExternalId,

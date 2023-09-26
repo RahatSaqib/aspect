@@ -121,8 +121,8 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
 
   // Override assay.id
-  const payloadAssayName = _.get(payload, 'data.assay', false)
-  const mappedAssayExternalId = assayNameToExternalId[payloadAssayName] || 'GxUnknown'
+  const payloadAssayName = _.get(payload, 'data.assay', '')
+  const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
   _.set(payload, 'assay.id', mappedAssayExternalId)
 
   const potentialAssayIds = [mappedAssayExternalId]
