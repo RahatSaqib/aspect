@@ -205,17 +205,17 @@ class TruenatResult extends SynchronousDataProcessor {
           notes,
           reportableSiteId: _.get(existingResult, 'reportableSiteId') || deviceDefaultReportableSiteId || siteId,
         }
+        if (resultTime) {
+          newResultDetails.startedOn = resultTime
+          if (['Complete', 'Completed', 'Aborted'].includes(resultStatus)) {
+            newResultDetails.endedOn = resultTime
+          }
+        }
         const result = {
           createdOn: utcNow,
           ...(existingResult || {}),
           ...newResultDetails,
           externalId: resultExternalId,
-        }
-        if (resultTime) {
-          resultTime.startedOn = resultTime
-          if (['Complete', 'Completed', 'Aborted'].includes(resultStatus)) {
-            resultTime.endedOn = resultTime
-          }
         }
         if (!result.id) {
           const [resultId] = await knex('Result').insert(result)
@@ -308,7 +308,7 @@ function getDetailsFromRequest(request) {
     patientId: _.get(payload, 'PatientID')?.trim(),
     sampleTypeName: _.get(payload, 'SampleType')?.trim(),
     testName: _.get(payload, 'TestName')?.trim(),
-    patientAge: _.get(payload, 'Age')?.trim(),
+    patientAge: _.get(payload, 'Age')?.toString()?.trim(),
     patientGender: _.get(payload, 'Gender')?.trim(),
     resultStatus: _.get(payload, 'Status')?.trim(),
     finalResult,
