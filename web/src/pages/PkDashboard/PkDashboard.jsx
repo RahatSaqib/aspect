@@ -106,7 +106,10 @@ const PkDashboard = () => {
             />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrFQResistance)}>
-            <DashboardLink to="" label={formatMessage(messages.CurrentFQDetection)} />
+            <DashboardLink
+              to="/dashboard/xdr/current-fq-detection"
+              label={formatMessage(messages.CurrentFQDetection)}
+            />
             <DashboardLink to="/dashboard/xdr/national-fq" label={formatMessage(messages.NationalFQResistanceTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-fq-diagnosis-trend"
