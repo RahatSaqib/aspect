@@ -15,6 +15,7 @@ const { pakistanPlugin } = require('./plugins/pakistanPlugin')
 
 /**
  * There are two types of plugins: partner plugins and device type plugins
+ * All the plugins can override the methods of the basePlugin
  */
 const plugins = {
   commcare: commcarePlugin,
@@ -33,9 +34,10 @@ const plugins = {
 
 /**
  * Loads a plugin by name and action see documentation for
- * default plugin in ./default.js for available actions
+ * default plugin in ./plugin/basePlugin.js for available actions
  *
- * The action of the partnerPlugin have the highest priority
+ * The partner plugin action takes the highest priority, followed by the device type plugin;
+ * otherwise, the basePlugin's method is executed
  *
  */
 async function loadPlugin(partnerPluginName, deviceTypePluginName, actionName) {

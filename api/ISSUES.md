@@ -30,7 +30,7 @@ An example of this could be Myanmar where we defined some specific issues and tr
 All these customizations must be implemented in the corresponding action where we want Aspect to do something different and specific.
 
 For checking the configuration of the plugin you should check the file
-`api/src/plugin/loadPlugin.js` line 19 where is defined the plugin structure with all the actions we can overwrite.
+`api/src/plugin/loadPlugin.js` line 20 where is defined the plugin structure with all the actions we can overwrite.
 
 ### Default actions (can be overwritten) are
 
