@@ -25,6 +25,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
     .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .leftJoin('Sample as sample', 'result.sampleId', 'sample.id')
     .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
+    .leftJoin('Person as sampleCollectedBy', 'sample.collectedBy', 'sampleCollectedBy.userId')
     .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
     .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
     .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
@@ -115,6 +116,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'sample.sampleStatus as sampleStatus',
       'sample.updatedOn as sampleUpdatedOn',
       'sample.collectedOn as sampleCollectedOn',
+      'sample.externalId as sampleExternalId',
       'sampleOriginSite.externalId as sampleSiteExternalId',
       'sampleOriginSite.id as sampleSiteId',
       'sampleOriginSite.name as sampleSiteName',
@@ -128,7 +130,8 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'laboratory.id as laboratorySiteId',
       'laboratory.externalId as laboratorySiteExternalId',
       'laboratory.name as laboratorySiteName',
-      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId'
+      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
+      'sampleCollectedBy.name as sampleClinicianName'
     )
   return knexQuery
 }
@@ -160,6 +163,7 @@ const getFollowUpsByResultIds = results => {
   const knexQuery = knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .leftJoin('Person as p', 'p.id', 'rfu.createdBy')
     .whereIn(
       'rfu.resultId',
       _.map(results, r => r.id)
@@ -177,7 +181,8 @@ const getFollowUpsByResultIds = results => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypeI18nKey'
+      'fut.i18nKey as followUpTypeI18nKey',
+      'p.name as clinicianName'
     )
   return knexQuery
 }

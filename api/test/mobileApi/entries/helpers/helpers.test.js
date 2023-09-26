@@ -64,7 +64,7 @@ describe('Entries helpers', () => {
   })
 
   describe('buildHistoryTimeline', () => {
-    it('should build a correct timeline', () => {
+    it('should build a correct timeline', async () => {
       const data = {
         id: 123,
         sampleCollectedOn: '2023-05-01T00:00:00Z',
@@ -78,9 +78,21 @@ describe('Entries helpers', () => {
         transferStatusLogData:
           '{"siteId":261,"reportableSiteId":436,"previousReportableSiteId":261,"comment":"test comment"}',
         transferredOn: '2023-05-02T00:00:00Z',
+        sampleClinicianName: 'test clinician',
+        sampleExternalId: '123',
+        patientData: '{"id": "PATIENT-1"}',
       }
 
-      const followUps = [{ id: 789, resultId: 123, followUpName: 'FollowUp1', updatedOn: '2023-05-03T00:00:00Z' }]
+      const followUps = [
+        {
+          id: 789,
+          resultId: 123,
+          followUpName: 'FollowUp1',
+          updatedOn: '2023-05-03T00:00:00Z',
+          followUpTypeName: 'sample follow up type',
+          clinicianName: 'test clinician',
+        },
+      ]
 
       const expectedOutput = [
         {
@@ -89,7 +101,9 @@ describe('Entries helpers', () => {
           event: 'followUpCreated',
           name: 'FollowUp1',
           siteName: 'ReportClinic1',
+          type: 'sample follow up type',
           updatedOn: '2023-05-03T00:00:00Z',
+          clinicianName: 'test clinician',
         },
         {
           id: 123,
@@ -100,6 +114,7 @@ describe('Entries helpers', () => {
           updatedOn: '2023-05-02T00:00:00Z',
           comment: 'test comment',
           transferredBy: 'testuser',
+          originSiteName: null,
         },
         {
           id: 456,
@@ -108,6 +123,8 @@ describe('Entries helpers', () => {
           name: 'SampleType1',
           siteName: 'ReportLab1',
           updatedOn: '2023-05-02T00:00:00Z',
+          patientId: 'PATIENT-1',
+          sampleId: '123',
         },
         {
           id: 456,
@@ -116,19 +133,21 @@ describe('Entries helpers', () => {
           name: 'SampleType1',
           siteName: 'Lab1',
           updatedOn: '2023-05-01T00:00:00Z',
+          clinicianName: 'test clinician',
+          sampleId: '123',
         },
       ]
 
-      const result = buildHistoryTimeline(data, followUps)
+      const result = await buildHistoryTimeline(data, followUps)
       expect(result).to.deep.eq(expectedOutput)
     })
 
-    it('should handle null/undefined values correctly', () => {
+    it('should handle null/undefined values correctly', async () => {
       const data = { id: 123 }
       const followUps = []
       const expectedOutput = []
 
-      const result = buildHistoryTimeline(data, followUps)
+      const result = await buildHistoryTimeline(data, followUps)
       expect(result).to.eql(expectedOutput)
     })
   })
@@ -544,11 +563,67 @@ describe('Entries helpers', () => {
   })
 
   describe('transformResultResponse', () => {
+    // eslint-disable-next-line mocha/no-exclusive-tests
     it('correctly transform results', async () => {
       const entry347 = transformResultResponse([data347], [], [])
       const entry450 = transformResultResponse([data450], followUp450, [])
+
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
+    })
+
+    it('should return requiresFollowUp for followUpStatus', async () => {
+      const requiresFollowUpEntry = transformResultResponse(
+        [{ ...data347, resultCategoryAssay1RequiresTreatment: 1 }],
+        [],
+        []
+      )
+
+      const clonedExpected = expected347[0]
+      const requiresFollowUpExpectedResult = {
+        ...clonedExpected,
+        requiresFollowUp: true,
+        resultRequiresTreatment: true,
+        searchSchema: {
+          ...clonedExpected.searchSchema,
+          filterMeta: {
+            ...clonedExpected.searchSchema.filterMeta,
+            followUpStatus: 'requiresFollowUp',
+            requiresFollowUp: true,
+          },
+        },
+      }
+      expect(requiresFollowUpEntry).to.deep.eq([requiresFollowUpExpectedResult])
+    })
+
+    it('should return noFollowUpPossible for followUpStatus', async () => {
+      const noFollowUpPossibleEntry = transformResultResponse(
+        [{ ...data347, resultTreatmentStatusExternalId: 'NotPossible' }],
+        [],
+        []
+      )
+
+      const clonedExpected = expected347[0]
+      const noFollowUpPossibleEntryExpectedResult = {
+        ...clonedExpected,
+        noFollowUpPossible: true,
+        searchSchema: {
+          ...clonedExpected.searchSchema,
+          filterMeta: {
+            ...clonedExpected.searchSchema.filterMeta,
+            followUpStatus: 'noFollowUpPossible',
+            treatmentStatus: 'NotPossible',
+            hasFollowUp: false,
+            noFollowUpPossible: true,
+            requiresFollowUp: false,
+          },
+        },
+        treatmentStatus: {
+          ...clonedExpected.treatmentStatus,
+          externalId: 'NotPossible',
+        },
+      }
+      expect(noFollowUpPossibleEntry).to.deep.eq([noFollowUpPossibleEntryExpectedResult])
     })
   })
 })

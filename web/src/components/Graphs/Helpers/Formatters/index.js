@@ -498,4 +498,5 @@ export {
   validateGraphConfig,
   getColorIdByFieldName,
   formatDateToYYYYMMDD,
+  translateLabel,
 }

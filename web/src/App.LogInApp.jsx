@@ -235,6 +235,7 @@ const LogInApp = () => {
                 <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
                 <Route path="/browse/inventory/log" element={<InventoryLog />} />
                 <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
+                <Route path="/browse/inventory/overview" element={<InventoryOverview />} />
               </>
             ) : null}
             {a(['browse', 'notification']) ? (

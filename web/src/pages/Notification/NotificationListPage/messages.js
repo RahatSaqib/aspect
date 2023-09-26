@@ -123,6 +123,19 @@ export const messages = defineMessages({
     id: 'pages.TableCell.reportBasedNotification',
     defaultMessage: 'Report Based',
   },
+
+  annualUtilizationRates: {
+    id: 'pages.ReportIndex.annualUtilizationRates',
+    defaultMessage: 'National and Provincial Trends in Annual Utilization Rates',
+  },
+  xpert_workload_summary_report: {
+    id: 'pages.ReportIndex.xpert_workload_summary_report',
+    defaultMessage: 'Xpert Workload Summary Report',
+  },
+  xpert_site_summary_site_wise_report: {
+    id: 'pages.ReportIndex.xpert_site_summary_site_wise_report',
+    defaultMessage: 'Xpert Site Summary Report - Site Wise',
+  },
   ...report,
 })
 

@@ -31,7 +31,7 @@ const parseDate = (date, fmt) => {
   }
 }
 
-const flattenAssaysStructure = ({ data }) => {
+export const flattenAssaysStructure = ({ data }) => {
   const output = []
   map(data, ({ resultCategories }) => map(resultCategories, category => output.push({ ...category })))
   return uniqBy(output, 'i18nKey')
