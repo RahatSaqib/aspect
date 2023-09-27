@@ -347,6 +347,38 @@ function arrayofIANATimezone(timezone) {
   return findIana(timezone)
 }
 
+function getUserEndOfMonth(date, userTimeZoneOffsetInMinutes) {
+  return addMinutes(endOfMonth(addMinutes(date, userTimeZoneOffsetInMinutes)), -userTimeZoneOffsetInMinutes)
+}
+
+function getUserStartOfMonth(date, userTimeZoneOffsetInMinutes) {
+  return addMinutes(startOfMonth(addMinutes(date, userTimeZoneOffsetInMinutes)), -userTimeZoneOffsetInMinutes)
+}
+
+/**
+ * This function is used for reports that show data grouped in months and accept date-range filtering. Expects a min and max date objects, and the offset in minutes of the user's timezone, and generates the collection of user months and the UTC ranges to filter in the database.
+ * @param {*} minDate The min date object from the filter
+ * @param {*} maxDate The max date object from the filter
+ * @param {*} userTimeZoneOffsetInMinutes The timezone offset of the user
+ * @returns The collection of months and date ranges for db queries
+ */
+function getAllUserMonthsInRange(minDate, maxDate, userTimeZoneOffsetInMinutes) {
+  let allRanges = []
+  let currentDate = minDate
+  let maxCurrentDate = _.min([getUserEndOfMonth(currentDate, userTimeZoneOffsetInMinutes), maxDate])
+  while (currentDate <= maxDate) {
+    const newItem = {
+      userMonth: format(addMinutes(currentDate, userTimeZoneOffsetInMinutes), 'yyyy-MM'),
+      minDate: currentDate,
+      maxDate: maxCurrentDate,
+    }
+    allRanges = [...allRanges, newItem]
+    currentDate = getUserStartOfMonth(addMonths(currentDate, 1), userTimeZoneOffsetInMinutes)
+    maxCurrentDate = _.min([getUserEndOfMonth(currentDate, userTimeZoneOffsetInMinutes), maxDate])
+  }
+  return allRanges.sort(r => r.userMonth)
+}
+
 function getAllMonthsInRange(minDate, maxDate) {
   let allRanges = []
   let currentMonth = getLocalDateTimeStringInUtc(minDate)
@@ -394,4 +426,7 @@ module.exports = {
   daysBetweenDates,
   arrayofIANATimezone,
   getAllMonthsInRange,
+  getAllUserMonthsInRange,
+  getUserEndOfMonth,
+  getUserStartOfMonth,
 }

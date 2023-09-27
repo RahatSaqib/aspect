@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { startOfMonth, endOfMonth, subMonths } = require('date-fns')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../../result/query')
 const { filterDateRangeParams, knex } = require('../../../db')
-const { getAllMonthsInRange } = require('../../../shared/date')
+const { getOffsetFromIsoDateStringInMinutes, getAllUserMonthsInRange } = require('../../../shared/date')
 
 const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) => {
   const now = new Date()
@@ -33,28 +33,30 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .orderBy('st.name', 'lg.name')
 
-  const dateRanges = getAllMonthsInRange(dateFrom.toISOString(), dateTo.toISOString())
+  const offset = getOffsetFromIsoDateStringInMinutes(query.minDate || query.maxDate)
+  const dateRanges = getAllUserMonthsInRange(dateFrom, dateTo, offset)
   const totalColumns = []
 
   for (const dateRange of dateRanges) {
-    const date = new Date(`${dateRange}-01`)
-    const minDate = startOfMonth(date).toISOString()
-    const maxDate = endOfMonth(date).toISOString()
+    const { userMonth, minDate, maxDate } = dateRange
 
-    const alias = `resultsCount${dateRange}`
+    const alias = `resultsCount${userMonth}`
+
+    const isoMinDate = minDate.toISOString()
+    const isoMaxDate = maxDate.toISOString()
 
     baseQuery.select({
       [`${alias}_total`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' THEN 1 ELSE 0 END), 0)`
       ),
       [`${alias}_mtbDetectedTraceDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId IN ('Detected', 'Trace Detected') THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId IN ('Detected', 'Trace Detected') THEN 1 ELSE 0 END), 0)`
       ),
       [`${alias}_mtbTraceDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Trace Detected' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId = 'Trace Detected' THEN 1 ELSE 0 END), 0)`
       ),
       [`${alias}_mtbDetectedRifDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)`
       ),
     })
 
@@ -79,8 +81,8 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
   ].map(column => ({
     header: column.name,
     subHeaders: dateRanges.map(dateRange => ({
-      key: `resultsCount${dateRange}_${column.key}`,
-      text: dateRange,
+      key: `resultsCount${dateRange.userMonth}_${column.key}`,
+      text: dateRange.userMonth,
     })),
   }))
 

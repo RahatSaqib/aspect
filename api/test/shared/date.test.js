@@ -1,5 +1,6 @@
 const { assert } = require('chai')
 
+const { parseISO } = require('date-fns')
 const {
   getLocalDateTimeStringInUtc,
   getArrayOfDaysInRange,
@@ -13,6 +14,9 @@ const {
   REGEX_ISODATESTRING,
   getOffsetFromIsoDateString,
   getOffsetFromTimeZone,
+  getAllUserMonthsInRange,
+  getUserEndOfMonth,
+  getUserStartOfMonth,
 } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
@@ -207,6 +211,161 @@ describe('Shared Date Utility Functions', () => {
           `Cannot infer offSet from timeZone '${f.tz}'${f.obs}`
         )
       }
+    })
+  })
+
+  describe('Generate date ranges collection for reports', () => {
+    describe('getUserEndOfMonth', () => {
+      it('get user end of the month for negative timezones for min dates', () => {
+        const userEOM = getUserEndOfMonth(parseISO('2023-01-01T00:00:00.000-03:00'), -180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-31T23:59:59.999-03:00').toISOString())
+      })
+
+      it('get user end of the month for negative timezones for max dates', () => {
+        const userEOM = getUserEndOfMonth(parseISO('2023-01-31T23:59:59.999-03:00'), -180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-31T23:59:59.999-03:00').toISOString())
+      })
+
+      it('get user end of the month for positive timezones for min dates', () => {
+        const userEOM = getUserEndOfMonth(parseISO('2023-01-01T00:00:00.000+03:00'), 180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-31T23:59:59.999+03:00').toISOString())
+      })
+
+      it('get user end of the month for positive timezones for max dates', () => {
+        const userEOM = getUserEndOfMonth(parseISO('2023-01-31T23:59:59.999+03:00'), 180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-31T23:59:59.999+03:00').toISOString())
+      })
+
+      it('get user start of the month for negative timezones for min dates', () => {
+        const userEOM = getUserStartOfMonth(parseISO('2023-01-01T00:00:00.000-03:00'), -180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-01T00:00:00.000-03:00').toISOString())
+      })
+
+      it('get user start of the month for negative timezones for max dates', () => {
+        const userEOM = getUserStartOfMonth(parseISO('2023-01-31T23:59:59.999-03:00'), -180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-01T00:00:00.000-03:00').toISOString())
+      })
+
+      it('get user start of month for positive timezones for min dates', () => {
+        const userEOM = getUserStartOfMonth(parseISO('2023-01-01T00:00:00.000+03:00'), 180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-01T00:00:00.000+03:00').toISOString())
+      })
+
+      it('get user start of month for positive timezones for max dates', () => {
+        const userEOM = getUserStartOfMonth(parseISO('2023-01-31T23:59:59.999+03:00'), 180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-01T00:00:00.000+03:00').toISOString())
+      })
+    })
+
+    describe('getAllUserMonthsInRange', () => {
+      describe('get date range collection for negative timezones', () => {
+        it('should process correctly limit dates', () => {
+          const minsOffset = -180
+          const months = getAllUserMonthsInRange(
+            parseISO('2023-01-01T00:00:00.000-03:00'),
+            parseISO('2023-01-31T23:59:59.999-03:00'),
+            minsOffset
+          )
+          assert.deepEqual(months, [
+            {
+              userMonth: '2023-01',
+              minDate: parseISO('2023-01-01T00:00:00.000-03:00'),
+              maxDate: parseISO('2023-01-31T23:59:59.999-03:00'),
+            },
+          ])
+        })
+
+        it('should process correctly middle dates', () => {
+          const minsOffset = -180
+          const months = getAllUserMonthsInRange(
+            parseISO('2023-01-01T00:00:00.000-03:00'),
+            parseISO('2023-01-23T00:00:00.000-03:00'),
+            minsOffset
+          )
+          assert.deepEqual(months, [
+            {
+              userMonth: '2023-01',
+              minDate: parseISO('2023-01-01T00:00:00.000-03:00'),
+              maxDate: parseISO('2023-01-23T00:00:00.000-03:00'),
+            },
+          ])
+        })
+
+        it('should process correctly more than 1 month-far dates', () => {
+          const minsOffset = -180
+          const months = getAllUserMonthsInRange(
+            parseISO('2023-01-03T00:00:00.000-03:00'),
+            parseISO('2023-02-23T00:00:00.000-03:00'),
+            minsOffset
+          )
+          assert.deepEqual(months, [
+            {
+              userMonth: '2023-01',
+              minDate: parseISO('2023-01-03T00:00:00.000-03:00'),
+              maxDate: parseISO('2023-01-31T23:59:59.999-03:00'),
+            },
+            {
+              userMonth: '2023-02',
+              minDate: parseISO('2023-02-01T00:00:00.000-03:00'),
+              maxDate: parseISO('2023-02-23T00:00:00.000-03:00'),
+            },
+          ])
+        })
+      })
+    })
+    describe('get date range collection for positive timezones', () => {
+      it('should process correctly limit dates', () => {
+        const minsOffset = +180
+        const months = getAllUserMonthsInRange(
+          parseISO('2023-01-01T00:00:00.00+03:00'),
+          parseISO('2023-01-31T23:59:59.999+03:00'),
+          minsOffset
+        )
+        assert.deepEqual(months, [
+          {
+            userMonth: '2023-01',
+            minDate: parseISO('2023-01-01T00:00:00.000+03:00'),
+            maxDate: parseISO('2023-01-31T23:59:59.999+03:00'),
+          },
+        ])
+      })
+
+      it('should process correctly middle dates', () => {
+        const minsOffset = +180
+        const months = getAllUserMonthsInRange(
+          parseISO('2023-01-01T00:00:00.000+03:00'),
+          parseISO('2023-01-23T00:00:00.000+03:00'),
+          minsOffset
+        )
+        assert.deepEqual(months, [
+          {
+            userMonth: '2023-01',
+            minDate: parseISO('2023-01-01T00:00:00.000+03:00'),
+            maxDate: parseISO('2023-01-23T00:00:00.000+03:00'),
+          },
+        ])
+      })
+
+      it('should process correctly more than 1 month-far dates', () => {
+        const minsOffset = +180
+        const months = getAllUserMonthsInRange(
+          parseISO('2023-01-03T00:00:00.000+03:00'),
+          parseISO('2023-02-23T00:00:00.000+03:00'),
+          minsOffset
+        )
+        assert.deepEqual(months, [
+          {
+            userMonth: '2023-01',
+            minDate: parseISO('2023-01-03T00:00:00.000+03:00'),
+            maxDate: parseISO('2023-01-31T23:59:59.999+03:00'),
+          },
+          {
+            userMonth: '2023-02',
+            minDate: parseISO('2023-02-01T00:00:00.000+03:00'),
+            maxDate: parseISO('2023-02-23T00:00:00.000+03:00'),
+          },
+        ])
+      })
     })
   })
 })
