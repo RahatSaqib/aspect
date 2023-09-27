@@ -80,9 +80,9 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     { key: 'mtbDetectedRifDetected', name: 'Rif Resistant' },
   ].map(column => ({
     header: column.name,
-    subHeaders: dateRanges.map(dateRange => ({
-      key: `resultsCount${dateRange.userMonth}_${column.key}`,
-      text: dateRange.userMonth,
+    subHeaders: dateRanges.map(({ userMonth }) => ({
+      key: `resultsCount${userMonth}_${column.key}`,
+      text: userMonth,
     })),
   }))
 
