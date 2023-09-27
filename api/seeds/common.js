@@ -121,8 +121,8 @@ async function commonUpserts(
     (await knex('Person')
       .where({
         userId: adminId,
-        geographyId,
-        canLogIn: true,
+        // geographyId,
+        // canLogIn: true,
       })
       .first('id')) || {}
   if (!adminPersonId) {
