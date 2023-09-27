@@ -481,6 +481,11 @@ const DeviceDetailProfile = ({
             />
 
             <Summary
+              title={formatMessage(messages.instrumentsConnected)}
+              description={device.get('instrumentsConnected') ?? 'n/a'}
+            />
+
+            <Summary
               title={formatMessage(messages.partner)}
               description={device.get('implementingPartnerName') ?? 'n/a'}
             />

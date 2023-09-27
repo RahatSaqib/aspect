@@ -174,7 +174,10 @@ const messages = {
       id: 'pages.deviceDetail.countryAverage',
       defaultMessage: 'Country Average',
     },
-
+    instrumentsConnected: {
+      id: 'pages.deviceDetail.instrumentsConnected',
+      defaultMessage: 'Instruments Connected',
+    },
     deviceCapacityModules: {
       id: 'pages.DeviceDetailProfile.deviceCapacityModules',
       defaultMessage: `{numberOfModules, plural,
