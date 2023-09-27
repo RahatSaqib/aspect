@@ -388,13 +388,7 @@ async function addCovidResults(
       resultText: 'Unknown',
     },
   ]
-  const { id: aspectDeviceTypeId } = await knex('DeviceType').where('externalId', 'Aspect').first('id')
-  const aspectDevice = await knex('Device')
-    .where({
-      partnerId,
-      deviceTypeId: aspectDeviceTypeId,
-    })
-    .first()
+
   const genericTestTypes = [
     {
       title: 'PCR/molecular',
@@ -413,7 +407,7 @@ async function addCovidResults(
       value: 'digitalXRay',
     },
   ]
-  const genericAssay = await knex('Assay').where('externalId', 'assayGenericCovid19').first()
+
   const elegiblesSites = _.filter(
     siteDatas,
     site => site.externalId.indexOf('_lab') >= 0 || site.name.indexOf(' Lab') >= 0
@@ -421,20 +415,16 @@ async function addCovidResults(
 
   const assayDiseases = await knex('Assay as a')
     .join('AssayType as at', 'a.assayTypeId', 'at.id')
-    .whereIn('a.id', _.uniq([...assays, genericAssay].map(assay => assay.id)))
+    .whereIn('a.id', _.uniq([...assays].map(assay => assay.id)))
     .select('a.id', 'at.diseaseId')
   const assayIdDiseaseIdMap = assayDiseases.reduce((accumulator, assayDisease) => {
     accumulator[assayDisease.id] = assayDisease.diseaseId
     return accumulator
   }, {})
   await Promise.each(_.range(quantity), async i => {
-    const resultCapturedInAspect = !!aspectDevice && (i % 7 === 0 || _.isEmpty(devices))
+    const device = _.sample(devices)
 
-    const device = resultCapturedInAspect ? aspectDevice : _.sample(devices)
-
-    const siteData = resultCapturedInAspect
-      ? elegiblesSites[i % elegiblesSites.length]
-      : _.find(siteDatas, site => site.id === device.siteId)
+    const siteData = _.find(siteDatas, site => site.id === device.siteId)
 
     const sample = samples[i % samples.length]
 
@@ -446,9 +436,7 @@ async function addCovidResults(
     const randomDate = date || calculateDateForResultForCovid(i, resultCovidNumber, 6000)
     let linkedResult
     let resultToInsert = {}
-    const assayId = resultCapturedInAspect
-      ? genericAssay.id
-      : _.find(assays, elem => elem.deviceTypeId === device.deviceTypeId).id
+    const assayId = _.find(assays, elem => elem.deviceTypeId === device.deviceTypeId).id
     if (!positiveResults) {
       const rnd = _.random(0, 100)
       result = _.find(possibleResults, r => rnd >= r.minLikelihood && rnd <= r.maxLikelihood)
@@ -461,9 +449,6 @@ async function addCovidResults(
         dateAndTimeOfTest: addMinutes(randomDate, 100),
       }
       const selectedTestType = genericTestTypes[_.random(0, genericTestTypes.length - 1)]
-      if (resultCapturedInAspect) {
-        formData.testType = selectedTestType.value
-      }
     } else {
       result = _.find(possibleResults, r => r.resultText === 'Negative')
 
@@ -497,7 +482,7 @@ async function addCovidResults(
         patientCaseId,
         partnerId,
         formData: JSON.stringify(formData),
-        startedOn: resultCapturedInAspect ? null : randomDate,
+        startedOn: randomDate,
         endedOn: addMinutes(randomDate, 100),
         createdOn,
         updatedOn,
