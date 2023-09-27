@@ -31,7 +31,8 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
   } = (await createSmsMessageFromTemplate(knex, smsMessageId)) || {}
   if (!_.isEmpty(phone)) {
     const messageStatusId = await messageStatusToId('Pending')
-    const phoneNumber = normalizePhoneNumber(phone, countryCode)
+    const [isFormatted, formatted] = phone.split('?')
+    const phoneNumber = isFormatted ? formatted : normalizePhoneNumber(phone, countryCode)
     if (!phoneNumber) return
     // store generated sms message into the same record and set messageStatusId
     await knex('SmsMessage').where({ id: smsMessageId }).update({
@@ -117,8 +118,9 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
       'tmpl.phoneNumber as phoneNumberTemplate',
       knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
     )
+
   return processUsingDataSourceQuery(
-    data,
+    { ...data, personCell: data?.personCellE164 ? `true?${data?.personCellE164}` : data?.personCell },
     ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'],
     authLikeObject
   )
