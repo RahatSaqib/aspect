@@ -100,9 +100,12 @@ const insertNewSample = (payload, auth) =>
     .then(async newSample => getSamplesRegisteredById(newSample[0], auth))
 
 const getTransferHistory = dataConstraints => {
-  const query = knex.select('resultId').from('ResultTransferLog').modify(addConstraints, dataConstraints, {
-    transferLog: 'transferLog',
-  })
+  const query = knex
+    .distinct('resultId')
+    .from('ResultTransferLog as transferLog')
+    .modify(addConstraints, dataConstraints, {
+      transferLog: 'transferLog',
+    })
   return query
 }
 
