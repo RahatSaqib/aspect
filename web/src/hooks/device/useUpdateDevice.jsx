@@ -14,6 +14,7 @@ const updateDeviceById = async (device, deviceId) => {
       deviceCapacityId: device.dailyCapacityId,
       notes: device.notes,
       siteId: device.siteId,
+      instrumentsConnected: device.instrumentsConnected,
       configurationData: device.configurationData,
       implementingPartnerId: implementingPartnerId ? Number(implementingPartnerId) : null,
       approvalToken: device.approvalToken,
