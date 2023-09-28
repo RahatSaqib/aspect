@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { seedIssueEventTriggersForPartner } = require('./utils')
 const { allIssueCategoryToId, allMessageSeverityToId } = require('../src/shared/dictionary')
 const { cleanUpIssues } = require('../test/utils/issueUtils')
-const { loadPlugin } = require('../src/plugin/registration')
+const { loadPlugin } = require('../src/plugin/loadPlugin')
 
 const now = new Date()
 
@@ -117,8 +117,8 @@ async function seedDataCategory(knex, partnerExternalId, partnerName) {
   // ----------------------------------------------------------------------
   // read dataCategories
   // ----------------------------------------------------------------------
-  const pluginName = partnerName.toLowerCase()
-  const plugin = await loadPlugin([pluginName], 'dataCategories')
+  const partnerPluginName = partnerName.toLowerCase()
+  const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { dataCategories = [] } = plugin
 
   const issueCategories = await allIssueCategoryToId()
@@ -307,8 +307,8 @@ async function updateDataCategoryNotificationTypeForRO(knex, partnerExternalId, 
   // ----------------------------------------------------------------------
   // read dataCategories
   // ----------------------------------------------------------------------
-  const pluginName = partnerName.toLowerCase()
-  const plugin = await loadPlugin([pluginName], 'dataCategories')
+  const partnerPluginName = partnerName.toLowerCase()
+  const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { dataCategories = [] } = plugin
 
   const issueCategories = await allIssueCategoryToId()

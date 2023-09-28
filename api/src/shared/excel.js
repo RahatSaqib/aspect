@@ -8,6 +8,9 @@ const { getDisplayPreferences, getUser } = require('../auth/service')
 const logger = require('./logger')
 const { RELABEL_EXCEL } = require('./constants')
 const { respondFile } = require('./response')
+const {
+  basePlugin: { settings },
+} = require('../plugin/plugins/basePlugin')
 
 const LANG_DEFAULT = 'en'
 
@@ -96,8 +99,7 @@ const getMaxLimitPlaceHolders = () => [
 // ----------------------------------------------------------------------------------------------
 const getAdministrativeDivisionLabelPlaceHolders = async ({ partnerId }) => {
   const displayPreferences = await getDisplayPreferences({ partnerId })
-  const { DEFAULT_SETTINGS } = require('../plugin/registration')
-  const getLabel = (name, defaultValue) => displayPreferences[name] || DEFAULT_SETTINGS[name] || defaultValue
+  const getLabel = (name, defaultValue) => displayPreferences[name] || settings[name] || defaultValue
 
   return [
     {
