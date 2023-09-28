@@ -98,8 +98,8 @@ const ContactDetails = ({ setStep }) => {
             lgaId: person?.lgaId || '',
             notes: person?.notes || '',
             zip: person?.zip || '',
-            phone: person?.phoneE164?.length > 5 ? person.phoneE164 : person?.phone?.length > 5 ? person.phone : null,
-            cell: person?.cellE164?.length > 5 ? person.cellE164 : person?.cell?.length > 5 ? person.cell : null,
+            phone: person?.phone?.length > 5 ? person.phone : null,
+            cell: person?.cell?.length > 5 ? person.cell : null,
           }}
           validationSchema={validationSchema}
           onSubmit={(values, { resetForm }) => {
