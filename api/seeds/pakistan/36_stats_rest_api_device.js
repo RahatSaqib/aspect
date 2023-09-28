@@ -33,14 +33,12 @@ module.exports = require('../utils').seed(async knex => {
     deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   })
 
-  const { siteId } = await knex('Site as s').where({ externalId: 'Aspect' }).first('s.id as siteId')
-
   const [deviceId] = await knex('Device').insert({
     name: 'API Consumer',
     deviceApprovalId: await deviceApprovalToId('approved'),
     partnerId,
     geographyId,
-    siteId,
+    siteId: null,
     lastPingOn: new Date(),
     lastSeenOn: new Date(),
     deviceTypeId,
