@@ -19,10 +19,9 @@ const assayNameToExternalId = {
 
   'HIV VL': 'GxHiv1Vl',
   'HIV-1 VL': 'GxHiv1Vl',
-  'Xpert_HIV-1 Viral Load': 'GxHiv1Vl',
-  'Xpert HIV-1 Viral Load XC': 'GxHiv1Vl',
-  'XPERT HIV-1 VIRAL LOAD': 'GxHiv1Vl',
   'XPERT_HIV-1 VIRAL LOAD': 'GxHiv1Vl',
+  'XPERT HIV-1 VIRAL LOAD XC': 'GxHiv1Vl',
+  'XPERT HIV-1 VIRAL LOAD': 'GxHiv1Vl',
   'HIV-1 VIRAL LOAD': 'GxHiv1Vl',
   'HIV-1_VL': 'GxHiv1Vl',
 
