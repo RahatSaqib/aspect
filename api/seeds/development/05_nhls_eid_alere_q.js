@@ -73,7 +73,7 @@ async function seed(knex) {
     name: 'South Africa NHLS',
     externalId: 'southAfricaNhls',
     partnerTypeId: await partnerTypeToId('operating'),
-    plugin: 'sa_nhls',
+    plugin: 'saNhls',
     deviceLogHistoryDays: 365,
     maxDaysDeviceOffline: 7,
     maxDaysDeviceNoResults: 14,

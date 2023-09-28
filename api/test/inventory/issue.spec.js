@@ -12,7 +12,7 @@ const { inventoryStockout, inventoryStockExpiring } = require('../../src/invento
 const { escalateIssues } = require('../../src/issue/actions')
 const { refreshConsumptionRates } = require('../../src/fact/service')
 const { getPartner, getSite, getIssue, getIssueNotifications, cleanUpIssues } = require('../utils/issueUtils')
-const { loadPlugin } = require('../../src/plugin/registration')
+const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const {
   deviceTypeToId,
   deviceApprovalToId,
@@ -54,7 +54,7 @@ describe('Inventory Stock Issues Endpoint', () => {
     const resultId = await createTestResult(knex, device)
     resultIds.push(resultId)
 
-    const { displayPreferences = {} } = await loadPlugin([partner.plugin], 'settings')
+    const { displayPreferences = {} } = await loadPlugin(partner.plugin, undefined, 'settings')
     baseProps = {
       siteId,
       siteRegionalOfficer,
