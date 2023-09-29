@@ -122,7 +122,7 @@ describe('stringTemplate', () => {
       dateTimeFormat: 'd/M/yyyy HH:mm:ss',
     }
     const { processUsingDataSourceQuery } = proxyquire('../../src/stringTemplate/service', {
-      '../plugin/registration': {
+      '../plugin/loadPlugin': {
         loadPlugin: async () => Promise.resolve({ displayPreferences }),
       },
     })

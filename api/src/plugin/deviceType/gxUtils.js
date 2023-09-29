@@ -21,6 +21,7 @@ const {
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
 const { mapPayloadWithCustomFields } = require('./customFields')
 const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
+const { assayNameToExternalId } = require('../../shared/assayNameToExternalId')
 
 /*
 The purpose of this plugin is to ensure that results are captured
@@ -119,7 +120,12 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const gxAlertUniqueId = _.get(payload, 'data.gxAlertTestUniqueId', generatedExternalId)
   const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
 
-  const potentialAssayIds = [_.get(payload, 'assay.id')]
+  // Override assay.id
+  const payloadAssayName = _.get(payload, 'data.assay', '')
+  const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
+  _.set(payload, 'assay.id', mappedAssayExternalId)
+
+  const potentialAssayIds = [mappedAssayExternalId]
   if (potentialAssayIds.includes('GxMtbRif') && !potentialAssayIds.includes('GxMtbRifUltra')) {
     potentialAssayIds.push('GxMtbRifUltra')
   }

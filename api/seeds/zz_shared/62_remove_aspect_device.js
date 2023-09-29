@@ -1,6 +1,7 @@
 module.exports = require('../utils').seed(async knex => {
-  const { id: aspectDeviceTypeId } = await knex('DeviceType').where({ externalId: 'Aspect' }).first()
-  if (aspectDeviceTypeId) {
+  const aspectDeviceType = await knex('DeviceType').where({ externalId: 'Aspect' }).first()
+  if (aspectDeviceType) {
+    const aspectDeviceTypeId = aspectDeviceType.id
     const aspectDeviceIds = await knex('Device').where({ deviceTypeId: aspectDeviceTypeId }).pluck('id')
     const opIds = await knex('DeviceOperation').whereIn('deviceId', aspectDeviceIds).pluck('id')
     await knex('DeviceApprovalLog').whereIn('deviceId', aspectDeviceIds).delete()

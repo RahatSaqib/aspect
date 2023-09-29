@@ -31,6 +31,7 @@ const { deviceSeen, types } = require('../../../src/device/actions')
 const { factGenerateDeviceConnectivity } = require('../../../src/fact/actions')
 
 const server = require('../../utils/testUtils')
+const { assayNameToExternalId } = require('../../../src/shared/assayNameToExternalId')
 
 const { assert, expect } = chai
 
@@ -410,7 +411,7 @@ describe('Device API routes for GxAlert Device', () => {
         payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
           result: {
             id: dateFormat(new Date(), 'T'),
-            data: { a: 'b', c: 2, d: false, e: { f: 'g' } },
+            data: { a: 'b', c: 2, d: false, e: { f: 'g' }, assay: 'Xpert MTB-RIF' },
             type: { id: 'Study' },
             source: { id: 'EnteredByHand' },
             workflow: { status: { id: 'Acknowledged' } },
@@ -1018,6 +1019,9 @@ describe('Device API routes for GxAlert Device', () => {
                 id: assayName,
                 version: assayVersion,
               },
+              data: {
+                assay: 'New Assay Type',
+              },
               instrument: {
                 serial: '20345230',
               },
@@ -1082,6 +1086,11 @@ describe('Device API routes for GxAlert Device', () => {
               assay: {
                 id: consumableAssay.assayId,
                 version: '2',
+              },
+              data: {
+                assay: Object.keys(assayNameToExternalId).find(
+                  assayName => assayNameToExternalId[assayName] === consumableAssay.assayId
+                ),
               },
             },
           }),
@@ -1155,6 +1164,8 @@ describe('Device API routes for GxAlert Device', () => {
           const sampleId = 'This test will reduce inventory once'
           const instrumentSerial = 'Same instrument serial'
 
+          const assayExternalId = _.head(consumableAssays).assayId
+
           // Send first test
           const firstResponse = await postToDeviceApi({
             authHeader: deviceAuth,
@@ -1162,8 +1173,13 @@ describe('Device API routes for GxAlert Device', () => {
               result: {
                 id: uniqueTestId,
                 assay: {
-                  id: _.head(consumableAssays).assayId,
+                  id: assayExternalId,
                   version: '2',
+                },
+                data: {
+                  assay: Object.keys(assayNameToExternalId).find(
+                    assayName => assayNameToExternalId[assayName] === assayExternalId
+                  ),
                 },
                 sample: { id: sampleId },
                 instrument: { serial: instrumentSerial },
