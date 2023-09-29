@@ -16,7 +16,7 @@ const { factDataCategoryLow } = require('../../src/fact/actions')
 const { getDataCategoryStatus } = require('../../src/fact/service')
 const { escalateIssues, resolveIssues } = require('../../src/issue/actions')
 const { getPartner, getSite, cleanUpIssues } = require('../utils/issueUtils')
-const { loadPlugin } = require('../../src/plugin/registration')
+const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const {
   allResultCategoryToId,
   deviceTypeToId,
@@ -116,8 +116,8 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
   before(() =>
     run(async knex => {
       // get dataCategory definitions
-      const pluginName = partnerName.toLowerCase()
-      const plugin = (await loadPlugin([pluginName], 'dataCategories')) || {}
+      const partnerPluginName = partnerName.toLowerCase()
+      const plugin = (await loadPlugin(partnerPluginName, undefined, 'dataCategories')) || {}
       ;({ dataCategories = [] } = plugin)
 
       // get partnerId
