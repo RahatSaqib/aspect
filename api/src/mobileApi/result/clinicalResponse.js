@@ -139,7 +139,6 @@ async function clinicalResponse(request) {
           )
         } else if (resultEntry.clinicalResponse.treatment !== mostRecentTreatmentInPayload.externalId) {
           const followUp = await getFollowUpByExternalId(mostRecentTreatmentInPayload.externalId)
-          // mostRecentTreatmentInPayload.date = new Date(mostRecentTreatmentInPayload.date)
           await addResultFollowUp(
             mostRecentTreatmentInPayload.resultId,
             mostRecentTreatmentInPayload.externalId,
