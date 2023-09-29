@@ -7,11 +7,11 @@ const { getSampleUpdatedOnDate } = require('./getTrueUpdatedOnDates')
 const { generateSearchKeys } = require('./generateSearchKeys')
 const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../../common/consts')
 
-function transformSampleResponse(query, data, results) {
+function transformSampleResponse(query, data) {
   if (_.isEmpty(data)) return []
   const minUpdatedOn = query?.minUpdatedOn ?? formatISO(subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP))
   return _.map(data, sample => {
-    if (!_.isEmpty(_.find(results, { sample: { id: sample.id } }))) return
+    // if (!_.isEmpty(_.find(results, { sample: { id: sample.id } }))) return
     if (_.lt(new Date(sample.collectedOn), minUpdatedOn)) return
     if (sample?.sampleData && typeof sample?.sampleData === 'string') {
       sample.sampleData = JSON.parse(sample?.sampleData)
