@@ -33,6 +33,7 @@ const SELECT_SHOW_FIELDS = [
   'd.hostId',
   'd.deviceTypeId',
   'd.deviceApprovalId',
+  'd.instrumentsConnected',
   'd.configurationData',
   'd.notes',
   'd.serial',

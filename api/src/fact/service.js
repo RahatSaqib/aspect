@@ -706,7 +706,7 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     factDataCategoryLow,
   })
-  const { loadPlugin } = require('../plugin/registration')
+  const { loadPlugin } = require('../plugin/loadPlugin')
   const now = new Date()
   // calculate only for last 30 days
   const period = {
@@ -723,8 +723,8 @@ async function checkDataCategoriesForLowStatus(action, { messageContext }) {
     const partners = await knex('Partner').whereNotNull('plugin').select('id', 'plugin')
 
     // loop all partners
-    await Promise.each(partners, async ({ id: partnerId, plugin }) => {
-      const { dataCategories = [] } = await loadPlugin([plugin], 'dataCategories')
+    await Promise.each(partners, async ({ id: partnerId, plugin: partnerPluginName }) => {
+      const { dataCategories = [] } = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
       // check data categories for 'low status'
       return Promise.each(dataCategories, async dataCategory => {
         const { externalId: categoryToken } = dataCategory

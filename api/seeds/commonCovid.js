@@ -29,18 +29,6 @@ async function upsertCovidDeviceTypes(
   await Promise.each(
     [
       {
-        deviceTypeCategoryId: await deviceTypeCategoryToId('Information System'),
-        externalId: 'Aspect',
-        name: 'Aspect',
-        manufacturer: 'SystemOne',
-        plugin: 'aspectresultentry',
-        assayName: 'COVID-19 Generic Test',
-        abbreviation: 'Generic',
-        resultSourceId: await resultSourceToId('EnteredByHand'),
-        oldExternalId: 'AspectResultEntry',
-        oldAssayExternalId: 'assayAspectResultEntryCovid19',
-      },
-      {
         deviceTypeCategoryId: await deviceTypeCategoryToId('Lab'),
         externalId: 'rocheMagnaPure96',
         name: 'MagNA Pure-96',
