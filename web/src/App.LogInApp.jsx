@@ -72,6 +72,7 @@ const NationalGXTestingTrends = lazy(() => import('./pages/PkDashboard/pages/Mtb
 const NationalFQTrends = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/NationalFQTrendPage'))
 const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRTestingPage'))
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
+const CurrentFQTrend = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentFQTrendPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
 const ProvincialXDRTestingTrend = lazy(() =>
   import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialTestingTrendPage')
@@ -176,6 +177,7 @@ const LogInApp = () => {
                     <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
                     <Route path="/dashboard/xdr/provincial-fq-diagnosis-trend" element={<ProvincialXDRTrendsFQ />} />
                     <Route path="/dashboard/xdr/testing-diagnosis-trend" element={<XDRTestingDiagnosisTrend />} />
+                    <Route path="/dashboard/xdr/current-fq-detection" element={<CurrentFQTrend />} />
 
                     <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
                     <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
@@ -233,6 +235,7 @@ const LogInApp = () => {
                 <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
                 <Route path="/browse/inventory/log" element={<InventoryLog />} />
                 <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
+                <Route path="/browse/inventory/overview" element={<InventoryOverview />} />
               </>
             ) : null}
             {a(['browse', 'notification']) ? (

@@ -150,7 +150,7 @@ const validationSchema = formatMessage =>
         }),
       smsBody: Yup.string()
         .when('sendSms', optionsForSendXXX(formatMessage(messages.smsBodyRequired)))
-        .max(1000)
+        .max(2000)
         .when(['sendSms', 'notificationType'], {
           is: (sendSms, notificationType) => {
             return sendSms && notificationType === 'SiteWithLowFieldCompletionRate'
