@@ -43,6 +43,7 @@ async function clinicalResponse(request) {
     payload,
     params,
   } = request
+
   const { resultId } = params
   const { id: currentUserId } = await getUser(credentials.name)
   const dataConstraints = await getConstraints(credentials)
@@ -83,6 +84,11 @@ async function clinicalResponse(request) {
     const followUpDatesOccurredInPayload = payload.filter(fuv =>
       followUpTypeExternalIds.map(fut => `${fut}Occurred`).includes(fuv.fieldName)
     )
+
+    followUpDatesOccurredInPayload.forEach(occurrence => {
+      occurrence.value = new Date(occurrence.value)
+    })
+
     const standardFollowUpsInPayload = standardFollowUpValuesInPayload.map(value => {
       // Find the follow-up date occurred captured for the matching follow-up immediately after the follow-up was captured
       const followUpDate =
@@ -133,6 +139,7 @@ async function clinicalResponse(request) {
           )
         } else if (resultEntry.clinicalResponse.treatment !== mostRecentTreatmentInPayload.externalId) {
           const followUp = await getFollowUpByExternalId(mostRecentTreatmentInPayload.externalId)
+          // mostRecentTreatmentInPayload.date = new Date(mostRecentTreatmentInPayload.date)
           await addResultFollowUp(
             mostRecentTreatmentInPayload.resultId,
             mostRecentTreatmentInPayload.externalId,
