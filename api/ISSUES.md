@@ -30,7 +30,7 @@ An example of this could be Myanmar where we defined some specific issues and tr
 All these customizations must be implemented in the corresponding action where we want Aspect to do something different and specific.
 
 For checking the configuration of the plugin you should check the file
-`api/src/plugin/registration.js` line 36 where is defined the plugin structure with all the actions we can overwrite.
+`api/src/plugin/loadPlugin.js` line 20 where is defined the plugin structure with all the actions we can overwrite.
 
 ### Default actions (can be overwritten) are
 
@@ -295,7 +295,7 @@ The notifications are going to be fired after analyzing if we have configured th
 ## Configuring new Issue with notification
 
 This tutorial will show you the step-by-step for triggering result-based issues, using plugin functions for checking if issue conditions were met. Also we will configure the issue for triggering a notification and automatically resolving it by the scheduler.
-_The following files presented in this document are taken from the default plugin. If you need to do an issue trigger/resolution, for some specific country/partner/device you need to add the correspondent function to those files instead of the default location. You can check which one are those files in api/src/plugin/registration.js
+_The following files presented in this document are taken from the default plugin. If you need to do an issue trigger/resolution, for some specific country/partner/device you need to add the correspondent function to those files instead of the default location. You can check which one are those files in api/src/plugin/loadPlugin.js
 Also, it's important to mention that in this tutorial we will use plugin functions for triggering and resolving issues, but you can do it in many ways which were described in the Triggering section._
 
 1.  Start by adding a function for analyzing if your issue should be triggered or not. Let's go to 'api/src/plugin/issueTriggers.js' and add a new plugin for your conditions-met function:

@@ -28,6 +28,7 @@ const basicResultPayload = {
     sample: { id: 'PKM0833243689' },
     data: {
       probeData: {},
+      assay: 'Xpert MTB-RIF Ultra',
       customFieldData: {
         1: {
           notAvailable: false,

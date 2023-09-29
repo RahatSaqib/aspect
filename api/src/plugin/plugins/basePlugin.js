@@ -1,8 +1,10 @@
-const { get, merge } = require('lodash')
 const Boom = require('@hapi/boom')
-const { postProcessMergeResult } = require('../deviceApi/result')
-// include excludeResult file
-const excludeResult = require('./result/excludeResult')
+const { postProcessMergeResult } = require('../../deviceApi/result')
+const excludeResult = require('../result/excludeResult')
+const issueTriggers = require('../issueTriggers')
+const issueResolutions = require('../issueResolutions')
+const filtersOpenIssues = require('../../issue/filterConditions')
+const inventoryStrategy = require('../../inventory/strategies')
 
 const DEFAULT_SETTINGS = {
   displayPreferences: {
@@ -44,138 +46,39 @@ const DEFAULT_HANDLER_OPTIONS = {
   },
 }
 
-const plugins = {
-  default: {
-    settings: DEFAULT_SETTINGS,
-    handlerOptions: DEFAULT_HANDLER_OPTIONS,
-    issueTriggers: require('./issueTriggers'),
-    issueResolutions: require('./issueResolutions'),
-    issueEscalations: {},
-    dataCategories: {},
-    filtersOpenIssues: require('../issue/filterConditions'),
-    inventoryStrategy: require('../inventory/strategies'),
-    transformInitialPayload,
-    getDeviceSeenOn,
-    getDevicePingOn,
-    preProcessCreateDevice,
-    transformNewDevicePayload,
-    preProcessAddDeviceData,
-    preProcessUpdateDeviceConfiguration,
-    postProcessUpdateDeviceConfiguration,
-    postProcessAddDeviceOperation,
-    preProcessUpdateSite,
-    postProcessUpdateSite,
-    preProcessGetResult,
-    postProcessGetResult,
-    preProcessMergeResult,
-    excludeResult,
-    transformMergeResultPayload,
-    postProcessMergeResult,
-    onResultLogged,
-    onGxAlertAuthenticated,
-    onCaseAdded,
-    onCaseUpdated,
-    onPatientAdded,
-    onPatientUpdated,
-    getCustomFields,
-  },
-  commcare: {
-    transformInitialPayload: require('./deviceType/CommCareApp/transformInitialPayload'),
-  },
-  malawi: {
-    settings: require('./partner/Malawi/settings'),
-    transformNewDevicePayload: require('./partner/Malawi/transformNewDevicePayload'),
-    preProcessGetResult: require('./partner/Malawi/preProcessGetResult'),
-    excludeResult: require('./partner/Malawi/excludeResult'),
-    postProcessMergeResult: require('./partner/Malawi/postProcessMergeResult'),
-    postProcessUpdateSite: require('./partner/Malawi/postProcessUpdateSite'),
-    onResultLogged: require('./partner/Malawi/onResultLogged'),
-  },
-  gxconnect: {
-    preProcessCreateDevice: require('./deviceType/CepheidGeneXpert/preProcessCreateDevice'),
-    preProcessAddDeviceData: require('./deviceType/CepheidGeneXpert/preProcessAddDeviceData'),
-    postProcessUpdateDeviceConfiguration: require('./deviceType/CepheidGeneXpert/postProcessUpdateDeviceConfiguration'),
-    postProcessAddDeviceOperation: require('./deviceType/CepheidGeneXpert/postProcessAddDeviceOperation'),
-    transformMergeResultPayload: require('./deviceType/CepheidGeneXpert/transformMergeResultPayload'),
-    preProcessMergeResult: require('./deviceType/CepheidGeneXpert/preProcessMergeResult'),
-    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
-    getCustomFields: require('./deviceType/GxConnect/customFields/customFields'),
-  },
-  gxalert: {
-    getDeviceSeenOn: require('./deviceType/GxAlert/getDeviceSeenOn'),
-    getDevicePingOn: require('./deviceType/GxAlert/getDevicePingOn'),
-    preProcessAddDeviceData: require('./deviceType/GxAlert/preProcessAddDeviceData'),
-    preProcessUpdateDeviceConfiguration: require('./deviceType/GxAlert/preProcessUpdateDeviceConfiguration'),
-    postProcessUpdateDeviceConfiguration: require('./deviceType/GxAlert/postProcessUpdateDeviceConfiguration'),
-    postProcessAddDeviceOperation: require('./deviceType/GxAlert/postProcessAddDeviceOperation'),
-    transformMergeResultPayload: require('./deviceType/GxAlert/transformMergeResultPayload'),
-    preProcessMergeResult: require('./deviceType/GxAlert/preProcessMergeResult'),
-    postProcessMergeResult: require('./deviceType/GxAlert/postProcessMergeResult'),
-    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
-  },
-  myanmar: {
-    settings: require('./partner/Myanmar/settings'),
-    issueResolutions: require('./partner/Myanmar/issueResolutions'),
-    issueEscalations: require('./partner/Myanmar/issueEscalations'),
-    dataCategories: require('./partner/Myanmar/dataCategories'),
-    transformMergeResultPayload: require('./partner/Myanmar/transformMergeResultPayload'),
-    onResultLogged: require('./partner/Myanmar/onResultLogged'),
-  },
-  alereftpconnector: {
-    handlerOptions: merge({}, DEFAULT_HANDLER_OPTIONS, require('./deviceType/AlereFtpConnector/handlerOptions')),
-    getDeviceSeenOn: require('./deviceType/AlereFtpConnector/getDeviceSeenOn'),
-    preProcessAddDeviceData: require('./deviceType/AlereFtpConnector/preProcessAddDeviceData'),
-    preProcessMergeResult: require('./deviceType/AlereFtpConnector/preProcessMergeResult'),
-    postProcessMergeResult: require('./deviceType/AlereFtpConnector/postProcessMergeResult'),
-  },
-  sa_nhls: {
-    issueTriggers: require('./partner/SA_NHLS/issueTriggers'),
-    issueEscalations: require('./partner/SA_NHLS/issueEscalationConditions'),
-    issueResolutions: require('./partner/SA_NHLS/issueResolutionConditions'),
-    onResultLogged: require('./partner/SA_NHLS/onResultLogged'),
-    onGxAlertAuthenticated: require('./partner/SA_NHLS/onGxAlertAuthenticated'),
-    postProcessMergeResult: require('./partner/SA_NHLS/postProcessMergeResult'),
-  },
-  cameroon: {
-    issueTriggers: require('./partner/Cameroon/issueTriggers'),
-    issueResolutions: require('./partner/Cameroon/issueResolutionConditions'),
-  },
-  aspectresultentry: {
-    onResultLogged: require('./deviceType/AspectResultEntry/onResultLogged.js'),
-  },
-  lesothoTb: {
-    preProcessAddDeviceData: require('./partner/Lesotho_TB/preProcessAddDeviceData'),
-  },
-  philippines: {
-    onResultLogged: require('./partner/Philippines/onResultLogged'),
-    issueTriggers: require('./partner/Philippines/issueTriggers'),
-    issueResolutions: require('./partner/Philippines/issueResolutionConditions'),
-    transformMergeResultPayload: require('./partner/Philippines/transformMergeResultPayload'),
-    settings: require('./partner/Philippines/settings'),
-  },
-  pakistan: {
-    settings: require('./partner/Pakistan/settings'),
-    inventoryStrategy: require('./partner/Pakistan/inventoryStrategy'),
-  },
-}
-
-/**
- * Loads a plugin by name and action see documentation for
- * default plugin in ./default.js for available actions
- *
- * Falls back to default plugin if action
- * with name not registered
- *
- */
-async function loadPlugin(pluginNames, actionName) {
-  pluginNames = pluginNames || []
-  for (let i = 0; i < pluginNames.length; i++) {
-    const pluginAction = get(plugins, [pluginNames[i], actionName])
-    if (pluginAction) {
-      return pluginAction
-    }
-  }
-  return plugins.default[actionName]
+const basePlugin = {
+  settings: DEFAULT_SETTINGS,
+  handlerOptions: DEFAULT_HANDLER_OPTIONS,
+  issueTriggers,
+  issueResolutions,
+  issueEscalations: {},
+  dataCategories: {},
+  filtersOpenIssues,
+  inventoryStrategy,
+  transformInitialPayload,
+  getDeviceSeenOn,
+  getDevicePingOn,
+  preProcessCreateDevice,
+  transformNewDevicePayload,
+  preProcessAddDeviceData,
+  preProcessUpdateDeviceConfiguration,
+  postProcessUpdateDeviceConfiguration,
+  postProcessAddDeviceOperation,
+  preProcessUpdateSite,
+  postProcessUpdateSite,
+  preProcessGetResult,
+  postProcessGetResult,
+  preProcessMergeResult,
+  excludeResult,
+  transformMergeResultPayload,
+  postProcessMergeResult,
+  onResultLogged,
+  onGxAlertAuthenticated,
+  onCaseAdded,
+  onCaseUpdated,
+  onPatientAdded,
+  onPatientUpdated,
+  getCustomFields,
 }
 
 /**
@@ -390,6 +293,5 @@ async function onPatientUpdated(/* { patientId }, { messageContext } */) {
 }
 
 module.exports = {
-  loadPlugin,
-  DEFAULT_SETTINGS,
+  basePlugin,
 }
