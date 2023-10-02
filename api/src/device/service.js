@@ -233,23 +233,21 @@ async function getDevicePerformance(request) {
 
   const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' }, { showUnapprovedDevices: true })
     .where('r.deviceId', deviceId)
     .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
     .select([
       knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
-      knex.raw(`sum(rc1.name = 'Error') as errorCount`),
+      knex.raw(`sum(rc1.externalId = 'Error') as errorCount`),
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthTested', offset),
       lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
     ])
     .groupBy('monthTested')
 
-  const [{ errorCategoryId }] = await knex('ResultCategory as r')
-    .where('r.name', 'Error')
-    .select('r.id as errorCategoryId')
-    .limit(1)
+  const { errorCategoryId } = await knex('ResultCategory as r')
+    .where('r.externalId', 'Error')
+    .first('r.id as errorCategoryId')
 
   const resultsByCategory = await knex('FactResultsDeviceByCategory1 as f')
     .innerJoin('Device as d', 'f.deviceId', 'd.id')
