@@ -489,6 +489,7 @@ describe('Truenat Result Upload Data Processor', () => {
             ctResult3: _.get(request, 'payload.CtResult3'),
             labName: _.get(request, 'payload.LabName'),
             testName: _.get(request, 'payload.TestName'),
+            resultText: finalResult,
           }),
           sampleId: existingSampleId,
           resultCategory1: resultCategory1Id || resultCategoryIds.Missing,
