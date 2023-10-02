@@ -257,10 +257,8 @@ async function getDevicePerformance(request) {
     .groupBy('f.resultCategory1')
     .select([knex.raw('f.resultCategory1 as resultCategoryId'), knex.raw(`sum(f.resultCount) as resultCount`)])
 
-  const nonErrorResultsByCategory = resultsByCategory.filter(x => x.resultCategoryId !== errorCategoryId)
-
   const countryTotalErrorCount = resultsByCategory.find(x => x.resultCategoryId === errorCategoryId)?.resultCount ?? 0
-  const countryTotalResult = _.sumBy(nonErrorResultsByCategory, x => x.resultCount)
+  const countryTotalResult = _.sumBy(resultsByCategory, x => x.resultCount)
 
   const [deviceCapacity] = await knex('DeviceCapacity as dc')
     .leftJoin('Device as d', 'd.deviceCapacityId', 'dc.id')
