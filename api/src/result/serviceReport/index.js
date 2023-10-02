@@ -90,6 +90,7 @@ async function getAllResultsForExport(auth, query) {
     { key: 'deviceStateName', header: 'State' },
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'resultCategoryGroup', header: 'Result' },
+    { key: 'resultData.resultText', header: 'Raw Result' },
     { key: 'sampleId', header: 'Sample Id' },
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
