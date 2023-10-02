@@ -246,25 +246,23 @@ async function getDevicePerformance(request) {
     ])
     .groupBy('monthTested')
 
-  const [deviceCountry] = await knex('Device as d')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
-    .where('d.id', deviceId)
+  const [{ errorCategoryId }] = await knex('ResultCategory as r')
+    .where('r.name', 'Error')
+    .select('r.id as errorCategoryId')
+    .limit(1)
 
-  const [{ countryTotalResult, countryTotalErrorCount }] = await knex('Result as r')
-    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
-    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
-    .where('c.id', deviceCountry.countryId)
-    .select([
-      knex.raw('count(distinct r.id) as countryTotalResult'),
-      knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`),
-    ])
+  const resultsByCategory = await knex('FactResultsDeviceByCategory1 as f')
+    .innerJoin('Device as d', 'f.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'f.assayId', 'a.id')
+    .modify(addConstraints, dataConstraints, { device: 'd', assay: 'a' })
+    .where('f.days', 365)
+    .groupBy('f.resultCategory1')
+    .select([knex.raw('f.resultCategory1 as resultCategoryId'), knex.raw(`sum(f.resultCount) as resultCount`)])
+
+  const nonErrorResultsByCategory = resultsByCategory.filter(x => x.resultCategoryId !== errorCategoryId)
+
+  const countryTotalErrorCount = resultsByCategory.find(x => x.resultCategoryId === errorCategoryId)?.resultCount ?? 0
+  const countryTotalResult = _.sumBy(nonErrorResultsByCategory, x => x.resultCount)
 
   const [deviceCapacity] = await knex('DeviceCapacity as dc')
     .leftJoin('Device as d', 'd.deviceCapacityId', 'dc.id')
