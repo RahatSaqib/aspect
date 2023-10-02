@@ -57,51 +57,54 @@ async function fetchEntriesServiceHandler(request) {
   const samples = await getAllSamplesRegistered(query, dataConstraints)
   const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
 
-  // get origin Ids for each result
-  const originSiteIds = results
-    .filter(r => !!r.transferStatusLogData)
-    .map(r => JSON.parse(r.transferStatusLogData).sampleOriginSiteId)
+  let transformedResults = []
+  if (!_.isEmpty(results)) {
+    const originSiteIds = results
+      .filter(r => !!r.transferStatusLogData)
+      .map(r => JSON.parse(r.transferStatusLogData).sampleOriginSiteId)
 
-  const transferOriginIds = await getSiteByIds(originSiteIds)
+    const transferOriginIds = await getSiteByIds(originSiteIds)
 
-  // map origin id to name
-  const originSitesMap = _.reduce(
-    transferOriginIds,
-    (result, item) => {
-      result[item.id] = item.name
-      return result
-    },
-    {}
-  )
+    // map origin id to name
+    const originSitesMap = _.reduce(
+      transferOriginIds,
+      (result, item) => {
+        result[item.id] = item.name
+        return result
+      },
+      {}
+    )
 
-  const acknowledgements = await getAcknowledgementsByResultIds(results)
-  const flags = await getFlagsByResultIds(results)
-  const userSiteIds = await getUserSiteIds(dataConstraints)
-  const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
-  const user = await getUser(auth.credentials.name)
-  await addResultDownloadLog(resultIdsToBeRegistered, user.id)
+    const acknowledgements = await getAcknowledgementsByResultIds(results)
+    const flags = await getFlagsByResultIds(results)
+    const userSiteIds = await getUserSiteIds(dataConstraints)
+    const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
+    const user = await getUser(auth.credentials.name)
+    await addResultDownloadLog(resultIdsToBeRegistered, user.id)
 
-  const resultIdsToUpdate = _.uniq(
-    results
-      .filter(result => setDeliveredResultWorkflowStatuses.includes(result.resultWorkflowStatusExternalId))
-      .map(result => result.id)
-  )
-  await updateResultWorkflowStatus(resultIdsToUpdate, user.id, 'Delivered')
+    const resultIdsToUpdate = _.uniq(
+      results
+        .filter(result => setDeliveredResultWorkflowStatuses.includes(result.resultWorkflowStatusExternalId))
+        .map(result => result.id)
+    )
+    await updateResultWorkflowStatus(resultIdsToUpdate, user.id, 'Delivered')
 
-  const followUps = await getFollowUpsByResultIds(results)
-  const comments = await getCommentsOfResultById(results)
+    const followUps = await getFollowUpsByResultIds(results)
+    const comments = await getCommentsOfResultById(results)
+    transformedResults = transformResultResponse(
+      results,
+      followUps,
+      comments,
+      acknowledgements,
+      flags,
+      userSiteIds,
+      originSitesMap
+    )
+  }
+
   const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
-  const transformedResults = transformResultResponse(
-    results,
-    followUps,
-    comments,
-    acknowledgements,
-    flags,
-    userSiteIds,
-    originSitesMap
-  )
-
-  const transformedSamples = transformSampleResponse(query, samples, transformedResults)
+  // get origin Ids for each result
+  const transformedSamples = transformSampleResponse(query, samples)
 
   const mergedData = transformedResults.reduce((mergedResults, result) => {
     const existingObj = mergedResults.find(item => item.id === result.id)
