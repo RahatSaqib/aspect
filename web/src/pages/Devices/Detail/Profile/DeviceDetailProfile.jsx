@@ -485,6 +485,20 @@ const DeviceDetailProfile = ({
               description={device.get('instrumentsConnected') ?? 'n/a'}
             />
 
+            {device.getIn(['deviceType', 'externalId']) === 'CepheidGeneXpert' ? (
+              <>
+                <Summary
+                  title={formatMessage(messages.gx6cModulesCount)}
+                  description={device.get('gx6cModulesCount') ?? '0'}
+                />
+
+                <Summary
+                  title={formatMessage(messages.gx10cModulesCount)}
+                  description={device.get('gx10cModulesCount') ?? '0'}
+                />
+              </>
+            ) : null}
+
             <Summary
               title={formatMessage(messages.partner)}
               description={device.get('implementingPartnerName') ?? 'n/a'}
