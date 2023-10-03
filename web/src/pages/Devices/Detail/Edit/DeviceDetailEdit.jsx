@@ -19,6 +19,7 @@ import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGrou
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
 import styles from '../styles.css'
 import messages from './messages'
+import get from 'lodash/get'
 
 const cssClasses = classnames.bind(styles)
 
@@ -126,6 +127,38 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 shrink: true,
               }}
             />
+
+            {get(device, 'deviceType.externalId') === 'CepheidGeneXpert' ? (
+              <>
+                <TextField
+                  label={intl.formatMessage(messages.gx6cModulesCount)}
+                  type="number"
+                  error={error?.gx6cModulesCount}
+                  value={editDevice?.gx6cModulesCount ?? 0}
+                  onChange={({ target: { value } }) => {
+                    setError({ gx6cModulesCount: Number(value) < 0 })
+                    setEditDevice({ ...editDevice, gx6cModulesCount: value ? parseInt(value, 10) : '' })
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+
+                <TextField
+                  label={intl.formatMessage(messages.gx10cModulesCount)}
+                  type="number"
+                  error={error?.gx10cModulesCount}
+                  value={editDevice?.gx10cModulesCount ?? 0}
+                  onChange={({ target: { value } }) => {
+                    setError({ gx10cModulesCount: Number(value) < 0 })
+                    setEditDevice({ ...editDevice, gx10cModulesCount: value ? parseInt(value, 10) : '' })
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </>
+            ) : null}
 
             <TextField
               fullWidth
