@@ -181,6 +181,7 @@ describe('This test suite is for testing different triggers conditions', async (
           },
           data: {
             resultText: resultCategoryExternalId ? resultCategoryExternalId.toUpperCase() : null,
+            assay: 'Xpert MTB-RIF',
           },
           instrument: {
             serial: _.get(results, 'instrumentSerial') || 'S-1234-0',
@@ -391,6 +392,7 @@ describe('This test suite is for testing different triggers conditions', async (
               },
               data: {
                 resultText: resultCategoryExternalId ? resultCategoryExternalId.toUpperCase() : null,
+                assay: 'Xpert MTB-RIF',
               },
             }),
           })
@@ -420,6 +422,7 @@ describe('This test suite is for testing different triggers conditions', async (
               },
               data: {
                 resultText: resultCategoryExternalId ? resultCategoryExternalId.toUpperCase() : null,
+                assay: 'Xpert MTB-RIF',
               },
             }),
           })
@@ -490,6 +493,7 @@ describe('This test suite is for testing different triggers conditions', async (
               },
               data: {
                 resultText: resultCategoryExternalId ? resultCategoryExternalId.toUpperCase() : null,
+                assay: 'Xpert MTB-RIF',
               },
             }),
           })

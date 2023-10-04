@@ -203,6 +203,12 @@ const messages = {
     RRPerMonth: { id: 'p.PkDashboard.RRPerMonth', defaultMessage: 'Average RR cases diagnosed per month' },
     RRPerDay: { id: 'p.PkDashboard.RRPerDay', defaultMessage: 'RR cases diagnosed in last 24 hours' },
 
+    currentFQDetection: { id: 'p.PkDashboard.currentFQDetection', defaultMessage: 'Current FQ Detection' },
+    FQRPerYear: { id: 'p.PkDashboard.FQRPerYear', defaultMessage: 'FQ-R cases diagnosed this year' },
+    FQRCurrentYear: { id: 'p.PkDashboard.FQRCurrentYear', defaultMessage: 'FQ-R cases diagnosed in current year' },
+    FQRPerMonth: { id: 'p.PkDashboard.FQRPerMonth', defaultMessage: 'Average FQ-R cases diagnosed per month' },
+    FQRPerDay: { id: 'p.PkDashboard.FQRPerDay', defaultMessage: 'FQ-R cases diagnosed in last 24 hours' },
+
     xdrCurrentTitle: { id: 'p.PkDashboard.xdrCurrentTitle', defaultMessage: 'Current GX-10CX Testing performed in' },
 
     xdrCurrentDiagnosisTitle: { id: 'p.PkDashboard.xdrCurrentDiagnosisTitle', defaultMessage: 'Current Diagnosis' },
@@ -281,8 +287,8 @@ const messages = {
       defaultMessage: 'FQ & INH Testing & Diagnosis',
     },
     CurrentFQDetection: {
-      id: 'p.PkDashboard.CurrentFQDetectionPending',
-      defaultMessage: 'Current FQ Detection (Pending)',
+      id: 'p.PkDashboard.CurrentFQDetection',
+      defaultMessage: 'Current FQ Detection',
     },
     NationalFQResistanceTrend: {
       id: 'p.PkDashboard.NationalFQResistanceTrend',

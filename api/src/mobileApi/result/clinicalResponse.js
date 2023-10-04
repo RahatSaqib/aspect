@@ -29,6 +29,7 @@ const {
   getCurrentResultWorkflowStatus,
   updateResultWithResultWorkflowLog,
   updateMostRecentResultFollowUp,
+  getFollowUpsNotPossibleByResultById,
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
 
@@ -229,23 +230,28 @@ async function clinicalResponse(request) {
             value: null,
             clientTime: mostRecentNotPossibleValueCaptured.clientTime,
           }
-          const followUp = await getFollowUpByExternalId(NOT_POSSIBLE_FOLLOW_UP_TYPE)
-          await addResultFollowUp(
-            resultId,
-            NOT_POSSIBLE_FOLLOW_UP_TYPE,
-            followUp.id,
-            mostRecentNotPossibleValueCaptured.clientTime,
-            currentUserId,
-            mostRecentNotPossibleValueCaptured.clientTime,
-            currentUserId,
-            mostRecentNotPossibleValueCaptured.clientTime
-          )
-          await flagResult(
-            resultId,
-            currentUserId,
-            notPossibleReasonValueCaptured.value,
-            mostRecentNotPossibleValueCaptured.clientTime
-          )
+
+          const followUpNotPossibleExist = await getFollowUpsNotPossibleByResultById(resultId)
+
+          if (_.isEmpty(followUpNotPossibleExist)) {
+            const followUp = await getFollowUpByExternalId(NOT_POSSIBLE_FOLLOW_UP_TYPE)
+            await addResultFollowUp(
+              resultId,
+              NOT_POSSIBLE_FOLLOW_UP_TYPE,
+              followUp.id,
+              mostRecentNotPossibleValueCaptured.clientTime,
+              currentUserId,
+              mostRecentNotPossibleValueCaptured.clientTime,
+              currentUserId,
+              mostRecentNotPossibleValueCaptured.clientTime
+            )
+            await flagResult(
+              resultId,
+              currentUserId,
+              notPossibleReasonValueCaptured.value,
+              mostRecentNotPossibleValueCaptured.clientTime
+            )
+          }
           resultEntry = await showResult(resultId, dataConstraints)
         }
       } else {

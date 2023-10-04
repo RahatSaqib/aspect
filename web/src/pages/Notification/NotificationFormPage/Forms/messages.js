@@ -64,7 +64,7 @@ export default defineMessages({
   },
   smsLength: {
     id: 'pages.Notifications.smsLength',
-    defaultMessage: "Sms body shouldn't have no more than 1000 characters",
+    defaultMessage: "Sms body shouldn't have no more than 2000 characters",
   },
   geographyRequired: {
     id: 'pages.Notifications.geographyRequired',
