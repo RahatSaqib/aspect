@@ -4480,8 +4480,6 @@ msgstr "GeneXpert bei Fälligkeit kalibriert"
 #. defaultMessage is:
 #. GeneXpert Calibration Past Due
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Calibration Past Due"
 msgid "GeneXpert Calibration Past Due"
 msgstr "Kalibrierung überfällig"
 
@@ -5506,10 +5504,8 @@ msgstr "Seriennummer"
 #. defaultMessage is:
 #. Instruments Connected
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Instrument Replaced"
 msgid "Instruments Connected"
-msgstr "Ersetztes Instrument"
+msgstr "Angeschlossene Instrumente"
 
 #. [errorResponseMessages.fetchPersons.GET.403.title]
 #. defaultMessage is:
@@ -7043,10 +7039,8 @@ msgstr "Modulwechsel"
 #. defaultMessage is:
 #. Module Swaps (GeneXpert only)
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Module Status Report"
 msgid "Module Swaps (GeneXpert only)"
-msgstr "Modul-Statusbericht"
+msgstr "Durchschnittliche Tage für Modulaustausch"
 
 #. [pages.Notification.type.ModuleUnused]
 #. defaultMessage is:
@@ -7316,10 +7310,8 @@ msgstr "Nationale Testtrends mit MTB/XDR-Assay"
 #. defaultMessage is:
 #. National and Provincial Trends in Annual Utilization Rates
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Provinces annual utilization rates"
 msgid "National and Provincial Trends in Annual Utilization Rates"
-msgstr "Jährliche Nutzungsraten der Provinzen"
+msgstr "Nationale und provinzielle Trends bei den jährlichen Nutzungsraten"
 
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
@@ -11282,8 +11274,6 @@ msgstr "SMS-Text ist erforderlich"
 #. defaultMessage is:
 #. Sms body shouldn't have no more than 2000 characters
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Sms body shouldn't have no more than 144 characters"
 msgid "Sms body shouldn't have no more than 2000 characters"
 msgstr "Der SMS-Text sollte nicht mehr als 144 Zeichen haben"
 
@@ -11291,8 +11281,6 @@ msgstr "Der SMS-Text sollte nicht mehr als 144 Zeichen haben"
 #. defaultMessage is:
 #. Sms message should not be longer than 2000 characters
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Sms message should not be longer than 144 characters"
 msgid "Sms message should not be longer than 2000 characters"
 msgstr "SMS-Nachricht sollte nicht länger als 144 Zeichen sein"
 
@@ -11391,10 +11379,8 @@ msgstr "Status"
 #. defaultMessage is:
 #. Stock not recorded (GenXpert only)
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Stock not recorded"
 msgid "Stock not recorded (GenXpert only)"
-msgstr "Bestand nicht erfasst"
+msgstr "Bestand nicht erfasst (nur GenXpert)"
 
 #. [pages.SiteDetail.fieldBelongTo]
 #. defaultMessage is:
@@ -11962,8 +11948,6 @@ msgstr ""
 #. defaultMessage is:
 #. The average number of SMS recipients per positive result.
 #: extracted_strings.json
-#, fuzzy
-#| msgid "The average number of SMS recipients per positive GeneXpert result."
 msgid "The average number of SMS recipients per positive result."
 msgstr ""
 "Die durchschnittliche Anzahl von SMS-Empfängern pro positivem GeneXpert-"
@@ -11973,10 +11957,6 @@ msgstr ""
 #. defaultMessage is:
 #. The average number of characters in SMS messages sent about positive results.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The average number of characters in SMS messages sent about positive "
-#| "GeneXpert results."
 msgid ""
 "The average number of characters in SMS messages sent about positive results."
 msgstr ""
@@ -12004,12 +11984,6 @@ msgstr ""
 #. defaultMessage is:
 #. The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The average number of days between when an instrument serial last "
-#| "reported from a device and a new instrument serial reporting. An "
-#| "Instrument is marked as replaced when two consecutive results performed "
-#| "in the same device, have a different Instrument serial number"
 msgid ""
 "The average number of days between when an instrument serial last reported "
 "from a GeneXpert device and a new instrument serial reporting. An Instrument "
@@ -12026,9 +12000,6 @@ msgstr ""
 #. defaultMessage is:
 #. The average number of email recipients per positive result.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The average number of email recipients per positive GeneXpert result."
 msgid "The average number of email recipients per positive result."
 msgstr ""
 "Die durchschnittliche Anzahl der E-Mail-Empfänger pro positivem GeneXpert-"
@@ -12103,10 +12074,6 @@ msgstr "Die Meldungsart ist erforderlich"
 #. defaultMessage is:
 #. The number of GeneXpert instruments that had their last calibration more than one year ago.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The number of instruments that had their last calibration more than one "
-#| "year ago."
 msgid ""
 "The number of GeneXpert instruments that had their last calibration more "
 "than one year ago."
@@ -12118,11 +12085,6 @@ msgstr ""
 #. defaultMessage is:
 #. The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The number of module swaps made at the current month. The module swap "
-#| "issue appears when two consecutive results performed in the same slot "
-#| "have a different module serial number"
 msgid ""
 "The number of GeneXpert module swaps made at the current month. The module "
 "swap issue appears when two consecutive results performed in the same slot "
@@ -12288,29 +12250,20 @@ msgstr ""
 #. defaultMessage is:
 #. The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The percentage of calibrations that were within 30 days of the scheduled "
-#| "date. Note that this only counts calibrations for devices that had a "
-#| "calibration record before."
 msgid ""
 "The percentage of GeneXpert calibrations that were within 30 days of the "
 "scheduled date. Note that this only counts calibrations for devices that had "
 "a calibration record before."
 msgstr ""
-"Der Prozentsatz der Kalibrierungen, die innerhalb von 30 Tagen nach dem "
-"geplanten Datum durchgeführt wurden. Beachten Sie, dass dies nur "
-"Kalibrierungen für Geräte zählt, für die zuvor ein Kalibrierungsprotokoll "
-"erstellt wurde."
+"Der Prozentsatz der GeneXpert-Kalibrierungen, die innerhalb von 30 Tagen "
+"nach dem geplanten Datum stattfanden. Beachten Sie, dass hier nur "
+"Kalibrierungen für Geräte gezählt werden, für die es zuvor einen "
+"Kalibrierungsdatensatz gab."
 
 #. [component.Widget.gxPositiveResultsNotifiedDescription]
 #. defaultMessage is:
 #. The percentage of positive results that were notified via SMS or email.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "The percentage of positive GeneXpert's results that were notified via SMS "
-#| "or email."
 msgid "The percentage of positive results that were notified via SMS or email."
 msgstr ""
 "Der Prozentsatz der positiven GeneXpert-Ergebnisse, die per SMS oder E-Mail "
@@ -13699,10 +13652,8 @@ msgstr "Xpert Site Detaillierter Bericht"
 #. defaultMessage is:
 #. Xpert Site Summary Report - Site Wise
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Device Summary Report"
 msgid "Xpert Site Summary Report - Site Wise"
-msgstr "Gerätezusammenfassungsbericht"
+msgstr "Xpert Site Detaillierter Bericht"
 
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
@@ -13715,10 +13666,8 @@ msgstr "Rapport Xpert-testactiviteiten"
 #. defaultMessage is:
 #. Xpert Workload Summary Report
 #: extracted_strings.json
-#, fuzzy
-#| msgid "Report of TB Workload Summary"
 msgid "Xpert Workload Summary Report"
-msgstr "Bericht über die Zusammenfassung der TB-Arbeitsbelastung"
+msgstr "Xpert Workload-Zusammenfassungsbericht"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
@@ -13780,10 +13729,6 @@ msgstr "Gestern"
 #. defaultMessage is:
 #. You can contact us to check your account by email ({supportEmail})
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "You can contact us to unlock your account for you by email "
-#| "({supportEmail})"
 msgid "You can contact us to check your account by email ({supportEmail})"
 msgstr ""
 "Sie können uns per E-Mail ({supportEmail}) kontaktieren, um Ihr Konto für "
@@ -13926,16 +13871,12 @@ msgstr ""
 #. defaultMessage is:
 #. Your credentials were not configured properly. Please, contact your administrator.
 #: extracted_strings.json
-#, fuzzy
-#| msgid ""
-#| "Access denied for this resource. Please, contact your administrator for "
-#| "support."
 msgid ""
 "Your credentials were not configured properly. Please, contact your "
 "administrator."
 msgstr ""
-"Zugriff für diese Ressource verweigert. Bitte wenden Sie sich an Ihren "
-"Administrator, um Unterstützung zu erhalten."
+"Ihre Anmeldedaten wurden nicht richtig konfiguriert. Bitte wenden Sie sich "
+"an Ihren Administrator."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
