@@ -31,9 +31,9 @@ module.exports = async function (request) {
           name: 'Download Link',
         },
         {
-          id: 'report.dateRang',
-          nameI18nKey: 'placeholderReportDateRang',
-          name: 'Date Rang',
+          id: 'report.dateRange',
+          nameI18nKey: 'placeholderReportDateRange',
+          name: 'Date Range',
         },
       ],
     },

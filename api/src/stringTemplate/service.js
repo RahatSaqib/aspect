@@ -13,6 +13,7 @@ const {
 } = require('../shared/date')
 const { addConstraints } = require('../auth/constraints')
 const getCurrentPartner = require('../partner/getCurrentPartner')
+const { getDateRangeFilters } = require('../notification/common/logic')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -155,6 +156,8 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'i.data as issueData',
         'it.externalId as issueTypeExternalId',
         'nt.name as notificationTypeName',
+        knex.raw("nt.filterCondition ->> '$.reportDateRange' as reportDateRange"),
+        knex.raw("nt.filterCondition ->> '$.reportStartingWeekDay' as reportStartingWeekDay"),
         knex.raw(`${notification}.reportToken as reportToken`)
       )
   }
@@ -387,6 +390,7 @@ async function getBaseDataSource(data, auth) {
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}
+  const range = getDateRangeFilters(new Date(), d.reportDateRange, d.reportStartingWeekDay)
 
   return {
     country: {
@@ -487,6 +491,7 @@ async function getBaseDataSource(data, auth) {
     },
     report: {
       downloadLink: `${apiUrl}/api/reports/download?token=${d.reportToken}`,
+      dateRange: `${range.minDate} ${range.maxDate}`,
     },
     displayPreferences,
     timezone: d.timezone,
