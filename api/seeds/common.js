@@ -121,7 +121,8 @@ async function commonUpserts(
     (await knex('Person')
       .where({
         userId: adminId,
-        geographyId,
+        // geographyId,
+        // canLogIn: true,
       })
       .first('id')) || {}
   if (!adminPersonId) {
@@ -132,6 +133,7 @@ async function commonUpserts(
       lastCountryId: countryId,
       geographyId,
       culture,
+      canLogIn: true,
       timezone,
       ...auditFields,
     })
@@ -172,7 +174,7 @@ async function commonUpserts(
   if (deviceApiToken) {
     await upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
   }
-  await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
+
   await ensureResultTreatmentStatuses(knex)
 
   if (usersInsertConfig)
@@ -214,6 +216,7 @@ async function upsertDemoUsersPerJobFunction(
     lastCountryId: countryId,
     geographyId,
     culture,
+    canLogIn: true,
     timezone,
     ...auditFields,
   }
@@ -431,21 +434,6 @@ async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, devi
         updatedOn: auditFields.updatedOn,
       })
   }
-}
-
-async function ensureAspectDeviceExists(knex, countryId, partnerId, auditFields) {
-  return ensureCountryLevelInformationSystemExists(
-    knex,
-    countryId,
-    partnerId,
-    {
-      externalId: 'Aspect',
-      name: 'Aspect',
-      manufacturer: 'SystemOne',
-      plugin: 'aspectresultentry',
-    },
-    auditFields
-  )
 }
 
 async function ensureCountryLevelInformationSystemExists(knex, countryId, partnerId, deviceType, auditFields) {
@@ -1966,7 +1954,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
-  ensureAspectDeviceExists,
   upsertJobFunctionPermission,
   upsertGeneXpertDeviceTypeAndAssays,
   upsertSites,

@@ -2,13 +2,12 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const Promise = require('bluebird')
 
-const { ensureAspectDeviceExists } = require('../common')
 const { upsertCovidDeviceTypes } = require('../commonCovid')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 const now = new Date()
 async function seed(knex) {
-  const { partnerId, labGeographyId, labSiteId, labName, labExternalId, countryId } = await knex('Partner as p')
+  const { partnerId, labGeographyId, labSiteId, labName, labExternalId } = await knex('Partner as p')
     .join('Device as d', 'p.id', 'd.partnerId')
     .join('Site as s', 's.id', 'd.siteId')
     .join('Geography as g', 's.geographyId', 's.geographyId')
@@ -35,7 +34,6 @@ async function seed(knex) {
   const covidDeviceTypes = (await upsertCovidDeviceTypes(knex, partnerId)).filter(
     deviceType => deviceType.externalId !== 'Aspect'
   )
-  await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
   const deviceTypeAssays = {}
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),

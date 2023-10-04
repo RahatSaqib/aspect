@@ -1,0 +1,35 @@
+import React from 'react'
+import { Column } from '@ant-design/plots'
+import { filterColour } from '../../graphUtils'
+
+const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onReady, isPercentage }) => {
+  const config = {
+    data,
+    color: datum => filterColour(data.find(d => d.type === datum.type).id, graphId),
+    label: showLabel
+      ? {
+          position: 'middle',
+          content: originData => (isPercentage ? `${originData.value}%` : originData.value),
+          layout: [{ type: 'interval-adjust-position' }, { type: 'interval-hide-overlap' }, { type: 'adjust-color' }],
+        }
+      : false, // format for label on top of section
+    isStack: true,
+    xField,
+    yField,
+    seriesField,
+    animation: false,
+    legend: { position: 'bottom', maxRow: 3 },
+    tooltip: {
+      formatter: datum => ({
+        name: `${datum.type}`,
+        value: isPercentage ? `${datum.value}%` : `${datum.value}`,
+      }),
+    },
+    onReady,
+    appendPadding: 20,
+  }
+
+  return <Column {...config} />
+}
+
+export default BarGraph

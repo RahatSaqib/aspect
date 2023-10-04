@@ -23,7 +23,7 @@ const {
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
 
-const { loadPlugin } = require('../../src/plugin/registration')
+const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const { seedDataCategory } = require('../dataCategoryLow')
 
 const now = new Date()
@@ -79,8 +79,8 @@ async function seed(knex) {
 
   // -------------------------
   // add and randomly populate DataCategory fields
-  const pluginName = 'myanmar'
-  const plugin = await loadPlugin([pluginName], 'dataCategories')
+  const partnerPluginName = 'myanmar'
+  const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { addDataCategoryFields } = plugin
   if (addDataCategoryFields) {
     patients = addDataCategoryFields(patients)
@@ -139,7 +139,7 @@ async function seed(knex) {
   }
   const baseProps = {
     partnerId,
-    pluginName,
+    pluginName: partnerPluginName,
     jobFunctionIds,
     auditFields,
     issueTypeWhitelist: ['DeviceMaintenance', 'ModuleReplaced'],
@@ -474,6 +474,7 @@ async function seed(knex) {
         geographyId,
         culture: myanmarCountry.culture,
         timezone: myanmarCountry.timezone,
+        canLogIn: true,
         ...auditFields,
       })
       const [jobIdLab] = await knex('Job').insert({

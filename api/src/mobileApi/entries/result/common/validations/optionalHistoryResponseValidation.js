@@ -15,10 +15,15 @@ const optionalHistoryResponseValidation = Joi.object()
           siteName: Joi.string().required().description('Entry event site name derived from siteId'),
           updatedOn: Joi.required().description('When the entry event was last updated in the Aspect database'),
           reason: Joi.optional().allow('', null).description('The reason for the follow up being recorded'),
+          clinicianName: Joi.optional().allow('', null).description('The name of clinician who took the action'),
+          type: Joi.optional().allow('', null).description('The follow up type'),
           transferredBy: Joi.optional()
             .allow('', null)
             .description('The full name of the user who transferred the result'),
           comment: Joi.optional().allow('', null).description('The comment made when result was transferred'),
+          originSiteName: Joi.optional().allow('', null).description('The site where the transferred was initiated'),
+          sampleId: Joi.optional().allow('', null).description('The id of the sample'),
+          patientId: Joi.optional().allow('', null).description('The id of the patient'),
         })
       ),
   })

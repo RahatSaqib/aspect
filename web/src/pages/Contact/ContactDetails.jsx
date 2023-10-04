@@ -32,7 +32,7 @@ const ContactDetails = ({ setStep }) => {
 
   const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
-  const { countryAbbreviation, countryId } = useAuthState()
+  const { countryAbbreviation, countryId, userPermissions } = useAuthState()
   const { formatMessage } = useI18n()
 
   const { isLoading, data: person } = usePerson(id)
@@ -80,7 +80,7 @@ const ContactDetails = ({ setStep }) => {
     <>
       <ContactStepper
         step={0}
-        full={id !== ACTION.SELF}
+        full={id !== ACTION.SELF && userPermissions.includes('person:edit')}
         isUpdate={id !== ACTION.ADD}
         onChange={(v, step) => setStep(step)}
       />

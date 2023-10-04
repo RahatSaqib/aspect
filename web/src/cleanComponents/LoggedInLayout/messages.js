@@ -17,6 +17,7 @@ const messages = defineMessages({
   inventoryItems: { id: 'browsePage.browseDropdown.inventoryItems', defaultMessage: 'Inventory on Hand' },
   inventoryLog: { id: 'browsePage.browseDropdown.inventoryLog', defaultMessage: 'Inventory Log' },
   inventoryTransfers: { id: 'browsePage.browseDropdown.inventoryTransfers', defaultMessage: 'Transfers' },
+  InventoryOverview: { id: 'browsePage.browseDropdown.inventoryOverview', defaultMessage: 'Inventory Overview' },
   routers: { id: 'browsePage.browseDropdown.routers', defaultMessage: 'Routers' },
   reporters: { id: 'browsePage.browseDropdown.reporters', defaultMessage: 'Reporters' },
   notifications: { id: 'browsePage.browseDropdown.notifications', defaultMessage: 'Notifications' },

@@ -3,24 +3,25 @@ import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useSelector, useDispatch } from 'react-redux'
 import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
+import CovidResultGraph from '../../../cleanComponents/Graphs/CovidResultGraph'
+import HivResultsGraph from '../../../cleanComponents/Graphs/HivResultsGraph'
+import QuartersMtbDetectedGraph from '../../../cleanComponents/Graphs/QuartersMtbDetectedGraph'
+import QuartersRifDetectedGraph from '../../../cleanComponents/Graphs/QuartersRifDetectedGraph'
+import TbDetectedGraph from '../../../cleanComponents/Graphs/TbDetectedGraph'
+import TbResultsGraph from '../../../cleanComponents/Graphs/TbResultsGraph'
+import TestsOverTimeGraph from '../../../cleanComponents/Graphs/TestsOverTimeGraph'
+import TreatmentStatusGraph from '../../../cleanComponents/Graphs/TreatmentStatusGraph'
+import TrendInYearsAllTestsGraph from '../../../cleanComponents/Graphs/TrendInYearsAllTestsGraph'
+import TrendInYearsMtbDetectedGraph from '../../../cleanComponents/Graphs/TrendInYearsMtbDetectedGraph'
+import TrendInYearsRifDetectedGraph from '../../../cleanComponents/Graphs/TrendInYearsRifDetectedGraph'
+import XDRFLQResistanceGraph from '../../../cleanComponents/Graphs/XDRFLQResistanceGraph'
+import XDRResultsGraph from '../../../cleanComponents/Graphs/XDRResultsGraph'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
+import { useAuthState } from '../../../providers/AuthProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
-import CovidResultGraph from '../Graphs/CovidResultGraph'
 import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
-import HivResultsGraph from '../Graphs/HivResultsGraph'
 import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
-import QuartersMtbDetectedGraph from '../Graphs/QuartersMtbDetectedGraph'
-import QuartersRifDetectedGraph from '../Graphs/QuartersRifDetectedGraph'
-import TbDetectedGraph from '../Graphs/TbDetectedGraph'
-import TbResultsGraph from '../Graphs/TbResultsGraph'
-import TestsOverTimeGraph from '../Graphs/TestsOverTimeGraph'
-import TreatmentStatusGraph from '../Graphs/TreatmentStatusGraph'
-import TrendInYearsAllTestsGraph from '../Graphs/TrendInYearsAllTestsGraph'
-import TrendInYearsMtbDetectedGraph from '../Graphs/TrendInYearsMtbDetectedGraph'
-import TrendInYearsRifDetectedGraph from '../Graphs/TrendInYearsRifDetectedGraph'
-import XDRFLQResistanceGraph from '../Graphs/XDRFLQResistanceGraph'
-import XDRResultsGraph from '../Graphs/XDRResultsGraph'
 import styles from './index.css'
 import messages from './messages'
 import Reports from './Reports'
@@ -31,7 +32,7 @@ const cssClasses = classnames.bind(styles)
 const Status = () => {
   const { formatMessage } = useI18n()
   const dispatch = useDispatch()
-
+  const { isCountry } = useAuthState()
   useEffect(() => {
     dispatch(fetchAssays(false))
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -83,21 +84,21 @@ const Status = () => {
 
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
-              <TrendInYearsAllTestsGraph assaysFromState={assays} /> {/* 5 */}
-              <TrendInYearsMtbDetectedGraph assaysFromState={assays} /> {/* 6 */}
-              <TrendInYearsRifDetectedGraph assaysFromState={assays} /> {/* 7 */}
-              <QuartersMtbDetectedGraph assaysFromState={assays} /> {/* 8 */}
-              <QuartersRifDetectedGraph assaysFromState={assays} /> {/* 9 */}
+              <TrendInYearsAllTestsGraph /> {/* 5 */}
+              <TrendInYearsMtbDetectedGraph /> {/* 6 */}
+              <TrendInYearsRifDetectedGraph /> {/* 7 */}
+              <QuartersMtbDetectedGraph /> {/* 8 */}
+              <QuartersRifDetectedGraph /> {/* 9 */}
             </PermissionChecker>
           ) : null}
 
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
-              <XDRFLQResistanceGraph assaysFromState={assays} /> {/* 10 */}
+              <XDRFLQResistanceGraph /> {/* 10 */}
             </PermissionChecker>
           ) : null}
 
-          {assays.some(a => covidPermissions.includes(a.externalId)) ? (
+          {assays.some(a => covidPermissions.includes(a.externalId)) && !isCountry('BD') ? (
             <PermissionChecker permissions={['dashboard']}>
               <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
             </PermissionChecker>
@@ -110,7 +111,7 @@ const Status = () => {
           ) : null}
 
           <PermissionChecker permissions={['dashboard', 'operationalData']}>
-            <DeviceStatusGraph assaysFromState={assays} /> {/* 13 */}
+            {!isCountry('BD') && <DeviceStatusGraph assaysFromState={assays} />} {/* 13 */}
             <InventoryStatusGraph assaysFromState={assays} /> {/* 14 */}
           </PermissionChecker>
 
