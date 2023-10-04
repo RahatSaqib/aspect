@@ -12,8 +12,12 @@ import useInventoryOverview from './useInventoryOverview'
 function transformInventory(data) {
   return data?.map(item => ({
     ...item,
-    name: item[item.type],
+    name: item[item.type] ?? item.lab,
     children: transformInventory(item.children ?? []),
+    usedLastSixMonths: item.usedLastSixMonths ?? 0,
+    daysOfInventoryLeft: item.daysOfInventoryLeft ?? 0,
+    usedInDateRange: item.usedInDateRange ?? 0,
+    dailyConsumptionRate: item.dailyConsumptionRate ?? 0,
   }))
 }
 
