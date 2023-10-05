@@ -56,7 +56,7 @@ function transformResultResponse(data, followUps, comments, acknowledgements, fl
       errorCode: result.errorCode,
       laboratorySiteName: result.laboratorySiteName,
       testEndDate: result.testEndDate,
-      resultNotes: result.ResultNotes,
+      resultNotes: result.resultNotes,
       comments: extractFromDataById(comments, 'resultId', result.id),
       followUps: resultFollowUps,
       history: buildHistoryTimeline(result, resultFollowUps, resultFlags, userSiteIds, originSites),

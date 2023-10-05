@@ -13,7 +13,7 @@ const data347 = {
   patientData:
     '{"id": "57-158-6406", "age": "54", "dob": "1964-06-21", "zip": "37823", "city": "Malaomo", "name": "Ireen Jackson", "phone": "301-152-2436", "state": "Mangochi", "gender": "Female", "street": "18227 Cambridge Trail", "lastName": "Jackson", "sampleId": "PRH-35931", "firstName": "Ireen", "hivStatus": "HIV Negative", "motherName": "Peter", "providerId": "P-4477", "artHccNumber": "3487-9991", "microscopyResult": "Not Done"}',
   resultData:
-    '{"probes": {"qc1": "YES", "qc2": "No", "qc1Ct": 1, "qc2Ct": 0.007, "probeA": "NEG", "probeB": "POS", "probeC": "NO RESULT", "probeD": "NEG", "probeE": "POS", "probeACt": 12.32, "probeBCt": 11.2, "probeCCt": 12.5, "probeDCt": 0.5, "probeECt": 1.2, "probeSpc": "NO RESULT", "qc1Endpt": 0.1234, "qc2Endpt": 1.22, "probeSpcCt": 5.78, "probeAEndpt": 1.6, "probeBEndpt": 2.33, "probeCEndpt": 457, "probeDEndpt": 12.43, "probeEEndpt": 3.14, "probeSpcEndpt": 8.9018}, "resultText": "Not Detected"}',
+    '{"probes": {"qc1": "YES", "qc2": "No", "qc1Ct": 1, "qc2Ct": 0.007, "probeA": "NEG", "probeB": "POS", "probeC": "NO RESULT", "probeD": "NEG", "probeE": "POS", "probeACt": 12.32, "probeBCt": 11.2, "probeCCt": 12.5, "probeDCt": 0.5, "probeECt": 1.2, "probeSpc": "NO RESULT", "qc1Endpt": 0.1234, "qc2Endpt": 1.22, "probeSpcCt": 5.78, "probeAEndpt": 1.6, "probeBEndpt": 2.33, "probeCEndpt": 457, "probeDEndpt": 12.43, "probeEEndpt": 3.14, "probeSpcEndpt": 8.9018}, "resultText": "Not Detected",}',
   resultSampleId: 172,
   updatedOn: '2023-05-03T19:15:57.000Z',
   testDate: '2023-05-03T17:55:57.000Z',
@@ -52,6 +52,9 @@ const data347 = {
   laboratorySiteExternalId: 'Lancaster-Lab',
   laboratorySiteName: 'Lancaster Clinic Laboratory',
   sampleClinicianName: 'test clinician',
+  errorCode: '400',
+  resultNotes: 'test notes',
+  testEndDate: '2023-10-05T19:25:21.025Z',
 }
 
 const expected347 = [
@@ -74,6 +77,10 @@ const expected347 = [
     requiresFollowUp: false,
     noFollowUpPossible: false,
     noFollowUpPossibleComment: undefined,
+    errorCode: '400',
+    laboratorySiteName: 'Lancaster Clinic Laboratory',
+    resultNotes: 'test notes',
+    testEndDate: '2023-10-05T19:25:21.025Z',
     comments: [],
     followUps: [],
     history: [
@@ -212,7 +219,7 @@ const data450 = {
   patientData:
     '{"id": "84-687-3493", "age": "17", "dob": "2001-11-24", "zip": "59987", "city": "Mitundu", "name": "Banda Ganizani", "phone": "691-815-0082", "state": "Likoma", "gender": "Male", "street": "22946 Dexter Park", "lastName": "Ganizani", "sampleId": "PRH-42714", "firstName": "Banda", "hivStatus": "HIV Negative", "motherName": "Ellen", "providerId": "P-7111", "artHccNumber": "0349-5670", "microscopyResult": "Not Done"}',
   resultData:
-    '{"probes": {"qc1": "YES", "qc2": "No", "qc1Ct": 1, "qc2Ct": 0.007, "probeA": "NEG", "probeB": "POS", "probeC": "NO RESULT", "probeD": "NEG", "probeE": "POS", "probeACt": 12.32, "probeBCt": 11.2, "probeCCt": 12.5, "probeDCt": 0.5, "probeECt": 1.2, "probeSpc": "NO RESULT", "qc1Endpt": 0.1234, "qc2Endpt": 1.22, "probeSpcCt": 5.78, "probeAEndpt": 1.6, "probeBEndpt": 2.33, "probeCEndpt": 457, "probeDEndpt": 12.43, "probeEEndpt": 3.14, "probeSpcEndpt": 8.9018}, "resultText": "MTB Detected|Rif Indeterminate"}',
+    '{"probes": {"qc1": "YES", "qc2": "No", "qc1Ct": 1, "qc2Ct": 0.007, "probeA": "NEG", "probeB": "POS", "probeC": "NO RESULT", "probeD": "NEG", "probeE": "POS", "probeACt": 12.32, "probeBCt": 11.2, "probeCCt": 12.5, "probeDCt": 0.5, "probeECt": 1.2, "probeSpc": "NO RESULT", "qc1Endpt": 0.1234, "qc2Endpt": 1.22, "probeSpcCt": 5.78, "probeAEndpt": 1.6, "probeBEndpt": 2.33, "probeCEndpt": 457, "probeDEndpt": 12.43, "probeEEndpt": 3.14, "probeSpcEndpt": 8.9018}, "resultText": "MTB Detected|Rif Indeterminate", "detectedResistance": ["INH", "FLQ"]}',
   resultSampleId: 155,
   updatedOn: '2023-05-20T19:15:55.000Z',
   testDate: '2023-05-20T17:55:55.000Z',
@@ -251,6 +258,9 @@ const data450 = {
   laboratorySiteExternalId: 'Marden-Lab',
   laboratorySiteName: 'Marden Hospital Laboratory',
   sampleClinicianName: 'test clinician',
+  errorCode: '400',
+  resultNotes: 'test notes',
+  testEndDate: '2023-10-05T19:25:21.025Z',
 }
 
 const followUp450 = [
@@ -293,6 +303,10 @@ const expected450 = [
     requiresFollowUp: false,
     noFollowUpPossible: false,
     noFollowUpPossibleComment: undefined,
+    errorCode: '400',
+    resultNotes: 'test notes',
+    testEndDate: '2023-10-05T19:25:21.025Z',
+    laboratorySiteName: 'Marden Hospital Laboratory',
     comments: [],
     followUps: [
       {
@@ -428,6 +442,7 @@ const expected450 = [
         value: 'Indeterminate',
         valueI18nKey: 'resultCategoryIndeterminate',
         severity: 'danger',
+        detectedResistance: ['INH', 'FLQ'],
       },
     ],
     testType: {

@@ -485,6 +485,7 @@ describe('Entries helpers', () => {
           value: 'name2',
           valueI18nKey: 'valueKey2',
           severity: 'info',
+          detectedResistance: [],
         },
       ]
 
@@ -563,7 +564,6 @@ describe('Entries helpers', () => {
   })
 
   describe('transformResultResponse', () => {
-    // eslint-disable-next-line mocha/no-exclusive-tests
     it('correctly transform results', async () => {
       const entry347 = transformResultResponse([data347], [], [])
       const entry450 = transformResultResponse([data450], followUp450, [])
