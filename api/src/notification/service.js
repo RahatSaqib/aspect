@@ -567,7 +567,20 @@ async function createNotificationIfNotCreatedAlready(
     filterCondition,
   } = notifProps
   const { personId = null, policy, reportToken = null, reportFileName = null, now = new Date() } = policyProps
-  const { notify: notifyANonPerson = false, email: to, phone } = nonPersonToSend
+  const { notify: notifyANonPerson = false } = nonPersonToSend
+  let { email: to, phone } = nonPersonToSend
+  let person
+  if (personId) {
+    person = await knex('Person').where({ id: personId }).first()
+  }
+  if (person) {
+    if (!to) {
+      to = person.email || person.email2 || ''
+    }
+    if (!phone) {
+      phone = person.cell || person.phone || ''
+    }
+  }
 
   context.bindActionCreators({
     notificationCreated,
@@ -612,7 +625,7 @@ async function createNotificationIfNotCreatedAlready(
       createdOn: now,
       updatedOn: now,
     }
-    if (personId || !!notifyANonPerson || policy.webhookTemplateId) {
+    if (person || !!notifyANonPerson || policy.webhookTemplateId) {
       if (policy.alertTemplateId != null) {
         const [alertMessageId] = await knex('AlertMessage').insert({
           alertTemplateId: policy.alertTemplateId,
