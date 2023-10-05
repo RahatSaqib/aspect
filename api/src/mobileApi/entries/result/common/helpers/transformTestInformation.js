@@ -35,6 +35,7 @@ function transformTestInformation(data) {
       value: testInfo2.resultCategory2Name ?? null,
       valueI18nKey: testInfo2.resultCategory2ValueI18nKey ?? null,
       severity: testInfo2.resultCategory2Emphasize ? 'danger' : 'info',
+      detectedResistance: JSON.parse(data.resultData)?.detectedResistance,
     })
   }
   return output
