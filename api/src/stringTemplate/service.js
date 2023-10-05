@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { formatDistanceStrict, parseISO } = require('date-fns')
+const { formatDistanceStrict, parseISO, format } = require('date-fns')
 const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
@@ -491,7 +491,7 @@ async function getBaseDataSource(data, auth) {
     },
     report: {
       downloadLink: `${apiUrl}/api/reports/download?token=${d.reportToken}`,
-      dateRange: `${range.minDate} ${range.maxDate}`,
+      dateRange: `${format(parseISO(range.minDate), 'yyyy-MM-dd')} - ${format(parseISO(range.maxDate), 'yyyy-MM-dd')}`,
     },
     displayPreferences,
     timezone: d.timezone,
