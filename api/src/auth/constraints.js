@@ -661,14 +661,18 @@ const addPartnerQueryConstraints = (queryBuilder, { partner, country, geography,
 
 function addTransferLogConstraints(queryBuilder, constraints, aliases) {
   if (aliases.transferLog) {
-    const clinicianSiteIds = constraints.$or.map(item => item.site.id)
-    return queryBuilder
-      .where(builder => {
-        builder.whereIn('previousReportableSiteId', clinicianSiteIds).orWhereIn('sampleOriginSiteId', clinicianSiteIds)
-      })
-      .andWhere(builder => {
-        builder.whereNotIn('reportableSiteId', clinicianSiteIds)
-      })
+    const clinicianSiteIds = constraints.$or.map(constraint => constraint.site?.id).filter(item => !!item)
+    if (!_.isEmpty(clinicianSiteIds)) {
+      return queryBuilder
+        .where(builder => {
+          builder
+            .whereIn('previousReportableSiteId', clinicianSiteIds)
+            .orWhereIn('sampleOriginSiteId', clinicianSiteIds)
+        })
+        .andWhere(builder => {
+          builder.whereNotIn('reportableSiteId', clinicianSiteIds)
+        })
+    }
   }
 }
 
