@@ -1589,32 +1589,10 @@ async function transferResult(request) {
     resultStatusLog = await knex('ResultStatusLog').where({ id: resultStatusLogId }).first('createdOn')
     transferredOn = resultStatusLog.createdOn
 
-    // remove ResultFollowUp because we want the user at the clinic that now has access
-    // to the result to confirm the treatment status.
-    await knex('ResultFollowUp').where({ resultId }).del()
-    // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
-    const externalId = 'AwaitingTreatment'
-    const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
-    const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
-      resultId,
-      resultTreatmentStatusId,
-      method: 'transfer',
-      data: JSON.stringify({
-        siteId: result.data.siteId,
-        reportableSiteId: siteId,
-        sampleOriginSiteId: result.data.sampleOriginSiteId,
-      }),
-      createdOn: now,
-      changedOn: now,
-      createdBy: currentUserId,
-    })
-    // ------------
-
     // update
     await knex('Result').where('id', resultId).update({
       reportableSiteId: siteId,
       resultStatusLogId,
-      treatmentStatusLogId,
       firstViewedOn: null,
       updatedBy: currentUserId,
       updatedOn: now,

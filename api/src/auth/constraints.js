@@ -613,7 +613,7 @@ function applyConstraintObjectOnAlias(queryBuilder, alias, constraint) {
       _.keys(constraint)
         .filter(k => !!constraint[k])
         .forEach(k => {
-          nullOrEqualQb.where(knex.raw(`IFNULL(${alias}.${k}, 0)`), constraint[k])
+          nullOrEqualQb.where(knex.raw(`${alias}.${k} = ?`, [constraint[k]]))
         })
     })
   }
