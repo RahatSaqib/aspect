@@ -22,6 +22,7 @@ import useUpdateSelf from '../../hooks/person/useUpdateSelf'
 import useI18n from '../../hooks/useI18n'
 import { getCustomMessage } from '../../messages/customMessages'
 import { useAuthState } from '../../providers/AuthProvider'
+import { normalizePhoneNumber } from '../../utils/utils/phone'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -137,7 +138,7 @@ const ContactDetails = ({ setStep }) => {
             }
           }}
         >
-          {({ handleSubmit, handleChange, values, errors, isValid, dirty }) => (
+          {({ handleSubmit, handleChange, setFieldValue, values, errors, isValid, dirty }) => (
             <form onSubmit={handleSubmit}>
               <DirtyListener step={0} />
               <Grid container spacing={2}>
@@ -197,9 +198,11 @@ const ContactDetails = ({ setStep }) => {
                     id="phone"
                     name="phone"
                     defaultCountry="us"
+                    countryCodeEditable={false}
                     label={formatMessage(messages.phone)}
-                    value={values.phone || '+1'}
-                    onChange={e => {
+                    value={values.phone}
+                    onChange={(e, c) => {
+                      setFieldValue('phoneE164', normalizePhoneNumber(e, c?.countryCode))
                       handleChange({ target: { name: 'phone', value: e !== '+' && e !== '+1' ? e : null } })
                     }}
                     error={errors.phone ? errors.phone : undefined}
@@ -211,9 +214,11 @@ const ContactDetails = ({ setStep }) => {
                     id="cell"
                     name="cell"
                     defaultCountry="us"
+                    countryCodeEditable={false}
                     label={formatMessage(messages.mobile)}
-                    value={values.cell || '+1'}
-                    onChange={e => {
+                    value={values.cell}
+                    onChange={(e, c) => {
+                      setFieldValue('cellE164', normalizePhoneNumber(e, c?.countryCode))
                       handleChange({ target: { name: 'cell', value: e !== '+' && e !== '+1' ? e : null } })
                     }}
                     error={errors.cell ? errors.cell : undefined}
