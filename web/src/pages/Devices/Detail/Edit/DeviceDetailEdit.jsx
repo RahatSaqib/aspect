@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 import { Button, Card, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
+import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import values from 'lodash/values'
@@ -17,9 +18,9 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
+import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import styles from '../styles.css'
 import messages from './messages'
-import get from 'lodash/get'
 
 const cssClasses = classnames.bind(styles)
 
@@ -128,7 +129,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               }}
             />
 
-            {get(device, 'deviceType.externalId') === 'CepheidGeneXpert' ? (
+            {get(device, 'deviceType.externalId') === CONSTS.GENEXPERT_EXTERNAL_ID ? (
               <>
                 <TextField
                   label={intl.formatMessage(messages.gx6cModulesCount)}

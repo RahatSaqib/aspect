@@ -24,6 +24,7 @@ import {
   exportDeviceLogs,
 } from '../../../../store/DeviceRedux'
 import { fetchResults, exportResults } from '../../../../store/ResultRedux'
+import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -485,7 +486,7 @@ const DeviceDetailProfile = ({
               description={device.get('instrumentsConnected') ?? 'n/a'}
             />
 
-            {device.getIn(['deviceType', 'externalId']) === 'CepheidGeneXpert' ? (
+            {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID ? (
               <>
                 <Summary
                   title={formatMessage(messages.gx6cModulesCount)}
