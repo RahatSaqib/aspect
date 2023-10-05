@@ -9,10 +9,18 @@ import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 import useInventoryOverview from './useInventoryOverview'
 
+function getInventoryLabel(item) {
+  return item.type && item[item.type]
+    ? item[item.type]
+    : item.type === 'lga'
+    ? 'No Associated LGA'
+    : 'No Associated State'
+}
+
 function transformInventory(data) {
   return data?.map(item => ({
     ...item,
-    name: item[item.type] ?? item.lab,
+    name: getInventoryLabel(item),
     children: transformInventory(item.children ?? []),
     usedLastSixMonths: item.usedLastSixMonths ?? 0,
     daysOfInventoryLeft: item.daysOfInventoryLeft ?? 0,
