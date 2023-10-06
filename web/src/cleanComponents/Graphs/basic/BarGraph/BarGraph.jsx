@@ -1,5 +1,6 @@
 import React from 'react'
 import { Column } from '@ant-design/plots'
+import { formatNumber } from '../../../../utils/utils/number'
 import { filterColour } from '../../graphUtils'
 
 const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onReady, isPercentage }) => {
@@ -22,11 +23,16 @@ const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onRea
     tooltip: {
       formatter: datum => ({
         name: `${datum.type}`,
-        value: isPercentage ? `${datum.value}%` : `${datum.value}`,
+        value: isPercentage ? `${datum.value}%` : `${formatNumber(datum.value)}`,
       }),
     },
     onReady,
     appendPadding: 20,
+    yAxis: {
+      label: {
+        formatter: formatNumber,
+      },
+    },
   }
 
   return <Column {...config} />
