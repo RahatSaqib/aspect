@@ -16,6 +16,8 @@ const updateDeviceById = async (device, deviceId) => {
       siteId: device.siteId,
       instrumentsConnected: device.instrumentsConnected,
       configurationData: device.configurationData,
+      gx6cModulesCount: device?.gx6cModulesCount,
+      gx10cModulesCount: device?.gx10cModulesCount,
       implementingPartnerId: implementingPartnerId ? Number(implementingPartnerId) : null,
       approvalToken: device.approvalToken,
     },
