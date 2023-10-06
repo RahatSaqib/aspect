@@ -9,6 +9,8 @@ const {
   expected450,
   followUp450,
   searchKeys450,
+  xdrTestData,
+  xdrExpectedResult,
 } = require('./data')
 const { TRANSFERRED, FOLLOW_UP_TYPES } = require('../../../../src/mobileApi/entries/common/consts')
 const { extractFromDataById } = require('../../../../src/mobileApi/entries/result/common/helpers/extractFromDataById')
@@ -485,7 +487,6 @@ describe('Entries helpers', () => {
           value: 'name2',
           valueI18nKey: 'valueKey2',
           severity: 'info',
-          detectedResistance: [],
         },
       ]
 
@@ -567,9 +568,12 @@ describe('Entries helpers', () => {
     it('correctly transform results', async () => {
       const entry347 = transformResultResponse([data347], [], [])
       const entry450 = transformResultResponse([data450], followUp450, [])
+      const xdrEntry = transformResultResponse([xdrTestData], [], [])
 
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
+
+      expect(xdrEntry).to.deep.eq(xdrExpectedResult)
     })
 
     it('should return requiresFollowUp for followUpStatus', async () => {
