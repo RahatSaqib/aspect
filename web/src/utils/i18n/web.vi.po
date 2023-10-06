@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
+"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -1035,6 +1035,13 @@ msgstr "Độ trễ trung bình để tải lên"
 msgid "Average Duration of Service Interruption"
 msgstr "Thời gian gián đoạn dịch vụ trung bình"
 
+#. [p.PkDashboard.FQRPerMonth]
+#. defaultMessage is:
+#. Average FQ-R cases diagnosed per month
+#: extracted_strings.json
+msgid "Average FQ-R cases diagnosed per month"
+msgstr "Các trường hợp FQ-R trung bình được chẩn đoán mỗi tháng"
+
 #. [pages.Status.clinicalIndicatorsCovidPieLegend]
 #. defaultMessage is:
 #. Average Monthly Positivity Rate
@@ -1508,13 +1515,6 @@ msgstr "CSF"
 msgid "CSV"
 msgstr "CSV"
 
-#. [component.Widget.deviceCalibratedWhenDueTitle]
-#. defaultMessage is:
-#. Calibrated When Due
-#: extracted_strings.json
-msgid "Calibrated When Due"
-msgstr "Hiệu chỉnh khi đến hạn"
-
 #. [pages.resultEdit.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1548,13 +1548,6 @@ msgstr "Ngày hiệu chuẩn là bắt buộc"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Ngày đến hạn hiệu chuẩn"
-
-#. [component.Widget.deviceCalibrationPastDueTitle]
-#. defaultMessage is:
-#. Calibration Past Due
-#: extracted_strings.json
-msgid "Calibration Past Due"
-msgstr "Hiệu chỉnh Quá hạn"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable]
 #. defaultMessage is:
@@ -2407,12 +2400,15 @@ msgstr "Các thiết bị hoạt động hiện tại"
 msgid "Current Diagnosis"
 msgstr "Chẩn đoán hiện tại"
 
-#. [p.PkDashboard.CurrentFQDetectionPending]
+#. [p.PkDashboard.currentFQDetection]
 #. defaultMessage is:
-#. Current FQ Detection (Pending)
+#. Current FQ Detection
+#. [p.PkDashboard.CurrentFQDetection]
+#. defaultMessage is:
+#. Current FQ Detection
 #: extracted_strings.json
-msgid "Current FQ Detection (Pending)"
-msgstr "Phát hiện FQ hiện tại (Đang chờ xử lý)"
+msgid "Current FQ Detection"
+msgstr "Phát hiện FQ hiện tại"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2935,10 +2931,10 @@ msgstr "Đã phát hiện"
 #. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
-#. [forms.formSectionHeader.device]
+#. [legends.Unknown.device]
 #. defaultMessage is:
 #. Device
-#. [legends.Unknown.device]
+#. [forms.formSectionHeader.device]
 #. defaultMessage is:
 #. Device
 #. [placeholder.device]
@@ -3180,6 +3176,9 @@ msgstr "Nhật ký thiết bị"
 msgid "Device type"
 msgstr "Loại thiết bị"
 
+#. [legends.Unknown.devices]
+#. defaultMessage is:
+#. Devices
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
 #. Devices
@@ -3187,9 +3186,6 @@ msgstr "Loại thiết bị"
 #. defaultMessage is:
 #. Devices
 #. [component.Widget.devicesTitle]
-#. defaultMessage is:
-#. Devices
-#. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.DeviceList.devicesTitle]
@@ -4150,6 +4146,27 @@ msgstr "FQ-R%"
 msgid "FQ-R Detected"
 msgstr "Đã phát hiện FQ-R"
 
+#. [p.PkDashboard.FQRCurrentYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in current year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in current year"
+msgstr "Các trường hợp FQ-R được chẩn đoán trong năm hiện tại"
+
+#. [p.PkDashboard.FQRPerDay]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in last 24 hours"
+msgstr "Các trường hợp FQ-R được chẩn đoán trong 24 giờ qua"
+
+#. [p.PkDashboard.FQRPerYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed this year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed this year"
+msgstr "Các trường hợp FQ-R được chẩn đoán trong năm nay"
+
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
 #. Facility Code
@@ -4439,6 +4456,20 @@ msgstr "GeneXpert COVID-19"
 #: extracted_strings.json
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "Hộp mực GeneXpert COVID-19"
+
+#. [component.Widget.deviceCalibratedWhenDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibrated When Due
+#: extracted_strings.json
+msgid "GeneXpert Calibrated When Due"
+msgstr "GeneXpert được hiệu chỉnh khi đến hạn"
+
+#. [component.Widget.deviceCalibrationPastDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibration Past Due
+#: extracted_strings.json
+msgid "GeneXpert Calibration Past Due"
+msgstr "Quá hạn hiệu chuẩn GeneXpert"
 
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
@@ -5452,6 +5483,16 @@ msgstr "Sê-ri dụng cụ"
 msgid "Instrument Serial"
 msgstr "Sê-ri dụng cụ"
 
+#. [pages.DeviceDetailEdit.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#. [pages.deviceDetail.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#: extracted_strings.json
+msgid "Instruments Connected"
+msgstr "Dụng cụ được kết nối"
+
 #. [errorResponseMessages.fetchPersons.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -5575,6 +5616,9 @@ msgstr "Mục hàng tồn kho"
 msgid "Inventory Log"
 msgstr "Nhật ký hàng tồn kho"
 
+#. [browsePage.browseDropdown.inventoryOverview]
+#. defaultMessage is:
+#. Inventory Overview
 #. [p.PkDashboard.overview]
 #. defaultMessage is:
 #. Inventory Overview
@@ -6191,6 +6235,9 @@ msgstr "Đăng nhập thất bại"
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.title]
 #. defaultMessage is:
 #. Login failed
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.title]
+#. defaultMessage is:
+#. Login failed
 #: extracted_strings.json
 msgid "Login failed"
 msgstr "Đăng nhập thất bại"
@@ -6305,6 +6352,9 @@ msgstr "MTB bị ô nhiễm"
 #. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [legends.Unknown.MtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [pages.filters.gxMtbRifMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -6315,9 +6365,6 @@ msgstr "MTB bị ô nhiễm"
 #. defaultMessage is:
 #. MTB Detected
 #. [assayGenericDstResultCategoryDetected]
-#. defaultMessage is:
-#. MTB Detected
-#. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
 #: extracted_strings.json
@@ -6966,15 +7013,19 @@ msgstr "Báo cáo trạng thái mô-đun"
 #. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
-#. [component.Widget.moduleSwapsTitle]
-#. defaultMessage is:
-#. Module Swaps
 #. [pages.ReportIndex.module_swaps]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
 msgid "Module Swaps"
 msgstr "Hoán đổi mô-đun"
+
+#. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps (GeneXpert only)
+#: extracted_strings.json
+msgid "Module Swaps (GeneXpert only)"
+msgstr "Hoán đổi mô-đun (chỉ GeneXpert)"
 
 #. [pages.Notification.type.ModuleUnused]
 #. defaultMessage is:
@@ -7239,6 +7290,13 @@ msgstr "Xu hướng thử nghiệm quốc gia"
 #: extracted_strings.json
 msgid "National Testing Trends using MTB/XDR Assay"
 msgstr "Xu hướng Thử nghiệm Quốc gia sử dụng Xét nghiệm MTB/XDR"
+
+#. [pages.ReportIndex.annualUtilizationRates]
+#. defaultMessage is:
+#. National and Provincial Trends in Annual Utilization Rates
+#: extracted_strings.json
+msgid "National and Provincial Trends in Annual Utilization Rates"
+msgstr "Xu hướng cấp quốc gia và cấp tỉnh về tỷ lệ sử dụng hàng năm"
 
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
@@ -11184,17 +11242,17 @@ msgstr "Nội dung sms là bắt buộc"
 
 #. [pages.Notifications.smsLength]
 #. defaultMessage is:
-#. Sms body shouldn't have no more than 144 characters
+#. Sms body shouldn't have no more than 2000 characters
 #: extracted_strings.json
-msgid "Sms body shouldn't have no more than 144 characters"
-msgstr "Nội dung sms không được có nhiều hơn 144 ký tự"
+msgid "Sms body shouldn't have no more than 2000 characters"
+msgstr "Nội dung tin nhắn không được dài quá 2000 ký tự"
 
 #. [pages.NotificationDetail.smsBodyLimit]
 #. defaultMessage is:
-#. Sms message should not be longer than 144 characters
+#. Sms message should not be longer than 2000 characters
 #: extracted_strings.json
-msgid "Sms message should not be longer than 144 characters"
-msgstr "Tin nhắn SMS không được dài hơn 144 ký tự"
+msgid "Sms message should not be longer than 2000 characters"
+msgstr "Tin nhắn sms không được dài quá 2000 ký tự"
 
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
@@ -11289,10 +11347,10 @@ msgstr "Trạng thái"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
-#. Stock not recorded
+#. Stock not recorded (GenXpert only)
 #: extracted_strings.json
-msgid "Stock not recorded"
-msgstr "Hàng không được ghi nhận"
+msgid "Stock not recorded (GenXpert only)"
+msgstr "Kho chưa được ghi lại (chỉ GenXpert)"
 
 #. [pages.SiteDetail.fieldBelongTo]
 #. defaultMessage is:
@@ -11853,21 +11911,18 @@ msgstr ""
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
-#. The average number of SMS recipients per positive GeneXpert result.
+#. The average number of SMS recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of SMS recipients per positive GeneXpert result."
-msgstr "Số người nhận SMS trung bình trên mỗi kết quả GeneXpert dương tính."
+msgid "The average number of SMS recipients per positive result."
+msgstr "Số người nhận SMS trung bình trên mỗi kết quả tích cực."
 
 #. [component.Widget.averageLengthOfSmsDescription]
 #. defaultMessage is:
-#. The average number of characters in SMS messages sent about positive GeneXpert results.
+#. The average number of characters in SMS messages sent about positive results.
 #: extracted_strings.json
 msgid ""
-"The average number of characters in SMS messages sent about positive "
-"GeneXpert results."
-msgstr ""
-"Số ký tự trung bình trong tin nhắn SMS được gửi về kết quả GeneXpert dương "
-"tính."
+"The average number of characters in SMS messages sent about positive results."
+msgstr "Số ký tự trung bình trong tin nhắn SMS được gửi cho kết quả tích cực."
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
@@ -11888,26 +11943,25 @@ msgstr ""
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
+#. The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting. An Instrument is marked "
-"as replaced when two consecutive results performed in the same device, have "
-"a different Instrument serial number"
+"from a GeneXpert device and a new instrument serial reporting. An Instrument "
+"is marked as replaced when two consecutive results performed in the same "
+"device, have a different Instrument serial number"
 msgstr ""
-"Số ngày trung bình giữa thời điểm báo cáo sê-ri thiết bị gần đây nhất từ một "
-"thiết bị và báo cáo sê-ri thiết bị mới. Dụng cụ được đánh dấu là thay thế "
-"khi hai kết quả liên tiếp được thực hiện trên cùng một thiết bị, có số sê-ri "
-"của Dụng cụ other nhau"
+"Số ngày trung bình kể từ khi một sê-ri công cụ được báo cáo lần cuối từ "
+"thiết bị GeneXpert cho đến khi báo cáo sê-ri công cụ mới. Một thiết bị được "
+"đánh dấu là đã thay thế khi hai kết quả liên tiếp được thực hiện trên cùng "
+"một thiết bị, có số sê-ri Dụng cụ khác nhau"
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
-#. The average number of email recipients per positive GeneXpert result.
+#. The average number of email recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of email recipients per positive GeneXpert result."
-msgstr ""
-"Số lượng người nhận email trung bình trên mỗi kết quả GeneXpert dương tính."
+msgid "The average number of email recipients per positive result."
+msgstr "Số lượng người nhận email trung bình trên mỗi kết quả tích cực."
 
 #. [component.Widget.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
@@ -11972,6 +12026,29 @@ msgstr "Tên thông báo là bắt buộc"
 msgid "The notification type is required"
 msgstr "Loại thông báo là bắt buộc"
 
+#. [component.Widget.deviceCalibrationPastDueDescription]
+#. defaultMessage is:
+#. The number of GeneXpert instruments that had their last calibration more than one year ago.
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert instruments that had their last calibration more "
+"than one year ago."
+msgstr ""
+"Số lượng thiết bị GeneXpert được hiệu chuẩn lần cuối cách đây hơn một năm."
+
+#. [component.Widget.moduleSwapsDescription]
+#. defaultMessage is:
+#. The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert module swaps made at the current month. The module "
+"swap issue appears when two consecutive results performed in the same slot "
+"have a different module serial number"
+msgstr ""
+"Số lần hoán đổi mô-đun GeneXpert được thực hiện vào tháng hiện tại. Sự cố "
+"hoán đổi mô-đun xuất hiện khi hai kết quả liên tiếp được thực hiện trong "
+"cùng một khe có số sê-ri mô-đun khác nhau"
+
 #. [component.Widget.geneXpertDevices]
 #. defaultMessage is:
 #. The number of approved GeneXpert devices (excluding decommissioned devices).
@@ -12023,28 +12100,6 @@ msgstr ""
 "Số lượng thiết bị gặp sự cố gián đoạn dịch vụ vào tháng này và tháng trước. "
 "Một thiết bị bị gián đoạn dịch vụ khi nó được gắn cờ là \"Không sửa chữa "
 "được\" cho trạng thái bảo trì của thiết bị."
-
-#. [component.Widget.deviceCalibrationPastDueDescription]
-#. defaultMessage is:
-#. The number of instruments that had their last calibration more than one year ago.
-#: extracted_strings.json
-msgid ""
-"The number of instruments that had their last calibration more than one year "
-"ago."
-msgstr "Số lượng thiết bị đã được hiệu chuẩn lần cuối cách đây hơn một năm."
-
-#. [component.Widget.moduleSwapsDescription]
-#. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
-#: extracted_strings.json
-msgid ""
-"The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same slot have a "
-"different module serial number"
-msgstr ""
-"Số lượng hoán đổi mô-đun được thực hiện ở tháng hiện tại. Sự cố hoán đổi mô-"
-"đun xuất hiện khi hai kết quả liên tiếp được thực hiện trong cùng một vị trí "
-"có số sê-ri mô-đun other nhau"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -12142,27 +12197,23 @@ msgstr ""
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
-#. The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
+#. The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
 #: extracted_strings.json
 msgid ""
-"The percentage of calibrations that were within 30 days of the scheduled "
-"date. Note that this only counts calibrations for devices that had a "
-"calibration record before."
+"The percentage of GeneXpert calibrations that were within 30 days of the "
+"scheduled date. Note that this only counts calibrations for devices that had "
+"a calibration record before."
 msgstr ""
-"Phần trăm hiệu chuẩn trong vòng 30 ngày kể từ ngày đã lên lịch. Lưu ý rằng "
-"điều này chỉ tính các hiệu chuẩn cho các thiết bị đã có hồ sơ hiệu chuẩn "
-"trước đó."
+"Tỷ lệ hiệu chuẩn GeneXpert trong vòng 30 ngày kể từ ngày đã lên lịch. Lưu ý "
+"rằng điều này chỉ tính các lần hiệu chuẩn cho các thiết bị đã có bản ghi "
+"hiệu chuẩn trước đó."
 
 #. [component.Widget.gxPositiveResultsNotifiedDescription]
 #. defaultMessage is:
-#. The percentage of positive GeneXpert's results that were notified via SMS or email.
+#. The percentage of positive results that were notified via SMS or email.
 #: extracted_strings.json
-msgid ""
-"The percentage of positive GeneXpert's results that were notified via SMS or "
-"email."
-msgstr ""
-"Phần trăm kết quả tích cực của GeneXpert đã được thông báo qua SMS hoặc "
-"email."
+msgid "The percentage of positive results that were notified via SMS or email."
+msgstr "Tỷ lệ phần trăm kết quả tích cực được thông báo qua SMS hoặc email."
 
 #. [pages.OperationalData.percentReportedDescription]
 #. defaultMessage is:
@@ -13527,12 +13578,26 @@ msgstr "Báo cáo bệnh nhân Xpert"
 msgid "Xpert Site Detailed Report"
 msgstr "Báo cáo chi tiết trang web Xpert"
 
+#. [pages.ReportIndex.xpert_site_summary_site_wise_report]
+#. defaultMessage is:
+#. Xpert Site Summary Report - Site Wise
+#: extracted_strings.json
+msgid "Xpert Site Summary Report - Site Wise"
+msgstr "Báo cáo tóm tắt trang web Xpert - Site Wise"
+
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
 #. Xpert Test Activities Report
 #: extracted_strings.json
 msgid "Xpert Test Activities Report"
 msgstr "Báo cáo hoạt động thử nghiệm Xpert"
+
+#. [pages.ReportIndex.xpert_workload_summary_report]
+#. defaultMessage is:
+#. Xpert Workload Summary Report
+#: extracted_strings.json
+msgid "Xpert Workload Summary Report"
+msgstr "Báo cáo tóm tắt khối lượng công việc Xpert"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
@@ -13589,6 +13654,15 @@ msgstr "Có, xóa nó đi"
 #: extracted_strings.json
 msgid "Yesterday"
 msgstr "Hôm qua"
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.resolution]
+#. defaultMessage is:
+#. You can contact us to check your account by email ({supportEmail})
+#: extracted_strings.json
+msgid "You can contact us to check your account by email ({supportEmail})"
+msgstr ""
+"Bạn có thể liên hệ với chúng tôi để kiểm tra tài khoản của bạn qua email "
+"({supportEmail})"
 
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.resolution]
 #. defaultMessage is:
@@ -13719,6 +13793,17 @@ msgid ""
 msgstr ""
 "Tài khoản của bạn vẫn cần một số thiết lập trước khi bạn có thể sử dụng hệ "
 "thống. Vui lòng liên hệ với quản trị viên của bạn."
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.message]
+#. defaultMessage is:
+#. Your credentials were not configured properly. Please, contact your administrator.
+#: extracted_strings.json
+msgid ""
+"Your credentials were not configured properly. Please, contact your "
+"administrator."
+msgstr ""
+"Thông tin xác thực của bạn không được định cấu hình đúng cách. Vui lòng liên "
+"hệ với quản trị viên của bạn."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -14391,6 +14476,9 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records} / {tổng, plural, one {# kết quả} other {# kết quả}})"
+
+#~ msgid "Current FQ Detection (Pending)"
+#~ msgstr "Phát hiện FQ hiện tại (Đang chờ xử lý)"
 
 #~ msgid "HIV (Pending)"
 #~ msgstr "HIV (Đang chờ xử lý)"
