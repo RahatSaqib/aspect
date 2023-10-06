@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
+"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -1037,6 +1037,13 @@ msgstr "Durchschnittliche Stunden bis zum Hochladen"
 msgid "Average Duration of Service Interruption"
 msgstr "Durchschnittliche Dauer der Betriebsunterbrechung"
 
+#. [p.PkDashboard.FQRPerMonth]
+#. defaultMessage is:
+#. Average FQ-R cases diagnosed per month
+#: extracted_strings.json
+msgid "Average FQ-R cases diagnosed per month"
+msgstr "Durchschnittlich diagnostizierte FQ-R-Fälle pro Monat"
+
 #. [pages.Status.clinicalIndicatorsCovidPieLegend]
 #. defaultMessage is:
 #. Average Monthly Positivity Rate
@@ -1513,13 +1520,6 @@ msgstr "CSF"
 msgid "CSV"
 msgstr "CSV"
 
-#. [component.Widget.deviceCalibratedWhenDueTitle]
-#. defaultMessage is:
-#. Calibrated When Due
-#: extracted_strings.json
-msgid "Calibrated When Due"
-msgstr "Bei Fälligkeit kalibriert"
-
 #. [pages.resultEdit.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1553,13 +1553,6 @@ msgstr "Kalibrierungsdatum ist erforderlich"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Fälligkeitsdatum der Kalibrierung"
-
-#. [component.Widget.deviceCalibrationPastDueTitle]
-#. defaultMessage is:
-#. Calibration Past Due
-#: extracted_strings.json
-msgid "Calibration Past Due"
-msgstr "Kalibrierung überfällig"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable]
 #. defaultMessage is:
@@ -2413,12 +2406,15 @@ msgstr "Aktuelle aktive Geräte"
 msgid "Current Diagnosis"
 msgstr "Aktuelles Passwort"
 
-#. [p.PkDashboard.CurrentFQDetectionPending]
+#. [p.PkDashboard.currentFQDetection]
 #. defaultMessage is:
-#. Current FQ Detection (Pending)
+#. Current FQ Detection
+#. [p.PkDashboard.CurrentFQDetection]
+#. defaultMessage is:
+#. Current FQ Detection
 #: extracted_strings.json
-msgid "Current FQ Detection (Pending)"
-msgstr "Aktueller FQ-Nachweis (anhängig)"
+msgid "Current FQ Detection"
+msgstr "Aktuelle FQ-Detektion"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2941,10 +2937,10 @@ msgstr "Erkannt"
 #. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
-#. [forms.formSectionHeader.device]
+#. [legends.Unknown.device]
 #. defaultMessage is:
 #. Device
-#. [legends.Unknown.device]
+#. [forms.formSectionHeader.device]
 #. defaultMessage is:
 #. Device
 #. [placeholder.device]
@@ -3186,6 +3182,9 @@ msgstr "Geräteprotokolle"
 msgid "Device type"
 msgstr "Gerätetyp"
 
+#. [legends.Unknown.devices]
+#. defaultMessage is:
+#. Devices
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
 #. Devices
@@ -3193,9 +3192,6 @@ msgstr "Gerätetyp"
 #. defaultMessage is:
 #. Devices
 #. [component.Widget.devicesTitle]
-#. defaultMessage is:
-#. Devices
-#. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.DeviceList.devicesTitle]
@@ -4161,6 +4157,27 @@ msgstr "FQ-R %"
 msgid "FQ-R Detected"
 msgstr "FQ-R Erkannt"
 
+#. [p.PkDashboard.FQRCurrentYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in current year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in current year"
+msgstr "Im laufenden Jahr diagnostizierte FQ-R-Fälle"
+
+#. [p.PkDashboard.FQRPerDay]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in last 24 hours"
+msgstr "In den letzten 24 Stunden diagnostizierte FQ-R-Fälle"
+
+#. [p.PkDashboard.FQRPerYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed this year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed this year"
+msgstr "In diesem Jahr diagnostizierte FQ-R-Fälle"
+
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
 #. Facility Code
@@ -4451,6 +4468,20 @@ msgstr "GeneXpert COVID-19"
 #: extracted_strings.json
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "GeneXpert TB Kartusche"
+
+#. [component.Widget.deviceCalibratedWhenDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibrated When Due
+#: extracted_strings.json
+msgid "GeneXpert Calibrated When Due"
+msgstr "GeneXpert bei Fälligkeit kalibriert"
+
+#. [component.Widget.deviceCalibrationPastDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibration Past Due
+#: extracted_strings.json
+msgid "GeneXpert Calibration Past Due"
+msgstr "Kalibrierung überfällig"
 
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
@@ -5466,6 +5497,16 @@ msgstr "Ersetztes Instrument"
 msgid "Instrument Serial"
 msgstr "Seriennummer"
 
+#. [pages.DeviceDetailEdit.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#. [pages.deviceDetail.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#: extracted_strings.json
+msgid "Instruments Connected"
+msgstr "Angeschlossene Instrumente"
+
 #. [errorResponseMessages.fetchPersons.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -5589,6 +5630,9 @@ msgstr "Inventarartikel"
 msgid "Inventory Log"
 msgstr "Bericht"
 
+#. [browsePage.browseDropdown.inventoryOverview]
+#. defaultMessage is:
+#. Inventory Overview
 #. [p.PkDashboard.overview]
 #. defaultMessage is:
 #. Inventory Overview
@@ -6206,6 +6250,9 @@ msgstr "Anmeldung Fehlgeschlagen"
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.title]
 #. defaultMessage is:
 #. Login failed
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.title]
+#. defaultMessage is:
+#. Login failed
 #: extracted_strings.json
 msgid "Login failed"
 msgstr "Login fehlgeschlagen"
@@ -6320,6 +6367,9 @@ msgstr "MTB kontaminiert"
 #. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [legends.Unknown.MtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [pages.filters.gxMtbRifMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -6330,9 +6380,6 @@ msgstr "MTB kontaminiert"
 #. defaultMessage is:
 #. MTB Detected
 #. [assayGenericDstResultCategoryDetected]
-#. defaultMessage is:
-#. MTB Detected
-#. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
 #: extracted_strings.json
@@ -6981,15 +7028,19 @@ msgstr "Modul-Statusbericht"
 #. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
-#. [component.Widget.moduleSwapsTitle]
-#. defaultMessage is:
-#. Module Swaps
 #. [pages.ReportIndex.module_swaps]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
 msgid "Module Swaps"
 msgstr "Modulwechsel"
+
+#. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps (GeneXpert only)
+#: extracted_strings.json
+msgid "Module Swaps (GeneXpert only)"
+msgstr "Durchschnittliche Tage für Modulaustausch"
 
 #. [pages.Notification.type.ModuleUnused]
 #. defaultMessage is:
@@ -7254,6 +7305,13 @@ msgstr "Nationale Trends bei Tests"
 #: extracted_strings.json
 msgid "National Testing Trends using MTB/XDR Assay"
 msgstr "Nationale Testtrends mit MTB/XDR-Assay"
+
+#. [pages.ReportIndex.annualUtilizationRates]
+#. defaultMessage is:
+#. National and Provincial Trends in Annual Utilization Rates
+#: extracted_strings.json
+msgid "National and Provincial Trends in Annual Utilization Rates"
+msgstr "Nationale und provinzielle Trends bei den jährlichen Nutzungsraten"
 
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
@@ -11214,16 +11272,16 @@ msgstr "SMS-Text ist erforderlich"
 
 #. [pages.Notifications.smsLength]
 #. defaultMessage is:
-#. Sms body shouldn't have no more than 144 characters
+#. Sms body shouldn't have no more than 2000 characters
 #: extracted_strings.json
-msgid "Sms body shouldn't have no more than 144 characters"
+msgid "Sms body shouldn't have no more than 2000 characters"
 msgstr "Der SMS-Text sollte nicht mehr als 144 Zeichen haben"
 
 #. [pages.NotificationDetail.smsBodyLimit]
 #. defaultMessage is:
-#. Sms message should not be longer than 144 characters
+#. Sms message should not be longer than 2000 characters
 #: extracted_strings.json
-msgid "Sms message should not be longer than 144 characters"
+msgid "Sms message should not be longer than 2000 characters"
 msgstr "SMS-Nachricht sollte nicht länger als 144 Zeichen sein"
 
 #. [pages.DeviceList.sourceDevices]
@@ -11319,10 +11377,10 @@ msgstr "Status"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
-#. Stock not recorded
+#. Stock not recorded (GenXpert only)
 #: extracted_strings.json
-msgid "Stock not recorded"
-msgstr "Bestand nicht erfasst"
+msgid "Stock not recorded (GenXpert only)"
+msgstr "Bestand nicht erfasst (nur GenXpert)"
 
 #. [pages.SiteDetail.fieldBelongTo]
 #. defaultMessage is:
@@ -11888,20 +11946,19 @@ msgstr ""
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
-#. The average number of SMS recipients per positive GeneXpert result.
+#. The average number of SMS recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of SMS recipients per positive GeneXpert result."
+msgid "The average number of SMS recipients per positive result."
 msgstr ""
 "Die durchschnittliche Anzahl von SMS-Empfängern pro positivem GeneXpert-"
 "Ergebnis."
 
 #. [component.Widget.averageLengthOfSmsDescription]
 #. defaultMessage is:
-#. The average number of characters in SMS messages sent about positive GeneXpert results.
+#. The average number of characters in SMS messages sent about positive results.
 #: extracted_strings.json
 msgid ""
-"The average number of characters in SMS messages sent about positive "
-"GeneXpert results."
+"The average number of characters in SMS messages sent about positive results."
 msgstr ""
 "Die durchschnittliche Anzahl von Zeichen in SMS-Nachrichten, die über "
 "positive GeneXpert-Ergebnisse gesendet wurden."
@@ -11925,13 +11982,13 @@ msgstr ""
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
+#. The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting. An Instrument is marked "
-"as replaced when two consecutive results performed in the same device, have "
-"a different Instrument serial number"
+"from a GeneXpert device and a new instrument serial reporting. An Instrument "
+"is marked as replaced when two consecutive results performed in the same "
+"device, have a different Instrument serial number"
 msgstr ""
 "Die durchschnittliche Anzahl von Tagen zwischen der letzten Meldung einer "
 "Instrumentenserie von einem Gerät und der Meldung einer neuen "
@@ -11941,9 +11998,9 @@ msgstr ""
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
-#. The average number of email recipients per positive GeneXpert result.
+#. The average number of email recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of email recipients per positive GeneXpert result."
+msgid "The average number of email recipients per positive result."
 msgstr ""
 "Die durchschnittliche Anzahl der E-Mail-Empfänger pro positivem GeneXpert-"
 "Ergebnis."
@@ -12013,6 +12070,31 @@ msgstr "Der Benachrichtigungsname ist erforderlich"
 msgid "The notification type is required"
 msgstr "Die Meldungsart ist erforderlich"
 
+#. [component.Widget.deviceCalibrationPastDueDescription]
+#. defaultMessage is:
+#. The number of GeneXpert instruments that had their last calibration more than one year ago.
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert instruments that had their last calibration more "
+"than one year ago."
+msgstr ""
+"The number of instruments that had their last calibration more than one year "
+"ago."
+
+#. [component.Widget.moduleSwapsDescription]
+#. defaultMessage is:
+#. The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert module swaps made at the current month. The module "
+"swap issue appears when two consecutive results performed in the same slot "
+"have a different module serial number"
+msgstr ""
+"Die Anzahl der im aktuellen Monat durchgeführten Modultauschvorgänge. Das "
+"Problem des Modultauschs tritt auf, wenn zwei aufeinanderfolgende "
+"Ergebnisse, die im selben Steckplatz durchgeführt wurden, eine "
+"unterschiedliche Modul-Seriennummer haben"
+
 #. [component.Widget.geneXpertDevices]
 #. defaultMessage is:
 #. The number of approved GeneXpert devices (excluding decommissioned devices).
@@ -12066,31 +12148,6 @@ msgstr ""
 "Betriebsunterbrechung auftrat. Ein Gerät hat eine Betriebsunterbrechung, "
 "wenn es für seinen Wartungsstatus als \"Zur Reparatur außer Betrieb\" "
 "gekennzeichnet ist."
-
-#. [component.Widget.deviceCalibrationPastDueDescription]
-#. defaultMessage is:
-#. The number of instruments that had their last calibration more than one year ago.
-#: extracted_strings.json
-msgid ""
-"The number of instruments that had their last calibration more than one year "
-"ago."
-msgstr ""
-"The number of instruments that had their last calibration more than one year "
-"ago."
-
-#. [component.Widget.moduleSwapsDescription]
-#. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
-#: extracted_strings.json
-msgid ""
-"The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same slot have a "
-"different module serial number"
-msgstr ""
-"Die Anzahl der im aktuellen Monat durchgeführten Modultauschvorgänge. Das "
-"Problem des Modultauschs tritt auf, wenn zwei aufeinanderfolgende "
-"Ergebnisse, die im selben Steckplatz durchgeführt wurden, eine "
-"unterschiedliche Modul-Seriennummer haben"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -12191,25 +12248,23 @@ msgstr ""
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
-#. The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
+#. The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
 #: extracted_strings.json
 msgid ""
-"The percentage of calibrations that were within 30 days of the scheduled "
-"date. Note that this only counts calibrations for devices that had a "
-"calibration record before."
+"The percentage of GeneXpert calibrations that were within 30 days of the "
+"scheduled date. Note that this only counts calibrations for devices that had "
+"a calibration record before."
 msgstr ""
-"Der Prozentsatz der Kalibrierungen, die innerhalb von 30 Tagen nach dem "
-"geplanten Datum durchgeführt wurden. Beachten Sie, dass dies nur "
-"Kalibrierungen für Geräte zählt, für die zuvor ein Kalibrierungsprotokoll "
-"erstellt wurde."
+"Der Prozentsatz der GeneXpert-Kalibrierungen, die innerhalb von 30 Tagen "
+"nach dem geplanten Datum stattfanden. Beachten Sie, dass hier nur "
+"Kalibrierungen für Geräte gezählt werden, für die es zuvor einen "
+"Kalibrierungsdatensatz gab."
 
 #. [component.Widget.gxPositiveResultsNotifiedDescription]
 #. defaultMessage is:
-#. The percentage of positive GeneXpert's results that were notified via SMS or email.
+#. The percentage of positive results that were notified via SMS or email.
 #: extracted_strings.json
-msgid ""
-"The percentage of positive GeneXpert's results that were notified via SMS or "
-"email."
+msgid "The percentage of positive results that were notified via SMS or email."
 msgstr ""
 "Der Prozentsatz der positiven GeneXpert-Ergebnisse, die per SMS oder E-Mail "
 "benachrichtigt wurden."
@@ -13593,12 +13648,26 @@ msgstr "Xpert-Patientenbericht"
 msgid "Xpert Site Detailed Report"
 msgstr "Xpert Site Detaillierter Bericht"
 
+#. [pages.ReportIndex.xpert_site_summary_site_wise_report]
+#. defaultMessage is:
+#. Xpert Site Summary Report - Site Wise
+#: extracted_strings.json
+msgid "Xpert Site Summary Report - Site Wise"
+msgstr "Xpert Site Detaillierter Bericht"
+
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
 #. Xpert Test Activities Report
 #: extracted_strings.json
 msgid "Xpert Test Activities Report"
 msgstr "Rapport Xpert-testactiviteiten"
+
+#. [pages.ReportIndex.xpert_workload_summary_report]
+#. defaultMessage is:
+#. Xpert Workload Summary Report
+#: extracted_strings.json
+msgid "Xpert Workload Summary Report"
+msgstr "Xpert Workload-Zusammenfassungsbericht"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
@@ -13655,6 +13724,15 @@ msgstr "Ja, löschen"
 #: extracted_strings.json
 msgid "Yesterday"
 msgstr "Gestern"
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.resolution]
+#. defaultMessage is:
+#. You can contact us to check your account by email ({supportEmail})
+#: extracted_strings.json
+msgid "You can contact us to check your account by email ({supportEmail})"
+msgstr ""
+"Sie können uns per E-Mail ({supportEmail}) kontaktieren, um Ihr Konto für "
+"Sie freizuschalten"
 
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.resolution]
 #. defaultMessage is:
@@ -13788,6 +13866,17 @@ msgid ""
 msgstr ""
 "Ihr Konto muss noch eingerichtet werden, bevor Sie das System nutzen können. "
 "Bitte kontaktieren Sie Ihren Administrator."
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.message]
+#. defaultMessage is:
+#. Your credentials were not configured properly. Please, contact your administrator.
+#: extracted_strings.json
+msgid ""
+"Your credentials were not configured properly. Please, contact your "
+"administrator."
+msgstr ""
+"Ihre Anmeldedaten wurden nicht richtig konfiguriert. Bitte wenden Sie sich "
+"an Ihren Administrator."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -14460,6 +14549,9 @@ msgstr "{unit} gesamt kalibrierungen"
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""
 "{value} ({records}/{total, plural, one {# Ergebnis} other {# Ergebnisse} })"
+
+#~ msgid "Current FQ Detection (Pending)"
+#~ msgstr "Aktueller FQ-Nachweis (anhängig)"
 
 #~ msgid "HIV (Pending)"
 #~ msgstr "HIV (in Vorbereitung)"
