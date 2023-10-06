@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-09-18T18:30:28.668Z\n"
+"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -1035,6 +1035,13 @@ msgstr "Таъхири миёна барои боргузорӣ"
 msgid "Average Duration of Service Interruption"
 msgstr "Давомнокии миёнаи қатъи хидмат"
 
+#. [p.PkDashboard.FQRPerMonth]
+#. defaultMessage is:
+#. Average FQ-R cases diagnosed per month
+#: extracted_strings.json
+msgid "Average FQ-R cases diagnosed per month"
+msgstr "Ҳодисаҳои миёнаи FQ-R дар як моҳ ташхис карда мешаванд"
+
 #. [pages.Status.clinicalIndicatorsCovidPieLegend]
 #. defaultMessage is:
 #. Average Monthly Positivity Rate
@@ -1504,13 +1511,6 @@ msgstr "CSF"
 msgid "CSV"
 msgstr "CSV"
 
-#. [component.Widget.deviceCalibratedWhenDueTitle]
-#. defaultMessage is:
-#. Calibrated When Due
-#: extracted_strings.json
-msgid "Calibrated When Due"
-msgstr "Калибрчендашуда ҳангоми мӯҳлат"
-
 #. [pages.resultEdit.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1544,13 +1544,6 @@ msgstr "Санаи калибрченкунӣ лозим аст"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Санаи анҷоми калибрченкунӣ"
-
-#. [component.Widget.deviceCalibrationPastDueTitle]
-#. defaultMessage is:
-#. Calibration Past Due
-#: extracted_strings.json
-msgid "Calibration Past Due"
-msgstr "Калибрченкунӣ мӯҳлаташ гузаштааст"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable]
 #. defaultMessage is:
@@ -2404,12 +2397,15 @@ msgstr "Дастгоҳҳои фаъоли ҷорӣ"
 msgid "Current Diagnosis"
 msgstr "Ташхиси ҷорӣ"
 
-#. [p.PkDashboard.CurrentFQDetectionPending]
+#. [p.PkDashboard.currentFQDetection]
 #. defaultMessage is:
-#. Current FQ Detection (Pending)
+#. Current FQ Detection
+#. [p.PkDashboard.CurrentFQDetection]
+#. defaultMessage is:
+#. Current FQ Detection
 #: extracted_strings.json
-msgid "Current FQ Detection (Pending)"
-msgstr "Муайянкунии FQ-и ҷорӣ (Интизори)"
+msgid "Current FQ Detection"
+msgstr "Муайянкунии ҳозираи FQ"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2932,10 +2928,10 @@ msgstr "Муайян карда шуд"
 #. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
-#. [forms.formSectionHeader.device]
+#. [legends.Unknown.device]
 #. defaultMessage is:
 #. Device
-#. [legends.Unknown.device]
+#. [forms.formSectionHeader.device]
 #. defaultMessage is:
 #. Device
 #. [placeholder.device]
@@ -3177,6 +3173,9 @@ msgstr "Сабти дастгоҳ"
 msgid "Device type"
 msgstr "Навъи дастгоҳ"
 
+#. [legends.Unknown.devices]
+#. defaultMessage is:
+#. Devices
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
 #. Devices
@@ -3184,9 +3183,6 @@ msgstr "Навъи дастгоҳ"
 #. defaultMessage is:
 #. Devices
 #. [component.Widget.devicesTitle]
-#. defaultMessage is:
-#. Devices
-#. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.DeviceList.devicesTitle]
@@ -4152,6 +4148,27 @@ msgstr "FQ-R %"
 msgid "FQ-R Detected"
 msgstr "FQ-R муайян карда шуд"
 
+#. [p.PkDashboard.FQRCurrentYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in current year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in current year"
+msgstr "Ҳодисаҳои FQ-R дар соли ҷорӣ ташхис карда шуданд"
+
+#. [p.PkDashboard.FQRPerDay]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in last 24 hours"
+msgstr "Ҳодисаҳои FQ-R дар 24 соати охир ташхис карда шуданд"
+
+#. [p.PkDashboard.FQRPerYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed this year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed this year"
+msgstr "Ҳодисаҳои FQ-R имсол ташхис карда шуданд"
+
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
 #. Facility Code
@@ -4441,6 +4458,20 @@ msgstr "GeneXpert COVID-19"
 #: extracted_strings.json
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "Картриджи GeneXpert COVID-19"
+
+#. [component.Widget.deviceCalibratedWhenDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibrated When Due
+#: extracted_strings.json
+msgid "GeneXpert Calibrated When Due"
+msgstr "GeneXpert ҳангоми мувофиқат калибр карда мешавад"
+
+#. [component.Widget.deviceCalibrationPastDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibration Past Due
+#: extracted_strings.json
+msgid "GeneXpert Calibration Past Due"
+msgstr "Калибргузории GeneXpert, ки мӯҳлаташ гузаштааст"
 
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
@@ -5456,6 +5487,16 @@ msgstr "Асбоб иваз карда шуд"
 msgid "Instrument Serial"
 msgstr "Силсилаи асбобҳо"
 
+#. [pages.DeviceDetailEdit.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#. [pages.deviceDetail.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#: extracted_strings.json
+msgid "Instruments Connected"
+msgstr "Асбобҳо пайваст"
+
 #. [errorResponseMessages.fetchPersons.GET.403.title]
 #. defaultMessage is:
 #. Insufficient Permissions
@@ -5579,6 +5620,9 @@ msgstr "Объекти инвентаризатсия"
 msgid "Inventory Log"
 msgstr "Сабти инвентаризатсия"
 
+#. [browsePage.browseDropdown.inventoryOverview]
+#. defaultMessage is:
+#. Inventory Overview
 #. [p.PkDashboard.overview]
 #. defaultMessage is:
 #. Inventory Overview
@@ -6196,6 +6240,9 @@ msgstr "Талоши вуруд ноком шуд"
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.title]
 #. defaultMessage is:
 #. Login failed
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.title]
+#. defaultMessage is:
+#. Login failed
 #: extracted_strings.json
 msgid "Login failed"
 msgstr "Талоши вуруд ноком Шуд"
@@ -6310,6 +6357,9 @@ msgstr "MTB олудашуда"
 #. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [legends.Unknown.MtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [pages.filters.gxMtbRifMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -6320,9 +6370,6 @@ msgstr "MTB олудашуда"
 #. defaultMessage is:
 #. MTB Detected
 #. [assayGenericDstResultCategoryDetected]
-#. defaultMessage is:
-#. MTB Detected
-#. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
 #: extracted_strings.json
@@ -6971,15 +7018,19 @@ msgstr "Ҳисобот дар бораи ҳолати модул"
 #. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
-#. [component.Widget.moduleSwapsTitle]
-#. defaultMessage is:
-#. Module Swaps
 #. [pages.ReportIndex.module_swaps]
 #. defaultMessage is:
 #. Module Swaps
 #: extracted_strings.json
 msgid "Module Swaps"
 msgstr "Иваз кардани модул"
+
+#. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps (GeneXpert only)
+#: extracted_strings.json
+msgid "Module Swaps (GeneXpert only)"
+msgstr "Свопҳои модул (танҳо GeneXpert)"
 
 #. [pages.Notification.type.ModuleUnused]
 #. defaultMessage is:
@@ -7244,6 +7295,13 @@ msgstr "Тамоюлҳои имтиҳони миллӣ"
 #: extracted_strings.json
 msgid "National Testing Trends using MTB/XDR Assay"
 msgstr "Тамоюлҳои миллии тестӣ бо истифода аз MTB/XDR Assay"
+
+#. [pages.ReportIndex.annualUtilizationRates]
+#. defaultMessage is:
+#. National and Provincial Trends in Annual Utilization Rates
+#: extracted_strings.json
+msgid "National and Provincial Trends in Annual Utilization Rates"
+msgstr "Тамоюлҳои миллӣ ва музофотӣ дар сатҳи солонаи истифода"
 
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
@@ -11200,17 +11258,17 @@ msgstr "Ҷисми SMS лозим аст"
 
 #. [pages.Notifications.smsLength]
 #. defaultMessage is:
-#. Sms body shouldn't have no more than 144 characters
+#. Sms body shouldn't have no more than 2000 characters
 #: extracted_strings.json
-msgid "Sms body shouldn't have no more than 144 characters"
-msgstr "Матни SMS набояд аз 144 аломат зиёд бошад"
+msgid "Sms body shouldn't have no more than 2000 characters"
+msgstr "Матни SMS набояд аз 2000 аломат зиёд бошад"
 
 #. [pages.NotificationDetail.smsBodyLimit]
 #. defaultMessage is:
-#. Sms message should not be longer than 144 characters
+#. Sms message should not be longer than 2000 characters
 #: extracted_strings.json
-msgid "Sms message should not be longer than 144 characters"
-msgstr "Паёми SMS набояд аз 144 аломат зиёд бошад"
+msgid "Sms message should not be longer than 2000 characters"
+msgstr "Паёми SMS набояд аз 2000 аломат зиёд бошад"
 
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
@@ -11305,10 +11363,10 @@ msgstr "Статус"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
-#. Stock not recorded
+#. Stock not recorded (GenXpert only)
 #: extracted_strings.json
-msgid "Stock not recorded"
-msgstr "Захира ба қайд гирифта нашудааст"
+msgid "Stock not recorded (GenXpert only)"
+msgstr "Захира сабт нашудааст (танҳо GenXpert)"
 
 #. [pages.SiteDetail.fieldBelongTo]
 #. defaultMessage is:
@@ -11871,22 +11929,19 @@ msgstr ""
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
-#. The average number of SMS recipients per positive GeneXpert result.
+#. The average number of SMS recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of SMS recipients per positive GeneXpert result."
-msgstr ""
-"Шумораи миёнаи қабулкунандагони SMS барои як натиҷаи мусбати GeneXpert."
+msgid "The average number of SMS recipients per positive result."
+msgstr "Шумораи миёнаи қабулкунандагони SMS барои як натиҷаи мусбӣ."
 
 #. [component.Widget.averageLengthOfSmsDescription]
 #. defaultMessage is:
-#. The average number of characters in SMS messages sent about positive GeneXpert results.
+#. The average number of characters in SMS messages sent about positive results.
 #: extracted_strings.json
 msgid ""
-"The average number of characters in SMS messages sent about positive "
-"GeneXpert results."
+"The average number of characters in SMS messages sent about positive results."
 msgstr ""
-"Шумораи миёнаи аломатҳо дар паёмҳои SMS дар бораи натиҷаҳои мусбати "
-"GeneXpert фиристода мешаванд."
+"Миқдори миёнаи аломатҳои SMS паёмҳои ирсолшуда дар бораи натиҷаҳои мусбӣ."
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
@@ -11907,27 +11962,26 @@ msgstr ""
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
+#. The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting. An Instrument is marked "
-"as replaced when two consecutive results performed in the same device, have "
-"a different Instrument serial number"
+"from a GeneXpert device and a new instrument serial reporting. An Instrument "
+"is marked as replaced when two consecutive results performed in the same "
+"device, have a different Instrument serial number"
 msgstr ""
-"Миқдори миёнаи рӯзҳо байни вақте ки силсилаи асбобҳо охирон аз дастгоҳ "
-"гузориш дода мешаванд ва гузоришдиҳии силсилавии асбоби нав. Асбоб ҳамчун "
-"ивазшуда қайд карда мешавад, вақте ки ду натиҷаи пайдарпай дар як дастгоҳ "
-"иҷро карда шуда, рақами силсилавии асбоби гуногун доранд"
+"Миқдори миёнаи рӯзҳо байни вақте ки силсилаи асбобҳо охирон аз дастгоҳи "
+"GeneXpert гузориш дода шудааст ва гузоришдиҳии силсилавии асбоби нав. Асбоб "
+"ҳамчун ивазшуда қайд карда мешавад, вақте ки ду натиҷаи пайдарпай дар як "
+"дастгоҳ иҷро карда шуда, рақами силсилавии асбоби гуногун доранд"
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
-#. The average number of email recipients per positive GeneXpert result.
+#. The average number of email recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of email recipients per positive GeneXpert result."
+msgid "The average number of email recipients per positive result."
 msgstr ""
-"Шумораи миёнаи гирандагони почтаи электронӣ барои як натиҷаи мусбати "
-"GeneXpert."
+"Шумораи миёнаи қабулкунандагони почтаи электронӣ барои як натиҷаи мусбӣ."
 
 #. [component.Widget.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
@@ -11993,6 +12047,30 @@ msgstr "Номи огоҳинома лозим аст"
 msgid "The notification type is required"
 msgstr "Навъи огоҳинома талаб карда мешавад"
 
+#. [component.Widget.deviceCalibrationPastDueDescription]
+#. defaultMessage is:
+#. The number of GeneXpert instruments that had their last calibration more than one year ago.
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert instruments that had their last calibration more "
+"than one year ago."
+msgstr ""
+"Шумораи асбобҳои GeneXpert, ки калибровкаи охирини худро зиёда аз як сол пеш "
+"карда буданд."
+
+#. [component.Widget.moduleSwapsDescription]
+#. defaultMessage is:
+#. The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert module swaps made at the current month. The module "
+"swap issue appears when two consecutive results performed in the same slot "
+"have a different module serial number"
+msgstr ""
+"Шумораи свопҳои модули GeneXpert дар моҳи ҷорӣ. Масъалаи мубодилаи модул "
+"вақте пайдо мешавад, ки ду натиҷаи пайдарпай дар як слот иҷрошуда рақами "
+"силсилавии модули гуногун доранд"
+
 #. [component.Widget.geneXpertDevices]
 #. defaultMessage is:
 #. The number of approved GeneXpert devices (excluding decommissioned devices).
@@ -12045,30 +12123,6 @@ msgstr ""
 "Шумораи дастгоҳҳое, ки дар ин ва моҳи гузашта қатъи хидматро аз сар "
 "мегузаронанд. Дастгоҳ қатъи хидматро дорад, вақте ки он барои ҳолати "
 "нигоҳдории он ҳамчун \"Ба таъмир поён\" ишора карда мешавад."
-
-#. [component.Widget.deviceCalibrationPastDueDescription]
-#. defaultMessage is:
-#. The number of instruments that had their last calibration more than one year ago.
-#: extracted_strings.json
-msgid ""
-"The number of instruments that had their last calibration more than one year "
-"ago."
-msgstr ""
-"Шумораи асбобҳое, ки калибровкаи охирини худро зиёда аз як сол пеш карда "
-"буданд."
-
-#. [component.Widget.moduleSwapsDescription]
-#. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
-#: extracted_strings.json
-msgid ""
-"The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same slot have a "
-"different module serial number"
-msgstr ""
-"Шумораи мубодилаи модулҳо дар моҳи ҷорӣ. Масъалаи мубодилаи модул вақте "
-"пайдо мешавад, ки ду натиҷаи пайдарпай дар як слот иҷрошуда рақами "
-"силсилавии модули гуногун доранд"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -12166,27 +12220,25 @@ msgstr ""
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
-#. The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
+#. The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
 #: extracted_strings.json
 msgid ""
-"The percentage of calibrations that were within 30 days of the scheduled "
-"date. Note that this only counts calibrations for devices that had a "
-"calibration record before."
+"The percentage of GeneXpert calibrations that were within 30 days of the "
+"scheduled date. Note that this only counts calibrations for devices that had "
+"a calibration record before."
 msgstr ""
-"Фоизи калибрченкунӣ, ки дар давоми 30 рӯз аз санаи ба нақша гирифташуда "
-"буданд. Дар хотир доред, ки ин танҳо калибрченкуниро барои дастгоҳҳое ҳисоб "
-"мекунад, ки қаблан сабти калибрченкунӣ доштанд."
+"Фоизи калибровкаҳои GeneXpert, ки дар давоми 30 рӯз аз санаи ба нақша "
+"гирифташуда буданд. Дар хотир доред, ки ин танҳо калибрченкуниро барои "
+"дастгоҳҳое ҳисоб мекунад, ки қаблан сабти калибрченкунӣ доштанд."
 
 #. [component.Widget.gxPositiveResultsNotifiedDescription]
 #. defaultMessage is:
-#. The percentage of positive GeneXpert's results that were notified via SMS or email.
+#. The percentage of positive results that were notified via SMS or email.
 #: extracted_strings.json
-msgid ""
-"The percentage of positive GeneXpert's results that were notified via SMS or "
-"email."
+msgid "The percentage of positive results that were notified via SMS or email."
 msgstr ""
-"Фоизи натиҷаҳои мусбати GeneXpert, ки тавассути SMS ё почтаи электронӣ огоҳ "
-"карда шудаанд."
+"Фоизи натиҷаҳои мусбӣ, ки тавассути SMS ё почтаи электронӣ огоҳ карда "
+"шудаанд."
 
 #. [pages.OperationalData.percentReportedDescription]
 #. defaultMessage is:
@@ -13559,12 +13611,26 @@ msgstr "Гузориши беморони Xpert"
 msgid "Xpert Site Detailed Report"
 msgstr "Гузориши муфассали сайти Xpert"
 
+#. [pages.ReportIndex.xpert_site_summary_site_wise_report]
+#. defaultMessage is:
+#. Xpert Site Summary Report - Site Wise
+#: extracted_strings.json
+msgid "Xpert Site Summary Report - Site Wise"
+msgstr "Гузориши мухтасари сайти Xpert - Site Wise"
+
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
 #. Xpert Test Activities Report
 #: extracted_strings.json
 msgid "Xpert Test Activities Report"
 msgstr "Ҳисобот оид ба фаъолияти санҷиши Xpert"
+
+#. [pages.ReportIndex.xpert_workload_summary_report]
+#. defaultMessage is:
+#. Xpert Workload Summary Report
+#: extracted_strings.json
+msgid "Xpert Workload Summary Report"
+msgstr "Ҳисоботи мухтасари сарбории Xpert"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
@@ -13621,6 +13687,15 @@ msgstr "Бале, нест кунед"
 #: extracted_strings.json
 msgid "Yesterday"
 msgstr "Дируз"
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.resolution]
+#. defaultMessage is:
+#. You can contact us to check your account by email ({supportEmail})
+#: extracted_strings.json
+msgid "You can contact us to check your account by email ({supportEmail})"
+msgstr ""
+"Шумо метавонед бо мо тамос гиред, то ҳисоби худро тавассути почтаи электронӣ "
+"тафтиш кунед ({supportEmail})"
 
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.resolution]
 #. defaultMessage is:
@@ -13752,6 +13827,17 @@ msgid ""
 msgstr ""
 "Пеш аз он ки шумо системаро истифода баред, ҳисоби шумо ҳанӯз ба баъзе "
 "танзимот ниёз дорад. Лутфан бо администратори худ тамос гиред."
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.message]
+#. defaultMessage is:
+#. Your credentials were not configured properly. Please, contact your administrator.
+#: extracted_strings.json
+msgid ""
+"Your credentials were not configured properly. Please, contact your "
+"administrator."
+msgstr ""
+"Маълумоти эътимоднокии шумо дуруст танзим карда нашудааст. Лутфан, бо "
+"администратори худ тамос гиред."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -14421,6 +14507,9 @@ msgstr "{unit} калибровкаи умумӣ"
 #: extracted_strings.json
 msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr "{value} ({records}/{ҳамагӣ, plural, one {# натиҷа} other {# натиҷа} })"
+
+#~ msgid "Current FQ Detection (Pending)"
+#~ msgstr "Муайянкунии FQ-и ҷорӣ (Интизори)"
 
 #~ msgid "HIV (Pending)"
 #~ msgstr "ВИЧ (интизорӣ)"
