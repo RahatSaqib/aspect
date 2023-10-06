@@ -1,5 +1,6 @@
 import React from 'react'
 import { Line } from '@ant-design/plots'
+import { formatNumber } from '../../../../utils/utils/number'
 import { filterColour } from '../../graphUtils'
 
 const LineGraph = ({ data, graphId, showLabel }) => {
@@ -21,6 +22,14 @@ const LineGraph = ({ data, graphId, showLabel }) => {
     },
     animation: false,
     appendPadding: 20,
+    tooltip: {
+      formatter: datum => ({ name: datum.year, value: formatNumber(datum.value) }),
+    },
+    yAxis: {
+      label: {
+        formatter: text => formatNumber(text),
+      },
+    },
   }
 
   return <Line {...config} />
