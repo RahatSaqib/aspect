@@ -391,7 +391,11 @@ async function getBaseDataSource(data, auth) {
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}
-  const range = getDateRangeFilters(new Date(), d.reportDateRange, d.reportStartingWeekDay)
+  let dateRange = null
+  if (d?.reportDateRange) {
+    const { minDate, maxDate } = getDateRangeFilters(new Date(), d.reportDateRange, d?.reportStartingWeekDay)
+    dateRange = `${format(parseISO(minDate), 'yyyy-MM-dd')} - ${format(parseISO(maxDate), 'yyyy-MM-dd')}`
+  }
 
   return {
     country: {
@@ -492,7 +496,7 @@ async function getBaseDataSource(data, auth) {
     },
     report: {
       downloadLink: `${apiUrl}/api/reports/download?token=${d.reportToken}`,
-      dateRange: `${format(parseISO(range.minDate), 'yyyy-MM-dd')} - ${format(parseISO(range.maxDate), 'yyyy-MM-dd')}`,
+      dateRange,
     },
     displayPreferences,
     timezone: d.timezone,
