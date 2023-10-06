@@ -121,7 +121,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               error={error?.instrumentsConnected}
               value={editDevice.instrumentsConnected}
               onChange={({ target: { value } }) => {
-                setError({ instrumentsConnected: Number(value) <= 0 })
+                setError(error => ({ ...error, instrumentsConnected: Number(value) <= 0 }))
                 setEditDevice({ ...editDevice, instrumentsConnected: value ? parseInt(value, 10) : '' })
               }}
               InputLabelProps={{
@@ -137,7 +137,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   error={error?.gx6cModulesCount}
                   value={editDevice?.gx6cModulesCount ?? 0}
                   onChange={({ target: { value } }) => {
-                    setError({ gx6cModulesCount: Number(value) < 0 })
+                    setError(error => ({ ...error, gx6cModulesCount: Number(value) < 0 }))
                     setEditDevice({ ...editDevice, gx6cModulesCount: value ? parseInt(value, 10) : '' })
                   }}
                   InputLabelProps={{
@@ -151,7 +151,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   error={error?.gx10cModulesCount}
                   value={editDevice?.gx10cModulesCount ?? 0}
                   onChange={({ target: { value } }) => {
-                    setError({ gx10cModulesCount: Number(value) < 0 })
+                    setError(error => ({ ...error, gx10cModulesCount: Number(value) < 0 }))
                     setEditDevice({ ...editDevice, gx10cModulesCount: value ? parseInt(value, 10) : '' })
                   }}
                   InputLabelProps={{
