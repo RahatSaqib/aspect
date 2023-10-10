@@ -47,7 +47,7 @@ const ErrorComponent = ({ fallbackComponent: FallBack, children }) => {
   } else Component = ErrorFallback
 
   return isProd ? (
-    <Sentry.ErrorBoundary fallback={Component}>{children}</Sentry.ErrorBoundary>
+    <Sentry.ErrorBoundary fallback={({ error }) => <Component error={error} />}>{children}</Sentry.ErrorBoundary>
   ) : (
     <ErrorBoundary FallbackComponent={Component}>{children}</ErrorBoundary>
   )
