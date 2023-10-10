@@ -39,11 +39,17 @@ function ErrorFallbackProd({ error }) {
 }
 
 const ErrorComponent = ({ fallbackComponent: FallBack, children }) => {
-  const Component = FallBack || process.env.NODE_ENV !== 'production' ? ErrorFallback : ErrorFallbackProd
-  return process.env.NODE_ENV !== 'production' ? (
-    <ErrorBoundary FallbackComponent={Component}>{children}</ErrorBoundary>
-  ) : (
+  let Component
+
+  const isProd = process.env.NODE_ENV === 'production'
+  if (isProd) {
+    Component = FallBack || ErrorFallbackProd
+  } else Component = ErrorFallback
+
+  return isProd ? (
     <Sentry.ErrorBoundary fallback={Component}>{children}</Sentry.ErrorBoundary>
+  ) : (
+    <ErrorBoundary FallbackComponent={Component}>{children}</ErrorBoundary>
   )
 }
 
