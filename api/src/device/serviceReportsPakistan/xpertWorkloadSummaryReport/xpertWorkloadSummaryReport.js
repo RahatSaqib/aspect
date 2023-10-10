@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { startOfMonth, endOfMonth, subMonths } = require('date-fns')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../../result/query')
-const { filterDateRangeParams, knex } = require('../../../db')
+const { filterDateRangeParams, knex, filterParams } = require('../../../db')
 const { getOffsetFromIsoDateStringInMinutes, getAllUserMonthsInRange } = require('../../../shared/date')
 
 const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) => {
@@ -28,6 +28,7 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
       approvalStatus: 'da.name',
       responsible: knex.raw(`'Aspect'`),
     })
+    .modify(filterParams, query)
     .groupBy(groupBy)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
