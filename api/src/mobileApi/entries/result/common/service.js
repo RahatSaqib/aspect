@@ -54,9 +54,10 @@ const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkf
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const clinicIds = await getSitesQuery(dataConstraints)
+  const clinics = await getSitesQuery(dataConstraints).select('s.id')
+  const clinicIds = clinics.map(c => c.id)
   const samples = await getAllSamplesRegistered(query, clinicIds)
-  const results = await fetchResultsByUpdatedOnQuery(query, clinicIds)
+  const results = await fetchResultsByUpdatedOnQuery(query, clinicIds, dataConstraints)
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
