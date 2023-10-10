@@ -21,7 +21,7 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
 } = require('../../../result/common/db')
-const { getSiteByIds } = require('../../../../site/service')
+const { getSiteByIds, getSitesQuery } = require('../../../../site/service')
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
@@ -54,8 +54,9 @@ const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkf
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const samples = await getAllSamplesRegistered(query, dataConstraints)
-  const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
+  const clinicIds = await getSitesQuery(dataConstraints)
+  const samples = await getAllSamplesRegistered(query, clinicIds)
+  const results = await fetchResultsByUpdatedOnQuery(query, clinicIds)
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
