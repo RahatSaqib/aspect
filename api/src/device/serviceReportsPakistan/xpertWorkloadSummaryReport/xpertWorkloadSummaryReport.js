@@ -28,10 +28,15 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
       approvalStatus: 'da.name',
       responsible: knex.raw(`'Aspect'`),
     })
-    .modify(filterParams, query)
+    .modify(filterParams, query, {
+      assayId: 'a.id',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteId: 's.id',
+    })
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .groupBy(groupBy)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .orderBy('st.name', 'lg.name')
 
   const offset = getOffsetFromIsoDateStringInMinutes(query.minDate || query.maxDate)
@@ -110,6 +115,9 @@ const addTotalRowByProvince = (rows, columnsToSum) => {
   let group = [] // group of rows with the same province
   for (const [i, row] of rows.entries()) {
     const isLastRow = i === rows.length - 1
+
+    group.push(row)
+
     const shouldCreateNewGroup = isLastRow || (group.length > 0 && group[0].provinceName !== row.provinceName)
     if (shouldCreateNewGroup) {
       const { provinceName } = group[0]
@@ -127,10 +135,6 @@ const addTotalRowByProvince = (rows, columnsToSum) => {
 
       // Start a new group
       group = []
-    }
-
-    if (!isLastRow) {
-      group.push(row)
     }
   }
 
