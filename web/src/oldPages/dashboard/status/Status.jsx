@@ -1,14 +1,13 @@
 import React, { useEffect, useMemo } from 'react'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
-import { useSelector, useDispatch } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
 import CovidResultGraph from '../../../cleanComponents/Graphs/CovidResultGraph'
 import HivResultsGraph from '../../../cleanComponents/Graphs/HivResultsGraph'
 import QuartersMtbDetectedGraph from '../../../cleanComponents/Graphs/QuartersMtbDetectedGraph'
 import QuartersRifDetectedGraph from '../../../cleanComponents/Graphs/QuartersRifDetectedGraph'
 import TbDetectedGraph from '../../../cleanComponents/Graphs/TbDetectedGraph'
-import TbResultsGraph from '../../../cleanComponents/Graphs/TbResultsGraph'
 import TestsOverTimeGraph from '../../../cleanComponents/Graphs/TestsOverTimeGraph'
 import TreatmentStatusGraph from '../../../cleanComponents/Graphs/TreatmentStatusGraph'
 import TrendInYearsAllTestsGraph from '../../../cleanComponents/Graphs/TrendInYearsAllTestsGraph'
@@ -72,7 +71,7 @@ const Status = () => {
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <TbDetectedGraph assaysFromState={assays} /> {/* 2 */}
-              <TbResultsGraph assaysFromState={assays} /> {/* 3 */}
+              {/* <TbResultsGraph assaysFromState={assays} /> 3 */}
             </PermissionChecker>
           ) : null}
 

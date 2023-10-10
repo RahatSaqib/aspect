@@ -38,6 +38,8 @@ async function updateDevice(request) {
       deviceCapacityId: payload.deviceCapacityId,
       implementingPartnerId: payload.implementingPartnerId,
       instrumentsConnected: payload.instrumentsConnected,
+      gx6cModulesCount: payload.gx6cModulesCount,
+      gx10cModulesCount: payload.gx10cModulesCount,
       name: payload.name,
       notes: payload.notes,
       shortName: payload.shortName,

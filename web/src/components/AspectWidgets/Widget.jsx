@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router'
 import useI18n from '../../hooks/useI18n'
 import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
 import { useFilterUpdate } from '../../providers/FilterProvider'
+import { formatNumber } from '../../utils/utils/number'
 import IconProvider from '../IconProvider'
 import WidgetAlert from './Alerts'
 import { buildWidgetParams, translate } from './Helpers'
@@ -74,7 +75,7 @@ const AspectWidget = ({
         <div className={cssClasses('Summary__Card__Content')}>
           <div className={cssClasses('Summary__Card__Item')}>
             <div className={cssClasses('Summary__Card__Item__Count')}>
-              {count} {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
+              {formatNumber(count)} {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
             </div>
             <div className={cssClasses('Summary__Card__Item__Messages')}>
               <div className={cssClasses('Summary__Card__Item__Messages--main')}>

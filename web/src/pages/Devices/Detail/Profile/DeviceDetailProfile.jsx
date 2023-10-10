@@ -24,6 +24,7 @@ import {
   exportDeviceLogs,
 } from '../../../../store/DeviceRedux'
 import { fetchResults, exportResults } from '../../../../store/ResultRedux'
+import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import {
   makeSortPageSelector,
   makeSearchParamsSanitizer,
@@ -484,6 +485,20 @@ const DeviceDetailProfile = ({
               title={formatMessage(messages.instrumentsConnected)}
               description={device.get('instrumentsConnected') ?? 'n/a'}
             />
+
+            {device.getIn(['deviceType', 'externalId']) === CONSTS.GENEXPERT_EXTERNAL_ID ? (
+              <>
+                <Summary
+                  title={formatMessage(messages.gx6cModulesCount)}
+                  description={device.get('gx6cModulesCount') ?? '0'}
+                />
+
+                <Summary
+                  title={formatMessage(messages.gx10cModulesCount)}
+                  description={device.get('gx10cModulesCount') ?? '0'}
+                />
+              </>
+            ) : null}
 
             <Summary
               title={formatMessage(messages.partner)}
