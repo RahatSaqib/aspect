@@ -61,15 +61,10 @@ async function fetchEntriesServiceHandler(request) {
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
-    const originSiteIds = results.reduce((acc, result) => {
-      if (result.transferStatusLogData) {
-        const parsedData = JSON.parse(result.transferStatusLogData)
-        if (parsedData.sampleOriginSiteId) {
-          acc.push(parsedData.sampleOriginSiteId)
-        }
-      }
-      return acc
-    }, [])
+    const originSiteIds = results
+      .filter(r => !!r.transferStatusLogData)
+      .map(r => JSON.parse(r.transferStatusLogData).sampleOriginSiteId)
+      .filter(_.identity)
 
     const transferOriginIds = await getSiteByIds(originSiteIds)
 
