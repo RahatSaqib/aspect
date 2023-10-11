@@ -6,6 +6,7 @@ import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router'
 import useI18n from '../../../hooks/useI18n'
 import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
+import { formatNumber } from '../../../utils/utils/number'
 import { generateColorForValue } from '../Helpers/Formatters'
 import messages from './messages'
 import styles from './PieRowGraph.css'
@@ -64,7 +65,7 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
                                 content: {
                                   offsetY: -12,
                                   style: { fontSize: '24px' },
-                                  customHtml: (_, __, datum, data) => `${data[0].value}`,
+                                  customHtml: (_, __, datum, data) => formatNumber(data[0].value),
                                 },
                               },
                               legend: false,
@@ -87,10 +88,17 @@ const AspectResponsiveRow = ({ data, componentClasses }) => {
                                 offset: '-99%',
                                 style: { textAlign: 'center', fontSize: 20 },
                                 autoRotate: false,
+                                content: obj => formatNumber(obj.value),
                               },
                               legend: false,
                               color: () => generateColorForValue(pie.value[0].id, undefined),
                               animation: false,
+                              tooltip: {
+                                formatter: datum => ({
+                                  name: `${datum.id}`,
+                                  value: formatNumber(datum.value),
+                                }),
+                              },
                             }}
                             onReady={plot => plot.on('plot:click', () => navigate(link))}
                           />

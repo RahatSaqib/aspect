@@ -21,7 +21,7 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
 } = require('../../../result/common/db')
-const { getSiteByIds } = require('../../../../site/service')
+const { getSiteByIds, getSitesQuery } = require('../../../../site/service')
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
@@ -56,12 +56,19 @@ async function fetchEntriesServiceHandler(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // get resultIds of transferred result
-  const resultTransferHistory = await getTransferHistory(dataConstraints)
+  const resultTransferHistory = []
 
   const userViewOnlyTransferredResultIds = resultTransferHistory.map(record => record.resultId)
 
-  const samples = await getAllSamplesRegistered(query, dataConstraints)
-  const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints, userViewOnlyTransferredResultIds)
+  const clinics = await getSitesQuery(dataConstraints).select('s.id')
+  const clinicIds = clinics.map(c => c.id)
+  const samples = await getAllSamplesRegistered(query, clinicIds)
+  const results = await fetchResultsByUpdatedOnQuery(
+    query,
+    clinicIds,
+    dataConstraints,
+    userViewOnlyTransferredResultIds
+  )
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
