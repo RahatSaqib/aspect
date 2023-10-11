@@ -2,10 +2,11 @@ const subMonths = require('date-fns/subMonths')
 const addDays = require('date-fns/addDays')
 const { format } = require('date-fns')
 const { knex } = require('../../../../db')
-const { addConstraints, getConstraints } = require('../../../../auth/constraints')
 const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
+const { getConstraints } = require('../../../../auth/constraints')
+const { getSitesQuery } = require('../../../../site/service')
 
-const getBaseAllSamplesRegistered = dataConstraints => {
+const getBaseAllSamplesRegistered = originSiteIds => {
   const knexQuery = knex('Sample as sample')
     .select(
       'sample.id as id',
@@ -31,17 +32,13 @@ const getBaseAllSamplesRegistered = dataConstraints => {
     .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
     .leftJoin('Geography as geography', 'sampleOriginSite.geographyId', 'geography.id')
     .leftJoin('State as state', 'geography.stateId', 'state.id')
-    .modify(addConstraints, dataConstraints, {
-      site: 'sampleOriginSite',
-      sample: 'sample',
-      geography: 'geography',
-    })
+    .whereIn('sample.originSiteId', originSiteIds)
   return knexQuery
 }
 
-const getAllSamplesRegistered = (query, dataConstraints) => {
+const getAllSamplesRegistered = (query, originSiteIds) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
-  const knexQuery = getBaseAllSamplesRegistered(dataConstraints).where(queryBuilder =>
+  const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where(queryBuilder =>
     queryBuilder
       .where(qb => qb.where('sample.collectedOn', '>=', minUpdatedOn).orWhere('sample.updatedOn', '>=', minUpdatedOn))
       .andWhere('sample.registeredInAspect', true)
@@ -49,9 +46,8 @@ const getAllSamplesRegistered = (query, dataConstraints) => {
   return knexQuery
 }
 
-const getSamplesRegisteredById = async (sampleId, auth) => {
-  const dataConstraints = await getConstraints(auth.credentials)
-  const knexQuery = getBaseAllSamplesRegistered(dataConstraints).where({ 'sample.id': sampleId })
+const getSamplesRegisteredById = async (sampleId, originSiteIds) => {
+  const knexQuery = getBaseAllSamplesRegistered(originSiteIds).where({ 'sample.id': sampleId })
   return knexQuery
 }
 
@@ -60,9 +56,9 @@ const getSamplesRegisteredAtSiteOnDayWithSampleId = async (
   sampleTypeId,
   collectedOn,
   originSiteId,
-  dataConstraints
+  originSiteIds
 ) => {
-  const knexQuery = getBaseAllSamplesRegistered(dataConstraints).modify(qb => {
+  const knexQuery = getBaseAllSamplesRegistered(originSiteIds).modify(qb => {
     qb.where({
       'sample.externalId': sampleExternalId,
       'sample.originSiteId': originSiteId,
@@ -88,20 +84,27 @@ const getSamplesRegisteredAtSiteOnDayWithSampleId = async (
   return knexQuery
 }
 
-const updateExistingSample = (sampleId, payload, auth) =>
-  knex('Sample')
-    .where('id', sampleId)
-    .update(payload)
-    .then(() => getSamplesRegisteredById(sampleId, auth))
+const getSiteIdsForUser = async auth => {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const clinics = await getSitesQuery(dataConstraints).select('s.id')
+  return clinics.map(c => c.id)
+}
 
-const insertNewSample = (payload, auth) =>
-  knex('Sample')
-    .insert({ ...payload })
-    .then(async newSample => getSamplesRegisteredById(newSample[0], auth))
+const updateExistingSample = async (sampleId, payload, auth) => {
+  await knex('Sample').where('id', sampleId).update(payload)
+  const clinicIds = await getSiteIdsForUser(auth)
+  return getSamplesRegisteredById(sampleId, clinicIds)
+}
+
+const insertNewSample = async (payload, auth) => {
+  const [newSampleId] = await knex('Sample').insert({ ...payload })
+  const clinicIds = await getSiteIdsForUser(auth)
+  return getSamplesRegisteredById(newSampleId, clinicIds)
+}
 
 module.exports = {
   getAllSamplesRegistered,
+  getSamplesRegisteredAtSiteOnDayWithSampleId,
   updateExistingSample,
   insertNewSample,
-  getSamplesRegisteredAtSiteOnDayWithSampleId,
 }
