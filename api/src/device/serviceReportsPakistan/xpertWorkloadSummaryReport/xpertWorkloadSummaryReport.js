@@ -17,7 +17,9 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     .modify(modifiers.join.resultCategory1)
     .modify(modifiers.join.resultCategory2)
     .leftJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .select({
@@ -25,8 +27,8 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
       districtName: 'lg.name',
       deviceName: 'd.name',
       assayName: 'a.name',
-      approvalStatus: 'da.name',
-      responsible: knex.raw(`'Aspect'`),
+      maintenanceStatus: 'dms.name',
+      responsible: 'ip.name',
     })
     .modify(filterParams, query, {
       assayId: 'a.id',
@@ -142,7 +144,7 @@ const addTotalRowByProvince = (rows, columnsToSum) => {
 }
 
 const getXpertWorkloadSummaryReportByDistrict = async (dataConstraints, query) =>
-  getXpertWorkloadSummaryReport(dataConstraints, query, ['g.lgaId'])
+  getXpertWorkloadSummaryReport(dataConstraints, query, ['g.lgaId', 'ip.id', 'r.assayId'])
 
 const getXpertWorkloadSummaryReportByDevice = async (dataConstraints, query) =>
   getXpertWorkloadSummaryReport(dataConstraints, query, ['r.deviceId', 'r.assayId'])
