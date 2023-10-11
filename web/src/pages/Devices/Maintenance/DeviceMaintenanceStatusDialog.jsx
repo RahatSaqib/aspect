@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Button, TextField } from '@mui/material'
+import { DesktopDatePicker } from '@mui/x-date-pickers'
 import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import { defineMessages } from 'react-intl'
@@ -36,6 +37,10 @@ const messages = defineMessages({
     id: 'pages.MaintenanceStatusDialog.maintenanceStatusIsRequired',
     defaultMessage: 'Maintenance status is required',
   },
+  expectedBack: {
+    id: 'pages.MaintenanceStatusDialog.expectedBack',
+    defaultMessage: 'Expect Back Online',
+  },
 })
 
 export function validate({ maintenanceStatus }, { formatMessage }) {
@@ -56,6 +61,7 @@ const deviceMaintenanceStatusDialog = WrappedComponent => props => {
       setValues({
         maintenanceStatus: device.get('maintenanceStatus') || null,
         notes: device.get('maintenanceStatusNotes') || null,
+        expectedBack: device.get('expectedBackOnline') || null,
       })
     }
   }, [device, values])
@@ -84,6 +90,7 @@ const FormDialog = ({
   onMaintenanceStatusChange,
   onNotesChange,
   handleSubmit,
+  onExpectedBackChange,
 }) => {
   const { formatMessage } = useI18n()
   return (
@@ -140,6 +147,18 @@ const FormDialog = ({
               inputProps={{ maxLength: 2000 }}
             />
           </section>
+          <section>
+            <DesktopDatePicker
+              label={formatMessage(messages.expectedBack)}
+              name="expectedBack"
+              type="expectedBack"
+              value={values.expectedBack}
+              minDate={new Date()}
+              disabled={form.submitting}
+              onChange={onExpectedBackChange}
+              renderInput={params => <TextField {...params} onKeyDown={e => e.preventDefault()} />}
+            />
+          </section>
         </div>
       </form>
     </AspectDialog>
@@ -158,6 +177,10 @@ export default flowRight(
       {
         fieldName: 'notes',
         valueFromChangeEvent: it => it.target.value,
+      },
+      {
+        fieldName: 'expectedBack',
+        valueFromChangeEvent: it => it,
       },
     ],
     validate,

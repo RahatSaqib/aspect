@@ -508,7 +508,7 @@ async function setStatusForDateRange(request) {
     payload,
     plugins: { messageContext },
   } = request
-  const { externalId, day = startOfTodayUtc(), notes } = payload
+  const { externalId, day = startOfTodayUtc(), notes, expectedBackOnline } = payload
   let { dateFrom, dateTo } = payload
 
   if (!dateFrom && !dateTo) {
@@ -554,6 +554,7 @@ async function setStatusForDateRange(request) {
     maintenanceStatusActive: deviceMaintenanceStatus.active,
     maintenanceStatusNotes: notes,
     maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
+    expectedBackOnline,
   }
 
   if (
@@ -568,6 +569,9 @@ async function setStatusForDateRange(request) {
     // Everything all right, then insert logs
     if (notes) {
       _.set(payload, 'options.data.notes', notes)
+    }
+    if (expectedBackOnline) {
+      _.set(payload, 'options.data.expectedBackOnline', expectedBackOnline)
     }
 
     const deviceMaintenanceStatusLogIds = []

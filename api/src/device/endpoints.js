@@ -356,6 +356,11 @@ const routes = [
           notes: Joi.string()
             .allow('', null)
             .description('Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.notes'),
+          expectedBackOnline: Joi.string()
+            .allow('', null)
+            .description(
+              'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.expectedBackOnline'
+            ),
         },
       },
       response: {
@@ -388,6 +393,9 @@ const routes = [
               maintenanceStatusManuallySetBy: Joi.object()
                 .allow(null)
                 .description('Member responsible for manually setting the status'),
+              expectedBackOnline: Joi.string()
+                .allow('', null)
+                .description('The expected Online back date of the last the maintenance status'),
             }),
         }),
       },

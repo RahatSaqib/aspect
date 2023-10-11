@@ -174,7 +174,7 @@ export function hideDialog() {
   }
 }
 
-export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
+export function updateDeviceMaintenanceStatus({ externalId, device, notes, expectedBackOnline }) {
   const deviceId = device.get('id')
   const i18nErrorTitleDescriptor = () =>
     defineMessages({
@@ -190,6 +190,7 @@ export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
       body: JSON.stringify({
         externalId,
         notes,
+        expectedBackOnline,
       }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes({
