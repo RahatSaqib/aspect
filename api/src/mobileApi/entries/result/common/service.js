@@ -61,9 +61,9 @@ async function fetchEntriesServiceHandler(request) {
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
-    const originSiteIds = results.reduce((acc, r) => {
-      if (r.transferStatusLogData) {
-        const parsedData = JSON.parse(r.transferStatusLogData)
+    const originSiteIds = results.reduce((acc, result) => {
+      if (result.transferStatusLogData) {
+        const parsedData = JSON.parse(result.transferStatusLogData)
         if (parsedData.sampleOriginSiteId) {
           acc.push(parsedData.sampleOriginSiteId)
         }
