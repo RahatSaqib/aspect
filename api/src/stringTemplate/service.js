@@ -393,7 +393,7 @@ async function getBaseDataSource(data, auth) {
   const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}
   let dateRange = null
   if (d?.reportDateRange) {
-    const { minDate, maxDate } = getDateRangeFilters(new Date(), d.reportDateRange, d?.reportStartingWeekDay)
+    const { minDate, maxDate } = getDateRangeFilters(new Date(), d.reportDateRange, d.reportStartingWeekDay)
     dateRange = `${format(parseISO(minDate), 'yyyy-MM-dd')} - ${format(parseISO(maxDate), 'yyyy-MM-dd')}`
   }
 
