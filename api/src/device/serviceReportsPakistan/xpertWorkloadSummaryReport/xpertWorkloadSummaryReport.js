@@ -114,30 +114,28 @@ const sumOfColumns = (rows, columns) => {
 
 const addTotalRowByProvince = (rows, columnsToSum) => {
   const newData = []
-  let group = [] // group of rows with the same province
-  for (const [i, row] of rows.entries()) {
-    const isLastRow = i === rows.length - 1
 
-    group.push(row)
+  for (let i = 0; i < rows.length; i++) {
+    const row = rows[i]
+    const group = [row] // group of rows with the same province
 
-    const shouldCreateNewGroup = isLastRow || (group.length > 0 && group[0].provinceName !== row.provinceName)
-    if (shouldCreateNewGroup) {
-      const { provinceName } = group[0]
-      const counters = sumOfColumns(group, columnsToSum)
-
-      // Add total row before the group of rows
-      newData.push({
-        provinceName,
-        districtName: 'All',
-        ...counters,
-      })
-
-      // Add rows of the group
-      newData.push(...group)
-
-      // Start a new group
-      group = []
+    while (i !== rows.length - 1 && group[0].provinceName === rows[i].provinceName) {
+      group.push(rows[i])
+      i += 1
     }
+
+    const { provinceName } = group[0]
+    const counters = sumOfColumns(group, columnsToSum)
+
+    // Add total row before the group of rows
+    newData.push({
+      provinceName,
+      districtName: 'All',
+      ...counters,
+    })
+
+    // Add rows of the group
+    newData.push(...group)
   }
 
   return newData
