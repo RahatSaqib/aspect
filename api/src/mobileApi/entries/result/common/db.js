@@ -75,9 +75,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
         qb.whereIn('assay.externalId', MOBILE_APP_ALLOWED_ASSAYS)
       }
     })
-    .orWhere(qb => {
-      qb.whereIn('result.id', userViewOnlyTransferredResultIds)
-    })
+    .orWhereIn('result.id', userViewOnlyTransferredResultIds)
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',

@@ -667,15 +667,11 @@ function addTransferLogConstraints(queryBuilder, constraints, aliases) {
   if (aliases.transferLog) {
     const clinicianSiteIds = constraints.$or.map(constraint => constraint.site?.id).filter(item => !!item)
     if (!_.isEmpty(clinicianSiteIds)) {
-      return queryBuilder
-        .where(builder => {
-          builder
-            .whereIn('previousReportableSiteId', clinicianSiteIds)
-            .orWhereIn('sampleOriginSiteId', clinicianSiteIds)
-        })
-        .andWhere(builder => {
-          builder.whereNotIn('reportableSiteId', clinicianSiteIds)
-        })
+      return queryBuilder.where(builder => {
+        builder
+          .whereIn(`${aliases.transferLog}.previousReportableSiteId`, clinicianSiteIds)
+          .orWhereIn(`${aliases.transferLog}.sampleOriginSiteId`, clinicianSiteIds)
+      })
     }
   }
 }
