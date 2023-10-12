@@ -53,6 +53,66 @@ async function clinicalResponse(request) {
   }
   const mostRecentValueCaptured = _.sortBy(payload, value => value.clientTime).reverse()[0]
   if (mostRecentValueCaptured) {
+    // If the result has been marked as follow-up not possible
+    const mostRecentNotPossibleValueCaptured = _.sortBy(
+      payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_FIELD_NAME),
+      fuv => fuv.clientTime
+    ).reverse()[0]
+    if (mostRecentValueCaptured) {
+      resultEntry = await showResult(resultId, dataConstraints)
+    }
+    if (mostRecentNotPossibleValueCaptured) {
+      if (mostRecentNotPossibleValueCaptured.value) {
+        // As long as there is no treatment captured afterwards that would invalidate notPossible?
+        const mostRecentTreatmentValueCaptured = _.sortBy(
+          payload.filter(
+            fuv =>
+              fuv.fieldName === fieldNameToFollowUpTypeIdMappings.treatment && fuv.value !== NOT_POSSIBLE_FOLLOW_UP_TYPE
+          ),
+          fuv => fuv.clientTime
+        ).reverse()[0]
+        if (
+          !mostRecentTreatmentValueCaptured ||
+          mostRecentTreatmentValueCaptured.clientTime <= mostRecentNotPossibleValueCaptured.clientTime
+        ) {
+          const notPossibleReasonValueCaptured = _.sortBy(
+            payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_REASON_FIELD_NAME),
+            fuv => fuv.clientTime
+          ).reverse()[0] || {
+            value: null,
+            clientTime: mostRecentNotPossibleValueCaptured.clientTime,
+          }
+
+          const followUpNotPossibleExist = await getFollowUpsNotPossibleByResultById(resultId)
+
+          if (_.isEmpty(followUpNotPossibleExist)) {
+            const followUp = await getFollowUpByExternalId(NOT_POSSIBLE_FOLLOW_UP_TYPE)
+            await addResultFollowUp(
+              resultId,
+              NOT_POSSIBLE_FOLLOW_UP_TYPE,
+              followUp.id,
+              mostRecentNotPossibleValueCaptured.clientTime,
+              currentUserId,
+              mostRecentNotPossibleValueCaptured.clientTime,
+              currentUserId,
+              mostRecentNotPossibleValueCaptured.clientTime
+            )
+
+            await flagResult(
+              resultId,
+              currentUserId,
+              notPossibleReasonValueCaptured.value,
+              mostRecentNotPossibleValueCaptured.clientTime
+            )
+          }
+          resultEntry = await showResult(resultId, dataConstraints)
+        }
+      } else {
+        await deleteResultFollowUpNotPossible(resultId, mostRecentNotPossibleValueCaptured.clientTime)
+        await unflagResult(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
+        resultEntry = await showResult(resultId, dataConstraints)
+      }
+    }
     // If the result has been recorded in the register, acknowledge the result
     const confirmedValueCaptured = _.sortBy(
       payload.filter(fuv => fuv.fieldName === ACKNOWLEDGED_FIELD_NAME),
@@ -205,65 +265,6 @@ async function clinicalResponse(request) {
             mostRecentOutcomeInPayload.updatedBy
           )
         }
-      }
-    }
-    // If the result has been marked as follow-up not possible
-    const mostRecentNotPossibleValueCaptured = _.sortBy(
-      payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_FIELD_NAME),
-      fuv => fuv.clientTime
-    ).reverse()[0]
-    if (mostRecentValueCaptured) {
-      resultEntry = await showResult(resultId, dataConstraints)
-    }
-    if (mostRecentNotPossibleValueCaptured) {
-      if (mostRecentNotPossibleValueCaptured.value) {
-        // As long as there is no treatment captured afterwards that would invalidate notPossible?
-        const mostRecentTreatmentValueCaptured = _.sortBy(
-          payload.filter(
-            fuv =>
-              fuv.fieldName === fieldNameToFollowUpTypeIdMappings.treatment && fuv.value !== NOT_POSSIBLE_FOLLOW_UP_TYPE
-          ),
-          fuv => fuv.clientTime
-        ).reverse()[0]
-        if (
-          !mostRecentTreatmentValueCaptured ||
-          mostRecentTreatmentValueCaptured.clientTime <= mostRecentNotPossibleValueCaptured.clientTime
-        ) {
-          const notPossibleReasonValueCaptured = _.sortBy(
-            payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_REASON_FIELD_NAME),
-            fuv => fuv.clientTime
-          ).reverse()[0] || {
-            value: null,
-            clientTime: mostRecentNotPossibleValueCaptured.clientTime,
-          }
-
-          const followUpNotPossibleExist = await getFollowUpsNotPossibleByResultById(resultId)
-
-          if (_.isEmpty(followUpNotPossibleExist)) {
-            const followUp = await getFollowUpByExternalId(NOT_POSSIBLE_FOLLOW_UP_TYPE)
-            await addResultFollowUp(
-              resultId,
-              NOT_POSSIBLE_FOLLOW_UP_TYPE,
-              followUp.id,
-              mostRecentNotPossibleValueCaptured.clientTime,
-              currentUserId,
-              mostRecentNotPossibleValueCaptured.clientTime,
-              currentUserId,
-              mostRecentNotPossibleValueCaptured.clientTime
-            )
-            await flagResult(
-              resultId,
-              currentUserId,
-              notPossibleReasonValueCaptured.value,
-              mostRecentNotPossibleValueCaptured.clientTime
-            )
-          }
-          resultEntry = await showResult(resultId, dataConstraints)
-        }
-      } else {
-        await deleteResultFollowUpNotPossible(resultId, mostRecentNotPossibleValueCaptured.clientTime)
-        await unflagResult(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
-        resultEntry = await showResult(resultId, dataConstraints)
       }
     }
     const resultFollowUps = await getFollowUpsOfResultById(resultId)
