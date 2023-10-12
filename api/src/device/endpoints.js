@@ -171,6 +171,15 @@ const routes = [
           shortName: Joi.string().allow('', null).description('The short name of the device'),
           siteId: Joi.number(),
           implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
+          instrumentsConnected: Joi.number().min(1).description('Number of connected instruments'),
+          gx6cModulesCount: Joi.number()
+            .allow('', null)
+            .min(0)
+            .description('Number of GX-6C modules on GenExpert device'),
+          gx10cModulesCount: Joi.number()
+            .allow('', null)
+            .min(0)
+            .description('Number of GX-10C modules on GenExpert device'),
           deviceCapacityId: Joi.number().allow(null).optional(),
         },
       },

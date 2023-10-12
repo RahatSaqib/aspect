@@ -1589,32 +1589,10 @@ async function transferResult(request) {
     resultStatusLog = await knex('ResultStatusLog').where({ id: resultStatusLogId }).first('createdOn')
     transferredOn = resultStatusLog.createdOn
 
-    // remove ResultFollowUp because we want the user at the clinic that now has access
-    // to the result to confirm the treatment status.
-    await knex('ResultFollowUp').where({ resultId }).del()
-    // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
-    const externalId = 'AwaitingTreatment'
-    const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
-    const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
-      resultId,
-      resultTreatmentStatusId,
-      method: 'transfer',
-      data: JSON.stringify({
-        siteId: result.data.siteId,
-        reportableSiteId: siteId,
-        sampleOriginSiteId: result.data.sampleOriginSiteId,
-      }),
-      createdOn: now,
-      changedOn: now,
-      createdBy: currentUserId,
-    })
-    // ------------
-
     // update
     await knex('Result').where('id', resultId).update({
       reportableSiteId: siteId,
       resultStatusLogId,
-      treatmentStatusLogId,
       firstViewedOn: null,
       updatedBy: currentUserId,
       updatedOn: now,
@@ -1729,7 +1707,7 @@ async function currentResultAggregations(request) {
   const resp = {}
   let dateColumn
   let baseQuery
-  if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
+  if (_.every(groupBy, group => _.includes(factTableDataGroups, group)) && !query?.resistance) {
     baseQuery = getClinicalIndicatorQueryForFactTable(dataConstraints, null, groupBy, query)
     dateColumn = 'r.startedOn'
   } else {
@@ -2123,7 +2101,7 @@ async function updateOrCreateResult(request, result = {}) {
   // deviceId is optional. if null and creating a result, it has to be an assay that is for manual entry only
   let { deviceId } = result
   if (isCreating) {
-    deviceId = await getDeviceIdForResultCreation(payload, partnerId, assay.externalId)
+    deviceId = await validatePayloadHadDeviceId(payload)
   }
   // check that user has access to device
   const device = await getDeviceByDeviceId({
@@ -2271,22 +2249,12 @@ async function updateOrCreateResult(request, result = {}) {
   return r
 }
 
-async function getDeviceIdForResultCreation(payload, partnerId, assayExternalId) {
+async function validatePayloadHadDeviceId(payload) {
   if (payload.deviceId) {
     return payload.deviceId
   }
-  // TODO: configure this in the db instead of hardcoding
-  const assaysForManualEntry = ['assayGenericCovid19', 'GenericRDT', 'DaktariHivVL']
-  if (assaysForManualEntry.indexOf(assayExternalId) === -1) {
-    throw Boom.badRequest(
-      'You did not select a device and this assay can not be entered manually without a device. Please specify a device.'
-    )
-  }
-  const aspectDeviceId = await getAspectDeviceId(partnerId)
-  if (!aspectDeviceId) {
-    throw Boom.internal('Could not find Aspect device for assigning this result.')
-  }
-  return aspectDeviceId
+
+  throw Boom.internal('Device is mandatory.')
 }
 
 async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collectedOn, originSiteId) {

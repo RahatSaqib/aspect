@@ -1,8 +1,10 @@
 import React, { useState } from 'react'
 import { Button, Card, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
+import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
+import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
@@ -16,6 +18,7 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
+import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import styles from '../styles.css'
 import messages from './messages'
 
@@ -30,9 +33,10 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const [editDevice, setEditDevice] = useState({ ...device })
   const [editDeviceTags, setEditDeviceTags] = useState([...deviceTags])
   const isPristine = isEqual(device, editDevice) && isEqual(deviceTags, editDeviceTags)
-  const [isError, setError] = useState(false)
+  const [error, setError] = useState({})
 
   const onDiscardClick = () => {
+    setError({})
     setEditDevice({ ...device })
     setEditDeviceTags([...deviceTags])
   }
@@ -110,6 +114,53 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               value={editDevice.dailyCapacityId}
               onChange={dailyCapacityId => setEditDevice({ ...editDevice, dailyCapacityId })}
             />
+
+            <TextField
+              label={intl.formatMessage(messages.instrumentsConnected)}
+              type="number"
+              error={error?.instrumentsConnected}
+              value={editDevice.instrumentsConnected}
+              onChange={({ target: { value } }) => {
+                setError(error => ({ ...error, instrumentsConnected: Number(value) <= 0 }))
+                setEditDevice({ ...editDevice, instrumentsConnected: value ? parseInt(value, 10) : '' })
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            {get(device, 'deviceType.externalId') === CONSTS.GENEXPERT_EXTERNAL_ID ? (
+              <>
+                <TextField
+                  label={intl.formatMessage(messages.gx6cModulesCount)}
+                  type="number"
+                  error={error?.gx6cModulesCount}
+                  value={editDevice?.gx6cModulesCount ?? 0}
+                  onChange={({ target: { value } }) => {
+                    setError(error => ({ ...error, gx6cModulesCount: Number(value) < 0 }))
+                    setEditDevice({ ...editDevice, gx6cModulesCount: value ? parseInt(value, 10) : '' })
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+
+                <TextField
+                  label={intl.formatMessage(messages.gx10cModulesCount)}
+                  type="number"
+                  error={error?.gx10cModulesCount}
+                  value={editDevice?.gx10cModulesCount ?? 0}
+                  onChange={({ target: { value } }) => {
+                    setError(error => ({ ...error, gx10cModulesCount: Number(value) < 0 }))
+                    setEditDevice({ ...editDevice, gx10cModulesCount: value ? parseInt(value, 10) : '' })
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </>
+            ) : null}
+
             <TextField
               fullWidth
               id="notes"
@@ -145,7 +196,12 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 >
                   {intl.formatMessage(messages.discard)}
                 </AspectButton>
-                <Button color="primary" variant="contained" onClick={handleSubmit} disabled={isPristine || isError}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={handleSubmit}
+                  disabled={isPristine || !values(error).every(v => v === false)}
+                >
                   {intl.formatMessage(messages.save)}
                 </Button>
               </ButtonGroup>

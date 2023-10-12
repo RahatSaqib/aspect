@@ -105,6 +105,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'lg.name as siteLga',
         'p.name as personName',
         'p.cell as personCell',
+        'p.cellE164 as personCellE164',
         'g.id as geographyId',
         'pu.plugin as partnerPlugin',
         'c.name as countryName',
@@ -382,8 +383,8 @@ async function processUsingDataSourceQuery(data, templateFields, auth) {
  */
 async function getBaseDataSource(data, auth) {
   const d = data || {}
-  const { loadPlugin } = require('../plugin/registration')
-  const { displayPreferences = {} } = await loadPlugin([d.partnerPlugin], 'settings')
+  const { loadPlugin } = require('../plugin/loadPlugin')
+  const { displayPreferences = {} } = await loadPlugin(d.partnerPlugin, undefined, 'settings')
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}
