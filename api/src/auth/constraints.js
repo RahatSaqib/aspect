@@ -332,7 +332,7 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
   const { device, assay, result } = aliases
   const { showUnapprovedDevices = false, showDecommissionedDevices = false } = options
   if (!result) {
-    if (!aliases.site && device) {
+    if (!aliases.site && device && !aliases.resultTransferFlag) {
       aliases.site = alias('Site')
       queryBuilder.leftOuterJoin(`Site as ${aliases.site}`, `${device}.siteId`, `${aliases.site}.id`)
     }
@@ -547,11 +547,15 @@ function addConstraints(
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
   addPartnerConstraints(queryBuilder, constraints, aliases)
+
   addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases)
   addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options)
+
   addPersonConstraints(queryBuilder, constraints, aliases)
   addGeographyConstraints(queryBuilder, constraints, aliases)
+
   addOrConstraints(queryBuilder, constraints, aliases)
+
   addResultConstraints(queryBuilder, constraints, aliases, options)
   addTransferLogConstraints(queryBuilder, constraints, aliases)
 }

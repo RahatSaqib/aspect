@@ -56,7 +56,7 @@ async function fetchEntriesServiceHandler(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // get resultIds of transferred result
-  const resultTransferHistory = []
+  const resultTransferHistory = await getTransferHistory(dataConstraints)
 
   const userViewOnlyTransferredResultIds = resultTransferHistory.map(record => record.resultId)
 

@@ -1532,6 +1532,7 @@ async function transferResult(request) {
 
   // get the result so we can check access
   const result = await getResultByResultId(auth, resultId)
+
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
   }
