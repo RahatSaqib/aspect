@@ -1,0 +1,40 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run Web",
+            "runtimeExecutable": "yarn",
+            "cwd": "${workspaceFolder}/web",
+            "runtimeArgs": ["start"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run Api",
+            "runtimeExecutable": "yarn",
+            "cwd": "${workspaceFolder}/api",
+            "runtimeArgs": ["start"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run db:reseed",
+            "runtimeExecutable": "yarn",
+            "cwd": "${workspaceFolder}/api",
+            "runtimeArgs": ["db:reseed"]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Run db:migrate",
+            "runtimeExecutable": "yarn",
+            "cwd": "${workspaceFolder}/api",
+            "runtimeArgs": ["db:migrate"]
+        }
+    ]
+}
