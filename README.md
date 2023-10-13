@@ -14,6 +14,13 @@ Setup Development Environment
 Install [Husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged) tools by running `yarn` in the root.
 Continue both web and API installs by reading: [API README](api/README.md#new-development-setup) & [Web README](web/README.md#installation)
 
+Setup Development Environment (Using devcontainers)
+------------------------------
+
+Install VScode and "Dev Containers" extension, press F1 and choose "Dev Containers: Rebuild Container" then in the section "Run and Debug" you can start aspect-api and aspect-web.
+
+If you are using windows with WSL2, is very important to checkout the source code inside of WSL 2 filesystem to avoid performance issues. [READ MORE](https://code.visualstudio.com/remote/advancedcontainers/improve-performance)
+
 Deployment
 ----------
 
