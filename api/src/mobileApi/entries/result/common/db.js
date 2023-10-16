@@ -162,7 +162,7 @@ const getFollowUpsByResultIds = results => {
   const knexQuery = knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .leftJoin('Person as p', 'p.id', 'rfu.createdBy')
+    .leftJoin('Person as p', 'p.userId', 'rfu.createdBy')
     .whereIn(
       'rfu.resultId',
       _.map(results, r => r.id)
