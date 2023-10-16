@@ -648,6 +648,18 @@ const getFollowUpsNotPossibleByResultById = resultId => {
     .first()
 }
 
+const deleteResultFollowUpTreatment = async (resultId, externalId, updatedBy, updatedOn) => {
+  return knex('ResultFollowUp')
+    .where('resultId', resultId)
+    .andWhere('externalId', externalId)
+    .andWhere('isDeleted', false)
+    .update({
+      isDeleted: 1,
+      updatedBy,
+      updatedOn,
+    })
+}
+
 module.exports = {
   addResultDownloadLogQuery,
   addResultFollowUp,
@@ -681,4 +693,5 @@ module.exports = {
   updateMostRecentResultFollowUp,
   getCurrentResultWorkflowStatus,
   getFollowUpsNotPossibleByResultById,
+  deleteResultFollowUpTreatment,
 }
