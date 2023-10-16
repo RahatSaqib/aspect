@@ -25,6 +25,7 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import { graphMessages, assay } from '../../../messages'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
+import { formatNumber } from '../../../utils/utils/number'
 import ErrorBoundary from '../../ErrorBoundary'
 import Loading from '../../Loading'
 import messages from '../graphMessages'
@@ -213,7 +214,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                       <Grid item xs={12} md={4} lg={4}>
                         <DonutGraph
                           data={donutData.data}
-                          total={donutData.total}
+                          total={formatNumber(donutData.total)}
                           graphId="testPerformedMonthlytotal"
                           graphTitle={[
                             formatMessage(graphMessages.testsOverTimeAvgTitle)
