@@ -220,7 +220,6 @@ async function clinicalResponse(request) {
     if (mostRecentNotPossibleValueCaptured) {
       if (mostRecentNotPossibleValueCaptured.value) {
         // As long as there is no treatment captured afterwards that would invalidate notPossible?
-
         const mostRecentTreatmentValueCaptured = _.sortBy(
           payload.filter(
             fuv =>
@@ -261,7 +260,7 @@ async function clinicalResponse(request) {
               mostRecentNotPossibleValueCaptured.clientTime
             )
 
-            // delete treatment
+            // delete follow up treatment
             if (mostRecentTreatmentInPayload) {
               await deleteResultFollowUpTreatment(
                 mostRecentTreatmentInPayload.resultId,
