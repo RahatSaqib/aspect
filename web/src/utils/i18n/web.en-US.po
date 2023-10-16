@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
+"POT-Creation-Date: 2023-10-16T20:47:00.675Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1039,7 +1039,6 @@ msgstr "Average Duration of Service Interruption"
 #. defaultMessage is:
 #. Average FQ-R cases diagnosed per month
 #: extracted_strings.json
-#| msgid "Average RR cases diagnosed per month"
 msgid "Average FQ-R cases diagnosed per month"
 msgstr "Average FQ-R cases diagnosed per month"
 
@@ -2405,7 +2404,6 @@ msgstr "Current Diagnosis"
 #. defaultMessage is:
 #. Current FQ Detection
 #: extracted_strings.json
-#| msgid "Current MTB Detection"
 msgid "Current FQ Detection"
 msgstr "Current FQ Detection"
 
@@ -4150,7 +4148,6 @@ msgstr "FQ-R Detected"
 #. defaultMessage is:
 #. FQ-R cases diagnosed in current year
 #: extracted_strings.json
-#| msgid "RRTB Cases Diagnosed in current year"
 msgid "FQ-R cases diagnosed in current year"
 msgstr "FQ-R cases diagnosed in current year"
 
@@ -4158,7 +4155,6 @@ msgstr "FQ-R cases diagnosed in current year"
 #. defaultMessage is:
 #. FQ-R cases diagnosed in last 24 hours
 #: extracted_strings.json
-#| msgid "RR cases diagnosed in last 24 hours"
 msgid "FQ-R cases diagnosed in last 24 hours"
 msgstr "FQ-R cases diagnosed in last 24 hours"
 
@@ -4166,7 +4162,6 @@ msgstr "FQ-R cases diagnosed in last 24 hours"
 #. defaultMessage is:
 #. FQ-R cases diagnosed this year
 #: extracted_strings.json
-#| msgid "RR cases diagnosed this year"
 msgid "FQ-R cases diagnosed this year"
 msgstr "FQ-R cases diagnosed this year"
 
@@ -4464,7 +4459,6 @@ msgstr "GeneXpert COVID-19 Cartridge"
 #. defaultMessage is:
 #. GeneXpert Calibrated When Due
 #: extracted_strings.json
-#| msgid "Calibrated When Due"
 msgid "GeneXpert Calibrated When Due"
 msgstr "GeneXpert Calibrated When Due"
 
@@ -4472,7 +4466,6 @@ msgstr "GeneXpert Calibrated When Due"
 #. defaultMessage is:
 #. GeneXpert Calibration Past Due
 #: extracted_strings.json
-#| msgid "Calibration Past Due"
 msgid "GeneXpert Calibration Past Due"
 msgstr "GeneXpert Calibration Past Due"
 
@@ -5496,7 +5489,6 @@ msgstr "Instrument Serial"
 #. defaultMessage is:
 #. Instruments Connected
 #: extracted_strings.json
-#| msgid "Instrument Replaced"
 msgid "Instruments Connected"
 msgstr "Instruments Connected"
 
@@ -7028,7 +7020,6 @@ msgstr "Module Swaps"
 #. defaultMessage is:
 #. Module Swaps (GeneXpert only)
 #: extracted_strings.json
-#| msgid "Module Status Report"
 msgid "Module Swaps (GeneXpert only)"
 msgstr "Module Swaps (GeneXpert only)"
 
@@ -7300,7 +7291,6 @@ msgstr "National Testing Trends using MTB/XDR Assay"
 #. defaultMessage is:
 #. National and Provincial Trends in Annual Utilization Rates
 #: extracted_strings.json
-#| msgid "Provinces annual utilization rates"
 msgid "National and Provincial Trends in Annual Utilization Rates"
 msgstr "National and Provincial Trends in Annual Utilization Rates"
 
@@ -7794,6 +7784,26 @@ msgstr "Now"
 msgid "Number of Devices"
 msgstr "Number of Devices"
 
+#. [pages.DeviceDetailEdit.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#. [pages.deviceDetail.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#: extracted_strings.json
+msgid "Number of GX-10C modules"
+msgstr "Number of GX-10C modules"
+
+#. [pages.DeviceDetailEdit.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#. [pages.deviceDetail.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#: extracted_strings.json
+msgid "Number of GX-6C modules"
+msgstr "Number of GX-6C modules"
+
 #. [legends.Unknown.inventoryGraphStatusXAxisLegend]
 #. defaultMessage is:
 #. Number of Locations
@@ -7985,6 +7995,19 @@ msgstr "Only lots with stock"
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Only transfers"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
@@ -11241,7 +11264,6 @@ msgstr "Sms body is required"
 #. defaultMessage is:
 #. Sms body shouldn't have no more than 2000 characters
 #: extracted_strings.json
-#| msgid "Sms body shouldn't have no more than 144 characters"
 msgid "Sms body shouldn't have no more than 2000 characters"
 msgstr "Sms body shouldn't have no more than 2000 characters"
 
@@ -11249,7 +11271,6 @@ msgstr "Sms body shouldn't have no more than 2000 characters"
 #. defaultMessage is:
 #. Sms message should not be longer than 2000 characters
 #: extracted_strings.json
-#| msgid "Sms message should not be longer than 144 characters"
 msgid "Sms message should not be longer than 2000 characters"
 msgstr "Sms message should not be longer than 2000 characters"
 
@@ -11348,7 +11369,6 @@ msgstr "Status"
 #. defaultMessage is:
 #. Stock not recorded (GenXpert only)
 #: extracted_strings.json
-#| msgid "Stock not recorded"
 msgid "Stock not recorded (GenXpert only)"
 msgstr "Stock not recorded (GenXpert only)"
 
@@ -11912,7 +11932,6 @@ msgstr ""
 #. defaultMessage is:
 #. The average number of SMS recipients per positive result.
 #: extracted_strings.json
-#| msgid "The average number of SMS recipients per positive GeneXpert result."
 msgid "The average number of SMS recipients per positive result."
 msgstr "The average number of SMS recipients per positive result."
 
@@ -11920,9 +11939,6 @@ msgstr "The average number of SMS recipients per positive result."
 #. defaultMessage is:
 #. The average number of characters in SMS messages sent about positive results.
 #: extracted_strings.json
-#| msgid ""
-#| "The average number of characters in SMS messages sent about positive "
-#| "GeneXpert results."
 msgid ""
 "The average number of characters in SMS messages sent about positive results."
 msgstr ""
@@ -11949,11 +11965,6 @@ msgstr ""
 #. defaultMessage is:
 #. The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
-#| msgid ""
-#| "The average number of days between when an instrument serial last "
-#| "reported from a device and a new instrument serial reporting. An "
-#| "Instrument is marked as replaced when two consecutive results performed "
-#| "in the same device, have a different Instrument serial number"
 msgid ""
 "The average number of days between when an instrument serial last reported "
 "from a GeneXpert device and a new instrument serial reporting. An Instrument "
@@ -11969,8 +11980,6 @@ msgstr ""
 #. defaultMessage is:
 #. The average number of email recipients per positive result.
 #: extracted_strings.json
-#| msgid ""
-#| "The average number of email recipients per positive GeneXpert result."
 msgid "The average number of email recipients per positive result."
 msgstr "The average number of email recipients per positive result."
 
@@ -12041,9 +12050,6 @@ msgstr "The notification type is required"
 #. defaultMessage is:
 #. The number of GeneXpert instruments that had their last calibration more than one year ago.
 #: extracted_strings.json
-#| msgid ""
-#| "The number of instruments that had their last calibration more than one "
-#| "year ago."
 msgid ""
 "The number of GeneXpert instruments that had their last calibration more "
 "than one year ago."
@@ -12055,10 +12061,6 @@ msgstr ""
 #. defaultMessage is:
 #. The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
 #: extracted_strings.json
-#| msgid ""
-#| "The number of module swaps made at the current month. The module swap "
-#| "issue appears when two consecutive results performed in the same slot "
-#| "have a different module serial number"
 msgid ""
 "The number of GeneXpert module swaps made at the current month. The module "
 "swap issue appears when two consecutive results performed in the same slot "
@@ -13602,7 +13604,6 @@ msgstr "Xpert Site Detailed Report"
 #. defaultMessage is:
 #. Xpert Site Summary Report - Site Wise
 #: extracted_strings.json
-#| msgid "Device Summary Report"
 msgid "Xpert Site Summary Report - Site Wise"
 msgstr "Xpert Site Summary Report - Site Wise"
 
@@ -13617,7 +13618,6 @@ msgstr "Xpert Test Activities Report"
 #. defaultMessage is:
 #. Xpert Workload Summary Report
 #: extracted_strings.json
-#| msgid "Report of TB Workload Summary"
 msgid "Xpert Workload Summary Report"
 msgstr "Xpert Workload Summary Report"
 
@@ -13812,9 +13812,6 @@ msgstr ""
 #. defaultMessage is:
 #. Your credentials were not configured properly. Please, contact your administrator.
 #: extracted_strings.json
-#| msgid ""
-#| "Access denied for this resource. Please, contact your administrator for "
-#| "support."
 msgid ""
 "Your credentials were not configured properly. Please, contact your "
 "administrator."
