@@ -1,0 +1,57 @@
+version: '3'
+
+services:
+  aspect-app:
+    image: node:14-alpine
+    working_dir: /app
+    entrypoint: ["/bin/sh","-c"]
+    command:
+    - |
+      cd /app/api
+      cp -n .env.example .env
+      yarn install --frozen-lockfile
+
+      cd /app/web
+      yarn install --frozen-lockfile
+
+      sleep infinity
+     
+    volumes:
+      - ../:/app
+    depends_on:
+      - mysql
+      - rabbitmq
+    env_file:
+      - env.yml
+    network_mode: service:mysql
+
+  rabbitmq:
+    image: rabbitmq:management
+    restart: always
+    environment:
+      - RABBITMQ_DEFAULT_USER=guest
+      - RABBITMQ_DEFAULT_PASS=guest
+    healthcheck:
+      test: [ "CMD", "nc", "-z", "localhost", "5672" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+    network_mode: service:mysql
+  mysql:
+    image: mysql
+    # NOTE: use of "mysql_native_password" is not recommended: https://dev.mysql.com/doc/refman/8.0/en/upgrading-from-previous-series.html#upgrade-caching-sha2-password
+    # (this is just an example, not intended to be a production configuration)
+    command: --default-authentication-plugin=mysql_native_password --sql_mode= --default-time-zone=+00:00 --innodb-buffer-pool-size=4G --innodb-buffer-pool-instances=4 --innodb-buffer-pool-chunk-size=1G
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: 1234
+      TZ: UTC
+    volumes:
+      - ./data/db:/var/lib/mysql
+    healthcheck:
+      test: ["CMD", "mysqladmin" ,"ping", "-h", "localhost"]
+      timeout: 20s
+      retries: 10
+
+volumes:
+  dbdata:

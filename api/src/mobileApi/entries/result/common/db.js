@@ -11,7 +11,7 @@ const {
 const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 
-const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
+const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const knexQuery = knex('Result as result')
@@ -19,10 +19,10 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
     .join('Site as laboratory', 'result.siteId', 'laboratory.id')
     .join('Assay as assay', 'result.assayId', 'assay.id')
     .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
+    .join('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
+    .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .leftJoin('ResultCategory as resultCategory1', 'result.resultCategory1', 'resultCategory1.id')
     .leftJoin('ResultCategory as resultCategory2', 'result.resultCategory2', 'resultCategory2.id')
-    .leftJoin('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
-    .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .leftJoin('Sample as sample', 'result.sampleId', 'sample.id')
     .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
     .leftJoin('Person as sampleCollectedBy', 'sample.collectedBy', 'sampleCollectedBy.userId')
@@ -57,14 +57,12 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
         .on('result.assayId', 'resultCategoryAssay2.assayId')
         .andOn('result.resultCategory2', 'resultCategoryAssay2.resultCategoryId')
     )
+    .whereIn('result.reportableSiteId', clinicIds)
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
       assayType: 'assayType',
-      site: 'reportableSite',
-      geography: 'reportableSiteGeography',
-      result: 'result',
     })
-    .where('result.updatedOn', '>', minUpdatedOn)
+    .andWhere('result.updatedOn', '>', minUpdatedOn)
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .andWhere(qb =>
       qb
@@ -166,7 +164,7 @@ const getFollowUpsByResultIds = results => {
   const knexQuery = knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
-    .leftJoin('Person as p', 'p.id', 'rfu.createdBy')
+    .leftJoin('Person as p', 'p.userId', 'rfu.createdBy')
     .whereIn(
       'rfu.resultId',
       _.map(results, r => r.id)
