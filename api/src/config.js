@@ -1,4 +1,4 @@
-require('dotenv-safe').config()
+require('dotenv-safe').config({ allowEmptyValues: true })
 const _ = require('lodash')
 
 const port = process.env.PORT || 8080
