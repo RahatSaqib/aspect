@@ -80,7 +80,6 @@ async function getAllResultsForExport(auth, query) {
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
-  const columnsFromResultForms = await getColumnsFromResultForms(props)
   const columns = [
     ..._.map(extraColumns, column => ({
       key: column.db,
@@ -116,7 +115,6 @@ async function getAllResultsForExport(auth, query) {
 
     // dynamic columns from different schema json fields
     ...columnsFromAssaySchema,
-    ...columnsFromResultForms,
   ]
 
   const dataset = {
@@ -202,23 +200,6 @@ async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
     }
   })
 
-  return columns
-}
-
-async function getColumnsFromResultForms({ partnerId }) {
-  const columns = []
-  const forms = await knex('ResultForm').where('partnerId', partnerId).pluck('formSchema')
-
-  _.forEach(forms, formSchema => {
-    _.forEach(JSON.parse(formSchema).fields, (value, key) => {
-      if (value && (_.isNil(value.excludeReport) || !value.excludeReport) && value.name) {
-        columns.push({
-          header: value.name,
-          key: key.replace('.title', '').replace('.properties', ''),
-        })
-      }
-    })
-  })
   return columns
 }
 

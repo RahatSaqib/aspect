@@ -3147,7 +3147,6 @@ async function seed(knex) {
     GxMtbXdr: assayGeneXpertMtbXdrId,
     GxMtbRifUltra: assayGeneXpertMtbRifUltraId,
     GxHiv1Vl: assayGeneXpertHiv1VlId,
-    GxHiv1Qual: assayGeneXpertHiv1QualId,
     GxEbola: assayGeneXpertEbolaId,
     GxHcv: assayGeneXpertHcvId,
   } = await allAssayToId()
@@ -5222,78 +5221,4 @@ async function seed(knex) {
       widgetId: widgetIds.averageTimeToModuleReplacement,
     },
   ])
-
-  const geneXpertHiv1VlFormSchema = JSON.stringify({
-    fields: {
-      hospitalNumber: {
-        i18nLabel: 'hospitalNumber',
-        control: {
-          type: 'TextBox',
-        },
-        order: 1,
-      },
-      nameOfPatient: {
-        i18nLabel: 'nameOfPatient',
-        control: {
-          type: 'TextBox',
-        },
-        order: 2,
-      },
-      surnameOfPatient: {
-        i18nLabel: 'surnameOfPatient',
-        control: {
-          type: 'TextBox',
-        },
-        order: 3,
-      },
-      ward: {
-        i18nLabel: 'ward',
-        control: {
-          type: 'TextBox',
-        },
-        order: 4,
-      },
-      timeSampleTaken: {
-        i18nLabel: 'timeSampleTaken',
-        control: {
-          type: 'DateTime',
-        },
-        order: 5,
-      },
-      sampleType: {
-        i18nLabel: 'sampleType',
-        control: {
-          type: 'DropDown',
-          options: [
-            {
-              i18nText: 'studyOfSampleType',
-              value: '1',
-            },
-            {
-              i18nText: 'EQAOfSampleType',
-              value: '2',
-            },
-            {
-              i18nText: 'miscOfSampleType',
-              value: '3',
-            },
-          ],
-        },
-        order: 6,
-      },
-    },
-    sendChangesOn: 'change',
-  })
-
-  await knex('ResultForm').insert({
-    partnerId: partnerOneId,
-    assayId: assayGeneXpertHiv1VlId,
-    formSchema: geneXpertHiv1VlFormSchema,
-  })
-
-  await knex('ResultForm').insert({
-    partnerId: partnerOneId,
-    assayId: assayGeneXpertHiv1QualId,
-    formSchema: geneXpertHiv1VlFormSchema,
-  })
 }

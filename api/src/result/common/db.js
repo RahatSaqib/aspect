@@ -71,9 +71,6 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       // full result text for the result details page
       data.fullResultText = data.resultData.resultText
     }
-    if (data.formSchema) {
-      data.formSchema = JSON.parse(data.formSchema)
-    }
 
     if (data.formData) {
       data.formData = JSON.parse(data.formData)
@@ -188,9 +185,6 @@ const getBaseQueryForResults = () =>
     })
     .leftJoin('ResultCategoryAssay as rca2', q => {
       q.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
-    .leftJoin('ResultForm as rf', q => {
-      q.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
     .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')

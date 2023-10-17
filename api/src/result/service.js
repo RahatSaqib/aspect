@@ -12,13 +12,11 @@ const {
   RESULT_STRING_TEMPLATE_FIELDS,
 } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
-const { resultUpdated, resultLoggedProcessed } = require('./actions')
 const { addConstraints, canViewResults, getConstraints, addPartnerQueryConstraints } = require('../auth/constraints')
 const { getUser, getUserByUserId, getPersonByPersonId } = require('../auth/service')
 const {
   allAssayToId,
   allResultCategoryToId,
-  deviceTypeToId,
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
   resultStatusToId,
@@ -34,7 +32,6 @@ const { updateTagsById } = require('../tag/service')
 const { getCaseId } = require('../case/service')
 const { applyExtraColumns, sanitizeExtraColumns } = require('./extraColumns')
 const { getAllAssaySchemas, getAssayResultCategories } = require('../assay/service')
-const { getRemoteAddress } = require('../shared/request')
 
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
@@ -680,9 +677,6 @@ async function getResultForStringTemplateProcessing(resultId, fields = RESULT_ST
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sample', 'r.sampleId', 'sample.id')
     .join('Partner as p', 'r.partnerId', 'p.id')
-    .leftJoin('ResultForm as rf', function () {
-      this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
-    })
     .leftJoin('PartnerDisease as pd', function () {
       this.on('at.diseaseId', 'pd.diseaseId').andOn('r.partnerId', 'pd.partnerId')
     })
@@ -1069,128 +1063,6 @@ async function getTreatmentStatusByResultId(resultId) {
       'ts.externalId',
       'ts.i18nKey'
     )
-}
-
-async function updateFormDataByResultId(
-  resultId,
-  partnerId,
-  assayId,
-  existingFormData,
-  newFormData,
-  auth,
-  messageContext,
-  senderIp,
-  params
-) {
-  const now = new Date()
-  const mergedFormData = _.merge({}, existingFormData, newFormData)
-  if (!_.isEqual(existingFormData, mergedFormData)) {
-    const resultForm = await knex('ResultForm')
-      .where({
-        partnerId,
-        assayId,
-      })
-      .first('formSchema')
-
-    if (!resultForm || _.isEmpty(resultForm.formSchema)) {
-      return 'This result cannot accept form data because no form schema is defined.'
-    }
-    const formSchema = JSON.parse(resultForm.formSchema)
-    const unrecognisedFields = _.difference(Object.keys(newFormData), Object.keys(formSchema.fields))
-    if (!_.isEmpty(unrecognisedFields)) {
-      const undefinedFieldMessage =
-        unrecognisedFields.length > 1
-          ? `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
-          : `This result cannot accept the following field in it's form data: ${unrecognisedFields[0]} because it is not defined in the forms schema.`
-      return undefinedFieldMessage
-    }
-    const fieldValidationErrors = []
-    _.each(Object.keys(newFormData), formFieldKey => {
-      const formFieldValue = _.get(newFormData, formFieldKey)
-      const formFieldSchema = _.get(formSchema, ['fields', formFieldKey])
-      if (!_.isNil(formFieldValue)) {
-        const allowMultipleSelection = _.get(formFieldSchema, 'control.allowMultipleSelection', true)
-        const formFieldOptions = _.get(formFieldSchema, 'control.options')
-        if (formFieldOptions) {
-          const allowedValues = _.map(formFieldOptions, 'value')
-          if (_.isArray(formFieldValue)) {
-            if (!allowMultipleSelection && formFieldValue.length > 1) {
-              fieldValidationErrors.push(
-                `[${formFieldValue.join()}] is invalid for ${formFieldKey} because the field does not allow multiple values.`
-              )
-            }
-            const illegalValuesEntered = _.difference(formFieldValue, allowedValues)
-            if (!_.isEmpty(illegalValuesEntered)) {
-              const validationMessage =
-                illegalValuesEntered.length === 1
-                  ? `${illegalValuesEntered[0]} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
-                  : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
-              fieldValidationErrors.push(validationMessage)
-            }
-          } else if (!allowedValues.includes(formFieldValue.toString())) {
-            fieldValidationErrors.push(
-              `${formFieldValue} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
-            )
-          }
-        }
-      }
-    })
-    if (!_.isEmpty(fieldValidationErrors)) {
-      return fieldValidationErrors.join('\n')
-    }
-    messageContext.bindActionCreators({
-      resultUpdated,
-    })
-    const { id: currentUserId } = await getUser(auth.credentials.name)
-    let deviceLogId
-    await messageContext.transact(async knex => {
-      const updatedResult = {
-        formData: JSON.stringify(mergedFormData),
-        updatedBy: currentUserId,
-        updatedOn: now,
-      }
-
-      await knex('Result').where('id', resultId).update(updatedResult)
-
-      const deviceId = await getAspectDeviceId(partnerId)
-
-      if (deviceId) {
-        ;[deviceLogId] = await knex('DeviceLog').insert({
-          deviceId,
-          resultId,
-          source: 'Result Edited in Aspect',
-          createdOn: now,
-          senderIp,
-          rawMessage: JSON.stringify({
-            auth: { credentials: { name: auth.credentials.name } },
-            params,
-            payload: newFormData,
-          }),
-        })
-      }
-
-      messageContext.resultUpdated(resultId, deviceLogId, currentUserId)
-    })
-    if (deviceLogId) {
-      await messageContext.queue.waitForAction(resultLoggedProcessed(resultId, deviceLogId), 1000).catch(_.noop)
-    }
-  }
-}
-
-async function getAspectDeviceId(partnerId) {
-  const aspectDeviceTypeId = await deviceTypeToId('Aspect')
-  if (aspectDeviceTypeId) {
-    const { id: deviceId } =
-      (await knex('Device')
-        .where({
-          partnerId,
-          deviceTypeId: aspectDeviceTypeId,
-        })
-        .first('id')) || {}
-    if (deviceId) {
-      return deviceId
-    }
-  }
 }
 
 async function listWorkflowStatusTypes() {
@@ -2071,11 +1943,7 @@ async function createResult(request) {
 }
 
 async function updateOrCreateResult(request, result = {}) {
-  const {
-    auth,
-    payload,
-    plugins: { messageContext },
-  } = request
+  const { auth, payload } = request
   const { id: userId, partnerId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
   const isCreating = !result.id
@@ -2200,18 +2068,6 @@ async function updateOrCreateResult(request, result = {}) {
 
   // update or insert tags
   await updateTagsById(result.id, 'result', payload.tags, auth)
-
-  // update result form data
-  await updateFormDataByResultId(
-    result.id,
-    result.partnerId,
-    result.assayId,
-    result.formData,
-    payload.formData,
-    auth,
-    messageContext,
-    getRemoteAddress(request)
-  )
 
   // update/insert workflow status
   const resultWorkflowStatusExternalId =

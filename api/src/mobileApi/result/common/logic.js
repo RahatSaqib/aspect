@@ -275,9 +275,6 @@ async function getResultByResultId(
       // full result text for the result details page
       data.fullResultText = data.resultData.resultText
     }
-    if (data.formSchema) {
-      data.formSchema = JSON.parse(data.formSchema)
-    }
 
     if (data.formData) {
       data.formData = JSON.parse(data.formData)

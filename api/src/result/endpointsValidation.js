@@ -250,7 +250,6 @@ function validateResultDetailResponse() {
     sampleTypeId: asPositiveInteger.allow(null).description('Sample type Id'),
     patientId: Joi.string().allow(null, '').description('The patient Id'),
     patientData: Joi.object().allow(null).description('The patient data'),
-    formSchema: Joi.object().allow(null).description('The form data object'),
     assay: Joi.object().allow(null).description('The assay object'),
     assayType: Joi.string().allow(null, '').description("The type of the result's assay"),
     deviceType: Joi.string().allow(null, '').description("The type of the result's device"),
