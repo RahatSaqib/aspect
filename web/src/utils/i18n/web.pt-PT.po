@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
+"POT-Creation-Date: 2023-10-16T20:47:00.675Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -7799,6 +7799,30 @@ msgstr "Agora"
 msgid "Number of Devices"
 msgstr "Número de Dispositivos"
 
+#. [pages.DeviceDetailEdit.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#. [pages.deviceDetail.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Number of Tests"
+msgid "Number of GX-10C modules"
+msgstr "Número de Testes"
+
+#. [pages.DeviceDetailEdit.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#. [pages.deviceDetail.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Number of Tests"
+msgid "Number of GX-6C modules"
+msgstr "Número de Testes"
+
 #. [legends.Unknown.inventoryGraphStatusXAxisLegend]
 #. defaultMessage is:
 #. Number of Locations
@@ -7990,6 +8014,19 @@ msgstr "Apenas lotes com estoque"
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Apenas lotes com estoque"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Ops! Algo correu mal. A nossa equipa foi notificada e estamos a trabalhar "
+"para resolver o problema. Tente novamente mais tarde. Se o problema "
+"persistir, contacte a nossa equipa de apoio e forneça o seguinte erro:"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
