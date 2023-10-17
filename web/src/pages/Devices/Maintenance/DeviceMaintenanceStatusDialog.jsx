@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { Button, TextField } from '@mui/material'
 import { DesktopDatePicker } from '@mui/x-date-pickers'
 import classnames from 'classnames/bind'
+import format from 'date-fns/format'
 import flowRight from 'lodash/flowRight'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../../hooks/useI18n'
@@ -155,7 +156,9 @@ const FormDialog = ({
               value={values.expectedBack}
               minDate={new Date()}
               disabled={form.submitting}
-              onChange={onExpectedBackChange}
+              onChange={date => {
+                onExpectedBackChange(format(date, 'yyyy-MM-dd'))
+              }}
               renderInput={params => <TextField {...params} onKeyDown={e => e.preventDefault()} />}
             />
           </section>
