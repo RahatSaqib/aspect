@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { formatDistanceStrict, parseISO } = require('date-fns')
+const { formatDistanceStrict, parseISO, format } = require('date-fns')
 const { findTimeZone } = require('timezone-support')
 const { convertToTimeZone } = require('date-fns-timezone')
 const handlebars = require('handlebars')
@@ -13,6 +13,7 @@ const {
 } = require('../shared/date')
 const { addConstraints } = require('../auth/constraints')
 const getCurrentPartner = require('../partner/getCurrentPartner')
+const { getDateRangeFilters } = require('../notification/common/logic')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
@@ -156,6 +157,8 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'i.data as issueData',
         'it.externalId as issueTypeExternalId',
         'nt.name as notificationTypeName',
+        knex.raw("nt.filterCondition ->> '$.reportDateRange' as reportDateRange"),
+        knex.raw("nt.filterCondition ->> '$.reportStartingWeekDay' as reportStartingWeekDay"),
         knex.raw(`${notification}.reportToken as reportToken`)
       )
   }
@@ -388,6 +391,11 @@ async function getBaseDataSource(data, auth) {
   const issueData = d.issueData ? JSON.parse(d.issueData) : {}
   const isHardwareIssue = d.issueTypeExternalId ? d.issueTypeExternalId.indexOf('Hardware') === 0 : false
   const { apiUrl = '' } = auth?.credentials ? (await getCurrentPartner(auth)) || {} : {}
+  let dateRange = null
+  if (d?.reportDateRange) {
+    const { minDate, maxDate } = getDateRangeFilters(new Date(), d.reportDateRange, d.reportStartingWeekDay)
+    dateRange = `${format(parseISO(minDate), 'yyyy-MM-dd')} - ${format(parseISO(maxDate), 'yyyy-MM-dd')}`
+  }
 
   return {
     country: {
@@ -488,6 +496,7 @@ async function getBaseDataSource(data, auth) {
     },
     report: {
       downloadLink: `${apiUrl}/api/reports/download?token=${d.reportToken}`,
+      dateRange,
     },
     displayPreferences,
     timezone: d.timezone,
