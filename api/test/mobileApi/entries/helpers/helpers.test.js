@@ -88,7 +88,7 @@ describe('Entries helpers', () => {
           id: 789,
           resultId: 123,
           followUpName: 'FollowUp1',
-          updatedOn: '2023-05-03T00:00:00Z',
+          date: '2023-05-03T00:00:00Z',
           followUpTypeName: 'sample follow up type',
           clinicianName: 'test clinician',
         },
