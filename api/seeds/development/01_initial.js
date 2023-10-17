@@ -4269,7 +4269,8 @@ async function seed(knex) {
 
         resultData.resultText = result.resultText
 
-        resultData.detectedResistance = getDetectedResistanceCategoryTypes(result.resultText)
+        const { detectedResistances } = getDetectedResistanceCategoryTypes(result.resultText)
+        resultData.detectedResistance = detectedResistances
 
         const [resultId] = await knex('Result').insert({
           ...auditFields,
