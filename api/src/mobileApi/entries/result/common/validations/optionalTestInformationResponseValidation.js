@@ -18,6 +18,7 @@ const optionalTestInformationResponseValidation = Joi.object()
           .integer()
           .positive()
           .description('The id of last entry in ResultStatusLog for current result'),
+        detectedResistance: Joi.array().description('list of drug resistance'),
       })
     ),
   })
