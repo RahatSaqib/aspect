@@ -229,7 +229,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
-const allMtbNamesInXdrResistance = ['MTB']
 const allXdrResistanceNames = ['INH', 'FLQ', 'AMK', 'KAN', 'CAP', 'ETH']
 const comboXdrResistanceNames = ['INH_FLQ', 'INH_ETH']
 const sumSingleXdrResistance = (knex, resistanceName) =>
@@ -459,7 +458,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
           'r.assayId',
           'r.resultCategory1',
           'r.resultCategory2',
-          ...allMtbNamesInXdrResistance.map(name => sumSingleXdrResistance(knex, name)),
           ...allXdrResistanceNames.map(resistanceName => sumSingleXdrResistance(knex, resistanceName)),
           ...comboXdrResistanceNames.map(comboNames => sumComboXdrResistances(knex, ...comboNames.split('_'))),
           knex.raw('DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame'),
@@ -501,15 +499,13 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         /**
          * fill all XDR resistance counts
          */
-        ;[...allMtbNamesInXdrResistance, ...allXdrResistanceNames, ...comboXdrResistanceNames].forEach(
-          resistanceName => {
-            // see pattern for field alias in funcs `sumSingleXdrResistance` and `sumComboXdrResistances` above
-            const cntDetected = count[`cnt_${resistanceName}`] || 0
-            const cntNotDetected = count.resultCount - cntDetected
-            _.set(xdrResistanceCounts, [resistanceName, 'detected'], cntDetected)
-            _.set(xdrResistanceCounts, [resistanceName, 'notDetected'], cntNotDetected)
-          }
-        )
+        ;[...allXdrResistanceNames, ...comboXdrResistanceNames].forEach(resistanceName => {
+          // see pattern for field alias in funcs `sumSingleXdrResistance` and `sumComboXdrResistances` above
+          const cntDetected = count[`cnt_${resistanceName}`] || 0
+          const cntNotDetected = count.resultCount - cntDetected
+          _.set(xdrResistanceCounts, [resistanceName, 'detected'], cntDetected)
+          _.set(xdrResistanceCounts, [resistanceName, 'notDetected'], cntNotDetected)
+        })
         if (factResultsDeviceByTimeFrame) {
           await knex('FactResultsDeviceByTimeFrame')
             .where({

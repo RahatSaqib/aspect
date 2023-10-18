@@ -323,18 +323,18 @@ const parseResultText = resultText => {
  * @returns An array including all the resistances category types which result was Detected. Ex.: ['INH', 'ETH']
  */
 const getDetectedResistanceCategoryTypes = resultText => {
-  const detectedResistances = []
+  const detectedResistance = []
   const allResistances = {}
   const resultsCollection = parseResultText(resultText)
   Object.keys(resultsCollection).forEach(categoryType => {
     const resistance = categoryType.replace('RESISTANCE', '').trim()
     const resultCategoryValue = resultsCollection[categoryType]
     if (categoryType !== 'MTB' && resultCategoryValue === 'Detected') {
-      detectedResistances.push(resistance)
+      detectedResistance.push(resistance)
     }
     allResistances[resistance] = resultCategoryValue
   })
-  return { detectedResistances, allResistances }
+  return { detectedResistance, allResistances }
 }
 
 module.exports = {

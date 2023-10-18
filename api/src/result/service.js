@@ -1532,6 +1532,7 @@ async function transferResult(request) {
 
   // get the result so we can check access
   const result = await getResultByResultId(auth, resultId)
+
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
   }
@@ -1596,6 +1597,14 @@ async function transferResult(request) {
       firstViewedOn: null,
       updatedBy: currentUserId,
       updatedOn: now,
+    })
+
+    await knex('ResultTransferLog').insert({
+      resultId,
+      reportableSiteId: siteId,
+      sampleOriginSiteId: result.data.sampleOriginSiteId,
+      previousReportableSiteId: result.data.reportableSiteId,
+      comment,
     })
 
     result.data.reportableSiteId = siteId
