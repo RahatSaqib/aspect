@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import round from 'lodash/round'
 
-export function getItemsForTrendsGraph(data, states) {
+export function getItemsForTrendsGraph(data, states, lgas) {
   let actualData = data
   if (states?.length) {
     /**
@@ -11,7 +11,7 @@ export function getItemsForTrendsGraph(data, states) {
      * data for ALL selected states - if raw `data` from API doesn't have entries for
      * some state - use default value
      */
-    actualData = states.map(({ name }) => {
+    actualData = (lgas.length ? lgas : states).map(({ name }) => {
       const d = data.find(it => it.locationName === name)
       if (d) {
         return d
