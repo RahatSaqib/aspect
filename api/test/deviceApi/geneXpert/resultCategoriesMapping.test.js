@@ -326,7 +326,7 @@ describe('Detected Resistancies Calculation', () => {
 
   it('Should return an empty array if no resistances were detected', () => {
     const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(
-      '|MTB @label_result_detected|Medium INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_not_detected'
+      '|MTB @label_result_detected|INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_not_detected'
     )
     assert.isEmpty(detectedResistance)
     assert.deepEqual(allResistances, {
