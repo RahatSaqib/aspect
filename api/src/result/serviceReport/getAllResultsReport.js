@@ -56,7 +56,7 @@ module.exports = async (auth, query) => {
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'resultCategoryGroup', header: 'Result' },
     { key: 'resultData.resultText', header: 'Raw Result' },
-    { key: 'resultData.allResistances.IMH', header: 'INH' },
+    { key: 'resultData.allResistances.INH', header: 'INH' },
     { key: 'resultData.allResistances.FLQ', header: 'FLQ' },
     { key: 'resultData.allResistances.AMK', header: 'AMK' },
     { key: 'resultData.allResistances.KAN', header: 'KAN' },
