@@ -23,12 +23,12 @@ const sanitizeResultTextValue = resultTextValue =>
     // Result Category 2 - Rif
     .replace(/rif resistance/, '')
     // Result Category 2 - XDR
-    .replace(/(?:very low\s+|low\s+|medium\s+|)inh resistance/, '')
-    .replace(/(?:very low\s+|low\s+|medium\s+|)flq resistance/, '')
-    .replace(/(?:very low\s+|low\s+|medium\s+|)amk resistance/, '')
-    .replace(/(?:very low\s+|low\s+|medium\s+|)kan resistance/, '')
-    .replace(/(?:very low\s+|low\s+|medium\s+|)cap resistance/, '')
-    .replace(/(?:very low\s+|low\s+|medium\s+|)eth resistance/, '')
+    .replace(/inh resistance/, '')
+    .replace(/flq resistance/, '')
+    .replace(/amk resistance/, '')
+    .replace(/kan resistance/, '')
+    .replace(/cap resistance/, '')
+    .replace(/eth resistance/, '')
     // Result Category 2 - Ebola
     .replace(/ebola np/, '')
     // Needed for cases like 'Low INH Resistance @label_result_detected'
