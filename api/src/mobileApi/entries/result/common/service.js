@@ -64,6 +64,7 @@ async function fetchEntriesServiceHandler(request) {
     const originSiteIds = results
       .filter(r => !!r.transferStatusLogData)
       .map(r => JSON.parse(r.transferStatusLogData).sampleOriginSiteId)
+      .filter(_.identity)
 
     const transferOriginIds = await getSiteByIds(originSiteIds)
 
