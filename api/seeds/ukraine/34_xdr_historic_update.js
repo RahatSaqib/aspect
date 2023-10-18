@@ -30,8 +30,11 @@ exports.seed = async function (knex) {
     const rc1 = result && result[0] ? result[0].id : null
     const rc2 = result && result[1] ? result[1].id : null
 
-    if (rc2) resData.detectedResistance = getDetectedResistanceCategoryTypes(resData.resultText)
-    else resData.detectedResistance = null
+    if (rc2) {
+      const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(resData.resultText)
+      resData.detectedResistance = detectedResistance
+      resData.allResistances = allResistances
+    } else resData.detectedResistance = null
 
     await knex('Result')
       .update({
