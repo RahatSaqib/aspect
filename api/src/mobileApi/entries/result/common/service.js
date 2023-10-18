@@ -9,7 +9,7 @@ const {
   getFlagsByResultIds,
   getUserSiteIds,
 } = require('./db')
-const { getAllSamplesRegistered } = require('../../sample/common/db')
+const { getAllSamplesRegistered, getTransferHistory } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transformResultResponse } = require('./helpers/transformResultResponse')
@@ -54,10 +54,21 @@ const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkf
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
+
+  // get resultIds of transferred result
+  const resultTransferHistory = await getTransferHistory(dataConstraints)
+
+  const userViewOnlyTransferredResultIds = resultTransferHistory.map(record => record.resultId)
+
   const clinics = await getSitesQuery(dataConstraints).select('s.id')
   const clinicIds = clinics.map(c => c.id)
   const samples = await getAllSamplesRegistered(query, clinicIds)
-  const results = await fetchResultsByUpdatedOnQuery(query, clinicIds, dataConstraints)
+  const results = await fetchResultsByUpdatedOnQuery(
+    query,
+    clinicIds,
+    dataConstraints,
+    userViewOnlyTransferredResultIds
+  )
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
@@ -109,7 +120,7 @@ async function fetchEntriesServiceHandler(request) {
   // get origin Ids for each result
   const transformedSamples = transformSampleResponse(query, samples)
 
-  const mergedData = transformedResults.reduce((mergedResults, result) => {
+  const mergedResultData = transformedResults.reduce((mergedResults, result) => {
     const existingObj = mergedResults.find(item => item.id === result.id)
 
     if (existingObj) {
@@ -130,7 +141,7 @@ async function fetchEntriesServiceHandler(request) {
   }, [])
 
   const entries = _.orderBy(
-    _.concat(_.uniqBy(mergedData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
+    _.concat(_.uniqBy(mergedResultData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
     ['updatedOn'],
     ['desc']
   )
