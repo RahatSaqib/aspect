@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
+"POT-Creation-Date: 2023-10-16T20:47:00.675Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3957,14 +3957,14 @@ msgstr "Виконати"
 #. Exp. since {date}
 #: extracted_strings.json
 msgid "Exp. since {date}"
-msgstr "з {date}"
+msgstr "З {date}"
 
 #. [filter.btnGroup.expDateTo]
 #. defaultMessage is:
 #. Exp. until {date}
 #: extracted_strings.json
 msgid "Exp. until {date}"
-msgstr "до {date}"
+msgstr "До {date}"
 
 #. [pages.TableCell.expandRow]
 #. defaultMessage is:
@@ -7798,6 +7798,26 @@ msgstr "Зараз"
 msgid "Number of Devices"
 msgstr "Кількість пристроїв"
 
+#. [pages.DeviceDetailEdit.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#. [pages.deviceDetail.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#: extracted_strings.json
+msgid "Number of GX-10C modules"
+msgstr "Кількість модулів GX-10C"
+
+#. [pages.DeviceDetailEdit.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#. [pages.deviceDetail.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#: extracted_strings.json
+msgid "Number of GX-6C modules"
+msgstr "Кількість модулів GX-6C"
+
 #. [legends.Unknown.inventoryGraphStatusXAxisLegend]
 #. defaultMessage is:
 #. Number of Locations
@@ -7991,6 +8011,19 @@ msgstr "Тільки лоти зі складом"
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Тільки лоти зі складом"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Упс! Щось пішло не так. Наша команда була повідомлена, і ми працюємо над "
+"вирішенням проблеми. Будь ласка, спробуйте пізніше. Якщо проблема не зникне, "
+"зв’яжіться з нашою службою підтримки та повідомте їм про наступну помилку:"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
