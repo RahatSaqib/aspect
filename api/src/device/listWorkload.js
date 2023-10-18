@@ -1,4 +1,5 @@
 const omit = require('lodash/omit')
+const startCase = require('lodash/startCase')
 const { getResultCategoriesByAssay, getDeviceWorkload } = require('./common/db')
 const { getAssay } = require('../assay/common/db')
 const { getConstraints } = require('../auth/constraints')
@@ -25,15 +26,19 @@ const buildExtraColumns = (
   return extraColumns
 }
 
-const buildXdrExtraColumns = () => {
-  const xdrResult = ['Detected', 'Indeterminate', 'NotDetected']
+const buildXdrExtraColumns = isExport => {
+  const xdrResult = ['Detected']
+
+  // When exporting the report, we need to also show columns for the XDR Indeterminate and Not Detected cases
+  if (isExport) xdrResult.push('Indeterminate', 'NotDetected')
+
   const extraColumns = []
   XDR_RESISTANCES.forEach(xdrResistance => {
     xdrResult.forEach(result => {
       extraColumns.push({
-        label: `${xdrResistance} ${result}`,
+        label: `${xdrResistance} ${startCase(result)}`,
         resultCategoryLabelI18nKey: `categoryType${xdrResistance}ResistanceI18nKey`,
-        resultCategoryI18nKey: 'ResultCategoryDetected',
+        resultCategoryI18nKey: `ResultCategory${result}`,
         fieldId: `categoryType${xdrResistance}ResistanceI18nKey-ResultCategory${result}`,
         selector: `SUM(
           CASE WHEN
@@ -75,7 +80,7 @@ const listWorkload = async request => {
   }
 
   if (assay.externalId === 'GxMtbXdr') {
-    extraColumns = [...extraColumns, ...buildXdrExtraColumns()]
+    extraColumns = [...extraColumns, ...buildXdrExtraColumns(query.isExport)]
   } else if (resultCategory1ResultsId !== null) {
     extraColumns = [
       ...extraColumns,
