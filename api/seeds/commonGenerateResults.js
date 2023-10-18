@@ -868,7 +868,7 @@ async function addTBResults(
 
     if (gxAssayExternalIds.includes(assay.externalId)) {
       resultData[assay.externalId].resultText = result.resultText
-      resultData[assay.externalId].detectedResistance = getDetectedResistanceCategoryTypes(result.resultText)
+      ;({ detectedResistance: resultData[assay.externalId] } = getDetectedResistanceCategoryTypes(result.resultText))
     }
 
     const resultStatus =
