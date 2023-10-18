@@ -2,6 +2,7 @@ import React, { useMemo, useState } from 'react'
 import { Grid } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'
+import AspectSelect from '../../../../../cleanComponents/AspectSelect'
 import Loading from '../../../../../cleanComponents/Loading'
 import StateAutocomplete from '../../../../../cleanComponents/StateAutocomplete'
 import EmptyGraph from '../../../../../components/Graphs/EmptyData'
@@ -19,12 +20,16 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [states, setState] = useState([])
+  const [lgas, setLgas] = useState([])
+
   const mergedParams = [
     { assay: 'GxMtbRif' },
     { assay: 'GxMtbRifUltra' },
     { resultCategory1: 'Detected' },
     { resultCategory2: 'Detected' },
   ]
+    .concat(lgas.map(i => ({ lgaId: i.id })))
+    .concat(states.map(i => ({ stateId: i.id })))
 
   const { isLoading, data: { data = [] } = {} } = useQuery(
     ['ProvincialRRTBDiagnosisTrendPage', { mergedParams }],
@@ -32,19 +37,33 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-provincial', params: mergedParams })
   )
 
-  const { graphData, tableData } = useMemo(() => getItemsForTrendsGraph(data, states), [data, states])
+  const { graphData, tableData } = useMemo(() => getItemsForTrendsGraph(data, states, lgas), [lgas, data, states])
 
   return (
     <PkPage
       title={`${formatMessage(messages.provincialDiagnosisTrendsRRTBComparison)}`}
       filters={
-        <StateAutocomplete
-          fullWidth
-          countryId={user.countryId}
-          value={states}
-          onChange={(_, newValue) => setState(newValue)}
-          label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
-        />
+        <>
+          <StateAutocomplete
+            fullWidth
+            countryId={user.countryId}
+            value={states}
+            onChange={(_, newValue) => {
+              setState(newValue)
+              setLgas([])
+            }}
+            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+          />
+          <AspectSelect
+            multiple
+            fullWidth
+            itemToString={i => i?.name ?? ''}
+            options={states.reduce((p, c) => [...p, ...c.lgas], [])}
+            value={lgas}
+            onChange={v => setLgas(v)}
+            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+          />
+        </>
       }
     >
       {isLoading ? (
