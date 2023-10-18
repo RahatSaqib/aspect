@@ -314,7 +314,6 @@ describe('Detected Resistancies Calculation', () => {
     )
     assert.deepEqual(detectedResistance, ['INH'])
     assert.deepEqual(allResistances, {
-      MTB: 'Detected',
       INH: 'Detected',
       FLQ: 'Indeterminate',
       AMK: 'Error',
@@ -330,7 +329,6 @@ describe('Detected Resistancies Calculation', () => {
     )
     assert.isEmpty(detectedResistance)
     assert.deepEqual(allResistances, {
-      MTB: 'Detected',
       INH: 'NotDetected',
       FLQ: 'NotDetected',
       AMK: 'Error',
