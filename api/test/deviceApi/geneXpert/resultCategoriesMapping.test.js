@@ -309,17 +309,35 @@ describe('Result Text Parsing', () => {
 
 describe('Detected Resistancies Calculation', () => {
   it('Should get all the category types of the resistancies that were detected', () => {
-    const { detectedResistances } = getDetectedResistanceCategoryTypes(
-      '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+    const { detectedResistances, allResistances } = getDetectedResistanceCategoryTypes(
+      '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_indeterminate|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
     )
     assert.deepEqual(detectedResistances, ['INH'])
+    assert.deepEqual(allResistances, {
+      MTB: 'Detected',
+      INH: 'Detected',
+      FLQ: 'Indeterminate',
+      AMK: 'Error',
+      KAN: 'NotDetected',
+      CAP: 'NotDetected',
+      ETH: 'NotDetected',
+    })
   })
 
   it('Should return an empty array if no resistances were detected', () => {
-    const { detectedResistances } = getDetectedResistanceCategoryTypes(
-      '|MTB @label_result_detected|Medium INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
+    const { detectedResistances, allResistances } = getDetectedResistanceCategoryTypes(
+      '|MTB @label_result_detected|Medium INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_not_detected'
     )
     assert.isEmpty(detectedResistances)
+    assert.deepEqual(allResistances, {
+      MTB: 'Detected',
+      INH: 'NotDetected',
+      FLQ: 'NotDetected',
+      AMK: 'Error',
+      KAN: 'NotDetected',
+      CAP: 'Indeterminate',
+      ETH: 'NotDetected',
+    })
   })
 
   it('Should not crash if invalid categories are present', () => {
