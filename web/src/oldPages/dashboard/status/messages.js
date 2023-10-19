@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const messages = defineMessages({
+const messages = defineMessages({
   statusTitle: {
     id: 'pages.Status.title',
     defaultMessage: 'Status',

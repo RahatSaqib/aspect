@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { format, subMonths, subHours, eachMonthOfInterval } = require('date-fns')
+const { format, addMonths, subMonths, subHours } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
 const {
@@ -10,10 +10,6 @@ const {
   LIST_FIELDS_UTC,
   SORT_FIELDS,
   RESULT_STRING_TEMPLATE_FIELDS,
-  caseCondition,
-  countXdr,
-  getBaseQuery,
-  modifiers,
 } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { resultUpdated, resultLoggedProcessed } = require('./actions')
@@ -30,9 +26,8 @@ const {
   resultTypeToId,
   resultCategoryToId,
 } = require('../shared/dictionary')
-const { getDatesFromQuery } = require('../shared/date')
+const { getMonthYearField, getDatesFromQuery, returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
-const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 const { getSiteByPartnerCountry, getSite } = require('../site/service')
 const { updateTagsById } = require('../tag/service')
@@ -40,7 +35,6 @@ const { getCaseId } = require('../case/service')
 const { applyExtraColumns, sanitizeExtraColumns } = require('./extraColumns')
 const { getAllAssaySchemas, getAssayResultCategories } = require('../assay/service')
 const { getRemoteAddress } = require('../shared/request')
-const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
@@ -51,6 +45,8 @@ const {
   getQueryForResultsListAndExport,
   showFileReferencesById,
   getResultNotesByResultId,
+  getXdrResultCountBase,
+  FACT_FIELD_SCOPE,
 } = require('./common/db')
 const { getDeviceByDeviceId } = require('../device/service')
 const { getGroupBy, clinicalIndicatorAggregations } = require('./common/logic')
@@ -2451,48 +2447,58 @@ async function getCustomFieldsCompletion(auth, query) {
 async function xdrAssayGraphAggregations(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const offset = getOffsetFromIsoDateString(query.maxDate)
 
-  const dates = getDatesFromQuery(query)
-  const { dateFrom, dateTo } = dates
+  /**
+   * in the query use use fact table `FactResultsDeviceByTimeFrame` where
+   * field `statedOn` is a date part (no time) and is stored in format
+   * `YYYY-MM-01 00:00:00`. Because of that - below cut only date part from
+   * request.query's minDate/maxDate, and then add time part for UTC 00:00.
+   * In this case sql query will compare `r.startedOn >= minDate` and
+   * `r.startedOn < maxDate`
+   */
+  let { minDate, maxDate } = query
+  minDate = `${minDate.slice(0, 10)}T00:00:00.000+00:00`
+  maxDate = `${maxDate.slice(0, 10)}T23:59:59.999+00:00`
+
   const resultCategoryIds = await allResultCategoryToId()
-  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
-
-  const months = eachMonthOfInterval({ start: dateFrom, end: dateTo })
-
   const assayIds = await allAssayToId()
 
-  let data = await getBaseQuery(knex, dataConstraints)
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .modify(modifiers.join.resultCategory1)
-    .modify(modifiers.join.resultCategory2)
+  /**
+   * manually get list of months in the interval.
+   * Do not use func `eachMonthOfInterval` from `date-fns` because it converts
+   * time into local user's timezone time, i.e. instead of
+   * `2023-10-01T00:00:00.000+00:00` it may use `2023-09-30T21:00:00.000+03:00`
+   * if user's tz is +03:00
+   */
+  let months = []
+  let monthDate = new Date(minDate)
+  const endDate = new Date(maxDate)
+  while (monthDate < endDate) {
+    months = [...months, monthDate]
+    monthDate = addMonths(monthDate, 1)
+  }
+
+  let data = await getXdrResultCountBase({
+    resultCategoryIds,
+    dataConstraints,
+    query: { ...query, minDate, maxDate },
+    fieldsScope: [FACT_FIELD_SCOPE.all],
+  })
     .where('a.id', assayIds.GxMtbXdr)
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-    })
-    .select(
-      knex.raw(`
-        DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m') as month
-      `)
-    )
+    .modify(filterDateRangeParams, { minDate, maxDate }, 'r.startedOn')
+    .select(getMonthYearField(knex, 'r.startedOn', 'month'))
     .groupBy('month')
-    .count({
-      TotalTests: knex.raw('DISTINCT r.id'),
-      MtbDetected: caseCondition('r.id', `r.resultCategory1 IN (${positiveResultCategories})`),
-      FqrDetected: countXdr('FLQ'),
-      InhDetected: countXdr('INH'),
-    })
     .orderBy('month')
 
   data = months.map(monthDate => {
     const month = format(monthDate, 'yyyy-MM')
     const item = data.find(it => it.month === month)
-    const { TotalTests = 0, MtbDetected = 0, FqrDetected = 0, InhDetected = 0 } = item || {}
+    const {
+      cntAll: TotalTests = 0,
+      cnt_mtb: MtbDetected = 0,
+      cnt_flq: FqrDetected = 0,
+      cnt_inh: InhDetected = 0,
+    } = item || {}
     const FqrToMtbPercentage = MtbDetected === 0 ? 0 : (100 * FqrDetected) / MtbDetected
 
     return {

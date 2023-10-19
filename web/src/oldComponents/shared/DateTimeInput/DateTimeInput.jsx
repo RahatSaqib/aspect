@@ -351,7 +351,7 @@ const Options = props => {
   )
 }
 
-export const DateTimeSelect = props => {
+const DateTimeSelect = props => {
   const {
     classesMap,
     displayOption,

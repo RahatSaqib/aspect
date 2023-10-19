@@ -16,7 +16,7 @@ import cssStyles from './HistoryResults.css'
 
 const cssClasses = classnames.bind(cssStyles)
 
-export const Results = ({
+const Results = ({
   navigate,
   location,
   sortDir,

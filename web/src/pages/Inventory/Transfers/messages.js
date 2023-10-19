@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 import { commonDefinitions } from '../../../messages/customMessages'
 
-export const messages = defineMessages({
+const messages = defineMessages({
   ...commonDefinitions,
   InventoryTransferTitle: {
     id: 'pages.InventoryTransfer.InventoryTransferTitle',

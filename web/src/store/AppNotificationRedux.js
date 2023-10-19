@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import omit from 'lodash/omit'
 
-export const types = {
+const types = {
   SHOW_APP_NOTIFICATION: 'SHOW_APP_NOTIFICATION',
   SHOW_MORE_DETAILS: 'SHOW_MORE_DETAILS',
   HIDE_APP_NOTIFICATION: 'HIDE_APP_NOTIFICATION',
