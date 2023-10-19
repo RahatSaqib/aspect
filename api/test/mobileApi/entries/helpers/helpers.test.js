@@ -111,7 +111,7 @@ describe('Entries helpers', () => {
           id: 123,
           resultId: 123,
           event: 'transferEvent',
-          name: 'awayTransfer',
+          name: 'Transferred Away',
           siteName: 'ReportClinic1',
           updatedOn: '2023-05-02T00:00:00Z',
           comment: 'test comment',

@@ -22,9 +22,7 @@ function generateTransferStatus(data, userSiteIds) {
     const { siteId, comment, reportableSiteId, previousReportableSiteId } = transferStatusLogData
     transferStatus.comment = comment
     transferStatus.canBeTransferred = userSiteIds?.includes(reportableSiteId) || false
-    transferStatus.transferStatus = userSiteIds?.includes(previousReportableSiteId)
-      ? TRANSFERRED.HERE
-      : TRANSFERRED.AWAY
+    transferStatus.transferStatus = userSiteIds?.includes(reportableSiteId) ? TRANSFERRED.HERE : TRANSFERRED.AWAY
     transferStatus.previousReportableSiteId = previousReportableSiteId
     transferStatus.reportableSiteId = reportableSiteId
     transferStatus.siteId = siteId
