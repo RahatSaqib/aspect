@@ -1,3 +1,4 @@
 import Cron from './Cron'
+import getCronHumanValue from './utils'
 
-export default Cron
+export { Cron, getCronHumanValue }

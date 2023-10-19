@@ -79,7 +79,7 @@ const enhance = compose(
   })
 )
 
-export function DeviceApiKeyAssignerDialogForm({
+function DeviceApiKeyAssignerDialogForm({
   isDialogOpen,
   count,
   onCancel,

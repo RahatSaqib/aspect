@@ -5,7 +5,7 @@ import { defineMessages } from 'react-intl'
 import { errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../utils/utils/fetch'
 
-export const types = {
+const types = {
   REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'REQUEST_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
   RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST: 'RECEIVE_PARTNERS_AND_JOB_FUNCTIONS_FOR_SELECT_LIST',
 }

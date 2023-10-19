@@ -6,7 +6,7 @@ import { assay } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import AspectSelect from '../AspectSelect'
 
-export function AssayMultiSelect(props) {
+function AssayMultiSelect(props) {
   const { filters, ...rest } = props
 
   const { isLoading, data } = useAssayList()
@@ -26,3 +26,5 @@ export function AssayMultiSelect(props) {
     />
   )
 }
+
+export default AssayMultiSelect

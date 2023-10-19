@@ -15,7 +15,7 @@ const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
 const listDeviceCapacity = require('./listDeviceCapacity')
-const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
+const { exportDevices, exportDeviceOperationLogReport, getDeviceCoverageReport } = require('./serviceReports')
 const {
   exportWorkloadRequestSchema,
   listWorkloadRequestSchema,
@@ -722,6 +722,22 @@ const routes = [
               })
             ),
         }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/coverage',
+    handler: getDeviceCoverageReport,
+    config: {
+      description: 'List of Devices with 6- and 1-color modules aggregations',
+      notes: 'List is prepared for expandable table with nested rows for country-state-lga-site-device levels',
+      auth: { scope: ['device:view'] },
+      validate: {
+        query: {
+          assay: Joi.alternatives().try(Joi.array(), Joi.string()).description('Filter for assay'),
+          ...validateDateRangeParams(false),
+        },
       },
     },
   },

@@ -2,8 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import SiteFilter from '../../../cleanComponents/Filter/SiteFilter'
+import { DetailHeader, SiteFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
@@ -24,7 +23,7 @@ import getExportableFile from './SiteQueries'
 
 const cssClasses = classnames.bind(styles)
 
-export const SiteList = ({ navigate, location }) => {
+const SiteList = ({ navigate, location }) => {
   const user = useAuthState()
   const intl = useI18n()
   const filters = useFilterValues(location.pathname)

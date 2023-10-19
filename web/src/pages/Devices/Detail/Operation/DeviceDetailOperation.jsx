@@ -141,7 +141,7 @@ const enhance = compose(
   })
 )
 
-export const DeviceDetailOperation = ({
+const DeviceDetailOperation = ({
   navigate,
   location,
   device,

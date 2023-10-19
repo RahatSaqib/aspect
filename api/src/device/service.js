@@ -1205,6 +1205,46 @@ async function postPayloadFromDevice(deviceLogDetails, optionalKnex) {
   return databaseTransaction(optionalKnex)
 }
 
+async function onDeviceUpdateModuleSerials(action, { messageContext }) {
+  return messageContext.run(async knex => {
+    const items = await knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+      .where('dtc.hasResults', 1)
+      .select('d.id as deviceId')
+    return Promise.each(items, async ({ deviceId }) => updateDeviceConfigurationData(knex, deviceId))
+  })
+}
+
+/**
+ *
+ */
+async function updateDeviceConfigurationData(knex, deviceId) {
+  let { configurationData } = await knex('Device').where({ id: deviceId }).first('configurationData')
+  configurationData = configurationData ? JSON.parse(configurationData) : {}
+
+  const data = await knex('Result as r')
+    .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
+    .where({ deviceId })
+    .where('rt.excluded', false)
+    .distinct('r.moduleSerial')
+    .orderBy('r.moduleSerial')
+  const moduleSerials = data.map(it => it.moduleSerial)
+  /**
+   * exit if new `moduleSerials` equals existing one
+   */
+  if (_.isEqual(moduleSerials, configurationData.moduleSerials)) {
+    return
+  }
+  /**
+   * save new `moduleSerials`
+   */
+  _.set(configurationData, 'moduleSerials', moduleSerials)
+  await knex('Device')
+    .where({ id: deviceId })
+    .update({ configurationData: JSON.stringify(configurationData) })
+}
+
 module.exports = {
   showDevice,
   getDeviceByRequest,
@@ -1230,4 +1270,5 @@ module.exports = {
   getDeviceBaseExtendedQuery,
   setStatusForDateRange,
   postPayloadFromDevice,
+  onDeviceUpdateModuleSerials,
 }
