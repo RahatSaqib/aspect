@@ -11,14 +11,13 @@ import sumBy from 'lodash/sumBy'
 import times from 'lodash/times'
 import uniqBy from 'lodash/uniqBy'
 import {
-  dateRangeOptions,
   calcPercentageSplitBar,
   normaliseKeys,
   filterByMultiple,
   calcPercentageForGraphs,
   negateTimeZoneOffset,
 } from '.'
-import graphColorMap from '../Variables'
+import graphColorMap from '../Variables/Variables'
 
 const groupByKey = (data, indexBy, keyToConsume = false, displayMethod = 'actual', formatDate = false, filterBy) => {
   const filtered = filterBy ? filterByMultiple(data, filterBy) : data
@@ -101,36 +100,6 @@ const groupForOldTreatmentAPI = (data, keyToConsume, indexBy, formatDate, filter
   return normaliseKeys(grouped)
 }
 
-const groupForPieOldTreatmentAPI = (data, keyToConsume) => {
-  const groupedConfirmed = []
-  const groupedNotConfirmed = []
-  data.reduce((acc, curr) => {
-    if (!acc.id || acc.id !== 'Confirmed') {
-      acc = { id: 'Confirmed', label: 'Confirmed', value: curr[keyToConsume] }
-      groupedConfirmed.push(acc)
-    } else if (acc.id === 'Confirmed') {
-      acc.value += curr[keyToConsume]
-    }
-    return acc
-  }, {})
-
-  data.reduce((acc, curr) => {
-    if (!acc.id || acc.id !== 'NotConfirmed') {
-      acc = {
-        id: 'NotConfirmed',
-        label: 'NotConfirmed',
-        value: curr.total - curr[keyToConsume],
-      }
-      groupedConfirmed.push(acc)
-    } else if (acc.id === 'NotConfirmed') {
-      acc.value += curr.total - curr[keyToConsume]
-    }
-    return acc
-  }, {})
-
-  return [...groupedConfirmed, ...groupedNotConfirmed]
-}
-
 const weekendOrHolidayInactive = (inactive = 0, total, isWeekendOrHoliday) =>
   isWeekendOrHoliday ? 0 : +calcPercentageForGraphs(inactive, total)
 
@@ -171,152 +140,4 @@ const groupForDeviceStatusAPI = (data, keyToConsume, indexBy, formatDate, filter
   return normaliseKeys(grouped)
 }
 
-const groupForInventoryStatusAPI = (data, i18nKeys, formatMessage, messages) => {
-  const grouped = []
-  map(data, ({ consumableId, consumableName, ...rest }) =>
-    map(rest, (val, key) => {
-      const findRenamedKey = formatMessage(messages[i18nKeys[key]])
-      const renamedKey = findRenamedKey || key
-      return grouped.push({
-        consumableId,
-        consumableName,
-        increment: renamedKey,
-        [key]: val,
-        count: val,
-      })
-    })
-  )
-  return grouped
-}
-
-const pieValueFormat = key => {
-  let type
-  switch (true) {
-    case key.includes('percent'):
-      type = 'percent'
-      break
-    case key.includes('cnt'):
-      type = 'int'
-      break
-
-    default:
-      type = 'string'
-      break
-  }
-  return type
-}
-
-const pieWidgetType = (_key, value, difference) => {
-  let type
-  switch (true) {
-    case typeof value === 'number' && difference !== undefined:
-      type = 'doughnut'
-      break
-
-    case typeof value === 'string':
-      type = 'string'
-      break
-
-    default:
-      type = 'solid'
-      break
-  }
-  return type
-}
-
-const buildLink = (id, assayId, resultCategoryPositiveId, mergedParams) => {
-  let link
-  const { dateRanges } = dateRangeOptions('dateRanges')
-  // const dateRanges = getDateRanges[Object.keys(getDateRanges)]
-  const dateMonthStart = mergedParams && mergedParams.length ? mergedParams[0].currentMonth : false
-  const dateMonthEnd =
-    dateRanges && dateRanges.length
-      ? filter(dateRanges, {
-          value: { minDate: dateMonthStart },
-        })[0].value.maxDate
-      : false
-
-  const linkBase = '/browse/result?filters='
-  const assayUrl = `assayId%3D${assayId}`
-  const minDateUrl = `minDate%3D${dateMonthStart}`
-  const maxDateUrl = `maxDate%3D${dateMonthEnd}`
-  const resultCategoryUrl = `resultCategoryId%3D${resultCategoryPositiveId}`
-
-  switch (true) {
-    case id === 'cntAll':
-      link = `${linkBase}${assayUrl}%26${minDateUrl}%26${maxDateUrl}`
-      break
-
-    case id === 'cntPositive':
-      link = `${linkBase}${assayUrl}%26${minDateUrl}%26${maxDateUrl}%26${resultCategoryUrl}`
-      break
-
-    default:
-      link = false
-      break
-  }
-
-  return link
-}
-
-const valueSplit = (key, value, type, difference) => {
-  const diffs = difference !== undefined ? { difference } : {}
-  switch (true) {
-    case type === 'doughnut':
-      return [
-        { id: key, label: key, value, ...diffs },
-        { id: 'noData', label: 'noData', value: 100 - value, ...diffs },
-      ]
-
-    case type === 'string':
-      return [{ id: key, label: key, value: value.replace(/(^|\s)GeneXpert(\s|$)/gm, '') }]
-
-    default:
-      return [{ id: key, label: key, value: value > 0 ? value : 100, valueLabel: value, ...diffs }]
-  }
-}
-
-const groupForPieRow = (data, mergedParams) => {
-  const keysToRenderOrder = [
-    'assayName',
-    'cntAll',
-    'cntPositive',
-    'percentPositive',
-    'percentReported',
-    'percentViaSms',
-    'percentViaEmail',
-    'percentWithin2Hours',
-  ]
-
-  const pieRows = []
-
-  data.map(({ assayId, resultCategoryPositiveId, ...rest }) => {
-    const pieRow = {}
-    for (const [key, value] of Object.entries(rest)) {
-      if (keysToRenderOrder.includes(key)) {
-        const hasChange = rest[`${key}Change`]
-
-        const heading = `${key}`
-        const type = pieWidgetType(key, value, hasChange)
-        const format = pieValueFormat(key)
-        const link = buildLink(key, assayId, resultCategoryPositiveId, mergedParams)
-        const val = valueSplit(key, value, type, hasChange)
-
-        pieRow[key] = { heading, type, format, link, value: val }
-      }
-    }
-    return pieRows.push(Object.keys(pieRow).reduce((r, k) => r.concat(pieRow[k]), []))
-  })
-  return pieRows
-}
-
-export {
-  groupByKey,
-  groupForPie,
-  groupForDivergent,
-  groupForInventoryStatusAPI,
-  groupForOldTreatmentAPI,
-  groupForPieOldTreatmentAPI,
-  groupForDeviceStatusAPI,
-  groupForPieRow,
-}
+export { groupByKey, groupForPie, groupForDivergent, groupForOldTreatmentAPI, groupForDeviceStatusAPI }

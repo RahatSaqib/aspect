@@ -1,20 +1,17 @@
-import React, { useMemo, useState } from 'react'
-import { Grid } from '@mui/material'
-import isEmpty from 'lodash/isEmpty'
+import React, { useState, useEffect } from 'react'
+import { Grid, Typography } from '@mui/material'
 import { useQuery } from 'react-query'
+import { StateAutocomplete, Loading, getItemsForTrendsGraph, LineGraph, fillData } from '../../../../../cleanComponents'
 import AspectSelect from '../../../../../cleanComponents/AspectSelect'
-import Loading from '../../../../../cleanComponents/Loading'
-import StateAutocomplete from '../../../../../cleanComponents/StateAutocomplete'
-import EmptyGraph from '../../../../../components/Graphs/EmptyData'
-import SimpleBarLine from '../../../../../components/Graphs/SimpleBarLine'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
-import { getItemsForTrendsGraph } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
+
+const endpointParams = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }]
 
 const ProvincialTestingTrendPage = () => {
   const { formatMessage } = useI18n()
@@ -22,17 +19,34 @@ const ProvincialTestingTrendPage = () => {
   const [states, setState] = useState([])
   const [lgas, setLgas] = useState([])
 
-  const mergedParams = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }]
-    .concat(lgas.map(i => ({ lgaId: i.id })))
+  const [graphData, setGraphData] = useState(false)
+  const [tableData, setTableData] = useState([])
+
+  const mergedParams = endpointParams.concat(lgas.map(i => ({ lgaId: i.id })))
     .concat(states.map(i => ({ stateId: i.id })))
 
-  const { isLoading, data: { data = [] } = {} } = useQuery(
+
+  const { isLoading, data } = useQuery(
     ['tblProvincialTrends', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-provincial', params: mergedParams })
   )
 
-  const { graphData, tableData } = useMemo(() => getItemsForTrendsGraph(data, states, lgas), [data, states, lgas])
+  useEffect(() => {
+    if (data?.data) {
+      const grouped = []
+      data.data.map(item =>
+        item.trends.map(trend => grouped.push({ id: item.locationName, year: trend.year, value: trend.cntAll }))
+      )
+
+      const graph = fillData(grouped).sort((a, b) => a.year - b.year)
+      const table = getItemsForTrendsGraph(data.data, states).tableData
+
+      setGraphData(graph)
+      setTableData(table)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
 
   return (
     <PkPage
@@ -66,14 +80,19 @@ const ProvincialTestingTrendPage = () => {
       ) : (
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} container>
-            {graphData && !isEmpty(graphData) ? (
-              <SimpleBarLine title={formatMessage(messages.provincialTestingTrends)} data={graphData} />
-            ) : (
-              <EmptyGraph type="bar" />
-            )}
+            <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
+              {formatMessage(messages.provincialTestingTrends)}
+            </Typography>
+            {graphData ? (
+              <div style={{ width: '100%' }}>
+                <LineGraph data={graphData} showLabel xField="year" yField="value" seriesField="id" />
+              </div>
+            ) : null}
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            <ProvinceTrendTable title={formatMessage(messages.provincialTestingTrendsYear)} rows={tableData} />
+            {tableData ? (
+              <ProvinceTrendTable title={formatMessage(messages.provincialTestingTrendsYear)} rows={tableData} />
+            ) : null}
           </Grid>
         </Grid>
       )}

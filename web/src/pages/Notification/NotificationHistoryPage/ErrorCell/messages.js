@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const messages = defineMessages({
+const messages = defineMessages({
   notificationsTableTotalTriggersCount: {
     id: 'pages.Notifications.notificationsTableTotalTriggersCount',
     defaultMessage: `{itemCount} (total)`,

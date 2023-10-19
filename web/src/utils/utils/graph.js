@@ -1,5 +1,3 @@
-const isAllowedGroupsWithoutAssays = graphGroup => ['assaysNotNeeded'].includes(graphGroup)
-
 const getWhitelistedAssays = ({ assays, assaysFromState }) => {
   const allowed = []
   if (assays && assays.length > 0) {
@@ -10,4 +8,4 @@ const getWhitelistedAssays = ({ assays, assaysFromState }) => {
   return allowed
 }
 
-export { isAllowedGroupsWithoutAssays, getWhitelistedAssays }
+export { getWhitelistedAssays }

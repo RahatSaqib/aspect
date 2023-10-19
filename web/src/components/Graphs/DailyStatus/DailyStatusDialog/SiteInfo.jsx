@@ -11,7 +11,7 @@ const cssClasses = classnames.bind(styles)
 
 const workingHoursFormat = 'p' // Long localized time
 
-export const SiteInfo = ({ siteContacts, hoursStart, hoursEnd }) => {
+const SiteInfo = ({ siteContacts, hoursStart, hoursEnd }) => {
   const { formatMessage } = useI18n()
 
   return (

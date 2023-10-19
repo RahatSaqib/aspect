@@ -1,8 +1,7 @@
 import * as React from 'react'
-import { Box, Table, TableBody, TableCell, TableHead, TableRow } from '@mui/material'
+import { Box, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
 import useI18n from '../../../hooks/useI18n'
 import messages from '../PkDashboard.Messages'
-import GraphTitle from './GraphTitle'
 
 const ProvinceTrendTable = props => {
   const { rows, title } = props
@@ -10,7 +9,11 @@ const ProvinceTrendTable = props => {
 
   return (
     <Box>
-      {title ? <GraphTitle>{title}</GraphTitle> : null}
+      {title ? (
+        <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
+          {title}
+        </Typography>
+      ) : null}
       <Table aria-label="simple-table">
         <TableHead>
           <TableRow>

@@ -1,29 +1,79 @@
-import React, { useState } from 'react'
-import { FormControlLabel, Switch } from '@mui/material'
-import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
-import useAssayList from '../../../../../hooks/assay/useAssayList'
+import React, { useState, useEffect } from 'react'
+import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
+import { useQuery } from 'react-query'
+import {
+  LgaSelect,
+  StateSelect,
+  Loading,
+  fillYear,
+  objectToArray,
+  ColumnGraph,
+  LineGraph,
+} from '../../../../../cleanComponents'
+import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
-import { getCustomMessage, graphMessages } from '../../../../../messages'
+import { getCustomMessage, graphMessages, months } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
-import { objectToArray } from '../../../../../utils/utils/misc'
 import PkPage from '../../../components/PkPage'
-import TrendInYearsAllTestsGraph from '../../../components/TrendInYearsAllTestsGraph.Main'
 import messages from '../../../PkDashboard.Messages'
 
-const defaultFilters = [
+const maxDate = new Date()
+
+const endpointParams = [
+  { groupBy: 'month' },
+  { minDate: `${maxDate.getFullYear() - 5}-01-01` },
+  { maxDate },
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { resultCategory1: 'Detected' },
   { resultCategory2: 'Detected' },
 ]
+
 const NationalRtbTrendsGraph = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState()
-  const { data: assays } = useAssayList()
 
-  return (
+  const mergedParams = filter ? [...endpointParams, ...objectToArray(filter)] : [...endpointParams]
+
+  const { isLoading, data } = useQuery(
+    ['tbAllTestsYearlyTrends', { mergedParams }],
+    async ({ queryKey: [, { mergedParams }] }) =>
+      fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-national', params: mergedParams })
+  )
+
+  const [graphData, setGraphData] = useState(false)
+  const [annual, setAnnual] = useState(false)
+  useEffect(() => {
+    if (data) {
+      const grouped = data.data
+        .map(item => ({ year: item.month.split('-')[0], month: item.month.split('-')[1], value: item.cnt }))
+        .sort((a, b) => b.month - a.month || b.year - a.year)
+        .reverse()
+        .map(item => ({ ...item, month: `${formatMessage(months[item.month - 1])}` }))
+
+      const annualData = []
+      grouped.map(item => {
+        const year = annualData.find(annual => annual.year === item.year)
+        if (year) {
+          year.value += item.value
+        } else {
+          annualData.push({ type: item.year, year: item.year, value: item.value })
+        }
+        return item
+      })
+      if (grouped) {
+        setGraphData(fillYear(grouped))
+        setAnnual(annualData)
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
+
+  return isLoading ? (
+    <Loading />
+  ) : (
     <PkPage
       title={formatMessage(messages.rrtbNationalDiagnosisTrendsTitle)}
       filters={
@@ -48,14 +98,54 @@ const NationalRtbTrendsGraph = () => {
         </>
       }
     >
-      <TrendInYearsAllTestsGraph
-        withAnnual
-        yearTitle={formatMessage(messages.annualRRDiagnosedTrends)}
-        monthTitle={formatMessage(messages.monthlyDiagnosedTrends)}
-        assaysFromState={assays ?? []}
-        showLabel={showLabel}
-        filterSelection={objectToArray(filter).concat(defaultFilters)}
-      />
+      <Grid container>
+        <Grid item xs={12} md={4}>
+          <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
+            {formatMessage(messages.annualRRDiagnosedTrends)}
+          </Typography>
+          <ColumnGraph
+            data={annual}
+            showLabel={showLabel}
+            graphId="tbAllTestsYearlyTrends"
+            xField="year"
+            yField="value"
+            colors="#34717c"
+            tooltip={{
+              customContent: (_title, _data) => {
+                return `
+  <div class="g2-tooltip-title">${_title}</div>
+  <ul class="g2-tooltip-list" style="margin: 0px; list-style-type: none; padding: 0px;">
+  ${_data
+    ?.map(
+      r => `<li class="g2-tooltip-list-item" data-index="" style="list-style-type: none; padding: 0px; margin: 12px 0px;">
+      <span style="background-color:#34717c;" class="g2-tooltip-marker"></span>
+    <span class="g2-tooltip-name">${formatMessage(
+      messages.annualRRDiagnosedTrends
+    )}</span>: <span class="g2-tooltip-value" style="display: inline-block; float: right; margin-left: 30px;">${
+        r.data.value
+      }</span>
+    </li>`
+    )
+    .join('')}
+  </ul>`
+              },
+            }}
+          />
+        </Grid>
+        <Grid item xs={12} md={8}>
+          <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
+            {formatMessage(messages.monthlyDiagnosedTrends)}
+          </Typography>
+          <LineGraph
+            data={graphData}
+            showLabel={showLabel}
+            graphId="tbAllTestsYearlyTrends"
+            xField="month"
+            yField="value"
+            seriesField="year"
+          />
+        </Grid>
+      </Grid>
     </PkPage>
   )
 }

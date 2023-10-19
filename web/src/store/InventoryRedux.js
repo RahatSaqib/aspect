@@ -1,15 +1,9 @@
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import fetchWrapperForQueries from '../components/QueryFetch'
-import { getFilters } from '../oldComponents/utils'
-import {
-  badRequestBuilder,
-  filterFieldsRejectedError,
-  errorPleaseTryAgainInAFewMinutes,
-} from '../utils/error/CommonErrorNotifications'
+import { badRequestBuilder, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { receiveList, Items } from '../utils/metaReducers/groupedItems'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/groupedTable'
-import { receivedExportResponse } from './GlobalsRedux'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -106,43 +100,6 @@ function hideAdjustInventoryDialog() {
   return {
     type: types.HIDE_ADJUST_INVENTORY_DIALOG,
   }
-}
-
-function exportSupplies(filtersParams, breakOutByLot, sortCol, sortDir, page, size, fileFormat, reportName, dispatch) {
-  const filters = getFilters(filtersParams) || {}
-  filters.breakOutByLot = breakOutByLot
-  return fetchWrapperForQueries({
-    endpoint: '/inventory/export',
-    params: {
-      sortCol,
-      sortDir,
-      page,
-      size,
-      format: fileFormat,
-      ...filters,
-    },
-    customErrorNotifications: {
-      400: filterFieldsRejectedError(
-        defineMessages({
-          title: {
-            id: 'errorResponseMessages.exportSupplies.GET.400.title',
-            defaultMessage: 'Exporting Supplies Failed',
-          },
-        })
-      ),
-      default: errorPleaseTryAgainInAFewMinutes(
-        defineMessages({
-          title: {
-            id: 'errorResponseMessages.exportSupplies.GET.default.title',
-            defaultMessage: 'Exporting Supplies Failed',
-          },
-        })
-      ),
-    },
-  }).then(async elem => {
-    const file = await elem.blob
-    dispatch(receivedExportResponse(file, fileFormat, reportName))
-  })
 }
 
 function addInventory(data, dispatch, inventoryState) {
@@ -370,7 +327,6 @@ export {
   showTransferInventoryDialog,
   showReceiveInventoryDialog,
   hideAdjustInventoryDialog,
-  exportSupplies,
   addInventory,
   removeInventory,
   transferInventory,

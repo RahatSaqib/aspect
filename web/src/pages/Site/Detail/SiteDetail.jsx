@@ -6,8 +6,7 @@ import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
+import { DetailHeader } from '../../../cleanComponents'
 import useSite from '../../../hooks/site/useSite'
 import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
@@ -27,7 +26,7 @@ const titleMessages = defineMessages({
   edit: { id: 'pages.SiteDetail.edit', defaultMessage: 'Edit' },
 })
 
-export const SiteDetail = ({ navigate, location }) => {
+const SiteDetail = ({ navigate, location }) => {
   const intl = useI18n()
   const { siteId } = useParams()
   const { isLoading, data: site } = useSite(siteId)
@@ -44,7 +43,7 @@ export const SiteDetail = ({ navigate, location }) => {
   const onButtonClick = event => navigate(event.currentTarget.dataset.path)
 
   return (
-    <ErrorBoundary>
+    <>
       <Helmet title={intl.formatMessage(messages.title)} />
       <DetailHeader name={(site && site.name) || 'Site'} back="/browse/site">
         {[
@@ -104,7 +103,7 @@ export const SiteDetail = ({ navigate, location }) => {
           )}
         </section>
       </Box>
-    </ErrorBoundary>
+    </>
   )
 }
 

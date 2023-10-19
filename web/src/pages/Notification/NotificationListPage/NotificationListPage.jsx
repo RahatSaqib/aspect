@@ -4,11 +4,7 @@ import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
-import NotificationFilter from '../../../cleanComponents/Filter/NotificationFilter'
-import SimpleTableHeader from '../../../cleanComponents/SimpleTable/SimpleTableHeader'
-import SimpleTablePagination from '../../../cleanComponents/SimpleTable/SimpleTablePagination'
+import { DetailHeader, NotificationFilter, SimpleTableHeader, SimpleTablePagination } from '../../../cleanComponents'
 import { allowOnlyAPIKeys, removeNullFromCollection } from '../../../components/AspectTable/Helpers'
 import ContactsCell from '../../../components/AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../../components/AspectTable/TableCell/DateTimeCell'
@@ -126,7 +122,7 @@ const NotificationList = () => {
                 <CircularProgress />
               </div>
             ) : (
-              <ErrorBoundary>
+              <>
                 <Table size="small">
                   <SimpleTableHeader
                     columns={columns}
@@ -173,7 +169,7 @@ const NotificationList = () => {
                   pageSize={size}
                   total={data.total}
                 />
-              </ErrorBoundary>
+              </>
             )}
           </CardContent>
         </Card>

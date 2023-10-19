@@ -1,27 +1,3 @@
-import React from 'react'
-import PropTypes from 'prop-types'
-import { compose, setPropTypes, pure, withProps } from 'recompose'
-import ReadOnlyField, { readOnlyFieldPropTypes } from './ReadOnlyField'
-
-const enhance = compose(
-  pure,
-  setPropTypes({
-    fields: PropTypes.arrayOf(PropTypes.shape(readOnlyFieldPropTypes)).isRequired,
-  }),
-  withProps(({ fields, hideLabel = false }) => ({
-    fields,
-    hideLabel: hideLabel && fields.length < 2,
-  }))
-)
+import ReadOnlyField from './ReadOnlyField'
 
 export { ReadOnlyField } // Backward-compatibility
-
-export const ReadOnlyFields = ({ fields, hideLabel = false, ...restProps }) => (
-  <div {...restProps}>
-    {fields.map(it => (
-      <ReadOnlyField key={it.label} hideLabel={hideLabel} {...it} />
-    ))}
-  </div>
-)
-
-export default enhance(ReadOnlyFields)
