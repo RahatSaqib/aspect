@@ -10,7 +10,11 @@ import messages from '../../../PkDashboard.Messages'
 import useInventoryOverview from './useInventoryOverview'
 
 function getInventoryLabel(item, isState) {
-  return item.type && item[item.type] ? item[item.type] : !isState ? 'No Associated LGA' : 'No Associated State'
+  return item.type && item[item.type]
+    ? item[item.type]
+    : !isState
+    ? messages.noAssociatedLga
+    : messages.noAssociatedSite
 }
 
 function transformInventory(data) {

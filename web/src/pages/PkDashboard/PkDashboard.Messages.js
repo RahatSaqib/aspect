@@ -317,6 +317,8 @@ const messages = {
       id: 'forms.formSectionHeader.date',
       defaultMessage: 'Date',
     },
+    noAssociatedSite: { id: 'p.PkDashboard.noAssociatedSite', defaultMessage: 'No Associated Site' },
+    noAssociatedLga: { id: 'p.PkDashboard.noAssociatedLga', defaultMessage: 'No Associated LGA' },
   }),
 }
 
