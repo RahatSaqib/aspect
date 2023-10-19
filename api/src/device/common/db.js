@@ -53,6 +53,7 @@ const SELECT_SHOW_FIELDS = [
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
   knex.raw('ifnull(frd60Errors.resultCount, 0) as errorCount60'),
   knex.raw("dmsl.data->>'$.options.data.notes' as maintenanceStatusNotes"),
+  knex.raw("dmsl.data->>'$.options.data.expectedBackOnline' as expectedBackOnline"),
   'dmC.contextDate as calibrationDate',
   'dmC.notes as calibrationNotes',
   'dmW.contextDate as warrantyDueDate',
