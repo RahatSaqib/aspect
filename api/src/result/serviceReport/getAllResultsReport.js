@@ -2,6 +2,7 @@ const Boom = require('@hapi/boom')
 const { subDays } = require('date-fns')
 const _ = require('lodash')
 const flat = require('flat')
+const startCase = require('lodash/startCase')
 const { allAssayToId } = require('../../shared/dictionary')
 const { knex, sortPageParams } = require('../../db')
 const { getPersonByPersonId } = require('../../auth/service')
@@ -10,7 +11,6 @@ const { getSelectCommonListFieldsTZ, SORT_FIELDS } = require('../query')
 const { getOffsetFromIsoDateString } = require('../../shared/date')
 const { getQueryForResultsListAndExport } = require('../common/db')
 const { getConstraints } = require('../../auth/constraints')
-
 /**
  This report logic is consumed by the all results report, as well as from the csv download of the result list.
  */
@@ -54,7 +54,7 @@ module.exports = async (auth, query) => {
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
   const columnsFromResultForms = await getColumnsFromResultForms(props)
-
+  const assays = await allAssayToId()
   const columns = [
     ..._.map(extraColumns, column => ({
       key: column.db,
@@ -65,7 +65,7 @@ module.exports = async (auth, query) => {
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'resultCategoryGroup', header: 'Result' },
     { key: 'resultData.resultText', header: 'Raw Result' },
-    ...((await queryIncludesXdr(query))
+    ...(queryIncludesXdr(query, assays)
       ? [
           { key: 'resultData.allResistances.INH', header: 'INH' },
           { key: 'resultData.allResistances.FLQ', header: 'FLQ' },
@@ -196,6 +196,9 @@ async function getResultsForExport(auth, query) {
   const getData = resultQuery.clone().groupBy('r.id').modify(sortPageParams, query, 'endedOn').select(selectFields)
 
   const [{ total }, data] = await Promise.all([getCount, getData])
+
+  humanizeResistancesTexts(data, query)
+
   const result = {
     ok: true,
     data,
@@ -303,8 +306,7 @@ const getWorkflowStatus = async (externalId, subQuery) => {
   return query
 }
 
-const queryIncludesXdr = async query => {
-  const assays = await allAssayToId()
+const queryIncludesXdr = (query, assays) => {
   const { GxMtbXdr: xdrAssayId } = assays
   return (
     xdrAssayId &&
@@ -312,4 +314,18 @@ const queryIncludesXdr = async query => {
       query.assayId === xdrAssayId ||
       (Array.isArray(query.assayId) && query.assayId.includes(xdrAssayId)))
   )
+}
+
+const humanizeResistancesTexts = (data, query, assays) => {
+  // Hack to present a little bit clearer texts due to the lack of i18n handling in backend:
+  if (!queryIncludesXdr(query, assays)) {
+    for (const record of data) {
+      record.INH = startCase(record.INH)
+      record.FLQ = startCase(record.FLQ)
+      record.AMK = startCase(record.AMK)
+      record.KAN = startCase(record.KAN)
+      record.CAP = startCase(record.CAP)
+      record.ETH = startCase(record.ETH)
+    }
+  }
 }
