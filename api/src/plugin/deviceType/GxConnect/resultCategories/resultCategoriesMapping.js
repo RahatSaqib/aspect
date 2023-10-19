@@ -329,10 +329,12 @@ const getDetectedResistanceCategoryTypes = resultText => {
   Object.keys(resultsCollection).forEach(categoryType => {
     const resistance = categoryType.replace('RESISTANCE', '').trim()
     const resultCategoryValue = resultsCollection[categoryType]
-    if (categoryType !== 'MTB' && resultCategoryValue === 'Detected') {
-      detectedResistance.push(resistance)
+    if (categoryType !== 'MTB') {
+      allResistances[resistance] = resultCategoryValue
+      if (resultCategoryValue === 'Detected') {
+        detectedResistance.push(resistance)
+      }
     }
-    allResistances[resistance] = resultCategoryValue
   })
   return { detectedResistance, allResistances }
 }
