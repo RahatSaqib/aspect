@@ -2,15 +2,15 @@ const Promise = require('bluebird')
 const {
   getDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
-const { allAssayToId } = require('../../src/shared/dictionary')
 
 module.exports = require('../utils').seed(async knex => {
-  const assayIds = await allAssayToId()
+  const { id: xdrAssayId } = await knex('Assay').where('externalId', 'GxMtbXdr').first('id')
+
   /**
    * get all MTB-XDR results
    */
   const results = await knex('Result')
-    .whereIn('assayId', [assayIds.GxMtbXdr])
+    .where('assayId', xdrAssayId)
     .whereNotNull('resultData')
     .select('id', 'resultData')
   await Promise.each(results, async result => {
