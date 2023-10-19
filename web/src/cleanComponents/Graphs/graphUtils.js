@@ -389,7 +389,7 @@ const prepParamsForEndPoint = (urlParams, updatedParams) => {
 
 const objectToArray = object => Object.entries(omitBy(object, isNil)).map(([name, value]) => ({ [name]: value }))
 
-const getItemsForTrendsGraph = (data, states) => {
+const getItemsForTrendsGraph = (data, states, lgas) => {
   let actualData = data
   if (states?.length) {
     /**
@@ -397,7 +397,7 @@ const getItemsForTrendsGraph = (data, states) => {
      * data for ALL selected states - if raw `data` from API doesn't have entries for
      * some state - use default value
      */
-    actualData = states.map(({ name }) => {
+    actualData = (lgas.length ? lgas : states).map(({ name }) => {
       const d = data.find(it => it.locationName === name)
       if (d) {
         return d

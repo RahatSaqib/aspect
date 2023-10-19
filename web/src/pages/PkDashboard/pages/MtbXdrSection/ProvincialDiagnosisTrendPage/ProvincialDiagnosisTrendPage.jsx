@@ -22,9 +22,9 @@ const ProvincialDiagnosisTrendPage = () => {
   const [graphData, setGraphData] = useState(false)
   const [tableData, setTableData] = useState([])
 
-  const mergedParams = endpointParams.concat(lgas.map(i => ({ lgaId: i.id })))
+  const mergedParams = endpointParams
+    .concat(lgas.map(i => ({ lgaId: i.id })))
     .concat(states.map(i => ({ stateId: i.id })))
-
 
   const { isLoading, data } = useQuery(
     ['ProvincialDiagnosisTrendPage_Xdr', { mergedParams }],
@@ -39,7 +39,7 @@ const ProvincialDiagnosisTrendPage = () => {
         item.trends.map(trend => grouped.push({ id: item.locationName, year: trend.year, value: trend.cntAll }))
       )
       const graph = fillData(grouped).sort((a, b) => a.year - b.year)
-      const table = getItemsForTrendsGraph(data.data, states).tableData
+      const table = getItemsForTrendsGraph(data.data, states, lgas).tableData
 
       setGraphData(graph)
       setTableData(table)

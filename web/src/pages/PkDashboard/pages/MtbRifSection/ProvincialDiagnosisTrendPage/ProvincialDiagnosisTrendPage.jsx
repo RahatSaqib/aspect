@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@mui/material'
 import { useQuery } from 'react-query'
-import AspectSelect from '../../../../../cleanComponents/AspectSelect'
-import { StateAutocomplete, Loading, getItemsForTrendsGraph, LineGraph, fillData } from '../../../../../cleanComponents'
+import {
+  StateAutocomplete,
+  Loading,
+  getItemsForTrendsGraph,
+  LineGraph,
+  fillData,
+  AspectSelect,
+} from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage } from '../../../../../messages'
@@ -40,7 +46,7 @@ const ProvincialDiagnosisTrendPage = () => {
       )
 
       const graph = fillData(grouped).sort((a, b) => a.year - b.year)
-      const table = getItemsForTrendsGraph(data.data, states).tableData
+      const table = getItemsForTrendsGraph(data.data, states, lgas).tableData
 
       setGraphData(graph)
       setTableData(table)

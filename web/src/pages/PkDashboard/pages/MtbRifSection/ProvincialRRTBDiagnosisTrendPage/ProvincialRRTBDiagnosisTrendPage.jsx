@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@mui/material'
 import { useQuery } from 'react-query'
-import { StateAutocomplete, Loading, getItemsForTrendsGraph, LineGraph, fillData } from '../../../../../cleanComponents'
-import AspectSelect from '../../../../../cleanComponents/AspectSelect'
+import {
+  StateAutocomplete,
+  Loading,
+  getItemsForTrendsGraph,
+  LineGraph,
+  AspectSelect,
+  fillData,
+} from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage } from '../../../../../messages'
@@ -26,9 +32,9 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
   const [graphData, setGraphData] = useState(false)
   const [tableData, setTableData] = useState([])
 
-  const mergedParams = endpointParams.concat(lgas.map(i => ({ lgaId: i.id })))
+  const mergedParams = endpointParams
+    .concat(lgas.map(i => ({ lgaId: i.id })))
     .concat(states.map(i => ({ stateId: i.id })))
-
 
   const { isLoading, data } = useQuery(
     ['ProvincialRRTBDiagnosisTrendPage', { mergedParams }],
@@ -43,7 +49,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
         item.trends.map(trend => grouped.push({ id: item.locationName, year: trend.year, value: trend.cntAll }))
       )
       const graph = fillData(grouped).sort((a, b) => a.year - b.year)
-      const table = getItemsForTrendsGraph(data.data, states).tableData
+      const table = getItemsForTrendsGraph(data.data, states, lgas).tableData
 
       setGraphData(graph)
       setTableData(table)
