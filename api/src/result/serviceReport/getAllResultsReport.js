@@ -1,6 +1,7 @@
 const { subDays } = require('date-fns')
 const _ = require('lodash')
-const flatten = require('flat')
+const flat = require('flat')
+const { allAssayToId } = require('../../shared/dictionary')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getResultsForExport } = require('../service')
 const { knex } = require('../../db')
@@ -46,6 +47,7 @@ module.exports = async (auth, query) => {
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
   const columnsFromResultForms = await getColumnsFromResultForms(props)
+
   const columns = [
     ..._.map(extraColumns, column => ({
       key: column.db,
@@ -56,13 +58,16 @@ module.exports = async (auth, query) => {
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'resultCategoryGroup', header: 'Result' },
     { key: 'resultData.resultText', header: 'Raw Result' },
-    { key: 'resultData.allResistances.INH', header: 'INH' },
-    { key: 'resultData.allResistances.FLQ', header: 'FLQ' },
-    { key: 'resultData.allResistances.AMK', header: 'AMK' },
-    { key: 'resultData.allResistances.KAN', header: 'KAN' },
-    { key: 'resultData.allResistances.CAP', header: 'CAP' },
-    { key: 'resultData.allResistances.ETH', header: 'ETH' },
-    { key: 'sampleId', header: 'Sample Id' },
+    ...((await queryIncludesXdr(query))
+      ? [
+          { key: 'resultData.allResistances.INH', header: 'INH' },
+          { key: 'resultData.allResistances.FLQ', header: 'FLQ' },
+          { key: 'resultData.allResistances.AMK', header: 'AMK' },
+          { key: 'resultData.allResistances.KAN', header: 'KAN' },
+          { key: 'resultData.allResistances.CAP', header: 'CAP' },
+          { key: 'resultData.allResistances.ETH', header: 'ETH' },
+        ]
+      : []),
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
     { key: 'resultWorkflowStatus', header: 'Result Status' },
@@ -110,7 +115,7 @@ module.exports = async (auth, query) => {
     dataSelector: (
       dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
     ) =>
-      flatten({
+      require('flat')({
         ...dataRow,
         patientData: JSON.parse(dataRow.patientData),
         resultData: JSON.parse(dataRow.resultData),
@@ -141,8 +146,8 @@ async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
   })
 
   const flattenObjects = {
-    ...flatten({ resultData }),
-    ...flatten({ patientData }),
+    ...flat({ resultData }),
+    ...flat({ patientData }),
   }
 
   _.forEach(flattenObjects, (value, key) => {
@@ -220,4 +225,10 @@ const getWorkflowStatus = async (externalId, subQuery) => {
   }
 
   return query
+}
+
+const queryIncludesXdr = async query => {
+  const assays = await allAssayToId()
+  const { GxMtbXdr: xdrAssayId } = assays
+  return xdrAssayId && (!query.assayId || query.assayId === xdrAssayId)
 }
