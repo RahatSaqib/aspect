@@ -18,6 +18,7 @@ const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
 const getDataExtractReport = require('./dataExtractForTableau')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { getGroupBy, getClinicalIndicatorQueryForResultsTable } = require('../service')
+const { getCustomFieldsForResult } = require('../common/db')
 
 /**
  * 'header' is for 1st row in CSV file,
@@ -80,6 +81,8 @@ async function getAllResultsForExport(auth, query) {
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
+  const columnsFromCustomFields = await getColumnsFromCustomFields({ partnerId, assayId: query.assayId })
+
   const columns = [
     ..._.map(extraColumns, column => ({
       key: column.db,
@@ -115,6 +118,7 @@ async function getAllResultsForExport(auth, query) {
 
     // dynamic columns from different schema json fields
     ...columnsFromAssaySchema,
+    ...columnsFromCustomFields,
   ]
 
   const dataset = {
@@ -201,6 +205,22 @@ async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
   })
 
   return columns
+}
+
+async function getColumnsFromCustomFields({ partnerId, assayId }) {
+  const { diseaseId } = assayId
+    ? await knex('Assay as a')
+        .join('AssayType as at', 'at.id', 'a.assayTypeId')
+        .join('Disease as d', 'd.id', 'at.diseaseId')
+        .where('a.id', assayId)
+        .first('d.id as diseaseId')
+    : {} // without assayId, the diseaseId will be undefined
+  const customFields = await getCustomFieldsForResult({ partnerId, diseaseId, assayId })
+
+  return customFields.map(cf => ({
+    header: cf.title,
+    key: cf.source,
+  }))
 }
 
 async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
