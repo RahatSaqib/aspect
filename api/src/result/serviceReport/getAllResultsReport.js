@@ -1,12 +1,19 @@
+const Boom = require('@hapi/boom')
 const { subDays } = require('date-fns')
 const _ = require('lodash')
 const flat = require('flat')
 const { allAssayToId } = require('../../shared/dictionary')
+const { knex, sortPageParams } = require('../../db')
 const { getPersonByPersonId } = require('../../auth/service')
-const { getResultsForExport } = require('../service')
-const { knex } = require('../../db')
 const { getAllAssaySchemas } = require('../../assay/service')
+const { getSelectCommonListFieldsTZ, SORT_FIELDS } = require('../query')
+const { getOffsetFromIsoDateString } = require('../../shared/date')
+const { getQueryForResultsListAndExport } = require('../common/db')
+const { getConstraints } = require('../../auth/constraints')
 
+/**
+ This report logic is consumed by the all results report, as well as from the csv download of the result list.
+ */
 module.exports = async (auth, query) => {
   const user = await getPersonByPersonId(auth.credentials.personId)
 
@@ -128,6 +135,75 @@ module.exports = async (auth, query) => {
     defaultNoDataMessage: 'No data',
   }
   return dataset
+}
+
+async function getResultsForExport(auth, query) {
+  const offset = getOffsetFromIsoDateString(query.maxDate)
+  const selectFields = {
+    ...getSelectCommonListFieldsTZ(offset),
+    deviceStateName: 'stdpn.name',
+    resultCategoryGroup: 'rcg.name',
+  }
+  const sortableFields = [...SORT_FIELDS]
+
+  const assayColumns = []
+  if (query.assayId) {
+    const assays = await knex('Assay as a')
+      .modify(queryBuilder => {
+        if (_.isArray(query.assayId)) queryBuilder.whereIn('a.id', query.assayId)
+        else queryBuilder.where('a.id', query.assayId)
+      })
+
+      .select()
+
+    for (const assay of assays) {
+      if (assay.resultCategory1Label && selectFields.resultCategory1Name !== 'rc1.name') {
+        selectFields.resultCategory1Name = 'rc1.name'
+        sortableFields.push('resultCategory1Name')
+        assayColumns.push({
+          db: 'resultCategory1Name',
+          type: 'string',
+          title: assay.resultCategory1Label,
+          i18nKey: assay.resultCategory1i18nKey,
+        })
+      }
+
+      if (assay.resultCategory2Label && selectFields.resultCategory2Name !== 'rc2.name') {
+        selectFields.resultCategory2Name = 'rc2.name'
+        sortableFields.push('resultCategory2Name')
+        assayColumns.push({
+          db: 'resultCategory2Name',
+          type: 'string',
+          title: assay.resultCategory2Label,
+          i18nKey: assay.resultCategory2i18nKey,
+        })
+      }
+    }
+  }
+
+  // now we know if the sort that was passed is valid:
+  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
+    return Boom.badRequest()
+  }
+
+  // get data constraints
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
+
+  const getCount = resultQuery.clone().count('r.id as total').first()
+
+  const getData = resultQuery.clone().groupBy('r.id').modify(sortPageParams, query, 'endedOn').select(selectFields)
+
+  const [{ total }, data] = await Promise.all([getCount, getData])
+  const result = {
+    ok: true,
+    data,
+    total,
+    extraColumns: assayColumns,
+  }
+
+  return result
 }
 
 async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
