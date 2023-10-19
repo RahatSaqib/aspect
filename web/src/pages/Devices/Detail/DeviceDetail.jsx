@@ -69,6 +69,7 @@ export const DeviceDetail = props => {
           externalId: values.maintenanceStatus,
           device: Immutable.fromJS(device),
           notes: values.notes,
+          expectedBackOnline: values.expectedBack,
         })
       ),
     { onSuccess }
