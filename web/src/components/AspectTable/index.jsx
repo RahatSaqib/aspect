@@ -5,7 +5,6 @@ import isEqual from 'lodash/isEqual'
 import { func, array, object, oneOfType } from 'prop-types'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
-import ErrorBoundary from '../../cleanComponents/ErrorBoundary'
 import useI18n from '../../hooks/useI18n'
 import { getFilters, sanitizeFiltersStringBy } from '../../oldComponents/utils'
 import {
@@ -232,35 +231,33 @@ const AspectTable = ({ baseConfig, FILTERS_CONFIG, consts: CONSTS, onClickRow })
   return isLoading || !data ? (
     <Loading />
   ) : (
-    <ErrorBoundary>
-      <AspectTableCore
-        config={config}
-        tableData={data}
-        params={params}
-        pageCount={Math.ceil(data.total / size)}
-        isFetching={isFetching}
-        initialState={removeNullFromCollection({
-          pageSize: size,
-          sortBy: [
-            {
-              id: sortCol,
-              desc: determineSortDirection(sortDir),
-            },
-          ],
-          pageIndex: page,
-          allowReset,
-          filters: getColumnIdFromFilterKey(config, filters),
-        })}
-        setters={{
-          handleClearParams,
-          setSize,
-          setSortCol,
-          setSortDir,
-          setPage,
-        }}
-        onClickRow={onClickRow}
-      />
-    </ErrorBoundary>
+    <AspectTableCore
+      config={config}
+      tableData={data}
+      params={params}
+      pageCount={Math.ceil(data.total / size)}
+      isFetching={isFetching}
+      initialState={removeNullFromCollection({
+        pageSize: size,
+        sortBy: [
+          {
+            id: sortCol,
+            desc: determineSortDirection(sortDir),
+          },
+        ],
+        pageIndex: page,
+        allowReset,
+        filters: getColumnIdFromFilterKey(config, filters),
+      })}
+      setters={{
+        handleClearParams,
+        setSize,
+        setSortCol,
+        setSortDir,
+        setPage,
+      }}
+      onClickRow={onClickRow}
+    />
   )
 }
 

@@ -229,5 +229,3 @@ export const updateValidationsAndFilters = (sections, data, formik) => {
     return section
   })
 }
-
-export default getFormConfigWithData

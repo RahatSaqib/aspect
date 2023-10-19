@@ -18,4 +18,4 @@ const getCronHumanValue = (cronExpression, locale) => {
   }
 }
 
-export { getCronHumanValue }
+export default getCronHumanValue

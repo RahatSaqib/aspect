@@ -31,11 +31,11 @@ const FILTERS_CONFIG = {
   contactNameOrEmail: true,
 }
 
-export const searchSanitizer = makeSearchParamsSanitizer({
+const searchSanitizer = makeSearchParamsSanitizer({
   availableSortCol: ['issueCategory', 'site', 'time'],
 })
-export const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
-export const filtersFromLocation = composeSanitizer(
+const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
+const filtersFromLocation = composeSanitizer(
   flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
   searchSanitizer
 )
@@ -173,7 +173,7 @@ const enhance = compose(
   })
 )
 
-export const TaskList = ({
+const TaskList = ({
   intl,
   navigate,
   location,

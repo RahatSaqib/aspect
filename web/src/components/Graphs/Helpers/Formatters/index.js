@@ -1,9 +1,6 @@
 import first from 'lodash/first'
-import forOwn from 'lodash/forOwn'
 import get from 'lodash/get'
 import includes from 'lodash/includes'
-import isArray from 'lodash/isArray'
-import isNull from 'lodash/isNull'
 import keys from 'lodash/keys'
 import last from 'lodash/last'
 import map from 'lodash/map'
@@ -22,33 +19,19 @@ import values from 'lodash/values'
 import valuesIn from 'lodash/valuesIn'
 import {
   dateRangeOptions,
-  getAllDaysInCurrentMonth,
-  getDayFromToday,
   getISOFromString,
   getTimePeriod,
   getPreviousPeriod,
   negateTimeZoneOffset,
 } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
-import graphColorMap from '../Variables'
-import {
-  calcPercentageSplitBar,
-  calcPercentageForGraphs,
-  getAverageFromData,
-  getMaxValueForDivergent,
-  roundIfNumber,
-  percentageOrActualForPie,
-} from './calcs'
+import { calcPercentageSplitBar, calcPercentageForGraphs, roundIfNumber } from './calcs'
 import {
   groupByKey,
   groupForPie,
-  groupForPieRow,
   groupForDivergent,
-  groupForInventoryStatusAPI,
   groupForOldTreatmentAPI,
-  groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,
 } from './grouping'
-import validateGraphConfig from './validate'
 
 const makeProperCase = string => startCase(string)
 
@@ -87,18 +70,6 @@ const formatValuesForGraphs = (value, displayMethod, { formatNumber }) => {
       break
   }
   return formatted
-}
-
-const orderKeysById = keys => {
-  const sortedKeys = []
-  keys.map(k => graphColorMap.filter(({ id, externalId }) => externalId === k && sortedKeys.push({ id, externalId })))
-  return map(sortBy(sortedKeys, ['id']), 'externalId')
-}
-
-const getGraphKeysFromResults = (data, keyToOmit) => {
-  const newdata = []
-  data.filter(d => forOwn(d, (value, key) => keyToOmit === key || newdata.push({ [key]: value })))
-  return orderKeysById(uniq(newdata.flatMap(a => keys(a))))
 }
 
 const sortByValue = values => {
@@ -182,38 +153,6 @@ const generateTickValues = (data, axesTicks, keys, whichAxes, zeroOut = false, {
   return values
 }
 
-const filterColour = (valueId, graphId) => {
-  let colorValue
-  const tbResultsGraphs = ['tbResultsByCategory1Monthly', 'tbResultsByCategory1Aggregate']
-  const tbResultsValues = ['Trace Detected', 'NotDetected', 'NoResult']
-  const tRifGraphs = ['tbByCategory1Monthly', 'tbByCategory1Aggregate']
-  const tbRifValues = ['NotDetected']
-  const covidGraphs = ['covidByCategory1Monthly', 'covidByCategory1Aggregate']
-  const covidValues = ['Negative', 'Unknown', 'NotDetected']
-  switch (true) {
-    case includes(tbResultsGraphs, graphId) && includes(tbResultsValues, valueId):
-      colorValue = `${valueId}_${graphId}`
-      break
-
-    case includes(tRifGraphs, graphId) && includes(tbRifValues, valueId):
-      colorValue = `${valueId}_${graphId}`
-      break
-
-    case includes(covidGraphs, graphId) && includes(covidValues, valueId):
-      colorValue = `${valueId}_${graphId}`
-      break
-
-    default:
-      colorValue = valueId
-      break
-  }
-
-  return graphColorMap.filter(color => color.externalId === colorValue || color.id === 999)[0].color
-}
-
-const generateColorForValue = (valueId, graphId) => filterColour(valueId, graphId)
-const generateColorForLegend = (valueId, graphId) => filterColour(valueId, graphId)
-
 const generateToolTip = (
   item,
   displayMethod,
@@ -288,89 +227,6 @@ const translateLabel = (string, assaysFromState, formatMessage, intlMessages, i1
     ? formatMessage(intlMessages[i18nKeys[string]]) || get(nth(newString, 0), 'name')
     : makeProperCase(removeStringsFromArray(string))
 }
-const generateLegendIntl = (
-  formatMessage,
-  intlMessages,
-  i18nKeys,
-  string,
-  assaysFromState,
-  graphId = false,
-  legendsNotToRender = false,
-  { colorExternalId } = {}
-) => {
-  if (!legendsNotToRender?.includes(string)) {
-    return {
-      label: translateLabel(string, assaysFromState, formatMessage, intlMessages, i18nKeys),
-      color: generateColorForLegend(colorExternalId || string, graphId),
-    }
-  }
-  return {}
-}
-
-const formatDataByGraphType = (
-  data,
-  displayMethod,
-  filterBy,
-  formatDate,
-  indexBy,
-  keyToConsume,
-  i18nKeys,
-  type,
-  mergedParams,
-  formatMessage,
-  messages
-) => {
-  let grouped
-  switch (type) {
-    case 'bar':
-    case 'calendar':
-    case 'stacked':
-      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
-      break
-
-    case 'divergent':
-      grouped = groupForDivergent(data, indexBy, keyToConsume, filterBy)
-      break
-
-    case 'barLegacyTreatment':
-      grouped = groupForOldTreatmentAPI(data, keyToConsume, indexBy, formatDate, filterBy, displayMethod)
-      break
-
-    case 'stackedDeviceActivity':
-      grouped = groupForDeviceStatusAPI(data, keyToConsume, indexBy, formatDate, filterBy)
-      break
-
-    case 'barInventory':
-      grouped = groupForInventoryStatusAPI(data, i18nKeys, formatMessage, messages)
-      break
-
-    case 'pieLegacyTreatment':
-      grouped = groupForPieOldTreatmentAPI(data, keyToConsume, indexBy, filterBy)
-      break
-
-    case 'pie':
-      grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
-      break
-
-    case 'pieRow':
-      grouped = groupForPieRow(data, mergedParams)
-      break
-
-    case 'line-trends': {
-      const filtered = filterBy ? filterByMultiple(data, filterBy) : data
-      return filtered
-    }
-
-    case 'bar-line':
-      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
-      return grouped
-
-    default:
-      grouped = false
-      break
-  }
-  return grouped
-}
 
 const extractOptionValue = (identifier, selectedOption) => {
   let optionValue
@@ -428,75 +284,22 @@ const extractOptionValue = (identifier, selectedOption) => {
   return optionValue
 }
 
-const prepAssaysForParams = whiteListed => {
-  const assays = []
-  map(whiteListed, value => assays.push({ assay: value }))
-  return assays
-}
-
-const prepParamsForEndPoint = (urlParams, updatedParams) => {
-  const params = []
-  const paramsToUse = updatedParams && !isNull(values(updatedParams)[0]) ? updatedParams : urlParams
-
-  map(paramsToUse, (value, key) =>
-    isArray(value) ? map(value, v => params.push({ [key]: v })) : params.push({ [key]: value })
-  )
-  return params
-}
-
-const getColorIdByFieldName = (fields, fieldName) => {
-  if (isArray(fields)) {
-    const [field = {}] = fields?.filter(it => it.name === fieldName) || {}
-    return field.colorId
-  }
-  return null
-}
-
-const formatDateToYYYYMMDD = date => {
-  const year = date.getFullYear()
-  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are zero-based
-  const day = String(date.getDate()).padStart(2, '0')
-
-  return `${year}-${month}-${day}`
-}
-
 export {
   calcPercentageSplitBar,
   calcPercentageForGraphs,
   dateRangeOptions,
   extractOptionValue,
   filterByMultiple,
-  filterColour,
-  formatDataByGraphType,
-  formatValuesForGraphs,
-  generateColorForLegend,
-  generateColorForValue,
-  generateLegendIntl,
   generateTickValues,
   generateToolTip,
-  getAllDaysInCurrentMonth,
-  getAverageFromData,
-  getDayFromToday,
-  getGraphKeysFromResults,
   getISOFromString,
-  getMaxValueForDivergent,
   getPreviousPeriod,
   getTimePeriod,
-  graphColorMap,
   groupByKey,
   groupForDeviceStatusAPI,
   groupForDivergent,
   groupForOldTreatmentAPI,
   groupForPie,
-  groupForPieOldTreatmentAPI,
-  groupForPieRow,
   negateTimeZoneOffset,
   normaliseKeys,
-  percentageOrActualForPie,
-  prepAssaysForParams,
-  prepParamsForEndPoint,
-  validateGraphConfig,
-  getColorIdByFieldName,
-  formatDateToYYYYMMDD,
-  translateLabel,
 }

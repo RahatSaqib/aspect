@@ -1,37 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
-import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'
-import { StateSelect, LgaSelect } from '../../../../../cleanComponents'
-import Loading from '../../../../../cleanComponents/Loading'
-import AspectResponsiveBar from '../../../../../components/Graphs/BarGraph/AspectResponsiveBar'
-import AxisRightLayer from '../../../../../components/Graphs/BarGraph/AxisRightLayer'
-import EmptyGraph from '../../../../../components/Graphs/EmptyData'
+import { StateSelect, LgaSelect, ColumnLineGraph, Loading } from '../../../../../cleanComponents'
+import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
-import styles from '../../../../../oldPages/dashboard/Graphs/styles.css'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
-import { lineForProp, lineForPropWithLabel } from '../../../components/QuartersMtbDetectedGraph.Main.Layers'
 import messages from '../../../PkDashboard.Messages'
-
-const cssClasses = classnames.bind(styles)
-
-const baseConfig = {
-  id: 'tbMtbDetectedQuarterlyTrends',
-  groupMode: 'grouped',
-  fields: [
-    { name: 'Total', colorId: 'caseTotal', target: 'bar' },
-    { name: 'MtbDetected', colorId: 'caseDetected', target: 'bar' },
-    { name: 'MtbToTotalPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
-  ],
-  clickThrough: false,
-  axisRightProps: { fieldName: 'MtbToTotalPercentage' },
-}
 
 const endpointParams = [
   { source: 'tbDetection' },
@@ -47,11 +25,6 @@ const XDRTestingDiagnosisTrendPage = () => {
   const [showLabel, setShowLabel] = useState(true)
   const [stateId, setState] = useState()
   const [lgaId, setLga] = useState()
-  const { data: assays } = useAssayList()
-
-  const [i18nKeys, setI18nKeys] = useState([])
-  const [graphData, setGraphData] = useState(false)
-  const [graphKeys, setGraphKeys] = useState(false)
 
   const mergedParams = stateId ? [...endpointParams, { stateId, lgaId }] : [...endpointParams]
 
@@ -61,13 +34,24 @@ const XDRTestingDiagnosisTrendPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
+  const mtbPlusMessage = formatMessage(intlMessages.MtbDetected)
+  const totalMessage = formatMessage(intlMessages.Total)
+  const percentageMessage = formatMessage(intlMessages.MTBPercent)
+
+  const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
-      const { grouped, keysFromGrouped, i18nKeys } = data
-      setI18nKeys(i18nKeys)
-      setGraphData(grouped)
-      setGraphKeys(keysFromGrouped)
+      const line = []
+      const bar = []
+      data.grouped.map(({ year, MtbToTotalPercentage, Total, MtbDetected }) => {
+        line.push({ year, [percentageMessage]: +MtbToTotalPercentage.toFixed(2) })
+        bar.push({ year, value: MtbDetected, type: mtbPlusMessage })
+        bar.push({ year, value: Total, type: totalMessage })
+        return {}
+      })
+      setGraphData([bar, line])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   return (
@@ -97,34 +81,21 @@ const XDRTestingDiagnosisTrendPage = () => {
         <Loading />
       ) : (
         <Grid item xs={12}>
-          <div className={cssClasses('Graph_Wrapper')}>
-            {graphData && !isEmpty(graphData) && assays ? (
-              <AspectResponsiveBar
-                assaysFromState={assays}
-                config={{
-                  ...baseConfig,
-                  layers: [
-                    showLabel ? lineForPropWithLabel('MtbToTotalPercentage') : lineForProp('MtbToTotalPercentage'),
-                    AxisRightLayer,
-                  ],
-                  showLabel,
-                  showDecimals: 0,
-                  labelTextColor: '#333',
-                }}
+          <Grid container>
+            <Grid item xs={12} md={12} lg={12}>
+              <ColumnLineGraph
                 data={graphData}
-                keys={graphKeys}
-                indexBy="year"
-                tickValuesYShape="twos"
-                tickValuesXShape="all"
-                displayMethod="actual"
-                displayLegend
-                type="bar-line"
-                i18nKeys={i18nKeys}
+                graphId="tbMtbDetectedQuarterlyTrends"
+                colors={[
+                  { name: mtbPlusMessage, colorId: 'caseDetected' },
+                  { name: totalMessage, colorId: 'caseTotal' },
+                  { name: percentageMessage, colorId: 'casePercentDetectedOfTotal' },
+                ]}
+                xField="year"
+                yField={['value', percentageMessage]}
               />
-            ) : (
-              <EmptyGraph type="bar" />
-            )}
-          </div>
+            </Grid>
+          </Grid>
         </Grid>
       )}
     </PkPage>

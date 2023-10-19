@@ -7,9 +7,7 @@ import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import { graphMessages, months } from '../../../messages'
-import StateSelector from '../../../oldPages/dashboard/Graphs/StateSelector'
-import ErrorBoundary from '../../ErrorBoundary'
-import Loading from '../../Loading'
+import { StateSelector, Loading } from '../../index'
 import styles from '../graphStyles.css'
 import { fillYear } from '../graphUtils'
 
@@ -58,39 +56,44 @@ const TrendInYearsAllTestsGraph = () => {
   return isLoading ? (
     <Loading />
   ) : (
-    <ErrorBoundary>
-      <Grid container className={cssClasses('Graph_Container')}>
-        <Grid item xs={12}>
-          <Card>
-            <CardHeader title={formatMessage(graphMessages.rifDetectedTrendsInYearTitle)} />
-            <CardContent>
-              <Grid container spacing={1} className={cssClasses('Graph_Content')}>
-                <Grid item xs={12} md={12} lg={2}>
-                  <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                    <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
-                      <FormControlLabel
-                        label={formatMessage(graphMessages.showValuesLabel)}
-                        control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
-                      />
-                    </Grid>
-                    <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
-                      <StateSelector filter={filter} onChange={setFilter} />
-                    </Grid>
+    <Grid container className={cssClasses('Graph_Container')}>
+      <Grid item xs={12}>
+        <Card>
+          <CardHeader title={formatMessage(graphMessages.rifDetectedTrendsInYearTitle)} />
+          <CardContent>
+            <Grid container spacing={1} className={cssClasses('Graph_Content')}>
+              <Grid item xs={12} md={12} lg={2}>
+                <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
+                  <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                    <FormControlLabel
+                      label={formatMessage(graphMessages.showValuesLabel)}
+                      control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
+                    />
                   </Grid>
-                </Grid>
-                <Grid item xs={12} md={12} lg={10}>
-                  <Grid container>
-                    <Grid item xs={12} md={12} lg={12}>
-                      <LineGraph data={graphData} showLabel={showLabel} graphId="tbMtbDetectedYearlyTrends" />
-                    </Grid>
+                  <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
+                    <StateSelector filter={filter} onChange={setFilter} />
                   </Grid>
                 </Grid>
               </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
+              <Grid item xs={12} md={12} lg={10}>
+                <Grid container>
+                  <Grid item xs={12} md={12} lg={12}>
+                    <LineGraph
+                      data={graphData}
+                      showLabel={showLabel}
+                      graphId="tbMtbDetectedYearlyTrends"
+                      xField="month"
+                      yField="value"
+                      seriesField="year"
+                    />
+                  </Grid>
+                </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
       </Grid>
-    </ErrorBoundary>
+    </Grid>
   )
 }
 

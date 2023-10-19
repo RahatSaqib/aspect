@@ -7,7 +7,7 @@ import styles from './GraphPlaceholders.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const messages = defineMessages({
+const messages = defineMessages({
   emptyGraphPlaceholderTitle: {
     id: 'pages.graphs.emptyGraphPlaceholderTitle',
     defaultMessage: 'No Data Available',

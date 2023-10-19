@@ -52,6 +52,6 @@ const enhance = compose(
   })
 )
 
-export const LocalStorage = () => false
+const LocalStorage = () => false
 
 export default enhance(LocalStorage)
