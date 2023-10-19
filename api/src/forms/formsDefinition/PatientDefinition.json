@@ -10,7 +10,8 @@
       "gxAlertDbColumn": "PatientName",
       "caption": "Name",
       "i18nKeyCaption": "Namei18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "source": "patientData.PatientName"
     },
     {
       "id": 2,
@@ -21,7 +22,8 @@
       "order": 2,
       "caption": "Name",
       "i18nKeyCaption": "Namei18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "source": "patientData.PatientSurname"
     },
     {
       "id": 3,
