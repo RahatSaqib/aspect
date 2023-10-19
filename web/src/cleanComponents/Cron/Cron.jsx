@@ -9,7 +9,7 @@ import Daily from './Daily'
 import Monthly from './Monthly'
 import Quarterly from './Quarterly'
 import styles from './styles.css'
-import { getCronHumanValue } from './utils'
+import getCronHumanValue from './utils'
 import Weekly from './Weekly'
 
 const classes = classNames.bind(styles)

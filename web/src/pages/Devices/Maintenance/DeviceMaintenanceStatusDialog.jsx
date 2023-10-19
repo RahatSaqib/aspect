@@ -38,7 +38,7 @@ const messages = defineMessages({
   },
 })
 
-export function validate({ maintenanceStatus }, { formatMessage }) {
+function validate({ maintenanceStatus }, { formatMessage }) {
   const errors = {}
   if (!maintenanceStatus) {
     errors.contextDate = formatMessage(messages.maintenanceStatusIsRequired)

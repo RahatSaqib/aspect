@@ -9,7 +9,7 @@ import styles from './ReadOnlyField.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const readOnlyFieldPropTypes = {
+const readOnlyFieldPropTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.any,
   lg: PropTypes.bool,
@@ -19,7 +19,7 @@ export const readOnlyFieldPropTypes = {
 
 const enhance = compose(pure, setPropTypes(readOnlyFieldPropTypes))
 
-export const ReadOnlyField = ({
+const ReadOnlyField = ({
   label,
   value,
   lg,

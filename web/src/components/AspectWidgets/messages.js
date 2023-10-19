@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const messages = defineMessages({
+const messages = defineMessages({
   summaryWidgetGroupConnectivity: {
     id: 'pages.Status.summaryWidgetGroup.connectivity',
     defaultMessage: 'Connectivity',

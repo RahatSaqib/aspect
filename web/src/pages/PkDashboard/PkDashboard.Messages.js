@@ -186,6 +186,18 @@ const messages = {
       id: 'p.PkDashboard.rrtbNationalDiagnosisTrendsTitle',
       defaultMessage: 'National Rifampicin Resistance Diagnosis Trends',
     },
+    RRToTbTotalPercentage: {
+      id: 'p.PkDashboard.RRToTbTotalPercentage',
+      defaultMessage: 'RR To Tb Total Percentage',
+    },
+    TbTotal: {
+      id: 'p.PkDashboard.TbTotal',
+      defaultMessage: 'Tb Total',
+    },
+    rrDetected: {
+      id: 'p.PkDashboard.rrDetected',
+      defaultMessage: 'RR Detected',
+    },
     provincialRRDiagnosisTrends: {
       id: 'p.PkDashboard.provincialRRDiagnosisTrends',
       defaultMessage: 'Provincial RR Diagnosis Trends',
@@ -301,7 +313,7 @@ const messages = {
     // 3rd column
     titlecoverage: { id: 'p.PkDashboard.titlecoverage', defaultMessage: 'Coverage' },
     coverageperformance: { id: 'p.PkDashboard.coverageperformance', defaultMessage: 'Performance' },
-    genExpert: { id: 'p.PkDashboard.genExpertPending', defaultMessage: 'GeneXpert Device Coverage (Pending)' },
+    genExpert: { id: 'p.PkDashboard.genExpertPending', defaultMessage: 'GeneXpert Device Coverage' },
     genExpertError: { id: 'p.PkDashboard.genExpertError', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
     utilization: { id: 'p.PkDashboard.utilizationPending', defaultMessage: 'Utilization (Pending)' },
     errorRate: { id: 'p.PkDashboard.errorRatePending', defaultMessage: 'Error Rate (Pending)' },

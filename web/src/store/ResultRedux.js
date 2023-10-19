@@ -13,7 +13,7 @@ import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/ta
 import { aspectFetch } from '../utils/utils/fetch'
 import { receivedExportResponse } from './GlobalsRedux'
 
-export const types = {
+const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
   RECEIVE_RESULTS: 'RECEIVE_RESULTS',
   REJECTED_RESULTS: 'REJECTED_RESULTS',
@@ -144,7 +144,7 @@ export function exportResults(filtersParams, format, sortCol, sortDir, page, pag
 /*
  * ---------------- Reducers -----------------
  */
-export const WorkflowLogModel = Immutable.Record({
+const WorkflowLogModel = Immutable.Record({
   items: new Items(),
   table: new Table({
     sortCol: 'changedOn',
@@ -154,7 +154,7 @@ export const WorkflowLogModel = Immutable.Record({
   }),
 })
 
-export const Result = Immutable.Record({
+const Result = Immutable.Record({
   items: new Items(),
   table: new Table({
     sortCol: 'endedOn',

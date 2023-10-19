@@ -10,7 +10,7 @@ const messages = defineMessages({
   clearFilters: { id: 'shared.EmptyList.clearFilters', defaultMessage: 'Clear filters' },
 })
 
-export const BrowseEmptyList = () => {
+const BrowseEmptyList = () => {
   const { formatMessage } = useI18n()
   const location = useLocation()
   const [, , resetFilter] = useFilterUpdate()

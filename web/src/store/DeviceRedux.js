@@ -10,7 +10,7 @@ import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/ta
 import { aspectFetch } from '../utils/utils/fetch'
 import { receivedExportResponse } from './GlobalsRedux'
 
-export const types = {
+const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
   REJECTED_DEVICES: 'REJECTED_DEVICES',

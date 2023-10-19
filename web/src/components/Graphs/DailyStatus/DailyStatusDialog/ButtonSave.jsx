@@ -6,7 +6,7 @@ import useI18n from '../../../../hooks/useI18n'
 import messages from './messages'
 import { MODE } from './utils'
 
-export const ButtonSave = ({ onClick, deviceId, mode }) => {
+const ButtonSave = ({ onClick, deviceId, mode }) => {
   const { formatMessage } = useI18n()
   const { formik } = useFormikContext()
   return (

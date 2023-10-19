@@ -38,14 +38,14 @@ function formatBase(date, displayPreferenceKey) {
   return timeToFormat === null ? '' : format(new Date(timeToFormat), dateFormatPreference)
 }
 
-export const SECOND_IN_MILLISECONDS = 1000
-export const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS
-export const HOUR_IN_MILLISECONDS = 60 * MINUTE_IN_MILLISECONDS
-export const DAY_IN_MILLISECONDS = 24 * HOUR_IN_MILLISECONDS
-export const WEEK_IN_MILLISECONDS = 7 * DAY_IN_MILLISECONDS
-export const MONTH_IN_MILLISECONDS = 30 * DAY_IN_MILLISECONDS
-export const QUARTER_IN_MILLISECONDS = 3 * MONTH_IN_MILLISECONDS
-export const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
+const SECOND_IN_MILLISECONDS = 1000
+const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS
+const HOUR_IN_MILLISECONDS = 60 * MINUTE_IN_MILLISECONDS
+const DAY_IN_MILLISECONDS = 24 * HOUR_IN_MILLISECONDS
+const WEEK_IN_MILLISECONDS = 7 * DAY_IN_MILLISECONDS
+const MONTH_IN_MILLISECONDS = 30 * DAY_IN_MILLISECONDS
+const QUARTER_IN_MILLISECONDS = 3 * MONTH_IN_MILLISECONDS
+const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
 
 export function formatDate(date) {
   return formatBase(date, 'dateFormat')
@@ -65,20 +65,6 @@ export const withDateFormatProps = withProps(() => {
   const prefs = getAspectDisplayPreferences()
   return {
     dateFormat: prefs.get('dateFormat'),
-  }
-})
-
-export const withTimeFormatProps = withProps(() => {
-  const prefs = getAspectDisplayPreferences()
-  return {
-    timeFormat: prefs.get('timeFormat'),
-  }
-})
-
-export const withDateTimeFormatProps = withProps(() => {
-  const prefs = getAspectDisplayPreferences()
-  return {
-    dateTimeFormat: prefs.get('dateTimeFormat'),
   }
 })
 

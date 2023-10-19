@@ -18,6 +18,7 @@ const types = {
   DEVICE_MODULE_DISABLE_RECEIVED: 'DEVICE_MODULE_DISABLE_RECEIVED',
   DEVICE_INSTRUMENT_REPLACED: 'DEVICE_INSTRUMENT_REPLACED',
   DEVICE_UNUSED_MODULES: 'DEVICE_UNUSED_MODULES',
+  DEVICE_UPDATE_MODULE_SERIALS: 'DEVICE_UPDATE_MODULE_SERIALS',
   HARDWARE_SYRINGE_STALL_ERROR: 'HARDWARE_SYRINGE_STALL_ERROR', // 2005
   HARDWARE_SYRINGE_PRESSURE_TOOHIGH: 'HARDWARE_SYRINGE_PRESSURE_TOOHIGH', // 2008
   HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE: 'HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE', // 2026
@@ -320,6 +321,15 @@ function deviceHardwareError(device, resultErrorCode, options) {
   }
 }
 
+/**
+ * Creates an action to update array `moduleSerials` in Device.configurationalData
+ */
+function deviceUpdateModuleSerials() {
+  return {
+    type: types.DEVICE_UPDATE_MODULE_SERIALS,
+  }
+}
+
 module.exports = {
   types,
   calibrationDueDateAnalysis,
@@ -340,4 +350,5 @@ module.exports = {
   deviceHardwareError,
   hardwareErrorActions,
   logDeviceMaintenanceStatus,
+  deviceUpdateModuleSerials,
 }
