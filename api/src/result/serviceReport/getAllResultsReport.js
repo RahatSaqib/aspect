@@ -230,5 +230,10 @@ const getWorkflowStatus = async (externalId, subQuery) => {
 const queryIncludesXdr = async query => {
   const assays = await allAssayToId()
   const { GxMtbXdr: xdrAssayId } = assays
-  return xdrAssayId && (!query.assayId || query.assayId === xdrAssayId)
+  return (
+    xdrAssayId &&
+    (!query.assayId ||
+      query.assayId === xdrAssayId ||
+      (Array.isArray(query.assayId) && query.assayId.includes(xdrAssayId)))
+  )
 }
