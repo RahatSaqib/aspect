@@ -55,6 +55,7 @@ const data347 = {
   errorCode: '400',
   resultNotes: 'test notes',
   testEndDate: '2023-10-05T19:25:21.025Z',
+  transferSiteName: 'TransferClinic',
 }
 
 const expected347 = [
@@ -89,7 +90,7 @@ const expected347 = [
         resultId: 347,
         event: 'transferEvent',
         name: 'Transferred Away',
-        siteName: 'Lancaster Clinic',
+        siteName: 'TransferClinic',
         updatedOn: '2023-05-03T18:15:57.000Z',
         transferredBy: 'Admin',
         comment: undefined,
