@@ -54,7 +54,8 @@ module.exports = async (auth, query) => {
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
   const columnsFromResultForms = await getColumnsFromResultForms(props)
-  const assays = await allAssayToId()
+  const { GxMtbXdr: xdrAssayId } = await allAssayToId()
+  const dataIncludesResistances = queryIncludesXdr(query, xdrAssayId)
   const columns = [
     ..._.map(extraColumns, column => ({
       key: column.db,
@@ -65,7 +66,7 @@ module.exports = async (auth, query) => {
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'resultCategoryGroup', header: 'Result' },
     { key: 'resultData.resultText', header: 'Raw Result' },
-    ...(queryIncludesXdr(query, assays)
+    ...(dataIncludesResistances
       ? [
           { key: 'resultData.allResistances.INH', header: 'INH' },
           { key: 'resultData.allResistances.FLQ', header: 'FLQ' },
@@ -125,7 +126,7 @@ module.exports = async (auth, query) => {
       require('flat')({
         ...dataRow,
         patientData: JSON.parse(dataRow.patientData),
-        resultData: JSON.parse(dataRow.resultData),
+        resultData: dataRow.assayId === xdrAssayId ? humanizeResistancesTexts(dataRow.resultData) : dataRow.resultData,
         formData: JSON.parse(dataRow.formData),
         errorCode: _.replace(dataRow.errorCode || '', /(\r\n|\n|\r)/gm, ''),
         errorNotes: _.replace(dataRow.errorNotes || '', /(\r\n|\n|\r)/gm, ''),
@@ -196,8 +197,6 @@ async function getResultsForExport(auth, query) {
   const getData = resultQuery.clone().groupBy('r.id').modify(sortPageParams, query, 'endedOn').select(selectFields)
 
   const [{ total }, data] = await Promise.all([getCount, getData])
-
-  humanizeResistancesTexts(data, query)
 
   const result = {
     ok: true,
@@ -306,8 +305,7 @@ const getWorkflowStatus = async (externalId, subQuery) => {
   return query
 }
 
-const queryIncludesXdr = (query, assays) => {
-  const { GxMtbXdr: xdrAssayId } = assays
+const queryIncludesXdr = (query, xdrAssayId) => {
   return (
     xdrAssayId &&
     (!query.assayId ||
@@ -316,16 +314,16 @@ const queryIncludesXdr = (query, assays) => {
   )
 }
 
-const humanizeResistancesTexts = (data, query, assays) => {
+const humanizeResistancesTexts = resultDataString => {
   // Hack to present a little bit clearer texts due to the lack of i18n handling in backend:
-  if (!queryIncludesXdr(query, assays)) {
-    for (const record of data) {
-      record.INH = startCase(record.INH)
-      record.FLQ = startCase(record.FLQ)
-      record.AMK = startCase(record.AMK)
-      record.KAN = startCase(record.KAN)
-      record.CAP = startCase(record.CAP)
-      record.ETH = startCase(record.ETH)
-    }
+  const resultData = JSON.parse(resultDataString)
+  if (resultData.allResistances) {
+    resultData.allResistances.INH = startCase(resultData.allResistances.INH)
+    resultData.allResistances.FLQ = startCase(resultData.allResistances.FLQ)
+    resultData.allResistances.AMK = startCase(resultData.allResistances.AMK)
+    resultData.allResistances.KAN = startCase(resultData.allResistances.KAN)
+    resultData.allResistances.CAP = startCase(resultData.allResistances.CAP)
+    resultData.allResistances.ETH = startCase(resultData.allResistances.ETH)
   }
+  return resultData
 }
