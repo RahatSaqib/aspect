@@ -70,7 +70,8 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
         'pe.id as maintenanceStatusManuallySetById',
         'pe.name as maintenanceStatusManuallySetByName',
         'dmsl.createdOn as maintenanceStatusManuallySetByDate',
-        knex.raw("dmsl.data->>'$.notes' AS maintenanceStatusNotes")
+        knex.raw("dmsl.data->>'$.notes' AS maintenanceStatusNotes"),
+        knex.raw("dmsl.data->>'$.expectedBackOnline' AS expectedBackOnline")
       )
   )
 }
