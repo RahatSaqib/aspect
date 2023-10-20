@@ -7,30 +7,6 @@ const { TRANSFERRED } = require('../../../common/consts')
  * @returns {Object} - An object containing transfer status and other related data.
  */
 
-// function generateTransferStatus(data, userSiteIds) {
-//   const transferStatus = {
-//     resultId: data.id,
-//     siteExternalId: data.reportableSiteExternalId,
-//     siteName: data.reportableSiteName,
-//     canBeTransferred: true,
-//     transferStatus: null,
-//     transferredBy: data.transferredBy,
-//     transferredOn: data.transferredOn,
-//   }
-//   if (!_.isNil(data.transferStatusLogData)) {
-//     const transferStatusLogData = JSON.parse(data.transferStatusLogData)
-//     const { siteId, comment, reportableSiteId, previousReportableSiteId } = transferStatusLogData
-//     transferStatus.comment = comment
-//     transferStatus.canBeTransferred = userSiteIds?.includes(reportableSiteId) || false
-//     transferStatus.transferStatus = userSiteIds?.includes(reportableSiteId) ? TRANSFERRED.HERE : TRANSFERRED.AWAY
-//     transferStatus.previousReportableSiteId = previousReportableSiteId
-//     transferStatus.reportableSiteId = reportableSiteId
-//     transferStatus.siteId = siteId
-//   }
-
-//   return transferStatus
-// }
-
 function generateTransferStatus(data, userSiteIds) {
   const transferStatus = {
     resultId: data.id,
@@ -52,7 +28,6 @@ function generateTransferStatus(data, userSiteIds) {
       : TRANSFERRED.AWAY
     transferStatus.previousReportableSiteId = transferPreviousReportableSiteId
     transferStatus.reportableSiteId = transferReportableSiteId
-    // transferStatus.siteId = siteId
   }
   return transferStatus
 }
