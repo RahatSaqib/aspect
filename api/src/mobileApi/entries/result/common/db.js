@@ -139,7 +139,9 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'transferLogSite.name as transferSiteName',
       'transferOriginSite.name as transferOriginSiteName',
       'transferLog.comment as transferComment',
-      'transferLog.createdOn as transferredOn'
+      'transferLog.createdOn as transferredOn',
+      'transferLog.reportableSiteId as transferReportableSiteId',
+      'transferLog.previousReportableSiteId as transferPreviousReportableSiteId'
     )
   return knexQuery
 }
