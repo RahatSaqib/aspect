@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const { knex, sortPageParams } = require('../../../db')
 const { addConstraints } = require('../../../auth/constraints')
 const { NOT_POSSIBLE_FOLLOW_UP_TYPE, fieldNameToFollowUpTypeIdMappings } = require('./logic')
@@ -659,7 +660,7 @@ const deleteResultFollowUpTreatment = async (resultId, updatedBy, updatedOn) => 
     .andWhere('isDeleted', false)
     .select('rfu.id')
 
-  if (treatmentFollowUps.length > 0) {
+  if (!_.isEmpty(treatmentFollowUps)) {
     await knex('ResultFollowUp')
       .whereIn(
         'id',
