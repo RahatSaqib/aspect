@@ -1,7 +1,7 @@
 import { defineMessages } from 'react-intl'
 import report from '../../../messages/report'
 
-export const messages = defineMessages({
+const messages = defineMessages({
   createNotification: {
     id: 'pages.NotificationList.createNotification',
     defaultMessage: 'Create Notification',

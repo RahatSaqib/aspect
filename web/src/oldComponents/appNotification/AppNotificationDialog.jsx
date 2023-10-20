@@ -35,7 +35,7 @@ const genericMessages = defineMessages({
 
 const enhance = flowRight(injectIntl, connect(mapStateToProps, mapDispatchToProps))
 
-export class AppNotificationDialog extends PureComponent {
+class AppNotificationDialog extends PureComponent {
   static propTypes = {
     intl: PropTypeOf.intl.isRequired,
     appNotification: PropTypes.objectOf(Error),

@@ -13,8 +13,8 @@ import {
   StateSelect,
   TagSelect,
   TimezoneSelect,
+  Loading,
 } from '../../cleanComponents'
-import Loading from '../../cleanComponents/Loading'
 import useAddPerson from '../../hooks/person/useAddPerson'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePerson from '../../hooks/person/useUpdatePerson'

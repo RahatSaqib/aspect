@@ -6,7 +6,7 @@ import { defineMessages } from 'react-intl'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../utils/utils/fetch'
 
-export const types = {
+const types = {
   REQUEST_TREATMENT_STATUSES: 'REQUEST_TREATMENT_STATUSES',
   RECEIVE_TREATMENT_STATUSES: 'RECEIVE_TREATMENT_STATUSES',
 }

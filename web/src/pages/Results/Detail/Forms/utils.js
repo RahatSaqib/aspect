@@ -1,5 +1,5 @@
 import ASSAY_LIST from '../../../../components/QueryFetch/Assay'
-import { DEVICE_SELECT_LIST, DEVICE_TYPES } from '../../../../components/QueryFetch/Device'
+import { DEVICE_SELECT_LIST } from '../../../../components/QueryFetch/Device'
 import { GEOGRAPHY_STATES } from '../../../../components/QueryFetch/Geography'
 import { SITE_ALL } from '../../../../components/QueryFetch/Site'
 import messages from '../messages'
@@ -22,7 +22,7 @@ export const getBaseOptions = (
   return options
 }
 
-export const getReadonly = (id, props, hiddenFields) => {
+const getReadonly = (id, props, hiddenFields) => {
   let items = [
     {
       ...props,
@@ -195,52 +195,6 @@ export const deviceProps = (isNew, props) => {
         },
         dependencies: ['siteId'],
         isClearable: true,
-      },
-    },
-  ]
-}
-
-export const deviceTypeProps = (isNew, props) => {
-  if (!isNew) {
-    return getReadonly('deviceType', props, [{ id: 'deviceTypeId' }])
-  }
-  return [
-    {
-      ...props,
-      id: 'deviceTypeId',
-      controlType: {
-        component: 'select',
-        endpoint: DEVICE_TYPES.ENDPOINT,
-        hideIfNoOptions: false,
-        queryKey: DEVICE_TYPES.KEY,
-        normalizeLoadedData: response => {
-          let options = []
-          const { ok, data } = response
-          if (ok) {
-            options = data
-              .filter(({ name }) => !name.includes('Aspect') && !name.includes('GxAlert'))
-              .map(({ id, name }) => ({
-                label: name,
-                value: id,
-              }))
-          }
-          return options
-        },
-      },
-    },
-  ]
-}
-
-export const deviceSerialProps = (isNew, props) => {
-  if (!isNew) {
-    return getReadonly('deviceSerial', props, null)
-  }
-  return [
-    {
-      ...props,
-      id: 'deviceSerial',
-      controlType: {
-        component: 'textField',
       },
     },
   ]

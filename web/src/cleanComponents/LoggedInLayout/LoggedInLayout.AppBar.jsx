@@ -27,7 +27,7 @@ const messages = defineMessages({
   },
 })
 
-export const Header = () => {
+const Header = () => {
   const dispatch = useDispatch()
   const intl = useI18n()
   const navigate = useNavigate()

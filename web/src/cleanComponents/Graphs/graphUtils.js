@@ -1,11 +1,15 @@
 import { subDays, subMonths, format, addMinutes, subMinutes, getYear, subYears, startOfMonth } from 'date-fns'
+import endOfMonth from 'date-fns/endOfMonth'
 import filter from 'lodash/filter'
+import flatten from 'lodash/flatten'
 import get from 'lodash/get'
 import includes from 'lodash/includes'
 import isArray from 'lodash/isArray'
+import isNil from 'lodash/isNil'
 import isNull from 'lodash/isNull'
 import map from 'lodash/map'
 import nth from 'lodash/nth'
+import omitBy from 'lodash/omitBy'
 import pick from 'lodash/pick'
 import round from 'lodash/round'
 import startCase from 'lodash/startCase'
@@ -13,6 +17,17 @@ import sum from 'lodash/sum'
 import uniqBy from 'lodash/uniqBy'
 import values from 'lodash/values'
 import { customPropertiesVariables as colors } from '../../theme/colors'
+import {
+  groupByKey,
+  groupForPie,
+  groupForPieRow,
+  groupForDivergent,
+  groupForInventoryStatusAPI,
+  groupForOldTreatmentAPI,
+  groupForPieOldTreatmentAPI,
+  groupForDeviceStatusAPI,
+  filterByMultiple,
+} from './grouping'
 
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: colors['--aspect-color-mandy'] },
@@ -323,7 +338,8 @@ const negateTimeZoneOffset = dateString => {
 
   return Math.sign(offset) !== -1 ? addMinutes(date, offset) : subMinutes(date, Math.abs(offset))
 }
-export const startOfYearsAgo = years => new Date(getYear(subYears(new Date(), years)), 0, 1)
+
+const startOfYearsAgo = years => new Date(getYear(subYears(new Date(), years)), 0, 1)
 
 const startOfMonthUTC = dateString => {
   const [datepart, time] = dateString.split('T')
@@ -371,6 +387,165 @@ const prepParamsForEndPoint = (urlParams, updatedParams) => {
   return params
 }
 
+const objectToArray = object => Object.entries(omitBy(object, isNil)).map(([name, value]) => ({ [name]: value }))
+
+const getItemsForTrendsGraph = (data, states) => {
+  let actualData = data
+  if (states?.length) {
+    /**
+     * when state(s) selected in the filter - then make sure `actualData` contains
+     * data for ALL selected states - if raw `data` from API doesn't have entries for
+     * some state - use default value
+     */
+    actualData = states.map(({ name }) => {
+      const d = data.find(it => it.locationName === name)
+      if (d) {
+        return d
+      }
+      return {
+        locationName: name,
+        currYearTotals: { cntAll: '-' },
+        currYearMeanPerMonth: { cntAll: '-' },
+        prevYearMeanPerMonth: { cntAll: '-' },
+        last24h: { cntAll: '-' },
+        trends: [{ year: new Date().getFullYear() }],
+        noDataAvailable: true,
+      }
+    })
+  }
+  const yearSet = new Set(flatten(actualData?.map(it => it.trends.map(d => d.year))))
+  const years = [...yearSet]
+  years.sort()
+
+  const tableData =
+    actualData?.map(it => {
+      const trends = years.map(year => {
+        const y = it.trends.find(x => x.year === year)?.cntAll || 0
+        return { x: year, y }
+      })
+      return {
+        province: it.locationName,
+        perYear: it.currYearTotals.cntAll,
+        monthlyAverage: it.noDataAvailable ? '-' : round(it.currYearMeanPerMonth.cntAll, 2),
+        perDay: it.last24h.cntAll,
+        trends,
+        noDataAvailable: it.noDataAvailable,
+      }
+    }) || []
+  let graphData = tableData?.map(({ province, trends, noDataAvailable }) => ({
+    id: province,
+    data: trends,
+    noDataAvailable,
+  }))
+  if (graphData.length === graphData.filter(it => it.noDataAvailable).length) {
+    graphData = []
+  }
+
+  return { graphData, tableData }
+}
+
+const getPreviousPeriod = (period = 'month', dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") => {
+  // currently only works for month
+  const previousPeriodStart = getTimePeriod(1, period, dateFormat)
+  const previousPeriodEnd = format(endOfMonth(new Date(previousPeriodStart)), dateFormat)
+
+  return { start: previousPeriodStart, end: previousPeriodEnd }
+}
+
+const formatDataByGraphType = (
+  data,
+  displayMethod,
+  filterBy,
+  formatDate,
+  indexBy,
+  keyToConsume,
+  i18nKeys,
+  type,
+  mergedParams,
+  formatMessage,
+  messages
+) => {
+  let grouped
+  switch (type) {
+    case 'bar':
+    case 'calendar':
+    case 'stacked':
+      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
+      break
+
+    case 'divergent':
+      grouped = groupForDivergent(data, indexBy, keyToConsume, filterBy)
+      break
+
+    case 'barLegacyTreatment':
+      grouped = groupForOldTreatmentAPI(data, keyToConsume, indexBy, formatDate, filterBy, displayMethod)
+      break
+
+    case 'stackedDeviceActivity':
+      grouped = groupForDeviceStatusAPI(data, keyToConsume, indexBy, formatDate, filterBy)
+      break
+
+    case 'barInventory':
+      grouped = groupForInventoryStatusAPI(data, i18nKeys, formatMessage, messages)
+      break
+
+    case 'pieLegacyTreatment':
+      grouped = groupForPieOldTreatmentAPI(data, keyToConsume, indexBy, filterBy)
+      break
+
+    case 'pie':
+      grouped = groupForPie(data, keyToConsume, indexBy, filterBy)
+      break
+
+    case 'pieRow':
+      grouped = groupForPieRow(data, mergedParams)
+      break
+
+    case 'line-trends': {
+      const filtered = filterBy ? filterByMultiple(data, filterBy) : data
+      return filtered
+    }
+
+    case 'bar-line':
+      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
+      return grouped
+
+    default:
+      grouped = false
+      break
+  }
+  return grouped
+}
+
+const formatDateToYYYYMMDD = date => {
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, '0') // Months are zero-based
+  const day = String(date.getDate()).padStart(2, '0')
+
+  return `${year}-${month}-${day}`
+}
+
+const fillData = data => {
+  const cities = []
+  const years = []
+  const result = []
+
+  data.map(d => {
+    if (!cities.includes(d.id)) cities.push(d.id)
+    if (!years.includes(d.year)) years.push(d.year)
+    return d
+  })
+  years.map(currYear => {
+    cities.map(currCity => {
+      const info = data.find(d => d.year === currYear && d.id === currCity)
+      result.push(info || { id: currCity, year: currYear, value: 0 })
+      return currCity
+    })
+    return currYear
+  })
+  return result
+}
+
 export {
   filterColour,
   getTimePeriod,
@@ -382,4 +557,10 @@ export {
   fillYear,
   prepAssaysForParams,
   prepParamsForEndPoint,
+  objectToArray,
+  getItemsForTrendsGraph,
+  getPreviousPeriod,
+  formatDataByGraphType,
+  formatDateToYYYYMMDD,
+  fillData,
 }

@@ -13,5 +13,3 @@ export const getFormConfigWithData = (intl, jobFunctions, partner, validationSch
   }
   return formWithData
 }
-
-export default getFormConfigWithData

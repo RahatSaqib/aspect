@@ -11,7 +11,7 @@ import { receiveList, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
 import { aspectFetch } from '../utils/utils/fetch'
 
-export const types = {
+const types = {
   REQUEST_PERSONS: 'REQUEST_PERSONS',
   RECEIVE_PERSONS: 'RECEIVE_PERSONS',
   REJECTED_PERSONS: 'REJECTED_PERSONS',
@@ -102,39 +102,6 @@ const Person = Immutable.Record({
   availableContacts: Immutable.Map(),
   siteContacts: Immutable.Map(),
   personNew: Immutable.Map(),
-})
-
-export const ContactDetails = Immutable.Record({
-  id: null,
-  name: null,
-  title: null,
-  email: null,
-  email2: null,
-  phone: null,
-  cell: null,
-  countryId: null,
-  stateId: null,
-  lgaId: null,
-  zip: null,
-  notes: null,
-  lastPartnerId: null,
-  canLogIn: false,
-})
-export const LoginDetails = Immutable.Record({
-  id: null,
-  username: null,
-  newPassword: null,
-  confirmNewPassword: null,
-  currentPassword: null,
-  partnerId: null,
-  jobFunctions: Immutable.List([]),
-  userLockedOut: null,
-  email: null,
-})
-export const UserPreferences = Immutable.Record({
-  id: null,
-  timezone: null,
-  culture: null,
 })
 
 const initialState = new Person()
