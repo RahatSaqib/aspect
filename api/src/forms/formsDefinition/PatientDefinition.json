@@ -85,7 +85,7 @@
       "i18nKey": "PatientPhoneNumberi18nkey",
       "payloadOriginPath": "patient.phone",
       "payloadDestinationPath": "patient.phone",
-      "fieldType": "patientCellphone",
+      "fieldType": "text",
       "gxAlertDbColumn": "PatientPhone",
       "order": 2,
       "caption": "Cellphone number",
@@ -96,7 +96,8 @@
           "validationType": "regex",
           "regex": "\\(?([0-9]{3})\\)?([ .-]?)([0-9]{3})\\2([0-9]{4})"
         }
-      ]
+      ],
+      "source": "patientData.patientPhone"
     }
   ],
   "refForms": []

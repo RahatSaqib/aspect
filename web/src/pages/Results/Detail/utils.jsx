@@ -15,7 +15,6 @@ export const getFormConfigWithData = (intl, isNew, values) => {
   let validationSchema = getValidationSchema(intl.formatMessage)
 
   const totalCustomFields = values.customFields?.length || 0
-
   // if no custom fields just a placeholder just in case it changes in the future
   if (totalCustomFields === 0) {
     customFields.rows = [
@@ -40,8 +39,8 @@ export const getFormConfigWithData = (intl, isNew, values) => {
 function getRowsForCustomFields(values) {
   const id = 9000
   let rows = []
-  // show 3 cells per row
-  const cellsPerRow = 3
+  // show 2 cells per row
+  const cellsPerRow = 2
   let row = {}
   uniqBy(values.customFields, elem => elem.source).forEach((customField, index) => {
     if (index % cellsPerRow === 0) {
