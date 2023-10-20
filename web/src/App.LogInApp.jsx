@@ -26,6 +26,7 @@ const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
 const NotificationDetailHistory = lazy(() => import('./pages/Notification/NotificationHistoryPage'))
 const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
+const NotificationLogs = lazy(() => import('./pages/Notification/NotificationLogsPage'))
 const OperationalData = lazy(() => import('./oldPages/dashboard/operational/OperationalData'))
 const PersonList = lazy(() => import('./pages/Person/List/PersonList'))
 const PkDashboard = lazy(() => import('./pages/PkDashboard'))
@@ -238,7 +239,8 @@ const LogInApp = () => {
             ) : null}
             {a(['browse', 'notification']) ? (
               <>
-                <Route path="/browse/notification" element={<NotificationList />} />
+                <Route path="/browse/notification/types" element={<NotificationList />} />
+                <Route path="/browse/notification/logs" element={<NotificationLogs />} />
                 <Route path="/browse/notification/:notificationId" element={<NotificationDetail />} />
                 <Route path="/browse/notification/:notificationId/history" element={<NotificationDetailHistory />} />
               </>

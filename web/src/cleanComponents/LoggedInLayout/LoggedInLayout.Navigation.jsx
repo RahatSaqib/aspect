@@ -117,7 +117,15 @@ const getRawLinks = f => [
     ],
   },
   { href: '/browse/reporter', label: f(messages.reporters), perm: ['browse', '+reporter'] },
-  { href: '/browse/notification', label: f(messages.notifications), perm: ['browse', '+notification'] },
+  {
+    href: '/browse/notification',
+    label: f(messages.notifications),
+    perm: ['browse', '+notification'],
+    submenu: [
+      { href: '/browse/notification/types', label: f(messages.notificationTypes), perm: ['notification'] },
+      { href: '/browse/notification/logs', label: f(messages.notificationLogs), perm: ['notification'] },
+    ],
+  },
   { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', '+deviceApiKey'] },
   { href: '/reports', label: f(messages.reportsTitle), perm: ['+report'] },
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },

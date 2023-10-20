@@ -21,6 +21,8 @@ const messages = defineMessages({
   routers: { id: 'browsePage.browseDropdown.routers', defaultMessage: 'Routers' },
   reporters: { id: 'browsePage.browseDropdown.reporters', defaultMessage: 'Reporters' },
   notifications: { id: 'browsePage.browseDropdown.notifications', defaultMessage: 'Notifications' },
+  notificationTypes: { id: 'browsePage.browseDropdown.notificationTypes', defaultMessage: 'Notification Types' },
+  notificationLogs: { id: 'browsePage.browseDropdown.notificationLogs', defaultMessage: 'Notification Logs' },
   reports: { id: 'browsePage.browseDropdown.reports', defaultMessage: 'Reports' },
   deviceApiKey: { id: 'browsePage.browseDropdown.deviceApiKey', defaultMessage: 'Device API Keys' },
   cases: { id: 'browsePage.browseDropdown.cases', defaultMessage: 'Cases' },

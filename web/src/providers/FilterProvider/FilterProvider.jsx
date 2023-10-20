@@ -23,7 +23,7 @@ const defaultFilter = {
   '/browse/inventory/log': { minDate, maxDate },
   '/browse/inventory/supplies': { hasStock: true },
   '/browse/inventory/transfers': {},
-  '/browse/notification': {},
+  '/browse/notification/types': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
   '/browse/result': { minDate, maxDate },

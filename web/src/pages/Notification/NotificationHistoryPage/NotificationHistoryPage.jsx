@@ -24,7 +24,7 @@ const NotificationHistoryPage = () => {
   return (
     <Fragment>
       <Helmet title={formatMessage(messages.notificationsTitle)} />
-      <DetailHeader name={formatMessage(messages.notificationsTitle)} back="/browse/notification" />
+      <DetailHeader name={formatMessage(messages.notificationsTitle)} back="/browse/notification/types" />
       <Box component="main" sx={{ p: 1, width: '100%' }}>
         <Card>
           <CardContent>

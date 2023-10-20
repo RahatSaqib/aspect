@@ -127,7 +127,7 @@ const NotificationFormPage = () => {
             if (!isNew) {
               queryClient.invalidateQueries([NOTIFICATION_KEY, Number(notificationId)])
             }
-            navigate('/browse/notification')
+            navigate('/browse/notification/types')
           },
         }
       )
