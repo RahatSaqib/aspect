@@ -15,6 +15,7 @@ import {
   objectToArray,
   ColumnGraph,
   formatDataByGraphType,
+  DonutGraph,
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
@@ -38,13 +39,18 @@ const defaultFilters = [
   { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
 ]
 
-// const pieGraphParams = [{ groupBy: 'resultCategory1' }, { minDate }, { maxDate:endOfMonth(new Date()) }]
+const pieGraphParams = [
+  { groupBy: 'resultCategory1' },
+  { minDate: startOfYear(new Date()) },
+  { maxDate: endOfYear(new Date()) },
+  { flags: 'GET_TOTAL_RESULTS' },
+]
 
 const CurrentDiagnosisGraphPage = () => {
   const { formatMessage, format } = useI18n()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  // const [showPercentage, setShowPercentage] = useState(false)
+  const [showPercentage, setShowPercentage] = useState(false)
   const [filter, setFilter] = useState()
   const { data: assays } = useAssayList()
 
@@ -52,9 +58,9 @@ const CurrentDiagnosisGraphPage = () => {
   const [addFilter] = useFilterUpdate()
 
   const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filter).concat(defaultFilters))
-  // const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filter).concat(pieGraphParams))
+  const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filter).concat(pieGraphParams))
 
-  // const [donutData, setDonutData] = useState({})
+  const [donutData, setDonutData] = useState({})
   const [barData, setBarData] = useState({})
   useEffect(() => {
     if (mainData && assays) {
@@ -100,8 +106,18 @@ const CurrentDiagnosisGraphPage = () => {
 
       setBarData({ data: expandedBarData })
     }
+    if (pieData) {
+      const pieTotal = pieData.data.reduce((acc, curr) => acc + curr.cnt, 0)
+      const pie = pieData.data.map(d => ({
+        ...d,
+        id: d.resultCategory1,
+        label: formatMessage(intlMessages[d.resultCategory1I18nKey]),
+        value: d.cnt,
+      }))
+      setDonutData({ data: pie, total: pieTotal })
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [mainData, assays])
+  }, [mainData, pieData, assays])
 
   return (
     <PkPage
@@ -113,11 +129,11 @@ const CurrentDiagnosisGraphPage = () => {
             label={formatMessage(graphMessages.showValuesLabel)}
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
-          {/* <FormControlLabel
+          <FormControlLabel
             sx={{ minWidth: '145px' }}
             label={formatMessage(graphMessages.showPercentage)}
             control={<Switch checked={showPercentage} onChange={e => setShowPercentage(e.target.checked)} />}
-          /> */}
+          />
           <StateSelect
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
@@ -133,7 +149,7 @@ const CurrentDiagnosisGraphPage = () => {
         </>
       }
     >
-      {isLoadingMain ? (
+      {isLoadingMain || isLoadingPie ? (
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
@@ -182,7 +198,19 @@ const CurrentDiagnosisGraphPage = () => {
               { label: formatMessage(messages.xdrLastDay), value: `${mainData?.totalResultsInLast24Hours}` },
             ]}
           />
-          {/* <TestsOverTimeGraphHalf data={pieData?.data} assaysFromState={assays} showLabel={showLabel} /> */}
+          {donutData.data && donutData.data.length ? (
+            <Grid item xs={12}>
+              <DonutGraph
+                data={donutData.data}
+                total={donutData.total}
+                graphId="tbResultsByCategory1Aggregate"
+                graphTitle={formatMessage(graphMessages.total)}
+                showLabel={showLabel}
+                tooltip={v => (!showPercentage ? `${v}` : `${((v * 100) / donutData.total).toFixed(2)}%`)}
+                label={obj => (!showPercentage ? obj.cnt : `${(obj.percent * 100).toFixed(2)}%`)}
+              />
+            </Grid>
+          ) : null}
         </Grid>
       )}
     </PkPage>

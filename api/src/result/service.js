@@ -1731,7 +1731,7 @@ async function currentResultAggregations(request) {
    */
   const data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
 
-  if (query.minDate && query.maxDate) {
+  if (groupBy.includes('month') && query.minDate && query.maxDate) {
     // Get all months in date range (YYYY-MM)
     const months = getAllMonthsInRange(query.minDate, query.maxDate)
 
