@@ -12,7 +12,7 @@ const optionalHistoryResponseValidation = Joi.object()
           resultId: Joi.number().required().description('Entry ID'),
           event: Joi.string().required().description('Entry event key used as ID, example: transferEvent'),
           name: Joi.required().description('Entry event name used as label, example: awayTransfer'),
-          siteName: Joi.string().required().description('Entry event site name derived from siteId'),
+          siteName: Joi.string().required().allow('', null).description('Entry event site name derived from siteId'),
           updatedOn: Joi.required().description('When the entry event was last updated in the Aspect database'),
           reason: Joi.optional().allow('', null).description('The reason for the follow up being recorded'),
           clinicianName: Joi.optional().allow('', null).description('The name of clinician who took the action'),

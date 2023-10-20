@@ -46,7 +46,6 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'resultTreatmentStatus.id'
     )
     .leftJoin('ResultStatusLog as resultStatusLog', 'result.id', 'resultStatusLog.resultId')
-    .leftJoin('Person as personTransferred', 'resultStatusLog.createdBy', 'personTransferred.userId')
     .leftJoin('ResultCategoryAssay as resultCategoryAssay1', queryBuilder =>
       queryBuilder
         .on('result.assayId', 'resultCategoryAssay1.assayId')
@@ -59,6 +58,8 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
     )
     .leftJoin('ResultTransferLog as transferLog', 'result.id', 'transferLog.resultId')
     .leftJoin('Site as transferLogSite', 'transferLog.reportableSiteId', 'transferLogSite.id')
+    .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
+    .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
     .whereIn('result.reportableSiteId', clinicIds)
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
@@ -136,6 +137,8 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
       'sampleCollectedBy.name as sampleClinicianName',
       'transferLogSite.name as transferSiteName',
+      'transferOriginSite.name as transferOriginSiteName',
+      'transferLog.comment as transferComment',
       'transferLog.createdOn as transferredOn'
     )
   return knexQuery

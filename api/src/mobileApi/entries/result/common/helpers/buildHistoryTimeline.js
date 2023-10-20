@@ -11,7 +11,7 @@ const { generateTransferStatus } = require('./generateTransferStatus')
  * @returns {array} - An array of objects containing the history timeline, sorted by update date in descending order.
  */
 
-function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds, originSites = {}) {
+function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds) {
   const output = []
   const resultFollowUps = extractFromDataById(followUps, 'resultId', data.id)
   const transferStatus = generateTransferStatus(data, userSiteIds)
@@ -45,27 +45,18 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds, originS
   }
 
   if (!_.isNil(transferStatus?.transferStatus)) {
-    const { transferredBy, transferStatusLogData } = data
-
-    let statusLogData
-    let comment
-    let originSiteName
-    if (transferStatusLogData) {
-      statusLogData = JSON.parse(transferStatusLogData)
-      originSiteName = originSites[statusLogData.sampleOriginSiteId] || null
-      comment = statusLogData?.comment
-    }
+    const { transferredBy, transferComment, transferSiteName, transferOriginSiteName } = data
 
     output.push({
       id: data.id,
       resultId: data.id,
       event: 'transferEvent',
       name: transferStatus.transferStatus,
-      siteName: data.transferSiteName,
+      siteName: transferSiteName,
       updatedOn: transferStatus.transferredOn,
-      comment,
+      comment: transferComment,
       transferredBy,
-      originSiteName,
+      originSiteName: transferOriginSiteName,
     })
   }
 
