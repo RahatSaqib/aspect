@@ -3843,18 +3843,16 @@ async function seed(knex) {
               name.toLowerCase().includes('clinic')
           )
           const anotherReportableSite = otherSites[_.random(0, otherSites.length - 1)]
-          const transferObject = {
+          const transferData = {
+            siteId: savedResult.siteId,
             reportableSiteId: anotherReportableSite.id,
             previousReportableSiteId: savedResult.reportableSiteId,
             sampleOriginSiteId: savedResult.sampleOriginSiteId,
           }
-          data = JSON.stringify({
-            siteId: savedResult.siteId,
-            ...transferObject,
-          })
+          data = JSON.stringify(transferData)
           resultWithLogInfo.reportableSiteId = anotherReportableSite.id
 
-          transferLogData = transferObject
+          transferLogData = transferData
 
           // add entry in ResultDownloadLog to show transferred results in Reporters list
           await upsertSingle(knex, 'ResultDownloadLog', ['resultId'], {
