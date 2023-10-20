@@ -7,7 +7,10 @@ const {
   ACKNOWLEDGED,
   NOT_POSSIBLE_FOLLOW_UP_TYPE,
 } = require('./common/logic')
-const { updateResultWorkflowStatusByResultId } = require('./updateWorkflowStatus')
+const {
+  updateResultWorkflowStatusByResultId,
+  updateNotPossibleWorkflowStatusByResultId,
+} = require('./updateWorkflowStatus')
 const { getConstraints } = require('../../auth/constraints')
 const { resultTreatmentStatusToId, resultWorkflowStatusToId } = require('../../shared/dictionary')
 const {
@@ -253,6 +256,7 @@ async function clinicalResponse(request) {
               currentUserId,
               mostRecentNotPossibleValueCaptured.clientTime
             )
+
             await flagResult(
               resultId,
               currentUserId,
@@ -313,7 +317,6 @@ const PURGED_EXTERNALID = 'Purged'
 const DELIVERED_EXTERNALID = 'Delivered'
 
 async function flagResult(resultId, currentUserId, reason, date) {
-  const resultWorkflowLog = await getLatestResultWorkflowLog(resultId)
   const flaggedId = await resultWorkflowStatusToId(FLAGGED_EXTERNALID)
   const resultWorkflowLogEntry = {
     resultId,
@@ -322,11 +325,7 @@ async function flagResult(resultId, currentUserId, reason, date) {
     reason,
     changedOn: date,
   }
-  const errorMessage = await updateResultWorkflowStatusByResultId(
-    resultWorkflowLogEntry,
-    date,
-    resultWorkflowLog?.resultWorkflowChangedOn
-  )
+  const errorMessage = await updateNotPossibleWorkflowStatusByResultId(resultWorkflowLogEntry)
   if (errorMessage) {
     return Boom.badRequest(errorMessage)
   }
