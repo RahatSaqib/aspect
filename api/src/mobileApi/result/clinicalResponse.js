@@ -261,14 +261,7 @@ async function clinicalResponse(request) {
             )
 
             // delete follow up treatment
-            if (mostRecentTreatmentInPayload) {
-              await deleteResultFollowUpTreatment(
-                mostRecentTreatmentInPayload.resultId,
-                mostRecentTreatmentInPayload.externalId,
-                mostRecentTreatmentInPayload.updatedBy,
-                mostRecentNotPossibleValueCaptured.clientTime
-              )
-            }
+            await deleteResultFollowUpTreatment(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
           }
           resultEntry = await showResult(resultId, dataConstraints)
         }
