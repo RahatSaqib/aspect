@@ -57,6 +57,8 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
         .on('result.assayId', 'resultCategoryAssay2.assayId')
         .andOn('result.resultCategory2', 'resultCategoryAssay2.resultCategoryId')
     )
+    .leftJoin('ResultTransferLog as transferLog', 'result.id', 'transferLog.resultId')
+    .leftJoin('Site as transferLogSite', 'transferLog.reportableSiteId', 'transferLogSite.id')
     .whereIn('result.reportableSiteId', clinicIds)
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
@@ -133,7 +135,8 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'laboratory.externalId as laboratorySiteExternalId',
       'laboratory.name as laboratorySiteName',
       'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
-      'sampleCollectedBy.name as sampleClinicianName'
+      'sampleCollectedBy.name as sampleClinicianName',
+      'transferLogSite.name as transferSiteName'
     )
   return knexQuery
 }

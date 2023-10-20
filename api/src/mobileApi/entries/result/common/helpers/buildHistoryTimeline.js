@@ -61,7 +61,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds, originS
       resultId: data.id,
       event: 'transferEvent',
       name: transferStatus.transferStatus,
-      siteName: data?.reportableSiteName,
+      siteName: data.transferSiteName,
       updatedOn: transferStatus.transferredOn,
       comment,
       transferredBy,
