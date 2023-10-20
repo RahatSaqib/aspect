@@ -3,7 +3,6 @@
   where individual items can be updated with additional data
 */
 import Immutable from 'immutable'
-import flowRight from 'lodash/flowRight'
 
 function receiveListHelper(items, list, method) {
   const nextById = items.byId.withMutations(mutById => {
@@ -31,5 +30,3 @@ export const Items = Immutable.Record({
   byId: Immutable.Map(),
   currentIdList: Immutable.List(),
 })
-
-export const makeItems = flowRight(Items, Immutable.fromJS)

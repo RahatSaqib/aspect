@@ -11,7 +11,7 @@ import { fetchConsumables, ConsumableItems } from '../../store/ConsumableRedux'
 import PropTypeOf from '../../utils/types'
 import SelectField from '../shared/SelectField'
 
-export class ConsumableSelectField extends PureComponent {
+class ConsumableSelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     fetchConsumables: PropTypes.func.isRequired,

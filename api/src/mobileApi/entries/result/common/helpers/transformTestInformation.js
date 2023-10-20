@@ -16,7 +16,6 @@ function transformTestInformation(data) {
     'resultCategory2Emphasize',
     'resultCategory2ValueI18nKey',
   ])
-
   if (!_.isEmpty(testInfo1) && !_.isNil(testInfo1.resultCategory1Name) && !_.isEmpty(testInfo1.resultCategory1Name)) {
     output.push({
       resultId: data.id,
@@ -28,14 +27,19 @@ function transformTestInformation(data) {
     })
   }
   if (!_.isEmpty(testInfo2) && !_.isNil(testInfo2.resultCategory2Name) && !_.isEmpty(testInfo2.resultCategory2Name)) {
-    output.push({
+    const testInfo = {
       resultId: data.id,
       label: testInfo2.resultCategory2Label ?? null,
       labelI18nKey: testInfo2.resultCategory2i18nKey ?? null,
-      value: testInfo2.resultCategory2Name ?? null,
       valueI18nKey: testInfo2.resultCategory2ValueI18nKey ?? null,
       severity: testInfo2.resultCategory2Emphasize ? 'danger' : 'info',
-    })
+      value: testInfo2.resultCategory2Name ?? null,
+    }
+
+    if (data.assayExternalId === 'GxMtbXdr' && data.resultCategory2Name === 'Detected') {
+      testInfo.value = (JSON.parse(data.resultData || null)?.detectedResistance || []).join(', ')
+    }
+    output.push(testInfo)
   }
   return output
 }

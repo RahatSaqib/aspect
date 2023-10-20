@@ -33,7 +33,7 @@ const styles = {
   },
 }
 
-export class AppNotificationSnackBar extends PureComponent {
+class AppNotificationSnackBar extends PureComponent {
   static propTypes = {
     intl: PropTypeOf.intl.isRequired,
     appNotification: PropTypes.objectOf(Error),

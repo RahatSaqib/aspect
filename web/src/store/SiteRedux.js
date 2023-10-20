@@ -6,7 +6,7 @@ import { receiveItem, Items } from '../utils/metaReducers/items'
 import { Table } from '../utils/metaReducers/table'
 import { aspectFetch } from '../utils/utils/fetch'
 
-export const types = {
+const types = {
   REQUEST_SITES_FOR_SELECT_LIST: 'REQUEST_SITES_FOR_SELECT_LIST',
   RECEIVE_SITES_FOR_SELECT_LIST: 'RECEIVE_SITES_FOR_SELECT_LIST',
 }
@@ -71,14 +71,14 @@ export function fetchSitesForSelectList(forceRefresh) {
 /*
  * ---------------- Reducers -----------------
  */
-export const SelectListItems = Immutable.Record({
+const SelectListItems = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
   countryName: undefined,
   stateName: undefined,
   lastRefreshed: undefined,
 })
-export const Site = Immutable.Record({
+const Site = Immutable.Record({
   items: new Items(),
   table: new Table(),
   selectList: new SelectListItems(),

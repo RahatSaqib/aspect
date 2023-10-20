@@ -31,7 +31,7 @@ const enhance = compose(
   )
 )
 
-export class ResetPassword extends PureComponent {
+class ResetPassword extends PureComponent {
   constructor(props) {
     super(props)
 

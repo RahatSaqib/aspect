@@ -10,7 +10,7 @@ import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/ta
 import { aspectFetch } from '../utils/utils/fetch'
 import { receivedExportResponse } from './GlobalsRedux'
 
-export const types = {
+const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
   RECEIVE_DEVICES: 'RECEIVE_DEVICES',
   REJECTED_DEVICES: 'REJECTED_DEVICES',
@@ -174,7 +174,7 @@ export function hideDialog() {
   }
 }
 
-export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
+export function updateDeviceMaintenanceStatus({ externalId, device, notes, expectedBackOnline }) {
   const deviceId = device.get('id')
   const i18nErrorTitleDescriptor = () =>
     defineMessages({
@@ -190,6 +190,7 @@ export function updateDeviceMaintenanceStatus({ externalId, device, notes }) {
       body: JSON.stringify({
         externalId,
         notes,
+        expectedBackOnline,
       }),
       errorNotifications: {
         default: errorPleaseTryAgainInAFewMinutes({

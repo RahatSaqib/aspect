@@ -67,13 +67,13 @@ export const LazyLoadItems = Immutable.Record({
   lastRefreshed: undefined,
 })
 
-export const LazyLoadParent = Immutable.Record({
+const LazyLoadParent = Immutable.Record({
   id: undefined,
   name: undefined,
   children: new LazyLoadItems(),
 })
 
-export const LazyLoadChild = Immutable.Record({
+const LazyLoadChild = Immutable.Record({
   id: undefined,
   name: undefined,
 })
