@@ -1601,6 +1601,7 @@ async function transferResult(request) {
       sampleOriginSiteId: result.data.sampleOriginSiteId,
       previousReportableSiteId: result.data.reportableSiteId,
       comment,
+      createdOn: now,
     })
 
     result.data.reportableSiteId = siteId

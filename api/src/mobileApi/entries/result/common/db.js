@@ -105,7 +105,6 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'resultCategoryAssay1.requiresTreatment as resultCategoryAssay1RequiresTreatment',
       'resultCategoryAssay2.emphasize as resultCategory2Emphasize',
       'resultCategoryAssay2.requiresTreatment as resultCategoryAssay2RequiresTreatment',
-      'resultStatusLog.createdOn as transferredOn',
       'resultStatusLog.data as transferStatusLogData',
       'resultTreatmentStatus.externalId as resultTreatmentStatusExternalId',
       'resultTreatmentStatus.i18nKey as resultTreatmentStatusI18nKey',
@@ -136,7 +135,8 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'laboratory.name as laboratorySiteName',
       'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
       'sampleCollectedBy.name as sampleClinicianName',
-      'transferLogSite.name as transferSiteName'
+      'transferLogSite.name as transferSiteName',
+      'transferLog.createdOn as transferredOn'
     )
   return knexQuery
 }
