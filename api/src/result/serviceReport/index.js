@@ -208,13 +208,16 @@ async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
 }
 
 async function getColumnsFromCustomFields({ partnerId, assayId }) {
-  const { diseaseId } = assayId
-    ? await knex('Assay as a')
-        .join('AssayType as at', 'at.id', 'a.assayTypeId')
-        .join('Disease as d', 'd.id', 'at.diseaseId')
-        .where('a.id', assayId)
-        .first('d.id as diseaseId')
-    : {} // without assayId, the diseaseId will be undefined
+  const diseaseId = assayId
+    ? (
+        await knex('Assay as a')
+          .join('AssayType as at', 'at.id', 'a.assayTypeId')
+          .join('Disease as d', 'd.id', 'at.diseaseId')
+          .whereIn('a.id', _.isArray(assayId) ? assayId : [assayId])
+          .first(knex.raw('GROUP_CONCAT(d.id) as diseaseId'))
+      ).diseaseId.split(',')
+    : undefined // without assayId, the diseaseId will be undefined
+
   const customFields = await getCustomFieldsForResult({ partnerId, diseaseId, assayId })
 
   return customFields.map(cf => ({

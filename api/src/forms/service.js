@@ -167,11 +167,14 @@ function getFormsBaseQuery(partnerId, query) {
       formType: 'ft.externalId',
     })
     .modify(q => {
-      if (query.assayId)
-        q.andWhere(whereAssay => whereAssay.where('fd.assayId', query.assayId).orWhereNull('fd.assayId'))
-
-      if (query.diseaseId)
-        q.andWhere(whereAssay => whereAssay.where('fd.diseaseId', query.diseaseId).orWhereNull('fd.diseaseId'))
+      if (query.assayId) {
+        const assayId = _.isArray(query.assayId) ? query.assayId : [query.assayId]
+        q.andWhere(whereAssay => whereAssay.whereIn('fd.assayId', assayId).orWhereNull('fd.assayId'))
+      }
+      if (query.diseaseId) {
+        const diseaseId = _.isArray(query.diseaseId) ? query.diseaseId : [query.diseaseId]
+        q.andWhere(whereAssay => whereAssay.whereIn('fd.diseaseId', diseaseId).orWhereNull('fd.diseaseId'))
+      }
     })
     .distinct(
       'fd.externalId',
