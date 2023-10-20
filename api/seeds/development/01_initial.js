@@ -3830,6 +3830,7 @@ async function seed(knex) {
         const rdm = _.random(0, resultStatusesIds.length - 1)
         const resultStatusId = resultStatusesIds[rdm]
         let data = null
+        let transferLogData = null
         if (resultStatusId === resultStatuses.Transfer) {
           /**
            * for transferred result we need specify `data` field in `ResultStatusLog` table
@@ -3842,13 +3843,18 @@ async function seed(knex) {
               name.toLowerCase().includes('clinic')
           )
           const anotherReportableSite = otherSites[_.random(0, otherSites.length - 1)]
-          data = JSON.stringify({
-            siteId: savedResult.siteId,
+          const transferObject = {
             reportableSiteId: anotherReportableSite.id,
             previousReportableSiteId: savedResult.reportableSiteId,
             sampleOriginSiteId: savedResult.sampleOriginSiteId,
+          }
+          data = JSON.stringify({
+            siteId: savedResult.siteId,
+            ...transferObject,
           })
           resultWithLogInfo.reportableSiteId = anotherReportableSite.id
+
+          transferLogData = transferObject
 
           // add entry in ResultDownloadLog to show transferred results in Reporters list
           await upsertSingle(knex, 'ResultDownloadLog', ['resultId'], {
@@ -3864,6 +3870,13 @@ async function seed(knex) {
           createdOn: addHours(randomDate, 2),
           createdBy: adminId,
           data,
+        })
+
+        await knex('ResultTransferLog').insert({
+          resultId,
+          createdOn: addHours(randomDate, 2),
+          createdBy: adminId,
+          ...transferLogData,
         })
 
         await knex('Result')
