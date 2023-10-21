@@ -19,7 +19,7 @@ const {
 } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const { startOfDayUtc } = require('../shared/date')
-const { XDR_RESISTANCES, XDR_RESISTANCES_COMBO, XDR_RESISTANCE_VALUES } = require('../shared/constants')
+const { XDR_RESISTANCES, /* XDR_RESISTANCES_COMBO, */ XDR_RESISTANCE_VALUES } = require('../shared/constants')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const daysToCalculateCountOfDeliveredResults = [30, 60]
@@ -267,32 +267,35 @@ const sumSingleXdrResistance = knex =>
     []
   )
 
-const sumComboXdrResistances = knex =>
-  _.reduce(
-    XDR_RESISTANCES_COMBO,
-    (acc, comboNames) => {
-      const [resistanceName1, resistanceName2] = comboNames.split('_')
-      XDR_RESISTANCE_VALUES.forEach(resistanceValue => {
-        acc = [
-          ...acc,
-          knex.raw(`
-            SUM(
-              CASE
-                WHEN 
-                  (r.resultData ->> '$.allResistances.${resistanceName1}') = '${resistanceValue}'
-                  AND
-                  (r.resultData ->> '$.allResistances.${resistanceName2}') = '${resistanceValue}'
-                THEN 1
-                ELSE 0
-              END
-            ) as cnt_${resistanceName1}_${resistanceName2}_${resistanceValue}
-          `),
-        ]
-      })
-      return acc
-    },
-    []
-  )
+/**
+ * commenting out below func which calculates combinations of resistances
+ */
+// const sumComboXdrResistances = knex =>
+//   _.reduce(
+//     XDR_RESISTANCES_COMBO,
+//     (acc, comboNames) => {
+//       const [resistanceName1, resistanceName2] = comboNames.split('_')
+//       XDR_RESISTANCE_VALUES.forEach(resistanceValue => {
+//         acc = [
+//           ...acc,
+//           knex.raw(`
+//             SUM(
+//               CASE
+//                 WHEN
+//                   (r.resultData ->> '$.allResistances.${resistanceName1}') = '${resistanceValue}'
+//                   AND
+//                   (r.resultData ->> '$.allResistances.${resistanceName2}') = '${resistanceValue}'
+//                 THEN 1
+//                 ELSE 0
+//               END
+//             ) as cnt_${resistanceName1}_${resistanceName2}_${resistanceValue}
+//           `),
+//         ]
+//       })
+//       return acc
+//     },
+//     []
+//   )
 async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, { messageContext }) {
   const { assayId, resultCategory1, resultCategory2, endedOn: resultEndedOn } = options
   return messageContext.transact(async knex => {
@@ -498,7 +501,10 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
           'r.resultCategory1',
           'r.resultCategory2',
           ...sumSingleXdrResistance(knex),
-          ...sumComboXdrResistances(knex),
+          /**
+           * commenting out below line which calculates combinations of resistances
+           */
+          // ...sumComboXdrResistances(knex),
           knex.raw('DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame'),
         ])
       // if we didn't get an endedOn, generate all time frames since first result from device
@@ -537,8 +543,9 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         }
         /**
          * fill all XDR resistance counts
+         * ---> add `...XDR_RESISTANCES_COMBO` to below array for counting combination of resistances
          */
-        ;[...XDR_RESISTANCES, ...XDR_RESISTANCES_COMBO].forEach(resistanceName => {
+        ;[...XDR_RESISTANCES].forEach(resistanceName => {
           // see pattern for field alias in funcs `sumSingleXdrResistance` and `sumComboXdrResistances` above
           const cntDetected = count[`cnt_${resistanceName}_Detected`] || 0
           const cntNotDetected = count[`cnt_${resistanceName}_NotDetected`] || 0
