@@ -641,6 +641,8 @@ async function getDeviceCoverageReport(request) {
               cnt6cDevices,
               cnt10cDevices,
               cnt6c10cCombo,
+              // # Sites
+              cntSites: 0,
             }
           })
           /**
