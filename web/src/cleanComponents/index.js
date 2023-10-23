@@ -28,6 +28,7 @@ import {
   InventoryLogFilter,
   InventoryTransferFilter,
   NotificationFilter,
+  NotificationLogFilter,
   PersonFilter,
   ReporterFilter,
   ReportsFilter,
@@ -79,6 +80,8 @@ import LgaSelect from './LgaSelect'
 import Loading from './Loading'
 import LocationSelector from './LocationSelector'
 import LoggedInLayout from './LoggedInLayout'
+import NotificationCategoryTypeSelect from './NotificationCategoryTypeSelect'
+import NotificationTypeSelect from './NotificationTypeSelect'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
 import ReportSelector from './ReportSelector'
@@ -130,6 +133,8 @@ export {
   StateSelect,
   TagSelect,
   TimezoneSelect,
+  NotificationTypeSelect,
+  NotificationCategoryTypeSelect,
   Loading,
   BarGraph,
   ColumnGraph,
@@ -166,6 +171,7 @@ export {
   InventoryLogFilter,
   InventoryTransferFilter,
   NotificationFilter,
+  NotificationLogFilter,
   PersonFilter,
   ReporterFilter,
   ReportsFilter,
