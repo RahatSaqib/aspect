@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import get from 'lodash/get'
 import { Helmet } from 'react-helmet'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { DetailHeader, NotificationFilter } from '../../../cleanComponents'
+import { DetailHeader, NotificationLogFilter } from '../../../cleanComponents'
 import AspectTable from '../../../components/AspectTable'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
 import useI18n from '../../../hooks/useI18n'
@@ -30,7 +30,7 @@ const NotificationHistoryPage = () => {
       <DetailHeader name={intl.formatMessage(messages.notificationLogs)} disableBack />
       <div className={cssClasses('Container')}>
         <Helmet title={intl.formatMessage(messages.notificationLogs)} />
-        <NotificationFilter />
+        <NotificationLogFilter />
         <Card>
           <CardContent>
             <AspectTable baseConfig={baseConfig} consts={NOTIFICATION_LIST} onClickRow={onClickRow} />

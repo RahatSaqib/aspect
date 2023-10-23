@@ -316,6 +316,22 @@ const messages = {
       id: 'filter.popover.deviceStatus',
       defaultMessage: 'Device Status',
     },
+    notificationType: {
+      id: 'filter.popover.notificationType',
+      defaultMessage: 'Notification Type',
+    },
+    notificationCategoryType: {
+      id: 'filter.popover.notificationCategoryType',
+      defaultMessage: 'Notification Category Type',
+    },
+    patientId: {
+      id: 'filter.popover.patientId',
+      defaultMessage: 'Patient Id',
+    },
+    onlyErrors: {
+      id: 'filter.popover.onlyErrors',
+      defaultMessage: 'Show only notifications with errors',
+    },
 
     displayResult: {
       id: 'filter.popover.displayResult',
@@ -334,6 +350,7 @@ const messages = {
       defaultMessage: 'Expires On',
     },
     reportName: { id: 'filter.popover.reportName', defaultMessage: 'Report' },
+    reportWithName: { id: 'filter.popover.reportWithName', defaultMessage: 'Report Name' },
     cancel: { id: 'filter.popover.cancel', defaultMessage: 'Cancel' },
     apply: { id: 'filter.popover.apply', defaultMessage: 'Apply Filters' },
   }),
