@@ -218,6 +218,12 @@ async function clinicalResponse(request) {
     if (mostRecentValueCaptured) {
       resultEntry = await showResult(resultId, dataConstraints)
     }
+
+    const notPossibleReasonValueCaptured = _.sortBy(
+      payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_REASON_FIELD_NAME),
+      fuv => fuv.clientTime
+    ).reverse()[0]
+
     if (mostRecentNotPossibleValueCaptured) {
       if (mostRecentNotPossibleValueCaptured.value) {
         // As long as there is no treatment captured afterwards that would invalidate notPossible?
@@ -232,10 +238,7 @@ async function clinicalResponse(request) {
           !mostRecentTreatmentValueCaptured ||
           mostRecentTreatmentValueCaptured.clientTime <= mostRecentNotPossibleValueCaptured.clientTime
         ) {
-          const notPossibleReasonValueCaptured = _.sortBy(
-            payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_REASON_FIELD_NAME),
-            fuv => fuv.clientTime
-          ).reverse()[0] || {
+          const notPossibleReasonValue = notPossibleReasonValueCaptured || {
             value: null,
             clientTime: mostRecentNotPossibleValueCaptured.clientTime,
           }
@@ -258,7 +261,7 @@ async function clinicalResponse(request) {
             await flagResult(
               resultId,
               currentUserId,
-              notPossibleReasonValueCaptured.value,
+              notPossibleReasonValue.value,
               mostRecentNotPossibleValueCaptured.clientTime
             )
           }
@@ -269,6 +272,15 @@ async function clinicalResponse(request) {
         await unflagResult(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
         resultEntry = await showResult(resultId, dataConstraints)
       }
+    }
+
+    if (!mostRecentNotPossibleValueCaptured && notPossibleReasonValueCaptured) {
+      await flagResult(
+        resultId,
+        currentUserId,
+        notPossibleReasonValueCaptured.value,
+        notPossibleReasonValueCaptured.clientTime
+      )
     }
     const resultFollowUps = await getFollowUpsOfResultById(resultId)
     const latestTreatment =
