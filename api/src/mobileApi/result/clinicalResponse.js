@@ -33,6 +33,7 @@ const {
   updateResultWithResultWorkflowLog,
   updateMostRecentResultFollowUp,
   getFollowUpsNotPossibleByResultById,
+  updateResultFollowUp,
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
 
@@ -224,6 +225,8 @@ async function clinicalResponse(request) {
       fuv => fuv.clientTime
     ).reverse()[0]
 
+    const followUpNotPossibleExist = await getFollowUpsNotPossibleByResultById(resultId)
+
     if (mostRecentNotPossibleValueCaptured) {
       if (mostRecentNotPossibleValueCaptured.value) {
         // As long as there is no treatment captured afterwards that would invalidate notPossible?
@@ -242,8 +245,6 @@ async function clinicalResponse(request) {
             value: null,
             clientTime: mostRecentNotPossibleValueCaptured.clientTime,
           }
-
-          const followUpNotPossibleExist = await getFollowUpsNotPossibleByResultById(resultId)
 
           if (_.isEmpty(followUpNotPossibleExist)) {
             const followUp = await getFollowUpByExternalId(NOT_POSSIBLE_FOLLOW_UP_TYPE)
@@ -274,7 +275,8 @@ async function clinicalResponse(request) {
       }
     }
 
-    if (!mostRecentNotPossibleValueCaptured && notPossibleReasonValueCaptured) {
+    if (followUpNotPossibleExist && notPossibleReasonValueCaptured) {
+      await updateResultFollowUp(followUpNotPossibleExist.resultFollowUpId, notPossibleReasonValueCaptured.clientTime)
       await flagResult(
         resultId,
         currentUserId,

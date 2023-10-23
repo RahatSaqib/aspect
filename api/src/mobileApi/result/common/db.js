@@ -646,6 +646,14 @@ const getFollowUpsNotPossibleByResultById = resultId => {
     .andWhere('rfu.isDeleted', false)
     .andWhere({ 'rfu.externalId': 'notPossible' })
     .first()
+    .select('rfu.id as resultFollowUpId')
+}
+
+const updateResultFollowUp = (resultFollowUpId, updatedOn) => {
+  return knex('ResultFollowUp').where('id', resultFollowUpId).update({
+    date: updatedOn,
+    updatedOn,
+  })
 }
 
 module.exports = {
@@ -681,4 +689,5 @@ module.exports = {
   updateMostRecentResultFollowUp,
   getCurrentResultWorkflowStatus,
   getFollowUpsNotPossibleByResultById,
+  updateResultFollowUp,
 }
