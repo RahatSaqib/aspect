@@ -33,7 +33,7 @@ const NotificationLogFilter = () => {
           <NotificationTypeSelect
             valueBy="id"
             label={formatMessage(messages.notificationType)}
-            typeCategoryId={state.notificationCategoryTypeId}
+            categoryTypeId={state.notificationCategoryTypeId}
             value={state.notificationTypeId}
             onChange={id => setState(state => ({ ...state, notificationTypeId: id }))}
           />
