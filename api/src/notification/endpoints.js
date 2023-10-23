@@ -19,6 +19,7 @@ const getNotification = require('./getNotification')
 const history = require('./history')
 const deleteNotification = require('./deleteNotification')
 const listPlaceholders = require('./listPlaceholders')
+const { listNotificationCategoryType, listNotificationType } = require('./listSelect')
 
 const routes = [
   {
@@ -234,6 +235,61 @@ const routes = [
                     assayWhitelist: Joi.array(),
                   })
                 ),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/notification/type-category/select-list',
+    handler: listNotificationCategoryType,
+    config: {
+      description: 'List Notification Category Type',
+      auth: { scope: ['notification'] },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False on any non-fatal error'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                id: Joi.number(),
+                name: Joi.string(),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/notification/type/select-list/{typeCategoryId}',
+    handler: listNotificationType,
+    config: {
+      description: 'List Notification Type',
+      auth: { scope: ['notification'] },
+      validate: {
+        params: {
+          typeCategoryId: Joi.number().description('Notification type category id').integer().positive().required(),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False on any non-fatal error'),
+          data: Joi.array()
+            .allow(null)
+            .items(
+              Joi.object().keys({
+                id: Joi.number(),
+                name: Joi.string(),
               })
             ),
         }),
