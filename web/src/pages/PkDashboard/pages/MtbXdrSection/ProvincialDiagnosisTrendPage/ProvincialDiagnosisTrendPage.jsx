@@ -1,8 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@mui/material'
 import { useQuery } from 'react-query'
-import { StateAutocomplete, Loading, getItemsForTrendsGraph, LineGraph, fillData } from '../../../../../cleanComponents'
-import AspectSelect from '../../../../../cleanComponents/AspectSelect'
+import {
+  StateAutocomplete,
+  Loading,
+  getItemsForTrendsGraph,
+  LineGraph,
+  fillData,
+  AspectSelect,
+} from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage } from '../../../../../messages'
