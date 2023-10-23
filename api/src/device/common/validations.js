@@ -286,6 +286,9 @@ const deviceDetailsResponseFields = Joi.object()
       .allow('', null)
       .description('The default name of the current maintenance status of the device'),
     maintenanceStatusNotes: Joi.string().allow('', null).description('The notes of the last the maintenance status'),
+    expectedBackOnline: Joi.string()
+      .allow('', null)
+      .description('The expected back online of the last the maintenance status'),
     maintenanceStatusActive: Joi.number().allow(null).description('Whether the device is active or not'),
     maintenanceStatusManuallySet: Joi.number().allow(null).description('Whether the device status is manually set'),
     approvalToken: Joi.string().required().description('The external ID of the approval'),

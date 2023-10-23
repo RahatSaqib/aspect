@@ -719,6 +719,7 @@ describe('Device routes', () => {
           dateFrom,
           dateTo,
           notes: "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+          expectedBackOnline: '2020-12-12T00:00:00.000-03:00',
         }
 
         // Should update to inactiveDownForRepair

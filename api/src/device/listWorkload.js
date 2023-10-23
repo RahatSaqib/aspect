@@ -1,7 +1,9 @@
 const omit = require('lodash/omit')
+const startCase = require('lodash/startCase')
 const { getResultCategoriesByAssay, getDeviceWorkload } = require('./common/db')
 const { getAssay } = require('../assay/common/db')
 const { getConstraints } = require('../auth/constraints')
+const { XDR_RESISTANCES } = require('../shared/constants')
 
 const buildExtraColumns = (
   resultCategoryIx,
@@ -24,20 +26,30 @@ const buildExtraColumns = (
   return extraColumns
 }
 
-const xdrExtraColumns = ['INH', 'FLQ', 'AMK', 'KAN', 'CAP', 'ETH'].map(resistance => ({
-  label: `${resistance} Resistance Detected`,
-  resultCategoryLabelI18nKey: `categoryType${resistance}ResistanceI18nKey`,
-  resultCategoryI18nKey: 'ResultCategoryDetected',
-  fieldId: `categoryType${resistance}ResistanceI18nKey-ResultCategoryDetected`,
-  selector: `SUM(
-    CASE WHEN
-      JSON_SEARCH(
-        r.resultData ->> '$.detectedResistance[*]',
-        'one',
-        '${resistance}'
-      ) IS NOT NULL
-    THEN 1 ELSE 0 END)`,
-}))
+const buildXdrExtraColumns = isExport => {
+  const xdrResult = ['Detected']
+
+  // When exporting the report, we need to also show columns for the XDR Indeterminate and Not Detected cases
+  if (isExport) xdrResult.push('Indeterminate', 'NotDetected')
+
+  const extraColumns = []
+  XDR_RESISTANCES.forEach(xdrResistance => {
+    xdrResult.forEach(result => {
+      extraColumns.push({
+        label: `${xdrResistance} ${startCase(result)}`,
+        resultCategoryLabelI18nKey: `categoryType${xdrResistance}ResistanceI18nKey`,
+        resultCategoryI18nKey: `ResultCategory${result}`,
+        fieldId: `categoryType${xdrResistance}ResistanceI18nKey-ResultCategory${result}`,
+        selector: `SUM(
+          CASE WHEN
+            r.resultData ->> '$.allResistances.${xdrResistance}' = '${result}'
+          THEN 1 ELSE 0 END)`,
+      })
+    })
+  })
+
+  return extraColumns
+}
 
 const listWorkload = async request => {
   const { query, auth } = request
@@ -68,7 +80,7 @@ const listWorkload = async request => {
   }
 
   if (assay.externalId === 'GxMtbXdr') {
-    extraColumns = [...extraColumns, ...xdrExtraColumns]
+    extraColumns = [...extraColumns, ...buildXdrExtraColumns(query.isExport)]
   } else if (resultCategory1ResultsId !== null) {
     extraColumns = [
       ...extraColumns,
