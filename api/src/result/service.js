@@ -1735,10 +1735,15 @@ async function currentResultAggregations(request) {
     // Get all months in date range (YYYY-MM)
     const months = getAllMonthsInRange(query.minDate, query.maxDate)
 
-    resp.data = months.map(month => {
-      const monthInData = data.find(d => d.month === month)
-      return monthInData ?? { cnt: 0, month }
-    })
+    resp.data = []
+    for (const month of months) {
+      const monthData = data.filter(result => result.month === month)
+      if (monthData.length > 0) {
+        resp.data = [...resp.data, ...monthData]
+      } else {
+        resp.data = [...resp.data, { cnt: 0, month }]
+      }
+    }
   } else {
     resp.data = data
   }
