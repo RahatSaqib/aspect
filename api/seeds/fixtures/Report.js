@@ -58,7 +58,7 @@ const allResults = {
     {
       sortOrder: 0,
       moduleName: 'result/serviceReport',
-      functionName: 'getAllResultsForExport',
+      functionName: 'getAllResultsReport',
       query: {
         sortCol: 'endedOn',
         sortDir: 'desc',
