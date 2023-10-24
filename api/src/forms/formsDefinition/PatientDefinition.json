@@ -85,7 +85,7 @@
       "i18nKey": "PatientPhoneNumberi18nkey",
       "payloadOriginPath": "patient.phone",
       "payloadDestinationPath": "patient.phone",
-      "fieldType": "text",
+      "fieldType": "phone",
       "gxAlertDbColumn": "PatientPhone",
       "order": 2,
       "caption": "Cellphone number",

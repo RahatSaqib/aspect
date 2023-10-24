@@ -34,7 +34,7 @@ function transformPayloadWithFormsDefinition(forms, payload, countryCode) {
       if (payloadOriginPath) {
         let value = _.get(payload, payloadOriginPath)
         if (value) {
-          if (_.includes(['patientCellphone', 'clinicianCellphone'], fieldType))
+          if (_.includes(['patientCellphone', 'clinicianCellphone', 'phone'], fieldType))
             value = normalizePhoneNumber(value, countryCode)
           if (payloadDestinationPath) {
             _.set(payload, payloadDestinationPath, value)

@@ -67,7 +67,10 @@ function getRowsForCustomFields(values) {
             .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined })),
         },
       })
-    } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
+    } else if (
+      customField.controlType === 'textBox' &&
+      (customField.fieldType === 'text' || customField.fieldType === 'phone')
+    ) {
       row.items.push({ ...baseItem, controlType: { component: 'textField' } })
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
       // assuming only one validation
