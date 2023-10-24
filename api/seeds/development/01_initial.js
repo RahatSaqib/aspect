@@ -3844,12 +3844,14 @@ async function seed(knex) {
           )
           const anotherReportableSite = otherSites[_.random(0, otherSites.length - 1)]
           const transferData = {
-            siteId: savedResult.siteId,
             reportableSiteId: anotherReportableSite.id,
             previousReportableSiteId: savedResult.reportableSiteId,
             sampleOriginSiteId: savedResult.sampleOriginSiteId,
           }
-          data = JSON.stringify(transferData)
+          data = JSON.stringify({
+            siteId: savedResult.siteId,
+            ...transferData,
+          })
           resultWithLogInfo.reportableSiteId = anotherReportableSite.id
 
           transferLogData = transferData
