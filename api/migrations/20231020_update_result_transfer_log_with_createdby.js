@@ -8,6 +8,7 @@ async function up(knex) {
 async function down(knex) {
   await knex.schema.alterTable('ResultTransferLog', resultTransferLog => {
     resultTransferLog.dropColumn('createdBy')
+    resultTransferLog.dropColumn('siteId')
   })
 }
 
