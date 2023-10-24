@@ -59,7 +59,6 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
     .leftJoin('ResultTransferLog as transferLog', 'result.id', 'transferLog.resultId')
     .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
     .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
-    .leftJoin('Site as transferSite', 'transferLog.siteId', 'transferSite.id')
     .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
     .whereIn('result.reportableSiteId', clinicIds)
     .modify(addConstraints, dataConstraints, {
@@ -142,8 +141,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'transferLog.comment as transferComment',
       'transferLog.createdOn as transferredOn',
       'transferLog.reportableSiteId as transferReportableSiteId',
-      'transferLog.previousReportableSiteId as transferPreviousReportableSiteId',
-      'transferLog.siteId as transferSiteId'
+      'transferLog.previousReportableSiteId as transferPreviousReportableSiteId'
     )
   return knexQuery
 }

@@ -1597,7 +1597,6 @@ async function transferResult(request) {
 
     await knex('ResultTransferLog').insert({
       resultId,
-      siteId: result.data.siteId,
       reportableSiteId: siteId,
       sampleOriginSiteId: result.data.sampleOriginSiteId,
       previousReportableSiteId: result.data.reportableSiteId,

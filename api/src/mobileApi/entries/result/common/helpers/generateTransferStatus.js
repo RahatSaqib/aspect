@@ -18,7 +18,7 @@ function generateTransferStatus(data, userSiteIds) {
   }
 
   if (data.transferReportableSiteId) {
-    const { transferReportableSiteId, transferPreviousReportableSiteId, transferComment, transferSiteId } = data
+    const { transferReportableSiteId, transferPreviousReportableSiteId, transferComment } = data
 
     transferStatus.comment = transferComment
     transferStatus.canBeTransferred = userSiteIds?.includes(transferReportableSiteId) || false
@@ -27,7 +27,7 @@ function generateTransferStatus(data, userSiteIds) {
       : TRANSFERRED.AWAY
     transferStatus.previousReportableSiteId = transferPreviousReportableSiteId
     transferStatus.reportableSiteId = transferReportableSiteId
-    transferStatus.siteId = transferSiteId
+    transferStatus.siteId = transferPreviousReportableSiteId
   }
   return transferStatus
 }
