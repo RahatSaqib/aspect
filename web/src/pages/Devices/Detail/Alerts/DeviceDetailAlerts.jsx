@@ -9,7 +9,7 @@ import styles from '../styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const DeviceDetailAlerts = ({ navigate, location, device }) => {
+const DeviceDetailAlerts = ({ navigate, location, device }) => {
   const { deviceId = false } = useParams()
   const intl = useI18n()
   const deviceName = device.get('name')

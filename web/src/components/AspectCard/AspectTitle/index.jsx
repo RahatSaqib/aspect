@@ -5,7 +5,7 @@ import styles from './Title.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const Title = memo(({ Icon, title, classNames }) => (
+const Title = memo(({ Icon, title, classNames }) => (
   <div className={cssClasses('title__container')}>
     <Icon />
     <span

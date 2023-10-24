@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
+"POT-Creation-Date: 2023-10-16T20:47:00.675Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -7803,6 +7803,26 @@ msgstr "Jetzt"
 msgid "Number of Devices"
 msgstr "Anzahl der Geräte"
 
+#. [pages.DeviceDetailEdit.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#. [pages.deviceDetail.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#: extracted_strings.json
+msgid "Number of GX-10C modules"
+msgstr "Anzahl der GX-10C-Module"
+
+#. [pages.DeviceDetailEdit.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#. [pages.deviceDetail.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#: extracted_strings.json
+msgid "Number of GX-6C modules"
+msgstr "Anzahl der GX-6C-Module"
+
 #. [legends.Unknown.inventoryGraphStatusXAxisLegend]
 #. defaultMessage is:
 #. Number of Locations
@@ -7996,6 +8016,20 @@ msgstr "Nur Lose mit Lagerbestand"
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Nur Lose mit Lagerbestand"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Huch! Da ist etwas schief gelaufen. Unser Team wurde benachrichtigt, und wir "
+"arbeiten an der Behebung des Problems. Bitte versuchen Sie es später noch "
+"einmal. Wenn das Problem weiterhin besteht, wenden Sie sich bitte an unser "
+"Support-Team und teilen Sie ihm den folgenden Fehler mit:"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:

@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 
-export const messages = defineMessages({
+const messages = defineMessages({
   placeholdersTriggerButtonLabel: {
     id: 'placeholders.trigger.button.label',
     defaultMessage: 'Insert placeholder',

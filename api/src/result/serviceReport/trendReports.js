@@ -4,22 +4,14 @@ const { startOfDay, endOfDay, subDays, endOfMonth, getDayOfYear, getDaysInYear }
 const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
-const { getOffsetFromIsoDateString, getMonthYearUserTimeZoneField } = require('../../shared/date')
-const { getXdrResultCountBase } = require('../common/db')
+const { getMonthYearField } = require('../../shared/date')
+const { getXdrResultCountBase, FACT_FIELD_SCOPE } = require('../common/db')
 
 /**
  * gx10CBaseQueryNational
  */
-async function gx10CBaseQueryNational(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
+function gx10CBaseQueryNational({ query, dataConstraints, resultCategoryIds }) {
   const now = new Date()
-  const resultCategoryIds = await allResultCategoryToId()
-  /**
-   * based on minDate or maxDate define timezone `offset` to correctly group by month
-   */
-  let { minDate, maxDate } = query
-  const someDateFromUser = minDate || maxDate
-  const offset = getOffsetFromIsoDateString(someDateFromUser)
   /**
    * explicitly set date range as of last 5 years
    */
@@ -31,8 +23,8 @@ async function gx10CBaseQueryNational(auth, query) {
    */
   const startYear = currentYear - 5
   const dateFrom = `${startYear}-01-01`
-  minDate = new Date(dateFrom)
-  maxDate = new Date(dateTo)
+  const minDate = new Date(dateFrom)
+  const maxDate = new Date(dateTo)
   /**
    * base query grouped by month
    */
@@ -44,7 +36,7 @@ async function gx10CBaseQueryNational(auth, query) {
     /**
      * group by month
      */
-    .select(getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'yearAndMonth', offset))
+    .select(getMonthYearField(knex, 'r.startedOn', 'yearAndMonth'))
     .groupBy('yearAndMonth')
   return baseQuery
 }
@@ -52,15 +44,8 @@ async function gx10CBaseQueryNational(auth, query) {
 /**
  * gx10CBaseQueryProvincial
  */
-async function gx10CBaseQueryProvincial(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
+function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds }) {
   const now = new Date()
-  const resultCategoryIds = await allResultCategoryToId()
-  /**
-   * based on minDate or maxDate define timezone `offset` to correctly group by month
-   */
-  const someDateFromUser = query.minDate || query.maxDate
-  const offset = getOffsetFromIsoDateString(someDateFromUser)
   /**
    * helper func to return base query for specified dates
    */
@@ -72,9 +57,10 @@ async function gx10CBaseQueryProvincial(auth, query) {
       resultCategoryIds,
       dataConstraints,
       query: { ...query, minDate, maxDate },
+      fieldsScope: [FACT_FIELD_SCOPE.all],
     })
       .select(
-        getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'yearAndMonth', offset),
+        getMonthYearField(knex, 'r.startedOn', 'yearAndMonth'),
         'g.stateId',
         'st.name as locationName' // state name
       )
@@ -107,7 +93,9 @@ async function gx10CBaseQueryProvincial(auth, query) {
  * listGx10CTrendsNational
  */
 async function listGx10CTrendsNational({ auth, query }) {
-  const baseQuery = await gx10CBaseQueryNational(auth, query)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
+  const baseQuery = await gx10CBaseQueryNational({ query, dataConstraints, resultCategoryIds })
   let data = await baseQuery
   /**
    * for National Trend report use `count all results` value
@@ -128,9 +116,15 @@ async function listGx10CTrendsNational({ auth, query }) {
  * listGx10CTrendsProvincial
  */
 async function listGx10CTrendsProvincial({ auth, query }) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
   const now = new Date()
   const denominator = (getDayOfYear(now) / getDaysInYear(now)) * 12
-  const { baseQuerySince5YearsAgo, baseQueryLast24h } = await gx10CBaseQueryProvincial(auth, query)
+  const { baseQuerySince5YearsAgo, baseQueryLast24h } = gx10CBaseQueryProvincial({
+    query,
+    dataConstraints,
+    resultCategoryIds,
+  })
   const rawSince5YearsAgo = await baseQuerySince5YearsAgo
   const rawLast24h = await baseQueryLast24h
 

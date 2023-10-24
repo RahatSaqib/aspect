@@ -5,8 +5,7 @@ import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import Loading from '../../../cleanComponents/Loading'
+import { DetailHeader, Loading } from '../../../cleanComponents'
 import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
@@ -70,6 +69,7 @@ export const DeviceDetail = props => {
           externalId: values.maintenanceStatus,
           device: Immutable.fromJS(device),
           notes: values.notes,
+          expectedBackOnline: values.expectedBack,
         })
       ),
     { onSuccess }

@@ -50,7 +50,7 @@ const styles = theme => ({
   },
 })
 
-export const Dropdown = ({ classes, source, ...props }) => {
+const Dropdown = ({ classes, source, ...props }) => {
   const { messages } = props
   const { formatMessage } = useI18n()
   return (

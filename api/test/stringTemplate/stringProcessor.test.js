@@ -136,6 +136,7 @@ describe('stringTemplate', () => {
       deviceLastSeenOn: new Date(2018, 7, 1, 10, 51, 13),
       resultStartedOn: new Date(2018, 7, 1, 10, 16, 28),
       resultEndedOn: new Date(2018, 7, 1, 10, 18, 1),
+      reportDateRange: 'PREVIOUS_WEEK',
       resultNotes: 'These are the notes\nfor sample:\n   SAMPLE-123',
       sampleExternalId: 'SAMPLE-123',
       resultData: `{"id":1,"sampleBarcode":"SAMPLE-123","operator":"RHANDZU","resultNo":1,"sampleId":"FUNCTION TEST","testName":"Alere™ q HIV-1/2 Detect","errorCode":"18006","timeStamp":"2018-10-05T13:40:46","hiv2Result":"---","pickedUpOn":"2018-11-08T14:06:21.305072","sourceFile":"/home/south_africa_nhls/ftp/alere_q/01-01_NAT-04000925_2018-10-31-11-18-58.csv.zip","cartridgeId":"0479001033","deviceCheck":"Fail","hiv1OResult":"---","deviceSerial":"NAT-04000925","hiv1MNResult":"---","analysisCheck":"----","negativeControl":"----","sampleDetection":"----","softwareVersion":"0.24.2","hiv1PositiveControl":"----","hiv2PositiveControl":"----"}`,

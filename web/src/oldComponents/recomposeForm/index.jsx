@@ -3,7 +3,7 @@ import isPromise from 'is-promise'
 import _fp from 'lodash/fp'
 import wrapDisplayName from 'recompose/wrapDisplayName'
 
-export const normalChangeEventReader = event => event.target.value
+const normalChangeEventReader = event => event.target.value
 
 export const errorProps = ({ touched, error } = {}) =>
   touched && error

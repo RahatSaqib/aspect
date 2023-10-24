@@ -11,6 +11,8 @@ const GRAPH_FLAGS = {
 }
 
 const XDR_RESISTANCES = ['INH', 'FLQ', 'AMK', 'KAN', 'CAP', 'ETH']
+const XDR_RESISTANCES_COMBO = ['INH_FLQ', 'INH_ETH']
+const XDR_RESISTANCE_VALUES = ['Detected', 'NotDetected', 'Indeterminate']
 
 const DAYS_STOCK_LEFT_RANGES = {
   outOfStock: { min: 0, max: 0 },
@@ -26,5 +28,7 @@ module.exports = {
   RELABEL_EXCEL,
   GRAPH_FLAGS,
   XDR_RESISTANCES,
+  XDR_RESISTANCES_COMBO,
+  XDR_RESISTANCE_VALUES,
   DAYS_STOCK_LEFT_RANGES,
 }

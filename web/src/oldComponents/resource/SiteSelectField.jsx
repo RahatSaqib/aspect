@@ -65,7 +65,7 @@ const enhance = compose(
   }))
 )
 
-export function SiteSelectField({ sitesSelectList, onChange, allItemText, ...restProps }) {
+function SiteSelectField({ sitesSelectList, onChange, allItemText, ...restProps }) {
   return (
     <SelectField {...restProps} onChange={onChange}>
       {allItemText && <MenuItem value={undefined}>{allItemText}</MenuItem>}

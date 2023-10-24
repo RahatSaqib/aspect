@@ -76,7 +76,7 @@ function buildHistoryTimeline(data, followUps, resultFlags, userSiteIds, originS
       event: 'followUpCreated',
       name: followUp.followUpName,
       siteName: data?.reportableSiteName,
-      updatedOn: followUp.updatedOn,
+      updatedOn: followUp.date,
       type: followUp.followUpTypeName,
       clinicianName: followUp.clinicianName,
     }

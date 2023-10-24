@@ -9,6 +9,7 @@ const {
   onDeviceUpdateMaintenanceStatusNoResults,
   onDeviceMaintenanceResolved,
   onDeviceMaintenanceStatusLogScheduled,
+  onDeviceUpdateModuleSerials,
 } = require('./service')
 
 const subscriptions = [
@@ -24,6 +25,7 @@ const subscriptions = [
       DEVICE_MAINTENANCE_RESOLVED: onDeviceMaintenanceResolved,
       DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED: async (action, context) =>
         taskTracker(onDeviceMaintenanceStatusLogScheduled, action, context),
+      DEVICE_UPDATE_MODULE_SERIALS: onDeviceUpdateModuleSerials,
     },
   },
 ]

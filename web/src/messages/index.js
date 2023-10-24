@@ -14,7 +14,6 @@ import resultCategoryType from './resultCategoryType'
 import resultTreatmentStatusMessages from './resultTreatmentStatusMessages'
 import resultWorkflowStatusMessages from './resultWorkflowStatusMessages'
 import sampleType from './sampleType'
-import { validations } from './validations'
 
 export {
   assay,
@@ -31,7 +30,6 @@ export {
   resultCategoryType,
   resultWorkflowStatusMessages,
   resultTreatmentStatusMessages,
-  validations,
   report,
   sampleType,
   graphMessages,

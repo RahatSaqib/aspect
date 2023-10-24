@@ -22,7 +22,7 @@ const messages = defineMessages({
   },
 })
 
-export function validate({ contextDate }, { formatMessage }) {
+function validate({ contextDate }, { formatMessage }) {
   const errors = {}
   if (!contextDate) {
     errors.contextDate = formatMessage(messages.warrantyDueDateIsRequired)

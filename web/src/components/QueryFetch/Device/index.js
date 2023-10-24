@@ -5,21 +5,6 @@ const DAILY_STATUS = {
   KEY: 'DAILY_STATUS',
 }
 
-const DEVICE_DETAIL = {
-  ENDPOINT: '/device',
-  KEY: 'DEVICE_DETAIL',
-}
-
-const DEVICE_PERFORMANCE = {
-  ENDPOINT: '/device/performance',
-  KEY: 'DEVICE_PERFORMANCE',
-}
-
-const DEVICE_TYPES = {
-  ENDPOINT: '/device-type/select-list',
-  KEY: 'DEVICE_TYPES',
-}
-
 const DEVICE_STATUS = {
   ENDPOINT: '/device/maintenance-statuses',
   KEY: 'DEVICE_STATUS',
@@ -139,9 +124,6 @@ const DEVICE_MAINTENANCE_STATUS_BY_PERIOD = {
 
 export {
   DAILY_STATUS,
-  DEVICE_DETAIL,
-  DEVICE_PERFORMANCE,
-  DEVICE_TYPES,
   DEVICE_STATUS,
   DEVICE_STATUS_LAST_REPORTED,
   DEVICE_LIST,

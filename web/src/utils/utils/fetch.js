@@ -11,13 +11,6 @@ import config from '../../config'
 import { showError } from '../../store/AppNotificationRedux'
 import { setLastServerResponseTime } from '../../store/GlobalsRedux'
 
-export const aspectFetchFile = createFetch(
-  base(config.aspectApi),
-  header('Content-Type', 'application/octet-stream'),
-  addAuthHeaderMiddleware,
-  handleFetchResponseOrError
-)
-
 export const aspectFetch = createFetch(
   base(config.aspectApi),
   accept('application/json'),
@@ -25,8 +18,6 @@ export const aspectFetch = createFetch(
   addAuthHeaderMiddleware,
   handleFetchResponseOrError
 )
-
-export default aspectFetch
 
 function addAuthHeaderMiddleware(fetch, input, options = {}) {
   const token = localStorage.getItem('asAccess')

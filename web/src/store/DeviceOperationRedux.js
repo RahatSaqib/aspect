@@ -7,7 +7,7 @@ import { receiveList, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
 import { aspectFetch } from '../utils/utils/fetch'
 
-export const types = {
+const types = {
   REQUEST_DEVICE_OPERATIONS: 'REQUEST_DEVICE_OPERATIONS',
   RECEIVE_DEVICE_OPERATIONS: 'RECEIVE_DEVICE_OPERATIONS',
 }

@@ -39,7 +39,7 @@ const messages = defineMessages({
   },
 })
 
-export function validate(
+function validate(
   { reasonId, dateAdjustedFrom, dateAdjustedTo, canExpire, expiresOn, fromSiteId, quantity, dateAdjusted },
   { intl, consumableReason }
 ) {

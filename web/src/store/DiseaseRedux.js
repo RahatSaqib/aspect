@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../utils/utils/fetch'
 
-export const types = {
+const types = {
   REQUEST_DISEASES: 'REQUEST_DISEASES',
   RECEIVE_DISEASES: 'RECEIVE_DISEASES',
 }
@@ -60,12 +60,12 @@ export function fetchDiseases(forceRefresh) {
   }
 }
 
-export const DiseaseItems = Immutable.Record({
+const DiseaseItems = Immutable.Record({
   loading: false,
   items: Immutable.List([]),
   lastRefreshed: undefined,
 })
-export const Disease = Immutable.Record({
+const Disease = Immutable.Record({
   diseases: new DiseaseItems(),
 })
 const initialState = new Disease()

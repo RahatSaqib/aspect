@@ -123,7 +123,7 @@ const getRawLinks = f => [
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },
 ]
 
-export const NavigationMenu = () => {
+const NavigationMenu = () => {
   const { formatMessage } = useI18n()
 
   const rawLinks = getRawLinks(formatMessage)

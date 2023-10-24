@@ -71,7 +71,7 @@ const enhance = compose(
   }))
 )
 
-export function DeviceSelectField({ devicesSelectList, onChange, disabled, ...restProps }) {
+function DeviceSelectField({ devicesSelectList, onChange, disabled, ...restProps }) {
   const disable = disabled || devicesSelectList.length === 0
   return (
     <SelectField

@@ -9,7 +9,7 @@ import styles from './ResetPassword.css'
 
 const cssClasses = classnames.bind(styles)
 
-export function validate({ newPassword, confirmNewPassword }, { intl }) {
+function validate({ newPassword, confirmNewPassword }, { intl }) {
   const errors = {}
   if (newPassword) {
     if (newPassword.trim().length < 8) {
@@ -44,7 +44,7 @@ const enhance = compose(
   })
 )
 
-export const ResetPasswordEnterPassword = ({
+const ResetPasswordEnterPassword = ({
   intl,
   action,
   form,

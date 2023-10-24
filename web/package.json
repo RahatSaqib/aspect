@@ -40,9 +40,6 @@
     "@mui/material": "^5.10.14",
     "@mui/styles": "^5.10.14",
     "@mui/x-date-pickers": "^5.0.8",
-    "@nivo/bar": "^0.63.0",
-    "@nivo/line": "^0.63.0",
-    "@nivo/pie": "^0.63.0",
     "@react-google-maps/api": "^2.12.1",
     "@sentry/react": "^7.11.1",
     "@sentry/tracing": "^7.11.1",
@@ -192,8 +189,13 @@
     "snapshotSerializers": [
       "enzyme-to-json/serializer"
     ],
-    "watchPathIgnorePatterns": [
-      "<rootDir>/jest.json"
+    "coveragePathIgnorePatterns": [
+      "<rootDir>/src/config.js",
+      "<rootDir>/src/__mocks__",
+      "<rootDir>/src/__setup__",
+      "<rootDir>/src/utils",
+      "<rootDir>/src/messages",
+      "<rootDir>/src/providers/I18nProvider/date-fns-locales"
     ]
   },
   "resolutions": {

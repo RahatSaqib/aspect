@@ -6,7 +6,7 @@ import { groupWidgets } from '../../../components/AspectWidgets/Helpers'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import SUMMARY_STATUS_WIDGETS from '../../../components/QueryFetch/Dashboard/index'
 
-export const SummaryStatus = ({ className, dashboard }) => {
+const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
   const {
     isLoading,

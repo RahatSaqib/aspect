@@ -1,22 +1,23 @@
 import React, { Fragment } from 'react'
-import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
+import { ErrorBoundary } from '../../../cleanComponents'
 import DailyStatus from '../../../components/Graphs/DailyStatus'
 import DailyStatusMap from '../../../components/Maps/DailyStatus'
 import PermissionChecker from '../../../components/PermissionChecker'
 
-export const OperationalDailyStatus = () => {
+const OperationalDailyStatus = () => {
   return (
     <Fragment>
-      <ErrorBoundary>
-        <PermissionChecker permissions={['operationalData']}>
+      <PermissionChecker permissions={['operationalData']}>
+        <ErrorBoundary>
           <DailyStatusMap />
-        </PermissionChecker>
-      </ErrorBoundary>
-      <ErrorBoundary>
-        <PermissionChecker permissions={['operationalData']}>
+        </ErrorBoundary>
+      </PermissionChecker>
+
+      <PermissionChecker permissions={['operationalData']}>
+        <ErrorBoundary>
           <DailyStatus />
-        </PermissionChecker>
-      </ErrorBoundary>
+        </ErrorBoundary>
+      </PermissionChecker>
     </Fragment>
   )
 }
