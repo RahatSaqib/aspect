@@ -50,7 +50,13 @@ async function updateResultWorkflowStatusByResultId(resultWorkflowLogEntry, clie
   }
 }
 
+async function updateNotPossibleWorkflowStatusByResultId(resultWorkflowLogEntry) {
+  const [lastLogId] = await insertResultWorkflowLog(resultWorkflowLogEntry)
+  await updateResultWithResultWorkflowLog(resultWorkflowLogEntry, lastLogId, new Date())
+}
+
 module.exports = {
   updateWorkflowStatusToFlagged,
   updateResultWorkflowStatusByResultId,
+  updateNotPossibleWorkflowStatusByResultId,
 }
