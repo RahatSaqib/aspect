@@ -57,7 +57,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
         .andOn('result.resultCategory2', 'resultCategoryAssay2.resultCategoryId')
     )
     .leftJoin('ResultTransferLog as transferLog', 'result.id', 'transferLog.resultId')
-    .leftJoin('Site as transferLogSite', 'transferLog.reportableSiteId', 'transferLogSite.id')
+    .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
     .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
     .leftJoin('Site as transferSite', 'transferLog.siteId', 'transferSite.id')
     .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
@@ -137,7 +137,7 @@ const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userVie
       'laboratory.name as laboratorySiteName',
       'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
       'sampleCollectedBy.name as sampleClinicianName',
-      'transferLogSite.name as transferSiteName',
+      'transferReportableSite.name as transferSiteName',
       'transferOriginSite.name as transferOriginSiteName',
       'transferLog.comment as transferComment',
       'transferLog.createdOn as transferredOn',
