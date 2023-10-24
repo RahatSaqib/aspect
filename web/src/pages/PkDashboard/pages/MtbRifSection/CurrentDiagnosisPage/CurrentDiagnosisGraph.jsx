@@ -30,7 +30,6 @@ import messages from '../../../PkDashboard.Messages'
 
 const defaultFilters = [
   { groupBy: 'month' },
-  { groupBy: 'assay' },
   { resultCategory1: 'Detected' },
   { minDate: startOfYear(new Date()) },
   { maxDate: endOfYear(new Date()) },
