@@ -266,7 +266,7 @@ describe('Entries helpers', () => {
         previousReportableSiteId: initialClinicSiteId,
         reportableSiteId: transferToClinicSiteId,
         resultId: 123,
-        siteId: 1,
+        siteId: initialClinicSiteId,
         comment: undefined,
         siteExternalId: 'SiteId1',
         siteName: 'SiteName1',
