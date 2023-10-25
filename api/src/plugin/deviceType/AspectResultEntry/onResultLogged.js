@@ -36,7 +36,6 @@ async function onResultLogged({ resultId, deviceLogId, userId }, { messageContex
       resultId,
       [
         ...RESULT_STRING_TEMPLATE_FIELDS,
-        'rf.formSchema',
         'r.instrumentSerial',
         'r.assayId',
         'd.id as resultDeviceId',
@@ -111,7 +110,6 @@ async function updateCovidResultFromFormData({ result, userId }, { messageContex
       resultStartedOn,
       resultEndedOn,
       resultFormData,
-      formSchema,
       diseaseId,
       resultPatientData,
       resultCategory1,
@@ -144,10 +142,6 @@ async function updateCovidResultFromFormData({ result, userId }, { messageContex
       resultDataObject = JSON.parse(resultData)
       originalResultDataObject = JSON.parse(resultData)
     }
-    let formSchemaObject = {}
-    if (formSchema) {
-      formSchemaObject = JSON.parse(formSchema)
-    }
     const diagnosticDeviceResoultSourceId = await resultSourceToId('DiagnosticDevice')
     const [{ deviceLogCountFromDiagnosticDevice }] = await knex('DeviceLog as dl')
       .join('Device as d', 'dl.deviceId', 'd.id')
@@ -178,64 +172,25 @@ async function updateCovidResultFromFormData({ result, userId }, { messageContex
       }
     }
 
-    const testReasonOptions = _.get(formSchemaObject, 'fields.testReason.control.options') || []
-    patientDataObject.testReason =
-      (
-        testReasonOptions.find(
-          option => option.value == formDataObject.testReason // eslint-disable-line eqeqeq
-        ) || {}
-      ).title ||
-      formDataObject.testReasonOther ||
-      patientDataObject.testReason
+    patientDataObject.testReason = formDataObject.testReasonOther || patientDataObject.testReason
     patientDataObject.age =
       formDataObject.age ||
       (formDataObject.ageYears ? `${formDataObject.ageYears} years` : null) ||
       (formDataObject.ageMonths ? `${formDataObject.ageMonths} months` : null) ||
       (formDataObject.ageDays ? `${formDataObject.ageDays} days` : null)
-    const genderOptions = _.get(formSchemaObject, 'fields.gender.control.options') || []
-    patientDataObject.gender =
-      (
-        genderOptions.find(
-          option => option.value == formDataObject.gender // eslint-disable-line eqeqeq
-        ) || {}
-      ).title || patientDataObject.gender
+
     if (!_.isEqual(patientDataObject, originalPatientDataObject)) {
       resultUpdates.patientData = JSON.stringify(patientDataObject)
     }
-    const testResultOptions = _.get(formSchemaObject, 'fields.testResult.control.options') || []
-    const selectedResultText = (
-      testResultOptions.find(
-        option => option.value == formDataObject.testResult // eslint-disable-line eqeqeq
-      ) || {}
-    ).title
     let testDate
     if (formDataObject.dateAndTimeOfTest) {
       testDate = parseDateOrDefault(formDataObject.dateAndTimeOfTest)
     }
     if (canOverwriteDiagnosticDataByHand) {
-      resultDataObject.resultText = selectedResultText || resultDataObject.resultText
       if (testDate) {
         resultUpdates.endedOn = testDate || resultEndedOn
         resultUpdates.startedOn = testDate || resultStartedOn
       }
-    } else if (selectedResultText) {
-      resultDataObject.resultText = resultDataObject.resultText || selectedResultText
-      if (resultDataObject.resultText === 'Unknown' && selectedResultText !== 'Unknown') {
-        resultDataObject.resultText = selectedResultText
-      }
-      if (testDate) {
-        resultUpdates.endedOn = resultEndedOn || testDate
-        resultUpdates.startedOn = resultStartedOn || testDate
-      }
-    }
-    if (assayExternalId === 'assayGenericCovid19') {
-      const testTypeOptions = _.get(formSchemaObject, 'fields.testType.control.options') || []
-      const selectedTestType = (
-        testTypeOptions.find(
-          option => option.value == formDataObject.testType // eslint-disable-line eqeqeq
-        ) || {}
-      ).title
-      resultDataObject.typeOfTest = selectedTestType || resultDataObject.typeOfTest
     }
     if (!_.isEqual(resultDataObject, originalResultDataObject)) {
       if (resultDataObject.resultText) {

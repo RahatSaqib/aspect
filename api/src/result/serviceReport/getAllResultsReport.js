@@ -9,8 +9,9 @@ const { getPersonByPersonId } = require('../../auth/service')
 const { getAllAssaySchemas } = require('../../assay/service')
 const { getSelectCommonListFieldsTZ, SORT_FIELDS } = require('../query')
 const { getOffsetFromIsoDateString } = require('../../shared/date')
-const { getQueryForResultsListAndExport } = require('../common/db')
+const { getQueryForResultsListAndExport, getCustomFieldsForResult } = require('../common/db')
 const { getConstraints } = require('../../auth/constraints')
+
 /**
  This report logic is consumed by the all results report, as well as from the csv download of the result list.
  */
@@ -53,7 +54,7 @@ module.exports = async (auth, query) => {
   const { partnerId, id: userId } = user
   const props = { query, partnerId, userId }
   const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
-  const columnsFromResultForms = await getColumnsFromResultForms(props)
+  const columnsFromCustomFields = await getColumnsFromCustomFields({ partnerId, assayId: query.assayId })
   const { GxMtbXdr: xdrAssayId } = await allAssayToId()
   const dataIncludesResistances = queryIncludesXdr(query, xdrAssayId)
   const columns = [
@@ -100,7 +101,7 @@ module.exports = async (auth, query) => {
 
     // dynamic columns from different schema json fields
     ...columnsFromAssaySchema,
-    ...columnsFromResultForms,
+    ...columnsFromCustomFields,
   ]
 
   const dataset = {
@@ -240,23 +241,6 @@ async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
   return columns
 }
 
-async function getColumnsFromResultForms({ partnerId }) {
-  const columns = []
-  const forms = await knex('ResultForm').where('partnerId', partnerId).pluck('formSchema')
-
-  _.forEach(forms, formSchema => {
-    _.forEach(JSON.parse(formSchema).fields, (value, key) => {
-      if (value && (_.isNil(value.excludeReport) || !value.excludeReport) && value.name) {
-        columns.push({
-          header: value.name,
-          key: key.replace('.title', '').replace('.properties', ''),
-        })
-      }
-    })
-  })
-  return columns
-}
-
 const getLatestFollowUpsByResultIds = async resultIds => {
   const subQuery = knex('ResultFollowUp')
     .select('resultId', 'followUpId', 'date', 'updatedOn')
@@ -326,4 +310,23 @@ const humanizeResistancesTexts = resultDataString => {
     resultData.allResistances.ETH = startCase(resultData.allResistances.ETH)
   }
   return resultData
+}
+
+async function getColumnsFromCustomFields({ partnerId, assayId }) {
+  const diseaseId = assayId
+    ? (
+        await knex('Assay as a')
+          .join('AssayType as at', 'at.id', 'a.assayTypeId')
+          .join('Disease as d', 'd.id', 'at.diseaseId')
+          .whereIn('a.id', _.isArray(assayId) ? assayId : [assayId])
+          .first(knex.raw('GROUP_CONCAT(d.id) as diseaseId'))
+      ).diseaseId.split(',')
+    : undefined // without assayId, the diseaseId will be undefined
+
+  const customFields = await getCustomFieldsForResult({ partnerId, diseaseId, assayId })
+
+  return customFields.map(cf => ({
+    header: cf.title,
+    key: cf.source,
+  }))
 }
