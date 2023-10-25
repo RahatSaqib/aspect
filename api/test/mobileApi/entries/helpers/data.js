@@ -26,7 +26,6 @@ const data347 = {
   resultCategory2Emphasize: null,
   resultCategoryAssay2RequiresTreatment: null,
   transferredOn: '2023-05-03T18:15:57.000Z',
-  transferStatusLogData: '{"siteId": 32, "reportableSiteId": 61, "previousReportableSiteId": 32}',
   resultTreatmentStatusExternalId: null,
   resultTreatmentStatusI18nKey: null,
   resultTreatmentStatusName: null,
@@ -55,6 +54,11 @@ const data347 = {
   errorCode: '400',
   resultNotes: 'test notes',
   testEndDate: '2023-10-05T19:25:21.025Z',
+  transferSiteName: 'TransferClinic',
+  transferOriginSiteName: 'transfer origin site',
+  transferPreviousReportableSiteId: 32,
+  transferReportableSiteId: 61,
+  transferSiteId: 32,
 }
 
 const expected347 = [
@@ -89,11 +93,11 @@ const expected347 = [
         resultId: 347,
         event: 'transferEvent',
         name: 'Transferred Away',
-        siteName: 'Lancaster Clinic',
+        siteName: 'TransferClinic',
         updatedOn: '2023-05-03T18:15:57.000Z',
         transferredBy: 'Admin',
         comment: undefined,
-        originSiteName: null,
+        originSiteName: 'transfer origin site',
       },
       {
         id: 172,

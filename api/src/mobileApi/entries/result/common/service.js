@@ -20,7 +20,7 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
 } = require('../../../result/common/db')
-const { getSiteByIds, getSitesQuery } = require('../../../../site/service')
+const { getSitesQuery } = require('../../../../site/service')
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
@@ -71,23 +71,6 @@ async function fetchEntriesServiceHandler(request) {
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
-    const originSiteIds = results
-      .filter(r => !!r.transferStatusLogData)
-      .map(r => JSON.parse(r.transferStatusLogData).sampleOriginSiteId)
-      .filter(_.identity)
-
-    const transferOriginIds = await getSiteByIds(originSiteIds)
-
-    // map origin id to name
-    const originSitesMap = _.reduce(
-      transferOriginIds,
-      (result, item) => {
-        result[item.id] = item.name
-        return result
-      },
-      {}
-    )
-
     const acknowledgements = await getAcknowledgementsByResultIds(results)
     const flags = await getFlagsByResultIds(results)
     const userSiteIds = await getUserSiteIds(dataConstraints)
@@ -104,15 +87,7 @@ async function fetchEntriesServiceHandler(request) {
 
     const followUps = await getFollowUpsByResultIds(results)
     const comments = await getCommentsOfResultById(results)
-    transformedResults = transformResultResponse(
-      results,
-      followUps,
-      comments,
-      acknowledgements,
-      flags,
-      userSiteIds,
-      originSitesMap
-    )
+    transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
   }
 
   // get origin Ids for each result
