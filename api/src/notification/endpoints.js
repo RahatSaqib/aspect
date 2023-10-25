@@ -268,14 +268,14 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/notification/type/select-list/{typeCategoryId}',
+    path: '/notification/type/select-list/{typeCategoryId?}',
     handler: listNotificationType,
     config: {
       description: 'List Notification Type',
       auth: { scope: ['notification'] },
       validate: {
         params: {
-          typeCategoryId: Joi.number().description('Notification type category id').integer().positive().required(),
+          typeCategoryId: Joi.number().allow(null).description('Notification type category id').integer().positive(),
         },
       },
       response: {

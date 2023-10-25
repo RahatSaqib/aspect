@@ -5,6 +5,7 @@ const NOTIFICATION_KEY_ENDPOINT = '/notification'
 const NOTIFICATION_KEY_BY_ID_ENDPOINT = '/notification/:notificationId'
 const NOTIFICATION_KEY_PLACEHOLDER_ENDPOINT = '/notification/placeholders'
 const NOTIFICATION_TYPE_SELECT_ENDPOINT = '/notification/type/select-list/:categoryTypeId'
+const NOTIFICATION_TYPE_SELECT_ALL_ENDPOINT = '/notification/type/select-list'
 const NOTIFICATION_CATEGORY_TYPE_SELECT_ENDPOINT = '/notification/type-category/select-list'
 
 export {
@@ -16,4 +17,5 @@ export {
   NOTIFICATION_KEY_PLACEHOLDER_ENDPOINT,
   NOTIFICATION_TYPE_SELECT_ENDPOINT,
   NOTIFICATION_CATEGORY_TYPE_SELECT_ENDPOINT,
+  NOTIFICATION_TYPE_SELECT_ALL_ENDPOINT,
 }

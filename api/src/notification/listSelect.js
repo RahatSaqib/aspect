@@ -10,7 +10,9 @@ async function listNotificationType(request) {
     params: { typeCategoryId },
   } = request
   const data = await knex('NotificationType as n')
-    .where('notificationTypeCategoryId', typeCategoryId)
+    .modify(qb => {
+      if (typeCategoryId) qb.where('notificationTypeCategoryId', typeCategoryId)
+    })
     .select('n.id', 'n.name')
   return { ok: true, data }
 }
