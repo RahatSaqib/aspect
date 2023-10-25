@@ -26,10 +26,10 @@ const InventoryOverviewPage = () => {
       ...item,
       name: getInventoryLabel(item, isState),
       children: transformInventory(item.children ?? []),
-      usedLastSixMonths: item.usedLastSixMonths ?? 0,
-      daysOfInventoryLeft: item.daysOfInventoryLeft ?? 0,
-      usedInDateRange: item.usedInDateRange ?? 0,
-      dailyConsumptionRate: item.dailyConsumptionRate ?? 0,
+      usedLastSixMonths: item.type === 'warehouse' ? '-' : item.usedLastSixMonths ?? 0,
+      daysOfInventoryLeft: item.type === 'warehouse' ? '-' : item.daysOfInventoryLeft ?? 0,
+      usedInDateRange: item.type === 'warehouse' ? '-' : item.usedInDateRange ?? 0,
+      dailyConsumptionRate: item.type === 'warehouse' ? '-' : item.dailyConsumptionRate ?? 0,
     }))
   }
 
