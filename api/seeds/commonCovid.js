@@ -7,17 +7,10 @@ const {
   resultCategoryToId,
 } = require('../src/shared/dictionary')
 const { updateAssayResultCategoryTreatmentEmphasize, seedPartnerAssay, seedPartnerDisease } = require('./utils')
-const AssayCovidPatientDataSchema = require('./fixtures/AssayCovidPatientDataSchema.json')
-const AssayCovidResultDataSchema = require('./fixtures/AssayCovidResultDataSchema.json')
-const AssayCovidResultFormSchema = require('./fixtures/AssayCovidResultFormSchema.json')
+const patientDataSchema = require('./fixtures/AssayCovidPatientDataSchema.json')
+const resultDataSchema = require('./fixtures/AssayCovidResultDataSchema.json')
 
-async function upsertCovidDeviceTypes(
-  knex,
-  partnerId,
-  resultFormSchema = AssayCovidResultFormSchema,
-  patientDataSchema = AssayCovidPatientDataSchema,
-  resultDataSchema = AssayCovidResultDataSchema
-) {
+async function upsertCovidDeviceTypes(knex) {
   const values = await Promise.all([
     resultCategoryToId('Positive'),
     resultCategoryToId('Negative'),
@@ -126,72 +119,6 @@ async function upsertCovidDeviceTypes(
         })
       )
 
-      const resultForm = await knex('ResultForm')
-        .where({
-          partnerId,
-          assayId: assayCovidId,
-        })
-        .first()
-      const assayResultFormSchema = JSON.parse(JSON.stringify(resultFormSchema))
-      if (deviceTypeSpec.abbreviation === 'Generic' && !assayResultFormSchema.fields.testType) {
-        const testTypeOrder = assayResultFormSchema.fields.testResult
-          ? assayResultFormSchema.fields.testResult.order + 1
-          : Math.min(Object.values(assayResultFormSchema.fields).map(field => field.order))
-        Object.keys(assayResultFormSchema.fields).forEach(assayResultFormSchemaFieldKey => {
-          if (assayResultFormSchema.fields[assayResultFormSchemaFieldKey].order >= testTypeOrder) {
-            assayResultFormSchema.fields[assayResultFormSchemaFieldKey].order += 1
-          }
-        })
-        assayResultFormSchema.fields.testType = {
-          i18nLabel: 'testType',
-          control: {
-            type: 'DropDown',
-            options: [
-              {
-                title: 'PCR/molecular',
-                i18nText: 'pcr',
-                value: 'pcr',
-              },
-              {
-                title: 'Immunoassay',
-                i18nText: 'immunoassay',
-                value: 'immunoassay',
-              },
-              {
-                title: 'Rapid diagnostic test',
-                i18nText: 'rapidDiagnosticTest',
-                value: 'rapidDiagnosticTest',
-              },
-              {
-                title: 'Digital X-Ray',
-                i18nText: 'digitalXRay',
-                value: 'digitalXRay',
-              },
-            ],
-          },
-          order: testTypeOrder,
-        }
-      }
-      if (!resultForm) {
-        await knex('ResultForm').insert({
-          partnerId,
-          assayId: assayCovidId,
-          formSchema: JSON.stringify(assayResultFormSchema),
-        })
-      } else {
-        const existingFormSchema = JSON.parse(resultForm.formSchema || '{}')
-        if (existingFormSchema.sendChangesOn !== assayResultFormSchema.sendChangesOn) {
-          existingFormSchema.sendChangesOn = assayResultFormSchema.sendChangesOn
-        }
-        await knex('ResultForm')
-          .where({
-            partnerId,
-            assayId: assayCovidId,
-          })
-          .update({
-            formSchema: JSON.stringify(existingFormSchema),
-          })
-      }
       covidDeviceTypes.push(deviceType)
     }
   )

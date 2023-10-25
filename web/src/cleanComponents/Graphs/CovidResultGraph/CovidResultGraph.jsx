@@ -7,14 +7,12 @@ import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { formatDataByGraphType } from '../../../components/Graphs/Helpers/Formatters'
-import messages from '../../../components/Graphs/intlMessages'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
-import ErrorBoundary from '../../ErrorBoundary'
-import Loading from '../../Loading'
+import { formatDataByGraphType, Loading } from '../../index'
+import messages from '../graphMessages'
 import styles from '../graphStyles.css'
 import {
   negateTimeZoneOffset,
@@ -24,7 +22,7 @@ import {
   flattenAssaysStructure,
   calcPercentageForGraphs,
 } from '../graphUtils'
-import { BarGraph, DonutGraph } from '../index'
+import { ColumnGraph, DonutGraph } from '../index'
 
 const cssClasses = classnames.bind(styles)
 
@@ -121,95 +119,92 @@ const CovidResultGraph = ({ assaysFromState: assays }) => {
   return isLoading ? (
     <Loading />
   ) : (
-    <ErrorBoundary>
-      <Grid container className={cssClasses('Graph_Container')}>
-        <Grid item xs={12}>
-          <Card>
-            <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsCovidTitle)} />
-            <CardContent>
-              <Grid container spacing={1} className={cssClasses('Graph_Content')}>
-                <Grid item xs={12} md={12} lg={2}>
-                  <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                    <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
-                      <FormControlLabel
-                        label={formatMessage(graphMessages.showValuesLabel)}
-                        control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12} md={12} lg={10}>
-                  <Grid container>
-                    {barData.data && barData.data.length ? (
-                      <Grid item xs={12} md={8}>
-                        <BarGraph
-                          data={barData.data}
-                          graphId="covidByCategory1Monthly"
-                          xField="month"
-                          yField="value"
-                          seriesField="type"
-                          showLabel={showLabel}
-                          isPercentage
-                          onReady={plot => {
-                            plot.on('plot:click', evt => {
-                              const base = 'yyyy-MM-dd'
-                              const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
-
-                              const params = {
-                                assayId: assays
-                                  .filter(it => ['assayGXCovid19', 'assayGenericCovid19'].includes(it.externalId))
-                                  .map(it => it.id),
-                                maxDate: format(endOfMonth(parsedDate), base),
-                                minDate: format(startOfMonth(parsedDate), base),
-                                resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
-                                  a => a.externalId === evt.data.data.id
-                                )[0].id,
-                              }
-                              addFilter({ ...params }, '/browse/result')
-                              navigate('/browse/result')
-                            })
-                          }}
-                        />
-                      </Grid>
-                    ) : null}
-                    {donutData.data && donutData.data.length ? (
-                      <Grid item xs={12} md={4} lg={4}>
-                        <DonutGraph
-                          data={donutData.data}
-                          total={donutData.total}
-                          graphId="covidByCategory1Aggregate"
-                          graphTitle={[
-                            formatMessage(graphMessages.clinicalIndicatorsCovidPieLegend)
-                              .split(' ')
-                              .splice(
-                                0,
-                                Math.ceil(
-                                  formatMessage(graphMessages.clinicalIndicatorsCovidPieLegend).split(' ').length / 2
-                                )
-                              )
-                              .join(' '),
-                            formatMessage(graphMessages.clinicalIndicatorsCovidPieLegend)
-                              .split(' ')
-                              .splice(
-                                Math.ceil(
-                                  formatMessage(graphMessages.clinicalIndicatorsCovidPieLegend).split(' ').length / 2
-                                )
-                              )
-                              .join(' '),
-                          ].join('<br/>')} // "Average Monthly<br/>Test Performed"
-                          legend={false}
-                          showLabel={showLabel}
-                        />
-                      </Grid>
-                    ) : null}
+    <Grid container className={cssClasses('Graph_Container')}>
+      <Grid item xs={12}>
+        <Card>
+          <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsCovidTitle)} />
+          <CardContent>
+            <Grid container spacing={1} className={cssClasses('Graph_Content')}>
+              <Grid item xs={12} md={12} lg={2}>
+                <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
+                  <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                    <FormControlLabel
+                      label={formatMessage(graphMessages.showValuesLabel)}
+                      control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
+                    />
                   </Grid>
                 </Grid>
               </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
+              <Grid item xs={12} md={12} lg={10}>
+                <Grid container>
+                  {barData.data && barData.data.length ? (
+                    <Grid item xs={12} md={8}>
+                      <ColumnGraph
+                        data={barData.data}
+                        graphId="covidByCategory1Monthly"
+                        xField="month"
+                        yField="value"
+                        seriesField="type"
+                        showLabel={showLabel}
+                        isPercentage
+                        onReady={plot => {
+                          plot.on('plot:click', evt => {
+                            const base = 'yyyy-MM-dd'
+                            const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+
+                            const params = {
+                              assayId: assays
+                                .filter(it => ['assayGXCovid19', 'assayGenericCovid19'].includes(it.externalId))
+                                .map(it => it.id),
+                              maxDate: format(endOfMonth(parsedDate), base),
+                              minDate: format(startOfMonth(parsedDate), base),
+                              resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
+                                a => a.externalId === evt.data.data.id
+                              )[0].id,
+                            }
+                            addFilter({ ...params }, '/browse/result')
+                            navigate('/browse/result')
+                          })
+                        }}
+                      />
+                    </Grid>
+                  ) : null}
+                  {donutData.data && donutData.data.length ? (
+                    <Grid item xs={12} md={4} lg={4}>
+                      <DonutGraph
+                        data={donutData.data}
+                        total={donutData.total}
+                        graphId="covidByCategory1Aggregate"
+                        graphTitle={[
+                          formatMessage(graphMessages.clinicalIndicatorsCovidPieLegend)
+                            .split(' ')
+                            .splice(
+                              0,
+                              Math.ceil(
+                                formatMessage(graphMessages.clinicalIndicatorsCovidPieLegend).split(' ').length / 2
+                              )
+                            )
+                            .join(' '),
+                          formatMessage(graphMessages.clinicalIndicatorsCovidPieLegend)
+                            .split(' ')
+                            .splice(
+                              Math.ceil(
+                                formatMessage(graphMessages.clinicalIndicatorsCovidPieLegend).split(' ').length / 2
+                              )
+                            )
+                            .join(' '),
+                        ].join('<br/>')} // "Average Monthly<br/>Test Performed"
+                        showLabel={showLabel}
+                      />
+                    </Grid>
+                  ) : null}
+                </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
       </Grid>
-    </ErrorBoundary>
+    </Grid>
   )
 }
 

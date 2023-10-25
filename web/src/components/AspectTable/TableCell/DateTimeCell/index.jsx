@@ -84,4 +84,4 @@ DateTimeCell.propTypes = {
   value: oneOfType([bool, string]),
 }
 
-export { DateTimeCell, DateTimeCellSince, DateTimeCellFlagged }
+export { DateTimeCell, DateTimeCellFlagged }

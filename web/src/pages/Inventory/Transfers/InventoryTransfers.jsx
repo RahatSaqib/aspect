@@ -3,8 +3,7 @@ import { Card, CardContent, LinearProgress, Table, TableBody, TableCell, TableRo
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useLocation, useNavigate } from 'react-router'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import InventoryTransferFilter from '../../../cleanComponents/Filter/InventoryTransferFilter'
+import { DetailHeader, InventoryTransferFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import useInventoryTransferDownload from '../../../hooks/inventory/useInventoryTransferDownload'
 import useInventoryTransferList from '../../../hooks/inventory/useInventoryTransferList'
@@ -21,7 +20,7 @@ import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const InventoryTransfers = () => {
+const InventoryTransfers = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { formatMessage } = useI18n()

@@ -1,6 +1,6 @@
 import React from 'react'
 import { Grid } from '@mui/material'
-import Loading from '../../cleanComponents/Loading'
+import { Loading } from '../../cleanComponents'
 import useI18n from '../../hooks/useI18n'
 import ColumnName from './components/ColumnName'
 import DashboardCard from './components/DashboardCard'

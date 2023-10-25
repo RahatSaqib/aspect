@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
-  countAllAwaitingTreatment,
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
@@ -9,7 +8,7 @@ const {
   getFlagsByResultIds,
   getUserSiteIds,
 } = require('./db')
-const { getAllSamplesRegistered } = require('../../sample/common/db')
+const { getAllSamplesRegistered, getTransferHistory } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transformResultResponse } = require('./helpers/transformResultResponse')
@@ -21,7 +20,7 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
 } = require('../../../result/common/db')
-const { getSiteByIds, getSitesQuery } = require('../../../../site/service')
+const { getSitesQuery } = require('../../../../site/service')
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
@@ -54,29 +53,24 @@ const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkf
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
+
+  // get resultIds of transferred result
+  const resultTransferHistory = await getTransferHistory(dataConstraints)
+
+  const userViewOnlyTransferredResultIds = resultTransferHistory.map(record => record.resultId)
+
   const clinics = await getSitesQuery(dataConstraints).select('s.id')
   const clinicIds = clinics.map(c => c.id)
   const samples = await getAllSamplesRegistered(query, clinicIds)
-  const results = await fetchResultsByUpdatedOnQuery(query, clinicIds, dataConstraints)
+  const results = await fetchResultsByUpdatedOnQuery(
+    query,
+    clinicIds,
+    dataConstraints,
+    userViewOnlyTransferredResultIds
+  )
 
   let transformedResults = []
   if (!_.isEmpty(results)) {
-    const originSiteIds = results
-      .filter(r => !!r.transferStatusLogData)
-      .map(r => JSON.parse(r.transferStatusLogData).sampleOriginSiteId)
-
-    const transferOriginIds = await getSiteByIds(originSiteIds)
-
-    // map origin id to name
-    const originSitesMap = _.reduce(
-      transferOriginIds,
-      (result, item) => {
-        result[item.id] = item.name
-        return result
-      },
-      {}
-    )
-
     const acknowledgements = await getAcknowledgementsByResultIds(results)
     const flags = await getFlagsByResultIds(results)
     const userSiteIds = await getUserSiteIds(dataConstraints)
@@ -93,22 +87,13 @@ async function fetchEntriesServiceHandler(request) {
 
     const followUps = await getFollowUpsByResultIds(results)
     const comments = await getCommentsOfResultById(results)
-    transformedResults = transformResultResponse(
-      results,
-      followUps,
-      comments,
-      acknowledgements,
-      flags,
-      userSiteIds,
-      originSitesMap
-    )
+    transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
   }
 
-  const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
   // get origin Ids for each result
   const transformedSamples = transformSampleResponse(query, samples)
 
-  const mergedData = transformedResults.reduce((mergedResults, result) => {
+  const mergedResultData = transformedResults.reduce((mergedResults, result) => {
     const existingObj = mergedResults.find(item => item.id === result.id)
 
     if (existingObj) {
@@ -129,15 +114,17 @@ async function fetchEntriesServiceHandler(request) {
   }, [])
 
   const entries = _.orderBy(
-    _.concat(_.uniqBy(mergedData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
+    _.concat(_.uniqBy(mergedResultData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
     ['updatedOn'],
     ['desc']
   )
 
+  const awaitingTreatment = _.countBy(entries, 'requiresFollowUp')
+
   return {
     ok: !!entries,
     total: _.size(entries),
-    awaitingTreatment: awaitingTreatment.count,
+    awaitingTreatment: awaitingTreatment.true || 0,
     data: entries,
   }
 }

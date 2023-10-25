@@ -1,13 +1,15 @@
 import React, { Fragment } from 'react'
 import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
-import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
+import {
+  ErrorBoundary,
+  DeviceStatusGraph,
+  ResultTransmittedGraph,
+  InventoryStatusGraph,
+} from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'
-import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
-import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
-import ResultTransmittedGraph from '../Graphs/ResultTransmittedGraph'
 import SummaryStatus from '../status/SummaryStatus'
 import styles from './OperationalData.css'
 
@@ -29,11 +31,16 @@ const OperationalDashBoard = () => {
         <ErrorBoundary>
           <SummaryStatus className={cssClasses('Section--summary')} dashboard="operational" />
         </ErrorBoundary>
+
         <ResultTransmittedGraph />
         {assays ? (
           <div className={cssClasses('wrapper')}>
-            <DeviceStatusGraph assaysFromState={assays} />
-            <InventoryStatusGraph assaysFromState={assays} />
+            <ErrorBoundary>
+              <DeviceStatusGraph assaysFromState={assays} />
+            </ErrorBoundary>
+            <ErrorBoundary>
+              <InventoryStatusGraph assaysFromState={assays} />
+            </ErrorBoundary>
           </div>
         ) : null}
       </PermissionChecker>

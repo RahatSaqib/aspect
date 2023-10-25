@@ -1,6 +1,6 @@
 msgid ""
 msgstr ""
-"POT-Creation-Date: 2023-10-16T20:47:00.675Z\n"
+"POT-Creation-Date: 2023-10-25T16:51:39.575Z\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "MIME-Version: 1.0\n"
@@ -1797,13 +1797,6 @@ msgid "Clear filters"
 msgstr ""
 
 #: ./extracted_strings.json
-#. [pages.Graphs.toolTipAllowClickThrough]
-#. defaultMessage is:
-#. Click to view results in table format
-msgid "Click to view results in table format"
-msgstr ""
-
-#: ./extracted_strings.json
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
 #. Clinical Indicators
@@ -2161,20 +2154,6 @@ msgstr ""
 #. defaultMessage is:
 #. Could Not Find Test Result
 msgid "Could Not Find Test Result"
-msgstr ""
-
-#: ./extracted_strings.json
-#. [errorResponseMessages.fetchAllSites.GET.404.title]
-#. defaultMessage is:
-#. Could Not Load All Sites
-msgid "Could Not Load All Sites"
-msgstr ""
-
-#: ./extracted_strings.json
-#. [errorResponseMessages.transferResult.GET.404.title]
-#. defaultMessage is:
-#. Could Not Transfer Result
-msgid "Could Not Transfer Result"
 msgstr ""
 
 #: ./extracted_strings.json
@@ -3875,11 +3854,11 @@ msgstr ""
 #. defaultMessage is:
 #. Error
 #: ./extracted_strings.json
-#. [pages.filters.gxEbolaGPError]
+#. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
 #: ./extracted_strings.json
-#. [pages.deviceDetail.resultCategoryError]
+#. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
 msgid "Error"
@@ -3920,13 +3899,6 @@ msgstr ""
 #. defaultMessage is:
 #. Error Fetching Endpoint
 msgid "Error Fetching Endpoint"
-msgstr ""
-
-#: ./extracted_strings.json
-#. [errorResponseMessages.fetchAllSites.GET.default.title]
-#. defaultMessage is:
-#. Error Loading All Sites
-msgid "Error Loading All Sites"
 msgstr ""
 
 #: ./extracted_strings.json
@@ -3984,13 +3956,6 @@ msgstr ""
 #. defaultMessage is:
 #. Error Sending Reset Password Email
 msgid "Error Sending Reset Password Email"
-msgstr ""
-
-#: ./extracted_strings.json
-#. [errorResponseMessages.transferResult.GET.default.title]
-#. defaultMessage is:
-#. Error Transferring Result
-msgid "Error Transferring Result"
 msgstr ""
 
 #: ./extracted_strings.json
@@ -4072,6 +4037,13 @@ msgstr ""
 #. defaultMessage is:
 #. Expand Row
 msgid "Expand Row"
+msgstr ""
+
+#: ./extracted_strings.json
+#. [pages.MaintenanceStatusDialog.expectedBack]
+#. defaultMessage is:
+#. Expect Back Online
+msgid "Expect Back Online"
 msgstr ""
 
 #: ./extracted_strings.json
@@ -4595,8 +4567,8 @@ msgstr ""
 #: ./extracted_strings.json
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
-#. GeneXpert Device Coverage (Pending)
-msgid "GeneXpert Device Coverage (Pending)"
+#. GeneXpert Device Coverage
+msgid "GeneXpert Device Coverage"
 msgstr ""
 
 #: ./extracted_strings.json
@@ -9520,6 +9492,20 @@ msgid "RIF Resistance Rate (%positive results)"
 msgstr ""
 
 #: ./extracted_strings.json
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR Detected
+msgid "RR Detected"
+msgstr ""
+
+#: ./extracted_strings.json
+#. [p.PkDashboard.RRToTbTotalPercentage]
+#. defaultMessage is:
+#. RR To Tb Total Percentage
+msgid "RR To Tb Total Percentage"
+msgstr ""
+
+#: ./extracted_strings.json
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
 #. RR cases diagnosed
@@ -12068,6 +12054,13 @@ msgid "Tasks"
 msgstr ""
 
 #: ./extracted_strings.json
+#. [p.PkDashboard.TbTotal]
+#. defaultMessage is:
+#. Tb Total
+msgid "Tb Total"
+msgstr ""
+
+#: ./extracted_strings.json
 #. [p.PkDashboard.xdrLastDay]
 #. defaultMessage is:
 #. Tb cases diagnosed in last 24 hours
@@ -12975,11 +12968,11 @@ msgid "Total Errors"
 msgstr ""
 
 #: ./extracted_strings.json
-#. [pages.OperationalData.cntAll]
+#. [reporters.totalResults]
 #. defaultMessage is:
 #. Total Results
 #: ./extracted_strings.json
-#. [reporters.totalResults]
+#. [pages.OperationalData.cntAll]
 #. defaultMessage is:
 #. Total Results
 #: ./extracted_strings.json
@@ -14628,11 +14621,4 @@ msgstr ""
 #. defaultMessage is:
 #. {unit} total calibrations
 msgid "{unit} total calibrations"
-msgstr ""
-
-#: ./extracted_strings.json
-#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit]
-#. defaultMessage is:
-#. {value} ({records}/{total, plural, one {# result} other {# results} })
-msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
 msgstr ""

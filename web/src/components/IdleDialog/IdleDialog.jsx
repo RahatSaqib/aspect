@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 import useI18n from '../../hooks/useI18n'
 import AspectDialog from '../../oldComponents/shared/AspectDialog'
 
-export const IdleDialog = () => {
+const IdleDialog = () => {
   const { formatMessage } = useI18n()
 
   return (

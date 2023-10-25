@@ -2,26 +2,28 @@ import React, { useEffect, useMemo } from 'react'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useDispatch, useSelector } from 'react-redux'
-import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
-import CovidResultGraph from '../../../cleanComponents/Graphs/CovidResultGraph'
-import HivResultsGraph from '../../../cleanComponents/Graphs/HivResultsGraph'
-import QuartersMtbDetectedGraph from '../../../cleanComponents/Graphs/QuartersMtbDetectedGraph'
-import QuartersRifDetectedGraph from '../../../cleanComponents/Graphs/QuartersRifDetectedGraph'
-import TbDetectedGraph from '../../../cleanComponents/Graphs/TbDetectedGraph'
-import TbResultsGraph from '../../../cleanComponents/Graphs/TbResultsGraph'
-import TestsOverTimeGraph from '../../../cleanComponents/Graphs/TestsOverTimeGraph'
-import TreatmentStatusGraph from '../../../cleanComponents/Graphs/TreatmentStatusGraph'
-import TrendInYearsAllTestsGraph from '../../../cleanComponents/Graphs/TrendInYearsAllTestsGraph'
-import TrendInYearsMtbDetectedGraph from '../../../cleanComponents/Graphs/TrendInYearsMtbDetectedGraph'
-import TrendInYearsRifDetectedGraph from '../../../cleanComponents/Graphs/TrendInYearsRifDetectedGraph'
-import XDRFLQResistanceGraph from '../../../cleanComponents/Graphs/XDRFLQResistanceGraph'
-import XDRResultsGraph from '../../../cleanComponents/Graphs/XDRResultsGraph'
+import {
+  ErrorBoundary,
+  CovidResultGraph,
+  HivResultsGraph,
+  QuartersMtbDetectedGraph,
+  QuartersRifDetectedGraph,
+  TbDetectedGraph,
+  TbResultsGraph,
+  TestsOverTimeGraph,
+  TreatmentStatusGraph,
+  TrendInYearsAllTestsGraph,
+  TrendInYearsMtbDetectedGraph,
+  TrendInYearsRifDetectedGraph,
+  XDRFLQResistanceGraph,
+  XDRResultsGraph,
+  DeviceStatusGraph,
+  InventoryStatusGraph,
+} from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
-import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
-import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
 import styles from './index.css'
 import messages from './messages'
 import Reports from './Reports'

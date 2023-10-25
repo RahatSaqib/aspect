@@ -13,8 +13,8 @@ import {
   LgaSelect,
   SiteSelect,
   StateSelect,
+  Loading,
 } from '../../cleanComponents'
-import Loading from '../../cleanComponents/Loading'
 import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
 import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
 import usePersonAssignment from '../../hooks/person/usePersonAssignment'

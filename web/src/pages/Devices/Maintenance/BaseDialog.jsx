@@ -11,7 +11,7 @@ import styles from './BaseDialog.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const sharedMessages = defineMessages({
+const sharedMessages = defineMessages({
   notes: {
     id: 'pages.BaseDialog.notes',
     defaultMessage: 'Notes',
@@ -34,7 +34,7 @@ export const sharedFields = {
   },
 }
 
-export const messages = defineMessages({
+const messages = defineMessages({
   submit: {
     id: 'pages.BaseDialog.submit',
     defaultMessage: 'Submit',

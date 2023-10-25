@@ -7,7 +7,7 @@
     "maxLikelihood": 50
   },
   {
-    "resultText": "|MTB @label_result_detected||INH Resistance @label_result_not_detected|Low FLQ Resistance @label_result_not_detected||AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected",
+    "resultText": "|MTB @label_result_detected||INH Resistance @label_result_not_detected|FLQ Resistance @label_result_not_detected||AMK Resistance @label_result_not_detected|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected",
     "category1": "Detected",
     "category2": "NotDetected",
     "minLikelihood": 51,

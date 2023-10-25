@@ -2,6 +2,7 @@ import { stringify } from 'querystring'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
+import { getISOFromString } from '../../oldComponents/shared/DateTimeInput/utils/date'
 import {
   errorForbidden,
   errorPleaseTryAgainInAFewMinutes,
@@ -10,7 +11,6 @@ import {
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
 import { WORKLOAD_KEY, WORKLOAD_KEY_EXPORT_ENDPOINT } from './workloadKeys.js'
-import { getISOFromString } from '../../oldComponents/shared/DateTimeInput/utils/date'
 
 const getDownload = async (filtersParams, fileFormat) => {
   return aspectFetch(

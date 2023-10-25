@@ -45,7 +45,7 @@ const enhance = compose(
   })
 )
 
-export const Reports = ({
+const Reports = ({
   className,
   title,
   siteId,

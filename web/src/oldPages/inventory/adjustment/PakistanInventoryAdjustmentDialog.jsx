@@ -2,8 +2,7 @@ import React, { memo } from 'react'
 import { Button, DialogActions, TextField } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Formik } from 'formik'
-import { ConsumableSelect, SiteSelect } from '../../../cleanComponents'
-import ConsumableReasonSelect from '../../../cleanComponents/ConsumableReasonSelect'
+import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
 import useI18n from '../../../hooks/useI18n'
 import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
@@ -16,9 +15,7 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
-export { testConductedReasonI18nKey }
-
-export function PakistanInventoryAdjustmentDialog(props) {
+function PakistanInventoryAdjustmentDialog(props) {
   const { onCancel, onSubmit, inventoryItem, actionType } = props
   const { formatMessage, ...intl } = useI18n()
   const inventory = inventoryItem?.toJS?.() ?? undefined

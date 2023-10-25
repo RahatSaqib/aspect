@@ -3147,7 +3147,6 @@ async function seed(knex) {
     GxMtbXdr: assayGeneXpertMtbXdrId,
     GxMtbRifUltra: assayGeneXpertMtbRifUltraId,
     GxHiv1Vl: assayGeneXpertHiv1VlId,
-    GxHiv1Qual: assayGeneXpertHiv1QualId,
     GxEbola: assayGeneXpertEbolaId,
     GxHcv: assayGeneXpertHcvId,
   } = await allAssayToId()
@@ -3830,6 +3829,7 @@ async function seed(knex) {
         const rdm = _.random(0, resultStatusesIds.length - 1)
         const resultStatusId = resultStatusesIds[rdm]
         let data = null
+        let transferLogData = null
         if (resultStatusId === resultStatuses.Transfer) {
           /**
            * for transferred result we need specify `data` field in `ResultStatusLog` table
@@ -3842,13 +3842,18 @@ async function seed(knex) {
               name.toLowerCase().includes('clinic')
           )
           const anotherReportableSite = otherSites[_.random(0, otherSites.length - 1)]
-          data = JSON.stringify({
-            siteId: savedResult.siteId,
+          const transferData = {
             reportableSiteId: anotherReportableSite.id,
             previousReportableSiteId: savedResult.reportableSiteId,
             sampleOriginSiteId: savedResult.sampleOriginSiteId,
+          }
+          data = JSON.stringify({
+            siteId: savedResult.siteId,
+            ...transferData,
           })
           resultWithLogInfo.reportableSiteId = anotherReportableSite.id
+
+          transferLogData = transferData
 
           // add entry in ResultDownloadLog to show transferred results in Reporters list
           await upsertSingle(knex, 'ResultDownloadLog', ['resultId'], {
@@ -3864,6 +3869,13 @@ async function seed(knex) {
           createdOn: addHours(randomDate, 2),
           createdBy: adminId,
           data,
+        })
+
+        await knex('ResultTransferLog').insert({
+          resultId,
+          createdOn: addHours(randomDate, 2),
+          createdBy: adminId,
+          ...transferLogData,
         })
 
         await knex('Result')
@@ -4269,7 +4281,9 @@ async function seed(knex) {
 
         resultData.resultText = result.resultText
 
-        resultData.detectedResistance = getDetectedResistanceCategoryTypes(result.resultText)
+        const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(result.resultText)
+        resultData.detectedResistance = detectedResistance
+        resultData.allResistances = allResistances
 
         const [resultId] = await knex('Result').insert({
           ...auditFields,
@@ -5220,78 +5234,4 @@ async function seed(knex) {
       widgetId: widgetIds.averageTimeToModuleReplacement,
     },
   ])
-
-  const geneXpertHiv1VlFormSchema = JSON.stringify({
-    fields: {
-      hospitalNumber: {
-        i18nLabel: 'hospitalNumber',
-        control: {
-          type: 'TextBox',
-        },
-        order: 1,
-      },
-      nameOfPatient: {
-        i18nLabel: 'nameOfPatient',
-        control: {
-          type: 'TextBox',
-        },
-        order: 2,
-      },
-      surnameOfPatient: {
-        i18nLabel: 'surnameOfPatient',
-        control: {
-          type: 'TextBox',
-        },
-        order: 3,
-      },
-      ward: {
-        i18nLabel: 'ward',
-        control: {
-          type: 'TextBox',
-        },
-        order: 4,
-      },
-      timeSampleTaken: {
-        i18nLabel: 'timeSampleTaken',
-        control: {
-          type: 'DateTime',
-        },
-        order: 5,
-      },
-      sampleType: {
-        i18nLabel: 'sampleType',
-        control: {
-          type: 'DropDown',
-          options: [
-            {
-              i18nText: 'studyOfSampleType',
-              value: '1',
-            },
-            {
-              i18nText: 'EQAOfSampleType',
-              value: '2',
-            },
-            {
-              i18nText: 'miscOfSampleType',
-              value: '3',
-            },
-          ],
-        },
-        order: 6,
-      },
-    },
-    sendChangesOn: 'change',
-  })
-
-  await knex('ResultForm').insert({
-    partnerId: partnerOneId,
-    assayId: assayGeneXpertHiv1VlId,
-    formSchema: geneXpertHiv1VlFormSchema,
-  })
-
-  await knex('ResultForm').insert({
-    partnerId: partnerOneId,
-    assayId: assayGeneXpertHiv1QualId,
-    formSchema: geneXpertHiv1VlFormSchema,
-  })
 }

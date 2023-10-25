@@ -10,7 +10,7 @@ import SelectField from '../shared/SelectField'
 /**
  * @deprecated
  */
-export class CountrySelectField extends PureComponent {
+class CountrySelectField extends PureComponent {
   static propTypes = {
     allItemText: PropTypes.string,
     countries: PropTypes.objectOf(LazyLoadItems).isRequired,

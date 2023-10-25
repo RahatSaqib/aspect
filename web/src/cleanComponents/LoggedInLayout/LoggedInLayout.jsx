@@ -12,7 +12,7 @@ import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
-export const LoggedInLayout = ({ children }) => {
+const LoggedInLayout = ({ children }) => {
   const intl = useI18n()
   const [version, setVersion] = useState({ fetched: false, v: '' })
 

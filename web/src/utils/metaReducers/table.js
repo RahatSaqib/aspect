@@ -3,7 +3,6 @@
   to be loaded in a pageable, sortable grid
 */
 import Immutable from 'immutable'
-import flowRight from 'lodash/flowRight'
 
 export function requestTable(table, action) {
   return table.merge(
@@ -38,5 +37,3 @@ export const Table = Immutable.Record({
   extraColumns: Immutable.List(),
   groupBy: Immutable.List(),
 })
-
-export const makeTable = flowRight(Table, Immutable.fromJS)

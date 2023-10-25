@@ -9,6 +9,8 @@ const {
   expected450,
   followUp450,
   searchKeys450,
+  xdrTestData,
+  xdrExpectedResult,
 } = require('./data')
 const { TRANSFERRED, FOLLOW_UP_TYPES } = require('../../../../src/mobileApi/entries/common/consts')
 const { extractFromDataById } = require('../../../../src/mobileApi/entries/result/common/helpers/extractFromDataById')
@@ -75,12 +77,16 @@ describe('Entries helpers', () => {
         reportableSiteName: 'ReportClinic1',
         testDate: '2023-05-02T00:00:00Z',
         transferredBy: 'testuser',
-        transferStatusLogData:
-          '{"siteId":261,"reportableSiteId":436,"previousReportableSiteId":261,"comment":"test comment"}',
         transferredOn: '2023-05-02T00:00:00Z',
         sampleClinicianName: 'test clinician',
         sampleExternalId: '123',
         patientData: '{"id": "PATIENT-1"}',
+        transferSiteName: 'TransferClinic',
+        transferOriginSiteName: 'originSiteClinic',
+        transferComment: 'test comment',
+        transferPreviousReportableSiteId: 261,
+        transferReportableSiteId: 436,
+        transferSiteId: 261,
       }
 
       const followUps = [
@@ -88,7 +94,7 @@ describe('Entries helpers', () => {
           id: 789,
           resultId: 123,
           followUpName: 'FollowUp1',
-          updatedOn: '2023-05-03T00:00:00Z',
+          date: '2023-05-03T00:00:00Z',
           followUpTypeName: 'sample follow up type',
           clinicianName: 'test clinician',
         },
@@ -109,12 +115,12 @@ describe('Entries helpers', () => {
           id: 123,
           resultId: 123,
           event: 'transferEvent',
-          name: 'awayTransfer',
-          siteName: 'ReportClinic1',
+          name: 'Transferred Away',
+          siteName: 'TransferClinic',
           updatedOn: '2023-05-02T00:00:00Z',
           comment: 'test comment',
           transferredBy: 'testuser',
-          originSiteName: null,
+          originSiteName: 'originSiteClinic',
         },
         {
           id: 456,
@@ -212,15 +218,13 @@ describe('Entries helpers', () => {
     it('should generate TRANSFERRED.AWAY when siteId equals previousReportableSiteId and not reportableSiteId', () => {
       const data = {
         id: 123,
-        transferStatusLogData: JSON.stringify({
-          siteId: 1,
-          reportableSiteId: 2,
-          previousReportableSiteId: 1,
-        }),
         transferredBy: 'user1',
         transferredOn: '2023-01-01T00:00:00Z',
         reportableSiteExternalId: 'SiteId1',
         reportableSiteName: 'SiteName1',
+        transferPreviousReportableSiteId: 1,
+        transferReportableSiteId: 2,
+        transferSiteId: 1,
       }
 
       const expectedOutput = {
@@ -248,15 +252,13 @@ describe('Entries helpers', () => {
       const userSiteIds = [labSiteId, initialClinicSiteId, transferToClinicSiteId]
       const data = {
         id: 123,
-        transferStatusLogData: JSON.stringify({
-          siteId: labSiteId,
-          reportableSiteId: transferToClinicSiteId,
-          previousReportableSiteId: initialClinicSiteId,
-        }),
         transferredBy: 'user1',
         transferredOn: '2023-01-01T00:00:00Z',
         reportableSiteExternalId: 'SiteId1',
         reportableSiteName: 'SiteName1',
+        transferPreviousReportableSiteId: initialClinicSiteId,
+        transferReportableSiteId: transferToClinicSiteId,
+        transferSiteId: labSiteId,
       }
 
       const expectedOutput = {
@@ -264,7 +266,7 @@ describe('Entries helpers', () => {
         previousReportableSiteId: initialClinicSiteId,
         reportableSiteId: transferToClinicSiteId,
         resultId: 123,
-        siteId: 1,
+        siteId: initialClinicSiteId,
         comment: undefined,
         siteExternalId: 'SiteId1',
         siteName: 'SiteName1',
@@ -563,13 +565,15 @@ describe('Entries helpers', () => {
   })
 
   describe('transformResultResponse', () => {
-    // eslint-disable-next-line mocha/no-exclusive-tests
     it('correctly transform results', async () => {
       const entry347 = transformResultResponse([data347], [], [])
       const entry450 = transformResultResponse([data450], followUp450, [])
+      const xdrEntry = transformResultResponse([xdrTestData], [], [])
 
       expect(entry347).to.deep.eq(expected347)
       expect(entry450).to.deep.eq(expected450)
+
+      expect(xdrEntry).to.deep.eq(xdrExpectedResult)
     })
 
     it('should return requiresFollowUp for followUpStatus', async () => {

@@ -8,8 +8,8 @@ import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
-import { AssayMultiSelect } from '../AssayMultiSelect/AssayMultiSelect'
 import {
+  AssayMultiSelect,
   DeviceTypeSelect,
   DisplayResultSelect,
   LgaSelect,

@@ -10,20 +10,37 @@ const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { pageParams, sortParams } = require('../../db')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
+const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
+
+function getSitesQuery(dataConstraints) {
+  return knex('Site as s')
+    .join('SiteType as st', 's.siteTypeId', 'st.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
+    .groupBy(['s.id'])
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+}
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
+  const clinics = await getSitesQuery(dataConstraints).select('s.id')
+  const clinicIds = clinics.map(c => c.id)
+
   const { userName } = await getUser(auth.credentials.name)
   const results = await getBaseQueryForResults()
     .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
     .select('rt.excluded', 'rt.id as resultTypeId')
     .where('r.id', resultId)
+    .andWhere(qb => qb.whereIn('r.reportableSiteId', clinicIds))
     .modify(
       addConstraints,
       dataConstraints,
       {
         device: 'd',
-        result: 'r',
+        resultTransferFlag: true,
       },
       { displayResult: 'all' }
     )
@@ -53,9 +70,6 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       data.resultData = JSON.parse(data.resultData)
       // full result text for the result details page
       data.fullResultText = data.resultData.resultText
-    }
-    if (data.formSchema) {
-      data.formSchema = JSON.parse(data.formSchema)
     }
 
     if (data.formData) {
@@ -94,7 +108,6 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
 
     data.customFields = await getCustomFieldsForResult(data)
   }
-
   return { ok: results.length === 1, data }
 }
 
@@ -172,9 +185,6 @@ const getBaseQueryForResults = () =>
     })
     .leftJoin('ResultCategoryAssay as rca2', q => {
       q.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
-    .leftJoin('ResultForm as rf', q => {
-      q.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
     .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
@@ -498,47 +508,100 @@ const getResultCountersBase = (resultCategoryIds, positiveResultCategories) => {
   }
 }
 
-const getXdrResultCountBase = ({ resultCategoryIds, dataConstraints, query }) => {
-  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
+const FACT_FIELD_SCOPE = {
+  all: 'all',
+  mtb: 'mtb',
+  invalid: 'invalid',
+  noResult: 'noResult',
+  error: 'error',
+  xdrResistances: 'xdrResistances',
+}
 
-  return getQueryForResultsListAndExport(query, dataConstraints)
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-      assay: (queryBuilder, filterValue) => {
-        if (_.isArray(filterValue)) {
-          queryBuilder.whereIn('a.externalId', filterValue)
-        } else {
-          queryBuilder.where('a.externalId', filterValue)
-        }
-      },
-      resultCategory1: (queryBuilder, filterValue) => {
-        if (_.isArray(filterValue)) {
-          queryBuilder.whereIn('rc1.externalId', filterValue)
-        } else {
-          queryBuilder.where('rc1.externalId', filterValue)
-        }
-      },
-      resultCategory2: (queryBuilder, filterValue) => {
-        if (_.isArray(filterValue)) {
-          queryBuilder.whereIn('rc2.externalId', filterValue)
-        } else {
-          queryBuilder.where('rc2.externalId', filterValue)
-        }
-      },
-      xdrResistance: (queryBuilder, filterValue) => {
-        queryBuilder.whereRaw(`JSON_SEARCH(
-          r.resultData ->> '$.detectedResistance[*]',
-          'one',
-          '${filterValue}'
-        ) IS NOT NULL`)
-      },
-    })
-    .count({
-      ...getResultCountersBase(resultCategoryIds, positiveResultCategories),
-    })
+const getXdrResultCountBase = ({
+  resultCategoryIds,
+  dataConstraints,
+  query,
+  fieldsScope = [], // empty array means we return default field `cntAll`
+}) => {
+  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
+  const takeAll = fieldsScope.includes(FACT_FIELD_SCOPE.all)
+  let fields = {
+    cntAll: 'r.resultCount',
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.mtb)) {
+    fields = {
+      ...fields,
+      cnt_mtb: knex.raw(`
+        CASE 
+          WHEN r.resultCategory1 IN (${positiveResultCategories}) 
+          THEN r.resultCount
+          ELSE IFNULL(r.xdrResistanceCounts ->> '$.MTB.detected', 0)
+        END      
+      `),
+    }
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.invalid)) {
+    fields = {
+      ...fields,
+      cnt_Invalid: knex.raw(`
+        CASE 
+          WHEN r.resultCategory1 = ${resultCategoryIds.Invalid}
+          THEN r.resultCount
+          ELSE 0
+        END
+      `),
+    }
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.noResult)) {
+    fields = {
+      ...fields,
+      cnt_NoResult: knex.raw(`
+        CASE 
+          WHEN r.resultCategory1 = ${resultCategoryIds.NoResult}
+          THEN r.resultCount
+          ELSE 0
+        END
+      `),
+    }
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.error)) {
+    fields = {
+      ...fields,
+      cnt_Error: knex.raw(`
+        CASE 
+          WHEN r.resultCategory1 = ${resultCategoryIds.Error}
+          THEN r.resultCount
+          ELSE 0
+        END
+      `),
+    }
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.xdrResistances)) {
+    fields = {
+      ...fields,
+      cnt_inh: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.INH.detected', 0)`),
+      cnt_flq: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.FLQ.detected', 0)`),
+      cnt_amk: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.AMK.detected', 0)`),
+      cnt_kan: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.KAN.detected', 0)`),
+      cnt_cap: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.CAP.detected', 0)`),
+      cnt_eth: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.ETH.detected', 0)`),
+    }
+  }
+
+  const base = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+  })
+    // .where(function () {
+    //   // skip filtering by 'rca.reportable' if grouping by 'assay'
+    //   if (!query.groupBy?.includes('assay')) {
+    //     this.where('rca.reportable', true)
+    //   }
+    // })
+    .sum(fields)
+  return base
 }
 
 const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstraints, query) => {
@@ -803,4 +866,5 @@ module.exports = {
   processGroupedQuery,
   getClinicalIndicatorQueryForFactTable,
   getClinicalIndicatorQueryForResultsTable,
+  FACT_FIELD_SCOPE,
 }

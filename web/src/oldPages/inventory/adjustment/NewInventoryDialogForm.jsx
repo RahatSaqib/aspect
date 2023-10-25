@@ -42,7 +42,7 @@ const messages = defineMessages({
   },
 })
 
-export function validate({ consumableId, canExpire, expiresOn, toSiteId, quantity, dateAdjusted }, { intl }) {
+function validate({ consumableId, canExpire, expiresOn, toSiteId, quantity, dateAdjusted }, { intl }) {
   const errors = {}
   if (!consumableId || consumableId <= 0) {
     errors.consumableId = intl.formatMessage(sharedMessages.consumableRequired)

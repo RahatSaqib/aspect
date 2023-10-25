@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../utils/utils/fetch'
 
-export const types = {
+const types = {
   REQUEST_ASSAYS: 'REQUEST_ASSAYS',
   RECEIVE_ASSAYS: 'RECEIVE_ASSAYS',
 }
@@ -64,7 +64,7 @@ export function fetchAssays(forceRefresh) {
 /*
  * ---------------- Reducers -----------------
  */
-export const Assay = Immutable.Record({
+const Assay = Immutable.Record({
   loading: null,
   items: Immutable.List([]),
   lastRefreshed: undefined,

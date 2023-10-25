@@ -7,9 +7,7 @@ import { Helmet } from 'react-helmet'
 import { useMutation, useQuery } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import ErrorBoundary from '../../../cleanComponents/ErrorBoundary/index'
-import InventoryItemsFilter from '../../../cleanComponents/Filter/InventoryItemsFilter'
+import { DetailHeader, InventoryItemsFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
@@ -198,11 +196,9 @@ export const InventoryItemsListWithProps = ({
                 <FormControlLabel
                   sx={{ p: 2 }}
                   control={
-                    <ErrorBoundary>
-                      <Switch
-                        onChange={event => setEnableInventoryOnHandField(filter.breakOutByLot && event.target.checked)}
-                      />
-                    </ErrorBoundary>
+                    <Switch
+                      onChange={event => setEnableInventoryOnHandField(filter.breakOutByLot && event.target.checked)}
+                    />
                   }
                   label={intl.formatMessage(messages.inventoryOnHand)}
                 />

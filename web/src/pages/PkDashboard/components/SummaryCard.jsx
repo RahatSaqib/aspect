@@ -12,10 +12,10 @@ const SummaryCard = ({ items }) => {
         {items.map((item, index) => {
           const isLast = index === items.length - 1
           return (
-            <>
+            <React.Fragment key={index}>
               <DataRow label={formatMessage(messages[item.key])} value={item.value.toString()} />
               {!isLast && <Divider />}
-            </>
+            </React.Fragment>
           )
         })}
       </CardContent>

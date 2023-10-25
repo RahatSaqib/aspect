@@ -8,7 +8,7 @@ import PropTypes from 'prop-types'
 import getDisplayName from 'react-display-name'
 import { useStore } from 'react-redux'
 
-export const MATCH_TYPE = {
+const MATCH_TYPE = {
   // exact match of the item in userPermissions (i.e. 'result:edit') and item in requestedPermissions (i.e. 'result:edit')
   EXACT: 'EXACT',
   // match of 'scope' part of user permission (i.e. 'result' from 'result:view') with item in requestedPermissions (i.e. 'result')
@@ -18,7 +18,7 @@ export const MATCH_TYPE = {
 }
 
 // Superiority of permission access levels
-export const NESTED_ACCESS_LEVELS_FOR = {
+const NESTED_ACCESS_LEVELS_FOR = {
   // propName is a permission access level
   // array in propValue lists all access levels which are nested in propName
   // another words - propName is greater than any access level in propValue
@@ -64,7 +64,7 @@ export function groupByPermissionTypes(permissions) {
  *     matchValue - string or array of strings
  *   }
  */
-export function getMatchedUserPermissions(userPermissions, requestedPermissions) {
+function getMatchedUserPermissions(userPermissions, requestedPermissions) {
   return userPermissions.reduce((acc, permission) => {
     // exact match of permission!
     if (requestedPermissions.includes(permission)) {

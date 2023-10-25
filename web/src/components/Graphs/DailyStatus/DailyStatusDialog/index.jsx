@@ -15,7 +15,7 @@ import { MODE, getFormConfig } from './utils'
 
 const cssClasses = classnames.bind(styles)
 
-export const DailyStatusDialog = ({ data = {}, onCancel, onSubmit, statuses, title, deviceName, siteProps }) => {
+const DailyStatusDialog = ({ data = {}, onCancel, onSubmit, statuses, title, deviceName, siteProps }) => {
   const [mode, setMode] = useState(MODE.EDITING)
   const { formatMessage } = useI18n()
 

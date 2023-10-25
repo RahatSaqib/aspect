@@ -8,8 +8,7 @@ import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useNavigate } from 'react-router-dom'
-import { ImplementingPartnerSelect } from '../../../../cleanComponents'
-import DeviceCapacitySelect from '../../../../cleanComponents/DeviceCapacitySelect'
+import { ImplementingPartnerSelect, DeviceCapacitySelect } from '../../../../cleanComponents'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import useI18n from '../../../../hooks/useI18n'
@@ -24,7 +23,7 @@ import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
-export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
+const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const navigate = useNavigate()
   const intl = useI18n()
 

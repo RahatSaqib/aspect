@@ -38,27 +38,3 @@ export const buildURL = (baseUrl, params = {}) => {
   urlQuery = `${baseUrl}?${urlQuery}`
   return urlQuery
 }
-
-/**
- * Given an URL query like 'a%3Da%26b%3Db', returns an object representing the key-value pairs: { a: a, b: b }
- * @param {string} query The URL query to be parsed
- * @returns The object containing the key-value pairs
- */
-const getParamsFromQuery = query =>
-  query
-    ? JSON.parse(`{"${query.replace(/&/g, '","').replace(/=/g, '":"')}"}`, function (key, value) {
-        return key === '' ? value : decodeURIComponent(value)
-      })
-    : {}
-
-/**
- * Given a location, gets the key-value pairs object from the URL filters section. For example, from '?filters=a%3Da&b=b&' gets { a: 'a' }.
- * This function is specially useful for extracting filters section for the browse pages.
- * @param {Location} location The location object from where the URL should be gotten
- * @returns The object of key-value pairs parsed from the URL's filters section
- */
-export const getFiltersObjectFromLocation = location => {
-  const urlSearchParams = new URLSearchParams(location.search)
-  const urlFilters = urlSearchParams.get('filters')
-  return getParamsFromQuery(urlFilters)
-}

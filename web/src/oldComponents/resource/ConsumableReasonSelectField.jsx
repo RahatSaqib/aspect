@@ -91,7 +91,7 @@ const enhance = compose(
   })
 )
 
-export const ConsumableReasonSelectField = ({
+const ConsumableReasonSelectField = ({
   allItemText,
   intl,
   consumableReasons,

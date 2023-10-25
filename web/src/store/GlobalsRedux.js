@@ -1,7 +1,7 @@
 import Immutable from 'immutable'
 import { downloadFile } from '../utils/utils/files'
 
-export const types = {
+const types = {
   GLOBALS_SET_LAST_SERVER_RESPONSE_TIME: 'GLOBALS_SET_LAST_SERVER_RESPONSE_TIME',
   EXPORT_RESPONSE_FILE_RECEIVED: 'EXPORT_RESPONSE_FILE_RECEIVED',
   EXPORT_FILE_STARTED: 'EXPORT_FILE_STARTED',
