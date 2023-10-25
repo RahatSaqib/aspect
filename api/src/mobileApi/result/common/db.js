@@ -1,5 +1,7 @@
+const _ = require('lodash')
 const { knex, sortPageParams } = require('../../../db')
 const { addConstraints } = require('../../../auth/constraints')
+const { NOT_POSSIBLE_FOLLOW_UP_TYPE, fieldNameToFollowUpTypeIdMappings } = require('./logic')
 
 const generateResultQuery = (query, dataConstraints, resultId) => {
   const knexQuery = knex('Result as r')
@@ -656,6 +658,30 @@ const updateResultFollowUp = (resultFollowUpId, updatedOn) => {
   })
 }
 
+const deleteResultFollowUpTreatment = async (resultId, updatedBy, updatedOn) => {
+  const treatmentFollowUps = await knex('ResultFollowUp as rfu')
+    .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
+    .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .where('rfu.resultId', resultId)
+    .andWhereNot('fu.externalId', NOT_POSSIBLE_FOLLOW_UP_TYPE)
+    .andWhere('fut.externalId', fieldNameToFollowUpTypeIdMappings.treatment)
+    .andWhere('isDeleted', false)
+    .select('rfu.id')
+
+  if (!_.isEmpty(treatmentFollowUps)) {
+    await knex('ResultFollowUp')
+      .whereIn(
+        'id',
+        treatmentFollowUps.map(rfu => rfu.id)
+      )
+      .update({
+        isDeleted: 1,
+        updatedBy,
+        updatedOn,
+      })
+  }
+}
+
 module.exports = {
   addResultDownloadLogQuery,
   addResultFollowUp,
@@ -690,4 +716,5 @@ module.exports = {
   getCurrentResultWorkflowStatus,
   getFollowUpsNotPossibleByResultById,
   updateResultFollowUp,
+  deleteResultFollowUpTreatment,
 }
