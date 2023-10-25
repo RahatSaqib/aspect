@@ -25,16 +25,24 @@ module.exports = async function (query, constraints) {
         .leftJoin('Result as r', 'r.siteId', 's.id')
         .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
         .leftJoin('Assay as a', 'a.id', 'ca.assayId')
-        .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
+        .leftJoin('Consumable as c', q =>
+          q.on('c.id', 'ca.consumableId').andOn('c.externalId', knex.raw(`'${query.consumableExternalId}'`))
+        )
         .leftJoin('Unit as u', 'c.unit', 'u.id')
-        .modify(
-          filterDateRangeParams,
-          { minDate: min(sixMonthsBeforeToday, query.minDate), maxDate: query.maxDate },
-          'r.endedOn'
+        .where(q =>
+          q
+            .whereNull('r.id')
+            .orWhere(q2 =>
+              q2.modify(
+                filterDateRangeParams,
+                { minDate: min(sixMonthsBeforeToday, query.minDate), maxDate: query.maxDate },
+                'r.endedOn'
+              )
+            )
         )
         .modify(addConstraints, constraints, { geography: 'g', site: 's' })
-        .where('c.externalId', query.consumableExternalId)
-        .orWhere('stype.externalId', 'warehouse')
+        .where(q => q.where('c.externalId', query.consumableExternalId).orWhereNull('c.externalId'))
+        .andWhere(q => q.whereIn('stype.externalId', ['warehouse', 'lab']))
         .groupBy('s.id', 'c.id')
         .select([
           's.id as id',
@@ -60,11 +68,11 @@ module.exports = async function (query, constraints) {
         .as('site')
     )
     .leftJoin('InventoryItem as ii', builder => {
-      builder
-        .on('site.id', 'ii.siteId')
-        .andOn('site.consumableId', 'ii.consumableId')
-        .andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
+      builder.on('site.id', 'ii.siteId').andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
     })
+    .leftJoin('Consumable as c', q =>
+      q.on('ii.consumableId', 'c.id').andOn('c.externalId', knex.raw(`'${query.consumableExternalId}'`))
+    )
     .groupBy('site.id')
     .select([knex.raw('SUM(IFNULL(ii.quantityOnHand,0)) as quantity'), 'site.*'])
 
