@@ -31,9 +31,7 @@ async function seed(knex) {
     updatedBy: adminId,
   }
 
-  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex, partnerId)).filter(
-    deviceType => deviceType.externalId !== 'Aspect'
-  )
+  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex)).filter(deviceType => deviceType.externalId !== 'Aspect')
   const deviceTypeAssays = {}
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),

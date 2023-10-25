@@ -15,7 +15,6 @@ const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
-const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
@@ -87,9 +86,7 @@ async function seed(knex) {
     .where({ partnerId })
     .first('id')
 
-  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)).filter(
-    deviceType => deviceType.externalId !== 'Aspect'
-  )
+  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex)).filter(deviceType => deviceType.externalId !== 'Aspect')
   const deviceTypeAssays = {}
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),

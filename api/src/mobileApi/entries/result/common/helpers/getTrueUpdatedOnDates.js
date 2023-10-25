@@ -18,8 +18,9 @@ function getResultUpdatedOnDate(data, followUps, comments) {
 }
 
 function getSampleUpdatedOnDate(data) {
-  const otherDates = _.pick(data, ['updatedOn', 'collectedOn'])
+  const otherDates = _.pick(data, ['sampleUpdatedOn', 'collectedOn'])
   const resultDates = _.map(otherDates, value => value)
+
   return _.max(resultDates)
 }
 

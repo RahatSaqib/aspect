@@ -411,11 +411,6 @@ async function listSitesWithReporters(request) {
   return { ok: true, total, length: data.length, data }
 }
 
-const getSiteByIds = async siteIds => {
-  if (!siteIds.length) return null
-  return knex('Site as s').whereIn('s.id', siteIds).select('s.id', 's.name')
-}
-
 module.exports = {
   getSitesQuery,
   listSites,
@@ -426,5 +421,4 @@ module.exports = {
   listSitesWithReporters,
   getListSitesForSelectList,
   disableSite,
-  getSiteByIds,
 }
