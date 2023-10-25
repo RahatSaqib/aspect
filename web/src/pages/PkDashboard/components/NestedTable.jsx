@@ -42,11 +42,11 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
+const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowCustomOrder = true }) => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(perPage)
-  const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState(columns[0].prop)
+  const [order, setOrder] = useState(allowCustomOrder ? 'asc' : null)
+  const [orderBy, setOrderBy] = useState(allowCustomOrder ? columns[0].prop : null)
   const [open, setOpen] = useState(-1)
   const colors = isDetail ? ['#dadbdf', '#e6e6e6'] : ['#eef1f8', '#ffffff']
 
@@ -67,67 +67,79 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
           <TableRow>
             {columns.map((c, idx) => (
               <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined}>
-                <TableSortLabel
-                  active={orderBy === c.prop}
-                  direction={orderBy === c.prop ? order : 'asc'}
-                  onClick={() => {
-                    const isAsc = orderBy === c.prop && order === 'asc'
-                    setOrder(isAsc ? 'desc' : 'asc')
-                    setOrderBy(c.prop)
-                    setPage(0)
-                  }}
-                >
-                  {c.name}
-                </TableSortLabel>
+                {allowCustomOrder ? (
+                  <TableSortLabel
+                    active={orderBy === c.prop}
+                    direction={orderBy === c.prop ? order : 'asc'}
+                    onClick={() => {
+                      const isAsc = orderBy === c.prop && order === 'asc'
+                      setOrder(isAsc ? 'desc' : 'asc')
+                      setOrderBy(c.prop)
+                      setPage(0)
+                    }}
+                  >
+                    {c.name}
+                  </TableSortLabel>
+                ) : (
+                  c.name
+                )}
               </TableCell>
             ))}
           </TableRow>
         </TableHead>
       ) : null}
       <TableBody>
-        {(rowsPerPage > 0
-          ? rows.sort(getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-          : rows
-        ).map((row, i) => {
-          const hasChildren = row?.children?.length > 0 ?? false
-          return (
-            <>
-              <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
-                {columns.map((c, i) => (
-                  <TableCell
-                    width="10%"
-                    scope={i === 0 ? 'row' : undefined}
-                    style={{ paddingLeft: row?.depth * 7.5 }}
-                    key={c.prop}
-                    align={i !== 0 ? 'right' : undefined}
-                  >
-                    {i === 0 ? (
-                      <Box display="flex">
-                        <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
-                          {open === row.id ? <ExpandLess /> : <ExpandMore />}
+        {(rowsPerPage > 0 && allowCustomOrder ? rows.sort(getComparator(order, orderBy)) : rows)
+          .slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+          .map((row, i) => {
+            const hasChildren = row?.children?.length > 0 ?? false
+            return (
+              <>
+                <TableRow
+                  sx={{ backgroundColor: colors[i % 2] }}
+                  onClick={() => setOpen(open === row.id ? -1 : row.id)}
+                >
+                  {columns.map((c, i) => (
+                    <TableCell
+                      width="10%"
+                      scope={i === 0 ? 'row' : undefined}
+                      style={{ paddingLeft: row?.depth * 7.5 }}
+                      key={c.prop}
+                      align={i !== 0 ? 'right' : undefined}
+                    >
+                      {i === 0 ? (
+                        <Box display="flex">
+                          <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
+                            {open === row.id ? <ExpandLess /> : <ExpandMore />}
+                          </Box>
+                          <span>{row?.[c.prop] ?? 'N/A'}</span>
                         </Box>
-                        <span>{row?.[c.prop] ?? 'N/A'}</span>
-                      </Box>
-                    ) : (
-                      row?.[c.prop] ?? 'N/A'
-                    )}
-                  </TableCell>
-                ))}
-              </TableRow>
-              {hasChildren ? (
-                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                  <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
-                    <Collapse in={open === row.id} timeout="auto" unmountOnExit>
-                      <Box sx={{ backgroundColor: colors[i % 2] }}>
-                        <NestedTable perPage={rowsPerPage} columns={columns} isDetail rows={row.children} />
-                      </Box>
-                    </Collapse>
-                  </TableCell>
+                      ) : (
+                        row?.[c.prop] ?? 'N/A'
+                      )}
+                    </TableCell>
+                  ))}
                 </TableRow>
-              ) : null}
-            </>
-          )
-        })}
+                {hasChildren ? (
+                  <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
+                    <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
+                      <Collapse in={open === row.id} timeout="auto" unmountOnExit>
+                        <Box sx={{ backgroundColor: colors[i % 2] }}>
+                          <NestedTable
+                            perPage={rowsPerPage}
+                            columns={columns}
+                            isDetail
+                            rows={row.children}
+                            allowCustomOrder={allowCustomOrder}
+                          />
+                        </Box>
+                      </Collapse>
+                    </TableCell>
+                  </TableRow>
+                ) : null}
+              </>
+            )
+          })}
 
         {emptyRows > 0 && (
           <TableRow style={{ height: 44.5 * emptyRows }}>

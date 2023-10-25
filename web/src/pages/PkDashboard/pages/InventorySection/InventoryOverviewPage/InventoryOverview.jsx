@@ -64,7 +64,11 @@ const InventoryOverviewPage = () => {
         </>
       }
     >
-      {isLoading ? <LinearProgress /> : <NestedTable columns={columns} rows={transformInventory(data)} />}
+      {isLoading ? (
+        <LinearProgress />
+      ) : (
+        <NestedTable columns={columns} rows={transformInventory(data)} allowCustomOrder={false} />
+      )}
     </PkPage>
   )
 }
