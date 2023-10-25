@@ -8,33 +8,31 @@ import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 import useInventoryOverview from './useInventoryOverview'
 
-function getInventoryLabel(item, isState) {
-  return item.type && item[item.type]
-    ? item[item.type]
-    : !isState
-    ? messages.noAssociatedLga
-    : messages.noAssociatedSite
-}
-
-function transformInventory(data) {
-  const isState = data?.some(item => item.type === 'state')
-  return data?.map(item => ({
-    ...item,
-    name: getInventoryLabel(item, isState),
-    children: transformInventory(item.children ?? []),
-    usedLastSixMonths: item.usedLastSixMonths ?? 0,
-    daysOfInventoryLeft: item.daysOfInventoryLeft ?? 0,
-    usedInDateRange: item.usedInDateRange ?? 0,
-    dailyConsumptionRate: item.dailyConsumptionRate ?? 0,
-  }))
-}
-
 const InventoryOverviewPage = () => {
   const { formatMessage } = useI18n()
   const [filter, setFilter] = useState({
     minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
+
+  function getInventoryLabel(item, isState) {
+    if (item.type && item[item.type]) return item.type && item[item.type]
+    return isState ? formatMessage(messages.noAssociatedState) : formatMessage(messages.noAssociatedLga)
+  }
+
+  function transformInventory(data) {
+    const isState = data?.some(item => item.type === 'state')
+    return data?.map(item => ({
+      ...item,
+      name: getInventoryLabel(item, isState),
+      children: transformInventory(item.children ?? []),
+      usedLastSixMonths: item.usedLastSixMonths ?? 0,
+      daysOfInventoryLeft: item.daysOfInventoryLeft ?? 0,
+      usedInDateRange: item.usedInDateRange ?? 0,
+      dailyConsumptionRate: item.dailyConsumptionRate ?? 0,
+    }))
+  }
+
   const [consumableExternalId, setConsumableExternalId] = useState()
 
   const { isLoading, data } = useInventoryOverview(

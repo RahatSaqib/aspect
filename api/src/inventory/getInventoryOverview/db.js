@@ -40,6 +40,7 @@ module.exports = async function (query, constraints) {
           's.id as id',
           'c.id as consumableId',
           's.name as lab',
+          's.name as warehouse',
           'stype.externalId as type',
           knex.raw(
             'IFNULL(SUM(CASE WHEN r.endedOn >= ? AND r.endedOn <= ? THEN ca.quantity ELSE 0 END),0) as usedLastSixMonths',
