@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-10-16T20:47:00.675Z\n"
+"POT-Creation-Date: 2023-10-25T16:51:39.575Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1772,13 +1772,6 @@ msgstr "Valeur claire"
 msgid "Clear filters"
 msgstr "Effacer les filtres"
 
-#. [pages.Graphs.toolTipAllowClickThrough]
-#. defaultMessage is:
-#. Click to view results in table format
-#: extracted_strings.json
-msgid "Click to view results in table format"
-msgstr "Cliquez pour afficher les résultats sous forme de tableau"
-
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
 #. Clinical Indicators
@@ -2118,20 +2111,6 @@ msgstr "Copier"
 #: extracted_strings.json
 msgid "Could Not Find Test Result"
 msgstr "Impossible de trouver le résultat du test"
-
-#. [errorResponseMessages.fetchAllSites.GET.404.title]
-#. defaultMessage is:
-#. Could Not Load All Sites
-#: extracted_strings.json
-msgid "Could Not Load All Sites"
-msgstr "Impossible de charger tous les sites"
-
-#. [errorResponseMessages.transferResult.GET.404.title]
-#. defaultMessage is:
-#. Could Not Transfer Result
-#: extracted_strings.json
-msgid "Could Not Transfer Result"
-msgstr "Impossible de transférer le résultat"
 
 #. [errorResponseMessages.loginStart.POST.401.incorrectPassword.title]
 #. defaultMessage is:
@@ -3786,10 +3765,10 @@ msgstr "Entrez le nom du site ..."
 #. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
-#. [pages.filters.gxEbolaGPError]
+#. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
-#. [pages.deviceDetail.resultCategoryError]
+#. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
 #: extracted_strings.json
@@ -3828,13 +3807,6 @@ msgstr "Code d'Erreur"
 #: extracted_strings.json
 msgid "Error Fetching Endpoint"
 msgstr "Taux d'erreur"
-
-#. [errorResponseMessages.fetchAllSites.GET.default.title]
-#. defaultMessage is:
-#. Error Loading All Sites
-#: extracted_strings.json
-msgid "Error Loading All Sites"
-msgstr "Erreur de chargement de tous les sites"
 
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
@@ -3890,13 +3862,6 @@ msgstr "Erreur lors de l'enregistrement du nouveau mot de passe"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Erreur d'envoi Réinitialiser mot de passe Email"
-
-#. [errorResponseMessages.transferResult.GET.default.title]
-#. defaultMessage is:
-#. Error Transferring Result
-#: extracted_strings.json
-msgid "Error Transferring Result"
-msgstr "Erreur de transfert du résultat"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3977,6 +3942,13 @@ msgstr "Exp. jusqu'à {date}"
 #: extracted_strings.json
 msgid "Expand Row"
 msgstr "Expende"
+
+#. [pages.MaintenanceStatusDialog.expectedBack]
+#. defaultMessage is:
+#. Expect Back Online
+#: extracted_strings.json
+msgid "Expect Back Online"
+msgstr "Retour en ligne"
 
 #. [forms.formItem.consumableExpirationDate]
 #. defaultMessage is:
@@ -4486,10 +4458,10 @@ msgstr "Calibration du GeneXpert en retard"
 
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
-#. GeneXpert Device Coverage (Pending)
+#. GeneXpert Device Coverage
 #: extracted_strings.json
-msgid "GeneXpert Device Coverage (Pending)"
-msgstr "Couverture du dispositif GeneXpert (en attente)"
+msgid "GeneXpert Device Coverage"
+msgstr "Couverture du dispositif GeneXpert"
 
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
@@ -9223,6 +9195,20 @@ msgstr "Résistance RIF"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Le nombre de résultats positifs"
 
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR Detected
+#: extracted_strings.json
+msgid "RR Detected"
+msgstr "RR détecté"
+
+#. [p.PkDashboard.RRToTbTotalPercentage]
+#. defaultMessage is:
+#. RR To Tb Total Percentage
+#: extracted_strings.json
+msgid "RR To Tb Total Percentage"
+msgstr "RR To Tb Total Pourcentage"
+
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
 #. RR cases diagnosed
@@ -11744,6 +11730,13 @@ msgstr "Liste de tâche"
 msgid "Tasks"
 msgstr "Les tâches"
 
+#. [p.PkDashboard.TbTotal]
+#. defaultMessage is:
+#. Tb Total
+#: extracted_strings.json
+msgid "Tb Total"
+msgstr "Tb Total"
+
 #. [p.PkDashboard.xdrLastDay]
 #. defaultMessage is:
 #. Tb cases diagnosed in last 24 hours
@@ -12892,10 +12885,10 @@ msgstr "Total des cas"
 msgid "Total Errors"
 msgstr "Total des erreurs"
 
-#. [pages.OperationalData.cntAll]
+#. [reporters.totalResults]
 #. defaultMessage is:
 #. Total Results
-#. [reporters.totalResults]
+#. [pages.OperationalData.cntAll]
 #. defaultMessage is:
 #. Total Results
 #. [performance.barChart.results]
@@ -14577,13 +14570,25 @@ msgstr "{unit} semaine dernière"
 msgid "{unit} total calibrations"
 msgstr "{unit} total des étalonnages"
 
-#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit]
-#. defaultMessage is:
-#. {value} ({records}/{total, plural, one {# result} other {# results} })
-#: extracted_strings.json
-msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
-msgstr ""
-"{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
+#~ msgid "Click to view results in table format"
+#~ msgstr "Cliquez pour afficher les résultats sous forme de tableau"
+
+#~ msgid "Could Not Load All Sites"
+#~ msgstr "Impossible de charger tous les sites"
+
+#~ msgid "Could Not Transfer Result"
+#~ msgstr "Impossible de transférer le résultat"
+
+#~ msgid "Error Loading All Sites"
+#~ msgstr "Erreur de chargement de tous les sites"
+
+#~ msgid "Error Transferring Result"
+#~ msgstr "Erreur de transfert du résultat"
+
+#~ msgid ""
+#~ "{value} ({records}/{total, plural, one {# result} other {# results} })"
+#~ msgstr ""
+#~ "{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
 
 #~ msgid "Current FQ Detection (Pending)"
 #~ msgstr "Détection actuelle du quotient familial (en attente)"
