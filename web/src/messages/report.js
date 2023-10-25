@@ -264,8 +264,8 @@ const messages = defineMessages({
     defaultMessage: 'Shows stats about the use of the system.',
   },
   devicesAndSitesOverview: {
-    id: 'pages.ReportIndex.devicesAndSitesOverview',
-    defaultMessage: 'Devices and Sites Overview',
+    id: 'pages.ReportIndex.XpertSiteSummaryReport',
+    defaultMessage: 'Xpert Site Summary Report',
   },
   devicesAndSites_description: {
     id: 'pages.ReportIndex.devicesAndSites_description',
