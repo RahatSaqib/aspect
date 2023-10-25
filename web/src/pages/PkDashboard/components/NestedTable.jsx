@@ -102,7 +102,7 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
                   <TableCell
                     width="10%"
                     scope={i === 0 ? 'row' : undefined}
-                    style={{ paddingLeft: row?.depth * 7.5 }}
+                    style={{ paddingLeft: isDetail ? row?.depth * 20 : null }}
                     key={c.prop}
                     align={i !== 0 ? 'right' : undefined}
                   >
