@@ -4,12 +4,7 @@ const dateFormat = require('date-fns/format')
 const { format, addMonths, subMonths, subHours } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
-const {
-  getReportCommonFieldsTZ,
-  LIST_FIELDS_UTC,
-  SORT_FIELDS,
-  RESULT_STRING_TEMPLATE_FIELDS,
-} = require('./query')
+const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const { resultUpdated, resultLoggedProcessed } = require('./actions')
 const { addConstraints, canViewResults, getConstraints, addPartnerQueryConstraints } = require('../auth/constraints')
