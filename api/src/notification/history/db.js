@@ -1,4 +1,4 @@
-const { knex, sortPageParams } = require('../../db')
+const { knex, sortPageParams, filterParams, filterDateRangeParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
 const getNotificationHistory = async (notificationTypeId, dataConstraints, query) => {
@@ -133,10 +133,9 @@ const getNotificationHistory = async (notificationTypeId, dataConstraints, query
   return { getItems, getCount }
 }
 const getAllNotificationHistory = async (dataConstraints, query) => {
-  const { externalId: category } = await knex('NotificationType as nt')
-    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
-    .first('ntc.externalId')
-
+  let updatedQuery = query
+  if (query.notificationWithErrors)
+    updatedQuery = { ...updatedQuery, webhookError: 'Error', emailError: 'Error', smsError: 'Error' }
   const baseQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
@@ -150,32 +149,29 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .leftOuterJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
     .leftOuterJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
     .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
+    .leftOuterJoin('Result as r', 'r.Id', 'n.resultId')
+    .leftOuterJoin('Issue as iss', 'iss.id', 'n.issueId')
+    .leftJoin('Sample as s', 's.id', 'r.sampleId')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
+    .modify(filterDateRangeParams, query, 'n.createdOn')
+    .modify(filterParams, updatedQuery, {
+      notificationName: 'nt.name',
+      notificationTypeName: 'ntc.name',
+      sampleId: 's.externalId',
+      webhookError: 'mswm.externalId',
+      emailError: 'msem.externalId',
+      smsError: 'mssms.externalId',
+    })
 
-  let getCount
-  let getItems
+  let getItems = buildReportBasedNotificationHistory(baseQuery, query)
 
-  switch (category) {
-    case 'resultBased': {
-      getCount = buildResultBasedNotificationHistoryCount(baseQuery)
-      break
-    }
-    case 'issueBased': {
-      getCount = buildIssueBasedNotificationHistoryCount(baseQuery)
-      break
-    }
-    case 'reportBased': {
-      getCount = buildReportBasedNotificationHistoryCount(baseQuery)
-      break
-    }
-    default:
-      break
-  }
-
-  baseQuery
+  getItems
     .modify(sortPageParams, query, 'n.createdOn')
     .select([
       'n.createdOn as date',
+      'ntc.name as notificationTypeName',
+      'nt.name as notificationName',
+      'r.id as resultId',
       knex.raw(`
       GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
       `),
@@ -185,7 +181,22 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
       knex.raw(`
       GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
       `),
+      knex.raw(`
+      CASE 
+          WHEN ntc.name='Result-Based' THEN JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))
+          ELSE ''
+      END as patientId,
+      CASE 
+          WHEN ntc.name='Result-Based' THEN s.externalId
+          ELSE ''
+      END as sampleId,
+      CASE 
+          WHEN ntc.name='Report-Based' THEN rpt.name
+          ELSE ''
+      END as reportName
+  `),
     ])
+    // .whereRaw('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
     .count({
       webhookSent: knex.raw(`
         DISTINCT
@@ -242,24 +253,11 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
         ELSE null END
       `),
     })
-
-  switch (category) {
-    case 'resultBased': {
-      getItems = buildResultBasedNotificationHistory(baseQuery)
-      break
-    }
-    case 'issueBased': {
-      getItems = buildIssueBasedNotificationHistory(baseQuery)
-      break
-    }
-    case 'reportBased': {
-      getItems = buildReportBasedNotificationHistory(baseQuery)
-      break
-    }
-    default:
-      break
+  if (query.patientId) {
+    getItems = getItems.whereRaw('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
   }
-  return { getItems, getCount }
+
+  return { getItems }
 }
 
 const buildResultBasedNotificationHistoryCount = query => {
@@ -272,8 +270,8 @@ const buildResultBasedNotificationHistoryCount = query => {
     .first()
 }
 
-const buildReportBasedNotificationHistoryCount = query => {
-  return query.clone().leftOuterJoin('Report as r', 'r.id', 'n.reportId').count('n.id as total').first()
+const buildReportBasedNotificationHistoryCount = baseQuery => {
+  return baseQuery.clone().leftOuterJoin('Report as r', 'r.id', 'n.reportId').count('n.id as total').first()
 }
 
 const buildIssueBasedNotificationHistoryCount = query => {
@@ -299,12 +297,26 @@ const buildResultBasedNotificationHistory = query => {
     .groupBy('n.resultId')
 }
 
-const buildReportBasedNotificationHistory = query => {
-  return query.leftOuterJoin('Report as r', 'r.id', 'n.reportId').groupBy('n.id')
+const buildReportBasedNotificationHistory = (baseQuery, query) => {
+  return baseQuery
+    .leftOuterJoin('Report as rpt', 'rpt.id', 'n.reportId')
+    .modify(filterParams, query, {
+      reportName: (queryBuilder, value) => {
+        queryBuilder.whereRaw(
+          `(
+          rpt.name LIKE CONCAT('%', ?, '%')
+          OR
+          rpt.description LIKE CONCAT('%', ?, '%')
+        )`,
+          [value, value]
+        )
+      },
+    })
+    .groupBy('n.id')
 }
 
-const buildIssueBasedNotificationHistory = query => {
-  return query
+const buildIssueBasedNotificationHistory = baseQuery => {
+  return baseQuery
     .leftOuterJoin('Issue as iss', 'iss.id', 'n.issueId')
     .leftOuterJoin('Result as r', 'iss.resultId', 'r.id')
     .leftJoin('Sample as s', 's.id', 'r.sampleId')

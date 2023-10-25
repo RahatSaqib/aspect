@@ -75,6 +75,13 @@ const routes = [
       auth: { scope: ['notification'] },
       validate: {
         query: {
+          sampleId: Joi.string().allow(null, '').description('The sample id'),
+          patientId: Joi.string().allow(null, '').description('The patient id'),
+          date: Joi.date().allow(null).description('The creation date of the notification log'),
+          notificationTypeName: Joi.string().allow(null, '').description('Notification Type Category name'),
+          notificationName: Joi.string().allow(null, '').description('Notification Type external Id'),
+          reportName: Joi.string().allow(null, '').description('Report Name'),
+          notificationWithErrors: Joi.bool().allow(null).description('Error in SMS,Email or webhook Notification'),
           ...validateSortPageParams(),
         },
       },
@@ -100,6 +107,9 @@ const routes = [
                 emailWithErrors: Joi.number().description('The number of email notification sent with errors'),
                 emailPending: Joi.number().description('The number of email notification pending to be send'),
                 date: Joi.date().description('The date notification was sent or received'),
+                notificationTypeName: Joi.string().allow(null, '').description('Notification Type Category name'),
+                notificationName: Joi.string().allow(null, '').description('Notification Type external Id'),
+                reportName: Joi.string().allow(null, '').description('Report Name'),
                 issueId: Joi.number().allow(null).description(`Notification's issueId`),
                 resultId: Joi.number().allow(null).description(`Notification's resultId`),
                 sampleId: Joi.alternatives().allow(null, '').try(Joi.number(), Joi.string()).description('Sample id'),
