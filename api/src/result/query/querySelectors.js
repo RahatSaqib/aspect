@@ -164,7 +164,6 @@ const LIST_FIELDS_UTC = {
 const SELECT_FIELDS_UTC = {
   ...COMMON_LIST_FIELDS_UTC,
   ...{
-    formSchema: 'rf.formSchema',
     canEdit: knex.raw('IFNULL(pa.canEdit, 0)'),
     canDelete: knex.raw('IFNULL(pa.canDelete, 0)'),
     resultText: knex.raw(

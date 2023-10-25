@@ -5,7 +5,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 describe('result/service', () => {
-  function createFakeKnex({ getResultByResultId = {}, assay = {}, assayForm = {} } = {}) {
+  function createFakeKnex({ getResultByResultId = {}, assay = {} } = {}) {
     const fakeKnexFunction = tableName => {
       let firstResult = {}
       let selectResult = []
@@ -13,8 +13,6 @@ describe('result/service', () => {
         firstResult = _.cloneDeep(assay)
       } else if (tableName === 'Result as r') {
         selectResult = _.isEmpty(getResultByResultId) ? [] : [_.cloneDeep(getResultByResultId)]
-      } else if (tableName === 'ResultForm') {
-        firstResult = _.cloneDeep(assayForm)
       } else if (tableName === 'Device') {
         firstResult = { id: 1 }
       }
