@@ -33,6 +33,7 @@ const {
   updateResultWithResultWorkflowLog,
   updateMostRecentResultFollowUp,
   getFollowUpsNotPossibleByResultById,
+  deleteResultFollowUpTreatment,
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
 
@@ -215,6 +216,7 @@ async function clinicalResponse(request) {
       payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_FIELD_NAME),
       fuv => fuv.clientTime
     ).reverse()[0]
+
     if (mostRecentValueCaptured) {
       resultEntry = await showResult(resultId, dataConstraints)
     }
@@ -261,6 +263,9 @@ async function clinicalResponse(request) {
               notPossibleReasonValueCaptured.value,
               mostRecentNotPossibleValueCaptured.clientTime
             )
+
+            // delete follow up treatment
+            await deleteResultFollowUpTreatment(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
           }
           resultEntry = await showResult(resultId, dataConstraints)
         }
