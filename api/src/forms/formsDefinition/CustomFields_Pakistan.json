@@ -16,6 +16,7 @@
       "payloadDestinationPath": "patient.PatientGender",
       "source": "patientData.PatientGender",
       "mandatory": false,
+      "migrateFromId": -4,
       "items": [
         {
           "key": 1,
@@ -50,6 +51,7 @@
       "payloadDestinationPath": "patient.PatientAge",
       "source": "patientData.PatientAge",
       "mandatory": false,
+      "migrateFromId": -3,
       "validation": [
         {
           "validationType": "regex",
@@ -89,6 +91,7 @@
       "payloadDestinationPath": "patient.HivStatus",
       "source": "patientData.HivStatus",
       "mandatory": false,
+      "migrateFromId": -1,
       "items": [
         {
           "key": 1,
@@ -124,6 +127,7 @@
       "payloadDestinationPath": "patient.PatientAgeMonths",
       "source": "patientData.PatientAgeMonths",
       "mandatory": false,
+      "migrateFromId": -18,
       "validation": [
         {
           "validationType": "regex",
@@ -155,7 +159,6 @@
       "fieldType": "number",
       "completionWeight": 10,
       "order": 100,
-      "gxAlertDbColumn": "PKRepeatTest",
       "caption": "Is GeneXpert Test Performed Previously?",
       "i18nKeyCaption": "PKRepeatTestI8nCaptionKey",
       "controlType": "comboBox",
@@ -163,6 +166,7 @@
       "payloadDestinationPath": "patient.PKRepeatTest",
       "source": "patientData.PKRepeatTest",
       "mandatory": false,
+      "migrateFromId": -19,
       "items": [
         {
           "key": 1,
@@ -192,7 +196,8 @@
       "payloadOriginPath": "data.customFieldData.6.value",
       "payloadDestinationPath": "patient.PatientStreet",
       "source": "patientData.PatientStreet",
-      "mandatory": false
+      "mandatory": false,
+      "migrateFromId": -9
     },
     {
       "id": 7,
@@ -209,7 +214,8 @@
       "payloadOriginPath": "data.customFieldData.7.value",
       "payloadDestinationPath": "patient.PatientName",
       "source": "patientData.PatientName",
-      "mandatory": false
+      "mandatory": false,
+      "migrateFromId": 1
     },
     {
       "id": 8,
@@ -219,14 +225,14 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 32,
-      "gxAlertDbColumn": "PKHomeDistrict",
       "caption": "Patient Home District",
       "i18nKeyCaption": "PKHomeDistrictI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.8.value",
       "payloadDestinationPath": "patient.PKHomeDistrict",
       "source": "patientData.PKHomeDistrict",
-      "mandatory": false
+      "mandatory": false,
+      "migrateFromId": 2
     },
     {
       "id": 9,
@@ -236,7 +242,6 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 43,
-      "gxAlertDbColumn": "PKReferringHealthFacility",
       "caption": "Referring Health Facility Name",
       "i18nKeyCaption": "PKReferringHealthFacilityI8nCaptionKey",
       "controlType": "comboBox",
@@ -244,6 +249,8 @@
       "payloadDestinationPath": "patient.PKReferringHealthFacility",
       "source": "patientData.PKReferringHealthFacility",
       "mandatory": false,
+      "optional": false,
+      "migrateFromId": 3,
       "condition": [
         {
           "propToCompare": "PKReferringHealthFacilityLocation",
@@ -318,7 +325,6 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 60,
-      "gxAlertDbColumn": "PKDiseaseSite",
       "caption": "Disease Site",
       "i18nKeyCaption": "PKDiseaseSiteI8nCaptionKey",
       "controlType": "comboBox",
@@ -326,6 +332,7 @@
       "payloadDestinationPath": "patient.PKDiseaseSite",
       "source": "patientData.PKDiseaseSite",
       "mandatory": false,
+      "migrateFromId": 4,
       "items": [
         {
           "key": "Pulmonary",
@@ -353,14 +360,14 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 50,
-      "gxAlertDbColumn": "PKReferringPhysicianName",
       "caption": "Referring Physician Name",
       "i18nKeyCaption": "PKReferringPhysicianNameI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.11.value",
       "payloadDestinationPath": "patient.PKReferringPhysicianName",
       "source": "patientData.PKReferringPhysicianName",
-      "mandatory": false
+      "mandatory": false,
+      "migrateFromId": 5
     },
     {
       "id": 12,
@@ -370,7 +377,6 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 51,
-      "gxAlertDbColumn": "PKReferringPhysicianContact",
       "caption": "Referring Physician Contact (e.g. 03002625431)",
       "i18nKeyCaption": "PKReferringPhysicianContactI8nCaptionKey",
       "controlType": "textBox",
@@ -378,6 +384,7 @@
       "payloadDestinationPath": "patient.PKReferringPhysicianContact",
       "source": "patientData.PKReferringPhysicianContact",
       "mandatory": false,
+      "migrateFromId": 6,
       "validation": [
         {
           "validationType": "regex",
@@ -395,7 +402,6 @@
       "fieldType": "number",
       "completionWeight": 10,
       "order": 90,
-      "gxAlertDbColumn": "PKSpecimenType",
       "caption": "Specimen Type",
       "i18nKeyCaption": "PKSpecimenTypeI8nCaptionKey",
       "controlType": "comboBox",
@@ -403,6 +409,7 @@
       "payloadDestinationPath": "patient.PKSpecimenType",
       "source": "patientData.PKSpecimenType",
       "mandatory": false,
+      "migrateFromId": 7,
       "items": [
         {
           "key": 0,
@@ -458,16 +465,19 @@
         {
           "propToCompare": "PKDiseaseSite",
           "valueToCompare": "Pulmonary",
+          "operator": "=",
           "conjunction": "or"
         },
         {
           "propToCompare": "PKDiseaseSite",
           "valueToCompare": "Ex-pulmonary",
+          "operator": "=",
           "conjunction": "or"
         },
         {
           "propToCompare": "PKDiseaseSite",
           "valueToCompare": "PTBAndEPTB",
+          "operator": "=",
           "conjunction": "or"
         }
       ],
@@ -487,7 +497,6 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 110,
-      "gxAlertDbColumn": "PKAFBSmearResults",
       "caption": "AFB Smear Results",
       "i18nKeyCaption": "PKAFBSmearResultsI8nCaptionKey",
       "controlType": "comboBox",
@@ -495,6 +504,7 @@
       "payloadDestinationPath": "patient.PKAFBSmearResults",
       "source": "patientData.PKAFBSmearResults",
       "mandatory": false,
+      "migrateFromId": 9,
       "items": [
         {
           "key": "Positive",
@@ -526,7 +536,6 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 120,
-      "gxAlertDbColumn": "PKPreviousHistoryOfTbTreatment",
       "caption": "Previous History of TB Treatment",
       "i18nKeyCaption": "PKPreviousHistoryOfTbTreatmentI8nCaptionKey",
       "controlType": "comboBox",
@@ -534,6 +543,7 @@
       "payloadDestinationPath": "patient.PKPreviousHistoryOfTbTreatment",
       "source": "patientData.PKPreviousHistoryOfTbTreatment",
       "mandatory": false,
+      "migrateFromId": 10,
       "items": [
         {
           "key": "Yes",
@@ -561,7 +571,6 @@
       "fieldType": "number",
       "completionWeight": 10,
       "order": 105,
-      "gxAlertDbColumn": "PKPreviousGeneXpertResult",
       "caption": "Previous GeneXpert Result",
       "i18nKeyCaption": "PKPreviousGeneXpertResultI8nCaptionKey",
       "controlType": "comboBox",
@@ -637,7 +646,6 @@
       "fieldType": "number",
       "completionWeight": 10,
       "order": 40,
-      "gxAlertDbColumn": "PKReferringHealthFacilityProvince",
       "caption": "Province",
       "i18nKeyCaption": "PKReferringHealthFacilityProvinceI8nCaptionKey",
       "controlType": "comboBox",
@@ -716,7 +724,6 @@
       "fieldType": "number",
       "completionWeight": 10,
       "order": 41,
-      "gxAlertDbColumn": "PKReferringHealthFacilityDistrict",
       "caption": "Referring Health Facility District",
       "i18nKeyCaption": "PKReferringHealthFacilityDistrictI8nCaptionKey",
       "controlType": "comboBox",
@@ -1546,7 +1553,6 @@
       "fieldType": "number",
       "completionWeight": 10,
       "order": 42,
-      "gxAlertDbColumn": "PKReferringHealthFacilityLevel",
       "caption": "Referring Health Facility Level",
       "i18nKeyCaption": "PKReferringHealthFacilityLevelI8nCaptionKey",
       "controlType": "comboBox",
@@ -1640,7 +1646,6 @@
       "fieldType": "number",
       "completionWeight": 10,
       "order": 107,
-      "gxAlertDbColumn": "PKIfPreviousGeneXpertResultsIsPositive",
       "caption": "If Previous GeneXpert Results is Positive",
       "i18nKeyCaption": "PKIfPreviousGeneXpertResultsIsPositiveI8nCaptionKey",
       "controlType": "comboBox",
@@ -1686,7 +1691,6 @@
       "fieldType": "number",
       "completionWeight": 10,
       "order": 95,
-      "gxAlertDbColumn": "PKEPTissueType",
       "caption": "EP Tissue Type",
       "i18nKeyCaption": "PKEPTissueTypeI8nCaptionKey",
       "controlType": "comboBox",
@@ -1732,7 +1736,6 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 38,
-      "gxAlertDbColumn": "PKTBDRTBRegNum",
       "caption": "TB/DRTB Reg #",
       "i18nKeyCaption": "PKTBDRTBRegNumI8nCaptionKey",
       "controlType": "textBox",
@@ -1749,7 +1752,6 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 39,
-      "gxAlertDbColumn": "PKReferringHealthFacilityLocation",
       "caption": "Referring Health Facility Location",
       "i18nKeyCaption": "PKReferringHealthFacilityLocationI8nCaptionKey",
       "controlType": "comboBox",
@@ -1779,7 +1781,6 @@
       "fieldType": "datetime",
       "completionWeight": 10,
       "order": 52,
-      "gxAlertDbColumn": "PKDateSpecimenCollected",
       "caption": "Date Specimen Collected",
       "i18nKeyCaption": "PKDateSpecimenCollectedI8nCaptionKey",
       "controlType": "dateTimePicker",
@@ -1796,7 +1797,6 @@
       "fieldType": "datetime",
       "completionWeight": 10,
       "order": 53,
-      "gxAlertDbColumn": "PKDateSpecimenReceived",
       "caption": "Date Specimen Received",
       "i18nKeyCaption": "PKDateSpecimenReceivedI8nCaptionKey",
       "controlType": "dateTimePicker",
@@ -1820,7 +1820,6 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 11,
-      "gxAlertDbColumn": "PKCNIC",
       "caption": "CNIC (13 numbers without dashes)",
       "i18nKeyCaption": "PKCNICI8nCaptionKey",
       "controlType": "textBox",
@@ -1845,14 +1844,14 @@
       "fieldType": "text",
       "completionWeight": 10,
       "order": 99999,
-      "gxAlertDbColumn": "Remarks",
       "caption": "Remarks",
       "i18nKeyCaption": "RemarksI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.28.value",
       "payloadDestinationPath": "patient.Remarks",
       "source": "patientData.Remarks",
-      "mandatory": false
+      "mandatory": false,
+      "cellSpan": 2
     }
   ],
   "refForms": []

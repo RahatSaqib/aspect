@@ -77,12 +77,16 @@ describe('Entries helpers', () => {
         reportableSiteName: 'ReportClinic1',
         testDate: '2023-05-02T00:00:00Z',
         transferredBy: 'testuser',
-        transferStatusLogData:
-          '{"siteId":261,"reportableSiteId":436,"previousReportableSiteId":261,"comment":"test comment"}',
         transferredOn: '2023-05-02T00:00:00Z',
         sampleClinicianName: 'test clinician',
         sampleExternalId: '123',
         patientData: '{"id": "PATIENT-1"}',
+        transferSiteName: 'TransferClinic',
+        transferOriginSiteName: 'originSiteClinic',
+        transferComment: 'test comment',
+        transferPreviousReportableSiteId: 261,
+        transferReportableSiteId: 436,
+        transferSiteId: 261,
       }
 
       const followUps = [
@@ -112,11 +116,11 @@ describe('Entries helpers', () => {
           resultId: 123,
           event: 'transferEvent',
           name: 'Transferred Away',
-          siteName: 'ReportClinic1',
+          siteName: 'TransferClinic',
           updatedOn: '2023-05-02T00:00:00Z',
           comment: 'test comment',
           transferredBy: 'testuser',
-          originSiteName: null,
+          originSiteName: 'originSiteClinic',
         },
         {
           id: 456,
@@ -214,15 +218,13 @@ describe('Entries helpers', () => {
     it('should generate TRANSFERRED.AWAY when siteId equals previousReportableSiteId and not reportableSiteId', () => {
       const data = {
         id: 123,
-        transferStatusLogData: JSON.stringify({
-          siteId: 1,
-          reportableSiteId: 2,
-          previousReportableSiteId: 1,
-        }),
         transferredBy: 'user1',
         transferredOn: '2023-01-01T00:00:00Z',
         reportableSiteExternalId: 'SiteId1',
         reportableSiteName: 'SiteName1',
+        transferPreviousReportableSiteId: 1,
+        transferReportableSiteId: 2,
+        transferSiteId: 1,
       }
 
       const expectedOutput = {
@@ -250,15 +252,13 @@ describe('Entries helpers', () => {
       const userSiteIds = [labSiteId, initialClinicSiteId, transferToClinicSiteId]
       const data = {
         id: 123,
-        transferStatusLogData: JSON.stringify({
-          siteId: labSiteId,
-          reportableSiteId: transferToClinicSiteId,
-          previousReportableSiteId: initialClinicSiteId,
-        }),
         transferredBy: 'user1',
         transferredOn: '2023-01-01T00:00:00Z',
         reportableSiteExternalId: 'SiteId1',
         reportableSiteName: 'SiteName1',
+        transferPreviousReportableSiteId: initialClinicSiteId,
+        transferReportableSiteId: transferToClinicSiteId,
+        transferSiteId: labSiteId,
       }
 
       const expectedOutput = {
@@ -266,7 +266,7 @@ describe('Entries helpers', () => {
         previousReportableSiteId: initialClinicSiteId,
         reportableSiteId: transferToClinicSiteId,
         resultId: 123,
-        siteId: 1,
+        siteId: initialClinicSiteId,
         comment: undefined,
         siteExternalId: 'SiteId1',
         siteName: 'SiteName1',
