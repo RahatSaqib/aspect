@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
-  countAllAwaitingTreatment,
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
@@ -116,7 +115,6 @@ async function fetchEntriesServiceHandler(request) {
     )
   }
 
-  const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
   // get origin Ids for each result
   const transformedSamples = transformSampleResponse(query, samples)
 
@@ -146,10 +144,12 @@ async function fetchEntriesServiceHandler(request) {
     ['desc']
   )
 
+  const awaitingTreatment = _.countBy(entries, 'requiresFollowUp')
+
   return {
     ok: !!entries,
     total: _.size(entries),
-    awaitingTreatment: awaitingTreatment.count,
+    awaitingTreatment: awaitingTreatment.true || 0,
     data: entries,
   }
 }
