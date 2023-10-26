@@ -34,7 +34,7 @@ function buildHierarchy(geo, sites) {
 
   // Add extra unique states and lgas to match sites with no state or lga associated
   lgas.push({ lgaId: 'NO_LGA', stateId: 'NO_STATE', countryId })
-  states.forEach(s => lgas.push({ lgaId: `STATE_${s.stateId}_NO_LGA`, stateId: s.stateId }))
+  lgas.push(...states.map(s => ({ lgaId: `STATE_${s.stateId}_NO_LGA`, stateId: s.stateId })))
   states.push({ stateId: 'NO_STATE', countryId })
 
   // Assign unique matching lga id and state id to sites with no state or lga associated
