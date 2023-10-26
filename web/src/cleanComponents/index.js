@@ -1,3 +1,4 @@
+import AspectSelect from './AspectSelect'
 import AssayMultiSelect from './AssayMultiSelect'
 import AssaySelect from './AssaySelect'
 import AssayTypeSelect from './AssayTypeSelect'
@@ -97,6 +98,7 @@ import TagSelect from './TagSelect'
 import TimezoneSelect from './TimezoneSelect'
 
 export {
+  AspectSelect,
   AssaySelect,
   AssayTypeSelect,
   ConnectorStatusSelect,
