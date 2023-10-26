@@ -136,6 +136,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
   let updatedQuery = query
   if (query.notificationWithErrors)
     updatedQuery = { ...updatedQuery, webhookError: 'Error', emailError: 'Error', smsError: 'Error' }
+
   const baseQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
     .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
@@ -183,20 +184,19 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
       `),
       knex.raw(`
       CASE 
-          WHEN ntc.name='Result-Based' THEN JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))
-          ELSE ''
-      END as patientId,
-      CASE 
-          WHEN ntc.name='Result-Based' THEN s.externalId
-          ELSE ''
-      END as sampleId,
-      CASE 
-          WHEN ntc.name='Report-Based' THEN rpt.name
-          ELSE ''
-      END as reportName
-  `),
+        WHEN ntc.name='Result-Based' THEN 
+          JSON_OBJECT(
+            'patientId', JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")),
+            'sampleId', s.externalId
+          )
+        WHEN ntc.name='Report-Based' THEN 
+          JSON_OBJECT(
+            'reportName', rpt.name
+          )
+        ELSE JSON_OBJECT()
+      END as data
+      `),
     ])
-    // .whereRaw('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
     .count({
       webhookSent: knex.raw(`
         DISTINCT

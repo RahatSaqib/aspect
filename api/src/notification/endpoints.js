@@ -20,6 +20,7 @@ const { getHistoryById, getAllHistory } = require('./history')
 const deleteNotification = require('./deleteNotification')
 const listPlaceholders = require('./listPlaceholders')
 const { listNotificationCategoryType, listNotificationType } = require('./listSelect')
+const { notificationHistoryQuery, notificationHistoryResponse } = require('./history/validations')
 
 const routes = [
   {
@@ -75,13 +76,7 @@ const routes = [
       auth: { scope: ['notification'] },
       validate: {
         query: {
-          sampleId: Joi.string().allow(null, '').description('The sample id'),
-          patientId: Joi.string().allow(null, '').description('The patient id'),
-          date: Joi.date().allow(null).description('The creation date of the notification log'),
-          notificationTypeName: Joi.string().allow(null, '').description('Notification Type Category name'),
-          notificationName: Joi.string().allow(null, '').description('Notification Type external Id'),
-          reportName: Joi.string().allow(null, '').description('Report Name'),
-          notificationWithErrors: Joi.bool().allow(null).description('Error in SMS,Email or webhook Notification'),
+          ...notificationHistoryQuery,
           ...validateSortPageParams(),
         },
       },
@@ -96,33 +91,7 @@ const routes = [
             .allow(null)
             .items(
               Joi.object().keys({
-                id: Joi.number().description('id'),
-                webhookSent: Joi.number().description('The number of webhook notification sent'),
-                webhookWithErrors: Joi.number().description('The number of webhook notification sent but with errors'),
-                webhookPending: Joi.number().description('The number of webhook notification pending to be sent'),
-                smsSent: Joi.number().description('The number of sms notification sent'),
-                smsWithErrors: Joi.number().description('The number of sms notification sent'),
-                smsPending: Joi.number().description('The number of sms notification sent'),
-                emailSent: Joi.number().description('The number of email notification sent'),
-                emailWithErrors: Joi.number().description('The number of email notification sent with errors'),
-                emailPending: Joi.number().description('The number of email notification pending to be send'),
-                date: Joi.date().description('The date notification was sent or received'),
-                notificationTypeName: Joi.string().allow(null, '').description('Notification Type Category name'),
-                notificationName: Joi.string().allow(null, '').description('Notification Type external Id'),
-                reportName: Joi.string().allow(null, '').description('Report Name'),
-                issueId: Joi.number().allow(null).description(`Notification's issueId`),
-                resultId: Joi.number().allow(null).description(`Notification's resultId`),
-                sampleId: Joi.alternatives().allow(null, '').try(Joi.number(), Joi.string()).description('Sample id'),
-                patientId: Joi.string().allow(null, '').description('The patient Id'),
-                emailRecipients: Joi.array()
-                  .allow(null)
-                  .description('Comma-separated person names who get notification email'),
-                smsRecipients: Joi.array()
-                  .allow(null)
-                  .description('Comma-separated person names who get notification sms'),
-                webhookRecipients: Joi.array()
-                  .allow(null)
-                  .description('Comma-separated url who get notification the webhook'),
+                ...notificationHistoryResponse,
               })
             ),
         }),
