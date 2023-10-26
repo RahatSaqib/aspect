@@ -70,6 +70,7 @@ import {
   formatDataByGraphType,
   formatDateToYYYYMMDD,
   fillData,
+  DonutGraph,
 } from './Graphs'
 import ImplementingPartnerSelect from './ImplementingPartnerSelect'
 import InputPassword from './InputPassword'
@@ -194,4 +195,5 @@ export {
   formatDataByGraphType,
   formatDateToYYYYMMDD,
   fillData,
+  DonutGraph,
 }
