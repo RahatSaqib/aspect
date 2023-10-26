@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 import form from '../../../components/Form/messages'
-import { resultCategory, assay, report } from '../../../messages'
+import { assay, report, resultCategory } from '../../../messages'
 
 const result = defineMessages({
   gxEbolaGPDetectedNPDetected: {
@@ -1054,8 +1054,8 @@ export default defineMessages({
     id: 'pages.ReportIndex.genxpert_tb_workload_report',
     defaultMessage: 'GeneXpert TB Workload',
   },
-  devices_and_sites_overview: {
-    id: 'pages.ReportIndex.devices_and_sites_overview',
+  xpert_site_summary_report: {
+    id: 'pages.ReportIndex.xpert_site_summary_report',
     defaultMessage: 'Devices and Sites Overview',
   },
   result_notifications: {

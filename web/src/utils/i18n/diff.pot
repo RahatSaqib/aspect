@@ -757,7 +757,7 @@ msgid "An email has been sent to you"
 msgstr ""
 
 #: ./extracted_strings.json
-#. [pages.ReportIndex.devicesAndSites_description]
+#. [pages.ReportIndex.xpertSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 msgid "An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called \"All Devices\""
@@ -3313,11 +3313,11 @@ msgid "Devices With Service Interruption"
 msgstr ""
 
 #: ./extracted_strings.json
-#. [pages.ReportIndex.devicesAndSitesOverview]
+#. [pages.ReportIndex.xpertSiteSummaryReport]
 #. defaultMessage is:
 #. Devices and Sites Overview
 #: ./extracted_strings.json
-#. [pages.ReportIndex.devices_and_sites_overview]
+#. [pages.ReportIndex.xpert_site_summary_report]
 #. defaultMessage is:
 #. Devices and Sites Overview
 msgid "Devices and Sites Overview"
