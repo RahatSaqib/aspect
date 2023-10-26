@@ -17,6 +17,7 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
     .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'st.id', 'g.stateId')
+    .leftOuterJoin('Lga as lg', 'lg.id', 'g.lgaId')
     .modify(
       addConstraints,
       dataConstraints,
