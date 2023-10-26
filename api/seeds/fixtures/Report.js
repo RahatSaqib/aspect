@@ -524,9 +524,9 @@ const geneXpertTBWorkloadReport = {
 }
 
 const devicesAndSitesOverview = {
-  name: 'GeneXpert Devices and Sites Overview',
+  name: 'Xpert Site Summary Report',
   description:
-    'An overview of all GeneXpert devices in the system, information about inventory, and aggregated test results and errors per device.',
+    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".',
   i18nKey: 'devicesAndSitesOverview',
   i18nKeyDescription: 'devicesAndSites_description',
   externalId: 'devices_and_sites_overview',
