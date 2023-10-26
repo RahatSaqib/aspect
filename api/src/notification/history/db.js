@@ -134,8 +134,7 @@ const getNotificationHistory = async (notificationTypeId, dataConstraints, query
 }
 const getAllNotificationHistory = async (dataConstraints, query) => {
   let updatedQuery = query
-  if (query.notificationWithErrors)
-    updatedQuery = { ...updatedQuery, webhookError: 'Error', emailError: 'Error', smsError: 'Error' }
+  if (query.notificationWithErrors) updatedQuery = { ...updatedQuery, Error: 'Error' }
 
   const baseQuery = knex('Notification as n')
     .innerJoin('NotificationType as nt', 'nt.id', 'n.notificationTypeId')
@@ -155,19 +154,17 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .leftJoin('Sample as s', 's.id', 'r.sampleId')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .modify(filterDateRangeParams, query, 'n.createdOn')
-    .modify(filterParams, updatedQuery, {
-      notificationName: 'nt.name',
-      notificationTypeName: 'ntc.name',
-      sampleId: 's.externalId',
-      webhookError: 'mswm.externalId',
-      emailError: 'msem.externalId',
-      smsError: 'mssms.externalId',
-    })
 
   let getItems = buildReportBasedNotificationHistory(baseQuery, query)
 
   getItems
     .modify(sortPageParams, query, 'n.createdOn')
+    .modify(filterParams, updatedQuery, {
+      notificationName: 'nt.name',
+      notificationTypeName: 'ntc.name',
+      sampleId: 's.externalId',
+      Error: ['mswm.externalId', 'msem.externalId', 'mssms.externalId'],
+    })
     .select([
       'n.createdOn as date',
       'ntc.name as notificationTypeName',
