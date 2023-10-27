@@ -1,6 +1,6 @@
 const Joi = require('@hapi/joi')
 const { getNotificationTriggerSubscriptions } = require('./subscriptions')
-const { asyncHandler, validateSortPageParams } = require('../routes')
+const { asyncHandler, validateSortPageParams, validateDateRangeParams } = require('../routes')
 const listNotifications = require('./listNotifications')
 const { clearCache } = require('./service')
 const { exportNotifications } = require('./serviceReports')
@@ -78,6 +78,7 @@ const routes = [
         query: {
           ...notificationHistoryQuery,
           ...validateSortPageParams(),
+          ...validateDateRangeParams(),
         },
       },
       response: {
