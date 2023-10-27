@@ -13,28 +13,11 @@ const cssClasses = classnames.bind(styles)
 
 const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value }) => {
   const { formatMessage } = useI18n()
-  const [modalConfiguration, setModalConfiguration] = useState({
-    showDialog: false,
-    sent,
-    withErrors,
-    pending,
-    recipients,
-    value,
-  })
-  const handleClick = () => {
-    setModalConfiguration({
-      showDialog: !modalConfiguration.showDialog,
-      sent,
-      withErrors,
-      pending,
-      recipients,
-      value,
-    })
-  }
+  const [open, setOpen] = useState(false)
 
   return (
     <Fragment>
-      {!modalConfiguration.value ? (
+      {!value ? (
         <div style={{ textAlign: 'center' }}>-</div>
       ) : (
         <AspectTooltip
@@ -54,15 +37,15 @@ const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value })
           className={cssClasses('details_statusTooltip')}
         >
           <NotificationDetailModal
-            {...modalConfiguration}
-            onClose={() => {
-              setModalConfiguration({
-                ...modalConfiguration,
-                showDialog: false,
-              })
-            }}
+            showDialog={open}
+            sent={sent}
+            withErrors={withErrors}
+            pending={pending}
+            recipients={recipients}
+            value={value}
+            onClose={() => setOpen(false)}
           />
-          <Button className={cssClasses({ hasError: withErrors })} onClick={handleClick}>
+          <Button className={cssClasses({ hasError: withErrors })} onClick={() => setOpen(true)}>
             {sent}/{sent + withErrors + pending}
             <IconProvider icon="MdKeyboardArrowDown" className={cssClasses('popover-cell__icon')} />
           </Button>
