@@ -2,6 +2,9 @@ const Joi = require('@hapi/joi')
 
 const notificationHistoyCommomFields = {
   sampleId: Joi.string().allow(null, '').description('The sample id'),
+  countryId: Joi.string().allow(null, '').description('The country id'),
+  notificationTypeId: Joi.string().allow(null, '').description('The country id'),
+  notificationTypeCategoryId: Joi.string().allow(null, '').description('The country id'),
   patientId: Joi.string().allow(null, '').description('The patient id'),
   date: Joi.date().allow(null).description('The creation date of the notification log'),
   notificationTypeName: Joi.string().allow(null, '').description('Notification Type Category name'),

@@ -162,6 +162,8 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .modify(filterParams, updatedQuery, {
       notificationName: 'nt.name',
       notificationTypeName: 'ntc.name',
+      notificationTypeCategoryId: 'nt.notificationTypeCategoryId',
+      notificationTypeId: 'n.notificationTypeId',
       sampleId: 's.externalId',
       Error: ['mswm.externalId', 'msem.externalId', 'mssms.externalId'],
     })
