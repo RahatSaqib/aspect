@@ -62,10 +62,11 @@ function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds })
       .select(
         getMonthYearField(knex, 'r.startedOn', 'yearAndMonth'),
         'g.stateId',
-        'st.name as locationName' // state name
+        'g.lgaId',
+        query.lgaId ? 'lg.name as locationName' : 'st.name as locationName'
       )
       .whereNotNull('g.stateId')
-      .groupBy('g.stateId', 'yearAndMonth')
+      .groupBy('g.stateId', 'g.lgaId', 'yearAndMonth')
     return baseQuery
   }
 
@@ -148,13 +149,14 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const groupedSince5YearsAgo = _.reduce(
     rawSince5YearsAgo,
     (acc, item) => {
-      const { stateId, yearAndMonth, locationName } = item
+      const { stateId, lgaId, yearAndMonth, locationName } = item
+      const key = query.lgaId ? lgaId : stateId
       const [year, month] = yearAndMonth.split('-')
-      acc[stateId] = acc[stateId] || { locationName }
-      acc[stateId][year] = acc[stateId][year] || {}
-      acc[stateId][year][month] = acc[stateId][year][month] || { ...emptyCounts }
+      acc[key] = acc[key] || { locationName }
+      acc[key][year] = acc[key][year] || {}
+      acc[key][year][month] = acc[key][year][month] || { ...emptyCounts }
       counterNames.forEach(counterName => {
-        acc[stateId][year][month][counterName] += item[counterName]
+        acc[key][year][month][counterName] += item[counterName]
       })
       return acc
     },
@@ -163,10 +165,11 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const groupedLast24h = _.reduce(
     rawLast24h,
     (acc, item) => {
-      const { stateId, locationName } = item
-      acc[stateId] = acc[stateId] || { locationName, ...emptyCounts }
+      const { stateId, lgaId, locationName } = item
+      const key = query.lgaId ? lgaId : stateId
+      acc[key] = acc[key] || { locationName, ...emptyCounts }
       counterNames.forEach(counterName => {
-        acc[stateId][counterName] += item[counterName]
+        acc[key][counterName] += item[counterName]
       })
       return acc
     },
@@ -174,10 +177,10 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   )
   const data = _.reduce(
     _.keys(groupedSince5YearsAgo),
-    (acc, stateId) => {
-      const byState = groupedSince5YearsAgo[stateId]
-      const byCurrYear = byState[currentYear]
-      const byPrevYear = byState[previousYear]
+    (acc, key) => {
+      const byLocation = groupedSince5YearsAgo[key]
+      const byCurrYear = byLocation[currentYear]
+      const byPrevYear = byLocation[previousYear]
       const currYearTotals = { ...emptyCounts }
       const currYearMeanPerMonth = { ...emptyCounts }
       const prevYearMeanPerMonth = { ...emptyCounts }
@@ -187,13 +190,13 @@ async function listGx10CTrendsProvincial({ auth, query }) {
         /**
          *
          */
-        _.keys(byState)
+        _.keys(byLocation)
           .filter(key => key !== 'locationName')
           .forEach(key => {
             const year = +key
             byYear[year] = byYear[year] || { ...emptyCounts }
-            _.keys(byState[year]).forEach(month => {
-              byYear[year][counterName] += byState[year][month][counterName]
+            _.keys(byLocation[year]).forEach(month => {
+              byYear[year][counterName] += byLocation[year][month][counterName]
               if (year === currentYear) {
                 currYearTotals[counterName] += byCurrYear[month][counterName]
               } else if (year === previousYear) {
@@ -223,8 +226,8 @@ async function listGx10CTrendsProvincial({ auth, query }) {
       acc = [
         ...acc,
         {
-          stateId,
-          locationName: byState.locationName,
+          stateId: key,
+          locationName: byLocation.locationName,
           currYearTotals,
           currYearMeanPerMonth,
           prevYearMeanPerMonth,

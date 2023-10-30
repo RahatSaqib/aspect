@@ -329,6 +329,8 @@ const messages = {
       id: 'forms.formSectionHeader.date',
       defaultMessage: 'Date',
     },
+    noAssociatedState: { id: 'p.PkDashboard.noAssociatedState', defaultMessage: 'No Associated State' },
+    noAssociatedLga: { id: 'p.PkDashboard.noAssociatedLga', defaultMessage: 'No Associated LGA' },
   }),
 }
 
