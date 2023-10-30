@@ -154,7 +154,6 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .leftJoin('Sample as s', 's.id', 'r.sampleId')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .modify(filterDateRangeParams, query, 'n.createdOn')
-    .modify(sortPageParams, query, 'n.createdOn')
     .modify(filterParams, updatedQuery, {
       notificationName: 'nt.name',
       notificationTypeName: 'ntc.name',
@@ -256,6 +255,8 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     getItems = getItems.whereRaw('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
   }
   const getCount = knex.count('* as count').from(getItems.clone().as('mainQuery')).first()
+
+  getItems.modify(sortPageParams, query, 'n.createdOn')
 
   return { getCount, getItems }
 }
