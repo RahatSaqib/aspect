@@ -155,6 +155,8 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .modify(filterDateRangeParams, query, 'n.createdOn')
 
+  const getCount = baseQuery.clone().countDistinct('n.id as count').first()
+
   let getItems = buildReportBasedNotificationHistory(baseQuery, query)
 
   getItems
@@ -172,6 +174,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
       'ntc.name as notificationTypeName',
       'nt.name as notificationName',
       'r.id as resultId',
+      'n.issueId',
       knex.raw(`
       GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
       `),
@@ -256,7 +259,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     getItems = getItems.whereRaw('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
   }
 
-  return { getItems }
+  return { getCount, getItems }
 }
 
 const buildResultBasedNotificationHistoryCount = query => {

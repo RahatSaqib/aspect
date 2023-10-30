@@ -25,9 +25,9 @@ const getAllHistory = async request => {
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const { getItems } = await getAllNotificationHistory(dataConstraints, query)
+  const { getCount, getItems } = await getAllNotificationHistory(dataConstraints, query)
 
-  const [data] = await Promise.all([getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
   const items = (data || []).map(item => ({
     ..._.omit(item, ['groupingParam']),
@@ -35,7 +35,7 @@ const getAllHistory = async request => {
     smsRecipients: item.smsRecipients ? item.smsRecipients.split('|') : null,
     data: JSON.parse(item.data),
   }))
-  return { ok: true, total: items.length, data: items }
+  return { ok: true, total, data: items }
 }
 
 module.exports = { getHistoryById, getAllHistory }
