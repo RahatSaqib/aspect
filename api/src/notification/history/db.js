@@ -154,12 +154,6 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .leftJoin('Sample as s', 's.id', 'r.sampleId')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .modify(filterDateRangeParams, query, 'n.createdOn')
-
-  const getCount = baseQuery.clone().countDistinct('n.id as count').first()
-
-  let getItems = buildReportBasedNotificationHistory(baseQuery, query)
-
-  getItems
     .modify(sortPageParams, query, 'n.createdOn')
     .modify(filterParams, updatedQuery, {
       notificationName: 'nt.name',
@@ -169,6 +163,9 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
       sampleId: 's.externalId',
       Error: ['mswm.externalId', 'msem.externalId', 'mssms.externalId'],
     })
+  let getItems = buildReportBasedNotificationHistory(baseQuery, query)
+
+  getItems
     .select([
       'n.createdOn as date',
       'ntc.name as notificationTypeName',
@@ -258,6 +255,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
   if (query.patientId) {
     getItems = getItems.whereRaw('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
   }
+  const getCount = knex.count('* as count').from(getItems.clone().as('mainQuery')).first()
 
   return { getCount, getItems }
 }
