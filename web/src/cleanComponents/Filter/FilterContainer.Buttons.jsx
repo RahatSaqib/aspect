@@ -654,6 +654,7 @@ const PatientId = ({ patientId, remove }) => {
 
   return <Btn lbl={formatMessage(messages.patientId, { patientId })} del={() => remove(['patientId'])} />
 }
+
 const NotificationCategoryType = ({ notificationCategoryTypeId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useNotificationCategoryType()
@@ -668,10 +669,11 @@ const NotificationCategoryType = ({ notificationCategoryTypeId, remove }) => {
   }
   return null
 }
+
 const NotificationType = ({ notificationTypeCategoryId, notificationTypeId, remove }) => {
   const { formatMessage } = useI18n()
   const { data } = useNotificationType(notificationTypeCategoryId)
-  if (data && notificationTypeCategoryId && notificationTypeId) {
+  if (data && notificationTypeId) {
     const name = data.find(i => i.id === notificationTypeId)?.name
     return (
       <Btn
