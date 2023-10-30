@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-25T16:51:39.575Z\n"
+"POT-Creation-Date: 2023-10-30T19:12:22.157Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -3933,7 +3933,6 @@ msgstr "Expand Row"
 #. defaultMessage is:
 #. Expect Back Online
 #: extracted_strings.json
-#| msgid "Repeat Baseline"
 msgid "Expect Back Online"
 msgstr "Expect Back Online"
 
@@ -4446,7 +4445,6 @@ msgstr "GeneXpert Calibration Past Due"
 #. defaultMessage is:
 #. GeneXpert Device Coverage
 #: extracted_strings.json
-#| msgid "GeneXpert Device Coverage (Pending)"
 msgid "GeneXpert Device Coverage"
 msgstr "GeneXpert Device Coverage"
 
@@ -7389,6 +7387,20 @@ msgstr "Next"
 msgid "No"
 msgstr "No"
 
+#. [p.PkDashboard.noAssociatedLga]
+#. defaultMessage is:
+#. No Associated LGA
+#: extracted_strings.json
+msgid "No Associated LGA"
+msgstr "No Associated LGA"
+
+#. [p.PkDashboard.noAssociatedState]
+#. defaultMessage is:
+#. No Associated State
+#: extracted_strings.json
+msgid "No Associated State"
+msgstr "No Associated State"
+
 #. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -9159,7 +9171,6 @@ msgstr "RIF Resistance Rate (%positive results)"
 #. defaultMessage is:
 #. RR Detected
 #: extracted_strings.json
-#| msgid "Detected"
 msgid "RR Detected"
 msgstr "RR Detected"
 
@@ -12785,6 +12796,9 @@ msgstr "Toggle status confirmation"
 msgid "Topic"
 msgstr "Topic"
 
+#. [pages.Status.total]
+#. defaultMessage is:
+#. Total
 #. [legends.Unknown.Total]
 #. defaultMessage is:
 #. Total
