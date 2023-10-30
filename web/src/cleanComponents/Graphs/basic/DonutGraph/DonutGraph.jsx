@@ -18,7 +18,7 @@ function renderStatistic(containerWidth, text, style) {
   </div>`
 }
 
-const DonutGraph = ({ data, graphId, showLabel, graphTitle, total }) => {
+const DonutGraph = ({ data, graphId, showLabel, graphTitle, total, label, tooltip }) => {
   const config = {
     data,
     color: datum => filterColour(data.find(d => d.label === datum.label).id, graphId),
@@ -28,7 +28,11 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total }) => {
           offset: '-50%',
           style: { textAlign: 'center' },
           autoRotate: false,
-          content: obj => (obj.value < 1 ? '' : `${obj.value}%`),
+          content:
+            label ||
+            (obj => {
+              return obj.value < 1 ? '' : `${obj.value}%`
+            }),
         }
       : false, // format for label on top of section
     statistic: {
@@ -55,7 +59,7 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total }) => {
     colorField: 'label',
     radius: 1,
     innerRadius: 0.64,
-    meta: { value: { formatter: v => `${v} %` } }, // format for hover tooltip
+    meta: { value: { formatter: tooltip || (v => `${v} %`) } }, // format for hover tooltip
     animation: false,
     legend: {
       position: 'bottom',

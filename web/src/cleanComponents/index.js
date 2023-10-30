@@ -1,3 +1,4 @@
+import AspectSelect from './AspectSelect'
 import AssayMultiSelect from './AssayMultiSelect'
 import AssaySelect from './AssaySelect'
 import AssayTypeSelect from './AssayTypeSelect'
@@ -69,6 +70,7 @@ import {
   formatDataByGraphType,
   formatDateToYYYYMMDD,
   fillData,
+  DonutGraph,
 } from './Graphs'
 import ImplementingPartnerSelect from './ImplementingPartnerSelect'
 import InputPassword from './InputPassword'
@@ -97,6 +99,7 @@ import TagSelect from './TagSelect'
 import TimezoneSelect from './TimezoneSelect'
 
 export {
+  AspectSelect,
   AssaySelect,
   AssayTypeSelect,
   ConnectorStatusSelect,
@@ -192,4 +195,5 @@ export {
   formatDataByGraphType,
   formatDateToYYYYMMDD,
   fillData,
+  DonutGraph,
 }

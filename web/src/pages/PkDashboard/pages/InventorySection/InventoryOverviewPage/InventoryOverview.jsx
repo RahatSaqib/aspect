@@ -8,20 +8,31 @@ import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 import useInventoryOverview from './useInventoryOverview'
 
-function transformInventory(data) {
-  return data?.map(item => ({
-    ...item,
-    name: item[item.type],
-    children: transformInventory(item.children ?? []),
-  }))
-}
-
 const InventoryOverviewPage = () => {
   const { formatMessage } = useI18n()
   const [filter, setFilter] = useState({
     minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
+
+  function getInventoryLabel(item, isState) {
+    if (item.type && item[item.type]) return item.type && item[item.type]
+    return isState ? formatMessage(messages.noAssociatedState) : formatMessage(messages.noAssociatedLga)
+  }
+
+  function transformInventory(data) {
+    const isState = data?.some(item => item.type === 'state')
+    return data?.map(item => ({
+      ...item,
+      name: getInventoryLabel(item, isState),
+      children: transformInventory(item.children ?? []),
+      usedLastSixMonths: item.type === 'warehouse' ? '-' : item.usedLastSixMonths ?? 0,
+      daysOfInventoryLeft: item.type === 'warehouse' ? '-' : item.daysOfInventoryLeft ?? 0,
+      usedInDateRange: item.type === 'warehouse' ? '-' : item.usedInDateRange ?? 0,
+      dailyConsumptionRate: item.type === 'warehouse' ? '-' : item.dailyConsumptionRate ?? 0,
+    }))
+  }
+
   const [consumableExternalId, setConsumableExternalId] = useState()
 
   const { isLoading, data } = useInventoryOverview(
@@ -53,7 +64,16 @@ const InventoryOverviewPage = () => {
         </>
       }
     >
-      {isLoading ? <LinearProgress /> : <NestedTable columns={columns} rows={transformInventory(data)} />}
+      {isLoading ? (
+        <LinearProgress />
+      ) : (
+        <NestedTable
+          columns={columns}
+          rows={transformInventory(data)}
+          allowPagination={false}
+          allowCustomOrder={false}
+        />
+      )}
     </PkPage>
   )
 }
