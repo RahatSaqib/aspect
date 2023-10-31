@@ -2,6 +2,9 @@
 import React, { useEffect, useState } from 'react'
 import { CircularProgress, Box, CardContent, Card } from '@mui/material'
 import { useFormikContext } from 'formik'
+import keys from 'lodash/keys'
+import reduce from 'lodash/reduce'
+import trim from 'lodash/trim'
 import { useMutation, useQuery } from 'react-query'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
@@ -53,6 +56,16 @@ const AspectResultDetail = () => {
         data.resultCategory2 = `${data.resultCategory2}`
       }
       data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
+      data.allResistances = trim(
+        reduce(
+          keys(data.resultData.allResistances),
+          (acc, key) => {
+            acc = [...acc, `${key}: ${data.resultData.allResistances[key]}`]
+            return acc
+          },
+          []
+        ).join('\n')
+      )
       // This is for the title, so wee need the colons
       setPatientId(`: ${data.patientId}`)
 
