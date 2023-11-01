@@ -63,6 +63,7 @@ const sentryPlugins =
             client: {
               dsn: config.sentry.dsn,
               environment: config.environment,
+              beforeSend: config.sentry.beforeSend,
               ignoreErrors: config.sentry.ignoreErrors,
               sanitizeKeys: config.sentry.sanitizeKeys,
             },

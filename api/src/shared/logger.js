@@ -92,6 +92,7 @@ if (config.sentry?.dsn && !config.isDevelopment && config.sentry?.logLevel)
       config: {
         dsn: config.sentry.dsn,
         environment: config.environment,
+        beforeSend: config.sentry.beforeSend,
         ignoreErrors: config.sentry.ignoreErrors,
         sanitizeKeys: config.sentry.sanitizeKeys,
       },
