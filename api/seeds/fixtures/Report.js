@@ -523,14 +523,14 @@ const geneXpertTBWorkloadReport = {
   ],
 }
 
-const xpertSiteSummaryReport = {
-  name: 'Xpert Site Summary Report',
+const deviceAndSiteSummaryReport = {
+  name: 'Device and Site Summary Report',
   description:
     'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".',
-  i18nKey: 'xpertSiteSummaryReport',
-  i18nKeyDescription: 'xpertSiteSummaryReport_description',
-  externalId: 'xpert_site_summary_report',
-  fileName: 'XpertSiteSummaryReport',
+  i18nKey: 'deviceAndSiteSummaryReport',
+  i18nKeyDescription: 'xdeviceAndSiteSummaryReport_description',
+  externalId: 'device_and_site_summary_report',
+  fileName: 'DeviceAndSiteSummaryReport',
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 150,
@@ -554,7 +554,7 @@ const xpertSiteSummaryReport = {
      */
     {
       sortOrder: 1,
-      moduleName: 'device/serviceReports/xpertSiteSummaryReportReport',
+      moduleName: 'device/serviceReports/deviceAndSiteSummaryReport',
       functionName: 'getInventoryData',
       query: {
         hasResults: 1,
@@ -726,7 +726,7 @@ module.exports = {
   xdrDevicesSummary,
   usageStats,
   errorRatesReport,
-  xpertSiteSummaryReport,
+  deviceAndSiteSummaryReport,
   dataExtract,
   resultNotificationsReport,
   inventoryNoStock,

@@ -1054,9 +1054,9 @@ export default defineMessages({
     id: 'pages.ReportIndex.genxpert_tb_workload_report',
     defaultMessage: 'GeneXpert TB Workload',
   },
-  xpert_site_summary_report: {
-    id: 'pages.ReportIndex.xpert_site_summary_report',
-    defaultMessage: 'Devices and Sites Overview',
+  device_and_site_summary_report: {
+    id: 'pages.ReportIndex.device_and_site_summary_report',
+    defaultMessage: 'Device and Site Sumary',
   },
   result_notifications: {
     id: 'pages.ReportIndex.result_notifications',

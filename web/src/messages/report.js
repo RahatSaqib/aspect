@@ -263,12 +263,12 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.usageStatistics_description',
     defaultMessage: 'Shows stats about the use of the system.',
   },
-  xpertSiteSummaryReport: {
-    id: 'pages.ReportIndex.XpertSiteSummaryReport',
+  deviceAndSiteSummaryReport: {
+    id: 'pages.ReportIndex.DeviceAndSiteSummaryReport',
     defaultMessage: 'Xpert Site Summary Report',
   },
-  xpertSiteSummaryReport_description: {
-    id: 'pages.ReportIndex.xpertSiteSummaryReport_description',
+  deviceAndSiteSummaryReport_description: {
+    id: 'pages.ReportIndex.DeviceAndSiteSummaryReport_description',
     defaultMessage:
       'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
   },
