@@ -134,6 +134,10 @@ const messages = defineMessages({
     id: 'pages.Notifications.table.patientId',
     defaultMessage: 'Patient ID',
   },
+  reportName: {
+    id: 'pages.Notifications.table.reportName',
+    defaultMessage: 'Report Name',
+  },
   eventsTableWebhookSent: {
     id: 'pages.Notifications.table.webhookSentHeader',
     defaultMessage: 'Webhook Sent',
@@ -145,6 +149,10 @@ const messages = defineMessages({
   eventsTableSmsSent: {
     id: 'pages.Notifications.table.smsSentHeader',
     defaultMessage: 'SMS Sent',
+  },
+  clickToResult: {
+    id: 'pages.Notifications.table.clickToResult',
+    defaultMessage: 'Click here to go to the result',
   },
 })
 

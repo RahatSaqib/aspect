@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo, useState } from 'react'
-import { Box, Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableRow } from '@mui/material'
+import { Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableRow } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
@@ -12,9 +12,9 @@ import { NOTIFICATION_LOG_ENDPOINT, NOTIFICATION_LOG_KEY } from '../../../hooks/
 import useI18n from '../../../hooks/useI18n'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { EmailCell, SMSCell, WebhookCell } from '../NotificationHistoryPage/ErrorCell/NotificationCells'
+import { DataCell } from './DataCell'
 import messages from './messages'
 import styles from './NotificationLogsPage.css'
-import AspectLink from '../../../components/AspectLink'
 
 const cssClasses = classnames.bind(styles)
 
@@ -59,13 +59,13 @@ const NotificationHistoryPage = () => {
       width: 10,
     },
     {
-      id: 'notificationTypeName',
-      label: intl.formatMessage(messages.notificationsTableHeaderType),
+      id: 'notificationName',
+      label: intl.formatMessage(messages.notificationsTableHeaderCategory),
       width: 10,
     },
     {
-      id: 'notificationName',
-      label: intl.formatMessage(messages.notificationsTableHeaderCategory),
+      id: 'notificationTypeName',
+      label: intl.formatMessage(messages.notificationsTableHeaderType),
       width: 10,
     },
     {
@@ -119,18 +119,7 @@ const NotificationHistoryPage = () => {
                         <TableCell>{row.notificationTypeName}</TableCell>
                         <TableCell>{row.notificationName}</TableCell>
                         <TableCell>
-                          {row.data.patientId ? (
-                            <AspectLink
-                              className={{ active: cssClasses('result_link') }}
-                              to={`/browse/result/${row.resultId}`}
-                            >
-                              {`${intl.formatMessage(messages.patientId)}: ${row.data.patientId}`}
-                            </AspectLink>
-                          ) : null}
-                          {row.data.sampleId ? (
-                            <Box>{`${intl.formatMessage(messages.sampleId)}: ${row.data.sampleId}`}</Box>
-                          ) : null}
-                          {row.data.reportName ?? null}
+                          <DataCell {...row.data} resultId={row.resultId} />
                         </TableCell>
                         <TableCell>
                           <EmailCell item={row} value={row.emailRecipients} />
