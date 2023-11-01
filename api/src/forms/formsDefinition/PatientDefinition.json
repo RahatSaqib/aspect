@@ -10,7 +10,8 @@
       "gxAlertDbColumn": "PatientName",
       "caption": "Name",
       "i18nKeyCaption": "Namei18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "source": "patientData.PatientName"
     },
     {
       "id": 2,
@@ -21,7 +22,8 @@
       "order": 2,
       "caption": "Name",
       "i18nKeyCaption": "Namei18nCaptionKey",
-      "controlType": "textBox"
+      "controlType": "textBox",
+      "source": "patientData.PatientSurname"
     },
     {
       "id": 3,
@@ -83,7 +85,7 @@
       "i18nKey": "PatientPhoneNumberi18nkey",
       "payloadOriginPath": "patient.phone",
       "payloadDestinationPath": "patient.phone",
-      "fieldType": "patientCellphone",
+      "fieldType": "phone",
       "gxAlertDbColumn": "PatientPhone",
       "order": 2,
       "caption": "Cellphone number",
@@ -94,7 +96,8 @@
           "validationType": "regex",
           "regex": "\\(?([0-9]{3})\\)?([ .-]?)([0-9]{3})\\2([0-9]{4})"
         }
-      ]
+      ],
+      "source": "patientData.patientPhone"
     }
   ],
   "refForms": []

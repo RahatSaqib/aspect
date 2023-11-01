@@ -1,7 +1,14 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@mui/material'
 import { useQuery } from 'react-query'
-import { StateAutocomplete, Loading, getItemsForTrendsGraph, LineGraph, fillData } from '../../../../../cleanComponents'
+import {
+  StateAutocomplete,
+  Loading,
+  getItemsForTrendsGraph,
+  LineGraph,
+  fillData,
+  AspectSelect,
+} from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage } from '../../../../../messages'
@@ -16,12 +23,14 @@ const ProvincialXDRTrendsFQPage = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
   const [states, setState] = useState([])
+  const [lgas, setLgas] = useState([])
+
   const [graphData, setGraphData] = useState(false)
   const [tableData, setTableData] = useState([])
 
-  const mergedParams = states.length
-    ? [...endpointParams, ...states.map(v => ({ stateId: v.id }))]
-    : [...endpointParams]
+  const mergedParams = endpointParams
+    .concat(lgas.map(i => ({ lgaId: i.id })))
+    .concat(states.map(i => ({ stateId: i.id })))
 
   const { isLoading, data } = useQuery(
     ['ProvincialDiagnosisTrendPage_Xdr_FLQ', { mergedParams }],
@@ -38,7 +47,7 @@ const ProvincialXDRTrendsFQPage = () => {
         item.trends.map(trend => grouped.push({ id: item.locationName, year: trend.year, value: trend.cntAll }))
       )
       const graph = fillData(grouped).sort((a, b) => a.year - b.year)
-      const table = getItemsForTrendsGraph(data.data, states).tableData
+      const table = getItemsForTrendsGraph(data.data, states, lgas).tableData
 
       setGraphData(graph)
       setTableData(table)
@@ -50,13 +59,27 @@ const ProvincialXDRTrendsFQPage = () => {
     <PkPage
       title={formatMessage(messages.provincialDistrictFqrDiagnosisTrends)}
       filters={
-        <StateAutocomplete
-          fullWidth
-          countryId={user.countryId}
-          value={states}
-          onChange={(_, newValue) => setState(newValue)}
-          label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
-        />
+        <>
+          <StateAutocomplete
+            fullWidth
+            countryId={user.countryId}
+            value={states}
+            onChange={(_, newValue) => {
+              setState(newValue)
+              setLgas([])
+            }}
+            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+          />
+          <AspectSelect
+            multiple
+            fullWidth
+            itemToString={i => i?.name ?? ''}
+            options={states.reduce((p, c) => [...p, ...c.lgas], [])}
+            value={lgas}
+            onChange={v => setLgas(v)}
+            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+          />
+        </>
       }
     >
       {isLoading ? (

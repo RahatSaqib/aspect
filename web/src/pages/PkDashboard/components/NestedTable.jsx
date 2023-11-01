@@ -42,11 +42,11 @@ function getComparator(order, orderBy) {
     : (a, b) => -descendingComparator(a, b, orderBy)
 }
 
-const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
+const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = true, allowCustomOrder = true }) => {
   const [page, setPage] = useState(0)
   const [rowsPerPage, setRowsPerPage] = useState(perPage)
-  const [order, setOrder] = useState('asc')
-  const [orderBy, setOrderBy] = useState(columns[0].prop)
+  const [order, setOrder] = useState(allowCustomOrder ? 'asc' : null)
+  const [orderBy, setOrderBy] = useState(allowCustomOrder ? columns[0].prop : null)
   const [open, setOpen] = useState(-1)
   const colors = isDetail ? ['#dadbdf', '#e6e6e6'] : ['#eef1f8', '#ffffff']
 
@@ -60,6 +60,10 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
     setPage(0)
   }
 
+  if (rows && allowCustomOrder) rows = rows.sort(getComparator(order, orderBy))
+
+  if (rows && allowPagination) rows = rows.slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
+
   return rows ? (
     <Table style={{ tableLayout: 'fixed' }}>
       {!isDetail ? (
@@ -67,28 +71,29 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
           <TableRow>
             {columns.map((c, idx) => (
               <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined}>
-                <TableSortLabel
-                  active={orderBy === c.prop}
-                  direction={orderBy === c.prop ? order : 'asc'}
-                  onClick={() => {
-                    const isAsc = orderBy === c.prop && order === 'asc'
-                    setOrder(isAsc ? 'desc' : 'asc')
-                    setOrderBy(c.prop)
-                    setPage(0)
-                  }}
-                >
-                  {c.name}
-                </TableSortLabel>
+                {allowCustomOrder ? (
+                  <TableSortLabel
+                    active={orderBy === c.prop}
+                    direction={orderBy === c.prop ? order : 'asc'}
+                    onClick={() => {
+                      const isAsc = orderBy === c.prop && order === 'asc'
+                      setOrder(isAsc ? 'desc' : 'asc')
+                      setOrderBy(c.prop)
+                      setPage(0)
+                    }}
+                  >
+                    {c.name}
+                  </TableSortLabel>
+                ) : (
+                  c.name
+                )}
               </TableCell>
             ))}
           </TableRow>
         </TableHead>
       ) : null}
       <TableBody>
-        {(rowsPerPage > 0
-          ? rows.sort(getComparator(order, orderBy)).slice(page * rowsPerPage, page * rowsPerPage + rowsPerPage)
-          : rows
-        ).map((row, i) => {
+        {rows.map((row, i) => {
           const hasChildren = row?.children?.length > 0 ?? false
           return (
             <>
@@ -97,7 +102,7 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
                   <TableCell
                     width="10%"
                     scope={i === 0 ? 'row' : undefined}
-                    style={{ paddingLeft: row?.depth * 7.5 }}
+                    style={{ paddingLeft: isDetail ? row?.depth * 20 : null }}
                     key={c.prop}
                     align={i !== 0 ? 'right' : undefined}
                   >
@@ -119,7 +124,14 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
                   <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
                     <Collapse in={open === row.id} timeout="auto" unmountOnExit>
                       <Box sx={{ backgroundColor: colors[i % 2] }}>
-                        <NestedTable perPage={rowsPerPage} columns={columns} isDetail rows={row.children} />
+                        <NestedTable
+                          perPage={rowsPerPage}
+                          columns={columns}
+                          isDetail
+                          rows={row.children}
+                          allowCustomOrder={allowCustomOrder}
+                          allowPagination={allowPagination}
+                        />
                       </Box>
                     </Collapse>
                   </TableCell>
@@ -135,7 +147,7 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10 }) => {
           </TableRow>
         )}
       </TableBody>
-      {rows.length > rowsPerPage ? (
+      {rows.length > rowsPerPage && allowPagination ? (
         <TableFooter>
           <TableRow>
             <TablePagination
