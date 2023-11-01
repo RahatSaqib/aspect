@@ -24,7 +24,6 @@ const InventoryLog = lazy(() => import('./oldPages/inventory/log/InventoryLog'))
 const InventoryTransfers = lazy(() => import('./pages/Inventory/Transfers'))
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
-const NotificationDetailHistory = lazy(() => import('./pages/Notification/NotificationHistoryPage'))
 const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
 const NotificationLogs = lazy(() => import('./pages/Notification/NotificationLogsPage'))
 const OperationalData = lazy(() => import('./oldPages/dashboard/operational/OperationalData'))
@@ -242,7 +241,6 @@ const LogInApp = () => {
                 <Route path="/browse/notification/types" element={<NotificationList />} />
                 <Route path="/browse/notification/logs" element={<NotificationLogs />} />
                 <Route path="/browse/notification/:notificationId" element={<NotificationDetail />} />
-                <Route path="/browse/notification/:notificationId/history" element={<NotificationDetailHistory />} />
               </>
             ) : null}
 
