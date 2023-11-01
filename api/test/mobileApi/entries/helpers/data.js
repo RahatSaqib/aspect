@@ -803,7 +803,7 @@ const xdrExpectedResult = [
       name: null,
       externalId: null,
       i18nKey: null,
-      severity: 'warning',
+      severity: 'danger',
     },
     updatedOn: '2023-10-06T10:40:53.000Z',
     reportableSite: {
