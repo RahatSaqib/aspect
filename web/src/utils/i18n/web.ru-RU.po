@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
+"POT-Creation-Date: 2023-10-30T19:12:22.157Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -1766,13 +1766,6 @@ msgstr "Четкое значение"
 msgid "Clear filters"
 msgstr "Очистить фильтры"
 
-#. [pages.Graphs.toolTipAllowClickThrough]
-#. defaultMessage is:
-#. Click to view results in table format
-#: extracted_strings.json
-msgid "Click to view results in table format"
-msgstr "Нажмите, чтобы просмотреть результаты в табличном формате"
-
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
 #. Clinical Indicators
@@ -2112,20 +2105,6 @@ msgstr "Копировать"
 #: extracted_strings.json
 msgid "Could Not Find Test Result"
 msgstr "Не смог найти результат теста"
-
-#. [errorResponseMessages.fetchAllSites.GET.404.title]
-#. defaultMessage is:
-#. Could Not Load All Sites
-#: extracted_strings.json
-msgid "Could Not Load All Sites"
-msgstr "Не мог загрузить все объекты"
-
-#. [errorResponseMessages.transferResult.GET.404.title]
-#. defaultMessage is:
-#. Could Not Transfer Result
-#: extracted_strings.json
-msgid "Could Not Transfer Result"
-msgstr "Не смог перевести результат"
 
 #. [errorResponseMessages.loginStart.POST.401.incorrectPassword.title]
 #. defaultMessage is:
@@ -3780,10 +3759,10 @@ msgstr "Введите имя сайта..."
 #. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
-#. [pages.filters.gxEbolaGPError]
+#. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
-#. [pages.deviceDetail.resultCategoryError]
+#. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
 #: extracted_strings.json
@@ -3822,13 +3801,6 @@ msgstr "Код ошибки"
 #: extracted_strings.json
 msgid "Error Fetching Endpoint"
 msgstr "Ошибка при получении конечной точки"
-
-#. [errorResponseMessages.fetchAllSites.GET.default.title]
-#. defaultMessage is:
-#. Error Loading All Sites
-#: extracted_strings.json
-msgid "Error Loading All Sites"
-msgstr "Ошибка загрузки всех сайтов"
 
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
@@ -3884,13 +3856,6 @@ msgstr "Ошибка при сохранении нового пароля"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Ошибка при отправке сообщения о сбросе пароля"
-
-#. [errorResponseMessages.transferResult.GET.default.title]
-#. defaultMessage is:
-#. Error Transferring Result
-#: extracted_strings.json
-msgid "Error Transferring Result"
-msgstr "Результат переноса ошибок"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3971,6 +3936,13 @@ msgstr "Эксп. до {date}"
 #: extracted_strings.json
 msgid "Expand Row"
 msgstr "Развернуть Строку"
+
+#. [pages.MaintenanceStatusDialog.expectedBack]
+#. defaultMessage is:
+#. Expect Back Online
+#: extracted_strings.json
+msgid "Expect Back Online"
+msgstr "Ожидайте возвращения в сеть"
 
 #. [forms.formItem.consumableExpirationDate]
 #. defaultMessage is:
@@ -4480,10 +4452,10 @@ msgstr "Калибровка GeneXpert просрочена"
 
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
-#. GeneXpert Device Coverage (Pending)
+#. GeneXpert Device Coverage
 #: extracted_strings.json
-msgid "GeneXpert Device Coverage (Pending)"
-msgstr "Покрытие устройства GeneXpert (ожидается)"
+msgid "GeneXpert Device Coverage"
+msgstr "Покрытие прибора GeneXpert"
 
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
@@ -7431,6 +7403,20 @@ msgstr "Следующий"
 msgid "No"
 msgstr "Нет"
 
+#. [p.PkDashboard.noAssociatedLga]
+#. defaultMessage is:
+#. No Associated LGA
+#: extracted_strings.json
+msgid "No Associated LGA"
+msgstr "Нет Ассоциированный LGA"
+
+#. [p.PkDashboard.noAssociatedState]
+#. defaultMessage is:
+#. No Associated State
+#: extracted_strings.json
+msgid "No Associated State"
+msgstr "Нет ассоциированного государства"
+
 #. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -7800,6 +7786,26 @@ msgstr "Сейчас"
 msgid "Number of Devices"
 msgstr "Количество устройств"
 
+#. [pages.DeviceDetailEdit.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#. [pages.deviceDetail.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#: extracted_strings.json
+msgid "Number of GX-10C modules"
+msgstr "Количество модулей GX-10C"
+
+#. [pages.DeviceDetailEdit.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#. [pages.deviceDetail.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#: extracted_strings.json
+msgid "Number of GX-6C modules"
+msgstr "Количество модулей GX-6C"
+
 #. [legends.Unknown.inventoryGraphStatusXAxisLegend]
 #. defaultMessage is:
 #. Number of Locations
@@ -7992,6 +7998,20 @@ msgstr "Только лоты в наличии"
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Только лоты в наличии"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Упс! Что-то пошло не так. Наша команда была уведомлена об этом, и мы "
+"работаем над устранением проблемы. Пожалуйста, повторите попытку позже. Если "
+"проблема сохраняется, свяжитесь с нашей службой поддержки и сообщите им о "
+"следующей ошибке:"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
@@ -9178,6 +9198,20 @@ msgstr "RIF сопротивление"
 #: extracted_strings.json
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Количество положительных результатов"
+
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR Detected
+#: extracted_strings.json
+msgid "RR Detected"
+msgstr "Обнаружен RR"
+
+#. [p.PkDashboard.RRToTbTotalPercentage]
+#. defaultMessage is:
+#. RR To Tb Total Percentage
+#: extracted_strings.json
+msgid "RR To Tb Total Percentage"
+msgstr "РР К Тб Всего Процент"
 
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
@@ -11702,6 +11736,13 @@ msgstr "Лист заданий"
 msgid "Tasks"
 msgstr "Задачи"
 
+#. [p.PkDashboard.TbTotal]
+#. defaultMessage is:
+#. Tb Total
+#: extracted_strings.json
+msgid "Tb Total"
+msgstr "Тб Всего"
+
 #. [p.PkDashboard.xdrLastDay]
 #. defaultMessage is:
 #. Tb cases diagnosed in last 24 hours
@@ -12805,6 +12846,9 @@ msgstr "Переключение подтверждения статуса"
 msgid "Topic"
 msgstr "Тема"
 
+#. [pages.Status.total]
+#. defaultMessage is:
+#. Total
 #. [legends.Unknown.Total]
 #. defaultMessage is:
 #. Total
@@ -12833,10 +12877,10 @@ msgstr "Всего случаев"
 msgid "Total Errors"
 msgstr "Всего ошибок"
 
-#. [pages.OperationalData.cntAll]
+#. [reporters.totalResults]
 #. defaultMessage is:
 #. Total Results
-#. [reporters.totalResults]
+#. [pages.OperationalData.cntAll]
 #. defaultMessage is:
 #. Total Results
 #. [performance.barChart.results]
@@ -14508,13 +14552,26 @@ msgstr "{unit} с прошлой недели"
 msgid "{unit} total calibrations"
 msgstr "{unit} суммарные калибровки"
 
-#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit]
-#. defaultMessage is:
-#. {value} ({records}/{total, plural, one {# result} other {# results} })
-#: extracted_strings.json
-msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
-msgstr ""
-"{value} ({records}/{total, plural, one {# результат} other {# результаты} })"
+#~ msgid "Click to view results in table format"
+#~ msgstr "Нажмите, чтобы просмотреть результаты в табличном формате"
+
+#~ msgid "Could Not Load All Sites"
+#~ msgstr "Не мог загрузить все объекты"
+
+#~ msgid "Could Not Transfer Result"
+#~ msgstr "Не смог перевести результат"
+
+#~ msgid "Error Loading All Sites"
+#~ msgstr "Ошибка загрузки всех сайтов"
+
+#~ msgid "Error Transferring Result"
+#~ msgstr "Результат переноса ошибок"
+
+#~ msgid ""
+#~ "{value} ({records}/{total, plural, one {# result} other {# results} })"
+#~ msgstr ""
+#~ "{value} ({records}/{total, plural, one {# результат} other {# "
+#~ "результаты} })"
 
 #~ msgid "Current FQ Detection (Pending)"
 #~ msgstr "Текущее обнаружение FQ (ожидается)"
