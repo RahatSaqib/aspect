@@ -265,7 +265,7 @@ const messages = defineMessages({
   },
   deviceAndSiteSummaryReport: {
     id: 'pages.ReportIndex.DeviceAndSiteSummaryReport',
-    defaultMessage: 'Xpert Site Summary Report',
+    defaultMessage: 'Device and Site Summary Report',
   },
   deviceAndSiteSummaryReport_description: {
     id: 'pages.ReportIndex.DeviceAndSiteSummaryReport_description',

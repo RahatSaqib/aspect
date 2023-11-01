@@ -528,7 +528,7 @@ const deviceAndSiteSummaryReport = {
   description:
     'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".',
   i18nKey: 'deviceAndSiteSummaryReport',
-  i18nKeyDescription: 'xdeviceAndSiteSummaryReport_description',
+  i18nKeyDescription: 'deviceAndSiteSummaryReport_description',
   externalId: 'device_and_site_summary_report',
   fileName: 'DeviceAndSiteSummaryReport',
   exportCsv: false,
