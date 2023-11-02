@@ -21,6 +21,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .leftOuterJoin('Result as r', 'r.Id', 'n.resultId')
     .leftOuterJoin('Issue as iss', 'iss.id', 'n.issueId')
     .leftJoin('Sample as s', 's.id', 'r.sampleId')
+    .leftOuterJoin('Report as rpt', 'rpt.id', 'n.reportId')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .modify(filterDateRangeParams, query, 'n.createdOn')
     .modify(filterParams, updatedQuery, {
@@ -30,10 +31,26 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
       notificationTypeId: 'n.notificationTypeId',
       sampleId: 's.externalId',
       Error: ['mswm.externalId', 'msem.externalId', 'mssms.externalId'],
+      reportName: (queryBuilder, value) => {
+        queryBuilder.whereRaw(
+          `(
+          rpt.name LIKE CONCAT('%', ?, '%')
+          OR
+          rpt.description LIKE CONCAT('%', ?, '%')
+        )`,
+          [value, value]
+        )
+      },
     })
-  let getItems = buildReportBasedNotificationHistory(baseQuery, query)
+    .groupBy('n.id')
 
-  getItems
+  const getItems = baseQuery
+    .clone()
+    .modify(queryBuilder => {
+      if (query.patientId) {
+        queryBuilder.where('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
+      }
+    })
     .select([
       'n.createdOn as date',
       'ntc.name as notificationTypeName',
@@ -41,13 +58,13 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
       'r.id as resultId',
       'n.issueId',
       knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.externalId) SEPARATOR "|") AS emailRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.i18nKey) SEPARATOR "|") AS emailRecipients
       `),
       knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.i18nKey) SEPARATOR "|") AS smsRecipients
       `),
       knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.i18nKey) SEPARATOR "|") AS webhookRecipients
       `),
       knex.raw(`
       CASE 
@@ -120,32 +137,11 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
         ELSE null END
       `),
     })
-  if (query.patientId) {
-    getItems = getItems.whereRaw('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
-  }
   const getCount = knex.count('* as count').from(getItems.clone().as('mainQuery')).first()
 
   getItems.modify(sortPageParams, query, 'n.createdOn')
 
   return { getCount, getItems }
-}
-
-const buildReportBasedNotificationHistory = (baseQuery, query) => {
-  return baseQuery
-    .leftOuterJoin('Report as rpt', 'rpt.id', 'n.reportId')
-    .modify(filterParams, query, {
-      reportName: (queryBuilder, value) => {
-        queryBuilder.whereRaw(
-          `(
-          rpt.name LIKE CONCAT('%', ?, '%')
-          OR
-          rpt.description LIKE CONCAT('%', ?, '%')
-        )`,
-          [value, value]
-        )
-      },
-    })
-    .groupBy('n.id')
 }
 
 module.exports = {
