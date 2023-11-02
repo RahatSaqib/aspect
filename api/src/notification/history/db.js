@@ -42,15 +42,15 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
         )
       },
     })
-    .groupBy('n.id')
-
-  const getItems = baseQuery
-    .clone()
     .modify(queryBuilder => {
       if (query.patientId) {
         queryBuilder.where('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
       }
     })
+    .groupBy('n.id')
+
+  const getItems = baseQuery
+    .clone()
     .select([
       'n.createdOn as date',
       'ntc.name as notificationTypeName',
