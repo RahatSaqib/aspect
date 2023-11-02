@@ -9,8 +9,9 @@ async function unAssignContact(request) {
   if (_.isEmpty(personDetails) || _.isEmpty(site)) {
     return Boom.notFound()
   }
+  const { id: jobFunctionIdDefault } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
 
-  const contact = { id: personDetails.jobContextId, siteId }
+  const contact = { personId: personDetails.id, jobFunctionId: jobFunctionIdDefault, siteId }
   const jcRecord = await knex('JobContext')
     .where(contact)
     .whereNull('assayTypeId')

@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { query, knex, transact } = require('../db')
+const { query, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 
@@ -86,59 +86,18 @@ async function getJobFunction(jobFunctionId, partnerId, err) {
   }
   return jobFunction
 }
-// ----------------------------------------------------------------------------------------
-const assignJob = async request => manageJob(request, MODE_INSERT)
-const unassignJob = async request => manageJob(request, MODE_DELETE)
-async function manageJob(request, mode) {
-  const {
-    payload: { personId, jobFunctionId },
-  } = request
-  const { auth } = request
 
-  const valResult = await validateJobData({ personId, jobFunctionId, auth })
-  if (valResult.isBoom) {
-    return valResult
-  }
-
-  const job = await knex('Job').where({ personId, jobFunctionId }).first()
-
-  if (mode === MODE_INSERT) {
-    // create job if missing
-    if (!job) {
-      await knex('Job').insert({
-        personId,
-        jobFunctionId,
-      })
-    }
-  } else if (mode === MODE_DELETE) {
-    if (job) {
-      await transact(async knex => {
-        // remove all FK's entries
-        await knex('JobContext').where({ jobId: job.id }).del()
-        // remove Job
-        await knex('Job').where({ id: job.id }).del()
-      })
-    }
-  }
-
-  // return all jobs for requested person
-  const jobs = await knex('Job').where({ personId }).select('id', 'personId', 'jobFunctionId')
-  return { ok: true, data: jobs }
-}
 // ----------------------------------------------------------------------------------------
 const assignJobContext = async request => manageJobContext(request, MODE_INSERT)
 const unassignJobContext = async request => manageJobContext(request, MODE_DELETE)
 const validateAndNormalizeJobContextData = async request => {
   const { payload } = request
-  const { auth } = request
-  const { partnerId } = await getUser(auth.credentials.name)
   const { personId, jobFunctionId, geographyId, siteId } = payload
-  let { jobId } = payload
 
-  // either jobId or both (personId and jobFunctionId) are needed
+  // personId and jobFunctionId are needed
   const hasPersonAndJobFunction = !!personId && !!jobFunctionId
-  if (!jobId && !hasPersonAndJobFunction) {
-    return Boom.expectationFailed('Either jobId or (personId and jobFunctionId) is needed to manage JobContext')
+  if (!hasPersonAndJobFunction) {
+    return Boom.expectationFailed('personId and jobFunctionId is needed to manage JobContext')
   }
   // either geographyId or siteId is needed
   const bothMissing = !geographyId && !siteId
@@ -160,44 +119,16 @@ const validateAndNormalizeJobContextData = async request => {
       return Boom.badData(`Missing geography with specified geographyId=${geographyId}`)
     }
   }
-  if (jobId) {
-    const item = await knex('JobContext as jc')
-      .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
-      .where('jc.id', jobId)
-      .first('jc.id', 'jf.partnerId')
-    if (!item) {
-      return Boom.badData(`Missing job with specified jobId=${jobId}`)
-    }
-    if (item.partnerId !== partnerId) {
-      return Boom.expectationFailed('Only Admin with same partnerId as Job/JobFunction can manage Jobs')
-    }
-  } else if (!jobId) {
-    // if no jobId - create Job with personId/jobFunctionId
 
-    // use 'personId, jobFunctionId' from request to create/get Job
-    const jobResponse = await assignJob(request)
-    if (jobResponse.isBoom) {
-      // Boom when current Admin user and JobFunction have different partnerId's
-      return jobResponse
-    }
-    // get jobId for requested personId/jobFunctionId from list of all Jobs for personId
-    ;[{ id: jobId }] = jobResponse.data.filter(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
-  } else {
-    const item = await knex('Job').where({ id: jobId }).first()
-    if (!item) {
-      return Boom.badData(`Missing job with specified jobId=${jobId}`)
-    }
-  }
-  return { jobId }
+  return {}
 }
 async function manageJobContext(request, mode) {
   const { payload } = request
-  const { geographyId, siteId } = payload
+  const { personId, jobFunctionId, geographyId, siteId } = payload
   const normalizedData = await validateAndNormalizeJobContextData(request)
   if (normalizedData.isBoom) {
     return normalizedData
   }
-  const { personId, jobFunctionId } = normalizedData
 
   const q = knex('JobContext')
     .where({ personId, jobFunctionId })
@@ -691,8 +622,6 @@ module.exports = {
   getJobFunctionsForSelectList,
   getPermissions,
   //
-  assignJob,
-  unassignJob,
   assignJobContext,
   unassignJobContext,
   assignJobFunctionDashboardWidgets,

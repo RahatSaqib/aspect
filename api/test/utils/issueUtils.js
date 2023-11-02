@@ -23,6 +23,7 @@ async function getSite(knex, { countryAbbreviation, partnerId, userId, requireIn
       this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull('regionalGeography.lgaId')
     })
     .join('Country as c', 'lgaGeography.countryId', 'c.id')
+    .join('Person as labUser', 'lgaGeography.id', 'labUser.geographyId')
     .join('JobContext as labUserJob', 'labUser.id', 'labUserJob.personId')
     .join('JobFunction as labUserJobFunction', 'labUserJob.jobFunctionId', 'labUserJobFunction.id')
     .join('JobContext as regionalContext', 'regionalGeography.id', 'regionalContext.geographyId')
