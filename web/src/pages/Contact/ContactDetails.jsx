@@ -109,7 +109,7 @@ const ContactDetails = ({ setStep }) => {
               'lgaName',
               'disabled',
               'disabledOn',
-              'jobId',
+              'jobContextId',
               'jobFunctions',
               'userId',
               'username',

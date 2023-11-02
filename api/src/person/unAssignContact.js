@@ -10,7 +10,7 @@ async function unAssignContact(request) {
     return Boom.notFound()
   }
 
-  const contact = { jobId: personDetails.jobId, siteId }
+  const contact = { id: personDetails.jobContextId, siteId }
   const jcRecord = await knex('JobContext')
     .where(contact)
     .whereNull('assayTypeId')

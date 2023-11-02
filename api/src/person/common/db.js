@@ -14,21 +14,19 @@ const getCreateAssignPerson = async (
   const personQuery = getPeopleBase()
     .where('g.countryId', countryId)
     .groupBy('p.id')
-    .first('p.name', 'p.id', 'p.email', 'p.email2', 'p.cell', 'j.id as jobId')
+    .first('p.name', 'p.id', 'p.email', 'p.email2', 'p.cell', 'jc.id as jobContextId')
   //
   const personByName = await personQuery.where('p.name', name)
   const personByEmail = await personQuery.where(builder => {
     builder.where('p.email', email).orWhere('p.email2', email)
   })
 
-  let jobId
   let personId
   // ----------
   // person-by-name found
   // ----------
   if (personByName) {
     personId = personByName.id
-    ;[{ jobId }] = [personByName]
     // update email if it's missing
     if (email && !personByName.email) {
       await knex('Person').update('email', email).where('id', personId)
@@ -43,7 +41,6 @@ const getCreateAssignPerson = async (
   // ----------
   else if (personByEmail) {
     personId = personByEmail.id
-    ;[{ jobId }] = [personByEmail]
     // update cell if it's missing
     if (cell && !personByEmail.cell) {
       await knex('Person').update('cell', cell).where('id', personId)
@@ -82,21 +79,13 @@ const getCreateAssignPerson = async (
    * - assign this person to site, i.e. to JobContext
    */
   if (personId) {
-    // create Job for person
-    if (!jobId) {
-      const jobFunction = await knex('JobFunction').where({ externalId: jobFunctionExternalId }).first('id')
-      if (!jobFunction) {
-        throw Boom.expectationFailed(`Required job function '${jobFunctionExternalId}' is missing`)
-      }
-
-      ;[jobId] = await knex('Job').insert({
-        personId,
-        jobFunctionId: jobFunction.id,
-      })
+    // assign contact to site if it is not assigned yet
+    const jobFunction = await knex('JobFunction').where({ externalId: jobFunctionExternalId }).first('id')
+    if (!jobFunction) {
+      throw Boom.expectationFailed(`Required job function '${jobFunctionExternalId}' is missing`)
     }
 
-    // assign contact to site if it is not assigned yet
-    const newJobContext = { jobId, siteId }
+    const newJobContext = { personId, jobFunctionId: jobFunction.id, siteId }
     const existingJobContext = await knex('JobContext')
       .where(newJobContext)
       .whereNull('assayTypeId')
@@ -163,9 +152,9 @@ async function listPeople(request) {
   // get total count for paging
   const getCount = personQuery.clone().select(knex.raw('count(distinct p.id) as total')).first()
 
-  const getJobFunctionNames = knex('Job as j')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .where('j.personId', '=', knex.raw('p.id'))
+  const getJobFunctionNames = knex('JobContext as jc')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .where('jc.personId', '=', knex.raw('p.id'))
     .select(knex.raw('group_concat(jf.name separator "; ")'))
     .as('level')
 
@@ -215,8 +204,7 @@ async function listPeople(request) {
 
 function siteContacts(id) {
   return knex('JobContext as jc')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .innerJoin('Person as p', 'jc.personId', 'p.id')
     .where('jc.siteId', id)
     .select('p.name', 'p.id')
 }
@@ -225,8 +213,7 @@ async function getPersonDetails(personId, dataConstraints) {
   const personDetails = await query('Get person details')
     .from('Person as p')
     .leftJoin('Geography as g', 'p.geographyId', 'g.id')
-    .leftOuterJoin('Job as j', 'p.id', 'j.personId')
-    .leftOuterJoin('JobContext as jc', 'jc.jobId', 'j.id')
+    .leftOuterJoin('JobContext as jc', 'p.id', 'jc.personId')
     .leftOuterJoin('Geography as jg', 'jc.geographyId', 'jg.id')
     .leftJoin('User as u', 'p.userId', 'u.id')
     .leftOuterJoin('State as s', 'g.stateId', 's.id')
@@ -270,7 +257,7 @@ async function getPersonDetails(personId, dataConstraints) {
       'p.canLogIn',
       'p.disabled',
       'p.disabledOn',
-      'j.id as jobId'
+      'jc.id as jobContextId'
     )
 
   if (personDetails) {
@@ -393,11 +380,11 @@ async function showPerson(request) {
     personDetails.jobFunctions = []
   } else {
     const jobFunctionsForUser = await query('Get job functions for user')
-      .from('Job as j')
-      .innerJoin('JobFunction as jf', 'jf.id', 'j.jobFunctionId')
-      .innerJoin('Person as ps', 'ps.id', 'j.personId')
+      .from('JobContext as jc')
+      .innerJoin('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
+      .innerJoin('Person as ps', 'ps.id', 'jc.personId')
       .where({ 'ps.userId': personDetails.userId })
-      .select('ps.userId', 'j.jobFunctionId', 'jf.partnerId')
+      .select('ps.userId', 'jc.jobFunctionId', 'jf.partnerId')
     personDetails.jobFunctions = _.map(jobFunctionsForUser, 'jobFunctionId')
     if (jobFunctionsForUser.length > 0) {
       personDetails.partnerId = jobFunctionsForUser[0].partnerId

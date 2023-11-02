@@ -10,17 +10,9 @@ async function assignContact(request) {
     return Boom.notFound()
   }
 
-  let { jobId } = personDetails
+  const { id: jobFunctionIdDefault } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
 
-  if (!jobId) {
-    const { id: jobFunctionIdDefault } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
-    ;[jobId] = await knex('Job').insert({
-      personId: personDetails.id,
-      jobFunctionId: jobFunctionIdDefault,
-    })
-  }
-
-  const newJobContext = { jobId, siteId }
+  const newJobContext = { personId: personDetails.id, jobFunctionId: jobFunctionIdDefault, siteId }
 
   const existingJobContext = await knex('JobContext')
     .where(newJobContext)

@@ -58,7 +58,7 @@ const jobContextResponse = {
       .description('All job contexts for specified person')
       .items(
         Joi.object().keys({
-          jobId: Joi.number().required().description('JobContext.jobId'),
+          jobContextId: Joi.number().required().description('JobContext.jobContextId'),
           personId: Joi.number().required().description('Job.personId'),
           jobFunctionId: Joi.number().required().description('Job.jobFunctionId'),
           geographyId: Joi.number().allow(null).description('JobContext.geographyId'),
@@ -87,7 +87,6 @@ const personAssignmentsResponse = {
           personId: Joi.number().required().description('Job.personId'),
           partnerId: Joi.number().required().description('JobFunction.personId'),
           jobContextId: Joi.number().required().description('JobContext.id'),
-          jobId: Joi.number().required().description('JobContext.jobId'),
           jobFunctionId: Joi.number().required().description('Job.jobFunctionId'),
           jobFunctionName: Joi.string().required().description('JobFunction.name'),
           countryId: Joi.number().required().description('Country.id'),
@@ -238,7 +237,7 @@ const routes = [
       auth: { scope: ['person:edit'] },
       validate: {
         payload: {
-          jobId: Joi.number(),
+          jobContextId: Joi.number(),
           personId: Joi.number(),
           jobFunctionId: Joi.number(),
           geographyId: Joi.number(),
@@ -262,7 +261,7 @@ const routes = [
       auth: { scope: ['person:edit'] },
       validate: {
         payload: {
-          jobId: Joi.number(),
+          jobContextId: Joi.number(),
           personId: Joi.number(),
           jobFunctionId: Joi.number(),
           geographyId: Joi.number(),

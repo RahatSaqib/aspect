@@ -28,7 +28,7 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
       {assignments.length === 0 && <h4>{formatMessage(messages.notSpecified)}</h4>}
       {assignments.map((assignment, idx) => (
         <PersonAssignmentItem
-          key={`${assignment.jobFunctionId}-${assignment.jobId}-${idx}`}
+          key={`${assignment.jobFunctionId}-${assignment.jobContextId}-${idx}`}
           assignment={assignment}
           showLinks
           onAskConfirmation={askConfirmation}

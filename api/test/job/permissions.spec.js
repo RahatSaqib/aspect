@@ -36,14 +36,14 @@ describe('Permissions', () => {
           .first('s.id', 's.name', 's.geographyId'),
       ]
       // if Job doesn't exist then entry added during the test will be removed in after()
-      const job = await knex('Job').where({ personId, jobFunctionId }).first()
+      const job = await knex('JobContext').where({ personId, jobFunctionId }).first()
       cleanJob = !job
     })
   )
   after(() =>
     runTestWithKnex(async knex => {
       if (cleanJob) {
-        await knex('Job').where('id', jobId).del()
+        await knex('JobContext').where('id', jobId).del()
       }
     })
   )
@@ -83,9 +83,8 @@ describe('Permissions', () => {
       runTestWithKnex(async knex => {
         // keep JobContext entries, if any exists
         jobContextsOld = await knex('JobContext as jc')
-          .join('Job as j', 'jc.jobId', 'j.id')
-          .where('j.personId', personId)
-          .where('j.jobFunctionId', jobFunctionId)
+          .where('jc.personId', personId)
+          .where('jc.jobFunctionId', jobFunctionId)
           .select('jc.geographyId', 'jc.siteId')
       })
     )
@@ -485,20 +484,12 @@ describe('Permissions', () => {
           await knex('JobFunction').where({ partnerId: partner1, name: 'Clinician' }).first('id'),
         ]
 
-        const jobProps = { personId, jobFunctionId: jobFunctionClinicianId }
-        const job = await knex('Job').where(jobProps).first()
-        if (!job) {
-          // if such Job is missing - keep it's properties to remove it in after()
-          toCleanUp.jobProps = jobProps
-          // --> toCleanUp.jobContextIds will be defined when assigning person to job
-        } else {
-          const jobContextProps = { jobId: job.id, siteId }
-          // check if JobContext exists
-          const jobContext = await knex('JobContext').where(jobContextProps).first()
-          if (!jobContext) {
-            // if such JobContext is missing - keep it's properties to remove it in after()
-            toCleanUp.jobContextProps = jobContextProps
-          }
+        const jobContextProps = { personId, jobFunctionId: jobFunctionClinicianId, siteId }
+        // check if JobContext exists
+        const jobContext = await knex('JobContext').where(jobContextProps).first()
+        if (!jobContext) {
+          // if such JobContext is missing - keep it's properties to remove it in after()
+          toCleanUp.jobContextProps = jobContextProps
         }
       })
     )
@@ -522,7 +513,6 @@ describe('Permissions', () => {
     function assertItemProperties(item) {
       assert.property(item, 'personId')
       assert.property(item, 'partnerId')
-      assert.property(item, 'jobId')
       assert.property(item, 'jobFunctionId')
       assert.property(item, 'jobFunctionName')
       assert.property(item, 'jobContextId')
