@@ -1,5 +1,7 @@
 /* eslint-disable linebreak-style */
 
+const { upsertData } = require('../../seeds/utils')
+
 async function setUserPermission(knex, userName, jobFunctionName, permissionId) {
   // ------------------------------------------------------
   // make sure specified users have permissions to see Treatment Graph
@@ -18,24 +20,14 @@ async function setUserPermission(knex, userName, jobFunctionName, permissionId) 
     .first()
   // JobFunction
   const { id: jobFunctionId } = await knex('JobFunction').where({ partnerId, name: jobFunctionName }).first()
-  // Job
-  let { id: jobId } = (await knex('Job').where({ personId, jobFunctionId }).first()) || {}
-  if (!jobId) {
-    ;[jobId] = await knex('Job').insert({
-      personId,
-      jobFunctionId,
-    })
-  }
 
   // JobContext
-  const jobContext = await knex('JobContext').where({ jobId, geographyId }).whereNull('siteId').first()
-  if (!jobContext) {
-    await knex('JobContext').insert({
-      jobId,
-      geographyId,
-      siteId: null,
-    })
-  }
+  await upsertData(knex, 'JobContext', {
+    personId,
+    jobFunctionId,
+    geographyId,
+  })
+
   // JobFunctionPermission
   const jobFunctionPermission = await knex('JobFunctionPermission').where({ permissionId, jobFunctionId }).first()
   if (!jobFunctionPermission) {
@@ -51,7 +43,6 @@ async function setUserPermission(knex, userName, jobFunctionName, permissionId) 
     countryId,
     geographyId,
     jobFunctionId,
-    jobId,
   }
 }
 

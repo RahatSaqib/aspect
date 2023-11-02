@@ -16,7 +16,7 @@ async function seed(knex) {
   await copyPermissionsAndDashboardWidgetsFromJobFunction(knex, 'admin', 'systemOne')
 
   // reassign existing admin user:
-  await knex('Job').update('jobFunctionId', jobFunctionSystemOneId).where({ personId: adminPersonId })
+  await knex('JobContext').update('jobFunctionId', jobFunctionSystemOneId).where({ personId: adminPersonId })
 
   // --- ----------------------
   // --- Create new job function NTP users who
@@ -32,9 +32,9 @@ async function seed(knex) {
   // --- users who are country admins in GxAlert
   // --- ----------------------
   const { id: jobFunctionNtpId } = await knex('JobFunction').where('externalId', 'ntp').first('id')
-  await knex('Job as j')
-    .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .join('Person as p', 'j.personId', 'p.id')
+  await knex('JobContext as jc')
+    .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .join('Person as p', 'jc.personId', 'p.id')
     .join('User as u', 'p.userId', 'u.id')
     .update('jobFunctionId', jobFunctionNtpId)
     .where('jf.externalId', 'admin')
@@ -50,9 +50,9 @@ async function seed(knex) {
   // --- ----------------------
   // --- Finally, move some users to NTP-No Result
   // --- ----------------------
-  await knex('Job as j')
-    .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .join('Person as p', 'j.personId', 'p.id')
+  await knex('JobContext as jc')
+    .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .join('Person as p', 'jc.personId', 'p.id')
     .join('User as u', 'p.userId', 'u.id')
     .update('jobFunctionId', jobFunctionNtpNoResultsId)
     .whereIn('u.name', ['olinamutuwani@gmail.com', 'rumbychiwanza@gmail.com'])

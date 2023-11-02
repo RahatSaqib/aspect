@@ -200,27 +200,20 @@ module.exports = async (knex, partnerData, contacts) => {
 
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
-        // Upsert Jobs
-        let { id: jobId } =
-          (await knex('Job').where({ personId, jobFunctionId: jobFunctions[jobFunctionName] }).first()) || {}
-
-        if (!jobId) {
-          ;[jobId] = await knex('Job').insert({
-            personId,
-            jobFunctionId: jobFunctions[jobFunctionName],
-          })
-        }
-
         if (
           !['Admin', 'Regional Officer'].includes(jobFunctionName) &&
           !_.isEmpty(person.sites) &&
           person.sites.some(site => !!siteIds[site.shortName || site.name])
         ) {
-          const existingJobContexts = await knex('JobContext').whereNotNull('siteId').andWhere({ jobId }).select()
+          const existingJobContexts = await knex('JobContext')
+            .whereNotNull('siteId')
+            .andWhere({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
+            .select()
           const expectedJobContexts = person.sites
             .filter(site => !!siteIds[site.shortName || site.name])
             .map(site => ({
-              jobId,
+              personId,
+              jobFunctionId: jobFunctions[jobFunctionName],
               siteId: siteIds[site.shortName || site.name],
             }))
           const jobContextItem = expectedJobContexts.filter(
@@ -238,7 +231,7 @@ module.exports = async (knex, partnerData, contacts) => {
           )
 
           await knex('JobContext')
-            .where('jobId', jobId)
+            .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
             .whereNull('geographyId')
             .whereIn(
               'siteId',
@@ -250,14 +243,18 @@ module.exports = async (knex, partnerData, contacts) => {
             existingJobContextToUpdate =>
               knex
                 .where({
-                  jobId,
+                  personId,
+                  jobFunctionId: jobFunctions[jobFunctionName],
                   geographyId: existingJobContextToUpdate.geographyId,
                 })
                 .update({ siteId: null })
           )
         }
         if (['Admin', 'Regional Officer', 'Data Viewer'].includes(jobFunctionName) && !_.isEmpty(person.geographies)) {
-          const existingJobContexts = await knex('JobContext').whereNotNull('geographyId').andWhere({ jobId }).select()
+          const existingJobContexts = await knex('JobContext')
+            .whereNotNull('geographyId')
+            .andWhere({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
+            .select()
           let expectedJobContexts = []
           await Promise.each(person.geographies, async geography => {
             const jobProvince = geography.stateName
@@ -287,7 +284,8 @@ module.exports = async (knex, partnerData, contacts) => {
             expectedJobContexts = [
               ...expectedJobContexts,
               {
-                jobId,
+                personId,
+                jobFunctionId: jobFunctions[jobFunctionName],
                 geographyId: jobGeographyId,
               },
             ]
@@ -306,7 +304,7 @@ module.exports = async (knex, partnerData, contacts) => {
               })
           )
           await knex('JobContext')
-            .where('jobId', jobId)
+            .where({ personId, jobFunctionId: jobFunctions[jobFunctionName] })
             .whereNull('siteId')
             .whereIn(
               'geographyId',
@@ -318,7 +316,8 @@ module.exports = async (knex, partnerData, contacts) => {
             existingJobContextToUpdate =>
               knex
                 .where({
-                  jobId,
+                  personId,
+                  jobFunctionId: jobFunctions[jobFunctionName],
                   siteId: existingJobContextToUpdate.siteId,
                 })
                 .update({ geographyId: null })
