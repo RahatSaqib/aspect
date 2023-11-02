@@ -158,8 +158,8 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                   !!values.resultSourceExternalId && values.resultSourceExternalId !== 'EnteredByHand',
               },
               {
-                id: 'detectedResistance',
-                controlType: { component: 'textField' },
+                id: 'allResistances',
+                controlType: { component: 'textArea', rows: 7 },
                 type: 'readOnly',
                 label: 'Detected Resistance',
                 hideIfNull: true,
