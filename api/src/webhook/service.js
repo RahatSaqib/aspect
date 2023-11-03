@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { createFetch, base, method, params, header, body } = require('http-client')
 const { webhookMessagePending, webhookMessageSent, webhookMessageError } = require('./actions')
+const { notificationMessageProcessed } = require('../notification/actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
@@ -159,7 +160,9 @@ async function finalizeWebhookMessage(webhookMessageId, messageContext) {
   const context = messageContext.bindActionCreators({
     resolveIssues,
     escalateIssues,
+    notificationMessageProcessed,
   })
+  context.notificationMessageProcessed({ webhookMessageId })
   return context.run(async knex => {
     const { issueId } =
       (await knex('WebhookMessage as m')

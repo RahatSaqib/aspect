@@ -2,7 +2,7 @@
 const types = {
   EMAIL_MESSAGE_CREATED: 'EMAIL_MESSAGE_CREATED',
   EMAIL_MESSAGE_READY_FOR_SENDING: 'EMAIL_MESSAGE_READY_FOR_SENDING',
-  EMAIL_MESSAGE_SENT: 'EMAIL_MESSAGE_SENT',
+  EMAIL_MESSAGE_PROCESSED: 'EMAIL_MESSAGE_PROCESSED',
 }
 
 // ----------- Action Creators -------------------
@@ -46,12 +46,12 @@ function emailMessageReadyForSending(emailMessageId) {
  *
  * emailMessageId is required.
  */
-function emailMessageSent(emailMessageId) {
+function emailMessageProcessed(emailMessageId) {
   if (!emailMessageId) {
     throw new Error('Must specify emailMessageId')
   }
   return {
-    type: types.EMAIL_MESSAGE_SENT,
+    type: types.EMAIL_MESSAGE_PROCESSED,
     emailMessageId,
   }
 }
@@ -60,5 +60,5 @@ module.exports = {
   types,
   emailMessageCreated,
   emailMessageReadyForSending,
-  emailMessageSent,
+  emailMessageProcessed,
 }
