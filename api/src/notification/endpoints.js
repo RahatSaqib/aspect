@@ -145,7 +145,7 @@ const routes = [
       validate: {
         payload: saveNotificationPayload,
         params: {
-          id: Joi.string().description('Item id depending on payload.notificationType').required(),
+          id: Joi.number().integer().positive().required().description('NotificationTypeId'),
         },
       },
       response: saveNotificationResponse,
@@ -177,7 +177,7 @@ const routes = [
       validate: {
         payload: changeNotificationStatusPayload,
         params: {
-          id: Joi.string().description('Item id depending on payload.notificationType').required(),
+          id: Joi.number().integer().positive().required().description('NotificationTypeId'),
         },
       },
       response: saveNotificationResponse,
