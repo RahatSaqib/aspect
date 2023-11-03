@@ -1,7 +1,6 @@
 // External IDs of devices that we use internally and that should be excluded from some lists and counts
 const INTERNAL_DEVICE_IDS = ['GxAlert', 'Aspect']
 const RELABEL_EXCEL = { reLabel: 'aspect:report:excel' }
-const DEACTIVATED_COUNTRIES = ['Tanzania']
 
 const GRAPH_FLAGS = {
   GET_TOTAL_RESULTS: 'GET_TOTAL_RESULTS',
@@ -27,7 +26,6 @@ const DAYS_STOCK_LEFT_RANGES = {
 module.exports = {
   INTERNAL_DEVICE_IDS,
   RELABEL_EXCEL,
-  DEACTIVATED_COUNTRIES,
   GRAPH_FLAGS,
   XDR_RESISTANCES,
   XDR_RESISTANCES_COMBO,
