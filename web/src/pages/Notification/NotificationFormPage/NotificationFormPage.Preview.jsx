@@ -191,9 +191,7 @@ const NotificationFormPreview = ({ values }) => {
         <span>
           {!isPersonListLoading
             ? (values.persons || []).map((p, index) => {
-                const person = isString(p)
-                  ? personList.find(pl => pl.id === p)
-                  : personList.find(pl => pl.id === p.value)
+                const person = personList.find(pl => (isString(p) ? pl.id === p : pl.id === p.value)) || { name: '' }
                 return (
                   <span style={{ ...labelStyle, display: 'block' }} key={index}>{`${person.name} ${
                     person.state ? `(${person.state})` : ''
