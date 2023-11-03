@@ -1,5 +1,6 @@
 require('dotenv-safe').config({ allowEmptyValues: true })
 const _ = require('lodash')
+const { IGNORED_SENTRY_ERRORS } = require('./shared/constants')
 
 const port = process.env.PORT || 8080
 const host = '127.0.0.1'
@@ -132,7 +133,7 @@ function configureOptional(config) {
     config.sentry = {
       dsn: sentryDsn,
       logLevel: process.env['sentry.logLevel'],
-      ignoreErrors: getArrayFromString('sentry.ignoreErrors', []).concat([/^Cannot authorize API Key$/]),
+      ignoreErrors: getArrayFromString('sentry.ignoreErrors', []).concat(IGNORED_SENTRY_ERRORS),
       sanitizeKeys: getArrayFromString('sentry.sanitizeKeys', [
         'patientId',
         'sampleId',
