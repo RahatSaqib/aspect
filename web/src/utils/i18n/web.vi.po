@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-04T14:15:41.085Z\n"
+"POT-Creation-Date: 2023-10-30T19:12:22.157Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -757,7 +757,7 @@ msgstr "Đã xảy ra lỗi khi cố gắng lưu thiết bị"
 msgid "An email has been sent to you"
 msgstr "Một email đã được gửi cho bạn"
 
-#. [pages.ReportIndex.devicesAndSites_description]
+#. [pages.ReportIndex.xpertSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 #: extracted_strings.json
@@ -1766,13 +1766,6 @@ msgstr "Xóa giá trị"
 msgid "Clear filters"
 msgstr "Bỏ bộ lọc"
 
-#. [pages.Graphs.toolTipAllowClickThrough]
-#. defaultMessage is:
-#. Click to view results in table format
-#: extracted_strings.json
-msgid "Click to view results in table format"
-msgstr "Nhấp để xem kết quả ở định dạng bảng"
-
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
 #. Clinical Indicators
@@ -2112,20 +2105,6 @@ msgstr "Sao chép"
 #: extracted_strings.json
 msgid "Could Not Find Test Result"
 msgstr "Không thể tìm thấy kết quả kiểm tra"
-
-#. [errorResponseMessages.fetchAllSites.GET.404.title]
-#. defaultMessage is:
-#. Could Not Load All Sites
-#: extracted_strings.json
-msgid "Could Not Load All Sites"
-msgstr "Không thể tải tất cả các đơn vị"
-
-#. [errorResponseMessages.transferResult.GET.404.title]
-#. defaultMessage is:
-#. Could Not Transfer Result
-#: extracted_strings.json
-msgid "Could Not Transfer Result"
-msgstr "Không thể chuyển kết quả"
 
 #. [errorResponseMessages.loginStart.POST.401.incorrectPassword.title]
 #. defaultMessage is:
@@ -3222,10 +3201,10 @@ msgstr "Danh sách thiết bị"
 msgid "Devices With Service Interruption"
 msgstr "Thiết bị bị gián đoạn dịch vụ"
 
-#. [pages.ReportIndex.devicesAndSitesOverview]
+#. [pages.ReportIndex.xpertSiteSummaryReport]
 #. defaultMessage is:
 #. Devices and Sites Overview
-#. [pages.ReportIndex.devices_and_sites_overview]
+#. [pages.ReportIndex.xpert_site_summary_report]
 #. defaultMessage is:
 #. Devices and Sites Overview
 #: extracted_strings.json
@@ -3775,10 +3754,10 @@ msgstr "Nhập tên đơn vị..."
 #. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
-#. [pages.filters.gxEbolaGPError]
+#. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
-#. [pages.deviceDetail.resultCategoryError]
+#. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
 #: extracted_strings.json
@@ -3817,13 +3796,6 @@ msgstr "Mã lỗi"
 #: extracted_strings.json
 msgid "Error Fetching Endpoint"
 msgstr "Lỗi khi tìm nạp điểm cuối"
-
-#. [errorResponseMessages.fetchAllSites.GET.default.title]
-#. defaultMessage is:
-#. Error Loading All Sites
-#: extracted_strings.json
-msgid "Error Loading All Sites"
-msgstr "Lỗi khi tải tất cả các đơn vị"
 
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
@@ -3879,13 +3851,6 @@ msgstr "Lỗi khi lưu mật khẩu mới"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Lỗi khi gửi Email Đặt lại Mật khẩu"
-
-#. [errorResponseMessages.transferResult.GET.default.title]
-#. defaultMessage is:
-#. Error Transferring Result
-#: extracted_strings.json
-msgid "Error Transferring Result"
-msgstr "Lỗi khi chuyển kết quả"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3966,6 +3931,13 @@ msgstr "Exp. cho đến {date}"
 #: extracted_strings.json
 msgid "Expand Row"
 msgstr "Mở rộng hàng"
+
+#. [pages.MaintenanceStatusDialog.expectedBack]
+#. defaultMessage is:
+#. Expect Back Online
+#: extracted_strings.json
+msgid "Expect Back Online"
+msgstr "Mong đợi trực tuyến trở lại"
 
 #. [forms.formItem.consumableExpirationDate]
 #. defaultMessage is:
@@ -4473,10 +4445,10 @@ msgstr "Quá hạn hiệu chuẩn GeneXpert"
 
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
-#. GeneXpert Device Coverage (Pending)
+#. GeneXpert Device Coverage
 #: extracted_strings.json
-msgid "GeneXpert Device Coverage (Pending)"
-msgstr "Phạm vi phủ sóng thiết bị GeneXpert (Đang chờ xử lý)"
+msgid "GeneXpert Device Coverage"
+msgstr "Bảo hiểm thiết bị GeneXpert"
 
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
@@ -7419,6 +7391,20 @@ msgstr "Tiếp"
 msgid "No"
 msgstr "Không"
 
+#. [p.PkDashboard.noAssociatedLga]
+#. defaultMessage is:
+#. No Associated LGA
+#: extracted_strings.json
+msgid "No Associated LGA"
+msgstr "Không có LGA liên kết"
+
+#. [p.PkDashboard.noAssociatedState]
+#. defaultMessage is:
+#. No Associated State
+#: extracted_strings.json
+msgid "No Associated State"
+msgstr "Không có quốc gia liên kết"
+
 #. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -7788,6 +7774,26 @@ msgstr "Bây giờ"
 msgid "Number of Devices"
 msgstr "Số lượng thiết bị"
 
+#. [pages.DeviceDetailEdit.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#. [pages.deviceDetail.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#: extracted_strings.json
+msgid "Number of GX-10C modules"
+msgstr "Số lượng mô-đun GX-10C"
+
+#. [pages.DeviceDetailEdit.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#. [pages.deviceDetail.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#: extracted_strings.json
+msgid "Number of GX-6C modules"
+msgstr "Số lượng mô-đun GX-6C"
+
 #. [legends.Unknown.inventoryGraphStatusXAxisLegend]
 #. defaultMessage is:
 #. Number of Locations
@@ -7979,6 +7985,19 @@ msgstr "Chỉ có rất nhiều với kho"
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Chỉ chuyển khoản"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Ối! Đã xảy ra lỗi. Nhóm của chúng tôi đã được thông báo và chúng tôi đang nỗ "
+"lực khắc phục sự cố. Vui lòng thử lại sau. Nếu sự cố vẫn tiếp diễn, hãy liên "
+"hệ với nhóm hỗ trợ của chúng tôi và cung cấp cho họ lỗi sau:"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
@@ -9159,6 +9178,20 @@ msgstr "RIF kháng"
 #: extracted_strings.json
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Tỷ lệ kháng Rif (% kết quả dương tính)"
+
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR Detected
+#: extracted_strings.json
+msgid "RR Detected"
+msgstr "Đã phát hiện RR"
+
+#. [p.PkDashboard.RRToTbTotalPercentage]
+#. defaultMessage is:
+#. RR To Tb Total Percentage
+#: extracted_strings.json
+msgid "RR To Tb Total Percentage"
+msgstr "RR Đến Tb Tổng tỷ lệ phần trăm"
 
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
@@ -11675,6 +11708,13 @@ msgstr "Danh sách công việc"
 msgid "Tasks"
 msgstr "Nhiệm vụ"
 
+#. [p.PkDashboard.TbTotal]
+#. defaultMessage is:
+#. Tb Total
+#: extracted_strings.json
+msgid "Tb Total"
+msgstr "Tổng số Tb"
+
 #. [p.PkDashboard.xdrLastDay]
 #. defaultMessage is:
 #. Tb cases diagnosed in last 24 hours
@@ -12765,6 +12805,9 @@ msgstr "Chuyển đổi xác nhận trạng thái"
 msgid "Topic"
 msgstr "Chủ đề"
 
+#. [pages.Status.total]
+#. defaultMessage is:
+#. Total
 #. [legends.Unknown.Total]
 #. defaultMessage is:
 #. Total
@@ -12793,10 +12836,10 @@ msgstr "Tổng số trường hợp"
 msgid "Total Errors"
 msgstr "Tổng số lỗi"
 
-#. [pages.OperationalData.cntAll]
+#. [reporters.totalResults]
 #. defaultMessage is:
 #. Total Results
-#. [reporters.totalResults]
+#. [pages.OperationalData.cntAll]
 #. defaultMessage is:
 #. Total Results
 #. [performance.barChart.results]
@@ -14469,13 +14512,25 @@ msgstr "{unit} kể từ tuần trước"
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
 
-#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit]
-#. defaultMessage is:
-#. {value} ({records}/{total, plural, one {# result} other {# results} })
-#: extracted_strings.json
-msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
-msgstr ""
-"{value} ({records} / {tổng, plural, one {# kết quả} other {# kết quả}})"
+#~ msgid "Click to view results in table format"
+#~ msgstr "Nhấp để xem kết quả ở định dạng bảng"
+
+#~ msgid "Could Not Load All Sites"
+#~ msgstr "Không thể tải tất cả các đơn vị"
+
+#~ msgid "Could Not Transfer Result"
+#~ msgstr "Không thể chuyển kết quả"
+
+#~ msgid "Error Loading All Sites"
+#~ msgstr "Lỗi khi tải tất cả các đơn vị"
+
+#~ msgid "Error Transferring Result"
+#~ msgstr "Lỗi khi chuyển kết quả"
+
+#~ msgid ""
+#~ "{value} ({records}/{total, plural, one {# result} other {# results} })"
+#~ msgstr ""
+#~ "{value} ({records} / {tổng, plural, one {# kết quả} other {# kết quả}})"
 
 #~ msgid "Current FQ Detection (Pending)"
 #~ msgstr "Phát hiện FQ hiện tại (Đang chờ xử lý)"
