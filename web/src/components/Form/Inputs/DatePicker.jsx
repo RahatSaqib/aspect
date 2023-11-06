@@ -17,7 +17,7 @@ import { useAuthState } from '../../../providers/AuthProvider'
 import { getDateObject } from '../../../utils/utils/dateFormat'
 import styles from './DatePicker.module.css'
 
-import 'react-datepicker/dist/react-datepicker-cssmodules.min.module.css'
+import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
 const cssClasses = classnames.bind(styles)
 const CustomPickersDay = styled(PickersDay, {
