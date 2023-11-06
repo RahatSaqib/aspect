@@ -747,7 +747,7 @@ async function getNotifications(request) {
       GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
       `),
       knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecepients
       `),
       knex.raw(`
         JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId

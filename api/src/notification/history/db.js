@@ -11,9 +11,8 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .leftOuterJoin('Partner as p', 'nt.partnerId', 'p.id')
     .leftOuterJoin('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
     .leftOuterJoin('EmailMessage as em', 'em.id', 'n.emailMessageId')
-    .leftOuterJoin('Person as pEm', 'em.personId', 'pEm.id')
+    .leftOuterJoin('Person as pr', 'n.personId', 'pr.id')
     .leftOuterJoin('SmsMessage as sm', 'sm.id', 'n.smsMessageId')
-    .leftOuterJoin('Person as pSm', 'sm.personId', 'pSm.id')
     .leftOuterJoin('MessageStatus as mswebhook', 'mswebhook.id', 'wm.messageStatusId')
     .leftOuterJoin('MessageStatus as msem', 'msem.id', 'em.messageStatusId')
     .leftOuterJoin('MessageStatus as mssms', 'mssms.id', 'sm.messageStatusId')
@@ -47,26 +46,19 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
         queryBuilder.where('r.patientData ->> "$.id" LIKE ?', `%${query.patientId}%`)
       }
     })
-    .groupBy('n.id')
 
-  const getItems = baseQuery
-    .clone()
-    .select([
-      'n.createdOn as date',
-      'ntc.name as notificationTypeName',
-      'nt.name as notificationName',
-      'r.id as resultId',
-      'n.issueId',
-      knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(pEm.name,'-',msem.i18nKey) SEPARATOR "|") AS emailRecipients
-      `),
-      knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.i18nKey) SEPARATOR "|") AS smsRecipients
-      `),
-      knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.i18nKey) SEPARATOR "|") AS webhookRecipients
-      `),
-      knex.raw(`
+  const getItems = baseQuery.clone().select([
+    'n.createdOn as date',
+    'ntc.name as notificationTypeName',
+    'nt.name as notificationName',
+    'r.id as resultId',
+    'n.issueId',
+    'pr.name as recepientName',
+    'wm.url as webhookRecepient',
+    'mswm.externalId as webHookStatus',
+    'mssms.externalId as smsStatus',
+    'msem.externalId as emailStatus',
+    knex.raw(`
       CASE 
         WHEN ntc.name='Result-Based' THEN 
           JSON_OBJECT(
@@ -80,63 +72,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
         ELSE JSON_OBJECT()
       END as data
       `),
-    ])
-    .count({
-      webhookSent: knex.raw(`
-        DISTINCT
-        CASE WHEN mswm.externalId = "Sent"
-        THEN n.id
-        ELSE null END
-      `),
-      webhookWithErrors: knex.raw(`
-        DISTINCT
-        CASE WHEN mswm.externalId = "Error"
-        THEN n.id
-        ELSE null END
-      `),
-      webhookPending: knex.raw(`
-        DISTINCT
-        CASE WHEN mswm.externalId = "Pending"
-        THEN n.id
-        ELSE null END
-      `),
-      smsSent: knex.raw(`
-        DISTINCT
-        CASE WHEN mssms.externalId = "Sent"
-        THEN n.id
-        ELSE null END
-      `),
-      smsWithErrors: knex.raw(`
-        DISTINCT
-        CASE WHEN mssms.externalId = "Error"
-        THEN n.id
-        ELSE null END
-      `),
-      smsPending: knex.raw(`
-        DISTINCT
-        CASE WHEN mssms.externalId = "Pending"
-        THEN n.id
-        ELSE null END
-      `),
-      emailSent: knex.raw(`
-        DISTINCT
-        CASE WHEN msem.externalId = "Sent"
-        THEN n.id
-        ELSE null END
-      `),
-      emailWithErrors: knex.raw(`
-        DISTINCT
-        CASE WHEN msem.externalId = "Error"
-        THEN n.id
-        ELSE null END
-      `),
-      emailPending: knex.raw(`
-        DISTINCT
-        CASE WHEN msem.externalId = "Pending"
-        THEN n.id
-        ELSE null END
-      `),
-    })
+  ])
   const getCount = knex.count('* as count').from(getItems.clone().as('mainQuery')).first()
 
   getItems.modify(sortPageParams, query, 'n.createdOn')

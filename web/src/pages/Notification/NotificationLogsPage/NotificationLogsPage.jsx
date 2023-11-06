@@ -1,5 +1,6 @@
 import React, { Fragment, useMemo, useState } from 'react'
-import { Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableRow } from '@mui/material'
+import { Error, Pending, Done } from '@mui/icons-material'
+import { Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableRow, Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
@@ -12,18 +13,23 @@ import { NOTIFICATION_LOG_ENDPOINT, NOTIFICATION_LOG_KEY } from '../../../hooks/
 import useI18n from '../../../hooks/useI18n'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { DataCell } from './DataCell'
-import { EmailCell, SMSCell, WebhookCell } from './ErrorCell/NotificationCells'
 import messages from './messages'
 import styles from './NotificationLogsPage.css'
 
 const cssClasses = classnames.bind(styles)
+
+export const statusIcons = {
+  Error: <Error style={{ color: 'red' }} />,
+  Sent: <Done style={{ color: 'green' }} />,
+  Pending: <Pending style={{ color: 'yellow' }} />,
+}
 
 const NotificationHistoryPage = () => {
   const intl = useI18n()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
   const [sortCol, setSortCol] = useState('date')
-  const [sortDir, setSortDir] = useState('asc')
+  const [sortDir, setSortDir] = useState('desc')
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
 
@@ -74,6 +80,16 @@ const NotificationHistoryPage = () => {
       width: 10,
     },
     {
+      id: 'recepientName',
+      label: intl.formatMessage(messages.notificationsTableRecepientName),
+      width: 10,
+    },
+    {
+      id: 'webhookRecepient',
+      label: intl.formatMessage(messages.notificationsTableWebhookRecepient),
+      width: 10,
+    },
+    {
       id: 'emailRecipients',
       label: intl.formatMessage(messages.eventsTableHeaderEmailSent),
       width: 5,
@@ -89,6 +105,18 @@ const NotificationHistoryPage = () => {
       width: 5,
     },
   ]
+
+  const getIcon = status => {
+    const icon = statusIcons[status]
+    if (icon) {
+      return (
+        <Tooltip title={status} disableInteractive>
+          {icon}
+        </Tooltip>
+      )
+    }
+    return '-'
+  }
 
   return (
     <Fragment>
@@ -121,15 +149,11 @@ const NotificationHistoryPage = () => {
                         <TableCell>
                           <DataCell {...row.data} resultId={row.resultId} />
                         </TableCell>
-                        <TableCell>
-                          <EmailCell item={row} value={row.emailRecipients} />
-                        </TableCell>
-                        <TableCell>
-                          <SMSCell item={row} value={row.smsRecipients} />
-                        </TableCell>
-                        <TableCell>
-                          <WebhookCell item={row} value={row.webhookRecipients} />
-                        </TableCell>
+                        <TableCell>{row.recepientName}</TableCell>
+                        <TableCell>{row.webhookRecipient}</TableCell>
+                        <TableCell>{getIcon(row.emailStatus)}</TableCell>
+                        <TableCell>{getIcon(row.smsStatus)}</TableCell>
+                        <TableCell>{getIcon(row.webHookStatus)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

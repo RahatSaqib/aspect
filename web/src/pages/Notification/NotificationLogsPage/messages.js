@@ -24,6 +24,14 @@ const messages = defineMessages({
     id: 'pages.Notifications.table.categoryHeader',
     defaultMessage: 'Category',
   },
+  notificationsTableRecepientName: {
+    id: 'pages.Notifications.table.notificationsTableRecepientName',
+    defaultMessage: 'Recepient Name',
+  },
+  notificationsTableWebhookRecepient: {
+    id: 'pages.Notifications.table.notificationsTableWebhookRecepient',
+    defaultMessage: 'Webhook Recepient',
+  },
   notificationsTableHeaderData: {
     id: 'pages.Notifications.table.notificationsTableHeaderData',
     defaultMessage: 'Data',

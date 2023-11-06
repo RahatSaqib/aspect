@@ -14,8 +14,6 @@ const getAllHistory = async request => {
 
   const items = (data || []).map(item => ({
     ..._.omit(item, ['groupingParam']),
-    emailRecipients: item.emailRecipients ? item.emailRecipients.split('|') : null,
-    smsRecipients: item.smsRecipients ? item.smsRecipients.split('|') : null,
     data: JSON.parse(item.data),
   }))
   return { ok: true, total, data: items }

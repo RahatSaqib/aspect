@@ -1,12 +1,12 @@
 import React from 'react'
 import ErrorCell from './ErrorCell'
 
-const WebhookCell = ({ item: { webhookSent, webhookWithErrors, webhookPending, webhookRecipients }, value }) => (
+const WebhookCell = ({ item: { webhookSent, webhookWithErrors, webhookPending, webhookRecepients }, value }) => (
   <ErrorCell
     sent={webhookSent}
     withErrors={webhookWithErrors}
     pending={webhookPending}
-    recipients={webhookRecipients}
+    recipients={webhookRecepients}
     value={value}
   />
 )
