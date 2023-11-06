@@ -1,5 +1,5 @@
 import React, { Fragment, useMemo, useState } from 'react'
-import { Error, Pending, Done } from '@mui/icons-material'
+import { Close, MoreHoriz, Done } from '@mui/icons-material'
 import { Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableRow, Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
@@ -19,9 +19,9 @@ import styles from './NotificationLogsPage.css'
 const cssClasses = classnames.bind(styles)
 
 export const statusIcons = {
-  Error: <Error style={{ color: 'red' }} />,
+  Error: <Close style={{ color: 'red' }} />,
   Sent: <Done style={{ color: 'green' }} />,
-  Pending: <Pending style={{ color: 'yellow' }} />,
+  Pending: <MoreHoriz style={{ color: '#0095ff' }} />,
 }
 
 const NotificationHistoryPage = () => {
