@@ -1,0 +1,15 @@
+@import '../../../../theme/variables.css';
+
+.hasError {
+  color: var(--aspect-color-mandy) !important;
+}
+
+.details_statusIcon {
+  color: rgb(252, 51, 22);
+  font-size: 10px;
+}
+
+.details_statusTooltip {
+  float: right;
+  margin-left: 5px;
+}

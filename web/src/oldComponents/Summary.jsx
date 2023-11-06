@@ -3,7 +3,7 @@ import { Box } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
-import styles from './Summary.css'
+import styles from './Summary.module.css'
 
 const cssClasses = classnames.bind(styles)
 

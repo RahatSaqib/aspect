@@ -22,6 +22,10 @@ import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
+import styles from './DeviceList.module.css'
+import getExportableFile from './DeviceQueries'
+import messages from './messages'
 import { DetailHeader, DeviceListFilter } from '../../../cleanComponents'
 import ExportListButton from '../../../components/AspectExportListButton'
 import PermissionChecker from '../../../components/PermissionChecker/index'
@@ -40,10 +44,6 @@ import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
-import styles from './DeviceList.css'
-import getExportableFile from './DeviceQueries'
-import messages from './messages'
 
 const cssClasses = classnames.bind(styles)
 
@@ -203,7 +203,6 @@ const DeviceList = () => {
     const sortPage = makeSortPageSelector({ sortCol: 'name' })
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   const onExportClick = formatType => {

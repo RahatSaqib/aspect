@@ -3,7 +3,7 @@ import { Card, Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import AspectTitle from './AspectTitle'
-import styles from './Card.css'
+import styles from './Card.module.css'
 
 const cssClasses = classnames.bind(styles)
 

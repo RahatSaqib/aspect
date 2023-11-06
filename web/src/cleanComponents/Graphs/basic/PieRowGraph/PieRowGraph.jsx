@@ -8,7 +8,7 @@ import useI18n from '../../../../hooks/useI18n'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import { filterColour } from '../../../index'
 import messages from './messages'
-import styles from './PieRowGraph.css'
+import styles from './PieRowGraph.module.css'
 
 const cssClasses = classnames.bind(styles)
 

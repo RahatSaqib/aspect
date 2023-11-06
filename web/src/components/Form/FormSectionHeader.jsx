@@ -3,7 +3,7 @@ import { Grid } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
-import styles from './Form.css'
+import styles from './Form.module.css'
 
 const cssClasses = classnames.bind(styles)
 

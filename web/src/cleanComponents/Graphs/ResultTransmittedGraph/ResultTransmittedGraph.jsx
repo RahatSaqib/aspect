@@ -18,7 +18,7 @@ import {
   PieRowGraph,
 } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 

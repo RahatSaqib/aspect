@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { CircularProgress, Box, Card, CardContent, Grid } from '@mui/material'
 import { useFormikContext } from 'formik'
-import './NotificationFormPage.css'
+import './NotificationFormPage.module.css'
 import isEmpty from 'lodash/isEmpty'
 import { DetailHeader } from '../../../cleanComponents'
 import AspectForm from '../../../components/Form'

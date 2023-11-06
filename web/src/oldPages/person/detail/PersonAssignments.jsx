@@ -5,7 +5,7 @@ import useI18n from '../../../hooks/useI18n'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 import PersonAssignmentItem from './PersonAssignmentItem'
-import styles from './PersonDetail.css'
+import styles from './PersonDetail.module.css'
 
 const cssClasses = classnames.bind(styles)
 
