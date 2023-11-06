@@ -8,7 +8,7 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useI18n from '../../../hooks/useI18n'
 import { graphMessages, months } from '../../../messages'
 import { StateSelector, Loading } from '../../index'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import { fillYear } from '../graphUtils'
 
 const cssClasses = classnames.bind(styles)

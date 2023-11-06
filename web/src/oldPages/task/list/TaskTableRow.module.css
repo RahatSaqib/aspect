@@ -5,11 +5,11 @@
 }
 
 .TableRow {
-  composes: TableRow from '../../../oldComponents/shared/DataTableRow.css';
+  composes: TableRow from '../../../oldComponents/shared/DataTableRow.module.css';
 }
 
 .TableCell {
-  composes: TableCell from '../../../oldComponents/shared/DataTableRow.css';
+  composes: TableCell from '../../../oldComponents/shared/DataTableRow.module.css';
   color: var(--aspect-color-grey-4);
 }
 

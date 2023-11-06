@@ -16,7 +16,7 @@ import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

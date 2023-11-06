@@ -15,9 +15,9 @@ import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { getDateObject } from '../../../utils/utils/dateFormat'
-import styles from './DatePicker.css'
+import styles from './DatePicker.module.css'
 
-import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
+import 'react-datepicker/dist/react-datepicker-cssmodules.min.module.css'
 
 const cssClasses = classnames.bind(styles)
 const CustomPickersDay = styled(PickersDay, {

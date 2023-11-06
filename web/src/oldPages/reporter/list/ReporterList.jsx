@@ -21,7 +21,7 @@ import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { getExportableFile, REPORTERS_LIST, REPORTERS_LIST_REVOKE_ONE } from '../ReporterQueries'
 import messages from './messages'
 import { ReporterDataTable, ReporterDataTableHead, ReporterDataTableRow } from './ReporterDataTable'
-import styles from './ReporterList.css'
+import styles from './ReporterList.module.css'
 
 const cssClasses = classnames.bind(styles)
 

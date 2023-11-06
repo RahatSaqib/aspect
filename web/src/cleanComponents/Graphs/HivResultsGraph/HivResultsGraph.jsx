@@ -13,7 +13,7 @@ import { graphMessages } from '../../../messages'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import {
   calcPercentageForGraphs,
   flattenAssaysStructure,

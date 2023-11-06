@@ -11,7 +11,7 @@ import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'
 import SummaryStatus from '../status/SummaryStatus'
-import styles from './OperationalData.css'
+import styles from './OperationalData.module.css'
 
 const cssClasses = classnames.bind(styles)
 

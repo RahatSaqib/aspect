@@ -34,7 +34,7 @@ import { formatRelative } from '../../../../utils/utils/dateFormat'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
 

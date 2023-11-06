@@ -3,7 +3,7 @@ import { CircularProgress } from '@mui/material'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../../hooks/useI18n'
-import styles from './SiteLocationFormMap.css'
+import styles from './SiteLocationFormMap.module.css'
 import SiteMap from './SiteMap'
 
 const messages = defineMessages({

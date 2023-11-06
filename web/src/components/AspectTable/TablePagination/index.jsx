@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { array, bool, func, number, oneOfType, string } from 'prop-types'
-import styles from '../Table.css'
+import styles from '../Table.module.css'
 import PageIndexSelectors from './PageIndexSelectors'
 import PageSizeSelectors from './PageSizeSelectors'
 

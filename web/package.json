@@ -24,9 +24,8 @@
     "updatemessages:start": "rip json2pot \"./extracted_strings.json\" -o \"./diff.pot\"",
     "updatemessages:end": "rip po2json \"./src/utils/i18n/web.*.po\" -m \"./extracted_strings.json\" -o \"./src/utils/i18n/translation.json\"",
     "postupdatemessages:end": "fsys --task=remove --fileFolder=extracted_strings.json && fsys --task=remove --fileFolder=diff.pot",
-    "prettier": "prettier \"./src/**/*.{js,jsx,css}\"",
-    "prettier:write": "npm run prettier -- --write \"./src/**/*.{js,jsx,css}\"",
-    "lint": "eslint . --ext .js --ext .jsx",
+    "prettier": "prettier \"./src/**/*.{js,jsx,css}\" --write",
+    "lint": "eslint . --report-unused-disable-directives --ext .js --ext .jsx --fix",
     "release:major": "npm version major && npm publish && git push --follow-tags",
     "release:minor": "npm version minor && npm publish && git push --follow-tags",
     "release:patch": "npm version patch && npm publish && git push --follow-tags"
