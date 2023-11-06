@@ -20,7 +20,7 @@ import {
   composeSanitizer,
 } from '../../../../utils/selectors/searchParams'
 import { formatDate } from '../../../../utils/utils/dateFormat'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 import {
   DeviceOperationDataTable,
   DeviceOperationDataTableHead,

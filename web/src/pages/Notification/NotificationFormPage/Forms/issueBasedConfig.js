@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import messages from '../messages'
-import styles from '../NotificationFormPage.css'
+import styles from '../NotificationFormPage.module.css'
 
 const cssClasses = classnames.bind(styles)
 

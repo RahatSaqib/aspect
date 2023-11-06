@@ -9,9 +9,9 @@ import { injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
-import { fetchLicense, userRequestedLogout, acceptLicenseStart } from '../../../store/AuthRedux'
-import styles from './License.css'
+import styles from './License.module.css'
 import messages from './messages'
+import { fetchLicense, userRequestedLogout, acceptLicenseStart } from '../../../store/AuthRedux'
 
 const cssClasses = classnames.bind(styles)
 
@@ -78,11 +78,7 @@ export const License = ({ intl, licenseContent, onDoNotAcceptClick, onAcceptClic
           </div>
           <div className={cssClasses('License__Container')}>
             <div className={cssClasses('License__Container__License')}>
-              {licenseContent &&
-                licenseContent
-                  .split('\n')
-                  // eslint-disable-next-line react/no-array-index-key
-                  .map((item, key) => <p key={key}>{item}</p>)}
+              {licenseContent && licenseContent.split('\n').map((item, key) => <p key={key}>{item}</p>)}
             </div>
             <div className={cssClasses('License__Container__ActionRow')}>
               <Button type="submit" variant="contained" color="primary" onClick={onAcceptClick}>

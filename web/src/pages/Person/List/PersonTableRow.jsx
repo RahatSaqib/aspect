@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import isString from 'lodash/isString'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import AccountEnableDisable from './AccountEnableDisable'
 

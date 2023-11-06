@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import useI18n from '../../../../hooks/useI18n'
 import { i18nWrapper } from '../../../../providers/I18nProvider'
 import IconProvider from '../../../IconProvider/index'
-import styles from './DailyStatusDialog.css'
+import styles from './DailyStatusDialog.module.css'
 import messages from './messages'
 
 const { format } = i18nWrapper()

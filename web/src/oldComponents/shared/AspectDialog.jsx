@@ -3,7 +3,7 @@ import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import IconProvider from '../../components/IconProvider'
-import styles from './AspectDialog.css'
+import styles from './AspectDialog.module.css'
 
 const cssClasses = classnames.bind(styles)
 

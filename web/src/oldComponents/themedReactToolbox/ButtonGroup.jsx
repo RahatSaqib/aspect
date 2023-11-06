@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import styles from './ButtonGroup.css'
+import styles from './ButtonGroup.module.css'
 
 const cssClasses = classnames.bind(styles)
 

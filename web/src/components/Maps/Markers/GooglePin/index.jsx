@@ -7,7 +7,7 @@ import { deviceStatusMessages } from '../../../../messages'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import formatI18nMessage from '../../../../utils/i18n/formatterWeb'
 import IconProvider from '../../../IconProvider'
-import styles from './GooglePin.css'
+import styles from './GooglePin.module.css'
 
 const cssClasses = classnames.bind(styles)
 

@@ -6,7 +6,7 @@ import isNil from 'lodash/isNil'
 import useI18n from '../../../hooks/useI18n'
 import { getFieldErrorProps } from '../Formik/Helpers'
 import messages from '../messages'
-import styles from './RadioButtonList.css'
+import styles from './RadioButtonList.module.css'
 
 const classes = classNames.bind(styles)
 

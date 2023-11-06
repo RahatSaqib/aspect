@@ -7,7 +7,7 @@ import { getISOFromString } from '../../../../oldComponents/shared/DateTimeInput
 import AspectForm from '../../../Form'
 import { FormikProvider } from '../../../Form/Formik/Context'
 import ButtonSave from './ButtonSave'
-import styles from './DailyStatusDialog.css'
+import styles from './DailyStatusDialog.module.css'
 import formConfig from './formConfig'
 import messages from './messages'
 import SiteInfo from './SiteInfo'

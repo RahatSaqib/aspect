@@ -9,6 +9,7 @@
   display: flex;
   flex-flow: row;
   justify-content: space-between;
+  align-items: flex-end;
 }
 
 .DataTableCard--table {
@@ -16,9 +17,9 @@
 }
 
 .Checkbox {
-  padding: inherit;
+  padding: 0;
 }
 
-.InventoryDataTable {
-  composes: ComponentDataTable from '../../../../../oldComponents/shared/DataTable.css';
+.PersonDataTable {
+  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.module.css';
 }

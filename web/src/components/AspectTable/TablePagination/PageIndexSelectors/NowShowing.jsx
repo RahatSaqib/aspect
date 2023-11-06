@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import { number, string } from 'prop-types'
 import { i18nWrapper } from '../../../../providers/I18nProvider/index'
 import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)

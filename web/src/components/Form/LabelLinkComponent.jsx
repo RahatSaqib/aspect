@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import AspectLink from '../AspectLink'
 import IconProvider from '../IconProvider'
-import styles from './LabelLinkComponent.css'
+import styles from './LabelLinkComponent.module.css'
 
 const cssClasses = classnames.bind(styles)
 
