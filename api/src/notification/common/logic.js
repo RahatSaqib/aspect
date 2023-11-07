@@ -9,6 +9,7 @@ const {
   startOfWeek,
   endOfWeek,
 } = require('date-fns')
+const _ = require('lodash')
 const { sendSlackMessage } = require('../../shared/slackUtil')
 const logger = require('../../shared/logger')
 const { getMessageStatusData } = require('./db')
@@ -107,32 +108,40 @@ async function notifyMessageWithErrorToSlack({ smsMessageId, emailMessageId, web
 
       if (smsMessageId) {
         const { personId, personName, phoneNumber, errorData } = messageData
-        const maskedPhoneNumber = maskPhoneNumber(phoneNumber)
+        const maskedPhoneNumber = phoneNumber ? maskPhoneNumber(phoneNumber) : 'N/A'
         message = `${getMessage(`:warning: *There was an error on sending an SMS message.*`)}
-    •   *Message Error On*: ${messageUpdatedOn?.toISOString().replace('T', ' ')}
+    •   *Message Error On*: ${messageUpdatedOn?.toISOString()?.replace('T', ' ')}
     •   *Person*: ${
       personId
         ? `${maskName(personName)} - <${process.env.aspectUrl}/browse/person/${personId}|Go to the person's details>`
         : 'N/A'
     }
-    •   *Phone Number*: ${phoneNumber ? maskPhoneNumber(phoneNumber) : 'N/A'}
-    •   *Error Data*: ${errorData.replace(phoneNumber, maskedPhoneNumber)}`
+    •   *Phone Number*: ${maskedPhoneNumber}
+    •   *Error Data*: ${
+      errorData && phoneNumber && !_.isEmpty(phoneNumber)
+        ? _.replace(errorData, new RegExp(_.escapeRegExp(phoneNumber), 'g'), maskedPhoneNumber)
+        : errorData
+    }`
       } else if (emailMessageId) {
         const { personId, personName, email, sendResponse } = messageData
-        const maskedEmail = maskEmail(email)
+        const maskedEmail = email ? maskEmail(email) : 'N/A'
         message = `${getMessage(`:warning: *There was an error on sending an Email message.*`)}
-    •   *Message Error On*: ${messageUpdatedOn?.toISOString().replace('T', ' ')}
+    •   *Message Error On*: ${messageUpdatedOn?.toISOString()?.replace('T', ' ')}
     •   *Person*: ${
       personId
         ? `${maskName(personName)} - <${process.env.aspectUrl}/browse/person/${personId}|Go to the person's details>`
         : 'N/A'
     }
-    •   *Email*: ${maskEmail(email)}
-    •   *Error Data*: ${sendResponse?.replace(email, maskedEmail)}`
+    •   *Email*: ${maskedEmail}
+    •   *Error Data*: ${
+      sendResponse && email && !_.isEmpty(email)
+        ? _.replace(sendResponse, new RegExp(_.escapeRegExp(email), 'g'), maskedEmail)
+        : sendResponse
+    }`
       } else if (webhookMessageId) {
         const { url, response } = messageData
         message = `${getMessage(`:warning: *There was an error on sending a Webhook message.*`)}
-    •   *Message Error On*: ${messageUpdatedOn?.toISOString().replace('T', ' ')}
+    •   *Message Error On*: ${messageUpdatedOn?.toISOString()?.replace('T', ' ')}
     •   *Webhook URL*: ${url}
     •   *Error Data*: ${response}`
       }
