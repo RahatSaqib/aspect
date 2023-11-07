@@ -5,7 +5,7 @@ import padStart from 'lodash/padStart'
 import { range } from 'ramda'
 import useI18n from '../../../hooks/useI18n'
 import { cronMessages as messages } from '../../../messages/index'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 
 const classes = classNames.bind(styles)
 

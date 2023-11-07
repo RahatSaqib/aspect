@@ -6,7 +6,7 @@ import usePlaceholder from '../../hooks/notification/usePlaceholder'
 import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
 import messages from './messages'
-import styles from './Placeholders.css'
+import styles from './Placeholders.module.css'
 
 const cssClasses = classnames.bind(styles)
 

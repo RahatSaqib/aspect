@@ -5,7 +5,7 @@ import { bool, func } from 'prop-types'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../../hooks/useI18n'
 import IconProvider from '../../IconProvider'
-import styles from '../Table.css'
+import styles from '../Table.module.css'
 
 const cssClasses = classnames.bind(styles)
 

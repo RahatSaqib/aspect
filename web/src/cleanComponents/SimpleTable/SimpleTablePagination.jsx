@@ -5,7 +5,7 @@ import min from 'lodash/min'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import useI18n from '../../hooks/useI18n'
 import messages from './messages'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

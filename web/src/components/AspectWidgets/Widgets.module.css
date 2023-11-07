@@ -163,7 +163,10 @@
 }
 
 .Summary__Card__Item--right {
-  composes: Summary__Card__Item;
+  padding: 10px 0;
+  display: flex;
+  flex-flow: row nowrap;
+  overflow: hidden;
   text-align: right;
 }
 

@@ -41,7 +41,7 @@ import ReceiveInventoryDialogForm from '../adjustment/ReceiveInventoryDialogForm
 import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
 import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
-import styles from './InventoryItemsList.css'
+import styles from './InventoryItemsList.module.css'
 import getExportableFile from './InventoryItemsQueries'
 import messages from './messages'
 

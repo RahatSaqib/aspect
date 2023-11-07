@@ -5,7 +5,7 @@ import { array, arrayOf, number, oneOfType, string } from 'prop-types'
 import IconProvider from '../../../../components/IconProvider/index'
 import useI18n from '../../../../hooks/useI18n'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import styles from './ErrorCell.css'
+import styles from './ErrorCell.module.css'
 import messages from './messages'
 import NotificationDetailModal from './NotificationDetailModal'
 

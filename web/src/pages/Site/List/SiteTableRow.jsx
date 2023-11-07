@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { formatRelative } from '../../../utils/utils/dateFormat'
 

@@ -122,7 +122,7 @@ SelectField.propTypes = {
     PropTypes.bool,
     PropTypes.object,
     PropTypes.arrayOf(PropTypes.string),
-  ]), // eslint-disable-line
+  ]),
   children: PropTypes.node,
   onChange: PropTypes.func.isRequired,
   multiple: PropTypes.bool,

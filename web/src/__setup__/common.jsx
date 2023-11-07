@@ -12,5 +12,4 @@ const shallowWithTheme = children => {
   return shallow(<ThemeProvider theme={theme}>{children}</ThemeProvider>)
 }
 
-// eslint-disable-next-line import/no-unused-modules
 export { mountWithTheme, shallowWithTheme }
