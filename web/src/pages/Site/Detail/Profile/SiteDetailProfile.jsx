@@ -7,7 +7,7 @@ import { commonDefinitions, getCustomMessage } from '../../../../messages/custom
 import Summary from '../../../../oldComponents/Summary'
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
-import styles from '../SiteDetail.css'
+import styles from '../SiteDetail.module.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -65,7 +65,6 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
 
 SiteDetailProfile.propTypes = {
   formatMessage: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   site: PropTypes.object.isRequired,
   disabled: PropTypes.bool.isRequired,
   user: PropTypes.oneOfType([PropTypes.object]).isRequired,

@@ -5,7 +5,7 @@ import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import useI18n from '../../../../hooks/useI18n'
 import TaskList from '../../../../oldPages/task/list/TaskList'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

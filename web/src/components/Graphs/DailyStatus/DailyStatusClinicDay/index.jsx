@@ -6,7 +6,7 @@ import noop from 'lodash/noop'
 import PropTypes from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import styles from '../DailyStatus.css'
+import styles from '../DailyStatus.module.css'
 import { getDayTitle } from '../Helpers'
 import messages from '../messages'
 

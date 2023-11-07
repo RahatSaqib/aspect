@@ -11,7 +11,7 @@ import { compose, pure, withProps } from 'recompose'
 import config from '../../../config'
 import Icon from '../../../oldComponents/shared/icon/Icon'
 import { requirePermissions } from '../../../oldComponents/shared/requirePermissions'
-import styles from './index.css'
+import styles from './index.module.css'
 import Title from './Title'
 
 const cssClasses = classnames.bind(styles)

@@ -7,6 +7,8 @@ import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router-dom'
+import { convertToFloat, getLatLongFromAddress } from './address'
+import SiteTypeSelect from './SiteTypeSelect'
 import { SiteListSelect, SiteTagInput, LocationSelector, TimezoneSelect } from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
@@ -17,9 +19,7 @@ import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { useAuthState } from '../../../../providers/AuthProvider'
 import messages from '../messages'
-import styles from '../SiteDetail.css'
-import { convertToFloat, getLatLongFromAddress } from './address'
-import SiteTypeSelect from './SiteTypeSelect'
+import styles from '../SiteDetail.module.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -409,7 +409,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
 }
 
 SiteForm.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   site: PropTypes.object,
   onLatLongChange: PropTypes.func,
 }

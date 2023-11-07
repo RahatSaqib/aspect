@@ -5,7 +5,7 @@ import uniqueId from 'lodash/uniqueId'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
-import styles from './Form.css'
+import styles from './Form.module.css'
 import FormItem from './FormItem'
 import messagesBase from './messages'
 

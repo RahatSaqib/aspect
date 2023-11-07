@@ -6,17 +6,17 @@ import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
+import SiteForm from './Edit/SiteForm'
+import messages from './messages'
+import SiteDetailProfile from './Profile/SiteDetailProfile'
+import styles from './SiteDetail.module.css'
+import SiteLocationFormMap from './SiteLocationFormMap'
 import { DetailHeader } from '../../../cleanComponents'
 import useSite from '../../../hooks/site/useSite'
 import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import TaskList from '../../../oldPages/task/list/TaskList'
-import isEditable from '../../../utils/selectors/isEditable' // eslint-disable-line import/no-named-default
-import SiteForm from './Edit/SiteForm'
-import messages from './messages'
-import SiteDetailProfile from './Profile/SiteDetailProfile'
-import styles from './SiteDetail.css'
-import SiteLocationFormMap from './SiteLocationFormMap'
+import isEditable from '../../../utils/selectors/isEditable'
 
 const cssClasses = classnames.bind(styles)
 

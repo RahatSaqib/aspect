@@ -18,7 +18,7 @@ import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)

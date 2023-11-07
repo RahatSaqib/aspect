@@ -7,7 +7,7 @@ import { Helmet } from 'react-helmet'
 import { Link, useNavigate } from 'react-router-dom'
 import useI18n from '../../hooks/useI18n'
 import messages from './messages'
-import styles from './NotFound.css'
+import styles from './NotFound.module.css'
 
 const cssClasses = classnames.bind(styles)
 

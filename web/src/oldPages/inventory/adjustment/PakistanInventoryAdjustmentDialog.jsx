@@ -10,7 +10,7 @@ import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { types } from '../../../store/InventoryRedux'
 import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, transformValues } from './helpers'
-import styles from './InventoryAdjustmentDialogForm.css'
+import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)

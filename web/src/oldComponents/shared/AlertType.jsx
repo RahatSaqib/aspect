@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import { FaRegCircle as FaCircleO, FaCircle } from 'react-icons/fa'
-import styles from './AlertType.css'
+import styles from './AlertType.module.css'
 
 const cssClasses = classnames.bind(styles)
 
