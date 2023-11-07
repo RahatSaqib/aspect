@@ -23,7 +23,7 @@ import {
 } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import { TaskDataTable, TaskDataTableHead, TaskDataTableRow } from './TaskDataTable'
-import styles from './TaskList.css'
+import styles from './TaskList.module.css'
 
 const cssClasses = classnames.bind(styles)
 

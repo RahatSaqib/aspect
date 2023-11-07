@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
 import { FaSquare } from 'react-icons/fa'
 import { ErrorBoundary } from '../../cleanComponents'
-import styles from './Icons.css'
+import styles from './Icons.module.css'
 
 const cssClasses = classnames.bind(styles)
 

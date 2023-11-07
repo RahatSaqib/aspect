@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import { useFormikContext } from 'formik'
 import PropTypes from 'prop-types'
 import PlaceholderSelector from '../../Placeholders/PlaceholderSelector'
-import styles from '../Form.css'
+import styles from '../Form.module.css'
 import AspectTextField from './TextField'
 
 const cssClasses = classnames.bind(styles)

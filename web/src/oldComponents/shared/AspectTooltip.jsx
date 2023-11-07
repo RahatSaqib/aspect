@@ -3,7 +3,7 @@ import { Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import IconProvider from '../../components/IconProvider'
-import styles from './AspectTooltip.css'
+import styles from './AspectTooltip.module.css'
 
 const cssClasses = classnames.bind(styles)
 

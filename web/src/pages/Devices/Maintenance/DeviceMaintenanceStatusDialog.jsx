@@ -9,7 +9,7 @@ import useI18n from '../../../hooks/useI18n'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import DeviceMaintenanceStatusSelectField from '../../../oldComponents/resource/DeviceMaintenanceStatusSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-import styles from './BaseDialog.css'
+import styles from './BaseDialog.module.css'
 
 const cssClasses = classnames.bind(styles)
 

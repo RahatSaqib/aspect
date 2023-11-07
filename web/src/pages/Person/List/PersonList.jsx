@@ -19,7 +19,7 @@ import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import { PersonDataTable, PersonDataTableHead, PersonDataTableRow } from './PersonDataTable'
-import styles from './PersonList.css'
+import styles from './PersonList.module.css'
 import getExportableFile from './PersonQueries'
 
 const cssClasses = classnames.bind(styles)

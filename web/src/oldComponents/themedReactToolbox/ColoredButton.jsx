@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import AspectButton from '../shared/AspectButton'
-import styles from './ColoredButton.css'
+import styles from './ColoredButton.module.css'
 
 const cssClasses = classnames.bind(styles)
 

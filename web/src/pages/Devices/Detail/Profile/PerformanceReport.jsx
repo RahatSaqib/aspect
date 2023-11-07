@@ -10,7 +10,7 @@ import { defineMessages } from 'react-intl'
 import { ColumnGraph } from '../../../../cleanComponents'
 import useI18n from '../../../../hooks/useI18n'
 import variables from '../../../../theme/colors'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 import messages from './messages'
 
 const customMessages = defineMessages({

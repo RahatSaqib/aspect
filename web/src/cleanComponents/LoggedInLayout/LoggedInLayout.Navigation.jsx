@@ -6,7 +6,7 @@ import { Link as RouterLink, useLocation } from 'react-router-dom'
 import PermissionChecker from '../../components/PermissionChecker'
 import useI18n from '../../hooks/useI18n'
 import messages from './messages'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

@@ -8,7 +8,7 @@ import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { StateSelector, Loading } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import { ColumnLineGraph } from '../index'
 
 const cssClasses = classnames.bind(styles)

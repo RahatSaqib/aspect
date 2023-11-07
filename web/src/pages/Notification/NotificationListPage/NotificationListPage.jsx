@@ -15,7 +15,7 @@ import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import messages from './messages'
-import styles from './NotificationListPage.css'
+import styles from './NotificationListPage.module.css'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
 
 const cssClasses = classnames.bind(styles)

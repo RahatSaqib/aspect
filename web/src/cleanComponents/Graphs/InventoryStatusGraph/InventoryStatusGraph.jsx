@@ -10,7 +10,7 @@ import { useFilterUpdate } from '../../../providers/FilterProvider'
 import ConsumableSelector from '../../ConsumableSelector'
 import { Loading, ColumnGraph, genLabel } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 
 const cssClasses = classnames.bind(styles)
 
