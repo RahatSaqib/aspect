@@ -1,4 +1,6 @@
 const { WebClient } = require('@slack/web-api')
+const isEmpty = require('lodash/isEmpty')
+const isNil = require('lodash/isNil')
 const logger = require('./logger')
 
 const ERROR_CODES = { NOT_IN_CHANNEL: 'not_in_channel' }
@@ -23,7 +25,12 @@ const sendSlackMessage = async (message, channel = null) => {
   // Only try sending a message if:
   // - The slack token was defined in the env file
   // - The slack channel was defined in the env file or specified in the parameter
-  if (process.env.slack_token && channelId) {
+  if (
+    !isNil(process.env.slack_token) &&
+    !isEmpty(process.env.slack_token) &&
+    !isNil(channelId) &&
+    !isEmpty(channelId)
+  ) {
     try {
       // Try posting the message
       await web.chat.postMessage({
