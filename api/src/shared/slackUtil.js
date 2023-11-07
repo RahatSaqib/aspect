@@ -20,19 +20,24 @@ const joinChannel = async channelId => {
 
 const sendSlackMessage = async (message, channel = null) => {
   const channelId = channel || process.env.slack_channel_id
+  // Only try sending a message if:
+  // - The slack token was defined in the env file
+  // - The slack channel was defined in the env file or specified in the parameter
   if (process.env.slack_token && channelId) {
     try {
+      // Try posting the message
       await web.chat.postMessage({
         text: message,
         channel: channelId,
       })
     } catch (error) {
+      // If the App didn't join the desired channel yet, we need to join it
       if (error.data.error === ERROR_CODES.NOT_IN_CHANNEL) {
-        // Join the channel if did not already and re-try
         const joinChannelOK = await joinChannel(channelId)
+        // If joining the channel did not end on an unexpected error, then try sending the slack message again
         if (joinChannelOK) await sendSlackMessage(message, channelId)
       }
-      // Avoid internal server errors, and just log to Sentry
+      // Any other kind of error, like channel not found, invalid auth, etc.
       else logger.error(error)
     }
   }
