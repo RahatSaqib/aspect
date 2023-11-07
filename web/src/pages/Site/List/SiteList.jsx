@@ -18,7 +18,7 @@ import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
-import styles from './SiteList.css'
+import styles from './SiteList.module.css'
 import getExportableFile from './SiteQueries'
 
 const cssClasses = classnames.bind(styles)

@@ -4,7 +4,7 @@ import classnames from 'classnames/bind'
 import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
 import IconProvider from '../../../IconProvider'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 import Cell from '../Cell'
 import messages from '../messages'
 

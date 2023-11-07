@@ -14,7 +14,7 @@ import xor from 'lodash/xor'
 import { PERSON_SELECT_LIST } from '../../../../components/QueryFetch/Person'
 import { SITE_SELECT } from '../../../../components/QueryFetch/Site'
 import messages from '../messages'
-import styles from '../NotificationFormPage.css'
+import styles from '../NotificationFormPage.module.css'
 import {
   issueBasedSection,
   calibrationSection,

@@ -1,7 +1,7 @@
 import React, { memo } from 'react'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import styles from './Title.css'
+import styles from './Title.module.css'
 
 const cssClasses = classnames.bind(styles)
 

@@ -8,11 +8,11 @@ import frLocale from 'date-fns/locale/fr'
 import ptLocale from 'date-fns/locale/pt'
 import ruLocale from 'date-fns/locale/ru'
 import ukLocale from 'date-fns/locale/uk'
+import tgLocale from 'date-fns/locale/uz-Cyrl'
 import viLocale from 'date-fns/locale/vi'
 import { DateTime } from 'luxon'
 import { createIntl, useIntl } from 'react-intl' // eslint-disable-line no-restricted-imports
 import translation from '../../utils/i18n/translation.json'
-import tgLocale from './date-fns-locales/tg-TJ'
 
 const I18nContext = createContext()
 

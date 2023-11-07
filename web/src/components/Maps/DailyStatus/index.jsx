@@ -7,7 +7,7 @@ import DailyStatusFilters from '../../Graphs/DailyStatus/DailyStatusFilters'
 import useDailyStatus from '../../Graphs/DailyStatus/Helpers/useDailyStatus'
 import { DEVICE_STATUS_LAST_REPORTED } from '../../QueryFetch/Device'
 import AspectMap from '../index'
-import styles from './DailyStatusMap.css'
+import styles from './DailyStatusMap.module.css'
 import buildMarkersForDailyStatus from './Helpers'
 import messages from './messages'
 

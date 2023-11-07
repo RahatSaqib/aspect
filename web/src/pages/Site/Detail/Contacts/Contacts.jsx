@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import { ContactTagInput } from '../../../../cleanComponents'
 import useContactBySite from '../../../../hooks/person/useContactBySite'
 import { ReadOnlyField } from '../../../../oldComponents/shared/ReadOnlyFields'
-import styles from '../../../../oldComponents/Summary.css'
+import styles from '../../../../oldComponents/Summary.module.css'
 import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)

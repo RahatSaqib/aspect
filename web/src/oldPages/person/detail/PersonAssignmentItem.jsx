@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom'
 import useI18n from '../../../hooks/useI18n'
 import { mergeToFiltersParams } from '../../../oldComponents/utils'
 import messages from './messages'
-import styles from './PersonDetail.css'
+import styles from './PersonDetail.module.css'
 
 const cssClasses = classnames.bind(styles)
 

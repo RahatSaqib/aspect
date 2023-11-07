@@ -3,7 +3,7 @@ import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import { bool, func, oneOf, string } from 'prop-types'
 import IconProvider from '../../../IconProvider'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 
 const cssClasses = classnames.bind(styles)
 
