@@ -1310,10 +1310,11 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
     }
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
+        const jobFunctionId = jobFunctions[jobFunctionName]
         const existingJobContext = await knex('JobContext')
           .where({
             personId,
-            jobFunctionId: jobFunctions[jobFunctionName],
+            jobFunctionId,
           })
           .first()
         if (!existingJobContext) {
@@ -1325,7 +1326,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
           ) {
             await knex('JobContext').insert({
               personId,
-              jobFunctionId: jobFunctions[jobFunctionName],
+              jobFunctionId,
               siteId: siteIds[person.sites[0].shortName],
             })
           } else if (!_.isEmpty(person.geographies)) {
@@ -1356,7 +1357,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
                 .first()
               await knex('JobContext').insert({
                 personId,
-                jobFunctionId: jobFunctions[jobFunctionName],
+                jobFunctionId,
                 geographyId: jobGeographyId,
               })
             })
