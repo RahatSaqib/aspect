@@ -8,7 +8,7 @@ import DisplayCard from './components/DisplayCard'
 import Daily from './Daily'
 import Monthly from './Monthly'
 import Quarterly from './Quarterly'
-import styles from './styles.css'
+import styles from './styles.module.css'
 import getCronHumanValue from './utils'
 import Weekly from './Weekly'
 

@@ -8,7 +8,7 @@ import AppNotificationDialog from '../../oldComponents/appNotification/AppNotifi
 import AppNotificationSnackBar from '../../oldComponents/appNotification/AppNotificationSnackBar'
 import { aspectFetch } from '../../utils/utils/fetch'
 import Header from './LoggedInLayout.AppBar'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

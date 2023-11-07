@@ -5,6 +5,9 @@ import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router'
+import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
+import messages from './messages'
+import styles from './styles.module.css'
 import { DetailHeader, InventoryLogFilter } from '../../../cleanComponents'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
@@ -14,9 +17,6 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
-import messages from './messages'
-import styles from './styles.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -110,7 +110,6 @@ export const InventoryLogWithProps = ({
                 <TableBody>
                   {items.map((inventoryLogItem, index) => (
                     <InventoryLogTableRow
-                      // eslint-disable-next-line react/no-array-index-key
                       key={`InventoryLog---${location.key}--${index}`}
                       inventoryLogItem={inventoryLogItem}
                     />

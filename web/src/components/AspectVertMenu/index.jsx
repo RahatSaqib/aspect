@@ -5,7 +5,7 @@ import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import IconMenu from '../../oldComponents/shared/IconMenu'
 import IconProvider from '../IconProvider'
-import styles from './AspectVertMenu.css'
+import styles from './AspectVertMenu.module.css'
 
 const cssClasses = classnames.bind(styles)
 

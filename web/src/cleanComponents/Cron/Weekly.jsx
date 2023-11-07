@@ -4,7 +4,7 @@ import classNames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const WEEK_DAYS = [
   {

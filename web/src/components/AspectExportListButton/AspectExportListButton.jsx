@@ -4,7 +4,7 @@ import { Button, LinearProgress, Menu, MenuItem } from '@mui/material'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { downloadFile } from '../../utils/utils/files'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

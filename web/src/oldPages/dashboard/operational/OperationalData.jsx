@@ -1,15 +1,14 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import React, { useState } from 'react'
 import LaunchIcon from '@mui/icons-material/Launch'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
-import { DetailHeader } from '../../../cleanComponents'
-import useI18n from '../../../hooks/useI18n'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
 import messages from './messages'
 import OperationalDailyStatus from './OperationalDailyStatus'
 import OperationalDashBoard from './OperationalDashBoard'
-import styles from './OperationalData.css'
+import styles from './OperationalData.module.css'
+import { DetailHeader } from '../../../cleanComponents'
+import useI18n from '../../../hooks/useI18n'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 
 const cssClasses = classnames.bind(styles)
 

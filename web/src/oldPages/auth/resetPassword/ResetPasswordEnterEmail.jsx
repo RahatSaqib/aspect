@@ -5,7 +5,7 @@ import { compose, withState, pure } from 'recompose'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import validateEmailAddress from '../../../utils/utils/validate'
 import messages from './messages'
-import styles from './ResetPassword.css'
+import styles from './ResetPassword.module.css'
 
 const cssClasses = classnames.bind(styles)
 

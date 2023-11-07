@@ -6,7 +6,7 @@ import AlertType from '../../../oldComponents/shared/AlertType'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-import styles from './TaskTableRow.css'
+import styles from './TaskTableRow.module.css'
 
 const cssClasses = classnames.bind(styles)
 

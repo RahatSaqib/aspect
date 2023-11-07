@@ -9,7 +9,7 @@ import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { getTimePeriod, formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 
 const cssClasses = classnames.bind(styles)
 
