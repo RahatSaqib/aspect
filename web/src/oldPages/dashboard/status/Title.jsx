@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import styles from './index.css'
+import styles from './index.module.css'
 
 const cssClasses = classnames.bind(styles)
 

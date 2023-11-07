@@ -12,7 +12,7 @@ import { compose } from 'recompose'
 import recomposeForm, { errorProps } from '../../../oldComponents/recomposeForm'
 import { loginStart } from '../../../store/AuthRedux'
 import { reasonTypes } from '../loggedOutReasons'
-import styles from './Login.css'
+import styles from './Login.module.css'
 import messages from './messages'
 import Reason from './Reason'
 

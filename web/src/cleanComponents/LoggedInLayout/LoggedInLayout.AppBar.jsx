@@ -12,7 +12,7 @@ import IconMenu from '../../oldComponents/shared/IconMenu'
 import { userRequestedLogout } from '../../store/AuthRedux'
 import { aspectFetch } from '../../utils/utils/fetch'
 import LayoutNavigation from './LoggedInLayout.Navigation'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

@@ -2,7 +2,7 @@ import React from 'react'
 import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
-import styles from './ColoredNumber.css'
+import styles from './ColoredNumber.module.css'
 
 const cssClasses = classnames.bind(styles)
 

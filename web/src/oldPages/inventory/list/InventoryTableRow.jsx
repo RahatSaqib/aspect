@@ -10,7 +10,7 @@ import { useDispatch } from 'react-redux'
 import AspectVertMenu from '../../../components/AspectVertMenu'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useI18n from '../../../hooks/useI18n'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
 import { useAuthState } from '../../../providers/AuthProvider'
 import {

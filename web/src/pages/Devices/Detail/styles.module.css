@@ -116,7 +116,7 @@
 
 .ResultDataTable,
 .DeviceOperationDataTable {
-  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.css';
+  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.module.css';
 }
 
 .DelayShowingProgressCircular {

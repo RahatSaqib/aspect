@@ -8,11 +8,11 @@ import { MdFileDownload } from 'react-icons/md'
 import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import messages from '../list/messages'
-import cssStyles from './HistoryResults.css'
+import cssStyles from './HistoryResults.module.css'
 
 const cssClasses = classnames.bind(cssStyles)
 

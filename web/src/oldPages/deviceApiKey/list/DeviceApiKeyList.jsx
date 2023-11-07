@@ -25,7 +25,7 @@ import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
 import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
-import styles from './DeviceApiKeyList.css'
+import styles from './DeviceApiKeyList.module.css'
 import DeviceApiKeyTableRow from './DeviceApiKeyTableRow'
 import messages from './messages'
 

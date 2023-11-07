@@ -15,7 +15,7 @@ import { useFilterValues } from '../../../providers/FilterProvider'
 import { showError } from '../../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../../utils/utils/files'
 import ReportCard from './ReportCard'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

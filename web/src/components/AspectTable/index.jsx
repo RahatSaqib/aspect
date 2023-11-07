@@ -16,7 +16,7 @@ import {
 import fetchWrapperForQueries from '../QueryFetch'
 import { replaceRouteParams } from '../QueryFetch/Helpers'
 import { allowOnlyAPIKeys, determineSortDirection, getColumnIdFromFilterKey, removeNullFromCollection } from './Helpers'
-import styles from './Table.css'
+import styles from './Table.module.css'
 import AspectTableCore from './TableCore'
 
 const cssClasses = classnames.bind(styles)

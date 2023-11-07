@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import styles from '../../../../../oldComponents/shared/DataTableRow.css'
+import styles from '../../../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as Tr, DataTableCell as Td } from '../../../../../oldComponents/shared/tableBody'
 
 const cssClasses = classnames.bind(styles)

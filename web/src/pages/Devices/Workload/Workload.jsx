@@ -18,7 +18,7 @@ import { useAuthState } from '../../../providers/AuthProvider'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
-import styles from './styles.css'
+import styles from './styles.module.css'
 import TableRow from './TableRow'
 
 // There are some missing translations for the status, you should check what we are actually doing in device table.

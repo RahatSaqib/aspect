@@ -3,7 +3,7 @@ import { AppBar, Box, Button, Toolbar, Typography } from '@mui/material'
 import classnames from 'classnames/bind'
 import { MdKeyboardArrowLeft } from 'react-icons/md'
 import { useNavigate } from 'react-router'
-import styles from './styles.css'
+import styles from './styles.module.css'
 
 const cssClasses = classnames.bind(styles)
 

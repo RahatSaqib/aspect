@@ -3,7 +3,7 @@ import { Chip } from '@mui/material'
 import classnames from 'classnames/bind'
 import { array, func, oneOfType } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 import messages from '../messages'
 
 const cssClasses = classnames.bind(styles)
