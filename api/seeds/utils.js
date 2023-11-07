@@ -3033,14 +3033,6 @@ async function upsertForms(knex, partnerId, forms) {
   return true
 }
 
-async function upsertData(knex, table, columns) {
-  let { id: rowId } = (await knex(table).where(columns).first('id')) || {}
-  if (!rowId) {
-    ;[rowId] = await knex(table).insert(columns)
-  }
-  return rowId
-}
-
 module.exports = {
   seed,
   seedTable,
@@ -3114,5 +3106,4 @@ module.exports = {
   updateIssueNotificationTemplates,
 
   upsertForms,
-  upsertData,
 }

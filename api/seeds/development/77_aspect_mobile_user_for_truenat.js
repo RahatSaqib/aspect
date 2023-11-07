@@ -3,7 +3,7 @@ const { hashSync } = require('bcrypt')
 const Promise = require('bluebird')
 const { adminUserName } = require('./fixtures/partnerData')
 const config = require('../../src/config')
-const { upsertData } = require('../utils')
+const { upsertSingle } = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -74,7 +74,7 @@ async function seed(knex) {
           ...auditFields,
         })
       }
-      await upsertData(knex, 'JobContext', {
+      await upsertSingle(knex, 'JobContext', {
         personId: truenatClinician.id,
         jobFunctionId: clinicianJobFunctionId,
         siteId: truenatResultSite.id,

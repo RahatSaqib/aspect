@@ -1,6 +1,6 @@
 /* eslint-disable linebreak-style */
 
-const { upsertData } = require('../../seeds/utils')
+const { upsertSingle } = require('../../seeds/utils')
 
 async function setUserPermission(knex, userName, jobFunctionName, permissionId) {
   // ------------------------------------------------------
@@ -22,7 +22,7 @@ async function setUserPermission(knex, userName, jobFunctionName, permissionId) 
   const { id: jobFunctionId } = await knex('JobFunction').where({ partnerId, name: jobFunctionName }).first()
 
   // JobContext
-  await upsertData(knex, 'JobContext', {
+  await upsertSingle(knex, 'JobContext', {
     personId,
     jobFunctionId,
     geographyId,

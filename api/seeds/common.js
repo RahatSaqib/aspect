@@ -144,7 +144,7 @@ async function commonUpserts(
   await upsertJobFunctionFixture(knex, _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture, partnerId)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId }).first()
-  await utils.upsertData(knex, 'JobContext', {
+  await utils.upsertSingle(knex, 'JobContext', {
     personId: adminPersonId,
     jobFunctionId: jobFunctionIdAdmin,
     geographyId,
@@ -226,7 +226,7 @@ async function upsertDemoUsersPerJobFunction(
         ...commonPersonFields,
       })
     }
-    await utils.upsertData(knex, 'JobContext', { personId, jobFunctionId, geographyId })
+    await utils.upsertSingle(knex, 'JobContext', { personId, jobFunctionId, geographyId })
   })
   await Promise.all(insertUsers)
 }
