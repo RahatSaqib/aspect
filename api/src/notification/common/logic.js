@@ -82,6 +82,8 @@ function maskName(personName) {
 
 async function notifyMessageWithErrorToSlack({ smsMessageId, emailMessageId, webhookMessageId }) {
   try {
+    // Only one of smsMessageId, emailMessageId, or webhookMessageId, is going to be received
+    // The message data is got from the one that is not null
     const {
       partnerName,
       notificationTypeName,
