@@ -9,7 +9,7 @@ import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../../utils/utils/fetch'
-import styles from './Detail.css'
+import styles from './Detail.module.css'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)

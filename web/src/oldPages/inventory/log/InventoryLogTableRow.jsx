@@ -1,7 +1,7 @@
 import React from 'react'
 import classnames from 'classnames/bind'
 import useI18n from '../../../hooks/useI18n'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'

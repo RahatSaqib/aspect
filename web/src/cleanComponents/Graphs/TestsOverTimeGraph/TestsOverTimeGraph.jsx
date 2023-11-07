@@ -27,7 +27,7 @@ import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { formatNumber } from '../../../utils/utils/number'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import {
   getTimePeriod,
   genLabel,

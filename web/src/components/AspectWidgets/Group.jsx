@@ -6,7 +6,7 @@ import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 import { AspectWidget } from './Widget'
-import styles from './Widgets.css'
+import styles from './Widgets.module.css'
 
 const cssClasses = classnames.bind(styles)
 

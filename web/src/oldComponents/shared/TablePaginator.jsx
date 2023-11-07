@@ -6,7 +6,7 @@ import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from
 import { defineMessages } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
 import useI18n from '../../hooks/useI18n'
-import styles from './TablePaginator.css'
+import styles from './TablePaginator.module.css'
 
 const cssClasses = classnames.bind(styles)
 

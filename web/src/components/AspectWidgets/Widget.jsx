@@ -11,7 +11,7 @@ import IconProvider from '../IconProvider'
 import WidgetAlert from './Alerts'
 import { buildWidgetParams, translate } from './Helpers'
 import messages from './messages'
-import styles from './Widgets.css'
+import styles from './Widgets.module.css'
 
 const cssClasses = classnames.bind(styles)
 

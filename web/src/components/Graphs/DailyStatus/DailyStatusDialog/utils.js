@@ -1,6 +1,6 @@
 import classnames from 'classnames/bind'
 import { setClassNames, setInitialValue } from '../Helpers'
-import styles from './DailyStatusDialog.css'
+import styles from './DailyStatusDialog.module.css'
 
 const cssClasses = classnames.bind(styles)
 

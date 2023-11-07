@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
 import { useAuthState } from '../../../../providers/AuthProvider'
 import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 
 const cssClasses = classnames.bind(styles)
 

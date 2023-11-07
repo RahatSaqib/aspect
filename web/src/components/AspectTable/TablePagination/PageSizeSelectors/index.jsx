@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '@mui/material'
 import classnames from 'classnames/bind'
 import { func, number } from 'prop-types'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 
 const cssClasses = classnames.bind(styles)
 

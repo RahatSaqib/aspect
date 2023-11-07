@@ -1,7 +1,7 @@
 import React from 'react'
 import classNames from 'classnames/bind'
 import IconProvider from '../../IconProvider'
-import styles from './AspectMessageField.css'
+import styles from './AspectMessageField.module.css'
 
 const cssClasses = classNames.bind(styles)
 

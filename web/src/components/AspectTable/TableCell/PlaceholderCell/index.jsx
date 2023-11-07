@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 
 const cssClasses = classnames.bind(styles)
 

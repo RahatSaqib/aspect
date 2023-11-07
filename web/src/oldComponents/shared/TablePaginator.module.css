@@ -19,7 +19,8 @@
 }
 
 .Left {
-  composes: Container__Content;
+  display: flex;
+  margin-bottom: 10px;
   flex-grow: 1;
 }
 
@@ -51,7 +52,8 @@
 }
 
 .Right {
-  composes: Container__Content;
+  display: flex;
+  margin-bottom: 10px;
   flex-grow: 0;
   justify-content: flex-end;
 }
