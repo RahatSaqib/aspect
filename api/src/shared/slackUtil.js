@@ -6,9 +6,16 @@ const options = {}
 const web = new WebClient(process.env.slack_token, options)
 
 const joinChannel = async channelId => {
-  await web.conversations.join({
-    channel: channelId,
-  })
+  let ok = true
+  try {
+    await web.conversations.join({
+      channel: channelId,
+    })
+  } catch (error) {
+    logger.error(error)
+    ok = false
+  }
+  return ok
 }
 
 const sendSlackMessage = async (message, channel = null) => {
@@ -22,8 +29,8 @@ const sendSlackMessage = async (message, channel = null) => {
     } catch (error) {
       if (error.data.error === ERROR_CODES.NOT_IN_CHANNEL) {
         // Join the channel if did not already and re-try
-        await joinChannel(channelId)
-        await sendSlackMessage(message, channelId)
+        const joinChannelOK = await joinChannel(channelId)
+        if (joinChannelOK) await sendSlackMessage(message, channelId)
       }
       // Avoid internal server errors, and just log to Sentry
       else logger.error(error)
