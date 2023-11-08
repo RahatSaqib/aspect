@@ -1,13 +1,10 @@
 import React from 'react'
 import { Button, CircularProgress, Tooltip } from '@mui/material'
-import classnames from 'classnames/bind'
 import { bool, func } from 'prop-types'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../../hooks/useI18n'
 import IconProvider from '../../IconProvider'
 import styles from '../Table.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   resetTableMessage: {
@@ -19,7 +16,7 @@ const messages = defineMessages({
 const AspectTableReset = ({ isFetching, action }) => {
   const { formatMessage } = useI18n()
   return (
-    <div className={cssClasses('table__reload')}>
+    <div className={styles.table__reload}>
       <Tooltip
         placement="left"
         title={formatMessage(messages.resetTableMessage)}
@@ -28,7 +25,7 @@ const AspectTableReset = ({ isFetching, action }) => {
       >
         <Button size="small" disabled={isFetching} onClick={action}>
           {isFetching ? (
-            <div className={cssClasses('tablereload__waiting')}>
+            <div className={styles.tablereload__waiting}>
               <CircularProgress />
             </div>
           ) : (

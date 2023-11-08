@@ -5,11 +5,11 @@
   width: 100%;
 }
 
-.Section--summary {
+.Section__summary {
   margin: 10px 0 0;
 }
 
-.Section--stock > div:first-child {
+.Section__stock > div:first-child {
   padding-top: 20px;
 }
 
@@ -37,14 +37,14 @@
   border-bottom-right-radius: 8px;
 }
 
-.tabs__tab--inactive {
+.tabs__tab__inactive {
   color: black !important;
-  background-color: var('--alto-2') !important;
+  background-color: var(--alto-2) !important;
 }
 
-.tabs__tab--active {
+.tabs__tab__active {
   color: white !important;
-  background-color: var('--aspect-device-aspect') !important;
+  background-color: var(--aspect-device-aspect) !important;
 }
 .wrapper {
   width: 100%;

@@ -1,9 +1,9 @@
 @import '../../theme/variables.css';
 
-.ColoredNumber--Error {
+.ColoredNumber__Error {
   color: var(--aspect-color-mandy);
 }
 
-.ColoredNumber--Success {
+.ColoredNumber__Success {
   color: var(--aspect-color-conifer);
 }

@@ -1,13 +1,10 @@
 import React from 'react'
 import { IconButton } from '@mui/material'
-import classnames from 'classnames/bind'
 import { bool, func, number } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
 import IconProvider from '../../../IconProvider'
 import styles from '../../Table.module.css'
 import messages from '../messages'
-
-const cssClasses = classnames.bind(styles)
 
 /**
  * Component to allow rows to be grouped for this column
@@ -18,7 +15,7 @@ const TableColumnGroupBy = ({ headerIndex, handleGroupByColumnToggle, isGrouped 
   return isGrouped ? (
     <IconButton
       onClick={e => handleGroupByColumnToggle(e, headerIndex)}
-      className={cssClasses('tableheader__groupbybutton')}
+      className={styles.tableheader__groupbybutton}
       data-testid={`ungroup_${headerIndex}`}
       title={formatMessage(messages.unGroupByColumn)}
     >
@@ -27,7 +24,7 @@ const TableColumnGroupBy = ({ headerIndex, handleGroupByColumnToggle, isGrouped 
   ) : (
     <IconButton
       onClick={e => handleGroupByColumnToggle(e, headerIndex)}
-      className={cssClasses('tableheader__groupbybutton')}
+      className={styles.tableheader__groupbybutton}
       data-testid={`group_${headerIndex}`}
       title={formatMessage(messages.groupByColumn)}
     >

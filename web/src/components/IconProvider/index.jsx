@@ -1,11 +1,8 @@
 import React, { Suspense, lazy, memo } from 'react'
-import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
 import { FaSquare } from 'react-icons/fa'
 import { ErrorBoundary } from '../../cleanComponents'
 import styles from './Icons.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 async function loadIconModule(icon) {
   const iconFamily = icon.substring(0, 2).toLowerCase()
@@ -32,7 +29,7 @@ async function loadIconModule(icon) {
  */
 
 const IconProvider = memo(({ icon, className, title }) => {
-  const IconShell = ({ children }) => <div className={cssClasses({ [className]: !!className })}>{children}</div>
+  const shellClass = className ? styles[className] : ''
 
   const IconComponent = lazy(() =>
     loadIconModule(icon).then(module => {
@@ -46,16 +43,16 @@ const IconProvider = memo(({ icon, className, title }) => {
   return (
     <Suspense
       fallback={
-        <IconShell>
-          <FaSquare className={cssClasses(['icons__proxy'])} />
-        </IconShell>
+        <div className={shellClass}>
+          <FaSquare className={styles.icons__proxy} />
+        </div>
       }
     >
-      <IconShell>
+      <div className={shellClass}>
         <ErrorBoundary fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}>
           <IconComponent title={title} />
         </ErrorBoundary>
-      </IconShell>
+      </div>
     </Suspense>
   )
 })

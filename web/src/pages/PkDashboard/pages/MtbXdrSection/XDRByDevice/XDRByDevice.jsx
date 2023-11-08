@@ -1,6 +1,5 @@
 import React from 'react'
 import { TableBody, Table, Button, LinearProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useLocation, useNavigate } from 'react-router'
@@ -19,8 +18,6 @@ import { makeSortPageSelector } from '../../../../../utils/selectors/searchParam
 import messages from './messages'
 import styles from './styles.module.css'
 import TableRow from './TableRow'
-
-const cssClasses = classnames.bind(styles)
 
 const XdrByDevice = () => {
   const navigate = useNavigate()
@@ -86,10 +83,10 @@ const XdrByDevice = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.XDRAssayResultsSummary)} />
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.XDRAssayResultsSummary)} />
         <XDRByDeviceFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <Button
               variant="outlined"
@@ -98,7 +95,7 @@ const XdrByDevice = () => {
                 addFilter({ ...workloadFilter, singleAssayId: GxMtbXdrId }, '/browse/device/workload')
                 navigate('/browse/device/workload')
               }}
-              className={cssClasses('export-icon-button')}
+              className={styles.export_icon_button}
             >
               {formatMessage(messages.goTo)}
             </Button>
@@ -110,7 +107,7 @@ const XdrByDevice = () => {
           ) : (
             <>
               <div>
-                <Table className={cssClasses('InventoryDataTable')}>
+                <Table className={styles.InventoryDataTable}>
                   <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
                   <TableBody>
                     {XdrByDevice.map((item, index) => (

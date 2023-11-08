@@ -1,6 +1,5 @@
 import React, { Fragment, useState } from 'react'
 import { Button } from '@mui/material'
-import classnames from 'classnames/bind'
 import { array, arrayOf, number, oneOfType, string } from 'prop-types'
 import IconProvider from '../../../../components/IconProvider/index'
 import useI18n from '../../../../hooks/useI18n'
@@ -8,8 +7,6 @@ import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import styles from './ErrorCell.module.css'
 import messages from './messages'
 import NotificationDetailModal from './NotificationDetailModal'
-
-const cssClasses = classnames.bind(styles)
 
 const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value }) => {
   const { formatMessage } = useI18n()
@@ -51,7 +48,7 @@ const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value })
               </p>
             </Fragment>
           }
-          className={cssClasses('details_statusTooltip')}
+          className={styles.details_statusTooltip}
         >
           <NotificationDetailModal
             {...modalConfiguration}
@@ -62,9 +59,9 @@ const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value })
               })
             }}
           />
-          <Button className={cssClasses({ hasError: withErrors })} onClick={handleClick}>
+          <Button className={`${withErrors ? 'hasError' : ''}`} onClick={handleClick}>
             {sent}/{sent + withErrors + pending}
-            <IconProvider icon="MdKeyboardArrowDown" className={cssClasses('popover-cell__icon')} />
+            <IconProvider icon="MdKeyboardArrowDown" className={styles.popover_cell__icon} />
           </Button>
         </AspectTooltip>
       )}

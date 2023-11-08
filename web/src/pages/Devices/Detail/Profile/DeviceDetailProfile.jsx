@@ -1,7 +1,6 @@
 import React, { Fragment } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Button, Card, IconButton, Tooltip } from '@mui/material'
-import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
@@ -37,8 +36,6 @@ import WarrantyDialog from '../../Maintenance/WarrantyDialog'
 import styles from '../styles.module.css'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
-
-const cssClasses = classnames.bind(styles)
 
 const tokens = {
   PROVISIONED: 'provisioned',
@@ -276,8 +273,8 @@ const DeviceDetailProfile = ({
 
   return (
     <div>
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           <div>
             <Summary
               title={formatMessage(messages.deviceType)}
@@ -305,7 +302,7 @@ const DeviceDetailProfile = ({
               title={
                 isMaintenanceStatusChangeDisabled ? (
                   <AspectTooltip
-                    className={cssClasses('deviceSummary__container')}
+                    className={styles.deviceSummary__container}
                     iconClass="deviceSummary__helpIcon"
                     showHelpIcon
                     title={formatMessage(messages.deviceStatusChangeDisabledTooltip)}
@@ -398,7 +395,7 @@ const DeviceDetailProfile = ({
               <Summary
                 title={
                   <AspectTooltip
-                    className={cssClasses('deviceSummary__container')}
+                    className={styles.deviceSummary__container}
                     iconClass="deviceSummary__helpIcon"
                     showHelpIcon
                     title={
@@ -429,7 +426,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={
                 <AspectTooltip
-                  className={cssClasses('deviceSummary__container')}
+                  className={styles.deviceSummary__container}
                   iconClass="deviceSummary__helpIcon"
                   showHelpIcon
                   title={

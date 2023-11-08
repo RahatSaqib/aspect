@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { TableBody, LinearProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, PersonFilter } from '../../../cleanComponents'
@@ -21,8 +20,6 @@ import messages from './messages'
 import { PersonDataTable, PersonDataTableHead, PersonDataTableRow } from './PersonDataTable'
 import styles from './PersonList.module.css'
 import getExportableFile from './PersonQueries'
-
-const cssClasses = classnames.bind(styles)
 
 export const PersonList = () => {
   const navigate = useNavigate()
@@ -68,10 +65,10 @@ export const PersonList = () => {
           </AspectButton>
         </PermissionChecker>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.contactsTitle)} />
         <PersonFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} visible={data.data.length !== 0} />
           </div>
@@ -81,7 +78,7 @@ export const PersonList = () => {
             <BrowseEmptyList />
           ) : (
             <>
-              <PersonDataTable className={cssClasses('PersonDataTable')}>
+              <PersonDataTable className={styles.PersonDataTable}>
                 <PersonDataTableHead
                   navigate={navigate}
                   location={location}

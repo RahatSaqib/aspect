@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { TableBody, Table, LinearProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, DeviceWorkloadFilter } from '../../../cleanComponents'
@@ -23,8 +22,6 @@ import TableRow from './TableRow'
 
 // There are some missing translations for the status, you should check what we are actually doing in device table.
 // BD MGIT columnas
-
-const cssClasses = classnames.bind(styles)
 
 const availableSortCol = [
   'name',
@@ -84,10 +81,10 @@ const Workload = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack />
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.workloadTitle)} />
         <DeviceWorkloadFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton
               onExport={onExcelClick}
@@ -103,7 +100,7 @@ const Workload = () => {
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
-                <Table className={cssClasses('InventoryDataTable')}>
+                <Table className={styles.InventoryDataTable}>
                   <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
                   <TableBody>
                     {workloadList.map((item, index) => (

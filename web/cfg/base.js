@@ -2,22 +2,8 @@ const path = require('path')
 const HtmlWebpackHarddiskPlugin = require('html-webpack-harddisk-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-const cssNext = require('postcss-cssnext')
-const cssImport = require('postcss-import')
-const pxToRem = require('postcss-pxtorem')
 const SpriteLoaderPlugin = require('svg-sprite-loader/plugin')
 const { WebpackManifestPlugin } = require('webpack-manifest-plugin')
-
-const postcssPlugins = () => [
-  pxToRem({
-    /* see options: https://github.com/cuth/postcss-pxtorem#options */
-    rootValue: 16,
-  }),
-  cssImport(),
-  cssNext({
-    browsers: ['> 1%', 'last 2 versions'],
-  }),
-]
 
 module.exports = NODE_ENV => {
   return {
@@ -48,14 +34,6 @@ module.exports = NODE_ENV => {
                   exportLocalsConvention: 'camelCase',
                 },
                 importLoaders: 1,
-              },
-            },
-            {
-              loader: 'postcss-loader',
-              options: {
-                postcssOptions: {
-                  plugins: postcssPlugins(),
-                },
               },
             },
           ],

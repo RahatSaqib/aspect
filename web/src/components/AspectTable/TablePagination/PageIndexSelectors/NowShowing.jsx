@@ -1,12 +1,9 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import { number, string } from 'prop-types'
 import { i18nWrapper } from '../../../../providers/I18nProvider/index'
 import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
 import styles from '../../Table.module.css'
 import messages from '../messages'
-
-const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render page counts and navigation
@@ -25,7 +22,7 @@ const NowShowing = ({ dataLength, pageIndex, pageSize, name, namePlural }) => {
       })
     : null
   return (
-    <div className={cssClasses('nowShowing__container')} data-testid="now-showing">
+    <div className={styles.nowShowing__container} data-testid="now-showing">
       {countName}
     </div>
   )

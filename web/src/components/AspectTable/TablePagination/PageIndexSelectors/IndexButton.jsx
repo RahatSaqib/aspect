@@ -1,11 +1,8 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import classnames from 'classnames/bind'
 import { bool, func, oneOf, string } from 'prop-types'
 import IconProvider from '../../../IconProvider'
 import styles from '../../Table.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render page navigation button
@@ -14,7 +11,7 @@ const cssClasses = classnames.bind(styles)
 const IndexButton = ({ modifier, disabled, action, icon, label }) => {
   return (
     <Button
-      className={cssClasses(['pageindex__button', `pageindex__button--${modifier}`])}
+      className={`${styles.pageindex__button} ${styles[`pageindex__Button__${modifier}`]}`}
       disabled={disabled}
       onClick={action}
     >

@@ -1,16 +1,13 @@
 import React, { useState } from 'react'
 import LaunchIcon from '@mui/icons-material/Launch'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
+import { DetailHeader } from '../../../cleanComponents'
+import useI18n from '../../../hooks/useI18n'
+import AspectButton from '../../../oldComponents/shared/AspectButton'
 import messages from './messages'
 import OperationalDailyStatus from './OperationalDailyStatus'
 import OperationalDashBoard from './OperationalDashBoard'
 import styles from './OperationalData.module.css'
-import { DetailHeader } from '../../../cleanComponents'
-import useI18n from '../../../hooks/useI18n'
-import AspectButton from '../../../oldComponents/shared/AspectButton'
-
-const cssClasses = classnames.bind(styles)
 
 export const OperationalData = () => {
   const { formatMessage } = useI18n()
@@ -32,7 +29,7 @@ export const OperationalData = () => {
               {formatMessage(messages.dailyStatusNav)}
             </AspectButton>
           </DetailHeader>
-          <div className={cssClasses('Container')}>
+          <div className={styles.Container}>
             <OperationalDashBoard />
           </div>
         </>
@@ -49,7 +46,7 @@ export const OperationalData = () => {
               {formatMessage(messages.dashboardNav)}
             </AspectButton>
           </DetailHeader>
-          <div className={cssClasses('Container')}>
+          <div className={styles.Container}>
             <OperationalDailyStatus />
           </div>
         </>

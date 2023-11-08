@@ -1,11 +1,8 @@
 import React from 'react'
 import { Tooltip } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import IconProvider from '../../components/IconProvider'
 import styles from './AspectTooltip.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const AspectTooltip = ({
   title,
@@ -18,20 +15,16 @@ const AspectTooltip = ({
   ...rest
 }) => (
   <Tooltip
-    classes={{ tooltip: cssClasses(toolTipClass) }}
+    classes={{ tooltip: styles[toolTipClass] }}
     title={<span style={{ whiteSpace: 'pre-line' }}>{title}</span>}
     disableInteractive
     {...rest}
   >
-    <div className={cssClasses(toolTipContainerClass)}>
-      <span
-        className={cssClasses('ChildrenContainer', {
-          ChildrenContainer_clickable: showPointerCursor,
-        })}
-      >
+    <div className={styles[toolTipContainerClass]}>
+      <span className={`${styles.ChildrenContainer} ${showPointerCursor ? styles.ChildrenContainer_clickable : ''}`}>
         {children}
       </span>
-      {showHelpIcon ? <IconProvider icon="MdHelp" className={cssClasses(iconClass)} /> : null}
+      {showHelpIcon ? <IconProvider icon="MdHelp" className={styles[iconClass]} /> : null}
     </div>
   </Tooltip>
 )

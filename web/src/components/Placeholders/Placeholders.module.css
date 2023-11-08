@@ -18,7 +18,7 @@
   height: 16px;
 }
 
-.menu-header {
+.menu_header {
   font-weight: bold;
   font-size: 12px;
   padding: 0 0 8px 16px;
@@ -26,11 +26,11 @@
   text-transform: uppercase;
   word-spacing: 5px;
 }
-.menu-section-header {
+.menu_section_header {
   font-weight: bold !important;
   opacity: 1 !important;
 }
-.menu-item {
+.menu_item {
   color: #34717c !important;
   display: flex;
   align-items: center;
@@ -38,7 +38,7 @@
   padding-top: 3px !important;
   padding-bottom: 3px !important;
 }
-.menu-item-icon {
+.menu_item_icon {
   font-size: 16px;
   margin: 1px 5px 0 0;
 }

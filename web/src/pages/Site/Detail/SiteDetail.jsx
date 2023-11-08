@@ -1,24 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import { Box, LinearProgress, Paper } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
-import SiteForm from './Edit/SiteForm'
-import messages from './messages'
-import SiteDetailProfile from './Profile/SiteDetailProfile'
-import styles from './SiteDetail.module.css'
-import SiteLocationFormMap from './SiteLocationFormMap'
 import { DetailHeader } from '../../../cleanComponents'
 import useSite from '../../../hooks/site/useSite'
 import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import TaskList from '../../../oldPages/task/list/TaskList'
 import isEditable from '../../../utils/selectors/isEditable'
-
-const cssClasses = classnames.bind(styles)
+import SiteForm from './Edit/SiteForm'
+import messages from './messages'
+import SiteDetailProfile from './Profile/SiteDetailProfile'
+import styles from './SiteDetail.module.css'
+import SiteLocationFormMap from './SiteLocationFormMap'
 
 const titleMessages = defineMessages({
   profile: { id: 'pages.SiteDetail.profile', defaultMessage: 'Profile' },
@@ -78,7 +75,7 @@ const SiteDetail = ({ navigate, location }) => {
             <Route
               path="alerts"
               element={
-                <section className={cssClasses('Section', 'Section--first')}>
+                <section className={`${styles.Section} ${styles.Section__first}`}>
                   <TaskList intl={intl} navigate={navigate} location={location} filterOptions={{ siteId }} />
                 </section>
               }
@@ -91,7 +88,7 @@ const SiteDetail = ({ navigate, location }) => {
             />
           </Routes>
         )}
-        <section className={cssClasses('Section', 'Section--first')}>
+        <section className={`${styles.Section} ${styles.Section__first}`}>
           {latLong.lat && latLong.lng ? (
             <Paper>
               <SiteLocationFormMap latLong={latLong} />

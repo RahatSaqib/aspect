@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Button } from '@mui/material'
-import classnames from 'classnames/bind'
 import useI18n from '../../../../hooks/useI18n'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { getISOFromString } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
@@ -12,8 +11,6 @@ import formConfig from './formConfig'
 import messages from './messages'
 import SiteInfo from './SiteInfo'
 import { MODE, getFormConfig } from './utils'
-
-const cssClasses = classnames.bind(styles)
 
 const DailyStatusDialog = ({ data = {}, onCancel, onSubmit, statuses, title, deviceName, siteProps }) => {
   const [mode, setMode] = useState(MODE.EDITING)
@@ -44,21 +41,21 @@ const DailyStatusDialog = ({ data = {}, onCancel, onSubmit, statuses, title, dev
           <ButtonSave deviceId={data.deviceId} onClick={onSaveChanges} mode={mode} />,
         ]}
         classes={{
-          paper: cssClasses('reset-overflow'),
+          paper: styles.reset_overflow,
         }}
         dialogContentClasses={{
-          root: cssClasses('reset-overflow'),
+          root: styles.reset_overflow,
         }}
         maxWidth="xs"
         open
         onClose={onCancel}
         title={title || formatMessage(messages.title)}
       >
-        <div className={cssClasses('Form__content')}>
-          <div className={cssClasses('Form__device-name')}>
+        <div className={styles.Form__content}>
+          <div className={styles.Form__device_name}>
             {formatMessage(messages.deviceLabel)}: {deviceName}
           </div>
-          <div className={cssClasses('Form__controls')}>
+          <div className={styles.Form__controls}>
             <AspectForm config={config} />
           </div>
 

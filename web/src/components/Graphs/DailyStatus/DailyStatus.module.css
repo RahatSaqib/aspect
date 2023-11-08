@@ -38,7 +38,7 @@
   position: relative;
 }
 
-.clinic__day--null {
+.clinic__day__null {
   background-color: transparent;
 }
 
@@ -54,58 +54,58 @@
  * inactiveDecommissioned
  */
 
-.clinic__day--weekend {
-  background-color: var('--aspect-device-weekend');
+.clinic__day__weekend {
+  background-color: var(--aspect-device-weekend);
 }
 
-.clinic__day--active,
-.clinic__day--reportedActive {
-  background-color: var('--aspect-device-active');
-  color: var('--aspect-color-black-2');
+.clinic__day__active,
+.clinic__day__reportedActive {
+  background-color: var(--aspect-device-active);
+  color: var(--aspect-color-black-2);
 }
 
-.clinic__day--inactive {
-  background-color: var('--aspect-device-inactiveConnectivity');
+.clinic__day__inactive {
+  background-color: var(--aspect-device-inactiveConnectivity);
 }
 
-.clinic__day--inactiveNoTestsPerformed {
-  background-color: var('--aspect-device-inactiveNoTestsPerformed');
+.clinic__day__inactiveNoTestsPerformed {
+  background-color: var(--aspect-device-inactiveNoTestsPerformed);
 }
 
-.clinic__day--inactiveDownForRepair {
-  background-color: var('--aspect-device-inactiveDownForRepair');
+.clinic__day__inactiveDownForRepair {
+  background-color: var(--aspect-device-inactiveDownForRepair);
 }
 
-.clinic__day--inactiveUnknown {
-  background-color: var('--aspect-device-inactiveUnknown');
+.clinic__day__inactiveUnknown {
+  background-color: var(--aspect-device-inactiveUnknown);
 }
 
-.clinic__day--inactiveOutOfInventory {
-  background-color: var('--aspect-device-inactiveOutOfInventory');
+.clinic__day__inactiveOutOfInventory {
+  background-color: var(--aspect-device-inactiveOutOfInventory);
 }
 
-.clinic__day--noResultsReported {
-  background-color: var('--aspect-device-inactiveNoTestsPerformed');
+.clinic__day__noResultsReported {
+  background-color: var(--aspect-device-inactiveNoTestsPerformed);
 }
 
-.clinic__day--inactiveConnectivity {
-  background-color: var('--aspect-device-inactiveConnectivity');
+.clinic__day__inactiveConnectivity {
+  background-color: var(--aspect-device-inactiveConnectivity);
 }
 
-.clinic__day--inactiveDecommissioned {
-  background-color: var('--aspect-device-inactiveDecommissioned');
+.clinic__day__inactiveDecommissioned {
+  background-color: var(--aspect-device-inactiveDecommissioned);
 }
-.clinic__day--inactiveNoStaff {
-  background-color: var('--aspect-device-inactiveNoStaff');
+.clinic__day__inactiveNoStaff {
+  background-color: var(--aspect-device-inactiveNoStaff);
 }
-.clinic__day--inactiveNoSamples {
-  background-color: var('--aspect-device-inactiveNoSamples');
+.clinic__day__inactiveNoSamples {
+  background-color: var(--aspect-device-inactiveNoSamples);
 }
-.clinic__day--inactiveNoPower {
-  background-color: var('--aspect-device-inactiveNoPower');
+.clinic__day__inactiveNoPower {
+  background-color: var(--aspect-device-inactiveNoPower);
 }
-.clinic__day--inactiveOther {
-  background-color: var('--aspect-device-inactiveOther');
+.clinic__day__inactiveOther {
+  background-color: var(--aspect-device-inactiveOther);
 }
 
 .status__checkbox {
@@ -113,46 +113,46 @@
   margin: 0 10px 0 !important;
 }
 
-.status__checkbox--all {
-  color: var('--aspect-color-cyan') !important;
+.status__checkbox__all {
+  color: var(--aspect-color-cyan) !important;
   background-color: transparent;
 }
-.status__checkbox--active,
-.status__checkbox--reportedActive {
-  color: var('--aspect-device-active') !important;
+.status__checkbox__active,
+.status__checkbox__reportedActive {
+  color: var(--aspect-device-active) !important;
 }
-.status__checkbox--inactiveUnknown {
-  color: var('--aspect-device-inactiveUnknown') !important;
+.status__checkbox__inactiveUnknown {
+  color: var(--aspect-device-inactiveUnknown) !important;
 }
-.status__checkbox--inactiveNoTestsPerformed {
-  color: var('--aspect-device-inactiveNoTestsPerformed') !important;
+.status__checkbox__inactiveNoTestsPerformed {
+  color: var(--aspect-device-inactiveNoTestsPerformed) !important;
 }
-.status__checkbox--inactiveOutOfInventory {
-  color: var('--aspect-device-inactiveOutOfInventory') !important;
+.status__checkbox__inactiveOutOfInventory {
+  color: var(--aspect-device-inactiveOutOfInventory) !important;
 }
-.status__checkbox--inactiveDownForRepair {
-  color: var('--aspect-device-inactiveDownForRepair') !important;
+.status__checkbox__inactiveDownForRepair {
+  color: var(--aspect-device-inactiveDownForRepair) !important;
 }
-.status__checkbox--inactiveConnectivity {
-  color: var('--aspect-device-inactiveConnectivity') !important;
+.status__checkbox__inactiveConnectivity {
+  color: var(--aspect-device-inactiveConnectivity) !important;
 }
-.status__checkbox--inactiveDecommissioned {
-  color: var('--aspect-device-inactiveDecommissioned') !important;
+.status__checkbox__inactiveDecommissioned {
+  color: var(--aspect-device-inactiveDecommissioned) !important;
 }
-.status__checkbox--inactiveNoStaff {
-  color: var('--aspect-device-inactiveNoStaff') !important;
+.status__checkbox__inactiveNoStaff {
+  color: var(--aspect-device-inactiveNoStaff) !important;
 }
-.status__checkbox--inactiveNoSamples {
-  color: var('--aspect-device-inactiveNoSamples') !important;
+.status__checkbox__inactiveNoSamples {
+  color: var(--aspect-device-inactiveNoSamples) !important;
 }
-.status__checkbox--inactiveNoPower {
-  color: var('--aspect-device-inactiveNoPower') !important;
+.status__checkbox__inactiveNoPower {
+  color: var(--aspect-device-inactiveNoPower) !important;
 }
-.status__checkbox--inactiveOther {
-  color: var('--aspect-device-inactiveOther') !important;
+.status__checkbox__inactiveOther {
+  color: var(--aspect-device-inactiveOther) !important;
 }
 
-.clinic__day--future {
+.clinic__day__future {
   border-radius: 20%;
   border: 1px dashed #fafcff;
 }

@@ -4,13 +4,13 @@
   font-size: 1rem;
 }
 
-.FieldContainer--large {
+.FieldContainer__large {
   font-size: 1.15rem;
 }
 
 .FieldContainer__Label {
   font-size: 0.75em;
-  color: var(--aspect-color-silver);
+  color: var(--aspect-color-silver, #9e9e9e);
   display: block;
   padding: 0 0 2px 0;
 }
