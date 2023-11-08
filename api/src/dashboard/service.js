@@ -35,8 +35,15 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
+const dashboardWidgetTitle = [
+  'Current Active/Online Devices',
+  'Module Swaps (GeneXpert only)',
+  'Total Modules',
+  'Active Modules',
+]
+
 async function getDashboardWidget({ id, partnerId }, options) {
-  const { layout, dashboard = 'home' } = options
+  const { layout, dashboard = 'home', country } = options
   const tableName = layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
   const widgets = knex('DashboardWidget as w')
     .innerJoin(`${tableName} as sw`, 'w.id', 'sw.dashboardWidgetId')
@@ -50,6 +57,10 @@ async function getDashboardWidget({ id, partnerId }, options) {
     })
     .where(function () {
       this.whereRaw(`JSON_EXTRACT(w.dashboards , '$.${dashboard}') IS NOT NULL`)
+
+      if (country === 'BD') this.orWhereIn('w.title', dashboardWidgetTitle)
+      else this.whereNotIn('w.title', dashboardWidgetTitle)
+
       if (dashboard === 'home') {
         this.orWhereNull('w.dashboards')
       }
