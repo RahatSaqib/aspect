@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-30T19:12:22.157Z\n"
+"POT-Creation-Date: 2023-11-08T17:35:53.690Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -757,7 +757,7 @@ msgstr "Ҳангоми кӯшиши захира кардани дастгоҳ �
 msgid "An email has been sent to you"
 msgstr "Ба шумо паёми электронӣ фиристода шуд"
 
-#. [pages.ReportIndex.xpertSiteSummaryReport_description]
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 #: extracted_strings.json
@@ -3131,6 +3131,20 @@ msgstr "Кафолати дастгоҳ"
 msgid "Device Workload"
 msgstr "Сарбории дастгоҳ"
 
+#. [pages.ReportIndex.device_and_site_summary_report]
+#. defaultMessage is:
+#. Device and Site Sumary
+#: extracted_strings.json
+msgid "Device and Site Sumary"
+msgstr "Хулосаи дастгоҳ ва сайт"
+
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport]
+#. defaultMessage is:
+#. Device and Site Summary Report
+#: extracted_strings.json
+msgid "Device and Site Summary Report"
+msgstr "Ҳисоботи мухтасари дастгоҳ ва сайт"
+
 #. [pages.NotificationDetail.SelectStateTitle]
 #. defaultMessage is:
 #. Device from State
@@ -3197,16 +3211,6 @@ msgstr "Рӯйхати дастгоҳҳо"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Таҷҳизот бо қатъи хидмат"
-
-#. [pages.ReportIndex.xpertSiteSummaryReport]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#. [pages.ReportIndex.xpert_site_summary_report]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#: extracted_strings.json
-msgid "Devices and Sites Overview"
-msgstr "Баррасии дастгоҳҳо ва сайтҳо"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
