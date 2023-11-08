@@ -7,7 +7,7 @@ import { defineMessages } from 'react-intl'
 import useI18n from '../../../hooks/useI18n'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
-import styles from './BaseDialog.css'
+import styles from './BaseDialog.module.css'
 
 const cssClasses = classnames.bind(styles)
 

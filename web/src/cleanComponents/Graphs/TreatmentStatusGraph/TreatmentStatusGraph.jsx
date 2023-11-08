@@ -14,7 +14,7 @@ import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { getWhitelistedAssays } from '../../../utils/utils/graph'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import {
   prepAssaysForParams,
   getAverageFromData,

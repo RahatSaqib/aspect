@@ -663,14 +663,14 @@ const DateTimeInput = props => {
 const DateType = PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
 
 DateTimeInput.propTypes = {
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  classes: PropTypes.object.isRequired,
   className: PropTypes.string,
-  dateFormat: PropTypes.string, // eslint-disable-line react/require-default-props
+  dateFormat: PropTypes.string,
   timeFormat: PropTypes.string, // eslint-disable-line react/require-default-props
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
   value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]), // eslint-disable-line react/require-default-props
-  defaultValue: DateType, // eslint-disable-line react/forbid-prop-types,
+  defaultValue: DateType,
   minDate: DateType,
   maxDate: DateType,
   defaultToNow: PropTypes.bool,
@@ -685,7 +685,7 @@ DateTimeInput.propTypes = {
     H: TextField.propTypes,
     m: TextField.propTypes,
   }),
-  RootProps: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  RootProps: PropTypes.object,
 }
 
 DateTimeInput.defaultProps = {

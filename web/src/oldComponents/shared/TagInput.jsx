@@ -205,7 +205,7 @@ TagInput.defaultProps = {
   noMatch: '',
 }
 TagInput.propTypes = {
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  classes: PropTypes.object.isRequired,
   disabled: PropTypes.bool,
   fullWidth: PropTypes.bool,
   tagName: PropTypes.string.isRequired,

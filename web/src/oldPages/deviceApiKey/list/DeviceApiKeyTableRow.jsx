@@ -3,7 +3,7 @@ import classnames from 'classnames/bind'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { formatDate } from '../../../utils/utils/dateFormat'
-import styles from './DeviceApiKeyTableRow.css'
+import styles from './DeviceApiKeyTableRow.module.css'
 
 const cssClasses = classnames.bind(styles)
 

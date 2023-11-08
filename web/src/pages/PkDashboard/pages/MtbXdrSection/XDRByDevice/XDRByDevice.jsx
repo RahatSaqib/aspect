@@ -17,7 +17,7 @@ import { useAuthState } from '../../../../../providers/AuthProvider'
 import { useFilterUpdate, useFilterValues } from '../../../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../../../utils/selectors/searchParams'
 import messages from './messages'
-import styles from './styles.css'
+import styles from './styles.module.css'
 import TableRow from './TableRow'
 
 const cssClasses = classnames.bind(styles)

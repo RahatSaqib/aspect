@@ -14,7 +14,7 @@ import Select from 'react-select'
 import useI18n from '../../hooks/useI18n'
 import UI_CONSTS from '../../utils/consts/UI'
 import { getMuiTheme, getAspectTheme } from './AspectDropDown.theme'
-import styles from './Dropdown.css'
+import styles from './Dropdown.module.css'
 
 const cssClasses = classnames.bind(styles)
 

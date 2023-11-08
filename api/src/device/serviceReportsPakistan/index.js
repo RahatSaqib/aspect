@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const { getConstraints } = require('../../auth/constraints')
 const { getXpertSiteDetailedReport } = require('./xpertSiteDetailedReport')
-const { getAllDeviceReportData } = require('../serviceReports/devicesAndSitesOverviewReport')
+const { getAllDeviceReportData } = require('../serviceReports/deviceAndSiteSummaryReport')
 const { getResultCategoryGroupColumns, getLastUploadDateBySites } = require('../common/db')
 const { getOffsetFromIsoDateString } = require('../../shared/date')
 

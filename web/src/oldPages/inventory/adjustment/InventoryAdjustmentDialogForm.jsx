@@ -17,7 +17,7 @@ import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { fetchConsumables } from '../../../store/ConsumableRedux'
 import { types } from '../../../store/InventoryRedux'
-import styles from './InventoryAdjustmentDialogForm.css'
+import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
 
 const cssClasses = classnames.bind(styles)

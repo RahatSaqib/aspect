@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-30T19:12:22.157Z\n"
+"POT-Creation-Date: 2023-11-08T17:35:53.690Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -757,7 +757,7 @@ msgstr "Beim Versuch, das Gerät zu speichern, ist ein Fehler aufgetreten"
 msgid "An email has been sent to you"
 msgstr "Es wurde eine E-Mail an Sie gesendet"
 
-#. [pages.ReportIndex.devicesAndSites_description]
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 #: extracted_strings.json
@@ -3140,6 +3140,20 @@ msgstr "Geräte-Garantie"
 msgid "Device Workload"
 msgstr "Gerät Arbeitsbelastung"
 
+#. [pages.ReportIndex.device_and_site_summary_report]
+#. defaultMessage is:
+#. Device and Site Sumary
+#: extracted_strings.json
+msgid "Device and Site Sumary"
+msgstr "Zusammenfassung der Geräte und Standorte"
+
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport]
+#. defaultMessage is:
+#. Device and Site Summary Report
+#: extracted_strings.json
+msgid "Device and Site Summary Report"
+msgstr "Zusammenfassender Bericht über Geräte und Standorte"
+
 #. [pages.NotificationDetail.SelectStateTitle]
 #. defaultMessage is:
 #. Device from State
@@ -3206,16 +3220,6 @@ msgstr "Geräteliste"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Geräte mit Betriebsunterbrechung"
-
-#. [pages.ReportIndex.devicesAndSitesOverview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#. [pages.ReportIndex.devices_and_sites_overview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#: extracted_strings.json
-msgid "Devices and Sites Overview"
-msgstr "Übersicht über Geräte und Standorte"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:

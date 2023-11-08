@@ -1,0 +1,17 @@
+@import '../../../theme/variables.css';
+
+.Container {
+  padding: 10px;
+  width: 100%;
+}
+
+.ReporterDataTable {
+  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.module.css';
+}
+
+.site__details {
+  color: var(--ming, #34717c);
+  text-align: center;
+  padding: 5px;
+  text-decoration: underline;
+}

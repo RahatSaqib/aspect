@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-30T19:12:22.157Z\n"
+"POT-Creation-Date: 2023-11-08T17:35:53.690Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -757,7 +757,7 @@ msgstr "Đã xảy ra lỗi khi cố gắng lưu thiết bị"
 msgid "An email has been sent to you"
 msgstr "Một email đã được gửi cho bạn"
 
-#. [pages.ReportIndex.devicesAndSites_description]
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 #: extracted_strings.json
@@ -3134,6 +3134,20 @@ msgstr "Bảo hành thiết bị"
 msgid "Device Workload"
 msgstr "Khối lượng công việc của thiết bị"
 
+#. [pages.ReportIndex.device_and_site_summary_report]
+#. defaultMessage is:
+#. Device and Site Sumary
+#: extracted_strings.json
+msgid "Device and Site Sumary"
+msgstr "Tóm tắt thiết bị và trang web"
+
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport]
+#. defaultMessage is:
+#. Device and Site Summary Report
+#: extracted_strings.json
+msgid "Device and Site Summary Report"
+msgstr "Báo cáo tóm tắt về thiết bị và trang web"
+
 #. [pages.NotificationDetail.SelectStateTitle]
 #. defaultMessage is:
 #. Device from State
@@ -3200,16 +3214,6 @@ msgstr "Danh sách thiết bị"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Thiết bị bị gián đoạn dịch vụ"
-
-#. [pages.ReportIndex.devicesAndSitesOverview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#. [pages.ReportIndex.devices_and_sites_overview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#: extracted_strings.json
-msgid "Devices and Sites Overview"
-msgstr "Tổng quan về thiết bị và trang web"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:

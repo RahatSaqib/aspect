@@ -1,6 +1,6 @@
 import React from 'react'
 import classnames from 'classnames/bind'
-import styles from './Icon.css'
+import styles from './Icon.module.css'
 
 const cssClasses = classnames.bind(styles)
 

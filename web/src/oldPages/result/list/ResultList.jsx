@@ -12,6 +12,9 @@ import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
+import messages from './messages'
+import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './ResultDataTable'
+import styles from './ResultList.module.css'
 import { DetailHeader, ResultFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
@@ -27,9 +30,6 @@ import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import getExportableFile from '../ResultQueries'
-import messages from './messages'
-import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './ResultDataTable'
-import styles from './ResultList.css'
 
 const cssClasses = classnames.bind(styles)
 
@@ -223,7 +223,6 @@ const ResultList = () => {
     const sortPage = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   // >>>>>> Lifecycles <<<<<<

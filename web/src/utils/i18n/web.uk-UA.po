@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-30T19:12:22.157Z\n"
+"POT-Creation-Date: 2023-11-08T17:35:53.690Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -759,7 +759,7 @@ msgstr "Під час спроби зберегти пристрій стала�
 msgid "An email has been sent to you"
 msgstr "Вам надіслано електронне повідомлення"
 
-#. [pages.ReportIndex.devicesAndSites_description]
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 #: extracted_strings.json
@@ -3137,6 +3137,20 @@ msgstr "Гарантія на пристрій"
 msgid "Device Workload"
 msgstr "Навантаження на пристрій"
 
+#. [pages.ReportIndex.device_and_site_summary_report]
+#. defaultMessage is:
+#. Device and Site Sumary
+#: extracted_strings.json
+msgid "Device and Site Sumary"
+msgstr "Короткий опис пристрою та сайту"
+
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport]
+#. defaultMessage is:
+#. Device and Site Summary Report
+#: extracted_strings.json
+msgid "Device and Site Summary Report"
+msgstr "Зведений звіт про пристрій та сайт"
+
 #. [pages.NotificationDetail.SelectStateTitle]
 #. defaultMessage is:
 #. Device from State
@@ -3203,16 +3217,6 @@ msgstr "Список завдань"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Пристрої, що переживають переривання служби"
-
-#. [pages.ReportIndex.devicesAndSitesOverview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#. [pages.ReportIndex.devices_and_sites_overview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#: extracted_strings.json
-msgid "Devices and Sites Overview"
-msgstr "Пристрої"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
