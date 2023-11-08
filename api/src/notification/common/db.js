@@ -21,6 +21,7 @@ async function getMessageStatusData({ emailMessageId, smsMessageId, webhookMessa
     .innerJoin('Partner as pt', 'nt.partnerId', 'pt.id')
     .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
     .select(
+      'nt.id as notificationTypeId',
       'nt.name as notificationTypeName',
       'ntc.name as notificationTypeCategoryName',
       'pt.name as partnerName',

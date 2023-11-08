@@ -90,6 +90,7 @@ async function notifyMessageWithErrorToSlack({ smsMessageId, emailMessageId, web
       notificationTypeName,
       notificationTypeCategoryName,
       notificationCreatedOn,
+      notificationTypeId,
       messageStatus,
       messageUpdatedOn,
       ...messageData
@@ -98,7 +99,9 @@ async function notifyMessageWithErrorToSlack({ smsMessageId, emailMessageId, web
     const getMessage = title => {
       return `${title}
     •   *Partner/Country*: ${partnerName}
-    •   *Notification Type*: ${notificationTypeName}
+    •   *Notification Type*: ${notificationTypeName} <${
+        process.env.aspectUrl
+      }/browse/notification/${notificationTypeId}|Go to the notification details>
     •   *Notification Type Category*: ${notificationTypeCategoryName}
     •   *Notification Created On*: ${notificationCreatedOn.toISOString().replace('T', ' ')}`
     }
