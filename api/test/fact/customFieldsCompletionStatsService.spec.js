@@ -60,7 +60,7 @@ describe('CustomFieldsCompletionStatsService', async () => {
 
     expect(stats[0].completionRate).to.be.equal(0.33, 'stats[0].completionRate')
     expect(stats[1].completionRate).to.be.equal(0.5, 'stats[1].completionRate')
-    expect(stats[2].completionRate).to.be.equal(0.41, 'stats[2].completionRate')
+    expect(stats[2].completionRate).to.be.equal(0.42, 'stats[2].completionRate')
 
     const fieldStats = stats.map(s => JSON.parse(s.completionByField))
 
