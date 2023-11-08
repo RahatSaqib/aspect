@@ -9,9 +9,9 @@ import styles from '../styles.module.css'
 
 const classes = classNames.bind(styles)
 
-const MINUTES = range(0, 4).map(m => ({
+const MINUTES = range(0, 60).map(m => ({
   key: m,
-  value: m * 15,
+  value: m,
 }))
 
 const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
