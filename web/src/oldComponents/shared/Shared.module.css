@@ -7,10 +7,8 @@
   padding-top: 14%;
 }
 
-/* --- Helper classes --- */
-
 /*Make items with touch event behave like links*/
-.Helper--linky {
+.Helper__linky {
   cursor: pointer !important;
 }
 

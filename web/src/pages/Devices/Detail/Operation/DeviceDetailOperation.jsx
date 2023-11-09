@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card, IconButton, LinearProgress, TableBody } from '@mui/material'
-import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
@@ -26,8 +25,6 @@ import {
   DeviceOperationDataTableHead,
   DeviceOperationDataTableRow,
 } from './DeviceOperationDataTable'
-
-const cssClasses = classnames.bind(styles)
 
 const EMPTY_DATE = new Date()
 
@@ -158,8 +155,8 @@ const DeviceDetailOperation = ({
   return (
     <div>
       <Helmet title={device.get('name')} />
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           <div>
             <Summary title="Firmware" description="TODO: 72.43.102" />
             <Summary
@@ -175,11 +172,11 @@ const DeviceDetailOperation = ({
           </div>
         </Card>
       </section>
-      <section className={cssClasses('Section')}>
-        <Card className={cssClasses('Section__Content')}>
-          <header className={cssClasses('Header')}>
-            <div className={cssClasses('Header__Title')}>Operation history</div>
-            <div className={cssClasses('Header__Actions')}>
+      <section className={styles.Section}>
+        <Card className={styles.Section__Content}>
+          <header className={styles.Header}>
+            <div className={styles.Header__Title}>Operation history</div>
+            <div className={styles.Header__Actions}>
               <IconButton onClick={onExportClick}>
                 <MdFileDownload />
               </IconButton>
@@ -191,7 +188,7 @@ const DeviceDetailOperation = ({
             ) : items.currentIdList.isEmpty() ? (
               <BrowseEmptyList />
             ) : (
-              <DeviceOperationDataTable className={cssClasses('DeviceOperationDataTable')}>
+              <DeviceOperationDataTable className={styles.DeviceOperationDataTable}>
                 <DeviceOperationDataTableHead
                   navigate={navigate}
                   location={location}

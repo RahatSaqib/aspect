@@ -3,7 +3,7 @@
   width: 100%;
 }
 
-.DataTableCard--action {
+.DataTableCard__action {
   padding: 12px 20px;
   margin-bottom: 2px;
   display: flex;
@@ -12,7 +12,7 @@
   align-items: flex-end;
 }
 
-.DataTableCard--table {
+.DataTableCard__table {
   overflow: visible; /* For IconMenu at last row to be visible */
 }
 
@@ -21,5 +21,7 @@
 }
 
 .PersonDataTable {
-  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.module.css';
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
 }

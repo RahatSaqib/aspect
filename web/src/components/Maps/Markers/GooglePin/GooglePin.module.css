@@ -1,11 +1,11 @@
-.markers--google-pin {
+.markers__google_pin {
   position: absolute;
 }
 
-.markers--google-pin:focus {
+.markers__google_pin:focus {
   outline: none !important;
 }
 
-.markers--google-pin:hover {
+.markers__google_pin:hover {
   cursor: pointer;
 }

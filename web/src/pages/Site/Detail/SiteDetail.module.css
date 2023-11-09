@@ -4,7 +4,7 @@
   padding: 10px var(--aspect-detail-horizontal-padding);
 }
 
-.Section--first {
+.Section__first {
   padding-top: 20px;
 }
 
@@ -33,7 +33,7 @@
   margin-left: 20px;
 }
 
-@media screen and (--lg-viewport) {
+@media screen and (min-width: 64em) {
   .container__field,
   .coordinate__button {
     flex: 1;

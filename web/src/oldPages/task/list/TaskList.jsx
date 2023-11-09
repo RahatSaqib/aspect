@@ -1,6 +1,5 @@
 import React from 'react'
 import { LinearProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import identity from 'lodash/identity'
 import isEqual from 'lodash/isEqual'
@@ -24,8 +23,6 @@ import {
 import messages from './messages'
 import { TaskDataTable, TaskDataTableHead, TaskDataTableRow } from './TaskDataTable'
 import styles from './TaskList.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const FILTERS_CONFIG = {
   contactNameOrEmail: true,
@@ -192,45 +189,30 @@ const TaskList = ({
 }) => {
   const { formatMessage } = useI18n()
   return (
-    <div className={cssClasses('Container')}>
+    <div className={styles.Container}>
       <Helmet title={formatMessage(messages.tasksTitle)} />
-      <div className={cssClasses('FiltersGroup')}>
-        <div className={cssClasses('FiltersGroup__Child', 'FiltersGroup__Child--dropdown')}>
+      <div className={styles.FiltersGroup}>
+        <div className={`${styles.FiltersGroup__Child} ${styles.FiltersGroup__Child__dropdown}`}>
           <StyledDropdown
             value={issueCategory}
             source={[
-              {
-                value: 'all',
-                label: formatMessage(messages.taskListOptionsAllTopics),
-              },
-              {
-                value: 'device',
-                label: formatMessage(messages.taskListOptionsDevice),
-              },
-              {
-                value: 'reagent',
-                label: formatMessage(messages.taskListOptionsReagent),
-              },
-              {
-                value: 'data',
-                label: formatMessage(messages.taskListOptionsData),
-              },
-              {
-                value: 'connectivity',
-                label: formatMessage(messages.taskListOptionsConnectivity),
-              },
+              { value: 'all', label: formatMessage(messages.taskListOptionsAllTopics) },
+              { value: 'device', label: formatMessage(messages.taskListOptionsDevice) },
+              { value: 'reagent', label: formatMessage(messages.taskListOptionsReagent) },
+              { value: 'data', label: formatMessage(messages.taskListOptionsData) },
+              { value: 'connectivity', label: formatMessage(messages.taskListOptionsConnectivity) },
             ]}
             onChange={onIssueCategoryChange}
           />
         </div>
       </div>
-      <DataTableCard key={`DataTableCard--table-${location.key}`}>
+      <DataTableCard key={`DataTableCard__table-${location.key}`}>
         {table.loading ? (
           <LinearProgress />
         ) : items.currentIdList.isEmpty() ? (
           <BrowseEmptyList />
         ) : (
-          <TaskDataTable className={cssClasses('TaskDataTable')}>
+          <TaskDataTable className={styles.TaskDataTable}>
             <TaskDataTableHead
               navigate={navigate}
               location={location}

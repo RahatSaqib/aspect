@@ -1,13 +1,10 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import { bool, func, number, string } from 'prop-types'
 import useI18n from '../../../../hooks/useI18n'
 import styles from '../../Table.module.css'
 import messages from '../messages'
 import IndexButton from './IndexButton'
 import NowShowing from './NowShowing'
-
-const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render page navigation options
@@ -28,7 +25,7 @@ const PageIndexSelectors = ({
 }) => {
   const intl = useI18n()
   return (
-    <div className={cssClasses('pageindex__container')}>
+    <div className={styles.pageindex__container}>
       <IndexButton
         modifier="left"
         disabled={!canPreviousPage}
