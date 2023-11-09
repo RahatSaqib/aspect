@@ -79,7 +79,7 @@ exports[`Cron Component snapshot test should shallow render export list correctl
         class="css-hyolpn-MuiStack-root"
       >
         <div
-          class="MuiFormGroup-root MuiFormGroup-row Radio-Group css-qfz70r-MuiFormGroup-root"
+          class="MuiFormGroup-root MuiFormGroup-row Radio_Group css-qfz70r-MuiFormGroup-root"
           role="radiogroup"
         >
           <label
