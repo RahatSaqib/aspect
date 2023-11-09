@@ -176,3 +176,9 @@
   align-items: center;
   min-height: 93px;
 }
+
+.summaryCard__icon {
+  margin: 5px 3px 0 0;
+  color: var(--manatee);
+  font-size: 20px;
+}

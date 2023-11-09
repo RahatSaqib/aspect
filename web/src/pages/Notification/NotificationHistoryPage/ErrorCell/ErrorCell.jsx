@@ -61,7 +61,7 @@ const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value })
           />
           <Button className={`${withErrors ? 'hasError' : ''}`} onClick={handleClick}>
             {sent}/{sent + withErrors + pending}
-            <IconProvider icon="MdKeyboardArrowDown" className={styles.popover_cell__icon} />
+            <IconProvider icon="MdKeyboardArrowDown" />
           </Button>
         </AspectTooltip>
       )}

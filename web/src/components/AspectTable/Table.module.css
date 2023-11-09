@@ -199,3 +199,9 @@
   max-height: 300px;
   overflow: auto;
 }
+
+.summaryCard__icon {
+  margin: 5px 3px 0 0;
+  color: var(--manatee);
+  font-size: 20px;
+}

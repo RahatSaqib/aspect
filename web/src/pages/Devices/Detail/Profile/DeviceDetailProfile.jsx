@@ -303,7 +303,7 @@ const DeviceDetailProfile = ({
                 isMaintenanceStatusChangeDisabled ? (
                   <AspectTooltip
                     className={styles.deviceSummary__container}
-                    iconClass="deviceSummary__helpIcon"
+                    iconClass={styles.deviceSummary__helpIcon}
                     showHelpIcon
                     title={formatMessage(messages.deviceStatusChangeDisabledTooltip)}
                   >
@@ -396,7 +396,7 @@ const DeviceDetailProfile = ({
                 title={
                   <AspectTooltip
                     className={styles.deviceSummary__container}
-                    iconClass="deviceSummary__helpIcon"
+                    iconClass={styles.deviceSummary__helpIcon}
                     showHelpIcon
                     title={
                       <React.Fragment>
@@ -427,7 +427,7 @@ const DeviceDetailProfile = ({
               title={
                 <AspectTooltip
                   className={styles.deviceSummary__container}
-                  iconClass="deviceSummary__helpIcon"
+                  iconClass={styles.deviceSummary__helpIcon}
                   showHelpIcon
                   title={
                     <React.Fragment>

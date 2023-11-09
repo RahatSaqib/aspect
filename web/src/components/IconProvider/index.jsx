@@ -28,9 +28,7 @@ async function loadIconModule(icon) {
  * Falls back to default icon if failure
  */
 
-const IconProvider = memo(({ icon, className, title }) => {
-  const shellClass = className ? styles[className] : ''
-
+const IconProvider = memo(({ icon, className = '', title }) => {
   const IconComponent = lazy(() =>
     loadIconModule(icon).then(module => {
       if (module && module[icon]) {
@@ -43,12 +41,12 @@ const IconProvider = memo(({ icon, className, title }) => {
   return (
     <Suspense
       fallback={
-        <div className={shellClass}>
+        <div className={className}>
           <FaSquare className={styles.icons__proxy} />
         </div>
       }
     >
-      <div className={shellClass}>
+      <div className={className}>
         <ErrorBoundary fallbackComponent={() => <IconProvider icon="FaQuestionCircle" />}>
           <IconComponent title={title} />
         </ErrorBoundary>

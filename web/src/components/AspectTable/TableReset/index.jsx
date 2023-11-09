@@ -29,7 +29,7 @@ const AspectTableReset = ({ isFetching, action }) => {
               <CircularProgress />
             </div>
           ) : (
-            <IconProvider icon="MdDeleteSweep" className="summaryCard__icon" />
+            <IconProvider icon="MdDeleteSweep" className={styles.summaryCard__icon} />
           )}
         </Button>
       </Tooltip>

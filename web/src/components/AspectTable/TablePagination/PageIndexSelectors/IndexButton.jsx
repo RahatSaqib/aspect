@@ -15,7 +15,7 @@ const IndexButton = ({ modifier, disabled, action, icon, label }) => {
       disabled={disabled}
       onClick={action}
     >
-      <IconProvider icon={icon} className="indexButton__icon" />
+      <IconProvider icon={icon} />
       {label}
     </Button>
   )

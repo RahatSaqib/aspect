@@ -17,7 +17,7 @@ const TableColumnOrderButtons = ({ headerIndex, headersLength, handleChangeColum
         data-testid={`order_left_${headerIndex}`}
         title={formatMessage(messages.moveColumnLeft)}
       >
-        <IconProvider icon="MdChevronLeft" className="tableheader__orderbutton" />
+        <IconProvider icon="MdChevronLeft" className={styles.tableheader__orderbuttons} />
       </IconButton>
       <IconButton
         disabled={headerIndex + 1 >= headersLength}
@@ -26,7 +26,7 @@ const TableColumnOrderButtons = ({ headerIndex, headersLength, handleChangeColum
         data-testid={`order_right_${headerIndex}`}
         title={formatMessage(messages.moveColumnRight)}
       >
-        <IconProvider icon="MdChevronRight" className="tableheader__orderbutton" />
+        <IconProvider icon="MdChevronRight" className={styles.tableheader__orderbuttons} />
       </IconButton>
     </div>
   )

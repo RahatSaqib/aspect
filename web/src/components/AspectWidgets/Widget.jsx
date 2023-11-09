@@ -56,7 +56,7 @@ const AspectWidget = ({
     <span className={styles.Summary}>
       <Card className={`${styles.Summary} ${styles.Summary__Card}`} onClick={() => goToLink()}>
         <div className={styles.Summary__Card__Title}>
-          <IconProvider icon={icon} className="summaryCard__icon" />
+          <IconProvider icon={icon} className={styles.summaryCard__icon} />
           <span className={styles.Summary__Card__Title__main}>
             <AspectTooltip title={titleText} toolTipContainerClass="inline__tooltip">
               {titleText}

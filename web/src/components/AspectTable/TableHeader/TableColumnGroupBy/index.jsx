@@ -19,7 +19,7 @@ const TableColumnGroupBy = ({ headerIndex, handleGroupByColumnToggle, isGrouped 
       data-testid={`ungroup_${headerIndex}`}
       title={formatMessage(messages.unGroupByColumn)}
     >
-      <IconProvider icon="FaCheckSquare" className="tableheader__groupbybutton" />
+      <IconProvider icon="FaCheckSquare" className={styles.tableheader__groupbybutton} />
     </IconButton>
   ) : (
     <IconButton
@@ -28,7 +28,7 @@ const TableColumnGroupBy = ({ headerIndex, handleGroupByColumnToggle, isGrouped 
       data-testid={`group_${headerIndex}`}
       title={formatMessage(messages.groupByColumn)}
     >
-      <IconProvider icon="FaRegCheckSquare" className="tableheader__groupbybutton" />
+      <IconProvider icon="FaRegCheckSquare" className={styles.tableheader__groupbybutton} />
     </IconButton>
   )
 }
