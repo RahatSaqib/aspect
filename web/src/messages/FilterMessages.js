@@ -318,7 +318,7 @@ const messages = {
     },
     notificationType: {
       id: 'filter.popover.notificationType',
-      defaultMessage: 'Notification Type',
+      defaultMessage: 'Notification Type Name',
     },
     notificationCategoryType: {
       id: 'filter.popover.notificationCategoryType',
