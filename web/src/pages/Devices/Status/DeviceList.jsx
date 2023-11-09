@@ -226,7 +226,7 @@ const DeviceList = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.devicesTitle)} disableBack>
-        <PermissionChecker permissions={['device:edit']}>
+        <PermissionChecker permissions={['device:admin']}>
           <AspectButton
             onClick={() => {
               setConfirmationVisible(false)
