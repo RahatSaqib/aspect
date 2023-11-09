@@ -90,9 +90,6 @@ async function fetchEntriesServiceHandler(request) {
     transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
   }
 
-  // get origin Ids for each result
-  const transformedSamples = transformSampleResponse(query, samples)
-
   const mergedResultData = transformedResults.reduce((mergedResults, result) => {
     const existingObj = mergedResults.find(item => item.id === result.id)
 
@@ -112,6 +109,8 @@ async function fetchEntriesServiceHandler(request) {
     }
     return mergedResults
   }, [])
+
+  const transformedSamples = transformSampleResponse(query, samples, mergedResultData)
 
   const entries = _.orderBy(
     _.concat(_.uniqBy(mergedResultData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
