@@ -58,7 +58,7 @@ const AspectWidget = ({
         <div className={styles.Summary__Card__Title}>
           <IconProvider icon={icon} className={styles.summaryCard__icon} />
           <span className={styles.Summary__Card__Title__main}>
-            <AspectTooltip title={titleText} toolTipContainerClass="inline__tooltip">
+            <AspectTooltip title={titleText} toolTipContainerClass={styles.inline__tooltip}>
               {titleText}
             </AspectTooltip>
             <span className={styles.Summary__Card__Title__sub}>{translate(subTitleI18nKey, subTitle, translator)}</span>

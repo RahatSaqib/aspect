@@ -19,7 +19,7 @@ const AspectTooltip = ({
     disableInteractive
     {...rest}
   >
-    <div className={styles[toolTipContainerClass]}>
+    <div className={toolTipContainerClass}>
       <span className={`${styles.ChildrenContainer} ${showPointerCursor ? styles.ChildrenContainer_clickable : ''}`}>
         {children}
       </span>
@@ -30,7 +30,7 @@ const AspectTooltip = ({
 
 AspectTooltip.defaultProps = {
   showHelpIcon: false,
-  toolTipContainerClass: null,
+  toolTipContainerClass: '',
   iconClass: styles.HelpIcon,
   showPointerCursor: true,
   title: '',

@@ -182,3 +182,7 @@
   color: var(--manatee);
   font-size: 20px;
 }
+
+.inline__tooltip {
+  display: inline;
+}

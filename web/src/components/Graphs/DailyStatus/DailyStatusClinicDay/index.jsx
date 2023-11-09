@@ -86,7 +86,7 @@ const DailyStatusClinicDay = ({
     <AspectTooltip
       showPointerCursor={isEditable}
       title={!isEditable ? `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}` : `${title}${manuallySet}`}
-      toolTipContainerClass="inline__tooltip"
+      toolTipContainerClass={styles.inline__tooltip}
       placement="right"
     >
       <DayBlock consts={consts} dayModifier={dayModifier} onClick={isEditable ? onClickDay : noop} />
