@@ -9,7 +9,10 @@ function range(start, end) {
   return Array.from(Array(end - start).keys()).map(i => i + start)
 }
 
-const MINUTES = range(0, 4).map(m => ({ key: m, value: m * 15 }))
+const MINUTES = range(0, 60).map(m => ({
+  key: m,
+  value: m,
+}))
 
 const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
   const { formatMessage } = useI18n()

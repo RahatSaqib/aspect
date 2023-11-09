@@ -9,6 +9,10 @@ const {
   startOfWeek,
   endOfWeek,
 } = require('date-fns')
+const _ = require('lodash')
+const { sendSlackMessage } = require('../../shared/slackUtil')
+const logger = require('../../shared/logger')
+const { getMessageStatusData } = require('./db')
 
 function getDateRangeFilters(executionDate, reportDateRange, reportStartingWeekDay) {
   if (reportStartingWeekDay && reportDateRange !== 'PREVIOUS_WEEK') {
@@ -63,6 +67,98 @@ function getDateRangeFilters(executionDate, reportDateRange, reportStartingWeekD
   return { minDate: dateRange.minDate.toISOString(), maxDate: dateRange.maxDate.toISOString() }
 }
 
+function maskEmail(email) {
+  const partialEmail = email.replace(/(\w{3})[\w.-]+@([\w.]+\w)/, '$1***@$2')
+  return partialEmail
+}
+
+function maskPhoneNumber(phoneNumber) {
+  return `${phoneNumber.slice(0, -4)}****`
+}
+
+function maskName(personName) {
+  const regex = /\b(\w{2})\w+(\w)\b/g
+  return personName.replace(regex, '$1**$2')
+}
+
+async function notifyMessageWithErrorToSlack({ smsMessageId, emailMessageId, webhookMessageId }) {
+  try {
+    // Only one of smsMessageId, emailMessageId, or webhookMessageId, is going to be received
+    // The message data is got from the one that is not null
+    const {
+      partnerName,
+      notificationTypeName,
+      notificationTypeCategoryName,
+      notificationCreatedOn,
+      notificationTypeId,
+      messageStatus,
+      messageUpdatedOn,
+      ...messageData
+    } = await getMessageStatusData({ smsMessageId, emailMessageId, webhookMessageId })
+
+    const getMessage = title => {
+      return `${title}
+    •   *Partner/Country*: ${partnerName}
+    •   *Notification Type*: ${notificationTypeName} <${
+        process.env.aspectUrl
+      }/browse/notification/${notificationTypeId}|Go to the notification details>
+    •   *Notification Type Category*: ${notificationTypeCategoryName}
+    •   *Notification Created On*: ${notificationCreatedOn.toISOString().replace('T', ' ')}`
+    }
+
+    if (messageStatus === 'Error') {
+      let message
+
+      if (smsMessageId) {
+        const { personId, personName, phoneNumber, errorData } = messageData
+        const maskedPhoneNumber = phoneNumber ? maskPhoneNumber(phoneNumber) : 'N/A'
+        message = `${getMessage(`:warning: *There was an error on sending an SMS message.*`)}
+    •   *Message Error On*: ${messageUpdatedOn?.toISOString()?.replace('T', ' ')}
+    •   *Person*: ${
+      personId
+        ? `${maskName(personName)} - <${process.env.aspectUrl}/browse/person/${personId}|Go to the person's details>`
+        : 'N/A'
+    }
+    •   *Phone Number*: ${maskedPhoneNumber}
+    •   *Error Data*: ${
+      errorData && phoneNumber && !_.isEmpty(phoneNumber)
+        ? _.replace(errorData, new RegExp(_.escapeRegExp(phoneNumber), 'g'), maskedPhoneNumber)
+        : errorData
+    }`
+      } else if (emailMessageId) {
+        const { personId, personName, email, sendResponse } = messageData
+        const maskedEmail = email ? maskEmail(email) : 'N/A'
+        message = `${getMessage(`:warning: *There was an error on sending an Email message.*`)}
+    •   *Message Error On*: ${messageUpdatedOn?.toISOString()?.replace('T', ' ')}
+    •   *Person*: ${
+      personId
+        ? `${maskName(personName)} - <${process.env.aspectUrl}/browse/person/${personId}|Go to the person's details>`
+        : 'N/A'
+    }
+    •   *Email*: ${maskedEmail}
+    •   *Error Data*: ${
+      sendResponse && email && !_.isEmpty(email)
+        ? _.replace(sendResponse, new RegExp(_.escapeRegExp(email), 'g'), maskedEmail)
+        : sendResponse
+    }`
+      } else if (webhookMessageId) {
+        const { url, response } = messageData
+        message = `${getMessage(`:warning: *There was an error on sending a Webhook message.*`)}
+    •   *Message Error On*: ${messageUpdatedOn?.toISOString()?.replace('T', ' ')}
+    •   *Webhook URL*: ${url}
+    •   *Error Data*: ${response}`
+      }
+
+      if (message) {
+        await sendSlackMessage(message)
+      }
+    }
+  } catch (error) {
+    logger.error(error)
+  }
+}
+
 module.exports = {
   getDateRangeFilters,
+  notifyMessageWithErrorToSlack,
 }

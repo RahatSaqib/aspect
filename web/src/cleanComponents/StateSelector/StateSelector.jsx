@@ -13,7 +13,7 @@ const StateSelector = ({ filter, onChange }) => {
   const user = useAuthState()
 
   useEffect(() => {
-    setInnerValue(filter?.stateId)
+    setInnerValue(filter?.stateId ?? '')
   }, [filter])
 
   const manageValue = val => {
