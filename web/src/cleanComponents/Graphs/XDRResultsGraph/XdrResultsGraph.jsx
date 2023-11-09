@@ -52,7 +52,8 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
   const [barData, setBarData] = useState({})
   useEffect(() => {
     if (data && data.data) {
-      const info = data.data
+      const keyToConsume = 'resultCategory2'
+      const info = data.data.filter(i => !!i[keyToConsume])
       const i18nKeys = reduce(
         info,
         (acc, curr) => {
@@ -68,7 +69,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         { resultCategory1: { values: ['Detected'] } },
         'MMM yy',
         'cnt',
-        'resultCategory2',
+        keyToConsume,
         i18nKeys,
         'pie',
         endPointParams,
@@ -76,7 +77,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         messages
       )
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Detected'], 'standard')
+      const { avg: pieAvg = 0 } = getAverageFromData(pieData, 'value', ['Detected'], 'standard')
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -89,7 +90,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         { resultCategory1: { values: ['Detected'] } },
         'MMM',
         'month',
-        'resultCategory2',
+        keyToConsume,
         i18nKeys,
         'bar',
         endPointParams,
