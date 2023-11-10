@@ -19,6 +19,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .leftOuterJoin('MessageStatus as mswm', 'mswm.id', 'wm.messageStatusId')
     .leftOuterJoin('Result as r', 'r.Id', 'n.resultId')
     .leftOuterJoin('Issue as iss', 'iss.id', 'n.issueId')
+    .leftOuterJoin('IssueType as isst', 'isst.id', 'iss.issueTypeId')
     .leftJoin('Sample as s', 's.id', 'r.sampleId')
     .leftOuterJoin('Report as rpt', 'rpt.id', 'n.reportId')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
@@ -26,6 +27,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .modify(filterParams, updatedQuery, {
       notificationName: 'nt.name',
       notificationTypeName: 'ntc.name',
+      issueTypeName: 'isst.name',
       notificationTypeCategoryId: 'nt.notificationTypeCategoryId',
       notificationTypeId: 'n.notificationTypeId',
       sampleId: 's.externalId',

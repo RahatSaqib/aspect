@@ -22,10 +22,16 @@ const NotificationLogFilter = () => {
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <NotificationCategoryTypeSelect
-            valueBy="id"
+            valueBy="name"
             label={formatMessage(messages.notificationCategoryType)}
-            value={state.notificationCategoryTypeId}
-            onChange={id => setState(state => ({ ...state, notificationCategoryTypeId: id, notificationTypeId: null }))}
+            value={state.notificationTypeName}
+            onChange={name => {
+              if (name === 'Result Based' || name === 'Report Based') {
+                setState(state => ({ ...state, notificationTypeName: name }))
+              } else {
+                setState(state => ({ ...state, issueTypeName: name }))
+              }
+            }}
           />
         </Grid>
 
@@ -33,7 +39,6 @@ const NotificationLogFilter = () => {
           <NotificationTypeSelect
             valueBy="id"
             label={formatMessage(messages.notificationType)}
-            categoryTypeId={state.notificationCategoryTypeId}
             value={state.notificationTypeId}
             onChange={id => setState(state => ({ ...state, notificationTypeId: id }))}
           />
