@@ -14,7 +14,7 @@ const notificationHistoyCommomFields = {
 
 const notificationHistoryQuery = {
   notificationWithErrors: Joi.bool().allow(null).description('Error in SMS,Email or webhook Notification'),
-  issueTypeName: Joi.bool().allow(null).description('Issue Type Name'),
+  issueTypeName: Joi.string().allow(null).description('Issue Type Name'),
   ...notificationHistoyCommomFields,
 }
 
