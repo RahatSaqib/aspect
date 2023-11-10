@@ -3,8 +3,8 @@ import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@
 import { useQuery } from 'react-query'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
+import { useIntl } from 'react-intl'
 import { StateSelector, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -17,7 +17,7 @@ const endpointParams = [
 ]
 
 const QuartersMtbDetectedGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState()

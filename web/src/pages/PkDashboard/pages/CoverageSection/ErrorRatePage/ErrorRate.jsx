@@ -5,12 +5,12 @@ import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
 import { useLocation } from 'react-router'
 import { Loading, ErrorRateFilter } from '../../../../../cleanComponents'
-import useI18n from '../../../../../hooks/useI18n'
 import { useFilterValues } from '../../../../../providers/FilterProvider'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
 import messages from '../../../PkDashboard.Messages'
+import { useIntl } from 'react-intl'
 
 const values = ['numberOfModules', 'cntMtbResults', 'cntMtbError', 'cntMtbInvalid', 'cntMtbNoResult']
 
@@ -80,7 +80,7 @@ const makeNestedData = array => {
 }
 
 const ErrorRatePage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
   const { data, isLoading } = useDeviceErrors(filter)

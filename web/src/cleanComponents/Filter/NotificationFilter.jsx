@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { Grid, TextField } from '@mui/material'
 import { useLocation } from 'react-router'
-import useI18n from '../../hooks/useI18n'
 import messages from '../../messages/FilterMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
+import { useIntl } from 'react-intl'
 import FilterContainer from './FilterContainer'
 
 const NotificationFilter = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const location = useLocation()
   const filter = useFilterValues(location.pathname)

@@ -2,8 +2,8 @@ import React from 'react'
 import CloseIcon from '@mui/icons-material/RemoveCircle'
 import camelCase from 'lodash/camelCase'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
-import useI18n from '../../../hooks/useI18n'
 import { mergeToFiltersParams } from '../../../oldComponents/utils'
 import messages from './messages'
 import styles from './PersonDetail.module.css'
@@ -22,7 +22,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
   const searchCountryParams = getSearch({ countryId })
   const searchStateParams = getSearch({ countryId, stateId })
   const searchLgaParams = getSearch({ countryId, stateId, lgaId })
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const textForAssignmentItem = (i18nKey, name) => {
     return (messages[i18nKey] ? formatMessage(messages[i18nKey]) : name) || name

@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { FormControlLabel, RadioGroup, Radio, Stack, TextField } from '@mui/material'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
 import styles from './styles.module.css'
 
 const Daily = ({ cronExpression, onChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [days, setDays] = useState(1)
   const onDayChange = e => {

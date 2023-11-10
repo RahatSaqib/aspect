@@ -8,6 +8,7 @@ import map from 'lodash/map'
 import partial from 'lodash/partial'
 import without from 'lodash/without'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
@@ -15,7 +16,6 @@ import { DetailHeader, ResultFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { RESULT_LIST } from '../../../components/QueryFetch/Result'
-import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -171,7 +171,7 @@ export const ResultListWithProps = ({
 
 const ResultList = () => {
   // >>>>>> hooks/ <<<<<<
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()

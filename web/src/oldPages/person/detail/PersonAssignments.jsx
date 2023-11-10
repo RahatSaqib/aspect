@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button, LinearProgress } from '@mui/material'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 import PersonAssignmentItem from './PersonAssignmentItem'
@@ -16,7 +16,7 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
   const askConfirmation = (assignment, index) => {
     setConfirmation({ isActive: true, assignment, index })
   }
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <section className={styles.Assignments}>

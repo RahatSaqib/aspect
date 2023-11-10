@@ -3,11 +3,11 @@ import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useQuery } from 'react-query'
 import { StateSelect, LgaSelect, ColumnLineGraph, Loading, getTimePeriod } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
+import { useIntl } from 'react-intl'
 
 const endpointParams = [
   { source: 'rrDetection' },
@@ -20,7 +20,7 @@ const endpointParams = [
 ]
 
 const RrtbTestDiagnosisPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [stateId, setState] = useState()
@@ -68,12 +68,12 @@ const RrtbTestDiagnosisPage = () => {
           <StateSelect
             countryId={user.countryId}
             onChange={e => setState(e.target.value)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
             stateId={stateId}
             onChange={e => setLga(e.target.value)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

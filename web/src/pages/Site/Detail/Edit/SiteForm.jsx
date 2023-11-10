@@ -5,13 +5,13 @@ import isEqual from 'lodash/isEqual'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { SiteListSelect, SiteTagInput, LocationSelector, TimezoneSelect } from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
 import useDeleteSite from '../../../../hooks/site/useDeleteSite'
 import useUpdateSite from '../../../../hooks/site/useUpdateSite'
-import useI18n from '../../../../hooks/useI18n'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { useAuthState } from '../../../../providers/AuthProvider'
 import messages from '../messages'
@@ -20,7 +20,7 @@ import { convertToFloat, getLatLongFromAddress } from './address'
 import SiteTypeSelect from './SiteTypeSelect'
 
 const SiteForm = ({ site, onLatLongChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const navigate = useNavigate()
   const [showConfirmation, setShowConfirmation] = useState(false)

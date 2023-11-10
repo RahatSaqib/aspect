@@ -5,12 +5,14 @@ import { Loading } from '..'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 import { getCustomMessage, commonDefinitions as messages } from '../../messages'
 import { useAuthState } from '../../providers/AuthProvider'
+import { useIntl } from 'react-intl'
 
 const StateSelector = ({ filter, onChange }) => {
   const { countryId } = useAuthState()
   const { data, isLoading } = useStatesByCountry({ countryId })
   const [innerValue, setInnerValue] = useState('')
   const user = useAuthState()
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     setInnerValue(filter?.stateId ?? '')
@@ -31,11 +33,11 @@ const StateSelector = ({ filter, onChange }) => {
   ) : (
     <FormControl sx={{ width: '100%' }} variant="standard" size="small">
       {innerValue === undefined ? (
-        <InputLabel id="select-state">{getCustomMessage(messages, 'state', user)}</InputLabel>
+        <InputLabel id="select-state">{getCustomMessage(formatMessage, messages, 'state', user)}</InputLabel>
       ) : null}
       <Select
         labelId="select-state"
-        label={innerValue !== undefined ? getCustomMessage(messages, 'state', user) : ''}
+        label={innerValue !== undefined ? getCustomMessage(formatMessage, messages, 'state', user) : ''}
         value={innerValue}
         onChange={e => manageValue(e.target.value)}
         displayEmpty

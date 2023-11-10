@@ -3,10 +3,10 @@ import { Grid } from '@mui/material'
 import { useQuery } from 'react-query'
 import { objectToArray, Loading } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
+import { useIntl } from 'react-intl'
 
 const now = new Date()
 const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
@@ -30,7 +30,7 @@ const columns = [
 ]
 
 const DeviceCoveragePage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [filter] = useState()
 
   const { data: { data } = {}, isLoading } = useQuery(

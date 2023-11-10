@@ -1,8 +1,7 @@
 import React from 'react'
 import { Button, CircularProgress, Tooltip } from '@mui/material'
 import { bool, func } from 'prop-types'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../../hooks/useI18n'
+import { defineMessages, useIntl } from 'react-intl'
 import IconProvider from '../../IconProvider'
 import styles from '../Table.module.css'
 
@@ -14,7 +13,7 @@ const messages = defineMessages({
 })
 
 const AspectTableReset = ({ isFetching, action }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <div className={styles.table__reload}>
       <Tooltip

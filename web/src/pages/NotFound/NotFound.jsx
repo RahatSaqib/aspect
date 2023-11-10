@@ -4,13 +4,13 @@ import ActionBack from '@mui/icons-material/KeyboardArrowLeft'
 import { IconButton } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { Link, useNavigate } from 'react-router-dom'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import messages from './messages'
 import styles from './NotFound.module.css'
 
 const NotFound = () => {
   const navigate = useNavigate()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <div className={styles.Container}>

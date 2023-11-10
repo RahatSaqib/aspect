@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '@mui/material'
 import { defineMessages } from 'react-intl'
 import { useLocation } from 'react-router'
-import useI18n from '../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { useFilterUpdate } from '../providers/FilterProvider'
 
 const messages = defineMessages({
@@ -11,7 +11,7 @@ const messages = defineMessages({
 })
 
 const BrowseEmptyList = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const location = useLocation()
   const [, , resetFilter] = useFilterUpdate()
   return (

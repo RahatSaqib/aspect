@@ -5,7 +5,7 @@ import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { DEVICE_STATUS } from '../../components/QueryFetch/Device/index'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { deviceStatusMessages } from '../../messages'
 import { types } from '../../store/DeviceMaintenanceStatusRedux'
 import formatI18nMessage from '../../utils/i18n/formatterWeb'
@@ -29,7 +29,7 @@ const DeviceMaintenanceStatusSelectField = ({
   onlyManuallySetableStatuses,
   ...restProps
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data: maintenanceStatuses, isLoading } = useMaintenanceStatus(onlyManuallySetableStatuses)
   const dispatch = useDispatch()
 

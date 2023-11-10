@@ -2,8 +2,8 @@ import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages, months } from '../../../messages'
+import { useIntl } from 'react-intl'
 import { StateSelector, Loading } from '../../index'
 import styles from '../graphStyles.module.css'
 import { fillYear } from '../graphUtils'
@@ -14,7 +14,7 @@ const maxDate = new Date()
 const endpointParams = [{ groupBy: 'month' }, { minDate: `${maxDate.getFullYear() - 5}-01-01` }, { maxDate }]
 
 const TrendInYearsAllTestsGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState()

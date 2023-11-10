@@ -10,17 +10,17 @@ import {
   AspectSelect,
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
+import { useIntl } from 'react-intl'
 
 const endpointParams = [{ assay: 'GxMtbXdr' }, { xdrResistance: 'FLQ' }]
 
 const ProvincialXDRTrendsFQPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [states, setState] = useState([])
   const [lgas, setLgas] = useState([])
@@ -68,7 +68,7 @@ const ProvincialXDRTrendsFQPage = () => {
               setState(newValue)
               setLgas([])
             }}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <AspectSelect
             multiple
@@ -77,7 +77,7 @@ const ProvincialXDRTrendsFQPage = () => {
             options={states.reduce((p, c) => [...p, ...c.lgas], [])}
             value={lgas}
             onChange={v => setLgas(v)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

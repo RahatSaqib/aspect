@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import useI18n from '../../hooks/useI18n'
 import { getCustomMessage } from '../../messages/customMessages'
+import { useIntl } from 'react-intl'
 import CountrySelectField from '../Geography/CountrySelectField'
 import LgaSelectField from '../Geography/LgaSelectField'
 import StateSelectField from '../Geography/StateSelectField'
@@ -8,7 +8,7 @@ import messages from './messages'
 import styles from './styles'
 
 const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validators }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [selectedCountry, setSelectedCountry] = useState({ id: countryId, name: '' })
   const [selectedState, setSelectedState] = useState({ id: stateId, name: '' })
   const [selectedLga, setSelectedLga] = useState({ id: lgaId, name: '' })
@@ -61,7 +61,7 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validator
           countryId={selectedCountry.id}
           tabIndex="0"
           aria-haspopup
-          floatingLabelText={getCustomMessage(messages, 'state', user)}
+          floatingLabelText={getCustomMessage(formatMessage, messages, 'state', user)}
           style={styles.field}
         />
       </div>
@@ -73,7 +73,7 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validator
           lgaId={selectedLga.id}
           tabIndex="0"
           aria-haspopup
-          floatingLabelText={getCustomMessage(messages, 'lga', user)}
+          floatingLabelText={getCustomMessage(formatMessage, messages, 'lga', user)}
           style={styles.field}
         />
       </div>

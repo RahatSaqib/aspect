@@ -2,7 +2,7 @@ import React from 'react'
 import * as Sentry from '@sentry/react'
 import { ErrorBoundary } from 'react-error-boundary'
 import { defineMessages } from 'react-intl'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 
 const messages = defineMessages({
   errorBoundaryMessage: {
@@ -29,7 +29,7 @@ function ErrorFallback({ error }) {
 }
 
 function ErrorFallbackProd({ error }) {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <pre style={errorStyle}>
       <p>{formatMessage(messages.errorBoundaryMessage)}</p>

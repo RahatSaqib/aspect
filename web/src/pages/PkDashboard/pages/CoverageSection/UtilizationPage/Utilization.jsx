@@ -5,10 +5,10 @@ import round from 'lodash/round'
 import { useQuery } from 'react-query'
 import { PeriodSelector, Loading, BarGraph, getTimePeriod } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
+import { useIntl } from 'react-intl'
 
 const now = new Date()
 const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
@@ -23,7 +23,7 @@ const columns = [
 ]
 
 const UtilizationPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [filter, setFilter] = useState({
     minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),

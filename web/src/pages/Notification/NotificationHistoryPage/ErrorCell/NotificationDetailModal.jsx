@@ -1,13 +1,13 @@
 import React, { useState } from 'react'
 import { Avatar, Button, Grid, Typography } from '@mui/material'
 import PropTypes from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 
 const NotificationDetailModal = ({ sent, withErrors, pending, showDialog, onClose, recipients = [] }) => {
   const [notificationData] = useState(recipients)
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const colors = {
     Sent: '#34717c',

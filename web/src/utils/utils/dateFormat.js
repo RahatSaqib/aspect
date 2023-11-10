@@ -7,7 +7,6 @@ import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
 import { withProps } from 'recompose'
-import { i18nWrapper } from '../../providers/I18nProvider'
 import { getAspectDisplayPreferences } from '../LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
@@ -72,7 +71,7 @@ export const withTodayProps = withProps(() => ({
   today: startOfDay(new Date()),
 }))
 
-export const formatRelative = (date, defaultMessage = '') => {
+export const formatRelative = (date, formatRelativeTime, defaultMessage = '') => {
   const dateInMilliseconds = new Date(date).getTime()
   if (isNil(date) || isNaN(dateInMilliseconds)) return defaultMessage
 
@@ -104,7 +103,6 @@ export const formatRelative = (date, defaultMessage = '') => {
 
   const timeDiffInMilliseconds = dateInMilliseconds - Date.now()
   const { denom, unit } = getParams(timeDiffInMilliseconds)
-  const { formatRelativeTime } = i18nWrapper()
 
   // see details - https://formatjs.io/docs/react-intl/api#formatrelativetime
   return formatRelativeTime(Math.round(timeDiffInMilliseconds / denom), unit, {

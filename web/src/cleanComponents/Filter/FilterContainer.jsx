@@ -2,9 +2,9 @@ import React, { useState } from 'react'
 import { Button, Card, CardActions, CardContent, Collapse } from '@mui/material'
 import { MdArrowDownward, MdArrowUpward } from 'react-icons/md'
 import { useLocation } from 'react-router'
-import useI18n from '../../hooks/useI18n'
 import messages from '../../messages/FilterMessages'
 import { useFilterValues, useFilterUpdate } from '../../providers/FilterProvider'
+import { useIntl } from 'react-intl'
 import FilterButtons from './FilterContainer.Buttons'
 
 const cardContentStyle = {
@@ -15,7 +15,7 @@ const cardContentStyle = {
 }
 
 const FilterContainer = ({ children, state, setState, blocked }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
   const filter = useFilterValues(location.pathname)

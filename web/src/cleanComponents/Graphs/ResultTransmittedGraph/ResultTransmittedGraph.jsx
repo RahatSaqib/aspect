@@ -4,9 +4,9 @@ import isEmpty from 'lodash/isEmpty'
 import { useQuery } from 'react-query'
 import EmptyGraph from '../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { dateRangeOptions } from '../../../oldComponents/shared/DateTimeInput/utils/date'
+import { useIntl } from 'react-intl'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import {
   getTimePeriod,
@@ -21,11 +21,11 @@ import styles from '../graphStyles.module.css'
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 
-const dateRanges = dateRangeOptions('resultsDateRange', false)
-const currentMonth = dateRanges.resultsDateRange.find(dr => dr.id === DATE_RANGE_OPTIONS.CURRENT_MONTH).value.minDate
-
 const ResultTransmittedGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage, formatDate } = useIntl()
+
+  const dateRanges = dateRangeOptions(formatMessage, formatDate, 'resultsDateRange', false)
+  const currentMonth = dateRanges.resultsDateRange.find(dr => dr.id === DATE_RANGE_OPTIONS.CURRENT_MONTH).value.minDate
 
   const [graphData, setGraphData] = useState(false)
   const [showLabel, setShowLabel] = useState(false)

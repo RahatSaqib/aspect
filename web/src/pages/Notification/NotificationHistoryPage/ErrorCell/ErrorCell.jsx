@@ -1,15 +1,15 @@
 import React, { Fragment, useState } from 'react'
 import { Button } from '@mui/material'
 import { array, arrayOf, number, oneOfType, string } from 'prop-types'
+import { useIntl } from 'react-intl'
 import IconProvider from '../../../../components/IconProvider/index'
-import useI18n from '../../../../hooks/useI18n'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import styles from './ErrorCell.module.css'
 import messages from './messages'
 import NotificationDetailModal from './NotificationDetailModal'
 
 const ErrorCell = ({ sent = 0, withErrors = 0, pending = 0, recipients, value }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [modalConfiguration, setModalConfiguration] = useState({
     showDialog: false,
     sent,

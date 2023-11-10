@@ -2,7 +2,7 @@ import React, { lazy, Suspense, useState } from 'react'
 import { Box, Card, CardContent } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import PermissionChecker from '../../components/PermissionChecker'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { DirtyStepsProvider, FormStatusProvider } from './context'
 import messages from './messages'
 
@@ -14,7 +14,7 @@ const Step = ({ step, value, children }) => <div hidden={step !== value}>{childr
 
 const ContactPage = () => {
   const [step, setStep] = useState(0)
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <>
       <Helmet title={formatMessage(messages.title)} />

@@ -1,7 +1,7 @@
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { assay, resultCategory } from '../../messages'
-import useI18n from '../useI18n'
 import { RESULT_KEY, RESULT_KEY_RESULT_CATEGORY_GROUP_ENDPOINT } from './resultKeys.js'
 
 const getResultCategoryGroup = async assayId =>
@@ -11,7 +11,7 @@ const getResultCategoryGroup = async assayId =>
   }).then(response => response.data)
 
 const useResultCategoryGroup = (assayIds, options) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const assayIdsLength = assayIds?.length
 
   return useQuery([RESULT_KEY, 'category-group', assayIds], () => getResultCategoryGroup(assayIds), {

@@ -2,8 +2,7 @@ import React from 'react'
 import { Button, InputLabel, TextField } from '@mui/material'
 import has from 'lodash/has'
 import identity from 'lodash/identity'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../../hooks/useI18n'
+import { defineMessages, useIntl } from 'react-intl'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import styles from './BaseDialog.module.css'
@@ -55,7 +54,7 @@ export const BaseDialog = ({
   onNotesChange,
   handleSubmit,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <AspectDialog
       actions={[

@@ -4,8 +4,8 @@ import filter from 'lodash/filter'
 import sumBy from 'lodash/sumBy'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
+import { useIntl } from 'react-intl'
 import { getTimePeriod, formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -37,7 +37,7 @@ const calcOverallRate = (keyToCalc, totalTotal, gData, filterCriteria) => {
 }
 
 const DeviceStatusGraph = ({ assaysFromState }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState({

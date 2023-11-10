@@ -1,6 +1,6 @@
 import React from 'react'
 import { number, string } from 'prop-types'
-import { i18nWrapper } from '../../../../providers/I18nProvider/index'
+import { useIntl } from 'react-intl'
 import { getFirstAndLastVisibleRowNumbers } from '../../Helpers'
 import styles from '../../Table.module.css'
 import messages from '../messages'
@@ -10,7 +10,7 @@ import messages from '../messages'
  */
 
 const NowShowing = ({ dataLength, pageIndex, pageSize, name, namePlural }) => {
-  const { formatMessage } = i18nWrapper()
+  const { formatMessage } = useIntl()
   const boundaries = getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize)
   const countName = boundaries
     ? formatMessage(messages.nowShowing, {

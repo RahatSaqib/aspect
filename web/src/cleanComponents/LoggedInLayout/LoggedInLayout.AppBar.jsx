@@ -6,8 +6,8 @@ import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../../assets/logo_confluence.png'
 import PermissionChecker from '../../components/PermissionChecker'
-import useI18n from '../../hooks/useI18n'
 import IconMenu from '../../oldComponents/shared/IconMenu'
+import { useIntl } from 'react-intl'
 import { userRequestedLogout } from '../../store/AuthRedux'
 import { aspectFetch } from '../../utils/utils/fetch'
 import LayoutNavigation from './LoggedInLayout.Navigation'
@@ -26,7 +26,7 @@ const messages = defineMessages({
 
 const Header = () => {
   const dispatch = useDispatch()
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const [version, setVersion] = useState({ fetched: false, v: '' })
 

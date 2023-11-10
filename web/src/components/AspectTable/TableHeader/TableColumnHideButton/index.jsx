@@ -1,13 +1,13 @@
 import React from 'react'
 import { IconButton } from '@mui/material'
 import { func, string } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import IconProvider from '../../../IconProvider'
 import styles from '../../Table.module.css'
 import messages from '../messages'
 
 const TableColumnHideButton = ({ headerIndex, handleHideColumnToggle }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <IconButton
       onClick={e => handleHideColumnToggle(e, headerIndex)}

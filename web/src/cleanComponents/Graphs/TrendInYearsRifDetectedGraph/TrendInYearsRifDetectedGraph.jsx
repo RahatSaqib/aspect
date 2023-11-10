@@ -4,8 +4,8 @@ import { useQuery } from 'react-query'
 import { LineGraph } from '..'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages, months } from '../../../messages'
+import { useIntl } from 'react-intl'
 import { StateSelector, Loading } from '../../index'
 import styles from '../graphStyles.module.css'
 import { fillYear } from '../graphUtils'
@@ -21,7 +21,7 @@ const endpointParams = [
 ]
 
 const TrendInYearsAllTestsGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState()

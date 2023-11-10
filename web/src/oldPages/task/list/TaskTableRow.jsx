@@ -1,15 +1,15 @@
 import React from 'react'
 import { FaExclamationTriangle } from 'react-icons/fa'
-import useI18n from '../../../hooks/useI18n'
 import AlertType from '../../../oldComponents/shared/AlertType'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import { formatRelative } from '../../../utils/utils/dateFormat'
+import { useIntl } from 'react-intl'
 import styles from './TaskTableRow.module.css'
 
 const TaskTableRow = ({ messages, task, ...restProps }) => {
-  const intl = useI18n()
-  const { formatMessage } = intl
+  const intl = useIntl()
+  const { formatMessage, formatRelativeTime } = intl
   return (
     <TableRow {...restProps} className={`${styles[restProps.className]} ${styles.TableRow}`}>
       <TableCell className={styles.TableCell}>
@@ -50,7 +50,7 @@ const TaskTableRow = ({ messages, task, ...restProps }) => {
         </div>
       </TableCell>
       <TableCell className={styles.TableCell}>{addEllipsis(task.get('site'))}</TableCell>
-      <TableCell className={styles.TableCell}>{formatRelative(task.get('time'))}</TableCell>
+      <TableCell className={styles.TableCell}>{formatRelative(task.get('time'), formatRelativeTime)}</TableCell>
     </TableRow>
   )
 }

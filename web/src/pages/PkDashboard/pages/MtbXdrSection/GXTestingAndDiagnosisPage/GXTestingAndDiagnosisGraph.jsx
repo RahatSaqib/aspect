@@ -6,11 +6,11 @@ import { useQuery } from 'react-query'
 import { LgaSelect, StateSelect, Loading, ColumnLineGraph, getTimePeriod } from '../../../../../cleanComponents'
 import messages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import pkMessages from '../../../PkDashboard.Messages'
+import { useIntl } from 'react-intl'
 
 const endpointParams = [
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
@@ -18,7 +18,7 @@ const endpointParams = [
 ]
 
 const GXTestingAndDiagnosisGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState(undefined)
@@ -74,13 +74,13 @@ const GXTestingAndDiagnosisGraph = () => {
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
-            label={getCustomMessage(pkMessages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, pkMessages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
             value={filter?.lgaId ?? ''}
             stateId={filter?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
-            label={getCustomMessage(pkMessages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, pkMessages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

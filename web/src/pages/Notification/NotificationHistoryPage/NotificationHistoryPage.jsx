@@ -2,17 +2,17 @@ import React, { Fragment } from 'react'
 import { Box, Card, CardContent } from '@mui/material'
 import get from 'lodash/get'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
 import AspectTable from '../../../components/AspectTable'
 import { NOTIFICATION_HISTORY } from '../../../components/QueryFetch/Notification'
-import useI18n from '../../../hooks/useI18n'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import messages from './messages'
 import baseConfig from './NotificationHistoryPageTableConfig'
 
 const NotificationHistoryPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const location = useLocation()
 

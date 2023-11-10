@@ -7,9 +7,9 @@ import filter from 'lodash/filter'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
+import { useIntl } from 'react-intl'
 import { getWhitelistedAssays } from '../../../utils/utils/graph'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
@@ -41,7 +41,7 @@ const endPointParams = {
 }
 
 const TreatmentStatusGraph = ({ assaysFromState }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()

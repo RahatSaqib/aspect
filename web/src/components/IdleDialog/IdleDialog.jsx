@@ -1,10 +1,10 @@
 import React from 'react'
 import { defineMessages } from 'react-intl'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AspectDialog from '../../oldComponents/shared/AspectDialog'
 
 const IdleDialog = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <AspectDialog title={formatMessage(messages.title)} modal open>

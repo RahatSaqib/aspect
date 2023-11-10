@@ -1,5 +1,5 @@
-import { subDays, subMonths, format, addMinutes, subMinutes, getYear, subYears, startOfMonth } from 'date-fns'
-import endOfMonth from 'date-fns/endOfMonth'
+import { subDays, subMonths, addMinutes, subMinutes, getYear, subYears, startOfMonth, endOfMonth } from 'date-fns'
+import { format } from 'date-fns-tz'
 import filter from 'lodash/filter'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
@@ -498,7 +498,7 @@ const formatDataByGraphType = (
       break
 
     case 'pieRow':
-      grouped = groupForPieRow(data, mergedParams)
+      grouped = groupForPieRow(formatMessage, formatDate, data, mergedParams)
       break
 
     case 'line-trends': {

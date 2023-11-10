@@ -10,7 +10,7 @@ import isString from 'lodash/isString'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
 import Select from 'react-select'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import UI_CONSTS from '../../utils/consts/UI'
 import { getMuiTheme, getAspectTheme } from './AspectDropDown.theme'
 import styles from './Dropdown.module.css'
@@ -34,7 +34,7 @@ const SelectComponent = ({
   theme,
 }) => {
   messages = messages || {}
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [currentSelectedOption, setCurrentSelectedOption] = useState(null)
   const [defaultOption] = useState(selectedValue)
   const [options, setOptions] = useState([])

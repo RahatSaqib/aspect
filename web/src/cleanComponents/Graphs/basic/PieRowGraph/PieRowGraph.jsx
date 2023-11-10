@@ -2,15 +2,15 @@ import React, { Fragment } from 'react'
 import { Pie } from '@ant-design/plots'
 import map from 'lodash/map'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
-import useI18n from '../../../../hooks/useI18n'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import { filterColour } from '../../../index'
 import messages from './messages'
 import styles from './PieRowGraph.module.css'
 
 const PieRowGraph = ({ data, componentClasses }) => {
-  const { formatMessage: intlFormatMessage } = useI18n()
+  const { formatMessage: intlFormatMessage } = useIntl()
   const navigate = useNavigate()
 
   const headings = graphData => map(graphData[0], 'heading')
