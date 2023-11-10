@@ -5,6 +5,7 @@ import endOfYear from 'date-fns/endOfYear'
 import startOfMonth from 'date-fns/startOfMonth'
 import startOfYear from 'date-fns/startOfYear'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import {
   LgaSelect,
@@ -26,7 +27,6 @@ import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import { useMtpRifResults } from '../../../hooks/useMtpRifResults'
 import messages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 
 const defaultFilters = [
   { groupBy: 'month' },

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Link, Menu } from '@mui/material'
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
+import { useIntl } from 'react-intl'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import PermissionChecker from '../../components/PermissionChecker'
-import { useIntl } from 'react-intl'
 import messages from './messages'
 import styles from './styles.module.css'
 

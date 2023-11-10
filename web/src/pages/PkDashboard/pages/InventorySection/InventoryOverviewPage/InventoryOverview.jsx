@@ -1,11 +1,11 @@
 import React, { useState } from 'react'
 import { LinearProgress } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { PeriodSelector, ConsumableSelector } from '../../../../../cleanComponents'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 import useInventoryOverview from './useInventoryOverview'
 
 const InventoryOverviewPage = () => {

@@ -3,6 +3,7 @@ import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router'
 import {
@@ -24,7 +25,6 @@ import { useFilterUpdate } from '../../../../../providers/FilterProvider'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 
 const now = new Date()
 const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))

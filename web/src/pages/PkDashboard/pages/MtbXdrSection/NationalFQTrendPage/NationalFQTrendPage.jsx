@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
   LgaSelect,
@@ -15,7 +16,6 @@ import { getCustomMessage, graphMessages, months } from '../../../../../messages
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 
 const maxDate = new Date()
 

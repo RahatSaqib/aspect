@@ -3,6 +3,7 @@ import entries from 'lodash/entries'
 import get from 'lodash/get'
 import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
 import { Loading, ErrorRateFilter } from '../../../../../cleanComponents'
 import { useFilterValues } from '../../../../../providers/FilterProvider'
@@ -10,7 +11,6 @@ import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
 import messages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 
 const values = ['numberOfModules', 'cntMtbResults', 'cntMtbError', 'cntMtbInvalid', 'cntMtbNoResult']
 

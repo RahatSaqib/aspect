@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
-import { getCustomMessage } from '../../messages/customMessages'
 import { useIntl } from 'react-intl'
+import { getCustomMessage } from '../../messages/customMessages'
 import CountrySelectField from '../Geography/CountrySelectField'
 import LgaSelectField from '../Geography/LgaSelectField'
 import StateSelectField from '../Geography/StateSelectField'

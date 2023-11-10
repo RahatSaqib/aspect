@@ -1,8 +1,7 @@
 import React from 'react'
 import * as Sentry from '@sentry/react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { defineMessages } from 'react-intl'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 
 const messages = defineMessages({
   errorBoundaryMessage: {

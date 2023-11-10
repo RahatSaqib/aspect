@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Grid, TextField } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
-import { useIntl } from 'react-intl'
 import { StateSelect, LgaSelect, AssaySelect, PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 

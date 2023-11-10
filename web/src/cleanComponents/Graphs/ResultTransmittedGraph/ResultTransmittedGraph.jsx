@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import EmptyGraph from '../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages } from '../../../messages'
 import { dateRangeOptions } from '../../../oldComponents/shared/DateTimeInput/utils/date'
-import { useIntl } from 'react-intl'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import {
   getTimePeriod,

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
   LgaSelect,
@@ -15,7 +16,6 @@ import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 
 const now = new Date()
 const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))

@@ -1,8 +1,8 @@
 import React, { lazy, Suspense, useState } from 'react'
 import { Box, Card, CardContent } from '@mui/material'
 import { Helmet } from 'react-helmet'
-import PermissionChecker from '../../components/PermissionChecker'
 import { useIntl } from 'react-intl'
+import PermissionChecker from '../../components/PermissionChecker'
 import { DirtyStepsProvider, FormStatusProvider } from './context'
 import messages from './messages'
 

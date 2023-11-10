@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { LgaSelect, StateSelect, Loading, ColumnLineGraph, getTimePeriod } from '../../../../../cleanComponents'
 import messages from '../../../../../cleanComponents/Graphs/graphMessages'
@@ -10,7 +11,6 @@ import { getCustomMessage, graphMessages } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import pkMessages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 
 const endpointParams = [
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },

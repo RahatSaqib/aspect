@@ -1,11 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { FormControl, InputLabel, MenuItem, Select, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { Loading } from '..'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 import { getCustomMessage, commonDefinitions as messages } from '../../messages'
 import { useAuthState } from '../../providers/AuthProvider'
-import { useIntl } from 'react-intl'
 
 const StateSelector = ({ filter, onChange }) => {
   const { countryId } = useAuthState()

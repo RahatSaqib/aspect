@@ -1,9 +1,9 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useDeviceMaintenanceStatus from '../../hooks/device/useDeviceMaintenanceStatus'
 import { deviceStatusMessages } from '../../messages'
-import { useIntl } from 'react-intl'
 
 const DeviceMaintenanceStatusSelect = ({
   id,
