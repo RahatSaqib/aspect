@@ -34,7 +34,8 @@ const NotificationHistoryPage = () => {
   const [size, setSize] = useState(10)
 
   const params = useMemo(() => {
-    const { notificationCategoryTypeId, onlyErrors, reportWithName, ...rest } = filters
+    const { notificationCategoryTypeId, notificationCategory, onlyErrors, reportWithName, ...rest } = filters
+    const [category, type] = notificationCategory?.split('=') ?? ''
     return removeNullFromCollection({
       size,
       sortCol,
@@ -43,6 +44,7 @@ const NotificationHistoryPage = () => {
       reportName: reportWithName,
       notificationTypeCategoryId: notificationCategoryTypeId,
       notificationWithErrors: onlyErrors,
+      ...(type === 'category' ? { notificationTypeName: category } : { issueTypeName: category }),
       ...rest,
     })
   }, [page, size, sortCol, sortDir, filters])

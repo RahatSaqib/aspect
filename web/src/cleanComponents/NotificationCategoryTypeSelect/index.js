@@ -1,3 +1,0 @@
-import NotificationCategoryTypeSelect from './NotificationCategoryTypeSelect'
-
-export default NotificationCategoryTypeSelect

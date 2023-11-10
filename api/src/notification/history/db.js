@@ -26,8 +26,8 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .modify(filterDateRangeParams, query, 'n.createdOn')
     .modify(filterParams, updatedQuery, {
       notificationName: 'nt.name',
-      notificationTypeName: 'ntc.name',
-      issueTypeName: 'isst.name',
+      notificationTypeName: 'ntc.externalId',
+      issueTypeName: 'isst.externalId',
       notificationTypeCategoryId: 'nt.notificationTypeCategoryId',
       notificationTypeId: 'n.notificationTypeId',
       sampleId: 's.externalId',

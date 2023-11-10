@@ -8,6 +8,7 @@ import deviceApprovalMessages from './deviceApprovalMessages'
 import deviceStatusMessages from './deviceStatusMessages'
 import diseases from './diseaseMessages'
 import graphMessages from './graphMessages'
+import notificationCategories from './notificationCategories'
 import report from './report'
 import resultCategory from './resultCategory'
 import resultCategoryType from './resultCategoryType'
@@ -31,6 +32,7 @@ export {
   resultWorkflowStatusMessages,
   resultTreatmentStatusMessages,
   report,
+  notificationCategories,
   sampleType,
   graphMessages,
 }

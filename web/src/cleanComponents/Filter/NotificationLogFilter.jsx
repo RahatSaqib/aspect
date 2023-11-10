@@ -6,7 +6,7 @@ import messages from '../../messages/FilterMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
 import { PeriodSelector } from '../index'
-import NotificationCategoryTypeSelect from '../NotificationCategoryTypeSelect'
+import NotificationCategorySelect from '../NotificationCategorySelect'
 import NotificationTypeSelect from '../NotificationTypeSelect'
 import FilterContainer from './FilterContainer'
 
@@ -21,17 +21,11 @@ const NotificationLogFilter = () => {
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
-          <NotificationCategoryTypeSelect
-            valueBy="name"
+          <NotificationCategorySelect
+            valueBy="id"
             label={formatMessage(messages.notificationCategoryType)}
-            value={state.notificationTypeName}
-            onChange={name => {
-              if (name === 'Result Based' || name === 'Report Based') {
-                setState(state => ({ ...state, notificationTypeName: name }))
-              } else {
-                setState(state => ({ ...state, issueTypeName: name }))
-              }
-            }}
+            value={state.notificationCategory}
+            onChange={id => setState(state => ({ ...state, notificationCategory: id }))}
           />
         </Grid>
 

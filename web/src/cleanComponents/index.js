@@ -82,7 +82,7 @@ import LgaSelect from './LgaSelect'
 import Loading from './Loading'
 import LocationSelector from './LocationSelector'
 import LoggedInLayout from './LoggedInLayout'
-import NotificationCategoryTypeSelect from './NotificationCategoryTypeSelect'
+import NotificationCategorySelect from './NotificationCategorySelect'
 import NotificationTypeSelect from './NotificationTypeSelect'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
@@ -137,7 +137,7 @@ export {
   TagSelect,
   TimezoneSelect,
   NotificationTypeSelect,
-  NotificationCategoryTypeSelect,
+  NotificationCategorySelect,
   Loading,
   BarGraph,
   ColumnGraph,

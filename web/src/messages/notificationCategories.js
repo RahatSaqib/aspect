@@ -1,6 +1,6 @@
-const { defineMessage } = require('react-intl')
+import { defineMessages } from 'react-intl'
 
-const messages = defineMessage({
+export default defineMessages({
   notificationTypeResultBased: {
     id: 'notificationCategoryTypeSelect.ResultBased',
     defaultMessage: 'Result Based',
@@ -50,5 +50,3 @@ const messages = defineMessage({
     defaultMessage: 'Instrument Replaced',
   },
 })
-
-export default messages

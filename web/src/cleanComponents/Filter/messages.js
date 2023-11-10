@@ -7,6 +7,7 @@ import {
   resultCategory,
   resultTreatmentStatusMessages,
   resultWorkflowStatusMessages,
+  notificationCategories,
 } from '../../messages'
 
 const messages = {
@@ -17,6 +18,7 @@ const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...assay,
+  ...notificationCategories,
   ...defineMessages({
     noFilters: {
       id: 'filter.btnGroup.noFilters',

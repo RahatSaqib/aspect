@@ -11,7 +11,6 @@ import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 import useConsumable from '../../hooks/inventory/useConsumable'
-import useNotificationCategoryType from '../../hooks/notification/useNotificationCategoryType'
 import useNotificationType from '../../hooks/notification/useNotificationType'
 import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
@@ -20,6 +19,7 @@ import useI18n from '../../hooks/useI18n'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
 import messages from './messages'
+import { notificationCategories } from '../NotificationCategorySelect/fixture'
 
 const filtersOrdering = {
   breakOutByLot: 1,
@@ -178,8 +178,8 @@ const buttonMapping = {
   onlyErrors: ({ remove }) => <OnlyErrors remove={remove} />,
   reportWithName: ({ remove, reportWithName }) => <ReportWithName reportWithName={reportWithName} remove={remove} />,
   patientId: ({ remove, patientId }) => <PatientId patientId={patientId} remove={remove} />,
-  notificationCategoryTypeId: ({ remove, notificationCategoryTypeId }) => (
-    <NotificationCategoryType notificationCategoryTypeId={notificationCategoryTypeId} remove={remove} />
+  notificationCategory: ({ remove, notificationCategory }) => (
+    <NotificationCategory notificationCategory={notificationCategory} remove={remove} />
   ),
   notificationTypeId: ({ remove, notificationCategoryTypeId, notificationTypeId }) => (
     <NotificationType
@@ -655,18 +655,18 @@ const PatientId = ({ patientId, remove }) => {
   return <Btn lbl={formatMessage(messages.patientId, { patientId })} del={() => remove(['patientId'])} />
 }
 
-const NotificationCategoryType = ({ notificationCategoryTypeId, remove }) => {
+const NotificationCategory = ({ notificationCategory, remove }) => {
   const { formatMessage } = useI18n()
-  const { data } = useNotificationCategoryType()
-  if (data && notificationCategoryTypeId) {
-    const name = data.find(i => i.id === notificationCategoryTypeId)?.name
+  const name = notificationCategories.find(i => i.id === notificationCategory)?.i18Name
+  if (name)
     return (
       <Btn
-        lbl={formatMessage(messages.notificationCategoryType, { notificationCategoryType: name })}
-        del={() => remove(['notificationCategoryTypeId'])}
+        lbl={formatMessage(messages.notificationCategoryType, {
+          notificationCategoryType: formatMessage(name),
+        })}
+        del={() => remove(['notificationCategory'])}
       />
     )
-  }
   return null
 }
 
