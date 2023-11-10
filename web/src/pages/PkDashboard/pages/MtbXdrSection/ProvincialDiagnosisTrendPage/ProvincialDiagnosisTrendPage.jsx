@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
   StateAutocomplete,
@@ -15,7 +16,6 @@ import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 
 const endpointParams = [{ assay: 'GxMtbXdr' }, { resultCategory1: 'Detected' }]
 

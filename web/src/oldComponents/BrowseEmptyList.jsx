@@ -1,8 +1,7 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import { useIntl } from 'react-intl'
 import { useFilterUpdate } from '../providers/FilterProvider'
 
 const messages = defineMessages({

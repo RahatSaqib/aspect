@@ -1,12 +1,12 @@
 import React, { useState } from 'react'
 import { Grid, TextField } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
-import { useIntl } from 'react-intl'
 import { StateSelect, LgaSelect } from '../index'
 import FilterContainer from './FilterContainer'
 

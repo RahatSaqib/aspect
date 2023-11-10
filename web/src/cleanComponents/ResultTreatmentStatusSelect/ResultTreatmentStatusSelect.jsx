@@ -1,9 +1,9 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
 import { resultTreatmentStatusMessages } from '../../messages'
-import { useIntl } from 'react-intl'
 
 const ResultTreatmentStatusSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
   const { formatMessage } = useIntl()

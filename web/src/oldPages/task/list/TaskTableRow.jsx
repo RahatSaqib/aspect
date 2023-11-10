@@ -1,10 +1,10 @@
 import React from 'react'
 import { FaExclamationTriangle } from 'react-icons/fa'
+import { useIntl } from 'react-intl'
 import AlertType from '../../../oldComponents/shared/AlertType'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-import { useIntl } from 'react-intl'
 import styles from './TaskTableRow.module.css'
 
 const TaskTableRow = ({ messages, task, ...restProps }) => {

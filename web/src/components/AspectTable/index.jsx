@@ -2,9 +2,9 @@ import React, { useEffect, useState, useMemo } from 'react'
 import { CircularProgress } from '@mui/material'
 import isEqual from 'lodash/isEqual'
 import { func, array, object, oneOfType } from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
-import { useIntl } from 'react-intl'
 import { getFilters, sanitizeFiltersStringBy } from '../../oldComponents/utils'
 import {
   DEFAULT_PAGE_AT,

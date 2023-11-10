@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { StateSelect, LgaSelect, Loading, ColumnLineGraph, getTimePeriod } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
@@ -8,7 +9,6 @@ import { graphMessages, getCustomMessage } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
-import { useIntl } from 'react-intl'
 
 const endpointParams = [
   { source: 'tbDetection' },

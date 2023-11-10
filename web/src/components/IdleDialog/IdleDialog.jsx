@@ -1,6 +1,5 @@
 import React from 'react'
-import { defineMessages } from 'react-intl'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import AspectDialog from '../../oldComponents/shared/AspectDialog'
 
 const IdleDialog = () => {

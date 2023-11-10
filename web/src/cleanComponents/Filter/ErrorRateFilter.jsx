@@ -1,10 +1,10 @@
 import React, { useState } from 'react'
 import { Grid } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
 import messages from '../../messages/FilterMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
-import { useIntl } from 'react-intl'
 import { PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 

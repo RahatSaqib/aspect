@@ -1,8 +1,7 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { MenuItem, TextField, IconButton } from '@mui/material'
-import { defineMessages } from 'react-intl'
-import { useIntl } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 
 const messages = defineMessages({
   optionFalse: {

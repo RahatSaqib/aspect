@@ -12,7 +12,7 @@ import ukLocale from 'date-fns/locale/uk'
 import tgLocale from 'date-fns/locale/uz-Cyrl'
 import viLocale from 'date-fns/locale/vi'
 import { DateTime } from 'luxon'
-import { createIntl, createIntlCache, RawIntlProvider } from 'react-intl' // eslint-disable-line no-restricted-imports
+import { createIntl, createIntlCache, RawIntlProvider } from 'react-intl'
 import translation from '../../utils/i18n/translation.json'
 
 // This is optional but highly recommended

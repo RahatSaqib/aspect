@@ -1,9 +1,9 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useDiseaseList from '../../hooks/disease/useDiseaseList'
 import { diseases } from '../../messages'
-import { useIntl } from 'react-intl'
 
 const DiseaseSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
   const { isLoading, data: diseasesList } = useDiseaseList()

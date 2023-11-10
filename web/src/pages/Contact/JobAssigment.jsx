@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
+import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import { object, string } from 'yup'
 import {
@@ -18,7 +19,6 @@ import {
 import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
 import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
 import usePersonAssignment from '../../hooks/person/usePersonAssignment'
-import { useIntl } from 'react-intl'
 import { getCustomMessage } from '../../messages'
 import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
 import { useAuthState } from '../../providers/AuthProvider'
