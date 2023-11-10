@@ -58,7 +58,6 @@
     "is-promise": "^4.0.0",
     "jwt-decode": "^3.1.2",
     "lodash": "^4.17.21",
-    "luxon": "^3.0.1",
     "material-ui-phone-number": "^3.0.0",
     "piwik-react-router": "^0.12.1",
     "prop-types": "^15.8.1",

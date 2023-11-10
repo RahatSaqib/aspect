@@ -1,6 +1,5 @@
 import React from 'react'
-// import { utcToZonedTime, format } from 'date-fns-tz'
-import format from 'date-fns/format'
+import { utcToZonedTime, format } from 'date-fns-tz'
 import formatDistance from 'date-fns/formatDistance'
 import deLocale from 'date-fns/locale/de'
 import usLocale from 'date-fns/locale/en-US'
@@ -11,7 +10,6 @@ import ruLocale from 'date-fns/locale/ru'
 import ukLocale from 'date-fns/locale/uk'
 import tgLocale from 'date-fns/locale/uz-Cyrl'
 import viLocale from 'date-fns/locale/vi'
-import { DateTime } from 'luxon'
 import { createIntl, createIntlCache, RawIntlProvider } from 'react-intl' // eslint-disable-line no-restricted-imports
 import translation from '../../utils/i18n/translation.json'
 
@@ -69,9 +67,8 @@ const I18nProvider = ({ children }) => {
         ...intl,
         format: (dateIn, formatIn) => format(dateIn, formatIn, { locale: dateFNSLocale }),
         formatDate: (dateIn, options = {}) => intl.formatDate(dateIn, options),
-        formatWithOffset: dateIn => DateTime.fromJSDate(dateIn).setZone(validTimeZone).toISO(),
-        // formatWithOffset: dateIn =>
-        //   format(utcToZonedTime(dateIn, validTimeZone), "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone: validTimeZone }),
+        formatWithOffset: dateIn =>
+          format(utcToZonedTime(dateIn, validTimeZone), "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone: validTimeZone }),
         formatDistance: (firstDateIn, secondDateIn, showSuffix = false) =>
           formatDistance(firstDateIn, secondDateIn, { locale: dateFNSLocale, addSuffix: showSuffix }),
         formatTimezone: dateIn => dateIn.toLocaleString(finalLocale, { timeZone: validTimeZone }),
