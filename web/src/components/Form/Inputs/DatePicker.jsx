@@ -2,7 +2,6 @@ import React from 'react'
 import { styled, TextField } from '@mui/material'
 import { MobileDatePicker } from '@mui/x-date-pickers'
 import { PickersDay } from '@mui/x-date-pickers/PickersDay'
-import classnames from 'classnames/bind'
 import isEqual from 'date-fns/isEqual'
 import startOfDay from 'date-fns/startOfDay'
 import { useFormikContext } from 'formik'
@@ -19,7 +18,6 @@ import styles from './DatePicker.module.css'
 
 import 'react-datepicker/dist/react-datepicker-cssmodules.min.css'
 
-const cssClasses = classnames.bind(styles)
 const CustomPickersDay = styled(PickersDay, {
   shouldForwardProp: prop => prop !== 'dayIsBetween' && prop !== 'isFirstDay' && prop !== 'isLastDay',
 })(({ theme, dayIsBetween, isFirstDay, isLastDay }) => ({
@@ -121,7 +119,7 @@ const AspectDatePickerBase = props => {
             'isClearable',
             'transformTimezone',
           ])}
-          className={cssClasses('datepicker__TextField')}
+          className={styles.datepicker__TextField}
         />
       )}
     />

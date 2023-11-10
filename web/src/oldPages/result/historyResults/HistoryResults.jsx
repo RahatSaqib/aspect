@@ -1,7 +1,6 @@
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import { Card, IconButton, LinearProgress, Table, TableBody, Tooltip } from '@mui/material'
-import classnames from 'classnames/bind'
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import { MdFileDownload } from 'react-icons/md'
@@ -13,8 +12,6 @@ import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../o
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import messages from '../list/messages'
 import cssStyles from './HistoryResults.module.css'
-
-const cssClasses = classnames.bind(cssStyles)
 
 const Results = ({
   navigate,
@@ -34,12 +31,12 @@ const Results = ({
   const { formatMessage } = useI18n()
 
   return (
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section__Content')}>
-        <header className={cssClasses('Header')}>
-          <div className={cssClasses('Header__Title')}>{`${title}`}</div>
+    <section className={cssStyles.Section}>
+      <Card className={cssStyles.Section__Content}>
+        <header className={cssStyles.Header}>
+          <div className={cssStyles.Header__Title}>{`${title}`}</div>
           {onExportClick && (
-            <div className={cssClasses('Header__Actions')}>
+            <div className={cssStyles.Header__Actions}>
               <IconButton onClick={onExportClick}>
                 <MdFileDownload />
               </IconButton>
@@ -52,7 +49,7 @@ const Results = ({
           ) : items.currentIdList.isEmpty() ? (
             <BrowseEmptyList />
           ) : (
-            <Table className={cssClasses('ResultDataTable')}>
+            <Table className={cssStyles.ResultDataTable}>
               <DataTableHead
                 navigate={navigate}
                 location={location}

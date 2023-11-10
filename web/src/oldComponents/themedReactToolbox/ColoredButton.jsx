@@ -1,9 +1,6 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import AspectButton from '../shared/AspectButton'
 import styles from './ColoredButton.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const ColoredButton = ({
   neutral = true,
@@ -14,21 +11,18 @@ const ColoredButton = ({
   brink = false,
   label,
   ...restProps
-}) => (
-  <AspectButton
-    {...restProps}
-    variant={raised ? 'contained' : 'text'}
-    className={cssClasses(restProps.className, {
-      'ColoredButton--ship-cove': shipCove,
-      'ColoredButton--shakespeare': shakespeare,
-      'ColoredButton--mountain': mountain,
-      'ColoredButton--brink': brink,
-      'ColoredButton--neutral': neutral,
-      'ColoredButton--raised': raised,
-    })}
-  >
-    {label}
-  </AspectButton>
-)
+}) => {
+  const classes = `${styles[restProps.className]} 
+    ${shipCove ? 'ColoredButton__ship-cove' : ''} 
+    ${shakespeare ? 'ColoredButton__shakespeare' : ''} ${mountain ? 'ColoredButton__mountain' : ''} 
+    ${brink ? 'ColoredButton__brink' : ''} ${neutral ? 'ColoredButton__neutral' : ''} ${
+    raised ? 'ColoredButton__raised' : ''
+  }}`
+  return (
+    <AspectButton {...restProps} variant={raised ? 'contained' : 'text'} className={classes}>
+      {label}
+    </AspectButton>
+  )
+}
 
 export default ColoredButton

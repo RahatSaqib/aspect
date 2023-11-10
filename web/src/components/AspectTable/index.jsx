@@ -1,6 +1,5 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { CircularProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
 import { func, array, object, oneOfType } from 'prop-types'
 import { useQuery } from 'react-query'
@@ -19,10 +18,8 @@ import { allowOnlyAPIKeys, determineSortDirection, getColumnIdFromFilterKey, rem
 import styles from './Table.module.css'
 import AspectTableCore from './TableCore'
 
-const cssClasses = classnames.bind(styles)
-
 const Loading = () => (
-  <div className={cssClasses('table__spinner')}>
+  <div className={styles.table__spinner}>
     <CircularProgress />
   </div>
 )

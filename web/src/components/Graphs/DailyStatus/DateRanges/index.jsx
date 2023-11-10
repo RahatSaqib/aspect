@@ -1,12 +1,9 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
 import useI18n from '../../../../hooks/useI18n'
 import styles from '../DailyStatus.module.css'
 import { groupDateRanges } from '../Helpers'
-
-const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   totalTests: {
@@ -24,14 +21,14 @@ const DateRanges = ({ data, consts }) => {
     totalBlockSize: { width: totalBlockWidth },
   } = consts
   return (
-    <div className={cssClasses('dates__row')}>
-      <div className={cssClasses('dates__spacer')} />
-      <div className={cssClasses('dates__dayContainer')}>
+    <div className={styles.dates__row}>
+      <div className={styles.dates__spacer} />
+      <div className={styles.dates__dayContainer}>
         {days.map(({ min, max, week, size }) => {
           return week.includes('we') ? (
             <div
               key={week}
-              className={cssClasses('dates__dayBlock')}
+              className={styles.dates__dayBlock}
               style={{
                 width: `${(blockWidth + marginWidth) * size}px`,
               }}
@@ -39,7 +36,7 @@ const DateRanges = ({ data, consts }) => {
           ) : (
             <div
               key={week}
-              className={cssClasses('dates__dayBlock')}
+              className={styles.dates__dayBlock}
               style={{
                 width: `${(blockWidth + marginWidth) * size}px`,
               }}
@@ -50,7 +47,7 @@ const DateRanges = ({ data, consts }) => {
           )
         })}
         <div
-          className={cssClasses('dates__dayBlock')}
+          className={styles.dates__dayBlock}
           style={{
             width: `${totalBlockWidth}px`,
           }}

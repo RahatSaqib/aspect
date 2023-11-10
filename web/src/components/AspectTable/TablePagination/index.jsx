@@ -1,11 +1,8 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import { array, bool, func, number, oneOfType, string } from 'prop-types'
 import styles from '../Table.module.css'
 import PageIndexSelectors from './PageIndexSelectors'
 import PageSizeSelectors from './PageSizeSelectors'
-
-const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render pagination
@@ -26,8 +23,8 @@ const AspectPagination = ({
   previousPage,
   page,
 }) => (
-  <div className={cssClasses('pagination__container')}>
-    <div className={cssClasses('pagination__leftActions')}>
+  <div className={styles.pagination__container}>
+    <div className={styles.pagination__leftActions}>
       <PageIndexSelectors
         canNextPage={canNextPage}
         canPreviousPage={canPreviousPage}
@@ -43,7 +40,7 @@ const AspectPagination = ({
         page={page}
       />
     </div>
-    <div className={cssClasses('pagination__rightActions')}>
+    <div className={styles.pagination__rightActions}>
       <PageSizeSelectors
         dataLength={dataLength}
         pageIndex={pageIndex}

@@ -1,14 +1,11 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { formatRelative } from '../../../utils/utils/dateFormat'
 
-const cssClasses = classnames.bind(styles)
-
 const SiteTableRow = ({ site, onAlertClick, ...restProps }) => {
   return (
-    <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableRow {...restProps} className={styles[restProps.className]}>
       <TableCell>{site.name}</TableCell>
       <TableCell>{site.state}</TableCell>
       <TableCell>{site.lga}</TableCell>

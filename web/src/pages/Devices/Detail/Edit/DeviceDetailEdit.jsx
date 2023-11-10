@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Button, Card, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -20,8 +19,6 @@ import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
 import styles from '../styles.module.css'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const navigate = useNavigate()
@@ -62,8 +59,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   return (
     <div>
       <Helmet title={device.name} />
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           <form>
             <TextField
               fullWidth
@@ -184,7 +181,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               />
             </FormGroup>
 
-            <div className={cssClasses('Form__Actions')}>
+            <div className={styles.Form__Actions}>
               <ButtonGroup isolated>
                 <AspectButton
                   type="button"

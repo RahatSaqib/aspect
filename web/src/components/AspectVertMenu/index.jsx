@@ -1,13 +1,10 @@
 import React, { Fragment } from 'react'
 import MoreVertIcon from '@mui/icons-material/MoreVert'
 import { Divider, ListItemIcon, ListItemText, MenuItem } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import IconMenu from '../../oldComponents/shared/IconMenu'
 import IconProvider from '../IconProvider'
 import styles from './AspectVertMenu.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const AspectVertMenuItem = ({ icon, color, disabled = false, text, action, params, separator = false, onClick }) => (
   <Fragment>
@@ -26,22 +23,22 @@ const AspectVertMenuItem = ({ icon, color, disabled = false, text, action, param
           action(params)
         }
       }}
-      className={cssClasses('menu-item')}
+      className={styles.menu_item}
     >
       {icon && (
-        <ListItemIcon className={cssClasses('menu-item-icon')} style={{ color }}>
+        <ListItemIcon className={styles.menu_item_icon} style={{ color }}>
           <IconProvider icon={icon} />
         </ListItemIcon>
       )}
       <ListItemText inset primary={text} />
     </MenuItem>
-    {separator && <Divider className={cssClasses('divider')} />}
+    {separator && <Divider className={styles.divider} />}
   </Fragment>
 )
 
 const AspectVertMenu = ({ actions, params }) =>
   actions ? (
-    <IconMenu icon={<MoreVertIcon />} className={cssClasses('menu')}>
+    <IconMenu icon={<MoreVertIcon />} className={styles.menu}>
       {actions.map(item => (
         <AspectVertMenuItem key={`${item.icon}-${item.text}`} {...item} params={params} />
       ))}

@@ -1,6 +1,5 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, TextField, MenuItem } from '@mui/material'
-import classnames from 'classnames/bind'
 import useI18n from '../../../hooks/useI18n'
 import Loading from '../../../oldComponents/Loading'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
@@ -13,8 +12,6 @@ import DailyStatusFilters from './DailyStatusFilters'
 import DateRanges from './DateRanges'
 import useDailyStatus from './Helpers/useDailyStatus'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 
@@ -74,7 +71,7 @@ const DailyStatus = () => {
       <CardHeader title={formatMessage(messages.dailyStatusMainTitle)} />
       <CardContent>
         {!devicesIsLoading && !deviceStatusesIsLoading ? (
-          <div className={cssClasses('dailystatus__container')}>
+          <div className={styles.dailystatus__container}>
             <TextField select value={range} onChange={onChange} sx={{ float: 'right', width: '240px' }}>
               {ops.map(c => (
                 <MenuItem key={c.id} value={c.id}>
@@ -110,7 +107,7 @@ const DailyStatus = () => {
             ) : null}
           </div>
         ) : (
-          <Loading className={cssClasses('dailyStatus__spinner')} />
+          <Loading className={styles.dailyStatus__spinner} />
         )}
       </CardContent>
     </Card>

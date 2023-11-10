@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import { CircularProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import useI18n from '../../../hooks/useI18n'
 import AspectCard from '../../AspectCard'
 import DailyStatusFilters from '../../Graphs/DailyStatus/DailyStatusFilters'
@@ -11,10 +10,8 @@ import styles from './DailyStatusMap.module.css'
 import buildMarkersForDailyStatus from './Helpers'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-
 const Loading = () => (
-  <div className={cssClasses('dailystatusMap__spinner')}>
+  <div className={styles.dailystatusMap__spinner}>
     <CircularProgress />
   </div>
 )

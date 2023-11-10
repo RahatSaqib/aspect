@@ -1,5 +1,4 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
@@ -10,15 +9,13 @@ import styles from '../DailyStatus.module.css'
 import { getDayTitle } from '../Helpers'
 import messages from '../messages'
 
-const cssClasses = classnames.bind(styles)
-
 const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
     blockSize: { width: blockWidth, height: blockHeight, marginWidth },
   } = consts
   return (
     <div
-      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
+      className={`${styles.clinic__day} ${styles[`clinic__day__${dayModifier}`]}`}
       style={{
         width: `${blockWidth}px`,
         height: `${blockHeight}px`,
@@ -89,7 +86,7 @@ const DailyStatusClinicDay = ({
     <AspectTooltip
       showPointerCursor={isEditable}
       title={!isEditable ? `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}` : `${title}${manuallySet}`}
-      toolTipContainerClass="inline__tooltip"
+      toolTipContainerClass={styles.inline__tooltip}
       placement="right"
     >
       <DayBlock consts={consts} dayModifier={dayModifier} onClick={isEditable ? onClickDay : noop} />

@@ -9,7 +9,7 @@
   border-radius: 15px;
 }
 
-.piegraphs__row--header {
+.piegraphs__row__header {
   height: 110px;
 }
 
@@ -17,7 +17,7 @@
   background: var(--aspect-color-white-2);
 }
 
-.piegraphs__row--header > .piegraphs__column {
+.piegraphs__row__header > .piegraphs__column {
   height: 100%;
 }
 
@@ -54,7 +54,7 @@
   justify-content: flex-end;
 }
 
-.piegraphs__columnGraph--solid {
+.piegraphs__columnGraph__solid {
   border-radius: 50%;
 }
 
@@ -88,7 +88,7 @@
     display: block;
     position: absolute;
     height: 2px;
-    background: var('--dusty');
+    background: var(--dusty);
     width: 20px;
     left: 100%;
     top: calc(50% - 2px);

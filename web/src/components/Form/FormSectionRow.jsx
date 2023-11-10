@@ -1,6 +1,5 @@
 import React from 'react'
 import { Grid, IconButton } from '@mui/material'
-import classnames from 'classnames/bind'
 import uniqueId from 'lodash/uniqueId'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
@@ -8,8 +7,6 @@ import IconProvider from '../IconProvider'
 import styles from './Form.module.css'
 import FormItem from './FormItem'
 import messagesBase from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const FormSectionRow = ({
   arrayHelpers,
@@ -28,14 +25,10 @@ const FormSectionRow = ({
 
   const onClickDelete = () => arrayHelpers.remove(subRowIndex)
 
+  const classes = `${styles.form__sectionItemsContainer} ${classNames.container ? styles[classNames.container] : ''}`
   return (
-    <div className={cssClasses('form__row')}>
-      <Grid
-        container
-        className={cssClasses('form__sectionItemsContainer', {
-          [classNames.container]: !!classNames.container,
-        })}
-      >
+    <div className={styles.form__row}>
+      <Grid container className={classes}>
         {items?.map((item, itemIndex) => {
           const { id, ...restItemProps } = item
 
@@ -51,10 +44,10 @@ const FormSectionRow = ({
         })}
       </Grid>
       {isMulti ? (
-        <div className={cssClasses('form__row-buttons')}>
+        <div className={styles.form__row_buttons}>
           {showDeleteButton ? (
             <IconButton
-              className={cssClasses('form__button', 'form__button-close')}
+              className={`${styles.form__button} ${styles.form__button_close}`}
               onClick={onClickDelete}
               size="medium"
               title={formatMessage(messages.removeRow)}
@@ -63,7 +56,7 @@ const FormSectionRow = ({
             </IconButton>
           ) : null}
           <IconButton
-            className={cssClasses('form__button')}
+            className={styles.form__button}
             onClick={onClickAdd}
             size="medium"
             title={formatMessage(messages.addRow)}

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, InputLabel, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import has from 'lodash/has'
 import identity from 'lodash/identity'
 import { defineMessages } from 'react-intl'
@@ -8,8 +7,6 @@ import useI18n from '../../../hooks/useI18n'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import styles from './BaseDialog.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const sharedMessages = defineMessages({
   notes: {
@@ -79,8 +76,8 @@ export const BaseDialog = ({
       onClose={onCancel}
       title={labels.dialogTitle}
     >
-      <form className={cssClasses('Form')}>
-        <div className={cssClasses('Form__Content')}>
+      <form className={styles.Form}>
+        <div className={styles.Form__Content}>
           <section>
             {has(values, 'contextDate') && (
               <div>
@@ -90,7 +87,7 @@ export const BaseDialog = ({
                 <DateTimeInput
                   fullWidth
                   margin="normal"
-                  className={cssClasses('DateTime')}
+                  className={styles.DateTime}
                   dateFormat={dateFormat}
                   disabled={form.submitting}
                   value={values.contextDate}

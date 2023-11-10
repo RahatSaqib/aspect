@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.17.0",
+  "version": "1.18.0",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
@@ -76,6 +76,7 @@
     "@hapi/vision": "^7.0.1",
     "@sentry/node": "^7.25.0",
     "@sentry/tracing": "^7.50.0",
+    "@slack/web-api": "^6.9.1",
     "adm-zip": "^0.5.10",
     "ajv": "^8.11.2",
     "ajv-cli": "^5.0.0",
