@@ -1,7 +1,7 @@
 import React from 'react'
 import { Autocomplete, LinearProgress, TextField } from '@mui/material'
-import { isArray } from 'lodash/fp'
 import get from 'lodash/get'
+import isArray from 'lodash/isArray'
 import map from 'lodash/map'
 
 export default function AspectSelect(props) {
