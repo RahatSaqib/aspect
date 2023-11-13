@@ -24,7 +24,7 @@ const NotificationLogFilter = () => {
           <NotificationCategorySelect
             valueBy="id"
             label={formatMessage(messages.notificationCategoryType)}
-            value={state.notificationCategory}
+            value={state.notificationCategory || null}
             onChange={id => setState(state => ({ ...state, notificationCategory: id }))}
           />
         </Grid>
@@ -33,7 +33,7 @@ const NotificationLogFilter = () => {
           <NotificationTypeSelect
             valueBy="id"
             label={formatMessage(messages.notificationType)}
-            value={state.notificationTypeId}
+            value={state.notificationTypeId || null}
             onChange={id => setState(state => ({ ...state, notificationTypeId: id }))}
           />
         </Grid>
@@ -41,21 +41,21 @@ const NotificationLogFilter = () => {
           <TextField
             label={formatMessage(messages.sampleId)}
             value={state.sampleId || ''}
-            onChange={({ target: { value } }) => setState({ ...state, sampleId: value ?? null })}
+            onChange={({ target: { value } }) => setState({ ...state, sampleId: value || null })}
           />
         </Grid>
         <Grid item xs={3}>
           <TextField
             label={formatMessage(messages.patientId)}
             value={state.patientId || ''}
-            onChange={({ target: { value } }) => setState({ ...state, patientId: value ?? null })}
+            onChange={({ target: { value } }) => setState({ ...state, patientId: value || null })}
           />
         </Grid>
         <Grid item xs={3}>
           <TextField
             label={formatMessage(messages.reportWithName)}
             value={state.reportWithName || ''}
-            onChange={({ target: { value } }) => setState({ ...state, reportWithName: value ?? null })}
+            onChange={({ target: { value } }) => setState({ ...state, reportWithName: value || null })}
           />
         </Grid>
         <Grid item xs={3}>
