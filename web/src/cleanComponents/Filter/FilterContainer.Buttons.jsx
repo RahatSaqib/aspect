@@ -12,11 +12,13 @@ import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 import useConsumable from '../../hooks/inventory/useConsumable'
+import useNotificationType from '../../hooks/notification/useNotificationType'
 import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
 import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
+import { notificationCategories } from '../NotificationCategorySelect/fixture'
 import messages from './messages'
 
 const filtersOrdering = {
@@ -173,6 +175,19 @@ const buttonMapping = {
   assayOverride: () => null,
   singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
   daysStockLeft: ({ daysStockLeft, remove }) => <DaysStockLeft daysStockLeft={daysStockLeft} remove={remove} />,
+  onlyErrors: ({ remove }) => <OnlyErrors remove={remove} />,
+  reportWithName: ({ remove, reportWithName }) => <ReportWithName reportWithName={reportWithName} remove={remove} />,
+  patientId: ({ remove, patientId }) => <PatientId patientId={patientId} remove={remove} />,
+  notificationCategory: ({ remove, notificationCategory }) => (
+    <NotificationCategory notificationCategory={notificationCategory} remove={remove} />
+  ),
+  notificationTypeId: ({ remove, notificationCategoryTypeId, notificationTypeId }) => (
+    <NotificationType
+      notificationTypeCategoryId={notificationCategoryTypeId}
+      notificationTypeId={notificationTypeId}
+      remove={remove}
+    />
+  ),
 }
 
 const Btn = ({ lbl, del }) => {
@@ -620,6 +635,54 @@ const OnlyTreatmentRequired = ({ remove }) => {
   const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.onlyTreatmentRequired)} del={() => remove(['onlyTreatmentRequired'])} />
+}
+
+const OnlyErrors = ({ remove }) => {
+  const { formatMessage } = useIntl()
+
+  return <Btn lbl={formatMessage(messages.onlyErrors)} del={() => remove(['onlyErrors'])} />
+}
+
+const ReportWithName = ({ remove, reportWithName }) => {
+  const { formatMessage } = useIntl()
+
+  return <Btn lbl={formatMessage(messages.reportWithName, { reportWithName })} del={() => remove(['reportWithName'])} />
+}
+
+const PatientId = ({ patientId, remove }) => {
+  const { formatMessage } = useIntl()
+
+  return <Btn lbl={formatMessage(messages.patientId, { patientId })} del={() => remove(['patientId'])} />
+}
+
+const NotificationCategory = ({ notificationCategory, remove }) => {
+  const { formatMessage } = useIntl()
+  const name = notificationCategories.find(i => i.id === notificationCategory)?.i18Name
+  if (name)
+    return (
+      <Btn
+        lbl={formatMessage(messages.notificationCategoryType, {
+          notificationCategoryType: formatMessage(name),
+        })}
+        del={() => remove(['notificationCategory'])}
+      />
+    )
+  return null
+}
+
+const NotificationType = ({ notificationTypeCategoryId, notificationTypeId, remove }) => {
+  const { formatMessage } = useIntl()
+  const { data } = useNotificationType(notificationTypeCategoryId)
+  if (data && notificationTypeId) {
+    const name = data.find(i => i.id === notificationTypeId)?.name
+    return (
+      <Btn
+        lbl={formatMessage(messages.notificationType, { notificationType: name })}
+        del={() => remove(['notificationTypeId'])}
+      />
+    )
+  }
+  return null
 }
 
 const Revoked = ({ revoked, remove }) => {
