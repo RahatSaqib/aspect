@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
+import isArray from 'lodash/isArray'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useI18n from '../../hooks/useI18n'
@@ -67,7 +68,7 @@ const ResultFilter = () => {
                 label={formatMessage(messages.resultGroup)}
                 value={state?.resultCategoryGroupId ?? []}
                 onChange={e => setState({ ...state, resultCategoryGroupId: e })}
-                assayId={state?.assayId}
+                assayId={!isArray(state?.assayId) ? [state?.assayId] : state?.assayId}
               />
             </Grid>
           </>
