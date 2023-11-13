@@ -9,6 +9,10 @@ export default defineMessages({
     id: 'notificationCategoryTypeSelect.notificationTypeReportBased',
     defaultMessage: 'Report Based',
   },
+  notificationTypeIssuedBased: {
+    id: 'notificationCategoryTypeSelect.notificationTypeIssuedBased',
+    defaultMessage: 'Issue Based',
+  },
   notificationTypeLowInventory: {
     id: 'notificationCategoryTypeSelect.notificationTypeLowInventory',
     defaultMessage: 'Low Inventory',

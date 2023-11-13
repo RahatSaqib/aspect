@@ -252,7 +252,7 @@ const routes = [
       auth: { scope: ['notification'] },
       validate: {
         params: {
-          typeCategoryId: Joi.number().allow(null).description('Notification type category id').integer().positive(),
+          typeCategoryId: Joi.string().allow(null).description('Notification type category id'),
         },
       },
       response: {

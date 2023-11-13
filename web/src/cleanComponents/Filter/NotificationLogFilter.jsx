@@ -10,6 +10,11 @@ import NotificationCategorySelect from '../NotificationCategorySelect'
 import NotificationTypeSelect from '../NotificationTypeSelect'
 import FilterContainer from './FilterContainer'
 
+const getCategoryType = param => {
+  const [value, type] = param?.split('=') ?? ''
+  return type === 'category' ? value : null
+}
+
 const NotificationLogFilter = () => {
   const { formatMessage } = useI18n()
   const user = useAuthState()
@@ -33,6 +38,7 @@ const NotificationLogFilter = () => {
           <NotificationTypeSelect
             valueBy="id"
             label={formatMessage(messages.notificationType)}
+            categoryTypeId={getCategoryType(state.notificationCategory)}
             value={state.notificationTypeId || null}
             onChange={id => setState(state => ({ ...state, notificationTypeId: id }))}
           />

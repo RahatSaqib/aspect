@@ -10,6 +10,10 @@ export const notificationCategories = [
     id: 'reportBased=category',
   },
   {
+    i18Name: messages.notificationTypeIssuedBased,
+    id: 'issueBased=category',
+  },
+  {
     i18Name: messages.notificationTypeLowInventory,
     id: 'InventoryStockout=issue',
   },
