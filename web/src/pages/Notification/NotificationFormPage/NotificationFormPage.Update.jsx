@@ -144,7 +144,7 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
 
   return (
     <>
-      <DetailHeader name={formConfig.title} back="/browse/notification">
+      <DetailHeader name={formConfig.title} back="/browse/notification/types">
         {[
           {
             disabled: !formik.dirty || !formik.isValid,
