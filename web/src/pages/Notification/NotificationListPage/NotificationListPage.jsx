@@ -1,6 +1,5 @@
 import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CircularProgress, Table, TableBody, TableRow, TableCell } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
@@ -17,8 +16,6 @@ import { useFilterValues } from '../../../providers/FilterProvider'
 import messages from './messages'
 import styles from './NotificationListPage.module.css'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
-
-const cssClasses = classnames.bind(styles)
 
 const NotificationList = () => {
   const intl = useI18n()
@@ -112,13 +109,13 @@ const NotificationList = () => {
           {intl.formatMessage(messages.createNotification)}
         </AspectButton>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
         <NotificationFilter />
         <Card>
           <CardContent>
             {isLoading ? (
-              <div className={cssClasses('table__spinner')}>
+              <div className={styles.table__spinner}>
                 <CircularProgress />
               </div>
             ) : (

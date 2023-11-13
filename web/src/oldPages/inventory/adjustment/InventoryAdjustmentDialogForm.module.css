@@ -1,6 +1,6 @@
 @import '../../../theme/variables.css';
 
-.Field__quantity--status {
+.Field__quantity__status {
   display: flex;
   justify-content: space-between;
   margin: -16px 0 20px 0;

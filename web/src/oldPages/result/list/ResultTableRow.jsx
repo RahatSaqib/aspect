@@ -1,7 +1,6 @@
 import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import { Tooltip } from '@mui/material'
-import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import isNumber from 'lodash/isNumber'
 import partial from 'lodash/partial'
@@ -11,8 +10,6 @@ import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import formatters from '../formatters'
-
-const cssClasses = classnames.bind(styles)
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { format, formatMessage, formatNumber } = useI18n()
@@ -30,7 +27,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   )
 
   return (
-    <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableRow {...restProps} className={styles[restProps.className]}>
       <TableCell>{result.get('endedOn') ? format(new Date(result.get('endedOn')), dateFormat) : ''}</TableCell>
       <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
       <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>

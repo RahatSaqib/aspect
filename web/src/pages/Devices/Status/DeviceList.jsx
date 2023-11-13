@@ -12,7 +12,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import classnames from 'classnames/bind'
 import endOfMonth from 'date-fns/endOfMonth'
 import format from 'date-fns/format'
 import startOfMonth from 'date-fns/startOfMonth'
@@ -22,10 +21,6 @@ import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
-import styles from './DeviceList.module.css'
-import getExportableFile from './DeviceQueries'
-import messages from './messages'
 import { DetailHeader, DeviceListFilter } from '../../../cleanComponents'
 import ExportListButton from '../../../components/AspectExportListButton'
 import PermissionChecker from '../../../components/PermissionChecker/index'
@@ -44,8 +39,10 @@ import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-
-const cssClasses = classnames.bind(styles)
+import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
+import styles from './DeviceList.module.css'
+import getExportableFile from './DeviceQueries'
+import messages from './messages'
 
 const { dateFormat } = getAspectDisplayPreferences().toJS()
 
@@ -244,10 +241,10 @@ const DeviceList = () => {
           </AspectButton>
         </PermissionChecker>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.devicesTitle)} />
         <DeviceListFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
           </div>
@@ -258,7 +255,7 @@ const DeviceList = () => {
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
-                <DeviceDataTable className={cssClasses('DeviceDataTable')}>
+                <DeviceDataTable className={styles.DeviceDataTable}>
                   <DeviceDataTableHead
                     navigate={navigate}
                     location={location}

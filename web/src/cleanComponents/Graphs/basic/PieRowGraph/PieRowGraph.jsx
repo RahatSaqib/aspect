@@ -1,6 +1,5 @@
 import React, { Fragment } from 'react'
 import { Pie } from '@ant-design/plots'
-import classnames from 'classnames/bind'
 import map from 'lodash/map'
 import PropTypes from 'prop-types'
 import { useNavigate } from 'react-router'
@@ -10,8 +9,6 @@ import { filterColour } from '../../../index'
 import messages from './messages'
 import styles from './PieRowGraph.module.css'
 
-const cssClasses = classnames.bind(styles)
-
 const PieRowGraph = ({ data, componentClasses }) => {
   const { formatMessage: intlFormatMessage } = useI18n()
   const navigate = useNavigate()
@@ -20,13 +17,13 @@ const PieRowGraph = ({ data, componentClasses }) => {
   const getRowKey = rowIndex => `row-${rowIndex}`
 
   return (
-    <div className={cssClasses('piegraph__container')}>
+    <div className={styles.piegraph__container}>
       {data && data.length ? (
         <Fragment>
-          <div className={cssClasses(['piegraphs__row', 'piegraphs__row--header'])}>
+          <div className={`${styles.piegraphs__row} ${styles.piegraphs__row__header}`}>
             {headings(data).map(heading => (
-              <div key={heading} className={cssClasses('piegraphs__column')}>
-                <div className={cssClasses('piegraphs__columnTitle')}>
+              <div key={heading} className={styles.piegraphs__column}>
+                <div className={styles.piegraphs__columnTitle}>
                   {messages[`${heading}Description`] ? (
                     <AspectTooltip showHelpIcon title={intlFormatMessage(messages[`${heading}Description`])}>
                       {intlFormatMessage(messages[heading])}
@@ -39,17 +36,15 @@ const PieRowGraph = ({ data, componentClasses }) => {
             ))}
           </div>
           {data.map((row, rowIndex) => (
-            <div key={getRowKey(rowIndex)} className={cssClasses('piegraphs__row')}>
+            <div key={getRowKey(rowIndex)} className={styles.piegraphs__row}>
               {row.map(pie => {
                 const { value, type, link, heading } = pie
                 return (
-                  <div key={`${heading}-${type}`} className={cssClasses('piegraphs__column')}>
-                    <div className={cssClasses('piegraphs__columnGraph')}>
-                      {type === 'string' ? (
-                        <div className={cssClasses('piegraphs__rowTitle')}>{value[0].value}</div>
-                      ) : null}
+                  <div key={`${heading}-${type}`} className={styles.piegraphs__column}>
+                    <div className={styles.piegraphs__columnGraph}>
+                      {type === 'string' ? <div className={styles.piegraphs__rowTitle}>{value[0].value}</div> : null}
                       {type === 'doughnut' ? (
-                        <div className={cssClasses(componentClasses)} style={{ height: 120, width: 120 }}>
+                        <div className={styles[componentClasses]} style={{ height: 120, width: 120 }}>
                           <Pie
                             {...{
                               appendPadding: 10,
@@ -75,7 +70,7 @@ const PieRowGraph = ({ data, componentClasses }) => {
                           />
                         </div>
                       ) : (
-                        <div className={cssClasses(componentClasses)} style={{ height: 120, width: 120 }}>
+                        <div className={styles[componentClasses]} style={{ height: 120, width: 120 }}>
                           <Pie
                             {...{
                               appendPadding: 10,

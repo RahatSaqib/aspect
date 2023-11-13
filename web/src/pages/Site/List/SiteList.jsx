@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { DetailHeader, SiteFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
@@ -20,8 +19,6 @@ import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.module.css'
 import getExportableFile from './SiteQueries'
-
-const cssClasses = classnames.bind(styles)
 
 const SiteList = ({ navigate, location }) => {
   const user = useAuthState()
@@ -105,10 +102,10 @@ const SiteList = ({ navigate, location }) => {
           </AspectButton>
         </PermissionChecker>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
         <SiteFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
           </div>
@@ -118,7 +115,7 @@ const SiteList = ({ navigate, location }) => {
             <BrowseEmptyList />
           ) : (
             <>
-              <SiteDataTable className={cssClasses('SiteDataTable')}>
+              <SiteDataTable className={styles.SiteDataTable}>
                 <SiteDataTableHead
                   navigate={navigate}
                   location={location}

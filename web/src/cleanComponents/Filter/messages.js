@@ -7,6 +7,7 @@ import {
   resultCategory,
   resultTreatmentStatusMessages,
   resultWorkflowStatusMessages,
+  notificationCategories,
 } from '../../messages'
 
 const messages = {
@@ -17,6 +18,7 @@ const messages = {
   ...deviceStatusMessages,
   ...deviceApprovalMessages,
   ...assay,
+  ...notificationCategories,
   ...defineMessages({
     noFilters: {
       id: 'filter.btnGroup.noFilters',
@@ -274,6 +276,26 @@ const messages = {
     breakOutByLot: {
       id: 'pages.InventoryItemsList.breakOutByLot',
       defaultMessage: 'Break Out by Lot',
+    },
+    onlyErrors: {
+      id: 'pages.filters.onlyErrors',
+      defaultMessage: 'Show only notifications with errors',
+    },
+    reportWithName: {
+      id: 'filter.btnGroup.reportWithName',
+      defaultMessage: 'Report name includes "{reportWithName}"',
+    },
+    patientId: {
+      id: 'filter.btnGroup.patientId',
+      defaultMessage: 'Patient Id includes "{patientId}"',
+    },
+    notificationType: {
+      id: 'filter.btnGroup.notificationType',
+      defaultMessage: 'Notification type is "{notificationType}"',
+    },
+    notificationCategoryType: {
+      id: 'filter.btnGroup.notificationTypeCategory',
+      defaultMessage: 'Notification category type is "{notificationCategoryType}"',
     },
   }),
 }

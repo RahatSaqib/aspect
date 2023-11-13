@@ -1,13 +1,10 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useParams } from 'react-router-dom'
 import useI18n from '../../../../hooks/useI18n'
 import TaskList from '../../../../oldPages/task/list/TaskList'
 import styles from '../styles.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const DeviceDetailAlerts = ({ navigate, location, device }) => {
   const { deviceId = false } = useParams()
@@ -16,7 +13,7 @@ const DeviceDetailAlerts = ({ navigate, location, device }) => {
   return (
     <div>
       <Helmet title={deviceName} />
-      <section className={cssClasses('Section', 'Section--first')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
         <TaskList
           intl={intl}
           navigate={navigate}

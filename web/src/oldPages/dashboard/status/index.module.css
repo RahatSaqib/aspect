@@ -6,18 +6,18 @@
   margin-bottom: 0;
 }
 
-.Section--summary {
+.Section__summary {
   margin-top: 10px;
 }
 
-.Section--withDropdown {
-  composes: Section--summary;
+.Section__withDropdown {
+  margin-top: 10px;
   padding: 20px;
   overflow: inherit;
 }
 
-.Section--withStatus {
-  composes: Section--summary;
+.Section__withStatus {
+  margin-top: 10px;
   padding: 20px;
 }
 
@@ -34,12 +34,12 @@
   visibility: hidden;
 }
 
-.CardTitle--paint-when-group-is-not-ready {
+.CardTitle__paint_when_group_is_not_ready {
   color: #f5f5f5;
   background-color: #f5f5f5;
 }
 
-@media screen and (--lg-viewport) {
+@media screen and (min-width: 64em) {
   .TitleContainer::after {
     flex: 1;
   }
@@ -83,11 +83,12 @@
 }
 
 .SummaryItemsBlock {
-  composes: Shared__Block;
+  margin: 10px;
+  background-color: var(--aspect-color-grey-8);
   padding: 20px;
 }
 
-.SummaryItemsBlock--clickable {
+.SummaryItemsBlock__clickable {
   cursor: pointer;
 }
 
@@ -122,16 +123,16 @@
   color: var(--aspect-color-grey-4);
 }
 
-.SummaryItemsBlock__Item__Messages--sub {
+.SummaryItemsBlock__Item__Messages__sub {
   font-weight: var(--lato-font-weight-black);
 }
 
-.SummaryItemsBlock__Item__Messages--sub::first-letter {
+.SummaryItemsBlock__Item__Messages__sub::first-letter {
   text-transform: capitalize;
 }
 
 @media screen and (min-width: 64em) {
-  .SummaryItemsBlocks--horizontal-scrollable {
+  .SummaryItemsBlocks__horizontal_scrollable {
     height: 400px;
     overflow-x: auto;
     display: flex;
@@ -141,7 +142,8 @@
 }
 
 .ButtonsBlock {
-  composes: Shared__Block;
+  margin: 10px;
+  background-color: var(--aspect-color-grey-8);
   padding: 10px;
   display: flex;
   flex-flow: column;
@@ -152,15 +154,15 @@
   text-transform: capitalize;
 }
 
-.Button--receive:not([disabled]) {
+.Button__receive:not([disabled]) {
   background-color: var(--aspect-color-conifer);
 }
 
-.Button--discard:not([disabled]) {
+.Button__discard:not([disabled]) {
   background-color: var(--aspect-color-mandy);
 }
 
-.TargetItemBlockContainer--horizontal-scrollable {
+.TargetItemBlockContainer__horizontal-scrollable {
   margin-left: 50px;
   overflow-x: auto;
 }
@@ -169,7 +171,7 @@
   min-width: 460px;
 }
 
-@media screen and (--lg-viewport) {
+@media screen and (min-width: 64em) {
   .TargetItemBlockContainer {
     margin-left: 60px;
     margin-right: 60px;
@@ -204,7 +206,7 @@
   margin-bottom: 4px;
 }
 
-.TargetItemBlock__Label--error {
+.TargetItemBlock__Label__error {
   font-size: var(--aspect-font-size-sm);
   color: var(--aspect-color-mandy);
   font-weight: var(--lato-font-weight-bold);
@@ -212,11 +214,11 @@
   margin-bottom: 4px;
 }
 
-.TargetItemBlock .TargetItemBlock__Label--sub {
+.TargetItemBlock .TargetItemBlock__Label__sub {
   display: none;
 }
 
-.TargetItemBlock:first-child .TargetItemBlock__Label--sub {
+.TargetItemBlock:first-child .TargetItemBlock__Label__sub {
   display: block;
   position: absolute;
   left: 20px;
@@ -224,8 +226,8 @@
   text-align: right;
 }
 
-@media screen and (--lg-viewport) {
-  .TargetItemBlock:first-child .TargetItemBlock__Label--sub {
+@media screen and (min-width: 64em) {
+  .TargetItemBlock:first-child .TargetItemBlock__Label__sub {
     left: 60px;
   }
 }
@@ -235,7 +237,9 @@
 }
 
 .ActionDataTable {
-  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.module.css';
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
 }
 
 .ActionDataTable__TableHead {
@@ -243,7 +247,7 @@
 }
 
 .ActionDataTable__TableHead__Status {
-  composes: ActionDataTable__TableHead;
+  font-size: var(--aspect-font-size-sm);
   text-align: center;
   padding-left: 0 !important;
   padding-right: 0;
@@ -251,21 +255,21 @@
 }
 
 .ActionDataTable__TableHead__Lab {
-  composes: ActionDataTable__TableHead;
+  font-size: var(--aspect-font-size-sm);
   width: 10%;
 }
 
 .ActionDataTable__TableHead__Device {
-  composes: ActionDataTable__TableHead;
+  font-size: var(--aspect-font-size-sm);
   width: 15%;
 }
 
 .ActionDataTable__TableHead__Issue {
-  composes: ActionDataTable__TableHead;
+  font-size: var(--aspect-font-size-sm);
   width: 65%;
 }
 
-.ActionDataTable--empty {
+.ActionDataTable__empty {
   text-align: center;
   font-size: var(--aspect-font-size-md);
   border-top: 2px solid var(--aspect-color-grey-9);
@@ -293,60 +297,60 @@
   height: auto;
 }
 
-@media screen and (--sm-viewport) {
+@media screen and (min-width: 35.5em) {
   .ReportsContainer__Button {
     margin: 0 20px;
   }
 }
 
-@media screen and (--lg-viewport) {
-  .Treatment--TitleContainer::after {
+@media screen and (min-width: 64em) {
+  .Treatment__TitleContainer::after {
     flex: none;
   }
 }
-.Treatment--arrow-container {
+.Treatment__arrow-container {
   text-align: center;
   height: 245px;
   padding-top: 105px;
 }
-.Treatment--arrow-container svg {
+.Treatment__arrow-container svg {
   cursor: pointer;
   border-radius: 50%;
 }
-.Treatment--arrow-container svg:hover {
+.Treatment__arrow-container svg:hover {
   border: 1px solid var(--aspect-color-grey-7);
   background-color: var(--aspect-color-grey-8);
 }
-.Treatment--ArrowLeftContainer {
+.Treatment__ArrowLeftContainer {
   border-right: 1px solid var(--aspect-color-grey-5);
 }
-.Treatment--ArrowRightContainer {
+.Treatment__ArrowRightContainer {
   border-left: 1px solid var(--aspect-color-grey-5);
 }
-.Treatment--graph-legend {
+.Treatment__graph-legend {
   display: flex;
   margin: 30px 0;
 }
-.Treatment--graph-legend-item {
+.Treatment__graph-legend-item {
   display: flex;
   align-items: center;
   margin-right: 30px;
 }
-.Treatment--graph-legend-item-text {
+.Treatment__graph-legend-item-text {
   margin: 0 2px 0 5px;
   font-size: 1.1em;
 }
-.Treatment--graph-tooltip-help-icon svg {
+.Treatment__graph-tooltip-help-icon svg {
   margin-top: -10px;
   cursor: pointer;
   color: var(--aspect-color-chill-blue-1);
 }
-.Treatment--graph-tooltip-color {
+.Treatment__graph-tooltip-color {
   width: 15px;
   height: 15px;
   margin-right: 5px;
 }
-.FiltersGroup__Child--dropdown {
+.FiltersGroup__Child__dropdown {
   margin-left: 10px;
 }
 .Inventory_graph_Container {
@@ -364,25 +368,25 @@
 }
 
 /* Results by Category Start */
-.results--container {
+.results__container {
   display: flex;
   justify-content: center;
   align-content: center;
 }
 
-.results--graphContainer {
+.results__graphContainer {
   width: 900px;
   display: flex;
   justify-content: space-between;
   align-content: center;
 }
 
-.resultsContainer--aggregate {
+.resultsContainer__aggregate {
   width: 200px;
   height: 200px;
 }
 
-.resultsContainer--byMonth {
+.resultsContainer__byMonth {
   width: 100%;
   height: 200px;
 }

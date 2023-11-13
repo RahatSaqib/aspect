@@ -634,7 +634,7 @@ async function createNotificationIfNotCreatedAlready(
         notification.alertMessageId = alertMessageId
       }
 
-      if (policy.emailTemplateId != null) {
+      if (policy.emailTemplateId != null && !_.isNil(to) && !_.isEmpty(to)) {
         const [emailMessageId] = await knex('EmailMessage').insert({
           emailTemplateId: policy.emailTemplateId,
           ...sharedMessageProperties,
@@ -642,7 +642,7 @@ async function createNotificationIfNotCreatedAlready(
         })
         notification.emailMessageId = emailMessageId
       }
-      if (policy.smsTemplateId != null) {
+      if (policy.smsTemplateId != null && !_.isNil(phone) && !_.isEmpty(phone)) {
         const [smsMessageId] = await knex('SmsMessage').insert({
           smsTemplateId: policy.smsTemplateId,
           ...sharedMessageProperties,
@@ -747,7 +747,7 @@ async function getNotifications(request) {
       GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
       `),
       knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecepients
       `),
       knex.raw(`
         JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId
