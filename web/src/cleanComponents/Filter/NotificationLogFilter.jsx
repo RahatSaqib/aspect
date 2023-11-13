@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import useI18n from '../../hooks/useI18n'
 import messages from '../../messages/FilterMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import { useFilterValues } from '../../providers/FilterProvider'
@@ -16,7 +16,7 @@ const getCategoryType = param => {
 }
 
 const NotificationLogFilter = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
