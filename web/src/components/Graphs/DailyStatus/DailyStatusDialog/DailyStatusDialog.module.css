@@ -1,4 +1,4 @@
-.reset-overflow {
+.reset_overflow {
   overflow: visible !important;
 }
 
@@ -9,7 +9,7 @@
   justify-content: center;
 }
 
-.Form__device-name {
+.Form__device_name {
   margin-top: -10px;
   margin-bottom: 30px;
 }
@@ -56,7 +56,7 @@
   align-items: center;
 }
 
-.Form__bottom-container {
+.Form__bottom_container {
   display: flex;
   flex-direction: column;
   flex-shrink: 1;
@@ -64,35 +64,35 @@
   padding: 0;
 }
 
-.Form__bottom-details {
+.Form__bottom_details {
   display: flex;
   flex-direction: column;
   margin-top: 10px;
 }
 
-.Form__bottom-title {
+.Form__bottom_title {
   margin: 20px 0 5px;
 }
-.Form__bottom-title:first-of-type {
+.Form__bottom_title:first-of-type {
   margin-top: 10px;
 }
 
-.Form__bottom-prop {
+.Form__bottom_prop {
   display: flex;
   align-items: center;
   font-size: 0.85rem;
   margin: 5px 0 0 20px;
 }
-.Form__bottom-prop-name {
+.Form__bottom_prop_name {
   margin-left: 20px;
   margin-right: 5px;
   opacity: 0.5;
 }
-.Form__bottom-prop-value {
+.Form__bottom_prop_value {
   font-weight: 400;
 }
 
-.Form__bottom-contact-name {
+.Form__bottom_contact_name {
   line-height: 1;
   display: flex;
   align-items: center;
@@ -100,7 +100,7 @@
   font-weight: 400;
 }
 
-.Form__bottom-cell__icon {
+.Form__bottom_cell__icon {
   font-size: 1.1rem;
   height: 18px;
   margin-right: 6px;

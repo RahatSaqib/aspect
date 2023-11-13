@@ -1,29 +1,18 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import useI18n from '../../hooks/useI18n'
 import styles from './ColoredNumber.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const ColoredNumber = ({ number, formatNumberStyle, error, success }) => {
   const { formatNumber } = useI18n()
 
   return (
     <span
-      className={cssClasses('ColoredNumber', {
-        'ColoredNumber--Error': error,
-        'ColoredNumber--Success': success,
-      })}
+      className={`${styles.ColoredNumber} ${error ? styles.ColoredNumber__Error : ''} ${
+        success ? styles.ColoredNumber__Success : ''
+      }`}
     >
-      {formatNumber(
-        number,
-        formatNumberStyle
-          ? {
-              style: formatNumberStyle,
-            }
-          : {}
-      )}
+      {formatNumber(number, formatNumberStyle ? { style: formatNumberStyle } : {})}
     </span>
   )
 }

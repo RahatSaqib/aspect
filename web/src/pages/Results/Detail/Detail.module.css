@@ -9,7 +9,7 @@
   padding: 20px;
   background-color: var(--aspect-color-white-4);
 }
-.autocomplete-wrapper > div {
+.autocomplete_wrapper > div {
   width: 100%;
 }
 .comment-wrapper {
@@ -27,7 +27,7 @@
   justify-content: center;
 }
 
-.processing .processing-spinner {
+.processing .processing_spinner {
   height: 150px;
   width: 150px;
   border-radius: 50%;
@@ -41,7 +41,7 @@
   align-items: center;
   justify-content: center;
 }
-.processing .processing-label {
+.processing .processing_label {
   z-index: 1;
 }
 .ErrorMessage {

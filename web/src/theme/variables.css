@@ -206,10 +206,4 @@
 
   /* Height of AppBar */
   --aspect-app-bar-height: 64px;
-
-  /* Media Query */
-  @custom-media --xs-viewport (min-width: 30em);
-  @custom-media --sm-viewport (min-width: 35.5em);
-  @custom-media --md-viewport (min-width: 48em);
-  @custom-media --lg-viewport (min-width: 64em);
 }

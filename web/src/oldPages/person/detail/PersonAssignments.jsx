@@ -1,13 +1,10 @@
 import React, { useState } from 'react'
 import { Button, LinearProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import useI18n from '../../../hooks/useI18n'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from './messages'
 import PersonAssignmentItem from './PersonAssignmentItem'
 import styles from './PersonDetail.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
   const [confirmation, setConfirmation] = useState({ isActive: false })
@@ -22,7 +19,7 @@ export default ({ assignments, loadedAssignments, onDeleteAssignment }) => {
   const { formatMessage } = useI18n()
 
   return (
-    <section className={cssClasses('Assignments')}>
+    <section className={styles.Assignments}>
       <h4>{formatMessage(messages.assignments)}</h4>
       {!loadedAssignments && <LinearProgress />}
       {assignments.length === 0 && <h4>{formatMessage(messages.notSpecified)}</h4>}

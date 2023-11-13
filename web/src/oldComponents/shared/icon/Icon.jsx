@@ -1,13 +1,13 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import styles from './Icon.module.css'
 
-const cssClasses = classnames.bind(styles)
-
-const Icon = ({ type, className, size = 'md', ...restProps }) => (
-  <svg className={cssClasses(className, 'Icon', `Icon--${size}`)} {...restProps}>
-    <use xlinkHref={`${type.default.url}`} />
-  </svg>
-)
+const Icon = ({ type, className, size = 'md', ...restProps }) => {
+  const classes = `${styles[className]} Icon Icon__${size}`
+  return (
+    <svg className={classes} {...restProps}>
+      <use xlinkHref={`${type.default.url}`} />
+    </svg>
+  )
+}
 
 export default Icon

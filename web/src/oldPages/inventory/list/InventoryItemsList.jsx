@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { FormControlLabel, Switch, TableBody, LinearProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
@@ -44,8 +43,6 @@ import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } fro
 import styles from './InventoryItemsList.module.css'
 import getExportableFile from './InventoryItemsQueries'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -186,10 +183,10 @@ export const InventoryItemsListWithProps = ({
           </AspectButton>
         </PermissionChecker>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
         <InventoryItemsFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             {filter.breakOutByLot ? (
               <PermissionChecker permissions={['inventory:edit']}>
@@ -212,7 +209,7 @@ export const InventoryItemsListWithProps = ({
             <BrowseEmptyList />
           ) : (
             <>
-              <InventoryDataTable className={cssClasses('InventoryDataTable')}>
+              <InventoryDataTable className={styles.InventoryDataTable}>
                 <InventoryDataTableHead
                   navigate={navigate}
                   location={location}

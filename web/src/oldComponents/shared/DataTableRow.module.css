@@ -32,31 +32,31 @@
   opacity: 1;
 }
 
-.TableCell--numeric {
+.TableCell__numeric {
   text-align: right;
 }
 
-.TableCell--sm {
+.TableCell__sm {
   display: none;
   visibility: hidden;
 }
 
-.TableCell--xs {
+.TableCell__xs {
   display: none;
   visibility: hidden;
 }
 
-.TableCell--md {
+.TableCell__md {
   display: none;
   visibility: hidden;
 }
 
-.TableCell--lg {
+.TableCell__lg {
   display: none;
   visibility: hidden;
 }
 
-.ColoredButton--micro {
+.ColoredButton__micro {
   padding: 0 4px;
   height: 18px;
   min-height: 18px;
@@ -64,29 +64,29 @@
   font-size: 12px;
 }
 
-@media screen and (--xs-viewport) {
-  .TableCell--xs {
+@media screen and (min-width: 30em) {
+  .TableCell__xs {
     display: table-cell;
     visibility: visible;
   }
 }
 
-@media screen and (--sm-viewport) {
-  .TableCell--sm {
+@media screen and (min-width: 35.5em) {
+  .TableCell__sm {
     display: table-cell;
     visibility: visible;
   }
 }
 
-@media screen and (--md-viewport) {
-  .TableCell--md {
+@media screen and (min-width: 48em) {
+  .TableCell__md {
     display: table-cell;
     visibility: visible;
   }
 }
 
-@media screen and (--lg-viewport) {
-  .TableCell--lg {
+@media screen and (min-width: 64em) {
+  .TableCell__lg {
     display: table-cell;
     visibility: visible;
   }

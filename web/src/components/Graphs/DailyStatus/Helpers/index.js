@@ -84,20 +84,14 @@ const getDayTitle = ({
     : ''
 }
 
-const setClassNames = (item, cssClasses) => {
-  if (item.classNames) {
-    item.classNames = mapValues(item.classNames, className => cssClasses(className))
-  }
-}
-
-const setInitialValue = (items, id, initialValue, cssClasses, callback) => {
+const setInitialValue = (items, id, initialValue, styles, callback) => {
   const item = items.find(x => x.id === id)
   if (item) {
     if (!isUndefined(initialValue)) {
       item.initialValue = initialValue
     }
 
-    setClassNames(item, cssClasses)
+    item.classNames = mapValues(item.classNames, className => styles[className])
 
     if (callback) {
       callback(item)
@@ -106,4 +100,4 @@ const setInitialValue = (items, id, initialValue, cssClasses, callback) => {
   return item
 }
 
-export { dateRangeByWeekDay, getDayTitle, getIndex, getTotalDays, groupDateRanges, setClassNames, setInitialValue }
+export { dateRangeByWeekDay, getDayTitle, getIndex, getTotalDays, groupDateRanges, setInitialValue }

@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, LinearProgress, Table, TableBody, TableCell, TableRow } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryTransferFilter } from '../../../cleanComponents'
@@ -17,8 +16,6 @@ import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 import styles from './styles.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const InventoryTransfers = () => {
   const location = useLocation()
@@ -56,7 +53,7 @@ const InventoryTransfers = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.InventoryTransferTitle)} disableBack />
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.InventoryTransferTitle)} />
         <InventoryTransferFilter />
         <Card>
@@ -70,7 +67,7 @@ const InventoryTransfers = () => {
               <BrowseEmptyList />
             ) : (
               <>
-                <Table className={cssClasses('SiteDataTable')}>
+                <Table className={styles.SiteDataTable}>
                   <DataTableHead
                     navigate={navigate}
                     location={location}

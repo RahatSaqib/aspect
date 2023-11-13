@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, LinearProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import { defineMessages } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -16,8 +15,6 @@ import { showError } from '../../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../../utils/utils/files'
 import ReportCard from './ReportCard'
 import styles from './styles.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const ReportIndex = () => {
   const navigate = useNavigate()
@@ -101,7 +98,7 @@ const ReportIndex = () => {
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.reportsTitle)} disableBack />
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
         <ReportsFilter />
         {showProgressBar ? (
