@@ -1,11 +1,11 @@
 import React from 'react'
 import { Clear } from '@mui/icons-material'
 import { TextField, Stepper, Step, StepLabel } from '@mui/material'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import messages from './messages'
 
 const InputPassword = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const rules = [
     { descriptionLabel: formatMessage(messages.eightCharsLong), validator: /^.{8,}$/ },
     { descriptionLabel: formatMessage(messages.mixCase), validator: /(?=.*?[a-z])(?=.*?[A-Z])/ },

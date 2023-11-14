@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '@mui/material'
 import min from 'lodash/min'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import messages from './messages'
 import styles from './styles.module.css'
 
@@ -16,7 +16,7 @@ const SimpleTablePagination = ({
   onPageChange,
   onPageSizeChange,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const hasFirstPage = pageAt !== 0
   const hasPreviousPage = pageAt > 0
   const firstItemIndex = 1 + pageSize * pageAt

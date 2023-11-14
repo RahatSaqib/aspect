@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
-import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -22,7 +22,7 @@ import getExportableFile from './SiteQueries'
 
 const SiteList = ({ navigate, location }) => {
   const user = useAuthState()
-  const intl = useI18n()
+  const intl = useIntl()
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
@@ -52,8 +52,8 @@ const SiteList = ({ navigate, location }) => {
 
   const tableColumns = [
     { key: 'name', label: intl.formatMessage(messages.siteName), sortable: true },
-    { key: 'state', label: getCustomMessage(messages, 'state', user), sortable: true },
-    { key: 'lga', label: getCustomMessage(messages, 'lga', user), sortable: true },
+    { key: 'state', label: getCustomMessage(intl.formatMessage, messages, 'state', user), sortable: true },
+    { key: 'lga', label: getCustomMessage(intl.formatMessage, messages, 'lga', user), sortable: true },
     { key: 'externalId', label: intl.formatMessage(messages.externalId), sortable: true },
     { key: 'totalDevices', label: intl.formatMessage(messages.totalDevices), sortable: true },
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },

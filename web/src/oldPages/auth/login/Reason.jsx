@@ -1,10 +1,10 @@
 import React from 'react'
 import get from 'lodash/get'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { typeToMessage } from '../loggedOutReasons'
 
 const Reason = ({ location, ...restProps }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   return typeToMessage(get(location, 'state.reason')) ? (
     <div {...restProps}>{intl.formatMessage(typeToMessage(get(location, 'state.reason')))}</div>
   ) : null

@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { Loading } from '../../cleanComponents'
-import useI18n from '../../hooks/useI18n'
 import ColumnName from './components/ColumnName'
 import DashboardCard from './components/DashboardCard'
 import DashboardLink from './components/DashboardLink'
@@ -11,7 +11,7 @@ import useResultOverview from './hooks/useResultOverview'
 import messages from './PkDashboard.Messages'
 
 const PkDashboard = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data: resultOverview, isLoading } = useResultOverview()
 
   return (

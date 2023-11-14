@@ -1,11 +1,11 @@
 import React from 'react'
 import { Box, Button } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import useI18n from '../../../hooks/useI18n'
 import messages from './messages'
 
 export function DataCell({ patientId, sampleId, reportName, resultId }) {
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
 
   if (reportName) return <Box>{`${intl.formatMessage(messages.reportName)}: ${reportName}`}</Box>

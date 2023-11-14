@@ -1,10 +1,10 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import styles from './ColoredNumber.module.css'
 
 const ColoredNumber = ({ number, formatNumberStyle, error, success }) => {
-  const { formatNumber } = useI18n()
+  const { formatNumber } = useIntl()
 
   return (
     <span

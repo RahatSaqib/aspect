@@ -3,6 +3,7 @@ import { Box, Button, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isString from 'lodash/isString'
 import MuiPhoneNumber from 'material-ui-phone-number'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { array, object, string } from 'yup'
 import {
@@ -19,7 +20,6 @@ import useAddPerson from '../../hooks/person/useAddPerson'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePerson from '../../hooks/person/useUpdatePerson'
 import useUpdateSelf from '../../hooks/person/useUpdateSelf'
-import useI18n from '../../hooks/useI18n'
 import { getCustomMessage } from '../../messages/customMessages'
 import { useAuthState } from '../../providers/AuthProvider'
 import { normalizePhoneNumber } from '../../utils/utils/phone'
@@ -34,7 +34,7 @@ const ContactDetails = ({ setStep }) => {
   const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
   const { countryAbbreviation, countryId, userPermissions } = useAuthState()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const { isLoading, data: person } = usePerson(id)
 
@@ -243,7 +243,7 @@ const ContactDetails = ({ setStep }) => {
                     id="stateId"
                     name="stateId"
                     returnAll
-                    label={getCustomMessage(messages, 'state', { countryAbbreviation })}
+                    label={getCustomMessage(formatMessage, messages, 'state', { countryAbbreviation })}
                     value={values.stateId || ''}
                     onChange={handleChange}
                     error={errors.stateId ? errors.stateId : undefined}
@@ -256,7 +256,7 @@ const ContactDetails = ({ setStep }) => {
                     id="lgaId"
                     name="lgaId"
                     returnAll
-                    label={getCustomMessage(messages, 'lga', { countryAbbreviation })}
+                    label={getCustomMessage(formatMessage, messages, 'lga', { countryAbbreviation })}
                     value={values.lgaId || ''}
                     onChange={handleChange}
                     error={errors.lgaId ? errors.lgaId : undefined}

@@ -33,6 +33,12 @@ const config = () => {
       filename: '[name].[contenthash].js',
     },
     devtool: false,
+    resolve: {
+      alias: {
+        // remove parser and reduce bundle. See: https://formatjs.io/docs/guides/advanced-usage#react-intl-without-parser-40-smaller
+        '@formatjs/icu-messageformat-parser': '@formatjs/icu-messageformat-parser/no-parser',
+      },
+    },
     plugins: [
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
       new Dotenv({

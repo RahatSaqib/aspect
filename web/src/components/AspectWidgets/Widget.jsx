@@ -1,8 +1,8 @@
 import React from 'react'
 import { Card, CircularProgress } from '@mui/material'
 import { bool, func, number, object, oneOfType, shape, string } from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
-import useI18n from '../../hooks/useI18n'
 import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
 import { useFilterUpdate } from '../../providers/FilterProvider'
 import { formatNumber } from '../../utils/utils/number'
@@ -38,7 +38,7 @@ const AspectWidget = ({
     alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
   const translator = { formatMessage, messages }

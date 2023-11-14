@@ -6,11 +6,11 @@ import isEqual from 'lodash/isEqual'
 import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { ImplementingPartnerSelect, DeviceCapacitySelect } from '../../../../cleanComponents'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
-import useI18n from '../../../../hooks/useI18n'
 import SiteSelectField from '../../../../oldComponents/resource/SiteSelectField'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
@@ -22,7 +22,7 @@ import messages from './messages'
 
 const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const navigate = useNavigate()
-  const intl = useI18n()
+  const intl = useIntl()
 
   const { mutate: updateDevice } = useUpdateDevice(device.id)
   const { mutate: updateDeviceTags } = useUpdateTagByTypeAndId('device', device.id)

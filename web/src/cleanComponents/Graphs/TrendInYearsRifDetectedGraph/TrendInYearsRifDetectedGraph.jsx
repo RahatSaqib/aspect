@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { LineGraph } from '..'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages, months } from '../../../messages'
 import { StateSelector, Loading } from '../../index'
 import styles from '../graphStyles.module.css'
@@ -21,7 +21,7 @@ const endpointParams = [
 ]
 
 const TrendInYearsAllTestsGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState()

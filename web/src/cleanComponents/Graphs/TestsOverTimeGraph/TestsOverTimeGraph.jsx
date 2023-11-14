@@ -17,10 +17,10 @@ import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import pick from 'lodash/pick'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages, assay } from '../../../messages'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { formatNumber } from '../../../utils/utils/number'
@@ -65,7 +65,7 @@ const filterFunctionBar = (data, props) => {
 }
 
 const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState([])
   const navigate = useNavigate()
@@ -241,7 +241,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
 export default TestsOverTimeGraph
 
 const AssayAutocomplete = ({ assaysFromState, value, onChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [innerValue, setInnerValue] = useState(value)
 
   const options = assaysFromState.sort((a, b) => -b.assayTypeAbbreviation.localeCompare(a.assayTypeAbbreviation))
