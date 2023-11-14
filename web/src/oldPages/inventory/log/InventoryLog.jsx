@@ -1,24 +1,21 @@
 import React from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
-import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router'
-import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
-import messages from './messages'
-import styles from './styles.module.css'
 import { DetailHeader, InventoryLogFilter } from '../../../cleanComponents'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
-import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-
-const cssClasses = classnames.bind(styles)
+import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
+import messages from './messages'
+import styles from './styles.module.css'
 
 const availableSortCol = [
   'createdOn',
@@ -89,17 +86,17 @@ export const InventoryLogWithProps = ({
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack />
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
         <InventoryLogFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`} className={cssClasses('DataTableCard--table')}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
           {isLoading ? (
             <LinearProgress />
           ) : !hasItems ? (
             <BrowseEmptyList />
           ) : (
             <>
-              <InventoryLogDataTable className={cssClasses('InventoryDataTable')}>
+              <InventoryLogDataTable className={styles.InventoryDataTable}>
                 <InventoryLogDataTableHead
                   navigate={navigate}
                   location={location}
@@ -139,7 +136,7 @@ const InventoryLog = () => {
   const navigate = useNavigate()
   const filters = useFilterValues(location.pathname)
   // >>>>>> Defining hooks <<<<<<
-  const intl = useI18n()
+  const intl = useIntl()
   // >>>>>> Structuring data <<<<<<
 
   const apiFilters = { ...filters }

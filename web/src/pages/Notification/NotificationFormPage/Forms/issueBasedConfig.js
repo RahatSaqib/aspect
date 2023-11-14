@@ -1,8 +1,5 @@
-import classnames from 'classnames/bind'
 import messages from '../messages'
 import styles from '../NotificationFormPage.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const lowInventorySection = (formatMessage, partner) => {
   return {
@@ -25,9 +22,9 @@ const lowInventorySection = (formatMessage, partner) => {
               options: [{ value: `${partner.dueDaysInventoryStockout}`, label: `${partner.dueDaysInventoryStockout}` }],
             },
             classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
+              itemContainer: 'max_width_100pc tags_container',
+              controlContainer: styles.full_width_100pc,
+              item: styles.full_width_100pc,
             },
             labelI18nKey: 'daysOfInventoryLeft',
           },
@@ -58,9 +55,9 @@ const deviceOfflineSection = (formatMessage, partner) => {
               options: [{ value: `${partner.maxDaysDeviceOffline}`, label: `${partner.maxDaysDeviceOffline}` }],
             },
             classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
+              itemContainer: 'max_width_100pc tags_container',
+              controlContainer: styles.full_width_100pc,
+              item: styles.full_width_100pc,
             },
             labelI18nKey: 'daysOffline',
           },
@@ -91,9 +88,9 @@ const deviceNoResultsSection = (formatMessage, partner) => {
               options: [{ value: `${partner.maxDaysDeviceNoResults}`, label: `${partner.maxDaysDeviceNoResults}` }],
             },
             classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
+              itemContainer: 'max_width_100pc tags_container',
+              controlContainer: styles.full_width_100pc,
+              item: styles.full_width_100pc,
             },
             labelI18nKey: 'daysWithoutResults',
           },
@@ -131,9 +128,9 @@ const stockExpiringSection = (formatMessage, partner) => {
               ],
             },
             classNames: {
-              itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-              controlContainer: cssClasses('full-width-100pc'),
-              item: cssClasses('full-width-100pc'),
+              itemContainer: 'max_width_100pc tags_container',
+              controlContainer: styles.full_width_100pc,
+              item: styles.full_width_100pc,
             },
             labelI18nKey: 'daysStockExpiring',
           },
@@ -156,7 +153,7 @@ const calibrationSection = formatMessage => {
           {
             id: 'daysBeforeCalibrationDueDate',
             controlType: { component: 'numberField', min: 1, max: 90 },
-            classNames: { itemContainer: cssClasses('item-in-group-container') },
+            classNames: { itemContainer: styles.item_in_group_container },
             type: 'text',
             labelI18nKey: 'daysBeforeCalibrationDueDate',
           },

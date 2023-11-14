@@ -1,13 +1,10 @@
 import React, { useRef } from 'react'
 import { FormControl } from '@mui/material'
-import classnames from 'classnames/bind'
 import { useFormikContext } from 'formik'
 import PropTypes from 'prop-types'
 import PlaceholderSelector from '../../Placeholders/PlaceholderSelector'
 import styles from '../Form.module.css'
 import AspectTextField from './TextField'
-
-const cssClasses = classnames.bind(styles)
 
 const PlaceholderTextField = props => {
   const { formik, id: fieldName } = props
@@ -39,7 +36,7 @@ const PlaceholderTextField = props => {
   const filter = { type: formik.values.notificationType, assay: formik.values.result[0].assayId }
 
   return (
-    <FormControl className={cssClasses('form_FormControl')}>
+    <FormControl className={styles.form_FormControl}>
       <AspectTextField {...props} inputRef={inputRef} />
       <PlaceholderSelector onClose={onClosePlaceholderSelector} onSelect={onSelectPlaceholder} filter={filter} />
     </FormControl>

@@ -1,13 +1,13 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useAssayTypeList from '../../hooks/assay/useAssayTypeList'
-import useI18n from '../../hooks/useI18n'
 import { assay } from '../../messages'
 
 const AssayTypeSelect = ({ id, name, label, value, onChange, error, helperText, disabled, diseaseId }) => {
   const { isLoading, data: assayTypes } = useAssayTypeList()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const data = assayTypes && diseaseId ? assayTypes.filter(s => s.diseaseId === diseaseId) : assayTypes
 

@@ -1,22 +1,16 @@
 import React, { memo } from 'react'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import styles from './Title.module.css'
 
-const cssClasses = classnames.bind(styles)
-
-const Title = memo(({ Icon, title, classNames }) => (
-  <div className={cssClasses('title__container')}>
-    <Icon />
-    <span
-      className={cssClasses('title__label', {
-        [classNames?.cardTitleText]: !!classNames?.cardTitleText,
-      })}
-    >
-      {title}
-    </span>
-  </div>
-))
+const Title = memo(({ Icon, title, classNames }) => {
+  const classes = `${styles.title__label} ${classNames?.cardTitleText ? styles[classNames?.cardTitleText] : ''}`
+  return (
+    <div className={styles.title__container}>
+      <Icon />
+      <span className={classes}>{title}</span>
+    </div>
+  )
+})
 
 Title.defaultProps = {
   Icon: () => null,

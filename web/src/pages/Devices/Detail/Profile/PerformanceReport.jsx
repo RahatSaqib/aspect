@@ -1,14 +1,12 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
 import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
 import startOfMonth from 'date-fns/startOfMonth'
 import { oneOfType, object, string, number } from 'prop-types'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { ColumnGraph } from '../../../../cleanComponents'
-import useI18n from '../../../../hooks/useI18n'
 import variables from '../../../../theme/colors'
 import styles from '../styles.module.css'
 import messages from './messages'
@@ -27,13 +25,12 @@ const customMessages = defineMessages({
     defaultMessage: 'Total Errors',
   },
 })
-const cssClasses = classnames.bind(styles)
 
 const { '--aspect-color-shakespeare': shakespeare } = variables.customPropertiesVariables
 const { '--aspect-color-mandy': mandy } = variables.customPropertiesVariables
 
 const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [utilizationData, setUtilizationData] = useState({})
   const [errorData, setErrorData] = useState({})
@@ -86,8 +83,8 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
   }, [performanceReport])
 
   return (
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section')}>
+    <section className={styles.Section}>
+      <Card className={styles.Section}>
         <p data-panel-title>{formatMessage(messages.performanceTitle)}</p>
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={6}>

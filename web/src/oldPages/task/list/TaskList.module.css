@@ -15,14 +15,16 @@
   margin: 0 5px;
 }
 
-.FiltersGroup__Child--dropdown {
+.FiltersGroup__Child__dropdown {
   text-align: left;
 }
 
-.Button--mini {
+.Button__mini {
   min-width: 40px;
 }
 
 .TaskDataTable {
-  composes: ComponentDataTable from '../../../oldComponents/shared/DataTable.module.css';
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
 }

@@ -1,5 +1,4 @@
 import React, { Fragment } from 'react'
-import classnames from 'classnames/bind'
 import { useQuery } from 'react-query'
 import {
   ErrorBoundary,
@@ -12,8 +11,6 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'
 import SummaryStatus from '../status/SummaryStatus'
 import styles from './OperationalData.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const OperationalDashBoard = () => {
   const {
@@ -29,12 +26,12 @@ const OperationalDashBoard = () => {
     <Fragment>
       <PermissionChecker permissions={['operationalData']}>
         <ErrorBoundary>
-          <SummaryStatus className={cssClasses('Section--summary')} dashboard="operational" />
+          <SummaryStatus className={styles.Section__summary} dashboard="operational" />
         </ErrorBoundary>
 
         <ResultTransmittedGraph />
         {assays ? (
-          <div className={cssClasses('wrapper')}>
+          <div className={styles.wrapper}>
             <ErrorBoundary>
               <DeviceStatusGraph assaysFromState={assays} />
             </ErrorBoundary>

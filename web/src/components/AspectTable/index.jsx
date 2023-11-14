@@ -1,11 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { CircularProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
 import { func, array, object, oneOfType } from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
-import useI18n from '../../hooks/useI18n'
 import { getFilters, sanitizeFiltersStringBy } from '../../oldComponents/utils'
 import {
   DEFAULT_PAGE_AT,
@@ -19,10 +18,8 @@ import { allowOnlyAPIKeys, determineSortDirection, getColumnIdFromFilterKey, rem
 import styles from './Table.module.css'
 import AspectTableCore from './TableCore'
 
-const cssClasses = classnames.bind(styles)
-
 const Loading = () => (
-  <div className={cssClasses('table__spinner')}>
+  <div className={styles.table__spinner}>
     <CircularProgress />
   </div>
 )
@@ -123,7 +120,7 @@ const toRelocate = (navigate, location, currentState, newState, setStates) => {
 }
 // ------------------------------------
 const AspectTable = ({ baseConfig, FILTERS_CONFIG, consts: CONSTS, onClickRow }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const config = useMemo(() => baseConfig(intl), [baseConfig, intl])
   const navigate = useNavigate()
   const { ...routeParams } = useParams()

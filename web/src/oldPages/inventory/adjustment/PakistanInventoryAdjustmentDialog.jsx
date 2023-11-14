@@ -1,9 +1,8 @@
 import React, { memo } from 'react'
 import { Button, DialogActions, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Formik } from 'formik'
+import { useIntl } from 'react-intl'
 import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
-import useI18n from '../../../hooks/useI18n'
 import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
@@ -13,11 +12,9 @@ import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, tr
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-
 function PakistanInventoryAdjustmentDialog(props) {
   const { onCancel, onSubmit, inventoryItem, actionType } = props
-  const { formatMessage, ...intl } = useI18n()
+  const { formatMessage, ...intl } = useIntl()
   const inventory = inventoryItem?.toJS?.() ?? undefined
   const labels = getLabels(actionType)
 
@@ -50,8 +47,8 @@ function PakistanInventoryAdjustmentDialog(props) {
               consumableName: values?.consumable?.name ?? formatMessage(messages.defaultConsumableName),
             })}
           >
-            <form className={cssClasses('Form')}>
-              <div className={cssClasses('Form__Content')}>
+            <form className={styles.Form}>
+              <div className={styles.Form__Content}>
                 {!inventory ? (
                   <ConsumableSelect
                     name="consumable"
@@ -136,7 +133,7 @@ function PakistanInventoryAdjustmentDialog(props) {
                 />
 
                 {inventory ? (
-                  <p className={cssClasses('Field__quantity--status')}>
+                  <p className={styles.Field__quantity__status}>
                     <span>{values?.consumable?.unitShortName}</span>
                     <span>
                       {formatMessage(messages.nextQuantityStatus, getQuantityOnHand(actionType, inventory, values))}

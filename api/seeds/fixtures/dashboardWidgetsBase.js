@@ -89,6 +89,39 @@ const devicesTitle = {
   },
 }
 
+const instrumentsConnected = {
+  jobFunctions: ['all'],
+  icon: 'MdDesktopWindows',
+  title: 'Instruments',
+  titleI18nKey: 'instrumentsConnectedTitle',
+  subTitle: null,
+  subTitleI18nKey: null,
+  /**
+   * Use here the same query as for `devicesTitle`, but instead of counting devices - i.e. `count(d.id)` -
+   * we are getting sum of all instruments connected - i.e. `sum(d.instrumentsConnected)`
+   */
+  sqlForIndicator: `
+    select sum(d.instrumentsConnected) as cnt
+    from Device as d
+      inner join DeviceApproval da on d.deviceApprovalId = da.id
+      inner join Site as s on s.id = d.siteId
+      inner join DeviceType as dt on dt.id = d.deviceTypeId
+      inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId
+      left outer join Geography as g on s.geographyId = g.id
+    where da.token = 'approved' and
+      dc.hasResults = 1 and
+      dt.externalId not in ('${INTERNAL_DEVICE_IDS.join("','")}')
+  `,
+  link: '/browse/device/list',
+  sortOrder: 1,
+  externalId: 'instrumentsConnected',
+  description: 'The number of instruments connected to a single laptop in multi-device connector configuration.',
+  descriptionI18nKey: 'instrumentsConnectedDescription',
+  dashboards: {
+    home: {},
+  },
+}
+
 const resultsTitle = {
   jobFunctions: ['all'],
   icon: 'MdAssignment',
@@ -2089,5 +2122,6 @@ module.exports = {
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
+    instrumentsConnected,
   },
 }
