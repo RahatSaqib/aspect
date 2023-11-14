@@ -8,7 +8,6 @@ import { JssProvider } from 'react-jss'
 import { QueryClient, QueryClientProvider } from 'react-query'
 import { useSelector, Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
-import history from '../history'
 import store from '../store/store'
 import getTheme from '../theme'
 import LocalStorage from '../utils/LocalStorage'
@@ -36,7 +35,7 @@ const AppWithProviders = ({ children }) => {
           />
           <QueryClientProvider client={new QueryClient()}>
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocales[culture]}>
-              <BrowserRouter history={history}>
+              <BrowserRouter>
                 <AuthProvider>
                   <FilterProvider>
                     <RoutesPermissionProvider>{children}</RoutesPermissionProvider>
