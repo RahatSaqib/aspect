@@ -83,6 +83,11 @@ function getRowsForCustomFields(values) {
         ...baseItem,
         controlType: { component: 'numberField', min: validation.min, max: validation.max },
       })
+    } else if (customField.fieldType === 'datetime') {
+      row.items.push({
+        ...baseItem,
+        controlType: { component: 'datePicker' },
+      })
     }
   })
 
