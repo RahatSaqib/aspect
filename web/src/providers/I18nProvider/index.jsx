@@ -68,7 +68,6 @@ const I18nProvider = ({ children }) => {
       value={{
         ...intl,
         format: (dateIn, formatIn) => format(dateIn, formatIn, { locale: dateFNSLocale }),
-        formatDate: (dateIn, options = {}) => intl.formatDate(dateIn, options),
         formatWithOffset: dateIn => DateTime.fromJSDate(dateIn).setZone(validTimeZone).toISO(),
         // formatWithOffset: dateIn =>
         //   format(utcToZonedTime(dateIn, validTimeZone), "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone: validTimeZone }),
