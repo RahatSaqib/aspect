@@ -27,7 +27,7 @@ const DailyStatus = () => {
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
 
-  const ops = dateRangeOptions(formatMessage, formatDate, formatMessage, formatDate, 'deviceDateRange').deviceDateRange
+  const ops = dateRangeOptions(formatMessage, formatDate, 'deviceDateRange').deviceDateRange
 
   const onClickDay = ({ day, deviceId }) => {
     const {
