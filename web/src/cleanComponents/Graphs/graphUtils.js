@@ -456,21 +456,22 @@ const formatDataByGraphType = (
   data,
   displayMethod,
   filterBy,
-  formatDate,
+  formatForDate,
   indexBy,
   keyToConsume,
   i18nKeys,
   type,
   mergedParams,
   formatMessage,
-  messages
+  messages,
+  formatDate
 ) => {
   let grouped
   switch (type) {
     case 'bar':
     case 'calendar':
     case 'stacked':
-      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
+      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatForDate, filterBy)
       break
 
     case 'divergent':
@@ -478,11 +479,11 @@ const formatDataByGraphType = (
       break
 
     case 'barLegacyTreatment':
-      grouped = groupForOldTreatmentAPI(data, keyToConsume, indexBy, formatDate, filterBy, displayMethod)
+      grouped = groupForOldTreatmentAPI(data, keyToConsume, indexBy, formatForDate, filterBy, displayMethod)
       break
 
     case 'stackedDeviceActivity':
-      grouped = groupForDeviceStatusAPI(data, keyToConsume, indexBy, formatDate, filterBy)
+      grouped = groupForDeviceStatusAPI(data, keyToConsume, indexBy, formatForDate, filterBy)
       break
 
     case 'barInventory':
@@ -507,7 +508,7 @@ const formatDataByGraphType = (
     }
 
     case 'bar-line':
-      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
+      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatForDate, filterBy)
       return grouped
 
     default:

@@ -54,7 +54,8 @@ const ResultTransmittedGraph = () => {
       'pieRow',
       mergedParams,
       formatMessage,
-      messages
+      messages,
+      formatDate // its only here because its needed in only one case
     )
   }
 
