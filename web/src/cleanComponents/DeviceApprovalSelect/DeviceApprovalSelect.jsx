@@ -1,12 +1,12 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, TextField, IconButton, MenuItem } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useDeviceApprovalType from '../../hooks/device/useDeviceApprovalType'
-import useI18n from '../../hooks/useI18n'
 import { deviceApprovalMessages } from '../../messages'
 
 const DeviceApprovalSelect = ({ id, name, label, value, onChange, error, helperText }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { isLoading, data } = useDeviceApprovalType()
 
   return isLoading ? (

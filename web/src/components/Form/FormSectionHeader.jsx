@@ -1,11 +1,11 @@
 import React from 'react'
 import { Grid } from '@mui/material'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import styles from './Form.module.css'
 
 const FormSectionHeader = ({ classNames, header, headerI18nKey, messages }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const classes = `${styles.form__sectionHeader} ${classNames.sectionHeader ? styles[classNames.sectionHeader] : ''}`
   return (

@@ -1,11 +1,11 @@
 import * as React from 'react'
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, Typography } from '@mui/material'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import messages from '../PkDashboard.Messages'
 
 const ProvinceTrendTable = props => {
   const { rows, title } = props
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Box>

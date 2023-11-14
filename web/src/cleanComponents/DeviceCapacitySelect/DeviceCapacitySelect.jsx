@@ -1,7 +1,7 @@
 import React from 'react'
 import { LinearProgress, MenuItem, TextField } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useDeviceCapacityForSelect from '../../hooks/device/useDeviceCapacityForSelect'
-import useI18n from '../../hooks/useI18n'
 
 const messages = {
   modules: {
@@ -14,7 +14,7 @@ const messages = {
 }
 
 const DeviceCapacitySelect = ({ name, label, value, onChange, deviceTypeId }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { isLoading, data } = useDeviceCapacityForSelect(deviceTypeId)
 
   return (

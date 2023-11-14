@@ -2,7 +2,7 @@ import React from 'react'
 import { Input, MenuItem, Select } from '@mui/material'
 import { withStyles } from '@mui/styles'
 import omit from 'lodash/omit'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 
 const styles = theme => ({
   root: {
@@ -52,7 +52,7 @@ const styles = theme => ({
 
 const Dropdown = ({ classes, source, ...props }) => {
   const { messages } = props
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <Select
       input={<Input disableUnderline />}

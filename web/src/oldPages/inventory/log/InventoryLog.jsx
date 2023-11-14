@@ -2,12 +2,12 @@ import React from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryLogFilter } from '../../../cleanComponents'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
-import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -136,7 +136,7 @@ const InventoryLog = () => {
   const navigate = useNavigate()
   const filters = useFilterValues(location.pathname)
   // >>>>>> Defining hooks <<<<<<
-  const intl = useI18n()
+  const intl = useIntl()
   // >>>>>> Structuring data <<<<<<
 
   const apiFilters = { ...filters }

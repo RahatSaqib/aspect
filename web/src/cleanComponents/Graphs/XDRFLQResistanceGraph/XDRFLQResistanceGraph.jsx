@@ -1,9 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import { format, startOfMonth, endOfMonth, subMonths } from 'date-fns'
+import { startOfMonth, endOfMonth, subMonths } from 'date-fns'
+import { format } from 'date-fns-tz'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { StateSelector, Loading } from '../../index'
 import messages from '../graphMessages'
@@ -16,7 +17,7 @@ const maxDate = format(endOfMonth(now), 'yyyy-MM-dd')
 const endpointParams = [{ minDate }, { maxDate }]
 
 const XDRFLQResistanceGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState()

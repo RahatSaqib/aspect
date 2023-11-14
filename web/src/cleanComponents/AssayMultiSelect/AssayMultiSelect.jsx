@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import isMatch from 'lodash/isMatch'
+import { useIntl } from 'react-intl'
 import useAssayList from '../../hooks/assay/useAssayList'
-import useI18n from '../../hooks/useI18n'
 import { assay } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import AspectSelect from '../AspectSelect'
@@ -11,7 +11,7 @@ function AssayMultiSelect(props) {
 
   const { isLoading, data } = useAssayList()
 
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const options = useMemo(() => data?.filter(item => isMatch(item, filters)), [data, filters])
 

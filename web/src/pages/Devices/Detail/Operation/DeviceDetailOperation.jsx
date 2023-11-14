@@ -4,11 +4,10 @@ import Immutable from 'immutable'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { MdFileDownload } from 'react-icons/md'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import useI18n from '../../../../hooks/useI18n'
 import BrowseEmptyList from '../../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../../oldComponents/BrowseTablePaginator'
 import Summary from '../../../../oldComponents/Summary'
@@ -151,7 +150,7 @@ const DeviceDetailOperation = ({
   pageSize,
   onExportClick,
 }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   return (
     <div>
       <Helmet title={device.get('name')} />

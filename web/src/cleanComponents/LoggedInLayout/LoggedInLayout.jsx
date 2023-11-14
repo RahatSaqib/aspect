@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
 import { Container } from '@mui/system'
 import { Helmet } from 'react-helmet'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AppNotificationDialog from '../../oldComponents/appNotification/AppNotificationDialog'
 import AppNotificationSnackBar from '../../oldComponents/appNotification/AppNotificationSnackBar'
 import { aspectFetch } from '../../utils/utils/fetch'
@@ -10,7 +10,7 @@ import Header from './LoggedInLayout.AppBar'
 import styles from './styles.module.css'
 
 const LoggedInLayout = ({ children }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const [version, setVersion] = useState({ fetched: false, v: '' })
 
   useEffect(() => {

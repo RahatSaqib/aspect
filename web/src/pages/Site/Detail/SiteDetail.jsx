@@ -2,12 +2,11 @@ import React, { useEffect, useState } from 'react'
 import { Box, LinearProgress, Paper } from '@mui/material'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
 import useSite from '../../../hooks/site/useSite'
-import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import TaskList from '../../../oldPages/task/list/TaskList'
 import isEditable from '../../../utils/selectors/isEditable'
@@ -24,7 +23,7 @@ const titleMessages = defineMessages({
 })
 
 const SiteDetail = ({ navigate, location }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const { siteId } = useParams()
   const { isLoading, data: site } = useSite(siteId)
   const { editable, user } = useSelector(state => ({

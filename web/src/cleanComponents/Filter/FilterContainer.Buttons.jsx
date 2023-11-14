@@ -5,6 +5,7 @@ import { pull } from 'lodash/array'
 import isArray from 'lodash/isArray'
 import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
+import { useIntl } from 'react-intl'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceApprovalType from '../../hooks/device/useDeviceApprovalType'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
@@ -15,11 +16,10 @@ import useNotificationType from '../../hooks/notification/useNotificationType'
 import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
 import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
-import useI18n from '../../hooks/useI18n'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
-import messages from './messages'
 import { notificationCategories } from '../NotificationCategorySelect/fixture'
+import messages from './messages'
 
 const filtersOrdering = {
   breakOutByLot: 1,
@@ -66,7 +66,7 @@ const emptyFilter = filter => {
 }
 
 const FilterButtons = ({ filters, remove, append }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <span>
       {emptyFilter(filters) ? (
@@ -214,13 +214,13 @@ const LgaId = ({ stateId, lgaId, remove }) => {
 }
 
 const SiteName = ({ siteName, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.whereSiteNameIncludes, { siteName })} del={() => remove(['siteName'])} />
 }
 
 const OriginSiteName = ({ originSiteName, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
@@ -231,7 +231,7 @@ const OriginSiteName = ({ originSiteName, remove }) => {
 }
 
 const DestinationSiteName = ({ destinationSiteName, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
@@ -241,7 +241,7 @@ const DestinationSiteName = ({ destinationSiteName, remove }) => {
   )
 }
 const AssayId = ({ assayId, remove, append, resultCategoryGroupId }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data } = useAssayList()
   const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
 
@@ -272,7 +272,7 @@ const AssayId = ({ assayId, remove, append, resultCategoryGroupId }) => {
 }
 
 const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data: assays } = useAssayList()
   if (resultCategoryId && assays) {
     const rcName = assays
@@ -298,7 +298,7 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
 }
 
 const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, remove, append }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
 
@@ -329,7 +329,7 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, 
 }
 
 const ConsumableId = ({ consumableId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data } = useConsumable()
 
   return data && consumableId ? (
@@ -341,7 +341,7 @@ const ConsumableId = ({ consumableId, remove }) => {
 }
 
 const MinDate = ({ minDate, remove }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(minDate), dateFormat)
 
@@ -349,7 +349,7 @@ const MinDate = ({ minDate, remove }) => {
 }
 
 const MaxDate = ({ maxDate, remove }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   if (!maxDate) return null
   const date = format(new Date(maxDate), dateFormat)
@@ -358,7 +358,7 @@ const MaxDate = ({ maxDate, remove }) => {
 }
 
 const MinExpirationDate = ({ minExpirationDate, remove }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(minExpirationDate), dateFormat)
 
@@ -366,7 +366,7 @@ const MinExpirationDate = ({ minExpirationDate, remove }) => {
 }
 
 const MaxExpirationDate = ({ maxExpirationDate, remove }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(maxExpirationDate), dateFormat)
 
@@ -374,7 +374,7 @@ const MaxExpirationDate = ({ maxExpirationDate, remove }) => {
 }
 
 const ReportName = ({ reportName, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn lbl={formatMessage(messages.whereReportNameIncludes, { reportName })} del={() => remove(['reportName'])} />
@@ -382,7 +382,7 @@ const ReportName = ({ reportName, remove }) => {
 }
 
 const ExternalId = ({ externalId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn lbl={formatMessage(messages.whereExternalIdIncludes, { externalId })} del={() => remove(['externalId'])} />
@@ -390,7 +390,7 @@ const ExternalId = ({ externalId, remove }) => {
 }
 
 const DeviceName = ({ deviceName, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn lbl={formatMessage(messages.whereDeviceNameIncludes, { deviceName })} del={() => remove(['deviceName'])} />
@@ -398,7 +398,7 @@ const DeviceName = ({ deviceName, remove }) => {
 }
 
 const ContactStatus = ({ contactStatus, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const status = formatMessage(commonDefinitions[`${contactStatus}` === '0' ? 'enabled' : 'disabled'])
 
   return (
@@ -410,7 +410,7 @@ const ContactStatus = ({ contactStatus, remove }) => {
 }
 
 const ContactNameOrEmail = ({ contactNameOrEmail, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
@@ -421,7 +421,7 @@ const ContactNameOrEmail = ({ contactNameOrEmail, remove }) => {
 }
 
 const NotificationName = ({ notificationName, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
@@ -432,37 +432,37 @@ const NotificationName = ({ notificationName, remove }) => {
 }
 
 const OnlyTranfers = ({ remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.onlyTransfers)} del={() => remove(['onlyTransfers'])} />
 }
 
 const LotNumber = ({ lotNumber, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.whereLotNumberIncludes, { lotNumber })} del={() => remove(['lotNumber'])} />
 }
 
 const HasStock = ({ remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.hasStock)} del={() => remove(['hasStock'])} />
 }
 
 const DaysStockLeft = ({ daysStockLeft, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages[daysStockLeft])} del={() => remove(['daysStockLeft'])} />
 }
 
 const BreakOutByLot = ({ remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.breakOutByLot)} del={() => remove(['breakOutByLot'])} />
 }
 
 const DeviceApprovalId = ({ deviceApprovalId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data } = useDeviceApprovalType()
   const name = data?.find(it => it.id === deviceApprovalId)?.name
   if (deviceApprovalId && name) {
@@ -478,7 +478,7 @@ const DeviceApprovalId = ({ deviceApprovalId, remove }) => {
 }
 
 const DeviceType = ({ deviceType, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data } = useDeviceTypeList()
 
   if (data && deviceType) {
@@ -490,7 +490,7 @@ const DeviceType = ({ deviceType, remove }) => {
 }
 
 const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const ids = isArray(deviceMaintenanceStatusId) ? deviceMaintenanceStatusId : [deviceMaintenanceStatusId]
   return ids.map(id => (
     <Btn
@@ -504,7 +504,7 @@ const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove }) => {
 }
 
 const ConnectorStatus = ({ connectorStatus, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const status = formatMessage(messages[connectorStatus])
   return (
     <Btn
@@ -515,13 +515,13 @@ const ConnectorStatus = ({ connectorStatus, remove }) => {
 }
 
 const ErrorCode = ({ errorCode, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.errorCode, { errorCode })} del={() => remove(['errorCode'])} />
 }
 
 const PatientOrResearchId = ({ patientOrResearchId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
@@ -532,13 +532,13 @@ const PatientOrResearchId = ({ patientOrResearchId, remove }) => {
 }
 
 const SampleId = ({ sampleId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.sampleId, { sampleId })} del={() => remove(['sampleId'])} />
 }
 
 const ReportableSiteName = ({ reportableSiteName, reportableSiteId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const message = reportableSiteId ? messages.whereReportableSiteName : messages.whereReportableSiteNameIncludes
   return (
     <Btn
@@ -549,7 +549,7 @@ const ReportableSiteName = ({ reportableSiteName, reportableSiteId, remove }) =>
 }
 
 const ReportableSiteId = ({ reportableSiteName, reportableSiteId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return !reportableSiteName ? (
     <Btn
@@ -560,7 +560,7 @@ const ReportableSiteId = ({ reportableSiteName, reportableSiteId, remove }) => {
 }
 
 const SampleOriginSiteId = ({ sampleOriginSite, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
@@ -571,7 +571,7 @@ const SampleOriginSiteId = ({ sampleOriginSite, remove }) => {
 }
 
 const WorkflowStatusId = ({ workflowStatusId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data } = useWorkflowStatus()
 
   if (data) {
@@ -588,7 +588,7 @@ const WorkflowStatusId = ({ workflowStatusId, remove }) => {
 }
 
 const TreatmentStatus = ({ treatmentStatus, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data } = useTreatmentStatus()
 
   if (data) {
@@ -605,7 +605,7 @@ const TreatmentStatus = ({ treatmentStatus, remove }) => {
 }
 
 const DisplayResult = ({ displayResult, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
@@ -620,43 +620,43 @@ const DisplayResult = ({ displayResult, remove }) => {
 }
 
 const OnlyReportableResults = ({ remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.onlyReportableResults)} del={() => remove(['onlyReportableResults'])} />
 }
 
 const OnlyDownloadedByReporter = ({ remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.onlyDownloadedByReporter)} del={() => remove(['onlyDownloadedByReporter'])} />
 }
 
 const OnlyTreatmentRequired = ({ remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.onlyTreatmentRequired)} del={() => remove(['onlyTreatmentRequired'])} />
 }
 
 const OnlyErrors = ({ remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.onlyErrors)} del={() => remove(['onlyErrors'])} />
 }
 
 const ReportWithName = ({ remove, reportWithName }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.reportWithName, { reportWithName })} del={() => remove(['reportWithName'])} />
 }
 
 const PatientId = ({ patientId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return <Btn lbl={formatMessage(messages.patientId, { patientId })} del={() => remove(['patientId'])} />
 }
 
 const NotificationCategory = ({ notificationCategory, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const name = notificationCategories.find(i => i.id === notificationCategory)?.i18Name
   if (name)
     return (
@@ -671,7 +671,7 @@ const NotificationCategory = ({ notificationCategory, remove }) => {
 }
 
 const NotificationType = ({ notificationTypeCategoryId, notificationTypeId, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data } = useNotificationType(notificationTypeCategoryId)
   if (data && notificationTypeId) {
     const name = data.find(i => i.id === notificationTypeId)?.name
@@ -686,7 +686,7 @@ const NotificationType = ({ notificationTypeCategoryId, notificationTypeId, remo
 }
 
 const Revoked = ({ revoked, remove }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Btn

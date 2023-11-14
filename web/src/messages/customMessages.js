@@ -1,6 +1,5 @@
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
-import { i18nWrapper } from '../providers/I18nProvider'
 
 export const commonDefinitions = defineMessages({
   period: {
@@ -109,9 +108,8 @@ export const commonDefinitions = defineMessages({
   },
 })
 
-export function getCustomMessage(messages, key, user, params) {
+export function getCustomMessage(formatMessage, messages, key, user, params) {
   const { countryAbbreviation } = user || {}
-  const { formatMessage } = i18nWrapper()
 
   let message = messages[`${key}_${countryAbbreviation}`] // default Key can be 'state' or 'lga', in this case
 
@@ -127,7 +125,7 @@ export function getCustomMessage(messages, key, user, params) {
   if (params) {
     const [...keys] = Immutable.fromJS(params).keys()
     keys.forEach(key => {
-      params[key] = getCustomMessage(messages, params[key], user)
+      params[key] = getCustomMessage(formatMessage, messages, params[key], user)
     })
   }
 

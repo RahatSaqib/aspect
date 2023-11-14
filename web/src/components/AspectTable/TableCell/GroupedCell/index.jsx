@@ -1,7 +1,7 @@
 import React from 'react'
 import { IconButton } from '@mui/material'
 import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import IconProvider from '../../../IconProvider'
 import styles from '../../Table.module.css'
 import Cell from '../Cell'
@@ -19,7 +19,7 @@ const GroupedCell = ({
   subRows: { length: subRowsLength },
   value,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <div className={styles.tablecell__grouped}>
       <IconButton
