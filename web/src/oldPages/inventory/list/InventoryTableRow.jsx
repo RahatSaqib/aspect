@@ -4,11 +4,11 @@ import ErrorIcon from '@mui/icons-material/Error'
 import { TextField } from '@mui/material'
 import isNull from 'lodash/isNull'
 import round from 'lodash/round'
+import { useIntl } from 'react-intl'
 import { useMutation } from 'react-query'
 import { useDispatch } from 'react-redux'
 import AspectVertMenu from '../../../components/AspectVertMenu'
 import PermissionChecker from '../../../components/PermissionChecker'
-import useI18n from '../../../hooks/useI18n'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
 import { useAuthState } from '../../../providers/AuthProvider'
@@ -22,7 +22,7 @@ import {
 import messages from './messages'
 
 const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refetch }) => {
-  const { formatMessage, formatNumber } = useI18n()
+  const { formatMessage, formatNumber } = useIntl()
 
   const { isCountry } = useAuthState()
   const [newQtyOnHand, setNewQtyOnHand] = useState('')

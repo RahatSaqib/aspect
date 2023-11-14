@@ -5,6 +5,7 @@ import endOfYear from 'date-fns/endOfYear'
 import startOfMonth from 'date-fns/startOfMonth'
 import startOfYear from 'date-fns/startOfYear'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import {
   LgaSelect,
@@ -19,7 +20,6 @@ import {
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
-import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import { useFilterUpdate } from '../../../../../providers/FilterProvider'
@@ -46,7 +46,7 @@ const pieGraphParams = [
 ]
 
 const CurrentDiagnosisGraphPage = () => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [showPercentage, setShowPercentage] = useState(false)
@@ -137,13 +137,13 @@ const CurrentDiagnosisGraphPage = () => {
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
             value={filter?.lgaId ?? ''}
             stateId={filter?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

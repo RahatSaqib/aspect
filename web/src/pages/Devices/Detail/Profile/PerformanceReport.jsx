@@ -5,9 +5,8 @@ import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
 import startOfMonth from 'date-fns/startOfMonth'
 import { oneOfType, object, string, number } from 'prop-types'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { ColumnGraph } from '../../../../cleanComponents'
-import useI18n from '../../../../hooks/useI18n'
 import variables from '../../../../theme/colors'
 import styles from '../styles.module.css'
 import messages from './messages'
@@ -31,7 +30,7 @@ const { '--aspect-color-shakespeare': shakespeare } = variables.customProperties
 const { '--aspect-color-mandy': mandy } = variables.customPropertiesVariables
 
 const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [utilizationData, setUtilizationData] = useState({})
   const [errorData, setErrorData] = useState({})

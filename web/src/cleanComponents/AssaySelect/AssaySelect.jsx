@@ -1,8 +1,8 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useAssayList from '../../hooks/assay/useAssayList'
-import useI18n from '../../hooks/useI18n'
 import { assay } from '../../messages'
 
 const AssaySelect = ({
@@ -21,7 +21,7 @@ const AssaySelect = ({
   single = false,
 }) => {
   const { isLoading, data: assayList } = useAssayList()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   let data =
     assayList && assayTypeId && deviceTypeId

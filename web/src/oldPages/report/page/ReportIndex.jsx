@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, ReportsFilter } from '../../../cleanComponents'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
-import useI18n from '../../../hooks/useI18n'
 import messages from '../../../messages/report'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import { showError } from '../../../store/AppNotificationRedux'
@@ -19,7 +18,7 @@ import styles from './styles.module.css'
 const ReportIndex = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const intl = useI18n()
+  const intl = useIntl()
   const [items, setItems] = useState()
   const [showProgressBar, setShowProgressBar] = useState(false)
   const dispatch = useDispatch()

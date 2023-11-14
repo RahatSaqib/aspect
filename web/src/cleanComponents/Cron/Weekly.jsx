@@ -1,6 +1,6 @@
 import React, { useCallback, useState } from 'react'
 import { Checkbox, FormControlLabel, FormGroup, Stack } from '@mui/material'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
 import styles from './styles.module.css'
@@ -45,7 +45,7 @@ const initDaysOfTheWeek = cronExpression => {
 }
 
 const Weekly = ({ cronExpression, onChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [daysOfTheWeek, setDaysOfTheWeek] = useState(initDaysOfTheWeek(cronExpression))
   // ------------------------------
   const changeHours = useCallback(

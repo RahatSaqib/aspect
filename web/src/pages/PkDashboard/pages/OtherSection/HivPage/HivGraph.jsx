@@ -5,6 +5,7 @@ import endOfYear from 'date-fns/endOfYear'
 import startOfMonth from 'date-fns/startOfMonth'
 import startOfYear from 'date-fns/startOfYear'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import {
@@ -17,7 +18,6 @@ import {
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
-import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages } from '../../../../../messages'
 import { useFilterUpdate } from '../../../../../providers/FilterProvider'
 import PkPage from '../../../components/PkPage'
@@ -43,7 +43,7 @@ const endPointParams = [
 ]
 
 const HivGraphPage = () => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(true)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()

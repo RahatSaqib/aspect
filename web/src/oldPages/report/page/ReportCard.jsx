@@ -1,6 +1,6 @@
 import React from 'react'
 import { Button, Card, CardActionArea, CardActions, CardContent, Grid, Typography } from '@mui/material'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { report as messages } from '../../../messages'
 
 const styles = {
@@ -19,7 +19,7 @@ const styles = {
 }
 
 const ReportCard = ({ description, onClick, title, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const reportName = messages[i18nKey] ? formatMessage(messages[i18nKey]) : title
 
   return (

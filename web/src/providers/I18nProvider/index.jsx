@@ -1,4 +1,5 @@
-import React, { createContext } from 'react'
+import React from 'react'
+// import { utcToZonedTime, format } from 'date-fns-tz'
 import format from 'date-fns/format'
 import formatDistance from 'date-fns/formatDistance'
 import deLocale from 'date-fns/locale/de'
@@ -11,10 +12,12 @@ import ukLocale from 'date-fns/locale/uk'
 import tgLocale from 'date-fns/locale/uz-Cyrl'
 import viLocale from 'date-fns/locale/vi'
 import { DateTime } from 'luxon'
-import { createIntl, useIntl } from 'react-intl' // eslint-disable-line no-restricted-imports
+import { createIntl, createIntlCache, RawIntlProvider } from 'react-intl'
 import translation from '../../utils/i18n/translation.json'
 
-const I18nContext = createContext()
+// This is optional but highly recommended
+// since it prevents memory leak
+const cache = createIntlCache()
 
 export const dateFNSLocales = {
   de: deLocale,
@@ -38,9 +41,7 @@ export const dateFNSLocales = {
 
 function timeZoneFallBack(timezone) {
   try {
-    new Date().toLocaleString('en', {
-      timeZone: timezone,
-    })
+    new Date().toLocaleString('en', { timeZone: timezone })
     return timezone
   } catch (e) {
     console.warn(`${timezone}: Invalid timezone, falling back to America/Los_Angeles`)
@@ -48,49 +49,39 @@ function timeZoneFallBack(timezone) {
   }
 }
 
-function i18nWrapper(messages, passedCulture = false, passedTimezone = false) {
-  const localStorageCulture = localStorage.getItem('asCulture')
-
-  const userLocale = passedCulture || localStorageCulture || 'en'
-
-  const intl = createIntl({
-    locale: userLocale === 'tg-TJ' ? 'uz-Cyrl' : userLocale,
-    messages: messages || translation[userLocale],
-    onError: () => {}, // to not show console.error with MISSING_TRANSLATION
-  })
-
-  const timezone = passedTimezone || Intl.DateTimeFormat().resolvedOptions().timeZone
-
-  const { formatDate, formats, formatMessage, locale, ...rest } = intl
-  const dateFNSLocale = dateFNSLocales[userLocale]
-  const validTimeZone = timeZoneFallBack(timezone)
-  return {
-    culture: locale,
-    dateFNSLocale,
-    format: (dateIn, formatIn) => format(dateIn, formatIn, { locale: dateFNSLocale }),
-    formats,
-    formatDate: (dateIn, options = {}) => formatDate(dateIn, options),
-    formatWithOffset: dateIn => DateTime.fromJSDate(dateIn).setZone(validTimeZone).toISO(),
-    formatDistance: (firstDateIn, secondDateIn, showSuffix = false) =>
-      formatDistance(firstDateIn, secondDateIn, {
-        locale: dateFNSLocale,
-        addSuffix: showSuffix,
-      }),
-    formatTimezone: dateIn =>
-      dateIn.toLocaleString(locale, {
-        timeZone: validTimeZone,
-      }),
-    formatMessage: (stringIn, values = {}, fallback = `!! I18N ID not set !!`) =>
-      !stringIn ? fallback : formatMessage(stringIn, values),
-    timezone: validTimeZone,
-    ...rest,
-  }
-}
-
 const I18nProvider = ({ children }) => {
-  const { messages } = useIntl()
-  const value = i18nWrapper(messages)
-  return <I18nContext.Provider value={value}>{children}</I18nContext.Provider>
+  const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
+  const validTimeZone = timeZoneFallBack(timezone)
+
+  const userLocale = localStorage.getItem('asCulture') || 'en'
+  const dateFNSLocale = dateFNSLocales[userLocale]
+
+  const finalLocale = userLocale === 'tg-TJ' ? 'uz-Cyrl' : userLocale
+  const finalMessages = translation[userLocale]
+
+  const intl = createIntl({ locale: finalLocale, messages: finalMessages, onError: () => {} }, cache)
+
+  // if we use a react provider we need a intlProvider wrapping it. Instead of 2 providers, the correct way is to use a RawIntProvider
+  // https://formatjs.io/docs/react-intl/components/#rawintlprovider
+  return (
+    <RawIntlProvider
+      value={{
+        ...intl,
+        format: (dateIn, formatIn) => format(dateIn, formatIn, { locale: dateFNSLocale }),
+        formatWithOffset: dateIn => DateTime.fromJSDate(dateIn).setZone(validTimeZone).toISO(),
+        // formatWithOffset: dateIn =>
+        //   format(utcToZonedTime(dateIn, validTimeZone), "yyyy-MM-dd'T'HH:mm:ssXXX", { timeZone: validTimeZone }),
+        formatDistance: (firstDateIn, secondDateIn, showSuffix = false) =>
+          formatDistance(firstDateIn, secondDateIn, { locale: dateFNSLocale, addSuffix: showSuffix }),
+        formatTimezone: dateIn => dateIn.toLocaleString(finalLocale, { timeZone: validTimeZone }),
+        formatMessage: (stringIn, values = {}, fallback = `!! I18N ID not set !!`) =>
+          !stringIn ? fallback : intl.formatMessage(stringIn, values),
+        timezone: validTimeZone,
+      }}
+    >
+      {children}
+    </RawIntlProvider>
+  )
 }
 
-export { I18nProvider, I18nContext, i18nWrapper }
+export { I18nProvider }

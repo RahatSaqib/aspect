@@ -1,6 +1,6 @@
 import React from 'react'
 import { bool, func, number, string } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import styles from '../../Table.module.css'
 import messages from '../messages'
 import IndexButton from './IndexButton'
@@ -23,7 +23,7 @@ const PageIndexSelectors = ({
   pageSize,
   previousPage,
 }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   return (
     <div className={styles.pageindex__container}>
       <IndexButton
