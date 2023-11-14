@@ -4,16 +4,35 @@
   --notification-icon-size: 36px;
 }
 
+.TableRow:first-child > .TableCell {
+  border-top-width: 2px;
+}
+
+.TableRow:not(:first-child) > .TableCell {
+  border-top: none;
+}
+
 .TableRow {
-  composes: TableRow from '../../../oldComponents/shared/DataTableRow.module.css';
+  cursor: pointer;
+}
+
+.TableRow:nth-child(even) {
+  background-color: var(--aspect-color-grey-8);
+}
+
+.TableRow:hover {
+  background-color: var(--aspect-color-grey-6);
+}
+
+.TableRow:hover .TableCell__small {
+  opacity: 1;
 }
 
 .TableCell {
-  composes: TableCell from '../../../oldComponents/shared/DataTableRow.module.css';
   color: var(--aspect-color-grey-4);
 }
 
-.TableCell--notificationCount {
+.TableCell__notificationCount {
   position: relative;
   font-size: var(--notification-icon-size);
 }

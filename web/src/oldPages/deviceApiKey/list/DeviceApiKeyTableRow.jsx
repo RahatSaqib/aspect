@@ -1,18 +1,15 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { formatDate } from '../../../utils/utils/dateFormat'
 import styles from './DeviceApiKeyTableRow.module.css'
 
-const cssClasses = classnames.bind(styles)
-
 const DeviceApiKeyTableRow = ({ deviceApiKey, disabled, checked, onSelectedChange, onRevokedChange, ...restProps }) => (
-  <TableRow {...restProps} className={cssClasses(restProps.className)}>
+  <TableRow {...restProps} className={styles[restProps.className]}>
     <TableCell>
       <AspectCheckbox
         name="selected"
-        className={cssClasses('Checkbox__field')}
+        className={styles.Checkbox__field}
         inputProps={{
           'data-device-api-key-id': deviceApiKey.id,
         }}

@@ -21,7 +21,7 @@
   flex-grow: 1;
 }
 
-.Navigation--horizontal .Link {
+.Navigation__horizontal .Link {
   text-align: center;
   margin: 0 15px;
   display: inline-block;
@@ -68,7 +68,7 @@
   font-weight: var(--lato-font-weight-bold) !important;
 }
 
-.Navigation--horizontal .Link::after {
+.Navigation__horizontal .Link::after {
   /* provides placeholder content for bold font: https://stackoverflow.com/a/20249560 */
   display: block;
   content: attr(title);

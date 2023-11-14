@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { Card, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import differenceInBusinessDays from 'date-fns/differenceInBusinessDays'
 import endOfMonth from 'date-fns/endOfMonth'
 import parseISO from 'date-fns/parseISO'
@@ -27,7 +26,6 @@ const customMessages = defineMessages({
     defaultMessage: 'Total Errors',
   },
 })
-const cssClasses = classnames.bind(styles)
 
 const { '--aspect-color-shakespeare': shakespeare } = variables.customPropertiesVariables
 const { '--aspect-color-mandy': mandy } = variables.customPropertiesVariables
@@ -86,8 +84,8 @@ const PerformanceReport = ({ performanceReport, dailyCapacity, culture }) => {
   }, [performanceReport])
 
   return (
-    <section className={cssClasses('Section')}>
-      <Card className={cssClasses('Section')}>
+    <section className={styles.Section}>
+      <Card className={styles.Section}>
         <p data-panel-title>{formatMessage(messages.performanceTitle)}</p>
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={6}>

@@ -1,6 +1,5 @@
 import React, { useCallback, useState } from 'react'
 import { Checkbox, FormControlLabel, FormGroup, Stack } from '@mui/material'
-import classNames from 'classnames/bind'
 import useI18n from '../../hooks/useI18n'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
@@ -45,7 +44,6 @@ const initDaysOfTheWeek = cronExpression => {
   })
 }
 
-const classes = classNames.bind(styles)
 const Weekly = ({ cronExpression, onChange }) => {
   const { formatMessage } = useI18n()
   const [daysOfTheWeek, setDaysOfTheWeek] = useState(initDaysOfTheWeek(cronExpression))
@@ -94,7 +92,7 @@ const Weekly = ({ cronExpression, onChange }) => {
   return (
     <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
       <Stack direction="row" spacing={1} alignItems="center">
-        <FormGroup row className={classes('Check-Group')}>
+        <FormGroup row className={styles.Check_Group}>
           {WEEK_DAYS.map((it, index) => (
             <FormControlLabel
               control={

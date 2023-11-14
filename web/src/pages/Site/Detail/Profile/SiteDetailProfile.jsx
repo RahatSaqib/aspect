@@ -1,6 +1,5 @@
 import React from 'react'
 import { Card } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
@@ -8,8 +7,6 @@ import Summary from '../../../../oldComponents/Summary'
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
 import styles from '../SiteDetail.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const messages = { ...commonDefinitions, ...localMessages }
 
@@ -44,8 +41,8 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
   ]
   return (
     <div>
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           {fields.map(({ label, value }) => (
             <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="4" />
           ))}

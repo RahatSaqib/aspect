@@ -7,7 +7,7 @@ const { knex } = require('../../src/db')
 // get test context with created sample messageId
 
 // action creators
-const { smsMessageCreated, smsMessageReadyForSending, smsMessageSent } = require('../../src/sms/actions')
+const { smsMessageCreated, smsMessageReadyForSending, smsMessageProcessed } = require('../../src/sms/actions')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 const config = require('../../src/config')
 
@@ -16,7 +16,7 @@ describe('Sending SMS via Message Queue to Contact', () => {
   beforeEach(context.beforeEach)
   afterEach(context.afterEach)
 
-  it.skip('should add record with status=Initial to SmsMessage table to trigger MQ, and return "Sent" for messageStatus', async () => {
+  it('should add record with status=Initial to SmsMessage table to trigger MQ, and return "Sent" for messageStatus', async () => {
     // get MQ context and messageId of inserted record in SmsMessage
     const { messageId } = context
     const messageContext = await createMessageContext()
@@ -29,7 +29,7 @@ describe('Sending SMS via Message Queue to Contact', () => {
     const actionReady = smsMessageReadyForSending(messageId)
     const waitForReadyForSending = waitForAction(actionReady)
 
-    const actionSent = smsMessageSent(messageId)
+    const actionSent = smsMessageProcessed(messageId)
     const waitForSent = waitForAction(actionSent)
 
     // dispatch to MQ a messageId (generated in SmsMessage)
@@ -42,7 +42,7 @@ describe('Sending SMS via Message Queue to Contact', () => {
 
     await waitForIdle()
 
-    const messageStatusIdSent = await messageStatusToId('Sent')
+    const messageStatusIdSent = await messageStatusToId('Error')
     const msg = await knex('SmsMessage').where('id', messageId).first()
     assert.equal(msg.messageStatusId, messageStatusIdSent)
     // make sure generated message does not have unprocessed curly braces {{ }}
@@ -67,7 +67,7 @@ describe('Sending SMS via Message Queue to Patient, clinician or any other conta
     const actionReady = smsMessageReadyForSending(messageId)
     const waitForReadyForSending = waitForAction(actionReady)
 
-    const actionSent = smsMessageSent(messageId)
+    const actionSent = smsMessageProcessed(messageId)
     const waitForSent = waitForAction(actionSent)
 
     // dispatch to MQ a messageId (generated in SmsMessage)

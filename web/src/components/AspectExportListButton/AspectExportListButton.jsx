@@ -1,12 +1,9 @@
 import React, { useState } from 'react'
 import CloudDownloadIcon from '@mui/icons-material/CloudDownload'
 import { Button, LinearProgress, Menu, MenuItem } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import { downloadFile } from '../../utils/utils/files'
 import styles from './styles.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const AspectExportListButton = ({ onExport, visible, disableCSV, disableExcel }) => {
   const [downloadStarted, setDownloadStarted] = useState(false)
@@ -34,12 +31,12 @@ const AspectExportListButton = ({ onExport, visible, disableCSV, disableExcel })
   if (!visible) return null
 
   return (
-    <div className={cssClasses('export-button-wrapper')}>
+    <div className={styles.export_button_wrapper}>
       {downloadStarted && <LinearProgress />}
       <Button
         variant="outlined"
         onClick={event => setAnchorEl(event.currentTarget)}
-        className={cssClasses('export-icon-button')}
+        className={styles.export_icon_button}
       >
         <CloudDownloadIcon style={{ fontSize: '1.25rem' }} />
       </Button>
@@ -56,9 +53,7 @@ const AspectExportListButton = ({ onExport, visible, disableCSV, disableExcel })
           vertical: 'top',
           horizontal: 'center',
         }}
-        classes={{
-          root: cssClasses('export-menu-root'),
-        }}
+        classes={{ root: styles.export_menu_root }}
       >
         <MenuItem disabled={disableExcel} onClick={onExportTo('xlsx')}>
           Excel

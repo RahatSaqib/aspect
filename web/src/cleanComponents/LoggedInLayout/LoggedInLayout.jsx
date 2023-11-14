@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Grid } from '@mui/material'
 import { Container } from '@mui/system'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
 import useI18n from '../../hooks/useI18n'
 import AppNotificationDialog from '../../oldComponents/appNotification/AppNotificationDialog'
@@ -9,8 +8,6 @@ import AppNotificationSnackBar from '../../oldComponents/appNotification/AppNoti
 import { aspectFetch } from '../../utils/utils/fetch'
 import Header from './LoggedInLayout.AppBar'
 import styles from './styles.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const LoggedInLayout = ({ children }) => {
   const intl = useI18n()
@@ -29,7 +26,7 @@ const LoggedInLayout = ({ children }) => {
   return (
     <>
       <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />
-      <Container maxWidth="100%" disableGutters className={cssClasses('Container')}>
+      <Container maxWidth="100%" disableGutters className={styles.Container}>
         <Header />
         <Grid container spacing={2}>
           {children}
