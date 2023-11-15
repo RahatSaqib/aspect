@@ -4,10 +4,10 @@ import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { formatDataByGraphType, Loading } from '../../index'
@@ -34,7 +34,7 @@ const endPointParams = [
 ]
 
 const XdrResultsGraph = ({ assaysFromState: assays }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()

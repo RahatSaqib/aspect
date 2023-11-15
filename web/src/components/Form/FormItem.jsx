@@ -4,7 +4,7 @@ import { useFormikContext } from 'formik'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import styles from './Form.module.css'
 import { getFormattedString, getLabel } from './Formik/Helpers'
 import AspectInput from './Inputs/AspectInput'
@@ -58,7 +58,7 @@ const FormItem = ({
   disabledIf,
   subRowIndex,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { formik, toggleEdit, validationSchema } = useFormikContext()
   const { getFieldProps, values } = formik
   const value = values[id]

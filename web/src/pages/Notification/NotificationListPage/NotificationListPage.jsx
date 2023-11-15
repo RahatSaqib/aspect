@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CircularProgress, Table, TableBody, TableRow, TableCell } from '@mui/material'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
 import { DetailHeader, NotificationFilter, SimpleTableHeader, SimpleTablePagination } from '../../../cleanComponents'
@@ -10,7 +11,6 @@ import { DateTimeCellFlagged } from '../../../components/AspectTable/TableCell/D
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { replaceRouteParams } from '../../../components/QueryFetch/Helpers'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
-import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { useFilterValues } from '../../../providers/FilterProvider'
 import messages from './messages'
@@ -18,7 +18,7 @@ import styles from './NotificationListPage.module.css'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
 
 const NotificationList = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const { formatMessage } = intl
   const navigate = useNavigate()
   const { ...routeParams } = useParams()

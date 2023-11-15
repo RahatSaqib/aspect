@@ -2,7 +2,7 @@ import React, { useEffect, useMemo } from 'react'
 import { FormControlLabel, FormHelperText, RadioGroup, Radio } from '@mui/material'
 import { useFormikContext } from 'formik'
 import isNil from 'lodash/isNil'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { getFieldErrorProps } from '../Formik/Helpers'
 import messages from '../messages'
 import styles from './RadioButtonList.module.css'
@@ -21,7 +21,7 @@ const RadioButtonList = props => {
     name,
     value,
   } = props
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { formik, updateField, toggleEdit } = useFormikContext()
   const { error, helperText } = getFieldErrorProps(formik, id)
 

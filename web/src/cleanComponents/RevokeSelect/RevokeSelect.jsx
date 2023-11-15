@@ -1,8 +1,7 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { MenuItem, TextField, IconButton } from '@mui/material'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../hooks/useI18n'
+import { defineMessages, useIntl } from 'react-intl'
 
 const messages = defineMessages({
   optionFalse: {
@@ -16,7 +15,7 @@ const messages = defineMessages({
 })
 
 const RevokeSelect = ({ id, name, label, value, onChange, error, helperText }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <TextField

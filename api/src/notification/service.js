@@ -408,9 +408,9 @@ async function getNotificationPolicy(
 
 async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
   const people = txKnex('Person as p')
-    .innerJoin('Job as j', 'p.id', 'j.personId')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')
+    .innerJoin('JobContext as jc', 'p.id', 'jc.personId')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .leftJoin('PersonTag as pt', 'jc.personId', 'pt.personId')
     .where('p.disabled', false)
     .modify(qWhere => {
       // Where the person is NOT disabled and...
@@ -447,7 +447,7 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
         })
       }
     })
-    .distinct('p.id as id', 'j.jobFunctionId')
+    .distinct('p.id as id', 'jc.jobFunctionId')
   return people
 }
 

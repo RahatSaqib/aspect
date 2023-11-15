@@ -1,8 +1,8 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useDeviceMaintenanceStatus from '../../hooks/device/useDeviceMaintenanceStatus'
-import useI18n from '../../hooks/useI18n'
 import { deviceStatusMessages } from '../../messages'
 
 const DeviceMaintenanceStatusSelect = ({
@@ -17,7 +17,7 @@ const DeviceMaintenanceStatusSelect = ({
   onlyManuallySetableStatuses,
   multiple,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data: maintenanceStatuses, isLoading } = useDeviceMaintenanceStatus(onlyManuallySetableStatuses || false)
 
   const valueArray = value ? (Array.isArray(value) ? value : [value]) : []

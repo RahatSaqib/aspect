@@ -1,7 +1,7 @@
 import React from 'react'
 import { OverlayView } from '@react-google-maps/api'
 import { func, shape, string, number } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { deviceStatusMessages } from '../../../../messages'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import formatI18nMessage from '../../../../utils/i18n/formatterWeb'
@@ -10,7 +10,7 @@ import styles from './GooglePin.module.css'
 
 const GooglePin = ({ position, config, id, color, info: { maintenanceStatusI18nKey, name } }) => {
   const { size, click } = config
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <OverlayView position={position} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>

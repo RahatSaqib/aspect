@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 import { Button } from '@mui/material'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { getISOFromString } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import AspectForm from '../../../Form'
@@ -14,7 +14,7 @@ import { MODE, getFormConfig } from './utils'
 
 const DailyStatusDialog = ({ data = {}, onCancel, onSubmit, statuses, title, deviceName, siteProps }) => {
   const [mode, setMode] = useState(MODE.EDITING)
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const onSaveChanges = (deviceId, values) => {
     setMode(MODE.SAVING)

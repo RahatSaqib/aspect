@@ -1,7 +1,6 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../../../hooks/useI18n'
+import { defineMessages, useIntl } from 'react-intl'
 import styles from '../DailyStatus.module.css'
 import { groupDateRanges } from '../Helpers'
 
@@ -13,9 +12,9 @@ const messages = defineMessages({
 })
 
 const DateRanges = ({ data, consts }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
-  const days = groupDateRanges(data)
+  const days = groupDateRanges(data, formatMessage)
   const {
     blockSize: { width: blockWidth, marginWidth },
     totalBlockSize: { width: totalBlockWidth },

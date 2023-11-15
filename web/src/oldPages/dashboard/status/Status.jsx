@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   ErrorBoundary,
@@ -20,7 +21,6 @@ import {
   InventoryStatusGraph,
 } from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
-import useI18n from '../../../hooks/useI18n'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
 import styles from './index.module.css'
@@ -29,7 +29,7 @@ import Reports from './Reports'
 import SummaryStatus from './SummaryStatus'
 
 const Status = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const dispatch = useDispatch()
   const { isCountry } = useAuthState()
   useEffect(() => {

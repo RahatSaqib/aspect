@@ -2,7 +2,7 @@ import React from 'react'
 import { Grid, IconButton } from '@mui/material'
 import uniqueId from 'lodash/uniqueId'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import IconProvider from '../IconProvider'
 import styles from './Form.module.css'
 import FormItem from './FormItem'
@@ -19,7 +19,7 @@ const FormSectionRow = ({
   showDeleteButton,
   subRowIndex,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const onClickAdd = () => arrayHelpers.insert(subRowIndex + 1, { __guid__: uniqueId(rowId) })
 
