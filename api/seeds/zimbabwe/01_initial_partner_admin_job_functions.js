@@ -82,16 +82,14 @@ async function seed(knex) {
   })
   await upsertJobFunctionFixture(knex, fixtures.jobFunctions, partnerId)
   const jobFunctionsById = await allJobFunctionToId()
-  const [jobIdAdmin] = await knex('Job').insert({
+  await knex('JobContext').insert({
     personId: adminPersonId,
     jobFunctionId: jobFunctionsById.admin,
-  })
-  await knex('JobContext').insert({
-    jobId: jobIdAdmin,
     geographyId,
   })
   await knex('JobContext').insert({
-    jobId: jobIdAdmin,
+    personId: adminPersonId,
+    jobFunctionId: jobFunctionsById.admin,
     geographyId,
   })
 }
