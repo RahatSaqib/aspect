@@ -154,14 +154,14 @@ describe('Device daily details', () => {
       getPeopleBase()
         .where('p.name', name)
         .groupBy('p.id')
-        .first('p.id', 'p.name', 'p.email', 'p.email2', 'p.cell', 'j.id as jobId')
+        .first('p.id', 'p.name', 'p.email', 'p.email2', 'p.cell', 'jc.id as jobContextId')
 
     beforeEach(() => {
       personIds = []
     })
     afterEach(async () => {
       await knex('JobContext').where('siteId', context.siteId).del()
-      await knex('Job').whereIn('personId', personIds).del()
+      await knex('JobContext').whereIn('personId', personIds).del()
       await knex('Person')
         .where(builder => {
           builder.whereIn('name', [labContactName, installerName]).whereIn('id', personIds)
@@ -196,14 +196,14 @@ describe('Device daily details', () => {
       ;[person] = [await getPerson(labContactName)]
       personIds.push(person.id)
       assert.isDefined(person)
-      assert.isDefined(person.jobId)
+      assert.isDefined(person.jobContextId)
       assert.equal(person.email, configurationData.labContactEmail)
       assert.equal(person.cell, configurationData.labContactCell)
       // created Person for installerName
       const installer = await getPerson(installerName)
       personIds.push(installer.id)
       assert.isDefined(installer)
-      assert.isDefined(installer.jobId)
+      assert.isDefined(installer.jobContextId)
       assert.equal(installer.email, configurationData.installerEmail)
       assert.equal(installer.cell, configurationData.installerCell)
 
@@ -213,18 +213,18 @@ describe('Device daily details', () => {
       const { id: jobFunctionIdLab } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
 
       // person's job for Lab User
-      const job = await knex('Job').where('id', person.jobId).first()
-      assert.equal(job.personId, person.id)
-      assert.equal(job.jobFunctionId, jobFunctionIdLab)
+      const jobContext = await knex('JobContext').where('id', person.jobContextId).first()
+      assert.equal(jobContext.personId, person.id)
+      assert.equal(jobContext.jobFunctionId, jobFunctionIdLab)
 
       // site assignment
-      const jobContext = await knex('JobContext')
+      const jobContext2 = await knex('JobContext')
         .where({
-          jobId: person.jobId,
+          id: person.jobContextId,
           siteId,
         })
         .first()
-      assert.isDefined(jobContext)
+      assert.isDefined(jobContext2)
 
       /**
        * post another email/cell and check that email/cell of the person didn't change

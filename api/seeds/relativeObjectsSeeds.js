@@ -31,8 +31,8 @@ async function addIssueTypes(
       // eslint-disable-next-line prefer-const
       ;({ adminId, partnerId } = await knex('User as u')
         .join('Person as p', 'u.id', 'p.userId')
-        .join('Job as j', 'p.id', 'j.personId')
-        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .join('JobContext as jc', 'p.id', 'jc.personId')
+        .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
         .where('jf.name', 'admin')
         .first('u.id as adminId', 'p.lastPartnerId as partnerId'))
       if (!adminId) return false
@@ -113,8 +113,8 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
       // eslint-disable-next-line prefer-const
       ;({ partnerId } = await knex('User as u')
         .join('Person as p', 'u.id', 'p.userId')
-        .join('Job as j', 'p.id', 'j.personId')
-        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .join('JobContext as jc', 'p.id', 'jc.personId')
+        .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
         .where('jf.name', 'admin')
         .first('p.lastPartnerId as partnerId'))
       if (!partnerId) {
