@@ -91,6 +91,45 @@
           "order": 20
         }
       ]
+    },
+    {
+      "id": 107,
+      "name": "PKDateSpecimenCollected",
+      "title": "Date Specimen Collected",
+      "i18nKey": "PKDateSpecimenCollectedI18nKey",
+      "fieldType": "datetime",
+      "completionWeight": 10,
+      "order": 52,
+      "caption": "Date Specimen Collected",
+      "i18nKeyCaption": "PKDateSpecimenCollectedI8nCaptionKey",
+      "controlType": "dateTimePicker",
+      "payloadOriginPath": "data.customFieldData.25.value",
+      "payloadDestinationPath": "patient.PKDateSpecimenCollected",
+      "source": "patientData.PKDateSpecimenCollected",
+      "mandatory": false
+    },
+    {
+      "id": 108,
+      "name": "PKDateSpecimenReceived",
+      "title": "Date Specimen Received",
+      "i18nKey": "PKDateSpecimenReceivedI18nKey",
+      "fieldType": "datetime",
+      "completionWeight": 10,
+      "order": 53,
+      "caption": "Date Specimen Received",
+      "i18nKeyCaption": "PKDateSpecimenReceivedI8nCaptionKey",
+      "controlType": "dateTimePicker",
+      "payloadOriginPath": "data.customFieldData.26.value",
+      "payloadDestinationPath": "patient.PKDateSpecimenReceived",
+      "source": "patientData.PKDateSpecimenReceived",
+      "mandatory": false,
+      "condition": [
+        {
+          "propToCompare": "PKReferringHealthFacilityLocation",
+          "valueToCompare": "other",
+          "operator": "="
+        }
+      ]
     }
   ],
   "refForms": []
