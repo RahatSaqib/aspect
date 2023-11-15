@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Link, Menu } from '@mui/material'
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
+import { useIntl } from 'react-intl'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import PermissionChecker from '../../components/PermissionChecker'
-import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 import styles from './styles.module.css'
 
@@ -130,7 +130,7 @@ const getRawLinks = f => [
 ]
 
 const NavigationMenu = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const rawLinks = getRawLinks(formatMessage)
 

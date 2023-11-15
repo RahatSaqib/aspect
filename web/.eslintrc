@@ -92,7 +92,7 @@
     "no-restricted-imports": [
       "error",
       {
-        "paths": [{ "name": "react-intl", "importNames": ["useIntl"], "message": "Use 'useI18n' from hooks/ folder." }]
+        "paths": [{ "name": "date-fns", "importNames": ["format"], "message": "Use 'format' from date-fns-tz." }]
       }
     ],
     "security/detect-object-injection": "off",

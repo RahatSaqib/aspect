@@ -4,7 +4,7 @@ import ArrowRightIcon from '@mui/icons-material/ArrowRight'
 import { TreeItem, TreeView } from '@mui/lab'
 import { TextField, Box, ClickAwayListener, Grow, Paper, Popper, Typography } from '@mui/material'
 import { DesktopDatePicker } from '@mui/x-date-pickers'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import messages from './messages'
 import {
   dayOptions,
@@ -30,7 +30,7 @@ function PeriodSelector({
   noCustom,
   customMaxYear,
 }) {
-  const intl = useI18n()
+  const intl = useIntl()
   const { formatMessage } = intl
   const day = dayOptions(intl)
   const week = weekOptions(intl)

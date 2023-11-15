@@ -6,9 +6,9 @@ import isEqual from 'lodash/isEqual'
 import pickBy from 'lodash/pickBy'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle, setPropTypes, defaultProps } from 'recompose'
-import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -187,7 +187,7 @@ const TaskList = ({
   pageSize,
   onRowClick,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <div className={styles.Container}>
       <Helmet title={formatMessage(messages.tasksTitle)} />

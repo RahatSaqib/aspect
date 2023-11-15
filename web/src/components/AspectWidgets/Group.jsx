@@ -2,7 +2,7 @@ import React from 'react'
 import { Card, Grid } from '@mui/material'
 import orderBy from 'lodash/orderBy'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import messages from './messages'
 import { AspectWidget } from './Widget'
 import styles from './Widgets.module.css'
@@ -13,7 +13,7 @@ const OrderedAspectWidget = ({ items }) =>
   ))
 
 const AspectWidgetGroup = ({ data }) => {
-  const { formatMessage: intlFormatMessage } = useI18n()
+  const { formatMessage: intlFormatMessage } = useIntl()
   return (
     <Card className={styles.summary__groupCard}>
       <Grid container spacing={2}>

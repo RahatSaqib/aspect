@@ -4,13 +4,13 @@ import { useFormikContext } from 'formik'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import './NotificationFormPage.module.css'
+import { useIntl } from 'react-intl'
 import { DetailHeader } from '../../../cleanComponents'
 import AspectForm from '../../../components/Form'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import useNotification from '../../../hooks/notification/useNotification'
 import usePartner from '../../../hooks/partner/usePartner'
-import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import validationSchema from './Forms/validation'
 import messages from './messages'
@@ -32,7 +32,7 @@ function buildAreaItems(id, target, data) {
 
 const NotificationFormPage = ({ id, onSubmit }) => {
   const notificationId = Number(id)
-  const intl = useI18n()
+  const intl = useIntl()
   const [formConfig, setFormConfig] = useState(false)
 
   const { data: jobFunctions } = useJobFunctions()
@@ -139,7 +139,7 @@ const NotificationFormPage = ({ id, onSubmit }) => {
 }
 
 const NotificationForm = ({ formConfig, onSubmit }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const { formik, meta } = useFormikContext()
 
   return (

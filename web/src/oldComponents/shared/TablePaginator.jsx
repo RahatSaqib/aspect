@@ -2,9 +2,8 @@ import React from 'react'
 import { Button } from '@mui/material'
 import min from 'lodash/min'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
-import useI18n from '../../hooks/useI18n'
 import styles from './TablePaginator.module.css'
 
 export const ALL_KEY = 'All'
@@ -129,7 +128,7 @@ const TablePaginator = ({
   pageSizeButtonKeys = PAGE_SIZE_BUTTON_KEYS,
   ...restProps
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <div className={`${styles[className]} ${styles.Container}`}>
       <div className={styles.Left}>

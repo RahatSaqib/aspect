@@ -2,9 +2,9 @@ import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import filter from 'lodash/filter'
 import sumBy from 'lodash/sumBy'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { getTimePeriod, formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
 import messages from '../graphMessages'
@@ -37,7 +37,7 @@ const calcOverallRate = (keyToCalc, totalTotal, gData, filterCriteria) => {
 }
 
 const DeviceStatusGraph = ({ assaysFromState }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState({

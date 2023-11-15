@@ -1,13 +1,13 @@
 import React from 'react'
 import isNil from 'lodash/isNil'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as Tr, DataTableCell as Td } from '../../../oldComponents/shared/tableBody'
 import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import messages from './messages'
 
 const TableRow = ({ item, extraColumns }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const { dateTimeFormat } = getAspectDisplayPreferences().toJS()
   return (
     <Tr className={styles.TableRow}>

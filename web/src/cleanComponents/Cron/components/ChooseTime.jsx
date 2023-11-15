@@ -1,7 +1,7 @@
 import React from 'react'
 import { MenuItem, TextField, Stack } from '@mui/material'
 import padStart from 'lodash/padStart'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { cronMessages as messages } from '../../../messages/index'
 import styles from '../styles.module.css'
 
@@ -15,7 +15,7 @@ const MINUTES = range(0, 60).map(m => ({
 }))
 
 const ChooseTime = ({ hour, minute, changeHours, changeMinutes, disabled }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <Stack direction="row" spacing={1} alignItems="flex-start" className={styles.Input_Wrapper}>

@@ -10,8 +10,8 @@ import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import { Cron, getCronHumanValue } from '../../../cleanComponents'
-import useI18n from '../../../hooks/useI18n'
 import { getFieldErrorProps } from '../Formik/Helpers'
 import messages from '../messages'
 
@@ -30,7 +30,7 @@ const CronForm = props => {
   const handleOnChange = (cronExpression, frequency) => {
     updateField(id, { cronExpression, frequency }, { formik, toggleEdit })
   }
-  const { locale, formatMessage } = useI18n()
+  const { locale, formatMessage } = useIntl()
   return (
     <FormControl component="fieldset" fullWidth>
       {isArray(initialRecurrency) ? (
