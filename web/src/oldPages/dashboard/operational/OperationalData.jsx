@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import LaunchIcon from '@mui/icons-material/Launch'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { DetailHeader } from '../../../cleanComponents'
-import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import messages from './messages'
 import OperationalDailyStatus from './OperationalDailyStatus'
@@ -10,7 +10,7 @@ import OperationalDashBoard from './OperationalDashBoard'
 import styles from './OperationalData.module.css'
 
 export const OperationalData = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [activeTab, setActiveTab] = useState('dashboard')
 
   return (

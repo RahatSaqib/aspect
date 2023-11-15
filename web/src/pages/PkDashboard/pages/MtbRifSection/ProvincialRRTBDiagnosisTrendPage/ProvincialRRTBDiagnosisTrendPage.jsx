@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
   StateAutocomplete,
@@ -10,7 +11,6 @@ import {
   fillData,
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
@@ -25,7 +25,7 @@ const endpointParams = [
 ]
 
 const ProvincialRRTBDiagnosisTrendPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [states, setState] = useState([])
   const [lgas, setLgas] = useState([])
@@ -70,7 +70,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
               setState(newValue)
               setLgas([])
             }}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <AspectSelect
             multiple
@@ -79,7 +79,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
             options={states.reduce((p, c) => [...p, ...c.lgas], [])}
             value={lgas}
             onChange={v => setLgas(v)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

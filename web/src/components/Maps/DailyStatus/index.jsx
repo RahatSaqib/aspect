@@ -1,6 +1,6 @@
 import React, { Fragment } from 'react'
 import { CircularProgress } from '@mui/material'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AspectCard from '../../AspectCard'
 import DailyStatusFilters from '../../Graphs/DailyStatus/DailyStatusFilters'
 import useDailyStatus from '../../Graphs/DailyStatus/Helpers/useDailyStatus'
@@ -17,7 +17,7 @@ const Loading = () => (
 )
 
 const DailyStatusMap = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
     statuses: { visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },

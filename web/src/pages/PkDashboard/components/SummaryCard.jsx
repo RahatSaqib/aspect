@@ -1,11 +1,11 @@
 import React from 'react'
 import { Card, CardContent, Divider } from '@mui/material'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import messages from '../PkDashboard.Messages'
 import DataRow from './DataRow'
 
 const SummaryCard = ({ items }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <Card>
       <CardContent sx={{ p: 2, '&:last-child': { pb: '16px' } }}>

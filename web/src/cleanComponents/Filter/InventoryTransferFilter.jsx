@@ -1,8 +1,8 @@
 import React, { useState } from 'react'
 import { Grid } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
-import useI18n from '../../hooks/useI18n'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { useAuthState } from '../../providers/AuthProvider'
@@ -11,7 +11,7 @@ import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector } from '../ind
 import FilterContainer from './FilterContainer'
 
 const InventoryTransferFilter = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
@@ -22,7 +22,7 @@ const InventoryTransferFilter = () => {
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
-            label={getCustomMessage(messages, 'state', user)}
+            label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
             onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
             countryId={state.countryId}
@@ -30,7 +30,7 @@ const InventoryTransferFilter = () => {
         </Grid>
         <Grid item xs={3}>
           <LgaSelect
-            label={getCustomMessage(messages, 'lga', user)}
+            label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
             onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
             stateId={state.stateId}
