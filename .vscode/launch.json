@@ -10,7 +10,9 @@
             "name": "Run Web",
             "runtimeExecutable": "yarn",
             "cwd": "${workspaceFolder}/web",
-            "runtimeArgs": ["start"]
+            "runtimeArgs": ["start"],
+            "console": "integratedTerminal",
+            "outputCapture": "std"
         },
         {
             "type": "node",
@@ -18,7 +20,9 @@
             "name": "Run Api",
             "runtimeExecutable": "yarn",
             "cwd": "${workspaceFolder}/api",
-            "runtimeArgs": ["start"]
+            "runtimeArgs": ["start"],
+            "console": "integratedTerminal",
+            "outputCapture": "std"
         },
         {
             "type": "node",
@@ -26,7 +30,9 @@
             "name": "Run db:reseed",
             "runtimeExecutable": "yarn",
             "cwd": "${workspaceFolder}/api",
-            "runtimeArgs": ["db:reseed"]
+            "runtimeArgs": ["db:reseed"],
+            "console": "integratedTerminal",
+            "outputCapture": "std"
         },
         {
             "type": "node",
@@ -34,7 +40,9 @@
             "name": "Run db:migrate",
             "runtimeExecutable": "yarn",
             "cwd": "${workspaceFolder}/api",
-            "runtimeArgs": ["db:migrate"]
+            "runtimeArgs": ["db:migrate"],
+            "console": "integratedTerminal",
+            "outputCapture": "std"
         }
     ]
 }
