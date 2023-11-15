@@ -208,7 +208,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                     <Grid item xs={12} md={4} lg={4}>
                       <DonutGraph
                         data={donutData.data}
-                        total={formatNumber(donutData.total)}
+                        total={donutData.total}
                         graphId="testPerformedMonthlytotal"
                         graphTitle={[
                           formatMessage(graphMessages.testsOverTimeAvgTitle)
