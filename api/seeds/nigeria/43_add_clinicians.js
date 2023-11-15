@@ -71,8 +71,7 @@ module.exports = require('../utils').seed(async knex => {
         canLogIn: 1,
         ...auditFields,
       })
-      const [jobId] = await knex('Job').insert({ personId, jobFunctionId })
-      await knex('JobContext').insert({ jobId, siteId })
+      await knex('JobContext').insert({ personId, jobFunctionId, siteId })
     } else {
       logger.warning(`NOT found geography for:${clinician.lga} and ${clinician.site}`)
     }
