@@ -1,15 +1,12 @@
 import React from 'react'
 import CloseIcon from '@mui/icons-material/RemoveCircle'
-import classnames from 'classnames/bind'
 import camelCase from 'lodash/camelCase'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
+import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
-import useI18n from '../../../hooks/useI18n'
 import { mergeToFiltersParams } from '../../../oldComponents/utils'
 import messages from './messages'
 import styles from './PersonDetail.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 export default ({ assignment, showLinks, onAskConfirmation }) => {
   if (!assignment) {
@@ -25,18 +22,18 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
   const searchCountryParams = getSearch({ countryId })
   const searchStateParams = getSearch({ countryId, stateId })
   const searchLgaParams = getSearch({ countryId, stateId, lgaId })
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const textForAssignmentItem = (i18nKey, name) => {
     return (messages[i18nKey] ? formatMessage(messages[i18nKey]) : name) || name
   }
   return (
-    <div className={cssClasses('Assignment__Section')}>
-      <div className={cssClasses('Assignment__Title')}>
+    <div className={styles.Assignment__Section}>
+      <div className={styles.Assignment__Title}>
         {formatMessage(messages[camelCase(assignment.jobFunctionName)])}
 
         {onAskConfirmation && (
-          <Link to="#" onClick={() => onAskConfirmation(assignment)} className={cssClasses('Assignment__Link')}>
+          <Link to="#" onClick={() => onAskConfirmation(assignment)} className={styles.Assignment__Link}>
             <CloseIcon style={{ fill: '--aspect-color-chill-blue-1' }} />
           </Link>
         )}
@@ -44,7 +41,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
       <div>
         <span>{assignment.countryName}</span>
         {showLinks && (
-          <Link to={`/browse/site?${searchCountryParams.toString()}`} className={cssClasses('Assignment__Link')}>
+          <Link to={`/browse/site?${searchCountryParams.toString()}`} className={styles.Assignment__Link}>
             <FaExternalLink />
           </Link>
         )}
@@ -52,7 +49,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
       <div>
         <span>{assignment.stateName || formatMessage(messages.allStates)}</span>
         {showLinks && (
-          <Link to={`/browse/site?${searchStateParams.toString()}`} className={cssClasses('Assignment__Link')}>
+          <Link to={`/browse/site?${searchStateParams.toString()}`} className={styles.Assignment__Link}>
             <FaExternalLink />
           </Link>
         )}
@@ -60,7 +57,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
       <div>
         <span>{assignment.lgaName || formatMessage(messages.allAreas)}</span>
         {showLinks && (
-          <Link to={`/browse/site?${searchLgaParams.toString()}`} className={cssClasses('Assignment__Link')}>
+          <Link to={`/browse/site?${searchLgaParams.toString()}`} className={styles.Assignment__Link}>
             <FaExternalLink />
           </Link>
         )}
@@ -70,7 +67,7 @@ export default ({ assignment, showLinks, onAskConfirmation }) => {
         {showLinks && (
           <Link
             to={siteId ? `/browse/site/${siteId}` : `/browse/site?${searchLgaParams.toString()}`}
-            className={cssClasses('Assignment__Link')}
+            className={styles.Assignment__Link}
           >
             <FaExternalLink />
           </Link>

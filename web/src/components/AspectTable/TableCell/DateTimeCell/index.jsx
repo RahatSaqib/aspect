@@ -1,11 +1,8 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import { bool, string, oneOfType } from 'prop-types'
 import { useAuthState } from '../../../../providers/AuthProvider'
 import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
 import styles from '../../Table.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const DateTimeCellBase = ({ value, flagged, since }) => {
   const { culture } = useAuthState()
@@ -14,7 +11,7 @@ const DateTimeCellBase = ({ value, flagged, since }) => {
   const dateFormatted = timeAndDate(value, 'yyyy-MM-dd hh:mm:ss')
 
   return (
-    <div className={cssClasses(`${isPast && flagged ? 'date__cell--past' : 'date__cell'}`)}>
+    <div className={`${isPast && flagged ? styles.date__cell__past : styles.date__cell}`}>
       {since ? timeSince : dateFormatted}
     </div>
   )

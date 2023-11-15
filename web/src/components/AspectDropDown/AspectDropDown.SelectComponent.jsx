@@ -1,6 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useCallback, useState } from 'react'
-import classnames from 'classnames/bind'
 import find from 'lodash/find'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
@@ -9,14 +8,11 @@ import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
 import isString from 'lodash/isString'
 import PropTypes from 'prop-types'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import Select from 'react-select'
-import useI18n from '../../hooks/useI18n'
 import UI_CONSTS from '../../utils/consts/UI'
 import { getMuiTheme, getAspectTheme } from './AspectDropDown.theme'
 import styles from './Dropdown.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const SelectComponent = ({
   action: dispatchFromRedux,
@@ -37,7 +33,7 @@ const SelectComponent = ({
   theme,
 }) => {
   messages = messages || {}
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [currentSelectedOption, setCurrentSelectedOption] = useState(null)
   const [defaultOption] = useState(selectedValue)
   const [options, setOptions] = useState([])
@@ -65,8 +61,11 @@ const SelectComponent = ({
     [identifier, dispatchFromRedux]
   )
 
+  const classes = `${styles.select__container} ${
+    classNames.controlContainer ? styles[classNames.controlContainer] : ''
+  }`
   return (
-    <div className={cssClasses('select__container', { [classNames.controlContainer]: !!classNames.controlContainer })}>
+    <div className={classes}>
       <Select
         components={components}
         name={identifier}

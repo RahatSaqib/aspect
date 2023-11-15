@@ -1,35 +1,32 @@
 import React from 'react'
 import { IconButton } from '@mui/material'
-import classnames from 'classnames/bind'
 import { func, number } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import IconProvider from '../../../IconProvider'
 import styles from '../../Table.module.css'
 import messages from '../messages'
 
-const cssClasses = classnames.bind(styles)
-
 const TableColumnOrderButtons = ({ headerIndex, headersLength, handleChangeColumnOrder }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
-    <div className={cssClasses('tableheader__orderbuttons')}>
+    <div className={styles.tableheader__orderbuttons}>
       <IconButton
         disabled={headerIndex <= 0}
         onClick={e => handleChangeColumnOrder(e, 'left', headerIndex)}
-        className={cssClasses('tableheader__orderbutton')}
+        className={styles.tableheader__orderbutton}
         data-testid={`order_left_${headerIndex}`}
         title={formatMessage(messages.moveColumnLeft)}
       >
-        <IconProvider icon="MdChevronLeft" className="tableheader__orderbutton" />
+        <IconProvider icon="MdChevronLeft" className={styles.tableheader__orderbuttons} />
       </IconButton>
       <IconButton
         disabled={headerIndex + 1 >= headersLength}
         onClick={e => handleChangeColumnOrder(e, 'right', headerIndex)}
-        className={cssClasses('tableheader__orderbutton')}
+        className={styles.tableheader__orderbutton}
         data-testid={`order_right_${headerIndex}`}
         title={formatMessage(messages.moveColumnRight)}
       >
-        <IconProvider icon="MdChevronRight" className="tableheader__orderbutton" />
+        <IconProvider icon="MdChevronRight" className={styles.tableheader__orderbuttons} />
       </IconButton>
     </div>
   )

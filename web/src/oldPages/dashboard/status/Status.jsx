@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo } from 'react'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useDispatch, useSelector } from 'react-redux'
 import {
   ErrorBoundary,
@@ -21,7 +21,6 @@ import {
   InventoryStatusGraph,
 } from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
-import useI18n from '../../../hooks/useI18n'
 import { useAuthState } from '../../../providers/AuthProvider'
 import { fetchAssays } from '../../../store/AssayRedux'
 import styles from './index.module.css'
@@ -29,10 +28,8 @@ import messages from './messages'
 import Reports from './Reports'
 import SummaryStatus from './SummaryStatus'
 
-const cssClasses = classnames.bind(styles)
-
 const Status = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const dispatch = useDispatch()
   const { isCountry } = useAuthState()
   useEffect(() => {
@@ -57,17 +54,17 @@ const Status = () => {
   const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
   return (
-    <div className={cssClasses('Container')}>
+    <div className={styles.Container}>
       <Helmet title={formatMessage(messages.statusTitle)} />
 
       <PermissionChecker permissions={['dashboard']}>
         <ErrorBoundary>
-          <SummaryStatus className={cssClasses('Section--summary')} dashboard="home" />
+          <SummaryStatus className={styles.Section__summary} dashboard="home" />
         </ErrorBoundary>
       </PermissionChecker>
 
       {assays ? (
-        <div className={cssClasses('wrapper')}>
+        <div className={styles.wrapper}>
           <PermissionChecker permissions={['dashboard']}>
             <ErrorBoundary>
               <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
@@ -159,7 +156,7 @@ const Status = () => {
       ) : null}
 
       <ErrorBoundary>
-        <Reports className={cssClasses('Section--withStatus')} title={formatMessage(messages.reportsTitle)} />
+        <Reports className={styles.Section__withStatus} title={formatMessage(messages.reportsTitle)} />
       </ErrorBoundary>
     </div>
   )

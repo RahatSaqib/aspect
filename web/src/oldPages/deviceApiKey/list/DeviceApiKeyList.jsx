@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { TableBody, Table } from '@mui/material'
-import classnames from 'classnames/bind'
 import intersectionWith from 'lodash/intersectionWith'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, DeviceApiKeyFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
@@ -14,7 +14,6 @@ import useDeviceApiKeyAssign from '../../../hooks/deviceApiKey/useDeviceApiKeyAs
 import useDeviceApiKeyGenerate from '../../../hooks/deviceApiKey/useDeviceApiKeyGenerate'
 import useDeviceApiKeyUpdate from '../../../hooks/deviceApiKey/useDeviceApiKeyUpdate'
 import useExportDeviceApiKey from '../../../hooks/deviceApiKey/useExportDeviceApiKey'
-import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
@@ -29,13 +28,11 @@ import styles from './DeviceApiKeyList.module.css'
 import DeviceApiKeyTableRow from './DeviceApiKeyTableRow'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
 const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
 
 export const DeviceApiKeyList = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
@@ -146,7 +143,7 @@ export const DeviceApiKeyList = () => {
           {intl.formatMessage(messages.assign)}
         </AspectButton>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.title)} />
         <DeviceApiKeyFilter />
         <div>
@@ -168,7 +165,7 @@ export const DeviceApiKeyList = () => {
             intl={intl}
           />
         </div>
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton
               onExport={onExportClick}
@@ -180,7 +177,7 @@ export const DeviceApiKeyList = () => {
             <BrowseEmptyList />
           ) : (
             <>
-              <Table className={cssClasses('DeviceApiKeyDataTable')}>
+              <Table className={styles.DeviceApiKeyDataTable}>
                 <DataTableHead
                   navigate={navigate}
                   location={location}

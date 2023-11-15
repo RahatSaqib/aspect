@@ -1,23 +1,15 @@
 import React from 'react'
 import { Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import styles from './Form.module.css'
 
-const cssClasses = classnames.bind(styles)
-
 const FormSectionHeader = ({ classNames, header, headerI18nKey, messages }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
+
+  const classes = `${styles.form__sectionHeader} ${classNames.sectionHeader ? styles[classNames.sectionHeader] : ''}`
   return (
-    <Grid
-      item
-      xs={2}
-      className={cssClasses('form__sectionHeader', {
-        [classNames.sectionHeader]: !!classNames.sectionHeader,
-      })}
-      id={headerI18nKey}
-    >
+    <Grid item xs={2} className={classes} id={headerI18nKey}>
       {headerI18nKey ? formatMessage(messages[headerI18nKey]) : header}
     </Grid>
   )

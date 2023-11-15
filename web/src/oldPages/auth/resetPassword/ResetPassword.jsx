@@ -6,14 +6,14 @@ import { connect } from 'react-redux'
 import { Link } from 'react-router-dom'
 import { compose, withProps } from 'recompose'
 import { bindActionCreators } from 'redux'
-import messages from './messages'
-import styles from './ResetPassword.module.css'
-import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
-import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 import config from '../../../config'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import { showError, showAcknowledgement } from '../../../store/AppNotificationRedux'
 import { resetPasswordEnterEmailAddress, resetPasswordEnterPassword } from '../../../store/AuthRedux'
+import messages from './messages'
+import styles from './ResetPassword.module.css'
+import ResetPasswordEnterEmail from './ResetPasswordEnterEmail'
+import ResetPasswordEnterPassword from './ResetPasswordEnterPassword'
 
 const enhance = compose(
   injectIntl,

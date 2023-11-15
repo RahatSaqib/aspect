@@ -3,6 +3,7 @@ import isPlainObject from 'lodash/isPlainObject'
 import map from 'lodash/map'
 import reduce from 'lodash/reduce'
 import unset from 'lodash/unset'
+import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { useParams, useNavigate } from 'react-router-dom'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
@@ -11,7 +12,6 @@ import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import { NOTIFICATION_KEY } from '../../../hooks/notification/notificationKeys'
 import useSaveNotification from '../../../hooks/notification/useSaveNotification'
 import usePartner from '../../../hooks/partner/usePartner'
-import useI18n from '../../../hooks/useI18n'
 import getFormConfig from './Forms/editConfig'
 import Create from './NotificationFormPage.Create'
 import Update from './NotificationFormPage.Update'
@@ -19,7 +19,7 @@ import Update from './NotificationFormPage.Update'
 const NotificationFormPage = () => {
   const queryClient = useQueryClient()
   const { notificationId } = useParams()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const { data: jobFunctions } = useJobFunctions()
   const { data: partner } = usePartner()
@@ -127,7 +127,7 @@ const NotificationFormPage = () => {
             if (!isNew) {
               queryClient.invalidateQueries([NOTIFICATION_KEY, Number(notificationId)])
             }
-            navigate('/browse/notification')
+            navigate('/browse/notification/types')
           },
         }
       )

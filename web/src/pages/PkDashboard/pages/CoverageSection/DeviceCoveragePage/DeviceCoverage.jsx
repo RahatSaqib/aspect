@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Grid } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { objectToArray, Loading } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
@@ -30,7 +30,7 @@ const columns = [
 ]
 
 const DeviceCoveragePage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [filter] = useState()
 
   const { data: { data } = {}, isLoading } = useQuery(

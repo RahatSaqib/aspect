@@ -36,7 +36,6 @@ import range from 'lodash/range'
 import times from 'lodash/times'
 import upperFirst from 'lodash/upperFirst'
 import values from 'lodash/values'
-import { i18nWrapper } from '../../../../providers/I18nProvider'
 import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import { getAspectDisplayPreferences } from '../../../../utils/LocalStorage'
 import messages from '../messages'
@@ -276,9 +275,8 @@ const monthRangeByCount = (date, offset, dateFormat) => ({
   maxDate: format(endOfMonth(subMonths(date, offset)), dateFormat),
 })
 
-const dateRangeOptions = (key, showLast30Days = true) => {
+const dateRangeOptions = (formatMessage, formatDate, key, showLast30Days = true) => {
   const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
-  const { formatDate, formatMessage } = i18nWrapper()
   const dateFormatValue = 'yyyy-MM-dd'
   const dateFormatMonths = { month: 'long', year: 'numeric' }
   const today = negateTimeZoneOffset(new Date())

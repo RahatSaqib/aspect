@@ -6,7 +6,15 @@ const endpointUtils = require('../utils/endpointUtils')
 describe('person endpoints', () => {
   function setupRoute(method, path, serviceStub) {
     const endpoints = proxyquire('../../src/person/endpoints', {
-      './service': serviceStub,
+      './listPeople': serviceStub,
+      './listRefreshTokens': serviceStub,
+      './availableContacts': serviceStub,
+      './assignContact': serviceStub,
+      './unAssignContact': serviceStub,
+      './updatePerson': serviceStub,
+      './showPerson': serviceStub,
+      './updateRefreshToken': serviceStub,
+      './updatePersonUserPreferences': serviceStub,
     })
     return _.find(endpoints.routes, { method, path })
   }

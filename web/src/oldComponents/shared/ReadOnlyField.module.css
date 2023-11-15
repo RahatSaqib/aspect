@@ -24,18 +24,18 @@
   text-decoration: none !important;
 }
 
-.Container--large {
+.Container__large {
   font-size: 1.15rem;
 }
 
 .Container__Label {
   font-size: 0.75em;
-  color: var(--aspect-color-silver);
+  color: var(--aspect-color-silver, #9e9e9e);
   display: block;
   padding: 0 0 2px 0;
 }
 
-.Container__Label--hidden {
+.Container__Label__hidden {
   display: none;
 }
 

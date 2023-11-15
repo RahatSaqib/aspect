@@ -1,16 +1,15 @@
 import React, { useState, useEffect } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
-import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import isEmpty from 'lodash/isEmpty'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, ReporterFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
@@ -22,8 +21,6 @@ import { getExportableFile, REPORTERS_LIST, REPORTERS_LIST_REVOKE_ONE } from '..
 import messages from './messages'
 import { ReporterDataTable, ReporterDataTableHead, ReporterDataTableRow } from './ReporterDataTable'
 import styles from './ReporterList.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const getBaseColumns = formatMessage => {
   return Immutable.List([
@@ -92,15 +89,15 @@ export const ReporterListWithProps = ({
   onExportClick,
   pageSize,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <>
       <DetailHeader name={formatMessage(messages.reportersTitle)} disableBack />
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.reportersTitle)} />
         <ReporterFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton
               onExport={onExportClick}
@@ -114,7 +111,7 @@ export const ReporterListWithProps = ({
             <BrowseEmptyList />
           ) : (
             <>
-              <ReporterDataTable className={cssClasses('ReporterDataTable')}>
+              <ReporterDataTable className={styles.ReporterDataTable}>
                 <ReporterDataTableHead
                   navigate={navigate}
                   location={location}
@@ -133,7 +130,7 @@ export const ReporterListWithProps = ({
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}
-                className={cssClasses('BrowseTablePaginator')}
+                className={styles.BrowseTablePaginator}
                 paginatorStatus={messages.paginatorStatus}
                 total={table.total}
                 pageAt={pageAt}
@@ -167,7 +164,7 @@ const ReporterList = () => {
   const [total, setTotal] = useState()
   const [pagination, setPagination] = useState(getCurrentPagination(location))
   const [columns, setColumns] = useState(Immutable.List([]))
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const { sortCol, sortDir, page, size } = pagination
   const params = { ...pagination, ...filters }

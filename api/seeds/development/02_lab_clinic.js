@@ -278,8 +278,7 @@ async function seed(knex) {
     },
   ])
 
-  const [jobIdAdmin] = await knex('Job').insert([{ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
-  await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
+  await knex('JobContext').insert({ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin, geographyId })
 
   const statesByName = malawiStates.reduce((memo, state) => {
     memo[state.name.toLowerCase()] = state
@@ -408,10 +407,7 @@ async function seed(knex) {
         ...auditFields,
       })
 
-      const [jobIdLabAdmin] = await knex('Job').insert([
-        { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin },
-      ])
-      await knex('JobContext').insert({ jobId: jobIdLabAdmin, siteId })
+      await knex('JobContext').insert({ personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin, siteId })
 
       if (lab.devices) {
         await Promise.all(

@@ -10,14 +10,13 @@ const issueToDeleteId = []
 async function getPersonByName(personName) {
   return knex('Person as p')
     .join('Geography as g', 'g.id', 'p.geographyId')
-    .join('Job as j', 'p.id', 'j.personId')
-    .join('JobContext as jc', 'jc.jobId', 'j.id')
+    .join('JobContext as jc', 'p.id', 'jc.personId')
     .where({ name: personName })
     .first(
       'p.id as personId',
       'p.lastPartnerId as partnerId',
       'p.geographyId',
-      'j.jobFunctionId',
+      'jc.jobFunctionId',
       'g.countryId',
       'g.stateId',
       'g.lgaId',

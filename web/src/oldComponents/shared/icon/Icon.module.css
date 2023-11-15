@@ -7,22 +7,22 @@
   height: 20px;
 }
 
-.Icon--xs {
+.Icon__xs {
   width: 12px;
   height: 12px;
 }
 
-.Icon--sm {
+.Icon__sm {
   width: 16px;
   height: 16px;
 }
 
-.Icon--md {
+.Icon__md {
   width: 20px;
   height: 20px;
 }
 
-.Icon--lg {
+.Icon__lg {
   width: 36px;
   height: 36px;
 }

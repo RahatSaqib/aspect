@@ -1,14 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import filter from 'lodash/filter'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { getWhitelistedAssays } from '../../../utils/utils/graph'
@@ -24,8 +23,6 @@ import {
   negateTimeZoneOffset,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
-
-const cssClasses = classnames.bind(styles)
 
 const assays = [
   'abbottM2000DBSHivVL',
@@ -44,7 +41,7 @@ const endPointParams = {
 }
 
 const TreatmentStatusGraph = ({ assaysFromState }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
@@ -131,15 +128,15 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
   return isLoading ? (
     <Loading />
   ) : (
-    <Grid container className={cssClasses('Graph_Container')}>
+    <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
           <CardHeader title={formatMessage(graphMessages.treatmentGraphStatusMonthly)} />
           <CardContent>
-            <Grid container spacing={1} className={cssClasses('Graph_Content')}>
+            <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
-                <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                  <Grid item xs={12} md={12} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                <Grid container spacing={2} className={styles.Graph_Content_Container}>
+                  <Grid item xs={12} md={12} lg={12} className={styles.Graph_Content_ShowLabel}>
                     <FormControlLabel
                       label={formatMessage(graphMessages.showValuesLabel)}
                       control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}

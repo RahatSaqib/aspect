@@ -1,14 +1,10 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import classnames from 'classnames/bind'
 import min from 'lodash/min'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { compose, withProps, withHandlers, pure } from 'recompose'
-import useI18n from '../../hooks/useI18n'
 import styles from './TablePaginator.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 export const ALL_KEY = 'All'
 
@@ -132,13 +128,13 @@ const TablePaginator = ({
   pageSizeButtonKeys = PAGE_SIZE_BUTTON_KEYS,
   ...restProps
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
-    <div className={cssClasses(className, 'Container')}>
-      <div className={cssClasses('Left')}>
+    <div className={`${styles[className]} ${styles.Container}`}>
+      <div className={styles.Left}>
         <Button
           classes={{
-            root: cssClasses('Left__Button'),
+            root: styles.Left__Button,
           }}
           disabled={!hasFirstPage}
           color="primary"
@@ -150,7 +146,7 @@ const TablePaginator = ({
         </Button>
         <Button
           classes={{
-            root: cssClasses('Left__Button'),
+            root: styles.Left__Button,
           }}
           disabled={!hasPreviousPage}
           color="primary"
@@ -160,7 +156,7 @@ const TablePaginator = ({
           <FaAngleLeft />
           {formatMessage(timedMessageUsed ? messages.newer : messages.previous)}
         </Button>
-        <div className={cssClasses('Left__Status')}>
+        <div className={styles.Left__Status}>
           {formatMessage(paginatorStatus, {
             firstItemIndex,
             lastItemIndex,
@@ -169,7 +165,7 @@ const TablePaginator = ({
         </div>
         <Button
           classes={{
-            root: cssClasses('Left__Button', 'Left__Button--next'),
+            root: [styles.Left__Button, styles.Left__Button__next],
           }}
           disabled={!hasNextPage}
           color="primary"
@@ -181,7 +177,7 @@ const TablePaginator = ({
         </Button>
         <Button
           classes={{
-            root: cssClasses('Left__Button', 'Left__Button--next'),
+            root: [styles.Left__Button, styles.Left__Button__next],
           }}
           disabled={!hasLastPage}
           color="primary"
@@ -192,16 +188,14 @@ const TablePaginator = ({
           <FaAngleDoubleRight />
         </Button>
       </div>
-      <div className={cssClasses('Right')}>
+      <div className={styles.Right}>
         {pageSizeButtonKeys.map(key => (
           <Button
             key={key}
             classes={{
-              root: cssClasses('Right__Button'),
+              root: styles.Right__Button,
             }}
-            className={cssClasses({
-              selected: key !== ALL_KEY ? key === pageSize : pageSize === total,
-            })}
+            className={`${(key !== ALL_KEY ? key === pageSize : pageSize === total) ? 'selected' : ''}`}
             onClick={restProps[`onPageSizeChange${key}`]}
             variant="contained"
             color="primary"
