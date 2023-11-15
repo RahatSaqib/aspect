@@ -18,6 +18,12 @@ const { addExtraData } = require('./options')
 const resultsTransmittedDashboard = require('./resultsTransmitted')
 const activityOverTimeDashboard = require('./activityOverTime')
 
+const dashboardWidgetsBase = require('../../seeds/fixtures/dashboardWidgetsBase')
+
+const {
+  stat: { activeDevicesCnt, totalNumberOfModules, activeModules, moduleSwaps },
+} = dashboardWidgetsBase
+
 const i18nKeys = {
   // Dashboard
   sitesTitle: 'sitesTitle',
@@ -36,10 +42,10 @@ const i18nKeys = {
 }
 
 const dashboardWidgetTitle = [
-  'Current Active/Online Devices',
-  'Module Swaps (GeneXpert only)',
-  'Total Modules',
-  'Active Modules',
+  activeDevicesCnt.title,
+  moduleSwaps.title,
+  totalNumberOfModules.title,
+  activeModules.title,
 ]
 
 async function getDashboardWidget({ id, partnerId }, options) {
