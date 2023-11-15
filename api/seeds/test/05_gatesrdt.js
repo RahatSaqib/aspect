@@ -139,8 +139,7 @@ async function seed(knex) {
     },
   ])
 
-  const [jobIdAdmin] = await knex('Job').insert([{ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
-  await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
+  await knex('JobContext').insert({ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin, geographyId })
 
   // Issue Escalation Triggers
   await knex('IssueEscalationTrigger').insert([
