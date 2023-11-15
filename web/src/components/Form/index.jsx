@@ -15,7 +15,7 @@ const AspectForm = ({ config: { sections, classNames, messages: customMessages }
   }
 
   classNames = classNames || {}
-
+  console.log('xxx')
   const classes = `${styles.form__container} ${classNames.container ? styles[classNames.container] : ''}`
   return (
     <Grid container className={classes}>

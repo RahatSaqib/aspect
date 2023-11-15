@@ -3,7 +3,7 @@ import isNil from 'lodash/isNil'
 import { useIntl } from 'react-intl'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as Tr, DataTableCell as Td } from '../../../oldComponents/shared/tableBody'
-import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
 import messages from './messages'
 
 const TableRow = ({ item, extraColumns }) => {

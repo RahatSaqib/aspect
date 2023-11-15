@@ -1,7 +1,6 @@
 import React from 'react'
 import { Card, Grid } from '@mui/material'
 import PropTypes from 'prop-types'
-import AspectTitle from './AspectTitle'
 import styles from './Card.module.css'
 
 const CardHeader = ({ props }) => {
@@ -13,7 +12,15 @@ const CardHeader = ({ props }) => {
       <Grid container spacing={1} className={styles.card__headerContainer}>
         {title ? (
           <Grid item xs={6} className={styles.card__title}>
-            <AspectTitle title={title} classNames={classNames} />
+            <div className={styles.title__container}>
+              <span
+                className={`${styles.title__label} ${
+                  classNames?.cardTitleText ? styles[classNames?.cardTitleText] : ''
+                }`}
+              >
+                {title}
+              </span>
+            </div>
           </Grid>
         ) : null}
         {actionComponent ? (

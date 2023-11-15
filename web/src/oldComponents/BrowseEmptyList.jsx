@@ -2,7 +2,7 @@ import React from 'react'
 import { Button } from '@mui/material'
 import { defineMessages, useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import { useFilterUpdate } from '../providers/FilterProvider'
+import useFilterUpdate from '../hooks/useFilterUpdate'
 
 const messages = defineMessages({
   noResultsTitle: { id: 'shared.EmptyList.noResultsTitle', defaultMessage: 'No results match your selected filters' },

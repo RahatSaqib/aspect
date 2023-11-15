@@ -10,11 +10,11 @@ import { useSelector, Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import store from '../store/store'
 import getTheme from '../theme'
-import LocalStorage from '../utils/LocalStorage'
-import { AuthProvider } from './AuthProvider'
-import { FilterProvider } from './FilterProvider'
-import { I18nProvider, dateFNSLocales } from './I18nProvider'
-import { RoutesPermissionProvider } from './RoutePermissions'
+import LocalStorage from '../oldComponents/LocalStorage'
+import AuthProvider from './AuthProvider'
+import FilterProvider from './FilterProvider'
+import I18nProvider from './I18nProvider'
+import dateFNSLocales from './I18nProvider/dateFNSLocales'
 
 const jss = create({ ...jssPreset(), insertionPoint: 'insertion-point-jss' })
 
@@ -37,9 +37,7 @@ const AppWithProviders = ({ children }) => {
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocales[culture]}>
               <BrowserRouter>
                 <AuthProvider>
-                  <FilterProvider>
-                    <RoutesPermissionProvider>{children}</RoutesPermissionProvider>
-                  </FilterProvider>
+                  <FilterProvider>{children}</FilterProvider>
                 </AuthProvider>
               </BrowserRouter>
             </LocalizationProvider>

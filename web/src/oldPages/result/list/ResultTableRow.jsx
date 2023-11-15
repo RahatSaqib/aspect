@@ -8,7 +8,7 @@ import { useIntl } from 'react-intl'
 import PermissionChecker from '../../../components/PermissionChecker'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
 import formatters from '../formatters'
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
