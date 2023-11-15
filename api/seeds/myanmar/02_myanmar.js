@@ -157,13 +157,10 @@ async function seed(knex) {
     modules.dashboard.actionInventoryLevelUpdate,
   ])
 
-  // Admin Job
-  const [jobIdAdmin] = await knex('Job').insert({
+  // Admin JobContext
+  await knex('JobContext').insert({
     personId: adminPersonId,
     jobFunctionId: jobFunctionIdAdmin,
-  })
-  await knex('JobContext').insert({
-    jobId: jobIdAdmin,
     geographyId: myanmarGeographyId,
   })
 
@@ -196,12 +193,9 @@ async function seed(knex) {
         timezone: myanmarCountry.timezone,
         ...auditFields,
       })
-      const [jobIdRegion] = await knex('Job').insert({
+      await knex('JobContext').insert({
         personId: regionPersonId,
         jobFunctionId: jobFunctionIdRegionalOfficer,
-      })
-      await knex('JobContext').insert({
-        jobId: jobIdRegion,
         geographyId: regionId,
       })
       await Promise.all(

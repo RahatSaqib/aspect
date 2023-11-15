@@ -170,8 +170,7 @@ async function createSite(knex, { partner, user, site }) {
   // find geography for current user
   const { id: geographyId } = await knex('Geography as g')
     .join('JobContext as jc', 'g.id', 'jc.geographyId')
-    .join('Job as j', 'jc.jobId', 'j.id')
-    .join('Person as p', 'j.personId', 'p.id')
+    .join('Person as p', 'jc.personId', 'p.id')
     .join('User as u', 'p.userId', 'u.id')
     .where('p.lastPartnerId', partnerId)
     .andWhere('u.name', user)

@@ -3,6 +3,7 @@ const { hashSync } = require('bcrypt')
 const Promise = require('bluebird')
 const { adminUserName } = require('./fixtures/partnerData')
 const config = require('../../src/config')
+const { upsertSingle } = require('../utils')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -20,9 +21,8 @@ async function seed(knex) {
     .leftJoin('JobContext as jc', qb => {
       qb.on('s.id', 'jc.siteId').andOn('dt.id', 'jc.deviceTypeId')
     })
-    .leftJoin('Job as j', 'jc.jobId', 'j.id')
     .leftJoin('JobFunction as jf', qb => {
-      qb.on('j.jobFunctionId', 'jf.id').andOn(knex.raw(`jf.externalId = 'clinician'`))
+      qb.on('jc.jobFunctionId', 'jf.id').andOn(knex.raw(`jf.externalId = 'clinician'`))
     })
     .where('dt.externalId', 'molbioTruenat')
     .andWhere(qb => qb.whereNull('jf.id'))
@@ -74,25 +74,12 @@ async function seed(knex) {
           ...auditFields,
         })
       }
-      const job =
-        (await knex('Job as j')
-          .leftJoin('JobContext as jc', qb => qb.on('j.id', 'jc.jobId').andOn('jc.siteId', truenatResultSite.id))
-          .where('j.jobFunctionId', clinicianJobFunctionId)
-          .andWhere('j.personId', truenatClinician.id)
-          .first('j.id', 'jc.siteId')) || {}
-      if (!job.id) {
-        ;[job.id] = await knex('Job').insert({
-          personId: truenatClinician.id,
-          jobFunctionId: clinicianJobFunctionId,
-        })
-      }
-      if (!job.siteId) {
-        await knex('JobContext').insert({
-          jobId: job.id,
-          siteId: truenatResultSite.id,
-          deviceTypeId: truenatResultSite.deviceTypeId,
-        })
-      }
+      await upsertSingle(knex, 'JobContext', {
+        personId: truenatClinician.id,
+        jobFunctionId: clinicianJobFunctionId,
+        siteId: truenatResultSite.id,
+        deviceTypeId: truenatResultSite.deviceTypeId,
+      })
     })
   }
 }

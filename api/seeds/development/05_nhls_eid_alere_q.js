@@ -229,9 +229,9 @@ async function seed(knex) {
     .pluck('id')
   const [jobFunctionIdLabUser] = await knex('JobFunction').where({ externalId: 'labUser', partnerId }).pluck('id')
 
-  const [jobIdAdmin] = await knex('Job').insert([{ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
   await knex('JobContext').insert({
-    jobId: jobIdAdmin,
+    personId: adminPersonId,
+    jobFunctionId: jobFunctionIdAdmin,
     geographyId: southAfricaGeographyId,
   })
 
@@ -265,12 +265,9 @@ async function seed(knex) {
         timezone,
         ...auditFields,
       })
-      const [jobIdLab] = await knex('Job').insert({
+      await knex('JobContext').insert({
         personId: labPersonId,
         jobFunctionId: jobFunctionIdLabUser,
-      })
-      await knex('JobContext').insert({
-        jobId: jobIdLab,
         siteId,
       })
     })
@@ -2012,17 +2009,15 @@ async function seed(knex) {
       )
       await Promise.each(tagsToAppendToPerson, async tag => knex('PersonTag').insert({ tagId: tag.id, personId }))
     }
-    const [jobId] = await knex('Job').insert({
-      personId,
-      jobFunctionId: person.jobFunctionId,
-    })
+
     if (person.jobFunctionId === jobFunctionIdLabUser) {
       await knex('JobContext').insert({
-        jobId,
+        personId,
+        jobFunctionId: person.jobFunctionId,
         siteId: siteIds[person.deploymentShortName],
       })
     } else {
-      await knex('JobContext').insert({ jobId, geographyId })
+      await knex('JobContext').insert({ personId, jobFunctionId: person.jobFunctionId, geographyId })
     }
   })
 }

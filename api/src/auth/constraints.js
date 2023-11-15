@@ -98,9 +98,8 @@ async function getContext({ userId, partnerId, jobFunctionId }) {
 
   return knex('JobContext as jc')
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where(_.omitBy(filter, _.isNil))
     .distinct(
       'g.countryId',
@@ -111,7 +110,7 @@ async function getContext({ userId, partnerId, jobFunctionId }) {
       'jc.assayTypeId',
       'jc.assayId',
       'jc.deviceTypeId',
-      'j.jobFunctionId',
+      'jc.jobFunctionId',
       knex.raw('0 AS isAdmin')
     )
 }
@@ -148,10 +147,9 @@ async function getJobConstraints(personId, jobFunctionId) {
     .leftJoin('AssayType as at', 'jc.assayTypeId', 'at.id')
     .leftJoin('Assay as a', 'jc.assayId', 'a.id')
     .leftJoin('DeviceType as dt', 'jc.deviceTypeId', 'dt.id')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
     .where({
-      'j.personId': personId,
+      'jc.personId': personId,
       'jf.id': jobFunctionId,
     })
     .distinct(
@@ -164,7 +162,7 @@ async function getJobConstraints(personId, jobFunctionId) {
       'at.id as assayTypeId',
       'a.id as assayId',
       'dt.id as deviceTypeId',
-      'j.jobFunctionId',
+      'jc.jobFunctionId',
       knex.raw('0 AS isAdmin')
     )
 
