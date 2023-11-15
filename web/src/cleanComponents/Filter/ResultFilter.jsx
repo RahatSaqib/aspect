@@ -68,7 +68,7 @@ const ResultFilter = () => {
                 label={formatMessage(messages.resultGroup)}
                 value={state?.resultCategoryGroupId ?? []}
                 onChange={e => setState({ ...state, resultCategoryGroupId: e })}
-                assayId={!isArray(state?.assayId) ? [state?.assayId] : state?.assayId}
+                assayId={!state?.assayId ? [] : !isArray(state?.assayId) ? [state?.assayId] : state?.assayId}
               />
             </Grid>
           </>
