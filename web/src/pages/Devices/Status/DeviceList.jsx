@@ -19,6 +19,7 @@ import subMonths from 'date-fns/subMonths'
 import Immutable from 'immutable'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, DeviceListFilter } from '../../../cleanComponents'
@@ -28,7 +29,6 @@ import { DEVICE_LIST } from '../../../components/QueryFetch/Device/index'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
-import useI18n from '../../../hooks/useI18n'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
@@ -124,7 +124,7 @@ const getAvailableTargetDevices = (deviceList, sourceDevicesIds, siteToMergeDevi
 const DeviceList = () => {
   const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true, showUnapprovedDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const { displayPreferences } = useAuthState()
   const location = useLocation()
@@ -176,6 +176,7 @@ const DeviceList = () => {
     isError,
     error,
     isLoading: tableLoading,
+    refetch,
   } = useQuery(
     [DEVICE_LIST.KEY, { params }],
     async () => fetchWrapperForQueries({ endpoint: DEVICE_LIST.ENDPOINT, params: { ...params, hasResults: 1 } }),
@@ -222,7 +223,7 @@ const DeviceList = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.devicesTitle)} disableBack>
-        <PermissionChecker permissions={['device:edit']}>
+        <PermissionChecker permissions={['device:admin']}>
           <AspectButton
             onClick={() => {
               setConfirmationVisible(false)
@@ -438,7 +439,7 @@ const DeviceList = () => {
                       { sourceDevicesIds, targetDeviceId },
                       {
                         onSuccess: () => {
-                          queryClient.invalidateQueries([DEVICE_LIST.KEY, { params }])
+                          refetch()
                           /**
                            * with setting state var `isProcessingMergeDevices` back to false
                            * we explicitly re-render page to let `useQuery` to update `data`

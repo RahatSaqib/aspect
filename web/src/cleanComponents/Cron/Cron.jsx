@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Card, CardContent, Tab, Tabs } from '@mui/material'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { cronMessages as messages } from '../../messages'
 import DisplayCard from './components/DisplayCard'
 import Daily from './Daily'
@@ -24,7 +24,7 @@ const getInitialTabIndex = value => {
 }
 
 const Cron = ({ showResultText, showResultCron, onChange, value }) => {
-  const { locale, formatMessage } = useI18n()
+  const { locale, formatMessage } = useIntl()
   const [selectedTabIndex, setSelectedTabIndex] = useState(getInitialTabIndex(value))
 
   useEffect(() => {

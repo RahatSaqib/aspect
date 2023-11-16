@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { TableBody, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, PersonFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import usePersons from '../../../hooks/person/usePersons'
-import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -24,7 +24,7 @@ import getExportableFile from './PersonQueries'
 export const PersonList = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { userPermissions, user } = useAuthState()
   const filters = useFilterValues(location.pathname)
   const sortPage = makeSortPageSelector({ sortCol: 'name' })
@@ -87,8 +87,8 @@ export const PersonList = () => {
                   columns={[
                     { key: 'name', label: formatMessage(messages.personName), sortable: true },
                     { key: 'level', label: formatMessage(messages.level), sortable: true },
-                    { key: 'state', label: getCustomMessage(messages, 'state', user), sortable: true },
-                    { key: 'lga', label: getCustomMessage(messages, 'lga', user), sortable: true },
+                    { key: 'state', label: getCustomMessage(formatMessage, messages, 'state', user), sortable: true },
+                    { key: 'lga', label: getCustomMessage(formatMessage, messages, 'lga', user), sortable: true },
                     { key: 'tags', label: formatMessage(messages.tags), sortable: true },
                     isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
                   ]}

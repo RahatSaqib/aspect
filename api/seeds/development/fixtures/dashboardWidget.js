@@ -36,6 +36,7 @@ const {
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
+    instrumentsConnected,
   },
 } = dashboardWidgetsBase
 
@@ -90,5 +91,6 @@ module.exports = {
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
+    instrumentsConnected,
   ],
 }

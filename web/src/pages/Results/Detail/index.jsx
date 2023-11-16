@@ -6,6 +6,7 @@ import keys from 'lodash/keys'
 import reduce from 'lodash/reduce'
 import startCase from 'lodash/startCase'
 import trim from 'lodash/trim'
+import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
@@ -15,7 +16,6 @@ import { FormikProvider } from '../../../components/Form/Formik/Context'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
-import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { ResultDetailsErrors as customErrorNotifications } from './errors'
 import messages from './messages'
@@ -23,7 +23,7 @@ import ResultTransferModal from './ResultTransferModal'
 import { getFormConfigWithData, updateValidationsAndFilters } from './utils'
 
 const AspectResultDetail = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const { resultId } = useParams()
   const { search } = useLocation()
@@ -112,7 +112,7 @@ const AspectResultDetail = () => {
 }
 
 const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
   const { setToggleEdit, formik, toggleEdit } = useFormikContext()
 

@@ -1,9 +1,9 @@
 import React, { useState } from 'react'
 import { Link, Menu } from '@mui/material'
 import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
+import { useIntl } from 'react-intl'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import PermissionChecker from '../../components/PermissionChecker'
-import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 import styles from './styles.module.css'
 
@@ -115,14 +115,22 @@ const getRawLinks = f => [
     ],
   },
   { href: '/browse/reporter', label: f(messages.reporters), perm: ['browse', '+reporter'] },
-  { href: '/browse/notification', label: f(messages.notifications), perm: ['browse', '+notification'] },
+  {
+    href: '/browse/notification',
+    label: f(messages.notifications),
+    perm: ['browse', '+notification'],
+    submenu: [
+      { href: '/browse/notification/types', label: f(messages.notificationTypes), perm: ['notification'] },
+      { href: '/browse/notification/logs', label: f(messages.notificationLogs), perm: ['notification'] },
+    ],
+  },
   { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', '+deviceApiKey'] },
   { href: '/reports', label: f(messages.reportsTitle), perm: ['+report'] },
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },
 ]
 
 const NavigationMenu = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const rawLinks = getRawLinks(formatMessage)
 

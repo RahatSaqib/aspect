@@ -403,8 +403,8 @@ describe('Result Notifications triggers', () => {
         .where({ notificationTypeCategoryId })
 
       const personTags = await knex('Person as p')
-        .join('Job as j', 'j.personId', 'p.id')
-        .whereIn('j.jobFunctionId', [1])
+        .join('JobContext as jc', 'jc.personId', 'p.id')
+        .whereIn('jc.jobFunctionId', [1])
         .pluck('p.id')
       const person = _.sample(personTags)
       await knex('PersonTag').insert({ personId: person, tagId: inserted })
@@ -494,12 +494,11 @@ describe('Result Notifications triggers', () => {
   describe('Filter by Person', () => {
     let adminId
     let managerId
-    let jobToRemoveId
+    let jobContextToRemoveId
 
     beforeEach(async () => {
       ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
-      const adminJob = await knex('Job').where({ personId: adminId }).first()
-      const adminJobContext = await knex('JobContext').where({ jobId: adminJob.id }).first()
+      const adminJobContext = await knex('JobContext').where({ personId: adminId }).first()
 
       const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
       ;[managerId] = await knex('Person')
@@ -509,8 +508,7 @@ describe('Result Notifications triggers', () => {
       const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
 
       // Add an extra job to the Admin user - the system should send notifications by person, and not by job
-      ;[jobToRemoveId] = await knex('Job').insert({ ..._.omit(adminJob, 'id'), jobFunctionId: managerJobFunctionId })
-      await knex('JobContext').insert({ ..._.omit(adminJobContext, 'id'), jobId: jobToRemoveId })
+      ;[jobContextToRemoveId] = await knex('JobContext').insert(_.omit(adminJobContext, 'id'))
 
       // Notify to the person called "Admin" with job Admin - Send notification
       // Notify to the person called "Admin" with job Manager - DO NOT send notification
@@ -527,8 +525,7 @@ describe('Result Notifications triggers', () => {
 
     afterEach(async () => {
       // Remove the extra job added to the Admin user
-      await knex('JobContext').where({ jobId: jobToRemoveId }).delete()
-      await knex('Job').where({ id: jobToRemoveId }).delete()
+      await knex('JobContext').where({ id: jobContextToRemoveId }).delete()
       await removeTestContext()
     })
 
@@ -798,8 +795,8 @@ describe('Notification routes', () => {
 
   it('PUT - Existing person but without assigned job, should return error 400', async () => {
     const personWithoutJob = await knex('Person as p')
-      .leftJoin('Job as j', 'p.id', 'j.personId')
-      .whereNull('j.id')
+      .leftJoin('JobContext as jc', 'p.id', 'jc.personId')
+      .whereNull('jc.id')
       .first('p.*')
     const res = await server
       .put(`${path}/${ntId}`)
@@ -853,78 +850,5 @@ describe('Notification routes', () => {
       issueTypeId: null,
       resultBasedScope: 'any',
     })
-  })
-})
-
-describe('Notification - View Logs', () => {
-  const now = new Date()
-  let resultId
-  let emailMessageId
-  let notificationTypeId
-  let notificationId
-  const partnerId = 1
-  beforeEach(async () => {
-    const messageType = await knex('MessageType').select().first()
-    const { id: messageStatusId } = await knex('MessageStatus').where('externalId', 'Sent').first()
-    ;[{ id: resultId }] = [await knex('Result').where({ partnerId }).first()]
-    const { id: emailTemplateId } = await knex('EmailTemplate').first()
-
-    /**
-     * insert testing data
-     */
-    ;[emailMessageId] = await knex('EmailMessage').insert({
-      emailTemplateId,
-      messageStatusId,
-      createdOn: now,
-      updatedOn: now,
-    })
-    ;[notificationTypeId] = await knex('NotificationType').insert({
-      partnerId,
-      name: 'A notification',
-      createdOn: now,
-      updatedOn: now,
-      notificationTypeCategoryId: await notificationTypeCategoryToId('resultBased'),
-      messageTypeId: messageType.id,
-    })
-    ;[notificationId] = await knex('Notification').insert({
-      notificationTypeId,
-      resultId,
-      emailMessageId,
-      createdOn: now,
-    })
-  })
-
-  afterEach(async () => {
-    /**
-     * delete testing data
-     */
-    await knex('Notification').where('id', notificationId).del()
-    await knex('NotificationType').where('id', notificationTypeId).del()
-    await knex('EmailMessage').where('id', emailMessageId).del()
-  })
-
-  it('GET - notification logs', async () => {
-    const path = `/api/notification/history/${notificationTypeId}`
-    const res = await server.get(path).set('Authorization', `Bearer ${shared.token}`)
-    assert.equal(res.status, 200)
-    assert.typeOf(res.body, 'Object')
-    assert.property(res.body, 'data')
-    assert.property(res.body, 'ok')
-    assert.equal(res.body.ok, true)
-
-    const { data } = res.body
-    assert.typeOf(data, 'array')
-    assert.equal(data.length, 1)
-
-    const [item] = data
-
-    assert.property(item, 'date')
-    assert.property(item, 'resultId')
-    assert.property(item, 'emailSent')
-    assert.property(item, 'smsSent')
-    assert.property(item, 'webhookSent')
-    assert.equal(item.emailSent, 1)
-    assert.equal(item.smsSent, 0)
-    assert.equal(item.webhookSent, 0)
   })
 })

@@ -1,14 +1,14 @@
 import React, { useState } from 'react'
 import { IconButton, Menu, MenuItem } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 import usePlaceholder from '../../hooks/notification/usePlaceholder'
-import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
 import messages from './messages'
 import styles from './Placeholders.module.css'
 
 const PlaceholderSelector = ({ onSelect, onClose, filter }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [anchorEl, setAnchorEl] = useState(null)
   const { isLoading, data } = usePlaceholder()
 

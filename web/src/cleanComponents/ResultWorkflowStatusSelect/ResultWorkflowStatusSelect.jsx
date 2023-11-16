@@ -1,12 +1,12 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
-import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 
 const ResultWorkflowStatusSelect = ({ id, name, label, value, onChange, error, helperText, disabled }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data: maintenanceStatuses, isLoading } = useWorkflowStatus()
 
   return isLoading ? (

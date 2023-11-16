@@ -9,7 +9,7 @@ const getPersonDetailsById = (personId, dataConstraints) => {
     .leftOuterJoin('State as s', 'g.stateId', 's.id')
     .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('Job as j', 'p.id', 'j.personId')
+    .leftOuterJoin('JobContext as jc', 'p.id', 'jc.personId')
     .modify(addConstraints, dataConstraints, { geography: 'g' })
     .where({ 'p.id': personId })
     .first(
@@ -42,7 +42,7 @@ const getPersonDetailsById = (personId, dataConstraints) => {
       'p.canLogIn',
       'p.disabled',
       'p.disabledOn',
-      'j.id as jobId'
+      'jc.id as jobContextId'
     )
 }
 
