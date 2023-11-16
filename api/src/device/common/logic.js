@@ -16,6 +16,7 @@ const {
   deleteDeviceFromFactTables,
   deleteDeviceSiteHistory,
   deleteDevice: deleteDeviceFromDb,
+  deleteMissingInventoryLots,
 } = require('./db')
 
 async function deleteDevice(deviceId, trknex) {
@@ -35,6 +36,7 @@ async function deleteDevice(deviceId, trknex) {
    */
   await deleteInventoryLog(deviceId, trknex)
   await deleteMessages(deviceId, trknex)
+  await deleteMissingInventoryLots(deviceId, trknex)
   await deleteResults(deviceId, trknex)
   await deleteDeviceFromDeviceOperation(deviceId, trknex)
   await deleteDeviceFromDeviceMaintenance(deviceId, trknex)
