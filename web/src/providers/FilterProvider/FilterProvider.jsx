@@ -136,7 +136,7 @@ function useFilterUpdate() {
     update(filterForLocation, pathname)
   }
 
-  const resetFilter = pathname => setFilter({ ...filter, [pathname]: { ...defaultFilter[pathname] } })
+  const resetFilter = pathname => setFilter({ ...filter, [pathname]: {} })
 
   return [update, removeFilter, resetFilter] // pathname is to allow changing the filter in other places before navigation
 }
