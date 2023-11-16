@@ -1,9 +1,9 @@
 import React from 'react'
 import isNil from 'lodash/isNil'
 import { useIntl } from 'react-intl'
+import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as Tr, DataTableCell as Td } from '../../../oldComponents/shared/tableBody'
-import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
 import messages from './messages'
 
 const TableRow = ({ item, extraColumns }) => {
