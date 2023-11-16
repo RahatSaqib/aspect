@@ -403,8 +403,8 @@ describe('Result Notifications triggers', () => {
         .where({ notificationTypeCategoryId })
 
       const personTags = await knex('Person as p')
-        .join('Job as j', 'j.personId', 'p.id')
-        .whereIn('j.jobFunctionId', [1])
+        .join('JobContext as jc', 'jc.personId', 'p.id')
+        .whereIn('jc.jobFunctionId', [1])
         .pluck('p.id')
       const person = _.sample(personTags)
       await knex('PersonTag').insert({ personId: person, tagId: inserted })
@@ -494,12 +494,11 @@ describe('Result Notifications triggers', () => {
   describe('Filter by Person', () => {
     let adminId
     let managerId
-    let jobToRemoveId
+    let jobContextToRemoveId
 
     beforeEach(async () => {
       ;[adminId] = await knex('Person').where({ email: config.admin.email }).pluck('id')
-      const adminJob = await knex('Job').where({ personId: adminId }).first()
-      const adminJobContext = await knex('JobContext').where({ jobId: adminJob.id }).first()
+      const adminJobContext = await knex('JobContext').where({ personId: adminId }).first()
 
       const [managerJobFunctionId] = await knex('JobFunction').where({ externalId: 'manager' }).pluck('id')
       ;[managerId] = await knex('Person')
@@ -509,8 +508,7 @@ describe('Result Notifications triggers', () => {
       const [adminJobFunctionId] = await knex('JobFunction').where({ externalId: 'admin' }).pluck('id')
 
       // Add an extra job to the Admin user - the system should send notifications by person, and not by job
-      ;[jobToRemoveId] = await knex('Job').insert({ ..._.omit(adminJob, 'id'), jobFunctionId: managerJobFunctionId })
-      await knex('JobContext').insert({ ..._.omit(adminJobContext, 'id'), jobId: jobToRemoveId })
+      ;[jobContextToRemoveId] = await knex('JobContext').insert(_.omit(adminJobContext, 'id'))
 
       // Notify to the person called "Admin" with job Admin - Send notification
       // Notify to the person called "Admin" with job Manager - DO NOT send notification
@@ -527,8 +525,7 @@ describe('Result Notifications triggers', () => {
 
     afterEach(async () => {
       // Remove the extra job added to the Admin user
-      await knex('JobContext').where({ jobId: jobToRemoveId }).delete()
-      await knex('Job').where({ id: jobToRemoveId }).delete()
+      await knex('JobContext').where({ id: jobContextToRemoveId }).delete()
       await removeTestContext()
     })
 
@@ -798,8 +795,8 @@ describe('Notification routes', () => {
 
   it('PUT - Existing person but without assigned job, should return error 400', async () => {
     const personWithoutJob = await knex('Person as p')
-      .leftJoin('Job as j', 'p.id', 'j.personId')
-      .whereNull('j.id')
+      .leftJoin('JobContext as jc', 'p.id', 'jc.personId')
+      .whereNull('jc.id')
       .first('p.*')
     const res = await server
       .put(`${path}/${ntId}`)
