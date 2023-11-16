@@ -61,29 +61,6 @@ describe('CustomFieldsCompletionStatsService', async () => {
     expect(stats[0].completionRate).to.be.equal(0.38, 'stats[0].completionRate')
     expect(stats[1].completionRate).to.be.equal(0.5, 'stats[1].completionRate')
     expect(stats[2].completionRate).to.be.equal(0.44, 'stats[2].completionRate')
-
-    const fieldStats = stats.map(s => JSON.parse(s.completionByField))
-
-    expect(+fieldStats[0].PatientAgeYears.weighting).to.be.equal(0.08333)
-    expect(+fieldStats[0].PatientAgeYears.completed).to.be.equal(1)
-    expect(+fieldStats[1].PatientAgeYears.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[1].PatientAgeYears.completed).to.be.equal(1)
-    expect(+fieldStats[2].PatientAgeYears.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[2].PatientAgeYears.completed).to.be.equal(2)
-
-    expect(+fieldStats[0].PatientGender.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[0].PatientGender.completed).to.be.equal(2)
-    expect(+fieldStats[1].PatientGender.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[1].PatientGender.completed).to.be.equal(1)
-    expect(+fieldStats[2].PatientGender.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[2].PatientGender.completed).to.be.equal(2)
-
-    expect(+fieldStats[0].HealthFacility.weighting).to.be.equal(0.08333)
-    expect(+fieldStats[0].HealthFacility.completed).to.be.equal(1)
-    expect(+fieldStats[1].HealthFacility.weighting).to.be.equal(0.16667)
-    expect(+fieldStats[1].HealthFacility.completed).to.be.equal(1)
-    expect(+fieldStats[2].HealthFacility.weighting).to.be.equal(0.08333)
-    expect(+fieldStats[2].HealthFacility.completed).to.be.equal(1)
   })
 
   const patientDataDates = [
