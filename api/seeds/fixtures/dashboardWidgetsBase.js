@@ -2223,11 +2223,8 @@ module.exports = {
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
-<<<<<<< HEAD
     totalNumberOfModules,
     activeModules,
-=======
     instrumentsConnected,
->>>>>>> develop
   },
 }
