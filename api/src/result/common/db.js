@@ -42,7 +42,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
         device: 'd',
         resultTransferFlag: true,
       },
-      { displayResult: 'all' }
+      { displayResult: 'all', showUnapprovedDevices: true }
     )
     .select({
       resultText: knex.raw(

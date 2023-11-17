@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-11-08T17:35:53.690Z\n"
+"POT-Creation-Date: 2023-11-15T18:39:51.843Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1541,6 +1541,9 @@ msgstr "Data de Calibração"
 msgid "Calibration Date is required"
 msgstr "A Data de Calibração é necessária"
 
+#. [notificationCategoryTypeSelect.notificationTypeCalibrationDueDate]
+#. defaultMessage is:
+#. Calibration Due Date
 #. [placeholder.calibrationDueDate]
 #. defaultMessage is:
 #. Calibration Due Date
@@ -1595,9 +1598,6 @@ msgstr "Não pode ser editado"
 #. defaultMessage is:
 #. Cancel
 #. [pages.DailyStatusDialog.cancel]
-#. defaultMessage is:
-#. Cancel
-#. [pages.Notifications.table.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
@@ -1767,6 +1767,13 @@ msgstr "Limpiar Valores"
 #: extracted_strings.json
 msgid "Clear filters"
 msgstr "Limpar filtros"
+
+#. [pages.Notifications.table.clickToResult]
+#. defaultMessage is:
+#. Click here to go to the result
+#: extracted_strings.json
+msgid "Click here to go to the result"
+msgstr "Clique aqui para aceder ao resultado"
 
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
@@ -2012,9 +2019,6 @@ msgstr "Contato Criado com Sucesso"
 #. [pages.PersonDetails.contactDetails]
 #. defaultMessage is:
 #. Contact Details
-#. [pages.Notifications.table.contactDetails]
-#. defaultMessage is:
-#. Contact Details
 #: extracted_strings.json
 msgid "Contact Details"
 msgstr "Detalhes do contato"
@@ -2253,6 +2257,9 @@ msgid "Create Site"
 msgstr "Criar site"
 
 #. [pages.DeviceApiKeyList.createdOn]
+#. defaultMessage is:
+#. Created On
+#. [pages.Notifications.table.createButton.group.createdOn]
 #. defaultMessage is:
 #. Created On
 #. [pages.DeviceDetailEdit.createdOn]
@@ -2645,6 +2652,9 @@ msgstr "Painel de controlo v2"
 #. defaultMessage is:
 #. Data
 #. [pages.DeviceList.dataHealth]
+#. defaultMessage is:
+#. Data
+#. [pages.Notifications.table.notificationsTableHeaderData]
 #. defaultMessage is:
 #. Data
 #: extracted_strings.json
@@ -3524,6 +3534,9 @@ msgstr ""
 #. [pages.NotificationDetail.email]
 #. defaultMessage is:
 #. Email
+#. [pages.Notifications.table.emailHeader]
+#. defaultMessage is:
+#. Email
 #: extracted_strings.json
 msgid "Email"
 msgstr "E-mail"
@@ -3578,13 +3591,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Email subject is required"
 msgstr "O assunto do email é obrigatório"
-
-#. [pages.Notifications.table.emailSentTo]
-#. defaultMessage is:
-#. Email was sent to:
-#: extracted_strings.json
-msgid "Email was sent to:"
-msgstr "O e-mail foi enviado para:"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
@@ -5456,6 +5462,9 @@ msgstr "Inserir espaço reservado para"
 msgid "Insert placeholder"
 msgstr "Inserir espaço reservado"
 
+#. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
+#. defaultMessage is:
+#. Instrument Replaced
 #. [pages.Notification.type.InstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5573,6 +5582,9 @@ msgstr "URL de webhook inválido"
 msgid "Inventory"
 msgstr "Inventário"
 
+#. [notificationCategoryTypeSelect.notificationTypeInventoryExpiring]
+#. defaultMessage is:
+#. Inventory Expiring
 #. [pages.Notification.type.InventoryExpiring]
 #. defaultMessage is:
 #. Inventory Expiring
@@ -5650,6 +5662,9 @@ msgstr "Tem pelo menos {minLength} caracteres longos"
 msgid "Isolate"
 msgstr "Isolar"
 
+#. [notificationCategoryTypeSelect.notificationTypeIssuedBased]
+#. defaultMessage is:
+#. Issue Based
 #. [pages.NotificationDetail.type.notificationTypeIssueBased]
 #. defaultMessage is:
 #. Issue Based
@@ -6279,6 +6294,9 @@ msgstr "Lote"
 msgid "Lot Number"
 msgstr "Número do lote"
 
+#. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
+#. defaultMessage is:
+#. Low Field Completion Rate
 #. [pages.Notification.type.LowFieldCompletionRate]
 #. defaultMessage is:
 #. Low Field Completion Rate
@@ -6286,6 +6304,9 @@ msgstr "Número do lote"
 msgid "Low Field Completion Rate"
 msgstr "Baixa taxa de conclusão do campo"
 
+#. [notificationCategoryTypeSelect.notificationTypeLowInventory]
+#. defaultMessage is:
+#. Low Inventory
 #. [pages.Notification.type.LowInventory]
 #. defaultMessage is:
 #. Low Inventory
@@ -6953,6 +6974,9 @@ msgstr "Módulo"
 msgid "Module Activity Report"
 msgstr "Relatório de actividade do módulo"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
+#. defaultMessage is:
+#. Module Disabled
 #. [pages.Notification.type.ModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -6970,6 +6994,9 @@ msgstr "Módulo Deficiente"
 msgid "Module Name"
 msgstr "Nome do Módulo"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleReplaced]
+#. defaultMessage is:
+#. Module Replaced
 #. [pages.Notification.type.ModuleReplaced]
 #. defaultMessage is:
 #. Module Replaced
@@ -7014,6 +7041,9 @@ msgstr "Troca de módulos"
 msgid "Module Swaps (GeneXpert only)"
 msgstr "Trocas de módulos (apenas GeneXpert)"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleUnused]
+#. defaultMessage is:
+#. Module Unused
 #. [pages.Notification.type.ModuleUnused]
 #. defaultMessage is:
 #. Module Unused
@@ -7471,6 +7501,9 @@ msgstr "Sem filtros aplicados"
 msgid "No Power"
 msgstr "Sem energia"
 
+#. [notificationCategoryTypeSelect.notificationTypeNoResult]
+#. defaultMessage is:
+#. No Result
 #. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
 #. No Result
@@ -7717,6 +7750,23 @@ msgstr "Notas"
 msgid "Notification"
 msgstr "Notificação"
 
+#. [filter.popover.notificationCategoryType]
+#. defaultMessage is:
+#. Notification Category Type
+#: extracted_strings.json
+msgid "Notification Category Type"
+msgstr "Categoria de notificação Tipo"
+
+#. [browsePage.browseDropdown.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
+#. [pages.NotificationList.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
+#: extracted_strings.json
+msgid "Notification Logs"
+msgstr "Registos de notificação"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -7730,6 +7780,27 @@ msgstr "Título da Notificação"
 #: extracted_strings.json
 msgid "Notification Type"
 msgstr "Tipo de notificação"
+
+#. [filter.popover.notificationType]
+#. defaultMessage is:
+#. Notification Type Name
+#: extracted_strings.json
+msgid "Notification Type Name"
+msgstr "Nome do tipo de nota"
+
+#. [browsePage.browseDropdown.notificationTypes]
+#. defaultMessage is:
+#. Notification Types
+#: extracted_strings.json
+msgid "Notification Types"
+msgstr "Tipos de Notificação"
+
+#. [filter.btnGroup.notificationTypeCategory]
+#. defaultMessage is:
+#. Notification category type is "{notificationCategoryType}"
+#: extracted_strings.json
+msgid "Notification category type is \"{notificationCategoryType}\""
+msgstr "O tipo de categoria de notificação é \"{notificationCategoryType}\""
 
 #. [pages.Notifications.group.forDevices]
 #. defaultMessage is:
@@ -7757,6 +7828,13 @@ msgstr "Notificação de Resultados"
 #: extracted_strings.json
 msgid "Notification for Site"
 msgstr "Notificação"
+
+#. [filter.btnGroup.notificationType]
+#. defaultMessage is:
+#. Notification type is "{notificationType}"
+#: extracted_strings.json
+msgid "Notification type is \"{notificationType}\""
+msgstr "O tipo de notificação é \"{notificationType}\""
 
 #. [browsePage.browseDropdown.notifications]
 #. defaultMessage is:
@@ -7892,6 +7970,9 @@ msgstr "outubro"
 msgid "OK"
 msgstr "OK"
 
+#. [notificationCategoryTypeSelect.notificationTypeOffline]
+#. defaultMessage is:
+#. Offline
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
 #. Offline
@@ -8215,12 +8296,22 @@ msgstr "Paciente"
 msgid "Patient ID"
 msgstr "Identificação do paciente"
 
+#. [filter.popover.patientId]
+#. defaultMessage is:
+#. Patient Id
 #. [placeholder.result.patient.id]
 #. defaultMessage is:
 #. Patient Id
 #: extracted_strings.json
 msgid "Patient Id"
 msgstr "ID do paciente"
+
+#. [filter.btnGroup.patientId]
+#. defaultMessage is:
+#. Patient Id includes "{patientId}"
+#: extracted_strings.json
+msgid "Patient Id includes \"{patientId}\""
+msgstr "O ID do doente inclui \"{patientId}\""
 
 #. [pages.resultEdit.PatientNameI18nCaptionKey]
 #. defaultMessage is:
@@ -8242,13 +8333,6 @@ msgstr "Retratamento do paciente"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "Identificação do paciente/do caso"
-
-#. [pages.Notifications.table.sentPending]
-#. defaultMessage is:
-#. Pending
-#: extracted_strings.json
-msgid "Pending"
-msgstr "Pending"
 
 #. [page.contacts.person.pendingChanges]
 #. defaultMessage is:
@@ -9328,12 +9412,12 @@ msgstr "Receber Inventário em Trânsito"
 msgid "Receive {consumableName}"
 msgstr "Receber {consumableName}"
 
-#. [pages.Notifications.table.recipients]
+#. [pages.Notifications.table.notificationsTableRecepientName]
 #. defaultMessage is:
-#. Recipients
+#. Recepient Name
 #: extracted_strings.json
-msgid "Recipients"
-msgstr "Destinatários"
+msgid "Recepient Name"
+msgstr "Nome do destinatário"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -9449,6 +9533,9 @@ msgstr "Teste de repetição"
 msgid "Report"
 msgstr "Relatório"
 
+#. [notificationCategoryTypeSelect.notificationTypeReportBased]
+#. defaultMessage is:
+#. Report Based
 #. [pages.NotificationDetail.type.notificationTypeReportBased]
 #. defaultMessage is:
 #. Report Based
@@ -9459,6 +9546,16 @@ msgstr "Relatório"
 msgid "Report Based"
 msgstr "Baseado em relatórios"
 
+#. [filter.popover.reportWithName]
+#. defaultMessage is:
+#. Report Name
+#. [pages.Notifications.table.reportName]
+#. defaultMessage is:
+#. Report Name
+#: extracted_strings.json
+msgid "Report Name"
+msgstr "Nome do relatório"
+
 #. [pages.ReportIndex.error_rate_description]
 #. defaultMessage is:
 #. Report error rates per quarter, break them down by devices, modules and users
@@ -9468,6 +9565,13 @@ msgid ""
 msgstr ""
 "Relate as taxas de erro por trimestre, divida-as por dispositivos, módulos e "
 "usuários"
+
+#. [filter.btnGroup.reportWithName]
+#. defaultMessage is:
+#. Report name includes "{reportWithName}"
+#: extracted_strings.json
+msgid "Report name includes \"{reportWithName}\""
+msgstr "O nome do relatório inclui \"{reportWithName}\""
 
 #. [pages.ReportIndex.reportTBWorkloadSummary]
 #. defaultMessage is:
@@ -9761,6 +9865,9 @@ msgstr "Resultado 1"
 msgid "Result 2"
 msgstr "Resultado 2"
 
+#. [notificationCategoryTypeSelect.ResultBased]
+#. defaultMessage is:
+#. Result Based
 #. [pages.NotificationDetail.type.ResultBased]
 #. defaultMessage is:
 #. Result Based
@@ -10150,6 +10257,9 @@ msgstr "setembro"
 #. [pages.NotificationDetail.sms]
 #. defaultMessage is:
 #. SMS
+#. [pages.Notifications.table.smsHeader]
+#. defaultMessage is:
+#. SMS
 #: extracted_strings.json
 msgid "SMS"
 msgstr "SMS"
@@ -10181,13 +10291,6 @@ msgstr "SMS Enviado MTD"
 #: extracted_strings.json
 msgid "SMS Stats"
 msgstr "Estatísticas de SMS"
-
-#. [pages.Notifications.table.smsSentTo]
-#. defaultMessage is:
-#. SMS was sent to:
-#: extracted_strings.json
-msgid "SMS was sent to:"
-msgstr "O SMS foi enviado para:"
 
 #. [filter.sampleType.sampleTypeSaliva]
 #. defaultMessage is:
@@ -10708,13 +10811,6 @@ msgstr "Enviar ao paciente"
 msgid "Sender Operator"
 msgstr "Operador Remetente"
 
-#. [pages.Notifications.table.sentDetails]
-#. defaultMessage is:
-#. Sent details
-#: extracted_strings.json
-msgid "Sent details"
-msgstr "Detalhes enviados"
-
 #. [pages.OperationalData.percentViaEmail]
 #. defaultMessage is:
 #. Sent via Email
@@ -10901,6 +10997,16 @@ msgstr "Mostrar apenas transferências"
 #: extracted_strings.json
 msgid "Show Percentage"
 msgstr "Mostrar Porcentagem"
+
+#. [filter.popover.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
+#. [pages.filters.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
+#: extracted_strings.json
+msgid "Show only notifications with errors"
+msgstr "Mostrar apenas as notificações com erros"
 
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
@@ -11471,13 +11577,6 @@ msgstr "Enviar"
 #: extracted_strings.json
 msgid "Success"
 msgstr "Sucesso"
-
-#. [pages.Notifications.table.sentSuccessfully]
-#. defaultMessage is:
-#. Successfully
-#: extracted_strings.json
-msgid "Successfully"
-msgstr "Com sucesso"
 
 #. [pages.ReportIndex.reportTBWorkloadSummary_description]
 #. defaultMessage is:
@@ -13119,6 +13218,13 @@ msgstr "Tuberculose"
 msgid "Tuesday"
 msgstr "Terça-feira"
 
+#. [pages.Notifications.table.notificationsTableHeaderType]
+#. defaultMessage is:
+#. Type
+#: extracted_strings.json
+msgid "Type"
+msgstr "Tipo"
+
 #. [pages.resultEdit.PatientHistoryI18nKey]
 #. defaultMessage is:
 #. Type History
@@ -13419,6 +13525,13 @@ msgstr "Web"
 msgid "Web Body"
 msgstr "Corpo da Web"
 
+#. [pages.Notifications.table.notificationsTableHeaderWebHook]
+#. defaultMessage is:
+#. Web Hook
+#: extracted_strings.json
+msgid "Web Hook"
+msgstr "Gancho Web"
+
 #. [pages.NotificationDetail.webUrl]
 #. defaultMessage is:
 #. Web Url
@@ -13446,6 +13559,13 @@ msgstr "O url da web tem um formato inválido"
 #: extracted_strings.json
 msgid "Web url is required"
 msgstr "O url da web é obrigatório"
+
+#. [pages.Notifications.table.notificationsTableWebhookRecepient]
+#. defaultMessage is:
+#. Webhook Recepient
+#: extracted_strings.json
+msgid "Webhook Recepient"
+msgstr "Recetor de webhook"
 
 #. [pages.Notifications.table.webhookSentHeader]
 #. defaultMessage is:
@@ -13530,13 +13650,6 @@ msgstr "Quando o dispositivo está desligado há mais de ..."
 #: extracted_strings.json
 msgid "When the result is"
 msgstr "Quando o resultado é"
-
-#. [pages.Notifications.table.sentWithErrors]
-#. defaultMessage is:
-#. With errors
-#: extracted_strings.json
-msgid "With errors"
-msgstr "Com erros"
 
 #. [pages.OperationalData.percentWithin2Hours]
 #. defaultMessage is:
@@ -14538,6 +14651,27 @@ msgstr "{unit} desde a semana passada"
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
 
+#~ msgid "Email was sent to:"
+#~ msgstr "O e-mail foi enviado para:"
+
+#~ msgid "Pending"
+#~ msgstr "Pending"
+
+#~ msgid "Recipients"
+#~ msgstr "Destinatários"
+
+#~ msgid "SMS was sent to:"
+#~ msgstr "O SMS foi enviado para:"
+
+#~ msgid "Sent details"
+#~ msgstr "Detalhes enviados"
+
+#~ msgid "Successfully"
+#~ msgstr "Com sucesso"
+
+#~ msgid "With errors"
+#~ msgstr "Com erros"
+
 #~ msgid "Click to view results in table format"
 #~ msgstr "Clique para ver os resultados em formato de tabela"
 
@@ -15142,17 +15276,16 @@ msgstr "{unit} calibrações totais"
 #~ msgstr "Styleguide"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for "
-#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for repair"
+#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."
 #~ msgstr ""
 #~ "A porcentagem de \"dias de dispositivo\" que foram classificados como "
 #~ "\"inativos para reparo\", excluindo fins de semana. Por exemplo, 20 dias "
-#~ "da semana no mês e 5 dispositivos equivalem a 100 \"dias do "
-#~ "dispositivo\". Se um dispositivo caísse na metade do mês, esse número "
-#~ "seria de 10%"
+#~ "da semana no mês e 5 dispositivos equivalem a 100 \"dias do dispositivo"
+#~ "\". Se um dispositivo caísse na metade do mês, esse número seria de 10%"
 
 #~ msgid "Viewing all devices {GEOGRAPHY} {NAME}."
 #~ msgstr "Visualização de todos os dispositivos {GEOGRAPHY} {NAME}."
