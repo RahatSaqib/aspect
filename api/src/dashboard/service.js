@@ -63,7 +63,6 @@ async function getDashboardWidget({ id, partnerId }, options) {
     })
     .where(function () {
       this.whereRaw(`JSON_EXTRACT(w.dashboards , '$.${dashboard}') IS NOT NULL`)
-
       if (country === 'BD') this.orWhereIn('w.title', dashboardWidgetTitle)
       else this.whereNotIn('w.title', dashboardWidgetTitle)
 
@@ -82,8 +81,8 @@ async function summaryDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const { dashboard } = query
-  const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
+  const { dashboard, country } = query
+  const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard, country })
   const data = await Promise.all(
     widgets.map(async widget => {
       const { sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget
