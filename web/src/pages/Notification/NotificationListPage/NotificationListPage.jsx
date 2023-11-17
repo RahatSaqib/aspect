@@ -77,12 +77,12 @@ const NotificationList = () => {
       width: 5,
     },
     {
-      key: 'jobFunctions',
+      id: 'jobFunctions',
       label: formatMessage(messages.notificationsTableHeaderJobFunctions),
       width: 25,
     },
     {
-      key: 'persons',
+      id: 'persons',
       label: formatMessage(messages.notificationsTableHeaderJobFunctionsPersons),
       width: 25,
     },

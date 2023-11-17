@@ -135,6 +135,16 @@ const InventoryLog = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const filters = useFilterValues(location.pathname)
+  const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({
+    sortCol: 'createdOn',
+    sortDir: 'desc',
+    pageSize: 50,
+  })({
+    location,
+    availableSortCol,
+    dependencies: {},
+  })
+
   // >>>>>> Defining hooks <<<<<<
   const intl = useIntl()
   // >>>>>> Structuring data <<<<<<
@@ -160,17 +170,6 @@ const InventoryLog = () => {
       }),
     { enable: !isEmpty(apiFilters) }
   )
-  const sortPage = makeSortPageSelector({
-    sortCol: 'createdOn',
-    sortDir: 'desc',
-    pageSize: 50,
-  })
-
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
-    location,
-    availableSortCol,
-    dependencies: {},
-  })
 
   if (isError) throw new Error(error)
 
