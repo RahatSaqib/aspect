@@ -176,6 +176,7 @@ const DeviceList = () => {
     isError,
     error,
     isLoading: tableLoading,
+    refetch,
   } = useQuery(
     [DEVICE_LIST.KEY, { params }],
     async () => fetchWrapperForQueries({ endpoint: DEVICE_LIST.ENDPOINT, params: { ...params, hasResults: 1 } }),
@@ -222,7 +223,7 @@ const DeviceList = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.devicesTitle)} disableBack>
-        <PermissionChecker permissions={['device:edit']}>
+        <PermissionChecker permissions={['device:admin']}>
           <AspectButton
             onClick={() => {
               setConfirmationVisible(false)
@@ -438,7 +439,7 @@ const DeviceList = () => {
                       { sourceDevicesIds, targetDeviceId },
                       {
                         onSuccess: () => {
-                          queryClient.invalidateQueries([DEVICE_LIST.KEY, { params }])
+                          refetch()
                           /**
                            * with setting state var `isProcessingMergeDevices` back to false
                            * we explicitly re-render page to let `useQuery` to update `data`
