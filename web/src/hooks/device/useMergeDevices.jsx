@@ -10,7 +10,7 @@ const mergeDevices = async data => {
   })
 }
 
-const useCreateSite = () => {
+const useMergeDevices = () => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation(data => mergeDevices(data), {
@@ -20,4 +20,4 @@ const useCreateSite = () => {
   return mutation
 }
 
-export default useCreateSite
+export default useMergeDevices

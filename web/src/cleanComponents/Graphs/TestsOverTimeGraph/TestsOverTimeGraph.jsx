@@ -190,12 +190,13 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                             const base = 'yyyy-MM-dd'
                             const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
 
+                            const assay = assays.find(a => a.externalId === evt.data.data.id).id
                             const params = {
                               displayResult: 'actual',
                               maxDate: format(endOfMonth(parsedDate), base),
                               minDate: format(startOfMonth(parsedDate), base),
                               onlyReportableResults: true,
-                              assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                              assayId: [assay],
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')

@@ -37,10 +37,6 @@ const admin = {
     },
     {
       module: 'device',
-      activity: 'edit',
-    },
-    {
-      module: 'device',
       activity: 'admin',
     },
     {
@@ -196,7 +192,7 @@ const manager = {
     },
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'inventory',
@@ -965,7 +961,7 @@ const labManager = {
     },
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'person',
@@ -1296,7 +1292,7 @@ const labAdmin = {
   permissions: [
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'result',
