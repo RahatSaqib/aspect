@@ -32,7 +32,7 @@
   padding: 10px 0 0 0;
 }
 
-.Form__Input--error {
+.Form__Input__error {
   margin-top: 5px;
   margin-bottom: -10px;
 }

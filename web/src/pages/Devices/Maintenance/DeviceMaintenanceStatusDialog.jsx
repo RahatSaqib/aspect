@@ -1,17 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Button, TextField } from '@mui/material'
 import { DesktopDatePicker } from '@mui/x-date-pickers'
-import classnames from 'classnames/bind'
 import format from 'date-fns/format'
 import flowRight from 'lodash/flowRight'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../../hooks/useI18n'
+import { defineMessages, useIntl } from 'react-intl'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import DeviceMaintenanceStatusSelectField from '../../../oldComponents/resource/DeviceMaintenanceStatusSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import styles from './BaseDialog.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   dialogTitle: {
@@ -55,7 +51,7 @@ function validate({ maintenanceStatus }, { formatMessage }) {
 const deviceMaintenanceStatusDialog = WrappedComponent => props => {
   const [values, setValues] = useState(false)
   const { device } = props
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     if (!values) {
@@ -93,7 +89,7 @@ const FormDialog = ({
   handleSubmit,
   onExpectedBackChange,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <AspectDialog
       actions={[
@@ -114,8 +110,8 @@ const FormDialog = ({
       onClose={onCancel}
       title={labels.dialogTitle}
     >
-      <form className={cssClasses('Form')}>
-        <div className={cssClasses('Form__Content')}>
+      <form className={styles.Form}>
+        <div className={styles.Form__Content}>
           <section>
             <div>
               <DeviceMaintenanceStatusSelectField

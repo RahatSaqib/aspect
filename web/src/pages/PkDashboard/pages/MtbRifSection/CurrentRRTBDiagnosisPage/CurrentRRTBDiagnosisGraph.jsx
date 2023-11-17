@@ -4,6 +4,7 @@ import endOfMonth from 'date-fns/endOfMonth'
 import parse from 'date-fns/parse'
 import startOfMonth from 'date-fns/startOfMonth'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router'
 import {
@@ -18,7 +19,6 @@ import {
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
-import useI18n from '../../../../../hooks/useI18n'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import { useFilterUpdate } from '../../../../../providers/FilterProvider'
@@ -49,7 +49,7 @@ const defaultFilters = [
 ]
 
 const CurrentDiagnosisGraphPage = () => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState({})
@@ -111,13 +111,13 @@ const CurrentDiagnosisGraphPage = () => {
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
             value={filter?.lgaId ?? ''}
             stateId={filter?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

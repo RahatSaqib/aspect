@@ -55,8 +55,8 @@ async function getDashboardWidget({ id, partnerId }, options) {
     .innerJoin(`${tableName} as sw`, 'w.id', 'sw.dashboardWidgetId')
     .innerJoin('JobFunctionDashboardWidget as jfw', 'w.id', 'jfw.widgetId')
     .innerJoin('JobFunction as jf', 'jfw.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .innerJoin('JobContext as jc', 'jc.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where({
       'ps.userId': id,
       'jf.partnerId': partnerId,

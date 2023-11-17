@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import { Box, Paper, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 
 const Welcome = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const user = useSelector(({ user }) => user.toJS())
 

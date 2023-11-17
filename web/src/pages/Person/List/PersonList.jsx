@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { TableBody, LinearProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, PersonFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import usePersons from '../../../hooks/person/usePersons'
-import useI18n from '../../../hooks/useI18n'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -22,12 +21,10 @@ import { PersonDataTable, PersonDataTableHead, PersonDataTableRow } from './Pers
 import styles from './PersonList.module.css'
 import getExportableFile from './PersonQueries'
 
-const cssClasses = classnames.bind(styles)
-
 export const PersonList = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { userPermissions, user } = useAuthState()
   const filters = useFilterValues(location.pathname)
   const sortPage = makeSortPageSelector({ sortCol: 'name' })
@@ -68,10 +65,10 @@ export const PersonList = () => {
           </AspectButton>
         </PermissionChecker>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.contactsTitle)} />
         <PersonFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} visible={data.data.length !== 0} />
           </div>
@@ -81,7 +78,7 @@ export const PersonList = () => {
             <BrowseEmptyList />
           ) : (
             <>
-              <PersonDataTable className={cssClasses('PersonDataTable')}>
+              <PersonDataTable className={styles.PersonDataTable}>
                 <PersonDataTableHead
                   navigate={navigate}
                   location={location}
@@ -90,8 +87,8 @@ export const PersonList = () => {
                   columns={[
                     { key: 'name', label: formatMessage(messages.personName), sortable: true },
                     { key: 'level', label: formatMessage(messages.level), sortable: true },
-                    { key: 'state', label: getCustomMessage(messages, 'state', user), sortable: true },
-                    { key: 'lga', label: getCustomMessage(messages, 'lga', user), sortable: true },
+                    { key: 'state', label: getCustomMessage(formatMessage, messages, 'state', user), sortable: true },
+                    { key: 'lga', label: getCustomMessage(formatMessage, messages, 'lga', user), sortable: true },
                     { key: 'tags', label: formatMessage(messages.tags), sortable: true },
                     isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
                   ]}

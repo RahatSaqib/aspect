@@ -17,7 +17,7 @@
   cursor: pointer;
 }
 
-.table__headerLabel--nohover {
+.table__headerLabel__nohover {
   cursor: auto !important;
 }
 
@@ -26,7 +26,7 @@
   font-weight: 500;
 }
 
-.table__headerTitle--bold {
+.table__headerTitle__bold {
   font-size: 0.75rem;
   font-weight: 900 !important;
 }
@@ -62,20 +62,20 @@
   padding: 0 20px;
 }
 
-.pageindex__button--left span {
+.pageindex__Button__left span {
   flex-direction: row;
 }
 
-.pageindex__button--right span {
+.pageindex__Button__right span {
   flex-direction: row-reverse;
 }
 
-.pageindex__button--left div {
+.pageindex__Button__left div {
   font-size: 20px;
   padding: 7px 5px 0;
 }
 
-.pageindex__button--right div {
+.pageindex__Button__right div {
   font-size: 20px;
   padding: 7px 0 0 5px;
 }
@@ -148,8 +148,8 @@
   color: rgba(0, 0, 0, 0.87);
 }
 
-.date__cell--past {
-  color: var('--thunderbird', #db2f17) !important;
+.date__cell__past {
+  color: var(--thunderbird, #db2f17) !important;
 }
 
 .placeholder__cell {
@@ -185,7 +185,7 @@
   width: 20px !important;
 }
 
-.message--not-configured {
+.message__not_configured {
   color: #cccccc;
 }
 
@@ -198,4 +198,10 @@
   padding: 15px;
   max-height: 300px;
   overflow: auto;
+}
+
+.summaryCard__icon {
+  margin: 5px 3px 0 0;
+  color: var(--manatee);
+  font-size: 20px;
 }

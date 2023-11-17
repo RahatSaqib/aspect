@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
 import { FormControl, MenuItem, InputLabel, Select } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Loading } from '..'
 import fetchWrapperForQueries from '../../components/QueryFetch'
-import useI18n from '../../hooks/useI18n'
 import { consumableMessages } from '../../messages'
 
 const ConsumableSelector = ({ onChange }) => {
@@ -12,7 +12,7 @@ const ConsumableSelector = ({ onChange }) => {
   const { isLoading, data } = useQuery('data.inventoryConsumableSummaryList', async () =>
     fetchWrapperForQueries({ endpoint: '/dashboard/inventory-item' })
   )
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   useEffect(() => {
     if (data) {
       const opt = data.data.inventoryConsumableSummaryList.sort((a, b) =>

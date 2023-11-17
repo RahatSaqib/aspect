@@ -2,7 +2,8 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays, subMonths } = require('date-fns')
 
-const { emailMessageReadyForSending, emailMessageSent } = require('./actions')
+const { emailMessageReadyForSending, emailMessageProcessed } = require('./actions')
+const { notificationMessageProcessed } = require('../notification/actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints } = require('../auth/constraints')
@@ -52,7 +53,7 @@ async function prepareEmailMessageForSending(context, knex, emailMessageId) {
 // -----------------------------
 async function onEmailMessageReadyForSending({ emailMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
-    emailMessageSent,
+    emailMessageProcessed,
   })
 
   return context.transact(async knex => {
@@ -94,8 +95,13 @@ async function doSendEmailMessage(context, knex, emailMessageId) {
       updatedOn: new Date(),
     })
 
-  // dispatch EMAIL_MESSAGE_SENT to MQ
-  context.emailMessageSent(emailMessageId)
+  // dispatch EMAIL_MESSAGE_PROCESSED to MQ
+  context.emailMessageProcessed(emailMessageId)
+
+  context.bindActionCreators({
+    notificationMessageProcessed,
+  })
+  context.notificationMessageProcessed({ emailMessageId })
 }
 
 async function createEmailFieldsFromTemplate(knex, emailMessageId) {
@@ -130,9 +136,8 @@ async function createEmailFieldsFromTemplate(knex, emailMessageId) {
 
   if (data && data.geographyId) {
     data.siteContacts = await knex('JobContext as jc')
-      .join('Job as j', 'jc.jobId', 'j.id')
-      .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-      .join('Person as p', 'j.personId', 'p.id')
+      .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+      .join('Person as p', 'jc.personId', 'p.id')
       .where({ 'jc.siteId': data.siteId })
       .where({ 'jf.externalId': 'labUser' })
       .select('p.name', 'p.title', 'p.phone', 'p.cell', 'p.email')

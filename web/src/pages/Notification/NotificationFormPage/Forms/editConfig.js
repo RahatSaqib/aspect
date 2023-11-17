@@ -1,4 +1,3 @@
-import classnames from 'classnames/bind'
 import capitalize from 'lodash/capitalize'
 import filter from 'lodash/filter'
 import intersectionBy from 'lodash/intersectionBy'
@@ -27,11 +26,9 @@ import notificationTypeSection from './notificationTypeSection'
 import { reportBasedSection } from './reportBasedConfig'
 import { resultBasedSection } from './resultBasedConfig'
 
-const cssClasses = classnames.bind(styles)
-
 const checkboxClassNames = {
-  itemContainer: cssClasses('checkbox-item-container'),
-  controlContainer: cssClasses('checkbox-container'),
+  itemContainer: styles.checkbox_item_container,
+  controlContainer: styles.checkbox_container,
 }
 
 const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
@@ -229,7 +226,7 @@ const sendSection = (formatMessage, jobFunctions) => {
             {
               id: 'emailSubject',
               controlType: { component: 'placeholderTextField' },
-              classNames: { itemContainer: cssClasses('item-in-group-container') },
+              classNames: { itemContainer: styles.item_in_group_container },
               type: 'text',
               labelI18nKey: 'emailSubject',
               visibleIf: values => values.sendEmail === true,
@@ -242,7 +239,7 @@ const sendSection = (formatMessage, jobFunctions) => {
             {
               id: 'emailBody',
               controlType: { component: 'placeholderTextArea', rowsMax: 10, rows: 4 },
-              classNames: { itemContainer: cssClasses('item-in-group-container') },
+              classNames: { itemContainer: styles.item_in_group_container },
               type: 'text',
               labelI18nKey: 'emailBody',
               visibleIf: values => values.sendEmail === true,
@@ -258,7 +255,7 @@ const sendSection = (formatMessage, jobFunctions) => {
             {
               id: 'smsBody',
               controlType: { component: 'placeholderTextArea', rowsMax: 5, rows: 2 },
-              classNames: { itemContainer: cssClasses('item-in-group-container') },
+              classNames: { itemContainer: styles.item_in_group_container },
               labelI18nKey: 'smsBody',
               visibleIf: values => values.sendSms === true,
             },
@@ -273,7 +270,7 @@ const sendSection = (formatMessage, jobFunctions) => {
             {
               id: 'webUrl',
               controlType: { component: 'textField' },
-              classNames: { itemContainer: cssClasses('item-in-group-container') },
+              classNames: { itemContainer: styles.item_in_group_container },
               type: 'text',
               labelI18nKey: 'webUrl',
               visibleIf: values => values.sendWeb === true,
@@ -286,7 +283,7 @@ const sendSection = (formatMessage, jobFunctions) => {
             {
               id: 'webBody',
               controlType: { component: 'placeholderTextArea', rowsMax: 10, rows: 3 },
-              classNames: { itemContainer: cssClasses('item-in-group-container') },
+              classNames: { itemContainer: styles.item_in_group_container },
               labelI18nKey: 'webBody',
               visibleIf: values => values.sendWeb === true,
             },
@@ -354,9 +351,9 @@ const sendSection = (formatMessage, jobFunctions) => {
                 },
               },
               classNames: {
-                itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-                controlContainer: cssClasses('full-width-100pc'),
-                item: cssClasses('full-width-100pc'),
+                itemContainer: 'max_width_100pc tags_container',
+                controlContainer: styles.full_width_100pc,
+                item: styles.full_width_100pc,
               },
               labelI18nKey: 'selectPersonOption',
             },
@@ -401,8 +398,8 @@ const sendSection = (formatMessage, jobFunctions) => {
                     id: `jobFunctions[${index}].checked`,
                     controlType: { component: 'checkbox' },
                     classNames: {
-                      controlContainer: cssClasses('checkbox-container'),
-                      itemContainer: cssClasses('max-width-100pcr'),
+                      controlContainer: styles.checkbox_container,
+                      itemContainer: styles.max_width_100pcr,
                     },
                     label: jf.name,
                     onAfterChange: formik => formik.setFieldTouched(`jobFunctions[${index}].checked`, true),
@@ -436,9 +433,9 @@ const sendSection = (formatMessage, jobFunctions) => {
                       isMulti: true,
                     },
                     classNames: {
-                      itemContainer: cssClasses('max-width-100pc', 'tags-container'),
-                      controlContainer: cssClasses('full-width-100pc'),
-                      item: cssClasses('full-width-100pc'),
+                      itemContainer: 'max_width_100pc tags_container',
+                      controlContainer: styles.full_width_100pc,
+                      item: styles.full_width_100pc,
                     },
                     label: 'Tags',
                     labelI18nKey: 'jobFunctionTags',

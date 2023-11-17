@@ -1,11 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import EmptyGraph from '../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages } from '../../../messages'
 import { dateRangeOptions } from '../../../oldComponents/shared/DateTimeInput/utils/date'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
@@ -22,13 +21,11 @@ import styles from '../graphStyles.module.css'
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 
-const dateRanges = dateRangeOptions('resultsDateRange', false)
-const currentMonth = dateRanges.resultsDateRange.find(dr => dr.id === DATE_RANGE_OPTIONS.CURRENT_MONTH).value.minDate
-
-const cssClasses = classnames.bind(styles)
-
 const ResultTransmittedGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage, formatDate } = useIntl()
+
+  const dateRanges = dateRangeOptions(formatMessage, formatDate, 'resultsDateRange', false)
+  const currentMonth = dateRanges.resultsDateRange.find(dr => dr.id === DATE_RANGE_OPTIONS.CURRENT_MONTH).value.minDate
 
   const [graphData, setGraphData] = useState(false)
   const [showLabel, setShowLabel] = useState(false)
@@ -57,7 +54,8 @@ const ResultTransmittedGraph = () => {
       'pieRow',
       mergedParams,
       formatMessage,
-      messages
+      messages,
+      formatDate // its only here because its needed in only one case
     )
   }
 
@@ -72,21 +70,21 @@ const ResultTransmittedGraph = () => {
   }, [data])
 
   return (
-    <Grid container className={cssClasses('Graph_Container')}>
+    <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
           <CardHeader title={formatMessage(graphMessages.resultsTransmittedTitle)} />
           <CardContent>
-            <Grid container spacing={1} className={cssClasses('Graph_Content')}>
+            <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
-                <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                  <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                <Grid container spacing={2} className={styles.Graph_Content_Container}>
+                  <Grid item xs={12} md={4} lg={12} className={styles.Graph_Content_ShowLabel}>
                     <FormControlLabel
                       label={formatMessage(graphMessages.showValuesLabel)}
                       control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
                     />
                   </Grid>
-                  <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
+                  <Grid item xs={12} md={8} lg={12} className={styles.Graph_Content_AssaySelector}>
                     <PeriodSelector
                       label={formatMessage(graphMessages.date)}
                       noAny
@@ -114,7 +112,7 @@ const ResultTransmittedGraph = () => {
                     <Loading />
                   ) : (
                     <Grid item xs={12} md={12} lg={12}>
-                      <div className={cssClasses('Graph_Wrapper')}>
+                      <div className={styles.Graph_Wrapper}>
                         {graphData && !isEmpty(graphData) ? (
                           <PieRowGraph data={graphData} componentClasses={['piegraph__container--nobg']} />
                         ) : (

@@ -1,11 +1,8 @@
 import React, { useCallback } from 'react'
 import { Dialog, DialogActions, DialogContent, DialogTitle, IconButton } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import IconProvider from '../../components/IconProvider'
 import styles from './AspectDialog.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const AspectDialog = ({
   actions,
@@ -24,7 +21,7 @@ const AspectDialog = ({
       <DialogTitle id="dialog-title">
         {title}
         {showCrossIcon && onRequestClose ? (
-          <IconButton aria-label="close" className={cssClasses('button-close')} onClick={onRequestClose} size="medium">
+          <IconButton aria-label="close" className={styles.button_close} onClick={onRequestClose} size="medium">
             <IconProvider icon="MdClose" />
           </IconButton>
         ) : null}

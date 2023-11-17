@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
   LgaSelect,
@@ -11,7 +12,6 @@ import {
   LineGraph,
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
 import { getCustomMessage, graphMessages, months } from '../../../../../messages'
 import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
@@ -30,7 +30,7 @@ const endpointParams = [
 ]
 
 const NationalRtbTrendsGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState()
@@ -87,13 +87,13 @@ const NationalRtbTrendsGraph = () => {
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
             value={filter?.lgaId ?? ''}
             stateId={filter?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

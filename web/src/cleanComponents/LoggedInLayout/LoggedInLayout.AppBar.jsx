@@ -1,20 +1,16 @@
 import React, { useEffect, useState } from 'react'
 import { AppBar, IconButton, MenuItem, Toolbar } from '@mui/material'
-import classnames from 'classnames/bind'
 import { FaUser } from 'react-icons/fa'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../../assets/logo_confluence.png'
 import PermissionChecker from '../../components/PermissionChecker'
-import useI18n from '../../hooks/useI18n'
 import IconMenu from '../../oldComponents/shared/IconMenu'
 import { userRequestedLogout } from '../../store/AuthRedux'
 import { aspectFetch } from '../../utils/utils/fetch'
 import LayoutNavigation from './LoggedInLayout.Navigation'
 import styles from './styles.module.css'
-
-const cssClasses = classnames.bind(styles)
 
 const messages = defineMessages({
   accountDetails: {
@@ -29,7 +25,7 @@ const messages = defineMessages({
 
 const Header = () => {
   const dispatch = useDispatch()
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const [version, setVersion] = useState({ fetched: false, v: '' })
 
@@ -46,14 +42,14 @@ const Header = () => {
   return (
     <AppBar color="inherit" position="sticky">
       <Toolbar>
-        <IconButton className={cssClasses('AppBar__leftIcon')} aria-label="Logo" onClick={() => navigate('/')}>
-          <img className={cssClasses('ConfluenceIcon')} src={Logo} alt="" />
-          {!!version?.v && <span className={cssClasses('version')}>v{version.v}</span>}
+        <IconButton className={styles.AppBar__leftIcon} aria-label="Logo" onClick={() => navigate('/')}>
+          <img className={styles.ConfluenceIcon} src={Logo} alt="" />
+          {!!version?.v && <span className={styles.version}>v{version.v}</span>}
         </IconButton>
 
         <LayoutNavigation />
 
-        <IconMenu icon={<FaUser className={cssClasses('IconMenu__icon')} />}>
+        <IconMenu icon={<FaUser className={styles.IconMenu__icon} />}>
           <PermissionChecker permissions={['account:edit']}>
             <MenuItem onClick={() => navigate('/account-details/current')}>
               {intl.formatMessage(messages.accountDetails)}

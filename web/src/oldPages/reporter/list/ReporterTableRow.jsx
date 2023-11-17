@@ -1,5 +1,4 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import { useLocation } from 'react-router-dom'
 import AspectLink from '../../../components/AspectLink'
 import { buildURL } from '../../../components/AspectLink/helpers'
@@ -8,7 +7,6 @@ import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../o
 import { useFilterUpdate, useFilterValues } from '../../../providers/FilterProvider'
 import ReporterLinkCell from './ReporterLinkCell'
 
-const cssClasses = classnames.bind(styles)
 const destinationPath = '/browse/result'
 
 const ReporterTableRow = ({ reporter, ...restProps }) => {
@@ -43,18 +41,12 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
   )
 
   return (
-    <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableRow {...restProps} className={styles[restProps.className]}>
       <TableCell>
         <ReporterLinkCell data={reporter} />
       </TableCell>
       <TableCell>
-        <LinkToResults
-          params={{
-            onlyReportableResults: true,
-          }}
-        >
-          {reporter.get('totalResults')}
-        </LinkToResults>
+        <LinkToResults params={{ onlyReportableResults: true }}>{reporter.get('totalResults')}</LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults

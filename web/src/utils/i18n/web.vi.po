@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-10-30T19:12:22.157Z\n"
+"POT-Creation-Date: 2023-11-15T18:39:51.843Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -757,7 +757,7 @@ msgstr "Đã xảy ra lỗi khi cố gắng lưu thiết bị"
 msgid "An email has been sent to you"
 msgstr "Một email đã được gửi cho bạn"
 
-#. [pages.ReportIndex.xpertSiteSummaryReport_description]
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 #: extracted_strings.json
@@ -1539,6 +1539,9 @@ msgstr "Ngày hiệu chuẩn"
 msgid "Calibration Date is required"
 msgstr "Ngày hiệu chuẩn là bắt buộc"
 
+#. [notificationCategoryTypeSelect.notificationTypeCalibrationDueDate]
+#. defaultMessage is:
+#. Calibration Due Date
 #. [placeholder.calibrationDueDate]
 #. defaultMessage is:
 #. Calibration Due Date
@@ -1593,9 +1596,6 @@ msgstr "Không thể chỉnh sửa"
 #. defaultMessage is:
 #. Cancel
 #. [pages.DailyStatusDialog.cancel]
-#. defaultMessage is:
-#. Cancel
-#. [pages.Notifications.table.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
@@ -1765,6 +1765,13 @@ msgstr "Xóa giá trị"
 #: extracted_strings.json
 msgid "Clear filters"
 msgstr "Bỏ bộ lọc"
+
+#. [pages.Notifications.table.clickToResult]
+#. defaultMessage is:
+#. Click here to go to the result
+#: extracted_strings.json
+msgid "Click here to go to the result"
+msgstr "Nhấn vào đây để đi đến kết quả"
 
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
@@ -2010,9 +2017,6 @@ msgstr "Liên hệ được tạo thành công"
 #. [pages.PersonDetails.contactDetails]
 #. defaultMessage is:
 #. Contact Details
-#. [pages.Notifications.table.contactDetails]
-#. defaultMessage is:
-#. Contact Details
 #: extracted_strings.json
 msgid "Contact Details"
 msgstr "Chi tiết liên hệ"
@@ -2250,6 +2254,9 @@ msgid "Create Site"
 msgstr "Tạo site"
 
 #. [pages.DeviceApiKeyList.createdOn]
+#. defaultMessage is:
+#. Created On
+#. [pages.Notifications.table.createButton.group.createdOn]
 #. defaultMessage is:
 #. Created On
 #. [pages.DeviceDetailEdit.createdOn]
@@ -2641,6 +2648,9 @@ msgstr "Bảng điều khiển v2"
 #. defaultMessage is:
 #. Data
 #. [pages.DeviceList.dataHealth]
+#. defaultMessage is:
+#. Data
+#. [pages.Notifications.table.notificationsTableHeaderData]
 #. defaultMessage is:
 #. Data
 #: extracted_strings.json
@@ -3134,6 +3144,20 @@ msgstr "Bảo hành thiết bị"
 msgid "Device Workload"
 msgstr "Khối lượng công việc của thiết bị"
 
+#. [pages.ReportIndex.device_and_site_summary_report]
+#. defaultMessage is:
+#. Device and Site Sumary
+#: extracted_strings.json
+msgid "Device and Site Sumary"
+msgstr "Tóm tắt thiết bị và trang web"
+
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport]
+#. defaultMessage is:
+#. Device and Site Summary Report
+#: extracted_strings.json
+msgid "Device and Site Summary Report"
+msgstr "Báo cáo tóm tắt về thiết bị và trang web"
+
 #. [pages.NotificationDetail.SelectStateTitle]
 #. defaultMessage is:
 #. Device from State
@@ -3200,16 +3224,6 @@ msgstr "Danh sách thiết bị"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Thiết bị bị gián đoạn dịch vụ"
-
-#. [pages.ReportIndex.xpertSiteSummaryReport]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#. [pages.ReportIndex.xpert_site_summary_report]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#: extracted_strings.json
-msgid "Devices and Sites Overview"
-msgstr "Tổng quan về thiết bị và trang web"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
@@ -3515,6 +3529,9 @@ msgstr ""
 #. [pages.NotificationDetail.email]
 #. defaultMessage is:
 #. Email
+#. [pages.Notifications.table.emailHeader]
+#. defaultMessage is:
+#. Email
 #: extracted_strings.json
 msgid "Email"
 msgstr "Email"
@@ -3567,13 +3584,6 @@ msgstr "Email phải chứa liên kết tải xuống cho Thông báo dựa trê
 #: extracted_strings.json
 msgid "Email subject is required"
 msgstr "Chủ đề email là bắt buộc"
-
-#. [pages.Notifications.table.emailSentTo]
-#. defaultMessage is:
-#. Email was sent to:
-#: extracted_strings.json
-msgid "Email was sent to:"
-msgstr "Email đã được gửi đến:"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
@@ -5441,6 +5451,9 @@ msgstr "Chèn trình giữ chỗ cho"
 msgid "Insert placeholder"
 msgstr "Chèn trình giữ chỗ"
 
+#. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
+#. defaultMessage is:
+#. Instrument Replaced
 #. [pages.Notification.type.InstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5558,6 +5571,9 @@ msgstr "Url webhook không hợp lệ"
 msgid "Inventory"
 msgstr "Hàng tồn kho"
 
+#. [notificationCategoryTypeSelect.notificationTypeInventoryExpiring]
+#. defaultMessage is:
+#. Inventory Expiring
 #. [pages.Notification.type.InventoryExpiring]
 #. defaultMessage is:
 #. Inventory Expiring
@@ -5635,6 +5651,9 @@ msgstr "Dài ít nhất {minLength} ký tự"
 msgid "Isolate"
 msgstr "Cô Lập (Isolate)"
 
+#. [notificationCategoryTypeSelect.notificationTypeIssuedBased]
+#. defaultMessage is:
+#. Issue Based
 #. [pages.NotificationDetail.type.notificationTypeIssueBased]
 #. defaultMessage is:
 #. Issue Based
@@ -6264,6 +6283,9 @@ msgstr "Lô"
 msgid "Lot Number"
 msgstr "Mã lô"
 
+#. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
+#. defaultMessage is:
+#. Low Field Completion Rate
 #. [pages.Notification.type.LowFieldCompletionRate]
 #. defaultMessage is:
 #. Low Field Completion Rate
@@ -6271,6 +6293,9 @@ msgstr "Mã lô"
 msgid "Low Field Completion Rate"
 msgstr "Tỷ lệ hoàn thành trường thấp"
 
+#. [notificationCategoryTypeSelect.notificationTypeLowInventory]
+#. defaultMessage is:
+#. Low Inventory
 #. [pages.Notification.type.LowInventory]
 #. defaultMessage is:
 #. Low Inventory
@@ -6938,6 +6963,9 @@ msgstr "Chức năng"
 msgid "Module Activity Report"
 msgstr "Báo cáo hoạt động mô-đun"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
+#. defaultMessage is:
+#. Module Disabled
 #. [pages.Notification.type.ModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -6955,6 +6983,9 @@ msgstr "Mô-đun bị vô hiệu hóa"
 msgid "Module Name"
 msgstr "Tên mô-đun"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleReplaced]
+#. defaultMessage is:
+#. Module Replaced
 #. [pages.Notification.type.ModuleReplaced]
 #. defaultMessage is:
 #. Module Replaced
@@ -6999,6 +7030,9 @@ msgstr "Hoán đổi mô-đun"
 msgid "Module Swaps (GeneXpert only)"
 msgstr "Hoán đổi mô-đun (chỉ GeneXpert)"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleUnused]
+#. defaultMessage is:
+#. Module Unused
 #. [pages.Notification.type.ModuleUnused]
 #. defaultMessage is:
 #. Module Unused
@@ -7456,6 +7490,9 @@ msgstr "Không có bộ lọc nào được áp dụng"
 msgid "No Power"
 msgstr "Không có điện"
 
+#. [notificationCategoryTypeSelect.notificationTypeNoResult]
+#. defaultMessage is:
+#. No Result
 #. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
 #. No Result
@@ -7702,6 +7739,23 @@ msgstr "Ghi chú"
 msgid "Notification"
 msgstr "Thông báo"
 
+#. [filter.popover.notificationCategoryType]
+#. defaultMessage is:
+#. Notification Category Type
+#: extracted_strings.json
+msgid "Notification Category Type"
+msgstr "Loại danh mục thông báo"
+
+#. [browsePage.browseDropdown.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
+#. [pages.NotificationList.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
+#: extracted_strings.json
+msgid "Notification Logs"
+msgstr "Nhật ký thông báo"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -7715,6 +7769,27 @@ msgstr "Tiêu đề thông báo"
 #: extracted_strings.json
 msgid "Notification Type"
 msgstr "Loại thông báo"
+
+#. [filter.popover.notificationType]
+#. defaultMessage is:
+#. Notification Type Name
+#: extracted_strings.json
+msgid "Notification Type Name"
+msgstr "Tên loại thông báo"
+
+#. [browsePage.browseDropdown.notificationTypes]
+#. defaultMessage is:
+#. Notification Types
+#: extracted_strings.json
+msgid "Notification Types"
+msgstr "Các loại thông báo"
+
+#. [filter.btnGroup.notificationTypeCategory]
+#. defaultMessage is:
+#. Notification category type is "{notificationCategoryType}"
+#: extracted_strings.json
+msgid "Notification category type is \"{notificationCategoryType}\""
+msgstr "Loại danh mục thông báo là \"{notificationCategoryType}\""
 
 #. [pages.Notifications.group.forDevices]
 #. defaultMessage is:
@@ -7742,6 +7817,13 @@ msgstr "Thông báo kết quả"
 #: extracted_strings.json
 msgid "Notification for Site"
 msgstr "Thông báo"
+
+#. [filter.btnGroup.notificationType]
+#. defaultMessage is:
+#. Notification type is "{notificationType}"
+#: extracted_strings.json
+msgid "Notification type is \"{notificationType}\""
+msgstr "Loại thông báo là \"{notificationType}\""
 
 #. [browsePage.browseDropdown.notifications]
 #. defaultMessage is:
@@ -7877,6 +7959,9 @@ msgstr "tháng Mười"
 msgid "OK"
 msgstr "OK"
 
+#. [notificationCategoryTypeSelect.notificationTypeOffline]
+#. defaultMessage is:
+#. Offline
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
 #. Offline
@@ -8028,7 +8113,7 @@ msgstr "Đã đặt hàng"
 #. Origin Site
 #: extracted_strings.json
 msgid "Origin Site"
-msgstr "trang web gốc"
+msgstr "Trang web gốc"
 
 #. [pages.shared.deviceStatus.inactiveOther]
 #. defaultMessage is:
@@ -8200,12 +8285,22 @@ msgstr "Bệnh nhân"
 msgid "Patient ID"
 msgstr "ID của Bệnh Nhân"
 
+#. [filter.popover.patientId]
+#. defaultMessage is:
+#. Patient Id
 #. [placeholder.result.patient.id]
 #. defaultMessage is:
 #. Patient Id
 #: extracted_strings.json
 msgid "Patient Id"
 msgstr "ID của Bệnh Nhân"
+
+#. [filter.btnGroup.patientId]
+#. defaultMessage is:
+#. Patient Id includes "{patientId}"
+#: extracted_strings.json
+msgid "Patient Id includes \"{patientId}\""
+msgstr "Id bệnh nhân bao gồm \"{patientId}\""
 
 #. [pages.resultEdit.PatientNameI18nCaptionKey]
 #. defaultMessage is:
@@ -8227,13 +8322,6 @@ msgstr "Dữ liệu bệnh nhân"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "ID bệnh nhân / trường hợp"
-
-#. [pages.Notifications.table.sentPending]
-#. defaultMessage is:
-#. Pending
-#: extracted_strings.json
-msgid "Pending"
-msgstr "Đang chờ xử lý"
 
 #. [page.contacts.person.pendingChanges]
 #. defaultMessage is:
@@ -9313,12 +9401,12 @@ msgstr "Nhận hàng tồn kho trong quá trình vận chuyển"
 msgid "Receive {consumableName}"
 msgstr "Nhận {consumableName}"
 
-#. [pages.Notifications.table.recipients]
+#. [pages.Notifications.table.notificationsTableRecepientName]
 #. defaultMessage is:
-#. Recipients
+#. Recepient Name
 #: extracted_strings.json
-msgid "Recipients"
-msgstr "Người nhận"
+msgid "Recepient Name"
+msgstr "Tên người nhận"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -9434,6 +9522,9 @@ msgstr "Lặp lại bài kiểm tra"
 msgid "Report"
 msgstr "Báo cáo"
 
+#. [notificationCategoryTypeSelect.notificationTypeReportBased]
+#. defaultMessage is:
+#. Report Based
 #. [pages.NotificationDetail.type.notificationTypeReportBased]
 #. defaultMessage is:
 #. Report Based
@@ -9444,6 +9535,16 @@ msgstr "Báo cáo"
 msgid "Report Based"
 msgstr "Dựa trên báo cáo"
 
+#. [filter.popover.reportWithName]
+#. defaultMessage is:
+#. Report Name
+#. [pages.Notifications.table.reportName]
+#. defaultMessage is:
+#. Report Name
+#: extracted_strings.json
+msgid "Report Name"
+msgstr "Tên báo cáo"
+
 #. [pages.ReportIndex.error_rate_description]
 #. defaultMessage is:
 #. Report error rates per quarter, break them down by devices, modules and users
@@ -9452,6 +9553,13 @@ msgid ""
 "Report error rates per quarter, break them down by devices, modules and users"
 msgstr ""
 "Báo cáo tỷ lệ lỗi mỗi quý, chia nhỏ chúng theo thiết bị, mô-đun và người dùng"
+
+#. [filter.btnGroup.reportWithName]
+#. defaultMessage is:
+#. Report name includes "{reportWithName}"
+#: extracted_strings.json
+msgid "Report name includes \"{reportWithName}\""
+msgstr "Tên báo cáo bao gồm \"{reportWithName}\""
 
 #. [pages.ReportIndex.reportTBWorkloadSummary]
 #. defaultMessage is:
@@ -9745,6 +9853,9 @@ msgstr "Kết quả 1"
 msgid "Result 2"
 msgstr "Kết quả 2"
 
+#. [notificationCategoryTypeSelect.ResultBased]
+#. defaultMessage is:
+#. Result Based
 #. [pages.NotificationDetail.type.ResultBased]
 #. defaultMessage is:
 #. Result Based
@@ -10134,6 +10245,9 @@ msgstr "tháng Chín"
 #. [pages.NotificationDetail.sms]
 #. defaultMessage is:
 #. SMS
+#. [pages.Notifications.table.smsHeader]
+#. defaultMessage is:
+#. SMS
 #: extracted_strings.json
 msgid "SMS"
 msgstr "SMS"
@@ -10165,13 +10279,6 @@ msgstr "SMS đã gửi MTD"
 #: extracted_strings.json
 msgid "SMS Stats"
 msgstr "Thống kê SMS"
-
-#. [pages.Notifications.table.smsSentTo]
-#. defaultMessage is:
-#. SMS was sent to:
-#: extracted_strings.json
-msgid "SMS was sent to:"
-msgstr "SMS đã được gửi tới:"
 
 #. [filter.sampleType.sampleTypeSaliva]
 #. defaultMessage is:
@@ -10692,13 +10799,6 @@ msgstr "Gửi cho bệnh nhân"
 msgid "Sender Operator"
 msgstr "Nhà điều hành người gửi"
 
-#. [pages.Notifications.table.sentDetails]
-#. defaultMessage is:
-#. Sent details
-#: extracted_strings.json
-msgid "Sent details"
-msgstr "Chi tiết đã gửi"
-
 #. [pages.OperationalData.percentViaEmail]
 #. defaultMessage is:
 #. Sent via Email
@@ -10884,6 +10984,16 @@ msgstr "Chỉ hiển thị chuyển khoản"
 #: extracted_strings.json
 msgid "Show Percentage"
 msgstr "Hiển thị tỷ lệ phần trăm"
+
+#. [filter.popover.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
+#. [pages.filters.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
+#: extracted_strings.json
+msgid "Show only notifications with errors"
+msgstr "Chỉ hiển thị thông báo có lỗi"
 
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
@@ -11453,13 +11563,6 @@ msgstr "Gửi"
 #. Success
 #: extracted_strings.json
 msgid "Success"
-msgstr "Thành công"
-
-#. [pages.Notifications.table.sentSuccessfully]
-#. defaultMessage is:
-#. Successfully
-#: extracted_strings.json
-msgid "Successfully"
 msgstr "Thành công"
 
 #. [pages.ReportIndex.reportTBWorkloadSummary_description]
@@ -12138,8 +12241,8 @@ msgid ""
 "\"Down for repair\" for it maintenance status."
 msgstr ""
 "Số lượng thiết bị gặp sự cố gián đoạn dịch vụ vào tháng này và tháng trước. "
-"Một thiết bị bị gián đoạn dịch vụ khi nó được gắn cờ là \"Không sửa chữa "
-"được\" cho trạng thái bảo trì của thiết bị."
+"Một thiết bị bị gián đoạn dịch vụ khi nó được gắn cờ là \"Không sửa chữa được"
+"\" cho trạng thái bảo trì của thiết bị."
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -13091,6 +13194,13 @@ msgstr "Bệnh lao"
 msgid "Tuesday"
 msgstr "Thứ ba"
 
+#. [pages.Notifications.table.notificationsTableHeaderType]
+#. defaultMessage is:
+#. Type
+#: extracted_strings.json
+msgid "Type"
+msgstr "Loại"
+
 #. [pages.resultEdit.PatientHistoryI18nKey]
 #. defaultMessage is:
 #. Type History
@@ -13391,6 +13501,13 @@ msgstr "Web"
 msgid "Web Body"
 msgstr "Nội dung web"
 
+#. [pages.Notifications.table.notificationsTableHeaderWebHook]
+#. defaultMessage is:
+#. Web Hook
+#: extracted_strings.json
+msgid "Web Hook"
+msgstr "Móc web"
+
 #. [pages.NotificationDetail.webUrl]
 #. defaultMessage is:
 #. Web Url
@@ -13418,6 +13535,13 @@ msgstr "Url web có định dạng không hợp lệ"
 #: extracted_strings.json
 msgid "Web url is required"
 msgstr "Url web là bắt buộc"
+
+#. [pages.Notifications.table.notificationsTableWebhookRecepient]
+#. defaultMessage is:
+#. Webhook Recepient
+#: extracted_strings.json
+msgid "Webhook Recepient"
+msgstr "Người nhận Webhook"
 
 #. [pages.Notifications.table.webhookSentHeader]
 #. defaultMessage is:
@@ -13502,13 +13626,6 @@ msgstr "Khi thiết bị đã ngoại tuyến trong hơn ..."
 #: extracted_strings.json
 msgid "When the result is"
 msgstr "Khi kết quả là"
-
-#. [pages.Notifications.table.sentWithErrors]
-#. defaultMessage is:
-#. With errors
-#: extracted_strings.json
-msgid "With errors"
-msgstr "Với lỗi"
 
 #. [pages.OperationalData.percentWithin2Hours]
 #. defaultMessage is:
@@ -14186,7 +14303,7 @@ msgstr "ID bệnh nhân bao gồm {patientOrResearchId}"
 #. patient/case ID includes {patientOrCaseId}
 #: extracted_strings.json
 msgid "patient/case ID includes {patientOrCaseId}"
-msgstr "ID bệnh nhân/trường hợp bao gồm {patientOrCaseId}"
+msgstr "ID bệnh nhân / trường hợp bao gồm {patientOrCaseId}"
 
 #. [widgetAlerts.percentageOfActiveDevices]
 #. defaultMessage is:
@@ -14270,7 +14387,7 @@ msgstr "đơn vị có thể báo cáo \"{reportableSiteName}\""
 #. reportable site ID includes "{reportableSiteId}"
 #: extracted_strings.json
 msgid "reportable site ID includes \"{reportableSiteId}\""
-msgstr "ID trang web có thể báo cáo bao gồm \"{reportableSiteId}\""
+msgstr "ID đơn vị có thể báo cáo bao gồm \"{reportableSiteId}\""
 
 #. [filter.btnGroup.whereReportableSiteNameIncludes]
 #. defaultMessage is:
@@ -14312,7 +14429,7 @@ msgstr "kể từ {date}"
 #. site ID is in ({joinedIds})
 #: extracted_strings.json
 msgid "site ID is in ({joinedIds})"
-msgstr "ID trang web ở ({joinedIds})"
+msgstr "ID đơn vị ở ({joinedIds})"
 
 #. [filter.btnGroup.whereSiteNameIncludes]
 #. defaultMessage is:
@@ -14511,6 +14628,27 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
+
+#~ msgid "Email was sent to:"
+#~ msgstr "Email đã được gửi đến:"
+
+#~ msgid "Pending"
+#~ msgstr "Đang chờ xử lý"
+
+#~ msgid "Recipients"
+#~ msgstr "Người nhận"
+
+#~ msgid "SMS was sent to:"
+#~ msgstr "SMS đã được gửi tới:"
+
+#~ msgid "Sent details"
+#~ msgstr "Chi tiết đã gửi"
+
+#~ msgid "Successfully"
+#~ msgstr "Thành công"
+
+#~ msgid "With errors"
+#~ msgstr "Với lỗi"
 
 #~ msgid "Click to view results in table format"
 #~ msgstr "Nhấp để xem kết quả ở định dạng bảng"
@@ -15110,8 +15248,8 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 #~ msgstr "Hướng dẫn mẫu"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for "
-#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for repair"
+#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."

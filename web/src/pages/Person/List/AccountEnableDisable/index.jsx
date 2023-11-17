@@ -1,11 +1,11 @@
 import React, { Fragment, useState } from 'react'
 import { Person, PersonOff } from '@mui/icons-material'
 import { Button, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useMutation } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useLocation, useSearchParams, useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../../components/QueryFetch'
-import useI18n from '../../../../hooks/useI18n'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
 import { DataTableCell as TableCell } from '../../../../oldComponents/shared/tableBody'
 import { fetchPersons } from '../../../../store/PersonRedux'
@@ -20,7 +20,7 @@ const IconContainer = ({ icon: Icon, style, action }) => (
 
 const AccountEnableDisable = props => {
   const { person } = props
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const location = useLocation()
   const [params] = useSearchParams()
   const navigate = useNavigate()

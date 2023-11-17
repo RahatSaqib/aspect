@@ -1,9 +1,8 @@
 import React from 'react'
 import { Card, CircularProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import { bool, func, number, object, oneOfType, shape, string } from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
-import useI18n from '../../hooks/useI18n'
 import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
 import { useFilterUpdate } from '../../providers/FilterProvider'
 import { formatNumber } from '../../utils/utils/number'
@@ -13,10 +12,8 @@ import { buildWidgetParams, translate } from './Helpers'
 import messages from './messages'
 import styles from './Widgets.module.css'
 
-const cssClasses = classnames.bind(styles)
-
 const EmptyWidget = () => (
-  <Card className={cssClasses(['Summary__Card', 'empty__widget'])}>
+  <Card className={`${styles.Summary__Card} ${styles.empty__widget}`}>
     <CircularProgress variant="indeterminate" disableShrink size={24} thickness={4} />
   </Card>
 )
@@ -41,7 +38,7 @@ const AspectWidget = ({
     alert: { display: displayAlert, config: alertConfig } = {},
   },
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
   const translator = { formatMessage, messages }
@@ -56,38 +53,36 @@ const AspectWidget = ({
   }
 
   return (
-    <span className={cssClasses('Summary')}>
-      <Card className={cssClasses('Summary', 'Summary__Card')} onClick={() => goToLink()}>
-        <div className={cssClasses('Summary__Card__Title')}>
-          <IconProvider icon={icon} className="summaryCard__icon" />
-          <span className={cssClasses('Summary__Card__Title--main')}>
-            <AspectTooltip title={titleText} toolTipContainerClass="inline__tooltip">
+    <span className={styles.Summary}>
+      <Card className={`${styles.Summary} ${styles.Summary__Card}`} onClick={() => goToLink()}>
+        <div className={styles.Summary__Card__Title}>
+          <IconProvider icon={icon} className={styles.summaryCard__icon} />
+          <span className={styles.Summary__Card__Title__main}>
+            <AspectTooltip title={titleText} toolTipContainerClass={styles.inline__tooltip}>
               {titleText}
             </AspectTooltip>
-            <span className={cssClasses('Summary__Card__Title--sub')}>
-              {translate(subTitleI18nKey, subTitle, translator)}
-            </span>
+            <span className={styles.Summary__Card__Title__sub}>{translate(subTitleI18nKey, subTitle, translator)}</span>
           </span>
           {description ? (
             <AspectTooltip showHelpIcon title={translate(descriptionI18nKey, description, translator)} />
           ) : null}
         </div>
-        <div className={cssClasses('Summary__Card__Content')}>
-          <div className={cssClasses('Summary__Card__Item')}>
-            <div className={cssClasses('Summary__Card__Item__Count')}>
+        <div className={styles.Summary__Card__Content}>
+          <div className={styles.Summary__Card__Item}>
+            <div className={styles.Summary__Card__Item__Count}>
               {formatNumber(count)} {displayAlert ? <WidgetAlert alert={alertConfig} /> : null}
             </div>
-            <div className={cssClasses('Summary__Card__Item__Messages')}>
-              <div className={cssClasses('Summary__Card__Item__Messages--main')}>
+            <div className={styles.Summary__Card__Item__Messages}>
+              <div className={styles.Summary__Card__Item__Messages__main}>
                 {statUnitI18nKey !== null && formatMessage(messages[statUnitI18nKey], { unit })}
               </div>
-              <div className={cssClasses('Summary__Card__Item__Messages--sub')}>{statStatus}</div>
+              <div className={styles.Summary__Card__Item__Messages__sub}>{statStatus}</div>
             </div>
           </div>
-          <div className={cssClasses('Summary__Card__Item--right')}>
-            <div className={cssClasses('Summary__Card__Item__Messages')}>
-              <div className={cssClasses('Summary__Card__Item__Messages--main')}>{extra}</div>
-              <div className={cssClasses('Summary__Card__Item__Messages--sub')}>{extraLabel}</div>
+          <div className={styles.Summary__Card__Item__right}>
+            <div className={styles.Summary__Card__Item__Messages}>
+              <div className={styles.Summary__Card__Item__Messages__main}>{extra}</div>
+              <div className={styles.Summary__Card__Item__Messages__sub}>{extraLabel}</div>
             </div>
           </div>
         </div>

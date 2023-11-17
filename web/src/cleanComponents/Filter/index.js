@@ -6,6 +6,7 @@ import InventoryItemsFilter from './InventoryItemsFilter'
 import InventoryLogFilter from './InventoryLogFilter'
 import InventoryTransferFilter from './InventoryTransferFilter'
 import NotificationFilter from './NotificationFilter'
+import NotificationLogFilter from './NotificationLogFilter'
 import PersonFilter from './PersonFilter'
 import ReporterFilter from './ReporterFilter'
 import ReportsFilter from './ReportsFilter'
@@ -28,4 +29,5 @@ export {
   ResultFilter,
   SiteFilter,
   XDRByDeviceFilter,
+  NotificationLogFilter,
 }
