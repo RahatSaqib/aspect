@@ -7,6 +7,7 @@ import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import EmptyGraph from '../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages } from '../../../messages'
 import { useFilterUpdate } from '../../../providers/FilterProvider'
@@ -135,8 +136,8 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
               </Grid>
               <Grid item xs={12} md={12} lg={10}>
                 <Grid container>
-                  {barData.data && barData.data.length ? (
-                    <Grid item xs={12} md={8}>
+                  <Grid item xs={12} md={8}>
+                    {barData.data && barData.data.length ? (
                       <ColumnGraph
                         data={barData.data}
                         graphId="xdrByCategory1Monthly"
@@ -163,10 +164,13 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                           })
                         }}
                       />
-                    </Grid>
-                  ) : null}
-                  {donutData.data && donutData.data.length ? (
-                    <Grid item xs={12} md={4} lg={4}>
+                    ) : (
+                      <EmptyGraph type="bar" />
+                    )}
+                  </Grid>
+
+                  <Grid item xs={12} md={4} lg={4}>
+                    {donutData.data && donutData.data.length ? (
                       <DonutGraph
                         data={donutData.data}
                         total={donutData.total}
@@ -192,10 +196,10 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
                       />
-                    </Grid>
-                  ) : (
-                    <Loading />
-                  )}
+                    ) : (
+                      <EmptyGraph type="pie" />
+                    )}
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>
