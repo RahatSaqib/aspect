@@ -59,8 +59,8 @@ async function seed(knex) {
     .first()
 
   const persons = await knex('NotificationType as nt')
-    .join('Job as j', 'nt.jobFunctionId', 'j.jobFunctionId')
-    .join('Person as p', 'j.personId', 'p.Id')
+    .join('JobContext as jc', 'nt.jobFunctionId', 'jc.jobFunctionId')
+    .join('Person as p', 'jc.personId', 'p.Id')
     .where('nt.partnerId', partnerId)
     .where('nt.issueTypeId', issueTypeId)
     .where('nt.messageTypeId', messageTypeId)

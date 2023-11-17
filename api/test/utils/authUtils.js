@@ -142,23 +142,8 @@ async function createUser(
   const jobFunctions = _.uniq(jobs.map(job => job.jobFunctionExternalId))
   await Promise.each(jobFunctions, async jobFunctionExternalId => {
     const jobFunction = await knex('JobFunction').where('externalId', jobFunctionExternalId).first()
-    let jobId
-    const job = await knex('Job')
-      .where({
-        personId,
-        jobFunctionId: jobFunction.id,
-      })
-      .first()
-    if (job) {
-      jobId = job.id
-    } else {
-      ;[jobId] = await knex('Job').insert({
-        personId,
-        jobFunctionId: jobFunction.id,
-      })
-    }
     const jobFunctionJobs = jobs.filter(job => job.jobFunctionExternalId === jobFunctionExternalId)
-    await knex('JobContext').where({ jobId }).del()
+    await knex('JobContext').where({ personId, jobFunctionId: jobFunction.id }).del()
     await Promise.each(jobFunctionJobs, async jobFunctionJob => {
       let jobGeography = {}
       const job = {
@@ -199,7 +184,8 @@ async function createUser(
       const assay = (await knex('Assay').where('externalId', job.assayExternalId).first()) || {}
       const disease = (await knex('Disease').where('externalId', job.diseaseExternalId).first()) || {}
       await knex('JobContext').insert({
-        jobId,
+        personId,
+        jobFunctionId: jobFunction.id,
         geographyId: jobGeography.id,
         siteId: site.id,
         assayTypeId: assayType.id,
@@ -217,9 +203,7 @@ async function removeUser(userId) {
     return Promise.resolve()
   }
   const personIds = await knex('Person').where({ userId }).pluck('id')
-  const jobIds = await knex('Job').whereIn('personId', personIds).pluck('id')
-  await knex('JobContext').whereIn('jobId', jobIds).del()
-  await knex('Job').whereIn('id', jobIds).del()
+  await knex('JobContext').whereIn('personId', personIds).del()
   await knex('LicensePerson').whereIn('personId', personIds).del()
   await knex('Person').where({ userId }).del()
   await knex('RefreshToken').where({ userId }).del()

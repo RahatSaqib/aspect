@@ -220,9 +220,10 @@ function getMySqlJsonPathFromCustomField(customField) {
     r.patientData ->> '$.name')`
   }
 
-  if (customField.fieldName === 'PatientPhone') {
+  if (customField.fieldName === 'PatientPhone' || customField.fieldName === 'RequestorPhone') {
     return `COALESCE(
     r.patientData ->> '$.PatientPhone',
+    r.patientData ->> '$.patientPhone',
     r.patientData ->> '$.phone')`
   }
 
@@ -230,6 +231,12 @@ function getMySqlJsonPathFromCustomField(customField) {
     return `COALESCE(
     r.patientData ->> '$.PatientStreet',
     r.patientData ->> '$.street')`
+  }
+
+  if (customField.fieldName === 'HealthFacility') {
+    return `COALESCE(
+    r.patientData ->> '$.HealthFacility',
+    r.patientData ->> '$.ReferringFacility')`
   }
 
   return `r.patientData ->> '$.${customField.fieldName}'`

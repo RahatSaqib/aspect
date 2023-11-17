@@ -92,7 +92,7 @@ const personDetailsResponse = {
         disabled: customBoolean('Person disabled'),
         disabledOn: Joi.date().allow(null).description('Date person was disabled'),
         disabledBy: Joi.number().allow(null).description('Id of user that disabled person'),
-        jobId: Joi.number().allow(null).description('Id of first Job'),
+        jobContextId: Joi.number().allow(null).description('Id of first Job'),
         jobFunctions: Joi.array().items(Joi.number()).allow(null).description('Array of jobFunctionId'),
         partnerId: Joi.number().allow(null).description('partnerId of first jobFunction'),
         tags: Joi.array().items(Joi.string()).allow(null).description('tags assigned to person'),

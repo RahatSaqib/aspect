@@ -57,25 +57,11 @@ async function initUserAndJobs(knex, partnerId, siteId) {
     const { id: userId } = await knex('User').where({ name: userName }).first()
     // get Person
     const { id: personId } = await knex('Person').where({ userId }).first()
-    // get (insert) Job
-    let jobId
-    const job = await knex('Job')
-      .where({
-        personId,
-        jobFunctionId,
-      })
-      .first()
-    if (job) {
-      jobId = job.id
-    } else {
-      ;[jobId] = await knex('Job').insert({
-        personId,
-        jobFunctionId,
-      })
-    }
+
     // insert JobContext for new site
     const [jobContextId] = await knex('JobContext').insert({
-      jobId,
+      personId,
+      jobFunctionId,
       siteId,
     })
     return jobContextId

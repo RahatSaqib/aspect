@@ -1,5 +1,5 @@
-const { listPeople } = require('./service')
 const { exportData, getBaseReplacements } = require('../shared/excel')
+const { listPeople } = require('./common/db')
 
 async function exportContacts(request, reply) {
   const { data } = await listPeople(request)
