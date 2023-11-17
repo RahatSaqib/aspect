@@ -82,6 +82,7 @@ import LgaSelect from './LgaSelect'
 import Loading from './Loading'
 import LocationSelector from './LocationSelector'
 import LoggedInLayout from './LoggedInLayout'
+import LoggedOutLayout from './LoggedOutLayout'
 import NotificationCategorySelect from './NotificationCategorySelect'
 import NotificationTypeSelect from './NotificationTypeSelect'
 import PartnerSelect from './PartnerSelect'
@@ -202,4 +203,5 @@ export {
   formatDateToYYYYMMDD,
   fillData,
   DonutGraph,
+  LoggedOutLayout,
 }

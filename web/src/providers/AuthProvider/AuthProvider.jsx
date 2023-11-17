@@ -1,8 +1,7 @@
-import React, { createContext, useCallback, useContext, useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import isNumber from 'lodash/isNumber'
 import { useSelector } from 'react-redux'
-
-const AuthContext = createContext()
+import AuthContext from './AuthProvider.Context'
 
 const AuthProvider = ({ children }) => {
   const userComposed = useSelector(({ user }) => user)
@@ -35,14 +34,4 @@ const AuthProvider = ({ children }) => {
   return <AuthContext.Provider value={userData}>{children}</AuthContext.Provider>
 }
 
-const useAuthState = () => {
-  const userData = useContext(AuthContext)
-
-  if (userData === undefined) {
-    throw new Error('useAuthState must be used within a AuthProvider')
-  }
-
-  return userData
-}
-
-export { AuthProvider, useAuthState }
+export default AuthProvider

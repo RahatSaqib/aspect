@@ -12,7 +12,7 @@ import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import pick from 'lodash/pick'
 import PropTypes from 'prop-types'
-import { useAuthState } from '../../../providers/AuthProvider'
+import useAuthState from '../../../hooks/useAuthState'
 import { getDateObject } from '../../../utils/utils/dateFormat'
 import styles from './DatePicker.module.css'
 
