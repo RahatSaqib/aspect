@@ -9,7 +9,7 @@ import { useAuthState } from '../../../providers/AuthProvider'
 
 const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
-  const { user } = useAuthState()
+  const { countryAbbreviation } = useAuthState()
 
   const {
     isLoading,
@@ -19,7 +19,7 @@ const SummaryStatus = ({ className, dashboard }) => {
   } = useQuery([SUMMARY_STATUS_WIDGETS.KEY, { dashboard }], async () =>
     fetchWrapperForQueries({
       endpoint: SUMMARY_STATUS_WIDGETS.ENDPOINT,
-      params: { dashboard, country: user?.countryAbbreviation },
+      params: { dashboard, country: countryAbbreviation },
     })
   )
 
