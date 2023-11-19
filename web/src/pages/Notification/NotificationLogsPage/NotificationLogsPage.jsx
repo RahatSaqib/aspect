@@ -11,7 +11,7 @@ import { allowOnlyAPIKeys, removeNullFromCollection, timeAndDate } from '../../.
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { replaceRouteParams } from '../../../components/QueryFetch/Helpers'
 import { NOTIFICATION_LOG_ENDPOINT, NOTIFICATION_LOG_KEY } from '../../../hooks/notification/notificationKeys'
-import { useFilterValues } from '../../../providers/FilterProvider'
+import useFilterValues from '../../../hooks/useFilterValues'
 import { DataCell } from './DataCell'
 import messages from './messages'
 import styles from './NotificationLogsPage.css'

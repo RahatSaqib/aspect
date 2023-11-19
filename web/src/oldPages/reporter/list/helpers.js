@@ -6,8 +6,6 @@ const encodeQueryFromObject = obj => {
   return encodeURIComponent(encodedQuery)
 }
 
-const hasObjectParams = params => Object.keys(params).filter(pKey => typeof params[pKey] === 'object').length > 0
-
 /**
  * Based on a baseUrl and parameters, builds to whole URL converting the provided parameters on a query string.
  * If the params object contains at least 1 object, only the second level of keys will be encoded. For example:
@@ -20,7 +18,9 @@ const hasObjectParams = params => Object.keys(params).filter(pKey => typeof para
  */
 export const buildURL = (baseUrl, params = {}) => {
   let urlQuery = ''
-  const shouldDefineSections = hasObjectParams(params)
+
+  const shouldDefineSections = Object.keys(params).filter(pKey => typeof params[pKey] === 'object').length > 0
+
   Object.keys(params).forEach(pKey => {
     let pValue
     if (typeof params[pKey] === 'object') {

@@ -21,8 +21,8 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages, assay } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { formatNumber } from '../../../utils/utils/number'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
@@ -190,12 +190,13 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                             const base = 'yyyy-MM-dd'
                             const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
 
+                            const assay = assays.find(a => a.externalId === evt.data.data.id).id
                             const params = {
                               displayResult: 'actual',
                               maxDate: format(endOfMonth(parsedDate), base),
                               minDate: format(startOfMonth(parsedDate), base),
                               onlyReportableResults: true,
-                              assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                              assayId: [assay],
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')
