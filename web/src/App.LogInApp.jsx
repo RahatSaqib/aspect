@@ -1,13 +1,14 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { useIdleTimer } from 'react-idle-timer'
+import { defineMessages, useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { Loading, ErrorBoundary, LoggedInLayout } from './cleanComponents'
-import IdleDialog from './components/IdleDialog'
 import config from './config'
+import useAuthState from './hooks/useAuthState'
 import useHashAndScroll from './hooks/useHashAndScroll'
+import AspectDialog from './oldComponents/shared/AspectDialog'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
-import { useAuthState } from './providers/AuthProvider'
 import { idleLogout, refreshStart } from './store/AuthRedux'
 import { fetchDiseases } from './store/DiseaseRedux'
 import { fetchCountries } from './store/GeographyRedux'
@@ -85,6 +86,8 @@ const LogInApp = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const navigate = useNavigate()
+  const { formatMessage } = useIntl()
+
   useHashAndScroll()
 
   const [showIdleDialog, setShowIdleDialog] = useState(false)
@@ -253,9 +256,22 @@ const LogInApp = () => {
         </Suspense>
       </ErrorBoundary>
 
-      {showIdleDialog ? <IdleDialog /> : null}
+      {showIdleDialog ? (
+        <AspectDialog title={formatMessage(messages.title)} modal open>
+          <span>{formatMessage(messages.help)}</span>
+        </AspectDialog>
+      ) : null}
     </LoggedInLayout>
   )
 }
 
 export default LogInApp
+
+const messages = defineMessages({
+  title: { id: 'pages.IdleDialog.title', defaultMessage: 'Automatic Logout' },
+  help: {
+    id: 'shared.IdleDialog.help',
+    defaultMessage:
+      'You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.',
+  },
+})

@@ -17,14 +17,7 @@ const Welcome = () => {
   }, [user, navigate])
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 'calc(100% - 120px)',
-      }}
-    >
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100% - 120px)' }}>
       <Paper elevation={3} sx={{ p: 4, minWidth: 380, width: '60vw' }}>
         <Typography variant="h4" sx={{ mb: 2 }}>
           {formatMessage(messages.welcome)}

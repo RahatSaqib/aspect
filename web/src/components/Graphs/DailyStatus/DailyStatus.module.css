@@ -213,13 +213,6 @@
   margin-right: 10px !important;
 }
 
-.dailyStatus__spinner {
-  height: 100%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
 .inline__tooltip {
   display: inline;
 }
