@@ -20,7 +20,7 @@ import Immutable from 'immutable'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useQuery, useQueryClient } from 'react-query'
+import { useQuery } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, DeviceListFilter } from '../../../cleanComponents'
 import ExportListButton from '../../../components/AspectExportListButton'
@@ -150,7 +150,6 @@ const DeviceList = () => {
   const [isProcessingMergeDevices, setProcessingMergeDevices] = useState(false)
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [pagination, setPagination] = useState({})
-  const queryClient = useQueryClient()
 
   const { sortCol, sortDir, page, size } = pagination
   const params = { ...pagination, ...filters }
