@@ -5,7 +5,7 @@ import { AspectWidgets, EmptyWidgets } from '../../../components/AspectWidgets'
 import { groupWidgets } from '../../../components/AspectWidgets/Helpers'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import SUMMARY_STATUS_WIDGETS from '../../../components/QueryFetch/Dashboard/index'
-import { useAuthState } from '../../../providers/AuthProvider'
+import useAuthState from '../../../hooks/useAuthState'
 
 const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)

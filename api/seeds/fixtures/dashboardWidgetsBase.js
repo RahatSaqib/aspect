@@ -2085,7 +2085,7 @@ const bangladeshAverageCompletion = {
 
 const totalNumberOfModules = {
   jobFunctions: ['all'],
-  icon: 'MdSwapVert',
+  icon: 'MdViewModule',
   title: 'Total Modules',
   titleI18nKey: 'totalModules',
   subTitle: null,
@@ -2133,7 +2133,7 @@ const totalNumberOfModules = {
 }
 const activeModules = {
   jobFunctions: ['all'],
-  icon: 'MdSwapVert',
+  icon: 'MdCheck',
   title: 'Active Modules',
   titleI18nKey: 'activeModules',
   subTitle: null,
