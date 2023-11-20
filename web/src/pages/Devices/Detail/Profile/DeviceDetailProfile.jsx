@@ -3,9 +3,12 @@ import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Button, Card, IconButton, Tooltip } from '@mui/material'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import useI18n from '../../../../hooks/useI18n'
+import useAuthState from '../../../../hooks/useAuthState'
+import useFilterUpdate from '../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../hooks/useFilterValues'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
 import requirePermissions from '../../../../oldComponents/shared/requirePermissions'
@@ -13,8 +16,6 @@ import Summary from '../../../../oldComponents/Summary'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
 import Results from '../../../../oldPages/result/historyResults/HistoryResults'
 import resultMessages from '../../../../oldPages/result/list/messages.js'
-import { useAuthState } from '../../../../providers/AuthProvider'
-import { useFilterUpdate, useFilterValues } from '../../../../providers/FilterProvider'
 import {
   showDialog,
   hideDialog,
@@ -223,7 +224,7 @@ const DeviceDetailProfile = ({
 }) => {
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
-  const { formatMessage, formatNumber, formatDate } = useI18n()
+  const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
   const {
     culture,
     displayPreferences: { utilizationRateThreshold, errorRateThreshold },
@@ -364,7 +365,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.connectivity)}
               description={formatMessage(messages.lastSeen, {
-                lastSeen: formatRelative(device.get('lastPingOn')),
+                lastSeen: formatRelative(device.get('lastPingOn'), formatRelativeTime),
               })}
             />
             <Summary
@@ -389,7 +390,10 @@ const DeviceDetailProfile = ({
             />
             <Summary title={formatMessage(messages.serial)} description={device.get('serial')} />
             <Summary title={formatMessage(messages.hostId)} description={device.get('hostId')} />
-            <Summary title={formatMessage(messages.createdOn)} description={formatRelative(device.get('createdOn'))} />
+            <Summary
+              title={formatMessage(messages.createdOn)}
+              description={formatRelative(device.get('createdOn'), formatRelativeTime)}
+            />
 
             {utilizationRateThisMonth !== null && (
               <Summary

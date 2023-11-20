@@ -3,6 +3,7 @@ import { Close, MoreHoriz, Done } from '@mui/icons-material'
 import { Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableRow, Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import { DetailHeader, NotificationLogFilter, SimpleTableHeader, SimpleTablePagination } from '../../../cleanComponents'
@@ -10,8 +11,7 @@ import { allowOnlyAPIKeys, removeNullFromCollection, timeAndDate } from '../../.
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { replaceRouteParams } from '../../../components/QueryFetch/Helpers'
 import { NOTIFICATION_LOG_ENDPOINT, NOTIFICATION_LOG_KEY } from '../../../hooks/notification/notificationKeys'
-import useI18n from '../../../hooks/useI18n'
-import { useFilterValues } from '../../../providers/FilterProvider'
+import useFilterValues from '../../../hooks/useFilterValues'
 import { DataCell } from './DataCell'
 import messages from './messages'
 import styles from './NotificationLogsPage.css'
@@ -25,7 +25,7 @@ export const statusIcons = {
 }
 
 const NotificationHistoryPage = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
   const [sortCol, setSortCol] = useState('date')

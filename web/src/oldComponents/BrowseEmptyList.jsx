@@ -1,9 +1,8 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import useI18n from '../hooks/useI18n'
-import { useFilterUpdate } from '../providers/FilterProvider'
+import useFilterUpdate from '../hooks/useFilterUpdate'
 
 const messages = defineMessages({
   noResultsTitle: { id: 'shared.EmptyList.noResultsTitle', defaultMessage: 'No results match your selected filters' },
@@ -11,7 +10,7 @@ const messages = defineMessages({
 })
 
 const BrowseEmptyList = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const location = useLocation()
   const [, , resetFilter] = useFilterUpdate()
   return (

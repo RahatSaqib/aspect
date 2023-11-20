@@ -4,13 +4,12 @@ import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import filter from 'lodash/filter'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
-import { getWhitelistedAssays } from '../../../utils/utils/graph'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -35,13 +34,23 @@ const assays = [
   'ReporterHivVL',
 ]
 
+const getWhitelistedAssays = ({ assays, assaysFromState }) => {
+  const allowed = []
+  if (assays && assays.length > 0) {
+    assays.map(a =>
+      assaysFromState.filter(({ externalId, hasResults }) => externalId === a && hasResults && allowed.push(a))
+    )
+  }
+  return allowed
+}
+
 const endPointParams = {
   minDate: startOfMonth(subMonths(new Date(), 12)),
   maxDate: endOfMonth(subMonths(new Date(), 1)),
 }
 
 const TreatmentStatusGraph = ({ assaysFromState }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()

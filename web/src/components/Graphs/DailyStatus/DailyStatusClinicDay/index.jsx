@@ -3,7 +3,7 @@ import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
 import PropTypes from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import styles from '../DailyStatus.module.css'
 import { getDayTitle } from '../Helpers'
@@ -50,7 +50,7 @@ const DailyStatusClinicDay = ({
   totalResults,
   onClickDay,
 }) => {
-  const { formatDate, formatMessage } = useI18n()
+  const { formatDate, formatMessage } = useIntl()
   const isActive = maintenanceStatusI18nKey === 'active' || maintenanceStatusI18nKey === 'reportedActive'
   const isEditable = maintenanceStatusExternalId !== 'active'
   const { weekend } = consts

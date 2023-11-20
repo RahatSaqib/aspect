@@ -1,16 +1,13 @@
 import React from 'react'
-import useI18n from '../../../../hooks/useI18n'
-import { i18nWrapper } from '../../../../providers/I18nProvider'
+import { useIntl } from 'react-intl'
 import IconProvider from '../../../IconProvider/index'
 import styles from './DailyStatusDialog.module.css'
 import messages from './messages'
 
-const { format } = i18nWrapper()
-
 const workingHoursFormat = 'p' // Long localized time
 
 const SiteInfo = ({ siteContacts, hoursStart, hoursEnd }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage, format } = useIntl()
 
   return (
     <div className={styles.Form__bottom_container}>

@@ -3,6 +3,7 @@ import { FormControlLabel, Switch, TableBody, LinearProgress } from '@mui/materi
 import Immutable from 'immutable'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
@@ -12,13 +13,12 @@ import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
-import useI18n from '../../../hooks/useI18n'
+import useAuthState from '../../../hooks/useAuthState'
+import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import { useAuthState } from '../../../providers/AuthProvider'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
 import { fetchConsumables } from '../../../store/ConsumableRedux'
 import {
@@ -303,7 +303,7 @@ export const InventoryItemsList = () => {
   const filter = useFilterValues(location.pathname)
   // >>>>>> Defining hooks <<<<<<
   const dispatch = useDispatch()
-  const intl = useI18n()
+  const intl = useIntl()
 
   const [isLoading, setIsLoading] = useState(true)
 

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Helmet } from 'react-helmet'
-import useI18n from '../hooks/useI18n'
-import AppNotificationDialog from './appNotification/AppNotificationDialog'
-import AppNotificationSnackBar from './appNotification/AppNotificationSnackBar'
+import { useIntl } from 'react-intl'
+import AppNotificationDialog from '../../oldComponents/appNotification/AppNotificationDialog'
+import AppNotificationSnackBar from '../../oldComponents/appNotification/AppNotificationSnackBar'
 
 const SignedOutLayout = ({ children }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   return (
     <div>
       <Helmet titleTemplate="%s - Aspect" defaultTitle="Aspect" />

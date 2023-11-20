@@ -1,17 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { Card, CardContent, LinearProgress, Table, TableBody, TableCell, TableRow } from '@mui/material'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryTransferFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import useInventoryTransferDownload from '../../../hooks/inventory/useInventoryTransferDownload'
 import useInventoryTransferList from '../../../hooks/inventory/useInventoryTransferList'
-import useI18n from '../../../hooks/useI18n'
+import useFilterValues from '../../../hooks/useFilterValues'
 import consumables from '../../../messages/consumableMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
@@ -20,7 +20,7 @@ import styles from './styles.module.css'
 const InventoryTransfers = () => {
   const location = useLocation()
   const navigate = useNavigate()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const filter = useFilterValues(location.pathname)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
 

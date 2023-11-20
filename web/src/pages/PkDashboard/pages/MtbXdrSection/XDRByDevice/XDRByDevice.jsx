@@ -2,18 +2,19 @@ import React from 'react'
 import { TableBody, Table, Button, LinearProgress } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, XDRByDeviceFilter } from '../../../../../cleanComponents'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useXdrStatus from '../../../../../hooks/result/useXdrStatus'
-import useI18n from '../../../../../hooks/useI18n'
+import useAuthState from '../../../../../hooks/useAuthState'
+import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import { getCustomMessage } from '../../../../../messages/customMessages'
 import BrowseEmptyList from '../../../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../../../oldComponents/shared/DataTableCard'
 import DataTableHead from '../../../../../oldComponents/shared/tableHead'
-import { useAuthState } from '../../../../../providers/AuthProvider'
-import { useFilterUpdate, useFilterValues } from '../../../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../../../utils/selectors/searchParams'
 import messages from './messages'
 import styles from './styles.module.css'
@@ -22,7 +23,7 @@ import TableRow from './TableRow'
 const XdrByDevice = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const filter = useFilterValues(location.pathname)
   const workloadFilter = useFilterValues('/browse/device/workload')
   const [addFilter] = useFilterUpdate()
@@ -51,9 +52,9 @@ const XdrByDevice = () => {
   const isDistrict = !isEmpty(filter.stateId) && !isEmpty(filter.lgaId)
 
   const label = isNational
-    ? getCustomMessage(messages, 'state', user)
+    ? getCustomMessage(formatMessage, messages, 'state', user)
     : isProvince
-    ? getCustomMessage(messages, 'lga', user)
+    ? getCustomMessage(formatMessage, messages, 'lga', user)
     : formatMessage(messages.site)
 
   const columns = [

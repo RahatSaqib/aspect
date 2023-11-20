@@ -1,7 +1,7 @@
 import React from 'react'
 import { IconButton } from '@mui/material'
 import { bool, func, number } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import IconProvider from '../../../IconProvider'
 import styles from '../../Table.module.css'
 import messages from '../messages'
@@ -11,7 +11,7 @@ import messages from '../messages'
  */
 
 const TableColumnGroupBy = ({ headerIndex, handleGroupByColumnToggle, isGrouped }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return isGrouped ? (
     <IconButton
       onClick={e => handleGroupByColumnToggle(e, headerIndex)}

@@ -16,6 +16,7 @@ import UI_CONSTS from '../../utils/consts/UI'
 import IconProvider from '../IconProvider'
 import fetchWrapperForQueries from '../QueryFetch'
 import SelectComponent, { getSelectedOptions } from './AspectDropDown.SelectComponent'
+import { useFormikContext } from 'formik'
 
 const getActualData = ({ data, reduxStateId, sortByKeys }) => {
   const actualData = get(data, reduxStateId)
@@ -91,6 +92,8 @@ const groupStyles = {
 const GroupHeading = props => <originalComponents.GroupHeading {...props} style={groupStyles} />
 
 const LabelValue = ({ selectOptions, defaultSelectedOption, keyMapping }) => {
+  const { toggleEdit } = useFormikContext()
+  const keepInvalidSelection = !toggleEdit
   const options = getSelectedOptions(selectOptions, defaultSelectedOption, keyMapping.idKey)
 
   let text = '-'
@@ -100,6 +103,8 @@ const LabelValue = ({ selectOptions, defaultSelectedOption, keyMapping }) => {
     } else {
       text = options.label
     }
+  } else if (keepInvalidSelection) {
+    text = defaultSelectedOption
   }
 
   return (

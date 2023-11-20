@@ -1,5 +1,3 @@
-const Promise = require('bluebird')
-
 const chai = require('chai')
 const _ = require('lodash')
 
@@ -18,8 +16,6 @@ describe('Permissions', () => {
   const wrongValue = 99999999
   let countryId
   let jobFunctionId
-  let cleanJob = false
-  let jobId
   let siteId
   let siteName
   let geographyId
@@ -35,16 +31,6 @@ describe('Permissions', () => {
           .where('s.partnerId', partner1)
           .first('s.id', 's.name', 's.geographyId'),
       ]
-      // if Job doesn't exist then entry added during the test will be removed in after()
-      const job = await knex('Job').where({ personId, jobFunctionId }).first()
-      cleanJob = !job
-    })
-  )
-  after(() =>
-    runTestWithKnex(async knex => {
-      if (cleanJob) {
-        await knex('Job').where('id', jobId).del()
-      }
     })
   )
 
@@ -73,175 +59,24 @@ describe('Permissions', () => {
     })
   })
 
-  describe('Job', () => {
-    /*
-    deleting Job also deletes linked JobContext entries,
-    and we need to restore original values in after()
-    */
-    let jobContextsOld
-    before(() =>
-      runTestWithKnex(async knex => {
-        // keep JobContext entries, if any exists
-        jobContextsOld = await knex('JobContext as jc')
-          .join('Job as j', 'jc.jobId', 'j.id')
-          .where('j.personId', personId)
-          .where('j.jobFunctionId', jobFunctionId)
-          .select('jc.geographyId', 'jc.siteId')
-      })
-    )
-    //
-    after(() =>
-      runTestWithKnex(async knex => {
-        await Promise.each(jobContextsOld, async jc => {
-          const jcOld = await knex('JobContext')
-            .where({ jobId })
-            .where(function () {
-              if (jc.geographyId) {
-                this.where({ geographyId: jc.geographyId })
-              } else if (jc.siteId) {
-                this.where({ siteId: jc.siteId })
-              }
-            })
-            .first()
-          if (!jcOld) {
-            await knex('JobContext').insert({
-              jobId,
-              geographyId: jc.geographyId,
-              siteId: jc.siteId,
-            })
-          }
-        })
-      })
-    )
-    it('should un-assign person from JobFunction and return list of remaining Jobs for person', done => {
-      server
-        .post(`${path}/unassign-job`)
-        .send({
-          personId,
-          jobFunctionId,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'ok')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          // list must NOT contain item we just removed
-          const jf = res.body.data.find(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
-          assert.isUndefined(jf)
-          //
-          done()
-        })
-    })
-
-    let numJobs = 0
-    it('should assign person to JobFunction and return list of Jobs for person', done => {
-      server
-        .post(`${path}/assign-job`)
-        .send({
-          personId,
-          jobFunctionId,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'ok')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.isAtLeast(res.body.data.length, 1)
-
-          numJobs = res.body.data.length
-          let item = res.body.data[0]
-          assert.property(item, 'id')
-          assert.property(item, 'jobFunctionId')
-          assert.property(item, 'personId')
-          // list must contain item we just added
-          item = res.body.data.find(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
-          assert.typeOf(item, 'Object')
-          // get 'jobId' to use in next steps
-          jobId = item.id
-          assert.isNumber(jobId)
-          //
-          done()
-        })
-    })
-    it('should return same list of jobs as before after assign person to the same JobFunction', done => {
-      server
-        .post(`${path}/assign-job`)
-        .send({
-          personId,
-          jobFunctionId,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 200)
-          assert.typeOf(res.body, 'Object')
-          assert.property(res.body, 'ok')
-          assert.property(res.body, 'data')
-          assert.typeOf(res.body.data, 'array')
-          assert.equal(res.body.data.length, numJobs)
-          let item = res.body.data[0]
-          assert.property(item, 'id')
-          assert.property(item, 'jobFunctionId')
-          assert.property(item, 'personId')
-          // list must contain item we just added
-          item = res.body.data.find(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
-          assert.typeOf(item, 'Object')
-          // get 'jobId' to use in next steps
-          jobId = item.id
-          assert.isNumber(jobId)
-          //
-          done()
-        })
-    })
-    it('should fail - wrong personId', done => {
-      server
-        .post(`${path}/assign-job`)
-        .send({
-          personId: wrongValue,
-          jobFunctionId,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 422) // Boom.badData
-          assert.equal(res.body.message, `Can not find person with id=${wrongValue}`)
-          //
-          done()
-        })
-    })
-    it('should fail - personId is from another geography (i.e. another country)', done => {
-      server
-        .post(`${path}/assign-job`)
-        .send({
-          personId: 7,
-          jobFunctionId,
-        })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 422) // Boom.badData
-          //
-          done()
-        })
-    })
-  })
-
   describe('Job Context', () => {
     let cleanJobContext = false
     //
     before(() =>
       runTestWithKnex(async knex => {
         //
-        const jobContext = await knex('JobContext').where({ jobId, siteId }).whereNull('geographyId').first()
+        const jobContext = await knex('JobContext')
+          .where({ personId, jobFunctionId, siteId })
+          .whereNull('geographyId')
+          .first()
         cleanJobContext = !jobContext
       })
     )
     //
     after(() =>
       runTestWithKnex(async knex => {
-        if (cleanJob || cleanJobContext) {
-          await knex('JobContext').where({ jobId, siteId }).whereNull('geographyId').del()
+        if (cleanJobContext) {
+          await knex('JobContext').where({ personId, jobFunctionId, siteId }).whereNull('geographyId').del()
         }
       })
     )
@@ -249,7 +84,7 @@ describe('Permissions', () => {
     it('should un-assign person from JobContext and return list of remaining JobContexts for person', done => {
       server
         .post(`${path}/unassign-job-context`)
-        .send({ jobId, siteId })
+        .send({ personId, jobFunctionId, siteId })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
@@ -258,7 +93,9 @@ describe('Permissions', () => {
           assert.property(res.body, 'data')
           assert.typeOf(res.body.data, 'array')
           // list must NOT contain item we just removed
-          const item = res.body.data.find(x => x.jobId === jobId && x.siteId === siteId && !x.geographyId)
+          const item = res.body.data.find(
+            x => x.personId === personId && x.jobFunctionId === jobFunctionId && x.siteId === siteId && !x.geographyId
+          )
           assert.isUndefined(item)
           //
           done()
@@ -268,7 +105,7 @@ describe('Permissions', () => {
     it('should assign person to JobContext and return list of JobContexts for person', done => {
       server
         .post(`${path}/assign-job-context`)
-        .send({ jobId, siteId })
+        .send({ personId, jobFunctionId, siteId })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 200)
@@ -279,13 +116,13 @@ describe('Permissions', () => {
           assert.isAtLeast(res.body.data.length, 1)
           let item = res.body.data[0]
           // assert.property(item, 'id')
-          assert.property(item, 'jobId')
           assert.property(item, 'geographyId')
           assert.property(item, 'siteId')
-          assert.property(item, 'personId')
           assert.property(item, 'jobFunctionId')
           // list must contain item we just added
-          item = res.body.data.find(x => x.jobId === jobId && x.siteId === siteId && !x.geographyId)
+          item = res.body.data.find(
+            x => x.personId === personId && x.jobFunctionId === jobFunctionId && x.siteId === siteId && !x.geographyId
+          )
           assert.typeOf(item, 'Object')
           //
           done()
@@ -295,7 +132,7 @@ describe('Permissions', () => {
     it('should fail - either `siteId` or `geographyId` is needed, not both', done => {
       server
         .post(`${path}/assign-job-context`)
-        .send({ jobId, siteId, geographyId })
+        .send({ personId, jobFunctionId, siteId, geographyId })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 409) // Boom.conflict
@@ -307,7 +144,7 @@ describe('Permissions', () => {
     it('should fail - missing both `siteId` and `geographyId`', done => {
       server
         .post(`${path}/assign-job-context`)
-        .send({ jobId })
+        .send({ personId, jobFunctionId })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 409) // Boom.conflict
@@ -316,26 +153,14 @@ describe('Permissions', () => {
           done()
         })
     })
-    it('should fail - missing jobId or both (personId and jobFunctionId)', done => {
+    it('should fail - missing (personId and jobFunctionId)', done => {
       server
         .post(`${path}/assign-job-context`)
         .send({ siteId, geographyId })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 417) // Boom.expectationFailed
-          assert.equal(res.body.message, 'Either jobId or (personId and jobFunctionId) is needed to manage JobContext')
-          //
-          done()
-        })
-    })
-    it('should fail - wrong jobId', done => {
-      server
-        .post(`${path}/assign-job-context`)
-        .send({ jobId: wrongValue, siteId })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 422) // Boom.badData
-          assert.equal(res.body.message, `Missing job with specified jobId=${wrongValue}`)
+          assert.equal(res.body.message, 'personId and jobFunctionId is needed to manage JobContext')
           //
           done()
         })
@@ -343,7 +168,7 @@ describe('Permissions', () => {
     it('should fail - wrong siteId', done => {
       server
         .post(`${path}/assign-job-context`)
-        .send({ jobId, siteId: wrongValue })
+        .send({ personId, jobFunctionId, siteId: wrongValue })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
@@ -355,23 +180,11 @@ describe('Permissions', () => {
     it('should fail - wrong geographyId', done => {
       server
         .post(`${path}/assign-job-context`)
-        .send({ jobId, geographyId: wrongValue })
+        .send({ personId, jobFunctionId, geographyId: wrongValue })
         .set('Authorization', `Bearer ${shared.token}`)
         .end((err, res) => {
           assert.equal(res.status, 422) // Boom.badData
           assert.equal(res.body.message, `Missing geography with specified geographyId=${wrongValue}`)
-          //
-          done()
-        })
-    })
-    it('should fail - current Admin user and jobId point to different partnerId', done => {
-      server
-        .post(`${path}/assign-job-context`)
-        .send({ jobId: 8, geographyId })
-        .set('Authorization', `Bearer ${shared.token}`)
-        .end((err, res) => {
-          assert.equal(res.status, 417) // Boom.expectationFailed
-          assert.equal(res.body.message, 'Only Admin with same partnerId as Job/JobFunction can manage Jobs')
           //
           done()
         })
@@ -485,20 +298,12 @@ describe('Permissions', () => {
           await knex('JobFunction').where({ partnerId: partner1, name: 'Clinician' }).first('id'),
         ]
 
-        const jobProps = { personId, jobFunctionId: jobFunctionClinicianId }
-        const job = await knex('Job').where(jobProps).first()
-        if (!job) {
-          // if such Job is missing - keep it's properties to remove it in after()
-          toCleanUp.jobProps = jobProps
-          // --> toCleanUp.jobContextIds will be defined when assigning person to job
-        } else {
-          const jobContextProps = { jobId: job.id, siteId }
-          // check if JobContext exists
-          const jobContext = await knex('JobContext').where(jobContextProps).first()
-          if (!jobContext) {
-            // if such JobContext is missing - keep it's properties to remove it in after()
-            toCleanUp.jobContextProps = jobContextProps
-          }
+        const jobContextProps = { personId, jobFunctionId: jobFunctionClinicianId, siteId }
+        // check if JobContext exists
+        const jobContext = await knex('JobContext').where(jobContextProps).first()
+        if (!jobContext) {
+          // if such JobContext is missing - keep it's properties to remove it in after()
+          toCleanUp.jobContextProps = jobContextProps
         }
       })
     )
@@ -513,16 +318,12 @@ describe('Permissions', () => {
         if (toCleanUp.jobContextIds.length) {
           await knex('JobContext').whereIn('id', toCleanUp.jobContextIds).del()
         }
-        if (toCleanUp.jobProps) {
-          await knex('Job').where(toCleanUp.jobProps).del()
-        }
       })
     )
 
     function assertItemProperties(item) {
       assert.property(item, 'personId')
       assert.property(item, 'partnerId')
-      assert.property(item, 'jobId')
       assert.property(item, 'jobFunctionId')
       assert.property(item, 'jobFunctionName')
       assert.property(item, 'jobContextId')

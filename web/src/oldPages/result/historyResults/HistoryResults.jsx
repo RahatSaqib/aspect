@@ -4,7 +4,7 @@ import { Card, IconButton, LinearProgress, Table, TableBody, Tooltip } from '@mu
 import map from 'lodash/map'
 import omit from 'lodash/omit'
 import { MdFileDownload } from 'react-icons/md'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
@@ -28,7 +28,7 @@ const Results = ({
   onExportClick,
   onRowClick,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <section className={cssStyles.Section}>

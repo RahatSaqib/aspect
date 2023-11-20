@@ -17,12 +17,12 @@ import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import pick from 'lodash/pick'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages, assay } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -64,7 +64,7 @@ const filterFunctionBar = (data, props) => {
 }
 
 const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState([])
   const navigate = useNavigate()
@@ -189,12 +189,13 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                             const base = 'yyyy-MM-dd'
                             const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
 
+                            const assay = assays.find(a => a.externalId === evt.data.data.id).id
                             const params = {
                               displayResult: 'actual',
                               maxDate: format(endOfMonth(parsedDate), base),
                               minDate: format(startOfMonth(parsedDate), base),
                               onlyReportableResults: true,
-                              assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                              assayId: [assay],
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')
@@ -240,7 +241,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
 export default TestsOverTimeGraph
 
 const AssayAutocomplete = ({ assaysFromState, value, onChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [innerValue, setInnerValue] = useState(value)
 
   const options = assaysFromState.sort((a, b) => -b.assayTypeAbbreviation.localeCompare(a.assayTypeAbbreviation))

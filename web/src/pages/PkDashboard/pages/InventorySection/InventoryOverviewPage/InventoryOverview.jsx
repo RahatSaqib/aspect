@@ -1,15 +1,15 @@
 import React, { useState } from 'react'
 import { LinearProgress } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { PeriodSelector, ConsumableSelector } from '../../../../../cleanComponents'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
-import useI18n from '../../../../../hooks/useI18n'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 import useInventoryOverview from './useInventoryOverview'
 
 const InventoryOverviewPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [filter, setFilter] = useState({
     minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),

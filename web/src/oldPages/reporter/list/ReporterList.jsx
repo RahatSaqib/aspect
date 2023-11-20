@@ -4,16 +4,16 @@ import Immutable from 'immutable'
 import isEmpty from 'lodash/isEmpty'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, ReporterFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
+import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { receiveList, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
@@ -89,7 +89,7 @@ export const ReporterListWithProps = ({
   onExportClick,
   pageSize,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <>
@@ -164,7 +164,7 @@ const ReporterList = () => {
   const [total, setTotal] = useState()
   const [pagination, setPagination] = useState(getCurrentPagination(location))
   const [columns, setColumns] = useState(Immutable.List([]))
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const { sortCol, sortDir, page, size } = pagination
   const params = { ...pagination, ...filters }

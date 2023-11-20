@@ -10,7 +10,7 @@ import isNil from 'lodash/isNil'
 import map from 'lodash/map'
 import noop from 'lodash/noop'
 import PropTypes from 'prop-types'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { formatWithLocale } from '../../../utils/utils/dateFormat'
 import AspectButton from '../AspectButton'
 import messages from './messages'
@@ -506,7 +506,7 @@ const DateTimeInput = props => {
 
   const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat })
   const displayFormat = getDisplayFormat({ dateFormat, timeFormat })
-  const { formatMessage, culture } = useI18n()
+  const { formatMessage, culture } = useIntl()
   const FieldProps = originFieldProps || getDefaultFieldsProps(formatMessage)
   const TextFieldsProps = _fp.merge(getDefaultFieldsProps(formatMessage), FieldProps)
   const minDate = getDateObject(min)

@@ -1,7 +1,7 @@
 import React from 'react'
 import isString from 'lodash/isString'
 import { array, oneOfType, string } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import styles from '../../Table.module.css'
 import messages from '../messages'
 
@@ -14,7 +14,7 @@ const CONTACTS = {
  */
 
 const ContactsCell = ({ value }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const valToArray = isString(value) ? value.split(',') : []
   if (valToArray.length > CONTACTS.MAX_VISIBLE_COUNT) {
     const tempContacts = [...valToArray]

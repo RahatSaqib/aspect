@@ -4,12 +4,13 @@ import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import EmptyGraph from '../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -34,7 +35,7 @@ const endPointParams = [
 ]
 
 const XdrResultsGraph = ({ assaysFromState: assays }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
@@ -49,7 +50,8 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
   const [barData, setBarData] = useState({})
   useEffect(() => {
     if (data && data.data) {
-      const info = data.data
+      const keyToConsume = 'resultCategory2'
+      const info = data.data.filter(i => !!i[keyToConsume])
       const i18nKeys = reduce(
         info,
         (acc, curr) => {
@@ -65,7 +67,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         { resultCategory1: { values: ['Detected'] } },
         'MMM yy',
         'cnt',
-        'resultCategory2',
+        keyToConsume,
         i18nKeys,
         'pie',
         endPointParams,
@@ -73,7 +75,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         messages
       )
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Detected'], 'standard')
+      const { avg: pieAvg = 0 } = getAverageFromData(pieData, 'value', ['Detected'], 'standard')
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -86,7 +88,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         { resultCategory1: { values: ['Detected'] } },
         'MMM',
         'month',
-        'resultCategory2',
+        keyToConsume,
         i18nKeys,
         'bar',
         endPointParams,
@@ -134,8 +136,8 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
               </Grid>
               <Grid item xs={12} md={12} lg={10}>
                 <Grid container>
-                  {barData.data && barData.data.length ? (
-                    <Grid item xs={12} md={8}>
+                  <Grid item xs={12} md={8}>
+                    {barData.data && barData.data.length ? (
                       <ColumnGraph
                         data={barData.data}
                         graphId="xdrByCategory1Monthly"
@@ -162,10 +164,13 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                           })
                         }}
                       />
-                    </Grid>
-                  ) : null}
-                  {donutData.data && donutData.data.length ? (
-                    <Grid item xs={12} md={4} lg={4}>
+                    ) : (
+                      <EmptyGraph type="bar" />
+                    )}
+                  </Grid>
+
+                  <Grid item xs={12} md={4} lg={4}>
+                    {donutData.data && donutData.data.length ? (
                       <DonutGraph
                         data={donutData.data}
                         total={donutData.total}
@@ -191,10 +196,10 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
                       />
-                    </Grid>
-                  ) : (
-                    <Loading />
-                  )}
+                    ) : (
+                      <EmptyGraph type="pie" />
+                    )}
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>

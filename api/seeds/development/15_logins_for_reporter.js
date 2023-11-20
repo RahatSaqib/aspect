@@ -152,15 +152,13 @@ async function seed(knex) {
     )
 
     // --------
-    // Job
+    // Job Context
     const userName = jobFunction.name === resultViewerYes.name ? userNames[0] : userNames[1]
-    const [jobId] = await knex('Job').insert({
+    await knex('JobContext').insert({
       personId: users.find(x => x.userName === userName).personId,
       jobFunctionId,
+      siteId,
     })
-    // --------
-    // Job Context
-    await knex('JobContext').insert({ jobId, siteId })
   })
 }
 

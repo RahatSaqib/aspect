@@ -4,6 +4,7 @@ import intersectionWith from 'lodash/intersectionWith'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, DeviceApiKeyFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
@@ -13,14 +14,13 @@ import useDeviceApiKeyAssign from '../../../hooks/deviceApiKey/useDeviceApiKeyAs
 import useDeviceApiKeyGenerate from '../../../hooks/deviceApiKey/useDeviceApiKeyGenerate'
 import useDeviceApiKeyUpdate from '../../../hooks/deviceApiKey/useDeviceApiKeyUpdate'
 import useExportDeviceApiKey from '../../../hooks/deviceApiKey/useExportDeviceApiKey'
-import useI18n from '../../../hooks/useI18n'
+import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
 import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
@@ -32,7 +32,7 @@ const DEFAULT_GENERATOR_VALUES = { count: 1 }
 const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
 
 export const DeviceApiKeyList = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)

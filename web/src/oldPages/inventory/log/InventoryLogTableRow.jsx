@@ -1,12 +1,12 @@
 import React from 'react'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
 const InventoryLogTableRow = ({ inventoryLogItem }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <TableRow className={styles.TableRow}>
       <TableCell className={styles.TableCell}>

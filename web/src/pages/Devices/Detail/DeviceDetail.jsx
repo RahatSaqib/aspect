@@ -1,7 +1,7 @@
 import React, { useCallback } from 'react'
 import { Box } from '@mui/material'
 import Immutable from 'immutable'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
@@ -10,11 +10,10 @@ import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
-import useI18n from '../../../hooks/useI18n'
+import useAuthState from '../../../hooks/useAuthState'
 import deviceApprovalMessages from '../../../messages/deviceApprovalMessages'
 import deviceStatusMessages from '../../../messages/deviceStatusMessages'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { useAuthState } from '../../../providers/AuthProvider'
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
 import DeviceDetailAlerts from './Alerts/DeviceDetailAlerts'
@@ -41,7 +40,7 @@ export const DeviceDetail = props => {
   const searchParams = new URLSearchParams(location.search)
   const navigate = useNavigate()
   const { deviceId } = useParams()
-  const intl = useI18n()
+  const intl = useIntl()
   const queryClient = useQueryClient()
 
   const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)

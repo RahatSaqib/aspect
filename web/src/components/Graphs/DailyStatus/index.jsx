@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, TextField, MenuItem } from '@mui/material'
-import useI18n from '../../../hooks/useI18n'
-import Loading from '../../../oldComponents/Loading'
+import { useIntl } from 'react-intl'
+import Loading from '../../../cleanComponents/Loading'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import GRAPH_CONSTS from '../../../utils/consts/Graphs/CONSTS'
 import { getPreviousPeriod, dateRangeOptions } from '../Helpers/Formatters'
@@ -15,19 +15,19 @@ import messages from './messages'
 
 const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 
-const ops = dateRangeOptions('deviceDateRange').deviceDateRange
-
 const DailyStatus = () => {
   const [dialogState, setDialogState] = useState({ isOpen: false })
   const minDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").start
   const maxDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").end
-  const { formatMessage } = useI18n()
+  const { formatMessage, formatDate } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
     statuses: { allStatuses, visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },
     actions: { changeDeviceStatus, getDeviceDayDetails, toggleAll, toggleStatusVisibility, updateFromActionComponent },
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
+
+  const ops = dateRangeOptions(formatMessage, formatDate, 'deviceDateRange').deviceDateRange
 
   const onClickDay = ({ day, deviceId }) => {
     const {
@@ -107,7 +107,7 @@ const DailyStatus = () => {
             ) : null}
           </div>
         ) : (
-          <Loading className={styles.dailyStatus__spinner} />
+          <Loading centered />
         )}
       </CardContent>
     </Card>

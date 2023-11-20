@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react'
 import { AppBar, IconButton, MenuItem, Toolbar } from '@mui/material'
 import { FaUser } from 'react-icons/fa'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../../assets/logo_confluence.png'
 import PermissionChecker from '../../components/PermissionChecker'
-import useI18n from '../../hooks/useI18n'
 import IconMenu from '../../oldComponents/shared/IconMenu'
 import { userRequestedLogout } from '../../store/AuthRedux'
 import { aspectFetch } from '../../utils/utils/fetch'
@@ -26,7 +25,7 @@ const messages = defineMessages({
 
 const Header = () => {
   const dispatch = useDispatch()
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const [version, setVersion] = useState({ fetched: false, v: '' })
 

@@ -12,7 +12,7 @@ import min from 'lodash/min'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import range from 'lodash/range'
-import { dateFNSLocales } from '../../../providers/I18nProvider'
+import dateFNSLocales from '../../../providers/I18nProvider/dateFNSLocales'
 
 function buildColumnsFromData({ columns, columnOrder, contextualMenu = false }) {
   const output = []
