@@ -15,7 +15,6 @@ import jobs from './JobRedux'
 import person from './PersonRedux'
 import result from './ResultRedux'
 import resultTreatmentStatus from './ResultTreatmentStatusRedux'
-import site from './SiteRedux'
 import task from './TaskRedux'
 
 const appReducer = combineReducers({
@@ -34,7 +33,6 @@ const appReducer = combineReducers({
   person,
   result,
   resultTreatmentStatus,
-  site,
   task,
 })
 
@@ -54,7 +52,6 @@ const App = Immutable.Record({
   person: undefined,
   result: undefined,
   resultTreatmentStatus: undefined,
-  site: undefined,
   task: undefined,
 })
 
