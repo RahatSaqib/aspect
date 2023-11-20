@@ -184,7 +184,7 @@ const calculateFilteredOptions = (itemBase, item, formik) => {
 }
 // end filter logic
 
-const enableItemAndFilter = (item, data, formik) => {
+const enableItemAndFilter = (item, data, formik, keepInvalidSelection) => {
   const idToUpdate = item.id
   const itemBase = data.find(itemBase => itemBase.source === idToUpdate)
 
@@ -207,11 +207,13 @@ const enableItemAndFilter = (item, data, formik) => {
         .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined }))
       item.controlType.dependencies = [itemBase.source]
 
-      // second, clear any invalid option from already selected values
-      const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
-      const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
-      if (!currentValidValues.includes(currentSelectdValue)) {
-        formik.values[field[0]][field[1]] = ''
+      if (!keepInvalidSelection) {
+        // second, clear any invalid option from already selected values
+        const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
+        const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
+        if (!currentValidValues.includes(currentSelectdValue)) {
+          formik.values[field[0]][field[1]] = ''
+        }
       }
     }
   }
@@ -219,13 +221,13 @@ const enableItemAndFilter = (item, data, formik) => {
   return item
 }
 
-export const updateValidationsAndFilters = (sections, data, formik) => {
+export const updateValidationsAndFilters = (sections, data, formik, keepInvalidSelection) => {
   return sections.map((section, index) => {
     // last section is custom fields
     if (index === sections.length - 1) {
       section = {
         ...section,
-        rows: section.rows.map(r => ({ ...r, items: r.items.map(item => enableItemAndFilter(item, data, formik)) })),
+        rows: section.rows.map(r => ({ ...r, items: r.items.map(item => enableItemAndFilter(item, data, formik, keepInvalidSelection)) })),
       }
     }
     return section
