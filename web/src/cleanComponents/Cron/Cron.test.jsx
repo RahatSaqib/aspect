@@ -2,7 +2,7 @@ import React from 'react'
 import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
-import { I18nProvider } from '../../providers/I18nProvider'
+import I18nProvider from '../../providers/I18nProvider'
 import Cron from './Cron'
 
 const props = {

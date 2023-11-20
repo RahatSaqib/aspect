@@ -3,7 +3,7 @@ import isDateEqual from 'date-fns/isEqual'
 import Downshift from 'downshift'
 import { act } from 'react-dom/test-utils'
 import { mountWithTheme, shallowWithTheme } from '../../../__setup__/common'
-import { I18nProvider } from '../../../providers/I18nProvider'
+import I18nProvider from '../../../providers/I18nProvider'
 import DateTimeInput from './DateTimeInput'
 
 const DateTimeInputI18n = props => (

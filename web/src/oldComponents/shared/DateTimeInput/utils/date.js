@@ -37,7 +37,7 @@ import times from 'lodash/times'
 import upperFirst from 'lodash/upperFirst'
 import values from 'lodash/values'
 import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
-import { getAspectDisplayPreferences } from '../../../../utils/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../LocalStorage'
 import messages from '../messages'
 
 const now = new Date()
