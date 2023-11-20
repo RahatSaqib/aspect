@@ -18,8 +18,8 @@ import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
 import useI18n from '../../hooks/useI18n'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
-import messages from './messages'
 import { notificationCategories } from '../NotificationCategorySelect/fixture'
+import messages from './messages'
 
 const filtersOrdering = {
   breakOutByLot: 1,
