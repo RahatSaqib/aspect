@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { TextField } from '@mui/material'
+import { useFormikContext } from 'formik'
 import get from 'lodash/get'
 import intersectionWith from 'lodash/intersectionWith'
 import isArray from 'lodash/isArray'
@@ -16,7 +17,6 @@ import UI_CONSTS from '../../utils/consts/UI'
 import IconProvider from '../IconProvider'
 import fetchWrapperForQueries from '../QueryFetch'
 import SelectComponent, { getSelectedOptions } from './AspectDropDown.SelectComponent'
-import { useFormikContext } from 'formik'
 
 const getActualData = ({ data, reduxStateId, sortByKeys }) => {
   const actualData = get(data, reduxStateId)
