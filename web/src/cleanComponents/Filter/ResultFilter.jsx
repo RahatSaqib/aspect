@@ -4,11 +4,11 @@ import isArray from 'lodash/isArray'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
+import useAuthState from '../../hooks/useAuthState'
+import useFilterValues from '../../hooks/useFilterValues'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
-import { useAuthState } from '../../providers/AuthProvider'
-import { useFilterValues } from '../../providers/FilterProvider'
 import {
   AssayMultiSelect,
   DeviceTypeSelect,

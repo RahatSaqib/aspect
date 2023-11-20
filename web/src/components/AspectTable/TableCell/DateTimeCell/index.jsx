@@ -1,6 +1,6 @@
 import React from 'react'
 import { bool, string, oneOfType } from 'prop-types'
-import { useAuthState } from '../../../../providers/AuthProvider'
+import useAuthState from '../../../../hooks/useAuthState'
 import { timeAndDate, timeSinceFromUTC } from '../../Helpers'
 import styles from '../../Table.module.css'
 

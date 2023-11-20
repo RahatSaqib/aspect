@@ -17,7 +17,7 @@ import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
 import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
 import { commonDefinitions } from '../../messages/customMessages'
-import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
+import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import { notificationCategories } from '../NotificationCategorySelect/fixture'
 import messages from './messages'
 

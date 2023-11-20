@@ -8,9 +8,8 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
-import { getWhitelistedAssays } from '../../../utils/utils/graph'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -34,6 +33,16 @@ const assays = [
   'QHivVL',
   'ReporterHivVL',
 ]
+
+const getWhitelistedAssays = ({ assays, assaysFromState }) => {
+  const allowed = []
+  if (assays && assays.length > 0) {
+    assays.map(a =>
+      assaysFromState.filter(({ externalId, hasResults }) => externalId === a && hasResults && allowed.push(a))
+    )
+  }
+  return allowed
+}
 
 const endPointParams = {
   minDate: startOfMonth(subMonths(new Date(), 12)),
