@@ -29,7 +29,7 @@ const availableSortCol = [
   'lastPingOn',
   'firstResultEndedOn',
   'lastResultEndedOn',
-  'totalTests',
+  'total',
   'stateName',
   'lgaName',
 ]
@@ -77,7 +77,7 @@ const Workload = () => {
     { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true, hiddenOn: 'xl' },
     { key: 'firstResultEndedOn', label: formatMessage(messages.firstResultEndedOn), sortable: true, hiddenOn: 'xl' },
     { key: 'lastResultEndedOn', label: formatMessage(messages.lastResultEndedOn), sortable: true, hiddenOn: 'xl' },
-    { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
+    { key: 'total', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
       label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
