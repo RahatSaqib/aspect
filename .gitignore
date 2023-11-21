@@ -6,6 +6,7 @@ node_modules/
 .idea/
 .vscode/*
 !.vscode/settings.json
+!.vscode/launch.json
 
 # Runtime data
 pids

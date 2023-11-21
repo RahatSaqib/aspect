@@ -1,10 +1,7 @@
 import React from 'react'
 import { TableSortLabel } from '@mui/material'
-import classnames from 'classnames/bind'
 import { bool, func, string } from 'prop-types'
-import styles from '../../Table.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from '../../Table.module.css'
 
 /**
  * Component to render column
@@ -20,22 +17,24 @@ function TableColumnHeader({
   render,
 }) {
   return (
-    <div className={cssClasses('table__container')}>
-      <div className={cssClasses('table__header')}>
+    <div className={styles.table__container}>
+      <div className={styles.table__header}>
         <TableSortLabel
           active={isSorted}
           direction={isSortedDesc ? 'desc' : 'asc'}
           hideSortIcon
-          className={cssClasses(`${canSort ? 'table__headerLabel' : 'table__headerLabel--nohover'}`)}
+          className={`${canSort ? styles.table__headerLabel : styles.table__headerLabel__nohover}`}
         >
           <div
-            className={cssClasses(`${isSorted ? 'table__headerTitle table__headerTitle--bold' : 'table__headerTitle'}`)}
+            className={`${
+              isSorted ? [styles.table__headerTitle, styles.table__headerTitle__bold] : styles.table__headerTitle
+            }`}
           >
             {render}
           </div>
         </TableSortLabel>
       </div>
-      <div className={cssClasses('tablecolumn__actions')}>
+      <div className={styles.tablecolumn__actions}>
         <HeaderGroupByComponent />
         <HeaderVisibilityComponent />
         <HeaderOrderComponent />

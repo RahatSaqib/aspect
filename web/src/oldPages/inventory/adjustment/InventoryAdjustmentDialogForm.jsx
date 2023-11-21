@@ -1,6 +1,5 @@
 import React, { useEffect } from 'react'
 import { Button, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import has from 'lodash/has'
 import identity from 'lodash/identity'
@@ -17,10 +16,8 @@ import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { fetchConsumables } from '../../../store/ConsumableRedux'
 import { types } from '../../../store/InventoryRedux'
-import styles from './InventoryAdjustmentDialogForm.css'
+import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -165,8 +162,8 @@ export const InventoryAdjustmentDialogForm = ({
       onClose={onCancel}
       title={labels.dialogTitle}
     >
-      <form className={cssClasses('Form')}>
-        <div className={cssClasses('Form__Content')}>
+      <form className={styles.Form}>
+        <div className={styles.Form__Content}>
           <section>
             {(!currInventoryItem || has(values, 'consumableId')) && (
               <ConsumableSelectField
@@ -283,7 +280,7 @@ export const InventoryAdjustmentDialogForm = ({
               inputProps={{ maxLength: 500 }}
             />
             {currInventoryItem !== null ? (
-              <p className={cssClasses('Field__quantity--status')}>
+              <p className={styles.Field__quantity__status}>
                 <span>{consumable.get('unitShortName')}</span>
                 <span>{labels.nextQuantityStatus}</span>
               </p>

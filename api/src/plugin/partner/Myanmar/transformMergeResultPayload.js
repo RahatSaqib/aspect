@@ -4,9 +4,13 @@ const { sampleTypeToId, deviceTypeToPlugin } = require('../../../shared/dictiona
 
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
-  const plugin = await deviceTypeToPlugin(deviceType)
-  const { loadPlugin } = require('../../registration')
-  const deviceTypeTransformMergeResultPayload = await loadPlugin([plugin], 'transformMergeResultPayload')
+  const deviceTypePluginName = await deviceTypeToPlugin(deviceType)
+  const { loadPlugin } = require('../../loadPlugin')
+  const deviceTypeTransformMergeResultPayload = await loadPlugin(
+    undefined,
+    deviceTypePluginName,
+    'transformMergeResultPayload'
+  )
   const transformedPayload = await deviceTypeTransformMergeResultPayload(context)
   if (deviceType === 'CepheidGeneXpert') {
     parseNotes(transformedPayload)

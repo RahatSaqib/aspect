@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const { TRANSFERRED } = require('../../../common/consts')
 /**
  * Determines transfer status and other related data based on given data.
@@ -17,17 +16,18 @@ function generateTransferStatus(data, userSiteIds) {
     transferredBy: data.transferredBy,
     transferredOn: data.transferredOn,
   }
-  if (!_.isNil(data.transferStatusLogData)) {
-    const transferStatusLogData = JSON.parse(data.transferStatusLogData)
-    const { siteId, comment, reportableSiteId, previousReportableSiteId } = transferStatusLogData
-    transferStatus.comment = comment
-    transferStatus.canBeTransferred = userSiteIds?.includes(reportableSiteId) || false
-    transferStatus.transferStatus = userSiteIds?.includes(previousReportableSiteId)
+
+  if (data.transferReportableSiteId) {
+    const { transferReportableSiteId, transferPreviousReportableSiteId, transferComment } = data
+
+    transferStatus.comment = transferComment
+    transferStatus.canBeTransferred = userSiteIds?.includes(transferReportableSiteId) || false
+    transferStatus.transferStatus = userSiteIds?.includes(transferReportableSiteId)
       ? TRANSFERRED.HERE
       : TRANSFERRED.AWAY
-    transferStatus.previousReportableSiteId = previousReportableSiteId
-    transferStatus.reportableSiteId = reportableSiteId
-    transferStatus.siteId = siteId
+    transferStatus.previousReportableSiteId = transferPreviousReportableSiteId
+    transferStatus.reportableSiteId = transferReportableSiteId
+    transferStatus.siteId = transferPreviousReportableSiteId
   }
   return transferStatus
 }

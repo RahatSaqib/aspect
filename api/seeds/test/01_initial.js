@@ -920,6 +920,7 @@ async function seed(knex) {
     timezone: countries.US.timezone,
     culture: countries.US.culture,
     geographyId,
+    canLogIn: true,
     ...auditFields,
   })
 
@@ -948,6 +949,7 @@ async function seed(knex) {
     timezone: countries.US.timezone,
     culture: countries.US.culture,
     geographyId,
+    canLogIn: true,
     ...auditFields,
   })
 
@@ -969,6 +971,7 @@ async function seed(knex) {
     timezone: countries.US.timezone,
     culture: countries.US.culture,
     geographyId,
+    canLogIn: true,
     ...auditFields,
   })
 
@@ -1211,28 +1214,18 @@ async function seed(knex) {
     .where({ externalId: 'labManager', partnerId: partnerTwoId })
     .first()
 
-  // crate jobs for users
-  const [jobIdAdmin] = await knex('Job').insert({
-    personId: adminPersonId,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
-
-  const [jobIdManager] = await knex('Job').insert({
-    personId: managerPersonId,
-    jobFunctionId: jobFunctionIdManager,
-  })
-
-  const [jobIdClinician] = await knex('Job').insert({
-    personId: clinicianPersonId,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   // Constrain jobs by context
-  await knex('JobContext').insert([{ jobId: jobIdAdmin, geographyId: countries.US.geographyId }])
+  await knex('JobContext').insert([
+    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+  ])
 
-  await knex('JobContext').insert([{ jobId: jobIdManager, geographyId: countries.US.geographyId }])
+  await knex('JobContext').insert([
+    { personId: managerPersonId, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.geographyId },
+  ])
 
-  await knex('JobContext').insert([{ jobId: jobIdClinician, siteId: siteDataDayton.id }])
+  await knex('JobContext').insert([
+    { personId: clinicianPersonId, jobFunctionId: jobFunctionIdClinician, siteId: siteDataDayton.id },
+  ])
 
   // Create DashboardWidget
   const widgetIds = {}

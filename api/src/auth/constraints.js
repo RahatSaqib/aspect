@@ -98,9 +98,8 @@ async function getContext({ userId, partnerId, jobFunctionId }) {
 
   return knex('JobContext as jc')
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where(_.omitBy(filter, _.isNil))
     .distinct(
       'g.countryId',
@@ -111,7 +110,7 @@ async function getContext({ userId, partnerId, jobFunctionId }) {
       'jc.assayTypeId',
       'jc.assayId',
       'jc.deviceTypeId',
-      'j.jobFunctionId',
+      'jc.jobFunctionId',
       knex.raw('0 AS isAdmin')
     )
 }
@@ -148,10 +147,9 @@ async function getJobConstraints(personId, jobFunctionId) {
     .leftJoin('AssayType as at', 'jc.assayTypeId', 'at.id')
     .leftJoin('Assay as a', 'jc.assayId', 'a.id')
     .leftJoin('DeviceType as dt', 'jc.deviceTypeId', 'dt.id')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
     .where({
-      'j.personId': personId,
+      'jc.personId': personId,
       'jf.id': jobFunctionId,
     })
     .distinct(
@@ -164,7 +162,7 @@ async function getJobConstraints(personId, jobFunctionId) {
       'at.id as assayTypeId',
       'a.id as assayId',
       'dt.id as deviceTypeId',
-      'j.jobFunctionId',
+      'jc.jobFunctionId',
       knex.raw('0 AS isAdmin')
     )
 
@@ -332,7 +330,7 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
   const { device, assay, result } = aliases
   const { showUnapprovedDevices = false, showDecommissionedDevices = false } = options
   if (!result) {
-    if (!aliases.site && device) {
+    if (!aliases.site && device && !aliases.resultTransferFlag) {
       aliases.site = alias('Site')
       queryBuilder.leftOuterJoin(`Site as ${aliases.site}`, `${device}.siteId`, `${aliases.site}.id`)
     }
@@ -542,17 +540,22 @@ function addConstraints(
     queryBuilder.whereRaw('0 = 1')
     return
   }
-
   const aliases = _.cloneDeep(receivedAliases)
+
   // TODO generalize constraint building
   // TODO only join queries if needed within constraints or required by unspecified aliases
   addPartnerConstraints(queryBuilder, constraints, aliases)
+
   addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases)
   addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options)
+
   addPersonConstraints(queryBuilder, constraints, aliases)
   addGeographyConstraints(queryBuilder, constraints, aliases)
+
   addOrConstraints(queryBuilder, constraints, aliases)
+
   addResultConstraints(queryBuilder, constraints, aliases, options)
+  addTransferLogConstraints(queryBuilder, constraints, aliases)
 }
 
 function isNullInOrEqual(queryBuilder, columnName, value) {
@@ -612,7 +615,7 @@ function applyConstraintObjectOnAlias(queryBuilder, alias, constraint) {
       _.keys(constraint)
         .filter(k => !!constraint[k])
         .forEach(k => {
-          nullOrEqualQb.where(knex.raw(`IFNULL(${alias}.${k}, 0)`), constraint[k])
+          nullOrEqualQb.where(knex.raw(`${alias}.${k} = ?`, [constraint[k]]))
         })
     })
   }
@@ -656,6 +659,19 @@ const addPartnerQueryConstraints = (queryBuilder, { partner, country, geography,
     if (geography.lgaId) queryBuilder.where('g.lgaId', geography.lgaId)
     else if (geography.stateId) queryBuilder.where('g.stateId', geography.lgaId)
   } else if (country) queryBuilder.where('c.id', country.id)
+}
+
+function addTransferLogConstraints(queryBuilder, constraints, aliases) {
+  if (aliases.transferLog) {
+    const clinicianSiteIds = constraints.$or.map(constraint => constraint.site?.id).filter(item => !!item)
+    if (!_.isEmpty(clinicianSiteIds)) {
+      return queryBuilder.where(builder => {
+        builder
+          .whereIn(`${aliases.transferLog}.previousReportableSiteId`, clinicianSiteIds)
+          .orWhereIn(`${aliases.transferLog}.sampleOriginSiteId`, clinicianSiteIds)
+      })
+    }
+  }
 }
 
 module.exports = {

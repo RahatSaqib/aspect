@@ -233,38 +233,32 @@ async function getDevicePerformance(request) {
 
   const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' }, { showUnapprovedDevices: true })
     .where('r.deviceId', deviceId)
     .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
     .select([
       knex.raw('count(distinct r.id) as totalResult'), // group by r.endedOn as 'yyyy-MM'
-      knex.raw(`sum(rc1.name = 'Error') as errorCount`),
+      knex.raw(`sum(rc1.externalId = 'Error') as errorCount`),
       getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthTested', offset),
       lastDayOfMonthByOffsetAndResultEndedOn(knex, offset, 'lastDayOfMonth'),
     ])
     .groupBy('monthTested')
 
-  const [deviceCountry] = await knex('Device as d')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
-    .where('d.id', deviceId)
+  const { errorCategoryId } = await knex('ResultCategory as r')
+    .where('r.externalId', 'Error')
+    .first('r.id as errorCategoryId')
 
-  const [{ countryTotalResult, countryTotalErrorCount }] = await knex('Result as r')
-    .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .leftJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
-    .leftOuterJoin('Country as c', 'g.countryId', 'c.id')
-    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
-    .where('c.id', deviceCountry.countryId)
-    .select([
-      knex.raw('count(distinct r.id) as countryTotalResult'),
-      knex.raw(`sum(rc1.name = 'Error') as countryTotalErrorCount`),
-    ])
+  const resultsByCategory = await knex('FactResultsDeviceByCategory1 as f')
+    .innerJoin('Device as d', 'f.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'f.assayId', 'a.id')
+    .modify(addConstraints, dataConstraints, { device: 'd', assay: 'a' })
+    .where('f.days', 365)
+    .groupBy('f.resultCategory1')
+    .select([knex.raw('f.resultCategory1 as resultCategoryId'), knex.raw(`sum(f.resultCount) as resultCount`)])
+
+  const countryTotalErrorCount = resultsByCategory.find(x => x.resultCategoryId === errorCategoryId)?.resultCount ?? 0
+  const countryTotalResult = _.sumBy(resultsByCategory, x => x.resultCount)
 
   const [deviceCapacity] = await knex('DeviceCapacity as dc')
     .leftJoin('Device as d', 'd.deviceCapacityId', 'dc.id')
@@ -514,7 +508,7 @@ async function setStatusForDateRange(request) {
     payload,
     plugins: { messageContext },
   } = request
-  const { externalId, day = startOfTodayUtc(), notes } = payload
+  const { externalId, day = startOfTodayUtc(), notes, expectedBackOnline } = payload
   let { dateFrom, dateTo } = payload
 
   if (!dateFrom && !dateTo) {
@@ -560,6 +554,7 @@ async function setStatusForDateRange(request) {
     maintenanceStatusActive: deviceMaintenanceStatus.active,
     maintenanceStatusNotes: notes,
     maintenanceStatusManuallySet: deviceMaintenanceStatus.manuallySet,
+    expectedBackOnline,
   }
 
   if (
@@ -574,6 +569,10 @@ async function setStatusForDateRange(request) {
     // Everything all right, then insert logs
     if (notes) {
       _.set(payload, 'options.data.notes', notes)
+    }
+    if (expectedBackOnline) {
+      _.set(payload, 'options.data.expectedBackOnline', expectedBackOnline)
+      delete payload.expectedBackOnline
     }
 
     const deviceMaintenanceStatusLogIds = []
@@ -1206,6 +1205,46 @@ async function postPayloadFromDevice(deviceLogDetails, optionalKnex) {
   return databaseTransaction(optionalKnex)
 }
 
+async function onDeviceUpdateModuleSerials(action, { messageContext }) {
+  return messageContext.run(async knex => {
+    const items = await knex('Device as d')
+      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+      .where('dtc.hasResults', 1)
+      .select('d.id as deviceId')
+    return Promise.each(items, async ({ deviceId }) => updateDeviceConfigurationData(knex, deviceId))
+  })
+}
+
+/**
+ *
+ */
+async function updateDeviceConfigurationData(knex, deviceId) {
+  let { configurationData } = await knex('Device').where({ id: deviceId }).first('configurationData')
+  configurationData = configurationData ? JSON.parse(configurationData) : {}
+
+  const data = await knex('Result as r')
+    .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
+    .where({ deviceId })
+    .where('rt.excluded', false)
+    .distinct('r.moduleSerial')
+    .orderBy('r.moduleSerial')
+  const moduleSerials = data.map(it => it.moduleSerial)
+  /**
+   * exit if new `moduleSerials` equals existing one
+   */
+  if (_.isEqual(moduleSerials, configurationData.moduleSerials)) {
+    return
+  }
+  /**
+   * save new `moduleSerials`
+   */
+  _.set(configurationData, 'moduleSerials', moduleSerials)
+  await knex('Device')
+    .where({ id: deviceId })
+    .update({ configurationData: JSON.stringify(configurationData) })
+}
+
 module.exports = {
   showDevice,
   getDeviceByRequest,
@@ -1231,4 +1270,5 @@ module.exports = {
   getDeviceBaseExtendedQuery,
   setStatusForDateRange,
   postPayloadFromDevice,
+  onDeviceUpdateModuleSerials,
 }

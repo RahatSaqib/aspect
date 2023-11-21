@@ -306,7 +306,7 @@ const barDataForToolTipsNovIn3 = {
 }
 
 const barDataForToolTipsNovOut1 = {
-  color: 'var(--guardsman-red, #d60000)',
+  color: '#d60000',
   displayId: 'Detected',
   indexValue: 'Nov 20',
   displayValue: {
@@ -320,7 +320,7 @@ const barDataForToolTipsNovOut1 = {
 }
 
 const barDataForToolTipsNovOut2 = {
-  color: 'var(--guardsman-red, #d60000)',
+  color: '#d60000',
   displayId: 'Detected',
   indexValue: 'Nov 20',
   displayValue: {
@@ -334,7 +334,7 @@ const barDataForToolTipsNovOut2 = {
 }
 
 const barDataForToolTipsNovOut3 = {
-  color: 'var(--guardsman-red, #d60000)',
+  color: '#d60000',
   displayId: 'Detected',
   indexValue: 'Nov 20',
   displayValue: {

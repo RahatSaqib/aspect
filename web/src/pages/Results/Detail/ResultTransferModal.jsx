@@ -1,6 +1,5 @@
 import React, { useCallback, useState, useEffect } from 'react'
 import { Button, CircularProgress, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import { defineMessages, injectIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import { RESULT_TRANSFER } from '../../../components/QueryFetch/Result'
@@ -9,10 +8,8 @@ import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../../utils/utils/fetch'
-import styles from './Detail.css'
+import styles from './Detail.module.css'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const ResultTransferModal = ({
   intl: { formatMessage },
@@ -91,11 +88,11 @@ const ResultTransferModal = ({
 
   const renderSpinner = useCallback(
     () => (
-      <div className={cssClasses('processing')}>
-        <div className={cssClasses('processing-spinner')}>
+      <div className={styles.processing}>
+        <div className={styles.processing_spinner}>
           <CircularProgress size="100%" thickness={1} disableShrink />
         </div>
-        <div className={cssClasses('processing-label')}>{formatMessage(messages.processing)}</div>
+        <div className={styles.processing_label}>{formatMessage(messages.processing)}</div>
       </div>
     ),
     [formatMessage]
@@ -191,11 +188,11 @@ const ResultTransferModal = ({
           onChange={event => setIncludeAllResults(event.target.checked)}
         />
       </div>
-      <div className={cssClasses('NoteWrapper')}>{formatMessage(messages.note)}</div>
+      <div className={styles.NoteWrapper}>{formatMessage(messages.note)}</div>
 
       {isProcessing && renderSpinner()}
 
-      {transferError && <div className={cssClasses('ErrorMessage')}>{transferError}</div>}
+      {transferError && <div className={styles.ErrorMessage}>{transferError}</div>}
 
       {isSuccessAlert && renderSuccessAlert()}
     </AspectDialog>

@@ -8,9 +8,4 @@ const SITE_SELECT = {
   KEY: 'SITE_ALL',
 }
 
-const SITE_LIST = {
-  ENDPOINT: '/site',
-  KEY: 'SITE_LIST',
-}
-
-export { SITE_ALL, SITE_LIST, SITE_SELECT }
+export { SITE_ALL, SITE_SELECT }

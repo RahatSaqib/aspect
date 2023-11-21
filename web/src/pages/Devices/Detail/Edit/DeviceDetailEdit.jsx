@@ -1,38 +1,38 @@
 import React, { useState } from 'react'
 import { Button, Card, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
+import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
+import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import { ImplementingPartnerSelect } from '../../../../cleanComponents'
-import DeviceCapacitySelect from '../../../../cleanComponents/DeviceCapacitySelect'
+import { ImplementingPartnerSelect, DeviceCapacitySelect } from '../../../../cleanComponents'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
-import useI18n from '../../../../hooks/useI18n'
 import SiteSelectField from '../../../../oldComponents/resource/SiteSelectField'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
-import styles from '../styles.css'
+import CONSTS from '../../../../utils/consts/Devices/CONSTS'
+import styles from '../styles.module.css'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-
-export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
+const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const navigate = useNavigate()
-  const intl = useI18n()
+  const intl = useIntl()
 
   const { mutate: updateDevice } = useUpdateDevice(device.id)
   const { mutate: updateDeviceTags } = useUpdateTagByTypeAndId('device', device.id)
   const [editDevice, setEditDevice] = useState({ ...device })
   const [editDeviceTags, setEditDeviceTags] = useState([...deviceTags])
   const isPristine = isEqual(device, editDevice) && isEqual(deviceTags, editDeviceTags)
-  const [isError, setError] = useState(false)
+  const [error, setError] = useState({})
 
   const onDiscardClick = () => {
+    setError({})
     setEditDevice({ ...device })
     setEditDeviceTags([...deviceTags])
   }
@@ -59,8 +59,8 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   return (
     <div>
       <Helmet title={device.name} />
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           <form>
             <TextField
               fullWidth
@@ -110,6 +110,53 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               value={editDevice.dailyCapacityId}
               onChange={dailyCapacityId => setEditDevice({ ...editDevice, dailyCapacityId })}
             />
+
+            <TextField
+              label={intl.formatMessage(messages.instrumentsConnected)}
+              type="number"
+              error={error?.instrumentsConnected}
+              value={editDevice.instrumentsConnected}
+              onChange={({ target: { value } }) => {
+                setError(error => ({ ...error, instrumentsConnected: Number(value) <= 0 }))
+                setEditDevice({ ...editDevice, instrumentsConnected: value ? parseInt(value, 10) : '' })
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            {get(device, 'deviceType.externalId') === CONSTS.GENEXPERT_EXTERNAL_ID ? (
+              <>
+                <TextField
+                  label={intl.formatMessage(messages.gx6cModulesCount)}
+                  type="number"
+                  error={error?.gx6cModulesCount}
+                  value={editDevice?.gx6cModulesCount ?? 0}
+                  onChange={({ target: { value } }) => {
+                    setError(error => ({ ...error, gx6cModulesCount: Number(value) < 0 }))
+                    setEditDevice({ ...editDevice, gx6cModulesCount: value ? parseInt(value, 10) : '' })
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+
+                <TextField
+                  label={intl.formatMessage(messages.gx10cModulesCount)}
+                  type="number"
+                  error={error?.gx10cModulesCount}
+                  value={editDevice?.gx10cModulesCount ?? 0}
+                  onChange={({ target: { value } }) => {
+                    setError(error => ({ ...error, gx10cModulesCount: Number(value) < 0 }))
+                    setEditDevice({ ...editDevice, gx10cModulesCount: value ? parseInt(value, 10) : '' })
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
+                />
+              </>
+            ) : null}
+
             <TextField
               fullWidth
               id="notes"
@@ -134,7 +181,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               />
             </FormGroup>
 
-            <div className={cssClasses('Form__Actions')}>
+            <div className={styles.Form__Actions}>
               <ButtonGroup isolated>
                 <AspectButton
                   type="button"
@@ -145,7 +192,12 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 >
                   {intl.formatMessage(messages.discard)}
                 </AspectButton>
-                <Button color="primary" variant="contained" onClick={handleSubmit} disabled={isPristine || isError}>
+                <Button
+                  color="primary"
+                  variant="contained"
+                  onClick={handleSubmit}
+                  disabled={isPristine || !values(error).every(v => v === false)}
+                >
                   {intl.formatMessage(messages.save)}
                 </Button>
               </ButtonGroup>

@@ -1,10 +1,7 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import classnames from 'classnames/bind'
 import { func, number } from 'prop-types'
-import styles from '../../Table.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from '../../Table.module.css'
 
 /**
  * Component to render page selectors for table component
@@ -13,19 +10,23 @@ const cssClasses = classnames.bind(styles)
 const PageSizeSelectors = ({ dataLength, pageSize, handleChangeRowsPerPage }) => {
   const ALL_KEY = 'All'
   const pageSizeButtonKeys = [10, 25, 50, 100, ALL_KEY]
-  return pageSizeButtonKeys.map(key => (
-    <Button
-      key={key}
-      className={cssClasses('pagesize__button', {
-        selected: key !== ALL_KEY ? key === pageSize : pageSize === dataLength,
-      })}
-      onClick={() => handleChangeRowsPerPage(key)}
-      variant="contained"
-      color="primary"
-    >
-      {key}
-    </Button>
-  ))
+
+  return pageSizeButtonKeys.map(key => {
+    const classes = `${styles.pagesize__button} ${
+      (key !== ALL_KEY ? key === pageSize : pageSize === dataLength) ? styles.selected : ''
+    }`
+    return (
+      <Button
+        key={key}
+        className={classes}
+        onClick={() => handleChangeRowsPerPage(key)}
+        variant="contained"
+        color="primary"
+      >
+        {key}
+      </Button>
+    )
+  })
 }
 
 PageSizeSelectors.proptTypes = {

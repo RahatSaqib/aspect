@@ -13,8 +13,8 @@ module.exports = async (knex, partnerExternalId) => {
   })
 
   const [adminId] = await knex('Person as p')
-    .innerJoin('Job as j', 'p.id', 'j.personId')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobContext as jc', 'p.id', 'jc.personId')
+    .innerJoin('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
     .where('p.lastPartnerId', partnerId)
     .andWhere('jf.externalId', 'admin')
     .pluck('p.id')

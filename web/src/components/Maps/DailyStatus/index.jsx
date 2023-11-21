@@ -1,26 +1,23 @@
 import React, { Fragment } from 'react'
 import { CircularProgress } from '@mui/material'
-import classnames from 'classnames/bind'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AspectCard from '../../AspectCard'
 import DailyStatusFilters from '../../Graphs/DailyStatus/DailyStatusFilters'
 import useDailyStatus from '../../Graphs/DailyStatus/Helpers/useDailyStatus'
 import { DEVICE_STATUS_LAST_REPORTED } from '../../QueryFetch/Device'
 import AspectMap from '../index'
-import styles from './DailyStatusMap.css'
+import styles from './DailyStatusMap.module.css'
 import buildMarkersForDailyStatus from './Helpers'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-
 const Loading = () => (
-  <div className={cssClasses('dailystatusMap__spinner')}>
+  <div className={styles.dailystatusMap__spinner}>
     <CircularProgress />
   </div>
 )
 
 const DailyStatusMap = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
     statuses: { visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },

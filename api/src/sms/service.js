@@ -1,5 +1,6 @@
 const _ = require('lodash')
-const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
+const { smsMessageReadyForSending, smsMessageProcessed } = require('./actions')
+const { notificationMessageProcessed } = require('../notification/actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints } = require('../auth/constraints')
@@ -27,12 +28,15 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
   const {
     message,
     phoneNumber: phone,
+    personCell: cell,
+    personCellE164: cellE164,
     countryAbbreviation: countryCode,
   } = (await createSmsMessageFromTemplate(knex, smsMessageId)) || {}
   if (!_.isEmpty(phone)) {
     const messageStatusId = await messageStatusToId('Pending')
-    const phoneNumber = normalizePhoneNumber(phone, countryCode)
+    const phoneNumber = phone ?? cellE164 ?? normalizePhoneNumber(cell, countryCode)
 
+    if (!phoneNumber) return
     // store generated sms message into the same record and set messageStatusId
     await knex('SmsMessage').where({ id: smsMessageId }).update({
       message,
@@ -51,7 +55,7 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
 // -----------------------------
 async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
-    smsMessageSent,
+    smsMessageProcessed,
   })
 
   return context.transact(async knex => {
@@ -93,8 +97,13 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
     errorData,
   })
 
-  // dispatch SMS_MESSAGE_SENT to MQ
-  context.smsMessageSent(smsMessageId)
+  // dispatch SMS_MESSAGE_PROCESSED to MQ
+  context.smsMessageProcessed(smsMessageId)
+
+  context.bindActionCreators({
+    notificationMessageProcessed,
+  })
+  context.notificationMessageProcessed({ smsMessageId })
 }
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
@@ -115,10 +124,13 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     .first(
       'tmpl.message as messageTemplate',
       'tmpl.phoneNumber as phoneNumberTemplate',
-      knex.raw('IFNULL(m.phoneNumber,p.cell) as personCell')
+      knex.raw('m.phoneNumber as phoneNumber'),
+      knex.raw('p.cell as personCell'),
+      knex.raw('p.cellE164 as personCellE164')
     )
+
   return processUsingDataSourceQuery(
-    data,
+    { ...data, personCell: data?.personCellE164 ? `true?${data?.personCellE164}` : data?.personCell },
     ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'],
     authLikeObject
   )

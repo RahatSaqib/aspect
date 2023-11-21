@@ -1,15 +1,12 @@
 import React from 'react'
 import { Button, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import { compose, withState, pure } from 'recompose'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import StrongPasswordInput from '../../../oldComponents/shared/StrongPasswordInput'
 import messages from './messages'
-import styles from './ResetPassword.css'
+import styles from './ResetPassword.module.css'
 
-const cssClasses = classnames.bind(styles)
-
-export function validate({ newPassword, confirmNewPassword }, { intl }) {
+function validate({ newPassword, confirmNewPassword }, { intl }) {
   const errors = {}
   if (newPassword) {
     if (newPassword.trim().length < 8) {
@@ -44,7 +41,7 @@ const enhance = compose(
   })
 )
 
-export const ResetPasswordEnterPassword = ({
+const ResetPasswordEnterPassword = ({
   intl,
   action,
   form,
@@ -54,8 +51,8 @@ export const ResetPasswordEnterPassword = ({
   onConfirmNewPasswordChange,
   handleSubmit,
 }) => (
-  <form onSubmit={handleSubmit} className={cssClasses('Form')}>
-    <div className={cssClasses('Form__Content')}>
+  <form onSubmit={handleSubmit} className={styles.Form}>
+    <div className={styles.Form__Content}>
       <p>{intl.formatMessage(messages.enterNewPasswordContent)}</p>
       <StrongPasswordInput
         intl={intl}
@@ -86,7 +83,7 @@ export const ResetPasswordEnterPassword = ({
         inputProps={{ maxLength: 100 }}
       />
     </div>
-    <div className={cssClasses('Form__ActionRow')}>
+    <div className={styles.Form__ActionRow}>
       <Button
         type="submit"
         variant="contained"

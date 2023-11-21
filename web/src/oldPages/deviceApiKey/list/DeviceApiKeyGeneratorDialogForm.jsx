@@ -147,7 +147,7 @@ const errorStyle = {
   textOverflow: 'visible',
 }
 
-export function DeviceApiKeyGeneratorDialogForm({
+function DeviceApiKeyGeneratorDialogForm({
   isDialogOpen,
   onCancel,
   onCountChange,

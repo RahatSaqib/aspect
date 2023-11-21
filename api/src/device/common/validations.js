@@ -35,7 +35,11 @@ const listWorkloadRequestSchema = {
       'lastPingOn',
       'firstResultConductedOn',
       'lastResultConductedOn',
-      'totalTests'
+      'total',
+      'firstResultEndedOn',
+      'lastResultEndedOn',
+      'lgaName',
+      'stateName'
     ),
   },
 }
@@ -255,6 +259,9 @@ const deviceDetailsResponseFields = Joi.object()
     siteId: Joi.number().allow('', null).description('The ID of the site where the device is located'),
     implementingPartnerId: Joi.number().allow('', null).description('Implementing partner id'),
     implementingPartnerName: Joi.string().allow('', null).description('Implementing partner name'),
+    instrumentsConnected: Joi.number().description('The number of instruments assigned to the device or connector'),
+    gx6cModulesCount: Joi.number().allow('', null).description('Number of GX-6C modules on GenExpert device'),
+    gx10cModulesCount: Joi.number().allow('', null).description('Number of GX-10C modules on GenExpert device'),
     siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
     hostId: Joi.string().allow('', null).description('The host ID of the device'),
     deviceType: Joi.object()
@@ -283,6 +290,9 @@ const deviceDetailsResponseFields = Joi.object()
       .allow('', null)
       .description('The default name of the current maintenance status of the device'),
     maintenanceStatusNotes: Joi.string().allow('', null).description('The notes of the last the maintenance status'),
+    expectedBackOnline: Joi.string()
+      .allow('', null)
+      .description('The expected back online of the last the maintenance status'),
     maintenanceStatusActive: Joi.number().allow(null).description('Whether the device is active or not'),
     maintenanceStatusManuallySet: Joi.number().allow(null).description('Whether the device status is manually set'),
     approvalToken: Joi.string().required().description('The external ID of the approval'),

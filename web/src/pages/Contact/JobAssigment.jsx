@@ -1,6 +1,7 @@
 import React, { useContext } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
+import { useIntl } from 'react-intl'
 import { useNavigate, useParams } from 'react-router-dom'
 import { object, string } from 'yup'
 import {
@@ -13,15 +14,14 @@ import {
   LgaSelect,
   SiteSelect,
   StateSelect,
+  Loading,
 } from '../../cleanComponents'
-import Loading from '../../cleanComponents/Loading'
 import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
 import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
 import usePersonAssignment from '../../hooks/person/usePersonAssignment'
-import useI18n from '../../hooks/useI18n'
+import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages'
 import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
-import { useAuthState } from '../../providers/AuthProvider'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -31,7 +31,7 @@ const JobAssigment = ({ setStep }) => {
   const { id, isAdding } = useContext(FormStatusContext)
   const auth = useAuthState()
   const { countryAbbreviation, countryId } = auth
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { personId = auth.personId } = useParams()
   const navigate = useNavigate()
   const { isLoading, data: assignment } = usePersonAssignment(personId)
@@ -112,7 +112,7 @@ const JobAssigment = ({ setStep }) => {
                       <StateSelect
                         id="stateId"
                         name="stateId"
-                        label={getCustomMessage(messages, 'state', { countryAbbreviation })}
+                        label={getCustomMessage(formatMessage, messages, 'state', { countryAbbreviation })}
                         value={values.stateId || ''}
                         onChange={handleChange}
                         error={errors.stateId ? errors.stateId : undefined}
@@ -124,7 +124,7 @@ const JobAssigment = ({ setStep }) => {
                       <LgaSelect
                         id="lgaId"
                         name="lgaId"
-                        label={getCustomMessage(messages, 'lga', { countryAbbreviation })}
+                        label={getCustomMessage(formatMessage, messages, 'lga', { countryAbbreviation })}
                         value={values.lgaId || ''}
                         onChange={handleChange}
                         error={errors.lgaId ? errors.lgaId : undefined}

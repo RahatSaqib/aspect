@@ -1,30 +1,24 @@
 import React, { useState, useEffect } from 'react'
-import { Grid } from '@mui/material'
-import classnames from 'classnames/bind'
+import { Grid, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import ReportsFilter from '../../../cleanComponents/Filter/ReportsFilter'
+import { DetailHeader, ReportsFilter } from '../../../cleanComponents'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { REPORT_LIST } from '../../../components/QueryFetch/Report/index'
-import useI18n from '../../../hooks/useI18n'
+import useFilterValues from '../../../hooks/useFilterValues'
 import messages from '../../../messages/report'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { showError } from '../../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../../utils/utils/files'
 import ReportCard from './ReportCard'
-import styles from './styles.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './styles.module.css'
 
 const ReportIndex = () => {
   const navigate = useNavigate()
   const location = useLocation()
-  const intl = useI18n()
+  const intl = useIntl()
   const [items, setItems] = useState()
   const [showProgressBar, setShowProgressBar] = useState(false)
   const dispatch = useDispatch()
@@ -103,25 +97,28 @@ const ReportIndex = () => {
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.reportsTitle)} disableBack />
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
         <ReportsFilter />
-        <DataTableProgressBar disabled={!showProgressBar} />
-        <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
-          {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (
-            <ReportCard
-              title={name}
-              description={description}
-              i18nKey={i18nKey}
-              i18nKeyDescription={i18nKeyDescription}
-              exportExcel={exportExcel}
-              exportCsv={exportCsv}
-              key={externalId}
-              onClick={(fileExtension, reportName) => onClickDownload(externalId, fileExtension, reportName)}
-              navigate={navigate}
-            />
-          ))}
-        </Grid>
+        {showProgressBar ? (
+          <LinearProgress />
+        ) : (
+          <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
+            {items?.map(({ externalId, name, description, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => (
+              <ReportCard
+                title={name}
+                description={description}
+                i18nKey={i18nKey}
+                i18nKeyDescription={i18nKeyDescription}
+                exportExcel={exportExcel}
+                exportCsv={exportCsv}
+                key={externalId}
+                onClick={(fileExtension, reportName) => onClickDownload(externalId, fileExtension, reportName)}
+                navigate={navigate}
+              />
+            ))}
+          </Grid>
+        )}
       </div>
     </>
   )

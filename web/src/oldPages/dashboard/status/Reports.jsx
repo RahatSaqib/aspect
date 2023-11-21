@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button, Card } from '@mui/material'
-import classnames from 'classnames/bind'
 import endOfYear from 'date-fns/endOfYear'
 import formatDate from 'date-fns/format'
 import startOfYear from 'date-fns/startOfYear'
@@ -11,10 +10,8 @@ import { compose, pure, withProps } from 'recompose'
 import config from '../../../config'
 import Icon from '../../../oldComponents/shared/icon/Icon'
 import { requirePermissions } from '../../../oldComponents/shared/requirePermissions'
-import styles from './index.css'
+import styles from './index.module.css'
 import Title from './Title'
-
-const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   pure,
@@ -45,7 +42,7 @@ const enhance = compose(
   })
 )
 
-export const Reports = ({
+const Reports = ({
   className,
   title,
   siteId,
@@ -63,87 +60,87 @@ export const Reports = ({
     permissions: ['dashboard:target'],
   })(() => (
     <Card className={className}>
-      <div className={cssClasses('TitleContainer')}>
+      <div className={styles.TitleContainer}>
         <Title
           title={title}
           icon={
             <Icon
-              className={cssClasses('Title__Icon')}
+              className={styles.Title__Icon}
               type={require('../../../oldComponents/shared/icon/assets/reports.svg')}
             />
           }
         />
       </div>
-      <div className={cssClasses('ReportsContainer')}>
+      <div className={styles.ReportsContainer}>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
         >
           Rif Report (last 7 days)
         </Button>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
         >
           MTB+ Report (last 7 days)
         </Button>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
         >
           TI Report (last 7 days)
         </Button>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last7Days}&token=${token}`}
         >
           Failed Test Report (last 7 days)
         </Button>
       </div>
-      <div className={cssClasses('ReportsContainer')}>
+      <div className={styles.ReportsContainer}>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/RifResistanceExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
         >
           Rif Report (last 30 days)
         </Button>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/MtbPositiveExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
         >
           MTB+ Report (last 30 days)
         </Button>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/IndeterminateExportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
         >
           TI Report (last 30 days)
         </Button>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/FailedTestsReportExcel.xlsx?dateFrom=${last30Days}&token=${token}`}
         >
           Failed Test Report (last 30 days)
         </Button>
       </div>
-      <div className={cssClasses('ReportsContainer')}>
+      <div className={styles.ReportsContainer}>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&token=${token}`}
         >
           {`Quarterly Report ${new Date().getFullYear() - 1}`}
         </Button>
         <Button
-          className={cssClasses('ReportsContainer__Button')}
+          className={styles.ReportsContainer__Button}
           inverse
           href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&token=${token}`}
         >
@@ -155,34 +152,34 @@ export const Reports = ({
   return (
     (showHigherLevel && <HigherLevelReport />) || (
       <Card className={className}>
-        <div className={cssClasses('TitleContainer')}>
+        <div className={styles.TitleContainer}>
           <Title
             title={title}
             icon={
               <Icon
-                className={cssClasses('Title__Icon')}
+                className={styles.Title__Icon}
                 type={require('../../../oldComponents/shared/icon/assets/reports.svg')}
               />
             }
           />
         </div>
-        <div className={cssClasses('ReportsContainer')}>
+        <div className={styles.ReportsContainer}>
           <Button
-            className={cssClasses('ReportsContainer__Button')}
+            className={styles.ReportsContainer__Button}
             inverse
             href={`${config.aspectApi}/report/gx/LogsExportExcel.xlsx?dateFrom=${last30Days}&siteId=${siteId}&token=${token}`}
           >
             Inventory Report
           </Button>
           <Button
-            className={cssClasses('ReportsContainer__Button')}
+            className={styles.ReportsContainer__Button}
             inverse
             href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfLastYear}&dateTo=${endOfLastYear}&siteId=${siteId}&token=${token}`}
           >
             {`Quarterly Report ${new Date().getFullYear() - 1}`}
           </Button>
           <Button
-            className={cssClasses('ReportsContainer__Button')}
+            className={styles.ReportsContainer__Button}
             inverse
             href={`${config.aspectApi}/report/gx/QuarterlyReportExcel.xlsx?dateFrom=${beginningOfThisYear}&dateTo=${endOfThisYear}&siteId=${siteId}&token=${token}`}
           >

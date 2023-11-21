@@ -1,4 +1,3 @@
-import addDays from 'date-fns/addDays'
 import addMinutes from 'date-fns/addMinutes'
 import closestTo from 'date-fns/closestTo'
 import differenceInSeconds from 'date-fns/differenceInSeconds'
@@ -37,23 +36,21 @@ import range from 'lodash/range'
 import times from 'lodash/times'
 import upperFirst from 'lodash/upperFirst'
 import values from 'lodash/values'
-import { i18nWrapper } from '../../../../providers/I18nProvider'
 import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
-import { getAspectDisplayPreferences } from '../../../../utils/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../LocalStorage'
 import messages from '../messages'
 
 const now = new Date()
-export const startOfYearsAgo = years => new Date(getYear(subYears(now, years)), 0, 1)
+const startOfYearsAgo = years => new Date(getYear(subYears(now, years)), 0, 1)
 export const since = new Date(getYear(subYears(now, 10)), 0, 1)
 export const until = new Date(getYear(subYears(now, -10)), 11, 31)
-export const rangeIncludeLast = (start, end) => range(start, end + 1)
+const rangeIncludeLast = (start, end) => range(start, end + 1)
 
 export const defaultYearList = rangeIncludeLast(getYear(since), getYear(until))
 export const defaultMonthList = range(0, 12)
 export const defaultDateList = rangeIncludeLast(1, 31)
 export const defaultHourList = range(0, 24)
 export const defaultMinuteList = range(0, 60)
-export const defaultSecondList = range(0, 60)
 
 export const accessOptions = {
   setYear,
@@ -77,20 +74,20 @@ export function getDateObject(value, defaultValue) {
   return defaultValue
 }
 
-export function isValidDateRange(minDate, maxDate) {
+function isValidDateRange(minDate, maxDate) {
   if (!isValid(maxDate) || !isValid(minDate) || differenceInSeconds(maxDate, minDate) < 0) {
     return false
   }
   return true
 }
 
-export const isDateEqual = field => (date1, date2) => {
+const isDateEqual = field => (date1, date2) => {
   const name = upperFirst(field)
   const get = accessOptions[`get${name}`]
   return get(date1) === get(date2)
 }
 
-export const isAllSameDateFields =
+const isAllSameDateFields =
   (fields = []) =>
   (date1, date2) =>
     every(fields, field => isDateEqual(field)(date1, date2))
@@ -186,8 +183,6 @@ export function getMinuteList({ date, minDate = since, maxDate = until }) {
   return defaultMinuteList
 }
 
-const getDayFromToday = cnt => format(addDays(new Date(), cnt), 'yyyy-MM-dd')
-
 const negateTimeZoneOffset = dateString => {
   const date = new Date(dateString)
   const offset = date.getTimezoneOffset()
@@ -280,9 +275,8 @@ const monthRangeByCount = (date, offset, dateFormat) => ({
   maxDate: format(endOfMonth(subMonths(date, offset)), dateFormat),
 })
 
-const dateRangeOptions = (key, showLast30Days = true) => {
+const dateRangeOptions = (formatMessage, formatDate, key, showLast30Days = true) => {
   const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
-  const { formatDate, formatMessage } = i18nWrapper()
   const dateFormatValue = 'yyyy-MM-dd'
   const dateFormatMonths = { month: 'long', year: 'numeric' }
   const today = negateTimeZoneOffset(new Date())
@@ -369,15 +363,11 @@ const checkIfParamsIsDate = (params, encode = true) => {
   return false
 }
 
-const forceBaseFormatDate = date => format(parseISO(date), 'yyyy-MM-dd')
-
 export {
   getCurrentYear,
   checkIfParamsIsDate,
   dateRangeOptions,
-  forceBaseFormatDate,
   getAllDaysInCurrentMonth,
-  getDayFromToday,
   getISOFromString,
   getTimePeriod,
   getPreviousPeriod,

@@ -26,7 +26,7 @@ const admin = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'devices_and_sites_overview',
+    'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
   ],
@@ -34,10 +34,6 @@ const admin = {
     {
       module: 'assay',
       activity: 'view',
-    },
-    {
-      module: 'device',
-      activity: 'edit',
     },
     {
       module: 'device',
@@ -173,7 +169,7 @@ const manager = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'devices_and_sites_overview',
+    'device_and_site_summary_report',
     'no_stock',
     'result_notifications',
   ],
@@ -196,7 +192,7 @@ const manager = {
     },
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'inventory',
@@ -276,7 +272,7 @@ const regionalOfficer = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'devices_and_sites_overview',
+    'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
   ],
@@ -954,7 +950,7 @@ const labManager = {
     'report_custom_fields_completion',
     'tb_workload_summary',
     'usage_statistics_report',
-    'devices_and_sites_overview',
+    'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
   ],
@@ -965,7 +961,7 @@ const labManager = {
     },
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'person',
@@ -1041,7 +1037,7 @@ const labSupervisor = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'devices_and_sites_overview',
+    'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
   ],
@@ -1290,13 +1286,13 @@ const labAdmin = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'usage_statistics_report',
-    'devices_and_sites_overview',
+    'device_and_site_summary_report',
     'no_stock',
   ],
   permissions: [
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'result',

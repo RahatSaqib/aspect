@@ -1,25 +1,22 @@
 import React from 'react'
 import { OverlayView } from '@react-google-maps/api'
-import classnames from 'classnames/bind'
 import { func, shape, string, number } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { deviceStatusMessages } from '../../../../messages'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import formatI18nMessage from '../../../../utils/i18n/formatterWeb'
 import IconProvider from '../../../IconProvider'
-import styles from './GooglePin.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './GooglePin.module.css'
 
 const GooglePin = ({ position, config, id, color, info: { maintenanceStatusI18nKey, name } }) => {
   const { size, click } = config
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <OverlayView position={position} mapPaneName={OverlayView.OVERLAY_MOUSE_TARGET}>
       <div
         key={id}
-        className={cssClasses('markers--google-pin')}
+        className={styles.markers__google_pin}
         onClick={click}
         onKeyDown={() => false}
         role="button"

@@ -18,6 +18,7 @@ END as cnt
 FROM Result as r
   INNER JOIN Device as d on d.id = r.deviceId
   INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site as s on s.id = d.siteId
   INNER JOIN Partner p on s.partnerId = p.id
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
@@ -88,6 +89,39 @@ const devicesTitle = {
   },
 }
 
+const instrumentsConnected = {
+  jobFunctions: ['all'],
+  icon: 'MdDesktopWindows',
+  title: 'Instruments',
+  titleI18nKey: 'instrumentsConnectedTitle',
+  subTitle: null,
+  subTitleI18nKey: null,
+  /**
+   * Use here the same query as for `devicesTitle`, but instead of counting devices - i.e. `count(d.id)` -
+   * we are getting sum of all instruments connected - i.e. `sum(d.instrumentsConnected)`
+   */
+  sqlForIndicator: `
+    select sum(d.instrumentsConnected) as cnt
+    from Device as d
+      inner join DeviceApproval da on d.deviceApprovalId = da.id
+      inner join Site as s on s.id = d.siteId
+      inner join DeviceType as dt on dt.id = d.deviceTypeId
+      inner join DeviceTypeCategory as dc on dc.id = dt.deviceTypeCategoryId
+      left outer join Geography as g on s.geographyId = g.id
+    where da.token = 'approved' and
+      dc.hasResults = 1 and
+      dt.externalId not in ('${INTERNAL_DEVICE_IDS.join("','")}')
+  `,
+  link: '/browse/device/list',
+  sortOrder: 1,
+  externalId: 'instrumentsConnected',
+  description: 'The number of instruments connected to a single laptop in multi-device connector configuration.',
+  descriptionI18nKey: 'instrumentsConnectedDescription',
+  dashboards: {
+    home: {},
+  },
+}
+
 const resultsTitle = {
   jobFunctions: ['all'],
   icon: 'MdAssignment',
@@ -139,17 +173,19 @@ const dashboardWidgetTestsPerDayTitle = {
   FROM Result as r
     INNER JOIN Device as d on d.id = r.deviceId
     INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site as s on s.id = d.siteId
     INNER JOIN Partner p on s.partnerId = p.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE
     r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND DAYOFWEEK(r.endedOn) NOT IN (1,7)
-    AND dt.externalId = 'CepheidGeneXpert'`,
+    AND dtc.hasResults = 1`,
   sqlForStatUnit: `SELECT ROUND(COUNT(r.id)/GetWeekdaysInRange(DATE_FORMAT(CURRENT_DATE, '%Y-%m-01'), DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01'))) as cnt
   FROM Result as r
     INNER JOIN Device as d on d.id = r.deviceId
     INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site as s on s.id = d.siteId
     INNER JOIN Partner p on s.partnerId = p.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
@@ -157,12 +193,11 @@ const dashboardWidgetTestsPerDayTitle = {
     r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
     AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
     AND DAYOFWEEK(r.endedOn) NOT IN (1,7)
-    AND dt.externalId = 'CepheidGeneXpert'`,
+    AND dtc.hasResults = 1`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
-    deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 1,
@@ -186,20 +221,18 @@ const dashboardWidgetValidResultsPc = {
   sqlForIndicator: `${partialValidResults}
     WHERE
       r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
-      AND
-      dt.externalId = 'CepheidGeneXpert'
+      AND dtc.hasResults = 1
     `,
   sqlForStatUnit: `${partialValidResults}
     WHERE
       r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
       AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
-      AND dt.externalId = 'CepheidGeneXpert'
+      AND dtc.hasResults = 1
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
-    deviceType: 'CepheidGeneXpert',
     onlyReportableResults: true,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -246,12 +279,12 @@ const utilizationRate = {
     SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, dc.dailyCapacity
       FROM Device AS d
       INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Result AS r ON d.id= r.deviceId AND DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn) AND DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-    WHERE
-      dt.externalId = 'CepheidGeneXpert'
+    WHERE dtc.hasResults = 1
     GROUP BY d.id, dc.dailyCapacity
   ) AS innerQuery`,
   sqlForStatUnit: `SELECT
@@ -268,19 +301,18 @@ const utilizationRate = {
     SELECT d.id AS deviceId, COUNT(r.id) AS resultCount, dc.dailyCapacity
       FROM Device AS d
       INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Result AS r ON d.id = r.deviceId AND DATE_FORMAT(CURRENT_DATE, '%Y-%m-01') > r.endedOn AND DATE_FORMAT(DATE_SUB(CURRENT_DATE, INTERVAL 1 MONTH), '%Y-%m-01') < r.endedOn AND DAYOFWEEK(r.endedOn) <> 1 AND DAYOFWEEK(r.endedOn) <> 7
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-    WHERE
-      dt.externalId = 'CepheidGeneXpert'
+    WHERE dtc.hasResults = 1
     GROUP BY d.id, dc.dailyCapacity
   ) AS innerQuery`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/device/list',
   linkParams: {
-    deviceType: 'CepheidGeneXpert',
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
   sortOrder: 0,
@@ -360,10 +392,11 @@ const activeDevices = {
   INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
   INNER JOIN Device AS d ON dml.deviceId = d.id
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site AS s ON s.id = d.siteId
   INNER JOIN Partner AS p ON s.partnerId = p.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  WHERE dt.externalId = 'CepheidGeneXpert'
+  WHERE dtc.hasResults = 1
   AND ISNULL(dms2.id)
   AND dml.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
   AND DAYOFWEEK(dml.day) <> 1
@@ -374,10 +407,11 @@ const activeDevices = {
   INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
   INNER JOIN Device AS d ON dml.deviceId = d.id
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site AS s ON s.id = d.siteId
   INNER JOIN Partner AS p ON s.partnerId = p.id
   LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  WHERE dt.externalId = 'CepheidGeneXpert'
+  WHERE dtc.hasResults = 1
   AND ISNULL(dms2.id)
   AND dml.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
   AND dml.day < DATE_FORMAT(NOW(),"%Y-%m-01")
@@ -518,10 +552,11 @@ const deviceDaysActive = {
     INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
     INNER JOIN Device AS d ON dml.deviceId = d.id
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON s.id = d.siteId
     INNER JOIN Partner AS p ON s.partnerId = p.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-    WHERE dt.externalId = 'CepheidGeneXpert'
+    WHERE dtc.hasResults = 1
     AND ISNULL(dms2.id)
     AND dml.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND DAYOFWEEK(dml.day) <> 1
@@ -537,10 +572,11 @@ const deviceDaysActive = {
     INNER JOIN DeviceMaintenanceStatus AS dms ON dml.deviceMaintenanceStatusId = dms.id
     INNER JOIN Device AS d ON dml.deviceId = d.id
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON s.id = d.siteId
     INNER JOIN Partner AS p ON s.partnerId = p.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-    WHERE dt.externalId = 'CepheidGeneXpert'
+    WHERE dtc.hasResults = 1
     AND ISNULL(dms2.id)
     AND dml.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
     AND dml.day < DATE_FORMAT(NOW(),"%Y-%m-01")
@@ -585,11 +621,12 @@ const errorRate = {
           INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
           INNER JOIN Device AS d ON d.id = r.deviceId
           INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
           INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         WHERE DATE_FORMAT(NOW(), '%Y-%m-01') <= DATE(r.endedOn)
-        AND dt.externalId = 'CepheidGeneXpert'
+        AND dtc.hasResults = 1
         GROUP BY r.deviceId
       ) AS innerQuery`,
   sqlForStatUnit: `SELECT
@@ -608,20 +645,20 @@ const errorRate = {
           INNER JOIN ResultCategory AS rc ON rc.id = r.resultCategory1
           INNER JOIN Device AS d ON d.id = r.deviceId
           INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
           INNER JOIN DeviceCapacity dc ON d.deviceCapacityId = dc.id
           INNER JOIN Site AS s ON s.id = d.siteId
           LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
         WHERE DATE(r.endedOn)
               BETWEEN DATE_FORMAT(NOW() - INTERVAL 1 MONTH, '%Y-%m-01')
               AND LAST_DAY(NOW() - INTERVAL 1 MONTH)
-              AND dt.externalId = 'CepheidGeneXpert'
+              AND dtc.hasResults = 1
         GROUP BY r.deviceId, dc.dailyCapacity
       ) AS innerQuery`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
-    deviceType: 'CepheidGeneXpert',
     workflowStatusId: 2,
     dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
   },
@@ -650,7 +687,7 @@ const errorRate = {
 const stockNotRecorded = {
   jobFunctions: ['all'],
   icon: 'MdInbox',
-  title: 'Stock not recorded',
+  title: 'Stock not recorded (GeneXpert only)',
   titleI18nKey: 'stockNotRecordedTitle',
   subTitle: null,
   subTitleI18nKey: null,
@@ -711,7 +748,7 @@ const stockNotRecorded = {
 const moduleSwaps = {
   jobFunctions: ['all'],
   icon: 'MdSwapVert',
-  title: 'Module Swaps',
+  title: 'Module Swaps (GeneXpert only)',
   titleI18nKey: 'moduleSwapsTitle',
   subTitle: null,
   subTitleI18nKey: null,
@@ -719,18 +756,12 @@ const moduleSwaps = {
   COUNT(*) AS cnt
     FROM
         Issue AS i
-            INNER JOIN
-        IssueType it ON i.issueTypeId = it.id
-            INNER JOIN
-        Device AS d ON d.id = i.deviceId
-            INNER JOIN
-        DeviceType as dt on dt.id = d.deviceTypeId
-            INNER JOIN
-        Site AS s ON s.id = d.siteId
-            INNER JOIN
-        Partner AS p ON s.partnerId = p.id
-            LEFT OUTER JOIN
-        Geography AS g ON s.geographyId = g.id
+            INNER JOIN IssueType it ON i.issueTypeId = it.id
+            INNER JOIN Device AS d ON d.id = i.deviceId
+            INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+            INNER JOIN Site AS s ON s.id = d.siteId
+            INNER JOIN Partner AS p ON s.partnerId = p.id
+            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE
         it.externalId = 'ModuleReplaced'
         AND dt.externalId = 'CepheidGeneXpert'
@@ -739,18 +770,12 @@ const moduleSwaps = {
   COUNT(*) AS cnt
     FROM
         Issue AS i
-            INNER JOIN
-        IssueType it ON i.issueTypeId = it.id
-            INNER JOIN
-        Device AS d ON d.id = i.deviceId
-            INNER JOIN
-        DeviceType as dt on dt.id = d.deviceTypeId
-            INNER JOIN
-        Site AS s ON s.id = d.siteId
-            INNER JOIN
-        Partner AS p ON s.partnerId = p.id
-            LEFT OUTER JOIN
-        Geography AS g ON s.geographyId = g.id
+            INNER JOIN IssueType it ON i.issueTypeId = it.id
+            INNER JOIN Device AS d ON d.id = i.deviceId
+            INNER JOIN DeviceType as dt on dt.id = d.deviceTypeId
+            INNER JOIN Site AS s ON s.id = d.siteId
+            INNER JOIN Partner AS p ON s.partnerId = p.id
+            LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     WHERE
         it.externalId = 'ModuleReplaced'
         AND dt.externalId = 'CepheidGeneXpert'
@@ -765,7 +790,7 @@ const moduleSwaps = {
   sortOrder: 6,
   externalId: 'moduleSwaps',
   description:
-    'The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
+    'The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number',
   descriptionI18nKey: 'moduleSwapsDescription',
   dashboards: {
     operational: {
@@ -787,12 +812,13 @@ const gxPositiveResultsNotified = {
     FROM Result AS r
       INNER JOIN Device AS d ON d.id = r.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
       LEFT JOIN SmsMessage sm ON sm.resultId = r.id AND sm.messageStatusId = 3
       LEFT JOIN EmailMessage em ON em.resultId = r.id AND em.messageStatusId = 3
       LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
       WHERE rc.externalid IN ${positiveResults}
-        AND dt.externalId = 'CepheidGeneXpert'
+        AND dtc.hasResults = 1
         AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
         AND (da.token = 'approved' OR ISNULL(da.token))
     GROUP BY r.id
@@ -805,12 +831,13 @@ const gxPositiveResultsNotified = {
     FROM Result AS r
       INNER JOIN Device AS d ON d.id = r.deviceId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
       LEFT JOIN SmsMessage sm ON sm.resultId = r.id AND sm.messageStatusId = 3
       LEFT JOIN EmailMessage em ON em.resultId = r.id AND em.messageStatusId = 3
       LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
       WHERE rc.externalid IN ${positiveResults}
-        AND dt.externalId = 'CepheidGeneXpert'
+        AND dtc.hasResults = 1
         AND r.endedOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
         AND r.endedOn< DATE_FORMAT(NOW(),"%Y-%m-01")
         AND (da.token = 'approved' OR ISNULL(da.token))
@@ -820,7 +847,7 @@ const gxPositiveResultsNotified = {
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   sortOrder: 7,
-  description: "The percentage of positive GeneXpert's results that were notified via SMS or email.",
+  description: 'The percentage of positive results that were notified via SMS or email.',
   descriptionI18nKey: 'gxPositiveResultsNotifiedDescription',
   link: '/operational-data#resultsTransmitted',
   dashboards: {
@@ -951,32 +978,27 @@ FROM
           d.id,
           COUNT(DISTINCT r.moduleName) AS usedModulesInLast7Days,
           IFNULL(innerQuery.cnt,0) AS activeModules
-      FROM
-          Device AS d
-      LEFT JOIN (SELECT
-        r2.deviceId,
-        COUNT(DISTINCT r2.moduleName) AS cnt
-      FROM
-          Result AS r2
-      WHERE r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
-      GROUP BY r2.deviceId
-      ) AS innerQuery ON d.id = innerQuery.deviceId
+        FROM Device AS d
+        LEFT JOIN (SELECT r2.deviceId,
+          COUNT(DISTINCT r2.moduleName) AS cnt
+          FROM Result AS r2
+          WHERE r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+          GROUP BY r2.deviceId
+        ) AS innerQuery ON d.id = innerQuery.deviceId
       INNER JOIN Site AS s ON s.id = d.siteId
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
       INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
       LEFT JOIN Geography AS g ON s.geographyId = g.id
       INNER JOIN Result AS r ON d.id = r.deviceId
-      WHERE
-          dc.hasResults = 1
-          AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
-          AND dt.externalId = 'CepheidGeneXpert'
+      WHERE dc.hasResults = 1
+        AND dt.externalId = 'CepheidGeneXpert'
+        AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
       GROUP BY d.id) AS q) AS q2`,
   sqlForStatUnit: `
   SELECT
     SUM(q2.totalModules) AS cnt
 FROM
-    (SELECT
-        q.id,
+    (SELECT q.id,
     CASE WHEN q.activeModules = 0 THEN 0 ELSE
 		(CASE
 			WHEN q.activeModules <= 4 THEN 4
@@ -989,17 +1011,13 @@ FROM
 			END)
 		END) END AS totalModules
     FROM
-		(SELECT
-      d.id,
+		(SELECT d.id,
       COUNT(DISTINCT r.moduleName) AS usedModulesInLast7Days,
       IFNULL(innerQuery.cnt,0) AS activeModules
-  FROM
-      Device AS d
-  LEFT JOIN (SELECT
-    r2.deviceId,
-    COUNT(DISTINCT r2.moduleName) AS cnt
-  FROM
-      Result AS r2
+    FROM Device AS d
+    LEFT JOIN (SELECT r2.deviceId,
+                COUNT(DISTINCT r2.moduleName) AS cnt
+              FROM Result AS r2
   WHERE r2.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
   GROUP BY r2.deviceId
   ) AS innerQuery ON d.id = innerQuery.deviceId
@@ -1008,11 +1026,9 @@ FROM
   INNER JOIN DeviceTypeCategory AS dc ON dc.id = dt.deviceTypeCategoryId
   LEFT JOIN Geography AS g ON s.geographyId = g.id
   INNER JOIN Result AS r ON d.id = r.deviceId
-
-  WHERE
-      dc.hasResults = 1
-          AND dt.externalId = 'CepheidGeneXpert'
-          AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
+  WHERE dc.hasResults = 1
+         AND dt.externalId = 'CepheidGeneXpert'
+         AND r.endedOn > DATE_SUB(NOW(), INTERVAL 7 DAY)
   GROUP BY d.id) AS q) AS q2
   `,
   statUnit: 'of {unit} total modules',
@@ -1098,7 +1114,7 @@ const instrumentsReplaced = {
   sortOrder: 3,
   externalId: 'instrumentsReplaced',
   description:
-    'The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting in the consecutive result conducted.',
+    'The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting in the consecutive result conducted.',
   descriptionI18nKey: 'instrumentsReplacedDescription',
   dashboards: {
     operational: {
@@ -1133,10 +1149,11 @@ const averageRecipientsOfEmail = {
         INNER JOIN EmailMessage AS em ON em.resultId = r.id
         INNER JOIN Device AS d ON d.id = em.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
         INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
           WHERE rc.externalid IN ${positiveResults}
-          AND dt.externalId = 'CepheidGeneXpert'
+          AND dtc.hasResults = 1
           AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND em.resultId IS NOT NULL
@@ -1152,10 +1169,11 @@ const averageRecipientsOfEmail = {
         INNER JOIN EmailMessage AS em ON em.resultId = r.id
         INNER JOIN Device AS d ON d.id = em.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
         INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
         WHERE rc.externalid IN ${positiveResults}
-          AND dt.externalId = 'CepheidGeneXpert'
+        AND dtc.hasResults = 1
           AND em.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
           AND em.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
@@ -1168,7 +1186,7 @@ const averageRecipientsOfEmail = {
   link: '/operational-data#resultsTransmitted',
   sortOrder: 9,
   externalId: 'averageRecipientsOfEmail',
-  description: 'The average number of email recipients per positive GeneXpert result.',
+  description: 'The average number of email recipients per positive result.',
   descriptionI18nKey: 'averageRecipientsOfEmailDescription',
   dashboards: {
     operational: {
@@ -1193,10 +1211,11 @@ const averageRecipientsOfSms = {
         INNER JOIN SmsMessage AS sms ON sms.resultId = r.id
         INNER JOIN Device AS d ON d.id = sms.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
         INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
           WHERE rc.externalid IN ${positiveResults}
-          AND dt.externalId = 'CepheidGeneXpert'
+          AND dtc.hasResults = 1
           AND r.endedOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND sms.resultId IS NOT NULL
@@ -1212,11 +1231,12 @@ const averageRecipientsOfSms = {
         INNER JOIN SmsMessage AS sms ON sms.resultId = r.id
         INNER JOIN Device AS d ON d.id = sms.deviceId
         INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+        INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
         INNER JOIN ResultCategory AS rc ON r.resultCategory1 = rc.id
         LEFT JOIN DeviceApproval da ON d.deviceApprovalId = da.id
         WHERE rc.externalid IN ${positiveResults}
-          AND dt.externalId = 'CepheidGeneXpert'
-          and sms.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
+          AND dtc.hasResults = 1
+          AND sms.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
           AND sms.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
           AND (da.token = 'approved' OR ISNULL(da.token))
           AND sms.resultId IS NOT NULL
@@ -1228,7 +1248,7 @@ const averageRecipientsOfSms = {
   link: '/operational-data#resultsTransmitted',
   sortOrder: 10,
   externalId: 'averageRecipientsOfSms',
-  description: 'The average number of SMS recipients per positive GeneXpert result.',
+  description: 'The average number of SMS recipients per positive result.',
   descriptionI18nKey: 'averageRecipientsOfSmsDescription',
   dashboards: {
     operational: {
@@ -1251,11 +1271,12 @@ const averageLengthOfSms = {
   FROM SmsMessage AS sms
   INNER JOIN Device AS d ON d.id = sms.deviceId
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site AS s ON d.siteId = s.id
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE sms.createdOn >= DATE_FORMAT(NOW(),"%Y-%m-01")
   AND sms.resultId IS NOT NULL
-  AND dt.externalId = 'CepheidGeneXpert'
+  AND dtc.hasResults = 1
   GROUP BY sms.resultId
   ) AS innerQuery`,
   sqlForStatUnit: `SELECT IFNULL(ROUND(AVG(messageLength)),0) AS cnt
@@ -1265,12 +1286,13 @@ const averageLengthOfSms = {
   FROM SmsMessage AS sms
   INNER JOIN Device AS d ON d.id = sms.deviceId
   INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+  INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   INNER JOIN Site AS s ON d.siteId = s.id
   LEFT OUTER JOIN Geography as g on s.geographyId = g.id
   WHERE sms.createdOn>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
   AND sms.createdOn< DATE_FORMAT(NOW(),"%Y-%m-01")
   AND sms.resultId IS NOT NULL
-  AND dt.externalId = 'CepheidGeneXpert'
+  AND dtc.hasResults = 1
   GROUP BY sms.resultId
   ) AS innerQuery`,
   statUnit: '{unit} last month',
@@ -1278,7 +1300,7 @@ const averageLengthOfSms = {
   link: '/browse/notification',
   sortOrder: 11,
   externalId: 'averageLengthOfSms',
-  description: 'The average number of characters in SMS messages sent about positive GeneXpert results.',
+  description: 'The average number of characters in SMS messages sent about positive results.',
   descriptionI18nKey: 'averageLengthOfSmsDescription',
   dashboards: {
     operational: {
@@ -1310,24 +1332,24 @@ const smsSent = {
   FROM SmsMessage AS sms
     INNER JOIN Device AS d ON d.id = sms.deviceId
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON d.siteId = s.id
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
-  WHERE
-    sms.createdOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
+  WHERE sms.createdOn>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND sms.resultId IS NOT NULL
-    AND dt.externalId = 'CepheidGeneXpert'`,
+    AND dtc.hasResults = 1`,
   sqlForStatUnit: `
   SELECT
     IFNULL(SUM(CEIL(LENGTH(message)/140)),0) as cnt
   FROM SmsMessage AS sms
     INNER JOIN Device AS d ON d.id = sms.deviceId
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON d.siteId = s.id
     LEFT OUTER JOIN Geography as g on s.geographyId = g.id
-  WHERE
-    sms.createdOn>= DATE_FORMAT(NOW(),"%Y-01-01")
+  WHERE sms.createdOn>= DATE_FORMAT(NOW(),"%Y-01-01")
     AND sms.resultId IS NOT NULL
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
   `,
   statUnit: '{unit} YTD',
   statUnitI18nKey: 'ytd',
@@ -1532,48 +1554,39 @@ const numberOfDevicesExperiencingServiceInterruption = {
     COUNT(DISTINCT d.id) AS cnt
   FROM
       Device AS d
-          INNER JOIN
-      Site AS s ON s.id = d.siteId
-          LEFT OUTER JOIN
-      Geography AS g ON s.geographyId = g.id
-          INNER JOIN
-      DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
-          INNER JOIN
-      DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
-          INNER JOIN
-      DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN Site AS s ON s.id = d.siteId
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          INNER JOIN DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
+          INNER JOIN DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   WHERE
       dms.externalId = 'inactiveDownForRepair'
       AND dmsl.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
-      AND dt.externalId = 'CepheidGeneXpert'
+      AND dtc.hasResults = 1
   `,
   sqlForStatUnit: `
   SELECT
     COUNT(DISTINCT d.id) AS cnt
   FROM
       Device AS d
-          INNER JOIN
-      Site AS s ON s.id = d.siteId
-          LEFT OUTER JOIN
-      Geography AS g ON s.geographyId = g.id
-          INNER JOIN
-      DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
-          INNER JOIN
-      DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
-          INNER JOIN
-      DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN Site AS s ON s.id = d.siteId
+          LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
+          INNER JOIN DeviceMaintenanceStatusLog dmsl ON d.id = dmsl.deviceId
+          INNER JOIN DeviceMaintenanceStatus dms ON dmsl.deviceMaintenanceStatusId = dms.id
+          INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+          INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
   WHERE
       dms.externalId = 'inactiveDownForRepair'
       and dmsl.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
       AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
-      AND dt.externalId = 'CepheidGeneXpert'
+      AND dtc.hasResults = 1
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/device/list',
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
-    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 0,
   externalId: 'numberOfDevicesExperiencingServiceInterruption',
@@ -1609,6 +1622,7 @@ const averageDurationServiceInterruption = {
       INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
       INNER JOIN Device AS d ON dmsl.deviceId = d.id
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN
@@ -1616,13 +1630,13 @@ const averageDurationServiceInterruption = {
           SELECT  dmsl.deviceId, COUNT(dmsl.deviceId) AS times
           FROM DeviceMaintenanceStatusLog AS dmsl
           LEFT OUTER JOIN DeviceMaintenanceStatusLog AS dmsl2 ON dmsl.deviceId = dmsl2.deviceId AND dmsl.day = DATE_SUB(dmsl2.day, INTERVAL 1 DAY) AND dmsl2.deviceMaintenanceStatusId <> dmsl.deviceMaintenanceStatusId
-              LEFT OUTER JOIN DeviceMaintenanceStatus AS dms ON dmsl2.deviceMaintenanceStatusId = dms.id
+          LEFT OUTER JOIN DeviceMaintenanceStatus AS dms ON dmsl2.deviceMaintenanceStatusId = dms.id
           WHERE dmsl.day >= DATE_FORMAT(NOW(),"%Y-%m-01")
               AND dms.externalId = 'inactiveDownForRepair'
           GROUP BY dmsl.deviceId) AS o ON dmsl.deviceId = o.deviceId
     WHERE dmsl.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND dms.externalId = 'inactiveDownForRepair'
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
     GROUP BY deviceId
     ORDER BY deviceId , minInactive) AS innerQuery
   `,
@@ -1637,6 +1651,7 @@ const averageDurationServiceInterruption = {
       INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
       INNER JOIN Device AS d ON dmsl.deviceId = d.id
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN
@@ -1652,7 +1667,7 @@ const averageDurationServiceInterruption = {
     WHERE dmsl.day>= DATE_FORMAT(DATE_SUB(NOW(), INTERVAL 1 MONTH),"%Y-%m-01")
     AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
     AND dms.externalId = 'inactiveDownForRepair'
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
     GROUP BY deviceId
     ORDER BY deviceId , minInactive) AS innerQuery
   `,
@@ -1661,7 +1676,6 @@ const averageDurationServiceInterruption = {
   link: '/browse/device/list',
   linkParams: {
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
-    deviceType: 'CepheidGeneXpert',
   },
   sortOrder: 1,
   externalId: 'averageDurationServiceInterruption',
@@ -1708,6 +1722,7 @@ const percentageOfDaysWithServiceInterruption = {
   '%') AS cnt
       FROM Device AS d
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN (
@@ -1723,7 +1738,7 @@ const percentageOfDaysWithServiceInterruption = {
         GROUP BY dmsl.deviceId
       ) AS down ON d.id = down.deviceId
       WHERE d.createdOn <= NOW()
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
   `,
   sqlForStatUnit: `
   SELECT CONCAT(
@@ -1743,6 +1758,7 @@ const percentageOfDaysWithServiceInterruption = {
   '%') AS cnt
     FROM Device AS d
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
+    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON s.id = d.siteId
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     LEFT OUTER JOIN (
@@ -1759,13 +1775,12 @@ const percentageOfDaysWithServiceInterruption = {
       GROUP BY dmsl.deviceId
     ) AS down ON d.id = down.deviceId
     WHERE d.createdOn <= LAST_DAY(DATE_SUB(NOW(), INTERVAL 1 MONTH))
-    AND dt.externalId = 'CepheidGeneXpert'
+    AND dtc.hasResults = 1
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
   link: '/browse/device/list',
   linkParams: {
-    deviceName: 'GeneXpert',
     deviceMaintenanceStatusId: 'inactiveDownForRepair',
   },
   sortOrder: 2,
@@ -1945,7 +1960,7 @@ const deviceCalibrationPastDue = {
   jobFunctions: ['all'],
   sortOrder: 4,
   icon: 'MdBuild',
-  title: 'Calibration Past Due',
+  title: 'GeneXpert Calibration Past Due',
   titleI18nKey: 'deviceCalibrationPastDueTitle',
   sqlForIndicator: `
     SELECT
@@ -1964,11 +1979,11 @@ const deviceCalibrationPastDue = {
     ) AS sub;`,
   statUnit: '{unit} of all devices',
   statUnitI18nKey: 'ofAllDevices',
-  description: `The number of instruments that had their last calibration more than one year ago.`,
+  description: `The number of GeneXpert instruments that had their last calibration more than one year ago.`,
   descriptionI18nKey: 'deviceCalibrationPastDueDescription',
   link: '/reports',
   linkParams: {
-    reportName: 'Device Calibration Report',
+    reportName: 'GeneXpert Device Calibration Report',
   },
   dashboards: {
     operational: {
@@ -2005,7 +2020,7 @@ const deviceCalibratedWhenDue = {
   jobFunctions: ['all'],
   sortOrder: 5,
   icon: 'MdBuild',
-  title: 'Calibrated When Due',
+  title: 'GeneXpert Calibrated When Due',
   titleI18nKey: 'deviceCalibratedWhenDueTitle',
   sqlForIndicator: `
     SELECT
@@ -2023,11 +2038,11 @@ const deviceCalibratedWhenDue = {
     ) AS sub;`,
   statUnit: '{unit} total calibrations',
   statUnitI18nKey: 'totalCalibrations',
-  description: `The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.`,
+  description: `The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.`,
   descriptionI18nKey: 'deviceCalibratedWhenDueDescription',
   link: '/reports',
   linkParams: {
-    reportName: 'Device Calibration Report',
+    reportName: 'GeneXpert Device Calibration Report',
   },
   dashboards: {
     operational: {
@@ -2107,5 +2122,6 @@ module.exports = {
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
+    instrumentsConnected,
   },
 }

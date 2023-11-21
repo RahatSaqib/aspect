@@ -1,9 +1,8 @@
 import React from 'react'
 import { CircularProgress } from '@mui/material'
 import PropTypes from 'prop-types'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../../hooks/useI18n'
-import styles from './SiteLocationFormMap.css'
+import { defineMessages, useIntl } from 'react-intl'
+import styles from './SiteLocationFormMap.module.css'
 import SiteMap from './SiteMap'
 
 const messages = defineMessages({
@@ -24,7 +23,7 @@ const messages = defineMessages({
  * into a latLng pair.
  */
 const SiteLocationFormMap = ({ latLong }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <div className={styles.Container}>

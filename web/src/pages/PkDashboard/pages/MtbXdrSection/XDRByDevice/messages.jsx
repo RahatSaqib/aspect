@@ -27,6 +27,7 @@ const messages = {
     error: { id: 'pages.XDR.error', defaultMessage: 'Error #' },
     invalid: { id: 'pages.XDR.invalid', defaultMessage: 'Invalid #' },
     noResult: { id: 'pages.XDR.noResult', defaultMessage: 'No Result #' },
+    pmdtSites: { id: 'pages.XDR.pmdtSites', defaultMessage: '# of PMDT Sites with 10 C GX' },
     paginatorStatus: {
       id: 'pages.XDR.paginatorStatus',
       defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,

@@ -1,7 +1,7 @@
 // External IDs of devices that we use internally and that should be excluded from some lists and counts
 const INTERNAL_DEVICE_IDS = ['GxAlert', 'Aspect']
 const RELABEL_EXCEL = { reLabel: 'aspect:report:excel' }
-
+const IGNORED_SENTRY_ERRORS = [/^Cannot authorize API Key$/]
 const GRAPH_FLAGS = {
   GET_TOTAL_RESULTS: 'GET_TOTAL_RESULTS',
   GET_TOTAL_RESULTS_IN_CURRENT_YEAR: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR',
@@ -11,6 +11,8 @@ const GRAPH_FLAGS = {
 }
 
 const XDR_RESISTANCES = ['INH', 'FLQ', 'AMK', 'KAN', 'CAP', 'ETH']
+const XDR_RESISTANCES_COMBO = ['INH_FLQ', 'INH_ETH']
+const XDR_RESISTANCE_VALUES = ['Detected', 'NotDetected', 'Indeterminate']
 
 const DAYS_STOCK_LEFT_RANGES = {
   outOfStock: { min: 0, max: 0 },
@@ -22,9 +24,12 @@ const DAYS_STOCK_LEFT_RANGES = {
 }
 
 module.exports = {
+  IGNORED_SENTRY_ERRORS,
   INTERNAL_DEVICE_IDS,
   RELABEL_EXCEL,
   GRAPH_FLAGS,
   XDR_RESISTANCES,
+  XDR_RESISTANCES_COMBO,
+  XDR_RESISTANCE_VALUES,
   DAYS_STOCK_LEFT_RANGES,
 }

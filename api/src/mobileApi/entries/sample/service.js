@@ -5,7 +5,7 @@ const { getSamplesRegisteredAtSiteOnDayWithSampleId, updateExistingSample, inser
 const { transformSampleData } = require('../result/common/helpers/transformSample')
 const { sampleTypeToId } = require('../../../shared/dictionary')
 const { getConstraints } = require('../../../auth/constraints')
-const { getSite } = require('../../../site/service')
+const { getSite, getSitesQuery } = require('../../../site/service')
 
 async function registerNewSample(request) {
   const {
@@ -21,12 +21,13 @@ async function registerNewSample(request) {
   const collectedOn = _.isNaN(collectedOnUnSanitised.getTime()) ? null : collectedOnUnSanitised
   const sampleTypeId =
     payload.sampleTypeExternalId === 'Other' ? null : await sampleTypeToId(payload.sampleTypeExternalId ?? 'Sputum')
+  const clinics = await getSitesQuery(dataConstraints).select('s.id')
   const existingSamples = await getSamplesRegisteredAtSiteOnDayWithSampleId(
     payload.externalId,
     sampleTypeId,
     collectedOn,
     payload.originSiteId,
-    dataConstraints
+    clinics.map(c => c.id)
   )
   const currentlyLoggedInUser = await getUser(credentials.name)
   const now = new Date()

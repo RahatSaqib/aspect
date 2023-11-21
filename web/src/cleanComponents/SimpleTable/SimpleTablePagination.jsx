@@ -1,13 +1,10 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import classnames from 'classnames/bind'
 import min from 'lodash/min'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import messages from './messages'
-import styles from './styles.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './styles.module.css'
 
 const SimpleTablePagination = ({
   timedMessageUsed = false,
@@ -19,7 +16,7 @@ const SimpleTablePagination = ({
   onPageChange,
   onPageSizeChange,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const hasFirstPage = pageAt !== 0
   const hasPreviousPage = pageAt > 0
   const firstItemIndex = 1 + pageSize * pageAt
@@ -28,10 +25,10 @@ const SimpleTablePagination = ({
   const hasLastPage = total > pageSize * (1 + pageAt)
 
   return (
-    <div className={cssClasses(className, 'Container')}>
-      <div className={cssClasses('Left')}>
+    <div className={`${styles[className]} Container`}>
+      <div className={styles.Left}>
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Left__Button') }}
+          classes={{ root: styles.Left__Button }}
           disabled={!hasFirstPage}
           variant="outlined"
           onClick={() => onPageChange(0)}
@@ -43,7 +40,7 @@ const SimpleTablePagination = ({
           }
         />
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Left__Button') }}
+          classes={{ root: styles.Left__Button }}
           disabled={!hasPreviousPage}
           variant="outlined"
           onClick={() => onPageChange(pageAt - 1)}
@@ -54,11 +51,11 @@ const SimpleTablePagination = ({
             </>
           }
         />
-        <div className={cssClasses('Left__Status')}>
+        <div className={styles.Left__Status}>
           {formatMessage(paginatorStatus, { firstItemIndex, lastItemIndex, itemCount: total })}
         </div>
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Left__Button', 'Left__Button--next') }}
+          classes={{ root: 'Left__Button Left__Button__next' }}
           disabled={!hasNextPage}
           variant="outlined"
           onClick={() => onPageChange(pageAt + 1)}
@@ -70,7 +67,7 @@ const SimpleTablePagination = ({
           }
         />
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Left__Button', 'Left__Button--next') }}
+          classes={{ root: 'Left__Button Left__Button__next' }}
           disabled={!hasLastPage}
           variant="outlined"
           onClick={() => {
@@ -85,34 +82,34 @@ const SimpleTablePagination = ({
           }
         />
       </div>
-      <div className={cssClasses('Right')}>
+      <div className={styles.Right}>
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Right__Button') }}
-          className={cssClasses({ selected: pageSize === 10 })}
+          classes={{ root: styles.Right__Button }}
+          className={pageSize === 10 ? styles.selected : ''}
           onClick={() => onPageSizeChange(10)}
           label={`${10}`}
         />
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Right__Button') }}
-          className={cssClasses({ selected: pageSize === 25 })}
+          classes={{ root: styles.Right__Button }}
+          className={pageSize === 25 ? styles.selected : ''}
           onClick={() => onPageSizeChange(25)}
           label={`${25}`}
         />
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Right__Button') }}
-          className={cssClasses({ selected: pageSize === 50 })}
+          classes={{ root: styles.Right__Button }}
+          className={pageSize === 50 ? styles.selected : ''}
           onClick={() => onPageSizeChange(50)}
           label={`${50}`}
         />
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Right__Button') }}
-          className={cssClasses({ selected: pageSize === 100 })}
+          classes={{ root: styles.Right__Button }}
+          className={pageSize === 100 ? styles.selected : ''}
           onClick={() => onPageSizeChange(100)}
           label={`${100}`}
         />
         <SimpleTablePaginationButton
-          classes={{ root: cssClasses('Right__Button') }}
-          className={cssClasses({ selected: pageSize === total })}
+          classes={{ root: styles.Right__Button }}
+          className={pageSize === total ? styles.selected : ''}
           onClick={() => onPageSizeChange(total)}
           label={formatMessage(messages.all)}
         />

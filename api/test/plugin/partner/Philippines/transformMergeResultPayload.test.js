@@ -10,7 +10,7 @@ describe('transformMergeResultPayload plugin for CepheidGeneXpert devices in the
         sampleTypeToId: async () => {},
         deviceTypeToPlugin: async () => Promise.resolve(''),
       },
-      '../../registration': {
+      '../../loadPlugin': {
         loadPlugin: async () => Promise.resolve(async ({ payload }) => Promise.resolve(payload)),
       },
     }

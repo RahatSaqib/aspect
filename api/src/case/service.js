@@ -190,9 +190,10 @@ async function onCaseChanged(caseId, messageContext, isAdded) {
   })
   // exec plugin
   if (partnerPluginName || deviceTypePluginName) {
-    const { loadPlugin } = require('../plugin/registration')
+    const { loadPlugin } = require('../plugin/loadPlugin')
     const pluginOnCaseChanged = await loadPlugin(
-      [partnerPluginName, deviceTypePluginName],
+      partnerPluginName,
+      deviceTypePluginName,
       isAdded ? 'onCaseAdded' : 'onCaseUpdated'
     )
     await pluginOnCaseChanged({ caseId }, { messageContext })

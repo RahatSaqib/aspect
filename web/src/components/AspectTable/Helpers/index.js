@@ -5,7 +5,6 @@ import parseISO from 'date-fns/parseISO'
 import chunk from 'lodash/chunk'
 import filter from 'lodash/filter'
 import find from 'lodash/find'
-import get from 'lodash/get'
 import isNil from 'lodash/isNil'
 import map from 'lodash/map'
 import max from 'lodash/max'
@@ -13,7 +12,7 @@ import min from 'lodash/min'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import range from 'lodash/range'
-import { dateFNSLocales } from '../../../providers/I18nProvider'
+import dateFNSLocales from '../../../providers/I18nProvider/dateFNSLocales'
 
 function buildColumnsFromData({ columns, columnOrder, contextualMenu = false }) {
   const output = []
@@ -127,11 +126,6 @@ function getReturnUrl(returnUrlRaw, defaultUrl) {
   return `${path}?${query.toString()}`
 }
 
-const translate = (mesages, formatMessage) => value => {
-  const message = get(mesages, value, value)
-  return message === value ? value : formatMessage(message)
-}
-
 export {
   allowOnlyAPIKeys,
   buildColumnsFromData,
@@ -144,5 +138,4 @@ export {
   timeSinceFromUTC,
   useUrlQuery,
   getReturnUrl,
-  translate,
 }

@@ -15,7 +15,6 @@ const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
-const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
@@ -87,9 +86,7 @@ async function seed(knex) {
     .where({ partnerId })
     .first('id')
 
-  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)).filter(
-    deviceType => deviceType.externalId !== 'Aspect'
-  )
+  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex)).filter(deviceType => deviceType.externalId !== 'Aspect')
   const deviceTypeAssays = {}
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),
@@ -260,15 +257,10 @@ async function seed(knex) {
     updatedOn: now,
   })
 
-  // job function for user
-  const [jobIdFirstClinic] = await knex('Job').insert({
-    personId: personIdFirstClinic,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   // context for user
   await knex('JobContext').insert({
-    jobId: jobIdFirstClinic,
+    personId: personIdFirstClinic,
+    jobFunctionId: jobFunctionIdClinician,
     siteId: siteIdFirstClinic,
   })
 
@@ -300,15 +292,10 @@ async function seed(knex) {
     updatedOn: now,
   })
 
-  // job function for user
-  const [jobIdSecondClinic] = await knex('Job').insert({
-    personId: personIdSecondClinic,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   // context for user
   await knex('JobContext').insert({
-    jobId: jobIdSecondClinic,
+    personId: personIdSecondClinic,
+    jobFunctionId: jobFunctionIdClinician,
     siteId: siteIdSecondClinic,
   })
 

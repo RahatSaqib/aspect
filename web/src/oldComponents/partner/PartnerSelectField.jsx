@@ -52,7 +52,7 @@ const enhance = compose(
   }))
 )
 
-export function PartnerSelectField({ onChangePartner, partnerId, partnerList, disabled, ...restProps }) {
+function PartnerSelectField({ onChangePartner, partnerId, partnerList, disabled, ...restProps }) {
   return (
     <SelectField
       {...restProps}

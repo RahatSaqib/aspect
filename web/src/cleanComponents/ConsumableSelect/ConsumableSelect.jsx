@@ -1,11 +1,11 @@
 import React from 'react'
+import { useIntl } from 'react-intl'
 import useConsumable from '../../hooks/inventory/useConsumable'
-import useI18n from '../../hooks/useI18n'
 import { consumableMessages } from '../../messages'
 import AspectSelect from '../AspectSelect'
 
 export default function ConsumableSelect(props) {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { isLoading: isConsumableLoading, data: consumables } = useConsumable()
   return (
     <AspectSelect

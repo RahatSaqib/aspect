@@ -1,0 +1,30 @@
+@import '../../../theme/variables.css';
+
+.Container {
+  padding: 10px;
+}
+
+.FiltersGroup {
+  padding: 20px;
+  text-align: center;
+}
+
+.FiltersGroup__Child {
+  vertical-align: middle;
+  display: inline-block;
+  margin: 0 5px;
+}
+
+.FiltersGroup__Child__dropdown {
+  text-align: left;
+}
+
+.Button__mini {
+  min-width: 40px;
+}
+
+.TaskDataTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
+}

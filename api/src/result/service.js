@@ -1,28 +1,16 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { format, subMonths, subHours, eachMonthOfInterval } = require('date-fns')
+const { format, addMonths, subMonths, subHours } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
-const {
-  getSelectCommonListFieldsTZ,
-  getReportCommonFieldsTZ,
-  LIST_FIELDS_UTC,
-  SORT_FIELDS,
-  RESULT_STRING_TEMPLATE_FIELDS,
-  caseCondition,
-  countXdr,
-  getBaseQuery,
-  modifiers,
-} = require('./query')
+const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
-const { resultUpdated, resultLoggedProcessed } = require('./actions')
 const { addConstraints, canViewResults, getConstraints, addPartnerQueryConstraints } = require('../auth/constraints')
 const { getUser, getUserByUserId, getPersonByPersonId } = require('../auth/service')
 const {
   allAssayToId,
   allResultCategoryToId,
-  deviceTypeToId,
   resultWorkflowStatusToId,
   resultTreatmentStatusToId,
   resultStatusToId,
@@ -30,17 +18,14 @@ const {
   resultTypeToId,
   resultCategoryToId,
 } = require('../shared/dictionary')
-const { getDatesFromQuery } = require('../shared/date')
+const { getMonthYearField, getDatesFromQuery, returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
-const { returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { getPathFromFileReferenceId } = require('../file/service')
 const { getSiteByPartnerCountry, getSite } = require('../site/service')
 const { updateTagsById } = require('../tag/service')
 const { getCaseId } = require('../case/service')
 const { applyExtraColumns, sanitizeExtraColumns } = require('./extraColumns')
 const { getAllAssaySchemas, getAssayResultCategories } = require('../assay/service')
-const { getRemoteAddress } = require('../shared/request')
-const getPositiveCategoriesExternalIds = require('../resultCategory/service')
 
 const confirmedTreatmentTracking = require('./treatment')
 const logger = require('../shared/logger')
@@ -51,6 +36,8 @@ const {
   getQueryForResultsListAndExport,
   showFileReferencesById,
   getResultNotesByResultId,
+  getXdrResultCountBase,
+  FACT_FIELD_SCOPE,
 } = require('./common/db')
 const { getDeviceByDeviceId } = require('../device/service')
 const { getGroupBy, clinicalIndicatorAggregations } = require('./common/logic')
@@ -180,75 +167,6 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
     data,
     extraColumns: assayColumns,
   }
-  return result
-}
-
-async function getResultsForExport(auth, query) {
-  const offset = getOffsetFromIsoDateString(query.maxDate)
-  const selectFields = {
-    ...getSelectCommonListFieldsTZ(offset),
-    deviceStateName: 'stdpn.name',
-    resultCategoryGroup: 'rcg.name',
-  }
-  const sortableFields = [...SORT_FIELDS]
-
-  const assayColumns = []
-  if (query.assayId) {
-    const assays = await knex('Assay as a')
-      .modify(queryBuilder => {
-        if (_.isArray(query.assayId)) queryBuilder.whereIn('a.id', query.assayId)
-        else queryBuilder.where('a.id', query.assayId)
-      })
-
-      .select()
-
-    for (const assay of assays) {
-      if (assay.resultCategory1Label && selectFields.resultCategory1Name !== 'rc1.name') {
-        selectFields.resultCategory1Name = 'rc1.name'
-        sortableFields.push('resultCategory1Name')
-        assayColumns.push({
-          db: 'resultCategory1Name',
-          type: 'string',
-          title: assay.resultCategory1Label,
-          i18nKey: assay.resultCategory1i18nKey,
-        })
-      }
-
-      if (assay.resultCategory2Label && selectFields.resultCategory2Name !== 'rc2.name') {
-        selectFields.resultCategory2Name = 'rc2.name'
-        sortableFields.push('resultCategory2Name')
-        assayColumns.push({
-          db: 'resultCategory2Name',
-          type: 'string',
-          title: assay.resultCategory2Label,
-          i18nKey: assay.resultCategory2i18nKey,
-        })
-      }
-    }
-  }
-
-  // now we know if the sort that was passed is valid:
-  if (query.sortCol && !sortableFields.includes(query.sortCol)) {
-    return Boom.badRequest()
-  }
-
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const resultQuery = getQueryForResultsListAndExport(query, dataConstraints)
-
-  const getCount = resultQuery.clone().count('r.id as total').first()
-
-  const getData = resultQuery.clone().groupBy('r.id').modify(sortPageParams, query, 'endedOn').select(selectFields)
-
-  const [{ total }, data] = await Promise.all([getCount, getData])
-  const result = {
-    ok: true,
-    data,
-    total,
-    extraColumns: assayColumns,
-  }
-
   return result
 }
 
@@ -684,9 +602,6 @@ async function getResultForStringTemplateProcessing(resultId, fields = RESULT_ST
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('Sample as sample', 'r.sampleId', 'sample.id')
     .join('Partner as p', 'r.partnerId', 'p.id')
-    .leftJoin('ResultForm as rf', function () {
-      this.on('a.id', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
-    })
     .leftJoin('PartnerDisease as pd', function () {
       this.on('at.diseaseId', 'pd.diseaseId').andOn('r.partnerId', 'pd.partnerId')
     })
@@ -1075,128 +990,6 @@ async function getTreatmentStatusByResultId(resultId) {
     )
 }
 
-async function updateFormDataByResultId(
-  resultId,
-  partnerId,
-  assayId,
-  existingFormData,
-  newFormData,
-  auth,
-  messageContext,
-  senderIp,
-  params
-) {
-  const now = new Date()
-  const mergedFormData = _.merge({}, existingFormData, newFormData)
-  if (!_.isEqual(existingFormData, mergedFormData)) {
-    const resultForm = await knex('ResultForm')
-      .where({
-        partnerId,
-        assayId,
-      })
-      .first('formSchema')
-
-    if (!resultForm || _.isEmpty(resultForm.formSchema)) {
-      return 'This result cannot accept form data because no form schema is defined.'
-    }
-    const formSchema = JSON.parse(resultForm.formSchema)
-    const unrecognisedFields = _.difference(Object.keys(newFormData), Object.keys(formSchema.fields))
-    if (!_.isEmpty(unrecognisedFields)) {
-      const undefinedFieldMessage =
-        unrecognisedFields.length > 1
-          ? `This result cannot accept the following fields in it's form data: [${unrecognisedFields.join()}] because they are not defined in the forms schema.`
-          : `This result cannot accept the following field in it's form data: ${unrecognisedFields[0]} because it is not defined in the forms schema.`
-      return undefinedFieldMessage
-    }
-    const fieldValidationErrors = []
-    _.each(Object.keys(newFormData), formFieldKey => {
-      const formFieldValue = _.get(newFormData, formFieldKey)
-      const formFieldSchema = _.get(formSchema, ['fields', formFieldKey])
-      if (!_.isNil(formFieldValue)) {
-        const allowMultipleSelection = _.get(formFieldSchema, 'control.allowMultipleSelection', true)
-        const formFieldOptions = _.get(formFieldSchema, 'control.options')
-        if (formFieldOptions) {
-          const allowedValues = _.map(formFieldOptions, 'value')
-          if (_.isArray(formFieldValue)) {
-            if (!allowMultipleSelection && formFieldValue.length > 1) {
-              fieldValidationErrors.push(
-                `[${formFieldValue.join()}] is invalid for ${formFieldKey} because the field does not allow multiple values.`
-              )
-            }
-            const illegalValuesEntered = _.difference(formFieldValue, allowedValues)
-            if (!_.isEmpty(illegalValuesEntered)) {
-              const validationMessage =
-                illegalValuesEntered.length === 1
-                  ? `${illegalValuesEntered[0]} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
-                  : `[${illegalValuesEntered.join()}] are invalid for ${formFieldKey} because they are not present in the options configured for the field.`
-              fieldValidationErrors.push(validationMessage)
-            }
-          } else if (!allowedValues.includes(formFieldValue.toString())) {
-            fieldValidationErrors.push(
-              `${formFieldValue} is invalid for ${formFieldKey} because it is not present in the options configured for the field.`
-            )
-          }
-        }
-      }
-    })
-    if (!_.isEmpty(fieldValidationErrors)) {
-      return fieldValidationErrors.join('\n')
-    }
-    messageContext.bindActionCreators({
-      resultUpdated,
-    })
-    const { id: currentUserId } = await getUser(auth.credentials.name)
-    let deviceLogId
-    await messageContext.transact(async knex => {
-      const updatedResult = {
-        formData: JSON.stringify(mergedFormData),
-        updatedBy: currentUserId,
-        updatedOn: now,
-      }
-
-      await knex('Result').where('id', resultId).update(updatedResult)
-
-      const deviceId = await getAspectDeviceId(partnerId)
-
-      if (deviceId) {
-        ;[deviceLogId] = await knex('DeviceLog').insert({
-          deviceId,
-          resultId,
-          source: 'Result Edited in Aspect',
-          createdOn: now,
-          senderIp,
-          rawMessage: JSON.stringify({
-            auth: { credentials: { name: auth.credentials.name } },
-            params,
-            payload: newFormData,
-          }),
-        })
-      }
-
-      messageContext.resultUpdated(resultId, deviceLogId, currentUserId)
-    })
-    if (deviceLogId) {
-      await messageContext.queue.waitForAction(resultLoggedProcessed(resultId, deviceLogId), 1000).catch(_.noop)
-    }
-  }
-}
-
-async function getAspectDeviceId(partnerId) {
-  const aspectDeviceTypeId = await deviceTypeToId('Aspect')
-  if (aspectDeviceTypeId) {
-    const { id: deviceId } =
-      (await knex('Device')
-        .where({
-          partnerId,
-          deviceTypeId: aspectDeviceTypeId,
-        })
-        .first('id')) || {}
-    if (deviceId) {
-      return deviceId
-    }
-  }
-}
-
 async function listWorkflowStatusTypes() {
   const resultQuery = knex('ResultWorkflowStatus as rs')
 
@@ -1532,6 +1325,7 @@ async function transferResult(request) {
 
   // get the result so we can check access
   const result = await getResultByResultId(auth, resultId)
+
   if (!result.ok) {
     return Boom.notFound('Result with requested Id is not found')
   }
@@ -1589,35 +1383,23 @@ async function transferResult(request) {
     resultStatusLog = await knex('ResultStatusLog').where({ id: resultStatusLogId }).first('createdOn')
     transferredOn = resultStatusLog.createdOn
 
-    // remove ResultFollowUp because we want the user at the clinic that now has access
-    // to the result to confirm the treatment status.
-    await knex('ResultFollowUp').where({ resultId }).del()
-    // add entry to ResultTreatmentStatusLog as "Awaiting Treatment" with details about reason
-    const externalId = 'AwaitingTreatment'
-    const resultTreatmentStatusId = await resultTreatmentStatusToId(externalId)
-    const [treatmentStatusLogId] = await knex('ResultTreatmentStatusLog').insert({
-      resultId,
-      resultTreatmentStatusId,
-      method: 'transfer',
-      data: JSON.stringify({
-        siteId: result.data.siteId,
-        reportableSiteId: siteId,
-        sampleOriginSiteId: result.data.sampleOriginSiteId,
-      }),
-      createdOn: now,
-      changedOn: now,
-      createdBy: currentUserId,
-    })
-    // ------------
-
     // update
     await knex('Result').where('id', resultId).update({
       reportableSiteId: siteId,
       resultStatusLogId,
-      treatmentStatusLogId,
       firstViewedOn: null,
       updatedBy: currentUserId,
       updatedOn: now,
+    })
+
+    await knex('ResultTransferLog').insert({
+      resultId,
+      reportableSiteId: siteId,
+      sampleOriginSiteId: result.data.sampleOriginSiteId,
+      previousReportableSiteId: result.data.reportableSiteId,
+      comment,
+      createdOn: now,
+      createdBy: currentUserId,
     })
 
     result.data.reportableSiteId = siteId
@@ -1729,7 +1511,7 @@ async function currentResultAggregations(request) {
   const resp = {}
   let dateColumn
   let baseQuery
-  if (_.every(groupBy, group => _.includes(factTableDataGroups, group))) {
+  if (_.every(groupBy, group => _.includes(factTableDataGroups, group)) && !query?.resistance) {
     baseQuery = getClinicalIndicatorQueryForFactTable(dataConstraints, null, groupBy, query)
     dateColumn = 'r.startedOn'
   } else {
@@ -1748,14 +1530,19 @@ async function currentResultAggregations(request) {
    */
   const data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
 
-  if (query.minDate && query.maxDate) {
+  if (groupBy.includes('month') && query.minDate && query.maxDate) {
     // Get all months in date range (YYYY-MM)
     const months = getAllMonthsInRange(query.minDate, query.maxDate)
 
-    resp.data = months.map(month => {
-      const monthInData = data.find(d => d.month === month)
-      return monthInData ?? { cnt: 0, month }
-    })
+    resp.data = []
+    for (const month of months) {
+      const monthData = data.filter(result => result.month === month)
+      if (monthData.length > 0) {
+        resp.data = [...resp.data, ...monthData]
+      } else {
+        resp.data = [...resp.data, { cnt: 0, month }]
+      }
+    }
   } else {
     resp.data = data
   }
@@ -2088,11 +1875,7 @@ async function createResult(request) {
 }
 
 async function updateOrCreateResult(request, result = {}) {
-  const {
-    auth,
-    payload,
-    plugins: { messageContext },
-  } = request
+  const { auth, payload } = request
   const { id: userId, partnerId } = await getUser(auth.credentials.name)
   const dataConstraints = await getConstraints(auth.credentials)
   const isCreating = !result.id
@@ -2123,7 +1906,7 @@ async function updateOrCreateResult(request, result = {}) {
   // deviceId is optional. if null and creating a result, it has to be an assay that is for manual entry only
   let { deviceId } = result
   if (isCreating) {
-    deviceId = await getDeviceIdForResultCreation(payload, partnerId, assay.externalId)
+    deviceId = await validatePayloadHadDeviceId(payload)
   }
   // check that user has access to device
   const device = await getDeviceByDeviceId({
@@ -2218,18 +2001,6 @@ async function updateOrCreateResult(request, result = {}) {
   // update or insert tags
   await updateTagsById(result.id, 'result', payload.tags, auth)
 
-  // update result form data
-  await updateFormDataByResultId(
-    result.id,
-    result.partnerId,
-    result.assayId,
-    result.formData,
-    payload.formData,
-    auth,
-    messageContext,
-    getRemoteAddress(request)
-  )
-
   // update/insert workflow status
   const resultWorkflowStatusExternalId =
     result.resultCategory1 === (await resultCategoryToId('Error')) ? 'Error' : 'Deliverable'
@@ -2271,22 +2042,12 @@ async function updateOrCreateResult(request, result = {}) {
   return r
 }
 
-async function getDeviceIdForResultCreation(payload, partnerId, assayExternalId) {
+async function validatePayloadHadDeviceId(payload) {
   if (payload.deviceId) {
     return payload.deviceId
   }
-  // TODO: configure this in the db instead of hardcoding
-  const assaysForManualEntry = ['assayGenericCovid19', 'GenericRDT', 'DaktariHivVL']
-  if (assaysForManualEntry.indexOf(assayExternalId) === -1) {
-    throw Boom.badRequest(
-      'You did not select a device and this assay can not be entered manually without a device. Please specify a device.'
-    )
-  }
-  const aspectDeviceId = await getAspectDeviceId(partnerId)
-  if (!aspectDeviceId) {
-    throw Boom.internal('Could not find Aspect device for assigning this result.')
-  }
-  return aspectDeviceId
+
+  throw Boom.internal('Device is mandatory.')
 }
 
 async function updateOrCreateSample(sampleId, externalId, sampleTypeId, collectedOn, originSiteId) {
@@ -2474,49 +2235,60 @@ async function getCustomFieldsCompletion(auth, query) {
 async function xdrAssayGraphAggregations(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const offset = getOffsetFromIsoDateString(query.maxDate)
 
-  const dates = getDatesFromQuery(query)
-  const { dateFrom, dateTo } = dates
+  /**
+   * in the query use use fact table `FactResultsDeviceByTimeFrame` where
+   * field `statedOn` is a date part (no time) and is stored in format
+   * `YYYY-MM-01 00:00:00`. Because of that - below cut only date part from
+   * request.query's minDate/maxDate, and then add time part for UTC 00:00.
+   * In this case sql query will compare `r.startedOn >= minDate` and
+   * `r.startedOn < maxDate`
+   */
+  let { minDate, maxDate } = query
+  minDate = `${minDate.slice(0, 10)}T00:00:00.000+00:00`
+  maxDate = `${maxDate.slice(0, 10)}T23:59:59.999+00:00`
+
   const resultCategoryIds = await allResultCategoryToId()
-  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
-
-  const months = eachMonthOfInterval({ start: dateFrom, end: dateTo })
-
   const assayIds = await allAssayToId()
 
-  let data = await getBaseQuery(knex, dataConstraints)
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .modify(modifiers.join.resultCategory1)
-    .modify(modifiers.join.resultCategory2)
+  /**
+   * manually get list of months in the interval.
+   * Do not use func `eachMonthOfInterval` from `date-fns` because it converts
+   * time into local user's timezone time, i.e. instead of
+   * `2023-10-01T00:00:00.000+00:00` it may use `2023-09-30T21:00:00.000+03:00`
+   * if user's tz is +03:00
+   */
+  let months = []
+  let monthDate = new Date(minDate)
+  const endDate = new Date(maxDate)
+  while (monthDate < endDate) {
+    months = [...months, monthDate]
+    monthDate = addMonths(monthDate, 1)
+  }
+
+  let data = await getXdrResultCountBase({
+    resultCategoryIds,
+    dataConstraints,
+    query: { ...query, minDate, maxDate },
+    fieldsScope: [FACT_FIELD_SCOPE.all],
+  })
     .where('a.id', assayIds.GxMtbXdr)
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-    })
-    .select(
-      knex.raw(`
-        DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', '${offset}'), '%Y-%m') as month
-      `)
-    )
+    .modify(filterDateRangeParams, { minDate, maxDate }, 'r.startedOn')
+    .select(getMonthYearField(knex, 'r.startedOn', 'month'))
     .groupBy('month')
-    .count({
-      TotalTests: knex.raw('DISTINCT r.id'),
-      MtbDetected: caseCondition('r.id', `r.resultCategory1 IN (${positiveResultCategories})`),
-      FqrDetected: countXdr('FLQ'),
-      InhDetected: countXdr('INH'),
-    })
     .orderBy('month')
 
   data = months.map(monthDate => {
     const month = format(monthDate, 'yyyy-MM')
     const item = data.find(it => it.month === month)
-    const { TotalTests = 0, MtbDetected = 0, FqrDetected = 0, InhDetected = 0 } = item || {}
+    const {
+      cntAll: TotalTests = 0,
+      cnt_mtb: MtbDetected = 0,
+      cnt_flq: FqrDetected = 0,
+      cnt_inh: InhDetected = 0,
+    } = item || {}
     const FqrToMtbPercentage = MtbDetected === 0 ? 0 : (100 * FqrDetected) / MtbDetected
+    const InhToMtbPercentage = MtbDetected === 0 ? 0 : (100 * InhDetected) / MtbDetected
 
     return {
       month,
@@ -2525,19 +2297,28 @@ async function xdrAssayGraphAggregations(request) {
       FqrDetected,
       InhDetected,
       FqrToMtbPercentage,
+      InhToMtbPercentage,
     }
   })
 
   return {
     grouped: data,
     // series
-    keysFromGrouped: ['TotalTests', 'MtbDetected', 'FqrDetected', 'InhDetected', 'FqrToMtbPercentage'],
+    keysFromGrouped: [
+      'TotalTests',
+      'MtbDetected',
+      'FqrDetected',
+      'InhDetected',
+      'FqrToMtbPercentage',
+      'InhToMtbPercentage',
+    ],
     i18nKeys: {
       TotalTests: 'TotalTests',
       MtbDetected: 'MtbDetected',
       FqrDetected: 'FqrDetected',
       InhDetected: 'InhDetected',
       FqrToMtbPercentage: 'FQRPercent',
+      InhToMtbPercentage: 'INHPercent',
     },
   }
 }
@@ -2546,7 +2327,6 @@ module.exports = {
   updateTransferNotification,
   listResults,
   getResultsForReport,
-  getResultsForExport,
   downloadResultsList,
   showResult,
   getResultForStringTemplateProcessing,

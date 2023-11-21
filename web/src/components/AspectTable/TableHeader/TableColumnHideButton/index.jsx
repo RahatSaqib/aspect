@@ -1,24 +1,21 @@
 import React from 'react'
 import { IconButton } from '@mui/material'
-import classnames from 'classnames/bind'
 import { func, string } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import IconProvider from '../../../IconProvider'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 import messages from '../messages'
 
-const cssClasses = classnames.bind(styles)
-
 const TableColumnHideButton = ({ headerIndex, handleHideColumnToggle }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <IconButton
       onClick={e => handleHideColumnToggle(e, headerIndex)}
-      className={cssClasses('tableheader__hidebutton')}
+      className={styles.tableheader__hidebutton}
       data-testid={`hide_column_${headerIndex}`}
       title={formatMessage(messages.hideColumn)}
     >
-      <IconProvider icon="MdVisibilityOff" className="tableheader__hidebutton" />
+      <IconProvider icon="MdVisibilityOff" className={styles.tableheader__hidebutton} />
     </IconButton>
   )
 }

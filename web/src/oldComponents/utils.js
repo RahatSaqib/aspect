@@ -6,7 +6,7 @@ import isNull from 'lodash/isNull'
 import isUndefined from 'lodash/isUndefined'
 import reduce from 'lodash/reduce'
 
-export function nonEmptyFilterValue(x) {
+function nonEmptyFilterValue(x) {
   return !isNull(x) && !isUndefined(x) && x !== ''
 }
 

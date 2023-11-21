@@ -27,7 +27,6 @@ describe('Disease routes', () => {
       const { data } = diseaseResponse.body
       assert.isTrue(!_.isNil(data))
 
-      assert.isAtLeast(_.filter(data, elem => elem.hasResults).length, 1)
       assert.isTrue(!_.isNil(data.length))
 
       assert.isAtLeast(data.length, 8)
@@ -35,7 +34,6 @@ describe('Disease routes', () => {
       assert.property(disease, 'id')
       assert.property(disease, 'name')
       assert.property(disease, 'i18nKey')
-      assert.property(disease, 'hasResults')
       assert.property(disease, 'externalId')
 
       expect(_.map(data, elem => ({ externalId: elem.externalId }))).to.containSubset([

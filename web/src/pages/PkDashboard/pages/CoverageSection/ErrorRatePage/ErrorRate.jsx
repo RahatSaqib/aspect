@@ -3,11 +3,10 @@ import entries from 'lodash/entries'
 import get from 'lodash/get'
 import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import ErrorRateFilter from '../../../../../cleanComponents/Filter/ErrorRateFilter'
-import Loading from '../../../../../cleanComponents/Loading'
-import useI18n from '../../../../../hooks/useI18n'
-import { useFilterValues } from '../../../../../providers/FilterProvider'
+import { Loading, ErrorRateFilter } from '../../../../../cleanComponents'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
@@ -19,10 +18,12 @@ const columns = [
   { name: 'Devices', prop: 'name' },
   { name: 'Total Modules', prop: 'numberOfModules' },
   { name: 'Total Tests', prop: 'cntMtbResults' },
-  { name: 'Error Rate', prop: 'percentMtbError' },
-  { name: 'Errors', prop: 'cntMtbError' },
-  { name: 'Invalid', prop: 'cntMtbInvalid' },
-  { name: 'No Res', prop: 'cntMtbNoResult' },
+  { name: '# Errors', prop: 'cntMtbError' },
+  { name: '% Errors', prop: 'errorPercent' },
+  { name: '# Invalid', prop: 'cntMtbInvalid' },
+  { name: '% Invalid', prop: 'invalidPercent' },
+  { name: '# No Result', prop: 'cntMtbNoResult' },
+  { name: '% No Result', prop: 'noResultPercent' },
 ]
 
 const childrenKey = 'children'
@@ -38,9 +39,16 @@ const createNode = (name, parent) => {
     },
     { name, id: name }
   )
-  const errorRate = data?.cntMtbError / data?.cntMtbResults
+  const errorPercent = (data?.cntMtbError / data?.cntMtbResults) * 100
+  const invalidPercent = (data?.cntMtbInvalid / data?.cntMtbResults) * 100
+  const noResultPercent = (data?.cntMtbNoResult / data?.cntMtbResults) * 100
 
-  return { ...data, percentMtbError: Number.isNaN(errorRate) ? 0 : errorRate.toPrecision(1) }
+  return {
+    ...data,
+    errorPercent: `${errorPercent.toPrecision(3)} %`,
+    invalidPercent: `${invalidPercent.toPrecision(3)} %`,
+    noResultPercent: `${noResultPercent.toPrecision(3)} %`,
+  }
 }
 
 const makeNestedData = array => {
@@ -72,7 +80,7 @@ const makeNestedData = array => {
 }
 
 const ErrorRatePage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
   const { data, isLoading } = useDeviceErrors(filter)

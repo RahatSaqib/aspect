@@ -93,7 +93,7 @@ async function createResult(
   }
   const assay = await knex('Assay').where('externalId', assayExternalId).first()
   ;[sample.id] = await knex('Sample').insert(sample)
-  const resultSourceEnteredByHandId = await resultSourceToId('EnteredByHand')
+
   const resultSourceDiagnosticDeviceId = await resultSourceToId('DiagnosticDevice')
   const resultCategories = await allResultCategoryToId()
   const resultTypePatientId = await resultTypeToId('Patient')
@@ -107,7 +107,7 @@ async function createResult(
     deviceId: device.id,
     longitude: site.longitude,
     latitude: site.latitude,
-    resultSourceId: deviceTypeExternalId === 'Aspect' ? resultSourceEnteredByHandId : resultSourceDiagnosticDeviceId,
+    resultSourceId: resultSourceDiagnosticDeviceId,
     resultTypeId: resultTypePatientId,
     sampleId: sample.id,
     resultCategory1: resultCategories.Unknown,

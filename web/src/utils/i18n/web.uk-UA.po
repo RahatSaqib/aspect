@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-08-29T12:46:49.806Z\n"
+"POT-Creation-Date: 2023-11-15T18:39:51.843Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -41,6 +41,13 @@ msgstr "# Результати Поточний місяць"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "# Результати минулого місяця"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "# Кількість сайтів PMDT з 10 C GX"
 
 #. [pages.XDR.totalConducted]
 #. defaultMessage is:
@@ -248,8 +255,8 @@ msgid ""
 "A list of all GeneXpert device modules marked as 'do not use'. Includes "
 "device name, module serial."
 msgstr ""
-"Список усіх модулів пристрою GeneXpert, позначених як \"не "
-"використовувати\". Включає назву пристрою, серійний номер модуля."
+"Список усіх модулів пристрою GeneXpert, позначених як \"не використовувати"
+"\". Включає назву пристрою, серійний номер модуля."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -752,7 +759,7 @@ msgstr "Під час спроби зберегти пристрій стала�
 msgid "An email has been sent to you"
 msgstr "Вам надіслано електронне повідомлення"
 
-#. [pages.ReportIndex.devicesAndSites_description]
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 #: extracted_strings.json
@@ -1029,6 +1036,13 @@ msgstr "Середня затримка завантаження"
 #: extracted_strings.json
 msgid "Average Duration of Service Interruption"
 msgstr "Середня тривалість переривання обслуговування"
+
+#. [p.PkDashboard.FQRPerMonth]
+#. defaultMessage is:
+#. Average FQ-R cases diagnosed per month
+#: extracted_strings.json
+msgid "Average FQ-R cases diagnosed per month"
+msgstr "Середній показник діагностованих випадків FQ-R на місяць"
 
 #. [pages.Status.clinicalIndicatorsCovidPieLegend]
 #. defaultMessage is:
@@ -1500,13 +1514,6 @@ msgstr "CSF"
 msgid "CSV"
 msgstr "CSV"
 
-#. [component.Widget.deviceCalibratedWhenDueTitle]
-#. defaultMessage is:
-#. Calibrated When Due
-#: extracted_strings.json
-msgid "Calibrated When Due"
-msgstr "Дата калібрування"
-
 #. [pages.resultEdit.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1531,6 +1538,9 @@ msgstr "Дата калібрування"
 msgid "Calibration Date is required"
 msgstr "Потрібна дата калібрування"
 
+#. [notificationCategoryTypeSelect.notificationTypeCalibrationDueDate]
+#. defaultMessage is:
+#. Calibration Due Date
 #. [placeholder.calibrationDueDate]
 #. defaultMessage is:
 #. Calibration Due Date
@@ -1540,13 +1550,6 @@ msgstr "Потрібна дата калібрування"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Дата калібрування"
-
-#. [component.Widget.deviceCalibrationPastDueTitle]
-#. defaultMessage is:
-#. Calibration Past Due
-#: extracted_strings.json
-msgid "Calibration Past Due"
-msgstr "Калібрування минуло"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable]
 #. defaultMessage is:
@@ -1592,9 +1595,6 @@ msgstr "Не можна редагувати"
 #. defaultMessage is:
 #. Cancel
 #. [pages.DailyStatusDialog.cancel]
-#. defaultMessage is:
-#. Cancel
-#. [pages.Notifications.table.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
@@ -1765,12 +1765,12 @@ msgstr "Очистити значення"
 msgid "Clear filters"
 msgstr "Очистити фільтри"
 
-#. [pages.Graphs.toolTipAllowClickThrough]
+#. [pages.Notifications.table.clickToResult]
 #. defaultMessage is:
-#. Click to view results in table format
+#. Click here to go to the result
 #: extracted_strings.json
-msgid "Click to view results in table format"
-msgstr "Клацніть, щоб переглянути результати у форматі таблиці"
+msgid "Click here to go to the result"
+msgstr "Натисніть тут, щоб перейти до результату"
 
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
@@ -2016,9 +2016,6 @@ msgstr "Контакт створено успішно"
 #. [pages.PersonDetails.contactDetails]
 #. defaultMessage is:
 #. Contact Details
-#. [pages.Notifications.table.contactDetails]
-#. defaultMessage is:
-#. Contact Details
 #: extracted_strings.json
 msgid "Contact Details"
 msgstr "Контактні дані"
@@ -2111,20 +2108,6 @@ msgstr "Копіювати"
 #: extracted_strings.json
 msgid "Could Not Find Test Result"
 msgstr "Не вдалося знайти результат тесту"
-
-#. [errorResponseMessages.fetchAllSites.GET.404.title]
-#. defaultMessage is:
-#. Could Not Load All Sites
-#: extracted_strings.json
-msgid "Could Not Load All Sites"
-msgstr "Не вдалося завантажити всі сайти"
-
-#. [errorResponseMessages.transferResult.GET.404.title]
-#. defaultMessage is:
-#. Could Not Transfer Result
-#: extracted_strings.json
-msgid "Could Not Transfer Result"
-msgstr "Не вдалося передати результат"
 
 #. [errorResponseMessages.loginStart.POST.401.incorrectPassword.title]
 #. defaultMessage is:
@@ -2272,6 +2255,9 @@ msgstr "Створити сайт"
 #. [pages.DeviceApiKeyList.createdOn]
 #. defaultMessage is:
 #. Created On
+#. [pages.Notifications.table.createButton.group.createdOn]
+#. defaultMessage is:
+#. Created On
 #. [pages.DeviceDetailEdit.createdOn]
 #. defaultMessage is:
 #. Created On
@@ -2399,12 +2385,15 @@ msgstr "Поточні активні пристрої"
 msgid "Current Diagnosis"
 msgstr "Поточний діагноз"
 
-#. [p.PkDashboard.CurrentFQDetectionPending]
+#. [p.PkDashboard.currentFQDetection]
 #. defaultMessage is:
-#. Current FQ Detection (Pending)
+#. Current FQ Detection
+#. [p.PkDashboard.CurrentFQDetection]
+#. defaultMessage is:
+#. Current FQ Detection
 #: extracted_strings.json
-msgid "Current FQ Detection (Pending)"
-msgstr "Поточне виявлення FQ (Очікує)"
+msgid "Current FQ Detection"
+msgstr "Виявлення поточного FQ"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2662,6 +2651,9 @@ msgstr "Dashboard v2"
 #. defaultMessage is:
 #. Data
 #. [pages.DeviceList.dataHealth]
+#. defaultMessage is:
+#. Data
+#. [pages.Notifications.table.notificationsTableHeaderData]
 #. defaultMessage is:
 #. Data
 #: extracted_strings.json
@@ -2931,10 +2923,10 @@ msgstr "Виявлено"
 #. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
-#. [forms.formSectionHeader.device]
+#. [legends.Unknown.device]
 #. defaultMessage is:
 #. Device
-#. [legends.Unknown.device]
+#. [forms.formSectionHeader.device]
 #. defaultMessage is:
 #. Device
 #. [placeholder.device]
@@ -3155,6 +3147,20 @@ msgstr "Гарантія на пристрій"
 msgid "Device Workload"
 msgstr "Навантаження на пристрій"
 
+#. [pages.ReportIndex.device_and_site_summary_report]
+#. defaultMessage is:
+#. Device and Site Sumary
+#: extracted_strings.json
+msgid "Device and Site Sumary"
+msgstr "Короткий опис пристрою та сайту"
+
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport]
+#. defaultMessage is:
+#. Device and Site Summary Report
+#: extracted_strings.json
+msgid "Device and Site Summary Report"
+msgstr "Зведений звіт про пристрій та сайт"
+
 #. [pages.NotificationDetail.SelectStateTitle]
 #. defaultMessage is:
 #. Device from State
@@ -3176,6 +3182,9 @@ msgstr "Журнали пристроїв"
 msgid "Device type"
 msgstr "Тип пристрою"
 
+#. [legends.Unknown.devices]
+#. defaultMessage is:
+#. Devices
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
 #. Devices
@@ -3183,9 +3192,6 @@ msgstr "Тип пристрою"
 #. defaultMessage is:
 #. Devices
 #. [component.Widget.devicesTitle]
-#. defaultMessage is:
-#. Devices
-#. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.DeviceList.devicesTitle]
@@ -3221,16 +3227,6 @@ msgstr "Список завдань"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Пристрої, що переживають переривання служби"
-
-#. [pages.ReportIndex.devicesAndSitesOverview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#. [pages.ReportIndex.devices_and_sites_overview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#: extracted_strings.json
-msgid "Devices and Sites Overview"
-msgstr "Пристрої"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
@@ -3537,6 +3533,9 @@ msgstr ""
 #. [pages.NotificationDetail.email]
 #. defaultMessage is:
 #. Email
+#. [pages.Notifications.table.emailHeader]
+#. defaultMessage is:
+#. Email
 #: extracted_strings.json
 msgid "Email"
 msgstr "Адреса ел. пошти"
@@ -3591,13 +3590,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Email subject is required"
 msgstr "Тема електронного листа обов’язкова"
-
-#. [pages.Notifications.table.emailSentTo]
-#. defaultMessage is:
-#. Email was sent to:
-#: extracted_strings.json
-msgid "Email was sent to:"
-msgstr "Електронний лист надіслано на адресу:"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
@@ -3778,10 +3770,10 @@ msgstr "Введіть назву сайту ..."
 #. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
-#. [pages.filters.gxEbolaGPError]
+#. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
-#. [pages.deviceDetail.resultCategoryError]
+#. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
 #: extracted_strings.json
@@ -3820,13 +3812,6 @@ msgstr "Код помилки"
 #: extracted_strings.json
 msgid "Error Fetching Endpoint"
 msgstr "Помилка отримання кінцевої точки"
-
-#. [errorResponseMessages.fetchAllSites.GET.default.title]
-#. defaultMessage is:
-#. Error Loading All Sites
-#: extracted_strings.json
-msgid "Error Loading All Sites"
-msgstr "Помилка завантаження всіх сайтів"
 
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
@@ -3882,13 +3867,6 @@ msgstr "Помилка збереження нового пароля"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Помилка надсилання електронної пошти для скидання пароля"
-
-#. [errorResponseMessages.transferResult.GET.default.title]
-#. defaultMessage is:
-#. Error Transferring Result
-#: extracted_strings.json
-msgid "Error Transferring Result"
-msgstr "Помилка передачі результату"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3954,14 +3932,14 @@ msgstr "Виконати"
 #. Exp. since {date}
 #: extracted_strings.json
 msgid "Exp. since {date}"
-msgstr "з {date}"
+msgstr "З {date}"
 
 #. [filter.btnGroup.expDateTo]
 #. defaultMessage is:
 #. Exp. until {date}
 #: extracted_strings.json
 msgid "Exp. until {date}"
-msgstr "до {date}"
+msgstr "До {date}"
 
 #. [pages.TableCell.expandRow]
 #. defaultMessage is:
@@ -3969,6 +3947,13 @@ msgstr "до {date}"
 #: extracted_strings.json
 msgid "Expand Row"
 msgstr "Розгорнути рядок"
+
+#. [pages.MaintenanceStatusDialog.expectedBack]
+#. defaultMessage is:
+#. Expect Back Online
+#: extracted_strings.json
+msgid "Expect Back Online"
+msgstr "Очікуйте на повернення в мережу"
 
 #. [forms.formItem.consumableExpirationDate]
 #. defaultMessage is:
@@ -4149,6 +4134,27 @@ msgstr "FQ-R %"
 #: extracted_strings.json
 msgid "FQ-R Detected"
 msgstr "FQ-R виявлено"
+
+#. [p.PkDashboard.FQRCurrentYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in current year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in current year"
+msgstr "Випадки ХПН, діагностовані в поточному році"
+
+#. [p.PkDashboard.FQRPerDay]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in last 24 hours"
+msgstr "Випадки FQ-R, діагностовані за останні 24 години"
+
+#. [p.PkDashboard.FQRPerYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed this year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed this year"
+msgstr "Випадки FQ-R, діагностовані в цьому році"
 
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
@@ -4440,12 +4446,26 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "Касета GeneXpert COVID-19"
 
+#. [component.Widget.deviceCalibratedWhenDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibrated When Due
+#: extracted_strings.json
+msgid "GeneXpert Calibrated When Due"
+msgstr "GeneXpert відкалібрований вчасно"
+
+#. [component.Widget.deviceCalibrationPastDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibration Past Due
+#: extracted_strings.json
+msgid "GeneXpert Calibration Past Due"
+msgstr "Калібрування GeneXpert прострочено"
+
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
-#. GeneXpert Device Coverage (Pending)
+#. GeneXpert Device Coverage
 #: extracted_strings.json
-msgid "GeneXpert Device Coverage (Pending)"
-msgstr "Покриття пристрою GeneXpert (на розгляді)"
+msgid "GeneXpert Device Coverage"
+msgstr "Покриття приладу GeneXpert"
 
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
@@ -4877,19 +4897,15 @@ msgstr "ВГС Немає результату"
 msgid "HCV Not Detected"
 msgstr "ВГС не виявлено"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "ВІЛ"
-
-#. [p.PkDashboard.hivPending]
-#. defaultMessage is:
-#. HIV (Pending)
-#: extracted_strings.json
-msgid "HIV (Pending)"
-msgstr "ВІЛ (на розгляді)"
 
 #. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
 #. defaultMessage is:
@@ -5443,6 +5459,9 @@ msgstr "Вставити заповнювач для"
 msgid "Insert placeholder"
 msgstr "Вставити заповнювач"
 
+#. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
+#. defaultMessage is:
+#. Instrument Replaced
 #. [pages.Notification.type.InstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5456,6 +5475,16 @@ msgstr "Інструмент замінено"
 #: extracted_strings.json
 msgid "Instrument Serial"
 msgstr "Серійний номер інструменту"
+
+#. [pages.DeviceDetailEdit.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#. [pages.deviceDetail.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#: extracted_strings.json
+msgid "Instruments Connected"
+msgstr "Підключені інструменти"
 
 #. [errorResponseMessages.fetchPersons.GET.403.title]
 #. defaultMessage is:
@@ -5550,6 +5579,9 @@ msgstr "Недійсна URL-адреса вебхуку"
 msgid "Inventory"
 msgstr "Склад"
 
+#. [notificationCategoryTypeSelect.notificationTypeInventoryExpiring]
+#. defaultMessage is:
+#. Inventory Expiring
 #. [pages.Notification.type.InventoryExpiring]
 #. defaultMessage is:
 #. Inventory Expiring
@@ -5580,6 +5612,9 @@ msgstr "Тип картриджу"
 msgid "Inventory Log"
 msgstr "Журнал інвентаризації"
 
+#. [browsePage.browseDropdown.inventoryOverview]
+#. defaultMessage is:
+#. Inventory Overview
 #. [p.PkDashboard.overview]
 #. defaultMessage is:
 #. Inventory Overview
@@ -5624,6 +5659,9 @@ msgstr "Принаймні {minLength} символів"
 msgid "Isolate"
 msgstr "Ізолювати"
 
+#. [notificationCategoryTypeSelect.notificationTypeIssuedBased]
+#. defaultMessage is:
+#. Issue Based
 #. [pages.NotificationDetail.type.notificationTypeIssueBased]
 #. defaultMessage is:
 #. Issue Based
@@ -6196,6 +6234,9 @@ msgstr "Помилка логіну"
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.title]
 #. defaultMessage is:
 #. Login failed
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.title]
+#. defaultMessage is:
+#. Login failed
 #: extracted_strings.json
 msgid "Login failed"
 msgstr "Не вдалося ввійти"
@@ -6250,6 +6291,9 @@ msgstr "Лот"
 msgid "Lot Number"
 msgstr "Номер партії"
 
+#. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
+#. defaultMessage is:
+#. Low Field Completion Rate
 #. [pages.Notification.type.LowFieldCompletionRate]
 #. defaultMessage is:
 #. Low Field Completion Rate
@@ -6257,6 +6301,9 @@ msgstr "Номер партії"
 msgid "Low Field Completion Rate"
 msgstr "Низький коефіцієнт завершення робіт на родовищі"
 
+#. [notificationCategoryTypeSelect.notificationTypeLowInventory]
+#. defaultMessage is:
+#. Low Inventory
 #. [pages.Notification.type.LowInventory]
 #. defaultMessage is:
 #. Low Inventory
@@ -6310,6 +6357,9 @@ msgstr "MTB забруднено"
 #. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [legends.Unknown.MtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [pages.filters.gxMtbRifMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -6320,9 +6370,6 @@ msgstr "MTB забруднено"
 #. defaultMessage is:
 #. MTB Detected
 #. [assayGenericDstResultCategoryDetected]
-#. defaultMessage is:
-#. MTB Detected
-#. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
 #: extracted_strings.json
@@ -6926,6 +6973,9 @@ msgstr "Модуль"
 msgid "Module Activity Report"
 msgstr "Звіт про діяльність модуля"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
+#. defaultMessage is:
+#. Module Disabled
 #. [pages.Notification.type.ModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -6943,6 +6993,9 @@ msgstr "Модуль вимкнено"
 msgid "Module Name"
 msgstr "Ім'я модуля"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleReplaced]
+#. defaultMessage is:
+#. Module Replaced
 #. [pages.Notification.type.ModuleReplaced]
 #. defaultMessage is:
 #. Module Replaced
@@ -6973,9 +7026,6 @@ msgstr "Модуль"
 #. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
-#. [component.Widget.moduleSwapsTitle]
-#. defaultMessage is:
-#. Module Swaps
 #. [pages.ReportIndex.module_swaps]
 #. defaultMessage is:
 #. Module Swaps
@@ -6983,6 +7033,16 @@ msgstr "Модуль"
 msgid "Module Swaps"
 msgstr "Обмін модулями"
 
+#. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps (GeneXpert only)
+#: extracted_strings.json
+msgid "Module Swaps (GeneXpert only)"
+msgstr "Заміна модулів (тільки для GeneXpert)"
+
+#. [notificationCategoryTypeSelect.notificationTypeModuleUnused]
+#. defaultMessage is:
+#. Module Unused
 #. [pages.Notification.type.ModuleUnused]
 #. defaultMessage is:
 #. Module Unused
@@ -7247,6 +7307,13 @@ msgstr "Національні тенденції тестування"
 msgid "National Testing Trends using MTB/XDR Assay"
 msgstr "Національні тенденції тестування з використанням тесту MTB/XDR"
 
+#. [pages.ReportIndex.annualUtilizationRates]
+#. defaultMessage is:
+#. National and Provincial Trends in Annual Utilization Rates
+#: extracted_strings.json
+msgid "National and Provincial Trends in Annual Utilization Rates"
+msgstr "Національні та провінційні тенденції річних коефіцієнтів використання"
+
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
 #. Needs Repair
@@ -7368,6 +7435,20 @@ msgstr "Далі"
 msgid "No"
 msgstr "Немає"
 
+#. [p.PkDashboard.noAssociatedLga]
+#. defaultMessage is:
+#. No Associated LGA
+#: extracted_strings.json
+msgid "No Associated LGA"
+msgstr "Немає асоційованих АОМС"
+
+#. [p.PkDashboard.noAssociatedState]
+#. defaultMessage is:
+#. No Associated State
+#: extracted_strings.json
+msgid "No Associated State"
+msgstr "Немає асоційованої держави"
+
 #. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -7419,6 +7500,9 @@ msgstr "Фільтри не застосовуються"
 msgid "No Power"
 msgstr "Немає живлення"
 
+#. [notificationCategoryTypeSelect.notificationTypeNoResult]
+#. defaultMessage is:
+#. No Result
 #. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
 #. No Result
@@ -7665,6 +7749,23 @@ msgstr "Примітки"
 msgid "Notification"
 msgstr "Повідомлення"
 
+#. [filter.popover.notificationCategoryType]
+#. defaultMessage is:
+#. Notification Category Type
+#: extracted_strings.json
+msgid "Notification Category Type"
+msgstr "Категорія повідомлення Тип повідомлення"
+
+#. [browsePage.browseDropdown.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
+#. [pages.NotificationList.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
+#: extracted_strings.json
+msgid "Notification Logs"
+msgstr "Журнали сповіщень"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -7678,6 +7779,27 @@ msgstr "Назва сповіщення"
 #: extracted_strings.json
 msgid "Notification Type"
 msgstr "Тип повідомлення"
+
+#. [filter.popover.notificationType]
+#. defaultMessage is:
+#. Notification Type Name
+#: extracted_strings.json
+msgid "Notification Type Name"
+msgstr "Тип сповіщення Назва"
+
+#. [browsePage.browseDropdown.notificationTypes]
+#. defaultMessage is:
+#. Notification Types
+#: extracted_strings.json
+msgid "Notification Types"
+msgstr "Типи сповіщень"
+
+#. [filter.btnGroup.notificationTypeCategory]
+#. defaultMessage is:
+#. Notification category type is "{notificationCategoryType}"
+#: extracted_strings.json
+msgid "Notification category type is \"{notificationCategoryType}\""
+msgstr "Тип категорії сповіщення \"{notificationCategoryType}\""
 
 #. [pages.Notifications.group.forDevices]
 #. defaultMessage is:
@@ -7705,6 +7827,13 @@ msgstr "Повідомлення про результати"
 #: extracted_strings.json
 msgid "Notification for Site"
 msgstr "Повідомлення для сайту"
+
+#. [filter.btnGroup.notificationType]
+#. defaultMessage is:
+#. Notification type is "{notificationType}"
+#: extracted_strings.json
+msgid "Notification type is \"{notificationType}\""
+msgstr "Тип сповіщення \"{notificationType}\""
 
 #. [browsePage.browseDropdown.notifications]
 #. defaultMessage is:
@@ -7736,6 +7865,26 @@ msgstr "Зараз"
 #: extracted_strings.json
 msgid "Number of Devices"
 msgstr "Кількість пристроїв"
+
+#. [pages.DeviceDetailEdit.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#. [pages.deviceDetail.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#: extracted_strings.json
+msgid "Number of GX-10C modules"
+msgstr "Кількість модулів GX-10C"
+
+#. [pages.DeviceDetailEdit.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#. [pages.deviceDetail.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#: extracted_strings.json
+msgid "Number of GX-6C modules"
+msgstr "Кількість модулів GX-6C"
 
 #. [legends.Unknown.inventoryGraphStatusXAxisLegend]
 #. defaultMessage is:
@@ -7822,6 +7971,9 @@ msgstr "жовтень"
 msgid "OK"
 msgstr "Добре"
 
+#. [notificationCategoryTypeSelect.notificationTypeOffline]
+#. defaultMessage is:
+#. Offline
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
 #. Offline
@@ -7930,6 +8082,19 @@ msgstr "Тільки лоти зі складом"
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Тільки лоти зі складом"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Упс! Щось пішло не так. Наша команда була повідомлена, і ми працюємо над "
+"вирішенням проблеми. Будь ласка, спробуйте пізніше. Якщо проблема не зникне, "
+"зв’яжіться з нашою службою підтримки та повідомте їм про наступну помилку:"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
@@ -8132,12 +8297,22 @@ msgstr "Пацієнт"
 msgid "Patient ID"
 msgstr "ID пацієнта"
 
+#. [filter.popover.patientId]
+#. defaultMessage is:
+#. Patient Id
 #. [placeholder.result.patient.id]
 #. defaultMessage is:
 #. Patient Id
 #: extracted_strings.json
 msgid "Patient Id"
 msgstr "ID пацієнта"
+
+#. [filter.btnGroup.patientId]
+#. defaultMessage is:
+#. Patient Id includes "{patientId}"
+#: extracted_strings.json
+msgid "Patient Id includes \"{patientId}\""
+msgstr "Ідентифікатор пацієнта містить \"{patientId}\""
 
 #. [pages.resultEdit.PatientNameI18nCaptionKey]
 #. defaultMessage is:
@@ -8159,13 +8334,6 @@ msgstr "Реабілітація пацієнтів"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "Ідентифікатор пацієнта / випадку"
-
-#. [pages.Notifications.table.sentPending]
-#. defaultMessage is:
-#. Pending
-#: extracted_strings.json
-msgid "Pending"
-msgstr "Очікується"
 
 #. [page.contacts.person.pendingChanges]
 #. defaultMessage is:
@@ -8273,8 +8441,8 @@ msgid ""
 "results that didn't result in \"Error\", \"No Result\", or \"Invalid\"."
 msgstr ""
 "Відсоток дійсних результатів, повідомлених цього місяця. Дійсні результати "
-"включають усі результати, які не призвели до \"Помилка\", \"Немає "
-"результату\" або \"Недійсний\"."
+"включають усі результати, які не призвели до \"Помилка\", \"Немає результату"
+"\" або \"Недійсний\"."
 
 #. [p.PkDashboard.coverageperformance]
 #. defaultMessage is:
@@ -9114,6 +9282,20 @@ msgstr "Опір RIF"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Кількість позитивних результатів"
 
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR Detected
+#: extracted_strings.json
+msgid "RR Detected"
+msgstr "Виявлено RR"
+
+#. [p.PkDashboard.RRToTbTotalPercentage]
+#. defaultMessage is:
+#. RR To Tb Total Percentage
+#: extracted_strings.json
+msgid "RR To Tb Total Percentage"
+msgstr "РР до ТБ Загальний відсоток"
+
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
 #. RR cases diagnosed
@@ -9234,12 +9416,12 @@ msgstr "Отримати інвентар під час транзиту"
 msgid "Receive {consumableName}"
 msgstr "Отримати {consumableName}"
 
-#. [pages.Notifications.table.recipients]
+#. [pages.Notifications.table.notificationsTableRecepientName]
 #. defaultMessage is:
-#. Recipients
+#. Recepient Name
 #: extracted_strings.json
-msgid "Recipients"
-msgstr "Одержувачі"
+msgid "Recepient Name"
+msgstr "Ім'я одержувача"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -9355,6 +9537,9 @@ msgstr "Повторний тест"
 msgid "Report"
 msgstr "Звіт"
 
+#. [notificationCategoryTypeSelect.notificationTypeReportBased]
+#. defaultMessage is:
+#. Report Based
 #. [pages.NotificationDetail.type.notificationTypeReportBased]
 #. defaultMessage is:
 #. Report Based
@@ -9365,6 +9550,16 @@ msgstr "Звіт"
 msgid "Report Based"
 msgstr "На основі звіту"
 
+#. [filter.popover.reportWithName]
+#. defaultMessage is:
+#. Report Name
+#. [pages.Notifications.table.reportName]
+#. defaultMessage is:
+#. Report Name
+#: extracted_strings.json
+msgid "Report Name"
+msgstr "Назва звіту"
+
 #. [pages.ReportIndex.error_rate_description]
 #. defaultMessage is:
 #. Report error rates per quarter, break them down by devices, modules and users
@@ -9374,6 +9569,13 @@ msgid ""
 msgstr ""
 "Звітуйте про кількість помилок за квартал, розбивайте їх за пристроями, "
 "модулями та користувачами"
+
+#. [filter.btnGroup.reportWithName]
+#. defaultMessage is:
+#. Report name includes "{reportWithName}"
+#: extracted_strings.json
+msgid "Report name includes \"{reportWithName}\""
+msgstr "Назва звіту містить \"{reportWithName}\""
 
 #. [pages.ReportIndex.reportTBWorkloadSummary]
 #. defaultMessage is:
@@ -9664,6 +9866,9 @@ msgstr "Результат 1"
 msgid "Result 2"
 msgstr "Результат 2"
 
+#. [notificationCategoryTypeSelect.ResultBased]
+#. defaultMessage is:
+#. Result Based
 #. [pages.NotificationDetail.type.ResultBased]
 #. defaultMessage is:
 #. Result Based
@@ -10053,6 +10258,9 @@ msgstr "Вересень"
 #. [pages.NotificationDetail.sms]
 #. defaultMessage is:
 #. SMS
+#. [pages.Notifications.table.smsHeader]
+#. defaultMessage is:
+#. SMS
 #: extracted_strings.json
 msgid "SMS"
 msgstr "SMS"
@@ -10084,13 +10292,6 @@ msgstr "SMS надіслано MTD"
 #: extracted_strings.json
 msgid "SMS Stats"
 msgstr "Статистика SMS"
-
-#. [pages.Notifications.table.smsSentTo]
-#. defaultMessage is:
-#. SMS was sent to:
-#: extracted_strings.json
-msgid "SMS was sent to:"
-msgstr "SMS надіслано на адресу:"
 
 #. [filter.sampleType.sampleTypeSaliva]
 #. defaultMessage is:
@@ -10610,13 +10811,6 @@ msgstr "Надіслати пацієнту"
 msgid "Sender Operator"
 msgstr "Оператор відправника"
 
-#. [pages.Notifications.table.sentDetails]
-#. defaultMessage is:
-#. Sent details
-#: extracted_strings.json
-msgid "Sent details"
-msgstr "Надіслали деталі"
-
 #. [pages.OperationalData.percentViaEmail]
 #. defaultMessage is:
 #. Sent via Email
@@ -10795,6 +10989,23 @@ msgstr "Показати лише результати з необхідним �
 #: extracted_strings.json
 msgid "Show Only Transfers"
 msgstr "Показати тільки перекази"
+
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Показати відсоток"
+
+#. [filter.popover.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
+#. [pages.filters.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
+#: extracted_strings.json
+msgid "Show only notifications with errors"
+msgstr "Показувати лише сповіщення з помилками"
 
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
@@ -11186,17 +11397,17 @@ msgstr "Потрібне тіло смс"
 
 #. [pages.Notifications.smsLength]
 #. defaultMessage is:
-#. Sms body shouldn't have no more than 144 characters
+#. Sms body shouldn't have no more than 2000 characters
 #: extracted_strings.json
-msgid "Sms body shouldn't have no more than 144 characters"
-msgstr "Тіло SMS не повинно містити більше 144 символів"
+msgid "Sms body shouldn't have no more than 2000 characters"
+msgstr "Текст повідомлення не повинен містити більше 2000 символів"
 
 #. [pages.NotificationDetail.smsBodyLimit]
 #. defaultMessage is:
-#. Sms message should not be longer than 144 characters
+#. Sms message should not be longer than 2000 characters
 #: extracted_strings.json
-msgid "Sms message should not be longer than 144 characters"
-msgstr "Довжина SMS-повідомлення не повинна перевищувати 144 символи"
+msgid "Sms message should not be longer than 2000 characters"
+msgstr "SMS-повідомлення не повинно бути довшим за 2000 символів"
 
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
@@ -11291,10 +11502,10 @@ msgstr "Статус"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
-#. Stock not recorded
+#. Stock not recorded (GenXpert only)
 #: extracted_strings.json
-msgid "Stock not recorded"
-msgstr "Запас не реєструється"
+msgid "Stock not recorded (GenXpert only)"
+msgstr "Запаси не реєструються (тільки для GenXpert)"
 
 #. [pages.SiteDetail.fieldBelongTo]
 #. defaultMessage is:
@@ -11365,13 +11576,6 @@ msgstr "Відправити"
 #: extracted_strings.json
 msgid "Success"
 msgstr "Успіху"
-
-#. [pages.Notifications.table.sentSuccessfully]
-#. defaultMessage is:
-#. Successfully
-#: extracted_strings.json
-msgid "Successfully"
-msgstr "Успішно"
 
 #. [pages.ReportIndex.reportTBWorkloadSummary_description]
 #. defaultMessage is:
@@ -11621,6 +11825,13 @@ msgstr "Список завдань"
 msgid "Tasks"
 msgstr "Завдання"
 
+#. [p.PkDashboard.TbTotal]
+#. defaultMessage is:
+#. Tb Total
+#: extracted_strings.json
+msgid "Tb Total"
+msgstr "Тб Всього"
+
 #. [p.PkDashboard.xdrLastDay]
 #. defaultMessage is:
 #. Tb cases diagnosed in last 24 hours
@@ -11859,21 +12070,19 @@ msgstr ""
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
-#. The average number of SMS recipients per positive GeneXpert result.
+#. The average number of SMS recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of SMS recipients per positive GeneXpert result."
-msgstr "Середня кількість одержувачів SMS на позитивний результат GeneXpert."
+msgid "The average number of SMS recipients per positive result."
+msgstr "Середня кількість отримувачів SMS на один позитивний результат."
 
 #. [component.Widget.averageLengthOfSmsDescription]
 #. defaultMessage is:
-#. The average number of characters in SMS messages sent about positive GeneXpert results.
+#. The average number of characters in SMS messages sent about positive results.
 #: extracted_strings.json
 msgid ""
-"The average number of characters in SMS messages sent about positive "
-"GeneXpert results."
+"The average number of characters in SMS messages sent about positive results."
 msgstr ""
-"Середня кількість символів у SMS-повідомленнях, надісланих про позитивні "
-"результати GeneXpert."
+"Середня кількість символів у SMS-повідомленнях про позитивні результати."
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
@@ -11894,27 +12103,25 @@ msgstr ""
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
+#. The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting. An Instrument is marked "
-"as replaced when two consecutive results performed in the same device, have "
-"a different Instrument serial number"
+"from a GeneXpert device and a new instrument serial reporting. An Instrument "
+"is marked as replaced when two consecutive results performed in the same "
+"device, have a different Instrument serial number"
 msgstr ""
-"Середня кількість днів між датою останнього повідомлення про серійний сигнал "
-"приладу з пристрою та новим серійним звітом приладу. Інструмент позначається "
-"як замінений, якщо два послідовні результати, виконані на одному пристрої, "
-"мають інший серійний номер інструменту"
+"Середня кількість днів між останнім повідомленням про серійний номер приладу "
+"з приладу GeneXpert та новим повідомленням про серійний номер приладу. "
+"Прилад позначається як замінений, якщо два послідовних результати, отримані "
+"на одному і тому ж приладі, мають різні серійні номери приладу"
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
-#. The average number of email recipients per positive GeneXpert result.
+#. The average number of email recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of email recipients per positive GeneXpert result."
-msgstr ""
-"Середня кількість одержувачів електронної пошти на позитивний результат "
-"GeneXpert."
+msgid "The average number of email recipients per positive result."
+msgstr "Середня кількість отримувачів на один позитивний результат."
 
 #. [component.Widget.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
@@ -11979,6 +12186,28 @@ msgstr "Укажіть назву сповіщення"
 msgid "The notification type is required"
 msgstr "Необхідно вказати тип сповіщення"
 
+#. [component.Widget.deviceCalibrationPastDueDescription]
+#. defaultMessage is:
+#. The number of GeneXpert instruments that had their last calibration more than one year ago.
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert instruments that had their last calibration more "
+"than one year ago."
+msgstr "Кількість приладів, які мали останнє калібрування більше року тому."
+
+#. [component.Widget.moduleSwapsDescription]
+#. defaultMessage is:
+#. The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert module swaps made at the current month. The module "
+"swap issue appears when two consecutive results performed in the same slot "
+"have a different module serial number"
+msgstr ""
+"Кількість замін модулів за поточний місяць. Проблема заміни модуля "
+"з'являється, коли два послідовні результати, виконані в одному слоті, мають "
+"інший серійний номер модуля"
+
 #. [component.Widget.geneXpertDevices]
 #. defaultMessage is:
 #. The number of approved GeneXpert devices (excluding decommissioned devices).
@@ -12031,28 +12260,6 @@ msgstr ""
 "Кількість пристроїв, у яких за цей та попередній місяць було перервано "
 "обслуговування. Пристрій має перерву в обслуговуванні, якщо він позначений "
 "як \"Не на ремонт\" для статусу обслуговування."
-
-#. [component.Widget.deviceCalibrationPastDueDescription]
-#. defaultMessage is:
-#. The number of instruments that had their last calibration more than one year ago.
-#: extracted_strings.json
-msgid ""
-"The number of instruments that had their last calibration more than one year "
-"ago."
-msgstr "Кількість приладів, які мали останнє калібрування більше року тому."
-
-#. [component.Widget.moduleSwapsDescription]
-#. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
-#: extracted_strings.json
-msgid ""
-"The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same slot have a "
-"different module serial number"
-msgstr ""
-"Кількість замін модулів за поточний місяць. Проблема заміни модуля "
-"з'являється, коли два послідовні результати, виконані в одному слоті, мають "
-"інший серійний номер модуля"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -12145,34 +12352,32 @@ msgid ""
 "would equate 100 \"device-days\". If one device was down half of the month, "
 "this number would be 10%"
 msgstr ""
-"Відсоток \"днів-пристроїв\", які були визначені як \"недоступні для "
-"ремонту\", за винятком вихідних. Наприклад, 20 робочих днів у місяці та 5 "
-"пристроїв дорівнювали б 100 \"пристроям-дням\". Якби на одному пристрої було "
-"менше половини місяця, це число становило б 10%"
+"Відсоток \"днів-пристроїв\", які були визначені як \"недоступні для ремонту"
+"\", за винятком вихідних. Наприклад, 20 робочих днів у місяці та 5 пристроїв "
+"дорівнювали б 100 \"пристроям-дням\". Якби на одному пристрої було менше "
+"половини місяця, це число становило б 10%"
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
-#. The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
+#. The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
 #: extracted_strings.json
 msgid ""
-"The percentage of calibrations that were within 30 days of the scheduled "
-"date. Note that this only counts calibrations for devices that had a "
-"calibration record before."
+"The percentage of GeneXpert calibrations that were within 30 days of the "
+"scheduled date. Note that this only counts calibrations for devices that had "
+"a calibration record before."
 msgstr ""
-"Відсоток калібрувань, які були протягом 30 днів із запланованої дати. "
-"Зверніть увагу, що це враховує калібрування лише для пристроїв, які раніше "
-"мали запис калібрування."
+"Відсоток калібрувань GeneXpert, які були виконані протягом 30 днів від "
+"запланованої дати. Зауважте, що тут враховано лише калібрування для "
+"пристроїв, які раніше мали запис про калібрування."
 
 #. [component.Widget.gxPositiveResultsNotifiedDescription]
 #. defaultMessage is:
-#. The percentage of positive GeneXpert's results that were notified via SMS or email.
+#. The percentage of positive results that were notified via SMS or email.
 #: extracted_strings.json
-msgid ""
-"The percentage of positive GeneXpert's results that were notified via SMS or "
-"email."
+msgid "The percentage of positive results that were notified via SMS or email."
 msgstr ""
-"Відсоток позитивних результатів GeneXpert, про які було повідомлено за "
-"допомогою SMS або електронної пошти."
+"Відсоток позитивних результатів, про які було повідомлено через SMS або "
+"електронну пошту."
 
 #. [pages.OperationalData.percentReportedDescription]
 #. defaultMessage is:
@@ -12726,6 +12931,9 @@ msgstr "Перемкнути підтвердження статусу"
 msgid "Topic"
 msgstr "Тема"
 
+#. [pages.Status.total]
+#. defaultMessage is:
+#. Total
 #. [legends.Unknown.Total]
 #. defaultMessage is:
 #. Total
@@ -12754,10 +12962,10 @@ msgstr "Загальна кількість інцидентів"
 msgid "Total Errors"
 msgstr "Загальна кількість помилок"
 
-#. [pages.OperationalData.cntAll]
+#. [reporters.totalResults]
 #. defaultMessage is:
 #. Total Results
-#. [reporters.totalResults]
+#. [pages.OperationalData.cntAll]
 #. defaultMessage is:
 #. Total Results
 #. [performance.barChart.results]
@@ -13008,6 +13216,13 @@ msgstr "Туберкульоз"
 #: extracted_strings.json
 msgid "Tuesday"
 msgstr "Вівторок"
+
+#. [pages.Notifications.table.notificationsTableHeaderType]
+#. defaultMessage is:
+#. Type
+#: extracted_strings.json
+msgid "Type"
+msgstr "Тип"
 
 #. [pages.resultEdit.PatientHistoryI18nKey]
 #. defaultMessage is:
@@ -13307,6 +13522,13 @@ msgstr "Веб"
 msgid "Web Body"
 msgstr "Веб-тіло"
 
+#. [pages.Notifications.table.notificationsTableHeaderWebHook]
+#. defaultMessage is:
+#. Web Hook
+#: extracted_strings.json
+msgid "Web Hook"
+msgstr "Веб-гачок"
+
 #. [pages.NotificationDetail.webUrl]
 #. defaultMessage is:
 #. Web Url
@@ -13334,6 +13556,13 @@ msgstr "Веб-адреса має недійсний формат"
 #: extracted_strings.json
 msgid "Web url is required"
 msgstr "Потрібна веб-адреса"
+
+#. [pages.Notifications.table.notificationsTableWebhookRecepient]
+#. defaultMessage is:
+#. Webhook Recepient
+#: extracted_strings.json
+msgid "Webhook Recepient"
+msgstr "Webhook Одержувач"
 
 #. [pages.Notifications.table.webhookSentHeader]
 #. defaultMessage is:
@@ -13418,13 +13647,6 @@ msgstr "Коли пристрій знаходиться в автономном
 #: extracted_strings.json
 msgid "When the result is"
 msgstr "Коли результат є"
-
-#. [pages.Notifications.table.sentWithErrors]
-#. defaultMessage is:
-#. With errors
-#: extracted_strings.json
-msgid "With errors"
-msgstr "З помилками"
 
 #. [pages.OperationalData.percentWithin2Hours]
 #. defaultMessage is:
@@ -13537,12 +13759,26 @@ msgstr "Звіт пацієнтів Xpert"
 msgid "Xpert Site Detailed Report"
 msgstr "Детальний звіт по сайту Xpert"
 
+#. [pages.ReportIndex.xpert_site_summary_site_wise_report]
+#. defaultMessage is:
+#. Xpert Site Summary Report - Site Wise
+#: extracted_strings.json
+msgid "Xpert Site Summary Report - Site Wise"
+msgstr "Xpert Site Summary Report - Site Wise"
+
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
 #. Xpert Test Activities Report
 #: extracted_strings.json
 msgid "Xpert Test Activities Report"
 msgstr "Звіт про діяльність Xpert Test"
+
+#. [pages.ReportIndex.xpert_workload_summary_report]
+#. defaultMessage is:
+#. Xpert Workload Summary Report
+#: extracted_strings.json
+msgid "Xpert Workload Summary Report"
+msgstr "Зведений звіт про навантаження Xpert"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
@@ -13599,6 +13835,15 @@ msgstr "Так, видаліть"
 #: extracted_strings.json
 msgid "Yesterday"
 msgstr "Вчора"
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.resolution]
+#. defaultMessage is:
+#. You can contact us to check your account by email ({supportEmail})
+#: extracted_strings.json
+msgid "You can contact us to check your account by email ({supportEmail})"
+msgstr ""
+"Ви можете зв'язатися з нами, щоб перевірити свій обліковий запис електронною "
+"поштою ({supportEmail})"
 
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.resolution]
 #. defaultMessage is:
@@ -13728,6 +13973,17 @@ msgid ""
 msgstr ""
 "Ваш обліковий запис усе ще потребує налаштування, перш ніж ви зможете "
 "користуватися системою. Зверніться до свого адміністратора."
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.message]
+#. defaultMessage is:
+#. Your credentials were not configured properly. Please, contact your administrator.
+#: extracted_strings.json
+msgid ""
+"Your credentials were not configured properly. Please, contact your "
+"administrator."
+msgstr ""
+"Ваші облікові дані були налаштовані неправильно. Будь ласка, зверніться до "
+"вашого адміністратора."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -14392,13 +14648,53 @@ msgstr "{unit} з минулого тижня"
 msgid "{unit} total calibrations"
 msgstr "{unit} загальна калібрування"
 
-#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit]
-#. defaultMessage is:
-#. {value} ({records}/{total, plural, one {# result} other {# results} })
-#: extracted_strings.json
-msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
-msgstr ""
-"{value} ({records} / {total, plural, one {# результат} other {# результати}})"
+#~ msgid "Email was sent to:"
+#~ msgstr "Електронний лист надіслано на адресу:"
+
+#~ msgid "Pending"
+#~ msgstr "Очікується"
+
+#~ msgid "Recipients"
+#~ msgstr "Одержувачі"
+
+#~ msgid "SMS was sent to:"
+#~ msgstr "SMS надіслано на адресу:"
+
+#~ msgid "Sent details"
+#~ msgstr "Надіслали деталі"
+
+#~ msgid "Successfully"
+#~ msgstr "Успішно"
+
+#~ msgid "With errors"
+#~ msgstr "З помилками"
+
+#~ msgid "Click to view results in table format"
+#~ msgstr "Клацніть, щоб переглянути результати у форматі таблиці"
+
+#~ msgid "Could Not Load All Sites"
+#~ msgstr "Не вдалося завантажити всі сайти"
+
+#~ msgid "Could Not Transfer Result"
+#~ msgstr "Не вдалося передати результат"
+
+#~ msgid "Error Loading All Sites"
+#~ msgstr "Помилка завантаження всіх сайтів"
+
+#~ msgid "Error Transferring Result"
+#~ msgstr "Помилка передачі результату"
+
+#~ msgid ""
+#~ "{value} ({records}/{total, plural, one {# result} other {# results} })"
+#~ msgstr ""
+#~ "{value} ({records} / {total, plural, one {# результат} other {# "
+#~ "результати}})"
+
+#~ msgid "Current FQ Detection (Pending)"
+#~ msgstr "Поточне виявлення FQ (Очікує)"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "ВІЛ (на розгляді)"
 
 #~ msgid "Current FQ Trends"
 #~ msgstr "Поточні тенденції FQ"
@@ -14975,8 +15271,8 @@ msgstr ""
 #~ msgstr "Посібник стилю"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for "
-#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for repair"
+#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."

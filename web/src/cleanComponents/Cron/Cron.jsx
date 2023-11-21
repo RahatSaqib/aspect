@@ -1,18 +1,16 @@
 import React, { useCallback, useEffect, useState } from 'react'
 import { Card, CardContent, Tab, Tabs } from '@mui/material'
-import classNames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { cronMessages as messages } from '../../messages'
 import DisplayCard from './components/DisplayCard'
 import Daily from './Daily'
 import Monthly from './Monthly'
 import Quarterly from './Quarterly'
-import styles from './styles.css'
-import { getCronHumanValue } from './utils'
+import styles from './styles.module.css'
+import getCronHumanValue from './utils'
 import Weekly from './Weekly'
 
-const classes = classNames.bind(styles)
 const options = [
   { name: 'daily', Component: Daily, value: ['0', '0', '*/1', '*', '*'] },
   { name: 'weekly', Component: Weekly, value: ['0', '0', '*/1', '*', 'MON'] },
@@ -26,7 +24,7 @@ const getInitialTabIndex = value => {
 }
 
 const Cron = ({ showResultText, showResultCron, onChange, value }) => {
-  const { locale, formatMessage } = useI18n()
+  const { locale, formatMessage } = useIntl()
   const [selectedTabIndex, setSelectedTabIndex] = useState(getInitialTabIndex(value))
 
   useEffect(() => {
@@ -61,7 +59,7 @@ const Cron = ({ showResultText, showResultCron, onChange, value }) => {
   return (
     <Card style={{ maxWidth: '100%' }}>
       <CardContent>
-        <Tabs value={selectedTabIndex} onChange={onTabChange} className={classes('Tab_Margin')}>
+        <Tabs value={selectedTabIndex} onChange={onTabChange} className={styles.Tab_Margin}>
           {options.map(option => (
             <Tab fullWidth key={option.name} label={formatMessage(messages[option.name])} />
           ))}

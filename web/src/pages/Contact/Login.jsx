@@ -2,14 +2,13 @@ import React, { useContext } from 'react'
 import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { object, ref, string } from 'yup'
-import { InputPassword, LabeledSwitch } from '../../cleanComponents'
-import Loading from '../../cleanComponents/Loading'
+import { InputPassword, LabeledSwitch, Loading } from '../../cleanComponents'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePersonLogin from '../../hooks/person/useUpdatePersonLogin'
-import useI18n from '../../hooks/useI18n'
-import { useAuthState } from '../../providers/AuthProvider'
+import useAuthState from '../../hooks/useAuthState'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -17,11 +16,10 @@ import messages from './messages'
 
 const Login = ({ setStep }) => {
   const { id, isAdding } = useContext(FormStatusContext)
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
-  const { userId: loggedInUserId } = useAuthState()
-
+  const { personId: loggedInPersonId, userPermissions } = useAuthState()
   const initialValues = {
     canLogIn: id === ACTION.SELF ? 1 : person?.canLogIn,
     username: person?.username || '',
@@ -52,13 +50,13 @@ const Login = ({ setStep }) => {
     userLockedOut: string().nullable(),
   })
 
-  const { mutate: updateLogin } = useUpdatePersonLogin(id === ACTION.SELF ? loggedInUserId : id)
+  const { mutate: updateLogin } = useUpdatePersonLogin(id === ACTION.SELF ? loggedInPersonId : id)
 
   return (
     <>
       <ContactStepper
         step={2}
-        full={id !== ACTION.SELF}
+        full={id !== ACTION.SELF && userPermissions.includes('person:edit')}
         isUpdate={id !== ACTION.ADD}
         onChange={(v, step) => setStep(step)}
       />

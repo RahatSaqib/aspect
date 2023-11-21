@@ -1,20 +1,16 @@
 import React from 'react'
-import classnames from 'classnames/bind'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import ColoredNumber from '../../../oldComponents/shared/ColoredNumber'
-import stylesShared from '../../../oldComponents/shared/DataTableRow.css'
+import stylesShared from '../../../oldComponents/shared/DataTableRow.module.css'
 import StatusIcon from '../../../oldComponents/shared/StatusIcon'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
 import { formatRelative } from '../../../utils/utils/dateFormat'
-import styles from './DeviceTableRow.css'
+import styles from './DeviceTableRow.module.css'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-const sharedCssClasses = classnames.bind(stylesShared)
-
 const Rate = ({ it, messageId, threshold }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   return (
     <span>
@@ -24,15 +20,15 @@ const Rate = ({ it, messageId, threshold }) => {
         <ColoredNumber number={it.rate} formatNumberStyle="percent" error={threshold && it.rate > threshold} />
       )}
       <br />
-      <span className={cssClasses('Rate__hover')}>{formatMessage(messageId, it)}</span>
+      <span className={styles.Rate__hover}>{formatMessage(messageId, it)}</span>
     </span>
   )
 }
 
 const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateThreshold }, ...restProps }) => {
-  const { formatMessage, formatNumber } = useI18n()
+  const { formatMessage, formatNumber, formatRelativeTime } = useIntl()
   return (
-    <TableRow {...restProps} className={cssClasses('TableRow', restProps.className)}>
+    <TableRow {...restProps} className={`TableRow ${restProps.className}`}>
       <TableCell>{device.get('name')}</TableCell>
       <TableCell hiddenOn="lg">{device.get('siteName')}</TableCell>
       <TableCell>
@@ -59,22 +55,22 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
           ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
           : formatMessage(messages.notAvailable)}
       </TableCell>
-      <TableCell>{formatRelative(device.get('lastResultConductedOn'))}</TableCell>
+      <TableCell>{formatRelative(device.get('lastResultConductedOn'), formatRelativeTime)}</TableCell>
       <TableCell>
         <StatusIcon
           title={formatMessage(messages[device.get('connectorStatus')])}
           status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
         />
       </TableCell>
-      <TableCell>{formatRelative(device.get('lastPingOn'))}</TableCell>
+      <TableCell>{formatRelative(device.get('lastPingOn'), formatRelativeTime)}</TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
       </TableCell>
-      <TableCell className={cssClasses('TableCell--alerts')}>
+      <TableCell className={styles.TableCell__alerts}>
         {device.get('issueCategories').map(it => (
           <ColoredButton
             key={it.get('key')}
-            className={sharedCssClasses('ColoredButton--micro')}
+            className={stylesShared.ColoredButton__micro}
             shipCove={it.get('key') === 'issueCategoryDeviceHealth'}
             shakespeare={it.get('key') === 'issueCategoryReagentHealth'}
             mountain={it.get('key') === 'issueCategoryDataHealth'}
@@ -91,7 +87,7 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
       <TableCell hiddenOn="lg">
         <Rate it={device.get('error').toJS()} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
       </TableCell>
-      <TableCell hiddenOn="lg">{formatRelative(device.get('createdOn'))}</TableCell>
+      <TableCell hiddenOn="lg">{formatRelative(device.get('createdOn'), formatRelativeTime)}</TableCell>
       <TableCell hiddenOn="lg" numeric>
         {formatNumber(device.get('resultCountLastMonth'))}
       </TableCell>

@@ -1,5 +1,5 @@
 const itemMocked = {
-  color: 'var(--guardsman-red, #d60000)',
+  color: '#d60000',
   theme: {
     background: 'transparent',
     fontFamily: 'sans-serif',

@@ -55,7 +55,7 @@ describe('transformMergeResultPayload for Myanmar', () => {
   function initialisePluginAndPayload(payload) {
     deviceTypeTransformMergeResultPayload = sinon.stub().resolves(getPayload(payload))
     transformMergeResultPayload = proxyquire('../../../src/plugin/partner/Myanmar/transformMergeResultPayload', {
-      '../../registration': {
+      '../../loadPlugin': {
         async loadPlugin() {
           return deviceTypeTransformMergeResultPayload
         },

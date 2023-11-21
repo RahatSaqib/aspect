@@ -205,7 +205,7 @@ const saveNotificationPayload = Joi.object({
     .description('Email multi-line body (if sendEmail is checked)'),
   smsBody: Joi.string()
     .when('sendSms', optionsForSendXXX)
-    .max(144)
+    .max(1000)
     .description('Sms multi-line text (if sendSms is checked)'),
   webBody: Joi.string()
     .when('sendWeb', optionsForSendXXX)

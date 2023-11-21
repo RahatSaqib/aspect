@@ -1,6 +1,10 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
+  total: {
+    id: 'pages.Status.total',
+    defaultMessage: 'Total',
+  },
   showValuesLabel: {
     id: 'pages.Status.showValuesLabel',
     defaultMessage: 'Show Label',

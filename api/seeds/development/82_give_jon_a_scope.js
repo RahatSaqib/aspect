@@ -26,28 +26,13 @@ module.exports = seed(async knex => {
     .whereIn('id', [...alabamaClinics.map(ac => ac.id), ...ohioClinics.map(oc => oc.id)])
     .update({ siteTypeId: clinicSiteType.id })
   const clinicianJobFunction = await knex('JobFunction').where('externalId', 'clinician').first('id')
-  const jonsJobs = await knex('Job').where('personId', jonPerson.id).select('id')
-  await knex('JobContext')
-    .whereIn(
-      'jobId',
-      jonsJobs.map(j => j.id)
-    )
-    .delete()
-  await knex('Job')
-    .whereIn(
-      'id',
-      jonsJobs.map(j => j.id)
-    )
-    .delete()
-  const [jonsNewJobId] = await knex('Job').insert({
-    jobFunctionId: clinicianJobFunction.id,
-    personId: jonPerson.id,
-  })
+  await knex('JobContext').where('personId', jonPerson.id).delete()
   const alabamaClinicIds = alabamaClinics.map(ac => ac.id)
   const jonClinicIds = ohioClinics[0] ? [...alabamaClinicIds, ohioClinics[0].id] : alabamaClinicIds
   await Promise.each(jonClinicIds, async clinicId =>
     knex('JobContext').insert({
-      jobId: jonsNewJobId,
+      jobFunctionId: clinicianJobFunction.id,
+      personId: jonPerson.id,
       siteId: clinicId,
     })
   )

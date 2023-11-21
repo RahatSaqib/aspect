@@ -1,10 +1,9 @@
 import React, { Suspense, lazy } from 'react'
 import { Route, Routes, Navigate, useLocation, useNavigate } from 'react-router-dom'
-import Loading from './cleanComponents/Loading'
-import SignedOutLayout from './oldComponents/SignedOutLayout'
+import { LoggedOutLayout, Loading } from './cleanComponents'
+import useAuthState from './hooks/useAuthState'
 import License from './oldPages/auth/license/License'
 import ResetPassword from './oldPages/auth/resetPassword/ResetPassword'
-import { useAuthState } from './providers/AuthProvider'
 
 const LoadableLogin = lazy(() => import('./oldPages/auth/login/Login'))
 
@@ -26,7 +25,7 @@ const LogoutApp = () => {
   }
 
   return (
-    <SignedOutLayout>
+    <LoggedOutLayout>
       <Suspense fallback={<Loading centered />}>
         <Routes>
           <Route
@@ -44,7 +43,7 @@ const LogoutApp = () => {
           <Route path="*" element={<Navigate replace to="/login" state={{ referrer: location }} />} />
         </Routes>
       </Suspense>
-    </SignedOutLayout>
+    </LoggedOutLayout>
   )
 }
 

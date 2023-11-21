@@ -16,7 +16,7 @@ const { factDataCategoryLow } = require('../../src/fact/actions')
 const { getDataCategoryStatus } = require('../../src/fact/service')
 const { escalateIssues, resolveIssues } = require('../../src/issue/actions')
 const { getPartner, getSite, cleanUpIssues } = require('../utils/issueUtils')
-const { loadPlugin } = require('../../src/plugin/registration')
+const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const {
   allResultCategoryToId,
   deviceTypeToId,
@@ -57,25 +57,11 @@ async function initUserAndJobs(knex, partnerId, siteId) {
     const { id: userId } = await knex('User').where({ name: userName }).first()
     // get Person
     const { id: personId } = await knex('Person').where({ userId }).first()
-    // get (insert) Job
-    let jobId
-    const job = await knex('Job')
-      .where({
-        personId,
-        jobFunctionId,
-      })
-      .first()
-    if (job) {
-      jobId = job.id
-    } else {
-      ;[jobId] = await knex('Job').insert({
-        personId,
-        jobFunctionId,
-      })
-    }
+
     // insert JobContext for new site
     const [jobContextId] = await knex('JobContext').insert({
-      jobId,
+      personId,
+      jobFunctionId,
       siteId,
     })
     return jobContextId
@@ -116,8 +102,8 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
   before(() =>
     run(async knex => {
       // get dataCategory definitions
-      const pluginName = partnerName.toLowerCase()
-      const plugin = (await loadPlugin([pluginName], 'dataCategories')) || {}
+      const partnerPluginName = partnerName.toLowerCase()
+      const plugin = (await loadPlugin(partnerPluginName, undefined, 'dataCategories')) || {}
       ;({ dataCategories = [] } = plugin)
 
       // get partnerId

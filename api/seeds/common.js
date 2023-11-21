@@ -121,7 +121,8 @@ async function commonUpserts(
     (await knex('Person')
       .where({
         userId: adminId,
-        geographyId,
+        // geographyId,
+        // canLogIn: true,
       })
       .first('id')) || {}
   if (!adminPersonId) {
@@ -132,6 +133,7 @@ async function commonUpserts(
       lastCountryId: countryId,
       geographyId,
       culture,
+      canLogIn: true,
       timezone,
       ...auditFields,
     })
@@ -142,37 +144,16 @@ async function commonUpserts(
   await upsertJobFunctionFixture(knex, _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture, partnerId)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId }).first()
-  let { id: jobIdAdmin } =
-    (await knex('Job')
-      .where({
-        personId: adminPersonId,
-        jobFunctionId: jobFunctionIdAdmin,
-      })
-      .first('id')) || {}
-  if (!jobIdAdmin) {
-    ;[jobIdAdmin] = await knex('Job').insert({
-      personId: adminPersonId,
-      jobFunctionId: jobFunctionIdAdmin,
-    })
-  }
-  const { id: jobContextIdAdmin } =
-    (await knex('JobContext')
-      .where({
-        jobId: jobIdAdmin,
-        geographyId,
-      })
-      .first('id')) || {}
-  if (!jobContextIdAdmin) {
-    await knex('JobContext').insert({
-      jobId: jobIdAdmin,
-      geographyId,
-    })
-  }
+  await utils.upsertSingle(knex, 'JobContext', {
+    personId: adminPersonId,
+    jobFunctionId: jobFunctionIdAdmin,
+    geographyId,
+  })
 
   if (deviceApiToken) {
     await upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
   }
-  await ensureAspectDeviceExists(knex, countryId, partnerId, auditFields)
+
   await ensureResultTreatmentStatuses(knex)
 
   if (usersInsertConfig)
@@ -214,6 +195,7 @@ async function upsertDemoUsersPerJobFunction(
     lastCountryId: countryId,
     geographyId,
     culture,
+    canLogIn: true,
     timezone,
     ...auditFields,
   }
@@ -244,19 +226,7 @@ async function upsertDemoUsersPerJobFunction(
         ...commonPersonFields,
       })
     }
-    const job = await knex('Job').where({ personId, jobFunctionId }).first()
-    let jobId = job?.id
-    if (!jobId) {
-      ;[jobId] = await knex('Job').insert({ personId, jobFunctionId })
-    }
-    const jonContext = await knex('JobContext').where({ jobId, geographyId }).first()
-    const jonContextId = jonContext?.id
-    if (!jonContextId) {
-      await knex('JobContext').insert({
-        jobId,
-        geographyId,
-      })
-    }
+    await utils.upsertSingle(knex, 'JobContext', { personId, jobFunctionId, geographyId })
   })
   await Promise.all(insertUsers)
 }
@@ -431,21 +401,6 @@ async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, devi
         updatedOn: auditFields.updatedOn,
       })
   }
-}
-
-async function ensureAspectDeviceExists(knex, countryId, partnerId, auditFields) {
-  return ensureCountryLevelInformationSystemExists(
-    knex,
-    countryId,
-    partnerId,
-    {
-      externalId: 'Aspect',
-      name: 'Aspect',
-      manufacturer: 'SystemOne',
-      plugin: 'aspectresultentry',
-    },
-    auditFields
-  )
 }
 
 async function ensureCountryLevelInformationSystemExists(knex, countryId, partnerId, deviceType, auditFields) {
@@ -1355,12 +1310,14 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
     }
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
-        const existingJob = await knex('Job').where({ personId, jobFunctionId: jobFunctions[jobFunctionName] }).first()
-        if (!existingJob) {
-          const [jobId] = await knex('Job').insert({
+        const jobFunctionId = jobFunctions[jobFunctionName]
+        const existingJobContext = await knex('JobContext')
+          .where({
             personId,
-            jobFunctionId: jobFunctions[jobFunctionName],
+            jobFunctionId,
           })
+          .first()
+        if (!existingJobContext) {
           if (
             jobFunctionName === 'Lab User' &&
             person.sites &&
@@ -1368,7 +1325,8 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
             siteIds[person.sites[0].shortName]
           ) {
             await knex('JobContext').insert({
-              jobId,
+              personId,
+              jobFunctionId,
               siteId: siteIds[person.sites[0].shortName],
             })
           } else if (!_.isEmpty(person.geographies)) {
@@ -1398,7 +1356,8 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
                 })
                 .first()
               await knex('JobContext').insert({
-                jobId,
+                personId,
+                jobFunctionId,
                 geographyId: jobGeographyId,
               })
             })
@@ -1413,11 +1372,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
 
 async function removeJobFunctions(knex, jobFunctionsToDelete) {
   await Promise.each(jobFunctionsToDelete, async ({ id }) => {
-    const jobIds = await knex('Job').where('jobFunctionId', id).pluck('id')
-    if (jobIds.length > 0) {
-      await knex('JobContext').whereIn('jobId', jobIds).delete()
-      await knex('Job').whereIn('id', jobIds).delete()
-    }
+    await knex('JobContext').where('jobFunctionId', id).delete()
     await knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete()
     await knex('JobFunctionPermission').where('jobFunctionId', id).delete()
     await knex('JobFunctionReport').where('jobFunctionId', id).delete()
@@ -1966,7 +1921,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
-  ensureAspectDeviceExists,
   upsertJobFunctionPermission,
   upsertGeneXpertDeviceTypeAndAssays,
   upsertSites,

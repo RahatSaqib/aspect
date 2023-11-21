@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2023-08-29T12:46:49.806Z\n"
+"POT-Creation-Date: 2023-11-15T18:39:51.843Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.3.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -42,6 +42,13 @@ msgstr "Mois"
 #: extracted_strings.json
 msgid "# Results Last month"
 msgstr "Le mois dernier ({minDate} - {maxDate})"
+
+#. [pages.XDR.pmdtSites]
+#. defaultMessage is:
+#. # of PMDT Sites with 10 C GX
+#: extracted_strings.json
+msgid "# of PMDT Sites with 10 C GX"
+msgstr "# Nombre de sites PMDT avec 10 C GX"
 
 #. [pages.XDR.totalConducted]
 #. defaultMessage is:
@@ -755,7 +762,7 @@ msgstr ""
 msgid "An email has been sent to you"
 msgstr "Un email vous a été envoyé"
 
-#. [pages.ReportIndex.devicesAndSites_description]
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport_description]
 #. defaultMessage is:
 #. An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"
 #: extracted_strings.json
@@ -766,8 +773,8 @@ msgid ""
 msgstr ""
 "Une vue d'ensemble de tous les appareils du système, des informations sur "
 "l'inventaire des sites et les résultats agrégés des tests par appareil. Il "
-"s'agit de l'ancien rapport amélioré de GxAlert appelé \"Tous les "
-"dispositifs\""
+"s'agit de l'ancien rapport amélioré de GxAlert appelé \"Tous les dispositifs"
+"\""
 
 #. [p.PkDashboard.annualFQRDiagnosed]
 #. defaultMessage is:
@@ -1034,6 +1041,13 @@ msgstr "Délai moyen de mise en ligne"
 #: extracted_strings.json
 msgid "Average Duration of Service Interruption"
 msgstr "Durée moyenne d'interruption de service"
+
+#. [p.PkDashboard.FQRPerMonth]
+#. defaultMessage is:
+#. Average FQ-R cases diagnosed per month
+#: extracted_strings.json
+msgid "Average FQ-R cases diagnosed per month"
+msgstr "Nombre moyen de cas de FQ-R diagnostiqués par mois"
 
 #. [pages.Status.clinicalIndicatorsCovidPieLegend]
 #. defaultMessage is:
@@ -1507,13 +1521,6 @@ msgstr "CSF"
 msgid "CSV"
 msgstr "CSV"
 
-#. [component.Widget.deviceCalibratedWhenDueTitle]
-#. defaultMessage is:
-#. Calibrated When Due
-#: extracted_strings.json
-msgid "Calibrated When Due"
-msgstr "Calibré à l'échéance"
-
 #. [pages.resultEdit.Calibration]
 #. defaultMessage is:
 #. Calibration
@@ -1538,6 +1545,9 @@ msgstr "Date d'étalonnage"
 msgid "Calibration Date is required"
 msgstr "La date d'étalonnage est requise"
 
+#. [notificationCategoryTypeSelect.notificationTypeCalibrationDueDate]
+#. defaultMessage is:
+#. Calibration Due Date
 #. [placeholder.calibrationDueDate]
 #. defaultMessage is:
 #. Calibration Due Date
@@ -1547,13 +1557,6 @@ msgstr "La date d'étalonnage est requise"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Date d'échéance de l'étalonnage"
-
-#. [component.Widget.deviceCalibrationPastDueTitle]
-#. defaultMessage is:
-#. Calibration Past Due
-#: extracted_strings.json
-msgid "Calibration Past Due"
-msgstr "Étalonnage en retard"
 
 #. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleNotEditable]
 #. defaultMessage is:
@@ -1599,9 +1602,6 @@ msgstr "Ne peut pas être modifié"
 #. defaultMessage is:
 #. Cancel
 #. [pages.DailyStatusDialog.cancel]
-#. defaultMessage is:
-#. Cancel
-#. [pages.Notifications.table.cancel]
 #. defaultMessage is:
 #. Cancel
 #. [contextualMenu.notifications.cancel]
@@ -1772,12 +1772,12 @@ msgstr "Valeur claire"
 msgid "Clear filters"
 msgstr "Effacer les filtres"
 
-#. [pages.Graphs.toolTipAllowClickThrough]
+#. [pages.Notifications.table.clickToResult]
 #. defaultMessage is:
-#. Click to view results in table format
+#. Click here to go to the result
 #: extracted_strings.json
-msgid "Click to view results in table format"
-msgstr "Cliquez pour afficher les résultats sous forme de tableau"
+msgid "Click here to go to the result"
+msgstr "Cliquez ici pour accéder au résultat"
 
 #. [header.link.clinicalIndicators.title]
 #. defaultMessage is:
@@ -2023,9 +2023,6 @@ msgstr "Contact créé avec succès"
 #. [pages.PersonDetails.contactDetails]
 #. defaultMessage is:
 #. Contact Details
-#. [pages.Notifications.table.contactDetails]
-#. defaultMessage is:
-#. Contact Details
 #: extracted_strings.json
 msgid "Contact Details"
 msgstr "Détails du contact"
@@ -2118,20 +2115,6 @@ msgstr "Copier"
 #: extracted_strings.json
 msgid "Could Not Find Test Result"
 msgstr "Impossible de trouver le résultat du test"
-
-#. [errorResponseMessages.fetchAllSites.GET.404.title]
-#. defaultMessage is:
-#. Could Not Load All Sites
-#: extracted_strings.json
-msgid "Could Not Load All Sites"
-msgstr "Impossible de charger tous les sites"
-
-#. [errorResponseMessages.transferResult.GET.404.title]
-#. defaultMessage is:
-#. Could Not Transfer Result
-#: extracted_strings.json
-msgid "Could Not Transfer Result"
-msgstr "Impossible de transférer le résultat"
 
 #. [errorResponseMessages.loginStart.POST.401.incorrectPassword.title]
 #. defaultMessage is:
@@ -2280,6 +2263,9 @@ msgstr "Créer le site"
 #. [pages.DeviceApiKeyList.createdOn]
 #. defaultMessage is:
 #. Created On
+#. [pages.Notifications.table.createButton.group.createdOn]
+#. defaultMessage is:
+#. Created On
 #. [pages.DeviceDetailEdit.createdOn]
 #. defaultMessage is:
 #. Created On
@@ -2407,12 +2393,15 @@ msgstr "Dispositifs actifs actuels"
 msgid "Current Diagnosis"
 msgstr "Diagnostic actuel"
 
-#. [p.PkDashboard.CurrentFQDetectionPending]
+#. [p.PkDashboard.currentFQDetection]
 #. defaultMessage is:
-#. Current FQ Detection (Pending)
+#. Current FQ Detection
+#. [p.PkDashboard.CurrentFQDetection]
+#. defaultMessage is:
+#. Current FQ Detection
 #: extracted_strings.json
-msgid "Current FQ Detection (Pending)"
-msgstr "Détection actuelle du quotient familial (en attente)"
+msgid "Current FQ Detection"
+msgstr "Détection actuelle du quotient familial"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2667,6 +2656,9 @@ msgstr "Tableau de bord"
 #. defaultMessage is:
 #. Data
 #. [pages.DeviceList.dataHealth]
+#. defaultMessage is:
+#. Data
+#. [pages.Notifications.table.notificationsTableHeaderData]
 #. defaultMessage is:
 #. Data
 #: extracted_strings.json
@@ -2936,10 +2928,10 @@ msgstr "Détecté"
 #. [filter.popover.deviceName]
 #. defaultMessage is:
 #. Device
-#. [forms.formSectionHeader.device]
+#. [legends.Unknown.device]
 #. defaultMessage is:
 #. Device
-#. [legends.Unknown.device]
+#. [forms.formSectionHeader.device]
 #. defaultMessage is:
 #. Device
 #. [placeholder.device]
@@ -3160,6 +3152,20 @@ msgstr "Garantie de l'appareil"
 msgid "Device Workload"
 msgstr "Charge de travail du dispositif"
 
+#. [pages.ReportIndex.device_and_site_summary_report]
+#. defaultMessage is:
+#. Device and Site Sumary
+#: extracted_strings.json
+msgid "Device and Site Sumary"
+msgstr "Résumé des dispositifs et des sites"
+
+#. [pages.ReportIndex.DeviceAndSiteSummaryReport]
+#. defaultMessage is:
+#. Device and Site Summary Report
+#: extracted_strings.json
+msgid "Device and Site Summary Report"
+msgstr "Rapport de synthèse sur les appareils et les sites"
+
 #. [pages.NotificationDetail.SelectStateTitle]
 #. defaultMessage is:
 #. Device from State
@@ -3181,6 +3187,9 @@ msgstr "Journaux des dispositifs"
 msgid "Device type"
 msgstr "Type d'appareil"
 
+#. [legends.Unknown.devices]
+#. defaultMessage is:
+#. Devices
 #. [browsePage.browseDropdown.devices]
 #. defaultMessage is:
 #. Devices
@@ -3188,9 +3197,6 @@ msgstr "Type d'appareil"
 #. defaultMessage is:
 #. Devices
 #. [component.Widget.devicesTitle]
-#. defaultMessage is:
-#. Devices
-#. [legends.Unknown.devices]
 #. defaultMessage is:
 #. Devices
 #. [pages.DeviceList.devicesTitle]
@@ -3226,16 +3232,6 @@ msgstr "Liste des appareils"
 #: extracted_strings.json
 msgid "Devices With Service Interruption"
 msgstr "Appareils avec interruption de service"
-
-#. [pages.ReportIndex.devicesAndSitesOverview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#. [pages.ReportIndex.devices_and_sites_overview]
-#. defaultMessage is:
-#. Devices and Sites Overview
-#: extracted_strings.json
-msgid "Devices and Sites Overview"
-msgstr "Aperçu des dispositifs et des sites"
 
 #. [pages.NotificationDetail.SelectLgaTitle]
 #. defaultMessage is:
@@ -3542,6 +3538,9 @@ msgstr ""
 #. [pages.NotificationDetail.email]
 #. defaultMessage is:
 #. Email
+#. [pages.Notifications.table.emailHeader]
+#. defaultMessage is:
+#. Email
 #: extracted_strings.json
 msgid "Email"
 msgstr "Email"
@@ -3596,13 +3595,6 @@ msgstr ""
 #: extracted_strings.json
 msgid "Email subject is required"
 msgstr "L'objet de l'e-mail est requis"
-
-#. [pages.Notifications.table.emailSentTo]
-#. defaultMessage is:
-#. Email was sent to:
-#: extracted_strings.json
-msgid "Email was sent to:"
-msgstr "L’e-mail a été envoyé à :"
 
 #. [pages.NotificationDetail.enable]
 #. defaultMessage is:
@@ -3783,10 +3775,10 @@ msgstr "Entrez le nom du site ..."
 #. [pages.deviceDetail.ResultWorkflowStatusError]
 #. defaultMessage is:
 #. Error
-#. [pages.filters.gxEbolaGPError]
+#. [pages.deviceDetail.resultCategoryError]
 #. defaultMessage is:
 #. Error
-#. [pages.deviceDetail.resultCategoryError]
+#. [pages.filters.gxEbolaGPError]
 #. defaultMessage is:
 #. Error
 #: extracted_strings.json
@@ -3825,13 +3817,6 @@ msgstr "Code d'Erreur"
 #: extracted_strings.json
 msgid "Error Fetching Endpoint"
 msgstr "Taux d'erreur"
-
-#. [errorResponseMessages.fetchAllSites.GET.default.title]
-#. defaultMessage is:
-#. Error Loading All Sites
-#: extracted_strings.json
-msgid "Error Loading All Sites"
-msgstr "Erreur de chargement de tous les sites"
 
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
@@ -3887,13 +3872,6 @@ msgstr "Erreur lors de l'enregistrement du nouveau mot de passe"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Erreur d'envoi Réinitialiser mot de passe Email"
-
-#. [errorResponseMessages.transferResult.GET.default.title]
-#. defaultMessage is:
-#. Error Transferring Result
-#: extracted_strings.json
-msgid "Error Transferring Result"
-msgstr "Erreur de transfert du résultat"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3974,6 +3952,13 @@ msgstr "Exp. jusqu'à {date}"
 #: extracted_strings.json
 msgid "Expand Row"
 msgstr "Expende"
+
+#. [pages.MaintenanceStatusDialog.expectedBack]
+#. defaultMessage is:
+#. Expect Back Online
+#: extracted_strings.json
+msgid "Expect Back Online"
+msgstr "Retour en ligne"
 
 #. [forms.formItem.consumableExpirationDate]
 #. defaultMessage is:
@@ -4155,6 +4140,27 @@ msgstr "FQ-R"
 #: extracted_strings.json
 msgid "FQ-R Detected"
 msgstr "FQ-R détecté"
+
+#. [p.PkDashboard.FQRCurrentYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in current year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in current year"
+msgstr "Cas de FQ-R diagnostiqués pendant l'année en cours"
+
+#. [p.PkDashboard.FQRPerDay]
+#. defaultMessage is:
+#. FQ-R cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed in last 24 hours"
+msgstr "Cas de FQ-R diagnostiqués dans les dernières 24 heures"
+
+#. [p.PkDashboard.FQRPerYear]
+#. defaultMessage is:
+#. FQ-R cases diagnosed this year
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed this year"
+msgstr "Cas de FQ-R diagnostiqués cette année"
 
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
@@ -4446,12 +4452,26 @@ msgstr "GeneXpert COVID-19"
 msgid "GeneXpert COVID-19 Cartridge"
 msgstr "Cartouche GeneXpert COVID-19"
 
+#. [component.Widget.deviceCalibratedWhenDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibrated When Due
+#: extracted_strings.json
+msgid "GeneXpert Calibrated When Due"
+msgstr "GeneXpert étalonné à temps"
+
+#. [component.Widget.deviceCalibrationPastDueTitle]
+#. defaultMessage is:
+#. GeneXpert Calibration Past Due
+#: extracted_strings.json
+msgid "GeneXpert Calibration Past Due"
+msgstr "Calibration du GeneXpert en retard"
+
 #. [p.PkDashboard.genExpertPending]
 #. defaultMessage is:
-#. GeneXpert Device Coverage (Pending)
+#. GeneXpert Device Coverage
 #: extracted_strings.json
-msgid "GeneXpert Device Coverage (Pending)"
-msgstr "Couverture du dispositif GeneXpert (en attente)"
+msgid "GeneXpert Device Coverage"
+msgstr "Couverture du dispositif GeneXpert"
 
 #. [component.Widget.geneXpertDevicesTitle]
 #. defaultMessage is:
@@ -4883,19 +4903,15 @@ msgstr "VHC Aucun résultat"
 msgid "HCV Not Detected"
 msgstr "VHC non détecté"
 
+#. [p.PkDashboard.hiv]
+#. defaultMessage is:
+#. HIV
 #. [pages.ResultList.resultCategoryHivVl]
 #. defaultMessage is:
 #. HIV
 #: extracted_strings.json
 msgid "HIV"
 msgstr "VIH"
-
-#. [p.PkDashboard.hivPending]
-#. defaultMessage is:
-#. HIV (Pending)
-#: extracted_strings.json
-msgid "HIV (Pending)"
-msgstr "VIH (en attente)"
 
 #. [resultCategoryGroup.assayGeneXpertHiv1VlresultCategoryLessThan1000]
 #. defaultMessage is:
@@ -5450,6 +5466,9 @@ msgstr "Insérer un espace réservé pour"
 msgid "Insert placeholder"
 msgstr "Insérer un espace réservé"
 
+#. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
+#. defaultMessage is:
+#. Instrument Replaced
 #. [pages.Notification.type.InstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5463,6 +5482,16 @@ msgstr "Instrument remplacé"
 #: extracted_strings.json
 msgid "Instrument Serial"
 msgstr "Numéro de série"
+
+#. [pages.DeviceDetailEdit.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#. [pages.deviceDetail.instrumentsConnected]
+#. defaultMessage is:
+#. Instruments Connected
+#: extracted_strings.json
+msgid "Instruments Connected"
+msgstr "Instruments connectés"
 
 #. [errorResponseMessages.fetchPersons.GET.403.title]
 #. defaultMessage is:
@@ -5557,6 +5586,9 @@ msgstr "URL de webhook non valide"
 msgid "Inventory"
 msgstr "Inventaire"
 
+#. [notificationCategoryTypeSelect.notificationTypeInventoryExpiring]
+#. defaultMessage is:
+#. Inventory Expiring
 #. [pages.Notification.type.InventoryExpiring]
 #. defaultMessage is:
 #. Inventory Expiring
@@ -5587,6 +5619,9 @@ msgstr "Article d'inventaire"
 msgid "Inventory Log"
 msgstr "Journal d’inventaire"
 
+#. [browsePage.browseDropdown.inventoryOverview]
+#. defaultMessage is:
+#. Inventory Overview
 #. [p.PkDashboard.overview]
 #. defaultMessage is:
 #. Inventory Overview
@@ -5631,6 +5666,9 @@ msgstr "Est-ce qu'au moins {minLength} caractères"
 msgid "Isolate"
 msgstr "Isoler"
 
+#. [notificationCategoryTypeSelect.notificationTypeIssuedBased]
+#. defaultMessage is:
+#. Issue Based
 #. [pages.NotificationDetail.type.notificationTypeIssueBased]
 #. defaultMessage is:
 #. Issue Based
@@ -6204,6 +6242,9 @@ msgstr "Échec de la connexion"
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.title]
 #. defaultMessage is:
 #. Login failed
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.title]
+#. defaultMessage is:
+#. Login failed
 #: extracted_strings.json
 msgid "Login failed"
 msgstr "Échec de la connexion"
@@ -6258,6 +6299,9 @@ msgstr "Lot"
 msgid "Lot Number"
 msgstr "Numéro de lot"
 
+#. [notificationCategoryTypeSelect.notificationTypeLowFieldCompletionRate]
+#. defaultMessage is:
+#. Low Field Completion Rate
 #. [pages.Notification.type.LowFieldCompletionRate]
 #. defaultMessage is:
 #. Low Field Completion Rate
@@ -6265,6 +6309,9 @@ msgstr "Numéro de lot"
 msgid "Low Field Completion Rate"
 msgstr "Faible taux d'achèvement des travaux sur le terrain"
 
+#. [notificationCategoryTypeSelect.notificationTypeLowInventory]
+#. defaultMessage is:
+#. Low Inventory
 #. [pages.Notification.type.LowInventory]
 #. defaultMessage is:
 #. Low Inventory
@@ -6318,6 +6365,9 @@ msgstr "MTB Contaminé"
 #. [resultCategoryGroup.assayTruenatMtbPlusResultCategoryDetected]
 #. defaultMessage is:
 #. MTB Detected
+#. [legends.Unknown.MtbDetected]
+#. defaultMessage is:
+#. MTB Detected
 #. [pages.filters.gxMtbRifMtbDetected]
 #. defaultMessage is:
 #. MTB Detected
@@ -6328,9 +6378,6 @@ msgstr "MTB Contaminé"
 #. defaultMessage is:
 #. MTB Detected
 #. [assayGenericDstResultCategoryDetected]
-#. defaultMessage is:
-#. MTB Detected
-#. [legends.Unknown.MtbDetected]
 #. defaultMessage is:
 #. MTB Detected
 #: extracted_strings.json
@@ -6932,6 +6979,9 @@ msgstr "Module"
 msgid "Module Activity Report"
 msgstr "Rapport d'activité du module"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
+#. defaultMessage is:
+#. Module Disabled
 #. [pages.Notification.type.ModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -6949,6 +6999,9 @@ msgstr "Module désactivé"
 msgid "Module Name"
 msgstr "Nom du module"
 
+#. [notificationCategoryTypeSelect.notificationTypeModuleReplaced]
+#. defaultMessage is:
+#. Module Replaced
 #. [pages.Notification.type.ModuleReplaced]
 #. defaultMessage is:
 #. Module Replaced
@@ -6979,9 +7032,6 @@ msgstr "Rapport sur l'état du module"
 #. [pages.ReportIndex.moduleSwapsReport]
 #. defaultMessage is:
 #. Module Swaps
-#. [component.Widget.moduleSwapsTitle]
-#. defaultMessage is:
-#. Module Swaps
 #. [pages.ReportIndex.module_swaps]
 #. defaultMessage is:
 #. Module Swaps
@@ -6989,6 +7039,16 @@ msgstr "Rapport sur l'état du module"
 msgid "Module Swaps"
 msgstr "Échange de modules"
 
+#. [component.Widget.moduleSwapsTitle]
+#. defaultMessage is:
+#. Module Swaps (GeneXpert only)
+#: extracted_strings.json
+msgid "Module Swaps (GeneXpert only)"
+msgstr "Changement de module (GeneXpert uniquement)"
+
+#. [notificationCategoryTypeSelect.notificationTypeModuleUnused]
+#. defaultMessage is:
+#. Module Unused
 #. [pages.Notification.type.ModuleUnused]
 #. defaultMessage is:
 #. Module Unused
@@ -7255,6 +7315,13 @@ msgstr "Tendances des tests dans l'année"
 msgid "National Testing Trends using MTB/XDR Assay"
 msgstr "Tendances nationales en matière de dépistage à l'aide du test MTB/XDR"
 
+#. [pages.ReportIndex.annualUtilizationRates]
+#. defaultMessage is:
+#. National and Provincial Trends in Annual Utilization Rates
+#: extracted_strings.json
+msgid "National and Provincial Trends in Annual Utilization Rates"
+msgstr "Tendances nationales et provinciales des taux d'utilisation annuels"
+
 #. [pages.DeviceList.needsRepair]
 #. defaultMessage is:
 #. Needs Repair
@@ -7376,6 +7443,20 @@ msgstr "Suivant"
 msgid "No"
 msgstr "Non"
 
+#. [p.PkDashboard.noAssociatedLga]
+#. defaultMessage is:
+#. No Associated LGA
+#: extracted_strings.json
+msgid "No Associated LGA"
+msgstr "Pas d'LGA associé"
+
+#. [p.PkDashboard.noAssociatedState]
+#. defaultMessage is:
+#. No Associated State
+#: extracted_strings.json
+msgid "No Associated State"
+msgstr "Pas d'État associé"
+
 #. [filter.btnGroup.daysStockLeft.noConsumption]
 #. defaultMessage is:
 #. No Consumption
@@ -7427,6 +7508,9 @@ msgstr "Aucun filtre appliqué"
 msgid "No Power"
 msgstr "Aucune puissance"
 
+#. [notificationCategoryTypeSelect.notificationTypeNoResult]
+#. defaultMessage is:
+#. No Result
 #. [pages.deviceDetail.resultCategoryNoResult]
 #. defaultMessage is:
 #. No Result
@@ -7673,6 +7757,23 @@ msgstr "Remarques"
 msgid "Notification"
 msgstr "Notification"
 
+#. [filter.popover.notificationCategoryType]
+#. defaultMessage is:
+#. Notification Category Type
+#: extracted_strings.json
+msgid "Notification Category Type"
+msgstr "Catégorie de notification Type"
+
+#. [browsePage.browseDropdown.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
+#. [pages.NotificationList.notificationLogs]
+#. defaultMessage is:
+#. Notification Logs
+#: extracted_strings.json
+msgid "Notification Logs"
+msgstr "Journaux de notification"
+
 #. [pages.NotificationDetail.notificationTitle]
 #. defaultMessage is:
 #. Notification Title
@@ -7686,6 +7787,28 @@ msgstr "Titre de la notification"
 #: extracted_strings.json
 msgid "Notification Type"
 msgstr "Type de notification"
+
+#. [filter.popover.notificationType]
+#. defaultMessage is:
+#. Notification Type Name
+#: extracted_strings.json
+msgid "Notification Type Name"
+msgstr "Nom du type de notification"
+
+#. [browsePage.browseDropdown.notificationTypes]
+#. defaultMessage is:
+#. Notification Types
+#: extracted_strings.json
+msgid "Notification Types"
+msgstr "Types de notification"
+
+#. [filter.btnGroup.notificationTypeCategory]
+#. defaultMessage is:
+#. Notification category type is "{notificationCategoryType}"
+#: extracted_strings.json
+msgid "Notification category type is \"{notificationCategoryType}\""
+msgstr ""
+"Le type de catégorie de notification est \"{notificationCategoryType}\""
 
 #. [pages.Notifications.group.forDevices]
 #. defaultMessage is:
@@ -7713,6 +7836,13 @@ msgstr "Notification des résultats"
 #: extracted_strings.json
 msgid "Notification for Site"
 msgstr "Notification pour le site"
+
+#. [filter.btnGroup.notificationType]
+#. defaultMessage is:
+#. Notification type is "{notificationType}"
+#: extracted_strings.json
+msgid "Notification type is \"{notificationType}\""
+msgstr "Le type de notification est \"{notificationType}\""
 
 #. [browsePage.browseDropdown.notifications]
 #. defaultMessage is:
@@ -7744,6 +7874,26 @@ msgstr "Maintenant"
 #: extracted_strings.json
 msgid "Number of Devices"
 msgstr "Nombre d'appareils"
+
+#. [pages.DeviceDetailEdit.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#. [pages.deviceDetail.gx10cModulesCount]
+#. defaultMessage is:
+#. Number of GX-10C modules
+#: extracted_strings.json
+msgid "Number of GX-10C modules"
+msgstr "Nombre de modules GX-10C"
+
+#. [pages.DeviceDetailEdit.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#. [pages.deviceDetail.gx6cModulesCount]
+#. defaultMessage is:
+#. Number of GX-6C modules
+#: extracted_strings.json
+msgid "Number of GX-6C modules"
+msgstr "Nombre de modules GX-6C"
 
 #. [legends.Unknown.inventoryGraphStatusXAxisLegend]
 #. defaultMessage is:
@@ -7829,6 +7979,9 @@ msgstr "octobre"
 msgid "OK"
 msgstr "OK"
 
+#. [notificationCategoryTypeSelect.notificationTypeOffline]
+#. defaultMessage is:
+#. Offline
 #. [pages.connectorStatusSelectField.offline]
 #. defaultMessage is:
 #. Offline
@@ -7937,6 +8090,20 @@ msgstr "Seuls les lots en stock"
 #: extracted_strings.json
 msgid "Only transfers"
 msgstr "Seuls les lots en stock"
+
+#. [pages.errorBoundary.message]
+#. defaultMessage is:
+#. Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:
+#: extracted_strings.json
+msgid ""
+"Oops! Something went wrong. Our team has been notified, and we're working to "
+"fix the issue. Please try again later. If the problem persists, contact our "
+"support team and provide them with the folowing error:"
+msgstr ""
+"Oups ! Un problème s’est produit. Notre équipe en a été informée et nous "
+"nous efforçons de résoudre le problème. Veuillez réessayer plus tard. Si le "
+"problème persiste, contactez notre équipe d’assistance et indiquez-lui "
+"l’erreur suivante :"
 
 #. [pages.DeviceDetail.operation]
 #. defaultMessage is:
@@ -8139,12 +8306,22 @@ msgstr "ID patient"
 msgid "Patient ID"
 msgstr "ID patient"
 
+#. [filter.popover.patientId]
+#. defaultMessage is:
+#. Patient Id
 #. [placeholder.result.patient.id]
 #. defaultMessage is:
 #. Patient Id
 #: extracted_strings.json
 msgid "Patient Id"
 msgstr "ID du patient"
+
+#. [filter.btnGroup.patientId]
+#. defaultMessage is:
+#. Patient Id includes "{patientId}"
+#: extracted_strings.json
+msgid "Patient Id includes \"{patientId}\""
+msgstr "L'identité du patient comprend \"{patientId}\""
 
 #. [pages.resultEdit.PatientNameI18nCaptionKey]
 #. defaultMessage is:
@@ -8166,13 +8343,6 @@ msgstr "Retraite des patients"
 #: extracted_strings.json
 msgid "Patient/Case ID"
 msgstr "Identification du patient/cas"
-
-#. [pages.Notifications.table.sentPending]
-#. defaultMessage is:
-#. Pending
-#: extracted_strings.json
-msgid "Pending"
-msgstr "En attente"
 
 #. [page.contacts.person.pendingChanges]
 #. defaultMessage is:
@@ -9128,6 +9298,20 @@ msgstr "Résistance RIF"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Le nombre de résultats positifs"
 
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR Detected
+#: extracted_strings.json
+msgid "RR Detected"
+msgstr "RR détecté"
+
+#. [p.PkDashboard.RRToTbTotalPercentage]
+#. defaultMessage is:
+#. RR To Tb Total Percentage
+#: extracted_strings.json
+msgid "RR To Tb Total Percentage"
+msgstr "RR To Tb Total Pourcentage"
+
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
 #. RR cases diagnosed
@@ -9248,12 +9432,12 @@ msgstr "Recevoir l'inventaire en transit"
 msgid "Receive {consumableName}"
 msgstr "Recevoir {consumableName}"
 
-#. [pages.Notifications.table.recipients]
+#. [pages.Notifications.table.notificationsTableRecepientName]
 #. defaultMessage is:
-#. Recipients
+#. Recepient Name
 #: extracted_strings.json
-msgid "Recipients"
-msgstr "Destinataires"
+msgid "Recepient Name"
+msgstr "Nom du destinataire"
 
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
@@ -9370,6 +9554,9 @@ msgstr "Répétition du test"
 msgid "Report"
 msgstr "Rapport"
 
+#. [notificationCategoryTypeSelect.notificationTypeReportBased]
+#. defaultMessage is:
+#. Report Based
 #. [pages.NotificationDetail.type.notificationTypeReportBased]
 #. defaultMessage is:
 #. Report Based
@@ -9380,6 +9567,16 @@ msgstr "Rapport"
 msgid "Report Based"
 msgstr "Rapport"
 
+#. [filter.popover.reportWithName]
+#. defaultMessage is:
+#. Report Name
+#. [pages.Notifications.table.reportName]
+#. defaultMessage is:
+#. Report Name
+#: extracted_strings.json
+msgid "Report Name"
+msgstr "Nom du rapport"
+
 #. [pages.ReportIndex.error_rate_description]
 #. defaultMessage is:
 #. Report error rates per quarter, break them down by devices, modules and users
@@ -9389,6 +9586,13 @@ msgid ""
 msgstr ""
 "Rapportez les taux d'erreur par trimestre, ventilez-les par appareils, "
 "modules et utilisateurs"
+
+#. [filter.btnGroup.reportWithName]
+#. defaultMessage is:
+#. Report name includes "{reportWithName}"
+#: extracted_strings.json
+msgid "Report name includes \"{reportWithName}\""
+msgstr "Le nom du rapport comprend \"{reportWithName}\""
 
 #. [pages.ReportIndex.reportTBWorkloadSummary]
 #. defaultMessage is:
@@ -9682,6 +9886,9 @@ msgstr "Résultat 1"
 msgid "Result 2"
 msgstr "Résultat 2"
 
+#. [notificationCategoryTypeSelect.ResultBased]
+#. defaultMessage is:
+#. Result Based
 #. [pages.NotificationDetail.type.ResultBased]
 #. defaultMessage is:
 #. Result Based
@@ -10071,6 +10278,9 @@ msgstr "septembre"
 #. [pages.NotificationDetail.sms]
 #. defaultMessage is:
 #. SMS
+#. [pages.Notifications.table.smsHeader]
+#. defaultMessage is:
+#. SMS
 #: extracted_strings.json
 msgid "SMS"
 msgstr "SMS"
@@ -10102,13 +10312,6 @@ msgstr "SMS envoyés ce mois"
 #: extracted_strings.json
 msgid "SMS Stats"
 msgstr "Statistiques sur les SMS"
-
-#. [pages.Notifications.table.smsSentTo]
-#. defaultMessage is:
-#. SMS was sent to:
-#: extracted_strings.json
-msgid "SMS was sent to:"
-msgstr "SMS a été envoyé à:"
 
 #. [filter.sampleType.sampleTypeSaliva]
 #. defaultMessage is:
@@ -10629,13 +10832,6 @@ msgstr "Envoyer au patient"
 msgid "Sender Operator"
 msgstr "Opérateur"
 
-#. [pages.Notifications.table.sentDetails]
-#. defaultMessage is:
-#. Sent details
-#: extracted_strings.json
-msgid "Sent details"
-msgstr "Détails de l'envoi"
-
 #. [pages.OperationalData.percentViaEmail]
 #. defaultMessage is:
 #. Sent via Email
@@ -10815,6 +11011,23 @@ msgstr "Afficher uniquement les résultats avec traitement requis"
 #: extracted_strings.json
 msgid "Show Only Transfers"
 msgstr "Afficher uniquement les transferts"
+
+#. [pages.Status.showPercentage]
+#. defaultMessage is:
+#. Show Percentage
+#: extracted_strings.json
+msgid "Show Percentage"
+msgstr "Afficher le pourcentage"
+
+#. [filter.popover.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
+#. [pages.filters.onlyErrors]
+#. defaultMessage is:
+#. Show only notifications with errors
+#: extracted_strings.json
+msgid "Show only notifications with errors"
+msgstr "Afficher uniquement les notifications d'erreurs"
 
 #. [pages.ReportIndex.no_stock_description]
 #. defaultMessage is:
@@ -11206,17 +11419,17 @@ msgstr "Le corps du SMS est requis"
 
 #. [pages.Notifications.smsLength]
 #. defaultMessage is:
-#. Sms body shouldn't have no more than 144 characters
+#. Sms body shouldn't have no more than 2000 characters
 #: extracted_strings.json
-msgid "Sms body shouldn't have no more than 144 characters"
-msgstr "Le corps du SMS ne doit pas contenir plus de 144 caractères"
+msgid "Sms body shouldn't have no more than 2000 characters"
+msgstr "Le corps du SMS ne doit pas comporter plus de 2000 caractères"
 
 #. [pages.NotificationDetail.smsBodyLimit]
 #. defaultMessage is:
-#. Sms message should not be longer than 144 characters
+#. Sms message should not be longer than 2000 characters
 #: extracted_strings.json
-msgid "Sms message should not be longer than 144 characters"
-msgstr "Le message SMS ne doit pas dépasser 144 caractères"
+msgid "Sms message should not be longer than 2000 characters"
+msgstr "Le message SMS ne doit pas comporter plus de 2000 caractères"
 
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
@@ -11311,10 +11524,10 @@ msgstr "Statut"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
-#. Stock not recorded
+#. Stock not recorded (GenXpert only)
 #: extracted_strings.json
-msgid "Stock not recorded"
-msgstr "Stock non enregistré"
+msgid "Stock not recorded (GenXpert only)"
+msgstr "Stock non enregistré (GenXpert uniquement)"
 
 #. [pages.SiteDetail.fieldBelongTo]
 #. defaultMessage is:
@@ -11385,13 +11598,6 @@ msgstr "Soumettre"
 #: extracted_strings.json
 msgid "Success"
 msgstr "Succès"
-
-#. [pages.Notifications.table.sentSuccessfully]
-#. defaultMessage is:
-#. Successfully
-#: extracted_strings.json
-msgid "Successfully"
-msgstr "Avec succès"
 
 #. [pages.ReportIndex.reportTBWorkloadSummary_description]
 #. defaultMessage is:
@@ -11642,6 +11848,13 @@ msgstr "Liste de tâche"
 msgid "Tasks"
 msgstr "Les tâches"
 
+#. [p.PkDashboard.TbTotal]
+#. defaultMessage is:
+#. Tb Total
+#: extracted_strings.json
+msgid "Tb Total"
+msgstr "Tb Total"
+
 #. [p.PkDashboard.xdrLastDay]
 #. defaultMessage is:
 #. Tb cases diagnosed in last 24 hours
@@ -11881,22 +12094,20 @@ msgstr ""
 
 #. [component.Widget.averageRecipientsOfSmsDescription]
 #. defaultMessage is:
-#. The average number of SMS recipients per positive GeneXpert result.
+#. The average number of SMS recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of SMS recipients per positive GeneXpert result."
-msgstr ""
-"Le nombre moyen de destinataires de SMS par résultat GeneXpert positif."
+msgid "The average number of SMS recipients per positive result."
+msgstr "Le nombre moyen de destinataires de SMS par résultat positif."
 
 #. [component.Widget.averageLengthOfSmsDescription]
 #. defaultMessage is:
-#. The average number of characters in SMS messages sent about positive GeneXpert results.
+#. The average number of characters in SMS messages sent about positive results.
 #: extracted_strings.json
 msgid ""
-"The average number of characters in SMS messages sent about positive "
-"GeneXpert results."
+"The average number of characters in SMS messages sent about positive results."
 msgstr ""
-"Le nombre moyen de caractères dans les messages SMS envoyés à propos de "
-"résultats GeneXpert positifs."
+"Le nombre moyen de caractères dans les messages SMS envoyés au sujet des "
+"résultats positifs."
 
 #. [component.Widget.averageDaysModuleSwapDescription]
 #. defaultMessage is:
@@ -11918,26 +12129,26 @@ msgstr ""
 
 #. [component.Widget.instrumentsReplacedDescription]
 #. defaultMessage is:
-#. The average number of days between when an instrument serial last reported from a device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
+#. The average number of days between when an instrument serial last reported from a GeneXpert device and a new instrument serial reporting. An Instrument is marked as replaced when two consecutive results performed in the same device, have a different Instrument serial number
 #: extracted_strings.json
 msgid ""
 "The average number of days between when an instrument serial last reported "
-"from a device and a new instrument serial reporting. An Instrument is marked "
-"as replaced when two consecutive results performed in the same device, have "
-"a different Instrument serial number"
+"from a GeneXpert device and a new instrument serial reporting. An Instrument "
+"is marked as replaced when two consecutive results performed in the same "
+"device, have a different Instrument serial number"
 msgstr ""
-"Le nombre moyen de jours entre le dernier rapport de série d'un instrument "
-"provenant d'un appareil et le rapport de série d'un nouvel instrument. Un "
-"instrument est marqué comme remplacé lorsque deux résultats consécutifs "
-"effectués dans le même appareil ont un numéro de série d'instrument différent"
+"Le nombre moyen de jours entre le dernier rapport d'un numéro de série "
+"d'instrument d'un appareil GeneXpert et le rapport d'un nouveau numéro de "
+"série d'instrument. Un instrument est considéré comme remplacé lorsque deux "
+"résultats consécutifs obtenus avec le même appareil ont un numéro de série "
+"différent"
 
 #. [component.Widget.averageRecipientsOfEmailDescription]
 #. defaultMessage is:
-#. The average number of email recipients per positive GeneXpert result.
+#. The average number of email recipients per positive result.
 #: extracted_strings.json
-msgid "The average number of email recipients per positive GeneXpert result."
-msgstr ""
-"Nombre moyen de destinataires d'e-mails par résultat GeneXpert positif."
+msgid "The average number of email recipients per positive result."
+msgstr "Le nombre moyen de destinataires d'e-mails par résultat positif."
 
 #. [component.Widget.averageTimeToModuleReplacementDescription]
 #. defaultMessage is:
@@ -12002,6 +12213,31 @@ msgstr "Le nom de la notification est requis"
 msgid "The notification type is required"
 msgstr "Le type de notification est requis"
 
+#. [component.Widget.deviceCalibrationPastDueDescription]
+#. defaultMessage is:
+#. The number of GeneXpert instruments that had their last calibration more than one year ago.
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert instruments that had their last calibration more "
+"than one year ago."
+msgstr ""
+"Nombre d'instruments GeneXpert dont le dernier étalonnage remonte à plus "
+"d'un an."
+
+#. [component.Widget.moduleSwapsDescription]
+#. defaultMessage is:
+#. The number of GeneXpert module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
+#: extracted_strings.json
+msgid ""
+"The number of GeneXpert module swaps made at the current month. The module "
+"swap issue appears when two consecutive results performed in the same slot "
+"have a different module serial number"
+msgstr ""
+"Le nombre de permutations de modules GeneXpert effectuées pendant le mois en "
+"cours. Le problème de permutation de module apparaît lorsque deux résultats "
+"consécutifs effectués dans le même emplacement ont un numéro de série de "
+"module différent"
+
 #. [component.Widget.geneXpertDevices]
 #. defaultMessage is:
 #. The number of approved GeneXpert devices (excluding decommissioned devices).
@@ -12055,30 +12291,6 @@ msgstr ""
 "et le mois précédent. Un dispositif subit une interruption de service "
 "lorsqu'il est signalé comme \"en panne pour réparation\" pour son état de "
 "maintenance."
-
-#. [component.Widget.deviceCalibrationPastDueDescription]
-#. defaultMessage is:
-#. The number of instruments that had their last calibration more than one year ago.
-#: extracted_strings.json
-msgid ""
-"The number of instruments that had their last calibration more than one year "
-"ago."
-msgstr ""
-"Le nombre d'instruments qui ont eu leur dernier étalonnage il y a plus d'un "
-"an."
-
-#. [component.Widget.moduleSwapsDescription]
-#. defaultMessage is:
-#. The number of module swaps made at the current month. The module swap issue appears when two consecutive results performed in the same slot have a different module serial number
-#: extracted_strings.json
-msgid ""
-"The number of module swaps made at the current month. The module swap issue "
-"appears when two consecutive results performed in the same slot have a "
-"different module serial number"
-msgstr ""
-"Le nombre d'échanges de modules effectués au cours du mois actuel. Le "
-"problème d'échange de modules apparaît lorsque deux résultats consécutifs "
-"effectués dans le même emplacement ont un numéro de série de module différent"
 
 #. [component.Widget.confirmedCasesDescription]
 #. defaultMessage is:
@@ -12179,27 +12391,26 @@ msgstr ""
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
-#. The percentage of calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
+#. The percentage of GeneXpert calibrations that were within 30 days of the scheduled date. Note that this only counts calibrations for devices that had a calibration record before.
 #: extracted_strings.json
 msgid ""
-"The percentage of calibrations that were within 30 days of the scheduled "
-"date. Note that this only counts calibrations for devices that had a "
-"calibration record before."
+"The percentage of GeneXpert calibrations that were within 30 days of the "
+"scheduled date. Note that this only counts calibrations for devices that had "
+"a calibration record before."
 msgstr ""
-"Le pourcentage d'étalonnages effectués dans les 30 jours suivant la date "
-"prévue. Notez que cela ne compte que les étalonnages pour les appareils qui "
-"avaient un enregistrement d'étalonnage auparavant."
+"Le pourcentage d'étalonnages du GeneXpert qui ont eu lieu dans les 30 jours "
+"suivant la date prévue. Il convient de noter que ce chiffre ne tient compte "
+"que des étalonnages effectués sur des appareils ayant déjà fait l'objet d'un "
+"enregistrement d'étalonnage."
 
 #. [component.Widget.gxPositiveResultsNotifiedDescription]
 #. defaultMessage is:
-#. The percentage of positive GeneXpert's results that were notified via SMS or email.
+#. The percentage of positive results that were notified via SMS or email.
 #: extracted_strings.json
-msgid ""
-"The percentage of positive GeneXpert's results that were notified via SMS or "
-"email."
+msgid "The percentage of positive results that were notified via SMS or email."
 msgstr ""
-"Le pourcentage de résultats positifs de GeneXpert qui ont été notifiés par "
-"SMS ou e-mail."
+"Le pourcentage de résultats positifs qui ont été notifiés par SMS ou par "
+"courriel."
 
 #. [pages.OperationalData.percentReportedDescription]
 #. defaultMessage is:
@@ -12764,6 +12975,9 @@ msgstr "Basculer la confirmation de l'état"
 msgid "Topic"
 msgstr "Sujet"
 
+#. [pages.Status.total]
+#. defaultMessage is:
+#. Total
 #. [legends.Unknown.Total]
 #. defaultMessage is:
 #. Total
@@ -12792,10 +13006,10 @@ msgstr "Total des cas"
 msgid "Total Errors"
 msgstr "Total des erreurs"
 
-#. [pages.OperationalData.cntAll]
+#. [reporters.totalResults]
 #. defaultMessage is:
 #. Total Results
-#. [reporters.totalResults]
+#. [pages.OperationalData.cntAll]
 #. defaultMessage is:
 #. Total Results
 #. [performance.barChart.results]
@@ -13046,6 +13260,13 @@ msgstr "Tuberculose"
 #: extracted_strings.json
 msgid "Tuesday"
 msgstr "Mardi"
+
+#. [pages.Notifications.table.notificationsTableHeaderType]
+#. defaultMessage is:
+#. Type
+#: extracted_strings.json
+msgid "Type"
+msgstr "Type"
 
 #. [pages.resultEdit.PatientHistoryI18nKey]
 #. defaultMessage is:
@@ -13348,6 +13569,13 @@ msgstr "Web"
 msgid "Web Body"
 msgstr "Corps Web"
 
+#. [pages.Notifications.table.notificationsTableHeaderWebHook]
+#. defaultMessage is:
+#. Web Hook
+#: extracted_strings.json
+msgid "Web Hook"
+msgstr "Crochet Web"
+
 #. [pages.NotificationDetail.webUrl]
 #. defaultMessage is:
 #. Web Url
@@ -13375,6 +13603,13 @@ msgstr "L'URL Web a un format non valide"
 #: extracted_strings.json
 msgid "Web url is required"
 msgstr "L'URL Web est requise"
+
+#. [pages.Notifications.table.notificationsTableWebhookRecepient]
+#. defaultMessage is:
+#. Webhook Recepient
+#: extracted_strings.json
+msgid "Webhook Recepient"
+msgstr "Récepteur Webhook"
 
 #. [pages.Notifications.table.webhookSentHeader]
 #. defaultMessage is:
@@ -13459,13 +13694,6 @@ msgstr "Lorsque l'appareil est hors ligne depuis plus de ..."
 #: extracted_strings.json
 msgid "When the result is"
 msgstr "Lorsque le résultat est"
-
-#. [pages.Notifications.table.sentWithErrors]
-#. defaultMessage is:
-#. With errors
-#: extracted_strings.json
-msgid "With errors"
-msgstr "Avec erreurs"
 
 #. [pages.OperationalData.percentWithin2Hours]
 #. defaultMessage is:
@@ -13578,12 +13806,26 @@ msgstr "Rapport sur les patients Xpert"
 msgid "Xpert Site Detailed Report"
 msgstr "Rapport détaillé du site Xpert"
 
+#. [pages.ReportIndex.xpert_site_summary_site_wise_report]
+#. defaultMessage is:
+#. Xpert Site Summary Report - Site Wise
+#: extracted_strings.json
+msgid "Xpert Site Summary Report - Site Wise"
+msgstr "Rapport de synthèse du site Xpert - Site Wise"
+
 #. [pages.ReportIndex."xpertTestActivitiesReport"]
 #. defaultMessage is:
 #. Xpert Test Activities Report
 #: extracted_strings.json
 msgid "Xpert Test Activities Report"
 msgstr "Rapport d'activités de test Xpert"
+
+#. [pages.ReportIndex.xpert_workload_summary_report]
+#. defaultMessage is:
+#. Xpert Workload Summary Report
+#: extracted_strings.json
+msgid "Xpert Workload Summary Report"
+msgstr "Rapport de synthèse sur la charge de travail de l'Xpert"
 
 #. [pages.dateRangeSelector.year]
 #. defaultMessage is:
@@ -13640,6 +13882,15 @@ msgstr "Oui, supprimez-le"
 #: extracted_strings.json
 msgid "Yesterday"
 msgstr "Hier"
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.resolution]
+#. defaultMessage is:
+#. You can contact us to check your account by email ({supportEmail})
+#: extracted_strings.json
+msgid "You can contact us to check your account by email ({supportEmail})"
+msgstr ""
+"Vous pouvez nous contacter pour vérifier votre compte par email "
+"({supportEmail})"
 
 #. [errorResponseMessages.loginStart.POST.403.accountLocked.resolution]
 #. defaultMessage is:
@@ -13776,6 +14027,17 @@ msgid ""
 msgstr ""
 "Votre compte doit encore être configuré avant que vous puissiez utiliser le "
 "système. Veuillez contacter votre administrateur."
+
+#. [errorResponseMessages.loginStart.POST.417.missingPermissions.message]
+#. defaultMessage is:
+#. Your credentials were not configured properly. Please, contact your administrator.
+#: extracted_strings.json
+msgid ""
+"Your credentials were not configured properly. Please, contact your "
+"administrator."
+msgstr ""
+"Vos informations d'identification n'ont pas été configurées correctement. "
+"Veuillez contacter votre administrateur."
 
 #. [pages.ResetPassword.finishContent]
 #. defaultMessage is:
@@ -14443,13 +14705,52 @@ msgstr "{unit} semaine dernière"
 msgid "{unit} total calibrations"
 msgstr "{unit} total des étalonnages"
 
-#. [pages.DailyStatus.DailyStatusClinicDay.toolTipTitleWithPercentageSplit]
-#. defaultMessage is:
-#. {value} ({records}/{total, plural, one {# result} other {# results} })
-#: extracted_strings.json
-msgid "{value} ({records}/{total, plural, one {# result} other {# results} })"
-msgstr ""
-"{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
+#~ msgid "Email was sent to:"
+#~ msgstr "L’e-mail a été envoyé à :"
+
+#~ msgid "Pending"
+#~ msgstr "En attente"
+
+#~ msgid "Recipients"
+#~ msgstr "Destinataires"
+
+#~ msgid "SMS was sent to:"
+#~ msgstr "SMS a été envoyé à:"
+
+#~ msgid "Sent details"
+#~ msgstr "Détails de l'envoi"
+
+#~ msgid "Successfully"
+#~ msgstr "Avec succès"
+
+#~ msgid "With errors"
+#~ msgstr "Avec erreurs"
+
+#~ msgid "Click to view results in table format"
+#~ msgstr "Cliquez pour afficher les résultats sous forme de tableau"
+
+#~ msgid "Could Not Load All Sites"
+#~ msgstr "Impossible de charger tous les sites"
+
+#~ msgid "Could Not Transfer Result"
+#~ msgstr "Impossible de transférer le résultat"
+
+#~ msgid "Error Loading All Sites"
+#~ msgstr "Erreur de chargement de tous les sites"
+
+#~ msgid "Error Transferring Result"
+#~ msgstr "Erreur de transfert du résultat"
+
+#~ msgid ""
+#~ "{value} ({records}/{total, plural, one {# result} other {# results} })"
+#~ msgstr ""
+#~ "{value} ({records}/{total, plural, one {# résultat} other {# résultats} })"
+
+#~ msgid "Current FQ Detection (Pending)"
+#~ msgstr "Détection actuelle du quotient familial (en attente)"
+
+#~ msgid "HIV (Pending)"
+#~ msgstr "VIH (en attente)"
 
 #~ msgid "Current FQ Trends"
 #~ msgstr "Tendances actuelles du quotient familial"
@@ -15041,8 +15342,8 @@ msgstr ""
 #~ msgstr "Guide de style"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for "
-#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for repair"
+#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."
@@ -15300,9 +15601,6 @@ msgstr ""
 
 #~ msgid "Regional Progress Indicators"
 #~ msgstr "Indicateurs de progrès régionaux"
-
-#~ msgid "Reporter Name"
-#~ msgstr "Nom du reporter"
 
 #~ msgid "STOCK LEVEL:"
 #~ msgstr "NIVEAU DE STOCK:"

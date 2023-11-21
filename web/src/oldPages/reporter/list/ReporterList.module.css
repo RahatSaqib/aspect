@@ -1,0 +1,19 @@
+@import '../../../theme/variables.css';
+
+.Container {
+  padding: 10px;
+  width: 100%;
+}
+
+.ReporterDataTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
+}
+
+.site__details {
+  color: var(--ming, #34717c);
+  text-align: center;
+  padding: 5px;
+  text-decoration: underline;
+}

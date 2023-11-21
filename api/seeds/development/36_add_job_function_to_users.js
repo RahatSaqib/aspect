@@ -41,37 +41,17 @@ async function seed(knex) {
 
   const { id: geographyId } = await knex('Geography').where({ countryId: country.id }).first('id')
 
-  const checkJobEd = await knex('Job').where({
+  const checkJobEd = await knex('JobContext').where({
     personId: personIds.jon,
     jobFunctionId: jobFunctionClinical.id,
   })
 
   if (checkJobEd.length < 1) {
-    const [jobIdEd] = await knex('Job').insert({
-      personId: personIds.ed,
-      jobFunctionId: jobFunctionManager.id,
-    })
-
-    const [jobIdJim] = await knex('Job').insert({
-      personId: personIds.jim,
-      jobFunctionId: jobFunctionLabManager.id,
-    })
-
-    const [jobIdJon] = await knex('Job').insert({
-      personId: personIds.jon,
-      jobFunctionId: jobFunctionClinical.id,
-    })
-
-    const [jobIdSteve] = await knex('Job').insert({
-      personId: personIds.steve,
-      jobFunctionId: jobFunctionClinical.id,
-    })
-
     await knex('JobContext').insert([
-      { jobId: jobIdEd, geographyId },
-      { jobId: jobIdJim, geographyId },
-      { jobId: jobIdJon, geographyId },
-      { jobId: jobIdSteve, geographyId },
+      { personId: personIds.ed, jobFunctionId: jobFunctionManager.id, geographyId },
+      { personId: personIds.jim, jobFunctionId: jobFunctionLabManager.id, geographyId },
+      { personId: personIds.jon, jobFunctionId: jobFunctionClinical.id, geographyId },
+      { personId: personIds.steve, jobFunctionId: jobFunctionClinical.id, geographyId },
     ])
   }
 }

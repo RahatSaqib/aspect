@@ -1,12 +1,9 @@
 import React from 'react'
 import { Chip } from '@mui/material'
-import classnames from 'classnames/bind'
 import { array, func, oneOfType } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
-import styles from '../../Table.css'
+import { useIntl } from 'react-intl'
+import styles from '../../Table.module.css'
 import messages from '../messages'
-
-const cssClasses = classnames.bind(styles)
 
 const getProperColumnLabelFromKey = (key, columns) => {
   const columnArray = columns.filter(({ accessor }) => accessor === key)
@@ -21,16 +18,16 @@ const getProperColumnLabelFromKey = (key, columns) => {
  */
 
 const TableHiddenColumns = ({ columns, hiddenColumns, handleHideColumnToggle }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
-    <div className={cssClasses('hiddenColumn__container')}>
+    <div className={styles.hiddenColumn__container}>
       {formatMessage(messages.hiddenColumns)}
       {hiddenColumns.map(column => (
         <Chip
           key={column}
           label={`${getProperColumnLabelFromKey(column, columns)}`}
           onDelete={e => handleHideColumnToggle(e, column)}
-          className={cssClasses('hiddenColumn__chip')}
+          className={styles.hiddenColumn__chip}
         />
       ))}
     </div>

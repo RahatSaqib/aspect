@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useFormikContext } from 'formik'
 import { useLocation, useParams } from 'react-router-dom'
-import { useAuthState } from '../../providers/AuthProvider'
+import useAuthState from '../../hooks/useAuthState'
 import ACTION from './constants'
 
 export const DirtyStepsContext = React.createContext(undefined)
@@ -10,19 +10,19 @@ export const FormStatusContext = React.createContext(undefined)
 
 export const FormStatusProvider = props => {
   const { personId } = useParams()
-  const { userId: loggedInUserId } = useAuthState()
+  const { personId: loggedInPersonId } = useAuthState()
   const { search } = useLocation()
   const isRecentlyAdd = useMemo(() => new URLSearchParams(search).get('add'), [search])
   const id = useMemo(
     () =>
       personId
-        ? personId === loggedInUserId
+        ? personId === loggedInPersonId
           ? ACTION.SELF
           : personId !== ACTION.ADD
           ? personId
           : ACTION.ADD
         : ACTION.SELF,
-    [loggedInUserId, personId]
+    [loggedInPersonId, personId]
   )
 
   const isAdding = useMemo(() => id === ACTION.ADD || isRecentlyAdd, [id, isRecentlyAdd])

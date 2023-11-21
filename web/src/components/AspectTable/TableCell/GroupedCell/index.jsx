@@ -1,14 +1,11 @@
 import React from 'react'
 import { IconButton } from '@mui/material'
-import classnames from 'classnames/bind'
 import { array, bool, func, number, object, oneOfType, shape, string } from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import IconProvider from '../../../IconProvider'
-import styles from '../../Table.css'
+import styles from '../../Table.module.css'
 import Cell from '../Cell'
 import messages from '../messages'
-
-const cssClasses = classnames.bind(styles)
 
 /**
  * Component to render a grouped cell
@@ -22,12 +19,12 @@ const GroupedCell = ({
   subRows: { length: subRowsLength },
   value,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
-    <div className={cssClasses('tablecell__grouped')}>
+    <div className={styles.tablecell__grouped}>
       <IconButton
         {...getToggleRowExpandedProps()}
-        className={cssClasses('tablecell__expandbutton')}
+        className={styles.tablecell__expandbutton}
         title={formatMessage(messages.expandRow)}
       >
         {isExpanded ? <IconProvider icon="MdUnfoldLess" /> : <IconProvider icon="MdUnfoldMore" />}

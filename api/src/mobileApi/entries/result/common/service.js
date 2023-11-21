@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const {
-  countAllAwaitingTreatment,
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,
@@ -9,7 +8,7 @@ const {
   getFlagsByResultIds,
   getUserSiteIds,
 } = require('./db')
-const { getAllSamplesRegistered } = require('../../sample/common/db')
+const { getAllSamplesRegistered, getTransferHistory } = require('../../sample/common/db')
 const { setDeliveredResultWorkflowStatuses } = require('../../common/consts')
 const { transformSampleResponse } = require('./helpers/transformSampleResponse')
 const { transformResultResponse } = require('./helpers/transformResultResponse')
@@ -21,15 +20,25 @@ const {
   insertResultWorkflowLogQuery,
   updateResultWorkflowLogQuery,
 } = require('../../../result/common/db')
+const { getSitesQuery } = require('../../../../site/service')
 
 const addResultDownloadLog = async (idsToBeRegistered, userId) => {
   const now = new Date()
-  return Promise.each(idsToBeRegistered, async resultId => addResultDownloadLogQuery(resultId, now, userId))
+  const resultDownloadLogs = idsToBeRegistered.map(resultId => {
+    return {
+      resultId,
+      createdOn: now,
+      createdBy: userId,
+    }
+  })
+
+  return addResultDownloadLogQuery(resultDownloadLogs)
 }
 
 const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkflowStatusExternalId) => {
   const { id: resultWorkflowStatusId } = await getResultWorkflowStatusQuery(resultWorkflowStatusExternalId)
   const now = new Date()
+
   return Promise.each(resultIdsToUpdate, async resultId => {
     const [resultWorkflowStatusLogId] = await insertResultWorkflowLogQuery(
       resultId,
@@ -44,35 +53,77 @@ const updateResultWorkflowStatus = async (resultIdsToUpdate, userId, resultWorkf
 async function fetchEntriesServiceHandler(request) {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-  const samples = await getAllSamplesRegistered(query, dataConstraints)
-  const results = await fetchResultsByUpdatedOnQuery(query, dataConstraints)
-  const acknowledgements = await getAcknowledgementsByResultIds(results)
-  const flags = await getFlagsByResultIds(results)
-  const userSiteIds = await getUserSiteIds(dataConstraints)
-  const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
-  const user = await getUser(auth.credentials.name)
-  await addResultDownloadLog(resultIdsToBeRegistered, user.id)
-  const resultIdsToUpdate = _.uniq(
-    results
-      .filter(result => setDeliveredResultWorkflowStatuses.includes(result.resultWorkflowStatusExternalId))
-      .map(result => result.id)
+
+  // get resultIds of transferred result
+  const resultTransferHistory = await getTransferHistory(dataConstraints)
+
+  const userViewOnlyTransferredResultIds = resultTransferHistory.map(record => record.resultId)
+
+  const clinics = await getSitesQuery(dataConstraints).select('s.id')
+  const clinicIds = clinics.map(c => c.id)
+  const samples = await getAllSamplesRegistered(query, clinicIds)
+  const results = await fetchResultsByUpdatedOnQuery(
+    query,
+    clinicIds,
+    dataConstraints,
+    userViewOnlyTransferredResultIds
   )
-  await updateResultWorkflowStatus(resultIdsToUpdate, user.id, 'Delivered')
-  const followUps = await getFollowUpsByResultIds(results)
-  const comments = await getCommentsOfResultById(results)
-  const awaitingTreatment = await countAllAwaitingTreatment(dataConstraints)
-  const transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
-  const transformedSamples = transformSampleResponse(query, samples, transformedResults)
+
+  let transformedResults = []
+  if (!_.isEmpty(results)) {
+    const acknowledgements = await getAcknowledgementsByResultIds(results)
+    const flags = await getFlagsByResultIds(results)
+    const userSiteIds = await getUserSiteIds(dataConstraints)
+    const resultIdsToBeRegistered = _.uniq(results.map(result => result.id))
+    const user = await getUser(auth.credentials.name)
+    await addResultDownloadLog(resultIdsToBeRegistered, user.id)
+
+    const resultIdsToUpdate = _.uniq(
+      results
+        .filter(result => setDeliveredResultWorkflowStatuses.includes(result.resultWorkflowStatusExternalId))
+        .map(result => result.id)
+    )
+    await updateResultWorkflowStatus(resultIdsToUpdate, user.id, 'Delivered')
+
+    const followUps = await getFollowUpsByResultIds(results)
+    const comments = await getCommentsOfResultById(results)
+    transformedResults = transformResultResponse(results, followUps, comments, acknowledgements, flags, userSiteIds)
+  }
+
+  const mergedResultData = transformedResults.reduce((mergedResults, result) => {
+    const existingObj = mergedResults.find(item => item.id === result.id)
+
+    if (existingObj) {
+      const uniqueHistory = new Set(existingObj.history.map(JSON.stringify))
+
+      result.history.forEach(history => {
+        if (history.event === 'transferEvent' && !uniqueHistory.has(JSON.stringify(history))) {
+          uniqueHistory.add(JSON.stringify(history))
+          existingObj.history.push(history)
+        }
+      })
+
+      existingObj.history.sort((historyA, historyB) => new Date(historyB.updatedOn) - new Date(historyA.updatedOn))
+    } else {
+      mergedResults.push(result)
+    }
+    return mergedResults
+  }, [])
+
+  const transformedSamples = transformSampleResponse(query, samples, mergedResultData)
+
   const entries = _.orderBy(
-    _.concat(_.uniqBy(transformedResults, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
+    _.concat(_.uniqBy(mergedResultData, 'id'), _.uniqBy(transformedSamples, 'id')).filter(_.identity),
     ['updatedOn'],
     ['desc']
   )
 
+  const awaitingTreatment = _.countBy(entries, 'requiresFollowUp')
+
   return {
     ok: !!entries,
     total: _.size(entries),
-    awaitingTreatment: awaitingTreatment.count,
+    awaitingTreatment: awaitingTreatment.true || 0,
     data: entries,
   }
 }

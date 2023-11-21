@@ -1,6 +1,7 @@
 const CaseSensitivePathsPlugin = require('case-sensitive-paths-webpack-plugin')
 const CompressionPlugin = require('compression-webpack-plugin')
 const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
+const Dotenv = require('dotenv-webpack')
 const MiniCssExtractPlugin = require('mini-css-extract-plugin')
 const TerserPlugin = require('terser-webpack-plugin')
 const webpack = require('webpack')
@@ -34,6 +35,11 @@ const config = () => {
     devtool: false,
     plugins: [
       new webpack.EnvironmentPlugin(['NODE_ENV', 'ASPECT_TARGET']),
+      new Dotenv({
+        path: './.env.production',
+        allowEmptyValues: true,
+        prefix: 'process.env.',
+      }),
       /**
        * extracts CSS into separate files
        * see https://webpack.js.org/plugins/mini-css-extract-plugin/

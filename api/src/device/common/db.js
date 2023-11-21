@@ -33,6 +33,9 @@ const SELECT_SHOW_FIELDS = [
   'd.hostId',
   'd.deviceTypeId',
   'd.deviceApprovalId',
+  'd.instrumentsConnected',
+  'd.gx6cModulesCount',
+  'd.gx10cModulesCount',
   'd.configurationData',
   'd.notes',
   'd.serial',
@@ -50,6 +53,7 @@ const SELECT_SHOW_FIELDS = [
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
   knex.raw('ifnull(frd60Errors.resultCount, 0) as errorCount60'),
   knex.raw("dmsl.data->>'$.options.data.notes' as maintenanceStatusNotes"),
+  knex.raw("dmsl.data->>'$.options.data.expectedBackOnline' as expectedBackOnline"),
   'dmC.contextDate as calibrationDate',
   'dmC.notes as calibrationNotes',
   'dmW.contextDate as warrantyDueDate',
@@ -472,6 +476,12 @@ async function deleteMessages(deviceId, trknex) {
   await trknex('WebhookMessage').where('deviceId', deviceId).del()
 }
 
+async function deleteMissingInventoryLots(deviceId, trknex) {
+  await trknex('MissingInventoryLots')
+    .whereIn('resultId', knex('Result').where('deviceId', deviceId).select('id'))
+    .del()
+}
+
 async function deleteResults(deviceId, trknex) {
   await trknex('Result').where('deviceId', deviceId).del()
 }
@@ -775,4 +785,5 @@ module.exports = {
   modulesWithLastResultBeforeMinDate,
   getDeviceByIdBaseQuery,
   getLastUploadDateBySites,
+  deleteMissingInventoryLots,
 }

@@ -26,7 +26,7 @@ const {
 } = require('./device')
 const { deviceSeen } = require('../device/actions')
 const { mergeResult } = require('./result')
-const { loadPlugin } = require('../plugin/registration')
+const { loadPlugin } = require('../plugin/loadPlugin')
 const { shouldTriggerHardwareErrorAnalysis, shouldLogDeviceCalibration } = require('../plugin/utils')
 const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')
@@ -65,8 +65,12 @@ const addDeviceOperationHandler = deviceApiHandler(addDeviceOperationWithContext
 
 const mergeResultHandler = deviceApiHandler(mergeResultWithContext)
 
-async function getHandlerOptionsFromContext(handler, { pluginNames: plugins = [] }, defaultHandlerOptions = {}) {
-  const handlerOptionGroups = await loadPlugin(plugins, 'handlerOptions')
+async function getHandlerOptionsFromContext(
+  handler,
+  { partnerPluginName, deviceTypePluginName },
+  defaultHandlerOptions = {}
+) {
+  const handlerOptionGroups = await loadPlugin(partnerPluginName, deviceTypePluginName, 'handlerOptions')
   return _.merge({}, defaultHandlerOptions, handlerOptionGroups[handler.name] || {})
 }
 
@@ -75,7 +79,6 @@ async function getHandlerOptionsFromRequest(
   { auth = { credentials: {} }, type = {} },
   defaultHandlerOptions = {}
 ) {
-  let plugins = []
   let partnerPluginName
   let deviceTypePluginName
   const {
@@ -103,13 +106,7 @@ async function getHandlerOptionsFromRequest(
         .where('dt.externalId', deviceTypeId)
         .first('dt.plugin as deviceTypePluginName')) || {})
   }
-  if (partnerPluginName) {
-    plugins = [...plugins, partnerPluginName]
-  }
-  if (deviceTypePluginName) {
-    plugins = [...plugins, deviceTypePluginName]
-  }
-  const handlerOptionGroups = await loadPlugin(plugins, 'handlerOptions')
+  const handlerOptionGroups = await loadPlugin(partnerPluginName, deviceTypePluginName, 'handlerOptions')
   return _.merge({}, defaultHandlerOptions, handlerOptionGroups[handler.name] || {})
 }
 
@@ -196,12 +193,12 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}, isFastImport = fa
 }
 
 async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
-  const { knex, pluginNames: plugins, device, payload } = context
+  const { knex, partnerPluginName, deviceTypePluginName, device, payload } = context
   const { updatePing = false } = handlerOptions
 
   const deviceUpdates = {}
 
-  const getDeviceSeenOn = await loadPlugin(plugins, 'getDeviceSeenOn')
+  const getDeviceSeenOn = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getDeviceSeenOn')
   const deviceSeenOn = await getDeviceSeenOn(context)
   if (deviceSeenOn != null) {
     logger.debug('update deviceSeenOn', {
@@ -218,7 +215,7 @@ async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
       reLabel: 'deviceApi:updateDeviceData',
     })
 
-    const getDevicePingOn = await loadPlugin(plugins, 'getDevicePingOn')
+    const getDevicePingOn = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getDevicePingOn')
     const devicePingOn = await getDevicePingOn(context)
     if (devicePingOn != null) {
       deviceUpdates.lastPingOn = devicePingOn
@@ -236,12 +233,12 @@ async function updateDeviceData(context, handlerOptions = {}, remoteAddress) {
 
 async function addDeviceDataWithContext(context) {
   let response = {}
-  const { pluginNames: plugins } = context
+  const { partnerPluginName, deviceTypePluginName } = context
 
   logger.debug("Loading device plugin's preProcessAddDeviceData", {
     reLabel: 'deviceApi:preProcessAddDeviceData',
   })
-  const preProcessAddDeviceData = await loadPlugin(plugins, 'preProcessAddDeviceData')
+  const preProcessAddDeviceData = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessAddDeviceData')
   logger.debug('Processing preProcessAddDeviceData', {
     reLabel: 'deviceApi:preProcessAddDeviceData',
   })
@@ -516,12 +513,13 @@ async function addDeviceOperationWithContext(context) {
     payload,
     device: { id: deviceId },
     now,
-    pluginNames: plugins,
+    partnerPluginName,
+    deviceTypePluginName,
   } = context
   const op = await addDeviceOperation(knex, deviceId, payload, now)
   context.addDeviceLogUpdate('deviceOperationId', op.id)
 
-  const postProcess = await loadPlugin(plugins, 'postProcessAddDeviceOperation')
+  const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessAddDeviceOperation')
   const postProcessResult = await postProcess(context)
   return postProcessResult
 }
@@ -532,17 +530,18 @@ async function updateDeviceConfigurationWithContext(context) {
     payload,
     device: { id: deviceId },
     now,
-    pluginNames: plugins,
+    partnerPluginName,
+    deviceTypePluginName,
     messageContext,
   } = context
-  const preProcess = await loadPlugin(plugins, 'preProcessUpdateDeviceConfiguration')
+  const preProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessUpdateDeviceConfiguration')
   await preProcess(context)
 
   if (!context.isFastImport) {
     await updateDeviceConfiguration(knex, deviceId, payload, now, messageContext)
   }
   context.addDeviceLogUpdate('deviceConfigurationUpdated', true)
-  const postProcess = await loadPlugin(plugins, 'postProcessUpdateDeviceConfiguration')
+  const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessUpdateDeviceConfiguration')
   const postProcessResult = await postProcess(context)
 
   return postProcessResult
@@ -551,10 +550,11 @@ const getCustomFields = async context => {
   const {
     knex,
     device: { id: deviceId, partnerId },
-    pluginNames: plugins,
+    partnerPluginName,
+    deviceTypePluginName,
   } = context
   let CustomFields = null
-  const customFields = await loadPlugin(plugins, 'getCustomFields')
+  const customFields = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getCustomFields')
   if (customFields) CustomFields = _.get(await customFields(knex, partnerId, deviceId), 'CustomFields')
   return { CustomFields }
 }
@@ -569,7 +569,7 @@ async function getDeviceOperationWithContext(context) {
 }
 
 async function updateSiteWithContext(context) {
-  const { knex, actions, device, payload, now, pluginNames: plugins } = context
+  const { knex, actions, device, payload, now, partnerPluginName, deviceTypePluginName } = context
 
   const pluginContext = {
     knex,
@@ -580,7 +580,7 @@ async function updateSiteWithContext(context) {
     deviceId: device.id,
   }
 
-  const preProcessUpdateSite = await loadPlugin(plugins, 'preProcessUpdateSite')
+  const preProcessUpdateSite = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessUpdateSite')
   await preProcessUpdateSite(pluginContext)
 
   const siteExternalId = payload.id || null
@@ -630,7 +630,7 @@ async function updateSiteWithContext(context) {
     })
   }
 
-  const postProcessUpdateSite = await loadPlugin(plugins, 'postProcessUpdateSite')
+  const postProcessUpdateSite = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessUpdateSite')
   await postProcessUpdateSite(pluginContext, { id: site.id, externalId: siteExternalId }, { id: device.siteId })
 }
 
@@ -639,7 +639,8 @@ async function mergeResultWithContext(context) {
     knex,
     actions,
     device: { id: deviceId, deviceType },
-    pluginNames: plugins,
+    partnerPluginName,
+    deviceTypePluginName,
     payload,
     partnerId,
     now,
@@ -659,13 +660,13 @@ async function mergeResultWithContext(context) {
     userId,
   }
 
-  const preProcess = await loadPlugin(plugins, 'preProcessMergeResult')
+  const preProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessMergeResult')
   await preProcess(pluginContext)
 
-  const excludeResult = await loadPlugin(plugins, 'excludeResult')
+  const excludeResult = await loadPlugin(partnerPluginName, deviceTypePluginName, 'excludeResult')
   await excludeResult(pluginContext)
 
-  const transformPayload = await loadPlugin(plugins, 'transformMergeResultPayload')
+  const transformPayload = await loadPlugin(partnerPluginName, deviceTypePluginName, 'transformMergeResultPayload')
   const transformedPayload = await transformPayload(pluginContext)
   const {
     processedResult: plainResult,
@@ -674,7 +675,7 @@ async function mergeResultWithContext(context) {
     // changeFlags - This is going to be used when we implement the Sample ID and Patient ID based notification
   } = await mergeResult(knex, deviceId, transformedPayload, { now })
   context.addDeviceLogUpdate('resultId', plainResult.id)
-  const postProcess = await loadPlugin(plugins, 'postProcessMergeResult')
+  const postProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'postProcessMergeResult')
   const postProcessResult = await postProcess(pluginContext, plainResult, plainPreviousResult)
 
   // This is going to be used when we implement the Sample ID and Patient ID based notification
@@ -747,7 +748,7 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
     logger.debug('Set up transforminitialpayload plugin function', {
       reLabel: 'deviceApi:createDeviceApiContext',
     })
-    const transformInitialPayload = await loadPlugin([request.params.pluginName], 'transformInitialPayload')
+    const transformInitialPayload = await loadPlugin(undefined, request.params.pluginName, 'transformInitialPayload')
 
     if (existingDeviceAndData && existingDeviceAndData.countryAbbreviation) {
       logger.debug('Transforming the payload base on the function plugin', {
@@ -799,7 +800,8 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
     messageContext,
     deviceLogType,
     partnerId: partner.id,
-    pluginNames: [partner.partnerPluginName, device.deviceTypePluginName],
+    partnerPluginName: partner.partnerPluginName,
+    deviceTypePluginName: device.deviceTypePluginName,
   })
 
   // Add Device Log if requested
@@ -857,18 +859,21 @@ function createNewDeviceFromRequest(request, now) {
         error: Boom.notFound('Cannot find available API Key when creating new device'),
       }
     }
-    const deviceTypePlugin = await deviceTypeToPlugin(_.get(request, 'payload.type.id'))
-    const apiKey = _.assign({}, partnerApiKey, {
-      plugins: [_.get(partnerApiKey, 'plugin'), deviceTypePlugin],
-    })
+    const partnerPluginName = _.get(partnerApiKey, 'plugin')
+    const deviceTypePluginName = await deviceTypeToPlugin(_.get(request, 'payload.type.id'))
+    const apiKey = partnerApiKey
 
     // Require Device Type when creating device
-    const transformNewDevicePayload = await loadPlugin(apiKey.plugins, 'transformNewDevicePayload')
+    const transformNewDevicePayload = await loadPlugin(
+      partnerPluginName,
+      deviceTypePluginName,
+      'transformNewDevicePayload'
+    )
     const payload = await transformNewDevicePayload({
       payload: request.payload,
     })
 
-    const preProcessCreateDevice = await loadPlugin(apiKey.plugins, 'preProcessCreateDevice')
+    const preProcessCreateDevice = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessCreateDevice')
     const existingDevice = await preProcessCreateDevice(request, now)
 
     if (!_.isEmpty(existingDevice)) {
@@ -1015,7 +1020,7 @@ async function onResultLogged(action, context) {
         reLabel: 'deviceApi:onResultLogged',
       }
     )
-    const pluginOnResultLogged = await loadPlugin([partnerPluginName, deviceTypePluginName], 'onResultLogged')
+    const pluginOnResultLogged = await loadPlugin(partnerPluginName, deviceTypePluginName, 'onResultLogged')
     await pluginOnResultLogged(action, context)
     context.messageContext.queue.dispatch(resultLoggedProcessed(action.resultId, action.deviceLogId), undefined, {
       expiration: 60000,

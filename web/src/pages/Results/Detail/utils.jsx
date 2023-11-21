@@ -15,7 +15,6 @@ export const getFormConfigWithData = (intl, isNew, values) => {
   let validationSchema = getValidationSchema(intl.formatMessage)
 
   const totalCustomFields = values.customFields?.length || 0
-
   // if no custom fields just a placeholder just in case it changes in the future
   if (totalCustomFields === 0) {
     customFields.rows = [
@@ -40,8 +39,8 @@ export const getFormConfigWithData = (intl, isNew, values) => {
 function getRowsForCustomFields(values) {
   const id = 9000
   let rows = []
-  // show 3 cells per row
-  const cellsPerRow = 3
+  // show 2 cells per row
+  const cellsPerRow = 2
   let row = {}
   uniqBy(values.customFields, elem => elem.source).forEach((customField, index) => {
     if (index % cellsPerRow === 0) {
@@ -68,7 +67,10 @@ function getRowsForCustomFields(values) {
             .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined })),
         },
       })
-    } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
+    } else if (
+      customField.controlType === 'textBox' &&
+      (customField.fieldType === 'text' || customField.fieldType === 'phone')
+    ) {
       row.items.push({ ...baseItem, controlType: { component: 'textField' } })
     } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
       // assuming only one validation
@@ -80,6 +82,11 @@ function getRowsForCustomFields(values) {
       row.items.push({
         ...baseItem,
         controlType: { component: 'numberField', min: validation.min, max: validation.max },
+      })
+    } else if (customField.fieldType === 'datetime') {
+      row.items.push({
+        ...baseItem,
+        controlType: { component: 'datePicker' },
       })
     }
   })
@@ -160,14 +167,13 @@ const evaluateEnabledState = (itemBase, formik) => {
 
 // start filter logic
 const applyFilterToOption = (filter, option, formik, sourcePath) => {
-  const cleanList = isArray(option[filter.fieldToCompare])
-    ? option[filter.fieldToCompare].map(o => o.toLowerCase())
-    : option[filter.fieldToCompare].toLowerCase()
+  const data = option[filter.fieldToCompare]
+  if (!data) return
+
+  const cleanList = isArray(data) ? data : [data]
   const cleanValue = sanitizeValue(formik.values[sourcePath[0]][filter.propToCompare]).toLowerCase()
-  switch (filter.operator) {
-    case 'in':
-      return cleanList.includes(cleanValue)
-    default:
+  if (filter.operator === 'in') {
+    return cleanList.map(o => o.toLowerCase()).includes(cleanValue)
   }
 }
 
@@ -183,7 +189,7 @@ const calculateFilteredOptions = (itemBase, item, formik) => {
 }
 // end filter logic
 
-const enableItemAndFilter = (item, data, formik) => {
+const enableItemAndFilter = (item, data, formik, keepInvalidSelection) => {
   const idToUpdate = item.id
   const itemBase = data.find(itemBase => itemBase.source === idToUpdate)
 
@@ -206,11 +212,13 @@ const enableItemAndFilter = (item, data, formik) => {
         .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined }))
       item.controlType.dependencies = [itemBase.source]
 
-      // second, clear any invalid option from already selected values
-      const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
-      const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
-      if (!currentValidValues.includes(currentSelectdValue)) {
-        formik.values[field[0]][field[1]] = ''
+      if (!keepInvalidSelection) {
+        // second, clear any invalid option from already selected values
+        const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
+        const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
+        if (!currentValidValues.includes(currentSelectdValue)) {
+          formik.values[field[0]][field[1]] = ''
+        }
       }
     }
   }
@@ -218,17 +226,18 @@ const enableItemAndFilter = (item, data, formik) => {
   return item
 }
 
-export const updateValidationsAndFilters = (sections, data, formik) => {
+export const updateValidationsAndFilters = (sections, data, formik, keepInvalidSelection) => {
   return sections.map((section, index) => {
     // last section is custom fields
     if (index === sections.length - 1) {
       section = {
         ...section,
-        rows: section.rows.map(r => ({ ...r, items: r.items.map(item => enableItemAndFilter(item, data, formik)) })),
+        rows: section.rows.map(r => ({
+          ...r,
+          items: r.items.map(item => enableItemAndFilter(item, data, formik, keepInvalidSelection)),
+        })),
       }
     }
     return section
   })
 }
-
-export default getFormConfigWithData

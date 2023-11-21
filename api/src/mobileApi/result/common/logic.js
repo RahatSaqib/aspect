@@ -275,9 +275,6 @@ async function getResultByResultId(
       // full result text for the result details page
       data.fullResultText = data.resultData.resultText
     }
-    if (data.formSchema) {
-      data.formSchema = JSON.parse(data.formSchema)
-    }
 
     if (data.formData) {
       data.formData = JSON.parse(data.formData)
@@ -338,9 +335,13 @@ async function getResultByResultId(
 // Supporting function : getResultByResultId
 async function getCustomFieldsForResult(data) {
   const { deviceId, partnerId, partnerPluginName, deviceTypePluginName } = data
-  const pluginNames = [partnerPluginName, deviceTypePluginName]
   const { getCustomFields } = require('../../../deviceApi/service')
-  const customFieldsRaw = await getCustomFields({ knex, device: { id: deviceId, partnerId }, pluginNames })
+  const customFieldsRaw = await getCustomFields({
+    knex,
+    device: { id: deviceId, partnerId },
+    partnerPluginName,
+    deviceTypePluginName,
+  })
   let customFields = customFieldsRaw?.CustomFields?.Fields || []
   customFields = _.sortBy(customFields, ['DisplayOrder', 'Name'])
   const customFieldsValues = customFields.map(it => ({

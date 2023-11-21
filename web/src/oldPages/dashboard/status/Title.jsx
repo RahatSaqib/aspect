@@ -1,13 +1,10 @@
 import React from 'react'
-import classnames from 'classnames/bind'
-import styles from './index.css'
+import styles from './index.module.css'
 
-const cssClasses = classnames.bind(styles)
-
-export const Title = ({ className, icon, title }) => (
-  <div className={cssClasses('Title', className)}>
+const Title = ({ className, icon, title }) => (
+  <div className={`${styles.Title} ${styles[className]}`}>
     {icon}
-    <span className={cssClasses('Title__Label', className)}>{title}</span>
+    <span className={`${styles.Title__Label} ${styles[className]}`}>{title}</span>
   </div>
 )
 

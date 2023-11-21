@@ -1,20 +1,16 @@
-const flatten = require('flat')
-const { subDays } = require('date-fns')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const locales = require('date-fns/locale')
 const { endOfMonth, endOfYear, startOfMonth, subMonths, addMonths } = require('date-fns')
 
-const { getResultsForExport } = require('../service')
 const { knex } = require('../../db')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
 const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../../shared/excel')
 const { processGroupedQuery } = require('../../shared/query')
 
-const { getAllAssaySchemas } = require('../../assay/service')
-
 const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
+const getAllResultsReport = require('./getAllResultsReport')
 const getDataExtractReport = require('./dataExtractForTableau')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { getGroupBy, getClinicalIndicatorQueryForResultsTable } = require('../service')
@@ -41,95 +37,11 @@ const columnsDeviceErrorHistoryForAttachment = [
   { header: 'Error Code', key: 'errorCode' },
   { header: 'Error Message', key: 'errorMessage' },
 ]
-async function getAllResultsForExport(auth, query) {
-  const user = await getPersonByPersonId(auth.credentials.personId)
-
-  // get whole dataset - based on current query params (sorting, filtering) and auth constraints
-  // ---------------
-  // change query page/size values to get whole dataset (not only currently paged items)
-  query.page = 0
-  // For performance issues we are going to limit this report to max 50k results.
-  query.size = query.maxNumberOfRecords || 50000
-
-  // For performance issues this enforce to use the result_partner_endedOn_index Index, because it helps to reduce query time down to  60%
-  if (_.isNil(query.minDate)) query.minDate = subDays(new Date(query.maxDate), query.daysToSubstract || 360)
-
-  const { data, extraColumns = [], total } = await getResultsForExport(auth, query)
-  const { partnerId, id: userId } = user
-  const props = { query, partnerId, userId }
-  const columnsFromAssaySchema = await getColumnsFromAssaySchema(props)
-  const columnsFromResultForms = await getColumnsFromResultForms(props)
-  const columns = [
-    ..._.map(extraColumns, column => ({
-      key: column.db,
-      header: column.title,
-    })),
-    // TODO: move below items to Excel template for better formatting and translations
-    { key: 'deviceStateName', header: 'State' },
-    { key: 'caseExternalId', header: 'Case ID' },
-    { key: 'resultCategoryGroup', header: 'Result Category Group' },
-    { key: 'sampleId', header: 'Sample Id' },
-    { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
-    { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
-    { key: 'resultWorkflowStatus', header: 'Result Status' },
-    { key: 'resultWorkflowChangedOn', header: 'Result Status Changed On' },
-    { key: 'consumableSerial', header: 'Consumable Serial' },
-    { key: 'consumableLot', header: 'Consumable Lot' },
-    { key: 'consumableExpirationDate', header: 'Consumable Expiration Date' },
-    { key: 'instrumentSerial', header: 'Instrument Serial' },
-    { key: 'moduleName', header: 'Module' },
-    { key: 'moduleSerial', header: 'Module Serial' },
-    { key: 'researchId', header: 'Research ID' },
-    { key: 'senderOperator', header: 'Operator' },
-    { key: 'errorCode', header: 'Error Code' },
-    { key: 'errorNotes', header: 'Error notes' },
-    { key: 'notes', header: 'Notes' },
-    { key: 'assayName', header: 'Assay' },
-    // dynamic columns from different schema json fields
-    ...columnsFromAssaySchema,
-    ...columnsFromResultForms,
-  ]
-
-  const dataset = {
-    ok: true,
-    total,
-    length: _.get(data, 'length', 0),
-    data,
-    dynamicColumns: columns,
-    fixedColumns: [
-      { key: 'endedOn', header: 'Test Date' },
-      { key: 'stateName', header: 'Sample State' },
-      { key: 'siteName', header: 'Sample Site' },
-      { key: 'sampleId', header: 'Sample ID' },
-      { key: 'deviceName', header: 'Device' },
-      { key: 'assayName', header: 'Assay' },
-      { key: 'errorCode', header: 'Error Code' },
-      { key: 'resultWorkflowStatus', header: 'Workflow Status' },
-      { key: 'resultTreatmentStatus', header: 'Treatment Status' },
-      { key: 'patientId', header: 'Patient Id' },
-    ],
-    dataSelector: (
-      dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
-    ) =>
-      flatten({
-        ...dataRow,
-        patientData: JSON.parse(dataRow.patientData),
-        resultData: JSON.parse(dataRow.resultData),
-        formData: JSON.parse(dataRow.formData),
-        errorCode: _.replace(dataRow.errorCode || '', /(\r\n|\n|\r)/gm, ''),
-        errorNotes: _.replace(dataRow.errorNotes || '', /(\r\n|\n|\r)/gm, ''),
-        notes: _.replace(dataRow.notes || '', /(\r\n|\n|\r)/gm, ''),
-      }),
-    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
-    defaultNoDataMessage: 'No data',
-  }
-  return dataset
-}
 
 // ----------------------------------------------------------------------------------------------
 async function exportResults(request, reply) {
   const { query, auth } = request
-  const { data, dynamicColumns, dataSelector, fixedColumns = [], total } = await getAllResultsForExport(auth, query)
+  const { data, dynamicColumns, dataSelector, fixedColumns = [], total } = await getAllResultsReport(auth, query)
   const sheetData = {
     data,
     dynamicColumns,
@@ -143,55 +55,6 @@ async function exportResults(request, reply) {
     replacements: [...getBaseReplacements(), ...getMaxLimitPlaceHolders()],
     dataSelector,
   })
-}
-
-async function getColumnsFromAssaySchema({ query, partnerId, userId }) {
-  const columns = []
-  const assaySchema = await getAllAssaySchemas(partnerId, userId, query.assayId)
-  let resultData = {}
-  let patientData = {}
-
-  assaySchema.forEach(element => {
-    if (element.patientDataSchema) {
-      patientData = _.merge(patientData, JSON.parse(element.patientDataSchema))
-    }
-    if (element.resultDataSchema) {
-      resultData = _.merge(resultData, JSON.parse(element.resultDataSchema))
-    }
-  })
-
-  const flattenObjects = {
-    ...flatten({ resultData }),
-    ...flatten({ patientData }),
-  }
-
-  _.forEach(flattenObjects, (value, key) => {
-    if (key.toLowerCase().indexOf('title') >= 0) {
-      columns.push({
-        header: value,
-        key: key.replace('.title', '').replace('.properties', ''),
-      })
-    }
-  })
-
-  return columns
-}
-
-async function getColumnsFromResultForms({ partnerId }) {
-  const columns = []
-  const forms = await knex('ResultForm').where('partnerId', partnerId).pluck('formSchema')
-
-  _.forEach(forms, formSchema => {
-    _.forEach(JSON.parse(formSchema).fields, (value, key) => {
-      if (value && (_.isNil(value.excludeReport) || !value.excludeReport) && value.name) {
-        columns.push({
-          header: value.name,
-          key: key.replace('.title', '').replace('.properties', ''),
-        })
-      }
-    })
-  })
-  return columns
 }
 
 async function getDeviceErrorHistoryForAttachment(deviceId, minDate, maxDate) {
@@ -601,11 +464,11 @@ async function getReportWorkloadSummaryByYear(auth, query, options) {
 module.exports = {
   exportResults,
   getDeviceErrorHistoryForAttachment,
-  getAllResultsForExport,
   columnsDeviceErrorHistoryForAttachment,
   getReportWorkloadSummary,
   getReportWorkloadSummaryByQuarter,
   getReportWorkloadSummaryByYear,
   getReportXdrDevicesSummary,
   getDataExtractReport,
+  getAllResultsReport,
 }

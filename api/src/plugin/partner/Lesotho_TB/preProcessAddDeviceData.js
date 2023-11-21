@@ -58,12 +58,11 @@ async function preProcessAddDeviceData(context) {
         context.device = hivGxAlertDeviceDetails
         context.partnerId = hivGxAlertDeviceDetails.partnerId
         await knex('DeviceLog').where('id', context.deviceLogId).update({ deviceId: hivGxAlertDeviceDetails.id })
-        const indexOfLesothoTbPluginName = context.pluginNames.indexOf('lesothoTb')
-        if (indexOfLesothoTbPluginName) {
-          context.pluginNames.splice(indexOfLesothoTbPluginName, 1)
+        if (context.partnerPluginName === 'lesothoTb') {
+          context.partnerPluginName = undefined
         }
         if (hivGxAlertDeviceDetails.partnerPluginName) {
-          context.pluginNames = [hivGxAlertDeviceDetails.partnerPluginName, ...context.pluginNames]
+          context.partnerPluginName = hivGxAlertDeviceDetails.partnerPluginName
         }
       }
     }

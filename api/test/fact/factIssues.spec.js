@@ -50,8 +50,7 @@ describe('Fact based issues', () => {
   const { runTest } = context
   before(async () => {
     const { siteId } = await knex('JobContext as jc')
-      .innerJoin('Job as j', 'jc.jobId', 'j.id')
-      .innerJoin('Person as p', 'j.personId', 'p.id')
+      .innerJoin('Person as p', 'jc.personId', 'p.id')
       .innerJoin('User as u', 'p.userId', 'u.id')
       .where('u.name', USER_LU)
       .first('jc.siteId')

@@ -142,9 +142,10 @@ async function onPatientChanged(patientId, messageContext, isAdded) {
   const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
   // exec plugin
   if (partnerPluginName || deviceTypePluginName) {
-    const { loadPlugin } = require('../plugin/registration')
+    const { loadPlugin } = require('../plugin/loadPlugin')
     const pluginOnPatientChanged = await loadPlugin(
-      [partnerPluginName, deviceTypePluginName],
+      partnerPluginName,
+      deviceTypePluginName,
       isAdded ? 'onPatientAdded' : 'onPatientUpdated'
     )
     await pluginOnPatientChanged({ patientId }, { messageContext })

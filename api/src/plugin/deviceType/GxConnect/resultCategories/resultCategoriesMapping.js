@@ -286,6 +286,9 @@ function getResultCategoriesHivVL(result1Text) {
  * Parses a GeneXpert result text and returns an object containing the key value pairs.
  * @param {string} resultText The result text of a GeneXpert result
  * @returns An object including all the parsed category types and their values. Ex.: { MTB: 'Detected', 'RIF RESISTANCE': 'NotDetected'  }
+ *
+ * Sample of `resultText` for MTB-XDR may look like this:
+ * |MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_indeterminate|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_not_detected
  */
 const parseResultText = resultText => {
   const results = {}
@@ -298,9 +301,15 @@ const parseResultText = resultText => {
       results['HIV-1'] = result1CategoryMapping[sanitizeResultTextValue(val)] || getResultCategoriesHivVL(val)
     } else {
       const resultValue =
-        result1CategoryMapping[sanitizeResultTextValue(val)] || result2CategoryMapping[sanitizeResultTextValue(val)]
+        // from 1-st mapping collection
+        result1CategoryMapping[sanitizeResultTextValue(val)] ||
+        // or from 2-nd mapping collection
+        result2CategoryMapping[sanitizeResultTextValue(val)]
 
       if (categoryType && resultValue) {
+        /**
+         * i.e. results['FLQ RESISTANCE'] = 'Indeterminate'
+         */
         results[categoryType] = resultValue
       }
     }
@@ -314,13 +323,20 @@ const parseResultText = resultText => {
  * @returns An array including all the resistances category types which result was Detected. Ex.: ['INH', 'ETH']
  */
 const getDetectedResistanceCategoryTypes = resultText => {
-  const detectedResistances = []
+  const detectedResistance = []
+  const allResistances = {}
   const resultsCollection = parseResultText(resultText)
   Object.keys(resultsCollection).forEach(categoryType => {
-    if (categoryType !== 'MTB' && resultsCollection[categoryType] === 'Detected')
-      detectedResistances.push(categoryType.replace('RESISTANCE', '').trim())
+    const resistance = categoryType.replace('RESISTANCE', '').trim()
+    const resultCategoryValue = resultsCollection[categoryType]
+    if (categoryType !== 'MTB') {
+      allResistances[resistance] = resultCategoryValue
+      if (resultCategoryValue === 'Detected') {
+        detectedResistance.push(resistance)
+      }
+    }
   })
-  return detectedResistances
+  return { detectedResistance, allResistances }
 }
 
 module.exports = {

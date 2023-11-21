@@ -1,12 +1,10 @@
 import React, { useEffect, useState, useMemo } from 'react'
 import { CircularProgress } from '@mui/material'
-import classnames from 'classnames/bind'
 import isEqual from 'lodash/isEqual'
 import { func, array, object, oneOfType } from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
-import ErrorBoundary from '../../cleanComponents/ErrorBoundary'
-import useI18n from '../../hooks/useI18n'
 import { getFilters, sanitizeFiltersStringBy } from '../../oldComponents/utils'
 import {
   DEFAULT_PAGE_AT,
@@ -17,13 +15,11 @@ import {
 import fetchWrapperForQueries from '../QueryFetch'
 import { replaceRouteParams } from '../QueryFetch/Helpers'
 import { allowOnlyAPIKeys, determineSortDirection, getColumnIdFromFilterKey, removeNullFromCollection } from './Helpers'
-import styles from './Table.css'
+import styles from './Table.module.css'
 import AspectTableCore from './TableCore'
 
-const cssClasses = classnames.bind(styles)
-
 const Loading = () => (
-  <div className={cssClasses('table__spinner')}>
+  <div className={styles.table__spinner}>
     <CircularProgress />
   </div>
 )
@@ -124,7 +120,7 @@ const toRelocate = (navigate, location, currentState, newState, setStates) => {
 }
 // ------------------------------------
 const AspectTable = ({ baseConfig, FILTERS_CONFIG, consts: CONSTS, onClickRow }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const config = useMemo(() => baseConfig(intl), [baseConfig, intl])
   const navigate = useNavigate()
   const { ...routeParams } = useParams()
@@ -232,35 +228,33 @@ const AspectTable = ({ baseConfig, FILTERS_CONFIG, consts: CONSTS, onClickRow })
   return isLoading || !data ? (
     <Loading />
   ) : (
-    <ErrorBoundary>
-      <AspectTableCore
-        config={config}
-        tableData={data}
-        params={params}
-        pageCount={Math.ceil(data.total / size)}
-        isFetching={isFetching}
-        initialState={removeNullFromCollection({
-          pageSize: size,
-          sortBy: [
-            {
-              id: sortCol,
-              desc: determineSortDirection(sortDir),
-            },
-          ],
-          pageIndex: page,
-          allowReset,
-          filters: getColumnIdFromFilterKey(config, filters),
-        })}
-        setters={{
-          handleClearParams,
-          setSize,
-          setSortCol,
-          setSortDir,
-          setPage,
-        }}
-        onClickRow={onClickRow}
-      />
-    </ErrorBoundary>
+    <AspectTableCore
+      config={config}
+      tableData={data}
+      params={params}
+      pageCount={Math.ceil(data.total / size)}
+      isFetching={isFetching}
+      initialState={removeNullFromCollection({
+        pageSize: size,
+        sortBy: [
+          {
+            id: sortCol,
+            desc: determineSortDirection(sortDir),
+          },
+        ],
+        pageIndex: page,
+        allowReset,
+        filters: getColumnIdFromFilterKey(config, filters),
+      })}
+      setters={{
+        handleClearParams,
+        setSize,
+        setSortCol,
+        setSortDir,
+        setPage,
+      }}
+      onClickRow={onClickRow}
+    />
   )
 }
 

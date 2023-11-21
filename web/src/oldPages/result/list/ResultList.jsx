@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { TableBody } from '@mui/material'
-import classnames from 'classnames/bind'
+import { LinearProgress, TableBody } from '@mui/material'
 import Immutable from 'immutable'
 import filter from 'lodash/filter'
 import identity from 'lodash/identity'
@@ -9,20 +8,18 @@ import map from 'lodash/map'
 import partial from 'lodash/partial'
 import without from 'lodash/without'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { useNavigate, useLocation } from 'react-router-dom'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import ResultFilter from '../../../cleanComponents/Filter/ResultFilter'
+import { DetailHeader, ResultFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { RESULT_LIST } from '../../../components/QueryFetch/Result'
-import useI18n from '../../../hooks/useI18n'
+import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import DataTableProgressBar from '../../../oldComponents/shared/DataTableProgressBar'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
@@ -31,9 +28,7 @@ import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import getExportableFile from '../ResultQueries'
 import messages from './messages'
 import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './ResultDataTable'
-import styles from './ResultList.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './ResultList.module.css'
 
 const getBaseColumns = (extraColumns = [], formatMessage) => {
   return Immutable.List(
@@ -107,10 +102,10 @@ export const ResultListWithProps = ({
 }) => (
   <>
     <DetailHeader name={intl.formatMessage(messages.resultsTitle)} disableBack />
-    <div className={cssClasses('Container')}>
+    <div className={styles.Container}>
       <Helmet title={intl.formatMessage(messages.resultsTitle)} />
       <ResultFilter />
-      <DataTableCard key={`DataTableCard--table-Result-list---${location.key}`}>
+      <DataTableCard key={`DataTableCard__table-Result-list---${location.key}`}>
         <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
           <AspectExportListButton
             onExport={onExportClick}
@@ -120,13 +115,13 @@ export const ResultListWithProps = ({
           />
         </div>
 
-        {isLoading ? <DataTableProgressBar /> : null}
-
-        {items.currentIdList.isEmpty() ? (
+        {isLoading ? (
+          <LinearProgress />
+        ) : items.currentIdList.isEmpty() ? (
           <BrowseEmptyList />
         ) : (
           <>
-            <ResultDataTable className={cssClasses('ResultDataTable')}>
+            <ResultDataTable className={styles.ResultDataTable}>
               <ResultDataTableHead
                 navigate={navigate}
                 location={location}
@@ -176,7 +171,7 @@ export const ResultListWithProps = ({
 
 const ResultList = () => {
   // >>>>>> hooks/ <<<<<<
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const dispatch = useDispatch()
   const location = useLocation()
@@ -192,7 +187,7 @@ const ResultList = () => {
     })
   )
   const [total, setTotal] = useState()
-  const [isLoading, setIsLoading] = useState(false)
+  const [isLoading, setIsLoading] = useState(true)
   const [pagination, setPagination] = useState({})
   const [columns, setColumns] = useState([])
 
@@ -225,7 +220,6 @@ const ResultList = () => {
     const sortPage = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   // >>>>>> Lifecycles <<<<<<

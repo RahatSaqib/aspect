@@ -1,14 +1,11 @@
 import React from 'react'
 import { Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Form, useFormikContext } from 'formik'
 import PropTypes from 'prop-types'
-import styles from './Form.css'
+import styles from './Form.module.css'
 import FormSection from './FormSection'
 import FormSectionHeader from './FormSectionHeader'
 import formMessagesBase from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const AspectForm = ({ config: { sections, classNames, messages: customMessages } }) => {
   const { formik, toggleEdit } = useFormikContext()
@@ -18,21 +15,18 @@ const AspectForm = ({ config: { sections, classNames, messages: customMessages }
   }
 
   classNames = classNames || {}
+
+  const classes = `${styles.form__container} ${classNames.container ? styles[classNames.container] : ''}`
   return (
-    <Grid
-      container
-      className={cssClasses('form__container', {
-        [classNames.container]: !!classNames.container,
-      })}
-    >
-      <Form noValidate autoComplete="off" className={cssClasses('form__parent')}>
+    <Grid container className={classes}>
+      <Form noValidate autoComplete="off" className={styles.form__parent}>
         {sections &&
           sections.map(({ id, label, labelI18nKey, rows, hideHeader, classNames = {}, visibleIf }) => {
             if (visibleIf && !visibleIf(formik.values, toggleEdit)) {
               return null
             }
             return (
-              <Grid key={id} item xs={12} className={cssClasses('form__sectionContainer')}>
+              <Grid key={id} item xs={12} className={styles.form__sectionContainer}>
                 <Grid container>
                   {hideHeader ? null : (
                     <FormSectionHeader

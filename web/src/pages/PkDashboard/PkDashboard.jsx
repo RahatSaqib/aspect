@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid } from '@mui/material'
-import Loading from '../../cleanComponents/Loading'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
+import { Loading } from '../../cleanComponents'
 import ColumnName from './components/ColumnName'
 import DashboardCard from './components/DashboardCard'
 import DashboardLink from './components/DashboardLink'
@@ -11,7 +11,7 @@ import useResultOverview from './hooks/useResultOverview'
 import messages from './PkDashboard.Messages'
 
 const PkDashboard = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data: resultOverview, isLoading } = useResultOverview()
 
   return (
@@ -106,7 +106,10 @@ const PkDashboard = () => {
             />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrFQResistance)}>
-            <DashboardLink to="" label={formatMessage(messages.CurrentFQDetection)} />
+            <DashboardLink
+              to="/dashboard/xdr/current-fq-detection"
+              label={formatMessage(messages.CurrentFQDetection)}
+            />
             <DashboardLink to="/dashboard/xdr/national-fq" label={formatMessage(messages.NationalFQResistanceTrend)} />
             <DashboardLink
               to="/dashboard/xdr/provincial-fq-diagnosis-trend"

@@ -11,7 +11,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   inlineErrorPleaseTryAgainInAFewMinutes,
 } from '../utils/error/CommonErrorNotifications'
-import { getClientId, getClientName, getClientType as clientType } from '../utils/utils/browser'
+import { getClientId, getClientName } from '../utils/utils/browser'
 import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
@@ -73,7 +73,7 @@ export function loginStart({ user, password }) {
         name: user,
         password,
         clientId,
-        clientType,
+        clientType: 'web',
         clientName: getClientName(),
       }),
       errorNotifications: {
@@ -184,6 +184,28 @@ export function loginStart({ user, password }) {
             },
           },
         },
+        417: {
+          'Your credentials were not configured properly. Please, contact your administrator.': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id: 'errorResponseMessages.loginStart.POST.417.missingPermissions.title',
+                defaultMessage: 'Login failed',
+              },
+              message: {
+                id: 'errorResponseMessages.loginStart.POST.417.missingPermissions.message',
+                defaultMessage: 'Your credentials were not configured properly. Please, contact your administrator.',
+              },
+              resolution: {
+                id: 'errorResponseMessages.loginStart.POST.417.missingPermissions.resolution',
+                defaultMessage: 'You can contact us to check your account by email ({supportEmail})',
+              },
+            }),
+            messageValues: {
+              supportEmail: config.supportEmail,
+            },
+          },
+        },
         default: errorPleaseTryAgainInAFewMinutes(
           defineMessages({
             title: {
@@ -254,7 +276,10 @@ export function refreshStart() {
 
     const clientId = localStorage.getItem('asClientId')
     // try to get a new access token:
-    return aspectFetch('/auth/refresh', { method: 'POST', body: JSON.stringify({ token, clientId, clientType }) })
+    return aspectFetch('/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ token, clientId, clientType: 'web' }),
+    })
       .then(json =>
         dispatch(
           refreshSuccess({

@@ -3,7 +3,7 @@ const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = req
 const locales = require('date-fns/locale')
 const { getDeviceBaseExtendedQuery } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
-const { issueCategoryIntlToShortname, issueTypeToId } = require('../../shared/dictionary')
+const { issueCategoryIntlToShortname } = require('../../shared/dictionary')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../../db')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const {
@@ -17,12 +17,14 @@ const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getDoNotUseModulesReportData } = require('./doNotUseModulesReport')
 const { getModuleStatusReportData } = require('./moduleStatusReport')
 const getDevicesWithCountsForTB = require('./genXpertTbWorkloadReport')
-const { getAllDeviceReportData } = require('./devicesAndSitesOverviewReport')
+const { getAllDeviceReportData } = require('./deviceAndSiteSummaryReport')
 const { getResultCategoryGroupColumns } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
 const { getErrorRateByDevice, getErrorRateByModule, getErrorRateByUser } = require('./errorRatesReport')
 const { getNoStockInventoryReport } = require('./noStockInventoryReport')
 const { listDevices } = require('../listDevices')
+const { getModuleSwapsReportData } = require('./moduleSwapsReport')
+const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -151,42 +153,14 @@ async function getDeviceActivityReport(auth, query) {
 
 async function getModuleSwapsReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const {
-    minDate,
-    maxDate,
-    minDateFormatted = minDate ? parseISO(minDate) : subMonths(new Date(), 12),
-    maxDateFormatted = maxDate ? parseISO(maxDate) : new Date(),
-  } = query
 
-  const issueTypeId = await issueTypeToId('ModuleReplaced')
-  // get rows
-  const devices = await getDeviceBaseExtendedQuery(query, dataConstraints)
-    .clone()
-    .innerJoin('Issue as i', 'i.deviceId', 'd.id')
-    .join('Result as newModuleResult', 'i.resultid', 'newModuleResult.id')
-    .join('Result as oldResult', builder => builder.on(knex.raw('i.data->>"$.oldResultId" = oldResult.id ')))
-    .select(
-      'd.name as deviceName',
-      'd.serial',
-      'newModuleResult.moduleName',
-      'newModuleResult.instrumentSerial',
-      'newModuleResult.moduleSerial as newModuleSerial',
-      'oldResult.moduleSerial as oldModuleSerial',
-      knex.raw(
-        'DATEDIFF(COALESCE(newModuleResult.endedOn,newModuleResult.startedOn), COALESCE(oldResult.endedOn,oldResult.startedOn)) as daysDifference'
-      ),
-      'da.name as deviceApprovalStatus',
-      knex.raw('COALESCE(newModuleResult.endedOn,newModuleResult.startedOn) as lastResultNewModule'),
-      knex.raw('COALESCE(oldResult.endedOn,oldResult.startedOn) as lastResultOldModule')
-    )
-    .andWhere(knex.raw('i.createdOn between ? and ?', [minDateFormatted, maxDateFormatted]))
-    .andWhere('i.issueTypeId', issueTypeId)
-    .modify(sortPageParams, query, 'name')
+  const moduleSwapsReport = await getModuleSwapsReportData(dataConstraints, query)
+
   const dataset = {
     ok: true,
-    total: devices.length,
-    length: devices.length,
-    data: devices,
+    total: moduleSwapsReport.data.rows.length,
+    length: moduleSwapsReport.data.rows.length,
+    ...moduleSwapsReport,
   }
   return dataset
 }
@@ -529,6 +503,234 @@ async function noStockInventoryReport(auth, query) {
   }
 }
 
+async function getDeviceCoverageReport(request) {
+  const { auth, query } = request
+  const dataConstraints = await getConstraints(auth.credentials)
+  const geographies = await knex('Geography as g')
+    .innerJoin('Country as c', 'c.id', 'g.countryId')
+    .leftJoin('State as s', 's.id', 'g.stateId')
+    .leftJoin('Lga as l', 'l.id', 'g.lgaId')
+    .modify(addConstraints, dataConstraints, { geography: 'g' })
+    .orderBy(['c.name', 's.name', 'l.name'], 'asc')
+    .select(
+      'g.id as geographyId',
+      'c.id as countryId',
+      'c.name as countryName',
+      's.id as stateId',
+      's.name as stateName',
+      'l.id as lgaId',
+      'l.name as lgaName'
+    )
+  const allSites = await knex('Site as s')
+    .innerJoin('SiteType as st', 's.siteTypeId', 'st.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
+    .leftOuterJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+      externalId: 's.externalId',
+    })
+    .orderBy('s.name')
+    .select([
+      's.id as siteId',
+      's.name as siteName',
+      's.shortName as siteShortName',
+      'sta.id as stateId',
+      'lg.id as lgaId',
+      's.createdOn',
+      's.externalId',
+    ])
+
+  let id = 1
+  const rawDevices = await getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
+    .whereNotIn('dt.externalId', ['Aspect', 'GxAlert'])
+    // .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .distinct([
+      // 'c.id as countryId',
+      // 'c.name as countryName',
+      'st.id as stateId',
+      'st.name as stateName',
+      'lg.id as lgaId',
+      'lg.name as lgaName',
+      's.id as siteId',
+      's.name as siteName',
+      'd.id as deviceId',
+      'd.name as deviceName',
+      'd.configurationData',
+    ])
+    .orderBy('st.name', 'lg.name', 's.name', 'd.name')
+  /**
+   * assemble hierarchy
+   */
+  let nestedData = _.reduce(
+    geographies,
+    (acc, item) => {
+      const { stateId, stateName, lgaId, lgaName } = item
+      if (!stateId || !lgaId) {
+        return acc
+      }
+      let state = acc.find(x => x.stateId === stateId)
+      if (!state) {
+        id += 1
+        state = {
+          /**
+           * specific props for current nesting level
+           */
+          stateId,
+          /**
+           * base props for NestedTable component
+           */
+          id,
+          name: stateName,
+          children: [], // list of LGA's
+        }
+        acc = [...acc, state]
+      }
+      let lga = state.children.find(x => x.lgaId === lgaId)
+      if (!lga) {
+        /**
+         * sites
+         */
+        const rawSites = allSites.filter(it => it.stateId === stateId && it.lgaId === lgaId)
+        const sites = rawSites.map(({ siteId, siteName }) => {
+          /**
+           * Devices in this site
+           */
+          const devicesInSite = rawDevices.filter(x => x.siteId === siteId)
+          /**
+           * TODO: think and check if it makes sense to show devices
+           * under LGA and state level - because some devices may not
+           * have siteId defined but have only lgaId or stateId (which
+           * is probably may be considered as error))
+           */
+          // const devicesInLga = rawDevices.filter(x => !x.siteId && x.lgaId === lgaId)
+          // const devicesInState = rawDevices.filter(x => !x.siteId && !x.lgaId && x.stateId === stateId)
+          const devices = devicesInSite.map(dev => {
+            const { deviceId, deviceName } = dev
+            const configurationData = dev.configurationData ? JSON.parse(dev.configurationData) : {}
+            const { moduleSerials = [], tenColorModules = [] } = configurationData
+            const tenColors = moduleSerials.filter(
+              moduleSerial => !!tenColorModules.find(it => it.SiteSerialNumber === moduleSerial)
+            )
+            const cnt6cModules = moduleSerials.length - tenColors.length
+            const cnt10cModules = tenColors.length
+
+            id += 1
+            const cnt6cDevices = cnt6cModules > 0 ? 1 : 0
+            const cnt10cDevices = cnt10cModules > 0 ? 1 : 0
+            const cnt6c10cCombo = cnt6cModules > 0 && cnt10cModules > 0 ? 1 : 0
+            return {
+              /**
+               * specific props for current nesting level
+               */
+              deviceId,
+              /**
+               * base props for NestedTable component
+               */
+              id,
+              name: deviceName,
+              // # Modules
+              cnt6cModules,
+              cnt10cModules,
+              // # Devices - here 1 or 0 for current device
+              cnt6cDevices,
+              cnt10cDevices,
+              cnt6c10cCombo,
+              // # Sites
+              cntSites: 0,
+            }
+          })
+          /**
+           * define Site
+           */
+          id += 1
+          const site = {
+            /**
+             * specific props for current nesting level
+             */
+            siteId,
+            /**
+             * base props for NestedTable component
+             */
+            id,
+            name: siteName,
+            children: devices,
+            // # Modules
+            cnt6cModules: _.sum(devices.map(x => x.cnt6cModules)),
+            cnt10cModules: _.sum(devices.map(x => x.cnt10cModules)),
+            // # Devices
+            cnt6cDevices: _.sum(devices.map(x => x.cnt6cDevices)),
+            cnt10cDevices: _.sum(devices.map(x => x.cnt10cDevices)),
+            cnt6c10cCombo: _.sum(devices.map(x => x.cnt6c10cCombo)),
+            // # Sites
+            cntSites: 1,
+          }
+          return site
+        })
+        /**
+         * LGA
+         */
+        id += 1
+        lga = {
+          /**
+           * specific props for current nesting level
+           */
+          lgaId,
+          /**
+           * base props for NestedTable component
+           */
+          id,
+          name: lgaName,
+          children: sites,
+          // # Modules
+          cnt6cModules: _.sum(sites.map(x => x.cnt6cModules)),
+          cnt10cModules: _.sum(sites.map(x => x.cnt10cModules)),
+          // # Devices
+          cnt6cDevices: _.sum(sites.map(x => x.cnt6cDevices)),
+          cnt10cDevices: _.sum(sites.map(x => x.cnt10cDevices)),
+          cnt6c10cCombo: _.sum(sites.map(x => x.cnt6c10cCombo)),
+          // # Sites
+          cntSites: _.sum(sites.map(x => x.cntSites)),
+        }
+        state.children = [...state.children, lga]
+      }
+      return acc
+    },
+    []
+  )
+
+  /**
+   * set counts for all states
+   */
+  nestedData = nestedData.map(state => {
+    return {
+      ...state,
+      // # Modules
+      cnt6cModules: _.sum(state.children.map(x => x.cnt6cModules)),
+      cnt10cModules: _.sum(state.children.map(x => x.cnt10cModules)),
+      // # Devices
+      cnt6cDevices: _.sum(state.children.map(x => x.cnt6cDevices)),
+      cnt10cDevices: _.sum(state.children.map(x => x.cnt10cDevices)),
+      cnt6c10cCombo: _.sum(state.children.map(x => x.cnt6c10cCombo)),
+      // # Sites
+      cntSites: _.sum(state.children.map(x => x.cntSites)),
+    }
+  })
+  const data = nestedData
+
+  return {
+    ok: true,
+    total: data.length,
+    length: data.length,
+    data,
+  }
+}
+
 module.exports = {
   exportDevices,
   getDeviceActivityReport,
@@ -547,4 +749,5 @@ module.exports = {
   getErrorRateByUserReport,
   getErrorsByDevicesReport,
   noStockInventoryReport,
+  getDeviceCoverageReport,
 }

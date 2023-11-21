@@ -10,7 +10,7 @@ import isNil from 'lodash/isNil'
 import map from 'lodash/map'
 import noop from 'lodash/noop'
 import PropTypes from 'prop-types'
-import useI18n from '../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { formatWithLocale } from '../../../utils/utils/dateFormat'
 import AspectButton from '../AspectButton'
 import messages from './messages'
@@ -351,7 +351,7 @@ const Options = props => {
   )
 }
 
-export const DateTimeSelect = props => {
+const DateTimeSelect = props => {
   const {
     classesMap,
     displayOption,
@@ -506,7 +506,7 @@ const DateTimeInput = props => {
 
   const dateTimeFormat = getDateTimeFormat({ dateFormat, timeFormat })
   const displayFormat = getDisplayFormat({ dateFormat, timeFormat })
-  const { formatMessage, culture } = useI18n()
+  const { formatMessage, culture } = useIntl()
   const FieldProps = originFieldProps || getDefaultFieldsProps(formatMessage)
   const TextFieldsProps = _fp.merge(getDefaultFieldsProps(formatMessage), FieldProps)
   const minDate = getDateObject(min)
@@ -663,14 +663,14 @@ const DateTimeInput = props => {
 const DateType = PropTypes.oneOfType([PropTypes.string, PropTypes.instanceOf(Date)])
 
 DateTimeInput.propTypes = {
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  classes: PropTypes.object.isRequired,
   className: PropTypes.string,
-  dateFormat: PropTypes.string, // eslint-disable-line react/require-default-props
+  dateFormat: PropTypes.string,
   timeFormat: PropTypes.string, // eslint-disable-line react/require-default-props
   onChange: PropTypes.func,
   onBlur: PropTypes.func,
   value: PropTypes.oneOfType([PropTypes.object, PropTypes.string]), // eslint-disable-line react/require-default-props
-  defaultValue: DateType, // eslint-disable-line react/forbid-prop-types,
+  defaultValue: DateType,
   minDate: DateType,
   maxDate: DateType,
   defaultToNow: PropTypes.bool,
@@ -685,7 +685,7 @@ DateTimeInput.propTypes = {
     H: TextField.propTypes,
     m: TextField.propTypes,
   }),
-  RootProps: PropTypes.object, // eslint-disable-line react/forbid-prop-types
+  RootProps: PropTypes.object,
 }
 
 DateTimeInput.defaultProps = {

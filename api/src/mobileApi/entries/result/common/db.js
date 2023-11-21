@@ -11,7 +11,7 @@ const {
 const { addConstraints } = require('../../../../auth/constraints')
 const { INTERNAL_DEVICE_IDS } = require('../../../../shared/constants')
 
-const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
+const fetchResultsByUpdatedOnQuery = (query, clinicIds, dataConstraints, userViewOnlyTransferredResultIds) => {
   const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
 
   const knexQuery = knex('Result as result')
@@ -19,12 +19,13 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
     .join('Site as laboratory', 'result.siteId', 'laboratory.id')
     .join('Assay as assay', 'result.assayId', 'assay.id')
     .join('AssayType as assayType', 'assay.assayTypeId', 'assayType.id')
+    .join('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
+    .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .leftJoin('ResultCategory as resultCategory1', 'result.resultCategory1', 'resultCategory1.id')
     .leftJoin('ResultCategory as resultCategory2', 'result.resultCategory2', 'resultCategory2.id')
-    .leftJoin('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
-    .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
     .leftJoin('Sample as sample', 'result.sampleId', 'sample.id')
     .leftJoin('SampleType as sampleType', 'sample.sampleTypeId', 'sampleType.id')
+    .leftJoin('Person as sampleCollectedBy', 'sample.collectedBy', 'sampleCollectedBy.userId')
     .leftJoin('Site as sampleOriginSite', 'sample.originSiteId', 'sampleOriginSite.id')
     .leftJoin('Geography as sampleOriginGeography', 'sampleOriginSite.geographyId', 'sampleOriginGeography.id')
     .leftJoin('State as sampleOriginState', 'sampleOriginGeography.stateId', 'sampleOriginState.id')
@@ -44,8 +45,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'resultTreatmentStatusLog.resultTreatmentStatusId',
       'resultTreatmentStatus.id'
     )
-    .leftJoin('ResultStatusLog as resultStatusLog', 'result.resultStatusLogId', 'resultStatusLog.id')
-    .leftJoin('Person as personTransferred', 'resultStatusLog.createdBy', 'personTransferred.userId')
+    .leftJoin('ResultStatusLog as resultStatusLog', 'result.id', 'resultStatusLog.resultId')
     .leftJoin('ResultCategoryAssay as resultCategoryAssay1', queryBuilder =>
       queryBuilder
         .on('result.assayId', 'resultCategoryAssay1.assayId')
@@ -56,14 +56,16 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
         .on('result.assayId', 'resultCategoryAssay2.assayId')
         .andOn('result.resultCategory2', 'resultCategoryAssay2.resultCategoryId')
     )
+    .leftJoin('ResultTransferLog as transferLog', 'result.id', 'transferLog.resultId')
+    .leftJoin('Site as transferReportableSite', 'transferLog.reportableSiteId', 'transferReportableSite.id')
+    .leftJoin('Site as transferOriginSite', 'transferLog.previousReportableSiteId', 'transferOriginSite.id')
+    .leftJoin('Person as personTransferred', 'transferLog.createdBy', 'personTransferred.userId')
+    .whereIn('result.reportableSiteId', clinicIds)
     .modify(addConstraints, dataConstraints, {
       assay: 'assay',
       assayType: 'assayType',
-      site: 'reportableSite',
-      geography: 'reportableSiteGeography',
-      result: 'result',
     })
-    .where('result.updatedOn', '>', minUpdatedOn)
+    .andWhere('result.updatedOn', '>', minUpdatedOn)
     .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
     .andWhere(qb =>
       qb
@@ -76,6 +78,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
         qb.whereIn('assay.externalId', MOBILE_APP_ALLOWED_ASSAYS)
       }
     })
+    .orWhereIn('result.id', userViewOnlyTransferredResultIds)
     .select(
       'assay.externalId as assayExternalId',
       'assay.patientDataSchema as patientDataSchema',
@@ -91,6 +94,9 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'result.resultData as resultData',
       'result.sampleId as resultSampleId',
       'result.updatedOn as updatedOn',
+      'result.errorCode as errorCode',
+      'result.endedOn as testEndDate',
+      'result.notes as resultNotes',
       knex.raw('COALESCE(result.endedOn, result.startedOn) as testDate'),
       'resultCategory1.i18nKey as resultCategory1ValueI18nKey',
       'resultCategory1.name as resultCategory1Name',
@@ -100,7 +106,6 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'resultCategoryAssay1.requiresTreatment as resultCategoryAssay1RequiresTreatment',
       'resultCategoryAssay2.emphasize as resultCategory2Emphasize',
       'resultCategoryAssay2.requiresTreatment as resultCategoryAssay2RequiresTreatment',
-      'resultStatusLog.createdOn as transferredOn',
       'resultStatusLog.data as transferStatusLogData',
       'resultTreatmentStatus.externalId as resultTreatmentStatusExternalId',
       'resultTreatmentStatus.i18nKey as resultTreatmentStatusI18nKey',
@@ -115,6 +120,7 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'sample.sampleStatus as sampleStatus',
       'sample.updatedOn as sampleUpdatedOn',
       'sample.collectedOn as sampleCollectedOn',
+      'sample.externalId as sampleExternalId',
       'sampleOriginSite.externalId as sampleSiteExternalId',
       'sampleOriginSite.id as sampleSiteId',
       'sampleOriginSite.name as sampleSiteName',
@@ -128,7 +134,14 @@ const fetchResultsByUpdatedOnQuery = (query, dataConstraints) => {
       'laboratory.id as laboratorySiteId',
       'laboratory.externalId as laboratorySiteExternalId',
       'laboratory.name as laboratorySiteName',
-      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId'
+      'resultWorkflowStatus.externalId as resultWorkflowStatusExternalId',
+      'sampleCollectedBy.name as sampleClinicianName',
+      'transferReportableSite.name as transferSiteName',
+      'transferOriginSite.name as transferOriginSiteName',
+      'transferLog.comment as transferComment',
+      'transferLog.createdOn as transferredOn',
+      'transferLog.reportableSiteId as transferReportableSiteId',
+      'transferLog.previousReportableSiteId as transferPreviousReportableSiteId'
     )
   return knexQuery
 }
@@ -160,6 +173,7 @@ const getFollowUpsByResultIds = results => {
   const knexQuery = knex('ResultFollowUp as rfu')
     .join('FollowUp as fu', 'rfu.followUpId', 'fu.id')
     .join('FollowUpType as fut', 'fu.followUpTypeId', 'fut.id')
+    .leftJoin('Person as p', 'p.userId', 'rfu.createdBy')
     .whereIn(
       'rfu.resultId',
       _.map(results, r => r.id)
@@ -177,7 +191,8 @@ const getFollowUpsByResultIds = results => {
       'fu.i18nKey as followUpi18nKey',
       'fut.name as followUpTypeName',
       'fut.externalId as followUpTypeExternalId',
-      'fut.i18nKey as followUpTypeI18nKey'
+      'fut.i18nKey as followUpTypeI18nKey',
+      'p.name as clinicianName'
     )
   return knexQuery
 }
@@ -207,53 +222,6 @@ const getCommentsOfResultById = comments => {
   return knexQuery
 }
 
-const countAllAwaitingTreatment = (query, dataConstraints) => {
-  const minUpdatedOn = query?.minUpdatedOn ?? subMonths(new Date(), MONTHS_HISTORY_TO_LOOK_UP)
-  const knexQuery = knex('Result as result')
-    .join(
-      'ResultTreatmentStatusLog as resultTreatmentStatusLog',
-      'result.treatmentStatusLogId',
-      'resultTreatmentStatusLog.id'
-    )
-    .join(
-      'ResultTreatmentStatus as resultTreatmentStatus',
-      'resultTreatmentStatusLog.resultTreatmentStatusId',
-      'resultTreatmentStatus.id'
-    )
-    .leftJoin('Site as reportableSite', 'result.reportableSiteId', 'reportableSite.id')
-    .leftJoin('Geography as reportableSiteGeography', 'reportableSite.geographyId', 'reportableSiteGeography.id')
-    .leftJoin('ResultWorkflowLog as resultWorkflowLog', 'result.resultWorkflowStatusLogId', 'resultWorkflowLog.id')
-    .leftJoin(
-      'ResultWorkflowStatus as resultWorkflowStatus',
-      'resultWorkflowLog.resultWorkflowStatusId',
-      'resultWorkflowStatus.id'
-    )
-    .leftJoin('ResultCategoryAssay as resultCategoryAssay1', queryBuilder =>
-      queryBuilder
-        .on('result.assayId', 'resultCategoryAssay1.assayId')
-        .andOn('result.resultCategory1', 'resultCategoryAssay1.resultCategoryId')
-    )
-    .leftJoin('ResultCategoryAssay as resultCategoryAssay2', queryBuilder =>
-      queryBuilder
-        .on('result.assayId', 'resultCategoryAssay2.assayId')
-        .andOn('result.resultCategory2', 'resultCategoryAssay2.resultCategoryId')
-    )
-    .where('resultTreatmentStatus.externalId', 'AwaitingTreatment')
-    .modify(addConstraints, dataConstraints, {
-      site: 'reportableSite',
-      geography: 'reportableSiteGeography',
-      result: 'result',
-    })
-    .where('result.updatedOn', '>', minUpdatedOn)
-    .andWhere(qb => qb.whereIn('resultWorkflowStatus.externalId', deliverableResultWorkflowStatuses))
-    .andWhere(qb =>
-      qb.orWhere('resultCategoryAssay1.requiresTreatment', true).orWhere('resultCategoryAssay2.requiresTreatment', true)
-    )
-    .countDistinct('result.id as count')
-    .first()
-  return knexQuery
-}
-
 const getUserSiteIds = async dataConstraints => {
   const sites = await knex('Site as s')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
@@ -267,7 +235,6 @@ const getUserSiteIds = async dataConstraints => {
 }
 
 module.exports = {
-  countAllAwaitingTreatment,
   fetchResultsByUpdatedOnQuery,
   getCommentsOfResultById,
   getFollowUpsByResultIds,

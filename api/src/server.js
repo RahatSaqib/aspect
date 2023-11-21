@@ -8,7 +8,7 @@ const Sentry = require('@sentry/node')
 const fs = require('fs')
 const config = require('./config')
 const { version } = require('../package.json')
-const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes, asyncHandler } = require('./routes')
+const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
 const { addSubscriptions } = require('./subscriptions')
 const { startScheduler } = require('./scheduler/scheduler')
@@ -17,11 +17,15 @@ const logger = require('./shared/logger')
 const { plugin: deviceApiKeyPlugin, validateApiKeyAuthBasic } = require('./deviceApi/deviceApiKeyPlugin')
 const { plugin: deviceApiRawUnauthenticatedPlugin } = require('./deviceApi/deviceApiRawUnauthenticatedPlugin')
 const { initDictionaryTables } = require('./shared/dictionary')
-const AspectCacheSingleton = require('../aspectCache')
-
-const cache = AspectCacheSingleton.getInstance()
 
 const { port } = config
+
+const AspectCacheSingleton = require('../aspectCache')
+
+// version is cached to indicate the new version only when Aspect api restarts,
+// instead of doing so directly when package.json is updated.
+const cache = AspectCacheSingleton.getInstance()
+cache.setVersion(version)
 
 const server = new Hapi.server({
   port,
@@ -297,28 +301,6 @@ const start = async () => {
     },
   })
 
-  // =======================
-  // version endpoint
-  // =======================
-  server.route({
-    method: 'GET',
-    path: '/api/version',
-    handler: asyncHandler(async () => {
-      // version is cached to indicate the new version only when Aspect api restarts,
-      // instead of doing so directly when package.json is updated.
-      const cachedVersion = await cache.getVersion()
-      if (!cachedVersion) {
-        await cache.setVersion(version)
-      }
-
-      return {
-        version: cachedVersion ?? version,
-      }
-    }),
-    config: {
-      auth: false,
-    },
-  })
   // =======================
   // use plugin to mount all API routes at /api
   // =======================

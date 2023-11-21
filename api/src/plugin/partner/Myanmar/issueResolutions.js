@@ -382,13 +382,13 @@ async function resolveDataCategoryLow(knex, issue) {
   const issueData = JSON.parse(issue.data) || {}
   // get needed props from [action].options (see factDataCategoryLow() in /fact/action.js)
   const { siteId, categoryToken } = issueData
-  const { plugin } =
+  const { plugin: partnerPluginName } =
     (await knex('Site as s')
       .innerJoin('Partner as p', 's.partnerId', 'p.id')
       .where('s.id', siteId)
       .first('p.plugin')) || {}
-  const { loadPlugin } = require('../../registration')
-  const { dataCategories = [] } = await loadPlugin([plugin], 'dataCategories')
+  const { loadPlugin } = require('../../loadPlugin')
+  const { dataCategories = [] } = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const dataCategory = _.find(dataCategories, category => category.externalId === categoryToken)
 
   if (dataCategory) {
