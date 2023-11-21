@@ -34,7 +34,8 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
   }
 
   const remove = keys => {
-    const cleaned = keys.filter(el => !blocked.includes(el))
+    const blockedArr=blocked??[]
+    const cleaned = keys.filter(el => !blockedArr.includes(el))
     if (cleaned.length) {
       removeFilter(keys, location.pathname)
       const newState = { ...state }
