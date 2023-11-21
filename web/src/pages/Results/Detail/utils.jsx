@@ -232,7 +232,10 @@ export const updateValidationsAndFilters = (sections, data, formik, keepInvalidS
     if (index === sections.length - 1) {
       section = {
         ...section,
-        rows: section.rows.map(r => ({ ...r, items: r.items.map(item => enableItemAndFilter(item, data, formik, keepInvalidSelection)) })),
+        rows: section.rows.map(r => ({
+          ...r,
+          items: r.items.map(item => enableItemAndFilter(item, data, formik, keepInvalidSelection)),
+        })),
       }
     }
     return section

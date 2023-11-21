@@ -29,7 +29,7 @@ const availableSortCol = [
   'lastPingOn',
   'firstResultEndedOn',
   'lastResultEndedOn',
-  'totalTests',
+  'total',
   'stateName',
   'lgaName',
 ]
@@ -43,7 +43,12 @@ const Workload = () => {
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
-  const { isError, isLoading, data = false, error } = useWorkload({ ...filter, size: pageSize, page: pageAt })
+  const {
+    isError,
+    isLoading,
+    data = false,
+    error,
+  } = useWorkload({ ...filter, size: pageSize, page: pageAt, sortCol, sortDir })
 
   if (isError) throw new Error(error)
 
@@ -72,7 +77,7 @@ const Workload = () => {
     { key: 'lastPingOn', label: formatMessage(messages.lastPingOn), sortable: true, hiddenOn: 'xl' },
     { key: 'firstResultEndedOn', label: formatMessage(messages.firstResultEndedOn), sortable: true, hiddenOn: 'xl' },
     { key: 'lastResultEndedOn', label: formatMessage(messages.lastResultEndedOn), sortable: true, hiddenOn: 'xl' },
-    { key: 'totalTests', label: formatMessage(messages.totalTests), sortable: true },
+    { key: 'total', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
       label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
