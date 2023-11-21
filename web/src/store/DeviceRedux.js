@@ -8,7 +8,7 @@ import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../
 import { receiveItem, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
 import { aspectFetch } from '../utils/utils/fetch'
-import { receivedExportResponse } from './GlobalsRedux'
+import { downloadFile } from '../utils/utils/files'
 
 const types = {
   REQUEST_DEVICES: 'REQUEST_DEVICES',
@@ -152,7 +152,7 @@ export function exportDeviceLogs(filtersParams, fileFormat, reportName) {
       }
     ).then(async elem => {
       const file = await elem.blob
-      dispatch(receivedExportResponse(file, fileFormat, reportName))
+      downloadFile(file, reportName, fileFormat)
     })
   }
 }
