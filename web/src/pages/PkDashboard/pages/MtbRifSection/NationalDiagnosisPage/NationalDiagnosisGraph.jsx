@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
+import sortBy from 'lodash/sortBy'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
@@ -52,7 +53,7 @@ const NationalDiagnosisGraph = () => {
         .reverse()
         .map(item => ({ ...item, month: `${formatMessage(months[item.month - 1])}` }))
 
-      const annualData = []
+      let annualData = []
       grouped.map(item => {
         const year = annualData.find(annual => annual.year === item.year)
         if (year) {
@@ -62,6 +63,7 @@ const NationalDiagnosisGraph = () => {
         }
         return item
       })
+      annualData = sortBy(annualData, ['year'])
       if (grouped) {
         setGraphData(fillYear(grouped))
         setAnnual(annualData)
