@@ -113,7 +113,7 @@ const result1CategoryMapping = {
   'предположительный положительный': 'PresumptivePositive',
   'présomptif positif': 'PresumptivePositive',
   'предположительно пол': 'PresumptivePositive',
-  негативний: 'PresumptivePositive',
+  негативний: 'Negative',
   'praduga pos': 'PresumptivePositive',
   przypuszczalnego: 'PresumptivePositive',
   'null null': 'Success',
