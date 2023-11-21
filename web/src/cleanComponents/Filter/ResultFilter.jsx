@@ -1,13 +1,14 @@
 import React, { useState } from 'react'
 import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
+import isArray from 'lodash/isArray'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
+import useAuthState from '../../hooks/useAuthState'
+import useFilterValues from '../../hooks/useFilterValues'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
-import { useAuthState } from '../../providers/AuthProvider'
-import { useFilterValues } from '../../providers/FilterProvider'
 import {
   AssayMultiSelect,
   DeviceTypeSelect,
@@ -67,7 +68,7 @@ const ResultFilter = () => {
                 label={formatMessage(messages.resultGroup)}
                 value={state?.resultCategoryGroupId ?? []}
                 onChange={e => setState({ ...state, resultCategoryGroupId: e })}
-                assayId={state?.assayId}
+                assayId={!state?.assayId ? [] : !isArray(state?.assayId) ? [state?.assayId] : state?.assayId}
               />
             </Grid>
           </>

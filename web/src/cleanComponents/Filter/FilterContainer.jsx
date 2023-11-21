@@ -3,8 +3,9 @@ import { Button, Card, CardActions, CardContent, Collapse } from '@mui/material'
 import { MdArrowDownward, MdArrowUpward } from 'react-icons/md'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
+import useFilterUpdate from '../../hooks/useFilterUpdate'
+import useFilterValues from '../../hooks/useFilterValues'
 import messages from '../../messages/FilterMessages'
-import { useFilterValues, useFilterUpdate } from '../../providers/FilterProvider'
 import FilterButtons from './FilterContainer.Buttons'
 
 const cardContentStyle = {

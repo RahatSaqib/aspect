@@ -21,7 +21,7 @@ import {
   InventoryStatusGraph,
 } from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
-import { useAuthState } from '../../../providers/AuthProvider'
+import useAuthState from '../../../hooks/useAuthState'
 import { fetchAssays } from '../../../store/AssayRedux'
 import styles from './index.module.css'
 import messages from './messages'

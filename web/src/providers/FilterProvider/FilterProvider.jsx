@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useEffect, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfDay from 'date-fns/startOfDay'
@@ -9,7 +9,8 @@ import isArray from 'lodash/isArray'
 import { useLocation } from 'react-router-dom'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
-import { useAuthState } from '../AuthProvider'
+import useAuthState from '../../hooks/useAuthState'
+import FilterContext from './FilterProvider.Context'
 
 const now = new Date()
 const minDate = startOfDay(subtractDays(now, 30))
@@ -32,8 +33,6 @@ const defaultFilter = {
   '/reports': {},
   '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
 }
-
-const FilterContext = createContext()
 
 const mapValues = (key, value, deviceTypes) => {
   switch (true) {
@@ -63,7 +62,7 @@ const getFilters = (urlSearchParams, deviceTypes) => {
   return filters
 }
 
-function FilterProvider({ children }) {
+const FilterProvider = ({ children }) => {
   const { pathname, search } = useLocation()
   const [filterState, setFilterState] = useState(defaultFilter)
   const { isLoggedOut, jwt } = useAuthState()
@@ -95,50 +94,4 @@ function FilterProvider({ children }) {
   return <FilterContext.Provider value={[filterState, setFilterState]}>{children}</FilterContext.Provider>
 }
 
-function useFilterValues(pathname) {
-  const [filter] = useContext(FilterContext)
-
-  if (filter === undefined) {
-    throw new Error('useFilter must be used within a FilterProvider')
-  }
-
-  if (pathname) {
-    const cleanPath = pathname.split('#')[0]
-
-    if (Object.keys(filter).includes(cleanPath)) {
-      // eslint-disable-next-line no-unused-vars
-      return Object.fromEntries(Object.entries(filter[cleanPath]).filter(([_, v]) => v != null)) // remove nulls
-    }
-  }
-  return {}
-}
-
-function useFilterUpdate() {
-  const [filter, setFilter] = useContext(FilterContext)
-
-  if (filter === undefined) {
-    throw new Error('useFilter must be used within a FilterProvider')
-  }
-
-  const update = (newFilter, pathname) => setFilter({ ...filter, [pathname]: { ...newFilter } })
-
-  const removeFilter = (keys, pathname) => {
-    const filterForLocation = filter[pathname]
-    keys.forEach(k => {
-      if (k.includes('.')) {
-        const [key, value] = k.split('.')
-        filterForLocation[key] = filterForLocation[key].filter(v => v !== value)
-      } else {
-        delete filterForLocation[k]
-      }
-    })
-
-    update(filterForLocation, pathname)
-  }
-
-  const resetFilter = pathname => setFilter({ ...filter, [pathname]: {} })
-
-  return [update, removeFilter, resetFilter] // pathname is to allow changing the filter in other places before navigation
-}
-
-export { FilterProvider, useFilterValues, useFilterUpdate }
+export default FilterProvider
