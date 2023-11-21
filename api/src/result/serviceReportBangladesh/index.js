@@ -959,8 +959,6 @@ async function getDataForReportDrTb10B(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
-    // .whereIn('r.resultCategory1', positiveResultCategories) // MTB Detected
-    // .whereIn('r.resultCategory2', positiveResultCategories) // RIF Detected
     .select(
       'r.endedOn as dateOfDiagnosis',
       knex.raw(
