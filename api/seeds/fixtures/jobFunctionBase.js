@@ -216,10 +216,6 @@ const manager = {
     },
     {
       module: 'dashboard',
-      activity: 'report',
-    },
-    {
-      module: 'dashboard',
       activity: 'site',
     },
     {
@@ -900,10 +896,6 @@ const remoteHealthWorker = {
     {
       module: 'dashboard',
       activity: 'inventory',
-    },
-    {
-      module: 'dashboard',
-      activity: 'report',
     },
     {
       module: 'dashboard',
