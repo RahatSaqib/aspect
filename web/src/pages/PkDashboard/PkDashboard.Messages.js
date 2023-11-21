@@ -331,6 +331,8 @@ const messages = {
     },
     noAssociatedState: { id: 'p.PkDashboard.noAssociatedState', defaultMessage: 'No Associated State' },
     noAssociatedLga: { id: 'p.PkDashboard.noAssociatedLga', defaultMessage: 'No Associated LGA' },
+
+    showLineFor: { id: 'p.PkDashboard.showLineFor', defaultMessage: 'Show line for' },
   }),
 }
 
