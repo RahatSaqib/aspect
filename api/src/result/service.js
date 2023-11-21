@@ -2288,6 +2288,7 @@ async function xdrAssayGraphAggregations(request) {
       cnt_inh: InhDetected = 0,
     } = item || {}
     const FqrToMtbPercentage = MtbDetected === 0 ? 0 : (100 * FqrDetected) / MtbDetected
+    const InhToMtbPercentage = MtbDetected === 0 ? 0 : (100 * InhDetected) / MtbDetected
 
     return {
       month,
@@ -2296,19 +2297,28 @@ async function xdrAssayGraphAggregations(request) {
       FqrDetected,
       InhDetected,
       FqrToMtbPercentage,
+      InhToMtbPercentage,
     }
   })
 
   return {
     grouped: data,
     // series
-    keysFromGrouped: ['TotalTests', 'MtbDetected', 'FqrDetected', 'InhDetected', 'FqrToMtbPercentage'],
+    keysFromGrouped: [
+      'TotalTests',
+      'MtbDetected',
+      'FqrDetected',
+      'InhDetected',
+      'FqrToMtbPercentage',
+      'InhToMtbPercentage',
+    ],
     i18nKeys: {
       TotalTests: 'TotalTests',
       MtbDetected: 'MtbDetected',
       FqrDetected: 'FqrDetected',
       InhDetected: 'InhDetected',
       FqrToMtbPercentage: 'FQRPercent',
+      InhToMtbPercentage: 'INHPercent',
     },
   }
 }

@@ -417,6 +417,10 @@ const messages = {
       id: 'legends.Unknown.FQRPercent',
       defaultMessage: 'FQ-R %',
     },
+    INHPercent: {
+      id: 'legends.Unknown.INHPercent',
+      defaultMessage: 'INH-R %',
+    },
   }),
 }
 
