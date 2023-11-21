@@ -5,7 +5,7 @@ import { TreeItem, TreeView } from '@mui/lab'
 import { TextField, Box, ClickAwayListener, Grow, Paper, Popper, Typography } from '@mui/material'
 import { DesktopDatePicker } from '@mui/x-date-pickers'
 import { useIntl } from 'react-intl'
-import messages from './messages'
+import messages from '../../messages/allMessages'
 import {
   dayOptions,
   weekOptions,

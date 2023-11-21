@@ -17,60 +17,34 @@ const types = {
 /*
  * ---------------- Action Creators -----------------
  */
-function requestTasks(sortCol, sortDir, page, size, filters) {
-  return {
-    type: types.REQUEST_TASKS,
-    sortCol,
-    sortDir,
-    page,
-    size,
-    filters,
-  }
-}
-
-function receiveTasks(json) {
-  return {
-    type: types.RECEIVE_TASKS,
-    items: json.data,
-    total: json.total,
-    countByAlert: json.countByAlert,
-  }
-}
 
 export function fetchTasks(filtersParams, sortCol, sortDir, page, pageSize) {
   return dispatch => {
     const filters = getFilters(filtersParams)
-    dispatch(requestTasks(sortCol, sortDir, page, pageSize, filters))
+    dispatch({ type: types.REQUEST_TASKS, sortCol, sortDir, page, pageSize, filters })
 
-    return aspectFetch(
-      `/task?${stringify({
-        sortCol,
-        sortDir,
-        page,
-        size: pageSize,
-        ...filters,
-      })}`,
-      {
-        errorTasks: {
-          400: filterFieldsRejectedError(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchTasks.GET.400.title',
-                defaultMessage: 'Searching Tasks Failed',
-              },
-            })
-          ),
-          default: errorPleaseTryAgainInAFewMinutes(
-            defineMessages({
-              title: {
-                id: 'errorResponseMessages.fetchTasks.GET.default.title',
-                defaultMessage: 'Loading Tasks Failed',
-              },
-            })
-          ),
-        },
-      }
-    ).then(json => dispatch(receiveTasks(json)))
+    return aspectFetch(`/task?${stringify({ sortCol, sortDir, page, size: pageSize, ...filters })}`, {
+      errorTasks: {
+        400: filterFieldsRejectedError(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchTasks.GET.400.title',
+              defaultMessage: 'Searching Tasks Failed',
+            },
+          })
+        ),
+        default: errorPleaseTryAgainInAFewMinutes(
+          defineMessages({
+            title: {
+              id: 'errorResponseMessages.fetchTasks.GET.default.title',
+              defaultMessage: 'Loading Tasks Failed',
+            },
+          })
+        ),
+      },
+    }).then(json =>
+      dispatch({ type: types.RECEIVE_TASKS, items: json.data, total: json.total, countByAlert: json.countByAlert })
+    )
   }
 }
 /*
