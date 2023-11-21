@@ -48,6 +48,10 @@ const messages = {
       id: 'filter.btnGroup.patientOrResearchId',
       defaultMessage: 'patient ID includes {patientOrResearchId}',
     },
+    issueTypeId: {
+      id: 'filter.btnGroup.issueTypeId',
+      defaultMessage: 'issue Type ID includes {issueTypeId}',
+    },
     patientOrCaseId: {
       id: 'filter.btnGroup.patientOrCaseId',
       defaultMessage: 'patient/case ID includes {patientOrCaseId}',
