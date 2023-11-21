@@ -1013,6 +1013,7 @@ async function getDataForReportDrTb10B(auth, query) {
           ELSE ''
         END as sampleType`),
       knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
+      knex.raw(`r.resultData ->> '$.bacterialLoad' as bacterialLoad`),
       knex.raw(`CASE WHEN a.id = ${assayIds.GxMtbXdr} THEN rc1.name ELSE '' END as mtbDetected`),
       knex.raw(
         `
