@@ -9,6 +9,7 @@ import { graphMessages } from '../../../messages'
 import { getTimePeriod, formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
+import { subDays } from 'date-fns'
 
 const i18nKeys = {
   devicesActive: 'devicesActive',
@@ -41,7 +42,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState({
-    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
+    minDate: subDays(new Date(), 30),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
 
