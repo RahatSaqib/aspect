@@ -7,6 +7,7 @@ module.exports = {
     name: 'Papua New Guinea',
     externalId: 'papuaNewGuinea',
   },
+  defaultCountryTimeZone: 'acific/Port_Moresby',
   deviceApiToken: 'alznnlc7d67k1kdwa5d3',
   partnerAbbreviation: 'PG',
   lowerLevelUserPassword: 'PLE1Ueu$^htj',

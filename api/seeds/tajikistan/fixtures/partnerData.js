@@ -5,6 +5,7 @@ module.exports = {
     name: 'Tajikistan',
     externalId: 'tajikistan',
   },
+  defaultCountryTimeZone: 'Asia/Dushanbe',
   adminUserName: 'admin',
   adminPassword: 'Gx@l3rt!Adm1111n',
   deviceApiToken: 'yepp5hrgmzt6e1hxhw03',

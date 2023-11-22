@@ -5,6 +5,7 @@ module.exports = {
     externalId: 'drc',
     name: 'DRC',
   },
+  defaultCountryTimeZone: 'Africa/Kinshasa',
   adminUserName: 'admin',
   adminPassword: 'JP8VQ7H6uT',
   deviceApiToken: '2k8BAP8zBdS2SuxG8nsxmwsQC43PT6nF',

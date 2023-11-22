@@ -5,6 +5,7 @@ module.exports = {
     name: 'Ghana',
     externalId: 'ghana',
   },
+  defaultCountryTimeZone: 'Africa/Accra',
   partnerAbbreviation: 'GH',
   adminUserName: 'admin',
   adminPassword: '3law734i4g',

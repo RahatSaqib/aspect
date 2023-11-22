@@ -5,6 +5,7 @@ module.exports = {
     name: 'Ukraine',
     externalId: 'ukraine',
   },
+  defaultCountryTimeZone: 'Europe/Kyiv',
   adminUserName: 'admin',
   adminPassword: 'F0Rbq3WtDP',
   deviceApiToken: 'qqsmc85rzlaoh9aygzh2',

@@ -5,6 +5,7 @@ module.exports = {
     name: 'Nigeria',
     externalId: 'nigeria',
   },
+  defaultCountryTimeZone: 'Africa/Lagos',
   deviceApiToken: 'q5zh29mw0a01zkqzq1yg',
   partnerAbbreviation: 'NG',
   adminUserName: 'admin',

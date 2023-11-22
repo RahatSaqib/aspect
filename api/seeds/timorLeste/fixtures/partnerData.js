@@ -7,6 +7,7 @@ module.exports = {
     name: 'Timor Leste',
     externalId: 'timorLeste',
   },
+  defaultCountryTimeZone: 'Asia/Dili',
   deviceApiToken: 'vqzewlc2d67v5kdwa9h6',
   partnerAbbreviation: 'TL',
   lowerLevelUserPassword: 'TOVpMx3nHP',

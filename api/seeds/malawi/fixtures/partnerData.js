@@ -5,6 +5,7 @@ module.exports = {
     name: 'Malawi',
     externalId: 'malawi',
   },
+  defaultCountryTimeZone: 'Africa/Blantyre',
   adminUserName: 'admin',
   adminPassword: 'yIeRINEZ',
   deviceApiToken: 'RMENANyMAcKSKInABeAtHIcuRSiCiTZe',

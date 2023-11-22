@@ -5,6 +5,7 @@ module.exports = {
     name: 'Myanmar',
     externalId: 'myanmar',
   },
+  defaultCountryTimeZone: 'Asia/Yangon',
   deviceApiToken: 'ukpjat39531egjy4pc20',
   partnerAbbreviation: 'MM',
   adminUserName: 'myanmar_admin',

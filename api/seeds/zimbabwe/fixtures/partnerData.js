@@ -5,6 +5,7 @@ module.exports = {
     name: 'Zimbabwe',
     externalId: 'zimbabwe',
   },
+  defaultCountryTimeZone: 'Africa/Harare',
   partnerAbbreviation: 'ZW',
   adminUserName: 'admin',
   adminPassword: '54wzDZPtOs',

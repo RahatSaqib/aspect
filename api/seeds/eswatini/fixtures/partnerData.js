@@ -7,6 +7,7 @@ module.exports = {
     name: 'Eswatini',
     externalId: 'eswatini',
   },
+  defaultCountryTimeZone: 'Africa/Mbabane',
   deviceApiToken: 'pmvrfsxjltrzfpjfkepe',
   partnerAbbreviation: 'SZ',
   lowerLevelUserPassword: 'sds123ASDTOVpMx3nHP',
