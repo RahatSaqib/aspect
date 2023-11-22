@@ -35,7 +35,11 @@ const listWorkloadRequestSchema = {
       'lastPingOn',
       'firstResultConductedOn',
       'lastResultConductedOn',
-      'totalTests'
+      'total',
+      'firstResultEndedOn',
+      'lastResultEndedOn',
+      'lgaName',
+      'stateName'
     ),
   },
 }
