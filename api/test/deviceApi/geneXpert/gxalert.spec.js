@@ -1741,7 +1741,7 @@ describe('Device API routes for GxAlert Device', () => {
                   data: { resultText: 'NO RESULT' },
                 },
               }),
-              expectedStatusCode: 409,
+              expectedStatusCode: 201,
             })
             completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
