@@ -782,7 +782,6 @@ const moduleSwaps = {
         AND i.createdOn BETWEEN DATE_FORMAT(NOW() - interval 1 month, '%Y-%m-01') AND LAST_DAY(CURRENT_DATE-INTERVAL 1 MONTH)`,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
-  link: '/browse/device/list',
   linkParams: {
     deviceType: 'CepheidGeneXpert',
     issueTypeId: 'ModuleReplaced',
