@@ -3,6 +3,7 @@ const {
   mapResultCategory2,
   parseResultText,
   getDetectedResistanceCategoryTypes,
+  getBacterialLoad,
 } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/utils')
 
@@ -349,4 +350,16 @@ describe('Detected Resistancies Calculation', () => {
     const { detectedResistance } = getDetectedResistanceCategoryTypes('|MTB @label_result_detected')
     assert.isEmpty(detectedResistance)
   })
+})
+
+describe('Bacterial Load', () => {
+  assert.equal(undefined, getBacterialLoad('MTB NOT DETECTED||'))
+  assert.equal(
+    'Very Low',
+    getBacterialLoad(
+      'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low|Rif Resistance @label_result_not_detected|'
+    )
+  )
+  assert.equal('Low', getBacterialLoad('MTB DETECTED LOW||RIF Resistance NOT DETECTED'))
+  assert.equal('Medium', getBacterialLoad('MTB DETECTED MEDIUM|Rif Resistance NOT DETECTED|'))
 })
