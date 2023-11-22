@@ -18,12 +18,12 @@ const types = {
  * ---------------- Action Creators -----------------
  */
 
-export function fetchTasks(filtersParams, sortCol, sortDir, page, pageSize) {
+export function fetchTasks(filtersParams, sortCol, sortDir, page, size) {
   return dispatch => {
     const filters = getFilters(filtersParams)
-    dispatch({ type: types.REQUEST_TASKS, sortCol, sortDir, page, pageSize, filters })
+    dispatch({ type: types.REQUEST_TASKS, sortCol, sortDir, page, size, filters })
 
-    return aspectFetch(`/task?${stringify({ sortCol, sortDir, page, size: pageSize, ...filters })}`, {
+    return aspectFetch(`/task?${stringify({ sortCol, sortDir, page, size, ...filters })}`, {
       errorTasks: {
         400: filterFieldsRejectedError(
           defineMessages({
