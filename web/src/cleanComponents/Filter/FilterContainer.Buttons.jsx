@@ -345,7 +345,6 @@ const MinDate = ({ minDate, remove,hideCloseButton=false }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(minDate), dateFormat)
-console.log("hideCloseButton",hideCloseButton)
   return  <>
   {!hideCloseButton ? (
     <Btn
