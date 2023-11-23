@@ -84,7 +84,7 @@
       "i18nKeyCaption": "MWChildUniqueIdI8nCaptionKey",
       "gxAlertDbColumn": "MWChildUniqueId",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.32.value",
+      "payloadOriginPath": "data.customFieldData.32.value"
     }
   ],
   "refForms": []
