@@ -16,7 +16,6 @@ import deviceStatusMessages from '../../../messages/deviceStatusMessages'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
-import DeviceDetailAlerts from './Alerts/DeviceDetailAlerts'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
@@ -97,7 +96,6 @@ export const DeviceDetail = props => {
       <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device/list">
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
-          { label: intl.formatMessage(messages.alerts), path: `/browse/device/list/${deviceId}/alerts` },
           { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
@@ -139,12 +137,6 @@ export const DeviceDetail = props => {
               path="operation"
               element={
                 <DeviceDetailOperation intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
-              }
-            />
-            <Route
-              path="alerts"
-              element={
-                <DeviceDetailAlerts intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
               }
             />
             <Route
