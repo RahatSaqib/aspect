@@ -72,10 +72,6 @@ function removeNullFromCollection(collection) {
   return omitBy(collection, isNil)
 }
 
-// function determineSortDirection(direction) {
-//   return (direction && direction === 'desc') || false
-// }
-
 function useUrlQuery(search) {
   return new URLSearchParams(search)
 }
@@ -84,22 +80,6 @@ function allowOnlyAPIKeys(params) {
   const omitKeys = ['filters']
   return omit(params, omitKeys)
 }
-
-// function getColumnIdFromFilterKey(config, filters) {
-//   const output = []
-//   const { columns } = config
-//   const filterStrings = Object.fromEntries(new URLSearchParams(filters))
-
-//   map(filterStrings, (value, key) => {
-//     const configColumn = find(columns, { filterKey: key })
-//     if (configColumn) {
-//       const { key: id } = configColumn
-//       return output.push({ id, value })
-//     }
-//   })
-
-//   return output
-// }
 
 function getReturnUrl(returnUrlRaw, defaultUrl) {
   if (!returnUrlRaw) {
