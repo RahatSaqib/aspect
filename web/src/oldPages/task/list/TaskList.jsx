@@ -24,13 +24,9 @@ import messages from './messages'
 import { TaskDataTable, TaskDataTableHead, TaskDataTableRow } from './TaskDataTable'
 import styles from './TaskList.module.css'
 
-const FILTERS_CONFIG = {
-  contactNameOrEmail: true,
-}
+const FILTERS_CONFIG = { contactNameOrEmail: true }
 
-const searchSanitizer = makeSearchParamsSanitizer({
-  availableSortCol: ['issueCategory', 'site', 'time'],
-})
+const searchSanitizer = makeSearchParamsSanitizer({ availableSortCol: ['issueCategory', 'site', 'time'] })
 const filtersSanitizer = sanitizeFiltersStringBy(FILTERS_CONFIG)
 const filtersFromLocation = composeSanitizer(
   flowRight(filtersSanitizer, searchParams => searchParams.get('filters') || ''),
@@ -51,28 +47,12 @@ function mergeFilterOptions(searchParams, filterOptions = {}) {
 }
 
 const enhance = compose(
-  setPropTypes({
-    baseFilterOptions: PropTypes.object,
+  setPropTypes({ baseFilterOptions: PropTypes.object }),
+  defaultProps({ baseFilterOptions: {} }),
+  withProps(makeSortPageSelector({ sortCol: 'time', sortDir: 'desc' })),
+  connect(state => ({ items: state.task.items, table: state.task.table, countByAlert: state.task.countByAlert }), {
+    fetchTasks,
   }),
-  defaultProps({
-    baseFilterOptions: {},
-  }),
-  withProps(
-    makeSortPageSelector({
-      sortCol: 'time',
-      sortDir: 'desc',
-    })
-  ),
-  connect(
-    state => ({
-      items: state.task.items,
-      table: state.task.table,
-      countByAlert: state.task.countByAlert,
-    }),
-    {
-      fetchTasks,
-    }
-  ),
   withHandlers({
     onInitialLoad:
       ({ location, fetchTasks, sortCol, sortDir, pageAt, pageSize, filterOptions }) =>

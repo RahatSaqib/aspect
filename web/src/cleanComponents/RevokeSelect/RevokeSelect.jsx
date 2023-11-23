@@ -1,18 +1,8 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { MenuItem, TextField, IconButton } from '@mui/material'
-import { defineMessages, useIntl } from 'react-intl'
-
-const messages = defineMessages({
-  optionFalse: {
-    id: 'pages.revokedSelectField.false',
-    defaultMessage: 'False',
-  },
-  optionTrue: {
-    id: 'pages.revokedSelectField.true',
-    defaultMessage: 'True',
-  },
-})
+import { useIntl } from 'react-intl'
+import messages from '../../messages/allMessages'
 
 const RevokeSelect = ({ id, name, label, value, onChange, error, helperText }) => {
   const { formatMessage } = useIntl()
