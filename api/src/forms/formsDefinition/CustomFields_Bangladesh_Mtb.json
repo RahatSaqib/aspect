@@ -113,16 +113,8 @@
       "source": "patientData.ReferringFacility",
       "itemsSource": "all-sites",
       "itemsSourceConfig": {
-        "key": "externalId",
-        "value": "name",
-        "extraItems": [
-          {
-            "key": "other",
-            "value": "Other",
-            "description": "Other",
-            "order": 100
-          }
-        ]
+        "key": "id",
+        "value": "name"
       }
     },
     {
@@ -142,8 +134,15 @@
       "condition": [
         {
           "propToCompare": "ReferringFacility",
-          "valueToCompare": "other",
-          "operator": "="
+          "valueToCompare": "",
+          "operator": "=",
+          "conjunction": "or"
+        },
+        {
+          "propToCompare": "ReferringFacility",
+          "valueToCompare": null,
+          "operator": "=",
+          "conjunction": "or"
         }
       ]
     },
