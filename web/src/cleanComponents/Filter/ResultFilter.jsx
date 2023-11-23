@@ -31,7 +31,7 @@ const ResultFilter = () => {
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
-    <FilterContainer state={state} setState={setState} hideCloseButton={true}>
+    <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
@@ -160,9 +160,13 @@ const ResultFilter = () => {
         <Grid item xs={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
-            minDate={state.minDate || null}
-            maxDate={state.maxDate || null}
-            onChange={dateValues => setState({ ...state, ...dateValues })}
+            minDate={state.minDate.value || null}
+            maxDate={state.maxDate.value || null}
+            onChange={dateValues => {
+              setState({ ...state,
+                 minDate:{...state.minDate,value:dateValues.minDate},
+                 maxDate:{...state.maxDate,value:dateValues.maxDate} })}
+            }
             noAny={true}
           />
         </Grid>

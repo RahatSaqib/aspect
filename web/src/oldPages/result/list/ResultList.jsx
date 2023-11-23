@@ -198,7 +198,6 @@ const ResultList = () => {
 
   const params = { ...pagination, ...filters }
   delete params.assayOverride
-  delete params.hideCloseButton
 
   // >>>>>> Queries <<<<<<
   const {
@@ -208,7 +207,7 @@ const ResultList = () => {
     error,
   } = useQuery(
     [RESULT_LIST.KEY, { params }],
-    async () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params }),
+    async () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params:{...params,minDate:params.minDate.value,maxDate:params.maxDate.value} }),
     { enabled: !isEmpty(params) }
   )
 

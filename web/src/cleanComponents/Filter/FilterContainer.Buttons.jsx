@@ -116,8 +116,8 @@ const buttonMapping = {
     />
   ),
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
-  minDate: ({ minDate, remove ,hideCloseButton}) =>  <MinDate minDate={minDate} remove={remove} hideCloseButton={hideCloseButton}/>,
-  maxDate: ({ maxDate, remove ,hideCloseButton}) => <MaxDate maxDate={maxDate} remove={remove} hideCloseButton={hideCloseButton}/>,
+  minDate: ({ minDate: { value, hideCloseButton }, remove }) =>  <MinDate minDate={value} remove={remove} hideCloseButton={hideCloseButton}/>,
+  maxDate: ({ maxDate: { value, hideCloseButton }, remove }) => <MaxDate maxDate={value} remove={remove} hideCloseButton={hideCloseButton}/>,
   minExpirationDate: ({ minExpirationDate, remove }) => (
     <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} />
   ),
@@ -367,7 +367,7 @@ const MaxDate = ({ maxDate, remove ,hideCloseButton=false}) => {
   {!hideCloseButton ? (
     <Btn
       lbl={formatMessage(messages.dateFrom, { date })}
-      del={() => remove(['minDate'])}
+      del={() => remove(['maxDate'])}
     />
   ) : (
     <Btn lbl={formatMessage(messages.dateFrom, { date })} />
