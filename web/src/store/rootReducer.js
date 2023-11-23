@@ -9,13 +9,11 @@ import deviceOperation from './DeviceOperationRedux'
 import device from './DeviceRedux'
 import disease from './DiseaseRedux'
 import geography from './GeographyRedux'
-import globals from './GlobalsRedux'
 import inventory from './InventoryRedux'
 import jobs from './JobRedux'
 import person from './PersonRedux'
 import result from './ResultRedux'
 import resultTreatmentStatus from './ResultTreatmentStatusRedux'
-import site from './SiteRedux'
 import task from './TaskRedux'
 
 const appReducer = combineReducers({
@@ -28,13 +26,11 @@ const appReducer = combineReducers({
   disease,
   form: formReducer,
   geography,
-  globals,
   inventory,
   jobs,
   person,
   result,
   resultTreatmentStatus,
-  site,
   task,
 })
 
@@ -48,13 +44,11 @@ const App = Immutable.Record({
   disease: undefined,
   form: undefined,
   geography: undefined,
-  globals: undefined,
   inventory: undefined,
   jobs: undefined,
   person: undefined,
   result: undefined,
   resultTreatmentStatus: undefined,
-  site: undefined,
   task: undefined,
 })
 
