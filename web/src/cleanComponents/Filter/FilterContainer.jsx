@@ -15,7 +15,7 @@ const cardContentStyle = {
   p: '16px !important',
 }
 
-const FilterContainer = ({ children, state, setState, blocked }) => {
+const FilterContainer = ({ children, state, setState, blocked,hideCloseButton }) => {
   const { formatMessage } = useIntl()
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
@@ -61,7 +61,7 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
   return (
     <Card sx={{ mb: 1 }}>
       <CardContent sx={cardContentStyle}>
-        <FilterButtons filters={filter} remove={remove} append={append} />
+        <FilterButtons filters={{ ...filter, hideCloseButton: hideCloseButton ? true : undefined }} remove={remove} append={append} />
         <Button variant="contained" color="secondary" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>
           {expanded ? <MdArrowUpward /> : <MdArrowDownward />}
         </Button>

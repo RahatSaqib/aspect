@@ -77,6 +77,7 @@ const FilterButtons = ({ filters, remove, append }) => {
           .sortBy(filterKey => filtersOrdering[filterKey])
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
+            if(!Comp)return null
             return <Comp {...filters} remove={remove} append={append} key={key} />
           })
       )}
@@ -115,8 +116,8 @@ const buttonMapping = {
     />
   ),
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
-  minDate: ({ minDate, remove }) => <MinDate minDate={minDate} remove={remove} />,
-  maxDate: ({ maxDate, remove }) => <MaxDate maxDate={maxDate} remove={remove} />,
+  minDate: ({ minDate, remove ,hideCloseButton}) =>  <MinDate minDate={minDate} remove={remove} hideCloseButton={hideCloseButton}/>,
+  maxDate: ({ maxDate, remove ,hideCloseButton}) => <MaxDate maxDate={maxDate} remove={remove} hideCloseButton={hideCloseButton}/>,
   minExpirationDate: ({ minExpirationDate, remove }) => (
     <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} />
   ),
@@ -340,21 +341,39 @@ const ConsumableId = ({ consumableId, remove }) => {
   ) : null
 }
 
-const MinDate = ({ minDate, remove }) => {
+const MinDate = ({ minDate, remove,hideCloseButton=false }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(minDate), dateFormat)
-
-  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={() => remove(['minDate'])} />
+console.log("hideCloseButton",hideCloseButton)
+  return  <>
+  {!hideCloseButton ? (
+    <Btn
+      lbl={formatMessage(messages.dateFrom, { date })}
+      del={() => remove(['minDate'])}
+    />
+  ) : (
+    <Btn lbl={formatMessage(messages.dateFrom, { date })} />
+  )}
+</>
 }
 
-const MaxDate = ({ maxDate, remove }) => {
+const MaxDate = ({ maxDate, remove ,hideCloseButton=false}) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   if (!maxDate) return null
   const date = format(new Date(maxDate), dateFormat)
 
-  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={() => remove(['maxDate'])} />
+  return  <>
+  {!hideCloseButton ? (
+    <Btn
+      lbl={formatMessage(messages.dateFrom, { date })}
+      del={() => remove(['minDate'])}
+    />
+  ) : (
+    <Btn lbl={formatMessage(messages.dateFrom, { date })} />
+  )}
+</>
 }
 
 const MinExpirationDate = ({ minExpirationDate, remove }) => {

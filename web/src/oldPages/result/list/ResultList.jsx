@@ -198,6 +198,7 @@ const ResultList = () => {
 
   const params = { ...pagination, ...filters }
   delete params.assayOverride
+  delete params.hideCloseButton
 
   // >>>>>> Queries <<<<<<
   const {
