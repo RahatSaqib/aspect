@@ -5,10 +5,10 @@ import PropTypes from 'prop-types'
 import { defineMessages, injectIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, pure, setPropTypes, lifecycle } from 'recompose'
+import { SiteSelect } from '../../../cleanComponents'
 import CountrySelectField from '../../../oldComponents/geography/CountrySelectField'
 import PartnerSelectField from '../../../oldComponents/partner/PartnerSelectField'
 import recomposeForm, { errorProps } from '../../../oldComponents/recomposeForm'
-import SiteSelectField from '../../../oldComponents/resource/SiteSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import { fetchCountriesForLocationSelector, LazyLoadItems } from '../../../store/GeographyRedux'
 import { fetchPartnersAndJobFunctionsForSelectList } from '../../../store/JobRedux'
@@ -216,18 +216,13 @@ function DeviceApiKeyGeneratorDialogForm({
           tabIndex="0"
           aria-haspopup
         />
-        <SiteSelectField
+        <SiteSelect
+          id="siteId"
           name="siteId"
-          floatingLabelText={formatMessage(messages.siteId)}
-          countryId={values.countryId}
-          partnerId={values.partnerId}
+          label={formatMessage(messages.siteId)}
           value={values.siteId}
-          onSiteChange={onSiteIdChange}
-          errorStyle={errorStyle}
-          errorText={meta.siteId.touched && meta.siteId.error}
-          fullWidth
-          tabIndex="0"
-          aria-haspopup
+          onChange={onSiteIdChange}
+          error={meta.siteId.touched && meta.siteId.error}
         />
       </form>
     </AspectDialog>

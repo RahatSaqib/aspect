@@ -6,11 +6,11 @@ import identity from 'lodash/identity'
 import isNil from 'lodash/isNil'
 import { defineMessages } from 'react-intl'
 import { connect, useDispatch } from 'react-redux'
+import { SiteSelect } from '../../../cleanComponents'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
 } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import ConsumableSelectField from '../../../oldComponents/resource/ConsumableSelectField'
-import SiteSelectField from '../../../oldComponents/resource/SiteSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
@@ -223,42 +223,28 @@ export const InventoryAdjustmentDialogForm = ({
           </section>
           <section>
             {has(values, 'fromSiteId') && (
-              <SiteSelectField
+              <SiteSelect
+                id="fromSiteId"
                 name="fromSiteId"
-                floatingLabelText={intl.formatMessage(messages.fromSiteName)}
+                label={intl.formatMessage(messages.fromSiteName)}
+                value={values.fromSiteId}
+                onChange={onFromSiteIdChange}
+                error={meta.fromSiteId.touched && meta.fromSiteId.error}
                 disabled={
                   form.submitting ||
                   (currInventoryItem && (isReceiveInventoryDialog || !isNil(currInventoryItem.get('siteId'))))
                 }
-                value={values.fromSiteId}
-                onSiteChange={onFromSiteIdChange}
-                errorStyle={{
-                  float: 'left',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'visible',
-                }}
-                errorText={meta.fromSiteId.touched && meta.fromSiteId.error}
-                fullWidth
-                tabIndex="0"
-                aria-haspopup
               />
             )}
             {has(values, 'toSiteId') && (
-              <SiteSelectField
+              <SiteSelect
+                id="toSiteId"
                 name="toSiteId"
-                floatingLabelText={intl.formatMessage(messages.toSiteName)}
-                disabled={form.submitting || isReceiveInventoryDialog}
+                label={intl.formatMessage(messages.toSiteName)}
                 value={values.toSiteId}
-                onSiteChange={onToSiteIdChange}
-                errorStyle={{
-                  float: 'left',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'visible',
-                }}
-                errorText={meta.toSiteId.touched && meta.toSiteId.error}
-                fullWidth
-                tabIndex="0"
-                aria-haspopup
+                onChange={onToSiteIdChange}
+                error={meta.toSiteId.touched && meta.toSiteId.error}
+                disabled={form.submitting || isReceiveInventoryDialog}
               />
             )}
           </section>
