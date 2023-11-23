@@ -15,7 +15,6 @@
       "gxAlertDbColumn": "MWHealthFacilityName",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.21.value",
-      "payloadDestinationPath": "patient.MWHealthFacilityName"
     },
     {
       "id": 22,
@@ -32,7 +31,6 @@
       "gxAlertDbColumn": "MWPatientSurname",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.22.value",
-      "payloadDestinationPath": "patient.MWPatientSurname"
     },
     {
       "id": 25,
@@ -71,7 +69,6 @@
       "gxAlertDbColumn": "MWGenderPregBf",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.25.value",
-      "payloadDestinationPath": "patient.MWGenderPregBf"
     },
     {
       "id": 27,
@@ -88,7 +85,6 @@
       "gxAlertDbColumn": "MWDateSampleDrawn",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.27.value",
-      "payloadDestinationPath": "patient.MWDateSampleDrawn"
     },
     {
       "id": 20,
@@ -105,7 +101,6 @@
       "gxAlertDbColumn": "MWHealthFacilityDistrict",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.20.value",
-      "payloadDestinationPath": "patient.MWHealthFacilityDistrict"
     },
     {
       "id": 23,
@@ -122,7 +117,6 @@
       "gxAlertDbColumn": "MWPatientFirstName",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.23.value",
-      "payloadDestinationPath": "patient.MWPatientFirstName"
     },
     {
       "id": 24,
@@ -139,7 +133,6 @@
       "gxAlertDbColumn": "MWPatientDateOfBirth",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.24.value",
-      "payloadDestinationPath": "patient.MWPatientDateOfBirth"
     },
     {
       "id": 36,
@@ -156,7 +149,6 @@
       "gxAlertDbColumn": "MWPersonCollectingSampleSurname",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.36.value",
-      "payloadDestinationPath": "patient.MWPersonCollectingSampleSurname"
     },
     {
       "id": 37,
@@ -173,7 +165,6 @@
       "gxAlertDbColumn": "MWPersonCollectingSampleFirstName",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.37.value",
-      "payloadDestinationPath": "patient.MWPersonCollectingSampleFirstName"
     },
     {
       "id": 38,
@@ -190,7 +181,6 @@
       "gxAlertDbColumn": "MWPersonCollectingSamplePhoneNumber",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.38.value",
-      "payloadDestinationPath": "patient.MWPersonCollectingSamplePhoneNumber"
     },
     {
       "id": 39,
@@ -207,7 +197,6 @@
       "gxAlertDbColumn": "MWPersonCollectingSampleHTCProviderID",
       "completionWeight": 10,
       "payloadOriginPath": "data.customFieldData.39.value",
-      "payloadDestinationPath": "patient.MWPersonCollectingSampleHTCProviderID"
     }
   ],
   "refForms": []
