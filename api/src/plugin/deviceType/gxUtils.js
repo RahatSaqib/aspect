@@ -184,7 +184,10 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
         (_.get(existingResult, 'resultCategory2') && _.get(existingResult, 'resultCategory2') !== 'NoResult')
       ) {
         // We should never merge an incomplete result over a complete result
-        throw Boom.conflict('A later version of this result already exists')
+        const error = Boom.conflict('A later version of this result already exists')
+        error.output.statusCode = 201
+        error.reformat()
+        throw error
       }
     }
     if (_.get(existingResult, 'externalId') !== generatedExternalId) {

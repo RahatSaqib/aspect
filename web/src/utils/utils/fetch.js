@@ -9,7 +9,6 @@ import trim from 'lodash/trim'
 import { defineMessages } from 'react-intl'
 import config from '../../config'
 import { showError } from '../../store/AppNotificationRedux'
-import { setLastServerResponseTime } from '../../store/GlobalsRedux'
 
 export const aspectFetch = createFetch(
   base(config.aspectApi),
@@ -58,13 +57,9 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
   return fetch(input, options)
     .then(
       resp => {
-        const date = resp.headers.get('date')
         const contentType = resp.headers.get('Content-Type')
         const contentDisposition = resp.headers.get('Content-Disposition')
-        if (date) {
-          const store = require('../../store/store').default
-          store.dispatch(setLastServerResponseTime(new Date(date)))
-        }
+
         if (contentDisposition && contentDisposition.indexOf('attachment;') === 0) {
           const str = 'filename='
           const fileName = trim(contentDisposition.substr(contentDisposition.indexOf(str) + str.length), ' ;')
