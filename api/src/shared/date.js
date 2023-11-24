@@ -21,7 +21,7 @@ const {
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
-const { formatInTimeZone } = require('date-fns-tz')
+const { formatInTimeZone, zonedTimeToUtc } = require('date-fns-tz')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -36,6 +36,10 @@ function getTimezoneOffsetFromNumber(timezoneOffset) {
   return offset
 }
 
+const slideDateToTimeZone = (date, timeZoneIANA) => zonedTimeToUtc(date, timeZoneIANA)
+
+const formatDateInTimeZone = (date, timeZoneIANA) => formatInTimeZone(date, timeZoneIANA, 'yyyy-MM-dd HH:mm:ssXXX')
+
 const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') => {
   return knex.raw(`CONCAT_WS(
     '-',
@@ -43,6 +47,7 @@ const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset 
     LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
 }
+
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
   knex.raw(`CONCAT_WS(
     '-',
@@ -64,6 +69,20 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
  */
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
   knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`)
+
+/**
+ * - Generates knex code build an expression over a datetime field in the specified timezone.
+ * @param {*} knex - Knex ref.
+ * @param {string} field - Name of the field to select.
+ * @param {string} offset - Time offset in ISO format (e.g. +05:00)
+ * @returns Expression to be added to a Knex query, representing plain datetime value converted a specified TZ
+ * @example
+ * .where('r.endedOn', '>', getDateTimeExpressionInTimeZone(knex, 'd.lastSeenOn', '+05:00'))
+ * returns:
+ * where `r.endedOn` > CONVERT_TZ(`d.lastSeen`, '+00:00', '+05:00')
+ */
+const getDateTimeExpressionInTimeZone = (knex, field, offset, alias) =>
+  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}")`)
 
 const getISODateUserTimeZoneField = (knex, field, alias = 'isoDate', offset = '+00:00') =>
   knex.raw(
@@ -139,9 +158,9 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
   }
   return initialProperties
     ? dates.map(d => ({
-        date: parseISO(d),
-        ...initialProperties,
-      }))
+      date: parseISO(d),
+      ...initialProperties,
+    }))
     : dates.map(d => parseISO(d))
 }
 
@@ -283,15 +302,16 @@ function getDatesFromQuery(query) {
   }
 }
 
-/**
- * Convert a Timezone name in a timeOffset
+/** Converts a Timezone name in a timeOffset
  * @param {string} timeZone - ISO 8601 timezone String (i.e. Australia/Canberra)
  * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
  * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
+ * @description - Useful when you need to use {@link getDateTimeProjectionInUserTimeZone} or directly mysql CONVERT_TZ function,
+ * which takes as argument the time offset in the format this function returns.
  */
-function getOffsetFromTimeZone(timeZone) {
+function getOffsetFromTimeZone(timeZone, date = new Date()) {
   try {
-    return formatToTimeZone(new Date(), 'Z', { timeZone })
+    return formatToTimeZone(date, 'Z', { timeZone })
   } catch (error) {
     return '+00:00'
   }
@@ -378,12 +398,15 @@ module.exports = {
   getMonthYearUserTimeZoneField,
   getISODateUserTimeZoneField,
   getDateTimeProjectionInUserTimeZone,
+  getDateTimeExpressionInTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
   getFormattedDateTimeWithTimezone,
   getFormattedDate,
   getDatesFromQuery,
   getOffsetFromTimeZone,
+  slideDateToTimeZone,
+  formatDateInTimeZone,
   getOffsetFromIsoDateString,
   getOffsetFromIsoDateStringInMinutes,
   getTimeZoneFromUser,

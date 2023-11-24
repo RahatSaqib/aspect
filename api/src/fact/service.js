@@ -18,7 +18,7 @@ const {
   resultWorkflowStatusToId,
 } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
-const { startOfDayUtc } = require('../shared/date')
+const { startOfDayUtc, formatDateInTimeZone, slideDateToTimeZone } = require('../shared/date')
 const { XDR_RESISTANCES, /* XDR_RESISTANCES_COMBO, */ XDR_RESISTANCE_VALUES } = require('../shared/constants')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
@@ -301,6 +301,13 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
   return messageContext.transact(async knex => {
     const now = new Date()
 
+    const { defaultTimeZoneIANA: timeZoneIANA } = await knex('Device as d')
+      .join('Geography as g', 'g.id', 'd.geographyId')
+      .join('Country as c', 'c.id', 'g.countryId')
+      .first('defaultTimeZoneIANA')
+
+    // const offset = getOffsetFromTimeZone(timeZoneIANA, resultEndedOn)
+
     const query = knex('Result as r')
       .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
       .where({ deviceId })
@@ -327,12 +334,16 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
     await messageContext.initDictionaryTables()
 
     await Promise.each(daysToCalculate, async days => {
-      const endedOn = startOfDayUtc(subDays(now, days))
+      const endedOn = formatDateInTimeZone(
+        slideDateToTimeZone(startOfDayUtc(subDays(now, days)), timeZoneIANA),
+        timeZoneIANA
+      )
+
       // query for selecting data for the device
       const query = knex('Result as r')
         .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
         .where('r.deviceId', deviceId)
-        .where('r.endedOn', '>', endedOn)
+        .where('r.endedOn', '>=', endedOn)
         .where('rt.excluded', false)
       const factResultsDevice = {
         calculatedOn: now,
