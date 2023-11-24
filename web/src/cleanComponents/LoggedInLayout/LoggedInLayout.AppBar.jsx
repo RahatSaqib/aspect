@@ -1,27 +1,17 @@
 import React, { useEffect, useState } from 'react'
 import { AppBar, IconButton, MenuItem, Toolbar } from '@mui/material'
 import { FaUser } from 'react-icons/fa'
-import { defineMessages, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
 import Logo from '../../assets/logo_confluence.png'
 import PermissionChecker from '../../components/PermissionChecker'
+import messages from '../../messages/allMessages'
 import IconMenu from '../../oldComponents/shared/IconMenu'
 import { userRequestedLogout } from '../../store/AuthRedux'
 import { aspectFetch } from '../../utils/utils/fetch'
 import LayoutNavigation from './LoggedInLayout.Navigation'
 import styles from './styles.module.css'
-
-const messages = defineMessages({
-  accountDetails: {
-    id: 'pages.HorizontalAppBar.accountDetails',
-    defaultMessage: 'Account Details',
-  },
-  signOut: {
-    id: 'pages.HorizontalAppBar.signOut',
-    defaultMessage: 'Sign Out',
-  },
-})
 
 const Header = () => {
   const dispatch = useDispatch()
