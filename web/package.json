@@ -49,7 +49,6 @@
     "downshift": "^6.1.9",
     "email-validator": "^2.0.4",
     "formik": "^2.2.9",
-    "global": "^4.4.0",
     "google-libphonenumber": "^3.2.33",
     "http-client": "^4.3.1",
     "immutable": "4.1.0",
@@ -60,8 +59,8 @@
     "prop-types": "^15.8.1",
     "react": "^17.0.2",
     "react-datepicker": "^4.8.0",
-    "react-display-name": "^0.2.5",
     "react-dom": "^17.0.2",
+    "react-error-boundary": "^3.1.4",
     "react-google-maps": "^9.4.5",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.4.0",
@@ -79,7 +78,6 @@
     "redux-form": "^8.3.8",
     "redux-immutable": "^4.0.0",
     "redux-thunk": "^2.4.1",
-    "url-search-params-polyfill": "^8.1.1",
     "yup": "^0.32.11"
   },
   "devDependencies": {
@@ -105,7 +103,6 @@
     "@babel/preset-env": "^7.18.10",
     "@babel/preset-react": "^7.18.6",
     "@babel/register": "^7.18.9",
-    "@formatjs/cli": "^4.8.4",
     "@testing-library/jest-dom": "^5.16.5",
     "@testing-library/react": "^12.0.0",
     "@testing-library/user-event": "^14.4.3",
@@ -146,8 +143,6 @@
     "jsdom": "^20.0.0",
     "mini-css-extract-plugin": "2.6.1",
     "prettier": "^2.7.1",
-    "react-error-boundary": "^3.1.4",
-    "react-intl-po": "^2.2.2",
     "react-test-renderer": "^17.0.2",
     "sinon": "^14.0.0",
     "style-loader": "^3.3.1",
@@ -162,7 +157,6 @@
   },
   "jest": {
     "setupFiles": [
-      "<rootDir>/src/__setup__/polyfills.js",
       "<rootDir>/src/__setup__/mockDate.js",
       "<rootDir>/src/__setup__/mockFetch.js",
       "<rootDir>/src/__setup__/mockGoogle.js",
