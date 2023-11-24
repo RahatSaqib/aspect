@@ -123,6 +123,29 @@ async function getTbTestingDiagnosisTrend(request) {
       },
     }
   }
+
+  if (request.query.source === 'tbAndRrDetection') {
+    const tbGrouped = reduceByTbDetected(dataRaw, getYear(request.query.minDate), getYear(request.query.maxDate))
+    const rrGrouped = reduceByRrDetected(dataRaw, getYear(request.query.minDate), getYear(request.query.maxDate))
+
+    const map = new Map();
+    tbGrouped.forEach(item => map.set(item.year, item));
+    rrGrouped.forEach(item => map.set(item.year, {...map.get(item.year), ...item}));
+    const tbAndRrGrouped = Array.from(map.values());
+
+    return {
+      grouped: tbAndRrGrouped,
+      keysFromGrouped: ['Total', 'MtbDetected', 'MtbToTotalPercentage', 'tbTotal', 'rrDetected', 'rrToTbTotalPercentage'], // series
+      i18nKeys: {
+        MtbDetected: 'MTBPlus',
+        Total: 'Total',
+        MtbToTotalPercentage: 'MTBPercent',
+        rrDetected: 'rrDetected',
+        tbTotal: 'TbTotal',
+        rrToTbTotalPercentage: 'rrToTbTotalPercentage',
+      },
+    }
+  }
 }
 
 module.exports = {

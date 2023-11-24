@@ -8,9 +8,10 @@ import useAuthState from '../../../../../hooks/useAuthState'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
+import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 
 const endpointParams = [
-  { source: 'rrDetection' },
+  { source: 'tbAndRrDetection' },
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { groupBy: 'resultCategory1' },
@@ -34,18 +35,24 @@ const RrtbTestDiagnosisPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
+  const mtbPlusMessage = formatMessage(intlMessages.MTBPlus)
+  const mtbPlusTotalMessage = formatMessage(intlMessages.MTBPlus) + ' ' + formatMessage(intlMessages.Total)
+  const mtbPlusPercentageMessage = formatMessage(intlMessages.MTBPercent)
   const rrDetectedMessage = formatMessage(messages.rrDetected)
-  const totalTestsMessage = formatMessage(messages.TbTotal)
-  const RRToTbTotalPercentage = formatMessage(messages.RRToTbTotalPercentage)
+  const rrTotalTestsMessage = formatMessage(messages.TbTotal)
+  const rrToTbTotalPercentageMessage = formatMessage(messages.RRToTbTotalPercentage)
 
   const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
       const line = []
       const bar = []
-      data.grouped.map(({ year, rrToTbTotalPercentage, tbTotal, rrDetected }) => {
-        line.push({ year, [RRToTbTotalPercentage]: +rrToTbTotalPercentage.toFixed(2) })
-        bar.push({ year, value: tbTotal, type: totalTestsMessage })
+      data.grouped.map(({ year, MtbToTotalPercentage, Total, MtbDetected, rrToTbTotalPercentage, tbTotal, rrDetected }) => {
+        line.push({ year, [mtbPlusPercentageMessage]: +MtbToTotalPercentage.toFixed(2) })
+        bar.push({ year, value: MtbDetected, type: mtbPlusMessage })
+        bar.push({ year, value: Total, type: mtbPlusTotalMessage })
+        line.push({ year, [rrToTbTotalPercentageMessage]: +rrToTbTotalPercentage.toFixed(2) })
+        bar.push({ year, value: tbTotal, type: rrTotalTestsMessage })
         bar.push({ year, value: rrDetected, type: rrDetectedMessage })
         return {}
       })
@@ -87,12 +94,15 @@ const RrtbTestDiagnosisPage = () => {
             showLabel={showLabel}
             graphId="rrtbDetectedQuarterlyTrends"
             colors={[
-              { name: totalTestsMessage, colorId: 'caseTotal' },
+              { name: mtbPlusMessage, colorId: 'caseDetected' },
+              { name: mtbPlusTotalMessage, colorId: 'caseTotal' },
+              { name: mtbPlusPercentageMessage, colorId: 'casePercentDetectedOfTotal' },
+              { name: rrTotalTestsMessage, colorId: 'caseTotal' },
               { name: rrDetectedMessage, colorId: 'caseDetected' },
-              { name: RRToTbTotalPercentage, colorId: 'casePercentDetectedOfTotal' },
+              { name: rrToTbTotalPercentageMessage, colorId: 'casePercentDetectedOfTotal' },
             ]}
             xField="year"
-            yField={['value', RRToTbTotalPercentage]}
+            yField={['value', rrToTbTotalPercentageMessage]}
           />
         </Grid>
       )}
