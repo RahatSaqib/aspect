@@ -5,7 +5,10 @@ const {
 module.exports = require('../utils').seed(async knex => {
   const assayIds = await knex('Assay').whereIn('externalId', ['GxMtbRif', 'GxMtbRifUltra']).pluck('id')
 
-  const bacterialLoadKeys = Object.keys(bacterialLoadMapping)
+  // We are sorting the bacterial load by length to prevent conflicts when matching the bacterial load levels
+  const bacterialLoadKeys = Object.keys(bacterialLoadMapping).sort(function (a, b) {
+    return b.length - a.length
+  })
 
   const caseQuery = bacterialLoadKeys
     .map(key => `WHEN resultData->>"$.resultText" LIKE '%${key}%' THEN '${bacterialLoadMapping[key]}'`)
