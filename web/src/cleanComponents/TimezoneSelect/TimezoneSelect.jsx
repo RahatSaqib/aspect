@@ -12,8 +12,8 @@ const TimezoneSelect = ({ id, name, label, value, onChange, error, helperText, d
       helperText={helperText}
       select
       variant="standard"
-      value={value}
-      onChange={onChange}
+      value={[value]}
+      onChange={e => onChange(e.target.value)}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
