@@ -4,9 +4,9 @@ import map from 'lodash/map'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
+import messages from '../../../../messages/allMessages'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import { filterColour } from '../../../index'
-import messages from './messages'
 import styles from './PieRowGraph.module.css'
 
 const PieRowGraph = ({ data, componentClasses }) => {

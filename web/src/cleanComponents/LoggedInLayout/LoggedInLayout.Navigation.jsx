@@ -4,7 +4,7 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
 import { useIntl } from 'react-intl'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import PermissionChecker from '../../components/PermissionChecker'
-import messages from './messages'
+import messages from '../../messages/allMessages'
 import styles from './styles.module.css'
 
 const submenuSelected = (href, location) => location.pathname.startsWith(`${href}/`)

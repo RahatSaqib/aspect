@@ -8,10 +8,9 @@ import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import { ImplementingPartnerSelect, DeviceCapacitySelect } from '../../../../cleanComponents'
+import { ImplementingPartnerSelect, DeviceCapacitySelect, SiteSelect } from '../../../../cleanComponents'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
-import SiteSelectField from '../../../../oldComponents/resource/SiteSelectField'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
@@ -86,15 +85,13 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 setError(isEmpty(e.target.value))
               }}
             />
-            <SiteSelectField
+            <SiteSelect
+              id="siteId"
               name="siteId"
-              floatingLabelText={intl.formatMessage(messages.location)}
-              disabled={!editable}
+              label={intl.formatMessage(messages.location)}
               value={editDevice.siteId}
-              onSiteChange={siteId => setEditDevice({ ...editDevice, siteId })}
-              fullWidth
-              tabIndex="0"
-              aria-haspopup
+              onChange={siteId => setEditDevice({ ...editDevice, siteId })}
+              disabled={!editable}
             />
 
             <ImplementingPartnerSelect
