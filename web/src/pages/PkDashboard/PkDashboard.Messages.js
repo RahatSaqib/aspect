@@ -298,6 +298,10 @@ const messages = {
       id: 'p.PkDashboard.fqInhTestingDiagnosis',
       defaultMessage: 'FQ & INH Testing & Diagnosis',
     },
+    dataVisualisationForXDR: {
+      id: 'p.PkDashboard.dataVisualisationForXDR',
+      defaultMessage: 'Data Visualisation for XDR Resistance',
+    },
     CurrentFQDetection: {
       id: 'p.PkDashboard.CurrentFQDetection',
       defaultMessage: 'Current FQ Detection',
@@ -333,6 +337,10 @@ const messages = {
     noAssociatedLga: { id: 'p.PkDashboard.noAssociatedLga', defaultMessage: 'No Associated LGA' },
 
     showLineFor: { id: 'p.PkDashboard.showLineFor', defaultMessage: 'Show line for' },
+    dataVisualisationForXDRResistanceGraphTitle: {
+      id: 'p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle',
+      defaultMessage: 'Data Visualisation For XDR Resistance Over Time',
+    },
   }),
 }
 

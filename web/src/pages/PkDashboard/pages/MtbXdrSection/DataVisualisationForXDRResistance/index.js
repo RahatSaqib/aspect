@@ -1,0 +1,3 @@
+import DataVisualisationForXDRResistance from './DataVisualisationForXDRResistance'
+
+export default DataVisualisationForXDRResistance
