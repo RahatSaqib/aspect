@@ -64,7 +64,7 @@ function getRowsForCustomFields(values) {
           component: 'select',
           options: customField.items
             .sort((a, b) => a.order - b.order)
-            .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined })),
+            .map(i => ({ value: i.key, label: i.value, scope: i.scope || undefined })),
         },
       })
     } else if (
@@ -138,14 +138,13 @@ function getValidationsForCustomFields(values, formatMessage) {
   return rows
 }
 
-const sanitizeValue = value => value.replaceAll('-', '').replaceAll(',', '').replaceAll('  ', ' ').split(' ').join('_')
 
 // start enable/disable logic
 const evaluateCondition = (condition, sourcePath, formik) => {
-  const cleanValue = sanitizeValue(formik.values[sourcePath[0]][condition.propToCompare]).toLowerCase()
+  const cleanValue = formik.values[sourcePath[0]][condition.propToCompare]
   switch (condition.operator) {
     case '=':
-      return cleanValue === condition.valueToCompare.toLowerCase()
+      return cleanValue === condition.valueToCompare?.toLowerCase()
     default:
       return false
   }
@@ -171,7 +170,7 @@ const applyFilterToOption = (filter, option, formik, sourcePath) => {
   if (!data) return
 
   const cleanList = isArray(data) ? data : [data]
-  const cleanValue = sanitizeValue(formik.values[sourcePath[0]][filter.propToCompare]).toLowerCase()
+  const cleanValue = formik.values[sourcePath[0]][filter.propToCompare]
   if (filter.operator === 'in') {
     return cleanList.map(o => o.toLowerCase()).includes(cleanValue)
   }

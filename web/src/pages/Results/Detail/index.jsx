@@ -123,7 +123,6 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
 
   const keepInvalidSelection = !toggleEdit
   formConfig.sections = updateValidationsAndFilters(formConfig.sections, data, formik, keepInvalidSelection)
-
   return (
     <>
       <DetailHeader name={`${formConfig.title}${patientId}`} back="/browse/result">
