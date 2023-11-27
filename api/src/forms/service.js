@@ -5,6 +5,7 @@ const { knex, filterParams } = require('../db')
 const formDictionary = require('./formsFileDictionary')
 const { getListSitesForSelectList } = require('../site/service')
 const { stateSelectList } = require('../geography/service')
+const { normalizePhoneNumber } = require('../shared/phoneNormalization')
 
 function createFormObject(formQuery) {
   const forms = {}
@@ -185,10 +186,29 @@ function getFormsBaseQuery(partnerId, query) {
     )
   return queryForm
 }
+
+const getCustomFieldsFromPayload = async (payload, countryCode, partnerId, assayId, diseaseId = null) => {
+  const forms = createFormObject(await getFormsBaseQuery(partnerId, { formType: 'gxConnectForm', assayId, diseaseId }))
+  const fields = Object.values(forms).flatMap(form => form.fields)
+
+  return fields.reduce((obj, field) => {
+    const { payloadOriginPath = `data.customFieldData.${field.id}.value`, source, fieldType } = field
+
+    const value = _.get(payload, payloadOriginPath)
+    if (value && source) {
+      if (_.includes(['patientCellphone', 'clinicianCellphone', 'phone'], fieldType))
+        _.set(obj, source, normalizePhoneNumber(value, countryCode))
+      else _.set(obj, source, value)
+    }
+    return obj
+  }, {})
+}
+
 module.exports = {
   getForms,
   getCustomFields,
   createFormObject,
   replaceOptionSourceProp,
   getCustomFieldPlaceholdersForNotifications,
+  getCustomFieldsFromPayload,
 }

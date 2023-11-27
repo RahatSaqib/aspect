@@ -94,7 +94,7 @@
           "regex": "\\(?([0-9]{3})\\)?([ .-]?)([0-9]{3})\\2([0-9]{4})"
         }
       ],
-      "source": "patientData.patientPhone"
+      "source": "patientData.phone"
     }
   ],
   "refForms": []
