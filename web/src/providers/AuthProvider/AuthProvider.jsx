@@ -5,11 +5,8 @@ import AuthContext from './AuthProvider.Context'
 
 const AuthProvider = ({ children }) => {
   const userComposed = useSelector(({ user }) => user)
-  const globalsComposed = useSelector(({ globals }) => globals)
   const user = useMemo(() => userComposed.toJS(), [userComposed])
-  const globals = useMemo(() => globalsComposed.toJS(), [globalsComposed])
 
-  const { lastServerResponseTime } = globals
   const jwtExp = user.jwt.exp
 
   let isLoggedOut = false
@@ -21,8 +18,8 @@ const AuthProvider = ({ children }) => {
     [user.countryAbbreviation]
   )
 
-  if (isNumber(jwtExp) && lastServerResponseTime) {
-    const isExpired = jwtExp < lastServerResponseTime.getTime() / 1000
+  if (isNumber(jwtExp)) {
+    const isExpired = jwtExp < new Date().getTime() / 1000
     if (isExpired) {
       isLoggedOut = true
     }

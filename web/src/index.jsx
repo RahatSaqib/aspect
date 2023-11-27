@@ -1,5 +1,4 @@
 // This is the entry point for our app
-import 'url-search-params-polyfill'
 import React from 'react'
 import * as Sentry from '@sentry/react'
 import { Integrations } from '@sentry/tracing'

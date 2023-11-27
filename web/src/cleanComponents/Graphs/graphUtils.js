@@ -1,4 +1,4 @@
-import { subDays, subMonths, addMinutes, subMinutes, getYear, subYears, startOfMonth, endOfMonth } from 'date-fns'
+import { subDays, subMonths, addMinutes, subMinutes, getYear, subYears, startOfMonth } from 'date-fns'
 import { format } from 'date-fns-tz'
 import filter from 'lodash/filter'
 import flatten from 'lodash/flatten'
@@ -444,14 +444,6 @@ const getItemsForTrendsGraph = (data, states, lgas) => {
   return { graphData, tableData }
 }
 
-const getPreviousPeriod = (period = 'month', dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") => {
-  // currently only works for month
-  const previousPeriodStart = getTimePeriod(1, period, dateFormat)
-  const previousPeriodEnd = format(endOfMonth(new Date(previousPeriodStart)), dateFormat)
-
-  return { start: previousPeriodStart, end: previousPeriodEnd }
-}
-
 const formatDataByGraphType = (
   data,
   displayMethod,
@@ -560,7 +552,6 @@ export {
   prepParamsForEndPoint,
   objectToArray,
   getItemsForTrendsGraph,
-  getPreviousPeriod,
   formatDataByGraphType,
   formatDateToYYYYMMDD,
   fillData,
