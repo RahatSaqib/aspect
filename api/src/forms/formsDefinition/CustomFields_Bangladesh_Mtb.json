@@ -101,7 +101,7 @@
       "id": 1106,
       "name": "ReferringFacility",
       "i18nKey": "ReferringFacilityI18nkey",
-      "fieldType": "text",
+      "fieldType": "number",
       "completionWeight": 10,
       "order": 160,
       "gxAlertDbColumn": "ReferringFacility",
@@ -110,7 +110,7 @@
       "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
       "controlType": "autoComplete",
       "payloadOriginPath": "data.customFieldData.1106.value",
-      "source": "patientData.ReferringFacility",
+      "source": "referringSiteId",
       "itemsSource": "all-sites",
       "itemsSourceConfig": {
         "key": "id",
