@@ -1,5 +1,6 @@
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
+import isString from 'lodash/isString'
 import uniqBy from 'lodash/uniqBy'
 import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
@@ -96,48 +97,57 @@ function getRowsForCustomFields(values) {
   return rows
 }
 
-function getValidationsForCustomFields(values, formatMessage) {
-  const rows = {}
+const getValidationRule = (customField, formatMessage) => {
+  let validationRule = Yup.mixed()
 
-  uniqBy(values.customFields, elem => elem.source).forEach(customField => {
-    if (customField.source) {
-      const source = customField.source?.split('.')
-      const dataOrigin = source[0]
-      const dataField = source[1]
-      let validationRule = Yup.mixed()
+  if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
+    // add validation for text
+    validationRule = Yup.string()
+  } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
+    const validation =
+      customField.validation && customField.validation.length
+        ? customField.validation[0]
+        : { min: 1, max: 100, errorMessage: '' }
+    validationRule = Yup.number()
+      .positive()
+      .integer()
+      .min(validation.min || 1, validation.errorMessage)
+      .max(validation.max, validation.errorMessage)
+  }
 
-      if (!Object.keys(rows).includes(dataOrigin)) {
-        rows[dataOrigin] = Yup.object({})
-      }
+  if (customField.optional === false) {
+    validationRule = validationRule.required(formatMessage(validations.required))
+  }
 
-      if (customField.controlType === 'comboBox' || customField.controlType === 'autoComplete') {
-        // add validation for select
-      } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
-        // add validation for text
-        validationRule = Yup.string()
-      } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
-        const validation =
-          customField.validation && customField.validation.length
-            ? customField.validation[0]
-            : { min: 1, max: 100, errorMessage: '' }
-        validationRule = Yup.number()
-          .positive()
-          .integer()
-          .min(validation.min || 1, validation.errorMessage)
-          .max(validation.max, validation.errorMessage)
-      }
-
-      if (customField.optional === false) {
-        validationRule = validationRule.required(formatMessage(validations.required))
-      }
-
-      rows[dataOrigin] = rows[dataOrigin].shape({ [dataField]: validationRule })
-    }
-  })
-
-  return rows
+  return validationRule
 }
 
+const getValidationsForCustomFields = (values, formatMessage) =>
+  uniqBy(values.customFields, elem => elem.source).reduce((form, customField) => {
+    if (customField.source && isString(customField.source)) {
+      const source = customField.source.split('.')
+      const isNestedObject = source.length > 1
+
+      const validationRule = getValidationRule(customField, formatMessage)
+
+      if (isNestedObject) {
+        const dataOrigin = source[0]
+        const dataField = source[1]
+
+        if (!Object.keys(form).includes(source[0])) {
+          // Create subgroup
+          form[dataOrigin] = Yup.object({})
+        }
+
+        // Add a custom field to the subgroup
+        form[dataOrigin] = form[dataOrigin].shape({ [dataField]: validationRule })
+      } else {
+        // Add a custom field to the group
+        form[customField.source] = validationRule
+      }
+    }
+    return form
+  }, {})
 
 // start enable/disable logic
 const evaluateCondition = (condition, sourcePath, formik) => {
