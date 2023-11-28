@@ -36,7 +36,7 @@ export default StateSelectField
 StateSelectField.propTypes = {
   allItemText: PropTypes.string,
   onStateIdChange: PropTypes.func,
-  countryId: PropTypes.string,
+  countryId: PropTypes.number,
   stateId: PropTypes.string,
   floatingLabelText: PropTypes.string.isRequired,
 }
@@ -44,6 +44,6 @@ StateSelectField.propTypes = {
 StateSelectField.defaultProps = {
   allItemText: null,
   onStateIdChange: () => {},
-  countryId: '',
+  countryId: null,
   stateId: '',
 }
