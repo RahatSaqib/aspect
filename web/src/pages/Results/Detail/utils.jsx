@@ -60,7 +60,7 @@ function getRowsForCustomFields(values) {
       const initialValue = get(values, customField.source)
       row.items.push({
         ...baseItem,
-        initialValue: initialValue ? [initialValue] : '',
+        initialValue,
         controlType: {
           component: 'select',
           options: customField.items
