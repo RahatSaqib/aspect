@@ -36,9 +36,38 @@ function getTimezoneOffsetFromNumber(timezoneOffset) {
   return offset
 }
 
+/** Slides an UTC date the amount of hours between UTC and the specified IANA timezone
+ * @param {date} date - An UTC date
+ * @param {string} timeZoneIANA - A String representing a IANA time zone
+ * @returns a new Date object representing the same date and time in the target timezone
+ * @example
+ * slideDateToTimeZone(new Date(2030,0,1), 'Asia/Karachi')
+ *
+ * will return 2030-01-01T05:00:00.000Z wich is zero hours of new year in Karachi (+05:00)
+ * @description This function returns a different moment that the one specified.
+ */
 const slideDateToTimeZone = (date, timeZoneIANA) => zonedTimeToUtc(date, timeZoneIANA)
 
+/** Format an UTC Date into a full ISO string in the time offset of specified time zone
+ * @param {Date} date - An UTC date
+ * @param {String} timeZoneIANA - A string representing a IANA time zone
+ * @returns a string representing the same date in the specified offset
+ * @example
+ * formatDateInTimeZone(new Date(2030,0,1), 'Asia/Karachi')
+ *
+ * Will return a '2030-01-01T05:00:00+05:00', note that it's the same date as input parameter,
+ * just expressed in Karachi time zone
+ */
 const formatDateInTimeZone = (date, timeZoneIANA) => formatInTimeZone(date, timeZoneIANA, 'yyyy-MM-dd HH:mm:ssXXX')
+
+/** Slides an UTC date to the specified time zone and return the result date in full ISO format
+ * @param {Date} date - An UTC date
+ * @param {String} timeZoneIANA - A string representing a IANA time zone
+ * @returns A new Date object slided the amount of hours between UTC and the input time zone, expressed as ISO full string
+ * @description This function it's the same as chain slideDateToTimeZone and then formatDateInTimeZone.
+ */
+const slideDateToTimeZoneISO = (date, timeZoneIANA) =>
+  formatDateInTimeZone(slideDateToTimeZone(date, timeZoneIANA), timeZoneIANA)
 
 const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') => {
   return knex.raw(`CONCAT_WS(
@@ -407,6 +436,7 @@ module.exports = {
   getOffsetFromTimeZone,
   slideDateToTimeZone,
   formatDateInTimeZone,
+  slideDateToTimeZoneISO,
   getOffsetFromIsoDateString,
   getOffsetFromIsoDateStringInMinutes,
   getTimeZoneFromUser,

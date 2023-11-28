@@ -18,7 +18,12 @@ const {
   resultWorkflowStatusToId,
 } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
-const { startOfDayUtc, formatDateInTimeZone, slideDateToTimeZone } = require('../shared/date')
+const {
+  startOfDayUtc,
+  slideDateToTimeZoneISO,
+  getOffsetFromTimeZone,
+  getDateTimeProjectionInUserTimeZone,
+} = require('../shared/date')
 const { XDR_RESISTANCES, /* XDR_RESISTANCES_COMBO, */ XDR_RESISTANCE_VALUES } = require('../shared/constants')
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
@@ -301,12 +306,14 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
   return messageContext.transact(async knex => {
     const now = new Date()
 
-    const { defaultTimeZoneIANA: timeZoneIANA } = await knex('Device as d')
+    const { timeZone: timeZoneIANA } = await knex('Device as d')
       .join('Geography as g', 'g.id', 'd.geographyId')
       .join('Country as c', 'c.id', 'g.countryId')
-      .first('defaultTimeZoneIANA')
+      .join('TimeZone as tz', 'c.timezone', 'tz.id')
+      .first('tz.timeZone')
+      .where('d.id', deviceId)
 
-    // const offset = getOffsetFromTimeZone(timeZoneIANA, resultEndedOn)
+    const offset = getOffsetFromTimeZone(timeZoneIANA, resultEndedOn)
 
     const query = knex('Result as r')
       .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
@@ -334,16 +341,13 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
     await messageContext.initDictionaryTables()
 
     await Promise.each(daysToCalculate, async days => {
-      const endedOn = formatDateInTimeZone(
-        slideDateToTimeZone(startOfDayUtc(subDays(now, days)), timeZoneIANA),
-        timeZoneIANA
-      )
+      const from = slideDateToTimeZoneISO(startOfDayUtc(subDays(now, days)), timeZoneIANA)
 
       // query for selecting data for the device
       const query = knex('Result as r')
         .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
         .where('r.deviceId', deviceId)
-        .where('r.endedOn', '>=', endedOn)
+        .where('r.endedOn', '>=', from)
         .where('rt.excluded', false)
       const factResultsDevice = {
         calculatedOn: now,
@@ -356,7 +360,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
             queryBuilder
               .on('r.resultWorkflowStatusLogId', 'rwl.id')
               .andOn(knex.raw('rwl.resultWorkflowStatusId = ?', deliveredResultWorkfowStatusId))
-              .andOn(knex.raw('rwl.changedOn > ?', endedOn))
+              .andOn(knex.raw('rwl.changedOn > ?', from))
           })
           .first(
             knex.raw('COUNT(DISTINCT r.id) as resultCount'),
@@ -504,7 +508,10 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         .modify(qb => {
           if (resultEndedOn) {
             // TODO: we'll have to account for different timeframes here if we ever want to calculate more than just month
-            qb.whereBetween('r.endedOn', [startOfMonth(parseISO(resultEndedOn)), endOfMonth(parseISO(resultEndedOn))])
+            qb.whereBetween('r.endedOn', [
+              slideDateToTimeZoneISO(startOfMonth(parseISO(resultEndedOn)), timeZoneIANA),
+              slideDateToTimeZoneISO(endOfMonth(parseISO(resultEndedOn)), timeZoneIANA),
+            ])
           }
         })
         .select([
@@ -516,8 +523,15 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
            * commenting out below line which calculates combinations of resistances
            */
           // ...sumComboXdrResistances(knex),
-          knex.raw('DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame'),
+          knex.raw(
+            `DATE_FORMAT(${getDateTimeProjectionInUserTimeZone(
+              knex,
+              knex.raw(`IFNULL(r.endedOn, r.startedOn)`),
+              offset
+            )}, "%Y-%m-01") as startedOnTimeFrame`
+          ),
         ])
+
       // if we didn't get an endedOn, generate all time frames since first result from device
       await Promise.each(countsByCategories, async count => {
         const factResultsDeviceByTimeFrame = await knex('FactResultsDeviceByTimeFrame')
