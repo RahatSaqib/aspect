@@ -6,6 +6,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { create } from 'jss'
 import { JssProvider } from 'react-jss'
 import { QueryClient, QueryClientProvider } from 'react-query'
+import { ReactQueryDevtools } from 'react-query/devtools'
 import { useSelector, Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import LocalStorage from '../oldComponents/LocalStorage'
@@ -41,6 +42,7 @@ const AppWithProviders = ({ children }) => {
                 </AuthProvider>
               </BrowserRouter>
             </LocalizationProvider>
+            <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>
         </ThemeProvider>
       </I18nProvider>
