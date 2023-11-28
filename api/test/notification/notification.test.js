@@ -43,7 +43,7 @@ describe('Query generator for filtering conditions', () => {
       {
         tags: [],
         checked: true,
-        jobFunctionId: '1',
+        jobFunctionId: 1,
       },
     ],
     deviceLevelId: 'national',
@@ -80,7 +80,7 @@ describe('Query generator for filtering conditions', () => {
       {
         tags: [],
         checked: true,
-        jobFunctionId: '1',
+        jobFunctionId: 1,
       },
     ],
     deviceLevelId: 'state',
