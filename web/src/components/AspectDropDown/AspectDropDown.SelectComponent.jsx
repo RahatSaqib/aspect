@@ -145,7 +145,7 @@ function getOptionByValue(data, requestedValue, idKey) {
   if (isPlainObject(requestedValue)) {
     const { value } = requestedValue
     return find(data, { [idKey]: value })
-  } 
+  }
   // Take the option in different ways, depending on the data format
   if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
 
@@ -155,7 +155,8 @@ function getOptionByValue(data, requestedValue, idKey) {
     const groupedListFind = data
       .flatMap(o => o.options)
       .find(option => option !== undefined && option[idKey] === requestedValue)
-    
+
+
     return simpleListFind || groupedListFind
   }
 }

@@ -66,12 +66,10 @@ const FormItem = ({
 
   let isVisible = true
   if (hideIfNull) {
-    if (typeof value === 'string')
-      isVisible = !isNil(value) && !isEmpty(value)
-    else
-      isVisible = !isNil(value)
+    if (typeof value === 'string') isVisible = !isNil(value) && !isEmpty(value)
+    else isVisible = !isNil(value)
   }
-  
+
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values, toggleEdit, subRowIndex)
   }

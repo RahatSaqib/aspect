@@ -68,7 +68,7 @@ const AspectResultDetail = () => {
       )
       // This is for the title, so wee need the colons
       setPatientId(`: ${data.patientId}`)
-      
+
       const config = getFormConfigWithData(intl, false, data)
 
       setData(data.customFields)

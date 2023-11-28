@@ -133,4 +133,3 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
       return Promise.reject(err)
     })
 }
-
