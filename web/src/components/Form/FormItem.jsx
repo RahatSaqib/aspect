@@ -3,6 +3,7 @@ import { Grid } from '@mui/material'
 import { useFormikContext } from 'formik'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
+import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import styles from './Form.module.css'
@@ -62,7 +63,15 @@ const FormItem = ({
   const { formik, toggleEdit, validationSchema } = useFormikContext()
   const { getFieldProps, values } = formik
   const value = values[id]
-  let isVisible = !(hideIfNull && isEmpty(value) && !toggleEdit)
+
+  let isVisible = true
+  if (hideIfNull) {
+    if (typeof value === 'string')
+      isVisible = !isNil(value) && !isEmpty(value)
+    else
+      isVisible = !isNil(value)
+  }
+  
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values, toggleEdit, subRowIndex)
   }

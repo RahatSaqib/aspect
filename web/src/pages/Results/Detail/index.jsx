@@ -50,12 +50,6 @@ const AspectResultDetail = () => {
     if (isLoading || !queryResponse) return
     if (queryResponse?.ok) {
       const { data } = queryResponse
-      if (data.resultCategory1) {
-        data.resultCategory1 = `${data.resultCategory1}`
-      }
-      if (data.resultCategory2) {
-        data.resultCategory2 = `${data.resultCategory2}`
-      }
       data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
       /**
        * This field `allResistances` is displayed in `textArea` component in readOnly mode.
@@ -74,7 +68,7 @@ const AspectResultDetail = () => {
       )
       // This is for the title, so wee need the colons
       setPatientId(`: ${data.patientId}`)
-
+      
       const config = getFormConfigWithData(intl, false, data)
 
       setData(data.customFields)

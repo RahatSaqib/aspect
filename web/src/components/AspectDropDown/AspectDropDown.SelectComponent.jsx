@@ -145,27 +145,19 @@ function getOptionByValue(data, requestedValue, idKey) {
   if (isPlainObject(requestedValue)) {
     const { value } = requestedValue
     return find(data, { [idKey]: value })
+  } 
+  // Take the option in different ways, depending on the data format
+  if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
+
+  if (isArray(data)) {
+    const simpleListFind = data.find(option => option[idKey] === requestedValue)
+    // options can be nested/grouped: ie {label:'a', options:[{label:'a1',name:'a1'}]}
+    const groupedListFind = data
+      .flatMap(o => o.options)
+      .find(option => option !== undefined && option[idKey] === requestedValue)
+    
+    return simpleListFind || groupedListFind
   }
-
-  // When the requested value is a string key
-  if (isString(requestedValue)) {
-    // Take the option in different ways, depending on the data format
-    if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
-
-    if (isArray(data)) {
-      const simpleListFind = data.find(option => option[idKey] === requestedValue)
-      // options can be nested/grouped: ie {label:'a', options:[{label:'a1',name:'a1'}]}
-      const groupedListFind = data
-        .flatMap(o => o.options)
-        .find(option => option !== undefined && option[idKey] === requestedValue)
-      return simpleListFind || groupedListFind
-    }
-
-    if (isNumber(requestedValue)) return data.find(option => option[idKey] === requestedValue)
-  }
-
-  // When the requested value is a position in the array
-  if (isNumber(requestedValue)) return data[requestedValue]
 }
 
 export function getSelectedOptions(data, someValue, idKey) {

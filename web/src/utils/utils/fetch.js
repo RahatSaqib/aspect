@@ -73,7 +73,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         }
         if (resp.ok) {
           // HTTP Status === 2xx
-          return resp.json().then(changeAllIdsToString)
+          return resp.json()
         }
         // HTTP Status !== 2xx
         return resp.json().then(resp => {
@@ -134,26 +134,3 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
     })
 }
 
-// check if a property looks like an ID (key is equal to 'id' or ends with 'Id')
-function isIdLike(key) {
-  return key === 'id' || key.match(/.+Id$/)
-}
-
-// change data type of IDs to a string
-// params in react router are always strings
-// so this saves us from having to do conversions throught the app
-function changeAllIdsToString(data) {
-  if (isArray(data)) {
-    return data.map(changeAllIdsToString)
-  }
-  if (isObject(data)) {
-    return mapValues(data, (value, key) =>
-      isIdLike(key)
-        ? value === null || value === undefined || isObject(value)
-          ? value
-          : String(value)
-        : changeAllIdsToString(value)
-    )
-  }
-  return data
-}
