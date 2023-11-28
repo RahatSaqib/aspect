@@ -29,11 +29,11 @@ const filterConditionWithJfForDevice = {
   jobFunctions: [
     {
       tags: [],
-      jobFunctionId: '1',
+      jobFunctionId: 1,
     },
     {
       tags: [],
-      jobFunctionId: '2',
+      jobFunctionId: 2,
     },
   ],
   deviceLevelId: 'lga',
@@ -48,11 +48,11 @@ const filterConditionWithJfForDeviceNotWayneCounty = {
   jobFunctions: [
     {
       tags: [],
-      jobFunctionId: '1',
+      jobFunctionId: 1,
     },
     {
       tags: [],
-      jobFunctionId: '2',
+      jobFunctionId: 2,
     },
   ],
   deviceLevelId: 'lga',
@@ -79,11 +79,11 @@ const filterConditionWithJf = {
   jobFunctions: [
     {
       tags: [],
-      jobFunctionId: '1',
+      jobFunctionId: 1,
     },
     {
       tags: [],
-      jobFunctionId: '2',
+      jobFunctionId: 2,
     },
   ],
   deviceLevelId: 'lga',
@@ -113,11 +113,11 @@ const baseFilterCondition = {
   jobFunctions: [
     {
       tags: [],
-      jobFunctionId: '1',
+      jobFunctionId: 1,
     },
     {
       tags: [],
-      jobFunctionId: '2',
+      jobFunctionId: 2,
     },
   ],
   deviceLevelId: 'lga',

@@ -85,47 +85,47 @@ describe('notification endpoints', () => {
       webBody: 'web body',
       jobFunctions: [
         {
-          jobFunctionId: '1',
+          jobFunctionId: 1,
           checked: true,
           tags: [],
         },
         {
-          jobFunctionId: '2',
+          jobFunctionId: 2,
           checked: true,
           tags: [],
         },
         {
-          jobFunctionId: '3',
+          jobFunctionId: 3,
           checked: false,
           tags: [],
         },
         {
-          jobFunctionId: '4',
+          jobFunctionId: 4,
           checked: false,
           tags: [],
         },
         {
-          jobFunctionId: '5',
+          jobFunctionId: 5,
           checked: false,
           tags: [],
         },
         {
-          jobFunctionId: '6',
+          jobFunctionId: 6,
           checked: false,
           tags: [],
         },
         {
-          jobFunctionId: '7',
+          jobFunctionId: 7,
           checked: false,
           tags: [],
         },
         {
-          jobFunctionId: '8',
+          jobFunctionId: 8,
           checked: false,
           tags: [],
         },
         {
-          jobFunctionId: '9',
+          jobFunctionId: 9,
           checked: false,
           tags: [],
         },

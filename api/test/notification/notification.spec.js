@@ -146,8 +146,8 @@ describe('Issue based Notifications triggers', () => {
       // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
       const filterConditions = {
         ..._.omit(filterConditionWithJfForDevice, 'jobFunctions'),
-        persons: [{ personId: `${adminId}` }],
-        jobFunctions: [{ jobFunctionId: `${managerJobFunctionId}` }, { jobFunctionId: `${adminJobFunctionId}` }],
+        persons: [{ personId: adminId }],
+        jobFunctions: [{ jobFunctionId: managerJobFunctionId }, { jobFunctionId: adminJobFunctionId }],
       }
       await createTestContext(filterConditions)
     })
@@ -390,11 +390,11 @@ describe('Result Notifications triggers', () => {
             jobFunctions: [
               {
                 tags: [{ label: 'oneTag', value: inserted }],
-                jobFunctionId: '1',
+                jobFunctionId: 1,
               },
               {
                 tags: [{ label: 'secondTag', value: inserted + 1 }],
-                jobFunctionId: '2',
+                jobFunctionId: 2,
               },
             ],
             resultBasedScope: 'any',
@@ -517,8 +517,8 @@ describe('Result Notifications triggers', () => {
       // ==> ONLY TWO NOTIFICATIONS WILL BE SENT
       const filterConditions = {
         ...filterConditionWithAssay,
-        persons: [{ personId: `${adminId}` }],
-        jobFunctions: [{ jobFunctionId: `${managerJobFunctionId}` }, { jobFunctionId: `${adminJobFunctionId}` }],
+        persons: [{ personId: adminId }],
+        jobFunctions: [{ jobFunctionId: managerJobFunctionId }, { jobFunctionId: adminJobFunctionId }],
       }
       await createTestContext(filterConditions)
     })
@@ -548,7 +548,7 @@ describe('Result Notifications triggers', () => {
         jobFunctions: [
           {
             tags: [],
-            jobFunctionId: '1',
+            jobFunctionId: 1,
           },
         ],
       })
@@ -651,10 +651,10 @@ describe('Notification routes', () => {
       updatedOn: new Date(),
       notificationTypeCategoryId: await notificationTypeCategoryToId('resultBased'),
       filterCondition: JSON.stringify({
-        persons: [{ personId: `${personId}`, checked: true }],
+        persons: [{ personId, checked: true }],
         jobFunctions: [
           {
-            jobFunctionId: '1',
+            jobFunctionId: 1,
             checked: true,
             tags: [],
           },
@@ -677,14 +677,14 @@ describe('Notification routes', () => {
       sendWeb: false,
       jobFunctions: [
         {
-          jobFunctionId: '1',
+          jobFunctionId: 1,
           checked: true,
           tags: [],
         },
       ],
       persons: [
         {
-          personId: `${personId}`,
+          personId,
           checked: true,
         },
       ],
@@ -765,7 +765,7 @@ describe('Notification routes', () => {
         ...basePayload,
         persons: [
           {
-            personId: '99999999999',
+            personId: 99999999999,
             checked: true,
           },
         ],
@@ -783,7 +783,7 @@ describe('Notification routes', () => {
         ...basePayload,
         jobFunctions: [
           {
-            jobFunctionId: '99999999999',
+            jobFunctionId: 99999999999,
             checked: true,
           },
         ],
@@ -805,7 +805,7 @@ describe('Notification routes', () => {
         ...basePayload,
         persons: [
           {
-            personId: `${personWithoutJob.id}`,
+            personId: personWithoutJob.id,
             checked: true,
           },
         ],
@@ -824,13 +824,13 @@ describe('Notification routes', () => {
     assert.deepEqual(JSON.parse(filterCondition), {
       persons: [
         {
-          personId: `${personId}`,
+          personId,
           checked: true,
         },
       ],
       jobFunctions: [
         {
-          jobFunctionId: '1',
+          jobFunctionId: 1,
           checked: true,
           tags: [],
         },
