@@ -217,7 +217,7 @@ const saveNotificationPayload = Joi.object({
   persons: Joi.array()
     .items(
       Joi.object().keys({
-        personId: Joi.string().required().description('Id of the Person'),
+        personId: Joi.number().min(0).required().description('Id of the Person'),
         checked: Joi.bool().valid(true, null).optional().description('Checked persons'),
       })
     )
@@ -226,7 +226,7 @@ const saveNotificationPayload = Joi.object({
   jobFunctions: Joi.array()
     .items(
       Joi.object().keys({
-        jobFunctionId: Joi.string().required().description('Id of Job Function'),
+        jobFunctionId: Joi.number().min(0).required().description('Id of Job Function'),
         checked: Joi.bool().valid(true, null).optional().description('Checked job functions'),
         tags: Joi.array()
           .items(
