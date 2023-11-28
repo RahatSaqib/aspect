@@ -4,9 +4,7 @@ import find from 'lodash/find'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isNil from 'lodash/isNil'
-import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
-import isString from 'lodash/isString'
 import PropTypes from 'prop-types'
 import { defineMessages, useIntl } from 'react-intl'
 import Select from 'react-select'
@@ -146,6 +144,7 @@ function getOptionByValue(data, requestedValue, idKey) {
     const { value } = requestedValue
     return find(data, { [idKey]: value })
   }
+
   // Take the option in different ways, depending on the data format
   if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
 
@@ -155,7 +154,6 @@ function getOptionByValue(data, requestedValue, idKey) {
     const groupedListFind = data
       .flatMap(o => o.options)
       .find(option => option !== undefined && option[idKey] === requestedValue)
-
 
     return simpleListFind || groupedListFind
   }

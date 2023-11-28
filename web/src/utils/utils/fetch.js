@@ -1,9 +1,6 @@
 /* eslint-disable max-classes-per-file */
 import { createFetch, base, header, accept } from 'http-client'
 import get from 'lodash/get'
-import isArray from 'lodash/isArray'
-import isObject from 'lodash/isObject'
-import mapValues from 'lodash/mapValues'
 import set from 'lodash/set'
 import trim from 'lodash/trim'
 import { defineMessages } from 'react-intl'

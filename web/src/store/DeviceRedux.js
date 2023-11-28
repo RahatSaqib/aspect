@@ -123,7 +123,7 @@ export function updateSingleDevice(deviceId, data) {
 }
 // TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
 export function exportDeviceLogs(filtersParams, fileFormat, reportName) {
-  return dispatch => {
+  return () => {
     const filters = getFilters(filtersParams)
     return aspectFetch(
       `/device/exportDeviceLogs?${stringify({
