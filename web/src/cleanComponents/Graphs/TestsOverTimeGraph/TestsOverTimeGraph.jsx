@@ -23,7 +23,6 @@ import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages, assay } from '../../../messages'
-import { formatNumber } from '../../../utils/utils/number'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -209,7 +208,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                     <Grid item xs={12} md={4} lg={4}>
                       <DonutGraph
                         data={donutData.data}
-                        total={formatNumber(donutData.total)}
+                        total={donutData.total}
                         graphId="testPerformedMonthlytotal"
                         graphTitle={[
                           formatMessage(graphMessages.testsOverTimeAvgTitle)

@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react'
-import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
+import React, { useState, useEffect, useMemo } from 'react'
+import { FormControlLabel, Grid, Switch, Typography, MenuItem, TextField } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
@@ -22,6 +22,11 @@ const GXTestingAndDiagnosisGraph = () => {
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState(undefined)
+  const lineSource = useMemo(
+    () => [formatMessage(messages.FQRPercent), formatMessage(messages.INHPercent)],
+    [formatMessage]
+  )
+  const [lineFor, setLineFor] = useState(lineSource[0])
 
   const mergedParams = filter
     ? [...endpointParams, ...Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))]
@@ -38,14 +43,20 @@ const GXTestingAndDiagnosisGraph = () => {
   const fqrDetectedMessage = formatMessage(messages.FqrDetected)
   const totalTestsMessage = formatMessage(messages.TotalTests)
   const FQRPercentMessage = formatMessage(messages.FQRPercent)
+  const INHPercentMessage = formatMessage(messages.INHPercent)
 
   const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
       const line = []
       const bar = []
-      data.grouped.map(({ month, FqrToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected }) => {
-        line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+      data.grouped.map(dat => {
+        const { month, FqrToMtbPercentage, InhToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected } = dat
+        if (lineFor === FQRPercentMessage) {
+          line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+        } else if (lineFor === INHPercentMessage) {
+          line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+        }
         bar.push({ month, value: TotalTests, type: totalTestsMessage })
         bar.push({ month, value: MtbDetected, type: mtbDetectedMessage })
         bar.push({ month, value: FqrDetected, type: fqrDetectedMessage })
@@ -56,7 +67,7 @@ const GXTestingAndDiagnosisGraph = () => {
       setGraphData([bar, line])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
+  }, [data, lineFor])
 
   return isLoading ? (
     <Loading />
@@ -70,6 +81,19 @@ const GXTestingAndDiagnosisGraph = () => {
             label={formatMessage(graphMessages.showValuesLabel)}
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
+          <TextField
+            label={formatMessage(pkMessages.showLineFor)}
+            select
+            value={lineFor}
+            onChange={e => setLineFor(e.target.value)}
+            SelectProps={{ IconComponent: () => null }}
+          >
+            {lineSource.map(it => (
+              <MenuItem key={it} value={it}>
+                {it}
+              </MenuItem>
+            ))}
+          </TextField>
           <StateSelect
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
@@ -99,10 +123,10 @@ const GXTestingAndDiagnosisGraph = () => {
               { name: mtbDetectedMessage, colorId: '--aspect-color-slate' },
               { name: fqrDetectedMessage, colorId: 'caseDetected' },
               { name: inhDetectedMessage, colorId: 'casePercentDetectedOfTotal' },
-              { name: FQRPercentMessage, colorId: 'casePercentDetectedOfTotal' },
+              { name: lineFor, colorId: 'casePercentDetectedOfTotal' },
             ]}
             xField="month"
-            yField={['value', FQRPercentMessage]}
+            yField={['value', lineFor]}
           />
         </Grid>
       </Grid>

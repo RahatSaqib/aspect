@@ -3,7 +3,7 @@ import { Button } from '@mui/material'
 import min from 'lodash/min'
 import { FaAngleDoubleLeft, FaAngleDoubleRight, FaAngleLeft, FaAngleRight } from 'react-icons/fa'
 import { useIntl } from 'react-intl'
-import messages from './messages'
+import messages from '../../messages/allMessages'
 import styles from './styles.module.css'
 
 const SimpleTablePagination = ({
