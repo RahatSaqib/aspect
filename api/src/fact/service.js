@@ -11,13 +11,10 @@ const {
 } = require('./actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { deviceOffline, deviceOnline, deviceNoResults, deviceHasNewResults } = require('../device/actions')
-const {
-  issueTypeToId,
-  issueStatusToId,
-  issueEventStatusToId,
-} = require('../shared/dictionary')
+const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const { daysToCalculate } = require('./common/constants')
+const { getOffsetFromTimeZone, slideDateToTimeZoneISO, startOfDayUtc } = require('../shared/date')
 
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
@@ -145,6 +142,7 @@ async function onDeviceSeen({ deviceId }, { messageContext }) {
           .orWhereRaw('fdf.offline = 1 and (fdf.updatedOn <= IFNULL(d.lastSeenOn, fdf.updatedOn))')
       })
       .first('d.id')
+
     if (offlineDevice != null) {
       context.deviceOnline(offlineDevice.id)
     }
@@ -206,7 +204,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
     })
   })
 }
-
 
 /**
  * commenting out below func which calculates combinations of resistances
@@ -348,6 +345,14 @@ async function refreshConsumptionRates(knex, siteId, consumableId) {
 
 async function getConsumptions(knex, siteId, consumableId) {
   const totals = []
+  const now = new Date()
+  const { timeZone: timeZoneIANA } = await knex('Site as s')
+    .join('Geography as g', 'g.id', 's.geographyId')
+    .join('Country as c', 'c.id', 'g.countryId')
+    .join('TimeZone as tz', 'c.timezone', 'tz.id')
+    .first('tz.timeZone')
+    .where('s.id', siteId)
+
   // --------------------
   // daily rate -
   // use most recent N days with at least one test
@@ -390,11 +395,11 @@ async function getConsumptions(knex, siteId, consumableId) {
   // other rates
   // --------------------
   const daysToRate = daysToCalculate.filter(x => x > 1 && x < 9999)
-  const fields = _.map(daysToRate, days =>
-    knex.raw(
-      `sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL  -${days} DAY) then ca.quantity else 0 end) as total${days}`
-    )
-  )
+  const fields = _.map(daysToRate, days => {
+    const from = slideDateToTimeZoneISO(startOfDayUtc(subDays(now, days)), timeZoneIANA)
+
+    return knex.raw(`sum(case when r.endedOn >= ${from} then ca.quantity else 0 end) as total${days}`)
+  })
 
   const consumedTotals = await knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
