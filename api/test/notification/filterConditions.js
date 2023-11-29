@@ -14,7 +14,7 @@ const filterConditionWithAssay = {
   areaItems: [
     {
       label: 'Wayne',
-      value: '12',
+      value: 12,
     },
   ],
   deviceLevelId: 'lga',
@@ -23,7 +23,7 @@ const filterConditionWithJfForDevice = {
   areaItems: [
     {
       label: 'Wayne',
-      value: '12',
+      value: 12,
     },
   ],
   jobFunctions: [
@@ -42,7 +42,7 @@ const filterConditionWithJfForDeviceNotWayneCounty = {
   areaItems: [
     {
       label: 'Kale',
-      value: '59',
+      value: 59,
     },
   ],
   jobFunctions: [
@@ -73,7 +73,7 @@ const filterConditionWithJf = {
   areaItems: [
     {
       label: 'Wayne',
-      value: '12',
+      value: 12,
     },
   ],
   jobFunctions: [
@@ -107,7 +107,7 @@ const baseFilterCondition = {
   areaItems: [
     {
       label: 'Wayne',
-      value: '12',
+      value: 12,
     },
   ],
   jobFunctions: [

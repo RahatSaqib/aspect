@@ -839,7 +839,7 @@ describe('Notification routes', () => {
       areaItems: [
         {
           label: 'Wayne',
-          value: '12',
+          value: 12,
         },
       ],
       sendEmail: false,

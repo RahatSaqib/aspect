@@ -68,11 +68,11 @@ describe('notification endpoints', () => {
       areaItems: [
         {
           label: 'Alabama',
-          value: '4',
+          value: 4,
         },
         {
           label: 'Arizona',
-          value: '4',
+          value: 4,
         },
       ],
       sendEmail: true,
