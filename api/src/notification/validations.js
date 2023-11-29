@@ -170,7 +170,7 @@ const saveNotificationPayload = Joi.object({
     .items(
       Joi.object().keys({
         label: Joi.string().optional().description('Name of geography item'),
-        value: Joi.string().required().description('Id of geography item'),
+        value: Joi.number().required().description('Id of geography item'),
       })
     )
     .when('deviceLevelId', {
