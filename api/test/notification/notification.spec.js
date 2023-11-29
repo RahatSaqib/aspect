@@ -228,7 +228,12 @@ describe('Result Notifications triggers', () => {
   let wayneLgaId = null
   const wayneLgaName = 'Wayne'
   before(async () => {
-    ;[wayneLgaId] = await knex('Lga').where('name', 'Wayne').pluck('id')
+    ;[wayneLgaId] = await knex('Geography as g')
+      .join('Lga as lga', 'lga.id', 'g.lgaId')
+      .join('State as s', 's.id', 'g.stateId')
+      .where('lga.name', 'Wayne')
+      .andWhere('s.name', 'Ohio')
+      .pluck('lga.id')
     resultCategory1 = await resultCategoryToId('Detected')
     results = await knex('Result as r')
       .join('Geography as g', 'r.geographyId', 'g.id')
@@ -240,7 +245,7 @@ describe('Result Notifications triggers', () => {
       .distinct('r.*', 'l.name as lgaName', 'l.id as lgaId')
     assert.isAtLeast(results.length, 1)
     const fieldsToNotReplicate = ['lgaName', 'lgaId', 'externalId', 'endedOn', 'id', 'resultCategory1']
-    const wayneLgaResult = _.sample(_.filter(results, elem => elem.lgaName === 'Wayne'))
+    const wayneLgaResult = _.sample(_.filter(results, elem => elem.lgaId === wayneLgaId))
     ;[insertedResultDetected] = await knex('Result').insert({
       ..._.omit(wayneLgaResult, fieldsToNotReplicate),
       resultCategory1,
@@ -254,13 +259,13 @@ describe('Result Notifications triggers', () => {
       endedOn: new Date(),
     })
     notWayneLgaResultId = await knex('Result').insert({
-      ..._.omit(_.sample(_.filter(results, elem => elem.lgaName !== 'Wayne')), fieldsToNotReplicate),
+      ..._.omit(_.sample(_.filter(results, elem => elem.lgaId !== wayneLgaId)), fieldsToNotReplicate),
       resultCategory1: await resultCategoryToId('Detected'),
       externalId: 'MytestsResultID3',
       endedOn: new Date(),
     })
     wayneLgaResultId = await knex('Result').insert({
-      ..._.omit(_.sample(_.filter(results, elem => elem.lgaName === 'Wayne')), fieldsToNotReplicate),
+      ..._.omit(_.sample(_.filter(results, elem => elem.lgaId === wayneLgaId)), fieldsToNotReplicate),
       resultCategory1: await resultCategoryToId('Detected'),
       externalId: 'My test from Wayne',
       endedOn: new Date(),
@@ -566,6 +571,7 @@ describe('Result Notifications triggers', () => {
   describe('Filter by Area Items', () => {
     before(async () => {
       await createTestContext({
+        deviceLevelId: 'lga',
         areaItems: [
           {
             label: wayneLgaName,
