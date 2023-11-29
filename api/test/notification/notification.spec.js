@@ -223,8 +223,12 @@ describe('Result Notifications triggers', () => {
   }
   let insertedResultDetected = null
   let insertedResultUnknow = null
-  let notWayneResult = null
+  let notWayneLgaResultId = null
+  let wayneLgaResultId = null
+  let wayneLgaId = null
+  const wayneLgaName = 'Wayne'
   before(async () => {
+    ;[wayneLgaId] = await knex('Lga').where('name', 'Wayne').pluck('id')
     resultCategory1 = await resultCategoryToId('Detected')
     results = await knex('Result as r')
       .join('Geography as g', 'r.geographyId', 'g.id')
@@ -233,31 +237,32 @@ describe('Result Notifications triggers', () => {
       .join('Lga as l', 'g.lgaId', 'l.id')
       .where({ 'r.partnerId': 1, 'dt.externalId': 'DaktariVirology' })
       .whereNotExists(knex('Notification as n').whereRaw('n.resultId = r.id').select())
-      .distinct('r.*', 'l.name as lgaName')
+      .distinct('r.*', 'l.name as lgaName', 'l.id as lgaId')
     assert.isAtLeast(results.length, 1)
-    const result = _.sample(_.filter(results, elem => elem.lgaName === 'Wayne'))
+    const fieldsToNotReplicate = ['lgaName', 'lgaId', 'externalId', 'endedOn', 'id', 'resultCategory1']
+    const wayneLgaResult = _.sample(_.filter(results, elem => elem.lgaName === 'Wayne'))
     ;[insertedResultDetected] = await knex('Result').insert({
-      ..._.omit(result, ['id', 'resultCategory1', 'lgaName', 'externalId', 'endedOn']),
+      ..._.omit(wayneLgaResult, fieldsToNotReplicate),
       resultCategory1,
       externalId: 'MytestsResultID',
       endedOn: new Date(),
     })
     ;[insertedResultUnknow] = await knex('Result').insert({
-      ..._.omit(result, ['id', 'resultCategory1', 'lgaName', 'externalId', 'endedOn']),
+      ..._.omit(wayneLgaResult, fieldsToNotReplicate),
       resultCategory1: await resultCategoryToId('Unknown'),
       externalId: 'MytestsResultID2',
       endedOn: new Date(),
     })
-    notWayneResult = await knex('Result').insert({
-      ..._.omit(_.sample(_.filter(results, elem => elem.lgaName !== 'Wayne')), [
-        'id',
-        'resultCategory1',
-        'lgaName',
-        'externalId',
-        'endedOn',
-      ]),
+    notWayneLgaResultId = await knex('Result').insert({
+      ..._.omit(_.sample(_.filter(results, elem => elem.lgaName !== 'Wayne')), fieldsToNotReplicate),
       resultCategory1: await resultCategoryToId('Detected'),
       externalId: 'MytestsResultID3',
+      endedOn: new Date(),
+    })
+    wayneLgaResultId = await knex('Result').insert({
+      ..._.omit(_.sample(_.filter(results, elem => elem.lgaName === 'Wayne')), fieldsToNotReplicate),
+      resultCategory1: await resultCategoryToId('Detected'),
+      externalId: 'My test from Wayne',
       endedOn: new Date(),
     })
     assert.isNotNull(insertedResultDetected)
@@ -269,11 +274,23 @@ describe('Result Notifications triggers', () => {
       .pluck('id')
     await Promise.each(['EmailMessage', 'SmsMessage', 'AlertMessage', 'Notification'], table =>
       knex(table)
-        .whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult, ...resultsId])
+        .whereIn('resultId', [
+          insertedResultDetected,
+          insertedResultUnknow,
+          notWayneLgaResultId,
+          wayneLgaResultId,
+          ...resultsId,
+        ])
         .delete()
     )
     await knex('Result')
-      .whereIn('id', [insertedResultDetected, insertedResultUnknow, notWayneResult, ...resultsId])
+      .whereIn('id', [
+        insertedResultDetected,
+        insertedResultUnknow,
+        notWayneLgaResultId,
+        wayneLgaResultId,
+        ...resultsId,
+      ])
 
       .delete()
   })
@@ -324,7 +341,7 @@ describe('Result Notifications triggers', () => {
       assert.isEmpty(notifications)
     })
     it('should NOT create a result based notification for a different LGA than wayne', async () => {
-      const resultId = notWayneResult
+      const resultId = notWayneLgaResultId
       assert.isNotNull(resultId)
       await dispatchAndWaitForAction(resultReadyForNotification(resultId, false))
       await waitForIdle(1000)
@@ -354,7 +371,9 @@ describe('Result Notifications triggers', () => {
     })
 
     afterEach(async () =>
-      knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
+      knex('Notification')
+        .whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneLgaResultId])
+        .delete()
     )
     it('should create a result based notification for particular jobFunctions', async () => {
       const resultId = insertedResultDetected
@@ -468,7 +487,9 @@ describe('Result Notifications triggers', () => {
     })
 
     afterEach(async () =>
-      knex('Notification').whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
+      knex('Notification')
+        .whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneLgaResultId])
+        .delete()
     )
     it('should create a result based notification for particular jobFunctions', async () => {
       const resultId = insertedResultDetected
@@ -542,6 +563,41 @@ describe('Result Notifications triggers', () => {
     })
   })
 
+  describe('Filter by Area Items', () => {
+    before(async () => {
+      await createTestContext({
+        areaItems: [
+          {
+            label: wayneLgaName,
+            value: wayneLgaId,
+          },
+        ],
+        jobFunctions: [
+          {
+            tags: [],
+            jobFunctionId: 1,
+          },
+        ],
+      })
+    })
+    after(async () => removeTestContext())
+    afterEach(async () =>
+      Promise.each(['EmailMessage', 'SmsMessage', 'AlertMessage', 'WebhookMessage', 'Notification'], table =>
+        knex(table).whereIn('resultId', [wayneLgaResultId]).delete()
+      )
+    )
+    it('Should create a result based notification', async () => {
+      const resultId = wayneLgaResultId
+      assert.isNotNull(resultId)
+      await dispatchAndWaitForAction(resultReadyForNotification(resultId, false))
+      await waitForIdle(2000)
+      const notifications = await knex('Notification')
+        .where({ resultId, notificationTypeId: ntId })
+        .distinct('resultId', 'notificationTypeId', 'personId')
+      assert.equal(notifications.length, 1)
+    })
+  })
+
   describe('No filtering', () => {
     before(async () =>
       createTestContext({
@@ -556,7 +612,7 @@ describe('Result Notifications triggers', () => {
     after(async () => removeTestContext())
     afterEach(async () =>
       Promise.each(['EmailMessage', 'SmsMessage', 'AlertMessage', 'WebhookMessage', 'Notification'], table =>
-        knex(table).whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneResult]).delete()
+        knex(table).whereIn('resultId', [insertedResultDetected, insertedResultUnknow, notWayneLgaResultId]).delete()
       )
     )
     it('Should create a result based notification', async () => {
