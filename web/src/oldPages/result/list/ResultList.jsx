@@ -198,7 +198,7 @@ const ResultList = () => {
 
   const params = { ...pagination, ...filters }
   delete params.assayOverride
-
+  delete params.closeButton
   // >>>>>> Queries <<<<<<
   const {
     isLoading: tableLoading,
@@ -207,7 +207,7 @@ const ResultList = () => {
     error,
   } = useQuery(
     [RESULT_LIST.KEY, { params }],
-    async () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params:{...params,minDate:params.minDate.value,maxDate:params.maxDate.value} }),
+    async () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params: { ...params } }),
     { enabled: !isEmpty(params) }
   )
 

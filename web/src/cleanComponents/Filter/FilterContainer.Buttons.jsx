@@ -3,7 +3,6 @@ import { Button } from '@mui/material'
 import Immutable from 'immutable'
 import { pull } from 'lodash/array'
 import isArray from 'lodash/isArray'
-import isDate from 'lodash/isDate'
 import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
 import { useIntl } from 'react-intl'
@@ -117,8 +116,8 @@ const buttonMapping = {
     />
   ),
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
-  minDate: ({ minDate, remove }) => <MinDate minDate={isDate(minDate) ? minDate : minDate.value} remove={remove} hideCloseButton={minDate.hideCloseButton} />,
-  maxDate: ({ maxDate, remove }) => <MaxDate maxDate={isDate(maxDate) ? maxDate : maxDate.value} remove={remove} hideCloseButton={maxDate.hideCloseButton} />,
+  minDate: ({ minDate, remove, closeButton }) => <MinDate minDate={minDate} remove={remove} hideCloseButton={closeButton?.hideMinDate} />,
+  maxDate: ({ maxDate, remove, closeButton }) => <MaxDate maxDate={maxDate} remove={remove} hideCloseButton={closeButton?.hideMaxDate} />,
   minExpirationDate: ({ minExpirationDate, remove }) => (
     <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} />
   ),

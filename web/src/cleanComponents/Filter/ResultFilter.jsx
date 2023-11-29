@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import isArray from 'lodash/isArray'
 import { useIntl } from 'react-intl'
@@ -21,6 +21,7 @@ import {
   StateSelect,
 } from '../index'
 import FilterContainer from './FilterContainer'
+import useFilterUpdate from '../../hooks/useFilterUpdate'
 
 const ResultFilter = () => {
   const { formatMessage } = useIntl()
@@ -29,6 +30,17 @@ const ResultFilter = () => {
   const filter = useFilterValues(location.pathname)
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
   const allowed = required => isPermittedUser(user.userPermissions, { required })
+  const [addFilter] = useFilterUpdate()
+
+
+  useEffect(() => {
+    addFilter({
+      ...state, closeButton: {
+        hideMinDate: true,
+        hideMaxDate: true
+      }
+    }, location.pathname)
+  }, [])
 
   return (
     <FilterContainer state={state} setState={setState}>
@@ -162,11 +174,7 @@ const ResultFilter = () => {
             label={formatMessage(messages.date)}
             minDate={state.minDate.value || null}
             maxDate={state.maxDate.value || null}
-            onChange={dateValues => {
-              setState({ ...state,
-                 minDate:{...state.minDate,value:dateValues.minDate},
-                 maxDate:{...state.maxDate,value:dateValues.maxDate} })}
-            }
+            onChange={dateValues => setState({ ...state, ...dateValues })}
             noAny={true}
           />
         </Grid>
