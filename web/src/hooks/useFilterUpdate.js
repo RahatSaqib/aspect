@@ -22,7 +22,7 @@ const defaultFilter = {
   '/browse/notification/types': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
-  '/browse/result': { minDate:{value:minDate,hideCloseButton:true}, maxDate:{value:maxDate,hideCloseButton:true} },
+  '/browse/result': { minDate: { value: minDate, hideCloseButton: true }, maxDate: { value: maxDate, hideCloseButton: true } },
   '/browse/site': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate },
   '/reports': {},

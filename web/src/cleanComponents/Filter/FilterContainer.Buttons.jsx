@@ -3,6 +3,7 @@ import { Button } from '@mui/material'
 import Immutable from 'immutable'
 import { pull } from 'lodash/array'
 import isArray from 'lodash/isArray'
+import isDate from 'lodash/isDate'
 import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
 import { useIntl } from 'react-intl'
@@ -77,7 +78,7 @@ const FilterButtons = ({ filters, remove, append }) => {
           .sortBy(filterKey => filtersOrdering[filterKey])
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
-            if(!Comp)return null
+            if (!Comp) return null
             return <Comp {...filters} remove={remove} append={append} key={key} />
           })
       )}
@@ -116,8 +117,8 @@ const buttonMapping = {
     />
   ),
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
-  minDate: ({ minDate: { value, hideCloseButton }, remove }) =>  <MinDate minDate={value} remove={remove} hideCloseButton={hideCloseButton}/>,
-  maxDate: ({ maxDate: { value, hideCloseButton }, remove }) => <MaxDate maxDate={value} remove={remove} hideCloseButton={hideCloseButton}/>,
+  minDate: ({ minDate, remove }) => <MinDate minDate={isDate(minDate) ? minDate : minDate.value} remove={remove} hideCloseButton={minDate.hideCloseButton} />,
+  maxDate: ({ maxDate, remove }) => <MaxDate maxDate={isDate(maxDate) ? maxDate : maxDate.value} remove={remove} hideCloseButton={maxDate.hideCloseButton} />,
   minExpirationDate: ({ minExpirationDate, remove }) => (
     <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} />
   ),
@@ -341,38 +342,38 @@ const ConsumableId = ({ consumableId, remove }) => {
   ) : null
 }
 
-const MinDate = ({ minDate, remove,hideCloseButton=false }) => {
+const MinDate = ({ minDate, remove, hideCloseButton = false }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(minDate), dateFormat)
-  return  <>
-  {!hideCloseButton ? (
-    <Btn
-      lbl={formatMessage(messages.dateFrom, { date })}
-      del={() => remove(['minDate'])}
-    />
-  ) : (
-    <Btn lbl={formatMessage(messages.dateFrom, { date })} />
-  )}
-</>
+  return <>
+    {!hideCloseButton ? (
+      <Btn
+        lbl={formatMessage(messages.dateFrom, { date })}
+        del={() => remove(['minDate'])}
+      />
+    ) : (
+      <Btn lbl={formatMessage(messages.dateFrom, { date })} />
+    )}
+  </>
 }
 
-const MaxDate = ({ maxDate, remove ,hideCloseButton=false}) => {
+const MaxDate = ({ maxDate, remove, hideCloseButton = false }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   if (!maxDate) return null
   const date = format(new Date(maxDate), dateFormat)
 
-  return  <>
-  {!hideCloseButton ? (
-    <Btn
-      lbl={formatMessage(messages.dateFrom, { date })}
-      del={() => remove(['maxDate'])}
-    />
-  ) : (
-    <Btn lbl={formatMessage(messages.dateFrom, { date })} />
-  )}
-</>
+  return <>
+    {!hideCloseButton ? (
+      <Btn
+        lbl={formatMessage(messages.dateFrom, { date })}
+        del={() => remove(['maxDate'])}
+      />
+    ) : (
+      <Btn lbl={formatMessage(messages.dateFrom, { date })} />
+    )}
+  </>
 }
 
 const MinExpirationDate = ({ minExpirationDate, remove }) => {
