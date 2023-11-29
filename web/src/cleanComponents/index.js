@@ -62,7 +62,6 @@ import {
   TrendInYearsRifDetectedGraph,
   XDRFLQResistanceGraph,
   XDRResultsGraph,
-  getPreviousPeriod,
   PieRowGraph,
   filterColour,
   DeviceStatusGraph,
@@ -83,8 +82,6 @@ import Loading from './Loading'
 import LocationSelector from './LocationSelector'
 import LoggedInLayout from './LoggedInLayout'
 import LoggedOutLayout from './LoggedOutLayout'
-import NotificationCategorySelect from './NotificationCategorySelect'
-import NotificationTypeSelect from './NotificationTypeSelect'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
 import ReportSelector from './ReportSelector'
@@ -137,8 +134,6 @@ export {
   StateSelect,
   TagSelect,
   TimezoneSelect,
-  NotificationTypeSelect,
-  NotificationCategorySelect,
   Loading,
   BarGraph,
   ColumnGraph,
@@ -190,7 +185,6 @@ export {
   ContactTagInput,
   LocationSelector,
   AssayMultiSelect,
-  getPreviousPeriod,
   PieRowGraph,
   filterColour,
   DeviceStatusGraph,

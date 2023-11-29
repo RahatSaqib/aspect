@@ -4,7 +4,6 @@ import isPast from 'date-fns/isPast'
 import parseISO from 'date-fns/parseISO'
 import chunk from 'lodash/chunk'
 import filter from 'lodash/filter'
-import find from 'lodash/find'
 import isNil from 'lodash/isNil'
 import map from 'lodash/map'
 import max from 'lodash/max'
@@ -52,15 +51,6 @@ function getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize) {
   return false
 }
 
-function getCurrentColumnIndexAndShift(visibleColumns, direction, index) {
-  const columnsToShuffle = [...visibleColumns]
-  const columns = columnsToShuffle.map(({ id }) => id)
-  const from = index
-  const to = direction === 'left' ? index - 1 : index + 1
-  columns.splice(to, 0, columns.splice(from, 1)[0])
-  return columns
-}
-
 function timeSinceFromUTC(val, locale) {
   const date = parseISO(val)
   const dateFNSLocale = dateFNSLocales[locale]
@@ -82,10 +72,6 @@ function removeNullFromCollection(collection) {
   return omitBy(collection, isNil)
 }
 
-function determineSortDirection(direction) {
-  return (direction && direction === 'desc') || false
-}
-
 function useUrlQuery(search) {
   return new URLSearchParams(search)
 }
@@ -93,22 +79,6 @@ function useUrlQuery(search) {
 function allowOnlyAPIKeys(params) {
   const omitKeys = ['filters']
   return omit(params, omitKeys)
-}
-
-function getColumnIdFromFilterKey(config, filters) {
-  const output = []
-  const { columns } = config
-  const filterStrings = Object.fromEntries(new URLSearchParams(filters))
-
-  map(filterStrings, (value, key) => {
-    const configColumn = find(columns, { filterKey: key })
-    if (configColumn) {
-      const { key: id } = configColumn
-      return output.push({ id, value })
-    }
-  })
-
-  return output
 }
 
 function getReturnUrl(returnUrlRaw, defaultUrl) {
@@ -129,9 +99,6 @@ function getReturnUrl(returnUrlRaw, defaultUrl) {
 export {
   allowOnlyAPIKeys,
   buildColumnsFromData,
-  determineSortDirection,
-  getColumnIdFromFilterKey,
-  getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
   removeNullFromCollection,
   timeAndDate,
