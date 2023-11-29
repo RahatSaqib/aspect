@@ -37,7 +37,7 @@ Summary.propTypes = {
       })
     ),
   ]).isRequired,
-  to: PropTypes.string,
+  to: PropTypes.func,
   action: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
   cols: PropTypes.string,
 }
