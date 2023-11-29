@@ -8,7 +8,7 @@ async function onFactCalculateInventoryConsumptionRates(action, { messageContext
     const items = await knex('InventoryItem').groupBy('siteId', 'consumableId').select('siteId', 'consumableId')
 
     // loop through all sites/consumables and refresh rate
-    return Promise.each(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId))
+    return await Promise.map(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId), {concurrency: 10})
   })
 }
 
@@ -21,7 +21,7 @@ async function onFactCalculateInventoryConsumptionRates(action, { messageContext
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
   const consumptionTotals = await getConsumptions(knex, siteId, consumableId)
-  await Promise.each(consumptionTotals, async consumptionTotal => {
+  await Promise.map(consumptionTotals, async consumptionTotal => {
     const factInventoryConsumptionRate = await knex('FactInventoryConsumptionRate')
       .where({ siteId, consumableId, days: consumptionTotal.days })
       .first()
