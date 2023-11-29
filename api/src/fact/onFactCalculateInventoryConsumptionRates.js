@@ -1,5 +1,5 @@
-const _ = require('lodash')
 const Promise = require('bluebird')
+const { subDays } = require('date-fns')
 const { daysToCalculate } = require('./common/constants')
 const { slideDateToTimeZoneISO, startOfDayUtc } = require('../shared/date')
 
@@ -8,7 +8,7 @@ async function onFactCalculateInventoryConsumptionRates(action, { messageContext
     const items = await knex('InventoryItem').groupBy('siteId', 'consumableId').select('siteId', 'consumableId')
 
     // loop through all sites/consumables and refresh rate
-    return await Promise.map(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId), {concurrency: 10})
+    return await Promise.map(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId), { concurrency: 10 })
   })
 }
 
@@ -99,10 +99,10 @@ async function getConsumptions(knex, siteId, consumableId) {
   // other rates
   // --------------------
   const daysToRate = daysToCalculate.filter(x => x > 1 && x < 9999)
-  const fields = _.map(daysToRate, days => {
+  const fields = daysToRate.map(days => {
     const from = slideDateToTimeZoneISO(startOfDayUtc(subDays(now, days)), timeZoneIANA)
 
-    return knex.raw(`sum(case when r.endedOn >= ${from} then ca.quantity else 0 end) as total${days}`)
+    return knex.raw(`sum(case when r.endedOn >= '${from}' then ca.quantity else 0 end) as total${days}`)
   })
 
   const consumedTotals = await knex('Result as r')
@@ -115,15 +115,14 @@ async function getConsumptions(knex, siteId, consumableId) {
     .groupBy('d.siteId', 'ca.consumableId')
     .first(...fields)
 
-  _.map(daysToRate, days => {
+  daysToRate.forEach(days => {
     const totalItems = consumedTotals && consumedTotals[`total${days}`]
-    const total = _.isNumber(totalItems) ? totalItems : 0
+    const total = typeof totalItems === 'number' ? totalItems : 0
     totals.push({ days, total })
   })
 
   return totals
 }
-
 module.exports = {
   onFactCalculateInventoryConsumptionRates,
   refreshConsumptionRates, // Exported for testing purposes
