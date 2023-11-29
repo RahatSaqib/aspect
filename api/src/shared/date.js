@@ -95,6 +95,8 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
  * e.g.:
  * getDateTimeProjectionInUserTimeZone(knex, 'd.lastSeenOn', '+05:00', 'lastSeen')
  * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
+ * @description - NOTE: Don't use the CONVERT_TZ overload that receives a IANA time zone as parameter,
+ * use this instead and obtain the offset using date-fns-tz, as we are not updating mysql time_zone db.
  */
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
   knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`)
@@ -110,8 +112,7 @@ const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
  * returns:
  * where `r.endedOn` > CONVERT_TZ(`d.lastSeen`, '+00:00', '+05:00')
  */
-const getDateTimeExpressionInTimeZone = (knex, field, offset, alias) =>
-  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}")`)
+const getDateTimeExpressionInTimeZone = (knex, field, offset) => knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}")`)
 
 const getISODateUserTimeZoneField = (knex, field, alias = 'isoDate', offset = '+00:00') =>
   knex.raw(
@@ -187,9 +188,9 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
   }
   return initialProperties
     ? dates.map(d => ({
-      date: parseISO(d),
-      ...initialProperties,
-    }))
+        date: parseISO(d),
+        ...initialProperties,
+      }))
     : dates.map(d => parseISO(d))
 }
 
