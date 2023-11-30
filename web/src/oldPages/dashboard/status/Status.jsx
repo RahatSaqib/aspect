@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo } from 'react'
+import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useDispatch, useSelector } from 'react-redux'
 import {
   ErrorBoundary,
   CovidResultGraph,
@@ -21,37 +20,30 @@ import {
   InventoryStatusGraph,
 } from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
+import useAssayList from '../../../hooks/assay/useAssayList'
 import useAuthState from '../../../hooks/useAuthState'
-import { fetchAssays } from '../../../store/AssayRedux'
 import styles from './index.module.css'
 import messages from './messages'
-import Reports from './Reports'
 import SummaryStatus from './SummaryStatus'
+
+const tbPermissions = ['GxMtbRif', 'GxMtbRifUltra']
+const xdrPermissions = ['GxMtbXdr']
+const hivPermissions = [
+  'abbottM2000DBSHivVL',
+  'abbottM2000PlasmaHivVL',
+  'assayAlereQHiv12Detect',
+  'assayAlereQHiv12VLPlasma',
+  'assayCobasHivVl',
+  'GxHiv1Vl',
+  'QHivVL',
+  'ReporterHivVL',
+]
+const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
 const Status = () => {
   const { formatMessage } = useIntl()
-  const dispatch = useDispatch()
   const { isCountry } = useAuthState()
-  useEffect(() => {
-    dispatch(fetchAssays(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const assaysImmutable = useSelector(({ assay }) => assay.items)
-  const assays = useMemo(() => assaysImmutable.toJS(), [assaysImmutable])
-  const tbPermissions = ['GxMtbRif', 'GxMtbRifUltra']
-  const xdrPermissions = ['GxMtbXdr']
-  const hivPermissions = [
-    'abbottM2000DBSHivVL',
-    'abbottM2000PlasmaHivVL',
-    'assayAlereQHiv12Detect',
-    'assayAlereQHiv12VLPlasma',
-    'assayCobasHivVl',
-    'GxHiv1Vl',
-    'QHivVL',
-    'ReporterHivVL',
-  ]
-  const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
+  const { data: assays } = useAssayList()
 
   return (
     <div className={styles.Container}>
@@ -154,10 +146,6 @@ const Status = () => {
           ) : null}
         </div>
       ) : null}
-
-      <ErrorBoundary>
-        <Reports className={styles.Section__withStatus} title={formatMessage(messages.reportsTitle)} />
-      </ErrorBoundary>
     </div>
   )
 }
