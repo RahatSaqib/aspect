@@ -23,7 +23,10 @@ const SiteSelect = ({ id, name, label, value, onChange, error, helperText, disab
       error={error}
       helperText={helperText}
       select
-      value={value}
+      /**
+       * default to empty string to make form field work in `controlled` mode
+       */
+      value={value || ''}
       onChange={onChange}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
