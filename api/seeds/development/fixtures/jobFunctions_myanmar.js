@@ -57,10 +57,6 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'report',
-      },
-      {
-        module: 'dashboard',
         activity: 'siteFilter',
       },
       {
@@ -109,10 +105,6 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'report',
-      },
-      {
-        module: 'dashboard',
         activity: 'siteFilter',
       },
       {
@@ -158,10 +150,6 @@ module.exports = [
       {
         module: 'site',
         activity: 'edit',
-      },
-      {
-        module: 'dashboard',
-        activity: 'report',
       },
       {
         module: 'dashboard',
