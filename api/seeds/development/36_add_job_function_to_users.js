@@ -1,19 +1,10 @@
-const Promise = require('bluebird')
-
 module.exports = require('../utils').seed(seed, __filename)
 
 async function seed(knex) {
   const users = ['ed', 'jim', 'jon', 'steve']
   const personIds = {}
 
-  await Promise.each(users, async user => {
-    const userDetail = await knex('User').where({ name: user }).first('id')
-    const personId = await knex('Person').where({ userId: userDetail.id }).first('id')
-    personIds[user] = personId.id
-  })
-
   const partnerIdOne = await knex('Partner').where({ name: 'Partner One' }).first('id')
-
   const partnerIdTwo = await knex('Partner').where({ name: 'Partner Two' }).first('id')
 
   const jobFunctionLabManager = await knex('JobFunction')
@@ -38,8 +29,14 @@ async function seed(knex) {
     .first('id')
 
   const country = await knex('Country').where({ abbreviation: 'US' }).first('id')
-
   const { id: geographyId } = await knex('Geography').where({ countryId: country.id }).first('id')
+
+  const usersDetail = await knex('User as u')
+    .join('Person as p', 'u.id', 'p.userId')
+    .whereIn('u.name', users)
+    .select('p.id as personId', 'u.name as userName')
+
+  usersDetail.forEach(ud => (personIds[ud.userName] = ud.personId))
 
   const checkJobEd = await knex('JobContext').where({
     personId: personIds.jon,
