@@ -366,11 +366,11 @@ const MaxDate = ({ maxDate, remove, hideCloseButton = false }) => {
   return <>
     {!hideCloseButton ? (
       <Btn
-        lbl={formatMessage(messages.dateFrom, { date })}
+        lbl={formatMessage(messages.dateTo, { date })}
         del={() => remove(['maxDate'])}
       />
     ) : (
-      <Btn lbl={formatMessage(messages.dateFrom, { date })} />
+      <Btn lbl={formatMessage(messages.dateTo, { date })} />
     )}
   </>
 }
