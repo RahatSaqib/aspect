@@ -1,10 +1,16 @@
-import React from 'react'
+import React, { useCallback, useMemo } from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import useSiteList from '../../hooks/site/useSiteList'
 
 const SiteSelect = ({ id, name, label, value, onChange, error, helperText, disabled, stateId, lgaId }) => {
   const { isLoading, data: sites } = useSiteList()
+
+  const onChangeValue = useCallback(event => onChange(event.target.value), [onChange])
+  /**
+   * default to empty string (not undefined nor null) to make form field working in `controlled` mode
+   */
+  const actualValue = useMemo(() => value || '', [value])
 
   const data =
     sites && lgaId
@@ -23,11 +29,8 @@ const SiteSelect = ({ id, name, label, value, onChange, error, helperText, disab
       error={error}
       helperText={helperText}
       select
-      /**
-       * default to empty string to make form field work in `controlled` mode
-       */
-      value={value || ''}
-      onChange={onChange}
+      value={actualValue}
+      onChange={onChangeValue}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{

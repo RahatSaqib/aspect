@@ -65,7 +65,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: event => event.target.value,
+        valueFromChangeEvent: _fp.identity,
       },
       {
         fieldName: 'deviceId',
