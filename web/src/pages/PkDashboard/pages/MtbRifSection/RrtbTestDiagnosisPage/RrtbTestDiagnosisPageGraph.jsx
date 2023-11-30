@@ -11,7 +11,7 @@ import messages from '../../../PkDashboard.Messages'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 
 const endpointParams = [
-  { source: 'tbAndRrDetection' },
+  { source: 'rrDetection' },
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { groupBy: 'resultCategory1' },
@@ -35,25 +35,21 @@ const RrtbTestDiagnosisPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
-  const mtbPlusMessage = formatMessage(intlMessages.MTBPlus)
-  const mtbPlusTotalMessage = formatMessage(intlMessages.MTBPlus) + ' ' + formatMessage(intlMessages.Total)
-  const mtbPlusPercentageMessage = formatMessage(intlMessages.MTBPercent)
+  const testsPerformedMessage = formatMessage(messages.testsPerformed)
   const rrDetectedMessage = formatMessage(messages.rrDetected)
-  const rrTotalTestsMessage = formatMessage(messages.TbTotal)
-  const rrToTbTotalPercentageMessage = formatMessage(messages.RRToTbTotalPercentage)
+  const mtbDetectedMessage = formatMessage(intlMessages.MTBPlus)
+  const rrToMtbPercentageMessage = formatMessage(messages.rrToMtbPercentage)
 
   const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
       const line = []
       const bar = []
-      data.grouped.map(({ year, MtbToTotalPercentage, Total, MtbDetected, rrToTbTotalPercentage, tbTotal, rrDetected }) => {
-        line.push({ year, [mtbPlusPercentageMessage]: +MtbToTotalPercentage.toFixed(2) })
-        bar.push({ year, value: MtbDetected, type: mtbPlusMessage })
-        bar.push({ year, value: Total, type: mtbPlusTotalMessage })
-        line.push({ year, [rrToTbTotalPercentageMessage]: +rrToTbTotalPercentage.toFixed(2) })
-        bar.push({ year, value: tbTotal, type: rrTotalTestsMessage })
+      data.grouped.map(({ year, testsPerformed, mtbDetected, rrDetected, rrToMtbPercentage }) => {
+        bar.push({ year, value: testsPerformed, type: testsPerformedMessage })
+        bar.push({ year, value: mtbDetected, type: mtbDetectedMessage })
         bar.push({ year, value: rrDetected, type: rrDetectedMessage })
+        line.push({ year, [rrToMtbPercentageMessage]: +rrToMtbPercentage.toFixed(2) })
         return {}
       })
 
@@ -94,15 +90,13 @@ const RrtbTestDiagnosisPage = () => {
             showLabel={showLabel}
             graphId="rrtbDetectedQuarterlyTrends"
             colors={[
-              { name: mtbPlusMessage, colorId: 'caseDetected' },
-              { name: mtbPlusTotalMessage, colorId: 'caseTotal' },
-              { name: mtbPlusPercentageMessage, colorId: 'casePercentDetectedOfTotal' },
-              { name: rrTotalTestsMessage, colorId: 'caseTotal' },
+              { name: testsPerformedMessage, colorId: 'caseTotal' },
+              { name: mtbDetectedMessage, colorId: 'casePercentDetectedOfTotal' },
               { name: rrDetectedMessage, colorId: 'caseDetected' },
-              { name: rrToTbTotalPercentageMessage, colorId: 'casePercentDetectedOfTotal' },
+              { name: rrToMtbPercentageMessage, colorId: 'caseDetected' },
             ]}
             xField="year"
-            yField={['value', rrToTbTotalPercentageMessage]}
+            yField={['value', rrToMtbPercentageMessage]}
           />
         </Grid>
       )}
