@@ -65,7 +65,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: event => event.target.value,
       },
       {
         fieldName: 'deviceId',
@@ -160,7 +160,6 @@ function DeviceApiKeyAssignerDialogForm({
         <DeviceSelectField
           disabled={values.deviceApiKeyIds.length > 1}
           name="deviceId"
-          emptyId="-1"
           floatingLabelText={formatMessage(messages.deviceId)}
           countryId={values.countryId}
           partnerId={values.partnerId}

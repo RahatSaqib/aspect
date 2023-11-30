@@ -123,7 +123,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: event => event.target.value,
       },
     ],
     validate({ countryId, partnerId }, { intl }) {
