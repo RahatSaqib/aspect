@@ -9,6 +9,7 @@ import { graphMessages } from '../../../messages'
 import { getTimePeriod, formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
+import { subDays } from 'date-fns'
 
 const i18nKeys = {
   devicesActive: 'devicesActive',
@@ -41,7 +42,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState({
-    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
+    minDate: subDays(new Date(), 29),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
 
@@ -151,12 +152,12 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
   <div class="g2-tooltip-title">${_title}</div>
   <ul class="g2-tooltip-list" style="margin: 0px; list-style-type: none; padding: 0px;">
   ${withData
-    ?.map(
-      r => `<li class="g2-tooltip-list-item" data-index="" style="list-style-type: none; padding: 0px; margin: 12px 0px;">
+                                    ?.map(
+                                      r => `<li class="g2-tooltip-list-item" data-index="" style="list-style-type: none; padding: 0px; margin: 12px 0px;">
     <span class="g2-tooltip-name">${r.name}</span>: <span class="g2-tooltip-value" style="display: inline-block; float: right; margin-left: 30px;">${r.data.realValue} Devices</span>
     </li>`
-    )
-    .join('')}
+                                    )
+                                    .join('')}
   </ul>`
                               },
                             }}
