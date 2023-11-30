@@ -21,7 +21,6 @@ import {
   StateSelect,
 } from '../index'
 import FilterContainer from './FilterContainer'
-import useFilterUpdate from '../../hooks/useFilterUpdate'
 
 const ResultFilter = () => {
   const { formatMessage } = useIntl()
@@ -30,17 +29,6 @@ const ResultFilter = () => {
   const filter = useFilterValues(location.pathname)
   const [state, setState] = useState({ ...filter, countryId: user.countryId })
   const allowed = required => isPermittedUser(user.userPermissions, { required })
-  const [addFilter] = useFilterUpdate()
-
-
-  useEffect(() => {
-    addFilter({
-      ...state, closeButton: {
-        hideMinDate: true,
-        hideMaxDate: true
-      }
-    }, location.pathname)
-  }, [])
 
   return (
     <FilterContainer state={state} setState={setState}>
@@ -172,9 +160,9 @@ const ResultFilter = () => {
         <Grid item xs={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
-            minDate={state.minDate.value || null}
-            maxDate={state.maxDate.value || null}
-            onChange={dateValues => setState({ ...state, ...dateValues })}
+            minDate={state.fixedMinDate || null}
+            maxDate={state.fixedMaxDate || null}
+            onChange={({ minDate, maxDate }) => setState({ ...state, fixedMinDate: minDate, fixedMaxDate: maxDate })}
             noAny={true}
           />
         </Grid>

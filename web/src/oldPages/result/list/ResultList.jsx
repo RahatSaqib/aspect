@@ -197,8 +197,10 @@ const ResultList = () => {
   searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
   const params = { ...pagination, ...filters }
+  const { fixedMinDate: minDate, fixedMaxDate: maxDate } = params
   delete params.assayOverride
-  delete params.closeButton
+  delete params.fixedMaxDate
+  delete params.fixedMinDate
   // >>>>>> Queries <<<<<<
   const {
     isLoading: tableLoading,
@@ -207,7 +209,7 @@ const ResultList = () => {
     error,
   } = useQuery(
     [RESULT_LIST.KEY, { params }],
-    async () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params: { ...params } }),
+    async () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params: { ...params, minDate, maxDate } }),
     { enabled: !isEmpty(params) }
   )
 
