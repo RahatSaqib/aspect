@@ -7,7 +7,6 @@ module.exports = {
     name: 'Bangladesh',
     externalId: 'bangladesh',
   },
-  defaultCountryTimeZone: 'Asia/Dhaka',
   deviceApiToken: 'vqzewlc2d67v5kdwa9h6',
   partnerAbbreviation: 'BD',
   lowerLevelUserPassword: 'sds123ASDTOVpMx3nHP',

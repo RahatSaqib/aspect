@@ -7,7 +7,6 @@ module.exports = {
     name: 'Vietnam',
     externalId: 'vietnam',
   },
-  defaultCountryTimeZone: 'Asia/Ho_Chi_Minh',
   deviceApiToken: 'q9weva3thrtdeb8ukat4',
   partnerAbbreviation: 'VN',
   lowerLevelUserPassword: '4r5uov8rt3',

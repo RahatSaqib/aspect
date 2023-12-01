@@ -5,7 +5,6 @@ module.exports = {
     name: 'Philippines',
     externalId: 'philippines',
   },
-  defaultCountryTimeZone: 'Asia/Manila',
   adminUserName: 'admin',
   adminPassword: 'e5wQ40TLzd',
   deviceApiToken: 'jdk5ctyu8jhwimkvfc99',

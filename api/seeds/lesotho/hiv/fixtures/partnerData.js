@@ -7,7 +7,6 @@ module.exports = {
     name: 'Lesotho HIV',
     externalId: 'lesothoHiv',
   },
-  defaultCountryTimeZone: 'Africa/Maseru',
   gxAlertDeviceApiKey: 'bnhqb0a2jkfajhut2x3g',
   plugin: '',
   fixtures: {

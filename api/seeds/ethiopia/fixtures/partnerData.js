@@ -6,7 +6,6 @@ module.exports = {
     name: 'Ethiopia EPHI',
     externalId: 'ethiopiaEphi',
   },
-  defaultCountryTimeZone: 'Africa/Addis_Ababa',
   deviceApiToken: '1tfw5604jfn09gx7upd0',
   partnerAbbreviation: 'ET',
   fixtures: {

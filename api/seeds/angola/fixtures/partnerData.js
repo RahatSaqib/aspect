@@ -7,7 +7,6 @@ module.exports = {
     name: 'Angola',
     externalId: 'angola',
   },
-  defaultCountryTimeZone: 'Africa/Luanda',
   deviceApiToken: 'bh59kmC69TZh2EEvVUz25mwx',
   partnerAbbreviation: 'AO',
   lowerLevelUserPassword: 'wMNrV96R',

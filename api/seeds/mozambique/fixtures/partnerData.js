@@ -6,7 +6,6 @@ module.exports = {
     name: 'Mozambique',
     externalId: 'mozambique',
   },
-  defaultCountryTimeZone: 'Africa/Maputo',
   deviceApiToken: 'dwumjc2a7ke5w6a1c0e0',
   partnerAbbreviation: 'MZ',
   fixtures: {
