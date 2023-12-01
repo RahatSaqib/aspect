@@ -90,7 +90,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               name="siteId"
               label={intl.formatMessage(messages.location)}
               value={editDevice.siteId}
-              onChange={siteId => setEditDevice({ ...editDevice, siteId })}
+              onChange={e => setEditDevice({ ...editDevice, siteId: e.target.value })}
               disabled={!editable}
             />
 

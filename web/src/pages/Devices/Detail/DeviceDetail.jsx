@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Box } from '@mui/material'
 import Immutable from 'immutable'
 import { defineMessages, useIntl } from 'react-intl'
@@ -52,9 +52,7 @@ export const DeviceDetail = props => {
   const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
 
   // onSuccess - reset key to re-run query for device
-  const onSuccess = useCallback(() => {
-    queryClient.invalidateQueries([DEVICE_KEY, deviceId])
-  }, [deviceId, queryClient])
+  const onSuccess = () => queryClient.invalidateQueries([DEVICE_KEY, deviceId])
 
   const { mutate: updateDevice } = useMutation(({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)), {
     onSuccess,
