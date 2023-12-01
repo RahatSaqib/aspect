@@ -138,34 +138,37 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   )
   `
 
+  const baseQuery = knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    /**
+     * join to `DeviceCapacity` to count number of modules per device
+     */
+    .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
+    .leftJoin('ResultCategoryAssay as rca1', function () {
+      this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
+    })
+    .leftJoin('ResultCategoryAssay as rca2', function () {
+      this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
+    })
+    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      assay: 'a',
+      result: 'r',
+    })
+    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+
   return {
-    drTb10AData: knex('Result as r')
-      .innerJoin('Device as d', 'r.deviceId', 'd.id')
-      .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-      .innerJoin('Assay as a', 'r.assayId', 'a.id')
-      .leftOuterJoin('Site as s', 's.id', 'r.siteId')
-      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-      /**
-       * join to `DeviceCapacity` to count number of modules per device
-       */
-      .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
-      .leftJoin('ResultCategoryAssay as rca1', function () {
-        this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
-      })
-      .leftJoin('ResultCategoryAssay as rca2', function () {
-        this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-      })
-      .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-      .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
-      .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
-      .modify(addConstraints, dataConstraints, {
-        device: 'd',
-        site: 's',
-        geography: 'g',
-        assay: 'a',
-        result: 'r',
-      })
-      .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+    drTb10AData: baseQuery
+      .clone()
       .modify(filterParams, query, {
         countryId: 'g.countryId',
         stateId: 'g.stateId',
@@ -175,6 +178,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .select(
         'r.deviceId',
         'sp.sampleTypeId',
+        knex.raw(`GROUP_CONCAT(DISTINCT r.referringSiteId) as referringSiteIds`),
+        knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         /**
          * Notice that we below group by `deviceId`
          * only because we need to count number of modules
@@ -763,7 +768,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           CONCAT(r.deviceId, '-',  r.moduleName)
         `),
 
-        cnt_Tested_by_XDR_Cartridge: counter(
+        cnt_Xdr_Tested_From_Eligible: counter(
           'r.id',
           `
           ${assayXdr}
@@ -771,7 +776,27 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           ${whereXdrDetected}
           `
         ),
+        /**
+         * cnt_Xdr_Total_Tests is calculated in the code
+         */
+        // cnt_Xdr_Total_Tests: --> see func `getDataForSheet1or2` below
       }),
+    getQueryForXdrCountsBySiteIds: siteIds =>
+      baseQuery
+        .clone()
+        .whereIn('s.id', siteIds)
+        .select('sp.sampleTypeId')
+        .groupBy('sp.sampleTypeId')
+        .count({
+          cnt_Xdr_Total_Tests: counter(
+            'r.id',
+            `
+            ${assayXdr}
+            or
+            ${whereXdrDetected}
+            `
+          ),
+        }),
   }
 }
 
@@ -791,7 +816,7 @@ async function getDataForReportDrTb10A(auth, query, options) {
     dateFrom = subMonths(dateTo, 1)
   }
 
-  const { drTb10AData } = await reportDrTb10ABaseQuery(auth, query)
+  const { drTb10AData, getQueryForXdrCountsBySiteIds } = await reportDrTb10ABaseQuery(auth, query)
   let data = await drTb10AData
 
   sharedResults[nameOfSharedData] = data
@@ -799,12 +824,15 @@ async function getDataForReportDrTb10A(auth, query, options) {
   const sampleTypeIds = await allSampleTypeToId()
   data = await getDataForSheet1or2(
     data,
-    { userName, cell, phone, email },
-    { stateId, lgaId, siteName },
-    /**
-     * for 1st worksheet use only sample type != `Stool` (see 2nd worksheet for `Stool`)
-     */
-    sampleTypeId => sampleTypeId !== sampleTypeIds.Stool
+    { userName, cell, phone, email }, // current user props
+    { stateId, lgaId, siteName }, // props from query
+    {
+      /**
+       * for 1st worksheet use only sample type != `Stool` (see 2nd worksheet for `Stool`)
+       */
+      condition: sampleTypeId => sampleTypeId !== sampleTypeIds.Stool,
+      getQueryForXdrCountsBySiteIds,
+    }
   )
 
   return {
@@ -815,9 +843,15 @@ async function getDataForReportDrTb10A(auth, query, options) {
 }
 
 // ---------------------------------------------------------------------------
-async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { stateId, lgaId, siteName }, condition) {
+async function getDataForSheet1or2(
+  rawData,
+  { userName, cell, phone, email },
+  { stateId, lgaId, siteName },
+  { condition, getQueryForXdrCountsBySiteIds }
+) {
   let item
   const [first] = rawData || []
+  let propNames = []
   if (first) {
     item = {
       userName,
@@ -827,11 +861,9 @@ async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { 
       devices: new Set(), // this is a temporal prop to collect distinct deviceId's
     }
     /**
-     * notice that variable `rest` below contains only counters - i.e. all keys starts with `cnt`
+     * prop names of all counters `cnt*`, i.e. all keys starting with `cnt`
      */
-    // eslint-disable-next-line no-unused-vars
-    const { deviceId, sampleTypeId, ...rest } = first
-    const propNames = _.keys(rest) // i.e. all counters `cnt*`
+    propNames = _.keys(first).filter(key => key.startsWith('cnt'))
     propNames.forEach(propName => {
       item[propName] = 0
     })
@@ -839,24 +871,53 @@ async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { 
     item = {}
   }
 
-  _.forEach(rawData, ({ deviceId, sampleTypeId, ...rest }) => {
-    if (!condition(sampleTypeId)) {
-      return
+  let allSiteIds = []
+  let allReferringSiteIds = []
+  _.forEach(
+    rawData?.filter(it => condition(it.sampleTypeId)),
+    ({ deviceId, siteIds, referringSiteIds, ...rest }) => {
+      /**
+       *
+       */
+      allSiteIds = [...allSiteIds, ...(siteIds?.split(',') || []).map(it => +it)]
+      allReferringSiteIds = [...allReferringSiteIds, ...(referringSiteIds?.split(',') || []).map(it => +it)]
+      /**
+       * Increment all counters for current deviceId
+       */
+      propNames.forEach(propName => {
+        item[propName] += rest[propName]
+      })
+      /**
+       * unique deviceId's
+       */
+      item.devices.add(deviceId)
     }
-    /**
-     * --> notice that `rest` contains only counters - i.e. all keys starts with `cnt`.
-     * Increment all counters for current deviceId
-     */
-    _.keys(rest).forEach(propName => {
-      item[propName] += rest[propName]
-    })
-    /**
-     * unique deviceId's
-     */
-    item.devices.add(deviceId)
-  })
-  let data = item
+  )
+  const uniqueSiteIds = [...new Set(allSiteIds)]
+  const uniqueReferringSiteIds = [...new Set(allReferringSiteIds)]
 
+  /**
+   * cnt_Xdr_Total_Tests = cnt_Xdr_Tested_From_Eligible + (cnt_Xdr_Total_Tests from other sites)
+   */
+  item.cnt_Xdr_Total_Tests = item.cnt_Xdr_Tested_From_Eligible
+  /**
+   * list of site id's which are in ReferringSiteIds but not in SiteIds
+   */
+  const refSiteIds = uniqueReferringSiteIds.filter(siteId => !uniqueSiteIds.includes(siteId))
+  if (!_.isEmpty(refSiteIds)) {
+    /**
+     *
+     */
+    const rawRefData = await getQueryForXdrCountsBySiteIds(refSiteIds)
+    _.forEach(
+      rawRefData?.filter(it => condition(it.sampleTypeId)),
+      it => {
+        item.cnt_Xdr_Total_Tests += it.cnt_Xdr_Total_Tests
+      }
+    )
+  }
+
+  let data = item
   if (_.isNil(data)) data = {}
   /**
    * set `cntDevices` and remove temporal prop `devices`
@@ -885,6 +946,7 @@ async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { 
 async function getDataForReportDrTb10AStool(auth, query, options) {
   const { sharedResults, useNamedData } = options
 
+  const { getQueryForXdrCountsBySiteIds } = await reportDrTb10ABaseQuery(auth, query)
   let data = sharedResults[useNamedData]
 
   const { stateId, lgaId, siteName } = query
@@ -894,12 +956,15 @@ async function getDataForReportDrTb10AStool(auth, query, options) {
 
   data = await getDataForSheet1or2(
     data,
-    { userName, cell, phone, email },
-    { stateId, lgaId, siteName },
-    /**
-     * for 2nd worksheet use only sample type `Stool`
-     */
-    sampleTypeId => sampleTypeId === sampleTypeIds.Stool
+    { userName, cell, phone, email }, // current user props
+    { stateId, lgaId, siteName }, // props from query
+    {
+      /**
+       * for 2nd worksheet use only sample type `Stool`
+       */
+      condition: sampleTypeId => sampleTypeId === sampleTypeIds.Stool,
+      getQueryForXdrCountsBySiteIds,
+    }
   )
 
   return {
