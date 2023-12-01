@@ -1,9 +1,9 @@
+import { format, formatInTimeZone, zonedTimeToUtc } from 'date-fns-tz'
 import addMinutes from 'date-fns/addMinutes'
 import closestTo from 'date-fns/closestTo'
 import differenceInSeconds from 'date-fns/differenceInSeconds'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
-import format from 'date-fns/format'
 import getDate from 'date-fns/getDate'
 import getDaysInMonth from 'date-fns/getDaysInMonth'
 import getHours from 'date-fns/getHours'
@@ -190,28 +190,6 @@ const negateTimeZoneOffset = dateString => {
   return Math.sign(offset) !== -1 ? addMinutes(date, offset) : subMinutes(date, Math.abs(offset))
 }
 
-const getISOFromString = (date, sod = true, eod = false) => {
-  const iSOFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
-  const checkForTimeStampRegex = RegExp('[T|:|s]')
-
-  switch (true) {
-    case isObject(date):
-      return format(date, iSOFormat)
-
-    case isEmpty(date):
-      return format(new Date(), iSOFormat)
-
-    case !checkForTimeStampRegex.test(date) && sod:
-      return format(startOfDay(parseISO(date)), iSOFormat)
-
-    case !checkForTimeStampRegex.test(date) && eod:
-      return format(endOfDay(parseISO(date)), iSOFormat)
-
-    default:
-      return format(new Date(date), iSOFormat)
-  }
-}
-
 const getTimePeriod = (cnt, period, dateFormat) => {
   let timePeriod
   const dateNow = new Date()
@@ -316,6 +294,32 @@ const dateRangeOptions = (formatMessage, formatDate, key, showLast30Days = true)
   })
   return {
     [key]: [...dateRange],
+  }
+}
+
+const getISOFromString = (date, sod = true, eod = false) => {
+  const iSOFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSxxx"
+  const checkForTimeStampRegex = RegExp('[T|:|s]')
+  const validTimeZone = localStorage.getItem('asTimezoneId')
+
+  switch (true) {
+    case isObject(date):
+      return formatInTimeZone(zonedTimeToUtc(date, validTimeZone), validTimeZone, iSOFormat)
+
+    case isEmpty(date):
+      return format(new Date(), iSOFormat)
+
+    case !checkForTimeStampRegex.test(date) && sod:
+      return format(startOfDay(parseISO(date)), iSOFormat)
+
+    case !checkForTimeStampRegex.test(date) && eod:
+      return format(endOfDay(parseISO(date)), iSOFormat)
+
+    case checkForTimeStampRegex.test(date):
+      return date
+
+    default:
+      return format(new Date(date), iSOFormat)
   }
 }
 
