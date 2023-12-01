@@ -6,6 +6,7 @@ const formDictionary = require('./formsFileDictionary')
 const { getListSitesForSelectList } = require('../site/service')
 const { stateSelectList } = require('../geography/service')
 const { normalizePhoneNumber } = require('../shared/phoneNormalization')
+const { getSiteIdByName } = require('../site/common/db')
 
 function createFormObject(formQuery) {
   const forms = {}
@@ -187,21 +188,32 @@ function getFormsBaseQuery(partnerId, query) {
   return queryForm
 }
 
+/*
+ * Create an object for merging with the result to save it directly in the database
+ */
 const getCustomFieldsFromPayload = async (payload, countryCode, partnerId, assayId, diseaseId = null) => {
   const forms = createFormObject(await getFormsBaseQuery(partnerId, { formType: 'gxConnectForm', assayId, diseaseId }))
   const fields = Object.values(forms).flatMap(form => form.fields)
 
-  return fields.reduce((obj, field) => {
+  const obj = {}
+
+  for (const field of fields) {
     const { payloadOriginPath = `data.customFieldData.${field.id}.value`, source, fieldType } = field
 
     const value = _.get(payload, payloadOriginPath)
     if (value && source) {
       if (_.includes(['patientCellphone', 'clinicianCellphone', 'phone'], fieldType))
         _.set(obj, source, normalizePhoneNumber(value, countryCode))
-      else _.set(obj, source, value)
+      else if (source === 'referringSiteId') {
+        // This case will be removed in the future because the payloadOriginPath should take the key instead of the value
+        const key = _.get(payload, `data.customFieldData.${field.id}.key`)
+        // eslint-disable-next-line no-await-in-loop
+        _.set(obj, source, key || (await getSiteIdByName(value)))
+      } else _.set(obj, source, value)
     }
-    return obj
-  }, {})
+  }
+
+  return obj
 }
 
 module.exports = {

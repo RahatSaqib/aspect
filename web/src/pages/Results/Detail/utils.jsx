@@ -1,6 +1,7 @@
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import isString from 'lodash/isString'
+import set from 'lodash/set'
 import uniqBy from 'lodash/uniqBy'
 import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
@@ -65,7 +66,11 @@ function getRowsForCustomFields(values) {
           component: 'select',
           options: customField.items
             .sort((a, b) => a.order - b.order)
-            .map(i => ({ value: i.key, label: i.value, scope: i.scope || undefined })),
+            .map(i => ({
+              value: customField.sourceType === 'key' ? i.key : i.value,
+              label: i.value,
+              scope: i.scope || undefined,
+            })),
         },
       })
     } else if (
@@ -212,7 +217,6 @@ const enableItemAndFilter = (item, data, formik, keepInvalidSelection) => {
 
     // ASP-5626: 3. filters: based on comparative with other custom fields, shows or hides options in combobox and autocomplete.
     if (itemBase.filters) {
-      const field = itemBase.source.split('.')
       const filteredOptions = calculateFilteredOptions(itemBase, item, formik)
 
       // first update the available options
@@ -224,9 +228,9 @@ const enableItemAndFilter = (item, data, formik, keepInvalidSelection) => {
       if (!keepInvalidSelection) {
         // second, clear any invalid option from already selected values
         const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
-        const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
+        const currentSelectdValue = get(formik.values, itemBase.source, '').toLowerCase()
         if (!currentValidValues.includes(currentSelectdValue)) {
-          formik.values[field[0]][field[1]] = ''
+          set(formik.values, itemBase.source, '')
         }
       }
     }

@@ -438,7 +438,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   const existingResultPatientString = _.get(existingResult, 'patientData', null)
   const existingResultPatient = isJson(existingResultPatientString) ? JSON.parse(existingResultPatientString) : {}
 
-  const preProcessResult = {
+  const preProcessedResult = {
     latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', site.latitude)),
     longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', site.longitude)),
     assayId: assay.id,
@@ -490,13 +490,13 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     assay.id
   )
 
-  const preProcessResultWithCustomFields = _.merge(preProcessResult, customFieldsData)
+  const preProcessedResultWithCustomFields = _.merge(preProcessedResult, customFieldsData)
 
   const result = {
-    ...preProcessResultWithCustomFields,
-    resultData: JSON.stringify(preProcessResultWithCustomFields.resultData),
-    patientData: !_.isEmpty(preProcessResultWithCustomFields.patientData)
-      ? JSON.stringify(preProcessResultWithCustomFields.patientData)
+    ...preProcessedResultWithCustomFields,
+    resultData: JSON.stringify(preProcessedResultWithCustomFields.resultData),
+    patientData: !_.isEmpty(preProcessedResultWithCustomFields.patientData)
+      ? JSON.stringify(preProcessedResultWithCustomFields.patientData)
       : null,
   }
 

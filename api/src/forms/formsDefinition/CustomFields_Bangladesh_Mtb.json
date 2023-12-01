@@ -51,6 +51,7 @@
       "caption": "Gender",
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
+      "payloadOriginPath": "data.customFieldData.1103.value",
       "source": "patientData.PatientGender",
       "items": [
         {
@@ -77,6 +78,7 @@
       "gxAlertDbColumn": "PatientStreet",
       "caption": "Address",
       "i18nKeyCaption": "AddressI18nCaptionKey",
+      "payloadOriginPath": "data.customFieldData.1104.value",
       "source": "patientData.address",
       "controlType": "textBox",
       "mandatory": true
@@ -111,6 +113,7 @@
       "controlType": "autoComplete",
       "payloadOriginPath": "data.customFieldData.1106.value",
       "source": "referringSiteId",
+      "sourceType": "key",
       "itemsSource": "all-sites",
       "itemsSourceConfig": {
         "key": "id",
