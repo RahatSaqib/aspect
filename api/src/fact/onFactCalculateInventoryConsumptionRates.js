@@ -8,7 +8,9 @@ async function onFactCalculateInventoryConsumptionRates(action, { messageContext
     const items = await knex('InventoryItem').groupBy('siteId', 'consumableId').select('siteId', 'consumableId')
 
     // loop through all sites/consumables and refresh rate
-    return await Promise.map(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId), { concurrency: 10 })
+    return Promise.map(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId), {
+      concurrency: 10,
+    })
   })
 }
 
