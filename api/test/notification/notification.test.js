@@ -69,11 +69,11 @@ describe('Query generator for filtering conditions', () => {
     areaItems: [
       {
         label: 'Idaho',
-        value: '46',
+        value: 46,
       },
       {
         label: 'Nebraska',
-        value: '62',
+        value: 62,
       },
     ],
     jobFunctions: [
