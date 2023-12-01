@@ -130,7 +130,7 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     )
 
   return processUsingDataSourceQuery(
-    { ...data, personCell: data?.personCellE164 ? `true?${data?.personCellE164}` : data?.personCell },
+    data,
     ['messageTemplate', 'phoneNumberTemplate', 'personCellE164Template', 'personCellTemplate', 'countryAbbreviation'],
     authLikeObject
   )
