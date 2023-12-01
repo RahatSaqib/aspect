@@ -6,8 +6,21 @@ import styles from './Icons.module.css'
 
 async function loadIconModule(icon) {
   const iconFamily = icon.substring(0, 2).toLowerCase()
-  // we are only using MD and FA icons
-  return iconFamily === 'fa' ? import('react-icons/fa') : import('react-icons/md')
+  switch (true) {
+    case iconFamily === 'fa':
+      return import('react-icons/fa')
+
+    case iconFamily === 'ai':
+      return import('react-icons/ai')
+
+    case iconFamily === 'bs':
+      return import('react-icons/bs')
+    case iconFamily === 'gr':
+      return import('react-icons/gr')
+
+    default:
+      return import('react-icons/md')
+  }
 }
 
 /**

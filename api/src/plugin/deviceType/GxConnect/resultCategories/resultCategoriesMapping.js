@@ -113,7 +113,7 @@ const result1CategoryMapping = {
   'предположительный положительный': 'PresumptivePositive',
   'présomptif positif': 'PresumptivePositive',
   'предположительно пол': 'PresumptivePositive',
-  негативний: 'PresumptivePositive',
+  негативний: 'Negative',
   'praduga pos': 'PresumptivePositive',
   przypuszczalnego: 'PresumptivePositive',
   'null null': 'Success',
@@ -182,6 +182,36 @@ const result2CategoryMapping = {
   'tanpa hasil': 'NoResult',
   '@label_result_no_result': 'NoResult',
   'brak wyniku': 'NoResult',
+}
+
+const bacterialLoadMapping = {
+  'very low @label_result_detected': 'Very Low',
+  'low @label_result_detected': 'Low',
+  'medium @label_result_detected': 'Medium',
+  'high @label_result_detected': 'High',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low': 'Very Low',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low': 'Low',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium': 'Medium',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high': 'High',
+  'detected very low': 'Very Low',
+  'detected low': 'Low',
+  'detected medium': 'Medium',
+  'detected high': 'High',
+  'detectado muito baixo': 'Very Low',
+  'detectado baixo': 'Low',
+  'detectado médio': 'Medium',
+  'detectado alto': 'High',
+  'detectado muy bajo': 'Very Low',
+  'detectado bajo': 'Low',
+  'detectado medio': 'Medium',
+  'обнаружен очень низкий': 'Very Low',
+  'обнаружен низкий': 'Low',
+  'обнаружен средний': 'Medium',
+  'обнаружен высокий': 'High',
+  'détecté très bas': 'Very Low',
+  'détecté bas': 'Low',
+  'détecté moyen': 'Medium',
+  'détecté élevé': 'High',
 }
 
 const mtbPositiveResultCategories = [
@@ -282,6 +312,15 @@ function getResultCategoriesHivVL(result1Text) {
   else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0) return 'NoResult'
 }
 
+const getBacterialLoad = resultText => {
+  const resultTextValues = splitResultTextValues(resultText)
+
+  if (resultTextValues.length === 0) return undefined
+
+  const result1Text = sanitizeResultTextValue(resultTextValues[0])
+  return bacterialLoadMapping[result1Text]
+}
+
 /**
  * Parses a GeneXpert result text and returns an object containing the key value pairs.
  * @param {string} resultText The result text of a GeneXpert result
@@ -342,9 +381,10 @@ const getDetectedResistanceCategoryTypes = resultText => {
 module.exports = {
   getDetectedResistanceCategoryTypes,
   result1CategoryMapping,
-  result2CategoryMapping,
   mapResultCategory2,
   parseResultText,
   getResultCategoriesHivVL,
   getVLCopies,
+  getBacterialLoad,
+  bacterialLoadMapping,
 }

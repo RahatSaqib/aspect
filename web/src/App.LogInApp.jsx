@@ -10,7 +10,6 @@ import useHashAndScroll from './hooks/useHashAndScroll'
 import AspectDialog from './oldComponents/shared/AspectDialog'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import { idleLogout, refreshStart } from './store/AuthRedux'
-import { fetchDiseases } from './store/DiseaseRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
 const ContactPage = lazy(() => import('./pages/Contact'))
@@ -99,8 +98,6 @@ const LogInApp = () => {
   useEffect(() => {
     // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
     dispatch(fetchCountries())
-    // fetch diseases on start so allow HIV graph on dashboard to load properly
-    dispatch(fetchDiseases())
 
     // Refresh the access token every 30 minutes.
     const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)
