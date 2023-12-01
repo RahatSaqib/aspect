@@ -21,7 +21,7 @@ const activityOverTimeDashboard = require('./activityOverTime')
 const dashboardWidgetsBase = require('../../seeds/fixtures/dashboardWidgetsBase')
 
 const {
-  stat: { activeDevicesCnt, totalNumberOfModules, activeModules, moduleSwaps },
+  stat: { activeDevicesCnt, totalNumberOfModules, activeModules },
 } = dashboardWidgetsBase
 
 const i18nKeys = {
@@ -43,7 +43,6 @@ const i18nKeys = {
 
 const dashboardWidgetTitle = [
   activeDevicesCnt.title,
-  moduleSwaps.title,
   totalNumberOfModules.title,
   activeModules.title,
 ]
@@ -63,7 +62,7 @@ async function getDashboardWidget({ id, partnerId }, options) {
     })
     .where(function () {
       this.whereRaw(`JSON_EXTRACT(w.dashboards , '$.${dashboard}') IS NOT NULL`)
-      if (country === 'BD') this.orWhereIn('w.title', dashboardWidgetTitle)
+      if (country === 'BD' && dashboard === 'home') this.orWhereIn('w.title', dashboardWidgetTitle)
       else this.whereNotIn('w.title', dashboardWidgetTitle)
 
       if (dashboard === 'home') {
@@ -170,38 +169,38 @@ async function resultDashboard(request) {
   const [siteList, resultCnt, assayTypes] = await Promise.all(
     canViewResults(auth)
       ? [
-          canViewSites(auth) ? siteQuery : [],
-          knex('FactResultsDeviceByCategory1 as f')
-            .innerJoin('Device as d', 'd.id', 'f.deviceId')
-            .innerJoin('Site as s', 's.id', 'd.siteId')
-            .innerJoin('Assay as a', 'a.id', 'f.assayId')
-            .innerJoin('ResultCategory as rc', 'rc.id', 'f.resultCategory1')
-            .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-            .modify(addConstraints, dataConstraints, {
-              device: 'd',
-              site: 's',
-              geography: 'g',
-              assay: 'a',
-            })
-            .groupBy('rc.externalId', 'a.assayTypeId', 'd.siteId')
-            .select('rc.externalId as resultCategory1ExternalId', 'a.assayTypeId', 'd.siteId')
-            .sum('f.resultCount as cnt'),
-          knex('AssayType as at')
-            .innerJoin('Assay as a', 'at.id', 'a.assayTypeId')
-            .leftJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
-            .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
-            .modify(addConstraints, dataConstraints, {
-              assayType: 'at',
-              assay: 'a',
-            })
-            .groupBy('at.id')
-            .select(
-              'at.id',
-              'at.name as assayTypeName',
-              knex.raw('GROUP_CONCAT(rc.externalId) as rawResultCategoryExternalIds'),
-              knex.raw('GROUP_CONCAT(rc.name) as rawResultCategoryNames')
-            ),
-        ]
+        canViewSites(auth) ? siteQuery : [],
+        knex('FactResultsDeviceByCategory1 as f')
+          .innerJoin('Device as d', 'd.id', 'f.deviceId')
+          .innerJoin('Site as s', 's.id', 'd.siteId')
+          .innerJoin('Assay as a', 'a.id', 'f.assayId')
+          .innerJoin('ResultCategory as rc', 'rc.id', 'f.resultCategory1')
+          .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+          .modify(addConstraints, dataConstraints, {
+            device: 'd',
+            site: 's',
+            geography: 'g',
+            assay: 'a',
+          })
+          .groupBy('rc.externalId', 'a.assayTypeId', 'd.siteId')
+          .select('rc.externalId as resultCategory1ExternalId', 'a.assayTypeId', 'd.siteId')
+          .sum('f.resultCount as cnt'),
+        knex('AssayType as at')
+          .innerJoin('Assay as a', 'at.id', 'a.assayTypeId')
+          .leftJoin('ResultCategoryAssay as rca', 'a.id', 'rca.assayId')
+          .innerJoin('ResultCategory as rc', 'rca.resultCategoryId', 'rc.id')
+          .modify(addConstraints, dataConstraints, {
+            assayType: 'at',
+            assay: 'a',
+          })
+          .groupBy('at.id')
+          .select(
+            'at.id',
+            'at.name as assayTypeName',
+            knex.raw('GROUP_CONCAT(rc.externalId) as rawResultCategoryExternalIds'),
+            knex.raw('GROUP_CONCAT(rc.name) as rawResultCategoryNames')
+          ),
+      ]
       : [[], [], []]
   )
   const resultCntBySiteIdByAssayTypeId = _.mapValues(_.groupBy(resultCnt, 'assayTypeId'), it => _.groupBy(it, 'siteId'))
