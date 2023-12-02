@@ -39,7 +39,8 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
     const now = new Date()
 
     const { timeZone: timeZoneIANA } = await knex('Device as d')
-      .join('Geography as g', 'g.id', 'd.geographyId')
+      .join('Site as s', 's.id', 'd.siteId')
+      .join('Geography as g', 'g.id', 's.geographyId')
       .join('Country as c', 'c.id', 'g.countryId')
       .join('TimeZone as tz', 'c.timezone', 'tz.id')
       .first('tz.timeZone')
