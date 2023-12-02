@@ -1,7 +1,7 @@
 const Promise = require('bluebird')
 const { subDays } = require('date-fns')
 const { daysToCalculate } = require('./common/constants')
-const { slideDateToTimeZoneISO, startOfDayUtc } = require('../shared/date')
+const { replaceOffset, startOfDayUtc } = require('../shared/date')
 
 async function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
   return messageContext.run(async knex => {
@@ -102,7 +102,7 @@ async function getConsumptions(knex, siteId, consumableId) {
   // --------------------
   const daysToRate = daysToCalculate.filter(x => x > 1 && x < 9999)
   const fields = daysToRate.map(days => {
-    const from = slideDateToTimeZoneISO(startOfDayUtc(subDays(now, days)), timeZoneIANA)
+    const from = replaceOffset(startOfDayUtc(subDays(now, days)), timeZoneIANA)
 
     return knex.raw(`sum(case when r.endedOn >= '${from}' then ca.quantity else 0 end) as total${days}`)
   })

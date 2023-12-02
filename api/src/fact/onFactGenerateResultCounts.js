@@ -3,7 +3,7 @@ const Promise = require('bluebird')
 const { subDays, startOfMonth, endOfMonth, parseISO } = require('date-fns')
 const {
   startOfDayUtc,
-  slideDateToTimeZoneISO,
+  replaceOffset,
   getOffsetFromTimeZone,
   getDateTimeProjectionInUserTimeZone,
 } = require('../shared/date')
@@ -73,7 +73,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
     await messageContext.initDictionaryTables()
 
     await Promise.each(daysToCalculate, async days => {
-      const from = slideDateToTimeZoneISO(startOfDayUtc(subDays(now, days)), timeZoneIANA)
+      const from = replaceOffset(startOfDayUtc(subDays(now, days)), timeZoneIANA)
 
       // query for selecting data for the device
       const query = knex('Result as r')
@@ -241,8 +241,8 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
           if (resultEndedOn) {
             // TODO: we'll have to account for different timeframes here if we ever want to calculate more than just month
             qb.whereBetween('r.endedOn', [
-              slideDateToTimeZoneISO(startOfMonth(parseISO(resultEndedOn)), timeZoneIANA),
-              slideDateToTimeZoneISO(endOfMonth(parseISO(resultEndedOn)), timeZoneIANA),
+              replaceOffset(startOfMonth(parseISO(resultEndedOn)), timeZoneIANA),
+              replaceOffset(endOfMonth(parseISO(resultEndedOn)), timeZoneIANA),
             ])
           }
         })

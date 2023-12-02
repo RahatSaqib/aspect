@@ -60,13 +60,16 @@ const slideDateToTimeZone = (date, timeZoneIANA) => zonedTimeToUtc(date, timeZon
  */
 const formatDateInTimeZone = (date, timeZoneIANA) => formatInTimeZone(date, timeZoneIANA, 'yyyy-MM-dd HH:mm:ssXXX')
 
-/** Slides an UTC date to the specified time zone and return the result date in full ISO format
+/** Changes the time offset of a date to get the same date and time in the target time zone.
  * @param {Date} date - An UTC date
  * @param {String} timeZoneIANA - A string representing a IANA time zone
  * @returns A new Date object slided the amount of hours between UTC and the input time zone, expressed as ISO full string
  * @description This function it's the same as chain slideDateToTimeZone and then formatDateInTimeZone.
+ * @example
+ * Given 2020-01-01T00:00:00.000Z as date and 'Asia/Karachi' time zone, it will return 2020-01-01T00:00:00.000+05:00.
+ * Note that it takes into account DST, as it's not performing a simple replace but using date-fns-tz library.
  */
-const slideDateToTimeZoneISO = (date, timeZoneIANA) =>
+const replaceOffset = (date, timeZoneIANA) =>
   formatDateInTimeZone(slideDateToTimeZone(date, timeZoneIANA), timeZoneIANA)
 
 const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') => {
@@ -437,7 +440,7 @@ module.exports = {
   getOffsetFromTimeZone,
   slideDateToTimeZone,
   formatDateInTimeZone,
-  slideDateToTimeZoneISO,
+  replaceOffset,
   getOffsetFromIsoDateString,
   getOffsetFromIsoDateStringInMinutes,
   getTimeZoneFromUser,
