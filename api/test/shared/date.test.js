@@ -187,24 +187,26 @@ describe('Shared Date Utility Functions', () => {
   describe('getOffsetFromTimeZone', () => {
     it('should return correct offSet from given timeZone', () => {
       const tzFixtures = [
-        { tz: 'America/Buenos_Aires', expectedOffset: ['-03:00'], obs: '' },
-        { tz: 'Asia/Baku', expectedOffset: ['+04:00'], obs: '' },
-        { tz: 'Asia/Dhaka', expectedOffset: ['+06:00'], obs: '' },
-        { tz: 'Pacific/Fiji', expectedOffset: ['+12:00', '+13:00'], obs: '' },
-        { tz: 'GMT', expectedOffset: ['+00:00'], obs: '' },
-        { tz: 'Canada/Atlantic', expectedOffset: ['-03:00', '-04:00'], obs: '' },
+        { tz: 'America/Buenos_Aires', expectedOffset: ['-03:00'] },
+        { tz: 'Asia/Baku', expectedOffset: ['+04:00'] },
+        { tz: 'Asia/Dhaka', expectedOffset: ['+06:00'] },
+        { tz: 'Pacific/Fiji', expectedOffset: ['+12:00', '+13:00'] },
+        { tz: 'GMT', expectedOffset: ['+00:00'] },
+        { tz: 'Canada/Atlantic', expectedOffset: ['-03:00', '-04:00'] },
         {
           tz: 'Failing Test Timezone',
           expectedOffset: ['+00:00'],
           obs: ' (This timeZone must fail to be parsed, and should default to +00:00)',
         },
+        { tz: 'America/New_York', expectedOffset: ['-04:00'], date: '2023-08-01T12:00:00' },
+        { tz: 'America/New_York', expectedOffset: ['-05:00'], date: '2023-12-03T12:00:00' },
       ]
 
       for (const f of tzFixtures) {
         assert.oneOf(
-          getOffsetFromTimeZone(f.tz),
+          getOffsetFromTimeZone(f.tz, f.date ? new Date(f.date) : undefined),
           f.expectedOffset,
-          `Cannot infer offSet from timeZone '${f.tz}'${f.obs}`
+          `Cannot infer offSet from timeZone '${f.tz}'${f.obs || ''}${f.date ? `, for date ${f.date}` : ''}`
         )
       }
     })
