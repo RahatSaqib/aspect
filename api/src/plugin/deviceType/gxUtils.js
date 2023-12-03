@@ -807,14 +807,14 @@ function getResultCategories(payload) {
 
   // Applying GxAlert result category mapping as a fallback
   if (_.isEmpty(payloadCategory) && !_.isNil(payloadResultText)) {
+    const formattedResultText = payloadResultText.includes('|')
+      ? payloadResultText.substring(0, payloadResultText.indexOf('|'))
+      : payloadResultText
     const gxAssay = _.get(payload, 'data.assay').toUpperCase().trim()
-    if (gxAssay == 'HCV VL' 
-      || gxAssay == 'XPERT HCV VL' 
-      || gxAssay == 'XPERT HCV VIRAL LOAD' 
-      || gxAssay == 'XPERT_HCV VIRAL LOAD') {
-      const formattedResultText = payloadResultText.includes('|')
-        ? payloadResultText.substring(0, payloadResultText.indexOf('|'))
-        : payloadResultText
+    if (gxAssay === 'HCV VL'
+      || gxAssay === 'XPERT HCV VL'
+      || gxAssay === 'XPERT HCV VIRAL LOAD'
+      || gxAssay === 'XPERT_HCV VIRAL LOAD') {
       const hcvResultText = formattedResultText
         .toLowerCase()
         .replace('hcv-1', '')
@@ -858,6 +858,63 @@ function getResultCategories(payload) {
       }
       else {
         payloadCategory = [{ id: 'Error' }]
+      }
+    }
+    else if (gxAssay === 'SARS-COV-2'
+      || gxAssay === 'XPERT SARS-COV-2'
+      || gxAssay === 'XPRESS SARS-COV-2'
+      || gxAssay === 'XPERT XPRESS SARS-COV-2') {
+      const textToCompare = formattedResultText
+        .toLowerCase()
+        .replace('sars-cov-2', '')
+        .replace('|', '')
+        .trim();
+      switch (textToCompare) {
+        case 'positive':
+        case 'positivo':
+        case 'положительный':
+        case 'positif':
+        case '@label_result_positive':
+          payloadCategory = [{ id: 'Detected' }]
+          break
+        case 'presumptive pos':
+        case 'presumptive positive':
+        case 'presuntivo positivo':
+        case 'предположительный положительный':
+        case 'présomptif positif':
+        case '@label_result_presumptive_pos':
+        case '@label_result_presumptive_positive':
+          payloadCategory = [{ id: 'PresumptivePositive' }]
+          break
+        case 'invalid':
+        case 'inválido':
+        case 'недействительный':
+        case 'non valide':
+        case '@label_result_invalid':
+          payloadCategory = [{ id: 'Invalid' }]
+          break
+        case 'négatif':
+        case 'negative':
+        case 'отрицательный':
+        case 'negativo':
+        case '@label_result_negative':
+          payloadCategory = [{ id: 'NotDetected' }]
+          break
+        case 'no result':
+        case 'sem resultado':
+        case 'безрезультатно':
+        case 'sans résultat':
+        case 'sin resultado':
+        case '@label_result_no_result':
+          payloadCategory = [{ id: 'NoResult' }]
+          break
+        case 'error':
+        case 'erro':
+        case 'ошибка':
+        case 'erreur':
+        case '@label_result_error':
+        default:
+          payloadCategory = [{ id: 'Error' }]
       }
     }
   }
