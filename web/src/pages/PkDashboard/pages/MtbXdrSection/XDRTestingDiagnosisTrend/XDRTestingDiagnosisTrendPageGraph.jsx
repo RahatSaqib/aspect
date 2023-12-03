@@ -6,8 +6,8 @@ import { StateSelect, LgaSelect, ColumnLineGraph, Loading } from '../../../../..
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
+import useAuthState from '../../../../../hooks/useAuthState'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 

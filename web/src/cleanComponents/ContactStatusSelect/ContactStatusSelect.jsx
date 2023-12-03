@@ -2,7 +2,7 @@ import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { TextField, IconButton, MenuItem } from '@mui/material'
 import { useIntl } from 'react-intl'
-import messages from './messages'
+import messages from '../../messages/allMessages'
 
 const ContactStatusSelect = ({ id, name, label, value, onChange, error, helperText }) => {
   const { formatMessage } = useIntl()

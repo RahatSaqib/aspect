@@ -11,8 +11,8 @@ import {
   fillData,
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
+import useAuthState from '../../../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'

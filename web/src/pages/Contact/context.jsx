@@ -1,7 +1,7 @@
 import React, { useContext, useEffect, useMemo, useState } from 'react'
 import { useFormikContext } from 'formik'
 import { useLocation, useParams } from 'react-router-dom'
-import { useAuthState } from '../../providers/AuthProvider'
+import useAuthState from '../../hooks/useAuthState'
 import ACTION from './constants'
 
 export const DirtyStepsContext = React.createContext(undefined)

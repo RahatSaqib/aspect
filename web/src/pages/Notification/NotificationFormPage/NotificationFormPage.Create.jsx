@@ -40,6 +40,7 @@ const NotificationFormPage = ({ onSubmit }) => {
 const NotificationForm = ({ formConfig, onSubmit }) => {
   const intl = useIntl()
   const { formik, meta } = useFormikContext()
+
   return (
     <>
       <DetailHeader name={formConfig.title} back="/browse/notification/types">

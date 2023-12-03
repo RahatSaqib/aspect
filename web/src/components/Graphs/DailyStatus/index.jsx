@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import { Card, CardContent, CardHeader, TextField, MenuItem } from '@mui/material'
 import { useIntl } from 'react-intl'
-import Loading from '../../../oldComponents/Loading'
+import Loading from '../../../cleanComponents/Loading'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import GRAPH_CONSTS from '../../../utils/consts/Graphs/CONSTS'
 import { getPreviousPeriod, dateRangeOptions } from '../Helpers/Formatters'
@@ -107,7 +107,7 @@ const DailyStatus = () => {
             ) : null}
           </div>
         ) : (
-          <Loading className={styles.dailyStatus__spinner} />
+          <Loading centered />
         )}
       </CardContent>
     </Card>

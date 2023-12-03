@@ -8,10 +8,10 @@ import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryLogFilter } from '../../../cleanComponents'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
+import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { InventoryLogDataTable, InventoryLogDataTableHead, InventoryLogTableRow } from './InventoryLogDataTable'
 import messages from './messages'
@@ -135,6 +135,16 @@ const InventoryLog = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const filters = useFilterValues(location.pathname)
+  const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({
+    sortCol: 'createdOn',
+    sortDir: 'desc',
+    pageSize: 50,
+  })({
+    location,
+    availableSortCol,
+    dependencies: {},
+  })
+
   // >>>>>> Defining hooks <<<<<<
   const intl = useIntl()
   // >>>>>> Structuring data <<<<<<
@@ -160,17 +170,6 @@ const InventoryLog = () => {
       }),
     { enable: !isEmpty(apiFilters) }
   )
-  const sortPage = makeSortPageSelector({
-    sortCol: 'createdOn',
-    sortDir: 'desc',
-    pageSize: 50,
-  })
-
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({
-    location,
-    availableSortCol,
-    dependencies: {},
-  })
 
   if (isError) throw new Error(error)
 

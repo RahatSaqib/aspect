@@ -4,8 +4,8 @@ import { FormControl, InputLabel, MenuItem, Select, IconButton } from '@mui/mate
 import { useIntl } from 'react-intl'
 import { Loading } from '..'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
+import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage, commonDefinitions as messages } from '../../messages'
-import { useAuthState } from '../../providers/AuthProvider'
 
 const StateSelector = ({ filter, onChange }) => {
   const { countryId } = useAuthState()

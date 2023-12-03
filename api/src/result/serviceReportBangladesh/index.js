@@ -927,14 +927,13 @@ async function getDataForReportDrTb10B(auth, query) {
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
-  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
   const checkResistance = (resistance, key) => `CASE
           WHEN JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
           THEN 'X'
           ELSE ' '
           END as ${key}
        `
-  const data = await knex('Result as r')
+  const dataQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
@@ -960,9 +959,8 @@ async function getDataForReportDrTb10B(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
-    .whereIn('r.resultCategory1', positiveResultCategories) // MTB Detected
-    .whereIn('r.resultCategory2', positiveResultCategories) // RIF Detected
     .select(
+      'r.endedOn as dateOfDiagnosis',
       knex.raw(
         `COALESCE(
           r.patientData ->> '$.PatientName',
@@ -975,9 +973,45 @@ async function getDataForReportDrTb10B(auth, query) {
           r.patientData ->> '$.age'
         ) as patientAge`
       ),
-      knex.raw(`r.patientData ->> '$.TypeOfPatient' as patientType`),
-      knex.raw(`r.patientData ->> '$.SampleType' as sampleType`),
+      knex.raw(`
+      CASE WHEN r.patientData->>'$.TypeOfPatient' = 'Failures of Category I' THEN '1'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Failures of Retreatment' THEN '2'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Non converters of Category I' THEN '3'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Non converters of Retreatment' THEN '4'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Relapses' AND r.patientData->>'$.PatientRetreatment' = 'Category I-I' THEN '5a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Relapses' AND r.patientData->>'$.PatientRetreatment' = 'Retreatment' THEN '5b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Treatment after loss to follow up' AND r.patientData->>'$.PatientRetreatment' = 'Category I' THEN '6a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Treatment after loss to follow up' AND r.patientData->>'$.PatientRetreatment' = 'Retreatment' THEN '6b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Close contacts of DR TB patient with symptoms' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '7a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Close contacts of DR TB patient with symptoms' AND r.patientData->>'$.PatientHistory' = 'New' THEN '7b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Close contacts of DR TB patient with symptoms' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '7c'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'HIV infected person, with TB S/S' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '8a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'HIV infected person, with TB S/S' AND r.patientData->>'$.PatientHistory' = 'New' THEN '8b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'HIV infected person, with TB S/S' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '8c'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, clinically diagnosed' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '9ia'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, clinically diagnosed' AND r.patientData->>'$.PatientHistory' = 'New' THEN '9ib'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, clinically diagnosed' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '9ic'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Extra Pulmonary' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '9iia'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Extra Pulmonary' AND r.patientData->>'$.PatientHistory' = 'New' THEN '9iib'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Extra Pulmonary' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '9iic'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, Bacteriologically Confirmed' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '9iiia'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, Bacteriologically Confirmed' AND r.patientData->>'$.PatientHistory' = 'New' THEN '9iiib'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive Pulmonary Smear Negative TB Cases' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '10a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive Pulmonary Smear Negative TB Cases' AND r.patientData->>'$.PatientHistory' = 'New' THEN '10b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive Pulmonary Smear Negative TB Cases' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '10c'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive TB' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '11a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive TB' AND r.patientData->>'$.PatientHistory' = 'New' THEN '11b'
+      ELSE '-'
+      END as patientType`),
+      knex.raw(`
+        CASE 
+          WHEN r.patientData->>'$.SampleType' = 'Pulmonary' THEN 'Sputum'
+          WHEN r.patientData->>'$.SampleType' = 'Extra-pulmonary' THEN 'Others'
+          WHEN r.patientData->>'$.SampleType' = 'Stool' THEN 'Stool'
+          ELSE ''
+        END as sampleType`),
       knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
+      knex.raw(`r.resultData ->> '$.bacterialLoad' as bacterialLoad`),
       knex.raw(`CASE WHEN a.id = ${assayIds.GxMtbXdr} THEN rc1.name ELSE '' END as mtbDetected`),
       knex.raw(
         `
@@ -1037,15 +1071,16 @@ async function getDataForReportDrTb10B(auth, query) {
           CASE WHEN a.id IN (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})
           THEN 
             (CASE
-              WHEN r.resultCategory1 IN (${positiveResultCategories})
+              WHEN r.resultCategory1 = ${resultCategoryIds.Detected}
                     AND
                     r.resultCategory2 = ${resultCategoryIds.NotDetected} THEN 'T'
-              WHEN r.resultCategory1 IN (${positiveResultCategories})
+              WHEN r.resultCategory1 = ${resultCategoryIds.Detected}
                     AND
-                    r.resultCategory2 IN (${positiveResultCategories}) THEN 'RR'
-              WHEN r.resultCategory1 IN (${positiveResultCategories})
+                    r.resultCategory2 = ${resultCategoryIds.Detected} THEN 'RR'
+              WHEN r.resultCategory1 = ${resultCategoryIds.Detected}
                     AND
                     r.resultCategory2 = ${resultCategoryIds.Indeterminate} THEN 'TI'
+              WHEN r.resultCategory1 = ${resultCategoryIds['Trace Detected']} THEN 'TT'
               WHEN r.resultCategory1 = ${resultCategoryIds.NotDetected} THEN 'N'
               WHEN r.resultCategory1 IN (
                       ${resultCategoryIds.Invalid},
@@ -1058,6 +1093,7 @@ async function getDataForReportDrTb10B(auth, query) {
           END as resultMtbRif
       `)
     )
+  const data = await dataQuery
 
   return {
     ok: true,

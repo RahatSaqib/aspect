@@ -11,8 +11,8 @@ import {
   Loading,
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
+import useAuthState from '../../../../../hooks/useAuthState'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
