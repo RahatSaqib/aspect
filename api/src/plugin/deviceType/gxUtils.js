@@ -775,10 +775,10 @@ async function assignGxUnknownAssayIfNotExists(knex, payload) {
 }
 
 function getResultCategories(payload) {
+  const payloadResultText = _.get(payload, 'data.resultText')
   let payloadCategory = _.get(payload, 'category')
   if (_.isEmpty(payloadCategory)) {
     payloadCategory = []
-    const payloadResultText = _.get(payload, 'data.resultText')
     if (payloadResultText) {
       const resultTextValues = splitResultTextValues(payloadResultText)
       const assayId = _.get(payload, 'assay.id')
@@ -804,6 +804,64 @@ function getResultCategories(payload) {
       }
     }
   }
+
+  // Applying GxAlert result category mapping as a fallback
+  if (_.isEmpty(payloadCategory) && !_.isNil(payloadResultText)) {
+    const gxAssay = _.get(payload, 'data.assay').toUpperCase().trim()
+    if (gxAssay == 'HCV VL' 
+      || gxAssay == 'XPERT HCV VL' 
+      || gxAssay == 'XPERT HCV VIRAL LOAD' 
+      || gxAssay == 'XPERT_HCV VIRAL LOAD') {
+      const formattedResultText = payloadResultText.includes('|')
+        ? payloadResultText.substring(0, payloadResultText.indexOf('|'))
+        : payloadResultText
+      const hcvResultText = formattedResultText
+        .toLowerCase()
+        .replace('hcv-1', '')
+        .replace('hcv', '')
+        .replace('|', '')
+        .trim()
+      if (hcvResultText.includes('not detected')
+        || hcvResultText.includes('não detectado')
+        || hcvResultText.includes('не обнаружен')
+        || hcvResultText.includes('non détecté')
+        || hcvResultText.includes('@label_result_not_detected')) {
+        payloadCategory = [{ id: 'NotDetected' }]
+      }
+      else if (hcvResultText.includes('detected')
+        || hcvResultText.includes('detectado')
+        || hcvResultText.includes('обнаружен')
+        || hcvResultText.includes('détecté')
+        || hcvResultText.includes('@label_result_detected')) {
+        payloadCategory = [{ id: 'Detected' }]
+      }
+      else if (hcvResultText.includes('invalid')
+        || hcvResultText.includes('inválido')
+        || hcvResultText.includes('недействительный')
+        || hcvResultText.includes('non valide')
+        || hcvResultText.includes('@label_result_invalid')) {
+        payloadCategory = [{ id: 'Invalid' }]
+      }
+      else if (hcvResultText.includes('no result')
+        || hcvResultText.includes('sem resultado')
+        || hcvResultText.includes('безрезультатно')
+        || hcvResultText.includes('sans résultat')
+        || hcvResultText.includes('@label_result_no_result')) {
+        payloadCategory = [{ id: 'NoResult' }]
+      }
+      else if (hcvResultText.includes('error')
+        || hcvResultText.includes('erro')
+        || hcvResultText.includes('ошибка')
+        || hcvResultText.includes('erreur')
+        || hcvResultText.includes('label_result_error')) {
+        payloadCategory = [{ id: 'Error' }]
+      }
+      else {
+        payloadCategory = [{ id: 'Error' }]
+      }
+    }
+  }
+
   return payloadCategory
 }
 
