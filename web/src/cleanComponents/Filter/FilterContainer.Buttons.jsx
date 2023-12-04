@@ -118,8 +118,8 @@ const buttonMapping = {
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
   minDate: ({ minDate, remove }) => <MinDate minDate={minDate} remove={remove} />,
   maxDate: ({ maxDate, remove }) => <MaxDate maxDate={maxDate} remove={remove} />,
-  fixedMinDate: ({ fixedMinDate }) => <FixedMinDate minDate={fixedMinDate} />,
-  fixedMaxDate: ({ fixedMaxDate }) => <FixedMaxDate maxDate={fixedMaxDate} />,
+  fixedMinDate: ({ fixedMinDate }) => <MinDate minDate={fixedMinDate} />,
+  fixedMaxDate: ({ fixedMaxDate }) => <MaxDate maxDate={fixedMaxDate} />,
   minExpirationDate: ({ minExpirationDate, remove }) => (
     <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} />
   ),
@@ -346,36 +346,21 @@ const ConsumableId = ({ consumableId, remove }) => {
 const MinDate = ({ minDate, remove }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
+  const del = remove ? () => remove(['minDate']) : undefined  // fixedMinDate has no delete option
+
   const date = format(new Date(minDate), dateFormat)
-  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={() => remove(['minDate'])} />
+  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={del} />
 }
 
 const MaxDate = ({ maxDate, remove }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   if (!maxDate) return null
+  const del = remove ? () => remove(['maxDate']) : undefined  // fixedMaxDate has no delete option
   const date = format(new Date(maxDate), dateFormat)
-  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={() => remove(['maxDate'])} />
+  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={del} />
 }
 
-const FixedMaxDate = ({ maxDate }) => {
-  const { formatMessage, format } = useIntl()
-  const { dateFormat } = getAspectDisplayPreferences().toJS()
-
-  if (!maxDate) return null
-  const date = format(new Date(maxDate), dateFormat)
-
-  return <Btn lbl={formatMessage(messages.dateTo, { date })} />
-}
-const FixedMinDate = ({ minDate }) => {
-  const { formatMessage, format } = useIntl()
-  const { dateFormat } = getAspectDisplayPreferences().toJS()
-
-  if (!minDate) return null
-  const date = format(new Date(minDate), dateFormat)
-
-  return <Btn lbl={formatMessage(messages.dateFrom, { date })} />
-}
 
 const MinExpirationDate = ({ minExpirationDate, remove }) => {
   const { formatMessage, format } = useIntl()
