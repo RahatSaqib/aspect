@@ -23,7 +23,8 @@ const DataVisualisationForXDRResistance = () => {
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState(undefined)
   const lineSource = useMemo(
-    () => [formatMessage(messages.FQRPercent), formatMessage(messages.INHPercent)],
+    () => [formatMessage(messages.FQRPercent), formatMessage(messages.INHPercent), formatMessage(messages.AMKPercent),
+    formatMessage(messages.KANPercent), formatMessage(messages.CAPPercent), formatMessage(messages.ETHPercent)],
     [formatMessage]
   )
   const [lineFor, setLineFor] = useState(lineSource[0])
@@ -48,6 +49,10 @@ const DataVisualisationForXDRResistance = () => {
   const totalTestsMessage = formatMessage(messages.TotalTests)
   const FQRPercentMessage = formatMessage(messages.FQRPercent)
   const INHPercentMessage = formatMessage(messages.INHPercent)
+  const AMKPercentMessage = formatMessage(messages.AMKPercent)
+  const KANPercentMessage = formatMessage(messages.KANPercent)
+  const CAPPercentMessage = formatMessage(messages.CAPPercent)
+  const ETHPercentMessage = formatMessage(messages.ETHPercent)
 
   const [graphData, setGraphData] = useState()
   useEffect(() => {
@@ -56,13 +61,21 @@ const DataVisualisationForXDRResistance = () => {
       const bar = []
       data.grouped.map(dat => {
 
-        const { month, FqrToMtbPercentage, InhToMtbPercentage, TotalTests, MtbDetected,
+        const { month, FqrToMtbPercentage, InhToMtbPercentage, KanToMtbPercentage, EthToMtbPercentage, CapToMtbPercentage, AmkToMtbPercentage, TotalTests, MtbDetected,
           FqrDetected, InhDetected, AmkDetected, KanDetected, CapDetected, EthDetected } = dat
 
         if (lineFor === FQRPercentMessage) {
           line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
         } else if (lineFor === INHPercentMessage) {
           line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+        } else if (lineFor === AMKPercentMessage) {
+          line.push({ month, [AMKPercentMessage]: +AmkToMtbPercentage.toFixed(2) })
+        } else if (lineFor === KANPercentMessage) {
+          line.push({ month, [KANPercentMessage]: +KanToMtbPercentage.toFixed(2) })
+        } else if (lineFor === CAPPercentMessage) {
+          line.push({ month, [CAPPercentMessage]: +CapToMtbPercentage.toFixed(2) })
+        } else if (lineFor === ETHPercentMessage) {
+          line.push({ month, [ETHPercentMessage]: +EthToMtbPercentage.toFixed(2) })
         }
 
         bar.push({ month, value: TotalTests, type: totalTestsMessage })
