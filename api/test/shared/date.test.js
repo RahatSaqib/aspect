@@ -15,6 +15,7 @@ const {
   getOffsetFromTimeZone,
   slideDateToTimeZone,
   formatDateInTimeZone,
+  replaceOffset,
 } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
@@ -241,7 +242,7 @@ describe('Shared Date Utility Functions', () => {
     })
   })
 
-  describe.only('formatDateInTimeZone', () => {
+  describe('replaceOffset', () => {
     it('should return the input date formatted in ISO-8601 full format, with the correct offset for the target time zone in the input date', () => {
       const tzFixtures = [
         {
@@ -266,5 +267,32 @@ describe('Shared Date Utility Functions', () => {
         )
       }
     })
+  })
+})
+
+describe('replaceOffset', () => {
+  it('should return the input date slided the amount of hours between UTC and the target time zone and formatted in ISO-8601 full format, with the correct offset for the target time zone in the input date', () => {
+    const tzFixtures = [
+      {
+        tz: 'America/Argentina/Buenos_Aires',
+        date: '2023-01-01T00:00:00Z',
+        expectedDate: '2023-01-01T00:00:00-03:00',
+      },
+      { tz: 'Asia/Baku', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+04:00' },
+
+      { tz: 'Asia/Dhaka', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+06:00' },
+      { tz: 'Pacific/Fiji', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+12:00' },
+      { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00Z' },
+      { tz: 'Canada/Atlantic', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00-04:00' },
+      { tz: 'Canada/Atlantic', date: '2023-11-01', expectedDate: '2023-11-01T00:00:00-03:00' },
+    ]
+
+    for (const f of tzFixtures) {
+      assert.equal(
+        replaceOffset(new Date(f.date), f.tz),
+        f.expectedDate,
+        `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
+      )
+    }
   })
 })
