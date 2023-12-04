@@ -58,7 +58,7 @@ const slideDateToTimeZone = (date, timeZoneIANA) => zonedTimeToUtc(date, timeZon
  * Will return a '2030-01-01T05:00:00+05:00', note that it's the same date as input parameter,
  * just expressed in Karachi time zone
  */
-const formatDateInTimeZone = (date, timeZoneIANA) => formatInTimeZone(date, timeZoneIANA, 'yyyy-MM-dd HH:mm:ssXXX')
+const formatDateInTimeZone = (date, timeZoneIANA) => formatInTimeZone(date, timeZoneIANA, "yyyy-MM-dd'T'HH:mm:ssXXX")
 
 /** Changes the time offset of a date to get the same date and time in the target time zone.
  * @param {Date} date - An UTC date
