@@ -37,7 +37,7 @@ import times from 'lodash/times'
 import upperFirst from 'lodash/upperFirst'
 import values from 'lodash/values'
 import DATE_CONSTS from '../../../../utils/consts/DateTime/CONSTS'
-import { getAspectDisplayPreferences } from '../../../../utils/LocalStorage'
+import { getAspectDisplayPreferences } from '../../../LocalStorage'
 import messages from '../messages'
 
 const now = new Date()
@@ -236,16 +236,6 @@ const getTimePeriod = (cnt, period, dateFormat) => {
   return format(timePeriod, dateFormat)
 }
 
-const getCurrentYear = dateFormat => {
-  const date = new Date()
-  const startDate = format(new Date(date.getFullYear(), 0, 1), dateFormat)
-  const endDate = format(new Date(date.getFullYear(), 11, 31), dateFormat)
-  return {
-    endDate,
-    startDate,
-  }
-}
-
 const startOfMonthUTC = dateString => {
   const [datepart, time] = dateString.split('T')
 
@@ -364,7 +354,6 @@ const checkIfParamsIsDate = (params, encode = true) => {
 }
 
 export {
-  getCurrentYear,
   checkIfParamsIsDate,
   dateRangeOptions,
   getAllDaysInCurrentMonth,

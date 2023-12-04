@@ -1,4 +1,4 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Box } from '@mui/material'
 import Immutable from 'immutable'
 import { defineMessages, useIntl } from 'react-intl'
@@ -10,10 +10,10 @@ import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
+import useAuthState from '../../../hooks/useAuthState'
 import deviceApprovalMessages from '../../../messages/deviceApprovalMessages'
 import deviceStatusMessages from '../../../messages/deviceStatusMessages'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { useAuthState } from '../../../providers/AuthProvider'
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
 import DeviceDetailAlerts from './Alerts/DeviceDetailAlerts'
@@ -53,9 +53,7 @@ export const DeviceDetail = props => {
   const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
 
   // onSuccess - reset key to re-run query for device
-  const onSuccess = useCallback(() => {
-    queryClient.invalidateQueries([DEVICE_KEY, deviceId])
-  }, [deviceId, queryClient])
+  const onSuccess = () => queryClient.invalidateQueries([DEVICE_KEY, deviceId])
 
   const { mutate: updateDevice } = useMutation(({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)), {
     onSuccess,

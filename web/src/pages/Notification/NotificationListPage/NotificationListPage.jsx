@@ -11,8 +11,8 @@ import { DateTimeCellFlagged } from '../../../components/AspectTable/TableCell/D
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { replaceRouteParams } from '../../../components/QueryFetch/Helpers'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
+import useFilterValues from '../../../hooks/useFilterValues'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import messages from './messages'
 import styles from './NotificationListPage.module.css'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
@@ -77,12 +77,12 @@ const NotificationList = () => {
       width: 5,
     },
     {
-      key: 'jobFunctions',
+      id: 'jobFunctions',
       label: formatMessage(messages.notificationsTableHeaderJobFunctions),
       width: 25,
     },
     {
-      key: 'persons',
+      id: 'persons',
       label: formatMessage(messages.notificationsTableHeaderJobFunctionsPersons),
       width: 25,
     },

@@ -6,6 +6,9 @@ import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import useAuthState from '../../../../hooks/useAuthState'
+import useFilterUpdate from '../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../hooks/useFilterValues'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
 import requirePermissions from '../../../../oldComponents/shared/requirePermissions'
@@ -13,8 +16,6 @@ import Summary from '../../../../oldComponents/Summary'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
 import Results from '../../../../oldPages/result/historyResults/HistoryResults'
 import resultMessages from '../../../../oldPages/result/list/messages.js'
-import { useAuthState } from '../../../../providers/AuthProvider'
-import { useFilterUpdate, useFilterValues } from '../../../../providers/FilterProvider'
 import {
   showDialog,
   hideDialog,

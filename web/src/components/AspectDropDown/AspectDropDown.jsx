@@ -1,6 +1,7 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import { TextField } from '@mui/material'
+import { useFormikContext } from 'formik'
 import get from 'lodash/get'
 import intersectionWith from 'lodash/intersectionWith'
 import isArray from 'lodash/isArray'
@@ -91,6 +92,8 @@ const groupStyles = {
 const GroupHeading = props => <originalComponents.GroupHeading {...props} style={groupStyles} />
 
 const LabelValue = ({ selectOptions, defaultSelectedOption, keyMapping }) => {
+  const { toggleEdit } = useFormikContext()
+  const keepInvalidSelection = !toggleEdit
   const options = getSelectedOptions(selectOptions, defaultSelectedOption, keyMapping.idKey)
 
   let text = '-'
@@ -100,6 +103,8 @@ const LabelValue = ({ selectOptions, defaultSelectedOption, keyMapping }) => {
     } else {
       text = options.label
     }
+  } else if (keepInvalidSelection) {
+    text = defaultSelectedOption
   }
 
   return (

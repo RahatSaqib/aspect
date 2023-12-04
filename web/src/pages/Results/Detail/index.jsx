@@ -121,7 +121,8 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
     submitResult({ values })
   }
 
-  formConfig.sections = updateValidationsAndFilters(formConfig.sections, data, formik)
+  const keepInvalidSelection = !toggleEdit
+  formConfig.sections = updateValidationsAndFilters(formConfig.sections, data, formik, keepInvalidSelection)
 
   return (
     <>
