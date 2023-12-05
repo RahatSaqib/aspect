@@ -7,6 +7,7 @@ const { addConstraints, getConstraints } = require('../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../../db')
 const { getDatesFromQuery } = require('../../shared/date')
 const { allAssayToId, allResultCategoryToId, allSampleTypeToId } = require('../../shared/dictionary')
+const { convertCsvToArrayOfNumbers } = require('../../shared/string')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { createFormObject } = require('../../forms/service')
 
@@ -788,6 +789,9 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         .select('sp.sampleTypeId')
         .groupBy('sp.sampleTypeId')
         .count({
+          /**
+           * same condition as for field `cnt_Xdr_Tested_From_Eligible`
+           */
           cnt_Xdr_Total_Tests: counter(
             'r.id',
             `
@@ -879,8 +883,8 @@ async function getDataForSheet1or2(
       /**
        *
        */
-      allSiteIds = [...allSiteIds, ...(siteIds?.split(',') || []).map(it => +it)]
-      allReferringSiteIds = [...allReferringSiteIds, ...(referringSiteIds?.split(',') || []).map(it => +it)]
+      allSiteIds = [...allSiteIds, ...convertCsvToArrayOfNumbers(siteIds)]
+      allReferringSiteIds = [...allReferringSiteIds, ...convertCsvToArrayOfNumbers(referringSiteIds)]
       /**
        * Increment all counters for current deviceId
        */
