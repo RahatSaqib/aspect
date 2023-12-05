@@ -100,7 +100,7 @@ function PakistanInventoryAdjustmentDialog(props) {
                     label={formatMessage(messages.fromSiteName)}
                     disabled
                     value={values.fromSiteId ?? null}
-                    onChange={e => setFieldValue('fromSiteId', e.target.value)}
+                    onChange={handleChange}
                   />
                 ) : null}
 
@@ -111,7 +111,7 @@ function PakistanInventoryAdjustmentDialog(props) {
                     error={errors?.toSiteId ?? null}
                     label={formatMessage(messages.toSiteName)}
                     value={values.toSiteId}
-                    onChange={e => setFieldValue('toSiteId', e.target.value)}
+                    onChange={handleChange}
                   />
                 ) : null}
 
