@@ -307,19 +307,19 @@ const getISOFromString = (date, sod = true, eod = false) => {
       return formatInTimeZone(zonedTimeToUtc(date, validTimeZone), validTimeZone, iSOFormat)
 
     case isEmpty(date):
-      return format(new Date(), iSOFormat)
+      return formatInTimeZone(zonedTimeToUtc(new Date(), validTimeZone), validTimeZone, iSOFormat)
 
     case !checkForTimeStampRegex.test(date) && sod:
-      return format(startOfDay(parseISO(date)), iSOFormat)
+      return formatInTimeZone(zonedTimeToUtc(parseISO(date), validTimeZone), validTimeZone, iSOFormat)
 
     case !checkForTimeStampRegex.test(date) && eod:
-      return format(endOfDay(parseISO(date)), iSOFormat)
+      return formatInTimeZone(zonedTimeToUtc(endOfDay(parseISO(date)), validTimeZone), validTimeZone, iSOFormat)
 
     case checkForTimeStampRegex.test(date):
       return date
 
     default:
-      return format(new Date(date), iSOFormat)
+      return formatInTimeZone(zonedTimeToUtc(new Date(date), validTimeZone), validTimeZone, iSOFormat)
   }
 }
 
