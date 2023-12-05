@@ -41,7 +41,8 @@ async function getStatistics() {
     .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
     .innerJoin('Result as r', 'n.resultId', 'r.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as c', 'g.countryId', 'c.id')
     .whereIn('ntc.externalId', ['resultBased'])
     .where(qb => {

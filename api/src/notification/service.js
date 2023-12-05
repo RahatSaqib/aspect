@@ -544,9 +544,7 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
       if (!_.isNil(issueId)) {
         builder.leftJoin('Geography as g', 'i.geographyId', 'g.id')
       } else {
-        builder.join('Site as s', 'd.siteId', 's.id')
-            .join('Geography as g', 's.geographyId', 'g.id')
-        builder.leftJoin('Geography as g', 'd.geographyId', 'g.id')
+        builder.join('Site as s', 'd.siteId', 's.id').join('Geography as g', 's.geographyId', 'g.id')
       }
     })
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
