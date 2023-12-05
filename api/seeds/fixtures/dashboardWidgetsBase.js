@@ -33,7 +33,9 @@ const WIDGET_GROUP_KEYS = {
 
 const WIDGET_FILTER_KEYS = {
   LAST_THIRTY_DAYS: 'last30Days',
+  FIXED_LAST_THIRTY_DAYS: 'fixedLast30Days',
   CURRENT_MONTH: 'currentMonth',
+  FIXED_CURRENT_MONTH: 'fixedCurrentMonth',
   PERSON_DISABLED: 0,
 }
 
@@ -132,7 +134,7 @@ const resultsTitle = {
   sqlForIndicator: `select ifnull(sum(f.resultCount), 0) as cnt from FactResultsDevice as f inner join Device as d on d.id = f.deviceId inner join Site as s on s.id = d.siteId inner join Partner as p on p.id = s.partnerId left outer join Geography as g on s.geographyId = g.id where f.days = 30`,
   link: '/browse/result',
   linkParams: {
-    dateRange: WIDGET_FILTER_KEYS.LAST_THIRTY_DAYS,
+    dateRange: WIDGET_FILTER_KEYS.FIXED_LAST_THIRTY_DAYS,
   },
   sortOrder: 2,
   externalId: 'resultsTitle',
@@ -198,7 +200,7 @@ const dashboardWidgetTestsPerDayTitle = {
   statUnitI18nKey: 'lastMonth',
   link: '/browse/result',
   linkParams: {
-    dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+    dateRange: WIDGET_FILTER_KEYS.FIXED_CURRENT_MONTH,
   },
   sortOrder: 1,
   externalId: 'dashboardWidgetTestsPerDayTitle',
@@ -234,7 +236,7 @@ const dashboardWidgetValidResultsPc = {
   link: '/browse/result',
   linkParams: {
     onlyReportableResults: true,
-    dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+    dateRange: WIDGET_FILTER_KEYS.FIXED_CURRENT_MONTH,
   },
   sortOrder: 2,
   externalId: 'dashboardWidgetValidResultsPc',
@@ -660,7 +662,7 @@ const errorRate = {
   link: '/browse/result',
   linkParams: {
     workflowStatusId: 2,
-    dateRange: WIDGET_FILTER_KEYS.CURRENT_MONTH,
+    dateRange: WIDGET_FILTER_KEYS.FIXED_CURRENT_MONTH,
   },
   sortOrder: 3,
   externalId: 'errorRate',

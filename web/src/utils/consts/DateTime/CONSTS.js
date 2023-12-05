@@ -7,6 +7,8 @@ const CONSTS = {
   DATE_RANGE_KEYS: {
     MIN_DATE: 'minDate',
     MAX_DATE: 'maxDate',
+    FIXED_MIN_DATE: 'fixedMinDate',
+    FIXED_MAX_DATE: 'fixedMaxDate',
     CURRENT_MONTH: 'currentMonth',
     DATE_ADJUSTED: 'dateAdjusted',
     DATE_ADJUSTED_FROM: 'dateAdjustedFrom',
