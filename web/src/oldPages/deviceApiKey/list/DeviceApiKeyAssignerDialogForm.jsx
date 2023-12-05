@@ -160,7 +160,6 @@ function DeviceApiKeyAssignerDialogForm({
         <DeviceSelectField
           disabled={values.deviceApiKeyIds.length > 1}
           name="deviceId"
-          emptyId="-1"
           floatingLabelText={formatMessage(messages.deviceId)}
           countryId={values.countryId}
           partnerId={values.partnerId}
