@@ -9,9 +9,13 @@ async function excludeResult(pluginContext) {
 
   const { excludePattern } = await knex('Partner').where({ id: partnerId }).first('excludePattern')
   if (excludePattern) {
+    /**
+     * create regex object with case-insensitive flag
+     */
+    const re = new RegExp(excludePattern, 'i')
     const sampleId = payload?.sample?.id ?? ''
     const sampleId1 = payload?.data?.sampleId ?? ''
-    const isEqaResult = sampleId.match(excludePattern) || sampleId1.match(excludePattern)
+    const isEqaResult = re.test(sampleId) || re.test(sampleId1)
     const newResultTypeId = isEqaResult ? EQA_RESULT_TYPE_EXTERNAL_ID : PATIENT_RESULT_TYPE_EXTERNAL_ID
 
     const shouldUpdateResultType =
