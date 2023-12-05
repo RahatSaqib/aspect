@@ -288,8 +288,6 @@ const getAverageFromData = (data, value, which, notation, culture) => {
               [value]: parseFloat(item[value]),
             }
           }
-        } else {
-          console.warn(`There are no results to match your config for item: ${curr}`)
         }
         return acc
       }, {})

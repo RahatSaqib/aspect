@@ -17,6 +17,7 @@ const {
   getResultCategoriesHivVL,
   getVLCopies,
   getDetectedResistanceCategoryTypes,
+  getBacterialLoad,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
 const { mapPayloadWithCustomFields } = require('./customFields')
@@ -132,6 +133,12 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (potentialAssayIds.includes('GxMtbRifUltra') && !potentialAssayIds.includes('GxMtbRif')) {
     potentialAssayIds.push('GxMtbRif')
   }
+
+  if (potentialAssayIds.includes('GxMtbRif') && _.get(payload, 'data.resultText')) {
+    const bacterialLoad = getBacterialLoad(_.get(payload, 'data.resultText'))
+    if (bacterialLoad) _.set(payload, 'data.bacterialLoad', bacterialLoad)
+  }
+
   if (potentialAssayIds.includes('GxHiv1Vl')) {
     const copies = getVLCopies(_.get(payload, 'data.resultText'))
     if (copies) _.set(payload, 'data.copies', copies)
