@@ -176,7 +176,6 @@ describe('Issue Escalation', () => {
 
     const [deviceId] = await knex('Device').insert({
       partnerId,
-      geographyId,
       siteId, // new site id
       deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
       deviceApprovalId: await deviceApprovalToId('approved'),

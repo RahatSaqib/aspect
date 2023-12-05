@@ -162,7 +162,6 @@ class DeviceApiTestContext {
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
-        geographyId: geography.id,
         deviceTypeId: alereFtpConnectorDeviceType.id,
         deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceApprovalId: approvedApprovalStatus.id,

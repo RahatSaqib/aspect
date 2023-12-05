@@ -207,7 +207,6 @@ async function createDevice(
 
   const [deviceId] = await knex('Device').insert({
     partnerId,
-    geographyId,
     siteId,
     deviceTypeId,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,

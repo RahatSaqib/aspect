@@ -204,7 +204,6 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
         deviceTypeId: truenatDeviceTypeId,
         deviceApprovalId: deviceApprovalApprovedId,
         partnerId,
-        geographyId,
         siteId: truenatLab.id,
         defaultReportableSiteId: truenatLab.id,
         serial: truenatDevice.deviceSerial,

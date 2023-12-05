@@ -108,7 +108,6 @@ class TruenatLogin extends SynchronousDataProcessor {
           name: payload.Username,
           shortName: payload.Username,
           partnerId: site.partnerId,
-          geographyId: site.geographyId,
           siteId: site.id,
           hostId: payload.Username,
           deviceTypeId: truenatDeviceTypeId,
