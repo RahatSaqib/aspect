@@ -47,7 +47,8 @@ async function seed(knex) {
 
   // get all devices that can process COVID (including GeneXperts)
   const devices = await knex('Device as d')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .where({ partnerId })

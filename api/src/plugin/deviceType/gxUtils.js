@@ -91,7 +91,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const [device] = await knex
     .from('Device as d')
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .where({ 'd.id': deviceId })
     .select(
@@ -327,9 +327,7 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
     if (state || !_.isUndefined(latitude) || !_.isUndefined(latitude)) {
       const currentDeviceGeography = await knex('Device as d')
         .leftJoin('Site as s', 'd.siteId', 's.id')
-        .innerJoin('Geography as g', function () {
-          this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-        })
+        .innerJoin('Geography as g', 's.geographyId', 'g.id')
         .leftJoin('State as st', 'g.stateId', 'st.id')
         .leftJoin('Lga as l', 'g.lgaId', 'l.id')
         .where('d.id', deviceId)

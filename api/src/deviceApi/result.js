@@ -805,7 +805,8 @@ function includesIgnoreCase(collection, value) {
 
 async function getCountryByDeviceId(knex, deviceId) {
   return knex('Device as d')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('d.id', deviceId)
     .first()

@@ -20,7 +20,8 @@ async function getPartner(knex, partnerName) {
 async function getDevice(knex, { countryAbbreviation, partnerId, noResultsSince = null, notIn = [] }) {
   ensureMySqlBeforeNestedTablesOptions(knex)
   return knex('Device as d')
-    .join('Geography as lgaGeography', 'd.geographyId', 'lgaGeography.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as lgaGeography', 's.geographyId', 'lgaGeography.id')
     .join('Geography as regionalGeography', function () {
       this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull('regionalGeography.lgaId')
     })

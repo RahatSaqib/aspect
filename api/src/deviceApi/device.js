@@ -67,10 +67,10 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
   if (labContactName || labContactEmail || installerName || installerEmail) {
     // get device props
     const device = await knex('Device as d')
-      .join('Geography as g', 'd.geographyId', 'g.id')
       .join('Site as s', 'd.siteId', 's.id')
+      .join('Geography as g', 's.geographyId', 'g.id')
       .where('d.id', deviceId)
-      .first('g.countryId', 's.id as siteId', 'd.partnerId', 'd.geographyId')
+      .first('g.countryId', 's.id as siteId', 'd.partnerId', 'g.id as geographyId')
     const { countryId, partnerId, geographyId, siteId } = device || {}
     // throw error if no device found or it is not assigned to site
     if (!device || !siteId) {
@@ -228,7 +228,6 @@ async function createNewDevice(
     serial,
     partnerId,
     siteId,
-    geographyId,
     approval,
     shortName,
     macAddress,
@@ -250,10 +249,8 @@ async function createNewDevice(
 
   const { timeZone: defaultTimeZone } =
     (await knex('Site as s')
-      .join('Geography as g', 's.geographyId', 'g.id')
       .join('Country as c', 'c.id', 'g.countryId')
-      .where('g.id', geographyId)
-      .orWhere('s.id', siteId)
+      .where('s.id', siteId)
       .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
     (await knex('Country as c').first('c.timezone as timeZone'))
   const { existingTimeZone } = await knex('TimeZone')
@@ -291,7 +288,6 @@ async function createNewDevice(
   }
   const [deviceId] = await knex('Device').insert({
     partnerId,
-    geographyId,
     siteId,
     deviceTypeId: deviceType.id,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
@@ -319,6 +315,7 @@ async function createNewDevice(
   })
 
   const device = await knex('Device as d')
+    .join('Site as s', 'd.siteId', 's.id')
     .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
@@ -328,7 +325,7 @@ async function createNewDevice(
       'd.id',
       'd.partnerId',
       'd.siteId',
-      'd.geographyId',
+      's.geographyId',
       'd.name',
       'd.shortName',
       'd.serial',

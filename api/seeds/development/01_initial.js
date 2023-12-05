@@ -4920,10 +4920,11 @@ async function seed(knex) {
 
   const sitesWithResults = await knex('Result as r')
     .join('Device as d', 'r.deviceId', 'd.id')
-    .join('Geography as g', 'g.id', 'd.geographyId')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('c.abbreviation', 'US')
-    .distinct('d.geographyId', 'd.siteId')
+    .distinct('d.siteId')
     .orderBy('r.endedOn', 'desc')
     .limit(3)
 
