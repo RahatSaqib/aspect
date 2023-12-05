@@ -150,7 +150,7 @@ const LogInApp = () => {
               <>
                 <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
                 <Route path="/dashboard" element={<Status />} />
-                {a(['dashboard-v2:view']) ? (
+                {true || a(['dashboard-v2:view']) ? (
                   <>
                     <Route path="/dashboard-v2" element={<PkDashboard />} />
                     <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
