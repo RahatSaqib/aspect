@@ -827,49 +827,43 @@ function getResultCategories(payload) {
         || hcvResultText.includes('non détecté')
         || hcvResultText.includes('@label_result_not_detected')) {
         payloadCategory = [{ id: 'NotDetected' }]
-      }
-      else if (hcvResultText.includes('detected')
+      } else if (hcvResultText.includes('detected')
         || hcvResultText.includes('detectado')
         || hcvResultText.includes('обнаружен')
         || hcvResultText.includes('détecté')
         || hcvResultText.includes('@label_result_detected')) {
         payloadCategory = [{ id: 'Detected' }]
-      }
-      else if (hcvResultText.includes('invalid')
+      } else if (hcvResultText.includes('invalid')
         || hcvResultText.includes('inválido')
         || hcvResultText.includes('недействительный')
         || hcvResultText.includes('non valide')
         || hcvResultText.includes('@label_result_invalid')) {
         payloadCategory = [{ id: 'Invalid' }]
-      }
-      else if (hcvResultText.includes('no result')
+      } else if (hcvResultText.includes('no result')
         || hcvResultText.includes('sem resultado')
         || hcvResultText.includes('безрезультатно')
         || hcvResultText.includes('sans résultat')
         || hcvResultText.includes('@label_result_no_result')) {
         payloadCategory = [{ id: 'NoResult' }]
-      }
-      else if (hcvResultText.includes('error')
+      } else if (hcvResultText.includes('error')
         || hcvResultText.includes('erro')
         || hcvResultText.includes('ошибка')
         || hcvResultText.includes('erreur')
         || hcvResultText.includes('label_result_error')) {
         payloadCategory = [{ id: 'Error' }]
-      }
-      else {
+      } else {
         payloadCategory = [{ id: 'Error' }]
       }
-    }
-    else if (gxAssay === 'SARS-COV-2'
+    } else if (gxAssay === 'SARS-COV-2'
       || gxAssay === 'XPERT SARS-COV-2'
       || gxAssay === 'XPRESS SARS-COV-2'
       || gxAssay === 'XPERT XPRESS SARS-COV-2') {
-      const textToCompare = formattedResultText
+      const covidResultText = formattedResultText
         .toLowerCase()
         .replace('sars-cov-2', '')
         .replace('|', '')
-        .trim();
-      switch (textToCompare) {
+        .trim()
+      switch (covidResultText) {
         case 'positive':
         case 'positivo':
         case 'положительный':
@@ -916,10 +910,92 @@ function getResultCategories(payload) {
         default:
           payloadCategory = [{ id: 'Error' }]
       }
+    } else if (gxAssay === 'XPERT HIV-1 VIRAL LOAD'
+      || gxAssay === 'XPERT_HIV-1 VIRAL LOAD'
+      || gxAssay === 'HIV-1 VIRAL LOAD'
+      || gxAssay === 'HIV-1 VL'
+      || gxAssay === 'HIV-1_VL'
+      || gxAssay === 'HIV VL') {
+      const hivResultText = formattedResultText
+        .toLowerCase()
+        .replace('hiv-1', '')
+        .replace('hiv', '')
+        .replace('|', '')
+        .trim()
+      if (hivResultText.includes('not detected')
+        || hivResultText.includes('não detectado')
+        || hivResultText.includes('не обнаружен')
+        || hivResultText.includes('non détecté')
+        || hivResultText.includes('@label_result_not_detected')) {
+        payloadCategory = [{ id: 'NotDetected' }]
+      } else if (hivResultText.includes('detected')
+        || hivResultText.includes('detectado')
+        || hivResultText.includes('обнаружен')
+        || hivResultText.includes('détecté')
+        || hivResultText.includes('@label_result_detected')) {
+        const copiesPerMl = getNumericResult1HivVol(hivResultText)
+        if (copiesPerMl !== null) {
+          if (copiesPerMl >= 1000)
+            payloadCategory = [{ id: 'MoreThan1000' }]
+          else {
+            payloadCategory = [{ id: 'LessThan1000' }]
+          }
+        } else if (hivResultText.includes('<')) {
+          payloadCategory = [{ id: 'LessThan40' }]
+        } else {
+          payloadCategory = [{ id: 'NoResult' }]
+        }
+      } else if (hivResultText.includes('invalid')
+        || hivResultText.includes('inválido')
+        || hivResultText.includes('недействительный')
+        || hivResultText.includes('non valide')
+        || hivResultText.includes('@label_result_invalid')) {
+        payloadCategory = [{ id: 'Invalid' }]
+      } else if (hivResultText.includes('no result')
+        || hivResultText.includes('sem resultado')
+        || hivResultText.includes('безрезультатно')
+        || hivResultText.includes('sans résultat')
+        || hivResultText.includes('@label_result_no_result')) {
+        payloadCategory = [{ id: 'NoResult' }]
+      } else if (hivResultText.includes('error')
+        || hivResultText.includes('erro')
+        || hivResultText.includes('ошибка')
+        || hivResultText.includes('erreur')
+        || hivResultText.includes('@label_result_error')) {
+        payloadCategory = [{ id: 'Error' }]
+      } else {
+        payloadCategory = [{ id: 'Error' }]
+      }
     }
   }
-
   return payloadCategory
+}
+
+function getNumericResult1HivVol(hivResultText) {
+  if (!hivResultText.includes('detected')
+    && !hivResultText.includes('detectado')
+    && !hivResultText.includes('обнаружен')
+    && !hivResultText.includes('détecté')
+    && !hivResultText.includes('@label_result_detected')) {
+    return null
+  }
+
+  // in HIV vol, if text contains less than sign, it's below the threshold (40). Also return null:
+  if (hivResultText.includes('<')) {
+    return null
+  }
+
+  // try extracting copies/mL from result string may be in exponential notation
+  const regexp = /[a-zA-Z><]?\s([\d,.eE]+)\s+[a-zA-Z]/g
+  const matches = regexp.exec(hivResultText)
+  if (matches && matches.length > 1) {
+    const copiesPerMlStr = matches[1].replace(',', '.')
+    const copiesPerMl = parseFloat(copiesPerMlStr)
+    if (!isNaN(copiesPerMl))
+      return copiesPerMl
+  }
+
+  return null
 }
 
 function macAddressValid(macAddress) {
