@@ -998,7 +998,7 @@ function getNumericResult1HivVol(hivResultText) {
   if (matches && matches.length > 1) {
     const copiesPerMlStr = matches[1].replace(',', '.')
     const copiesPerMl = parseFloat(copiesPerMlStr)
-    if (!isNaN(copiesPerMl))
+    if (!Number.isNaN(copiesPerMl))
       return copiesPerMl
   }
 
