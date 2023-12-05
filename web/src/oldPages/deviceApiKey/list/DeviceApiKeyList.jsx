@@ -42,7 +42,7 @@ export const DeviceApiKeyList = () => {
     location,
   })
 
-  const { isLoading, data } = useDeviceApiKey(
+  const { isLoading, data, refetch } = useDeviceApiKey(
     { sortCol, sortDir, page: pageAt, size: pageSize, ...filters },
     { enabled: !!sortCol }
   )
@@ -76,6 +76,7 @@ export const DeviceApiKeyList = () => {
     generate(generatorValues, {
       onSuccess: () => {
         onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false, generatorValues: DEFAULT_GENERATOR_VALUES })
+        refetch()
       },
     })
   }
@@ -83,6 +84,7 @@ export const DeviceApiKeyList = () => {
     assign(assignerValues, {
       onSuccess: () => {
         onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false, assignerValues: DEFAULT_ASSIGNER_VALUES })
+        refetch()
       },
     })
   }
