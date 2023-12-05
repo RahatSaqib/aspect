@@ -425,7 +425,6 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
       .where({
         deviceTypeId,
         partnerId,
-        geographyId: countryGeographyId,
       })
       .first()) || {}
   let { siteId } = device
@@ -447,7 +446,6 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
       name,
       deviceApprovalId: await deviceApprovalToId('approved'),
       partnerId,
-      geographyId: countryGeographyId,
       siteId,
       lastPingOn: new Date(),
       lastSeenOn: new Date(),

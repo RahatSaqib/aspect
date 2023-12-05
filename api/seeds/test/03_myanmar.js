@@ -331,7 +331,6 @@ async function seed(knex) {
     await Promise.each(site.devices, async deviceSeed => {
       const device = {
         partnerId,
-        geographyId: siteGeographyId,
         siteId,
         defaultReportableSiteId: siteId,
         deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
@@ -523,10 +522,12 @@ async function seed(knex) {
     .union(function () {
       this.select('jc.personId', 'd.id as deviceId')
         .from('Device as d')
-        .leftJoin('Geography as g1', 'd.geographyId', 'g1.id')
+        .leftJoin('Site as s', 'd.siteId', 's.id')
+        .leftJoin('Geography as g1', 's.geographyId', 'g1.id')
         .leftJoin('Geography as g2', 'g2.stateId', 'g1.stateId')
         .join('JobContext as jc', 'jc.geographyId', 'g2.id')
-        .where({ partnerId, jobFunctionId: jobFunctionIdRegionalOfficer })
+        .where('d.partnerId', partnerId)
+        .where({ jobFunctionId: jobFunctionIdRegionalOfficer })
     })
     .then(items =>
       _.orderBy(items, ['deviceId']).reduce((memo, row) => {

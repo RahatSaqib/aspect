@@ -1,5 +1,6 @@
 exports.up = function (knex) {
   return knex.schema.alterTable('Device', function (table) {
+    table.dropForeign(['geographyId'])
     table.dropColumn('geographyId')
   })
 }

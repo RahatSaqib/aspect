@@ -115,7 +115,6 @@ async function createDevicesForAllMissingTypes(
           deviceTypeId: deviceType.id,
           deviceApprovalId: deviceApprovalApproved,
           partnerId,
-          geographyId: siteData.geographyId,
           siteId: siteData.id,
           createdOn: new Date(+now - 3 * i * millisInHour),
           updatedOn: new Date(+now - i * millisInHour),

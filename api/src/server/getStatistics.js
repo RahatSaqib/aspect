@@ -77,7 +77,8 @@ async function getStatistics() {
    */
   stats.Tests = await knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as c', 'g.countryId', 'c.id')
     .select([...baseColumns, knex.raw(`DATE_FORMAT(r.endedOn, '%Y-%m-1') AS Date`)])
     .count({
@@ -90,7 +91,8 @@ async function getStatistics() {
    * see stored procedure `GetAdoptionConnectivity` in GxAlert
    */
   stats.Connectivity = await knex('Device as d')
-    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as c', 'g.countryId', 'c.id')
     .leftOuterJoin('DeviceMaintenanceStatusLog as dml', 'd.deviceMaintenanceStatusLogId', 'dml.id')
     .leftOuterJoin('DeviceMaintenanceStatus as dms', 'dml.deviceMaintenanceStatusId', 'dms.id')

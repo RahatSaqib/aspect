@@ -420,9 +420,7 @@ async function findDevices(availableDeviceDetails, knex) {
   const deviceQuery = knex
     .from('Device as d')
     .leftJoin('Site as s', 's.id', 'd.siteId')
-    .innerJoin('Geography as g', function () {
-      this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-    })
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -656,9 +654,7 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
       if (!countryCode && device) {
         ;[countryCode] = await knex('Device as d')
           .leftJoin('Site as s', 's.id', 'd.siteId')
-          .innerJoin('Geography as g', function () {
-            this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-          })
+          .innerJoin('Geography as g', 's.geographyId', 'g.id')
           .innerJoin('Country as c', 'g.countryId', 'c.id')
           .where('d.id', device.id)
           .pluck('c.abbreviation')

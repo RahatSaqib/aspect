@@ -378,9 +378,7 @@ class DeviceApiTestContext {
       const device = await knex
         .from('Device as d')
         .leftJoin('Site as s', 's.id', 'd.siteId')
-        .leftJoin('Geography as g', function () {
-          this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-        })
+        .innerJoin('Geography as g', 's.geographyId', 'g.id')
         .leftJoin('Country as c', 'g.countryId', 'c.id')
         .where('d.serial', _.last(this.alereDeviceSerialNumbers))
         .first(

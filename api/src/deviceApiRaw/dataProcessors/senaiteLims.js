@@ -67,7 +67,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             knex.raw('COALESCE(d.siteId, dak.siteId) as siteId'),
             knex.raw('COALESCE(s2.longitude, s1.longitude) as longitude'),
             knex.raw('COALESCE(s2.latitude, s1.latitude) as latitude'),
-            knex.raw('COALESCE(s2.geographyId, s1.geographyId, d.geographyId, dak.geographyId) as geographyId'),
+            knex.raw('COALESCE(s2.geographyId, s1.geographyId, dak.geographyId) as geographyId'),
             knex.raw('COALESCE(g1.countryId, g2.countryId, g3.countryId) as countryId'),
             'd.defaultReportableSiteId'
           )
