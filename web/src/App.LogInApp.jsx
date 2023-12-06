@@ -10,7 +10,6 @@ import useHashAndScroll from './hooks/useHashAndScroll'
 import AspectDialog from './oldComponents/shared/AspectDialog'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import { idleLogout, refreshStart } from './store/AuthRedux'
-import { fetchDiseases } from './store/DiseaseRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
 const ContactPage = lazy(() => import('./pages/Contact'))
@@ -73,6 +72,7 @@ const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSec
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const CurrentFQTrend = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentFQTrendPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
+const DataVisualisationForXDRResistance = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/DataVisualisationForXDRResistance'))
 const ProvincialXDRTestingTrend = lazy(() =>
   import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialTestingTrendPage')
 )
@@ -99,8 +99,6 @@ const LogInApp = () => {
   useEffect(() => {
     // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
     dispatch(fetchCountries())
-    // fetch diseases on start so allow HIV graph on dashboard to load properly
-    dispatch(fetchDiseases())
 
     // Refresh the access token every 30 minutes.
     const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)
@@ -174,6 +172,7 @@ const LogInApp = () => {
                     <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                     <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
                     <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
+                    <Route path="/dashboard/xdr/data-visualisation-for-xdr-resistance" element={<DataVisualisationForXDRResistance />} />
                     <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
                     <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
                     <Route path="/dashboard/xdr/provincial-fq-diagnosis-trend" element={<ProvincialXDRTrendsFQ />} />

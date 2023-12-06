@@ -33,10 +33,6 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'report',
-      },
-      {
-        module: 'dashboard',
         activity: 'result',
       },
       {
