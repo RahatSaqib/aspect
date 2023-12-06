@@ -35,6 +35,8 @@ module.exports = {
       'serverUptimeTitle',
       'deviceCalibrationPastDue',
       'deviceCalibratedWhenDue',
+      'totalNumberOfModules',
+      'activeModules',
     ])
   ),
 }
