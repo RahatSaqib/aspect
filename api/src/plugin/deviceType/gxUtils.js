@@ -105,6 +105,12 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
+
+  // Override assay.id
+  const payloadAssayName = _.get(payload, 'data.assay', '')
+  const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
+  _.set(payload, 'assay.id', mappedAssayExternalId)
+
   if (!_.isEmpty(payload.data)) {
     payload.category = getResultCategories(payload)
   } else {
@@ -120,11 +126,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const generatedExternalId = createUniqueIdForResult(instrumentSerial, startedOn, endedOn, sampleId)
   const gxAlertUniqueId = _.get(payload, 'data.gxAlertTestUniqueId', generatedExternalId)
   const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
-
-  // Override assay.id
-  const payloadAssayName = _.get(payload, 'data.assay', '')
-  const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
-  _.set(payload, 'assay.id', mappedAssayExternalId)
 
   const potentialAssayIds = [mappedAssayExternalId]
   if (potentialAssayIds.includes('GxMtbRif') && !potentialAssayIds.includes('GxMtbRifUltra')) {
@@ -782,227 +783,58 @@ async function assignGxUnknownAssayIfNotExists(knex, payload) {
 }
 
 function getResultCategories(payload) {
-  const payloadResultText = _.get(payload, 'data.resultText')
-  let payloadCategory = _.get(payload, 'category')
-  if (_.isEmpty(payloadCategory)) {
-    payloadCategory = []
-    if (payloadResultText) {
-      const resultTextValues = splitResultTextValues(payloadResultText)
-      const assayId = _.get(payload, 'assay.id')
+  const payloadCategories = _.get(payload, 'category')
+  if (!_.isEmpty(payloadCategories))
+    return payloadCategories
 
-      if (resultTextValues.length > 0) {
-        const result1Text = sanitizeResultTextValue(resultTextValues[0])
+  const categories = []
+  const assayId = _.get(payload, 'assay.id')
+  const text = _.get(payload, 'data.resultText')
 
-        if (result1CategoryMapping[result1Text]) {
-          payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
+  if (text) {
+    const parts = splitResultTextValues(text)
+
+    if (parts.length === 0)
+      return categories
+
+    let status = sanitizeResultTextValue(parts[0])
+
+    if (assayId === 'GxHiv1Vl') {
+      const hivCategory = getResultCategoriesHivVL(status)
+      if (hivCategory)
+        categories.push({ id: hivCategory })
+    }
+
+    if (categories.length === 0) {
+      const category1 = result1CategoryMapping[status]
+      if (category1)
+        categories.push({ id: category1 })
+    }
+
+    const category2 = mapResultCategory2(assayId, parts)
+    if (category2)
+      categories.push({ id: category2 })
+
+    // fallback logic
+    if (categories.length === 0) {
+      if (assayId === 'GxHcv') {
+        const regexp = /^([\w\s]+)\s*\d/g
+        const matches = regexp.exec(text)
+        if (matches && matches.length > 1) {
+          const rawStatus = matches[1]
+          status = sanitizeResultTextValue(rawStatus)
+          const category1 = result1CategoryMapping[status]
+          if (category1)
+            categories.push({ id: category1 })
         }
-        if (assayId === 'GxHiv1Vl') {
-          const externalId = getResultCategoriesHivVL(result1Text) || result1CategoryMapping[result1Text]
-          if (externalId) payloadCategory = [{ id: externalId }]
-        }
-      }
-
-      const resultCategory2 = mapResultCategory2(assayId, resultTextValues)
-      if (resultCategory2) payloadCategory = [...payloadCategory, { id: resultCategory2 }]
-    } else {
-      const assayId = _.get(payload, 'assay.id')
-      if (assayId === 'GxHiv1Vl') {
-        return [{ id: getResultCategoriesHivVL(payloadResultText) }]
       }
     }
+  } else {
+    if (assayId === 'GxHiv1Vl')
+      categories.push({ id: 'NoResult' })
   }
 
-  // Applying GxAlert result category mapping as a fallback
-  if (_.isEmpty(payloadCategory) && !_.isNil(payloadResultText)) {
-    const formattedResultText = payloadResultText.includes('|')
-      ? payloadResultText.substring(0, payloadResultText.indexOf('|'))
-      : payloadResultText
-    const gxAssay = _.get(payload, 'data.assay').toUpperCase().trim()
-    if (gxAssay === 'HCV VL'
-      || gxAssay === 'XPERT HCV VL'
-      || gxAssay === 'XPERT HCV VIRAL LOAD'
-      || gxAssay === 'XPERT_HCV VIRAL LOAD') {
-      const hcvResultText = formattedResultText
-        .toLowerCase()
-        .replace('hcv-1', '')
-        .replace('hcv', '')
-        .replace('|', '')
-        .trim()
-      if (hcvResultText.includes('not detected')
-        || hcvResultText.includes('não detectado')
-        || hcvResultText.includes('не обнаружен')
-        || hcvResultText.includes('non détecté')
-        || hcvResultText.includes('@label_result_not_detected')) {
-        payloadCategory = [{ id: 'NotDetected' }]
-      } else if (hcvResultText.includes('detected')
-        || hcvResultText.includes('detectado')
-        || hcvResultText.includes('обнаружен')
-        || hcvResultText.includes('détecté')
-        || hcvResultText.includes('@label_result_detected')) {
-        payloadCategory = [{ id: 'Detected' }]
-      } else if (hcvResultText.includes('invalid')
-        || hcvResultText.includes('inválido')
-        || hcvResultText.includes('недействительный')
-        || hcvResultText.includes('non valide')
-        || hcvResultText.includes('@label_result_invalid')) {
-        payloadCategory = [{ id: 'Invalid' }]
-      } else if (hcvResultText.includes('no result')
-        || hcvResultText.includes('sem resultado')
-        || hcvResultText.includes('безрезультатно')
-        || hcvResultText.includes('sans résultat')
-        || hcvResultText.includes('@label_result_no_result')) {
-        payloadCategory = [{ id: 'NoResult' }]
-      } else if (hcvResultText.includes('error')
-        || hcvResultText.includes('erro')
-        || hcvResultText.includes('ошибка')
-        || hcvResultText.includes('erreur')
-        || hcvResultText.includes('label_result_error')) {
-        payloadCategory = [{ id: 'Error' }]
-      } else {
-        payloadCategory = [{ id: 'Error' }]
-      }
-    } else if (gxAssay === 'SARS-COV-2'
-      || gxAssay === 'XPERT SARS-COV-2'
-      || gxAssay === 'XPRESS SARS-COV-2'
-      || gxAssay === 'XPERT XPRESS SARS-COV-2') {
-      const covidResultText = formattedResultText
-        .toLowerCase()
-        .replace('sars-cov-2', '')
-        .replace('|', '')
-        .trim()
-      switch (covidResultText) {
-        case 'positive':
-        case 'positivo':
-        case 'положительный':
-        case 'positif':
-        case '@label_result_positive':
-          payloadCategory = [{ id: 'Detected' }]
-          break
-        case 'presumptive pos':
-        case 'presumptive positive':
-        case 'presuntivo positivo':
-        case 'предположительный положительный':
-        case 'présomptif positif':
-        case '@label_result_presumptive_pos':
-        case '@label_result_presumptive_positive':
-          payloadCategory = [{ id: 'PresumptivePositive' }]
-          break
-        case 'invalid':
-        case 'inválido':
-        case 'недействительный':
-        case 'non valide':
-        case '@label_result_invalid':
-          payloadCategory = [{ id: 'Invalid' }]
-          break
-        case 'négatif':
-        case 'negative':
-        case 'отрицательный':
-        case 'negativo':
-        case '@label_result_negative':
-          payloadCategory = [{ id: 'NotDetected' }]
-          break
-        case 'no result':
-        case 'sem resultado':
-        case 'безрезультатно':
-        case 'sans résultat':
-        case 'sin resultado':
-        case '@label_result_no_result':
-          payloadCategory = [{ id: 'NoResult' }]
-          break
-        case 'error':
-        case 'erro':
-        case 'ошибка':
-        case 'erreur':
-        case '@label_result_error':
-        default:
-          payloadCategory = [{ id: 'Error' }]
-      }
-    } else if (gxAssay === 'XPERT HIV-1 VIRAL LOAD'
-      || gxAssay === 'XPERT_HIV-1 VIRAL LOAD'
-      || gxAssay === 'HIV-1 VIRAL LOAD'
-      || gxAssay === 'HIV-1 VL'
-      || gxAssay === 'HIV-1_VL'
-      || gxAssay === 'HIV VL') {
-      const hivResultText = formattedResultText
-        .toLowerCase()
-        .replace('hiv-1', '')
-        .replace('hiv', '')
-        .replace('|', '')
-        .trim()
-      if (hivResultText.includes('not detected')
-        || hivResultText.includes('não detectado')
-        || hivResultText.includes('не обнаружен')
-        || hivResultText.includes('non détecté')
-        || hivResultText.includes('@label_result_not_detected')) {
-        payloadCategory = [{ id: 'NotDetected' }]
-      } else if (hivResultText.includes('detected')
-        || hivResultText.includes('detectado')
-        || hivResultText.includes('обнаружен')
-        || hivResultText.includes('détecté')
-        || hivResultText.includes('@label_result_detected')) {
-        const copiesPerMl = getNumericResult1HivVol(hivResultText)
-        if (copiesPerMl !== null) {
-          if (copiesPerMl >= 1000)
-            payloadCategory = [{ id: 'MoreThan1000' }]
-          else {
-            payloadCategory = [{ id: 'LessThan1000' }]
-          }
-        } else if (hivResultText.includes('<')) {
-          payloadCategory = [{ id: 'LessThan40' }]
-        } else {
-          payloadCategory = [{ id: 'NoResult' }]
-        }
-      } else if (hivResultText.includes('invalid')
-        || hivResultText.includes('inválido')
-        || hivResultText.includes('недействительный')
-        || hivResultText.includes('non valide')
-        || hivResultText.includes('@label_result_invalid')) {
-        payloadCategory = [{ id: 'Invalid' }]
-      } else if (hivResultText.includes('no result')
-        || hivResultText.includes('sem resultado')
-        || hivResultText.includes('безрезультатно')
-        || hivResultText.includes('sans résultat')
-        || hivResultText.includes('@label_result_no_result')) {
-        payloadCategory = [{ id: 'NoResult' }]
-      } else if (hivResultText.includes('error')
-        || hivResultText.includes('erro')
-        || hivResultText.includes('ошибка')
-        || hivResultText.includes('erreur')
-        || hivResultText.includes('@label_result_error')) {
-        payloadCategory = [{ id: 'Error' }]
-      } else {
-        payloadCategory = [{ id: 'Error' }]
-      }
-    }
-  }
-  return payloadCategory
-}
-
-function getNumericResult1HivVol(hivResultText) {
-  if (!hivResultText.includes('detected')
-    && !hivResultText.includes('detectado')
-    && !hivResultText.includes('обнаружен')
-    && !hivResultText.includes('détecté')
-    && !hivResultText.includes('@label_result_detected')) {
-    return null
-  }
-
-  // in HIV vol, if text contains less than sign, it's below the threshold (40). Also return null:
-  if (hivResultText.includes('<')) {
-    return null
-  }
-
-  // try extracting copies/mL from result string may be in exponential notation
-  const regexp = /[a-zA-Z><]?\s([\d,.eE]+)\s+[a-zA-Z]/g
-  const matches = regexp.exec(hivResultText)
-  if (matches && matches.length > 1) {
-    const copiesPerMlStr = matches[1].replace(',', '.')
-    const copiesPerMl = parseFloat(copiesPerMlStr)
-    if (!Number.isNaN(copiesPerMl))
-      return copiesPerMl
-  }
-
-  return null
+  return categories
 }
 
 function macAddressValid(macAddress) {
