@@ -8,7 +8,6 @@ import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
 import useSite from '../../../hooks/site/useSite'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import TaskList from '../../../oldPages/task/list/TaskList'
 import isEditable from '../../../utils/selectors/isEditable'
 import SiteForm from './Edit/SiteForm'
 import messages from './messages'
@@ -44,7 +43,6 @@ const SiteDetail = ({ navigate, location }) => {
       <DetailHeader name={(site && site.name) || 'Site'} back="/browse/site">
         {[
           { label: intl.formatMessage(titleMessages.profile), path: `/browse/site/${siteId}` },
-          { label: intl.formatMessage(titleMessages.alerts), path: `/browse/site/${siteId}/alerts` },
           { label: intl.formatMessage(titleMessages.edit), path: `/browse/site/${siteId}/edit`, disabled: false },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
@@ -69,14 +67,6 @@ const SiteDetail = ({ navigate, location }) => {
               path=""
               element={
                 <SiteDetailProfile formatMessage={intl.formatMessage} disabled={!editable} site={site} user={user} />
-              }
-            />
-            <Route
-              path="alerts"
-              element={
-                <section className={`${styles.Section} ${styles.Section__first}`}>
-                  <TaskList intl={intl} navigate={navigate} location={location} filterOptions={{ siteId }} />
-                </section>
               }
             />
             <Route
