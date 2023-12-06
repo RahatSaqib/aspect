@@ -30,6 +30,7 @@ const routes = [
             .allow('', null)
             .valid('home', 'operational')
             .description('Dashboard token where requested data to be displayed'),
+          country: Joi.string().allow('', null).description('User Country'),
         },
       },
       response: {
