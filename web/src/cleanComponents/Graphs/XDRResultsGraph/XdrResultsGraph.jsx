@@ -153,8 +153,8 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                             const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
                             const params = {
                               assayId: assays.filter(it => ['GxMtbXdr'].includes(it.externalId)).map(it => it.id),
-                              fixedMaxDate: format(endOfMonth(parsedDate), base),
                               fixedMinDate: format(startOfMonth(parsedDate), base),
+                              fixedMaxDate: format(endOfMonth(parsedDate), base),
                               resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
                                 a => a.externalId === evt.data.data.id
                               )[0].id,

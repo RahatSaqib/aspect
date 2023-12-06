@@ -155,8 +155,8 @@ const HivResultsGraph = ({ assaysFromState: assays }) => {
 
                             const params = {
                               assayId: assays.filter(it => ['GxHiv1Vl'].includes(it.externalId)).map(it => it.id),
-                              fixedMaxDate: format(endOfMonth(parsedDate), base),
                               fixedMinDate: format(startOfMonth(parsedDate), base),
+                              fixedMaxDate: format(endOfMonth(parsedDate), base),
                               resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
                                 a => a.externalId === evt.data.data.id
                               )[0].id,

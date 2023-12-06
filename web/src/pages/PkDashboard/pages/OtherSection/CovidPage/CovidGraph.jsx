@@ -159,8 +159,8 @@ const CovidGraphPage = () => {
                     addFilter(
                       {
                         displayResult: 'actual',
-                        fixedMaxDate: format(endOfMonth(parsedDate), base),
                         fixedMinDate: format(startOfMonth(parsedDate), base),
+                        fixedMaxDate: format(endOfMonth(parsedDate), base),
                         onlyReportableResults: true,
                         assayId: assays.find(a => a.externalId === evt.data.data.id).id,
                       },
