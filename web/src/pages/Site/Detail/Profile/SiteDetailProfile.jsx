@@ -30,12 +30,7 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
     { label: formatMessage(messages.fieldCity), value: site.city },
     {
       label: formatMessage(messages.fieldDevices),
-      value:
-        site.devices &&
-        site.devices.map(device => ({
-          description: device.name,
-          to: `/browse/device/list/${device.id}`,
-        })),
+      value: site.devices?.map(device => ({ description: device.name, to: `/browse/device/list/${device.id}` })),
     },
     { label: formatMessage(messages.fieldTags), value: site?.tags.map(tag => tag.title).join(', ') },
   ]
