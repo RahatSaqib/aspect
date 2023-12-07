@@ -154,6 +154,9 @@ const buttonMapping = {
   patientOrResearchId: ({ patientOrResearchId, remove }) => (
     <PatientOrResearchId patientOrResearchId={patientOrResearchId} remove={remove} />
   ),
+  issueTypeId: ({ issueTypeId, remove }) => (
+    <IssueTypeId issueTypeId={issueTypeId} remove={remove} />
+  ),
   sampleId: ({ sampleId, remove }) => <SampleId sampleId={sampleId} remove={remove} />,
   reportableSiteName: ({ reportableSiteName, reportableSiteId, remove }) => (
     <ReportableSiteName reportableSiteName={reportableSiteName} reportableSiteId={reportableSiteId} remove={remove} />
@@ -532,6 +535,16 @@ const PatientOrResearchId = ({ patientOrResearchId, remove }) => {
     <Btn
       lbl={formatMessage(messages.patientOrResearchId, { patientOrResearchId })}
       del={() => remove(['patientOrResearchId'])}
+    />
+  )
+}
+const IssueTypeId = ({ issueTypeId, remove }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.issueTypeId, { issueTypeId })}
+      del={() => remove(['issueTypeId'])}
     />
   )
 }
