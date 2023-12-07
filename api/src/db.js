@@ -138,7 +138,7 @@ function load() {
       client: 'mysql',
       connection: config.db,
       pool: {
-        min: 2,
+        min: 0,
         max: config.db.connectionLimit,
         afterCreate: (conn, done) => {
           /**
