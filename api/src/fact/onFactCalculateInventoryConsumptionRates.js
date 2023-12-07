@@ -111,7 +111,7 @@ async function getConsumptions(knex, siteId, consumableId) {
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .whereRaw('r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -1 YEAR)')
+    .whereRaw('r.endedOn >= DATE_ADD(NOW(), INTERVAL -1 YEAR)')
     .where('d.siteId', siteId)
     .where('ca.consumableId', consumableId)
     .groupBy('d.siteId', 'ca.consumableId')
