@@ -927,7 +927,7 @@ async function getDataForSheet1or2(
    * set `cntDevices` and remove temporal prop `devices`
    */
   if (!_.isEmpty(data)) {
-    data.cntDevices = item.devices.size
+    data.cntDevices = item.devices?.size || 0
   }
   delete data.devices
   /**
