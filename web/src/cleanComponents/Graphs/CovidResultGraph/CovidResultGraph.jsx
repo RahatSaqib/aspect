@@ -153,8 +153,8 @@ const CovidResultGraph = ({ assaysFromState: assays }) => {
                               assayId: assays
                                 .filter(it => ['assayGXCovid19', 'assayGenericCovid19'].includes(it.externalId))
                                 .map(it => it.id),
-                              maxDate: format(endOfMonth(parsedDate), base),
-                              minDate: format(startOfMonth(parsedDate), base),
+                              fixedMinDate: format(startOfMonth(parsedDate), base),
+                              fixedMaxDate: format(endOfMonth(parsedDate), base),
                               resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
                                 a => a.externalId === evt.data.data.id
                               )[0].id,
