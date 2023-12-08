@@ -403,7 +403,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.id',
     'd.partnerId',
     'd.siteId',
-    'd.geographyId',
+    's.geographyId',
     'd.name',
     'd.serial',
     'd.hostId',
