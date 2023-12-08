@@ -307,9 +307,6 @@ async function createNewDevice(
     createdOn: now,
     updatedOn: now,
   })
-
-  console.log(deviceId)
-
   await knex('DeviceApprovalLog').insert({
     deviceId,
     deviceApprovalId,
@@ -324,6 +321,7 @@ async function createNewDevice(
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
+    .where('d.id', deviceId)
     .first(
       'd.id',
       'd.partnerId',
@@ -343,8 +341,6 @@ async function createNewDevice(
       'p.plugin as partnerPluginName',
       'dtc.name as deviceTypeCategory'
     )
-
-  console.log({ mehdiDevice: device })
   return { device }
 }
 
