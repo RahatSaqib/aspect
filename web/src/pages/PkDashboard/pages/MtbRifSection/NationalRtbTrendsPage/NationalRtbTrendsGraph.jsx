@@ -64,8 +64,8 @@ const NationalRtbTrendsGraph = () => {
         return item
       })
       if (grouped) {
-        setGraphData(fillYear(grouped))
-        setAnnual(annualData)
+        setGraphData(fillYear(grouped).sort((a, b) => a.year - b.year))
+        setAnnual(annualData.sort((a, b) => a.year - b.year))
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
