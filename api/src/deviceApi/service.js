@@ -902,7 +902,6 @@ function createNewDeviceFromRequest(request, now) {
       serial: payload.serial,
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId || _.get(defaultSite, 'id', null),
-      geographyId: apiKey.geographyId || _.get(defaultSite, 'geographyId', null),
       approval: apiKey.siteId ? 'approved' : 'provisioned',
       timezone: _.get(payload, 'configuration.data.timezone', null),
     })

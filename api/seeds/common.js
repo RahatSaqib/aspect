@@ -1835,7 +1835,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
           if (!existingDevice) {
             ;[deviceId] = await knex('Device').insert({
               partnerId,
-              geographyId: siteGeographyId,
               siteId,
               deviceTypeId,
               deviceApprovalId: await deviceApprovalToId('approved'),

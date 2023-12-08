@@ -640,7 +640,6 @@ async function getDevicesWithIdLargerThan(deviceId, knex) {
     .orderBy('id', 'asc')
     .select(
       'partnerId',
-      'geographyId',
       'siteId',
       'deviceTypeId',
       'deviceApprovalId',

@@ -70,7 +70,7 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
       .join('Site as s', 'd.siteId', 's.id')
       .join('Geography as g', 's.geographyId', 'g.id')
       .where('d.id', deviceId)
-      .first('g.countryId', 's.id as siteId', 'd.partnerId', 'g.id as geographyId')
+      .first('g.countryId', 's.id as siteId', 'd.partnerId', 's.geographyId')
     const { countryId, partnerId, geographyId, siteId } = device || {}
     // throw error if no device found or it is not assigned to site
     if (!device || !siteId) {
@@ -249,6 +249,7 @@ async function createNewDevice(
 
   const { timeZone: defaultTimeZone } =
     (await knex('Site as s')
+      .join('Geography as g', 's.geographyId', 'g.id')
       .join('Country as c', 'c.id', 'g.countryId')
       .where('s.id', siteId)
       .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
@@ -306,6 +307,9 @@ async function createNewDevice(
     createdOn: now,
     updatedOn: now,
   })
+
+  console.log(deviceId)
+
   await knex('DeviceApprovalLog').insert({
     deviceId,
     deviceApprovalId,
@@ -320,7 +324,6 @@ async function createNewDevice(
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
-    .where('d.id', deviceId)
     .first(
       'd.id',
       'd.partnerId',
@@ -340,6 +343,8 @@ async function createNewDevice(
       'p.plugin as partnerPluginName',
       'dtc.name as deviceTypeCategory'
     )
+
+  console.log({ mehdiDevice: device })
   return { device }
 }
 

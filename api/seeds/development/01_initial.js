@@ -4924,7 +4924,7 @@ async function seed(knex) {
     .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('c.abbreviation', 'US')
-    .distinct('d.siteId')
+    .distinct('d.siteId', 's.geographyId')
     .orderBy('r.endedOn', 'desc')
     .limit(3)
 
