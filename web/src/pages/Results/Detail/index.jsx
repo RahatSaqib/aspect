@@ -50,12 +50,6 @@ const AspectResultDetail = () => {
     if (isLoading || !queryResponse) return
     if (queryResponse?.ok) {
       const { data } = queryResponse
-      if (data.resultCategory1) {
-        data.resultCategory1 = `${data.resultCategory1}`
-      }
-      if (data.resultCategory2) {
-        data.resultCategory2 = `${data.resultCategory2}`
-      }
       data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
       /**
        * This field `allResistances` is displayed in `textArea` component in readOnly mode.
@@ -123,7 +117,6 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
 
   const keepInvalidSelection = !toggleEdit
   formConfig.sections = updateValidationsAndFilters(formConfig.sections, data, formik, keepInvalidSelection)
-
   return (
     <>
       <DetailHeader name={`${formConfig.title}${patientId}`} back="/browse/result">

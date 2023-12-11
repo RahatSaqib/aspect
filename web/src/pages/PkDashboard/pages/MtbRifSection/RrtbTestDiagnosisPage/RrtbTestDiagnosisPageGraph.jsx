@@ -8,6 +8,7 @@ import useAuthState from '../../../../../hooks/useAuthState'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
+import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 
 const endpointParams = [
   { source: 'rrDetection' },
@@ -34,19 +35,21 @@ const RrtbTestDiagnosisPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
+  const testsPerformedMessage = formatMessage(messages.testsPerformed)
   const rrDetectedMessage = formatMessage(messages.rrDetected)
-  const totalTestsMessage = formatMessage(messages.TbTotal)
-  const RRToTbTotalPercentage = formatMessage(messages.RRToTbTotalPercentage)
+  const mtbDetectedMessage = formatMessage(intlMessages.MTBPlus)
+  const rrToMtbPercentageMessage = formatMessage(messages.rrToMtbPercentage)
 
   const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
       const line = []
       const bar = []
-      data.grouped.map(({ year, rrToTbTotalPercentage, tbTotal, rrDetected }) => {
-        line.push({ year, [RRToTbTotalPercentage]: +rrToTbTotalPercentage.toFixed(2) })
-        bar.push({ year, value: tbTotal, type: totalTestsMessage })
+      data.grouped.map(({ year, testsPerformed, mtbDetected, rrDetected, rrToMtbPercentage }) => {
+        bar.push({ year, value: testsPerformed, type: testsPerformedMessage })
+        bar.push({ year, value: mtbDetected, type: mtbDetectedMessage })
         bar.push({ year, value: rrDetected, type: rrDetectedMessage })
+        line.push({ year, [rrToMtbPercentageMessage]: +rrToMtbPercentage.toFixed(2) })
         return {}
       })
 
@@ -87,12 +90,13 @@ const RrtbTestDiagnosisPage = () => {
             showLabel={showLabel}
             graphId="rrtbDetectedQuarterlyTrends"
             colors={[
-              { name: totalTestsMessage, colorId: 'caseTotal' },
+              { name: testsPerformedMessage, colorId: 'caseTotal' },
+              { name: mtbDetectedMessage, colorId: 'casePercentDetectedOfTotal' },
               { name: rrDetectedMessage, colorId: 'caseDetected' },
-              { name: RRToTbTotalPercentage, colorId: 'casePercentDetectedOfTotal' },
+              { name: rrToMtbPercentageMessage, colorId: 'caseDetected' },
             ]}
             xField="year"
-            yField={['value', RRToTbTotalPercentage]}
+            yField={['value', rrToMtbPercentageMessage]}
           />
         </Grid>
       )}

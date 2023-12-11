@@ -23,8 +23,14 @@ const DataVisualisationForXDRResistance = () => {
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState(undefined)
   const lineSource = useMemo(
-    () => [formatMessage(messages.FQRPercent), formatMessage(messages.INHPercent), formatMessage(messages.AMKPercent),
-    formatMessage(messages.KANPercent), formatMessage(messages.CAPPercent), formatMessage(messages.ETHPercent)],
+    () => [
+      formatMessage(messages.FQRPercent),
+      formatMessage(messages.INHPercent),
+      formatMessage(messages.AMKPercent),
+      formatMessage(messages.KANPercent),
+      formatMessage(messages.CAPPercent),
+      formatMessage(messages.ETHPercent),
+    ],
     [formatMessage]
   )
   const [lineFor, setLineFor] = useState(lineSource[0])
@@ -60,9 +66,23 @@ const DataVisualisationForXDRResistance = () => {
       const line = []
       const bar = []
       data.grouped.map(dat => {
-
-        const { month, FqrToMtbPercentage, InhToMtbPercentage, KanToMtbPercentage, EthToMtbPercentage, CapToMtbPercentage, AmkToMtbPercentage, TotalTests, MtbDetected,
-          FqrDetected, InhDetected, AmkDetected, KanDetected, CapDetected, EthDetected } = dat
+        const {
+          month,
+          FqrToMtbPercentage,
+          InhToMtbPercentage,
+          KanToMtbPercentage,
+          EthToMtbPercentage,
+          CapToMtbPercentage,
+          AmkToMtbPercentage,
+          TotalTests,
+          MtbDetected,
+          FqrDetected,
+          InhDetected,
+          AmkDetected,
+          KanDetected,
+          CapDetected,
+          EthDetected,
+        } = dat
 
         if (lineFor === FQRPercentMessage) {
           line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })

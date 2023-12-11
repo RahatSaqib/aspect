@@ -192,8 +192,8 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                             const assay = assays.find(a => a.externalId === evt.data.data.id).id
                             const params = {
                               displayResult: 'actual',
-                              maxDate: format(endOfMonth(parsedDate), base),
-                              minDate: format(startOfMonth(parsedDate), base),
+                              fixedMinDate: format(startOfMonth(parsedDate), base),
+                              fixedMaxDate: format(endOfMonth(parsedDate), base),
                               onlyReportableResults: true,
                               assayId: [assay],
                             }

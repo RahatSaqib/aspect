@@ -36,14 +36,14 @@ export default LgaSelectField
 LgaSelectField.propTypes = {
   allItemText: PropTypes.string,
   onLgaIdChange: PropTypes.func,
-  lgaId: PropTypes.string,
-  stateId: PropTypes.string,
+  lgaId: PropTypes.number,
+  stateId: PropTypes.number,
   floatingLabelText: PropTypes.string.isRequired,
 }
 
 LgaSelectField.defaultProps = {
   allItemText: null,
   onLgaIdChange: () => {},
-  lgaId: '',
-  stateId: '',
+  lgaId: null,
+  stateId: null,
 }
