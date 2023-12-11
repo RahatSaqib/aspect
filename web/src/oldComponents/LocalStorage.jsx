@@ -2,6 +2,7 @@ import Immutable from 'immutable'
 import identity from 'lodash/identity'
 import isUndefined from 'lodash/isUndefined'
 import { compose, pure, lifecycle } from 'recompose'
+import { getTimezoneById } from '../utils/utils/timezone'
 
 let displayPreferences = Immutable.Map({
   dateFormat: 'yyyy-MM-dd',
@@ -16,7 +17,7 @@ const storageMappings = [
   { storageKey: 'asRefresh', propsKey: 'refresh' },
   { storageKey: 'asClientId', propsKey: 'clientId' },
   { storageKey: 'asCulture', propsKey: 'culture' },
-  { storageKey: 'asTimezoneId', propsKey: 'timezoneId' },
+  { storageKey: 'asTimezoneId', propsKey: 'timezoneId', update: it => getTimezoneById(it) },
   {
     storageKey: 'asDisplayPreferences',
     propsKey: 'displayPreferences',
