@@ -12,7 +12,6 @@
       "caption": "Retreatment Case",
       "i18nKeyCaption": "RetreatmentCasei18nCaptionKey",
       "controlType": "comboBox",
-      "payloadDestinationPath": "patient.PreviouslyTreated",
       "items": [
         {
           "key": 1,
@@ -39,7 +38,6 @@
       "caption": "Referring Facility",
       "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.HealthFacility",
       "calculated": {
         "fieldId1": 5,
         "fixedValue": "now",
@@ -60,7 +58,6 @@
       "caption": "Referring Clinician or Facility Phone Number (if known)",
       "i18nKeyCaption": "Referringphonei18nKeyCaption",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.RequestorPhone",
       "source": "patientData.phone"
     },
     {
@@ -75,7 +72,6 @@
       "gxAlertDbColumn": "RepeatTest",
       "i18nKeyCaption": "RepeatTesti18nCaptionKey",
       "controlType": "comboBox",
-      "payloadDestinationPath": "patient.RepeatTest",
       "source": "patientData.RepeatTest",
       "items": [
         {
@@ -107,7 +103,6 @@
       "i18nKeyCaption": "DateSpecimenCollectedI8nCaptionKey",
       "controlType": "dateTimePicker",
       "payloadOriginPath": "data.customFieldData.25.value",
-      "payloadDestinationPath": "patient.DateSpecimenCollected",
       "source": "patientData.DateSpecimenCollected",
       "mandatory": false
     },
@@ -123,7 +118,6 @@
       "i18nKeyCaption": "DateSpecimenReceivedI8nCaptionKey",
       "controlType": "dateTimePicker",
       "payloadOriginPath": "data.customFieldData.26.value",
-      "payloadDestinationPath": "patient.DateSpecimenReceived",
       "source": "patientData.DateSpecimenReceived",
       "mandatory": false
     }

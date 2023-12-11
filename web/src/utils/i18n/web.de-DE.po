@@ -9063,16 +9063,16 @@ msgstr "Die Anzahl der positiven Ergebnisse"
 
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
-#. RR Detected
+#. RR+
 #: extracted_strings.json
-msgid "RR Detected"
-msgstr "RR Erkannt"
+msgid "RR+"
+msgstr "RR+"
 
-#. [p.PkDashboard.RRToTbTotalPercentage]
+#. [p.PkDashboard.rrToMtbPercentage]
 #. defaultMessage is:
-#. RR To Tb Total Percentage
+#. RR+ percentage of MTB+
 #: extracted_strings.json
-msgid "RR To Tb Total Percentage"
+msgid "RR+ percentage of MTB+"
 msgstr "RR bis Tb Gesamtprozentsatz"
 
 #. [p.PkDashboard.rrCasesDiagnosed]

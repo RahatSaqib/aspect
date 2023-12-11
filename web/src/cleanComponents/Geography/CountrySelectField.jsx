@@ -38,7 +38,7 @@ export default CountrySelectField
 CountrySelectField.propTypes = {
   allItemText: PropTypes.string,
   onCountryIdChange: PropTypes.func,
-  countryId: PropTypes.string,
+  countryId: PropTypes.number,
   floatingLabelText: PropTypes.string.isRequired,
   error: PropTypes.bool,
   helperText: PropTypes.string,
@@ -47,7 +47,7 @@ CountrySelectField.propTypes = {
 CountrySelectField.defaultProps = {
   allItemText: null,
   onCountryIdChange: () => {},
-  countryId: '',
+  countryId: null,
   error: false,
   helperText: null,
 }

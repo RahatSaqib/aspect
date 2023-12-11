@@ -1,5 +1,7 @@
 import get from 'lodash/get'
 import isArray from 'lodash/isArray'
+import isString from 'lodash/isString'
+import set from 'lodash/set'
 import uniqBy from 'lodash/uniqBy'
 import * as Yup from 'yup'
 import { getInitialValuesFromFormConfig, mergeFormConfigWithData } from '../../../components/Form/Formik/Helpers'
@@ -59,12 +61,16 @@ function getRowsForCustomFields(values) {
       const initialValue = get(values, customField.source)
       row.items.push({
         ...baseItem,
-        initialValue: initialValue ? [initialValue] : '',
+        initialValue,
         controlType: {
           component: 'select',
           options: customField.items
             .sort((a, b) => a.order - b.order)
-            .map(i => ({ value: i.value, label: i.value, scope: i.scope || undefined })),
+            .map(i => ({
+              value: customField.sourceType === 'key' ? i.key : i.value,
+              label: i.value,
+              scope: i.scope || undefined,
+            })),
         },
       })
     } else if (
@@ -96,56 +102,64 @@ function getRowsForCustomFields(values) {
   return rows
 }
 
-function getValidationsForCustomFields(values, formatMessage) {
-  const rows = {}
+const getValidationRule = (customField, formatMessage) => {
+  let validationRule = Yup.mixed()
 
-  uniqBy(values.customFields, elem => elem.source).forEach(customField => {
-    if (customField.source) {
-      const source = customField.source?.split('.')
-      const dataOrigin = source[0]
-      const dataField = source[1]
-      let validationRule = Yup.mixed()
+  if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
+    // add validation for text
+    validationRule = Yup.string()
+  } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
+    const validation =
+      customField.validation && customField.validation.length
+        ? customField.validation[0]
+        : { min: 1, max: 100, errorMessage: '' }
+    validationRule = Yup.number()
+      .positive()
+      .integer()
+      .min(validation.min || 1, validation.errorMessage)
+      .max(validation.max, validation.errorMessage)
+  }
 
-      if (!Object.keys(rows).includes(dataOrigin)) {
-        rows[dataOrigin] = Yup.object({})
-      }
+  if (customField.optional === false) {
+    validationRule = validationRule.required(formatMessage(validations.required))
+  }
 
-      if (customField.controlType === 'comboBox' || customField.controlType === 'autoComplete') {
-        // add validation for select
-      } else if (customField.controlType === 'textBox' && customField.fieldType === 'text') {
-        // add validation for text
-        validationRule = Yup.string()
-      } else if (customField.controlType === 'textBox' && customField.fieldType === 'number') {
-        const validation =
-          customField.validation && customField.validation.length
-            ? customField.validation[0]
-            : { min: 1, max: 100, errorMessage: '' }
-        validationRule = Yup.number()
-          .positive()
-          .integer()
-          .min(validation.min || 1, validation.errorMessage)
-          .max(validation.max, validation.errorMessage)
-      }
-
-      if (customField.optional === false) {
-        validationRule = validationRule.required(formatMessage(validations.required))
-      }
-
-      rows[dataOrigin] = rows[dataOrigin].shape({ [dataField]: validationRule })
-    }
-  })
-
-  return rows
+  return validationRule
 }
 
-const sanitizeValue = value => value.replaceAll('-', '').replaceAll(',', '').replaceAll('  ', ' ').split(' ').join('_')
+const getValidationsForCustomFields = (values, formatMessage) =>
+  uniqBy(values.customFields, elem => elem.source).reduce((form, customField) => {
+    if (customField.source && isString(customField.source)) {
+      const source = customField.source.split('.')
+      const isNestedObject = source.length > 1
+
+      const validationRule = getValidationRule(customField, formatMessage)
+
+      if (isNestedObject) {
+        const dataOrigin = source[0]
+        const dataField = source[1]
+
+        if (!Object.keys(form).includes(source[0])) {
+          // Create subgroup
+          form[dataOrigin] = Yup.object({})
+        }
+
+        // Add a custom field to the subgroup
+        form[dataOrigin] = form[dataOrigin].shape({ [dataField]: validationRule })
+      } else {
+        // Add a custom field to the group
+        form[customField.source] = validationRule
+      }
+    }
+    return form
+  }, {})
 
 // start enable/disable logic
 const evaluateCondition = (condition, sourcePath, formik) => {
-  const cleanValue = sanitizeValue(formik.values[sourcePath[0]][condition.propToCompare]).toLowerCase()
+  const cleanValue = formik.values[sourcePath[0]][condition.propToCompare]
   switch (condition.operator) {
     case '=':
-      return cleanValue === condition.valueToCompare.toLowerCase()
+      return cleanValue === condition.valueToCompare?.toLowerCase()
     default:
       return false
   }
@@ -171,7 +185,7 @@ const applyFilterToOption = (filter, option, formik, sourcePath) => {
   if (!data) return
 
   const cleanList = isArray(data) ? data : [data]
-  const cleanValue = sanitizeValue(formik.values[sourcePath[0]][filter.propToCompare]).toLowerCase()
+  const cleanValue = formik.values[sourcePath[0]][filter.propToCompare]
   if (filter.operator === 'in') {
     return cleanList.map(o => o.toLowerCase()).includes(cleanValue)
   }
@@ -203,7 +217,6 @@ const enableItemAndFilter = (item, data, formik, keepInvalidSelection) => {
 
     // ASP-5626: 3. filters: based on comparative with other custom fields, shows or hides options in combobox and autocomplete.
     if (itemBase.filters) {
-      const field = itemBase.source.split('.')
       const filteredOptions = calculateFilteredOptions(itemBase, item, formik)
 
       // first update the available options
@@ -215,9 +228,9 @@ const enableItemAndFilter = (item, data, formik, keepInvalidSelection) => {
       if (!keepInvalidSelection) {
         // second, clear any invalid option from already selected values
         const currentValidValues = filteredOptions.map(o => o.value.toLowerCase())
-        const currentSelectdValue = formik.values[field[0]][field[1]].toLowerCase()
+        const currentSelectdValue = get(formik.values, itemBase.source, '').toLowerCase()
         if (!currentValidValues.includes(currentSelectdValue)) {
-          formik.values[field[0]][field[1]] = ''
+          set(formik.values, itemBase.source, '')
         }
       }
     }
