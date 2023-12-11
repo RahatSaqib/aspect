@@ -1,10 +1,11 @@
-const { addDays, subDays, startOfMonth, endOfMonth, parseISO } = require('date-fns')
+const { format, addDays, subDays, startOfMonth, endOfMonth, startOfDay, endOfDay, parseISO } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { inventoryStockout, inventoryStockExpiring } = require('../inventory/actions')
 const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
+  factResultsDeviceByTimeFrame,
   factDataCategoryLow,
   factNewResultsAvailable,
   siteWithLowCompletionRateIssue,
@@ -23,7 +24,7 @@ const { XDR_RESISTANCES, /* XDR_RESISTANCES_COMBO, */ XDR_RESISTANCE_VALUES } = 
 
 const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
 const daysToCalculateCountOfDeliveredResults = [30, 60]
-const timeFramesToCalculate = ['month']
+const timeFramesToCalculate = ['month', 'day']
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
 const MIN_PERCENTAGE_FIELDS_COMPLETION_RATE = 0.8
@@ -135,6 +136,15 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
   })
 }
 
+async function getDeviceIds(knex) {
+  const items = await knex('Device as d')
+    .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
+    .where('dtc.hasResults', 1)
+    .select('d.id as deviceId')
+  return items
+}
+
 async function onFactGenerateResultCounts(action, context) {
   if (action.deviceId != null) {
     // specialization if device id specified, otherwise query for devices below.
@@ -144,12 +154,22 @@ async function onFactGenerateResultCounts(action, context) {
     factGenerateResultCounts,
   })
   return messageContext.run(async knex => {
-    const items = await knex('Device as d')
-      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-      .where('dtc.hasResults', 1)
-      .select('d.id as deviceId')
+    const items = await getDeviceIds(knex)
     await Promise.each(items, async ({ deviceId }) => messageContext.factGenerateResultCounts(deviceId))
+  })
+}
+
+async function calculateFactResultsDeviceByTimeFrame(action, context) {
+  if (action.deviceId != null) {
+    // run func if device id specified, otherwise query for devices below.
+    return onFactResultsDeviceByTimeFrame(action, context)
+  }
+  const messageContext = context.messageContext.bindActionCreators({
+    factResultsDeviceByTimeFrame,
+  })
+  return messageContext.run(async knex => {
+    const items = await getDeviceIds(knex)
+    await Promise.each(items, async ({ deviceId }) => messageContext.factResultsDeviceByTimeFrame(deviceId))
   })
 }
 
@@ -297,26 +317,9 @@ const sumSingleXdrResistance = knex =>
 //     []
 //   )
 async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, { messageContext }) {
-  const { assayId, resultCategory1, resultCategory2, endedOn: resultEndedOn } = options
+  const { assayId, resultCategory1, resultCategory2 } = options
   return messageContext.transact(async knex => {
     const now = new Date()
-
-    const query = knex('Result as r')
-      .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
-      .where({ deviceId })
-      .where('rt.excluded', false)
-
-    query.modify(queryBuilder => {
-      if (assayId) {
-        queryBuilder.where({ assayId })
-      }
-      if (resultCategory1) {
-        queryBuilder.where({ resultCategory1 })
-      }
-      if (resultCategory2) {
-        queryBuilder.where({ resultCategory2 })
-      }
-    })
 
     // calculate by device - make sure it still exists
     const device = await knex('Device').where({ id: deviceId }).first('deviceId')
@@ -482,108 +485,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         }
       })
     })
-    await Promise.each(timeFramesToCalculate, async timeFrame => {
-      // ...grouped by assay, resultCategory 1 & 2
-      const countsByCategories = await query
-        .clone()
-        .whereNotNull('r.assayId')
-        .whereNotNull('r.resultCategory1')
-        .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
-        .count('r.id as resultCount')
-        .modify(qb => {
-          if (resultEndedOn) {
-            // TODO: we'll have to account for different timeframes here if we ever want to calculate more than just month
-            qb.whereBetween('r.endedOn', [startOfMonth(parseISO(resultEndedOn)), endOfMonth(parseISO(resultEndedOn))])
-          }
-        })
-        .select([
-          'r.assayId',
-          'r.resultCategory1',
-          'r.resultCategory2',
-          ...sumSingleXdrResistance(knex),
-          /**
-           * commenting out below line which calculates combinations of resistances
-           */
-          // ...sumComboXdrResistances(knex),
-          knex.raw('DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame'),
-        ])
-      // if we didn't get an endedOn, generate all time frames since first result from device
-      await Promise.each(countsByCategories, async count => {
-        const factResultsDeviceByTimeFrame = await knex('FactResultsDeviceByTimeFrame')
-          .where({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            resultCategory2: count.resultCategory2,
-            timeFrame,
-            startedOn: count.startedOnTimeFrame,
-          })
-          .first()
-        let { xdrResistanceCounts } = factResultsDeviceByTimeFrame || {}
-        if (xdrResistanceCounts) {
-          xdrResistanceCounts = _.isString(xdrResistanceCounts) ? JSON.parse(xdrResistanceCounts) : xdrResistanceCounts
-        } else {
-          xdrResistanceCounts = {
-            /**
-             * keep this object empty.
-             * It has the following structure:
-             * [resistanceName]: {
-             *    detected: CNT1,
-             *    indeterminate: CNT2,
-             *    notDetected: CNT3,
-             * }
-             * i.e.:
-             * INH: {
-             *    detected: 87,
-             *    indeterminate: 5,
-             *    notDetected: 1234,
-             * }
-             */
-          }
-        }
-        /**
-         * fill all XDR resistance counts
-         * ---> add `...XDR_RESISTANCES_COMBO` to below array for counting combination of resistances
-         */
-        ;[...XDR_RESISTANCES].forEach(resistanceName => {
-          // see pattern for field alias in funcs `sumSingleXdrResistance` and `sumComboXdrResistances` above
-          const cntDetected = count[`cnt_${resistanceName}_Detected`] || 0
-          const cntNotDetected = count[`cnt_${resistanceName}_NotDetected`] || 0
-          const cntIndeterminate = count[`cnt_${resistanceName}_Indeterminate`] || 0
-          _.set(xdrResistanceCounts, [resistanceName, 'detected'], cntDetected)
-          _.set(xdrResistanceCounts, [resistanceName, 'notDetected'], cntNotDetected)
-          _.set(xdrResistanceCounts, [resistanceName, 'indeterminate'], cntIndeterminate)
-        })
-        if (factResultsDeviceByTimeFrame) {
-          await knex('FactResultsDeviceByTimeFrame')
-            .where({
-              deviceId,
-              assayId: count.assayId,
-              resultCategory1: count.resultCategory1,
-              resultCategory2: count.resultCategory2,
-              timeFrame,
-              startedOn: count.startedOnTimeFrame,
-            })
-            .update({
-              resultCount: count.resultCount,
-              calculatedOn: now,
-              xdrResistanceCounts: JSON.stringify(xdrResistanceCounts),
-            })
-        } else {
-          await knex('FactResultsDeviceByTimeFrame').insert({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            resultCategory2: count.resultCategory2,
-            timeFrame,
-            resultCount: count.resultCount,
-            calculatedOn: now,
-            startedOn: count.startedOnTimeFrame,
-            xdrResistanceCounts: JSON.stringify(xdrResistanceCounts),
-          })
-        }
-      })
-    })
 
     // delete orphan data (=not updated in the loop)
     await knex('FactResultsDevice').where({ deviceId }).whereRaw('calculatedOn < ?', now).delete()
@@ -626,6 +527,158 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         }
       })
       .delete()
+  })
+}
+
+async function onFactResultsDeviceByTimeFrame({ deviceId, options = {} }, { messageContext }) {
+  const { assayId, resultCategory1, resultCategory2, endedOn: resultEndedOn } = options
+  return messageContext.transact(async knex => {
+    // make sure device still exists
+    const device = await knex('Device').where({ id: deviceId }).first('deviceId')
+    if (!device) {
+      return
+    }
+
+    const baseQuery = knex('Result as r')
+      .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
+      .where({ deviceId })
+      .where('rt.excluded', false)
+
+    baseQuery.modify(queryBuilder => {
+      if (assayId) {
+        queryBuilder.where({ assayId })
+      }
+      if (resultCategory1) {
+        queryBuilder.where({ resultCategory1 })
+      }
+      if (resultCategory2) {
+        queryBuilder.where({ resultCategory2 })
+      }
+    })
+
+    await messageContext.initDictionaryTables()
+
+    await Promise.each(timeFramesToCalculate, async timeFrame => {
+      const timeFrameFormat = timeFrame === 'month' ? '%Y-%m-01' : '%Y-%m-%d'
+      // ...grouped by assay, resultCategory 1 & 2
+      const countsByCategories = await baseQuery
+        .clone()
+        .whereNotNull('r.assayId')
+        .whereNotNull('r.resultCategory1')
+        .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
+        .count('r.id as resultCount')
+        .modify(qb => {
+          if (resultEndedOn) {
+            if (timeFrame === 'month') {
+              qb.whereBetween('r.endedOn', [startOfMonth(parseISO(resultEndedOn)), endOfMonth(parseISO(resultEndedOn))])
+            } else {
+              qb.whereBetween('r.endedOn', [startOfDay(parseISO(resultEndedOn)), endOfDay(parseISO(resultEndedOn))])
+            }
+          }
+        })
+        .select([
+          'r.assayId',
+          'r.resultCategory1',
+          'r.resultCategory2',
+          ...sumSingleXdrResistance(knex),
+          /**
+           * commenting out below line which calculates combinations of resistances
+           */
+          // ...sumComboXdrResistances(knex),
+          knex.raw(`DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "${timeFrameFormat}") as startedOnTimeFrame`),
+        ])
+      /**
+       * assemble a bulk insert for all values in a single operation
+       * TODO: if length of countsByCategories array is too big (i.e. 10.000 or more)
+       * then consider assembling bulk insert for each N items.
+       * See MySql parameter `max_allowed_packet` for details -
+       * https://dev.mysql.com/doc/refman/8.0/en/packet-too-large.html
+       */
+      if (countsByCategories.length) {
+        /**
+         * 1. bulk delete all records for this deviceId for selected dates for current timeFrame
+         */
+        // get string array of unique dates (wrapped with single quot)
+        const startedOnDates = [...new Set(countsByCategories.map(it => it.startedOnTimeFrame))].map(
+          startedOn => `'${startedOn}'`
+        )
+        await knex.raw(`
+          DELETE FROM FactResultsDeviceByTimeFrame 
+          WHERE deviceId = ${deviceId} AND
+            timeFrame = '${timeFrame}' AND
+            startedOn in (${startedOnDates.join(',')})
+        `)
+        /**
+         * 2. construct bulk insert
+         */
+        let values = []
+        countsByCategories.forEach(count => {
+          const xdrResistanceCounts = {
+            /**
+             * set empty object with the following structure:
+             * [resistanceName]: {
+             *    detected: CNT1,
+             *    indeterminate: CNT2,
+             *    notDetected: CNT3,
+             * }
+             * i.e.:
+             * INH: {
+             *    detected: 87,
+             *    indeterminate: 5,
+             *    notDetected: 1234,
+             * }
+             */
+          }
+          /**
+           * fill all XDR resistance counts
+           * ---> add `...XDR_RESISTANCES_COMBO` to below array for counting combination of resistances
+           */
+          ;[...XDR_RESISTANCES].forEach(resistanceName => {
+            // see pattern for field alias in funcs `sumSingleXdrResistance` and `sumComboXdrResistances` above
+            const cntDetected = count[`cnt_${resistanceName}_Detected`] || 0
+            const cntNotDetected = count[`cnt_${resistanceName}_NotDetected`] || 0
+            const cntIndeterminate = count[`cnt_${resistanceName}_Indeterminate`] || 0
+            _.set(xdrResistanceCounts, [resistanceName, 'detected'], cntDetected)
+            _.set(xdrResistanceCounts, [resistanceName, 'notDetected'], cntNotDetected)
+            _.set(xdrResistanceCounts, [resistanceName, 'indeterminate'], cntIndeterminate)
+          })
+          const now = new Date()
+          /**
+           * array `values` with `(...)` strings
+           */
+          values = [
+            ...values,
+            `(
+              ${deviceId},
+              '${timeFrame}',
+              '${count.startedOnTimeFrame}',
+              ${count.assayId},
+              ${count.resultCategory1},
+              ${count.resultCategory2 || 'null'},
+              ${count.resultCount},
+              '${format(now, 'yyyy-MM-dd HH:mm:ss')}',
+              '${JSON.stringify(xdrResistanceCounts)}'
+            )`,
+          ]
+        })
+        await knex.raw(`
+          INSERT INTO FactResultsDeviceByTimeFrame
+            (
+              deviceId,
+              timeFrame,
+              startedOn,
+              assayId,
+              resultCategory1,
+              resultCategory2,
+              resultCount,
+              calculatedOn,
+              xdrResistanceCounts
+            )
+          VALUES
+            ${values.join(',')}
+          `)
+      }
+    })
   })
 }
 
@@ -1054,4 +1107,5 @@ module.exports = {
   onFactNewResultsAvailableCheck,
   onFactExternalSourceCheck,
   onFactCompletionRatePerSite,
+  calculateFactResultsDeviceByTimeFrame,
 }
