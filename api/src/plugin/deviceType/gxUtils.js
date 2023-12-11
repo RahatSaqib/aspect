@@ -20,7 +20,6 @@ const {
   getBacterialLoad,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
-const { mapPayloadWithCustomFields } = require('./customFields')
 const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
 const { assayNameToExternalId } = require('../../shared/assayNameToExternalId')
 
@@ -88,20 +87,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!startedOn) {
     throw Boom.badRequest('Start date or end date is required for a result from GxConnect')
   }
-  const [device] = await knex
-    .from('Device as d')
-    .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
-    .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .where({ 'd.id': deviceId })
-    .select(
-      'd.id',
-      'd.siteId',
-      'd.partnerId',
-      'd.deviceTypeId',
-      'c.abbreviation as countryCode',
-      knex.raw('coalesce(d.timezone, s.timezoneId, c.timezone) as timezone')
-    )
+  const device = await knex('Device as d').where({ 'd.id': deviceId }).first('d.siteId', 'd.partnerId')
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
@@ -205,14 +191,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (moduleName) _.set(payload, moduleNamePath, moduleName)
     else _.unset(payload, moduleNamePath)
   }
-
-  mapPayloadWithCustomFields(
-    payload,
-    device.countryCode,
-    device.partnerId,
-    _.get(existingResult, 'assayId'),
-    _.get(existingResult, 'diseaseId')
-  )
 }
 
 async function transformMergeResultPayload({ deviceId, payload, knex }) {

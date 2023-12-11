@@ -139,9 +139,23 @@ async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayI
   let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
   customFields = _.sortBy(customFields, ['order', 'name'])
   customFields = customFields.map(
-    ({ title, source, fieldType, order, controlType, validation, items, condition, filters, optional, id }) => ({
+    ({
       title,
       source,
+      sourceType,
+      fieldType,
+      order,
+      controlType,
+      validation,
+      items,
+      condition,
+      filters,
+      optional,
+      id,
+    }) => ({
+      title,
+      source,
+      sourceType,
       fieldType,
       order,
       controlType,

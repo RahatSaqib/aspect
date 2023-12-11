@@ -19,6 +19,6 @@ module.exports = {
   maxDaysDeviceNoResults: 14,
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
-  serverUrl: 'https://mozambique.aspect.id:9443',
-  apiUrl: 'https://mozambique.aspect.id:9443/api',
+  serverUrl: 'https://mozambique.aspect.id',
+  apiUrl: 'https://mozambique.aspect.id/api',
 }

@@ -56,7 +56,7 @@ Contacts.defaultProps = {
   disabled: false,
 }
 Contacts.propTypes = {
-  id: PropTypes.string.isRequired,
+  id: PropTypes.number.isRequired,
   title: PropTypes.string.isRequired,
   formatMessage: PropTypes.func.isRequired,
   disabled: PropTypes.bool,
