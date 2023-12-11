@@ -103,7 +103,7 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
 
 // TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
 export function exportResults(filtersParams, format, sortCol, sortDir, page, pageSize, fileFormat, reportName) {
-  return dispatch => {
+  return () => {
     const filters = getFilters(filtersParams)
     return aspectFetch(
       `/result/export?${stringify({

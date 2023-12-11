@@ -175,19 +175,19 @@ function geographyFilters(queryBuilder, filterConditions, aliases) {
       case 'state':
         queryBuilder.whereIn(
           `${geography}.stateId`,
-          _.map(areaItems, area => _.toInteger(area.value))
+          _.map(areaItems, area => area.value)
         )
         break
       case 'lga':
         queryBuilder.whereIn(
           `${geography}.lgaId`,
-          _.map(areaItems, area => _.toInteger(area.value))
+          _.map(areaItems, area => area.value)
         )
         break
       case 'lab':
         queryBuilder.whereIn(
           `${device}.siteId`,
-          _.map(areaItems, area => _.toInteger(area.value))
+          _.map(areaItems, area => area.value)
         )
         break
       default:
