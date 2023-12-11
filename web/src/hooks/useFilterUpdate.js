@@ -1,18 +1,18 @@
 import { useContext } from 'react'
+import FilterContext from '../providers/FilterProvider/FilterProvider.Context'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import startOfYear from 'date-fns/startOfYear'
 import subtractDays from 'date-fns/subDays'
-import FilterContext from '../providers/FilterProvider/FilterProvider.Context'
 
 const now = new Date()
 const minDate = startOfDay(subtractDays(now, 30))
 const maxDate = endOfDay(now)
 
 // TODO: remove pagination from URL
-const defaultFilter = {
+export const defaultFilter = {
   '/browse/deviceApiKey': {},
   '/browse/device/list': {},
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 },
@@ -22,7 +22,7 @@ const defaultFilter = {
   '/browse/notification/types': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
-  '/browse/result': { minDate, maxDate },
+  '/browse/result': { fixedMinDate: minDate, fixedMaxDate: maxDate },
   '/browse/site': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate },
   '/reports': {},

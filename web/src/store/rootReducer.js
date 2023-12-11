@@ -12,7 +12,6 @@ import jobs from './JobRedux'
 import person from './PersonRedux'
 import result from './ResultRedux'
 import resultTreatmentStatus from './ResultTreatmentStatusRedux'
-import task from './TaskRedux'
 
 const appReducer = combineReducers({
   appNotification,
@@ -27,7 +26,6 @@ const appReducer = combineReducers({
   person,
   result,
   resultTreatmentStatus,
-  task,
 })
 
 const App = Immutable.Record({
@@ -43,7 +41,6 @@ const App = Immutable.Record({
   person: undefined,
   result: undefined,
   resultTreatmentStatus: undefined,
-  task: undefined,
 })
 
 const initialState = new App()
