@@ -20,4 +20,9 @@ async function checkSiteAccess(siteId, dataConstraints) {
   return knex('Site as s').where('s.id', siteId).modify(addConstraints, dataConstraints, { site: 's' }).first('s.id')
 }
 
-module.exports = { getExistingSite, getExistingSiteExcludingCurrent, updateSite, checkSiteAccess }
+const getSiteIdByName = async siteName => {
+  const site = await knex('Site').where('name', siteName).first('id')
+  return site ? site.id : null
+}
+
+module.exports = { getExistingSite, getExistingSiteExcludingCurrent, updateSite, checkSiteAccess, getSiteIdByName }

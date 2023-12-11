@@ -54,6 +54,7 @@ const COMMON_LIST_FIELDS_UTC = {
   resultTreatmentStatusId: 'rtsl.resultTreatmentStatusId',
   reportableSiteId: 'r.reportableSiteId',
   reportableSiteName: 'sirep.name',
+  referringSiteId: 'r.referringSiteId',
   transferredBy: 'ptr.name',
   resultStatusLogId: 'r.resultStatusLogId',
   patientCaseId: 'r.patientCaseId',

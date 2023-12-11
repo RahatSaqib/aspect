@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
+import { subDays } from 'date-fns'
 import filter from 'lodash/filter'
 import sumBy from 'lodash/sumBy'
 import { useIntl } from 'react-intl'
@@ -9,7 +10,6 @@ import { graphMessages } from '../../../messages'
 import { getTimePeriod, formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
-import { subDays } from 'date-fns'
 
 const i18nKeys = {
   devicesActive: 'devicesActive',
@@ -152,12 +152,12 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
   <div class="g2-tooltip-title">${_title}</div>
   <ul class="g2-tooltip-list" style="margin: 0px; list-style-type: none; padding: 0px;">
   ${withData
-                                    ?.map(
-                                      r => `<li class="g2-tooltip-list-item" data-index="" style="list-style-type: none; padding: 0px; margin: 12px 0px;">
+    ?.map(
+      r => `<li class="g2-tooltip-list-item" data-index="" style="list-style-type: none; padding: 0px; margin: 12px 0px;">
     <span class="g2-tooltip-name">${r.name}</span>: <span class="g2-tooltip-value" style="display: inline-block; float: right; margin-left: 30px;">${r.data.realValue} Devices</span>
     </li>`
-                                    )
-                                    .join('')}
+    )
+    .join('')}
   </ul>`
                               },
                             }}
