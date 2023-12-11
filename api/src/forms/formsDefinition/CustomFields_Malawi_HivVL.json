@@ -36,8 +36,7 @@
       "i18nKeyCaption": "MWReasonForTestEidI8nCaptionKey",
       "gxAlertDbColumn": "MWReasonForTestEid",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.29.value",
-      "payloadDestinationPath": "patient.MWReasonForTestEid"
+      "payloadOriginPath": "data.customFieldData.29.value"
     },
     {
       "id": 33,
@@ -53,8 +52,7 @@
       "i18nKeyCaption": "MWARTInitiationDateI8nCaptionKey",
       "gxAlertDbColumn": "MWARTInitiationDate",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.33.value",
-      "payloadDestinationPath": "patient.MWARTInitiationDate"
+      "payloadOriginPath": "data.customFieldData.33.value"
     },
     {
       "id": 34,
@@ -97,8 +95,7 @@
       "i18nKeyCaption": "MWSampleTypeI8nCaptionKey",
       "gxAlertDbColumn": "MWSampleType",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.34.value",
-      "payloadDestinationPath": "patient.MWSampleType"
+      "payloadOriginPath": "data.customFieldData.34.value"
     },
     {
       "id": 35,
@@ -216,8 +213,7 @@
       "i18nKeyCaption": "MWCurrentARTRegimenI8nCaptionKey",
       "gxAlertDbColumn": "MWCurrentARTRegimen",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.35.value",
-      "payloadDestinationPath": "patient.MWCurrentARTRegimen"
+      "payloadOriginPath": "data.customFieldData.35.value"
     }
   ],
   "refForms": []
