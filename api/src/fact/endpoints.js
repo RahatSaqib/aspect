@@ -1,8 +1,6 @@
 const {
   onFactGenerateDeviceConnectivity,
-  onFactGenerateResultCounts,
   onFactCheckInventoryStock,
-  onFactCalculateInventoryConsumptionRates,
   onDeviceSeen,
   onDeviceUpdateFlag,
   onResultLogged,
@@ -11,6 +9,8 @@ const {
   onFactExternalSourceCheck,
   onFactCompletionRatePerSite,
 } = require('./service')
+const onFactGenerateResultCounts = require('./onFactGenerateResultCounts')
+const { onFactCalculateInventoryConsumptionRates } = require('./onFactCalculateInventoryConsumptionRates')
 const { factFillCustomFieldsCompletionStatsLast30Days } = require('./customFieldsCompletionStatsService')
 
 const subscriptions = [
