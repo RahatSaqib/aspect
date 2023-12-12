@@ -7,7 +7,6 @@ module.exports = {
     externalId: 'ethiopiaEphi',
   },
   deviceApiToken: '1tfw5604jfn09gx7upd0',
-
   partnerAbbreviation: 'ET',
   fixtures: {
     jobFunctions,
