@@ -14,7 +14,7 @@ const filterConditionWithAssay = {
   areaItems: [
     {
       label: 'Wayne',
-      value: '12',
+      value: 12,
     },
   ],
   deviceLevelId: 'lga',
@@ -23,17 +23,17 @@ const filterConditionWithJfForDevice = {
   areaItems: [
     {
       label: 'Wayne',
-      value: '12',
+      value: 12,
     },
   ],
   jobFunctions: [
     {
       tags: [],
-      jobFunctionId: '1',
+      jobFunctionId: 1,
     },
     {
       tags: [],
-      jobFunctionId: '2',
+      jobFunctionId: 2,
     },
   ],
   deviceLevelId: 'lga',
@@ -42,17 +42,17 @@ const filterConditionWithJfForDeviceNotWayneCounty = {
   areaItems: [
     {
       label: 'Kale',
-      value: '59',
+      value: 59,
     },
   ],
   jobFunctions: [
     {
       tags: [],
-      jobFunctionId: '1',
+      jobFunctionId: 1,
     },
     {
       tags: [],
-      jobFunctionId: '2',
+      jobFunctionId: 2,
     },
   ],
   deviceLevelId: 'lga',
@@ -73,17 +73,17 @@ const filterConditionWithJf = {
   areaItems: [
     {
       label: 'Wayne',
-      value: '12',
+      value: 12,
     },
   ],
   jobFunctions: [
     {
       tags: [],
-      jobFunctionId: '1',
+      jobFunctionId: 1,
     },
     {
       tags: [],
-      jobFunctionId: '2',
+      jobFunctionId: 2,
     },
   ],
   deviceLevelId: 'lga',
@@ -107,17 +107,17 @@ const baseFilterCondition = {
   areaItems: [
     {
       label: 'Wayne',
-      value: '12',
+      value: 12,
     },
   ],
   jobFunctions: [
     {
       tags: [],
-      jobFunctionId: '1',
+      jobFunctionId: 1,
     },
     {
       tags: [],
-      jobFunctionId: '2',
+      jobFunctionId: 2,
     },
   ],
   deviceLevelId: 'lga',

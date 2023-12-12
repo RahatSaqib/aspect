@@ -9025,17 +9025,17 @@ msgstr "RIF Resistance Rate (%positive results)"
 
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
-#. RR Detected
+#. RR+
 #: extracted_strings.json
-msgid "RR Detected"
-msgstr "RR Detected"
+msgid "RR+"
+msgstr "RR+"
 
-#. [p.PkDashboard.RRToTbTotalPercentage]
+#. [p.PkDashboard.rrToMtbPercentage]
 #. defaultMessage is:
-#. RR To Tb Total Percentage
+#. RR+ percentage of MTB+
 #: extracted_strings.json
-msgid "RR To Tb Total Percentage"
-msgstr "RR To Tb Total Percentage"
+msgid "RR+ percentage of MTB+"
+msgstr "RR+ percentage of MTB+"
 
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:

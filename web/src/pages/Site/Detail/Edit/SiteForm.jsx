@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react'
 import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
+import isNil from 'lodash/isNil'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
@@ -79,10 +80,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
 
   const isError =
     !isPristine &&
-    (isEmpty(editSite.name) ||
-      isEmpty(editSite.shortName) ||
-      isEmpty(editSite.countryId) ||
-      isEmpty(editSite.externalId))
+    (isEmpty(editSite.name) || isEmpty(editSite.shortName) || isNil(editSite.countryId) || isEmpty(editSite.externalId))
 
   return (
     <Box width="100%">
@@ -179,10 +177,10 @@ const SiteForm = ({ site, onLatLongChange }) => {
           <div className={styles.container}>
             <LocationSelector
               user={user}
-              countryId={editSite.countryId || ''}
-              stateId={editSite.stateId || ''}
-              lgaId={editSite.lgaId || ''}
-              validators={{ country: { error: !isPristine && isEmpty(editSite.countryId), helperText: 'is required' } }}
+              countryId={editSite.countryId}
+              stateId={editSite.stateId}
+              lgaId={editSite.lgaId}
+              validators={{ country: { error: !isPristine && isNil(editSite.countryId), helperText: 'is required' } }}
               onChange={location => {
                 setEditSite({
                   ...editSite,

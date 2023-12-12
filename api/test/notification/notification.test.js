@@ -43,7 +43,7 @@ describe('Query generator for filtering conditions', () => {
       {
         tags: [],
         checked: true,
-        jobFunctionId: '1',
+        jobFunctionId: 1,
       },
     ],
     deviceLevelId: 'national',
@@ -69,18 +69,18 @@ describe('Query generator for filtering conditions', () => {
     areaItems: [
       {
         label: 'Idaho',
-        value: '46',
+        value: 46,
       },
       {
         label: 'Nebraska',
-        value: '62',
+        value: 62,
       },
     ],
     jobFunctions: [
       {
         tags: [],
         checked: true,
-        jobFunctionId: '1',
+        jobFunctionId: 1,
       },
     ],
     deviceLevelId: 'state',

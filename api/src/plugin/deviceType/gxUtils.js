@@ -20,7 +20,6 @@ const {
   getBacterialLoad,
 } = require('./GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
-const { mapPayloadWithCustomFields } = require('./customFields')
 const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
 const { assayNameToExternalId } = require('../../shared/assayNameToExternalId')
 
@@ -88,23 +87,18 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!startedOn) {
     throw Boom.badRequest('Start date or end date is required for a result from GxConnect')
   }
-  const [device] = await knex
-    .from('Device as d')
-    .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('Country as c', 'g.countryId', 'c.id')
-    .where({ 'd.id': deviceId })
-    .select(
-      'd.id',
-      'd.siteId',
-      'd.partnerId',
-      'd.deviceTypeId',
-      'c.abbreviation as countryCode',
-      knex.raw('coalesce(d.timezone, s.timezoneId, c.timezone) as timezone')
-    )
+
+  const device = await knex('Device as d').where({ 'd.id': deviceId }).first('d.siteId', 'd.partnerId')
+
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
+
+  // Override assay.id
+  const payloadAssayName = _.get(payload, 'data.assay', '')
+  const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
+  _.set(payload, 'assay.id', mappedAssayExternalId)
+
   if (!_.isEmpty(payload.data)) {
     payload.category = getResultCategories(payload)
   } else {
@@ -120,11 +114,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   const generatedExternalId = createUniqueIdForResult(instrumentSerial, startedOn, endedOn, sampleId)
   const gxAlertUniqueId = _.get(payload, 'data.gxAlertTestUniqueId', generatedExternalId)
   const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
-
-  // Override assay.id
-  const payloadAssayName = _.get(payload, 'data.assay', '')
-  const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
-  _.set(payload, 'assay.id', mappedAssayExternalId)
 
   const potentialAssayIds = [mappedAssayExternalId]
   if (potentialAssayIds.includes('GxMtbRif') && !potentialAssayIds.includes('GxMtbRifUltra')) {
@@ -205,14 +194,6 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     if (moduleName) _.set(payload, moduleNamePath, moduleName)
     else _.unset(payload, moduleNamePath)
   }
-
-  mapPayloadWithCustomFields(
-    payload,
-    device.countryCode,
-    device.partnerId,
-    _.get(existingResult, 'assayId'),
-    _.get(existingResult, 'diseaseId')
-  )
 }
 
 async function transformMergeResultPayload({ deviceId, payload, knex }) {
@@ -776,36 +757,58 @@ async function assignGxUnknownAssayIfNotExists(knex, payload) {
 }
 
 function getResultCategories(payload) {
-  let payloadCategory = _.get(payload, 'category')
-  if (_.isEmpty(payloadCategory)) {
-    payloadCategory = []
-    const payloadResultText = _.get(payload, 'data.resultText')
-    if (payloadResultText) {
-      const resultTextValues = splitResultTextValues(payloadResultText)
-      const assayId = _.get(payload, 'assay.id')
+  const payloadCategories = _.get(payload, 'category')
+  if (!_.isEmpty(payloadCategories))
+    return payloadCategories
 
-      if (resultTextValues.length > 0) {
-        const result1Text = sanitizeResultTextValue(resultTextValues[0])
+  const categories = []
+  const assayId = _.get(payload, 'assay.id')
+  const text = _.get(payload, 'data.resultText')
 
-        if (result1CategoryMapping[result1Text]) {
-          payloadCategory = [{ id: result1CategoryMapping[result1Text] }]
+  if (text) {
+    const parts = splitResultTextValues(text)
+
+    if (parts.length === 0)
+      return categories
+
+    let status = sanitizeResultTextValue(parts[0])
+
+    if (assayId === 'GxHiv1Vl') {
+      const hivCategory = getResultCategoriesHivVL(status)
+      if (hivCategory)
+        categories.push({ id: hivCategory })
+    }
+
+    if (categories.length === 0) {
+      const category1 = result1CategoryMapping[status]
+      if (category1)
+        categories.push({ id: category1 })
+    }
+
+    const category2 = mapResultCategory2(assayId, parts)
+    if (category2)
+      categories.push({ id: category2 })
+
+    // fallback logic
+    if (categories.length === 0) {
+      if (assayId === 'GxHcv') {
+        const regexp = /^([\w\s]+)\s*\d/g
+        const matches = regexp.exec(text)
+        if (matches && matches.length > 1) {
+          const rawStatus = matches[1]
+          status = sanitizeResultTextValue(rawStatus)
+          const category1 = result1CategoryMapping[status]
+          if (category1)
+            categories.push({ id: category1 })
         }
-        if (assayId === 'GxHiv1Vl') {
-          const externalId = getResultCategoriesHivVL(result1Text) || result1CategoryMapping[result1Text]
-          if (externalId) payloadCategory = [{ id: externalId }]
-        }
-      }
-
-      const resultCategory2 = mapResultCategory2(assayId, resultTextValues)
-      if (resultCategory2) payloadCategory = [...payloadCategory, { id: resultCategory2 }]
-    } else {
-      const assayId = _.get(payload, 'assay.id')
-      if (assayId === 'GxHiv1Vl') {
-        return [{ id: getResultCategoriesHivVL(payloadResultText) }]
       }
     }
+  } else {
+    if (assayId === 'GxHiv1Vl')
+      categories.push({ id: 'NoResult' })
   }
-  return payloadCategory
+
+  return categories
 }
 
 function macAddressValid(macAddress) {
