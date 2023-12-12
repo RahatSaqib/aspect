@@ -15,7 +15,7 @@ const cardContentStyle = {
   p: '16px !important',
 }
 
-const FilterContainer = ({ children, state, setState, blocked}) => {
+const FilterContainer = ({ children, state, setState, blocked }) => {
   const { formatMessage } = useIntl()
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
@@ -35,7 +35,7 @@ const FilterContainer = ({ children, state, setState, blocked}) => {
   }
 
   const remove = keys => {
-    const blockedArr=blocked??[]
+    const blockedArr = blocked ?? []
     const cleaned = keys.filter(el => !blockedArr.includes(el))
     if (cleaned.length) {
       removeFilter(keys, location.pathname)

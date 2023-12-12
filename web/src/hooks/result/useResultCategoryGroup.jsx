@@ -1,9 +1,9 @@
+import isArray from 'lodash/isArray'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { assay, resultCategory } from '../../messages'
 import { RESULT_KEY, RESULT_KEY_RESULT_CATEGORY_GROUP_ENDPOINT } from './resultKeys.js'
-import isArray from 'lodash/isArray'
 
 const getResultCategoryGroup = async assayId =>
   fetchWrapperForQueries({
