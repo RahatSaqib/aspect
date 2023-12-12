@@ -322,7 +322,7 @@ const routes = [
           error: errorPayload,
         },
         status: {
-          '201': {},
+          201: {},
         },
       },
     },
