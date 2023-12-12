@@ -422,11 +422,12 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
     .first('id as countryGeographyId')
   const device =
     (await knex('Device')
-      .where({
-        deviceTypeId,
-        partnerId,
-      })
+      .join('Site as s', 'd.siteId', 's.id')
+      .where('d.deviceTypeId', deviceTypeId)
+      .where('d.partnerId', partnerId)
+      .where('s.geographyId', countryGeographyId)
       .first()) || {}
+
   let { siteId } = device
   if (!siteId) {
     ;[siteId] = await knex('Site').insert({
