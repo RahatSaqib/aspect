@@ -10,7 +10,7 @@ const { createMessageContext, waitForIdle, dispatchAndWaitForAction, waitForActi
 // action creators
 const { inventoryStockout, inventoryStockExpiring } = require('../../src/inventory/actions')
 const { escalateIssues } = require('../../src/issue/actions')
-const { refreshConsumptionRates } = require('../../src/fact/service')
+const { refreshConsumptionRates } = require('../../src/fact/onFactCalculateInventoryConsumptionRates')
 const { getPartner, getSite, getIssue, getIssueNotifications, cleanUpIssues } = require('../utils/issueUtils')
 const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const {
