@@ -635,22 +635,24 @@ async function getDeviceType(externalId, knex) {
 
 async function getDevicesWithIdLargerThan(deviceId, knex) {
   const devices = await knex
-    .from('Device')
+    .from('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .where('id', '>', deviceId)
     .orderBy('id', 'asc')
     .select(
-      'partnerId',
-      'siteId',
-      'deviceTypeId',
-      'deviceApprovalId',
-      'name',
-      'shortName',
-      'macAddress',
-      'serial',
-      'hostId',
-      'culture',
-      'timezone',
-      'configurationData'
+      'd.partnerId',
+      'd.siteId',
+      'd.deviceTypeId',
+      's.geographyId',
+      'd.deviceApprovalId',
+      'd.name',
+      'd.shortName',
+      'd.macAddress',
+      'd.serial',
+      'd.hostId',
+      'd.culture',
+      'd.timezone',
+      'd.configurationData'
     )
   return _.map(devices, device =>
     _.merge({}, device, {
