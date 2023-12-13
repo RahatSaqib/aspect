@@ -22,13 +22,6 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     const senaiteLimsDeviceType = await knex.from('DeviceType').where('externalId', 'SenaiteLims').first()
     const partner = await knex.from('Partner').where('name', 'Partner One').first()
 
-    const geography = await knex
-      .from('Country as c')
-      .join('Geography as g', 'g.countryId', 'c.id')
-      .where('c.abbreviation', 'US')
-      .whereNull('g.stateId')
-      .whereNull('g.lgaId')
-      .first('g.*')
     const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
     const deviceCapacity = await knex('DeviceCapacity')
       .where({ deviceTypeId: senaiteLimsDeviceType.id })
