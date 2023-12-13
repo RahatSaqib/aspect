@@ -632,8 +632,8 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
       if (!countryCode && device) {
         ;[countryCode] = await knex('Device as d')
           .leftJoin('Site as s', 's.id', 'd.siteId')
-          .innerJoin('Geography as g', 's.geographyId', 'g.id')
-          .innerJoin('Country as c', 'g.countryId', 'c.id')
+          .leftJoin('Geography as g', 's.geographyId', 'g.id')
+          .leftJoin('Country as c', 'g.countryId', 'c.id')
           .where('d.id', device.id)
           .pluck('c.abbreviation')
       }

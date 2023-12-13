@@ -121,6 +121,8 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
 
   await knex('DeviceOperation').whereIn('id', opIds).delete()
 
+  await knex('DeviceApiKey').whereIn('siteId', siteIds).orWhereIn('deviceId', deviceIds).delete()
+
   await knex('Device').whereIn('siteId', siteIds).orWhereIn('id', deviceIds).delete()
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
@@ -151,7 +153,11 @@ class GxAlertApiTestContext {
       },
       site: null,
       log: null,
-      configuration: null,
+      configuration: {
+        data: {
+          country: 'US',
+        },
+      },
       operation: null,
       result: null,
     }

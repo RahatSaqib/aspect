@@ -1697,14 +1697,11 @@ describe('Device API routes for GxAlert Device', () => {
               expectedStatusCode: 200,
             })
             const {
-              body: {
-                result: { id: completeResultId, externalId: completeResultExternalId },
-              },
+              body: { aspectResultId },
             } = deviceApiResponse
 
-            let completeResult = await getResult(completeResultId)
+            let completeResult = await getResult(aspectResultId)
             expect(completeResult).to.containSubset({
-              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
               startedOn: startedOnDate,
@@ -1724,9 +1721,8 @@ describe('Device API routes for GxAlert Device', () => {
               }),
               expectedStatusCode: 201,
             })
-            completeResult = await getResult(completeResultId)
+            completeResult = await getResult(aspectResultId)
             expect(completeResult).to.containSubset({
-              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
               startedOn: startedOnDate,
@@ -1745,9 +1741,8 @@ describe('Device API routes for GxAlert Device', () => {
               }),
               expectedStatusCode: 201,
             })
-            completeResult = await getResult(completeResultId)
+            completeResult = await getResult(aspectResultId)
             expect(completeResult).to.containSubset({
-              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
               startedOn: startedOnDate,
@@ -1766,9 +1761,8 @@ describe('Device API routes for GxAlert Device', () => {
               }),
               expectedStatusCode: 200,
             })
-            completeResult = await getResult(completeResultId)
+            completeResult = await getResult(aspectResultId)
             expect(completeResult).to.containSubset({
-              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NoResult',
               startedOn: startedOnDate,
