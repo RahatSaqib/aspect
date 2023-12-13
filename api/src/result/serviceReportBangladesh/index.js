@@ -769,14 +769,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           CONCAT(r.deviceId, '-',  r.moduleName)
         `),
 
-        cnt_Xdr_Tested_From_Eligible: counter(
-          'r.id',
-          `
-          ${assayXdr}
-          or
-          ${whereXdrDetected}
-          `
-        ),
+        cnt_Xdr_Tested_From_Eligible: counter('r.id', `${assayXdr}`),
         /**
          * cnt_Xdr_Total_Tests is calculated in the code
          */
@@ -785,6 +778,10 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
     getQueryForXdrCountsBySiteIds: siteIds =>
       baseQuery
         .clone()
+        /**
+         * narrow base query to XDR assays only
+         */
+        .whereIn('a.id', [assayIds.GxMtbXdr])
         .whereIn('s.id', siteIds)
         .select('sp.sampleTypeId')
         .groupBy('sp.sampleTypeId')
@@ -792,14 +789,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           /**
            * same condition as for field `cnt_Xdr_Tested_From_Eligible`
            */
-          cnt_Xdr_Total_Tests: counter(
-            'r.id',
-            `
-            ${assayXdr}
-            or
-            ${whereXdrDetected}
-            `
-          ),
+          cnt_Xdr_Total_Tests: counter('r.id', `${assayXdr}`),
         }),
   }
 }
