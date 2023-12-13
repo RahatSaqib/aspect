@@ -122,7 +122,9 @@ class MessageQueue {
   async subscribeSingleAction(name, messageTtl, messageHandler, type) {
     let handlerFunction = async () => Promise.resolve()
     let shouldHandle = () => true
-    let consumeOptions
+    const consumeOptions = {
+      noAck: true,
+    }
     let bindingKey = ''
     let purgeOnStart = false
     if (_.isFunction(messageHandler)) {
@@ -133,9 +135,7 @@ class MessageQueue {
         ;({ shouldHandle } = messageHandler)
       }
       if (messageHandler.consumerTag) {
-        consumeOptions = {
-          consumerTag: messageHandler.consumerTag,
-        }
+        consumeOptions.consumerTag = messageHandler.consumerTag
       }
       if (messageHandler.allowInfiniteListeners) {
         const maxListeners = this.emitter.getMaxListeners()
