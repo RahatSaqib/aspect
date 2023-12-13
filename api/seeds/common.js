@@ -421,7 +421,7 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
     .whereNull('stateId', 'lgaId')
     .first('id as countryGeographyId')
   const device =
-    (await knex('Device')
+    (await knex('Device as d')
       .join('Site as s', 'd.siteId', 's.id')
       .where('d.deviceTypeId', deviceTypeId)
       .where('d.partnerId', partnerId)
