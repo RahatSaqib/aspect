@@ -516,6 +516,8 @@ describe('Device API routes for GxAlert Device', () => {
       assert.equal(result2.moduleSerial, '555-8')
       assert.equal(result2.researchId, 'R123')
       assert.deepEqual(JSON.parse(result2.patientData), {
+        PatientName: 'Unknown',
+        PatientSurname: 'Blood Stained',
         id: 'P-333',
         name: 'Bob',
         surname: 'Hope',

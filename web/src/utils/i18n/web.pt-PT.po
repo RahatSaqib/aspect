@@ -9048,16 +9048,16 @@ msgstr "Taxa de Resistência RIF (%p resultados positivos)"
 
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
-#. RR Detected
+#. RR+
 #: extracted_strings.json
-msgid "RR Detected"
-msgstr "INH Detectado"
+msgid "RR+"
+msgstr "RR+"
 
-#. [p.PkDashboard.RRToTbTotalPercentage]
+#. [p.PkDashboard.rrToMtbPercentage]
 #. defaultMessage is:
-#. RR To Tb Total Percentage
+#. RR+ percentage of MTB+
 #: extracted_strings.json
-msgid "RR To Tb Total Percentage"
+msgid "RR+ percentage of MTB+"
 msgstr "RR Para Tb Percentagem total"
 
 #. [p.PkDashboard.rrCasesDiagnosed]
@@ -14927,8 +14927,10 @@ msgstr "{unit} calibrações totais"
 #~ msgid "This Username is Unavailable"
 #~ msgstr "Este nome de usuário não está disponível"
 
+#, fuzzy
+#~| msgid "Utilization Rate"
 #~ msgid "Utilization Rate Over Time"
-#~ msgstr "Taxa de utilização ao longo do tempo"
+#~ msgstr "Taxa de utilização"
 
 #~ msgid "{count} fields"
 #~ msgstr "campos"
@@ -15111,11 +15113,24 @@ msgstr "{unit} calibrações totais"
 #~ "aparece quando dois resultados consecutivos realizados no slot do mesmo "
 #~ "dispositivo, eles têm um número de série de módulo diferente"
 
-#~ msgid "The average duration of a service interruption, in days"
-#~ msgstr "A duração média de uma interrupção de serviço, em dias"
+#, fuzzy
+#~| msgid ""
+#~| "The number of devices experiencing service interruption on this and the "
+#~| "previous month. A device has a service interruption when it is flagged "
+#~| "as \"Down for repair\" for it maintenance status."
+#~ msgid ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month.A device has a service interruption when it is flagged as "
+#~ "\"Down for repair\" for it maintenance status."
+#~ msgstr ""
+#~ "O número de dispositivos com interrupção do serviço neste e no mês "
+#~ "anterior."
 
 #~ msgid "The average duration of a service interruption, in days."
 #~ msgstr "A duração média de uma interrupção de serviço, em dias."
+
+#~ msgid "The average duration of a service interruption, in days"
+#~ msgstr "A duração média de uma interrupção de serviço, em dias"
 
 #~ msgid "The number of module swaps made at the current month"
 #~ msgstr "O número de trocas de módulo feitas no mês atual"
@@ -15168,5 +15183,47 @@ msgstr "{unit} calibrações totais"
 #~ msgid "site ID includes \"{siteId}\""
 #~ msgstr "o ID do site inclui \"{siteId}\""
 
-#~ msgid "Device Api Keys"
+#, fuzzy
+#~| msgid "Device Api Keys"
+#~ msgid "Device Api Key"
 #~ msgstr "Chaves API do dispositivo"
+
+#, fuzzy
+#~| msgid "Results"
+#~ msgid "results"
+#~ msgstr "Resultados"
+
+#, fuzzy
+#~| msgid "percentage of valid results"
+#~ msgid "Percentage of valid results reported the current month"
+#~ msgstr "porcentagem de resultados válidos"
+
+#~ msgid "AMK-R %"
+#~ msgstr "AMK-R %"
+
+#~ msgid "AMK-R Detected"
+#~ msgstr "AMK-R Detectado"
+
+#~ msgid "CAP-R %"
+#~ msgstr "CAP-R %"
+
+#~ msgid "CAP-R Detected"
+#~ msgstr "CAP-R detectado"
+
+#~ msgid "Data Visualisation For XDR Resistance Over Time"
+#~ msgstr "Visualização de dados para a resistência XDR ao longo do tempo"
+
+#~ msgid "Data Visualisation for XDR Resistance"
+#~ msgstr "Visualização de dados para a resistência XDR"
+
+#~ msgid "ETH-R %"
+#~ msgstr "ETH-R %"
+
+#~ msgid "ETH-R Detected"
+#~ msgstr "ETH-R detectado"
+
+#~ msgid "KAN-R %"
+#~ msgstr "KAN-R %"
+
+#~ msgid "KAN-R Detected"
+#~ msgstr "KAN-R Detectado"

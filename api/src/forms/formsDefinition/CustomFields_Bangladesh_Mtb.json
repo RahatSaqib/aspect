@@ -12,7 +12,6 @@
       "caption": "Patient Name",
       "i18nKeyCaption": "PatientNameI18nCaptionKey",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.PatientName",
       "source": "patientData.name",
       "mandatory": true
     },
@@ -28,7 +27,6 @@
       "caption": "Age",
       "i18nKeyCaption": "Agei18nCaptionKey",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.PatientAge",
       "source": "patientData.PatientAge",
       "validation": [
         {
@@ -53,7 +51,7 @@
       "caption": "Gender",
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
-      "payloadDestinationPath": "patient.PatientGender",
+      "payloadOriginPath": "data.customFieldData.1103.value",
       "source": "patientData.PatientGender",
       "items": [
         {
@@ -80,7 +78,7 @@
       "gxAlertDbColumn": "PatientStreet",
       "caption": "Address",
       "i18nKeyCaption": "AddressI18nCaptionKey",
-      "payloadDestinationPath": "patient.PatientStreet",
+      "payloadOriginPath": "data.customFieldData.1104.value",
       "source": "patientData.address",
       "controlType": "textBox",
       "mandatory": true
@@ -98,7 +96,6 @@
       "i18nKeyCaption": "MobileNumberI18nKeyCaption",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.1105.value",
-      "payloadDestinationPath": "patient.PatientPhone",
       "source": "patientData.PatientPhone",
       "mandatory": true
     },
@@ -106,7 +103,7 @@
       "id": 1106,
       "name": "ReferringFacility",
       "i18nKey": "ReferringFacilityI18nkey",
-      "fieldType": "text",
+      "fieldType": "number",
       "completionWeight": 10,
       "order": 160,
       "gxAlertDbColumn": "ReferringFacility",
@@ -115,20 +112,12 @@
       "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
       "controlType": "autoComplete",
       "payloadOriginPath": "data.customFieldData.1106.value",
-      "payloadDestinationPath": "patient.ReferringFacility",
-      "source": "patientData.ReferringFacility",
+      "source": "referringSiteId",
+      "sourceType": "key",
       "itemsSource": "all-sites",
       "itemsSourceConfig": {
-        "key": "externalId",
-        "value": "name",
-        "extraItems": [
-          {
-            "key": "other",
-            "value": "Other",
-            "description": "Other",
-            "order": 100
-          }
-        ]
+        "key": "id",
+        "value": "name"
       }
     },
     {
@@ -144,13 +133,19 @@
       "i18nKeyCaption": "OtherReferringFacilityI18nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.1107.value",
-      "payloadDestinationPath": "patient.OtherReferringFacility",
       "source": "patientData.OtherReferringFacility",
       "condition": [
         {
           "propToCompare": "ReferringFacility",
-          "valueToCompare": "other",
-          "operator": "="
+          "valueToCompare": "",
+          "operator": "=",
+          "conjunction": "or"
+        },
+        {
+          "propToCompare": "ReferringFacility",
+          "valueToCompare": null,
+          "operator": "=",
+          "conjunction": "or"
         }
       ]
     },
@@ -167,7 +162,6 @@
       "i18nKeyCaption": "TypeOfPatientI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.12011.value",
-      "payloadDestinationPath": "patient.TypeOfPatient",
       "source": "patientData.TypeOfPatient",
       "items": [
         {
@@ -255,7 +249,6 @@
       "i18nKeyCaption": "PatientHistoryI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.12012.value",
-      "payloadDestinationPath": "patient.PatientHistory",
       "source": "patientData.PatientHistory",
       "condition": [
         {
@@ -365,7 +358,6 @@
       "i18nKeyCaption": "PatientRetreatmentI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.12013.value",
-      "payloadDestinationPath": "patient.PatientRetreatment",
       "source": "patientData.PatientRetreatment",
       "condition": [
         {
@@ -408,7 +400,6 @@
       "i18nKeyCaption": "HIVStatusI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.1210.value",
-      "payloadDestinationPath": "patient.HIVStatus",
       "source": "patientData.HIVStatus",
       "items": [
         {
@@ -441,7 +432,6 @@
       "i18nKeyCaption": "SampleTypeI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.1211.value",
-      "payloadDestinationPath": "patient.SampleType",
       "source": "patientData.SampleType",
       "items": [
         {
@@ -475,7 +465,6 @@
       "i18nKeyCaption": "TBRegistrationNumberPreviousI18nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.1301.value",
-      "payloadDestinationPath": "patient.TBRegistrationNumberPrevious",
       "source": "patientData.TBRegistrationNumberPrevious"
     },
     {
@@ -491,7 +480,6 @@
       "i18nKeyCaption": "TBRegistrationNumberCurrentI18nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.1302.value",
-      "payloadDestinationPath": "patient.TBRegistrationNumberCurrent",
       "source": "patientData.TBRegistrationNumberCurrent"
     }
   ],

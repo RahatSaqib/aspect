@@ -160,9 +160,10 @@ const ResultFilter = () => {
         <Grid item xs={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
-            minDate={state.minDate || null}
-            maxDate={state.maxDate || null}
-            onChange={dateValues => setState({ ...state, ...dateValues })}
+            minDate={state.fixedMinDate || null}
+            maxDate={state.fixedMaxDate || null}
+            onChange={({ minDate, maxDate }) => setState({ ...state, fixedMinDate: minDate, fixedMaxDate: maxDate })}
+            noAny={true}
           />
         </Grid>
         <Grid item xs={3}>

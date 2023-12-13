@@ -77,6 +77,7 @@ const FilterButtons = ({ filters, remove, append }) => {
           .sortBy(filterKey => filtersOrdering[filterKey])
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
+            if (!Comp) return null
             return <Comp {...filters} remove={remove} append={append} key={key} />
           })
       )}
@@ -117,6 +118,8 @@ const buttonMapping = {
   consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
   minDate: ({ minDate, remove }) => <MinDate minDate={minDate} remove={remove} />,
   maxDate: ({ maxDate, remove }) => <MaxDate maxDate={maxDate} remove={remove} />,
+  fixedMinDate: ({ fixedMinDate }) => <MinDate minDate={fixedMinDate} />,
+  fixedMaxDate: ({ fixedMaxDate }) => <MaxDate maxDate={fixedMaxDate} />,
   minExpirationDate: ({ minExpirationDate, remove }) => (
     <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} />
   ),
@@ -151,6 +154,7 @@ const buttonMapping = {
   patientOrResearchId: ({ patientOrResearchId, remove }) => (
     <PatientOrResearchId patientOrResearchId={patientOrResearchId} remove={remove} />
   ),
+  issueTypeId: ({ issueTypeId, remove }) => <IssueTypeId issueTypeId={issueTypeId} remove={remove} />,
   sampleId: ({ sampleId, remove }) => <SampleId sampleId={sampleId} remove={remove} />,
   reportableSiteName: ({ reportableSiteName, reportableSiteId, remove }) => (
     <ReportableSiteName reportableSiteName={reportableSiteName} reportableSiteId={reportableSiteId} remove={remove} />
@@ -343,19 +347,21 @@ const ConsumableId = ({ consumableId, remove }) => {
 const MinDate = ({ minDate, remove }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
-  const date = format(new Date(minDate), dateFormat)
+  const del = remove ? () => remove(['minDate']) : undefined  // fixedMinDate has no delete option
 
-  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={() => remove(['minDate'])} />
+  const date = format(new Date(minDate), dateFormat)
+  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={del} />
 }
 
 const MaxDate = ({ maxDate, remove }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   if (!maxDate) return null
+  const del = remove ? () => remove(['maxDate']) : undefined  // fixedMaxDate has no delete option
   const date = format(new Date(maxDate), dateFormat)
-
-  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={() => remove(['maxDate'])} />
+  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={del} />
 }
+
 
 const MinExpirationDate = ({ minExpirationDate, remove }) => {
   const { formatMessage, format } = useIntl()
@@ -529,6 +535,11 @@ const PatientOrResearchId = ({ patientOrResearchId, remove }) => {
       del={() => remove(['patientOrResearchId'])}
     />
   )
+}
+const IssueTypeId = ({ issueTypeId, remove }) => {
+  const { formatMessage } = useIntl()
+
+  return <Btn lbl={formatMessage(messages.issueTypeId, { issueTypeId })} del={() => remove(['issueTypeId'])} />
 }
 
 const SampleId = ({ sampleId, remove }) => {

@@ -23,6 +23,7 @@ import useUpdateSelf from '../../hooks/person/useUpdateSelf'
 import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages/customMessages'
 import { normalizePhoneNumber } from '../../utils/utils/phone'
+import { getTimezoneById } from '../../utils/utils/timezone'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -33,7 +34,7 @@ const ContactDetails = ({ setStep }) => {
 
   const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
-  const { countryAbbreviation, countryId, userPermissions } = useAuthState()
+  const { countryAbbreviation, countryId, userPermissions, timezoneId } = useAuthState()
   const { formatMessage } = useIntl()
 
   const { isLoading, data: person } = usePerson(id)
@@ -67,6 +68,7 @@ const ContactDetails = ({ setStep }) => {
   if (person) {
     if (id === ACTION.ADD) {
       person.countryId = countryId
+      person.timezone = timezoneId
     }
     if (isString(person.tags)) {
       person.tags = person.tags.split(',')
@@ -127,7 +129,12 @@ const ContactDetails = ({ setStep }) => {
                 },
               })
             } else if (id === ACTION.SELF) {
-              updateSelf(values, { onSuccess: () => resetForm({ values }) })
+              updateSelf(values, {
+                onSuccess: () => {
+                  localStorage.setItem('asTimezoneId', getTimezoneById(values.timezone))
+                  resetForm({ values })
+                },
+              })
             } else {
               updatePerson(values, {
                 onSuccess: () => {
@@ -297,6 +304,7 @@ const ContactDetails = ({ setStep }) => {
                     label={formatMessage(messages.timezone)}
                     value={values.timezone}
                     onChange={handleChange}
+                    disabled
                     error={errors.timezone ? errors.timezone : undefined}
                     helperText={errors.timezone}
                   />
