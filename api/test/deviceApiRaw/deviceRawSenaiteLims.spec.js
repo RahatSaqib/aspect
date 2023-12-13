@@ -7,6 +7,7 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
 const { parseDateOrDefault } = require('../../src/shared/date')
+const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 
 const server = require('../utils/testUtils')
 
@@ -16,12 +17,30 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
   const deviceApiRawPath = '/device/raw'
   const validApiKeyToken = randomToken()
   let senaiteLimsDeviceId
+  let senaiteLimsSiteId
   before(async () => {
     const now = new Date()
     const { id: userId } = await knex('User').first('id')
     const senaiteLimsDeviceType = await knex.from('DeviceType').where('externalId', 'SenaiteLims').first()
     const partner = await knex.from('Partner').where('name', 'Partner One').first()
 
+    const dataConstraints = await getConstraints({ name: 'admin' })
+    const [sampleSite] = await knex('Site as s')
+      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+      .leftOuterJoin('State as st', 'g.stateId', 'st.id')
+      .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
+      .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+      .modify(addConstraints, dataConstraints, {
+        site: 's',
+        geography: 'g',
+      })
+      .select('s.*')
+      .limit(1)
+    ;[senaiteLimsSiteId] = await knex('Site').insert({
+      ..._.omit(sampleSite, 'id'),
+      name: 'SENAITE TEST SITE 1',
+      externalId: 'senaiteTestSite1',
+    })
     const approvedDeviceApproval = await knex.from('DeviceApproval').where('token', 'approved').first()
     const deviceCapacity = await knex('DeviceCapacity')
       .where({ deviceTypeId: senaiteLimsDeviceType.id })
@@ -33,6 +52,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       deviceTypeId: senaiteLimsDeviceType.id,
       deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
       deviceApprovalId: approvedDeviceApproval.id,
+      siteId: senaiteLimsSiteId,
       name: 'Some Senaite LIMS',
       shortName: 'Senaite LIMS',
       configurationData: '{}',
@@ -44,6 +64,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
     await knex('DeviceApiKey').insert({
       token: validApiKeyToken,
       deviceId: senaiteLimsDeviceId,
+      siteId: senaiteLimsSiteId,
       revoked: false,
       createdOn: now,
       createdBy: userId,
