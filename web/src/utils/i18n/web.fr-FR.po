@@ -14991,8 +14991,10 @@ msgstr "{unit} total des étalonnages"
 #~ msgid "This Username is Unavailable"
 #~ msgstr "Ce nom d'utilisateur n'est pas disponible"
 
+#, fuzzy
+#~| msgid "Utilization Rate"
 #~ msgid "Utilization Rate Over Time"
-#~ msgstr "Taux d’utilisation dans le temps"
+#~ msgstr "Taux d'utilisation"
 
 #~ msgid "{count} fields"
 #~ msgstr "{count} champs"
@@ -15178,21 +15180,11 @@ msgstr "{unit} total des étalonnages"
 #~ "exécutés dans le même emplacement du dispositif, mais qu'ils ont un "
 #~ "numéro de série de module différent"
 
-#~ msgid ""
-#~ "The number of devices experiencing service interruption on this and the "
-#~ "previous month.A device has a service interruption when it is flagged as "
-#~ "\"Down for repair\" for it maintenance status."
-#~ msgstr ""
-#~ "Le nombre de dispositifs subissant une interruption de service ce mois-ci "
-#~ "et le mois précédent. Un dispositif subit une interruption de service "
-#~ "lorsqu'il est marqué comme \"en panne pour réparation\" pour son état de "
-#~ "maintenance."
+#~ msgid "The average duration of a service interruption, in days"
+#~ msgstr "La durée moyenne d'une interruption de service, en jours"
 
 #~ msgid "The average duration of a service interruption, in days."
 #~ msgstr "La durée moyenne d'une interruption de service, en jours."
-
-#~ msgid "The average duration of a service interruption, in days"
-#~ msgstr "La durée moyenne d'une interruption de service, en jours"
 
 #~ msgid "The number of module swaps made at the current month"
 #~ msgstr "Le nombre de swaps de modules effectués le mois en cours"
@@ -15236,9 +15228,6 @@ msgstr "{unit} total des étalonnages"
 #~ msgid "% Confirmed Follow-up"
 #~ msgstr "% Confirmé"
 
-#~ msgid "Connected Since"
-#~ msgstr "Connecté depuis"
-
 #~ msgid "Number Of Tests Delivered"
 #~ msgstr "Nombre de tests effectués"
 
@@ -15248,8 +15237,54 @@ msgstr "{unit} total des étalonnages"
 #~ msgid "site ID includes \"{siteId}\""
 #~ msgstr "l'ID du site comprend \"{siteId}\""
 
-#~ msgid "Device Api Key"
+#, fuzzy
+#~| msgid "Device Api Key"
+#~ msgid "Device Api Keys"
 #~ msgstr "Clés de l'API de l'appareil"
+
+#~ msgid "AMK-R %"
+#~ msgstr "AMK-R %"
+
+#~ msgid "AMK-R Detected"
+#~ msgstr "AMK-R détecté"
+
+#~ msgid "CAP-R %"
+#~ msgstr "CAP-R %"
+
+#~ msgid "CAP-R Detected"
+#~ msgstr "CAP-R détecté"
+
+#~ msgid "Data Visualisation For XDR Resistance Over Time"
+#~ msgstr ""
+#~ "Visualisation des données relatives à la résistance XDR au fil du temps"
+
+#~ msgid "Data Visualisation for XDR Resistance"
+#~ msgstr "Visualisation des données relatives à la résistance XDR"
+
+#~ msgid "ETH-R %"
+#~ msgstr "ETH-R %"
+
+#~ msgid "ETH-R Detected"
+#~ msgstr "ETH-R détecté"
+
+#~ msgid "KAN-R %"
+#~ msgstr "KAN-R %"
+
+#~ msgid "KAN-R Detected"
+#~ msgstr "KAN-R détectée"
+
+#~ msgid ""
+#~ "The number of devices experiencing service interruption on this and the "
+#~ "previous month.A device has a service interruption when it is flagged as "
+#~ "\"Down for repair\" for it maintenance status."
+#~ msgstr ""
+#~ "Le nombre de dispositifs subissant une interruption de service ce mois-ci "
+#~ "et le mois précédent. Un dispositif subit une interruption de service "
+#~ "lorsqu'il est marqué comme \"en panne pour réparation\" pour son état de "
+#~ "maintenance."
+
+#~ msgid "Connected Since"
+#~ msgstr "Connecté depuis"
 
 #~ msgid "results"
 #~ msgstr "Résultats"
