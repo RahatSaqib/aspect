@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-12-04T14:31:09.352Z\n"
+"POT-Creation-Date: 2023-12-12T20:27:38.085Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -214,6 +214,20 @@ msgstr "AMK R %"
 msgid "AMK Resistance"
 msgstr "Kháng AMK"
 
+#. [legends.Unknown.AMKPercent]
+#. defaultMessage is:
+#. AMK-R %
+#: extracted_strings.json
+msgid "AMK-R %"
+msgstr "AMK-R %"
+
+#. [legends.Unknown.AmkDetected]
+#. defaultMessage is:
+#. AMK-R Detected
+#: extracted_strings.json
+msgid "AMK-R Detected"
+msgstr "Đã phát hiện AMK-R"
+
 #. [months.april]
 #. defaultMessage is:
 #. APR
@@ -332,9 +346,6 @@ msgstr "Thông tin tài khoản"
 #. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
-#. [pages.TaskList.issueStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
 #: extracted_strings.json
 msgid "Acknowledged"
 msgstr "Thừa nhận"
@@ -343,9 +354,6 @@ msgstr "Thừa nhận"
 #. defaultMessage is:
 #. Active
 #. [component.Widget.activeDevicesTitle]
-#. defaultMessage is:
-#. Active
-#. [pages.TaskList.issueStatusActive]
 #. defaultMessage is:
 #. Active
 #. [pages.DeviceList.availabilityRate]
@@ -648,13 +656,6 @@ msgid ""
 msgstr ""
 "Tất cả các kết quả kiểm tra trong hệ thống. Một hàng trên mỗi kết quả với "
 "tất cả các trường cần thiết."
-
-#. [pages.TaskList.taskListOptionsAllTopics]
-#. defaultMessage is:
-#. All topics
-#: extracted_strings.json
-msgid "All topics"
-msgstr "Tất cả các chủ đề"
 
 #. [pages.ContactDetails.email2]
 #. defaultMessage is:
@@ -1222,6 +1223,20 @@ msgstr "Xây dựng thông báo"
 #: extracted_strings.json
 msgid "CAP Resistance"
 msgstr "Kháng CAP"
+
+#. [legends.Unknown.CAPPercent]
+#. defaultMessage is:
+#. CAP-R %
+#: extracted_strings.json
+msgid "CAP-R %"
+msgstr "CAP-R %"
+
+#. [legends.Unknown.CapDetected]
+#. defaultMessage is:
+#. CAP-R Detected
+#: extracted_strings.json
+msgid "CAP-R Detected"
+msgstr "Đã phát hiện CAP-R"
 
 #. [filter.AssayTypeSelectField.assayTypeCD4]
 #. defaultMessage is:
@@ -1837,9 +1852,6 @@ msgstr "Các trường hợp xác nhận"
 #. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
-#. [pages.TaskList.taskListOptionsConnectivity]
-#. defaultMessage is:
-#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
@@ -1852,16 +1864,6 @@ msgstr "Các trường hợp xác nhận"
 #: extracted_strings.json
 msgid "Connectivity"
 msgstr "Kết nối"
-
-#. [pages.TaskList.issueCategoryConnectivityHealth]
-#. defaultMessage is:
-#. Connectivity Health
-#. [pages.TaskList.ConnectivityHealth]
-#. defaultMessage is:
-#. Connectivity Health
-#: extracted_strings.json
-msgid "Connectivity Health"
-msgstr "Tình trạng kết nối"
 
 #. [filter.popover.connectorStatus]
 #. defaultMessage is:
@@ -2554,9 +2556,6 @@ msgstr "Bảng điều khiển"
 msgid "Dashboard v2"
 msgstr "Bảng điều khiển v2"
 
-#. [pages.TaskList.taskListOptionsData]
-#. defaultMessage is:
-#. Data
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
 #. Data
@@ -2574,15 +2573,19 @@ msgstr "Dữ liệu"
 msgid "Data Extract for Tableau"
 msgstr "Trích xuất dữ liệu cho Tableau"
 
-#. [pages.TaskList.issueCategoryDataHealth]
+#. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
-#. Data Health
-#. [pages.TaskList.dataHealth]
-#. defaultMessage is:
-#. Data Health
+#. Data Visualisation For XDR Resistance Over Time
 #: extracted_strings.json
-msgid "Data Health"
-msgstr "Tình trạng dữ liệu"
+msgid "Data Visualisation For XDR Resistance Over Time"
+msgstr "Trực quan hóa dữ liệu về khả năng kháng XDR theo thời gian"
+
+#. [p.PkDashboard.dataVisualisationForXDR]
+#. defaultMessage is:
+#. Data Visualisation for XDR Resistance
+#: extracted_strings.json
+msgid "Data Visualisation for XDR Resistance"
+msgstr "Trực quan hóa dữ liệu về khả năng kháng XDR"
 
 #. [filter.popover.date]
 #. defaultMessage is:
@@ -2845,9 +2848,6 @@ msgstr "Đã phát hiện"
 #. [pages.ResultList.deviceName]
 #. defaultMessage is:
 #. Device
-#. [pages.TaskList.taskListOptionsDevice]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
@@ -2938,16 +2938,6 @@ msgstr "Báo cáo hiệu chuẩn thiết bị"
 #: extracted_strings.json
 msgid "Device Country"
 msgstr "Quốc gia thiết bị"
-
-#. [pages.TaskList.issueCategoryDeviceHealth]
-#. defaultMessage is:
-#. Device Health
-#. [pages.TaskList.DeviceHealth]
-#. defaultMessage is:
-#. Device Health
-#: extracted_strings.json
-msgid "Device Health"
-msgstr "Tình trạng thiết bị"
 
 #. [filter.btnGroup.deviceIssueType]
 #. defaultMessage is:
@@ -3315,20 +3305,6 @@ msgstr ""
 msgid "Drug Resistance"
 msgstr "Kháng thuốc"
 
-#. [pages.TaskList.issueStatusDueNow]
-#. defaultMessage is:
-#. Due Now
-#: extracted_strings.json
-msgid "Due Now"
-msgstr "Đến hạn ngay"
-
-#. [pages.TaskList.issueStatusDueSoon]
-#. defaultMessage is:
-#. Due Soon
-#: extracted_strings.json
-msgid "Due Soon"
-msgstr "Do sớm"
-
 #. [filter.AssayTypeSelectField.assayTypeEid]
 #. defaultMessage is:
 #. EID
@@ -3366,6 +3342,20 @@ msgstr "ETH R %"
 #: extracted_strings.json
 msgid "ETH Resistance"
 msgstr "Kháng cự ETH"
+
+#. [legends.Unknown.ETHPercent]
+#. defaultMessage is:
+#. ETH-R %
+#: extracted_strings.json
+msgid "ETH-R %"
+msgstr "ETH-R %"
+
+#. [legends.Unknown.EthDetected]
+#. defaultMessage is:
+#. ETH-R Detected
+#: extracted_strings.json
+msgid "ETH-R Detected"
+msgstr "Đã phát hiện ETH-R"
 
 #. [filter.AssayTypeSelectField.assayTypeEbola]
 #. defaultMessage is:
@@ -5164,13 +5154,6 @@ msgstr "ID"
 msgid "ID includes \"{externalId}\""
 msgstr "ID bao gồm \"{externalId}\""
 
-#. [legends.Unknown.InhDetected]
-#. defaultMessage is:
-#. INH Detected
-#: extracted_strings.json
-msgid "INH Detected"
-msgstr "INH được phát hiện"
-
 #. [pages.XDR.cnt_inh]
 #. defaultMessage is:
 #. INH R
@@ -5253,9 +5236,6 @@ msgstr ""
 "thay đổi số trang bạn đang xem"
 
 #. [pages.shared.deviceStatus.inactive]
-#. defaultMessage is:
-#. Inactive
-#. [pages.TaskList.issueStatusInactive]
 #. defaultMessage is:
 #. Inactive
 #: extracted_strings.json
@@ -5618,6 +5598,20 @@ msgstr "Chức năng công việc"
 #: extracted_strings.json
 msgid "KAN Resistance"
 msgstr "KAN kháng"
+
+#. [legends.Unknown.KANPercent]
+#. defaultMessage is:
+#. KAN-R %
+#: extracted_strings.json
+msgid "KAN-R %"
+msgstr "KAN-R %"
+
+#. [legends.Unknown.KanDetected]
+#. defaultMessage is:
+#. KAN-R Detected
+#: extracted_strings.json
+msgid "KAN-R Detected"
+msgstr "Đã phát hiện KAN-R"
 
 #. [pages.DeviceApiKeyList.token]
 #. defaultMessage is:
@@ -6013,13 +6007,6 @@ msgstr "Tải các trạng thái xử lý kết quả không thành công"
 #: extracted_strings.json
 msgid "Loading Results Failed"
 msgstr "Tải kết quả không thành công"
-
-#. [errorResponseMessages.fetchTasks.GET.default.title]
-#. defaultMessage is:
-#. Loading Tasks Failed
-#: extracted_strings.json
-msgid "Loading Tasks Failed"
-msgstr "Tải công việc không thành công"
 
 #. [legends.Unknown.location]
 #. defaultMessage is:
@@ -7759,9 +7746,6 @@ msgstr "tháng Mười"
 #. [pages.ResultList.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. OK
-#. [pages.TaskList.issueStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
@@ -8001,13 +7985,6 @@ msgstr "Tỷ lệ hoạt động tổng thể"
 #: extracted_strings.json
 msgid "Overall Network Health Daily"
 msgstr "Tình trạng tổng thể hệ thống hàng ngày"
-
-#. [pages.TaskList.issueStatusOverdue]
-#. defaultMessage is:
-#. Overdue
-#: extracted_strings.json
-msgid "Overdue"
-msgstr "Quá hạn"
 
 #. [jobFunction.pakistanDashboardTesting]
 #. defaultMessage is:
@@ -9035,20 +9012,6 @@ msgstr "RIF kháng"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Tỷ lệ kháng Rif (% kết quả dương tính)"
 
-#. [p.PkDashboard.rrDetected]
-#. defaultMessage is:
-#. RR+
-#: extracted_strings.json
-msgid "RR+"
-msgstr "RR+"
-
-#. [p.PkDashboard.rrToMtbPercentage]
-#. defaultMessage is:
-#. RR+ percentage of MTB+
-#: extracted_strings.json
-msgid "RR+ percentage of MTB+"
-msgstr "RR Đến Tb Tổng tỷ lệ phần trăm"
-
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
 #. RR cases diagnosed
@@ -9069,6 +9032,20 @@ msgstr "Các trường hợp RR được chẩn đoán trong 24 giờ qua"
 #: extracted_strings.json
 msgid "RR cases diagnosed this year"
 msgstr "Các trường hợp RR được chẩn đoán trong năm nay"
+
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR+
+#: extracted_strings.json
+msgid "RR+"
+msgstr "RR+"
+
+#. [p.PkDashboard.rrToMtbPercentage]
+#. defaultMessage is:
+#. RR+ percentage of MTB+
+#: extracted_strings.json
+msgid "RR+ percentage of MTB+"
+msgstr "RR Đến Tb Tổng tỷ lệ phần trăm"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -9119,25 +9096,12 @@ msgstr "Chẩn đoán RRTB"
 msgid "Ready for delivery"
 msgstr "Sẵn sàng để giao hàng"
 
-#. [pages.TaskList.taskListOptionsReagent]
-#. defaultMessage is:
-#. Reagent
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
 #. Reagent
 #: extracted_strings.json
 msgid "Reagent"
 msgstr "Thuốc thử"
-
-#. [pages.TaskList.issueCategoryReagentHealth]
-#. defaultMessage is:
-#. Reagent Health
-#. [pages.TaskList.ReagentHealth]
-#. defaultMessage is:
-#. Reagent Health
-#: extracted_strings.json
-msgid "Reagent Health"
-msgstr "Sức khỏe thuốc thử"
 
 #. [forms.formItem.reason]
 #. defaultMessage is:
@@ -9561,13 +9525,6 @@ msgstr "Sức chống cự"
 #: extracted_strings.json
 msgid "Resistant"
 msgstr "Kháng cự"
-
-#. [pages.TaskList.issueStatusResolved]
-#. defaultMessage is:
-#. Resolved
-#: extracted_strings.json
-msgid "Resolved"
-msgstr "Giải quyết"
 
 #. [filter.popover.result]
 #. defaultMessage is:
@@ -10227,13 +10184,6 @@ msgstr "Tìm kiếm Trạng thái Xử lý Kết quả Không thành công"
 msgid "Searching Results Failed"
 msgstr "Kết quả tìm kiếm không thành công"
 
-#. [errorResponseMessages.fetchTasks.GET.400.title]
-#. defaultMessage is:
-#. Searching Tasks Failed
-#: extracted_strings.json
-msgid "Searching Tasks Failed"
-msgstr "Tìm kiếm công việc không thành công"
-
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -10858,17 +10808,6 @@ msgstr ""
 "Hiển thị {firstItemIndex} - {lastItemIndex} trong tổng số {itemCount, "
 "plural, one {# cung cấp} other {# cung cấp}}"
 
-#. [pages.TaskList.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
-"other {# tasks} }"
-msgstr ""
-"Hiển thị {firstItemIndex} - {lastItemIndex} trong tổng số {itemCount, "
-"plural, one {# task} other {# task}}"
-
 #. [pages.ReportIndex.moduleActivityReport_description]
 #. defaultMessage is:
 #. Shows devices with one or more inactive modules
@@ -10906,9 +10845,6 @@ msgstr "Đăng xuất"
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceApiKeyList.site]
-#. defaultMessage is:
-#. Site
-#. [pages.TaskList.site]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceList.site]
@@ -11514,26 +11450,12 @@ msgstr "Mục tiêu"
 msgid "Target device"
 msgstr "Thiết bị mục tiêu"
 
-#. [pages.TaskAggre.title]
-#. defaultMessage is:
-#. Task
-#: extracted_strings.json
-msgid "Task"
-msgstr "Tác vụ"
-
 #. [header.link.taskList.title]
 #. defaultMessage is:
 #. Task List
 #: extracted_strings.json
 msgid "Task List"
 msgstr "Danh sách công việc"
-
-#. [pages.TaskList.title]
-#. defaultMessage is:
-#. Tasks
-#: extracted_strings.json
-msgid "Tasks"
-msgstr "Nhiệm vụ"
 
 #. [p.PkDashboard.TbTotal]
 #. defaultMessage is:
@@ -11684,6 +11606,9 @@ msgid "Tests Per Day"
 msgstr "Số xét nghiệm trên ngày"
 
 #. [pages.Status.testsOverTimeTitle.graph]
+#. defaultMessage is:
+#. Tests Performed
+#. [p.PkDashboard.testsPerformed]
 #. defaultMessage is:
 #. Tests Performed
 #: extracted_strings.json
@@ -12526,13 +12451,6 @@ msgstr ""
 msgid "Thursday"
 msgstr "Thứ năm"
 
-#. [pages.TaskList.time]
-#. defaultMessage is:
-#. Time
-#: extracted_strings.json
-msgid "Time"
-msgstr "Thời gian"
-
 #. [pages.UserPreferences.timezone]
 #. defaultMessage is:
 #. Time Zone
@@ -12624,13 +12542,6 @@ msgstr "Chuyển đổi tất cả"
 #: extracted_strings.json
 msgid "Toggle status confirmation"
 msgstr "Chuyển đổi xác nhận trạng thái"
-
-#. [pages.TaskList.topic]
-#. defaultMessage is:
-#. Topic
-#: extracted_strings.json
-msgid "Topic"
-msgstr "Chủ đề"
 
 #. [legends.Unknown.Total]
 #. defaultMessage is:
@@ -14014,7 +13925,7 @@ msgstr "ID bệnh nhân bao gồm {patientOrResearchId}"
 #. patient/case ID includes {patientOrCaseId}
 #: extracted_strings.json
 msgid "patient/case ID includes {patientOrCaseId}"
-msgstr "ID bệnh nhân / trường hợp bao gồm {patientOrCaseId}"
+msgstr "ID bệnh nhân/trường hợp bao gồm {patientOrCaseId}"
 
 #. [widgetAlerts.percentageOfActiveDevices]
 #. defaultMessage is:
@@ -14098,7 +14009,7 @@ msgstr "đơn vị có thể báo cáo \"{reportableSiteName}\""
 #. reportable site ID includes "{reportableSiteId}"
 #: extracted_strings.json
 msgid "reportable site ID includes \"{reportableSiteId}\""
-msgstr "ID đơn vị có thể báo cáo bao gồm \"{reportableSiteId}\""
+msgstr "ID trang web có thể báo cáo bao gồm \"{reportableSiteId}\""
 
 #. [filter.btnGroup.whereReportableSiteNameIncludes]
 #. defaultMessage is:
@@ -14140,7 +14051,7 @@ msgstr "kể từ {date}"
 #. site ID is in ({joinedIds})
 #: extracted_strings.json
 msgid "site ID is in ({joinedIds})"
-msgstr "ID đơn vị ở ({joinedIds})"
+msgstr "ID trang web ở ({joinedIds})"
 
 #. [filter.btnGroup.whereSiteNameIncludes]
 #. defaultMessage is:
@@ -14197,13 +14108,6 @@ msgstr "với kết quả {resultCategoryName}"
 #: extracted_strings.json
 msgid "workflow status is {workflowStatusName}"
 msgstr "trạng thái quy trình làm việc là {workflowStatusName}"
-
-#. [pages.TaskList.alertCount]
-#. defaultMessage is:
-#. {alertCount, plural, one {# alert} other {# alerts} }
-#: extracted_strings.json
-msgid "{alertCount, plural, one {# alert} other {# alerts} }"
-msgstr "{alertCount, plural, one {# alert} other {# alerts}}"
 
 #. [pages.DeviceList.errorOfTotal]
 #. defaultMessage is:
@@ -14339,6 +14243,64 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
+
+#~ msgid "All topics"
+#~ msgstr "Tất cả các chủ đề"
+
+#~ msgid "Connectivity Health"
+#~ msgstr "Tình trạng kết nối"
+
+#~ msgid "Data Health"
+#~ msgstr "Tình trạng dữ liệu"
+
+#~ msgid "Device Health"
+#~ msgstr "Tình trạng thiết bị"
+
+#~ msgid "Due Now"
+#~ msgstr "Đến hạn ngay"
+
+#~ msgid "Due Soon"
+#~ msgstr "Do sớm"
+
+#~ msgid "INH Detected"
+#~ msgstr "INH được phát hiện"
+
+#~ msgid "Loading Tasks Failed"
+#~ msgstr "Tải công việc không thành công"
+
+#~ msgid "Overdue"
+#~ msgstr "Quá hạn"
+
+#~ msgid "Reagent Health"
+#~ msgstr "Sức khỏe thuốc thử"
+
+#~ msgid "Resolved"
+#~ msgstr "Giải quyết"
+
+#~ msgid "Searching Tasks Failed"
+#~ msgstr "Tìm kiếm công việc không thành công"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "task} other {# tasks} }"
+#~ msgstr ""
+#~ "Hiển thị {firstItemIndex} - {lastItemIndex} trong tổng số {itemCount, "
+#~ "plural, one {# task} other {# task}}"
+
+#~ msgid "Task"
+#~ msgstr "Tác vụ"
+
+#~ msgid "Tasks"
+#~ msgstr "Nhiệm vụ"
+
+#~ msgid "Time"
+#~ msgstr "Thời gian"
+
+#~ msgid "Topic"
+#~ msgstr "Chủ đề"
+
+#~ msgid "{alertCount, plural, one {# alert} other {# alerts} }"
+#~ msgstr "{alertCount, plural, one {# alert} other {# alerts}}"
 
 #~ msgid "< 1000 cp/mL"
 #~ msgstr "<1000 cp / mL"
@@ -14900,9 +14862,6 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 
 #~ msgid "This Username is Unavailable"
 #~ msgstr "Tên người dùng này không khả dụng"
-
-#~ msgid "Utilization Rate Over Time"
-#~ msgstr "Tỷ lệ sử dụng theo thời gian"
 
 #~ msgid "{count} fields"
 #~ msgstr "{count} trường"
