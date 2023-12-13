@@ -129,15 +129,15 @@ const result = defineMessages({
   },
   gxMtbXdrMtbDetectedXdrDetected: {
     id: 'pages.filters.gxMtbXdrMtbDetectedXdrDetected',
-    defaultMessage: 'MTB Detected XDR Detected',
+    defaultMessage: 'MTB Detected Drug Resistance Detected',
   },
   gxMtbXdrMtbDetectedXdrNotDetected: {
     id: 'pages.filters.gxMtbXdrMtbDetectedXdrNotDetected',
-    defaultMessage: 'MTB Detected XDR Not Detected',
+    defaultMessage: 'MTB Detected Drug Resistance Not Detected',
   },
   gxMtbXdrMtbDetectedXdrIndeterminate: {
     id: 'pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate',
-    defaultMessage: 'MTB Detected XDR Indeterminate',
+    defaultMessage: 'MTB Detected Drug Resistance Indeterminate',
   },
   gxMtbXdrMtbInvalid: {
     id: 'pages.filters.gxMtbXdrMtbInvalid',
