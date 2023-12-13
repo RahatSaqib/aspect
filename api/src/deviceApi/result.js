@@ -930,7 +930,7 @@ async function getLatestResultWorkflowLog(knex, resultId) {
 const getCountryCodeByDeviceId = async (knex, deviceId) => {
   const { countryCode } = await knex('Device as d')
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .where({ 'd.id': deviceId })
     .first('c.abbreviation as countryCode')

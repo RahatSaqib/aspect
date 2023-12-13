@@ -43,9 +43,6 @@ async function preProcessAddDeviceData({ knex, device, payload, now, messageCont
   if (device.siteId !== site.id) {
     deviceDetails.siteId = site.id
   }
-  if (device.geographyId !== site.geographyId) {
-    deviceDetails.geographyId = site.geographyId
-  }
   // A ping from GxConnect is just a configuration POST with a MAC address,
   // host ID, device Serial and country abbreviation
   // A ping from GxConnect forwarded by GxAlert is the same as a ping cooming
@@ -758,8 +755,7 @@ async function assignGxUnknownAssayIfNotExists(knex, payload) {
 
 function getResultCategories(payload) {
   const payloadCategories = _.get(payload, 'category')
-  if (!_.isEmpty(payloadCategories))
-    return payloadCategories
+  if (!_.isEmpty(payloadCategories)) return payloadCategories
 
   const categories = []
   const assayId = _.get(payload, 'assay.id')
@@ -768,26 +764,22 @@ function getResultCategories(payload) {
   if (text) {
     const parts = splitResultTextValues(text)
 
-    if (parts.length === 0)
-      return categories
+    if (parts.length === 0) return categories
 
     let status = sanitizeResultTextValue(parts[0])
 
     if (assayId === 'GxHiv1Vl') {
       const hivCategory = getResultCategoriesHivVL(status)
-      if (hivCategory)
-        categories.push({ id: hivCategory })
+      if (hivCategory) categories.push({ id: hivCategory })
     }
 
     if (categories.length === 0) {
       const category1 = result1CategoryMapping[status]
-      if (category1)
-        categories.push({ id: category1 })
+      if (category1) categories.push({ id: category1 })
     }
 
     const category2 = mapResultCategory2(assayId, parts)
-    if (category2)
-      categories.push({ id: category2 })
+    if (category2) categories.push({ id: category2 })
 
     // fallback logic
     if (categories.length === 0) {
@@ -798,15 +790,11 @@ function getResultCategories(payload) {
           const rawStatus = matches[1]
           status = sanitizeResultTextValue(rawStatus)
           const category1 = result1CategoryMapping[status]
-          if (category1)
-            categories.push({ id: category1 })
+          if (category1) categories.push({ id: category1 })
         }
       }
     }
-  } else {
-    if (assayId === 'GxHiv1Vl')
-      categories.push({ id: 'NoResult' })
-  }
+  } else if (assayId === 'GxHiv1Vl') categories.push({ id: 'NoResult' })
 
   return categories
 }

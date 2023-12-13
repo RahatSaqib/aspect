@@ -314,9 +314,8 @@ async function createNewDevice(
     createdOn: now,
     createdBy: null,
   })
-
   const device = await knex('Device as d')
-    .join('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
