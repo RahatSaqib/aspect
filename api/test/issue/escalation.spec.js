@@ -168,7 +168,7 @@ describe('Issue Escalation', () => {
   async function createDeviceNoResult(knex, { countryAbbreviation, partnerId }) {
     // get 1st site for current partner
     const {
-      s: { id: siteId, geographyId },
+      s: { id: siteId },
     } = await getSite(knex, {
       countryAbbreviation,
       partnerId,
