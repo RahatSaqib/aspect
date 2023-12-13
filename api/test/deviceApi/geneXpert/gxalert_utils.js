@@ -1,11 +1,7 @@
 const _ = require('lodash')
-const chai = require('chai')
-const { getDeviceFromApiKey } = require('../utils')
 const { run } = require('../../../src/db')
 const { waitAsyncComplete } = require('../../utils/generatorFunctionUtils')
 const { randomToken } = require('../../../src/deviceApi/apiKey')
-
-const { assert } = chai
 
 async function deleteGxAlertDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
   const deviceIds = await knex('DeviceApiKey as dak').whereIn('dak.token', apiKeys).pluck('dak.deviceId')
@@ -217,7 +213,6 @@ class GxAlertApiTestContext {
         revoked: 0,
         partnerId: partner.id,
         geographyId: geography.id,
-        deviceId,
         createdOn: now,
         createdBy: adminUser.id,
         updatedOn: now,
@@ -225,8 +220,6 @@ class GxAlertApiTestContext {
       })
       this.apiKeys.push(this.apiKey)
       this.deviceAuth = `Bearer ${this.apiKey}`
-      this.device = await getDeviceFromApiKey(knex, { token: this.apiKey })
-      assert.isNotEmpty(this.device, `Cannot find device created from ${this.apiKey}`)
     })
   }
 
