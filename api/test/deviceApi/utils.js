@@ -637,8 +637,8 @@ async function getDevicesWithIdLargerThan(deviceId, knex) {
   const devices = await knex
     .from('Device as d')
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .where('id', '>', deviceId)
-    .orderBy('id', 'asc')
+    .where('d.id', '>', deviceId)
+    .orderBy('d.id', 'asc')
     .select(
       'd.partnerId',
       'd.siteId',
