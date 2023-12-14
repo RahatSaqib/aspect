@@ -223,9 +223,11 @@ class GxAlertApiTestContext {
         createdBy: adminUser.id,
         updatedOn: now,
         updatedBy: adminUser.id,
+        deviceId,
       })
       this.apiKeys.push(this.apiKey)
       this.deviceAuth = `Bearer ${this.apiKey}`
+      this.device = await knex('Device').where({ id: deviceId }).first()
     })
   }
 

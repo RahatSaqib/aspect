@@ -714,10 +714,10 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
 
   const existingDeviceAndData = await knex('DeviceApiKey as dak')
     .innerJoin('Device as d', 'dak.deviceId', 'd.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Partner as p', 'p.id', 'd.partnerId')
@@ -761,6 +761,7 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
   }
 
   let device = null
+  // In the case of GxAlert, the device and the device API key were already created on seeding so no need to create a new device
   if (existingDeviceAndData != null) {
     device = existingDeviceAndData
   } else if (createDevice) {
