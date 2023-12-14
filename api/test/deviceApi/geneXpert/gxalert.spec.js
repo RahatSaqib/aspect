@@ -1552,11 +1552,14 @@ describe('Device API routes for GxAlert Device', () => {
               expectedStatusCode: 200,
             })
             const {
-              body: { aspectResultId: incompleteResultId },
+              body: {
+                result: { id: incompleteResultId, externalId: incompleteResultExternalId },
+              },
             } = deviceApiResponse
 
             const incompleteResult = await getResult(incompleteResultId)
             expect(incompleteResult).to.containSubset({
+              externalId: incompleteResultExternalId,
               resultCategory1: 'NoResult',
               resultCategory2: null,
               startedOn: startedOnDate,
@@ -1582,11 +1585,14 @@ describe('Device API routes for GxAlert Device', () => {
               expectedStatusCode: 200,
             })
             const {
-              body: { aspectResultId: completeResultId },
+              body: {
+                result: { id: completeResultId, externalId: completeResultExternalId },
+              },
             } = deviceApiResponse
 
             const completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
+              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'Indeterminate',
               startedOn: startedOnDate,
@@ -1595,8 +1601,8 @@ describe('Device API routes for GxAlert Device', () => {
                 resultText: 'DETECTED MEDIUM|INDETERMINATE|',
               },
             })
-            assert.equal(completeResult.id, incompleteResult.id)
-            assert.notEqual(completeResult.externalId, incompleteResult.externalId)
+            assert.equal(completeResultId, incompleteResultId)
+            assert.notEqual(completeResultExternalId, incompleteResultExternalId)
           })
           it("should NOT merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", async () => {
             const { deviceAuth } = context
@@ -1628,7 +1634,9 @@ describe('Device API routes for GxAlert Device', () => {
               expectedStatusCode: 200,
             })
             const {
-              body: { aspectResultId: incompleteResultId },
+              body: {
+                result: { id: incompleteResultId },
+              },
             } = deviceApiResponse
 
             const completeResultPayload = _.merge({}, incompleteResultPayload, {
@@ -1646,7 +1654,9 @@ describe('Device API routes for GxAlert Device', () => {
               expectedStatusCode: 200,
             })
             const {
-              body: { aspectResultId: completeResultId },
+              body: {
+                result: { id: completeResultId },
+              },
             } = deviceApiResponse
             assert.notEqual(incompleteResultId, completeResultId)
           })
@@ -1687,11 +1697,14 @@ describe('Device API routes for GxAlert Device', () => {
               expectedStatusCode: 200,
             })
             const {
-              body: { aspectResultId },
+              body: {
+                result: { id: completeResultId, externalId: completeResultExternalId },
+              },
             } = deviceApiResponse
 
-            let completeResult = await getResult(aspectResultId)
+            let completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
+              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
               startedOn: startedOnDate,
@@ -1711,7 +1724,7 @@ describe('Device API routes for GxAlert Device', () => {
               }),
               expectedStatusCode: 201,
             })
-            completeResult = await getResult(aspectResultId)
+            completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
@@ -1731,7 +1744,7 @@ describe('Device API routes for GxAlert Device', () => {
               }),
               expectedStatusCode: 201,
             })
-            completeResult = await getResult(aspectResultId)
+            completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
@@ -1751,7 +1764,7 @@ describe('Device API routes for GxAlert Device', () => {
               }),
               expectedStatusCode: 200,
             })
-            completeResult = await getResult(aspectResultId)
+            completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
               resultCategory1: 'Detected',
               resultCategory2: 'NoResult',
