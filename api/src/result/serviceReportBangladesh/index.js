@@ -139,43 +139,40 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   // )
   // `
 
-  const baseQuery = knex('Result as r')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('Site as s', 's.id', 'r.siteId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    /**
-     * join to `DeviceCapacity` to count number of modules per device
-     */
-    .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
-    .leftJoin('ResultCategoryAssay as rca1', function () {
-      this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
-    })
-    .leftJoin('ResultCategoryAssay as rca2', function () {
-      this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
-    /**
-     * better and faster to use joins with Sample/SampleType tables to get sample types for
-     * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
-     * and because of that read sample type directly from
-     * r.resultData ->> '$.customFieldData."1211".value'
-     */
-    // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
-    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
-    .modify(addConstraints, dataConstraints, {
-      device: 'd',
-      site: 's',
-      geography: 'g',
-      assay: 'a',
-      result: 'r',
-    })
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
-
   return {
-    drTb10AData: baseQuery
-      .clone()
+    drTb10AData: knex('Result as r')
+      .innerJoin('Device as d', 'r.deviceId', 'd.id')
+      .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+      .innerJoin('Assay as a', 'r.assayId', 'a.id')
+      .leftOuterJoin('Site as s', 's.id', 'r.siteId')
+      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+      /**
+       * join to `DeviceCapacity` to count number of modules per device
+       */
+      .leftOuterJoin('DeviceCapacity as dc', 'd.deviceCapacityId', 'dc.id')
+      .leftJoin('ResultCategoryAssay as rca1', function () {
+        this.on('r.assayId', 'rca1.assayId').andOn('r.resultCategory1', 'rca1.resultCategoryId')
+      })
+      .leftJoin('ResultCategoryAssay as rca2', function () {
+        this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
+      })
+      /**
+       * better and faster to use joins with Sample/SampleType tables to get sample types for
+       * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
+       * and because of that read sample type directly from
+       * r.resultData ->> '$.customFieldData."1211".value'
+       */
+      // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+      // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+      .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
+      .modify(addConstraints, dataConstraints, {
+        device: 'd',
+        site: 's',
+        geography: 'g',
+        assay: 'a',
+        result: 'r',
+      })
+      .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
       .modify(filterParams, query, {
         countryId: 'g.countryId',
         stateId: 'g.stateId',
@@ -185,7 +182,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .select(
         'r.deviceId',
         knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
-        knex.raw(`GROUP_CONCAT(DISTINCT r.referringSiteId) as referringSiteIds`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         /**
          * Notice that we below group by `deviceId`
@@ -779,28 +775,46 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         /**
          * cnt_Xdr_Total_Tests is calculated in the code
          */
-        // cnt_Xdr_Total_Tests: --> see func `getDataForSheet1or2` below
+        // cnt_Xdr_Total_Tests: --> see func `getQueryForXdrCountsByReferringSiteIds` below
       }),
-    getQueryForXdrCountsBySiteIds: siteIds =>
-      baseQuery
-        .clone()
+    getQueryForXdrCountsByReferringSiteIds: siteIds =>
+      knex('Result as r')
         /**
-         * narrow base query to XDR assays only
+         * use same inner joins as in main query
          */
-        .whereIn('a.id', [assayIds.GxMtbXdr])
-        .whereIn('s.id', siteIds)
-        .select(
-          knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
-        )
+        .innerJoin('Device as d', 'r.deviceId', 'd.id')
+        .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+        .innerJoin('Assay as a', 'r.assayId', 'a.id')
+        /**
+         * better and faster to use joins with Sample/SampleType tables to get sample types for
+         * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
+         * and because of that - below we read sample type directly from
+         * r.resultData ->> '$.customFieldData."1211".value'
+         */
+        // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+        // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+        /**
+         * limit to only Xdr results
+         */
+        .where('a.id', assayIds.GxMtbXdr)
+        /**
+         * use only value of Date filter and skip all other filters and constraints
+         * applied to main query `drTb10AData` above
+         */
+        .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+        /**
+         * this is a main condition for counting number of results - referringSiteId should point
+         * to our sites, but result's siteId should not be among our sites
+         */
+        .whereIn('r.referringSiteId', siteIds)
+        .whereNotIn('r.siteId', siteIds)
+        /**
+         * get `sampleType` from the same place as in main query
+         */
+        .select(knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`))
         .groupBy('sampleType')
         .count({
-          /**
-           * use same condition as for field `cnt_Xdr_Tested_From_Eligible`,
-           * or may count directly as 
-           *    cnt_Xdr_Total_Tests: knex.raw(`DISTINCT r.id`)
-           * because `where` clause already limits data by Xdr assays only
-           */
-          cnt_Xdr_Total_Tests: counter('r.id', `${assayXdr}`),
+          cnt_Xdr_Total_Tests: knex.raw(`DISTINCT r.id`),
         }),
   }
 }
@@ -821,7 +835,7 @@ async function getDataForReportDrTb10A(auth, query, options) {
     dateFrom = subMonths(dateTo, 1)
   }
 
-  const { drTb10AData, getQueryForXdrCountsBySiteIds } = await reportDrTb10ABaseQuery(auth, query)
+  const { drTb10AData, getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
   let data = await drTb10AData
 
   sharedResults[nameOfSharedData] = data
@@ -832,10 +846,10 @@ async function getDataForReportDrTb10A(auth, query, options) {
     { stateId, lgaId, siteName }, // props from query
     {
       /**
-       * for 1st worksheet use only sample type != `Stool` (see 2nd worksheet for `Stool`)
+       * for 1st worksheet use only sample type = `Pulmonary` (Sputum) (see 2nd worksheet for `Stool`)
        */
       condition: sampleType => sampleType === 'Pulmonary',
-      getQueryForXdrCountsBySiteIds,
+      getQueryForXdrCountsByReferringSiteIds,
     }
   )
 
@@ -851,7 +865,7 @@ async function getDataForSheet1or2(
   rawData,
   { userName, cell, phone, email },
   { stateId, lgaId, siteName },
-  { condition, getQueryForXdrCountsBySiteIds }
+  { condition, getQueryForXdrCountsByReferringSiteIds }
 ) {
   let item
   const [first] = rawData || []
@@ -876,15 +890,13 @@ async function getDataForSheet1or2(
   }
 
   let allSiteIds = []
-  let allReferringSiteIds = []
   _.forEach(
     rawData?.filter(it => condition(it.sampleType)),
-    ({ deviceId, siteIds, referringSiteIds, ...rest }) => {
+    ({ deviceId, siteIds, ...rest }) => {
       /**
        *
        */
       allSiteIds = [...allSiteIds, ...convertCsvToArrayOfNumbers(siteIds)]
-      allReferringSiteIds = [...allReferringSiteIds, ...convertCsvToArrayOfNumbers(referringSiteIds)]
       /**
        * Increment all counters for current deviceId
        */
@@ -897,8 +909,10 @@ async function getDataForSheet1or2(
       item.devices.add(deviceId)
     }
   )
-  const uniqueSiteIds = [...new Set(allSiteIds)]
-  const uniqueReferringSiteIds = [...new Set(allReferringSiteIds)]
+  /**
+   * unique site id's
+   */
+  allSiteIds = [...new Set(allSiteIds)]
 
   /**
    * cnt_Xdr_Total_Tests = cnt_Xdr_Tested_From_Eligible + (cnt_Xdr_Total_Tests from other sites)
@@ -907,12 +921,11 @@ async function getDataForSheet1or2(
   /**
    * list of site id's which are in ReferringSiteIds but not in SiteIds
    */
-  const refSiteIds = uniqueReferringSiteIds.filter(siteId => !uniqueSiteIds.includes(siteId))
-  if (!_.isEmpty(refSiteIds)) {
+  if (!_.isEmpty(allSiteIds)) {
     /**
      *
      */
-    const rawRefData = await getQueryForXdrCountsBySiteIds(refSiteIds)
+    const rawRefData = await getQueryForXdrCountsByReferringSiteIds(allSiteIds)
     _.forEach(
       rawRefData?.filter(it => condition(it.sampleType)),
       it => {
@@ -950,7 +963,7 @@ async function getDataForSheet1or2(
 async function getDataForReportDrTb10AStool(auth, query, options) {
   const { sharedResults, useNamedData } = options
 
-  const { getQueryForXdrCountsBySiteIds } = await reportDrTb10ABaseQuery(auth, query)
+  const { getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
   let data = sharedResults[useNamedData]
 
   const { stateId, lgaId, siteName } = query
@@ -965,7 +978,7 @@ async function getDataForReportDrTb10AStool(auth, query, options) {
        * for 2nd worksheet use only sample type `Stool`
        */
       condition: sampleType => sampleType === 'Stool',
-      getQueryForXdrCountsBySiteIds,
+      getQueryForXdrCountsByReferringSiteIds,
     }
   )
 
