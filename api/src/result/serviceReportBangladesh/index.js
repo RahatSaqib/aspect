@@ -125,19 +125,19 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
 
-  // const whereMtbDetected = `
-  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'MTB') IS NOT NULL
+  // // const whereMtbDetected = `
+  // //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'MTB') IS NOT NULL
+  // // `
+  // const whereXdrDetected = `
+  // (
+  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'INH') IS NOT NULL OR
+  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'FLQ') IS NOT NULL OR
+  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'AMK') IS NOT NULL OR
+  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'KAN') IS NOT NULL OR
+  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'CAP') IS NOT NULL OR
+  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'ETH') IS NOT NULL
+  // )
   // `
-  const whereXdrDetected = `
-  (
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'INH') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'FLQ') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'AMK') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'KAN') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'CAP') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'ETH') IS NOT NULL
-  )
-  `
 
   const baseQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -155,8 +155,14 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
     .leftJoin('ResultCategoryAssay as rca2', function () {
       this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
     })
-    .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-    .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+    /**
+     * better and faster to use joins with Sample/SampleType tables to get sample types for
+     * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
+     * and because of that read sample type directly from
+     * r.resultData ->> '$.customFieldData."1211".value'
+     */
+    // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+    // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -178,7 +184,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       })
       .select(
         'r.deviceId',
-        'sp.sampleTypeId',
+        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.referringSiteId) as referringSiteIds`),
         knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         /**
@@ -190,7 +196,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           ROUND(IFNULL(dc.dailyCapacity, 12) / 2, 0) as cntModules
         `)
       )
-      .groupBy('r.deviceId', 'sp.sampleTypeId')
+      .groupBy('r.deviceId', 'sampleType')
       /**
        * get total results per each device per period
        *
@@ -783,11 +789,16 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          */
         .whereIn('a.id', [assayIds.GxMtbXdr])
         .whereIn('s.id', siteIds)
-        .select('sp.sampleTypeId')
-        .groupBy('sp.sampleTypeId')
+        .select(
+          knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        )
+        .groupBy('sampleType')
         .count({
           /**
-           * same condition as for field `cnt_Xdr_Tested_From_Eligible`
+           * use same condition as for field `cnt_Xdr_Tested_From_Eligible`,
+           * or may count directly as 
+           *    cnt_Xdr_Total_Tests: knex.raw(`DISTINCT r.id`)
+           * because `where` clause already limits data by Xdr assays only
            */
           cnt_Xdr_Total_Tests: counter('r.id', `${assayXdr}`),
         }),
@@ -815,7 +826,6 @@ async function getDataForReportDrTb10A(auth, query, options) {
 
   sharedResults[nameOfSharedData] = data
 
-  const sampleTypeIds = await allSampleTypeToId()
   data = await getDataForSheet1or2(
     data,
     { userName, cell, phone, email }, // current user props
@@ -824,7 +834,7 @@ async function getDataForReportDrTb10A(auth, query, options) {
       /**
        * for 1st worksheet use only sample type != `Stool` (see 2nd worksheet for `Stool`)
        */
-      condition: sampleTypeId => sampleTypeId !== sampleTypeIds.Stool,
+      condition: sampleType => sampleType === 'Pulmonary',
       getQueryForXdrCountsBySiteIds,
     }
   )
@@ -868,7 +878,7 @@ async function getDataForSheet1or2(
   let allSiteIds = []
   let allReferringSiteIds = []
   _.forEach(
-    rawData?.filter(it => condition(it.sampleTypeId)),
+    rawData?.filter(it => condition(it.sampleType)),
     ({ deviceId, siteIds, referringSiteIds, ...rest }) => {
       /**
        *
@@ -904,7 +914,7 @@ async function getDataForSheet1or2(
      */
     const rawRefData = await getQueryForXdrCountsBySiteIds(refSiteIds)
     _.forEach(
-      rawRefData?.filter(it => condition(it.sampleTypeId)),
+      rawRefData?.filter(it => condition(it.sampleType)),
       it => {
         item.cnt_Xdr_Total_Tests += it.cnt_Xdr_Total_Tests
       }
@@ -946,8 +956,6 @@ async function getDataForReportDrTb10AStool(auth, query, options) {
   const { stateId, lgaId, siteName } = query
   const { userName, cell, phone, email } = await getUser(auth.credentials.name)
 
-  const sampleTypeIds = await allSampleTypeToId()
-
   data = await getDataForSheet1or2(
     data,
     { userName, cell, phone, email }, // current user props
@@ -956,7 +964,7 @@ async function getDataForReportDrTb10AStool(auth, query, options) {
       /**
        * for 2nd worksheet use only sample type `Stool`
        */
-      condition: sampleTypeId => sampleTypeId === sampleTypeIds.Stool,
+      condition: sampleType => sampleType === 'Stool',
       getQueryForXdrCountsBySiteIds,
     }
   )
