@@ -366,7 +366,7 @@ async function upsertJobFunctionPermission(knex, jobFunctionId, jobPermissions, 
 }
 
 async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken) {
-  const device = await ensureCountryLevelInformationSystemExists(
+  const { device, geographyId } = await ensureCountryLevelInformationSystemExists(
     knex,
     countryId,
     partnerId,
@@ -382,7 +382,7 @@ async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, devi
     token: deviceApiToken,
     revoked: 0,
     partnerId,
-    geographyId: device.geographyId,
+    geographyId,
     deviceId: device.id,
   }
   const { id: gxAlertDeviceApiKeyId } =
@@ -454,7 +454,7 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
     })
     device.id = deviceId
   }
-  return device
+  return { device, geographyId: countryGeographyId }
 }
 
 async function upsertGeneXpertDeviceTypeAndAssays(

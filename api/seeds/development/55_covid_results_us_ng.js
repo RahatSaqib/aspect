@@ -63,7 +63,7 @@ async function seed(knex) {
     .where({ 'd.partnerId': partnerId })
     .whereIn('c.a3', ['USA', 'NGA'])
     .whereIn('dt.externalId', ['AbbottM2000', 'CepheidGeneXpert'])
-    .select('d.*', 'c.a3')
+    .select('d.*', 'c.a3', 's.geographyId')
 
   const covidAssays = await knex('Assay as a')
     .whereIn('a.externalId', ['abbottM2000DaanNCOVID19', 'assayGXCovid19'])

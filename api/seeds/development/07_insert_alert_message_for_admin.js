@@ -59,7 +59,7 @@ async function seed(knex) {
     .join('Country as c', 'g.countryId', 'c.id')
     .where('c.a3', 'USA')
     .where('dtc.name', 'Lab')
-    .select('d.*')
+    .select('d.*', 's.geographyId')
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
   const issueStatusResolvedId = await getId(knex, 'IssueStatus', 'Resolved')
   const issueStatusAcknowledgedId = await getId(knex, 'IssueStatus', 'Acknowledged')

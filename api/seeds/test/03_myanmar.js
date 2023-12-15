@@ -470,7 +470,10 @@ async function seed(knex) {
   await seedNotificationTypes(knex, baseProps)
 
   // Fill Issue/AlertMessage/Notification table with some mock data
-  const devices = await knex('Device').where({ partnerId })
+  const devices = await knex('Device as d')
+    .join('Site as s', 'd.siteId', 's.id')
+    .where('d.partnerId', partnerId)
+    .select('d.*', 's.geographyId')
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
   const issueStatusAcknowledgedId = await getId(knex, 'IssueStatus', 'Acknowledged')
   const issueStatusOkId = await getId(knex, 'IssueStatus', 'OK')
