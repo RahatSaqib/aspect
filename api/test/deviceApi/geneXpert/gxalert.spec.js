@@ -1478,7 +1478,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
 
       describe('and the result HAS coordinates specified in the payload', () => {
-        it(/* .only */ 'should set the the GPS coordinates of the ones specified in the payload and the geography to that of the site that the result came from', async () => {
+        it('should set the the GPS coordinates of the ones specified in the payload and the geography to that of the site that the result came from', async () => {
           const now = new Date()
           const siteLatitude = Math.random() * 360
           const siteLongitude = Math.random() * 360

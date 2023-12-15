@@ -114,9 +114,8 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now, isFastImp
       const { timeZone: defaultTimeZone } =
         (await knex('Site as s')
           .join('Geography as g', 's.geographyId', 'g.id')
-          .join('Country as c', 'c.id', 'g.countryId')
-          .where('g.id', existingDevice.geographyId)
-          .orWhere('s.id', existingDevice.siteId)
+          .join('Country as c', 'g.countryId', 'c.id')
+          .where('s.id', existingDevice.siteId)
           .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
         (await knex('Country as c').first('c.timezone as timeZone'))
       const { existingTimeZone } = (await knex('TimeZone')
@@ -142,7 +141,11 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now, isFastImp
         )
     }
   }
-  return knex('Device as d').where({ 'd.id': deviceId }).first()
+  return knex('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .where({ 'd.id': deviceId })
+    .first('d.*', 'g.id as geographyId')
 }
 
 async function getDeviceConfiguration(knex, deviceId) {
