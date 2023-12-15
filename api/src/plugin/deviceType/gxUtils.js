@@ -355,7 +355,6 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
             if (currentDeviceGeography.siteId) {
               siteUpdateDetails.geographyId = newGeography.id
             }
-            deviceDetails.geographyId = newGeography.id
           }
         }
         if (!_.isUndefined(latitude) && currentDeviceGeography.latitude !== latitude) {
