@@ -10,12 +10,7 @@ const config = require('../../src/config')
 const southAfricaLabClinic = require('./fixtures/southAfricaLabClinic.json')
 const { rowsAsObject } = require('../utils')
 const { seedNotifications } = require('../utils_sa_nhls')
-const {
-  allResultCategoryToId,
-  allResultWorkflowStatusToId,
-  resultTypeToId,
-  deviceTypeToId,
-} = require('../../src/shared/dictionary')
+const { allResultCategoryToId, allResultWorkflowStatusToId, resultTypeToId } = require('../../src/shared/dictionary')
 const { createUniqueIdForResult } = require('../../src/result/service')
 const { parseDateOrDefault } = require('../../src/shared/date')
 

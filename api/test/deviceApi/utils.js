@@ -195,7 +195,7 @@ async function createDevice(
 ) {
   const now = new Date()
 
-  const { geographyId, partnerId } = await knex('Site as s').where({ id: siteId }).first()
+  const { partnerId } = await knex('Site as s').where({ id: siteId }).first()
 
   const deviceTypeId = await deviceTypeToId(type)
 
