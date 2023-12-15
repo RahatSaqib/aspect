@@ -46,7 +46,7 @@ describe('Issue based Notifications triggers', () => {
     // the cache should be reseted just for the test and because we are manually inserting data directly into the db.
     await server.post('/api/notification/clearcache').set('Authorization', `Bearer${shared.token}`)
     const { partnerId, deviceId, siteId, geographyId } = await knex('Device as d')
-      .join('Site as s')
+      .join('Site as s', 'd.siteId', 's.id')
       .where('d.name', 'Daktari Wayne, OH')
       .first('d.partnerId', 'd.id as deviceId', 'siteId', 's.geographyId')
     ;[insertedIssueId] = await knex('Issue').insert({
