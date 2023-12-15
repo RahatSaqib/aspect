@@ -1819,7 +1819,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
             .where({ partnerId, serial: device.serial })
             .first(
               'id',
-              'geographyId',
               'siteId',
               'deviceTypeId',
               'name',
@@ -1858,7 +1857,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
               deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
             }
             if (
-              existingDevice.geographyId !== siteGeographyId ||
               existingDevice.siteId !== siteId ||
               existingDevice.deviceTypeId !== deviceTypeId ||
               existingDevice.name !== device.name ||
@@ -1871,7 +1869,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
               await knex('Device')
                 .where('id', existingDevice.id)
                 .update({
-                  geographyId: siteGeographyId,
                   siteId,
                   deviceTypeId: await deviceTypeToId(device.deviceType),
                   name: device.name,
