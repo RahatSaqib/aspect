@@ -108,6 +108,7 @@ const result1CategoryMapping = {
   'presumptive positive': 'PresumptivePositive',
   'presumptive pos': 'PresumptivePositive',
   '@label_result_presumptive_positive': 'PresumptivePositive',
+  '@label_result_presumptive_pos': 'PresumptivePositive',
   'presumptive posit': 'PresumptivePositive',
   'presuntivo positivo': 'PresumptivePositive',
   'предположительный положительный': 'PresumptivePositive',
@@ -295,7 +296,8 @@ const mapResultCategory2 = (assayExternalId, resultTextValues) => {
 function getVLCopies(result1Text) {
   if (result1Text && !result1Text.includes('< 40')) {
     const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
-    const arr = regex.exec(result1Text.replace('HIV-1', ''))
+    const text = result1Text.replace('HIV-1', '').replace('@label_quant1_result_normal_log', '')
+    const arr = regex.exec(text)
 
     return arr ? parseFloat(arr[0]) : null
   }

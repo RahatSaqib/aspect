@@ -140,6 +140,7 @@ async function onDeviceSeen({ deviceId }, { messageContext }) {
           .orWhereRaw('fdf.offline = 1 and (fdf.updatedOn <= IFNULL(d.lastSeenOn, fdf.updatedOn))')
       })
       .first('d.id')
+
     if (offlineDevice != null) {
       context.deviceOnline(offlineDevice.id)
     }
@@ -202,6 +203,9 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
+// ----------------------------------------------
+// This function is triggered by scheduler, and checks stock for all sites
+// ----------------------------------------------
 async function onFactCheckInventoryStock(action, { messageContext }) {
   const context = messageContext.bindActionCreators({
     inventoryStockout,
