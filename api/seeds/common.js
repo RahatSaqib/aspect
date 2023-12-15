@@ -1568,7 +1568,6 @@ async function seedLabClinicFixture(
           if (_.isEmpty(deviceData)) {
             const lastDeviceActivity = now
             deviceData.partnerId = partnerId
-            deviceData.geographyId = siteData.geographyId
             deviceData.siteId = siteData.id
             const { id: deviceTypeId } = await knex('DeviceType')
               .where('externalId', device.deviceTypeId || 'CepheidGeneXpert')
