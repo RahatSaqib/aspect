@@ -166,7 +166,10 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     const [deviceId] = await knex('Device').insert({
       ..._.omit(device, ['id']),
     })
-    device = await knex('Device').where('id', deviceId).first('id', 'partnerId', 'geographyId', 'siteId')
+    device = await knex('Device as d')
+      .leftJoin('Site as s', 's.id', 'd.siteId')
+      .where('d.id', deviceId)
+      .first('d.id', 'd.partnerId', 's.geographyId', 'd.siteId')
 
     const getResultCategoryId = isDetected => {
       return isDetected ? resultCategoryDetectedId : resultCategoryNotDetectedId
