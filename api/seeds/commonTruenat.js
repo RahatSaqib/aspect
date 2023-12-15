@@ -227,9 +227,6 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
       if (truenatDevice.deviceShortName && existingTruenatDevice.shortName !== truenatDevice.deviceShortName) {
         deviceUpdates.shortName = truenatDevice.deviceShortName
       }
-      if (geographyId && existingTruenatDevice.geographyId !== geographyId) {
-        deviceUpdates.geographyId = geographyId
-      }
       if (truenatLab.id && existingTruenatDevice.siteId !== truenatLab.id) {
         deviceUpdates.siteId = truenatLab.id
       }
