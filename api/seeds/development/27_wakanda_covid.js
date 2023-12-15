@@ -150,7 +150,6 @@ async function seed(knex) {
               deviceTypeId: deviceType.id,
               deviceApprovalId: deviceApprovalApprovedId,
               partnerId: labData.partnerId,
-              geographyId: labData.geographyId,
               siteId: labData.id,
               defaultReportableSiteId: labData.id,
               ...auditFields,

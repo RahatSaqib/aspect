@@ -3394,7 +3394,6 @@ async function seed(knex) {
         deviceTypeId: deviceTypeIdRouter,
         deviceApprovalId: deviceApprovalApproved,
         partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
         siteId: siteData.id,
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         createdOn: new Date(+now - 3 * i * millisInHour),
@@ -3481,7 +3480,6 @@ async function seed(knex) {
           latestGrabbedModifiedDate: '2021-12-15T19:17:18.143Z',
         }),
         partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
         siteId: siteData.id,
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         // not all sites will have a router - we only added routers to some site

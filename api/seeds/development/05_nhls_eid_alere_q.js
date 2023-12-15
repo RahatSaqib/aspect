@@ -107,7 +107,6 @@ async function seed(knex) {
     deviceTypeId: deviceTypes.AlereFtpConnector.id,
     deviceApprovalId: approvedDeviceApprovalId,
     partnerId,
-    geographyId: southAfricaGeographyId,
     siteId: southAfricaNhlsAlereFtpConnectorSiteId,
     ...auditFields,
   })
@@ -189,23 +188,21 @@ async function seed(knex) {
       siteIds[clinic.shortName] = siteId
 
       if (clinic.devices) {
-        await Promise.all(
-          _.map(clinic.devices, async device =>
-            knex('Device').insert({
-              partnerId,
-              geographyId: clinicGeographyId,
-              siteId,
-              deviceTypeId: await deviceTypeToId(device.deviceTypeId),
-              deviceApprovalId: await deviceApprovalToId('approved'),
-              name: `${siteData.shortName} ${device.deviceTypeId}`,
-              shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
-              serial: device.deviceSerial,
-              culture: southAfricaCountry.culture,
-              timezone: siteData.timezoneId,
-              configurationData: '{}',
-              ...auditFields,
-            })
-          )
+        const deviceApprovedId = await deviceApprovalToId('approved')
+        await knex('Device').insert(
+          clinic.devices.map(device => ({
+            partnerId,
+            siteId,
+            deviceTypeId: deviceTypes.AlereQ.id,
+            deviceApprovalId: deviceApprovedId,
+            name: `${siteData.shortName} ${device.deviceTypeId}`,
+            shortName: `${device.deviceTypeId} ${device.deviceSerial}`,
+            serial: device.deviceSerial,
+            culture: southAfricaCountry.culture,
+            timezone: siteData.timezoneId,
+            configurationData: '{}',
+            ...auditFields,
+          }))
         )
       }
     })
@@ -541,7 +538,6 @@ async function seed(knex) {
   const { id: cmjahDeviceId, serial: cmjahDeviceSerial } = await knex('Device')
     .where({
       partnerId,
-      geographyId: cmjahGeographyId,
       siteId: cmjahSiteId,
     })
     .first('id', 'serial')

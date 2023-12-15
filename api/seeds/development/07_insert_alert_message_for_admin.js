@@ -34,7 +34,6 @@ async function seed(knex) {
     const site = _.sample(sites)
     await knex('Device').insert({
       partnerId: site.partnerId,
-      geographyId: site.geographyId,
       siteId: site.id,
       deviceTypeId: deviceType.id,
       deviceApprovalId,
