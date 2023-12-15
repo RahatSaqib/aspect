@@ -26,14 +26,9 @@ async function preProcessAddDeviceData(context) {
     .where('deviceId', alereDevice.id)
     .orderBy('startedOn', 'desc')
     .first('startedOn')) || { startedOn: null }
-  if (
-    alereDevice.siteId !== site.id ||
-    alereDevice.geographyId !== site.geographyId ||
-    alereDevice.putInService !== firstTestDate
-  ) {
+  if (alereDevice.siteId !== site.id || alereDevice.putInService !== firstTestDate) {
     await knex.from('Device').where({ id: alereDevice.id }).update({
       siteId: site.id,
-      geographyId: site.geographyId,
       putInService: firstTestDate,
       updatedOn: now,
       updatedBy: null,
