@@ -763,7 +763,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          */
         // cnt_Xdr_Total_Tests: --> see func `getQueryForXdrCountsByReferringSiteIds` below
       }),
-    getQueryForXdrCountsByReferringSiteIds: sampleType => siteIds =>
+    getQueryForXdrCountsByReferringSiteIds: (siteIds, sampleType) =>
       knex('Result as r')
         /**
          * use same inner joins as in main query
@@ -789,23 +789,15 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          */
         .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
         /**
-         * this is a main condition for counting number of results - referringSiteId should point
-         * to our sites, but result's siteId should not be among our sites
+         * condition is "referringSiteId should point
+         * to our sites, but result's siteId should not be among our sites"
          */
         .whereIn('r.referringSiteId', siteIds)
         .whereNotIn('r.siteId', siteIds)
-        /**
-         * get `sampleType` from the same place as in main query
-         */
-        .select(knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`))
-        .groupBy('sampleType')
-        .havingRaw(`sampleType = '${sampleType}'`)
+        .where(knex.raw(`r.resultData ->> '$.customFieldData."1211".value' = '${sampleType}'`))
         .count({
           cnt_Xdr_Total_Tests: knex.raw(`DISTINCT r.id`),
         })
-        /**
-         * we are grouping by a single sampleType - so return a single object instead of array with 1 entry
-         */
         .first(),
   }
 }
@@ -837,10 +829,10 @@ async function getDataForReportDrTb10A(auth, query, options) {
     { stateId, lgaId, siteName }, // props from query
     {
       /**
-       * for 1st worksheet use only sample type = `Pulmonary` (Sputum) (see 2nd worksheet for `Stool`)
+       * 1st worksheet shows only sample type = `Pulmonary` (Sputum)
        */
-      condition: sampleType => sampleType === 'Pulmonary',
-      queryByReferringSites: getQueryForXdrCountsByReferringSiteIds('Pulmonary'),
+      sampleType: 'Pulmonary',
+      getQueryForXdrCountsByReferringSiteIds,
     }
   )
 
@@ -856,7 +848,7 @@ async function getDataForSheet1or2(
   rawData,
   { userName, cell, phone, email },
   { stateId, lgaId, siteName },
-  { condition, queryByReferringSites }
+  { sampleType, getQueryForXdrCountsByReferringSiteIds }
 ) {
   let item
   const [first] = rawData || []
@@ -882,7 +874,7 @@ async function getDataForSheet1or2(
 
   let allSiteIds = []
   _.forEach(
-    rawData?.filter(it => condition(it.sampleType)),
+    rawData?.filter(it => it.sampleType === sampleType),
     ({ deviceId, siteIds, ...rest }) => {
       /**
        *
@@ -913,7 +905,7 @@ async function getDataForSheet1or2(
    * get number of results from other sites which are referring sites in main query
    */
   if (!_.isEmpty(allSiteIds)) {
-    const it = await queryByReferringSites(allSiteIds)
+    const it = await getQueryForXdrCountsByReferringSiteIds(allSiteIds, sampleType)
     item.cnt_Xdr_Total_Tests += it?.cnt_Xdr_Total_Tests || 0
   }
 
@@ -958,10 +950,10 @@ async function getDataForReportDrTb10AStool(auth, query, options) {
     { stateId, lgaId, siteName }, // props from query
     {
       /**
-       * for 2nd worksheet use only sample type `Stool`
+       * 2nd worksheet shows only sample type `Stool`
        */
-      condition: sampleType => sampleType === 'Stool',
-      queryByReferringSites: getQueryForXdrCountsByReferringSiteIds('Stool'),
+      sampleType: 'Stool',
+      getQueryForXdrCountsByReferringSiteIds,
     }
   )
 
