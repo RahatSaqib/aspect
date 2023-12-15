@@ -1429,25 +1429,31 @@ describe('Device API routes for GxAlert Device', () => {
       })
 
       describe('and the result has NO coordinates specified in the payload', () => {
-        it('should set the the GPS coordinates and geography of the result to those of the site/device', async () => {
+        it('should set the the GPS coordinates of the result to those of the site/device', async () => {
           const now = new Date()
           const latitude = Math.random() * 360
           const longitude = Math.random() * 360
           const geneXpertDevice = await getCurrentGeneXpertDevice()
           const { id: geographyId } = await knex('Geography as g')
-            .join('Country as c')
+            .join('Country as c', 'g.countryId', 'c.id')
             .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
             .whereNotNull('g.stateId')
             .whereNotNull('g.lgaId')
             .first('g.id')
+
           await knex('Site').where({ id: geneXpertDevice.siteId }).update({ latitude, longitude, geographyId })
+
           const gpsCoordsMissingResultId = 'UNIQUE-ID-WITHOUT-GPS-COORDS'
           const testStartedOn = setMilliseconds(
             subMinutes(subHours(now, Math.floor(Math.random() * 24)), Math.floor(Math.random() * 60)),
             0
           )
           const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-          await postToDeviceApi({
+          const {
+            body: {
+              result: { id: resultId },
+            },
+          } = await postToDeviceApi({
             authHeader: deviceAuth,
             payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
               result: {
@@ -1458,9 +1464,12 @@ describe('Device API routes for GxAlert Device', () => {
             }),
           })
 
-          const lastResult = await getLastResult()
+          const result = await knex('Result as r')
+            .innerJoin('Site as s', 'r.siteId', 's.id')
+            .where('r.id', resultId)
+            .first('r.latitude', 'r.longitude', 's.geographyId')
           const resultSite = await knex('Site').where({ id: geneXpertDevice.siteId }).first()
-          expect(lastResult).to.containSubset({
+          expect(result).to.containSubset({
             latitude: resultSite.latitude,
             longitude: resultSite.longitude,
             geographyId: resultSite.geographyId,
@@ -1469,13 +1478,13 @@ describe('Device API routes for GxAlert Device', () => {
       })
 
       describe('and the result HAS coordinates specified in the payload', () => {
-        it('should set the the GPS coordinates of the ones specified in the payload and the geography to that of the site that the result came from', async () => {
+        it(/* .only */ 'should set the the GPS coordinates of the ones specified in the payload and the geography to that of the site that the result came from', async () => {
           const now = new Date()
           const siteLatitude = Math.random() * 360
           const siteLongitude = Math.random() * 360
           const geneXpertDevice = await getCurrentGeneXpertDevice()
           const { id: geographyId } = await knex('Geography as g')
-            .join('Country as c')
+            .join('Country as c', 'g.countryId', 'c.id')
             .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
             .whereNotNull('g.stateId')
             .whereNotNull('g.lgaId')

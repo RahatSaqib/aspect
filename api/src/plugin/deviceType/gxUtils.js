@@ -397,8 +397,8 @@ async function findDevices(availableDeviceDetails, knex) {
   const deviceQuery = knex
     .from('Device as d')
     .leftJoin('Site as s', 's.id', 'd.siteId')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .innerJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
