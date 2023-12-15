@@ -121,7 +121,6 @@ async function getDeviceStatusOverTime(auth, query) {
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
-    .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
