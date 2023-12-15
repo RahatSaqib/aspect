@@ -559,6 +559,7 @@ function processUsingDynamicHelpers(template, ds) {
     .replace(/{{\s*(device.daysToCalibrationDueDate)\s*}}/g, (_str, _match) => {
       return `\${openMustaches}daysBeforeToday device.calibrationDueDate \${closeMustaches}`
     })
+    .replace(/{{\s*(report.downloadLink)\s*}}/g, '{{{report.downloadLink}}}')
     .replace(/{{[^}]+customFields\.([^}]*)}}/g, `{{ defaultTo result.$1 'N/A' }}`)
 
   let message = processUsingHandlebarsSyntax(dynamicTemplate, ds)
