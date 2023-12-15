@@ -24,7 +24,7 @@ const AppWithProviders = ({ children }) => {
 
   return (
     <JssProvider jss={jss}>
-      <I18nProvider>
+      <I18nProvider timezoneId={timezoneId}>
         <ThemeProvider theme={getTheme(culture)}>
           <LocalStorage
             access={access}

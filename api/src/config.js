@@ -18,7 +18,7 @@ module.exports = {
   environment: process.env.NODE_ENV,
   countryName: process.env.countryName || 'DEV',
   db: {
-    connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 10,
+    connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 100,
     host: process.env['db.host'],
     user: process.env['db.user'],
     port: process.env['db.port'] || 3306,

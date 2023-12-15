@@ -62,7 +62,7 @@ const buildWidgetParams = (link, linkParams) => {
 const buildDateRange = term => {
   let dateRange
   const {
-    DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE },
+    DATE_RANGE_KEYS: { MIN_DATE, MAX_DATE, FIXED_MIN_DATE, FIXED_MAX_DATE },
   } = DATE_CONSTS
   switch (true) {
     case term === 'last30Days':
@@ -72,10 +72,24 @@ const buildDateRange = term => {
       }
       break
 
+    case term === 'fixedLast30Days':
+      dateRange = {
+        [FIXED_MIN_DATE]: getTimePeriod(30, 'days', 'yyyy-MM-dd'),
+        [FIXED_MAX_DATE]: getTimePeriod(0, 'days', 'yyyy-MM-dd'),
+      }
+      break
+
     case term === 'currentMonth':
       dateRange = {
         [MIN_DATE]: getAllDaysInCurrentMonth().start,
         [MAX_DATE]: getAllDaysInCurrentMonth(true).end,
+      }
+      break
+
+    case term === 'fixedCurrentMonth':
+      dateRange = {
+        [FIXED_MIN_DATE]: getAllDaysInCurrentMonth().start,
+        [FIXED_MAX_DATE]: getAllDaysInCurrentMonth(true).end,
       }
       break
 

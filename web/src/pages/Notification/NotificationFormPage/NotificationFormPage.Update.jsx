@@ -82,7 +82,7 @@ const NotificationFormPage = ({ id, onSubmit }) => {
       webBody,
       sendToPatient: filter.sendToPatient,
       enabled: !!enabled,
-      persons: map(filter?.persons, p => `${p.personId}`),
+      persons: map(filter?.persons, p => p.personId),
       deviceLevelId: filter.deviceLevelId,
       areaItemsState: buildAreaItems(filter.deviceLevelId, 'state', filter.areaItems),
       areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
@@ -103,7 +103,7 @@ const NotificationFormPage = ({ id, onSubmit }) => {
         return {
           jobFunctionId: jf.id,
           checked: !!jfSaved,
-          tags: jfSaved ? jfSaved.tags.map(tag => ({ ...tag, value: `${tag.value}` })) : [],
+          tags: jfSaved ? jfSaved.tags : [],
         }
       }),
     }

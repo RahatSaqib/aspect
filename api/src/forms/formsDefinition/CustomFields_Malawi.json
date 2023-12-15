@@ -14,8 +14,7 @@
       "i18nKeyCaption": "MWSampleCollectionTimeI8nCaptionKey",
       "gxAlertDbColumn": "MWSampleCollectionTime",
       "completionWeight": 5,
-      "payloadOriginPath": "data.customFieldData.17.value",
-      "payloadDestinationPath": "patient.MWSampleCollectionTime"
+      "payloadOriginPath": "data.customFieldData.17.value"
     },
     {
       "id": 40,
@@ -31,8 +30,7 @@
       "i18nKeyCaption": "MWDateOfReceiptInTheLabI8nCaptionKey",
       "gxAlertDbColumn": "MWDateOfReceiptInTheLab",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.40.value",
-      "payloadDestinationPath": "patient.MWDateOfReceiptInTheLab"
+      "payloadOriginPath": "data.customFieldData.40.value"
     },
     {
       "id": 41,
@@ -48,8 +46,7 @@
       "i18nKeyCaption": "MWReceivedByI8nCaptionKey",
       "gxAlertDbColumn": "MWReceivedBy",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.41.value",
-      "payloadDestinationPath": "patient.MWReceivedBy"
+      "payloadOriginPath": "data.customFieldData.41.value"
     },
     {
       "id": 42,
@@ -65,8 +62,7 @@
       "i18nKeyCaption": "MWARTNumberI8nCaptionKey",
       "gxAlertDbColumn": "MWARTNumber",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.42.value",
-      "payloadDestinationPath": "patient.MWARTNumber"
+      "payloadOriginPath": "data.customFieldData.42.value"
     },
     {
       "id": 26,
@@ -82,8 +78,7 @@
       "i18nKeyCaption": "MWPatientPhoneI8nCaptionKey",
       "gxAlertDbColumn": "PatientPhone",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.26.value",
-      "payloadDestinationPath": "patient.PatientPhone"
+      "payloadOriginPath": "data.customFieldData.26.value"
     }
   ],
   "refForms": []

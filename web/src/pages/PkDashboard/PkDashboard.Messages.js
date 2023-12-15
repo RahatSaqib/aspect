@@ -186,9 +186,9 @@ const messages = {
       id: 'p.PkDashboard.rrtbNationalDiagnosisTrendsTitle',
       defaultMessage: 'National Rifampicin Resistance Diagnosis Trends',
     },
-    RRToTbTotalPercentage: {
-      id: 'p.PkDashboard.RRToTbTotalPercentage',
-      defaultMessage: 'RR To Tb Total Percentage',
+    rrToMtbPercentage: {
+      id: 'p.PkDashboard.rrToMtbPercentage',
+      defaultMessage: 'RR+ percentage of MTB+',
     },
     TbTotal: {
       id: 'p.PkDashboard.TbTotal',
@@ -196,7 +196,11 @@ const messages = {
     },
     rrDetected: {
       id: 'p.PkDashboard.rrDetected',
-      defaultMessage: 'RR Detected',
+      defaultMessage: 'RR+',
+    },
+    testsPerformed: {
+      id: 'p.PkDashboard.testsPerformed',
+      defaultMessage: 'Tests Performed',
     },
     provincialRRDiagnosisTrends: {
       id: 'p.PkDashboard.provincialRRDiagnosisTrends',

@@ -108,24 +108,13 @@ async function getListNotifications(query, credentials) {
     .leftOuterJoin('JobFunction AS jf', leftBuilder =>
       leftBuilder.on(
         knex.raw(
-          `JSON_SEARCH(
-                nti.filterCondition->>'$.jobFunctions[*].jobFunctionId',
-                'one',
-                jf.id
-              ) IS NOT NULL
-            `
+          `JSON_CONTAINS(JSON_EXTRACT(nti.filterCondition, '$.jobFunctions[*].jobFunctionId'), CAST(jf.id AS JSON))`
         )
       )
     )
     .leftOuterJoin('Person AS per', leftBuilder =>
       leftBuilder.on(
-        knex.raw(
-          ` JSON_SEARCH(
-              nti.filterCondition->>'$.persons[*].personId',
-              'one',
-              per.id
-            ) IS NOT NULL`
-        )
+        knex.raw(`JSON_CONTAINS(JSON_EXTRACT(nti.filterCondition, '$.persons[*].personId'), CAST(per.id AS JSON))`)
       )
     )
     .distinct('nti.id AS notificationTypeId', 'per.name AS personName', 'per.id as personId', 'jf.name AS jfName')
