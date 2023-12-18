@@ -261,7 +261,7 @@ async function onFactResultsDeviceByTimeFrame({ deviceId, options = {} }, { mess
             other: count.otherErrors,
           }
           errorCodes.forEach(errorCode => {
-            _.set(objCounts.errors, `${errorCode}`, count[`error${errorCode}`])
+            _.set(objCounts.errors, `${errorCode}`, count[`${errorCode}`])
           })
 
           const now = new Date()
