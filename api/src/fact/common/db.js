@@ -1,6 +1,6 @@
 function getBaseQueryForFactResultsDeviceByTimeFrame(
   knex,
-  { addConstraints, dataConstraints, filterParams, assay, query },
+  { addConstraints, dataConstraints, filterParams, assay, query, timeFrame = 'month' },
   opts
 ) {
   const { showDecommissionedDevices = false, showUnapprovedDevices = false } = opts || {}
@@ -60,7 +60,7 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
         qb.where('rc2.externalId', '=', query.resultCategory2)
       }
     })
-    .where('r.timeFrame', 'month')
+    .where('r.timeFrame', timeFrame)
     .sum('r.resultCount as cnt')
 }
 
