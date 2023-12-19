@@ -17,6 +17,8 @@ const ColumnGraph = ({
 }) => {
   const config = {
     data,
+    intervalPadding: 8,
+    dodgePadding: 0,
     color: colors || (datum => filterColour(data.find(d => d.type === datum.type).id, graphId)),
     label: showLabel
       ? {
