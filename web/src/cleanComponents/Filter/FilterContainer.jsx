@@ -16,7 +16,6 @@ const cardContentStyle = {
 }
 
 const FilterContainer = ({ children, state, setState, blocked }) => {
-const FilterContainer = ({ children, state, setState, blocked }) => {
   const { formatMessage } = useIntl()
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
