@@ -3,12 +3,12 @@ import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { StateSelect, LgaSelect, ColumnLineGraph, Loading, getTimePeriod } from '../../../../../cleanComponents'
+import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
-import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 
 const endpointParams = [
   { source: 'rrDetection' },
