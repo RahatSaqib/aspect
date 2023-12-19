@@ -374,7 +374,7 @@ const messages = defineMessages({
   AmkDetected: { id: 'legends.Unknown.AmkDetected', defaultMessage: 'AMK-R Detected' },
   KanDetected: { id: 'legends.Unknown.KanDetected', defaultMessage: 'KAN-R Detected' },
   EthDetected: { id: 'legends.Unknown.EthDetected', defaultMessage: 'ETH-R Detected' },
-  InhDetected: { id: 'legends.Unknown.CapDetected', defaultMessage: 'INH-R Detected' },
+  InhDetected: { id: 'legends.Unknown.InhDetected', defaultMessage: 'INH-R Detected' },
   CapDetected: { id: 'legends.Unknown.CapDetected', defaultMessage: 'CAP-R Detected' },
   FQRPercent: { id: 'legends.Unknown.FQRPercent', defaultMessage: 'FQ-R %' },
   INHPercent: { id: 'legends.Unknown.INHPercent', defaultMessage: 'INH-R %' },

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-12-04T14:31:09.352Z\n"
+"POT-Creation-Date: 2023-12-12T20:27:38.085Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -215,6 +215,20 @@ msgstr "AMK R %"
 msgid "AMK Resistance"
 msgstr "Опір АМК"
 
+#. [legends.Unknown.AMKPercent]
+#. defaultMessage is:
+#. AMK-R %
+#: extracted_strings.json
+msgid "AMK-R %"
+msgstr "AMK-R %"
+
+#. [legends.Unknown.AmkDetected]
+#. defaultMessage is:
+#. AMK-R Detected
+#: extracted_strings.json
+msgid "AMK-R Detected"
+msgstr "Виявлено AMK-R"
+
 #. [months.april]
 #. defaultMessage is:
 #. APR
@@ -333,9 +347,6 @@ msgstr "Деталі облікового запису"
 #. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
-#. [pages.TaskList.issueStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
 #: extracted_strings.json
 msgid "Acknowledged"
 msgstr "Визнано"
@@ -344,9 +355,6 @@ msgstr "Визнано"
 #. defaultMessage is:
 #. Active
 #. [component.Widget.activeDevicesTitle]
-#. defaultMessage is:
-#. Active
-#. [pages.TaskList.issueStatusActive]
 #. defaultMessage is:
 #. Active
 #. [pages.DeviceList.availabilityRate]
@@ -650,13 +658,6 @@ msgid ""
 msgstr ""
 "Всі результати тестів в системі. Один рядок на результат з усіма необхідними "
 "полями."
-
-#. [pages.TaskList.taskListOptionsAllTopics]
-#. defaultMessage is:
-#. All topics
-#: extracted_strings.json
-msgid "All topics"
-msgstr "Усі теми"
 
 #. [pages.ContactDetails.email2]
 #. defaultMessage is:
@@ -1221,6 +1222,21 @@ msgstr "Сповіщення про збірку"
 #: extracted_strings.json
 msgid "CAP Resistance"
 msgstr "CAP опір"
+
+#. [legends.Unknown.CAPPercent]
+#. defaultMessage is:
+#. CAP-R %
+#: extracted_strings.json
+#| msgid "FQ-R %"
+msgid "CAP-R %"
+msgstr "CAP-R %"
+
+#. [legends.Unknown.CapDetected]
+#. defaultMessage is:
+#. CAP-R Detected
+#: extracted_strings.json
+msgid "CAP-R Detected"
+msgstr "Виявлено CAP-R"
 
 #. [filter.AssayTypeSelectField.assayTypeCD4]
 #. defaultMessage is:
@@ -1836,9 +1852,6 @@ msgstr "Підтверджені випадки"
 #. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
-#. [pages.TaskList.taskListOptionsConnectivity]
-#. defaultMessage is:
-#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
@@ -1851,16 +1864,6 @@ msgstr "Підтверджені випадки"
 #: extracted_strings.json
 msgid "Connectivity"
 msgstr "Зв'язок"
-
-#. [pages.TaskList.issueCategoryConnectivityHealth]
-#. defaultMessage is:
-#. Connectivity Health
-#. [pages.TaskList.ConnectivityHealth]
-#. defaultMessage is:
-#. Connectivity Health
-#: extracted_strings.json
-msgid "Connectivity Health"
-msgstr "Здоров’я зв’язку"
 
 #. [filter.popover.connectorStatus]
 #. defaultMessage is:
@@ -2557,9 +2560,6 @@ msgstr "Панель управління"
 msgid "Dashboard v2"
 msgstr "Dashboard v2"
 
-#. [pages.TaskList.taskListOptionsData]
-#. defaultMessage is:
-#. Data
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
 #. Data
@@ -2577,15 +2577,19 @@ msgstr "Дані"
 msgid "Data Extract for Tableau"
 msgstr "Витяг даних для Tableau"
 
-#. [pages.TaskList.issueCategoryDataHealth]
+#. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
-#. Data Health
-#. [pages.TaskList.dataHealth]
-#. defaultMessage is:
-#. Data Health
+#. Data Visualisation For XDR Resistance Over Time
 #: extracted_strings.json
-msgid "Data Health"
-msgstr "Здоров’я даних"
+msgid "Data Visualisation For XDR Resistance Over Time"
+msgstr "Візуалізація даних про стійкість до XDR у часі"
+
+#. [p.PkDashboard.dataVisualisationForXDR]
+#. defaultMessage is:
+#. Data Visualisation for XDR Resistance
+#: extracted_strings.json
+msgid "Data Visualisation for XDR Resistance"
+msgstr "Візуалізація даних для визначення стійкості до XDR"
 
 #. [filter.popover.date]
 #. defaultMessage is:
@@ -2848,9 +2852,6 @@ msgstr "Виявлено"
 #. [pages.ResultList.deviceName]
 #. defaultMessage is:
 #. Device
-#. [pages.TaskList.taskListOptionsDevice]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
@@ -2941,16 +2942,6 @@ msgstr "Звіт про калібрування пристрою"
 #: extracted_strings.json
 msgid "Device Country"
 msgstr "Країна пристрою"
-
-#. [pages.TaskList.issueCategoryDeviceHealth]
-#. defaultMessage is:
-#. Device Health
-#. [pages.TaskList.DeviceHealth]
-#. defaultMessage is:
-#. Device Health
-#: extracted_strings.json
-msgid "Device Health"
-msgstr "Здоров’я пристрою"
 
 #. [filter.btnGroup.deviceIssueType]
 #. defaultMessage is:
@@ -3320,20 +3311,6 @@ msgstr ""
 msgid "Drug Resistance"
 msgstr "Стійкість до наркотиків"
 
-#. [pages.TaskList.issueStatusDueNow]
-#. defaultMessage is:
-#. Due Now
-#: extracted_strings.json
-msgid "Due Now"
-msgstr "Термін сплати зараз"
-
-#. [pages.TaskList.issueStatusDueSoon]
-#. defaultMessage is:
-#. Due Soon
-#: extracted_strings.json
-msgid "Due Soon"
-msgstr "Незабаром"
-
 #. [filter.AssayTypeSelectField.assayTypeEid]
 #. defaultMessage is:
 #. EID
@@ -3371,6 +3348,20 @@ msgstr "ETH R %"
 #: extracted_strings.json
 msgid "ETH Resistance"
 msgstr "Опір ETH"
+
+#. [legends.Unknown.ETHPercent]
+#. defaultMessage is:
+#. ETH-R %
+#: extracted_strings.json
+msgid "ETH-R %"
+msgstr "ETH-R %"
+
+#. [legends.Unknown.EthDetected]
+#. defaultMessage is:
+#. ETH-R Detected
+#: extracted_strings.json
+msgid "ETH-R Detected"
+msgstr "Виявлено ETH-R"
 
 #. [filter.AssayTypeSelectField.assayTypeEbola]
 #. defaultMessage is:
@@ -5171,13 +5162,6 @@ msgstr "ID"
 msgid "ID includes \"{externalId}\""
 msgstr "Ідентифікатор включає \"{externalId}\""
 
-#. [legends.Unknown.InhDetected]
-#. defaultMessage is:
-#. INH Detected
-#: extracted_strings.json
-msgid "INH Detected"
-msgstr "Виявлено INH"
-
 #. [pages.XDR.cnt_inh]
 #. defaultMessage is:
 #. INH R
@@ -5260,9 +5244,6 @@ msgstr ""
 "яку ви переглядаєте"
 
 #. [pages.shared.deviceStatus.inactive]
-#. defaultMessage is:
-#. Inactive
-#. [pages.TaskList.issueStatusInactive]
 #. defaultMessage is:
 #. Inactive
 #: extracted_strings.json
@@ -5626,6 +5607,20 @@ msgstr "Посадові функції"
 #: extracted_strings.json
 msgid "KAN Resistance"
 msgstr "Опір KAN"
+
+#. [legends.Unknown.KANPercent]
+#. defaultMessage is:
+#. KAN-R %
+#: extracted_strings.json
+msgid "KAN-R %"
+msgstr "KAN-R %"
+
+#. [legends.Unknown.KanDetected]
+#. defaultMessage is:
+#. KAN-R Detected
+#: extracted_strings.json
+msgid "KAN-R Detected"
+msgstr "KAN-R виявлено"
 
 #. [pages.DeviceApiKeyList.token]
 #. defaultMessage is:
@@ -6021,13 +6016,6 @@ msgstr "Завантаження статусів лікування резул�
 #: extracted_strings.json
 msgid "Loading Results Failed"
 msgstr "Помилка завантаження результатів"
-
-#. [errorResponseMessages.fetchTasks.GET.default.title]
-#. defaultMessage is:
-#. Loading Tasks Failed
-#: extracted_strings.json
-msgid "Loading Tasks Failed"
-msgstr "Не вдалося завантажити завдання"
 
 #. [legends.Unknown.location]
 #. defaultMessage is:
@@ -7771,9 +7759,6 @@ msgstr "жовтень"
 #. [pages.ResultList.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. OK
-#. [pages.TaskList.issueStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
@@ -8013,13 +7998,6 @@ msgstr "Загальний показник активності"
 #: extracted_strings.json
 msgid "Overall Network Health Daily"
 msgstr "Загальне здоров’я мережі щодня"
-
-#. [pages.TaskList.issueStatusOverdue]
-#. defaultMessage is:
-#. Overdue
-#: extracted_strings.json
-msgid "Overdue"
-msgstr "Прострочена"
 
 #. [jobFunction.pakistanDashboardTesting]
 #. defaultMessage is:
@@ -9050,20 +9028,6 @@ msgstr "Опір RIF"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Кількість позитивних результатів"
 
-#. [p.PkDashboard.rrDetected]
-#. defaultMessage is:
-#. RR+
-#: extracted_strings.json
-msgid "RR+"
-msgstr "RR+"
-
-#. [p.PkDashboard.rrToMtbPercentage]
-#. defaultMessage is:
-#. RR+ percentage of MTB+
-#: extracted_strings.json
-msgid "RR+ percentage of MTB+"
-msgstr "РР до ТБ Загальний відсоток"
-
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
 #. RR cases diagnosed
@@ -9084,6 +9048,20 @@ msgstr "RR випадки, діагностовані за останні 24 г�
 #: extracted_strings.json
 msgid "RR cases diagnosed this year"
 msgstr "Випадки RR, діагностовані цього року"
+
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR+
+#: extracted_strings.json
+msgid "RR+"
+msgstr "RR+"
+
+#. [p.PkDashboard.rrToMtbPercentage]
+#. defaultMessage is:
+#. RR+ percentage of MTB+
+#: extracted_strings.json
+msgid "RR+ percentage of MTB+"
+msgstr "РР до ТБ Загальний відсоток"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -9134,25 +9112,12 @@ msgstr "Діагностика RRTB"
 msgid "Ready for delivery"
 msgstr "Готовий до доставки"
 
-#. [pages.TaskList.taskListOptionsReagent]
-#. defaultMessage is:
-#. Reagent
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
 #. Reagent
 #: extracted_strings.json
 msgid "Reagent"
 msgstr "Реагент"
-
-#. [pages.TaskList.issueCategoryReagentHealth]
-#. defaultMessage is:
-#. Reagent Health
-#. [pages.TaskList.ReagentHealth]
-#. defaultMessage is:
-#. Reagent Health
-#: extracted_strings.json
-msgid "Reagent Health"
-msgstr "Здоров’я реагенту"
 
 #. [forms.formItem.reason]
 #. defaultMessage is:
@@ -9574,13 +9539,6 @@ msgstr "Опір"
 #: extracted_strings.json
 msgid "Resistant"
 msgstr "Стійкий"
-
-#. [pages.TaskList.issueStatusResolved]
-#. defaultMessage is:
-#. Resolved
-#: extracted_strings.json
-msgid "Resolved"
-msgstr "Вирішено"
 
 #. [filter.popover.result]
 #. defaultMessage is:
@@ -10239,13 +10197,6 @@ msgstr "Пошук статусів лікування результатів н
 msgid "Searching Results Failed"
 msgstr "Помилка пошуку результатів"
 
-#. [errorResponseMessages.fetchTasks.GET.400.title]
-#. defaultMessage is:
-#. Searching Tasks Failed
-#: extracted_strings.json
-msgid "Searching Tasks Failed"
-msgstr "Помилка пошуку завдань"
-
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -10870,17 +10821,6 @@ msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, plural, one {# "
 "постачання} other {# припаси}}"
 
-#. [pages.TaskList.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
-"other {# tasks} }"
-msgstr ""
-"Показано {firstItemIndex} - {lastItemIndex} з {itemCount, plural, one {# "
-"завдання} other {# завдання}}"
-
 #. [pages.ReportIndex.moduleActivityReport_description]
 #. defaultMessage is:
 #. Shows devices with one or more inactive modules
@@ -10918,9 +10858,6 @@ msgstr "Вийти"
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceApiKeyList.site]
-#. defaultMessage is:
-#. Site
-#. [pages.TaskList.site]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceList.site]
@@ -11528,26 +11465,12 @@ msgstr "Цільова"
 msgid "Target device"
 msgstr "Цільова"
 
-#. [pages.TaskAggre.title]
-#. defaultMessage is:
-#. Task
-#: extracted_strings.json
-msgid "Task"
-msgstr "Завдання"
-
 #. [header.link.taskList.title]
 #. defaultMessage is:
 #. Task List
 #: extracted_strings.json
 msgid "Task List"
 msgstr "Список завдань"
-
-#. [pages.TaskList.title]
-#. defaultMessage is:
-#. Tasks
-#: extracted_strings.json
-msgid "Tasks"
-msgstr "Завдання"
 
 #. [p.PkDashboard.TbTotal]
 #. defaultMessage is:
@@ -11698,6 +11621,9 @@ msgid "Tests Per Day"
 msgstr "Тести на день"
 
 #. [pages.Status.testsOverTimeTitle.graph]
+#. defaultMessage is:
+#. Tests Performed
+#. [p.PkDashboard.testsPerformed]
 #. defaultMessage is:
 #. Tests Performed
 #: extracted_strings.json
@@ -12551,13 +12477,6 @@ msgstr ""
 msgid "Thursday"
 msgstr "Четвер"
 
-#. [pages.TaskList.time]
-#. defaultMessage is:
-#. Time
-#: extracted_strings.json
-msgid "Time"
-msgstr "Час"
-
 #. [pages.UserPreferences.timezone]
 #. defaultMessage is:
 #. Time Zone
@@ -12647,13 +12566,6 @@ msgstr "Вибрати все"
 #: extracted_strings.json
 msgid "Toggle status confirmation"
 msgstr "Перемкнути підтвердження статусу"
-
-#. [pages.TaskList.topic]
-#. defaultMessage is:
-#. Topic
-#: extracted_strings.json
-msgid "Topic"
-msgstr "Тема"
 
 #. [legends.Unknown.Total]
 #. defaultMessage is:
@@ -14218,13 +14130,6 @@ msgstr "з результатом {resultCategoryName}"
 msgid "workflow status is {workflowStatusName}"
 msgstr "статус робочого циклу - {workflowStatusName}"
 
-#. [pages.TaskList.alertCount]
-#. defaultMessage is:
-#. {alertCount, plural, one {# alert} other {# alerts} }
-#: extracted_strings.json
-msgid "{alertCount, plural, one {# alert} other {# alerts} }"
-msgstr "{alertCount, plural, one {# alert} other {# alerts} }"
-
 #. [pages.DeviceList.errorOfTotal]
 #. defaultMessage is:
 #. {count} of {total}
@@ -14358,6 +14263,64 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} загальна калібрування"
+
+#~ msgid "All topics"
+#~ msgstr "Усі теми"
+
+#~ msgid "Connectivity Health"
+#~ msgstr "Здоров’я зв’язку"
+
+#~ msgid "Data Health"
+#~ msgstr "Здоров’я даних"
+
+#~ msgid "Device Health"
+#~ msgstr "Здоров’я пристрою"
+
+#~ msgid "Due Now"
+#~ msgstr "Термін сплати зараз"
+
+#~ msgid "Due Soon"
+#~ msgstr "Незабаром"
+
+#~ msgid "INH Detected"
+#~ msgstr "Виявлено INH"
+
+#~ msgid "Loading Tasks Failed"
+#~ msgstr "Не вдалося завантажити завдання"
+
+#~ msgid "Overdue"
+#~ msgstr "Прострочена"
+
+#~ msgid "Reagent Health"
+#~ msgstr "Здоров’я реагенту"
+
+#~ msgid "Resolved"
+#~ msgstr "Вирішено"
+
+#~ msgid "Searching Tasks Failed"
+#~ msgstr "Помилка пошуку завдань"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "task} other {# tasks} }"
+#~ msgstr ""
+#~ "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, plural, one {# "
+#~ "завдання} other {# завдання}}"
+
+#~ msgid "Task"
+#~ msgstr "Завдання"
+
+#~ msgid "Tasks"
+#~ msgstr "Завдання"
+
+#~ msgid "Time"
+#~ msgstr "Час"
+
+#~ msgid "Topic"
+#~ msgstr "Тема"
+
+#~ msgid "{alertCount, plural, one {# alert} other {# alerts} }"
+#~ msgstr "{alertCount, plural, one {# alert} other {# alerts} }"
 
 #~ msgid "< 1000 cp/mL"
 #~ msgstr "< 1000 cp/mL"
@@ -14920,9 +14883,6 @@ msgstr "{unit} загальна калібрування"
 
 #~ msgid "This Username is Unavailable"
 #~ msgstr "Це ім'я користувача недоступне"
-
-#~ msgid "Utilization Rate Over Time"
-#~ msgstr "Коефіцієнт використання в часі"
 
 #~ msgid "{count} fields"
 #~ msgstr "{count} поля"

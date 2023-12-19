@@ -6,6 +6,8 @@ import { filterColour } from '../../graphUtils'
 const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onReady, isPercentage, colors }) => {
   const config = {
     data,
+    intervalPadding: 8,
+    dodgePadding: 0,
     color: colors || (datum => filterColour(data.find(d => d.type === datum.type).id, graphId)),
     label: showLabel
       ? {
