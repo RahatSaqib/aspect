@@ -6,15 +6,28 @@ import { filterColour } from '../../graphUtils'
 const ColumnLineGraph = ({ data, colors, graphId, showLabel, xField, yField }) => {
   const config = {
     data, // [bar, line]
+    intervalPadding: 4,
     xField,
     yField, // percentage translated field must be always the last value of the array
     geometryOptions: [
       {
         color: datum => filterColour(colors.find(c => c.name === datum.type).colorId, graphId),
         geometry: 'column',
+        intervalPadding: 8,
+        dodgePadding: 0,
         isGroup: true,
         seriesField: 'type',
-        label: showLabel ? { position: 'middle', content: originData => originData.value } : false,
+        label: showLabel
+          ? {
+              position: 'middle',
+              content: originData => originData.value,
+              layout: [
+                { type: 'interval-adjust-position' },
+                { type: 'interval-hide-overlap' },
+                { type: 'adjust-color' },
+              ],
+            }
+          : false,
       },
       {
         geometry: 'line',
