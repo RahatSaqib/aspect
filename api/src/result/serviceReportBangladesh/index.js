@@ -125,9 +125,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
 
-  // const whereMtbDetected = `
-  //   JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'MTB') IS NOT NULL
-  // `
   const whereXdrDetected = `
   (
     JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'INH') IS NOT NULL OR
