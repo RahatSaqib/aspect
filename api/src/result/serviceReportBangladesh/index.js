@@ -1066,6 +1066,9 @@ async function getDataForReportDrTb10B(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+    .andWhere(queryBuilder => {
+      queryBuilder.where('a.externalId', 'GxMtbXdr').orWhere('rc2.externalId', 'Detected')
+    })
     .select(
       'r.endedOn as dateOfDiagnosis',
       knex.raw(
