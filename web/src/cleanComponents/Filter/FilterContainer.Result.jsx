@@ -160,7 +160,7 @@ const ResultFilter = () => {
             minDate={state.fixedMinDate || null}
             maxDate={state.fixedMaxDate || null}
             onChange={({ minDate, maxDate }) => setState({ ...state, fixedMinDate: minDate, fixedMaxDate: maxDate })}
-            noAny={true}
+            noAny
           />
         </Grid>
         <Grid item xs={3}>

@@ -345,7 +345,7 @@ const ConsumableId = ({ consumableId, remove }) => {
 const MinDate = ({ minDate, remove }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
-  const del = remove ? () => remove(['minDate']) : undefined  // fixedMinDate has no delete option
+  const del = remove ? () => remove(['minDate']) : undefined // fixedMinDate has no delete option
 
   const date = format(new Date(minDate), dateFormat)
   return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={del} />
@@ -355,11 +355,10 @@ const MaxDate = ({ maxDate, remove }) => {
   const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   if (!maxDate) return null
-  const del = remove ? () => remove(['maxDate']) : undefined  // fixedMaxDate has no delete option
+  const del = remove ? () => remove(['maxDate']) : undefined // fixedMaxDate has no delete option
   const date = format(new Date(maxDate), dateFormat)
   return <Btn lbl={formatMessage(messages.dateTo, { date })} del={del} />
 }
-
 
 const MinExpirationDate = ({ minExpirationDate, remove }) => {
   const { formatMessage, format } = useIntl()
