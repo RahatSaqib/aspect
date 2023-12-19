@@ -23,7 +23,7 @@ const useResultCategoryGroup = (assayIds, options) => {
         ...category,
         name: `${assayIdsLength > 1 ? `${formatMessage(assay[category?.assayI18nKey])} - ` : ''}${formatMessage(
           resultCategory[category?.i18nKey]
-        )}`.replace(' XDR ', ' Drug Resistance '),
+        )}`,
       })),
   })
 }

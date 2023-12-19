@@ -266,15 +266,15 @@ export default defineMessages({
     defaultMessage: 'MTB Detected',
   },
   gxMtbXdrMtbDetectedXdrDetected: {
-    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedXdrDetected',
+    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedDrugDetected',
     defaultMessage: 'MTB Detected Drug Resistance Detected',
   },
   gxMtbXdrMtbDetectedXdrNotDetected: {
-    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedXdrNotDetected',
+    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedDrugNotDetected',
     defaultMessage: 'MTB Detected Drug Resistance Not Detected',
   },
   gxMtbXdrMtbDetectedXdrIndeterminate: {
-    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedXdrIndeterminate',
+    id: 'resultCategoryGroup.gxMtbXdrMtbDetectedDrugIndeterminate',
     defaultMessage: 'MTB Detected Drug Resistance Indeterminate',
   },
   gxMtbXdrMtbInvalid: {
