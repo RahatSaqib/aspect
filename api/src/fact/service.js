@@ -203,36 +203,6 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
-/**
- * commenting out below func which calculates combinations of resistances
- */
-// const sumComboXdrResistances = knex =>
-//   _.reduce(
-//     XDR_RESISTANCES_COMBO,
-//     (acc, comboNames) => {
-//       const [resistanceName1, resistanceName2] = comboNames.split('_')
-//       XDR_RESISTANCE_VALUES.forEach(resistanceValue => {
-//         acc = [
-//           ...acc,
-//           knex.raw(`
-//             SUM(
-//               CASE
-//                 WHEN
-//                   (r.resultData ->> '$.allResistances.${resistanceName1}') = '${resistanceValue}'
-//                   AND
-//                   (r.resultData ->> '$.allResistances.${resistanceName2}') = '${resistanceValue}'
-//                 THEN 1
-//                 ELSE 0
-//               END
-//             ) as cnt_${resistanceName1}_${resistanceName2}_${resistanceValue}
-//           `),
-//         ]
-//       })
-//       return acc
-//     },
-//     []
-//   )
-
 // ----------------------------------------------
 // This function is triggered by scheduler, and checks stock for all sites
 // ----------------------------------------------
