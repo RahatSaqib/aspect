@@ -17,6 +17,7 @@ const useFilterSync = () => {
         if (dirty && diff > 1) {
           // if diff > 1 filter was reset and we need to update state (countryId doesnt count)
           setState({ ...filter, countryId: user.countryId })
+          setDirty(false) // changes commited, not dirty anymore
         }
       } else {
         setDirty(true) // apply filter was clicked

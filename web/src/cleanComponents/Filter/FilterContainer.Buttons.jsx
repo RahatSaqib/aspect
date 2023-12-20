@@ -76,7 +76,7 @@ const FilterButtons = ({ filters, remove, append }) => {
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
             if (!Comp) return null
-            return <Comp {...filters} remove={remove} append={append} key={key} />
+            return <Comp remove={remove} append={append} key={key} {...filters} />
           })
       )}
     </span>
@@ -313,6 +313,7 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, 
     return isArray(resultCategoryGroupId) ? (
       resultCategoryGroupId.map(id => (
         <Btn
+          key={id}
           del={() => {
             if (resultCategoryGroupId.length > 1) append({ resultCategoryGroupId: pull(resultCategoryGroupId, id) })
             else del.del()
