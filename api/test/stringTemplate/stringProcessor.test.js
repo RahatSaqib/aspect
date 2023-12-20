@@ -2338,6 +2338,12 @@ L|1`,
         const message = await runProcessUsingDataSourceQuery('{{report.downloadLink}}', { reportToken })
         assert.equal(message.payload, `/api/reports/download?token=${reportToken}`)
       })
+
+      it('should allow triple brackets in the template', async () => {
+        const reportToken = 'some-report-token'
+        const message = await runProcessUsingDataSourceQuery('{{{report.downloadLink}}}', { reportToken })
+        assert.equal(message.payload, `/api/reports/download?token=${reportToken}`)
+      })
     })
   })
 })
