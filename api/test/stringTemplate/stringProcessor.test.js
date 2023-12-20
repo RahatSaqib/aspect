@@ -2331,5 +2331,13 @@ L|1`,
         })
       })
     })
+
+    describe('report.downloadLink HTML escaping', () => {
+      it('should not HTML encode the report download link', async () => {
+        const reportToken = 'some-report-token'
+        const message = await runProcessUsingDataSourceQuery('{{report.downloadLink}}', { reportToken })
+        assert.equal(message.payload, `/api/reports/download?token=${reportToken}`)
+      })
+    })
   })
 })
