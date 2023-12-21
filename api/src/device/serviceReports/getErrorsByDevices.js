@@ -10,11 +10,7 @@ async function getErrorsByDevices(dataConstraints, query) {
   const resultCategoryIds = await allResultCategoryToId()
   const errorCodes = [5011, 5007, 5006, 2008, 2005, 2037, 2025, 2022]
 
-  const devices = await deviceQuery
-    .distinct(['d.id as deviceId', 'd.name as deviceName'])
-    .modify(sortPageParams, query, 'd.name')
-
-  const allCounts = await getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+  const allCounts = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
     addConstraints,
     dataConstraints,
     filterParams,
@@ -37,40 +33,41 @@ async function getErrorsByDevices(dataConstraints, query) {
         {}
       ),
       otherErrors: knex.raw(`
-        CASE 
+        CASE
           WHEN r.resultCategory1 = ${resultCategoryIds.Error}
-          THEN r.xdrResistanceCounts ->> "$.errors.other" 
+          THEN r.xdrResistanceCounts ->> "$.errors.other"
           ELSE 0
         END`),
       invalidResults: knex.raw(`
-        CASE 
+        CASE
           WHEN r.resultCategory1 IN (${resultCategoryIds.NoResult}, ${resultCategoryIds.Invalid}, ${resultCategoryIds.Indeterminate})
-          THEN r.xdrResistanceCounts ->> "$.errors.invalid" 
+          THEN r.xdrResistanceCounts ->> "$.errors.invalid"
           ELSE 0
         END`),
     })
-    .select(['d.name as deviceName', 'd.id as deviceId'])
-    .modify(sortPageParams, query, 'd.name')
+    .select('d.id as deviceId')
 
-  const emptyCounts = {
-    ..._.reduce(
-      errorCodes,
-      (acc, errorCode) => ({
-        ...acc,
-        [`${errorCode}`]: 0,
-      }),
-      {}
-    ),
-    otherErrors: 0,
-    invalidResults: 0,
-  }
-  const data = devices.map(({ deviceName, deviceId }) => {
-    const counts = allCounts.find(it => it.deviceId === deviceId) || emptyCounts
-    return {
-      deviceName,
-      ...counts,
-    }
-  })
+  const data = await deviceQuery
+    .leftJoin(allCounts.as('counts'), 'd.id', 'counts.deviceId')
+    .modify(sortPageParams, query, 'd.name')
+    .distinct({
+      ..._.reduce(
+        errorCodes,
+        (acc, errorCode) => ({
+          ...acc,
+          [`${errorCode}`]: knex.raw(`IFNULL(counts.\`${errorCode}\`, 0)`),
+        }),
+        {}
+      ),
+      otherErrors: knex.raw('IFNULL(counts.otherErrors, 0)'),
+      invalidResults: knex.raw('IFNULL(counts.invalidResults, 0)'),
+      deviceName: 'd.name',
+      /**
+       * should select also device id for returning `distinct` entries, because
+       * same device name with same counts may be found in different locations.
+       */
+      deviceId: 'd.id',
+    })
 
   return data
 }
