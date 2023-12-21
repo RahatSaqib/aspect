@@ -1198,6 +1198,84 @@ async function notifyPerson({ name, email, cell }, deviceName, routerNumber, noI
   }
 }
 
+const caseBuilder = condition => {
+  return `SUM(CASE WHEN ${condition} THEN 1 ELSE 0 END)`
+}
+
+const getTestAggregate = async request => {
+  const { dateFrom, dateTo } = request.query
+
+  const results = await knex('Site')
+    .select(
+      'State.name as province',
+      'Lga.name as district',
+      'Site.name as healthFacility',
+      knex.raw(`${caseBuilder('Result.id IS NOT NULL')} as numberOfTests`),
+      knex.raw(`${caseBuilder("rc1.externalId = 'Detected'")} as numberOfMtbDetected`),
+      knex.raw(`${caseBuilder("rc1.externalId = 'NotDetected'")} as numberOfMtbNotDetected`),
+      knex.raw(`${caseBuilder("rc1.externalId = 'Invalid'")} as numberOfMtbInvalid`),
+      knex.raw(`${caseBuilder("rc1.externalId = 'Error'")} as numberOfMtbError`),
+      knex.raw(`${caseBuilder("rc2.externalId = 'Detected'")} as numberOfRifDetected`),
+      knex.raw(`${caseBuilder("rc2.externalId = 'Indeterminate'")} as numberOfMtbIndeterminate`)
+    )
+    .leftJoin('Device', 'Device.siteId', 'Site.id')
+    .leftJoin('Result', 'Result.deviceId', 'Device.id')
+    .leftJoin('Geography', 'Geography.id', 'Site.geographyId')
+    .leftJoin('Lga', 'Lga.id', 'Geography.lgaId')
+    .leftJoin('State', 'State.id', 'Geography.stateId')
+    .leftJoin('ResultCategory as rc1', 'rc1.id', 'Result.resultCategory1')
+    .leftJoin('ResultCategory as rc2', 'rc2.id', 'Result.resultCategory2')
+    .where(builder => {
+      builder
+        .whereRaw('IFNULL(Result.endedOn, Result.startedOn) > ?', dateFrom)
+        .andWhereRaw('IFNULL(Result.endedOn, Result.startedOn) < ?', dateTo)
+    })
+    .groupBy('Site.id')
+
+  const formattedDate = new Date().toLocaleDateString('en-CA', {
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit',
+  })
+
+  const testResultsAggregate = _.map(results, result => {
+    const {
+      province,
+      district,
+      healthFacility,
+      numberOfTests,
+      numberOfMtbDetected,
+      numberOfMtbNotDetected,
+      numberOfMtbInvalid,
+      numberOfRifDetected,
+      numberOfMtbError,
+      numberOfMtbIndeterminate,
+    } = result
+
+    return {
+      province,
+      district,
+      health_facility: healthFacility,
+      test_results: {
+        Tests: numberOfTests,
+        Tests_MTB_NOT_DETECTED: numberOfMtbNotDetected,
+        Tests_MTB_DETECTED: numberOfMtbDetected,
+        Tests_ERROR: numberOfMtbError,
+        Tests_NO_RESULT: 0,
+        Tests_INVALID: numberOfMtbInvalid,
+        Tests_RIF_DETECTED: numberOfRifDetected,
+        Tests_RIF_INDETERMINATE: numberOfMtbIndeterminate,
+      },
+      date: formattedDate,
+    }
+  })
+
+  return {
+    total: testResultsAggregate.length,
+    data: testResultsAggregate,
+  }
+}
+
 module.exports = {
   getDeviceDataHandler,
   getDeviceOperationHandler,
@@ -1214,4 +1292,5 @@ module.exports = {
   getHealthStatsHandler,
   getCustomFields,
   getResultPakistanHandler,
+  getTestAggregate,
 }
