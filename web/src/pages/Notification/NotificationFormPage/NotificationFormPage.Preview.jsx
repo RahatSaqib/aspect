@@ -57,7 +57,7 @@ const NotificationFormPreview = ({ values }) => {
             <h4 style={labelStyle}>{formatMessage(messages.reportBaseType)}:</h4>
             <span style={labelStyle}>
               {values.reportId ? formatMessage(messages[values.reportId]) : null}{' '}
-              {getCronHumanValue(values.cronRecurrency.cronExpression, locale)}
+              {getCronHumanValue(values.cronRecurrency?.cronExpression, locale)}
             </span>
           </span>
           <span style={rowStyle}>
