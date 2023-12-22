@@ -32,6 +32,7 @@ const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')
 const { sendSms } = require('../sms/smsUtil')
 const { sendEmail } = require('../email/emailUtil')
+const { formatDateOrDefault } = require('../shared/date')
 
 const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 
@@ -1205,7 +1206,7 @@ const caseBuilder = condition => {
 const getTestAggregate = async request => {
   const { dateFrom, dateTo } = request.query
 
-  const results = await knex('Site')
+  const sites = await knex('Site')
     .select(
       'State.name as province',
       'Lga.name as district',
@@ -1215,6 +1216,7 @@ const getTestAggregate = async request => {
       knex.raw(`${caseBuilder("rc1.externalId = 'NotDetected'")} as numberOfMtbNotDetected`),
       knex.raw(`${caseBuilder("rc1.externalId = 'Invalid'")} as numberOfMtbInvalid`),
       knex.raw(`${caseBuilder("rc1.externalId = 'Error'")} as numberOfMtbError`),
+      knex.raw(`${caseBuilder("rc1.externalId = 'NoResult'")} as numberOfMtbNoResult`),
       knex.raw(`${caseBuilder("rc2.externalId = 'Detected'")} as numberOfRifDetected`),
       knex.raw(`${caseBuilder("rc2.externalId = 'Indeterminate'")} as numberOfMtbIndeterminate`)
     )
@@ -1232,13 +1234,9 @@ const getTestAggregate = async request => {
     })
     .groupBy('Site.id')
 
-  const formattedDate = new Date().toLocaleDateString('en-CA', {
-    year: 'numeric',
-    month: '2-digit',
-    day: '2-digit',
-  })
+  const formattedDate = formatDateOrDefault(new Date(), 'yyyy-MM-dd')
 
-  const testResultsAggregate = _.map(results, result => {
+  const testResultsAggregate = _.map(sites, site => {
     const {
       province,
       district,
@@ -1247,10 +1245,11 @@ const getTestAggregate = async request => {
       numberOfMtbDetected,
       numberOfMtbNotDetected,
       numberOfMtbInvalid,
+      numberOfMtbNoResult,
       numberOfRifDetected,
       numberOfMtbError,
       numberOfMtbIndeterminate,
-    } = result
+    } = site
 
     return {
       province,
@@ -1261,7 +1260,7 @@ const getTestAggregate = async request => {
         Tests_MTB_NOT_DETECTED: numberOfMtbNotDetected,
         Tests_MTB_DETECTED: numberOfMtbDetected,
         Tests_ERROR: numberOfMtbError,
-        Tests_NO_RESULT: 0,
+        Tests_NO_RESULT: numberOfMtbNoResult,
         Tests_INVALID: numberOfMtbInvalid,
         Tests_RIF_DETECTED: numberOfRifDetected,
         Tests_RIF_INDETERMINATE: numberOfMtbIndeterminate,
@@ -1270,10 +1269,7 @@ const getTestAggregate = async request => {
     }
   })
 
-  return {
-    total: testResultsAggregate.length,
-    data: testResultsAggregate,
-  }
+  return testResultsAggregate
 }
 
 module.exports = {

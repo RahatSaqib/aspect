@@ -395,8 +395,8 @@ const routes = [
     path: '/zenysis-sis/test-results',
     handler: getTestAggregate,
     config: {
-      description: 'Get Device Data',
-      notes: 'Get device configuration, operational and result data returns assigned site',
+      description: 'Get Test Results Aggregate',
+      notes: 'Get test results aggregate for each site',
       validate: {
         query: testAggRequestQueryValidation(),
       },

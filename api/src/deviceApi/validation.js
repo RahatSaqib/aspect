@@ -238,29 +238,27 @@ const resultPayload = {
 }
 
 const testAggResponseValidation = () => {
-  return Joi.object().keys({
-    data: Joi.array()
-      .required()
-      .description('Test aggregate')
-      .items(
-        Joi.object().keys({
-          province: Joi.string().allow(null, '').required(),
-          district: Joi.string().allow(null, '').required(),
-          health_facility: Joi.string().allow(null, '').required(),
-          test_results: Joi.object().keys({
-            Tests: Joi.number().description('Total number of tests'),
-            Tests_MTB_NOT_DETECTED: Joi.number().description('Number of tests where MTB was not detected'),
-            Tests_MTB_DETECTED: Joi.number().description('Number of tests where MTB was detected'),
-            Tests_ERROR: Joi.number().description('Number of tests with errors'),
-            Tests_NO_RESULT: Joi.number().description('Number of tests with no result'),
-            Tests_INVALID: Joi.number().description('Number of invalid tests'),
-            Tests_RIF_DETECTED: Joi.number().description('Number of tests where RIF was detected'),
-            Tests_RIF_INDETERMINATE: Joi.number().description('Number of tests with indeterminate RIF result'),
-          }),
-          date: Joi.date().required(),
-        })
-      ),
-  })
+  return Joi.array()
+    .required()
+    .description('Test aggregate')
+    .items(
+      Joi.object().keys({
+        province: Joi.string().allow(null, '').required(),
+        district: Joi.string().allow(null, '').required(),
+        health_facility: Joi.string().allow(null, '').required(),
+        test_results: Joi.object().keys({
+          Tests: Joi.number().description('Total number of tests'),
+          Tests_MTB_NOT_DETECTED: Joi.number().description('Number of tests where MTB was not detected'),
+          Tests_MTB_DETECTED: Joi.number().description('Number of tests where MTB was detected'),
+          Tests_ERROR: Joi.number().description('Number of tests with errors'),
+          Tests_NO_RESULT: Joi.number().description('Number of tests with no result'),
+          Tests_INVALID: Joi.number().description('Number of invalid tests'),
+          Tests_RIF_DETECTED: Joi.number().description('Number of tests where RIF was detected'),
+          Tests_RIF_INDETERMINATE: Joi.number().description('Number of tests with indeterminate RIF result'),
+        }),
+        date: Joi.date().required(),
+      })
+    )
 }
 
 const testAggRequestQueryValidation = () => {
