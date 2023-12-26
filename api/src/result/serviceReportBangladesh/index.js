@@ -1013,25 +1013,26 @@ async function getDataForReportDrTb10B(auth, query) {
   //         ELSE ' '
   //         END as ${key}
   //      `
-  const checkResistance = (resistance, key) => `
-    CASE
-      WHEN r.resultData->>'$.allResistances.${resistance}' = 'Detected'
-        THEN
-          CASE
-          WHEN r.resultData->>'$.resultText' LIKE '%High ${resistance} Resistance @label_result_detected%'
-            THEN 'High ${resistance} Resistance Detected'
-          WHEN r.resultData->>'$.resultText' LIKE '%Very Low ${resistance} Resistance @label_result_detected%'
-            THEN 'Very Low ${resistance} Resistance Detected'
-          WHEN r.resultData->>'$.resultText' LIKE '%Low ${resistance} Resistance @label_result_detected%'
-            THEN 'Low ${resistance} Resistance Detected'
-          ELSE '${resistance} Resistance Detected'
-          END
-      WHEN r.resultData->>'$.allResistances.${resistance}' = 'NotDetected'
-        THEN '${resistance} Resistance Not Detected'
-      WHEN r.resultData->>'$.allResistances.${resistance}' = 'Indeterminate'
-        THEN '${resistance} Resistance Indeterminate'
-      ELSE ' '
-    END as ${key}
+  const checkResistance = (resistance, key) => `CASE
+          WHEN JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
+            THEN
+              CASE
+              WHEN r.resultData->>'$.resultText' LIKE '%High ${resistance} Resistance @label_result_detected%'
+                THEN 'High ${resistance} Resistance Detected'
+              WHEN r.resultData->>'$.resultText' LIKE '%Very Low ${resistance} Resistance @label_result_detected%'
+                THEN 'Very Low ${resistance} Resistance Detected'
+              WHEN r.resultData->>'$.resultText' LIKE '%Low ${resistance} Resistance @label_result_detected%'
+                THEN 'Low ${resistance} Resistance Detected'
+              ELSE '${resistance} Resistance Detected'
+              END
+          WHEN r.resultData->>'$.allResistances.${resistance}' = 'Detected'
+            THEN '${resistance} Resistance Detected'
+          WHEN r.resultData->>'$.allResistances.${resistance}' = 'NotDetected'
+            THEN '${resistance} Resistance Not Detected'
+          WHEN r.resultData->>'$.allResistances.${resistance}' = 'Indeterminate'
+            THEN '${resistance} Resistance Indeterminate'
+          ELSE ' '
+        END as ${key}
     `
   const dataQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
