@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
+import * as Sentry from '@sentry/react'
 import Immutable from 'immutable'
 import filter from 'lodash/filter'
 import identity from 'lodash/identity'
@@ -249,6 +250,11 @@ const ResultList = () => {
         throw error
       })
   }
+
+  if (typeof items.currentIdList.map !== 'function') {
+    Sentry.captureMessage(`Potential Error on result Page. Filters : ${JSON.stringify(filters, null, 2)}`)
+  }
+
   const baseProps = {
     intl,
     // history,
