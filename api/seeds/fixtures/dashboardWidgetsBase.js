@@ -2093,7 +2093,7 @@ const bangladeshAverageCompletion = {
 //   subTitleI18nKey: null,
 //   sqlForIndicator: `
 //   SELECT
-//    SUM(ROUND(IFNULL(dc.dailyCapacity, 12) / 2, 0)) AS cnt 
+//    SUM(ROUND(IFNULL(dc.dailyCapacity, 12) / 2, 0)) AS cnt
 //    from Device as d
 //    INNER JOIN DeviceCapacity as dc ON d.deviceCapacityId=dc.id
 //   `,
