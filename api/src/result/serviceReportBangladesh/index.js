@@ -982,12 +982,35 @@ async function getDataForReportDrTb10B(auth, query) {
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
-  const checkResistance = (resistance, key) => `CASE
-          WHEN JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
-          THEN 'X'
-          ELSE ' '
-          END as ${key}
-       `
+  /**
+   * old func `checkResistance`
+   */
+  // const checkResistance = (resistance, key) => `CASE
+  //         WHEN JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
+  //         THEN 'X'
+  //         ELSE ' '
+  //         END as ${key}
+  //      `
+  const checkResistance = (resistance, key) => `
+    CASE
+      WHEN r.resultData->>'$.allResistances.${resistance}' = 'Detected'
+        THEN 
+          CASE
+          WHEN r.resultData->>'$.resultText' LIKE '%High ${resistance} Resistance @label_result_detected%'
+            THEN 'High ${resistance} Resistance Detected'
+          WHEN r.resultData->>'$.resultText' LIKE '%Very Low ${resistance} Resistance @label_result_detected%'
+            THEN 'Very Low ${resistance} Resistance Detected'
+          WHEN r.resultData->>'$.resultText' LIKE '%Low ${resistance} Resistance @label_result_detected%'
+            THEN 'Low ${resistance} Resistance Detected'
+          ELSE '${resistance} Resistance Detected'
+          END
+      WHEN r.resultData->>'$.allResistances.${resistance}' = 'NotDetected'
+        THEN '${resistance} Resistance Not Detected'
+      WHEN r.resultData->>'$.allResistances.${resistance}' = 'Indeterminate'
+        THEN '${resistance} Resistance Indeterminate'
+      ELSE ' '
+    END as ${key}
+    `
   const dataQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
@@ -995,8 +1018,12 @@ async function getDataForReportDrTb10B(auth, query) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftOuterJoin('Site as rs', 'r.referringSiteId', 'rs.id')
     // scope Mtb and Mtb-Ultra assays
     .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
+    .where(queryBuilder => {
+      queryBuilder.where('a.id', assayIds.GxMtbRif).orWhere('rc2.externalId', 'Detected')
+    })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
@@ -1058,11 +1085,18 @@ async function getDataForReportDrTb10B(auth, query) {
       WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive TB' AND r.patientData->>'$.PatientHistory' = 'New' THEN '11b'
       ELSE '-'
       END as patientType`),
+      // knex.raw(`
+      //   CASE
+      //     WHEN r.patientData->>'$.SampleType' = 'Pulmonary' THEN 'Sputum'
+      //     WHEN r.patientData->>'$.SampleType' = 'Extra-pulmonary' THEN 'Others'
+      //     WHEN r.patientData->>'$.SampleType' = 'Stool' THEN 'Stool'
+      //     ELSE ''
+      //   END as sampleType`),
       knex.raw(`
-        CASE 
-          WHEN r.patientData->>'$.SampleType' = 'Pulmonary' THEN 'Sputum'
-          WHEN r.patientData->>'$.SampleType' = 'Extra-pulmonary' THEN 'Others'
-          WHEN r.patientData->>'$.SampleType' = 'Stool' THEN 'Stool'
+        CASE
+          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Pulmonary' THEN 'Sputum'
+          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Extra-pulmonary' THEN 'Others'
+          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Stool' THEN 'Stool'
           ELSE ''
         END as sampleType`),
       knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
@@ -1089,25 +1123,42 @@ async function getDataForReportDrTb10B(auth, query) {
       knex.raw(checkResistance('ETH', 'ethDetected')),
       knex.raw(
         `CONCAT(
-          IFNULL(r.patientData ->> '$.address', ''),
-          ' ',
-          IFNULL(
-            COALESCE(
-              r.patientData ->> '$.PatientStreet',
-              r.patientData ->> '$.street'
-            ),
-            ''
-          ),
-          ' ',
-          IFNULL(
-            COALESCE(
-              r.patientData ->> '$.PatientPhone',
-              r.patientData ->> '$.phone'
-            ),
-            ''
-          )
-        ) as patientAddressAndCell`
+            IFNULL(r.patientData ->> '$.address', ''),
+            CASE
+              WHEN 
+                IFNULL(
+                  COALESCE(
+                    r.patientData ->> '$.PatientStreet',
+                    r.patientData ->> '$.street'
+                  ),
+                '') = ''
+                OR 
+                r.patientData->>'$.address' LIKE CONCAT('%', COALESCE(r.patientData->>'$.PatientStreet', r.patientData->>'$.street'), '%')
+              THEN ''
+              ELSE CONCAT(' ', COALESCE(r.patientData->>'$.PatientStreet', r.patientData->>'$.street'))
+            END,
+            IFNULL(
+              COALESCE(
+                r.patientData->>'$.PatientPhone',
+                r.patientData->>'$.phone'
+              ), 
+              ''
+            )
+         ) as patientAddressAndCell`
       ),
+      knex.raw(`
+        CASE
+        WHEN IFNULL(rs.name, '') <> ''
+        THEN CONCAT(
+            rs.name,
+            CASE WHEN IFNULL(rs.street1, '') = '' OR rs.street1 LIKE CONCAT('%', rs.name, '%') THEN '' ELSE CONCAT('\\n', rs.street1) END,
+            CASE WHEN IFNULL(rs.street2, '') = '' THEN '' ELSE CONCAT('\\n', rs.street2) END,
+            CASE WHEN IFNULL(rs.city, '') = '' THEN '' ELSE CONCAT('\\n', rs.city) END,
+            CASE WHEN IFNULL(rs.zip, '') = '' THEN '' ELSE CONCAT('\\n', rs.zip) END
+          )
+        ELSE IFNULL(r.patientData->>'$.ReferringFacility', '')
+        END as referringAddressAndCell
+      `),
       knex.raw(
         `CONCAT(
           IFNULL(r.patientData ->> '$.TBRegistrationNumberCurrent', ''),
@@ -1120,7 +1171,7 @@ async function getDataForReportDrTb10B(auth, query) {
        * RR = MTB detected, Rif resistance detected,
        * TI = MTB detected, Rif resistance indeterminate,
        * N  = MTB not detected,
-       * I = invalid/ no result/ error
+       * I = Invalid/ no result/ error
        */
       knex.raw(`
           CASE WHEN a.id IN (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})
