@@ -36,8 +36,8 @@ const {
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
-    totalNumberOfModules,
-    activeModules,
+    // totalNumberOfModules,
+    // activeModules,
     instrumentsConnected,
   },
 } = dashboardWidgetsBase
