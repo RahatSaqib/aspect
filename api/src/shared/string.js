@@ -93,6 +93,13 @@ function isNumeric(value) {
   return !isNaN(value) // eslint-disable-line no-restricted-globals
 }
 
+/**
+ * convert comma-separated-value string to array of numbers
+ */
+function convertCsvToArrayOfNumbers(csv) {
+  return (csv?.split(',') || []).map(it => +it).filter(it => !Number.isNaN(it))
+}
+
 module.exports = {
   convertStringToFloat,
   getAllStringsEnclosedBetweenCharacters,
@@ -101,4 +108,5 @@ module.exports = {
   escapeReservedRegexCharacters,
   nullIfEmpty,
   isNumeric,
+  convertCsvToArrayOfNumbers,
 }
