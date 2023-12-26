@@ -197,10 +197,8 @@ const ResultList = () => {
   searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
   const params = { ...pagination, ...filters }
-  const { fixedMinDate: minDate, fixedMaxDate: maxDate } = params
+  const { minDate, maxDate } = params
   delete params.assayOverride
-  delete params.fixedMaxDate
-  delete params.fixedMinDate
   // >>>>>> Queries <<<<<<
   const {
     isLoading: tableLoading,
