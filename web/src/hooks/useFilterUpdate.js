@@ -1,11 +1,11 @@
 import { useContext } from 'react'
-import FilterContext from '../providers/FilterProvider/FilterProvider.Context'
 import endOfDay from 'date-fns/endOfDay'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import startOfYear from 'date-fns/startOfYear'
 import subtractDays from 'date-fns/subDays'
+import FilterContext from '../providers/FilterProvider/FilterProvider.Context'
 
 const now = new Date()
 const minDate = startOfDay(subtractDays(now, 30))
