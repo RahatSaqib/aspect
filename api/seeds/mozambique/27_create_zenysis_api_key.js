@@ -2,7 +2,7 @@ const { deviceApprovalToId, deviceTypeCategoryToId } = require('../../src/shared
 const { createClientDeviceApiKey } = require('../common')
 
 async function seed(knex) {
-  const name = 'Zenysis test'
+  const name = 'Zenysis'
   const partnerId = 1
   const token = 'w3wgnd8fnm67mcpfey30'
 
