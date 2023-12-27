@@ -1918,6 +1918,27 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
   })
 }
 
+const createClientDeviceApiKey = async (knex, data) => {
+  const { deviceTypePayload, devicePayload, deviceApiKeyPayload } = data
+
+  const [deviceTypeId] = await knex('DeviceType').insert(deviceTypePayload)
+
+  const [deviceId] = await knex('Device').insert({
+    ...devicePayload,
+    deviceTypeId,
+  })
+
+  const now = new Date()
+
+  return knex('DeviceApiKey').insert({
+    ...deviceApiKeyPayload,
+    deviceId,
+    revoked: false,
+    createdOn: now,
+    updatedOn: now,
+  })
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
@@ -1937,4 +1958,5 @@ module.exports = {
   upsertPermissionFixture,
   getStatesByName,
   upsertGeography,
+  createClientDeviceApiKey
 }

@@ -299,8 +299,8 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
 }
 
 function addGeographyConstraints(queryBuilder, constraints, aliases) {
-  const { site, country, result } = aliases
-  if (result) {
+  const { site, country, result, external } = aliases
+  if (result && !external) {
     if (!aliases.geography) {
       aliases.geography = alias('Geography')
       queryBuilder.leftOuterJoin(
