@@ -1,10 +1,12 @@
 const { deviceApprovalToId, deviceTypeCategoryToId } = require('../../src/shared/dictionary')
 const { createClientDeviceApiKey } = require('../common')
 
+const { clientApiDetails } = require('./fixtures/partnerData')
+
 async function seed(knex) {
-  const name = 'Zenysis'
-  const partnerId = 1
-  const token = 'w3wgnd8fnm67mcpfey30'
+  const { name, partnerId, token, manufacturer, externalId } = clientApiDetails.find(
+    item => (item.id = 'testAggregate')
+  )
 
   const { id: countryId } = await knex('Country').where('abbreviation', 'MZ').first()
 
@@ -15,9 +17,9 @@ async function seed(knex) {
   const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId('Client')
 
   const deviceTypePayload = {
-    externalId: name,
+    externalId,
     name,
-    manufacturer: 'SystemOne',
+    manufacturer,
     deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
   }
 

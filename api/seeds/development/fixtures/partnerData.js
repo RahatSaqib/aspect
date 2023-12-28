@@ -29,4 +29,14 @@ module.exports = {
     },
   ],
   excludePattern: '^ExcludeMe.+$',
+  clientApiDetails: [
+    {
+      id: 'zenysisTestAggregate',
+      name: 'Zenysis test',
+      token: 'v6jp1u0dt8p90nx0tnc0',
+      externalId: 'ZenysisTest',
+      manufacturer: 'SystemOne',
+      partnerId: 1,
+    },
+  ],
 }

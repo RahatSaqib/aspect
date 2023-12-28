@@ -17,7 +17,6 @@ const {
   addDeviceLog,
   getHealthStatsHandler,
   getResultPakistanHandler,
-  getTestAggregate,
 } = require('./service')
 
 const {
@@ -31,6 +30,7 @@ const {
   testAggResponseValidation,
   testAggRequestQueryValidation,
 } = require('./validation')
+const { getTestAggregate } = require('./mozambique/zenysisApiClient')
 
 const routes = [
   {

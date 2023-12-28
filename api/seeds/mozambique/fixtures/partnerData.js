@@ -21,4 +21,14 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://mozambique.aspect.id',
   apiUrl: 'https://mozambique.aspect.id/api',
+  clientApiDetails: [
+    {
+      id: 'testAggregate',
+      name: 'Zenysis',
+      token: 'w3wgnd8fnm67mcpfey30',
+      externalId: 'Zenysis',
+      manufacturer: 'SystemOne',
+      partnerId: 1,
+    },
+  ],
 }
