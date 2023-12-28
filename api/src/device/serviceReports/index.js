@@ -25,6 +25,7 @@ const { getNoStockInventoryReport } = require('./noStockInventoryReport')
 const { listDevices } = require('../listDevices')
 const { getModuleSwapsReportData } = require('./moduleSwapsReport')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 
 async function exportDevices(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -36,16 +37,16 @@ async function exportDevices(request, reply) {
   const data =
     scope === 'devices'
       ? dataSet.map(item => ({
-          ...item,
-          issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
-          availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
-          errorRate: item.error.rate, // Excel column formatted as 'Percentage'
-        }))
+        ...item,
+        issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
+        availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
+        errorRate: item.error.rate, // Excel column formatted as 'Percentage'
+      }))
       : dataSet.map(item => ({
-          ...item,
-          lastPingOn: format(new Date(item.lastPingOn), 'yyyy-MM-dd'),
-          lastSeen: format(new Date(item.lastSeen), 'yyyy-MM-dd HH:mm:ss'),
-        }))
+        ...item,
+        lastPingOn: format(new Date(item.lastPingOn), 'yyyy-MM-dd'),
+        lastSeen: format(new Date(item.lastSeen), 'yyyy-MM-dd HH:mm:ss'),
+      }))
   //
   const sheetData = {
     data,
@@ -85,6 +86,8 @@ async function getDeviceActivityReport(auth, query) {
     'dt.externalId',
     ['Aspect', 'GxAlert']
   )
+    .groupBy(['d.id'])
+
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
 
@@ -92,24 +95,29 @@ async function getDeviceActivityReport(auth, query) {
     if (select) builder.select(select)
     if (groupBy) builder.groupBy(groupBy)
   }
-  // get rows
-  const getItems = deviceQuery
-    .clone()
-    .leftJoin('Result as r', builder => {
-      builder.on('d.id', 'r.deviceId').andOn(knex.raw('r.endedOn between ? and ?', [minDate, maxDate]))
-    })
+
+  const getItems = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+    timeFrame: 'day',
+  })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .distinct(
       'd.id',
       'd.name',
       'd.serial',
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
-      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn')
+      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.startedOn)', offset, 'lastUploadOn')
     )
-    .countDistinct('r.id as totalResults')
     .groupBy('d.id', 'd.name', 'd.serial')
+    .sum({
+      totalResults: 'r.resultCount'
+    })
     .modify(sortPageParams, query, 'name')
     .modify(addingGroupingAndSelect, query)
 
@@ -122,8 +130,19 @@ async function getDeviceActivityReport(auth, query) {
     .groupBy('d.id', 'monthYear')
     .modify(addingGroupingAndSelect, query)
 
+  const baseFields = ['d.id as deviceId']
+  const allDevices = await deviceQuery.clone().select(baseFields)
+
+
   // return result when both queries are finished
-  const [data, deviceDetails] = await Promise.all([getItems, deviceResultsPerMonths])
+  const [allCounts, deviceDetails] = await Promise.all([getItems, deviceResultsPerMonths])
+  const data = _.map(allDevices, d => {
+    const item = allCounts.find(it => it.deviceId === d.deviceId)
+    return {
+      ...d,
+      totalResults: item?.totalResults || 0,
+    }
+  })
   const dateFields = getMonthsDatefields(minDate, maxDate, culture)
   const extraField = query.select ? query.select.split(' as ')[1].trim() : null
 
@@ -303,7 +322,7 @@ async function getDeviceCapacityReport(auth, query) {
         )
         deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
           (filteredMonthlyCapacity.resultCount * 100) /
-            Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
+          Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
           2
         )
       }
