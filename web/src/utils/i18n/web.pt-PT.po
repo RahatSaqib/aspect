@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-12-04T14:31:09.352Z\n"
+"POT-Creation-Date: 2023-12-28T14:43:41.431Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -214,6 +214,20 @@ msgstr "AMK R %"
 msgid "AMK Resistance"
 msgstr "Resistência AMK"
 
+#. [legends.Unknown.AMKPercent]
+#. defaultMessage is:
+#. AMK-R %
+#: extracted_strings.json
+msgid "AMK-R %"
+msgstr "AMK-R %"
+
+#. [legends.Unknown.AmkDetected]
+#. defaultMessage is:
+#. AMK-R Detected
+#: extracted_strings.json
+msgid "AMK-R Detected"
+msgstr "AMK-R Detectado"
+
 #. [months.april]
 #. defaultMessage is:
 #. APR
@@ -332,9 +346,6 @@ msgstr "Detalhes da Conta"
 #. [pages.deviceDetail.ResultWorkflowStatusAcknowledged]
 #. defaultMessage is:
 #. Acknowledged
-#. [pages.TaskList.issueStatusAcknowledged]
-#. defaultMessage is:
-#. Acknowledged
 #: extracted_strings.json
 msgid "Acknowledged"
 msgstr "Reconhecido"
@@ -343,9 +354,6 @@ msgstr "Reconhecido"
 #. defaultMessage is:
 #. Active
 #. [component.Widget.activeDevicesTitle]
-#. defaultMessage is:
-#. Active
-#. [pages.TaskList.issueStatusActive]
 #. defaultMessage is:
 #. Active
 #. [pages.DeviceList.availabilityRate]
@@ -649,13 +657,6 @@ msgid ""
 msgstr ""
 "Todos os resultados dos testes no sistema. Uma linha por resultado com todos "
 "os campos necessários."
-
-#. [pages.TaskList.taskListOptionsAllTopics]
-#. defaultMessage is:
-#. All topics
-#: extracted_strings.json
-msgid "All topics"
-msgstr "Todos os tópicos"
 
 #. [pages.ContactDetails.email2]
 #. defaultMessage is:
@@ -1224,6 +1225,20 @@ msgstr "Notificação de construção"
 #: extracted_strings.json
 msgid "CAP Resistance"
 msgstr "Resistência CAP"
+
+#. [legends.Unknown.CAPPercent]
+#. defaultMessage is:
+#. CAP-R %
+#: extracted_strings.json
+msgid "CAP-R %"
+msgstr "CAP-R %"
+
+#. [legends.Unknown.CapDetected]
+#. defaultMessage is:
+#. CAP-R Detected
+#: extracted_strings.json
+msgid "CAP-R Detected"
+msgstr "CAP-R detectado"
 
 #. [filter.AssayTypeSelectField.assayTypeCD4]
 #. defaultMessage is:
@@ -1839,9 +1854,6 @@ msgstr "Casos confirmados"
 #. [pages.Status.summaryWidgetGroup.connectivity]
 #. defaultMessage is:
 #. Connectivity
-#. [pages.TaskList.taskListOptionsConnectivity]
-#. defaultMessage is:
-#. Connectivity
 #. [pages.DeviceList.connectivity]
 #. defaultMessage is:
 #. Connectivity
@@ -1854,16 +1866,6 @@ msgstr "Casos confirmados"
 #: extracted_strings.json
 msgid "Connectivity"
 msgstr "Conectividade"
-
-#. [pages.TaskList.issueCategoryConnectivityHealth]
-#. defaultMessage is:
-#. Connectivity Health
-#. [pages.TaskList.ConnectivityHealth]
-#. defaultMessage is:
-#. Connectivity Health
-#: extracted_strings.json
-msgid "Connectivity Health"
-msgstr "Conectividade Saúde"
 
 #. [filter.popover.connectorStatus]
 #. defaultMessage is:
@@ -2558,9 +2560,6 @@ msgstr "Painel"
 msgid "Dashboard v2"
 msgstr "Painel de controlo v2"
 
-#. [pages.TaskList.taskListOptionsData]
-#. defaultMessage is:
-#. Data
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
 #. Data
@@ -2578,15 +2577,19 @@ msgstr "Dados"
 msgid "Data Extract for Tableau"
 msgstr "Extracto de dados para o Tableau"
 
-#. [pages.TaskList.issueCategoryDataHealth]
+#. [p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle]
 #. defaultMessage is:
-#. Data Health
-#. [pages.TaskList.dataHealth]
-#. defaultMessage is:
-#. Data Health
+#. Data Visualisation For XDR Resistance Over Time
 #: extracted_strings.json
-msgid "Data Health"
-msgstr "Saúde dos dados"
+msgid "Data Visualisation For XDR Resistance Over Time"
+msgstr "Visualização de dados para a resistência XDR ao longo do tempo"
+
+#. [p.PkDashboard.dataVisualisationForXDR]
+#. defaultMessage is:
+#. Data Visualisation for XDR Resistance
+#: extracted_strings.json
+msgid "Data Visualisation for XDR Resistance"
+msgstr "Visualização de dados para a resistência XDR"
 
 #. [filter.popover.date]
 #. defaultMessage is:
@@ -2849,9 +2852,6 @@ msgstr "Detectado"
 #. [pages.ResultList.deviceName]
 #. defaultMessage is:
 #. Device
-#. [pages.TaskList.taskListOptionsDevice]
-#. defaultMessage is:
-#. Device
 #. [pages.DeviceList.device]
 #. defaultMessage is:
 #. Device
@@ -2942,16 +2942,6 @@ msgstr "Relatório de calibração de dispositivos"
 #: extracted_strings.json
 msgid "Device Country"
 msgstr "Dispositivo País"
-
-#. [pages.TaskList.issueCategoryDeviceHealth]
-#. defaultMessage is:
-#. Device Health
-#. [pages.TaskList.DeviceHealth]
-#. defaultMessage is:
-#. Device Health
-#: extracted_strings.json
-msgid "Device Health"
-msgstr "Saúde do dispositivo"
 
 #. [filter.btnGroup.deviceIssueType]
 #. defaultMessage is:
@@ -3320,20 +3310,6 @@ msgstr ""
 msgid "Drug Resistance"
 msgstr "Resistência a droga"
 
-#. [pages.TaskList.issueStatusDueNow]
-#. defaultMessage is:
-#. Due Now
-#: extracted_strings.json
-msgid "Due Now"
-msgstr "Devido Agora"
-
-#. [pages.TaskList.issueStatusDueSoon]
-#. defaultMessage is:
-#. Due Soon
-#: extracted_strings.json
-msgid "Due Soon"
-msgstr "Em breve"
-
 #. [filter.AssayTypeSelectField.assayTypeEid]
 #. defaultMessage is:
 #. EID
@@ -3371,6 +3347,20 @@ msgstr "ETH R %"
 #: extracted_strings.json
 msgid "ETH Resistance"
 msgstr "Resistência ETH"
+
+#. [legends.Unknown.ETHPercent]
+#. defaultMessage is:
+#. ETH-R %
+#: extracted_strings.json
+msgid "ETH-R %"
+msgstr "ETH-R %"
+
+#. [legends.Unknown.EthDetected]
+#. defaultMessage is:
+#. ETH-R Detected
+#: extracted_strings.json
+msgid "ETH-R Detected"
+msgstr "ETH-R detectado"
 
 #. [filter.AssayTypeSelectField.assayTypeEbola]
 #. defaultMessage is:
@@ -5173,13 +5163,6 @@ msgstr "ID"
 msgid "ID includes \"{externalId}\""
 msgstr "O ID inclui \"{externalId}\""
 
-#. [legends.Unknown.InhDetected]
-#. defaultMessage is:
-#. INH Detected
-#: extracted_strings.json
-msgid "INH Detected"
-msgstr "INH Detectado"
-
 #. [pages.XDR.cnt_inh]
 #. defaultMessage is:
 #. INH R
@@ -5207,6 +5190,13 @@ msgstr "Resistência INH"
 #: extracted_strings.json
 msgid "INH-R %"
 msgstr "INH-R %"
+
+#. [legends.Unknown.InhDetected]
+#. defaultMessage is:
+#. INH-R Detected
+#: extracted_strings.json
+msgid "INH-R Detected"
+msgstr "INH-R Detectado"
 
 #. [pages.ResetPassword.adminHelpContent]
 #. defaultMessage is:
@@ -5262,9 +5252,6 @@ msgstr ""
 "página que está visualizando"
 
 #. [pages.shared.deviceStatus.inactive]
-#. defaultMessage is:
-#. Inactive
-#. [pages.TaskList.issueStatusInactive]
 #. defaultMessage is:
 #. Inactive
 #: extracted_strings.json
@@ -5629,6 +5616,20 @@ msgstr "Funções de Trabalho"
 #: extracted_strings.json
 msgid "KAN Resistance"
 msgstr "Resistência KAN"
+
+#. [legends.Unknown.KANPercent]
+#. defaultMessage is:
+#. KAN-R %
+#: extracted_strings.json
+msgid "KAN-R %"
+msgstr "KAN-R %"
+
+#. [legends.Unknown.KanDetected]
+#. defaultMessage is:
+#. KAN-R Detected
+#: extracted_strings.json
+msgid "KAN-R Detected"
+msgstr "KAN-R Detectado"
 
 #. [pages.DeviceApiKeyList.token]
 #. defaultMessage is:
@@ -6024,13 +6025,6 @@ msgstr "Carregamento de resultados Status de tratamento falhados"
 #: extracted_strings.json
 msgid "Loading Results Failed"
 msgstr "Falha nos resultados de carregamento"
-
-#. [errorResponseMessages.fetchTasks.GET.default.title]
-#. defaultMessage is:
-#. Loading Tasks Failed
-#: extracted_strings.json
-msgid "Loading Tasks Failed"
-msgstr "Falha nas tarefas de carregamento"
 
 #. [legends.Unknown.location]
 #. defaultMessage is:
@@ -7770,9 +7764,6 @@ msgstr "outubro"
 #. [pages.ResultList.ResultWorkflowStatusValidated]
 #. defaultMessage is:
 #. OK
-#. [pages.TaskList.issueStatusOK]
-#. defaultMessage is:
-#. OK
 #. [pages.transferResult.successOk]
 #. defaultMessage is:
 #. OK
@@ -8012,13 +8003,6 @@ msgstr "Taxa de atividade global"
 #: extracted_strings.json
 msgid "Overall Network Health Daily"
 msgstr "Saúde geral da rede diariamente"
-
-#. [pages.TaskList.issueStatusOverdue]
-#. defaultMessage is:
-#. Overdue
-#: extracted_strings.json
-msgid "Overdue"
-msgstr "Atrasado"
 
 #. [jobFunction.pakistanDashboardTesting]
 #. defaultMessage is:
@@ -9046,20 +9030,6 @@ msgstr "Resistência RIF"
 msgid "RIF Resistance Rate (%positive results)"
 msgstr "Taxa de Resistência RIF (%p resultados positivos)"
 
-#. [p.PkDashboard.rrDetected]
-#. defaultMessage is:
-#. RR+
-#: extracted_strings.json
-msgid "RR+"
-msgstr "RR+"
-
-#. [p.PkDashboard.rrToMtbPercentage]
-#. defaultMessage is:
-#. RR+ percentage of MTB+
-#: extracted_strings.json
-msgid "RR+ percentage of MTB+"
-msgstr "RR Para Tb Percentagem total"
-
 #. [p.PkDashboard.rrCasesDiagnosed]
 #. defaultMessage is:
 #. RR cases diagnosed
@@ -9080,6 +9050,20 @@ msgstr "Casos de RR diagnosticados nas últimas 24 horas"
 #: extracted_strings.json
 msgid "RR cases diagnosed this year"
 msgstr "casos de RR diagnosticados este ano"
+
+#. [p.PkDashboard.rrDetected]
+#. defaultMessage is:
+#. RR+
+#: extracted_strings.json
+msgid "RR+"
+msgstr "RR+"
+
+#. [p.PkDashboard.rrToMtbPercentage]
+#. defaultMessage is:
+#. RR+ percentage of MTB+
+#: extracted_strings.json
+msgid "RR+ percentage of MTB+"
+msgstr "RR Para Tb Percentagem total"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -9130,25 +9114,12 @@ msgstr "Diagnóstico de TBRR"
 msgid "Ready for delivery"
 msgstr "Pronto para entrega"
 
-#. [pages.TaskList.taskListOptionsReagent]
-#. defaultMessage is:
-#. Reagent
 #. [pages.DeviceList.reagentHealth]
 #. defaultMessage is:
 #. Reagent
 #: extracted_strings.json
 msgid "Reagent"
 msgstr "Reagente"
-
-#. [pages.TaskList.issueCategoryReagentHealth]
-#. defaultMessage is:
-#. Reagent Health
-#. [pages.TaskList.ReagentHealth]
-#. defaultMessage is:
-#. Reagent Health
-#: extracted_strings.json
-msgid "Reagent Health"
-msgstr "Saúde do Reagente"
 
 #. [forms.formItem.reason]
 #. defaultMessage is:
@@ -9573,13 +9544,6 @@ msgstr "Resistência"
 #: extracted_strings.json
 msgid "Resistant"
 msgstr "Resistente"
-
-#. [pages.TaskList.issueStatusResolved]
-#. defaultMessage is:
-#. Resolved
-#: extracted_strings.json
-msgid "Resolved"
-msgstr "Resolvido"
 
 #. [filter.popover.result]
 #. defaultMessage is:
@@ -10239,13 +10203,6 @@ msgstr "Pesquisa de resultados Status de tratamento falhados"
 msgid "Searching Results Failed"
 msgstr "Resultados da pesquisa falhados"
 
-#. [errorResponseMessages.fetchTasks.GET.400.title]
-#. defaultMessage is:
-#. Searching Tasks Failed
-#: extracted_strings.json
-msgid "Searching Tasks Failed"
-msgstr "Tarefas de pesquisa falhadas"
-
 #. [pages.NotificationDetail.assayPlaceholder]
 #. defaultMessage is:
 #. Select Assay ...
@@ -10871,17 +10828,6 @@ msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 "suprimento} other {# suprimentos} }"
 
-#. [pages.TaskList.paginatorStatus]
-#. defaultMessage is:
-#. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} other {# tasks} }
-#: extracted_strings.json
-msgid ""
-"Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# task} "
-"other {# tasks} }"
-msgstr ""
-"Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
-"tarefa} other {# tarefas} }"
-
 #. [pages.ReportIndex.moduleActivityReport_description]
 #. defaultMessage is:
 #. Shows devices with one or more inactive modules
@@ -10919,9 +10865,6 @@ msgstr "Terminar Sessão"
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceApiKeyList.site]
-#. defaultMessage is:
-#. Site
-#. [pages.TaskList.site]
 #. defaultMessage is:
 #. Site
 #. [pages.DeviceList.site]
@@ -11528,26 +11471,12 @@ msgstr "Alvo"
 msgid "Target device"
 msgstr "Dispositivo de destino"
 
-#. [pages.TaskAggre.title]
-#. defaultMessage is:
-#. Task
-#: extracted_strings.json
-msgid "Task"
-msgstr "Tarefa"
-
 #. [header.link.taskList.title]
 #. defaultMessage is:
 #. Task List
 #: extracted_strings.json
 msgid "Task List"
 msgstr "Lista de tarefas"
-
-#. [pages.TaskList.title]
-#. defaultMessage is:
-#. Tasks
-#: extracted_strings.json
-msgid "Tasks"
-msgstr "Tarefas"
 
 #. [p.PkDashboard.TbTotal]
 #. defaultMessage is:
@@ -11698,6 +11627,9 @@ msgid "Tests Per Day"
 msgstr "Testes por dia"
 
 #. [pages.Status.testsOverTimeTitle.graph]
+#. defaultMessage is:
+#. Tests Performed
+#. [p.PkDashboard.testsPerformed]
 #. defaultMessage is:
 #. Tests Performed
 #: extracted_strings.json
@@ -12552,13 +12484,6 @@ msgstr ""
 msgid "Thursday"
 msgstr "Quinta-feira"
 
-#. [pages.TaskList.time]
-#. defaultMessage is:
-#. Time
-#: extracted_strings.json
-msgid "Time"
-msgstr "Tempo"
-
 #. [pages.UserPreferences.timezone]
 #. defaultMessage is:
 #. Time Zone
@@ -12648,13 +12573,6 @@ msgstr "Alternar tudo"
 #: extracted_strings.json
 msgid "Toggle status confirmation"
 msgstr "Confirmação do estado de alternância"
-
-#. [pages.TaskList.topic]
-#. defaultMessage is:
-#. Topic
-#: extracted_strings.json
-msgid "Topic"
-msgstr "Tópico"
 
 #. [legends.Unknown.Total]
 #. defaultMessage is:
@@ -14220,13 +14138,6 @@ msgstr "com resultado {resultCategoryName}"
 msgid "workflow status is {workflowStatusName}"
 msgstr "o status do fluxo de trabalho é {workflowStatusName}"
 
-#. [pages.TaskList.alertCount]
-#. defaultMessage is:
-#. {alertCount, plural, one {# alert} other {# alerts} }
-#: extracted_strings.json
-msgid "{alertCount, plural, one {# alert} other {# alerts} }"
-msgstr "{{#alertCount, plural, one {# alerta} other {# alertas} }"
-
 #. [pages.DeviceList.errorOfTotal]
 #. defaultMessage is:
 #. {count} of {total}
@@ -14361,6 +14272,61 @@ msgstr "{unit} desde a semana passada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
+
+#~ msgid "All topics"
+#~ msgstr "Todos os tópicos"
+
+#~ msgid "Connectivity Health"
+#~ msgstr "Conectividade Saúde"
+
+#~ msgid "Data Health"
+#~ msgstr "Saúde dos dados"
+
+#~ msgid "Device Health"
+#~ msgstr "Saúde do dispositivo"
+
+#~ msgid "Due Now"
+#~ msgstr "Devido Agora"
+
+#~ msgid "Due Soon"
+#~ msgstr "Em breve"
+
+#~ msgid "Loading Tasks Failed"
+#~ msgstr "Falha nas tarefas de carregamento"
+
+#~ msgid "Overdue"
+#~ msgstr "Atrasado"
+
+#~ msgid "Reagent Health"
+#~ msgstr "Saúde do Reagente"
+
+#~ msgid "Resolved"
+#~ msgstr "Resolvido"
+
+#~ msgid "Searching Tasks Failed"
+#~ msgstr "Tarefas de pesquisa falhadas"
+
+#~ msgid ""
+#~ "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
+#~ "task} other {# tasks} }"
+#~ msgstr ""
+#~ "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
+#~ "tarefa} other {# tarefas} }"
+
+#~ msgid "Task"
+#~ msgstr "Tarefa"
+
+#~ msgid "Tasks"
+#~ msgstr "Tarefas"
+
+#~ msgid "Time"
+#~ msgstr "Tempo"
+
+#~ msgid "Topic"
+#~ msgstr "Tópico"
+
+#~ msgid "{alertCount, plural, one {# alert} other {# alerts} }"
+#~ msgstr "{{#alertCount, plural, one {# alerta} other {# alertas} }"
 
 #~ msgid "< 1000 cp/mL"
 #~ msgstr "< 1000 cp/mL"
@@ -15071,17 +15037,16 @@ msgstr "{unit} calibrações totais"
 #~ msgstr "Styleguide"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for "
-#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for repair"
+#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."
 #~ msgstr ""
 #~ "A porcentagem de \"dias de dispositivo\" que foram classificados como "
 #~ "\"inativos para reparo\", excluindo fins de semana. Por exemplo, 20 dias "
-#~ "da semana no mês e 5 dispositivos equivalem a 100 \"dias do "
-#~ "dispositivo\". Se um dispositivo caísse na metade do mês, esse número "
-#~ "seria de 10%"
+#~ "da semana no mês e 5 dispositivos equivalem a 100 \"dias do dispositivo"
+#~ "\". Se um dispositivo caísse na metade do mês, esse número seria de 10%"
 
 #~ msgid "Viewing all devices {GEOGRAPHY} {NAME}."
 #~ msgstr "Visualização de todos os dispositivos {GEOGRAPHY} {NAME}."
@@ -15197,33 +15162,3 @@ msgstr "{unit} calibrações totais"
 #~| msgid "percentage of valid results"
 #~ msgid "Percentage of valid results reported the current month"
 #~ msgstr "porcentagem de resultados válidos"
-
-#~ msgid "AMK-R %"
-#~ msgstr "AMK-R %"
-
-#~ msgid "AMK-R Detected"
-#~ msgstr "AMK-R Detectado"
-
-#~ msgid "CAP-R %"
-#~ msgstr "CAP-R %"
-
-#~ msgid "CAP-R Detected"
-#~ msgstr "CAP-R detectado"
-
-#~ msgid "Data Visualisation For XDR Resistance Over Time"
-#~ msgstr "Visualização de dados para a resistência XDR ao longo do tempo"
-
-#~ msgid "Data Visualisation for XDR Resistance"
-#~ msgstr "Visualização de dados para a resistência XDR"
-
-#~ msgid "ETH-R %"
-#~ msgstr "ETH-R %"
-
-#~ msgid "ETH-R Detected"
-#~ msgstr "ETH-R detectado"
-
-#~ msgid "KAN-R %"
-#~ msgstr "KAN-R %"
-
-#~ msgid "KAN-R Detected"
-#~ msgstr "KAN-R Detectado"
