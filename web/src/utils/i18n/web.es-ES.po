@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-12-12T20:27:38.085Z\n"
+"POT-Creation-Date: 2023-12-28T14:43:41.431Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -19,7 +19,7 @@ msgstr ""
 #. "Do Not Use" Modules
 #: extracted_strings.json
 msgid "\"Do Not Use\" Modules"
-msgstr "Módulos \"No usar\""
+msgstr "\"Módulos \"No utilizar"
 
 #. [pages.ReportIndex.no_stock]
 #. defaultMessage is:
@@ -5197,6 +5197,13 @@ msgstr "Resistencia INH"
 #: extracted_strings.json
 msgid "INH-R %"
 msgstr "INH-R"
+
+#. [legends.Unknown.InhDetected]
+#. defaultMessage is:
+#. INH-R Detected
+#: extracted_strings.json
+msgid "INH-R Detected"
+msgstr "INH-R Detectado"
 
 #. [pages.ResetPassword.adminHelpContent]
 #. defaultMessage is:
@@ -12031,9 +12038,9 @@ msgid ""
 msgstr ""
 "Porcentaje de \"dispositivos-días\" que fueron declarados como \"inactivos "
 "por reparación\", excluyendo los fines de semana. Por ejemplo, 20 días "
-"laborables en el mes y 5 dispositivos equivaldrían a 100 \"dispositivos-"
-"días\". Si un dispositivo estuvo inactivo la mitad del mes, esta cifra sería "
-"del 10%"
+"laborables en el mes y 5 dispositivos equivaldrían a 100 \"dispositivos-días"
+"\". Si un dispositivo estuvo inactivo la mitad del mes, esta cifra sería del "
+"10%"
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
@@ -14323,9 +14330,6 @@ msgstr "{unit} calibraciones totales"
 #~ msgid "Due Soon"
 #~ msgstr "Vence próximamente"
 
-#~ msgid "INH Detected"
-#~ msgstr "INH Detectado"
-
 #~ msgid "Loading Tasks Failed"
 #~ msgstr "Fallo en la carga de tareas"
 
@@ -15077,8 +15081,8 @@ msgstr "{unit} calibraciones totales"
 #~ msgstr "Guía de estilos"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for "
-#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for repair"
+#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."
