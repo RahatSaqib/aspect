@@ -86,9 +86,7 @@ async function getDeviceActivityReport(auth, query) {
     'dt.externalId',
     ['Aspect', 'GxAlert']
   )
-    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
-    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .groupBy(['d.id'])
+
 
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
@@ -98,48 +96,67 @@ async function getDeviceActivityReport(auth, query) {
     if (groupBy) builder.groupBy(groupBy)
   }
 
-
-  const getItems = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+  const baseFactItems = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
     addConstraints,
     dataConstraints,
     filterParams,
     query,
     timeFrame: 'day',
   })
+    .select('r.deviceId')
+    .groupBy('r.deviceId')
+    .sum({
+      totalResults: 'r.resultCount',
+    })
+    .modify(addingGroupingAndSelect, query)
+
+
+  const baseFactByMonth = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+    timeFrame: 'day',
+  })
+    .select('r.deviceId', getMonthYearUserTimeZoneField(knex, 'r.startedOn', 'monthYear', offset))
+    .sum({
+      totalResults: 'r.resultCount',
+    })
+    .groupBy('r.deviceId', 'monthYear')
+
+  const baseResultsLastUploaded = knex('Result as r')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+    })
+    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .groupBy('r.deviceId')
+    .select('r.deviceId', knex.raw('MAX(r.updatedOn) as lastUploadOn'))
+
+  const data = await deviceQuery
+    .clone()
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .leftJoin(baseFactItems.as('fact'), 'd.id', 'fact.deviceId')
+    .leftJoin(baseResultsLastUploaded.as('res'), 'd.id', 'res.deviceId')
     .distinct(
       'd.id',
       'd.name',
       'd.serial',
+      'da.name as deviceApprovalStatus',
+      'dms.name as deviceMaintenanceStatus',
+      'res.lastUploadOn',
+      'fact.totalResults'
     )
     .groupBy('d.id')
-    .sum({
-      totalResults: 'r.resultCount'
-    })
     .modify(sortPageParams, query, 'name')
-    .modify(addingGroupingAndSelect, query)
 
-  const deviceResultsPerMonths = await deviceQuery
+
+  const deviceDetails = await deviceQuery
     .clone()
-    .join('Result as r', 'd.id', 'r.deviceId')
-    .countDistinct('r.id as totalResults')
-    .distinct('d.id as deviceId', getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'monthYear', offset))
-    .modify(filterDateRangeParams, query, 'r.endedOn')
-    .groupBy('d.id', 'monthYear')
-    .modify(addingGroupingAndSelect, query)
+    .leftJoin(baseFactByMonth.as('fact'), 'd.id', 'fact.deviceId')
+    .groupBy('d.id', 'fact.monthYear')
+    .select('d.id as deviceId', 'fact.totalResults', 'fact.monthYear')
 
-
-
-  // return result when both queries are finished
-  const [allCounts, deviceDetails] = await Promise.all([getItems, deviceResultsPerMonths])
-
-  const allDevices = await deviceQuery.clone().select(['d.id as deviceId', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus']).orderBy('d.name')
-  const data = _.map(allDevices, d => {
-    const item = allCounts.find(it => it.id === d.deviceId)
-    return {
-      ...d,
-      ...item,
-    }
-  })
 
   const dateFields = getMonthsDatefields(minDate, maxDate, culture)
   const extraField = query.select ? query.select.split(' as ')[1].trim() : null
@@ -155,9 +172,9 @@ async function getDeviceActivityReport(auth, query) {
         elem[detail.monthYear] = detail.totalResults
       }
     )
-
     return elem
   })
+
   const dataset = {
     ok: true,
     total: devices.length,
