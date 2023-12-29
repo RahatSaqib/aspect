@@ -2313,7 +2313,7 @@ async function xdrAssayGraphAggregations(request) {
       AmkToMtbPercentage,
       KanToMtbPercentage,
       CapToMtbPercentage,
-      EthToMtbPercentage
+      EthToMtbPercentage,
     }
   })
 
@@ -2334,23 +2334,23 @@ async function xdrAssayGraphAggregations(request) {
       'AmkToMtbPercentage',
       'KanToMtbPercentage',
       'CapToMtbPercentage',
-      'EthToMtbPercentage'
+      'EthToMtbPercentage',
     ],
     i18nKeys: {
       TotalTests: 'TotalTests',
       MtbDetected: 'MtbDetected',
       FqrDetected: 'FqrDetected',
       InhDetected: 'InhDetected',
-      AmkDetected:'AmkDetected',
-      KanDetected:'KanDetected',
-      CapDetected:'CapDetected',
-      EthDetected:'EthDetected',
+      AmkDetected: 'AmkDetected',
+      KanDetected: 'KanDetected',
+      CapDetected: 'CapDetected',
+      EthDetected: 'EthDetected',
       FqrToMtbPercentage: 'FQRPercent',
       InhToMtbPercentage: 'INHPercent',
       AmkToMtbPercentage: 'AMKPercent',
       KanToMtbPercentage: 'KANPercent',
       CapToMtbPercentage: 'CAPPercent',
-      EthToMtbPercentage: 'ETHPercent'
+      EthToMtbPercentage: 'ETHPercent',
     },
   }
 }
