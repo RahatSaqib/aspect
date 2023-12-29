@@ -96,6 +96,9 @@ async function getDeviceActivityReport(auth, query) {
     if (groupBy) builder.groupBy(groupBy)
   }
 
+  delete query.minDate
+  delete query.maxDate
+
   const getItems = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
     addConstraints,
     dataConstraints,
@@ -112,13 +115,21 @@ async function getDeviceActivityReport(auth, query) {
       'd.serial',
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
-      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.startedOn)', offset, 'lastUploadOn')
+      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.calculatedOn)', offset, 'lastUploadOn')
     )
     .groupBy('d.id', 'd.name', 'd.serial')
     .sum({
       totalResults: 'r.resultCount'
     })
     .modify(sortPageParams, query, 'name')
+    .modify(qb => {
+      if (minDate) {
+        qb.where('r.calculatedOn', '>=', minDate)
+      }
+      if (maxDate) {
+        qb.where('r.calculatedOn', '<=', maxDate)
+      }
+    })
     .modify(addingGroupingAndSelect, query)
 
   const deviceResultsPerMonths = await deviceQuery
@@ -130,19 +141,20 @@ async function getDeviceActivityReport(auth, query) {
     .groupBy('d.id', 'monthYear')
     .modify(addingGroupingAndSelect, query)
 
-  const baseFields = ['d.id as deviceId']
-  const allDevices = await deviceQuery.clone().select(baseFields)
 
 
   // return result when both queries are finished
   const [allCounts, deviceDetails] = await Promise.all([getItems, deviceResultsPerMonths])
+
+  const allDevices = await deviceQuery.clone().select(['d.id as deviceId', 'd.name', 'd.serial',]).orderBy('d.name')
   const data = _.map(allDevices, d => {
-    const item = allCounts.find(it => it.deviceId === d.deviceId)
+    const item = allCounts.find(it => it.id === d.deviceId)
     return {
       ...d,
-      totalResults: item?.totalResults || 0,
+      ...item,
     }
   })
+
   const dateFields = getMonthsDatefields(minDate, maxDate, culture)
   const extraField = query.select ? query.select.split(' as ')[1].trim() : null
 
