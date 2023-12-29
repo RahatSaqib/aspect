@@ -86,6 +86,8 @@ async function getDeviceActivityReport(auth, query) {
     'dt.externalId',
     ['Aspect', 'GxAlert']
   )
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .groupBy(['d.id'])
 
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
@@ -96,8 +98,6 @@ async function getDeviceActivityReport(auth, query) {
     if (groupBy) builder.groupBy(groupBy)
   }
 
-  delete query.minDate
-  delete query.maxDate
 
   const getItems = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
     addConstraints,
@@ -106,30 +106,16 @@ async function getDeviceActivityReport(auth, query) {
     query,
     timeFrame: 'day',
   })
-    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
-    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .distinct(
       'd.id',
       'd.name',
       'd.serial',
-      'da.name as deviceApprovalStatus',
-      'dms.name as deviceMaintenanceStatus',
-      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.calculatedOn)', offset, 'lastUploadOn')
     )
-    .groupBy('d.id', 'd.name', 'd.serial')
+    .groupBy('d.id')
     .sum({
       totalResults: 'r.resultCount'
     })
     .modify(sortPageParams, query, 'name')
-    .modify(qb => {
-      if (minDate) {
-        qb.where('r.calculatedOn', '>=', minDate)
-      }
-      if (maxDate) {
-        qb.where('r.calculatedOn', '<=', maxDate)
-      }
-    })
     .modify(addingGroupingAndSelect, query)
 
   const deviceResultsPerMonths = await deviceQuery
@@ -146,7 +132,7 @@ async function getDeviceActivityReport(auth, query) {
   // return result when both queries are finished
   const [allCounts, deviceDetails] = await Promise.all([getItems, deviceResultsPerMonths])
 
-  const allDevices = await deviceQuery.clone().select(['d.id as deviceId', 'd.name', 'd.serial',]).orderBy('d.name')
+  const allDevices = await deviceQuery.clone().select(['d.id as deviceId', 'd.name', 'd.serial', 'da.name as deviceApprovalStatus', 'dms.name as deviceMaintenanceStatus']).orderBy('d.name')
   const data = _.map(allDevices, d => {
     const item = allCounts.find(it => it.id === d.deviceId)
     return {
