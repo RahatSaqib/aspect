@@ -2,7 +2,14 @@ import React, { useState, useEffect } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { StateSelect, LgaSelect, ColumnLineGraph, Loading, getTimePeriod } from '../../../../../cleanComponents'
+import {
+  StateSelect,
+  LgaSelect,
+  ColumnLineGraph,
+  Loading,
+  getTimePeriod,
+  objectToArray,
+} from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
@@ -24,10 +31,9 @@ const RrtbTestDiagnosisPage = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [stateId, setState] = useState()
-  const [lgaId, setLga] = useState()
+  const [filter, setFilter] = useState()
 
-  const mergedParams = stateId ? [...endpointParams, { stateId, lgaId }] : [...endpointParams]
+  const mergedParams = filter ? [...endpointParams, ...objectToArray(filter)] : [...endpointParams]
 
   const { isLoading, data } = useQuery(
     ['rrtbMtbDetectedQuarterlyTrends', { mergedParams }],
@@ -70,12 +76,14 @@ const RrtbTestDiagnosisPage = () => {
           />
           <StateSelect
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
+            value={filter?.stateId ?? ''}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={stateId}
-            onChange={e => setLga(e.target.value)}
+            stateId={filter?.stateId}
+            value={filter?.lgaId ?? ''}
+            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
