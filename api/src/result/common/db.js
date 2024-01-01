@@ -536,6 +536,7 @@ const getXdrResultCountBase = ({
   dataConstraints,
   query,
   fieldsScope = [], // empty array means we return default field `cntAll`
+  timeFrame = 'month',
 }) => {
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
   const takeAll = fieldsScope.includes(FACT_FIELD_SCOPE.all)
@@ -550,7 +551,7 @@ const getXdrResultCountBase = ({
           WHEN r.resultCategory1 IN (${positiveResultCategories}) 
           THEN r.resultCount
           ELSE IFNULL(r.xdrResistanceCounts ->> '$.MTB.detected', 0)
-        END      
+        END
       `),
     }
   }
@@ -607,6 +608,7 @@ const getXdrResultCountBase = ({
     dataConstraints,
     filterParams,
     query,
+    timeFrame,
   })
     // .where(function () {
     //   // skip filtering by 'rca.reportable' if grouping by 'assay'
@@ -667,33 +669,26 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
   if (!assayIds.GxMtbXdr) {
     return Boom.badRequest('Xdr assays are not supported in this instance')
   }
+  const resultCategoryIds = await allResultCategoryToId()
 
-  // const resultCategoryIds = await allResultCategoryToId()
-  const countsBase = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
-    addConstraints,
+  const countsBase = getXdrResultCountBase({
+    resultCategoryIds,
     dataConstraints,
-    filterParams,
-    assay: ['GxMtbXdr'],
     query,
+    fieldsScope: [FACT_FIELD_SCOPE.all],
     timeFrame: 'day',
-  }).select({
-    stateId: 'st.id',
-    siteId: 's.id',
-    lgaId: 'lg.id',
-    deviceId: 'd.id',
-    xdrResistanceCounts: 'r.xdrResistanceCounts',
-  }) // cnt
-  // const countsBase = getResultCountBaseGroupBySiteId(assayIds, resultCategoryIds, dataConstraints, query)
+  }).select(['g.stateId', 's.id as siteId'])
+
+  // console.log('\x1b[1;36m', '🚀 ➜ file: db.js:681 ➜ countsBase:', countsBase.toString())
 
   const counterField = name => knex.raw(`IFNULL(SUM(_sub.${name}), 0) as ${name}`)
-
   const baseQuery = knex('Geography as g')
     .modify(qb => {
       if (query.lgaId) {
-        qb.innerJoin('Site as location', 'g.id', 'location.geographyId')
+        qb.innerJoin('Site as location', 's.id', 'location.id')
         qb.leftJoin(countsBase.as('_sub'), '_sub.siteId', 'location.id')
       } else if (query.stateId) {
-        qb.innerJoin('Lga as location', 'g.lgaId', 'location.id')
+        qb.innerJoin('Lga as location', 'lg.id', 'location.id')
         qb.leftJoin(countsBase.as('_sub'), '_sub.lgaId', 'location.id')
       } else {
         qb.innerJoin('State as location', 'g.stateId', 'location.id')
@@ -701,74 +696,58 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
         qb.whereNull('g.lgaId')
       }
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
-    .modify(filterParams, query, { countryId: 'g.countryId', stateId: 'g.stateId', lgaId: 'g.lgaId' })
     .leftJoin('SiteTag as siteTag', 'siteTag.siteId', '_sub.siteId')
     .leftJoin('Tag as tag', 'tag.id', 'siteTag.tagId')
+    .select(
+      knex.raw(`SUM(DISTINCT CASE WHEN tag.title = 'PMDT' THEN 1 ELSE 0 END) as isPmdt`),
+      knex.raw(`CASE WHEN SUM(_sub.cntAll) > 0 THEN 1 ELSE 0 END as hasPerformedXdr`)
+    )
 
-  const [totals] = await baseQuery.clone().select(
-    knex.raw(`'TOTAL' as locationName`),
-    knex.raw(`COUNT(DISTINCT location.id) as totalRecords`),
-    knex.raw(`SUM(DISTINCT CASE WHEN tag.title = 'PMDT' THEN 1 ELSE 0 END) as isPmdt`),
-    // counterField('isPmdt')
-    knex.raw(`CASE WHEN SUM(_sub.cnt) > 0 THEN 1 ELSE 0 END as hasPerformedXdr`),
-    // counterField('hasPerformedXdr'),
-    knex.sum('_sub.cnt as cntAll'),
-    // counterField('cntAll'),
-    // 👇 count of possitive result categories....migration and seed into resultCategory.isPositive?
-    // counterField('cnt_mtb'),
+  const [totals] = await baseQuery
+    .clone()
+    .select(
+      knex.raw(`'TOTAL' as locationName`),
+      knex.raw(`COUNT(DISTINCT location.id) as totalRecords`),
+      counterField('cntAll'),
+      counterField('cnt_mtb'),
+      counterField('cnt_inh'),
+      counterField('cnt_flq'),
+      counterField('cnt_amk'),
+      counterField('cnt_kan'),
+      counterField('cnt_cap'),
+      counterField('cnt_eth'),
+      counterField('cnt_Invalid'),
+      counterField('cnt_NoResult'),
+      counterField('cnt_Error')
+    )
 
-    knex.sum('_sub.xdrResistanceCounts->>"$.INH.detected"'),
-    // counterField('cnt_inh'),
+  const dataq = baseQuery
+    .clone()
+    .groupBy('location.id')
+    .select(
+      `location.name as locationName`,
+      // counterField('isPmdt'),
+      // counterField('hasPerformedXdr'),
+      counterField('cntAll'),
+      counterField('cnt_mtb'),
+      counterField('cnt_inh'),
+      counterField('cnt_flq'),
+      counterField('cnt_amk'),
+      counterField('cnt_kan'),
+      counterField('cnt_cap'),
+      counterField('cnt_eth'),
+      counterField('cnt_Invalid'),
+      counterField('cnt_NoResult'),
+      counterField('cnt_Error')
+    )
+    .modify(sortParams, query, 'locationName')
+    .modify(_q => {
+      // For export, we don't provide paging params - we should get all records
+      if (query.size) _q.modify(pageParams, query)
+    })
+  console.log('\x1b[1;36m', '🚀 ➜ file: db.js:717 ➜ baseQuery:', dataq.toString())
 
-    knex.sum('_sub.xdrResistanceCounts->>"$.FLQ.detected"'),
-    // counterField('cnt_flq'),
-
-    knex.sum('_sub.xdrResistanceCounts->>"$.AMK.detected"'),
-    // counterField('cnt_amk'),
-
-    knex.sum('_sub.xdrResistanceCounts->>"$.KAN.detected"'),
-    // counterField('cnt_kan'),
-
-    knex.sum('_sub.xdrResistanceCounts->>"$.CAP.detected"'),
-    // counterField('cnt_cap'),
-
-    knex.sum('_sub.xdrResistanceCounts->>"$.ETH.detected"'),
-    // counterField('cnt_eth'),
-
-    knex.sum('_sub.xdrResistanceCounts->>"$.FLQ.detected"'),
-
-    // counterField('cnt_Invalid'),
-    knex.sum('_sub.xdrResistanceCounts->>"$.errors.invalid"')
-    // counterField('cnt_NoResult'),
-    // counterField('cnt_Error')
-  )
-
-  const data = totals // await baseQuery
-  // .clone()
-  // .groupBy('location.id')
-  // .select(
-  //   `location.name as locationName`,
-  //   counterField('isPmdt'),
-  //   counterField('hasPerformedXdr'),
-  //   counterField('cntAll'),
-  //   counterField('cnt_mtb'),
-  //   counterField('cnt_inh'),
-  //   counterField('cnt_flq'),
-  //   counterField('cnt_amk'),
-  //   counterField('cnt_kan'),
-  //   counterField('cnt_cap'),
-  //   counterField('cnt_eth'),
-  //   counterField('cnt_Invalid'),
-  //   counterField('cnt_NoResult'),
-  //   counterField('cnt_Error')
-  // )
-  // .modify(sortParams, query, 'locationName')
-  // .modify(_q => {
-  //   // For export, we don't provide paging params - we should get all records
-  //   if (query.size) _q.modify(pageParams, query)
-  // })
-
+  const data = await dataq
   data.unshift(_.omit(totals, 'totalRecords'))
   return { total: totals.totalRecords, data, length: totals.length }
 }
