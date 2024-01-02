@@ -1,11 +1,10 @@
-const { subDays, subMonths } = require('date-fns')
+const { subDays } = require('date-fns')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
 const { SELECT_FIELDS_UTC } = require('../query')
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
-const { getDatesFromQuery } = require('../../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { pageParams, sortParams } = require('../../db')
@@ -476,52 +475,6 @@ function getQueryForDataExtract(query, dataConstraints) {
   return resultQuery
 }
 
-const getResultCountersBase = (resultCategoryIds, positiveResultCategories) => {
-  const whereMtbDetected = positiveResultCategories => `
-    JSON_SEARCH(
-      r.resultData ->> '$.detectedResistance[*]',
-      'one',
-      'MTB'
-    ) IS NOT NULL
-    OR
-    r.resultCategory1 IN (${positiveResultCategories})
-  `
-  const counter = (id, condition) =>
-    knex.raw(`
-      DISTINCT
-      CASE
-        WHEN ${condition}
-        THEN ${id}
-        ELSE null
-      END
-    `)
-  const countXdr = value =>
-    counter(
-      'r.id',
-      `
-      JSON_SEARCH(
-        r.resultData ->> '$.detectedResistance[*]',
-        'one',
-        '${value}'
-      ) IS NOT NULL
-      `
-    )
-
-  return {
-    cntAll: knex.raw('DISTINCT r.id'),
-    cnt_mtb: counter('r.id', whereMtbDetected(positiveResultCategories)),
-    cnt_inh: countXdr('INH'),
-    cnt_flq: countXdr('FLQ'),
-    cnt_amk: countXdr('AMK'),
-    cnt_kan: countXdr('KAN'),
-    cnt_cap: countXdr('CAP'),
-    cnt_eth: countXdr('ETH'),
-    cnt_Invalid: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Invalid}`),
-    cnt_NoResult: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.NoResult}`),
-    cnt_Error: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Error}`),
-  }
-}
-
 const FACT_FIELD_SCOPE = {
   all: 'all',
   mtb: 'mtb',
@@ -661,8 +614,8 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
     .leftJoin('SiteTag as siteTag', 'siteTag.siteId', '_sub.siteId')
     .leftJoin('Tag as tag', 'tag.id', 'siteTag.tagId')
     .select([
-      knex.raw(`COUNT(DISTINCT CASE WHEN tag.title = 'PMDT' THEN _sub.siteId ELSE null END) as totalPmdtSites`),
-      knex.raw('COUNT(_sub.siteId) as totalXdrSites'),
+      knex.raw(`COUNT(DISTINCT CASE WHEN tag.title = 'PMDT' THEN _sub.siteId ELSE null END) as isPmdt`),
+      knex.raw('COUNT(_sub.siteId) as hasPerformedXdr'),
       counterField('cntAll'),
       counterField('cnt_mtb'),
       counterField('cnt_inh'),
@@ -687,10 +640,14 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
     })
 
   // a matching row to show totals
-  const [totals] = await baseQuery.clone().select(knex.raw(`'TOTAL' as locationName`))
-  data.unshift(totals)
+  const [totals] = await baseQuery
+    .clone()
+    .select([knex.raw(`'TOTAL' as locationName`), knex.raw(`COUNT(DISTINCT location.id) as totalRecords`)])
+  const { totalRecords } = totals
+  // add totals row to the beginning of the data, omitting the totalRecords field, as it's forbidden when calling from dashboard:
+  data.unshift(_.omit(totals, 'totalRecords'))
 
-  return { total: data.length - 1, data, length: totals.length }
+  return { total: totalRecords, data, length: data.length }
 }
 
 async function processGroupedQuery(resultQuery, groupBy, dateColumn = 'IFNULL(r.endedOn, r.startedOn)') {
