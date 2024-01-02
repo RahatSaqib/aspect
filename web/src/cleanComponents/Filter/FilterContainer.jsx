@@ -24,7 +24,7 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
 
   const toggleOpen = () => setExpanded(state => !state)
 
-  const clear = () => {
+  const cancel = () => {
     setState({ ...filter })
     toggleOpen()
   }
@@ -35,7 +35,6 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
   }
 
   const remove = keys => {
-    // if (keys.length) {
     removeFilter(keys, location.pathname)
     const newState = { ...state }
     keys.forEach(k => {
@@ -47,7 +46,6 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
       }
     })
     setState(newState)
-    // }
   }
 
   const append = update => {
@@ -67,7 +65,7 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={cardContentStyle}>{children}</CardContent>
         <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button size="small" onClick={clear}>
+          <Button size="small" onClick={cancel}>
             {formatMessage(messages.cancel)}
           </Button>
           <Button size="small" onClick={apply}>
