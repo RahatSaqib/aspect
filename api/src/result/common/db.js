@@ -677,9 +677,9 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
     query,
     fieldsScope: [FACT_FIELD_SCOPE.all],
     timeFrame: 'day',
-  }).select(['g.stateId', 's.id as siteId'])
-
-  // console.log('\x1b[1;36m', '🚀 ➜ file: db.js:681 ➜ countsBase:', countsBase.toString())
+  })
+    .select(['g.stateId', 's.id as siteId'])
+    .groupBy('s.id')
 
   const counterField = name => knex.raw(`IFNULL(SUM(_sub.${name}), 0) as ${name}`)
   const baseQuery = knex('Geography as g')
