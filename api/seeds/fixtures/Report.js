@@ -174,7 +174,7 @@ const deviceActivity = {
     {
       sortOrder: 1,
       moduleName: 'device/serviceReports',
-      functionName: 'getDeviceActivityReport',
+      functionName: 'getDeviceActivityReportFor2ndSheet',
       query: {
         avoidStreaming: true,
         useNamedData: 'activity_report',

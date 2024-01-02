@@ -79,14 +79,13 @@ function getMonthsDatefields(minDate, maxDate, culture) {
   return dateFields
 }
 
-async function getDeviceActivityReport(auth, query) {
+async function getDeviceActivityReport(auth, query, options) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true }).whereNotIn(
     'dt.externalId',
     ['Aspect', 'GxAlert']
   )
-
 
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
@@ -116,13 +115,14 @@ async function getDeviceActivityReport(auth, query) {
     dataConstraints,
     filterParams,
     query,
-    timeFrame: 'day',
+    timeFrame: 'month',
   })
-    .select('r.deviceId', getMonthYearUserTimeZoneField(knex, 'r.startedOn', 'monthYear', offset))
+    .select('r.deviceId', 'r.startedOn as monthYear')
     .sum({
       totalResults: 'r.resultCount',
     })
     .groupBy('r.deviceId', 'monthYear')
+    .modify(addingGroupingAndSelect, query)
 
   const baseResultsLastUploaded = knex('Result as r')
     .modify(addConstraints, dataConstraints, {
@@ -132,7 +132,7 @@ async function getDeviceActivityReport(auth, query) {
     .groupBy('r.deviceId')
     .select('r.deviceId', knex.raw('MAX(r.updatedOn) as lastUploadOn'))
 
-  const data = await deviceQuery
+  const devicesData = await deviceQuery
     .clone()
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
@@ -145,13 +145,14 @@ async function getDeviceActivityReport(auth, query) {
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
       'res.lastUploadOn',
-      'fact.totalResults'
+      'fact.totalResults',
+      'fact.assayName'
     )
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
 
 
-  const deviceDetails = await deviceQuery
+  const deviceResultsPerMonths = await deviceQuery
     .clone()
     .leftJoin(baseFactByMonth.as('fact'), 'd.id', 'fact.deviceId')
     .groupBy('d.id', 'fact.monthYear')
@@ -161,10 +162,10 @@ async function getDeviceActivityReport(auth, query) {
   const dateFields = getMonthsDatefields(minDate, maxDate, culture)
   const extraField = query.select ? query.select.split(' as ')[1].trim() : null
 
-  const devices = _.map(data, elem => {
+  const devices = _.map(devicesData, elem => {
     _.each(
       _.filter(
-        deviceDetails,
+        deviceResultsPerMonths,
         filteredElem =>
           filteredElem.deviceId === elem.id && (extraField ? elem[extraField] === filteredElem[extraField] : true)
       ),
@@ -174,7 +175,6 @@ async function getDeviceActivityReport(auth, query) {
     )
     return elem
   })
-
   const dataset = {
     ok: true,
     total: devices.length,
@@ -183,6 +183,14 @@ async function getDeviceActivityReport(auth, query) {
     dynamicColumns: dateFields,
   }
   return dataset
+}
+
+async function getDeviceActivityReportFor2ndSheet(_, _, options) {
+  const { sharedResults, useNamedData } = options
+  const result = sharedResults[useNamedData]
+  return {
+    ...result,
+  }
 }
 
 async function getModuleSwapsReport(auth, query) {
@@ -784,4 +792,5 @@ module.exports = {
   getErrorsByDevicesReport,
   noStockInventoryReport,
   getDeviceCoverageReport,
+  getDeviceActivityReportFor2ndSheet
 }
