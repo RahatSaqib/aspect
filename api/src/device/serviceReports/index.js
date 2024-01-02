@@ -72,14 +72,14 @@ function getMonthsDatefields(minDate, maxDate, culture) {
       key: format(curMonth, 'yyyy-MM'),
       header: `${format(curMonth, 'yyyy-LLL', {
         locale: locales[locale],
-      })}\n (%)`,
+      })}`,
     })
     curMonth = addMonths(curMonth, 1)
   }
   return dateFields
 }
 
-async function getDeviceActivityReport(auth, query, options) {
+async function getDeviceActivityReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true }).whereNotIn(
@@ -88,7 +88,6 @@ async function getDeviceActivityReport(auth, query, options) {
   )
 
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
-  const offset = getOffsetFromIsoDateString(maxDate)
 
   const addingGroupingAndSelect = (builder, { select, groupBy }) => {
     if (select) builder.select(select)
