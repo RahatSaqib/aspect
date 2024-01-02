@@ -1,53 +1,75 @@
 const _ = require('lodash')
-const { knex, sortPageParams, filterDateRangeParams, filterParams } = require('../../db')
-const {
-  getBaseQuery: getResultBaseQuery,
-  modifiers,
-  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
-} = require('../../result/query')
+const { knex, sortPageParams, filterParams } = require('../../db')
+const { addConstraints } = require('../../auth/constraints')
 const { getBasicsForDevicesReport } = require('../common/db')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
+const { allResultCategoryToId } = require('../../shared/dictionary')
 
 async function getErrorsByDevices(dataConstraints, query) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
-  const { mtbNoResultInvalidIndeterminate, mtbErrorByCode, mtbOtherErrorsNotIn } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
-
+  const resultCategoryIds = await allResultCategoryToId()
   const errorCodes = [5011, 5007, 5006, 2008, 2005, 2037, 2025, 2022]
-  const errorCodesCsv = errorCodes.map(errorCode => `'${errorCode}'`).join(',')
-  const byErrorCodes = _.reduce(
-    errorCodes,
-    (acc, errorCode) => ({ ...acc, [`${errorCode}`]: mtbErrorByCode(errorCode) }),
-    {}
-  )
 
-  const resultsCount = getResultBaseQuery(knex, dataConstraints)
-    .modify(modifiers.join.resultCategory1)
-    .modify(modifiers.join.resultCategory2)
-    .select({
-      deviceId: 'r.deviceId',
-      ...byErrorCodes,
-      invalidResults: mtbNoResultInvalidIndeterminate,
-      otherErrors: mtbOtherErrorsNotIn(errorCodesCsv),
-    })
-    .modify(filterParams, query, {
-      assayId: 'a.id',
-    })
+  const allCounts = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+    timeFrame: 'day',
+  })
     .groupBy('r.deviceId')
-    .modify(filterDateRangeParams, query, 'r.endedOn')
-
-  return deviceQuery
-    .clone()
-    .leftJoin(resultsCount.as('resultsCount'), function () {
-      this.on('resultsCount.deviceId', 'd.id')
+    .sum({
+      ..._.reduce(
+        errorCodes,
+        (acc, errorCode) => ({
+          ...acc,
+          [`${errorCode}`]: knex.raw(`
+              CASE
+                WHEN r.resultCategory1 = ${resultCategoryIds.Error}
+                THEN r.xdrResistanceCounts ->> '$.errors."${errorCode}"'
+                ELSE 0
+              END`),
+        }),
+        {}
+      ),
+      otherErrors: knex.raw(`
+        CASE
+          WHEN r.resultCategory1 = ${resultCategoryIds.Error}
+          THEN r.xdrResistanceCounts ->> "$.errors.other"
+          ELSE 0
+        END`),
+      invalidResults: knex.raw(`
+        CASE
+          WHEN r.resultCategory1 IN (${resultCategoryIds.NoResult}, ${resultCategoryIds.Invalid}, ${resultCategoryIds.Indeterminate})
+          THEN r.xdrResistanceCounts ->> "$.errors.invalid"
+          ELSE 0
+        END`),
     })
-    .whereNot('dt.externalId', 'GxAlert')
-    .groupBy('d.id')
-    .modify(sortPageParams, query, 'deviceName')
-    .select([
-      'd.name as deviceName',
-      ...errorCodes.map(errorCode => knex.raw(`IFNULL(resultsCount.\`${errorCode}\`, 0) AS \`${errorCode}\``)),
-      knex.raw('IFNULL(resultsCount.otherErrors, 0) AS otherErrors'),
-      knex.raw('IFNULL(resultsCount.invalidResults, 0) AS invalidResults'),
-    ])
+    .select('d.id as deviceId')
+
+  const data = await deviceQuery
+    .leftJoin(allCounts.as('counts'), 'd.id', 'counts.deviceId')
+    .modify(sortPageParams, query, 'd.name')
+    .distinct({
+      ..._.reduce(
+        errorCodes,
+        (acc, errorCode) => ({
+          ...acc,
+          [`${errorCode}`]: knex.raw(`IFNULL(counts.\`${errorCode}\`, 0)`),
+        }),
+        {}
+      ),
+      otherErrors: knex.raw('IFNULL(counts.otherErrors, 0)'),
+      invalidResults: knex.raw('IFNULL(counts.invalidResults, 0)'),
+      deviceName: 'd.name',
+      /**
+       * should select also device id for returning `distinct` entries, because
+       * same device name with same counts may be found in different locations.
+       */
+      deviceId: 'd.id',
+    })
+
+  return data
 }
 
 module.exports = {

@@ -1,6 +1,5 @@
 import React from 'react'
 import { Button } from '@mui/material'
-import Immutable from 'immutable'
 import { pull } from 'lodash/array'
 import isArray from 'lodash/isArray'
 import startCase from 'lodash/startCase'
@@ -72,13 +71,12 @@ const FilterButtons = ({ filters, remove, append }) => {
       {emptyFilter(filters) ? (
         <Btn lbl={formatMessage(messages.noFilters)} />
       ) : (
-        Immutable.Map(filters)
-          .keySeq()
-          .sortBy(filterKey => filtersOrdering[filterKey])
+        Object.keys(filters)
+          .sort((a, b) => filtersOrdering[a] - filtersOrdering[b])
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
             if (!Comp) return null
-            return <Comp {...filters} remove={remove} append={append} key={key} />
+            return <Comp remove={remove} append={append} key={key} {...filters} />
           })
       )}
     </span>
@@ -315,6 +313,7 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, 
     return isArray(resultCategoryGroupId) ? (
       resultCategoryGroupId.map(id => (
         <Btn
+          key={id}
           del={() => {
             if (resultCategoryGroupId.length > 1) append({ resultCategoryGroupId: pull(resultCategoryGroupId, id) })
             else del.del()
