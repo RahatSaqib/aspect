@@ -642,7 +642,7 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
   const baseQuery = knex('Geography as g')
     .modify(qb => {
       if (query.siteName) {
-        qb.innerJoin('Site as location', 's.id', 'location.id')
+        qb.innerJoin('Site as location', 'g.id', 'location.geographyId')
         qb.leftJoin(countsBase.as('_sub'), '_sub.siteId', 'location.id')
       } else if (query.lgaId) {
         qb.innerJoin('Lga as location', 'g.lgaId', 'location.id')
@@ -656,6 +656,7 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
     .modify(filterParams, query, {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
+      siteName: 'location.name',
     })
     .leftJoin('SiteTag as siteTag', 'siteTag.siteId', '_sub.siteId')
     .leftJoin('Tag as tag', 'tag.id', 'siteTag.tagId')
@@ -675,7 +676,7 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       counterField('cnt_Error'),
     ])
 
-  const dataq = baseQuery
+  const data = await baseQuery
     .clone()
     .groupBy('location.id')
     .select([`location.name as locationName`])
@@ -684,9 +685,6 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       // For export, we don't provide paging params - we should get all records
       if (query.size) _q.modify(pageParams, query)
     })
-
-  console.log('\x1b[1;36m', '🚀 ➜ file: db.js:729 ➜ data:', dataq.toString())
-  const data = await dataq
 
   // a matching row to show totals
   const [totals] = await baseQuery.clone().select(knex.raw(`'TOTAL' as locationName`))
