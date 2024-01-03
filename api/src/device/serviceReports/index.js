@@ -129,7 +129,7 @@ async function getDeviceActivityReport(auth, query) {
     })
     .modify(filterDateRangeParams, query, 'r.endedOn')
     .groupBy('r.deviceId')
-    .select('r.deviceId', knex.raw('MAX(r.updatedOn) as lastUploadOn'))
+    .select('r.deviceId', getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn'))
 
   const devicesData = await deviceQuery
     .clone()
@@ -146,7 +146,6 @@ async function getDeviceActivityReport(auth, query) {
       'res.lastUploadOn',
       'fact.totalResults',
       'fact.assayName',
-      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn')
     )
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
