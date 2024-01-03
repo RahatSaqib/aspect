@@ -1,10 +1,11 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import isArray from 'lodash/isArray'
 import { useIntl } from 'react-intl'
+import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
-import useFilterSync from '../../hooks/useFilterSync'
+import useFilterValues from '../../hooks/useFilterValues'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
@@ -24,11 +25,13 @@ import FilterContainer from './FilterContainer'
 const ResultFilter = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
-  const [state, setState] = useFilterSync()
+  const location = useLocation()
+  const filter = useFilterValues(location.pathname)
+  const [state, setState] = useState({ ...filter, countryId: user.countryId })
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
-  return state ? (
-    <FilterContainer state={state} setState={setState}>
+  return (
+    <FilterContainer state={state} setState={setState} blocked={['minDate', 'maxDate']}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
@@ -157,9 +160,9 @@ const ResultFilter = () => {
         <Grid item xs={3}>
           <PeriodSelector
             label={formatMessage(messages.date)}
-            minDate={state.fixedMinDate || null}
-            maxDate={state.fixedMaxDate || null}
-            onChange={({ minDate, maxDate }) => setState({ ...state, fixedMinDate: minDate, fixedMaxDate: maxDate })}
+            minDate={state.minDate || null}
+            maxDate={state.maxDate || null}
+            onChange={({ minDate, maxDate }) => setState({ ...state, minDate, maxDate })}
             noAny
           />
         </Grid>
@@ -218,7 +221,7 @@ const ResultFilter = () => {
         </Grid>
       </Grid>
     </FilterContainer>
-  ) : null
+  )
 }
 
 export default ResultFilter
