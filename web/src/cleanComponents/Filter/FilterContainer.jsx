@@ -35,20 +35,17 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
   }
 
   const remove = keys => {
-    const cleaned = keys.filter(el => !(blocked ?? []).includes(el))
-    if (cleaned.length) {
-      removeFilter(keys, location.pathname)
-      const newState = { ...state }
-      keys.forEach(k => {
-        if (k.includes('.')) {
-          const [key, value] = k.split('.')
-          newState[key] = newState[key].filter(v => v !== value)
-        } else {
-          delete newState[k]
-        }
-      })
-      setState(newState)
-    }
+    removeFilter(keys, location.pathname)
+    const newState = { ...state }
+    keys.forEach(k => {
+      if (k.includes('.')) {
+        const [key, value] = k.split('.')
+        newState[key] = newState[key].filter(v => v !== value)
+      } else {
+        delete newState[k]
+      }
+    })
+    setState(newState)
   }
 
   const append = update => {
@@ -60,7 +57,7 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
   return (
     <Card sx={{ mb: 1 }}>
       <CardContent sx={cardContentStyle}>
-        <FilterButtons filters={filter} remove={remove} append={append} />
+        <FilterButtons filters={filter} remove={remove} append={append} blocked={blocked} />
         <Button variant="contained" color="secondary" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>
           {expanded ? <MdArrowUpward /> : <MdArrowDownward />}
         </Button>

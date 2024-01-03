@@ -25,7 +25,7 @@ export const defaultFilter = {
   '/browse/notification/types': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
-  '/browse/result': { fixedMinDate: minDate, fixedMaxDate: maxDate },
+  '/browse/result': { minDate, maxDate },
   '/browse/site': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate },
   '/reports': {},
