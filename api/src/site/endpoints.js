@@ -3,10 +3,28 @@ const { validateAllGeographyFilterParams } = require('../geography/requestValida
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const createSite = require('./createSite')
 const updateSite = require('./updateSite')
-const { listSites, showSite, listSitesForSelectList, listSitesWithReporters, disableSite } = require('./service')
+const {
+  listSites,
+  showSite,
+  listSitesForSelectList,
+  listSitesWithReporters,
+  disableSite,
+  getReportingSites,
+} = require('./service')
 const { postSchema, updateSchema } = require('./common/validations')
 
 const { exportSites, exportReporters } = require('./serviceReports')
+
+const reportingSitesQueryValidation = () => {
+  return {
+    minDate: Joi.date().timestamp().required().description('Test start date'),
+    maxDate: Joi.date().timestamp().required().description('Test end date'),
+    countryId: Joi.number().allow(null, '').description('Filter for Country ID'),
+    stateId: Joi.number().allow(null, '').description('Filter for State ID'),
+    siteId: Joi.number().allow(null, '').description('Filter for Site ID'),
+    assayId: Joi.number().allow(null, '').description('Filter for Assay ID'),
+  }
+}
 
 function listSitesBaseConfig() {
   return {
@@ -286,6 +304,29 @@ const routes = [
       validate: postSchema,
     },
   },
+  {
+    method: 'GET',
+    path: '/site/reportingSites',
+    handler: asyncHandler(getReportingSites),
+    config: {
+      description: 'Sites for Reporter Dashboard',
+      notes: `List of sites with some aggregations about reporters`,
+      validate: {
+        query: {
+          ...reportingSitesQueryValidation(),
+          ...validateSortPageParams(
+            'siteName',
+            'samplesRegistered',
+            'resultsReporting',
+            'downloaded',
+            'requiresFollowUp',
+            'followUpPending',
+            'followUpConfirmed',
+            'followUpNotPossible'
+          ),
+        },
+      },
+    },
+  },
 ]
-
 module.exports = { routes }
