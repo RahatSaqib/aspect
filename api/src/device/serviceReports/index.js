@@ -145,7 +145,8 @@ async function getDeviceActivityReport(auth, query) {
       'dms.name as deviceMaintenanceStatus',
       'res.lastUploadOn',
       'fact.totalResults',
-      'fact.assayName'
+      'fact.assayName',
+      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn')
     )
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
