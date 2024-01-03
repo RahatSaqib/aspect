@@ -88,7 +88,7 @@ async function getDeviceActivityReport(auth, query) {
   )
 
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
-
+  const offset = getOffsetFromIsoDateString(maxDate)
   const addingGroupingAndSelect = (builder, { select, groupBy }) => {
     if (select) builder.select(select)
     if (groupBy) builder.groupBy(groupBy)
