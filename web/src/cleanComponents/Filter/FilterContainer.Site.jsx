@@ -1,20 +1,18 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router'
+import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
-import useFilterValues from '../../hooks/useFilterValues'
+import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { StateSelect, LgaSelect, ContactStatusSelect } from '../index'
+import { StateSelect, LgaSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
-const PersonFilter = () => {
+const SiteFilter = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
-  const location = useLocation()
-  const filter = useFilterValues(location.pathname)
-  const [state, setState] = useState({ ...filter, countryId: user.countryId })
+  const [state, setState] = useFilterSync()
 
   return (
     <FilterContainer state={state} setState={setState}>
@@ -36,17 +34,22 @@ const PersonFilter = () => {
           />
         </Grid>
         <Grid item xs={3}>
-          <TextField
-            label={formatMessage(messages.contactNameEmail)}
-            value={state.contactNameOrEmail || ''}
-            onChange={e => setState({ ...state, contactNameOrEmail: e.target.value ? e.target.value : null })}
+          <SiteAutoCompleteField
+            name="siteName"
+            value={state.siteName || ''}
+            onChange={site => setState({ ...state, siteName: site.name })}
+            floatingLabelFixed
+            floatingLabelText={formatMessage(messages.site)}
+            stateId={state.stateId}
+            lgaId={state.lgaId}
+            width="100%"
           />
         </Grid>
         <Grid item xs={3}>
-          <ContactStatusSelect
-            label={formatMessage(messages.contactStatus)}
-            value={`${state.contactStatus}`}
-            onChange={e => setState({ ...state, contactStatus: e.target.value })}
+          <TextField
+            label={formatMessage(messages.externalId)}
+            value={state.externalId || ''}
+            onChange={e => setState({ ...state, externalId: e.target.value ? e.target.value : null })}
           />
         </Grid>
       </Grid>
@@ -54,4 +57,4 @@ const PersonFilter = () => {
   )
 }
 
-export default PersonFilter
+export default SiteFilter

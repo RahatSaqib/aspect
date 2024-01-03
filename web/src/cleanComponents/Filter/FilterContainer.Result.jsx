@@ -1,11 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import isArray from 'lodash/isArray'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
-import useFilterValues from '../../hooks/useFilterValues'
+import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
@@ -25,12 +24,10 @@ import FilterContainer from './FilterContainer'
 const ResultFilter = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
-  const location = useLocation()
-  const filter = useFilterValues(location.pathname)
-  const [state, setState] = useState({ ...filter, countryId: user.countryId })
+  const [state, setState] = useFilterSync()
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
-  return (
+  return state ? (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
@@ -221,7 +218,7 @@ const ResultFilter = () => {
         </Grid>
       </Grid>
     </FilterContainer>
-  )
+  ) : null
 }
 
 export default ResultFilter
