@@ -184,7 +184,7 @@ async function getDeviceActivityReport(auth, query) {
   return dataset
 }
 
-async function getDeviceActivityReportFor2ndSheet(_, _, options) {
+async function getDeviceActivityReportFor2ndSheet(auth, query, options) {
   const { sharedResults, useNamedData } = options
   const result = sharedResults[useNamedData]
   return {
