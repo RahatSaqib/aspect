@@ -235,7 +235,7 @@ const GxMtbXdrMtbDetected = {
 const GxMtbXdrMtbDetectedXdrNotDetected = {
   externalId: 'GxMtbXdrMtbDetectedXdrNotDetected',
   i18nKey: 'gxMtbXdrMtbDetectedXdrNotDetected',
-  name: 'MTB Detected XDR Not Detected',
+  name: 'MTB Detected Drug Resistance Not Detected',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'NotDetected',
   assayExternalId: 'GxMtbXdr',
@@ -244,7 +244,7 @@ const GxMtbXdrMtbDetectedXdrNotDetected = {
 const GxMtbXdrMtbDetectedXdrDetected = {
   externalId: 'GxMtbXdrMtbDetectedXdrDetected',
   i18nKey: 'gxMtbXdrMtbDetectedXdrDetected',
-  name: 'MTB Detected XDR Detected',
+  name: 'MTB Detected Drug Resistance Detected',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Detected',
   assayExternalId: 'GxMtbXdr',
@@ -253,7 +253,7 @@ const GxMtbXdrMtbDetectedXdrDetected = {
 const GxMtbXdrMtbDetectedXdrIndeterminate = {
   externalId: 'GxMtbXdrMtbDetectedXdrIndeterminate',
   i18nKey: 'gxMtbXdrMtbDetectedXdrIndeterminate',
-  name: 'MTB Detected XDR Indeterminate',
+  name: 'MTB Detected Drug Resistance Indeterminate',
   resultCategory1ExternalId: 'Detected',
   resultCategory2ExternalId: 'Indeterminate',
   assayExternalId: 'GxMtbXdr',
