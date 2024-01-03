@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-12-12T20:27:38.085Z\n"
+"POT-Creation-Date: 2023-12-28T14:43:41.431Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.1\n"
+"X-Generator: Poedit 3.4.2\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -184,8 +184,8 @@ msgid ""
 "A list of all GeneXpert device modules marked as 'do not use'. Includes "
 "device name, module serial."
 msgstr ""
-"Список усіх модулів пристрою GeneXpert, позначених як \"не "
-"використовувати\". Включає назву пристрою, серійний номер модуля."
+"Список усіх модулів пристрою GeneXpert, позначених як \"не використовувати"
+"\". Включає назву пристрою, серійний номер модуля."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -1227,7 +1227,6 @@ msgstr "CAP опір"
 #. defaultMessage is:
 #. CAP-R %
 #: extracted_strings.json
-#| msgid "FQ-R %"
 msgid "CAP-R %"
 msgstr "CAP-R %"
 
@@ -5190,6 +5189,13 @@ msgstr "Опір INH"
 msgid "INH-R %"
 msgstr "INH-R %"
 
+#. [legends.Unknown.InhDetected]
+#. defaultMessage is:
+#. INH-R Detected
+#: extracted_strings.json
+msgid "INH-R Detected"
+msgstr "Виявлено INH-R"
+
 #. [pages.ResetPassword.adminHelpContent]
 #. defaultMessage is:
 #. If you you need help to recover you login details, please contact us so that we may assist you. You can request our help by sending an email to {supportEmail}
@@ -8223,8 +8229,8 @@ msgid ""
 "results that didn't result in \"Error\", \"No Result\", or \"Invalid\"."
 msgstr ""
 "Відсоток дійсних результатів, повідомлених цього місяця. Дійсні результати "
-"включають усі результати, які не призвели до \"Помилка\", \"Немає "
-"результату\" або \"Недійсний\"."
+"включають усі результати, які не призвели до \"Помилка\", \"Немає результату"
+"\" або \"Недійсний\"."
 
 #. [p.PkDashboard.coverageperformance]
 #. defaultMessage is:
@@ -12002,10 +12008,10 @@ msgid ""
 "would equate 100 \"device-days\". If one device was down half of the month, "
 "this number would be 10%"
 msgstr ""
-"Відсоток \"днів-пристроїв\", які були визначені як \"недоступні для "
-"ремонту\", за винятком вихідних. Наприклад, 20 робочих днів у місяці та 5 "
-"пристроїв дорівнювали б 100 \"пристроям-дням\". Якби на одному пристрої було "
-"менше половини місяця, це число становило б 10%"
+"Відсоток \"днів-пристроїв\", які були визначені як \"недоступні для ремонту"
+"\", за винятком вихідних. Наприклад, 20 робочих днів у місяці та 5 пристроїв "
+"дорівнювали б 100 \"пристроям-дням\". Якби на одному пристрої було менше "
+"половини місяця, це число становило б 10%"
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
@@ -14282,9 +14288,6 @@ msgstr "{unit} загальна калібрування"
 #~ msgid "Due Soon"
 #~ msgstr "Незабаром"
 
-#~ msgid "INH Detected"
-#~ msgstr "Виявлено INH"
-
 #~ msgid "Loading Tasks Failed"
 #~ msgstr "Не вдалося завантажити завдання"
 
@@ -15024,8 +15027,8 @@ msgstr "{unit} загальна калібрування"
 #~ msgstr "Посібник стилю"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for "
-#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for repair"
+#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."

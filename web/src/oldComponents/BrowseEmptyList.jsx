@@ -11,12 +11,12 @@ const messages = defineMessages({
 
 const BrowseEmptyList = () => {
   const { formatMessage } = useIntl()
-  const location = useLocation()
+  const { pathname } = useLocation()
   const [, , resetFilter] = useFilterUpdate()
   return (
     <div style={{ textAlign: 'center' }}>
       <p>{formatMessage(messages.noResultsTitle)}</p>
-      <Button variant="text" onClick={() => resetFilter(location.pathname)}>
+      <Button variant="text" onClick={() => resetFilter(pathname)}>
         {formatMessage(messages.clearFilters)}
       </Button>
     </div>

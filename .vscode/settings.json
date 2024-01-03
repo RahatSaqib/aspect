@@ -1,10 +1,7 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll.eslint": true
+    "source.fixAll.eslint": "explicit"
   },
-  "eslint.workingDirectories": [
-    "./api",
-    "./web"
-  ],
-  "turboConsoleLog.logMessagePrefix": "\\x1b[1;36m\",\"🚀",
+  "eslint.workingDirectories": ["./api", "./web"],
+  "turboConsoleLog.logMessagePrefix": "\\x1b[1;36m\",\"🚀"
 }
