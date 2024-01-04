@@ -28,7 +28,6 @@ module.exports = {
       token: 'w3wgnd8fnm67mcpfey30',
       externalId: 'Zenysis',
       manufacturer: 'SystemOne',
-      partnerId: 1,
     },
   ],
 }

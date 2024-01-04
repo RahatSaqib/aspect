@@ -1,26 +1,28 @@
 const { deviceApprovalToId, deviceTypeCategoryToId } = require('../../src/shared/dictionary')
-const { createClientDeviceApiKey } = require('../common')
+const { createClientDeviceApiKey, getOrInsertGeography } = require('../common')
 
-const { clientApiDetails } = require('./fixtures/partnerData')
+const {
+  clientApiDetails,
+  partner: { externalId },
+  adminUserName,
+} = require('./fixtures/partnerData')
 
 async function seed(knex) {
-  const { name, partnerId, token, manufacturer, externalId } = clientApiDetails.find(
-    item => (item.id = 'zenysisTestAggregate')
-  )
+  const { name, token, manufacturer } = clientApiDetails.find(item => (item.id = 'zenysisTestAggregate'))
 
   const { id: countryId } = await knex('Country').where('abbreviation', 'US').first()
+  const { id: adminUserId } = await knex('User').where({ name: adminUserName }).first('id')
+  const { id: partnerId } = await knex('Partner').where({ externalId }).first('id')
 
-  const [geographyId] = await knex('Geography').insert({
-    countryId,
-  })
+  const geographyId = await getOrInsertGeography(knex, countryId)
 
-  const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId('Client')
+  const deviceTypeCategoryClient = await deviceTypeCategoryToId('Client')
 
   const deviceTypePayload = {
     externalId,
     name,
     manufacturer,
-    deviceTypeCategoryId: deviceTypeCategoryInformationSystem,
+    deviceTypeCategoryId: deviceTypeCategoryClient,
   }
 
   const devicePayload = {
@@ -35,8 +37,8 @@ async function seed(knex) {
     token,
     geographyId,
     revoked: false,
-    createdBy: 1,
-    updatedBy: 1,
+    createdBy: adminUserId,
+    updatedBy: adminUserId,
     partnerId,
   }
 
