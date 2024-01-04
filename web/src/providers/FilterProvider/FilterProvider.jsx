@@ -5,8 +5,6 @@ import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import startOfYear from 'date-fns/startOfYear'
 import subtractDays from 'date-fns/subDays'
-import isArray from 'lodash/isArray'
-import { useLocation } from 'react-router-dom'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useAuthState from '../../hooks/useAuthState'
@@ -27,43 +25,14 @@ export const defaultFilter = {
   '/browse/notification/types': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate },
-  '/browse/result': { fixedMinDate: minDate, fixedMaxDate: maxDate },
+  '/browse/result': { minDate, maxDate },
   '/browse/site': {},
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate },
   '/reports': {},
   '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
 }
 
-const mapValues = (key, value, deviceTypes) => {
-  switch (true) {
-    case ['minDate', 'maxDate', 'maxExpirationDate', 'minExpirationDate'].includes(key):
-      return new Date(value)
-    case key === 'deviceMaintenanceStatusId':
-      return [value]
-    case key === 'deviceType':
-      return deviceTypes?.find(i => i.externalId === value)?.id
-    default: {
-      return value
-    }
-  }
-}
-const getFilters = (urlSearchParams, deviceTypes) => {
-  const filters = {}
-  urlSearchParams.forEach((_value, key) => {
-    const value = mapValues(key, _value, deviceTypes)
-    if (filters[key]) {
-      let filter = filters[key]
-      filter = isArray(filter) ? filter : [filter]
-      filters[key] = [...filter, value]
-    } else {
-      filters[key] = value
-    }
-  })
-  return filters
-}
-
 const FilterProvider = ({ children }) => {
-  const { pathname, search } = useLocation()
   const [filterState, setFilterState] = useState(defaultFilter)
   const { isLoggedOut, jwt } = useAuthState()
   const isUserReady = !isLoggedOut && !jwt.hasToAcceptLicenseId
@@ -72,8 +41,6 @@ const FilterProvider = ({ children }) => {
 
   useEffect(() => {
     const filters = { ...filterState }
-    const searchParams = new URLSearchParams(search)
-    const filtersParams = new URLSearchParams(searchParams.get('filters') || '')
 
     // default filter (data based)
     if (assays?.length) {
@@ -82,10 +49,6 @@ const FilterProvider = ({ children }) => {
       if (filters['/browse/device/workload'].singleAssayId === -1) {
         filters['/browse/device/workload'].singleAssayId = mostResultsAssay?.id
       }
-    } // url parsing
-    if (filters[pathname] && filtersParams !== '') {
-      searchParams.delete('filters')
-      filters[pathname] = { ...filters[pathname], ...getFilters(filtersParams, deviceTypes) }
     }
     setFilterState(filters)
     // eslint-disable-next-line react-hooks/exhaustive-deps
