@@ -76,6 +76,7 @@ function getMonthsDatefields(minDate, maxDate, culture) {
     })
     curMonth = addMonths(curMonth, 1)
   }
+  console.log("date fields", dateFields)
   return dateFields
 }
 
@@ -114,9 +115,9 @@ async function getDeviceActivityReport(auth, query) {
     dataConstraints,
     filterParams,
     query,
-    timeFrame: 'month',
+    timeFrame: 'day',
   })
-    .select('r.deviceId', 'r.startedOn as monthYear')
+    .select('r.deviceId', knex.raw("DATE_FORMAT(r.startedOn,'%Y-%d') as monthYear"))
     .sum({
       totalResults: 'r.resultCount',
     })
