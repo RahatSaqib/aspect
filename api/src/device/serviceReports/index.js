@@ -158,7 +158,6 @@ async function getDeviceActivityReport(auth, query) {
   const deviceResultsPerMonths = await deviceQuery
     .clone()
     .leftJoin(baseFactByMonth.as('fact'), 'd.id', 'fact.deviceId')
-    .groupBy('d.id', 'fact.monthYear')
     .select('d.id as deviceId', 'fact.totalResults', 'fact.monthYear')
     .modify(qb => {
       if (extraField) {
