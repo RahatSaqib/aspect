@@ -8,6 +8,7 @@ env:
   dbname: 'aspect'
   dbuser: 'root'
   dbpassword: 'root'
+  dbseedfolder: './seeds/test'
   rabbitUser: 'guest'
   rabbitPassword: 'guest'
 
@@ -20,6 +21,7 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       api-changed: ${{ steps.filter.outputs.api-changed }}
+      api-migrations-changed: ${{ steps.filter.outputs.api-migrations-changed }}
       web-changed: ${{ steps.filter.outputs.web-changed }}
     steps:
       # For pull requests it's not necessary to checkout the code
@@ -29,6 +31,9 @@ jobs:
           filters: |
             api-changed:
               - './api/**'
+            api-migrations-changed:
+              - './api/migrations/**'
+              - './api/seeds/**'
             web-changed:
               - './web/**'
 
@@ -116,6 +121,7 @@ jobs:
           dbname: ${{ env.dbname }}
           dbuser: ${{ env.dbuser }}
           dbpassword: ${{ env.dbpassword }}
+          dbseedfolder: ${{ env.dbseedfolder }}
           TWILIOACCOUNTSID: ${{secrets.TWILIOACCOUNTSID}}
           TWILIOAUTHTOKEN: ${{secrets.TWILIOAUTHTOKEN}}
           TWILIOMESSAGINGSERVICESID: ${{secrets.TWILIOMESSAGINGSERVICESID}}
@@ -218,6 +224,7 @@ jobs:
           dbname: ${{ env.dbname }}
           dbuser: ${{ env.dbuser }}
           dbpassword: ${{ env.dbpassword }}
+          dbseedfolder: ${{ env.dbseedfolder }}
           TWILIOACCOUNTSID: ${{secrets.TWILIOACCOUNTSID}}
           TWILIOAUTHTOKEN: ${{secrets.TWILIOAUTHTOKEN}}
           TWILIOMESSAGINGSERVICESID: ${{secrets.TWILIOMESSAGINGSERVICESID}}
@@ -259,3 +266,53 @@ jobs:
       - name: 'Stop Server'
         if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
         run: yarn stop:api:bg
+
+  run-migration-test:
+    name: 'Migration Tests (API) - (seed ${{ matrix.seed }})'
+    runs-on: ubuntu-latest
+    needs: [be-lint, check-changes]
+    strategy:
+      fail-fast: false
+      matrix:
+        # skip './seeds/lesotho'
+        # find seeds -mindepth 1 -maxdepth 1 -type d ! -path "seeds/relatedObjects" ! -path "seeds/test" ! -path "seeds/daily_new_results" ! -path "seeds/zz_shared" ! -path "seeds/fixtures" ! -path "seeds/common" ! -path "seeds/scripts"
+        seed: ['./seeds/philippines','./seeds/pakistan','./seeds/bangladesh','./seeds/timorLeste','./seeds/ukraine','./seeds/png','./seeds/tanzania','./seeds/nigeria','./seeds/angola','./seeds/eswatini','./seeds/drc','./seeds/ghana','./seeds/vietnam','./seeds/zimbabwe','./seeds/malawi','./seeds/myanmar','./seeds/mozambique','./seeds/tajikistan','./seeds/development','./seeds/ethiopia']
+    steps:
+      - name: Setup MySQL
+        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        uses: haltuf/mysql-action@master
+        with:
+          character set server: 'utf8'
+          collation server: 'utf8_general_ci'
+          mysql version: '8.0'
+          mysql database: ${{ env.dbname }}
+          mysql root password: ${{ env.dbpassword }}
+          authentication plugin: 'mysql_native_password'
+
+      - uses: actions/checkout@v3
+        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+
+      - name: Clone and install backend environment
+        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        uses: ./.github/workflows/setups/back-end-setup
+
+      - name: Create .env file
+        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        uses: ./.github/workflows/setups/back-end-env
+        with:
+          dbname: ${{ env.dbname }}
+          dbuser: ${{ env.dbuser }}
+          dbpassword: ${{ env.dbpassword }}
+          dbseedfolder: ${{ matrix.seed }}
+          TWILIOACCOUNTSID: ${{secrets.TWILIOACCOUNTSID}}
+          TWILIOAUTHTOKEN: ${{secrets.TWILIOAUTHTOKEN}}
+          TWILIOMESSAGINGSERVICESID: ${{secrets.TWILIOMESSAGINGSERVICESID}}
+          ENCRYPTIONPASSPHRASE: ${{secrets.ENCRYPTIONPASSPHRASE}}
+          ENCRYPTIONINITVECTOR: ${{secrets.ENCRYPTIONINITVECTOR}}
+          PUSHNOTIFICATIONTESTDEVICETOKENID: ${{secrets.PUSHNOTIFICATIONTESTDEVICETOKENID}}
+          FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
+
+      - name: 'Seed DB & Run Migrations'
+        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        run: yarn start:api:seed
+        shell: bash
