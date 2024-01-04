@@ -1940,11 +1940,11 @@ const createClientDeviceApiKey = async (knex, data) => {
 }
 
 async function getOrInsertGeography(knex, countryId) {
-  const existing = await knex('Geography').select('id').where({ countryId, stateId: null, lgaId: null }).first()
+  const geography = await knex('Geography').select('id').where({ countryId, stateId: null, lgaId: null }).first()
 
   let geographyId
-  if (existing) {
-    geographyId = existing.id
+  if (geography) {
+    geographyId = geography.id
   } else {
     const [newId] = await knex('Geography').insert({ countryId }).returning('id')
     geographyId = newId
