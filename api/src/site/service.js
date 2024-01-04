@@ -418,7 +418,7 @@ const getReportingSites = async request => {
 
   const { minDate, maxDate } = query
 
-  const resultWithTreatments = knex('Site as s')
+  const resultTreatmentAggregate = knex('Site as s')
     .select([
       's.id as siteId',
       's.name as siteName',
@@ -481,7 +481,7 @@ const getReportingSites = async request => {
     .groupBy(['Result.id', 's.id'])
     .as('rwt')
 
-  const reportAggregate = knex(resultWithTreatments)
+  const siteAggregate = knex(resultTreatmentAggregate)
     .select([
       'rwt.siteName',
       knex.raw('COUNT(DISTINCT rwt.registeredSampleId) AS samplesRegistered'),
@@ -505,10 +505,10 @@ const getReportingSites = async request => {
     .groupBy('rwt.siteId')
   const getCount = knex
     .count('siteId as count')
-    .from(reportAggregate.clone().select('rwt.siteId as siteId').distinct().as('innerQuery'))
+    .from(siteAggregate.clone().select('rwt.siteId as siteId').distinct().as('innerQuery'))
     .first()
 
-  const reportingSites = reportAggregate.modify(sortPageParams, query, 'siteName')
+  const reportingSites = siteAggregate.modify(sortPageParams, query, 'siteName')
 
   const [{ count: total }, data] = await Promise.all([getCount, reportingSites])
 
