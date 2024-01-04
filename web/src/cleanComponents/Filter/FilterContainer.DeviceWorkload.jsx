@@ -1,22 +1,18 @@
-import React, { useState } from 'react'
-import { Grid } from '@mui/material'
+import React from 'react'
+import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router'
-import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
-import useFilterValues from '../../hooks/useFilterValues'
+import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
-import { AssaySelect, ConsumableSelect, LgaSelect, PeriodSelector, ReportSelector, StateSelect } from '../index'
+import { StateSelect, LgaSelect, AssaySelect, PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 
-const ReportsFilter = () => {
+const DeviceWorkloadFilter = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
-  const location = useLocation()
-  const filter = useFilterValues(location.pathname)
-  const [state, setState] = useState({ ...filter, countryId: user.countryId })
+  const [state, setState] = useFilterSync()
 
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
@@ -42,32 +38,17 @@ const ReportsFilter = () => {
         <Grid item xs={3}>
           <AssaySelect
             label={formatMessage(messages.assay)}
-            value={state.assayId}
-            onChange={e =>
-              setState({ ...state, assayId: e.target.value, resultCategoryId: null, resultCategoryGroupId: null })
-            }
-            onlyResults
+            value={state.singleAssayId}
+            onChange={e => setState({ ...state, singleAssayId: e.target.value })}
+            single
           />
         </Grid>
-        <Grid item xs={3}>
-          <ConsumableSelect
-            valueBy="id"
-            label={formatMessage(messages.consumable)}
-            value={state.consumableId}
-            onChange={value => setState({ ...state, consumableId: value })}
-          />
-        </Grid>
-        {allowed(['site:view']) ? (
+        {allowed(['device']) ? (
           <Grid item xs={3}>
-            <SiteAutoCompleteField
-              name="siteName"
-              value={state.siteName || ''}
-              onChange={site => setState({ ...state, siteName: site.name })}
-              floatingLabelFixed
-              floatingLabelText={formatMessage(messages.site)}
-              stateId={state.stateId}
-              lgaId={state.lgaId}
-              width="100%"
+            <TextField
+              label={formatMessage(messages.deviceName)}
+              value={state.deviceName || ''}
+              onChange={e => setState({ ...state, deviceName: e.target.value ? e.target.value : null })}
             />
           </Grid>
         ) : null}
@@ -79,16 +60,9 @@ const ReportsFilter = () => {
             onChange={dateValues => setState({ ...state, ...dateValues })}
           />
         </Grid>
-        <Grid item xs={3}>
-          <ReportSelector
-            label={formatMessage(messages.reportName)}
-            value={state.reportName}
-            onChange={report => setState({ ...state, reportName: report.name })}
-          />
-        </Grid>
       </Grid>
     </FilterContainer>
   )
 }
 
-export default ReportsFilter
+export default DeviceWorkloadFilter

@@ -153,8 +153,8 @@ const RifCurrentGraphPage = () => {
 
                     const params = {
                       displayResult: 'actual',
-                      fixedMinDate: format(startOfMonth(parsedDate), base),
-                      fixedMaxDate: format(endOfMonth(parsedDate), base),
+                      minDate: format(startOfMonth(parsedDate), base),
+                      maxDate: format(endOfMonth(parsedDate), base),
                       onlyReportableResults: true,
                       assayId: assays.find(a => a.externalId === evt.data.data.id).id,
                     }
