@@ -32,6 +32,10 @@ module.exports = async function upsertResultCategoryGroups(knex, fixture, assayW
     resultCategoryIds[externalId] = id
   })
 
+  // Only include the category groups from an existing assay
+  fixture = fixture.filter(g => assayIds[g.assayExternalId])
+
+  // Only include the category groups from the whitelist
   if (assayWhitelist.length > 0) fixture = fixture.filter(g => assayWhitelist.includes(g.assayExternalId))
 
   const groups = fixture.map(
