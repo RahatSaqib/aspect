@@ -1949,7 +1949,6 @@ async function getOrInsertGeography(knex, countryId) {
     const [newId] = await knex('Geography').insert({ countryId }).returning('id')
     geographyId = newId
   }
-
   return geographyId
 }
 
