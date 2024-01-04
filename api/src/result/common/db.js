@@ -6,7 +6,7 @@ const { getUser } = require('../../auth/service')
 const { SELECT_FIELDS_UTC } = require('../query')
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
 const { getDatesFromQuery } = require('../../shared/date')
-const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
+const { allAssayToId, allResultCategoryToId, deviceApprovalToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { pageParams, sortParams } = require('../../db')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
@@ -618,7 +618,12 @@ const getXdrResultCountBase = ({
   return base
 }
 
-const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstraints, query) => {
+const getXdrDevicesSummary = async (dataConstraints, query) => {
+  const assayIds = await allAssayToId()
+  if (!assayIds.GxMtbXdr) {
+    return Boom.badRequest('Xdr assays are not supported in this instance')
+  }
+  
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
   const { dateTo } = dates
@@ -626,9 +631,11 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
     dateFrom = subMonths(dateTo, 1)
   }
 
+  const resultCategoryIds = await allResultCategoryToId()
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
+  const approvedDeviceApprovalId = await deviceApprovalToId('approved')
 
-  return knex('Site as s')
+  const countsBase = knex('Site as s')
     .innerJoin('Device as d', 's.id', 'd.siteId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .leftOuterJoin('Result as r', onQuery => {
@@ -645,6 +652,7 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
     .where(qWhere => {
       qWhere.whereIn('a.id', [assayIds.GxMtbXdr]).orWhereNull('a.id')
     })
+    .andWhere('d.deviceApprovalId', approvedDeviceApprovalId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -660,15 +668,6 @@ const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstr
       ...getResultCountersBase(resultCategoryIds, positiveResultCategories),
     })
     .clone()
-}
-
-const getXdrDevicesSummary = async (dataConstraints, query) => {
-  const assayIds = await allAssayToId()
-  if (!assayIds.GxMtbXdr) {
-    return Boom.badRequest('Xdr assays are not supported in this instance')
-  }
-  const resultCategoryIds = await allResultCategoryToId()
-  const countsBase = getResultCountBaseGroupBySiteId(assayIds, resultCategoryIds, dataConstraints, query)
 
   const counterField = name => knex.raw(`IFNULL(SUM(_sub.${name}), 0) as ${name}`)
   const baseQuery = knex('Geography as g')
