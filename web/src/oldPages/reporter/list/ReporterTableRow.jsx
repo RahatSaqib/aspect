@@ -29,8 +29,8 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
              * - reportableSiteName - for initialInputValue in AutoComplete and to show in filter button
              * - reportableSiteId - for payload to fetch data
              */
-            reportableSiteName: reporter.get('siteName'),
-            reportableSiteId: reporter.get('siteId'),
+            reportableSiteName: reporter.siteName,
+            reportableSiteId: reporter.siteId,
           },
           destinationPath
         )
@@ -43,54 +43,37 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
   return (
     <TableRow {...restProps} className={styles[restProps.className]}>
       <TableCell>
-        <Link to={`/browse/site/${reporter.get('siteId')}`} {...restProps} className={btnStyles.site__details}>
-          {reporter.get('siteName')}
+        <Link to={`/browse/site/${reporter.siteId}`} {...restProps} className={btnStyles.site__details}>
+          {reporter.siteName}
         </Link>
       </TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyReportableResults: true }}>{reporter.get('totalResults')}</LinkToResults>
+        <LinkToResults params={{ onlyReportableResults: true }}>{reporter.totalResults}</LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults
-          params={{
-            onlyDownloadedByReporter: true,
-            onlyReportableResults: true,
-            onlyTreatmentRequired: false,
-          }}
+          params={{ onlyDownloadedByReporter: true, onlyReportableResults: true, onlyTreatmentRequired: false }}
         >
-          {reporter.get('delivered')}
+          {reporter.delivered}
         </LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults
-          params={{
-            onlyDownloadedByReporter: true,
-            onlyReportableResults: true,
-            onlyTreatmentRequired: true,
-          }}
+          params={{ onlyDownloadedByReporter: true, onlyReportableResults: true, onlyTreatmentRequired: true }}
         >
-          {reporter.get('requiresTreatment')}
+          {reporter.requiresTreatment}
         </LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults
-          params={{
-            onlyDownloadedByReporter: true,
-            onlyTreatmentRequired: true,
-            treatmentStatus: 'OnTreatment',
-          }}
+          params={{ onlyDownloadedByReporter: true, onlyTreatmentRequired: true, treatmentStatus: 'OnTreatment' }}
         >
-          {reporter.get('onTreatment')}
+          {reporter.onTreatment}
         </LinkToResults>
       </TableCell>
       <TableCell>
-        <LinkToResults
-          params={{
-            onlyDownloadedByReporter: true,
-            onlyTreatmentRequired: true,
-          }}
-        >
-          {reporter.get('transferred')}
+        <LinkToResults params={{ onlyDownloadedByReporter: true, onlyTreatmentRequired: true }}>
+          {reporter.transferred}
         </LinkToResults>
       </TableCell>
       <TableCell>
@@ -102,7 +85,7 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
             treatmentStatus: 'NotPossible',
           }}
         >
-          {reporter.get('notPossible')}
+          {reporter.notPossible}
         </LinkToResults>
       </TableCell>
       <TableCell>
@@ -114,7 +97,7 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
             treatmentStatus: 'AwaitingTreatment',
           }}
         >
-          {reporter.get('notOnTreatment')}
+          {reporter.notOnTreatment}
         </LinkToResults>
       </TableCell>
     </TableRow>

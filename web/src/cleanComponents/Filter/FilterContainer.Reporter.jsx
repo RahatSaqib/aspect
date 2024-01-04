@@ -1,12 +1,13 @@
 import React from 'react'
-import { Grid, TextField } from '@mui/material'
+import { Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
+import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
-import { StateSelect, LgaSelect, AssaySelect, PeriodSelector } from '../index'
+import { StateSelect, LgaSelect, AssaySelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const ReporterFilter = () => {
@@ -48,18 +49,15 @@ const ReporterFilter = () => {
           </Grid>
         ) : null}
         <Grid item xs={3}>
-          <TextField
-            label={formatMessage(messages.deviceName)}
-            value={state.deviceName || ''}
-            onChange={e => setState({ ...state, deviceName: e.target.value ? e.target.value : null })}
-          />
-        </Grid>
-        <Grid item xs={3}>
-          <PeriodSelector
-            label={formatMessage(messages.date)}
-            minDate={state.minDate || null}
-            maxDate={state.maxDate || null}
-            onChange={dateValues => setState({ ...state, ...dateValues })}
+          <SiteAutoCompleteField
+            name="siteName"
+            value={state.siteName || ''}
+            onChange={site => setState({ ...state, siteName: site.name })}
+            floatingLabelFixed
+            floatingLabelText={formatMessage(messages.site)}
+            stateId={state.stateId}
+            lgaId={state.lgaId}
+            width="100%"
           />
         </Grid>
       </Grid>
