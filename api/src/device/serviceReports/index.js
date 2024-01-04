@@ -152,7 +152,6 @@ async function getDeviceActivityReport(auth, query) {
         qb.distinct('fact.assayName')
       }
     })
-    .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
 
 
