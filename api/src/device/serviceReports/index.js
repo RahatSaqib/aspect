@@ -127,7 +127,6 @@ async function getDeviceActivityReport(auth, query) {
     .modify(addConstraints, dataConstraints, {
       result: 'r',
     })
-    .modify(filterDateRangeParams, query, 'r.endedOn')
     .groupBy('r.deviceId')
     .select('r.deviceId', getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn'))
 
