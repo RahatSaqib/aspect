@@ -411,6 +411,115 @@ async function listSitesWithReporters(request) {
   return { ok: true, total, length: data.length, data }
 }
 
+const getReportingSites = async request => {
+  const { query, auth } = request
+
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const { minDate, maxDate } = query
+
+  const resultWithTreatments = knex('Site as s')
+    .select([
+      's.id as siteId',
+      's.name as siteName',
+      knex.raw('Count(Result.id) as resultsReporting'),
+      knex.raw('MAX(ResultDownloadLog.id) as latestDownloadLogId'),
+      'OriginSample.id as registeredSampleId',
+      knex.raw(
+        `CASE WHEN rca1.requiresTreatment = 1 OR rca2.requiresTreatment = 1 THEN 1 ELSE 0 END as requiresFollowUp`
+      ),
+      knex.raw(
+        `MAX(CASE WHEN FollowUpType.externalId = 'treatment' AND (rca1.requiresTreatment = 1 OR rca2.requiresTreatment = 1) 
+              THEN CASE WHEN FollowUp.externalId != 'notPossible' 
+                    THEN ResultFollowUp.date 
+                    ELSE '1970-01-01' 
+                  END 
+              ELSE '1970-01-01' 
+            END) as latestTreatmentDate`
+      ),
+      knex.raw(
+        `MAX(CASE WHEN FollowUpType.externalId = 'treatment' AND (rca1.requiresTreatment = 1 OR rca2.requiresTreatment = 1) 
+              THEN CASE WHEN FollowUp.externalId = 'notPossible' 
+                THEN ResultFollowUp.date ELSE '1970-01-01' 
+              END 
+              ELSE '1970-01-01' 
+            END) as latestNotPossibleDate`
+      ),
+    ])
+    .leftJoin('Geography as g', 'g.id', 's.geographyId')
+    .leftJoin('Result', queryBuilder => {
+      queryBuilder.on('s.id', 'Result.reportableSiteId').andOnBetween('Result.endedOn', [minDate, maxDate])
+    })
+    .leftJoin('Sample as OriginSample', queryBuilder => {
+      queryBuilder
+        .on('OriginSample.originSiteId', 's.id')
+        .andOn('OriginSample.registeredInAspect', 1)
+        .andOnBetween('OriginSample.collectedOn', [minDate, maxDate])
+    })
+    .leftJoin('ResultCategoryAssay as rca1', queryBuilder => {
+      queryBuilder.on('rca1.resultCategoryId', 'Result.resultCategory1').andOn('rca1.assayId', 'Result.assayId')
+    })
+    .leftJoin('ResultCategoryAssay as rca2', queryBuilder => {
+      queryBuilder.on('rca2.resultCategoryId', 'Result.resultCategory2').andOn('rca2.assayId', 'Result.assayId')
+    })
+    .leftJoin('ResultFollowUp', queryBuilder => {
+      queryBuilder.on('ResultFollowUp.resultId', 'Result.id').andOn('ResultFollowUp.isDeleted', 0)
+    })
+    .leftJoin('FollowUp', 'FollowUp.id', 'ResultFollowUp.followUpId')
+    .leftJoin('FollowUpType', 'FollowUpType.id', 'FollowUp.followUpTypeId')
+    .leftJoin('ResultDownloadLog', 'ResultDownloadLog.resultId', 'Result.id')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      siteId: 's.id',
+      lgaId: 'Geography.lgaId',
+      assayId: 'Result.assayId',
+    })
+    .modify(addConstraints, dataConstraints, {
+      geography: 'g',
+    })
+    .groupBy(['Result.id', 's.id'])
+    .as('rwt')
+
+  const reportAggregate = knex(resultWithTreatments)
+    .select([
+      'rwt.siteName',
+      knex.raw('COUNT(DISTINCT rwt.registeredSampleId) AS samplesRegistered'),
+      knex.raw('SUM(rwt.resultsReporting) as resultsReporting'),
+      knex.raw('SUM(CASE WHEN rwt.latestDownloadLogId IS NULL THEN 0 ELSE 1 END) AS resultsDownloaded'),
+      knex.raw('SUM(rwt.requiresFollowUp) AS requiresFollowUp'),
+      knex.raw(
+        `SUM(CASE WHEN rwt.requiresFollowUp AND rwt.latestTreatmentDate = '1970-01-01' AND rwt.latestNotPossibleDate = '1970-01-01' THEN 1 ELSE 0 END) AS followUpPending`
+      ),
+      knex.raw(
+        `SUM(CASE WHEN rwt.latestTreatmentDate >= rwt.latestNotPossibleDate 
+          AND (rwt.latestTreatmentDate > '1970-01-01' OR rwt.latestNotPossibleDate > '1970-01-01') 
+          THEN 1 ELSE 0 END) AS followUpConfirmed`
+      ),
+      knex.raw(
+        `SUM(CASE WHEN rwt.latestTreatmentDate < rwt.latestNotPossibleDate 
+          AND (rwt.latestTreatmentDate > '1970-01-01' OR rwt.latestNotPossibleDate > '1970-01-01') 
+          THEN 1 ELSE 0 END) AS followUpNotPossible`
+      ),
+    ])
+    .groupBy('rwt.siteId')
+  const getCount = knex
+    .count('siteId as count')
+    .from(reportAggregate.clone().select('rwt.siteId as siteId').distinct().as('innerQuery'))
+    .first()
+
+  const reportingSites = reportAggregate.modify(sortPageParams, query, 'siteName')
+
+  const [{ count: total }, data] = await Promise.all([getCount, reportingSites])
+
+  return {
+    ok: !!reportingSites,
+    total,
+    length: _.size(reportingSites),
+    data,
+  }
+}
+
 module.exports = {
   getSitesQuery,
   listSites,
@@ -421,4 +530,5 @@ module.exports = {
   listSitesWithReporters,
   getListSitesForSelectList,
   disableSite,
+  getReportingSites,
 }
