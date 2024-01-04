@@ -3,7 +3,7 @@ const { subDays } = require('date-fns')
 const { startOfDayUtc, replaceOffset } = require('../shared/date')
 const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { daysToCalculate } = require('./common/constants')
-const { factGenerateResultCounts } = require('./actions')
+const { factGenerateResultCounts, factResultsDeviceByTimeFrame } = require('./actions')
 
 const daysToCalculateCountOfDeliveredResults = [30, 60]
 
@@ -245,6 +245,17 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         }
       })
       .delete()
+
+    messageContext.bindActionCreators({
+      factResultsDeviceByTimeFrame,
+    })
+    const timeFrameOptions = {
+      assayId: options.assayId,
+      resultCategory1: options.resultCategory1,
+      resultCategory2: options.resultCategory2,
+      endedOn: options.endedOn,
+    }
+    messageContext.factResultsDeviceByTimeFrame(deviceId, timeFrameOptions)
   })
 }
 
