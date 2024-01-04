@@ -298,9 +298,9 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
   }
 }
 
-function addGeographyConstraints(queryBuilder, constraints, aliases, options) {
+function addGeographyConstraints(queryBuilder, constraints, aliases) {
   const { site, country, result } = aliases
-  if (result && !options.external) {
+  if (result) {
     if (!aliases.geography) {
       aliases.geography = alias('Geography')
       queryBuilder.leftOuterJoin(
@@ -550,7 +550,7 @@ function addConstraints(
   addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, options)
 
   addPersonConstraints(queryBuilder, constraints, aliases)
-  addGeographyConstraints(queryBuilder, constraints, aliases, options)
+  addGeographyConstraints(queryBuilder, constraints, aliases)
 
   addOrConstraints(queryBuilder, constraints, aliases)
 
