@@ -76,7 +76,6 @@ function getMonthsDatefields(minDate, maxDate, culture) {
     })
     curMonth = addMonths(curMonth, 1)
   }
-  console.log("date fields", dateFields)
   return dateFields
 }
 
@@ -156,7 +155,7 @@ async function getDeviceActivityReport(auth, query) {
     .clone()
     .leftJoin(baseFactByMonth.as('fact'), 'd.id', 'fact.deviceId')
     .groupBy('d.id', 'fact.monthYear')
-    .select('d.id as deviceId', 'fact.totalResults', 'fact.monthYear')
+    .select('d.id as deviceId', 'fact.totalResults', 'fact.monthYear', 'fact.assayName')
 
 
   const dateFields = getMonthsDatefields(minDate, maxDate, culture)
