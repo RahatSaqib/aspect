@@ -193,13 +193,6 @@ async function getDeviceActivityReport(auth, query) {
   return dataset
 }
 
-async function getDeviceActivityReportFor2ndSheet(auth, query, options) {
-  const { sharedResults, useNamedData } = options
-  const result = sharedResults[useNamedData]
-  return {
-    ...result,
-  }
-}
 
 async function getModuleSwapsReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
@@ -800,5 +793,4 @@ module.exports = {
   getErrorsByDevicesReport,
   noStockInventoryReport,
   getDeviceCoverageReport,
-  getDeviceActivityReportFor2ndSheet
 }

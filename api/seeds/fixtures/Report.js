@@ -165,8 +165,6 @@ const deviceActivity = {
         sortCol: 'name',
         sortDir: 'asc',
         hasResults: 1,
-        nameOfSharedData: 'activity_report',
-        avoidStreaming: true,
       },
     },
     {
@@ -174,10 +172,11 @@ const deviceActivity = {
       moduleName: 'device/serviceReports',
       functionName: 'getDeviceActivityReport',
       query: {
-        avoidStreaming: true,
+        sortCol: 'name',
+        sortDir: 'asc',
+        hasResults: 1,
         groupBy: 'r.assayId',
         select: 'a.name as assayName',
-        useNamedData: 'activity_report',
       },
     },
   ],
