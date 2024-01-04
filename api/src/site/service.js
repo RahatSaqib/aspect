@@ -412,7 +412,9 @@ async function listSitesWithReporters(request) {
 }
 
 const getReportingSites = async request => {
-  const { query } = request
+  const { query, auth } = request
+
+  const dataConstraints = await getConstraints(auth.credentials)
 
   const { minDate, maxDate } = query
 
@@ -473,10 +475,13 @@ const getReportingSites = async request => {
       lgaId: 'Geography.lgaId',
       assayId: 'Result.assayId',
     })
+    .modify(addConstraints, dataConstraints, {
+      geography: 'g',
+    })
     .groupBy(['Result.id', 's.id'])
     .as('rwt')
 
-  const mainQuery = knex(resultWithTreatments)
+  const reportAggregate = knex(resultWithTreatments)
     .select([
       'rwt.siteName',
       knex.raw('COUNT(DISTINCT rwt.registeredSampleId) AS samplesRegistered'),
@@ -498,9 +503,21 @@ const getReportingSites = async request => {
       ),
     ])
     .groupBy('rwt.siteId')
-    .modify(sortPageParams, query, 'siteName')
+  const getCount = knex
+    .count('siteId as count')
+    .from(reportAggregate.clone().select('rwt.siteId as siteId').distinct().as('innerQuery'))
+    .first()
 
-  return mainQuery
+  const reportingSites = reportAggregate.modify(sortPageParams, query, 'siteName')
+
+  const [{ count: total }, data] = await Promise.all([getCount, reportingSites])
+
+  return {
+    ok: !!reportingSites,
+    total,
+    length: _.size(reportingSites),
+    data,
+  }
 }
 
 module.exports = {
