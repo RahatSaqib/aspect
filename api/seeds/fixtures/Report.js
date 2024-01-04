@@ -162,8 +162,6 @@ const deviceActivity = {
       moduleName: 'device/serviceReports',
       functionName: 'getDeviceActivityReport',
       query: {
-        groupBy: 'r.assayId',
-        select: 'a.name as assayName',
         sortCol: 'name',
         sortDir: 'asc',
         hasResults: 1,
@@ -174,9 +172,11 @@ const deviceActivity = {
     {
       sortOrder: 1,
       moduleName: 'device/serviceReports',
-      functionName: 'getDeviceActivityReportFor2ndSheet',
+      functionName: 'getDeviceActivityReport',
       query: {
         avoidStreaming: true,
+        groupBy: 'r.assayId',
+        select: 'a.name as assayName',
         useNamedData: 'activity_report',
       },
     },

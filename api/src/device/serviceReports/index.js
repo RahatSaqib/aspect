@@ -86,12 +86,15 @@ async function getDeviceActivityReport(auth, query) {
     'dt.externalId',
     ['Aspect', 'GxAlert']
   )
+  const extraField = query.select ? query.select.split(' as ')[1].trim() : null
 
   const { minDate = subMonths(new Date(), 12), maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
   const addingGroupingAndSelect = (builder, { select, groupBy }) => {
-    if (select) builder.select(select)
-    if (groupBy) builder.groupBy(groupBy)
+    if (extraField) {
+      if (select) builder.select(select)
+      if (groupBy) builder.groupBy(groupBy)
+    }
   }
 
   const baseFactItems = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
@@ -116,7 +119,7 @@ async function getDeviceActivityReport(auth, query) {
     query,
     timeFrame: 'day',
   })
-    .select('r.deviceId', knex.raw("DATE_FORMAT(r.startedOn,'%Y-%d') as monthYear"))
+    .select('r.deviceId', knex.raw("DATE_FORMAT(r.startedOn,'%Y-%m') as monthYear"))
     .sum({
       totalResults: 'r.resultCount',
     })
@@ -144,8 +147,11 @@ async function getDeviceActivityReport(auth, query) {
       'dms.name as deviceMaintenanceStatus',
       'res.lastUploadOn',
       'fact.totalResults',
-      'fact.assayName',
-    )
+    ).modify(qb => {
+      if (extraField) {
+        qb.distinct('fact.assayName')
+      }
+    })
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
 
@@ -154,11 +160,15 @@ async function getDeviceActivityReport(auth, query) {
     .clone()
     .leftJoin(baseFactByMonth.as('fact'), 'd.id', 'fact.deviceId')
     .groupBy('d.id', 'fact.monthYear')
-    .select('d.id as deviceId', 'fact.totalResults', 'fact.monthYear', 'fact.assayName')
+    .select('d.id as deviceId', 'fact.totalResults', 'fact.monthYear')
+    .modify(qb => {
+      if (extraField) {
+        qb.select('fact.assayName')
+      }
+    })
 
 
   const dateFields = getMonthsDatefields(minDate, maxDate, culture)
-  const extraField = query.select ? query.select.split(' as ')[1].trim() : null
 
   const devices = _.map(devicesData, elem => {
     _.each(
