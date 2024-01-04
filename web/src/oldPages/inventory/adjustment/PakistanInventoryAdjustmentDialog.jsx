@@ -110,7 +110,7 @@ function PakistanInventoryAdjustmentDialog(props) {
                     disabled={actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG}
                     error={errors?.toSiteId ?? null}
                     label={formatMessage(messages.toSiteName)}
-                    value={values.toSiteId}
+                    value={values.toSiteId || ''}
                     onChange={handleChange}
                   />
                 ) : null}
