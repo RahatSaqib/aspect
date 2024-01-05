@@ -316,7 +316,9 @@ const routes = [
           ),
         },
       },
-      response: reportingSitesResponse(),
+      response: {
+        schema: reportingSitesResponse(),
+      },
     },
   },
 ]

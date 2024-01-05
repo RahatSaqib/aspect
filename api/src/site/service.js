@@ -517,7 +517,7 @@ const getReportingSites = async request => {
   return {
     ok: !!reportingSites,
     total,
-    length: _.size(reportingSites),
+    length: _.size(data),
     data,
   }
 }
