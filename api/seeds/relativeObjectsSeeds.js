@@ -49,7 +49,7 @@ async function addIssueTypes(
     updatedOn: now,
     updatedBy: adminId,
   }
-  const insertedIssueTypes = _.map(await knex('IssueType').select('externalId'), elem => elem.externalId)
+  const insertedIssueTypes = await knex('IssueType').pluck('externalId')
   const issues = await getBaseIssues(auditFields)
   await Promise.each(Object.keys(issues), async elem => {
     // if defaultissues is null all are inserted
@@ -89,10 +89,12 @@ async function addIssueTypes(
           webhookTemplateId,
         })
       }
-      await knex('IssueType').insert({
-        ...issues[elem].issueType,
-        defaultMessageTypeId: messageTypeId,
-      })
+      if (!insertedIssueTypes.includes(issues[elem].issueType.externalId)) {
+        await knex('IssueType').insert({
+          ...issues[elem].issueType,
+          defaultMessageTypeId: messageTypeId,
+        })
+      }
     }
   })
 

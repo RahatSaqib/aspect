@@ -429,6 +429,7 @@ async function getDevicesForReport(auth, query) {
 }
 
 async function getDevicesForRifResistanceReport(auth, query) {
+  const assayExternalIds = ['GxMtbRif', 'GxMtbRifUltra']
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
   const deviceQuery = getDeviceBaseExtendedQuery(
@@ -441,46 +442,53 @@ async function getDevicesForRifResistanceReport(auth, query) {
     dataConstraints,
     { extendJoinToAssays: true }
   )
-    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    .whereIn('a.externalId', assayExternalIds)
     // Group for avoiding join duplications
     .groupBy(['d.id'])
 
-  // get total count for paging
-  const getCount = deviceQuery.clone().count('d.id as count')
+  /**
+   *
+   */
+  const baseFields = ['st.name as state', 'd.id as deviceId', 'd.name', 'lg.name as county']
+  query.assay = assayExternalIds
 
-  const queryResults = knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .modify(addConstraints, dataConstraints, {
-      result: 'r',
-      sample: 's',
+  const allCounts = await getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+    timeFrame: 'day',
+  })
+    .where('rca.reportable', true)
+    .select(baseFields)
+    .groupBy('r.deviceId')
+    .sum({
+      totalResults: 'r.resultCount',
+      totalDetected1: knex.raw(`
+        case
+        when r.resultCategory1 = ${resultCategoryIds.Detected} then r.resultCount
+        else 0
+        end
+      `),
+      totalDetected2: knex.raw(`
+        case
+        when r.resultCategory2 = ${resultCategoryIds.Detected} then r.resultCount
+        else 0
+        end
+      `),
     })
-    .whereRaw('r.siteId = d.siteId')
-    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .modify(filterDateRangeParams, query, 'r.endedOn')
 
-  // get rows
-  const getItems = deviceQuery
-    .clone()
-    .modify(sortPageParams, query, 'name')
-    .select([
-      'st.name as state',
-      'd.name',
-      'lg.name as county',
-      queryResults.clone().countDistinct('r.id').as('totalResults'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.Detected)
-        .countDistinct('r.id')
-        .as('totalDetected1'),
-      queryResults
-        .clone()
-        .where('r.resultCategory2', resultCategoryIds.Detected)
-        .countDistinct('r.id')
-        .as('totalDetected2'),
-    ])
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const allDevices = await deviceQuery.clone().select(baseFields).orderBy('d.name')
+  const data = _.map(allDevices, d => {
+    const item = allCounts.find(it => it.deviceId === d.deviceId)
+    return {
+      ...d,
+      totalResults: item?.totalResults || 0,
+      totalDetected1: item?.totalDetected1 || 0,
+      totalDetected2: item?.totalDetected2 || 0,
+    }
+  })
+  const total = data.length
 
   // add more fields which depend on aggregations
   data.forEach(async it => {
