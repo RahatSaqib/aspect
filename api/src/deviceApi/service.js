@@ -32,8 +32,6 @@ const logger = require('../shared/logger')
 const { getTbResultsStats } = require('./pakistan/pakistanTbService')
 const { sendSms } = require('../sms/smsUtil')
 const { sendEmail } = require('../email/emailUtil')
-const { formatDateOrDefault } = require('../shared/date')
-const { addConstraints } = require('../auth/constraints')
 
 const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 

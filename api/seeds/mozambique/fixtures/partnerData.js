@@ -23,7 +23,7 @@ module.exports = {
   apiUrl: 'https://mozambique.aspect.id/api',
   clientApiDetails: [
     {
-      id: 'testAggregate',
+      id: 'zenysisTestAggregate',
       name: 'Zenysis',
       token: 'w3wgnd8fnm67mcpfey30',
       externalId: 'Zenysis',
