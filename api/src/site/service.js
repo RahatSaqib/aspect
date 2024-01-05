@@ -418,7 +418,7 @@ const getReportingSites = async request => {
 
   const { minDate, maxDate } = query
 
-  const resultTreatmentAggregate = knex('Site as s')
+  const siteAggregateSubQuery = knex('Site as s')
     .select([
       's.id as siteId',
       's.name as siteName',
@@ -481,7 +481,7 @@ const getReportingSites = async request => {
     .groupBy(['Result.id', 's.id'])
     .as('rwt')
 
-  const siteAggregateQuery = knex(resultTreatmentAggregate)
+  const siteAggregateQuery = knex(siteAggregateSubQuery)
     .select([
       'rwt.siteName',
       knex.raw('COUNT(DISTINCT rwt.registeredSampleId) AS samplesRegistered'),
