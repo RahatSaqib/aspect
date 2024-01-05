@@ -48,32 +48,32 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
         </Link>
       </TableCell>
       <TableCell>
-        <LinkToResults params={{ onlyReportableResults: true }}>{reporter.totalResults}</LinkToResults>
+        <LinkToResults params={{ onlyReportableResults: true }}>{reporter.samplesRegistered}</LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults
           params={{ onlyDownloadedByReporter: true, onlyReportableResults: true, onlyTreatmentRequired: false }}
         >
-          {reporter.delivered}
+          {reporter.resultsReporting}
         </LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults
           params={{ onlyDownloadedByReporter: true, onlyReportableResults: true, onlyTreatmentRequired: true }}
         >
-          {reporter.requiresTreatment}
+          {reporter.resultsDownloaded}
         </LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults
           params={{ onlyDownloadedByReporter: true, onlyTreatmentRequired: true, treatmentStatus: 'OnTreatment' }}
         >
-          {reporter.onTreatment}
+          {reporter.requiresFollowUp}
         </LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults params={{ onlyDownloadedByReporter: true, onlyTreatmentRequired: true }}>
-          {reporter.transferred}
+          {reporter.followUpPending}
         </LinkToResults>
       </TableCell>
       <TableCell>
@@ -85,7 +85,7 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
             treatmentStatus: 'NotPossible',
           }}
         >
-          {reporter.notPossible}
+          {reporter.followUpConfirmed}
         </LinkToResults>
       </TableCell>
       <TableCell>
@@ -97,7 +97,7 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
             treatmentStatus: 'AwaitingTreatment',
           }}
         >
-          {reporter.notOnTreatment}
+          {reporter.followUpNotPossible}
         </LinkToResults>
       </TableCell>
     </TableRow>

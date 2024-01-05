@@ -1,29 +1,18 @@
-import React, { useState, useEffect } from 'react'
+import React from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
-import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useQuery } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, ReporterFilter } from '../../../cleanComponents'
-import fetchWrapperForQueries from '../../../components/QueryFetch'
+import useReportingSite from '../../../hooks/site/useReportingSite.jsx'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import { REPORTERS_LIST } from '../ReporterQueries'
 import messages from './messages'
 import { ReporterDataTable, ReporterDataTableHead, ReporterDataTableRow } from './ReporterDataTable'
 import styles from './ReporterList.module.css'
-
-// }
-
-const getCurrentPagination = location => {
-  const sortPage = makeSortPageSelector({ sortCol: 'siteName', sortDir: 'asc' })
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-  return { sortCol, sortDir, page: pageAt, size: pageSize }
-}
 
 const ReporterList = () => {
   const { formatMessage } = useIntl()
@@ -31,20 +20,10 @@ const ReporterList = () => {
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
 
-  const [pagination, setPagination] = useState(getCurrentPagination(location))
+  const sortPage = makeSortPageSelector({ sortCol: 'siteName', sortDir: 'asc' })
+  const { sortCol, sortDir, pageAt: page, pageSize: size } = sortPage({ location })
 
-  const { sortCol, sortDir, page: pageAt, size: pageSize } = pagination
-  const params = { ...pagination, ...filters }
-
-  const { isLoading, isError, data, error } = useQuery(
-    [REPORTERS_LIST.KEY, { params }],
-    async () => fetchWrapperForQueries({ endpoint: REPORTERS_LIST.ENDPOINT, params }),
-    { enabled: !isEmpty(params) }
-  )
-
-  useEffect(() => {
-    setPagination(getCurrentPagination(location))
-  }, [location])
+  const { isLoading, isError, data, error } = useReportingSite({ sortCol, sortDir, page, size, ...filters })
 
   if (isError) throw new Error(error)
 
@@ -57,7 +36,7 @@ const ReporterList = () => {
         <DataTableCard key={`DataTableCard__table-${location.key}`}>
           {isLoading ? (
             <LinearProgress />
-          ) : data?.data.length === 0 ? (
+          ) : data.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
@@ -79,7 +58,7 @@ const ReporterList = () => {
                   ]}
                 />
                 <TableBody>
-                  {data?.data.map(reporter => (
+                  {data.map(reporter => (
                     <ReporterDataTableRow key={reporter.siteId} reporter={reporter} />
                   ))}
                 </TableBody>
@@ -90,8 +69,8 @@ const ReporterList = () => {
                 className={styles.BrowseTablePaginator}
                 paginatorStatus={messages.paginatorStatus}
                 total={data?.total}
-                pageAt={pageAt}
-                pageSize={pageSize}
+                pageAt={page}
+                pageSize={size}
               />
             </>
           )}
