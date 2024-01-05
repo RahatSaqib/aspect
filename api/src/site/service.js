@@ -489,7 +489,9 @@ const getReportingSites = async request => {
       knex.raw('SUM(CASE WHEN rwt.latestDownloadLogId IS NULL THEN 0 ELSE 1 END) AS resultsDownloaded'),
       knex.raw('SUM(rwt.requiresFollowUp) AS requiresFollowUp'),
       knex.raw(
-        `SUM(CASE WHEN rwt.requiresFollowUp AND rwt.latestTreatmentDate = '1970-01-01' AND rwt.latestNotPossibleDate = '1970-01-01' THEN 1 ELSE 0 END) AS followUpPending`
+        `SUM(CASE WHEN rwt.requiresFollowUp AND rwt.latestTreatmentDate = '1970-01-01' 
+          AND rwt.latestNotPossibleDate = '1970-01-01' 
+          THEN 1 ELSE 0 END) AS followUpPending`
       ),
       knex.raw(
         `SUM(CASE WHEN rwt.latestTreatmentDate >= rwt.latestNotPossibleDate 

@@ -14,17 +14,7 @@ const {
 const { postSchema, updateSchema } = require('./common/validations')
 
 const { exportSites, exportReporters } = require('./serviceReports')
-
-const reportingSitesQueryValidation = () => {
-  return {
-    minDate: Joi.date().timestamp().required().description('Test start date'),
-    maxDate: Joi.date().timestamp().required().description('Test end date'),
-    countryId: Joi.number().allow(null, '').description('Filter for Country ID'),
-    stateId: Joi.number().allow(null, '').description('Filter for State ID'),
-    siteId: Joi.number().allow(null, '').description('Filter for Site ID'),
-    assayId: Joi.number().allow(null, '').description('Filter for Assay ID'),
-  }
-}
+const { reportingSitesQueryParams, reportingSitesResponse } = require('./common/validation/reportingSite')
 
 function listSitesBaseConfig() {
   return {
@@ -313,7 +303,7 @@ const routes = [
       notes: `List of sites with some aggregations about reporters`,
       validate: {
         query: {
-          ...reportingSitesQueryValidation(),
+          ...reportingSitesQueryParams(),
           ...validateSortPageParams(
             'siteName',
             'samplesRegistered',
@@ -326,6 +316,7 @@ const routes = [
           ),
         },
       },
+      response: reportingSitesResponse(),
     },
   },
 ]
