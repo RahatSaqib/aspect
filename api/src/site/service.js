@@ -8,6 +8,7 @@ const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getNotDecommissionedDevices } = require('../device/common/db')
+const { getLinkedResults, getResultsFollowUp, getSamplesRegisteredCount, getSites } = require('./common/db')
 
 const SELECT_LIST_FIELDS = [
   's.id',
@@ -411,114 +412,152 @@ async function listSitesWithReporters(request) {
   return { ok: true, total, length: data.length, data }
 }
 
+function paginateAndSort(data, query) {
+  const defaultSortCol = 'siteName'
+  const defaultSortDirection = 'asc'
+  const { page = 1, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query
+
+  // Sorting the data
+  const sortedData = data.sort((a, b) => {
+    if (a[sortCol] < b[sortCol]) return sortDir === 'asc' ? -1 : 1
+    if (a[sortCol] > b[sortCol]) return sortDir === 'asc' ? 1 : -1
+    return 0
+  })
+
+  // Calculating pagination
+  const start = (page - 1) * size
+  const end = page * size
+
+  // Slicing the data for pagination
+  const paginatedData = sortedData.slice(start, end)
+
+  return paginatedData
+}
+
 const getReportingSites = async request => {
   const { query, auth } = request
 
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const { minDate, maxDate } = query
+  // get sites
+  const sites = await getSites(dataConstraints, query)
 
-  const siteAggregateSubQuery = knex('Site as s')
-    .select([
-      's.id as siteId',
-      's.name as siteName',
-      knex.raw('Count(Result.id) as resultsReporting'),
-      knex.raw('MAX(ResultDownloadLog.id) as latestDownloadLogId'),
-      'OriginSample.id as registeredSampleId',
-      knex.raw(
-        `CASE WHEN rca1.requiresTreatment = 1 OR rca2.requiresTreatment = 1 THEN 1 ELSE 0 END as requiresFollowUp`
-      ),
-      knex.raw(
-        `MAX(CASE WHEN FollowUpType.externalId = 'treatment' AND (rca1.requiresTreatment = 1 OR rca2.requiresTreatment = 1) 
-              THEN CASE WHEN FollowUp.externalId != 'notPossible' 
-                    THEN ResultFollowUp.date 
-                    ELSE '1970-01-01' 
-                  END 
-              ELSE '1970-01-01' 
-            END) as latestTreatmentDate`
-      ),
-      knex.raw(
-        `MAX(CASE WHEN FollowUpType.externalId = 'treatment' AND (rca1.requiresTreatment = 1 OR rca2.requiresTreatment = 1) 
-              THEN CASE WHEN FollowUp.externalId = 'notPossible' 
-                THEN ResultFollowUp.date ELSE '1970-01-01' 
-              END 
-              ELSE '1970-01-01' 
-            END) as latestNotPossibleDate`
-      ),
-    ])
-    .leftJoin('Geography as g', 'g.id', 's.geographyId')
-    .leftJoin('Result', queryBuilder => {
-      queryBuilder.on('s.id', 'Result.reportableSiteId').andOnBetween('Result.endedOn', [minDate, maxDate])
-    })
-    .leftJoin('Sample as OriginSample', queryBuilder => {
-      queryBuilder
-        .on('OriginSample.originSiteId', 's.id')
-        .andOn('OriginSample.registeredInAspect', 1)
-        .andOnBetween('OriginSample.collectedOn', [minDate, maxDate])
-    })
-    .leftJoin('ResultCategoryAssay as rca1', queryBuilder => {
-      queryBuilder.on('rca1.resultCategoryId', 'Result.resultCategory1').andOn('rca1.assayId', 'Result.assayId')
-    })
-    .leftJoin('ResultCategoryAssay as rca2', queryBuilder => {
-      queryBuilder.on('rca2.resultCategoryId', 'Result.resultCategory2').andOn('rca2.assayId', 'Result.assayId')
-    })
-    .leftJoin('ResultFollowUp', queryBuilder => {
-      queryBuilder.on('ResultFollowUp.resultId', 'Result.id').andOn('ResultFollowUp.isDeleted', 0)
-    })
-    .leftJoin('FollowUp', 'FollowUp.id', 'ResultFollowUp.followUpId')
-    .leftJoin('FollowUpType', 'FollowUpType.id', 'FollowUp.followUpTypeId')
-    .leftJoin('ResultDownloadLog', 'ResultDownloadLog.resultId', 'Result.id')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      siteId: 's.id',
-      lgaId: 'Geography.lgaId',
-      assayId: 'Result.assayId',
-    })
-    .modify(addConstraints, dataConstraints, {
-      geography: 'g',
-    })
-    .groupBy(['Result.id', 's.id'])
-    .as('rwt')
+  // get linkedResults
+  const linkedResults = await getLinkedResults(dataConstraints, query)
 
-  const siteAggregateQuery = knex(siteAggregateSubQuery)
-    .select([
-      'rwt.siteName',
-      knex.raw('COUNT(DISTINCT rwt.registeredSampleId) AS samplesRegistered'),
-      knex.raw('SUM(rwt.resultsReporting) as resultsReporting'),
-      knex.raw('SUM(CASE WHEN rwt.latestDownloadLogId IS NULL THEN 0 ELSE 1 END) AS resultsDownloaded'),
-      knex.raw('SUM(rwt.requiresFollowUp) AS requiresFollowUp'),
-      knex.raw(
-        `SUM(CASE WHEN rwt.requiresFollowUp AND rwt.latestTreatmentDate = '1970-01-01' 
-          AND rwt.latestNotPossibleDate = '1970-01-01' 
-          THEN 1 ELSE 0 END) AS followUpPending`
-      ),
-      knex.raw(
-        `SUM(CASE WHEN rwt.latestTreatmentDate >= rwt.latestNotPossibleDate 
-          AND (rwt.latestTreatmentDate > '1970-01-01' OR rwt.latestNotPossibleDate > '1970-01-01') 
-          THEN 1 ELSE 0 END) AS followUpConfirmed`
-      ),
-      knex.raw(
-        `SUM(CASE WHEN rwt.latestTreatmentDate < rwt.latestNotPossibleDate 
-          AND (rwt.latestTreatmentDate > '1970-01-01' OR rwt.latestNotPossibleDate > '1970-01-01') 
-          THEN 1 ELSE 0 END) AS followUpNotPossible`
-      ),
-    ])
-    .groupBy('rwt.siteId')
-  const getCount = knex
-    .count('siteId as count')
-    .from(siteAggregateQuery.clone().select('rwt.siteId as siteId').distinct().as('innerQuery'))
-    .first()
+  const resultIds = linkedResults.map(item => item.resultId)
 
-  const reportingSites = siteAggregateQuery.modify(sortPageParams, query, 'siteName')
+  // get unique downloaded result
+  const resultDownloaded = await knex('ResultDownloadLog')
+    .distinct('ResultDownloadLog.resultId as resultDownloaded')
+    .whereIn('resultId', resultIds)
+    .select('ResultDownloadLog.resultId as resultId')
 
-  const [{ count: total }, data] = await Promise.all([getCount, reportingSites])
+  const mappedDownloadResultIds = resultDownloaded.reduce((obj, item) => {
+    obj[item.resultId] = true
+    return obj
+  }, {})
+
+  const resultsFollowUp = await getResultsFollowUp(resultIds)
+
+  // map resultIds with followUpExternalId
+  const followUpObj = _.reduce(
+    resultsFollowUp,
+    (acc, elem) => {
+      acc[elem.resultId] = elem.followUpExternalId
+      return acc
+    },
+    {}
+  )
+
+  // Determine treatment status and format result data
+  const resultsWithTreatmentStatus = _.map(linkedResults, result => {
+    const requiresFollowUp = result.rc1Treatment === 1 || result.rc2Treatment === 1 ? 1 : 0
+    const followUpStatus = followUpObj[result.resultId]
+    let followUpPending = 0
+    let followUpNotPossible = 0
+    let followUpConfirmed = 0
+
+    if (requiresFollowUp) {
+      if (!followUpStatus) {
+        followUpPending = 1
+      } else if (followUpStatus === 'notPossible') {
+        followUpNotPossible = 1
+      } else {
+        followUpConfirmed = 1
+      }
+    }
+
+    return {
+      ...result,
+      requiresFollowUp,
+      followUpPending,
+      followUpNotPossible,
+      followUpConfirmed,
+      downloaded: _.has(mappedDownloadResultIds, result.resultId) ? 1 : 0,
+    }
+  })
+
+  // get Sample count
+  const sampleCounts = await getSamplesRegisteredCount(dataConstraints, query)
+
+  const sampleKeyAndValue = {}
+
+  // map site to sample count
+  sampleCounts.forEach(sample => {
+    sampleKeyAndValue[sample.siteId] = sample.SampleCount
+  })
+
+  // sum up result details
+  const resultAggregate = _.reduce(
+    resultsWithTreatmentStatus,
+    (acc, elem) => {
+      const site = elem.reportableSite
+      if (!acc[site]) {
+        acc[site] = {
+          reportableSite: site,
+          followUpPending: 0,
+          followUpNotPossible: 0,
+          followUpConfirmed: 0,
+          requiresFollowUp: 0,
+          resultsReporting: 0,
+          downloaded: 0,
+        }
+      }
+      // Sum the fields for existing reportableSite
+      acc[site].followUpPending += elem.followUpPending || 0
+      acc[site].followUpNotPossible += elem.followUpNotPossible || 0
+      acc[site].followUpConfirmed += elem.followUpConfirmed || 0
+      acc[site].requiresFollowUp += elem.requiresFollowUp || 0
+      acc[site].resultsReporting += 1
+      acc[site].downloaded += elem.downloaded || 0
+
+      return acc
+    },
+    {}
+  )
+
+  // Aggregate data for site
+  const reportingSites = sites.map(site => {
+    return {
+      siteName: site.siteName,
+      followUpPending: resultAggregate[site.siteId]?.followUpPending || 0,
+      followUpNotPossible: resultAggregate[site.siteId]?.followUpNotPossible || 0,
+      followUpConfirmed: resultAggregate[site.siteId]?.followUpConfirmed || 0,
+      requiresFollowUp: resultAggregate[site.siteId]?.requiresFollowUp || 0,
+      resultsReporting: resultAggregate[site.siteId]?.resultsReporting || 0,
+      resultsDownloaded: resultAggregate[site.siteId]?.downloaded || 0,
+      samplesRegistered: sampleKeyAndValue[site.siteId] || 0,
+    }
+  })
+
+  const paginatedData = paginateAndSort(reportingSites, query)
 
   return {
-    ok: !!reportingSites,
-    total,
-    length: _.size(data),
-    data,
+    ok: !!paginatedData,
+    total: _.size(reportingSites),
+    length: _.size(paginatedData),
+    data: paginatedData,
   }
 }
 

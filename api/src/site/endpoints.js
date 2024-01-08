@@ -308,7 +308,7 @@ const routes = [
             'siteName',
             'samplesRegistered',
             'resultsReporting',
-            'downloaded',
+            'resultDownloaded',
             'requiresFollowUp',
             'followUpPending',
             'followUpConfirmed',
