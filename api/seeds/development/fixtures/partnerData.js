@@ -33,7 +33,7 @@ module.exports = {
     {
       id: 'zenysisTestAggregate',
       name: 'Zenysis test',
-      token: 'v6jp1u0dt8p90nx0tnc0',
+      token: 'w3wgnd8fnm67mcpfey30',
       externalId: 'ZenysisTest',
       manufacturer: 'SystemOne',
     },
