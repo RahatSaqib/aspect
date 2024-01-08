@@ -9,9 +9,10 @@ import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
-import { ReporterDataTable, ReporterDataTableHead, ReporterDataTableRow } from './ReporterDataTable'
+import { ReporterDataTable, ReporterDataTableHead } from './ReporterDataTable'
 import styles from './ReporterList.module.css'
 
 const ReporterList = () => {
@@ -36,7 +37,7 @@ const ReporterList = () => {
         <DataTableCard key={`DataTableCard__table-${location.key}`}>
           {isLoading ? (
             <LinearProgress />
-          ) : data.length === 0 ? (
+          ) : data.data.length === 0 ? (
             <BrowseEmptyList />
           ) : (
             <>
@@ -58,8 +59,17 @@ const ReporterList = () => {
                   ]}
                 />
                 <TableBody>
-                  {data.map(reporter => (
-                    <ReporterDataTableRow key={reporter.siteId} reporter={reporter} />
+                  {data.data.map(reporter => (
+                    <TableRow key={reporter.siteId}>
+                      <TableCell>{reporter.siteName}</TableCell>
+                      <TableCell>{reporter.samplesRegistered}</TableCell>
+                      <TableCell>{reporter.resultsReporting}</TableCell>
+                      <TableCell>{reporter.resultsDownloaded}</TableCell>
+                      <TableCell>{reporter.requiresFollowUp}</TableCell>
+                      <TableCell>{reporter.followUpPending}</TableCell>
+                      <TableCell>{reporter.followUpConfirmed}</TableCell>
+                      <TableCell>{reporter.followUpNotPossible}</TableCell>
+                    </TableRow>
                   ))}
                 </TableBody>
               </ReporterDataTable>
