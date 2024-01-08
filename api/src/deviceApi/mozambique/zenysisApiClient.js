@@ -8,7 +8,7 @@ const getDeviceKeyGeography = auth => {
   return knex('DeviceApiKey as k')
     .leftJoin('Geography as g', 'g.id', 'k.geographyId')
     .where({ 'k.id': auth.credentials.keyId })
-    .first('g.countryId', 'g.stateId', 'g.lgaId')
+    .first('g.countryId')
 }
 
 const getTestAggregate = async request => {
@@ -17,10 +17,11 @@ const getTestAggregate = async request => {
     query: { dateFrom, dateTo },
   } = request
 
-  // get geography for deviceApi key
-  const { countryId, stateId, lgaId } = await getDeviceKeyGeography(auth)
+  // get countryId for deviceApi key
+  const { countryId } = await getDeviceKeyGeography(auth)
 
-  if (stateId || lgaId) {
+  // we are hardcoding this for now
+  if (auth.credentials.token !== 'w3wgnd8fnm67mcpfey30') {
     throw Boom.unauthorized('Invalid Credentials')
   }
 
