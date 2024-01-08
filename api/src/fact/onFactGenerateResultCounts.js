@@ -247,8 +247,6 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
       })
       .delete()
 
-    await messageContext.initDictionaryTables()
-
     await calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCategory1, resultCategory2, endedOn, knex)
   })
 }
