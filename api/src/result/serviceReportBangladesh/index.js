@@ -1008,7 +1008,7 @@ async function getDataForReportDrTb10B(auth, query) {
         THEN '${resistance} Resistance Not Detected'
       WHEN r.resultData->>'$.allResistances.${resistance}' = 'Indeterminate'
         THEN '${resistance} Resistance Indeterminate'
-      ELSE ' '
+      ELSE null
     END as ${key}
     `
   const dataQuery = knex('Result as r')
@@ -1199,6 +1199,14 @@ async function getDataForReportDrTb10B(auth, query) {
           END as resultMtbRif
       `)
     )
+    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.CAP"'))
+    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.MTB"'))
+    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.FLQ"'))
+    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.AMK"'))
+    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.KAN"'))
+    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.CAP"'))
+    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.ETH"'))
+
   const data = await dataQuery
 
   return {
