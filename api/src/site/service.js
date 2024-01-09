@@ -555,7 +555,7 @@ const getReportingSites = async request => {
 
   return {
     ok: !!paginatedData,
-    total: _.size(reportingSites),
+    total: _.size(sites),
     length: _.size(paginatedData),
     data: paginatedData,
   }
