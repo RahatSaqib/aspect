@@ -8,19 +8,20 @@ async function seed(knex) {
   const deviceTypeIdNtrl = await deviceTypeToId('PhilippinesNtrl')
   const deviceTypeIdGeneXpert = await deviceTypeToId('CepheidGeneXpert')
 
-  const jobIdsWithAccessToGeneXpert = await knex('JobContext')
+  const jobContextIdsWithAccessToGeneXpert = await knex('JobContext')
     .where('deviceTypeId', deviceTypeIdGeneXpert)
-    .select('jobId')
+    .select('id')
 
   const jobContextsWithAccessToNtrlOnly = await knex('JobContext')
     .where('deviceTypeId', deviceTypeIdNtrl)
-    .whereNotIn('jobId', jobIdsWithAccessToGeneXpert)
+    .whereNotIn('id', jobContextIdsWithAccessToGeneXpert)
     .select()
 
   // now, give all jobs that have access to NTRL also access to the GeneXpert device type:
   await Promise.each(jobContextsWithAccessToNtrlOnly, async jc => {
     await knex('JobContext').insert({
-      jobId: jc.jobId,
+      personId: jc.personId,
+      jobFunctionId: jc.jobFunctionId,
       geographyId: jc.geographyId,
       siteId: jc.siteId,
       assayTypeId: jc.assayTypeId,

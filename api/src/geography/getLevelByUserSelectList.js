@@ -24,5 +24,6 @@ async function filterByJobFunction(auth) {
 }
 
 function hasConstraintLevel(dataConstraints, geographyLevel) {
+  if (geographyLevel === 'site') return dataConstraints.$or.some(c => !!c.site?.id)
   return dataConstraints.$or?.some(c => c.geography?.[`${geographyLevel}Id`] ?? false)
 }
