@@ -1071,7 +1071,7 @@ async function getDataForReportDrTb10B(auth, query) {
       WHEN r.patientData->>'$.TypeOfPatient' = 'Failures of Retreatment' THEN '2'
       WHEN r.patientData->>'$.TypeOfPatient' = 'Non converters of Category I' THEN '3'
       WHEN r.patientData->>'$.TypeOfPatient' = 'Non converters of Retreatment' THEN '4'
-      WHEN r.patientData->>'$.TypeOfPatient' = 'Relapses' AND r.patientData->>'$.PatientRetreatment' = 'Category I-I' THEN '5a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Relapses' AND r.patientData->>'$.PatientRetreatment' = 'Category I' THEN '5a'
       WHEN r.patientData->>'$.TypeOfPatient' = 'Relapses' AND r.patientData->>'$.PatientRetreatment' = 'Retreatment' THEN '5b'
       WHEN r.patientData->>'$.TypeOfPatient' = 'Treatment after loss to follow up' AND r.patientData->>'$.PatientRetreatment' = 'Category I' THEN '6a'
       WHEN r.patientData->>'$.TypeOfPatient' = 'Treatment after loss to follow up' AND r.patientData->>'$.PatientRetreatment' = 'Retreatment' THEN '6b'
