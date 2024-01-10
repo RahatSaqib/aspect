@@ -8,7 +8,7 @@ let sheets = [
     C6: 'stateName',
     C7: 'lgaName',
     C8: 'siteName',
-    C9: 'cntAll',
+    // ??: 'cntAll',
 
     N7: 'userName',
     M9: 'today',
