@@ -19,7 +19,7 @@ const messages = defineMessages({
   },
   downloaded: {
     id: 'reporters.downloaded',
-    defaultMessage: 'Downloaded',
+    defaultMessage: 'Results Downloaded',
   },
   followUpRequired: {
     id: 'reporters.followUpRequired',
