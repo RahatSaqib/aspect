@@ -829,9 +829,9 @@ async function getDataForReportDrTb10A(auth, query, options) {
     { stateId, lgaId, siteName }, // props from query
     {
       /**
-       * 1st worksheet shows only sample type = `Pulmonary` (Sputum)
+       * 1st worksheet shows only `Pulmonary` and `Extra-pulmonary` sample types
        */
-      sampleType: 'Pulmonary',
+      sampleType: ['Pulmonary', 'Extra-pulmonary'],
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
@@ -874,7 +874,7 @@ async function getDataForSheet1or2(
 
   let allSiteIds = []
   _.forEach(
-    rawData?.filter(it => it.sampleType === sampleType),
+    rawData?.filter(it => sampleType.includes(it.sampleType)),
     ({ deviceId, siteIds, ...rest }) => {
       /**
        *
@@ -952,7 +952,7 @@ async function getDataForReportDrTb10AStool(auth, query, options) {
       /**
        * 2nd worksheet shows only sample type `Stool`
        */
-      sampleType: 'Stool',
+      sampleType: ['Stool'],
       getQueryForXdrCountsByReferringSiteIds,
     }
   )
