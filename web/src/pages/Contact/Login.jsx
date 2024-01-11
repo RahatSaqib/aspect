@@ -2,13 +2,13 @@ import React, { useContext } from 'react'
 import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import { object, ref, string } from 'yup'
 import { InputPassword, LabeledSwitch, Loading } from '../../cleanComponents'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePersonLogin from '../../hooks/person/useUpdatePersonLogin'
-import useI18n from '../../hooks/useI18n'
-import { useAuthState } from '../../providers/AuthProvider'
+import useAuthState from '../../hooks/useAuthState'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -16,7 +16,7 @@ import messages from './messages'
 
 const Login = ({ setStep }) => {
   const { id, isAdding } = useContext(FormStatusContext)
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const { isLoading, data: person } = usePerson(id)
   const { personId: loggedInPersonId, userPermissions } = useAuthState()

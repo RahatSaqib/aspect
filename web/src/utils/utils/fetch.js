@@ -1,15 +1,11 @@
 /* eslint-disable max-classes-per-file */
 import { createFetch, base, header, accept } from 'http-client'
 import get from 'lodash/get'
-import isArray from 'lodash/isArray'
-import isObject from 'lodash/isObject'
-import mapValues from 'lodash/mapValues'
 import set from 'lodash/set'
 import trim from 'lodash/trim'
 import { defineMessages } from 'react-intl'
 import config from '../../config'
 import { showError } from '../../store/AppNotificationRedux'
-import { setLastServerResponseTime } from '../../store/GlobalsRedux'
 
 export const aspectFetch = createFetch(
   base(config.aspectApi),
@@ -58,13 +54,9 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
   return fetch(input, options)
     .then(
       resp => {
-        const date = resp.headers.get('date')
         const contentType = resp.headers.get('Content-Type')
         const contentDisposition = resp.headers.get('Content-Disposition')
-        if (date) {
-          const store = require('../../store/store').default
-          store.dispatch(setLastServerResponseTime(new Date(date)))
-        }
+
         if (contentDisposition && contentDisposition.indexOf('attachment;') === 0) {
           const str = 'filename='
           const fileName = trim(contentDisposition.substr(contentDisposition.indexOf(str) + str.length), ' ;')
@@ -78,7 +70,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         }
         if (resp.ok) {
           // HTTP Status === 2xx
-          return resp.json().then(changeAllIdsToString)
+          return resp.json()
         }
         // HTTP Status !== 2xx
         return resp.json().then(resp => {
@@ -137,28 +129,4 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
       }
       return Promise.reject(err)
     })
-}
-
-// check if a property looks like an ID (key is equal to 'id' or ends with 'Id')
-function isIdLike(key) {
-  return key === 'id' || key.match(/.+Id$/)
-}
-
-// change data type of IDs to a string
-// params in react router are always strings
-// so this saves us from having to do conversions throught the app
-function changeAllIdsToString(data) {
-  if (isArray(data)) {
-    return data.map(changeAllIdsToString)
-  }
-  if (isObject(data)) {
-    return mapValues(data, (value, key) =>
-      isIdLike(key)
-        ? value === null || value === undefined || isObject(value)
-          ? value
-          : String(value)
-        : changeAllIdsToString(value)
-    )
-  }
-  return data
 }

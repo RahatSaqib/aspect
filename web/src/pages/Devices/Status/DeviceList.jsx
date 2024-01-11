@@ -12,7 +12,6 @@ import {
   TextField,
   Typography,
 } from '@mui/material'
-import classnames from 'classnames/bind'
 import endOfMonth from 'date-fns/endOfMonth'
 import format from 'date-fns/format'
 import startOfMonth from 'date-fns/startOfMonth'
@@ -20,7 +19,8 @@ import subMonths from 'date-fns/subMonths'
 import Immutable from 'immutable'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
-import { useQuery, useQueryClient } from 'react-query'
+import { useIntl } from 'react-intl'
+import { useQuery } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, DeviceListFilter } from '../../../cleanComponents'
 import ExportListButton from '../../../components/AspectExportListButton'
@@ -29,23 +29,20 @@ import { DEVICE_LIST } from '../../../components/QueryFetch/Device/index'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
-import useI18n from '../../../hooks/useI18n'
+import useAuthState from '../../../hooks/useAuthState'
+import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import { useAuthState } from '../../../providers/AuthProvider'
-import { useFilterValues } from '../../../providers/FilterProvider'
-import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
-import styles from './DeviceList.css'
+import styles from './DeviceList.module.css'
 import getExportableFile from './DeviceQueries'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const { dateFormat } = getAspectDisplayPreferences().toJS()
 
@@ -127,7 +124,7 @@ const getAvailableTargetDevices = (deviceList, sourceDevicesIds, siteToMergeDevi
 const DeviceList = () => {
   const { data: deviceList } = useDeviceForSelect({ onlyResultDevices: true, showUnapprovedDevices: true })
   const { mutate: mergeDevices } = useMergeDevices()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const { displayPreferences } = useAuthState()
   const location = useLocation()
@@ -153,7 +150,6 @@ const DeviceList = () => {
   const [isProcessingMergeDevices, setProcessingMergeDevices] = useState(false)
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [pagination, setPagination] = useState({})
-  const queryClient = useQueryClient()
 
   const { sortCol, sortDir, page, size } = pagination
   const params = { ...pagination, ...filters }
@@ -179,6 +175,7 @@ const DeviceList = () => {
     isError,
     error,
     isLoading: tableLoading,
+    refetch,
   } = useQuery(
     [DEVICE_LIST.KEY, { params }],
     async () => fetchWrapperForQueries({ endpoint: DEVICE_LIST.ENDPOINT, params: { ...params, hasResults: 1 } }),
@@ -203,7 +200,6 @@ const DeviceList = () => {
     const sortPage = makeSortPageSelector({ sortCol: 'name' })
     const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
     setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [location])
 
   const onExportClick = formatType => {
@@ -226,7 +222,7 @@ const DeviceList = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.devicesTitle)} disableBack>
-        <PermissionChecker permissions={['device:edit']}>
+        <PermissionChecker permissions={['device:admin']}>
           <AspectButton
             onClick={() => {
               setConfirmationVisible(false)
@@ -245,10 +241,10 @@ const DeviceList = () => {
           </AspectButton>
         </PermissionChecker>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={formatMessage(messages.devicesTitle)} />
         <DeviceListFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <ExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
           </div>
@@ -259,7 +255,7 @@ const DeviceList = () => {
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
-                <DeviceDataTable className={cssClasses('DeviceDataTable')}>
+                <DeviceDataTable className={styles.DeviceDataTable}>
                   <DeviceDataTableHead
                     navigate={navigate}
                     location={location}
@@ -442,7 +438,7 @@ const DeviceList = () => {
                       { sourceDevicesIds, targetDeviceId },
                       {
                         onSuccess: () => {
-                          queryClient.invalidateQueries([DEVICE_LIST.KEY, { params }])
+                          refetch()
                           /**
                            * with setting state var `isProcessingMergeDevices` back to false
                            * we explicitly re-render page to let `useQuery` to update `data`

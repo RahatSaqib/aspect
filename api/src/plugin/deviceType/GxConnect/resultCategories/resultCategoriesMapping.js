@@ -108,12 +108,13 @@ const result1CategoryMapping = {
   'presumptive positive': 'PresumptivePositive',
   'presumptive pos': 'PresumptivePositive',
   '@label_result_presumptive_positive': 'PresumptivePositive',
+  '@label_result_presumptive_pos': 'PresumptivePositive',
   'presumptive posit': 'PresumptivePositive',
   'presuntivo positivo': 'PresumptivePositive',
   'предположительный положительный': 'PresumptivePositive',
   'présomptif positif': 'PresumptivePositive',
   'предположительно пол': 'PresumptivePositive',
-  негативний: 'PresumptivePositive',
+  негативний: 'Negative',
   'praduga pos': 'PresumptivePositive',
   przypuszczalnego: 'PresumptivePositive',
   'null null': 'Success',
@@ -182,6 +183,36 @@ const result2CategoryMapping = {
   'tanpa hasil': 'NoResult',
   '@label_result_no_result': 'NoResult',
   'brak wyniku': 'NoResult',
+}
+
+const bacterialLoadMapping = {
+  'very low @label_result_detected': 'Very Low',
+  'low @label_result_detected': 'Low',
+  'medium @label_result_detected': 'Medium',
+  'high @label_result_detected': 'High',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low': 'Very Low',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low': 'Low',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium': 'Medium',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high': 'High',
+  'detected very low': 'Very Low',
+  'detected low': 'Low',
+  'detected medium': 'Medium',
+  'detected high': 'High',
+  'detectado muito baixo': 'Very Low',
+  'detectado baixo': 'Low',
+  'detectado médio': 'Medium',
+  'detectado alto': 'High',
+  'detectado muy bajo': 'Very Low',
+  'detectado bajo': 'Low',
+  'detectado medio': 'Medium',
+  'обнаружен очень низкий': 'Very Low',
+  'обнаружен низкий': 'Low',
+  'обнаружен средний': 'Medium',
+  'обнаружен высокий': 'High',
+  'détecté très bas': 'Very Low',
+  'détecté bas': 'Low',
+  'détecté moyen': 'Medium',
+  'détecté élevé': 'High',
 }
 
 const mtbPositiveResultCategories = [
@@ -265,7 +296,8 @@ const mapResultCategory2 = (assayExternalId, resultTextValues) => {
 function getVLCopies(result1Text) {
   if (result1Text && !result1Text.includes('< 40')) {
     const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
-    const arr = regex.exec(result1Text.replace('HIV-1', ''))
+    const text = result1Text.replace('HIV-1', '').replace('@label_quant1_result_normal_log', '')
+    const arr = regex.exec(text)
 
     return arr ? parseFloat(arr[0]) : null
   }
@@ -280,6 +312,15 @@ function getResultCategoriesHivVL(result1Text) {
     if (copies >= 1000) return 'MoreThan1000'
   } else if (result1Text && result1Text.toLowerCase().includes('detected < 40')) return 'LessThan40'
   else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0) return 'NoResult'
+}
+
+const getBacterialLoad = resultText => {
+  const resultTextValues = splitResultTextValues(resultText)
+
+  if (resultTextValues.length === 0) return undefined
+
+  const result1Text = sanitizeResultTextValue(resultTextValues[0])
+  return bacterialLoadMapping[result1Text]
 }
 
 /**
@@ -342,9 +383,10 @@ const getDetectedResistanceCategoryTypes = resultText => {
 module.exports = {
   getDetectedResistanceCategoryTypes,
   result1CategoryMapping,
-  result2CategoryMapping,
   mapResultCategory2,
   parseResultText,
   getResultCategoriesHivVL,
   getVLCopies,
+  getBacterialLoad,
+  bacterialLoadMapping,
 }

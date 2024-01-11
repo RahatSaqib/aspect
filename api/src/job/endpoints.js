@@ -3,8 +3,6 @@ const { asyncHandler } = require('../routes')
 const {
   getJobFunctionsForSelectList,
   getPermissions,
-  assignJob,
-  unassignJob,
   assignJobContext,
   unassignJobContext,
   assignJobFunctionDashboardWidgets,
@@ -29,24 +27,6 @@ const ok = Joi.boolean()
     `
   )
 
-const jobResponse = {
-  options: {
-    allowUnknown: false,
-  },
-  schema: Joi.object().keys({
-    ok,
-    data: Joi.array()
-      .required()
-      .description('All jobs for specified person')
-      .items(
-        Joi.object().keys({
-          id: Joi.number().required().description('Job.id'),
-          personId: Joi.number().required().description('Job.personId'),
-          jobFunctionId: Joi.number().required().description('Job.jobFunctionId'),
-        })
-      ),
-  }),
-}
 const jobContextResponse = {
   options: {
     allowUnknown: false,
@@ -58,7 +38,6 @@ const jobContextResponse = {
       .description('All job contexts for specified person')
       .items(
         Joi.object().keys({
-          jobId: Joi.number().required().description('JobContext.jobId'),
           personId: Joi.number().required().description('Job.personId'),
           jobFunctionId: Joi.number().required().description('Job.jobFunctionId'),
           geographyId: Joi.number().allow(null).description('JobContext.geographyId'),
@@ -87,7 +66,6 @@ const personAssignmentsResponse = {
           personId: Joi.number().required().description('Job.personId'),
           partnerId: Joi.number().required().description('JobFunction.personId'),
           jobContextId: Joi.number().required().description('JobContext.id'),
-          jobId: Joi.number().required().description('JobContext.jobId'),
           jobFunctionId: Joi.number().required().description('Job.jobFunctionId'),
           jobFunctionName: Joi.string().required().description('JobFunction.name'),
           countryId: Joi.number().required().description('Country.id'),
@@ -189,43 +167,6 @@ const routes = [
     },
   },
   // ------------
-  // Job
-  // ------------
-  {
-    method: 'POST',
-    path: '/job-function/assign-job',
-    handler: asyncHandler(assignJob),
-    config: {
-      description: 'Assign person to job function',
-      notes: 'Assign person to job function',
-      auth: { scope: ['person:edit'] },
-      validate: {
-        payload: {
-          personId: Joi.number().required(),
-          jobFunctionId: Joi.number().required(),
-        },
-      },
-      response: jobResponse,
-    },
-  },
-  {
-    method: 'POST',
-    path: '/job-function/unassign-job',
-    handler: asyncHandler(unassignJob),
-    config: {
-      description: 'Un-assign person from job function',
-      notes: 'Un-assign person from job function',
-      auth: { scope: ['person:edit'] },
-      validate: {
-        payload: {
-          personId: Joi.number().required(),
-          jobFunctionId: Joi.number().required(),
-        },
-      },
-      response: jobResponse,
-    },
-  },
-  // ------------
   // Job Context
   // ------------
   {
@@ -238,7 +179,6 @@ const routes = [
       auth: { scope: ['person:edit'] },
       validate: {
         payload: {
-          jobId: Joi.number(),
           personId: Joi.number(),
           jobFunctionId: Joi.number(),
           geographyId: Joi.number(),
@@ -262,7 +202,6 @@ const routes = [
       auth: { scope: ['person:edit'] },
       validate: {
         payload: {
-          jobId: Joi.number(),
           personId: Joi.number(),
           jobFunctionId: Joi.number(),
           geographyId: Joi.number(),

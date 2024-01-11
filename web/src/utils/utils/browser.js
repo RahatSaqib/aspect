@@ -1,10 +1,6 @@
-import window from 'global/window'
-
 export function getClientName() {
   return `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
 }
-
-export const getClientType = 'web'
 
 export function getClientId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {

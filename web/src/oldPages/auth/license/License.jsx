@@ -1,6 +1,5 @@
 import React from 'react'
 import { Box, Button, Card } from '@mui/material'
-import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import get from 'lodash/get'
 import omit from 'lodash/omit'
@@ -10,10 +9,8 @@ import { connect } from 'react-redux'
 import { compose, withHandlers, lifecycle } from 'recompose'
 import { bindActionCreators } from 'redux'
 import { fetchLicense, userRequestedLogout, acceptLicenseStart } from '../../../store/AuthRedux'
-import styles from './License.css'
+import styles from './License.module.css'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const enhance = compose(
   injectIntl,
@@ -64,27 +61,23 @@ const enhance = compose(
 )
 
 const AspectLogo = () => (
-  <img className={cssClasses('Logo__Image')} src={require('../../../assets/logo_aspect.png')} alt="Aspect" />
+  <img className={styles.Logo__Image} src={require('../../../assets/logo_aspect.png')} alt="Aspect" />
 )
 
 export const License = ({ intl, licenseContent, onDoNotAcceptClick, onAcceptClick }) => (
-  <div className={cssClasses('Background')}>
+  <div className={styles.Background}>
     <Helmet title={intl.formatMessage(messages.title)} />
     <div>
       <Box sx={{ margin: '0 auto', width: { sm: '90%', md: '80%', xl: '66%' } }}>
         <Card>
-          <div className={cssClasses('Logo__Container')}>
+          <div className={styles.Logo__Container}>
             <AspectLogo />
           </div>
-          <div className={cssClasses('License__Container')}>
-            <div className={cssClasses('License__Container__License')}>
-              {licenseContent &&
-                licenseContent
-                  .split('\n')
-                  // eslint-disable-next-line react/no-array-index-key
-                  .map((item, key) => <p key={key}>{item}</p>)}
+          <div className={styles.License__Container}>
+            <div className={styles.License__Container__License}>
+              {licenseContent && licenseContent.split('\n').map((item, key) => <p key={key}>{item}</p>)}
             </div>
-            <div className={cssClasses('License__Container__ActionRow')}>
+            <div className={styles.License__Container__ActionRow}>
               <Button type="submit" variant="contained" color="primary" onClick={onAcceptClick}>
                 {intl.formatMessage(messages.accept)}
               </Button>

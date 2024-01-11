@@ -36,6 +36,9 @@ const {
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
+    // totalNumberOfModules,
+    // activeModules,
+    instrumentsConnected,
   },
 } = dashboardWidgetsBase
 
@@ -90,5 +93,8 @@ module.exports = {
     deviceCalibrationPastDue,
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
+    // totalNumberOfModules,
+    // activeModules,
+    instrumentsConnected,
   ],
 }

@@ -1,12 +1,12 @@
 import React, { useEffect } from 'react'
 import { Box, Paper, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useSelector } from 'react-redux'
 import { useNavigate } from 'react-router-dom'
-import useI18n from '../../hooks/useI18n'
 import messages from './messages'
 
 const Welcome = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const navigate = useNavigate()
   const user = useSelector(({ user }) => user.toJS())
 
@@ -17,14 +17,7 @@ const Welcome = () => {
   }, [user, navigate])
 
   return (
-    <Box
-      sx={{
-        display: 'flex',
-        justifyContent: 'center',
-        alignItems: 'center',
-        height: 'calc(100% - 120px)',
-      }}
-    >
+    <Box sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: 'calc(100% - 120px)' }}>
       <Paper elevation={3} sx={{ p: 4, minWidth: 380, width: '60vw' }}>
         <Typography variant="h4" sx={{ mb: 2 }}>
           {formatMessage(messages.welcome)}

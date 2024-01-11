@@ -1424,6 +1424,8 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
         assert.deepEqual(JSON.parse(result2.patientData), {
+          PatientName: 'Unknown',
+          PatientSurname: 'Blood Stained',
           id: 'P-333',
           name: 'Bob',
           surname: 'Hope',
@@ -2409,7 +2411,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   })
                 )
                 .then(res => {
-                  assert.equal(res.status, 409)
+                  assert.equal(res.status, 201)
                 })
                 .catch(assert.fail)
               const result2 = await getLastResult()
@@ -2435,7 +2437,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   })
                 )
                 .then(res => {
-                  assert.equal(res.status, 409)
+                  assert.equal(res.status, 201)
                 })
                 .catch(assert.fail)
               const result3 = await getLastResult()

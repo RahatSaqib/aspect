@@ -3,4 +3,4 @@ export const formatNumber = num => {
 }
 
 // eslint-disable-next-line security/detect-unsafe-regex
-export const isPercentage = input => /^\d+(\.\d+)?%$/.test(input)
+const isPercentage = input => /^\d+(\.\d+)?%$/.test(input)

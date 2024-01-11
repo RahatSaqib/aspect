@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { StateSelect, LgaSelect, ColumnLineGraph, Loading } from '../../../../../cleanComponents'
+import { StateSelect, LgaSelect, ColumnLineGraph, Loading, objectToArray } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
+import useAuthState from '../../../../../hooks/useAuthState'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -20,13 +20,12 @@ const endpointParams = [
 ]
 
 const XDRTestingDiagnosisTrendPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [stateId, setState] = useState()
-  const [lgaId, setLga] = useState()
+  const [filter, setFilter] = useState()
 
-  const mergedParams = stateId ? [...endpointParams, { stateId, lgaId }] : [...endpointParams]
+  const mergedParams = filter ? [...endpointParams, ...objectToArray(filter)] : [...endpointParams]
 
   const { isLoading, data } = useQuery(
     ['rrtbMtbDetectedQuarterlyTrends', { mergedParams }],
@@ -66,13 +65,15 @@ const XDRTestingDiagnosisTrendPage = () => {
           />
           <StateSelect
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            value={filter?.stateId ?? ''}
+            onChange={e => setFilter({ stateId: e.target.value })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={stateId}
-            onChange={e => setLga(e.target.value)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            stateId={filter?.stateId}
+            value={filter?.lgaId ?? ''}
+            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

@@ -1,9 +1,9 @@
 import React from 'react'
 import isString from 'lodash/isString'
+import { useIntl } from 'react-intl'
 import { getCronHumanValue } from '../../../cleanComponents'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import usePersonList from '../../../hooks/person/usePersonList'
-import useI18n from '../../../hooks/useI18n'
 import jobFunctionsMessages from '../../../messages/jobFunctionMessages'
 import messages from './messages'
 
@@ -11,7 +11,7 @@ const rowStyle = { display: 'flex', alignItems: 'flex-start' }
 const labelStyle = { margin: '3px 10px 3px 0px' }
 
 const NotificationFormPreview = ({ values }) => {
-  const { locale, formatMessage } = useI18n()
+  const { locale, formatMessage } = useIntl()
   const { data: jobFunctions, isLoading: isJfLoading } = useJobFunctions()
   const { data: personList, isLoading: isPersonListLoading } = usePersonList()
 
@@ -57,7 +57,7 @@ const NotificationFormPreview = ({ values }) => {
             <h4 style={labelStyle}>{formatMessage(messages.reportBaseType)}:</h4>
             <span style={labelStyle}>
               {values.reportId ? formatMessage(messages[values.reportId]) : null}{' '}
-              {getCronHumanValue(values.cronRecurrency.cronExpression, locale)}
+              {getCronHumanValue(values.cronRecurrency?.cronExpression, locale)}
             </span>
           </span>
           <span style={rowStyle}>
@@ -191,9 +191,7 @@ const NotificationFormPreview = ({ values }) => {
         <span>
           {!isPersonListLoading
             ? (values.persons || []).map((p, index) => {
-                const person = isString(p)
-                  ? personList.find(pl => pl.id === p)
-                  : personList.find(pl => pl.id === p.value)
+                const person = personList.find(pl => (isString(p) ? pl.id === p : pl.id === p.value)) || { name: '' }
                 return (
                   <span style={{ ...labelStyle, display: 'block' }} key={index}>{`${person.name} ${
                     person.state ? `(${person.state})` : ''

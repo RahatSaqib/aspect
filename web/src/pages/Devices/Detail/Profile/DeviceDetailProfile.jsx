@@ -1,12 +1,14 @@
 import React, { Fragment } from 'react'
 import NotesIcon from '@mui/icons-material/ChatBubbleOutline'
 import { Button, Card, IconButton, Tooltip } from '@mui/material'
-import classnames from 'classnames/bind'
 import flowRight from 'lodash/flowRight'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import useI18n from '../../../../hooks/useI18n'
+import useAuthState from '../../../../hooks/useAuthState'
+import useFilterUpdate from '../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../hooks/useFilterValues'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import ColoredNumber from '../../../../oldComponents/shared/ColoredNumber'
 import requirePermissions from '../../../../oldComponents/shared/requirePermissions'
@@ -14,8 +16,6 @@ import Summary from '../../../../oldComponents/Summary'
 import { sanitizeFiltersStringBy } from '../../../../oldComponents/utils'
 import Results from '../../../../oldPages/result/historyResults/HistoryResults'
 import resultMessages from '../../../../oldPages/result/list/messages.js'
-import { useAuthState } from '../../../../providers/AuthProvider'
-import { useFilterUpdate, useFilterValues } from '../../../../providers/FilterProvider'
 import {
   showDialog,
   hideDialog,
@@ -34,11 +34,9 @@ import { formatRelative } from '../../../../utils/utils/dateFormat'
 import CalibrationDialog from '../../Maintenance/CalibrationDialog'
 import DeviceMaintenanceStatusDialog from '../../Maintenance/DeviceMaintenanceStatusDialog'
 import WarrantyDialog from '../../Maintenance/WarrantyDialog'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 import messages from './messages'
 import PerformanceReport from './PerformanceReport'
-
-const cssClasses = classnames.bind(styles)
 
 const tokens = {
   PROVISIONED: 'provisioned',
@@ -226,7 +224,7 @@ const DeviceDetailProfile = ({
 }) => {
   const deviceListFilter = useFilterValues('/browse/device/list')
   const [addFilter] = useFilterUpdate()
-  const { formatMessage, formatNumber, formatDate } = useI18n()
+  const { formatMessage, formatNumber, formatDate, formatRelativeTime } = useIntl()
   const {
     culture,
     displayPreferences: { utilizationRateThreshold, errorRateThreshold },
@@ -276,8 +274,8 @@ const DeviceDetailProfile = ({
 
   return (
     <div>
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           <div>
             <Summary
               title={formatMessage(messages.deviceType)}
@@ -305,8 +303,8 @@ const DeviceDetailProfile = ({
               title={
                 isMaintenanceStatusChangeDisabled ? (
                   <AspectTooltip
-                    className={cssClasses('deviceSummary__container')}
-                    iconClass="deviceSummary__helpIcon"
+                    className={styles.deviceSummary__container}
+                    iconClass={styles.deviceSummary__helpIcon}
                     showHelpIcon
                     title={formatMessage(messages.deviceStatusChangeDisabledTooltip)}
                   >
@@ -367,7 +365,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.connectivity)}
               description={formatMessage(messages.lastSeen, {
-                lastSeen: formatRelative(device.get('lastPingOn')),
+                lastSeen: formatRelative(device.get('lastPingOn'), formatRelativeTime),
               })}
             />
             <Summary
@@ -392,14 +390,17 @@ const DeviceDetailProfile = ({
             />
             <Summary title={formatMessage(messages.serial)} description={device.get('serial')} />
             <Summary title={formatMessage(messages.hostId)} description={device.get('hostId')} />
-            <Summary title={formatMessage(messages.createdOn)} description={formatRelative(device.get('createdOn'))} />
+            <Summary
+              title={formatMessage(messages.createdOn)}
+              description={formatRelative(device.get('createdOn'), formatRelativeTime)}
+            />
 
             {utilizationRateThisMonth !== null && (
               <Summary
                 title={
                   <AspectTooltip
-                    className={cssClasses('deviceSummary__container')}
-                    iconClass="deviceSummary__helpIcon"
+                    className={styles.deviceSummary__container}
+                    iconClass={styles.deviceSummary__helpIcon}
                     showHelpIcon
                     title={
                       <React.Fragment>
@@ -429,8 +430,8 @@ const DeviceDetailProfile = ({
             <Summary
               title={
                 <AspectTooltip
-                  className={cssClasses('deviceSummary__container')}
-                  iconClass="deviceSummary__helpIcon"
+                  className={styles.deviceSummary__container}
+                  iconClass={styles.deviceSummary__helpIcon}
                   showHelpIcon
                   title={
                     <React.Fragment>

@@ -1,0 +1,9 @@
+.button_close {
+  position: absolute !important;
+  right: 10px;
+  top: 8px;
+}
+
+.button_close div {
+  height: 24px;
+}

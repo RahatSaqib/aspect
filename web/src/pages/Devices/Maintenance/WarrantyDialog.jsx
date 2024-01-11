@@ -1,8 +1,7 @@
 import React, { useState } from 'react'
 import flowRight from 'lodash/flowRight'
 import pick from 'lodash/pick'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../../hooks/useI18n'
+import { defineMessages, useIntl } from 'react-intl'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import { withDateFormatProps } from '../../../utils/utils/dateFormat'
 import { SHARED_DEFAULT_VALUES, sharedFields, BaseDialog } from './BaseDialog'
@@ -33,7 +32,7 @@ function validate({ contextDate }, { formatMessage }) {
 const DEFAULT_VALUES = pick(SHARED_DEFAULT_VALUES, ['contextDate', 'notes'])
 
 const warrantyDialog = WrappedComponent => props => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { device } = props
   const [values, setValues] = useState({
     ...DEFAULT_VALUES,

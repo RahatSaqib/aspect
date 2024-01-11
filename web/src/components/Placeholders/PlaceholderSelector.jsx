@@ -1,17 +1,14 @@
 import React, { useState } from 'react'
 import { IconButton, Menu, MenuItem } from '@mui/material'
-import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 import usePlaceholder from '../../hooks/notification/usePlaceholder'
-import useI18n from '../../hooks/useI18n'
 import IconProvider from '../IconProvider'
 import messages from './messages'
-import styles from './Placeholders.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './Placeholders.module.css'
 
 const PlaceholderSelector = ({ onSelect, onClose, filter }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [anchorEl, setAnchorEl] = useState(null)
   const { isLoading, data } = usePlaceholder()
 
@@ -30,13 +27,13 @@ const PlaceholderSelector = ({ onSelect, onClose, filter }) => {
   const paperStyle = { style: { maxHeight: 300, width: 250 } }
 
   return (
-    <div className={cssClasses('container')}>
+    <div className={styles.container}>
       <IconButton
         aria-expanded={isOpen.toString()}
         aria-haspopup="true"
         onClick={handleClick}
         title={formatMessage(messages.placeholdersTriggerButtonLabel)}
-        className={cssClasses('trigger_button')}
+        className={styles.trigger_button}
         size="small"
       >
         <IconProvider icon="BsBraces" title={formatMessage(messages.placeholdersTriggerButtonLabel)} />
@@ -50,14 +47,14 @@ const PlaceholderSelector = ({ onSelect, onClose, filter }) => {
           onClose={handleClose}
           PaperProps={paperStyle}
         >
-          <div key="placeholders-header" className={cssClasses('menu-header')}>
+          <div key="placeholders-header" className={styles.menu_header}>
             {formatMessage(messages.placeholdersInsertPlaceholderFor)}
           </div>
           {data
             .filter(item => (filter.type ? item.notificationTypeWhitelist.includes(filter.type) : item))
             .map(p => (
               <div key={p.labelI18nKey}>
-                <MenuItem classes={{ root: cssClasses('menu-section-header') }} dense disabled>
+                <MenuItem classes={{ root: styles.menu_section_header }} dense disabled>
                   {formatMessage(messages[p.labelI18nKey])}
                 </MenuItem>
                 {(p.labelI18nKey === 'placeholderCustomFields'
@@ -70,12 +67,12 @@ const PlaceholderSelector = ({ onSelect, onClose, filter }) => {
                   return (
                     <MenuItem
                       key={`${p.labelI18nKey}-${id}`}
-                      classes={{ root: cssClasses('menu-item') }}
+                      classes={{ root: styles.menu_item }}
                       dense
                       onClick={() => onSelectPlaceholder(id)}
                       title={title}
                     >
-                      <IconProvider icon="BsBraces" title={title} className={cssClasses('menu-item-icon')} />
+                      <IconProvider icon="BsBraces" title={title} className={styles.menu_item_icon} />
                       {messages[nameI18nKey] ? formatMessage(messages[nameI18nKey]) : name}
                     </MenuItem>
                   )

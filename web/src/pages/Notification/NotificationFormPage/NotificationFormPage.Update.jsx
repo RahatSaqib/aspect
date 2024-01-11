@@ -3,14 +3,14 @@ import { CircularProgress, Box, Card, CardContent, Grid } from '@mui/material'
 import { useFormikContext } from 'formik'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
-import './NotificationFormPage.css'
+import './NotificationFormPage.module.css'
+import { useIntl } from 'react-intl'
 import { DetailHeader } from '../../../cleanComponents'
 import AspectForm from '../../../components/Form'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import useNotification from '../../../hooks/notification/useNotification'
 import usePartner from '../../../hooks/partner/usePartner'
-import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import validationSchema from './Forms/validation'
 import messages from './messages'
@@ -32,7 +32,7 @@ function buildAreaItems(id, target, data) {
 
 const NotificationFormPage = ({ id, onSubmit }) => {
   const notificationId = Number(id)
-  const intl = useI18n()
+  const intl = useIntl()
   const [formConfig, setFormConfig] = useState(false)
 
   const { data: jobFunctions } = useJobFunctions()
@@ -82,7 +82,7 @@ const NotificationFormPage = ({ id, onSubmit }) => {
       webBody,
       sendToPatient: filter.sendToPatient,
       enabled: !!enabled,
-      persons: map(filter?.persons, p => `${p.personId}`),
+      persons: map(filter?.persons, p => p.personId),
       deviceLevelId: filter.deviceLevelId,
       areaItemsState: buildAreaItems(filter.deviceLevelId, 'state', filter.areaItems),
       areaItemsLGA: buildAreaItems(filter.deviceLevelId, 'lga', filter.areaItems),
@@ -103,7 +103,7 @@ const NotificationFormPage = ({ id, onSubmit }) => {
         return {
           jobFunctionId: jf.id,
           checked: !!jfSaved,
-          tags: jfSaved ? jfSaved.tags.map(tag => ({ ...tag, value: `${tag.value}` })) : [],
+          tags: jfSaved ? jfSaved.tags : [],
         }
       }),
     }
@@ -139,12 +139,12 @@ const NotificationFormPage = ({ id, onSubmit }) => {
 }
 
 const NotificationForm = ({ formConfig, onSubmit }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const { formik, meta } = useFormikContext()
 
   return (
     <>
-      <DetailHeader name={formConfig.title} back="/browse/notification">
+      <DetailHeader name={formConfig.title} back="/browse/notification/types">
         {[
           {
             disabled: !formik.dirty || !formik.isValid,

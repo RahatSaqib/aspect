@@ -29,6 +29,7 @@ import {
   InventoryLogFilter,
   InventoryTransferFilter,
   NotificationFilter,
+  NotificationLogFilter,
   PersonFilter,
   ReporterFilter,
   ReportsFilter,
@@ -61,7 +62,6 @@ import {
   TrendInYearsRifDetectedGraph,
   XDRFLQResistanceGraph,
   XDRResultsGraph,
-  getPreviousPeriod,
   PieRowGraph,
   filterColour,
   DeviceStatusGraph,
@@ -81,6 +81,7 @@ import LgaSelect from './LgaSelect'
 import Loading from './Loading'
 import LocationSelector from './LocationSelector'
 import LoggedInLayout from './LoggedInLayout'
+import LoggedOutLayout from './LoggedOutLayout'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
 import ReportSelector from './ReportSelector'
@@ -169,6 +170,7 @@ export {
   InventoryLogFilter,
   InventoryTransferFilter,
   NotificationFilter,
+  NotificationLogFilter,
   PersonFilter,
   ReporterFilter,
   ReportsFilter,
@@ -183,7 +185,6 @@ export {
   ContactTagInput,
   LocationSelector,
   AssayMultiSelect,
-  getPreviousPeriod,
   PieRowGraph,
   filterColour,
   DeviceStatusGraph,
@@ -196,4 +197,5 @@ export {
   formatDateToYYYYMMDD,
   fillData,
   DonutGraph,
+  LoggedOutLayout,
 }

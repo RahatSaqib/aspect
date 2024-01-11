@@ -1,17 +1,18 @@
-import DeviceApiKeyFilter from './DeviceApiKeyFilter'
-import DeviceListFilter from './DeviceListFilter'
-import DeviceWorkloadFilter from './DeviceWorkloadFilter'
-import ErrorRateFilter from './ErrorRateFilter'
-import InventoryItemsFilter from './InventoryItemsFilter'
-import InventoryLogFilter from './InventoryLogFilter'
-import InventoryTransferFilter from './InventoryTransferFilter'
-import NotificationFilter from './NotificationFilter'
-import PersonFilter from './PersonFilter'
-import ReporterFilter from './ReporterFilter'
-import ReportsFilter from './ReportsFilter'
-import ResultFilter from './ResultFilter'
-import SiteFilter from './SiteFilter'
-import XDRByDeviceFilter from './XDRByDeviceFilter'
+import DeviceApiKeyFilter from './FilterContainer.DeviceApiKey'
+import DeviceListFilter from './FilterContainer.DeviceList'
+import DeviceWorkloadFilter from './FilterContainer.DeviceWorkload'
+import ErrorRateFilter from './FilterContainer.ErrorRate'
+import InventoryItemsFilter from './FilterContainer.InventoryItems'
+import InventoryLogFilter from './FilterContainer.InventoryLog'
+import InventoryTransferFilter from './FilterContainer.InventoryTransfer'
+import NotificationFilter from './FilterContainer.Notification'
+import NotificationLogFilter from './FilterContainer.NotificationLog'
+import PersonFilter from './FilterContainer.Person'
+import ReporterFilter from './FilterContainer.Reporter'
+import ReportsFilter from './FilterContainer.Reports'
+import ResultFilter from './FilterContainer.Result'
+import SiteFilter from './FilterContainer.Site'
+import XDRByDeviceFilter from './FilterContainer.XDRByDevice'
 
 export {
   DeviceApiKeyFilter,
@@ -28,4 +29,5 @@ export {
   ResultFilter,
   SiteFilter,
   XDRByDeviceFilter,
+  NotificationLogFilter,
 }

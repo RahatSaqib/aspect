@@ -1,31 +1,27 @@
 import React, { useState } from 'react'
 import { Button, Card, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import { ImplementingPartnerSelect, DeviceCapacitySelect } from '../../../../cleanComponents'
+import { ImplementingPartnerSelect, DeviceCapacitySelect, SiteSelect } from '../../../../cleanComponents'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
-import useI18n from '../../../../hooks/useI18n'
-import SiteSelectField from '../../../../oldComponents/resource/SiteSelectField'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const navigate = useNavigate()
-  const intl = useI18n()
+  const intl = useIntl()
 
   const { mutate: updateDevice } = useUpdateDevice(device.id)
   const { mutate: updateDeviceTags } = useUpdateTagByTypeAndId('device', device.id)
@@ -62,8 +58,8 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   return (
     <div>
       <Helmet title={device.name} />
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           <form>
             <TextField
               fullWidth
@@ -89,15 +85,13 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 setError(isEmpty(e.target.value))
               }}
             />
-            <SiteSelectField
+            <SiteSelect
+              id="siteId"
               name="siteId"
-              floatingLabelText={intl.formatMessage(messages.location)}
+              label={intl.formatMessage(messages.location)}
+              value={editDevice?.siteId || ''}
+              onChange={e => setEditDevice({ ...editDevice, siteId: e.target.value })}
               disabled={!editable}
-              value={editDevice.siteId}
-              onSiteChange={siteId => setEditDevice({ ...editDevice, siteId })}
-              fullWidth
-              tabIndex="0"
-              aria-haspopup
             />
 
             <ImplementingPartnerSelect
@@ -184,7 +178,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               />
             </FormGroup>
 
-            <div className={cssClasses('Form__Actions')}>
+            <div className={styles.Form__Actions}>
               <ButtonGroup isolated>
                 <AspectButton
                   type="button"

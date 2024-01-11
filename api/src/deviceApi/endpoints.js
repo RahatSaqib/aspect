@@ -321,6 +321,9 @@ const routes = [
         schema: {
           error: errorPayload,
         },
+        status: {
+          201: {},
+        },
       },
     },
   },

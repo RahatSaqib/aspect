@@ -1,15 +1,15 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
 import { useIdleTimer } from 'react-idle-timer'
+import { defineMessages, useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { Loading, ErrorBoundary, LoggedInLayout } from './cleanComponents'
-import IdleDialog from './components/IdleDialog'
 import config from './config'
+import useAuthState from './hooks/useAuthState'
 import useHashAndScroll from './hooks/useHashAndScroll'
+import AspectDialog from './oldComponents/shared/AspectDialog'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
-import { useAuthState } from './providers/AuthProvider'
 import { idleLogout, refreshStart } from './store/AuthRedux'
-import { fetchDiseases } from './store/DiseaseRedux'
 import { fetchCountries } from './store/GeographyRedux'
 
 const ContactPage = lazy(() => import('./pages/Contact'))
@@ -24,8 +24,8 @@ const InventoryLog = lazy(() => import('./oldPages/inventory/log/InventoryLog'))
 const InventoryTransfers = lazy(() => import('./pages/Inventory/Transfers'))
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
-const NotificationDetailHistory = lazy(() => import('./pages/Notification/NotificationHistoryPage'))
 const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
+const NotificationLogs = lazy(() => import('./pages/Notification/NotificationLogsPage'))
 const OperationalData = lazy(() => import('./oldPages/dashboard/operational/OperationalData'))
 const PersonList = lazy(() => import('./pages/Person/List/PersonList'))
 const PkDashboard = lazy(() => import('./pages/PkDashboard'))
@@ -72,6 +72,9 @@ const CurrentXDRTesting = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSec
 const CurrentXDRDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentXDRDiagnosisPage'))
 const CurrentFQTrend = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/CurrentFQTrendPage'))
 const GXTestingAndDiagnosis = lazy(() => import('./pages/PkDashboard/pages/MtbXdrSection/GXTestingAndDiagnosisPage'))
+const DataVisualisationForXDRResistance = lazy(() =>
+  import('./pages/PkDashboard/pages/MtbXdrSection/DataVisualisationForXDRResistance')
+)
 const ProvincialXDRTestingTrend = lazy(() =>
   import('./pages/PkDashboard/pages/MtbXdrSection/ProvincialTestingTrendPage')
 )
@@ -85,6 +88,8 @@ const LogInApp = () => {
   const dispatch = useDispatch()
   const location = useLocation()
   const navigate = useNavigate()
+  const { formatMessage } = useIntl()
+
   useHashAndScroll()
 
   const [showIdleDialog, setShowIdleDialog] = useState(false)
@@ -96,8 +101,6 @@ const LogInApp = () => {
   useEffect(() => {
     // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
     dispatch(fetchCountries())
-    // fetch diseases on start so allow HIV graph on dashboard to load properly
-    dispatch(fetchDiseases())
 
     // Refresh the access token every 30 minutes.
     const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)
@@ -171,6 +174,10 @@ const LogInApp = () => {
                     <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
                     <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
                     <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
+                    <Route
+                      path="/dashboard/xdr/data-visualisation-for-xdr-resistance"
+                      element={<DataVisualisationForXDRResistance />}
+                    />
                     <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
                     <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
                     <Route path="/dashboard/xdr/provincial-fq-diagnosis-trend" element={<ProvincialXDRTrendsFQ />} />
@@ -238,9 +245,9 @@ const LogInApp = () => {
             ) : null}
             {a(['browse', 'notification']) ? (
               <>
-                <Route path="/browse/notification" element={<NotificationList />} />
+                <Route path="/browse/notification/types" element={<NotificationList />} />
+                <Route path="/browse/notification/logs" element={<NotificationLogs />} />
                 <Route path="/browse/notification/:notificationId" element={<NotificationDetail />} />
-                <Route path="/browse/notification/:notificationId/history" element={<NotificationDetailHistory />} />
               </>
             ) : null}
 
@@ -253,9 +260,22 @@ const LogInApp = () => {
         </Suspense>
       </ErrorBoundary>
 
-      {showIdleDialog ? <IdleDialog /> : null}
+      {showIdleDialog ? (
+        <AspectDialog title={formatMessage(messages.title)} modal open>
+          <span>{formatMessage(messages.help)}</span>
+        </AspectDialog>
+      ) : null}
     </LoggedInLayout>
   )
 }
 
 export default LogInApp
+
+const messages = defineMessages({
+  title: { id: 'pages.IdleDialog.title', defaultMessage: 'Automatic Logout' },
+  help: {
+    id: 'shared.IdleDialog.help',
+    defaultMessage:
+      'You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.',
+  },
+})

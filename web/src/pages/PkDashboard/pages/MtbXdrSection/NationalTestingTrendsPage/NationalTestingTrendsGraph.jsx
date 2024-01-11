@@ -1,11 +1,11 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { LgaSelect, StateSelect, Loading, fillYear, objectToArray, LineGraph } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
+import useAuthState from '../../../../../hooks/useAuthState'
 import { getCustomMessage, graphMessages, months } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -19,13 +19,10 @@ const endpointParams = [
 ]
 
 const NationalTestingTrendsGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState({})
-
-  const onChangeState = useCallback(e => setFilter({ stateId: e.target.value }), [])
-  const onChangeLga = useCallback(e => setFilter(prev => ({ ...prev, lgaId: e.target.value })), [])
+  const [filter, setFilter] = useState()
 
   const mergedParams = filter ? [...endpointParams, ...objectToArray(filter)] : [...endpointParams]
 
@@ -45,7 +42,7 @@ const NationalTestingTrendsGraph = () => {
         .map(item => ({ ...item, month: `${formatMessage(months[item.month - 1])}` }))
 
       if (grouped) {
-        setGraphData(fillYear(grouped))
+        setGraphData(fillYear(grouped).sort((a, b) => a.year - b.year))
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -64,16 +61,16 @@ const NationalTestingTrendsGraph = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
-            value={filter.stateId ?? ''}
+            value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={onChangeState}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            onChange={e => setFilter({ stateId: e.target.value })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter.lgaId ?? ''}
+            value={filter?.lgaId ?? ''}
             stateId={filter.stateId}
-            onChange={onChangeLga}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            onChange={e => setFilter(prev => ({ ...prev, lgaId: e.target.value }))}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

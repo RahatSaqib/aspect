@@ -1,5 +1,5 @@
-import { subDays, subMonths, format, addMinutes, subMinutes, getYear, subYears, startOfMonth } from 'date-fns'
-import endOfMonth from 'date-fns/endOfMonth'
+import { subDays, subMonths, addMinutes, subMinutes, getYear, subYears, startOfMonth } from 'date-fns'
+import { format } from 'date-fns-tz'
 import filter from 'lodash/filter'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
@@ -288,8 +288,6 @@ const getAverageFromData = (data, value, which, notation, culture) => {
               [value]: parseFloat(item[value]),
             }
           }
-        } else {
-          console.warn(`There are no results to match your config for item: ${curr}`)
         }
         return acc
       }, {})
@@ -444,33 +442,26 @@ const getItemsForTrendsGraph = (data, states, lgas) => {
   return { graphData, tableData }
 }
 
-const getPreviousPeriod = (period = 'month', dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") => {
-  // currently only works for month
-  const previousPeriodStart = getTimePeriod(1, period, dateFormat)
-  const previousPeriodEnd = format(endOfMonth(new Date(previousPeriodStart)), dateFormat)
-
-  return { start: previousPeriodStart, end: previousPeriodEnd }
-}
-
 const formatDataByGraphType = (
   data,
   displayMethod,
   filterBy,
-  formatDate,
+  formatForDate,
   indexBy,
   keyToConsume,
   i18nKeys,
   type,
   mergedParams,
   formatMessage,
-  messages
+  messages,
+  formatDate
 ) => {
   let grouped
   switch (type) {
     case 'bar':
     case 'calendar':
     case 'stacked':
-      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
+      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatForDate, filterBy)
       break
 
     case 'divergent':
@@ -478,11 +469,11 @@ const formatDataByGraphType = (
       break
 
     case 'barLegacyTreatment':
-      grouped = groupForOldTreatmentAPI(data, keyToConsume, indexBy, formatDate, filterBy, displayMethod)
+      grouped = groupForOldTreatmentAPI(data, keyToConsume, indexBy, formatForDate, filterBy, displayMethod)
       break
 
     case 'stackedDeviceActivity':
-      grouped = groupForDeviceStatusAPI(data, keyToConsume, indexBy, formatDate, filterBy)
+      grouped = groupForDeviceStatusAPI(data, keyToConsume, indexBy, formatForDate, filterBy)
       break
 
     case 'barInventory':
@@ -498,7 +489,7 @@ const formatDataByGraphType = (
       break
 
     case 'pieRow':
-      grouped = groupForPieRow(data, mergedParams)
+      grouped = groupForPieRow(formatMessage, formatDate, data, mergedParams)
       break
 
     case 'line-trends': {
@@ -507,7 +498,7 @@ const formatDataByGraphType = (
     }
 
     case 'bar-line':
-      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatDate, filterBy)
+      grouped = groupByKey(data, indexBy, keyToConsume, displayMethod, formatForDate, filterBy)
       return grouped
 
     default:
@@ -559,7 +550,6 @@ export {
   prepParamsForEndPoint,
   objectToArray,
   getItemsForTrendsGraph,
-  getPreviousPeriod,
   formatDataByGraphType,
   formatDateToYYYYMMDD,
   fillData,

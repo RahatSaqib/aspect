@@ -12,7 +12,7 @@ const { createMessageContext, waitForIdle, waitForAction } = require('../utils/m
 const context = createEmailTestContext({ user: 'admin' })
 
 // action creators
-const { emailMessageCreated, emailMessageReadyForSending, emailMessageSent } = require('../../src/email/actions')
+const { emailMessageCreated, emailMessageReadyForSending, emailMessageProcessed } = require('../../src/email/actions')
 const { columnsDeviceErrorHistoryForAttachment } = require('../../src/result/serviceReport')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 
@@ -35,7 +35,7 @@ describe('Sending Email via Message Queue', () => {
       const actionReady = emailMessageReadyForSending(messageId)
       const waitForReadyForSending = waitForAction(actionReady)
 
-      const actionSent = emailMessageSent(messageId)
+      const actionSent = emailMessageProcessed(messageId)
       const waitForSent = waitForAction(actionSent)
 
       // dispatch to MQ a messageId (generated in EmailMessage)
@@ -181,7 +181,7 @@ describe('Sending Email via Message Queue', () => {
       const actionReady = emailMessageReadyForSending(messageId)
       const waitForReadyForSending = waitForAction(actionReady)
 
-      const actionSent = emailMessageSent(messageId)
+      const actionSent = emailMessageProcessed(messageId)
       const waitForSent = waitForAction(actionSent)
 
       // dispatch to MQ a messageId (generated in EmailMessage)

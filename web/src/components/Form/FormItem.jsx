@@ -1,17 +1,15 @@
 import React, { useMemo } from 'react'
 import { Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import { useFormikContext } from 'formik'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
+import isNil from 'lodash/isNil'
 import PropTypes from 'prop-types'
-import useI18n from '../../hooks/useI18n'
-import styles from './Form.css'
+import { useIntl } from 'react-intl'
+import styles from './Form.module.css'
 import { getFormattedString, getLabel } from './Formik/Helpers'
 import AspectInput from './Inputs/AspectInput'
 import AspectTextField from './Inputs/TextField'
-
-const cssClasses = classnames.bind(styles)
 
 const INPUT_LABEL_PROPS = { shrink: true }
 
@@ -61,11 +59,17 @@ const FormItem = ({
   disabledIf,
   subRowIndex,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { formik, toggleEdit, validationSchema } = useFormikContext()
   const { getFieldProps, values } = formik
   const value = values[id]
-  let isVisible = !(hideIfNull && isEmpty(value) && !toggleEdit)
+
+  let isVisible = true
+  if (hideIfNull) {
+    if (typeof value === 'string') isVisible = !isNil(value) && !isEmpty(value)
+    else isVisible = !isNil(value)
+  }
+
   if (isVisible && visibleIf) {
     isVisible = visibleIf(formik.values, toggleEdit, subRowIndex)
   }
@@ -105,16 +109,14 @@ const FormItem = ({
   if (component === 'hidden') {
     return <input type="hidden" name={id} id={id} />
   }
-
+  const classes = `${styles.form__sectionItemContainer} ${
+    classNames.itemContainer ? styles[classNames.itemContainer] : ''
+  }`
+  const innerClasses = `${styles.form__sectionItemInput} ${
+    toggleEdit ? styles.form__sectionItemInput__enabled : styles.form__sectionItemInput__disabled
+  } ${classNames.item ? styles[classNames.item] : ''}`
   return isVisible ? (
-    <Grid
-      item
-      xs={12}
-      md={fullWidth ? 12 : 6}
-      className={cssClasses('form__sectionItemContainer', {
-        [classNames.itemContainer]: !!classNames.itemContainer,
-      })}
-    >
+    <Grid item xs={12} md={fullWidth ? 12 : 6} className={classes}>
       <AspectInput
         {...getFieldProps(id)}
         id={id}
@@ -123,11 +125,7 @@ const FormItem = ({
         label={`${getLabel({ ...i18nTools, labelI18nKey, label })}${isRequired ? '*' : ''}`}
         link={link}
         placeholder={getFormattedString(placeholder, i18nTools, ' - ')}
-        className={cssClasses('form__sectionItemInput', {
-          'form__sectionItemInput--enabled': toggleEdit,
-          'form__sectionItemInput--disabled': !toggleEdit,
-          [classNames.item]: !!classNames.item,
-        })}
+        className={innerClasses}
         classNames={classNames}
         fullWidth
         InputProps={inputProps}

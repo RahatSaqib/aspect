@@ -1,7 +1,7 @@
-import React, { useCallback } from 'react'
+import React from 'react'
 import { Box } from '@mui/material'
 import Immutable from 'immutable'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
 import { Routes, Navigate, Route, useNavigate, useParams, useLocation } from 'react-router-dom'
@@ -10,14 +10,12 @@ import { DEVICE_KEY } from '../../../hooks/device/deviceKeys'
 import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
-import useI18n from '../../../hooks/useI18n'
+import useAuthState from '../../../hooks/useAuthState'
 import deviceApprovalMessages from '../../../messages/deviceApprovalMessages'
 import deviceStatusMessages from '../../../messages/deviceStatusMessages'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { useAuthState } from '../../../providers/AuthProvider'
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
-import DeviceDetailAlerts from './Alerts/DeviceDetailAlerts'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
@@ -41,7 +39,7 @@ export const DeviceDetail = props => {
   const searchParams = new URLSearchParams(location.search)
   const navigate = useNavigate()
   const { deviceId } = useParams()
-  const intl = useI18n()
+  const intl = useIntl()
   const queryClient = useQueryClient()
 
   const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
@@ -54,9 +52,7 @@ export const DeviceDetail = props => {
   const isLoading = isDeviceLoading || isDeviceTagsLoading || isDevicePerformanceLoading
 
   // onSuccess - reset key to re-run query for device
-  const onSuccess = useCallback(() => {
-    queryClient.invalidateQueries([DEVICE_KEY, deviceId])
-  }, [deviceId, queryClient])
+  const onSuccess = () => queryClient.invalidateQueries([DEVICE_KEY, deviceId])
 
   const { mutate: updateDevice } = useMutation(({ deviceId, data }) => dispatch(updateSingleDevice(deviceId, data)), {
     onSuccess,
@@ -98,7 +94,6 @@ export const DeviceDetail = props => {
       <DetailHeader name={device ? device.name : 'Devices'} back="/browse/device/list">
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
-          { label: intl.formatMessage(messages.alerts), path: `/browse/device/list/${deviceId}/alerts` },
           { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
@@ -140,12 +135,6 @@ export const DeviceDetail = props => {
               path="operation"
               element={
                 <DeviceDetailOperation intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
-              }
-            />
-            <Route
-              path="alerts"
-              element={
-                <DeviceDetailAlerts intl={intl} {...props} device={Immutable.fromJS(device)} disabled={!editable} />
               }
             />
             <Route

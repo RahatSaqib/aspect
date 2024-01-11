@@ -86,15 +86,8 @@ async function storeUser(knex, username, password, gxUser, partnerId, countryId,
     })
   }
 
-  // insert Job if not exists
   if (jobFunctionId) {
-    const d = { personId, jobFunctionId }
-    let { id: jobId } = (await knex('Job').where(d).first('id')) || {}
-    if (!jobId) {
-      ;[jobId] = await knex('Job').insert(d)
-    }
-
-    await setJobContext(knex, jobId, gxUser)
+    await setJobContext(knex, personId, jobFunctionId, gxUser)
   }
 
   // finally return User
@@ -233,7 +226,7 @@ async function gxAlertAuthenticate(username, password) {
 // --------------------------------------------------------------------------------------------
 // setJobContext - based on list of countries, states, lgas, deployments gxAlert user is linked
 // --------------------------------------------------------------------------------------------
-async function setJobContext(knex, jobId, gxUser) {
+async function setJobContext(knex, personId, jobFunctionId, gxUser) {
   let hasJobContext = false
   // helper function
   const createIfNotExist = async (knex, options, onSuccess) => {
@@ -241,11 +234,12 @@ async function setJobContext(knex, jobId, gxUser) {
     if (geographyId) {
       // read JobContext item
       let { id: jobContextId } =
-        (await knex('JobContext').where({ jobId, geographyId }).whereNull('siteId').first()) || {}
+        (await knex('JobContext').where({ personId, jobFunctionId, geographyId }).whereNull('siteId').first()) || {}
       // if not exists - create it
       if (!jobContextId) {
         ;[jobContextId] = await knex('JobContext').insert({
-          jobId,
+          personId,
+          jobFunctionId,
           geographyId,
         })
       }
@@ -345,9 +339,9 @@ async function setJobContext(knex, jobId, gxUser) {
         // REVIEWER!!! If the device is not added, Aspect should let the admin to add devices to users
         if (geographyId && siteId) {
           const { id: jobContextId } =
-            (await knex('JobContext').where({ jobId, siteId }).whereNull('geographyId').first()) || {}
+            (await knex('JobContext').where({ personId, jobFunctionId, siteId }).whereNull('geographyId').first()) || {}
           if (!jobContextId) {
-            await knex('JobContext').insert({ jobId, siteId })
+            await knex('JobContext').insert({ personId, jobFunctionId, siteId })
           }
           hasJobContext = true
         }

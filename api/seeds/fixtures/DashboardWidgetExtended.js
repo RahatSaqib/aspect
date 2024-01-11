@@ -23,6 +23,8 @@ module.exports = {
       'moduleSwaps',
       'instrumentsReplaced',
       'percentageOfModulesFunctioning',
+      // 'totalNumberOfModules',
+      // 'activeModules',
       'averageRecipientsOfEmail',
       'averageRecipientsOfSms',
       'averageLengthOfSms',

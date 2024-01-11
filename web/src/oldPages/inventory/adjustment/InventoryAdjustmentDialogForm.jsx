@@ -1,26 +1,23 @@
 import React, { useEffect } from 'react'
 import { Button, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import has from 'lodash/has'
 import identity from 'lodash/identity'
 import isNil from 'lodash/isNil'
 import { defineMessages } from 'react-intl'
 import { connect, useDispatch } from 'react-redux'
+import { SiteSelect } from '../../../cleanComponents'
 import ConsumableReasonSelectField, {
   testConductedReasonI18nKey,
 } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import ConsumableSelectField from '../../../oldComponents/resource/ConsumableSelectField'
-import SiteSelectField from '../../../oldComponents/resource/SiteSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { fetchConsumables } from '../../../store/ConsumableRedux'
 import { types } from '../../../store/InventoryRedux'
-import styles from './InventoryAdjustmentDialogForm.css'
+import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const EMPTY_MAP = Immutable.Map()
 
@@ -165,8 +162,8 @@ export const InventoryAdjustmentDialogForm = ({
       onClose={onCancel}
       title={labels.dialogTitle}
     >
-      <form className={cssClasses('Form')}>
-        <div className={cssClasses('Form__Content')}>
+      <form className={styles.Form}>
+        <div className={styles.Form__Content}>
           <section>
             {(!currInventoryItem || has(values, 'consumableId')) && (
               <ConsumableSelectField
@@ -226,42 +223,28 @@ export const InventoryAdjustmentDialogForm = ({
           </section>
           <section>
             {has(values, 'fromSiteId') && (
-              <SiteSelectField
+              <SiteSelect
+                id="fromSiteId"
                 name="fromSiteId"
-                floatingLabelText={intl.formatMessage(messages.fromSiteName)}
+                label={intl.formatMessage(messages.fromSiteName)}
+                value={values.fromSiteId}
+                onChange={onFromSiteIdChange}
+                error={meta.fromSiteId.touched && meta.fromSiteId.error}
                 disabled={
                   form.submitting ||
                   (currInventoryItem && (isReceiveInventoryDialog || !isNil(currInventoryItem.get('siteId'))))
                 }
-                value={values.fromSiteId}
-                onSiteChange={onFromSiteIdChange}
-                errorStyle={{
-                  float: 'left',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'visible',
-                }}
-                errorText={meta.fromSiteId.touched && meta.fromSiteId.error}
-                fullWidth
-                tabIndex="0"
-                aria-haspopup
               />
             )}
             {has(values, 'toSiteId') && (
-              <SiteSelectField
+              <SiteSelect
+                id="toSiteId"
                 name="toSiteId"
-                floatingLabelText={intl.formatMessage(messages.toSiteName)}
-                disabled={form.submitting || isReceiveInventoryDialog}
+                label={intl.formatMessage(messages.toSiteName)}
                 value={values.toSiteId}
-                onSiteChange={onToSiteIdChange}
-                errorStyle={{
-                  float: 'left',
-                  whiteSpace: 'nowrap',
-                  textOverflow: 'visible',
-                }}
-                errorText={meta.toSiteId.touched && meta.toSiteId.error}
-                fullWidth
-                tabIndex="0"
-                aria-haspopup
+                onChange={onToSiteIdChange}
+                error={meta.toSiteId.touched && meta.toSiteId.error}
+                disabled={form.submitting || isReceiveInventoryDialog}
               />
             )}
           </section>
@@ -283,7 +266,7 @@ export const InventoryAdjustmentDialogForm = ({
               inputProps={{ maxLength: 500 }}
             />
             {currInventoryItem !== null ? (
-              <p className={cssClasses('Field__quantity--status')}>
+              <p className={styles.Field__quantity__status}>
                 <span>{consumable.get('unitShortName')}</span>
                 <span>{labels.nextQuantityStatus}</span>
               </p>

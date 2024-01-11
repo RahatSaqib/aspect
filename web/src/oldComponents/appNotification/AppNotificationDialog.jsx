@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux'
 import { hideAppNotification, Error } from '../../store/AppNotificationRedux'
 import PropTypeOf from '../../utils/types'
 import AspectDialog from '../shared/AspectDialog'
-import styles from './AppNotificationDialog.css'
+import styles from './AppNotificationDialog.module.css'
 
 const genericMessages = defineMessages({
   title: {

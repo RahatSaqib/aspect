@@ -1,14 +1,12 @@
 import React from 'react'
-import classnames from 'classnames/bind'
-import { useLocation } from 'react-router-dom'
-import AspectLink from '../../../components/AspectLink'
-import { buildURL } from '../../../components/AspectLink/helpers'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import { useLocation, Link } from 'react-router-dom'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../hooks/useFilterValues'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
-import { useFilterUpdate, useFilterValues } from '../../../providers/FilterProvider'
-import ReporterLinkCell from './ReporterLinkCell'
+import { buildURL } from './helpers'
+import btnStyles from './ReporterList.module.css'
 
-const cssClasses = classnames.bind(styles)
 const destinationPath = '/browse/result'
 
 const ReporterTableRow = ({ reporter, ...restProps }) => {
@@ -16,7 +14,8 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
   const location = useLocation()
   const currentFilters = useFilterValues(location.pathname)
   const LinkToResults = ({ params = {}, children }) => (
-    <AspectLink
+    <Link
+      to={buildURL(destinationPath)}
       onClick={() =>
         update(
           {
@@ -36,25 +35,20 @@ const ReporterTableRow = ({ reporter, ...restProps }) => {
           destinationPath
         )
       }
-      to={buildURL(destinationPath)}
     >
       {children}
-    </AspectLink>
+    </Link>
   )
 
   return (
-    <TableRow {...restProps} className={cssClasses(restProps.className)}>
+    <TableRow {...restProps} className={styles[restProps.className]}>
       <TableCell>
-        <ReporterLinkCell data={reporter} />
+        <Link to={`/browse/site/${reporter.get('siteId')}`} {...restProps} className={btnStyles.site__details}>
+          {reporter.get('siteName')}
+        </Link>
       </TableCell>
       <TableCell>
-        <LinkToResults
-          params={{
-            onlyReportableResults: true,
-          }}
-        >
-          {reporter.get('totalResults')}
-        </LinkToResults>
+        <LinkToResults params={{ onlyReportableResults: true }}>{reporter.get('totalResults')}</LinkToResults>
       </TableCell>
       <TableCell>
         <LinkToResults

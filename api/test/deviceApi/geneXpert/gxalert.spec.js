@@ -516,6 +516,8 @@ describe('Device API routes for GxAlert Device', () => {
       assert.equal(result2.moduleSerial, '555-8')
       assert.equal(result2.researchId, 'R123')
       assert.deepEqual(JSON.parse(result2.patientData), {
+        PatientName: 'Unknown',
+        PatientSurname: 'Blood Stained',
         id: 'P-333',
         name: 'Bob',
         surname: 'Hope',
@@ -1720,7 +1722,7 @@ describe('Device API routes for GxAlert Device', () => {
                   data: { resultText: 'NO RESULT|NO RESULT|' },
                 },
               }),
-              expectedStatusCode: 409,
+              expectedStatusCode: 201,
             })
             completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
@@ -1741,7 +1743,7 @@ describe('Device API routes for GxAlert Device', () => {
                   data: { resultText: 'NO RESULT' },
                 },
               }),
-              expectedStatusCode: 409,
+              expectedStatusCode: 201,
             })
             completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({

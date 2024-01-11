@@ -1,19 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import {
   getTimePeriod,
   genLabel,
@@ -23,8 +22,6 @@ import {
   negateTimeZoneOffset,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
-
-const cssClasses = classnames.bind(styles)
 
 const endPointParams = [
   { assay: 'GxMtbRif' },
@@ -37,7 +34,7 @@ const endPointParams = [
 ]
 
 const TbDetectedGraph = ({ assaysFromState: assays }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
@@ -119,15 +116,15 @@ const TbDetectedGraph = ({ assaysFromState: assays }) => {
   return isLoading ? (
     <Loading />
   ) : (
-    <Grid container className={cssClasses('Graph_Container')}>
+    <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
           <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsTBDetected)} />
           <CardContent>
-            <Grid container spacing={1} className={cssClasses('Graph_Content')}>
+            <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
-                <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                  <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                <Grid container spacing={2} className={styles.Graph_Content_Container}>
+                  <Grid item xs={12} md={4} lg={12} className={styles.Graph_Content_ShowLabel}>
                     <FormControlLabel
                       label={formatMessage(graphMessages.showValuesLabel)}
                       control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
@@ -156,8 +153,8 @@ const TbDetectedGraph = ({ assaysFromState: assays }) => {
                               assayId: assays
                                 .filter(it => ['GxMtbRif', 'GxMtbRifUltra'].includes(it.externalId))
                                 .map(it => it.id),
-                              maxDate: format(endOfMonth(parsedDate), base),
                               minDate: format(startOfMonth(parsedDate), base),
+                              maxDate: format(endOfMonth(parsedDate), base),
                               resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
                                 a => a.externalId === evt.data.data.id
                               )[0].id,

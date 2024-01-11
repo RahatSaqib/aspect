@@ -5,7 +5,6 @@ import isArray from 'lodash/isArray'
 import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
 import PropTypes from 'prop-types'
-import getDisplayName from 'react-display-name'
 import { useStore } from 'react-redux'
 
 const MATCH_TYPE = {
@@ -186,7 +185,6 @@ export const requirePermissions = outerProps => WrappedComponent => {
     return isPermitted ? <WrappedComponent {...restProps} /> : <ForbiddenComponent {...restProps} />
   }
 
-  PermissionResolver.displayName = `requirePermissions(${getDisplayName(WrappedComponent)})`
   PermissionResolver.propTypes = {
     overriddenPermissions: PropTypes.arrayOf(PropTypes.string),
     extraPermissions: PropTypes.arrayOf(PropTypes.string),

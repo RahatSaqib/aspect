@@ -10,7 +10,6 @@ import {
   Grid,
   TextField,
 } from '@mui/material'
-import classnames from 'classnames/bind'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
@@ -18,16 +17,15 @@ import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
 import pick from 'lodash/pick'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages, assay } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
-import { formatNumber } from '../../../utils/utils/number'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import {
   getTimePeriod,
   genLabel,
@@ -36,8 +34,6 @@ import {
   negateTimeZoneOffset,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
-
-const cssClasses = classnames.bind(styles)
 
 const endPointParams = [
   { groupBy: 'month' },
@@ -68,7 +64,7 @@ const filterFunctionBar = (data, props) => {
 }
 
 const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState([])
   const navigate = useNavigate()
@@ -158,21 +154,21 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
   return isLoading || !filter.length ? (
     <Loading />
   ) : (
-    <Grid container className={cssClasses('Graph_Container')}>
+    <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
           <CardHeader title={formatMessage(graphMessages.testsOverTimeTitle)} />
           <CardContent>
-            <Grid container spacing={1} className={cssClasses('Graph_Content')}>
+            <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
-                <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                  <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                <Grid container spacing={2} className={styles.Graph_Content_Container}>
+                  <Grid item xs={12} md={4} lg={12} className={styles.Graph_Content_ShowLabel}>
                     <FormControlLabel
                       label={formatMessage(graphMessages.showValuesLabel)}
                       control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
                     />
                   </Grid>
-                  <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
+                  <Grid item xs={12} md={8} lg={12} className={styles.Graph_Content_AssaySelector}>
                     <AssayAutocomplete assaysFromState={assays} value={filter} onChange={setFilter} />
                   </Grid>
                 </Grid>
@@ -193,12 +189,12 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                             const base = 'yyyy-MM-dd'
                             const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
 
+                            const assay = assays.find(a => a.externalId === evt.data.data.id).id
                             const params = {
                               displayResult: 'actual',
-                              maxDate: format(endOfMonth(parsedDate), base),
                               minDate: format(startOfMonth(parsedDate), base),
-                              onlyReportableResults: true,
-                              assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                              maxDate: format(endOfMonth(parsedDate), base),
+                              assayId: [assay],
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')
@@ -211,7 +207,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                     <Grid item xs={12} md={4} lg={4}>
                       <DonutGraph
                         data={donutData.data}
-                        total={formatNumber(donutData.total)}
+                        total={donutData.total}
                         graphId="testPerformedMonthlytotal"
                         graphTitle={[
                           formatMessage(graphMessages.testsOverTimeAvgTitle)
@@ -244,7 +240,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
 export default TestsOverTimeGraph
 
 const AssayAutocomplete = ({ assaysFromState, value, onChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [innerValue, setInnerValue] = useState(value)
 
   const options = assaysFromState.sort((a, b) => -b.assayTypeAbbreviation.localeCompare(a.assayTypeAbbreviation))

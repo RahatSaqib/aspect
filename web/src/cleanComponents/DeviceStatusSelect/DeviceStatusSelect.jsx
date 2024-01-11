@@ -1,8 +1,8 @@
 import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { TextField, IconButton, MenuItem } from '@mui/material'
-import useI18n from '../../hooks/useI18n'
-import messages from './messages'
+import { useIntl } from 'react-intl'
+import messages from '../../messages/allMessages'
 
 const options = {
   up: ['active', 'reportedActive', 'inactiveNoTestsPerformed'],
@@ -27,7 +27,7 @@ const getCurrentValue = value => {
 }
 
 const DeviceStatusSelect = ({ id, name, label, value, onChange, error, helperText }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const handleChange = e => {
     onChange(options[e.target.value])

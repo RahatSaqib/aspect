@@ -2286,8 +2286,17 @@ async function xdrAssayGraphAggregations(request) {
       cnt_mtb: MtbDetected = 0,
       cnt_flq: FqrDetected = 0,
       cnt_inh: InhDetected = 0,
+      cnt_amk: AmkDetected = 0,
+      cnt_kan: KanDetected = 0,
+      cnt_cap: CapDetected = 0,
+      cnt_eth: EthDetected = 0,
     } = item || {}
     const FqrToMtbPercentage = MtbDetected === 0 ? 0 : (100 * FqrDetected) / MtbDetected
+    const InhToMtbPercentage = MtbDetected === 0 ? 0 : (100 * InhDetected) / MtbDetected
+    const AmkToMtbPercentage = MtbDetected === 0 ? 0 : (100 * AmkDetected) / MtbDetected
+    const KanToMtbPercentage = MtbDetected === 0 ? 0 : (100 * KanDetected) / MtbDetected
+    const CapToMtbPercentage = MtbDetected === 0 ? 0 : (100 * CapDetected) / MtbDetected
+    const EthToMtbPercentage = MtbDetected === 0 ? 0 : (100 * EthDetected) / MtbDetected
 
     return {
       month,
@@ -2295,20 +2304,53 @@ async function xdrAssayGraphAggregations(request) {
       MtbDetected,
       FqrDetected,
       InhDetected,
+      AmkDetected,
+      KanDetected,
+      CapDetected,
+      EthDetected,
       FqrToMtbPercentage,
+      InhToMtbPercentage,
+      AmkToMtbPercentage,
+      KanToMtbPercentage,
+      CapToMtbPercentage,
+      EthToMtbPercentage,
     }
   })
 
   return {
     grouped: data,
     // series
-    keysFromGrouped: ['TotalTests', 'MtbDetected', 'FqrDetected', 'InhDetected', 'FqrToMtbPercentage'],
+    keysFromGrouped: [
+      'TotalTests',
+      'MtbDetected',
+      'FqrDetected',
+      'InhDetected',
+      'AmkDetected',
+      'KanDetected',
+      'CapDetected',
+      'EthDetected',
+      'FqrToMtbPercentage',
+      'InhToMtbPercentage',
+      'AmkToMtbPercentage',
+      'KanToMtbPercentage',
+      'CapToMtbPercentage',
+      'EthToMtbPercentage',
+    ],
     i18nKeys: {
       TotalTests: 'TotalTests',
       MtbDetected: 'MtbDetected',
       FqrDetected: 'FqrDetected',
       InhDetected: 'InhDetected',
+      AmkDetected: 'AmkDetected',
+      KanDetected: 'KanDetected',
+      CapDetected: 'CapDetected',
+      EthDetected: 'EthDetected',
       FqrToMtbPercentage: 'FQRPercent',
+      InhToMtbPercentage: 'INHPercent',
+      AmkToMtbPercentage: 'AMKPercent',
+      KanToMtbPercentage: 'KANPercent',
+      CapToMtbPercentage: 'CAPPercent',
+      EthToMtbPercentage: 'ETHPercent',
     },
   }
 }

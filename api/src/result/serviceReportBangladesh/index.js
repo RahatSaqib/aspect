@@ -6,7 +6,8 @@ const { getUser } = require('../../auth/service')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../../db')
 const { getDatesFromQuery } = require('../../shared/date')
-const { allAssayToId, allResultCategoryToId, allSampleTypeToId } = require('../../shared/dictionary')
+const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
+const { convertCsvToArrayOfNumbers } = require('../../shared/string')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { createFormObject } = require('../../forms/service')
 
@@ -124,20 +125,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
 
-  // const whereMtbDetected = `
-  //   JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'MTB') IS NOT NULL
-  // `
-  const whereXdrDetected = `
-  (
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'INH') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'FLQ') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'AMK') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'KAN') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'CAP') IS NOT NULL OR
-    JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', 'ETH') IS NOT NULL
-  )
-  `
-
   return {
     drTb10AData: knex('Result as r')
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -155,8 +142,14 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       .leftJoin('ResultCategoryAssay as rca2', function () {
         this.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
       })
-      .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
-      .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+      /**
+       * better and faster to use joins with Sample/SampleType tables to get sample types for
+       * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
+       * and because of that read sample type directly from
+       * r.resultData ->> '$.customFieldData."1211".value'
+       */
+      // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+      // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
       .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
       .modify(addConstraints, dataConstraints, {
         device: 'd',
@@ -174,7 +167,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
       })
       .select(
         'r.deviceId',
-        'sp.sampleTypeId',
+        knex.raw(`r.resultData ->> '$.customFieldData."1211".value' as sampleType`),
+        knex.raw(`GROUP_CONCAT(DISTINCT r.siteId) as siteIds`),
         /**
          * Notice that we below group by `deviceId`
          * only because we need to count number of modules
@@ -184,7 +178,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           ROUND(IFNULL(dc.dailyCapacity, 12) / 2, 0) as cntModules
         `)
       )
-      .groupBy('r.deviceId', 'sp.sampleTypeId')
+      .groupBy('r.deviceId', 'sampleType')
       /**
        * get total results per each device per period
        *
@@ -763,15 +757,48 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           CONCAT(r.deviceId, '-',  r.moduleName)
         `),
 
-        cnt_Tested_by_XDR_Cartridge: counter(
-          'r.id',
-          `
-          ${assayXdr}
-          or
-          ${whereXdrDetected}
-          `
-        ),
+        cnt_Xdr_Tested_From_Eligible: counter('r.id', `${assayXdr}`),
+        /**
+         * cnt_Xdr_Total_Tests is calculated in the code
+         */
+        // cnt_Xdr_Total_Tests: --> see func `getQueryForXdrCountsByReferringSiteIds` below
       }),
+    getQueryForXdrCountsByReferringSiteIds: (siteIds, sampleType) =>
+      knex('Result as r')
+        /**
+         * use same inner joins as in main query
+         */
+        .innerJoin('Device as d', 'r.deviceId', 'd.id')
+        .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+        .innerJoin('Assay as a', 'r.assayId', 'a.id')
+        /**
+         * better and faster to use joins with Sample/SampleType tables to get sample types for
+         * 'Pulmonary` (Sputum) or 'Stool'. But now we have all Sample.sampleTypeId empty,
+         * and because of that - below we read sample type directly from
+         * r.resultData ->> '$.customFieldData."1211".value'
+         */
+        // .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
+        // .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
+        /**
+         * limit to only Xdr results
+         */
+        .where('a.id', assayIds.GxMtbXdr)
+        /**
+         * use only value of Date filter and skip all other filters and constraints
+         * applied to main query `drTb10AData` above
+         */
+        .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+        /**
+         * condition is "referringSiteId should point
+         * to our sites, but result's siteId should not be among our sites"
+         */
+        .whereIn('r.referringSiteId', siteIds)
+        .whereNotIn('r.siteId', siteIds)
+        .where(knex.raw(`r.resultData ->> '$.customFieldData."1211".value' = '${sampleType}'`))
+        .count({
+          cnt_Xdr_Total_Tests: knex.raw(`DISTINCT r.id`),
+        })
+        .first(),
   }
 }
 
@@ -791,20 +818,22 @@ async function getDataForReportDrTb10A(auth, query, options) {
     dateFrom = subMonths(dateTo, 1)
   }
 
-  const { drTb10AData } = await reportDrTb10ABaseQuery(auth, query)
+  const { drTb10AData, getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
   let data = await drTb10AData
 
   sharedResults[nameOfSharedData] = data
 
-  const sampleTypeIds = await allSampleTypeToId()
   data = await getDataForSheet1or2(
     data,
-    { userName, cell, phone, email },
-    { stateId, lgaId, siteName },
-    /**
-     * for 1st worksheet use only sample type != `Stool` (see 2nd worksheet for `Stool`)
-     */
-    sampleTypeId => sampleTypeId !== sampleTypeIds.Stool
+    { userName, cell, phone, email }, // current user props
+    { stateId, lgaId, siteName }, // props from query
+    {
+      /**
+       * 1st worksheet shows only sample type = `Pulmonary` (Sputum)
+       */
+      sampleType: 'Pulmonary',
+      getQueryForXdrCountsByReferringSiteIds,
+    }
   )
 
   return {
@@ -815,9 +844,15 @@ async function getDataForReportDrTb10A(auth, query, options) {
 }
 
 // ---------------------------------------------------------------------------
-async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { stateId, lgaId, siteName }, condition) {
+async function getDataForSheet1or2(
+  rawData,
+  { userName, cell, phone, email },
+  { stateId, lgaId, siteName },
+  { sampleType, getQueryForXdrCountsByReferringSiteIds }
+) {
   let item
   const [first] = rawData || []
+  let propNames = []
   if (first) {
     item = {
       userName,
@@ -827,11 +862,9 @@ async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { 
       devices: new Set(), // this is a temporal prop to collect distinct deviceId's
     }
     /**
-     * notice that variable `rest` below contains only counters - i.e. all keys starts with `cnt`
+     * prop names of all counters `cnt*`, i.e. all keys starting with `cnt`
      */
-    // eslint-disable-next-line no-unused-vars
-    const { deviceId, sampleTypeId, ...rest } = first
-    const propNames = _.keys(rest) // i.e. all counters `cnt*`
+    propNames = _.keys(first).filter(key => key.startsWith('cnt'))
     propNames.forEach(propName => {
       item[propName] = 0
     })
@@ -839,44 +872,75 @@ async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { 
     item = {}
   }
 
-  _.forEach(rawData, ({ deviceId, sampleTypeId, ...rest }) => {
-    if (!condition(sampleTypeId)) {
-      return
+  let allSiteIds = []
+  _.forEach(
+    rawData?.filter(it => it.sampleType === sampleType),
+    ({ deviceId, siteIds, ...rest }) => {
+      /**
+       *
+       */
+      allSiteIds = [...allSiteIds, ...convertCsvToArrayOfNumbers(siteIds)]
+      /**
+       * Increment all counters for current deviceId
+       */
+      propNames.forEach(propName => {
+        item[propName] += rest[propName]
+      })
+      /**
+       * unique deviceId's
+       */
+      item.devices.add(deviceId)
     }
-    /**
-     * --> notice that `rest` contains only counters - i.e. all keys starts with `cnt`.
-     * Increment all counters for current deviceId
-     */
-    _.keys(rest).forEach(propName => {
-      item[propName] += rest[propName]
-    })
-    /**
-     * unique deviceId's
-     */
-    item.devices.add(deviceId)
-  })
-  let data = item
+  )
+  /**
+   * unique site id's
+   */
+  allSiteIds = [...new Set(allSiteIds)]
 
+  /**
+   * cnt_Xdr_Total_Tests = cnt_Xdr_Tested_From_Eligible + (cnt_Xdr_Total_Tests from other sites)
+   */
+  item.cnt_Xdr_Total_Tests = item.cnt_Xdr_Tested_From_Eligible
+  /**
+   * get number of results from other sites which are referring sites in main query
+   */
+  if (!_.isEmpty(allSiteIds)) {
+    const it = await getQueryForXdrCountsByReferringSiteIds(allSiteIds, sampleType)
+    item.cnt_Xdr_Total_Tests += it?.cnt_Xdr_Total_Tests || 0
+  }
+
+  let data = item
   if (_.isNil(data)) data = {}
   /**
    * set `cntDevices` and remove temporal prop `devices`
    */
   if (!_.isEmpty(data)) {
-    data.cntDevices = item.devices.size
+    data.cntDevices = item.devices?.size || 0
   }
   delete data.devices
   /**
    * additional props
    */
   data.today = dateFormat(new Date(), 'dd-MM-yyyy')
-  data.stateName = 'All'
-  data.lgaName = 'All'
   data.siteName = siteName || 'All'
-  if (stateId) {
-    ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
-  }
-  if (lgaId) {
-    ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
+  if (siteName) {
+    ;[{ lgaName: data.lgaName, stateName: data.stateName }] = await knex('Site as s')
+      .innerJoin('Geography as g', 's.geographyId', 'g.id')
+      .leftJoin('State as st', 'g.stateId', 'st.id')
+      .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+      .where('s.name', 'like', `%${siteName}%`)
+      .select('l.name as lgaName', 'st.name as stateName')
+    data.stateName = data.stateName || '?'
+    data.lgaName = data.lgaName || '?'
+  } else {
+    data.stateName = 'All'
+    data.lgaName = 'All'
+    if (stateId) {
+      ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
+    }
+    if (lgaId) {
+      ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
+    }
   }
   return data
 }
@@ -885,21 +949,23 @@ async function getDataForSheet1or2(rawData, { userName, cell, phone, email }, { 
 async function getDataForReportDrTb10AStool(auth, query, options) {
   const { sharedResults, useNamedData } = options
 
+  const { getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
   let data = sharedResults[useNamedData]
 
   const { stateId, lgaId, siteName } = query
   const { userName, cell, phone, email } = await getUser(auth.credentials.name)
 
-  const sampleTypeIds = await allSampleTypeToId()
-
   data = await getDataForSheet1or2(
     data,
-    { userName, cell, phone, email },
-    { stateId, lgaId, siteName },
-    /**
-     * for 2nd worksheet use only sample type `Stool`
-     */
-    sampleTypeId => sampleTypeId === sampleTypeIds.Stool
+    { userName, cell, phone, email }, // current user props
+    { stateId, lgaId, siteName }, // props from query
+    {
+      /**
+       * 2nd worksheet shows only sample type `Stool`
+       */
+      sampleType: 'Stool',
+      getQueryForXdrCountsByReferringSiteIds,
+    }
   )
 
   return {
@@ -927,22 +993,48 @@ async function getDataForReportDrTb10B(auth, query) {
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
-  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
-  const checkResistance = (resistance, key) => `CASE
-          WHEN JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
-          THEN 'X'
-          ELSE ' '
-          END as ${key}
-       `
-  const data = await knex('Result as r')
+  /**
+   * old func `checkResistance`
+   */
+  // const checkResistance = (resistance, key) => `CASE
+  //         WHEN JSON_SEARCH(r.resultData ->> '$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
+  //         THEN 'X'
+  //         ELSE ' '
+  //         END as ${key}
+  //      `
+  const checkResistance = (resistance, key) => `
+    CASE
+      WHEN r.resultData->>'$.allResistances.${resistance}' = 'Detected'
+        THEN 
+          CASE
+          WHEN r.resultData->>'$.resultText' LIKE '%High ${resistance} Resistance @label_result_detected%'
+            THEN 'High ${resistance} Resistance Detected'
+          WHEN r.resultData->>'$.resultText' LIKE '%Very Low ${resistance} Resistance @label_result_detected%'
+            THEN 'Very Low ${resistance} Resistance Detected'
+          WHEN r.resultData->>'$.resultText' LIKE '%Low ${resistance} Resistance @label_result_detected%'
+            THEN 'Low ${resistance} Resistance Detected'
+          ELSE '${resistance} Resistance Detected'
+          END
+      WHEN r.resultData->>'$.allResistances.${resistance}' = 'NotDetected'
+        THEN '${resistance} Resistance Not Detected'
+      WHEN r.resultData->>'$.allResistances.${resistance}' = 'Indeterminate'
+        THEN '${resistance} Resistance Indeterminate'
+      ELSE ' '
+    END as ${key}
+    `
+  const dataQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+    .leftOuterJoin('Site as rs', 'r.referringSiteId', 'rs.id')
     // scope Mtb and Mtb-Ultra assays
     .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
+    .where(queryBuilder => {
+      queryBuilder.where('a.id', assayIds.GxMtbRif).orWhere('rc2.externalId', 'Detected')
+    })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
@@ -960,9 +1052,8 @@ async function getDataForReportDrTb10B(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
-    .whereIn('r.resultCategory1', positiveResultCategories) // MTB Detected
-    .whereIn('r.resultCategory2', positiveResultCategories) // RIF Detected
     .select(
+      'r.endedOn as dateOfDiagnosis',
       knex.raw(
         `COALESCE(
           r.patientData ->> '$.PatientName',
@@ -975,9 +1066,52 @@ async function getDataForReportDrTb10B(auth, query) {
           r.patientData ->> '$.age'
         ) as patientAge`
       ),
-      knex.raw(`r.patientData ->> '$.TypeOfPatient' as patientType`),
-      knex.raw(`r.patientData ->> '$.SampleType' as sampleType`),
+      knex.raw(`
+      CASE WHEN r.patientData->>'$.TypeOfPatient' = 'Failures of Category I' THEN '1'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Failures of Retreatment' THEN '2'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Non converters of Category I' THEN '3'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Non converters of Retreatment' THEN '4'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Relapses' AND r.patientData->>'$.PatientRetreatment' = 'Category I' THEN '5a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Relapses' AND r.patientData->>'$.PatientRetreatment' = 'Retreatment' THEN '5b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Treatment after loss to follow up' AND r.patientData->>'$.PatientRetreatment' = 'Category I' THEN '6a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Treatment after loss to follow up' AND r.patientData->>'$.PatientRetreatment' = 'Retreatment' THEN '6b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Close contacts of DR TB patient with symptoms' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '7a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Close contacts of DR TB patient with symptoms' AND r.patientData->>'$.PatientHistory' = 'New' THEN '7b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Close contacts of DR TB patient with symptoms' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '7c'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'HIV infected person, with TB S/S' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '8a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'HIV infected person, with TB S/S' AND r.patientData->>'$.PatientHistory' = 'New' THEN '8b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'HIV infected person, with TB S/S' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '8c'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, clinically diagnosed' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '9ia'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, clinically diagnosed' AND r.patientData->>'$.PatientHistory' = 'New' THEN '9ib'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, clinically diagnosed' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '9ic'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Extra Pulmonary' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '9iia'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Extra Pulmonary' AND r.patientData->>'$.PatientHistory' = 'New' THEN '9iib'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Extra Pulmonary' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '9iic'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, Bacteriologically Confirmed' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '9iiia'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Others - Pulmonary, Bacteriologically Confirmed' AND r.patientData->>'$.PatientHistory' = 'New' THEN '9iiib'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive Pulmonary Smear Negative TB Cases' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '10a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive Pulmonary Smear Negative TB Cases' AND r.patientData->>'$.PatientHistory' = 'New' THEN '10b'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive Pulmonary Smear Negative TB Cases' AND r.patientData->>'$.PatientHistory' = 'Previously treated' THEN '10c'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive TB' AND r.patientData->>'$.PatientHistory' = 'Unknown history' THEN '11a'
+      WHEN r.patientData->>'$.TypeOfPatient' = 'Presumptive TB' AND r.patientData->>'$.PatientHistory' = 'New' THEN '11b'
+      ELSE '-'
+      END as patientType`),
+      // knex.raw(`
+      //   CASE
+      //     WHEN r.patientData->>'$.SampleType' = 'Pulmonary' THEN 'Sputum'
+      //     WHEN r.patientData->>'$.SampleType' = 'Extra-pulmonary' THEN 'Others'
+      //     WHEN r.patientData->>'$.SampleType' = 'Stool' THEN 'Stool'
+      //     ELSE ''
+      //   END as sampleType`),
+      knex.raw(`
+        CASE
+          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Pulmonary' THEN 'Sputum'
+          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Extra-pulmonary' THEN 'Others'
+          WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Stool' THEN 'Stool'
+          ELSE ''
+        END as sampleType`),
       knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
+      knex.raw(`r.resultData ->> '$.bacterialLoad' as bacterialLoad`),
       knex.raw(`CASE WHEN a.id = ${assayIds.GxMtbXdr} THEN rc1.name ELSE '' END as mtbDetected`),
       knex.raw(
         `
@@ -1000,25 +1134,42 @@ async function getDataForReportDrTb10B(auth, query) {
       knex.raw(checkResistance('ETH', 'ethDetected')),
       knex.raw(
         `CONCAT(
-          IFNULL(r.patientData ->> '$.address', ''),
-          ' ',
-          IFNULL(
-            COALESCE(
-              r.patientData ->> '$.PatientStreet',
-              r.patientData ->> '$.street'
-            ),
-            ''
-          ),
-          ' ',
-          IFNULL(
-            COALESCE(
-              r.patientData ->> '$.PatientPhone',
-              r.patientData ->> '$.phone'
-            ),
-            ''
-          )
-        ) as patientAddressAndCell`
+            IFNULL(r.patientData ->> '$.address', ''),
+            CASE
+              WHEN 
+                IFNULL(
+                  COALESCE(
+                    r.patientData ->> '$.PatientStreet',
+                    r.patientData ->> '$.street'
+                  ),
+                '') = ''
+                OR 
+                r.patientData->>'$.address' LIKE CONCAT('%', COALESCE(r.patientData->>'$.PatientStreet', r.patientData->>'$.street'), '%')
+              THEN ''
+              ELSE CONCAT(' ', COALESCE(r.patientData->>'$.PatientStreet', r.patientData->>'$.street'))
+            END,
+            IFNULL(
+              COALESCE(
+                r.patientData->>'$.PatientPhone',
+                r.patientData->>'$.phone'
+              ), 
+              ''
+            )
+         ) as patientAddressAndCell`
       ),
+      knex.raw(`
+        CASE
+        WHEN IFNULL(rs.name, '') <> ''
+        THEN CONCAT(
+            rs.name,
+            CASE WHEN IFNULL(rs.street1, '') = '' OR rs.street1 LIKE CONCAT('%', rs.name, '%') THEN '' ELSE CONCAT('\\n', rs.street1) END,
+            CASE WHEN IFNULL(rs.street2, '') = '' THEN '' ELSE CONCAT('\\n', rs.street2) END,
+            CASE WHEN IFNULL(rs.city, '') = '' THEN '' ELSE CONCAT('\\n', rs.city) END,
+            CASE WHEN IFNULL(rs.zip, '') = '' THEN '' ELSE CONCAT('\\n', rs.zip) END
+          )
+        ELSE IFNULL(r.patientData->>'$.ReferringFacility', '')
+        END as referringAddressAndCell
+      `),
       knex.raw(
         `CONCAT(
           IFNULL(r.patientData ->> '$.TBRegistrationNumberCurrent', ''),
@@ -1031,21 +1182,22 @@ async function getDataForReportDrTb10B(auth, query) {
        * RR = MTB detected, Rif resistance detected,
        * TI = MTB detected, Rif resistance indeterminate,
        * N  = MTB not detected,
-       * I = invalid/ no result/ error
+       * I = Invalid/ no result/ error
        */
       knex.raw(`
           CASE WHEN a.id IN (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})
           THEN 
             (CASE
-              WHEN r.resultCategory1 IN (${positiveResultCategories})
+              WHEN r.resultCategory1 = ${resultCategoryIds.Detected}
                     AND
                     r.resultCategory2 = ${resultCategoryIds.NotDetected} THEN 'T'
-              WHEN r.resultCategory1 IN (${positiveResultCategories})
+              WHEN r.resultCategory1 = ${resultCategoryIds.Detected}
                     AND
-                    r.resultCategory2 IN (${positiveResultCategories}) THEN 'RR'
-              WHEN r.resultCategory1 IN (${positiveResultCategories})
+                    r.resultCategory2 = ${resultCategoryIds.Detected} THEN 'RR'
+              WHEN r.resultCategory1 = ${resultCategoryIds.Detected}
                     AND
                     r.resultCategory2 = ${resultCategoryIds.Indeterminate} THEN 'TI'
+              WHEN r.resultCategory1 = ${resultCategoryIds['Trace Detected']} THEN 'TT'
               WHEN r.resultCategory1 = ${resultCategoryIds.NotDetected} THEN 'N'
               WHEN r.resultCategory1 IN (
                       ${resultCategoryIds.Invalid},
@@ -1058,6 +1210,7 @@ async function getDataForReportDrTb10B(auth, query) {
           END as resultMtbRif
       `)
     )
+  const data = await dataQuery
 
   return {
     ok: true,

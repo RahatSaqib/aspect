@@ -10,6 +10,9 @@ inputs:
   dbpassword:
     description: "The root password for the DB"
     required: true
+  dbseedfolder:
+    description: "The seed folder name for the DB"
+    required: true
   TWILIOACCOUNTSID:
     description: "TWILIOACCOUNTSID"
     required: true
@@ -55,6 +58,7 @@ runs:
         echo encryption.initVector=${{ inputs.ENCRYPTIONINITVECTOR }} >> ./api/.env
         echo pushNotification.testDeviceTokenId=${{ inputs.PUSHNOTIFICATIONTESTDEVICETOKENID }} >> ./api/.env
         echo firebase.serverKey=${{ inputs.FIREBASESERVERKEY }} >> ./api/.env
+        echo seeds.directory='${{ inputs.dbseedfolder }}' >> ./api/.env
 
         echo db.connectionLimit=100 >> ./api/.env
         echo db.host=localhost >> ./api/.env
@@ -64,7 +68,6 @@ runs:
         echo gxAlertApi=https://admin.gxalert.com/api >> ./api/.env
         echo file.reference.directory='./files' >> ./api/.env
         echo amqp.url=amqp://localhost >> ./api/.env
-        echo seeds.directory='./seeds/test/' >> ./api/.env
         echo seeds.resultMultiplier=2 >> ./api/.env
         echo email.host='smtp.sendgrid.net' >> ./api/.env
         echo email.port=2525 >> ./api/.env

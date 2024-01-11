@@ -4,35 +4,38 @@ const {
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 
 module.exports = require('../utils').seed(async knex => {
-  const { id: xdrAssayId } = await knex('Assay').where('externalId', 'GxMtbXdr').first('id')
+  const assay = await knex('Assay').where('externalId', 'GxMtbXdr')
 
-  /**
-   * get all MTB-XDR results
-   */
-  const results = await knex('Result')
-    .where('assayId', xdrAssayId)
-    .whereNotNull('resultData')
-    .select('id', 'resultData')
-  await Promise.each(results, async result => {
-    let resultData
-    try {
-      resultData = JSON.parse(result.resultData)
-    } catch {
-      return
-    }
-    const { resultText } = resultData
-    if (!resultText) return
+  if (assay && assay.id) {
+    const { id: xdrAssayId } = assay
     /**
-     * for getting `detectedResistance` and `allResistances` do the same as in
-     * func `preProcessMergeResult(...)` in file `api/src/plugin/deviceType/gxUtils.js`
+     * get all MTB-XDR results
      */
-    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(resultText)
-    resultData = { ...resultData, detectedResistance, allResistances }
+    const results = await knex('Result')
+      .where('assayId', xdrAssayId)
+      .whereNotNull('resultData')
+      .select('id', 'resultData')
+    await Promise.each(results, async result => {
+      let resultData
+      try {
+        resultData = JSON.parse(result.resultData)
+      } catch {
+        return
+      }
+      const { resultText } = resultData
+      if (!resultText) return
+      /**
+       * for getting `detectedResistance` and `allResistances` do the same as in
+       * func `preProcessMergeResult(...)` in file `api/src/plugin/deviceType/gxUtils.js`
+       */
+      const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(resultText)
+      resultData = { ...resultData, detectedResistance, allResistances }
 
-    await knex('Result')
-      .update({
-        resultData: JSON.stringify(resultData),
-      })
-      .where('id', result.id)
-  })
+      await knex('Result')
+        .update({
+          resultData: JSON.stringify(resultData),
+        })
+        .where('id', result.id)
+    })
+  }
 }, __filename)

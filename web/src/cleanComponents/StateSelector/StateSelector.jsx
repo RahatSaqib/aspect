@@ -1,19 +1,21 @@
 import React, { useEffect, useState } from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { FormControl, InputLabel, MenuItem, Select, IconButton } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { Loading } from '..'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
+import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage, commonDefinitions as messages } from '../../messages'
-import { useAuthState } from '../../providers/AuthProvider'
 
 const StateSelector = ({ filter, onChange }) => {
   const { countryId } = useAuthState()
   const { data, isLoading } = useStatesByCountry({ countryId })
   const [innerValue, setInnerValue] = useState('')
   const user = useAuthState()
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
-    setInnerValue(filter?.stateId)
+    setInnerValue(filter?.stateId ?? '')
   }, [filter])
 
   const manageValue = val => {
@@ -31,11 +33,11 @@ const StateSelector = ({ filter, onChange }) => {
   ) : (
     <FormControl sx={{ width: '100%' }} variant="standard" size="small">
       {innerValue === undefined ? (
-        <InputLabel id="select-state">{getCustomMessage(messages, 'state', user)}</InputLabel>
+        <InputLabel id="select-state">{getCustomMessage(formatMessage, messages, 'state', user)}</InputLabel>
       ) : null}
       <Select
         labelId="select-state"
-        label={innerValue !== undefined ? getCustomMessage(messages, 'state', user) : ''}
+        label={innerValue !== undefined ? getCustomMessage(formatMessage, messages, 'state', user) : ''}
         value={innerValue}
         onChange={e => manageValue(e.target.value)}
         displayEmpty

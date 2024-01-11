@@ -186,9 +186,9 @@ const messages = {
       id: 'p.PkDashboard.rrtbNationalDiagnosisTrendsTitle',
       defaultMessage: 'National Rifampicin Resistance Diagnosis Trends',
     },
-    RRToTbTotalPercentage: {
-      id: 'p.PkDashboard.RRToTbTotalPercentage',
-      defaultMessage: 'RR To Tb Total Percentage',
+    rrToMtbPercentage: {
+      id: 'p.PkDashboard.rrToMtbPercentage',
+      defaultMessage: 'RR+ percentage of MTB+',
     },
     TbTotal: {
       id: 'p.PkDashboard.TbTotal',
@@ -196,7 +196,11 @@ const messages = {
     },
     rrDetected: {
       id: 'p.PkDashboard.rrDetected',
-      defaultMessage: 'RR Detected',
+      defaultMessage: 'RR+',
+    },
+    testsPerformed: {
+      id: 'p.PkDashboard.testsPerformed',
+      defaultMessage: 'Tests Performed',
     },
     provincialRRDiagnosisTrends: {
       id: 'p.PkDashboard.provincialRRDiagnosisTrends',
@@ -298,6 +302,10 @@ const messages = {
       id: 'p.PkDashboard.fqInhTestingDiagnosis',
       defaultMessage: 'FQ & INH Testing & Diagnosis',
     },
+    dataVisualisationForXDR: {
+      id: 'p.PkDashboard.dataVisualisationForXDR',
+      defaultMessage: 'Data Visualisation for XDR Resistance',
+    },
     CurrentFQDetection: {
       id: 'p.PkDashboard.CurrentFQDetection',
       defaultMessage: 'Current FQ Detection',
@@ -331,6 +339,12 @@ const messages = {
     },
     noAssociatedState: { id: 'p.PkDashboard.noAssociatedState', defaultMessage: 'No Associated State' },
     noAssociatedLga: { id: 'p.PkDashboard.noAssociatedLga', defaultMessage: 'No Associated LGA' },
+
+    showLineFor: { id: 'p.PkDashboard.showLineFor', defaultMessage: 'Show line for' },
+    dataVisualisationForXDRResistanceGraphTitle: {
+      id: 'p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle',
+      defaultMessage: 'Data Visualisation For XDR Resistance Over Time',
+    },
   }),
 }
 
