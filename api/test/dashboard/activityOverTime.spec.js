@@ -124,7 +124,6 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
         externalId: `UQTB-${_.times(8, () => _.toUpper(_.random(36).toString(36))).join('')}`,
         assayId: assayGeneXpertMtbRif.id,
         partnerId,
-        geographyId,
         siteId,
         reportableSiteId: sample.originSiteId || siteId,
         deviceId,

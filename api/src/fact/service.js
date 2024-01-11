@@ -440,6 +440,7 @@ async function onFactNewResultsAvailableCheck(action, { messageContext }) {
     // get sample origin sites that have new results in last 24 hours
     // TODO: Enable Issues for persons. Currently triggering a notification for every origin site. That means people who have access to more than one site will receive a separate notification for each site.
     const sites = await knex('Result as r')
+      .leftJoin('Site as s', 'r.siteId', 's.id')
       .innerJoin('Sample as sa', 'r.sampleId', 'sa.id')
       .innerJoin('Site as si', 'sa.originSiteId', 'si.id')
       .innerJoin('ResultType as rt', 'r.resultTypeId', 'rt.id')
@@ -451,7 +452,7 @@ async function onFactNewResultsAvailableCheck(action, { messageContext }) {
       .select(
         knex.raw('si.id as siteId'),
         knex.raw('coalesce(r.partnerId, si.partnerId) as partnerId'),
-        knex.raw('coalesce(r.geographyId, si.geographyId) as geographyId')
+        knex.raw('coalesce(s.geographyId, si.geographyId) as geographyId')
       )
       .count('r.id as numberOfResults')
       .having(knex.raw('count(r.id) > 0'))

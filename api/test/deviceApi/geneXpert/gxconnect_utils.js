@@ -363,7 +363,6 @@ class GxConnectApiTestContext {
           externalId: `someresult-${randomNumber}`,
           assayId: assay.id,
           partnerId,
-          geographyId: this.site.geographyId,
           siteId: this.site.id,
           reportableSiteId: this.site.id,
           deviceId: this.device.id,
@@ -394,6 +393,7 @@ class GxConnectApiTestContext {
     return run(async knex => {
       const resultDetails = await knex('DeviceLog as dl')
         .join('Result as r', 'dl.resultId', 'r.id')
+        .leftJoin('Site as si', 'r.siteId', 'si.id')
         .leftJoin('ResultWorkflowLog as rwsl', 'r.resultWorkflowStatusLogId', 'rwsl.id')
         .leftJoin('ResultWorkflowStatus as rws', 'rwsl.resultWorkflowStatusId', 'rws.id')
         .leftJoin('Assay as a', 'r.assayId', 'a.id')
@@ -410,7 +410,7 @@ class GxConnectApiTestContext {
           'r.externalId',
           'r.deviceId',
           'r.siteId',
-          'r.geographyId',
+          'si.geographyId',
           'r.latitude',
           'r.longitude',
           'a.externalId as assay',

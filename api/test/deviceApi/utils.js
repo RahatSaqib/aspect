@@ -282,7 +282,6 @@ async function createResult(
     externalId,
     assayId,
     partnerId,
-    geographyId,
     siteId,
     deviceId,
     resultSourceId,

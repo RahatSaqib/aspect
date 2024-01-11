@@ -389,7 +389,6 @@ async function seed(knex) {
                 externalId: `UQTB-${i}`,
                 assayId: assays.GxMtbRif.id,
                 partnerId,
-                geographyId: siteData.geographyId,
                 siteId: siteData.id,
                 deviceId: device.id,
                 longitude: siteData.latitude,

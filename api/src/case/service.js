@@ -99,7 +99,8 @@ async function getCases({ query, auth }) {
   const casesQuery = knex('PatientCase as cs')
     .innerJoin(lastResults, 'cs.id', 'lr.caseId')
     .innerJoin('Result as r', 'lr.lastResultId', 'r.id')
-    .innerJoin('Geography as g', 'r.geographyId', 'g.id')
+    .innerJoin('Site as sit', 'r.siteId', 'sit.id')
+    .innerJoin('Geography as g', 'sit.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
@@ -205,7 +206,8 @@ async function getAutoCompleteCases({ auth, query }) {
 
   const casesQuery = knex('PatientCase as ca')
     .innerJoin('Result as r', 'ca.id', 'r.patientCaseId')
-    .innerJoin('Geography as g', 'r.geographyId', 'g.id')
+    .innerJoin('Site as s', 'r.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .modify(addPartnerQueryConstraints, { constraints, caseAlias: 'ca' })
     .modify((queryBuilder, params) => {

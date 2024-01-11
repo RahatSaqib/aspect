@@ -508,7 +508,6 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     externalId: payload.id,
     deviceId,
     partnerId: site.partnerId,
-    geographyId: site.geographyId,
     siteId: site.id,
     createdOn: now,
     ...result,

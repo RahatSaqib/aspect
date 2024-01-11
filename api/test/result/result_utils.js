@@ -100,7 +100,6 @@ async function createResult(
     externalId: `COVID-${randomNumber}`,
     assayId: assay.id,
     partnerId,
-    geographyId: site.geographyId,
     siteId: site.id,
     reportableSiteId: site.id,
     deviceId: device.id,

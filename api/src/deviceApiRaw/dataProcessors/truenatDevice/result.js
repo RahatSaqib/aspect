@@ -165,7 +165,6 @@ class TruenatResult extends SynchronousDataProcessor {
         const resultText = (finalResult || '').trim() === '' ? ctResult3 : finalResult.trim()
         const newResultDetails = {
           partnerId,
-          geographyId,
           siteId,
           deviceId,
           assayId: assay.id,

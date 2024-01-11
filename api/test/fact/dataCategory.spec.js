@@ -205,7 +205,6 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
             externalId: `Test-${i}`,
             assayId: assayGeneXpertMtbRifId,
             partnerId,
-            geographyId,
             siteId, // new site
             deviceId, // new device
             resultSourceId,

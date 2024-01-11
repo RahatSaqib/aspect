@@ -423,9 +423,6 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             resultRecord.senderOperator =
               testResultAnalysis.Creator || testResultAnalysis.Analyst || testResultAnalysis.Verificators
           }
-          if (!resultRecord.geographyId) {
-            resultRecord.geographyId = geographyId
-          }
           if (!resultRecord.siteId) {
             resultRecord.siteId = siteId
           }
