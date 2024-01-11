@@ -993,6 +993,8 @@ async function getDataForReportDrTb10B(auth, query) {
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
+  const resistances = ['CAP', 'MTB', 'FLQ', 'AMK', 'KAN', 'INH', 'ETH']
+
   /**
    * old func `checkResistance`
    */
@@ -1019,7 +1021,7 @@ async function getDataForReportDrTb10B(auth, query) {
         THEN '${resistance} Resistance Not Detected'
       WHEN r.resultData->>'$.allResistances.${resistance}' = 'Indeterminate'
         THEN '${resistance} Resistance Indeterminate'
-      ELSE null
+      ELSE ' '
     END as ${key}
     `
   const dataQuery = knex('Result as r')
@@ -1210,13 +1212,11 @@ async function getDataForReportDrTb10B(auth, query) {
           END as resultMtbRif
       `)
     )
-    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.CAP"'))
-    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.MTB"'))
-    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.FLQ"'))
-    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.AMK"'))
-    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.KAN"'))
-    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.CAP"'))
-    .whereNotNull(knex.raw('r.resultData->>"$.allResistances.ETH"'))
+    .where(builder => {
+      resistances.forEach(resistance => {
+        builder.orWhere(knex.raw(`r.resultData->>"$.allResistances.${resistance}" = "Detected"`))
+      })
+    })
 
   const data = await dataQuery
 
