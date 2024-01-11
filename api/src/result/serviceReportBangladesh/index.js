@@ -922,14 +922,25 @@ async function getDataForSheet1or2(
    * additional props
    */
   data.today = dateFormat(new Date(), 'dd-MM-yyyy')
-  data.stateName = 'All'
-  data.lgaName = 'All'
   data.siteName = siteName || 'All'
-  if (stateId) {
-    ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
-  }
-  if (lgaId) {
-    ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
+  if (siteName) {
+    ;[{ lgaName: data.lgaName, stateName: data.stateName }] = await knex('Site as s')
+      .innerJoin('Geography as g', 's.geographyId', 'g.id')
+      .leftJoin('State as st', 'g.stateId', 'st.id')
+      .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+      .where('s.name', 'like', `%${siteName}%`)
+      .select('l.name as lgaName', 'st.name as stateName')
+    data.stateName = data.stateName || '?'
+    data.lgaName = data.lgaName || '?'
+  } else {
+    data.stateName = 'All'
+    data.lgaName = 'All'
+    if (stateId) {
+      ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
+    }
+    if (lgaId) {
+      ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
+    }
   }
   return data
 }
