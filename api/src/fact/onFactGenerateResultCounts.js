@@ -30,7 +30,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
   return messageContext.transact(async knex => {
     const now = new Date()
 
-    const { timeZone: timeZoneIANA } = await knex('Device as d')
+    const timeZoneData = await knex('Device as d')
       .join('Site as s', 's.id', 'd.siteId')
       .join('Geography as g', 'g.id', 's.geographyId')
       .join('Country as c', 'c.id', 'g.countryId')
@@ -39,10 +39,11 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
       .where('d.id', deviceId)
 
     // calculate by device - make sure it still exists
-    const device = await knex('Device').where({ id: deviceId }).first('deviceId')
-    if (!device) {
+    if (!timeZoneData) {
       return
     }
+
+    const { timeZone: timeZoneIANA } = timeZoneData
 
     await messageContext.initDictionaryTables()
 
