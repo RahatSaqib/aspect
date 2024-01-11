@@ -234,6 +234,49 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           `
         ),
 
+        cnt_Presumptive_DR_TB_Cases_Invalid_Mtb: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Invalid}
+           and
+           ${assayMtb}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_Invalid_Xdr: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Invalid}
+           and
+           ${assayXdr}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_NoResult_Mtb: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.NoResult}
+           and
+           ${assayMtb}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_NoResult_Xdr: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.NoResult}
+           and
+           ${assayXdr}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_Error_Mtb: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Error}
+           and
+           ${assayMtb}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_Error_Xdr: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Error}
+           and
+           ${assayXdr}
+          `
+        ),
+
         cnt_Presumptive_DR_TB_Cases_Invalid: inTypeOfPatient(
           presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Invalid}`
