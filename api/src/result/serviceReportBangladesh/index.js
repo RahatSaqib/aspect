@@ -10,6 +10,7 @@ const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary
 const { convertCsvToArrayOfNumbers } = require('../../shared/string')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { createFormObject } = require('../../forms/service')
+const { XDR_RESISTANCES } = require('../../shared/constants')
 
 /**
  * **************************************
@@ -993,7 +994,6 @@ async function getDataForReportDrTb10B(auth, query) {
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
-  const resistances = ['CAP', 'MTB', 'FLQ', 'AMK', 'KAN', 'INH', 'ETH']
 
   /**
    * old func `checkResistance`
@@ -1213,7 +1213,7 @@ async function getDataForReportDrTb10B(auth, query) {
       `)
     )
     .where(builder => {
-      resistances.forEach(resistance => {
+      XDR_RESISTANCES.forEach(resistance => {
         builder.orWhere(knex.raw(`r.resultData->>"$.allResistances.${resistance}" = "Detected"`))
       })
     })
