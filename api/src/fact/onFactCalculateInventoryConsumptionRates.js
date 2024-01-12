@@ -9,7 +9,7 @@ async function onFactCalculateInventoryConsumptionRates(action, { messageContext
 
     // loop through all sites/consumables and refresh rate
     return Promise.map(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId), {
-      concurrency: 10,
+      concurrency: 5,
     })
   })
 }
@@ -23,7 +23,7 @@ async function onFactCalculateInventoryConsumptionRates(action, { messageContext
 async function refreshConsumptionRates(knex, siteId, consumableId) {
   const updatedOn = new Date()
   const consumptionTotals = await getConsumptions(knex, siteId, consumableId)
-  await Promise.map(consumptionTotals, async consumptionTotal => {
+  await Promise.each(consumptionTotals, async consumptionTotal => {
     const factInventoryConsumptionRate = await knex('FactInventoryConsumptionRate')
       .where({ siteId, consumableId, days: consumptionTotal.days })
       .first()
