@@ -39,7 +39,7 @@ const getLinkedResults = (dataConstraints, query) => {
       queryBuilder.on('rca2.resultCategoryId', 'r.resultCategory2').andOn('rca2.assayId', 'r.assayId')
     })
     .where('Sample.registeredInAspect', 1)
-    .whereBetween('r.endedOn', [minDate, maxDate])
+    .whereRaw('IFNULL(??, ??) BETWEEN ? AND ?', ['r.endedOn', 'r.startedOn', minDate, maxDate])
     .modify(addConstraints, dataConstraints, {
       geography: 'g',
       site: 's',
