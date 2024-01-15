@@ -3,7 +3,6 @@ const isNil = require('lodash/isNil')
 const types = {
   FACT_GENERATE_DEVICE_CONNECTIVITY: 'FACT_GENERATE_DEVICE_CONNECTIVITY',
   FACT_GENERATE_RESULT_COUNTS: 'FACT_GENERATE_RESULT_COUNTS',
-  FACT_RESULTS_DEVICE_BY_TIMEFRAME: 'FACT_RESULTS_DEVICE_BY_TIMEFRAME',
   FACT_CHECK_INVENTORY_STOCK: 'FACT_CHECK_INVENTORY_STOCK',
   FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES: 'FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES',
   // for DataCategoryLow issue types
@@ -49,14 +48,6 @@ function factGenerateDeviceConnectivity(deviceId, options) {
 function factGenerateResultCounts(deviceId, options) {
   return {
     type: types.FACT_GENERATE_RESULT_COUNTS,
-    deviceId,
-    options,
-  }
-}
-
-function factResultsDeviceByTimeFrame(deviceId, options) {
-  return {
-    type: types.FACT_RESULTS_DEVICE_BY_TIMEFRAME,
     deviceId,
     options,
   }
@@ -199,7 +190,6 @@ module.exports = {
   types,
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
-  factResultsDeviceByTimeFrame,
   factCheckInventoryStock,
   factCalculateInventoryConsumptionRates,
   factDataCategoryLowCheck,

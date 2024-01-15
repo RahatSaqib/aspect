@@ -7,21 +7,14 @@ const { deviceApprovalToId } = require('../../src/shared/dictionary')
 
 const now = new Date()
 async function seed(knex) {
-  const { partnerId, labGeographyId, labSiteId, labName, labExternalId } = await knex('Partner as p')
+  const { partnerId, labSiteId, labName, labExternalId } = await knex('Partner as p')
     .join('Device as d', 'p.id', 'd.partnerId')
     .join('Site as s', 's.id', 'd.siteId')
     .join('Geography as g', 's.geographyId', 's.geographyId')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('p.name', 'Partner One')
     .andWhere('c.abbreviation', 'US')
-    .first(
-      'd.partnerId',
-      's.geographyId as labGeographyId',
-      'd.siteId as labSiteId',
-      's.name as labName',
-      's.externalId as labExternalId',
-      'g.countryId'
-    )
+    .first('d.partnerId', 'd.siteId as labSiteId', 's.name as labName', 's.externalId as labExternalId', 'g.countryId')
 
   const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
   const auditFields = {
@@ -60,7 +53,6 @@ async function seed(knex) {
         deviceTypeId: covidDeviceType.id,
         deviceApprovalId: deviceApprovalApprovedId,
         partnerId,
-        geographyId: labGeographyId,
         siteId: labSiteId,
         defaultReportableSiteId: labSiteId,
         ...auditFields,

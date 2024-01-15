@@ -4,15 +4,14 @@ const {
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 
 module.exports = require('../utils').seed(async knex => {
-  const assay = await knex('Assay').where('externalId', 'GxMtbXdr')
+  const xdrAssay = await knex('Assay').where('externalId', 'GxMtbXdr').first('id')
 
-  if (assay && assay.id) {
-    const { id: xdrAssayId } = assay
+  if (xdrAssay) {
     /**
      * get all MTB-XDR results
      */
     const results = await knex('Result')
-      .where('assayId', xdrAssayId)
+      .where('assayId', xdrAssay.id)
       .whereNotNull('resultData')
       .select('id', 'resultData')
     await Promise.each(results, async result => {

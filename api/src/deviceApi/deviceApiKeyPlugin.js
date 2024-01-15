@@ -105,7 +105,7 @@ async function authToken(token) {
 
   const scope = ['deviceApi']
   const name = `(${key.keyId}) ${key.deviceName || ''}`.trim()
-  const credentials = { token, scope, name }
+  const credentials = { token, scope, name, keyId: key.keyId }
   return credentials
 }
 
