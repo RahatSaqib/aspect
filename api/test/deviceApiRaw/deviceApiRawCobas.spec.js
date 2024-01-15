@@ -54,7 +54,6 @@ describe('Device API Raw routes for cobas', () => {
       ;[deviceId] = await knex('Device').insert({
         partnerId: partner.id,
         siteId,
-        geographyId: geography.id,
         deviceTypeId: cobasDeviceType.id,
         deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceApprovalId: approvedDeviceApproval.id,

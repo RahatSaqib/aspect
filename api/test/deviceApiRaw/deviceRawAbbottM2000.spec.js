@@ -61,7 +61,6 @@ describe('Device API Raw routes for Abbott M2000', () => {
     ;[abbottM2000DeviceId] = await knex('Device').insert({
       partnerId: partner.id,
       siteId: abbottM2000SiteId,
-      geographyId: geography.id,
       deviceTypeId: abbottM2000DeviceType.id,
       deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
       deviceApprovalId: approvedDeviceApproval.id,

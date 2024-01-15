@@ -27,7 +27,6 @@ async function seed(knex) {
 
   const devicePayload = {
     partnerId,
-    geographyId,
     deviceApprovalId: await deviceApprovalToId('approved'),
     name,
     shortName: name,

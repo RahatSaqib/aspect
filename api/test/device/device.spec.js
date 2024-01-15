@@ -64,7 +64,8 @@ describe('Device routes', () => {
 
       const device = await knex('Device as d')
         .join('Partner as p', 'd.partnerId', 'p.id')
-        .join('Geography as g', 'g.id', 'd.geographyId')
+        .join('Site as s', 'd.siteId', 's.id')
+        .join('Geography as g', 's.geographyId', 'g.id')
         .join('Country as c', 'c.id', 'g.countryId')
         .where('p.name', 'Partner One')
         .where('c.abbreviation', 'US')

@@ -30,7 +30,8 @@ const beforeEachForPerson = async (personName, resultInItsGeography = true, resu
   const { id: resultId } = _.pick(
     await knex('Result as r')
       .join('Device as d', 'r.deviceId', 'd.id')
-      .join('Geography as g', 'g.id', 'd.geographyId')
+      .join('Site as s', 'd.siteId', 's.id')
+      .join('Geography as g', 's.geographyId', 'g.id')
       .where(builder => {
         builder.where('g.countryId', person.countryId)
         const operator = resultInItsGeography ? '=' : '<>'

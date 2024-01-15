@@ -19,14 +19,13 @@ async function seed(knex) {
     // temporary skip devices without Deployment Name (Site) provided!
     _.filter(devices, device => device.deploymentName),
     async device => {
-      const { siteId, geographyId } = await getSiteAndGeography(knex, device, defaultGeographyId, partnerId)
+      const { siteId } = await getSiteId(knex, device, defaultGeographyId, partnerId)
       const device4save = {
         name: device.deploymentName ? `${device.deploymentName} - ${device.router}` : device.router,
         shortName: device.deploymentName,
         deviceTypeId,
         deviceApprovalId,
         partnerId,
-        geographyId,
         siteId,
       }
       const [deviceId] = await knex('Device').insert(device4save)
@@ -84,13 +83,13 @@ const insertSite = async (knex, device, defaultGeographyId, partnerId) => {
   return siteId
 }
 
-const getSiteAndGeography = async (knex, device, defaultGeographyId, partnerId) => {
+const getSiteId = async (knex, device, defaultGeographyId, partnerId) => {
   const row = await knex('Site').where('name', device.deploymentName).first()
   if (!row) {
     const siteId = await insertSite(knex, device, defaultGeographyId, partnerId)
-    return { siteId, geographyId: defaultGeographyId }
+    return { siteId }
   }
-  return { siteId: row.id, geographyId: row.geographyId }
+  return { siteId: row.id }
 }
 
 const getPartnerId = async knex => {

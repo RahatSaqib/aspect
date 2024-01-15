@@ -17,13 +17,6 @@ module.exports = require('../utils').seed(async knex => {
 
   const { partnerId } = await knex('Partner').where('externalId', partnerExternalId).first('id as partnerId')
 
-  const { geographyId } = await knex('Geography as g')
-    .join('Country as c', 'c.id', 'g.countryId')
-    .whereNull('stateId')
-    .whereNull('lgaId')
-    .where({ 'c.abbreviation': 'PK' })
-    .first('g.id as geographyId')
-
   const deviceTypeCategoryInformationSystem = await deviceTypeCategoryToId('Information System')
   const [deviceTypeId] = await knex('DeviceType').insert({
     externalId: 'APIConsumer',
@@ -37,7 +30,6 @@ module.exports = require('../utils').seed(async knex => {
     name: 'API Consumer',
     deviceApprovalId: await deviceApprovalToId('approved'),
     partnerId,
-    geographyId,
     siteId: null,
     lastPingOn: new Date(),
     lastSeenOn: new Date(),

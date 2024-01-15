@@ -188,7 +188,6 @@ async function seed(knex) {
                 .first('d.*')) || {}
             if (_.isEmpty(deviceData)) {
               deviceData.partnerId = partnerId
-              deviceData.geographyId = siteData.geographyId
               deviceData.siteId = siteData.id
               deviceData.deviceApprovalId = approvedDeviceApprovalId
               deviceData.name = device.name

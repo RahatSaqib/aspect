@@ -65,7 +65,6 @@ async function createResult(
     })
     const [deviceId] = await knex('Device').insert({
       partnerId,
-      geographyId,
       siteId,
       defaultReportableSiteId: siteId,
       deviceTypeId: await deviceTypeToId(deviceTypeExternalId),

@@ -57,9 +57,7 @@ async function getOrCreateDevice(knex, payload, gxAlertDevice, now) {
   if (!countryCode) {
     ;[countryCode] = await knex('Device as d')
       .leftJoin('Site as s', 'd.siteId', 's.id')
-      .innerJoin('Geography as g', function () {
-        this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-      })
+      .leftJoin('Geography as g', 's.geographyId', 'g.id')
       .innerJoin('Country as c', 'g.countryId', 'c.id')
       .where('d.id', gxAlertDeviceId)
       .pluck('c.abbreviation')
