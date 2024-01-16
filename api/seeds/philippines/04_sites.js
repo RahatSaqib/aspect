@@ -103,7 +103,6 @@ async function seed(knex) {
             .where({ partnerId: partner.id, serial: device.serial })
             .first(
               'id',
-              'geographyId',
               'siteId',
               'deviceTypeId',
               'name',
@@ -117,7 +116,6 @@ async function seed(knex) {
           if (!existingDevice) {
             await knex('Device').insert({
               partnerId: partner.id,
-              geographyId: siteGeographyId,
               siteId,
               deviceTypeId,
               deviceApprovalId: await deviceApprovalToId('approved'),
@@ -139,7 +137,6 @@ async function seed(knex) {
               deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
             }
             if (
-              existingDevice.geographyId !== siteGeographyId ||
               existingDevice.siteId !== siteId ||
               existingDevice.deviceTypeId !== deviceTypeId ||
               existingDevice.name !== device.name ||
@@ -152,7 +149,6 @@ async function seed(knex) {
               await knex('Device')
                 .where('id', existingDevice.id)
                 .update({
-                  geographyId: siteGeographyId,
                   siteId,
                   deviceTypeId: await deviceTypeToId(device.deviceType),
                   name: device.name,

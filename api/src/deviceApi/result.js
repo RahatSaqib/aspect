@@ -816,7 +816,8 @@ function includesIgnoreCase(collection, value) {
 
 async function getCountryByDeviceId(knex, deviceId) {
   return knex('Device as d')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('d.id', deviceId)
     .first()
@@ -929,7 +930,7 @@ async function getLatestResultWorkflowLog(knex, resultId) {
 const getCountryCodeByDeviceId = async (knex, deviceId) => {
   const { countryCode } = await knex('Device as d')
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .where({ 'd.id': deviceId })
     .first('c.abbreviation as countryCode')

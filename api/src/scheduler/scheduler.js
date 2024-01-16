@@ -11,7 +11,6 @@ const {
 const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
-  factResultsDeviceByTimeFrame,
   factCheckInventoryStock,
   factCalculateInventoryConsumptionRates,
   factDataCategoryLowCheck,
@@ -32,7 +31,6 @@ function startScheduler(queue) {
     calibrationIssueNotificationTrigger,
     escalateIssues,
     factGenerateResultCounts,
-    factResultsDeviceByTimeFrame,
     factCheckInventoryStock,
     factGenerateDeviceConnectivity,
     factDataCategoryLowCheck,
@@ -50,7 +48,6 @@ function startScheduler(queue) {
   })
 
   dispatcher.factGenerateResultCounts()
-  dispatcher.factResultsDeviceByTimeFrame()
   dispatcher.factGenerateDeviceConnectivity()
   dispatcher.factDataCategoryLowCheck()
   dispatcher.factCalculateInventoryConsumptionRates()
@@ -67,8 +64,7 @@ function startScheduler(queue) {
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('0 2 * * *', dispatcher.tryToContinueUnprocessedRawData) // daily at 2 am
-  cron.schedule('10 */6 * * *', dispatcher.factGenerateResultCounts) // run every six hours, 30 minutes past the hour
-  cron.schedule('10 */8 * * *', dispatcher.factResultsDeviceByTimeFrame) // run every 8 hours, at minute 10
+  cron.schedule('0 3 * * *', dispatcher.factGenerateResultCounts) // daily at 3 am
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
   cron.schedule('15 * * * *', dispatcher.factDataCategoryLowCheck) // every hour at 15th minute
   cron.schedule('30 * * * *', dispatcher.resultAnalyzeTimeout) // every hour at 30th minute

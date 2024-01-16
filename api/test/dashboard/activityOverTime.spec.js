@@ -82,7 +82,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
       .where('s.partnerId', partnerId)
       .where('c.abbreviation', countryAbbreviation)
       .where('da.token', 'approved')
-      .first('d.id', 'd.partnerId', 'd.geographyId', 'd.siteId')
+      .first('d.id', 'd.partnerId', 's.geographyId', 'd.siteId')
 
     const getResultCategoryId = isDetected => {
       return isDetected ? resultCategoryDetectedId : resultCategoryNotDetectedId

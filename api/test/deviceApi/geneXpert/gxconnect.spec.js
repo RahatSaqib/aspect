@@ -2141,9 +2141,7 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceLocationDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function () {
-                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-              })
+              .join('Geography as g', 's.geographyId', 'g.id')
               .join('Country as c', 'g.countryId', 'c.id')
               .where({ 'dak.token': apiKey })
               .first('d.id', 's.id as siteId', 'g.id as geographyId', 'c.id as countryId')
@@ -2198,9 +2196,7 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceLocationDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function () {
-                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-              })
+              .join('Geography as g', 's.geographyId', 'g.id')
               .join('Country as c', 'g.countryId', 'c.id')
               .where({ 'dak.token': apiKey })
               .first('d.id', 's.id as siteId', 'g.id as geographyId', 'c.id as countryId')
