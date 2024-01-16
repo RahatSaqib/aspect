@@ -147,7 +147,7 @@ async function lookupIssueContext({ resultId, deviceId, siteId, consumableId }, 
     return knex('Device as d')
       .leftJoin('Site as s', 's.id', 'd.siteId')
       .where({ 'd.id': deviceId })
-      .first('d.partnerId', 'd.siteId', knex.raw('coalesce(d.geographyId, s.geographyId) as geographyId'))
+      .first('d.partnerId', 'd.siteId', 's.geographyId')
   }
   if (siteId) {
     if (consumableId != null) {

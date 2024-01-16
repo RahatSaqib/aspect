@@ -144,13 +144,11 @@ async function seed(knex) {
             // add device to the lab
             const deviceType = covidDeviceTypes[state.lgas.indexOf(lga) % covidDeviceTypes.length]
             const device = {
-              ...auditFields,
               name: `${labData.name} ${deviceType.name}`.substr(0, 255),
               shortName: `${labData.externalId}_${deviceType.externalId}`.substr(0, 45),
               deviceTypeId: deviceType.id,
               deviceApprovalId: deviceApprovalApprovedId,
               partnerId: labData.partnerId,
-              geographyId: labData.geographyId,
               siteId: labData.id,
               defaultReportableSiteId: labData.id,
               ...auditFields,
@@ -161,7 +159,7 @@ async function seed(knex) {
             }
 
             ;[device.id] = await knex('Device').insert(device)
-            countryData.devices.push(device)
+            countryData.devices.push({ ...device, geographyId })
 
             // add clinics in the LGA
             await Promise.all(

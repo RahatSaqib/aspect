@@ -20,7 +20,8 @@ async function getPartner(knex, partnerName) {
 async function getDevice(knex, { countryAbbreviation, partnerId, noResultsSince = null, notIn = [] }) {
   ensureMySqlBeforeNestedTablesOptions(knex)
   return knex('Device as d')
-    .join('Geography as lgaGeography', 'd.geographyId', 'lgaGeography.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as lgaGeography', 's.geographyId', 'lgaGeography.id')
     .join('Geography as regionalGeography', function () {
       this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull('regionalGeography.lgaId')
     })
@@ -154,7 +155,7 @@ async function createIssueEvent({
 async function createDeviceNoResult(knex, { countryAbbreviation, partnerId }) {
   // get 1st site for current partner
   const {
-    s: { id: siteId, geographyId },
+    s: { id: siteId },
   } = await getSite(knex, {
     countryAbbreviation,
     partnerId,
@@ -162,7 +163,6 @@ async function createDeviceNoResult(knex, { countryAbbreviation, partnerId }) {
 
   const [deviceId] = await knex('Device').insert({
     partnerId,
-    geographyId,
     siteId, // new site id
     deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
     deviceApprovalId: await deviceApprovalToId('approved'),

@@ -390,7 +390,8 @@ async function getNotificationPolicy(
           )
           .join('Device as d', 'result.deviceId', 'd.id')
           .join('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
-          .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+          .leftJoin('Site as s', 'd.siteId', 's.id')
+          .leftJoin('Geography as g', 's.geographyId', 'g.id')
           .where('ntc.externalId', 'resultBased')
           .andWhere('da.token', 'approved')
       }
@@ -543,7 +544,7 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
       if (!_.isNil(issueId)) {
         builder.leftJoin('Geography as g', 'i.geographyId', 'g.id')
       } else {
-        builder.leftJoin('Geography as g', 'd.geographyId', 'g.id')
+        builder.leftJoin('Geography as g', 's.geographyId', 'g.id')
       }
     })
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')

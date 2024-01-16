@@ -12,14 +12,12 @@ const {
 const onFactGenerateResultCounts = require('./onFactGenerateResultCounts')
 const { onFactCalculateInventoryConsumptionRates } = require('./onFactCalculateInventoryConsumptionRates')
 const { factFillCustomFieldsCompletionStatsLast30Days } = require('./customFieldsCompletionStatsService')
-const calculateFactResultsDeviceByTimeFrame = require('./onFactResultsDeviceByTimeFrame')
 
 const subscriptions = [
   {
     actions: {
       FACT_GENERATE_DEVICE_CONNECTIVITY: onFactGenerateDeviceConnectivity,
       FACT_GENERATE_RESULT_COUNTS: onFactGenerateResultCounts,
-      FACT_RESULTS_DEVICE_BY_TIMEFRAME: calculateFactResultsDeviceByTimeFrame,
       FACT_CHECK_INVENTORY_STOCK: onFactCheckInventoryStock,
       FACT_CALCULATE_INVENTORY_CONSUMPTION_RATES: onFactCalculateInventoryConsumptionRates,
       DEVICE_SEEN: onDeviceSeen,

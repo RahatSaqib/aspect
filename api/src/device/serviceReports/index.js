@@ -380,7 +380,7 @@ async function getGeneXpertOperationLogsReport(auth, query) {
   const data = await knex('Device as d')
     .join('DeviceOperation as dl', 'dl.deviceId', 'd.id')
     .join('Site as s', 'd.siteId', 's.id')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .modify(filterDateRangeParams, { minDate: minDateFormatted, maxDate: maxDateFormatted }, 'dl.startedOn')
     .modify(filterParams, query, {
       deviceId: 'd.id',
