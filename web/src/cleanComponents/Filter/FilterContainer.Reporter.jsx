@@ -18,7 +18,7 @@ const ReporterFilter = () => {
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
-    <FilterContainer state={state} setState={setState}>
+    <FilterContainer state={state} setState={setState} blocked={['minDate', 'maxDate']}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
