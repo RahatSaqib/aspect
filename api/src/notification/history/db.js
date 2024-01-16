@@ -1,5 +1,6 @@
 const { knex, sortPageParams, filterParams, filterDateRangeParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
+const { AddNotificationGeographyConstraints } = require('../common/db')
 
 const getAllNotificationHistory = async (dataConstraints, query) => {
   let updatedQuery = query
@@ -23,6 +24,7 @@ const getAllNotificationHistory = async (dataConstraints, query) => {
     .leftJoin('Sample as s', 's.id', 'r.sampleId')
     .leftOuterJoin('Report as rpt', 'rpt.id', 'n.reportId')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
+    .modify(AddNotificationGeographyConstraints, dataConstraints)
     .modify(filterDateRangeParams, query, 'n.createdOn')
     .modify(filterParams, updatedQuery, {
       notificationName: 'nt.name',
