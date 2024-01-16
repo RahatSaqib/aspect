@@ -30,7 +30,8 @@ async function preProcessAddDeviceData(context) {
           .join('Device as d', 'p.id', 'd.partnerId')
           .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
           .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-          .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+          .leftJoin('Site as s', 'd.siteId', 's.id')
+          .leftJoin('Geography as g', 's.geographyId', 'g.id')
           .leftJoin('Country as c', 'g.countryId', 'c.id')
           .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
           .where('dt.externalId', 'GxAlert')
@@ -39,7 +40,7 @@ async function preProcessAddDeviceData(context) {
             'd.id',
             'd.partnerId',
             'd.siteId',
-            'd.geographyId',
+            's.geographyId',
             'd.name',
             'd.shortName',
             'd.serial',

@@ -80,7 +80,6 @@ async function seed(knex) {
     deviceTypeId: await deviceTypeToId('GxAlert'),
     deviceApprovalId: await deviceApprovalToId('approved'),
     partnerId,
-    geographyId: myanmarGeographyId,
     siteId: gxAlertSiteId,
     createdOn: new Date(),
     updatedOn: new Date(),

@@ -175,20 +175,24 @@ async function shouldTriggerModuleDisabled(knex, messageContext, device, deviceM
 }
 
 async function shouldTriggerInstrumentReplaced(knex, messageContext, resultId) {
-  const result = await knex('Result as r').innerJoin('Device as d', 'r.deviceId', 'd.id').where('r.id', resultId).first(
-    'r.id as resultId',
-    'r.moduleName',
-    'r.moduleSerial',
-    'r.instrumentSerial',
-    'r.createdOn',
-    'r.endedOn',
-    'r.updatedOn',
-    // props to populate fields in table 'Issue'
-    'r.deviceId',
-    'd.partnerId',
-    'd.geographyId',
-    'd.siteId'
-  )
+  const result = await knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('Site as s', 'd.siteId', 's.id')
+    .where('r.id', resultId)
+    .first(
+      'r.id as resultId',
+      'r.moduleName',
+      'r.moduleSerial',
+      'r.instrumentSerial',
+      'r.createdOn',
+      'r.endedOn',
+      'r.updatedOn',
+      // props to populate fields in table 'Issue'
+      'r.deviceId',
+      'd.partnerId',
+      's.geographyId',
+      'd.siteId'
+    )
   if (!result) {
     return
   }

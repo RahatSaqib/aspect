@@ -4,6 +4,7 @@ const { startOfDayUtc, replaceOffset } = require('../shared/date')
 const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { daysToCalculate } = require('./common/constants')
 const { factGenerateResultCounts } = require('./actions')
+const calculateFactResultsDeviceByTimeFrame = require('./updateFactResultsDeviceByTimeFrame')
 
 const daysToCalculateCountOfDeliveredResults = [30, 60]
 
@@ -26,7 +27,7 @@ async function onFactGenerateResultCounts(action, context) {
 }
 
 async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, { messageContext }) {
-  const { assayId, resultCategory1, resultCategory2 } = options
+  const { assayId, resultCategory1, resultCategory2, endedOn } = options
   return messageContext.transact(async knex => {
     const now = new Date()
 
@@ -246,6 +247,8 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         }
       })
       .delete()
+
+    await calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCategory1, resultCategory2, endedOn, knex)
   })
 }
 

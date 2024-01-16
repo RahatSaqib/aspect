@@ -78,8 +78,9 @@ async function seed(knex) {
 
   const devices = await knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .join('Site as s', 'd.siteId', 's.id')
     .where('dt.externalId', 'CepheidGeneXpert')
-    .select('d.partnerId', 'd.geographyId', 'd.siteId', 'd.deviceId')
+    .select('d.partnerId', 's.geographyId', 'd.siteId', 'd.deviceId')
 
   // seed one issue type some time in the last two months for every 6th GeneXpert device:
   const issues = _.sampleSize(devices, devices.length / 3).map(d => {
