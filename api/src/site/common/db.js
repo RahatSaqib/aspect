@@ -90,6 +90,12 @@ const getSamplesRegisteredCount = (dataConstraints, query) => {
       geography: 'g',
       site: 's',
     })
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      siteId: 's.id',
+      lgaId: 'g.lgaId',
+    })
     .select('s.id as siteId')
     .count('Sample.id as SampleCount')
 }
