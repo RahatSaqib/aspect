@@ -187,7 +187,7 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
         stateConstraints.map(stateId =>
           qb.orWhere(b => {
             b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'state')
-            b.whereRaw(`'${stateId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+            b.whereRaw(`${stateId} MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
           })
         )
       }
@@ -197,7 +197,7 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
         lgaConstraints.map(lgaId =>
           qb.orWhere(b => {
             b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'lga')
-            b.whereRaw(`'${lgaId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+            b.whereRaw(`${lgaId} MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
           })
         )
       }
@@ -207,7 +207,7 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
         siteConstraints.map(siteId =>
           qb.orWhere(b => {
             b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'lab')
-            b.whereRaw(`'${siteId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+            b.whereRaw(`${siteId} MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
           })
         )
       }
@@ -513,4 +513,5 @@ module.exports = {
   getNotificationStatusInfo,
   updateNotificationType,
   getMessageStatusData,
+  AddNotificationGeographyConstraints,
 }
