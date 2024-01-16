@@ -43,9 +43,6 @@ async function preProcessAddDeviceData({ knex, device, payload, now, messageCont
   if (device.siteId !== site.id) {
     deviceDetails.siteId = site.id
   }
-  if (device.geographyId !== site.geographyId) {
-    deviceDetails.geographyId = site.geographyId
-  }
   // A ping from GxConnect is just a configuration POST with a MAC address,
   // host ID, device Serial and country abbreviation
   // A ping from GxConnect forwarded by GxAlert is the same as a ping cooming
@@ -87,7 +84,9 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (!startedOn) {
     throw Boom.badRequest('Start date or end date is required for a result from GxConnect')
   }
+
   const device = await knex('Device as d').where({ 'd.id': deviceId }).first('d.siteId', 'd.partnerId')
+
   if (_.isEmpty(device)) {
     throw Boom.notFound(`Cannot find device ${deviceId}`)
   }
@@ -306,9 +305,7 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
     if (state || !_.isUndefined(latitude) || !_.isUndefined(latitude)) {
       const currentDeviceGeography = await knex('Device as d')
         .leftJoin('Site as s', 'd.siteId', 's.id')
-        .innerJoin('Geography as g', function () {
-          this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-        })
+        .leftJoin('Geography as g', 's.geographyId', 'g.id')
         .leftJoin('State as st', 'g.stateId', 'st.id')
         .leftJoin('Lga as l', 'g.lgaId', 'l.id')
         .where('d.id', deviceId)
@@ -358,7 +355,6 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
             if (currentDeviceGeography.siteId) {
               siteUpdateDetails.geographyId = newGeography.id
             }
-            deviceDetails.geographyId = newGeography.id
           }
         }
         if (!_.isUndefined(latitude) && currentDeviceGeography.latitude !== latitude) {
@@ -384,7 +380,7 @@ async function findDevices(availableDeviceDetails, knex) {
     'd.id',
     'd.partnerId',
     'd.siteId',
-    'd.geographyId',
+    's.geographyId',
     'd.name',
     'd.serial',
     'd.hostId',
@@ -401,10 +397,8 @@ async function findDevices(availableDeviceDetails, knex) {
   const deviceQuery = knex
     .from('Device as d')
     .leftJoin('Site as s', 's.id', 'd.siteId')
-    .innerJoin('Geography as g', function () {
-      this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-    })
-    .innerJoin('Country as c', 'g.countryId', 'c.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
@@ -637,10 +631,8 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
       if (!countryCode && device) {
         ;[countryCode] = await knex('Device as d')
           .leftJoin('Site as s', 's.id', 'd.siteId')
-          .innerJoin('Geography as g', function () {
-            this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-          })
-          .innerJoin('Country as c', 'g.countryId', 'c.id')
+          .leftJoin('Geography as g', 's.geographyId', 'g.id')
+          .leftJoin('Country as c', 'g.countryId', 'c.id')
           .where('d.id', device.id)
           .pluck('c.abbreviation')
       }

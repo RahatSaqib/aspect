@@ -34,7 +34,6 @@ async function seed(knex) {
     const site = _.sample(sites)
     await knex('Device').insert({
       partnerId: site.partnerId,
-      geographyId: site.geographyId,
       siteId: site.id,
       deviceTypeId: deviceType.id,
       deviceApprovalId,
@@ -55,11 +54,12 @@ async function seed(knex) {
   const devices = await knex('Device as d')
     .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .join('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-    .join('Geography as g', 'g.id', 'd.geographyId')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('c.a3', 'USA')
     .where('dtc.name', 'Lab')
-    .select('d.*')
+    .select('d.*', 's.geographyId')
   const issueStatusActiveId = await getId(knex, 'IssueStatus', 'Active')
   const issueStatusResolvedId = await getId(knex, 'IssueStatus', 'Resolved')
   const issueStatusAcknowledgedId = await getId(knex, 'IssueStatus', 'Acknowledged')

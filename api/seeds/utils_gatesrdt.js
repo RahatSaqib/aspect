@@ -80,7 +80,6 @@ async function createResults(knex, { partnerId, deviceTypeId, assayId, patients 
     const lastTime = subMinutes(now, _.random(0, 60))
     ;[deviceId] = await knex('Device').insert({
       partnerId,
-      geographyId,
       siteId,
       deviceTypeId,
       deviceApprovalId,

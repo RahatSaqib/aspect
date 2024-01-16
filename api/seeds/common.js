@@ -366,7 +366,7 @@ async function upsertJobFunctionPermission(knex, jobFunctionId, jobPermissions, 
 }
 
 async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken) {
-  const device = await ensureCountryLevelInformationSystemExists(
+  const { device, geographyId } = await ensureCountryLevelInformationSystemExists(
     knex,
     countryId,
     partnerId,
@@ -382,7 +382,7 @@ async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, devi
     token: deviceApiToken,
     revoked: 0,
     partnerId,
-    geographyId: device.geographyId,
+    geographyId,
     deviceId: device.id,
   }
   const { id: gxAlertDeviceApiKeyId } =
@@ -421,13 +421,13 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
     .whereNull('stateId', 'lgaId')
     .first('id as countryGeographyId')
   const device =
-    (await knex('Device')
-      .where({
-        deviceTypeId,
-        partnerId,
-        geographyId: countryGeographyId,
-      })
+    (await knex('Device as d')
+      .join('Site as s', 'd.siteId', 's.id')
+      .where('d.deviceTypeId', deviceTypeId)
+      .where('d.partnerId', partnerId)
+      .where('s.geographyId', countryGeographyId)
       .first()) || {}
+
   let { siteId } = device
   if (!siteId) {
     ;[siteId] = await knex('Site').insert({
@@ -447,7 +447,6 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
       name,
       deviceApprovalId: await deviceApprovalToId('approved'),
       partnerId,
-      geographyId: countryGeographyId,
       siteId,
       lastPingOn: new Date(),
       lastSeenOn: new Date(),
@@ -455,7 +454,7 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
     })
     device.id = deviceId
   }
-  return device
+  return { device, geographyId: countryGeographyId }
 }
 
 async function upsertGeneXpertDeviceTypeAndAssays(
@@ -1569,7 +1568,6 @@ async function seedLabClinicFixture(
           if (_.isEmpty(deviceData)) {
             const lastDeviceActivity = now
             deviceData.partnerId = partnerId
-            deviceData.geographyId = siteData.geographyId
             deviceData.siteId = siteData.id
             const { id: deviceTypeId } = await knex('DeviceType')
               .where('externalId', device.deviceTypeId || 'CepheidGeneXpert')
@@ -1820,7 +1818,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
             .where({ partnerId, serial: device.serial })
             .first(
               'id',
-              'geographyId',
               'siteId',
               'deviceTypeId',
               'name',
@@ -1837,7 +1834,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
           if (!existingDevice) {
             ;[deviceId] = await knex('Device').insert({
               partnerId,
-              geographyId: siteGeographyId,
               siteId,
               deviceTypeId,
               deviceApprovalId: await deviceApprovalToId('approved'),
@@ -1860,7 +1856,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
               deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
             }
             if (
-              existingDevice.geographyId !== siteGeographyId ||
               existingDevice.siteId !== siteId ||
               existingDevice.deviceTypeId !== deviceTypeId ||
               existingDevice.name !== device.name ||
@@ -1873,7 +1868,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
               await knex('Device')
                 .where('id', existingDevice.id)
                 .update({
-                  geographyId: siteGeographyId,
                   siteId,
                   deviceTypeId: await deviceTypeToId(device.deviceType),
                   name: device.name,
@@ -1918,6 +1912,40 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
   })
 }
 
+const createClientDeviceApiKey = async (knex, data) => {
+  const { deviceTypePayload, devicePayload, deviceApiKeyPayload } = data
+
+  const [deviceTypeId] = await knex('DeviceType').insert(deviceTypePayload)
+
+  const [deviceId] = await knex('Device').insert({
+    ...devicePayload,
+    deviceTypeId,
+  })
+
+  const now = new Date()
+
+  return knex('DeviceApiKey').insert({
+    ...deviceApiKeyPayload,
+    deviceId,
+    revoked: false,
+    createdOn: now,
+    updatedOn: now,
+  })
+}
+
+async function getOrInsertGeography(knex, countryId) {
+  const geography = await knex('Geography').select('id').where({ countryId, stateId: null, lgaId: null }).first()
+
+  let geographyId
+  if (geography) {
+    geographyId = geography.id
+  } else {
+    const [newId] = await knex('Geography').insert({ countryId }).returning('id')
+    geographyId = newId
+  }
+  return geographyId
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
@@ -1937,4 +1965,6 @@ module.exports = {
   upsertPermissionFixture,
   getStatesByName,
   upsertGeography,
+  createClientDeviceApiKey,
+  getOrInsertGeography,
 }

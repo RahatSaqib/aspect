@@ -70,7 +70,6 @@ describe('Missing inventory lot resolver', () => {
 
     const [deviceId] = await knex('Device').insert({
       partnerId: site.partnerId,
-      geographyId: site.geographyId,
       siteId: site.id,
       deviceTypeId: 7,
       deviceApprovalId: 3,

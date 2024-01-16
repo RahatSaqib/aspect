@@ -134,7 +134,6 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
       // for new site - create new device
       ;[deviceId] = await knex('Device').insert({
         partnerId,
-        geographyId,
         siteId, // new site id
         deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
         deviceApprovalId: await deviceApprovalToId('approved'),

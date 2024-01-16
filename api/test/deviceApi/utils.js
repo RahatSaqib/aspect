@@ -195,7 +195,7 @@ async function createDevice(
 ) {
   const now = new Date()
 
-  const { geographyId, partnerId } = await knex('Site as s').where({ id: siteId }).first()
+  const { partnerId } = await knex('Site as s').where({ id: siteId }).first()
 
   const deviceTypeId = await deviceTypeToId(type)
 
@@ -207,7 +207,6 @@ async function createDevice(
 
   const [deviceId] = await knex('Device').insert({
     partnerId,
-    geographyId,
     siteId,
     deviceTypeId,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
@@ -636,23 +635,24 @@ async function getDeviceType(externalId, knex) {
 
 async function getDevicesWithIdLargerThan(deviceId, knex) {
   const devices = await knex
-    .from('Device')
-    .where('id', '>', deviceId)
-    .orderBy('id', 'asc')
+    .from('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .where('d.id', '>', deviceId)
+    .orderBy('d.id', 'asc')
     .select(
-      'partnerId',
-      'geographyId',
-      'siteId',
-      'deviceTypeId',
-      'deviceApprovalId',
-      'name',
-      'shortName',
-      'macAddress',
-      'serial',
-      'hostId',
-      'culture',
-      'timezone',
-      'configurationData'
+      'd.partnerId',
+      'd.siteId',
+      'd.deviceTypeId',
+      's.geographyId',
+      'd.deviceApprovalId',
+      'd.name',
+      'd.shortName',
+      'd.macAddress',
+      'd.serial',
+      'd.hostId',
+      'd.culture',
+      'd.timezone',
+      'd.configurationData'
     )
   return _.map(devices, device =>
     _.merge({}, device, {
