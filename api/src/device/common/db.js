@@ -567,7 +567,7 @@ function getResultCategoriesByAssay(assayId) {
     .first()
 }
 
-function getFirstAndLastResults(dataConstraints, assayId) {
+function getFirstAndLastResults(dataConstraints, assayId, deviceIds) {
   return knex('Result as _r')
     .modify(addConstraints, dataConstraints, { result: '_r' })
     .groupBy('deviceId')
@@ -577,11 +577,13 @@ function getFirstAndLastResults(dataConstraints, assayId) {
       lastEndedOn: knex.raw('MAX(endedOn)'),
     })
     .where('assayId', assayId)
+    .whereIn('deviceId', deviceIds)
     .as('firstAndLastResults')
 }
 
 async function getDeviceWorkload(extraColumns, dataConstraints, query) {
   const { assayId } = query
+
   const q = knex('Device as d')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -593,16 +595,8 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       joinAssay.on('dt.id', 'a.deviceTypeId').andOn('a.id', knex.raw(assayId))
     })
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
-    .leftJoin('Result as r', joinResultQuery => {
-      joinResultQuery.on('d.id', 'r.deviceId').andOn('r.assayId', knex.raw(assayId))
-
-      if (query.minDate) joinResultQuery.andOn('r.endedOn', '>', knex.raw(`'${query.minDate.toISOString()}'`))
-
-      if (query.maxDate) joinResultQuery.andOn('r.endedOn', '<=', knex.raw(`'${query.maxDate.toISOString()}'`))
-    })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .leftJoin(getFirstAndLastResults(dataConstraints, assayId), 'd.id', 'firstAndLastResults.deviceId')
     .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -622,23 +616,67 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       if (query.size) _q.modify(sortPageParams, query, 'name')
     })
     .select(
+      'd.id',
       'd.name',
       'dms.i18nKey as deviceStatus',
       'dms.name as deviceStatusLabel',
       'd.lastPingOn',
-      'firstAndLastResults.firstEndedOn as firstResultEndedOn',
-      'firstAndLastResults.lastEndedOn as lastResultEndedOn',
       'st.name as stateName',
       'lg.name as lgaName',
-      's.name as siteName',
-      knex.raw('COUNT(r.id) as total')
+      's.name as siteName'
     )
+    .groupBy('d.id')
+
+  const deviceIds = data.map(device => device.id)
+
+  const resultsGroupedByDevice = await knex('Result as r')
+    .modify(queryBuilder => {
+      if (query.minDate) {
+        queryBuilder.where('endedOn', '>', knex.raw(`'${query.minDate.toISOString()}'`))
+      }
+
+      if (query.maxDate) {
+        queryBuilder.where('endedOn', '<=', knex.raw(`'${query.maxDate.toISOString()}'`))
+      }
+
+      queryBuilder.whereIn('deviceId', deviceIds)
+    })
     .modify(q => {
       extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
     })
-    .groupBy('d.id')
+    .select('r.deviceId', knex.raw('COUNT(r.id) as total'))
+    .groupBy('r.deviceId')
+
+  const deviceFirstAndLastResult = await getFirstAndLastResults(dataConstraints, assayId, deviceIds)
+
+  const deviceFirstAndLastResultMap = {}
+
+  const resultsGroupedByDeviceMap = {}
+
+  deviceFirstAndLastResult.forEach(device => {
+    deviceFirstAndLastResultMap[device.deviceId] = device
+  })
+
+  resultsGroupedByDevice.forEach(result => {
+    const { deviceId, ...rest } = result
+    resultsGroupedByDeviceMap[deviceId] = rest
+  })
+
+  const updatedData = data.map(({ id, ...deviceResponse }) => {
+    const firstResultEndedOn = deviceFirstAndLastResultMap[id]?.firstEndedOn || null
+    const lastResultEndedOn = deviceFirstAndLastResultMap[id]?.lastEndedOn || null
+    const result = resultsGroupedByDeviceMap[id]
+
+    return {
+      ...deviceResponse,
+      firstResultEndedOn,
+      lastResultEndedOn,
+      ...result,
+    }
+  })
+
   const { length } = data
-  return { total, data, length }
+  return { total, data: updatedData, length }
 }
 
 async function joinModuleAvailability(dataConstraints, query) {
