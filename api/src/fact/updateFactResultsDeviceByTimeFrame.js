@@ -141,6 +141,7 @@ async function calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCa
         'r.assayId',
         'r.resultCategory1',
         'r.resultCategory2',
+        'r.siteId',
         ...sumSingleXdrResistance(knex),
         /**
          * commenting out below line which calculates combinations of resistances
@@ -249,6 +250,7 @@ async function calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCa
           ...values,
           `(
               ${deviceId},
+              '${count.siteId}',
               '${timeFrame}',
               '${count.startedOnTimeFrame}',
               ${count.assayId},
@@ -264,6 +266,7 @@ async function calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCa
           INSERT INTO FactResultsDeviceByTimeFrame
             (
               deviceId,
+              siteId,
               timeFrame,
               startedOn,
               assayId,
