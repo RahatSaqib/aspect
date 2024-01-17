@@ -639,7 +639,8 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
         queryBuilder.where('endedOn', '<=', knex.raw(`'${query.maxDate.toISOString()}'`))
       }
 
-      queryBuilder.whereIn('deviceId', deviceIds)
+      queryBuilder.where('r.assayId', assayId)
+      queryBuilder.whereIn('r.deviceId', deviceIds)
     })
     .modify(q => {
       extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
