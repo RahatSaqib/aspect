@@ -1272,7 +1272,10 @@ async function getDataForReportDrTb10B(auth, query) {
     )
     .where(builder => {
       XDR_RESISTANCES.forEach(resistance => {
-        builder.orWhere(knex.raw(`r.resultData->>"$.allResistances.${resistance}" = "Detected"`))
+        builder.orWhere(knex.raw(`r.resultData->>'$.allResistances.${resistance}' = 'Detected'`))
+      })
+      XDR_RESISTANCES.forEach(resistance => {
+        builder.orWhere(knex.raw(`JSON_SEARCH(r.resultData->'$.detectedResistance', 'one', '${resistance}') IS NOT NULL`));
       })
     })
 
