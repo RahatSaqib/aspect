@@ -650,23 +650,19 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
 
   const deviceFirstAndLastResult = await getFirstAndLastResults(dataConstraints, assayId, deviceIds)
 
-  const deviceFirstAndLastResultMap = {}
+  const deviceFirstAndLastResultMap = _.keyBy(deviceFirstAndLastResult, 'deviceId')
+  const resultsGroupedByDeviceMap = _.keyBy(resultsGroupedByDevice, 'deviceId')
 
-  const resultsGroupedByDeviceMap = {}
+  const updatedData = _.map(data, ({ id, ...deviceResponse }) => {
+    const firstResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'firstEndedOn'], null)
+    const lastResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'lastEndedOn'], null)
+    const result = _.omit(resultsGroupedByDeviceMap[id], 'deviceId')
 
-  deviceFirstAndLastResult.forEach(device => {
-    deviceFirstAndLastResultMap[device.deviceId] = device
-  })
+    deviceResponse.total = deviceResponse.total || 0
 
-  resultsGroupedByDevice.forEach(result => {
-    const { deviceId, ...rest } = result
-    resultsGroupedByDeviceMap[deviceId] = rest
-  })
-
-  const updatedData = data.map(({ id, ...deviceResponse }) => {
-    const firstResultEndedOn = deviceFirstAndLastResultMap[id]?.firstEndedOn || null
-    const lastResultEndedOn = deviceFirstAndLastResultMap[id]?.lastEndedOn || null
-    const result = resultsGroupedByDeviceMap[id]
+    _.forEach(extraColumns, ({ fieldId }) => {
+      deviceResponse[fieldId] = deviceResponse[fieldId] || 0
+    })
 
     return {
       ...deviceResponse,
