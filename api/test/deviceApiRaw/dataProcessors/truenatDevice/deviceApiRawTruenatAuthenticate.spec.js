@@ -65,7 +65,6 @@ describe('Device API Raw routes for Truenat Authentication', () => {
     const [deviceId] = await knex('Device').insert({
       partnerId: partner.id,
       siteId,
-      geographyId: geography.id,
       deviceTypeId: truenatDeviceType.id,
       deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
       deviceApprovalId: approvedDeviceApproval.id,

@@ -69,9 +69,8 @@ describe('Pakistan stats api', async () => {
     const seedSite = await knex('Site as s').where({ externalId: testExternalId }).first('s.id')
     const siteId = seedSite.id
 
-    await knex('Device').where('macAddress', macAddress).update({ siteId, geographyId: ALASKA_VALID_GEOGRAPHY_ID })
+    await knex('Device').where('macAddress', macAddress).update({ siteId })
     await knex('Site').where('id', siteId).update({ geographyId: ALASKA_VALID_GEOGRAPHY_ID })
-    contextAlaskaDevice.device.geographyId = ALASKA_VALID_GEOGRAPHY_ID
     contextAlaskaDevice.device.siteId = siteId
     contextAlaskaDevice.site.geographyId = ALASKA_VALID_GEOGRAPHY_ID
   })

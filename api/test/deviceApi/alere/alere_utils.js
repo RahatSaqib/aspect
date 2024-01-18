@@ -162,7 +162,6 @@ class DeviceApiTestContext {
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
-        geographyId: geography.id,
         deviceTypeId: alereFtpConnectorDeviceType.id,
         deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceApprovalId: approvedApprovalStatus.id,
@@ -378,9 +377,7 @@ class DeviceApiTestContext {
       const device = await knex
         .from('Device as d')
         .leftJoin('Site as s', 's.id', 'd.siteId')
-        .leftJoin('Geography as g', function () {
-          this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-        })
+        .leftJoin('Geography as g', 's.geographyId', 'g.id')
         .leftJoin('Country as c', 'g.countryId', 'c.id')
         .where('d.serial', _.last(this.alereDeviceSerialNumbers))
         .first(

@@ -4,6 +4,7 @@ const { startOfDayUtc, replaceOffset } = require('../shared/date')
 const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { daysToCalculate } = require('./common/constants')
 const { factGenerateResultCounts } = require('./actions')
+const calculateFactResultsDeviceByTimeFrame = require('./updateFactResultsDeviceByTimeFrame')
 
 const daysToCalculateCountOfDeliveredResults = [30, 60]
 
@@ -26,11 +27,11 @@ async function onFactGenerateResultCounts(action, context) {
 }
 
 async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, { messageContext }) {
-  const { assayId, resultCategory1, resultCategory2 } = options
+  const { assayId, resultCategory1, resultCategory2, endedOn } = options
   return messageContext.transact(async knex => {
     const now = new Date()
 
-    const { timeZone: timeZoneIANA } = await knex('Device as d')
+    const timeZoneData = await knex('Device as d')
       .join('Site as s', 's.id', 'd.siteId')
       .join('Geography as g', 'g.id', 's.geographyId')
       .join('Country as c', 'c.id', 'g.countryId')
@@ -39,10 +40,11 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
       .where('d.id', deviceId)
 
     // calculate by device - make sure it still exists
-    const device = await knex('Device').where({ id: deviceId }).first('deviceId')
-    if (!device) {
+    if (!timeZoneData) {
       return
     }
+
+    const { timeZone: timeZoneIANA } = timeZoneData
 
     await messageContext.initDictionaryTables()
 
@@ -245,6 +247,8 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
         }
       })
       .delete()
+
+    await calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCategory1, resultCategory2, endedOn, knex)
   })
 }
 

@@ -3394,7 +3394,6 @@ async function seed(knex) {
         deviceTypeId: deviceTypeIdRouter,
         deviceApprovalId: deviceApprovalApproved,
         partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
         siteId: siteData.id,
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         createdOn: new Date(+now - 3 * i * millisInHour),
@@ -3481,7 +3480,6 @@ async function seed(knex) {
           latestGrabbedModifiedDate: '2021-12-15T19:17:18.143Z',
         }),
         partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
         siteId: siteData.id,
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         // not all sites will have a router - we only added routers to some site
@@ -4920,10 +4918,11 @@ async function seed(knex) {
 
   const sitesWithResults = await knex('Result as r')
     .join('Device as d', 'r.deviceId', 'd.id')
-    .join('Geography as g', 'g.id', 'd.geographyId')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('c.abbreviation', 'US')
-    .distinct('d.geographyId', 'd.siteId')
+    .distinct('d.siteId', 's.geographyId')
     .orderBy('r.endedOn', 'desc')
     .limit(3)
 

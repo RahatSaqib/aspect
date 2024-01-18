@@ -173,8 +173,8 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
                             const params = {
                               treatmentStatus:
                                 evt.data.data.id === 'NotConfirmed' ? 'AwaitingTreatment' : 'OnTreatment',
-                              fixedMinDate: format(startOfMonth(parsedDate), base),
-                              fixedMaxDate: format(endOfMonth(parsedDate), base),
+                              minDate: format(startOfMonth(parsedDate), base),
+                              maxDate: format(endOfMonth(parsedDate), base),
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')

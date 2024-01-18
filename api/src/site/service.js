@@ -8,6 +8,7 @@ const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getNotDecommissionedDevices } = require('../device/common/db')
+const { getLinkedResults, getResultsFollowUp, getSamplesRegisteredCount, getSites } = require('./common/db')
 
 const SELECT_LIST_FIELDS = [
   's.id',
@@ -411,6 +412,155 @@ async function listSitesWithReporters(request) {
   return { ok: true, total, length: data.length, data }
 }
 
+function paginateAndSort(data, query) {
+  const defaultSortCol = 'siteName'
+  const defaultSortDirection = 'asc'
+  const { page = 1, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query
+
+  // Sorting the data
+  const sortedData = data.sort((a, b) => {
+    if (a[sortCol] < b[sortCol]) return sortDir === 'asc' ? -1 : 1
+    if (a[sortCol] > b[sortCol]) return sortDir === 'asc' ? 1 : -1
+    return 0
+  })
+
+  // Calculating pagination
+  const start = (page - 1) * size
+  const end = page * size
+
+  // Slicing the data for pagination
+  const paginatedData = sortedData.slice(start, end)
+
+  return paginatedData
+}
+
+const getReportingSites = async request => {
+  const { query, auth } = request
+
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  // get sites
+  const sites = await getSites(dataConstraints, query)
+
+  // get linkedResults
+  const linkedResults = await getLinkedResults(dataConstraints, query)
+
+  const resultIds = linkedResults.map(item => item.resultId)
+
+  // get unique downloaded result
+  const resultDownloaded = await knex('ResultDownloadLog')
+    .distinct('ResultDownloadLog.resultId as resultDownloaded')
+    .whereIn('resultId', resultIds)
+    .select('ResultDownloadLog.resultId as resultId')
+
+  const mappedDownloadResultIds = resultDownloaded.reduce((obj, item) => {
+    obj[item.resultId] = true
+    return obj
+  }, {})
+
+  const resultsFollowUp = await getResultsFollowUp(resultIds)
+
+  // map resultIds with followUpExternalId
+  const followUpObj = _.reduce(
+    resultsFollowUp,
+    (acc, elem) => {
+      acc[elem.resultId] = elem.followUpExternalId
+      return acc
+    },
+    {}
+  )
+
+  // Determine treatment status and format result data
+  const resultsWithTreatmentStatus = _.map(linkedResults, result => {
+    const requiresFollowUp = result.rc1Treatment === 1 || result.rc2Treatment === 1 ? 1 : 0
+    const followUpStatus = followUpObj[result.resultId]
+    let followUpPending = 0
+    let followUpNotPossible = 0
+    let followUpConfirmed = 0
+
+    if (requiresFollowUp) {
+      if (!followUpStatus) {
+        followUpPending = 1
+      } else if (followUpStatus === 'notPossible') {
+        followUpNotPossible = 1
+      } else {
+        followUpConfirmed = 1
+      }
+    }
+
+    return {
+      ...result,
+      requiresFollowUp,
+      followUpPending,
+      followUpNotPossible,
+      followUpConfirmed,
+      downloaded: _.has(mappedDownloadResultIds, result.resultId) ? 1 : 0,
+    }
+  })
+
+  // get Sample count
+  const sampleCounts = await getSamplesRegisteredCount(dataConstraints, query)
+
+  const sampleKeyAndValue = {}
+
+  // map site to sample count
+  sampleCounts.forEach(sample => {
+    sampleKeyAndValue[sample.siteId] = sample.SampleCount
+  })
+
+  // sum up result details
+  const resultAggregate = _.reduce(
+    resultsWithTreatmentStatus,
+    (acc, elem) => {
+      const site = elem.reportableSite
+      if (!acc[site]) {
+        acc[site] = {
+          reportableSite: site,
+          followUpPending: 0,
+          followUpNotPossible: 0,
+          followUpConfirmed: 0,
+          requiresFollowUp: 0,
+          resultsReporting: 0,
+          downloaded: 0,
+        }
+      }
+      // Sum the fields for existing reportableSite
+      acc[site].followUpPending += elem.followUpPending || 0
+      acc[site].followUpNotPossible += elem.followUpNotPossible || 0
+      acc[site].followUpConfirmed += elem.followUpConfirmed || 0
+      acc[site].requiresFollowUp += elem.requiresFollowUp || 0
+      acc[site].resultsReporting += 1
+      acc[site].downloaded += elem.downloaded || 0
+
+      return acc
+    },
+    {}
+  )
+
+  // Aggregate data for site
+  const reportingSites = sites.map(site => {
+    return {
+      siteName: site.siteName,
+      followUpPending: resultAggregate[site.siteId]?.followUpPending || 0,
+      followUpNotPossible: resultAggregate[site.siteId]?.followUpNotPossible || 0,
+      followUpConfirmed: resultAggregate[site.siteId]?.followUpConfirmed || 0,
+      requiresFollowUp: resultAggregate[site.siteId]?.requiresFollowUp || 0,
+      resultsReporting: resultAggregate[site.siteId]?.resultsReporting || 0,
+      resultsDownloaded: resultAggregate[site.siteId]?.downloaded || 0,
+      samplesRegistered: sampleKeyAndValue[site.siteId] || 0,
+    }
+  })
+
+  const paginatedData = paginateAndSort(reportingSites, query)
+
+  return {
+    ok: !!paginatedData,
+    total: _.size(sites),
+    length: _.size(paginatedData),
+    data: paginatedData,
+  }
+}
+
 module.exports = {
   getSitesQuery,
   listSites,
@@ -421,4 +571,5 @@ module.exports = {
   listSitesWithReporters,
   getListSitesForSelectList,
   disableSite,
+  getReportingSites,
 }

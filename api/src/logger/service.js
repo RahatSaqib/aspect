@@ -37,7 +37,9 @@ function logRequest(queue, request) {
   const timeElapsed = info.responded - info.received
 
   // TODO warn if timeElapsed > some constant?
-  const severity = statusCode >= 400 && statusCode <= 599 ? 'error' : 'info'
+  // We use warning as log level to avoid pushing regular status codes to Sentry and continue showing the error in the console
+  const severity =
+    statusCode >= 400 && statusCode < 500 ? 'warning' : statusCode >= 500 && statusCode <= 599 ? 'error' : 'info'
   const data = {
     method: method.toUpperCase(),
     path: url.pathname,
