@@ -1,19 +1,15 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router'
-import useAuthState from '../../hooks/useAuthState'
-import useFilterValues from '../../hooks/useFilterValues'
+import useFilterSync from '../../hooks/useFilterSync'
 import messages from '../../messages/FilterMessages'
 import { PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 
 export default function ErrorRateFilter() {
   const { formatMessage } = useIntl()
-  const user = useAuthState()
-  const location = useLocation()
-  const filter = useFilterValues(location.pathname)
-  const [state, setState] = useState({ ...filter, countryId: user.countryId })
+  const [state, setState] = useFilterSync()
+
   return (
     <FilterContainer state={state} setState={setState}>
       <Grid container spacing={2}>

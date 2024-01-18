@@ -43,7 +43,6 @@ async function seed(knex) {
     macAddress: '1c:69:7a:01:eb:9c,50:76:af:9f:e1:56',
     deviceApprovalId: await deviceApprovalToId('approved'),
     partnerId,
-    geographyId: ntrlSite.geographyId,
     siteId: ntrlSite.id,
     lastPingOn: new Date(),
     lastSeenOn: new Date(),

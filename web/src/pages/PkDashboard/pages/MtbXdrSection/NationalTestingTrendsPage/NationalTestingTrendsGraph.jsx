@@ -1,4 +1,4 @@
-import React, { useState, useCallback, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -22,10 +22,7 @@ const NationalTestingTrendsGraph = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState({})
-
-  const onChangeState = useCallback(e => setFilter({ stateId: e.target.value }), [])
-  const onChangeLga = useCallback(e => setFilter(prev => ({ ...prev, lgaId: e.target.value })), [])
+  const [filter, setFilter] = useState()
 
   const mergedParams = filter ? [...endpointParams, ...objectToArray(filter)] : [...endpointParams]
 
@@ -64,15 +61,15 @@ const NationalTestingTrendsGraph = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
-            value={filter.stateId ?? ''}
+            value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={onChangeState}
+            onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter.lgaId ?? ''}
+            value={filter?.lgaId ?? ''}
             stateId={filter.stateId}
-            onChange={onChangeLga}
+            onChange={e => setFilter(prev => ({ ...prev, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>

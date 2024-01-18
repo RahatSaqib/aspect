@@ -172,11 +172,11 @@ const deviceActivity = {
       moduleName: 'device/serviceReports',
       functionName: 'getDeviceActivityReport',
       query: {
-        groupBy: 'r.assayId',
-        select: 'a.name as assayName',
         sortCol: 'name',
         sortDir: 'asc',
         hasResults: 1,
+        groupBy: 'r.assayId',
+        select: 'a.name as assayName',
       },
     },
   ],

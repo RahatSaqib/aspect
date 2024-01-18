@@ -52,7 +52,6 @@ describe('Device API Raw routes for BD MGIT', () => {
     ;[bdMgitDeviceId] = await knex('Device').insert({
       partnerId: partner.id,
       siteId: bdMgitSiteId,
-      geographyId: geography.id,
       deviceTypeId: bdMgitDeviceType.id,
       deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
       deviceApprovalId: approvedDeviceApproval.id,
