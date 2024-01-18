@@ -301,6 +301,7 @@ const routes = [
     config: {
       description: 'Sites for Reporter Dashboard',
       notes: `List of sites with some aggregations about reporters`,
+      auth: { scope: ['site:view'] },
       validate: {
         query: {
           ...reportingSitesQueryParams(),
@@ -308,7 +309,7 @@ const routes = [
             'siteName',
             'samplesRegistered',
             'resultsReporting',
-            'downloaded',
+            'resultDownloaded',
             'requiresFollowUp',
             'followUpPending',
             'followUpConfirmed',

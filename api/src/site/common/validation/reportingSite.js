@@ -7,6 +7,7 @@ const reportingSitesQueryParams = () => {
     countryId: Joi.number().allow(null, '').description('Filter for Country ID'),
     stateId: Joi.number().allow(null, '').description('Filter for State ID'),
     siteId: Joi.number().allow(null, '').description('Filter for Site ID'),
+    lgaId: Joi.number().allow(null, '').description('Filter for Lga ID'),
     assayId: Joi.number().allow(null, '').description('Filter for Assay ID'),
   }
 }
