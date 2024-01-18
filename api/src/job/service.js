@@ -362,6 +362,10 @@ async function assignPersonTo(request) {
   // return list of person assignments for showing in right side of Person Job Assignment tab
   // ----------------
   const personAssignments = await getAssignments({ auth, personId })
+
+  const person = knex('Person').where('id', personId)
+  if ((await person.first()).disabled) await person.update({ disabled: false, disabledOn: null, disabledBy: null })
+
   return { ok: true, data: personAssignments }
 }
 
@@ -613,6 +617,15 @@ async function removePersonAssignment(request) {
   // return list of remaining person assignments
   // ----------------
   const personAssignments = await getAssignments({ auth, personId })
+
+  if (personAssignments.length === 0) {
+    await knex('Person').where('id', personId).update({
+      disabled: true,
+      disabledOn: new Date(),
+      disabledBy: dataConstraints.person.id,
+    })
+  }
+
   return { ok: true, data: personAssignments }
 }
 
