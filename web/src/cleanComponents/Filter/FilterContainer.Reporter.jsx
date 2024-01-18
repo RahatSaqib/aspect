@@ -7,7 +7,7 @@ import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
-import { StateSelect, LgaSelect, AssaySelect } from '../index'
+import { StateSelect, LgaSelect, AssaySelect, PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 
 const ReporterFilter = () => {
@@ -58,6 +58,14 @@ const ReporterFilter = () => {
             stateId={state.stateId}
             lgaId={state.lgaId}
             width="100%"
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <PeriodSelector
+            label={formatMessage(messages.date)}
+            minDate={state.minDate || null}
+            maxDate={state.maxDate || null}
+            onChange={dateValues => setState({ ...state, ...dateValues })}
           />
         </Grid>
       </Grid>
