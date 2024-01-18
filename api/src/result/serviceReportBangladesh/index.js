@@ -37,15 +37,15 @@ const presumptiveDrTbCases = [
  */
 // ----------------
 const typeOfPatient = value => `
-  IFNULL(r.patientData ->> '$.TypeOfPatient', '') = '${value}'
+  IFNULL(r.patientData->>'$.TypeOfPatient', '') = '${value}'
 `
 // ----------------
 const patientHistory = value => `
-  IFNULL(r.patientData ->> '$.PatientHistory', '') = '${value}'
+  IFNULL(r.patientData->>'$.PatientHistory', '') = '${value}'
 `
 // ----------------
 const patientRetreatment = value => `
-  IFNULL(r.patientData ->> '$.PatientRetreatment', '') = '${value}'
+  IFNULL(r.patientData->>'$.PatientRetreatment', '') = '${value}'
 `
 // ----------------
 const counter = (id, condition) =>
@@ -61,7 +61,7 @@ const counter = (id, condition) =>
 const inTypeOfPatient = (typeOfPatientValues, moreConditions) => {
   const typeOfPatient = _.trim(JSON.stringify(typeOfPatientValues), '[ ]')
   let condition = `
-    IFNULL(r.patientData ->> '$.TypeOfPatient', '') IN (${typeOfPatient})
+    IFNULL(r.patientData->>'$.TypeOfPatient', '') IN (${typeOfPatient})
   `
   if (moreConditions) {
     condition += `
@@ -125,6 +125,17 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
 
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
+
+  const whereXdrDetected = `
+  (
+    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'INH') IS NOT NULL OR
+    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'FLQ') IS NOT NULL OR
+    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'AMK') IS NOT NULL OR
+    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'KAN') IS NOT NULL OR
+    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'CAP') IS NOT NULL OR
+    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'ETH') IS NOT NULL
+  )
+  `
 
   return {
     drTb10AData: knex('Result as r')
@@ -229,6 +240,49 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         ),
         cnt_Presumptive_TB_Cases_Error_Xdr: inTypeOfPatient(
           presumptiveTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Error}
+           and
+           ${assayXdr}
+          `
+        ),
+
+        cnt_Presumptive_DR_TB_Cases_Invalid_Mtb: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Invalid}
+           and
+           ${assayMtb}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_Invalid_Xdr: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Invalid}
+           and
+           ${assayXdr}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_NoResult_Mtb: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.NoResult}
+           and
+           ${assayMtb}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_NoResult_Xdr: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.NoResult}
+           and
+           ${assayXdr}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_Error_Mtb: inTypeOfPatient(
+          presumptiveDrTbCases,
+          `r.resultCategory1 = ${resultCategoryIds.Error}
+           and
+           ${assayMtb}
+          `
+        ),
+        cnt_Presumptive_DR_TB_Cases_Error_Xdr: inTypeOfPatient(
+          presumptiveDrTbCases,
           `r.resultCategory1 = ${resultCategoryIds.Error}
            and
            ${assayXdr}
@@ -1004,25 +1058,26 @@ async function getDataForReportDrTb10B(auth, query) {
   //         ELSE ' '
   //         END as ${key}
   //      `
-  const checkResistance = (resistance, key) => `
-    CASE
-      WHEN r.resultData->>'$.allResistances.${resistance}' = 'Detected'
-        THEN 
-          CASE
-          WHEN r.resultData->>'$.resultText' LIKE '%High ${resistance} Resistance @label_result_detected%'
-            THEN 'High ${resistance} Resistance Detected'
-          WHEN r.resultData->>'$.resultText' LIKE '%Very Low ${resistance} Resistance @label_result_detected%'
-            THEN 'Very Low ${resistance} Resistance Detected'
-          WHEN r.resultData->>'$.resultText' LIKE '%Low ${resistance} Resistance @label_result_detected%'
-            THEN 'Low ${resistance} Resistance Detected'
-          ELSE '${resistance} Resistance Detected'
-          END
-      WHEN r.resultData->>'$.allResistances.${resistance}' = 'NotDetected'
-        THEN '${resistance} Resistance Not Detected'
-      WHEN r.resultData->>'$.allResistances.${resistance}' = 'Indeterminate'
-        THEN '${resistance} Resistance Indeterminate'
-      ELSE ' '
-    END as ${key}
+  const checkResistance = (resistance, key) => `CASE
+          WHEN JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', '${resistance}') IS NOT NULL
+            THEN
+              CASE
+              WHEN r.resultData->>'$.resultText' LIKE '%High ${resistance} Resistance @label_result_detected%'
+                THEN 'High ${resistance} Resistance Detected'
+              WHEN r.resultData->>'$.resultText' LIKE '%Very Low ${resistance} Resistance @label_result_detected%'
+                THEN 'Very Low ${resistance} Resistance Detected'
+              WHEN r.resultData->>'$.resultText' LIKE '%Low ${resistance} Resistance @label_result_detected%'
+                THEN 'Low ${resistance} Resistance Detected'
+              ELSE '${resistance} Resistance Detected'
+              END
+          WHEN r.resultData->>'$.allResistances.${resistance}' = 'Detected'
+            THEN '${resistance} Resistance Detected'
+          WHEN r.resultData->>'$.allResistances.${resistance}' = 'NotDetected'
+            THEN '${resistance} Resistance Not Detected'
+          WHEN r.resultData->>'$.allResistances.${resistance}' = 'Indeterminate'
+            THEN '${resistance} Resistance Indeterminate'
+          ELSE ' '
+        END as ${key}
     `
   const dataQuery = knex('Result as r')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -1054,18 +1109,21 @@ async function getDataForReportDrTb10B(auth, query) {
       lgaId: 'g.lgaId',
       siteName: 's.name',
     })
+    .andWhere(queryBuilder => {
+      queryBuilder.where('a.externalId', 'GxMtbXdr').orWhere('rc2.externalId', 'Detected')
+    })
     .select(
       'r.endedOn as dateOfDiagnosis',
       knex.raw(
         `COALESCE(
-          r.patientData ->> '$.PatientName',
-          r.patientData ->> '$.name'
+          r.patientData->>'$.PatientName',
+          r.patientData->>'$.name'
         ) as patientName`
       ),
       knex.raw(
         `COALESCE(
-          r.patientData ->> '$.PatientAge',
-          r.patientData ->> '$.age'
+          r.patientData->>'$.PatientAge',
+          r.patientData->>'$.age'
         ) as patientAge`
       ),
       knex.raw(`
@@ -1112,15 +1170,15 @@ async function getDataForReportDrTb10B(auth, query) {
           WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Stool' THEN 'Stool'
           ELSE ''
         END as sampleType`),
-      knex.raw(`r.patientData ->> '$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
-      knex.raw(`r.resultData ->> '$.bacterialLoad' as bacterialLoad`),
+      knex.raw(`r.patientData->>'$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
+      knex.raw(`r.resultData->>'$.bacterialLoad' as bacterialLoad`),
       knex.raw(`CASE WHEN a.id = ${assayIds.GxMtbXdr} THEN rc1.name ELSE '' END as mtbDetected`),
       knex.raw(
         `
         CASE
           COALESCE(
-            r.patientData ->> '$.PatientGender',
-            r.patientData ->> '$.gender'
+            r.patientData->>'$.PatientGender',
+            r.patientData->>'$.gender'
           )
         WHEN 'Male' THEN 'M'
         WHEN 'Female' THEN 'F'
@@ -1138,14 +1196,14 @@ async function getDataForReportDrTb10B(auth, query) {
         `CONCAT(
             IFNULL(r.patientData ->> '$.address', ''),
             CASE
-              WHEN 
+              WHEN
                 IFNULL(
                   COALESCE(
                     r.patientData ->> '$.PatientStreet',
                     r.patientData ->> '$.street'
                   ),
                 '') = ''
-                OR 
+                OR
                 r.patientData->>'$.address' LIKE CONCAT('%', COALESCE(r.patientData->>'$.PatientStreet', r.patientData->>'$.street'), '%')
               THEN ''
               ELSE CONCAT(' ', COALESCE(r.patientData->>'$.PatientStreet', r.patientData->>'$.street'))
@@ -1154,7 +1212,7 @@ async function getDataForReportDrTb10B(auth, query) {
               COALESCE(
                 r.patientData->>'$.PatientPhone',
                 r.patientData->>'$.phone'
-              ), 
+              ),
               ''
             )
          ) as patientAddressAndCell`
@@ -1174,9 +1232,9 @@ async function getDataForReportDrTb10B(auth, query) {
       `),
       knex.raw(
         `CONCAT(
-          IFNULL(r.patientData ->> '$.TBRegistrationNumberCurrent', ''),
+          IFNULL(r.patientData->>'$.TBRegistrationNumberCurrent', ''),
           ' ',
-          IFNULL(r.patientData ->> '$.TBRegistrationNumberPrevious', '')
+          IFNULL(r.patientData->>'$.TBRegistrationNumberPrevious', '')
         ) as tbRegistrationNumber`
       ),
       /**
@@ -1188,7 +1246,7 @@ async function getDataForReportDrTb10B(auth, query) {
        */
       knex.raw(`
           CASE WHEN a.id IN (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})
-          THEN 
+          THEN
             (CASE
               WHEN r.resultCategory1 = ${resultCategoryIds.Detected}
                     AND
@@ -1253,11 +1311,11 @@ async function getDataForReportCovid19(auth, query) {
   const conditionBase = (typeOfTest, gender, extraCondition) => {
     let condition = `
       COALESCE(
-        r.patientData ->> '$.PatientGender',
-        r.patientData ->> '$.gender'
+        r.patientData->>'$.PatientGender',
+        r.patientData->>'$.gender'
       ) = '${gender}'
       and
-      (r.patientData ->> '$.PatientHistory') = '${typeOfTest}'
+      (r.patientData->>'$.PatientHistory') = '${typeOfTest}'
     `
     if (extraCondition) {
       condition += ` and ${extraCondition} `
@@ -1921,10 +1979,10 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
             `
             DISTINCT
             CASE
-              WHEN 
+              WHEN
                 a.id = ${assayId}
                 AND
-                IFNULL(r.patientData ->> '$.${fieldName}', '') IN ('', 'null')
+                IFNULL(r.patientData->>'$.${fieldName}', '') IN ('', 'null')
               THEN r.id
               ELSE null
             END`
@@ -1957,7 +2015,7 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
        * knex.raw(`
        *  SUM(
        *    CASE
-       *    WHEN IFNULL(r.patientData ->> '$.${fieldName}', '') IN ('', 'null')
+       *    WHEN IFNULL(r.patientData->>'$.${fieldName}', '') IN ('', 'null')
        *    THEN 1
        *    ELSE 0
        *    END
