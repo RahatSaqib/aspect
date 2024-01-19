@@ -628,15 +628,14 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     .groupBy('d.id')
 
   const deviceIds = data.map(device => device.id)
-
   const resultsGroupedByDevice = await knex('Result as r')
     .modify(queryBuilder => {
       if (query.minDate) {
-        queryBuilder.where(knex.raw('IFNULL(r.endedOn, r.startedOn) > ?', [query.minDate.toISOString()]))
+        queryBuilder.where(knex.raw('IFNULL(r.endedOn, r.startedOn) > ?', [query.minDate]))
       }
 
       if (query.maxDate) {
-        queryBuilder.where(knex.raw('IFNULL(r.endedOn, r.startedOn) <= ?', [query.maxDate.toISOString()]))
+        queryBuilder.where(knex.raw('IFNULL(r.endedOn, r.startedOn) <= ?', [query.maxDate]))
       }
 
       queryBuilder.where('r.assayId', assayId)
