@@ -1627,8 +1627,18 @@ async function upsertDashboardWidgets(
 
   let widgets = dashboardWidgetJson.stat
 
+  // Remove widgets that are not in the fixture
+  const widgetsToRemoveIds = _.map(widgets, w => w.externalId)
+  const widgetsToRemove = await knex('DashboardWidget').whereNotIn('externalId', widgetsToRemoveIds).pluck('id')
+  await knex('JobFunctionDashboardWidget').whereIn('widgetId', widgetsToRemove).del()
+  await knex('DashboardWidgetStat').whereIn('dashboardWidgetId', widgetsToRemove).del()
+  await knex('DashboardWidgetTarget').whereIn('dashboardWidgetId', widgetsToRemove).del()
+  await knex('DashboardWidget').whereIn('id', widgetsToRemove).del()
+
+  // Get widgets to insert/update based on whitelist
   if (whitelist) widgets = _.filter(dashboardWidgetJson.stat, widget => _.indexOf(whitelist, widget.externalId) > -1)
 
+  // Iterate over all whitelisted widgets and insert/update
   await Promise.all(
     _.map(widgets, async widget => {
       // insert or update the widget itself

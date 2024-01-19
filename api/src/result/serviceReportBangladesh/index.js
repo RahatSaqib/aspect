@@ -125,17 +125,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
 
-  const whereXdrDetected = `
-  (
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'INH') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'FLQ') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'AMK') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'KAN') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'CAP') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'ETH') IS NOT NULL
-  )
-  `
-
   return {
     drTb10AData: knex('Result as r')
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
