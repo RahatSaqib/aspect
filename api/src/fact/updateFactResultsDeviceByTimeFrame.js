@@ -73,7 +73,7 @@ const sumSingleXdrResistance = knex =>
     []
   )
 
-async function calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCategory1, resultCategory2, endedOn, knex) {
+async function calculateFactResultsDeviceByTimeFrame(deviceId, siteId, assayId, resultCategory1, resultCategory2, endedOn, knex) {
   // make sure device still exists
   const device = await knex('Device as d')
     .join('Site as s', 's.id', 'd.siteId')
@@ -250,7 +250,7 @@ async function calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCa
           ...values,
           `(
               ${deviceId},
-              '${count.siteId}',
+              ${count.siteId ?? siteId},
               '${timeFrame}',
               '${count.startedOnTimeFrame}',
               ${count.assayId},
