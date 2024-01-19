@@ -6,10 +6,6 @@ exports.up = async function (knex) {
     await knex('FactResultsDeviceByTimeFrame').truncate();
   }
   await knex.schema.alterTable('FactResultsDeviceByTimeFrame', x => {
-    x.dropForeign('siteId')
-    x.dropColumns('siteId')
-  });
-  await knex.schema.alterTable('FactResultsDeviceByTimeFrame', x => {
     x.integer('siteId').unsigned().references('id').inTable('Site').notNullable();
   });
 };
