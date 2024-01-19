@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-12-28T14:43:41.431Z\n"
+"POT-Creation-Date: 2024-01-18T19:11:18.974Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -6236,6 +6236,36 @@ msgstr "MTB Detected - Rif Indeterminate"
 msgid "MTB Detected - Rif Not Detected"
 msgstr "MTB Detected - Rif Not Detected"
 
+#. [resultCategoryGroup.gxMtbXdrMtbDetectedDrugDetected]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Detected
+#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Detected
+#: extracted_strings.json
+msgid "MTB Detected Drug Resistance Detected"
+msgstr "MTB Detected Drug Resistance Detected"
+
+#. [resultCategoryGroup.gxMtbXdrMtbDetectedDrugIndeterminate]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Indeterminate
+#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected Drug Resistance Indeterminate"
+msgstr "MTB Detected Drug Resistance Indeterminate"
+
+#. [resultCategoryGroup.gxMtbXdrMtbDetectedDrugNotDetected]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Not Detected
+#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Not Detected
+#: extracted_strings.json
+msgid "MTB Detected Drug Resistance Not Detected"
+msgstr "MTB Detected Drug Resistance Not Detected"
+
 #. [resultCategoryGroup.gxMtbRifMtbDetectedRifDetected]
 #. defaultMessage is:
 #. MTB Detected RIF Detected
@@ -6289,36 +6319,6 @@ msgstr "MTB Detected Resistance Resistant"
 #: extracted_strings.json
 msgid "MTB Detected Resistance Susceptible"
 msgstr "MTB Detected Resistance Susceptible"
-
-#. [resultCategoryGroup.gxMtbXdrMtbDetectedXdrDetected]
-#. defaultMessage is:
-#. MTB Detected XDR Detected
-#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
-#. defaultMessage is:
-#. MTB Detected XDR Detected
-#: extracted_strings.json
-msgid "MTB Detected XDR Detected"
-msgstr "MTB Detected XDR Detected"
-
-#. [resultCategoryGroup.gxMtbXdrMtbDetectedXdrIndeterminate]
-#. defaultMessage is:
-#. MTB Detected XDR Indeterminate
-#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
-#. defaultMessage is:
-#. MTB Detected XDR Indeterminate
-#: extracted_strings.json
-msgid "MTB Detected XDR Indeterminate"
-msgstr "MTB Detected XDR Indeterminate"
-
-#. [resultCategoryGroup.gxMtbXdrMtbDetectedXdrNotDetected]
-#. defaultMessage is:
-#. MTB Detected XDR Not Detected
-#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
-#. defaultMessage is:
-#. MTB Detected XDR Not Detected
-#: extracted_strings.json
-msgid "MTB Detected XDR Not Detected"
-msgstr "MTB Detected XDR Not Detected"
 
 #. [p.PkDashboard.mtbXdrmtbDetection]
 #. defaultMessage is:
@@ -14228,6 +14228,15 @@ msgstr "{unit} since last week"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total calibrations"
+
+#~ msgid "MTB Detected XDR Detected"
+#~ msgstr "MTB Detected XDR Detected"
+
+#~ msgid "MTB Detected XDR Indeterminate"
+#~ msgstr "MTB Detected XDR Indeterminate"
+
+#~ msgid "MTB Detected XDR Not Detected"
+#~ msgstr "MTB Detected XDR Not Detected"
 
 #~ msgid "All topics"
 #~ msgstr "All topics"
