@@ -185,9 +185,7 @@ const start = async () => {
     server.events.on('log', (event, tags) => {
       if (tags.error) {
         const { error } = event
-        logger.error('-------------------')
-        logger.error(error || event)
-        logger.error('-------------------')
+        logger.error(`-------------------\n${error || event}\n-------------------`)
       }
     })
     server.ext('onPreResponse', function (request, h) {

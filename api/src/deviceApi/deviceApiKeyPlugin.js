@@ -36,7 +36,7 @@ function authenticate(request, h) {
         : h.unauthenticated(Boom.unauthorized('Invalid Credentials'))
     })
     .catch(err => {
-      logger.error(err)
+      logger.warning(err)
       throw err
     })
 }
@@ -62,7 +62,7 @@ const validateApiKeyAuthBasic = {
 
 async function authUsernameAndPassword(username, password) {
   if (!username || !password) {
-    logger.error('Invalid Credentials')
+    logger.warning('Invalid Credentials')
     return
   }
   const deviceApiKeyAuthResult = await lookupUsingCredentials(username, password)
@@ -71,7 +71,7 @@ async function authUsernameAndPassword(username, password) {
     if (password) {
       return authToken(password)
     }
-    logger.error('Cannot authorize API Key')
+    logger.warning('Cannot authorize API Key')
     return
   }
   const { id, token } = data
@@ -85,7 +85,7 @@ async function authToken(token) {
   // Remove whitespace and dashes
   token = normalizeToken(token)
   if (!token) {
-    logger.error('Blank API Key')
+    logger.warning('Blank API Key')
     return
   }
 
@@ -95,11 +95,11 @@ async function authToken(token) {
     .where({ 'k.token': token, 'k.revoked': false })
     .first('k.id as keyId', 'd.name as deviceName', 'k.expiresOn')
   if (!key) {
-    logger.error(`Cannot find API Key Token ${token}`)
+    logger.warning(`Cannot find API Key Token ${token}`)
     return
   }
   if (!!key.expiresOn && key.expiresOn < new Date()) {
-    logger.error(`API Key Token ${token} has Expired`)
+    logger.warning(`API Key Token ${token} has Expired`)
     return
   }
 
