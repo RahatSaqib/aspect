@@ -138,6 +138,10 @@ const messages = {
       id: 'pages.DeviceDetailProfile.dailyCapacity',
       defaultMessage: 'Daily Capacity',
     },
+    moduleBayCapacity: {
+      id: 'pages.DeviceDetailProfile.moduleBayCapacity',
+      defaultMessage: 'Module Bay Capacity',
+    },
     notes: {
       id: 'pages.DeviceDetailProfile.notes',
       defaultMessage: 'Notes',

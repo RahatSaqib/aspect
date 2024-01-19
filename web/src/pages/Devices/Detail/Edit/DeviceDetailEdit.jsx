@@ -109,6 +109,20 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
             />
 
             <TextField
+              label={intl.formatMessage(messages.moduleBayCapacity)}
+              type="number"
+              error={error?.moduleBayCapacity}
+              value={editDevice.moduleBayCapacity}
+              onChange={({ target: { value } }) => {
+                setError(error => ({ ...error, moduleBayCapacity: (Number(value) < 0 || Number(value) > 256) }))
+                setEditDevice({ ...editDevice, moduleBayCapacity: value ? parseInt(value, 10) : '' })
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
+            />
+
+            <TextField
               label={intl.formatMessage(messages.instrumentsConnected)}
               type="number"
               error={error?.instrumentsConnected}

@@ -39,6 +39,7 @@ const SELECT_SHOW_FIELDS = [
   'd.configurationData',
   'd.notes',
   'd.serial',
+  'd.moduleBayCapacity',
   'dt.id as deviceTypeId',
   'dt.name as deviceTypeName',
   'dt.externalId as deviceTypeExternalId',
