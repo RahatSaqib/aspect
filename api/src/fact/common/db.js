@@ -7,7 +7,7 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
   return knex('FactResultsDeviceByTimeFrame as r')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .leftJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
     .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
