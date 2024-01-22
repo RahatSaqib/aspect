@@ -413,25 +413,25 @@ async function listSitesWithReporters(request) {
 }
 
 const paginateAndSort = (data, query) => {
-  const defaultSortCol = 'siteName';
-  const defaultSortDirection = 'asc';
+  const defaultSortCol = 'siteName'
+  const defaultSortDirection = 'asc'
   const { page = 0, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query;
 
   // Sorting the data
   const sortedData = data.sort((a, b) => {
-    if (a[sortCol] < b[sortCol]) return sortDir === 'asc' ? -1 : 1;
-    if (a[sortCol] > b[sortCol]) return sortDir === 'asc' ? 1 : -1;
+    if (a[sortCol] < b[sortCol]) return sortDir === 'asc' ? -1 : 1
+    if (a[sortCol] > b[sortCol]) return sortDir === 'asc' ? 1 : -1
     return 0;
   });
 
   // Calculating pagination
-  const start = page * size;
-  const end = (page + 1) * size;
+  const start = page * size
+  const end = (page + 1) * size
 
   // Slicing the data for pagination
-  const paginatedData = sortedData.slice(start, end);
+  const paginatedData = sortedData.slice(start, end)
 
-  return paginatedData;
+  return paginatedData
 }
 
 const getReportingSites = async request => {
