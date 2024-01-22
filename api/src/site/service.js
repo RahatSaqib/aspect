@@ -421,8 +421,8 @@ const paginateAndSort = (data, query) => {
   const sortedData = data.sort((a, b) => {
     if (a[sortCol] < b[sortCol]) return sortDir === 'asc' ? -1 : 1
     if (a[sortCol] > b[sortCol]) return sortDir === 'asc' ? 1 : -1
-    return 0;
-  });
+    return 0
+  })
 
   // Calculating pagination
   const start = page * size
