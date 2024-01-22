@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2023-12-28T14:43:41.431Z\n"
+"POT-Creation-Date: 2024-01-18T19:11:18.974Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -6245,6 +6245,36 @@ msgstr "MTB ошкор - Rif номуайян"
 msgid "MTB Detected - Rif Not Detected"
 msgstr "MTB муайян карда шуд - Rif ошкор нашудааст"
 
+#. [resultCategoryGroup.gxMtbXdrMtbDetectedDrugDetected]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Detected
+#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Detected
+#: extracted_strings.json
+msgid "MTB Detected Drug Resistance Detected"
+msgstr "MTB Муқовимат ба маводи мухаддир ошкор"
+
+#. [resultCategoryGroup.gxMtbXdrMtbDetectedDrugIndeterminate]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Indeterminate
+#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Indeterminate
+#: extracted_strings.json
+msgid "MTB Detected Drug Resistance Indeterminate"
+msgstr "Муқовимати маводи мухаддири MTB муайяншуда номуайян"
+
+#. [resultCategoryGroup.gxMtbXdrMtbDetectedDrugNotDetected]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Not Detected
+#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
+#. defaultMessage is:
+#. MTB Detected Drug Resistance Not Detected
+#: extracted_strings.json
+msgid "MTB Detected Drug Resistance Not Detected"
+msgstr "Муқовимати маводи мухаддири MTB ошкор карда нашудааст"
+
 #. [resultCategoryGroup.gxMtbRifMtbDetectedRifDetected]
 #. defaultMessage is:
 #. MTB Detected RIF Detected
@@ -6298,36 +6328,6 @@ msgstr "Муқовимати муқовимати MTB ошкоршуда"
 #: extracted_strings.json
 msgid "MTB Detected Resistance Susceptible"
 msgstr "Муқовимати ошкоршудаи MTB ҳассос"
-
-#. [resultCategoryGroup.gxMtbXdrMtbDetectedXdrDetected]
-#. defaultMessage is:
-#. MTB Detected XDR Detected
-#. [pages.filters.gxMtbXdrMtbDetectedXdrDetected]
-#. defaultMessage is:
-#. MTB Detected XDR Detected
-#: extracted_strings.json
-msgid "MTB Detected XDR Detected"
-msgstr "MTB Detected XDR Detected"
-
-#. [resultCategoryGroup.gxMtbXdrMtbDetectedXdrIndeterminate]
-#. defaultMessage is:
-#. MTB Detected XDR Indeterminate
-#. [pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate]
-#. defaultMessage is:
-#. MTB Detected XDR Indeterminate
-#: extracted_strings.json
-msgid "MTB Detected XDR Indeterminate"
-msgstr "MTB Detected XDR Indeterminate"
-
-#. [resultCategoryGroup.gxMtbXdrMtbDetectedXdrNotDetected]
-#. defaultMessage is:
-#. MTB Detected XDR Not Detected
-#. [pages.filters.gxMtbXdrMtbDetectedXdrNotDetected]
-#. defaultMessage is:
-#. MTB Detected XDR Not Detected
-#: extracted_strings.json
-msgid "MTB Detected XDR Not Detected"
-msgstr "MTB Detected XDR ошкор нашудааст"
 
 #. [p.PkDashboard.mtbXdrmtbDetection]
 #. defaultMessage is:
@@ -14282,6 +14282,15 @@ msgstr "{unit} аз ҳафтаи гузашта"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
+
+#~ msgid "MTB Detected XDR Detected"
+#~ msgstr "MTB Detected XDR Detected"
+
+#~ msgid "MTB Detected XDR Indeterminate"
+#~ msgstr "MTB Detected XDR Indeterminate"
+
+#~ msgid "MTB Detected XDR Not Detected"
+#~ msgstr "MTB Detected XDR ошкор нашудааст"
 
 #~ msgid "All topics"
 #~ msgstr "Ҳама мавзӯъҳо"
