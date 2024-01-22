@@ -2,40 +2,40 @@ import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
   reportersTitle: {
-    id: 'pages.ReporterList.reportersTitle',
-    defaultMessage: 'Reporters',
+    id: 'pages.ReporterList.reportingSitesTitle',
+    defaultMessage: 'Reporting Sites',
   },
   siteName: {
     id: 'reporters.siteName',
     defaultMessage: 'Reporter Location',
   },
-  totalResults: {
-    id: 'reporters.totalResults',
-    defaultMessage: 'Total Results',
+  samplesRegistered: {
+    id: 'reporters.samplesRegistered',
+    defaultMessage: 'Samples Registered',
   },
-  delivered: {
-    id: 'reporters.delivered',
-    defaultMessage: 'To Reporter',
+  resultsReporting: {
+    id: 'reporters.resultsReporting',
+    defaultMessage: 'Results Reporting',
   },
-  requiresTreatment: {
-    id: 'reporters.requiresTreatment',
-    defaultMessage: 'Requires Confirmation',
+  downloaded: {
+    id: 'reporters.downloaded',
+    defaultMessage: 'Results Downloaded',
   },
-  onTreatment: {
-    id: 'reporters.onTreatment',
-    defaultMessage: 'Confirmed',
+  followUpRequired: {
+    id: 'reporters.followUpRequired',
+    defaultMessage: 'FollowUp Required',
   },
-  transferred: {
-    id: 'reporters.transferred',
-    defaultMessage: 'Transferred Out',
+  followUpPending: {
+    id: 'reporters.followUpPending',
+    defaultMessage: 'FollowUp Pending',
   },
-  notPossible: {
-    id: 'reporters.notPossible',
-    defaultMessage: 'Not Possible',
+  followUpConfirmed: {
+    id: 'reporters.followUpConfirmed',
+    defaultMessage: 'FollowUp Confirmed',
   },
-  notOnTreatment: {
-    id: 'reporters.notOnTreatment',
-    defaultMessage: 'Not Confirmed',
+  followUpNotPossible: {
+    id: 'reporters.followUpNotPossible',
+    defaultMessage: 'FollowUp Not Possible',
   },
   paginatorStatus: {
     id: 'pages.ReporterList.paginatorStatus',
