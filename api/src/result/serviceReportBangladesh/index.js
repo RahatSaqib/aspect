@@ -1090,19 +1090,21 @@ async function getDataForReportDrTb10B(auth, query) {
     // scope Mtb and Mtb-Ultra assays
     .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
     .where(queryBuilder => {
-      queryBuilder.where(q => {
-        q.whereIn('a.id', [assayIds.GxMtbXdr])
-          .andWhere(qq => {
+      queryBuilder
+        .where(q => {
+          q.whereIn('a.id', [assayIds.GxMtbXdr]).andWhere(qq => {
             XDR_RESISTANCES.forEach(resistance => {
               qq.orWhere(knex.raw(`r.resultData->>'$.allResistances.${resistance}' = 'Detected'`))
-            });
+            })
 
             XDR_RESISTANCES.forEach(resistance => {
-              qq.orWhere(knex.raw(`JSON_SEARCH(r.resultData->'$.detectedResistance', 'one', '${resistance}') IS NOT NULL`));
-            });
-          });
-      })
-        .orWhere('rc2.externalId', 'Detected');
+              qq.orWhere(
+                knex.raw(`JSON_SEARCH(r.resultData->'$.detectedResistance', 'one', '${resistance}') IS NOT NULL`)
+              )
+            })
+          })
+        })
+        .orWhere('rc2.externalId', 'Detected')
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
