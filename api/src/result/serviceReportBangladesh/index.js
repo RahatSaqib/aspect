@@ -1090,7 +1090,19 @@ async function getDataForReportDrTb10B(auth, query) {
     // scope Mtb and Mtb-Ultra assays
     .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
     .where(queryBuilder => {
-      queryBuilder.where('a.id', assayIds.GxMtbRif).orWhere('rc2.externalId', 'Detected')
+      queryBuilder.where(q => {
+        q.whereIn('a.id', [assayIds.GxMtbXdr])
+          .andWhere(qq => {
+            XDR_RESISTANCES.forEach(resistance => {
+              qq.orWhere(knex.raw(`r.resultData->>'$.allResistances.${resistance}' = 'Detected'`))
+            });
+
+            XDR_RESISTANCES.forEach(resistance => {
+              qq.orWhere(knex.raw(`JSON_SEARCH(r.resultData->'$.detectedResistance', 'one', '${resistance}') IS NOT NULL`));
+            });
+          });
+      })
+        .orWhere('rc2.externalId', 'Detected');
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -1108,9 +1120,6 @@ async function getDataForReportDrTb10B(auth, query) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
-    })
-    .andWhere(queryBuilder => {
-      queryBuilder.where('a.externalId', 'GxMtbXdr').orWhere('rc2.externalId', 'Detected')
     })
     .select(
       'r.endedOn as dateOfDiagnosis',
@@ -1270,14 +1279,6 @@ async function getDataForReportDrTb10B(auth, query) {
           END as resultMtbRif
       `)
     )
-    .where(builder => {
-      XDR_RESISTANCES.forEach(resistance => {
-        builder.orWhere(knex.raw(`r.resultData->>'$.allResistances.${resistance}' = 'Detected'`))
-      })
-      XDR_RESISTANCES.forEach(resistance => {
-        builder.orWhere(knex.raw(`JSON_SEARCH(r.resultData->'$.detectedResistance', 'one', '${resistance}') IS NOT NULL`));
-      })
-    })
 
   const data = await dataQuery
 
