@@ -1628,8 +1628,8 @@ async function upsertDashboardWidgets(
   let widgets = dashboardWidgetJson.stat
 
   // Remove widgets that are not in the fixture
-  const widgetsToRemoveIds = _.map(widgets, w => w.externalId)
-  const widgetsToRemove = await knex('DashboardWidget').whereNotIn('externalId', widgetsToRemoveIds).pluck('id')
+  const widgetsToKeepIds = _.map(widgets, w => w.externalId)
+  const widgetsToRemove = await knex('DashboardWidget').whereNotIn('externalId', widgetsToKeepIds).pluck('id')
   await knex('JobFunctionDashboardWidget').whereIn('widgetId', widgetsToRemove).del()
   await knex('DashboardWidgetStat').whereIn('dashboardWidgetId', widgetsToRemove).del()
   await knex('DashboardWidgetTarget').whereIn('dashboardWidgetId', widgetsToRemove).del()
