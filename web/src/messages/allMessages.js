@@ -408,7 +408,7 @@ const messages = defineMessages({
   inventoryTransfers: { id: 'browsePage.browseDropdown.inventoryTransfers', defaultMessage: 'Transfers' },
   InventoryOverview: { id: 'browsePage.browseDropdown.inventoryOverview', defaultMessage: 'Inventory Overview' },
   routers: { id: 'browsePage.browseDropdown.routers', defaultMessage: 'Routers' },
-  reporters: { id: 'browsePage.browseDropdown.reporters', defaultMessage: 'Reporters' },
+  reporters: { id: 'browsePage.browseDropdown.reportingSites', defaultMessage: 'Reporting Sites' },
   notifications: { id: 'browsePage.browseDropdown.notifications', defaultMessage: 'Notifications' },
   notificationTypes: { id: 'browsePage.browseDropdown.notificationTypes', defaultMessage: 'Notification Types' },
   notificationLogs: { id: 'browsePage.browseDropdown.notificationLogs', defaultMessage: 'Notification Logs' },
