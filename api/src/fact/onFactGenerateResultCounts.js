@@ -21,13 +21,13 @@ async function onFactGenerateResultCounts(action, context) {
       .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
       .where('dtc.hasResults', 1)
-      .select('d.id as deviceId', 'd.siteId as siteId')
-    await Promise.each(items, async ({ deviceId, siteId }) => messageContext.factGenerateResultCounts(deviceId, { siteId }))
+      .select('d.id as deviceId')
+    await Promise.each(items, async ({ deviceId }) => messageContext.factGenerateResultCounts(deviceId))
   })
 }
 
 async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, { messageContext }) {
-  const { assayId, resultCategory1, resultCategory2, endedOn, siteId } = options
+  const { assayId, resultCategory1, resultCategory2, endedOn } = options
   return messageContext.transact(async knex => {
     const now = new Date()
 
@@ -248,7 +248,7 @@ async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, {
       })
       .delete()
 
-    await calculateFactResultsDeviceByTimeFrame(deviceId, siteId, assayId, resultCategory1, resultCategory2, endedOn, knex)
+    await calculateFactResultsDeviceByTimeFrame(deviceId, assayId, resultCategory1, resultCategory2, endedOn, knex)
   })
 }
 

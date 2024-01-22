@@ -73,7 +73,14 @@ const sumSingleXdrResistance = knex =>
     []
   )
 
-async function calculateFactResultsDeviceByTimeFrame(deviceId, siteId, assayId, resultCategory1, resultCategory2, endedOn, knex) {
+async function calculateFactResultsDeviceByTimeFrame(
+  deviceId,
+  assayId,
+  resultCategory1,
+  resultCategory2,
+  endedOn,
+  knex
+) {
   // make sure device still exists
   const device = await knex('Device as d')
     .join('Site as s', 's.id', 'd.siteId')
@@ -107,8 +114,7 @@ async function calculateFactResultsDeviceByTimeFrame(deviceId, siteId, assayId, 
     }
   })
 
-  const { mtbNoResultInvalidIndeterminate, mtbErrorByCode, mtbOtherErrorsNotIn } =
-    SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
+  const { mtbNoResultInvalidIndeterminate, mtbErrorByCode, mtbOtherErrorsNotIn } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
   const errorCodes = [5011, 5007, 5006, 2008, 2005, 2037, 2025, 2022]
   const errorCodesCsv = errorCodes.map(errorCode => `'${errorCode}'`).join(',')
   const byErrorCodes = _.reduce(
@@ -125,7 +131,7 @@ async function calculateFactResultsDeviceByTimeFrame(deviceId, siteId, assayId, 
       .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
       .whereNotNull('r.assayId')
       .whereNotNull('r.resultCategory1')
-      .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
+      .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame', 'r.siteId')
       .count('r.id as resultCount')
       .modify(qb => {
         if (endedOn) {
@@ -217,19 +223,19 @@ async function calculateFactResultsDeviceByTimeFrame(deviceId, siteId, assayId, 
            * }
            */
         }
-          /**
-           * fill all XDR resistance counts
-           * ---> add `...XDR_RESISTANCES_COMBO` to below array for counting combination of resistances
-           */
-          ;[...XDR_RESISTANCES].forEach(resistanceName => {
-            // see pattern for field alias in funcs `sumSingleXdrResistance` and `sumComboXdrResistances` above
-            const cntDetected = count[`cnt_${resistanceName}_Detected`] || 0
-            const cntNotDetected = count[`cnt_${resistanceName}_NotDetected`] || 0
-            const cntIndeterminate = count[`cnt_${resistanceName}_Indeterminate`] || 0
-            _.set(objCounts, [resistanceName, 'detected'], cntDetected)
-            _.set(objCounts, [resistanceName, 'notDetected'], cntNotDetected)
-            _.set(objCounts, [resistanceName, 'indeterminate'], cntIndeterminate)
-          })
+        /**
+         * fill all XDR resistance counts
+         * ---> add `...XDR_RESISTANCES_COMBO` to below array for counting combination of resistances
+         */
+        ;[...XDR_RESISTANCES].forEach(resistanceName => {
+          // see pattern for field alias in funcs `sumSingleXdrResistance` and `sumComboXdrResistances` above
+          const cntDetected = count[`cnt_${resistanceName}_Detected`] || 0
+          const cntNotDetected = count[`cnt_${resistanceName}_NotDetected`] || 0
+          const cntIndeterminate = count[`cnt_${resistanceName}_Indeterminate`] || 0
+          _.set(objCounts, [resistanceName, 'detected'], cntDetected)
+          _.set(objCounts, [resistanceName, 'notDetected'], cntNotDetected)
+          _.set(objCounts, [resistanceName, 'indeterminate'], cntIndeterminate)
+        })
         _.set(objCounts, ['cntSameOriginSite'], count.cntSameOriginSite)
         /**
          * critical errors
@@ -250,7 +256,7 @@ async function calculateFactResultsDeviceByTimeFrame(deviceId, siteId, assayId, 
           ...values,
           `(
               ${deviceId},
-              ${count.siteId ?? siteId},
+              ${count.siteId},
               '${timeFrame}',
               '${count.startedOnTimeFrame}',
               ${count.assayId},
