@@ -415,7 +415,7 @@ async function listSitesWithReporters(request) {
 const paginateAndSort = (data, query) => {
   const defaultSortCol = 'siteName'
   const defaultSortDirection = 'asc'
-  const { page = 0, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query;
+  const { page = 0, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query
 
   // Sorting the data
   const sortedData = data.sort((a, b) => {
