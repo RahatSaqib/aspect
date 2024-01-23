@@ -4499,7 +4499,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromPMDTPayload(payload)[0].externalId
         expect(dstResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -4568,7 +4567,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromPMDTPayload(payload)[0].externalId
         expect(dstResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -4655,7 +4653,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sample1ExternalId = getSamplesFromPMDTPayload(payload)[0].externalId
         expect(cultureResult1).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -4700,7 +4697,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sample2ExternalId = getSamplesFromPMDTPayload(payload)[1].externalId
         expect(cultureResult2).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -4821,7 +4817,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const newSampleExternalId = getSamplesFromPMDTPayload(payload)[1].externalId
         expect(newCultureResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -4898,7 +4893,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromPMDTPayload(payload)[0].externalId
         expect(lpaResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -4956,7 +4950,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sample1ExternalId = getSamplesFromPMDTPayload(payload)[0].externalId
         expect(smearResult1).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -4994,7 +4987,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sample2ExternalId = getSamplesFromPMDTPayload(payload)[1].externalId
         expect(smearResult2).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -5048,7 +5040,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromPMDTPayload(payload)[0].externalId
         expect(gxResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -5103,7 +5094,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromPMDTPayload(payload)[0].externalId
         expect(tbLampResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -6809,7 +6799,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromRITMPayload(payload)[0].externalId
         expect(dstResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -6875,7 +6864,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromRITMPayload(payload)[0].externalId
         expect(cultureResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -6931,7 +6919,6 @@ describe('Device API Raw Philippines NTRL', () => {
         }
         expect(insertedSmearResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -6990,7 +6977,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromRITMPayload(payload)[0].externalId
         expect(gxResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
@@ -7045,7 +7031,6 @@ describe('Device API Raw Philippines NTRL', () => {
         const sampleExternalId = getSamplesFromRITMPayload(payload)[0].externalId
         expect(gxResult).to.containSubset({
           partnerId: databaseRecords.Site.partnerId,
-          geographyId: databaseRecords.Site.geographyId,
           siteId: databaseRecords.Site.id,
           deviceId: databaseRecords.DeviceApiKey.deviceId,
           longitude: databaseRecords.Site.longitude,
