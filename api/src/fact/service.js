@@ -13,6 +13,7 @@ const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { deviceOffline, deviceOnline, deviceNoResults, deviceHasNewResults } = require('../device/actions')
 const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
+const logger = require('../shared/logger')
 
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
@@ -183,17 +184,42 @@ async function onResultLogged({ resultId }, { messageContext }) {
     deviceHasNewResults,
   })
   return context.transact(async knex => {
-    const { deviceId, assayId, resultCategory1, resultCategory2, noResults, endedOn } =
+    const {
+      deviceId,
+      assayId,
+      resultCategory1,
+      resultCategory2,
+      noResults,
+      endedOn,
+      instrumentSerial,
+      moduleName,
+      moduleSerial } =
       (await knex('Result as r')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
         .where({ id: resultId })
-        .first('r.deviceId', 'r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'fdf.noResults', 'r.endedOn')) || {}
+        .first(
+          'r.deviceId',
+          'r.assayId',
+          'r.resultCategory1',
+          'r.resultCategory2',
+          'fdf.noResults',
+          'r.endedOn',
+          'r.instrumentSerial',
+          'r.moduleName',
+          'r.moduleSerial')) || {}
     if (!deviceId) {
       return
     }
     if (noResults === 1) {
       context.deviceHasNewResults(deviceId)
     }
+
+    try {
+      await updateFactDeviceModulesCount(deviceId)
+    } catch (err) {
+      logger.error(err)
+    }
+
     context.factGenerateResultCounts(deviceId, {
       assayId,
       resultCategory1,
@@ -201,6 +227,60 @@ async function onResultLogged({ resultId }, { messageContext }) {
       endedOn,
     })
   })
+}
+
+async function updateFactDeviceModulesCount(deviceId) {
+  const date = new Date(new Date().toDateString())
+  const nextDay = new Date(date)
+  nextDay.setDate(nextDay.getDate() + 1)
+
+  const rows = await knex('Result as r')
+    .where('r.endedOn', '>=', date)
+    .where('r.endedOn', '<', nextDay)
+    .where('r.deviceId', deviceId)
+    .distinct()
+    .select('r.instrumentSerial', 'r.moduleName', 'r.moduleSerial')
+
+  const device = {
+    moduleBays: {},
+    modules: {},
+  }
+  rows.forEach(row => {
+    const moduleBay = `${row.instrumentSerial}${row.moduleName}`
+    const module = `${row.instrumentSerial}${row.moduleSerial}`
+    if (moduleBay)
+      device.moduleBays[moduleBay] = 1
+    if (module)
+      device.modules[module] = 1
+  })
+
+  const moduleBaysUsed = Object.keys(device.moduleBays).length
+  const modulesUsed = Object.keys(device.modules).length
+
+  let needUpdate = true
+  const row = await knex('FactDeviceModulesCount as f')
+    .where('f.deviceId', deviceId)
+    .where('f.date', date)
+    .first('f.moduleBaysUsed', 'f.modulesUsed')
+
+  if (row && moduleBaysUsed <= row.moduleBaysUsed && modulesUsed <= row.modulesUsed) {
+    needUpdate = false
+  }
+
+  if (needUpdate) {
+    await knex.raw('INSERT INTO FactDeviceModulesCount SET ? ON DUPLICATE KEY UPDATE ?', [
+      {
+        deviceId,
+        date,
+        moduleBaysUsed,
+        modulesUsed,
+      },
+      {
+        moduleBaysUsed,
+        modulesUsed,
+      }
+    ])
+  }
 }
 
 // ----------------------------------------------

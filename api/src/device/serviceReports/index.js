@@ -15,10 +15,9 @@ const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getDoNotUseModulesReportData } = require('./doNotUseModulesReport')
-const { getModuleStatusReportData } = require('./moduleStatusReport')
 const getDevicesWithCountsForTB = require('./genXpertTbWorkloadReport')
 const { getAllDeviceReportData } = require('./deviceAndSiteSummaryReport')
-const { getResultCategoryGroupColumns } = require('../common/db')
+const { getResultCategoryGroupColumns, joinModuleAvailability } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
 const { getErrorRateByDevice, getErrorRateByModule, getErrorRateByUser } = require('./errorRatesReport')
 const { getNoStockInventoryReport } = require('./noStockInventoryReport')
@@ -450,13 +449,210 @@ async function getDoNotUseModulesReport(auth, query) {
 }
 
 async function getModuleStatusReport(auth, query) {
+  const { minDate = subMonths(new Date(), 1) } = query
+  const minDateNoTime = new Date(minDate.toDateString())
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getModuleStatusReportData(dataConstraints, query)
+
+  const moduleReplacedIssuesForPeriod = knex('Issue as issueModuleReplaced')
+    .join('IssueType as it', 'issueModuleReplaced.issueTypeId', 'it.id')
+    .where('it.name', 'Module Replaced')
+    .modify(filterDateRangeParams, query, 'issueModuleReplaced.createdOn')
+    .select('issueModuleReplaced.deviceId')
+    .count('issueModuleReplaced.id as qty')
+    .groupBy('issueModuleReplaced.deviceId')
+
+  const rows = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Partner as p', 'p.id', 'd.partnerId')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('State as state', 'state.id', 'g.stateId')
+    .innerJoin('Lga as lga', 'lga.id', 'g.lgaId')
+    .modify(await joinModuleAvailability(dataConstraints, query))
+    .leftJoin(moduleReplacedIssuesForPeriod.as('mr'), function () {
+      this.on('mr.deviceId', 'd.id')
+    })
+    .whereNot('dt.externalId', 'GxAlert')
+    .select([
+      'd.id as deviceId',
+      'd.name as deviceName',
+      'd.serial as deviceSerial',
+      'd.moduleBayCapacity as moduleBayCapacity',
+      'state.name as State',
+      'lga.name as Lga',
+      knex.raw('ifnull(moduleAvailability.enabled, 0) as functionalModules'),
+      knex.raw('ifnull(moduleAvailability.disabled, 0) as disabledModules'),
+      knex.raw('ifnull(mr.qty, 0) as replacedModules'),
+    ])
+    .groupBy('d.id')
+    .orderBy(['d.name'])
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      partner: 'p',
+    })
+    .modify(filterParams, query, {
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+
+  const disabledModules = await knex('Issue as i')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .join('Device as d', 'i.deviceId', 'd.id')
+    .whereNotNull('i.deviceId')
+    .where('it.externalId', 'ModuleDisabled')
+    .where('is.externalId', 'Active')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+    })
+    .groupBy('i.deviceId')
+    .select(
+      'i.deviceId',
+      knex.raw('COUNT(DISTINCT i.data->>"$.moduleSerial") as count'),
+    )
+
+  const moduleUsage = await knex('FactDeviceModulesCount as m')
+    .innerJoin('Device as d', 'm.deviceId', 'd.id')
+    .where('m.date', '>=', minDateNoTime)
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+    })
+    .groupBy('m.deviceId')
+    .select([
+      'm.deviceId as deviceId',
+      knex.raw('MAX(m.moduleBaysUsed) as moduleBaysUsed'),
+      knex.raw('MAX(m.modulesUsed) as modulesUsed'),
+    ])
+
+  _.each(rows, row => {
+    const activeModules = moduleUsage.find(d => d.deviceId === row.deviceId)?.modulesUsed || 0
+
+    row.activeModuleBays = moduleUsage.find(d => d.deviceId === row.deviceId)?.moduleBaysUsed || 0
+    row.replacedModules = activeModules > row.moduleBayCapacity ? (activeModules - row.moduleBayCapacity) : 0
+    row.disabledModules = disabledModules.find(d => d.deviceId === row.deviceId)?.count || 0
+  })
+
+  await updateFactDeviceModulesCount(5)
+  // await testMigration(knex)
 
   return {
     ok: true,
     data: rows,
     total: rows.length,
+  }
+}
+
+async function updateFactDeviceModulesCount(deviceId) {
+  const date = new Date(new Date().toDateString())
+  const nextDay = new Date(date)
+  nextDay.setDate(nextDay.getDate() + 1)
+
+  const rows = await knex('Result as r')
+    .where('r.endedOn', '>=', date)
+    .where('r.endedOn', '<', nextDay)
+    .where('r.deviceId', deviceId)
+    .distinct()
+    .select('r.instrumentSerial', 'r.moduleName', 'r.moduleSerial')
+
+  const device = {
+    moduleBays: {},
+    modules: {},
+  }
+  rows.forEach(row => {
+    const moduleBay = `${row.instrumentSerial}${row.moduleName}`
+    const module = `${row.instrumentSerial}${row.moduleSerial}`
+    if (moduleBay)
+      device.moduleBays[moduleBay] = 1
+    if (module)
+      device.modules[module] = 1
+  })
+
+  const moduleBaysUsed = Object.keys(device.moduleBays).length
+  const modulesUsed = Object.keys(device.modules).length
+
+  let needUpdate = true
+  const row = await knex('FactDeviceModulesCount as f')
+    .where('f.deviceId', deviceId)
+    .where('f.date', date)
+    .first('f.moduleBaysUsed', 'f.modulesUsed')
+
+  if (row && moduleBaysUsed <= row.moduleBaysUsed && modulesUsed <= row.modulesUsed) {
+    needUpdate = false
+  }
+
+  if (needUpdate) {
+    await knex.raw('INSERT INTO FactDeviceModulesCount SET ? ON DUPLICATE KEY UPDATE ?', [
+      {
+        deviceId,
+        date,
+        moduleBaysUsed,
+        modulesUsed,
+      },
+      {
+        moduleBaysUsed,
+        modulesUsed,
+      }
+    ])
+  }
+}
+
+async function testMigration(knex) {
+  let date = new Date(2023, 0, 1)
+  const maxDate = new Date(new Date().toDateString())
+  maxDate.setDate(maxDate.getDate() + 1)
+
+  let devices = {}
+  while (date < maxDate) {
+    const nextDay = new Date(date)
+    nextDay.setDate(nextDay.getDate() + 1)
+
+    const rows = await knex('Result as r')
+      .where('r.endedOn', '>=', date)
+      .where('r.endedOn', '<', nextDay)
+      .distinct()
+      .select('r.deviceId', 'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial')
+
+    rows.forEach(row => {
+      const deviceId = row.deviceId
+      const moduleBay = `${row.instrumentSerial}${row.moduleName}`
+      const module = `${row.instrumentSerial}${row.moduleSerial}`
+      let device
+      if (devices.hasOwnProperty(deviceId))
+        device = devices[deviceId]
+      else {
+        device = {
+          moduleBays: {},
+          modules: {},
+        }
+        devices[deviceId] = device
+      }
+      if (moduleBay)
+        device.moduleBays[moduleBay] = 1
+      if (module)
+        device.modules[module] = 1
+    })
+
+    for (let key in devices) {
+      const deviceObj = devices[key]
+      await knex.raw('INSERT INTO FactDeviceModulesCount SET ? ON DUPLICATE KEY UPDATE ?', [
+        {
+          deviceId: key,
+          date: date,
+          moduleBaysUsed: Object.keys(deviceObj.moduleBays).length,
+          modulesUsed: Object.keys(deviceObj.modules).length,
+
+        },
+        {
+          moduleBaysUsed: Object.keys(deviceObj.moduleBays).length,
+          modulesUsed: Object.keys(deviceObj.modules).length,
+        }
+      ])
+    }
+    devices = {}
+    date.setDate(date.getDate() + 1)
   }
 }
 
