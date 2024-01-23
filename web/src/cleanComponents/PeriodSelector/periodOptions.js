@@ -226,5 +226,3 @@ export const yearOptions = intl => [
 ]
 
 export const customYearOptions = (intl, year) => [...customYearsOptions(intl.formatDate, year)]
-
-export const customFormat = (start, end) => `${format(start, dayMonthFormat)} - ${format(end, dayMonthFormat)}`

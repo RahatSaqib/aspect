@@ -7,13 +7,14 @@ const { knex } = require('../../db')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getConstraints } = require('../../auth/constraints')
 const { exportData, getMaxLimitPlaceHolders, getBaseReplacements } = require('../../shared/excel')
-const { processGroupedQuery } = require('../../shared/query')
+const { processGroupedQuery } = require('../common/db')
 
 const getReportXdrDevicesSummary = require('./xdrDevicesSummaryReport')
 const getAllResultsReport = require('./getAllResultsReport')
 const getDataExtractReport = require('./dataExtractForTableau')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
-const { getGroupBy, getClinicalIndicatorQueryForResultsTable } = require('../service')
+const { getClinicalIndicatorQueryForResultsTable } = require('../service')
+const { getGroupBy } = require('../common/logic')
 
 /**
  * 'header' is for 1st row in CSV file,
