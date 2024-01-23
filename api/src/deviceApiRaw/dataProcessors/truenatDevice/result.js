@@ -51,7 +51,6 @@ class TruenatResult extends SynchronousDataProcessor {
           partnerId,
           deviceApprovalId,
           deviceName,
-          geographyId,
           longitude,
           latitude,
           siteName,

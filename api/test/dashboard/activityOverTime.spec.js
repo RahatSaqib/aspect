@@ -97,7 +97,7 @@ describe('Dashboard routes - GET /dashboard/operational-data/activity-over-time'
     // -----------------------------
     // insert few results for 1st weekday (weekDays[0])
     // -----------------------------
-    const { id: deviceId, geographyId, siteId } = device
+    const { id: deviceId, siteId } = device
     const samples = []
     await Promise.each(_.range(totalResults), async () => {
       const sample = {

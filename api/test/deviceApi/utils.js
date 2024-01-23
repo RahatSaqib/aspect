@@ -263,7 +263,7 @@ async function createResult(
   if (!endedOn) endedOn = now
   if (!resultWorkflowStatusId) resultWorkflowStatusId = await resultWorkflowStatusToId('OK')
 
-  const { siteId, partnerId, geographyId } = await knex('Device as d').where({ id: deviceId }).first()
+  const { siteId, partnerId } = await knex('Device as d').where({ id: deviceId }).first()
 
   const [sampleId] = await knex('Sample').insert({
     externalId,

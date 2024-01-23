@@ -171,7 +171,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
 
   // ------------------------------------------------------------------------
   const createResults = async () => {
-    const { deviceId, geographyId, partnerId, siteId, userId } = initialState
+    const { deviceId, partnerId, siteId, userId } = initialState
     const now = new Date().toISOString()
     const auditFields = {
       createdOn: now,
