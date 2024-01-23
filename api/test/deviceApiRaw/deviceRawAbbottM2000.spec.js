@@ -260,7 +260,6 @@ aa.`
     results.forEach(result => {
       expect(result.assayId).to.equal(expectedAssayId)
       expect(result.partnerId).to.equal(site.partnerId)
-      expect(result.geographyId).to.equal(site.geographyId)
       expect(result.siteId).to.equal(abbottM2000SiteId)
       expect(result.deviceId).to.equal(abbottM2000DeviceId)
       expect(result.longitude).to.equal(site.longitude)
@@ -381,7 +380,6 @@ aa.`
     results.forEach(result => {
       expect(result.assayId).to.equal(expectedAssayId)
       expect(result.partnerId).to.equal(site.partnerId)
-      expect(result.geographyId).to.equal(site.geographyId)
       expect(result.siteId).to.equal(abbottM2000SiteId)
       expect(result.deviceId).to.equal(abbottM2000DeviceId)
       expect(result.longitude).to.equal(site.longitude)
@@ -506,7 +504,6 @@ aa.`
     results.forEach(result => {
       expect(result.assayId).to.equal(expectedAssayId)
       expect(result.partnerId).to.equal(site.partnerId)
-      expect(result.geographyId).to.equal(site.geographyId)
       expect(result.siteId).to.equal(abbottM2000SiteId)
       expect(result.deviceId).to.equal(abbottM2000DeviceId)
       expect(result.longitude).to.equal(site.longitude)

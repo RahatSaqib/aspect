@@ -141,9 +141,9 @@ async function createNewIssue(knex, issueType, action) {
 
 async function lookupIssueContext({ resultId, deviceId, siteId, consumableId }, knex) {
   if (resultId) {
-    return knex('Result')
+    return knex('Result as r')
       .join('Site as s', 'r.siteId', 's.id')
-      .where({ id: resultId })
+      .where('r.id', resultId)
       .first('r.deviceId', 'r.siteId', 's.geographyId', 'r.partnerId')
   }
   if (deviceId) {
