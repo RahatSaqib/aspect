@@ -650,7 +650,7 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
   return { total: totalRecords, data, length: data.length }
 }
 
-async function processGroupedQuery(resultQuery, groupBy, dateColumn = 'IFNULL(r.endedOn, r.startedOn)') {
+async function processGroupedQuery(knex, resultQuery, groupBy, dateColumn = 'IFNULL(r.endedOn, r.startedOn)') {
   // handle possible groups:
   const paramToDb = {
     resultCategory1: ['rc1.externalId as resultCategory1', 'rc1.i18nKey as resultCategory1I18nKey '],
