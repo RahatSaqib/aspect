@@ -1528,7 +1528,7 @@ async function currentResultAggregations(request) {
   /**
    * List of the number of tests in date range groupped by xxx
    */
-  const data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+  const data = await processGroupedQuery(knex, baseQuery, groupBy, dateColumn)
 
   if (groupBy.includes('month') && query.minDate && query.maxDate) {
     // Get all months in date range (YYYY-MM)
@@ -1865,7 +1865,7 @@ async function followUpAggregations(request) {
     groupBy.push('followUp')
   }
 
-  const data = await processGroupedQuery(resultQuery, groupBy)
+  const data = await processGroupedQuery(knex, resultQuery, groupBy)
 
   return { data }
 }
