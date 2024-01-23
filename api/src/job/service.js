@@ -364,7 +364,8 @@ async function assignPersonTo(request) {
   const personAssignments = await getAssignments({ auth, personId })
 
   const person = knex('Person').where('id', personId)
-  if ((await person.first()).disabled) await person.update({ disabled: false, disabledOn: null, disabledBy: null })
+  if ((await person.clone().first())?.disabled)
+    await person.clone().update({ disabled: false, disabledOn: null, disabledBy: null })
 
   return { ok: true, data: personAssignments }
 }

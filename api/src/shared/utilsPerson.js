@@ -22,7 +22,7 @@ async function hasCountryLevelPermission(constraints) {
     .select('p.module', 'p.activity')
     .then(rows => rows?.map(r => `${r.module}:${r.activity}`))
 
-  return _.some(permissions, p => ['person:edit', 'admin', 'person:admin'].includes(p))
+  return _.some(permissions, p => ['person:edit', 'person:admin'].includes(p) || p.startsWith('admin'))
 }
 
 module.exports = {
