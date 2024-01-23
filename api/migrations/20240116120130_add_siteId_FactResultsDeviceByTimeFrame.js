@@ -5,7 +5,7 @@ exports.up = async function (knex) {
     await knex('FactResultsDeviceByTimeFrame').truncate()
   }
   await knex.schema.alterTable('FactResultsDeviceByTimeFrame', x => {
-    x.integer('siteId').unsigned().references('id').inTable('Site')
+    x.integer('siteId').unsigned().references('id').inTable('Site').onDelete('CASCADE')
     x.dropForeign('deviceId')
     x.dropUnique([], 'factresultsdevicebytimeframe_unique')
     x.unique(
