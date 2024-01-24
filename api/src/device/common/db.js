@@ -201,12 +201,12 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (extendJoinToAssays || query.assayExternalId) {
+      if (extendJoinToAssays || query.assayId) {
         queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
         conditionalAliases.assay = 'a'
       }
-      if (query.assayExternalId) {
-        queryBuilder.where('a.externalId', query.assayExternalId)
+      if (query.assayId) {
+        queryBuilder.where('a.id', query.assayId)
       }
 
       if (query.resultCategoryId)
