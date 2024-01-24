@@ -189,6 +189,8 @@ function getDeviceBaseExtendedQuery(
     extendJoinToAssays: false,
   }
 ) {
+  const conditionalAliases = {}
+
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -204,9 +206,13 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (extendJoinToAssays) queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-      else if (query.assayExternalId)
-        queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId').where('a.externalId', query.assayExternalId)
+      if (extendJoinToAssays || query.assayExternalId) {
+        queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+        conditionalAliases.assay = 'a'
+      }
+      if (query.assayExternalId) {
+        queryBuilder.where('a.externalId', query.assayExternalId)
+      }
 
       if (query.resultCategoryId)
         queryBuilder
@@ -240,7 +246,7 @@ function getDeviceBaseExtendedQuery(
       addConstraints,
       dataConstraints,
       {
-        assay: 'a',
+        ...conditionalAliases,
         device: 'd',
         deviceType: 'dt',
         geography: 'g',
