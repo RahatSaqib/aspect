@@ -191,12 +191,13 @@ async function onResultLogged({ resultId }, { messageContext }) {
       resultCategory2,
       noResults,
       endedOn,
-      instrumentSerial,
-      moduleName,
-      moduleSerial } =
+      deviceType,
+    } =
       (await knex('Result as r')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
-        .where({ id: resultId })
+        .leftJoin('Device as d', 'd.id', 'r.deviceId')
+        .leftJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+        .where('r.id', resultId)
         .first(
           'r.deviceId',
           'r.assayId',
@@ -204,9 +205,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           'r.resultCategory2',
           'fdf.noResults',
           'r.endedOn',
-          'r.instrumentSerial',
-          'r.moduleName',
-          'r.moduleSerial')) || {}
+          'dt.externalId as deviceType')) || {}
     if (!deviceId) {
       return
     }
@@ -215,7 +214,9 @@ async function onResultLogged({ resultId }, { messageContext }) {
     }
 
     try {
-      await updateFactDeviceModulesCount(deviceId)
+      if (endedOn && deviceType === 'CepheidGeneXpert') {
+        await updateFactDeviceModulesCount(deviceId, endedOn, knex)
+      }
     } catch (err) {
       logger.error(err)
     }
@@ -229,8 +230,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
-async function updateFactDeviceModulesCount(deviceId) {
-  const date = new Date(new Date().toDateString())
+async function updateFactDeviceModulesCount(deviceId, resultEndedOn, knex) {
+  const date = new Date(resultEndedOn.toDateString())
   const nextDay = new Date(date)
   nextDay.setDate(nextDay.getDate() + 1)
 
