@@ -10,7 +10,6 @@ const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
   getDateTimeProjectionInUserTimeZone,
-  formatDateOrDefault,
 } = require('../../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getPersonByPersonId } = require('../../auth/service')
@@ -18,7 +17,7 @@ const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getDoNotUseModulesReportData } = require('./doNotUseModulesReport')
 const getDevicesWithCountsForTB = require('./genXpertTbWorkloadReport')
 const { getAllDeviceReportData } = require('./deviceAndSiteSummaryReport')
-const { getResultCategoryGroupColumns, joinModuleAvailability } = require('../common/db')
+const { getResultCategoryGroupColumns } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
 const { getErrorRateByDevice, getErrorRateByModule, getErrorRateByUser } = require('./errorRatesReport')
 const { getNoStockInventoryReport } = require('./noStockInventoryReport')
@@ -529,9 +528,6 @@ async function getModuleStatusReport(auth, query) {
     row.replacedModules = activeModules > row.moduleBayCapacity ? (activeModules - row.moduleBayCapacity) : 0
     row.disabledModules = disabledModules.find(d => d.deviceId === row.deviceId)?.count || 0
   })
-
-  // await updateFactDeviceModulesCount(5, new Date(), knex)
-  await testMigration(knex)
 
   return {
     ok: true,

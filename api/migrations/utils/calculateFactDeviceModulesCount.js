@@ -1,3 +1,4 @@
+/* eslint-disable */
 const { knex } = require('../../src/db')
 const logger = require('../../src/shared/logger')
 
