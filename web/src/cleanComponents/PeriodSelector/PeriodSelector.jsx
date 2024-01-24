@@ -6,15 +6,10 @@ import { TextField, Box, ClickAwayListener, Grow, Paper, Popper, Typography } fr
 import { DesktopDatePicker } from '@mui/x-date-pickers'
 import { useIntl } from 'react-intl'
 import messages from '../../messages/allMessages'
-import {
-  dayOptions,
-  weekOptions,
-  monthOptions,
-  quarterOptions,
-  yearOptions,
-  customYearOptions,
-  customFormat,
-} from './periodOptions'
+import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
+import { dayOptions, weekOptions, monthOptions, quarterOptions, yearOptions, customYearOptions } from './periodOptions'
+
+const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
 
 function PeriodSelector({
   minDate,
@@ -31,7 +26,7 @@ function PeriodSelector({
   customMaxYear,
 }) {
   const intl = useIntl()
-  const { formatMessage } = intl
+  const { formatMessage, format } = intl
   const day = dayOptions(intl)
   const week = weekOptions(intl)
   const month = monthOptions(intl)
@@ -46,7 +41,7 @@ function PeriodSelector({
           o =>
             o.value.minDate.getTime() === new Date(minDate).getTime() &&
             o.value.maxDate.getTime() === new Date(maxDate).getTime()
-        )?.label || customFormat(new Date(minDate), new Date(maxDate))
+        )?.label || customFormat(new Date(minDate), new Date(maxDate), format)
       : formatMessage(messages.any)
   )
   const anchorRef = useRef(null)
@@ -244,7 +239,13 @@ const TreeLabel = ({ label }) => (
   </Box>
 )
 
-const CustomMinDatePicker = ({ formatMessage, range, setValueLabel, setRange, onChange, handleToggle }) => {
+export const customFormat = (start, end, format) => {
+  return `${format(start, dayMonthFormat)} - ${format(end, dayMonthFormat)}`
+}
+
+const CustomMinDatePicker = ({ range, setValueLabel, setRange, onChange, handleToggle }) => {
+  const { formatMessage, format } = useIntl()
+
   return (
     <div style={{ width: '95%' }}>
       <DesktopDatePicker
@@ -253,9 +254,9 @@ const CustomMinDatePicker = ({ formatMessage, range, setValueLabel, setRange, on
         onChange={minDate => {
           if (minDate) {
             if (range.maxDate !== null) {
-              setValueLabel(customFormat(minDate, range.maxDate))
+              setValueLabel(customFormat(minDate, range.maxDate, format))
               setRange({ ...range, minDate })
-              onChange({ minDate: minDate.toISOString(), maxDate: range.maxDate.toISOString() })
+              onChange({ minDate, maxDate: range.maxDate })
               handleToggle()
             } else {
               setRange({ ...range, minDate })
@@ -268,7 +269,9 @@ const CustomMinDatePicker = ({ formatMessage, range, setValueLabel, setRange, on
   )
 }
 
-const CustomMaxDatePicker = ({ formatMessage, range, setValueLabel, setRange, onChange, handleToggle }) => {
+const CustomMaxDatePicker = ({ range, setValueLabel, setRange, onChange, handleToggle }) => {
+  const { formatMessage, format } = useIntl()
+
   return (
     <div style={{ width: '95%' }}>
       <DesktopDatePicker
@@ -278,9 +281,9 @@ const CustomMaxDatePicker = ({ formatMessage, range, setValueLabel, setRange, on
         onChange={maxDate => {
           if (maxDate) {
             if (range.minDate !== null) {
-              setValueLabel(customFormat(range.minDate, maxDate))
+              setValueLabel(customFormat(range.minDate, maxDate, format))
               setRange({ ...range, maxDate })
-              onChange({ minDate: range.minDate.toISOString(), maxDate: maxDate.toISOString() })
+              onChange({ minDate: range.minDate, maxDate })
               handleToggle()
             } else {
               setRange({ ...range, maxDate })

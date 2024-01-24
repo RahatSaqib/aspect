@@ -412,10 +412,10 @@ async function listSitesWithReporters(request) {
   return { ok: true, total, length: data.length, data }
 }
 
-function paginateAndSort(data, query) {
+const paginateAndSort = (data, query) => {
   const defaultSortCol = 'siteName'
   const defaultSortDirection = 'asc'
-  const { page = 1, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query
+  const { page = 0, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query
 
   // Sorting the data
   const sortedData = data.sort((a, b) => {
@@ -425,8 +425,8 @@ function paginateAndSort(data, query) {
   })
 
   // Calculating pagination
-  const start = (page - 1) * size
-  const end = page * size
+  const start = page * size
+  const end = (page + 1) * size
 
   // Slicing the data for pagination
   const paginatedData = sortedData.slice(start, end)
