@@ -1,4 +1,3 @@
-const Boom = require('@hapi/boom')
 const _ = require('lodash')
 
 const { knex } = require('../../db')
