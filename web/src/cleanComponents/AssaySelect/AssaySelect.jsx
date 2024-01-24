@@ -1,6 +1,6 @@
-import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
-import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import { IconButton, LinearProgress, MenuItem, TextField } from '@mui/material'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import useAssayList from '../../hooks/assay/useAssayList'
 import { assay } from '../../messages'
@@ -45,22 +45,14 @@ const AssaySelect = ({
       helperText={helperText}
       select
       value={value || ''}
-      onChange={e => {
-        if (reportGroup) {
-          const assayId = e.target.value
-          const { resultCategory2Label } = data.find(e => e.id === assayId)
-          onChange({ target: { value: { id: assayId, resultCategory2Label } } })
-        } else {
-          onChange(e)
-        }
-      }}
+      onChange={onChange}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
         endAdornment: (
           <IconButton
             sx={{ visibility: value && !single ? 'visible' : 'hidden' }}
-            onClick={() => onChange({ target: { name, value: { id: null, resultCategory2Label: null } } })}
+            onClick={() => onChange({ target: { name, value: null } })}
             disabled={disabled}
           >
             <ClearIcon />
