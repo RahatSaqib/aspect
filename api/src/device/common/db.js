@@ -182,12 +182,7 @@ function getDeviceBaseExtendedQuery(
     showDecommissionedDevices = false,
     excludeInternalDevices = true,
     extendJoinToAssays = false,
-  } = {
-    showUnapprovedDevices: false,
-    showDecommissionedDevices: false,
-    excludeInternalDevices: true,
-    extendJoinToAssays: false,
-  }
+  } = {}
 ) {
   const conditionalAliases = {}
 
