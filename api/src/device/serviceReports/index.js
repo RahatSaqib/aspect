@@ -498,7 +498,6 @@ async function getModuleStatusReport(auth, query) {
     .whereNotNull('i.deviceId')
     .where('it.externalId', 'ModuleDisabled')
     .where('is.externalId', 'Active')
-    .where('i.createdOn', '<', minDate)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
     })

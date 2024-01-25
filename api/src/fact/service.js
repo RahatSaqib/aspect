@@ -239,8 +239,7 @@ async function updateFactDeviceModulesCount(deviceId, resultEndedOn, knex) {
     .where('r.endedOn', '>=', date)
     .where('r.endedOn', '<', nextDay)
     .where('r.deviceId', deviceId)
-    .distinct()
-    .select('r.instrumentSerial', 'r.moduleName', 'r.moduleSerial')
+    .distinct('r.instrumentSerial', 'r.moduleName', 'r.moduleSerial')
 
   const device = {
     moduleBays: {},
