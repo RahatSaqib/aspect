@@ -246,8 +246,8 @@ async function updateFactDeviceModulesCount(deviceId, resultEndedOn, knex) {
     modules: {},
   }
   rows.forEach(row => {
-    const moduleBay = `${row.instrumentSerial}${row.moduleName}`
-    const module = `${row.instrumentSerial}${row.moduleSerial}`
+    const moduleBay = `${row.instrumentSerial ?? ''}${row.moduleName ?? ''}`
+    const module = `${row.instrumentSerial ?? ''}${row.moduleSerial ?? ''}`
     if (moduleBay)
       device.moduleBays[moduleBay] = 1
     if (module)

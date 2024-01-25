@@ -22,8 +22,7 @@ async function calculate(dateFrom, dateTo) {
     const rows = await knex('Result as r')
       .where('r.endedOn', '>=', dateFrom)
       .where('r.endedOn', '<', nextDay)
-      .distinct()
-      .select('r.deviceId', 'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial')
+      .distinct('r.deviceId', 'r.instrumentSerial', 'r.moduleName', 'r.moduleSerial')
 
     console.log(`Processing ${dateFrom.toDateString()}. Results: ${rows.length}`)
 
@@ -33,8 +32,8 @@ async function calculate(dateFrom, dateTo) {
       if (!geneXpertDeviceIds.includes(deviceId))
         return
 
-      const moduleBay = `${row.instrumentSerial}${row.moduleName}`
-      const module = `${row.instrumentSerial}${row.moduleSerial}`
+      const moduleBay = `${row.instrumentSerial ?? ''}${row.moduleName ?? ''}`
+      const module = `${row.instrumentSerial ?? ''}${row.moduleSerial ?? ''}`
       let device
       if (devices.hasOwnProperty(deviceId))
         device = devices[deviceId]
