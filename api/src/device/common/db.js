@@ -183,13 +183,10 @@ function getDeviceBaseExtendedQuery(
     showDecommissionedDevices = false,
     excludeInternalDevices = true,
     extendJoinToAssays = false,
-  } = {
-    showUnapprovedDevices: false,
-    showDecommissionedDevices: false,
-    excludeInternalDevices: true,
-    extendJoinToAssays: false,
-  }
+  } = {}
 ) {
+  const conditionalAliases = {}
+
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -205,9 +202,13 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (extendJoinToAssays) queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-      else if (query.assayExternalId)
-        queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId').where('a.externalId', query.assayExternalId)
+      if (extendJoinToAssays || query.assayId) {
+        queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+        conditionalAliases.assay = 'a'
+      }
+      if (query.assayId) {
+        queryBuilder.where('a.id', query.assayId)
+      }
 
       if (query.resultCategoryId)
         queryBuilder
@@ -241,7 +242,7 @@ function getDeviceBaseExtendedQuery(
       addConstraints,
       dataConstraints,
       {
-        assay: 'a',
+        ...conditionalAliases,
         device: 'd',
         deviceType: 'dt',
         geography: 'g',
@@ -745,13 +746,19 @@ function moduleDisabledIssues(onlyActiveIssues = false) {
     .join('IssueStatus as is', 'i2.issueStatusId', 'is.id')
     .where('it.externalId', 'ModuleDisabled')
     .whereIn('i2.id', function () {
-      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleName"')
+      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleSerial"')
     })
     .select(
       'i2.id',
-      'i2.resultId',
+      'i2.resultId', // notice that for `ModuleDisabled` i.resultId is always `null`
       'i2.deviceId',
+      /**
+       * since awhile ago we store `moduleSerial` instead of `moduleName`,
+       * so return both - `moduleName` for very old `Issue.data`,
+       * and `moduleSerial` for newer Issue.data
+       */
       knex.raw('i2.data->>"$.moduleName" as moduleName'),
+      knex.raw('i2.data->>"$.moduleSerial" as moduleSerial'),
       'i2.createdOn as dateLastIssue',
       'it.name as lastIssue'
     )
