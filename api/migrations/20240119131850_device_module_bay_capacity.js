@@ -1,6 +1,6 @@
 exports.up = async function (knex) {
     await knex.schema.alterTable('Device', function (table) {
-        table.integer('moduleBayCapacity').defaultTo(0)
+        table.integer('moduleBayCapacity').notNullable().defaultTo(0).after('deviceCapacityId')
     })
 
     await knex.raw(`
