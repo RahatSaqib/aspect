@@ -744,13 +744,19 @@ function moduleDisabledIssues(onlyActiveIssues = false) {
     .join('IssueStatus as is', 'i2.issueStatusId', 'is.id')
     .where('it.externalId', 'ModuleDisabled')
     .whereIn('i2.id', function () {
-      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleName"')
+      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleSerial"')
     })
     .select(
       'i2.id',
-      'i2.resultId',
+      'i2.resultId', // notice that for `ModuleDisabled` i.resultId is always `null`
       'i2.deviceId',
+      /**
+       * since awhile ago we store `moduleSerial` instead of `moduleName`,
+       * so return both - `moduleName` for very old `Issue.data`,
+       * and `moduleSerial` for newer Issue.data
+       */
       knex.raw('i2.data->>"$.moduleName" as moduleName'),
+      knex.raw('i2.data->>"$.moduleSerial" as moduleSerial'),
       'i2.createdOn as dateLastIssue',
       'it.name as lastIssue'
     )
