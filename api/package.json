@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.23.0",
+  "version": "1.23.1",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
@@ -117,7 +117,7 @@
     "node-uuid": "^1.4.8",
     "nodemailer": "^6.8.0",
     "object-mapper": "^6.2.0",
-    "phone": "^3.1.35",
+    "phone": "^3.1.42",
     "pug": "^3.0.2",
     "raven": "^2.6.4",
     "shx": "^0.3.4",
