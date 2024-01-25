@@ -1,6 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { getPeopleBase } = require('../../shared/utilsPerson')
+const { getPeopleBase, hasCountryLevelPermission } = require('../../shared/utilsPerson')
 const { query, knex, filterParams, sortPageParams } = require('../../db')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { revokeUsersToken, lockedOutUser, getUser } = require('../../auth/service')
@@ -105,10 +105,14 @@ async function listPeople(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
+  const countryLevelPermission = await hasCountryLevelPermission(dataConstraints)
+
   const { geographicLevel, tags } = query
 
   const personQuery = getPeopleBase()
-    .leftJoin('Geography as jcg', qb => qb.on('jc.geographyId', 'jcg.id').orOn('s.geographyId', 'jcg.id'))
+    .leftJoin('Geography as jcg', qb =>
+      qb.on('jc.geographyId', 'jcg.id').orOn('s.geographyId', 'jcg.id').orOn('p.geographyId', 'jcg.id')
+    )
     .leftJoin('PersonTag as pt', 'p.id', 'pt.personId')
     .leftJoin('Tag as t', 'pt.tagId', 't.id')
     .modify(filterParams, query, {
@@ -119,7 +123,9 @@ async function listPeople(request) {
       siteId: 'jc.siteId',
       contactStatus: 'p.disabled',
     })
-    .modify(addConstraints, dataConstraints, { geography: 'jcg', site: 's' })
+    .modify(qb => {
+      if (!countryLevelPermission) addConstraints(qb, dataConstraints, { geography: 'jcg', site: 's' })
+    })
     .where(qb => {
       if (dataConstraints.partner.id) {
         qb.whereNull('p.partnerId').orWhere('p.partnerId', dataConstraints.partner.id)
