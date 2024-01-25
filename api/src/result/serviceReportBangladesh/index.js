@@ -10,7 +10,6 @@ const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary
 const { convertCsvToArrayOfNumbers } = require('../../shared/string')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { createFormObject } = require('../../forms/service')
-const { XDR_RESISTANCES } = require('../../shared/constants')
 
 /**
  * **************************************
@@ -125,17 +124,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
 
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
-
-  const whereXdrDetected = `
-  (
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'INH') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'FLQ') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'AMK') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'KAN') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'CAP') IS NOT NULL OR
-    JSON_SEARCH(r.resultData->>'$.detectedResistance[*]', 'one', 'ETH') IS NOT NULL
-  )
-  `
 
   return {
     drTb10AData: knex('Result as r')
@@ -1087,24 +1075,13 @@ async function getDataForReportDrTb10B(auth, query) {
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftOuterJoin('Site as rs', 'r.referringSiteId', 'rs.id')
-    // scope Mtb and Mtb-Ultra assays
-    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
-    .where(queryBuilder => {
-      queryBuilder
-        .where(q => {
-          q.whereIn('a.id', [assayIds.GxMtbXdr]).andWhere(qq => {
-            XDR_RESISTANCES.forEach(resistance => {
-              qq.orWhere(knex.raw(`r.resultData->>'$.allResistances.${resistance}' = 'Detected'`))
-            })
-
-            XDR_RESISTANCES.forEach(resistance => {
-              qq.orWhere(
-                knex.raw(`JSON_SEARCH(r.resultData->'$.detectedResistance', 'one', '${resistance}') IS NOT NULL`)
-              )
-            })
-          })
-        })
-        .orWhere('rc2.externalId', 'Detected')
+    // scope XDR and Mtb and Mtb-Ultra assays (MTB Detected RIF Detected)
+    .where(function (q) {
+      q.where('a.id', assayIds.GxMtbXdr).orWhere(function (qq) {
+        qq.whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+          .where('rc2.externalId', 'Detected')
+          .where('rc1.externalId', 'Detected')
+      })
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -1281,7 +1258,6 @@ async function getDataForReportDrTb10B(auth, query) {
           END as resultMtbRif
       `)
     )
-
   const data = await dataQuery
 
   return {
