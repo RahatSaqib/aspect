@@ -36,16 +36,16 @@ async function exportDevices(request, reply) {
   const data =
     scope === 'devices'
       ? dataSet.map(item => ({
-          ...item,
-          issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
-          availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
-          errorRate: item.error.rate, // Excel column formatted as 'Percentage'
-        }))
+        ...item,
+        issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
+        availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
+        errorRate: item.error.rate, // Excel column formatted as 'Percentage'
+      }))
       : dataSet.map(item => ({
-          ...item,
-          lastPingOn: format(new Date(item.lastPingOn), 'yyyy-MM-dd'),
-          lastSeen: format(new Date(item.lastSeen), 'yyyy-MM-dd HH:mm:ss'),
-        }))
+        ...item,
+        lastPingOn: format(new Date(item.lastPingOn), 'yyyy-MM-dd'),
+        lastSeen: format(new Date(item.lastSeen), 'yyyy-MM-dd HH:mm:ss'),
+      }))
   //
   const sheetData = {
     data,
@@ -340,7 +340,7 @@ async function getDeviceCapacityReport(auth, query) {
         )
         deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
           (filteredMonthlyCapacity.resultCount * 100) /
-            Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
+          Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
           2
         )
       }
