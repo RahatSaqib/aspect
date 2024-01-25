@@ -128,13 +128,24 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
 
   await knex('Notification').whereIn('issueId', issueIds).delete()
   await knex('Issue').whereIn('id', issueIds).delete()
-  await knex('Device')
+
+  const devices = knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('id', deviceIds)
     .orWhereIn(
       'id',
       _.map(sitesAndDevices, elem => elem.deviceId)
     )
+    .select('id')
+
+  const deviceIdsToRemove = devices.map(d => d.id)
+
+  await knex('FactDeviceModulesCount')
+    .whereIn('deviceId', deviceIdsToRemove)
+    .delete()
+
+  await knex('Device')
+    .whereIn('id', deviceIdsToRemove)
     .delete()
 
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
@@ -352,7 +363,7 @@ class GxConnectApiTestContext {
       originSiteId: this.site.id,
     }
     const assay = await knex('Assay').where('externalId', assayExternalId).first()
-    ;[sample.id] = await knex('Sample').insert(sample)
+      ;[sample.id] = await knex('Sample').insert(sample)
 
     const resultSourceDiagnosticDeviceId = await resultSourceToId('DiagnosticDevice')
     const resultCategories = await allResultCategoryToId()
