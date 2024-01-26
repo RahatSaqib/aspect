@@ -138,7 +138,7 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
     )
     .select('id')
 
-  const deviceIdsToRemove = devices.map(d => d.id)
+  const deviceIdsToRemove = _.map(devices, d => d.id)
 
   await knex('FactDeviceModulesCount')
     .whereIn('deviceId', deviceIdsToRemove)
