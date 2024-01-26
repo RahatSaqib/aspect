@@ -114,7 +114,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               error={error?.moduleBayCapacity}
               value={editDevice.moduleBayCapacity}
               onChange={({ target: { value } }) => {
-                setError(error => ({ ...error, moduleBayCapacity: (Number(value) < 1 || Number(value) > 256) }))
+                setError(error => ({ ...error, moduleBayCapacity: Number(value) < 1 || Number(value) > 256 }))
                 setEditDevice({ ...editDevice, moduleBayCapacity: value ? parseInt(value, 10) : '' })
               }}
               InputLabelProps={{
