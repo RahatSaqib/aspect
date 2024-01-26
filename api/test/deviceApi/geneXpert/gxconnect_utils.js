@@ -132,11 +132,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const devices = knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('id', deviceIds)
-    .orWhereIn(
-      'id',
-      _.map(sitesAndDevices, elem => elem.deviceId)
-    )
-    .select('id')
+    .orWhereIn('id', _.map(sitesAndDevices, elem => elem.deviceId))
+    .select('id') ?? []
 
   const deviceIdsToRemove = _.map(devices, d => d.id)
 
