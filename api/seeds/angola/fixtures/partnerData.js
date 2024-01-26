@@ -42,6 +42,6 @@ module.exports = {
   maxDaysDeviceNoResults: 14,
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
-  serverUrl: 'https://angola.aspect.id',
-  apiUrl: 'https://angola.aspect.id/api',
+  serverUrl: 'https://aspect.minsa.gov.ao',
+  apiUrl: 'https://aspect.minsa.gov.ao/api',
 }

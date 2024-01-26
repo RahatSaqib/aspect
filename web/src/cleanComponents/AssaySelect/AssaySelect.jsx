@@ -1,6 +1,6 @@
+import React from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { IconButton, LinearProgress, MenuItem, TextField } from '@mui/material'
-import React from 'react'
 import { useIntl } from 'react-intl'
 import useAssayList from '../../hooks/assay/useAssayList'
 import { assay } from '../../messages'
@@ -16,7 +16,6 @@ const AssaySelect = ({
   disabled,
   assayTypeId,
   deviceTypeId,
-  reportGroup,
   onlyResults = false,
   single = false,
 }) => {
