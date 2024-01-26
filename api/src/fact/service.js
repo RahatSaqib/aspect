@@ -184,15 +184,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     deviceHasNewResults,
   })
   return context.transact(async knex => {
-    const {
-      deviceId,
-      assayId,
-      resultCategory1,
-      resultCategory2,
-      noResults,
-      endedOn,
-      deviceType,
-    } =
+    const { deviceId, assayId, resultCategory1, resultCategory2, noResults, endedOn, deviceType } =
       (await knex('Result as r')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
         .leftJoin('Device as d', 'd.id', 'r.deviceId')
@@ -205,7 +197,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
           'r.resultCategory2',
           'fdf.noResults',
           'r.endedOn',
-          'dt.externalId as deviceType')) || {}
+          'dt.externalId as deviceType'
+        )) || {}
     if (!deviceId) {
       return
     }
@@ -248,10 +241,8 @@ async function updateFactDeviceModulesCount(deviceId, resultEndedOn, knex) {
   rows.forEach(row => {
     const moduleBay = `${row.instrumentSerial ?? ''}${row.moduleName ?? ''}`
     const module = `${row.instrumentSerial ?? ''}${row.moduleSerial ?? ''}`
-    if (moduleBay)
-      device.moduleBays[moduleBay] = 1
-    if (module)
-      device.modules[module] = 1
+    if (moduleBay) device.moduleBays[moduleBay] = 1
+    if (module) device.modules[module] = 1
   })
 
   const moduleBaysUsed = Object.keys(device.moduleBays).length
@@ -278,7 +269,7 @@ async function updateFactDeviceModulesCount(deviceId, resultEndedOn, knex) {
       {
         moduleBaysUsed,
         modulesUsed,
-      }
+      },
     ])
   }
 }

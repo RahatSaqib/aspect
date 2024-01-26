@@ -36,16 +36,16 @@ async function exportDevices(request, reply) {
   const data =
     scope === 'devices'
       ? dataSet.map(item => ({
-        ...item,
-        issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
-        availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
-        errorRate: item.error.rate, // Excel column formatted as 'Percentage'
-      }))
+          ...item,
+          issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
+          availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
+          errorRate: item.error.rate, // Excel column formatted as 'Percentage'
+        }))
       : dataSet.map(item => ({
-        ...item,
-        lastPingOn: format(new Date(item.lastPingOn), 'yyyy-MM-dd'),
-        lastSeen: format(new Date(item.lastSeen), 'yyyy-MM-dd HH:mm:ss'),
-      }))
+          ...item,
+          lastPingOn: format(new Date(item.lastPingOn), 'yyyy-MM-dd'),
+          lastSeen: format(new Date(item.lastSeen), 'yyyy-MM-dd HH:mm:ss'),
+        }))
   //
   const sheetData = {
     data,
@@ -340,7 +340,7 @@ async function getDeviceCapacityReport(auth, query) {
         )
         deviceRow[filteredMonthlyCapacity.monthYear] = _.round(
           (filteredMonthlyCapacity.resultCount * 100) /
-          Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
+            Math.max(filteredMonthlyCapacity.dailyCapacity * workingDays, 1),
           2
         )
       }
@@ -446,10 +446,7 @@ async function getDoNotUseModulesReport(auth, query) {
 }
 
 async function getModuleStatusReport(auth, query) {
-  let {
-    minDate = subMonths(new Date(), 1),
-    maxDate = new Date(),
-  } = query
+  let { minDate = subMonths(new Date(), 1), maxDate = new Date() } = query
   if (typeof minDate === 'string' || minDate instanceof String) {
     minDate = new Date(minDate)
   }
@@ -502,10 +499,7 @@ async function getModuleStatusReport(auth, query) {
       device: 'd',
     })
     .groupBy('i.deviceId')
-    .select(
-      'i.deviceId',
-      knex.raw('COUNT(DISTINCT i.data->>"$.moduleSerial") as count'),
-    )
+    .select('i.deviceId', knex.raw('COUNT(DISTINCT i.data->>"$.moduleSerial") as count'))
 
   const moduleUsage = await knex('FactDeviceModulesCount as m')
     .innerJoin('Device as d', 'm.deviceId', 'd.id')
@@ -525,7 +519,7 @@ async function getModuleStatusReport(auth, query) {
     const activeModules = moduleUsage.find(d => d.deviceId === row.deviceId)?.modulesUsed || 0
 
     row.activeModuleBays = moduleUsage.find(d => d.deviceId === row.deviceId)?.moduleBaysUsed || 0
-    row.replacedModules = activeModules > row.moduleBayCapacity ? (activeModules - row.moduleBayCapacity) : 0
+    row.replacedModules = activeModules > row.moduleBayCapacity ? activeModules - row.moduleBayCapacity : 0
     row.disabledModules = disabledModules.find(d => d.deviceId === row.deviceId)?.count || 0
   })
 
