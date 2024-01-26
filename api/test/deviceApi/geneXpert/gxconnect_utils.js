@@ -132,18 +132,17 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, apiKeys, clientId) {
   const devices = await knex('Device')
     .whereIn('siteId', siteIds)
     .orWhereIn('id', deviceIds)
-    .orWhereIn('id', _.map(sitesAndDevices, elem => elem.deviceId))
+    .orWhereIn(
+      'id',
+      _.map(sitesAndDevices, elem => elem.deviceId)
+    )
     .select('id')
 
   const deviceIdsToRemove = _.map(devices, d => d.id)
 
-  await knex('FactDeviceModulesCount')
-    .whereIn('deviceId', deviceIdsToRemove)
-    .delete()
+  await knex('FactDeviceModulesCount').whereIn('deviceId', deviceIdsToRemove).delete()
 
-  await knex('Device')
-    .whereIn('id', deviceIdsToRemove)
-    .delete()
+  await knex('Device').whereIn('id', deviceIdsToRemove).delete()
 
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
@@ -360,7 +359,7 @@ class GxConnectApiTestContext {
       originSiteId: this.site.id,
     }
     const assay = await knex('Assay').where('externalId', assayExternalId).first()
-      ;[sample.id] = await knex('Sample').insert(sample)
+    ;[sample.id] = await knex('Sample').insert(sample)
 
     const resultSourceDiagnosticDeviceId = await resultSourceToId('DiagnosticDevice')
     const resultCategories = await allResultCategoryToId()
