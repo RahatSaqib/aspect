@@ -1,4 +1,3 @@
-const Boom = require('@hapi/boom')
 const _ = require('lodash')
 
 const { knex } = require('../../db')
@@ -19,11 +18,6 @@ const getTestAggregate = async request => {
 
   // get countryId for deviceApi key
   const { countryId } = await getDeviceKeyGeography(auth)
-
-  // we are hardcoding this for now
-  if (auth.credentials.token !== 'w3wgnd8fnm67mcpfey30') {
-    throw Boom.unauthorized('Invalid Credentials')
-  }
 
   const sites = await knex('Site')
     .leftJoin('Geography as geography', 'geography.id', 'Site.geographyId')
