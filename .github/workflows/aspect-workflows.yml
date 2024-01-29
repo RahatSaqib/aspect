@@ -68,14 +68,13 @@ jobs:
     name: 'Tests (WEB)'
     runs-on: ubuntu-latest
     needs: [fe-lint, check-web-changes]
+    if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
     steps:
       - uses: actions/checkout@v3
       - id: install-aspect
         uses: ./.github/workflows/setups/front-end-setup
-        if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
 
       - name: 'Run Tests'
-        if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
         run: yarn web:test
 
   be-lint:
@@ -303,7 +302,7 @@ jobs:
   run-migration-test:
     name: 'Migration Tests (API) - (seed ${{ matrix.seed }})'
     runs-on: ubuntu-latest
-    needs: [be-lint, check-api-migrations-changes]
+    needs: [check-api-migrations-changes]
     strategy:
       fail-fast: false
       matrix:
@@ -323,14 +322,14 @@ jobs:
           authentication plugin: 'mysql_native_password'
 
       - uses: actions/checkout@v3
-        if: ${{ needs.check-api-migrations-changes.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
 
       - name: Clone and install backend environment
-        if: ${{ needs.check-api-migrations-changes.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-setup
 
       - name: Create .env file
-        if: ${{ needs.check-api-migrations-changes.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-env
         with:
           dbname: ${{ env.dbname }}
@@ -346,6 +345,6 @@ jobs:
           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
 
       - name: 'Seed DB & Run Migrations'
-        if: ${{ needs.check-api-migrations-changes.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
         run: yarn start:api:seed
         shell: bash
