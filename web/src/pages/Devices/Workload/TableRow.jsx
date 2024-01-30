@@ -11,7 +11,9 @@ const TableRow = ({ item, extraColumns, onColumnClick }) => {
   const { dateTimeFormat } = getAspectDisplayPreferences().toJS()
   return (
     <Tr className={styles.TableRow}>
-      <Td className={styles.TableCell}>{item.name}</Td>
+      <Td className={styles.TableCell} onClick={() => onColumnClick({ deviceId: item.deviceId })}>
+        {item.name}
+      </Td>
       <Td hiddenOn="xl" className={styles.TableCell}>
         {item.deviceStatus ? formatMessage(messages[item.deviceStatus]) : formatMessage(messages.notAvailable)}
       </Td>
@@ -36,11 +38,11 @@ const TableRow = ({ item, extraColumns, onColumnClick }) => {
           ? formatMessage(messages.notAvailable)
           : format(new Date(item.lastResultEndedOn), dateTimeFormat)}
       </Td>
-      <Td onClick={() => onColumnClick(item.name)} className={styles.TableCell}>
+      <Td onClick={() => onColumnClick({ deviceName: item.name })} className={styles.TableCell}>
         {item.total}
       </Td>
       {extraColumns.map(col => (
-        <Td onClick={() => onColumnClick(item.name, col)} className={styles.TableCell}>
+        <Td onClick={() => onColumnClick({ deviceName: item.name, fieldId: col })} className={styles.TableCell}>
           {item[col]}
         </Td>
       ))}

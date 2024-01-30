@@ -97,7 +97,12 @@ const Workload = () => {
   ]
   const extraColumnsProps = extraColumns.map(ec => ec.fieldId)
 
-  const onColumnClick = (deviceName, fieldId) => {
+  const onColumnClick = ({ deviceName, fieldId, deviceId }) => {
+    if (deviceId) {
+      navigate(`/browse/device/list/${deviceId}`, { state: { previousLocationPathname: location.pathname } })
+      return
+    }
+
     let column = fieldId && columns.find(col => col.key.toLowerCase() === fieldId.toLowerCase()).label.toLowerCase()
     const resultGroupId =
       fieldId &&
@@ -139,7 +144,7 @@ const Workload = () => {
             />
           </div>
 
-          {isLoading && isresultCategoryLoading ? (
+          {isLoading || isresultCategoryLoading ? (
             <LinearProgress />
           ) : workloadList.length === 0 ? (
             <BrowseEmptyList />
@@ -160,6 +165,12 @@ const Workload = () => {
                   </TableBody>
                 </Table>
               </div>
+              {/* <TableRow
+                key={`workload--${7895893489}`}
+                item={workloadList[0]}
+                extraColumns={extraColumnsProps}
+                onColumnClick={onColumnClick}
+              /> */}
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}
