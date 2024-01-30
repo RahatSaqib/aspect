@@ -205,7 +205,7 @@ async function calculateFactResultsDeviceByTimeFrame(
       /**
        * 2. construct bulk insert
        */
-      let values = []
+      const values = []
       countsByCategories.forEach(count => {
         const objCounts = {
           /**
@@ -252,9 +252,7 @@ async function calculateFactResultsDeviceByTimeFrame(
         /**
          * array `values` with `(...)` strings
          */
-        values = [
-          ...values,
-          `(
+        values.push(`(
               ${deviceId},
               ${count.siteId},
               '${timeFrame}',
@@ -265,8 +263,7 @@ async function calculateFactResultsDeviceByTimeFrame(
               ${count.resultCount},
               '${format(now, 'yyyy-MM-dd HH:mm:ss')}',
               '${JSON.stringify(objCounts)}'
-            )`,
-        ]
+            )`)
       })
       await knex.raw(`
           INSERT INTO FactResultsDeviceByTimeFrame
