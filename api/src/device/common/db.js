@@ -596,6 +596,13 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       joinAssay.on('dt.id', 'a.deviceTypeId').andOn('a.id', knex.raw(assayId))
     })
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('Result as r', joinResultQuery => {
+      joinResultQuery.on('d.id', 'r.deviceId').andOn('r.assayId', knex.raw(assayId))
+
+      if (query.minDate) joinResultQuery.andOn('r.endedOn', '>', knex.raw(`'${query.minDate.toISOString()}'`))
+
+      if (query.maxDate) joinResultQuery.andOn('r.endedOn', '<=', knex.raw(`'${query.maxDate.toISOString()}'`))
+    })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
@@ -610,6 +617,11 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       deviceMaintenanceStatusId: 'dms.id',
     })
     .andWhere('dtc.hasResults', true)
+    .modify(q => {
+      extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
+    })
+    .select('r.deviceId', knex.raw('COUNT(r.id) as total'))
+
   const { total } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as total')).first()
   const data = await q
     .modify(_q => {
@@ -629,34 +641,14 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     .groupBy('d.id')
 
   const deviceIds = data.map(device => device.id)
-  const resultsGroupedByDevice = await knex('Result as r')
-    .modify(queryBuilder => {
-      if (query.minDate) {
-        queryBuilder.where(knex.raw('IFNULL(r.endedOn, r.startedOn) > ?', [query.minDate]))
-      }
-
-      if (query.maxDate) {
-        queryBuilder.where(knex.raw('IFNULL(r.endedOn, r.startedOn) <= ?', [query.maxDate]))
-      }
-
-      queryBuilder.where('r.assayId', assayId)
-      queryBuilder.whereIn('r.deviceId', deviceIds)
-    })
-    .modify(q => {
-      extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
-    })
-    .select('r.deviceId', knex.raw('COUNT(r.id) as total'))
-    .groupBy('r.deviceId')
 
   const deviceFirstAndLastResult = await getFirstAndLastResults(dataConstraints, assayId, deviceIds)
 
   const deviceFirstAndLastResultMap = _.keyBy(deviceFirstAndLastResult, 'deviceId')
-  const resultsGroupedByDeviceMap = _.keyBy(resultsGroupedByDevice, 'deviceId')
 
   const updatedData = _.map(data, ({ id, ...deviceResponse }) => {
     const firstResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'firstEndedOn'], null)
     const lastResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'lastEndedOn'], null)
-    const result = _.omit(resultsGroupedByDeviceMap[id], 'deviceId')
 
     deviceResponse.total = deviceResponse.total || 0
 
@@ -668,7 +660,6 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       ...deviceResponse,
       firstResultEndedOn,
       lastResultEndedOn,
-      ...result,
     }
   })
 

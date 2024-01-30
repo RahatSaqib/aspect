@@ -5,7 +5,9 @@ import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, DeviceWorkloadFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import useResultCategoryGroup from '../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../hooks/useAuthState'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../hooks/useFilterValues'
 import useWorkload from '../../../hooks/workload/useWorkload'
 import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
@@ -40,6 +42,7 @@ const Workload = () => {
   const { formatMessage } = useIntl()
   const filter = useFilterValues(location.pathname)
   const user = useAuthState()
+  const [addFilter] = useFilterUpdate()
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
@@ -50,10 +53,16 @@ const Workload = () => {
     error,
   } = useWorkload({ ...filter, size: pageSize, page: pageAt, sortCol, sortDir })
 
+  const { isLoading: isresultCategoryLoading, data: resultCategoryGroups } = useResultCategoryGroup(
+    [filter.singleAssayId],
+    {
+      enabled: !!filter.singleAssayId,
+    }
+  )
+
   if (isError) throw new Error(error)
 
   useWorkloadDownload({ ...filter, ...download })
-
   const onExcelClick = formatType => setDownload({ fileFormat: formatType, enabled: true })
 
   useEffect(() => {
@@ -88,6 +97,33 @@ const Workload = () => {
   ]
   const extraColumnsProps = extraColumns.map(ec => ec.fieldId)
 
+  const onColumnClick = (deviceName, fieldId) => {
+    let column = fieldId && columns.find(col => col.key.toLowerCase() === fieldId.toLowerCase()).label.toLowerCase()
+    const resultGroupId =
+      fieldId &&
+      resultCategoryGroups.find(categoryGroup => {
+        const found = categoryGroup.name.includes(column)
+        if (!found && categoryGroup.assayI18nKey === 'assayGeneXpertMtbXdr') {
+          column = column.replace(/^.{4}/g, '')
+        }
+        return categoryGroup.name.toLowerCase().includes(column)
+      }).externalId
+
+    const { minDate, maxDate } = filter
+    const baseUrl = '/browse/result'
+    addFilter(
+      {
+        minDate,
+        maxDate,
+        assayId: [filter.singleAssayId],
+        resultCategoryGroupId: resultGroupId ?? null,
+        deviceName,
+      },
+      baseUrl
+    )
+    navigate(baseUrl)
+  }
+
   return (
     <>
       <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack />
@@ -103,7 +139,7 @@ const Workload = () => {
             />
           </div>
 
-          {isLoading ? (
+          {isLoading && isresultCategoryLoading ? (
             <LinearProgress />
           ) : workloadList.length === 0 ? (
             <BrowseEmptyList />
@@ -114,7 +150,12 @@ const Workload = () => {
                   <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
                   <TableBody>
                     {workloadList.map((item, index) => (
-                      <TableRow key={`workload--${index}`} item={item} extraColumns={extraColumnsProps} />
+                      <TableRow
+                        key={`workload--${index}`}
+                        item={item}
+                        extraColumns={extraColumnsProps}
+                        onColumnClick={onColumnClick}
+                      />
                     ))}
                   </TableBody>
                 </Table>

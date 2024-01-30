@@ -6,7 +6,7 @@ import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as Tr, DataTableCell as Td } from '../../../oldComponents/shared/tableBody'
 import messages from './messages'
 
-const TableRow = ({ item, extraColumns }) => {
+const TableRow = ({ item, extraColumns, onColumnClick }) => {
   const { formatMessage, format } = useIntl()
   const { dateTimeFormat } = getAspectDisplayPreferences().toJS()
   return (
@@ -36,9 +36,13 @@ const TableRow = ({ item, extraColumns }) => {
           ? formatMessage(messages.notAvailable)
           : format(new Date(item.lastResultEndedOn), dateTimeFormat)}
       </Td>
-      <Td className={styles.TableCell}>{item.total}</Td>
+      <Td onClick={() => onColumnClick(item.name)} className={styles.TableCell}>
+        {item.total}
+      </Td>
       {extraColumns.map(col => (
-        <Td className={styles.TableCell}>{item[col]}</Td>
+        <Td onClick={() => onColumnClick(item.name, col)} className={styles.TableCell}>
+          {item[col]}
+        </Td>
       ))}
     </Tr>
   )
