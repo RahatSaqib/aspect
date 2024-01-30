@@ -4,7 +4,7 @@
  * @param {FunctionType} parameters.addConstraints - function to add constraints to query
  * @param {Object} parameters.dataConstraints - user constraints
  * @param {Object} parameters.filterParams - function to add filter params to query
- * @param {string} parameters.assay - assay externalId
+ * @param {Array.<string>} parameters.assay - array of assay externalIds
  * @param {Object} parameters.query - query params
  * @param {string} parameters.timeFrame - timeFrame ['day', 'month']
  * @param {string} parameters.joinSiteWith - join site with ['device' (default), 'result']
