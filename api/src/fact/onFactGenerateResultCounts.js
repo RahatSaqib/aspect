@@ -4,7 +4,7 @@ const { startOfDayUtc, replaceOffset } = require('../shared/date')
 const { resultWorkflowStatusToId } = require('../shared/dictionary')
 const { daysToCalculate } = require('./common/constants')
 const { factGenerateResultCounts } = require('./actions')
-const calculateFactResultsDeviceByTimeFrame = require('./updateFactResultsDeviceByTimeFrame')
+const { calculateFactResultsDeviceByTimeFrame } = require('./calculateFactResultsDeviceByTimeFrame')
 
 const daysToCalculateCountOfDeliveredResults = [30, 60]
 
