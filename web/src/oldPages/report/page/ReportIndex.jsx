@@ -46,6 +46,22 @@ const ReportIndex = () => {
   }
 
   const processError = (error, fileExtension, reportName) => {
+    const errorCodeMapping = {
+      undefined: {
+        statusCode: undefined,
+        message: `Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}".
+          Please, try again in a few minutes. If the error persists, contact your administrator for support.`,
+      },
+      502: {
+        statusCode: 502,
+        message: `Failed to generate {fileType} report "{reportName}" because of Database Timeout:
+          You might be trying to download too much data.`,
+      },
+    }
+
+    const errorCode = error.statusCode || undefined
+    const errorDetails = errorCodeMapping[errorCode]
+
     /**
      * When API endpoint responds Boom error before streaming started
      * then `error.statusCode` has some value (i.e. 4xx or 5xx) and this is
@@ -62,28 +78,26 @@ const ReportIndex = () => {
      * So, to show error panel for such stream-related error (with response header StatusCode 200)
      * we analyze `error.statusCode` here.
      */
-    if (error.statusCode === undefined) {
+    if (errorDetails) {
+      const { message } = errorDetails
       const errorNotification = {
         severity: 'error',
-        ...defineMessages({
-          resolution: {
-            id: 'errorResponseMessages.reportStream.tryAgainLater.resolution',
-            defaultMessage: `Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}".
-            Please, try again in a few minutes. If the error persists, contact your administrator for support.
-            `,
-          },
-          // this is same `title` as in `default` in `components/QueryFetch/errors.js`
-          title: {
-            id: 'queryFetch.errorResponseMessages.GET.default.title',
-            defaultMessage: 'Error Fetching Endpoint',
-          },
+        resolution: defineMessages({
+          id: 'errorResponseMessages.reportStream.tryAgainLater.resolution',
+          defaultMessage: message,
+        }),
+        title: defineMessages({
+          id: 'queryFetch.errorResponseMessages.GET.default.title',
+          defaultMessage: 'Error Fetching Endpoint',
         }),
       }
+
       const messageValues = {
         reportName,
         errorMessage: error.message,
         fileType: fileExtension === 'xlsx' ? 'Excel' : fileExtension,
       }
+
       dispatch(showError(errorNotification, messageValues))
     }
   }
