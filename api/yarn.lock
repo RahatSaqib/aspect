@@ -8810,10 +8810,10 @@ pg-connection-string@2.5.0:
   resolved "https://registry.yarnpkg.com/pg-connection-string/-/pg-connection-string-2.5.0.tgz#538cadd0f7e603fc09a12590f3b8a452c2c0cf34"
   integrity sha512-r5o/V/ORTA6TmUnyWZR9nCj1klXCO2CEKNRlVuJptZe85QuhFayC7WeMic7ndayT5IRIR0S0xFxFi2ousartlQ==
 
-phone@^3.1.35:
-  version "3.1.35"
-  resolved "https://registry.yarnpkg.com/phone/-/phone-3.1.35.tgz#31d35fd6a70aae8f5594371817dfa7c6e3b85973"
-  integrity sha512-OEF2yXxJ2kTzMECk+ymbAmbYuucBNIMeYcqsiZD5Kz2QrRAP2BOEuerqalaC/chkAHLH3MXWKRK3qu07AvlRuQ==
+phone@^3.1.42:
+  version "3.1.42"
+  resolved "https://registry.yarnpkg.com/phone/-/phone-3.1.42.tgz#a83608b3644357095a5ea04f791398f7f07d212e"
+  integrity sha512-J+cbZtGcN/ph10TRxwCLYZx9/k4WOU1wImMiUiUjr/2sWnY7bR7CadehbsM8E9UyG+/shgmH++eKbhD0kR4EZA==
 
 picocolors@^1.0.0:
   version "1.0.0"

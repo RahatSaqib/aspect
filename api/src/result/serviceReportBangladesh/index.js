@@ -1036,6 +1036,7 @@ async function getDataForReportDrTb10B(auth, query) {
 
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
+
   /**
    * old func `checkResistance`
    */
@@ -1074,10 +1075,13 @@ async function getDataForReportDrTb10B(auth, query) {
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftOuterJoin('Site as rs', 'r.referringSiteId', 'rs.id')
-    // scope Mtb and Mtb-Ultra assays
-    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra, assayIds.GxMtbXdr])
-    .where(queryBuilder => {
-      queryBuilder.where('a.id', assayIds.GxMtbRif).orWhere('rc2.externalId', 'Detected')
+    // scope XDR and Mtb and Mtb-Ultra assays (MTB Detected RIF Detected)
+    .where(function (q) {
+      q.where('a.id', assayIds.GxMtbXdr).orWhere(function (qq) {
+        qq.whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+          .where('rc2.externalId', 'Detected')
+          .where('rc1.externalId', 'Detected')
+      })
     })
     .modify(addConstraints, dataConstraints, {
       device: 'd',
@@ -1095,9 +1099,6 @@ async function getDataForReportDrTb10B(auth, query) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
-    })
-    .andWhere(queryBuilder => {
-      queryBuilder.where('a.externalId', 'GxMtbXdr').orWhere('rc2.externalId', 'Detected')
     })
     .select(
       'r.endedOn as dateOfDiagnosis',

@@ -13,7 +13,26 @@ env:
   rabbitPassword: 'guest'
 
 jobs:
-  check-changes:
+  check-web-changes:
+    name: 'Check Changes (WEB)'
+    runs-on: ubuntu-latest
+    # Required permissions
+    permissions:
+      pull-requests: read
+    # Set job outputs to values from filter step
+    outputs:
+      web-changed: ${{ steps.filter.outputs.web-changed }}
+    steps:
+      # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            web-changed:
+              - './web/**'
+
+  check-api-changes:
+    name: 'Check Changes (API)'
     runs-on: ubuntu-latest
     # Required permissions
     permissions:
@@ -21,8 +40,6 @@ jobs:
     # Set job outputs to values from filter step
     outputs:
       api-changed: ${{ steps.filter.outputs.api-changed }}
-      api-migrations-changed: ${{ steps.filter.outputs.api-migrations-changed }}
-      web-changed: ${{ steps.filter.outputs.web-changed }}
     steps:
       # For pull requests it's not necessary to checkout the code
       - uses: dorny/paths-filter@v2
@@ -31,63 +48,57 @@ jobs:
           filters: |
             api-changed:
               - './api/**'
-            api-migrations-changed:
-              - './api/migrations/**'
-              - './api/seeds/**'
-            web-changed:
-              - './web/**'
 
   fe-lint:
     name: 'Lint (WEB)'
     runs-on: ubuntu-latest
-    needs: check-changes
+    needs: check-web-changes
     steps:
       - uses: actions/checkout@v3
       - name: Clone and install backend environment
-        if: ${{ needs.check-changes.outputs.web-changed == 'true' }}
+        if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
         uses: ./.github/workflows/setups/front-end-setup
    
       - name: Lint code
-        if: ${{ needs.check-changes.outputs.web-changed == 'true' }}
+        if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
         run: |
           yarn web:lint --fix
 
   fe-test:
     name: 'Tests (WEB)'
     runs-on: ubuntu-latest
-    needs: [fe-lint, check-changes]
+    needs: [fe-lint, check-web-changes]
+    if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
     steps:
       - uses: actions/checkout@v3
       - id: install-aspect
         uses: ./.github/workflows/setups/front-end-setup
-        if: ${{ needs.check-changes.outputs.web-changed == 'true' }}
 
       - name: 'Run Tests'
-        if: ${{ needs.check-changes.outputs.web-changed == 'true' }}
         run: yarn web:test
 
   be-lint:
     name: 'Lint (API)'
     runs-on: ubuntu-latest
-    needs: check-changes
+    needs: check-api-changes
     steps:
       - uses: actions/checkout@v3
       - name: Clone and install backend environment
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-setup
 
       - name: Lint code
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: |
           yarn api:lint --fix
 
   be-unit-test:
     name: 'Unit Tests (API)'
     runs-on: ubuntu-latest
-    needs: [be-lint, check-changes]
+    needs: [be-lint, check-api-changes]
     steps:
       - name: Setup MySQL
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         uses: haltuf/mysql-action@master
         with:
           character set server: 'utf8'
@@ -99,7 +110,7 @@ jobs:
 
       - name: 'Setup RabbitMQ'
         uses: mer-team/rabbitmq-mng-action@v1.2
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         with:
           RABBITMQ_USER: $rabbitUser
           RABBITMQ_PASS: $rabbitPassword
@@ -108,15 +119,15 @@ jobs:
           RABBITMQ_TAG: '3-management-alpine'
 
       - uses: actions/checkout@v3
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
 
       - name: Clone and install backend environment
         uses: ./.github/workflows/setups/back-end-setup
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
 
       - name: Create .env file
         uses: ./.github/workflows/setups/back-end-env
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         with:
           dbname: ${{ env.dbname }}
           dbuser: ${{ env.dbuser }}
@@ -131,22 +142,22 @@ jobs:
           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
 
       - name: 'Seed DB & Run Migrations'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: yarn start:api:seed
         shell: bash
 
       - name: 'Run Server'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: yarn start:api:bg
         shell: bash
 
       - name: 'Run API Unit Tests'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: yarn api:unit
         shell: bash
 
       - name: 'Unit Test Report'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         uses: dorny/test-reporter@v1
         env:
           GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
@@ -158,13 +169,13 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Stop Server'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: yarn stop:api:bg
 
   be-contract-chunks:
     name: 'Chunk Contract Tests (API)'
     runs-on: ubuntu-latest
-    needs: [be-lint, check-changes]
+    needs: [be-lint, check-api-changes]
     outputs:
       test-chunks: ${{ steps['set-test-chunks'].outputs['test-chunks'] }}
     steps:
@@ -183,14 +194,14 @@ jobs:
   be-contract-test:
     name: 'Contract Tests (API) - (chunk ${{ strategy.job-index }})'
     runs-on: ubuntu-latest
-    needs: [be-contract-chunks, check-changes]
+    needs: [be-contract-chunks, check-api-changes]
     strategy:
       fail-fast: false
       matrix:
         chunk: ${{ fromJson(needs.be-contract-chunks.outputs.test-chunks) }}
     steps:
       - name: Setup MySQL
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         uses: haltuf/mysql-action@master
         with:
           character set server: 'utf8'
@@ -201,7 +212,7 @@ jobs:
           authentication plugin: 'mysql_native_password'
 
       - name: 'Setup RabbitMQ'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         uses: mer-team/rabbitmq-mng-action@v1.2
         with:
           RABBITMQ_USER: $rabbitUser
@@ -211,14 +222,14 @@ jobs:
           RABBITMQ_TAG: '3-management-alpine'
 
       - uses: actions/checkout@v3
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
 
       - name: Clone and install backend environment
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-setup
 
       - name: Create .env file
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-env
         with:
           dbname: ${{ env.dbname }}
@@ -234,17 +245,17 @@ jobs:
           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
 
       - name: 'Seed DB & Run Migrations'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: yarn start:api:seed
         shell: bash
 
       - name: 'Run Server'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: yarn start:api:bg
         shell: bash
 
       - name: 'Run API Contract Tests'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: |
           yarn api:contract --spec ${{ matrix.chunk }}
         env:
@@ -255,7 +266,7 @@ jobs:
         uses: dorny/test-reporter@v1
         env:
           GITHUB_TOKEN: ${{ inputs.GITHUB_TOKEN }}
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         with:
           name: 'Contract Tests Report - (chunk ${{ strategy.job-index }})'
           path: 'api/contract-test-results.json'
@@ -264,13 +275,34 @@ jobs:
           token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: 'Stop Server'
-        if: ${{ needs.check-changes.outputs.api-changed == 'true' }}
+        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: yarn stop:api:bg
+
+
+  check-api-migrations-changes:
+    name: 'Check Changes (API Migrations)'
+    runs-on: ubuntu-latest
+    needs: be-lint
+    # Required permissions
+    permissions:
+      pull-requests: read
+    # Set job outputs to values from filter step
+    outputs:
+      api-migrations-changed: ${{ steps.filter.outputs.api-migrations-changed }}
+    steps:
+      # For pull requests it's not necessary to checkout the code
+      - uses: dorny/paths-filter@v2
+        id: filter
+        with:
+          filters: |
+            api-migrations-changed:
+              - './api/migrations/**'
+              - './api/seeds/**'
 
   run-migration-test:
     name: 'Migration Tests (API) - (seed ${{ matrix.seed }})'
     runs-on: ubuntu-latest
-    needs: [be-lint, check-changes]
+    needs: [check-api-migrations-changes]
     strategy:
       fail-fast: false
       matrix:
@@ -279,7 +311,7 @@ jobs:
         seed: ['./seeds/philippines','./seeds/pakistan','./seeds/bangladesh','./seeds/timorLeste','./seeds/ukraine','./seeds/png','./seeds/tanzania','./seeds/nigeria','./seeds/angola','./seeds/eswatini','./seeds/drc','./seeds/ghana','./seeds/vietnam','./seeds/zimbabwe','./seeds/malawi','./seeds/myanmar','./seeds/mozambique','./seeds/tajikistan','./seeds/development','./seeds/ethiopia']
     steps:
       - name: Setup MySQL
-        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
         uses: haltuf/mysql-action@master
         with:
           character set server: 'utf8'
@@ -290,14 +322,14 @@ jobs:
           authentication plugin: 'mysql_native_password'
 
       - uses: actions/checkout@v3
-        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
 
       - name: Clone and install backend environment
-        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-setup
 
       - name: Create .env file
-        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
         uses: ./.github/workflows/setups/back-end-env
         with:
           dbname: ${{ env.dbname }}
@@ -313,6 +345,6 @@ jobs:
           FIREBASESERVERKEY: ${{secrets.FIREBASESERVERKEY}}
 
       - name: 'Seed DB & Run Migrations'
-        if: ${{ needs.check-changes.outputs.api-migrations-changed == 'true' }}
+        if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
         run: yarn start:api:seed
         shell: bash
