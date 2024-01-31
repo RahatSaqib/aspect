@@ -165,12 +165,6 @@ const Workload = () => {
                   </TableBody>
                 </Table>
               </div>
-              {/* <TableRow
-                key={`workload--${7895893489}`}
-                item={workloadList[0]}
-                extraColumns={extraColumnsProps}
-                onColumnClick={onColumnClick}
-              /> */}
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}
