@@ -131,4 +131,19 @@ export const transformInventoryMessages = defineMessages({
   },
 })
 
+export const receiveInventoryMessages = defineMessages({
+  dialogTitle: {
+    id: 'pages.ReceiveInventoryDialogForm.dialogTitle',
+    defaultMessage: 'Receive {consumableName}',
+  },
+  quantity: {
+    id: 'pages.ReceiveInventoryDialogForm.quantity',
+    defaultMessage: 'Quantity Received',
+  },
+  dateAdjusted: {
+    id: 'pages.ReceiveInventoryDialogForm.dateAdjusted',
+    defaultMessage: 'Date Received',
+  },
+})
+
 export default messages
