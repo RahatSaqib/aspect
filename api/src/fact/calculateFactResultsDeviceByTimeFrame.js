@@ -13,6 +13,9 @@ const byErrorCodes = errorCodes.reduce(
   {}
 )
 
+// Is slower, but we need to improve the granularMode when a result is updating with new data (endedOn or resultCategories)
+const granularMode = false
+
 const getResultBaseQuery = (knex, { deviceId, assayId, resultCategory1, resultCategory2 }) => {
   const baseQuery = knex('Result as r')
     .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
@@ -25,11 +28,13 @@ const getResultBaseQuery = (knex, { deviceId, assayId, resultCategory1, resultCa
     if (assayId) {
       queryBuilder.where({ assayId })
     }
-    if (resultCategory1) {
-      queryBuilder.where({ resultCategory1 })
-    }
-    if (resultCategory2) {
-      queryBuilder.where({ resultCategory2 })
+    if (granularMode) {
+      if (resultCategory1) {
+        queryBuilder.where({ resultCategory1 })
+      }
+      if (resultCategory2) {
+        queryBuilder.where({ resultCategory2 })
+      }
     }
   })
 
@@ -93,20 +98,23 @@ const deleteFactResultsDeviceByTimeFrame = (
   knex,
   { dates, deviceId, assayId, resultCategory1, resultCategory2, timeFrame }
 ) => {
-  const deleteQuery = knex('FactResultsDeviceByTimeFrame')
-    .whereIn('startedOn', dates)
-    .andWhere('deviceId', deviceId)
-    .andWhere('timeFrame', timeFrame)
+  const deleteQuery = knex('FactResultsDeviceByTimeFrame').where('deviceId', deviceId).andWhere('timeFrame', timeFrame)
+
+  if (granularMode) {
+    deleteQuery.whereIn('startedOn', dates)
+  }
 
   deleteQuery.modify(queryBuilder => {
     if (assayId) {
       queryBuilder.where({ assayId })
     }
-    if (resultCategory1) {
-      queryBuilder.where({ resultCategory1 })
-    }
-    if (resultCategory2) {
-      queryBuilder.where({ resultCategory2 })
+    if (granularMode) {
+      if (resultCategory1) {
+        queryBuilder.where({ resultCategory1 })
+      }
+      if (resultCategory2) {
+        queryBuilder.where({ resultCategory2 })
+      }
     }
   })
 
@@ -125,7 +133,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
     .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
     .count('r.id as resultCount')
     .modify(qb => {
-      if (endedOn) {
+      if (granularMode && endedOn) {
         // If we receive an 'endedOn' value, it indicates that the process was triggered by a result
         const startOf = timeFrame === 'month' ? startOfMonth : startOfDay
         const endOf = timeFrame === 'month' ? endOfMonth : endOfDay
@@ -145,15 +153,15 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
        */
       // ...sumComboXdrResistances(knex),
       knex.raw(`
-          SUM(
-            CASE WHEN sa.originSiteId IS NOT NULL AND sa.originSiteId = ${siteId || 0} THEN 1 ELSE 0 END
-          ) as cntSameOriginSite
-        `),
+      SUM(
+        CASE WHEN sa.originSiteId IS NOT NULL AND sa.originSiteId = ${siteId || 0} THEN 1 ELSE 0 END
+      ) as cntSameOriginSite
+    `),
       knex.raw(
         `DATE_FORMAT(
-            ${getDateTimeProjectionInUserTimeZone(knex, knex.raw(`IFNULL(r.endedOn, r.startedOn)`), timeZoneIANA)}, 
-            "${timeFrameFormat}"
-          ) as startedOnTimeFrame`
+        ${getDateTimeProjectionInUserTimeZone(knex, knex.raw(`IFNULL(r.endedOn, r.startedOn)`), timeZoneIANA)}, 
+        "${timeFrameFormat}"
+      ) as startedOnTimeFrame`
       ),
     ])
     .select({
