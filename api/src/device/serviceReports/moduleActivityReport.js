@@ -11,7 +11,7 @@ async function getModuleActivityReportData(minDate, dataConstraints, query) {
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin(moduleDisabledIssues(), function () {
-      this.on('i.deviceId', 'r.deviceId').andOn('i.moduleName', 'r.moduleName')
+      this.on('i.deviceId', 'r.deviceId').andOn('i.moduleSerial', 'r.moduleSerial')
     })
     .whereNot('dt.externalId', 'GxAlert')
     .distinct([

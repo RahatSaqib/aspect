@@ -8,6 +8,7 @@ const {
   getClinicalIndicatorQueryForFactTable,
   getClinicalIndicatorQueryForResultsTable,
 } = require('./db')
+const { knex } = require('../../db')
 const { canViewResults, getConstraints } = require('../../auth/constraints')
 
 const plainToDeepObjectResult = result => {
@@ -128,7 +129,7 @@ async function clinicalIndicatorAggregations(request) {
       resp.totalResults = cnt
     }
 
-    resp.data = await processGroupedQuery(factTableQuery, groupBy, 'r.startedOn')
+    resp.data = await processGroupedQuery(knex, factTableQuery, groupBy, 'r.startedOn')
     return resp
   }
 
@@ -139,7 +140,7 @@ async function clinicalIndicatorAggregations(request) {
     resp.totalResults = cnt
   }
 
-  resp.data = await processGroupedQuery(resultQuery, groupBy)
+  resp.data = await processGroupedQuery(knex, resultQuery, groupBy)
   return resp
 }
 
