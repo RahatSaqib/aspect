@@ -50,7 +50,7 @@ const ReportIndex = () => {
       undefined: {
         statusCode: undefined,
         message: `Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}".
-          Please, try again in a few minutes. If the error persists, contact your administrator for support.`,
+           Please, try again in a few minutes. If the error persists, contact your administrator for support.`,
       },
       502: {
         statusCode: 502,
@@ -83,7 +83,7 @@ const ReportIndex = () => {
       const errorNotification = {
         severity: 'error',
         resolution: defineMessages({
-          id: 'errorResponseMessages.reportStream.tryAgainLater.resolution',
+          id: `errorResponseMessages.reportStream.${message}.resolution`,
           defaultMessage: message,
         }),
         title: defineMessages({
