@@ -11,6 +11,7 @@ const {
   isWeekend,
   parseJSON,
   differenceInBusinessDays,
+  subDays,
 } = require('date-fns')
 const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
 const { knex, filterParams, filterDateRangeParams, sortPageParams, sortParams, transact } = require('../db')
@@ -315,14 +316,16 @@ async function getDevicePerformance(request) {
 // get devices with different aggregations for reports
 // ---------------------------------
 async function getDevicesForReport(auth, query) {
-  const { minDate, maxDate } = query
-  if (!minDate || !maxDate) {
-    return Boom.badRequest('Dates are required')
+  let { minDate, maxDate } = query
+  const now = new Date()
+  if(!minDate || !maxDate){
+    minDate = subDays(now, 30)
+    maxDate = now
   }
 
   const dataConstraints = await getConstraints(auth.credentials)
   const { getCount, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(dataConstraints, query)
-  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+  const userTimeOffset = getOffsetFromIsoDateString(query.maxDate || maxDate)
 
   let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
   const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate

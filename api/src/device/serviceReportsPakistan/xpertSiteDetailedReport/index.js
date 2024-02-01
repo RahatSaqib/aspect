@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { endOfMonth, startOfMonth, subMonths } = require('date-fns')
+const { subMonths, subDays } = require('date-fns')
 
 const { addConstraints } = require('../../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams } = require('../../../db')
@@ -27,15 +27,20 @@ const getFieldsForLine = (resultCategory, pulmonary, smear, historyKeys) => {
 
 // ---------------------------------------------------------------------------------------
 async function getXpertSiteDetailedReport(dataConstraints, query) {
+  let { minDate, maxDate } = query
   const now = new Date()
-  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
+
+  if(!minDate || !maxDate){
+    minDate = subDays(now, 30)
+    maxDate = now
+  }
   let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
   const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
 
-  const offset = getOffsetFromIsoDateString(maxDate)
+  const offset = getOffsetFromIsoDateString(query.maxDate || maxDate)
 
   /**
    * prepare all inclusive months in the range in format `yyyy-mm`.
