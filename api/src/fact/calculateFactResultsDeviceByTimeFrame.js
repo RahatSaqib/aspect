@@ -130,7 +130,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
     .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
     .whereNotNull('r.assayId')
     .whereNotNull('r.resultCategory1')
-    .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
+    .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame', 'r.siteId')
     .count('r.id as resultCount')
     .modify(qb => {
       if (granularMode && endedOn) {
@@ -147,6 +147,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
       'r.assayId',
       'r.resultCategory1',
       'r.resultCategory2',
+      'r.siteId',
       ...sumSingleXdrResistance(knex),
       /**
        * commenting out below line which calculates combinations of resistances
@@ -237,6 +238,7 @@ async function calculateTimeFrame(device, assayId, resultCategory1, resultCatego
       const now = new Date()
       const newFactTableRecord = {
         deviceId,
+        siteId: count.siteId,
         timeFrame,
         startedOn: count.startedOnTimeFrame,
         assayId: count.assayId,
