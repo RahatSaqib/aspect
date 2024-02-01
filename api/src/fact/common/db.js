@@ -35,8 +35,7 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
       break
   }
 
-  qb.innerJoin('Site as s', 's.id', 'd.siteId')
-    .innerJoin('Assay as a', 'a.id', 'r.assayId')
+  qb.innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
     .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .innerJoin('ResultCategoryAssay as rca', function () {
@@ -91,7 +90,7 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
     .where('r.timeFrame', timeFrame)
     .sum('r.resultCount as cnt')
 
-  return query
+  return qb
 }
 
 module.exports = {
