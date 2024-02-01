@@ -622,7 +622,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     })
     .select('r.deviceId', knex.raw('COUNT(r.id) as total'))
 
-  const { total } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as totalRows')).first()
+  const { totalRows } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as totalRows')).first()
 
   const data = await q
     .modify(_q => {
@@ -664,7 +664,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     }
   })
   const { length } = data
-  return { total, data: updatedData, length }
+  return { total: totalRows, data: updatedData, length }
 }
 
 async function joinModuleAvailability(dataConstraints, query) {

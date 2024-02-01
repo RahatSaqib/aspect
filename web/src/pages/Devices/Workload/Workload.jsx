@@ -17,6 +17,7 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import colMessages from '../../../oldPages/result/list/messages'
+import { XDR_RESISTANCES } from '../../../utils/consts'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import styles from './styles.module.css'
@@ -44,7 +45,7 @@ const Workload = () => {
   const user = useAuthState()
   const [addFilter] = useFilterUpdate()
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 50 })
+  const sortPage = makeSortPageSelector({ sortCol: 'name', sortDir: 'asc', pageSize: 10 })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location, availableSortCol, dependencies: {} })
   const {
     isError,
@@ -109,7 +110,12 @@ const Workload = () => {
       resultCategoryGroups.find(categoryGroup => {
         const found = categoryGroup.name.includes(column)
         if (!found && categoryGroup.assayI18nKey === 'assayGeneXpertMtbXdr') {
-          column = column.replace(/^.{4}/g, '')
+          const hasResitanceString = XDR_RESISTANCES.some(resistance => column.includes(resistance.toLowerCase()))
+          if (hasResitanceString)
+            column = XDR_RESISTANCES.reduce(
+              (result, resistance) => result.replace(resistance.toLowerCase(), ''),
+              column
+            )
         }
         return categoryGroup.name.toLowerCase().includes(column)
       }).externalId
