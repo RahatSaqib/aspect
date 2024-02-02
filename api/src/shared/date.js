@@ -366,7 +366,7 @@ function getOffsetFromIsoDateStringInMinutes(isoDateTime) {
  * @returns String containing the timezone offset in '[+/-]hh:mm' format, (i.e. '-03:00')
  */
 function getOffsetFromIsoDateString(isoDateTime) {
-  const isoDateTimeSting = (isoDateTime && _.isString(isoDateTime)) ? isoDateTime : isoDateTime.toISOString()
+  const isoDateTimeSting = (_.isDate(isoDateTime)) ? isoDateTime.toISOString() : isoDateTime
   return typeof isoDateTime === 'string' && REGEX_ISODATESTRING.test(isoDateTimeSting) && isoDateTimeSting.slice(-1) !== 'Z'
     ? isoDateTime.slice(-6)
     : '+00:00'
