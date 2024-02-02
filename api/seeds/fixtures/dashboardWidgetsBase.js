@@ -2084,6 +2084,54 @@ const bangladeshAverageCompletion = {
   },
 }
 
+const totalModuleBays = {
+  jobFunctions: ['all'],
+  icon: 'MdViewModule',
+  title: 'Total Modules Bays',
+  titleI18nKey: 'totalModuleBays',
+  subTitle: null,
+  subTitleI18nKey: null,
+  sqlForIndicator: `
+    SELECT SUM(d.moduleBayCapacity) AS cnt
+    FROM Device as d
+    LEFT JOIN DeviceApproval AS a ON a.id = d.deviceApprovalId
+    WHERE a.token = 'approved'`,
+  sortOrder: 0,
+  externalId: 'totalModuleBays',
+  description: 'Total Number Of Module Bays.',
+  descriptionI18nKey: 'totalNoOfModuleBays',
+  dashboards: {
+    home: {},
+  },
+}
+
+const activeModuleBays = {
+  jobFunctions: ['all'],
+  icon: 'MdCheck',
+  title: 'Active Modules Bays',
+  titleI18nKey: 'activeModuleBays',
+  subTitle: null,
+  subTitleI18nKey: null,
+  sqlForIndicator: `
+    SELECT SUM(g.moduleBaysUsed) AS cnt
+    FROM 
+      (
+        SELECT f.deviceId, MAX(f.moduleBaysUsed) AS moduleBaysUsed
+        FROM FactDeviceModulesCount AS f
+        INNER JOIN Device AS d ON d.id = f.deviceId
+        LEFT JOIN DeviceApproval AS a ON a.id = d.deviceApprovalId
+        WHERE f.date >= DATE(NOW() - INTERVAL 7 DAY) AND a.token = 'approved'
+        GROUP BY f.deviceId
+      ) AS g`,
+  sortOrder: 0,
+  externalId: 'activeModuleBays',
+  description: 'Total Number Of Active Module Bays.',
+  descriptionI18nKey: 'totalNoOfActiveModuleBays',
+  dashboards: {
+    home: {},
+  },
+}
+
 module.exports = {
   WIDGET_GROUP_KEYS,
   WIDGET_FILTER_KEYS,
@@ -2124,5 +2172,7 @@ module.exports = {
     deviceCalibratedWhenDue,
     bangladeshAverageCompletion,
     instrumentsConnected,
+    totalModuleBays,
+    activeModuleBays,
   },
 }
