@@ -150,7 +150,7 @@ describe('Global reports', () => {
       assert.isTrue(device.calibratedOn < subYears(now, 1))
     })
 
-    it.only('should return list of devices with at least one device which is going to expire soon', async () => {
+    it('should return list of devices with at least one device which is going to expire soon', async () => {
       const { deviceId, user: userName, userId, now } = context
       // insert new entry with expired calibration
       await knex('DeviceMaintenance').insert({
