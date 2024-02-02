@@ -49,7 +49,7 @@ const useExportDeviceApiKey = ({ filters, sortCol, sortDir, page, pageSize, file
 
   return useQuery(
     [DEVICE_API_KEY_KEY, 'download'],
-    () => getDownload(filters, sortCol, sortDir, page, pageSize, fileFormat),
+    () => getDownload({ filters, sortCol, sortDir, page, pageSize, fileFormat }),
     {
       onSuccess: () => {
         dispatch({ type: 'EXPORT_RESPONSE_FILE_RECEIVED' })
