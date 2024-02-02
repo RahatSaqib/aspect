@@ -15,7 +15,6 @@ const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getPersonByPersonId } = require('../../auth/service')
 const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getDoNotUseModulesReportData } = require('./doNotUseModulesReport')
-const { getModuleStatusReportData } = require('./moduleStatusReport')
 const getDevicesWithCountsForTB = require('./genXpertTbWorkloadReport')
 const { getAllDeviceReportData } = require('./deviceAndSiteSummaryReport')
 const { getResultCategoryGroupColumns } = require('../common/db')
@@ -447,8 +446,82 @@ async function getDoNotUseModulesReport(auth, query) {
 }
 
 async function getModuleStatusReport(auth, query) {
+  let { minDate = subMonths(new Date(), 1), maxDate = new Date() } = query
+  if (typeof minDate === 'string' || minDate instanceof String) {
+    minDate = new Date(minDate)
+  }
+  if (typeof maxDate === 'string' || maxDate instanceof String) {
+    maxDate = new Date(maxDate)
+  }
+
+  minDate = new Date(minDate.toDateString())
+  maxDate = new Date(maxDate.toDateString())
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getModuleStatusReportData(dataConstraints, query)
+
+  const rows = await knex('Device as d')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Partner as p', 'p.id', 'd.partnerId')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('State as state', 'state.id', 'g.stateId')
+    .innerJoin('Lga as lga', 'lga.id', 'g.lgaId')
+    .whereNot('dt.externalId', 'GxAlert')
+    .select([
+      'd.id as deviceId',
+      'd.name as deviceName',
+      'd.serial as deviceSerial',
+      'd.moduleBayCapacity as moduleBayCapacity',
+      'state.name as State',
+      'lga.name as Lga',
+    ])
+    .groupBy('d.id')
+    .orderBy(['d.name'])
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      partner: 'p',
+    })
+    .modify(filterParams, query, {
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
+
+  const disabledModules = await knex('Issue as i')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .join('Device as d', 'i.deviceId', 'd.id')
+    .whereNotNull('i.deviceId')
+    .where('it.externalId', 'ModuleDisabled')
+    .where('is.externalId', 'Active')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+    })
+    .groupBy('i.deviceId')
+    .select('i.deviceId', knex.raw('COUNT(DISTINCT i.data->>"$.moduleSerial") as count'))
+
+  const moduleUsage = await knex('FactDeviceModulesCount as m')
+    .innerJoin('Device as d', 'm.deviceId', 'd.id')
+    .where('m.date', '>=', minDate)
+    .where('m.date', '<', maxDate)
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+    })
+    .groupBy('m.deviceId')
+    .select([
+      'm.deviceId as deviceId',
+      knex.raw('MAX(m.moduleBaysUsed) as moduleBaysUsed'),
+      knex.raw('MAX(m.modulesUsed) as modulesUsed'),
+    ])
+
+  _.each(rows, row => {
+    const activeModules = moduleUsage.find(d => d.deviceId === row.deviceId)?.modulesUsed || 0
+
+    row.activeModuleBays = moduleUsage.find(d => d.deviceId === row.deviceId)?.moduleBaysUsed || 0
+    row.replacedModules = activeModules > row.moduleBayCapacity ? activeModules - row.moduleBayCapacity : 0
+    row.disabledModules = disabledModules.find(d => d.deviceId === row.deviceId)?.count || 0
+  })
 
   return {
     ok: true,
