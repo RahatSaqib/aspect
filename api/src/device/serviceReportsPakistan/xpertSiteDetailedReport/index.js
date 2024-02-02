@@ -29,7 +29,6 @@ const getFieldsForLine = (resultCategory, pulmonary, smear, historyKeys) => {
 async function getXpertSiteDetailedReport(dataConstraints, query) {
   let { minDate, maxDate } = query
   const now = new Date()
-
   if(!minDate || !maxDate){
     minDate = subDays(now, 30)
     maxDate = now

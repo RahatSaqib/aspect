@@ -12,7 +12,6 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     minDate = subDays(now, 30)
     maxDate = now
   }
-
   let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
   const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
   if (dateFrom >= dateTo) {

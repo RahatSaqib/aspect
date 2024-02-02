@@ -404,7 +404,6 @@ function arrayofIANATimezone(timezone) {
 function getAllMonthsInRange(minDate, maxDate) {
   minDate = _.isString(minDate) ? minDate : minDate.toISOString()
   maxDate = _.isString(maxDate) ? maxDate : maxDate.toISOString()
-  
   let allRanges = []
   let currentMonth = getLocalDateTimeStringInUtc(minDate)
   while (currentMonth <= getLocalDateTimeStringInUtc(maxDate)) {

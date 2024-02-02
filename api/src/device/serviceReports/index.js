@@ -597,7 +597,6 @@ async function getErrorsByDevicesReport(auth, query) {
     query.minDate = subDays(now, 30)
     query.maxDate = now
   }
-
   const dataConstraints = await getConstraints(auth.credentials)
   const data = await getErrorsByDevices(dataConstraints, query)
   return {
