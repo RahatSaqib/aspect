@@ -225,6 +225,10 @@ async function generateReport(externalId, query, auth, user, userPlaceHolders, e
       value: getDateRangeString(query),
     },
     {
+      placeholder: '<ReportDate>',
+      value: new Date().toDateString(),
+    },
+    {
       placeholder: '<States>',
       value: await getStateNames(query),
     },
