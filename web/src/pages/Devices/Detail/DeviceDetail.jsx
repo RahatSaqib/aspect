@@ -93,7 +93,7 @@ export const DeviceDetail = props => {
     <>
       <DetailHeader
         name={device ? device.name : 'Devices'}
-        back={location.state.previousLocationPathname ?? '/browse/device/list'}
+        back={location.state?.previousLocationPathname ?? '/browse/device/list'}
       >
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
