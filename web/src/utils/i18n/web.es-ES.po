@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-18T19:11:18.974Z\n"
+"POT-Creation-Date: 2024-01-30T17:11:26.902Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1828,9 +1828,6 @@ msgid "Confirm to proceed."
 msgstr "Confirme para continuar."
 
 #. [legends.Unknown.Confirmed]
-#. defaultMessage is:
-#. Confirmed
-#. [reporters.onTreatment]
 #. defaultMessage is:
 #. Confirmed
 #: extracted_strings.json
@@ -4173,6 +4170,34 @@ msgstr "Marcado"
 #: extracted_strings.json
 msgid "Follow-up"
 msgstr "Seguimiento"
+
+#. [reporters.followUpConfirmed]
+#. defaultMessage is:
+#. FollowUp Confirmed
+#: extracted_strings.json
+msgid "FollowUp Confirmed"
+msgstr "Seguimiento confirmado"
+
+#. [reporters.followUpNotPossible]
+#. defaultMessage is:
+#. FollowUp Not Possible
+#: extracted_strings.json
+msgid "FollowUp Not Possible"
+msgstr "Seguimiento imposible"
+
+#. [reporters.followUpPending]
+#. defaultMessage is:
+#. FollowUp Pending
+#: extracted_strings.json
+msgid "FollowUp Pending"
+msgstr "Seguimiento pendiente"
+
+#. [reporters.followUpRequired]
+#. defaultMessage is:
+#. FollowUp Required
+#: extracted_strings.json
+msgid "FollowUp Required"
+msgstr "Seguimiento requerido"
 
 #. [pages.DeviceList.reportingForDays]
 #. defaultMessage is:
@@ -7462,9 +7487,6 @@ msgstr "No configurado"
 #. [legends.Unknown.NotConfirmed]
 #. defaultMessage is:
 #. Not Confirmed
-#. [reporters.notOnTreatment]
-#. defaultMessage is:
-#. Not Confirmed
 #: extracted_strings.json
 msgid "Not Confirmed"
 msgstr "No confirmado"
@@ -7484,9 +7506,6 @@ msgid "Not Found"
 msgstr "No encontrado"
 
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusNotPossible]
-#. defaultMessage is:
-#. Not Possible
-#. [reporters.notPossible]
 #. defaultMessage is:
 #. Not Possible
 #: extracted_strings.json
@@ -9400,21 +9419,23 @@ msgstr "Reporter HIV VL"
 msgid "Reporter Location"
 msgstr "Ubicación del reportero"
 
-#. [browsePage.browseDropdown.reporters]
-#. defaultMessage is:
-#. Reporters
-#. [pages.ReporterList.reportersTitle]
-#. defaultMessage is:
-#. Reporters
-#: extracted_strings.json
-msgid "Reporters"
-msgstr "Reporters"
-
 #. [pages.DeviceList.reportingFor]
 #. defaultMessage is:
 #. Reporting Since
 #: extracted_strings.json
 msgid "Reporting Since"
+msgstr "Reportando desde"
+
+#. [browsePage.browseDropdown.reportingSites]
+#. defaultMessage is:
+#. Reporting Sites
+#. [pages.ReporterList.reportingSitesTitle]
+#. defaultMessage is:
+#. Reporting Sites
+#: extracted_strings.json
+#, fuzzy
+#| msgid "Reporting Since"
+msgid "Reporting Sites"
 msgstr "Reportando desde"
 
 #. [browsePage.browseDropdown.reports]
@@ -9531,13 +9552,6 @@ msgstr "Se requiere una impresora"
 #: extracted_strings.json
 msgid "Required"
 msgstr "Requerido"
-
-#. [reporters.requiresTreatment]
-#. defaultMessage is:
-#. Requires Confirmation
-#: extracted_strings.json
-msgid "Requires Confirmation"
-msgstr "Requiere confirmación"
 
 #. [pages.ResetPassword.title]
 #. defaultMessage is:
@@ -9881,6 +9895,20 @@ msgstr "Resultado actualizado"
 msgid "Results"
 msgstr "Resultados"
 
+#. [reporters.downloaded]
+#. defaultMessage is:
+#. Results Downloaded
+#: extracted_strings.json
+msgid "Results Downloaded"
+msgstr "Resultados descargados"
+
+#. [reporters.resultsReporting]
+#. defaultMessage is:
+#. Results Reporting
+#: extracted_strings.json
+msgid "Results Reporting"
+msgstr "Informe de resultados"
+
 #. [pages.Status.resultsTransmittedTitle.graph]
 #. defaultMessage is:
 #. Results Transmitted
@@ -10109,6 +10137,13 @@ msgstr "Tipo de muestra"
 #: extracted_strings.json
 msgid "Sample collection site"
 msgstr "Lugar de recolección de la muestra"
+
+#. [reporters.samplesRegistered]
+#. defaultMessage is:
+#. Samples Registered
+#: extracted_strings.json
+msgid "Samples Registered"
+msgstr "Muestras registradas"
 
 #. [components.shared.saturday]
 #. defaultMessage is:
@@ -12038,9 +12073,9 @@ msgid ""
 msgstr ""
 "Porcentaje de \"dispositivos-días\" que fueron declarados como \"inactivos "
 "por reparación\", excluyendo los fines de semana. Por ejemplo, 20 días "
-"laborables en el mes y 5 dispositivos equivaldrían a 100 \"dispositivos-días"
-"\". Si un dispositivo estuvo inactivo la mitad del mes, esta cifra sería del "
-"10%"
+"laborables en el mes y 5 dispositivos equivaldrían a 100 \"dispositivos-"
+"días\". Si un dispositivo estuvo inactivo la mitad del mes, esta cifra sería "
+"del 10%"
 
 #. [component.Widget.deviceCalibratedWhenDueDescription]
 #. defaultMessage is:
@@ -12548,13 +12583,6 @@ msgstr "Título"
 msgid "To"
 msgstr "Hasta"
 
-#. [reporters.delivered]
-#. defaultMessage is:
-#. To Reporter
-#: extracted_strings.json
-msgid "To Reporter"
-msgstr "Reporters"
-
 #. [pages.InventoryAdjustmentDialogForm.toSiteName]
 #. defaultMessage is:
 #. To Site
@@ -12643,9 +12671,6 @@ msgid "Total Errors"
 msgstr "Total de errores"
 
 #. [pages.OperationalData.cntAll]
-#. defaultMessage is:
-#. Total Results
-#. [reporters.totalResults]
 #. defaultMessage is:
 #. Total Results
 #. [performance.barChart.results]
@@ -12761,13 +12786,6 @@ msgstr "Transferir a la clínica"
 #: extracted_strings.json
 msgid "Transfer {consumableName}"
 msgstr "Transferir  {consumableName}"
-
-#. [reporters.transferred]
-#. defaultMessage is:
-#. Transferred Out
-#: extracted_strings.json
-msgid "Transferred Out"
-msgstr "Trasladado al exterior"
 
 #. [browsePage.browseDropdown.inventoryTransfers]
 #. defaultMessage is:
@@ -14312,6 +14330,18 @@ msgstr "{unit} desde la semana pasada"
 msgid "{unit} total calibrations"
 msgstr "{unit} calibraciones totales"
 
+#~ msgid "Reporters"
+#~ msgstr "Reporters"
+
+#~ msgid "Requires Confirmation"
+#~ msgstr "Requiere confirmación"
+
+#~ msgid "To Reporter"
+#~ msgstr "Reporters"
+
+#~ msgid "Transferred Out"
+#~ msgstr "Trasladado al exterior"
+
 #~ msgid "MTB Detected XDR Detected"
 #~ msgstr "MTB detectado XDR detectado"
 
@@ -14460,9 +14490,6 @@ msgstr "{unit} calibraciones totales"
 
 #~ msgid "Email was sent to:"
 #~ msgstr "El correo electrónico fue enviado a:"
-
-#~ msgid "Pending"
-#~ msgstr "Pending"
 
 #~ msgid "Recipients"
 #~ msgstr "Destinatarios"
@@ -15090,8 +15117,8 @@ msgstr "{unit} calibraciones totales"
 #~ msgstr "Guía de estilos"
 
 #~ msgid ""
-#~ "The percentage of \"device-days\" that were statused as \"down for repair"
-#~ "\", excluding weekends. For example, 20 weekdays in the month and 5 "
+#~ "The percentage of \"device-days\" that were statused as \"down for "
+#~ "repair\", excluding weekends. For example, 20 weekdays in the month and 5 "
 #~ "devices would equate 100 \"device-days\". If one device was down half of "
 #~ "the month, this number would be 10%. A device has a service interruption "
 #~ "when it is flagged as \"Down for repair\" for it maintenance status."

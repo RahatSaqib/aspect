@@ -5,6 +5,7 @@ export default defineMessages({
   shortName: { id: 'pages.DeviceDetailEdit.shortName', defaultMessage: 'Short Name' },
   location: { id: 'pages.DeviceDetailEdit.location', defaultMessage: 'Site' },
   capacity: { id: 'pages.DeviceDetailEdit.capacity', defaultMessage: 'Capacity' },
+  moduleBayCapacity: { id: 'pages.DeviceDetailEdit.moduleBayCapacity', defaultMessage: 'Module Bay Capacity' },
   instrumentsConnected: { id: 'pages.DeviceDetailEdit.instrumentsConnected', defaultMessage: 'Instruments Connected' },
   gx6cModulesCount: { id: 'pages.DeviceDetailEdit.gx6cModulesCount', defaultMessage: 'Number of GX-6C modules' },
   gx10cModulesCount: { id: 'pages.DeviceDetailEdit.gx10cModulesCount', defaultMessage: 'Number of GX-10C modules' },
