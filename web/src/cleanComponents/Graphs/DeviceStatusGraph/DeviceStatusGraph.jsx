@@ -120,7 +120,6 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
                   </Grid>
                   <Grid item xs={12} md={8} lg={12} className={styles.Graph_Content_AssaySelector}>
                     <PeriodSelector
-                      noAny
                       label={formatMessage(graphMessages.date)}
                       minDate={filter.minDate || null}
                       maxDate={filter.maxDate || null}
