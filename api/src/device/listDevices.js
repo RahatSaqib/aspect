@@ -16,6 +16,15 @@ async function getListDevices(query, auth) {
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
   const resultCategoryErrorId = await resultCategoryToId('Error')
   const { assayId } = query
+  const userTimeOffset = '+00:00' // TODO: get time offset from somewhere and put here, as there is no datetime parameter to use getOffsetFromIsoDateString(someIsoDateParam) here.
+
+  const timezone = convertTimezonetoIANA(accountDetails.timezone || 'UTC')
+  const now = utcToZonedTime(new Date(), timezone)
+  const previousMonth = subMonths(now, 1)
+  const maxCurrentDate = zonedTimeToUtc(endOfMonth(now), timezone)
+  const minCurrentDate = zonedTimeToUtc(startOfMonth(now), timezone)
+  const maxPreviousDate = zonedTimeToUtc(endOfMonth(previousMonth), timezone)
+  const minPreviousDate = zonedTimeToUtc(startOfMonth(previousMonth), timezone)
   /**
    * `assayId` is number or array of numbers - cuz try(Joi.array().items(Joi.number()), Joi.number())
    */
@@ -70,6 +79,26 @@ async function getListDevices(query, auth) {
     .leftJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .leftJoin(
+      knex('Result as resDevice')
+        .select({
+          deviceId: 'deviceId',
+          lastResultConductedOn: knex.raw('MAX(resDevice.endedOn)'),
+          totalCurrentMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            minCurrentDate,
+            maxCurrentDate,
+          ]),
+          totalPreviousMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
+            minPreviousDate,
+            maxPreviousDate,
+          ]),
+          assayId: 'assayId',
+        })
+        .groupBy('deviceId')
+        .as('deviceResult'),
+      'd.id',
+      'deviceResult.deviceId'
+    )
     .where(queryBuilder => {
       if (query.deviceIds) {
         queryBuilder.whereIn('d.id', query.deviceIds.split(','))
@@ -103,6 +132,11 @@ async function getListDevices(query, auth) {
               .on('issue.issueStatusId', 'issueStatus.id')
               .andOn(knex.raw("issueStatus.externalId not in ('Inactive','OK','Resolved')"))
           )
+      }
+    })
+    .modify(queryBuilder => {
+      if (assayId) {
+        queryBuilder.where('deviceResult.assayId', assayId)
       }
     })
     .modify(filterParams, query, {
@@ -139,38 +173,11 @@ async function getListDevices(query, auth) {
     )
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
-  const userTimeOffset = '+00:00' // TODO: get time offset from somewhere and put here, as there is no datetime parameter to use getOffsetFromIsoDateString(someIsoDateParam) here.
-
-  const timezone = convertTimezonetoIANA(accountDetails.timezone || 'UTC')
-  const now = utcToZonedTime(new Date(), timezone)
-  const previousMonth = subMonths(now, 1)
-  const maxCurrentDate = zonedTimeToUtc(endOfMonth(now), timezone)
-  const minCurrentDate = zonedTimeToUtc(startOfMonth(now), timezone)
-  const maxPreviousDate = zonedTimeToUtc(endOfMonth(previousMonth), timezone)
-  const minPreviousDate = zonedTimeToUtc(startOfMonth(previousMonth), timezone)
 
   // get rows
   const getItems = deviceQuery
     .clone()
-    .leftJoin(
-      knex('Result as resDevice')
-        .select({
-          deviceId: 'deviceId',
-          lastResultConductedOn: knex.raw('MAX(resDevice.endedOn)'),
-          totalCurrentMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
-            minCurrentDate,
-            maxCurrentDate,
-          ]),
-          totalPreviousMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
-            minPreviousDate,
-            maxPreviousDate,
-          ]),
-        })
-        .groupBy('deviceId')
-        .as('deviceResult'),
-      'd.id',
-      'deviceResult.deviceId'
-    )
+
     .leftJoin(
       knex('DeviceMaintenanceStatusLog as d')
         .select('deviceId', 'day', knex.raw('max(s.active) as active'))
