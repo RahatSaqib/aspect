@@ -36,6 +36,7 @@ async function updateDevice(request) {
       deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
       deviceCapacityId: payload.deviceCapacityId,
+      moduleBayCapacity: payload.moduleBayCapacity,
       implementingPartnerId: payload.implementingPartnerId,
       instrumentsConnected: payload.instrumentsConnected,
       gx6cModulesCount: payload.gx6cModulesCount,
