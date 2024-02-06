@@ -3,7 +3,6 @@ import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
-import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages } from '../../../messages'
 import { StateSelector, Loading } from '../../index'
 import messages from '../graphMessages'
@@ -24,12 +23,7 @@ const QuartersMtbDetectedGraph = () => {
 
   const mergedParams = filter ? [...endpointParams, filter] : [...endpointParams]
 
-  const { isLoading, data } = useQuery(
-    ['tbMtbDetectedQuarterlyTrends', { mergedParams }],
-    async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/trend-in-quarters-mtb-detected', params: mergedParams })
-  )
-
+  const { isLoading, data } = useQuery(['tbMtbDetectedQuarterlyTrends', { mergedParams }])
   const mtbDetectedMessage = formatMessage(messages.MtbDetected)
   const totalMessage = formatMessage(messages.Total)
   const percentageMessage = formatMessage(messages.MTBPercent)
