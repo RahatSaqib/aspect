@@ -79,11 +79,11 @@ const ReportIndex = () => {
      * we analyze `error.statusCode` here.
      */
     if (errorDetails) {
-      const { message } = errorDetails
+      const { message, statusCode } = errorDetails
       const errorNotification = {
         severity: 'error',
         resolution: defineMessages({
-          id: `errorResponseMessages.reportStream.${message}.resolution`,
+          id: `errorResponseMessages.reportStream.${statusCode}.resolution`,
           defaultMessage: message,
         }),
         title: defineMessages({
