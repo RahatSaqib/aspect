@@ -46,6 +46,9 @@ const ReportIndex = () => {
   }
 
   const processError = (error, fileExtension, reportName) => {
+    const toMuchDataMessage = `Failed to generate {fileType} report "{reportName}" because of Database Timeout:
+    You might be trying to download too much data.`
+
     const errorCodeMapping = {
       undefined: {
         statusCode: undefined,
@@ -54,8 +57,11 @@ const ReportIndex = () => {
       },
       502: {
         statusCode: 502,
-        message: `Failed to generate {fileType} report "{reportName}" because of Database Timeout:
-          You might be trying to download too much data.`,
+        message: toMuchDataMessage,
+      },
+      504: {
+        statusCode: 504,
+        message: toMuchDataMessage,
       },
     }
 
