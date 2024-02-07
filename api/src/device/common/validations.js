@@ -281,6 +281,7 @@ const deviceDetailsResponseFields = Joi.object()
     configurationData: Joi.object().allow('', null).description('Configuration data for the device'),
     notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
     serial: Joi.string().allow('', null).description('The serial number of the device'),
+    moduleBayCapacity: Joi.number().required().description('The module bay capacity of the device'),
     approval: Joi.string().required().description('The current approval status of the device'),
     maintenanceStatus: Joi.string().allow('', null).description('The current maintenance status of the device'),
     maintenanceStatusI18nKey: Joi.string()
