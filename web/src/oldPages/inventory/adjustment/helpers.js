@@ -4,6 +4,7 @@ import { object, string } from 'yup'
 import { types } from '../../../store/InventoryRedux'
 import {
   newInventoryMessages,
+  receiveInventoryMessages,
   removeInventoryMessages,
   transformInventoryMessages,
   validationMessages,
@@ -43,6 +44,9 @@ export function getQuantityOnHand(actionType, inventory, values) {
     case types.SHOW_TRANSFER_INVENTORY_DIALOG:
       nextQuantity = inventory.quantityOnHand - Number(values?.quantity ?? 0)
       break
+    case types.SHOW_RECEIVE_INVENTORY_DIALOG:
+      nextQuantity = values?.quantity
+      break
     default:
       nextQuantity = inventory.quantityOnHand + Number(values?.quantity ?? 0)
   }
@@ -55,36 +59,31 @@ export function getQuantityOnHand(actionType, inventory, values) {
 export function getLabels(actionType) {
   switch (actionType) {
     case types.SHOW_REMOVE_INVENTORY_DIALOG:
-      return {
-        dialogTitle: removeInventoryMessages.dialogTitle,
-        quantity: removeInventoryMessages.quantity,
-        dateAdjusted: removeInventoryMessages.dateAdjusted,
-      }
+      return removeInventoryMessages
     case types.SHOW_TRANSFER_INVENTORY_DIALOG:
-      return {
-        dialogTitle: transformInventoryMessages.dialogTitle,
-        quantity: transformInventoryMessages.quantity,
-        dateAdjusted: transformInventoryMessages.dateAdjusted,
-      }
+      return transformInventoryMessages
+    case types.SHOW_RECEIVE_INVENTORY_DIALOG:
+      return receiveInventoryMessages
     default:
-      return {
-        dialogTitle: newInventoryMessages.dialogTitle,
-        quantity: newInventoryMessages.quantity,
-        dateAdjusted: newInventoryMessages.dateAdjusted,
-      }
+      return newInventoryMessages
   }
 }
 
 export function transformInitialValue(inventory, actionType) {
   let value = { dateAdjusted: new Date(), quantity: '', lotNumber: '' }
-
   if (inventory) {
     value = {
       ...value,
-      toSiteId: actionType === types.SHOW_ADD_INVENTORY_DIALOG ? inventory.siteId : undefined,
-      fromSiteId: ![types.SHOW_ADD_INVENTORY_DIALOG, types.SHOW_NEW_INVENTORY_DIALOG].includes(actionType)
+      quantity: actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG ? inventory.quantityOnHand : '',
+      toSiteId: [types.SHOW_ADD_INVENTORY_DIALOG, types.SHOW_RECEIVE_INVENTORY_DIALOG].includes(actionType)
         ? inventory.siteId
         : undefined,
+      fromSiteId:
+        actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG
+          ? inventory?.inTransitFromSiteId
+          : ![types.SHOW_ADD_INVENTORY_DIALOG, types.SHOW_NEW_INVENTORY_DIALOG].includes(actionType)
+          ? inventory.siteId
+          : undefined,
       lotNumber: inventory?.lotNumber,
       expiresOn: inventory?.expiresOn,
       consumable: {
