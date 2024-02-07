@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react'
 import { FormControlLabel, Switch, TableBody, LinearProgress } from '@mui/material'
-import Immutable from 'immutable'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -13,10 +12,10 @@ import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
-import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { showAcknowledgement } from '../../../store/AppNotificationRedux'
@@ -32,19 +31,11 @@ import {
   types,
 } from '../../../store/InventoryRedux'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
-import AddInventoryDialogForm from '../adjustment/AddInventoryDialogForm'
-import { testConductedReasonI18nKey } from '../adjustment/InventoryAdjustmentDialogForm'
-import NewInventoryDialogForm from '../adjustment/NewInventoryDialogForm'
-import PakistanInventoryAdjustmentDialog from '../adjustment/PakistanInventoryAdjustmentDialog'
-import ReceiveInventoryDialogForm from '../adjustment/ReceiveInventoryDialogForm'
-import RemoveInventoryDialogForm from '../adjustment/RemoveInventoryDialogForm'
-import TransferInventoryDialogForm from '../adjustment/TransferInventoryDialogForm'
+import PakistanInventoryAdjustmentDialog from '../adjustment/InventoryAdjustmentDialog'
 import { InventoryDataTable, InventoryDataTableHead, InventoryDataTableRow } from './InventoryDataTable'
 import styles from './InventoryItemsList.module.css'
 import getExportableFile from './InventoryItemsQueries'
 import messages from './messages'
-
-const EMPTY_MAP = Immutable.Map()
 
 const availableSortCol = [
   'siteName',
@@ -88,8 +79,6 @@ export const InventoryItemsListWithProps = ({
   refetch,
 }) => {
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
-
-  const { isCountry } = useAuthState()
 
   const columns = [
     {
@@ -167,7 +156,9 @@ export const InventoryItemsListWithProps = ({
       case types.SHOW_TRANSFER_INVENTORY_DIALOG:
         onTransferInventorySubmit(values)
         break
-
+      case types.SHOW_RECEIVE_INVENTORY_DIALOG:
+        onReceiveInventorySubmit(values)
+        break
       default: {
         onAddInventorySubmit(values)
       }
@@ -246,52 +237,14 @@ export const InventoryItemsListWithProps = ({
           )}
         </DataTableCard>
 
-        {isCountry('PK') && inventoryAdjustment.get('actionType') ? (
+        {inventoryAdjustment.get('actionType') ? (
           <PakistanInventoryAdjustmentDialog
             actionType={inventoryAdjustment.get('actionType')}
             inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], undefined)}
             onCancel={() => dispatch(hideAdjustInventoryDialog())}
             onSubmit={handleSubmit}
           />
-        ) : (
-          <>
-            <NewInventoryDialogForm
-              intl={intl}
-              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_NEW_INVENTORY_DIALOG}
-              onCancel={() => dispatch(hideAdjustInventoryDialog())}
-              onSubmit={onAddInventorySubmit}
-            />
-            <AddInventoryDialogForm
-              intl={intl}
-              inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_ADD_INVENTORY_DIALOG}
-              onCancel={() => dispatch(hideAdjustInventoryDialog())}
-              onSubmit={onAddInventorySubmit}
-            />
-            <RemoveInventoryDialogForm
-              intl={intl}
-              inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_REMOVE_INVENTORY_DIALOG}
-              onCancel={() => dispatch(hideAdjustInventoryDialog())}
-              onSubmit={onRemoveInventorySubmit}
-            />
-            <TransferInventoryDialogForm
-              intl={intl}
-              inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_TRANSFER_INVENTORY_DIALOG}
-              onCancel={() => dispatch(hideAdjustInventoryDialog())}
-              onSubmit={onTransferInventorySubmit}
-            />
-            <ReceiveInventoryDialogForm
-              intl={intl}
-              items={items}
-              inventoryItem={items.getIn(['byId', inventoryAdjustment.get('inventoryItemId')], EMPTY_MAP)}
-              isDialogActive={inventoryAdjustment.get('actionType') === types.SHOW_RECEIVE_INVENTORY_DIALOG}
-              onCancel={() => dispatch(hideAdjustInventoryDialog())}
-              onSubmit={onReceiveInventorySubmit}
-            />
-          </>
-        )}
+        ) : null}
       </div>
     </>
   )
