@@ -12,7 +12,7 @@ import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, tr
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
 
-function PakistanInventoryAdjustmentDialog(props) {
+function InventoryAdjustmentDialog(props) {
   const { onCancel, onSubmit, inventoryItem, actionType } = props
   const { formatMessage, ...intl } = useIntl()
   const inventory = inventoryItem?.toJS?.() ?? undefined
@@ -228,4 +228,4 @@ function PakistanInventoryAdjustmentDialog(props) {
   )
 }
 
-export default memo(PakistanInventoryAdjustmentDialog)
+export default memo(InventoryAdjustmentDialog)
