@@ -16,6 +16,7 @@ function PeriodSelector({
   maxDate,
   onChange,
   label,
+  noAny,
   noDay,
   noWeek,
   noMonth,
@@ -97,6 +98,17 @@ function PeriodSelector({
                   defaultEndIcon={<div style={{ width: 24 }} />}
                   onKeyDown={handleListKeyDown}
                 >
+                  {noAny ? null : (
+                    <TreeItem
+                      label={<TreeLabel label={formatMessage(messages.any)} />}
+                      nodeId="any"
+                      onClick={() => {
+                        setValueLabel(formatMessage(messages.any))
+                        onChange({ minDate: null, maxDate: null })
+                        handleToggle()
+                      }}
+                    />
+                  )}
                   {noDay ? null : (
                     <TreeItem label={<TreeLabel label={formatMessage(messages.day)} />} nodeId="day">
                       {day.map(option => (

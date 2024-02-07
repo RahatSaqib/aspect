@@ -87,6 +87,7 @@ const ResultTransmittedGraph = () => {
                   <Grid item xs={12} md={8} lg={12} className={styles.Graph_Content_AssaySelector}>
                     <PeriodSelector
                       label={formatMessage(graphMessages.date)}
+                      noAny
                       noDay
                       noWeek
                       noQuarter
