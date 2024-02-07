@@ -279,18 +279,47 @@ async function assignPersonTo(request) {
   // siteId or geographyId
   // ----------------
 
-  // This will used as default value for geography of assigment
-  const creatorGeography = await knex('JobContext as jc')
-    .where({ personId: creator.personId })
+  // This will determine whether the currently logged in user
+  // is allowed to add a permission for this State, LGA or Site
+  const allowedCreatorGeographiesAndSites = await knex('JobContext as jc')
+    .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .join('JobFunctionPermission as jfp', 'jc.jobFunctionId', 'jfp.jobFunctionId')
+    .join('Permission as p', 'jfp.permissionId', 'p.id')
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-    .select('g.stateId', 'g.countryId', 'g.lgaId')
-    .first()
+    .leftJoin('Site as s', qb => qb.on('jc.siteId', 's.id'))
+    .where({ personId: creator.personId })
+    .andWhereIn('p.module', ['account', 'person'])
+    .andWhereIn('p.activity', ['edit', 'admin'])
+    .distinct('g.stateId', 'g.countryId', 'g.lgaId', 's.id as siteId')
 
+  const highestLevelCreatorScope = {}
+  const countryOnlyGeography = allowedCreatorGeographiesAndSites
+    .filter(gs => !!geographyId.countryId && !gs.stateId && !gs.lgaId && !gs.siteId)
+    .first()
+  if (!countryOnlyGeography) {
+    const stateOnlyGeography = allowedCreatorGeographiesAndSites.filter(gs => !!gs.stateId && !gs.lgaId && !gs.siteId)
+    if (stateOnlyGeography.length === 1) {
+      highestLevelCreatorScope.stateId = stateOnlyGeography.stateId
+    } else {
+      const lgaOnlyGeography = allowedCreatorGeographiesAndSites.filter(gs => !!gs.lgaId && !gs.siteId)
+      if (lgaOnlyGeography.length === 1) {
+        highestLevelCreatorScope.stateId = lgaOnlyGeography.stateId
+        highestLevelCreatorScope.lgaId = lgaOnlyGeography.lgaId
+      } else {
+        const siteOnlyGeography = allowedCreatorGeographiesAndSites.filter(gs => !!gs.siteId)
+        if (siteOnlyGeography.length === 1) {
+          highestLevelCreatorScope.stateId = siteOnlyGeography.stateId
+          highestLevelCreatorScope.lgaId = siteOnlyGeography.lgaId
+          highestLevelCreatorScope.siteId = siteOnlyGeography.siteId
+        }
+      }
+    }
+  }
   const {
     countryId,
-    stateId = creatorGeography?.stateId ?? null,
-    lgaId = creatorGeography?.lgaId ?? null,
-    siteId = null,
+    stateId = highestLevelCreatorScope?.stateId ?? null,
+    lgaId = highestLevelCreatorScope?.lgaId ?? null,
+    siteId = highestLevelCreatorScope?.siteId ?? null,
     diseaseId = null,
     assayTypeId = null,
     assayId = null,
