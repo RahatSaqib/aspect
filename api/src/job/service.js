@@ -265,61 +265,151 @@ async function unassignJobFunctionPermissions(request) {
 // ----------------------------------------------------------------------------------------
 async function assignPersonTo(request) {
   const { payload } = request
-  // ----------------
-  // jobId
-  // ----------------
-  const { personId, jobFunctionId } = payload
+
+  const { countryId, personId, jobFunctionId } = payload
   const { auth } = request
   const creator = await validateJobData({ personId, jobFunctionId, auth })
   if (creator.isBoom) {
     return creator
   }
-
-  // ----------------
-  // siteId or geographyId
-  // ----------------
-
-  // This will determine whether the currently logged in user
-  // is allowed to add a permission for this State, LGA or Site
-  const allowedCreatorGeographiesAndSites = await knex('JobContext as jc')
+  const geographyIdsInPayload = {
+    countryId: countryId ?? null,
+    stateId: payload.stateId ?? null,
+    lgaId: payload.lgaId ?? null,
+    siteId: payload.siteId ?? null,
+  }
+  if (
+    geographyIdsInPayload.siteId &&
+    (!geographyIdsInPayload.lgaId || !geographyIdsInPayload.stateId || !geographyIdsInPayload.countryId)
+  ) {
+    const siteGeographyIds = await knex('Site as s')
+      .leftJoin('Geography as g', 's.geographyId', 'g.id')
+      .where('s.id', geographyIdsInPayload.siteId)
+      .first('g.countryId', 'g.stateId', 'g.lgaId')
+    geographyIdsInPayload.countryId = siteGeographyIds?.countryId ?? payload.countryId
+    geographyIdsInPayload.stateId = siteGeographyIds?.stateId ?? payload.stateId
+    geographyIdsInPayload.lgaId = siteGeographyIds?.lgaId ?? payload.lgaId
+  } else if (
+    !geographyIdsInPayload.siteId &&
+    geographyIdsInPayload.lgaId &&
+    (!geographyIdsInPayload.stateId || !geographyIdsInPayload.countryId)
+  ) {
+    const lgaGeographyIds = await knex('Geography as g')
+      .where('g.lgaId', geographyIdsInPayload.lgaId)
+      .first('g.countryId', 'g.stateId')
+    geographyIdsInPayload.countryId = lgaGeographyIds?.countryId ?? payload.countryId
+    geographyIdsInPayload.stateId = lgaGeographyIds?.stateId ?? payload.stateId
+  } else if (
+    !geographyIdsInPayload.siteId &&
+    !geographyIdsInPayload.lgaId &&
+    geographyIdsInPayload.stateId &&
+    !geographyIdsInPayload.countryId
+  ) {
+    const stateGeographyIds = await knex('Geography as g')
+      .where('g.stateId', geographyIdsInPayload.stateId)
+      .first('g.countryId')
+    geographyIdsInPayload.countryId = stateGeographyIds?.countryId ?? payload.countryId
+  }
+  const requiredJobAssignmentBaseQuery = knex('JobContext as jc')
     .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
     .join('JobFunctionPermission as jfp', 'jc.jobFunctionId', 'jfp.jobFunctionId')
     .join('Permission as p', 'jfp.permissionId', 'p.id')
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-    .leftJoin('Site as s', qb => qb.on('jc.siteId', 's.id'))
-    .where({ personId: creator.personId })
-    .andWhereIn('p.module', ['account', 'person'])
-    .andWhereIn('p.activity', ['edit', 'admin'])
-    .distinct('g.stateId', 'g.countryId', 'g.lgaId', 's.id as siteId')
-
-  const highestLevelCreatorScope = {}
-  const countryOnlyGeography = allowedCreatorGeographiesAndSites
-    .filter(gs => !!geographyId.countryId && !gs.stateId && !gs.lgaId && !gs.siteId)
-    .first()
-  if (!countryOnlyGeography) {
-    const stateOnlyGeography = allowedCreatorGeographiesAndSites.filter(gs => !!gs.stateId && !gs.lgaId && !gs.siteId)
-    if (stateOnlyGeography.length === 1) {
-      highestLevelCreatorScope.stateId = stateOnlyGeography.stateId
-    } else {
-      const lgaOnlyGeography = allowedCreatorGeographiesAndSites.filter(gs => !!gs.lgaId && !gs.siteId)
-      if (lgaOnlyGeography.length === 1) {
-        highestLevelCreatorScope.stateId = lgaOnlyGeography.stateId
-        highestLevelCreatorScope.lgaId = lgaOnlyGeography.lgaId
-      } else {
-        const siteOnlyGeography = allowedCreatorGeographiesAndSites.filter(gs => !!gs.siteId)
-        if (siteOnlyGeography.length === 1) {
-          highestLevelCreatorScope.stateId = siteOnlyGeography.stateId
-          highestLevelCreatorScope.lgaId = siteOnlyGeography.lgaId
-          highestLevelCreatorScope.siteId = siteOnlyGeography.siteId
-        }
+    .leftJoin('Site as s', 'jc.siteId', 's.id')
+    .where('jc.personId', creator.personId)
+    .whereIn('p.module', ['account', 'person'])
+    .whereIn('p.activity', ['edit', 'admin'])
+  const superAdminJobFunction = await requiredJobAssignmentBaseQuery
+    .clone()
+    .whereNull('s.id')
+    .whereNull('g.lgaId')
+    .whereNull('g.stateId')
+    .whereNull('g.countryId')
+    .first('jf.externalId')
+  if (!superAdminJobFunction) {
+    if (geographyIdsInPayload.siteId) {
+      const siteAdminJobFunction = await requiredJobAssignmentBaseQuery
+        .clone()
+        .andWhere(qb => {
+          qb.where('s.id', geographyIdsInPayload.siteId)
+          if (geographyIdsInPayload.lgaId) {
+            qb.orWhere(lgaQb => lgaQb.whereNull('s.id').andWhere('g.lgaId', geographyIdsInPayload.lgaId))
+          }
+          if (geographyIdsInPayload.stateId) {
+            qb.orWhere(stateQb =>
+              stateQb.whereNull('s.id').whereNull('g.lgaId').andWhere('g.stateId', geographyIdsInPayload.stateId)
+            )
+          }
+          if (geographyIdsInPayload.countryId) {
+            qb.orWhere(countryQb =>
+              countryQb
+                .whereNull('s.id')
+                .whereNull('g.lgaId')
+                .whereNull('g.stateId')
+                .where('g.countryId', geographyIdsInPayload.countryId)
+            )
+          }
+        })
+        .first('jf.externalId')
+      if (!siteAdminJobFunction?.externalId) {
+        return Boom.forbidden(`Site out of scope for current user's permissions`)
+      }
+    } else if (geographyIdsInPayload.lgaId) {
+      const lgaAdminJobFunction = await requiredJobAssignmentBaseQuery
+        .clone()
+        .whereNull('s.id')
+        .andWhere(qb => {
+          qb.where('g.lgaId', geographyIdsInPayload.lgaId)
+          if (geographyIdsInPayload.stateId) {
+            qb.orWhere(stateQb => stateQb.whereNull('g.lgaId').andWhere('g.stateId', geographyIdsInPayload.stateId))
+          }
+          if (geographyIdsInPayload.countryId) {
+            qb.orWhere(countryQb =>
+              countryQb
+                .whereNull('g.lgaId')
+                .whereNull('g.stateId')
+                .andWhere('g.countryId', geographyIdsInPayload.countryId)
+            )
+          }
+        })
+        .first('jf.externalId')
+      if (!lgaAdminJobFunction?.externalId) {
+        return Boom.forbidden(`LGA out of scope for current user's permissions`)
+      }
+    } else if (geographyIdsInPayload.stateId) {
+      const stateAdminJobFunction = await requiredJobAssignmentBaseQuery
+        .clone()
+        .whereNull('s.id')
+        .whereNull('g.lgaId')
+        .andWhere(qb => {
+          qb.where('g.stateId', geographyIdsInPayload.stateId)
+          if (geographyIdsInPayload.countryId) {
+            qb.orWhere(countryQb =>
+              countryQb.whereNull('g.stateId').andWhere('g.countryId', geographyIdsInPayload.countryId)
+            )
+          }
+        })
+        .first('jf.externalId')
+      if (!stateAdminJobFunction?.externalId) {
+        return Boom.forbidden(`State out of scope for current user's permissions`)
+      }
+    } else if (geographyIdsInPayload.countryId) {
+      const countryAdminJobFunction = await requiredJobAssignmentBaseQuery
+        .clone()
+        .whereNull('s.id')
+        .whereNull('g.lgaId')
+        .whereNull('g.stateId')
+        .andWhere('g.countryId', countryId)
+        .first('jf.externalId')
+      if (!countryAdminJobFunction?.externalId) {
+        return Boom.forbidden(`Country out of scope for current user's permissions`)
       }
     }
   }
   const {
-    countryId,
-    stateId = highestLevelCreatorScope?.stateId ?? null,
-    lgaId = highestLevelCreatorScope?.lgaId ?? null,
-    siteId = highestLevelCreatorScope?.siteId ?? null,
+    stateId = geographyIdsInPayload?.stateId ?? null,
+    lgaId = geographyIdsInPayload?.lgaId ?? null,
+    siteId = geographyIdsInPayload?.siteId ?? null,
     diseaseId = null,
     assayTypeId = null,
     assayId = null,
@@ -341,7 +431,9 @@ async function assignPersonTo(request) {
 
   let deviceTypeId
   if (deviceTypeExternalId) {
-    ;[deviceTypeId] = (await knex('DeviceType').where('externalId', deviceTypeExternalId).pluck('id')) || []
+    ;({ deviceTypeId } = (await knex('DeviceType')
+      .where('externalId', deviceTypeExternalId)
+      .first('id as deviceTypeId')) || { deviceTypeId: null })
   }
 
   // ----------------
