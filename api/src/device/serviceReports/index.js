@@ -1,6 +1,7 @@
 const _ = require('lodash')
-const { format, parseISO, addMonths, differenceInBusinessDays, subMonths, subDays } = require('date-fns')
+const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = require('date-fns')
 const locales = require('date-fns/locale')
+const Boom = require('@hapi/boom')
 const { getDeviceBaseExtendedQuery } = require('../service')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
 const { issueCategoryIntlToShortname } = require('../../shared/dictionary')
@@ -592,10 +593,9 @@ async function getAllDeviceReport(auth, query) {
 }
 
 async function getErrorsByDevicesReport(auth, query) {
-  const now = new Date()
-  if(!query.minDate || !query.minDate){
-    query.minDate = subDays(now, 30)
-    query.maxDate = now
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    throw Boom.badRequest('Dates are required')
   }
   const dataConstraints = await getConstraints(auth.credentials)
   const data = await getErrorsByDevices(dataConstraints, query)

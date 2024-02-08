@@ -1,16 +1,15 @@
 const _ = require('lodash')
-const { startOfMonth, endOfMonth, subMonths, subDays } = require('date-fns')
+const { startOfMonth, endOfMonth, subMonths } = require('date-fns')
+const Boom = require('@hapi/boom')
 const { filterParams, knex } = require('../../../db')
 const { getAllMonthsInRange } = require('../../../shared/date')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../../fact/common/db')
 const { addConstraints } = require('../../../auth/constraints')
 
 const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) => {
-  let { minDate, maxDate } = query
-  const now = new Date()
-  if(!minDate || !maxDate){
-    minDate = subDays(now, 30)
-    maxDate = now
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    throw Boom.badRequest('Dates are required')
   }
   let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
   const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate

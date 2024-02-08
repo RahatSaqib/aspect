@@ -1,6 +1,5 @@
 const _ = require('lodash')
-const { subMonths, subDays } = require('date-fns')
-
+const Boom = require('@hapi/boom')
 const { addConstraints } = require('../../../auth/constraints')
 const { knex, filterParams, filterDateRangeParams } = require('../../../db')
 const { allAssayToId, allResultCategoryToId } = require('../../../shared/dictionary')
@@ -27,19 +26,12 @@ const getFieldsForLine = (resultCategory, pulmonary, smear, historyKeys) => {
 
 // ---------------------------------------------------------------------------------------
 async function getXpertSiteDetailedReport(dataConstraints, query) {
-  let { minDate, maxDate } = query
-  const now = new Date()
-  if(!minDate || !maxDate){
-    minDate = subDays(now, 30)
-    maxDate = now
-  }
-  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
-  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
-  if (dateFrom >= dateTo) {
-    dateFrom = subMonths(dateTo, 1)
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    throw Boom.badRequest('Dates are required')
   }
 
-  const offset = getOffsetFromIsoDateString(query.maxDate || maxDate)
+  const offset = getOffsetFromIsoDateString(maxDate)
 
   /**
    * prepare all inclusive months in the range in format `yyyy-mm`.
@@ -203,7 +195,7 @@ async function getXpertSiteDetailedReport(dataConstraints, query) {
       result: 'r',
     })
     // apply date range filter
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+    .modify(filterDateRangeParams, { minDate, maxDate }, 'r.endedOn')
     // apply remaining filters
     .modify(filterParams, query, {
       countryId: 'g.countryId',
