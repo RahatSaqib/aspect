@@ -44,6 +44,7 @@ const XDRTestingDiagnosisTrendPage = () => {
       const bar = []
       data.grouped
         .filter(g => g.year >= 2022)
+        .slice(-5)
         .map(({ year, MtbToTotalPercentage, Total, MtbDetected }) => {
           line.push({ year, [percentageMessage]: +MtbToTotalPercentage.toFixed(2) })
           bar.push({ year, value: MtbDetected, type: mtbPlusMessage })
