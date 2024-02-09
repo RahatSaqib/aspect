@@ -38,7 +38,11 @@ const ReporterList = () => {
     (siteName, column) => {
       const findTreatmentStatus = id => find(treatmentStatuses, { externalId: id })?.externalId
       const destination = '/browse/result'
-      const params = { onlyReportableResults: true, siteName, ...pick(filters, ['minDate', 'maxDate']) }
+      const params = {
+        onlyReportableResults: true,
+        reportableSiteName: siteName,
+        ...pick(filters, ['minDate', 'maxDate']),
+      }
       switch (column) {
         case 'resultsDownloaded':
           merge(params, { onlyDownloadedByReporter: true })
