@@ -37,12 +37,12 @@ const CountrySelect = ({ id, name, label, value, onChange, error, helperText, di
         }}
       >
         {countries.map(c => {
-          const CurrrentFlag = Flags[COUNTRY_ISO_MAPPING[c.a3]]
+          const CurrentFlag = Flags[COUNTRY_ISO_MAPPING[c.a3]]
           return (
             <MenuItem key={c.id} value={c.id}>
-              {CurrrentFlag ? (
+              {CurrentFlag ? (
                 <>
-                  <CurrrentFlag style={{ height: 20, marginRight: 10, float: 'left' }} />{' '}
+                  <CurrentFlag style={{ height: 20, marginRight: 10, float: 'left' }} />{' '}
                 </>
               ) : null}
               <p style={{ float: 'left', margin: 0 }}>{c.name}</p>
