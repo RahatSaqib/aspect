@@ -18,17 +18,17 @@ const maxDate = endOfDay(now)
 export const defaultFilter = {
   '/browse/deviceApiKey': {},
   '/browse/device/list': {},
-  '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 },
-  '/browse/inventory/log': { minDate, maxDate },
-  '/browse/inventory/supplies': { hasStock: true },
-  '/browse/inventory/transfers': {},
+  '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 }, //
+  '/browse/inventory/log': { minDate, maxDate }, //
+  '/browse/inventory/supplies': { hasStock: true, minDate, maxDate }, //
+  '/browse/inventory/transfers': { minDate, maxDate }, //
   '/browse/notification/types': {},
   '/browse/person': { contactStatus: 0 },
-  '/browse/reporter': { minDate, maxDate },
-  '/browse/result': { minDate, maxDate },
+  '/browse/reporter': { minDate, maxDate }, //
+  '/browse/result': { minDate, maxDate }, //
   '/browse/site': {},
-  '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate },
-  '/reports': {},
+  '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate }, //
+  '/reports': { minDate, maxDate }, //
   '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
 }
 
