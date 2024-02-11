@@ -39,7 +39,10 @@ const ResultTransmittedGraph = () => {
   const { data, isLoading } = useQuery(
     ['resultsTransmittedDials', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/dashboard/results-transmitted', params: mergedParams })
+      fetchWrapperForQueries({ endpoint: '/dashboard/results-transmitted', params: mergedParams }),
+    {
+      refetchOnWindowFocus: false,
+    }
   )
 
   function formatRawData() {
