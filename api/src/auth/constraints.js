@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const { knex } = require('../db')
 const { getUser, getUserByUserId, getPersonByPersonId } = require('./service')
+const { getDictionarySync } = require('../shared/dictionary')
 
 // A prefix for joined table aliases intended to avoid
 // conflict with caller supplied table aliases
@@ -357,29 +358,30 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
     excludeDisabledSites(queryBuilder, aliases.site || filterAlias)
   }
   if (device && !showUnapprovedDevices) {
-    queryBuilder.leftOuterJoin(`DeviceApproval as deviceApproval`, `${device}.deviceApprovalId`, `deviceApproval.id`)
-    queryBuilder.where(qb =>
-      qb.where({ [`deviceApproval.token`]: 'approved' }).orWhere(knex.raw('isnull(`deviceApproval`.`token`)'))
-    )
+    const deviceApprovalIds = getDictionarySync('DeviceApproval')
+    queryBuilder.whereRaw(`
+      (
+        ${device}.deviceApprovalId is null
+        or
+        ${device}.deviceApprovalId = ${deviceApprovalIds.approved}
+      )
+    `)
   }
   if (device && !showDecommissionedDevices) {
+    const deviceMaintenanceStatusIds = getDictionarySync('DeviceMaintenanceStatus')
     // latest maintenance status for device is NOT 'inactiveDecommissioned'
-    queryBuilder
-      .leftOuterJoin(
-        `DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog`,
-        `${device}.deviceMaintenanceStatusLogId`,
-        `deviceMaintenanceStatusLog.id`
-      )
-      .leftOuterJoin(
-        'DeviceMaintenanceStatus AS deviceMaintenanceStatus',
-        'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
-        'deviceMaintenanceStatus.id'
-      )
-    queryBuilder.where(qb =>
-      qb
-        .whereNull('deviceMaintenanceStatus.externalId')
-        .orWhereNot('deviceMaintenanceStatus.externalId', 'inactiveDecommissioned')
+    queryBuilder.leftOuterJoin(
+      `DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog`,
+      `${device}.deviceMaintenanceStatusLogId`,
+      `deviceMaintenanceStatusLog.id`
     )
+    queryBuilder.whereRaw(`
+      (
+        ${device}.deviceMaintenanceStatusLogId is null
+        or
+        deviceMaintenanceStatusLog.deviceMaintenanceStatusId != ${deviceMaintenanceStatusIds.inactiveDecommissioned}
+      )
+    `)
   }
 }
 
