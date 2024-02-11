@@ -1,4 +1,7 @@
 exports.up = async function (knex) {
+  await knex.schema.alterTable('Site', function (tbl) {
+    tbl.index(['disabled'])
+  })
   await knex.schema.alterTable('EmailMessage', function (tbl) {
     tbl.index(['createdOn'])
   })
@@ -8,6 +11,9 @@ exports.up = async function (knex) {
 }
 
 exports.down = async function (knex) {
+  await knex.schema.alterTable('Site', function (tbl) {
+    tbl.dropIndex(['disabled'])
+  })
   await knex.schema.alterTable('EmailMessage', function (tbl) {
     tbl.dropIndex('createdOn')
   })
