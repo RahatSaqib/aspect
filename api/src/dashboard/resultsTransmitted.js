@@ -4,7 +4,7 @@ const { knex, filterParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getOffsetFromIsoDateString, startOfMonthUTC, endOfMonthUTC } = require('../shared/date')
 
-const { allResultCategoryToId, allMessageStatusToId } = require('../shared/dictionary')
+const { allResultCategoryToId, allDeviceTypeToId, allMessageStatusToId } = require('../shared/dictionary')
 const { formatDateOrDefault } = require('../shared/date')
 
 const getPositiveCategoriesExternalIds = require('../resultCategory/service')
@@ -42,31 +42,28 @@ async function getAssayQuery(query, dataConstraints, positiveResultCategories) {
 async function getResultQuery(query, dataConstraints, positiveResultCategories, tz = '+00:00') {
   const { currentMonth = new Date() } = query
   const messageStatusToId = await allMessageStatusToId()
+  const deviceTypeIds = await allDeviceTypeToId()
 
-  const resultsQuery = knex('Result as r')
+  /**
+   * base query which contains all required conditions and joins
+   */
+  const baseQuery = knex('Result as r')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     .innerJoin('Device as d', 'd.id', 'r.deviceId')
     .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('Notification as n', 'r.id', 'n.resultId')
-    .leftOuterJoin('EmailMessage as em', function () {
-      this.on('n.emailMessageId', 'em.id').andOn('em.messageStatusId', messageStatusToId.Sent)
-    })
-    .leftOuterJoin('SmsMessage as sm', function () {
-      this.on('n.smsMessageId', 'sm.id').andOn('sm.messageStatusId', messageStatusToId.Sent)
-    })
-    // only specified 'currentMonth' and previous onth
+    // only specified 'currentMonth' and previous month
     .whereRaw(
       `
-        ((
-          r.endedOn between ? and ?
-        )
-        OR
-        (
-         r.endedOn between ? and ?
-        ))
-      `,
+      ((
+        r.endedOn between ? and ?
+      )
+      OR
+      (
+       r.endedOn between ? and ?
+      ))
+    `,
       [
         startOfMonthUTC(currentMonth),
         endOfMonthUTC(currentMonth),
@@ -79,7 +76,7 @@ async function getResultQuery(query, dataConstraints, positiveResultCategories, 
      * See chunk `if (_.get(constraints, 'deviceType.id')) {` in func `addDevicesAndSitesConstraints`
      * in `api/src/auth/constraints.js` where user permitted deviceType is used
      */
-    .whereNot('dt.externalId', 'GxAlert')
+    .whereNot('d.deviceTypeId', deviceTypeIds.GxAlert)
     .modify(addConstraints, dataConstraints, {
       device: 'd',
       site: 's',
@@ -111,84 +108,95 @@ async function getResultQuery(query, dataConstraints, positiveResultCategories, 
         ) AS yearMonth
       `)
     )
-    // all results
+    .groupBy('a.id', 'yearMonth')
+
+  const basePositiveQuery = baseQuery.clone().whereRaw(`r.resultCategory1 IN (${positiveResultCategories})`)
+
+  /**
+   * now clone base queries and add needed joins for only 1 counter
+   * Notice that for particular counter all below queries have needed conditions
+   * in WHERE clause instead of using CASE blocks with similar conditions in `count()` function
+   */
+  const dataAll = await baseQuery.clone().count({
+    cntAll: knex.raw('DISTINCT r.id'),
+  })
+  const dataPositive = await basePositiveQuery.clone().count({
+    cntAll: knex.raw('DISTINCT r.id'),
+  })
+  const dataReportedViaEmail = await basePositiveQuery
+    .clone()
+    .innerJoin('Notification as n', 'r.id', 'n.resultId')
+    .innerJoin('EmailMessage as em', 'n.emailMessageId', 'em.id')
+    .where('em.messageStatusId', messageStatusToId.Sent)
     .count({
       cntAll: knex.raw('DISTINCT r.id'),
     })
-    // all Positive results
+  const dataReportedViaSms = await basePositiveQuery
+    .clone()
+    .innerJoin('Notification as n', 'r.id', 'n.resultId')
+    .innerJoin('SmsMessage as sm', 'n.smsMessageId', 'sm.id')
+    .where('sm.messageStatusId', messageStatusToId.Sent)
     .count({
-      cntPositive: knex.raw(`
-        DISTINCT
-        CASE
-          WHEN r.resultCategory1 IN (${positiveResultCategories})
-          THEN r.id
-          ELSE null
-        END
-      `),
+      cntAll: knex.raw('DISTINCT r.id'),
     })
-    // all results with email sent out
+  const dataAllReported = await basePositiveQuery
+    .clone()
+    .innerJoin('Notification as n', 'r.id', 'n.resultId')
+    .leftOuterJoin('EmailMessage as em', 'n.emailMessageId', 'em.id')
+    .leftOuterJoin('SmsMessage as sm', 'n.smsMessageId', 'sm.id')
+    .whereRaw(
+      `(
+        em.messageStatusId = ${messageStatusToId.Sent}
+        or
+        sm.messageStatusId = ${messageStatusToId.Sent}
+      )`
+    )
     .count({
-      cntReportedViaEmail: knex.raw(`
-        DISTINCT
-        CASE
-          WHEN
-            r.resultCategory1 IN (${positiveResultCategories})
-            AND
-            em.id IS NOT NULL
-          THEN r.id
-          ELSE null
-        END
-      `),
+      cntAll: knex.raw('DISTINCT r.id'),
     })
-    // all results with sms sent out
+  const dataWithin2Hours = await basePositiveQuery
+    .clone()
+    .innerJoin('Notification as n', 'r.id', 'n.resultId')
+    .leftOuterJoin('EmailMessage as em', 'n.emailMessageId', 'em.id')
+    .leftOuterJoin('SmsMessage as sm', 'n.smsMessageId', 'sm.id')
+    .whereRaw(
+      `(
+        (
+          em.messageStatusId = ${messageStatusToId.Sent} 
+          and 
+          em.createdOn < DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+        )
+        or
+        (
+          sm.messageStatusId = ${messageStatusToId.Sent}
+          and
+          sm.createdOn < DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
+        )
+      )`
+    )
     .count({
-      cntReportedViaSms: knex.raw(`
-        DISTINCT
-        CASE
-          WHEN
-            r.resultCategory1 IN (${positiveResultCategories})
-            AND
-            sm.id IS NOT NULL
-          THEN r.id
-          ELSE null
-        END
-      `),
+      cntAll: knex.raw('DISTINCT r.id'),
     })
-    // count results with either email or sms sent out
-    .count({
-      cntAllReported: knex.raw(`
-        DISTINCT
-        CASE
-          WHEN
-            r.resultCategory1 IN (${positiveResultCategories})
-            AND (
-              em.id IS NOT NULL
-              OR
-              sm.id IS NOT NULL
-            )
-          THEN r.id
-          ELSE null
-        END
-      `),
-    })
-    .count({
-      cntWithin2Hours: knex.raw(`
-        DISTINCT
-        CASE
-          WHEN
-            r.resultCategory1 IN (${positiveResultCategories})
-            AND (
-              em.createdOn < DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
-              OR
-              sm.createdOn < DATE_ADD(r.endedOn, INTERVAL 2 HOUR)
-            )
-          THEN r.id
-          ELSE null
-        END
-      `),
-    })
-    .groupBy('a.id', 'yearMonth')
-  return resultsQuery
+
+  /**
+   * helper func - get actual value for the same assay/month pair or return default 0
+   */
+  const getCounter = (data, { yearMonth, assayExternalId }) => {
+    return data.find(it => it.yearMonth === yearMonth && it.assayExternalId === assayExternalId)?.cntAll || 0
+  }
+  /**
+   * list `dataAll` has all data, so we loop through it and add missing data from
+   * other lists which have less data because they had more filtering conditions
+   */
+  const items = _.map(dataAll, item => {
+    item.cntPositive = getCounter(dataPositive, item)
+    item.cntReportedViaEmail = getCounter(dataReportedViaEmail, item)
+    item.cntReportedViaSms = getCounter(dataReportedViaSms, item)
+    item.cntAllReported = getCounter(dataAllReported, item)
+    item.cntWithin2Hours = getCounter(dataWithin2Hours, item)
+    return item
+  })
+  return items
 }
 
 async function resultsTransmittedDashboard(request) {
