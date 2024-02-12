@@ -40,7 +40,9 @@ const getLinkedResults = (dataConstraints, query) => {
     })
     .leftOuterJoin('ResultTreatmentStatusLog as rtsl', 'rtsl.resultId', 'r.id')
     .leftOuterJoin('ResultTreatmentStatus as rts', 'rts.id', 'rtsl.resultTreatmentStatusId')
-    .where('rca1.reportable', true)
+    .where(queryBuilder => {
+      queryBuilder.where('rca1.reportable', true).orWhere('rca2.reportable', true)
+    })
     .whereRaw('IFNULL(??, ??) BETWEEN ? AND ?', ['r.endedOn', 'r.startedOn', minDate, maxDate])
     .modify(addConstraints, dataConstraints, {
       geography: 'g',
