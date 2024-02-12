@@ -38,7 +38,9 @@ const getLinkedResults = (dataConstraints, query) => {
     .leftJoin('ResultCategoryAssay as rca2', queryBuilder => {
       queryBuilder.on('rca2.resultCategoryId', 'r.resultCategory2').andOn('rca2.assayId', 'r.assayId')
     })
-    .where('Sample.registeredInAspect', 1)
+    .leftOuterJoin('ResultTreatmentStatusLog as rtsl', 'rtsl.resultId', 'r.id')
+    .leftOuterJoin('ResultTreatmentStatus as rts', 'rts.id', 'rtsl.resultTreatmentStatusId')
+    .where('rca1.reportable', true)
     .whereRaw('IFNULL(??, ??) BETWEEN ? AND ?', ['r.endedOn', 'r.startedOn', minDate, maxDate])
     .modify(addConstraints, dataConstraints, {
       geography: 'g',
@@ -56,25 +58,9 @@ const getLinkedResults = (dataConstraints, query) => {
       'r.id as resultId',
       'rca1.requiresTreatment as rc1Treatment',
       'rca2.requiresTreatment as rc2Treatment',
-      'r.reportableSiteId as reportableSite'
+      'r.reportableSiteId as reportableSite',
+      'rts.externalId as treatmentStatus'
     )
-}
-
-const getResultsFollowUp = resultIds => {
-  const followUpSubQuery = knex('ResultFollowUp')
-    .select('id', 'resultId', 'followUpId', 'date', 'updatedOn')
-    .whereIn('resultId', resultIds)
-    .andWhere('isDeleted', false)
-    .select(knex.raw('ROW_NUMBER() OVER(PARTITION BY resultId ORDER BY date DESC) AS rowNumber'))
-
-  // get latest result followUps
-  return knex('FollowUp as fup')
-    .select('rf.resultId', 'rf.id as followUp', 'rf.date', 'fup.externalId as followUpExternalId')
-    .from(followUpSubQuery.as('rf'))
-    .leftJoin('FollowUp as fup', 'rf.followUpId', 'fup.id')
-    .join('FollowUpType as fut', 'fut.id', 'fup.followUpTypeId')
-    .where('rf.rowNumber', 1)
-    .andWhere('fut.externalId', 'treatment')
 }
 
 const getSamplesRegisteredCount = (dataConstraints, query) => {
@@ -123,7 +109,6 @@ module.exports = {
   checkSiteAccess,
   getSiteIdByName,
   getLinkedResults,
-  getResultsFollowUp,
   getSamplesRegisteredCount,
   getSites,
 }
