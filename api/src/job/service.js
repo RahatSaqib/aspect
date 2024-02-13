@@ -278,10 +278,7 @@ async function assignPersonTo(request) {
     lgaId: payload.lgaId ?? null,
     siteId: payload.siteId ?? null,
   }
-  if (
-    geographyIdsInPayload.siteId &&
-    (!geographyIdsInPayload.lgaId || !geographyIdsInPayload.stateId || !geographyIdsInPayload.countryId)
-  ) {
+  if (geographyIdsInPayload.siteId) {
     const siteGeographyIds = await knex('Site as s')
       .leftJoin('Geography as g', 's.geographyId', 'g.id')
       .where('s.id', geographyIdsInPayload.siteId)
@@ -289,22 +286,13 @@ async function assignPersonTo(request) {
     geographyIdsInPayload.countryId = siteGeographyIds?.countryId ?? payload.countryId
     geographyIdsInPayload.stateId = siteGeographyIds?.stateId ?? payload.stateId
     geographyIdsInPayload.lgaId = siteGeographyIds?.lgaId ?? payload.lgaId
-  } else if (
-    !geographyIdsInPayload.siteId &&
-    geographyIdsInPayload.lgaId &&
-    (!geographyIdsInPayload.stateId || !geographyIdsInPayload.countryId)
-  ) {
+  } else if (geographyIdsInPayload.lgaId) {
     const lgaGeographyIds = await knex('Geography as g')
       .where('g.lgaId', geographyIdsInPayload.lgaId)
       .first('g.countryId', 'g.stateId')
     geographyIdsInPayload.countryId = lgaGeographyIds?.countryId ?? payload.countryId
     geographyIdsInPayload.stateId = lgaGeographyIds?.stateId ?? payload.stateId
-  } else if (
-    !geographyIdsInPayload.siteId &&
-    !geographyIdsInPayload.lgaId &&
-    geographyIdsInPayload.stateId &&
-    !geographyIdsInPayload.countryId
-  ) {
+  } else if (geographyIdsInPayload.stateId) {
     const stateGeographyIds = await knex('Geography as g')
       .where('g.stateId', geographyIdsInPayload.stateId)
       .first('g.countryId')
