@@ -115,6 +115,7 @@ const LogInApp = () => {
     timeout: config.userInactiveMinutes * 60 * 1000, // after minutes, user is idle
     promptTimeout: 60 * 1000, // after one minute, we call onIdle() and log user out
     stopOnIdle: true, // once user is logged out, we stop timers
+    crossTab: true,
     // Fire a Modal Prompt
     onPrompt: () => setShowIdleDialog(true),
     // Close Modal Prompt & log out your user
