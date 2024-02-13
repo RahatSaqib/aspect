@@ -180,11 +180,7 @@ exports.getDictionarySync = getDictionarySync
  * tables defined
  */
 exports.initDictionaryTables = async () => {
-  const dictionaryTables = [
-    { table: 'Assay', column: 'id' },
-    { table: 'DeviceApproval' },
-    { table: 'DeviceMaintenanceStatus' },
-  ]
+  const dictionaryTables = [{ table: 'Assay', column: 'id' }]
   await Promise.all(
     dictionaryTables.map(async ({ table, column }) => {
       if (!getDictionarySync(table, column)) {

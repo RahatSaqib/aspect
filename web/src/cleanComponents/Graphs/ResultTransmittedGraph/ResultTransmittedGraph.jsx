@@ -42,6 +42,7 @@ const ResultTransmittedGraph = () => {
       fetchWrapperForQueries({ endpoint: '/dashboard/results-transmitted', params: mergedParams }),
     {
       refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 60, // 1 hour
     }
   )
 
