@@ -25,7 +25,7 @@ const getSiteIdByName = async siteName => {
   return site ? site.id : null
 }
 
-const getLinkedResults = (dataConstraints, query) => {
+const getLinkedResults = async (dataConstraints, query) => {
   const { minDate, maxDate } = query
 
   return knex('Result as r')
@@ -38,7 +38,19 @@ const getLinkedResults = (dataConstraints, query) => {
     .leftJoin('ResultCategoryAssay as rca2', queryBuilder => {
       queryBuilder.on('rca2.resultCategoryId', 'r.resultCategory2').andOn('rca2.assayId', 'r.assayId')
     })
-    .leftOuterJoin('ResultTreatmentStatusLog as rtsl', 'rtsl.resultId', 'r.id')
+    .leftOuterJoin(
+      knex('ResultTreatmentStatusLog')
+        .as('rtsl')
+        .select('*')
+        .rowNumber('rowNumber', function () {
+          this.orderBy('createdOn', 'desc').partitionBy('resultId')
+        }),
+      'rtsl.resultId',
+      'r.id'
+    )
+    .where(queryBuilder => {
+      queryBuilder.where('rtsl.rowNumber', 1).orWhere('rtsl.rowNumber', null)
+    })
     .leftOuterJoin('ResultTreatmentStatus as rts', 'rts.id', 'rtsl.resultTreatmentStatusId')
     .where(queryBuilder => {
       queryBuilder.where('rca1.reportable', true).orWhere('rca2.reportable', true)
