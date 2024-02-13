@@ -363,6 +363,7 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
     )
   }
   if (device && !showDecommissionedDevices) {
+    // latest maintenance status for device is NOT 'inactiveDecommissioned'
     queryBuilder
       .leftOuterJoin(
         `DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog`,
