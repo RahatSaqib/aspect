@@ -1,10 +1,15 @@
-import React from 'react'
-import { LinearProgress, TableBody } from '@mui/material'
+import React, { useCallback } from 'react'
+import { Button, LinearProgress, TableBody } from '@mui/material'
+import find from 'lodash/find'
+import merge from 'lodash/merge'
+import pick from 'lodash/pick'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader, ReporterFilter } from '../../../cleanComponents'
+import useTreatmentStatus from '../../../hooks/result/useTreatmentStatus'
 import useReportingSite from '../../../hooks/site/useReportingSite.jsx'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -20,11 +25,57 @@ const ReporterList = () => {
   const navigate = useNavigate()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
+  const [addFilter] = useFilterUpdate()
 
   const sortPage = makeSortPageSelector({ sortCol: 'siteName', sortDir: 'asc' })
   const { sortCol, sortDir, pageAt: page, pageSize: size } = sortPage({ location })
 
   const { isLoading, isError, data, error } = useReportingSite({ sortCol, sortDir, page, size, ...filters })
+
+  const { data: treatmentStatuses } = useTreatmentStatus()
+
+  const handleColumnClick = useCallback(
+    (siteName, column) => {
+      const findTreatmentStatus = id => find(treatmentStatuses, { externalId: id })?.externalId
+      const destination = '/browse/result'
+      const params = {
+        onlyReportableResults: true,
+        reportableSiteName: siteName,
+        ...pick(filters, ['minDate', 'maxDate']),
+      }
+      switch (column) {
+        case 'resultsDownloaded':
+          merge(params, { onlyDownloadedByReporter: true })
+          break
+        case 'requiresFollowUp':
+          merge(params, { onlyTreatmentRequired: true })
+          break
+        case 'followUpPending':
+          merge(params, {
+            treatmentStatus: findTreatmentStatus('AwaitingTreatment'),
+            onlyTreatmentRequired: true,
+          })
+          break
+        case 'followUpConfirmed':
+          merge(params, {
+            treatmentStatus: findTreatmentStatus('OnTreatment'),
+            onlyTreatmentRequired: true,
+          })
+          break
+        case 'followUpNotPossible':
+          merge(params, {
+            treatmentStatus: findTreatmentStatus('NotPossible'),
+            onlyTreatmentRequired: true,
+          })
+          break
+        default:
+          break
+      }
+      addFilter(params, destination)
+      navigate(destination)
+    },
+    [filters, addFilter, navigate, treatmentStatuses]
+  )
 
   if (isError) throw new Error(error)
 
@@ -63,12 +114,45 @@ const ReporterList = () => {
                     <TableRow key={reporter.siteId}>
                       <TableCell>{reporter.siteName}</TableCell>
                       <TableCell>{reporter.samplesRegistered}</TableCell>
-                      <TableCell>{reporter.resultsReporting}</TableCell>
-                      <TableCell>{reporter.resultsDownloaded}</TableCell>
-                      <TableCell>{reporter.requiresFollowUp}</TableCell>
-                      <TableCell>{reporter.followUpPending}</TableCell>
-                      <TableCell>{reporter.followUpConfirmed}</TableCell>
-                      <TableCell>{reporter.followUpNotPossible}</TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleColumnClick(reporter.siteName, 'resultsReporting')} variant="text">
+                          {reporter.resultsReporting}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => handleColumnClick(reporter.siteName, 'resultsDownloaded')}
+                          variant="text"
+                        >
+                          {reporter.resultsDownloaded}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleColumnClick(reporter.siteName, 'requiresFollowUp')} variant="text">
+                          {reporter.requiresFollowUp}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button onClick={() => handleColumnClick(reporter.siteName, 'followUpPending')} variant="text">
+                          {reporter.followUpPending}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => handleColumnClick(reporter.siteName, 'followUpConfirmed')}
+                          variant="text"
+                        >
+                          {reporter.followUpConfirmed}
+                        </Button>
+                      </TableCell>
+                      <TableCell>
+                        <Button
+                          onClick={() => handleColumnClick(reporter.siteName, 'followUpNotPossible')}
+                          variant="text"
+                        >
+                          {reporter.followUpNotPossible}
+                        </Button>
+                      </TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
