@@ -339,7 +339,7 @@ async function assignPersonTo(request) {
           }
         })
         .first('jf.externalId')
-      if (!siteAdminJobFunction?.externalId) {
+      if (!siteAdminJobFunction) {
         return Boom.forbidden(`Site out of scope for current user's permissions`)
       }
     } else if (geographyIdsInPayload.lgaId) {
@@ -361,7 +361,7 @@ async function assignPersonTo(request) {
           }
         })
         .first('jf.externalId')
-      if (!lgaAdminJobFunction?.externalId) {
+      if (!lgaAdminJobFunction) {
         return Boom.forbidden(`LGA out of scope for current user's permissions`)
       }
     } else if (geographyIdsInPayload.stateId) {
@@ -378,7 +378,7 @@ async function assignPersonTo(request) {
           }
         })
         .first('jf.externalId')
-      if (!stateAdminJobFunction?.externalId) {
+      if (!stateAdminJobFunction) {
         return Boom.forbidden(`State out of scope for current user's permissions`)
       }
     } else if (geographyIdsInPayload.countryId) {
@@ -389,7 +389,7 @@ async function assignPersonTo(request) {
         .whereNull('g.stateId')
         .andWhere('g.countryId', countryId)
         .first('jf.externalId')
-      if (!countryAdminJobFunction?.externalId) {
+      if (!countryAdminJobFunction) {
         return Boom.forbidden(`Country out of scope for current user's permissions`)
       }
     }
