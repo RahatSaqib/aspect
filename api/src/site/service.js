@@ -8,7 +8,7 @@ const { resultStatusToId } = require('../shared/dictionary')
 const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getNotDecommissionedDevices } = require('../device/common/db')
-const { getLinkedResults, getResultsFollowUp, getSamplesRegisteredCount, getSites } = require('./common/db')
+const { getLinkedResults, getSamplesRegisteredCount, getSites } = require('./common/db')
 
 const SELECT_LIST_FIELDS = [
   's.id',
@@ -458,33 +458,22 @@ const getReportingSites = async request => {
     return obj
   }, {})
 
-  const resultsFollowUp = await getResultsFollowUp(resultIds)
-
-  // map resultIds with followUpExternalId
-  const followUpObj = _.reduce(
-    resultsFollowUp,
-    (acc, elem) => {
-      acc[elem.resultId] = elem.followUpExternalId
-      return acc
-    },
-    {}
-  )
-
   // Determine treatment status and format result data
   const resultsWithTreatmentStatus = _.map(linkedResults, result => {
     const requiresFollowUp = result.rc1Treatment === 1 || result.rc2Treatment === 1 ? 1 : 0
-    const followUpStatus = followUpObj[result.resultId]
     let followUpPending = 0
     let followUpNotPossible = 0
     let followUpConfirmed = 0
 
     if (requiresFollowUp) {
-      if (!followUpStatus) {
-        followUpPending = 1
-      } else if (followUpStatus === 'notPossible') {
-        followUpNotPossible = 1
-      } else {
+      if (result.treatmentStatus === 'OnTreatment') {
         followUpConfirmed = 1
+      }
+      if (result.treatmentStatus === 'NotPossible') {
+        followUpNotPossible = 1
+      }
+      if (result.treatmentStatus === 'AwaitingTreatment' || result.treatmentStatus === null) {
+        followUpPending = 1
       }
     }
 
