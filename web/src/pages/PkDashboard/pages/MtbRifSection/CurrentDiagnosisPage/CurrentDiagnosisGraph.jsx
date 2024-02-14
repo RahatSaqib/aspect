@@ -88,18 +88,22 @@ const CurrentDiagnosisGraphPage = () => {
         formatMessage,
         intlMessages
       )
+      const currentYear = new Date().getFullYear()
       const expandedBarData = []
       groupedForBar.map(result => {
         const allKeysButMonth = Object.keys(result).filter(key => key !== 'month')
-        allKeysButMonth.map(key =>
-          expandedBarData.push({
-            id: key,
-            month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: +result[key].toFixed(3).slice(0, -1),
-            type: genLabel(key, assays, formatMessage, intlMessages, i18nKeys),
-            originalMonth: result.month,
-          })
-        )
+        allKeysButMonth.map(key => {
+          if (+result.month.split('-')[0] === currentYear) {
+            expandedBarData.push({
+              id: key,
+              month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
+              value: +result[key].toFixed(3).slice(0, -1),
+              type: genLabel(key, assays, formatMessage, intlMessages, i18nKeys),
+              originalMonth: result.month,
+            })
+          }
+          return {}
+        })
         return result
       })
 
@@ -189,12 +193,12 @@ const CurrentDiagnosisGraphPage = () => {
           ) : null}
           <TripleCardSide
             data={[
-              { label: formatMessage(messages.xdrCasesPerYear), value: `${mainData?.totalResultsCurrentYear}` },
+              { label: formatMessage(messages.xdrTBCasesPerYear), value: `${mainData?.totalResultsCurrentYear}` },
               {
                 label: formatMessage(messages.xdrAverageMoth),
                 value: `${mainData?.averageTestsPerMonthCurrentYear}`,
               },
-              { label: formatMessage(messages.xdrLastDay), value: `${mainData?.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.xdrTBLastDay), value: `${mainData?.totalResultsInLast24Hours}` },
             ]}
           />
           {donutData.data && donutData.data.length ? (

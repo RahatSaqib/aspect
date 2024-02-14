@@ -228,9 +228,9 @@ const messages = {
     xdrCurrentTitle: { id: 'p.PkDashboard.xdrCurrentTitle', defaultMessage: 'Current GX-10CX Testing performed in' },
 
     xdrCurrentDiagnosisTitle: { id: 'p.PkDashboard.xdrCurrentDiagnosisTitle', defaultMessage: 'Current Diagnosis' },
-    xdrCasesPerYear: { id: 'p.PkDashboard.xdrCasesPerYear', defaultMessage: 'Tb cases diagnosed this year' },
+    xdrTBCasesPerYear: { id: 'p.PkDashboard.xdrTBCasesPerYear', defaultMessage: 'TB cases diagnosed this year' },
     xdrAverageMoth: { id: 'p.PkDashboard.xdrAverageMoth', defaultMessage: 'Average TB cases diagnosed per month' },
-    xdrLastDay: { id: 'p.PkDashboard.xdrLastDay', defaultMessage: 'Tb cases diagnosed in last 24 hours' },
+    xdrTBLastDay: { id: 'p.PkDashboard.xdrTBLastDay', defaultMessage: 'TB cases diagnosed in last 24 hours' },
     // summary
     molecularAssay: {
       id: 'p.PkDashboard.molecularAssay',
@@ -273,9 +273,9 @@ const messages = {
     mtbXdrTesting: { id: 'p.PkDashboard.mtbXdrTesting', defaultMessage: 'Testing' },
     mtbXdrmtbDetection: { id: 'p.PkDashboard.mtbXdrmtbDetection', defaultMessage: 'MTB Detection' },
     mtbXdrFQResistance: { id: 'p.PkDashboard.mtbXdrFQResistance', defaultMessage: 'FQ Resistance' },
-    mtbXdrTestingDiagnosisTrends: {
-      id: 'p.PkDashboard.mtbXdrTestingDiagnosisTrends',
-      defaultMessage: 'Testing & Diagnosis Trends using MTB/XDR Assay',
+    fqinhTestingDiagnosis: {
+      id: 'p.PkDashboard.fqinhTestingDiagnosis',
+      defaultMessage: 'FQ & INH Testing & Diagnosis',
     },
     XDRByDevice: {
       id: 'p.PkDashboard.XDRByDevice',
