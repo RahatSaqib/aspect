@@ -38,19 +38,7 @@ const getLinkedResults = async (dataConstraints, query) => {
     .leftJoin('ResultCategoryAssay as rca2', queryBuilder => {
       queryBuilder.on('rca2.resultCategoryId', 'r.resultCategory2').andOn('rca2.assayId', 'r.assayId')
     })
-    .leftOuterJoin(
-      knex('ResultTreatmentStatusLog')
-        .as('rtsl')
-        .select('*')
-        .rowNumber('rowNumber', function () {
-          this.orderBy('createdOn', 'desc').partitionBy('resultId')
-        }),
-      'rtsl.resultId',
-      'r.id'
-    )
-    .where(queryBuilder => {
-      queryBuilder.where('rtsl.rowNumber', 1).orWhere('rtsl.rowNumber', null)
-    })
+    .leftOuterJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftOuterJoin('ResultTreatmentStatus as rts', 'rts.id', 'rtsl.resultTreatmentStatusId')
     .where(queryBuilder => {
       queryBuilder.where('rca1.reportable', true).orWhere('rca2.reportable', true)
