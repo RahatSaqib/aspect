@@ -59,6 +59,10 @@ const SELECT_SHOW_FIELDS = [
   'dmC.notes as calibrationNotes',
   'dmW.contextDate as warrantyDueDate',
   'dmW.notes as warrantyNotes',
+  'd.stickerInstrumentSerial',
+  'd.instrumentModel',
+  'd.softwareType',
+  'd.isDaisyChained',
 ]
 
 async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW_FIELDS }) {
@@ -143,6 +147,8 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
   device.errorRateThisMonth = device.resultCountThisMonth
     ? device.errorCountThisMonth / device.resultCountThisMonth
     : null
+
+  device.isDaisyChained = !!device.isDaisyChained
 
   return device
 }

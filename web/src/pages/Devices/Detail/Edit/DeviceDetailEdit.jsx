@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Card, TextField } from '@mui/material'
+import { Button, Checkbox, Card, FormControlLabel, TextField } from '@mui/material'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -8,7 +8,13 @@ import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
-import { ImplementingPartnerSelect, DeviceCapacitySelect, SiteSelect } from '../../../../cleanComponents'
+import {
+  ImplementingPartnerSelect,
+  DeviceCapacitySelect,
+  SiteSelect,
+  CepheidInstrumentModelSelect,
+  CepheidSoftwareTypeSelect,
+} from '../../../../cleanComponents'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
@@ -100,6 +106,32 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               value={editDevice?.implementingPartnerId ?? null}
               onChange={implementingPartnerId => setEditDevice(prv => ({ ...prv, implementingPartnerId }))}
             />
+
+            <TextField
+              fullWidth
+              id="stickerInstrumentSerial"
+              label={intl.formatMessage(messages.stickerInstrumentSerial)}
+              value={editDevice.stickerInstrumentSerial}
+              onChange={e => {
+                setEditDevice({ ...editDevice, stickerInstrumentSerial: e.target.value })
+                setError(isEmpty(e.target.value))
+              }}
+            />
+
+            <CepheidInstrumentModelSelect
+              valueBy="value"
+              label={intl.formatMessage(messages.instrumentModel)}
+              value={editDevice.instrumentModel}
+              onChange={instrumentModel => setEditDevice(prv => ({ ...prv, instrumentModel }))}
+            />
+
+            <CepheidSoftwareTypeSelect
+              valueBy="value"
+              label={intl.formatMessage(messages.softwareType)}
+              value={editDevice.softwareType}
+              onChange={softwareType => setEditDevice(prv => ({ ...prv, softwareType }))}
+            />
+
             <DeviceCapacitySelect
               name="capacity"
               deviceTypeId={editDevice.deviceType.externalId}
@@ -191,6 +223,19 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 disabled={!editable}
               />
             </FormGroup>
+
+            <FormControlLabel
+              control={
+                <Checkbox
+                  type="checkbox"
+                  onChange={isDaisyChained =>
+                    setEditDevice(prv => ({ ...prv, isDaisyChained: isDaisyChained.target.checked }))
+                  }
+                  checked={[true, 'true'].includes(editDevice.isDaisyChained)}
+                />
+              }
+              label={intl.formatMessage(messages.isDaisyChained)}
+            />
 
             <div className={styles.Form__Actions}>
               <ButtonGroup isolated>
