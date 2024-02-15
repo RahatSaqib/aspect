@@ -29,14 +29,12 @@ async function calculate(dateFrom, dateTo) {
     rows.forEach(row => {
       const deviceId = row.deviceId
 
-      if (!geneXpertDeviceIds.includes(deviceId))
-        return
+      if (!geneXpertDeviceIds.includes(deviceId)) return
 
       const moduleBay = `${row.instrumentSerial ?? ''}${row.moduleName ?? ''}`
       const module = `${row.instrumentSerial ?? ''}${row.moduleSerial ?? ''}`
       let device
-      if (devices.hasOwnProperty(deviceId))
-        device = devices[deviceId]
+      if (devices.hasOwnProperty(deviceId)) device = devices[deviceId]
       else {
         device = {
           moduleBays: {},
@@ -44,10 +42,8 @@ async function calculate(dateFrom, dateTo) {
         }
         devices[deviceId] = device
       }
-      if (moduleBay)
-        device.moduleBays[moduleBay] = 1
-      if (module)
-        device.modules[module] = 1
+      if (moduleBay) device.moduleBays[moduleBay] = 1
+      if (module) device.modules[module] = 1
     })
 
     for (let key in devices) {
@@ -58,12 +54,11 @@ async function calculate(dateFrom, dateTo) {
           date: dateFrom,
           moduleBaysUsed: Object.keys(deviceObj.moduleBays).length,
           modulesUsed: Object.keys(deviceObj.modules).length,
-
         },
         {
           moduleBaysUsed: Object.keys(deviceObj.moduleBays).length,
           modulesUsed: Object.keys(deviceObj.modules).length,
-        }
+        },
       ])
     }
     devices = {}

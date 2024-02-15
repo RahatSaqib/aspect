@@ -25,7 +25,7 @@ const ReportCard = ({ description, onClick, title, i18nKey, i18nKeyDescription, 
   return (
     <Grid item xs={12} sm={6} lg={3} style={{ padding: 8 }}>
       <Card style={styles.formatCard}>
-        <CardActionArea onClick={() => onClick('xlsx')}>
+        <CardActionArea onClick={() => onClick('xlsx', reportName)}>
           <CardContent>
             <Typography gutterBottom variant="h6" component="h4">
               {reportName}

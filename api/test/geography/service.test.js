@@ -609,7 +609,7 @@ describe('geography service', () => {
           )
           assert.deepEqual(
             countryQuery.select.lastCall.args,
-            ['c.id', 'c.name', 'c.abbreviation'],
+            ['c.id', 'c.name', 'c.abbreviation', 'c.a3'],
             'The select clause seems to be incorrect'
           )
         }))
