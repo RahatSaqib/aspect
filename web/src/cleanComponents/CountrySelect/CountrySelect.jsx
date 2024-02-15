@@ -3,6 +3,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import Flags from 'country-flag-icons/react/3x2'
 import useCountries from '../../hooks/geography/useCountries'
+import COUNTRY_ISO_MAPPING from '../../utils/consts/Countries/CONSTS'
 
 // the Flags from country-flag-icons are used to keep it consistent with the flags from the MuiPhoneNumber component
 const CountrySelect = ({ id, name, label, value, onChange, error, helperText, disabled, returnAll }) => {
@@ -36,11 +37,14 @@ const CountrySelect = ({ id, name, label, value, onChange, error, helperText, di
         }}
       >
         {countries.map(c => {
-          const CurrrentFlag = Flags[c.abbreviation]
-
+          const CurrentFlag = Flags[COUNTRY_ISO_MAPPING[c.a3]]
           return (
             <MenuItem key={c.id} value={c.id}>
-              <CurrrentFlag style={{ height: 20, marginRight: 10, float: 'left' }} />{' '}
+              {CurrentFlag ? (
+                <>
+                  <CurrentFlag style={{ height: 20, marginRight: 10, float: 'left' }} />{' '}
+                </>
+              ) : null}
               <p style={{ float: 'left', margin: 0 }}>{c.name}</p>
             </MenuItem>
           )
