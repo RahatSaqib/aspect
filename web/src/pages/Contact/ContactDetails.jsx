@@ -240,7 +240,11 @@ const ContactDetails = ({ setStep }) => {
                     returnAll
                     label={formatMessage(messages.country)}
                     value={values.countryId}
-                    onChange={handleChange}
+                    onChange={e => {
+                      setFieldValue('countryId', e.target.value)
+                      setFieldValue('stateId', '')
+                      setFieldValue('lgaId', '')
+                    }}
                     error={errors.countryId ? errors.countryId : undefined}
                     helperText={errors.countryId}
                   />

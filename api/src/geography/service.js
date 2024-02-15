@@ -67,7 +67,7 @@ async function countrySelectList(request) {
       .whereNull('g.stateId')
       .whereNull('g.lgaId')
       .orderBy(['c.name'], 'asc')
-      .select('c.id', 'c.name', 'c.abbreviation')
+      .select('c.id', 'c.name', 'c.abbreviation', 'c.a3')
   } else if (!stateId) {
     const countriesAndStates = await query('Get countries and country states for select lists')
       .from('Country as c')
