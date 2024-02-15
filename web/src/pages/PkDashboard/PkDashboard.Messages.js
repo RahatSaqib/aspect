@@ -170,6 +170,10 @@ const messages = {
       id: 'p.PkDashboard.nationalMtbRifDiagnosed',
       defaultMessage: 'National TB Diagnosis Trends using MTB/XDR Assay',
     },
+    nationalDiagnosisXdr: {
+      id: 'p.PkDashboard.nationalDiagnosisXdr',
+      defaultMessage: 'National Diagnosis Trends using MTB/XDR assay',
+    },
     nationalXdrTestingTrends: {
       id: 'p.PkDashboard.nationalMtbRifDiagnosed',
       defaultMessage: 'National Testing Trends using MTB/XDR Assay',
