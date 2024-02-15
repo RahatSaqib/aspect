@@ -42,12 +42,15 @@ const XDRTestingDiagnosisTrendPage = () => {
     if (data) {
       const line = []
       const bar = []
-      data.grouped.map(({ year, MtbToTotalPercentage, Total, MtbDetected }) => {
-        line.push({ year, [percentageMessage]: +MtbToTotalPercentage.toFixed(2) })
-        bar.push({ year, value: MtbDetected, type: mtbPlusMessage })
-        bar.push({ year, value: Total, type: totalMessage })
-        return {}
-      })
+      data.grouped
+        .filter(g => g.year >= 2022)
+        .slice(-5)
+        .map(({ year, MtbToTotalPercentage, Total, MtbDetected }) => {
+          line.push({ year, [percentageMessage]: +MtbToTotalPercentage.toFixed(2) })
+          bar.push({ year, value: MtbDetected, type: mtbPlusMessage })
+          bar.push({ year, value: Total, type: totalMessage })
+          return {}
+        })
       setGraphData([bar, line])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -94,6 +97,7 @@ const XDRTestingDiagnosisTrendPage = () => {
                 ]}
                 xField="year"
                 yField={['value', percentageMessage]}
+                showLabel={showLabel}
               />
             </Grid>
           </Grid>

@@ -481,6 +481,12 @@ const DeviceDetailProfile = ({
                   : '')
               }
             />
+            <Summary
+              title={formatMessage(messages.moduleBayCapacity)}
+              description={
+                device.get('moduleBayCapacity')
+              }
+            />
 
             <Summary
               title={formatMessage(messages.instrumentsConnected)}

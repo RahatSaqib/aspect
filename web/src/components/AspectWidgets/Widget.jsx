@@ -4,6 +4,7 @@ import { bool, func, number, object, oneOfType, shape, string } from 'prop-types
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router'
 import useFilterUpdate from '../../hooks/useFilterUpdate'
+import useFilterValues from '../../hooks/useFilterValues'
 import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
 import { formatNumber } from '../../utils/utils/number'
 import IconProvider from '../IconProvider'
@@ -41,13 +42,15 @@ const AspectWidget = ({
   const { formatMessage } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
+  const filter = useFilterValues(link)
+
   const translator = { formatMessage, messages }
   const params = link ? buildWidgetParams(link, linkParams) : null
   const titleText = translate(titleI18nKey, title, translator)
 
   const goToLink = () => {
     if (link) {
-      addFilter({ ...params }, link)
+      addFilter({ ...filter, ...params }, link)
       navigate(link)
     }
   }
