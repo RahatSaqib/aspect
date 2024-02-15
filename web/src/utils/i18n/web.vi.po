@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-30T17:11:26.902Z\n"
+"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -56,19 +56,7 @@ msgstr "Số địa điểm PMDT có 10 C GX"
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# địa điểm được thử nghiệm Xét nghiệm MTB/XDR"
 
-#. [pages.AddInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
@@ -429,9 +417,6 @@ msgstr "Thêm bản ghi"
 msgid "Add Row"
 msgstr "Thêm dòng"
 
-#. [pages.AddInventoryDialogForm.dialogTitle]
-#. defaultMessage is:
-#. Add {consumableName}
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. Add {consumableName}
@@ -2606,9 +2591,6 @@ msgstr "Trực quan hóa dữ liệu về khả năng kháng XDR"
 msgid "Date"
 msgstr "Ngày"
 
-#. [pages.AddInventoryDialogForm.dateAdjusted]
-#. defaultMessage is:
-#. Date Added
 #. [pages.NewInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
 #. Date Added
@@ -4040,19 +4022,6 @@ msgstr "Các trường hợp FQ-R được chẩn đoán trong năm nay"
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Mã cơ sở"
-
-#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
-#. defaultMessage is:
-#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
-#: extracted_strings.json
-msgid ""
-"Failed to generate {fileType} report \"{reportName}\" because of error "
-"\"{errorMessage}\". Please, try again in a few minutes. If the error "
-"persists, contact your administrator for support."
-msgstr ""
-"Không tạo được báo cáo {fileType} \"{reportName}\" vì lỗi "
-"\"{errorMessage}\". Hãy thử lại trong vài phút nữa. Nếu lỗi vẫn còn, hãy "
-"liên hệ với người quản trị của bạn để được hỗ trợ."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -6827,6 +6796,16 @@ msgstr "Chức năng"
 msgid "Module Activity Report"
 msgstr "Báo cáo hoạt động mô-đun"
 
+#. [pages.DeviceDetailEdit.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#. [pages.DeviceDetailProfile.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#: extracted_strings.json
+msgid "Module Bay Capacity"
+msgstr "Công suất khoang mô-đun"
+
 #. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -8287,16 +8266,6 @@ msgstr "Vui lòng kiểm tra xem nó vẫn tồn tại"
 msgid "Please choose a date later or equal to from date"
 msgstr "Vui lòng chọn một ngày muộn hơn hoặc bằng ngày kể từ ngày"
 
-#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#: extracted_strings.json
-msgid "Please choose a different site"
-msgstr "Vui lòng chọn một đơn vị other"
-
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
 #. Please confirm new password
@@ -8456,34 +8425,6 @@ msgstr "Vui lòng chỉ định ngày hết hạn"
 #: extracted_strings.json
 msgid "Please specify the quantity"
 msgstr "Vui lòng ghi rõ số lượng"
-
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
-#: extracted_strings.json
-msgid "Please specify the quantity to add"
-msgstr "Vui lòng ghi rõ số lượng cần thêm"
-
-#. [pages.ReceiveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to receive
-#: extracted_strings.json
-msgid "Please specify the quantity to receive"
-msgstr "Vui lòng ghi rõ số lượng nhận"
-
-#. [pages.RemoveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to remove
-#: extracted_strings.json
-msgid "Please specify the quantity to remove"
-msgstr "Vui lòng chỉ định số lượng cần loại bỏ"
-
-#. [pages.TransferInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to transfer
-#: extracted_strings.json
-msgid "Please specify the quantity to transfer"
-msgstr "Vui lòng ghi rõ số lượng cần chuyển"
 
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution]
 #. defaultMessage is:
@@ -8983,9 +8924,6 @@ msgstr "Số lượng nhận vào"
 msgid "Quantity on Hand"
 msgstr "Số lượng tồn kho hiện tại"
 
-#. [pages.AddInventoryDialogForm.quantity]
-#. defaultMessage is:
-#. Quantity to Add
 #. [pages.NewInventoryDialogForm.quantity]
 #. defaultMessage is:
 #. Quantity to Add
@@ -11837,13 +11775,6 @@ msgstr ""
 "thực hiện trong tháng và chia số đó cho tổng các thử nghiệm đã thực hiện "
 "trên tất cả các thiết bị."
 
-#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can transfer is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can transfer is {currentQuantity}"
-msgstr "Số tiền bạn có thể chuyển nhiều nhất là {currentQuantity}"
-
 #. [pages.Notifications.notificationNameRequired]
 #. defaultMessage is:
 #. The notification name is required
@@ -14266,6 +14197,33 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
+
+#~ msgid ""
+#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
+#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
+#~ "persists, contact your administrator for support."
+#~ msgstr ""
+#~ "Không tạo được báo cáo {fileType} \"{reportName}\" vì lỗi "
+#~ "\"{errorMessage}\". Hãy thử lại trong vài phút nữa. Nếu lỗi vẫn còn, hãy "
+#~ "liên hệ với người quản trị của bạn để được hỗ trợ."
+
+#~ msgid "Please choose a different site"
+#~ msgstr "Vui lòng chọn một đơn vị other"
+
+#~ msgid "Please specify the quantity to add"
+#~ msgstr "Vui lòng ghi rõ số lượng cần thêm"
+
+#~ msgid "Please specify the quantity to receive"
+#~ msgstr "Vui lòng ghi rõ số lượng nhận"
+
+#~ msgid "Please specify the quantity to remove"
+#~ msgstr "Vui lòng chỉ định số lượng cần loại bỏ"
+
+#~ msgid "Please specify the quantity to transfer"
+#~ msgstr "Vui lòng ghi rõ số lượng cần chuyển"
+
+#~ msgid "The most that you can transfer is {currentQuantity}"
+#~ msgstr "Số tiền bạn có thể chuyển nhiều nhất là {currentQuantity}"
 
 #~ msgid "Reporters"
 #~ msgstr "Những phóng viên"
