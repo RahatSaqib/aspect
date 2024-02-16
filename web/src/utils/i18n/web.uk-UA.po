@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-30T17:11:26.902Z\n"
+"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -56,19 +56,7 @@ msgstr "# Кількість сайтів PMDT з 10 C GX"
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# Кількість протестованих сайтів MTB/XDR-аналіз"
 
-#. [pages.AddInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
@@ -430,9 +418,6 @@ msgstr "Додати запис"
 msgid "Add Row"
 msgstr "Додати рядок"
 
-#. [pages.AddInventoryDialogForm.dialogTitle]
-#. defaultMessage is:
-#. Add {consumableName}
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. Add {consumableName}
@@ -2609,9 +2594,6 @@ msgstr "Візуалізація даних для визначення стій
 msgid "Date"
 msgstr "Дата"
 
-#. [pages.AddInventoryDialogForm.dateAdjusted]
-#. defaultMessage is:
-#. Date Added
 #. [pages.NewInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
 #. Date Added
@@ -4047,19 +4029,6 @@ msgstr "Випадки FQ-R, діагностовані в цьому році"
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Код об'єкта"
-
-#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
-#. defaultMessage is:
-#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
-#: extracted_strings.json
-msgid ""
-"Failed to generate {fileType} report \"{reportName}\" because of error "
-"\"{errorMessage}\". Please, try again in a few minutes. If the error "
-"persists, contact your administrator for support."
-msgstr ""
-"Не вдалося створити {fileType} звіт \"{reportName}\" через помилку "
-"\"{errorMessage}\". Будь ласка, спробуйте ще раз за кілька хвилин. Якщо "
-"помилка не зникає, зверніться до свого адміністратора за підтримкою."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -6837,6 +6806,16 @@ msgstr "Модуль"
 msgid "Module Activity Report"
 msgstr "Звіт про діяльність модуля"
 
+#. [pages.DeviceDetailEdit.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#. [pages.DeviceDetailProfile.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#: extracted_strings.json
+msgid "Module Bay Capacity"
+msgstr "Місткість відсіку для модулів"
+
 #. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -8303,16 +8282,6 @@ msgstr "Будь ласка, перевірте, чи все ще існує"
 msgid "Please choose a date later or equal to from date"
 msgstr "Будь ласка, виберіть дату пізніше або дорівнюйте даті"
 
-#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#: extracted_strings.json
-msgid "Please choose a different site"
-msgstr "Виберіть інший сайт"
-
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
 #. Please confirm new password
@@ -8470,34 +8439,6 @@ msgstr "Будь ласка, вкажіть термін придатності"
 #: extracted_strings.json
 msgid "Please specify the quantity"
 msgstr "Будь ласка, вкажіть кількість"
-
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
-#: extracted_strings.json
-msgid "Please specify the quantity to add"
-msgstr "Будь ласка, вкажіть кількість для додавання"
-
-#. [pages.ReceiveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to receive
-#: extracted_strings.json
-msgid "Please specify the quantity to receive"
-msgstr "Будь ласка, вкажіть кількість для отримання"
-
-#. [pages.RemoveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to remove
-#: extracted_strings.json
-msgid "Please specify the quantity to remove"
-msgstr "Будь ласка, вкажіть кількість для видалення"
-
-#. [pages.TransferInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to transfer
-#: extracted_strings.json
-msgid "Please specify the quantity to transfer"
-msgstr "Будь ласка, вкажіть кількість для передачі"
 
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution]
 #. defaultMessage is:
@@ -8998,9 +8939,6 @@ msgstr "Отримана кількість"
 msgid "Quantity on Hand"
 msgstr "Кількість на руках"
 
-#. [pages.AddInventoryDialogForm.quantity]
-#. defaultMessage is:
-#. Quantity to Add
 #. [pages.NewInventoryDialogForm.quantity]
 #. defaultMessage is:
 #. Quantity to Add
@@ -11854,13 +11792,6 @@ msgstr ""
 "проведених за місяць, і ділення цієї кількості на загальну кількість тестів, "
 "проведених на всіх пристроях."
 
-#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can transfer is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can transfer is {currentQuantity}"
-msgstr "Найбільше, що ви можете передати, - {currentQuantity}"
-
 #. [pages.Notifications.notificationNameRequired]
 #. defaultMessage is:
 #. The notification name is required
@@ -14285,6 +14216,33 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} загальна калібрування"
+
+#~ msgid ""
+#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
+#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
+#~ "persists, contact your administrator for support."
+#~ msgstr ""
+#~ "Не вдалося створити {fileType} звіт \"{reportName}\" через помилку "
+#~ "\"{errorMessage}\". Будь ласка, спробуйте ще раз за кілька хвилин. Якщо "
+#~ "помилка не зникає, зверніться до свого адміністратора за підтримкою."
+
+#~ msgid "Please choose a different site"
+#~ msgstr "Виберіть інший сайт"
+
+#~ msgid "Please specify the quantity to add"
+#~ msgstr "Будь ласка, вкажіть кількість для додавання"
+
+#~ msgid "Please specify the quantity to receive"
+#~ msgstr "Будь ласка, вкажіть кількість для отримання"
+
+#~ msgid "Please specify the quantity to remove"
+#~ msgstr "Будь ласка, вкажіть кількість для видалення"
+
+#~ msgid "Please specify the quantity to transfer"
+#~ msgstr "Будь ласка, вкажіть кількість для передачі"
+
+#~ msgid "The most that you can transfer is {currentQuantity}"
+#~ msgstr "Найбільше, що ви можете передати, - {currentQuantity}"
 
 #~ msgid "Reporters"
 #~ msgstr "Журналісти"
