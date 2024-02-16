@@ -1,5 +1,7 @@
 const _ = require('lodash')
 const { createFetch, base, method, params, header, body } = require('http-client')
+const { differenceInMinutes } = require('date-fns')
+const Promise = require('bluebird')
 const { webhookMessagePending, webhookMessageSent, webhookMessageError } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
@@ -7,6 +9,8 @@ const { messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
+
+const { loadPlugin } = require('../plugin/loadPlugin')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -218,9 +222,69 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
   return message
 }
 
+async function onWebHookServerCheckTokens(action, context) {
+  return context.messageContext.run(async knex => {
+    /**
+     * TODO: think if makes sense to cache partner's and deviceType's plugin names
+     */
+    const partnerPlugins = await knex('Partner').select('id as partnerId', 'plugin as partnerPluginName')
+    const deviceTypePlugins = await knex('DeviceType').select('id as deviceTypeId', 'plugin as deviceTypePluginName')
+
+    await Promise.each(partnerPlugins, async ({ partnerPluginName }) => {
+      await Promise.each(deviceTypePlugins, async ({ deviceTypePluginName }) => {
+        const getWebhookServers = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getWebHookServers')
+        const webhookServers = await getWebhookServers(context)
+        await Promise.each(_.keys(webhookServers), async serverKey => {
+          const server = webhookServers[serverKey]
+          const { authorize, refresh, getExpirationDate } = server
+          const expiresOn = getExpirationDate()
+          const now = new Date()
+
+          // eslint-disable-next-line no-console
+          console.log('_________________ check', {
+            accessToken: server.getAccessToken(),
+            refreshToken: server.getRefreshToken(),
+            expirationDate: server.getExpirationDate(),
+            isTokenValid: server.isTokenValid(),
+            now,
+            diff: differenceInMinutes(expiresOn, now),
+          })
+
+          if (!expiresOn) {
+            await authorize()
+            // eslint-disable-next-line no-console
+            console.log('_________________ authorize', {
+              accessToken: server.getAccessToken(),
+              refreshToken: server.getRefreshToken(),
+              expirationDate: server.getExpirationDate(),
+              isTokenValid: server.isTokenValid(),
+            })
+          } else if (differenceInMinutes(expiresOn, now) <= 10) {
+            /**
+             * ^^^^
+             * TODO: think to move 10 to either .env or in plugin (if different
+             * webhook servers may have different elapsed time until refresh token)
+             */
+            await refresh()
+            // eslint-disable-next-line no-console
+            console.log('_________________ refresh', {
+              accessToken: server.getAccessToken(),
+              refreshToken: server.getRefreshToken(),
+              expirationDate: server.getExpirationDate(),
+              isTokenValid: server.isTokenValid(),
+            })
+          }
+        })
+      })
+    })
+  })
+}
+
 module.exports = {
   onWebhookMessageCreated,
   onWebhookMessagePending,
   onWebhookMessageSent,
   onWebhookMessageError,
+
+  onWebHookServerCheckTokens,
 }

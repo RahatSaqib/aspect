@@ -79,6 +79,7 @@ const basePlugin = {
   onPatientAdded,
   onPatientUpdated,
   getCustomFields,
+  getWebHookServers,
 }
 
 /**
@@ -290,6 +291,13 @@ async function onPatientAdded(/* { patientId }, { messageContext } */) {
  */
 async function onPatientUpdated(/* { patientId }, { messageContext } */) {
   // do nothing by default
+}
+
+/**
+ *
+ */
+async function getWebHookServers(/* context */) {
+  return {}
 }
 
 module.exports = {
