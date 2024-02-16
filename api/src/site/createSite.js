@@ -1,4 +1,5 @@
 const Boom = require('@hapi/boom')
+const uuid = require('node-uuid')
 const { knex } = require('../db')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
@@ -28,6 +29,8 @@ module.exports = async function (request) {
     ...siteParams,
     externalId: siteParams.externalId || siteParams.name,
     partnerId: user.partnerId,
+    guid: uuid.v4(),
+    institutionGuid: uuid.v4(),
     createdOn: new Date(),
     createdBy: user.id,
     updatedOn: new Date(),
