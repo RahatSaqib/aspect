@@ -12,7 +12,7 @@ const { deviceApprovalToId } = require('../src/shared/dictionary')
 const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
 const upsertConsumables = require('./common/upsert_consumables')
-const { insertSite } = require('../../src/site/common/db')
+const { insertSite } = require('../src/site/common/db')
 
 const bcryptHash = promisify(bcrypt.hash)
 

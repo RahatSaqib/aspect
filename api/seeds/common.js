@@ -8,7 +8,7 @@ const { query } = require('../src/db')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
-const { insertSite } = require('../../src/site/common/db')
+const { insertSite } = require('../src/site/common/db')
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
 const jobFunctionsFixtureDefault = require('./fixtures/jobFunctions')
 const followUpFixture = require('./fixtures/FollowUp.json')
