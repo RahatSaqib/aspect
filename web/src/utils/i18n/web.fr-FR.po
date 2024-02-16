@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-01-30T17:11:26.902Z\n"
+"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -57,19 +57,7 @@ msgstr "# Nombre de sites PMDT avec 10 C GX"
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# Nombre de sites testés Test MTB/XDR"
 
-#. [pages.AddInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
@@ -431,9 +419,6 @@ msgstr "Ajouter un enregistrement"
 msgid "Add Row"
 msgstr "Ajouter une rangée"
 
-#. [pages.AddInventoryDialogForm.dialogTitle]
-#. defaultMessage is:
-#. Add {consumableName}
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. Add {consumableName}
@@ -2615,9 +2600,6 @@ msgstr "Visualisation des données relatives à la résistance XDR"
 msgid "Date"
 msgstr "Rendez-vous amoureux"
 
-#. [pages.AddInventoryDialogForm.dateAdjusted]
-#. defaultMessage is:
-#. Date Added
 #. [pages.NewInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
 #. Date Added
@@ -4054,19 +4036,6 @@ msgstr "Cas de FQ-R diagnostiqués cette année"
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Code d'installation"
-
-#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
-#. defaultMessage is:
-#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
-#: extracted_strings.json
-msgid ""
-"Failed to generate {fileType} report \"{reportName}\" because of error "
-"\"{errorMessage}\". Please, try again in a few minutes. If the error "
-"persists, contact your administrator for support."
-msgstr ""
-"Impossible de générer {fileType} rapport \"{reportName}\" à cause de "
-"l'erreur \"{errorMessage}\". Veuillez réessayer dans quelques minutes. Si "
-"l'erreur persiste, contactez votre administrateur pour obtenir de l'aide."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -6846,6 +6815,16 @@ msgstr "Module"
 msgid "Module Activity Report"
 msgstr "Rapport d'activité du module"
 
+#. [pages.DeviceDetailEdit.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#. [pages.DeviceDetailProfile.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#: extracted_strings.json
+msgid "Module Bay Capacity"
+msgstr "Capacité des baies de modules"
+
 #. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -8314,16 +8293,6 @@ msgstr "S'il vous plaît vérifier qu'il existe toujours"
 msgid "Please choose a date later or equal to from date"
 msgstr "Veuillez choisir une date ultérieure ou égale à la date du"
 
-#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#: extracted_strings.json
-msgid "Please choose a different site"
-msgstr "Veuillez choisir un autre site"
-
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
 #. Please confirm new password
@@ -8484,34 +8453,6 @@ msgstr "Veuillez spécifier une date d'expiration"
 #: extracted_strings.json
 msgid "Please specify the quantity"
 msgstr "Veuillez préciser la quantité"
-
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
-#: extracted_strings.json
-msgid "Please specify the quantity to add"
-msgstr "S'il vous plaît spécifier la quantité à ajouter"
-
-#. [pages.ReceiveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to receive
-#: extracted_strings.json
-msgid "Please specify the quantity to receive"
-msgstr "S'il vous plaît spécifier la quantité à recevoir"
-
-#. [pages.RemoveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to remove
-#: extracted_strings.json
-msgid "Please specify the quantity to remove"
-msgstr "Veuillez spécifier la quantité à supprimer"
-
-#. [pages.TransferInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to transfer
-#: extracted_strings.json
-msgid "Please specify the quantity to transfer"
-msgstr "Veuillez spécifier la quantité à transférer"
 
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution]
 #. defaultMessage is:
@@ -9017,9 +8958,6 @@ msgstr "Quantité reçue"
 msgid "Quantity on Hand"
 msgstr "Quantité en main"
 
-#. [pages.AddInventoryDialogForm.quantity]
-#. defaultMessage is:
-#. Quantity to Add
 #. [pages.NewInventoryDialogForm.quantity]
 #. defaultMessage is:
 #. Quantity to Add
@@ -11884,13 +11822,6 @@ msgstr ""
 "effectués au cours du mois et en divisant ce nombre par le total des tests "
 "effectués sur tous les appareils."
 
-#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can transfer is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can transfer is {currentQuantity}"
-msgstr "Le maximum que vous pouvez transférer est {currentQuantity}"
-
 #. [pages.Notifications.notificationNameRequired]
 #. defaultMessage is:
 #. The notification name is required
@@ -14345,6 +14276,33 @@ msgstr "{unit} semaine dernière"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total des étalonnages"
+
+#~ msgid ""
+#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
+#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
+#~ "persists, contact your administrator for support."
+#~ msgstr ""
+#~ "Impossible de générer {fileType} rapport \"{reportName}\" à cause de "
+#~ "l'erreur \"{errorMessage}\". Veuillez réessayer dans quelques minutes. Si "
+#~ "l'erreur persiste, contactez votre administrateur pour obtenir de l'aide."
+
+#~ msgid "Please choose a different site"
+#~ msgstr "Veuillez choisir un autre site"
+
+#~ msgid "Please specify the quantity to add"
+#~ msgstr "S'il vous plaît spécifier la quantité à ajouter"
+
+#~ msgid "Please specify the quantity to receive"
+#~ msgstr "S'il vous plaît spécifier la quantité à recevoir"
+
+#~ msgid "Please specify the quantity to remove"
+#~ msgstr "Veuillez spécifier la quantité à supprimer"
+
+#~ msgid "Please specify the quantity to transfer"
+#~ msgstr "Veuillez spécifier la quantité à transférer"
+
+#~ msgid "The most that you can transfer is {currentQuantity}"
+#~ msgstr "Le maximum que vous pouvez transférer est {currentQuantity}"
 
 #~ msgid "Reporters"
 #~ msgstr "Reporters"
