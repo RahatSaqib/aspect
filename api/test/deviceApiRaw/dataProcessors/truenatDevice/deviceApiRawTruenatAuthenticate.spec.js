@@ -7,6 +7,7 @@ const { passwordSaltRounds } = require('../../../../src/config')
 const { randomToken } = require('../../../../src/deviceApi/apiKey')
 const { deviceApprovalToId } = require('../../../../src/shared/dictionary')
 const server = require('../../../utils/testUtils')
+const { insertSite } = require('../../../../src/site/common/db')
 
 const saltRounds = parseInt(passwordSaltRounds, 10)
 
@@ -48,7 +49,7 @@ describe('Device API Raw routes for Truenat Authentication', () => {
       .where({ partnerId: partner.id })
       .where({ defaultForDeviceType: 1 })
       .first('id')
-    const [siteId] = await knex('Site').insert({
+    const [siteId] = await insertSite(knex, {
       name: 'Some Site for Some Truenat Device',
       shortName: 'SSF',
       externalId: 'SSF',

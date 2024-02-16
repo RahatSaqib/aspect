@@ -1,3 +1,4 @@
+const uuid = require('node-uuid')
 const { knex, filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
@@ -104,6 +105,13 @@ const getSites = (dataConstraints, query) => {
     })
 }
 
+const insertSite = (knex, site) => {
+  if (!site.guid) site.guid = uuid.v4()
+  if (!site.institutionGuid) site.institutionGuid = uuid.v4()
+
+  return insertSite(knex, site)
+}
+
 module.exports = {
   getExistingSite,
   getExistingSiteExcludingCurrent,
@@ -113,4 +121,5 @@ module.exports = {
   getLinkedResults,
   getSamplesRegisteredCount,
   getSites,
+  insertSite,
 }

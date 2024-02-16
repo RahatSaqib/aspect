@@ -5,6 +5,7 @@ const { run } = require('../../src/db')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const { insertSite } = require('../../src/site/common/db')
 
 const server = require('../utils/testUtils')
 
@@ -37,7 +38,7 @@ describe('Device API Raw routes for cobas', () => {
         .where({ partnerId: partner.id })
         .where({ defaultForDeviceType: 1 })
         .first('id')
-      const [siteId] = await knex('Site').insert({
+      const [siteId] = await insertSite(knex, {
         name: 'Some Site for Some cobas Device',
         shortName: 'SSF',
         externalId: 'SSF',
