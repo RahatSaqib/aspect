@@ -109,7 +109,7 @@ const insertSite = (knex, site) => {
   if (!site.guid) site.guid = uuid.v4()
   if (!site.institutionGuid) site.institutionGuid = uuid.v4()
 
-  return insertSite(knex, site)
+  return knex('Site').insert(site)
 }
 
 module.exports = {
