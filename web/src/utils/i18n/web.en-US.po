@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-30T17:11:26.902Z\n"
+"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -56,19 +56,7 @@ msgstr "# of PMDT Sites with 10 C GX"
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# of sites tested MTB/XDR Assay"
 
-#. [pages.AddInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
@@ -428,9 +416,6 @@ msgstr "Add Record"
 msgid "Add Row"
 msgstr "Add Row"
 
-#. [pages.AddInventoryDialogForm.dialogTitle]
-#. defaultMessage is:
-#. Add {consumableName}
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. Add {consumableName}
@@ -2603,9 +2588,6 @@ msgstr "Data Visualisation for XDR Resistance"
 msgid "Date"
 msgstr "Date"
 
-#. [pages.AddInventoryDialogForm.dateAdjusted]
-#. defaultMessage is:
-#. Date Added
 #. [pages.NewInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
 #. Date Added
@@ -4039,19 +4021,6 @@ msgstr "FQ-R cases diagnosed this year"
 msgid "Facility Code"
 msgstr "Facility Code"
 
-#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
-#. defaultMessage is:
-#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
-#: extracted_strings.json
-msgid ""
-"Failed to generate {fileType} report \"{reportName}\" because of error "
-"\"{errorMessage}\". Please, try again in a few minutes. If the error "
-"persists, contact your administrator for support."
-msgstr ""
-"Failed to generate {fileType} report \"{reportName}\" because of error "
-"\"{errorMessage}\". Please, try again in a few minutes. If the error "
-"persists, contact your administrator for support."
-
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
 #. Failures of Category I
@@ -4157,7 +4126,6 @@ msgstr "Follow-up"
 #. defaultMessage is:
 #. FollowUp Confirmed
 #: extracted_strings.json
-#| msgid "Not Confirmed"
 msgid "FollowUp Confirmed"
 msgstr "FollowUp Confirmed"
 
@@ -4165,7 +4133,6 @@ msgstr "FollowUp Confirmed"
 #. defaultMessage is:
 #. FollowUp Not Possible
 #: extracted_strings.json
-#| msgid "Not Possible"
 msgid "FollowUp Not Possible"
 msgstr "FollowUp Not Possible"
 
@@ -4173,7 +4140,6 @@ msgstr "FollowUp Not Possible"
 #. defaultMessage is:
 #. FollowUp Pending
 #: extracted_strings.json
-#| msgid "Pending"
 msgid "FollowUp Pending"
 msgstr "FollowUp Pending"
 
@@ -4181,7 +4147,6 @@ msgstr "FollowUp Pending"
 #. defaultMessage is:
 #. FollowUp Required
 #: extracted_strings.json
-#| msgid "Required"
 msgid "FollowUp Required"
 msgstr "FollowUp Required"
 
@@ -6827,6 +6792,16 @@ msgstr "Module"
 msgid "Module Activity Report"
 msgstr "Module Activity Report"
 
+#. [pages.DeviceDetailEdit.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#. [pages.DeviceDetailProfile.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#: extracted_strings.json
+msgid "Module Bay Capacity"
+msgstr "Module Bay Capacity"
+
 #. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -8283,16 +8258,6 @@ msgstr "Please check that it still exists"
 msgid "Please choose a date later or equal to from date"
 msgstr "Please choose a date later or equal to from date"
 
-#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#: extracted_strings.json
-msgid "Please choose a different site"
-msgstr "Please choose a different site"
-
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
 #. Please confirm new password
@@ -8450,34 +8415,6 @@ msgstr "Please specify an expiry date"
 #: extracted_strings.json
 msgid "Please specify the quantity"
 msgstr "Please specify the quantity"
-
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
-#: extracted_strings.json
-msgid "Please specify the quantity to add"
-msgstr "Please specify the quantity to add"
-
-#. [pages.ReceiveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to receive
-#: extracted_strings.json
-msgid "Please specify the quantity to receive"
-msgstr "Please specify the quantity to receive"
-
-#. [pages.RemoveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to remove
-#: extracted_strings.json
-msgid "Please specify the quantity to remove"
-msgstr "Please specify the quantity to remove"
-
-#. [pages.TransferInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to transfer
-#: extracted_strings.json
-msgid "Please specify the quantity to transfer"
-msgstr "Please specify the quantity to transfer"
 
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution]
 #. defaultMessage is:
@@ -8975,9 +8912,6 @@ msgstr "Quantity Received"
 msgid "Quantity on Hand"
 msgstr "Quantity on Hand"
 
-#. [pages.AddInventoryDialogForm.quantity]
-#. defaultMessage is:
-#. Quantity to Add
 #. [pages.NewInventoryDialogForm.quantity]
 #. defaultMessage is:
 #. Quantity to Add
@@ -9399,7 +9333,6 @@ msgstr "Reporting Since"
 #. defaultMessage is:
 #. Reporting Sites
 #: extracted_strings.json
-#| msgid "Reporting Since"
 msgid "Reporting Sites"
 msgstr "Reporting Sites"
 
@@ -9862,7 +9795,6 @@ msgstr "Results"
 #. defaultMessage is:
 #. Results Downloaded
 #: extracted_strings.json
-#| msgid "Only Results Downloaded By Reporter"
 msgid "Results Downloaded"
 msgstr "Results Downloaded"
 
@@ -9870,7 +9802,6 @@ msgstr "Results Downloaded"
 #. defaultMessage is:
 #. Results Reporting
 #: extracted_strings.json
-#| msgid "No Results Reported"
 msgid "Results Reporting"
 msgstr "Results Reporting"
 
@@ -10107,7 +10038,6 @@ msgstr "Sample collection site"
 #. defaultMessage is:
 #. Samples Registered
 #: extracted_strings.json
-#| msgid "Sample Origin Site"
 msgid "Samples Registered"
 msgstr "Samples Registered"
 
@@ -11831,13 +11761,6 @@ msgstr ""
 "The error rate is calculated by counting all errors in the tests conducted "
 "in the month and dividing that number by the total tests carried out of all "
 "devices."
-
-#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can transfer is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can transfer is {currentQuantity}"
-msgstr "The most that you can transfer is {currentQuantity}"
 
 #. [pages.Notifications.notificationNameRequired]
 #. defaultMessage is:
@@ -14252,6 +14175,33 @@ msgstr "{unit} since last week"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total calibrations"
+
+#~ msgid ""
+#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
+#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
+#~ "persists, contact your administrator for support."
+#~ msgstr ""
+#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
+#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
+#~ "persists, contact your administrator for support."
+
+#~ msgid "Please choose a different site"
+#~ msgstr "Please choose a different site"
+
+#~ msgid "Please specify the quantity to add"
+#~ msgstr "Please specify the quantity to add"
+
+#~ msgid "Please specify the quantity to receive"
+#~ msgstr "Please specify the quantity to receive"
+
+#~ msgid "Please specify the quantity to remove"
+#~ msgstr "Please specify the quantity to remove"
+
+#~ msgid "Please specify the quantity to transfer"
+#~ msgstr "Please specify the quantity to transfer"
+
+#~ msgid "The most that you can transfer is {currentQuantity}"
+#~ msgstr "The most that you can transfer is {currentQuantity}"
 
 #~ msgid "Reporters"
 #~ msgstr "Reporters"
