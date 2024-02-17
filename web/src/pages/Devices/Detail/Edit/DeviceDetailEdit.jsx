@@ -114,7 +114,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               value={editDevice.stickerInstrumentSerial}
               onChange={e => {
                 setEditDevice({ ...editDevice, stickerInstrumentSerial: e.target.value })
-                setError(isEmpty(e.target.value))
               }}
             />
 
@@ -130,6 +129,17 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               label={intl.formatMessage(messages.softwareType)}
               value={editDevice.softwareType}
               onChange={softwareType => setEditDevice(prv => ({ ...prv, softwareType }))}
+            />
+
+            <FormControlLabel
+              sx={{ mb: '20px' }}
+              control={
+                <Checkbox
+                  checked={editDevice.isDaisyChained ?? false}
+                  onChange={e => setEditDevice({ ...editDevice, isDaisyChained: e.target.checked })}
+                />
+              }
+              label={intl.formatMessage(messages.isDaisyChained)}
             />
 
             <DeviceCapacitySelect
@@ -223,19 +233,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 disabled={!editable}
               />
             </FormGroup>
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  type="checkbox"
-                  onChange={isDaisyChained =>
-                    setEditDevice(prv => ({ ...prv, isDaisyChained: isDaisyChained.target.checked }))
-                  }
-                  checked={[true, 'true'].includes(editDevice.isDaisyChained)}
-                />
-              }
-              label={intl.formatMessage(messages.isDaisyChained)}
-            />
 
             <div className={styles.Form__Actions}>
               <ButtonGroup isolated>
