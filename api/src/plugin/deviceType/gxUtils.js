@@ -4,7 +4,7 @@ const Promise = require('bluebird')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const { isNil } = require('lodash')
 
-const uuid = require('node-uuid')
+const { insertSite } = require('../../site/common/db')
 const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
@@ -722,8 +722,6 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
           externalId: deviceName,
           partnerId: device.partnerId,
           geographyId: geography.id,
-          guid: uuid.v4(),
-          institutionGuid: uuid.v4(),
           createdOn: now,
           updatedOn: now,
         }
@@ -736,7 +734,7 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
         if (newSite.externalId.length > 255) {
           newSite.externalId = newSite.externalId.substr(0, 255)
         }
-        const [newSiteId] = await knex.insert(newSite).into('Site')
+        const [newSiteId] = await insertSite(knex, newSite)
         sites = await knex.from('Site as s').where('s.id', newSiteId).select()
       }
     }
