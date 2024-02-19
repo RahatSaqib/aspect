@@ -315,7 +315,7 @@ async function onPostResultToWebHookServers(action, context) {
           isTokenValid: server.isTokenValid(),
         })
 
-        await pushResult(knex, resultId)
+        await pushResult({ knex, resultId })
       } else {
         /**
          * TODO: discuss what to do if token is invalid.
