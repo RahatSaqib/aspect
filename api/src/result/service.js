@@ -1491,6 +1491,26 @@ async function currentResultAggregations(request) {
     throw Boom.forbidden('You do not have access to results')
   }
 
+  /**
+   * date range must be defined
+   */
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    return Boom.badRequest('Dates are required')
+  }
+  /**
+   * See 'NOTE' in file
+   * PkDashboard/pages/MtbRifSection/CurrentTestingPage/CurrentTestingGraph.jsx.
+   *
+   * Notice here that datetime has format 'yyyy-01-01' and 'yyyy-12-31'.
+   * Like
+   *    minDate: 2024-01-01T00:00:00.000+06:00
+   *    maxDate: 2024-12-31T23:59:59.999+06:00
+   * And below we cut only date part YYYY-MM-DD for using in knex queries
+   */
+  query.minDate = minDate.substring(0, 10)
+  query.maxDate = maxDate.substring(0, 10)
+
   const now = new Date()
   const currentYear = now.getFullYear()
   const currentMonth = now.getMonth() + 1
