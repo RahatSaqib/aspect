@@ -73,7 +73,7 @@ const NationalDiagnosisGraph = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(messages.nationalMtbXdrDiagnosed)}
+      title={formatMessage(messages.nationalDiagnosisXdr)}
       filters={
         <>
           <FormControlLabel
