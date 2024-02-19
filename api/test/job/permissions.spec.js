@@ -388,6 +388,37 @@ describe('Permissions', () => {
           done()
         })
     })
+
+    it('should block unauthorised users from assigning jobs that are outside of their geographic scope', async () => {
+      const originalPermissions = await server
+        .get(`/api/job-function/permissions/${personId}/${partner1}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => res.body)
+
+      const clinicianAuthResponse = await server
+        .post('/api/auth')
+        .send({
+          name: 'clinician',
+          password: 'test07',
+          clientName: 'Mocha web',
+          clientType: 'web',
+        })
+        .then(res => res.body)
+
+      const assignPermissionResponse = await server
+        .post(`${path}/assign-person-to-job-and-context`)
+        .send({ personId, jobFunctionId: jobFunctionClinicianId, countryId })
+        .set('Authorization', `Bearer ${clinicianAuthResponse.access}`)
+
+      assert.equal(403, assignPermissionResponse.status)
+
+      const newPermissions = await server
+        .get(`/api/job-function/permissions/${personId}/${partner1}`)
+        .set('Authorization', `Bearer ${shared.token}`)
+        .then(res => res.body)
+      assert.deepEqual(originalPermissions, newPermissions)
+    })
+
     it('should remove person assignment to site as Clinician', done => {
       server
         .delete(`${path}/person-assignment/${personId}/${jobContextId}`)

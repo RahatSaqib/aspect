@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-30T17:11:26.902Z\n"
+"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -56,19 +56,7 @@ msgstr "# сайтҳои PMDT бо 10 C GX"
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# сайтҳои санҷиши MTB/XDR"
 
-#. [pages.AddInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
@@ -429,9 +417,6 @@ msgstr "Иловаи Сабт"
 msgid "Add Row"
 msgstr "Иловаи сатр"
 
-#. [pages.AddInventoryDialogForm.dialogTitle]
-#. defaultMessage is:
-#. Add {consumableName}
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. Add {consumableName}
@@ -2603,9 +2588,6 @@ msgstr "Визуалии маълумот барои муқовимати XDR"
 msgid "Date"
 msgstr "Сана"
 
-#. [pages.AddInventoryDialogForm.dateAdjusted]
-#. defaultMessage is:
-#. Date Added
 #. [pages.NewInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
 #. Date Added
@@ -4042,19 +4024,6 @@ msgstr "Ҳодисаҳои FQ-R имсол ташхис карда шуданд"
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Кодекси иншоот"
-
-#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
-#. defaultMessage is:
-#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
-#: extracted_strings.json
-msgid ""
-"Failed to generate {fileType} report \"{reportName}\" because of error "
-"\"{errorMessage}\". Please, try again in a few minutes. If the error "
-"persists, contact your administrator for support."
-msgstr ""
-"Аз сабаби хатогии \"{errorMessage}\" {fileType} гузориши \"{reportName}\" "
-"тавлид нашуд. Лутфан, пас аз чанд дақиқа бори other кӯшиш кунед. Агар хатогӣ "
-"идома ёбад, барои дастгирӣ бо маъмури худ тамос гиред."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -6832,6 +6801,16 @@ msgstr "Модул"
 msgid "Module Activity Report"
 msgstr "Ҳисобот дар бораи фаъолияти модул"
 
+#. [pages.DeviceDetailEdit.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#. [pages.DeviceDetailProfile.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#: extracted_strings.json
+msgid "Module Bay Capacity"
+msgstr "Иқтидори модули Bay"
+
 #. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -8298,16 +8277,6 @@ msgstr "Лутфан тафтиш кунед, ки он то ҳол вуҷуд �
 msgid "Please choose a date later or equal to from date"
 msgstr "Лутфан санаи дертар ё ба он баробарро интихоб кунед"
 
-#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#: extracted_strings.json
-msgid "Please choose a different site"
-msgstr "Лутфан сайти otherро интихоб кунед"
-
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
 #. Please confirm new password
@@ -8468,34 +8437,6 @@ msgstr "Лутфан санаи ба охир расидани мӯҳлатро 
 #: extracted_strings.json
 msgid "Please specify the quantity"
 msgstr "Лутфан миқдорро муайян кунед"
-
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
-#: extracted_strings.json
-msgid "Please specify the quantity to add"
-msgstr "Лутфан миқдори иловашударо муайян кунед"
-
-#. [pages.ReceiveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to receive
-#: extracted_strings.json
-msgid "Please specify the quantity to receive"
-msgstr "Лутфан миқдори гирифтани онро муайян кунед"
-
-#. [pages.RemoveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to remove
-#: extracted_strings.json
-msgid "Please specify the quantity to remove"
-msgstr "Лутфан миқдори хориҷшударо муайян кунед"
-
-#. [pages.TransferInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to transfer
-#: extracted_strings.json
-msgid "Please specify the quantity to transfer"
-msgstr "Лутфан миқдори интиқолро муайян кунед"
 
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution]
 #. defaultMessage is:
@@ -8995,9 +8936,6 @@ msgstr "Миқдори гирифташуда"
 msgid "Quantity on Hand"
 msgstr "Миқдори дар даст"
 
-#. [pages.AddInventoryDialogForm.quantity]
-#. defaultMessage is:
-#. Quantity to Add
 #. [pages.NewInventoryDialogForm.quantity]
 #. defaultMessage is:
 #. Quantity to Add
@@ -11857,14 +11795,6 @@ msgstr ""
 "гузаронидашуда ва тақсими ин рақам ба санҷишҳои умумии ҳамаи дастгоҳҳо ҳисоб "
 "карда мешавад."
 
-#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can transfer is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can transfer is {currentQuantity}"
-msgstr ""
-"Миқдори бештаре, ки шумо метавонед интиқол диҳед, ин аст: {currentQuantity}"
-
 #. [pages.Notifications.notificationNameRequired]
 #. defaultMessage is:
 #. The notification name is required
@@ -14298,6 +14228,35 @@ msgstr "{unit} аз ҳафтаи гузашта"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
+
+#~ msgid ""
+#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
+#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
+#~ "persists, contact your administrator for support."
+#~ msgstr ""
+#~ "Аз сабаби хатогии \"{errorMessage}\" {fileType} гузориши \"{reportName}\" "
+#~ "тавлид нашуд. Лутфан, пас аз чанд дақиқа бори other кӯшиш кунед. Агар "
+#~ "хатогӣ идома ёбад, барои дастгирӣ бо маъмури худ тамос гиред."
+
+#~ msgid "Please choose a different site"
+#~ msgstr "Лутфан сайти otherро интихоб кунед"
+
+#~ msgid "Please specify the quantity to add"
+#~ msgstr "Лутфан миқдори иловашударо муайян кунед"
+
+#~ msgid "Please specify the quantity to receive"
+#~ msgstr "Лутфан миқдори гирифтани онро муайян кунед"
+
+#~ msgid "Please specify the quantity to remove"
+#~ msgstr "Лутфан миқдори хориҷшударо муайян кунед"
+
+#~ msgid "Please specify the quantity to transfer"
+#~ msgstr "Лутфан миқдори интиқолро муайян кунед"
+
+#~ msgid "The most that you can transfer is {currentQuantity}"
+#~ msgstr ""
+#~ "Миқдори бештаре, ки шумо метавонед интиқол диҳед, ин аст: "
+#~ "{currentQuantity}"
 
 #~ msgid "Reporters"
 #~ msgstr "Хабарнигорон"
