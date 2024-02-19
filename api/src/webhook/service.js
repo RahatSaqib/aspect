@@ -280,6 +280,53 @@ async function onWebHookServerCheckTokens(action, context) {
   })
 }
 
+async function onPostResultToWebHookServers(action, context) {
+  return context.messageContext.run(async knex => {
+    const { resultId } = action
+    /**
+     * get plugin names for result's deviceType and partner
+     */
+    const { deviceTypePluginName, partnerPluginName } =
+      (await knex('Result as r')
+        .innerJoin('Device as d', 'r.deviceId', 'd.id')
+        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+        .innerJoin('Partner as p', 'r.partnerId', 'p.id')
+        .where('r.id', resultId)
+        .first('dt.plugin as deviceTypePluginName', 'p.plugin as partnerPluginName')) || {}
+    /**
+     * get all webhook servers, if any defined
+     */
+    const getWebhookServers = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getWebHookServers')
+    const webhookServers = await getWebhookServers(context)
+    /**
+     * loop all webhook servers and call their postResult method
+     */
+    await Promise.each(_.keys(webhookServers), async serverKey => {
+      const server = webhookServers[serverKey]
+      const { pushResult, isTokenValid } = server
+
+      if (isTokenValid()) {
+        // eslint-disable-next-line no-console
+        console.log('_________________ post', {
+          accessToken: server.getAccessToken(),
+          refreshToken: server.getRefreshToken(),
+          expirationDate: server.getExpirationDate(),
+          resultId,
+          isTokenValid: server.isTokenValid(),
+        })
+
+        await pushResult(knex, resultId)
+      } else {
+        /**
+         * TODO: discuss what to do if token is invalid.
+         * May be repeat attempt few more times (how many), or just
+         * throw an error only?
+         */
+      }
+    })
+  })
+}
+
 module.exports = {
   onWebhookMessageCreated,
   onWebhookMessagePending,
@@ -287,4 +334,5 @@ module.exports = {
   onWebhookMessageError,
 
   onWebHookServerCheckTokens,
+  onPostResultToWebHookServers,
 }

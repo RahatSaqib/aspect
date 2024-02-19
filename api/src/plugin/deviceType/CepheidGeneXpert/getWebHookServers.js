@@ -85,13 +85,33 @@ const srvCepheidC360 = (function () {
       isValid = false
     }
   }
-  const pushResult = async (/* { resultRaw } */) => {
+  const pushResult = async ({ knex, resultId }) => {
     /**
-     * TODO: fill in this func for ticket
-     * https://systemone.youtrack.cloud/issue/ASP-6621
+     * see https://systemone.youtrack.cloud/issue/ASP-6621
      */
     if (isValid) {
-      //
+      try {
+        const data = await knex('Result as r').where('r.id', resultId).first('r.id as resultId', 'r.instrumentSerial')
+        /**
+         * TODO: discuss what exact fields to post
+         */
+        const payload = {
+          data,
+        }
+        const args = [...fetchArgs, header('Authorization', `Bearer ${accessToken}`)]
+        const fetch = createFetch(...args, body(JSON.stringify(payload), 'application/json'))
+        const resp = await fetch(`${data.instrumentSerial}/instrumentTests`)
+        if (resp.status === 200) {
+          // const respJson = await resp.json()
+        } else {
+          /**
+           * TODO: discuss
+           */
+        }
+      } catch (err) {
+        // eslint-disable-next-line no-console
+        console.log('__________ post result err =', err)
+      }
     } else {
       //
     }
