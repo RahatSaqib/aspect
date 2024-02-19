@@ -178,10 +178,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   id="stickerInstrumentSerial"
                   label={intl.formatMessage(messages.stickerInstrumentSerial)}
                   value={editDevice.stickerInstrumentSerial}
-                  onChange={e => {
-                    setEditDevice({ ...editDevice, stickerInstrumentSerial: e.target.value })
-                    setError(isEmpty(e.target.value))
-                  }}
+                  onChange={e => setEditDevice({ ...editDevice, stickerInstrumentSerial: e.target.value })}
                 />
 
                 <CepheidInstrumentModelSelect
@@ -199,6 +196,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 />
 
                 <FormControlLabel
+                  sx={{ mb: '20px' }}
                   control={
                     <Checkbox
                       type="checkbox"
