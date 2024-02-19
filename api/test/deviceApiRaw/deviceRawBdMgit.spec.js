@@ -5,6 +5,7 @@ const { parseDateOrDefault } = require('../../src/shared/date')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
+const { insertSite } = require('../../src/site/common/db')
 
 const server = require('../utils/testUtils')
 
@@ -35,7 +36,7 @@ describe('Device API Raw routes for BD MGIT', () => {
       .where({ partnerId: partner.id })
       .where({ defaultForDeviceType: 1 })
       .first('id')
-    ;[bdMgitSiteId] = await knex('Site').insert({
+    ;[bdMgitSiteId] = await insertSite(knex, {
       name: 'Some Site for Some BD MGIT Device',
       shortName: 'SSFSBDMD',
       externalId: 'SSFSBDMD',

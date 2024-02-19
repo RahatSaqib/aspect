@@ -8,6 +8,7 @@ const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { deviceApiRawStatusToId } = require('../../src/shared/dictionary')
 const { parseDateOrDefault } = require('../../src/shared/date')
 const { getConstraints, addConstraints } = require('../../src/auth/constraints')
+const { insertSite } = require('../../src/site/common/db')
 
 const server = require('../utils/testUtils')
 
@@ -36,7 +37,7 @@ describe.skip('Device API Raw routes for Senaite LIMS', () => {
       })
       .select('s.*')
       .limit(1)
-    ;[senaiteLimsSiteId] = await knex('Site').insert({
+    ;[senaiteLimsSiteId] = await insertSite(knex, {
       ..._.omit(sampleSite, 'id'),
       name: 'SENAITE TEST SITE 1',
       externalId: 'senaiteTestSite1',

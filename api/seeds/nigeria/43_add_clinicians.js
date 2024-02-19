@@ -9,6 +9,7 @@ const {
   defaultPassword,
 } = require('./fixtures/partnerData')
 const logger = require('../../src/shared/logger')
+const { insertSite } = require('../../src/site/common/db')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -48,7 +49,7 @@ module.exports = require('../utils').seed(async knex => {
             'l.name': clinician.lga,
           })
           .first('g.id as geographyId')) || {})
-      ;[siteId] = await knex('Site').insert({
+      ;[siteId] = await insertSite(knex, {
         ...auditFields,
         name: clinician.site.replace(/\w+/g, _.capitalize),
         shortName: clinician.site.substr(0, 45),

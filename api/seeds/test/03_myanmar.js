@@ -12,6 +12,7 @@ const { addIssueTypes } = require('../relativeObjectsSeeds')
 const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
 const { partner: myanmarPartner } = require('../myanmar/fixtures/partnerData')
 const { seedDataCategory } = require('../dataCategoryLow')
+const { insertSite } = require('../../src/site/common/db')
 
 const now = new Date()
 const millisInHour = 1000 * 60 * 60
@@ -325,7 +326,7 @@ async function seed(knex) {
       hoursEnd: site.hoursEnd,
       ...auditFields,
     }
-    const [siteId] = await knex('Site').insert(siteData)
+    const [siteId] = await insertSite(knex, siteData)
     siteData.id = siteId
 
     await Promise.each(site.devices, async deviceSeed => {
