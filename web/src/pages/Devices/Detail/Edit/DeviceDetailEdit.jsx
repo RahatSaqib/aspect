@@ -107,31 +107,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               onChange={implementingPartnerId => setEditDevice(prv => ({ ...prv, implementingPartnerId }))}
             />
 
-            <TextField
-              fullWidth
-              id="stickerInstrumentSerial"
-              label={intl.formatMessage(messages.stickerInstrumentSerial)}
-              value={editDevice.stickerInstrumentSerial}
-              onChange={e => {
-                setEditDevice({ ...editDevice, stickerInstrumentSerial: e.target.value })
-                setError(isEmpty(e.target.value))
-              }}
-            />
-
-            <CepheidInstrumentModelSelect
-              valueBy="value"
-              label={intl.formatMessage(messages.instrumentModel)}
-              value={editDevice.instrumentModel}
-              onChange={instrumentModel => setEditDevice(prv => ({ ...prv, instrumentModel }))}
-            />
-
-            <CepheidSoftwareTypeSelect
-              valueBy="value"
-              label={intl.formatMessage(messages.softwareType)}
-              value={editDevice.softwareType}
-              onChange={softwareType => setEditDevice(prv => ({ ...prv, softwareType }))}
-            />
-
             <DeviceCapacitySelect
               name="capacity"
               deviceTypeId={editDevice.deviceType.externalId}
@@ -197,6 +172,44 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                     shrink: true,
                   }}
                 />
+
+                <TextField
+                  fullWidth
+                  id="stickerInstrumentSerial"
+                  label={intl.formatMessage(messages.stickerInstrumentSerial)}
+                  value={editDevice.stickerInstrumentSerial}
+                  onChange={e => {
+                    setEditDevice({ ...editDevice, stickerInstrumentSerial: e.target.value })
+                    setError(isEmpty(e.target.value))
+                  }}
+                />
+
+                <CepheidInstrumentModelSelect
+                  valueBy="value"
+                  label={intl.formatMessage(messages.instrumentModel)}
+                  value={editDevice.instrumentModel}
+                  onChange={instrumentModel => setEditDevice(prv => ({ ...prv, instrumentModel }))}
+                />
+
+                <CepheidSoftwareTypeSelect
+                  valueBy="value"
+                  label={intl.formatMessage(messages.softwareType)}
+                  value={editDevice.softwareType}
+                  onChange={softwareType => setEditDevice(prv => ({ ...prv, softwareType }))}
+                />
+
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      type="checkbox"
+                      onChange={isDaisyChained =>
+                        setEditDevice(prv => ({ ...prv, isDaisyChained: isDaisyChained.target.checked }))
+                      }
+                      checked={[true, 'true'].includes(editDevice.isDaisyChained)}
+                    />
+                  }
+                  label={intl.formatMessage(messages.isDaisyChained)}
+                />
               </>
             ) : null}
 
@@ -223,19 +236,6 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 disabled={!editable}
               />
             </FormGroup>
-
-            <FormControlLabel
-              control={
-                <Checkbox
-                  type="checkbox"
-                  onChange={isDaisyChained =>
-                    setEditDevice(prv => ({ ...prv, isDaisyChained: isDaisyChained.target.checked }))
-                  }
-                  checked={[true, 'true'].includes(editDevice.isDaisyChained)}
-                />
-              }
-              label={intl.formatMessage(messages.isDaisyChained)}
-            />
 
             <div className={styles.Form__Actions}>
               <ButtonGroup isolated>
