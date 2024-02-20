@@ -9,8 +9,13 @@ import { consumableMessages } from '../../messages'
 const ConsumableSelector = ({ onChange }) => {
   const [innerValue, setInnerValue] = useState('')
   const [options, setOptions] = useState([])
-  const { isLoading, data } = useQuery('data.inventoryConsumableSummaryList', async () =>
-    fetchWrapperForQueries({ endpoint: '/dashboard/inventory-item' })
+  const { isLoading, data } = useQuery(
+    'data.inventoryConsumableSummaryList',
+    async () => fetchWrapperForQueries({ endpoint: '/dashboard/inventory-item' }),
+    {
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 60, // 1 hour
+    }
   )
   const { formatMessage } = useIntl()
   useEffect(() => {
