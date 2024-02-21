@@ -1,15 +1,15 @@
-import React, { useState, useEffect } from 'react'
-import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
-  LgaSelect,
-  StateSelect,
-  Loading,
-  fillYear,
   ColumnGraph,
+  fillYear,
+  LgaSelect,
   LineGraph,
+  Loading,
   objectToArray,
+  StateSelect,
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
@@ -23,8 +23,8 @@ const endpointParams = [
   { groupBy: 'month' },
   { minDate: `${maxDate.getFullYear() - 5}-01-01` },
   { maxDate },
-  // { assay: 'GxMtbXdr' },
-  // { resistance: 'FLQ' },
+  { assay: 'GxMtbXdr' },
+  { resistance: 'FLQ' },
 ]
 
 const NationalFQTrendPage = () => {
