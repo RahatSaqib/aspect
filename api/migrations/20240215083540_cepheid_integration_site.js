@@ -1,6 +1,6 @@
 exports.up = function (knex) {
   return knex.schema.alterTable('Site', function (table) {
-    table.string('institutionName', 64)
+    table.string('institutionName', 255)
     table.uuid('institutionGuid')
     table.uuid('guid')
   })
