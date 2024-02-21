@@ -51,7 +51,7 @@ const RrtbTestDiagnosisPage = () => {
     if (data) {
       const line = []
       const bar = []
-      data.grouped.map(({ year, testsPerformed, mtbDetected, rrDetected, rrToMtbPercentage }) => {
+      data.grouped.slice(-5).map(({ year, testsPerformed, mtbDetected, rrDetected, rrToMtbPercentage }) => {
         bar.push({ year, value: testsPerformed, type: testsPerformedMessage })
         bar.push({ year, value: mtbDetected, type: mtbDetectedMessage })
         bar.push({ year, value: rrDetected, type: rrDetectedMessage })
