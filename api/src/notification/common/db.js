@@ -1,11 +1,12 @@
 const { knex, filterParams, filterDateRangeParams, sortPageParams, transact } = require('../../db')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
-
+const { JOB_FUNCTION_EXTERNAL_ID_FOR_API } = require('../../shared/constants')
 const {
   fileContentTypeToId,
   messageSeverityToId,
   notificationTypeCategoryToId,
   issueTypeToId,
+  jobFunctionToId,
 } = require('../../shared/dictionary')
 const { validateFilterCondition } = require('./validations')
 
@@ -104,6 +105,7 @@ async function getNotification(
 }
 
 async function getListNotifications(query, credentials) {
+  const jobFunctionIdForApi = await jobFunctionToId(JOB_FUNCTION_EXTERNAL_ID_FOR_API)
   const subquery = knex('NotificationType as nti')
     .leftOuterJoin('JobFunction AS jf', leftBuilder =>
       leftBuilder.on(
@@ -135,7 +137,7 @@ async function getListNotifications(query, credentials) {
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .modify(AddNotificationGeographyConstraints, dataConstraints)
-
+    .whereRaw(`(nt.jobFunctionId is null or nt.jobFunctionId != ${jobFunctionIdForApi})`)
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.id')
 

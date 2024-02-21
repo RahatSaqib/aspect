@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { JOB_FUNCTION_EXTERNAL_ID_FOR_API } = require('../../src/shared/constants')
 
 const admin = {
   name: 'Admin',
@@ -1305,6 +1306,12 @@ const labAdmin = {
   ],
 }
 
+const api = {
+  name: JOB_FUNCTION_EXTERNAL_ID_FOR_API,
+  reports: [],
+  permissions: [],
+}
+
 const concatUniqOrderedArray = (arr1, arr2, sortedFunction = _.identity) =>
   _.compact(_.sortBy(_.uniq(_.concat(arr1, arr2)), arr1 && arr2 ? sortedFunction : _.identity))
 
@@ -1351,6 +1358,7 @@ module.exports = {
   ntpNoResults,
   systemOne,
   labAdmin,
+  api,
   mergeJobFunctions,
   countryReportsDecorator,
 }

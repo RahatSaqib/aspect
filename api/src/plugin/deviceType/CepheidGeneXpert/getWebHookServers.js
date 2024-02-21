@@ -1,133 +1,118 @@
+const _ = require('lodash')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 const jwtDecode = require('jwt-decode')
-const uuid = require('node-uuid')
 
 const { WEBHOOK_SERVERS } = require('../../../shared/constants')
 
+const setHeaders = (src, dst) => {
+  _.each(_.keys(src), key => {
+    dst.push(header(key, src[key]))
+  })
+}
+
 const srvCepheidC360 = (function () {
-  /**
-   * private
-   */
-  const baseUrl = 'https://dev.aspect.id'
-  // const baseUrl = 'http://localhost:8080'
-  const baseProps = {
-    clientId: uuid.v4(),
-    clientType: 'web',
+  const emptyData = {
+    accessToken: '',
+    refreshToken: '',
+    isValid: false,
+    expiresOn: new Date(),
   }
-  const urlToAuthorize = '/api/api/auth'
-  const urlToRefreshToken = '/api/api/auth/refresh'
-  // const urlToAuthorize = '/api/auth'
-  // const urlToRefreshToken = '/api/auth/refresh'
-  const username = 'admin'
-  const password = 'test07'
-  // const username = ''
-  // const password = ''
-  const fetchArgs = [
-    method('POST'),
-    base(baseUrl),
-    accept('application/json'),
-    header('Content-Type', 'application/json'),
-  ]
-  let accessToken = ''
-  let refreshToken = ''
-  let expiresOn = null
-  let isValid = false
-  const processSuccess = respJson => {
+  const getResponseData = respJson => {
     const { access, refresh } = respJson
     const decoded = jwtDecode(access)
-    accessToken = access
-    refreshToken = refresh
-    isValid = true
-    expiresOn = new Date(Date.now() + (decoded.exp - decoded.iat) * 1000)
+    return {
+      accessToken: access,
+      refreshToken: refresh,
+      isValid: true,
+      expiresOn: new Date(Date.now() + (decoded.exp - decoded.iat) * 1000),
+    }
   }
   /**
    * public
    */
-  const authorize = async () => {
+  const authorize = async (baseUrl, headers = {}, params = {}) => {
     try {
-      const payload = {
-        ...baseProps,
-        clientName: 'Aspect API Webhook',
-        name: username,
-        password,
-      }
+      const fetchArgs = [
+        //
+        method(params.method || 'POST'),
+        //
+        base(baseUrl),
+      ]
+      setHeaders(headers, fetchArgs)
+      const payload = params.payload || {}
       const fetch = createFetch(...fetchArgs, body(JSON.stringify(payload), 'application/json'))
-      const resp = await fetch(urlToAuthorize)
+      const resp = await fetch(params.url)
       if (resp.status === 200) {
         const respJson = await resp.json()
-        processSuccess(respJson)
-      } else {
-        isValid = false
+        return getResponseData(respJson)
       }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log('__________authorize err =', err)
-      isValid = false
     }
+    return emptyData
   }
-  const refresh = async () => {
+  const refresh = async (baseUrl, headers = {}, params = {}, refreshToken) => {
     try {
-      const payload = {
-        ...baseProps,
+      const fetchArgs = [
+        //
+        method(params.method || 'POST'),
+        //
+        base(baseUrl),
+      ]
+      setHeaders(headers, fetchArgs)
+      let payload = params.payload || {}
+
+      payload = {
+        ...payload,
         token: refreshToken,
       }
       const fetch = createFetch(...fetchArgs, body(JSON.stringify(payload), 'application/json'))
-      const resp = await fetch(urlToRefreshToken)
+      const resp = await fetch(params.url)
       if (resp.status === 200) {
         const respJson = await resp.json()
-        processSuccess(respJson)
-      } else {
-        isValid = false
+        return getResponseData(respJson)
       }
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log('__________refresh token err =', err)
-      isValid = false
     }
+    return emptyData
   }
-  const pushResult = async ({ knex, resultId }) => {
+  const pushResult = async (baseUrl, headers = {}, params = {}, data) => {
     /**
      * see https://systemone.youtrack.cloud/issue/ASP-6621
      */
+    const { isValid } = params
     if (isValid) {
       try {
-        const data = await knex('Result as r').where('r.id', resultId).first('r.id as resultId', 'r.instrumentSerial')
-        /**
-         * TODO: discuss what exact fields to post
-         */
-        const payload = {
+        const fetchArgs = [
+          //
+          method(params.method || 'POST'),
+          //
+          base(baseUrl),
+        ]
+        setHeaders(headers, fetchArgs)
+        let payload = params.payload || {}
+
+        payload = {
+          ...payload,
           data,
         }
-        const args = [...fetchArgs, header('Authorization', `Bearer ${accessToken}`)]
-        const fetch = createFetch(...args, body(JSON.stringify(payload), 'application/json'))
-        const resp = await fetch(`${data.instrumentSerial}/instrumentTests`)
+        const fetch = createFetch(...fetchArgs, body(JSON.stringify(payload), 'application/json'))
+        const resp = await fetch(params.url)
         if (resp.status === 200) {
           // const respJson = await resp.json()
-        } else {
-          /**
-           * TODO: discuss
-           */
+          return true
         }
       } catch (err) {
         // eslint-disable-next-line no-console
-        console.log('__________ post result err =', err)
+        console.log('__________pushResult token err =', err)
       }
-    } else {
-      //
     }
   }
 
   return {
-    /**
-     * to get values
-     */
-    getAccessToken: () => accessToken,
-    getRefreshToken: () => refreshToken,
-    getExpirationDate: () => expiresOn,
-    isTokenValid: () => isValid,
-    /**
-     * methods
-     */
     authorize,
     refresh,
     pushResult,
