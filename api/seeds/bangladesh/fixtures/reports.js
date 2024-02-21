@@ -8,6 +8,7 @@ const resultsDrTb10A10BCovid = {
   exportCsv: false,
   sortOrder: 11,
   availableForNotification: 1,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -48,6 +49,7 @@ const resultsDrTb10A10BCovidNtpUse = {
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 12,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
