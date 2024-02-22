@@ -118,18 +118,17 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
             ...errorNotification,
           }
         }
-        // Only if statusCode isn't unauthorized and message isn't Expired Token
-        // the system should show the error an error message.
-        // For 401 errors of type Expired Token, the user must be logged out and redirected to the login screen.
-        if (err.statusCode !== 401 && err.message !== 'Expired token') {
+        // If the statusCode is 401 unauthorized the system should redirect the user to the logout screen
+        // For all other types of errors the user should be shown an error message.
+        if (err.statusCode === 401) {
+          store.dispatch(expiredTokenLogout())
+        } else {
           let customErrorNotification = null
           if (typeof errorNotification === 'function') {
             customErrorNotification = errorNotification(err.data, true)
           }
           // Maybe dont dispatch always the message? in case we need to do something else with the response.
           store.dispatch(showError(customErrorNotification || errorNotification, err))
-        } else {
-          store.dispatch(expiredTokenLogout())
         }
       }
       return Promise.reject(err)
