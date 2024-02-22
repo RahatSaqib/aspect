@@ -12,6 +12,9 @@ const { createStreamFromFileReference } = require('../file/service')
 const { JOB_FUNCTION_EXTERNAL_ID_FOR_API } = require('../shared/constants')
 
 const { loadPlugin } = require('../plugin/loadPlugin')
+const { knex } = require('../db')
+const { RESULT_STRING_TEMPLATE_FIELDS } = require('../result/query')
+const { getResultForStringTemplateProcessing } = require('../result/service')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -245,17 +248,28 @@ async function getAllWebhookServers(knex, context) {
   return allServers
 }
 
+async function getInternalApiNotifications() {
+  /**
+   * get all internal API notifications
+   */
+  const jobFunctionIdForApi = await jobFunctionToId(JOB_FUNCTION_EXTERNAL_ID_FOR_API)
+  const internalApiNotifications = await knex('NotificationType as nt')
+    .innerJoin('MessageType as mt', 'nt.messageTypeId', 'mt.id')
+    .innerJoin('WebhookTemplate as wh', 'mt.webhookTemplateId', 'wh.id')
+    .where('nt.jobFunctionId', jobFunctionIdForApi)
+    .select('wh.*')
+
+  // eslint-disable-next-line no-console
+  console.log('_________________ internalApiNotifications', internalApiNotifications)
+  return internalApiNotifications
+}
+
 async function onWebHookServerCheckTokens(action, context) {
   return context.messageContext.run(async knex => {
     /**
      * get all internal API notifications
      */
-    const jobFunctionIdForApi = await jobFunctionToId(JOB_FUNCTION_EXTERNAL_ID_FOR_API)
-    const internalApiNotifications = await knex('NotificationType as nt')
-      .innerJoin('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-      .innerJoin('WebhookTemplate as wh', 'mt.webhookTemplateId', 'wh.id')
-      .where('nt.jobFunctionId', jobFunctionIdForApi)
-      .select('wh.*')
+    const internalApiNotifications = await getInternalApiNotifications()
 
     // eslint-disable-next-line no-console
     console.log('_________________ internalApiNotifications', internalApiNotifications)
@@ -347,11 +361,116 @@ async function onPostResultToWebHookServers(action, context) {
      */
     const getWebhookServers = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getWebHookServers')
     const webhookServers = await getWebhookServers(context)
+
+    const internalApiNotifications = await getInternalApiNotifications()
+    // console.log('internalApiNotifications', internalApiNotifications)
+    // console.log('web hook server', webhookServers)
+    const result = await getResultForStringTemplateProcessing(
+      resultId,
+      [
+        ...RESULT_STRING_TEMPLATE_FIELDS,
+        'r.instrumentSerial',
+        'r.assayId',
+        'd.id as resultDeviceId',
+        'rc1.externalId as resultCategory1',
+        'st.name as stateName',
+        'lga.name as cityName',
+        knex.raw(
+          "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
+        ),
+      ],
+      knex
+    )
+    // console.log('result', result)
+    const {
+      instrumentSerial,
+      sampleExternalId,
+      resultOutcome,
+      sampleId,
+      resultModuleName,
+      siteName,
+      siteId,
+      stateName,
+      cityName,
+      resultRawData,
+    } = result
+
+    const {
+      softwareVersion,
+      reagentLotId,
+      gxConnectVersion,
+      moduleName,
+      moduleSerialNumber,
+      cartridgeSerial,
+      country,
+      computerId,
+    } = JSON.parse(result.resultData)
+
+    const testResult = {
+      instrumentSerialNumber: instrumentSerial,
+      gatewaySerialNumber: gxConnectVersion,
+      instrumentModel: resultModuleName,
+      softwareVersion,
+      firmwareVersion: '2.5.0',
+      operatingSystem: computerId,
+      lisConnected: true,
+      daisyChained: false,
+      institutionGuid: '123456789',
+      institutionName: 'Example Hospital',
+      labName: siteName, // site name
+      labGuid: siteId, // site id
+      labLocationCountry: country,
+      labLocationRegion: stateName, // state name
+      labLocationDistrict: cityName, // site city
+      adc2Psi: 0.5,
+      errorStatus: 'OK',
+      testResultGuid: resultId,
+      resultCategory: resultOutcome,
+      reagentLotId,
+      instrumentSerial,
+      sampleType: sampleExternalId,
+      data: resultRawData,
+      datagramFormat: 2,
+      dataReductionAlgorithm: 3,
+      icoreSerialNumber: 'ICORE123',
+      moduleName,
+      moduleSerialNumber,
+      moduleColor: '6-Color',
+      orderTime: 1645510800000,
+      exportTime: 1645514400000,
+      startTime: 1645512000000,
+      endTime: 1645515600000,
+      testModifiedTime: 1645516200000,
+      testCreationInInstrument: 1645510800000,
+      status: 2,
+      sampleId,
+      cartridgeSerialNumber: cartridgeSerial,
+      analytes: [
+        {
+          analyteIndex: 1,
+          analyteName: 'Cycle Threshold',
+          curveFitResult: 0.98,
+          cycleThreshold: 25,
+          endpoint: 100,
+          quantitativeResult: 0.05,
+        },
+      ],
+      errors: [
+        {
+          errorCode: 5007,
+          details: 'Error occurred during analysis',
+          logTime: 1645515600000,
+          severity: 2,
+        },
+      ],
+    }
     /**
      * loop all webhook servers and call their postResult method
      */
-    await Promise.each(_.keys(webhookServers), async serverKey => {
-      const server = webhookServers[serverKey]
+    await Promise.each(internalApiNotifications, async d => {
+      const server = webhookServers[d.externalId]
+      if (!server) return
+
       const { pushResult, isTokenValid } = server
 
       if (isTokenValid()) {
@@ -364,7 +483,7 @@ async function onPostResultToWebHookServers(action, context) {
           isTokenValid: server.isTokenValid(),
         })
 
-        await pushResult({ knex, resultId })
+        await pushResult(d.urlBase, d.headers || {}, d.params || {}, testResult)
       } else {
         /**
          * TODO: discuss what to do if token is invalid.

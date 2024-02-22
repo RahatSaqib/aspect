@@ -251,6 +251,7 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'p.plugin as partnerPlugin',
   's.externalId as siteExternalId',
   's.name as siteName',
+  's.id as siteId',
   's.shortname as siteShortName',
   's.externalId as siteExternalId',
   'd.name as deviceName',
