@@ -413,6 +413,14 @@ function getAllMonthsInRange(minDate, maxDate) {
   return allRanges.sort()
 }
 
+function getDateInMiliSeconds(date) {
+  const providedDate = new Date(date)
+
+  const unixEpoch = new Date('1970-01-01T00:00:00Z')
+
+  return providedDate.getTime() - unixEpoch.getTime()
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -454,4 +462,5 @@ module.exports = {
   daysBetweenDates,
   arrayofIANATimezone,
   getAllMonthsInRange,
+  getDateInMiliSeconds,
 }

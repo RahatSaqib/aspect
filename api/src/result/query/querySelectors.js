@@ -264,6 +264,8 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'r.patientData as resultPatientData',
   'r.startedOn as resultStartedOn',
   'r.endedOn as resultEndedOn',
+  'r.updatedOn as resultUpdatedOn',
+  'r.createdOn as resultCreatedOn',
   'r.notes as resultNotes',
   'r.consumableSerial',
   'r.consumableLot',

@@ -12,9 +12,10 @@ const { createStreamFromFileReference } = require('../file/service')
 const { JOB_FUNCTION_EXTERNAL_ID_FOR_API } = require('../shared/constants')
 
 const { loadPlugin } = require('../plugin/loadPlugin')
-const { knex } = require('../db')
+// const { knex } = require('../db')
 const { RESULT_STRING_TEMPLATE_FIELDS } = require('../result/query')
 const { getResultForStringTemplateProcessing } = require('../result/service')
+const { getDateInMiliSeconds } = require('../shared/date')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -270,22 +271,6 @@ async function getWebhookServers(knex, context) {
   return allServers
 }
 
-async function getInternalApiNotifications() {
-  /**
-   * get all internal API notifications
-   */
-  const jobFunctionIdForApi = await jobFunctionToId(JOB_FUNCTION_EXTERNAL_ID_FOR_API)
-  const internalApiNotifications = await knex('NotificationType as nt')
-    .innerJoin('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-    .innerJoin('WebhookTemplate as wh', 'mt.webhookTemplateId', 'wh.id')
-    .where('nt.jobFunctionId', jobFunctionIdForApi)
-    .select('wh.*')
-
-  // eslint-disable-next-line no-console
-  console.log('_________________ internalApiNotifications', internalApiNotifications)
-  return internalApiNotifications
-}
-
 async function onWebHookServerCheckTokens(action, context) {
   return context.messageContext.run(async knex => {
     /**
@@ -303,6 +288,7 @@ async function onWebHookServerCheckTokens(action, context) {
      * get list of all registered/available webhook servers
      */
     const webhookServers = await getWebhookServers(knex, context)
+    console.log('webhookServers', webhookServers)
     /**
      *
      */
@@ -360,7 +346,7 @@ async function onPostResultToWebHookServers(action, context) {
       ],
       knex
     )
-    // console.log('result', result)
+    console.log('result', result)
     const {
       instrumentSerial,
       sampleExternalId,
@@ -372,6 +358,10 @@ async function onPostResultToWebHookServers(action, context) {
       stateName,
       cityName,
       resultRawData,
+      resultStartedOn,
+      resultEndedOn,
+      resultUpdatedOn,
+      resultCreatedOn,
     } = result
 
     const {
@@ -390,38 +380,38 @@ async function onPostResultToWebHookServers(action, context) {
       gatewaySerialNumber: gxConnectVersion,
       instrumentModel: resultModuleName,
       softwareVersion,
-      firmwareVersion: '2.5.0',
       operatingSystem: computerId,
-      lisConnected: true,
-      daisyChained: false,
-      institutionGuid: '123456789',
-      institutionName: 'Example Hospital',
       labName: siteName, // site name
       labGuid: siteId, // site id
       labLocationCountry: country,
       labLocationRegion: stateName, // state name
       labLocationDistrict: cityName, // site city
-      adc2Psi: 0.5,
-      errorStatus: 'OK',
       testResultGuid: resultId,
       resultCategory: resultOutcome,
       reagentLotId,
       instrumentSerial,
       sampleType: sampleExternalId,
       data: resultRawData,
+      moduleName,
       datagramFormat: 2,
       dataReductionAlgorithm: 3,
       icoreSerialNumber: 'ICORE123',
-      moduleName,
+      adc2Psi: 0.5,
+      errorStatus: 'OK',
       moduleSerialNumber,
       moduleColor: '6-Color',
+      lisConnected: true,
+      daisyChained: false,
+      institutionGuid: '123456789',
+      institutionName: 'Example Hospital',
       orderTime: 1645510800000,
       exportTime: 1645514400000,
-      startTime: 1645512000000,
-      endTime: 1645515600000,
-      testModifiedTime: 1645516200000,
-      testCreationInInstrument: 1645510800000,
+      firmwareVersion: '2.5.0',
       status: 2,
+      startTime: getDateInMiliSeconds(resultStartedOn), // startedON
+      endTime: getDateInMiliSeconds(resultEndedOn), // endedOn
+      testModifiedTime: getDateInMiliSeconds(resultUpdatedOn), // updatedOn
+      testCreationInInstrument: getDateInMiliSeconds(resultCreatedOn), // createdOn
       sampleId,
       cartridgeSerialNumber: cartridgeSerial,
       analytes: [
@@ -450,7 +440,7 @@ async function onPostResultToWebHookServers(action, context) {
       const { server, props } = webhookServers[key]
 
       if (props.isValid) {
-        await server.pushResult(props.headers.toPushResult || {}, props.params.toPushResult || {}, action)
+        await server.pushResult(props.headers.toPushResult || {}, props.params.toPushResult || {}, testResult)
       } else {
         /**
          * TODO: discuss what to do if token is invalid.
