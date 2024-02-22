@@ -6,6 +6,7 @@ import trim from 'lodash/trim'
 import { defineMessages } from 'react-intl'
 import config from '../../config'
 import { showError } from '../../store/AppNotificationRedux'
+import { expiredTokenLogout } from '../../store/AuthRedux'
 
 export const aspectFetch = createFetch(
   base(config.aspectApi),
@@ -125,6 +126,9 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
           }
           // Maybe dont dispatch always the message? in case we need to do something else with the response.
           store.dispatch(showError(customErrorNotification || errorNotification, err))
+        } else {
+          store.dispatch(expiredTokenLogout())
+          return Promise.resolve(err)
         }
       }
       return Promise.reject(err)
