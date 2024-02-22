@@ -18,6 +18,7 @@ const dateKeys = require('./dateKeys')
 const { getResultDateOrDefault } = require('../common/utils')
 const { mapPatientData, sampleTypeMapping, resultDataMappings } = require('./mappings')
 const { testTypes } = require('../common/mapping')
+const { insertSite } = require('../../../site/common/db')
 
 class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
   constructor(request, messageContext) {
@@ -99,7 +100,7 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
                 .whereNull('countryGeography.stateId')
                 .whereNull('countryGeography.lgaId')
                 .first('countryGeography.id as countryGeographyId', 'country.timezone')) || {}
-            const [originSiteId] = await knex('Site').insert({
+            const [originSiteId] = await insertSite(knex, {
               name: referringFacility,
               shortName,
               externalId: referringFacility,

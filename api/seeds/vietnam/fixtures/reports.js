@@ -8,6 +8,7 @@ module.exports = {
     fileName: 'm4b2Activities',
     exportCsv: false,
     sortOrder: 20,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,
@@ -31,6 +32,7 @@ module.exports = {
     fileName: 'm4b1Patients',
     sortOrder: 20,
     exportCsv: false,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,
@@ -49,6 +51,7 @@ module.exports = {
     externalId: 'result_counts_by_hiv_status',
     fileName: 'resultCountsByHIVStatus',
     sortOrder: 30,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,
@@ -66,6 +69,7 @@ module.exports = {
     fileName: 'listRResistantTest',
     exportCsv: false,
     sortOrder: 30,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,
@@ -83,6 +87,7 @@ module.exports = {
     fileName: 'globalFundInventoryReport',
     exportCsv: true,
     sortOrder: 50,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,
@@ -100,6 +105,7 @@ module.exports = {
     fileName: 'reasonForTestingReport',
     exportCsv: false,
     sortOrder: 40,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,
@@ -117,6 +123,7 @@ module.exports = {
     fileName: 'xpert_m4b3_biological_products',
     exportCsv: false,
     sortOrder: 70,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,

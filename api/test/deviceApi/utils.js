@@ -13,6 +13,7 @@ const {
   resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
+const { insertSite } = require('../../src/site/common/db')
 
 const { assert } = chai
 
@@ -177,7 +178,7 @@ async function createSite(knex, { partner, user, site }) {
     .first('g.id')
 
   // create new site
-  const [siteId] = await knex('Site').insert({
+  const [siteId] = await insertSite(knex, {
     name: 'Test Site',
     shortName: 'Test Site',
     externalId: site || `Test Site ${new Date().getTime()}`,

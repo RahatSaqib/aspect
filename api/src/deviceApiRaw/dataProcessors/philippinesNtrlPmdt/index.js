@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const Boom = require('@hapi/boom')
+const { insertSite } = require('../../../site/common/db')
 const { transact } = require('../../../db')
 const { getDateOrDefault, parseDateOrDefault, dateEqual } = require('../../../shared/date')
 const { deviceSeen } = require('../../../device/actions')
@@ -90,7 +91,7 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
                 .whereNull('countryGeography.stateId')
                 .whereNull('countryGeography.lgaId')
                 .first('countryGeography.id as countryGeographyId', 'country.timezone')) || {}
-            const [originSiteId] = await knex('Site').insert({
+            const [originSiteId] = await insertSite(knex, {
               name: referringHealthFacilityExternalId,
               shortName,
               externalId: referringHealthFacilityExternalId,

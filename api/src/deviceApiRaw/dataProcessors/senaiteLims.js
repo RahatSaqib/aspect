@@ -15,6 +15,7 @@ const {
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
 const logger = require('../../shared/logger')
+const { insertSite } = require('../../site/common/db')
 
 class DefaultSenaiteLIMS extends SynchronousDataProcessor {
   constructor(request, messageContext) {
@@ -179,7 +180,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           originSiteGeographyId = originSiteGeography.id
         }
         if (!originSiteId) {
-          ;[originSiteId] = await knex('Site').insert({
+          ;[originSiteId] = await insertSite(knex, {
             name: facilityName,
             externalId: limsFacilityId,
             partnerId,

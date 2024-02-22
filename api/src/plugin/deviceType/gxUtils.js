@@ -4,6 +4,7 @@ const Promise = require('bluebird')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const { isNil } = require('lodash')
 
+const { insertSite } = require('../../site/common/db')
 const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
@@ -22,7 +23,6 @@ const {
 const { splitResultTextValues, sanitizeResultTextValue } = require('./GxConnect/resultCategories/utils')
 const { getInventoryStrategy, changeInventoryQuantity } = require('../../inventory/common/logic')
 const { assayNameToExternalId } = require('../../shared/assayNameToExternalId')
-
 /*
 The purpose of this plugin is to ensure that results are captured
 even when the site is unknown to Aspect
@@ -734,7 +734,7 @@ async function getOrCreateSite(knex, device, payload, now, countryCode, deviceNa
         if (newSite.externalId.length > 255) {
           newSite.externalId = newSite.externalId.substr(0, 255)
         }
-        const [newSiteId] = await knex.insert(newSite).into('Site')
+        const [newSiteId] = await insertSite(knex, newSite)
         sites = await knex.from('Site as s').where('s.id', newSiteId).select()
       }
     }

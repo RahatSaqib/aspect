@@ -28,6 +28,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const upsertConsumables = require('../common/upsert_consumables')
+const { insertSite } = require('../../src/site/common/db')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -883,7 +884,7 @@ async function seed(knex) {
             longitude: _.has(state, 'lng') ? state.lng + _.random(-0.5, 0.5, true) : undefined,
             ...auditFields,
           }
-          const [siteId] = await knex('Site').insert(siteData)
+          const [siteId] = await insertSite(knex, siteData)
           siteData.id = siteId
           siteDatas.push(siteData)
         }
@@ -904,7 +905,7 @@ async function seed(knex) {
     longitude: 0,
     ...auditFields,
   }
-  const [siteDaytonId] = await knex('Site').insert(siteDataDayton)
+  const [siteDaytonId] = await insertSite(knex, siteDataDayton)
   siteDataDayton.id = siteDaytonId
 
   const { id: geographyId } = await knex('Geography as g')
