@@ -68,7 +68,7 @@ const NationalTestingTrendsGraph = () => {
           />
           <LgaSelect
             value={filter?.lgaId ?? ''}
-            stateId={filter.stateId}
+            stateId={filter?.stateId}
             onChange={e => setFilter(prev => ({ ...prev, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
