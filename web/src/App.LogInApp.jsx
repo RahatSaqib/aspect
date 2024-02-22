@@ -105,7 +105,7 @@ const LogInApp = () => {
     dispatch(fetchCountries())
 
     // Refresh the access token every 30 minutes.
-    const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)
+    const refreshToken = setInterval(() => dispatch(refreshStart()), 30 * 60 * 1000)
     return () => clearInterval(refreshToken)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
