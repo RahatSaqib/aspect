@@ -1,5 +1,4 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
-import * as Sentry from '@sentry/react'
 import { useIdleTimer } from 'react-idle-timer'
 import { defineMessages, useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
@@ -94,13 +93,12 @@ const LogInApp = () => {
   useHashAndScroll()
 
   const [showIdleDialog, setShowIdleDialog] = useState(false)
-  const { countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedOut, loggedOutReason, userPermissions, jwt } =
+  const { countryId, countryAbbreviation, hasToAcceptLicenseId, isLoggedOut, loggedOutReason, userPermissions } =
     useAuthState()
 
   useEffect(() => window.scrollTo(0, 0), [location.pathname])
 
   useEffect(() => {
-    Sentry.captureMessage(`::LOGIN:: user: ${jwt?.name}`)
     // fetch countries on start so we have them ready for all if (countries.lenght === 1) { ... } logic
     dispatch(fetchCountries())
 
@@ -120,7 +118,6 @@ const LogInApp = () => {
     onPrompt: () => setShowIdleDialog(true),
     // Close Modal Prompt & log out your user
     onIdle: () => {
-      Sentry.captureMessage(`::LOGOUT:: AUTOMATIC for user: ${jwt?.name}`)
       setShowIdleDialog(false)
       dispatch(idleLogout())
     },
