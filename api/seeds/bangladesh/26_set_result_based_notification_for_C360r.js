@@ -41,52 +41,46 @@ async function seed(knex) {
     ;[webhookTemplateId] = await knex('WebhookTemplate').insert({
       method: 'POST',
       externalId: WEBHOOK_SERVERS.CepheidC360,
-      urlBase: 'http://localhost:8080/api',
-      url: '/',
+      url: '',
       headers: JSON.stringify({
         toLogin: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          /**
+           * this is a Basic<BASE64(CLIENT_ID:CLIENT_SECRET) OAuth 2.0 type.
+           * to get this value - run btoa('client_id:client_secret') in browser console.
+           * See client_id and client_secret in LastPass > Shared-SystemOne IT > Cepheid C360
+           */
+          Authorization:
+            'Basic NTN1MjBlbWVrdTJqZm5jbG9sMTJ1NTRjanI6Z2oyNjM4YWxuOTE4cTB2dWpiOWQ3djRmbGZhZjQ1N2M1cWIzYmlvNmgwM3IwaDVnaW9z',
         },
         toRefreshToken: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
+          Authorization:
+            'Basic NTN1MjBlbWVrdTJqZm5jbG9sMTJ1NTRjanI6Z2oyNjM4YWxuOTE4cTB2dWpiOWQ3djRmbGZhZjQ1N2M1cWIzYmlvNmgwM3IwaDVnaW9z',
         },
         toPushResult: {
-          Accept: 'application/json',
-          'Content-Type': 'application/json',
           Authorization: 'Bearer {{accessToken}}',
         },
       }),
       params: JSON.stringify({
         toLogin: {
           method: 'POST',
-          url: '/auth',
+          url: 'https://auth-datareceiver-dev.stg.c360.cepheid.com/oauth2/token',
           payload: {
-            clientId: '1084285d-6005-4dec-a7a3-ee12e41be100',
-            clientType: 'web',
-            clientName: 'Aspect API Webhook',
-            name: 'admin',
-            password: 'Pa$$w0rd',
+            grant_type: 'client_credentials',
+            client_id: '53u20emeku2jfnclol12u54cjr',
           },
         },
         toRefreshToken: {
           method: 'POST',
-          url: '/auth/refresh',
+          url: 'https://auth-datareceiver-dev.stg.c360.cepheid.com/oauth2/token',
           payload: {
-            clientId: '1084285d-6005-4dec-a7a3-ee12e41be100',
-            clientType: 'web',
-            token: '{{refreshToken}}',
+            grant_type: 'client_credentials',
+            client_id: '53u20emeku2jfnclol12u54cjr',
           },
         },
         toPushResult: {
           method: 'POST',
-          url: '/auth/refresh',
-          payload: {
-            clientId: '1084285d-6005-4dec-a7a3-ee12e41be100',
-            clientType: 'web',
-            token: '{{refreshToken}}',
-          },
+          url: 'https://datareceiver-dev.stg.c360.cepheid.com/datareceiver/api/v1/{{instrumentSerialNumber}}/instrumentTests',
+          payload: {},
         },
         isValid: false,
         accessToken: '',

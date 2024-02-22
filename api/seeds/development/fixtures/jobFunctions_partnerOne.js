@@ -9,6 +9,7 @@ const {
   resultViewerYes,
   technician,
   mergeJobFunctions,
+  api,
 } = require('../../fixtures/jobFunctionBase')
 
 const adminEnhanced = mergeJobFunctions(admin, {
@@ -33,4 +34,5 @@ module.exports = [
       },
     ],
   },
+  api,
 ]
