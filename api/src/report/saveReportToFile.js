@@ -45,8 +45,13 @@ async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = f
     },
   })
 
-  const promise = new Promise(resolve => {
-    worker.on('message', () => resolve(fullPath))
+  const promise = new Promise((resolve, reject) => {
+    worker.on('message', response => {
+      if (response.error) {
+        return reject(response.error)
+      }
+      return resolve(fullPath)
+    })
   })
 
   return { fileName, extension, promise }

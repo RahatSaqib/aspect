@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { createNewDevice } = require('../../../deviceApi/device')
+const { insertSite } = require('../../../site/common/db')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
@@ -156,7 +157,7 @@ async function getOrCreateSite(knex, alereFtpConnectorDevice, deviceDetails, now
     if (newSite.externalId.length > 255) {
       newSite.externalId = newSite.externalId.substr(0, 255)
     }
-    const [siteId] = await knex.insert(newSite).into('Site')
+    const [siteId] = await insertSite(knex, newSite)
     matchingSites = await knex.from('Site as s').where('s.id', siteId).select()
   }
   let matchingSite = null

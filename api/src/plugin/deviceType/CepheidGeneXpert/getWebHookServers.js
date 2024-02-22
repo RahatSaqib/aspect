@@ -1,120 +1,137 @@
 const _ = require('lodash')
-const { createFetch, base, accept, header, method, body } = require('http-client')
-const jwtDecode = require('jwt-decode')
+const fetch = require('node-fetch')
 
 const { WEBHOOK_SERVERS } = require('../../../shared/constants')
 
-const setHeaders = (src, dst) => {
-  _.each(_.keys(src), key => {
-    dst.push(header(key, src[key]))
-  })
+const emptyData = {
+  accessToken: '',
+  refreshToken: '',
+  isValid: false,
+  expiresOn: new Date(),
 }
 
 const srvCepheidC360 = (function () {
-  const emptyData = {
-    accessToken: '',
-    refreshToken: '',
-    isValid: false,
-    expiresOn: new Date(),
-  }
-  const getResponseData = respJson => {
-    const { access, refresh } = respJson
-    const decoded = jwtDecode(access)
-    return {
-      accessToken: access,
-      refreshToken: refresh,
-      isValid: true,
-      expiresOn: new Date(Date.now() + (decoded.exp - decoded.iat) * 1000),
-    }
-  }
   /**
    * public
    */
-  const authorize = async (baseUrl, headers = {}, params = {}) => {
+  const getToken = async (headers = {}, params = {}) => {
+    let error
+    let statusCode
+    let statusText
     try {
-      const fetchArgs = [
-        //
-        method(params.method || 'POST'),
-        //
-        base(baseUrl),
-      ]
-      setHeaders(headers, fetchArgs)
-      const payload = params.payload || {}
-      const fetch = createFetch(...fetchArgs, body(JSON.stringify(payload), 'application/json'))
-      const resp = await fetch(params.url)
-      if (resp.status === 200) {
-        const respJson = await resp.json()
-        return getResponseData(respJson)
-      }
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log('__________authorize err =', err)
-    }
-    return emptyData
-  }
-  const refresh = async (baseUrl, headers = {}, params = {}, refreshToken) => {
-    try {
-      const fetchArgs = [
-        //
-        method(params.method || 'POST'),
-        //
-        base(baseUrl),
-      ]
-      setHeaders(headers, fetchArgs)
-      let payload = params.payload || {}
+      const body = new URLSearchParams()
+      body.append('client_id', '53u20emeku2jfnclol12u54cjr')
+      body.append('grant_type', 'client_credentials')
 
-      payload = {
-        ...payload,
-        token: refreshToken,
+      const options = {
+        method: params.method || 'POST',
+        headers: {
+          ...headers,
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body,
       }
-      const fetch = createFetch(...fetchArgs, body(JSON.stringify(payload), 'application/json'))
-      const resp = await fetch(params.url)
+
+      const resp = await fetch(params.url, options)
+      const respJson = await resp.json()
       if (resp.status === 200) {
-        const respJson = await resp.json()
-        return getResponseData(respJson)
+        return {
+          params: {
+            accessToken: respJson.access_token,
+            isValid: true,
+            expiresOn: new Date(Date.now() + respJson.expires_in * 1000),
+            lastAction: {
+              type: 'GET_TOKEN',
+              statusCode: resp.status,
+              statusText: resp.statusText,
+              error: null,
+            },
+          },
+          headers: {
+            toPushResult: {
+              Authorization: `Bearer ${respJson.access_token}`,
+            },
+          },
+        }
       }
+      ;({ error } = respJson)
+      statusCode = resp.status
+      statusText = resp.statusText
     } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log('__________refresh token err =', err)
+      error = err.toString()
     }
-    return emptyData
+    return {
+      params: {
+        ...emptyData,
+        lastAction: {
+          type: 'GET_TOKEN',
+          statusCode,
+          statusText,
+          error,
+        },
+      },
+    }
   }
-  const pushResult = async (baseUrl, headers = {}, params = {}, data) => {
+  const pushResult = async (headers = {}, params = {}, action) => {
     /**
      * see https://systemone.youtrack.cloud/issue/ASP-6621
      */
     const { isValid } = params
     if (isValid) {
+      let error
+      let statusCode
+      let statusText
       try {
-        const fetchArgs = [
-          //
-          method(params.method || 'POST'),
-          //
-          base(baseUrl),
-        ]
-        setHeaders(headers, fetchArgs)
-        let payload = params.payload || {}
+        const { instrumentSerialNumber } = action
+        let { data } = action
+        if (_.isPlainObject(data)) {
+          data = [data]
+        }
+        const url = _.replace(params.url, '{{instrumentSerialNumber}}', instrumentSerialNumber)
+        const options = {
+          method: params.method || 'POST',
+          headers: {
+            ...headers,
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(data),
+        }
 
-        payload = {
-          ...payload,
-          data,
-        }
-        const fetch = createFetch(...fetchArgs, body(JSON.stringify(payload), 'application/json'))
-        const resp = await fetch(params.url)
+        const resp = await fetch(url, options)
+        const respJson = await resp.json()
         if (resp.status === 200) {
-          // const respJson = await resp.json()
-          return true
+          return {
+            params: {
+              lastAction: {
+                type: 'PUSH_RESULT',
+                statusCode: resp.status,
+                statusText: resp.statusText,
+                error: null,
+              },
+            },
+          }
         }
+        ;({ error } = respJson)
+        statusCode = resp.status
+        statusText = resp.statusText
       } catch (err) {
-        // eslint-disable-next-line no-console
-        console.log('__________pushResult token err =', err)
+        error = err.toString()
+      }
+      return {
+        params: {
+          lastAction: {
+            type: 'PUSH_RESULT',
+            statusCode,
+            statusText,
+            error,
+          },
+        },
       }
     }
   }
 
   return {
-    authorize,
-    refresh,
+    getToken,
     pushResult,
   }
 })()

@@ -27,6 +27,7 @@ const {
 } = require('../../src/shared/dictionary')
 const patients = require('../../seeds/test/fixtures/patients.json')
 const { getRandomGeneXpertPatientData } = require('../../seeds/commonTBResults')
+const { insertSite } = require('../../src/site/common/db')
 
 const totalPatients = patients.length
 
@@ -124,7 +125,7 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
       })
 
       // create new site for same partner and same geography
-      ;[siteId] = await knex('Site').insert({
+      ;[siteId] = await insertSite(knex, {
         name: 'Test Site',
         shortName: 'Test Site',
         externalId: `Test Site ${new Date().getTime()}`,

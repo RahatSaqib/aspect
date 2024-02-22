@@ -226,7 +226,17 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
   return message
 }
 
-async function getAllWebhookServers(knex, context) {
+async function getWebhookServers(knex, context) {
+  /**
+   * get all internal API notifications
+   */
+  const jobFunctionIdForApi = await jobFunctionToId(JOB_FUNCTION_EXTERNAL_ID_FOR_API)
+  const internalApiNotifications = await knex('NotificationType as nt')
+    .innerJoin('MessageType as mt', 'nt.messageTypeId', 'mt.id')
+    .innerJoin('WebhookTemplate as wh', 'mt.webhookTemplateId', 'wh.id')
+    .where('nt.jobFunctionId', jobFunctionIdForApi)
+    .select('wh.*')
+
   /**
    * TODO: think if makes sense to cache partner's and deviceType's plugin names.
    * See ticket ASP-6686 "Cache more data than we have in dictionary.js"
@@ -237,12 +247,24 @@ async function getAllWebhookServers(knex, context) {
   let allServers = {}
   await Promise.each(partnerPlugins, async ({ partnerPluginName }) => {
     await Promise.each(deviceTypePlugins, async ({ deviceTypePluginName }) => {
-      const getWebhookServers = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getWebHookServers')
-      const webhookServers = await getWebhookServers(context)
-      allServers = {
-        ...allServers,
-        ...webhookServers,
-      }
+      const getServers = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getWebHookServers')
+      const webhookServers = await getServers(context)
+
+      await Promise.each(internalApiNotifications, async props => {
+        const server = webhookServers[props.externalId]
+        if (!server) return
+
+        props.params = JSON.parse(props.params || '{}')
+        props.headers = JSON.parse(props.headers || '{}')
+
+        allServers = {
+          ...allServers,
+          [props.externalId]: {
+            server,
+            props,
+          },
+        }
+      })
     })
   })
   return allServers
@@ -267,102 +289,59 @@ async function getInternalApiNotifications() {
 async function onWebHookServerCheckTokens(action, context) {
   return context.messageContext.run(async knex => {
     /**
-     * get all internal API notifications
-     */
-    const internalApiNotifications = await getInternalApiNotifications()
-
-    // eslint-disable-next-line no-console
-    console.log('_________________ internalApiNotifications', internalApiNotifications)
-
-    /**
      * helper func
      */
     const updateWebhookTemplate = async (id, params, headers, data) => {
-      const { accessToken, refreshToken, expiresOn, isValid } = data
-
-      headers.toPushResult = headers.toPushResult || {}
-      if (headers.toPushResult.Authorization) {
-        headers.toPushResult.Authorization = headers.toPushResult.Authorization.replace(
-          '{{accessToken}}',
-          params.accessToken
-        )
-      }
       await knex('WebhookTemplate')
         .update({
-          params: JSON.stringify({
-            ...params,
-            accessToken,
-            refreshToken,
-            expiresOn,
-            isValid,
-          }),
-          headers: JSON.stringify(headers),
+          params: JSON.stringify(_.merge(params, data.params || {})),
+          headers: JSON.stringify(_.merge(headers, data.headers)),
         })
         .where('id', id)
     }
     /**
      * get list of all registered/available webhook servers
      */
-    const webhookServers = await getAllWebhookServers(knex, context)
+    const webhookServers = await getWebhookServers(knex, context)
     /**
      *
      */
-    await Promise.each(internalApiNotifications, async d => {
-      const server = webhookServers[d.externalId]
-      if (!server) return
+    await Promise.each(_.keys(webhookServers), async key => {
+      const { server, props } = webhookServers[key]
 
-      d.params = JSON.parse(d.params || '{}')
-      d.headers = JSON.parse(d.headers || '{}')
+      // eslint-disable-next-line no-console
+      console.log('_____ check - params', props.params)
+      // eslint-disable-next-line no-console
+      console.log('_____ check - headers', props.headers)
 
       const now = new Date()
-      if (!d.params.expiresOn) {
-        const data = await server.authorize(d.urlBase, d.headers.toLogin || {}, d.params.toLogin || {})
+      if (!props.params.expiresOn) {
+        const data = await server.getToken(props.headers.toLogin || {}, props.params.toLogin || {})
 
         // eslint-disable-next-line no-console
-        console.log('_________________ authorize', d.params.toLogin)
+        console.log('_________________ login', data)
 
-        await updateWebhookTemplate(d.id, d.params, d.headers, data)
-      } else if (differenceInMinutes(new Date(d.params.expiresOn), now) <= 10) {
-        /**
-         * ^^^^
-         * TODO: think to move 10 to either .env or in db or in plugin (if different
-         * webhook servers may have different remained time until token expires)
-         */
-        const data = await server.refresh(
-          d.urlBase,
-          d.headers.toRefreshToken || {},
-          d.params.toRefreshToken || {},
-          d.params.refreshToken || ''
-        )
+        await updateWebhookTemplate(props.id, props.params, props.headers, data)
+      } else if (differenceInMinutes(new Date(props.params.expiresOn), now) <= 100) {
+        const data = await server.getToken(props.headers.toRefreshToken || {}, props.params.toRefreshToken || {})
+
         // eslint-disable-next-line no-console
-        console.log('_________________ refresh', d.params.toRefreshToken)
+        console.log('_________________ refresh', data)
 
-        await updateWebhookTemplate(d.id, d.params, d.headers, data)
+        await updateWebhookTemplate(props.id, props.params, props.headers, data)
       }
     })
   })
 }
 
 async function onPostResultToWebHookServers(action, context) {
+  const { resultId } = action
   return context.messageContext.run(async knex => {
-    const { resultId } = action
     /**
-     * get plugin names for result's deviceType and partner
+     * get list of all registered/available webhook servers
      */
-    const { deviceTypePluginName, partnerPluginName } =
-      (await knex('Result as r')
-        .innerJoin('Device as d', 'r.deviceId', 'd.id')
-        .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-        .innerJoin('Partner as p', 'r.partnerId', 'p.id')
-        .where('r.id', resultId)
-        .first('dt.plugin as deviceTypePluginName', 'p.plugin as partnerPluginName')) || {}
-    /**
-     * get all webhook servers, if any defined
-     */
-    const getWebhookServers = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getWebHookServers')
     const webhookServers = await getWebhookServers(context)
 
-    const internalApiNotifications = await getInternalApiNotifications()
     // console.log('internalApiNotifications', internalApiNotifications)
     // console.log('web hook server', webhookServers)
     const result = await getResultForStringTemplateProcessing(
@@ -465,25 +444,13 @@ async function onPostResultToWebHookServers(action, context) {
       ],
     }
     /**
-     * loop all webhook servers and call their postResult method
+     *
      */
-    await Promise.each(internalApiNotifications, async d => {
-      const server = webhookServers[d.externalId]
-      if (!server) return
+    await Promise.each(_.keys(webhookServers), async key => {
+      const { server, props } = webhookServers[key]
 
-      const { pushResult, isTokenValid } = server
-
-      if (isTokenValid()) {
-        // eslint-disable-next-line no-console
-        console.log('_________________ post', {
-          accessToken: server.getAccessToken(),
-          refreshToken: server.getRefreshToken(),
-          expirationDate: server.getExpirationDate(),
-          resultId,
-          isTokenValid: server.isTokenValid(),
-        })
-
-        await pushResult(d.urlBase, d.headers || {}, d.params || {}, testResult)
+      if (props.isValid) {
+        await server.pushResult(props.headers.toPushResult || {}, props.params.toPushResult || {}, action)
       } else {
         /**
          * TODO: discuss what to do if token is invalid.

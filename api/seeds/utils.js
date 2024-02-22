@@ -18,6 +18,7 @@ const {
 const logger = require('../src/shared/logger')
 const config = require('../src/config')
 const { JOB_FUNCTION_EXTERNAL_ID_FOR_API } = require('../src/shared/constants')
+const { insertSite } = require('../src/site/common/db')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -2348,7 +2349,7 @@ async function insertSites(knex, partnerId, countryId, sites) {
         updatedBy: adminId,
       })
     } else {
-      ;[siteId] = await knex('Site').insert({
+      ;[siteId] = await insertSite(knex, {
         partnerId,
         geographyId: siteGeographyId,
         name: site.name,

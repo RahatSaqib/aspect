@@ -8,6 +8,7 @@ const labClinic = require('./fixtures/labClinic.json')
 const { addDeviceCapacities, setCapacityForExistingDevices } = require('../utils')
 const { randomToken } = require('../../src/deviceApi/apiKey')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
+const { insertSite } = require('../../src/site/common/db')
 
 async function seed(knex) {
   const { id: adminId } = await knex('User').where({ name: 'admin' }).first('id')
@@ -170,7 +171,7 @@ async function seed(knex) {
         siteData.externalId = lab.externalId
         siteData.latitude = lab.latitude
         siteData.longitude = lab.longitude
-        const [siteId] = await knex('Site').insert({
+        const [siteId] = await insertSite(knex, {
           ...siteData,
           ...auditFields,
         })
