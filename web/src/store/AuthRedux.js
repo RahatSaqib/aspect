@@ -251,6 +251,13 @@ export function idleLogout() {
   }
 }
 
+export function expiredTokenLogout() {
+  return {
+    type: types.LOGOUT,
+    data: { reason: reasonTypes.expiredJWT },
+  }
+}
+
 function refreshSuccess(data) {
   return {
     type: types.REFRESH_SUCCESS,
