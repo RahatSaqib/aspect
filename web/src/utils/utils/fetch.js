@@ -118,8 +118,10 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
             ...errorNotification,
           }
         }
-        // Only if statusCode isn't unauthorized or message isn't Expired Token, we should show the error as notification. For 401 errors of type Expired Token, the user will be logged out.
-        if (err.statusCode !== 401 || err.message !== 'Expired token') {
+        // Only if statusCode isn't unauthorized and message isn't Expired Token
+        // the system should show the error an error message.
+        // For 401 errors of type Expired Token, the user must be logged out and redirected to the login screen.
+        if (err.statusCode !== 401 && err.message !== 'Expired token') {
           let customErrorNotification = null
           if (typeof errorNotification === 'function') {
             customErrorNotification = errorNotification(err.data, true)
@@ -128,7 +130,6 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
           store.dispatch(showError(customErrorNotification || errorNotification, err))
         } else {
           store.dispatch(expiredTokenLogout())
-          return Promise.resolve(err)
         }
       }
       return Promise.reject(err)
