@@ -11,6 +11,7 @@ const { SynchronousDataProcessor } = require('../_base')
 const { postPayloadFromDevice } = require('../../../device/service')
 const { deviceSeen } = require('../../../device/actions')
 const { deviceApprovalToId, deviceTypeToId } = require('../../../shared/dictionary')
+const { insertSite } = require('../../../site/common/db')
 
 class TruenatLogin extends SynchronousDataProcessor {
   static get AllowUnauthenticatedRequests() {
@@ -99,7 +100,7 @@ class TruenatLogin extends SynchronousDataProcessor {
             createdOn: now,
             updatedOn: now,
           }
-          const [siteId] = await knex('Site').insert(site)
+          const [siteId] = await insertSite(knex, site)
           site.id = siteId
         }
         const truenatDeviceTypeId = await deviceTypeToId('molbioTruenat')
