@@ -15,6 +15,7 @@ const { getDevice } = require('../device/service')
 const inventoryUtils = require('../inventory/common/logic')
 const { mergeResultWithPayload } = require('../result/common/logic')
 const { getCustomFieldsFromPayload } = require('../forms/service')
+const { insertSite } = require('../site/common/db')
 
 async function getExistingResult(knex, payload, deviceId) {
   let existingResult = null
@@ -257,7 +258,7 @@ async function getSiteIdVarieties(knex, payload, site, now) {
       if (newSampleOriginSite.shortName.length > 45) {
         newSampleOriginSite.shortName = newSampleOriginSite.shortName.substr(0, 45)
       }
-      const [newSampleOriginSiteId] = await knex('Site').insert(newSampleOriginSite)
+      const [newSampleOriginSiteId] = await insertSite(knex, newSampleOriginSite)
       sampleOriginSite = { id: newSampleOriginSiteId }
     } else {
       await knex('Site')

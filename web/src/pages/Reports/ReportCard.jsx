@@ -1,7 +1,7 @@
 import React from 'react'
-import { Button, Card, CardActionArea, CardActions, CardContent, Grid, Typography } from '@mui/material'
+import { Card, CardActionArea, CardActions, CardContent, Grid, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
-import { report as messages } from '../../../messages'
+import { report as messages } from '../../messages'
 
 const styles = {
   formatCard: {
@@ -18,14 +18,13 @@ const styles = {
   },
 }
 
-const ReportCard = ({ description, onClick, title, i18nKey, i18nKeyDescription, exportExcel, exportCsv }) => {
+const ReportCard = ({ description, onClick, title, i18nKey, i18nKeyDescription, children }) => {
   const { formatMessage } = useIntl()
   const reportName = messages[i18nKey] ? formatMessage(messages[i18nKey]) : title
-
   return (
     <Grid item xs={12} sm={6} lg={3} style={{ padding: 8 }}>
       <Card style={styles.formatCard}>
-        <CardActionArea onClick={() => onClick('xlsx', reportName)}>
+        <CardActionArea onClick={onClick}>
           <CardContent>
             <Typography gutterBottom variant="h6" component="h4">
               {reportName}
@@ -35,18 +34,7 @@ const ReportCard = ({ description, onClick, title, i18nKey, i18nKeyDescription, 
             </Typography>
           </CardContent>
         </CardActionArea>
-        <CardActions style={styles.actions}>
-          {exportExcel === 1 && (
-            <Button size="small" color="primary" onClick={() => onClick('xlsx', reportName)}>
-              Excel
-            </Button>
-          )}
-          {exportCsv === 1 && (
-            <Button size="small" color="primary" onClick={() => onClick('csv', reportName)}>
-              CSV
-            </Button>
-          )}
-        </CardActions>
+        {children && <CardActions style={styles.actions}>{children}</CardActions>}
       </Card>
     </Grid>
   )
