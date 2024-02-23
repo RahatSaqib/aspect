@@ -1,10 +1,10 @@
 const pick = require('lodash/pick')
 const values = require('lodash/values')
-const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
+const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsCommon')
+const { WIDGET_GROUP_KEYS } = require('../../fixtures/dashboardWidgets')
 
 const {
   stat: { devicesTitle },
-  WIDGET_GROUP_KEYS,
 } = dashboardWidgetsBase
 
 module.exports = {
