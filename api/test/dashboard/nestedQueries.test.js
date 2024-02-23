@@ -1,4 +1,5 @@
 const chai = require('chai')
+const { find } = require('lodash')
 const {
   getBalancedParentheses,
   getNestedQueries,
@@ -6,7 +7,7 @@ const {
   tryConvertSqlStringToKnexQueryBuilder,
 } = require('../../src/shared/sql-2-knex')
 const { run } = require('../../src/db')
-const DashboardWidgetExtended = require('../../seeds/fixtures/DashboardWidgetExtended')
+const DashboardWidgetsCommon = require('../../seeds/fixtures/dashboardWidgetsCommon')
 
 const { assert, expect } = chai
 
@@ -23,7 +24,7 @@ async function assertQuery(knex, sqlBuilder, sql) {
 describe('Parse nested queries', () => {
   describe('Parse query which nested sub-queries', () => {
     // Used query from 'sqlForStatUnit' in
-    //    DashboardWidgetExtended.stat.find(x => x.externalId === 'stockNotRecorded')
+    //    DashboardWidgetsCommon.stat.find(x => x.externalId === 'stockNotRecorded')
     // and for testing purposes just copied above query here to not depend
     // on possible change of query actual format and paddings
     const sql = `SELECT
@@ -108,8 +109,8 @@ describe('Parse nested queries', () => {
   })
 
   describe('Execute query with sub-query in FROM clause', () => {
-    const { sqlForStatUnit: sql } = DashboardWidgetExtended.stat.find(x => x.externalId === 'errorRate')
-    it('should find nested query', async () => {
+    const { sqlForStatUnit: sql } = Object.values(DashboardWidgetsCommon.stat).find(x => x.externalId === 'errorRate')
+    it.only('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
       assert.equal(nestedQueries.all.length, 1)
 
@@ -124,7 +125,7 @@ describe('Parse nested queries', () => {
   })
 
   describe('Execute query with sub-query in JOIN clause', () => {
-    const { sqlForStatUnit: sql } = DashboardWidgetExtended.stat.find(x => x.externalId === 'stockouts')
+    const { sqlForStatUnit: sql } = Object.values(DashboardWidgetsCommon.stat).find(x => x.externalId === 'stockouts')
     it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
       assert.equal(nestedQueries.all.length, 1)
@@ -150,7 +151,7 @@ describe('Parse nested queries', () => {
 
   describe('Execute query with sub-query in SELECT clause', () => {
     // valid but non-optimized query for sqlForStatUnit for
-    // externalId = 'dashboardWidgetTestsPerDayTitle' from 'api/seeds/fixtures/DashboardWidgetExtended.js'
+    // externalId = 'dashboardWidgetTestsPerDayTitle' from 'api/seeds/fixtures/DashboardWidgetsCommon.js'
     const sql = `SELECT
       CASE
         WHEN avgCurrentMonth IS NULL OR avgLastMonth IS NULL THEN '?'
@@ -225,7 +226,7 @@ describe('Parse nested queries', () => {
   })
 
   describe('Execute ALL widgets in dashboardWidgetBase', () => {
-    DashboardWidgetExtended.stat.forEach(widget => {
+    Object.values(DashboardWidgetsCommon.stat).forEach(widget => {
       it(`should convert sql to knex and execute query for widget '${widget.title}'`, async () => {
         const dataConstraints = {}
         const urlQuery = {}
