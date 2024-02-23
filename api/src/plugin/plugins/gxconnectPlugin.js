@@ -6,7 +6,6 @@ const transformMergeResultPayload = require('../deviceType/CepheidGeneXpert/tran
 const preProcessMergeResult = require('../deviceType/CepheidGeneXpert/preProcessMergeResult')
 const onResultLogged = require('../deviceType/AspectResultEntry/onResultLogged.js')
 const getCustomFields = require('../deviceType/GxConnect/customFields/customFields')
-const getWebHookServers = require('../deviceType/CepheidGeneXpert/getWebHookServers')
 
 const gxconnectPlugin = {
   preProcessCreateDevice,
@@ -17,7 +16,6 @@ const gxconnectPlugin = {
   preProcessMergeResult,
   onResultLogged,
   getCustomFields,
-  getWebHookServers,
 }
 
 module.exports = {

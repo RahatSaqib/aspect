@@ -6,7 +6,6 @@ const {
   clinician,
   remoteHealthWorker,
   technician,
-  api,
 } = require('../../fixtures/jobFunctionBase')
 
 const withNewReports = jobFunction => ({
@@ -29,5 +28,4 @@ module.exports = [
   withNoReporterPermissions(clinician),
   withNoReporterPermissions(remoteHealthWorker),
   withNoReporterPermissions(technician),
-  withNoReporterPermissions(api),
 ]

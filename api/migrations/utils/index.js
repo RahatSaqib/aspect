@@ -26,7 +26,7 @@ function addUpdateFieldsNullable(table) {
   table.integer('updatedBy').unsigned().index().references('id').inTable('User')
 }
 
-function addTimestamps(table, { nullable = false, update = true } = { nullable: false, update: true }) {
+function addTimestamps(table, { nullable = false, update = true, by } = {}) {
   if (nullable) {
     table.dateTime('createdOn')
     if (update) {
@@ -36,6 +36,28 @@ function addTimestamps(table, { nullable = false, update = true } = { nullable: 
     table.dateTime('createdOn').notNullable()
     if (update) {
       table.dateTime('updatedOn').notNullable()
+    }
+  }
+
+  if (by) {
+    /**
+     * createdBy
+     */
+    let createdBy = table.integer('createdBy')
+    if (!by.nullable) {
+      createdBy = createdBy.notNullable()
+    }
+    createdBy.unsigned().index().references('id').inTable('User')
+
+    if (update) {
+      /**
+       * updatedBy
+       */
+      let updatedBy = table.integer('updatedBy')
+      if (!by.nullable) {
+        updatedBy = updatedBy.notNullable()
+      }
+      updatedBy.unsigned().index().references('id').inTable('User')
     }
   }
 }
