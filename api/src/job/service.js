@@ -2,7 +2,6 @@ const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { query, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
-const { JOB_FUNCTION_EXTERNAL_ID_FOR_API } = require('../shared/constants')
 const { getUser } = require('../auth/service')
 
 const MODE_INSERT = 'MODE_INSERT'
@@ -15,7 +14,6 @@ async function getJobFunctionsForSelectList(request) {
     .from('JobFunction as jf')
     .innerJoin('Partner as p', 'jf.partnerId', 'p.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
-    .whereNot('jf.externalId', JOB_FUNCTION_EXTERNAL_ID_FOR_API)
     .orderBy(['p.name', 'jf.name'], 'asc')
     .select(
       'p.id as partnerId',
@@ -69,7 +67,6 @@ async function getPermissions(request) {
     .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where('jf.partnerId', partnerId)
     .where('ps.id', personId)
-    .whereNot('jf.externalId', JOB_FUNCTION_EXTERNAL_ID_FOR_API)
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
     .then(items => items.map(p => `${p.module}:${p.activity}`))
@@ -308,7 +305,6 @@ async function assignPersonTo(request) {
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
     .leftJoin('Site as s', 'jc.siteId', 's.id')
     .where('jc.personId', creator.personId)
-    .whereNot('jf.externalId', JOB_FUNCTION_EXTERNAL_ID_FOR_API)
     .whereIn('p.module', ['account', 'person'])
     .whereIn('p.activity', ['edit', 'admin'])
   const superAdminJobFunction = await requiredJobAssignmentBaseQuery

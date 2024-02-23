@@ -17,7 +17,6 @@ const {
 } = require('../src/shared/dictionary')
 const logger = require('../src/shared/logger')
 const config = require('../src/config')
-const { JOB_FUNCTION_EXTERNAL_ID_FOR_API } = require('../src/shared/constants')
 const { insertSite } = require('../src/site/common/db')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
@@ -3035,18 +3034,6 @@ async function upsertForms(knex, partnerId, forms) {
   return true
 }
 
-async function upsertJobFunctionForApi(knex, partnerId) {
-  let jobFunctionId = await knex('JobFunction').where('externalId', JOB_FUNCTION_EXTERNAL_ID_FOR_API).first('id')
-  if (!jobFunctionId) {
-    ;[jobFunctionId] = await knex('JobFunction').insert({
-      externalId: JOB_FUNCTION_EXTERNAL_ID_FOR_API,
-      name: 'API',
-      partnerId,
-    })
-  }
-  return jobFunctionId
-}
-
 module.exports = {
   seed,
   seedTable,
@@ -3120,5 +3107,4 @@ module.exports = {
   updateIssueNotificationTemplates,
 
   upsertForms,
-  upsertJobFunctionForApi,
 }

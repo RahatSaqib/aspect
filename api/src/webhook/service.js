@@ -5,17 +5,11 @@ const Promise = require('bluebird')
 const { webhookMessagePending, webhookMessageSent, webhookMessageError } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
-const { messageStatusToId, jobFunctionToId } = require('../shared/dictionary')
+const { messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
-const { JOB_FUNCTION_EXTERNAL_ID_FOR_API } = require('../shared/constants')
-
-const { loadPlugin } = require('../plugin/loadPlugin')
-// const { knex } = require('../db')
-const { RESULT_STRING_TEMPLATE_FIELDS } = require('../result/query')
-const { getResultForStringTemplateProcessing } = require('../result/service')
-const { getDateInMiliSeconds } = require('../shared/date')
+const allWebhookServers = require('./servers')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -227,226 +221,56 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
   return message
 }
 
-async function getWebhookServers(knex, context) {
-  /**
-   * get all internal API notifications
-   */
-  const jobFunctionIdForApi = await jobFunctionToId(JOB_FUNCTION_EXTERNAL_ID_FOR_API)
-  const internalApiNotifications = await knex('NotificationType as nt')
-    .innerJoin('MessageType as mt', 'nt.messageTypeId', 'mt.id')
-    .innerJoin('WebhookTemplate as wh', 'mt.webhookTemplateId', 'wh.id')
-    .where('nt.jobFunctionId', jobFunctionIdForApi)
-    .select('wh.*')
-
-  /**
-   * TODO: think if makes sense to cache partner's and deviceType's plugin names.
-   * See ticket ASP-6686 "Cache more data than we have in dictionary.js"
-   */
-  const partnerPlugins = await knex('Partner').select('id as partnerId', 'plugin as partnerPluginName')
-  const deviceTypePlugins = await knex('DeviceType').select('id as deviceTypeId', 'plugin as deviceTypePluginName')
-
-  let allServers = {}
-  await Promise.each(partnerPlugins, async ({ partnerPluginName }) => {
-    await Promise.each(deviceTypePlugins, async ({ deviceTypePluginName }) => {
-      const getServers = await loadPlugin(partnerPluginName, deviceTypePluginName, 'getWebHookServers')
-      const webhookServers = await getServers(context)
-
-      await Promise.each(internalApiNotifications, async props => {
-        const server = webhookServers[props.externalId]
-        if (!server) return
-
-        props.params = JSON.parse(props.params || '{}')
-        props.headers = JSON.parse(props.headers || '{}')
-
-        allServers = {
-          ...allServers,
-          [props.externalId]: {
-            server,
-            props,
-          },
-        }
-      })
-    })
-  })
-  return allServers
-}
-
 async function onWebHookServerCheckTokens(action, context) {
   return context.messageContext.run(async knex => {
     /**
-     * helper func
+     * get list of all registered webhook servers
      */
-    const updateWebhookTemplate = async (id, params, headers, data) => {
-      await knex('WebhookTemplate')
-        .update({
-          params: JSON.stringify(_.merge(params, data.params || {})),
-          headers: JSON.stringify(_.merge(headers, data.headers)),
-        })
-        .where('id', id)
-    }
-    /**
-     * get list of all registered/available webhook servers
-     */
-    const webhookServers = await getWebhookServers(knex, context)
-    console.log('webhookServers', webhookServers)
+    const webhookServers = await knex('WebhookServer').select('*')
     /**
      *
      */
-    await Promise.each(_.keys(webhookServers), async key => {
-      const { server, props } = webhookServers[key]
+    await Promise.each(webhookServers, async srv => {
+      const { id, externalId, expiresOn } = srv
+      const server = allWebhookServers[externalId]
+      if (!server) return
 
-      // eslint-disable-next-line no-console
-      console.log('_____ check - params', props.params)
-      // eslint-disable-next-line no-console
-      console.log('_____ check - headers', props.headers)
+      srv.params = JSON.parse(srv.params || '{}')
+      srv.headers = JSON.parse(srv.headers || '{}')
+
+      const MINS_UNTIL_EXPIRES = 100
 
       const now = new Date()
-      if (!props.params.expiresOn) {
-        const data = await server.getToken(props.headers.toLogin || {}, props.params.toLogin || {})
-
-        // eslint-disable-next-line no-console
-        console.log('_________________ login', data)
-
-        await updateWebhookTemplate(props.id, props.params, props.headers, data)
-      } else if (differenceInMinutes(new Date(props.params.expiresOn), now) <= 100) {
-        const data = await server.getToken(props.headers.toRefreshToken || {}, props.params.toRefreshToken || {})
-
-        // eslint-disable-next-line no-console
-        console.log('_________________ refresh', data)
-
-        await updateWebhookTemplate(props.id, props.params, props.headers, data)
+      let headers
+      let params
+      if (!expiresOn) {
+        headers = srv.headers.toLogin || {}
+        params = srv.params.toLogin || {}
+      } else if (differenceInMinutes(new Date(expiresOn), now) <= MINS_UNTIL_EXPIRES) {
+        headers = srv.headers.toRefreshToken || {}
+        params = srv.params.toRefreshToken || {}
       }
-    })
-  })
-}
 
-async function onPostResultToWebHookServers(action, context) {
-  const { resultId } = action
-  return context.messageContext.run(async knex => {
-    /**
-     * get list of all registered/available webhook servers
-     */
-    const webhookServers = await getWebhookServers(context)
+      if (headers) {
+        const data = await server.getToken(headers, params)
 
-    // console.log('internalApiNotifications', internalApiNotifications)
-    // console.log('web hook server', webhookServers)
-    const result = await getResultForStringTemplateProcessing(
-      resultId,
-      [
-        ...RESULT_STRING_TEMPLATE_FIELDS,
-        'r.instrumentSerial',
-        'r.assayId',
-        'd.id as resultDeviceId',
-        'rc1.externalId as resultCategory1',
-        'st.name as stateName',
-        'lga.name as cityName',
-        knex.raw(
-          "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
-        ),
-      ],
-      knex
-    )
-    console.log('result', result)
-    const {
-      instrumentSerial,
-      sampleExternalId,
-      resultOutcome,
-      sampleId,
-      resultModuleName,
-      siteName,
-      siteId,
-      stateName,
-      cityName,
-      resultRawData,
-      resultStartedOn,
-      resultEndedOn,
-      resultUpdatedOn,
-      resultCreatedOn,
-    } = result
+        // eslint-disable-next-line no-console
+        console.log('_________________ getToken', data)
 
-    const {
-      softwareVersion,
-      reagentLotId,
-      gxConnectVersion,
-      moduleName,
-      moduleSerialNumber,
-      cartridgeSerial,
-      country,
-      computerId,
-    } = JSON.parse(result.resultData)
-
-    const testResult = {
-      instrumentSerialNumber: instrumentSerial,
-      gatewaySerialNumber: gxConnectVersion,
-      instrumentModel: resultModuleName,
-      softwareVersion,
-      operatingSystem: computerId,
-      labName: siteName, // site name
-      labGuid: siteId, // site id
-      labLocationCountry: country,
-      labLocationRegion: stateName, // state name
-      labLocationDistrict: cityName, // site city
-      testResultGuid: resultId,
-      resultCategory: resultOutcome,
-      reagentLotId,
-      instrumentSerial,
-      sampleType: sampleExternalId,
-      data: resultRawData,
-      moduleName,
-      datagramFormat: 2,
-      dataReductionAlgorithm: 3,
-      icoreSerialNumber: 'ICORE123',
-      adc2Psi: 0.5,
-      errorStatus: 'OK',
-      moduleSerialNumber,
-      moduleColor: '6-Color',
-      lisConnected: true,
-      daisyChained: false,
-      institutionGuid: '123456789',
-      institutionName: 'Example Hospital',
-      orderTime: 1645510800000,
-      exportTime: 1645514400000,
-      firmwareVersion: '2.5.0',
-      status: 2,
-      startTime: getDateInMiliSeconds(resultStartedOn), // startedON
-      endTime: getDateInMiliSeconds(resultEndedOn), // endedOn
-      testModifiedTime: getDateInMiliSeconds(resultUpdatedOn), // updatedOn
-      testCreationInInstrument: getDateInMiliSeconds(resultCreatedOn), // createdOn
-      sampleId,
-      cartridgeSerialNumber: cartridgeSerial,
-      analytes: [
-        {
-          analyteIndex: 1,
-          analyteName: 'Cycle Threshold',
-          curveFitResult: 0.98,
-          cycleThreshold: 25,
-          endpoint: 100,
-          quantitativeResult: 0.05,
-        },
-      ],
-      errors: [
-        {
-          errorCode: 5007,
-          details: 'Error occurred during analysis',
-          logTime: 1645515600000,
-          severity: 2,
-        },
-      ],
-    }
-    /**
-     *
-     */
-    await Promise.each(_.keys(webhookServers), async key => {
-      const { server, props } = webhookServers[key]
-
-      if (props.isValid) {
-        await server.pushResult(props.headers.toPushResult || {}, props.params.toPushResult || {}, testResult)
-      } else {
         /**
-         * TODO: discuss what to do if token is invalid.
-         * May be repeat attempt few more times (how many), or just
-         * throw an error only?
+         * update db with received accessToken et la
          */
+        const { isValid = 0, accessToken, refreshToken = null, expiresOn = null } = data
+        await knex('WebhookServer')
+          .update({
+            params: JSON.stringify(_.merge(srv.params, data.params || {})),
+            headers: JSON.stringify(_.merge(srv.headers, data.headers || {})),
+            isValid,
+            accessToken,
+            refreshToken,
+            expiresOn,
+          })
+          .where('id', id)
       }
     })
   })
@@ -459,5 +283,4 @@ module.exports = {
   onWebhookMessageError,
 
   onWebHookServerCheckTokens,
-  onPostResultToWebHookServers,
 }
