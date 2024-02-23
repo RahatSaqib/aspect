@@ -3,7 +3,7 @@ const chai = require('chai')
 const { subDays } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
-const dashboardWidget = require('../../seeds/test/fixtures/dashboardWidget')
+const dashboardWidget = require('../../seeds/test/fixtures/dashboardWidgetsCommon')
 const dashboardWidgetMyanmar = require('../../seeds/test/fixtures/myanmarDashboardWidget')
 
 const server = require('../utils/testUtils')
