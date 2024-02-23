@@ -1,11 +1,11 @@
 const { knex, filterParams, filterDateRangeParams, sortPageParams, transact } = require('../../db')
 const { addConstraints, getConstraints } = require('../../auth/constraints')
+
 const {
   fileContentTypeToId,
   messageSeverityToId,
   notificationTypeCategoryToId,
   issueTypeToId,
-  jobFunctionToId,
 } = require('../../shared/dictionary')
 const { validateFilterCondition } = require('./validations')
 
@@ -135,6 +135,7 @@ async function getListNotifications(query, credentials) {
     .modify(filterDateRangeParams, query, 'lastTriggeredOn')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .modify(AddNotificationGeographyConstraints, dataConstraints)
+
     .max('n.createdOn as lastTriggeredOn')
     .groupBy('nt.id')
 
