@@ -4,7 +4,7 @@ const { upsertDashboardWidgets } = require('../common')
 const {
   partner: { externalId: partnerExternalId },
 } = require('./fixtures/partnerData')
-const bangladeshAverageCompletion = require('./fixtures/dashboardWidgetsCommon')
+const bangladeshAverageCompletion = require('./fixtures/dashboardWidget')
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner').where({ externalId: partnerExternalId }).first('id')

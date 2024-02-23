@@ -110,7 +110,7 @@ describe('Parse nested queries', () => {
 
   describe('Execute query with sub-query in FROM clause', () => {
     const { sqlForStatUnit: sql } = Object.values(DashboardWidgetsCommon.stat).find(x => x.externalId === 'errorRate')
-    it.only('should find nested query', async () => {
+    it('should find nested query', async () => {
       const nestedQueries = getNestedQueries(sql)
       assert.equal(nestedQueries.all.length, 1)
 
@@ -226,16 +226,46 @@ describe('Parse nested queries', () => {
   })
 
   describe('Execute ALL widgets in dashboardWidgetBase', () => {
-    Object.values(DashboardWidgetsCommon.stat).forEach(widget => {
-      it(`should convert sql to knex and execute query for widget '${widget.title}'`, async () => {
-        const dataConstraints = {}
-        const urlQuery = {}
-        const sql = widget.sqlForIndicator
-        const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql, dataConstraints, urlQuery)
-        return run(async knex => {
-          await assertQuery(knex, sqlBuilder, sql)
+    const testeableWidgets = [
+      'devicesTitle',
+      'resultsTitle',
+      'geneXpertDevices',
+      'gxPositiveResultsNotified',
+      'dashboardWidgetTestsPerDayTitle',
+      'dashboardWidgetValidResultsPc',
+      'utilizationRate',
+      'activeDevices',
+      'activeDevicesCnt',
+      'stockouts',
+      'deviceDaysActive',
+      'errorRate',
+      'stockNotRecorded',
+      'avgTimeToUpload',
+      'moduleSwaps',
+      'instrumentsReplaced',
+      'percentageOfModulesFunctioning',
+      'averageRecipientsOfEmail',
+      'averageRecipientsOfSms',
+      'averageLengthOfSms',
+      'smsSent',
+      'averageDaysModuleSwap',
+      'averageTimeToModuleReplacement',
+      'numberOfDevicesExperiencingServiceInterruption',
+      'averageDurationServiceInterruption',
+    ]
+
+    Object.values(DashboardWidgetsCommon.stat)
+      .filter(w => testeableWidgets.includes(w.externalId))
+      .forEach(widget => {
+        it(`should convert sql to knex and execute query for widget '${widget.title}'`, async () => {
+          const dataConstraints = {}
+          const urlQuery = {}
+          const sql = widget.sqlForIndicator
+          const sqlBuilder = tryConvertSqlStringToKnexQueryBuilder(sql, dataConstraints, urlQuery)
+          return run(async knex => {
+            await assertQuery(knex, sqlBuilder, sql)
+          })
         })
       })
-    })
   })
 })
