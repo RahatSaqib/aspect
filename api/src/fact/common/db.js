@@ -86,10 +86,6 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
       if (query.resultCategory2) {
         qb.where('rc2.externalId', '=', query.resultCategory2)
       }
-
-      if (query.resistance) {
-        qb.whereJsonPath('r.xdrResistanceCounts', `$.${query.resistance}.detected`, '>', 0)
-      }
     })
     .where('r.timeFrame', timeFrame)
     .sum('r.resultCount as cnt')
