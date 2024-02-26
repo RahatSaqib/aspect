@@ -3,8 +3,7 @@ const { format, parseISO, addMonths, differenceInBusinessDays, subMonths } = req
 const locales = require('date-fns/locale')
 const Boom = require('@hapi/boom')
 const { getDeviceBaseExtendedQuery } = require('../service')
-const { exportData, getBaseReplacements } = require('../../shared/excel')
-const { issueCategoryIntlToShortname } = require('../../shared/dictionary')
+const { exportData } = require('../../shared/excel')
 const { knex, filterDateRangeParams, filterParams, sortPageParams } = require('../../db')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const {
@@ -22,42 +21,9 @@ const { getResultCategoryGroupColumns } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
 const { getErrorRateByDevice, getErrorRateByModule, getErrorRateByUser } = require('./errorRatesReport')
 const { getNoStockInventoryReport } = require('./noStockInventoryReport')
-const { listDevices } = require('../listDevices')
 const { getModuleSwapsReportData } = require('./moduleSwapsReport')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
-
-async function exportDevices(request, reply) {
-  const { data: dataSet } = await listDevices(request)
-  const [devicesData] = dataSet
-  const scope = devicesData.category !== 'Router' ? 'devices' : 'routers'
-
-  const issueCategories = await issueCategoryIntlToShortname()
-  // calculated and normalized props
-  const data =
-    scope === 'devices'
-      ? dataSet.map(item => ({
-          ...item,
-          issuesCategories: _.map(item.issueCategories, ({ key }) => issueCategories[key]).join(', '),
-          availabilityRate: item.availability.rate, // Excel column formatted as 'Percentage'
-          errorRate: item.error.rate, // Excel column formatted as 'Percentage'
-        }))
-      : dataSet.map(item => ({
-          ...item,
-          lastPingOn: format(new Date(item.lastPingOn), 'yyyy-MM-dd'),
-          lastSeen: format(new Date(item.lastSeen), 'yyyy-MM-dd HH:mm:ss'),
-        }))
-  //
-  const sheetData = {
-    data,
-    // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
-    defaultNoDataMessage: 'No data',
-  }
-
-  return exportData(request, reply, sheetData, scope, {
-    replacements: getBaseReplacements(),
-  })
-}
 
 function getMonthsDatefields(minDate, maxDate, culture) {
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
@@ -848,7 +814,6 @@ async function getDeviceCoverageReport(request) {
 }
 
 module.exports = {
-  exportDevices,
   getDeviceActivityReport,
   getModuleSwapsReport,
   getGeneXpertIssuesReport,
