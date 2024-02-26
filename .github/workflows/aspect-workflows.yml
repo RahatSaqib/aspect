@@ -62,7 +62,7 @@ jobs:
       - name: Lint code
         if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
         run: |
-          yarn web:lint --fix
+          yarn web:lint --max-warnings=0
 
   fe-test:
     name: 'Tests (WEB)'
@@ -90,7 +90,7 @@ jobs:
       - name: Lint code
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: |
-          yarn api:lint --fix
+          yarn api:lint --max-warnings=0
 
   be-unit-test:
     name: 'Unit Tests (API)'
