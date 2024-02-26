@@ -59,18 +59,18 @@ module.exports = async function upsertReports(knex, countrySpecificReportFixture
 
     const reportToUpdate = await knex('Report').where({ externalId }).first()
     let reportId
+    const reportData = { ..._.omit(report, omitFields), validations: JSON.stringify(report.validations) }
 
     if (reportToUpdate) {
       // Update
-      await knex('Report').where({ externalId }).update(_.omit(report, omitFields))
+      await knex('Report').where({ externalId }).update(reportData)
       reportId = reportToUpdate.id
     } else {
       // Create
-      await knex('Report').insert({
+      ;[reportId] = await knex('Report').insert({
         sortOrder: 0, // defaults to 0 if sortOrder is missing in 'report', need because 'sortOrder' is NOT NULL field
-        ..._.omit(report, omitFields),
+        ...reportData,
       })
-      ;[reportId] = await knex('Report').where({ externalId }).pluck('id')
     }
 
     await upsertSheets(knex, reportId, sheets)

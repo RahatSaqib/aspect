@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { addMilliseconds, addHours, addMinutes, subDays, subHours, subMinutes, subMonths } = require('date-fns')
+const { insertSite } = require('../../src/site/common/db')
 const { upsertJobFunctionFixture } = require('../common')
 const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
@@ -312,7 +313,7 @@ async function seed(knex) {
         siteTypeId: clinicSiteTypeId,
         ...auditFields,
       }
-      const [siteId] = await knex('Site').insert(siteData)
+      const [siteId] = await insertSite(knex, siteData)
       siteData.id = siteId
 
       const lastTime = subMinutes(now, _.random(0, 60))
@@ -381,7 +382,7 @@ async function seed(knex) {
         siteTypeId: labSiteTypeId,
         ...auditFields,
       }
-      const [siteId] = await knex('Site').insert(siteData)
+      const [siteId] = await insertSite(knex, siteData)
       siteData.id = siteId
 
       // create lab admin user with permission to view data to own lab

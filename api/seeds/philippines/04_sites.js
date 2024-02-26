@@ -4,6 +4,7 @@ module.exports = require('../utils').seed(seed, __filename, {
 })
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { insertSite } = require('../../src/site/common/db')
 
 const sites = require('./fixtures/sites.json')
 const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
@@ -92,7 +93,7 @@ async function seed(knex) {
     if (existingSite) {
       siteId = existingSite.id
     } else {
-      ;[siteId] = await knex('Site').insert(siteData)
+      ;[siteId] = await insertSite(knex, siteData)
     }
     siteData.id = siteId
 

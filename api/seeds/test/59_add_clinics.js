@@ -3,6 +3,7 @@ const _ = require('lodash')
 const { seed } = require('../utils')
 const labClinic = require('./fixtures/labClinic.json')
 const { siteTypeToId } = require('../../src/shared/dictionary')
+const { insertSite } = require('../../src/site/common/db')
 
 module.exports = seed(async knex => {
   const { id: usCountryId } = await knex('Country').where('abbreviation', 'US').first('id')
@@ -63,6 +64,6 @@ module.exports = seed(async knex => {
       siteTypeId: clinicSiteTypeId,
       ...auditFields,
     }
-    return knex('Site').insert(siteData)
+    return insertSite(knex, siteData)
   })
 }, __filename)

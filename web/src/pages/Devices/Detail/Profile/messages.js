@@ -17,6 +17,22 @@ const messages = {
       id: 'pages.DeviceDetailProfile.hostId',
       defaultMessage: 'Host',
     },
+    stickerInstrumentSerial: {
+      id: 'pages.DeviceDetailProfile.stickerInstrumentSerial',
+      defaultMessage: 'Sticker Instrument Serial',
+    },
+    instrumentModel: {
+      id: 'pages.DeviceDetailProfile.instrumentModel',
+      defaultMessage: 'Instrument Model',
+    },
+    softwareType: {
+      id: 'pages.DeviceDetailProfile.softwareType',
+      defaultMessage: 'Software Type',
+    },
+    isDaisyChained: {
+      id: 'pages.DeviceDetailProfile.isDaisyChained',
+      defaultMessage: 'Is Daisy Chained',
+    },
     createdOn: {
       id: 'pages.DeviceDetailProfile.createdOn',
       defaultMessage: 'Created On',

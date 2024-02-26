@@ -7,6 +7,7 @@ const deviceSummaryReport = {
   fileName: 'DeviceSummaryReport',
   exportCsv: false,
   sortOrder: 11,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -32,6 +33,7 @@ const xpertSiteDetailedReport = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: ['dateRangeRequired'],
   sheets: [
     {
       sortOrder: 0,
@@ -54,6 +56,7 @@ const xpertSiteSummaryReportSiteWise = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -76,6 +79,7 @@ const xpertWorkloadSummaryReport = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: ['dateRangeRequired'],
   sheets: [
     {
       sortOrder: 0,
@@ -107,6 +111,7 @@ const missingCartridgesReport = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -131,6 +136,7 @@ const annualUtilizationRates = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,

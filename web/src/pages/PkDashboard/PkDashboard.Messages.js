@@ -71,8 +71,8 @@ const messages = {
       defaultMessage: 'People tested using MTB/XDR assay in current year',
     },
     peopleDiagnosedRif: {
-      id: 'p.PkDashboard.peopleDiagnosedRif',
-      defaultMessage: 'People diagnosed for TB using MTB/Rif assay in current year',
+      id: 'p.PkDashboard.peopleDiagnosedRifUltra',
+      defaultMessage: 'People diagnosed for TB using MTB/Rif Ultra assay in current year',
     },
     peopleDiagnosedXdr: {
       id: 'p.PkDashboard.peopleDiagnosedXdr',
@@ -166,9 +166,9 @@ const messages = {
       id: 'p.PkDashboard.nationalMtbRifDiagnosed',
       defaultMessage: 'National TB Diagnosis Trends using MTB/Rif Assay',
     },
-    nationalMtbXdrDiagnosed: {
-      id: 'p.PkDashboard.nationalMtbRifDiagnosed',
-      defaultMessage: 'National TB Diagnosis Trends using MTB/XDR Assay',
+    nationalDiagnosisXdr: {
+      id: 'p.PkDashboard.nationalDiagnosisXdr',
+      defaultMessage: 'National Diagnosis Trends using MTB/XDR assay',
     },
     nationalXdrTestingTrends: {
       id: 'p.PkDashboard.nationalMtbRifDiagnosed',

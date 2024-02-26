@@ -8,6 +8,7 @@ const { query } = require('../src/db')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
+const { insertSite } = require('../src/site/common/db')
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
 const jobFunctionsFixtureDefault = require('./fixtures/jobFunctions')
 const followUpFixture = require('./fixtures/FollowUp.json')
@@ -430,7 +431,7 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
 
   let { siteId } = device
   if (!siteId) {
-    ;[siteId] = await knex('Site').insert({
+    ;[siteId] = await insertSite(knex, {
       ...auditFields,
       name,
       shortName: name.substr(0, 45),
@@ -1495,7 +1496,7 @@ async function seedLabClinicFixture(
           ...siteData,
         })
     } else {
-      await knex('Site').insert(siteData)
+      await insertSite(knex, siteData)
     }
   })
 
@@ -1552,7 +1553,7 @@ async function seedLabClinicFixture(
           ...siteData,
         })
     } else {
-      ;[siteId] = await knex('Site').insert(siteData)
+      ;[siteId] = await insertSite(knex, siteData)
     }
     siteData.id = siteId
 
@@ -1817,7 +1818,7 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
       siteId = existingSite.id
       await knex('Site').where('id', siteId).update(siteData)
     } else {
-      ;[siteId] = await knex('Site').insert(siteData)
+      ;[siteId] = await insertSite(knex, siteData)
     }
     siteData.id = siteId
 

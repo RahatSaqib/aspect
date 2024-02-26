@@ -22,6 +22,7 @@ const {
   resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
+const { insertSite } = require('../../src/site/common/db')
 
 const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const { seedDataCategory } = require('../dataCategoryLow')
@@ -327,7 +328,7 @@ async function seed(knex) {
         hoursEnd: site.hoursEnd,
         ...auditFields,
       }
-      const [siteId] = await knex('Site').insert(siteData)
+      const [siteId] = await insertSite(knex, siteData)
       siteData.id = siteId
       siteDatas.push(siteData)
 
