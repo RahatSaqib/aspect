@@ -238,7 +238,12 @@ async function onWebHookServerCheckTokens(action, context) {
       srv.params = JSON.parse(srv.params || '{}')
       srv.headers = JSON.parse(srv.headers || '{}')
 
-      const MINS_UNTIL_EXPIRES = 100
+      /**
+       * make sure that 10 mins before expiration we re-fetch access token.
+       * If it fails now - then we'll have 2 more attempts because scheduler job is
+       * running every 5 mins (see /scheduler/scheduler.js)
+       */
+      const MINS_UNTIL_EXPIRES = 10
 
       const now = new Date()
       let headers
