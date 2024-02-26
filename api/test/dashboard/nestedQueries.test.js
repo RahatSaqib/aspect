@@ -1,5 +1,4 @@
 const chai = require('chai')
-const { find } = require('lodash')
 const {
   getBalancedParentheses,
   getNestedQueries,
