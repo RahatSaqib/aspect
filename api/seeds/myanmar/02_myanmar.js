@@ -12,6 +12,7 @@ const dashboardWidget = require('./fixtures/dashboardWidget')
 const { rowsAsObject, getDefaultMessageTypes, getPermissionModules } = require('../utils')
 const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
 const upsertPartnerData = require('../common/upsert_partner_data')
+const { insertSite } = require('../../src/site/common/db')
 
 const now = new Date()
 
@@ -62,7 +63,7 @@ async function seed(knex) {
     .select('s.id', 's.name', 's.abbreviation')
 
   // create site for GxAlert device
-  const [gxAlertSiteId] = await knex('Site').insert({
+  const [gxAlertSiteId] = await insertSite(knex, {
     ...auditFields,
     name: 'GxAlert Site',
     shortName: 'GxA Site',

@@ -1,29 +1,24 @@
-import React, { useState, useEffect } from 'react'
-import { Switch, FormControlLabel, Grid } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { FormControlLabel, Grid, Switch } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import {
-  StateSelect,
-  LgaSelect,
-  Loading,
-  ColumnLineGraph,
-  getTimePeriod,
-  objectToArray,
-} from '../../../../../cleanComponents'
+import { ColumnLineGraph, LgaSelect, Loading, objectToArray, StateSelect } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
-import { graphMessages, getCustomMessage } from '../../../../../messages'
+import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
+
+const maxDate = new Date()
 
 const endpointParams = [
   { source: 'tbDetection' },
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { groupBy: 'resultCategory1' },
-  { minDate: getTimePeriod(5, 'years', 'yyyy-MM-dd') }, // five years ago
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { minDate: `${maxDate.getFullYear() - 5}-01-01` },
+  { maxDate },
 ]
 
 const TestDiagTrendPage = () => {

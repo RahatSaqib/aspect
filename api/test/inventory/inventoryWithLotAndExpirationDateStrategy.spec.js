@@ -10,6 +10,7 @@ const { knex } = require('../../src/db')
 const { assert } = chai
 const server = require('../utils/testUtils')
 const { startOfDayUtc } = require('../../src/shared/date')
+const { insertSite } = require('../../src/site/common/db')
 
 const assertBodyAndInventoryItems = res => {
   assert.equal(res.status, 200)
@@ -57,7 +58,7 @@ describe('Inventory Routes', () => {
       .where('type.externalId', 'lab')
       .select('s.*')
 
-    await knex('Site').insert([
+    await insertSite(knex, [
       {
         ..._.omit(site1, 'id'),
         name: 'TEST SITE 1',
