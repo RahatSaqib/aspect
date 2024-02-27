@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -20,7 +20,7 @@ import styles from '../SiteDetail.module.css'
 import { convertToFloat, getLatLongFromAddress } from './address'
 import SiteTypeSelect from './SiteTypeSelect'
 
-const SiteForm = ({ site, onLatLongChange }) => {
+const SiteForm = ({ site, onLatLongChange, location }) => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const navigate = useNavigate()
@@ -35,6 +35,15 @@ const SiteForm = ({ site, onLatLongChange }) => {
 
   const isPristine = isEqual(site, editSite)
   const isNew = site.id === 0
+
+  const backUrl = useMemo(() => {
+    const searchParams = new URLSearchParams(location.search).get('searchParams')
+    let url = '/browse/site'
+    if (searchParams) {
+      url += `?${searchParams}`
+    }
+    return url
+  }, [location.search])
 
   useEffect(
     () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
@@ -62,16 +71,16 @@ const SiteForm = ({ site, onLatLongChange }) => {
       })
     }
     if (isNew) {
-      createSite(editSite, { onSuccess: newId => navigate(`/browse/site/${newId}`) })
+      createSite(editSite, { onSuccess: newId => navigate(`/browse/site/${newId}${location.search}`) })
     } else {
-      updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}`) })
+      updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}${location.search}`) })
     }
   }
 
   const handleDelete = () => {
     deleteSite()
     setShowConfirmation(false)
-    navigate('/browse/site')
+    navigate(backUrl)
   }
 
   function handleDeletePrompt() {
@@ -371,12 +380,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             </PermissionChecker>
           )}
 
-          <Button
-            style={{ marginLeft: '1rem' }}
-            type="button"
-            variant="contained"
-            onClick={() => navigate('/browse/site')}
-          >
+          <Button style={{ marginLeft: '1rem' }} type="button" variant="contained" onClick={() => navigate(backUrl)}>
             {formatMessage(messages.buttonBack)}
           </Button>
 
@@ -405,6 +409,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
 SiteForm.propTypes = {
   site: PropTypes.object,
   onLatLongChange: PropTypes.func,
+  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 SiteForm.defaultProps = {
   site: {

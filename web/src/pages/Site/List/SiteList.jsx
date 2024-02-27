@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback, useMemo } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -26,6 +26,16 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
+
+  const callerSearchParams = useMemo(() => {
+    const callerSearchParams = new URLSearchParams(location.search).toString()
+    if (callerSearchParams) {
+      const searchParamsToReturn = new URLSearchParams()
+      searchParamsToReturn.set('searchParams', callerSearchParams)
+      return `?${searchParamsToReturn.toString()}`
+    }
+    return ''
+  }, [location.search])
 
   const { data, isLoading: tableLoading } = useSites(
     { sortCol, sortDir, pageAt, pageSize, filters },
@@ -59,14 +69,17 @@ const SiteList = ({ navigate, location }) => {
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
   ]
 
-  const onAlertClick = event => {
-    const {
-      currentTarget: {
-        dataset: { siteId },
-      },
-    } = event
-    navigate(`/browse/site/${siteId}/alerts`)
-  }
+  const onAlertClick = useCallback(
+    event => {
+      const {
+        currentTarget: {
+          dataset: { siteId },
+        },
+      } = event
+      navigate(`/browse/site/${siteId}/alerts`)
+    },
+    [navigate]
+  )
 
   const onExportClick = formatType => {
     setIsLoading(true)
@@ -81,11 +94,14 @@ const SiteList = ({ navigate, location }) => {
       })
   }
 
-  const onRowClick = ({
-    currentTarget: {
-      dataset: { siteId },
-    },
-  }) => navigate(`/browse/site/${siteId}`)
+  const onRowClick = useCallback(
+    ({
+      currentTarget: {
+        dataset: { siteId },
+      },
+    }) => navigate(`/browse/site/${siteId}${callerSearchParams}`),
+    [callerSearchParams, navigate]
+  )
 
   return (
     <>
@@ -96,7 +112,7 @@ const SiteList = ({ navigate, location }) => {
             color="primary"
             variant="contained"
             browseButton
-            onClick={() => navigate('/browse/site/create')}
+            onClick={() => navigate(`/browse/site/create${callerSearchParams}`)}
           >
             {intl.formatMessage(messages.createSite)}
           </AspectButton>

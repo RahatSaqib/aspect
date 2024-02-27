@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useMemo } from 'react'
 import { Box, LinearProgress, Paper } from '@mui/material'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
@@ -31,6 +31,15 @@ const SiteDetail = ({ navigate, location }) => {
   }))
   const [latLong, setLatLong] = useState({ lat: 0, lng: 0 })
 
+  const backUrl = useMemo(() => {
+    const searchParams = new URLSearchParams(location.search).get('searchParams')
+    let url = '/browse/site'
+    if (searchParams) {
+      url += `?${searchParams}`
+    }
+    return url
+  }, [location.search])
+
   useEffect(() => {
     setLatLong({ lat: site?.latitude, lng: site?.longitude })
   }, [site])
@@ -40,10 +49,14 @@ const SiteDetail = ({ navigate, location }) => {
   return (
     <>
       <Helmet title={intl.formatMessage(messages.title)} />
-      <DetailHeader name={(site && site.name) || 'Site'} back="/browse/site">
+      <DetailHeader name={(site && site.name) || 'Site'} back={`${backUrl}`}>
         {[
-          { label: intl.formatMessage(titleMessages.profile), path: `/browse/site/${siteId}` },
-          { label: intl.formatMessage(titleMessages.edit), path: `/browse/site/${siteId}/edit`, disabled: false },
+          { label: intl.formatMessage(titleMessages.profile), path: `/browse/site/${siteId}${location.search}` },
+          {
+            label: intl.formatMessage(titleMessages.edit),
+            path: `/browse/site/${siteId}/edit${location.search}`,
+            disabled: false,
+          },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}
@@ -72,7 +85,11 @@ const SiteDetail = ({ navigate, location }) => {
             <Route
               path="edit"
               element={
-                editable ? <SiteForm site={site} onLatLongChange={setLatLong} /> : <Navigate replace to={location} />
+                editable ? (
+                  <SiteForm site={site} onLatLongChange={setLatLong} location={location} />
+                ) : (
+                  <Navigate replace to={location} />
+                )
               }
             />
           </Routes>

@@ -226,7 +226,7 @@ const LogInApp = () => {
             {a(['browse', 'site']) ? (
               <>
                 <Route path="/browse/site" element={<SiteList {...props} />} />
-                <Route path="/browse/site/create" element={<EditSite />} />
+                <Route path="/browse/site/create" element={<EditSite location={location} />} />
                 <Route path="/browse/site/:siteId/*" element={<SiteDetail {...props} />} />
               </>
             ) : null}
