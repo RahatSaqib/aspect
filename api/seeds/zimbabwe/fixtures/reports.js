@@ -9,6 +9,7 @@ module.exports = {
     fileName: 'devicePerformance',
     availableForNotification: 1,
     sortOrder: 10,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,
@@ -31,6 +32,7 @@ module.exports = {
     fileName: 'geneXpertIssues',
     availableForNotification: 1,
     sortOrder: 9,
+    validations: [],
     sheets: [
       {
         sortOrder: 0,

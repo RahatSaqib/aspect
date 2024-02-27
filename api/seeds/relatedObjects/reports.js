@@ -11,6 +11,7 @@ async function getBaseReports() {
       i18nKey: 'MTB_Detected_RR_Detected',
       externalId: 'mtb_detected_rr_detected',
       fileName: 'MTB_Detected_RR_Detected',
+      validations: [],
       sheets: [
         {
           moduleName: 'result/service',
@@ -31,6 +32,7 @@ async function getBaseReports() {
       i18nKey: 'Critical_Errors_By_Device',
       externalId: 'critical_errors_by_device',
       fileName: 'DevicesWithErrors',
+      validations: ['dateRangeRequired'],
       sheets: [
         {
           moduleName: 'device/service',
@@ -60,6 +62,7 @@ async function getBaseReports() {
       i18nKey: 'RIF_Resistance_Rate',
       externalId: 'rif_resistance_rate',
       fileName: 'RifResistanceRate',
+      validations: [],
       sheets: [
         {
           moduleName: 'device/service',
@@ -81,6 +84,7 @@ async function getBaseReports() {
       i18nKey: 'Results_HIV_Not_Suppressed',
       externalId: 'results_hiv_not_suppressed',
       fileName: 'HIVNotSuppressed',
+      validations: [],
       sheets: [
         {
           moduleName: 'result/service',

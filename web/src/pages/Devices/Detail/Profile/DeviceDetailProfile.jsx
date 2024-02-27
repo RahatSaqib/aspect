@@ -391,6 +391,16 @@ const DeviceDetailProfile = ({
             <Summary title={formatMessage(messages.serial)} description={device.get('serial')} />
             <Summary title={formatMessage(messages.hostId)} description={device.get('hostId')} />
             <Summary
+              title={formatMessage(messages.stickerInstrumentSerial)}
+              description={device.get('stickerInstrumentSerial')}
+            />
+            <Summary title={formatMessage(messages.instrumentModel)} description={device.get('instrumentModel')} />
+            <Summary title={formatMessage(messages.softwareType)} description={device.get('softwareType')} />
+            <Summary
+              title={formatMessage(messages.isDaisyChained)}
+              description={device.get('isDaisyChained') ? 'True' : 'False'}
+            />
+            <Summary
               title={formatMessage(messages.createdOn)}
               description={formatRelative(device.get('createdOn'), formatRelativeTime)}
             />
@@ -481,12 +491,7 @@ const DeviceDetailProfile = ({
                   : '')
               }
             />
-            <Summary
-              title={formatMessage(messages.moduleBayCapacity)}
-              description={
-                device.get('moduleBayCapacity')
-              }
-            />
+            <Summary title={formatMessage(messages.moduleBayCapacity)} description={device.get('moduleBayCapacity')} />
 
             <Summary
               title={formatMessage(messages.instrumentsConnected)}
