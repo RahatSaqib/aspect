@@ -1,3 +1,4 @@
+const _ = require('lodash')
 const fetch = require('node-fetch')
 
 module.exports = {
@@ -7,8 +8,9 @@ module.exports = {
     let statusText
     try {
       const body = new URLSearchParams()
-      body.append('client_id', '53u20emeku2jfnclol12u54cjr')
-      body.append('grant_type', 'client_credentials')
+      _.keys(params.payload).forEach(key => {
+        body.append(key, params.payload[key])
+      })
 
       const options = {
         method: params.method || 'POST',
