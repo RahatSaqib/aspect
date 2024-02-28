@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import {
   Autocomplete,
   CircularProgress,
@@ -31,6 +31,7 @@ import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
+import useSearchParams from '../../../hooks/useSearchParams'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
@@ -150,25 +151,32 @@ const DeviceList = () => {
   const [isProcessingMergeDevices, setProcessingMergeDevices] = useState(false)
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [pagination, setPagination] = useState({})
+  const { callerSearchParams } = useSearchParams(location.search)
 
   const { sortCol, sortDir, page, size } = pagination
   const params = { ...pagination, ...filters }
 
-  const onRowClick = ({
-    currentTarget: {
-      dataset: { deviceId },
-    },
-  }) => navigate(`/browse/device/list/${deviceId}`)
-
-  const onAlertClick = event => {
-    event.stopPropagation()
-    const {
+  const onRowClick = useCallback(
+    ({
       currentTarget: {
         dataset: { deviceId },
       },
-    } = event
-    navigate(`/browse/device/list/${deviceId}/alerts`)
-  }
+    }) => navigate(`/browse/device/list/${deviceId}${callerSearchParams}`),
+    [callerSearchParams, navigate]
+  )
+
+  const onAlertClick = useCallback(
+    event => {
+      event.stopPropagation()
+      const {
+        currentTarget: {
+          dataset: { deviceId },
+        },
+      } = event
+      navigate(`/browse/device/list/${deviceId}/alerts${callerSearchParams}`)
+    },
+    [callerSearchParams, navigate]
+  )
 
   const {
     data,

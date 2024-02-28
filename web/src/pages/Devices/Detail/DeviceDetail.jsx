@@ -11,6 +11,7 @@ import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useAuthState from '../../../hooks/useAuthState'
+import useSearchParams from '../../../hooks/useSearchParams'
 import deviceApprovalMessages from '../../../messages/deviceApprovalMessages'
 import deviceStatusMessages from '../../../messages/deviceStatusMessages'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
@@ -41,6 +42,7 @@ export const DeviceDetail = props => {
   const { deviceId } = useParams()
   const intl = useIntl()
   const queryClient = useQueryClient()
+  const { backUrl } = useSearchParams(location.search, '/browse/device/list')
 
   const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
   const { isLoading: isDeviceTagsLoading, data: deviceTags } = useTagByTypeAndId('device', deviceId)
@@ -91,13 +93,10 @@ export const DeviceDetail = props => {
 
   return (
     <>
-      <DetailHeader
-        name={device ? device.name : 'Devices'}
-        back={location.state?.previousLocationPathname ?? '/browse/device/list'}
-      >
+      <DetailHeader name={device ? device.name : 'Devices'} back={location.state?.previousLocationPathname ?? backUrl}>
         {[
-          { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
-          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit` },
+          { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}${location.search}` },
+          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit${location.search}` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}

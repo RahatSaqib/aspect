@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -9,6 +9,7 @@ import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
+import useSearchParams from '../../../hooks/useSearchParams'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -26,16 +27,7 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-
-  const callerSearchParams = useMemo(() => {
-    const callerSearchParams = new URLSearchParams(location.search).toString()
-    if (callerSearchParams) {
-      const searchParamsToReturn = new URLSearchParams()
-      searchParamsToReturn.set('searchParams', callerSearchParams)
-      return `?${searchParamsToReturn.toString()}`
-    }
-    return ''
-  }, [location.search])
+  const { callerSearchParams } = useSearchParams(location.search)
 
   const { data, isLoading: tableLoading } = useSites(
     { sortCol, sortDir, pageAt, pageSize, filters },

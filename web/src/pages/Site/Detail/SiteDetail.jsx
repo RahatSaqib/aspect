@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Box, LinearProgress, Paper } from '@mui/material'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
@@ -7,6 +7,7 @@ import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
 import useSite from '../../../hooks/site/useSite'
+import useSearchParams from '../../../hooks/useSearchParams'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import isEditable from '../../../utils/selectors/isEditable'
 import SiteForm from './Edit/SiteForm'
@@ -31,14 +32,7 @@ const SiteDetail = ({ navigate, location }) => {
   }))
   const [latLong, setLatLong] = useState({ lat: 0, lng: 0 })
 
-  const backUrl = useMemo(() => {
-    const searchParams = new URLSearchParams(location.search).get('searchParams')
-    let url = '/browse/site'
-    if (searchParams) {
-      url += `?${searchParams}`
-    }
-    return url
-  }, [location.search])
+  const { backUrl } = useSearchParams(location.search, '/browse/site')
 
   useEffect(() => {
     setLatLong({ lat: site?.latitude, lng: site?.longitude })
