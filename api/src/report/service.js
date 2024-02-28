@@ -45,11 +45,12 @@ async function getReports(request) {
       'r.i18nKey',
       'r.i18nKeyDescription',
       'r.exportExcel',
-      'r.exportCsv'
+      'r.exportCsv',
+      'r.validations'
     )
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  return { ok: true, total, data }
+  return { ok: true, total, data: data.map(r => ({ ...r, validations: JSON.parse(r.validations) })) }
 }
 
 async function getReportDetails(externalId, dataConstraints) {

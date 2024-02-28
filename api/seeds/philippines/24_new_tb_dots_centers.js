@@ -1,6 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 const _ = require('lodash')
+const { insertSite } = require('../../src/site/common/db')
 
 const labClinic = require('./fixtures/labClinic.json')
 
@@ -71,7 +72,7 @@ async function seed(knex) {
         .where('externalId', clinic.externalId)
         .first('id', 'geographyId', 'latitude', 'longitude')
       if (!existingSite) {
-        await knex('Site').insert(siteData)
+        await insertSite(knex, siteData)
       } else if (
         existingSite.geographyId !== clinicGeographyId ||
         existingSite.latitude !== clinic.latitude ||

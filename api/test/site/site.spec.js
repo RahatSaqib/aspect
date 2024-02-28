@@ -3,6 +3,7 @@ const chaiSubset = require('chai-subset')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { knex } = require('../../src/db')
+const { insertSite } = require('../../src/site/common/db')
 
 const shared = require('../utils/sharedToken')
 
@@ -184,7 +185,7 @@ describe('Site routes', () => {
       })
 
       it('Should reject create a duplicate site ', async () => {
-        const [exisingSiteId] = await knex('Site').insert({
+        const [exisingSiteId] = await insertSite(knex, {
           name: dummyName,
           shortName: dummyShortName,
           externalId: dummyExternalId,
@@ -316,10 +317,10 @@ describe('Site routes', () => {
         tags.push(clinicTag)
 
         // Sites insert
-        const [labId] = await knex('Site').insert(lab)
+        const [labId] = await insertSite(knex, lab)
         lab.id = labId
         sites.push(lab)
-        const [clinicId] = await knex('Site').insert(clinic)
+        const [clinicId] = await insertSite(knex, clinic)
         clinic.id = clinicId
         sites.push(clinic)
 

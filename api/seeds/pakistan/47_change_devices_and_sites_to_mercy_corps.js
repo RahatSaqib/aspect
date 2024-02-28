@@ -1,9 +1,10 @@
 const _ = require('lodash')
+const { insertSite } = require('../../src/site/common/db')
 
 const cloneSite = async (knex, siteId) => {
   const site = await knex('Site').where('id', siteId).first()
   const newSite = { ...site, id: undefined }
-  const [insertedSiteId] = await knex('Site').insert(newSite)
+  const [insertedSiteId] = await insertSite(knex, newSite)
   return insertedSiteId
 }
 

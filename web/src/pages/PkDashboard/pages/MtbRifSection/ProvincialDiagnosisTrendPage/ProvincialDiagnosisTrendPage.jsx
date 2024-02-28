@@ -32,7 +32,7 @@ const ProvincialDiagnosisTrendPage = () => {
     .concat(lgas.map(i => ({ lgaId: i.id })))
     .concat(states.map(i => ({ stateId: i.id })))
 
-  const { isLoading, data: { data = [] } = {} } = useQuery(
+  const { isLoading, data } = useQuery(
     ['ProvincialDiagnosisTrendPage_Mtb', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-provincial', params: mergedParams })
@@ -89,19 +89,15 @@ const ProvincialDiagnosisTrendPage = () => {
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
               {formatMessage(messages.provincialDiagnosisTrends)}
             </Typography>
-            {graphData ? (
-              <div style={{ width: '100%' }}>
-                <LineGraph data={graphData} showLabel xField="year" yField="value" seriesField="id" />
-              </div>
-            ) : null}
+            <div style={{ width: '100%' }}>
+              <LineGraph data={graphData} showLabel xField="year" yField="value" seriesField="id" />
+            </div>
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            {tableData ? (
-              <ProvinceTrendTable
-                rows={tableData}
-                title={`${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`}
-              />
-            ) : null}
+            <ProvinceTrendTable
+              rows={tableData}
+              title={`${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`}
+            />
           </Grid>
         </Grid>
       )}

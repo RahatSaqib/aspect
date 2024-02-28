@@ -30,7 +30,7 @@ const OperationalData = lazy(() => import('./oldPages/dashboard/operational/Oper
 const PersonList = lazy(() => import('./pages/Person/List/PersonList'))
 const PkDashboard = lazy(() => import('./pages/PkDashboard'))
 const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
-const ReportIndex = lazy(() => import('./oldPages/report/page/ReportIndex'))
+const ReportIndex = lazy(() => import('./pages/Reports/ReportIndex'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
 const ResultList = lazy(() => import('./oldPages/result/list/ResultList'))
 const SiteDetail = lazy(() => import('./pages/Site/Detail'))

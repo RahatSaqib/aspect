@@ -4,6 +4,7 @@ const subSeconds = require('date-fns/subSeconds')
 const { knex } = require('../../src/db')
 const server = require('../utils/testUtils')
 const { deviceApprovalToId } = require('../../src/shared/dictionary')
+const { insertSite } = require('../../src/site/common/db')
 
 const { assert } = chai
 
@@ -179,7 +180,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
           createdOn: new Date(),
           updatedOn: new Date(),
         }
-        const [siteId] = await knex('Site').insert(site)
+        const [siteId] = await insertSite(knex, site)
         site.id = siteId
         const { body } = await authenticateWithTruelabApi(unapprovedDevice.username, unapprovedDevice.password)
         authHeaderValue = body.token
@@ -265,7 +266,7 @@ describe('Device API Raw routes for Truenat Authentication & Result Upload', () 
           createdOn: new Date(),
           updatedOn: new Date(),
         }
-        const [siteId] = await knex('Site').insert(site)
+        const [siteId] = await insertSite(knex, site)
         site.id = siteId
         const { body } = await authenticateWithTruelabApi(approvedDevice.username, approvedDevice.password)
         const { deviceId } = await knex('DeviceApiKey').where('username', approvedDevice.username).first('deviceId')

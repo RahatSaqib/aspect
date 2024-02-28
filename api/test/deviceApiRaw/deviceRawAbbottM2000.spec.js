@@ -8,6 +8,7 @@ const { randomToken } = require('../../src/deviceApi/apiKey')
 const { readTextFile } = require('../../src/shared/io')
 const { waitAsyncComplete } = require('../utils/generatorFunctionUtils')
 const { waitForIdle } = require('../utils/mqUtils')
+const { insertSite } = require('../../src/site/common/db')
 
 const server = require('../utils/testUtils')
 
@@ -44,7 +45,7 @@ describe('Device API Raw routes for Abbott M2000', () => {
       .where({ partnerId: partner.id })
       .where({ defaultForDeviceType: 1 })
       .first('id')
-    ;[abbottM2000SiteId] = await knex('Site').insert({
+    ;[abbottM2000SiteId] = await insertSite(knex, {
       name: 'Some Site for Some Aboott M2000 Device',
       shortName: 'SSFSAM2D',
       externalId: 'SSFSAM2D',

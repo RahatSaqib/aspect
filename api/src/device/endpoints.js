@@ -186,6 +186,10 @@ const routes = [
             .min(1)
             .max(256)
             .description('The module bay capacity of the device'),
+          stickerInstrumentSerial: Joi.string().allow('', null).optional(),
+          instrumentModel: Joi.string().allow('', null).optional(),
+          softwareType: Joi.string().allow('', null).optional(),
+          isDaisyChained: Joi.bool().required(),
         },
       },
     },

@@ -310,5 +310,18 @@ const messages = defineMessages({
     defaultMessage:
       "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
   },
+  genericReportErrorMessage: {
+    id: 'reports.genericReportErrorMessage',
+    defaultMessage: `Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}".
+      Please, try again in a few minutes. If the error persists, contact your administrator for support.`,
+  },
+  genericReportErrorTitle: {
+    id: 'reports.genericReportErrorTitle',
+    defaultMessage: 'Error Fetching Report',
+  },
+  tooMuchDataErrorMessage: {
+    id: 'reports.tooMuchDataErrorMessage',
+    defaultMessage: `Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.`,
+  },
 })
 export default messages

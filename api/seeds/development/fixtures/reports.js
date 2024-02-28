@@ -7,6 +7,7 @@ const deviceSummaryReport = {
   fileName: 'DeviceSummaryReport',
   exportCsv: false,
   sortOrder: 11,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -33,6 +34,7 @@ const missingCartridgesReport = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
