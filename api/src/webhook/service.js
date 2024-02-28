@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { createFetch, base, params, header, method, body } = require('http-client')
 const { differenceInMinutes } = require('date-fns')
 const Promise = require('bluebird')
-const { webhookMessagePending, webhookMessageSent, webhookMessageError } = require('./actions')
+const { webhookMessagePending, webhookMessageSent, webhookMessageError, webhookMessageCreated } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { messageStatusToId } = require('../shared/dictionary')
@@ -10,6 +10,7 @@ const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../string
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 const allWebhookServers = require('./servers')
+const { EXTERNAL_IDS } = require('../shared/constants')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -207,7 +208,9 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'tmpl.url as urlTemplate',
       'tmpl.fileName as fileNameTemplate',
       'tmpl.headers as headersTemplate',
-      'tmpl.params as paramsTemplate'
+      'tmpl.params as paramsTemplate',
+      'm.params as messageParams',
+      'm.headers as messageHeaders'
     )
 
   const message = await processUsingDataSourceQuery(
@@ -216,8 +219,8 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
     authLikeObject
   )
   // TODO replace template values of header/params
-  message.headers = data.headersTemplate
-  message.params = data.paramsTemplate
+  message.headers = data.headersTemplate ?? data.messageHeaders
+  message.params = data.paramsTemplate ?? data.messageParams
   return message
 }
 
@@ -276,6 +279,48 @@ async function onWebHookServerCheckTokens(action, context) {
   })
 }
 
+async function onPostResultToWebHookServers(action, context) {
+  const { resultId, siteId, deviceId } = action
+  const now = new Date()
+  context.messageContext.bindActionCreators({
+    webhookMessageCreated,
+  })
+  return context.messageContext.run(async knex => {
+    const [webhookTemplate] = await knex('WebhookTemplate')
+      .select('*')
+      .where({ externalId: EXTERNAL_IDS.SEND_RESULT_TO_CEPHEID })
+
+    const messageStatusId = await messageStatusToId('Initial')
+
+    /**
+     * get list of all registered webhook servers
+     */
+    const webhookServers = await knex('WebhookServer').select('*')
+    await Promise.each(webhookServers, async srv => {
+      const { isValid, accessToken } = srv
+      if (isValid) {
+        const [webhookMessageId] = await knex('WebhookMessage').insert({
+          webhookTemplateId: webhookTemplate.id,
+          url: webhookTemplate.url,
+          payload: webhookTemplate.payload,
+          params: JSON.stringify(webhookTemplate.params || {}),
+          headers: JSON.stringify({
+            Authorization: `Basic ${accessToken}`,
+          }),
+          resultId,
+          createdOn: now,
+          updatedOn: now,
+          siteId,
+          deviceId,
+          messageStatusId,
+        })
+
+        await context.messageContext.webhookMessageCreated(webhookMessageId)
+      }
+    })
+  })
+}
+
 module.exports = {
   onWebhookMessageCreated,
   onWebhookMessagePending,
@@ -283,4 +328,5 @@ module.exports = {
   onWebhookMessageError,
 
   onWebHookServerCheckTokens,
+  onPostResultToWebHookServers,
 }

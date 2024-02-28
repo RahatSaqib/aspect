@@ -6,6 +6,7 @@ const types = {
   WEBHOOK_MESSAGE_ERROR: 'WEBHOOK_MESSAGE_ERROR',
 
   WEBHOOK_SERVER_CHECK_TOKENS: 'WEBHOOK_SERVER_CHECK_TOKENS',
+  POST_RESULT_TO_WEBHOOK_SERVERS: 'POST_RESULT_TO_WEBHOOK_SERVERS',
 }
 
 // ----------- Action Creators -------------------
@@ -80,6 +81,15 @@ function webhookServerCheckTokens() {
   }
 }
 
+function postResultToWebHookServers(resultId, siteId, deviceId) {
+  return {
+    type: types.POST_RESULT_TO_WEBHOOK_SERVERS,
+    resultId,
+    siteId,
+    deviceId,
+  }
+}
+
 module.exports = {
   types,
   webhookMessageCreated,
@@ -88,4 +98,5 @@ module.exports = {
   webhookMessageError,
 
   webhookServerCheckTokens,
+  postResultToWebHookServers,
 }

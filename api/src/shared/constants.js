@@ -27,6 +27,10 @@ const WEBHOOK_SERVERS = {
   CepheidC360: 'CepheidC360',
 }
 
+const EXTERNAL_IDS = Object.freeze({
+  SEND_RESULT_TO_CEPHEID: 'sendResultToCepheid',
+})
+
 module.exports = {
   IGNORED_SENTRY_ERRORS,
   INTERNAL_DEVICE_IDS,
@@ -37,4 +41,5 @@ module.exports = {
   XDR_RESISTANCE_VALUES,
   DAYS_STOCK_LEFT_RANGES,
   WEBHOOK_SERVERS,
+  EXTERNAL_IDS,
 }

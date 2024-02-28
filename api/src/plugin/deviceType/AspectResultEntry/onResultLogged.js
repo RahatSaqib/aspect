@@ -103,7 +103,7 @@ async function onResultLogged({ resultId, deviceLogId, userId }, { messageContex
         postResultToWebHookServers,
       })
     }
-    await messageContext.postResultToWebHookServers(resultId)
+    await messageContext.postResultToWebHookServers(resultId, result.siteId, result.deviceId)
   })
 }
 
