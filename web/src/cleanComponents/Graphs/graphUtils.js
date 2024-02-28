@@ -1,5 +1,6 @@
 import { subDays, subMonths, addMinutes, subMinutes, getYear, subYears, startOfMonth } from 'date-fns'
 import { format } from 'date-fns-tz'
+import endOfMonth from 'date-fns/endOfMonth'
 import filter from 'lodash/filter'
 import flatten from 'lodash/flatten'
 import get from 'lodash/get'
@@ -537,6 +538,13 @@ const fillData = data => {
   return result
 }
 
+const getMinMaxDateFromMonthString = monthYear => {
+  const parsedDate = new Date(monthYear)
+  const minDate = negateTimeZoneOffset(parsedDate)
+  const maxDate = endOfMonth(minDate)
+  return { minDate, maxDate }
+}
+
 export {
   filterColour,
   getTimePeriod,
@@ -553,4 +561,5 @@ export {
   formatDataByGraphType,
   formatDateToYYYYMMDD,
   fillData,
+  getMinMaxDateFromMonthString,
 }
