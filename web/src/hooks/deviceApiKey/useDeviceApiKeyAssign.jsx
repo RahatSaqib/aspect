@@ -1,7 +1,7 @@
+import pick from 'lodash/pick'
 import { useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { DEVICE_API_KEY_KEY, DEVICE_KEY_ASSIGN_ENDPOINT } from './deviceApiKeyKeys.js'
-import pick from 'lodash/pick'
 
 const assignApiKey = async data => {
   return fetchWrapperForQueries({
