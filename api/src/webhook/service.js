@@ -229,6 +229,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       } else {
         error.Message = error.Message.replace(/(\r\n|\n|\r)/gm, '')
       }
+      if (_.isNil(error.ErrorType)) error.ErrorType = 'NULL'
     })
 
     if (!data.site.state) data.site.state = 'NULL'
