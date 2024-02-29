@@ -4,7 +4,7 @@ import { Formik } from 'formik'
 import isString from 'lodash/isString'
 import MuiPhoneNumber from 'material-ui-phone-number'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { array, object, string } from 'yup'
 import {
   CountrySelect,
@@ -22,6 +22,7 @@ import useUpdatePerson from '../../hooks/person/useUpdatePerson'
 import useUpdateSelf from '../../hooks/person/useUpdateSelf'
 import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages/customMessages'
+import { gotoReturnUrl } from '../../utils/utils/browser'
 import { normalizePhoneNumber } from '../../utils/utils/phone'
 import { getTimezoneById } from '../../utils/utils/timezone'
 import ContactStepper from './components/ContactStepper'
@@ -31,6 +32,7 @@ import messages from './messages'
 
 const ContactDetails = ({ setStep }) => {
   const navigate = useNavigate()
+  const location = useLocation()
 
   const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
@@ -123,7 +125,7 @@ const ContactDetails = ({ setStep }) => {
             if (id === ACTION.ADD) {
               addPerson(values, {
                 onSuccess: ({ data }) => {
-                  navigate(`/browse/person/${data.id}?add=true`)
+                  navigate(`/browse/person/${data.id}${location.search}${location.search ? '&' : '?'}add=true`)
                   setStep(1)
                   resetForm({ values })
                 },
@@ -356,7 +358,9 @@ const ContactDetails = ({ setStep }) => {
                 ) : null}
               </Grid>
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
+                <Button onClick={() => gotoReturnUrl(navigate, location, '/browse/person')}>
+                  {formatMessage(messages.backToTable)}
+                </Button>
                 <Box sx={{ flex: '1 1 auto' }} />
                 {isRecentlyAdd && !dirty ? (
                   <Button onClick={() => setStep(1)}>{formatMessage(messages.next)}</Button>

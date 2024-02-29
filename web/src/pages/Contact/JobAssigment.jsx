@@ -2,7 +2,7 @@ import React, { useContext } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { object, string } from 'yup'
 import {
   AssaySelect,
@@ -22,6 +22,7 @@ import usePersonAssignment from '../../hooks/person/usePersonAssignment'
 import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages'
 import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
+import { gotoReturnUrl } from '../../utils/utils/browser'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -34,6 +35,7 @@ const JobAssigment = ({ setStep }) => {
   const { formatMessage } = useIntl()
   const { personId = auth.personId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { isLoading, data: assignment } = usePersonAssignment(personId)
 
   const initialValues = {
@@ -223,7 +225,7 @@ const JobAssigment = ({ setStep }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button onClick={() => (isAdding ? setStep(0) : navigate('/browse/person'))}>
+                  <Button onClick={() => (isAdding ? setStep(0) : gotoReturnUrl(navigate, location, '/browse/person'))}>
                     {formatMessage(messages[isAdding ? 'back' : 'backToTable'])}
                   </Button>
                   {dirty ? (

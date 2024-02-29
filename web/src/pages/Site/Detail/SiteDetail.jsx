@@ -7,9 +7,9 @@ import { useSelector } from 'react-redux'
 import { Navigate, Route, Routes, useParams } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
 import useSite from '../../../hooks/site/useSite'
-import useSearchParams from '../../../hooks/useSearchParams'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import isEditable from '../../../utils/selectors/isEditable'
+import { getReturnUrl } from '../../../utils/utils/browser'
 import SiteForm from './Edit/SiteForm'
 import messages from './messages'
 import SiteDetailProfile from './Profile/SiteDetailProfile'
@@ -32,8 +32,6 @@ const SiteDetail = ({ navigate, location }) => {
   }))
   const [latLong, setLatLong] = useState({ lat: 0, lng: 0 })
 
-  const { backUrl } = useSearchParams(location.search, '/browse/site')
-
   useEffect(() => {
     setLatLong({ lat: site?.latitude, lng: site?.longitude })
   }, [site])
@@ -43,7 +41,7 @@ const SiteDetail = ({ navigate, location }) => {
   return (
     <>
       <Helmet title={intl.formatMessage(messages.title)} />
-      <DetailHeader name={(site && site.name) || 'Site'} back={`${backUrl}`}>
+      <DetailHeader name={(site && site.name) || 'Site'} back={getReturnUrl(location, '/browse/site')}>
         {[
           { label: intl.formatMessage(titleMessages.profile), path: `/browse/site/${siteId}${location.search}` },
           {

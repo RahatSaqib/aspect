@@ -9,13 +9,13 @@ import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
-import useSearchParams from '../../../hooks/useSearchParams'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.module.css'
@@ -27,7 +27,6 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const { callerSearchParams } = useSearchParams(location.search)
 
   const { data, isLoading: tableLoading } = useSites(
     { sortCol, sortDir, pageAt, pageSize, filters },
@@ -91,8 +90,8 @@ const SiteList = ({ navigate, location }) => {
       currentTarget: {
         dataset: { siteId },
       },
-    }) => navigate(`/browse/site/${siteId}${callerSearchParams}`),
-    [callerSearchParams, navigate]
+    }) => gotoWithReturnUrl(`/browse/site/${siteId}`, navigate, location),
+    [location, navigate]
   )
 
   return (
@@ -104,7 +103,7 @@ const SiteList = ({ navigate, location }) => {
             color="primary"
             variant="contained"
             browseButton
-            onClick={() => navigate(`/browse/site/create${callerSearchParams}`)}
+            onClick={() => gotoWithReturnUrl('/browse/site/create', navigate, location)}
           >
             {intl.formatMessage(messages.createSite)}
           </AspectButton>

@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -15,6 +15,7 @@ import useDeleteSite from '../../../../hooks/site/useDeleteSite'
 import useUpdateSite from '../../../../hooks/site/useUpdateSite'
 import useAuthState from '../../../../hooks/useAuthState'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import { gotoReturnUrl } from '../../../../utils/utils/browser'
 import messages from '../messages'
 import styles from '../SiteDetail.module.css'
 import { convertToFloat, getLatLongFromAddress } from './address'
@@ -35,15 +36,6 @@ const SiteForm = ({ site, onLatLongChange, location }) => {
 
   const isPristine = isEqual(site, editSite)
   const isNew = site.id === 0
-
-  const backUrl = useMemo(() => {
-    const searchParams = new URLSearchParams(location.search).get('searchParams')
-    let url = '/browse/site'
-    if (searchParams) {
-      url += `?${searchParams}`
-    }
-    return url
-  }, [location.search])
 
   useEffect(
     () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
@@ -80,7 +72,7 @@ const SiteForm = ({ site, onLatLongChange, location }) => {
   const handleDelete = () => {
     deleteSite()
     setShowConfirmation(false)
-    navigate(backUrl)
+    gotoReturnUrl(navigate, location, '/browse/site')
   }
 
   function handleDeletePrompt() {
@@ -90,6 +82,8 @@ const SiteForm = ({ site, onLatLongChange, location }) => {
   const isError =
     !isPristine &&
     (isEmpty(editSite.name) || isEmpty(editSite.shortName) || isNil(editSite.countryId) || isEmpty(editSite.externalId))
+
+  const clickBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
 
   return (
     <Box width="100%">
@@ -380,7 +374,7 @@ const SiteForm = ({ site, onLatLongChange, location }) => {
             </PermissionChecker>
           )}
 
-          <Button style={{ marginLeft: '1rem' }} type="button" variant="contained" onClick={() => navigate(backUrl)}>
+          <Button style={{ marginLeft: '1rem' }} type="button" variant="contained" onClick={clickBack}>
             {formatMessage(messages.buttonBack)}
           </Button>
 

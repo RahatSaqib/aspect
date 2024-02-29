@@ -31,7 +31,6 @@ import useDeviceForSelect from '../../../hooks/device/useDeviceForSelect'
 import useMergeDevices from '../../../hooks/device/useMergeDevices'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
-import useSearchParams from '../../../hooks/useSearchParams'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
@@ -40,6 +39,7 @@ import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
 import styles from './DeviceList.module.css'
 import getExportableFile from './DeviceQueries'
@@ -151,7 +151,6 @@ const DeviceList = () => {
   const [isProcessingMergeDevices, setProcessingMergeDevices] = useState(false)
   const [deviceTypeToMerge, setDeviceTypeToMerge] = useState()
   const [pagination, setPagination] = useState({})
-  const { callerSearchParams } = useSearchParams(location.search)
 
   const { sortCol, sortDir, page, size } = pagination
   const params = { ...pagination, ...filters }
@@ -161,8 +160,8 @@ const DeviceList = () => {
       currentTarget: {
         dataset: { deviceId },
       },
-    }) => navigate(`/browse/device/list/${deviceId}${callerSearchParams}`),
-    [callerSearchParams, navigate]
+    }) => gotoWithReturnUrl(`/browse/device/list/${deviceId}`, navigate, location),
+    [navigate, location]
   )
 
   const onAlertClick = useCallback(
@@ -173,9 +172,9 @@ const DeviceList = () => {
           dataset: { deviceId },
         },
       } = event
-      navigate(`/browse/device/list/${deviceId}/alerts${callerSearchParams}`)
+      gotoWithReturnUrl(`/browse/device/list/${deviceId}/alerts`, navigate, location)
     },
-    [callerSearchParams, navigate]
+    [navigate, location]
   )
 
   const {

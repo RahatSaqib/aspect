@@ -3,12 +3,13 @@ import { Box, Button, Checkbox, FormControlLabel, Grid, TextField } from '@mui/m
 import { Formik } from 'formik'
 import isEmpty from 'lodash/isEmpty'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { object, ref, string } from 'yup'
 import { InputPassword, LabeledSwitch, Loading } from '../../cleanComponents'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePersonLogin from '../../hooks/person/useUpdatePersonLogin'
 import useAuthState from '../../hooks/useAuthState'
+import { gotoReturnUrl } from '../../utils/utils/browser'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -18,6 +19,7 @@ const Login = ({ setStep }) => {
   const { id, isAdding } = useContext(FormStatusContext)
   const { formatMessage } = useIntl()
   const navigate = useNavigate()
+  const location = useLocation()
   const { isLoading, data: person } = usePerson(id)
   const { personId: loggedInPersonId, userPermissions } = useAuthState()
   const initialValues = {
@@ -172,7 +174,9 @@ const Login = ({ setStep }) => {
                       {formatMessage(messages.save)} {isValid}
                     </Button>
                   ) : (
-                    <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
+                    <Button onClick={() => gotoReturnUrl(navigate, location, '/browse/person')}>
+                      {formatMessage(messages.backToTable)}
+                    </Button>
                   )}
                 </Box>
               </form>

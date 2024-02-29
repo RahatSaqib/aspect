@@ -11,12 +11,12 @@ import useDevice from '../../../hooks/device/useDevice'
 import useDevicePerformance from '../../../hooks/device/useDevicePerformance'
 import useTagByTypeAndId from '../../../hooks/tag/useTagByTypeAndId'
 import useAuthState from '../../../hooks/useAuthState'
-import useSearchParams from '../../../hooks/useSearchParams'
 import deviceApprovalMessages from '../../../messages/deviceApprovalMessages'
 import deviceStatusMessages from '../../../messages/deviceStatusMessages'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
+import { getReturnUrl } from '../../../utils/utils/browser'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
@@ -42,7 +42,6 @@ export const DeviceDetail = props => {
   const { deviceId } = useParams()
   const intl = useIntl()
   const queryClient = useQueryClient()
-  const { backUrl } = useSearchParams(location.search, '/browse/device/list')
 
   const { isLoading: isDeviceLoading, data: device } = useDevice(deviceId)
   const { isLoading: isDeviceTagsLoading, data: deviceTags } = useTagByTypeAndId('device', deviceId)
@@ -93,7 +92,10 @@ export const DeviceDetail = props => {
 
   return (
     <>
-      <DetailHeader name={device ? device.name : 'Devices'} back={location.state?.previousLocationPathname ?? backUrl}>
+      <DetailHeader
+        name={device ? device.name : 'Devices'}
+        back={location.state?.previousLocationPathname ?? getReturnUrl(location, '/browse/device/list')}
+      >
         {[
           { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}${location.search}` },
           { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit${location.search}` },
