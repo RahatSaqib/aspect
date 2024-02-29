@@ -67,9 +67,9 @@ const SiteList = ({ navigate, location }) => {
           dataset: { siteId },
         },
       } = event
-      navigate(`/browse/site/${siteId}/alerts`)
+      gotoWithReturnUrl(`/browse/site/${siteId}/alerts`, navigate, location)
     },
-    [navigate]
+    [location, navigate]
   )
 
   const onExportClick = formatType => {
