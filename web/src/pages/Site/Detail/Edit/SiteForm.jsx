@@ -7,7 +7,7 @@ import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { SiteListSelect, SiteTagInput, LocationSelector, TimezoneSelect } from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
@@ -21,10 +21,11 @@ import styles from '../SiteDetail.module.css'
 import { convertToFloat, getLatLongFromAddress } from './address'
 import SiteTypeSelect from './SiteTypeSelect'
 
-const SiteForm = ({ site, onLatLongChange, location }) => {
+const SiteForm = ({ site, onLatLongChange }) => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const navigate = useNavigate()
+  const location = useLocation()
   const [showConfirmation, setShowConfirmation] = useState(false)
 
   const { mutate: updateSite } = useUpdateSite(site.id)
