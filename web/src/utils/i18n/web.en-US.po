@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
+"POT-Creation-Date: 2024-02-28T16:51:57.069Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3671,6 +3671,14 @@ msgstr "Error Code"
 msgid "Error Fetching Endpoint"
 msgstr "Error Fetching Endpoint"
 
+#. [reports.genericReportErrorTitle]
+#. defaultMessage is:
+#. Error Fetching Report
+#: extracted_strings.json
+#| msgid "Error Fetching Endpoint"
+msgid "Error Fetching Report"
+msgstr "Error Fetching Report"
+
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Countries
@@ -3725,6 +3733,13 @@ msgstr "Error Saving New Password"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Error Sending Reset Password Email"
+
+#. [report.missingDateRangeFilterTitle]
+#. defaultMessage is:
+#. Error: Date Selection Required to Download Report
+#: extracted_strings.json
+msgid "Error: Date Selection Required to Download Report"
+msgstr "Error: Date Selection Required to Download Report"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3951,6 +3966,9 @@ msgstr "FEB"
 msgid "FLQ Resistance"
 msgstr "FLQ Resistance"
 
+#. [p.PkDashboard.fqinhTestingDiagnosis]
+#. defaultMessage is:
+#. FQ & INH Testing & Diagnosis
 #. [p.PkDashboard.fqInhTestingDiagnosis]
 #. defaultMessage is:
 #. FQ & INH Testing & Diagnosis
@@ -4020,6 +4038,34 @@ msgstr "FQ-R cases diagnosed this year"
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Facility Code"
+
+#. [reports.tooMuchDataErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
+#: extracted_strings.json
+#| msgid ""
+#| "Failed to generate {fileType} report \"{reportName}\" because of error "
+#| "\"{errorMessage}\". Please, try again in a few minutes. If the error "
+#| "persists, contact your administrator for support."
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of Database "
+"Timeout: You might be trying to download too much data."
+msgstr ""
+"Failed to generate {fileType} report \"{reportName}\" because of Database "
+"Timeout: You might be trying to download too much data."
+
+#. [reports.genericReportErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -5306,6 +5352,17 @@ msgstr "Insert Placeholder For"
 msgid "Insert placeholder"
 msgstr "Insert placeholder"
 
+#. [pages.DeviceDetailEdit.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#. [pages.DeviceDetailProfile.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#: extracted_strings.json
+#| msgid "Instrument Serial"
+msgid "Instrument Model"
+msgstr "Instrument Model"
+
 #. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5488,6 +5545,16 @@ msgstr "Inventory levels have been adjusted successfully"
 #: extracted_strings.json
 msgid "Inventory on Hand"
 msgstr "Inventory on Hand"
+
+#. [pages.DeviceDetailEdit.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#. [pages.DeviceDetailProfile.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#: extracted_strings.json
+msgid "Is Daisy Chained"
+msgstr "Is Daisy Chained"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
 #. defaultMessage is:
@@ -7049,6 +7116,14 @@ msgstr "National"
 msgid "National Contacts"
 msgstr "National Contacts"
 
+#. [p.PkDashboard.nationalDiagnosisXdr]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB/XDR assay
+#: extracted_strings.json
+#| msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
+msgid "National Diagnosis Trends using MTB/XDR assay"
+msgstr "National Diagnosis Trends using MTB/XDR assay"
+
 #. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
 #. National FQ Resistance Trend
@@ -8112,12 +8187,13 @@ msgstr "Patient/Case ID"
 msgid "Pending changes"
 msgstr "Pending changes"
 
-#. [p.PkDashboard.peopleDiagnosedRif]
+#. [p.PkDashboard.peopleDiagnosedRifUltra]
 #. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif assay in current year
+#. People diagnosed for TB using MTB/Rif Ultra assay in current year
 #: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif assay in current year"
-msgstr "People diagnosed for TB using MTB/Rif assay in current year"
+#| msgid "People diagnosed for TB using MTB/Rif assay in current year"
+msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
+msgstr "People diagnosed for TB using MTB/Rif Ultra assay in current year"
 
 #. [p.PkDashboard.peopleDiagnosedXdr]
 #. defaultMessage is:
@@ -11028,6 +11104,17 @@ msgstr "Sms body shouldn't have no more than 2000 characters"
 msgid "Sms message should not be longer than 2000 characters"
 msgstr "Sms message should not be longer than 2000 characters"
 
+#. [pages.DeviceDetailEdit.softwareType]
+#. defaultMessage is:
+#. Software Type
+#. [pages.DeviceDetailProfile.softwareType]
+#. defaultMessage is:
+#. Software Type
+#: extracted_strings.json
+#| msgid "Site Type"
+msgid "Software Type"
+msgstr "Software Type"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -11118,6 +11205,17 @@ msgstr "Stats about SMS notifications sent."
 #: extracted_strings.json
 msgid "Status"
 msgstr "Status"
+
+#. [pages.DeviceDetailEdit.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#. [pages.DeviceDetailProfile.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#: extracted_strings.json
+#| msgid "Instrument Serial"
+msgid "Sticker Instrument Serial"
+msgstr "Sticker Instrument Serial"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11375,6 +11473,22 @@ msgstr "TB and RRTB Diagnosis Trends"
 msgid "TB cases diagnosed in"
 msgstr "TB cases diagnosed in"
 
+#. [p.PkDashboard.xdrTBLastDay]
+#. defaultMessage is:
+#. TB cases diagnosed in last 24 hours
+#: extracted_strings.json
+#| msgid "Tb cases diagnosed in last 24 hours"
+msgid "TB cases diagnosed in last 24 hours"
+msgstr "TB cases diagnosed in last 24 hours"
+
+#. [p.PkDashboard.xdrTBCasesPerYear]
+#. defaultMessage is:
+#. TB cases diagnosed this year
+#: extracted_strings.json
+#| msgid "Tb cases diagnosed this year"
+msgid "TB cases diagnosed this year"
+msgstr "TB cases diagnosed this year"
+
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
 #. TB lamp
@@ -11428,20 +11542,6 @@ msgstr "Task List"
 #: extracted_strings.json
 msgid "Tb Total"
 msgstr "Tb Total"
-
-#. [p.PkDashboard.xdrLastDay]
-#. defaultMessage is:
-#. Tb cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "Tb cases diagnosed in last 24 hours"
-msgstr "Tb cases diagnosed in last 24 hours"
-
-#. [p.PkDashboard.xdrCasesPerYear]
-#. defaultMessage is:
-#. Tb cases diagnosed this year
-#: extracted_strings.json
-msgid "Tb cases diagnosed this year"
-msgstr "Tb cases diagnosed this year"
 
 #. [forms.formItem.technicalDetails]
 #. defaultMessage is:
@@ -11534,9 +11634,6 @@ msgid "Testing"
 msgstr "Testing"
 
 #. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
 #. Testing & Diagnosis Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -12462,6 +12559,17 @@ msgstr "To an individual person"
 #: extracted_strings.json
 msgid "To any of these Job Functions"
 msgstr "To any of these Job Functions"
+
+#. [report.missingDateRangeFilterDescription]
+#. defaultMessage is:
+#. To download the report "{reportName}" you must select a date from the filters.
+#: extracted_strings.json
+msgid ""
+"To download the report \"{reportName}\" you must select a date from the "
+"filters."
+msgstr ""
+"To download the report \"{reportName}\" you must select a date from the "
+"filters."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
 #. defaultMessage is:
@@ -14175,15 +14283,6 @@ msgstr "{unit} since last week"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total calibrations"
-
-#~ msgid ""
-#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
-#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
-#~ "persists, contact your administrator for support."
-#~ msgstr ""
-#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
-#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
-#~ "persists, contact your administrator for support."
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Please choose a different site"
