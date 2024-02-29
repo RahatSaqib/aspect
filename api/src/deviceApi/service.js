@@ -15,6 +15,7 @@ const {
   resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
+const { deviceOperationLogged } = require('../device/actions')
 const templateProcessor = require('../email/templateProcessor')
 const {
   updateDeviceConfiguration,
@@ -408,6 +409,15 @@ async function processLogItem(context, logItem, options) {
       calibrationDeviceMaintenanceTypeId,
       context.messageContext
     )
+
+    if (payload.data.logFileName === 'GeneXpert DB') {
+      if (!context.messageContext.deviceOperationLogged) {
+        context.messageContext = context.messageContext.bindActionCreators({
+          deviceOperationLogged,
+        })
+      }
+      context.messageContext.deviceOperationLogged(device.id, deviceOperationId)
+    }
   } catch (err) {
     if (err.code === 'ER_DUP_ENTRY') {
       // ignore duplicate entry errors since the same log item may come from GxAlert and GxConnect

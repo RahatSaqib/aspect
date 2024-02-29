@@ -60,7 +60,7 @@ async function getMessageStatusData({ emailMessageId, smsMessageId, webhookMessa
       .first()
   else if (webhookMessageId)
     data = await query
-      .innerJoin('WebhookMessage as wm', 'n.emailMessageId', 'wm.id')
+      .innerJoin('WebhookMessage as wm', 'n.webhookMessageId', 'wm.id')
       .innerJoin('MessageStatus as ms', 'wm.messageStatusId', 'ms.id')
       .leftJoin('Person as p', 'wm.personId', 'p.id')
       .select('wm.updatedOn as messageUpdatedOn', 'ms.externalId as messageStatus', 'wm.response', 'wm.url')

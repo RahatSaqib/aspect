@@ -9,6 +9,7 @@ const types = {
   DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
+  DEVICE_OPERATION_LOGGED: 'DEVICE_OPERATION_LOGGED',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
@@ -89,6 +90,14 @@ function calibrationDateUpdated(deviceId) {
   return {
     type: types.CALIBRATION_DATE_UPDATED,
     deviceId,
+  }
+}
+
+function deviceOperationLogged(deviceId, deviceOperationId) {
+  return {
+    type: types.DEVICE_OPERATION_LOGGED,
+    deviceId,
+    options: { data: { deviceOperationId } },
   }
 }
 
@@ -351,4 +360,5 @@ module.exports = {
   hardwareErrorActions,
   logDeviceMaintenanceStatus,
   deviceUpdateModuleSerials,
+  deviceOperationLogged,
 }

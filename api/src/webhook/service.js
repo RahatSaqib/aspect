@@ -77,6 +77,11 @@ async function onWebhookMessagePending({ webhookMessageId }, { messageContext })
         fetchArgs.push(base(message.urlBase))
       }
       if (message.headers != null) {
+        if (message.headers.includes('%%CEPHEID_ACCESS_TOKEN%%') || message.headers.includes('%%CEPHEID_CLIENT_ID%%')) {
+          const cepheidParams = getCepheidParams()
+          message.headers.replace('%%CEPHEID_ACCESS_TOKEN%%', cepheidParams.accessToken)
+          message.headers.replace('%%CEPHEID_CLIENT_ID%%', cepheidParams.clientId)
+        }
         _.forEach(JSON.parse(message.headers), (value, key) => fetchArgs.push(header(key, value)))
       }
       if (message.params != null) {
@@ -207,6 +212,28 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'tmpl.headers as headersTemplate',
       'tmpl.params as paramsTemplate'
     )
+
+  if (data.issueTypeExternalId === 'SystemLogsReceived') {
+    const issueData = JSON.parse(data.issueData)
+    const deviceOperation = await knex('DeviceOperation as d')
+      .where('d.id', issueData.deviceOperationId)
+      .select('d.startedOn', 'd.data')
+      .first()
+    const deviceOperationData = JSON.parse(deviceOperation.data)
+
+    data.deviceOperationStartedOn = deviceOperation.startedOn.getTime()
+    data.deviceOperationErrors = deviceOperationData.details.Errors
+    data.deviceOperationErrors.forEach(error => {
+      if (error.ErrorCode === 0) {
+        error.Message = 'Performing Self-Test'
+      } else {
+        error.Message = error.Message.replace(/(\r\n|\n|\r)/gm, '')
+      }
+    })
+
+    if (!data.site.state) data.site.state = 'NULL'
+    if (!data.site.lga) data.site.lga = 'NULL'
+  }
 
   const message = await processUsingDataSourceQuery(
     data,
