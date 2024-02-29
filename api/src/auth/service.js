@@ -99,6 +99,7 @@ function getUserByUserId(userId) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'u.id': userId })
     .first(userProps)
