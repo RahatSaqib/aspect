@@ -77,11 +77,7 @@ const SiteDetail = ({ navigate, location }) => {
             <Route
               path="edit"
               element={
-                editable ? (
-                  <SiteForm site={site} onLatLongChange={setLatLong} location={location} />
-                ) : (
-                  <Navigate replace to={location} />
-                )
+                editable ? <SiteForm site={site} onLatLongChange={setLatLong} /> : <Navigate replace to={location} />
               }
             />
           </Routes>
