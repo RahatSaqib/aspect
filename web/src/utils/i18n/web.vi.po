@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
+"POT-Creation-Date: 2024-02-28T16:51:57.069Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3674,6 +3674,13 @@ msgstr "Mã lỗi"
 msgid "Error Fetching Endpoint"
 msgstr "Lỗi khi tìm nạp điểm cuối"
 
+#. [reports.genericReportErrorTitle]
+#. defaultMessage is:
+#. Error Fetching Report
+#: extracted_strings.json
+msgid "Error Fetching Report"
+msgstr "Lỗi tìm nạp báo cáo"
+
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Countries
@@ -3728,6 +3735,13 @@ msgstr "Lỗi khi lưu mật khẩu mới"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Lỗi khi gửi Email Đặt lại Mật khẩu"
+
+#. [report.missingDateRangeFilterTitle]
+#. defaultMessage is:
+#. Error: Date Selection Required to Download Report
+#: extracted_strings.json
+msgid "Error: Date Selection Required to Download Report"
+msgstr "Lỗi: Cần chọn ngày để tải xuống báo cáo"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3953,6 +3967,9 @@ msgstr "tháng hai"
 msgid "FLQ Resistance"
 msgstr "Kháng FLQ"
 
+#. [p.PkDashboard.fqinhTestingDiagnosis]
+#. defaultMessage is:
+#. FQ & INH Testing & Diagnosis
 #. [p.PkDashboard.fqInhTestingDiagnosis]
 #. defaultMessage is:
 #. FQ & INH Testing & Diagnosis
@@ -4022,6 +4039,30 @@ msgstr "Các trường hợp FQ-R được chẩn đoán trong năm nay"
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Mã cơ sở"
+
+#. [reports.tooMuchDataErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of Database "
+"Timeout: You might be trying to download too much data."
+msgstr ""
+"Không tạo được {fileType} báo cáo \"{reportName}\" do Hết thời gian chờ cơ "
+"sở dữ liệu: Bạn có thể đang cố tải xuống quá nhiều dữ liệu."
+
+#. [reports.genericReportErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Không tạo được báo cáo {fileType} \"{reportName}\" vì lỗi "
+"\"{errorMessage}\". Hãy thử lại trong vài phút nữa. Nếu lỗi vẫn còn, hãy "
+"liên hệ với người quản trị của bạn để được hỗ trợ."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -5307,6 +5348,16 @@ msgstr "Chèn trình giữ chỗ cho"
 msgid "Insert placeholder"
 msgstr "Chèn trình giữ chỗ"
 
+#. [pages.DeviceDetailEdit.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#. [pages.DeviceDetailProfile.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#: extracted_strings.json
+msgid "Instrument Model"
+msgstr "Mẫu nhạc cụ"
+
 #. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5489,6 +5540,16 @@ msgstr "Mức khoảng không quảng cáo đã được điều chỉnh thành 
 #: extracted_strings.json
 msgid "Inventory on Hand"
 msgstr "Hàng tồn kho"
+
+#. [pages.DeviceDetailEdit.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#. [pages.DeviceDetailProfile.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#: extracted_strings.json
+msgid "Is Daisy Chained"
+msgstr "Daisy có bị xích không"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
 #. defaultMessage is:
@@ -7053,6 +7114,13 @@ msgstr "Quốc gia"
 msgid "National Contacts"
 msgstr "Liên hệ quốc gia"
 
+#. [p.PkDashboard.nationalDiagnosisXdr]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB/XDR assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB/XDR assay"
+msgstr "Xu hướng chẩn đoán quốc gia sử dụng xét nghiệm MTB/XDR"
+
 #. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
 #. National FQ Resistance Trend
@@ -8116,14 +8184,14 @@ msgstr "ID bệnh nhân / trường hợp"
 msgid "Pending changes"
 msgstr "Các thay đổi đang chờ xử lý"
 
-#. [p.PkDashboard.peopleDiagnosedRif]
+#. [p.PkDashboard.peopleDiagnosedRifUltra]
 #. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif assay in current year
+#. People diagnosed for TB using MTB/Rif Ultra assay in current year
 #: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif assay in current year"
+msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
 msgstr ""
-"Số người được chẩn đoán mắc bệnh lao bằng xét nghiệm MTB/Rif trong năm hiện "
-"tại"
+"Số người được chẩn đoán mắc bệnh lao bằng xét nghiệm MTB/Rif Ultra trong năm "
+"hiện tại"
 
 #. [p.PkDashboard.peopleDiagnosedXdr]
 #. defaultMessage is:
@@ -11041,6 +11109,16 @@ msgstr "Nội dung tin nhắn không được dài quá 2000 ký tự"
 msgid "Sms message should not be longer than 2000 characters"
 msgstr "Tin nhắn sms không được dài quá 2000 ký tự"
 
+#. [pages.DeviceDetailEdit.softwareType]
+#. defaultMessage is:
+#. Software Type
+#. [pages.DeviceDetailProfile.softwareType]
+#. defaultMessage is:
+#. Software Type
+#: extracted_strings.json
+msgid "Software Type"
+msgstr "Loại phần mềm"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -11131,6 +11209,16 @@ msgstr "Thống kê về các thông báo SMS đã gửi."
 #: extracted_strings.json
 msgid "Status"
 msgstr "Trạng thái"
+
+#. [pages.DeviceDetailEdit.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#. [pages.DeviceDetailProfile.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#: extracted_strings.json
+msgid "Sticker Instrument Serial"
+msgstr "Nhãn dán nhạc cụ nối tiếp"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11388,6 +11476,20 @@ msgstr "Xu hướng chẩn đoán bệnh lao và RRTB"
 msgid "TB cases diagnosed in"
 msgstr "Các trường hợp lao được chẩn đoán trong"
 
+#. [p.PkDashboard.xdrTBLastDay]
+#. defaultMessage is:
+#. TB cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "TB cases diagnosed in last 24 hours"
+msgstr "Số ca bệnh lao được chẩn đoán trong 24 giờ qua"
+
+#. [p.PkDashboard.xdrTBCasesPerYear]
+#. defaultMessage is:
+#. TB cases diagnosed this year
+#: extracted_strings.json
+msgid "TB cases diagnosed this year"
+msgstr "Số ca bệnh lao được chẩn đoán trong năm nay"
+
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
 #. TB lamp
@@ -11441,20 +11543,6 @@ msgstr "Danh sách công việc"
 #: extracted_strings.json
 msgid "Tb Total"
 msgstr "Tổng số Tb"
-
-#. [p.PkDashboard.xdrLastDay]
-#. defaultMessage is:
-#. Tb cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "Tb cases diagnosed in last 24 hours"
-msgstr "Ca bệnh lao được chẩn đoán trong 24 giờ qua"
-
-#. [p.PkDashboard.xdrCasesPerYear]
-#. defaultMessage is:
-#. Tb cases diagnosed this year
-#: extracted_strings.json
-msgid "Tb cases diagnosed this year"
-msgstr "Các ca bệnh lao được chẩn đoán trong năm nay"
 
 #. [forms.formItem.technicalDetails]
 #. defaultMessage is:
@@ -11547,9 +11635,6 @@ msgid "Testing"
 msgstr "Thử nghiệm"
 
 #. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
 #. Testing & Diagnosis Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -12469,6 +12554,15 @@ msgstr "Đối với một cá nhân"
 #: extracted_strings.json
 msgid "To any of these Job Functions"
 msgstr "Đối với bất kỳ Chức năng Công việc nào trong số này"
+
+#. [report.missingDateRangeFilterDescription]
+#. defaultMessage is:
+#. To download the report "{reportName}" you must select a date from the filters.
+#: extracted_strings.json
+msgid ""
+"To download the report \"{reportName}\" you must select a date from the "
+"filters."
+msgstr "Để tải xuống báo cáo \"{reportName}\", bạn phải chọn ngày từ bộ lọc."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
 #. defaultMessage is:
@@ -14197,15 +14291,6 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
-
-#~ msgid ""
-#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
-#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
-#~ "persists, contact your administrator for support."
-#~ msgstr ""
-#~ "Không tạo được báo cáo {fileType} \"{reportName}\" vì lỗi "
-#~ "\"{errorMessage}\". Hãy thử lại trong vài phút nữa. Nếu lỗi vẫn còn, hãy "
-#~ "liên hệ với người quản trị của bạn để được hỗ trợ."
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Vui lòng chọn một đơn vị other"

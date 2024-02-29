@@ -1,4 +1,5 @@
 const jobFunctions = require('./jobFunctions')
+const webhookServers = require('../../fixtures/webhookServers')
 
 module.exports = {
   partner: {
@@ -12,6 +13,7 @@ module.exports = {
   partnerAbbreviation: 'UK',
   fixtures: {
     jobFunctions,
+    webhookServers,
   },
   plugin: '',
   deviceLogHistoryDays: 365,
