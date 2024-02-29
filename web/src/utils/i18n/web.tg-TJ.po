@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
+"POT-Creation-Date: 2024-02-28T16:51:57.069Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3674,6 +3674,13 @@ msgstr "Рамзи хато"
 msgid "Error Fetching Endpoint"
 msgstr "Хатогӣ ҳангоми гирифтани нуқтаи ниҳоӣ"
 
+#. [reports.genericReportErrorTitle]
+#. defaultMessage is:
+#. Error Fetching Report
+#: extracted_strings.json
+msgid "Error Fetching Report"
+msgstr "Хатогӣ ҳангоми дарёфти гузориш"
+
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Countries
@@ -3728,6 +3735,13 @@ msgstr "Хатогӣ ҳангоми захира кардани пароли н�
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Хатогӣ дар ирсоли почтаи электронии парол аз нав"
+
+#. [report.missingDateRangeFilterTitle]
+#. defaultMessage is:
+#. Error: Date Selection Required to Download Report
+#: extracted_strings.json
+msgid "Error: Date Selection Required to Download Report"
+msgstr "Хатогӣ: Интихоби сана барои зеркашии гузориш зарур аст"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3955,6 +3969,9 @@ msgstr "феврал"
 msgid "FLQ Resistance"
 msgstr "Муқовимат ба FLQ"
 
+#. [p.PkDashboard.fqinhTestingDiagnosis]
+#. defaultMessage is:
+#. FQ & INH Testing & Diagnosis
 #. [p.PkDashboard.fqInhTestingDiagnosis]
 #. defaultMessage is:
 #. FQ & INH Testing & Diagnosis
@@ -4024,6 +4041,31 @@ msgstr "Ҳодисаҳои FQ-R имсол ташхис карда шуданд"
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Кодекси иншоот"
+
+#. [reports.tooMuchDataErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of Database "
+"Timeout: You might be trying to download too much data."
+msgstr ""
+"Муваффақияти тавлиди {fileType} гузориши \"{reportName}\" аз сабаби "
+"мӯҳлатҳои пойгоҳи додаҳо: Шояд шумо кӯшиши зеркашии маълумоти аз ҳад зиёдро "
+"дошта бошед."
+
+#. [reports.genericReportErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Аз сабаби хатогии \"{errorMessage}\" {fileType} гузориши \"{reportName}\" "
+"тавлид нашуд. Лутфан, пас аз чанд дақиқа бори other кӯшиш кунед. Агар хатогӣ "
+"идома ёбад, барои дастгирӣ бо маъмури худ тамос гиред."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -5311,6 +5353,16 @@ msgstr "Ҷойгиркунандаи Барои"
 msgid "Insert placeholder"
 msgstr "Ҷойгиркуниро ворид кунед"
 
+#. [pages.DeviceDetailEdit.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#. [pages.DeviceDetailProfile.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#: extracted_strings.json
+msgid "Instrument Model"
+msgstr "Модели асбоб"
+
 #. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5493,6 +5545,16 @@ msgstr "Сатҳи инвентаризатсия бомуваффақият т�
 #: extracted_strings.json
 msgid "Inventory on Hand"
 msgstr "Инвентаризатсия дар даст"
+
+#. [pages.DeviceDetailEdit.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#. [pages.DeviceDetailProfile.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#: extracted_strings.json
+msgid "Is Daisy Chained"
+msgstr "Дейзи занҷирбанд аст"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
 #. defaultMessage is:
@@ -7058,6 +7120,13 @@ msgstr "Миллӣ"
 msgid "National Contacts"
 msgstr "Тамосҳои миллӣ"
 
+#. [p.PkDashboard.nationalDiagnosisXdr]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB/XDR assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB/XDR assay"
+msgstr "Тамоюлҳои миллии ташхис бо истифода аз таҳлили MTB/XDR"
+
 #. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
 #. National FQ Resistance Trend
@@ -8124,13 +8193,13 @@ msgstr "Бемор/Идентификатсияи парванда"
 msgid "Pending changes"
 msgstr "Тағйироти интизорӣ"
 
-#. [p.PkDashboard.peopleDiagnosedRif]
+#. [p.PkDashboard.peopleDiagnosedRifUltra]
 #. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif assay in current year
+#. People diagnosed for TB using MTB/Rif Ultra assay in current year
 #: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif assay in current year"
+msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
 msgstr ""
-"Одамоне, ки дар соли ҷорӣ бо истифода аз таҳлили MTB/Rif гирифтори бемории "
+"Одамоне, ки дар соли ҷорӣ бо истифода аз таҳлили MTB/Rif Ultra ба бемории "
 "сил ташхис шудаанд"
 
 #. [p.PkDashboard.peopleDiagnosedXdr]
@@ -11057,6 +11126,16 @@ msgstr "Матни SMS набояд аз 2000 аломат зиёд бошад"
 msgid "Sms message should not be longer than 2000 characters"
 msgstr "Паёми SMS набояд аз 2000 аломат зиёд бошад"
 
+#. [pages.DeviceDetailEdit.softwareType]
+#. defaultMessage is:
+#. Software Type
+#. [pages.DeviceDetailProfile.softwareType]
+#. defaultMessage is:
+#. Software Type
+#: extracted_strings.json
+msgid "Software Type"
+msgstr "Навъи нармафзор"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -11147,6 +11226,16 @@ msgstr "Статистика дар бораи SMS огоҳиномаҳои фи
 #: extracted_strings.json
 msgid "Status"
 msgstr "Статус"
+
+#. [pages.DeviceDetailEdit.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#. [pages.DeviceDetailProfile.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#: extracted_strings.json
+msgid "Sticker Instrument Serial"
+msgstr "Силсилаи асбобҳои стикер"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11405,6 +11494,20 @@ msgstr "Тамоюлҳои ташхиси сил ва RRTB"
 msgid "TB cases diagnosed in"
 msgstr "Ҳодисаҳои бемории сил дар"
 
+#. [p.PkDashboard.xdrTBLastDay]
+#. defaultMessage is:
+#. TB cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "TB cases diagnosed in last 24 hours"
+msgstr "Ҳодисаҳои бемории сил дар 24 соати охир ташхис карда шуданд"
+
+#. [p.PkDashboard.xdrTBCasesPerYear]
+#. defaultMessage is:
+#. TB cases diagnosed this year
+#: extracted_strings.json
+msgid "TB cases diagnosed this year"
+msgstr "Соли равон гирифторони бемории сил ташхис карда шуданд"
+
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
 #. TB lamp
@@ -11458,20 +11561,6 @@ msgstr "Рӯйхати вазифаҳо"
 #: extracted_strings.json
 msgid "Tb Total"
 msgstr "Тб Ҳамагӣ"
-
-#. [p.PkDashboard.xdrLastDay]
-#. defaultMessage is:
-#. Tb cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "Tb cases diagnosed in last 24 hours"
-msgstr "Ҳодисаҳои бемории сил дар 24 соати охир ташхис карда шуданд"
-
-#. [p.PkDashboard.xdrCasesPerYear]
-#. defaultMessage is:
-#. Tb cases diagnosed this year
-#: extracted_strings.json
-msgid "Tb cases diagnosed this year"
-msgstr "Ҳодисаҳои бемории сил имсол ташхис карда шуданд"
 
 #. [forms.formItem.technicalDetails]
 #. defaultMessage is:
@@ -11564,9 +11653,6 @@ msgid "Testing"
 msgstr "Санҷиш"
 
 #. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
 #. Testing & Diagnosis Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -12500,6 +12586,17 @@ msgstr "Ба шахси алохида"
 #: extracted_strings.json
 msgid "To any of these Job Functions"
 msgstr "Ба яке аз ин вазифаҳои корӣ"
+
+#. [report.missingDateRangeFilterDescription]
+#. defaultMessage is:
+#. To download the report "{reportName}" you must select a date from the filters.
+#: extracted_strings.json
+msgid ""
+"To download the report \"{reportName}\" you must select a date from the "
+"filters."
+msgstr ""
+"Барои зеркашии гузориши \"{reportName}\" шумо бояд аз филтрҳо санаро интихоб "
+"кунед."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
 #. defaultMessage is:
@@ -14228,15 +14325,6 @@ msgstr "{unit} аз ҳафтаи гузашта"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
-
-#~ msgid ""
-#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
-#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
-#~ "persists, contact your administrator for support."
-#~ msgstr ""
-#~ "Аз сабаби хатогии \"{errorMessage}\" {fileType} гузориши \"{reportName}\" "
-#~ "тавлид нашуд. Лутфан, пас аз чанд дақиқа бори other кӯшиш кунед. Агар "
-#~ "хатогӣ идома ёбад, барои дастгирӣ бо маъмури худ тамос гиред."
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Лутфан сайти otherро интихоб кунед"
