@@ -37,6 +37,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
 
   const isPristine = isEqual(site, editSite)
   const isNew = site.id === 0
+  const goBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
 
   useEffect(
     () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
@@ -73,7 +74,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const handleDelete = () => {
     deleteSite()
     setShowConfirmation(false)
-    gotoReturnUrl(navigate, location, '/browse/site')
+    goBack()
   }
 
   function handleDeletePrompt() {
@@ -83,8 +84,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const isError =
     !isPristine &&
     (isEmpty(editSite.name) || isEmpty(editSite.shortName) || isNil(editSite.countryId) || isEmpty(editSite.externalId))
-
-  const clickBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
 
   return (
     <Box width="100%">
@@ -375,7 +374,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             </PermissionChecker>
           )}
 
-          <Button style={{ marginLeft: '1rem' }} type="button" variant="contained" onClick={clickBack}>
+          <Button style={{ marginLeft: '1rem' }} type="button" variant="contained" onClick={goBack}>
             {formatMessage(messages.buttonBack)}
           </Button>
 
@@ -404,7 +403,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
 SiteForm.propTypes = {
   site: PropTypes.object,
   onLatLongChange: PropTypes.func,
-  location: PropTypes.oneOfType([PropTypes.object]).isRequired,
 }
 SiteForm.defaultProps = {
   site: {
