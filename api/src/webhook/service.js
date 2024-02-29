@@ -223,10 +223,11 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
     const issueData = JSON.parse(data.issueData)
     const deviceOperation = await knex('DeviceOperation as d')
       .where('d.id', issueData.deviceOperationId)
-      .select('d.startedOn', 'd.data')
+      .select('d.startedOn', 'd.data', 'd.guid')
       .first()
     const deviceOperationData = JSON.parse(deviceOperation.data)
 
+    data.deviceOperationGuid = deviceOperation.guid
     data.deviceOperationStartedOn = deviceOperation.startedOn.getTime()
     data.deviceOperationErrors = deviceOperationData.details.Errors
     data.deviceOperationErrors.forEach(error => {

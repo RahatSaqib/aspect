@@ -509,6 +509,7 @@ async function getBaseDataSource(data, auth) {
     displayPreferences,
     timezone: d.timezone,
     deviceOperation: {
+      guid: d.deviceOperationGuid,
       startedOn: d.deviceOperationStartedOn,
       errors: d.deviceOperationErrors,
     },
