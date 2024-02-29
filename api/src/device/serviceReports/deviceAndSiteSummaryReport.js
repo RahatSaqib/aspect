@@ -4,7 +4,7 @@ const { getGeneXpertInventoryBySitesAndConsumableQuery } = require('../../invent
 const { getConstraints } = require('../../auth/constraints')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/query')
 const { getBasicsForDevicesReport } = require('../common/db')
-const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 
 // --------------------------------------------------------------------------
 const resultCategoryGroupSum = (assayId, rc1, rc2) => {
@@ -21,10 +21,8 @@ const resultCategoryGroupSum = (assayId, rc1, rc2) => {
   return knex.raw(query)
 }
 
-async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query) {
+async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezone) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
-  const { maxDate = new Date() } = query
-  const offset = getOffsetFromIsoDateString(maxDate)
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.resultCategory1)
@@ -44,7 +42,7 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
       ),
       otherTests: knex.raw('IFNULL(SUM(CASE WHEN rcg.id IS NULL THEN 1 ELSE 0 END), 0)'),
       totalXpertTests: knex.raw('count(*)'),
-      lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset),
+      lastUploadOn: knex.raw('MAX(r.updatedOn)'),
     })
     .groupBy('r.deviceId')
     .modify(filterParams, query, {
@@ -76,17 +74,22 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
         'lg.name AS districtName',
         'd.serial AS serial',
         'd.lastInstrumentSerial AS instrumentSerial',
-        getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', offset, 'lastPingOn'),
+        getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', timezone, 'lastPingOn'),
         'd.lastPingFromIp AS lastPingFrom',
-        knex.raw('d.ConfigurationData ->> "$.connectSettingsSentOn" AS informationDate'),
+        getDateTimeProjectionInUserTimeZone(
+          knex,
+          'COALESCE(configurationData->>"$.systemTime.localTime", configurationData->>"$.systemTime")',
+          timezone,
+          'informationDate'
+        ),
         knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS operativeSystem'),
         'd.timezone AS timeZone',
         'd.culture AS language',
         knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS gxConnectVersion'),
         knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
         knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
-        'd.putInService AS instalationDate',
-        'resultsCount.lastUploadOn AS lastUploadOn',
+        getDateTimeProjectionInUserTimeZone(knex, 'd.putInService', timezone, 'instalationDate'),
+        getDateTimeProjectionInUserTimeZone(knex, 'resultsCount.lastUploadOn', timezone, 'lastUploadOn'),
         knex.raw('dms.name AS status'),
         knex.raw('dmsl.data ->> "$.notes" AS statusNote'),
         ...resultCategoryGroups.map(a => knex.raw(`IFNULL(resultsCount.${a.columnKey}, 0) AS ${a.columnKey}`)),

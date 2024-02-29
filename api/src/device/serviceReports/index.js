@@ -497,9 +497,9 @@ async function getModuleStatusReport(auth, query) {
   }
 }
 
-async function getDevicesWithCountsForTBReport(auth, query) {
+async function getDevicesWithCountsForTBReport(auth, query, timezone) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const rows = await getDevicesWithCountsForTB(dataConstraints, query)
+  const rows = await getDevicesWithCountsForTB(dataConstraints, query, timezone)
 
   return {
     ok: true,
@@ -541,10 +541,10 @@ async function getErrorRateByUserReport(auth, query) {
   }
 }
 
-async function getAllDeviceReport(auth, query) {
+async function getAllDeviceReport(auth, query, timezone) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
-  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezone)
   const rows = await builder
 
   return {
