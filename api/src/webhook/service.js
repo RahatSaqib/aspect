@@ -78,9 +78,15 @@ async function onWebhookMessagePending({ webhookMessageId }, { messageContext })
       }
       if (message.headers != null) {
         if (message.headers.includes('%%CEPHEID_ACCESS_TOKEN%%') || message.headers.includes('%%CEPHEID_CLIENT_ID%%')) {
-          const cepheidParams = getCepheidParams()
-          message.headers.replace('%%CEPHEID_ACCESS_TOKEN%%', cepheidParams.accessToken)
-          message.headers.replace('%%CEPHEID_CLIENT_ID%%', cepheidParams.clientId)
+          const cepheidParams = await knex('WebhookServer as ws')
+            .where('ws.externalId', 'CepheidC360')
+            .where('ws.isValid', 1)
+            .select(['ws.accessToken', knex.raw(`ws.params->>'$.toLogin.payload.client_id' as clientId`)])
+            .first()
+          if (cepheidParams) {
+            message.headers = message.headers.replace('%%CEPHEID_ACCESS_TOKEN%%', cepheidParams.accessToken)
+            message.headers = message.headers.replace('%%CEPHEID_CLIENT_ID%%', cepheidParams.clientId)
+          }
         }
         _.forEach(JSON.parse(message.headers), (value, key) => fetchArgs.push(header(key, value)))
       }
@@ -232,8 +238,8 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       if (_.isNil(error.ErrorType)) error.ErrorType = 'NULL'
     })
 
-    if (!data.site.state) data.site.state = 'NULL'
-    if (!data.site.lga) data.site.lga = 'NULL'
+    if (!data.siteState) data.siteState = 'NULL'
+    if (!data.siteLga) data.siteLga = 'NULL'
   }
 
   const message = await processUsingDataSourceQuery(
