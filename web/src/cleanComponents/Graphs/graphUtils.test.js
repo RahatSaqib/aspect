@@ -1,10 +1,9 @@
-// import timezonedDate from 'timezoned-date'
 import endOfDay from 'date-fns/endOfDay'
 import startOfDay from 'date-fns/startOfDay'
 import { getMinMaxDateFromMonthString } from './graphUtils'
 
-describe.only('getMinMaxDateFromMonthString', () => {
-  it.only('Should return the min and max dates from the provided month', () => {
+describe('getMinMaxDateFromMonthString', () => {
+  it('Should return the min and max dates from the provided month', () => {
     const input = '2024-01'
 
     const expected = {
