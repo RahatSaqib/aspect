@@ -123,7 +123,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: event => event.target.value,
       },
     ],
     validate({ countryId, partnerId }, { intl }) {
@@ -220,7 +220,7 @@ function DeviceApiKeyGeneratorDialogForm({
           id="siteId"
           name="siteId"
           label={formatMessage(messages.siteId)}
-          value={values.siteId}
+          value={values.siteId || ''}
           onChange={onSiteIdChange}
           error={meta.siteId.touched && meta.siteId.error}
         />
