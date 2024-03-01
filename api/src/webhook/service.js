@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { createFetch, base, method, params, header, body } = require('http-client')
+const { createFetch, base, params, header, method, body } = require('http-client')
 const { webhookMessagePending, webhookMessageSent, webhookMessageError } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
@@ -7,6 +7,7 @@ const { messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
+const onWebHookServerCheckTokens = require('./onWebHookServerCheckTokens')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -223,4 +224,6 @@ module.exports = {
   onWebhookMessagePending,
   onWebhookMessageSent,
   onWebhookMessageError,
+
+  onWebHookServerCheckTokens,
 }
