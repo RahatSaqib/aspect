@@ -35,8 +35,8 @@ module.exports = {
     `"moduleSerialNumber":{{enclose (defaultTo result.resultData.moduleSerial '') with='"'}},` + // required
     `"assayName":{{enclose (defaultTo result.assay.name '') with='"'}},` + // required
     `"assayGuid":{{enclose (defaultTo result.assay.id '') with='"'}},` + // required
-    `"daisyChained":{{enclose (defaultTo device.daisyChained false) with='"'}},` +
-    `"lisConnected":{{enclose (defaultTo device.lisConfiguredCorrectly false) with='"'}},` +
+    `"daisyChained":{{enclose (defaultTo device.daisyChained false) with=''}},` +
+    `"lisConnected":{{enclose (defaultTo device.lisConfiguredCorrectly false) with=''}},` +
     `"errors": {{square true}}` +
     `{{curly true}}` +
     `"errorCode":{{enclose (defaultTo result.errorCode '') with='"'}},` +
