@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-02-15T00:19:25.999Z\n"
+"POT-Creation-Date: 2024-02-28T16:51:57.069Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -3680,6 +3680,13 @@ msgstr "Код помилки"
 msgid "Error Fetching Endpoint"
 msgstr "Помилка отримання кінцевої точки"
 
+#. [reports.genericReportErrorTitle]
+#. defaultMessage is:
+#. Error Fetching Report
+#: extracted_strings.json
+msgid "Error Fetching Report"
+msgstr "Звіт про помилки при зчитуванні"
+
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Countries
@@ -3734,6 +3741,13 @@ msgstr "Помилка збереження нового пароля"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Помилка надсилання електронної пошти для скидання пароля"
+
+#. [report.missingDateRangeFilterTitle]
+#. defaultMessage is:
+#. Error: Date Selection Required to Download Report
+#: extracted_strings.json
+msgid "Error: Date Selection Required to Download Report"
+msgstr "Помилка: Для завантаження звіту потрібен вибір дати"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3960,6 +3974,9 @@ msgstr "лютий"
 msgid "FLQ Resistance"
 msgstr "Опір FLQ"
 
+#. [p.PkDashboard.fqinhTestingDiagnosis]
+#. defaultMessage is:
+#. FQ & INH Testing & Diagnosis
 #. [p.PkDashboard.fqInhTestingDiagnosis]
 #. defaultMessage is:
 #. FQ & INH Testing & Diagnosis
@@ -4029,6 +4046,30 @@ msgstr "Випадки FQ-R, діагностовані в цьому році"
 #: extracted_strings.json
 msgid "Facility Code"
 msgstr "Код об'єкта"
+
+#. [reports.tooMuchDataErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of Database "
+"Timeout: You might be trying to download too much data."
+msgstr ""
+"Не вдалося згенерувати звіт {fileType} \"{reportName}\" через тайм-аут бази "
+"даних: Можливо, ви намагаєтеся завантажити занадто багато даних."
+
+#. [reports.genericReportErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of error "
+"\"{errorMessage}\". Please, try again in a few minutes. If the error "
+"persists, contact your administrator for support."
+msgstr ""
+"Не вдалося створити {fileType} звіт \"{reportName}\" через помилку "
+"\"{errorMessage}\". Будь ласка, спробуйте ще раз за кілька хвилин. Якщо "
+"помилка не зникає, зверніться до свого адміністратора за підтримкою."
 
 #. [pages.resultEdit.Failures_of_Category_I]
 #. defaultMessage is:
@@ -5315,6 +5356,16 @@ msgstr "Вставити заповнювач для"
 msgid "Insert placeholder"
 msgstr "Вставити заповнювач"
 
+#. [pages.DeviceDetailEdit.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#. [pages.DeviceDetailProfile.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#: extracted_strings.json
+msgid "Instrument Model"
+msgstr "Модель інструменту"
+
 #. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5497,6 +5548,16 @@ msgstr "Рівні запасів успішно відрегульовані"
 #: extracted_strings.json
 msgid "Inventory on Hand"
 msgstr "Інвентар на руках"
+
+#. [pages.DeviceDetailEdit.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#. [pages.DeviceDetailProfile.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#: extracted_strings.json
+msgid "Is Daisy Chained"
+msgstr "Чи є Дейзі прикутою до ланцюга"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
 #. defaultMessage is:
@@ -7063,6 +7124,13 @@ msgstr "Національний"
 msgid "National Contacts"
 msgstr "Національні контакти"
 
+#. [p.PkDashboard.nationalDiagnosisXdr]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB/XDR assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB/XDR assay"
+msgstr "Національні тенденції діагностики з використанням тесту MTB/XDR"
+
 #. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
 #. National FQ Resistance Trend
@@ -8128,14 +8196,14 @@ msgstr "Ідентифікатор пацієнта / випадку"
 msgid "Pending changes"
 msgstr "Очікувані зміни"
 
-#. [p.PkDashboard.peopleDiagnosedRif]
+#. [p.PkDashboard.peopleDiagnosedRifUltra]
 #. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif assay in current year
+#. People diagnosed for TB using MTB/Rif Ultra assay in current year
 #: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif assay in current year"
+msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
 msgstr ""
-"Люди, яким було встановлено діагноз туберкульозу за допомогою тесту МТБ/Ріф "
-"у поточному році"
+"Люди, яким було встановлено діагноз ТБ за допомогою тесту MTB/Rif Ultra в "
+"поточному році"
 
 #. [p.PkDashboard.peopleDiagnosedXdr]
 #. defaultMessage is:
@@ -11053,6 +11121,16 @@ msgstr "Текст повідомлення не повинен містити �
 msgid "Sms message should not be longer than 2000 characters"
 msgstr "SMS-повідомлення не повинно бути довшим за 2000 символів"
 
+#. [pages.DeviceDetailEdit.softwareType]
+#. defaultMessage is:
+#. Software Type
+#. [pages.DeviceDetailProfile.softwareType]
+#. defaultMessage is:
+#. Software Type
+#: extracted_strings.json
+msgid "Software Type"
+msgstr "Тип програмного забезпечення"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -11143,6 +11221,16 @@ msgstr "Статистика відправлених SMS-повідомлень
 #: extracted_strings.json
 msgid "Status"
 msgstr "Статус"
+
+#. [pages.DeviceDetailEdit.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#. [pages.DeviceDetailProfile.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#: extracted_strings.json
+msgid "Sticker Instrument Serial"
+msgstr "Серійний номер приладу для наклейки"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11402,6 +11490,20 @@ msgstr "Тенденції діагностики туберкульозу та 
 msgid "TB cases diagnosed in"
 msgstr "TB cases diagnosed in"
 
+#. [p.PkDashboard.xdrTBLastDay]
+#. defaultMessage is:
+#. TB cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "TB cases diagnosed in last 24 hours"
+msgstr "Випадки ТB, діагностовані за останні 24 години"
+
+#. [p.PkDashboard.xdrTBCasesPerYear]
+#. defaultMessage is:
+#. TB cases diagnosed this year
+#: extracted_strings.json
+msgid "TB cases diagnosed this year"
+msgstr "Випадки ТB, діагностовані в цьому році"
+
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
 #. TB lamp
@@ -11455,20 +11557,6 @@ msgstr "Список завдань"
 #: extracted_strings.json
 msgid "Tb Total"
 msgstr "Тб Всього"
-
-#. [p.PkDashboard.xdrLastDay]
-#. defaultMessage is:
-#. Tb cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "Tb cases diagnosed in last 24 hours"
-msgstr "Випадки ТB, діагностовані за останні 24 години"
-
-#. [p.PkDashboard.xdrCasesPerYear]
-#. defaultMessage is:
-#. Tb cases diagnosed this year
-#: extracted_strings.json
-msgid "Tb cases diagnosed this year"
-msgstr "Випадки ТB, діагностовані в цьому році"
 
 #. [forms.formItem.technicalDetails]
 #. defaultMessage is:
@@ -11561,9 +11649,6 @@ msgid "Testing"
 msgstr "Тестування"
 
 #. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
 #. Testing & Diagnosis Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -12494,6 +12579,16 @@ msgstr "До окремої особи"
 #: extracted_strings.json
 msgid "To any of these Job Functions"
 msgstr "До будь -якої з цих функцій роботи"
+
+#. [report.missingDateRangeFilterDescription]
+#. defaultMessage is:
+#. To download the report "{reportName}" you must select a date from the filters.
+#: extracted_strings.json
+msgid ""
+"To download the report \"{reportName}\" you must select a date from the "
+"filters."
+msgstr ""
+"Для завантаження звіту \"{reportName}\" необхідно вибрати дату з фільтрів."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
 #. defaultMessage is:
@@ -14216,15 +14311,6 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} загальна калібрування"
-
-#~ msgid ""
-#~ "Failed to generate {fileType} report \"{reportName}\" because of error "
-#~ "\"{errorMessage}\". Please, try again in a few minutes. If the error "
-#~ "persists, contact your administrator for support."
-#~ msgstr ""
-#~ "Не вдалося створити {fileType} звіт \"{reportName}\" через помилку "
-#~ "\"{errorMessage}\". Будь ласка, спробуйте ще раз за кілька хвилин. Якщо "
-#~ "помилка не зникає, зверніться до свого адміністратора за підтримкою."
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Виберіть інший сайт"
