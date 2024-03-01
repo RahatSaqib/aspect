@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
-import endOfMonth from 'date-fns/endOfMonth'
 import format from 'date-fns/format'
-import startOfMonth from 'date-fns/startOfMonth'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
