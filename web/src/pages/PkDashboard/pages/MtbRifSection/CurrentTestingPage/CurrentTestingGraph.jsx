@@ -191,7 +191,6 @@ const RifCurrentGraphPage = () => {
                 yField="value"
                 seriesField="type"
                 showLabel={showLabel}
-                colors="#34717c"
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const base = 'yyyy-MM-dd'
