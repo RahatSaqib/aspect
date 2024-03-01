@@ -35,12 +35,12 @@ module.exports = {
     `"moduleSerialNumber":{{enclose (defaultTo result.resultData.moduleSerial '') with='"'}},` + // required
     `"assayName":{{enclose (defaultTo result.assay.name '') with='"'}},` + // required
     `"assayGuid":{{enclose (defaultTo result.assay.id '') with='"'}},` + // required
-    `"daisyChained":{{enclose (defaultTo device.daisyChained '') with='"'}},` +
-    `"lisConnected":{{enclose (defaultTo device.lisConfiguredCorrectly '') with='"'}},` +
+    `"daisyChained":{{enclose (defaultTo device.daisyChained false) with='"'}},` +
+    `"lisConnected":{{enclose (defaultTo device.lisConfiguredCorrectly false) with='"'}},` +
     `"errors": {{square true}}` +
     `{{curly true}}` +
     `"errorCode":{{enclose (defaultTo result.errorCode '') with='"'}},` +
-    `"details":{{enclose (defaultTo result.errorNotes '') with='"'}},` +
+    `"details":{{enclose (defaultTo result.errorNotes '') with='"'}}` +
     `{{curly}}` +
     `{{square}},` +
     // TODO: Need to Map these value because these values doesn't exist in Apect right nowW
