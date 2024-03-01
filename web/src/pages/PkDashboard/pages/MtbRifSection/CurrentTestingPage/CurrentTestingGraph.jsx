@@ -19,6 +19,7 @@ import {
   formatDataByGraphType,
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
+import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useAuthState from '../../../../../hooks/useAuthState'
@@ -194,16 +195,14 @@ const RifCurrentGraphPage = () => {
                 colors="#34717c"
                 onReady={plot => {
                   plot.on('plot:click', evt => {
-                    const base = 'yyyy-MM-dd'
-                    const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+                    const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
 
                     const baseUrl = '/browse/result'
                     addFilter(
                       {
                         displayResult: 'actual',
-                        maxDate: format(endOfMonth(parsedDate), base),
-                        minDate: format(startOfMonth(parsedDate), base),
-                        onlyReportableResults: true,
+                        minDate,
+                        maxDate,
                         assayId: assays.find(a => a.externalId === evt.data.data.id).id,
                       },
                       baseUrl

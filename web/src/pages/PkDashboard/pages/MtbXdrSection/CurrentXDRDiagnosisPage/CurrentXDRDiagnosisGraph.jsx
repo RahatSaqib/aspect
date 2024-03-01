@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
-import endOfMonth from 'date-fns/endOfMonth'
-import startOfMonth from 'date-fns/startOfMonth'
+import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -17,8 +16,13 @@ import {
   formatDataByGraphType,
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
+import {
+  getMinMaxDateFromMonthString,
+  getResultCategoryGroupsForResultList,
+} from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
@@ -27,16 +31,35 @@ import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
 const now = new Date()
-const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
-const endOfYearUTC = new Date(Date.UTC(now.getFullYear(), 11, 31, 23, 59, 59, 999))
+/**
+ * Do not use below startOfYearUTC and endOfYearUTC, because after datetime preparation
+ * for logged-in user in TZ +03:00 and current country in TZ +06:00 the fetch payload
+ * will have dates like this
+ *   minDate: '2024-01-01T03:00:00.000+06:00',
+ *   maxDate: '2025-01-01T02:59:59.999+06:00',
+ */
+// const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
+// const endOfYearUTC = new Date(Date.UTC(now.getFullYear(), 11, 31, 23, 59, 59, 999))
+// const minDate = startOfYearUTC
+// const maxDate = endOfYearUTC
+/**
+ * To resolve such over-engineered date preparation for this report let's use simple
+ * way and format to 'yyyy-01-01' and 'yyyy-12-31'.
+ * This will produce
+ *    minDate: 2024-01-01T00:00:00.000+06:00
+ *    maxDate: 2024-12-31T23:59:59.999+06:00
+ * for fetching, and on API from this dates we can cut first 10 characters for using in queries
+ */
+const minDate = format(now, 'yyyy-01-01')
+const maxDate = format(now, 'yyyy-12-31')
 
 const defaultFilters = [
   { assay: 'GxMtbXdr' },
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { resultCategory1: 'Detected' },
-  { minDate: startOfYearUTC },
-  { maxDate: endOfYearUTC },
+  { minDate },
+  { maxDate },
   /**
    * we may use below range when now is January, let's leave it here
    * `getTimePeriod` is in `/cleanComponents/Graphs/graphUtils`
@@ -53,7 +76,11 @@ const CurrentXDRDiagnosisPage = () => {
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState([])
-  const { data: assays } = useAssayList()
+  const { data: assays, isLoading: isLoadingAssays } = useAssayList()
+  const scopedAssays = assays?.filter(x => x.externalId === 'GxMtbXdr')
+  const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
+    scopedAssays?.map(x => x.id)
+  )
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
 
@@ -134,7 +161,7 @@ const CurrentXDRDiagnosisPage = () => {
         </>
       }
     >
-      {isLoading ? (
+      {isLoading || isLoadingAssays || isLoadingResultCategoryGroups ? (
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
@@ -149,15 +176,18 @@ const CurrentXDRDiagnosisPage = () => {
                 showLabel={showLabel}
                 onReady={plot => {
                   plot.on('plot:click', evt => {
-                    const base = 'yyyy-MM-dd'
-                    const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
-
+                    const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
+                    const assayId = assays.find(a => a.externalId === evt.data.data.id).id
+                    const resultCategoryGroupId = getResultCategoryGroupsForResultList(resultCategoryGroups, assayId, [
+                      'Detected',
+                      'Trace Detected',
+                    ])
                     const params = {
                       displayResult: 'actual',
-                      minDate: format(startOfMonth(parsedDate), base),
-                      maxDate: format(endOfMonth(parsedDate), base),
-                      onlyReportableResults: true,
-                      assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                      minDate,
+                      maxDate,
+                      assayId,
+                      resultCategoryGroupId,
                     }
                     addFilter({ ...params }, '/browse/result')
                     navigate('/browse/result')
