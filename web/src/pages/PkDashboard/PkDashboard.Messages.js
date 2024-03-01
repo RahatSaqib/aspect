@@ -162,9 +162,9 @@ const messages = {
       id: 'p.PkDashboard.provincialFqrDiagnosisTrends',
       defaultMessage: 'Provincial FQ Diagnosis Trends',
     },
-    nationalMtbRifDiagnosed: {
-      id: 'p.PkDashboard.nationalMtbRifDiagnosed',
-      defaultMessage: 'National TB Diagnosis Trends using MTB/Rif Assay',
+    nationalMtbRifUltraDiagnosed: {
+      id: 'p.PkDashboard.nationalMtbRifUltraDiagnosed',
+      defaultMessage: 'National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay',
     },
     nationalDiagnosisXdr: {
       id: 'p.PkDashboard.nationalDiagnosisXdr',
