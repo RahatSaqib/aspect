@@ -10,7 +10,7 @@ const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../string
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 const allWebhookServers = require('./servers')
-const { EXTERNAL_IDS } = require('../shared/constants')
+const { EXTERNAL_IDS, WEBHOOK_SERVERS } = require('../shared/constants')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -292,32 +292,35 @@ async function onPostResultToWebHookServers(action, context) {
 
     const messageStatusId = await messageStatusToId('Initial')
 
-    /**
-     * get list of all registered webhook servers
-     */
-    const webhookServers = await knex('WebhookServer').select('*')
-    await Promise.each(webhookServers, async srv => {
-      const { isValid, accessToken } = srv
-      if (isValid) {
-        const [webhookMessageId] = await knex('WebhookMessage').insert({
-          webhookTemplateId: webhookTemplate.id,
-          url: webhookTemplate.url,
-          payload: webhookTemplate.payload,
-          params: JSON.stringify(webhookTemplate.params || {}),
-          headers: JSON.stringify({
-            Authorization: `Basic ${accessToken}`,
-          }),
-          resultId,
-          createdOn: now,
-          updatedOn: now,
-          siteId,
-          deviceId,
-          messageStatusId,
-        })
+    const [{ isValid, accessToken, params }] = await knex('WebhookServer').where(
+      'externalId',
+      WEBHOOK_SERVERS.CepheidC360
+    )
+    const {
+      toLogin: {
+        payload: { client_id: ClientId },
+      },
+    } = JSON.parse(params)
+    if (isValid) {
+      const [webhookMessageId] = await knex('WebhookMessage').insert({
+        webhookTemplateId: webhookTemplate.id,
+        url: webhookTemplate.url,
+        payload: JSON.stringify([webhookTemplate.payload]),
+        params: JSON.stringify(webhookTemplate.params || {}),
+        headers: JSON.stringify({
+          Authorization: `Bearer ${accessToken}`,
+          ClientId,
+        }),
+        resultId,
+        createdOn: now,
+        updatedOn: now,
+        siteId,
+        deviceId,
+        messageStatusId,
+      })
 
-        await context.messageContext.webhookMessageCreated(webhookMessageId)
-      }
-    })
+      await context.messageContext.webhookMessageCreated(webhookMessageId)
+    }
   })
 }
 

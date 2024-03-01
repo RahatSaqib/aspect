@@ -10,13 +10,16 @@ const {
   getFormattedDateTimeWithTimezone,
   getFormattedDate,
   daysBetweenDates,
+  getDateInMiliSeconds,
 } = require('../shared/date')
 const { addConstraints } = require('../auth/constraints')
 const getCurrentPartner = require('../partner/getCurrentPartner')
 const { getDateRangeFilters } = require('../notification/common/logic')
 
 handlebars.registerHelper('curly', curlyBrace)
+handlebars.registerHelper('square', squareBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
+handlebars.registerHelper('getDateInMiliSeconds', getDateInMiliSeconds)
 handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('localizedDateTime', localizedDateTime)
 handlebars.registerHelper('localizedDate', localizedDate)
@@ -114,12 +117,18 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         knex.raw('coalesce(c.abbreviation,rc.abbreviation) as countryAbbreviation'),
         'd.id as deviceId',
         'd.name as deviceName',
+        'd.daisyChained',
+        'd.instrumentModel',
+        'd.softwareType',
+        knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'd.serial as deviceSerial',
         'd.lastInstrumentSerial as lastInstrumentSerial',
         'dt.externalId as deviceTypeExternalId',
         'r.resultData',
+        'r.id',
+        'r.updatedOn',
         'r.patientData as resultPatientData',
         'r.formData as resultFormData',
         'r.startedOn as resultStartedOn',
@@ -140,6 +149,9 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'sample.externalId as sampleExternalId',
         'sample.collectedOn as sampleCollectedOn',
         'rc1.externalId as resultCategory1ExternalId',
+        knex.raw(
+          "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
+        ),
         'rc2.externalId as resultCategory2ExternalId',
         'rs.name as reportableSiteName',
         knex.raw('COALESCE(devicetz.timezone, sitetz.timezone, countrytz.timezone) as timezone')
@@ -432,8 +444,13 @@ async function getBaseDataSource(data, auth) {
       serial: d.deviceSerial,
       lastInstrumentSerial: d.lastInstrumentSerial,
       calibrationDueDate: issueData.calibrationDueDate,
+      daisyChained: d.daisyChained,
+      instrumentModel: d.instrumentModel,
+      softwareType: d.softwareType,
+      lisConfiguredCorrectly: d.lisConfiguredCorrectly,
     },
     result: {
+      id: d.id,
       data: d.resultData ? JSON.parse(d.resultData) : {},
       resultData: d.resultData ? JSON.parse(d.resultData) : {},
       formData: d.resultFormData ? JSON.parse(d.resultFormData) : {},
@@ -441,6 +458,7 @@ async function getBaseDataSource(data, auth) {
       patientData: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
       rawData: d.resultRawData,
       startedOn: d.resultStartedOn,
+      updatedOn: d.updatedOn,
       endedOn: d.resultEndedOn,
       notes: d.resultNotes,
       consumableLot: d.consumableLot,
@@ -453,6 +471,7 @@ async function getBaseDataSource(data, auth) {
       softwareVersion: d.resultSoftwareVersion,
       errorCode: d.resultErrorCode,
       errorNotes: d.resultErrorNotes,
+      resultOutcome: d.resultOutcome,
       assay: {
         id: d.assayExternalId,
         name: d.assayName,
@@ -576,6 +595,10 @@ function processUsingDynamicHelpers(template, ds) {
 
 function curlyBrace(object, open) {
   return open ? '{' : '}'
+}
+
+function squareBrace(object, open) {
+  return open ? '[' : ']'
 }
 
 function numberOfDays(date) {
