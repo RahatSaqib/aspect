@@ -362,6 +362,7 @@ async function seed(knex) {
           lastSeenOn: lastTime,
           lastPingOn: lastTime,
           lastPingFromIp: '41.70.127.33',
+          putInService: subMonths(now, 2),
         })
       }
     })
@@ -475,6 +476,7 @@ async function seed(knex) {
           routerData.lastSeenOn = lastRouterActivity
           routerData.lastPingOn = lastRouterActivity
           routerData.lastPingFromIp = `91.25.123.${Math.floor(Math.random() * 255)}`
+          routerData.putInService = subMonths(now, 2)
           await knex('Device').insert({
             ...routerData,
             ...auditFields,

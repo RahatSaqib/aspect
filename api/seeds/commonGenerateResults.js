@@ -17,6 +17,7 @@ const {
   subDays,
   format,
   differenceInDays,
+  subMonths,
 } = require('date-fns')
 const { getLinkedResultDate, getDateFields } = require('./utils')
 const { getMGITResultFromTBPositive } = require('./commonTB')
@@ -121,6 +122,7 @@ async function createDevicesForAllMissingTypes(
           lastPingOn: new Date(+now - (i * millisInHour) / 3),
           lastPingFromIp: `71.11.10.${Math.floor(Math.random() * 255)}`,
           lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+          putInService: subMonths(new Date(), 2),
         }
         const [deviceId] = await knex('Device').insert(deviceToInsert)
         if (deviceType.requiresApiCredentials) {
