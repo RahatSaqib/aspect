@@ -79,7 +79,7 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
     })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .whereNot('dt.externalId', 'GxAlert')
+    .where('dt.externalId', 'CepheidGeneXpert')
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
     .select([
