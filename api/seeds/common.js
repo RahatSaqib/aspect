@@ -450,6 +450,7 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
       partnerId,
       siteId,
       lastPingOn: new Date(),
+      lastPingFromIp: `31.41.30.${Math.floor(Math.random() * 255)}`,
       lastSeenOn: new Date(),
       deviceTypeId,
     })

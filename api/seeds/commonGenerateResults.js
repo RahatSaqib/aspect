@@ -119,6 +119,7 @@ async function createDevicesForAllMissingTypes(
           createdOn: new Date(+now - 3 * i * millisInHour),
           updatedOn: new Date(+now - i * millisInHour),
           lastPingOn: new Date(+now - (i * millisInHour) / 3),
+          lastPingFromIp: `71.11.10.${Math.floor(Math.random() * 255)}`,
           lastSeenOn: new Date(+now - (i * millisInHour) / 3),
         }
         const [deviceId] = await knex('Device').insert(deviceToInsert)

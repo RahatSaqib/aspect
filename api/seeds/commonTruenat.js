@@ -211,6 +211,7 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
         createdOn: new Date(),
         updatedOn: new Date(),
         lastPingOn: new Date(),
+        lastPingFromIp: `3.41.60.${Math.floor(Math.random() * 255)}`,
         lastSeenOn: new Date(),
       })
       existingTruenatDevice = await knex('Device').where('id', newTruenatDeviceId).first()

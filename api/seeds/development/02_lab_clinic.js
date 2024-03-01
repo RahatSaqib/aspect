@@ -361,6 +361,7 @@ async function seed(knex) {
           siteId: siteData.id,
           lastSeenOn: lastTime,
           lastPingOn: lastTime,
+          lastPingFromIp: '41.70.127.33',
         })
       }
     })
@@ -430,7 +431,7 @@ async function seed(knex) {
               deviceData.hostId = device.hostId
               deviceData.lastSeenOn = lastDeviceActivity
               deviceData.lastPingOn = lastDeviceActivity
-              deviceData.lastPingFromIp = device.lastPingFromIp
+              deviceData.lastPingFromIp = `61.30.120.${Math.floor(Math.random() * 255)}`
               deviceData.putInService = subMonths(now, 30)
               deviceData.putInServiceSource = 'Installed at lab'
               deviceData.configurationData = '{}'
@@ -473,6 +474,7 @@ async function seed(knex) {
           routerData.siteId = siteData.id
           routerData.lastSeenOn = lastRouterActivity
           routerData.lastPingOn = lastRouterActivity
+          routerData.lastPingFromIp = `91.25.123.${Math.floor(Math.random() * 255)}`
           await knex('Device').insert({
             ...routerData,
             ...auditFields,

@@ -47,6 +47,7 @@ async function seed(knex) {
       defaultReportableSiteId: site.id,
       ...auditFields,
       lastPingOn: new Date(+now),
+      lastPingFromIp: `61.21.30.${Math.floor(Math.random() * 255)}`,
       lastSeenOn: new Date(+now),
       hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
       serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
