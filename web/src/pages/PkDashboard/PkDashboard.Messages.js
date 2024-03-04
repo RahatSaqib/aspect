@@ -171,7 +171,7 @@ const messages = {
       defaultMessage: 'National Diagnosis Trends using MTB/XDR assay',
     },
     nationalXdrTestingTrends: {
-      id: 'p.PkDashboard.nationalMtbRifDiagnosed',
+      id: 'p.PkDashboard.nationalXdrTestingTrends',
       defaultMessage: 'National Testing Trends using MTB/XDR Assay',
     },
     nationalFqrResistanceTrend: {
