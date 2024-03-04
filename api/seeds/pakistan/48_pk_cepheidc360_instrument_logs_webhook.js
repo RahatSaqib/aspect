@@ -1,10 +1,13 @@
 /* eslint-disable import/no-dynamic-require */
 const { issueEventStatusToId } = require('../../src/shared/dictionary')
 const { getPartnerByExternalId } = require('../utils')
+const { upsertCepheidc360IssueType } = require('../commonCepheidC360InstrumentLogs')
 
 const partnerData = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
 
 module.exports = require('../utils').seed(async knex => {
+  await upsertCepheidc360IssueType(knex)
+
   const { id: partnerId } = await getPartnerByExternalId(knex, partnerData.partner.externalId)
 
   // IssueType

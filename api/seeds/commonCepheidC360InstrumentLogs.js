@@ -1,10 +1,10 @@
 /* eslint-disable import/no-dynamic-require */
-const { messageSeverityToId, notificationTypeCategoryToId } = require('../../src/shared/dictionary')
-const { getPartnerByExternalId } = require('../utils')
+const { getPartnerByExternalId } = require('./utils')
+const { messageSeverityToId, notificationTypeCategoryToId } = require('../src/shared/dictionary')
 
-const partnerData = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
+const partnerData = require(`./${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
 
-module.exports = require('../utils').seed(async knex => {
+async function upsertCepheidc360IssueType(knex) {
   const { id: partnerId } = await getPartnerByExternalId(knex, partnerData.partner.externalId)
 
   // WebhookTemplate
@@ -92,4 +92,8 @@ module.exports = require('../utils').seed(async knex => {
     }
     ;[notificationTypeId] = await knex('NotificationType').insert(notificationType)
   }
-}, __filename)
+}
+
+module.exports = {
+  upsertCepheidc360IssueType,
+}
