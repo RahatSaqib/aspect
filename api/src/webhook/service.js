@@ -8,6 +8,7 @@ const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../string
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 const onWebHookServerCheckTokens = require('./onWebHookServerCheckTokens')
+const { WEBHOOK_SERVERS } = require('../shared/constants')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -79,7 +80,7 @@ async function onWebhookMessagePending({ webhookMessageId }, { messageContext })
       if (message.headers != null) {
         if (message.headers.includes('%%CEPHEID_ACCESS_TOKEN%%') || message.headers.includes('%%CEPHEID_CLIENT_ID%%')) {
           const cepheidParams = await knex('WebhookServer as ws')
-            .where('ws.externalId', 'CepheidC360')
+            .where('ws.externalId', WEBHOOK_SERVERS.CepheidC360)
             .where('ws.isValid', 1)
             .select(['ws.accessToken', knex.raw(`ws.params->>'$.toLogin.payload.client_id' as clientId`)])
             .first()
