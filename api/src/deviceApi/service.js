@@ -15,7 +15,7 @@ const {
   resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
-const { deviceOperationLogged } = require('../device/actions')
+const { cepheidc360InstrumentLogsReceived } = require('../device/actions')
 const templateProcessor = require('../email/templateProcessor')
 const {
   updateDeviceConfiguration,
@@ -411,12 +411,12 @@ async function processLogItem(context, logItem, options) {
     )
 
     if (payload.data.logFileName === 'GeneXpert DB') {
-      if (!context.messageContext.deviceOperationLogged) {
+      if (!context.messageContext.cepheidc360InstrumentLogsReceived) {
         context.messageContext = context.messageContext.bindActionCreators({
-          deviceOperationLogged,
+          cepheidc360InstrumentLogsReceived,
         })
       }
-      context.messageContext.deviceOperationLogged(device.id, deviceOperationId)
+      context.messageContext.cepheidc360InstrumentLogsReceived(device.id, deviceOperationId)
     }
   } catch (err) {
     if (err.code === 'ER_DUP_ENTRY') {

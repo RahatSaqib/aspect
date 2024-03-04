@@ -219,7 +219,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'tmpl.params as paramsTemplate'
     )
 
-  if (data.issueTypeExternalId === 'SystemLogsReceived') {
+  if (data.issueTypeExternalId === 'CepheidC360InstrumentLogsReceived') {
     const issueData = JSON.parse(data.issueData)
     const deviceOperation = await knex('DeviceOperation as d')
       .where('d.id', issueData.deviceOperationId)
@@ -236,11 +236,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       } else {
         error.Message = error.Message.replace(/(\r\n|\n|\r)/gm, '')
       }
-      if (_.isNil(error.ErrorType)) error.ErrorType = 'NULL'
     })
-
-    if (!data.siteState) data.siteState = 'NULL'
-    if (!data.siteLga) data.siteLga = 'NULL'
   }
 
   const message = await processUsingDataSourceQuery(
