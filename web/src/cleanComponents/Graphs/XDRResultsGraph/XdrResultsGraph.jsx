@@ -1,7 +1,5 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import endOfMonth from 'date-fns/endOfMonth'
-import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
@@ -21,6 +19,7 @@ import {
   getAverageFromData,
   negateTimeZoneOffset,
   flattenAssaysStructure,
+  getMinMaxDateFromMonthString,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
 
@@ -149,12 +148,12 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                         isPercentage
                         onReady={plot => {
                           plot.on('plot:click', evt => {
-                            const base = 'yyyy-MM-dd'
-                            const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+                            const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
+
                             const params = {
                               assayId: assays.filter(it => ['GxMtbXdr'].includes(it.externalId)).map(it => it.id),
-                              minDate: format(startOfMonth(parsedDate), base),
-                              maxDate: format(endOfMonth(parsedDate), base),
+                              minDate,
+                              maxDate,
                               resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
                                 a => a.externalId === evt.data.data.id
                               )[0].id,
