@@ -178,17 +178,17 @@ const CurrentDiagnosisGraphPage = () => {
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-                    const assayId = assays.find(a => a.externalId === evt.data.data.id).id
+                    const assayIds = [assays.find(a => a.externalId === evt.data.data.id).id]
                     const resultCategoryGroupId = getResultCategoryGroupsForResultList(
                       resultCategoryGroups,
-                      [assayId],
+                      assayIds,
                       [],
                       ['Detected']
                     )
                     const baseUrl = '/browse/result'
                     addFilter(
                       {
-                        assayId,
+                        assayId: assayIds,
                         minDate,
                         maxDate,
                         resultCategoryGroupId,

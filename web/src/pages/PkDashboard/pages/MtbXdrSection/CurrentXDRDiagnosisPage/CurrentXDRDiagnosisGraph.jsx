@@ -177,17 +177,16 @@ const CurrentXDRDiagnosisPage = () => {
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-                    const assayId = assays.find(a => a.externalId === evt.data.data.id).id
-                    const resultCategoryGroupId = getResultCategoryGroupsForResultList(
-                      resultCategoryGroups,
-                      [assayId],
-                      ['Detected', 'Trace Detected']
-                    )
+                    const assayIds = [assays.find(a => a.externalId === evt.data.data.id).id]
+                    const resultCategoryGroupId = getResultCategoryGroupsForResultList(resultCategoryGroups, assayIds, [
+                      'Detected',
+                      'Trace Detected',
+                    ])
                     const params = {
                       displayResult: 'actual',
                       minDate,
                       maxDate,
-                      assayId,
+                      assayId: assayIds,
                       resultCategoryGroupId,
                     }
                     addFilter({ ...params }, '/browse/result')
