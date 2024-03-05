@@ -8,16 +8,22 @@
  */
 export const getResultCategoryGroupsForResultList = (
   resultCategoryGroups,
-  assayId,
+  assayIds = [],
   resultCategory1ExternalIds = [],
   resultCategory2ExternalIds = []
 ) => {
-  return resultCategoryGroups
-    ?.filter(
-      x =>
-        x.assayId === assayId &&
-        ((resultCategory1ExternalIds.length > 0 && resultCategory1ExternalIds.includes(x.resultCategory1ExternalId)) ||
-          (resultCategory2ExternalIds.length > 0 && resultCategory2ExternalIds.includes(x.resultCategory2ExternalId)))
-    )
-    .map(x => x.externalId)
+  let groups = []
+  assayIds.forEach(assayId => {
+    const assayGroups = resultCategoryGroups
+      ?.filter(
+        x =>
+          x.assayId === assayId &&
+          ((resultCategory1ExternalIds.length > 0 &&
+            resultCategory1ExternalIds.includes(x.resultCategory1ExternalId)) ||
+            (resultCategory2ExternalIds.length > 0 && resultCategory2ExternalIds.includes(x.resultCategory2ExternalId)))
+      )
+      .map(x => x.externalId)
+    groups = [...groups, ...assayGroups]
+  })
+  return groups
 }

@@ -181,7 +181,7 @@ const CurrentDiagnosisGraphPage = () => {
                     const assayId = assays.find(a => a.externalId === evt.data.data.id).id
                     const resultCategoryGroupId = getResultCategoryGroupsForResultList(
                       resultCategoryGroups,
-                      assayId,
+                      [assayId],
                       [],
                       ['Detected']
                     )

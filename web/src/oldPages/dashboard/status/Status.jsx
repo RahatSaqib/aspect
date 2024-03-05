@@ -8,7 +8,7 @@ import {
   QuartersMtbDetectedGraph,
   QuartersRifDetectedGraph,
   TbDetectedGraph,
-  TbResultsGraph,
+  TbRifDetectedGraph,
   TestsOverTimeGraph,
   TreatmentStatusGraph,
   TrendInYearsAllTestsGraph,
@@ -21,6 +21,7 @@ import {
 } from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useAssayList from '../../../hooks/assay/useAssayList'
+import useResultCategoryGroup from '../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../hooks/useAuthState'
 import styles from './index.module.css'
 import messages from './messages'
@@ -44,7 +45,7 @@ const Status = () => {
   const { formatMessage } = useIntl()
   const { isCountry } = useAuthState()
   const { data: assays } = useAssayList()
-
+  const { data: resultCategoryGroups } = useResultCategoryGroup(assays?.map(x => x.id))
   return (
     <div className={styles.Container}>
       <Helmet title={formatMessage(messages.statusTitle)} />
@@ -55,7 +56,7 @@ const Status = () => {
         </ErrorBoundary>
       </PermissionChecker>
 
-      {assays ? (
+      {assays && resultCategoryGroups ? (
         <div className={styles.wrapper}>
           <PermissionChecker permissions={['dashboard']}>
             <ErrorBoundary>
@@ -66,10 +67,12 @@ const Status = () => {
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <TbDetectedGraph assaysFromState={assays} /> {/* 2 */}
+                <TbDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 2 */}
               </ErrorBoundary>
               <ErrorBoundary>
-                <TbResultsGraph assaysFromState={assays} /> {/* 3 */}
+                <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 3 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -77,7 +80,8 @@ const Status = () => {
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <XDRResultsGraph assaysFromState={assays} /> {/* 4 */}
+                <XDRResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 4 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -113,7 +117,8 @@ const Status = () => {
           {assays.some(a => covidPermissions.includes(a.externalId)) && !isCountry('BD') ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
+                <CovidResultGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 11 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -121,7 +126,8 @@ const Status = () => {
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <HivResultsGraph assaysFromState={assays} /> {/* 12 */}
+                <HivResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 12 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}

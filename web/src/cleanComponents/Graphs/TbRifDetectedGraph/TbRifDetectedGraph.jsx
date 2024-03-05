@@ -17,8 +17,8 @@ import {
   genLabel,
   calcPercentageForGraphs,
   getAverageFromData,
-  flattenAssaysStructure,
   negateTimeZoneOffset,
+  getResultCategoryGroupsForResultList,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
 
@@ -33,13 +33,12 @@ const endPointParams = [
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
-const TbResultsGraph = ({ assaysFromState: assays }) => {
+const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromState: resultCategoryGroups }) => {
   const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
-
-  const { data, isLoading } = useQuery(
+  const { data } = useQuery(
     ['tbResultsByCategory1Monthly', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
@@ -114,7 +113,7 @@ const TbResultsGraph = ({ assaysFromState: assays }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
 
-  return isLoading ? (
+  return !data || !assays || !resultCategoryGroups ? (
     <Loading />
   ) : (
     <Grid container className={styles.Graph_Container}>
@@ -147,17 +146,22 @@ const TbResultsGraph = ({ assaysFromState: assays }) => {
                         isPercentage
                         onReady={plot => {
                           plot.on('plot:click', evt => {
+                            const assayIds = assays
+                              .filter(it => ['GxMtbRif', 'GxMtbRifUltra'].includes(it.externalId))
+                              .map(it => it.id)
+                            const resultCategoryGroupId = getResultCategoryGroupsForResultList(
+                              resultCategoryGroups,
+                              assayIds,
+                              [],
+                              [evt.data.data.id]
+                            )
                             const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
 
                             const params = {
-                              assayId: assays
-                                .filter(it => ['GxMtbRif', 'GxMtbRifUltra'].includes(it.externalId))
-                                .map(it => it.id),
+                              assayId: assayIds,
                               minDate,
                               maxDate,
-                              resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
-                                a => a.externalId === evt.data.data.id
-                              )[0].id,
+                              resultCategoryGroupId,
                               displayResult: 'actual',
                             }
                             addFilter({ ...params }, '/browse/result')
@@ -208,4 +212,4 @@ const TbResultsGraph = ({ assaysFromState: assays }) => {
   )
 }
 
-export default TbResultsGraph
+export default TbRifDetectedGraph
