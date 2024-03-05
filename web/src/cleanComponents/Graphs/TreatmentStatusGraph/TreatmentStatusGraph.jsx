@@ -175,7 +175,6 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
                                 evt.data.data.id === 'NotConfirmed' ? 'AwaitingTreatment' : 'OnTreatment',
                               minDate,
                               maxDate,
-                              displayResult: 'actual',
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')
