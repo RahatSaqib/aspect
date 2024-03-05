@@ -10,7 +10,7 @@ const {
   getFormattedDateTimeWithTimezone,
   getFormattedDate,
   daysBetweenDates,
-  getDateInMiliSeconds,
+  getDateInMilliSeconds,
 } = require('../shared/date')
 const { addConstraints } = require('../auth/constraints')
 const getCurrentPartner = require('../partner/getCurrentPartner')
@@ -19,7 +19,7 @@ const { getDateRangeFilters } = require('../notification/common/logic')
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('square', squareBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
-handlebars.registerHelper('getDateInMiliSeconds', getDateInMiliSeconds)
+handlebars.registerHelper('getDateInMilliSeconds', getDateInMilliSeconds)
 handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('localizedDateTime', localizedDateTime)
 handlebars.registerHelper('localizedDate', localizedDate)

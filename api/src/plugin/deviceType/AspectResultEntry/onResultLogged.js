@@ -5,7 +5,6 @@ const { processUsingDataSourceQuery } = require('../../../stringTemplate/service
 const { getResultForStringTemplateProcessing } = require('../../../result/service')
 const { RESULT_STRING_TEMPLATE_FIELDS } = require('../../../result/query')
 const { resultUnusedModules } = require('../../../result/actions')
-const { postResultToWebHookServers } = require('../../../webhook/actions')
 
 const { shouldTriggerModuleReplaced, shouldTriggerResultErrorAnalysis } = require('../../utils')
 const logger = require('../../../shared/logger')
@@ -98,12 +97,6 @@ async function onResultLogged({ resultId, deviceLogId, userId }, { messageContex
         await updateCovidResultFromFormData({ result, deviceLogId, userId }, { messageContext })
       }
     }
-    if (!messageContext.postResultToWebHookServers) {
-      messageContext = messageContext.bindActionCreators({
-        postResultToWebHookServers,
-      })
-    }
-    await messageContext.postResultToWebHookServers(resultId, result.siteId, result.deviceId)
   })
 }
 

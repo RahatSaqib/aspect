@@ -4,7 +4,6 @@ const {
   onWebhookMessageSent,
   onWebhookMessageError,
   onWebHookServerCheckTokens,
-  onPostResultToWebHookServers,
 } = require('./service')
 
 const subscriptions = [
@@ -16,7 +15,6 @@ const subscriptions = [
       WEBHOOK_MESSAGE_ERROR: onWebhookMessageError,
 
       WEBHOOK_SERVER_CHECK_TOKENS: onWebHookServerCheckTokens,
-      POST_RESULT_TO_WEBHOOK_SERVERS: onPostResultToWebHookServers,
     },
   },
 ]

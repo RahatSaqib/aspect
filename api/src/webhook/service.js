@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { createFetch, base, params, header, method, body } = require('http-client')
 const { differenceInMinutes } = require('date-fns')
 const Promise = require('bluebird')
-const { webhookMessagePending, webhookMessageSent, webhookMessageError, webhookMessageCreated } = require('./actions')
+const { webhookMessagePending, webhookMessageSent, webhookMessageError } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { messageStatusToId } = require('../shared/dictionary')
@@ -10,7 +10,7 @@ const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../string
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 const allWebhookServers = require('./servers')
-const { EXTERNAL_IDS, WEBHOOK_SERVERS } = require('../shared/constants')
+const { WEBHOOK_SERVERS } = require('../shared/constants')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -80,6 +80,17 @@ async function onWebhookMessagePending({ webhookMessageId }, { messageContext })
         fetchArgs.push(base(message.urlBase))
       }
       if (message.headers != null) {
+        if (message.headers.includes('%%CEPHEID_ACCESS_TOKEN%%') || message.headers.includes('%%CEPHEID_CLIENT_ID%%')) {
+          const cepheidParams = await knex('WebhookServer as ws')
+            .where('ws.externalId', WEBHOOK_SERVERS.CepheidC360)
+            .where('ws.isValid', 1)
+            .select(['ws.accessToken', knex.raw(`ws.params->>'$.toLogin.payload.client_id' as clientId`)])
+            .first()
+          if (cepheidParams) {
+            message.headers = message.headers.replace('%%CEPHEID_ACCESS_TOKEN%%', cepheidParams.accessToken)
+            message.headers = message.headers.replace('%%CEPHEID_CLIENT_ID%%', cepheidParams.clientId)
+          }
+        }
         _.forEach(JSON.parse(message.headers), (value, key) => fetchArgs.push(header(key, value)))
       }
       if (message.params != null) {
@@ -279,51 +290,6 @@ async function onWebHookServerCheckTokens(action, context) {
   })
 }
 
-async function onPostResultToWebHookServers(action, context) {
-  const { resultId, siteId, deviceId } = action
-  const now = new Date()
-  context.messageContext.bindActionCreators({
-    webhookMessageCreated,
-  })
-  return context.messageContext.run(async knex => {
-    const [webhookTemplate] = await knex('WebhookTemplate')
-      .select('*')
-      .where({ externalId: EXTERNAL_IDS.SEND_RESULT_TO_CEPHEID })
-
-    const messageStatusId = await messageStatusToId('Initial')
-
-    const [{ isValid, accessToken, params }] = await knex('WebhookServer').where(
-      'externalId',
-      WEBHOOK_SERVERS.CepheidC360
-    )
-    const {
-      toLogin: {
-        payload: { client_id: ClientId },
-      },
-    } = JSON.parse(params)
-    if (isValid) {
-      const [webhookMessageId] = await knex('WebhookMessage').insert({
-        webhookTemplateId: webhookTemplate.id,
-        url: webhookTemplate.url,
-        payload: JSON.stringify([webhookTemplate.payload]),
-        params: JSON.stringify(webhookTemplate.params || {}),
-        headers: JSON.stringify({
-          Authorization: `Bearer ${accessToken}`,
-          ClientId,
-        }),
-        resultId,
-        createdOn: now,
-        updatedOn: now,
-        siteId,
-        deviceId,
-        messageStatusId,
-      })
-
-      await context.messageContext.webhookMessageCreated(webhookMessageId)
-    }
-  })
-}
-
 module.exports = {
   onWebhookMessageCreated,
   onWebhookMessagePending,
@@ -331,5 +297,4 @@ module.exports = {
   onWebhookMessageError,
 
   onWebHookServerCheckTokens,
-  onPostResultToWebHookServers,
 }
