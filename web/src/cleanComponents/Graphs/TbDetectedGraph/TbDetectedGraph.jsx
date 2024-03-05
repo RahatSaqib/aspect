@@ -148,6 +148,7 @@ const TbDetectedGraph = ({ assaysFromState: assays }) => {
                             const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
 
                             const params = {
+                              displayResult: 'actual',
                               assayId: assays
                                 .filter(it => ['GxMtbRif', 'GxMtbRifUltra'].includes(it.externalId))
                                 .map(it => it.id),

@@ -157,6 +157,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                               resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
                                 a => a.externalId === evt.data.data.id
                               )[0].id,
+                              displayResult: 'actual',
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')
