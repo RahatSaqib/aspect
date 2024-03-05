@@ -190,7 +190,6 @@ const RifCurrentGraphPage = () => {
                 yField="value"
                 seriesField="type"
                 showLabel={showLabel}
-                colors="#34717c"
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)

@@ -65,7 +65,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: event => event.target.value,
       },
       {
         fieldName: 'deviceId',
@@ -153,7 +153,7 @@ function DeviceApiKeyAssignerDialogForm({
           id="siteId"
           name="siteId"
           label={formatMessage(messages.siteId)}
-          value={values.siteId}
+          value={values.siteId || ''}
           onChange={onSiteIdChange}
           error={meta.siteId.touched && meta.siteId.error}
         />
