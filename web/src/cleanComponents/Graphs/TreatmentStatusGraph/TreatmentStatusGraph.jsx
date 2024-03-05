@@ -20,6 +20,7 @@ import {
   genLabel,
   prepParamsForEndPoint,
   negateTimeZoneOffset,
+  getMinMaxDateFromMonthString,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
 
@@ -167,14 +168,13 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
                         isPercentage
                         onReady={plot => {
                           plot.on('plot:click', evt => {
-                            const base = 'yyyy-MM-dd'
-                            const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+                            const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
 
                             const params = {
                               treatmentStatus:
                                 evt.data.data.id === 'NotConfirmed' ? 'AwaitingTreatment' : 'OnTreatment',
-                              minDate: format(startOfMonth(parsedDate), base),
-                              maxDate: format(endOfMonth(parsedDate), base),
+                              minDate,
+                              maxDate,
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')
