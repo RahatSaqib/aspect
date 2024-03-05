@@ -38,7 +38,7 @@ const CovidResultGraph = ({ assaysFromState: assays, resultCategoryGroupsFromSta
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
 
-  const { data, isLoading } = useQuery(
+  const { data } = useQuery(
     ['covidByCategory1Monthly', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
