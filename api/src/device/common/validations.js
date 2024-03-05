@@ -330,7 +330,7 @@ const deviceDetailsResponseFields = Joi.object()
     stickerInstrumentSerial: Joi.string().allow('', null).description('Cepheid sticker instrument serial'),
     instrumentModel: Joi.string().allow('', null).description('Cepheid instrument model'),
     softwareType: Joi.string().allow('', null).description('Cepheid software type'),
-    isDaisyChained: Joi.bool().required().description('Determines if the instrument is daisy chained'),
+    isDaisyChained: Joi.bool().allow('', null).description('Determines if the instrument is daisy chained'),
   })
 module.exports = {
   listWorkloadRequestSchema,
