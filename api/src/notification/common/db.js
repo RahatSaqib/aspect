@@ -448,6 +448,25 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
      * update remaining fields in NotificationType
      */
 
+    console.log('fields to sacve', {
+      areaItems,
+      deviceLevelId,
+      jobFunctions,
+      persons,
+      issueTypeId,
+      result,
+      sendEmail,
+      sendSms,
+      sendToPatient,
+      sendWeb,
+      enabled,
+      reportFrequency,
+      reportDateRange,
+      daysBeforeCalibrationDueDate,
+      reportStartingWeekDay,
+      resultBasedScope,
+    })
+
     await knex('NotificationType')
       .update({
         messageTypeId,
