@@ -114,7 +114,6 @@ async function onWebhookMessagePending({ webhookMessageId }, { messageContext })
         try {
           const fetch = createFetch(...fetchArgs)
           const resp = await fetch(message.url)
-          console.log('Resp', resp)
           if (fileStream != null) {
             resp.body.pipe(fileStream)
           }
