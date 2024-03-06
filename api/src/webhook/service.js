@@ -9,6 +9,7 @@ const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 const onWebHookServerCheckTokens = require('./onWebHookServerCheckTokens')
 const { WEBHOOK_SERVERS } = require('../shared/constants')
+const { ISSUE_TYPE_EXTERNAL_IDS } = require('../shared/constants')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -220,7 +221,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'tmpl.params as paramsTemplate'
     )
 
-  if (data.issueTypeExternalId === 'CepheidC360InstrumentLogsReceived') {
+  if (data.issueTypeExternalId === ISSUE_TYPE_EXTERNAL_IDS.CepheidC360InstrumentLogsReceived) {
     const issueData = JSON.parse(data.issueData)
     const deviceOperation = await knex('DeviceOperation as d')
       .where('d.id', issueData.deviceOperationId)

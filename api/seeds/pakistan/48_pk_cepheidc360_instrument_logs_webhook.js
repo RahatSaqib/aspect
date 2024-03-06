@@ -2,6 +2,7 @@
 const { issueEventStatusToId } = require('../../src/shared/dictionary')
 const { getPartnerByExternalId } = require('../utils')
 const { upsertCepheidc360IssueType } = require('../commonCepheidC360InstrumentLogs')
+const { ISSUE_TYPE_EXTERNAL_IDS } = require('../../src/shared/constants')
 
 const partnerData = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
 
@@ -12,7 +13,9 @@ module.exports = require('../utils').seed(async knex => {
 
   // IssueType
   const { id: issueTypeId } =
-    (await knex('IssueType as t').where('t.externalId', 'CepheidC360InstrumentLogsReceived').first('t.id')) || {}
+    (await knex('IssueType as t')
+      .where('t.externalId', ISSUE_TYPE_EXTERNAL_IDS.CepheidC360InstrumentLogsReceived)
+      .first('t.id')) || {}
 
   // IssueEventTrigger
   let { id: issueEventTriggerId } =
@@ -29,20 +32,5 @@ module.exports = require('../utils').seed(async knex => {
       updatedOn: '2024-01-01 00:00:00',
     }
     ;[issueEventTriggerId] = await knex('IssueEventTrigger').insert(issueEventTrigger)
-  }
-
-  // IssueResolutionTrigger
-  let { id: issueResolutionTriggerId } =
-    (await knex('IssueResolutionTrigger as t').where('t.issueTypeId', issueTypeId).first('t.id')) || {}
-  if (!issueResolutionTriggerId) {
-    const issueResolutionTrigger = {
-      partnerId,
-      issueTypeId,
-      resolutionConditions:
-        '{"evaluationMethod": "webhook-message-status", "evaluationParameter": {"messageStatusExternalId": "Sent"}}',
-      createdOn: '2024-01-01 00:00:00',
-      updatedOn: '2024-01-01 00:00:00',
-    }
-    ;[issueResolutionTriggerId] = await knex('IssueResolutionTrigger').insert(issueResolutionTrigger)
   }
 }, __filename)
