@@ -3,15 +3,15 @@ const { EXTERNAL_IDS } = require('../../src/shared/constants')
 module.exports = {
   externalId: EXTERNAL_IDS.SEND_RESULT_TO_CEPHEID,
   method: 'POST',
-  url: `https://datareceiver-dev.stg.c360.cepheid.com/datareceiver/api/v1/{{urlEncode result.instrumentSerial}}/instrumentTests`,
+  url: `https://datareceiver-dev.stg.c360.cepheid.com/datareceiver/api/v1/{{urlEncode device.stickerInstrumentSerial}}/instrumentTests`,
   headers:
     '{"ClientId": "%%CEPHEID_CLIENT_ID%%", "Content-Type": "application/json", "Authorization": "Bearer %%CEPHEID_ACCESS_TOKEN%%"}',
   payload:
     `{{square true}}` +
     `{{curly true}}` +
     // Required
-    `"instrumentSerialNumber":{{enclose (defaultTo result.instrumentSerial '') with='"'}},` +
-    `"gatewaySerialNumber":{{enclose (defaultTo result.resultData.gxConnectVersion '') with='"'}},` +
+    `"instrumentSerialNumber":{{enclose (defaultTo device.stickerInstrumentSerial '') with='"'}},` +
+    `"gatewaySerialNumber":{{enclose (defaultTo result.instrumentSerial '') with='"'}},` +
     `"instrumentModel":{{enclose (defaultTo device.instrumentModel '') with='"'}},` +
     `"softwareVersion":{{enclose (defaultTo result.resultData.softwareVersion '') with='"'}},` +
     `"operatingSystem":{{enclose (defaultTo result.resultData.computerId '') with='"'}},` +
