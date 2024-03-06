@@ -25,7 +25,7 @@ module.exports = {
     `"testResultGuid":{{enclose (defaultTo result.id '') with='"'}},` +
     `"resultCategory":{{enclose (defaultTo result.resultOutcome '') with='"'}},` +
     `"reagentLotId":{{enclose (defaultTo result.resultData.reagentLotId '') with='"'}},` +
-    `"sampleType":{{enclose (defaultTo result.sampleExternalId 'ORH') with='"'}},` +
+    `"sampleType":{{enclose (defaultTo result.resultData.sampleTypeKey 'ORH') with='"'}},` +
     `"data":{{enclose (defaultTo result.data '') with='"'}},` +
     `"moduleName":{{enclose (defaultTo result.resultData.moduleName '') with='"'}},` +
     `"startTime":{{urlEncode (defaultTo (getDateInMilliSeconds result.startedOn) 'null')}},` +
@@ -37,7 +37,7 @@ module.exports = {
     `"moduleSerialNumber":{{enclose (defaultTo result.resultData.moduleSerial '') with='"'}},` +
     `"assayName":{{enclose (defaultTo result.assay.name '') with='"'}},` +
     `"assayGuid":{{enclose (defaultTo result.assay.id '') with='"'}},` +
-    `"exportTime":1645514400000,` + // TODO: Map this
+    `"exportTime":{{urlEncode (defaultTo (getDateInMilliSeconds result.createdOn) 'null')}},` +
     `"icoreSerialNumber":{{result.resultData.icoreSerialNumber}},` +
     // Optional
     `"softwareType":{{enclose (defaultTo device.softwareType '') with='"'}},` +
@@ -52,9 +52,8 @@ module.exports = {
     `"orderTime":{{enclose (defaultTo result.resultData.orderTime '') with='"'}},` +
     `"firmwareVersion":{{enclose (defaultTo result.resultData.firmwareVersion '') with='"'}},` +
     `"status":{{enclose (defaultTo result.resultData.status '') with='"'}},` +
-    `"errorStatus":{{enclose (defaultTo result.resultData.errorStatus '') with='"'}}` +
-    // TODO: Need to Map these value because these values doesn't exist in Apect right nowW
-    // `"moduleColor":"6-Color",` +
+    `"errorStatus":{{enclose (defaultTo result.resultData.errorStatus '') with='"'}},` +
+    `"moduleColor":{{enclose (defaultTo device.moduleColor '') with='"'}}` +
     `{{curly}}` +
     `{{square}}`,
   fileContentTypeId: 'applicationJson',
