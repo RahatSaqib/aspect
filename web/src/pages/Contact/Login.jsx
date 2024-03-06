@@ -60,7 +60,7 @@ const Login = ({ setStep }) => {
         step={2}
         full={id !== ACTION.SELF && userPermissions.includes('person:edit')}
         isUpdate={id !== ACTION.ADD}
-        onChange={(v, step) => setStep(step)}
+        onChange={(v, step) => setStep(+step)}
       />
       {isLoading ? (
         <Loading />
@@ -118,7 +118,7 @@ const Login = ({ setStep }) => {
                       label={`${formatMessage(messages.username)} *`}
                       value={values.username}
                       onChange={handleChange}
-                      error={errors.username ? errors.username : undefined}
+                      error={!!errors.username}
                       helperText={errors.username}
                     />
                   </Grid>
@@ -133,7 +133,7 @@ const Login = ({ setStep }) => {
                         onChange={e =>
                           handleChange({ target: { name: 'userLockedOut', value: e.target.checked ? 1 : 0 } })
                         }
-                        error={errors.userLockedOut ? errors.userLockedOut : undefined}
+                        error={!!errors.userLockedOut}
                         helperText={errors.userLockedOut}
                         onLabel={formatMessage(messages.locked)}
                         offLabel={formatMessage(messages.unlocked)}
@@ -148,7 +148,7 @@ const Login = ({ setStep }) => {
                       label={`${formatMessage(messages.newPassword)}`}
                       value={values.newPassword}
                       onChange={handleChange}
-                      error={errors.newPassword ? errors.newPassword : undefined}
+                      error={!!errors.newPassword}
                       helperText={errors.newPassword}
                     />
                   </Grid>
@@ -160,7 +160,7 @@ const Login = ({ setStep }) => {
                       label={`${formatMessage(messages.confirmNewPassword)}`}
                       value={values.confirmNewPassword}
                       onChange={handleChange}
-                      error={errors.confirmNewPassword ? errors.confirmNewPassword : undefined}
+                      error={!!errors.confirmNewPassword}
                       helperText={errors.confirmNewPassword || undefined}
                     />
                   </Grid>
@@ -171,7 +171,7 @@ const Login = ({ setStep }) => {
                   <Box sx={{ flex: '1 1 auto' }} />
                   {dirty ? (
                     <Button type="submit" disabled={!isValid}>
-                      {formatMessage(messages.save)} {isValid}
+                      {formatMessage(messages.save)}
                     </Button>
                   ) : (
                     <Button onClick={() => gotoReturnUrl(navigate, location, '/browse/person')}>
