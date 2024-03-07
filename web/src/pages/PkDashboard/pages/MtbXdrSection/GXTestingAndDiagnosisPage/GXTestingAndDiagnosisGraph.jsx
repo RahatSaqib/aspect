@@ -8,12 +8,12 @@ import { LgaSelect, StateSelect, Loading, ColumnLineGraph, getTimePeriod } from 
 import messages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
-import { getCustomMessage, graphMessages } from '../../../../../messages'
+import { getCustomMessage, graphMessages, months } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import pkMessages from '../../../PkDashboard.Messages'
 
 const endpointParams = [
-  { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
+  { minDate: getTimePeriod(5, 'years', 'yyyy-MM-dd') },
   { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
 ]
 
@@ -52,15 +52,19 @@ const GXTestingAndDiagnosisGraph = () => {
       const bar = []
       data.grouped.map(dat => {
         const { month, FqrToMtbPercentage, InhToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected } = dat
-        if (lineFor === FQRPercentMessage) {
-          line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
-        } else if (lineFor === INHPercentMessage) {
-          line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+        const monthStr = month.split('-')
+        if (+monthStr[0] >= 2021) {
+          const translatedDate = `${formatMessage(months[+monthStr[1] - 1])}-${monthStr[0]}`
+          if (lineFor === FQRPercentMessage) {
+            line.push({ month: translatedDate, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+          } else if (lineFor === INHPercentMessage) {
+            line.push({ month: translatedDate, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+          }
+          bar.push({ month: translatedDate, value: TotalTests, type: totalTestsMessage })
+          bar.push({ month: translatedDate, value: MtbDetected, type: mtbDetectedMessage })
+          bar.push({ month: translatedDate, value: FqrDetected, type: fqrDetectedMessage })
+          bar.push({ month: translatedDate, value: InhDetected, type: inhDetectedMessage })
         }
-        bar.push({ month, value: TotalTests, type: totalTestsMessage })
-        bar.push({ month, value: MtbDetected, type: mtbDetectedMessage })
-        bar.push({ month, value: FqrDetected, type: fqrDetectedMessage })
-        bar.push({ month, value: InhDetected, type: inhDetectedMessage })
         return {}
       })
 
@@ -73,7 +77,7 @@ const GXTestingAndDiagnosisGraph = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(pkMessages.mtbXdrTestingDiagnosisTrends)}
+      title={formatMessage(pkMessages.fqinhTestingDiagnosis)}
       filters={
         <>
           <FormControlLabel

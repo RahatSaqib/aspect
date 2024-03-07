@@ -6,6 +6,7 @@ import trim from 'lodash/trim'
 import { defineMessages } from 'react-intl'
 import config from '../../config'
 import { showError } from '../../store/AppNotificationRedux'
+import { expiredTokenLogout } from '../../store/AuthRedux'
 
 export const aspectFetch = createFetch(
   base(config.aspectApi),
@@ -117,8 +118,11 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
             ...errorNotification,
           }
         }
-        // Only if statusCode isn't unauthorized or message isn't Expired Token, we should show the error as notification. For 401 errors of type Expired Token, the user will be logged out.
-        if (err.statusCode !== 401 || err.message !== 'Expired token') {
+        // If the statusCode is 401 unauthorized the system should redirect the user to the logout screen
+        // For all other types of errors the user should be shown an error message.
+        if (err.statusCode === 401) {
+          store.dispatch(expiredTokenLogout())
+        } else {
           let customErrorNotification = null
           if (typeof errorNotification === 'function') {
             customErrorNotification = errorNotification(err.data, true)

@@ -1,7 +1,5 @@
 const _ = require('lodash')
 const { createFetch, base, params, header, method, body } = require('http-client')
-const { differenceInMinutes } = require('date-fns')
-const Promise = require('bluebird')
 const { webhookMessagePending, webhookMessageSent, webhookMessageError } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
@@ -9,8 +7,8 @@ const { messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
-const allWebhookServers = require('./servers')
 const { WEBHOOK_SERVERS } = require('../shared/constants')
+const onWebHookServerCheckTokens = require('./onWebHookServerCheckTokens')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -233,61 +231,6 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
   message.headers = data.headersTemplate ?? data.messageHeaders
   message.params = data.paramsTemplate ?? data.messageParams
   return message
-}
-
-async function onWebHookServerCheckTokens(action, context) {
-  return context.messageContext.run(async knex => {
-    /**
-     * get list of all registered webhook servers
-     */
-    const webhookServers = await knex('WebhookServer').select('*')
-    /**
-     *
-     */
-    await Promise.each(webhookServers, async srv => {
-      const { id, externalId, expiresOn } = srv
-      const server = allWebhookServers[externalId]
-      if (!server) return
-
-      srv.params = JSON.parse(srv.params || '{}')
-      srv.headers = JSON.parse(srv.headers || '{}')
-
-      const MINS_UNTIL_EXPIRES = 100
-
-      const now = new Date()
-      let headers
-      let params
-      if (!expiresOn) {
-        headers = srv.headers.toLogin || {}
-        params = srv.params.toLogin || {}
-      } else if (differenceInMinutes(new Date(expiresOn), now) <= MINS_UNTIL_EXPIRES) {
-        headers = srv.headers.toRefreshToken || {}
-        params = srv.params.toRefreshToken || {}
-      }
-
-      if (headers) {
-        const data = await server.getToken(headers, params)
-
-        // eslint-disable-next-line no-console
-        console.log('_________________ getToken', data)
-
-        /**
-         * update db with received accessToken et la
-         */
-        const { isValid = 0, accessToken, refreshToken = null, expiresOn = null } = data
-        await knex('WebhookServer')
-          .update({
-            params: JSON.stringify(_.merge(srv.params, data.params || {})),
-            headers: JSON.stringify(_.merge(srv.headers, data.headers || {})),
-            isValid,
-            accessToken,
-            refreshToken,
-            expiresOn,
-          })
-          .where('id', id)
-      }
-    })
-  })
 }
 
 module.exports = {

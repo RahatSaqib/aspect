@@ -26,7 +26,7 @@ const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpe
 const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaEbola.json')
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
-const defaultDashboardWidgetsFixture = require('./fixtures/DashboardWidget')
+const defaultDashboardWidgetsFixture = require('./fixtures/dashboardWidgetsCommon')
 const upsertPartnerData = require('./common/upsert_partner_data')
 const {
   deviceApprovalToId,
