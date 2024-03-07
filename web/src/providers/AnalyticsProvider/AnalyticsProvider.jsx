@@ -3,8 +3,7 @@ import ReactGA from 'react-ga4'
 import { useLocation } from 'react-router-dom'
 import useAuthState from '../../hooks/useAuthState'
 
-const measurementId = process.env.googleAnalyticsMeasurementId
-
+const MEASUREMENT_ID = process.env.googleAnalyticsMeasurementId
 const PAGE_VIEW_EVENT = 'page_view'
 
 export default function AnalyticsProvider({ children }) {
@@ -12,7 +11,7 @@ export default function AnalyticsProvider({ children }) {
   const user = useAuthState()
 
   useEffect(() => {
-    if (measurementId) ReactGA.initialize(process.env.googleAnalyticsMeasurementId)
+    if (MEASUREMENT_ID) ReactGA.initialize(MEASUREMENT_ID)
   }, [])
 
   useEffect(() => {
