@@ -12,9 +12,7 @@ export default function AnalyticsProvider({ children }) {
   const user = useAuthState()
 
   useEffect(() => {
-    const params = user
-      ? { user_name: user.jwt.name, user_id: user.userId, user_country: user.countryAbbreviation }
-      : {}
+    const params = user ? { user_name: user.jwt.name, user_country: user.countryAbbreviation } : {}
     ReactGA.event(PAGE_VIEW_EVENT, { page_location: location.pathname, ...params })
   }, [location.pathname, user])
 
