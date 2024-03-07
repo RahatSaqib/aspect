@@ -32,7 +32,7 @@ module.exports = {
     `"endTime":{{urlEncode (defaultTo (getDateInMilliSeconds result.endedOn) 'null')}},` +
     `"testModifiedTime":{{urlEncode (defaultTo (getDateInMilliSeconds result.resultData.modificationTime) 'null')}},` +
     `"testCreationInInstrument":{{urlEncode (defaultTo (getDateInMilliSeconds result.resultData.creationTime) 'null')}},` +
-    `"sampleId":{{enclose (defaultTo oneDirectionalMd5Hash result.sample.id '') with='"'}},` +
+    `"sampleId":{{enclose (oneDirectionalMd5Hash result.sample.id) with='"'}},` +
     `"cartridgeSerialNumber":{{enclose (defaultTo result.resultData.cartridgeSerial '') with='"'}},` +
     `"moduleSerialNumber":{{enclose (defaultTo result.resultData.moduleSerial '') with='"'}},` +
     `"assayName":{{enclose (defaultTo result.assay.name '') with='"'}},` +
