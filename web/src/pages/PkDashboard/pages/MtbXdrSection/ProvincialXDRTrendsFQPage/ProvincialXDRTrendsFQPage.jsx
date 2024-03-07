@@ -17,7 +17,7 @@ import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
 
-const endpointParams = [{ assay: 'GxMtbXdr' }, { xdrResistance: 'FLQ' }]
+const endpointParams = [{ assay: 'GxMtbXdr' }, { resistance: 'FLQ' }]
 
 const ProvincialXDRTrendsFQPage = () => {
   const { formatMessage } = useIntl()
