@@ -15,6 +15,7 @@ const {
 const { addConstraints } = require('../auth/constraints')
 const getCurrentPartner = require('../partner/getCurrentPartner')
 const { getDateRangeFilters } = require('../notification/common/logic')
+const { oneDirectionalMd5Hash } = require('../shared/encryption')
 
 handlebars.registerHelper('curly', curlyBrace)
 handlebars.registerHelper('square', squareBrace)
@@ -50,6 +51,7 @@ handlebars.registerHelper({
 })
 handlebars.registerHelper('customFieldValueFromLabel', customFieldValueFromLabel)
 handlebars.registerHelper('coalesce', coalesce)
+handlebars.registerHelper('oneDirectionalMd5Hash', oneDirectionalMd5Hash)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -98,6 +100,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
       .leftJoin('TimeZone as countrytz', 'rc.timezone', 'countrytz.id')
       .select(
         's.id as siteId',
+        's.guid as siteGuid',
         's.externalId as siteExternalId',
         's.name as siteName',
         's.shortName as siteShortName',
@@ -121,6 +124,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'd.instrumentModel',
         'd.softwareType',
         knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
+        knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS computerOsVersion'),
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'd.serial as deviceSerial',
@@ -147,7 +151,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'r.errorNotes as resultErrorNotes',
         'a.externalId as assayExternalId',
         'a.name as assayName',
-        knex.raw("CASE WHEN a.name = 'GxMtbXdr' THEN '10-Color' ELSE '6-Color' END AS moduleColor"),
+        knex.raw("CASE WHEN IFNULL(d.gx10cModulesCount, 0) > 0 THEN '10-Color' ELSE '6-Color' END AS moduleColor"),
         'sample.externalId as sampleExternalId',
         'sample.collectedOn as sampleCollectedOn',
         'rc1.externalId as resultCategory1ExternalId',
@@ -420,6 +424,7 @@ async function getBaseDataSource(data, auth) {
       id: d.siteExternalId,
       name: d.siteName,
       shortName: d.siteShortName,
+      siteGuid: d.siteGuid,
       street1: d.siteStreet1,
       street2: d.siteStreet2,
       city: d.siteCity,
@@ -451,6 +456,7 @@ async function getBaseDataSource(data, auth) {
       instrumentModel: d.instrumentModel,
       softwareType: d.softwareType,
       lisConfiguredCorrectly: d.lisConfiguredCorrectly,
+      computerOsVersion: d.computerOsVersion,
       moduleColor: d.moduleColor,
     },
     result: {

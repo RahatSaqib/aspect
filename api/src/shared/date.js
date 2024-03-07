@@ -417,10 +417,7 @@ function getAllMonthsInRange(minDate, maxDate) {
 
 function getDateInMilliSeconds(date) {
   const providedDate = new Date(date)
-
-  const unixEpoch = new Date('1970-01-01T00:00:00Z')
-
-  return providedDate.getTime() - unixEpoch.getTime()
+  return providedDate.getTime()
 }
 
 module.exports = {

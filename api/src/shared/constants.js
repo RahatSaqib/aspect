@@ -31,6 +31,17 @@ const EXTERNAL_IDS = Object.freeze({
   SEND_RESULT_TO_CEPHEID: 'sendResultToCepheid',
 })
 
+const GENEXPERT_ASSAYS = Object.freeze({
+  GX_MTB_XDR: 'GxMtbXdr',
+  GX_MTB_RIFULTRA: 'GxMtbRifUltra',
+  GX_MTB_RIF: 'GxMtbRif',
+  GX_HIV1QUAL: 'GxHiv1Qual',
+  GX_EBOLA: 'GxEbola',
+  ASSAY_GX_COVID19: 'assayGXCovid19',
+  GX_HIV1VL: 'GxHiv1Vl',
+  GX_HCV: 'GxHcv',
+})
+
 module.exports = {
   IGNORED_SENTRY_ERRORS,
   INTERNAL_DEVICE_IDS,
@@ -42,4 +53,5 @@ module.exports = {
   DAYS_STOCK_LEFT_RANGES,
   WEBHOOK_SERVERS,
   EXTERNAL_IDS,
+  GENEXPERT_ASSAYS,
 }
