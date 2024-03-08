@@ -81,20 +81,20 @@ function allowOnlyAPIKeys(params) {
   return omit(params, omitKeys)
 }
 
-function getReturnUrl(returnUrlRaw, defaultUrl) {
-  if (!returnUrlRaw) {
-    return defaultUrl
-  }
-  let path = returnUrlRaw
-  let returnUrl = ''
-  const index = returnUrlRaw.indexOf('?')
-  if (index !== -1) {
-    path = returnUrlRaw.substring(0, index)
-    returnUrl = returnUrlRaw.substring(index + 1)
-  }
-  const query = new URLSearchParams(returnUrl)
-  return `${path}?${query.toString()}`
-}
+// function getReturnUrl(returnUrlRaw, defaultUrl) {
+//   if (!returnUrlRaw) {
+//     return defaultUrl
+//   }
+//   let path = returnUrlRaw
+//   let returnUrl = ''
+//   const index = returnUrlRaw.indexOf('?')
+//   if (index !== -1) {
+//     path = returnUrlRaw.substring(0, index)
+//     returnUrl = returnUrlRaw.substring(index + 1)
+//   }
+//   const query = new URLSearchParams(returnUrl)
+//   return `${path}?${query.toString()}`
+// }
 
 export {
   allowOnlyAPIKeys,
@@ -104,5 +104,5 @@ export {
   timeAndDate,
   timeSinceFromUTC,
   useUrlQuery,
-  getReturnUrl,
+  // getReturnUrl,
 }
