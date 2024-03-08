@@ -718,6 +718,7 @@ async function getResultCategoryGroupColumns(dataConstraints, query) {
     .leftJoin('ResultCategory AS rc2', 'rcg.resultCategory2Id', 'rc2.id')
     .join(usedAssay(dataConstraints).as('f'), 'a.id', 'f.assayId')
     .select([
+      knex.raw('GROUP_CONCAT(a.externalId) AS assayExternalId'),
       knex.raw('GROUP_CONCAT(rcg.assayId) AS assayId'),
       'rcg.resultCategory1Id',
       'rcg.resultCategory2Id',
@@ -736,22 +737,29 @@ async function getResultCategoryGroupColumns(dataConstraints, query) {
     .modify(filterParams, query, {
       assayId: 'a.id',
     })
-  // .orderBy('columnName')
-  const assay = await knex('Assay').where('externalId', 'GxMtbXdr').first()
 
-  // Adding the collection of columns of result xdr resistances
-  resultCategoryGroupColumns = [
-    ...resultCategoryGroupColumns,
-    ...XDR_RESISTANCES.map(r => ({
-      assayId: `${assay.id}`,
-      resultCategory1Id: null,
-      resultCategory2Id: null,
-      columnName: `MTB Detected ${r} Detected`,
-      xdrResistance: r,
-      columnKey: r,
-    })),
-  ]
-  return _.orderBy(resultCategoryGroupColumns, ['columnName'])
+  const { assayId: xdrAssayId, hasAccessToXdr = true } = resultCategoryGroupColumns.find(
+    rcg => rcg.assayExternalId === 'GxMtbXdr'
+  ) || {
+    assayId: null,
+    hasAccessToXdr: false,
+  }
+  if (hasAccessToXdr) {
+    // Adding the collection of columns of result xdr resistances
+    resultCategoryGroupColumns = [
+      ...resultCategoryGroupColumns,
+      ...XDR_RESISTANCES.map(r => ({
+        assayId: `${xdrAssayId}`,
+        resultCategory1Id: null,
+        resultCategory2Id: null,
+        columnName: `MTB Detected ${r} Detected`,
+        xdrResistance: r,
+        columnKey: r,
+      })),
+    ]
+  }
+
+  return _.orderBy(resultCategoryGroupColumns, ['assayId', 'columnName'])
 }
 
 function moduleDisabledIssues(onlyActiveIssues = false) {
