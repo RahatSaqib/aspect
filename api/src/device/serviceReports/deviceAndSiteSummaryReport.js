@@ -21,10 +21,32 @@ const resultCategoryGroupSum = (assayId, rc1, rc2) => {
   return knex.raw(query)
 }
 
+const resultXdrResistanceSum = resistance => {
+  return knex.raw(`SUM(
+    CASE WHEN
+      JSON_SEARCH(
+        r.resultData ->> '$.detectedResistance[*]',
+        'one',
+        '${resistance}'
+      ) IS NOT NULL
+    THEN 1 ELSE 0 END)`)
+}
+
 async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
   const { maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
+
+  const resultCategoryGroupsColumns = Object.fromEntries(
+    resultCategoryGroups.map(ac => {
+      if (!_.isNil(ac.resultCategory1) || !_.isNil(ac.resultCategory2))
+        // Counts a result category group
+        return [ac.columnKey, resultCategoryGroupSum(ac.assayId, ac.resultCategory1Id, ac.resultCategory2Id)]
+
+      // Counts an xdr resistance result
+      return [ac.columnKey, resultXdrResistanceSum(ac.xdrResistance)]
+    })
+  )
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.resultCategory1)
@@ -37,14 +59,10 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
     })
     .select({
       deviceId: 'deviceId',
-      ...Object.fromEntries(
-        resultCategoryGroups.map(ac => {
-          return [ac.columnKey, resultCategoryGroupSum(ac.assayId, ac.resultCategory1Id, ac.resultCategory2Id)]
-        })
-      ),
       otherTests: knex.raw('IFNULL(SUM(CASE WHEN rcg.id IS NULL THEN 1 ELSE 0 END), 0)'),
       totalXpertTests: knex.raw('count(*)'),
       lastUploadOn: getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset),
+      ...resultCategoryGroupsColumns,
     })
     .groupBy('r.deviceId')
     .modify(filterParams, query, {

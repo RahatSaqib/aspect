@@ -7,6 +7,7 @@ const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../result/qu
 const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { usedAssay } = require('../../assay/common/db')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
+const { XDR_RESISTANCES } = require('../../shared/constants')
 
 const SELECT_SHOW_FIELDS = [
   'd.id',
@@ -706,8 +707,8 @@ async function joinModuleAvailability(dataConstraints, query) {
   }
 }
 
-function getResultCategoryGroupColumns(dataConstraints, query) {
-  return knex
+async function getResultCategoryGroupColumns(dataConstraints, query) {
+  let resultCategoryGroupColumns = await knex
     .from('Assay AS a')
     .innerJoin('DeviceType AS dt', 'a.deviceTypeId', 'dt.id')
     .innerJoin('AssayType AS at', 'a.assayTypeId', 'at.id')
@@ -720,6 +721,7 @@ function getResultCategoryGroupColumns(dataConstraints, query) {
       knex.raw('GROUP_CONCAT(rcg.assayId) AS assayId'),
       'rcg.resultCategory1Id',
       'rcg.resultCategory2Id',
+      knex.raw('NULL as xdrResistance'),
       knex.raw('CONCAT(rcg.assayId, "_",IFNULL(rc1.id, ""), "_", IFNULL(rc2.id, "")) AS columnKey'),
       knex.raw(
         'CONCAT(resultCategory1Label, " ", rc1.name, IFNULL(CONCAT(" ", resultCategory2Label, " ", rc2.name), "")) AS columnName'
@@ -734,7 +736,22 @@ function getResultCategoryGroupColumns(dataConstraints, query) {
     .modify(filterParams, query, {
       assayId: 'a.id',
     })
-    .orderBy('columnName')
+  // .orderBy('columnName')
+  const assay = await knex('Assay').where('externalId', 'GxMtbXdr').first()
+
+  // Adding the collection of columns of result xdr resistances
+  resultCategoryGroupColumns = [
+    ...resultCategoryGroupColumns,
+    ...XDR_RESISTANCES.map(r => ({
+      assayId: `${assay.id}`,
+      resultCategory1Id: null,
+      resultCategory2Id: null,
+      columnName: `MTB Detected ${r} Detected`,
+      xdrResistance: r,
+      columnKey: r,
+    })),
+  ]
+  return _.orderBy(resultCategoryGroupColumns, ['columnName'])
 }
 
 function moduleDisabledIssues(onlyActiveIssues = false) {
