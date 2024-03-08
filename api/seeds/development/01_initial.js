@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears } = require('date-fns')
+const uuid = require('node-uuid')
 
 const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
@@ -3566,6 +3567,7 @@ async function seed(knex) {
           ),
           startedOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
+          guid: uuid.v4(),
         })
       })
     })
