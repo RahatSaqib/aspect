@@ -233,6 +233,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
     data.deviceOperationStartedOn = deviceOperation.startedOn.getTime()
     data.deviceOperationErrors = deviceOperationData.details.Errors
     data.deviceOperationErrors.forEach(error => {
+      error.ErrorCode = Math.trunc(error.ErrorCode / 1000)
       if (error.ErrorCode === 0) {
         error.Message = 'Performing Self-Test'
       } else {
