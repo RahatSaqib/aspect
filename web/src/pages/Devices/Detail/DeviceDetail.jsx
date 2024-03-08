@@ -16,6 +16,7 @@ import deviceStatusMessages from '../../../messages/deviceStatusMessages'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { updateSingleDevice, updateDeviceMaintenanceStatus, updateDeviceMaintenance } from '../../../store/DeviceRedux'
 import isEditable from '../../../utils/selectors/isEditable'
+import { getReturnUrl } from '../../../utils/utils/browser'
 import DeviceDetailEdit from './Edit/DeviceDetailEdit'
 import DeviceDetailOperation from './Operation/DeviceDetailOperation'
 import DeviceDetailProfile from './Profile/DeviceDetailProfile'
@@ -93,11 +94,11 @@ export const DeviceDetail = props => {
     <>
       <DetailHeader
         name={device ? device.name : 'Devices'}
-        back={location.state?.previousLocationPathname ?? '/browse/device/list'}
+        back={location.state?.previousLocationPathname ?? getReturnUrl(location, '/browse/device/list')}
       >
         {[
-          { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}` },
-          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit` },
+          { label: intl.formatMessage(messages.profile), path: `/browse/device/list/${deviceId}${location.search}` },
+          { label: intl.formatMessage(messages.edit), path: `/browse/device/list/${deviceId}/edit${location.search}` },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}

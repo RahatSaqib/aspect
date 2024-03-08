@@ -9,6 +9,7 @@ import { DetailHeader } from '../../../cleanComponents'
 import useSite from '../../../hooks/site/useSite'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import isEditable from '../../../utils/selectors/isEditable'
+import { getReturnUrl } from '../../../utils/utils/browser'
 import SiteForm from './Edit/SiteForm'
 import messages from './messages'
 import SiteDetailProfile from './Profile/SiteDetailProfile'
@@ -40,10 +41,14 @@ const SiteDetail = ({ navigate, location }) => {
   return (
     <>
       <Helmet title={intl.formatMessage(messages.title)} />
-      <DetailHeader name={(site && site.name) || 'Site'} back="/browse/site">
+      <DetailHeader name={(site && site.name) || 'Site'} back={getReturnUrl(location, '/browse/site')}>
         {[
-          { label: intl.formatMessage(titleMessages.profile), path: `/browse/site/${siteId}` },
-          { label: intl.formatMessage(titleMessages.edit), path: `/browse/site/${siteId}/edit`, disabled: false },
+          { label: intl.formatMessage(titleMessages.profile), path: `/browse/site/${siteId}${location.search}` },
+          {
+            label: intl.formatMessage(titleMessages.edit),
+            path: `/browse/site/${siteId}/edit${location.search}`,
+            disabled: false,
+          },
         ].map(({ label, path, disabled = false }) => (
           <AspectButton
             key={path}

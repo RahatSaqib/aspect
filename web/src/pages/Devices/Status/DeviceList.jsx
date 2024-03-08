@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useMemo } from 'react'
+import React, { useEffect, useState, useMemo, useCallback } from 'react'
 import {
   Autocomplete,
   CircularProgress,
@@ -39,6 +39,7 @@ import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import { DeviceDataTable, DeviceDataTableHead, DeviceDataTableRow } from './DeviceDataTable'
 import styles from './DeviceList.module.css'
 import getExportableFile from './DeviceQueries'
@@ -154,21 +155,27 @@ const DeviceList = () => {
   const { sortCol, sortDir, page, size } = pagination
   const params = { ...pagination, ...filters }
 
-  const onRowClick = ({
-    currentTarget: {
-      dataset: { deviceId },
-    },
-  }) => navigate(`/browse/device/list/${deviceId}`)
-
-  const onAlertClick = event => {
-    event.stopPropagation()
-    const {
+  const onRowClick = useCallback(
+    ({
       currentTarget: {
         dataset: { deviceId },
       },
-    } = event
-    navigate(`/browse/device/list/${deviceId}/alerts`)
-  }
+    }) => gotoWithReturnUrl(`/browse/device/list/${deviceId}`, navigate, location),
+    [navigate, location]
+  )
+
+  const onAlertClick = useCallback(
+    event => {
+      event.stopPropagation()
+      const {
+        currentTarget: {
+          dataset: { deviceId },
+        },
+      } = event
+      gotoWithReturnUrl(`/browse/device/list/${deviceId}/alerts`, navigate, location)
+    },
+    [navigate, location]
+  )
 
   const {
     data,
