@@ -136,6 +136,7 @@ const HivGraphPage = () => {
                     const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
 
                     const params = {
+                      displayResult: 'actual',
                       assayId: assays.filter(it => ['GxHiv1Vl'].includes(it.externalId)).map(it => it.id),
                       minDate: format(startOfMonth(parsedDate), base),
                       maxDate: format(endOfMonth(parsedDate), base),
