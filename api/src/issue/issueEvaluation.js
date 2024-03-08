@@ -11,6 +11,7 @@ const evaluationMethods = {
   'result-category': checkResultCategory,
   'child-condition': issueConditionsMet,
   'child-conditions': issueConditionsMet,
+  'webhook-message-status': checkWebhookMessageStatus,
 }
 
 async function issueConditionsMet(knex, issue, conditions) {
@@ -196,6 +197,20 @@ async function checkResultCategory(knex, issue, evaluationParameter) {
     .first('r.id')
 
   return result != null
+}
+
+async function checkWebhookMessageStatus(knex, issue, evaluationParameter) {
+  const allowedParameters = ['messageStatusExternalId']
+  if (Object.keys(_.omit(evaluationParameter, allowedParameters)).length > 0) {
+    return false
+  }
+  const webhookMessageId = await knex('Notification as n')
+    .join('WebhookMessage as wm', 'wm.id', 'n.webhookMessageId')
+    .join('MessageStatus as ms', 'ms.id', 'wm.messageStatusId')
+    .where({ 'n.issueId': issue.id, 'ms.externalId': evaluationParameter.messageStatusExternalId })
+    .first('wm.id')
+
+  return webhookMessageId != null
 }
 
 module.exports = {
