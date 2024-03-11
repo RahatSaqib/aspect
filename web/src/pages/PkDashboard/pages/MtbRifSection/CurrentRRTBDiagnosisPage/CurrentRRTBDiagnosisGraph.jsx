@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
-import endOfMonth from 'date-fns/endOfMonth'
-import parse from 'date-fns/parse'
-import startOfMonth from 'date-fns/startOfMonth'
+import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -15,10 +13,16 @@ import {
   objectToArray,
   ColumnGraph,
   Loading,
+  formatDataByGraphType,
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
+import {
+  getMinMaxDateFromMonthString,
+  getResultCategoryGroupsForResultList,
+} from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
@@ -26,21 +30,36 @@ import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
-const resultFilters = {
-  assay: ['GxMtbRif', 'GxMtbRifUltra'],
-  resultCategoryGroupId: ['GxMtbRifMtbDetectedRifDetected', 'GxMtbRifUltraMtbDetectedRifDetected'],
-}
-
 const now = new Date()
-const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
-const endOfYearUTC = new Date(Date.UTC(now.getFullYear(), 11, 31, 23, 59, 59, 999))
+/**
+ * Do not use below startOfYearUTC and endOfYearUTC, because after datetime preparation
+ * for logged-in user in TZ +03:00 and current country in TZ +06:00 the fetch payload
+ * will have dates like this
+ *   minDate: '2024-01-01T03:00:00.000+06:00',
+ *   maxDate: '2025-01-01T02:59:59.999+06:00',
+ */
+// const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
+// const endOfYearUTC = new Date(Date.UTC(now.getFullYear(), 11, 31, 23, 59, 59, 999))
+// const minDate = startOfYearUTC
+// const maxDate = endOfYearUTC
+/**
+ * To resolve such over-engineered date preparation for this report let's use simple
+ * way and format to 'yyyy-01-01' and 'yyyy-12-31'.
+ * This will produce
+ *    minDate: 2024-01-01T00:00:00.000+06:00
+ *    maxDate: 2024-12-31T23:59:59.999+06:00
+ * for fetching, and on API from this dates we can cut first 10 characters for using in queries
+ */
+const minDate = format(now, 'yyyy-01-01')
+const maxDate = format(now, 'yyyy-12-31')
 
 const defaultFilters = [
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { groupBy: 'month' },
-  { minDate: startOfYearUTC },
-  { maxDate: endOfYearUTC },
+  { groupBy: 'assay' },
+  { minDate },
+  { maxDate },
   { resultCategory1: 'Detected' },
   { resultCategory2: 'Detected' },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
@@ -53,7 +72,11 @@ const CurrentDiagnosisGraphPage = () => {
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState({})
-  const { data: assays } = useAssayList()
+  const { data: assays, isLoading: isLoadingAssays } = useAssayList()
+  const scopedAssays = assays?.filter(x => x.externalId === 'GxMtbRif' || x.externalId === 'GxMtbRifUltra')
+  const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
+    scopedAssays?.map(x => x.id)
+  )
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
 
@@ -66,7 +89,7 @@ const CurrentDiagnosisGraphPage = () => {
   const [barData, setBarData] = useState({})
   useEffect(() => {
     if (data && assays) {
-      const info = data.data
+      const info = data.data.map(r => (r.assay ? r : { ...r, assay: 'GxMtbRif', assayI18nKey: 'assayGeneXpertMtbRif' }))
 
       const i18nKeys = reduce(
         info,
@@ -76,18 +99,35 @@ const CurrentDiagnosisGraphPage = () => {
         },
         {}
       )
+      const groupedForBar = formatDataByGraphType(
+        info,
+        'actual',
+        false,
+        'MMM',
+        'month',
+        'assay',
+        i18nKeys,
+        'bar',
+        undefined,
+        formatMessage,
+        intlMessages
+      )
+      const currentYear = new Date().getFullYear()
       const expandedBarData = []
-      info.map(result => {
+      groupedForBar.map(result => {
         const allKeysButMonth = Object.keys(result).filter(key => key !== 'month')
-        allKeysButMonth.map(key =>
-          expandedBarData.push({
-            id: key,
-            month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: +result[key].toFixed(3).slice(0, -1),
-            type: genLabel('Amount', assays, formatMessage, intlMessages, i18nKeys),
-            originalMonth: result.month,
-          })
-        )
+        allKeysButMonth.map(key => {
+          if (+result.month.split('-')[0] === currentYear) {
+            expandedBarData.push({
+              id: key,
+              month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
+              value: +result[key].toFixed(3).slice(0, -1),
+              type: genLabel(key, assays, formatMessage, intlMessages, i18nKeys),
+              originalMonth: result.month,
+            })
+          }
+          return {}
+        })
         return result
       })
 
@@ -122,7 +162,7 @@ const CurrentDiagnosisGraphPage = () => {
         </>
       }
     >
-      {isLoading ? (
+      {isLoading || isLoadingAssays || isLoadingResultCategoryGroups ? (
         <Loading />
       ) : (
         <Grid container sx={{ mt: 2 }}>
@@ -135,18 +175,23 @@ const CurrentDiagnosisGraphPage = () => {
                 yField="value"
                 seriesField="type"
                 showLabel={showLabel}
-                colors="#34717c"
                 onReady={plot => {
                   plot.on('plot:click', evt => {
-                    const date = parse((evt.data.data.originalMonth, 'yyyy-MM', new Date()))
+                    const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
+                    const assayIds = [assays.find(a => a.externalId === evt.data.data.id).id]
+                    const resultCategoryGroupId = getResultCategoryGroupsForResultList(
+                      resultCategoryGroups,
+                      assayIds,
+                      [],
+                      ['Detected']
+                    )
                     const baseUrl = '/browse/result'
                     addFilter(
                       {
-                        assayId: assays.filter(a => resultFilters.assay.includes(a.externalId)).map(a => a.id),
-                        minDate: startOfMonth(date),
-                        maxDate: endOfMonth(date),
-                        resultCategoryGroupId: resultFilters.resultCategoryGroupId,
-                        onlyReportableResults: true,
+                        assayId: assayIds,
+                        minDate,
+                        maxDate,
+                        resultCategoryGroupId,
                         displayResult: 'actual',
                       },
                       baseUrl
