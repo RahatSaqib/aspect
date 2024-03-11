@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
+const uuid = require('node-uuid')
 const { deviceApprovalToId, deviceMaintenanceTypeToId } = require('../shared/dictionary')
 const { parseDateOrDefault } = require('../shared/date')
 const { setDeviceCalibrationStatus } = require('../plugin/utils')
@@ -183,6 +184,7 @@ async function addDeviceOperation(knex, deviceId, payload, now = new Date()) {
     endedOn: payload.endedOn,
     createdOn: now,
     hash: payload.hash,
+    guid: uuid.v4(),
   })
   return { id: deviceOperationId }
 }

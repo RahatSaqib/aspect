@@ -555,6 +555,9 @@ const getXdrResultCountBase = ({
       cnt_eth: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.ETH.detected', 0)`),
     }
   }
+  if (query.resistance) {
+    fields = { cntAll: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.${query.resistance}.detected', 0)`) }
+  }
 
   const base = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
     addConstraints,

@@ -102,6 +102,9 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         's.street2 as siteStreet2',
         's.city as siteCity',
         's.zip as siteZip',
+        's.guid as siteGuid',
+        's.institutionGuid as siteInstitutionGuid',
+        's.institutionName as siteInstitutionName',
         'st.name as siteState',
         'lg.name as siteLga',
         'p.name as personName',
@@ -118,6 +121,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'd.lastSeenOn as deviceLastSeenOn',
         'd.serial as deviceSerial',
         'd.lastInstrumentSerial as lastInstrumentSerial',
+        'd.stickerInstrumentSerial as deviceStickerInstrumentSerial',
         'dt.externalId as deviceTypeExternalId',
         'r.resultData',
         'r.patientData as resultPatientData',
@@ -423,6 +427,9 @@ async function getBaseDataSource(data, auth) {
             }
           : {},
       completionRatePercentage: issueData.completionRatePercentage,
+      guid: d.siteGuid,
+      institutionGuid: d.siteInstitutionGuid,
+      institutionName: d.siteInstitutionName,
     },
     device: {
       name: d.deviceName,
@@ -432,6 +439,7 @@ async function getBaseDataSource(data, auth) {
       serial: d.deviceSerial,
       lastInstrumentSerial: d.lastInstrumentSerial,
       calibrationDueDate: issueData.calibrationDueDate,
+      stickerInstrumentSerial: d.deviceStickerInstrumentSerial,
     },
     result: {
       data: d.resultData ? JSON.parse(d.resultData) : {},
@@ -500,6 +508,11 @@ async function getBaseDataSource(data, auth) {
     },
     displayPreferences,
     timezone: d.timezone,
+    deviceOperation: {
+      guid: d.deviceOperationGuid,
+      startedOn: d.deviceOperationStartedOn,
+      errors: d.deviceOperationErrors,
+    },
   }
 }
 
