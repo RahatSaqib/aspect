@@ -41,6 +41,13 @@ const GENEXPERT_ASSAYS = Object.freeze({
   GX_HIV1VL: 'GxHiv1Vl',
   GX_HCV: 'GxHcv',
 })
+const ISSUE_CATEGORY_EXTERNAL_IDS = {
+  CepheidC360InstrumentLogsReceived: 'CepheidC360InstrumentLogsReceived',
+}
+
+const ISSUE_TYPE_EXTERNAL_IDS = {
+  CepheidC360InstrumentLogsReceived: 'CepheidC360InstrumentLogsReceived',
+}
 
 module.exports = {
   IGNORED_SENTRY_ERRORS,
@@ -54,4 +61,6 @@ module.exports = {
   WEBHOOK_SERVERS,
   EXTERNAL_IDS,
   GENEXPERT_ASSAYS,
+  ISSUE_CATEGORY_EXTERNAL_IDS,
+  ISSUE_TYPE_EXTERNAL_IDS,
 }

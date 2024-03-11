@@ -9,6 +9,8 @@ const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
 const { WEBHOOK_SERVERS } = require('../shared/constants')
 const onWebHookServerCheckTokens = require('./onWebHookServerCheckTokens')
+const { WEBHOOK_SERVERS } = require('../shared/constants')
+const { ISSUE_TYPE_EXTERNAL_IDS } = require('../shared/constants')
 
 async function onWebhookMessageCreated({ webhookMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ webhookMessagePending })
@@ -221,6 +223,27 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'm.params as messageParams',
       'm.headers as messageHeaders'
     )
+
+  if (data.issueTypeExternalId === ISSUE_TYPE_EXTERNAL_IDS.CepheidC360InstrumentLogsReceived) {
+    const issueData = JSON.parse(data.issueData)
+    const deviceOperation = await knex('DeviceOperation as d')
+      .where('d.id', issueData.deviceOperationId)
+      .select('d.startedOn', 'd.data', 'd.guid')
+      .first()
+    const deviceOperationData = JSON.parse(deviceOperation.data)
+
+    data.deviceOperationGuid = deviceOperation.guid
+    data.deviceOperationStartedOn = deviceOperation.startedOn.getTime()
+    data.deviceOperationErrors = deviceOperationData.details.Errors
+    data.deviceOperationErrors.forEach(error => {
+      error.ErrorCode = Math.trunc(error.ErrorCode / 1000)
+      if (error.ErrorCode === 0) {
+        error.Message = 'Performing Self-Test'
+      } else {
+        error.Message = error.Message.replace(/(\r\n|\n|\r)/gm, '')
+      }
+    })
+  }
 
   const message = await processUsingDataSourceQuery(
     data,

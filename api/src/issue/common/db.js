@@ -43,6 +43,8 @@ async function getIssueFilter(knex, partnerId, deviceId) {
 }
 
 async function findOpenIssue(knex, issueType, action, filterIssueCondition = {}) {
+  const skipFindingOpenIssue = _.get(filterIssueCondition, 'skipFindingOpenIssue')
+  if (skipFindingOpenIssue) return null
   const evaluationFunction = _.get(filterIssueCondition, 'evaluationFunction')
   const findOpenIssue = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
