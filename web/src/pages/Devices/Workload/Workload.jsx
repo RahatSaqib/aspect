@@ -119,7 +119,6 @@ const Workload = () => {
         }
         return categoryGroup.name.toLowerCase().includes(column)
       }).externalId
-
     const { minDate, maxDate } = filter
     const baseUrl = '/browse/result'
     addFilter(

@@ -10,13 +10,13 @@ import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
-import { getReturnUrl, useUrlQuery } from '../../../components/AspectTable/Helpers'
 import AspectForm from '../../../components/Form'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
+import { getReturnUrl, gotoReturnUrl } from '../../../utils/utils/browser'
 import { ResultDetailsErrors as customErrorNotifications } from './errors'
 import messages from './messages'
 import ResultTransferModal from './ResultTransferModal'
@@ -26,8 +26,7 @@ const AspectResultDetail = () => {
   const intl = useIntl()
   const navigate = useNavigate()
   const { resultId } = useParams()
-  const { search } = useLocation()
-  const query = useUrlQuery(search)
+  const location = useLocation()
   const [patientId, setPatientId] = useState()
   const [values, setValues] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
@@ -87,7 +86,7 @@ const AspectResultDetail = () => {
         method: 'PUT',
         params: { ...values },
       }),
-    { onSuccess: () => navigate(getReturnUrl(query.get('returnUrl'), `/browse/result`)) }
+    { onSuccess: () => gotoReturnUrl(navigate, location, '/browse/result') }
   )
 
   return isLoading || !formConfig ? (
@@ -109,6 +108,7 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
   const intl = useIntl()
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
   const { setToggleEdit, formik, toggleEdit } = useFormikContext()
+  const location = useLocation()
 
   const onSubmit = () => {
     const values = sanitizeFormValues(formik.values, { formConfig })
@@ -119,7 +119,7 @@ const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
   formConfig.sections = updateValidationsAndFilters(formConfig.sections, data, formik, keepInvalidSelection)
   return (
     <>
-      <DetailHeader name={`${formConfig.title}${patientId}`} back="/browse/result">
+      <DetailHeader name={`${formConfig.title}${patientId}`} back={getReturnUrl(location, '/browse/result')}>
         {[
           {
             label: intl.formatMessage(messages.transferResult),

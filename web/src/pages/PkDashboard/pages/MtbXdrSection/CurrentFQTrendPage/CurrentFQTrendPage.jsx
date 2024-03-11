@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
+import format from 'date-fns/format'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
@@ -18,15 +19,34 @@ import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
 
 const now = new Date()
-const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
-const endOfYearUTC = new Date(Date.UTC(now.getFullYear(), 11, 31, 23, 59, 59, 999))
+/**
+ * Do not use below startOfYearUTC and endOfYearUTC, because after datetime preparation
+ * for logged-in user in TZ +03:00 and current country in TZ +06:00 the fetch payload
+ * will have dates like this
+ *   minDate: '2024-01-01T03:00:00.000+06:00',
+ *   maxDate: '2025-01-01T02:59:59.999+06:00',
+ */
+// const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
+// const endOfYearUTC = new Date(Date.UTC(now.getFullYear(), 11, 31, 23, 59, 59, 999))
+// const minDate = startOfYearUTC
+// const maxDate = endOfYearUTC
+/**
+ * To resolve such over-engineered date preparation for this report let's use simple
+ * way and format to 'yyyy-01-01' and 'yyyy-12-31'.
+ * This will produce
+ *    minDate: 2024-01-01T00:00:00.000+06:00
+ *    maxDate: 2024-12-31T23:59:59.999+06:00
+ * for fetching, and on API from this dates we can cut first 10 characters for using in queries
+ */
+const minDate = format(now, 'yyyy-01-01')
+const maxDate = format(now, 'yyyy-12-31')
 
 const defaultFilters = [
   { assay: 'GxMtbXdr' },
   { groupBy: 'month' },
   { resistance: 'FLQ' },
-  { minDate: startOfYearUTC },
-  { maxDate: endOfYearUTC },
+  { minDate },
+  { maxDate },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
   { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },

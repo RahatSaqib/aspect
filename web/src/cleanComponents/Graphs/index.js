@@ -25,7 +25,7 @@ import QuartersMtbDetectedGraph from './QuartersMtbDetectedGraph'
 import QuartersRifDetectedGraph from './QuartersRifDetectedGraph'
 import ResultTransmittedGraph from './ResultTransmittedGraph'
 import TbDetectedGraph from './TbDetectedGraph'
-import TbResultsGraph from './TbResultsGraph'
+import TbRifDetectedGraph from './TbRifDetectedGraph'
 import TestsOverTimeGraph from './TestsOverTimeGraph'
 import TreatmentStatusGraph from './TreatmentStatusGraph'
 import TrendInYearsAllTestsGraph from './TrendInYearsAllTestsGraph'
@@ -52,7 +52,7 @@ export {
   QuartersMtbDetectedGraph,
   QuartersRifDetectedGraph,
   TbDetectedGraph,
-  TbResultsGraph,
+  TbRifDetectedGraph,
   TestsOverTimeGraph,
   TreatmentStatusGraph,
   TrendInYearsAllTestsGraph,
