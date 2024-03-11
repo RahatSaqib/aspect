@@ -18,7 +18,7 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
 
   const resultCategoryGroupsColumns = Object.fromEntries(
     resultCategoryGroups.map(ac => {
-      if (!_.isNil(ac.resultCategory1) || !_.isNil(ac.resultCategory2))
+      if (!_.isNil(ac.resultCategory1Id) || !_.isNil(ac.resultCategory2Id))
         // Counts a result category group
         return [ac.columnKey, getResultCategoryGroupSumSelector(ac.assayId, ac.resultCategory1Id, ac.resultCategory2Id)]
 
