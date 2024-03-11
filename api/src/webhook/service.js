@@ -7,7 +7,6 @@ const { messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints } = require('../auth/constraints')
 const { createStreamFromFileReference } = require('../file/service')
-const { WEBHOOK_SERVERS } = require('../shared/constants')
 const onWebHookServerCheckTokens = require('./onWebHookServerCheckTokens')
 const { WEBHOOK_SERVERS } = require('../shared/constants')
 const { ISSUE_TYPE_EXTERNAL_IDS } = require('../shared/constants')
@@ -219,9 +218,7 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
       'tmpl.url as urlTemplate',
       'tmpl.fileName as fileNameTemplate',
       'tmpl.headers as headersTemplate',
-      'tmpl.params as paramsTemplate',
-      'm.params as messageParams',
-      'm.headers as messageHeaders'
+      'tmpl.params as paramsTemplate'
     )
 
   if (data.issueTypeExternalId === ISSUE_TYPE_EXTERNAL_IDS.CepheidC360InstrumentLogsReceived) {
@@ -251,8 +248,8 @@ async function createWebhookMessageFromTemplate(knex, webhookMessageId) {
     authLikeObject
   )
   // TODO replace template values of header/params
-  message.headers = data.headersTemplate ?? data.messageHeaders
-  message.params = data.paramsTemplate ?? data.messageParams
+  message.headers = data.headersTemplate
+  message.params = data.paramsTemplate
   return message
 }
 
