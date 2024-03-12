@@ -268,6 +268,10 @@ const messages = {
       id: 'filter.popover.deviceMaintenanceStatus',
       defaultMessage: 'Maintenance Status',
     },
+    geneXpertType: {
+      id: 'filter.popover.geneXpertType',
+      defaultMessage: 'GeneXpert type',
+    },
     selectDeviceMaintenanceStatus: {
       id: 'filter.popover.selectDeviceMaintenanceStatus',
       defaultMessage: 'Select maintenance status...',

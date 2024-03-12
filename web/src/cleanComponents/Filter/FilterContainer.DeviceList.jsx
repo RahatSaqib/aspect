@@ -7,6 +7,7 @@ import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
+import CONSTS from '../../utils/consts/Devices/CONSTS'
 import {
   StateSelect,
   LgaSelect,
@@ -16,6 +17,7 @@ import {
   DeviceStatusSelect,
   DeviceTypeSelect,
   DeviceMaintenanceStatusSelect,
+  CepheidModulesSelect,
 } from '../index'
 import FilterContainer from './FilterContainer'
 
@@ -116,6 +118,17 @@ const DeviceListFilter = () => {
             multiple
           />
         </Grid>
+
+        {state.deviceType === CONSTS.GENEXPERT_EXTERNAL_ID ? (
+          <Grid item xs={3}>
+            <CepheidModulesSelect
+              valueBy="value"
+              label={formatMessage(messages.geneXpertType)}
+              value={state.geneXpertType || null}
+              onChange={geneXpertType => setState({ ...state, geneXpertType })}
+            />
+          </Grid>
+        ) : null}
       </Grid>
     </FilterContainer>
   )
