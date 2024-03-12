@@ -2161,16 +2161,12 @@ async function getCustomFieldsCompletion(auth, query) {
       accForm[formKey] = _.reduce(
         fields,
         (acc, field) => {
-          const { name, title, gxAlertDbColumn } = field
+          const { name, title, source, gxAlertDbColumn } = field
           const fieldName = gxAlertDbColumn || name
           acc = [
             ...acc,
             knex.raw(
-              `
-              SUM(
-                IFNULL(fcfc.completionByField ->> '$.${fieldName}.completed', 0)
-              ) as cnt_${assayId}_${fieldName}
-              `
+              `SUM(IFNULL(JSON_EXTRACT(completionByField, '$."${source}".completed'),0)) as cnt_${assayId}_${fieldName}`
             ),
           ]
 
