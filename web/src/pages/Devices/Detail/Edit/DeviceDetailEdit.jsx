@@ -7,7 +7,7 @@ import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ImplementingPartnerSelect,
   DeviceCapacitySelect,
@@ -27,6 +27,7 @@ import messages from './messages'
 
 const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const navigate = useNavigate()
+  const location = useLocation()
   const intl = useIntl()
 
   const { mutate: updateDevice } = useUpdateDevice(device.id)
@@ -56,7 +57,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const handleSubmit = async () => {
     updateDeviceTags(editDeviceTags.map(deviceTag => deviceTag.title).join(','), {
       onSuccess: () => {
-        updateDevice(editDevice, { onSuccess: navigate(`/browse/device/list/${device.id}`) })
+        updateDevice(editDevice, { onSuccess: navigate(`/browse/device/list/${device.id}${location.search}`) })
       },
     })
   }

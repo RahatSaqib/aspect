@@ -1,5 +1,6 @@
 const { expect, assert } = require('chai')
 const { addDays, subDays } = require('date-fns')
+const uuid = require('node-uuid')
 const { deviceMaintenanceTypeToId, resultCategoryToId } = require('../../src/shared/dictionary')
 const { createGxConnectTestContext } = require('../deviceApi/geneXpert/gxconnect_utils')
 const shared = require('../utils/sharedToken')
@@ -207,6 +208,7 @@ async function seedDeviceOperation() {
     deviceId: sourceDeviceId,
     startedOn: new Date(),
     data: '{"someJsonData": "someValue"}',
+    guid: uuid.v4(),
   })
 }
 

@@ -8,6 +8,8 @@ async function listResultCategoryGroupsForSelectList(request) {
   const { assayId } = request.query
 
   const data = await knex('ResultCategoryGroup as rcg')
+    .leftJoin('ResultCategory as rc1', 'rcg.resultCategory1Id', 'rc1.id')
+    .leftJoin('ResultCategory as rc2', 'rcg.resultCategory2Id', 'rc2.id')
     .innerJoin('Assay as a', 'rcg.assayId', 'a.id')
     .modify(addConstraints, dataConstraints, {
       assay: 'a',
@@ -16,7 +18,15 @@ async function listResultCategoryGroupsForSelectList(request) {
       if (isArray(assayId)) qb.whereIn('rcg.assayId', assayId)
       else qb.where('rcg.assayId', assayId)
     })
-    .select(['a.i18nKey as assayI18nKey', 'rcg.assayId', 'rcg.externalId', 'rcg.name', 'rcg.i18nKey'])
+    .select([
+      'a.i18nKey as assayI18nKey',
+      'rcg.assayId',
+      'rcg.externalId',
+      'rcg.name',
+      'rcg.i18nKey',
+      'rc1.externalId as resultCategory1ExternalId',
+      'rc2.externalId as resultCategory2ExternalId',
+    ])
 
   return { ok: true, data }
 }
