@@ -6,13 +6,11 @@ import useAuthState from '../../hooks/useAuthState'
 const MEASUREMENT_ID = process.env.googleAnalyticsMeasurementId
 const PAGE_VIEW_EVENT = 'page_view'
 
+if (MEASUREMENT_ID) ReactGA.initialize(MEASUREMENT_ID)
+
 export default function AnalyticsProvider({ children }) {
   const location = useLocation()
   const user = useAuthState()
-
-  useEffect(() => {
-    if (MEASUREMENT_ID) ReactGA.initialize(MEASUREMENT_ID)
-  }, [])
 
   useEffect(() => {
     const params = user ? { user_name: user.jwt.name, user_country: user.countryAbbreviation } : {}
