@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -15,6 +15,7 @@ import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.module.css'
@@ -59,14 +60,17 @@ const SiteList = ({ navigate, location }) => {
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
   ]
 
-  const onAlertClick = event => {
-    const {
-      currentTarget: {
-        dataset: { siteId },
-      },
-    } = event
-    navigate(`/browse/site/${siteId}/alerts`)
-  }
+  const onAlertClick = useCallback(
+    event => {
+      const {
+        currentTarget: {
+          dataset: { siteId },
+        },
+      } = event
+      gotoWithReturnUrl(`/browse/site/${siteId}/alerts`, navigate, location)
+    },
+    [location, navigate]
+  )
 
   const onExportClick = formatType => {
     setIsLoading(true)
@@ -81,11 +85,14 @@ const SiteList = ({ navigate, location }) => {
       })
   }
 
-  const onRowClick = ({
-    currentTarget: {
-      dataset: { siteId },
-    },
-  }) => navigate(`/browse/site/${siteId}`)
+  const onRowClick = useCallback(
+    ({
+      currentTarget: {
+        dataset: { siteId },
+      },
+    }) => gotoWithReturnUrl(`/browse/site/${siteId}`, navigate, location),
+    [location, navigate]
+  )
 
   return (
     <>
@@ -96,7 +103,7 @@ const SiteList = ({ navigate, location }) => {
             color="primary"
             variant="contained"
             browseButton
-            onClick={() => navigate('/browse/site/create')}
+            onClick={() => gotoWithReturnUrl('/browse/site/create', navigate, location)}
           >
             {intl.formatMessage(messages.createSite)}
           </AspectButton>
