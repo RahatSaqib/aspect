@@ -272,6 +272,11 @@ const messages = {
       id: 'filter.popover.geneXpertType',
       defaultMessage: 'GeneXpert type',
     },
+    geneXpertTypeTooltip: {
+      id: 'filter.popover.geneXpertTypeTooltip',
+      defaultMessage:
+        'GeneXpert type offers a way to distinguish those GeneXpert instruments that have 10-color modules installed and are capable of running XDR tests.  In the devices details for the GeneXpert there is a field to record the number of 10-color (10c) modules installed in the instrument.  This filter captures any instrument for which the number is 1 or more',
+    },
     selectDeviceMaintenanceStatus: {
       id: 'filter.popover.selectDeviceMaintenanceStatus',
       defaultMessage: 'Select maintenance status...',

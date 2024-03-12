@@ -1,11 +1,12 @@
 import React from 'react'
-import { Grid, TextField } from '@mui/material'
+import { Box, Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
+import AspectTooltip from '../../oldComponents/shared/AspectTooltip'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import CONSTS from '../../utils/consts/Devices/CONSTS'
 import {
@@ -120,13 +121,15 @@ const DeviceListFilter = () => {
         </Grid>
 
         {state.deviceType === CONSTS.GENEXPERT_EXTERNAL_ID ? (
-          <Grid item xs={3}>
+          <Grid item display="flex" gap={1} alignItems="center" flexDirection="row" xs={3}>
             <CepheidModulesSelect
+              sx={{ flex: 1 }}
               valueBy="value"
               label={formatMessage(messages.geneXpertType)}
-              value={state.geneXpertType || null}
+              value={state.geneXpertType ?? null}
               onChange={geneXpertType => setState({ ...state, geneXpertType })}
             />
+            <AspectTooltip showHelpIcon title={formatMessage(messages.geneXpertTypeTooltip)} />
           </Grid>
         ) : null}
       </Grid>
