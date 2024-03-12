@@ -110,6 +110,7 @@ function listDevicesBaseRequest(isoDateFormatExpected = false) {
           .allow(null)
           .description('Filter for connector status'),
         siteName: Joi.string().allow('').description('Filter for site name'),
+        geneXpertType: Joi.string().allow('').description('Filter for GeneXpert type'),
         siteId: Joi.number().allow(null).description('Filter for site Id'),
         siteExternalId: Joi.string().allow('').description('Filter for facility code'),
         // query param 'format' is applicable only for handler 'exportDevices'
