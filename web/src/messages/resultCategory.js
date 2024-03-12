@@ -297,6 +297,14 @@ export default defineMessages({
     id: 'resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifNoResult',
     defaultMessage: 'MTB Trace Detected Rif No Result',
   },
+  GxMtbRifSomeResult: {
+    id: 'pages.filters.GxMtbRifSomeResult',
+    defaultMessage: 'Some Result',
+  },
+  GxMtbRifUltraSomeResult: {
+    id: 'pages.filters.GxMtbRifUltraSomeResult',
+    defaultMessage: 'Some Result',
+  },
   GxMtbRifUltraMTBTraceDetectedRifIndeterminate: {
     id: 'resultCategoryGroup.GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
     defaultMessage: 'MTB Trace Detected Rif Indeterminate',
