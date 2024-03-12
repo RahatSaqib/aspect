@@ -108,7 +108,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
   if (payload.id) {
     payload.data.geneXpertTestId = payload.id
   }
-  const generatedExternalId = createUniqueIdForResult(instrumentSerial, startedOn, endedOn, sampleId)
+  let generatedExternalId = createUniqueIdForResult(instrumentSerial, startedOn, endedOn, sampleId)
   const gxAlertUniqueId = _.get(payload, 'data.gxAlertTestUniqueId', generatedExternalId)
   const geneXpertTestId = _.get(payload, 'id') || _.get(payload, 'data.id')
 
@@ -183,7 +183,9 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
         // generatedExternalId = createUniqueIdForResult(... can return a duplicate value as explained
         //  in the comments to that function. If this update violates the unique constraints in the Result
         //  table, the externalId can remain as is and Aspect can uignore the error.
-        if (err.code !== 'ER_DUP_ENTRY') {
+        if (err.code === 'ER_DUP_ENTRY') {
+          generatedExternalId = payload.id ? payload.id : existingResult.externalId
+        } else {
           throw err
         }
       }
