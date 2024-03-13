@@ -1,34 +1,31 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
+import isNil from 'lodash/isNil'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
-import { useNavigate } from 'react-router-dom'
-import { SiteListSelect, SiteTagInput } from '../../../../cleanComponents'
-import LocationSelector from '../../../../cleanComponents/LocationSelector'
-import TimezoneSelect from '../../../../cleanComponents/TimezoneSelect'
+import { useIntl } from 'react-intl'
+import { useNavigate, useLocation } from 'react-router-dom'
+import { SiteListSelect, SiteTagInput, LocationSelector, TimezoneSelect } from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
 import useDeleteSite from '../../../../hooks/site/useDeleteSite'
 import useUpdateSite from '../../../../hooks/site/useUpdateSite'
-import useI18n from '../../../../hooks/useI18n'
-import AspectButton from '../../../../oldComponents/shared/AspectButton'
+import useAuthState from '../../../../hooks/useAuthState'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
-import { useAuthState } from '../../../../providers/AuthProvider'
+import { gotoReturnUrl } from '../../../../utils/utils/browser'
 import messages from '../messages'
-import styles from '../SiteDetail.css'
+import styles from '../SiteDetail.module.css'
 import { convertToFloat, getLatLongFromAddress } from './address'
 import SiteTypeSelect from './SiteTypeSelect'
 
-const cssClasses = classnames.bind(styles)
-
 const SiteForm = ({ site, onLatLongChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const navigate = useNavigate()
+  const location = useLocation()
   const [showConfirmation, setShowConfirmation] = useState(false)
 
   const { mutate: updateSite } = useUpdateSite(site.id)
@@ -40,6 +37,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
 
   const isPristine = isEqual(site, editSite)
   const isNew = site.id === 0
+  const goBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
 
   useEffect(
     () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
@@ -67,16 +65,16 @@ const SiteForm = ({ site, onLatLongChange }) => {
       })
     }
     if (isNew) {
-      createSite(editSite, { onSuccess: newId => navigate(`/browse/site/${newId}`) })
+      createSite(editSite, { onSuccess: newId => navigate(`/browse/site/${newId}${location.search}`) })
     } else {
-      updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}`) })
+      updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}${location.search}`) })
     }
   }
 
   const handleDelete = () => {
     deleteSite()
     setShowConfirmation(false)
-    navigate('/browse/site')
+    goBack()
   }
 
   function handleDeletePrompt() {
@@ -85,18 +83,15 @@ const SiteForm = ({ site, onLatLongChange }) => {
 
   const isError =
     !isPristine &&
-    (isEmpty(editSite.name) ||
-      isEmpty(editSite.shortName) ||
-      isEmpty(editSite.countryId) ||
-      isEmpty(editSite.externalId))
+    (isEmpty(editSite.name) || isEmpty(editSite.shortName) || isNil(editSite.countryId) || isEmpty(editSite.externalId))
 
   return (
     <Box width="100%">
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
-          <div className={cssClasses('container')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
+          <div className={styles.container}>
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="name"
               label={formatMessage(messages.fieldName)}
               margin="normal"
@@ -111,7 +106,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               helperText={!isPristine && isEmpty(editSite.name) && `${formatMessage(messages.fieldName)} is required`}
             />
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="shortName"
               label={formatMessage(messages.fieldShortName)}
               margin="normal"
@@ -124,7 +119,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               }
             />
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="externalId"
               label={formatMessage(messages.fieldExternalId)}
               margin="normal"
@@ -137,7 +132,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               }
             />
           </div>
-          <div className={cssClasses('container')}>
+          <div className={styles.container}>
             <SiteTypeSelect
               name="siteType"
               width="33%"
@@ -146,7 +141,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
             />
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="address"
               label={formatMessage(messages.fieldAddress)}
               onBlur={() =>
@@ -164,7 +159,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               onChange={e => setEditSite({ ...editSite, street1: e.target.value })}
             />
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="address2"
               label={formatMessage(messages.fieldAddress2)}
               onBlur={() =>
@@ -182,13 +177,13 @@ const SiteForm = ({ site, onLatLongChange }) => {
               onChange={e => setEditSite({ ...editSite, street2: e.target.value })}
             />
           </div>
-          <div className={cssClasses('container')}>
+          <div className={styles.container}>
             <LocationSelector
               user={user}
-              countryId={editSite.countryId || ''}
-              stateId={editSite.stateId || ''}
-              lgaId={editSite.lgaId || ''}
-              validators={{ country: { error: !isPristine && isEmpty(editSite.countryId), helperText: 'is required' } }}
+              countryId={editSite.countryId}
+              stateId={editSite.stateId}
+              lgaId={editSite.lgaId}
+              validators={{ country: { error: !isPristine && isNil(editSite.countryId), helperText: 'is required' } }}
               onChange={location => {
                 setEditSite({
                   ...editSite,
@@ -211,9 +206,9 @@ const SiteForm = ({ site, onLatLongChange }) => {
               }}
             />
           </div>
-          <div className={cssClasses('container')}>
+          <div className={styles.container}>
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="city"
               label={formatMessage(messages.fieldCity)}
               margin="normal"
@@ -231,7 +226,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               onChange={e => setEditSite({ ...editSite, city: e.target.value })}
             />
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="zip"
               label={formatMessage(messages.fieldZip)}
               onBlur={() =>
@@ -258,9 +253,9 @@ const SiteForm = ({ site, onLatLongChange }) => {
               isClearable
             />
           </div>
-          <div className={cssClasses('container', 'coordinate')}>
+          <div className={`${styles.container} ${styles.coordinate}`}>
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="longitude"
               label={formatMessage(messages.fieldLongitude)}
               margin="normal"
@@ -271,7 +266,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
               }}
             />
             <TextField
-              className={cssClasses('container__field')}
+              className={styles.container__field}
               name="latitude"
               label={formatMessage(messages.fieldLatitude)}
               margin="normal"
@@ -281,8 +276,8 @@ const SiteForm = ({ site, onLatLongChange }) => {
                 setEditSite({ ...editSite, latitude: e.target.value })
               }}
             />
-            <div className={cssClasses('coordinate__button')}>
-              <AspectButton
+            <div className={styles.coordinate__button}>
+              <Button
                 color="primary"
                 variant="contained"
                 onClick={() =>
@@ -296,10 +291,10 @@ const SiteForm = ({ site, onLatLongChange }) => {
                 }
               >
                 {formatMessage(messages.buttonSetBasedonAddress)}
-              </AspectButton>
+              </Button>
             </div>
           </div>
-          <div className={cssClasses('container')}>
+          <div className={styles.container}>
             <TimezoneSelect
               name="timezone"
               label={formatMessage(messages.fieldTimeZone)}
@@ -347,7 +342,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             value={editSite?.tags ?? []}
           />
 
-          <div className={cssClasses('container', 'coordinate')}>
+          <div className={`${styles.container} ${styles.coordinate}`}>
             <TextField
               label={formatMessage(messages.fieldNotes)}
               multiline
@@ -379,12 +374,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             </PermissionChecker>
           )}
 
-          <Button
-            style={{ marginLeft: '1rem' }}
-            type="button"
-            variant="contained"
-            onClick={() => navigate('/browse/site')}
-          >
+          <Button style={{ marginLeft: '1rem' }} type="button" variant="contained" onClick={goBack}>
             {formatMessage(messages.buttonBack)}
           </Button>
 
@@ -411,7 +401,6 @@ const SiteForm = ({ site, onLatLongChange }) => {
 }
 
 SiteForm.propTypes = {
-  // eslint-disable-next-line react/forbid-prop-types
   site: PropTypes.object,
   onLatLongChange: PropTypes.func,
 }

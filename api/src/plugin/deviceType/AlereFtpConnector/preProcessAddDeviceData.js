@@ -1,6 +1,7 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { createNewDevice } = require('../../../deviceApi/device')
+const { insertSite } = require('../../../site/common/db')
 
 async function preProcessAddDeviceData(context) {
   const { device, payload, knex, now } = context
@@ -26,14 +27,9 @@ async function preProcessAddDeviceData(context) {
     .where('deviceId', alereDevice.id)
     .orderBy('startedOn', 'desc')
     .first('startedOn')) || { startedOn: null }
-  if (
-    alereDevice.siteId !== site.id ||
-    alereDevice.geographyId !== site.geographyId ||
-    alereDevice.putInService !== firstTestDate
-  ) {
+  if (alereDevice.siteId !== site.id || alereDevice.putInService !== firstTestDate) {
     await knex.from('Device').where({ id: alereDevice.id }).update({
       siteId: site.id,
-      geographyId: site.geographyId,
       putInService: firstTestDate,
       updatedOn: now,
       updatedBy: null,
@@ -83,6 +79,7 @@ async function getOrCreateDevice(knex, payload, alereFtpConnectorDevice, now) {
 async function findDevices({ deviceId, partnerId, serial, deviceTypeExternalId }, knex) {
   return knex
     .from('Device as d')
+    .join('Site as s', 'd.siteId', 's.id')
     .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
@@ -104,7 +101,7 @@ async function findDevices({ deviceId, partnerId, serial, deviceTypeExternalId }
       'd.id',
       'd.partnerId',
       'd.siteId',
-      'd.geographyId',
+      's.geographyId',
       'd.name',
       'd.serial',
       'd.macAddress',
@@ -160,7 +157,7 @@ async function getOrCreateSite(knex, alereFtpConnectorDevice, deviceDetails, now
     if (newSite.externalId.length > 255) {
       newSite.externalId = newSite.externalId.substr(0, 255)
     }
-    const [siteId] = await knex.insert(newSite).into('Site')
+    const [siteId] = await insertSite(knex, newSite)
     matchingSites = await knex.from('Site as s').where('s.id', siteId).select()
   }
   let matchingSite = null

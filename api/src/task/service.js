@@ -135,9 +135,8 @@ async function getTask(request) {
 }
 
 async function getPersonsBySite(siteId) {
-  const query = await knex('JobContext as jb')
-    .leftJoin('Job as job', 'jb.jobId', 'job.Id')
-    .leftJoin('Person as jobperson', 'job.personId', 'jobperson.Id')
+  const query = await knex('JobContext as jc')
+    .leftJoin('Person as jobperson', 'jc.personId', 'jobperson.Id')
     .where('jb.siteId', siteId)
     .select('jobperson.name as jobPersons', 'jobperson.id as jobPersonsId')
   return query

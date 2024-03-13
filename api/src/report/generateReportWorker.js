@@ -5,18 +5,22 @@ const { generateReport } = require('./serviceReports')
 async function start() {
   const { externalId, query, auth, user, userPlaceHolders, fullPath, extension } = workerData
 
-  const { dataBuffer, streamResponse } = await generateReport(
-    externalId,
-    query,
-    auth,
-    user,
-    userPlaceHolders,
-    extension
-  )
+  try {
+    const { dataBuffer, streamResponse } = await generateReport(
+      externalId,
+      query,
+      auth,
+      user,
+      userPlaceHolders,
+      extension
+    )
 
-  await writeDataToFile(fullPath, dataBuffer)
+    await writeDataToFile(fullPath, dataBuffer)
 
-  parentPort.postMessage({ streamResponse })
+    parentPort.postMessage({ success: true, streamResponse })
+  } catch (err) {
+    parentPort.postMessage({ error: err.message })
+  }
 }
 
 start()

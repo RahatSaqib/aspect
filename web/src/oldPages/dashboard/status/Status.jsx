@@ -1,71 +1,63 @@
-import React, { useEffect, useMemo } from 'react'
-import classnames from 'classnames/bind'
+import React from 'react'
 import { Helmet } from 'react-helmet'
-import { useDispatch, useSelector } from 'react-redux'
-import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
-import CovidResultGraph from '../../../cleanComponents/Graphs/CovidResultGraph'
-import HivResultsGraph from '../../../cleanComponents/Graphs/HivResultsGraph'
-import QuartersMtbDetectedGraph from '../../../cleanComponents/Graphs/QuartersMtbDetectedGraph'
-import QuartersRifDetectedGraph from '../../../cleanComponents/Graphs/QuartersRifDetectedGraph'
-import TbDetectedGraph from '../../../cleanComponents/Graphs/TbDetectedGraph'
-import TbResultsGraph from '../../../cleanComponents/Graphs/TbResultsGraph'
-import TestsOverTimeGraph from '../../../cleanComponents/Graphs/TestsOverTimeGraph'
-import TreatmentStatusGraph from '../../../cleanComponents/Graphs/TreatmentStatusGraph'
-import TrendInYearsAllTestsGraph from '../../../cleanComponents/Graphs/TrendInYearsAllTestsGraph'
-import TrendInYearsMtbDetectedGraph from '../../../cleanComponents/Graphs/TrendInYearsMtbDetectedGraph'
-import TrendInYearsRifDetectedGraph from '../../../cleanComponents/Graphs/TrendInYearsRifDetectedGraph'
-import XDRFLQResistanceGraph from '../../../cleanComponents/Graphs/XDRFLQResistanceGraph'
-import XDRResultsGraph from '../../../cleanComponents/Graphs/XDRResultsGraph'
+import { useIntl } from 'react-intl'
+import {
+  ErrorBoundary,
+  CovidResultGraph,
+  HivResultsGraph,
+  QuartersMtbDetectedGraph,
+  QuartersRifDetectedGraph,
+  TbDetectedGraph,
+  TbRifDetectedGraph,
+  TestsOverTimeGraph,
+  TreatmentStatusGraph,
+  TrendInYearsAllTestsGraph,
+  TrendInYearsMtbDetectedGraph,
+  TrendInYearsRifDetectedGraph,
+  XDRFLQResistanceGraph,
+  XDRResultsGraph,
+  DeviceStatusGraph,
+  InventoryStatusGraph,
+} from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
-import useI18n from '../../../hooks/useI18n'
-import { useAuthState } from '../../../providers/AuthProvider'
-import { fetchAssays } from '../../../store/AssayRedux'
-import DeviceStatusGraph from '../Graphs/DeviceStatusGraph'
-import InventoryStatusGraph from '../Graphs/InventoryStatusGraph'
-import styles from './index.css'
+import useAssayList from '../../../hooks/assay/useAssayList'
+import useResultCategoryGroup from '../../../hooks/result/useResultCategoryGroup'
+import useAuthState from '../../../hooks/useAuthState'
+import styles from './index.module.css'
 import messages from './messages'
-import Reports from './Reports'
 import SummaryStatus from './SummaryStatus'
 
-const cssClasses = classnames.bind(styles)
+const tbPermissions = ['GxMtbRif', 'GxMtbRifUltra']
+const xdrPermissions = ['GxMtbXdr']
+const hivPermissions = [
+  'abbottM2000DBSHivVL',
+  'abbottM2000PlasmaHivVL',
+  'assayAlereQHiv12Detect',
+  'assayAlereQHiv12VLPlasma',
+  'assayCobasHivVl',
+  'GxHiv1Vl',
+  'QHivVL',
+  'ReporterHivVL',
+]
+const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
 const Status = () => {
-  const { formatMessage } = useI18n()
-  const dispatch = useDispatch()
+  const { formatMessage } = useIntl()
   const { isCountry } = useAuthState()
-  useEffect(() => {
-    dispatch(fetchAssays(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const assaysImmutable = useSelector(({ assay }) => assay.items)
-  const assays = useMemo(() => assaysImmutable.toJS(), [assaysImmutable])
-  const tbPermissions = ['GxMtbRif', 'GxMtbRifUltra']
-  const xdrPermissions = ['GxMtbXdr']
-  const hivPermissions = [
-    'abbottM2000DBSHivVL',
-    'abbottM2000PlasmaHivVL',
-    'assayAlereQHiv12Detect',
-    'assayAlereQHiv12VLPlasma',
-    'assayCobasHivVl',
-    'GxHiv1Vl',
-    'QHivVL',
-    'ReporterHivVL',
-  ]
-  const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
-
+  const { data: assays } = useAssayList()
+  const { data: resultCategoryGroups } = useResultCategoryGroup(assays?.map(x => x.id))
   return (
-    <div className={cssClasses('Container')}>
+    <div className={styles.Container}>
       <Helmet title={formatMessage(messages.statusTitle)} />
 
       <PermissionChecker permissions={['dashboard']}>
         <ErrorBoundary>
-          <SummaryStatus className={cssClasses('Section--summary')} dashboard="home" />
+          <SummaryStatus className={styles.Section__summary} dashboard="home" />
         </ErrorBoundary>
       </PermissionChecker>
 
-      {assays ? (
-        <div className={cssClasses('wrapper')}>
+      {assays && resultCategoryGroups ? (
+        <div className={styles.wrapper}>
           <PermissionChecker permissions={['dashboard']}>
             <ErrorBoundary>
               <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
@@ -75,10 +67,12 @@ const Status = () => {
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <TbDetectedGraph assaysFromState={assays} /> {/* 2 */}
+                <TbDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 2 */}
               </ErrorBoundary>
               <ErrorBoundary>
-                <TbResultsGraph assaysFromState={assays} /> {/* 3 */}
+                <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 3 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -86,7 +80,8 @@ const Status = () => {
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <XDRResultsGraph assaysFromState={assays} /> {/* 4 */}
+                <XDRResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 4 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -122,7 +117,8 @@ const Status = () => {
           {assays.some(a => covidPermissions.includes(a.externalId)) && !isCountry('BD') ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
+                <CovidResultGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 11 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -130,7 +126,8 @@ const Status = () => {
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <HivResultsGraph assaysFromState={assays} /> {/* 12 */}
+                <HivResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 12 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -155,10 +152,6 @@ const Status = () => {
           ) : null}
         </div>
       ) : null}
-
-      <ErrorBoundary>
-        <Reports className={cssClasses('Section--withStatus')} title={formatMessage(messages.reportsTitle)} />
-      </ErrorBoundary>
     </div>
   )
 }

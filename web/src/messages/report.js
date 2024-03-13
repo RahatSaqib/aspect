@@ -263,12 +263,12 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.usageStatistics_description',
     defaultMessage: 'Shows stats about the use of the system.',
   },
-  devicesAndSitesOverview: {
-    id: 'pages.ReportIndex.devicesAndSitesOverview',
-    defaultMessage: 'Devices and Sites Overview',
+  deviceAndSiteSummaryReport: {
+    id: 'pages.ReportIndex.DeviceAndSiteSummaryReport',
+    defaultMessage: 'Device and Site Summary Report',
   },
-  devicesAndSites_description: {
-    id: 'pages.ReportIndex.devicesAndSites_description',
+  deviceAndSiteSummaryReport_description: {
+    id: 'pages.ReportIndex.DeviceAndSiteSummaryReport_description',
     defaultMessage:
       'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices"',
   },
@@ -309,6 +309,19 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.missing_cartridges_report_description',
     defaultMessage:
       "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
+  },
+  genericReportErrorMessage: {
+    id: 'reports.genericReportErrorMessage',
+    defaultMessage: `Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}".
+      Please, try again in a few minutes. If the error persists, contact your administrator for support.`,
+  },
+  genericReportErrorTitle: {
+    id: 'reports.genericReportErrorTitle',
+    defaultMessage: 'Error Fetching Report',
+  },
+  tooMuchDataErrorMessage: {
+    id: 'reports.tooMuchDataErrorMessage',
+    defaultMessage: `Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.`,
   },
 })
 export default messages

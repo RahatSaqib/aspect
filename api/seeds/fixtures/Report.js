@@ -8,6 +8,7 @@ const xdrDevicesSummary = {
   fileName: 'XdrDevicesSummary',
   exportCsv: false,
   sortOrder: 101,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -29,6 +30,7 @@ const mtbDetectedRRDetected = {
   fileName: 'MTB_Detected_RR_Detected',
   sortOrder: 0,
   availableForNotification: 1,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -54,11 +56,12 @@ const allResults = {
   availableForNotification: 1,
   exportCsv: true,
   exportExcel: true,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
       moduleName: 'result/serviceReport',
-      functionName: 'getAllResultsForExport',
+      functionName: 'getAllResultsReport',
       query: {
         sortCol: 'endedOn',
         sortDir: 'desc',
@@ -78,6 +81,7 @@ const criticalErrorsByDevice = {
   fileName: 'DevicesWithErrors',
   availableForNotification: 1,
   sortOrder: 2,
+  validations: ['dateRangeRequired'],
   sheets: [
     {
       sortOrder: 0,
@@ -113,6 +117,7 @@ const rifResistanceRate = {
   fileName: 'RifResistanceRate',
   sortOrder: 3,
   availableForNotification: 1,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -131,6 +136,7 @@ const resultsHivNotSuppressed = {
   fileName: 'HIVNotSuppressed',
   availableForNotification: 1,
   sortOrder: 4,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -156,6 +162,7 @@ const deviceActivity = {
   fileName: 'deviceActivity',
   availableForNotification: 1,
   sortOrder: 5,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -172,11 +179,11 @@ const deviceActivity = {
       moduleName: 'device/serviceReports',
       functionName: 'getDeviceActivityReport',
       query: {
-        groupBy: 'r.assayId',
-        select: 'a.name as assayName',
         sortCol: 'name',
         sortDir: 'asc',
         hasResults: 1,
+        groupBy: 'r.assayId',
+        select: 'a.name as assayName',
       },
     },
   ],
@@ -192,6 +199,7 @@ const deviceUtilizationReport = {
   fileName: 'deviceUtilization',
   availableForNotification: 1,
   sortOrder: 7,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -216,6 +224,7 @@ const deviceActivityPercent = {
   fileName: 'deviceActivityPercent',
   sortOrder: 6,
   availableForNotification: 1,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -239,6 +248,7 @@ const moduleSwaps = {
   i18nKeyDescription: 'moduleSwapsReport_description',
   availableForNotification: 1,
   sortOrder: 7,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -262,6 +272,7 @@ const deviceCalibrationReport = {
   fileName: 'DeviceCalibrationReport',
   availableForNotification: 1,
   sortOrder: 8,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -286,6 +297,7 @@ const geneXpertIssues = {
   externalId: 'genexpert_issues',
   fileName: 'geneXpertIssues',
   sortOrder: 9,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -310,6 +322,7 @@ const utilizationPerInstrumentDayReport = {
   fileName: 'deviceUtilizationPerDay',
   availableForNotification: 1,
   sortOrder: 11,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -329,6 +342,7 @@ const moduleActivityReport = {
   availableForNotification: 1,
   exportCsv: true,
   sortOrder: 120,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -348,6 +362,7 @@ const doNotUseModulesReport = {
   availableForNotification: 1,
   exportCsv: true,
   sortOrder: 125,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -369,6 +384,7 @@ const moduleStatusReport = {
   exportCsv: true,
   exportExcel: true,
   sortOrder: 130,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -388,6 +404,7 @@ const reportCustomFieldsCompletion = {
   availableForNotification: 1,
   exportCsv: false,
   sortOrder: 13,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -410,6 +427,7 @@ const inventoryLog = {
   fileName: 'InventoryLog',
   exportCsv: false,
   sortOrder: 14,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -433,6 +451,7 @@ const tbWorkloadSummary = {
   fileName: 'ReportTBWorkloadSummary',
   exportCsv: false,
   sortOrder: 15,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -478,6 +497,7 @@ const usageStats = {
   exportExcel: true,
   availableForNotification: 1,
   sortOrder: 140,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -508,6 +528,7 @@ const geneXpertTBWorkloadReport = {
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 150,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -523,17 +544,18 @@ const geneXpertTBWorkloadReport = {
   ],
 }
 
-const devicesAndSitesOverview = {
-  name: 'GeneXpert Devices and Sites Overview',
+const deviceAndSiteSummaryReport = {
+  name: 'Device and Site Summary Report',
   description:
-    'An overview of all GeneXpert devices in the system, information about inventory, and aggregated test results and errors per device.',
-  i18nKey: 'devicesAndSitesOverview',
-  i18nKeyDescription: 'devicesAndSites_description',
-  externalId: 'devices_and_sites_overview',
-  fileName: 'DevicesAndSitesOverview',
+    'An overview of all devices in the system, information about inventory in sites, and aggregated test results per device. This is the old and improved report of GxAlert called "All Devices".',
+  i18nKey: 'deviceAndSiteSummaryReport',
+  i18nKeyDescription: 'deviceAndSiteSummaryReport_description',
+  externalId: 'device_and_site_summary_report',
+  fileName: 'DeviceAndSiteSummaryReport',
   exportCsv: false,
   availableForNotification: 1,
   sortOrder: 150,
+  validations: ['dateRangeRequired'],
   sheets: [
     /**
      * sheet `GeneXpert Devices`
@@ -554,7 +576,7 @@ const devicesAndSitesOverview = {
      */
     {
       sortOrder: 1,
-      moduleName: 'device/serviceReports/devicesAndSitesOverviewReport',
+      moduleName: 'device/serviceReports/deviceAndSiteSummaryReport',
       functionName: 'getInventoryData',
       query: {
         hasResults: 1,
@@ -594,6 +616,7 @@ const errorRatesReport = {
   availableForNotification: 1,
   exportCsv: false,
   exportExcel: true,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -636,6 +659,7 @@ const dataExtract = {
   availableForNotification: 0,
   exportCsv: true,
   exportExcel: false,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -664,6 +688,7 @@ const inventoryNoStock = {
   availableForNotification: 1,
   exportCsv: false,
   exportExcel: true,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -689,6 +714,7 @@ const resultNotificationsReport = {
   exportExcel: true,
   availableForNotification: 1,
   sortOrder: 160,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -726,7 +752,7 @@ module.exports = {
   xdrDevicesSummary,
   usageStats,
   errorRatesReport,
-  devicesAndSitesOverview,
+  deviceAndSiteSummaryReport,
   dataExtract,
   resultNotificationsReport,
   inventoryNoStock,

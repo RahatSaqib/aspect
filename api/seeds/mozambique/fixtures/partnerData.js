@@ -1,4 +1,5 @@
 const jobFunctions = require('./jobFunctions')
+const webhookServers = require('../../fixtures/webhookServers')
 
 module.exports = {
   adminUserName: 'admin',
@@ -10,6 +11,7 @@ module.exports = {
   partnerAbbreviation: 'MZ',
   fixtures: {
     jobFunctions,
+    webhookServers,
   },
   plugin: '',
   deviceLogHistoryDays: 365,
@@ -19,6 +21,15 @@ module.exports = {
   maxDaysDeviceNoResults: 14,
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
-  serverUrl: 'https://mozambique.aspect.id:9443',
-  apiUrl: 'https://mozambique.aspect.id:9443/api',
+  serverUrl: 'https://mozambique.aspect.id',
+  apiUrl: 'https://mozambique.aspect.id/api',
+  clientApiDetails: [
+    {
+      id: 'zenysisTestAggregate',
+      name: 'Zenysis',
+      token: 'w3wgnd8fnm67mcpfey30',
+      externalId: 'Zenysis',
+      manufacturer: 'SystemOne',
+    },
+  ],
 }

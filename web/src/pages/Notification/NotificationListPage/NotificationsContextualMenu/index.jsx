@@ -1,10 +1,11 @@
 import React, { Fragment, useState } from 'react'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { useNavigate } from 'react-router-dom'
 import AspectVertMenu from '../../../../components/AspectVertMenu'
 import { NOTIFICATION_LIST } from '../../../../components/QueryFetch/Notification/index'
-import useI18n from '../../../../hooks/useI18n'
+import useFilterUpdate from '../../../../hooks/useFilterUpdate'
 import DeleteConfirmationModal from './DeleteConfirmationModal'
 import messages from './messages'
 import ToggleStatusConfirmationModal from './ToggleStatusConfirmationModal'
@@ -15,7 +16,8 @@ const initialDeleteStatus = { showDialog: false, notificationId: 0 }
 
 const NotificationsContextualMenu = ({ item }) => {
   const navigate = useNavigate()
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
+  const [update] = useFilterUpdate()
 
   const { id, readyForNotification, name, typeCategory, enabled, totalTriggers } = item
 
@@ -50,7 +52,11 @@ const NotificationsContextualMenu = ({ item }) => {
     {
       icon: 'FaFileAlt',
       text: formatMessage(messages.viewLogTitle),
-      action: () => navigate(`/browse/notification/${id}/history`),
+      action: () => {
+        const path = '/browse/notification/logs'
+        update({ notificationTypeId: id }, path)
+        navigate(path)
+      },
       separator: true,
     },
     {

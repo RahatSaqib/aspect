@@ -1,32 +1,34 @@
 import React, { useState } from 'react'
-import { Button, Card, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
+import { Button, Checkbox, Card, FormControlLabel, TextField } from '@mui/material'
 import get from 'lodash/get'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import values from 'lodash/values'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
-import { useNavigate } from 'react-router-dom'
-import { ImplementingPartnerSelect } from '../../../../cleanComponents'
-import DeviceCapacitySelect from '../../../../cleanComponents/DeviceCapacitySelect'
+import { useIntl } from 'react-intl'
+import { useNavigate, useLocation } from 'react-router-dom'
+import {
+  ImplementingPartnerSelect,
+  DeviceCapacitySelect,
+  SiteSelect,
+  CepheidInstrumentModelSelect,
+  CepheidSoftwareTypeSelect,
+} from '../../../../cleanComponents'
 import useUpdateDevice from '../../../../hooks/device/useUpdateDevice'
 import useUpdateTagByTypeAndId from '../../../../hooks/tag/useUpdateTagByTypeAndId'
-import useI18n from '../../../../hooks/useI18n'
-import SiteSelectField from '../../../../oldComponents/resource/SiteSelectField'
 import AspectButton from '../../../../oldComponents/shared/AspectButton'
 import TagInput from '../../../../oldComponents/shared/TagInput'
 import ButtonGroup from '../../../../oldComponents/themedReactToolbox/ButtonGroup'
 import FormGroup from '../../../../oldComponents/themedReactToolbox/FormGroup'
 import CONSTS from '../../../../utils/consts/Devices/CONSTS'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-
-export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
+const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const navigate = useNavigate()
-  const intl = useI18n()
+  const location = useLocation()
+  const intl = useIntl()
 
   const { mutate: updateDevice } = useUpdateDevice(device.id)
   const { mutate: updateDeviceTags } = useUpdateTagByTypeAndId('device', device.id)
@@ -55,7 +57,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const handleSubmit = async () => {
     updateDeviceTags(editDeviceTags.map(deviceTag => deviceTag.title).join(','), {
       onSuccess: () => {
-        updateDevice(editDevice, { onSuccess: navigate(`/browse/device/list/${device.id}`) })
+        updateDevice(editDevice, { onSuccess: navigate(`/browse/device/list/${device.id}${location.search}`) })
       },
     })
   }
@@ -63,8 +65,8 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   return (
     <div>
       <Helmet title={device.name} />
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           <form>
             <TextField
               fullWidth
@@ -90,15 +92,13 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                 setError(isEmpty(e.target.value))
               }}
             />
-            <SiteSelectField
+            <SiteSelect
+              id="siteId"
               name="siteId"
-              floatingLabelText={intl.formatMessage(messages.location)}
+              label={intl.formatMessage(messages.location)}
+              value={editDevice?.siteId || ''}
+              onChange={e => setEditDevice({ ...editDevice, siteId: e.target.value })}
               disabled={!editable}
-              value={editDevice.siteId}
-              onSiteChange={siteId => setEditDevice({ ...editDevice, siteId })}
-              fullWidth
-              tabIndex="0"
-              aria-haspopup
             />
 
             <ImplementingPartnerSelect
@@ -107,12 +107,27 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               value={editDevice?.implementingPartnerId ?? null}
               onChange={implementingPartnerId => setEditDevice(prv => ({ ...prv, implementingPartnerId }))}
             />
+
             <DeviceCapacitySelect
               name="capacity"
               deviceTypeId={editDevice.deviceType.externalId}
               label={intl.formatMessage(messages.capacity)}
               value={editDevice.dailyCapacityId}
               onChange={dailyCapacityId => setEditDevice({ ...editDevice, dailyCapacityId })}
+            />
+
+            <TextField
+              label={intl.formatMessage(messages.moduleBayCapacity)}
+              type="number"
+              error={error?.moduleBayCapacity}
+              value={editDevice.moduleBayCapacity}
+              onChange={({ target: { value } }) => {
+                setError(error => ({ ...error, moduleBayCapacity: Number(value) < 1 || Number(value) > 256 }))
+                setEditDevice({ ...editDevice, moduleBayCapacity: value ? parseInt(value, 10) : '' })
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
 
             <TextField
@@ -158,6 +173,42 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                     shrink: true,
                   }}
                 />
+
+                <TextField
+                  fullWidth
+                  id="stickerInstrumentSerial"
+                  label={intl.formatMessage(messages.stickerInstrumentSerial)}
+                  value={editDevice.stickerInstrumentSerial}
+                  onChange={e => setEditDevice({ ...editDevice, stickerInstrumentSerial: e.target.value })}
+                />
+
+                <CepheidInstrumentModelSelect
+                  valueBy="value"
+                  label={intl.formatMessage(messages.instrumentModel)}
+                  value={editDevice.instrumentModel}
+                  onChange={instrumentModel => setEditDevice(prv => ({ ...prv, instrumentModel }))}
+                />
+
+                <CepheidSoftwareTypeSelect
+                  valueBy="value"
+                  label={intl.formatMessage(messages.softwareType)}
+                  value={editDevice.softwareType}
+                  onChange={softwareType => setEditDevice(prv => ({ ...prv, softwareType }))}
+                />
+
+                <FormControlLabel
+                  sx={{ mb: '20px' }}
+                  control={
+                    <Checkbox
+                      type="checkbox"
+                      onChange={isDaisyChained =>
+                        setEditDevice(prv => ({ ...prv, isDaisyChained: isDaisyChained.target.checked }))
+                      }
+                      checked={[true, 'true'].includes(editDevice.isDaisyChained)}
+                    />
+                  }
+                  label={intl.formatMessage(messages.isDaisyChained)}
+                />
               </>
             ) : null}
 
@@ -185,7 +236,7 @@ export const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               />
             </FormGroup>
 
-            <div className={cssClasses('Form__Actions')}>
+            <div className={styles.Form__Actions}>
               <ButtonGroup isolated>
                 <AspectButton
                   type="button"

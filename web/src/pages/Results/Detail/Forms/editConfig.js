@@ -145,6 +145,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: { ...resultCategoryControlType(formatMessage) },
                 labelI18nKey: resultCategory1i18nKey || 'resultCategory1',
                 label: 'resultCategory1Label',
+                type: 'readOnly',
                 disabledIf: values =>
                   !!values.resultSourceExternalId && values.resultSourceExternalId !== 'EnteredByHand',
               },
@@ -153,13 +154,14 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 controlType: { ...resultCategoryControlType(formatMessage), isClearable: true },
                 labelI18nKey: resultCategory2i18nKey || 'resultCategory2',
                 label: 'resultCategory2Label',
+                type: 'readOnly',
                 hideIfNull: true,
                 disabledIf: values =>
                   !!values.resultSourceExternalId && values.resultSourceExternalId !== 'EnteredByHand',
               },
               {
-                id: 'detectedResistance',
-                controlType: { component: 'textField' },
+                id: 'allResistances',
+                controlType: { component: 'textArea', rows: 7 },
                 type: 'readOnly',
                 label: 'Detected Resistance',
                 hideIfNull: true,
@@ -265,10 +267,17 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
               },
               {
                 id: 'sampleCollectedOn',
-                controlType: { component: 'datePicker', format: 'dd MMM yyyy hh:mm' },
+                controlType: {
+                  component: 'dateTimePicker',
+                  format: 'dd MMM yyyy hh:mm',
+                  timeIntervals: 1,
+                  isClearable: true,
+                },
                 type: 'readOnly',
                 label: 'Collected On',
                 labelI18nKey: 'collectedOn',
+                disabledIf: values =>
+                  !!values.resultSourceExternalId && values.resultSourceExternalId !== 'EnteredByHand',
               },
             ],
           },

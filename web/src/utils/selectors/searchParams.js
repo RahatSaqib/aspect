@@ -1,9 +1,9 @@
 import isNaN from 'lodash/isNaN'
 
-export const DEFAULT_SORT_COL = 'id'
-export const DEFAULT_SORT_DIR = 'asc'
-export const DEFAULT_PAGE_AT = 0
-export const DEFAULT_PAGE_SIZE = 10
+const DEFAULT_SORT_COL = 'id'
+const DEFAULT_SORT_DIR = 'asc'
+const DEFAULT_PAGE_AT = 0
+const DEFAULT_PAGE_SIZE = 10
 
 export const makeSortPageSelector =
   ({

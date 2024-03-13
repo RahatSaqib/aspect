@@ -1,5 +1,6 @@
 const _ = require('lodash')
-const { smsMessageReadyForSending, smsMessageSent } = require('./actions')
+const { smsMessageReadyForSending, smsMessageProcessed } = require('./actions')
+const { notificationMessageProcessed } = require('../notification/actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
 const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../stringTemplate/service')
 const { getConstraints } = require('../auth/constraints')
@@ -54,7 +55,7 @@ async function prepareSmsMessageForSending(context, knex, smsMessageId) {
 // -----------------------------
 async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
-    smsMessageSent,
+    smsMessageProcessed,
   })
 
   return context.transact(async knex => {
@@ -96,8 +97,13 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
     errorData,
   })
 
-  // dispatch SMS_MESSAGE_SENT to MQ
-  context.smsMessageSent(smsMessageId)
+  // dispatch SMS_MESSAGE_PROCESSED to MQ
+  context.smsMessageProcessed(smsMessageId)
+
+  context.bindActionCreators({
+    notificationMessageProcessed,
+  })
+  context.notificationMessageProcessed({ smsMessageId })
 }
 
 async function createSmsMessageFromTemplate(knex, smsMessageId) {
@@ -124,8 +130,8 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
     )
 
   return processUsingDataSourceQuery(
-    { ...data, personCell: data?.personCellE164 ? `true?${data?.personCellE164}` : data?.personCell },
-    ['messageTemplate', 'phoneNumberTemplate', 'countryAbbreviation'],
+    data,
+    ['messageTemplate', 'phoneNumberTemplate', 'personCellE164Template', 'personCellTemplate', 'countryAbbreviation'],
     authLikeObject
   )
 }

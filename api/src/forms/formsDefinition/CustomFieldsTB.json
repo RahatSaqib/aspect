@@ -5,13 +5,13 @@
       "name": "Retreatment Case",
       "i18nKey": "RetreatCaseFieldi18nKey",
       "fieldType": "number",
+      "completionWeight": 10,
       "order": 3,
       "gxAlertDbColumn": "PreviouslyTreated",
       "title": "Retreatment Case",
       "caption": "Retreatment Case",
       "i18nKeyCaption": "RetreatmentCasei18nCaptionKey",
       "controlType": "comboBox",
-      "payloadDestinationPath": "patient.PreviouslyTreated",
       "items": [
         {
           "key": 1,
@@ -38,7 +38,6 @@
       "caption": "Referring Facility",
       "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.HealthFacility",
       "calculated": {
         "fieldId1": 5,
         "fixedValue": "now",
@@ -52,13 +51,13 @@
       "name": "Referring Clinician or Facility Phone Number (if known)",
       "i18nKey": "ReferringClinicianI18nkey",
       "fieldType": "text",
+      "completionWeight": 10,
       "order": 7,
       "gxAlertDbColumn": "RequestorPhone",
       "title": "Referring Clinician or Facility Phone Number (if known)",
       "caption": "Referring Clinician or Facility Phone Number (if known)",
       "i18nKeyCaption": "Referringphonei18nKeyCaption",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.RequestorPhone",
       "source": "patientData.phone"
     },
     {
@@ -66,13 +65,13 @@
       "name": "Repeat Test",
       "i18nKey": "RepeatTesti18nKey",
       "fieldType": "number",
+      "completionWeight": 10,
       "order": 7,
       "title": "Repeat Test",
       "caption": "Repeat Test",
       "gxAlertDbColumn": "RepeatTest",
       "i18nKeyCaption": "RepeatTesti18nCaptionKey",
       "controlType": "comboBox",
-      "payloadDestinationPath": "patient.RepeatTest",
       "source": "patientData.RepeatTest",
       "items": [
         {
@@ -91,6 +90,36 @@
           "order": 20
         }
       ]
+    },
+    {
+      "id": 107,
+      "name": "DateSpecimenCollected",
+      "title": "Date Specimen Collected",
+      "i18nKey": "DateSpecimenCollectedI18nKey",
+      "fieldType": "datetime",
+      "completionWeight": 10,
+      "order": 10,
+      "caption": "Date Specimen Collected",
+      "i18nKeyCaption": "DateSpecimenCollectedI8nCaptionKey",
+      "controlType": "dateTimePicker",
+      "payloadOriginPath": "data.customFieldData.25.value",
+      "source": "patientData.DateSpecimenCollected",
+      "mandatory": false
+    },
+    {
+      "id": 108,
+      "name": "DateSpecimenReceived",
+      "title": "Date Specimen Received",
+      "i18nKey": "DateSpecimenReceivedI18nKey",
+      "fieldType": "datetime",
+      "completionWeight": 10,
+      "order": 11,
+      "caption": "Date Specimen Received",
+      "i18nKeyCaption": "DateSpecimenReceivedI8nCaptionKey",
+      "controlType": "dateTimePicker",
+      "payloadOriginPath": "data.customFieldData.26.value",
+      "source": "patientData.DateSpecimenReceived",
+      "mandatory": false
     }
   ],
   "refForms": []

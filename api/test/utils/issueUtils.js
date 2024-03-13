@@ -24,16 +24,11 @@ async function getSite(knex, { countryAbbreviation, partnerId, userId, requireIn
     })
     .join('Country as c', 'lgaGeography.countryId', 'c.id')
     .join('Person as labUser', 'lgaGeography.id', 'labUser.geographyId')
-    .join('Job as labUserJob', 'labUser.id', 'labUserJob.personId')
+    .join('JobContext as labUserJob', 'labUser.id', 'labUserJob.personId')
     .join('JobFunction as labUserJobFunction', 'labUserJob.jobFunctionId', 'labUserJobFunction.id')
     .join('JobContext as regionalContext', 'regionalGeography.id', 'regionalContext.geographyId')
-    .join('Job as regionalOfficerJob', 'regionalContext.jobId', 'regionalOfficerJob.id')
-    .join(
-      'JobFunction as regionalOfficerJobFunction',
-      'regionalOfficerJob.jobFunctionId',
-      'regionalOfficerJobFunction.id'
-    )
-    .join('Person as regionalOfficer', 'regionalOfficerJob.personId', 'regionalOfficer.id')
+    .join('JobFunction as regionalOfficerJobFunction', 'regionalContext.jobFunctionId', 'regionalOfficerJobFunction.id')
+    .join('Person as regionalOfficer', 'regionalContext.personId', 'regionalOfficer.id')
     .leftJoin('InventoryItem as ii', 's.id', 'ii.siteId')
     .where('c.abbreviation', countryAbbreviation)
     .andWhere(function () {

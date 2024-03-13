@@ -13,6 +13,7 @@ const {
   resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
+const { insertSite } = require('../../src/site/common/db')
 
 const { assert } = chai
 
@@ -170,15 +171,14 @@ async function createSite(knex, { partner, user, site }) {
   // find geography for current user
   const { id: geographyId } = await knex('Geography as g')
     .join('JobContext as jc', 'g.id', 'jc.geographyId')
-    .join('Job as j', 'jc.jobId', 'j.id')
-    .join('Person as p', 'j.personId', 'p.id')
+    .join('Person as p', 'jc.personId', 'p.id')
     .join('User as u', 'p.userId', 'u.id')
     .where('p.lastPartnerId', partnerId)
     .andWhere('u.name', user)
     .first('g.id')
 
   // create new site
-  const [siteId] = await knex('Site').insert({
+  const [siteId] = await insertSite(knex, {
     name: 'Test Site',
     shortName: 'Test Site',
     externalId: site || `Test Site ${new Date().getTime()}`,
@@ -196,7 +196,7 @@ async function createDevice(
 ) {
   const now = new Date()
 
-  const { geographyId, partnerId } = await knex('Site as s').where({ id: siteId }).first()
+  const { partnerId } = await knex('Site as s').where({ id: siteId }).first()
 
   const deviceTypeId = await deviceTypeToId(type)
 
@@ -208,7 +208,6 @@ async function createDevice(
 
   const [deviceId] = await knex('Device').insert({
     partnerId,
-    geographyId,
     siteId,
     deviceTypeId,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
@@ -637,23 +636,24 @@ async function getDeviceType(externalId, knex) {
 
 async function getDevicesWithIdLargerThan(deviceId, knex) {
   const devices = await knex
-    .from('Device')
-    .where('id', '>', deviceId)
-    .orderBy('id', 'asc')
+    .from('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .where('d.id', '>', deviceId)
+    .orderBy('d.id', 'asc')
     .select(
-      'partnerId',
-      'geographyId',
-      'siteId',
-      'deviceTypeId',
-      'deviceApprovalId',
-      'name',
-      'shortName',
-      'macAddress',
-      'serial',
-      'hostId',
-      'culture',
-      'timezone',
-      'configurationData'
+      'd.partnerId',
+      'd.siteId',
+      'd.deviceTypeId',
+      's.geographyId',
+      'd.deviceApprovalId',
+      'd.name',
+      'd.shortName',
+      'd.macAddress',
+      'd.serial',
+      'd.hostId',
+      'd.culture',
+      'd.timezone',
+      'd.configurationData'
     )
   return _.map(devices, device =>
     _.merge({}, device, {

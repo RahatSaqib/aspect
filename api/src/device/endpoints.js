@@ -15,7 +15,7 @@ const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
 const listDeviceCapacity = require('./listDeviceCapacity')
-const { exportDevices, exportDeviceOperationLogReport } = require('./serviceReports')
+const { exportDevices, exportDeviceOperationLogReport, getDeviceCoverageReport } = require('./serviceReports')
 const {
   exportWorkloadRequestSchema,
   listWorkloadRequestSchema,
@@ -181,6 +181,15 @@ const routes = [
             .min(0)
             .description('Number of GX-10C modules on GenExpert device'),
           deviceCapacityId: Joi.number().allow(null).optional(),
+          moduleBayCapacity: Joi.number()
+            .optional()
+            .min(0)
+            .max(256)
+            .description('The module bay capacity of the device'),
+          stickerInstrumentSerial: Joi.string().allow('', null).optional(),
+          instrumentModel: Joi.string().allow('', null).optional(),
+          softwareType: Joi.string().allow('', null).optional(),
+          isDaisyChained: Joi.bool().allow('', null).optional(),
         },
       },
     },
@@ -356,6 +365,11 @@ const routes = [
           notes: Joi.string()
             .allow('', null)
             .description('Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.notes'),
+          expectedBackOnline: Joi.string()
+            .allow('', null)
+            .description(
+              'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.expectedBackOnline'
+            ),
         },
       },
       response: {
@@ -388,6 +402,9 @@ const routes = [
               maintenanceStatusManuallySetBy: Joi.object()
                 .allow(null)
                 .description('Member responsible for manually setting the status'),
+              expectedBackOnline: Joi.string()
+                .allow('', null)
+                .description('The expected Online back date of the last the maintenance status'),
             }),
         }),
       },
@@ -426,6 +443,9 @@ const routes = [
           notes: Joi.string()
             .allow('', null)
             .description('Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.notes'),
+          expectedBackOnline: Joi.string()
+            .allow('', null)
+            .description('The expected Online back date of the last the maintenance status'),
         },
       },
       response: {
@@ -458,6 +478,9 @@ const routes = [
               maintenanceStatusManuallySetBy: Joi.object()
                 .allow(null)
                 .description('Member responsible for manually setting the status'),
+              expectedBackOnline: Joi.string()
+                .allow('', null)
+                .description('The expected Online back date of the last the maintenance status'),
             }),
         }),
       },
@@ -708,6 +731,22 @@ const routes = [
               })
             ),
         }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/coverage',
+    handler: getDeviceCoverageReport,
+    config: {
+      description: 'List of Devices with 6- and 1-color modules aggregations',
+      notes: 'List is prepared for expandable table with nested rows for country-state-lga-site-device levels',
+      auth: { scope: ['device:view'] },
+      validate: {
+        query: {
+          assay: Joi.alternatives().try(Joi.array(), Joi.string()).description('Filter for assay'),
+          ...validateDateRangeParams(false),
+        },
       },
     },
   },

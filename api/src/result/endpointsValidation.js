@@ -250,7 +250,6 @@ function validateResultDetailResponse() {
     sampleTypeId: asPositiveInteger.allow(null).description('Sample type Id'),
     patientId: Joi.string().allow(null, '').description('The patient Id'),
     patientData: Joi.object().allow(null).description('The patient data'),
-    formSchema: Joi.object().allow(null).description('The form data object'),
     assay: Joi.object().allow(null).description('The assay object'),
     assayType: Joi.string().allow(null, '').description("The type of the result's assay"),
     deviceType: Joi.string().allow(null, '').description("The type of the result's device"),
@@ -309,6 +308,7 @@ function validateResultDetailResponse() {
     reportableSiteName: Joi.string()
       .allow(null, '')
       .description('The name of reportable site, differ from siteName when transferred'),
+    referringSiteId: Joi.number().allow(null).integer().positive().description('The id of referring site'),
     transferredOn: Joi.date().allow(null).description('When result was transferred to another clinic'),
     firstViewedOn: Joi.date().allow(null).description('When transferred result was clicked'),
     transferredBy: Joi.string().allow(null, '').description('Who transferred result to another clinic'),

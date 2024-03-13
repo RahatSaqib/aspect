@@ -1,4 +1,4 @@
-const { addDays, subDays, startOfMonth, endOfMonth, parseISO } = require('date-fns')
+const { addDays, subDays } = require('date-fns')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { inventoryStockout, inventoryStockExpiring } = require('../inventory/actions')
@@ -11,18 +11,10 @@ const {
 } = require('./actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
 const { deviceOffline, deviceOnline, deviceNoResults, deviceHasNewResults } = require('../device/actions')
-const {
-  issueTypeToId,
-  issueStatusToId,
-  issueEventStatusToId,
-  resultWorkflowStatusToId,
-} = require('../shared/dictionary')
+const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
-const { startOfDayUtc } = require('../shared/date')
+const logger = require('../shared/logger')
 
-const daysToCalculate = [1, 7, 30, 60, 90, 365, 9999]
-const daysToCalculateCountOfDeliveredResults = [30, 60]
-const timeFramesToCalculate = ['month']
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
 const MIN_PERCENTAGE_FIELDS_COMPLETION_RATE = 0.8
@@ -134,24 +126,6 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
   })
 }
 
-async function onFactGenerateResultCounts(action, context) {
-  if (action.deviceId != null) {
-    // specialization if device id specified, otherwise query for devices below.
-    return onFactGenerateResultCountsForDevice(action, context)
-  }
-  const messageContext = context.messageContext.bindActionCreators({
-    factGenerateResultCounts,
-  })
-  return messageContext.run(async knex => {
-    const items = await knex('Device as d')
-      .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-      .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-      .where('dtc.hasResults', 1)
-      .select('d.id as deviceId')
-    await Promise.each(items, async ({ deviceId }) => messageContext.factGenerateResultCounts(deviceId))
-  })
-}
-
 async function onDeviceSeen({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({ deviceOnline })
   return context.run(async knex => {
@@ -167,6 +141,7 @@ async function onDeviceSeen({ deviceId }, { messageContext }) {
           .orWhereRaw('fdf.offline = 1 and (fdf.updatedOn <= IFNULL(d.lastSeenOn, fdf.updatedOn))')
       })
       .first('d.id')
+
     if (offlineDevice != null) {
       context.deviceOnline(offlineDevice.id)
     }
@@ -209,17 +184,36 @@ async function onResultLogged({ resultId }, { messageContext }) {
     deviceHasNewResults,
   })
   return context.transact(async knex => {
-    const { deviceId, assayId, resultCategory1, resultCategory2, noResults, endedOn } =
+    const { deviceId, assayId, resultCategory1, resultCategory2, noResults, endedOn, deviceType } =
       (await knex('Result as r')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
-        .where({ id: resultId })
-        .first('r.deviceId', 'r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'fdf.noResults', 'r.endedOn')) || {}
+        .leftJoin('Device as d', 'd.id', 'r.deviceId')
+        .leftJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+        .where('r.id', resultId)
+        .first(
+          'r.deviceId',
+          'r.assayId',
+          'r.resultCategory1',
+          'r.resultCategory2',
+          'fdf.noResults',
+          'r.endedOn',
+          'dt.externalId as deviceType'
+        )) || {}
     if (!deviceId) {
       return
     }
     if (noResults === 1) {
       context.deviceHasNewResults(deviceId)
     }
+
+    try {
+      if (endedOn && deviceType === 'CepheidGeneXpert') {
+        await updateFactDeviceModulesCount(deviceId, endedOn, knex)
+      }
+    } catch (err) {
+      logger.error(err)
+    }
+
     context.factGenerateResultCounts(deviceId, {
       assayId,
       resultCategory1,
@@ -229,295 +223,55 @@ async function onResultLogged({ resultId }, { messageContext }) {
   })
 }
 
-async function onFactGenerateResultCountsForDevice({ deviceId, options = {} }, { messageContext }) {
-  const { assayId, resultCategory1, resultCategory2, endedOn: resultEndedOn } = options
-  return messageContext.transact(async knex => {
-    const now = new Date()
+async function updateFactDeviceModulesCount(deviceId, resultEndedOn, knex) {
+  const date = new Date(resultEndedOn.toDateString())
+  const nextDay = new Date(date)
+  nextDay.setDate(nextDay.getDate() + 1)
 
-    const query = knex('Result as r')
-      .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
-      .where({ deviceId })
-      .where('rt.excluded', false)
+  const rows = await knex('Result as r')
+    .where('r.endedOn', '>=', date)
+    .where('r.endedOn', '<', nextDay)
+    .where('r.deviceId', deviceId)
+    .distinct('r.instrumentSerial', 'r.moduleName', 'r.moduleSerial')
 
-    query.modify(queryBuilder => {
-      if (assayId) {
-        queryBuilder.where({ assayId })
-      }
-      if (resultCategory1) {
-        queryBuilder.where({ resultCategory1 })
-      }
-      if (resultCategory2) {
-        queryBuilder.where({ resultCategory2 })
-      }
-    })
-
-    // calculate by device - make sure it still exists
-    const device = await knex('Device').where({ id: deviceId }).first('deviceId')
-    if (!device) {
-      return
-    }
-
-    await messageContext.initDictionaryTables()
-
-    await Promise.each(daysToCalculate, async days => {
-      const endedOn = startOfDayUtc(subDays(now, days))
-      // query for selecting data for the device
-      const query = knex('Result as r')
-        .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
-        .where('r.deviceId', deviceId)
-        .where('r.endedOn', '>', endedOn)
-        .where('rt.excluded', false)
-      const factResultsDevice = {
-        calculatedOn: now,
-      }
-      if (daysToCalculateCountOfDeliveredResults.includes(days)) {
-        const deliveredResultWorkfowStatusId = await resultWorkflowStatusToId('Delivered')
-        const countByDevice = (await query
-          .clone()
-          .leftJoin('ResultWorkflowLog as rwl', queryBuilder => {
-            queryBuilder
-              .on('r.resultWorkflowStatusLogId', 'rwl.id')
-              .andOn(knex.raw('rwl.resultWorkflowStatusId = ?', deliveredResultWorkfowStatusId))
-              .andOn(knex.raw('rwl.changedOn > ?', endedOn))
-          })
-          .first(
-            knex.raw('COUNT(DISTINCT r.id) as resultCount'),
-            knex.raw('SUM(CASE WHEN rwl.id IS NULL THEN 0 ELSE 1 END) as resultsDeliveredCount')
-          )) || { resultCount: 0 }
-        factResultsDevice.resultCount = countByDevice.resultCount
-        factResultsDevice.resultsDeliveredCount = countByDevice.resultsDeliveredCount
-      } else {
-        const countByDevice = await query.clone().count('r.id as resultCount').select('r.deviceId').first()
-        factResultsDevice.resultCount = countByDevice.resultCount
-      }
-
-      const existingFactResultsDeviceRecord = await knex('FactResultsDevice').where({ deviceId, days }).first()
-      if (existingFactResultsDeviceRecord) {
-        await knex('FactResultsDevice').where({ deviceId, days }).update(factResultsDevice)
-      } else {
-        await knex('FactResultsDevice').insert({
-          ...factResultsDevice,
-          deviceId,
-          days,
-        })
-      }
-
-      // ...grouped by assay
-      const countsByAssay = await query
-        .clone()
-        .whereNotNull('r.assayId')
-        .groupBy('r.assayid')
-        .count('r.id as resultCount')
-        .select('r.assayId')
-
-      await Promise.each(countsByAssay, async count => {
-        const factResultsDeviceByAssay = await knex('FactResultsDeviceByAssay')
-          .where({ deviceId, assayId: count.assayId, days })
-          .first()
-        if (factResultsDeviceByAssay) {
-          await knex('FactResultsDeviceByAssay').where({ deviceId, assayId: count.assayId, days }).update({
-            resultCount: count.resultCount,
-            calculatedOn: now,
-          })
-        } else {
-          await knex('FactResultsDeviceByAssay').insert({
-            deviceId,
-            assayId: count.assayId,
-            days,
-            resultCount: count.resultCount,
-            calculatedOn: now,
-          })
-        }
-      })
-
-      // ...grouped by assay, resultCategory
-      const countsByCategory = await query
-        .clone()
-        .whereNotNull('r.assayId')
-        .whereNotNull('r.resultCategory1')
-        .groupBy('r.assayId', 'r.resultCategory1')
-        .count('r.id as resultCount')
-        .select('r.assayId', 'r.resultCategory1')
-
-      await Promise.each(countsByCategory, async count => {
-        const factResultsDeviceByCategory1 = await knex('FactResultsDeviceByCategory1')
-          .where({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            days,
-          })
-          .first()
-        if (factResultsDeviceByCategory1) {
-          await knex('FactResultsDeviceByCategory1')
-            .where({
-              deviceId,
-              assayId: count.assayId,
-              resultCategory1: count.resultCategory1,
-              days,
-            })
-            .update({ resultCount: count.resultCount, calculatedOn: now })
-        } else {
-          await knex('FactResultsDeviceByCategory1').insert({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            days,
-            resultCount: count.resultCount,
-            calculatedOn: now,
-          })
-        }
-      })
-
-      // ...grouped by assay, resultCategory 1 & 2
-      const countsByCategories = await query
-        .clone()
-        .whereNotNull('r.assayId')
-        .whereNotNull('r.resultCategory1')
-        .whereNotNull('r.resultCategory2')
-        .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
-        .count('r.id as resultCount')
-        .select('r.assayId', 'r.resultCategory1', 'r.resultCategory2')
-
-      await Promise.each(countsByCategories, async count => {
-        const factResultsDeviceByCategory1And2 = await knex('FactResultsDeviceByCategory1And2')
-          .where({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            resultCategory2: count.resultCategory2,
-            days,
-          })
-          .first()
-        if (factResultsDeviceByCategory1And2) {
-          await knex('FactResultsDeviceByCategory1And2')
-            .where({
-              deviceId,
-              assayId: count.assayId,
-              resultCategory1: count.resultCategory1,
-              resultCategory2: count.resultCategory2,
-              days,
-            })
-            .update({
-              resultCount: count.resultCount,
-              calculatedOn: now,
-            })
-        } else {
-          await knex('FactResultsDeviceByCategory1And2').insert({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            resultCategory2: count.resultCategory2,
-            days,
-            resultCount: count.resultCount,
-            calculatedOn: now,
-          })
-        }
-      })
-    })
-    await Promise.each(timeFramesToCalculate, async timeFrame => {
-      // ...grouped by assay, resultCategory 1 & 2
-      const countsByCategories = await query
-        .clone()
-        .whereNotNull('r.assayId')
-        .whereNotNull('r.resultCategory1')
-        .groupBy('r.assayId', 'r.resultCategory1', 'r.resultCategory2', 'startedOnTimeFrame')
-        .count('r.id as resultCount')
-        .modify(qb => {
-          if (resultEndedOn) {
-            // TODO: we'll have to account for different timeframes here if we ever want to calculate more than just month
-            qb.whereBetween('r.endedOn', [startOfMonth(parseISO(resultEndedOn)), endOfMonth(parseISO(resultEndedOn))])
-          }
-        })
-        .select(
-          'r.assayId',
-          'r.resultCategory1',
-          'r.resultCategory2',
-          knex.raw('DATE_FORMAT(IFNULL(r.endedOn, r.startedOn), "%Y-%m-01") as startedOnTimeFrame')
-        )
-      // if we didn't get an endedOn, generate all time frames since first result from device
-      await Promise.each(countsByCategories, async count => {
-        const factResultsDeviceByTimeFrame = await knex('FactResultsDeviceByTimeFrame')
-          .where({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            resultCategory2: count.resultCategory2,
-            timeFrame,
-            startedOn: count.startedOnTimeFrame,
-          })
-          .first()
-        if (factResultsDeviceByTimeFrame) {
-          await knex('FactResultsDeviceByTimeFrame')
-            .where({
-              deviceId,
-              assayId: count.assayId,
-              resultCategory1: count.resultCategory1,
-              resultCategory2: count.resultCategory2,
-              timeFrame,
-              startedOn: count.startedOnTimeFrame,
-            })
-            .update({
-              resultCount: count.resultCount,
-              calculatedOn: now,
-            })
-        } else {
-          await knex('FactResultsDeviceByTimeFrame').insert({
-            deviceId,
-            assayId: count.assayId,
-            resultCategory1: count.resultCategory1,
-            resultCategory2: count.resultCategory2,
-            timeFrame,
-            resultCount: count.resultCount,
-            calculatedOn: now,
-            startedOn: count.startedOnTimeFrame,
-          })
-        }
-      })
-    })
-
-    // delete orphan data (=not updated in the loop)
-    await knex('FactResultsDevice').where({ deviceId }).whereRaw('calculatedOn < ?', now).delete()
-
-    await knex('FactResultsDeviceByAssay')
-      .where({ deviceId })
-      .whereRaw('calculatedOn < ?', now)
-      .modify(queryBuilder => {
-        if (assayId) {
-          queryBuilder.where({ assayId })
-        }
-      })
-      .delete()
-
-    await knex('FactResultsDeviceByCategory1')
-      .where({ deviceId })
-      .whereRaw('calculatedOn < ?', now)
-      .modify(queryBuilder => {
-        if (assayId) {
-          queryBuilder.where({ assayId })
-        }
-        if (resultCategory1) {
-          queryBuilder.where({ resultCategory1 })
-        }
-      })
-      .delete()
-
-    await knex('FactResultsDeviceByCategory1And2')
-      .where({ deviceId })
-      .whereRaw('calculatedOn < ?', now)
-      .modify(queryBuilder => {
-        if (assayId) {
-          queryBuilder.where({ assayId })
-        }
-        if (resultCategory1) {
-          queryBuilder.where({ resultCategory1 })
-        }
-        if (resultCategory2) {
-          queryBuilder.where({ resultCategory2 })
-        }
-      })
-      .delete()
+  const device = {
+    moduleBays: {},
+    modules: {},
+  }
+  rows.forEach(row => {
+    const moduleBay = `${row.instrumentSerial ?? ''}${row.moduleName ?? ''}`
+    const module = `${row.instrumentSerial ?? ''}${row.moduleSerial ?? ''}`
+    if (moduleBay) device.moduleBays[moduleBay] = 1
+    if (module) device.modules[module] = 1
   })
+
+  const moduleBaysUsed = Object.keys(device.moduleBays).length
+  const modulesUsed = Object.keys(device.modules).length
+
+  let needUpdate = true
+  const row = await knex('FactDeviceModulesCount as f')
+    .where('f.deviceId', deviceId)
+    .where('f.date', date)
+    .first('f.moduleBaysUsed', 'f.modulesUsed')
+
+  if (row && moduleBaysUsed <= row.moduleBaysUsed && modulesUsed <= row.modulesUsed) {
+    needUpdate = false
+  }
+
+  if (needUpdate) {
+    await knex.raw('INSERT INTO FactDeviceModulesCount SET ? ON DUPLICATE KEY UPDATE ?', [
+      {
+        deviceId,
+        date,
+        moduleBaysUsed,
+        modulesUsed,
+      },
+      {
+        moduleBaysUsed,
+        modulesUsed,
+      },
+    ])
+  }
 }
 
 // ----------------------------------------------
@@ -584,117 +338,6 @@ async function onFactCheckInventoryStock(action, { messageContext }) {
       }
     })
   })
-}
-
-// ------------------------------
-// is called from scheduler
-async function onFactCalculateInventoryConsumptionRates(action, { messageContext }) {
-  return messageContext.run(async knex => {
-    const items = await knex('InventoryItem').groupBy('siteId', 'consumableId').select('siteId', 'consumableId')
-
-    // loop through all sites/consumables and refresh rate
-    return Promise.each(items, async item => refreshConsumptionRates(knex, item.siteId, item.consumableId))
-  })
-}
-
-// ------------------------------
-// recalculates rates for provided siteId and consumableId
-async function refreshConsumptionRates(knex, siteId, consumableId) {
-  const updatedOn = new Date()
-  const consumptionTotals = await getConsumptions(knex, siteId, consumableId)
-  await Promise.each(consumptionTotals, async consumptionTotal => {
-    const factInventoryConsumptionRate = await knex('FactInventoryConsumptionRate')
-      .where({ siteId, consumableId, days: consumptionTotal.days })
-      .first()
-    if (factInventoryConsumptionRate) {
-      await knex('FactInventoryConsumptionRate').where({ siteId, consumableId, days: consumptionTotal.days }).update({
-        // in GxAlert we stored totals in field 'rate', so same here.
-        // to get actual rate - do rate/days
-        rate: consumptionTotal.total,
-        updatedOn,
-      })
-    } else {
-      await knex('FactInventoryConsumptionRate').insert({
-        siteId,
-        consumableId,
-        days: consumptionTotal.days,
-        // in GxAlert we stored totals in field 'rate', so same here.
-        // to get actual rate - do rate/days
-        rate: consumptionTotal.total,
-        updatedOn,
-      })
-    }
-  })
-  return consumptionTotals
-}
-
-async function getConsumptions(knex, siteId, consumableId) {
-  const totals = []
-  // --------------------
-  // daily rate -
-  // use most recent N days with at least one test
-  // --------------------
-  const limitItems = 10
-  const lastDaysWithTest = await knex
-    .from(function () {
-      this.from('Result as r')
-        .innerJoin('Assay as a', 'r.assayId', 'a.id')
-        .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
-        .innerJoin('Device as d', 'r.deviceId', 'd.id')
-        .where('d.siteId', siteId)
-        .where('ca.consumableId', consumableId)
-        .distinct(knex.raw('date(r.endedOn) as endedOn'))
-        .orderBy('endedOn', 'desc')
-        .limit(limitItems)
-        .as('t1')
-    })
-    .first(knex.raw('min(endedOn) as dateFrom'), knex.raw('max(endedOn) as dateTo'))
-
-  if (!lastDaysWithTest) {
-    return totals
-  }
-
-  const [consumed = { total: 0 }] =
-    (await knex('Result as r')
-      .innerJoin('Assay as a', 'r.assayId', 'a.id')
-      .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
-      .innerJoin('Device as d', 'r.deviceId', 'd.id')
-      .whereRaw('date(r.endedOn) >= ?', [lastDaysWithTest.dateFrom])
-      .whereRaw('date(r.endedOn) <= ?', [lastDaysWithTest.dateTo])
-      .where('d.siteId', siteId)
-      .where('ca.consumableId', consumableId)
-      .sum('ca.quantity as total')
-      .groupBy('d.siteId', 'ca.consumableId')) || []
-
-  totals.push({ days: 1, total: consumed.total / limitItems })
-
-  // --------------------
-  // other rates
-  // --------------------
-  const daysToRate = daysToCalculate.filter(x => x > 1 && x < 9999)
-  const fields = _.map(daysToRate, days =>
-    knex.raw(
-      `sum(case when r.endedOn >= DATE_ADD(CURDATE(), INTERVAL  -${days} DAY) then ca.quantity else 0 end) as total${days}`
-    )
-  )
-
-  const consumedTotals = await knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .innerJoin('ConsumableAssay as ca', 'a.id', 'ca.assayId')
-    .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .whereRaw('r.endedOn >= DATE_ADD(CURDATE(), INTERVAL -1 YEAR)')
-    .where('d.siteId', siteId)
-    .where('ca.consumableId', consumableId)
-    .groupBy('d.siteId', 'ca.consumableId')
-    .first(...fields)
-
-  _.map(daysToRate, days => {
-    const totalItems = consumedTotals && consumedTotals[`total${days}`]
-    const total = _.isNumber(totalItems) ? totalItems : 0
-    totals.push({ days, total })
-  })
-
-  return totals
 }
 
 // -------------------------------------------------------------------------------------
@@ -929,15 +572,11 @@ async function onFactCompletionRatePerSite(action, { messageContext }) {
 }
 
 module.exports = {
-  daysToCalculate,
   onFactGenerateDeviceConnectivity,
-  onFactGenerateResultCounts,
   onFactCheckInventoryStock,
-  onFactCalculateInventoryConsumptionRates,
   onDeviceSeen,
   onDeviceUpdateFlag,
   onResultLogged,
-  refreshConsumptionRates,
   checkDataCategoriesForLowStatus,
   getDataCategoryStatus,
   MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW,

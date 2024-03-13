@@ -1,5 +1,6 @@
 const { addMinutes, subDays, format: dateFormat } = require('date-fns')
 const { knex } = require('../../src/db')
+const { insertSite } = require('../../src/site/common/db')
 const {
   allResultCategoryToId,
   deviceApprovalToId,
@@ -55,7 +56,7 @@ async function createResult(
       updatedBy: userId,
       updatedOn: new Date(),
     }
-    const [siteId] = await knex('Site').insert({
+    const [siteId] = await insertSite(knex, {
       name: `Lab with ${deviceTypeExternalId}`,
       shortName: `${deviceTypeExternalId} Lab`,
       externalId: `${new Date().getTime()}`,
@@ -65,7 +66,6 @@ async function createResult(
     })
     const [deviceId] = await knex('Device').insert({
       partnerId,
-      geographyId,
       siteId,
       defaultReportableSiteId: siteId,
       deviceTypeId: await deviceTypeToId(deviceTypeExternalId),

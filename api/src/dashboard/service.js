@@ -18,6 +18,12 @@ const { addExtraData } = require('./options')
 const resultsTransmittedDashboard = require('./resultsTransmitted')
 const activityOverTimeDashboard = require('./activityOverTime')
 
+// const dashboardWidgetsBase = require('../../seeds/fixtures/dashboardWidgetsBase')
+
+// const {
+//   stat: { activeDevicesCnt, totalNumberOfModules, activeModules },
+// } = dashboardWidgetsBase
+
 const i18nKeys = {
   // Dashboard
   sitesTitle: 'sitesTitle',
@@ -35,21 +41,32 @@ const i18nKeys = {
   deviceCalibrationsUpToDate: 'deviceCalibrationsUpToDate',
 }
 
+// const dashboardWidgetTitle = [
+// activeDevicesCnt.title,
+// totalNumberOfModules.title,
+// activeModules.title,
+// ]
+
 async function getDashboardWidget({ id, partnerId }, options) {
+  // const { layout, dashboard = 'home', country } = options
   const { layout, dashboard = 'home' } = options
   const tableName = layout === 'target' ? 'DashboardWidgetTarget' : 'DashboardWidgetStat'
   const widgets = knex('DashboardWidget as w')
     .innerJoin(`${tableName} as sw`, 'w.id', 'sw.dashboardWidgetId')
     .innerJoin('JobFunctionDashboardWidget as jfw', 'w.id', 'jfw.widgetId')
     .innerJoin('JobFunction as jf', 'jfw.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .innerJoin('JobContext as jc', 'jc.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where({
       'ps.userId': id,
       'jf.partnerId': partnerId,
     })
     .where(function () {
       this.whereRaw(`JSON_EXTRACT(w.dashboards , '$.${dashboard}') IS NOT NULL`)
+      // if (country === 'BD' && dashboard === 'home') this.orWhereIn('w.title', dashboardWidgetTitle)
+      // else
+      // this.whereNotIn('w.title', dashboardWidgetTitle)
+
       if (dashboard === 'home') {
         this.orWhereNull('w.dashboards')
       }
@@ -65,8 +82,8 @@ async function summaryDashboard(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const user = await getUser(auth.credentials.name)
-  const { dashboard } = query
-  const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard })
+  const { dashboard, country } = query
+  const widgets = await getDashboardWidget(user, { layout: 'stat', dashboard, country })
   const data = await Promise.all(
     widgets.map(async widget => {
       const { sqlForExtra, sqlForIndicator, sqlForStatUnit, options } = widget

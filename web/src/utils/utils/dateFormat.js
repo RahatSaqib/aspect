@@ -7,8 +7,7 @@ import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
 import { withProps } from 'recompose'
-import { i18nWrapper } from '../../providers/I18nProvider'
-import { getAspectDisplayPreferences } from '../LocalStorage'
+import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import getLocale from './locale'
 import { getTimezoneById } from './timezone'
 
@@ -38,14 +37,14 @@ function formatBase(date, displayPreferenceKey) {
   return timeToFormat === null ? '' : format(new Date(timeToFormat), dateFormatPreference)
 }
 
-export const SECOND_IN_MILLISECONDS = 1000
-export const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS
-export const HOUR_IN_MILLISECONDS = 60 * MINUTE_IN_MILLISECONDS
-export const DAY_IN_MILLISECONDS = 24 * HOUR_IN_MILLISECONDS
-export const WEEK_IN_MILLISECONDS = 7 * DAY_IN_MILLISECONDS
-export const MONTH_IN_MILLISECONDS = 30 * DAY_IN_MILLISECONDS
-export const QUARTER_IN_MILLISECONDS = 3 * MONTH_IN_MILLISECONDS
-export const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
+const SECOND_IN_MILLISECONDS = 1000
+const MINUTE_IN_MILLISECONDS = 60 * SECOND_IN_MILLISECONDS
+const HOUR_IN_MILLISECONDS = 60 * MINUTE_IN_MILLISECONDS
+const DAY_IN_MILLISECONDS = 24 * HOUR_IN_MILLISECONDS
+const WEEK_IN_MILLISECONDS = 7 * DAY_IN_MILLISECONDS
+const MONTH_IN_MILLISECONDS = 30 * DAY_IN_MILLISECONDS
+const QUARTER_IN_MILLISECONDS = 3 * MONTH_IN_MILLISECONDS
+const YEAR_IN_MILLISECONDS = 365 * DAY_IN_MILLISECONDS
 
 export function formatDate(date) {
   return formatBase(date, 'dateFormat')
@@ -68,25 +67,11 @@ export const withDateFormatProps = withProps(() => {
   }
 })
 
-export const withTimeFormatProps = withProps(() => {
-  const prefs = getAspectDisplayPreferences()
-  return {
-    timeFormat: prefs.get('timeFormat'),
-  }
-})
-
-export const withDateTimeFormatProps = withProps(() => {
-  const prefs = getAspectDisplayPreferences()
-  return {
-    dateTimeFormat: prefs.get('dateTimeFormat'),
-  }
-})
-
 export const withTodayProps = withProps(() => ({
   today: startOfDay(new Date()),
 }))
 
-export const formatRelative = (date, defaultMessage = '') => {
+export const formatRelative = (date, formatRelativeTime, defaultMessage = '') => {
   const dateInMilliseconds = new Date(date).getTime()
   if (isNil(date) || isNaN(dateInMilliseconds)) return defaultMessage
 
@@ -118,7 +103,6 @@ export const formatRelative = (date, defaultMessage = '') => {
 
   const timeDiffInMilliseconds = dateInMilliseconds - Date.now()
   const { denom, unit } = getParams(timeDiffInMilliseconds)
-  const { formatRelativeTime } = i18nWrapper()
 
   // see details - https://formatjs.io/docs/react-intl/api#formatrelativetime
   return formatRelativeTime(Math.round(timeDiffInMilliseconds / denom), unit, {

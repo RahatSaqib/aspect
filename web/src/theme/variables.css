@@ -142,10 +142,10 @@
   --aspect-color-scooter-blue-4: var(--blizzard-blue, #a4e6f2);
   --aspect-color-shakespeare: var(--scooter-2, #41aeda);
   --aspect-color-ship-cove: var(--ship-cove, #7d96bb);
-  --aspect-color-silver: var(--silver-chalice: #9e9e9e);
-  --aspect-color-silver-2: var(--silver: #bfbfbf);
-  --aspect-color-silver-3: var(--silver-3: #cccccc);
-  --aspect-color-silver-4: var(--silver-4: #bfbfbf);
+  --aspect-color-silver: var(--silver-chalice, #9e9e9e);
+  --aspect-color-silver-2: var(--silver, #bfbfbf);
+  --aspect-color-silver-3: var(--silver-3, #cccccc);
+  --aspect-color-silver-4: var(--silver-4, #bfbfbf);
   --aspect-color-supernova: var(--saffron, #f0bc2c);
   --aspect-color-supernova-2: var(--my-sin, #fcb124);
   --aspect-color-sushi: var(--sushi, #7cb342);
@@ -206,10 +206,4 @@
 
   /* Height of AppBar */
   --aspect-app-bar-height: 64px;
-
-  /* Media Query */
-  @custom-media --xs-viewport (min-width: 30em);
-  @custom-media --sm-viewport (min-width: 35.5em);
-  @custom-media --md-viewport (min-width: 48em);
-  @custom-media --lg-viewport (min-width: 64em);
 }

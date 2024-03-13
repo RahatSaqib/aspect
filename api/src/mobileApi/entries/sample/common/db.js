@@ -3,7 +3,7 @@ const addDays = require('date-fns/addDays')
 const { format } = require('date-fns')
 const { knex } = require('../../../../db')
 const { MONTHS_HISTORY_TO_LOOK_UP } = require('../../common/consts')
-const { getConstraints } = require('../../../../auth/constraints')
+const { getConstraints, addConstraints } = require('../../../../auth/constraints')
 const { getSitesQuery } = require('../../../../site/service')
 
 const getBaseAllSamplesRegistered = originSiteIds => {
@@ -102,9 +102,20 @@ const insertNewSample = async (payload, auth) => {
   return getSamplesRegisteredById(newSampleId, clinicIds)
 }
 
+const getTransferHistory = dataConstraints => {
+  const query = knex
+    .distinct('resultId')
+    .from('ResultTransferLog as transferLog')
+    .modify(addConstraints, dataConstraints, {
+      transferLog: 'transferLog',
+    })
+  return query
+}
+
 module.exports = {
   getAllSamplesRegistered,
   getSamplesRegisteredAtSiteOnDayWithSampleId,
   updateExistingSample,
   insertNewSample,
+  getTransferHistory,
 }

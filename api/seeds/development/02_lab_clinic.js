@@ -5,6 +5,7 @@ const bcrypt = require('bcrypt')
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { addMilliseconds, addHours, addMinutes, subDays, subHours, subMinutes, subMonths } = require('date-fns')
+const { insertSite } = require('../../src/site/common/db')
 const { upsertJobFunctionFixture } = require('../common')
 const patients = require('./fixtures/patients.json')
 const config = require('../../src/config')
@@ -278,8 +279,7 @@ async function seed(knex) {
     },
   ])
 
-  const [jobIdAdmin] = await knex('Job').insert([{ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin }])
-  await knex('JobContext').insert({ jobId: jobIdAdmin, geographyId })
+  await knex('JobContext').insert({ personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin, geographyId })
 
   const statesByName = malawiStates.reduce((memo, state) => {
     memo[state.name.toLowerCase()] = state
@@ -313,7 +313,7 @@ async function seed(knex) {
         siteTypeId: clinicSiteTypeId,
         ...auditFields,
       }
-      const [siteId] = await knex('Site').insert(siteData)
+      const [siteId] = await insertSite(knex, siteData)
       siteData.id = siteId
 
       const lastTime = subMinutes(now, _.random(0, 60))
@@ -321,7 +321,6 @@ async function seed(knex) {
       if (clinic.hasReporter) {
         const [deviceId] = await knex('Device').insert({
           partnerId,
-          geographyId,
           siteId,
           defaultReportableSiteId: siteId,
           deviceTypeId: deviceTypeIdReporter,
@@ -359,7 +358,6 @@ async function seed(knex) {
           deviceTypeId: deviceTypeIdRouter,
           deviceApprovalId: approvedDeviceApprovalId,
           partnerId: siteData.partnerId,
-          geographyId: siteData.geographyId,
           siteId: siteData.id,
           lastSeenOn: lastTime,
           lastPingOn: lastTime,
@@ -384,7 +382,7 @@ async function seed(knex) {
         siteTypeId: labSiteTypeId,
         ...auditFields,
       }
-      const [siteId] = await knex('Site').insert(siteData)
+      const [siteId] = await insertSite(knex, siteData)
       siteData.id = siteId
 
       // create lab admin user with permission to view data to own lab
@@ -408,10 +406,7 @@ async function seed(knex) {
         ...auditFields,
       })
 
-      const [jobIdLabAdmin] = await knex('Job').insert([
-        { personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin },
-      ])
-      await knex('JobContext').insert({ jobId: jobIdLabAdmin, siteId })
+      await knex('JobContext').insert({ personId: labAdminPersonId, jobFunctionId: jobFunctionIdLabAdmin, siteId })
 
       if (lab.devices) {
         await Promise.all(
@@ -425,7 +420,6 @@ async function seed(knex) {
             if (_.isEmpty(deviceData)) {
               const lastDeviceActivity = subMinutes(now, _.random(0, 60))
               deviceData.partnerId = partnerId
-              deviceData.geographyId = siteData.geographyId
               deviceData.siteId = siteData.id
               deviceData.defaultReportableSiteId = siteData.id
               deviceData.deviceApprovalId = approvedDeviceApprovalId
@@ -476,7 +470,6 @@ async function seed(knex) {
           routerData.deviceTypeId = deviceTypeIdRouter
           routerData.deviceApprovalId = approvedDeviceApprovalId
           routerData.partnerId = siteData.partnerId
-          routerData.geographyId = siteData.geographyId
           routerData.siteId = siteData.id
           routerData.lastSeenOn = lastRouterActivity
           routerData.lastPingOn = lastRouterActivity

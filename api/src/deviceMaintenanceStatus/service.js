@@ -19,7 +19,8 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
     knex('Device as d')
       .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
       .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-      .innerJoin('Geography as g', 'd.geographyId', 'g.id')
+      .innerJoin('Site as s', 'd.siteId', 's.id')
+      .innerJoin('Geography as g', 's.geographyId', 'g.id')
       .innerJoin('Partner as p', 'd.partnerId', 'p.id')
       .modify(addConstraints, dataConstraints, {
         partner: 'p',
@@ -70,7 +71,8 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
         'pe.id as maintenanceStatusManuallySetById',
         'pe.name as maintenanceStatusManuallySetByName',
         'dmsl.createdOn as maintenanceStatusManuallySetByDate',
-        knex.raw("dmsl.data->>'$.notes' AS maintenanceStatusNotes")
+        knex.raw("dmsl.data->>'$.notes' AS maintenanceStatusNotes"),
+        knex.raw("dmsl.data->>'$.expectedBackOnline' AS expectedBackOnline")
       )
   )
 }
@@ -116,9 +118,9 @@ async function getDeviceStatusOverTime(auth, query) {
   const devices = await knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
-    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .modify(addConstraints, dataConstraints, {
       partner: 'p',
@@ -361,9 +363,9 @@ async function deviceStatusLastReported(request) {
   // get all scoped devices and their last reported day
   const devices = knex('Device as d')
     .innerJoin('Site as s', 'd.siteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .innerJoin('Geography as g', 'd.geographyId', 'g.id')
     .innerJoin('Partner as p', 'd.partnerId', 'p.id')
     .modify(addConstraints, dataConstraints, {
       partner: 'p',

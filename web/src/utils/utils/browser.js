@@ -1,20 +1,6 @@
-import window from 'global/window'
-
-export function isMobile() {
-  // https://developer.mozilla.org/en-US/docs/Web/HTTP/Browser_detection_using_the_user_agent
-  try {
-    const ua = navigator.userAgent
-    return /Mobi/.test(ua)
-  } catch (e) {
-    return false
-  }
-}
-
 export function getClientName() {
   return `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
 }
-
-export const getClientType = 'web'
 
 export function getClientId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
@@ -24,7 +10,7 @@ export function getClientId() {
   })
 }
 
-export function getBrowserNameAndVersion() {
+function getBrowserNameAndVersion() {
   const browser = getBrowserInfo()
 
   if (!browser) {
@@ -71,10 +57,19 @@ function getBrowserInfo() {
 
 export const gotoWithReturnUrl = (url, navigate, location) => {
   const searchParams = new URLSearchParams(location.search)
-
+  searchParams.delete('returnUrl')
   const q = new URLSearchParams({
     returnUrl: `${location.pathname}?${searchParams.toString()}`,
   })
 
   navigate(`${url}?${q.toString()}`)
+}
+
+export const getReturnUrl = (location, defaultReturnUrl) => {
+  const params = new URLSearchParams(location.search)
+  return params.has('returnUrl') ? params.get('returnUrl') : defaultReturnUrl
+}
+
+export const gotoReturnUrl = (navigate, location, defaultReturnUrl) => {
+  navigate(getReturnUrl(location, defaultReturnUrl))
 }

@@ -133,13 +133,13 @@ async function getCustomFieldsDefinitions() {
     diseaseId: qf.diseaseId,
     formTypeId: qf.assayId,
     fields: formDictionary[qf.jsonSchemaFileName].fields
-      .filter(f => f.completionWeight && f.payloadDestinationPath)
+      .filter(field => field.completionWeight && field.source)
       .map(field => ({
         id: field.id,
         assayId: qf.assayId,
         diseaseId: qf.diseaseId,
         completionWeight: field.completionWeight || 0,
-        fieldName: normalizeCustomFieldName(field),
+        fieldName: field.source,
       })),
   }))
 }
@@ -197,53 +197,55 @@ function generateStatsResult(fields, res) {
 }
 
 function getMySqlJsonPathFromCustomField(customField) {
-  if (customField.payloadDestinationPath?.startsWith('data')) {
-    return `r.resultData ->> '$.${customField.fieldName}'`
-  }
-
   // Hack: for now, we support inconsistencies in the form processing.
-  if (customField.fieldName === 'PatientAge') {
+  if (customField.fieldName === 'patientData.age' || customField.fieldName === 'patientData.PatientAge') {
     return `COALESCE(
     r.patientData ->> '$.PatientAge',
     r.patientData ->> '$.age')`
   }
 
-  if (customField.fieldName === 'PatientGender') {
+  if (customField.fieldName === 'patientData.PatientGender' || customField.fieldName === 'patientData.gender') {
     return `COALESCE(
     r.patientData ->> '$.PatientGender',
     r.patientData ->> '$.gender')`
   }
 
-  if (customField.fieldName === 'PatientName') {
+  if (customField.fieldName === 'patientData.name' || customField.fieldName === 'patientData.PatientName') {
     return `COALESCE(
     r.patientData ->> '$.PatientName',
     r.patientData ->> '$.name')`
   }
 
-  if (customField.fieldName === 'PatientPhone') {
+  if (
+    customField.fieldName === 'patientData.PatientPhone' ||
+    customField.fieldName === 'patientData.RequestorPhone' ||
+    customField.fieldName === 'patientData.phone'
+  ) {
     return `COALESCE(
     r.patientData ->> '$.PatientPhone',
+    r.patientData ->> '$.patientPhone',
     r.patientData ->> '$.phone')`
   }
 
-  if (customField.fieldName === 'PatientStreet') {
+  if (customField.fieldName === 'patientData.PatientStreet') {
     return `COALESCE(
     r.patientData ->> '$.PatientStreet',
     r.patientData ->> '$.street')`
   }
 
-  return `r.patientData ->> '$.${customField.fieldName}'`
-}
-
-/**
- * Determine the name of the custom field
- * @param {string} - Custom field definition from the form json definition
- * @returns if the field has payloadDestinationPath, extracts the name, if not returns the field name with lower capitalization
- */
-const normalizeCustomFieldName = field => {
-  if (field.payloadDestinationPath) {
-    return field.payloadDestinationPath.split('.')[1]
+  if (
+    customField.fieldName === 'patientData.MWHealthFacilityName' ||
+    customField.fieldName === 'patientData.ReferringFacility'
+  ) {
+    return `COALESCE(
+    r.patientData ->> '$.HealthFacility',
+    r.patientData ->> '$.ReferringFacility')`
   }
+
+  const customFieldPath = customField.fieldName.split('.')
+  return customFieldPath.length > 1
+    ? `r.${customFieldPath[0]} ->> '$.${customFieldPath[1]}'`
+    : `r.${customFieldPath[0]}`
 }
 
 module.exports = {

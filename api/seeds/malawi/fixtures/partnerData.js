@@ -1,4 +1,5 @@
 const jobFunctions = require('./jobFunctions')
+const webhookServers = require('../../fixtures/webhookServers')
 
 module.exports = {
   partner: {
@@ -23,6 +24,7 @@ module.exports = {
   ],
   fixtures: {
     jobFunctions,
+    webhookServers,
   },
   plugin: 'malawi',
   deviceLogHistoryDays: 365,
@@ -32,6 +34,6 @@ module.exports = {
   maxDaysDeviceNoResults: 14,
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
-  serverUrl: 'https://malawi.aspect.id',
-  apiUrl: 'https://malawi.aspect.id/api',
+  serverUrl: 'https://malawi.aspect.id:2083',
+  apiUrl: 'https://malawi.aspect.id:2083/api',
 }

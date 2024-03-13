@@ -1,31 +1,24 @@
 import React, { useState, useMemo } from 'react'
 import { Card, CardContent, CircularProgress, Table, TableBody, TableRow, TableCell } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation, useParams } from 'react-router-dom'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import ErrorBoundary from '../../../cleanComponents/ErrorBoundary'
-import NotificationFilter from '../../../cleanComponents/Filter/NotificationFilter'
-import SimpleTableHeader from '../../../cleanComponents/SimpleTable/SimpleTableHeader'
-import SimpleTablePagination from '../../../cleanComponents/SimpleTable/SimpleTablePagination'
+import { DetailHeader, NotificationFilter, SimpleTableHeader, SimpleTablePagination } from '../../../cleanComponents'
 import { allowOnlyAPIKeys, removeNullFromCollection } from '../../../components/AspectTable/Helpers'
 import ContactsCell from '../../../components/AspectTable/TableCell/ContactsCell'
 import { DateTimeCellFlagged } from '../../../components/AspectTable/TableCell/DateTimeCell'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { replaceRouteParams } from '../../../components/QueryFetch/Helpers'
 import { NOTIFICATION_LIST } from '../../../components/QueryFetch/Notification'
-import useI18n from '../../../hooks/useI18n'
+import useFilterValues from '../../../hooks/useFilterValues'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import messages from './messages'
-import styles from './NotificationListPage.css'
+import styles from './NotificationListPage.module.css'
 import NotificationsContextualMenu from './NotificationsContextualMenu'
 
-const cssClasses = classnames.bind(styles)
-
 const NotificationList = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const { formatMessage } = intl
   const navigate = useNavigate()
   const { ...routeParams } = useParams()
@@ -84,12 +77,12 @@ const NotificationList = () => {
       width: 5,
     },
     {
-      key: 'jobFunctions',
+      id: 'jobFunctions',
       label: formatMessage(messages.notificationsTableHeaderJobFunctions),
       width: 25,
     },
     {
-      key: 'persons',
+      id: 'persons',
       label: formatMessage(messages.notificationsTableHeaderJobFunctionsPersons),
       width: 25,
     },
@@ -116,17 +109,17 @@ const NotificationList = () => {
           {intl.formatMessage(messages.createNotification)}
         </AspectButton>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.notificationsTitle)} />
         <NotificationFilter />
         <Card>
           <CardContent>
             {isLoading ? (
-              <div className={cssClasses('table__spinner')}>
+              <div className={styles.table__spinner}>
                 <CircularProgress />
               </div>
             ) : (
-              <ErrorBoundary>
+              <>
                 <Table size="small">
                   <SimpleTableHeader
                     columns={columns}
@@ -173,7 +166,7 @@ const NotificationList = () => {
                   pageSize={size}
                   total={data.total}
                 />
-              </ErrorBoundary>
+              </>
             )}
           </CardContent>
         </Card>

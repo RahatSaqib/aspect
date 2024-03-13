@@ -2,7 +2,7 @@
 const types = {
   SMS_MESSAGE_CREATED: 'SMS_MESSAGE_CREATED',
   SMS_MESSAGE_READY_FOR_SENDING: 'SMS_MESSAGE_READY_FOR_SENDING',
-  SMS_MESSAGE_SENT: 'SMS_MESSAGE_SENT',
+  SMS_MESSAGE_PROCESSED: 'SMS_MESSAGE_PROCESSED',
 }
 
 // ----------- Action Creators -------------------
@@ -46,12 +46,12 @@ function smsMessageReadyForSending(smsMessageId) {
  *
  * smsMessageId is required.
  */
-function smsMessageSent(smsMessageId) {
+function smsMessageProcessed(smsMessageId) {
   if (!smsMessageId) {
     throw new Error('Must specify smsMessageId')
   }
   return {
-    type: types.SMS_MESSAGE_SENT,
+    type: types.SMS_MESSAGE_PROCESSED,
     smsMessageId,
   }
 }
@@ -60,5 +60,5 @@ module.exports = {
   types,
   smsMessageCreated,
   smsMessageReadyForSending,
-  smsMessageSent,
+  smsMessageProcessed,
 }

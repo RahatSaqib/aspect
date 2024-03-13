@@ -3,7 +3,11 @@ const cron = require('node-cron')
 const { startUp: reportBasedCronStartUp } = require('../notification/reportBased/reportBasedCronHandler')
 const { resultAnalyzeTimeout } = require('../notification/actions')
 const { missingInventoryLotsResolver } = require('../inventory/actions')
-const { calibrationDueDateAnalysis, calibrationIssueNotificationTrigger } = require('../device/actions')
+const {
+  calibrationDueDateAnalysis,
+  calibrationIssueNotificationTrigger,
+  deviceUpdateModuleSerials,
+} = require('../device/actions')
 const {
   factGenerateDeviceConnectivity,
   factGenerateResultCounts,
@@ -18,6 +22,7 @@ const {
 const { escalateIssues, resolveIssues } = require('../issue/actions')
 const { logDeviceMaintenanceStatus } = require('../device/actions')
 const { tryToContinueUnprocessedRawData } = require('../deviceApiRaw/actions')
+const { webhookServerCheckTokens } = require('../webhook/actions')
 const config = require('../config')
 
 function startScheduler(queue) {
@@ -40,8 +45,11 @@ function startScheduler(queue) {
     tryToContinueUnprocessedRawData,
     resultAnalyzeTimeout,
     missingInventoryLotsResolver,
+    deviceUpdateModuleSerials,
+    webhookServerCheckTokens,
   })
 
+  dispatcher.webhookServerCheckTokens()
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
   dispatcher.factDataCategoryLowCheck()
@@ -53,12 +61,14 @@ function startScheduler(queue) {
   dispatcher.calibrationIssueNotificationTrigger()
   dispatcher.resultAnalyzeTimeout()
   dispatcher.missingInventoryLotsResolver()
+  dispatcher.deviceUpdateModuleSerials()
 
+  cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
   cron.schedule('0 2 * * *', dispatcher.tryToContinueUnprocessedRawData) // daily at 2 am
-  cron.schedule('10 */6 * * *', dispatcher.factGenerateResultCounts) // run every six hours, 30 minmutes past the hour
+  cron.schedule('0 3 * * *', dispatcher.factGenerateResultCounts) // daily at 3 am
   cron.schedule('1 * * * *', dispatcher.factGenerateDeviceConnectivity) // run every hour at 1 minute past the hour
   cron.schedule('15 * * * *', dispatcher.factDataCategoryLowCheck) // every hour at 15th minute
   cron.schedule('30 * * * *', dispatcher.resultAnalyzeTimeout) // every hour at 30th minute
@@ -75,6 +85,8 @@ function startScheduler(queue) {
   cron.schedule('0 7 * * *', dispatcher.factNewResultsAvailableCheck) // daily at 7am
 
   cron.schedule('0 2 * * *', dispatcher.missingInventoryLotsResolver) // daily at 02:00 am
+
+  cron.schedule('0 */8 * * *', dispatcher.deviceUpdateModuleSerials) // run every 8 hours
 
   if (_.get(config, 'uptimerobot.api.key')) {
     const dispatchCheckUptimeRobot = () => {

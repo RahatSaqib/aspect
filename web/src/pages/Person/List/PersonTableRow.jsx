@@ -1,11 +1,8 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import isString from 'lodash/isString'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import AccountEnableDisable from './AccountEnableDisable'
-
-const cssClasses = classnames.bind(styles)
 
 const formatTags = tagsStr => {
   if (!tagsStr) return ''
@@ -14,7 +11,7 @@ const formatTags = tagsStr => {
     const tagsToShow = tags.slice(0, 2)
     const tagsToHide = tags.slice(2)
     tags = tagsToShow.map(tag => (
-      <span key={tag} className={cssClasses('TableCell__tag')}>
+      <span key={tag} className={styles.TableCell__tag}>
         {tag}
       </span>
     ))
@@ -26,7 +23,7 @@ const formatTags = tagsStr => {
     return tags
   }
   return tags.map((tag, index) => (
-    <span key={tag} className={cssClasses('TableCell__tag')}>
+    <span key={tag} className={styles.TableCell__tag}>
       {tag}
       {tags.length > 1 && index < tags.length - 1 ? ',' : ''}
     </span>
@@ -45,7 +42,7 @@ const PersonTableRow = ({ person, personEditPermission, ...restProps }) => {
     <TableRow
       {...restProps}
       onClick={evt => rowClickHandler(evt, restProps.onClick)}
-      className={cssClasses(restProps.className)}
+      className={styles[restProps.className]}
     >
       <TableCell>{person.name}</TableCell>
       <TableCell>{person.level}</TableCell>

@@ -5,9 +5,12 @@ import { AspectWidgets, EmptyWidgets } from '../../../components/AspectWidgets'
 import { groupWidgets } from '../../../components/AspectWidgets/Helpers'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import SUMMARY_STATUS_WIDGETS from '../../../components/QueryFetch/Dashboard/index'
+import useAuthState from '../../../hooks/useAuthState'
 
-export const SummaryStatus = ({ className, dashboard }) => {
+const SummaryStatus = ({ className, dashboard }) => {
   const [widgets, setWidgets] = useState(false)
+  const { countryAbbreviation } = useAuthState()
+
   const {
     isLoading,
     isError,
@@ -16,7 +19,7 @@ export const SummaryStatus = ({ className, dashboard }) => {
   } = useQuery([SUMMARY_STATUS_WIDGETS.KEY, { dashboard }], async () =>
     fetchWrapperForQueries({
       endpoint: SUMMARY_STATUS_WIDGETS.ENDPOINT,
-      params: { dashboard },
+      params: { dashboard, country: countryAbbreviation },
     })
   )
 

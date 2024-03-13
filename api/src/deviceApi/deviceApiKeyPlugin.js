@@ -30,9 +30,13 @@ function authenticate(request, h) {
     return tryAnonymousAuthenticate(request, h)
   }
   return authToken(token)
-    .then(credentials => h.authenticated({ credentials }))
+    .then(credentials => {
+      return credentials
+        ? h.authenticated({ credentials })
+        : h.unauthenticated(Boom.unauthorized('Invalid Credentials'))
+    })
     .catch(err => {
-      logger.error(err)
+      logger.warning(err)
       throw err
     })
 }
@@ -41,7 +45,7 @@ const validateApiKeyAuthBasic = {
   async validate(request, username, password) {
     if (!username) {
       return authToken(password)
-        .then(credentials => ({ isValid: true, credentials }))
+        .then(credentials => ({ isValid: !!credentials, credentials }))
         .catch(() => ({ isValid: false }))
     }
     return authUsernameAndPassword(username, password)
@@ -51,14 +55,15 @@ const validateApiKeyAuthBasic = {
         }
         return credentials
       })
-      .then(credentials => ({ isValid: true, credentials }))
+      .then(credentials => ({ isValid: !!credentials, credentials }))
       .catch(() => ({ isValid: false }))
   },
 }
 
 async function authUsernameAndPassword(username, password) {
   if (!username || !password) {
-    throw Boom.unauthorized('Invalid Credentials')
+    logger.warning('Invalid Credentials')
+    return
   }
   const deviceApiKeyAuthResult = await lookupUsingCredentials(username, password)
   const { authenticated, data } = deviceApiKeyAuthResult || {}
@@ -66,7 +71,8 @@ async function authUsernameAndPassword(username, password) {
     if (password) {
       return authToken(password)
     }
-    throw Boom.unauthorized('Cannot authorize API Key')
+    logger.warning('Cannot authorize API Key')
+    return
   }
   const { id, token } = data
   const scope = ['deviceApi']
@@ -78,10 +84,9 @@ async function authUsernameAndPassword(username, password) {
 async function authToken(token) {
   // Remove whitespace and dashes
   token = normalizeToken(token)
-
   if (!token) {
-    // token not specified
-    throw Boom.unauthorized('Invalid API Key')
+    logger.warning('Blank API Key')
+    return
   }
 
   // lookup single non-revoked API Key
@@ -90,15 +95,17 @@ async function authToken(token) {
     .where({ 'k.token': token, 'k.revoked': false })
     .first('k.id as keyId', 'd.name as deviceName', 'k.expiresOn')
   if (!key) {
-    throw Boom.unauthorized('Cannot authorize API Key')
+    logger.warning(`Cannot find API Key Token ${token}`)
+    return
   }
   if (!!key.expiresOn && key.expiresOn < new Date()) {
-    throw Boom.unauthorized('API Key Token has Expired')
+    logger.warning(`API Key Token ${token} has Expired`)
+    return
   }
 
   const scope = ['deviceApi']
   const name = `(${key.keyId}) ${key.deviceName || ''}`.trim()
-  const credentials = { token, scope, name }
+  const credentials = { token, scope, name, keyId: key.keyId }
   return credentials
 }
 

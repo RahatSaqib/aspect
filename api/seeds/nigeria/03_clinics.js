@@ -184,15 +184,10 @@ async function seed(knex) {
     updatedOn: now,
   })
 
-  // job function for user
-  const [jobIdMaitama] = await knex('Job').insert({
-    personId: personIdMaitama,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   // context for user
   await knex('JobContext').insert({
-    jobId: jobIdMaitama,
+    personId: personIdMaitama,
+    jobFunctionId: jobFunctionIdClinician,
     siteId: siteIdMaitama,
   })
 
@@ -225,15 +220,10 @@ async function seed(knex) {
     updatedOn: now,
   })
 
-  // job function for user
-  const [jobIdTownship] = await knex('Job').insert({
-    personId: personIdTownship,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   // context for user
   await knex('JobContext').insert({
-    jobId: jobIdTownship,
+    personId: personIdTownship,
+    jobFunctionId: jobFunctionIdClinician,
     siteId: siteIdTownship,
   })
 

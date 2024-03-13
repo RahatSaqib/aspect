@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears } = require('date-fns')
+const uuid = require('node-uuid')
 
 const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
@@ -41,6 +42,7 @@ const upsertConsumables = require('../common/upsert_consumables')
 const {
   getDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
+const { insertSite } = require('../../src/site/common/db')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -3147,7 +3149,6 @@ async function seed(knex) {
     GxMtbXdr: assayGeneXpertMtbXdrId,
     GxMtbRifUltra: assayGeneXpertMtbRifUltraId,
     GxHiv1Vl: assayGeneXpertHiv1VlId,
-    GxHiv1Qual: assayGeneXpertHiv1QualId,
     GxEbola: assayGeneXpertEbolaId,
     GxHcv: assayGeneXpertHcvId,
   } = await allAssayToId()
@@ -3278,7 +3279,7 @@ async function seed(knex) {
                       longitude: _.has(state, 'lng') ? state.lng + _.random(-0.5, 0.5, true) : undefined,
                       ...auditFields,
                     }
-                    const [siteId] = await knex('Site').insert(siteData)
+                    const [siteId] = await insertSite(knex, siteData)
                     siteData.id = siteId
                     countryData.sites.push(siteData)
                   })
@@ -3395,7 +3396,6 @@ async function seed(knex) {
         deviceTypeId: deviceTypeIdRouter,
         deviceApprovalId: deviceApprovalApproved,
         partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
         siteId: siteData.id,
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         createdOn: new Date(+now - 3 * i * millisInHour),
@@ -3482,7 +3482,6 @@ async function seed(knex) {
           latestGrabbedModifiedDate: '2021-12-15T19:17:18.143Z',
         }),
         partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
         siteId: siteData.id,
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         // not all sites will have a router - we only added routers to some site
@@ -3568,6 +3567,7 @@ async function seed(knex) {
           ),
           startedOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
+          guid: uuid.v4(),
         })
       })
     })
@@ -3830,6 +3830,7 @@ async function seed(knex) {
         const rdm = _.random(0, resultStatusesIds.length - 1)
         const resultStatusId = resultStatusesIds[rdm]
         let data = null
+        let transferLogData = null
         if (resultStatusId === resultStatuses.Transfer) {
           /**
            * for transferred result we need specify `data` field in `ResultStatusLog` table
@@ -3842,13 +3843,18 @@ async function seed(knex) {
               name.toLowerCase().includes('clinic')
           )
           const anotherReportableSite = otherSites[_.random(0, otherSites.length - 1)]
-          data = JSON.stringify({
-            siteId: savedResult.siteId,
+          const transferData = {
             reportableSiteId: anotherReportableSite.id,
             previousReportableSiteId: savedResult.reportableSiteId,
             sampleOriginSiteId: savedResult.sampleOriginSiteId,
+          }
+          data = JSON.stringify({
+            siteId: savedResult.siteId,
+            ...transferData,
           })
           resultWithLogInfo.reportableSiteId = anotherReportableSite.id
+
+          transferLogData = transferData
 
           // add entry in ResultDownloadLog to show transferred results in Reporters list
           await upsertSingle(knex, 'ResultDownloadLog', ['resultId'], {
@@ -3864,6 +3870,13 @@ async function seed(knex) {
           createdOn: addHours(randomDate, 2),
           createdBy: adminId,
           data,
+        })
+
+        await knex('ResultTransferLog').insert({
+          resultId,
+          createdOn: addHours(randomDate, 2),
+          createdBy: adminId,
+          ...transferLogData,
         })
 
         await knex('Result')
@@ -4269,7 +4282,9 @@ async function seed(knex) {
 
         resultData.resultText = result.resultText
 
-        resultData.detectedResistance = getDetectedResistanceCategoryTypes(result.resultText)
+        const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(result.resultText)
+        resultData.detectedResistance = detectedResistance
+        resultData.allResistances = allResistances
 
         const [resultId] = await knex('Result').insert({
           ...auditFields,
@@ -4904,114 +4919,42 @@ async function seed(knex) {
     .where({ partnerId: partnerTwoId, externalId: 'labManager' })
     .pluck('id')
 
-  const [jobIdAdmin] = await knex('Job').insert([
-    {
-      personId: personIds.admin,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin2,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin3,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin4,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin5,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin6,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-  ])
-
-  const [jobIdJason] = await knex('Job').insert({
-    personId: personIds.jason,
-    jobFunctionId: jobFunctionIdPartnerTwo,
-  })
-
-  const [jobIdSam] = await knex('Job').insert({
-    personId: personIds.sam,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
-
-  const [jobIdDemoAdmin] = await knex('Job').insert({
-    personId: personIds.admin_us,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
-
-  const [jobIdBob] = await knex('Job').insert({
-    personId: personIds.bob,
-    jobFunctionId: jobFunctionIdManager,
-  })
-
-  const [jobIdEd] = await knex('Job').insert({
-    personId: personIds.ed,
-    jobFunctionId: jobFunctionIdManager,
-  })
-  const [jobIdJim] = await knex('Job').insert({
-    personId: personIds.jim,
-    jobFunctionId: jobFunctionIdPartnerTwo,
-  })
-  const [jobIdNed] = await knex('Job').insert({
-    personId: personIds.ned,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-  const [jobIdClinicianUS] = await knex('Job').insert({
-    personId: personIds.clinician_us,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-  const [jobIdTechnicianUs] = await knex('Job').insert({
-    personId: personIds.technician_us,
-    jobFunctionId: jobFunctionIdTechnician,
-  })
-  const [jobIdJon] = await knex('Job').insert({
-    personId: personIds.jon,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-  const [jobIdSteve] = await knex('Job').insert({
-    personId: personIds.steve,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   const sitesWithResults = await knex('Result as r')
     .join('Device as d', 'r.deviceId', 'd.id')
-    .join('Geography as g', 'g.id', 'd.geographyId')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('c.abbreviation', 'US')
-    .distinct('d.geographyId', 'd.siteId')
+    .distinct('d.siteId', 's.geographyId')
     .orderBy('r.endedOn', 'desc')
     .limit(3)
 
   const siteSample = _.sample(sitesWithResults)
   // Constrain jobs by context
   await knex('JobContext').insert([
-    { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
-    { jobId: jobIdDemoAdmin, geographyId: countries.US.geographyId },
-    { jobId: jobIdJason, geographyId: countries.US.geographyId },
-    { jobId: jobIdSam, geographyId: countries.NG.geographyId },
-    { jobId: jobIdEd, geographyId: countries.US.geographyId },
-    { jobId: jobIdJim, geographyId: countries.US.geographyId },
-    { jobId: jobIdJon, geographyId: countries.US.geographyId },
-    { jobId: jobIdSteve, geographyId: countries.US.geographyId },
-    { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
+    { personId: personIds.admin, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+    { personId: personIds.admin_us, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+    { personId: personIds.jason, jobFunctionId: jobFunctionIdPartnerTwo, geographyId: countries.US.geographyId },
+    { personId: personIds.sam, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.NG.geographyId },
+    { personId: personIds.ed, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.geographyId },
+    { personId: personIds.jim, jobFunctionId: jobFunctionIdPartnerTwo, geographyId: countries.US.geographyId },
+    { personId: personIds.jon, jobFunctionId: jobFunctionIdClinician, geographyId: countries.US.geographyId },
+    { personId: personIds.steve, jobFunctionId: jobFunctionIdClinician, geographyId: countries.US.geographyId },
+    { personId: personIds.bob, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.states.OH.geographyId },
     {
-      jobId: jobIdClinicianUS,
+      personId: personIds.clinician_us,
+      jobFunctionId: jobFunctionIdClinician,
       geographyId: siteSample.geographyId,
       siteId: siteSample.siteId,
     },
     {
-      jobId: jobIdTechnicianUs,
+      personId: personIds.technician_us,
+      jobFunctionId: jobFunctionIdTechnician,
       geographyId: countries.US.states.MA.geographyId,
     },
     {
-      jobId: jobIdNed,
+      personId: personIds.ned,
+      jobFunctionId: jobFunctionIdClinician,
       geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
     },
   ])
@@ -5220,78 +5163,4 @@ async function seed(knex) {
       widgetId: widgetIds.averageTimeToModuleReplacement,
     },
   ])
-
-  const geneXpertHiv1VlFormSchema = JSON.stringify({
-    fields: {
-      hospitalNumber: {
-        i18nLabel: 'hospitalNumber',
-        control: {
-          type: 'TextBox',
-        },
-        order: 1,
-      },
-      nameOfPatient: {
-        i18nLabel: 'nameOfPatient',
-        control: {
-          type: 'TextBox',
-        },
-        order: 2,
-      },
-      surnameOfPatient: {
-        i18nLabel: 'surnameOfPatient',
-        control: {
-          type: 'TextBox',
-        },
-        order: 3,
-      },
-      ward: {
-        i18nLabel: 'ward',
-        control: {
-          type: 'TextBox',
-        },
-        order: 4,
-      },
-      timeSampleTaken: {
-        i18nLabel: 'timeSampleTaken',
-        control: {
-          type: 'DateTime',
-        },
-        order: 5,
-      },
-      sampleType: {
-        i18nLabel: 'sampleType',
-        control: {
-          type: 'DropDown',
-          options: [
-            {
-              i18nText: 'studyOfSampleType',
-              value: '1',
-            },
-            {
-              i18nText: 'EQAOfSampleType',
-              value: '2',
-            },
-            {
-              i18nText: 'miscOfSampleType',
-              value: '3',
-            },
-          ],
-        },
-        order: 6,
-      },
-    },
-    sendChangesOn: 'change',
-  })
-
-  await knex('ResultForm').insert({
-    partnerId: partnerOneId,
-    assayId: assayGeneXpertHiv1VlId,
-    formSchema: geneXpertHiv1VlFormSchema,
-  })
-
-  await knex('ResultForm').insert({
-    partnerId: partnerOneId,
-    assayId: assayGeneXpertHiv1QualId,
-    formSchema: geneXpertHiv1VlFormSchema,
-  })
 }

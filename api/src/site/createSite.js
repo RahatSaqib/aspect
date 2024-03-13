@@ -1,4 +1,5 @@
 const Boom = require('@hapi/boom')
+const { insertSite } = require('./common/db')
 const { knex } = require('../db')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
@@ -34,7 +35,7 @@ module.exports = async function (request) {
     updatedBy: user.id,
   }
 
-  const [newId] = await knex('Site').insert(values)
+  const [newId] = await insertSite(knex, values)
 
   await updateTagsById(newId, tagType, tags, auth)
 

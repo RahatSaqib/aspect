@@ -1,18 +1,9 @@
-import { defineMessages } from 'react-intl'
+import allMessages from '../../messages/allMessages'
 import { commonDefinitions } from '../../messages/customMessages'
 
 const messages = {
   ...commonDefinitions,
-  ...defineMessages({
-    country: {
-      id: 'pages.LocationSelector.country',
-      defaultMessage: 'Country',
-    },
-    countryRequired: {
-      id: 'pages.LocationSelector.countryRequired',
-      defaultMessage: 'Country is required',
-    },
-  }),
+  ...allMessages,
 }
 
 export default messages

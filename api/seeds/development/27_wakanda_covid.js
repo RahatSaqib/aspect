@@ -12,10 +12,10 @@ const config = require('../../src/config')
 const { partnerTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 const utils = require('../utils')
 const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
+const { insertSite } = require('../../src/site/common/db')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
-const wakandaCovidResultFormSchema = require('./fixtures/wakandaCovidResultFormSchema.json')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 const resultMultiplier = process.env['seeds.resultMultiplier'] || 100
@@ -87,9 +87,7 @@ async function seed(knex) {
     .where({ partnerId })
     .first('id')
 
-  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex, partnerId, wakandaCovidResultFormSchema)).filter(
-    deviceType => deviceType.externalId !== 'Aspect'
-  )
+  const covidDeviceTypes = (await upsertCovidDeviceTypes(knex)).filter(deviceType => deviceType.externalId !== 'Aspect')
   const deviceTypeAssays = {}
   await Promise.each(
     covidDeviceTypes.map(deviceType => deviceType.id),
@@ -140,20 +138,18 @@ async function seed(knex) {
               ...auditFields,
             }
 
-            const [siteId] = await knex('Site').insert(labData)
+            const [siteId] = await insertSite(knex, labData)
             labData.id = siteId
             countryData.labs.push(labData)
 
             // add device to the lab
             const deviceType = covidDeviceTypes[state.lgas.indexOf(lga) % covidDeviceTypes.length]
             const device = {
-              ...auditFields,
               name: `${labData.name} ${deviceType.name}`.substr(0, 255),
               shortName: `${labData.externalId}_${deviceType.externalId}`.substr(0, 45),
               deviceTypeId: deviceType.id,
               deviceApprovalId: deviceApprovalApprovedId,
               partnerId: labData.partnerId,
-              geographyId: labData.geographyId,
               siteId: labData.id,
               defaultReportableSiteId: labData.id,
               ...auditFields,
@@ -164,7 +160,7 @@ async function seed(knex) {
             }
 
             ;[device.id] = await knex('Device').insert(device)
-            countryData.devices.push(device)
+            countryData.devices.push({ ...device, geographyId })
 
             // add clinics in the LGA
             await Promise.all(
@@ -188,7 +184,7 @@ async function seed(knex) {
                   ...auditFields,
                 }
 
-                const [siteId] = await knex('Site').insert(clinicData)
+                const [siteId] = await insertSite(knex, clinicData)
                 clinicData.id = siteId
                 countryData.clinics.push(clinicData)
               })
@@ -260,15 +256,10 @@ async function seed(knex) {
     updatedOn: now,
   })
 
-  // job function for user
-  const [jobIdFirstClinic] = await knex('Job').insert({
-    personId: personIdFirstClinic,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   // context for user
   await knex('JobContext').insert({
-    jobId: jobIdFirstClinic,
+    personId: personIdFirstClinic,
+    jobFunctionId: jobFunctionIdClinician,
     siteId: siteIdFirstClinic,
   })
 
@@ -300,15 +291,10 @@ async function seed(knex) {
     updatedOn: now,
   })
 
-  // job function for user
-  const [jobIdSecondClinic] = await knex('Job').insert({
-    personId: personIdSecondClinic,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   // context for user
   await knex('JobContext').insert({
-    jobId: jobIdSecondClinic,
+    personId: personIdSecondClinic,
+    jobFunctionId: jobFunctionIdClinician,
     siteId: siteIdSecondClinic,
   })
 

@@ -27,29 +27,67 @@ module.exports = async function (request) {
  * @returns Hierachical list of geographies, with country ➜ state ➜ lga, where each node's children property contains warehouses and labs.
  */
 function buildHierarchy(geo, sites) {
-  const lgas = geo.filter(g => g.lgaId)
-  lgas.forEach(g => {
-    g.type = 'lga'
-    const lgaLabs = sites.filter(s => s.lgaId === g.lgaId && s.type === 'lab')
-    g.children = reduceAuxiliarProperties(lgaLabs)
-  })
+  const [{ countryId }] = geo
 
   const states = geo.filter(g => g.stateId && !g.lgaId)
-  states.forEach(g => {
-    g.type = 'state'
-    const stateSites = sites
-      .filter(s => g.stateId === s.stateId && !s.lgaId)
-      .sort((a, b) => ['warehouse', 'lab'].indexOf(a.type) > ['warehouse', 'lab'].indexOf(b.type))
-    const stateLgas = lgas.filter(l => l.stateId === g.stateId)
+  const lgas = geo.filter(g => g.lgaId)
 
-    g.children = reduceAuxiliarProperties([...stateSites, ...stateLgas])
+  // Add extra unique states and lgas to match sites with no state or lga associated
+  lgas.push({ lgaId: 'NO_LGA', stateId: 'NO_STATE', countryId })
+  lgas.push(...states.map(s => ({ lgaId: `STATE_${s.stateId}_NO_LGA`, stateId: s.stateId })))
+  states.push({ stateId: 'NO_STATE', countryId })
+
+  // Assign unique matching lga id and state id to sites with no state or lga associated
+  sites.forEach(s => {
+    if (!s.stateId && !s.lgaId) {
+      s.lgaId = `NO_LGA`
+      s.stateId = `NO_STATE`
+    } else if (!s.lgaId) {
+      s.lgaId = `STATE_${s.stateId}_NO_LGA`
+    }
   })
 
+  // Sort by showing first the warehouses and then the labs
+  sites = sites.sort((a, b) => {
+    if (a.type === b.type) return 0
+
+    if (a.type === 'warehouse' && b.type === 'lab') return -1
+
+    return 1
+  })
+
+  // Build lgas childrens
+  lgas.forEach(g => {
+    g.type = 'lga'
+    const lgaSites = sites.filter(
+      s =>
+        s.lgaId === g.lgaId &&
+        s.stateId === g.stateId &&
+        (s.type === 'lab' ||
+          // Only lga-level warehouses are going to be included in the site-level
+          (s.type === 'warehouse' && s.lgaId !== 'NO_LGA' && s.lgaId !== `STATE_${s.stateId}_NO_LGA`))
+    )
+
+    g.children = reduceAuxiliarProperties(lgaSites)
+  })
+
+  // Build states childrens
+  states.forEach(g => {
+    g.type = 'state'
+    const stateWarehouses = sites.filter(
+      s => s.type === 'warehouse' && g.stateId === s.stateId && s.lgaId === `STATE_${s.stateId}_NO_LGA`
+    )
+    const stateLgas = lgas.filter(l => l.stateId === g.stateId)
+    g.children = reduceAuxiliarProperties([...stateWarehouses, ...stateLgas])
+  })
+
+  // Build country childrens
   const country = geo.find(g => g.countryId && !g.stateId && !g.lgaId)
   country.type = 'country'
-  const countrySites = sites.filter(s => country.countryId === s.countryId && !s.stateId && !s.lgaId)
-
-  country.children = reduceAuxiliarProperties([...countrySites, ...states])
+  const countryWarehouses = sites.filter(
+    s => s.type === 'warehouse' && s.stateId === 'NO_STATE' && s.lgaId === 'NO_LGA'
+  )
+  country.children = reduceAuxiliarProperties([...countryWarehouses, ...states])
 
   return reduceItemAuxiliarProperties(country)
 }

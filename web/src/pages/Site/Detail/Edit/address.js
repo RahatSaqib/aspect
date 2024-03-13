@@ -1,5 +1,4 @@
 /* global google */
-import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
 import some from 'lodash/some'
 
@@ -13,15 +12,11 @@ function getGeoCoder() {
   return geocoder
 }
 
-export function isValidLatLng({ lat, lng }) {
-  return isNumber(lat) && isNumber(lng)
-}
-
-export function isValidFullAddress({ country, state, lga, city, address, address2 }) {
+function isValidFullAddress({ country, state, lga, city, address, address2 }) {
   return some([country, state, lga, city, address, address2], isString)
 }
 
-export function formatFullAddressToAddressQuery({ country, state, lga, city, address }) {
+function formatFullAddressToAddressQuery({ country, state, lga, city, address }) {
   return `${address}, ${city}, ${lga}, ${state}, ${country}`
 }
 

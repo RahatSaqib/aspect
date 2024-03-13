@@ -1,31 +1,47 @@
-const { subDays, subMonths } = require('date-fns')
+const { subDays } = require('date-fns')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { getConstraints, addConstraints, addPartnerQueryConstraints } = require('../../auth/constraints')
 const { getUser } = require('../../auth/service')
 const { SELECT_FIELDS_UTC } = require('../query')
 const { knex, filterParams, filterDateRangeParams } = require('../../db')
-const { getDatesFromQuery } = require('../../shared/date')
 const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary')
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { pageParams, sortParams } = require('../../db')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
+const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
+
+function getSitesQuery(dataConstraints) {
+  return knex('Site as s')
+    .join('SiteType as st', 's.siteTypeId', 'st.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
+    .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+    .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
+    .groupBy(['s.id'])
+    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
+}
 
 async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
   const dataConstraints = await getConstraints(auth.credentials)
+  const clinics = await getSitesQuery(dataConstraints).select('s.id')
+  const clinicIds = clinics.map(c => c.id)
+
   const { userName } = await getUser(auth.credentials.name)
   const results = await getBaseQueryForResults()
     .join('ResultType as rt', 'rt.id', 'r.resultTypeId')
     .select('rt.excluded', 'rt.id as resultTypeId')
     .where('r.id', resultId)
+    .andWhere(qb => qb.whereIn('r.reportableSiteId', clinicIds))
     .modify(
       addConstraints,
       dataConstraints,
       {
         device: 'd',
-        result: 'r',
+        resultTransferFlag: true,
       },
-      { displayResult: 'all' }
+      { displayResult: 'all', showUnapprovedDevices: true }
     )
     .select({
       resultText: knex.raw(
@@ -53,9 +69,6 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       data.resultData = JSON.parse(data.resultData)
       // full result text for the result details page
       data.fullResultText = data.resultData.resultText
-    }
-    if (data.formSchema) {
-      data.formSchema = JSON.parse(data.formSchema)
     }
 
     if (data.formData) {
@@ -94,7 +107,6 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
 
     data.customFields = await getCustomFieldsForResult(data)
   }
-
   return { ok: results.length === 1, data }
 }
 
@@ -126,9 +138,23 @@ async function getCustomFieldsForResult({ deviceId, partnerId, countryId, assayI
   let customFields = (await getCustomFields(partnerId, deviceId, countryId, assayId, diseaseId))?.fields
   customFields = _.sortBy(customFields, ['order', 'name'])
   customFields = customFields.map(
-    ({ title, source, fieldType, order, controlType, validation, items, condition, filters, optional, id }) => ({
+    ({
       title,
       source,
+      sourceType,
+      fieldType,
+      order,
+      controlType,
+      validation,
+      items,
+      condition,
+      filters,
+      optional,
+      id,
+    }) => ({
+      title,
+      source,
+      sourceType,
       fieldType,
       order,
       controlType,
@@ -172,9 +198,6 @@ const getBaseQueryForResults = () =>
     })
     .leftJoin('ResultCategoryAssay as rca2', q => {
       q.on('r.assayId', 'rca2.assayId').andOn('r.resultCategory2', 'rca2.resultCategoryId')
-    })
-    .leftJoin('ResultForm as rf', q => {
-      q.on('r.assayId', 'rf.assayId').andOn('r.partnerId', 'rf.partnerId')
     })
     .leftJoin('Partner as p', 'r.partnerId', 'p.id')
     .leftJoin('ResultWorkflowLog as rsl', 'r.resultWorkflowStatusLogId', 'rsl.id')
@@ -452,137 +475,106 @@ function getQueryForDataExtract(query, dataConstraints) {
   return resultQuery
 }
 
-const getResultCountersBase = (resultCategoryIds, positiveResultCategories) => {
-  const whereMtbDetected = positiveResultCategories => `
-    JSON_SEARCH(
-      r.resultData ->> '$.detectedResistance[*]',
-      'one',
-      'MTB'
-    ) IS NOT NULL
-    OR
-    r.resultCategory1 IN (${positiveResultCategories})
-  `
-  const counter = (id, condition) =>
-    knex.raw(`
-      DISTINCT
-      CASE
-        WHEN ${condition}
-        THEN ${id}
-        ELSE null
-      END
-    `)
-  const countXdr = value =>
-    counter(
-      'r.id',
-      `
-      JSON_SEARCH(
-        r.resultData ->> '$.detectedResistance[*]',
-        'one',
-        '${value}'
-      ) IS NOT NULL
-      `
-    )
-
-  return {
-    cntAll: knex.raw('DISTINCT r.id'),
-    cnt_mtb: counter('r.id', whereMtbDetected(positiveResultCategories)),
-    cnt_inh: countXdr('INH'),
-    cnt_flq: countXdr('FLQ'),
-    cnt_amk: countXdr('AMK'),
-    cnt_kan: countXdr('KAN'),
-    cnt_cap: countXdr('CAP'),
-    cnt_eth: countXdr('ETH'),
-    cnt_Invalid: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Invalid}`),
-    cnt_NoResult: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.NoResult}`),
-    cnt_Error: counter('r.id', `r.resultCategory1 = ${resultCategoryIds.Error}`),
-  }
+const FACT_FIELD_SCOPE = {
+  all: 'all',
+  mtb: 'mtb',
+  invalid: 'invalid',
+  noResult: 'noResult',
+  error: 'error',
+  xdrResistances: 'xdrResistances',
 }
 
-const getXdrResultCountBase = ({ resultCategoryIds, dataConstraints, query }) => {
+const getXdrResultCountBase = ({
+  resultCategoryIds,
+  dataConstraints,
+  query,
+  fieldsScope = [], // empty array means we return default field `cntAll`
+  timeFrame = 'month',
+}) => {
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
-
-  return getQueryForResultsListAndExport(query, dataConstraints)
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-      assay: (queryBuilder, filterValue) => {
-        if (_.isArray(filterValue)) {
-          queryBuilder.whereIn('a.externalId', filterValue)
-        } else {
-          queryBuilder.where('a.externalId', filterValue)
-        }
-      },
-      resultCategory1: (queryBuilder, filterValue) => {
-        if (_.isArray(filterValue)) {
-          queryBuilder.whereIn('rc1.externalId', filterValue)
-        } else {
-          queryBuilder.where('rc1.externalId', filterValue)
-        }
-      },
-      resultCategory2: (queryBuilder, filterValue) => {
-        if (_.isArray(filterValue)) {
-          queryBuilder.whereIn('rc2.externalId', filterValue)
-        } else {
-          queryBuilder.where('rc2.externalId', filterValue)
-        }
-      },
-      xdrResistance: (queryBuilder, filterValue) => {
-        queryBuilder.whereRaw(`JSON_SEARCH(
-          r.resultData ->> '$.detectedResistance[*]',
-          'one',
-          '${filterValue}'
-        ) IS NOT NULL`)
-      },
-    })
-    .count({
-      ...getResultCountersBase(resultCategoryIds, positiveResultCategories),
-    })
-}
-
-const getResultCountBaseGroupBySiteId = (assayIds, resultCategoryIds, dataConstraints, query) => {
-  const dates = getDatesFromQuery(query)
-  let { dateFrom } = dates
-  const { dateTo } = dates
-  if (dateFrom >= dateTo) {
-    dateFrom = subMonths(dateTo, 1)
+  const takeAll = fieldsScope.includes(FACT_FIELD_SCOPE.all)
+  let fields = {
+    cntAll: 'r.resultCount',
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.mtb)) {
+    fields = {
+      ...fields,
+      cnt_mtb: knex.raw(`
+        CASE 
+          WHEN r.resultCategory1 IN (${positiveResultCategories}) 
+          THEN r.resultCount
+          ELSE IFNULL(r.xdrResistanceCounts ->> '$.MTB.detected', 0)
+        END
+      `),
+    }
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.invalid)) {
+    fields = {
+      ...fields,
+      cnt_Invalid: knex.raw(`
+        CASE 
+          WHEN r.resultCategory1 = ${resultCategoryIds.Invalid}
+          THEN r.resultCount
+          ELSE 0
+        END
+      `),
+    }
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.noResult)) {
+    fields = {
+      ...fields,
+      cnt_NoResult: knex.raw(`
+        CASE 
+          WHEN r.resultCategory1 = ${resultCategoryIds.NoResult}
+          THEN r.resultCount
+          ELSE 0
+        END
+      `),
+    }
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.error)) {
+    fields = {
+      ...fields,
+      cnt_Error: knex.raw(`
+        CASE 
+          WHEN r.resultCategory1 = ${resultCategoryIds.Error}
+          THEN r.resultCount
+          ELSE 0
+        END
+      `),
+    }
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.xdrResistances)) {
+    fields = {
+      ...fields,
+      cnt_inh: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.INH.detected', 0)`),
+      cnt_flq: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.FLQ.detected', 0)`),
+      cnt_amk: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.AMK.detected', 0)`),
+      cnt_kan: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.KAN.detected', 0)`),
+      cnt_cap: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.CAP.detected', 0)`),
+      cnt_eth: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.ETH.detected', 0)`),
+    }
+  }
+  if (query.resistance) {
+    fields = { cntAll: knex.raw(`IFNULL(r.xdrResistanceCounts ->> '$.${query.resistance}.detected', 0)`) }
   }
 
-  const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
-
-  return knex('Site as s')
-    .innerJoin('Device as d', 's.id', 'd.siteId')
-    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
-    .leftOuterJoin('Result as r', onQuery => {
-      onQuery
-        .on('d.id', 'r.deviceId')
-        .andOn('r.endedOn', '>=', knex.raw(`'${new Date(dateFrom).toISOString()}'`))
-        .andOn('r.endedOn', '<', knex.raw(`'${new Date(dateTo).toISOString()}'`))
-    })
-    .leftOuterJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftOuterJoin('SiteTag as sita', 's.id', 'sita.siteId')
-    .leftOuterJoin('Tag as t', 't.id', 'sita.tagId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'g.stateId', 'st.id')
-    .where(qWhere => {
-      qWhere.whereIn('a.id', [assayIds.GxMtbXdr]).orWhereNull('a.id')
-    })
-    .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-    })
-    .select(`s.id as siteId`, 'g.stateId', 'g.lgaId')
-    .groupBy('s.id')
-    .select(knex.raw('CASE WHEN COUNT(r.id) IS NOT NULL AND COUNT(r.id) > 0 THEN 1 ELSE 0 END as hasPerformedXdr')) // -> to be changed in follow-up
-    .count({
-      isPmdt: knex.raw(`DISTINCT CASE WHEN t.title = 'PMDT' THEN 1 ELSE null END`),
-      ...getResultCountersBase(resultCategoryIds, positiveResultCategories),
-    })
-    .clone()
+  const base = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+    assay: ['GxMtbXdr'],
+    timeFrame,
+  })
+    // .where(function () {
+    //   // skip filtering by 'rca.reportable' if grouping by 'assay'
+    //   if (!query.groupBy?.includes('assay')) {
+    //     this.where('rca.reportable', true)
+    //   }
+    // })
+    .sum(fields)
+  return base
 }
 
 const getXdrDevicesSummary = async (dataConstraints, query) => {
@@ -591,15 +583,24 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
     return Boom.badRequest('Xdr assays are not supported in this instance')
   }
   const resultCategoryIds = await allResultCategoryToId()
-  const countsBase = getResultCountBaseGroupBySiteId(assayIds, resultCategoryIds, dataConstraints, query)
+
+  const countsBase = getXdrResultCountBase({
+    resultCategoryIds,
+    dataConstraints,
+    query,
+    fieldsScope: [FACT_FIELD_SCOPE.all],
+    timeFrame: 'day',
+  })
+    .select(['g.stateId', 'g.lgaId', 's.id as siteId'])
+    .groupBy('d.id')
 
   const counterField = name => knex.raw(`IFNULL(SUM(_sub.${name}), 0) as ${name}`)
   const baseQuery = knex('Geography as g')
     .modify(qb => {
-      if (query.lgaId) {
+      if (query.siteName) {
         qb.innerJoin('Site as location', 'g.id', 'location.geographyId')
         qb.leftJoin(countsBase.as('_sub'), '_sub.siteId', 'location.id')
-      } else if (query.stateId) {
+      } else if (query.lgaId) {
         qb.innerJoin('Lga as location', 'g.lgaId', 'location.id')
         qb.leftJoin(countsBase.as('_sub'), '_sub.lgaId', 'location.id')
       } else {
@@ -608,16 +609,16 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
         qb.whereNull('g.lgaId')
       }
     })
-    .modify(addConstraints, dataConstraints, { geography: 'g' })
-    .modify(filterParams, query, { countryId: 'g.countryId', stateId: 'g.stateId', lgaId: 'g.lgaId' })
-
-  const [totals] = await baseQuery
-    .clone()
-    .select(
-      knex.raw(`'TOTAL' as locationName`),
-      knex.raw(`COUNT(DISTINCT location.id) as totalRecords`),
-      counterField('isPmdt'),
-      counterField('hasPerformedXdr'),
+    .modify(filterParams, query, {
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 'location.name',
+    })
+    .leftJoin('SiteTag as siteTag', 'siteTag.siteId', '_sub.siteId')
+    .leftJoin('Tag as tag', 'tag.id', 'siteTag.tagId')
+    .select([
+      knex.raw(`COUNT(DISTINCT CASE WHEN tag.title = 'PMDT' THEN _sub.siteId ELSE null END) as isPmdt`),
+      knex.raw('COUNT(_sub.siteId) as hasPerformedXdr'),
       counterField('cntAll'),
       counterField('cnt_mtb'),
       counterField('cnt_inh'),
@@ -628,39 +629,31 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
       counterField('cnt_eth'),
       counterField('cnt_Invalid'),
       counterField('cnt_NoResult'),
-      counterField('cnt_Error')
-    )
+      counterField('cnt_Error'),
+    ])
 
   const data = await baseQuery
     .clone()
     .groupBy('location.id')
-    .select(
-      `location.name as locationName`,
-      counterField('isPmdt'),
-      counterField('hasPerformedXdr'),
-      counterField('cntAll'),
-      counterField('cnt_mtb'),
-      counterField('cnt_inh'),
-      counterField('cnt_flq'),
-      counterField('cnt_amk'),
-      counterField('cnt_kan'),
-      counterField('cnt_cap'),
-      counterField('cnt_eth'),
-      counterField('cnt_Invalid'),
-      counterField('cnt_NoResult'),
-      counterField('cnt_Error')
-    )
+    .select([`location.name as locationName`])
     .modify(sortParams, query, 'locationName')
     .modify(_q => {
       // For export, we don't provide paging params - we should get all records
       if (query.size) _q.modify(pageParams, query)
     })
 
+  // a matching row to show totals
+  const [totals] = await baseQuery
+    .clone()
+    .select([knex.raw(`'TOTAL' as locationName`), knex.raw(`COUNT(DISTINCT location.id) as totalRecords`)])
+  const { totalRecords } = totals
+  // add totals row to the beginning of the data, omitting the totalRecords field, as it's forbidden when calling from dashboard:
   data.unshift(_.omit(totals, 'totalRecords'))
-  return { total: totals.totalRecords, data, length: data.length }
+
+  return { total: totalRecords, data, length: data.length }
 }
 
-async function processGroupedQuery(resultQuery, groupBy, dateColumn = 'IFNULL(r.endedOn, r.startedOn)') {
+async function processGroupedQuery(knex, resultQuery, groupBy, dateColumn = 'IFNULL(r.endedOn, r.startedOn)') {
   // handle possible groups:
   const paramToDb = {
     resultCategory1: ['rc1.externalId as resultCategory1', 'rc1.i18nKey as resultCategory1I18nKey '],
@@ -803,4 +796,5 @@ module.exports = {
   processGroupedQuery,
   getClinicalIndicatorQueryForFactTable,
   getClinicalIndicatorQueryForResultsTable,
+  FACT_FIELD_SCOPE,
 }

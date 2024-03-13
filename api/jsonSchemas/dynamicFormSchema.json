@@ -83,6 +83,7 @@
               "email",
               "patientCellphone",
               "clinicianCellphone",
+              "phone",
               "number",
               "tel",
               "url",
@@ -93,12 +94,6 @@
             "$id": "#/properties/fields/items/properties/payloadOriginPath",
             "type": "string",
             "title": "Payload location path",
-            "description": "The path in the payload for getting this data"
-          },
-          "payloadDestinationPath": {
-            "$id": "#/properties/fields/items/properties/payloadDestinationPath",
-            "type": "string",
-            "title": "The path in the payload where it will be stored",
             "description": "The path in the payload for getting this data"
           },
           "order": {

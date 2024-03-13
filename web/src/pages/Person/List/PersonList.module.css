@@ -1,0 +1,27 @@
+.Container {
+  padding: 10px;
+  width: 100%;
+}
+
+.DataTableCard__action {
+  padding: 12px 20px;
+  margin-bottom: 2px;
+  display: flex;
+  flex-flow: row;
+  justify-content: space-between;
+  align-items: flex-end;
+}
+
+.DataTableCard__table {
+  overflow: visible; /* For IconMenu at last row to be visible */
+}
+
+.Checkbox {
+  padding: 0;
+}
+
+.PersonDataTable {
+  width: 100%;
+  border-spacing: 0;
+  font-size: 14px;
+}

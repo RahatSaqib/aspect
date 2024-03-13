@@ -1,8 +1,5 @@
-import classnames from 'classnames/bind'
 import messages from '../messages'
-import styles from '../NotificationFormPage.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from '../NotificationFormPage.module.css'
 
 const notificationTypeSection = (formatMessage, partner, isEdit) => ({
   id: 'section_notificationType',
@@ -161,7 +158,7 @@ const notificationTypeSection = (formatMessage, partner, isEdit) => ({
           fullWidth: true,
           labelI18nKey: 'notificationTitle',
           classNames: {
-            itemContainer: cssClasses('min-width-100pc'),
+            itemContainer: styles.min_width_100pc,
           },
         },
       ],

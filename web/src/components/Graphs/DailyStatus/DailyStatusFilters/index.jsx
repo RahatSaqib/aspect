@@ -1,27 +1,22 @@
 import React from 'react'
 import { Checkbox, FormControlLabel, FormGroup } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import styles from '../DailyStatus.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from '../DailyStatus.module.css'
 
 const DailyStatusFilters = ({ toggleAll: { checked, key, label }, statuses, action }) => {
   return (
-    <div className={cssClasses('statuses__row')}>
-      <div className={cssClasses('statuses__spacer')} />
-      <div className={cssClasses('statuses__container')}>
+    <div className={styles.statuses__row}>
+      <div className={styles.statuses__spacer} />
+      <div className={styles.statuses__container}>
         <FormGroup row>
-          <div className={cssClasses('statuses__status')}>
+          <div className={styles.statuses__status}>
             <FormControlLabel
               control={
                 <Checkbox
                   checked={checked}
                   onChange={() => action(key)}
                   value={key}
-                  classes={{
-                    root: cssClasses(`status__checkbox--${key}`),
-                  }}
+                  classes={{ root: styles[`status__checkbox__${key}`] }}
                 />
               }
               label={label}
@@ -29,23 +24,21 @@ const DailyStatusFilters = ({ toggleAll: { checked, key, label }, statuses, acti
           </div>
         </FormGroup>
         <FormGroup row>
-          <div className={cssClasses('statuses__status')}>
+          <div className={styles.statuses__status}>
             {statuses
               ? statuses.map(({ externalId, name, checked }) => (
                   <FormControlLabel
                     key={externalId}
                     classes={{
-                      root: cssClasses('statuses__statusroot'),
-                      label: cssClasses('statuses__statuslabel'),
+                      root: styles.statuses__statusroot,
+                      label: styles.statuses__statuslabel,
                     }}
                     control={
                       <Checkbox
                         checked={checked}
                         onChange={() => action(externalId)}
                         value={externalId}
-                        classes={{
-                          root: cssClasses(`status__checkbox--${externalId}`),
-                        }}
+                        classes={{ root: styles[`status__checkbox__${externalId}`] }}
                       />
                     }
                     label={name}

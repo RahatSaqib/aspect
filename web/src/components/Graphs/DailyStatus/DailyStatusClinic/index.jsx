@@ -1,11 +1,8 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
-import styles from '../DailyStatus.css'
+import styles from '../DailyStatus.module.css'
 import { DailyStatusClinicDay, DayBlock } from '../DailyStatusClinicDay'
-
-const cssClasses = classnames.bind(styles)
 
 const DailyStatusClinic = ({ name, data, deviceId, total, statuses, consts, totalDays, onClickDay }) => {
   const dataDays = data.length
@@ -16,9 +13,9 @@ const DailyStatusClinic = ({ name, data, deviceId, total, statuses, consts, tota
   } = consts
 
   return (
-    <div className={cssClasses('clinic__container')}>
-      <div className={cssClasses('clinic__name')}>{name}</div>
-      <div className={cssClasses('clinic__dayrow')}>
+    <div className={styles.clinic__container}>
+      <div className={styles.clinic__name}>{name}</div>
+      <div className={styles.clinic__dayrow}>
         {data.map(
           (
             {
@@ -53,7 +50,7 @@ const DailyStatusClinic = ({ name, data, deviceId, total, statuses, consts, tota
           <DayBlock dayModifier="future" consts={consts} />
         ))}
         <div
-          className={cssClasses('clinic__testtotal')}
+          className={styles.clinic__testtotal}
           style={{
             minWidth: totalBlockWidth,
             height: blockHeight,

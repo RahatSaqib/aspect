@@ -4,22 +4,14 @@ const { startOfDay, endOfDay, subDays, endOfMonth, getDayOfYear, getDaysInYear }
 const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
-const { getOffsetFromIsoDateString, getMonthYearUserTimeZoneField } = require('../../shared/date')
-const { getXdrResultCountBase } = require('../common/db')
+const { getMonthYearField } = require('../../shared/date')
+const { getXdrResultCountBase, FACT_FIELD_SCOPE } = require('../common/db')
 
 /**
  * gx10CBaseQueryNational
  */
-async function gx10CBaseQueryNational(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
+function gx10CBaseQueryNational({ query, dataConstraints, resultCategoryIds }) {
   const now = new Date()
-  const resultCategoryIds = await allResultCategoryToId()
-  /**
-   * based on minDate or maxDate define timezone `offset` to correctly group by month
-   */
-  let { minDate, maxDate } = query
-  const someDateFromUser = minDate || maxDate
-  const offset = getOffsetFromIsoDateString(someDateFromUser)
   /**
    * explicitly set date range as of last 5 years
    */
@@ -31,8 +23,8 @@ async function gx10CBaseQueryNational(auth, query) {
    */
   const startYear = currentYear - 5
   const dateFrom = `${startYear}-01-01`
-  minDate = new Date(dateFrom)
-  maxDate = new Date(dateTo)
+  const minDate = new Date(dateFrom)
+  const maxDate = new Date(dateTo)
   /**
    * base query grouped by month
    */
@@ -44,7 +36,7 @@ async function gx10CBaseQueryNational(auth, query) {
     /**
      * group by month
      */
-    .select(getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'yearAndMonth', offset))
+    .select(getMonthYearField(knex, 'r.startedOn', 'yearAndMonth'))
     .groupBy('yearAndMonth')
   return baseQuery
 }
@@ -52,15 +44,8 @@ async function gx10CBaseQueryNational(auth, query) {
 /**
  * gx10CBaseQueryProvincial
  */
-async function gx10CBaseQueryProvincial(auth, query) {
-  const dataConstraints = await getConstraints(auth.credentials)
+function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds }) {
   const now = new Date()
-  const resultCategoryIds = await allResultCategoryToId()
-  /**
-   * based on minDate or maxDate define timezone `offset` to correctly group by month
-   */
-  const someDateFromUser = query.minDate || query.maxDate
-  const offset = getOffsetFromIsoDateString(someDateFromUser)
   /**
    * helper func to return base query for specified dates
    */
@@ -72,14 +57,16 @@ async function gx10CBaseQueryProvincial(auth, query) {
       resultCategoryIds,
       dataConstraints,
       query: { ...query, minDate, maxDate },
+      fieldsScope: [FACT_FIELD_SCOPE.all],
     })
       .select(
-        getMonthYearUserTimeZoneField(knex, 'r.endedOn', 'yearAndMonth', offset),
+        getMonthYearField(knex, 'r.startedOn', 'yearAndMonth'),
         'g.stateId',
-        'st.name as locationName' // state name
+        'g.lgaId',
+        query.lgaId ? 'lg.name as locationName' : 'st.name as locationName'
       )
       .whereNotNull('g.stateId')
-      .groupBy('g.stateId', 'yearAndMonth')
+      .groupBy('g.stateId', 'g.lgaId', 'yearAndMonth')
     return baseQuery
   }
 
@@ -107,7 +94,9 @@ async function gx10CBaseQueryProvincial(auth, query) {
  * listGx10CTrendsNational
  */
 async function listGx10CTrendsNational({ auth, query }) {
-  const baseQuery = await gx10CBaseQueryNational(auth, query)
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
+  const baseQuery = await gx10CBaseQueryNational({ query, dataConstraints, resultCategoryIds })
   let data = await baseQuery
   /**
    * for National Trend report use `count all results` value
@@ -128,9 +117,15 @@ async function listGx10CTrendsNational({ auth, query }) {
  * listGx10CTrendsProvincial
  */
 async function listGx10CTrendsProvincial({ auth, query }) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const resultCategoryIds = await allResultCategoryToId()
   const now = new Date()
   const denominator = (getDayOfYear(now) / getDaysInYear(now)) * 12
-  const { baseQuerySince5YearsAgo, baseQueryLast24h } = await gx10CBaseQueryProvincial(auth, query)
+  const { baseQuerySince5YearsAgo, baseQueryLast24h } = gx10CBaseQueryProvincial({
+    query,
+    dataConstraints,
+    resultCategoryIds,
+  })
   const rawSince5YearsAgo = await baseQuerySince5YearsAgo
   const rawLast24h = await baseQueryLast24h
 
@@ -154,13 +149,14 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const groupedSince5YearsAgo = _.reduce(
     rawSince5YearsAgo,
     (acc, item) => {
-      const { stateId, yearAndMonth, locationName } = item
+      const { stateId, lgaId, yearAndMonth, locationName } = item
+      const key = query.lgaId ? lgaId : stateId
       const [year, month] = yearAndMonth.split('-')
-      acc[stateId] = acc[stateId] || { locationName }
-      acc[stateId][year] = acc[stateId][year] || {}
-      acc[stateId][year][month] = acc[stateId][year][month] || { ...emptyCounts }
+      acc[key] = acc[key] || { locationName }
+      acc[key][year] = acc[key][year] || {}
+      acc[key][year][month] = acc[key][year][month] || { ...emptyCounts }
       counterNames.forEach(counterName => {
-        acc[stateId][year][month][counterName] += item[counterName]
+        acc[key][year][month][counterName] += item[counterName] ?? 0
       })
       return acc
     },
@@ -169,10 +165,11 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const groupedLast24h = _.reduce(
     rawLast24h,
     (acc, item) => {
-      const { stateId, locationName } = item
-      acc[stateId] = acc[stateId] || { locationName, ...emptyCounts }
+      const { stateId, lgaId, locationName } = item
+      const key = query.lgaId ? lgaId : stateId
+      acc[key] = acc[key] || { locationName, ...emptyCounts }
       counterNames.forEach(counterName => {
-        acc[stateId][counterName] += item[counterName]
+        acc[key][counterName] += item[counterName] ?? 0
       })
       return acc
     },
@@ -180,10 +177,10 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   )
   const data = _.reduce(
     _.keys(groupedSince5YearsAgo),
-    (acc, stateId) => {
-      const byState = groupedSince5YearsAgo[stateId]
-      const byCurrYear = byState[currentYear]
-      const byPrevYear = byState[previousYear]
+    (acc, key) => {
+      const byLocation = groupedSince5YearsAgo[key]
+      const byCurrYear = byLocation[currentYear]
+      const byPrevYear = byLocation[previousYear]
       const currYearTotals = { ...emptyCounts }
       const currYearMeanPerMonth = { ...emptyCounts }
       const prevYearMeanPerMonth = { ...emptyCounts }
@@ -193,21 +190,21 @@ async function listGx10CTrendsProvincial({ auth, query }) {
         /**
          *
          */
-        _.keys(byState)
+        _.keys(byLocation)
           .filter(key => key !== 'locationName')
           .forEach(key => {
             const year = +key
             byYear[year] = byYear[year] || { ...emptyCounts }
-            _.keys(byState[year]).forEach(month => {
-              byYear[year][counterName] += byState[year][month][counterName]
+            _.keys(byLocation[year]).forEach(month => {
+              byYear[year][counterName] += byLocation[year][month][counterName] ?? 0
               if (year === currentYear) {
-                currYearTotals[counterName] += byCurrYear[month][counterName]
+                currYearTotals[counterName] += byCurrYear[month][counterName] ?? 0
               } else if (year === previousYear) {
-                prevYearMeanPerMonth[counterName] += byPrevYear[month][counterName]
+                prevYearMeanPerMonth[counterName] += byPrevYear[month][counterName] ?? 0
               }
             })
           })
-        currYearMeanPerMonth[counterName] = currYearTotals[counterName] / denominator
+        currYearMeanPerMonth[counterName] = (currYearTotals[counterName] ?? 0) / denominator
         prevYearMeanPerMonth[counterName] /= 12
       })
 
@@ -229,8 +226,8 @@ async function listGx10CTrendsProvincial({ auth, query }) {
       acc = [
         ...acc,
         {
-          stateId,
-          locationName: byState.locationName,
+          stateId: key,
+          locationName: byLocation.locationName,
           currYearTotals,
           currYearMeanPerMonth,
           prevYearMeanPerMonth,

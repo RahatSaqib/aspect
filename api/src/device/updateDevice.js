@@ -36,6 +36,7 @@ async function updateDevice(request) {
       deviceApprovalId,
       configurationData: JSON.stringify(configurationData),
       deviceCapacityId: payload.deviceCapacityId,
+      moduleBayCapacity: payload.moduleBayCapacity,
       implementingPartnerId: payload.implementingPartnerId,
       instrumentsConnected: payload.instrumentsConnected,
       gx6cModulesCount: payload.gx6cModulesCount,
@@ -43,6 +44,10 @@ async function updateDevice(request) {
       name: payload.name,
       notes: payload.notes,
       shortName: payload.shortName,
+      stickerInstrumentSerial: payload.stickerInstrumentSerial,
+      instrumentModel: payload.instrumentModel,
+      softwareType: payload.softwareType,
+      isDaisyChained: payload.isDaisyChained,
       updatedOn: now,
       updatedBy: currentlyLoggedInUserId,
     })

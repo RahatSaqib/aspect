@@ -3,11 +3,10 @@ import entries from 'lodash/entries'
 import get from 'lodash/get'
 import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import ErrorRateFilter from '../../../../../cleanComponents/Filter/ErrorRateFilter'
-import Loading from '../../../../../cleanComponents/Loading'
-import useI18n from '../../../../../hooks/useI18n'
-import { useFilterValues } from '../../../../../providers/FilterProvider'
+import { Loading, ErrorRateFilter } from '../../../../../cleanComponents'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
@@ -81,7 +80,7 @@ const makeNestedData = array => {
 }
 
 const ErrorRatePage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
   const { data, isLoading } = useDeviceErrors(filter)

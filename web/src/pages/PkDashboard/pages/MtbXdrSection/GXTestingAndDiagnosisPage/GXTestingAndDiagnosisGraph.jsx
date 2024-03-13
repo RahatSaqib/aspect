@@ -1,26 +1,83 @@
-import React, { useState } from 'react'
-import { FormControlLabel, Grid, Switch } from '@mui/material'
+import React, { useState, useEffect, useMemo } from 'react'
+import { FormControlLabel, Grid, Switch, Typography, MenuItem, TextField } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
-import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
-import useAssayList from '../../../../../hooks/assay/useAssayList'
-import useI18n from '../../../../../hooks/useI18n'
-import { getCustomMessage, graphMessages } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
+import { useIntl } from 'react-intl'
+import { useQuery } from 'react-query'
+import { LgaSelect, StateSelect, Loading, ColumnLineGraph, getTimePeriod } from '../../../../../cleanComponents'
+import messages from '../../../../../cleanComponents/Graphs/graphMessages'
+import fetchWrapperForQueries from '../../../../../components/QueryFetch'
+import useAuthState from '../../../../../hooks/useAuthState'
+import { getCustomMessage, graphMessages, months } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
-import XDRFLQResistanceGraphMain from '../../../components/XDRFLQResistanceGraph.Main'
-import messages from '../../../PkDashboard.Messages'
+import pkMessages from '../../../PkDashboard.Messages'
+
+const endpointParams = [
+  { minDate: getTimePeriod(5, 'years', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+]
 
 const GXTestingAndDiagnosisGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState(undefined)
-  const { data: assays } = useAssayList()
+  const lineSource = useMemo(
+    () => [formatMessage(messages.FQRPercent), formatMessage(messages.INHPercent)],
+    [formatMessage]
+  )
+  const [lineFor, setLineFor] = useState(lineSource[0])
 
-  return (
+  const mergedParams = filter
+    ? [...endpointParams, ...Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))]
+    : [...endpointParams]
+
+  const { isLoading, data } = useQuery(
+    ['xdrAssayGraph', { mergedParams }],
+    async ({ queryKey: [, { mergedParams }] }) =>
+      fetchWrapperForQueries({ endpoint: '/result/xdr-assay-graph', params: mergedParams })
+  )
+
+  const mtbDetectedMessage = formatMessage(messages.MtbDetected)
+  const inhDetectedMessage = formatMessage(messages.InhDetected)
+  const fqrDetectedMessage = formatMessage(messages.FqrDetected)
+  const totalTestsMessage = formatMessage(messages.TotalTests)
+  const FQRPercentMessage = formatMessage(messages.FQRPercent)
+  const INHPercentMessage = formatMessage(messages.INHPercent)
+
+  const [graphData, setGraphData] = useState()
+  useEffect(() => {
+    if (data) {
+      const line = []
+      const bar = []
+      data.grouped.map(dat => {
+        const { month, FqrToMtbPercentage, InhToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected } = dat
+        const monthStr = month.split('-')
+        if (+monthStr[0] >= 2021) {
+          const translatedDate = `${formatMessage(months[+monthStr[1] - 1])}-${monthStr[0]}`
+          if (lineFor === FQRPercentMessage) {
+            line.push({ month: translatedDate, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+          } else if (lineFor === INHPercentMessage) {
+            line.push({ month: translatedDate, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+          }
+          bar.push({ month: translatedDate, value: TotalTests, type: totalTestsMessage })
+          bar.push({ month: translatedDate, value: MtbDetected, type: mtbDetectedMessage })
+          bar.push({ month: translatedDate, value: FqrDetected, type: fqrDetectedMessage })
+          bar.push({ month: translatedDate, value: InhDetected, type: inhDetectedMessage })
+        }
+        return {}
+      })
+
+      setGraphData([bar, line])
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, lineFor])
+
+  return isLoading ? (
+    <Loading />
+  ) : (
     <PkPage
-      title={formatMessage(messages.mtbXdrTestingDiagnosisTrends)}
+      title={formatMessage(pkMessages.fqinhTestingDiagnosis)}
       filters={
         <>
           <FormControlLabel
@@ -28,28 +85,54 @@ const GXTestingAndDiagnosisGraph = () => {
             label={formatMessage(graphMessages.showValuesLabel)}
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
+          <TextField
+            label={formatMessage(pkMessages.showLineFor)}
+            select
+            value={lineFor}
+            onChange={e => setLineFor(e.target.value)}
+            SelectProps={{ IconComponent: () => null }}
+          >
+            {lineSource.map(it => (
+              <MenuItem key={it} value={it}>
+                {it}
+              </MenuItem>
+            ))}
+          </TextField>
           <StateSelect
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, pkMessages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
             value={filter?.lgaId ?? ''}
             stateId={filter?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, pkMessages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
     >
       <Grid container>
-        <XDRFLQResistanceGraphMain
-          title={formatMessage(messages.xdrFlqResistance)}
-          assaysFromState={assays ?? []}
-          showLabel={showLabel}
-          filterSelection={Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))}
-        />
+        <Grid item xs={12} md={12} lg={12}>
+          <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
+            {formatMessage(pkMessages.xdrFlqResistance)}
+          </Typography>
+          <ColumnLineGraph
+            data={graphData}
+            showLabel={showLabel}
+            graphId="xdrAssayGraph"
+            colors={[
+              { name: totalTestsMessage, colorId: 'caseTotal' },
+              { name: mtbDetectedMessage, colorId: '--aspect-color-slate' },
+              { name: fqrDetectedMessage, colorId: 'caseDetected' },
+              { name: inhDetectedMessage, colorId: 'casePercentDetectedOfTotal' },
+              { name: lineFor, colorId: 'casePercentDetectedOfTotal' },
+            ]}
+            xField="month"
+            yField={['value', lineFor]}
+          />
+        </Grid>
       </Grid>
     </PkPage>
   )

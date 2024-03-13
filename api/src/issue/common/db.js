@@ -43,6 +43,8 @@ async function getIssueFilter(knex, partnerId, deviceId) {
 }
 
 async function findOpenIssue(knex, issueType, action, filterIssueCondition = {}) {
+  const skipFindingOpenIssue = _.get(filterIssueCondition, 'skipFindingOpenIssue')
+  if (skipFindingOpenIssue) return null
   const evaluationFunction = _.get(filterIssueCondition, 'evaluationFunction')
   const findOpenIssue = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -147,7 +149,7 @@ async function lookupIssueContext({ resultId, deviceId, siteId, consumableId }, 
     return knex('Device as d')
       .leftJoin('Site as s', 's.id', 'd.siteId')
       .where({ 'd.id': deviceId })
-      .first('d.partnerId', 'd.siteId', knex.raw('coalesce(d.geographyId, s.geographyId) as geographyId'))
+      .first('d.partnerId', 'd.siteId', 's.geographyId')
   }
   if (siteId) {
     if (consumableId != null) {

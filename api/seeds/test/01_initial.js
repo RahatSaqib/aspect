@@ -28,6 +28,7 @@ const patients = require('./fixtures/patients.json')
 const dashboardWidget = require('./fixtures/dashboardWidget')
 const { errorCodes } = require('./fixtures/errorCodes.js')
 const upsertConsumables = require('../common/upsert_consumables')
+const { insertSite } = require('../../src/site/common/db')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -883,7 +884,7 @@ async function seed(knex) {
             longitude: _.has(state, 'lng') ? state.lng + _.random(-0.5, 0.5, true) : undefined,
             ...auditFields,
           }
-          const [siteId] = await knex('Site').insert(siteData)
+          const [siteId] = await insertSite(knex, siteData)
           siteData.id = siteId
           siteDatas.push(siteData)
         }
@@ -904,7 +905,7 @@ async function seed(knex) {
     longitude: 0,
     ...auditFields,
   }
-  const [siteDaytonId] = await knex('Site').insert(siteDataDayton)
+  const [siteDaytonId] = await insertSite(knex, siteDataDayton)
   siteDataDayton.id = siteDaytonId
 
   const { id: geographyId } = await knex('Geography as g')
@@ -986,7 +987,6 @@ async function seed(knex) {
     deviceTypeId: deviceTypeIdRouter,
     deviceApprovalId: deviceApprovalApproved,
     partnerId: site.partnerId,
-    geographyId: site.geographyId,
     siteId: site.id,
     createdOn: new Date(+now - 3 * _.random(10) * millisInHour),
     updatedOn: new Date(+now - _.random(10) * millisInHour),
@@ -1017,7 +1017,6 @@ async function seed(knex) {
         firmwareUpdateRequired: 'no',
       }),
       partnerId: siteData.partnerId,
-      geographyId: siteData.geographyId,
       siteId: siteData.id,
       defaultReportableSiteId: siteDatas[i + 1] ? siteDatas[i + 1].id : null,
       deviceId: i === 0 ? routerId : null,
@@ -1214,28 +1213,18 @@ async function seed(knex) {
     .where({ externalId: 'labManager', partnerId: partnerTwoId })
     .first()
 
-  // crate jobs for users
-  const [jobIdAdmin] = await knex('Job').insert({
-    personId: adminPersonId,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
-
-  const [jobIdManager] = await knex('Job').insert({
-    personId: managerPersonId,
-    jobFunctionId: jobFunctionIdManager,
-  })
-
-  const [jobIdClinician] = await knex('Job').insert({
-    personId: clinicianPersonId,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   // Constrain jobs by context
-  await knex('JobContext').insert([{ jobId: jobIdAdmin, geographyId: countries.US.geographyId }])
+  await knex('JobContext').insert([
+    { personId: adminPersonId, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+  ])
 
-  await knex('JobContext').insert([{ jobId: jobIdManager, geographyId: countries.US.geographyId }])
+  await knex('JobContext').insert([
+    { personId: managerPersonId, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.geographyId },
+  ])
 
-  await knex('JobContext').insert([{ jobId: jobIdClinician, siteId: siteDataDayton.id }])
+  await knex('JobContext').insert([
+    { personId: clinicianPersonId, jobFunctionId: jobFunctionIdClinician, siteId: siteDataDayton.id },
+  ])
 
   // Create DashboardWidget
   const widgetIds = {}

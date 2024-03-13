@@ -1,7 +1,7 @@
 import React from 'react'
 import { Grid } from '@mui/material'
-import Loading from '../../cleanComponents/Loading'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
+import { Loading } from '../../cleanComponents'
 import ColumnName from './components/ColumnName'
 import DashboardCard from './components/DashboardCard'
 import DashboardLink from './components/DashboardLink'
@@ -11,7 +11,7 @@ import useResultOverview from './hooks/useResultOverview'
 import messages from './PkDashboard.Messages'
 
 const PkDashboard = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data: resultOverview, isLoading } = useResultOverview()
 
   return (
@@ -92,6 +92,10 @@ const PkDashboard = () => {
               label={formatMessage(messages.ProvincialTestingTrend)}
             />
             <DashboardLink to="/dashboard/xdr/by-device" label={formatMessage(messages.XDRByDevice)} />
+            <DashboardLink
+              to="/dashboard/xdr/data-visualisation-for-xdr-resistance"
+              label={formatMessage(messages.dataVisualisationForXDR)}
+            />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
             <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrentPending)} />
@@ -136,7 +140,7 @@ const PkDashboard = () => {
           </DashboardCard>
           <ColumnName title={formatMessage(messages.titleother)} />
           <DashboardCard>
-            <DashboardLink to="/dashboard/other/covid" label={formatMessage(messages.covid)} />
+            <DashboardLink to="/dashboard/other/covid" label={formatMessage(messages.covidTesting)} />
             <DashboardLink to="/dashboard/other/hiv" label={formatMessage(messages.hiv)} />
           </DashboardCard>
         </Grid>

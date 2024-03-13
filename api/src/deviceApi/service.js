@@ -15,6 +15,7 @@ const {
   resultReadyForNotification,
   types: { RESULT_UPDATED },
 } = require('../result/actions')
+const { cepheidc360InstrumentLogsReceived } = require('../device/actions')
 const templateProcessor = require('../email/templateProcessor')
 const {
   updateDeviceConfiguration,
@@ -408,6 +409,15 @@ async function processLogItem(context, logItem, options) {
       calibrationDeviceMaintenanceTypeId,
       context.messageContext
     )
+
+    if (payload.data.logFileName === 'GeneXpert DB') {
+      if (!context.messageContext.cepheidc360InstrumentLogsReceived) {
+        context.messageContext = context.messageContext.bindActionCreators({
+          cepheidc360InstrumentLogsReceived,
+        })
+      }
+      context.messageContext.cepheidc360InstrumentLogsReceived(device.id, deviceOperationId)
+    }
   } catch (err) {
     if (err.code === 'ER_DUP_ENTRY') {
       // ignore duplicate entry errors since the same log item may come from GxAlert and GxConnect
@@ -434,7 +444,8 @@ async function getConnectionSettings(context) {
     (await knex('DeviceConfiguration as dc')
       .join('Geography as g', 'g.id', 'dc.geographyId')
       .join('Device as d', 'd.deviceTypeId', 'dc.deviceTypeId')
-      .join('Geography as deviceGeography', 'd.geographyId', 'deviceGeography.id')
+      .join('Site as s', 'd.siteId', 's.id')
+      .join('Geography as deviceGeography', 's.geographyId', 'deviceGeography.id')
       .where({
         'd.id': deviceId,
         'd.deviceTypeId': knex.raw('dc.deviceTypeId'),
@@ -716,7 +727,8 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
-    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Partner as p', 'p.id', 'd.partnerId')
     .where({
@@ -727,7 +739,7 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
       'd.id',
       'd.partnerId',
       'd.siteId',
-      'd.geographyId',
+      's.geographyId',
       'd.name',
       'd.shortName',
       'd.serial',
@@ -759,6 +771,7 @@ async function createDeviceApiContext(handler, originalRequest, defaultHandlerOp
   }
 
   let device = null
+  // In the case of GxAlert, the device and the device API key were already created on seeding so no need to create a new device
   if (existingDeviceAndData != null) {
     device = existingDeviceAndData
   } else if (createDevice) {
@@ -900,7 +913,6 @@ function createNewDeviceFromRequest(request, now) {
       serial: payload.serial,
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId || _.get(defaultSite, 'id', null),
-      geographyId: apiKey.geographyId || _.get(defaultSite, 'geographyId', null),
       approval: apiKey.siteId ? 'approved' : 'provisioned',
       timezone: _.get(payload, 'configuration.data.timezone', null),
     })
@@ -1054,7 +1066,8 @@ async function updateLogs(request) {
 
 async function getDevicesByCountry(knex) {
   return knex('Device as d')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .select(
       'c.abbreviation as A2',
@@ -1069,7 +1082,8 @@ async function getDevicesByCountry(knex) {
 
 async function getTestByCountry(knex) {
   return knex('Device as d')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Result as r', 'd.id', 'r.deviceId')
     .select(
@@ -1085,7 +1099,8 @@ async function getTestByCountry(knex) {
 
 async function getNotificationsByCountry(knex) {
   return knex('Device as d')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Issue as i', 'd.id', 'i.deviceId')
     .leftJoin('Notification as n', 'i.id', 'n.issueId')
@@ -1103,7 +1118,8 @@ async function getNotificationsByCountry(knex) {
 
 async function getCountriesHealthStats(knex) {
   return knex('Device as d')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .select('c.abbreviation as a2', 'c.a3 as A3', 'c.name as Country')
     .min('d.createdOn as Date')

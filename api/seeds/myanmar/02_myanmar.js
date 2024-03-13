@@ -12,6 +12,7 @@ const dashboardWidget = require('./fixtures/dashboardWidget')
 const { rowsAsObject, getDefaultMessageTypes, getPermissionModules } = require('../utils')
 const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
 const upsertPartnerData = require('../common/upsert_partner_data')
+const { insertSite } = require('../../src/site/common/db')
 
 const now = new Date()
 
@@ -62,7 +63,7 @@ async function seed(knex) {
     .select('s.id', 's.name', 's.abbreviation')
 
   // create site for GxAlert device
-  const [gxAlertSiteId] = await knex('Site').insert({
+  const [gxAlertSiteId] = await insertSite(knex, {
     ...auditFields,
     name: 'GxAlert Site',
     shortName: 'GxA Site',
@@ -80,7 +81,6 @@ async function seed(knex) {
     deviceTypeId: await deviceTypeToId('GxAlert'),
     deviceApprovalId: await deviceApprovalToId('approved'),
     partnerId,
-    geographyId: myanmarGeographyId,
     siteId: gxAlertSiteId,
     createdOn: new Date(),
     updatedOn: new Date(),
@@ -157,13 +157,10 @@ async function seed(knex) {
     modules.dashboard.actionInventoryLevelUpdate,
   ])
 
-  // Admin Job
-  const [jobIdAdmin] = await knex('Job').insert({
+  // Admin JobContext
+  await knex('JobContext').insert({
     personId: adminPersonId,
     jobFunctionId: jobFunctionIdAdmin,
-  })
-  await knex('JobContext').insert({
-    jobId: jobIdAdmin,
     geographyId: myanmarGeographyId,
   })
 
@@ -196,12 +193,9 @@ async function seed(knex) {
         timezone: myanmarCountry.timezone,
         ...auditFields,
       })
-      const [jobIdRegion] = await knex('Job').insert({
+      await knex('JobContext').insert({
         personId: regionPersonId,
         jobFunctionId: jobFunctionIdRegionalOfficer,
-      })
-      await knex('JobContext').insert({
-        jobId: jobIdRegion,
         geographyId: regionId,
       })
       await Promise.all(

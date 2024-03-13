@@ -39,6 +39,7 @@ const SELECT_SHOW_FIELDS = [
   'd.configurationData',
   'd.notes',
   'd.serial',
+  'd.moduleBayCapacity',
   'dt.id as deviceTypeId',
   'dt.name as deviceTypeName',
   'dt.externalId as deviceTypeExternalId',
@@ -53,10 +54,15 @@ const SELECT_SHOW_FIELDS = [
   knex.raw('ifnull(frd30Errors.resultCount, 0) as errorCountThisMonth'),
   knex.raw('ifnull(frd60Errors.resultCount, 0) as errorCount60'),
   knex.raw("dmsl.data->>'$.options.data.notes' as maintenanceStatusNotes"),
+  knex.raw("dmsl.data->>'$.options.data.expectedBackOnline' as expectedBackOnline"),
   'dmC.contextDate as calibrationDate',
   'dmC.notes as calibrationNotes',
   'dmW.contextDate as warrantyDueDate',
   'dmW.notes as warrantyNotes',
+  'd.stickerInstrumentSerial',
+  'd.instrumentModel',
+  'd.softwareType',
+  'd.isDaisyChained',
 ]
 
 async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW_FIELDS }) {
@@ -142,6 +148,8 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
     ? device.errorCountThisMonth / device.resultCountThisMonth
     : null
 
+  device.isDaisyChained = !!device.isDaisyChained
+
   return device
 }
 
@@ -181,13 +189,10 @@ function getDeviceBaseExtendedQuery(
     showDecommissionedDevices = false,
     excludeInternalDevices = true,
     extendJoinToAssays = false,
-  } = {
-    showUnapprovedDevices: false,
-    showDecommissionedDevices: false,
-    excludeInternalDevices: true,
-    extendJoinToAssays: false,
-  }
+  } = {}
 ) {
+  const conditionalAliases = {}
+
   const deviceQuery = knex('Device as d')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
@@ -203,9 +208,13 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (extendJoinToAssays) queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
-      else if (query.assayExternalId)
-        queryBuilder.innerJoin('Assay as a', 'dt.id', 'a.deviceTypeId').where('a.externalId', query.assayExternalId)
+      if (extendJoinToAssays || query.assayId) {
+        queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
+        conditionalAliases.assay = 'a'
+      }
+      if (query.assayId) {
+        queryBuilder.where('a.id', query.assayId)
+      }
 
       if (query.resultCategoryId)
         queryBuilder
@@ -239,7 +248,7 @@ function getDeviceBaseExtendedQuery(
       addConstraints,
       dataConstraints,
       {
-        assay: 'a',
+        ...conditionalAliases,
         device: 'd',
         deviceType: 'dt',
         geography: 'g',
@@ -475,6 +484,12 @@ async function deleteMessages(deviceId, trknex) {
   await trknex('WebhookMessage').where('deviceId', deviceId).del()
 }
 
+async function deleteMissingInventoryLots(deviceId, trknex) {
+  await trknex('MissingInventoryLots')
+    .whereIn('resultId', knex('Result').where('deviceId', deviceId).select('id'))
+    .del()
+}
+
 async function deleteResults(deviceId, trknex) {
   await trknex('Result').where('deviceId', deviceId).del()
 }
@@ -560,7 +575,7 @@ function getResultCategoriesByAssay(assayId) {
     .first()
 }
 
-function getFirstAndLastResults(dataConstraints, assayId) {
+function getFirstAndLastResults(dataConstraints, assayId, deviceIds) {
   return knex('Result as _r')
     .modify(addConstraints, dataConstraints, { result: '_r' })
     .groupBy('deviceId')
@@ -570,11 +585,13 @@ function getFirstAndLastResults(dataConstraints, assayId) {
       lastEndedOn: knex.raw('MAX(endedOn)'),
     })
     .where('assayId', assayId)
+    .whereIn('deviceId', deviceIds)
     .as('firstAndLastResults')
 }
 
 async function getDeviceWorkload(extraColumns, dataConstraints, query) {
   const { assayId } = query
+
   const q = knex('Device as d')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -586,7 +603,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       joinAssay.on('dt.id', 'a.deviceTypeId').andOn('a.id', knex.raw(assayId))
     })
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
-    .leftJoin('Result as r', joinResultQuery => {
+    .innerJoin('Result as r', joinResultQuery => {
       joinResultQuery.on('d.id', 'r.deviceId').andOn('r.assayId', knex.raw(assayId))
 
       if (query.minDate) joinResultQuery.andOn('r.endedOn', '>', knex.raw(`'${query.minDate.toISOString()}'`))
@@ -595,7 +612,6 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
     })
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .leftJoin(getFirstAndLastResults(dataConstraints, assayId), 'd.id', 'firstAndLastResults.deviceId')
     .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
@@ -608,30 +624,54 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       deviceMaintenanceStatusId: 'dms.id',
     })
     .andWhere('dtc.hasResults', true)
-  const { total } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as total')).first()
+    .modify(q => {
+      extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
+    })
+    .select('r.deviceId', knex.raw('COUNT(r.id) as total'))
+
+  const { totalRows } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as totalRows')).first()
+
   const data = await q
     .modify(_q => {
       // For export, we don't provide sort and paging params - we should get all records
       if (query.size) _q.modify(sortPageParams, query, 'name')
     })
     .select(
+      'd.id',
       'd.name',
       'dms.i18nKey as deviceStatus',
       'dms.name as deviceStatusLabel',
       'd.lastPingOn',
-      'firstAndLastResults.firstEndedOn as firstResultEndedOn',
-      'firstAndLastResults.lastEndedOn as lastResultEndedOn',
       'st.name as stateName',
       'lg.name as lgaName',
-      's.name as siteName',
-      knex.raw('COUNT(r.id) as total')
+      's.name as siteName'
     )
-    .modify(q => {
-      extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
-    })
     .groupBy('d.id')
+
+  const deviceIds = data.map(device => device.id)
+
+  const deviceFirstAndLastResult = await getFirstAndLastResults(dataConstraints, assayId, deviceIds)
+
+  const deviceFirstAndLastResultMap = _.keyBy(deviceFirstAndLastResult, 'deviceId')
+
+  const updatedData = _.map(data, ({ id, ...deviceResponse }) => {
+    const firstResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'firstEndedOn'], null)
+    const lastResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'lastEndedOn'], null)
+
+    deviceResponse.total = deviceResponse.total || 0
+
+    _.forEach(extraColumns, ({ fieldId }) => {
+      deviceResponse[fieldId] = deviceResponse[fieldId] || 0
+    })
+
+    return {
+      ...deviceResponse,
+      firstResultEndedOn,
+      lastResultEndedOn,
+    }
+  })
   const { length } = data
-  return { total, data, length }
+  return { total: totalRows, data: updatedData, length }
 }
 
 async function joinModuleAvailability(dataConstraints, query) {
@@ -703,13 +743,19 @@ function moduleDisabledIssues(onlyActiveIssues = false) {
     .join('IssueStatus as is', 'i2.issueStatusId', 'is.id')
     .where('it.externalId', 'ModuleDisabled')
     .whereIn('i2.id', function () {
-      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleName"')
+      this.max('id').from('Issue').groupByRaw('deviceId, data->>"$.moduleSerial"')
     })
     .select(
       'i2.id',
-      'i2.resultId',
+      'i2.resultId', // notice that for `ModuleDisabled` i.resultId is always `null`
       'i2.deviceId',
+      /**
+       * since awhile ago we store `moduleSerial` instead of `moduleName`,
+       * so return both - `moduleName` for very old `Issue.data`,
+       * and `moduleSerial` for newer Issue.data
+       */
       knex.raw('i2.data->>"$.moduleName" as moduleName'),
+      knex.raw('i2.data->>"$.moduleSerial" as moduleSerial'),
       'i2.createdOn as dateLastIssue',
       'it.name as lastIssue'
     )
@@ -778,4 +824,5 @@ module.exports = {
   modulesWithLastResultBeforeMinDate,
   getDeviceByIdBaseQuery,
   getLastUploadDateBySites,
+  deleteMissingInventoryLots,
 }

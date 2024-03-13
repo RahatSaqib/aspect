@@ -1,13 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { TableBody, Table } from '@mui/material'
-import classnames from 'classnames/bind'
 import intersectionWith from 'lodash/intersectionWith'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import DeviceApiKeyFilter from '../../../cleanComponents/Filter/DeviceApiKeyFilter'
+import { DetailHeader, DeviceApiKeyFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useDeviceApiKey from '../../../hooks/deviceApiKey/useDeviceApiKey'
@@ -15,28 +14,25 @@ import useDeviceApiKeyAssign from '../../../hooks/deviceApiKey/useDeviceApiKeyAs
 import useDeviceApiKeyGenerate from '../../../hooks/deviceApiKey/useDeviceApiKeyGenerate'
 import useDeviceApiKeyUpdate from '../../../hooks/deviceApiKey/useDeviceApiKeyUpdate'
 import useExportDeviceApiKey from '../../../hooks/deviceApiKey/useExportDeviceApiKey'
-import useI18n from '../../../hooks/useI18n'
+import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import AspectCheckbox from '../../../oldComponents/shared/AspectCheckbox'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import DeviceApiKeyAssignerDialogForm from './DeviceApiKeyAssignerDialogForm'
 import DeviceApiKeyGeneratorDialogForm from './DeviceApiKeyGeneratorDialogForm'
-import styles from './DeviceApiKeyList.css'
+import styles from './DeviceApiKeyList.module.css'
 import DeviceApiKeyTableRow from './DeviceApiKeyTableRow'
 import messages from './messages'
-
-const cssClasses = classnames.bind(styles)
 
 const DEFAULT_GENERATOR_VALUES = { count: 1 }
 const DEFAULT_ASSIGNER_VALUES = { deviceApiKeyIds: [] }
 
 export const DeviceApiKeyList = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
@@ -46,7 +42,7 @@ export const DeviceApiKeyList = () => {
     location,
   })
 
-  const { isLoading, data } = useDeviceApiKey(
+  const { isLoading, data, refetch } = useDeviceApiKey(
     { sortCol, sortDir, page: pageAt, size: pageSize, ...filters },
     { enabled: !!sortCol }
   )
@@ -80,6 +76,7 @@ export const DeviceApiKeyList = () => {
     generate(generatorValues, {
       onSuccess: () => {
         onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false, generatorValues: DEFAULT_GENERATOR_VALUES })
+        refetch()
       },
     })
   }
@@ -87,6 +84,7 @@ export const DeviceApiKeyList = () => {
     assign(assignerValues, {
       onSuccess: () => {
         onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false, assignerValues: DEFAULT_ASSIGNER_VALUES })
+        refetch()
       },
     })
   }
@@ -114,12 +112,11 @@ export const DeviceApiKeyList = () => {
     let selectedDDL = {}
     if (nextDeviceApiKeyIds.length === 1) {
       const [firstElementId] = nextDeviceApiKeyIds
-      const { siteId, countryId, partnerId } = (data?.data || []).find(d => d.id === firstElementId)
-      selectedDDL = { siteId, countryId, partnerId }
+      selectedDDL = (data?.data || []).find(d => d.id.toString() === firstElementId)
     } else if (nextDeviceApiKeyIds.length > 1) {
       const selection = []
       nextDeviceApiKeyIds.forEach(id => {
-        const { partnerId, siteId, countryId } = (data?.data || []).find(d => d.id === id)
+        const { partnerId, siteId, countryId } = (data?.data || []).find(d => d.id.toString() === id)
         selection.push({ partnerId, siteId, countryId })
       })
       const [{ countryId, siteId, partnerId }] = intersectionWith(selection, isEqual)
@@ -147,7 +144,7 @@ export const DeviceApiKeyList = () => {
           {intl.formatMessage(messages.assign)}
         </AspectButton>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.title)} />
         <DeviceApiKeyFilter />
         <div>
@@ -169,7 +166,7 @@ export const DeviceApiKeyList = () => {
             intl={intl}
           />
         </div>
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton
               onExport={onExportClick}
@@ -181,7 +178,7 @@ export const DeviceApiKeyList = () => {
             <BrowseEmptyList />
           ) : (
             <>
-              <Table className={cssClasses('DeviceApiKeyDataTable')}>
+              <Table className={styles.DeviceApiKeyDataTable}>
                 <DataTableHead
                   navigate={navigate}
                   location={location}
@@ -215,7 +212,7 @@ export const DeviceApiKeyList = () => {
                       intl={intl}
                       deviceApiKey={deviceApiKey}
                       disabled={!selectableIds.includes(deviceApiKey.id)}
-                      checked={dialogState.assignerValues.deviceApiKeyIds.indexOf(deviceApiKey.id) !== -1}
+                      checked={dialogState.assignerValues.deviceApiKeyIds.indexOf(deviceApiKey.id.toString()) !== -1}
                       onSelectedChange={onSelectedChange}
                       onRevokedChange={onRevokedChange}
                     />

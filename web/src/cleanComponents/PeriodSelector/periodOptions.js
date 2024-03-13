@@ -15,8 +15,8 @@ import subtractMonths from 'date-fns/subMonths'
 import subtractQuarters from 'date-fns/subQuarters'
 import subtractWeeks from 'date-fns/subWeeks'
 import subtractYears from 'date-fns/subYears'
-import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
-import messages from './messages'
+import messages from '../../messages/allMessages'
+import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 
 const { dayMonthFormat } = getAspectDisplayPreferences().toJS()
 
@@ -226,5 +226,3 @@ export const yearOptions = intl => [
 ]
 
 export const customYearOptions = (intl, year) => [...customYearsOptions(intl.formatDate, year)]
-
-export const customFormat = (start, end) => `${format(start, dayMonthFormat)} - ${format(end, dayMonthFormat)}`

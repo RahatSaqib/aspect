@@ -1,13 +1,10 @@
 import React from 'react'
 import { Button, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
 import { compose, withState, pure } from 'recompose'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import validateEmailAddress from '../../../utils/utils/validate'
 import messages from './messages'
-import styles from './ResetPassword.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './ResetPassword.module.css'
 
 export function validate({ emailAddress }, { intl }) {
   const errors = {}
@@ -43,8 +40,8 @@ export const ResetPasswordEnterEmail = ({
   onEmailAddressChange,
   handleSubmit,
 }) => (
-  <form onSubmit={handleSubmit} className={cssClasses('Form')}>
-    <div className={cssClasses('Form__Content')}>
+  <form onSubmit={handleSubmit} className={styles.Form}>
+    <div className={styles.Form__Content}>
       <p>{intl.formatMessage(messages.enterEmailAddressContent)}</p>
       <a href="#showAdminHelp" onClick={onShowAdminHelpDialog}>
         {intl.formatMessage(messages.iDontHaveAnEmailAddress)}
@@ -66,7 +63,7 @@ export const ResetPasswordEnterEmail = ({
         inputProps={{ maxLength: 500 }}
       />
     </div>
-    <div className={cssClasses('Form__ActionRow')}>
+    <div className={styles.Form__ActionRow}>
       <Button
         type="submit"
         color="secondary"

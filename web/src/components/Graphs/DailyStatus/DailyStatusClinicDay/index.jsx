@@ -1,16 +1,13 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import noop from 'lodash/noop'
 import PropTypes from 'prop-types'
-import useI18n from '../../../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
-import styles from '../DailyStatus.css'
+import styles from '../DailyStatus.module.css'
 import { getDayTitle } from '../Helpers'
 import messages from '../messages'
-
-const cssClasses = classnames.bind(styles)
 
 const DayBlock = ({ consts, dayModifier, onClick }) => {
   const {
@@ -18,7 +15,7 @@ const DayBlock = ({ consts, dayModifier, onClick }) => {
   } = consts
   return (
     <div
-      className={cssClasses('clinic__day', `clinic__day--${dayModifier}`)}
+      className={`${styles.clinic__day} ${styles[`clinic__day__${dayModifier}`]}`}
       style={{
         width: `${blockWidth}px`,
         height: `${blockHeight}px`,
@@ -53,7 +50,7 @@ const DailyStatusClinicDay = ({
   totalResults,
   onClickDay,
 }) => {
-  const { formatDate, formatMessage } = useI18n()
+  const { formatDate, formatMessage } = useIntl()
   const isActive = maintenanceStatusI18nKey === 'active' || maintenanceStatusI18nKey === 'reportedActive'
   const isEditable = maintenanceStatusExternalId !== 'active'
   const { weekend } = consts
@@ -89,7 +86,7 @@ const DailyStatusClinicDay = ({
     <AspectTooltip
       showPointerCursor={isEditable}
       title={!isEditable ? `${title}, ${formatMessage(messages.toolTipTitleNotEditable)}` : `${title}${manuallySet}`}
-      toolTipContainerClass="inline__tooltip"
+      toolTipContainerClass={styles.inline__tooltip}
       placement="right"
     >
       <DayBlock consts={consts} dayModifier={dayModifier} onClick={isEditable ? onClickDay : noop} />

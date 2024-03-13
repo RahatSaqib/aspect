@@ -1,37 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
-import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { StateSelect, LgaSelect } from '../../../../../cleanComponents'
-import Loading from '../../../../../cleanComponents/Loading'
-import AspectResponsiveBar from '../../../../../components/Graphs/BarGraph/AspectResponsiveBar'
-import AxisRightLayer from '../../../../../components/Graphs/BarGraph/AxisRightLayer'
-import EmptyGraph from '../../../../../components/Graphs/EmptyData'
-import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
+import {
+  StateSelect,
+  LgaSelect,
+  ColumnLineGraph,
+  Loading,
+  getTimePeriod,
+  objectToArray,
+} from '../../../../../cleanComponents'
+import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useAssayList from '../../../../../hooks/assay/useAssayList'
-import useI18n from '../../../../../hooks/useI18n'
+import useAuthState from '../../../../../hooks/useAuthState'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
-import styles from '../../../../../oldPages/dashboard/Graphs/styles.css'
-import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
-import { lineForProp, lineForPropWithLabel } from '../../../components/QuartersMtbDetectedGraph.Main.Layers'
 import messages from '../../../PkDashboard.Messages'
-
-const cssClasses = classnames.bind(styles)
-
-const baseConfig = {
-  id: 'rrtbDetectedQuarterlyTrends',
-  groupMode: 'grouped',
-  fields: [
-    { name: 'tbTotal', colorId: 'caseTotal', target: 'bar' },
-    { name: 'rrDetected', colorId: 'caseDetected', target: 'bar' },
-    { name: 'rrToTbTotalPercentage', colorId: 'casePercentDetectedOfTotal', target: 'line' },
-  ],
-  clickThrough: false,
-  axisRightProps: { fieldName: 'rrToTbTotalPercentage' },
-}
 
 const endpointParams = [
   { source: 'rrDetection' },
@@ -44,18 +28,12 @@ const endpointParams = [
 ]
 
 const RrtbTestDiagnosisPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [stateId, setState] = useState()
-  const [lgaId, setLga] = useState()
-  const { data: assays } = useAssayList()
+  const [filter, setFilter] = useState()
 
-  const [i18nKeys, setI18nKeys] = useState({})
-  const [graphData, setGraphData] = useState(false)
-  const [graphKeys, setGraphKeys] = useState(false)
-
-  const mergedParams = stateId ? [...endpointParams, { stateId, lgaId }] : [...endpointParams]
+  const mergedParams = filter ? [...endpointParams, ...objectToArray(filter)] : [...endpointParams]
 
   const { isLoading, data } = useQuery(
     ['rrtbMtbDetectedQuarterlyTrends', { mergedParams }],
@@ -63,13 +41,27 @@ const RrtbTestDiagnosisPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
+  const testsPerformedMessage = formatMessage(messages.testsPerformed)
+  const rrDetectedMessage = formatMessage(messages.rrDetected)
+  const mtbDetectedMessage = formatMessage(intlMessages.MTBPlus)
+  const rrToMtbPercentageMessage = formatMessage(messages.rrToMtbPercentage)
+
+  const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
-      const { grouped, keysFromGrouped, i18nKeys } = data
-      setI18nKeys(i18nKeys)
-      setGraphData(grouped)
-      setGraphKeys(keysFromGrouped)
+      const line = []
+      const bar = []
+      data.grouped.slice(-5).map(({ year, testsPerformed, mtbDetected, rrDetected, rrToMtbPercentage }) => {
+        bar.push({ year, value: testsPerformed, type: testsPerformedMessage })
+        bar.push({ year, value: mtbDetected, type: mtbDetectedMessage })
+        bar.push({ year, value: rrDetected, type: rrDetectedMessage })
+        line.push({ year, [rrToMtbPercentageMessage]: +rrToMtbPercentage.toFixed(2) })
+        return {}
+      })
+
+      setGraphData([bar, line])
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
 
   return (
@@ -84,13 +76,15 @@ const RrtbTestDiagnosisPage = () => {
           />
           <StateSelect
             countryId={user.countryId}
-            onChange={e => setState(e.target.value)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            value={filter?.stateId ?? ''}
+            onChange={e => setFilter({ stateId: e.target.value })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={stateId}
-            onChange={e => setLga(e.target.value)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            stateId={filter?.stateId}
+            value={filter?.lgaId ?? ''}
+            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
@@ -99,34 +93,19 @@ const RrtbTestDiagnosisPage = () => {
         <Loading />
       ) : (
         <Grid item xs={12}>
-          <div className={cssClasses('Graph_Wrapper')}>
-            {graphData && !isEmpty(graphData) && assays ? (
-              <AspectResponsiveBar
-                assaysFromState={assays}
-                config={{
-                  ...baseConfig,
-                  layers: [
-                    showLabel ? lineForPropWithLabel('rrToTbTotalPercentage') : lineForProp('rrToTbTotalPercentage'),
-                    AxisRightLayer,
-                  ],
-                  showLabel,
-                  showDecimals: 0,
-                  labelTextColor: '#333',
-                }}
-                data={graphData}
-                keys={graphKeys}
-                indexBy="year"
-                tickValuesYShape="twos"
-                tickValuesXShape="all"
-                displayMethod="actual"
-                displayLegend
-                type="bar-line"
-                i18nKeys={i18nKeys}
-              />
-            ) : (
-              <EmptyGraph type="bar" />
-            )}
-          </div>
+          <ColumnLineGraph
+            data={graphData}
+            showLabel={showLabel}
+            graphId="rrtbDetectedQuarterlyTrends"
+            colors={[
+              { name: testsPerformedMessage, colorId: 'caseTotal' },
+              { name: mtbDetectedMessage, colorId: 'casePercentDetectedOfTotal' },
+              { name: rrDetectedMessage, colorId: 'caseDetected' },
+              { name: rrToMtbPercentageMessage, colorId: 'caseDetected' },
+            ]}
+            xField="year"
+            yField={['value', rrToMtbPercentageMessage]}
+          />
         </Grid>
       )}
     </PkPage>

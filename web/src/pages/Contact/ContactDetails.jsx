@@ -3,7 +3,8 @@ import { Box, Button, Grid, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import isString from 'lodash/isString'
 import MuiPhoneNumber from 'material-ui-phone-number'
-import { useNavigate } from 'react-router-dom'
+import { useIntl } from 'react-intl'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { array, object, string } from 'yup'
 import {
   CountrySelect,
@@ -13,16 +14,17 @@ import {
   StateSelect,
   TagSelect,
   TimezoneSelect,
+  Loading,
 } from '../../cleanComponents'
-import Loading from '../../cleanComponents/Loading'
 import useAddPerson from '../../hooks/person/useAddPerson'
 import usePerson from '../../hooks/person/usePerson'
 import useUpdatePerson from '../../hooks/person/useUpdatePerson'
 import useUpdateSelf from '../../hooks/person/useUpdateSelf'
-import useI18n from '../../hooks/useI18n'
+import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages/customMessages'
-import { useAuthState } from '../../providers/AuthProvider'
+import { gotoReturnUrl } from '../../utils/utils/browser'
 import { normalizePhoneNumber } from '../../utils/utils/phone'
+import { getTimezoneById } from '../../utils/utils/timezone'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -30,11 +32,12 @@ import messages from './messages'
 
 const ContactDetails = ({ setStep }) => {
   const navigate = useNavigate()
+  const location = useLocation()
 
   const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
-  const { countryAbbreviation, countryId, userPermissions } = useAuthState()
-  const { formatMessage } = useI18n()
+  const { countryAbbreviation, countryId, userPermissions, timezoneId } = useAuthState()
+  const { formatMessage } = useIntl()
 
   const { isLoading, data: person } = usePerson(id)
 
@@ -67,6 +70,7 @@ const ContactDetails = ({ setStep }) => {
   if (person) {
     if (id === ACTION.ADD) {
       person.countryId = countryId
+      person.timezone = timezoneId
     }
     if (isString(person.tags)) {
       person.tags = person.tags.split(',')
@@ -83,7 +87,7 @@ const ContactDetails = ({ setStep }) => {
         step={0}
         full={id !== ACTION.SELF && userPermissions.includes('person:edit')}
         isUpdate={id !== ACTION.ADD}
-        onChange={(v, step) => setStep(step)}
+        onChange={(v, step) => setStep(+step)}
       />
       {isLoading ? (
         <Loading />
@@ -109,7 +113,7 @@ const ContactDetails = ({ setStep }) => {
               'lgaName',
               'disabled',
               'disabledOn',
-              'jobId',
+              'jobContextId',
               'jobFunctions',
               'userId',
               'username',
@@ -121,13 +125,18 @@ const ContactDetails = ({ setStep }) => {
             if (id === ACTION.ADD) {
               addPerson(values, {
                 onSuccess: ({ data }) => {
-                  navigate(`/browse/person/${data.id}?add=true`)
+                  navigate(`/browse/person/${data.id}${location.search}${location.search ? '&' : '?'}add=true`)
                   setStep(1)
                   resetForm({ values })
                 },
               })
             } else if (id === ACTION.SELF) {
-              updateSelf(values, { onSuccess: () => resetForm({ values }) })
+              updateSelf(values, {
+                onSuccess: () => {
+                  localStorage.setItem('asTimezoneId', getTimezoneById(values.timezone))
+                  resetForm({ values })
+                },
+              })
             } else {
               updatePerson(values, {
                 onSuccess: () => {
@@ -152,7 +161,7 @@ const ContactDetails = ({ setStep }) => {
                     label={`${formatMessage(messages.fullName)} *`}
                     value={values.name}
                     onChange={handleChange}
-                    error={errors.name ? errors.name : undefined}
+                    error={!!errors.name}
                     helperText={errors.name}
                   />
                 </Grid>
@@ -163,7 +172,7 @@ const ContactDetails = ({ setStep }) => {
                     label={formatMessage(messages.jobTitle)}
                     value={values.title}
                     onChange={handleChange}
-                    error={errors.title ? errors.title : undefined}
+                    error={!!errors.title}
                     helperText={errors.title}
                   />
                 </Grid>
@@ -176,7 +185,7 @@ const ContactDetails = ({ setStep }) => {
                     label={`${formatMessage(messages.primaryEmail)} *`}
                     value={values.email}
                     onChange={handleChange}
-                    error={errors.email ? errors.email : undefined}
+                    error={!!errors.email}
                     helperText={errors.email}
                   />
                 </Grid>
@@ -188,7 +197,7 @@ const ContactDetails = ({ setStep }) => {
                     label={formatMessage(messages.secondaryEmail)}
                     value={values.email2}
                     onChange={handleChange}
-                    error={errors.email2 ? errors.email2 : undefined}
+                    error={!!errors.email2}
                     helperText={errors.email2}
                   />
                 </Grid>
@@ -205,7 +214,7 @@ const ContactDetails = ({ setStep }) => {
                       setFieldValue('phoneE164', normalizePhoneNumber(e, c?.countryCode))
                       handleChange({ target: { name: 'phone', value: e !== '+' && e !== '+1' ? e : null } })
                     }}
-                    error={errors.phone ? errors.phone : undefined}
+                    error={!!errors.phone}
                     helperText={errors.phone}
                   />
                 </Grid>
@@ -221,7 +230,7 @@ const ContactDetails = ({ setStep }) => {
                       setFieldValue('cellE164', normalizePhoneNumber(e, c?.countryCode))
                       handleChange({ target: { name: 'cell', value: e !== '+' && e !== '+1' ? e : null } })
                     }}
-                    error={errors.cell ? errors.cell : undefined}
+                    error={!!errors.cell}
                     helperText={errors.cell}
                   />
                 </Grid>
@@ -233,8 +242,12 @@ const ContactDetails = ({ setStep }) => {
                     returnAll
                     label={formatMessage(messages.country)}
                     value={values.countryId}
-                    onChange={handleChange}
-                    error={errors.countryId ? errors.countryId : undefined}
+                    onChange={e => {
+                      setFieldValue('countryId', e.target.value)
+                      setFieldValue('stateId', '')
+                      setFieldValue('lgaId', '')
+                    }}
+                    error={!!errors.countryId}
                     helperText={errors.countryId}
                   />
                 </Grid>
@@ -243,10 +256,10 @@ const ContactDetails = ({ setStep }) => {
                     id="stateId"
                     name="stateId"
                     returnAll
-                    label={getCustomMessage(messages, 'state', { countryAbbreviation })}
+                    label={getCustomMessage(formatMessage, messages, 'state', { countryAbbreviation })}
                     value={values.stateId || ''}
                     onChange={handleChange}
-                    error={errors.stateId ? errors.stateId : undefined}
+                    error={!!errors.stateId}
                     helperText={errors.stateId}
                     countryId={values.countryId}
                   />
@@ -256,10 +269,10 @@ const ContactDetails = ({ setStep }) => {
                     id="lgaId"
                     name="lgaId"
                     returnAll
-                    label={getCustomMessage(messages, 'lga', { countryAbbreviation })}
+                    label={getCustomMessage(formatMessage, messages, 'lga', { countryAbbreviation })}
                     value={values.lgaId || ''}
                     onChange={handleChange}
-                    error={errors.lgaId ? errors.lgaId : undefined}
+                    error={!!errors.lgaId}
                     helperText={errors.lgaId}
                     stateId={values.stateId}
                   />
@@ -271,7 +284,7 @@ const ContactDetails = ({ setStep }) => {
                     label={formatMessage(messages.zip)}
                     value={values.zip}
                     onChange={handleChange}
-                    error={errors.zip ? errors.zip : undefined}
+                    error={!!errors.zip}
                     helperText={errors.zip}
                   />
                 </Grid>
@@ -284,7 +297,7 @@ const ContactDetails = ({ setStep }) => {
                       label={`${formatMessage(messages.partner)} *`}
                       value={values.lastPartnerId}
                       onChange={handleChange}
-                      error={errors.lastPartnerId ? errors.lastPartnerId : undefined}
+                      error={!!errors.lastPartnerId}
                       helperText={errors.lastPartnerId}
                     />
                   </Grid>
@@ -297,7 +310,8 @@ const ContactDetails = ({ setStep }) => {
                     label={formatMessage(messages.timezone)}
                     value={values.timezone}
                     onChange={handleChange}
-                    error={errors.timezone ? errors.timezone : undefined}
+                    disabled
+                    error={!!errors.timezone}
                     helperText={errors.timezone}
                   />
                 </Grid>
@@ -308,7 +322,7 @@ const ContactDetails = ({ setStep }) => {
                     label={formatMessage(messages.language)}
                     value={values.culture}
                     onChange={handleChange}
-                    error={errors.culture ? errors.culture : undefined}
+                    error={!!errors.culture}
                     helperText={errors.culture}
                   />
                 </Grid>
@@ -320,7 +334,7 @@ const ContactDetails = ({ setStep }) => {
                     label={formatMessage(messages.chooseTags)}
                     value={isString(values.tags) ? values.tags.split(',') : values.tags || []}
                     onChange={handleChange}
-                    error={errors.tags ? errors.tags : undefined}
+                    error={!!errors.tags}
                     helperText={errors.tags}
                   />
                 </Grid>
@@ -335,7 +349,7 @@ const ContactDetails = ({ setStep }) => {
                       onChange={e => {
                         handleChange({ target: { name: 'notes', value: e.target.value } })
                       }}
-                      error={errors.notes ? errors.notes : undefined}
+                      error={!!errors.notes}
                       helperText={errors.notes}
                       multiline
                       rows={3}
@@ -344,7 +358,9 @@ const ContactDetails = ({ setStep }) => {
                 ) : null}
               </Grid>
               <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                <Button onClick={() => navigate('/browse/person')}>{formatMessage(messages.backToTable)}</Button>
+                <Button onClick={() => gotoReturnUrl(navigate, location, '/browse/person')}>
+                  {formatMessage(messages.backToTable)}
+                </Button>
                 <Box sx={{ flex: '1 1 auto' }} />
                 {isRecentlyAdd && !dirty ? (
                   <Button onClick={() => setStep(1)}>{formatMessage(messages.next)}</Button>

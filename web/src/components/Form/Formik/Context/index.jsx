@@ -63,5 +63,3 @@ export const FormikProvider = ({ config, children, debug }) => {
     </FormikProviderBase>
   )
 }
-
-export default FormikProvider

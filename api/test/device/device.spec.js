@@ -64,7 +64,8 @@ describe('Device routes', () => {
 
       const device = await knex('Device as d')
         .join('Partner as p', 'd.partnerId', 'p.id')
-        .join('Geography as g', 'g.id', 'd.geographyId')
+        .join('Site as s', 'd.siteId', 's.id')
+        .join('Geography as g', 's.geographyId', 'g.id')
         .join('Country as c', 'c.id', 'g.countryId')
         .where('p.name', 'Partner One')
         .where('c.abbreviation', 'US')
@@ -719,6 +720,7 @@ describe('Device routes', () => {
           dateFrom,
           dateTo,
           notes: "Service engineer visited yesterday and couldn't finish by 3:30 PM",
+          expectedBackOnline: '2020-12-12T00:00:00.000-03:00',
         }
 
         // Should update to inactiveDownForRepair

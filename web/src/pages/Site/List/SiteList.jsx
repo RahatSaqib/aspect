@@ -1,32 +1,29 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useCallback } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
-import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
-import DetailHeader from '../../../cleanComponents/DetailHeader'
-import SiteFilter from '../../../cleanComponents/Filter/SiteFilter'
+import { useIntl } from 'react-intl'
+import { DetailHeader, SiteFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
-import useI18n from '../../../hooks/useI18n'
+import useAuthState from '../../../hooks/useAuthState'
+import useFilterValues from '../../../hooks/useFilterValues'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import { useAuthState } from '../../../providers/AuthProvider/index'
-import { useFilterValues } from '../../../providers/FilterProvider'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
-import styles from './SiteList.css'
+import styles from './SiteList.module.css'
 import getExportableFile from './SiteQueries'
 
-const cssClasses = classnames.bind(styles)
-
-export const SiteList = ({ navigate, location }) => {
+const SiteList = ({ navigate, location }) => {
   const user = useAuthState()
-  const intl = useI18n()
+  const intl = useIntl()
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
@@ -56,21 +53,24 @@ export const SiteList = ({ navigate, location }) => {
 
   const tableColumns = [
     { key: 'name', label: intl.formatMessage(messages.siteName), sortable: true },
-    { key: 'state', label: getCustomMessage(messages, 'state', user), sortable: true },
-    { key: 'lga', label: getCustomMessage(messages, 'lga', user), sortable: true },
+    { key: 'state', label: getCustomMessage(intl.formatMessage, messages, 'state', user), sortable: true },
+    { key: 'lga', label: getCustomMessage(intl.formatMessage, messages, 'lga', user), sortable: true },
     { key: 'externalId', label: intl.formatMessage(messages.externalId), sortable: true },
     { key: 'totalDevices', label: intl.formatMessage(messages.totalDevices), sortable: true },
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
   ]
 
-  const onAlertClick = event => {
-    const {
-      currentTarget: {
-        dataset: { siteId },
-      },
-    } = event
-    navigate(`/browse/site/${siteId}/alerts`)
-  }
+  const onAlertClick = useCallback(
+    event => {
+      const {
+        currentTarget: {
+          dataset: { siteId },
+        },
+      } = event
+      gotoWithReturnUrl(`/browse/site/${siteId}/alerts`, navigate, location)
+    },
+    [location, navigate]
+  )
 
   const onExportClick = formatType => {
     setIsLoading(true)
@@ -85,11 +85,14 @@ export const SiteList = ({ navigate, location }) => {
       })
   }
 
-  const onRowClick = ({
-    currentTarget: {
-      dataset: { siteId },
-    },
-  }) => navigate(`/browse/site/${siteId}`)
+  const onRowClick = useCallback(
+    ({
+      currentTarget: {
+        dataset: { siteId },
+      },
+    }) => gotoWithReturnUrl(`/browse/site/${siteId}`, navigate, location),
+    [location, navigate]
+  )
 
   return (
     <>
@@ -100,16 +103,16 @@ export const SiteList = ({ navigate, location }) => {
             color="primary"
             variant="contained"
             browseButton
-            onClick={() => navigate('/browse/site/create')}
+            onClick={() => gotoWithReturnUrl('/browse/site/create', navigate, location)}
           >
             {intl.formatMessage(messages.createSite)}
           </AspectButton>
         </PermissionChecker>
       </DetailHeader>
-      <div className={cssClasses('Container')}>
+      <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
         <SiteFilter />
-        <DataTableCard key={`DataTableCard--table-${location.key}`}>
+        <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
           </div>
@@ -119,7 +122,7 @@ export const SiteList = ({ navigate, location }) => {
             <BrowseEmptyList />
           ) : (
             <>
-              <SiteDataTable className={cssClasses('SiteDataTable')}>
+              <SiteDataTable className={styles.SiteDataTable}>
                 <SiteDataTableHead
                   navigate={navigate}
                   location={location}

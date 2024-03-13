@@ -11,7 +11,7 @@ async function getDoNotUseModulesReportData(minDate, dataConstraints, query) {
     .innerJoin('Site as s', 's.id', 'r.siteId')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin(moduleDisabledIssues(true), function () {
-      this.on('i.deviceId', 'r.deviceId').andOn('i.moduleName', 'r.moduleName')
+      this.on('i.deviceId', 'r.deviceId').andOn('i.moduleSerial', 'r.moduleSerial')
     })
     .whereNot('dt.externalId', 'GxAlert')
     .distinct([

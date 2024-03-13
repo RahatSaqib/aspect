@@ -1,27 +1,56 @@
-import React, { useState, useCallback } from 'react'
-import { FormControlLabel, Switch } from '@mui/material'
-import { LgaSelect, StateSelect } from '../../../../../cleanComponents'
-import useAssayList from '../../../../../hooks/assay/useAssayList'
-import useI18n from '../../../../../hooks/useI18n'
-import { getCustomMessage, graphMessages } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
-import { objectToArray } from '../../../../../utils/utils/misc'
+import React, { useState, useEffect } from 'react'
+import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
+import { useQuery } from 'react-query'
+import { LgaSelect, StateSelect, Loading, fillYear, objectToArray, LineGraph } from '../../../../../cleanComponents'
+import fetchWrapperForQueries from '../../../../../components/QueryFetch'
+import useAuthState from '../../../../../hooks/useAuthState'
+import { getCustomMessage, graphMessages, months } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
-import TrendInYearsAllTestsGraph from '../../../components/TrendInYearsAllTestsGraph.Main'
 import messages from '../../../PkDashboard.Messages'
 
-const defaultFilters = [{ assay: 'GxMtbXdr' }]
+const maxDate = new Date()
+
+const endpointParams = [
+  { groupBy: 'month' },
+  { minDate: `${maxDate.getFullYear() - 5}-01-01` },
+  { maxDate },
+  { assay: 'GxMtbXdr' },
+]
+
 const NationalTestingTrendsGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState({})
-  const { data: assays } = useAssayList()
+  const [filter, setFilter] = useState()
 
-  const onChangeState = useCallback(e => setFilter({ stateId: e.target.value }), [])
-  const onChangeLga = useCallback(e => setFilter(prev => ({ ...prev, lgaId: e.target.value })), [])
+  const mergedParams = filter ? [...endpointParams, ...objectToArray(filter)] : [...endpointParams]
 
-  return (
+  const { isLoading, data } = useQuery(
+    ['tbAllTestsYearlyTrends', { mergedParams }],
+    async ({ queryKey: [, { mergedParams }] }) =>
+      fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-national', params: mergedParams })
+  )
+
+  const [graphData, setGraphData] = useState(false)
+  useEffect(() => {
+    if (data) {
+      const grouped = data.data
+        .map(item => ({ year: item.month.split('-')[0], month: item.month.split('-')[1], value: item.cnt }))
+        .sort((a, b) => b.month - a.month || b.year - a.year)
+        .reverse()
+        .map(item => ({ ...item, month: `${formatMessage(months[item.month - 1])}` }))
+
+      if (grouped) {
+        setGraphData(fillYear(grouped).sort((a, b) => a.year - b.year))
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data])
+
+  return isLoading ? (
+    <Loading />
+  ) : (
     <PkPage
       title={formatMessage(messages.nationalXdrTestingTrends)}
       filters={
@@ -32,27 +61,37 @@ const NationalTestingTrendsGraph = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
-            value={filter.stateId ?? ''}
+            value={filter?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={onChangeState}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            onChange={e => setFilter({ stateId: e.target.value })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter.lgaId ?? ''}
-            stateId={filter.stateId}
-            onChange={onChangeLga}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            value={filter?.lgaId ?? ''}
+            stateId={filter?.stateId}
+            onChange={e => setFilter(prev => ({ ...prev, lgaId: e.target.value }))}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
     >
-      <TrendInYearsAllTestsGraph
-        assaysFromState={assays ?? []}
-        showLabel={showLabel}
-        yearTitle={formatMessage(messages.annualTestingTrends)}
-        monthTitle={formatMessage(messages.monthlyTestingTrends)}
-        filterSelection={objectToArray(filter).concat(defaultFilters)}
-      />
+      <Grid container>
+        <Grid item xs={12}>
+          <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
+            {formatMessage(messages.monthlyTestingTrends)}
+          </Typography>
+          {graphData ? (
+            <LineGraph
+              data={graphData}
+              showLabel={showLabel}
+              graphId="tbAllTestsYearlyTrends"
+              xField="month"
+              yField="value"
+              seriesField="year"
+            />
+          ) : null}
+        </Grid>
+      </Grid>
     </PkPage>
   )
 }

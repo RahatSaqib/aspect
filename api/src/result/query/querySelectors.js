@@ -54,6 +54,7 @@ const COMMON_LIST_FIELDS_UTC = {
   resultTreatmentStatusId: 'rtsl.resultTreatmentStatusId',
   reportableSiteId: 'r.reportableSiteId',
   reportableSiteName: 'sirep.name',
+  referringSiteId: 'r.referringSiteId',
   transferredBy: 'ptr.name',
   resultStatusLogId: 'r.resultStatusLogId',
   patientCaseId: 'r.patientCaseId',
@@ -164,7 +165,6 @@ const LIST_FIELDS_UTC = {
 const SELECT_FIELDS_UTC = {
   ...COMMON_LIST_FIELDS_UTC,
   ...{
-    formSchema: 'rf.formSchema',
     canEdit: knex.raw('IFNULL(pa.canEdit, 0)'),
     canDelete: knex.raw('IFNULL(pa.canDelete, 0)'),
     resultText: knex.raw(

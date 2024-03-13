@@ -2,7 +2,10 @@ const { exportData, getBaseReplacements } = require('../shared/excel')
 const listWorkload = require('./listWorkload')
 
 async function exportWorkload(request, reply) {
-  const { data, extraColumns } = await listWorkload(request)
+  // When exporting, we need to provide the isExport field
+  // This will add the extra fields for XDR Indeterminate and Not Detected cases
+  const decoratedRequest = { ...request, query: { ...request.query, isExport: true } }
+  const { data, extraColumns } = await listWorkload(decoratedRequest)
 
   //
   const sheetData = {

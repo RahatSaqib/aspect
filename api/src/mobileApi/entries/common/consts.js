@@ -6,8 +6,8 @@ const SEVERITY_THRESHOLDS = {
 }
 
 const TRANSFERRED = {
-  AWAY: 'awayTransfer',
-  HERE: 'hereTransfer',
+  AWAY: 'Transferred Away',
+  HERE: 'Transferred Here',
 }
 
 const TEST_TYPE = {

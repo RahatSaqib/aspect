@@ -5,19 +5,26 @@ import { pull } from 'lodash/array'
 import isArray from 'lodash/isArray'
 import startCase from 'lodash/startCase'
 import { MdClose } from 'react-icons/md'
+import { useIntl } from 'react-intl'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceApprovalType from '../../hooks/device/useDeviceApprovalType'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 import useConsumable from '../../hooks/inventory/useConsumable'
+import useNotificationType from '../../hooks/notification/useNotificationType'
 import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
 import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
-import useI18n from '../../hooks/useI18n'
 import { commonDefinitions } from '../../messages/customMessages'
-import { getAspectDisplayPreferences } from '../../utils/LocalStorage'
+import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
+import { notificationCategories } from '../NotificationCategorySelect/fixture'
 import messages from './messages'
+
+const emptyFilter = filter => {
+  const keys = Object.keys(filter)
+  return keys.length === 0 || (keys.length === 1 && keys.includes('countryId'))
+}
 
 const filtersOrdering = {
   breakOutByLot: 1,
@@ -58,13 +65,164 @@ const filtersOrdering = {
   maxExpirationDate: 32,
 }
 
-const emptyFilter = filter => {
-  const keys = Object.keys(filter)
-  return keys.length === 0 || (keys.length === 1 && keys.includes('countryId'))
+const buttonMapping = {
+  countryId: () => null, // we hide intentionally the country
+  stateId: ({ countryId, stateId, remove, blocked }) => (
+    <StateId countryId={countryId} stateId={stateId} remove={remove} blocked={blocked} />
+  ),
+  lgaId: ({ stateId, lgaId, remove, blocked }) => (
+    <LgaId stateId={stateId} lgaId={lgaId} remove={remove} blocked={blocked} />
+  ),
+  siteName: ({ siteName, remove, blocked }) => <SiteName siteName={siteName} remove={remove} blocked={blocked} />,
+  originSiteName: ({ originSiteName, remove, blocked }) => (
+    <OriginSiteName originSiteName={originSiteName} remove={remove} blocked={blocked} />
+  ),
+  destinationSiteName: ({ destinationSiteName, remove, blocked }) => (
+    <DestinationSiteName destinationSiteName={destinationSiteName} remove={remove} blocked={blocked} />
+  ),
+  assayId: ({ assayId, remove, append, resultCategoryGroupId, blocked }) => (
+    <AssayId
+      assayId={assayId}
+      remove={remove}
+      append={append}
+      resultCategoryGroupId={resultCategoryGroupId}
+      blocked={blocked}
+    />
+  ),
+  resultCategoryId: ({ resultCategoryId, assayOverride, assayId, diseaseId, remove, blocked }) => (
+    <ResultCategoryId
+      resultCategoryId={resultCategoryId}
+      assayOverride={assayOverride}
+      assayId={assayId}
+      diseaseId={diseaseId}
+      remove={remove}
+      blocked={blocked}
+    />
+  ),
+  resultCategoryGroupId: ({ resultCategoryGroupId, assayId, assayOverride, remove, append, blocked }) => (
+    <ResultCategoryGroupId
+      resultCategoryGroupId={resultCategoryGroupId}
+      assayId={assayId}
+      assayOverride={assayOverride}
+      remove={remove}
+      append={append}
+      blocked={blocked}
+    />
+  ),
+  consumableId: ({ consumableId, remove, blocked }) => (
+    <ConsumableId consumableId={consumableId} remove={remove} blocked={blocked} />
+  ),
+  minDate: ({ minDate, remove, blocked }) => <MinDate minDate={minDate} remove={remove} blocked={blocked} />,
+  maxDate: ({ maxDate, remove, blocked }) => <MaxDate maxDate={maxDate} remove={remove} blocked={blocked} />,
+  minExpirationDate: ({ minExpirationDate, remove, blocked }) => (
+    <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} blocked={blocked} />
+  ),
+  maxExpirationDate: ({ maxExpirationDate, remove, blocked }) => (
+    <MaxExpirationDate maxExpirationDate={maxExpirationDate} remove={remove} blocked={blocked} />
+  ),
+  reportName: ({ reportName, remove, blocked }) => (
+    <ReportName reportName={reportName} remove={remove} blocked={blocked} />
+  ),
+  externalId: ({ externalId, remove, blocked }) => (
+    <ExternalId externalId={externalId} remove={remove} blocked={blocked} />
+  ),
+  deviceName: ({ deviceName, remove, blocked }) => (
+    <DeviceName deviceName={deviceName} remove={remove} blocked={blocked} />
+  ),
+  contactStatus: ({ contactStatus, remove, blocked }) => (
+    <ContactStatus contactStatus={contactStatus} remove={remove} blocked={blocked} />
+  ),
+  contactNameOrEmail: ({ contactNameOrEmail, remove, blocked }) => (
+    <ContactNameOrEmail contactNameOrEmail={contactNameOrEmail} remove={remove} blocked={blocked} />
+  ),
+  notificationName: ({ notificationName, remove, blocked }) => (
+    <NotificationName notificationName={notificationName} remove={remove} blocked={blocked} />
+  ),
+  onlyTransfers: ({ remove, blocked }) => <OnlyTranfers remove={remove} blocked={blocked} />,
+  lotNumber: ({ lotNumber, remove, blocked }) => <LotNumber lotNumber={lotNumber} remove={remove} blocked={blocked} />,
+  hasStock: ({ remove, blocked }) => <HasStock remove={remove} blocked={blocked} />,
+  breakOutByLot: ({ remove, blocked }) => <BreakOutByLot remove={remove} blocked={blocked} />,
+  deviceApprovalId: ({ deviceApprovalId, remove, blocked }) => (
+    <DeviceApprovalId deviceApprovalId={deviceApprovalId} remove={remove} blocked={blocked} />
+  ),
+  deviceMaintenanceStatusId: ({ deviceMaintenanceStatusId, remove, blocked }) => (
+    <DeviceMaintenanceStatusId
+      deviceMaintenanceStatusId={deviceMaintenanceStatusId}
+      remove={remove}
+      blocked={blocked}
+    />
+  ),
+  deviceType: ({ deviceType, remove, blocked }) => (
+    <DeviceType deviceType={deviceType} remove={remove} blocked={blocked} />
+  ),
+  connectorStatus: ({ connectorStatus, remove, blocked }) => (
+    <ConnectorStatus connectorStatus={connectorStatus} remove={remove} blocked={blocked} />
+  ),
+  errorCode: ({ errorCode, remove, blocked }) => <ErrorCode errorCode={errorCode} remove={remove} blocked={blocked} />,
+  patientOrResearchId: ({ patientOrResearchId, remove, blocked }) => (
+    <PatientOrResearchId patientOrResearchId={patientOrResearchId} remove={remove} blocked={blocked} />
+  ),
+  issueTypeId: ({ issueTypeId, remove, blocked }) => (
+    <IssueTypeId issueTypeId={issueTypeId} remove={remove} blocked={blocked} />
+  ),
+  sampleId: ({ sampleId, remove, blocked }) => <SampleId sampleId={sampleId} remove={remove} blocked={blocked} />,
+  reportableSiteName: ({ reportableSiteName, reportableSiteId, remove, blocked }) => (
+    <ReportableSiteName
+      reportableSiteName={reportableSiteName}
+      reportableSiteId={reportableSiteId}
+      remove={remove}
+      blocked={blocked}
+    />
+  ),
+  reportableSiteId: ({ reportableSiteName, reportableSiteId, remove, blocked }) => (
+    <ReportableSiteId
+      reportableSiteName={reportableSiteName}
+      reportableSiteId={reportableSiteId}
+      remove={remove}
+      blocked={blocked}
+    />
+  ),
+  sampleOriginSite: ({ sampleOriginSite, remove, blocked }) => (
+    <SampleOriginSiteId sampleOriginSite={sampleOriginSite} remove={remove} blocked={blocked} />
+  ),
+  workflowStatusId: ({ workflowStatusId, remove, blocked }) => (
+    <WorkflowStatusId workflowStatusId={workflowStatusId} remove={remove} blocked={blocked} />
+  ),
+  treatmentStatus: ({ treatmentStatus, remove, blocked }) => (
+    <TreatmentStatus treatmentStatus={treatmentStatus} remove={remove} blocked={blocked} />
+  ),
+  displayResult: ({ displayResult, remove, blocked }) => (
+    <DisplayResult displayResult={displayResult} remove={remove} blocked={blocked} />
+  ),
+  onlyReportableResults: ({ remove, blocked }) => <OnlyReportableResults remove={remove} blocked={blocked} />,
+  onlyDownloadedByReporter: ({ remove, blocked }) => <OnlyDownloadedByReporter remove={remove} blocked={blocked} />,
+  onlyTreatmentRequired: ({ remove, blocked }) => <OnlyTreatmentRequired remove={remove} blocked={blocked} />,
+  revoked: ({ revoked, remove, blocked }) => <Revoked revoked={revoked} remove={remove} blocked={blocked} />,
+  assayOverride: () => null,
+  singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
+  daysStockLeft: ({ daysStockLeft, remove, blocked }) => (
+    <DaysStockLeft daysStockLeft={daysStockLeft} remove={remove} blocked={blocked} />
+  ),
+  onlyErrors: ({ remove, blocked }) => <OnlyErrors remove={remove} blocked={blocked} />,
+  reportWithName: ({ remove, reportWithName, blocked }) => (
+    <ReportWithName reportWithName={reportWithName} remove={remove} blocked={blocked} />
+  ),
+  patientId: ({ remove, patientId, blocked }) => <PatientId patientId={patientId} remove={remove} blocked={blocked} />,
+  notificationCategory: ({ remove, notificationCategory, blocked }) => (
+    <NotificationCategory notificationCategory={notificationCategory} remove={remove} blocked={blocked} />
+  ),
+  notificationTypeId: ({ remove, notificationCategoryTypeId, notificationTypeId, blocked }) => (
+    <NotificationType
+      notificationTypeCategoryId={notificationCategoryTypeId}
+      notificationTypeId={notificationTypeId}
+      remove={remove}
+      blocked={blocked}
+    />
+  ),
 }
 
-const FilterButtons = ({ filters, remove, append }) => {
-  const { formatMessage } = useI18n()
+const FilterButtons = ({ filters, remove, append, blocked }) => {
+  const { formatMessage } = useIntl()
   return (
     <span>
       {emptyFilter(filters) ? (
@@ -75,104 +233,12 @@ const FilterButtons = ({ filters, remove, append }) => {
           .sortBy(filterKey => filtersOrdering[filterKey])
           .map((filterKey, key) => {
             const Comp = buttonMapping[filterKey]
-            return <Comp {...filters} remove={remove} append={append} key={key} />
+            if (!Comp) return null
+            return <Comp key={key} {...filters} remove={remove} append={append} blocked={blocked ?? []} />
           })
       )}
     </span>
   )
-}
-
-const buttonMapping = {
-  countryId: () => null, // we hide intentionally the country
-  stateId: ({ countryId, stateId, remove }) => <StateId countryId={countryId} stateId={stateId} remove={remove} />,
-  lgaId: ({ stateId, lgaId, remove }) => <LgaId stateId={stateId} lgaId={lgaId} remove={remove} />,
-  siteName: ({ siteName, remove }) => <SiteName siteName={siteName} remove={remove} />,
-  originSiteName: ({ originSiteName, remove }) => <OriginSiteName originSiteName={originSiteName} remove={remove} />,
-  destinationSiteName: ({ destinationSiteName, remove }) => (
-    <DestinationSiteName destinationSiteName={destinationSiteName} remove={remove} />
-  ),
-  assayId: ({ assayId, remove, append, resultCategoryGroupId }) => (
-    <AssayId assayId={assayId} remove={remove} append={append} resultCategoryGroupId={resultCategoryGroupId} />
-  ),
-  resultCategoryId: ({ resultCategoryId, assayOverride, assayId, diseaseId, remove }) => (
-    <ResultCategoryId
-      resultCategoryId={resultCategoryId}
-      assayOverride={assayOverride}
-      assayId={assayId}
-      diseaseId={diseaseId}
-      remove={remove}
-    />
-  ),
-  resultCategoryGroupId: ({ resultCategoryGroupId, assayId, assayOverride, remove, append }) => (
-    <ResultCategoryGroupId
-      resultCategoryGroupId={resultCategoryGroupId}
-      assayId={assayId}
-      assayOverride={assayOverride}
-      remove={remove}
-      append={append}
-    />
-  ),
-  consumableId: ({ consumableId, remove }) => <ConsumableId consumableId={consumableId} remove={remove} />,
-  minDate: ({ minDate, remove }) => <MinDate minDate={minDate} remove={remove} />,
-  maxDate: ({ maxDate, remove }) => <MaxDate maxDate={maxDate} remove={remove} />,
-  minExpirationDate: ({ minExpirationDate, remove }) => (
-    <MinExpirationDate minExpirationDate={minExpirationDate} remove={remove} />
-  ),
-  maxExpirationDate: ({ maxExpirationDate, remove }) => (
-    <MaxExpirationDate maxExpirationDate={maxExpirationDate} remove={remove} />
-  ),
-  reportName: ({ reportName, remove }) => <ReportName reportName={reportName} remove={remove} />,
-  externalId: ({ externalId, remove }) => <ExternalId externalId={externalId} remove={remove} />,
-  deviceName: ({ deviceName, remove }) => <DeviceName deviceName={deviceName} remove={remove} />,
-  contactStatus: ({ contactStatus, remove }) => <ContactStatus contactStatus={contactStatus} remove={remove} />,
-  contactNameOrEmail: ({ contactNameOrEmail, remove }) => (
-    <ContactNameOrEmail contactNameOrEmail={contactNameOrEmail} remove={remove} />
-  ),
-  notificationName: ({ notificationName, remove }) => (
-    <NotificationName notificationName={notificationName} remove={remove} />
-  ),
-  onlyTransfers: ({ remove }) => <OnlyTranfers remove={remove} />,
-  lotNumber: ({ lotNumber, remove }) => <LotNumber lotNumber={lotNumber} remove={remove} />,
-  hasStock: ({ remove }) => <HasStock remove={remove} />,
-  breakOutByLot: ({ remove }) => <BreakOutByLot remove={remove} />,
-  deviceApprovalId: ({ deviceApprovalId, remove }) => (
-    <DeviceApprovalId deviceApprovalId={deviceApprovalId} remove={remove} />
-  ),
-  deviceMaintenanceStatusId: ({ deviceMaintenanceStatusId, remove }) => (
-    <DeviceMaintenanceStatusId deviceMaintenanceStatusId={deviceMaintenanceStatusId} remove={remove} />
-  ),
-  deviceType: ({ deviceType, remove }) => <DeviceType deviceType={deviceType} remove={remove} />,
-  connectorStatus: ({ connectorStatus, remove }) => (
-    <ConnectorStatus connectorStatus={connectorStatus} remove={remove} />
-  ),
-  errorCode: ({ errorCode, remove }) => <ErrorCode errorCode={errorCode} remove={remove} />,
-  patientOrResearchId: ({ patientOrResearchId, remove }) => (
-    <PatientOrResearchId patientOrResearchId={patientOrResearchId} remove={remove} />
-  ),
-  sampleId: ({ sampleId, remove }) => <SampleId sampleId={sampleId} remove={remove} />,
-  reportableSiteName: ({ reportableSiteName, reportableSiteId, remove }) => (
-    <ReportableSiteName reportableSiteName={reportableSiteName} reportableSiteId={reportableSiteId} remove={remove} />
-  ),
-  reportableSiteId: ({ reportableSiteName, reportableSiteId, remove }) => (
-    <ReportableSiteId reportableSiteName={reportableSiteName} reportableSiteId={reportableSiteId} remove={remove} />
-  ),
-  sampleOriginSite: ({ sampleOriginSite, remove }) => (
-    <SampleOriginSiteId sampleOriginSite={sampleOriginSite} remove={remove} />
-  ),
-  workflowStatusId: ({ workflowStatusId, remove }) => (
-    <WorkflowStatusId workflowStatusId={workflowStatusId} remove={remove} />
-  ),
-  treatmentStatus: ({ treatmentStatus, remove }) => (
-    <TreatmentStatus treatmentStatus={treatmentStatus} remove={remove} />
-  ),
-  displayResult: ({ displayResult, remove }) => <DisplayResult displayResult={displayResult} remove={remove} />,
-  onlyReportableResults: ({ remove }) => <OnlyReportableResults remove={remove} />,
-  onlyDownloadedByReporter: ({ remove }) => <OnlyDownloadedByReporter remove={remove} />,
-  onlyTreatmentRequired: ({ remove }) => <OnlyTreatmentRequired remove={remove} />,
-  revoked: ({ revoked, remove }) => <Revoked revoked={revoked} remove={remove} />,
-  assayOverride: () => null,
-  singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
-  daysStockLeft: ({ daysStockLeft, remove }) => <DaysStockLeft daysStockLeft={daysStockLeft} remove={remove} />,
 }
 
 const Btn = ({ lbl, del }) => {
@@ -184,55 +250,62 @@ const Btn = ({ lbl, del }) => {
   )
 }
 
-const StateId = ({ countryId, stateId, remove }) => {
+const StateId = ({ countryId, stateId, remove, blocked }) => {
   const { data } = useStatesByCountry({ countryId })
   const lbl = data?.find(s => s.id === stateId)?.name
 
-  return lbl && stateId ? <Btn lbl={lbl} del={() => remove(['stateId', 'lgaId'])} /> : null
+  return lbl && stateId ? (
+    <Btn lbl={lbl} del={blocked.includes('stateId') ? undefined : () => remove(['stateId', 'lgaId'])} />
+  ) : null
 }
 
-const LgaId = ({ stateId, lgaId, remove }) => {
+const LgaId = ({ stateId, lgaId, remove, blocked }) => {
   const { data } = useLgaByState({ stateId })
   const lbl = data?.find(s => s.id === lgaId)?.name
 
-  return lbl && lgaId ? <Btn lbl={lbl} del={() => remove(['lgaId'])} /> : null
+  return lbl && lgaId ? <Btn lbl={lbl} del={blocked.includes('lgaId') ? undefined : () => remove(['lgaId'])} /> : null
 }
 
-const SiteName = ({ siteName, remove }) => {
-  const { formatMessage } = useI18n()
+const SiteName = ({ siteName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.whereSiteNameIncludes, { siteName })} del={() => remove(['siteName'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereSiteNameIncludes, { siteName })}
+      del={blocked.includes('siteName') ? undefined : () => remove(['siteName'])}
+    />
+  )
 }
 
-const OriginSiteName = ({ originSiteName, remove }) => {
-  const { formatMessage } = useI18n()
+const OriginSiteName = ({ originSiteName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
       lbl={formatMessage(messages.whereOriginSiteNameIncludes, { originSiteName })}
-      del={() => remove(['originSiteName'])}
+      del={blocked.includes('originSiteName') ? undefined : () => remove(['originSiteName'])}
     />
   )
 }
 
-const DestinationSiteName = ({ destinationSiteName, remove }) => {
-  const { formatMessage } = useI18n()
+const DestinationSiteName = ({ destinationSiteName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
       lbl={formatMessage(messages.whereDestinationSiteNameIncludes, { destinationSiteName })}
-      del={() => remove(['destinationSiteName'])}
+      del={blocked.includes('destinationSiteName') ? undefined : () => remove(['destinationSiteName'])}
     />
   )
 }
-const AssayId = ({ assayId, remove, append, resultCategoryGroupId }) => {
-  const { formatMessage } = useI18n()
+const AssayId = ({ assayId, remove, append, resultCategoryGroupId, blocked }) => {
+  const { formatMessage } = useIntl()
   const { data } = useAssayList()
   const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
 
-  const del = { del: remove ? () => remove(['assayId', 'resultCategoryId', 'resultCategoryGroupId']) : undefined } // singleAssayId has no delete option
-
   if (!data) return null
+
+  const del = { del: remove ? () => remove(['assayId', 'resultCategoryId', 'resultCategoryGroupId']) : undefined } // singleAssayId has no delete option
 
   const resultCategory = resultCategoryGroups?.filter(i => resultCategoryGroupId?.includes(i.externalId))
 
@@ -240,14 +313,18 @@ const AssayId = ({ assayId, remove, append, resultCategoryGroupId }) => {
     assayId?.map(id => (
       <Btn
         key={id}
-        del={() => {
-          if (assayId?.length > 1)
-            append({
-              assayId: pull(assayId, id),
-              resultCategoryGroupId: resultCategory.filter(i => i.assayId !== id).map(c => c.externalId),
-            })
-          else del?.del()
-        }}
+        del={
+          blocked.includes('assayId')
+            ? undefined
+            : () => {
+                if (assayId?.length > 1)
+                  append({
+                    assayId: pull(assayId, id),
+                    resultCategoryGroupId: resultCategory.filter(i => i.assayId !== id).map(c => c.externalId),
+                  })
+                else del?.del()
+              }
+        }
         lbl={formatMessage(messages[data?.find(a => a.id === id)?.i18nKey])}
       />
     ))
@@ -256,8 +333,8 @@ const AssayId = ({ assayId, remove, append, resultCategoryGroupId }) => {
   ) : null
 }
 
-const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId, remove }) => {
-  const { formatMessage } = useI18n()
+const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const { data: assays } = useAssayList()
   if (resultCategoryId && assays) {
     const rcName = assays
@@ -277,13 +354,15 @@ const ResultCategoryId = ({ resultCategoryId, assayOverride, assayId, diseaseId,
 
     const label = formatMessage(messages.withResultCategory, { resultCategoryName: name })
 
-    return <Btn lbl={label} del={() => remove(['resultCategoryId'])} />
+    return (
+      <Btn lbl={label} del={blocked.includes('resultCategoryId') ? undefined : () => remove(['resultCategoryId'])} />
+    )
   }
   return null
 }
 
-const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, remove, append }) => {
-  const { formatMessage } = useI18n()
+const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, remove, append, blocked }) => {
+  const { formatMessage } = useIntl()
 
   const { data: resultCategoryGroups } = useResultCategoryGroup(assayId, { enabled: !!assayId })
 
@@ -291,15 +370,22 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, 
     const msg = id =>
       assayOverride ? `"${startCase(assayOverride)}"` : resultCategoryGroups.find(it => it.externalId === id)?.name
 
-    const del = { del: remove ? () => remove(['resultCategoryGroupId']) : undefined }
+    const del = {
+      del: remove && !blocked.includes('resultCategoryGroupId') ? () => remove(['resultCategoryGroupId']) : undefined,
+    }
 
     return isArray(resultCategoryGroupId) ? (
       resultCategoryGroupId.map(id => (
         <Btn
-          del={() => {
-            if (resultCategoryGroupId.length > 1) append({ resultCategoryGroupId: pull(resultCategoryGroupId, id) })
-            else del.del()
-          }}
+          del={
+            blocked.includes('resultCategoryGroupId')
+              ? undefined
+              : () => {
+                  if (resultCategoryGroupId.length > 1)
+                    append({ resultCategoryGroupId: pull(resultCategoryGroupId, id) })
+                  else del.del()
+                }
+          }
           lbl={formatMessage(messages.withResultCategoryGroup, { resultCategoryGroupName: msg(id) })}
         />
       ))
@@ -313,141 +399,188 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, 
   return null
 }
 
-const ConsumableId = ({ consumableId, remove }) => {
-  const { formatMessage } = useI18n()
+const ConsumableId = ({ consumableId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const { data } = useConsumable()
 
   return data && consumableId ? (
     <Btn
       lbl={formatMessage(messages[data.find(a => a.id === consumableId).i18nKey])}
-      del={() => remove(['consumableId'])}
+      del={blocked.includes('consumableId') ? undefined : () => remove(['consumableId'])}
     />
   ) : null
 }
 
-const MinDate = ({ minDate, remove }) => {
-  const { formatMessage, format } = useI18n()
+const MinDate = ({ minDate, remove, blocked }) => {
+  const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
-  const date = format(new Date(minDate), dateFormat)
+  const del = remove && !blocked.includes('minDate') ? () => remove(['minDate']) : undefined
 
-  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={() => remove(['minDate'])} />
+  const date = format(new Date(minDate), dateFormat)
+  return <Btn lbl={formatMessage(messages.dateFrom, { date })} del={del} />
 }
 
-const MaxDate = ({ maxDate, remove }) => {
-  const { formatMessage, format } = useI18n()
+const MaxDate = ({ maxDate, remove, blocked }) => {
+  const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   if (!maxDate) return null
-  const date = format(new Date(maxDate), dateFormat)
 
-  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={() => remove(['maxDate'])} />
+  const del = remove && !blocked.includes('maxDate') ? () => remove(['maxDate']) : undefined
+
+  const date = format(new Date(maxDate), dateFormat)
+  return <Btn lbl={formatMessage(messages.dateTo, { date })} del={del} />
 }
 
-const MinExpirationDate = ({ minExpirationDate, remove }) => {
-  const { formatMessage, format } = useI18n()
+const MinExpirationDate = ({ minExpirationDate, remove, blocked }) => {
+  const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(minExpirationDate), dateFormat)
 
-  return <Btn lbl={formatMessage(messages.expDateFrom, { date })} del={() => remove(['minExpirationDate'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.expDateFrom, { date })}
+      del={blocked.includes('minExpirationDate') ? undefined : () => remove(['minExpirationDate'])}
+    />
+  )
 }
 
-const MaxExpirationDate = ({ maxExpirationDate, remove }) => {
-  const { formatMessage, format } = useI18n()
+const MaxExpirationDate = ({ maxExpirationDate, remove, blocked }) => {
+  const { formatMessage, format } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
   const date = format(new Date(maxExpirationDate), dateFormat)
 
-  return <Btn lbl={formatMessage(messages.expDateTo, { date })} del={() => remove(['maxExpirationDate'])} />
-}
-
-const ReportName = ({ reportName, remove }) => {
-  const { formatMessage } = useI18n()
-
   return (
-    <Btn lbl={formatMessage(messages.whereReportNameIncludes, { reportName })} del={() => remove(['reportName'])} />
+    <Btn
+      lbl={formatMessage(messages.expDateTo, { date })}
+      del={blocked.includes('maxExpirationDate') ? undefined : () => remove(['maxExpirationDate'])}
+    />
   )
 }
 
-const ExternalId = ({ externalId, remove }) => {
-  const { formatMessage } = useI18n()
+const ReportName = ({ reportName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
-    <Btn lbl={formatMessage(messages.whereExternalIdIncludes, { externalId })} del={() => remove(['externalId'])} />
+    <Btn
+      lbl={formatMessage(messages.whereReportNameIncludes, { reportName })}
+      del={blocked.includes('reportName') ? undefined : () => remove(['reportName'])}
+    />
   )
 }
 
-const DeviceName = ({ deviceName, remove }) => {
-  const { formatMessage } = useI18n()
+const ExternalId = ({ externalId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
-    <Btn lbl={formatMessage(messages.whereDeviceNameIncludes, { deviceName })} del={() => remove(['deviceName'])} />
+    <Btn
+      lbl={formatMessage(messages.whereExternalIdIncludes, { externalId })}
+      del={blocked.includes('externalId') ? undefined : () => remove(['externalId'])}
+    />
   )
 }
 
-const ContactStatus = ({ contactStatus, remove }) => {
-  const { formatMessage } = useI18n()
+const DeviceName = ({ deviceName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereDeviceNameIncludes, { deviceName })}
+      del={blocked.includes('deviceName') ? undefined : () => remove(['deviceName'])}
+    />
+  )
+}
+
+const ContactStatus = ({ contactStatus, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const status = formatMessage(commonDefinitions[`${contactStatus}` === '0' ? 'enabled' : 'disabled'])
 
   return (
     <Btn
       lbl={formatMessage(messages.contactEnabledStatus, { contactStatus: status })}
-      del={() => remove(['contactStatus'])}
+      del={blocked.includes('contactStatus') ? undefined : () => remove(['contactStatus'])}
     />
   )
 }
 
-const ContactNameOrEmail = ({ contactNameOrEmail, remove }) => {
-  const { formatMessage } = useI18n()
+const ContactNameOrEmail = ({ contactNameOrEmail, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
       lbl={formatMessage(messages.whoseNameOrEmailIncludes, { contactNameOrEmail })}
-      del={() => remove(['contactNameOrEmail'])}
+      del={blocked.includes('contactNameOrEmail') ? undefined : () => remove(['contactNameOrEmail'])}
     />
   )
 }
 
-const NotificationName = ({ notificationName, remove }) => {
-  const { formatMessage } = useI18n()
+const NotificationName = ({ notificationName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
       lbl={formatMessage(messages.whereNotificationNameIncludes, { notificationName })}
-      del={() => remove(['notificationName'])}
+      del={blocked.includes('notificationName') ? undefined : () => remove(['notificationName'])}
     />
   )
 }
 
-const OnlyTranfers = ({ remove }) => {
-  const { formatMessage } = useI18n()
+const OnlyTranfers = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.onlyTransfers)} del={() => remove(['onlyTransfers'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.onlyTransfers)}
+      del={blocked.includes('onlyTransfers') ? undefined : () => remove(['onlyTransfers'])}
+    />
+  )
 }
 
-const LotNumber = ({ lotNumber, remove }) => {
-  const { formatMessage } = useI18n()
+const LotNumber = ({ lotNumber, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.whereLotNumberIncludes, { lotNumber })} del={() => remove(['lotNumber'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereLotNumberIncludes, { lotNumber })}
+      del={blocked.includes('lotNumber') ? undefined : () => remove(['lotNumber'])}
+    />
+  )
 }
 
-const HasStock = ({ remove }) => {
-  const { formatMessage } = useI18n()
+const HasStock = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.hasStock)} del={() => remove(['hasStock'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.hasStock)}
+      del={blocked.includes('hasStock') ? undefined : () => remove(['hasStock'])}
+    />
+  )
 }
 
-const DaysStockLeft = ({ daysStockLeft, remove }) => {
-  const { formatMessage } = useI18n()
+const DaysStockLeft = ({ daysStockLeft, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages[daysStockLeft])} del={() => remove(['daysStockLeft'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages[daysStockLeft])}
+      del={blocked.includes('daysStockLeft') ? undefined : () => remove(['daysStockLeft'])}
+    />
+  )
 }
 
-const BreakOutByLot = ({ remove }) => {
-  const { formatMessage } = useI18n()
+const BreakOutByLot = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.breakOutByLot)} del={() => remove(['breakOutByLot'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.breakOutByLot)}
+      del={blocked.includes('breakOutByLot') ? undefined : () => remove(['breakOutByLot'])}
+    />
+  )
 }
 
-const DeviceApprovalId = ({ deviceApprovalId, remove }) => {
-  const { formatMessage } = useI18n()
+const DeviceApprovalId = ({ deviceApprovalId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const { data } = useDeviceApprovalType()
   const name = data?.find(it => it.id === deviceApprovalId)?.name
   if (deviceApprovalId && name) {
@@ -455,27 +588,32 @@ const DeviceApprovalId = ({ deviceApprovalId, remove }) => {
     return (
       <Btn
         lbl={formatMessage(messages.withDeviceApproval, { deviceApprovalName })}
-        del={() => remove(['deviceApprovalId'])}
+        del={blocked.includes('deviceApprovalId') ? undefined : () => remove(['deviceApprovalId'])}
       />
     )
   }
   return null
 }
 
-const DeviceType = ({ deviceType, remove }) => {
-  const { formatMessage } = useI18n()
+const DeviceType = ({ deviceType, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const { data } = useDeviceTypeList()
 
   if (data && deviceType) {
     const deviceTypeName = data.find(it => it.id === deviceType || it.externalId === deviceType)?.name
 
-    return <Btn lbl={formatMessage(messages.withDeviceType, { deviceTypeName })} del={() => remove(['deviceType'])} />
+    return (
+      <Btn
+        lbl={formatMessage(messages.withDeviceType, { deviceTypeName })}
+        del={blocked.includes('deviceType') ? undefined : () => remove(['deviceType'])}
+      />
+    )
   }
   return null
 }
 
-const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove }) => {
-  const { formatMessage } = useI18n()
+const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const ids = isArray(deviceMaintenanceStatusId) ? deviceMaintenanceStatusId : [deviceMaintenanceStatusId]
   return ids.map(id => (
     <Btn
@@ -483,80 +621,104 @@ const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove }) => {
       lbl={formatMessage(messages.withDeviceMaintenanceStatus, {
         deviceMaintenanceStatusName: formatMessage(messages[id]),
       })}
-      del={() => remove([`deviceMaintenanceStatusId.${id}`])}
+      del={
+        blocked.includes('deviceMaintenanceStatusId') ? undefined : () => remove([`deviceMaintenanceStatusId.${id}`])
+      }
     />
   ))
 }
 
-const ConnectorStatus = ({ connectorStatus, remove }) => {
-  const { formatMessage } = useI18n()
+const ConnectorStatus = ({ connectorStatus, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const status = formatMessage(messages[connectorStatus])
   return (
     <Btn
       lbl={formatMessage(messages.withConnectorStatus, { connectorStatus: status })}
-      del={() => remove(['connectorStatus'])}
+      del={blocked.includes('connectorStatus') ? undefined : () => remove(['connectorStatus'])}
     />
   )
 }
 
-const ErrorCode = ({ errorCode, remove }) => {
-  const { formatMessage } = useI18n()
+const ErrorCode = ({ errorCode, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.errorCode, { errorCode })} del={() => remove(['errorCode'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.errorCode, { errorCode })}
+      del={blocked.includes('errorCode') ? undefined : () => remove(['errorCode'])}
+    />
+  )
 }
 
-const PatientOrResearchId = ({ patientOrResearchId, remove }) => {
-  const { formatMessage } = useI18n()
+const PatientOrResearchId = ({ patientOrResearchId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
       lbl={formatMessage(messages.patientOrResearchId, { patientOrResearchId })}
-      del={() => remove(['patientOrResearchId'])}
+      del={blocked.includes('patientOrResearchId') ? undefined : () => remove(['patientOrResearchId'])}
+    />
+  )
+}
+const IssueTypeId = ({ issueTypeId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.issueTypeId, { issueTypeId })}
+      del={blocked.includes('issueTypeId') ? undefined : () => remove(['issueTypeId'])}
     />
   )
 }
 
-const SampleId = ({ sampleId, remove }) => {
-  const { formatMessage } = useI18n()
+const SampleId = ({ sampleId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.sampleId, { sampleId })} del={() => remove(['sampleId'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.sampleId, { sampleId })}
+      del={blocked.includes('sampleId') ? undefined : () => remove(['sampleId'])}
+    />
+  )
 }
 
-const ReportableSiteName = ({ reportableSiteName, reportableSiteId, remove }) => {
-  const { formatMessage } = useI18n()
+const ReportableSiteName = ({ reportableSiteName, reportableSiteId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const message = reportableSiteId ? messages.whereReportableSiteName : messages.whereReportableSiteNameIncludes
   return (
     <Btn
       lbl={formatMessage(message, { reportableSiteName })}
-      del={() => remove(['reportableSiteName', 'reportableSiteId'])}
+      del={
+        blocked.includes('reportableSiteName') ? undefined : () => remove(['reportableSiteName', 'reportableSiteId'])
+      }
     />
   )
 }
 
-const ReportableSiteId = ({ reportableSiteName, reportableSiteId, remove }) => {
-  const { formatMessage } = useI18n()
+const ReportableSiteId = ({ reportableSiteName, reportableSiteId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return !reportableSiteName ? (
     <Btn
       lbl={formatMessage(messages.whereReportableSiteIdIncludes, { reportableSiteId })}
-      del={() => remove(['reportableSiteId'])}
+      del={blocked.includes('reportableSiteId') ? undefined : () => remove(['reportableSiteId'])}
     />
   ) : null
 }
 
-const SampleOriginSiteId = ({ sampleOriginSite, remove }) => {
-  const { formatMessage } = useI18n()
+const SampleOriginSiteId = ({ sampleOriginSite, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
       lbl={formatMessage(messages.sampleOriginSite, { sampleOriginSiteName: sampleOriginSite })}
-      del={() => remove(['sampleOriginSite'])}
+      del={blocked.includes('sampleOriginSite') ? undefined : () => remove(['sampleOriginSite'])}
     />
   )
 }
 
-const WorkflowStatusId = ({ workflowStatusId, remove }) => {
-  const { formatMessage } = useI18n()
+const WorkflowStatusId = ({ workflowStatusId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const { data } = useWorkflowStatus()
 
   if (data) {
@@ -565,15 +727,15 @@ const WorkflowStatusId = ({ workflowStatusId, remove }) => {
     return (
       <Btn
         lbl={formatMessage(messages.withWorkflowStatus, { workflowStatusName: formatMessage(messages[wfName]) })}
-        del={() => remove(['workflowStatusId'])}
+        del={blocked.includes('workflowStatusId') ? undefined : () => remove(['workflowStatusId'])}
       />
     )
   }
   return null
 }
 
-const TreatmentStatus = ({ treatmentStatus, remove }) => {
-  const { formatMessage } = useI18n()
+const TreatmentStatus = ({ treatmentStatus, remove, blocked }) => {
+  const { formatMessage } = useIntl()
   const { data } = useTreatmentStatus()
 
   if (data) {
@@ -582,15 +744,15 @@ const TreatmentStatus = ({ treatmentStatus, remove }) => {
     return (
       <Btn
         lbl={formatMessage(messages.withTreatmentStatus, { treatmentStatusName: formatMessage(messages[treatment]) })}
-        del={() => remove(['treatmentStatus'])}
+        del={blocked.includes('treatmentStatus') ? undefined : () => remove(['treatmentStatus'])}
       />
     )
   }
   return null
 }
 
-const DisplayResult = ({ displayResult, remove }) => {
-  const { formatMessage } = useI18n()
+const DisplayResult = ({ displayResult, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
@@ -599,36 +761,114 @@ const DisplayResult = ({ displayResult, remove }) => {
           messages[`display${displayResult?.charAt(0).toUpperCase() + displayResult?.slice(1)}Results`]
         ),
       })}
-      del={() => remove(['displayResult'])}
+      del={blocked.includes('displayResult') ? undefined : () => remove(['displayResult'])}
     />
   )
 }
 
-const OnlyReportableResults = ({ remove }) => {
-  const { formatMessage } = useI18n()
+const OnlyReportableResults = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.onlyReportableResults)} del={() => remove(['onlyReportableResults'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.onlyReportableResults)}
+      del={blocked.includes('onlyReportableResults') ? undefined : () => remove(['onlyReportableResults'])}
+    />
+  )
 }
 
-const OnlyDownloadedByReporter = ({ remove }) => {
-  const { formatMessage } = useI18n()
+const OnlyDownloadedByReporter = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.onlyDownloadedByReporter)} del={() => remove(['onlyDownloadedByReporter'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.onlyDownloadedByReporter)}
+      del={blocked.includes('onlyDownloadedByReporter') ? undefined : () => remove(['onlyDownloadedByReporter'])}
+    />
+  )
 }
 
-const OnlyTreatmentRequired = ({ remove }) => {
-  const { formatMessage } = useI18n()
+const OnlyTreatmentRequired = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
-  return <Btn lbl={formatMessage(messages.onlyTreatmentRequired)} del={() => remove(['onlyTreatmentRequired'])} />
+  return (
+    <Btn
+      lbl={formatMessage(messages.onlyTreatmentRequired)}
+      del={blocked.includes('onlyTreatmentRequired') ? undefined : () => remove(['onlyTreatmentRequired'])}
+    />
+  )
 }
 
-const Revoked = ({ revoked, remove }) => {
-  const { formatMessage } = useI18n()
+const OnlyErrors = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.onlyErrors)}
+      del={blocked.includes('onlyErrors') ? undefined : () => remove(['onlyErrors'])}
+    />
+  )
+}
+
+const ReportWithName = ({ remove, reportWithName, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.reportWithName, { reportWithName })}
+      del={blocked.includes('reportWithName') ? undefined : () => remove(['reportWithName'])}
+    />
+  )
+}
+
+const PatientId = ({ patientId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.patientId, { patientId })}
+      del={blocked.includes('patientId') ? undefined : () => remove(['patientId'])}
+    />
+  )
+}
+
+const NotificationCategory = ({ notificationCategory, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const name = notificationCategories.find(i => i.id === notificationCategory)?.i18Name
+  if (name)
+    return (
+      <Btn
+        lbl={formatMessage(messages.notificationCategoryType, {
+          notificationCategoryType: formatMessage(name),
+        })}
+        del={blocked.includes('notificationCategory') ? undefined : () => remove(['notificationCategory'])}
+      />
+    )
+  return null
+}
+
+const NotificationType = ({ notificationTypeCategoryId, notificationTypeId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const { data } = useNotificationType(notificationTypeCategoryId)
+  if (data && notificationTypeId) {
+    const name = data.find(i => i.id === notificationTypeId)?.name
+    return (
+      <Btn
+        lbl={formatMessage(messages.notificationType, { notificationType: name })}
+        del={blocked.includes('notificationTypeId') ? undefined : () => remove(['notificationTypeId'])}
+      />
+    )
+  }
+  return null
+}
+
+const Revoked = ({ revoked, remove, blocked }) => {
+  const { formatMessage } = useIntl()
 
   return (
     <Btn
       lbl={formatMessage(messages.withRevoked, { revokedStatus: revoked === '0' ? 'false' : 'true' })}
-      del={() => remove(['revoked'])}
+      del={blocked.includes('revoked') ? undefined : () => remove(['revoked'])}
     />
   )
 }

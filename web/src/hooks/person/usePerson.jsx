@@ -31,7 +31,7 @@ const empty = {
   canLogIn: 0,
   disabled: 0,
   disabledOn: '',
-  jobId: '',
+  jobContextId: '',
   tags: [],
   jobFunctions: [],
   partnerId: '',

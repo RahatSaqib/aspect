@@ -49,6 +49,10 @@ const downloadEntriesResponseValidation = () => {
                 .description('When the entry was last updated in the Aspect database'),
               reportableSite: returnSiteValidationSchema(),
               laboratorySite: returnSiteValidationSchema(),
+              errorCode: Joi.string().optional().allow(null, '').description('Result error code'),
+              laboratorySiteName: Joi.string().optional().allow(null, '').description('Testing site'),
+              testEndDate: Joi.date().optional().allow(null, '').description('Date when test was concluded at the lab'),
+              resultNotes: Joi.string().optional().allow(null, '').description('Result notes'),
             })
             .concat(optionalAssayAvatarResponseValidation)
             .concat(optionalClinicalResponseResponseValidation)

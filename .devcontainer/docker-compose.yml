@@ -7,6 +7,11 @@ services:
     entrypoint: ["/bin/sh","-c"]
     command:
     - |
+      apk update && apk upgrade
+      apk add --no-cache git openssh zsh curl bash mysql-client pv
+      sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
+      git config --global --add safe.directory /app
+
       cd /app/api
       cp -n .env.example .env
       yarn install --frozen-lockfile

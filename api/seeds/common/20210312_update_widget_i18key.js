@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const dashboardWidgetsBase = require('../fixtures/dashboardWidgetsBase')
+const dashboardWidgetsBase = require('../fixtures/dashboardWidgetsCommon')
 
 module.exports = async knex => {
   /**

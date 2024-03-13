@@ -8,6 +8,7 @@ const { query } = require('../src/db')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
+const { insertSite } = require('../src/site/common/db')
 const permissionsFixture = require('./fixtures/PermissionsDefinition.json')
 const jobFunctionsFixtureDefault = require('./fixtures/jobFunctions')
 const followUpFixture = require('./fixtures/FollowUp.json')
@@ -25,7 +26,7 @@ const geneXpertResultDataSchemaHcv = require('./fixtures/geneXpertDevice/geneXpe
 const geneXpertResultDataSchemaEbola = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaEbola.json')
 const geneXpertResultDataSchemaSarsCoV2 = require('./fixtures/geneXpertDevice/geneXpertResultDataSchemaSarsCoV2.json')
 const resultTreatmentStatuses = require('./fixtures/ResultTreatmentStatus.json')
-const defaultDashboardWidgetsFixture = require('./fixtures/DashboardWidget')
+const defaultDashboardWidgetsFixture = require('./fixtures/dashboardWidgetsCommon')
 const upsertPartnerData = require('./common/upsert_partner_data')
 const {
   deviceApprovalToId,
@@ -144,32 +145,11 @@ async function commonUpserts(
   await upsertJobFunctionFixture(knex, _.get(fixtures, 'jobFunctions') || defaultJobFunctionsFixture, partnerId)
 
   const { id: jobFunctionIdAdmin } = await knex('JobFunction').where({ externalId: 'admin', partnerId }).first()
-  let { id: jobIdAdmin } =
-    (await knex('Job')
-      .where({
-        personId: adminPersonId,
-        jobFunctionId: jobFunctionIdAdmin,
-      })
-      .first('id')) || {}
-  if (!jobIdAdmin) {
-    ;[jobIdAdmin] = await knex('Job').insert({
-      personId: adminPersonId,
-      jobFunctionId: jobFunctionIdAdmin,
-    })
-  }
-  const { id: jobContextIdAdmin } =
-    (await knex('JobContext')
-      .where({
-        jobId: jobIdAdmin,
-        geographyId,
-      })
-      .first('id')) || {}
-  if (!jobContextIdAdmin) {
-    await knex('JobContext').insert({
-      jobId: jobIdAdmin,
-      geographyId,
-    })
-  }
+  await utils.upsertSingle(knex, 'JobContext', {
+    personId: adminPersonId,
+    jobFunctionId: jobFunctionIdAdmin,
+    geographyId,
+  })
 
   if (deviceApiToken) {
     await upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken)
@@ -247,19 +227,7 @@ async function upsertDemoUsersPerJobFunction(
         ...commonPersonFields,
       })
     }
-    const job = await knex('Job').where({ personId, jobFunctionId }).first()
-    let jobId = job?.id
-    if (!jobId) {
-      ;[jobId] = await knex('Job').insert({ personId, jobFunctionId })
-    }
-    const jonContext = await knex('JobContext').where({ jobId, geographyId }).first()
-    const jonContextId = jonContext?.id
-    if (!jonContextId) {
-      await knex('JobContext').insert({
-        jobId,
-        geographyId,
-      })
-    }
+    await utils.upsertSingle(knex, 'JobContext', { personId, jobFunctionId, geographyId })
   })
   await Promise.all(insertUsers)
 }
@@ -399,7 +367,7 @@ async function upsertJobFunctionPermission(knex, jobFunctionId, jobPermissions, 
 }
 
 async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, deviceApiToken) {
-  const device = await ensureCountryLevelInformationSystemExists(
+  const { device, geographyId } = await ensureCountryLevelInformationSystemExists(
     knex,
     countryId,
     partnerId,
@@ -415,7 +383,7 @@ async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, devi
     token: deviceApiToken,
     revoked: 0,
     partnerId,
-    geographyId: device.geographyId,
+    geographyId,
     deviceId: device.id,
   }
   const { id: gxAlertDeviceApiKeyId } =
@@ -454,16 +422,16 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
     .whereNull('stateId', 'lgaId')
     .first('id as countryGeographyId')
   const device =
-    (await knex('Device')
-      .where({
-        deviceTypeId,
-        partnerId,
-        geographyId: countryGeographyId,
-      })
+    (await knex('Device as d')
+      .join('Site as s', 'd.siteId', 's.id')
+      .where('d.deviceTypeId', deviceTypeId)
+      .where('d.partnerId', partnerId)
+      .where('s.geographyId', countryGeographyId)
       .first()) || {}
+
   let { siteId } = device
   if (!siteId) {
-    ;[siteId] = await knex('Site').insert({
+    ;[siteId] = await insertSite(knex, {
       ...auditFields,
       name,
       shortName: name.substr(0, 45),
@@ -480,7 +448,6 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
       name,
       deviceApprovalId: await deviceApprovalToId('approved'),
       partnerId,
-      geographyId: countryGeographyId,
       siteId,
       lastPingOn: new Date(),
       lastSeenOn: new Date(),
@@ -488,7 +455,7 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
     })
     device.id = deviceId
   }
-  return device
+  return { device, geographyId: countryGeographyId }
 }
 
 async function upsertGeneXpertDeviceTypeAndAssays(
@@ -1343,12 +1310,14 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
     }
     if (!_.isEmpty(person.jobFunctions)) {
       await Promise.each(person.jobFunctions, async jobFunctionName => {
-        const existingJob = await knex('Job').where({ personId, jobFunctionId: jobFunctions[jobFunctionName] }).first()
-        if (!existingJob) {
-          const [jobId] = await knex('Job').insert({
+        const jobFunctionId = jobFunctions[jobFunctionName]
+        const existingJobContext = await knex('JobContext')
+          .where({
             personId,
-            jobFunctionId: jobFunctions[jobFunctionName],
+            jobFunctionId,
           })
+          .first()
+        if (!existingJobContext) {
           if (
             jobFunctionName === 'Lab User' &&
             person.sites &&
@@ -1356,7 +1325,8 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
             siteIds[person.sites[0].shortName]
           ) {
             await knex('JobContext').insert({
-              jobId,
+              personId,
+              jobFunctionId,
               siteId: siteIds[person.sites[0].shortName],
             })
           } else if (!_.isEmpty(person.geographies)) {
@@ -1386,7 +1356,8 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
                 })
                 .first()
               await knex('JobContext').insert({
-                jobId,
+                personId,
+                jobFunctionId,
                 geographyId: jobGeographyId,
               })
             })
@@ -1401,11 +1372,7 @@ async function baseGxAlertMigration(variables = defaultGxAlertMigrationVariables
 
 async function removeJobFunctions(knex, jobFunctionsToDelete) {
   await Promise.each(jobFunctionsToDelete, async ({ id }) => {
-    const jobIds = await knex('Job').where('jobFunctionId', id).pluck('id')
-    if (jobIds.length > 0) {
-      await knex('JobContext').whereIn('jobId', jobIds).delete()
-      await knex('Job').whereIn('id', jobIds).delete()
-    }
+    await knex('JobContext').where('jobFunctionId', id).delete()
     await knex('JobFunctionDashboardWidget').where('jobFunctionId', id).delete()
     await knex('JobFunctionPermission').where('jobFunctionId', id).delete()
     await knex('JobFunctionReport').where('jobFunctionId', id).delete()
@@ -1529,7 +1496,7 @@ async function seedLabClinicFixture(
           ...siteData,
         })
     } else {
-      await knex('Site').insert(siteData)
+      await insertSite(knex, siteData)
     }
   })
 
@@ -1586,7 +1553,7 @@ async function seedLabClinicFixture(
           ...siteData,
         })
     } else {
-      ;[siteId] = await knex('Site').insert(siteData)
+      ;[siteId] = await insertSite(knex, siteData)
     }
     siteData.id = siteId
 
@@ -1602,7 +1569,6 @@ async function seedLabClinicFixture(
           if (_.isEmpty(deviceData)) {
             const lastDeviceActivity = now
             deviceData.partnerId = partnerId
-            deviceData.geographyId = siteData.geographyId
             deviceData.siteId = siteData.id
             const { id: deviceTypeId } = await knex('DeviceType')
               .where('externalId', device.deviceTypeId || 'CepheidGeneXpert')
@@ -1662,8 +1628,18 @@ async function upsertDashboardWidgets(
 
   let widgets = dashboardWidgetJson.stat
 
+  // Remove widgets that are not in the fixture
+  const widgetsToKeepIds = _.map(widgets, w => w.externalId)
+  const widgetsToRemove = await knex('DashboardWidget').whereNotIn('externalId', widgetsToKeepIds).pluck('id')
+  await knex('JobFunctionDashboardWidget').whereIn('widgetId', widgetsToRemove).del()
+  await knex('DashboardWidgetStat').whereIn('dashboardWidgetId', widgetsToRemove).del()
+  await knex('DashboardWidgetTarget').whereIn('dashboardWidgetId', widgetsToRemove).del()
+  await knex('DashboardWidget').whereIn('id', widgetsToRemove).del()
+
+  // Get widgets to insert/update based on whitelist
   if (whitelist) widgets = _.filter(dashboardWidgetJson.stat, widget => _.indexOf(whitelist, widget.externalId) > -1)
 
+  // Iterate over all whitelisted widgets and insert/update
   await Promise.all(
     _.map(widgets, async widget => {
       // insert or update the widget itself
@@ -1842,7 +1818,7 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
       siteId = existingSite.id
       await knex('Site').where('id', siteId).update(siteData)
     } else {
-      ;[siteId] = await knex('Site').insert(siteData)
+      ;[siteId] = await insertSite(knex, siteData)
     }
     siteData.id = siteId
 
@@ -1853,7 +1829,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
             .where({ partnerId, serial: device.serial })
             .first(
               'id',
-              'geographyId',
               'siteId',
               'deviceTypeId',
               'name',
@@ -1870,7 +1845,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
           if (!existingDevice) {
             ;[deviceId] = await knex('Device').insert({
               partnerId,
-              geographyId: siteGeographyId,
               siteId,
               deviceTypeId,
               deviceApprovalId: await deviceApprovalToId('approved'),
@@ -1893,7 +1867,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
               deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
             }
             if (
-              existingDevice.geographyId !== siteGeographyId ||
               existingDevice.siteId !== siteId ||
               existingDevice.deviceTypeId !== deviceTypeId ||
               existingDevice.name !== device.name ||
@@ -1906,7 +1879,6 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
               await knex('Device')
                 .where('id', existingDevice.id)
                 .update({
-                  geographyId: siteGeographyId,
                   siteId,
                   deviceTypeId: await deviceTypeToId(device.deviceType),
                   name: device.name,
@@ -1951,6 +1923,40 @@ async function upsertSites(knex, adminId, partnerId, country, statesByName, site
   })
 }
 
+const createClientDeviceApiKey = async (knex, data) => {
+  const { deviceTypePayload, devicePayload, deviceApiKeyPayload } = data
+
+  const [deviceTypeId] = await knex('DeviceType').insert(deviceTypePayload)
+
+  const [deviceId] = await knex('Device').insert({
+    ...devicePayload,
+    deviceTypeId,
+  })
+
+  const now = new Date()
+
+  return knex('DeviceApiKey').insert({
+    ...deviceApiKeyPayload,
+    deviceId,
+    revoked: false,
+    createdOn: now,
+    updatedOn: now,
+  })
+}
+
+async function getOrInsertGeography(knex, countryId) {
+  const geography = await knex('Geography').select('id').where({ countryId, stateId: null, lgaId: null }).first()
+
+  let geographyId
+  if (geography) {
+    geographyId = geography.id
+  } else {
+    const [newId] = await knex('Geography').insert({ countryId }).returning('id')
+    geographyId = newId
+  }
+  return geographyId
+}
+
 module.exports = {
   commonUpserts,
   upsertGxAlertDevice,
@@ -1970,4 +1976,6 @@ module.exports = {
   upsertPermissionFixture,
   getStatesByName,
   upsertGeography,
+  createClientDeviceApiKey,
+  getOrInsertGeography,
 }

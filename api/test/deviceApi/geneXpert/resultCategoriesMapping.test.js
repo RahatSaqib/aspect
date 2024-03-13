@@ -3,6 +3,7 @@ const {
   mapResultCategory2,
   parseResultText,
   getDetectedResistanceCategoryTypes,
+  getBacterialLoad,
 } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const { splitResultTextValues } = require('../../../src/plugin/deviceType/GxConnect/resultCategories/utils')
 
@@ -309,32 +310,56 @@ describe('Result Text Parsing', () => {
 
 describe('Detected Resistancies Calculation', () => {
   it('Should get all the category types of the resistancies that were detected', () => {
-    assert.deepEqual(
-      getDetectedResistanceCategoryTypes(
-        '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
-      ),
-      ['INH']
+    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(
+      '|MTB @label_result_detected|Medium INH Resistance @label_result_detected|||FLQ Resistance @label_result_indeterminate|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
     )
+    assert.deepEqual(detectedResistance, ['INH'])
+    assert.deepEqual(allResistances, {
+      INH: 'Detected',
+      FLQ: 'Indeterminate',
+      AMK: 'Error',
+      KAN: 'NotDetected',
+      CAP: 'NotDetected',
+      ETH: 'NotDetected',
+    })
   })
 
   it('Should return an empty array if no resistances were detected', () => {
-    assert.isEmpty(
-      getDetectedResistanceCategoryTypes(
-        '|MTB @label_result_detected|Medium INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
-      )
+    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(
+      '|MTB @label_result_detected|INH Resistance @label_result_not_detected|||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_not_detected'
     )
+    assert.isEmpty(detectedResistance)
+    assert.deepEqual(allResistances, {
+      INH: 'NotDetected',
+      FLQ: 'NotDetected',
+      AMK: 'Error',
+      KAN: 'NotDetected',
+      CAP: 'Indeterminate',
+      ETH: 'NotDetected',
+    })
   })
 
   it('Should not crash if invalid categories are present', () => {
-    assert.deepEqual(
-      getDetectedResistanceCategoryTypes(
-        '|MTB @label_result_detected|Medium A_RESISTANCE_ANYONE_KNOWS Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
-      ),
-      ['FLQ']
+    const { detectedResistance } = getDetectedResistanceCategoryTypes(
+      '|MTB @label_result_detected|Medium A_RESISTANCE_ANYONE_KNOWS Resistance @label_result_detected|||FLQ Resistance @label_result_detected|AMK Resistance @label_result_error|KAN Resistance @label_result_not_detected|CAP Resistance @label_result_not_detected|ETH Resistance @label_result_not_detected'
     )
+    assert.deepEqual(detectedResistance, ['FLQ'])
   })
 
   it('Should not crash if result text does not include resistancies', () => {
-    assert.isEmpty(getDetectedResistanceCategoryTypes('|MTB @label_result_detected'))
+    const { detectedResistance } = getDetectedResistanceCategoryTypes('|MTB @label_result_detected')
+    assert.isEmpty(detectedResistance)
   })
+})
+
+describe('Bacterial Load', () => {
+  assert.equal(undefined, getBacterialLoad('MTB NOT DETECTED||'))
+  assert.equal(
+    'Very Low',
+    getBacterialLoad(
+      'MTB @label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low|Rif Resistance @label_result_not_detected|'
+    )
+  )
+  assert.equal('Low', getBacterialLoad('MTB DETECTED LOW||RIF Resistance NOT DETECTED'))
+  assert.equal('Medium', getBacterialLoad('MTB DETECTED MEDIUM|Rif Resistance NOT DETECTED|'))
 })

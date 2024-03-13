@@ -7,7 +7,10 @@ const {
   ACKNOWLEDGED,
   NOT_POSSIBLE_FOLLOW_UP_TYPE,
 } = require('./common/logic')
-const { updateResultWorkflowStatusByResultId } = require('./updateWorkflowStatus')
+const {
+  updateResultWorkflowStatusByResultId,
+  updateNotPossibleWorkflowStatusByResultId,
+} = require('./updateWorkflowStatus')
 const { getConstraints } = require('../../auth/constraints')
 const { resultTreatmentStatusToId, resultWorkflowStatusToId } = require('../../shared/dictionary')
 const {
@@ -30,6 +33,8 @@ const {
   updateResultWithResultWorkflowLog,
   updateMostRecentResultFollowUp,
   getFollowUpsNotPossibleByResultById,
+  updateResultFollowUp,
+  deleteResultFollowUpTreatment,
 } = require('./common/db')
 const { getAcknowledgementsByResultIds } = require('../entries/result/common/db')
 
@@ -212,9 +217,18 @@ async function clinicalResponse(request) {
       payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_FIELD_NAME),
       fuv => fuv.clientTime
     ).reverse()[0]
+
     if (mostRecentValueCaptured) {
       resultEntry = await showResult(resultId, dataConstraints)
     }
+
+    const notPossibleReasonValueCaptured = _.sortBy(
+      payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_REASON_FIELD_NAME),
+      fuv => fuv.clientTime
+    ).reverse()[0]
+
+    const followUpNotPossibleExist = await getFollowUpsNotPossibleByResultById(resultId)
+
     if (mostRecentNotPossibleValueCaptured) {
       if (mostRecentNotPossibleValueCaptured.value) {
         // As long as there is no treatment captured afterwards that would invalidate notPossible?
@@ -229,15 +243,10 @@ async function clinicalResponse(request) {
           !mostRecentTreatmentValueCaptured ||
           mostRecentTreatmentValueCaptured.clientTime <= mostRecentNotPossibleValueCaptured.clientTime
         ) {
-          const notPossibleReasonValueCaptured = _.sortBy(
-            payload.filter(fuv => fuv.fieldName === NOT_POSSIBLE_REASON_FIELD_NAME),
-            fuv => fuv.clientTime
-          ).reverse()[0] || {
+          const notPossibleReasonValue = notPossibleReasonValueCaptured || {
             value: null,
             clientTime: mostRecentNotPossibleValueCaptured.clientTime,
           }
-
-          const followUpNotPossibleExist = await getFollowUpsNotPossibleByResultById(resultId)
 
           if (_.isEmpty(followUpNotPossibleExist)) {
             const followUp = await getFollowUpByExternalId(NOT_POSSIBLE_FOLLOW_UP_TYPE)
@@ -251,12 +260,16 @@ async function clinicalResponse(request) {
               currentUserId,
               mostRecentNotPossibleValueCaptured.clientTime
             )
+
             await flagResult(
               resultId,
               currentUserId,
-              notPossibleReasonValueCaptured.value,
+              notPossibleReasonValue.value,
               mostRecentNotPossibleValueCaptured.clientTime
             )
+
+            // delete follow up treatment
+            await deleteResultFollowUpTreatment(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
           }
           resultEntry = await showResult(resultId, dataConstraints)
         }
@@ -265,6 +278,16 @@ async function clinicalResponse(request) {
         await unflagResult(resultId, currentUserId, mostRecentNotPossibleValueCaptured.clientTime)
         resultEntry = await showResult(resultId, dataConstraints)
       }
+    }
+
+    if (followUpNotPossibleExist && notPossibleReasonValueCaptured) {
+      await updateResultFollowUp(followUpNotPossibleExist.resultFollowUpId, notPossibleReasonValueCaptured.clientTime)
+      await flagResult(
+        resultId,
+        currentUserId,
+        notPossibleReasonValueCaptured.value,
+        notPossibleReasonValueCaptured.clientTime
+      )
     }
     const resultFollowUps = await getFollowUpsOfResultById(resultId)
     const latestTreatment =
@@ -308,7 +331,6 @@ const PURGED_EXTERNALID = 'Purged'
 const DELIVERED_EXTERNALID = 'Delivered'
 
 async function flagResult(resultId, currentUserId, reason, date) {
-  const resultWorkflowLog = await getLatestResultWorkflowLog(resultId)
   const flaggedId = await resultWorkflowStatusToId(FLAGGED_EXTERNALID)
   const resultWorkflowLogEntry = {
     resultId,
@@ -317,11 +339,7 @@ async function flagResult(resultId, currentUserId, reason, date) {
     reason,
     changedOn: date,
   }
-  const errorMessage = await updateResultWorkflowStatusByResultId(
-    resultWorkflowLogEntry,
-    date,
-    resultWorkflowLog?.resultWorkflowChangedOn
-  )
+  const errorMessage = await updateNotPossibleWorkflowStatusByResultId(resultWorkflowLogEntry)
   if (errorMessage) {
     return Boom.badRequest(errorMessage)
   }

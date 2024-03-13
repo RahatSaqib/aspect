@@ -1,15 +1,12 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import identity from 'lodash/identity'
 import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { Link } from 'react-router-dom'
 import { compose, setPropTypes, pure } from 'recompose'
-import styles from './ReadOnlyField.css'
+import styles from './ReadOnlyField.module.css'
 
-const cssClasses = classnames.bind(styles)
-
-export const readOnlyFieldPropTypes = {
+const readOnlyFieldPropTypes = {
   label: PropTypes.string.isRequired,
   value: PropTypes.any,
   lg: PropTypes.bool,
@@ -19,7 +16,7 @@ export const readOnlyFieldPropTypes = {
 
 const enhance = compose(pure, setPropTypes(readOnlyFieldPropTypes))
 
-export const ReadOnlyField = ({
+const ReadOnlyField = ({
   label,
   value,
   lg,
@@ -30,26 +27,24 @@ export const ReadOnlyField = ({
   nullText = '-',
 }) =>
   label && (
-    <div className={cssClasses('Container', { 'Container--large': lg })}>
+    <div className={`${styles.Container} ${lg ? styles.Container__large : ''}`}>
       {/* eslint-disable jsx-a11y/label-has-for */}
       <label
         htmlFor={label.replace(' ', '_')}
-        className={cssClasses('Container__Label', {
-          'Container__Label--hidden': hideLabel,
-        })}
+        className={`${styles.Container__Label} ${hideLabel ? styles.Container__Label__hidden : ''}`}
       >
         {label}
       </label>
       {/* eslint-enable jsx-a11y/label-has-for */}
-      <div id={label.replace(' ', '_')} className={cssClasses('Container__Value')}>
+      <div id={label.replace(' ', '_')} className={styles.Container__Value}>
         {!value ? nullText : format ? format(value) : value}
         {to && (
-          <Link to={to} className={cssClasses('Container__Link')}>
+          <Link to={to} className={styles.Container__Link}>
             <FaExternalLink />
           </Link>
         )}
         {linkButton && (
-          <Link to={linkButton.to || '#'} className={cssClasses('button')}>
+          <Link to={linkButton.to || '#'} className={styles.button}>
             {linkButton.text}
           </Link>
         )}

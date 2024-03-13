@@ -1,22 +1,18 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import endOfMonth from 'date-fns/endOfMonth'
 import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import filter from 'lodash/filter'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
-import { formatDataByGraphType } from '../../../components/Graphs/Helpers/Formatters'
-import messages from '../../../components/Graphs/intlMessages'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
-import { getWhitelistedAssays } from '../../../utils/utils/graph'
-import ErrorBoundary from '../../ErrorBoundary'
-import Loading from '../../Loading'
-import styles from '../graphStyles.css'
+import { formatDataByGraphType, Loading } from '../../index'
+import messages from '../graphMessages'
+import styles from '../graphStyles.module.css'
 import {
   prepAssaysForParams,
   getAverageFromData,
@@ -24,10 +20,9 @@ import {
   genLabel,
   prepParamsForEndPoint,
   negateTimeZoneOffset,
+  getMinMaxDateFromMonthString,
 } from '../graphUtils'
-import { DonutGraph, BarGraph } from '../index'
-
-const cssClasses = classnames.bind(styles)
+import { DonutGraph, ColumnGraph } from '../index'
 
 const assays = [
   'abbottM2000DBSHivVL',
@@ -40,13 +35,23 @@ const assays = [
   'ReporterHivVL',
 ]
 
+const getWhitelistedAssays = ({ assays, assaysFromState }) => {
+  const allowed = []
+  if (assays && assays.length > 0) {
+    assays.map(a =>
+      assaysFromState.filter(({ externalId, hasResults }) => externalId === a && hasResults && allowed.push(a))
+    )
+  }
+  return allowed
+}
+
 const endPointParams = {
   minDate: startOfMonth(subMonths(new Date(), 12)),
   maxDate: endOfMonth(subMonths(new Date(), 1)),
 }
 
 const TreatmentStatusGraph = ({ assaysFromState }) => {
-  const { formatMessage, format } = useI18n()
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
@@ -133,89 +138,86 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
   return isLoading ? (
     <Loading />
   ) : (
-    <ErrorBoundary>
-      <Grid container className={cssClasses('Graph_Container')}>
-        <Grid item xs={12}>
-          <Card>
-            <CardHeader title={formatMessage(graphMessages.treatmentGraphStatusMonthly)} />
-            <CardContent>
-              <Grid container spacing={1} className={cssClasses('Graph_Content')}>
-                <Grid item xs={12} md={12} lg={2}>
-                  <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                    <Grid item xs={12} md={12} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
-                      <FormControlLabel
-                        label={formatMessage(graphMessages.showValuesLabel)}
-                        control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
-                      />
-                    </Grid>
-                  </Grid>
-                </Grid>
-                <Grid item xs={12} md={12} lg={10}>
-                  <Grid container>
-                    {barData.data && barData.data.length ? (
-                      <Grid item xs={12} md={8}>
-                        <BarGraph
-                          data={barData.data}
-                          graphId="treatmentStatusMonthly"
-                          xField="month"
-                          yField="value"
-                          seriesField="type"
-                          showLabel={showLabel}
-                          isPercentage
-                          onReady={plot => {
-                            plot.on('plot:click', evt => {
-                              const base = 'yyyy-MM-dd'
-                              const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
-
-                              const params = {
-                                treatmentStatus:
-                                  evt.data.data.id === 'NotConfirmed' ? 'AwaitingTreatment' : 'OnTreatment',
-                                maxDate: format(endOfMonth(parsedDate), base),
-                                minDate: format(startOfMonth(parsedDate), base),
-                              }
-                              addFilter({ ...params }, '/browse/result')
-                              navigate('/browse/result')
-                            })
-                          }}
-                        />
-                      </Grid>
-                    ) : null}
-                    {donutData.data && donutData.data.length ? (
-                      <Grid item xs={12} md={4} lg={4}>
-                        <DonutGraph
-                          data={donutData.data}
-                          total={donutData.total}
-                          graphId="treatmentStatusMonthlyPie"
-                          graphTitle={[
-                            formatMessage(graphMessages.treatmentStatusTotalTitle)
-                              .split(' ')
-                              .splice(
-                                0,
-                                Math.ceil(formatMessage(graphMessages.treatmentStatusTotalTitle).split(' ').length / 2)
-                              )
-                              .join(' '),
-                            formatMessage(graphMessages.treatmentStatusTotalTitle)
-                              .split(' ')
-                              .splice(
-                                Math.ceil(formatMessage(graphMessages.treatmentStatusTotalTitle).split(' ').length / 2)
-                              )
-                              .join(' '),
-                          ].join('<br/>')} // "Average Monthly<br/>Test Performed"
-                          legend={false}
-                          showLabel={showLabel}
-                        />
-                      </Grid>
-                    ) : (
-                      <Loading />
-                    )}
+    <Grid container className={styles.Graph_Container}>
+      <Grid item xs={12}>
+        <Card>
+          <CardHeader title={formatMessage(graphMessages.treatmentGraphStatusMonthly)} />
+          <CardContent>
+            <Grid container spacing={1} className={styles.Graph_Content}>
+              <Grid item xs={12} md={12} lg={2}>
+                <Grid container spacing={2} className={styles.Graph_Content_Container}>
+                  <Grid item xs={12} md={12} lg={12} className={styles.Graph_Content_ShowLabel}>
+                    <FormControlLabel
+                      label={formatMessage(graphMessages.showValuesLabel)}
+                      control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
+                    />
                   </Grid>
                 </Grid>
               </Grid>
-            </CardContent>
-          </Card>
-        </Grid>
+              <Grid item xs={12} md={12} lg={10}>
+                <Grid container>
+                  {barData.data && barData.data.length ? (
+                    <Grid item xs={12} md={8}>
+                      <ColumnGraph
+                        data={barData.data}
+                        graphId="treatmentStatusMonthly"
+                        xField="month"
+                        yField="value"
+                        seriesField="type"
+                        showLabel={showLabel}
+                        isPercentage
+                        onReady={plot => {
+                          plot.on('plot:click', evt => {
+                            const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
+
+                            const params = {
+                              treatmentStatus:
+                                evt.data.data.id === 'NotConfirmed' ? 'AwaitingTreatment' : 'OnTreatment',
+                              minDate,
+                              maxDate,
+                              displayResult: 'actual',
+                            }
+                            addFilter({ ...params }, '/browse/result')
+                            navigate('/browse/result')
+                          })
+                        }}
+                      />
+                    </Grid>
+                  ) : null}
+                  {donutData.data && donutData.data.length ? (
+                    <Grid item xs={12} md={4} lg={4}>
+                      <DonutGraph
+                        data={donutData.data}
+                        total={donutData.total}
+                        graphId="treatmentStatusMonthlyPie"
+                        graphTitle={[
+                          formatMessage(graphMessages.treatmentStatusTotalTitle)
+                            .split(' ')
+                            .splice(
+                              0,
+                              Math.ceil(formatMessage(graphMessages.treatmentStatusTotalTitle).split(' ').length / 2)
+                            )
+                            .join(' '),
+                          formatMessage(graphMessages.treatmentStatusTotalTitle)
+                            .split(' ')
+                            .splice(
+                              Math.ceil(formatMessage(graphMessages.treatmentStatusTotalTitle).split(' ').length / 2)
+                            )
+                            .join(' '),
+                        ].join('<br/>')} // "Average Monthly<br/>Test Performed"
+                        showLabel={showLabel}
+                      />
+                    </Grid>
+                  ) : (
+                    <Loading />
+                  )}
+                </Grid>
+              </Grid>
+            </Grid>
+          </CardContent>
+        </Card>
       </Grid>
-    </ErrorBoundary>
+    </Grid>
   )
 }
 

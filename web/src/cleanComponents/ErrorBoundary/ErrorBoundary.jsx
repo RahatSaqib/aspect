@@ -1,16 +1,8 @@
 import React from 'react'
 import * as Sentry from '@sentry/react'
 import { ErrorBoundary } from 'react-error-boundary'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../hooks/useI18n'
-
-const messages = defineMessages({
-  errorBoundaryMessage: {
-    id: 'pages.errorBoundary.message',
-    defaultMessage:
-      "Oops! Something went wrong. Our team has been notified, and we're working to fix the issue. Please try again later. If the problem persists, contact our support team and provide them with the folowing error:",
-  },
-})
+import { useIntl } from 'react-intl'
+import messages from '../../messages/allMessages'
 
 const errorStyle = {
   color: 'red',
@@ -29,7 +21,7 @@ function ErrorFallback({ error }) {
 }
 
 function ErrorFallbackProd({ error }) {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <pre style={errorStyle}>
       <p>{formatMessage(messages.errorBoundaryMessage)}</p>

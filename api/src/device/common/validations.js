@@ -35,7 +35,11 @@ const listWorkloadRequestSchema = {
       'lastPingOn',
       'firstResultConductedOn',
       'lastResultConductedOn',
-      'totalTests'
+      'total',
+      'firstResultEndedOn',
+      'lastResultEndedOn',
+      'lgaName',
+      'stateName'
     ),
   },
 }
@@ -277,6 +281,7 @@ const deviceDetailsResponseFields = Joi.object()
     configurationData: Joi.object().allow('', null).description('Configuration data for the device'),
     notes: Joi.string().allow('', null).description('Any notes that were added to the device'),
     serial: Joi.string().allow('', null).description('The serial number of the device'),
+    moduleBayCapacity: Joi.number().required().description('The module bay capacity of the device'),
     approval: Joi.string().required().description('The current approval status of the device'),
     maintenanceStatus: Joi.string().allow('', null).description('The current maintenance status of the device'),
     maintenanceStatusI18nKey: Joi.string()
@@ -286,6 +291,9 @@ const deviceDetailsResponseFields = Joi.object()
       .allow('', null)
       .description('The default name of the current maintenance status of the device'),
     maintenanceStatusNotes: Joi.string().allow('', null).description('The notes of the last the maintenance status'),
+    expectedBackOnline: Joi.string()
+      .allow('', null)
+      .description('The expected back online of the last the maintenance status'),
     maintenanceStatusActive: Joi.number().allow(null).description('Whether the device is active or not'),
     maintenanceStatusManuallySet: Joi.number().allow(null).description('Whether the device status is manually set'),
     approvalToken: Joi.string().required().description('The external ID of the approval'),
@@ -319,6 +327,10 @@ const deviceDetailsResponseFields = Joi.object()
     calibrationNotes: Joi.string().allow('', null).description('Notes about the last calibration'),
     warrantyDueDate: Joi.date().allow(null).description('Latest warranty due date'),
     warrantyNotes: Joi.string().allow('', null).description('Notes on the latest warranty'),
+    stickerInstrumentSerial: Joi.string().allow('', null).description('Cepheid sticker instrument serial'),
+    instrumentModel: Joi.string().allow('', null).description('Cepheid instrument model'),
+    softwareType: Joi.string().allow('', null).description('Cepheid software type'),
+    isDaisyChained: Joi.bool().allow('', null).description('Determines if the instrument is daisy chained'),
   })
 module.exports = {
   listWorkloadRequestSchema,

@@ -36,8 +36,7 @@
       "i18nKeyCaption": "MWRepeatTestI8nCaptionKey",
       "gxAlertDbColumn": "RepeatTest",
       "completionWeight": 5,
-      "payloadOriginPath": "data.customFieldData.1.value",
-      "payloadDestinationPath": "patient.RepeatTest"
+      "payloadOriginPath": "data.customFieldData.1.value"
     },
     {
       "id": 2,
@@ -70,8 +69,7 @@
       "i18nKeyCaption": "MWPatientGenderI8nCaptionKey",
       "gxAlertDbColumn": "PatientGender",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.2.value",
-      "payloadDestinationPath": "patient.PatientGender"
+      "payloadOriginPath": "data.customFieldData.2.value"
     },
     {
       "id": 3,
@@ -96,8 +94,7 @@
       "i18nKeyCaption": "MWPatientAgeI8nCaptionKey",
       "gxAlertDbColumn": "PatientAge",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.3.value",
-      "payloadDestinationPath": "patient.PatientAge"
+      "payloadOriginPath": "data.customFieldData.3.value"
     },
     {
       "id": 4,
@@ -130,8 +127,7 @@
       "i18nKeyCaption": "MWHivStatusI8nCaptionKey",
       "gxAlertDbColumn": "HivStatus",
       "completionWeight": 5,
-      "payloadOriginPath": "data.customFieldData.4.value",
-      "payloadDestinationPath": "patient.HivStatus"
+      "payloadOriginPath": "data.customFieldData.4.value"
     },
     {
       "id": 5,
@@ -147,8 +143,7 @@
       "i18nKeyCaption": "MWRequestorNameI8nCaptionKey",
       "gxAlertDbColumn": "RequestorName",
       "completionWeight": 4,
-      "payloadOriginPath": "data.customFieldData.5.value",
-      "payloadDestinationPath": "patient.RequestorName"
+      "payloadOriginPath": "data.customFieldData.5.value"
     },
     {
       "id": 6,
@@ -164,8 +159,7 @@
       "i18nKeyCaption": "MWRequestorPhoneI8nCaptionKey",
       "gxAlertDbColumn": "RequestorPhone",
       "completionWeight": 5,
-      "payloadOriginPath": "data.customFieldData.6.value",
-      "payloadDestinationPath": "patient.RequestorPhone"
+      "payloadOriginPath": "data.customFieldData.6.value"
     },
     {
       "id": 7,
@@ -233,8 +227,7 @@
       "i18nKeyCaption": "MWSpecimenTypeI8nCaptionKey",
       "gxAlertDbColumn": "MWSpecimenType",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.7.value",
-      "payloadDestinationPath": "patient.MWSpecimenType"
+      "payloadOriginPath": "data.customFieldData.7.value"
     },
     {
       "id": 8,
@@ -262,8 +255,7 @@
       "i18nKeyCaption": "MWTreatmentHistoryI8nCaptionKey",
       "gxAlertDbColumn": "MWTreatmentHistory",
       "completionWeight": 5,
-      "payloadOriginPath": "data.customFieldData.8.value",
-      "payloadDestinationPath": "patient.MWTreatmentHistory"
+      "payloadOriginPath": "data.customFieldData.8.value"
     },
     {
       "id": 9,
@@ -301,8 +293,7 @@
       "i18nKeyCaption": "MWReasonForGeneXpertI8nCaptionKey",
       "gxAlertDbColumn": "MWReasonForGeneXpert",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.9.value",
-      "payloadDestinationPath": "patient.MWReasonForGeneXpert"
+      "payloadOriginPath": "data.customFieldData.9.value"
     }
   ],
   "refForms": []

@@ -1,4 +1,5 @@
 const jobFunctions = require('../../fixtures/jobFunctions')
+const webhookServers = require('../../fixtures/webhookServers')
 
 module.exports = {
   partner: {
@@ -11,6 +12,7 @@ module.exports = {
   deviceApiToken: '5vqkca0d3w4p8n4k6480',
   fixtures: {
     jobFunctions,
+    webhookServers,
   },
   plugin: '',
   autoAcknowledgeOlderThanDays: null,

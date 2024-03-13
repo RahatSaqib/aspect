@@ -12,7 +12,7 @@ import { bindActionCreators } from 'redux'
 import { hideAppNotification, Error } from '../../store/AppNotificationRedux'
 import PropTypeOf from '../../utils/types'
 import AspectDialog from '../shared/AspectDialog'
-import styles from './AppNotificationDialog.css'
+import styles from './AppNotificationDialog.module.css'
 
 const genericMessages = defineMessages({
   title: {
@@ -35,7 +35,7 @@ const genericMessages = defineMessages({
 
 const enhance = flowRight(injectIntl, connect(mapStateToProps, mapDispatchToProps))
 
-export class AppNotificationDialog extends PureComponent {
+class AppNotificationDialog extends PureComponent {
   static propTypes = {
     intl: PropTypeOf.intl.isRequired,
     appNotification: PropTypes.objectOf(Error),

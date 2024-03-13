@@ -17,6 +17,7 @@ const {
 } = require('../src/shared/dictionary')
 const logger = require('../src/shared/logger')
 const config = require('../src/config')
+const { insertSite } = require('../src/site/common/db')
 
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
@@ -2347,7 +2348,7 @@ async function insertSites(knex, partnerId, countryId, sites) {
         updatedBy: adminId,
       })
     } else {
-      ;[siteId] = await knex('Site').insert({
+      ;[siteId] = await insertSite(knex, {
         partnerId,
         geographyId: siteGeographyId,
         name: site.name,
@@ -2622,17 +2623,6 @@ function getDateFields(startedOn) {
   }
 }
 
-async function getResultForms(knex) {
-  return knex('ResultForm')
-    .select()
-    .then(items =>
-      items.map(resultForm => ({
-        ...resultForm,
-        formSchema: JSON.parse(resultForm.formSchema),
-      }))
-    )
-}
-
 async function seedJobFunctionsAndUsersForOperationalData(
   knex,
   { auditFields, countryId, culture, geographyId, partnerId, passwords = {}, timezone }
@@ -2699,28 +2689,18 @@ async function seedJobFunctionsAndUsersForOperationalData(
   )
 
   const jobFunctionsById = await allJobFunctionToId()
-  // -------------------------------------------
-  // Jobs
-  const initJob = async (personId, jobFunctionId) => {
-    const { id } = await upsertSingle(knex, 'Job', ['personId', 'jobFunctionId'], { personId, jobFunctionId })
-    return id
-  }
-  const jobIdCepheid = await initJob(personIds.cepheid, jobFunctionsById.deviceMaker)
-  const jobIdNtp = await initJob(personIds.ntp, jobFunctionsById.ntp)
-  const jobIdTechnician = await initJob(personIds.technician, jobFunctionsById.technician)
-  const jobIdUsaid = await initJob(personIds.usaid, jobFunctionsById.donor)
 
   // -------------------------------------------
   // Constrain jobs by context
   await upsertItems(
     knex,
     'JobContext',
-    ['jobId', 'geographyId'],
+    ['personId', 'jobFunctionId', 'geographyId'],
     [
-      { jobId: jobIdCepheid, geographyId },
-      { jobId: jobIdNtp, geographyId },
-      { jobId: jobIdTechnician, geographyId },
-      { jobId: jobIdUsaid, geographyId },
+      { personId: personIds.cepheid, jobFunctionId: jobFunctionsById.deviceMaker, geographyId },
+      { personId: personIds.ntp, jobFunctionId: jobFunctionsById.ntp, geographyId },
+      { personId: personIds.technician, jobFunctionId: jobFunctionsById.technician, geographyId },
+      { personId: personIds.usaid, jobFunctionId: jobFunctionsById.donor, geographyId },
     ]
   )
 
@@ -2731,10 +2711,6 @@ async function seedJobFunctionsAndUsersForOperationalData(
     jobFunctionIdNtp: jobFunctionsById.ntp,
     jobFunctionIdTechnician: jobFunctionsById.technician,
     jobFunctionIdDonor: jobFunctionsById.donor,
-    jobIdCepheid,
-    jobIdNtp,
-    jobIdTechnician,
-    jobIdUsaid,
   }
 }
 
@@ -2814,45 +2790,6 @@ async function updatePermissions(knex, permissions) {
       .where({ module, activity })
       .update({ ...restProps })
   )
-}
-
-/**
- * Removes a permission activity and replaces it for another one
- * @param {[object]} knex The knex instance
- * @param {[string]} ativityToRemove The activity that want to remove. Ex.: 'admin'
- * @param {[string]} activityToReplaceFor The activity that want to replace the one that'll be removed. Ex.: 'edit'
- * @deprecated this method breaks seeding if you later re-add the removed permissions.
- * Instead @see updatePermissions
- */
-async function removeAndReplaceActivity(knex, activityToRemove, activityToReplaceFor) {
-  const modules = await getPermissionModules(knex)
-  const modulesNames = Object.keys(modules)
-
-  await Promise.each(modulesNames, async moduleName => {
-    const activityToRemoveId = modules[moduleName][activityToRemove]
-
-    if (activityToRemoveId) {
-      let activityToReplaceForId = modules[moduleName][activityToReplaceFor]
-
-      // If module has activityToRemove, reassignation should be done
-      if (!activityToReplaceForId) {
-        // If module doesn't have the activityToReplaceFor
-        // Inserts the new permission
-        const [permissionId] = await knex('Permission').insert({
-          module: moduleName,
-          activity: activityToReplaceFor,
-        })
-
-        activityToReplaceForId = permissionId
-      }
-
-      // Assigns the activityToReplaceFor to all the job functions that use the activityToRemove
-      await mapJobFunctionPermissions(knex, [activityToRemoveId], [activityToReplaceForId])
-
-      await knex('JobFunctionPermission').where({ permissionId: activityToRemoveId }).delete()
-      await knex('Permission').where({ id: activityToRemoveId }).delete()
-    }
-  })
 }
 
 // ***********************************************************************
@@ -3031,8 +2968,8 @@ async function upsertForms(knex, partnerId, forms) {
       // eslint-disable-next-line prefer-const
       ;({ partnerId } = await knex('User as u')
         .join('Person as p', 'u.id', 'p.userId')
-        .join('Job as j', 'p.id', 'j.personId')
-        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .join('JobContext as jc', 'p.id', 'jc.personId')
+        .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
         .where('jf.name', 'admin')
         .first('p.lastPartnerId as partnerId'))
       if (!partnerId) {
@@ -3158,12 +3095,9 @@ module.exports = {
   getLinkedResultDate,
   getDateFields,
 
-  getResultForms,
-
   seedJobFunctionsAndUsersForOperationalData,
   mapJobFunctionPermissions,
   seedDashboardsJsonInDashboardWidget,
-  removeAndReplaceActivity,
   removePermissions,
   updatePermissions,
   getSeedsFolder,

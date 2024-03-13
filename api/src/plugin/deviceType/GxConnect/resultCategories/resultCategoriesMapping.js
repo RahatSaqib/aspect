@@ -108,12 +108,13 @@ const result1CategoryMapping = {
   'presumptive positive': 'PresumptivePositive',
   'presumptive pos': 'PresumptivePositive',
   '@label_result_presumptive_positive': 'PresumptivePositive',
+  '@label_result_presumptive_pos': 'PresumptivePositive',
   'presumptive posit': 'PresumptivePositive',
   'presuntivo positivo': 'PresumptivePositive',
   'предположительный положительный': 'PresumptivePositive',
   'présomptif positif': 'PresumptivePositive',
   'предположительно пол': 'PresumptivePositive',
-  негативний: 'PresumptivePositive',
+  негативний: 'Negative',
   'praduga pos': 'PresumptivePositive',
   przypuszczalnego: 'PresumptivePositive',
   'null null': 'Success',
@@ -182,6 +183,36 @@ const result2CategoryMapping = {
   'tanpa hasil': 'NoResult',
   '@label_result_no_result': 'NoResult',
   'brak wyniku': 'NoResult',
+}
+
+const bacterialLoadMapping = {
+  'very low @label_result_detected': 'Very Low',
+  'low @label_result_detected': 'Low',
+  'medium @label_result_detected': 'Medium',
+  'high @label_result_detected': 'High',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_very_low': 'Very Low',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_low': 'Low',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_medium': 'Medium',
+  '@label_result_concatenate_two,@label_result_detected,@label_semi_quant_level_text_high': 'High',
+  'detected very low': 'Very Low',
+  'detected low': 'Low',
+  'detected medium': 'Medium',
+  'detected high': 'High',
+  'detectado muito baixo': 'Very Low',
+  'detectado baixo': 'Low',
+  'detectado médio': 'Medium',
+  'detectado alto': 'High',
+  'detectado muy bajo': 'Very Low',
+  'detectado bajo': 'Low',
+  'detectado medio': 'Medium',
+  'обнаружен очень низкий': 'Very Low',
+  'обнаружен низкий': 'Low',
+  'обнаружен средний': 'Medium',
+  'обнаружен высокий': 'High',
+  'détecté très bas': 'Very Low',
+  'détecté bas': 'Low',
+  'détecté moyen': 'Medium',
+  'détecté élevé': 'High',
 }
 
 const mtbPositiveResultCategories = [
@@ -265,7 +296,8 @@ const mapResultCategory2 = (assayExternalId, resultTextValues) => {
 function getVLCopies(result1Text) {
   if (result1Text && !result1Text.includes('< 40')) {
     const regex = /(\d+([.]\d*)?([eE][+-]?\d+)?|[.]\d+([eE][+-]?\d+)?)/
-    const arr = regex.exec(result1Text.replace('HIV-1', ''))
+    const text = result1Text.replace('HIV-1', '').replace('@label_quant1_result_normal_log', '')
+    const arr = regex.exec(text)
 
     return arr ? parseFloat(arr[0]) : null
   }
@@ -282,10 +314,22 @@ function getResultCategoriesHivVL(result1Text) {
   else if (!result1Text || result1Text.toLowerCase().indexOf('detected') === 0) return 'NoResult'
 }
 
+const getBacterialLoad = resultText => {
+  const resultTextValues = splitResultTextValues(resultText)
+
+  if (resultTextValues.length === 0) return undefined
+
+  const result1Text = sanitizeResultTextValue(resultTextValues[0])
+  return bacterialLoadMapping[result1Text]
+}
+
 /**
  * Parses a GeneXpert result text and returns an object containing the key value pairs.
  * @param {string} resultText The result text of a GeneXpert result
  * @returns An object including all the parsed category types and their values. Ex.: { MTB: 'Detected', 'RIF RESISTANCE': 'NotDetected'  }
+ *
+ * Sample of `resultText` for MTB-XDR may look like this:
+ * |MTB @label_result_detected||INH Resistance @label_result_not_detected||FLQ Resistance @label_result_not_detected|AMK Resistance @label_result_indeterminate|KAN Resistance @label_result_indeterminate|CAP Resistance @label_result_indeterminate|ETH Resistance @label_result_not_detected
  */
 const parseResultText = resultText => {
   const results = {}
@@ -298,9 +342,15 @@ const parseResultText = resultText => {
       results['HIV-1'] = result1CategoryMapping[sanitizeResultTextValue(val)] || getResultCategoriesHivVL(val)
     } else {
       const resultValue =
-        result1CategoryMapping[sanitizeResultTextValue(val)] || result2CategoryMapping[sanitizeResultTextValue(val)]
+        // from 1-st mapping collection
+        result1CategoryMapping[sanitizeResultTextValue(val)] ||
+        // or from 2-nd mapping collection
+        result2CategoryMapping[sanitizeResultTextValue(val)]
 
       if (categoryType && resultValue) {
+        /**
+         * i.e. results['FLQ RESISTANCE'] = 'Indeterminate'
+         */
         results[categoryType] = resultValue
       }
     }
@@ -314,21 +364,29 @@ const parseResultText = resultText => {
  * @returns An array including all the resistances category types which result was Detected. Ex.: ['INH', 'ETH']
  */
 const getDetectedResistanceCategoryTypes = resultText => {
-  const detectedResistances = []
+  const detectedResistance = []
+  const allResistances = {}
   const resultsCollection = parseResultText(resultText)
   Object.keys(resultsCollection).forEach(categoryType => {
-    if (categoryType !== 'MTB' && resultsCollection[categoryType] === 'Detected')
-      detectedResistances.push(categoryType.replace('RESISTANCE', '').trim())
+    const resistance = categoryType.replace('RESISTANCE', '').trim()
+    const resultCategoryValue = resultsCollection[categoryType]
+    if (categoryType !== 'MTB') {
+      allResistances[resistance] = resultCategoryValue
+      if (resultCategoryValue === 'Detected') {
+        detectedResistance.push(resistance)
+      }
+    }
   })
-  return detectedResistances
+  return { detectedResistance, allResistances }
 }
 
 module.exports = {
   getDetectedResistanceCategoryTypes,
   result1CategoryMapping,
-  result2CategoryMapping,
   mapResultCategory2,
   parseResultText,
   getResultCategoriesHivVL,
   getVLCopies,
+  getBacterialLoad,
+  bacterialLoadMapping,
 }

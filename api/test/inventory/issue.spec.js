@@ -10,7 +10,7 @@ const { createMessageContext, waitForIdle, dispatchAndWaitForAction, waitForActi
 // action creators
 const { inventoryStockout, inventoryStockExpiring } = require('../../src/inventory/actions')
 const { escalateIssues } = require('../../src/issue/actions')
-const { refreshConsumptionRates } = require('../../src/fact/service')
+const { refreshConsumptionRates } = require('../../src/fact/onFactCalculateInventoryConsumptionRates')
 const { getPartner, getSite, getIssue, getIssueNotifications, cleanUpIssues } = require('../utils/issueUtils')
 const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const {
@@ -377,7 +377,6 @@ async function deleteInventoryTestData(knex, inventoryItemIds) {
 async function createTestDevice(knex, siteId, geographyId, partnerId) {
   return knex('Device').insert({
     partnerId,
-    geographyId,
     siteId, // new site id
     deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
     deviceApprovalId: await deviceApprovalToId('approved'),

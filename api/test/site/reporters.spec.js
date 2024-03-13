@@ -112,7 +112,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
         'd.id as deviceId',
         'd.name as deviceName',
         'd.partnerId',
-        'd.geographyId',
+        's.geographyId',
         'd.siteId',
         'g.countryId',
         'g.stateId',

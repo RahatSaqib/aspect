@@ -1,5 +1,0 @@
-/* .Radio-Group {} */
-
-.Radio-Group > label:not(:last-of-type) {
-  margin-right: 30px;
-}

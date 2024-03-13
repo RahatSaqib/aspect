@@ -11,7 +11,7 @@ import {
   errorPleaseTryAgainInAFewMinutes,
   inlineErrorPleaseTryAgainInAFewMinutes,
 } from '../utils/error/CommonErrorNotifications'
-import { getClientId, getClientName, getClientType as clientType } from '../utils/utils/browser'
+import { getClientId, getClientName } from '../utils/utils/browser'
 import { aspectFetch } from '../utils/utils/fetch'
 
 export const types = {
@@ -73,7 +73,7 @@ export function loginStart({ user, password }) {
         name: user,
         password,
         clientId,
-        clientType,
+        clientType: 'web',
         clientName: getClientName(),
       }),
       errorNotifications: {
@@ -251,6 +251,13 @@ export function idleLogout() {
   }
 }
 
+export function expiredTokenLogout() {
+  return {
+    type: types.LOGOUT,
+    data: { reason: reasonTypes.expiredJWT },
+  }
+}
+
 function refreshSuccess(data) {
   return {
     type: types.REFRESH_SUCCESS,
@@ -276,7 +283,10 @@ export function refreshStart() {
 
     const clientId = localStorage.getItem('asClientId')
     // try to get a new access token:
-    return aspectFetch('/auth/refresh', { method: 'POST', body: JSON.stringify({ token, clientId, clientType }) })
+    return aspectFetch('/auth/refresh', {
+      method: 'POST',
+      body: JSON.stringify({ token, clientId, clientType: 'web' }),
+    })
       .then(json =>
         dispatch(
           refreshSuccess({

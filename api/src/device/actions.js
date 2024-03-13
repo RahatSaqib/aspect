@@ -9,6 +9,7 @@ const types = {
   DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
+  CEPHEID_C360_INSTRUMENT_LOG_RECEIVED: 'CEPHEID_C360_INSTRUMENT_LOG_RECEIVED',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
@@ -18,6 +19,7 @@ const types = {
   DEVICE_MODULE_DISABLE_RECEIVED: 'DEVICE_MODULE_DISABLE_RECEIVED',
   DEVICE_INSTRUMENT_REPLACED: 'DEVICE_INSTRUMENT_REPLACED',
   DEVICE_UNUSED_MODULES: 'DEVICE_UNUSED_MODULES',
+  DEVICE_UPDATE_MODULE_SERIALS: 'DEVICE_UPDATE_MODULE_SERIALS',
   HARDWARE_SYRINGE_STALL_ERROR: 'HARDWARE_SYRINGE_STALL_ERROR', // 2005
   HARDWARE_SYRINGE_PRESSURE_TOOHIGH: 'HARDWARE_SYRINGE_PRESSURE_TOOHIGH', // 2008
   HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE: 'HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE', // 2026
@@ -88,6 +90,14 @@ function calibrationDateUpdated(deviceId) {
   return {
     type: types.CALIBRATION_DATE_UPDATED,
     deviceId,
+  }
+}
+
+function cepheidc360InstrumentLogsReceived(deviceId, deviceOperationId) {
+  return {
+    type: types.CEPHEID_C360_INSTRUMENT_LOG_RECEIVED,
+    deviceId,
+    options: { data: { deviceOperationId } },
   }
 }
 
@@ -320,6 +330,15 @@ function deviceHardwareError(device, resultErrorCode, options) {
   }
 }
 
+/**
+ * Creates an action to update array `moduleSerials` in Device.configurationalData
+ */
+function deviceUpdateModuleSerials() {
+  return {
+    type: types.DEVICE_UPDATE_MODULE_SERIALS,
+  }
+}
+
 module.exports = {
   types,
   calibrationDueDateAnalysis,
@@ -340,4 +359,6 @@ module.exports = {
   deviceHardwareError,
   hardwareErrorActions,
   logDeviceMaintenanceStatus,
+  deviceUpdateModuleSerials,
+  cepheidc360InstrumentLogsReceived,
 }

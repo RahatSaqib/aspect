@@ -1,12 +1,14 @@
 import React from 'react'
-import { Column } from '@ant-design/plots'
+import { Bar } from '@ant-design/plots'
 import { formatNumber } from '../../../../utils/utils/number'
 import { filterColour } from '../../graphUtils'
 
-const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onReady, isPercentage }) => {
+const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onReady, isPercentage, colors }) => {
   const config = {
     data,
-    color: datum => filterColour(data.find(d => d.type === datum.type).id, graphId),
+    intervalPadding: 8,
+    dodgePadding: 0,
+    color: colors || (datum => filterColour(data.find(d => d.type === datum.type).id, graphId)),
     label: showLabel
       ? {
           position: 'middle',
@@ -17,6 +19,13 @@ const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onRea
     isStack: true,
     xField,
     yField,
+    xAxis: isPercentage
+      ? {
+          min: 0,
+          max: 100,
+          label: { formatter: text => `${text}%` },
+        }
+      : undefined,
     seriesField,
     animation: false,
     legend: { position: 'bottom', maxRow: 3 },
@@ -35,7 +44,7 @@ const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onRea
     },
   }
 
-  return <Column {...config} />
+  return <Bar {...config} />
 }
 
 export default BarGraph

@@ -67,7 +67,7 @@ const getInitialValuesFromFormConfig = (config, savedValues) => {
               if (component === 'checkbox') {
                 value = isBoolean(savedValue) ? savedValue : initialValue === true
               } else {
-                value = savedValue || initialValue || ''
+                value = savedValue || initialValue
               }
               set(subRowsInitial[subRowIndex], fieldName, value)
             })
@@ -78,7 +78,7 @@ const getInitialValuesFromFormConfig = (config, savedValues) => {
           }
           items.forEach(({ controlType = {}, id: fieldName, initialValue }) => {
             const { component } = controlType
-            let value = initialValue || ''
+            let value = initialValue
             if (component === 'checkbox') {
               value = initialValue === true
             }
@@ -97,7 +97,7 @@ const getInitialValuesFromFormConfig = (config, savedValues) => {
                 : Boolean(savedValue)
               : Boolean(initialValue)
           } else {
-            value = savedValue || initialValue || ''
+            value = savedValue || initialValue
           }
           set(initialValues, fieldName, value)
         })

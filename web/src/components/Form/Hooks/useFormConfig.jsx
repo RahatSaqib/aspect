@@ -78,7 +78,7 @@ const compareValuesSkipGuid = (obj1, obj2) => {
 
   return true
 }
-export const useFormConfig = formConfig => {
+const useFormConfig = formConfig => {
   const [meta, setMeta] = useState(getState(formConfig))
 
   useEffect(() => {

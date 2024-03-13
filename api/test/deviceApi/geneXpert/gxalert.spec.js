@@ -516,6 +516,8 @@ describe('Device API routes for GxAlert Device', () => {
       assert.equal(result2.moduleSerial, '555-8')
       assert.equal(result2.researchId, 'R123')
       assert.deepEqual(JSON.parse(result2.patientData), {
+        PatientName: 'Unknown',
+        PatientSurname: 'Blood Stained',
         id: 'P-333',
         name: 'Bob',
         surname: 'Hope',
@@ -1427,25 +1429,31 @@ describe('Device API routes for GxAlert Device', () => {
       })
 
       describe('and the result has NO coordinates specified in the payload', () => {
-        it('should set the the GPS coordinates and geography of the result to those of the site/device', async () => {
+        it('should set the the GPS coordinates of the result to those of the site/device', async () => {
           const now = new Date()
           const latitude = Math.random() * 360
           const longitude = Math.random() * 360
           const geneXpertDevice = await getCurrentGeneXpertDevice()
           const { id: geographyId } = await knex('Geography as g')
-            .join('Country as c')
+            .join('Country as c', 'g.countryId', 'c.id')
             .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
             .whereNotNull('g.stateId')
             .whereNotNull('g.lgaId')
             .first('g.id')
+
           await knex('Site').where({ id: geneXpertDevice.siteId }).update({ latitude, longitude, geographyId })
+
           const gpsCoordsMissingResultId = 'UNIQUE-ID-WITHOUT-GPS-COORDS'
           const testStartedOn = setMilliseconds(
             subMinutes(subHours(now, Math.floor(Math.random() * 24)), Math.floor(Math.random() * 60)),
             0
           )
           const testEndedOn = setMilliseconds(addHours(testStartedOn, 2), 0)
-          await postToDeviceApi({
+          const {
+            body: {
+              result: { id: resultId },
+            },
+          } = await postToDeviceApi({
             authHeader: deviceAuth,
             payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
               result: {
@@ -1456,9 +1464,12 @@ describe('Device API routes for GxAlert Device', () => {
             }),
           })
 
-          const lastResult = await getLastResult()
+          const result = await knex('Result as r')
+            .innerJoin('Site as s', 'r.siteId', 's.id')
+            .where('r.id', resultId)
+            .first('r.latitude', 'r.longitude', 's.geographyId')
           const resultSite = await knex('Site').where({ id: geneXpertDevice.siteId }).first()
-          expect(lastResult).to.containSubset({
+          expect(result).to.containSubset({
             latitude: resultSite.latitude,
             longitude: resultSite.longitude,
             geographyId: resultSite.geographyId,
@@ -1473,7 +1484,7 @@ describe('Device API routes for GxAlert Device', () => {
           const siteLongitude = Math.random() * 360
           const geneXpertDevice = await getCurrentGeneXpertDevice()
           const { id: geographyId } = await knex('Geography as g')
-            .join('Country as c')
+            .join('Country as c', 'g.countryId', 'c.id')
             .where('c.abbreviation', geneXpertDevice.countryAbbreviation)
             .whereNotNull('g.stateId')
             .whereNotNull('g.lgaId')
@@ -1720,11 +1731,10 @@ describe('Device API routes for GxAlert Device', () => {
                   data: { resultText: 'NO RESULT|NO RESULT|' },
                 },
               }),
-              expectedStatusCode: 409,
+              expectedStatusCode: 201,
             })
             completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
-              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
               startedOn: startedOnDate,
@@ -1741,11 +1751,10 @@ describe('Device API routes for GxAlert Device', () => {
                   data: { resultText: 'NO RESULT' },
                 },
               }),
-              expectedStatusCode: 409,
+              expectedStatusCode: 201,
             })
             completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
-              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NotDetected',
               startedOn: startedOnDate,
@@ -1766,7 +1775,6 @@ describe('Device API routes for GxAlert Device', () => {
             })
             completeResult = await getResult(completeResultId)
             expect(completeResult).to.containSubset({
-              externalId: completeResultExternalId,
               resultCategory1: 'Detected',
               resultCategory2: 'NoResult',
               startedOn: startedOnDate,

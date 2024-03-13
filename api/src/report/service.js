@@ -16,8 +16,8 @@ async function getReports(request) {
   const reportsQuery = knex('Report as r')
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
     .innerJoin('JobFunction as jf', 'jf.id', 'jfr.jobFunctionId')
-    .innerJoin('Job as j', 'jf.id', 'j.jobFunctionId')
-    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .innerJoin('JobContext as jc', 'jf.id', 'jc.jobFunctionId')
+    .innerJoin('Person as p', 'jc.personId', 'p.id')
     .modify(addConstraints, dataConstraints, { person: 'p' })
 
   const getCount = reportsQuery.clone().count('r.id as count').first()
@@ -45,11 +45,12 @@ async function getReports(request) {
       'r.i18nKey',
       'r.i18nKeyDescription',
       'r.exportExcel',
-      'r.exportCsv'
+      'r.exportCsv',
+      'r.validations'
     )
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  return { ok: true, total, data }
+  return { ok: true, total, data: data.map(r => ({ ...r, validations: JSON.parse(r.validations) })) }
 }
 
 async function getReportDetails(externalId, dataConstraints) {
@@ -58,8 +59,8 @@ async function getReportDetails(externalId, dataConstraints) {
 
   const report = await knex('Report as r')
     .innerJoin('JobFunctionReport as jfr', 'r.id', 'jfr.reportId')
-    .innerJoin('Job as j', 'jfr.jobFunctionId', 'j.jobFunctionId')
-    .innerJoin('Person as p', 'j.personId', 'p.id')
+    .innerJoin('JobContext as jc', 'jfr.jobFunctionId', 'jc.jobFunctionId')
+    .innerJoin('Person as p', 'jc.personId', 'p.id')
     .modify(addConstraints, dataConstraints, { person: 'p' })
     .where('r.externalId', externalId)
     .select(
@@ -115,8 +116,8 @@ async function proxyGxReportAsync(request) {
 
   // check if user is admin and they should be able to download report even if assigned to more than one state
   const { jobFunctionName } = await knex('JobFunction as jf')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .innerJoin('JobContext as jc', 'jc.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where({
       'ps.id': dataConstraints.person.id,
       'jf.partnerId': dataConstraints.partner.id,

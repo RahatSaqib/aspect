@@ -1,6 +1,6 @@
 import { defineMessages } from 'react-intl'
 import form from '../../../components/Form/messages'
-import { resultCategory, assay, report } from '../../../messages'
+import { assay, report, resultCategory } from '../../../messages'
 
 const result = defineMessages({
   gxEbolaGPDetectedNPDetected: {
@@ -129,15 +129,15 @@ const result = defineMessages({
   },
   gxMtbXdrMtbDetectedXdrDetected: {
     id: 'pages.filters.gxMtbXdrMtbDetectedXdrDetected',
-    defaultMessage: 'MTB Detected XDR Detected',
+    defaultMessage: 'MTB Detected Drug Resistance Detected',
   },
   gxMtbXdrMtbDetectedXdrNotDetected: {
     id: 'pages.filters.gxMtbXdrMtbDetectedXdrNotDetected',
-    defaultMessage: 'MTB Detected XDR Not Detected',
+    defaultMessage: 'MTB Detected Drug Resistance Not Detected',
   },
   gxMtbXdrMtbDetectedXdrIndeterminate: {
     id: 'pages.filters.gxMtbXdrMtbDetectedXdrIndeterminate',
-    defaultMessage: 'MTB Detected XDR Indeterminate',
+    defaultMessage: 'MTB Detected Drug Resistance Indeterminate',
   },
   gxMtbXdrMtbInvalid: {
     id: 'pages.filters.gxMtbXdrMtbInvalid',
@@ -1054,9 +1054,9 @@ export default defineMessages({
     id: 'pages.ReportIndex.genxpert_tb_workload_report',
     defaultMessage: 'GeneXpert TB Workload',
   },
-  devices_and_sites_overview: {
-    id: 'pages.ReportIndex.devices_and_sites_overview',
-    defaultMessage: 'Devices and Sites Overview',
+  device_and_site_summary_report: {
+    id: 'pages.ReportIndex.device_and_site_summary_report',
+    defaultMessage: 'Device and Site Sumary',
   },
   result_notifications: {
     id: 'pages.ReportIndex.result_notifications',

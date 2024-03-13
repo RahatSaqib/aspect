@@ -4,7 +4,7 @@ import { defineMessages } from 'react-intl'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../utils/utils/fetch'
 
-export const types = {
+const types = {
   REQUEST_CONSUMABLES: 'REQUEST_CONSUMABLES',
   RECEIVE_CONSUMABLES: 'RECEIVE_CONSUMABLES',
 
@@ -117,7 +117,7 @@ export const ConsumableItems = Immutable.Record({
   items: Immutable.List([]),
   lastRefreshed: undefined,
 })
-export const Consumable = Immutable.Record({
+const Consumable = Immutable.Record({
   consumables: new ConsumableItems(),
   consumableReasons: new ConsumableItems(),
 })

@@ -27,6 +27,7 @@ const {
 } = require('../../src/shared/dictionary')
 const patients = require('../../seeds/test/fixtures/patients.json')
 const { getRandomGeneXpertPatientData } = require('../../seeds/commonTBResults')
+const { insertSite } = require('../../src/site/common/db')
 
 const totalPatients = patients.length
 
@@ -57,25 +58,11 @@ async function initUserAndJobs(knex, partnerId, siteId) {
     const { id: userId } = await knex('User').where({ name: userName }).first()
     // get Person
     const { id: personId } = await knex('Person').where({ userId }).first()
-    // get (insert) Job
-    let jobId
-    const job = await knex('Job')
-      .where({
-        personId,
-        jobFunctionId,
-      })
-      .first()
-    if (job) {
-      jobId = job.id
-    } else {
-      ;[jobId] = await knex('Job').insert({
-        personId,
-        jobFunctionId,
-      })
-    }
+
     // insert JobContext for new site
     const [jobContextId] = await knex('JobContext').insert({
-      jobId,
+      personId,
+      jobFunctionId,
       siteId,
     })
     return jobContextId
@@ -138,7 +125,7 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
       })
 
       // create new site for same partner and same geography
-      ;[siteId] = await knex('Site').insert({
+      ;[siteId] = await insertSite(knex, {
         name: 'Test Site',
         shortName: 'Test Site',
         externalId: `Test Site ${new Date().getTime()}`,
@@ -148,7 +135,6 @@ describe.skip('DataCategoryLow Issues Endpoint', () => {
       // for new site - create new device
       ;[deviceId] = await knex('Device').insert({
         partnerId,
-        geographyId,
         siteId, // new site id
         deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
         deviceApprovalId: await deviceApprovalToId('approved'),

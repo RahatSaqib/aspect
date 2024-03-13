@@ -1,23 +1,21 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
-const {
-  listPeople,
-  listPeopleForSelectList,
-  listRefreshTokens,
-  availableContacts,
-  showPerson,
-  updatePerson,
-  createPerson,
-  updatePersonUserPreferences,
-  updateRefreshToken,
-  assignContact,
-  unAssignContact,
-  updatePersonStatus,
-} = require('./service')
 
 const { exportContacts } = require('./serviceReports')
 const { contactDetailsPayload, newContactDetailsPayload, personDetailsResponse } = require('./helpers')
+const { listPeopleForSelectList } = require('./listPeopleForSelectList')
+const { listPeople } = require('./listPeople')
+const { updatePersonStatus } = require('./updatePersonStatus')
+const { updateRefreshToken } = require('./updateRefreshToken')
+const { listRefreshTokens } = require('./listRefreshTokens')
+const { availableContacts } = require('./availableContacts')
+const { assignContact } = require('./assignContact')
+const { unAssignContact } = require('./unAssignContact')
+const { updatePerson } = require('./updatePerson')
+const { updatePersonUserPreferences } = require('./updatePersonUserPreferences')
+const { createPerson } = require('./createPerson')
+const { showPerson } = require('./showPerson')
 
 function listContactBaseConfig() {
   return {
@@ -35,7 +33,7 @@ function listContactBaseConfig() {
           .description('The array of {tagName,tagId} assigned to persons'),
         contactStatus: Joi.number().allow('').description('Filter for person enabled/disabled'),
         ...validateAllGeographyFilterParams(),
-        ...validateSortPageParams('name', 'level', 'state', 'lga'),
+        ...validateSortPageParams('name', 'level', 'state', 'lga', 'tags'),
       },
     },
   }

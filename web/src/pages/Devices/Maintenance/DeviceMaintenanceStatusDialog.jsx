@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from 'react'
 import { Button, TextField } from '@mui/material'
-import classnames from 'classnames/bind'
+import { DesktopDatePicker } from '@mui/x-date-pickers'
+import format from 'date-fns/format'
 import flowRight from 'lodash/flowRight'
-import { defineMessages } from 'react-intl'
-import useI18n from '../../../hooks/useI18n'
+import { defineMessages, useIntl } from 'react-intl'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import DeviceMaintenanceStatusSelectField from '../../../oldComponents/resource/DeviceMaintenanceStatusSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-import styles from './BaseDialog.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './BaseDialog.module.css'
 
 const messages = defineMessages({
   dialogTitle: {
@@ -36,9 +34,13 @@ const messages = defineMessages({
     id: 'pages.MaintenanceStatusDialog.maintenanceStatusIsRequired',
     defaultMessage: 'Maintenance status is required',
   },
+  expectedBack: {
+    id: 'pages.MaintenanceStatusDialog.expectedBack',
+    defaultMessage: 'Expect Back Online',
+  },
 })
 
-export function validate({ maintenanceStatus }, { formatMessage }) {
+function validate({ maintenanceStatus }, { formatMessage }) {
   const errors = {}
   if (!maintenanceStatus) {
     errors.contextDate = formatMessage(messages.maintenanceStatusIsRequired)
@@ -49,13 +51,14 @@ export function validate({ maintenanceStatus }, { formatMessage }) {
 const deviceMaintenanceStatusDialog = WrappedComponent => props => {
   const [values, setValues] = useState(false)
   const { device } = props
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   useEffect(() => {
     if (!values) {
       setValues({
         maintenanceStatus: device.get('maintenanceStatus') || null,
         notes: device.get('maintenanceStatusNotes') || null,
+        expectedBack: device.get('expectedBackOnline') || null,
       })
     }
   }, [device, values])
@@ -84,8 +87,9 @@ const FormDialog = ({
   onMaintenanceStatusChange,
   onNotesChange,
   handleSubmit,
+  onExpectedBackChange,
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
     <AspectDialog
       actions={[
@@ -106,8 +110,8 @@ const FormDialog = ({
       onClose={onCancel}
       title={labels.dialogTitle}
     >
-      <form className={cssClasses('Form')}>
-        <div className={cssClasses('Form__Content')}>
+      <form className={styles.Form}>
+        <div className={styles.Form__Content}>
           <section>
             <div>
               <DeviceMaintenanceStatusSelectField
@@ -140,6 +144,20 @@ const FormDialog = ({
               inputProps={{ maxLength: 2000 }}
             />
           </section>
+          <section>
+            <DesktopDatePicker
+              label={formatMessage(messages.expectedBack)}
+              name="expectedBack"
+              type="expectedBack"
+              value={values.expectedBack}
+              minDate={new Date()}
+              disabled={form.submitting}
+              onChange={date => {
+                onExpectedBackChange(format(date, 'yyyy-MM-dd'))
+              }}
+              renderInput={params => <TextField {...params} onKeyDown={e => e.preventDefault()} />}
+            />
+          </section>
         </div>
       </form>
     </AspectDialog>
@@ -158,6 +176,10 @@ export default flowRight(
       {
         fieldName: 'notes',
         valueFromChangeEvent: it => it.target.value,
+      },
+      {
+        fieldName: 'expectedBack',
+        valueFromChangeEvent: it => it,
       },
     ],
     validate,

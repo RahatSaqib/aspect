@@ -115,7 +115,6 @@ async function createDevicesForAllMissingTypes(
           deviceTypeId: deviceType.id,
           deviceApprovalId: deviceApprovalApproved,
           partnerId,
-          geographyId: siteData.geographyId,
           siteId: siteData.id,
           createdOn: new Date(+now - 3 * i * millisInHour),
           updatedOn: new Date(+now - i * millisInHour),
@@ -188,15 +187,16 @@ async function generateResults(
       'AspectResultEntry',
       'molbioTruenat',
     ])
-  const devices = await knex('Device')
+  const devices = await knex('Device as d')
+    .join('Site as s', 's.id', 'd.siteId')
     .andWhere(qb => qb.whereIn('siteId', _.map(siteDatas, 'id')))
-    .andWhere('partnerId', partnerId)
+    .andWhere('d.partnerId', partnerId)
     .modify(queryBuilder => {
       if (deviceId) {
-        queryBuilder.where('id', deviceId)
+        queryBuilder.where('d.id', deviceId)
       }
     })
-    .select()
+    .select('d.*', 's.geographyId')
 
   const tbDevices = _.filter(devices, device => tbDeviceTypeIds.includes(device.deviceTypeId))
   const tbResults = await addTBResults(
@@ -868,7 +868,9 @@ async function addTBResults(
 
     if (gxAssayExternalIds.includes(assay.externalId)) {
       resultData[assay.externalId].resultText = result.resultText
-      resultData[assay.externalId].detectedResistance = getDetectedResistanceCategoryTypes(result.resultText)
+      const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(result.resultText)
+      resultData[assay.externalId].detectedResistance = detectedResistance
+      resultData[assay.externalId].allResistances = allResistances
     }
 
     const resultStatus =

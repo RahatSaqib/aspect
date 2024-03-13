@@ -4,6 +4,7 @@ module.exports = require('../utils').seed(seed, __filename, {
 })
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { insertSite } = require('../../src/site/common/db')
 
 const sites = require('./fixtures/sites.json')
 const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
@@ -92,7 +93,7 @@ async function seed(knex) {
     if (existingSite) {
       siteId = existingSite.id
     } else {
-      ;[siteId] = await knex('Site').insert(siteData)
+      ;[siteId] = await insertSite(knex, siteData)
     }
     siteData.id = siteId
 
@@ -103,7 +104,6 @@ async function seed(knex) {
             .where({ partnerId: partner.id, serial: device.serial })
             .first(
               'id',
-              'geographyId',
               'siteId',
               'deviceTypeId',
               'name',
@@ -117,7 +117,6 @@ async function seed(knex) {
           if (!existingDevice) {
             await knex('Device').insert({
               partnerId: partner.id,
-              geographyId: siteGeographyId,
               siteId,
               deviceTypeId,
               deviceApprovalId: await deviceApprovalToId('approved'),
@@ -139,7 +138,6 @@ async function seed(knex) {
               deviceConfigurationData.gxAlertDeviceId = device.gxAlertDeviceId
             }
             if (
-              existingDevice.geographyId !== siteGeographyId ||
               existingDevice.siteId !== siteId ||
               existingDevice.deviceTypeId !== deviceTypeId ||
               existingDevice.name !== device.name ||
@@ -152,7 +150,6 @@ async function seed(knex) {
               await knex('Device')
                 .where('id', existingDevice.id)
                 .update({
-                  geographyId: siteGeographyId,
                   siteId,
                   deviceTypeId: await deviceTypeToId(device.deviceType),
                   name: device.name,
