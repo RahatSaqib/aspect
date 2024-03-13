@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Grid, TextField } from '@mui/material'
+import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
