@@ -3,7 +3,7 @@ const { subMonths } = require('date-fns')
 const Boom = require('@hapi/boom')
 const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../../result/query')
 const { filterDateRangeParams, knex, filterParams } = require('../../../db')
-const { getOffsetFromIsoDateStringInMinutes, getAllUserMonthsInRange } = require('../../../shared/date')
+const { getAllUserMonthsInRange, getOffsetFromIsoDateStringInMinutes } = require('../../../shared/date')
 
 const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) => {
   const { minDate, maxDate } = query
