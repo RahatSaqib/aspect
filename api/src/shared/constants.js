@@ -23,6 +23,18 @@ const DAYS_STOCK_LEFT_RANGES = {
   moreThan180: { min: 181 },
 }
 
+const WEBHOOK_SERVERS = {
+  CepheidC360: 'CepheidC360',
+}
+
+const ISSUE_CATEGORY_EXTERNAL_IDS = {
+  CepheidC360InstrumentLogsReceived: 'CepheidC360InstrumentLogsReceived',
+}
+
+const ISSUE_TYPE_EXTERNAL_IDS = {
+  CepheidC360InstrumentLogsReceived: 'CepheidC360InstrumentLogsReceived',
+}
+
 module.exports = {
   IGNORED_SENTRY_ERRORS,
   INTERNAL_DEVICE_IDS,
@@ -32,4 +44,7 @@ module.exports = {
   XDR_RESISTANCES_COMBO,
   XDR_RESISTANCE_VALUES,
   DAYS_STOCK_LEFT_RANGES,
+  WEBHOOK_SERVERS,
+  ISSUE_CATEGORY_EXTERNAL_IDS,
+  ISSUE_TYPE_EXTERNAL_IDS,
 }

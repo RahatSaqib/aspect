@@ -1,4 +1,4 @@
-import { subDays, subMonths, addMinutes, subMinutes, getYear, subYears, startOfMonth } from 'date-fns'
+import { subDays, subMonths, getYear, subYears, startOfMonth } from 'date-fns'
 import { format } from 'date-fns-tz'
 import filter from 'lodash/filter'
 import flatten from 'lodash/flatten'
@@ -16,7 +16,7 @@ import startCase from 'lodash/startCase'
 import sum from 'lodash/sum'
 import uniqBy from 'lodash/uniqBy'
 import values from 'lodash/values'
-import { customPropertiesVariables as colors } from '../../theme/colors'
+import { customPropertiesVariables as colors } from '../../../theme/colors'
 import {
   groupByKey,
   groupForPie,
@@ -27,7 +27,10 @@ import {
   groupForPieOldTreatmentAPI,
   groupForDeviceStatusAPI,
   filterByMultiple,
-} from './grouping'
+} from '../grouping'
+import { getMinMaxDateFromMonthString } from './getMinMaxDateFromMonthString'
+import { getResultCategoryGroupsForResultList } from './getResultCategoryGroupsForResultList'
+import { negateTimeZoneOffset } from './negateTimeZoneOffset'
 
 const graphColorMap = [
   { id: 1, externalId: 'MoreThan1000', color: colors['--aspect-color-mandy'] },
@@ -330,13 +333,6 @@ const flattenAssaysStructure = ({ data }) => {
   return uniqBy(output, 'i18nKey')
 }
 
-const negateTimeZoneOffset = dateString => {
-  const date = new Date(dateString)
-  const offset = date.getTimezoneOffset()
-
-  return Math.sign(offset) !== -1 ? addMinutes(date, offset) : subMinutes(date, Math.abs(offset))
-}
-
 const startOfYearsAgo = years => new Date(getYear(subYears(new Date(), years)), 0, 1)
 
 const startOfMonthUTC = dateString => {
@@ -544,7 +540,6 @@ export {
   calcPercentageForGraphs,
   getAverageFromData,
   flattenAssaysStructure,
-  negateTimeZoneOffset,
   fillYear,
   prepAssaysForParams,
   prepParamsForEndPoint,
@@ -553,4 +548,7 @@ export {
   formatDataByGraphType,
   formatDateToYYYYMMDD,
   fillData,
+  getResultCategoryGroupsForResultList,
+  negateTimeZoneOffset,
+  getMinMaxDateFromMonthString,
 }

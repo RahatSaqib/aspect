@@ -112,12 +112,11 @@ export const DeviceApiKeyList = () => {
     let selectedDDL = {}
     if (nextDeviceApiKeyIds.length === 1) {
       const [firstElementId] = nextDeviceApiKeyIds
-      const { siteId, countryId, partnerId } = (data?.data || []).find(d => d.id === firstElementId)
-      selectedDDL = { siteId, countryId, partnerId }
+      selectedDDL = (data?.data || []).find(d => d.id.toString() === firstElementId)
     } else if (nextDeviceApiKeyIds.length > 1) {
       const selection = []
       nextDeviceApiKeyIds.forEach(id => {
-        const { partnerId, siteId, countryId } = (data?.data || []).find(d => d.id === id)
+        const { partnerId, siteId, countryId } = (data?.data || []).find(d => d.id.toString() === id)
         selection.push({ partnerId, siteId, countryId })
       })
       const [{ countryId, siteId, partnerId }] = intersectionWith(selection, isEqual)
@@ -213,7 +212,7 @@ export const DeviceApiKeyList = () => {
                       intl={intl}
                       deviceApiKey={deviceApiKey}
                       disabled={!selectableIds.includes(deviceApiKey.id)}
-                      checked={dialogState.assignerValues.deviceApiKeyIds.indexOf(deviceApiKey.id) !== -1}
+                      checked={dialogState.assignerValues.deviceApiKeyIds.indexOf(deviceApiKey.id.toString()) !== -1}
                       onSelectedChange={onSelectedChange}
                       onRevokedChange={onRevokedChange}
                     />

@@ -162,16 +162,16 @@ const messages = {
       id: 'p.PkDashboard.provincialFqrDiagnosisTrends',
       defaultMessage: 'Provincial FQ Diagnosis Trends',
     },
-    nationalMtbRifDiagnosed: {
-      id: 'p.PkDashboard.nationalMtbRifDiagnosed',
-      defaultMessage: 'National TB Diagnosis Trends using MTB/Rif Assay',
+    nationalMtbRifUltraDiagnosed: {
+      id: 'p.PkDashboard.nationalMtbRifUltraDiagnosed',
+      defaultMessage: 'National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay',
     },
     nationalDiagnosisXdr: {
       id: 'p.PkDashboard.nationalDiagnosisXdr',
       defaultMessage: 'National Diagnosis Trends using MTB/XDR assay',
     },
     nationalXdrTestingTrends: {
-      id: 'p.PkDashboard.nationalMtbRifDiagnosed',
+      id: 'p.PkDashboard.nationalXdrTestingTrends',
       defaultMessage: 'National Testing Trends using MTB/XDR Assay',
     },
     nationalFqrResistanceTrend: {
@@ -330,7 +330,7 @@ const messages = {
     overview: { id: 'p.PkDashboard.overview', defaultMessage: 'Inventory Overview' },
     // 5th column
     titleother: { id: 'p.PkDashboard.titleother', defaultMessage: 'Other' },
-    covid: { id: 'p.PkDashboard.covidPending', defaultMessage: 'Covid Testing (Pending)' },
+    covidTesting: { id: 'p.PkDashboard.covidTesting', defaultMessage: 'Covid Testing' },
     hiv: { id: 'p.PkDashboard.hiv', defaultMessage: 'HIV' },
     incompleteScreen: { id: 'p.PkDashboard.incompleteScreen', defaultMessage: 'Screen is not yet complete' },
     date: {
