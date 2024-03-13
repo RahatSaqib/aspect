@@ -330,7 +330,7 @@ const messages = {
     overview: { id: 'p.PkDashboard.overview', defaultMessage: 'Inventory Overview' },
     // 5th column
     titleother: { id: 'p.PkDashboard.titleother', defaultMessage: 'Other' },
-    covid: { id: 'p.PkDashboard.covidPending', defaultMessage: 'Covid Testing (Pending)' },
+    covidTesting: { id: 'p.PkDashboard.covidTesting', defaultMessage: 'Covid Testing' },
     hiv: { id: 'p.PkDashboard.hiv', defaultMessage: 'HIV' },
     incompleteScreen: { id: 'p.PkDashboard.incompleteScreen', defaultMessage: 'Screen is not yet complete' },
     date: {
