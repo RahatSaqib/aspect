@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-02-28T16:51:57.069Z\n"
+"POT-Creation-Date: 2024-03-13T18:16:45.673Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2118,12 +2118,12 @@ msgstr "COVID"
 msgid "Covid 19"
 msgstr "COVID 19"
 
-#. [p.PkDashboard.covidPending]
+#. [p.PkDashboard.covidTesting]
 #. defaultMessage is:
-#. Covid Testing (Pending)
+#. Covid Testing
 #: extracted_strings.json
-msgid "Covid Testing (Pending)"
-msgstr "Тестування на Covid (очікується)"
+msgid "Covid Testing"
+msgstr "Тестування на Covid"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -7124,6 +7124,14 @@ msgstr "Національний"
 msgid "National Contacts"
 msgstr "Національні контакти"
 
+#. [p.PkDashboard.nationalMtbRifUltraDiagnosed]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+msgstr ""
+"Національні тенденції діагностики за допомогою тесту MTB-Rif / MTB Rif Ultra"
+
 #. [p.PkDashboard.nationalDiagnosisXdr]
 #. defaultMessage is:
 #. National Diagnosis Trends using MTB/XDR assay
@@ -7197,7 +7205,7 @@ msgstr "Національні тенденції тестування TB"
 msgid "National Testing Trends"
 msgstr "Національні тенденції тестування"
 
-#. [p.PkDashboard.nationalMtbRifDiagnosed]
+#. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
 #. National Testing Trends using MTB/XDR Assay
 #: extracted_strings.json
