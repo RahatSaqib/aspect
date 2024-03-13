@@ -16,6 +16,7 @@ import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { isPermittedUser } from '../../../oldComponents/shared/requirePermissions'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import messages from './messages'
 import { PersonDataTable, PersonDataTableHead, PersonDataTableRow } from './PersonDataTable'
 import styles from './PersonList.module.css'
@@ -60,7 +61,12 @@ export const PersonList = () => {
     <>
       <DetailHeader name={formatMessage(messages.contactsTitle)} disableBack>
         <PermissionChecker permissions={['person:edit']}>
-          <AspectButton color="primary" variant="contained" browseButton onClick={() => navigate('/browse/person/add')}>
+          <AspectButton
+            color="primary"
+            variant="contained"
+            browseButton
+            onClick={() => gotoWithReturnUrl('/browse/person/add', navigate, location)}
+          >
             {formatMessage(messages.addContact)}
           </AspectButton>
         </PermissionChecker>
@@ -98,7 +104,9 @@ export const PersonList = () => {
                     <PersonDataTableRow
                       key={person.id}
                       person={person}
-                      onClick={e => navigate(`/browse/person/${e.currentTarget.dataset.personId}`)}
+                      onClick={e =>
+                        gotoWithReturnUrl(`/browse/person/${e.currentTarget.dataset.personId}`, navigate, location)
+                      }
                       data-person-id={person.id}
                       personEditPermission={isEditAllow && user?.userId !== person.id}
                     />

@@ -10,8 +10,6 @@ import {
   Grid,
   TextField,
 } from '@mui/material'
-import endOfMonth from 'date-fns/endOfMonth'
-import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import isEmpty from 'lodash/isEmpty'
 import map from 'lodash/map'
@@ -32,6 +30,7 @@ import {
   calcPercentageForGraphs,
   getAverageFromData,
   negateTimeZoneOffset,
+  getMinMaxDateFromMonthString,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
 
@@ -186,14 +185,13 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
                         showLabel={showLabel}
                         onReady={plot => {
                           plot.on('plot:click', evt => {
-                            const base = 'yyyy-MM-dd'
-                            const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+                            const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
 
                             const assay = assays.find(a => a.externalId === evt.data.data.id).id
                             const params = {
                               displayResult: 'actual',
-                              minDate: format(startOfMonth(parsedDate), base),
-                              maxDate: format(endOfMonth(parsedDate), base),
+                              minDate,
+                              maxDate,
                               assayId: [assay],
                             }
                             addFilter({ ...params }, '/browse/result')

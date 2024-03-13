@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useCallback } from 'react'
 import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
@@ -7,7 +7,7 @@ import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useLocation } from 'react-router-dom'
 import { SiteListSelect, SiteTagInput, LocationSelector, TimezoneSelect } from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
@@ -15,6 +15,7 @@ import useDeleteSite from '../../../../hooks/site/useDeleteSite'
 import useUpdateSite from '../../../../hooks/site/useUpdateSite'
 import useAuthState from '../../../../hooks/useAuthState'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
+import { gotoReturnUrl } from '../../../../utils/utils/browser'
 import messages from '../messages'
 import styles from '../SiteDetail.module.css'
 import { convertToFloat, getLatLongFromAddress } from './address'
@@ -24,6 +25,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const navigate = useNavigate()
+  const location = useLocation()
   const [showConfirmation, setShowConfirmation] = useState(false)
 
   const { mutate: updateSite } = useUpdateSite(site.id)
@@ -35,6 +37,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
 
   const isPristine = isEqual(site, editSite)
   const isNew = site.id === 0
+  const goBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
 
   useEffect(
     () => onLatLongChange({ lat: editSite.latitude, lng: editSite.longitude }),
@@ -62,16 +65,16 @@ const SiteForm = ({ site, onLatLongChange }) => {
       })
     }
     if (isNew) {
-      createSite(editSite, { onSuccess: newId => navigate(`/browse/site/${newId}`) })
+      createSite(editSite, { onSuccess: newId => navigate(`/browse/site/${newId}${location.search}`) })
     } else {
-      updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}`) })
+      updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}${location.search}`) })
     }
   }
 
   const handleDelete = () => {
     deleteSite()
     setShowConfirmation(false)
-    navigate('/browse/site')
+    goBack()
   }
 
   function handleDeletePrompt() {
@@ -371,12 +374,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             </PermissionChecker>
           )}
 
-          <Button
-            style={{ marginLeft: '1rem' }}
-            type="button"
-            variant="contained"
-            onClick={() => navigate('/browse/site')}
-          >
+          <Button style={{ marginLeft: '1rem' }} type="button" variant="contained" onClick={goBack}>
             {formatMessage(messages.buttonBack)}
           </Button>
 
