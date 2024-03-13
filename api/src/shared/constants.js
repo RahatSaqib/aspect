@@ -27,11 +27,6 @@ const WEBHOOK_SERVERS = {
   CepheidC360: 'CepheidC360',
 }
 
-const COMBINED_RESULT = {
-  INCONCLUSIVE_RESULT_CATEGORY_GROUPS: ['GxMtbRifSomeResult', 'GxMtbRifUltraSomeResult'],
-  INCONCLUSIVE_RESULT_CATEGORIES: ['NoResult', 'Indeterminate', 'Error', 'Invalid'],
-}
-
 module.exports = {
   IGNORED_SENTRY_ERRORS,
   INTERNAL_DEVICE_IDS,
@@ -42,5 +37,4 @@ module.exports = {
   XDR_RESISTANCE_VALUES,
   DAYS_STOCK_LEFT_RANGES,
   WEBHOOK_SERVERS,
-  COMBINED_RESULT,
 }

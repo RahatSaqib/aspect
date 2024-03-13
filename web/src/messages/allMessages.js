@@ -175,14 +175,6 @@ const messages = defineMessages({
     id: 'pages.filters.GxMtbRifUltraMTBTraceDetectedRifNoResult',
     defaultMessage: 'MTB Trace Detected Rif No Result',
   },
-  GxMtbRifSomeResult: {
-    id: 'pages.filters.GxMtbRifSomeResult',
-    defaultMessage: 'Some Result',
-  },
-  GxMtbRifUltraSomeResult: {
-    id: 'pages.filters.GxMtbRifUltraSomeResult',
-    defaultMessage: 'Some Result',
-  },
   GxMtbXdrMTBNotDetectedDrugResistanceNotDetected: {
     id: 'pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
     defaultMessage: 'MTB Not Detected Drug Resistance Not Detected',

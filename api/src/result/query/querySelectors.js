@@ -1,6 +1,5 @@
 const { knex } = require('../../db')
 const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
-const { COMBINED_RESULT } = require('../../shared/constants')
 
 const COMMON_LIST_FIELDS_UTC = {
   id: 'r.id',
@@ -177,8 +176,6 @@ const SELECT_FIELDS_UTC = {
   },
 }
 
-const csvInconclusiveResultCategories = COMBINED_RESULT.INCONCLUSIVE_RESULT_CATEGORIES.map(it => `'${it}'`).join(',')
-
 const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
   errorRate: knex.raw("ROUND(IFNULL(COUNT(r.id) / SUM(CASE WHEN rc1.externalId = 'Error' THEN 1 ELSE 0 END), 0), 2)"),
   // Flat mtb cnt
@@ -211,10 +208,10 @@ const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
   ),
   // Grouped mtb cnt
   mtbValid: knex.raw(
-    `IFNULL(SUM(CASE WHEN rc1.externalId is not null and rc1.externalId NOT IN (${csvInconclusiveResultCategories}) THEN 1 ELSE 0 END), 0)`
+    "IFNULL(SUM(CASE WHEN rc1.externalId is not null and rc1.externalId NOT IN ('NoResult', 'Indeterminate', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0)"
   ),
   mtbInconclusive: knex.raw(
-    `IFNULL(SUM(CASE WHEN rc1.externalId IN (${csvInconclusiveResultCategories}) THEN 1 ELSE 0 END), 0)`
+    "IFNULL(SUM(CASE WHEN rc1.externalId IN ('NoResult', 'Indeterminate', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0)"
   ),
 
   mtbNoResultInvalidIndeterminate: knex.raw(

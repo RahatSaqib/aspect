@@ -9,7 +9,7 @@ const { allAssayToId, allResultCategoryToId } = require('../../shared/dictionary
 const getPositiveCategoriesExternalIds = require('../../resultCategory/service')
 const { pageParams, sortParams } = require('../../db')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
-const { INTERNAL_DEVICE_IDS, COMBINED_RESULT } = require('../../shared/constants')
+const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 
 function getSitesQuery(dataConstraints) {
   return knex('Site as s')
@@ -213,26 +213,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
   const { showUnapprovedDevices = false, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
-  /**
-   * When user selected from Result Group dropdown options
-   * with text `Some Result` - then we need to process this
-   * separately. Because we don't have such item in ResultCategoryGroup
-   * table. This value combines few ResultCategory items -
-   * see COMBINED_RESULT.INCONCLUSIVE_RESULT_CATEGORY_GROUPS
-   */
-  let inconclusiveResultCategoryGroups = []
-  if (query.resultCategoryGroupId) {
-    inconclusiveResultCategoryGroups = query.resultCategoryGroupId.filter(it =>
-      COMBINED_RESULT.INCONCLUSIVE_RESULT_CATEGORY_GROUPS.includes(it)
-    )
-    query.resultCategoryGroupId = query.resultCategoryGroupId.filter(
-      it => !COMBINED_RESULT.INCONCLUSIVE_RESULT_CATEGORY_GROUPS.includes(it)
-    )
-    if (query.resultCategoryGroupId.length === 0) {
-      query.resultCategoryGroupId = undefined
-    }
-  }
-
   const resultQuery = getBaseQueryForResults()
     .leftJoin('Site as sdpn', 'sdpn.id', 'd.siteId')
     .leftJoin('Geography as gdpn', 'sdpn.geographyId', 'gdpn.id')
@@ -313,11 +293,6 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       onlyReportableResults: 'rca.reportable',
       resultCategoryGroupId: 'rcg.externalId',
       assayId: 'a.id',
-    })
-    .modify(queryBuilder => {
-      if (inconclusiveResultCategoryGroups?.length > 0) {
-        queryBuilder.whereNotIn('rc1.externalId', COMBINED_RESULT.INCONCLUSIVE_RESULT_CATEGORIES)
-      }
     })
     .modify((queryBuilder, params) => {
       if (params.onlyDownloadedByReporter) queryBuilder.innerJoin('ResultDownloadLog as rdl', 'r.id', 'rdl.resultId')

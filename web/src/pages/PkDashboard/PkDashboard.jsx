@@ -23,7 +23,11 @@ const PkDashboard = () => {
           ) : (
             <SummaryCard
               items={[
-                { key: 'molecularAssay', value: resultOverview.total1Year },
+                {
+                  key: 'molecularAssay',
+                  value: resultOverview.total1Year,
+                  valueTooltipKey: 'peopleTestedRifTooltip',
+                },
                 { key: 'molecularAssay24', value: resultOverview.total1Day },
               ]}
             />

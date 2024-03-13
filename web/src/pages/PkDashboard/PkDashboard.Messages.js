@@ -58,6 +58,11 @@ const messages = {
       id: 'p.PkDashboard.peopleTestedRif',
       defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
     },
+    peopleTestedRifTooltip: {
+      id: 'p.PkDashboard.peopleTestedRifTooltip',
+      defaultMessage:
+        "Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.",
+    },
     peopleTestedCovid: {
       id: 'p.PkDashboard.peopleTestedCovid',
       defaultMessage: 'People tested for Covid in current year',
