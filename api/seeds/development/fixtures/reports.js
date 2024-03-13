@@ -1,4 +1,4 @@
-const { xpertSiteSummaryReportSiteWise } = require('../../pakistan/fixtures/reports')
+const { xpertSiteSummaryReportSiteWise } = require('../../fixtures/Report')
 
 const deviceSummaryReport = {
   name: 'Device Summary Report',
