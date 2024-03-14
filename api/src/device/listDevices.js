@@ -139,6 +139,7 @@ async function getListDevices(query, auth) {
     )
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
+
   const userTimeOffset = '+00:00' // TODO: get time offset from somewhere and put here, as there is no datetime parameter to use getOffsetFromIsoDateString(someIsoDateParam) here.
 
   const timezone = convertTimezonetoIANA(accountDetails.timezone || 'UTC')

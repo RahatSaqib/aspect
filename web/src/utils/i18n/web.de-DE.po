@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-30T17:11:26.902Z\n"
+"POT-Creation-Date: 2024-03-13T18:16:45.673Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -56,19 +56,7 @@ msgstr "# Anzahl der PMDT-Standorte mit 10 C GX"
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# Anzahl der getesteten Standorte MTB/XDR-Assay"
 
-#. [pages.AddInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
@@ -430,9 +418,6 @@ msgstr "Datensatz hinzufügen"
 msgid "Add Row"
 msgstr "Zeile hinzufügen"
 
-#. [pages.AddInventoryDialogForm.dialogTitle]
-#. defaultMessage is:
-#. Add {consumableName}
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. Add {consumableName}
@@ -2140,12 +2125,12 @@ msgstr "Covid"
 msgid "Covid 19"
 msgstr "COVID 19"
 
-#. [p.PkDashboard.covidPending]
+#. [p.PkDashboard.covidTesting]
 #. defaultMessage is:
-#. Covid Testing (Pending)
+#. Covid Testing
 #: extracted_strings.json
-msgid "Covid Testing (Pending)"
-msgstr "Covid-Tests (noch nicht abgeschlossen)"
+msgid "Covid Testing"
+msgstr "Covid-Prüfung"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -2612,9 +2597,6 @@ msgstr "Datenvisualisierung für XDR-Resistenz"
 msgid "Date"
 msgstr "Datum"
 
-#. [pages.AddInventoryDialogForm.dateAdjusted]
-#. defaultMessage is:
-#. Date Added
 #. [pages.NewInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
 #. Date Added
@@ -3701,6 +3683,13 @@ msgstr "Fehlercode"
 msgid "Error Fetching Endpoint"
 msgstr "Fehler beim Laden"
 
+#. [reports.genericReportErrorTitle]
+#. defaultMessage is:
+#. Error Fetching Report
+#: extracted_strings.json
+msgid "Error Fetching Report"
+msgstr "Fehler beim Abrufen des Berichts"
+
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Countries
@@ -3755,6 +3744,13 @@ msgstr "Fehler beim Speichern des neuen Passworts"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Fehler beim Senden der E-Mail zum Zurücksetzen des Kennworts"
+
+#. [report.missingDateRangeFilterTitle]
+#. defaultMessage is:
+#. Error: Date Selection Required to Download Report
+#: extracted_strings.json
+msgid "Error: Date Selection Required to Download Report"
+msgstr "Fehler: Datumsauswahl zum Herunterladen des Berichts erforderlich"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3982,6 +3978,9 @@ msgstr "Februar"
 msgid "FLQ Resistance"
 msgstr "FLQ Widerstand"
 
+#. [p.PkDashboard.fqinhTestingDiagnosis]
+#. defaultMessage is:
+#. FQ & INH Testing & Diagnosis
 #. [p.PkDashboard.fqInhTestingDiagnosis]
 #. defaultMessage is:
 #. FQ & INH Testing & Diagnosis
@@ -4052,7 +4051,19 @@ msgstr "In diesem Jahr diagnostizierte FQ-R-Fälle"
 msgid "Facility Code"
 msgstr "Einrichtung Code"
 
-#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
+#. [reports.tooMuchDataErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of Database "
+"Timeout: You might be trying to download too much data."
+msgstr ""
+"Der {fileType}-Bericht \"{reportName}\" konnte wegen einer "
+"Zeitüberschreitung der Datenbank nicht erstellt werden: Sie versuchen "
+"möglicherweise, zu viele Daten herunterzuladen."
+
+#. [reports.genericReportErrorMessage]
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
@@ -5352,6 +5363,16 @@ msgstr "Platzhalter einfügen für"
 msgid "Insert placeholder"
 msgstr "Platzhalter einfügen"
 
+#. [pages.DeviceDetailEdit.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#. [pages.DeviceDetailProfile.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#: extracted_strings.json
+msgid "Instrument Model"
+msgstr "Instrumentenmodell"
+
 #. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5534,6 +5555,16 @@ msgstr "Der Lagerbestand wurde erfolgreich angepasst"
 #: extracted_strings.json
 msgid "Inventory on Hand"
 msgstr "Vorhandene Bestände"
+
+#. [pages.DeviceDetailEdit.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#. [pages.DeviceDetailProfile.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#: extracted_strings.json
+msgid "Is Daisy Chained"
+msgstr "Ist Daisy angekettet"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
 #. defaultMessage is:
@@ -6842,6 +6873,16 @@ msgstr "Modul"
 msgid "Module Activity Report"
 msgstr "Modul-Aktivitätsbericht"
 
+#. [pages.DeviceDetailEdit.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#. [pages.DeviceDetailProfile.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#: extracted_strings.json
+msgid "Module Bay Capacity"
+msgstr "Kapazität der Modulschächte"
+
 #. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -7089,6 +7130,20 @@ msgstr "Bundesweit"
 msgid "National Contacts"
 msgstr "Kontakte"
 
+#. [p.PkDashboard.nationalMtbRifUltraDiagnosed]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+msgstr "Nationale Diagnosetrends mit MTB-Rif / MTB Rif Ultra Test"
+
+#. [p.PkDashboard.nationalDiagnosisXdr]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB/XDR assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB/XDR assay"
+msgstr "Nationale Diagnosetrends mit MTB/XDR-Assay"
+
 #. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
 #. National FQ Resistance Trend
@@ -7155,7 +7210,7 @@ msgstr "Nationale TB-Test-Trends"
 msgid "National Testing Trends"
 msgstr "Nationale Trends bei Tests"
 
-#. [p.PkDashboard.nationalMtbRifDiagnosed]
+#. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
 #. National Testing Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -8156,14 +8211,14 @@ msgstr "Patienten-/Fall-ID"
 msgid "Pending changes"
 msgstr "Anstehende Änderungen"
 
-#. [p.PkDashboard.peopleDiagnosedRif]
+#. [p.PkDashboard.peopleDiagnosedRifUltra]
 #. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif assay in current year
+#. People diagnosed for TB using MTB/Rif Ultra assay in current year
 #: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif assay in current year"
+msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
 msgstr ""
-"Personen, bei denen im laufenden Jahr mit dem MTB/Rif-Test TB diagnostiziert "
-"wurde"
+"Personen, bei denen im laufenden Jahr mit dem MTB/Rif Ultra-Test Tuberkulose "
+"diagnostiziert wurde"
 
 #. [p.PkDashboard.peopleDiagnosedXdr]
 #. defaultMessage is:
@@ -8307,16 +8362,6 @@ msgstr "Bitte prüfen Sie, ob es noch existiert"
 #: extracted_strings.json
 msgid "Please choose a date later or equal to from date"
 msgstr "Bitte wählen Sie ein Datum größer oder gleich dem Datum von"
-
-#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#: extracted_strings.json
-msgid "Please choose a different site"
-msgstr "Bitte wählen Sie einen anderen Standort"
 
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
@@ -8478,34 +8523,6 @@ msgstr "Bitte geben Sie ein Verfallsdatum an"
 #: extracted_strings.json
 msgid "Please specify the quantity"
 msgstr "Bitte geben Sie die Menge an"
-
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
-#: extracted_strings.json
-msgid "Please specify the quantity to add"
-msgstr "Bitte geben Sie die Menge an, die Sie hinzufügen möchten"
-
-#. [pages.ReceiveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to receive
-#: extracted_strings.json
-msgid "Please specify the quantity to receive"
-msgstr "Bitte geben Sie die zu erhaltende Menge an"
-
-#. [pages.RemoveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to remove
-#: extracted_strings.json
-msgid "Please specify the quantity to remove"
-msgstr "Bitte geben Sie die zu entfernende Menge an"
-
-#. [pages.TransferInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to transfer
-#: extracted_strings.json
-msgid "Please specify the quantity to transfer"
-msgstr "Bitte geben Sie die zu übertragende Menge an"
 
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution]
 #. defaultMessage is:
@@ -9009,9 +9026,6 @@ msgstr "Empfangene Menge"
 msgid "Quantity on Hand"
 msgstr "Vorrätige Menge"
 
-#. [pages.AddInventoryDialogForm.quantity]
-#. defaultMessage is:
-#. Quantity to Add
 #. [pages.NewInventoryDialogForm.quantity]
 #. defaultMessage is:
 #. Quantity to Add
@@ -11135,6 +11149,16 @@ msgstr "Der SMS-Text sollte nicht mehr als 144 Zeichen haben"
 msgid "Sms message should not be longer than 2000 characters"
 msgstr "SMS-Nachricht sollte nicht länger als 144 Zeichen sein"
 
+#. [pages.DeviceDetailEdit.softwareType]
+#. defaultMessage is:
+#. Software Type
+#. [pages.DeviceDetailProfile.softwareType]
+#. defaultMessage is:
+#. Software Type
+#: extracted_strings.json
+msgid "Software Type"
+msgstr "Software-Typ"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -11225,6 +11249,16 @@ msgstr "Statistiken über gesendete SMS-Benachrichtigungen."
 #: extracted_strings.json
 msgid "Status"
 msgstr "Status"
+
+#. [pages.DeviceDetailEdit.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#. [pages.DeviceDetailProfile.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#: extracted_strings.json
+msgid "Sticker Instrument Serial"
+msgstr "Aufkleber Instrument Seriennummer"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11483,6 +11517,20 @@ msgstr "Trends bei der Diagnose von TB und RRTB"
 msgid "TB cases diagnosed in"
 msgstr "TB-Fälle diagnostiziert in"
 
+#. [p.PkDashboard.xdrTBLastDay]
+#. defaultMessage is:
+#. TB cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "TB cases diagnosed in last 24 hours"
+msgstr "In den letzten 24 Stunden diagnostizierte Tb-Fälle"
+
+#. [p.PkDashboard.xdrTBCasesPerYear]
+#. defaultMessage is:
+#. TB cases diagnosed this year
+#: extracted_strings.json
+msgid "TB cases diagnosed this year"
+msgstr "In diesem Jahr diagnostizierte Tb-Fälle"
+
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
 #. TB lamp
@@ -11536,20 +11584,6 @@ msgstr "Aufgabenliste"
 #: extracted_strings.json
 msgid "Tb Total"
 msgstr "Tb Gesamt"
-
-#. [p.PkDashboard.xdrLastDay]
-#. defaultMessage is:
-#. Tb cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "Tb cases diagnosed in last 24 hours"
-msgstr "In den letzten 24 Stunden diagnostizierte Tb-Fälle"
-
-#. [p.PkDashboard.xdrCasesPerYear]
-#. defaultMessage is:
-#. Tb cases diagnosed this year
-#: extracted_strings.json
-msgid "Tb cases diagnosed this year"
-msgstr "In diesem Jahr diagnostizierte Tb-Fälle"
 
 #. [forms.formItem.technicalDetails]
 #. defaultMessage is:
@@ -11642,9 +11676,6 @@ msgid "Testing"
 msgstr "Testen"
 
 #. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
 #. Testing & Diagnosis Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -11882,13 +11913,6 @@ msgstr ""
 "Die Fehlerrate wird berechnet, indem alle Fehler in den im Monat "
 "durchgeführten Tests gezählt und diese Zahl durch die Gesamtzahl der von "
 "allen Geräten durchgeführten Tests dividiert wird."
-
-#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can transfer is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can transfer is {currentQuantity}"
-msgstr "Das Maximum, das Sie übertragen können, ist {currentQuantity}"
 
 #. [pages.Notifications.notificationNameRequired]
 #. defaultMessage is:
@@ -12609,6 +12633,17 @@ msgstr "An eine einzelne Person"
 #: extracted_strings.json
 msgid "To any of these Job Functions"
 msgstr "Zu einer dieser Jobfunktionen"
+
+#. [report.missingDateRangeFilterDescription]
+#. defaultMessage is:
+#. To download the report "{reportName}" you must select a date from the filters.
+#: extracted_strings.json
+msgid ""
+"To download the report \"{reportName}\" you must select a date from the "
+"filters."
+msgstr ""
+"Um den Bericht \"{reportName}\" herunterzuladen, müssen Sie ein Datum aus "
+"den Filtern auswählen."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
 #. defaultMessage is:
@@ -14341,6 +14376,24 @@ msgstr "{unit} seit letzter Woche"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} gesamt kalibrierungen"
+
+#~ msgid "Please choose a different site"
+#~ msgstr "Bitte wählen Sie einen anderen Standort"
+
+#~ msgid "Please specify the quantity to add"
+#~ msgstr "Bitte geben Sie die Menge an, die Sie hinzufügen möchten"
+
+#~ msgid "Please specify the quantity to receive"
+#~ msgstr "Bitte geben Sie die zu erhaltende Menge an"
+
+#~ msgid "Please specify the quantity to remove"
+#~ msgstr "Bitte geben Sie die zu entfernende Menge an"
+
+#~ msgid "Please specify the quantity to transfer"
+#~ msgstr "Bitte geben Sie die zu übertragende Menge an"
+
+#~ msgid "The most that you can transfer is {currentQuantity}"
+#~ msgstr "Das Maximum, das Sie übertragen können, ist {currentQuantity}"
 
 #~ msgid "Reporters"
 #~ msgstr "Reporter"

@@ -8,6 +8,7 @@ const szMtbStats = {
   fileName: 'mtbStats',
   availableForNotification: 1,
   sortOrder: 100,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -27,6 +28,7 @@ const szSmsStats = {
   availableForNotification: 1,
   sortOrder: 110,
   exportCsv: false,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,

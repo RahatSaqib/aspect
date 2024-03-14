@@ -181,7 +181,15 @@ const routes = [
             .min(0)
             .description('Number of GX-10C modules on GenExpert device'),
           deviceCapacityId: Joi.number().allow(null).optional(),
-          moduleBayCapacity: Joi.number().optional().min(1).max(256).description('The module bay capacity of the device'),
+          moduleBayCapacity: Joi.number()
+            .optional()
+            .min(0)
+            .max(256)
+            .description('The module bay capacity of the device'),
+          stickerInstrumentSerial: Joi.string().allow('', null).optional(),
+          instrumentModel: Joi.string().allow('', null).optional(),
+          softwareType: Joi.string().allow('', null).optional(),
+          isDaisyChained: Joi.bool().allow('', null).optional(),
         },
       },
     },

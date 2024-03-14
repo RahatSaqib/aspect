@@ -11,6 +11,7 @@ import { BrowserRouter } from 'react-router-dom'
 import LocalStorage from '../oldComponents/LocalStorage'
 import store from '../store/store'
 import getTheme from '../theme'
+import AnalyticsProvider from './AnalyticsProvider'
 import AuthProvider from './AuthProvider'
 import FilterProvider from './FilterProvider'
 import I18nProvider from './I18nProvider'
@@ -38,7 +39,9 @@ const AppWithProviders = ({ children }) => {
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocales[culture]}>
               <BrowserRouter>
                 <AuthProvider>
-                  <FilterProvider>{children}</FilterProvider>
+                  <FilterProvider>
+                    <AnalyticsProvider>{children}</AnalyticsProvider>
+                  </FilterProvider>
                 </AuthProvider>
               </BrowserRouter>
             </LocalizationProvider>

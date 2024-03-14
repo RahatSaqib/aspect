@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-01-30T17:11:26.902Z\n"
+"POT-Creation-Date: 2024-03-13T18:16:45.673Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.1\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -56,19 +56,7 @@ msgstr "Số địa điểm PMDT có 10 C GX"
 msgid "# of sites tested MTB/XDR Assay"
 msgstr "# địa điểm được thử nghiệm Xét nghiệm MTB/XDR"
 
-#. [pages.AddInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
 #. [pages.NewInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.ReceiveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.RemoveInventoryDialogForm.nextQuantityStatus]
-#. defaultMessage is:
-#. (New quantity on hand: {nextQuantity} {unitShortName})
-#. [pages.TransferInventoryDialogForm.nextQuantityStatus]
 #. defaultMessage is:
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
@@ -429,9 +417,6 @@ msgstr "Thêm bản ghi"
 msgid "Add Row"
 msgstr "Thêm dòng"
 
-#. [pages.AddInventoryDialogForm.dialogTitle]
-#. defaultMessage is:
-#. Add {consumableName}
 #. [pages.NewInventoryDialogForm.dialogTitle]
 #. defaultMessage is:
 #. Add {consumableName}
@@ -2134,12 +2119,12 @@ msgstr "Covid"
 msgid "Covid 19"
 msgstr "Covid-19"
 
-#. [p.PkDashboard.covidPending]
+#. [p.PkDashboard.covidTesting]
 #. defaultMessage is:
-#. Covid Testing (Pending)
+#. Covid Testing
 #: extracted_strings.json
-msgid "Covid Testing (Pending)"
-msgstr "Xét nghiệm Covid (Đang chờ xử lý)"
+msgid "Covid Testing"
+msgstr "Thử nghiệm Covid"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -2606,9 +2591,6 @@ msgstr "Trực quan hóa dữ liệu về khả năng kháng XDR"
 msgid "Date"
 msgstr "Ngày"
 
-#. [pages.AddInventoryDialogForm.dateAdjusted]
-#. defaultMessage is:
-#. Date Added
 #. [pages.NewInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
 #. Date Added
@@ -3692,6 +3674,13 @@ msgstr "Mã lỗi"
 msgid "Error Fetching Endpoint"
 msgstr "Lỗi khi tìm nạp điểm cuối"
 
+#. [reports.genericReportErrorTitle]
+#. defaultMessage is:
+#. Error Fetching Report
+#: extracted_strings.json
+msgid "Error Fetching Report"
+msgstr "Lỗi tìm nạp báo cáo"
+
 #. [errorResponseMessages.fetchCountriesForLocationSelector.GET.default.title]
 #. defaultMessage is:
 #. Error Loading Countries
@@ -3746,6 +3735,13 @@ msgstr "Lỗi khi lưu mật khẩu mới"
 #: extracted_strings.json
 msgid "Error Sending Reset Password Email"
 msgstr "Lỗi khi gửi Email Đặt lại Mật khẩu"
+
+#. [report.missingDateRangeFilterTitle]
+#. defaultMessage is:
+#. Error: Date Selection Required to Download Report
+#: extracted_strings.json
+msgid "Error: Date Selection Required to Download Report"
+msgstr "Lỗi: Cần chọn ngày để tải xuống báo cáo"
 
 #. [components.shared.everyDay]
 #. defaultMessage is:
@@ -3971,6 +3967,9 @@ msgstr "tháng hai"
 msgid "FLQ Resistance"
 msgstr "Kháng FLQ"
 
+#. [p.PkDashboard.fqinhTestingDiagnosis]
+#. defaultMessage is:
+#. FQ & INH Testing & Diagnosis
 #. [p.PkDashboard.fqInhTestingDiagnosis]
 #. defaultMessage is:
 #. FQ & INH Testing & Diagnosis
@@ -4041,7 +4040,18 @@ msgstr "Các trường hợp FQ-R được chẩn đoán trong năm nay"
 msgid "Facility Code"
 msgstr "Mã cơ sở"
 
-#. [errorResponseMessages.reportStream.tryAgainLater.resolution]
+#. [reports.tooMuchDataErrorMessage]
+#. defaultMessage is:
+#. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
+#: extracted_strings.json
+msgid ""
+"Failed to generate {fileType} report \"{reportName}\" because of Database "
+"Timeout: You might be trying to download too much data."
+msgstr ""
+"Không tạo được {fileType} báo cáo \"{reportName}\" do Hết thời gian chờ cơ "
+"sở dữ liệu: Bạn có thể đang cố tải xuống quá nhiều dữ liệu."
+
+#. [reports.genericReportErrorMessage]
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of error "{errorMessage}". Please, try again in a few minutes. If the error persists, contact your administrator for support.
 #: extracted_strings.json
@@ -5338,6 +5348,16 @@ msgstr "Chèn trình giữ chỗ cho"
 msgid "Insert placeholder"
 msgstr "Chèn trình giữ chỗ"
 
+#. [pages.DeviceDetailEdit.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#. [pages.DeviceDetailProfile.instrumentModel]
+#. defaultMessage is:
+#. Instrument Model
+#: extracted_strings.json
+msgid "Instrument Model"
+msgstr "Mẫu nhạc cụ"
+
 #. [notificationCategoryTypeSelect.notificationTypeInstrumentReplaced]
 #. defaultMessage is:
 #. Instrument Replaced
@@ -5520,6 +5540,16 @@ msgstr "Mức khoảng không quảng cáo đã được điều chỉnh thành 
 #: extracted_strings.json
 msgid "Inventory on Hand"
 msgstr "Hàng tồn kho"
+
+#. [pages.DeviceDetailEdit.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#. [pages.DeviceDetailProfile.isDaisyChained]
+#. defaultMessage is:
+#. Is Daisy Chained
+#: extracted_strings.json
+msgid "Is Daisy Chained"
+msgstr "Daisy có bị xích không"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
 #. defaultMessage is:
@@ -6827,6 +6857,16 @@ msgstr "Chức năng"
 msgid "Module Activity Report"
 msgstr "Báo cáo hoạt động mô-đun"
 
+#. [pages.DeviceDetailEdit.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#. [pages.DeviceDetailProfile.moduleBayCapacity]
+#. defaultMessage is:
+#. Module Bay Capacity
+#: extracted_strings.json
+msgid "Module Bay Capacity"
+msgstr "Công suất khoang mô-đun"
+
 #. [notificationCategoryTypeSelect.notificationTypeModuleDisabled]
 #. defaultMessage is:
 #. Module Disabled
@@ -7074,6 +7114,20 @@ msgstr "Quốc gia"
 msgid "National Contacts"
 msgstr "Liên hệ quốc gia"
 
+#. [p.PkDashboard.nationalMtbRifUltraDiagnosed]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+msgstr "Xu hướng chẩn đoán quốc gia sử dụng xét nghiệm MTB-Rif / MTB Rif Ultra"
+
+#. [p.PkDashboard.nationalDiagnosisXdr]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB/XDR assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB/XDR assay"
+msgstr "Xu hướng chẩn đoán quốc gia sử dụng xét nghiệm MTB/XDR"
+
 #. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
 #. National FQ Resistance Trend
@@ -7140,7 +7194,7 @@ msgstr "Xu hướng xét nghiệm lao quốc gia"
 msgid "National Testing Trends"
 msgstr "Xu hướng thử nghiệm quốc gia"
 
-#. [p.PkDashboard.nationalMtbRifDiagnosed]
+#. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
 #. National Testing Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -8137,14 +8191,14 @@ msgstr "ID bệnh nhân / trường hợp"
 msgid "Pending changes"
 msgstr "Các thay đổi đang chờ xử lý"
 
-#. [p.PkDashboard.peopleDiagnosedRif]
+#. [p.PkDashboard.peopleDiagnosedRifUltra]
 #. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif assay in current year
+#. People diagnosed for TB using MTB/Rif Ultra assay in current year
 #: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif assay in current year"
+msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
 msgstr ""
-"Số người được chẩn đoán mắc bệnh lao bằng xét nghiệm MTB/Rif trong năm hiện "
-"tại"
+"Số người được chẩn đoán mắc bệnh lao bằng xét nghiệm MTB/Rif Ultra trong năm "
+"hiện tại"
 
 #. [p.PkDashboard.peopleDiagnosedXdr]
 #. defaultMessage is:
@@ -8286,16 +8340,6 @@ msgstr "Vui lòng kiểm tra xem nó vẫn tồn tại"
 #: extracted_strings.json
 msgid "Please choose a date later or equal to from date"
 msgstr "Vui lòng chọn một ngày muộn hơn hoặc bằng ngày kể từ ngày"
-
-#. [pages.ReceiveInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#. [pages.TransferInventoryDialogForm.siteShouldBeDifferent]
-#. defaultMessage is:
-#. Please choose a different site
-#: extracted_strings.json
-msgid "Please choose a different site"
-msgstr "Vui lòng chọn một đơn vị other"
 
 #. [pages.UpdateLoginDetails.confirmNewPasswordRequired]
 #. defaultMessage is:
@@ -8456,34 +8500,6 @@ msgstr "Vui lòng chỉ định ngày hết hạn"
 #: extracted_strings.json
 msgid "Please specify the quantity"
 msgstr "Vui lòng ghi rõ số lượng"
-
-#. [pages.AddInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to add
-#: extracted_strings.json
-msgid "Please specify the quantity to add"
-msgstr "Vui lòng ghi rõ số lượng cần thêm"
-
-#. [pages.ReceiveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to receive
-#: extracted_strings.json
-msgid "Please specify the quantity to receive"
-msgstr "Vui lòng ghi rõ số lượng nhận"
-
-#. [pages.RemoveInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to remove
-#: extracted_strings.json
-msgid "Please specify the quantity to remove"
-msgstr "Vui lòng chỉ định số lượng cần loại bỏ"
-
-#. [pages.TransferInventoryDialogForm.quantityRequired]
-#. defaultMessage is:
-#. Please specify the quantity to transfer
-#: extracted_strings.json
-msgid "Please specify the quantity to transfer"
-msgstr "Vui lòng ghi rõ số lượng cần chuyển"
 
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.cannotChangeStatusFromActive.resolution]
 #. defaultMessage is:
@@ -8983,9 +8999,6 @@ msgstr "Số lượng nhận vào"
 msgid "Quantity on Hand"
 msgstr "Số lượng tồn kho hiện tại"
 
-#. [pages.AddInventoryDialogForm.quantity]
-#. defaultMessage is:
-#. Quantity to Add
 #. [pages.NewInventoryDialogForm.quantity]
 #. defaultMessage is:
 #. Quantity to Add
@@ -11103,6 +11116,16 @@ msgstr "Nội dung tin nhắn không được dài quá 2000 ký tự"
 msgid "Sms message should not be longer than 2000 characters"
 msgstr "Tin nhắn sms không được dài quá 2000 ký tự"
 
+#. [pages.DeviceDetailEdit.softwareType]
+#. defaultMessage is:
+#. Software Type
+#. [pages.DeviceDetailProfile.softwareType]
+#. defaultMessage is:
+#. Software Type
+#: extracted_strings.json
+msgid "Software Type"
+msgstr "Loại phần mềm"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -11193,6 +11216,16 @@ msgstr "Thống kê về các thông báo SMS đã gửi."
 #: extracted_strings.json
 msgid "Status"
 msgstr "Trạng thái"
+
+#. [pages.DeviceDetailEdit.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#. [pages.DeviceDetailProfile.stickerInstrumentSerial]
+#. defaultMessage is:
+#. Sticker Instrument Serial
+#: extracted_strings.json
+msgid "Sticker Instrument Serial"
+msgstr "Nhãn dán nhạc cụ nối tiếp"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11450,6 +11483,20 @@ msgstr "Xu hướng chẩn đoán bệnh lao và RRTB"
 msgid "TB cases diagnosed in"
 msgstr "Các trường hợp lao được chẩn đoán trong"
 
+#. [p.PkDashboard.xdrTBLastDay]
+#. defaultMessage is:
+#. TB cases diagnosed in last 24 hours
+#: extracted_strings.json
+msgid "TB cases diagnosed in last 24 hours"
+msgstr "Số ca bệnh lao được chẩn đoán trong 24 giờ qua"
+
+#. [p.PkDashboard.xdrTBCasesPerYear]
+#. defaultMessage is:
+#. TB cases diagnosed this year
+#: extracted_strings.json
+msgid "TB cases diagnosed this year"
+msgstr "Số ca bệnh lao được chẩn đoán trong năm nay"
+
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
 #. TB lamp
@@ -11503,20 +11550,6 @@ msgstr "Danh sách công việc"
 #: extracted_strings.json
 msgid "Tb Total"
 msgstr "Tổng số Tb"
-
-#. [p.PkDashboard.xdrLastDay]
-#. defaultMessage is:
-#. Tb cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "Tb cases diagnosed in last 24 hours"
-msgstr "Ca bệnh lao được chẩn đoán trong 24 giờ qua"
-
-#. [p.PkDashboard.xdrCasesPerYear]
-#. defaultMessage is:
-#. Tb cases diagnosed this year
-#: extracted_strings.json
-msgid "Tb cases diagnosed this year"
-msgstr "Các ca bệnh lao được chẩn đoán trong năm nay"
 
 #. [forms.formItem.technicalDetails]
 #. defaultMessage is:
@@ -11609,9 +11642,6 @@ msgid "Testing"
 msgstr "Thử nghiệm"
 
 #. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#. [p.PkDashboard.mtbXdrTestingDiagnosisTrends]
 #. defaultMessage is:
 #. Testing & Diagnosis Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -11836,13 +11866,6 @@ msgstr ""
 "Tỷ lệ lỗi được tính bằng cách đếm tất cả các lỗi trong các thử nghiệm được "
 "thực hiện trong tháng và chia số đó cho tổng các thử nghiệm đã thực hiện "
 "trên tất cả các thiết bị."
-
-#. [pages.TransferInventoryDialogForm.positiveQuantityRequired]
-#. defaultMessage is:
-#. The most that you can transfer is {currentQuantity}
-#: extracted_strings.json
-msgid "The most that you can transfer is {currentQuantity}"
-msgstr "Số tiền bạn có thể chuyển nhiều nhất là {currentQuantity}"
 
 #. [pages.Notifications.notificationNameRequired]
 #. defaultMessage is:
@@ -12538,6 +12561,15 @@ msgstr "Đối với một cá nhân"
 #: extracted_strings.json
 msgid "To any of these Job Functions"
 msgstr "Đối với bất kỳ Chức năng Công việc nào trong số này"
+
+#. [report.missingDateRangeFilterDescription]
+#. defaultMessage is:
+#. To download the report "{reportName}" you must select a date from the filters.
+#: extracted_strings.json
+msgid ""
+"To download the report \"{reportName}\" you must select a date from the "
+"filters."
+msgstr "Để tải xuống báo cáo \"{reportName}\", bạn phải chọn ngày từ bộ lọc."
 
 #. [pages.UpdateLoginDetails.currentPasswordDialogMessage]
 #. defaultMessage is:
@@ -14266,6 +14298,24 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
+
+#~ msgid "Please choose a different site"
+#~ msgstr "Vui lòng chọn một đơn vị other"
+
+#~ msgid "Please specify the quantity to add"
+#~ msgstr "Vui lòng ghi rõ số lượng cần thêm"
+
+#~ msgid "Please specify the quantity to receive"
+#~ msgstr "Vui lòng ghi rõ số lượng nhận"
+
+#~ msgid "Please specify the quantity to remove"
+#~ msgstr "Vui lòng chỉ định số lượng cần loại bỏ"
+
+#~ msgid "Please specify the quantity to transfer"
+#~ msgstr "Vui lòng ghi rõ số lượng cần chuyển"
+
+#~ msgid "The most that you can transfer is {currentQuantity}"
+#~ msgstr "Số tiền bạn có thể chuyển nhiều nhất là {currentQuantity}"
 
 #~ msgid "Reporters"
 #~ msgstr "Những phóng viên"

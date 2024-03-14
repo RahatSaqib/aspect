@@ -4,6 +4,7 @@ const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
 const { addMinutes } = require('date-fns')
+const { insertSite } = require('../../src/site/common/db')
 const { upsertJobFunctionFixture } = require('../common')
 const jobFunctionsFixtureSouthAfrica = require('./fixtures/jobFunctions_southAfrica')
 const config = require('../../src/config')
@@ -86,7 +87,7 @@ async function seed(knex) {
     .first()
 
   // create site for Alere FTP Connector device
-  const [southAfricaNhlsAlereFtpConnectorSiteId] = await knex('Site').insert({
+  const [southAfricaNhlsAlereFtpConnectorSiteId] = await insertSite(knex, {
     name: 'SA NHLS Alere FTP Connector Site',
     shortName: 'SA NHLS Alere',
     externalId: 'sa_nhls_alere_ftp',
@@ -178,7 +179,7 @@ async function seed(knex) {
         timezoneId: southAfricaCountry.timezone,
         ...auditFields,
       }
-      const [siteId] = await knex('Site').insert(siteData)
+      const [siteId] = await insertSite(knex, siteData)
       siteData.id = siteId
       siteIds[clinic.shortName] = siteId
 
@@ -230,7 +231,7 @@ async function seed(knex) {
   // create site for lab user
   await Promise.all(
     _.map(['1', '2', '3'], async siteNum => {
-      const [siteId] = await knex('Site').insert({
+      const [siteId] = await insertSite(knex, {
         partnerId,
         geographyId: southAfricaGeographyId,
         name: `SA NHLS Site ${siteNum}`,

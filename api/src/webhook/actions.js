@@ -4,6 +4,8 @@ const types = {
   WEBHOOK_MESSAGE_PENDING: 'WEBHOOK_MESSAGE_PENDING',
   WEBHOOK_MESSAGE_SENT: 'WEBHOOK_MESSAGE_SENT',
   WEBHOOK_MESSAGE_ERROR: 'WEBHOOK_MESSAGE_ERROR',
+
+  WEBHOOK_SERVER_CHECK_TOKENS: 'WEBHOOK_SERVER_CHECK_TOKENS',
 }
 
 // ----------- Action Creators -------------------
@@ -72,10 +74,18 @@ function webhookMessageError(webhookMessageId) {
   }
 }
 
+function webhookServerCheckTokens() {
+  return {
+    type: types.WEBHOOK_SERVER_CHECK_TOKENS,
+  }
+}
+
 module.exports = {
   types,
   webhookMessageCreated,
   webhookMessagePending,
   webhookMessageSent,
   webhookMessageError,
+
+  webhookServerCheckTokens,
 }

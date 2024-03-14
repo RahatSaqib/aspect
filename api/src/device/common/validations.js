@@ -327,6 +327,10 @@ const deviceDetailsResponseFields = Joi.object()
     calibrationNotes: Joi.string().allow('', null).description('Notes about the last calibration'),
     warrantyDueDate: Joi.date().allow(null).description('Latest warranty due date'),
     warrantyNotes: Joi.string().allow('', null).description('Notes on the latest warranty'),
+    stickerInstrumentSerial: Joi.string().allow('', null).description('Cepheid sticker instrument serial'),
+    instrumentModel: Joi.string().allow('', null).description('Cepheid instrument model'),
+    softwareType: Joi.string().allow('', null).description('Cepheid software type'),
+    isDaisyChained: Joi.bool().allow('', null).description('Determines if the instrument is daisy chained'),
   })
 module.exports = {
   listWorkloadRequestSchema,

@@ -12,6 +12,7 @@ const config = require('../../src/config')
 const { partnerTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 const utils = require('../utils')
 const jobFunctionsFixtureWakanda = require('./fixtures/jobFunctions_wakanda')
+const { insertSite } = require('../../src/site/common/db')
 
 const geography = require('./fixtures/geography.json')
 const followUp = require('../fixtures/FollowUp.json')
@@ -137,7 +138,7 @@ async function seed(knex) {
               ...auditFields,
             }
 
-            const [siteId] = await knex('Site').insert(labData)
+            const [siteId] = await insertSite(knex, labData)
             labData.id = siteId
             countryData.labs.push(labData)
 
@@ -183,7 +184,7 @@ async function seed(knex) {
                   ...auditFields,
                 }
 
-                const [siteId] = await knex('Site').insert(clinicData)
+                const [siteId] = await insertSite(knex, clinicData)
                 clinicData.id = siteId
                 countryData.clinics.push(clinicData)
               })

@@ -366,7 +366,10 @@ function getOffsetFromIsoDateStringInMinutes(isoDateTime) {
  * @returns String containing the timezone offset in '[+/-]hh:mm' format, (i.e. '-03:00')
  */
 function getOffsetFromIsoDateString(isoDateTime) {
-  return typeof isoDateTime === 'string' && REGEX_ISODATESTRING.test(isoDateTime) && isoDateTime.slice(-1) !== 'Z'
+  const isoDateTimeSting = _.isDate(isoDateTime) ? isoDateTime.toISOString() : isoDateTime
+  return typeof isoDateTime === 'string' &&
+    REGEX_ISODATESTRING.test(isoDateTimeSting) &&
+    isoDateTimeSting.slice(-1) !== 'Z'
     ? isoDateTime.slice(-6)
     : '+00:00'
 }
@@ -401,6 +404,8 @@ function arrayofIANATimezone(timezone) {
 }
 
 function getAllMonthsInRange(minDate, maxDate) {
+  minDate = _.isString(minDate) ? minDate : minDate.toISOString()
+  maxDate = _.isString(maxDate) ? maxDate : maxDate.toISOString()
   let allRanges = []
   let currentMonth = getLocalDateTimeStringInUtc(minDate)
   while (currentMonth <= getLocalDateTimeStringInUtc(maxDate)) {
@@ -408,6 +413,11 @@ function getAllMonthsInRange(minDate, maxDate) {
     currentMonth = addMonths(currentMonth, 1)
   }
   return allRanges.sort()
+}
+
+function getDateInMilliSeconds(date) {
+  const providedDate = new Date(date)
+  return providedDate.getTime()
 }
 
 module.exports = {
@@ -451,4 +461,5 @@ module.exports = {
   daysBetweenDates,
   arrayofIANATimezone,
   getAllMonthsInRange,
+  getDateInMilliSeconds,
 }

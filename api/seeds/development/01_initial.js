@@ -3,6 +3,7 @@ const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears } = require('date-fns')
+const uuid = require('node-uuid')
 
 const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
@@ -41,6 +42,7 @@ const upsertConsumables = require('../common/upsert_consumables')
 const {
   getDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
+const { insertSite } = require('../../src/site/common/db')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -3277,7 +3279,7 @@ async function seed(knex) {
                       longitude: _.has(state, 'lng') ? state.lng + _.random(-0.5, 0.5, true) : undefined,
                       ...auditFields,
                     }
-                    const [siteId] = await knex('Site').insert(siteData)
+                    const [siteId] = await insertSite(knex, siteData)
                     siteData.id = siteId
                     countryData.sites.push(siteData)
                   })
@@ -3565,6 +3567,7 @@ async function seed(knex) {
           ),
           startedOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
+          guid: uuid.v4(),
         })
       })
     })

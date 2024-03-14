@@ -10,13 +10,17 @@ const {
   getFormattedDateTimeWithTimezone,
   getFormattedDate,
   daysBetweenDates,
+  getDateInMilliSeconds,
 } = require('../shared/date')
 const { addConstraints } = require('../auth/constraints')
 const getCurrentPartner = require('../partner/getCurrentPartner')
 const { getDateRangeFilters } = require('../notification/common/logic')
+const { oneDirectionalMd5Hash } = require('../shared/encryption')
 
 handlebars.registerHelper('curly', curlyBrace)
+handlebars.registerHelper('square', squareBrace)
 handlebars.registerHelper('numberOfDays', numberOfDays)
+handlebars.registerHelper('getDateInMilliSeconds', getDateInMilliSeconds)
 handlebars.registerHelper('isoDate', isoDate)
 handlebars.registerHelper('localizedDateTime', localizedDateTime)
 handlebars.registerHelper('localizedDate', localizedDate)
@@ -47,6 +51,7 @@ handlebars.registerHelper({
 })
 handlebars.registerHelper('customFieldValueFromLabel', customFieldValueFromLabel)
 handlebars.registerHelper('coalesce', coalesce)
+handlebars.registerHelper('oneDirectionalMd5Hash', oneDirectionalMd5Hash)
 
 // See unit tests for examples
 // Can include displayPreferences
@@ -95,6 +100,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
       .leftJoin('TimeZone as countrytz', 'rc.timezone', 'countrytz.id')
       .select(
         's.id as siteId',
+        's.guid as siteGuid',
         's.externalId as siteExternalId',
         's.name as siteName',
         's.shortName as siteShortName',
@@ -102,6 +108,9 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         's.street2 as siteStreet2',
         's.city as siteCity',
         's.zip as siteZip',
+        's.guid as siteGuid',
+        's.institutionGuid as siteInstitutionGuid',
+        's.institutionName as siteInstitutionName',
         'st.name as siteState',
         'lg.name as siteLga',
         'p.name as personName',
@@ -114,12 +123,20 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         knex.raw('coalesce(c.abbreviation,rc.abbreviation) as countryAbbreviation'),
         'd.id as deviceId',
         'd.name as deviceName',
+        'd.isDaisyChained as daisyChained',
+        'd.instrumentModel',
+        'd.softwareType',
+        knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
+        knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS computerOsVersion'),
         'd.lastPingOn as deviceLastPingOn',
         'd.lastSeenOn as deviceLastSeenOn',
         'd.serial as deviceSerial',
         'd.lastInstrumentSerial as lastInstrumentSerial',
+        'd.stickerInstrumentSerial as deviceStickerInstrumentSerial',
         'dt.externalId as deviceTypeExternalId',
         'r.resultData',
+        'r.id',
+        'r.updatedOn',
         'r.patientData as resultPatientData',
         'r.formData as resultFormData',
         'r.startedOn as resultStartedOn',
@@ -137,9 +154,13 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
         'r.errorNotes as resultErrorNotes',
         'a.externalId as assayExternalId',
         'a.name as assayName',
+        knex.raw("CASE WHEN IFNULL(d.gx10cModulesCount, 0) > 0 THEN '10-Color' ELSE '6-Color' END AS moduleColor"),
         'sample.externalId as sampleExternalId',
         'sample.collectedOn as sampleCollectedOn',
         'rc1.externalId as resultCategory1ExternalId',
+        knex.raw(
+          "case when rc1.externalId in ('Error', 'Invalid', 'NoResult') then rc1.externalid else 'Success' end as resultOutcome"
+        ),
         'rc2.externalId as resultCategory2ExternalId',
         'rs.name as reportableSiteName',
         knex.raw('COALESCE(devicetz.timezone, sitetz.timezone, countrytz.timezone) as timezone')
@@ -406,6 +427,7 @@ async function getBaseDataSource(data, auth) {
       id: d.siteExternalId,
       name: d.siteName,
       shortName: d.siteShortName,
+      siteGuid: d.siteGuid,
       street1: d.siteStreet1,
       street2: d.siteStreet2,
       city: d.siteCity,
@@ -423,6 +445,9 @@ async function getBaseDataSource(data, auth) {
             }
           : {},
       completionRatePercentage: issueData.completionRatePercentage,
+      guid: d.siteGuid,
+      institutionGuid: d.siteInstitutionGuid,
+      institutionName: d.siteInstitutionName,
     },
     device: {
       name: d.deviceName,
@@ -432,8 +457,16 @@ async function getBaseDataSource(data, auth) {
       serial: d.deviceSerial,
       lastInstrumentSerial: d.lastInstrumentSerial,
       calibrationDueDate: issueData.calibrationDueDate,
+      daisyChained: d.daisyChained,
+      instrumentModel: d.instrumentModel,
+      softwareType: d.softwareType,
+      lisConfiguredCorrectly: d.lisConfiguredCorrectly,
+      computerOsVersion: d.computerOsVersion,
+      moduleColor: d.moduleColor,
+      stickerInstrumentSerial: d.deviceStickerInstrumentSerial,
     },
     result: {
+      id: d.id,
       data: d.resultData ? JSON.parse(d.resultData) : {},
       resultData: d.resultData ? JSON.parse(d.resultData) : {},
       formData: d.resultFormData ? JSON.parse(d.resultFormData) : {},
@@ -441,6 +474,7 @@ async function getBaseDataSource(data, auth) {
       patientData: d.resultPatientData ? JSON.parse(d.resultPatientData) : {},
       rawData: d.resultRawData,
       startedOn: d.resultStartedOn,
+      updatedOn: d.updatedOn,
       endedOn: d.resultEndedOn,
       notes: d.resultNotes,
       consumableLot: d.consumableLot,
@@ -453,6 +487,7 @@ async function getBaseDataSource(data, auth) {
       softwareVersion: d.resultSoftwareVersion,
       errorCode: d.resultErrorCode,
       errorNotes: d.resultErrorNotes,
+      resultOutcome: d.resultOutcome,
       assay: {
         id: d.assayExternalId,
         name: d.assayName,
@@ -500,6 +535,11 @@ async function getBaseDataSource(data, auth) {
     },
     displayPreferences,
     timezone: d.timezone,
+    deviceOperation: {
+      guid: d.deviceOperationGuid,
+      startedOn: d.deviceOperationStartedOn,
+      errors: d.deviceOperationErrors,
+    },
   }
 }
 
@@ -576,6 +616,10 @@ function processUsingDynamicHelpers(template, ds) {
 
 function curlyBrace(object, open) {
   return open ? '{' : '}'
+}
+
+function squareBrace(object, open) {
+  return open ? '[' : ']'
 }
 
 function numberOfDays(date) {

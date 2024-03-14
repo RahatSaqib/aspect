@@ -30,7 +30,7 @@ const OperationalData = lazy(() => import('./oldPages/dashboard/operational/Oper
 const PersonList = lazy(() => import('./pages/Person/List/PersonList'))
 const PkDashboard = lazy(() => import('./pages/PkDashboard'))
 const ReporterList = lazy(() => import('./oldPages/reporter/list/ReporterList'))
-const ReportIndex = lazy(() => import('./oldPages/report/page/ReportIndex'))
+const ReportIndex = lazy(() => import('./pages/Reports/ReportIndex'))
 const ResultDetail = lazy(() => import('./pages/Results/Detail'))
 const ResultList = lazy(() => import('./oldPages/result/list/ResultList'))
 const SiteDetail = lazy(() => import('./pages/Site/Detail'))
@@ -103,7 +103,7 @@ const LogInApp = () => {
     dispatch(fetchCountries())
 
     // Refresh the access token every 30 minutes.
-    const refreshToken = setInterval(dispatch(refreshStart()), 30 * 60 * 1000)
+    const refreshToken = setInterval(() => dispatch(refreshStart()), 30 * 60 * 1000)
     return () => clearInterval(refreshToken)
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -113,6 +113,7 @@ const LogInApp = () => {
     timeout: config.userInactiveMinutes * 60 * 1000, // after minutes, user is idle
     promptTimeout: 60 * 1000, // after one minute, we call onIdle() and log user out
     stopOnIdle: true, // once user is logged out, we stop timers
+    crossTab: true,
     // Fire a Modal Prompt
     onPrompt: () => setShowIdleDialog(true),
     // Close Modal Prompt & log out your user

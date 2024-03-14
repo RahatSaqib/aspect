@@ -317,7 +317,7 @@ async function getDevicePerformance(request) {
 async function getDevicesForReport(auth, query) {
   const { minDate, maxDate } = query
   if (!minDate || !maxDate) {
-    return Boom.badRequest('Dates are required')
+    throw Boom.badRequest('Dates are required')
   }
 
   const dataConstraints = await getConstraints(auth.credentials)
