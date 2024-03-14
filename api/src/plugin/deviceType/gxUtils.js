@@ -3,13 +3,11 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const setMilliseconds = require('date-fns/setMilliseconds')
 const { isNil } = require('lodash')
-
 const { insertSite } = require('../../site/common/db')
 const { findConsumables, findConsumableReason } = require('../../consumable/consumableService')
 const { getDevice } = require('../../device/service')
 const { createUniqueIdForResult } = require('../../result/service')
 const { parseDateOrDefault } = require('../../shared/date')
-
 const { updateDeviceDetails } = require('../../deviceApi/device')
 const { shouldTriggerModuleDisabled } = require('../utils')
 const {
@@ -75,7 +73,8 @@ even when the assay name in the result is unknown to Aspect
 If the device is unknown, ignore this request
 If an unknown assay is detected, create it
 */
-async function preProcessMergeResult({ knex, deviceId, payload }) {
+async function preProcessMergeResult(context) {
+  const { knex, deviceId, payload, findResult } = context
   if (!deviceId) {
     throw Boom.notFound('Cannot find device')
   }
@@ -135,7 +134,8 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     _.set(payload, 'data.detectedResistance', detectedResistance)
     _.set(payload, 'data.allResistances', allResistances)
   }
-  const existingResult = await findExistingResult(
+
+  const resultFindings = await findResult(
     {
       partnerId: device.partnerId,
       geneXpertTestId,
@@ -149,6 +149,9 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
     },
     knex
   )
+
+  const { matchingResult: existingResult } = resultFindings
+
   if (!existingResult) {
     // Only assign assay to GxUnknown if result is new
     await assignGxUnknownAssayIfNotExists(knex, payload)
@@ -162,6 +165,7 @@ async function preProcessMergeResult({ knex, deviceId, payload }) {
       _.set(payload, 'workflow.status.id', 'Deliverable')
     }
   } else {
+    context.existingResultId = existingResult.id // adding the existing result id to the context to make it available for the rest of the process
     // Are we setting this result to NO RESULT?
     if (!_.isEmpty(_.get(payload, 'category', [])) && _.every(_.get(payload, 'category'), { id: 'NoResult' })) {
       // Has the result already been determined?
@@ -484,155 +488,155 @@ async function findDevices(availableDeviceDetails, knex) {
   return _.uniqBy(matchingDevices, 'id')
 }
 
-async function findExistingResult(availableResultDetails, knex) {
-  const {
-    partnerId,
-    geneXpertTestId = null, // GxConnect -> GxAlert -> Aspect: result.data.id, GxConnect -> Aspect: result.id
-    gxAlertUniqueId = null, // GxConnect/Listener -> GxAlert -> Aspect: result.data.gxAlertTestUniqueId
-    cartridgeSerial = null, // GxAlert -> Aspect: result.consumable.serial
-    instrumentSerial = null, // GxAlert -> Aspect: result.instrument.serial
-    potentialSampleIds = [],
-    siteId = null,
-    potentialAssayIds = [],
-    startedOn = null,
-  } = availableResultDetails
-  const selectFields = [
-    'r.id',
-    'r.externalId',
-    'r.resultData',
-    'r.siteId',
-    'rc1.externalId as resultCategory1',
-    'rc2.externalId as resultCategory2',
-    'a.externalId as assayId',
-    's.externalId as sampleId',
-    knex.raw('r.resultData->>"$.geneXpertTestId" as geneXpertTestId'),
-  ]
-  const queryStart = knex
-    .from('Result as r')
-    .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
-    .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
-    .leftJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftJoin('Sample as s', 'r.sampleId', 's.id')
-    .where('r.partnerId', partnerId)
-  let matchingResults = []
-  let matchingResult = null
-  if (gxAlertUniqueId) {
-    matchingResults = await queryStart.clone().andWhere('r.externalId', gxAlertUniqueId).select(selectFields)
-  }
-  if (matchingResults.length === 1) {
-    ;[matchingResult] = matchingResults
-  } else if (matchingResults.length > 1 && geneXpertTestId) {
-    matchingResults = _.filter(
-      matchingResults,
-      result => _.get(JSON.parse(result.resultData), 'geneXpertTestId') === geneXpertTestId
-    )
-    if (matchingResults.length === 1) {
-      ;[matchingResult] = matchingResults
-    } else if (matchingResults.length > 1 && gxAlertUniqueId) {
-      matchingResults = _.filter(matchingResults, {
-        externalId: gxAlertUniqueId,
-      })
-      if (matchingResults.length === 1) {
-        ;[matchingResult] = matchingResults
-      }
-    }
-  }
+// async function findExistingResult(availableResultDetails, knex) {
+//   const {
+//     partnerId,
+//     geneXpertTestId = null, // GxConnect -> GxAlert -> Aspect: result.data.id, GxConnect -> Aspect: result.id
+//     gxAlertUniqueId = null, // GxConnect/Listener -> GxAlert -> Aspect: result.data.gxAlertTestUniqueId
+//     cartridgeSerial = null, // GxAlert -> Aspect: result.consumable.serial
+//     instrumentSerial = null, // GxAlert -> Aspect: result.instrument.serial
+//     potentialSampleIds = [],
+//     siteId = null,
+//     potentialAssayIds = [],
+//     startedOn = null,
+//   } = availableResultDetails
+//   const selectFields = [
+//     'r.id',
+//     'r.externalId',
+//     'r.resultData',
+//     'r.siteId',
+//     'rc1.externalId as resultCategory1',
+//     'rc2.externalId as resultCategory2',
+//     'a.externalId as assayId',
+//     's.externalId as sampleId',
+//     knex.raw('r.resultData->>"$.geneXpertTestId" as geneXpertTestId'),
+//   ]
+//   const queryStart = knex
+//     .from('Result as r')
+//     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
+//     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
+//     .leftJoin('Assay as a', 'r.assayId', 'a.id')
+//     .leftJoin('Sample as s', 'r.sampleId', 's.id')
+//     .where('r.partnerId', partnerId)
+//   let matchingResults = []
+//   let matchingResult = null
+//   if (gxAlertUniqueId) {
+//     matchingResults = await queryStart.clone().andWhere('r.externalId', gxAlertUniqueId).select(selectFields)
+//   }
+//   if (matchingResults.length === 1) {
+//     ;[matchingResult] = matchingResults
+//   } else if (matchingResults.length > 1 && geneXpertTestId) {
+//     matchingResults = _.filter(
+//       matchingResults,
+//       result => _.get(JSON.parse(result.resultData), 'geneXpertTestId') === geneXpertTestId
+//     )
+//     if (matchingResults.length === 1) {
+//       ;[matchingResult] = matchingResults
+//     } else if (matchingResults.length > 1 && gxAlertUniqueId) {
+//       matchingResults = _.filter(matchingResults, {
+//         externalId: gxAlertUniqueId,
+//       })
+//       if (matchingResults.length === 1) {
+//         ;[matchingResult] = matchingResults
+//       }
+//     }
+//   }
 
-  if (_.isEmpty(matchingResult) && geneXpertTestId) {
-    matchingResults = await queryStart.clone().andWhere('r.externalId', geneXpertTestId).select(selectFields)
-    if (matchingResults.length === 1) {
-      ;[matchingResult] = matchingResults
-    } else if (matchingResults.length > 1) {
-      matchingResults = _.filter(
-        matchingResults,
-        result => _.get(JSON.parse(result.resultData), 'geneXpertTestId') === geneXpertTestId
-      )
-      if (matchingResults.length === 1) {
-        ;[matchingResult] = matchingResults
-      }
-    }
-  }
+//   if (_.isEmpty(matchingResult) && geneXpertTestId) {
+//     matchingResults = await queryStart.clone().andWhere('r.externalId', geneXpertTestId).select(selectFields)
+//     if (matchingResults.length === 1) {
+//       ;[matchingResult] = matchingResults
+//     } else if (matchingResults.length > 1) {
+//       matchingResults = _.filter(
+//         matchingResults,
+//         result => _.get(JSON.parse(result.resultData), 'geneXpertTestId') === geneXpertTestId
+//       )
+//       if (matchingResults.length === 1) {
+//         ;[matchingResult] = matchingResults
+//       }
+//     }
+//   }
 
-  if (_.isEmpty(matchingResult) && cartridgeSerial && instrumentSerial && cartridgeSerial.length > 5) {
-    matchingResults = await queryStart
-      .clone()
-      .andWhere('r.consumableSerial', cartridgeSerial)
-      .andWhere('r.instrumentSerial', instrumentSerial)
-      .select(selectFields)
-    if (matchingResults.length === 1) {
-      ;[matchingResult] = matchingResults
-    } else if (matchingResults.length > 1) {
-      matchingResults = _.filter(
-        matchingResults,
-        result => _.get(JSON.parse(result.resultData), 'geneXpertTestId') === geneXpertTestId
-      )
-      if (matchingResults.length === 1) {
-        ;[matchingResult] = matchingResults
-      }
-    }
-  }
-  if (
-    _.isEmpty(matchingResult) &&
-    !_.isEmpty(_.filter(potentialSampleIds, elem => elem)) &&
-    siteId &&
-    !_.isEmpty(_.filter(potentialAssayIds, elem => elem)) &&
-    startedOn
-  ) {
-    matchingResults = await queryStart
-      .clone()
-      .whereIn('s.externalId', potentialSampleIds)
-      .andWhere('r.siteId', siteId)
-      .whereIn('a.externalId', potentialAssayIds)
-      .andWhere('r.startedOn', startedOn)
-      .select(selectFields)
-    if (matchingResults.length === 1) {
-      ;[matchingResult] = matchingResults
-    } else if (matchingResults.length > 1) {
-      if (geneXpertTestId) {
-        matchingResults = _.filter(
-          matchingResults,
-          result => _.get(JSON.parse(result.resultData), 'geneXpertTestId') === geneXpertTestId
-        )
-      }
-      if (matchingResults.length > 1) {
-        if (geneXpertTestId) {
-          matchingResults = _.filter(matchingResults, result => result.externalId === geneXpertTestId)
-        }
-      }
-      if (matchingResults.length > 1) {
-        if (!_.isEmpty(potentialSampleIds) && siteId && !_.isEmpty(potentialAssayIds)) {
-          matchingResults = _.filter(
-            matchingResults,
-            result =>
-              potentialSampleIds.includes(result.sampleId) &&
-              result.siteId === siteId &&
-              potentialAssayIds.includes(result.assayId)
-          )
-        }
-      }
-      if (matchingResults.length > 1) {
-        if (cartridgeSerial && instrumentSerial) {
-          matchingResults = _.filter(
-            matchingResults,
-            result => result.consumableSerial === cartridgeSerial && result.instrumentSerial === instrumentSerial
-          )
-        }
-      }
-      if (matchingResults.length === 1) {
-        ;[matchingResult] = matchingResults
-      }
-    }
-  }
-  // if we find an existing result we are going to add an extra validation to compare the externalId or
-  // the genexpert test id which is generated by the devices. If match with one of them we are going to take that as a match.
-  // if not we are not going to take that as a match.
-  if (
-    !_.isEmpty(matchingResult) &&
-    (!geneXpertTestId || !matchingResult.geneXpertTestId || _.isEqual(geneXpertTestId, matchingResult.geneXpertTestId))
-  )
-    return matchingResult
-  return null
-}
+//   if (_.isEmpty(matchingResult) && cartridgeSerial && instrumentSerial && cartridgeSerial.length > 5) {
+//     matchingResults = await queryStart
+//       .clone()
+//       .andWhere('r.consumableSerial', cartridgeSerial)
+//       .andWhere('r.instrumentSerial', instrumentSerial)
+//       .select(selectFields)
+//     if (matchingResults.length === 1) {
+//       ;[matchingResult] = matchingResults
+//     } else if (matchingResults.length > 1) {
+//       matchingResults = _.filter(
+//         matchingResults,
+//         result => _.get(JSON.parse(result.resultData), 'geneXpertTestId') === geneXpertTestId
+//       )
+//       if (matchingResults.length === 1) {
+//         ;[matchingResult] = matchingResults
+//       }
+//     }
+//   }
+//   if (
+//     _.isEmpty(matchingResult) &&
+//     !_.isEmpty(_.filter(potentialSampleIds, elem => elem)) &&
+//     siteId &&
+//     !_.isEmpty(_.filter(potentialAssayIds, elem => elem)) &&
+//     startedOn
+//   ) {
+//     matchingResults = await queryStart
+//       .clone()
+//       .whereIn('s.externalId', potentialSampleIds)
+//       .andWhere('r.siteId', siteId)
+//       .whereIn('a.externalId', potentialAssayIds)
+//       .andWhere('r.startedOn', startedOn)
+//       .select(selectFields)
+//     if (matchingResults.length === 1) {
+//       ;[matchingResult] = matchingResults
+//     } else if (matchingResults.length > 1) {
+//       if (geneXpertTestId) {
+//         matchingResults = _.filter(
+//           matchingResults,
+//           result => _.get(JSON.parse(result.resultData), 'geneXpertTestId') === geneXpertTestId
+//         )
+//       }
+//       if (matchingResults.length > 1) {
+//         if (geneXpertTestId) {
+//           matchingResults = _.filter(matchingResults, result => result.externalId === geneXpertTestId)
+//         }
+//       }
+//       if (matchingResults.length > 1) {
+//         if (!_.isEmpty(potentialSampleIds) && siteId && !_.isEmpty(potentialAssayIds)) {
+//           matchingResults = _.filter(
+//             matchingResults,
+//             result =>
+//               potentialSampleIds.includes(result.sampleId) &&
+//               result.siteId === siteId &&
+//               potentialAssayIds.includes(result.assayId)
+//           )
+//         }
+//       }
+//       if (matchingResults.length > 1) {
+//         if (cartridgeSerial && instrumentSerial) {
+//           matchingResults = _.filter(
+//             matchingResults,
+//             result => result.consumableSerial === cartridgeSerial && result.instrumentSerial === instrumentSerial
+//           )
+//         }
+//       }
+//       if (matchingResults.length === 1) {
+//         ;[matchingResult] = matchingResults
+//       }
+//     }
+//   }
+//   // if we find an existing result we are going to add an extra validation to compare the externalId or
+//   // the genexpert test id which is generated by the devices. If match with one of them we are going to take that as a match.
+//   // if not we are not going to take that as a match.
+//   if (
+//     !_.isEmpty(matchingResult) &&
+//     (!geneXpertTestId || !matchingResult.geneXpertTestId || _.isEqual(geneXpertTestId, matchingResult.geneXpertTestId))
+//   )
+//     return matchingResult
+//   return null
+// }
 
 async function getOrCreateSite(knex, device, payload, now, countryCode, deviceName, deviceShortName, fromGxAlert) {
   let sites = []
