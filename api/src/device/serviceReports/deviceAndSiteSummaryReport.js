@@ -11,10 +11,9 @@ const {
   getResultCategoryGroupSumSelector,
   getResultXdrResistanceSumSelector,
 } = require('../../result/query/querySelectors')
-const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 
 // --------------------------------------------------------------------------
-async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query) {
+async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezone) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
 
   const resultCategoryGroupsColumns = Object.fromEntries(
