@@ -1,6 +1,6 @@
 exports.up = async function (knex) {
   await knex.schema.alterTable('WebhookMessage', function (table) {
-    table.mediumtext('payload').alter()
+    table.text('payload', 'mediumtext').alter()
   })
 }
 
