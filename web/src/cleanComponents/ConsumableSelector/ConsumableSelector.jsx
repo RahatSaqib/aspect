@@ -3,12 +3,15 @@ import { FormControl, MenuItem, InputLabel, Select } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { Loading } from '..'
+import fetchWrapperForQueries from '../../components/QueryFetch'
 import { consumableMessages } from '../../messages'
 
 const ConsumableSelector = ({ onChange }) => {
   const [innerValue, setInnerValue] = useState('')
   const [options, setOptions] = useState([])
-  const { isLoading, data } = useQuery('data.inventoryConsumableSummaryList')
+  const { isLoading, data } = useQuery('data.inventoryConsumableSummaryList', async () =>
+    fetchWrapperForQueries({ endpoint: '/dashboard/inventory-item' })
+  )
   const { formatMessage } = useIntl()
   useEffect(() => {
     if (data) {
