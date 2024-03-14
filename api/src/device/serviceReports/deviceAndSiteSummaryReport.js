@@ -88,7 +88,13 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
         knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS gxConnectVersion'),
         knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
         knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
-        getDateTimeProjectionInUserTimeZone(knex, 'd.putInService', timezone, 'instalationDate'),
+        // The deviceApi doesn't populate d.putInService well, so we are going to get it from configurationData until we fix that
+        getDateTimeProjectionInUserTimeZone(
+          knex,
+          'COALESCE(d.putInService, d.configurationData->>"$.putInService")',
+          timezone,
+          'instalationDate'
+        ),
         getDateTimeProjectionInUserTimeZone(knex, 'resultsCount.lastUploadOn', timezone, 'lastUploadOn'),
         knex.raw('dms.name AS status'),
         knex.raw('dmsl.data ->> "$.notes" AS statusNote'),

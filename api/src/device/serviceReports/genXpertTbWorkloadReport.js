@@ -105,7 +105,13 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
       knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS connectorVersion'),
       knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
       knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
-      'd.putInService AS instalationDate',
+      // The deviceApi doesn't populate d.putInService well, so we are going to get it from configurationData until we fix that
+      getDateTimeProjectionInUserTimeZone(
+        knex,
+        'COALESCE(d.putInService, d.configurationData->>"$.putInService")',
+        timezone,
+        'instalationDate'
+      ),
       knex.raw('d.ConfigurationData ->> "$.routerNumber" AS routerNumber'),
       knex.raw('d.ConfigurationData ->> "$.sim1SerialNumber" AS sim1SerialNumber'),
       knex.raw('d.ConfigurationData ->> "$.sim2SerialNumber" AS sim2SerialNumber'),
