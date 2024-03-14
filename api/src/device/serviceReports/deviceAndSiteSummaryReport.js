@@ -7,22 +7,26 @@ const { getBasicsForDevicesReport } = require('../common/db')
 const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 
 // --------------------------------------------------------------------------
-const resultCategoryGroupSum = (assayId, rc1, rc2) => {
-  let query = `IFNULL(SUM(CASE WHEN r.assayId IN (${assayId}) AND r.resultCategory1 = ${rc1} `
+const {
+  getResultCategoryGroupSumSelector,
+  getResultXdrResistanceSumSelector,
+} = require('../../result/query/querySelectors')
+const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 
-  if (rc2) {
-    query += `AND r.resultCategory2 = ${rc2} `
-  } else {
-    query += `AND r.resultCategory2 IS NULL `
-  }
-
-  query += 'THEN 1 ELSE 0 END), 0)'
-
-  return knex.raw(query)
-}
-
-async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezone) {
+// --------------------------------------------------------------------------
+async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, query) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
+
+  const resultCategoryGroupsColumns = Object.fromEntries(
+    resultCategoryGroups.map(ac => {
+      if (!_.isNil(ac.resultCategory1Id) || !_.isNil(ac.resultCategory2Id))
+        // Counts a result category group
+        return [ac.columnKey, getResultCategoryGroupSumSelector(ac.assayId, ac.resultCategory1Id, ac.resultCategory2Id)]
+
+      // Counts an xdr resistance result
+      return [ac.columnKey, getResultXdrResistanceSumSelector(ac.xdrResistance)]
+    })
+  )
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
     .modify(modifiers.join.resultCategory1)
@@ -35,14 +39,10 @@ async function getAllDeviceReportData(resultCategoryGroups, dataConstraints, que
     })
     .select({
       deviceId: 'deviceId',
-      ...Object.fromEntries(
-        resultCategoryGroups.map(ac => {
-          return [ac.columnKey, resultCategoryGroupSum(ac.assayId, ac.resultCategory1Id, ac.resultCategory2Id)]
-        })
-      ),
       otherTests: knex.raw('IFNULL(SUM(CASE WHEN rcg.id IS NULL THEN 1 ELSE 0 END), 0)'),
       totalXpertTests: knex.raw('count(*)'),
       lastUploadOn: knex.raw('MAX(r.updatedOn)'),
+      ...resultCategoryGroupsColumns,
     })
     .groupBy('r.deviceId')
     .modify(filterParams, query, {
