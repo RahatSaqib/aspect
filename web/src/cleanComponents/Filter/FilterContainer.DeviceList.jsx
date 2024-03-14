@@ -111,15 +111,6 @@ const DeviceListFilter = () => {
             onChange={deviceType => setState({ ...state, deviceType })}
           />
         </Grid>
-        <Grid item xs={3}>
-          <DeviceMaintenanceStatusSelect
-            label={formatMessage(messages.deviceMaintenanceStatus)}
-            value={state.deviceMaintenanceStatusId || []}
-            onChange={e => setState({ ...state, deviceMaintenanceStatusId: [...e.target.value] })}
-            multiple
-          />
-        </Grid>
-
         {state.deviceType === CONSTS.GENEXPERT_EXTERNAL_ID ? (
           <Grid item display="flex" gap={1} alignItems="center" flexDirection="row" xs={3}>
             <CepheidModulesSelect
@@ -132,6 +123,14 @@ const DeviceListFilter = () => {
             <AspectTooltip showHelpIcon title={formatMessage(messages.geneXpertTypeTooltip)} />
           </Grid>
         ) : null}
+        <Grid item xs={3}>
+          <DeviceMaintenanceStatusSelect
+            label={formatMessage(messages.deviceMaintenanceStatus)}
+            value={state.deviceMaintenanceStatusId || []}
+            onChange={e => setState({ ...state, deviceMaintenanceStatusId: [...e.target.value] })}
+            multiple
+          />
+        </Grid>
       </Grid>
     </FilterContainer>
   )

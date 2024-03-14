@@ -270,7 +270,7 @@ const messages = {
     },
     geneXpertType: {
       id: 'filter.popover.geneXpertType',
-      defaultMessage: 'GeneXpert type',
+      defaultMessage: 'GeneXpert Type',
     },
     geneXpertTypeTooltip: {
       id: 'filter.popover.geneXpertTypeTooltip',
