@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 const Promise = require('bluebird')
-const { addMinutes } = require('date-fns')
+const { addMinutes, subMonths } = require('date-fns')
 const { insertSite } = require('../../src/site/common/db')
 const { upsertJobFunctionFixture } = require('../common')
 const jobFunctionsFixtureSouthAfrica = require('./fixtures/jobFunctions_southAfrica')
@@ -104,6 +104,7 @@ async function seed(knex) {
     deviceApprovalId: approvedDeviceApprovalId,
     partnerId,
     siteId: southAfricaNhlsAlereFtpConnectorSiteId,
+    putInService: subMonths(now, 2),
     ...auditFields,
   })
 
@@ -196,6 +197,7 @@ async function seed(knex) {
             serial: device.deviceSerial,
             culture: southAfricaCountry.culture,
             timezone: siteData.timezoneId,
+            putInService: subMonths(now, 2),
             configurationData: '{}',
             ...auditFields,
           }))
