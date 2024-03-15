@@ -197,6 +197,8 @@ const RifCurrentGraphPage = () => {
                     const baseUrl = '/browse/result'
                     addFilter(
                       {
+                        ...filter,
+                        countryId: user.countryId,
                         displayResult: 'actual',
                         minDate,
                         maxDate,

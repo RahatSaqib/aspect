@@ -183,6 +183,8 @@ const CurrentXDRDiagnosisPage = () => {
                       'Trace Detected',
                     ])
                     const params = {
+                      ...filter,
+                      countryId: user.countryId,
                       displayResult: 'actual',
                       minDate,
                       maxDate,

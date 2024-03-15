@@ -170,6 +170,8 @@ const RifCurrentGraphPage = () => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
 
                     const params = {
+                      ...filter,
+                      countryId: user.countryId,
                       displayResult: 'actual',
                       minDate,
                       maxDate,

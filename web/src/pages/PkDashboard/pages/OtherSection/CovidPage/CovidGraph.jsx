@@ -176,6 +176,8 @@ const CovidGraphPage = () => {
 
                     addFilter(
                       {
+                        ...filter,
+                        countryId: user.countryId,
                         displayResult: 'actual',
                         minDate,
                         maxDate,
