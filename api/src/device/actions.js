@@ -78,11 +78,15 @@ function calibrationIssueNotificationTrigger() {
  * @param {*} deviceId - Device ID
  * @returns - Action message with params
  */
-function calibrationDueDateIsClose(deviceId, calibrationDueDate) {
+function calibrationDueDateIsClose(deviceId, dueDays) {
   return {
     type: types.CALIBRATION_DUE_DATE_IS_CLOSE,
     deviceId,
-    options: { data: { calibrationDueDate } },
+    /**
+     * set value for  placeholder {{issue.data.dueDays}} in base
+     * issue `CalibrationDueDate` in api/seeds/relatedObjects/issues.js
+     */
+    options: { data: { dueDays } },
   }
 }
 
