@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-02-28T16:51:57.069Z\n"
+"POT-Creation-Date: 2024-03-13T18:16:45.673Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2116,12 +2116,13 @@ msgstr "Covid"
 msgid "Covid 19"
 msgstr "Covid 19"
 
-#. [p.PkDashboard.covidPending]
+#. [p.PkDashboard.covidTesting]
 #. defaultMessage is:
-#. Covid Testing (Pending)
+#. Covid Testing
 #: extracted_strings.json
-msgid "Covid Testing (Pending)"
-msgstr "Covid Testing (Pending)"
+#| msgid "Covid Testing (Pending)"
+msgid "Covid Testing"
+msgstr "Covid Testing"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -3675,7 +3676,6 @@ msgstr "Error Fetching Endpoint"
 #. defaultMessage is:
 #. Error Fetching Report
 #: extracted_strings.json
-#| msgid "Error Fetching Endpoint"
 msgid "Error Fetching Report"
 msgstr "Error Fetching Report"
 
@@ -4043,10 +4043,6 @@ msgstr "Facility Code"
 #. defaultMessage is:
 #. Failed to generate {fileType} report "{reportName}" because of Database Timeout: You might be trying to download too much data.
 #: extracted_strings.json
-#| msgid ""
-#| "Failed to generate {fileType} report \"{reportName}\" because of error "
-#| "\"{errorMessage}\". Please, try again in a few minutes. If the error "
-#| "persists, contact your administrator for support."
 msgid ""
 "Failed to generate {fileType} report \"{reportName}\" because of Database "
 "Timeout: You might be trying to download too much data."
@@ -5359,7 +5355,6 @@ msgstr "Insert placeholder"
 #. defaultMessage is:
 #. Instrument Model
 #: extracted_strings.json
-#| msgid "Instrument Serial"
 msgid "Instrument Model"
 msgstr "Instrument Model"
 
@@ -7116,11 +7111,18 @@ msgstr "National"
 msgid "National Contacts"
 msgstr "National Contacts"
 
+#. [p.PkDashboard.nationalMtbRifUltraDiagnosed]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
+#: extracted_strings.json
+#| msgid "National Diagnosis Trends using MTB/XDR assay"
+msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+msgstr "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+
 #. [p.PkDashboard.nationalDiagnosisXdr]
 #. defaultMessage is:
 #. National Diagnosis Trends using MTB/XDR assay
 #: extracted_strings.json
-#| msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
 msgid "National Diagnosis Trends using MTB/XDR assay"
 msgstr "National Diagnosis Trends using MTB/XDR assay"
 
@@ -7190,7 +7192,7 @@ msgstr "National TB Testing Trends"
 msgid "National Testing Trends"
 msgstr "National Testing Trends"
 
-#. [p.PkDashboard.nationalMtbRifDiagnosed]
+#. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
 #. National Testing Trends using MTB/XDR Assay
 #: extracted_strings.json
@@ -8191,7 +8193,6 @@ msgstr "Pending changes"
 #. defaultMessage is:
 #. People diagnosed for TB using MTB/Rif Ultra assay in current year
 #: extracted_strings.json
-#| msgid "People diagnosed for TB using MTB/Rif assay in current year"
 msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
 msgstr "People diagnosed for TB using MTB/Rif Ultra assay in current year"
 
@@ -11111,7 +11112,6 @@ msgstr "Sms message should not be longer than 2000 characters"
 #. defaultMessage is:
 #. Software Type
 #: extracted_strings.json
-#| msgid "Site Type"
 msgid "Software Type"
 msgstr "Software Type"
 
@@ -11213,7 +11213,6 @@ msgstr "Status"
 #. defaultMessage is:
 #. Sticker Instrument Serial
 #: extracted_strings.json
-#| msgid "Instrument Serial"
 msgid "Sticker Instrument Serial"
 msgstr "Sticker Instrument Serial"
 
@@ -11477,7 +11476,6 @@ msgstr "TB cases diagnosed in"
 #. defaultMessage is:
 #. TB cases diagnosed in last 24 hours
 #: extracted_strings.json
-#| msgid "Tb cases diagnosed in last 24 hours"
 msgid "TB cases diagnosed in last 24 hours"
 msgstr "TB cases diagnosed in last 24 hours"
 
@@ -11485,7 +11483,6 @@ msgstr "TB cases diagnosed in last 24 hours"
 #. defaultMessage is:
 #. TB cases diagnosed this year
 #: extracted_strings.json
-#| msgid "Tb cases diagnosed this year"
 msgid "TB cases diagnosed this year"
 msgstr "TB cases diagnosed this year"
 
