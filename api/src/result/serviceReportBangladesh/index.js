@@ -849,7 +849,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
 /**
  * getDataForReportDrTb10A
  */
-async function getDataForReportDrTb10A(auth, query, options) {
+async function getDataForReportDrTb10A(auth, query, timezone, options) {
   const { sharedResults, nameOfSharedData } = options
 
   const { stateId, lgaId, siteName } = query
@@ -989,7 +989,7 @@ async function getDataForSheet1or2(
 }
 
 // ---------------------------------------------------------------------------
-async function getDataForReportDrTb10AStool(auth, query, options) {
+async function getDataForReportDrTb10AStool(auth, query, timezone, options) {
   const { sharedResults, useNamedData } = options
 
   const { getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)

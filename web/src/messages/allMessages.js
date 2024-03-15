@@ -101,6 +101,7 @@ const messages = defineMessages({
     defaultMessage: 'maintenance status is {deviceMaintenanceStatusName}',
   },
   withDeviceType: { id: 'filter.btnGroup.withDeviceType', defaultMessage: 'type is {deviceTypeName}' },
+  withGeneXpertType: { id: 'filter.btnGroup.withGeneXpertType', defaultMessage: 'GeneXpert Type is {geneXpertType}' },
   withConnectorStatus: {
     id: 'filter.btnGroup.withConnectorStatus',
     defaultMessage: 'Connector Status is {connectorStatus}',
