@@ -18,6 +18,7 @@ import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
 import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
+import { cepheidModulesOptions } from '../CepheidModulesSelect/CepheidModulesSelect'
 import { notificationCategories } from '../NotificationCategorySelect/fixture'
 import messages from './messages'
 
@@ -154,6 +155,9 @@ const buttonMapping = {
   ),
   deviceType: ({ deviceType, remove, blocked }) => (
     <DeviceType deviceType={deviceType} remove={remove} blocked={blocked} />
+  ),
+  geneXpertType: ({ geneXpertType, remove, blocked }) => (
+    <GeneXpertType geneXpertType={geneXpertType} remove={remove} blocked={blocked} />
   ),
   connectorStatus: ({ connectorStatus, remove, blocked }) => (
     <ConnectorStatus connectorStatus={connectorStatus} remove={remove} blocked={blocked} />
@@ -605,11 +609,22 @@ const DeviceType = ({ deviceType, remove, blocked }) => {
     return (
       <Btn
         lbl={formatMessage(messages.withDeviceType, { deviceTypeName })}
-        del={blocked.includes('deviceType') ? undefined : () => remove(['deviceType'])}
+        del={blocked.includes('deviceType') ? undefined : () => remove(['deviceType', 'geneXpertType'])}
       />
     )
   }
   return null
+}
+
+const GeneXpertType = ({ geneXpertType, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const label = cepheidModulesOptions.find(i => i.value === geneXpertType)?.label
+  return (
+    <Btn
+      lbl={formatMessage(messages.withGeneXpertType, { geneXpertType: label })}
+      del={blocked.includes('geneXpertType') ? undefined : () => remove(['geneXpertType'])}
+    />
+  )
 }
 
 const DeviceMaintenanceStatusId = ({ deviceMaintenanceStatusId, remove, blocked }) => {

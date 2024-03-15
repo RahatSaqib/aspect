@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-const { addMilliseconds, addMinutes, subDays, differenceInDays } = require('date-fns')
+const { addMilliseconds, addMinutes, subDays, differenceInDays, subMonths } = require('date-fns')
 const { upsertJobFunctionFixture } = require('../common')
 const jobFunctionsFixtureMyanmar = require('./fixtures/jobFunctions_myanmar')
 const config = require('../../src/config')
@@ -366,6 +366,7 @@ async function seed(knex) {
             timezone: deviceSeed.timezone,
             notes: deviceSeed.notes,
             lastSeenOn: now,
+            putInService: subMonths(now, 2),
           }
           const [deviceId] = await knex('Device').insert(device)
           device.id = deviceId

@@ -90,7 +90,7 @@ const HivGraphPage = () => {
           expandedBarData.push({
             id: key,
             month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: +result[key].toFixed(3).slice(0, -1),
+            value: +result[key].toFixed(3).slice(0, -1) || 0,
             type: key === 'undefined' ? 'NO DATA' : formatMessage(intlMessages[`resultCategory${key}`]),
             originalMonth: result.month,
           })

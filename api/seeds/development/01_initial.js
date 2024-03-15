@@ -2,7 +2,7 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears } = require('date-fns')
+const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears, subMonths } = require('date-fns')
 const uuid = require('node-uuid')
 
 const config = require('../../src/config')
@@ -3401,7 +3401,9 @@ async function seed(knex) {
         createdOn: new Date(+now - 3 * i * millisInHour),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
+        lastPingFromIp: `31.70.127.${Math.floor(Math.random() * 255)}`,
         lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+        putInService: subMonths(now, 2),
       })
       routerIds.push(routerId)
     })
@@ -3451,7 +3453,6 @@ async function seed(knex) {
             'False|Mobile Van MG 33AK L|0|1|1|False||0|-1|1|ASSAY=MTB-RIF[MTB=MTB][Rif Resistance=Rif Resistance][QC Check=QC Check]',
           longitude: -13.9833,
           shortName: 'Mobile Van LL 1',
-          lastPingOn: '2021-12-07T06:21:45Z',
           macAddress: 'MAC',
           systemTime: '2021-12-17T17:10:17.3052011Z',
           lisConfigOk: true,
@@ -3489,7 +3490,9 @@ async function seed(knex) {
         createdOn: subDays(now, _.random(0, 120)),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
+        lastPingFromIp: `13.10.97.${Math.floor(Math.random() * 255)}`,
         lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+        putInService: subMonths(now, 2),
         hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
         serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
         lastInstrumentSerial: _.times(14, () =>
