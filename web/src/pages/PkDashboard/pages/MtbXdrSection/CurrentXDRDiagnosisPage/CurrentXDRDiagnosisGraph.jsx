@@ -4,7 +4,6 @@ import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useNavigate } from 'react-router-dom'
 import {
   StateSelect,
   LgaSelect,
@@ -22,9 +21,9 @@ import {
 } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import { useResultlist } from '../../../../../hooks/result'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -81,8 +80,7 @@ const CurrentXDRDiagnosisPage = () => {
   const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
     scopedAssays?.map(x => x.id)
   )
-  const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
+  const [navigateToResultList] = useResultlist()
 
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
@@ -182,23 +180,16 @@ const CurrentXDRDiagnosisPage = () => {
                       'Detected',
                       'Trace Detected',
                     ])
-                    let updatedFilter
                     setFilter(prevFilter => {
-                      updatedFilter = prevFilter
+                      navigateToResultList({
+                        ...prevFilter,
+                        minDate,
+                        maxDate,
+                        assayId: assayIds,
+                        resultCategoryGroupId,
+                      })
                       return prevFilter
                     })
-
-                    const params = {
-                      ...updatedFilter,
-                      countryId: user.countryId,
-                      displayResult: 'actual',
-                      minDate,
-                      maxDate,
-                      assayId: assayIds,
-                      resultCategoryGroupId,
-                    }
-                    addFilter({ ...params }, '/browse/result')
-                    navigate('/browse/result')
                   })
                 }}
               />

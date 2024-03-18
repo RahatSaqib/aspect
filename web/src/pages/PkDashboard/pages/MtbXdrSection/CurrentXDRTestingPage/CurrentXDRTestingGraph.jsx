@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import format from 'date-fns/format'
+import { useResultlist } from 'hooks/result'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useNavigate } from 'react-router-dom'
 import {
   StateSelect,
   LgaSelect,
@@ -20,7 +20,6 @@ import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Gra
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -72,8 +71,7 @@ const RifCurrentGraphPage = () => {
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState([])
   const { data: assays } = useAssayList()
-  const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
+  const [navigateToResultList] = useResultlist()
 
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
@@ -169,22 +167,15 @@ const RifCurrentGraphPage = () => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
 
-                    let updatedFilter
                     setFilter(prevFilter => {
-                      updatedFilter = prevFilter
+                      navigateToResultList({
+                        ...prevFilter,
+                        minDate,
+                        maxDate,
+                        assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                      })
                       return prevFilter
                     })
-
-                    const params = {
-                      ...updatedFilter,
-                      countryId: user.countryId,
-                      displayResult: 'actual',
-                      minDate,
-                      maxDate,
-                      assayId: assays.find(a => a.externalId === evt.data.data.id).id,
-                    }
-                    addFilter({ ...params }, '/browse/result')
-                    navigate('/browse/result')
                   })
                 }}
               />

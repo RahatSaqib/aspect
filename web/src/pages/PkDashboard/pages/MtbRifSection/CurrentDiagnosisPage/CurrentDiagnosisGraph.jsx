@@ -3,7 +3,6 @@ import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
 import {
   LgaSelect,
   StateSelect,
@@ -21,9 +20,9 @@ import {
   getResultCategoryGroupsForResultList,
 } from '../../../../../cleanComponents/Graphs/graphUtils'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import { useResultlist } from '../../../../../hooks/result'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -71,6 +70,7 @@ const pieGraphParams = [{ groupBy: 'resultCategory1' }, { minDate }, { maxDate }
 const CurrentDiagnosisGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
+  const [navigateToResultList] = useResultlist()
   const [showLabel, setShowLabel] = useState(true)
   const [showPercentage, setShowPercentage] = useState(false)
   const [filter, setFilter] = useState()
@@ -79,9 +79,6 @@ const CurrentDiagnosisGraphPage = () => {
   const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
     scopedAssays?.map(x => x.id)
   )
-
-  const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
 
   const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filter).concat(defaultFilters))
   const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filter).concat(pieGraphParams))
@@ -203,26 +200,16 @@ const CurrentDiagnosisGraphPage = () => {
                       'Detected',
                       'Trace Detected',
                     ])
-                    const baseUrl = '/browse/result'
-                    let updatedFilter
                     setFilter(prevFilter => {
-                      updatedFilter = prevFilter
-                      return prevFilter
-                    })
-
-                    addFilter(
-                      {
-                        ...updatedFilter,
-                        countryId: user.countryId,
-                        displayResult: 'actual',
+                      navigateToResultList({
+                        ...prevFilter,
                         minDate,
                         maxDate,
                         assayId: assayIds,
                         resultCategoryGroupId,
-                      },
-                      baseUrl
-                    )
-                    navigate(baseUrl)
+                      })
+                      return prevFilter
+                    })
                   })
                 }}
               />

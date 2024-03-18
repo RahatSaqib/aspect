@@ -4,7 +4,6 @@ import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useNavigate } from 'react-router'
 import {
   LgaSelect,
   StateSelect,
@@ -19,8 +18,8 @@ import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import { useResultlist } from '../../../../../hooks/result'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -73,8 +72,7 @@ const CovidGraphPage = () => {
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState()
   const { data: assays } = useAssayList()
-  const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
+  const [navigateToResultList] = useResultlist()
 
   const { data, isLoading } = useQuery(
     ['covidByCategory1Monthly', { endPointParams: objectToArray(filter ?? {}).concat(defaultFilters) }],
@@ -173,25 +171,16 @@ const CovidGraphPage = () => {
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-                    let updatedFilter
                     setFilter(prevFilter => {
-                      updatedFilter = prevFilter
-                      return prevFilter
-                    })
-
-                    addFilter(
-                      {
-                        ...updatedFilter,
-                        countryId: user.countryId,
-                        displayResult: 'actual',
+                      navigateToResultList({
+                        ...prevFilter,
                         minDate,
                         maxDate,
                         onlyReportableResults: true,
                         assayId: assays.find(a => a.externalId === evt.data.data.id).id,
-                      },
-                      '/browse/result'
-                    )
-                    navigate('/browse/result')
+                      })
+                      return prevFilter
+                    })
                   })
                 }}
               />
