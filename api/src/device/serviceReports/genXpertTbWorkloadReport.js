@@ -5,6 +5,7 @@ const {
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
 } = require('../../result/query')
 const { XDR_RESISTANCES } = require('../../shared/constants')
+const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { getBasicsForDevicesReport } = require('../common/db')
 
 const xdrExtraColumns = Object.fromEntries(
@@ -21,7 +22,7 @@ const xdrExtraColumns = Object.fromEntries(
   ])
 )
 
-async function getDevicesWithCountsForTB(dataConstraints, query) {
+async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
   const {
     mtbDetectedRifNotDetected,
@@ -52,6 +53,8 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
       mtbTraceDetected,
       totalXpertTests: knex.raw('count(*)'),
       totalXpertModulesInUse: knex.raw('count(DISTINCT moduleName)'),
+      lastResultUploadedOn: knex.raw('MAX(r.createdOn)'),
+      lastResultConductedOn: knex.raw('MAX(r.endedOn)'),
     })
     .groupBy('r.deviceId')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'])
@@ -74,7 +77,9 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
     .leftJoin(deviceInactiveDays.as('deviceInactiveDays'), function () {
       this.on('deviceInactiveDays.deviceId', 'd.id')
     })
-    .whereNot('dt.externalId', 'GxAlert')
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
+    .where('dt.externalId', 'CepheidGeneXpert')
     .groupBy('d.id')
     .modify(sortPageParams, query, 'name')
     .select([
@@ -83,6 +88,33 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
       'st.name AS stateName',
       'lg.name AS districtName',
       'd.serial AS serial',
+      'd.lastInstrumentSerial AS lastInstrumentSerial',
+      'dms.name AS maintenanceStatusName',
+      knex.raw("dmsl.data->>'$.options.data.notes' AS maintenanceStatusNotes"),
+      getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', timezone, 'lastPingOn'),
+      'd.lastPingFromIp AS lastPingFromIp',
+      getDateTimeProjectionInUserTimeZone(
+        knex,
+        'COALESCE(configurationData->>"$.systemTime.localTime", configurationData->>"$.systemTime")',
+        timezone,
+        'informationDate'
+      ),
+      knex.raw('d.ConfigurationData ->> "$.computerOsVersion" AS computerOsVersion'),
+      'd.timezone AS timezone',
+      knex.raw('d.ConfigurationData ->> "$.culture" AS language'),
+      knex.raw('d.ConfigurationData ->> "$.gxConnectVersion" AS connectorVersion'),
+      knex.raw('d.ConfigurationData ->> "$.databaseDeviceOk" AS deviceFound'),
+      knex.raw('d.ConfigurationData ->> "$.lisConfigOk" AS lisConfiguredCorrectly'),
+      // The deviceApi doesn't populate d.putInService well, so we are going to get it from configurationData until we fix that
+      getDateTimeProjectionInUserTimeZone(
+        knex,
+        'COALESCE(d.putInService, d.configurationData->>"$.putInService")',
+        timezone,
+        'instalationDate'
+      ),
+      knex.raw('d.ConfigurationData ->> "$.routerNumber" AS routerNumber'),
+      knex.raw('d.ConfigurationData ->> "$.sim1SerialNumber" AS sim1SerialNumber'),
+      knex.raw('d.ConfigurationData ->> "$.sim2SerialNumber" AS sim2SerialNumber'),
       knex.raw('IFNULL(resultsCount.totalXpertModulesInUse, 0) AS totalXpertModulesInUse'),
       knex.raw('IFNULL(resultsCount.INH, 0) AS INH'),
       knex.raw('IFNULL(resultsCount.FLQ, 0) AS FLQ'),
@@ -101,8 +133,14 @@ async function getDevicesWithCountsForTB(dataConstraints, query) {
       knex.raw('IFNULL(resultsCount.mtbNoResult, 0) AS mtbNoResult'),
       knex.raw('IFNULL(resultsCount.mtbInvalid, 0) AS mtbInvalid'),
       knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertResults'),
-      knex('Result as lru').where('lru.deviceId', knex.raw('d.id')).max('lru.createdOn').as('lastResultUploadedOn'),
-      knex('Result as lrc').where('lrc.deviceId', knex.raw('d.id')).max('lrc.endedOn').as('lastResultConductedOn'),
+      getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', timezone, 'lastPingOn'),
+      getDateTimeProjectionInUserTimeZone(knex, 'resultsCount.lastResultUploadedOn', timezone, 'lastResultUploadedOn'),
+      getDateTimeProjectionInUserTimeZone(
+        knex,
+        'resultsCount.lastResultConductedOn',
+        timezone,
+        'lastResultConductedOn'
+      ),
     ])
 }
 
