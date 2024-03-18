@@ -1,4 +1,5 @@
 import isArray from 'lodash/isArray'
+import sortBy from 'lodash/sortBy'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
@@ -12,21 +13,25 @@ const getResultCategoryGroup = async assayId =>
     params: isArray(assayId) ? assayId.map(id => ({ assayId: id })) : [{ assayId }],
   }).then(response => response.data)
 
-const useResultCategoryGroup = (assayIds, options) => {
+const useResultCategoryGroup = (assayIds = [], options) => {
   const { formatMessage } = useIntl()
   const assayIdsLength = assayIds?.length
 
-  return useQuery([RESULT_KEY, 'category-group', assayIds], () => getResultCategoryGroup(assayIds), {
-    ...options,
-    ...SELECTS_QUERY_OPTIONS,
-    enabled: !!assayIdsLength,
-    select: data =>
-      data?.map(category => ({
-        ...category,
-        name: `${assayIdsLength > 1 ? `${formatMessage(assay[category?.assayI18nKey])} - ` : ''}${formatMessage(
-          resultCategory[category?.i18nKey]
-        )}`,
-      })),
-  })
+  return useQuery(
+    [RESULT_KEY, 'category-group', { assay: sortBy(assayIds).join(',') }],
+    () => getResultCategoryGroup(assayIds),
+    {
+      ...options,
+      ...SELECTS_QUERY_OPTIONS,
+      enabled: assayIdsLength > 0,
+      select: data =>
+        data?.map(category => ({
+          ...category,
+          name: `${assayIdsLength > 1 ? `${formatMessage(assay[category?.assayI18nKey])} - ` : ''}${formatMessage(
+            resultCategory[category?.i18nKey]
+          )}`,
+        })),
+    }
+  )
 }
 export default useResultCategoryGroup
