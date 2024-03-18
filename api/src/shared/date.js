@@ -447,6 +447,11 @@ function getAllMonthsInRange(minDate, maxDate) {
   return allRanges.sort()
 }
 
+function getDateInMilliSeconds(date) {
+  const providedDate = new Date(date)
+  return providedDate.getTime()
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -491,4 +496,5 @@ module.exports = {
   getAllUserMonthsInRange,
   getUserEndOfMonth,
   getUserStartOfMonth,
+  getDateInMilliSeconds,
 }

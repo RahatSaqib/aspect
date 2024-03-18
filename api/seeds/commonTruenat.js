@@ -2,7 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 const { promisify } = require('util')
-const { addMinutes } = require('date-fns')
+const { addMinutes, subMonths } = require('date-fns')
 const truenatDeviceTypes = require('./fixtures/truenatDevice/DeviceType.json')
 const truenatAssays = require('./fixtures/truenatDevice/Assays.json')
 const truenatPatientDataSchema = require('./fixtures/truenatDevice/PatientDataSchema.json')
@@ -211,7 +211,9 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
         createdOn: new Date(),
         updatedOn: new Date(),
         lastPingOn: new Date(),
+        lastPingFromIp: `3.41.60.${Math.floor(Math.random() * 255)}`,
         lastSeenOn: new Date(),
+        putInService: subMonths(new Date(), 2),
       })
       existingTruenatDevice = await knex('Device').where('id', newTruenatDeviceId).first()
       if (existingTruenatDevice.deviceApprovalId !== deviceApprovalApprovedId) {
