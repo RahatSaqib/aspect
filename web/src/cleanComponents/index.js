@@ -3,6 +3,7 @@ import AssayMultiSelect from './AssayMultiSelect'
 import AssaySelect from './AssaySelect'
 import AssayTypeSelect from './AssayTypeSelect'
 import CepheidInstrumentModelSelect from './CepheidInstrumentModelSelect'
+import CepheidModulesSelect from './CepheidModulesSelect'
 import CepheidSoftwareTypeSelect from './CepheidSoftwareTypeSelect'
 import ConnectorStatusSelect from './ConnectorStatusSelect'
 import ConsumableReasonSelect from './ConsumableReasonSelect'
@@ -107,6 +108,7 @@ export {
   AssayTypeSelect,
   CepheidInstrumentModelSelect,
   CepheidSoftwareTypeSelect,
+  CepheidModulesSelect,
   ConnectorStatusSelect,
   ConsumableSelect,
   ContactStatusSelect,

@@ -15,10 +15,10 @@ async function xpertSiteDetailedReport(auth, query) {
   }
 }
 
-async function xpertSiteSummarySiteWiseReport(auth, query) {
+async function xpertSiteSummarySiteWiseReport(auth, query, timezone) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryGroups = await getResultCategoryGroupColumns(dataConstraints, query)
-  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query)
+  const { builder } = await getAllDeviceReportData(resultCategoryGroups, dataConstraints, query, timezone)
   const { maxDate = new Date() } = query
   const offset = getOffsetFromIsoDateString(maxDate)
   const rows = await builder

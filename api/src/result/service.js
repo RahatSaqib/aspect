@@ -1050,6 +1050,16 @@ async function getWorkflowStatusLogByResultId(request) {
   return result
 }
 
+/*  
+When will this return a duplicate?
+ - Here is an example of a return value that was duplicated in Ukraine: 806279_634634_ee5025da
+   - Instrument 806729 ran a test that for a duplicate sample ID
+   - Sample IDs are hand entered and not unique and this is normal
+   - The test started at a time where the hour ended with 6 on the 34th minute
+   - The start time and the end time are the same which means this test hadn't completed at the time of being uploaded
+   - This time should have been 06:34 or 16:34
+   - If the same device starts 2 tests using the same sample ID at the same minute 10 hours apart, and those tests do not complete, this function will create a duplicated value
+*/
 function createUniqueIdForResult(instrumentSerial, testStartedOn, testEndedOn, sampleId) {
   if (!instrumentSerial || !testStartedOn || !testEndedOn || !sampleId) {
     return null
