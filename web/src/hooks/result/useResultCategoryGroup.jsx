@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { assay, resultCategory } from '../../messages'
+import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
 import { RESULT_KEY, RESULT_KEY_RESULT_CATEGORY_GROUP_ENDPOINT } from './resultKeys.js'
 
 const getResultCategoryGroup = async assayId =>
@@ -17,6 +18,7 @@ const useResultCategoryGroup = (assayIds, options) => {
 
   return useQuery([RESULT_KEY, 'category-group', assayIds], () => getResultCategoryGroup(assayIds), {
     ...options,
+    ...SELECTS_QUERY_OPTIONS,
     enabled: !!assayIdsLength,
     select: data =>
       data?.map(category => ({
