@@ -182,8 +182,14 @@ const CurrentXDRDiagnosisPage = () => {
                       'Detected',
                       'Trace Detected',
                     ])
+                    let updatedFilter
+                    setFilter(prevFilter => {
+                      updatedFilter = prevFilter
+                      return prevFilter
+                    })
+
                     const params = {
-                      ...filter,
+                      ...updatedFilter,
                       countryId: user.countryId,
                       displayResult: 'actual',
                       minDate,

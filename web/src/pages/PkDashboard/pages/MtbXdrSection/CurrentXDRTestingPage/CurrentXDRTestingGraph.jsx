@@ -169,8 +169,14 @@ const RifCurrentGraphPage = () => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
 
+                    let updatedFilter
+                    setFilter(prevFilter => {
+                      updatedFilter = prevFilter
+                      return prevFilter
+                    })
+
                     const params = {
-                      ...filter,
+                      ...updatedFilter,
                       countryId: user.countryId,
                       displayResult: 'actual',
                       minDate,
