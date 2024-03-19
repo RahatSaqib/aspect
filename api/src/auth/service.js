@@ -33,6 +33,7 @@ const personProps = [
   'p.name as userName',
   'p.culture',
   'p.timezone',
+  'tz.timeZone as timezoneIANA',
   'p.id as personId',
   'p.lastPartnerId as partnerId',
   'p.lastCountryId as countryId',
@@ -63,6 +64,7 @@ function getUser(username, options = {}) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'u.name': username })
     .modify(q => {
@@ -76,6 +78,7 @@ function getUserByPersonId(personId) {
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'p.id': personId })
     .first(userProps)
@@ -85,6 +88,7 @@ function getPersonByPersonId(personId) {
   return query('Get user details for person')
     .from('Person as p')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'p.id': personId })
     .first(personProps)
@@ -95,6 +99,7 @@ function getUserByUserId(userId) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'u.id': userId })
     .first(userProps)

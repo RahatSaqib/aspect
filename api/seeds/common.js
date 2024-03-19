@@ -2,6 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 
+const { subMonths } = require('date-fns')
 const utils = require('./utils')
 const config = require('../src/config')
 const { query } = require('../src/db')
@@ -450,6 +451,8 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
       partnerId,
       siteId,
       lastPingOn: new Date(),
+      lastPingFromIp: `31.41.30.${Math.floor(Math.random() * 255)}`,
+      putInService: subMonths(new Date(), 2),
       lastSeenOn: new Date(),
       deviceTypeId,
     })
@@ -1583,7 +1586,7 @@ async function seedLabClinicFixture(
             deviceData.lastSeenOn = lastDeviceActivity
             deviceData.lastPingOn = lastDeviceActivity
             deviceData.lastPingFromIp = device.lastPingFromIp
-            deviceData.putInService = now
+            deviceData.putInService = subMonths(now, 2)
             deviceData.putInServiceSource = 'Installed at lab'
             deviceData.configurationData = '{}'
             const [deviceId] = await knex('Device').insert({
