@@ -21,4 +21,15 @@ module.exports = require('../utils').seed(async knex => {
   const issueEventTriggerFixture = issueEventTriggerPartner || issueEventTriggerBase
 
   await upsertIssueEventTrigger(knex, partnerExternalId, issueEventTriggerFixture)
+
+  /**
+   * correct alert template message for issue `CalibrationDueDate` -
+   * see in `api/seeds/relatedObjects/issues.js`
+   */
+  await knex('AlertTemplate')
+    .where('message', 'Device Calibration due date is less than {{issue.data.dueDays}} close')
+    .update({
+      message: 'Device Calibration due date is less than {{device.daysToCalibrationDueDate}} close',
+      updatedOn: new Date(),
+    })
 }, __filename)

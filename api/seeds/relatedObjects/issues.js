@@ -1415,7 +1415,7 @@ async function getBaseIssues(auditFields) {
         messageSeverityId: messageSeverities.Alert,
       },
       AlertTemplate: {
-        message: 'Device Calibration due date is less than {{issue.data.dueDays}} close',
+        message: 'Device Calibration due date is less than {{device.daysToCalibrationDueDate}} close',
         ...auditFields,
       },
     },

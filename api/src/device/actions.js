@@ -78,15 +78,21 @@ function calibrationIssueNotificationTrigger() {
  * @param {*} deviceId - Device ID
  * @returns - Action message with params
  */
-function calibrationDueDateIsClose(deviceId, dueDays) {
+function calibrationDueDateIsClose(deviceId, calibrationDueDate) {
   return {
     type: types.CALIBRATION_DUE_DATE_IS_CLOSE,
     deviceId,
     /**
-     * set value for  placeholder {{issue.data.dueDays}} in base
-     * issue `CalibrationDueDate` in api/seeds/relatedObjects/issues.js
+     * set value for placeholder {{device.daysToCalibrationDueDate}} in base
+     * issue `CalibrationDueDate` in api/seeds/relatedObjects/issues.js.
+     *
+     * Notice that `issue.data.calibrationDueDate` is assigned to `issueData.calibrationDueDate`
+     * which then is assigned to `device.calibrationDueDate`. And placeholder
+     * `{{device.daysToCalibrationDueDate}}` in template is getting replaced with func
+     * `daysBeforeToday device.calibrationDueDate` - see this in `const dynamicTemplate` in
+     * `api/src/stringTemplate/service.js`
      */
-    options: { data: { dueDays } },
+    options: { data: { calibrationDueDate } },
   }
 }
 

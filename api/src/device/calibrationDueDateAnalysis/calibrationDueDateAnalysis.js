@@ -16,12 +16,12 @@ async function onCalibrationDueDateAnalysis(_, { messageContext }) {
     const devicesCalibrationInfo = await getCalibrationDueDateStatusFromDevices(knex)
 
     devicesCalibrationInfo.forEach(device => {
+      /**
+       * trigger an issue when # days left to CalibrationDueDate is less than
+       * dueDaysCalibrationIssue (i.e. 90, see in table Partner.dueDaysCalibrationIssue)
+       */
       if (isCalibrationOverdue(device)) {
-        /**
-         * trigger an issue when # days left to CalibrationDueDate is less than
-         * dueDaysCalibrationIssue (i.e. 90, see in table Partner.dueDaysCalibrationIssue)
-         */
-        context.calibrationDueDateIsClose(device.deviceId, device.daysToCalibrationDueDateIssue)
+        context.calibrationDueDateIsClose(device.deviceId, device.calibrationDueDate)
       }
     })
   })
