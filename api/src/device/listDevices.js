@@ -15,7 +15,7 @@ async function getListDevices(query, auth) {
   const loggedUserName = auth.credentials.name
   const accountDetails = await getAccountDetailsForUsername(loggedUserName)
   const resultCategoryErrorId = await resultCategoryToId('Error')
-  const { assayId } = query
+  const { assayId, geneXpertType } = query
   /**
    * `assayId` is number or array of numbers - cuz try(Joi.array().items(Joi.number()), Joi.number())
    */
@@ -104,6 +104,8 @@ async function getListDevices(query, auth) {
               .andOn(knex.raw("issueStatus.externalId not in ('Inactive','OK','Resolved')"))
           )
       }
+      if (geneXpertType === '6cModules') queryBuilder.where('d.gx6cModulesCount', '>', 0)
+      if (geneXpertType === '10cModules') queryBuilder.where('d.gx10cModulesCount', '>', 0)
     })
     .modify(filterParams, query, {
       countryId: 'g.countryId',
