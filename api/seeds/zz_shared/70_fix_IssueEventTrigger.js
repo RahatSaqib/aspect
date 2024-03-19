@@ -3,6 +3,7 @@ const {
   partner: { externalId: partnerExternalId },
 } = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
 
+const { data: issueEventTriggerBase } = require('../fixtures/IssueEventTrigger.json')
 const upsertIssueEventTrigger = require('../common/upsert_issue_event_triggers')
 
 module.exports = require('../utils').seed(async knex => {
@@ -15,7 +16,6 @@ module.exports = require('../utils').seed(async knex => {
   } catch {
     //
   }
-  const { data: issueEventTriggerBase } = require('../fixtures/issueEventTrigger.json')
 
   const issueEventTriggerFixture = issueEventTriggerPartner || issueEventTriggerBase
 
