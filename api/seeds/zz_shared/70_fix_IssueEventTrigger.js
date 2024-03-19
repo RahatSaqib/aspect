@@ -4,8 +4,7 @@ const {
 } = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
 
 const upsertIssueEventTrigger = require('../common/upsert_issue_event_triggers')
-// const issueEventTriggerFixture = require('../fixtures/issueEventTrigger')
-const { data: issueEventTriggerBase } = require('../fixtures/issueEventTrigger')
+const { data: issueEventTriggerBase } = require('../fixtures/issueEventTrigger.json')
 
 module.exports = require('../utils').seed(async knex => {
   let issueEventTriggerPartner
