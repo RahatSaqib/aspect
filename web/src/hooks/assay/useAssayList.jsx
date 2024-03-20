@@ -7,6 +7,6 @@ const getDeviceSelectList = async () =>
   fetchWrapperForQueries({ endpoint: ASSAY_KEY_LIST_ENDPOINT }).then(response => response.data)
 
 const useAssayList = options =>
-  useQuery([ASSAY_KEY, 'list'], () => getDeviceSelectList(), { ...options, ...SELECTS_QUERY_OPTIONS })
+  useQuery([ASSAY_KEY, 'list'], () => getDeviceSelectList(), { ...SELECTS_QUERY_OPTIONS, ...options })
 
 export default useAssayList

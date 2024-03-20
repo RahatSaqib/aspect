@@ -12,8 +12,8 @@ const getStatesByCountryId = async (countryId, returnAll) =>
 
 const useStatesByCountry = ({ countryId, returnAll = false }, options) =>
   useQuery([STATE_KEY, countryId, returnAll], () => getStatesByCountryId(countryId, returnAll), {
-    ...options,
     ...SELECTS_QUERY_OPTIONS,
+    ...options,
   })
 
 export default useStatesByCountry

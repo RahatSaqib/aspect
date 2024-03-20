@@ -21,8 +21,8 @@ const useResultCategoryGroup = (assayIds = [], options) => {
     [RESULT_KEY, 'category-group', { assay: sortBy(assayIds).join(',') }],
     () => getResultCategoryGroup(assayIds),
     {
-      ...options,
       ...SELECTS_QUERY_OPTIONS,
+      ...options,
       enabled: assayIdsLength > 0,
       select: data =>
         data?.map(category => ({

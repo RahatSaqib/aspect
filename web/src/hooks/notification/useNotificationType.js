@@ -18,8 +18,8 @@ const getNotificationType = async categoryTypeId =>
 
 const useNotificationType = (categoryTypeId, config) =>
   useQuery([NOTIFICATION_TYPE_KEY, categoryTypeId], () => getNotificationType(categoryTypeId), {
-    ...config,
     ...SELECTS_QUERY_OPTIONS,
+    ...config,
   })
 
 export default useNotificationType
