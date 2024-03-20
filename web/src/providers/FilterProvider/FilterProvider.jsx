@@ -30,6 +30,7 @@ export const defaultFilter = {
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate }, //
   '/reports': { minDate, maxDate }, //
   '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
+  '/dashboard/rif/current-diagnosis': {},
 }
 
 const FilterProvider = ({ children }) => {

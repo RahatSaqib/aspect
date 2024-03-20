@@ -3,22 +3,29 @@ const { default: useAuthState } = require('../useAuthState')
 const { default: useFilterUpdate } = require('../useFilterUpdate')
 
 export const useResultlist = () => {
-  const [addFilter] = useFilterUpdate()
+  const [, , , addMultipleFilter] = useFilterUpdate()
   const navigate = useNavigate()
   const user = useAuthState()
 
-  const navigateToResultList = filters => {
+  const navigateToResultList = (resultFilters, graphFilters) => {
     const baseUrl = '/browse/result'
 
-    addFilter(
+    addMultipleFilter([
       {
-        countryId: user.countryId,
-        displayResult: 'actual',
-        ...filters,
+        newFilter: {
+          countryId: user.countryId,
+          displayResult: 'actual',
+          ...resultFilters,
+        },
+        pathname: baseUrl,
       },
-      baseUrl
-    )
+      {
+        newFilter: graphFilters.newFilters,
+        pathname: graphFilters.pathname,
+      },
+    ])
+
     navigate(baseUrl)
   }
-  return [navigateToResultList]
+  return { navigateToResultList }
 }

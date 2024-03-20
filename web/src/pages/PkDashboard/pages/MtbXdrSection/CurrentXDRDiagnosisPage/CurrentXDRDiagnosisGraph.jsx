@@ -1,9 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
+import { useLocation } from 'react-router'
 import {
   StateSelect,
   LgaSelect,
@@ -24,6 +25,7 @@ import useAssayList from '../../../../../hooks/assay/useAssayList'
 import { useResultlist } from '../../../../../hooks/result'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -74,13 +76,16 @@ const CurrentXDRDiagnosisPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState([])
+  const location = useLocation()
+  const filterValues = useFilterValues(location.pathname)
+  const filterRef = useRef(filterValues)
+  const [filter, setFilter] = useState({ ...filterValues })
   const { data: assays, isLoading: isLoadingAssays } = useAssayList()
   const scopedAssays = assays?.filter(x => x.externalId === 'GxMtbXdr')
   const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
     scopedAssays?.map(x => x.id)
   )
-  const [navigateToResultList] = useResultlist()
+  const { navigateToResultList } = useResultlist()
 
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
@@ -134,6 +139,10 @@ const CurrentXDRDiagnosisPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, assays])
 
+  useEffect(() => {
+    filterRef.current = filter
+  }, [filter])
+
   return (
     <PkPage
       title={`${formatMessage(messages.peopleDiagnosedXdr)}`}
@@ -180,16 +189,16 @@ const CurrentXDRDiagnosisPage = () => {
                       'Detected',
                       'Trace Detected',
                     ])
-                    setFilter(prevFilter => {
-                      navigateToResultList({
-                        ...prevFilter,
+                    navigateToResultList(
+                      {
+                        ...filterRef.current,
                         minDate,
                         maxDate,
                         assayId: assayIds,
                         resultCategoryGroupId,
-                      })
-                      return prevFilter
-                    })
+                      },
+                      { newFilters: filterRef.current, pathname: location.pathname }
+                    )
                   })
                 }}
               />

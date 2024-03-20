@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
+import { useLocation } from 'react-router'
 import {
   StateSelect,
   LgaSelect,
@@ -20,6 +21,7 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
 import { useResultlist } from '../../../../../hooks/result'
 import useAuthState from '../../../../../hooks/useAuthState'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -69,9 +71,12 @@ const RifCurrentGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState([])
+  const location = useLocation()
+  const filterValues = useFilterValues(location.pathname)
+  const filterRef = useRef(filterValues)
+  const [filter, setFilter] = useState({ ...filterValues })
   const { data: assays } = useAssayList()
-  const [navigateToResultList] = useResultlist()
+  const { navigateToResultList } = useResultlist()
 
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
@@ -125,6 +130,10 @@ const RifCurrentGraphPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, assays])
 
+  useEffect(() => {
+    filterRef.current = filter
+  }, [filter])
+
   return (
     <PkPage
       title={formatMessage(messages.peopleTestedXdr)}
@@ -166,16 +175,15 @@ const RifCurrentGraphPage = () => {
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-
-                    setFilter(prevFilter => {
-                      navigateToResultList({
-                        ...prevFilter,
+                    navigateToResultList(
+                      {
+                        ...filterRef.current,
                         minDate,
                         maxDate,
                         assayId: assays.find(a => a.externalId === evt.data.data.id).id,
-                      })
-                      return prevFilter
-                    })
+                      },
+                      { newFilters: filterRef.current, pathname: location.pathname }
+                    )
                   })
                 }}
               />
