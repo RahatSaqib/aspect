@@ -207,7 +207,7 @@ const CurrentDiagnosisGraphPage = () => {
               { label: formatMessage(messages.RRPerYear), value: `${data.totalResultsCurrentYear}` },
               {
                 label: formatMessage(messages.RRPerMonth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
               { label: formatMessage(messages.RRPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}

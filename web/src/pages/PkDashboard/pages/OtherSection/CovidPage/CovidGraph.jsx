@@ -195,7 +195,7 @@ const CovidGraphPage = () => {
               { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
               {
                 label: formatMessage(messages.testPerMonth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
               { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
