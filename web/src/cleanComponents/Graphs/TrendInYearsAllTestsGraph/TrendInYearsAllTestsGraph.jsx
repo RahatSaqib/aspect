@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages, months } from '../../../messages'
+import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import { StateSelector, Loading } from '../../index'
 import styles from '../graphStyles.module.css'
 import { fillYear } from '../graphUtils'
@@ -24,7 +25,8 @@ const TrendInYearsAllTestsGraph = () => {
   const { isLoading, data } = useQuery(
     ['tbAllTestsYearlyTrends', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-national', params: mergedParams })
+      fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-national', params: mergedParams }),
+    { ...GRAPHS_QUERY_OPTIONS }
   )
 
   const [graphData, setGraphData] = useState(false)
