@@ -6,7 +6,6 @@ import { LineGraph } from '..'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages, months } from '../../../messages'
-import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import { StateSelector, Loading } from '../../index'
 import styles from '../graphStyles.module.css'
 import { fillYear } from '../graphUtils'
@@ -32,8 +31,7 @@ const TrendInYearsAllTestsGraph = () => {
   const { isLoading, data } = useQuery(
     ['trendInYearsRifDetected', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: mergedParams }),
-    { ...GRAPHS_QUERY_OPTIONS }
+      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: mergedParams })
   )
 
   const [graphData, setGraphData] = useState(false)

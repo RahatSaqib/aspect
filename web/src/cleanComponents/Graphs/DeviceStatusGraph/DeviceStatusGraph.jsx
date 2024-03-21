@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
+import { subDays } from 'date-fns'
 import filter from 'lodash/filter'
 import sumBy from 'lodash/sumBy'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages } from '../../../messages'
-import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import { getTimePeriod, formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -42,7 +42,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState({
-    minDate: getTimePeriod(29, 'day', 'yyyy-MM-dd'),
+    minDate: subDays(new Date(), 29),
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
 
@@ -51,8 +51,7 @@ const DeviceStatusGraph = ({ assaysFromState }) => {
   const { data, isLoading } = useQuery(
     ['deviceStatusMonthly', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/dashboard/operational-data/activity-over-time', params: mergedParams }),
-    { ...GRAPHS_QUERY_OPTIONS }
+      fetchWrapperForQueries({ endpoint: '/dashboard/operational-data/activity-over-time', params: mergedParams })
   )
 
   const [barData, setBarData] = useState({})

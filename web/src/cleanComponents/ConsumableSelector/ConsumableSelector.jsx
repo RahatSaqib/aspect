@@ -5,7 +5,6 @@ import { useQuery } from 'react-query'
 import { Loading } from '..'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { consumableMessages } from '../../messages'
-import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
 
 const ConsumableSelector = ({ onChange }) => {
   const [innerValue, setInnerValue] = useState('')
@@ -14,7 +13,8 @@ const ConsumableSelector = ({ onChange }) => {
     'data.inventoryConsumableSummaryList',
     async () => fetchWrapperForQueries({ endpoint: '/dashboard/inventory-item' }),
     {
-      ...SELECTS_QUERY_OPTIONS,
+      refetchOnWindowFocus: false,
+      staleTime: 1000 * 60 * 60, // 1 hour
     }
   )
   const { formatMessage } = useIntl()

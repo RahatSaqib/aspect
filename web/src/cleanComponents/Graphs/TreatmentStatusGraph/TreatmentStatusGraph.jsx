@@ -10,7 +10,6 @@ import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
-import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -71,8 +70,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/confirmed-treatment-tracking', params: endPointParams }),
-    { ...GRAPHS_QUERY_OPTIONS }
+      fetchWrapperForQueries({ endpoint: '/result/confirmed-treatment-tracking', params: endPointParams })
   )
 
   // code for donut
