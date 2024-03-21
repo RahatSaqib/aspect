@@ -1,6 +1,7 @@
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
 import {
   NOTIFICATION_TYPE_KEY,
   NOTIFICATION_TYPE_SELECT_ALL_ENDPOINT,
@@ -16,6 +17,9 @@ const getNotificationType = async categoryTypeId =>
   }).then(response => response.data)
 
 const useNotificationType = (categoryTypeId, config) =>
-  useQuery([NOTIFICATION_TYPE_KEY, categoryTypeId], () => getNotificationType(categoryTypeId), config)
+  useQuery([NOTIFICATION_TYPE_KEY, categoryTypeId], () => getNotificationType(categoryTypeId), {
+    ...SELECTS_QUERY_OPTIONS,
+    ...config,
+  })
 
 export default useNotificationType

@@ -3,6 +3,7 @@ import { Autocomplete, TextField } from '@mui/material'
 import isNumber from 'lodash/isNumber'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
+import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
 import fetchWrapperForQueries from '../QueryFetch'
 import { SITE_ALL } from '../QueryFetch/Site/index'
 
@@ -22,8 +23,10 @@ const SiteAutoCompleteField = ({
   /**
    * 1. get list of all sites
    */
-  const { isLoading, data: { data: siteData } = false } = useQuery([SITE_ALL.KEY], async () =>
-    fetchWrapperForQueries({ endpoint: SITE_ALL.ENDPOINT })
+  const { isLoading, data: { data: siteData } = false } = useQuery(
+    [SITE_ALL.KEY],
+    async () => fetchWrapperForQueries({ endpoint: SITE_ALL.ENDPOINT }),
+    { ...SELECTS_QUERY_OPTIONS }
   )
 
   /**
