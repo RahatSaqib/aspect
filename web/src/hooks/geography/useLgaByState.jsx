@@ -1,7 +1,6 @@
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
-import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
 import { LGA_KEY, LGA_KEY_BY_STATE_ID_ENDPOINT } from './geographyKeys.js'
 
 const getLgaByStateId = async (stateId, returnAll) =>
@@ -11,9 +10,6 @@ const getLgaByStateId = async (stateId, returnAll) =>
   }).then(response => response.data)
 
 const useLgaByState = ({ stateId, returnAll = false }, options) =>
-  useQuery([LGA_KEY, stateId, returnAll], () => getLgaByStateId(stateId, returnAll), {
-    ...SELECTS_QUERY_OPTIONS,
-    ...options,
-  })
+  useQuery([LGA_KEY, stateId, returnAll], () => getLgaByStateId(stateId, returnAll), options)
 
 export default useLgaByState

@@ -21,7 +21,6 @@ import { useNavigate } from 'react-router-dom'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages, assay } from '../../../messages'
-import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -79,8 +78,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams }),
-    { ...GRAPHS_QUERY_OPTIONS }
+      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
   )
   const [donutData, setDonutData] = useState({})
   const [barData, setBarData] = useState({})

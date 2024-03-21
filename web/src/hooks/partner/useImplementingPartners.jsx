@@ -1,6 +1,5 @@
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
-import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
 import { IMPLEMENTING_PARTNERS_ENDPOINT, IMPLEMENTING_PARTNERS_KEY } from './partnerKeys.js'
 
 const getImplementingPartnersList = async () =>
@@ -11,7 +10,6 @@ const getImplementingPartnersList = async () =>
     }))
   )
 
-const useImplementingPartners = () =>
-  useQuery([IMPLEMENTING_PARTNERS_KEY], () => getImplementingPartnersList(), { ...SELECTS_QUERY_OPTIONS })
+const useImplementingPartners = () => useQuery([IMPLEMENTING_PARTNERS_KEY], () => getImplementingPartnersList())
 
 export default useImplementingPartners

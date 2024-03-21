@@ -6,7 +6,6 @@ import { useNavigate } from 'react-router'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
-import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import ConsumableSelector from '../../ConsumableSelector'
 import { Loading, ColumnGraph, genLabel } from '../../index'
 import messages from '../graphMessages'
@@ -36,9 +35,9 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
   const { isLoading, data } = useQuery(
     ['suppliesExpiryByPeriod', { cleanFilter }],
     async ({ queryKey: [, { cleanFilter }] }) => {
+      // Call the query only when a consumable is selected - avoiding unnecesary calls to the API
       if (cleanFilter) return fetchWrapperForQueries({ endpoint: '/inventory/days-by-location', cleanFilter })
-    },
-    { ...GRAPHS_QUERY_OPTIONS }
+    }
   )
 
   const [barData, setBarData] = useState([])
