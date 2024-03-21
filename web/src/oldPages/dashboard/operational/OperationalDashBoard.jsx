@@ -9,6 +9,7 @@ import {
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import ASSAY_LIST from '../../../components/QueryFetch/Assay/index'
+import { SELECTS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import SummaryStatus from '../status/SummaryStatus'
 import styles from './OperationalData.module.css'
 
@@ -17,7 +18,9 @@ const OperationalDashBoard = () => {
     isError,
     data: { data: assays } = false,
     error,
-  } = useQuery(ASSAY_LIST.KEY, async () => fetchWrapperForQueries({ endpoint: ASSAY_LIST.ENDPOINT }))
+  } = useQuery(ASSAY_LIST.KEY, async () => fetchWrapperForQueries({ endpoint: ASSAY_LIST.ENDPOINT }), {
+    ...SELECTS_QUERY_OPTIONS,
+  })
 
   if (isError) {
     throw new Error(error)
