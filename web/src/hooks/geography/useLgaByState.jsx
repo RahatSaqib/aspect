@@ -12,8 +12,8 @@ const getLgaByStateId = async (stateId, returnAll) =>
 
 const useLgaByState = ({ stateId, returnAll = false }, options) =>
   useQuery([LGA_KEY, stateId, returnAll], () => getLgaByStateId(stateId, returnAll), {
-    ...options,
     ...SELECTS_QUERY_OPTIONS,
+    ...options,
   })
 
 export default useLgaByState
