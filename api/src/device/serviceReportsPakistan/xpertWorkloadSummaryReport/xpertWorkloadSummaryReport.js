@@ -1,9 +1,10 @@
 const _ = require('lodash')
 const { subMonths } = require('date-fns')
 const Boom = require('@hapi/boom')
-const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../../result/query')
-const { filterDateRangeParams, knex, filterParams } = require('../../../db')
+const { knex, filterParams } = require('../../../db')
 const { getAllUserMonthsInRange, getOffsetFromIsoDateStringInMinutes } = require('../../../shared/date')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../../fact/common/db')
+const { addConstraints } = require('../../../auth/constraints')
 
 const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) => {
   const { minDate, maxDate } = query
@@ -16,15 +17,15 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     dateFrom = subMonths(dateTo, 1)
   }
 
-  const baseQuery = getResultBaseQuery(knex, dataConstraints)
-    .modify(modifiers.join.resultCategory1)
-    .modify(modifiers.join.resultCategory2)
-    .leftJoin('Device as d', 'r.deviceId', 'd.id')
+  const baseQuery = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+  })
     .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .select({
       provinceName: 'st.name',
       districtName: 'lg.name',
@@ -39,7 +40,6 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
       lgaId: 'g.lgaId',
       siteId: 's.id',
     })
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .groupBy(groupBy)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .orderBy('st.name', 'lg.name')
@@ -58,16 +58,16 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
 
     baseQuery.select({
       [`${alias}_total`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbDetectedTraceDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId IN ('Detected', 'Trace Detected') THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId IN ('Detected', 'Trace Detected') THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbTraceDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId = 'Trace Detected' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId = 'Trace Detected' THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbDetectedRifDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN r.resultCount ELSE 0 END), 0)`
       ),
     })
 
