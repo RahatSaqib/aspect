@@ -156,7 +156,7 @@ const HivGraphPage = () => {
               { label: formatMessage(pkMessages.testPerYear), value: `${data.totalResultsCurrentYear}` },
               {
                 label: formatMessage(pkMessages.testPerMonth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
               { label: formatMessage(pkMessages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}

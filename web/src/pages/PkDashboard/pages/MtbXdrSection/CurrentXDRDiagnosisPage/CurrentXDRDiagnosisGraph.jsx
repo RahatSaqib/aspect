@@ -201,7 +201,7 @@ const CurrentXDRDiagnosisPage = () => {
               { label: formatMessage(messages.xdrTBCasesPerYear), value: `${data.totalResultsCurrentYear}` },
               {
                 label: formatMessage(messages.xdrAverageMoth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
               { label: formatMessage(messages.xdrTBLastDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
