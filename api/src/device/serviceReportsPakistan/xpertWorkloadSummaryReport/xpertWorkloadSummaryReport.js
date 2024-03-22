@@ -34,12 +34,6 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
       maintenanceStatus: 'dms.name',
       responsible: 'ip.name',
     })
-    .modify(filterParams, query, {
-      assayId: 'a.id',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteId: 's.id',
-    })
     .groupBy(groupBy)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
     .orderBy('st.name', 'lg.name')
