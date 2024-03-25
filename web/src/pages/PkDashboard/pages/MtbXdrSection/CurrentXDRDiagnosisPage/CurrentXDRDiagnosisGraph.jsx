@@ -1,10 +1,10 @@
-import React, { useEffect, useState } from 'react'
+import React, { useEffect, useState, useRef } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import {
   StateSelect,
   LgaSelect,
@@ -22,9 +22,10 @@ import {
 } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import { useResultlist } from '../../../../../hooks/result'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -75,14 +76,16 @@ const CurrentXDRDiagnosisPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState([])
+  const location = useLocation()
+  const filterValues = useFilterValues(location.pathname)
+  const filterRef = useRef(filterValues)
+  const [filter, setFilter] = useState({ ...filterValues })
   const { data: assays, isLoading: isLoadingAssays } = useAssayList()
   const scopedAssays = assays?.filter(x => x.externalId === 'GxMtbXdr')
   const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
     scopedAssays?.map(x => x.id)
   )
-  const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
+  const { navigateToResultList } = useResultlist()
 
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
@@ -136,6 +139,10 @@ const CurrentXDRDiagnosisPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, assays])
 
+  useEffect(() => {
+    filterRef.current = filter
+  }, [filter])
+
   return (
     <PkPage
       title={`${formatMessage(messages.peopleDiagnosedXdr)}`}
@@ -182,15 +189,16 @@ const CurrentXDRDiagnosisPage = () => {
                       'Detected',
                       'Trace Detected',
                     ])
-                    const params = {
-                      displayResult: 'actual',
-                      minDate,
-                      maxDate,
-                      assayId: assayIds,
-                      resultCategoryGroupId,
-                    }
-                    addFilter({ ...params }, '/browse/result')
-                    navigate('/browse/result')
+                    navigateToResultList(
+                      {
+                        ...filterRef.current,
+                        minDate,
+                        maxDate,
+                        assayId: assayIds,
+                        resultCategoryGroupId,
+                      },
+                      { newFilters: filterRef.current, pathname: location.pathname }
+                    )
                   })
                 }}
               />

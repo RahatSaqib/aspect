@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
-import { useNavigate } from 'react-router'
+import { useLocation } from 'react-router'
 import {
   LgaSelect,
   StateSelect,
@@ -21,9 +21,10 @@ import {
   getResultCategoryGroupsForResultList,
 } from '../../../../../cleanComponents/Graphs/graphUtils'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import { useResultlist } from '../../../../../hooks/result'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -71,17 +72,19 @@ const pieGraphParams = [{ groupBy: 'resultCategory1' }, { minDate }, { maxDate }
 const CurrentDiagnosisGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
+  const { navigateToResultList } = useResultlist()
+
   const [showLabel, setShowLabel] = useState(true)
   const [showPercentage, setShowPercentage] = useState(false)
-  const [filter, setFilter] = useState()
+  const location = useLocation()
+  const filterValues = useFilterValues(location.pathname)
+  const filterRef = useRef(filterValues)
+  const [filter, setFilter] = useState({ ...filterValues })
   const { data: assays, isLoading: isLoadingAssays } = useAssayList()
   const scopedAssays = assays?.filter(x => x.externalId === 'GxMtbRif' || x.externalId === 'GxMtbRifUltra')
   const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
     scopedAssays?.map(x => x.id)
   )
-
-  const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
 
   const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filter).concat(defaultFilters))
   const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filter).concat(pieGraphParams))
@@ -149,6 +152,10 @@ const CurrentDiagnosisGraphPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainData, pieData, assays])
 
+  useEffect(() => {
+    filterRef.current = filter
+  }, [filter])
+
   return (
     <PkPage
       title={formatMessage(messages.peopleDiagnosedRif)}
@@ -203,18 +210,17 @@ const CurrentDiagnosisGraphPage = () => {
                       'Detected',
                       'Trace Detected',
                     ])
-                    const baseUrl = '/browse/result'
-                    addFilter(
+
+                    navigateToResultList(
                       {
-                        displayResult: 'actual',
+                        ...filterRef.current,
                         minDate,
                         maxDate,
                         assayId: assayIds,
                         resultCategoryGroupId,
                       },
-                      baseUrl
+                      { newFilters: filterRef.current, pathname: location.pathname }
                     )
-                    navigate(baseUrl)
                   })
                 }}
               />
