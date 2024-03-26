@@ -404,11 +404,16 @@ function arrayofIANATimezone(timezone) {
 }
 
 function getUserEndOfMonth(date, userTimeZoneOffsetInMinutes) {
-  return addMinutes(endOfMonth(addMinutes(date, userTimeZoneOffsetInMinutes)), -userTimeZoneOffsetInMinutes)
+  const adjustedDate = addMinutes(date, userTimeZoneOffsetInMinutes)
+  const endOfMonthDate = endOfMonth(adjustedDate)
+
+  return endOfMonthDate
 }
 
 function getUserStartOfMonth(date, userTimeZoneOffsetInMinutes) {
-  return addMinutes(startOfMonth(addMinutes(date, userTimeZoneOffsetInMinutes)), -userTimeZoneOffsetInMinutes)
+  const adjustedDate = addMinutes(date, userTimeZoneOffsetInMinutes)
+  const startOfMonthDate = startOfMonth(adjustedDate)
+  return startOfMonthDate
 }
 
 /**
