@@ -1,0 +1,31 @@
+const { useNavigate } = require('react-router')
+const { default: useAuthState } = require('../useAuthState')
+const { default: useFilterUpdate } = require('../useFilterUpdate')
+
+export const useResultlist = () => {
+  const [, , , addMultipleFilter] = useFilterUpdate()
+  const navigate = useNavigate()
+  const user = useAuthState()
+
+  const navigateToResultList = (resultFilters, graphFilters) => {
+    const baseUrl = '/browse/result'
+
+    addMultipleFilter([
+      {
+        newFilter: {
+          countryId: user.countryId,
+          displayResult: 'actual',
+          ...resultFilters,
+        },
+        pathname: baseUrl,
+      },
+      {
+        newFilter: graphFilters.newFilters,
+        pathname: graphFilters.pathname,
+      },
+    ])
+
+    navigate(baseUrl)
+  }
+  return { navigateToResultList }
+}

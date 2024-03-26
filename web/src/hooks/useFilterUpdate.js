@@ -10,6 +10,14 @@ function useFilterUpdate() {
   }
 
   const update = (newFilter, pathname) => setFilter({ ...filter, [pathname]: { ...newFilter } })
+  const addMultipleFilter = filters => {
+    // Combine all new filters into a single object
+    const updatedFilters = filters.reduce((acc, { newFilter, pathname }) => {
+      return { ...acc, [pathname]: { ...newFilter } }
+    }, {})
+    // Update the state once with all the new filters
+    setFilter(prevFilter => ({ ...prevFilter, ...updatedFilters }))
+  }
 
   const removeFilter = (keys, pathname) => {
     const filterForLocation = filter[pathname]
@@ -27,7 +35,7 @@ function useFilterUpdate() {
 
   const resetFilter = pathname => setFilter({ ...filter, [pathname]: { ...defaultFilter[pathname] } })
 
-  return [update, removeFilter, resetFilter] // pathname is to allow changing the filter in other places before navigation
+  return [update, removeFilter, resetFilter, addMultipleFilter] // pathname is to allow changing the filter in other places before navigation
 }
 
 export default useFilterUpdate

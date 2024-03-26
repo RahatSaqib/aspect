@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Switch, FormControlLabel, Grid, Typography } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useNavigate } from 'react-router'
+import { useLocation } from 'react-router'
 import {
   LgaSelect,
   StateSelect,
@@ -19,8 +19,9 @@ import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import { useResultlist } from '../../../../../hooks/result'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -71,10 +72,12 @@ const CovidGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState()
+  const location = useLocation()
+  const filterValues = useFilterValues(location.pathname)
+  const filterRef = useRef(filterValues)
+  const [filter, setFilter] = useState({ ...filterValues })
   const { data: assays } = useAssayList()
-  const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
+  const { navigateToResultList } = useResultlist()
 
   const { data, isLoading } = useQuery(
     ['covidByCategory1Monthly', { endPointParams: objectToArray(filter ?? {}).concat(defaultFilters) }],
@@ -129,6 +132,10 @@ const CovidGraphPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, assays])
 
+  useEffect(() => {
+    filterRef.current = filter
+  }, [filter])
+
   return (
     <PkPage
       title={formatMessage(messages.peopleTestedCovid)}
@@ -173,18 +180,15 @@ const CovidGraphPage = () => {
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-
-                    addFilter(
+                    navigateToResultList(
                       {
-                        displayResult: 'actual',
+                        ...filterRef.current,
                         minDate,
                         maxDate,
-                        onlyReportableResults: true,
                         assayId: assays.find(a => a.externalId === evt.data.data.id).id,
                       },
-                      '/browse/result'
+                      { newFilters: filterRef.current, pathname: location.pathname }
                     )
-                    navigate('/browse/result')
                   })
                 }}
               />
@@ -195,7 +199,7 @@ const CovidGraphPage = () => {
               { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
               {
                 label: formatMessage(messages.testPerMonth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
               { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
