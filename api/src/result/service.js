@@ -1603,7 +1603,7 @@ async function currentResultAggregations(request) {
       },
       0
     )
-    resp.averageTestsPerMonthCurrentYear = totalResultsCurrentYear / currentMonth
+    resp.averageTestsPerMonthCurrentYear = Math.ceil(totalResultsCurrentYear / currentMonth)
   }
   /**
    * Total tests in the last 24 hours
@@ -1615,6 +1615,7 @@ async function currentResultAggregations(request) {
       maxDate: dateFormat(now, 'yyyy-MM-dd HH:mm:ss'),
     }
     const q = getClinicalIndicatorQueryForResultsTable(dataConstraints, null, groupBy, queryParams)
+    console.log(q.toString())
     const [{ cnt }] = await q.clone()
     resp.totalResultsInLast24Hours = cnt
   }

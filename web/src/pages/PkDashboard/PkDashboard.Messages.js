@@ -180,7 +180,7 @@ const messages = {
     },
     rrtbDiagnosisTitle: {
       id: 'p.PkDashboard.rrtbDiagnosisTitle',
-      defaultMessage: 'Current Rifampicin Resistance Diagnosis using MTB/Rif Assay',
+      defaultMessage: 'Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay',
     },
     rrtbNationalDiagnosisTrendsTitle: {
       id: 'p.PkDashboard.rrtbNationalDiagnosisTrendsTitle',
