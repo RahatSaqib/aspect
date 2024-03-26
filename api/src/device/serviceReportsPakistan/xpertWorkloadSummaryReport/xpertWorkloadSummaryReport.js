@@ -139,7 +139,7 @@ const addTotalRowByProvince = (rows, columnsToSum) => {
 }
 
 const getXpertWorkloadSummaryReportByDistrict = async (dataConstraints, query) =>
-  getXpertWorkloadSummaryReport(dataConstraints, query, ['g.lgaId', 'ip.id', 'r.assayId'])
+  getXpertWorkloadSummaryReport(dataConstraints, query, ['g.lgaId'])
 
 const getXpertWorkloadSummaryReportByDevice = async (dataConstraints, query) =>
   getXpertWorkloadSummaryReport(dataConstraints, query, ['r.deviceId', 'r.assayId'])
