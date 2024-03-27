@@ -1498,11 +1498,10 @@ async function getResultsForReport(auth, query) {
 async function currentResultAggregations(request) {
   const { auth, query } = request
   const { timeZone: timeZoneIANA } = await knex('Person as p')
-  .join('Geography as g', 'g.id', 'p.geographyId')
-  .join('Country as c', 'c.id', 'g.countryId')
-  .join('TimeZone as tz', 'c.timezone', 'tz.id')
-  .first('tz.timeZone')
-
+    .join('Geography as g', 'g.id', 'p.geographyId')
+    .join('Country as c', 'c.id', 'g.countryId')
+    .join('TimeZone as tz', 'c.timezone', 'tz.id')
+    .first('tz.timeZone')
 
   if (!canViewResults(auth)) {
     throw Boom.forbidden('You do not have access to results')
