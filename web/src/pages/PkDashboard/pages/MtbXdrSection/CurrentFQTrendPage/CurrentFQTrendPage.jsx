@@ -137,7 +137,7 @@ const CurrentFQTrendPage = () => {
               { label: formatMessage(messages.FQRPerYear), value: `${data.totalResultsCurrentYear}` },
               {
                 label: formatMessage(messages.FQRPerMonth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
               { label: formatMessage(messages.FQRPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}
