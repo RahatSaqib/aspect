@@ -1069,7 +1069,7 @@ const routes = [
           totalResultsInPeriod: Joi.number().allow(null).integer().description('Total results in specified date range'),
           totalResultsCurrentYear: Joi.number().allow(null).integer().description('Total results this year'),
           averageTestsPerMonthCurrentYear: Joi.number().allow(null).description('Average tests per month this year'),
-          totalResultsInLast24Hours: Joi.number().allow(null).integer().description('Total results in last 24 hours'),
+          totalResultsToday: Joi.number().allow(null).integer().description('Total results in last 24 hours'),
         }),
       },
     },

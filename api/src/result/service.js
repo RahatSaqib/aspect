@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { format, addMonths, subMonths, subHours } = require('date-fns')
+const { format, addMonths, subMonths, startOfDay, endOfDay } = require('date-fns')
 const Promise = require('bluebird')
 const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
 const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
@@ -46,6 +46,7 @@ const {
   getClinicalIndicatorQueryForFactTable,
   getClinicalIndicatorQueryForResultsTable,
 } = require('./common/db')
+const { replaceOffset } = require('../shared/date')
 
 async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   // for now call existing function, but later add here a query with different aggregations
@@ -1496,6 +1497,12 @@ async function getResultsForReport(auth, query) {
 
 async function currentResultAggregations(request) {
   const { auth, query } = request
+  const { timeZone: timeZoneIANA } = await knex('Person as p')
+  .join('Geography as g', 'g.id', 'p.geographyId')
+  .join('Country as c', 'c.id', 'g.countryId')
+  .join('TimeZone as tz', 'c.timezone', 'tz.id')
+  .first('tz.timeZone')
+
 
   if (!canViewResults(auth)) {
     throw Boom.forbidden('You do not have access to results')
@@ -1603,7 +1610,7 @@ async function currentResultAggregations(request) {
       },
       0
     )
-    resp.averageTestsPerMonthCurrentYear = Math.ceil(totalResultsCurrentYear / currentMonth)
+    resp.averageTestsPerMonthCurrentYear = Math.round(totalResultsCurrentYear / currentMonth)
   }
   /**
    * Total tests in the last 24 hours
@@ -1611,13 +1618,13 @@ async function currentResultAggregations(request) {
   if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS_IN_LAST_24_HOURS)) {
     const queryParams = {
       ...query,
-      minDate: dateFormat(subHours(now, 24), 'yyyy-MM-dd HH:mm:ss'),
-      maxDate: dateFormat(now, 'yyyy-MM-dd HH:mm:ss'),
+      minDate: replaceOffset(startOfDay(now), timeZoneIANA),
+      maxDate: replaceOffset(endOfDay(now), timeZoneIANA),
     }
+
     const q = getClinicalIndicatorQueryForResultsTable(dataConstraints, null, groupBy, queryParams)
-    console.log(q.toString())
     const [{ cnt }] = await q.clone()
-    resp.totalResultsInLast24Hours = cnt
+    resp.totalResultsToday = cnt
   }
 
   return resp
