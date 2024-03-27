@@ -16,15 +16,27 @@ async function onCalibrationDueDateAnalysis(_, { messageContext }) {
     const devicesCalibrationInfo = await getCalibrationDueDateStatusFromDevices(knex)
 
     devicesCalibrationInfo.forEach(device => {
+      /**
+       * trigger an issue when # days left to CalibrationDueDate is less than
+       * dueDaysCalibrationIssue (i.e. 90, see in table Partner.dueDaysCalibrationIssue)
+       */
       if (isCalibrationOverdue(device)) {
-        context.calibrationDueDateIsClose(device.deviceId, device.calibrationDueDate, device.dueDaysCalibrationIssue)
+        context.calibrationDueDateIsClose(device.deviceId, device.calibrationDueDate)
       }
     })
   })
 
   function isCalibrationOverdue(device) {
     return (
-      device.daysToCalibrationDueDateIssue < device.dueDaysCalibrationIssue && device.calibrationDueDate > new Date()
+      device.daysToCalibrationDueDateIssue < device.dueDaysCalibrationIssue &&
+      /**
+       * There are many DeviceMaintenance.contextDate = '0001-01-01' - meaning
+       * that device wasn't calibrated at all.
+       * And number of calibrations older than 2+ years ago.
+       * So, we trigger `Due Date Is Close` issue only for devices with
+       * due date greater than today.
+       */
+      device.calibrationDueDate > new Date()
     )
   }
 }
