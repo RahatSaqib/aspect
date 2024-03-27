@@ -203,7 +203,7 @@ const CurrentXDRDiagnosisPage = () => {
                 label: formatMessage(messages.xdrAverageMoth),
                 value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.xdrTBLastDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.xdrTBToday), value: `${data.totalResultsToday}` },
             ]}
           />
         </Grid>

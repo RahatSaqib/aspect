@@ -213,11 +213,11 @@ const messages = {
     },
     testPerYear: { id: 'p.PkDashboard.testPerYear', defaultMessage: 'Tests performed this year' },
     testPerMonth: { id: 'p.PkDashboard.testPerMonth', defaultMessage: 'Average tests performed per month' },
-    testPerDay: { id: 'p.PkDashboard.testPerDay', defaultMessage: 'Tests performed in last 24 hours' },
+    testToday: { id: 'p.PkDashboard.testToday', defaultMessage: 'Tests performed today' },
 
     RRPerYear: { id: 'p.PkDashboard.RRPerYear', defaultMessage: 'RR cases diagnosed this year' },
     RRPerMonth: { id: 'p.PkDashboard.RRPerMonth', defaultMessage: 'Average RR cases diagnosed per month' },
-    RRPerDay: { id: 'p.PkDashboard.RRPerDay', defaultMessage: 'RR cases diagnosed in last 24 hours' },
+    RRToday: { id: 'p.PkDashboard.RRToday', defaultMessage: 'RR cases diagnosed today' },
 
     currentFQDetection: { id: 'p.PkDashboard.currentFQDetection', defaultMessage: 'Current FQ Detection' },
     FQRPerYear: { id: 'p.PkDashboard.FQRPerYear', defaultMessage: 'FQ-R cases diagnosed this year' },
@@ -230,7 +230,7 @@ const messages = {
     xdrCurrentDiagnosisTitle: { id: 'p.PkDashboard.xdrCurrentDiagnosisTitle', defaultMessage: 'Current Diagnosis' },
     xdrTBCasesPerYear: { id: 'p.PkDashboard.xdrTBCasesPerYear', defaultMessage: 'TB cases diagnosed this year' },
     xdrAverageMoth: { id: 'p.PkDashboard.xdrAverageMoth', defaultMessage: 'Average TB cases diagnosed per month' },
-    xdrTBLastDay: { id: 'p.PkDashboard.xdrTBLastDay', defaultMessage: 'TB cases diagnosed in last 24 hours' },
+    xdrTBToday: { id: 'p.PkDashboard.xdrTBToday', defaultMessage: 'TB cases diagnosed today' },
     // summary
     molecularAssay: {
       id: 'p.PkDashboard.molecularAssay',

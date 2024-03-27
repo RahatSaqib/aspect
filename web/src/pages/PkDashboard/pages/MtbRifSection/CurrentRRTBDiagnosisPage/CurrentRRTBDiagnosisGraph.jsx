@@ -209,7 +209,7 @@ const CurrentDiagnosisGraphPage = () => {
                 label: formatMessage(messages.RRPerMonth),
                 value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.RRPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.RRToday), value: `${data.totalResultsToday}` },
             ]}
           />
         </Grid>

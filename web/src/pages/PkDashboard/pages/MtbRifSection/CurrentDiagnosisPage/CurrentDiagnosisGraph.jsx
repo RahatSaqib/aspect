@@ -227,7 +227,7 @@ const CurrentDiagnosisGraphPage = () => {
                 label: formatMessage(messages.xdrAverageMoth),
                 value: `${mainData?.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.xdrTBLastDay), value: `${mainData?.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.xdrTBToday), value: `${mainData?.totalResultsToday}` },
             ]}
           />
           {donutData.data && donutData.data.length ? (

@@ -190,7 +190,7 @@ const RifCurrentGraphPage = () => {
                 label: formatMessage(messages.testPerMonth),
                 value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.testToday), value: `${data.totalResultsToday}` },
             ]}
           />
         </Grid>
