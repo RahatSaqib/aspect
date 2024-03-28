@@ -94,48 +94,45 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
   return { data: newData, dynamicColumns }
 }
 
-const sumOfColumns = (rows, columns) => {
-  // Create a seed object with all columns as keys and initializing them with zero
-  const countersSeed = columns.reduce((object, column) => {
-    return { ...object, [column]: 0 }
-  }, {})
-
-  // Sum all the columns
-  return rows.reduce((counters, row) => {
-    columns.forEach(column => {
-      counters[column] += row[column]
-    })
-    return counters
-  }, countersSeed)
-}
-
 const addTotalRowByProvince = (rows, columnsToSum) => {
   const newData = []
 
-  for (let i = 0; i < rows.length; i++) {
-    const row = rows[i]
-    const group = [row] // group of rows with the same province
+  // Group rows by province
+  const groupedRows = groupRowsByProvince(rows)
 
-    while (i !== rows.length - 1 && group[0].provinceName === rows[i].provinceName) {
-      group.push(rows[i])
-      i += 1
-    }
-
-    const { provinceName } = group[0]
-    const counters = sumOfColumns(group, columnsToSum)
-
-    // Add total row before the group of rows
-    newData.push({
-      provinceName,
-      districtName: 'All',
-      ...counters,
-    })
-
-    // Add rows of the group
-    newData.push(...group)
-  }
+  // Add total row for each province and concatenate with original rows
+  groupedRows.forEach(provinceGroup => {
+    const { rows: provinceRows } = provinceGroup
+    const totalRow = createTotalRow(provinceRows, columnsToSum)
+    newData.push(totalRow, ...provinceRows)
+  })
 
   return newData
+}
+
+// group rows by province
+const groupRowsByProvince = rows => {
+  const groupedRows = new Map()
+  rows.forEach(row => {
+    const { provinceName } = row
+    if (!groupedRows.has(provinceName)) {
+      groupedRows.set(provinceName, { provinceName, rows: [] })
+    }
+    groupedRows.get(provinceName).rows.push(row)
+  })
+  return Array.from(groupedRows.values())
+}
+
+// calculate sum of specified columns for a group of rows
+const createTotalRow = (rows, columnsToSum) => {
+  const totalRow = {
+    provinceName: rows[0].provinceName,
+    districtName: 'All',
+  }
+  columnsToSum.forEach(column => {
+    totalRow[column] = rows.reduce((sum, row) => sum + row[column], 0)
+  })
+  return totalRow
 }
 
 const getXpertWorkloadSummaryReportByDistrict = async (dataConstraints, query) =>
