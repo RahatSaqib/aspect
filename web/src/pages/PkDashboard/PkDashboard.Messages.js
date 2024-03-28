@@ -55,8 +55,8 @@ const messages = {
       defaultMessage: 'MTB+ Trends In Month',
     },
     peopleTestedRif: {
-      id: 'p.PkDashboard.peopleTestedRif',
-      defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
+      id: 'p.PkDashboard.peopleTestedRifUltra',
+      defaultMessage: 'Assay for MTB Rif Ultra',
     },
     peopleTestedCovid: {
       id: 'p.PkDashboard.peopleTestedCovid',
