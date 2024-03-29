@@ -1,4 +1,4 @@
 #!/bin/sh
 . "$(dirname -- "$0")/_/husky.sh"
 
-bash .husky/prepare-commit-msg.sh
+bash .husky/prepare-commit-msg.sh "$1"
