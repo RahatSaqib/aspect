@@ -9,9 +9,9 @@ export default defineMessages({
     id: 'jobFunction.aspectTester',
     defaultMessage: 'Aspect Tester',
   },
-  pakistanDashboardTesting: {
-    id: 'jobFunction.pakistanDashboardTesting',
-    defaultMessage: 'Pakistan Dashboard Testing',
+  pakistanTesting: {
+    id: 'jobFunction.pakistanTesting',
+    defaultMessage: 'Pakistan Testing',
   },
   clinician: {
     id: 'jobFunction.clinician',

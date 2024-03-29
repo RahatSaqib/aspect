@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-02-28T16:51:57.069Z\n"
+"POT-Creation-Date: 2024-03-13T18:16:45.673Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2126,12 +2126,12 @@ msgstr "COVID"
 msgid "Covid 19"
 msgstr "COVID 19"
 
-#. [p.PkDashboard.covidPending]
+#. [p.PkDashboard.covidTesting]
 #. defaultMessage is:
-#. Covid Testing (Pending)
+#. Covid Testing
 #: extracted_strings.json
-msgid "Covid Testing (Pending)"
-msgstr "Test Covid (en attente)"
+msgid "Covid Testing"
+msgstr "Test Covid"
 
 #. [pages.PersonDetails.create]
 #. defaultMessage is:
@@ -5567,7 +5567,7 @@ msgstr "Inventaire en main"
 #. Is Daisy Chained
 #: extracted_strings.json
 msgid "Is Daisy Chained"
-msgstr "Daisy est-elle enchaînée ?"
+msgstr "est connecté en parallèle"
 
 #. [pages.StrongPasswordInput.passwordStrengthMeterMinLength]
 #. defaultMessage is:
@@ -7135,6 +7135,15 @@ msgstr "National"
 msgid "National Contacts"
 msgstr "Contacts nationaux"
 
+#. [p.PkDashboard.nationalMtbRifUltraDiagnosed]
+#. defaultMessage is:
+#. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
+#: extracted_strings.json
+msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+msgstr ""
+"Tendances nationales en matière de diagnostic à l'aide du test MTB-Rif / MTB "
+"Rif Ultra"
+
 #. [p.PkDashboard.nationalDiagnosisXdr]
 #. defaultMessage is:
 #. National Diagnosis Trends using MTB/XDR assay
@@ -7210,7 +7219,7 @@ msgstr "Tendances nationales du dépistage de la tuberculose"
 msgid "National Testing Trends"
 msgstr "Tendances des tests dans l'année"
 
-#. [p.PkDashboard.nationalMtbRifDiagnosed]
+#. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
 #. National Testing Trends using MTB/XDR Assay
 #: extracted_strings.json

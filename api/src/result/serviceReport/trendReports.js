@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { startOfDay, endOfDay, subDays, endOfMonth, getDayOfYear, getDaysInYear } = require('date-fns')
+const { startOfDay, endOfDay, subDays, endOfMonth, getMonth } = require('date-fns')
 
 const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
@@ -120,7 +120,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
   const now = new Date()
-  const denominator = (getDayOfYear(now) / getDaysInYear(now)) * 12
+  const denominator = getMonth(now) + 1
   const { baseQuerySince5YearsAgo, baseQueryLast24h } = gx10CBaseQueryProvincial({
     query,
     dataConstraints,

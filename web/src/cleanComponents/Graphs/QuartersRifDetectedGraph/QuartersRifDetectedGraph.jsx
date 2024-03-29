@@ -5,6 +5,7 @@ import { useQuery } from 'react-query'
 import { getTimePeriod } from '../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages } from '../../../messages'
+import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import { StateSelector, Loading } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
@@ -28,7 +29,8 @@ const QuartersRifDetectedGraph = () => {
   const { isLoading, data } = useQuery(
     ['tbRifDetectedQuarterlyTrends', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/trend-in-quarters-rif-detected', params: mergedParams })
+      fetchWrapperForQueries({ endpoint: '/result/trend-in-quarters-rif-detected', params: mergedParams }),
+    { ...GRAPHS_QUERY_OPTIONS }
   )
 
   const mtbDetectedMessage = formatMessage(messages.MtbDetected)

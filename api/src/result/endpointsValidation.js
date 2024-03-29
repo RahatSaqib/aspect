@@ -368,7 +368,7 @@ function listResultsBaseConfig() {
           .items(Joi.string().max(50))
           .single()
           .description('Specify which fields to select from the resultDataJSON'),
-        // query param 'format' is applicable only for handler 'exportDevices'
+        // query param 'format' is applicable only for handler 'deviceReport'
         format: Joi.string().allow(null, '').description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),
