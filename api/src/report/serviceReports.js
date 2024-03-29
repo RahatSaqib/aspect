@@ -25,7 +25,7 @@ const REPORT_FAILED = 'REPORT_FAILED'
 const REPORT_FINISHED = 'REPORT_FINISHED'
 
 // ----------------------------------------------------------------------------------------------
-async function getSheetData(auth, queryParams, sheet, sharedResults) {
+async function getSheetData(auth, queryParams, timezone, sheet, sharedResults) {
   const { moduleName, functionName } = sheet
   const { nameOfSharedData, useNamedData } = sheet.query
   const sheetQuery = _.omit(sheet.query, ['nameOfSharedData', 'useNamedData'])
@@ -59,7 +59,7 @@ async function getSheetData(auth, queryParams, sheet, sharedResults) {
 
   logger.debug(`Report moduleName='${moduleName}', functionName='${functionName}'`, RELABEL_EXCEL)
 
-  const result = await dataFunc(auth, query, { sharedResults, useNamedData, nameOfSharedData })
+  const result = await dataFunc(auth, query, timezone, { sharedResults, useNamedData, nameOfSharedData })
   const {
     ok,
     data,
@@ -163,7 +163,7 @@ async function getConsumablesNamesString(query) {
   return items.map(x => x.name).join(', ')
 }
 
-async function getAllSheetsData(auth, query, sheets) {
+async function getAllSheetsData(auth, query, timezone, sheets) {
   let boomError
   const dataSet = []
   const sharedResults = {}
@@ -180,7 +180,7 @@ async function getAllSheetsData(auth, query, sheets) {
       dataSelector = null,
       sections,
       populator,
-    } = await getSheetData(auth, query, sheet, sharedResults)
+    } = await getSheetData(auth, query, timezone, sheet, sharedResults)
     if (Boom.isBoom(data)) {
       boomError = data
       return
@@ -206,11 +206,11 @@ async function getAllSheetsData(auth, query, sheets) {
 }
 
 async function generateReport(externalId, query, auth, user, userPlaceHolders, extension) {
-  const { countryAbbreviation, culture, partnerId, userName, personId } = user
+  const { countryAbbreviation, culture, partnerId, userName, personId, timezoneIANA: timezone } = user
 
   const { sheets } = await getReportDetails(externalId, { personId })
 
-  const data = await getAllSheetsData(auth, query, sheets)
+  const data = await getAllSheetsData(auth, query, timezone, sheets)
   if (Boom.isBoom(data)) {
     throw data
   }

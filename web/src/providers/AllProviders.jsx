@@ -5,17 +5,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers'
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns'
 import { create } from 'jss'
 import { JssProvider } from 'react-jss'
-import { QueryClient, QueryClientProvider } from 'react-query'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { useSelector, Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
 import LocalStorage from '../oldComponents/LocalStorage'
 import store from '../store/store'
 import getTheme from '../theme'
+import AnalyticsProvider from './AnalyticsProvider'
 import AuthProvider from './AuthProvider'
 import FilterProvider from './FilterProvider'
 import I18nProvider from './I18nProvider'
 import dateFNSLocales from './I18nProvider/dateFNSLocales'
+import QueryClientProvider from './QueryClientProvider'
 
 const jss = create({ ...jssPreset(), insertionPoint: 'insertion-point-jss' })
 
@@ -34,11 +35,13 @@ const AppWithProviders = ({ children }) => {
             timezoneId={timezoneId}
             displayPreferences={displayPreferences}
           />
-          <QueryClientProvider client={new QueryClient()}>
+          <QueryClientProvider>
             <LocalizationProvider dateAdapter={AdapterDateFns} adapterLocale={dateFNSLocales[culture]}>
               <BrowserRouter>
                 <AuthProvider>
-                  <FilterProvider>{children}</FilterProvider>
+                  <FilterProvider>
+                    <AnalyticsProvider>{children}</AnalyticsProvider>
+                  </FilterProvider>
                 </AuthProvider>
               </BrowserRouter>
             </LocalizationProvider>

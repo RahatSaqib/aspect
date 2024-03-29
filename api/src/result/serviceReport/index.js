@@ -439,7 +439,7 @@ async function getReportWorkloadSummary(auth, query) {
 }
 
 // ------------------------------------------------------
-async function getReportWorkloadSummaryByQuarter(auth, query, options) {
+async function getReportWorkloadSummaryByQuarter(auth, query, timezone, options) {
   const { sharedResults, useNamedData } = options
   const result = sharedResults[useNamedData]
   const dynamicColumns = result.dynamicColumns.filter(it => it.type === 'quarter' || it.type === 'year')
@@ -451,7 +451,7 @@ async function getReportWorkloadSummaryByQuarter(auth, query, options) {
 }
 
 // ------------------------------------------------------
-async function getReportWorkloadSummaryByYear(auth, query, options) {
+async function getReportWorkloadSummaryByYear(auth, query, timezone, options) {
   const { sharedResults, useNamedData } = options
   const result = sharedResults[useNamedData]
   const dynamicColumns = result.dynamicColumns.filter(it => it.type === 'year')

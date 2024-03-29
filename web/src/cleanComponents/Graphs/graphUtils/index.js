@@ -420,7 +420,7 @@ const getItemsForTrendsGraph = (data, states, lgas) => {
       return {
         province: it.locationName,
         perYear: it.currYearTotals.cntAll,
-        monthlyAverage: it.noDataAvailable ? '-' : round(it.currYearMeanPerMonth.cntAll, 2),
+        monthlyAverage: it.noDataAvailable ? '-' : round(it.currYearMeanPerMonth.cntAll),
         perDay: it.last24h.cntAll,
         trends,
         noDataAvailable: it.noDataAvailable,

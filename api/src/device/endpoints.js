@@ -15,7 +15,7 @@ const mergeDevices = require('./mergeDevices')
 const listWorkload = require('./listWorkload')
 const listDeviceMtbErrors = require('./listDeviceMtbErrors')
 const listDeviceCapacity = require('./listDeviceCapacity')
-const { exportDevices, exportDeviceOperationLogReport, getDeviceCoverageReport } = require('./serviceReports')
+const { exportDeviceOperationLogReport, getDeviceCoverageReport } = require('./serviceReports')
 const {
   exportWorkloadRequestSchema,
   listWorkloadRequestSchema,
@@ -28,6 +28,7 @@ const exportWorkload = require('./exportWorkload')
 const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
+const { deviceReport } = require('./serviceReports/deviceReport')
 
 const routes = [
   {
@@ -222,7 +223,7 @@ const routes = [
   {
     method: 'GET',
     path: '/device/export',
-    handler: exportDevices,
+    handler: deviceReport,
     config: {
       description: 'Export Device List into Excel or CSV',
       notes: 'Filtered and sorted list of devices',
