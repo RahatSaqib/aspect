@@ -1,7 +1,12 @@
 const { subDays } = require('date-fns')
-const { startOfYear } = require('date-fns')
-const { getConstraints, addPartnerQueryConstraints, addConstraints } = require('../../auth/constraints')
+const {
+  getConstraints,
+  addPartnerQueryConstraints,
+  addConstraints,
+  getUserFromCredentials,
+} = require('../../auth/constraints')
 const { getBaseQueryForResults } = require('../common/db')
+const { getOffsetFromTimeZone } = require('../../shared/date')
 const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 const { mtbDetectedTraceDetected, mtbDetectedRifDetected, mtbValid } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
@@ -39,9 +44,29 @@ const getResultCount = (dataConstraints, minDate, maxDate) =>
 
 const getResultsOverview = async ({ auth }) => {
   const dataConstraints = await getConstraints(auth.credentials)
-  const now = new Date()
+  const user = await getUserFromCredentials(auth.credentials)
 
-  const resultCountYear = await getResultCount(dataConstraints, startOfYear(now), now)
+  /**
+   * local server time
+   */
+  const now = new Date()
+  /**
+   * We need a country timezone offset
+   * user.timezoneIANA is a country timezone - see getUser() in api/src/auth/service.js
+   */
+  const tzOffset = getOffsetFromTimeZone(user.timezoneIANA, now)
+
+  /**
+   * Year starts at midnight (00:00:00) for local time (+HH:MM, i.e. +06:00)
+   * and ends at 23:59:59.999 for local time  -
+   * construct correct DateTime for this regardless of current server
+   * timezone (i.e. explicitly define MM-DD and time with concatenated tz offset)
+   */
+  const year = now.getFullYear()
+  const startOfYearInCountryTZ = new Date(`${year}-01-01 00:00:00.000${tzOffset}`)
+  const endOfYearInCountryTZ = new Date(`${year}-12-31 23:59:59.999${tzOffset}`)
+
+  const resultCountYear = await getResultCount(dataConstraints, startOfYearInCountryTZ, endOfYearInCountryTZ)
   const resultCountDay = await getResultCount(dataConstraints, subDays(now, 1), now)
 
   const data = {
