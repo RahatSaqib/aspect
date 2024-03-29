@@ -2166,7 +2166,7 @@ async function getCustomFieldsCompletion(auth, query) {
           acc = [
             ...acc,
             knex.raw(
-              `SUM(IFNULL(JSON_EXTRACT(completionByField, '$."${source}".completed'),0)) as cnt_${assayId}_${fieldName}`
+              `SUM(IFNULL(JSON_EXTRACT(fcfc.completionByField, '$."${source}".completed'),0)) as cnt_${assayId}_${fieldName}`
             ),
           ]
 
