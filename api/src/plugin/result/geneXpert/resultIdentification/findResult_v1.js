@@ -97,6 +97,9 @@ const oldestIsBetter = (a, b) => new Date(a.createdOn) - new Date(b.createdOn)
  * @throws {Error} - If there is not enough data provided to find a result.
  */
 function generateDbQuery(knex, partnerId, gxAlertUniqueId, consumableSerial, instrumentSerial) {
+  if (!gxAlertUniqueId && (!consumableSerial || !instrumentSerial)) {
+    throw new Error('Not enough data to find a result')
+  }
   const selectFields = [
     'r.id',
     'r.externalId',
@@ -127,8 +130,6 @@ function generateDbQuery(knex, partnerId, gxAlertUniqueId, consumableSerial, ins
       this.orWhere(function () {
         this.where('r.instrumentSerial', instrumentSerial).andWhere('r.consumableSerial', consumableSerial)
       })
-    } else {
-      throw new Error('Not enough data to find a result')
     }
   })
   return query

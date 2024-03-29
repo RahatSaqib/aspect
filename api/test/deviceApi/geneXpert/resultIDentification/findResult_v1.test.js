@@ -148,6 +148,35 @@ describe('findResult', () => {
     expect(result.possibleDuplicates, 'possible duplicates').to.have.lengthOf(2)
   })
 
+  it('should return a MISSING_RESULT_DATA if not enough data to identify a result is provided.', async () => {
+    knexStub.then = sinon.stub().resolves([])
+    const result = await findResult(
+      {
+        partnerId: 1,
+        gxAlertUniqueId: null,
+        instrumentSerial: null,
+        cartridgeSerial: null,
+        createdOn: fakeDate,
+      },
+      knexStub
+    )
+
+    expect(result.matchingResult, 'matchingResult').to.deep.equal(null)
+    expect(result.matchType, 'matchType').to.equal(matchType.MISSING_RESULT_DATA)
+    expect(result.algorithm, 'algorithm').to.equal(fakeVersion1)
+    expect(result.possibleDuplicates).to.have.lengthOf(0)
+  })
+
+  it('should return a NO_MATCH if there is no and existing result.', async () => {
+    knexStub.then = sinon.stub().resolves([])
+    const result = await findResult(resultDetails, knexStub)
+
+    expect(result.matchingResult, 'matchingResult').to.deep.equal(null)
+    expect(result.matchType, 'matchType').to.equal(matchType.NO_MATCH)
+    expect(result.algorithm, 'algorithm').to.equal(fakeVersion1)
+    expect(result.possibleDuplicates).to.have.lengthOf(0)
+  })
+
   it('should throw a database exception', async () => {
     chai.use(chaiAsPromised)
     const error = new Error('Database error')
