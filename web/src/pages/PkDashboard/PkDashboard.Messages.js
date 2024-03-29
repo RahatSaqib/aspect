@@ -107,11 +107,11 @@ const messages = {
       defaultMessage: 'XDR FLQ Resistance',
     },
     nationalUtilizationTrendsAnnual: {
-      id: 'p.PkDashboard.nationalTrendsAnnual',
+      id: 'p.PkDashboard.nationalUtilizationTrendsAnnual',
       defaultMessage: 'National annual utilization rates',
     },
     provincesUtilizationTrendsAnnual: {
-      id: 'p.PkDashboard.nationalTrendsAnnual',
+      id: 'p.PkDashboard.provincesUtilizationTrendsAnnual',
       defaultMessage: 'Provinces annual utilization rates',
     },
     testingAndDiagnosisUsingXdr: {
@@ -217,7 +217,7 @@ const messages = {
 
     RRPerYear: { id: 'p.PkDashboard.RRPerYear', defaultMessage: 'RR cases diagnosed this year' },
     RRPerMonth: { id: 'p.PkDashboard.RRPerMonth', defaultMessage: 'Average RR cases diagnosed per month' },
-    RRPerDay: { id: 'p.PkDashboard.RRPerDay', defaultMessage: 'RR cases diagnosed in last 24 hours' },
+    RRInToday: { id: 'p.PkDashboard.RRInToday', defaultMessage: 'RR cases diagnosed in Today' },
 
     currentFQDetection: { id: 'p.PkDashboard.currentFQDetection', defaultMessage: 'Current FQ Detection' },
     FQRPerYear: { id: 'p.PkDashboard.FQRPerYear', defaultMessage: 'FQ-R cases diagnosed this year' },
