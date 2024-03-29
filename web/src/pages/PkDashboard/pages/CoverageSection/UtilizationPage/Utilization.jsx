@@ -1,25 +1,24 @@
-import React, { useState, useMemo } from 'react'
+import React, { useMemo, useState } from 'react'
 import { Typography } from '@mui/material'
 import subYears from 'date-fns/subYears'
 import round from 'lodash/round'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { PeriodSelector, Loading, BarGraph, getTimePeriod } from '../../../../../cleanComponents'
+import { BarGraph, getTimePeriod, Loading, PeriodSelector } from '../../../../../cleanComponents'
+import EmptyGraph from '../../../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
+import { useUtilizationTable } from '../../../hooks/useUtilizationTable'
 import messages from '../../../PkDashboard.Messages'
 
 const now = new Date()
 const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
-
 const columns = [
   { name: 'Name', prop: 'name' },
-  { name: 'Current Qty.', prop: 'quantity' },
-  { name: 'Last 6 Months', prop: 'lastSixMonths' },
-  { name: 'Used', prop: 'used' },
-  { name: 'Consumption Rate', prop: 'rate' },
-  { name: 'Days Left', prop: 'left' },
+  { name: 'Total Modules', prop: 'modules' },
+  { name: 'Total Tests', prop: 'cnt' },
+  { name: 'Utilization%', prop: 'rate' },
 ]
 
 const UtilizationPage = () => {
@@ -29,7 +28,7 @@ const UtilizationPage = () => {
     maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
   })
 
-  const data = new Array(111).fill({}).map((i, idx) => createData(idx, `City ${idx}`, 159, 6, 24, 9, 5))
+  const { isLoadingTable, tableData } = useUtilizationTable(filter)
 
   const { isLoading: isLoadingNational, data: { data: rawNational = [], WORKING_DAYS_IN_YEAR } = {} } = useQuery(
     ['tblUtilizationPage_National'],
@@ -103,14 +102,29 @@ const UtilizationPage = () => {
         />
       }
     >
-      <NestedTable columns={columns} rows={data} hasDetail />
+      {isLoadingTable ? (
+        <Loading />
+      ) : tableData?.length === 0 ? (
+        <EmptyGraph type="bar" />
+      ) : (
+        <NestedTable columns={columns} rows={tableData} hasDetail />
+      )}
+
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
         {formatMessage(messages.nationalUtilizationTrendsAnnual)}
       </Typography>
       {isLoadingNational ? (
         <Loading />
       ) : (
-        <BarGraph data={national.data} yField="type" xField="value" colors="#FF0000" isPercentage />
+        <BarGraph
+          data={national.data}
+          yField="type"
+          xField="value"
+          colors="#FF0000"
+          isPercentage
+          yAxis={null}
+          xAxis={null}
+        />
       )}
 
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
@@ -119,26 +133,10 @@ const UtilizationPage = () => {
       {isLoadingProvincial ? (
         <Loading />
       ) : (
-        <BarGraph data={provincial.data} yField="type" xField="value" colors="#FF0000" isPercentage />
+        <BarGraph data={provincial.data} yField="type" xField="value" colors="#FF0000" isPercentage disableFormat />
       )}
     </PkPage>
   )
 }
 
 export default UtilizationPage
-
-function createData(id, name, quantity, lastSixMonths, used, rate, left) {
-  return {
-    id,
-    name,
-    quantity,
-    lastSixMonths,
-    used,
-    rate,
-    left,
-    children: [
-      { id: `${id}${id}`, name, quantity, lastSixMonths, used, rate, left },
-      { id: `${id}${id}2`, name, quantity, lastSixMonths, used, rate, left },
-    ],
-  }
-}
