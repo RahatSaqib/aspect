@@ -24,9 +24,10 @@ async function findResult(availableResultDetails, knex) {
     instrumentSerial = null,
   } = availableResultDetails
 
-  const query = generateDbQuery(knex, partnerId, gxAlertUniqueId, consumableSerial, instrumentSerial)
-
-  if (!query) {
+  let query
+  try {
+    query = generateDbQuery(knex, partnerId, gxAlertUniqueId, consumableSerial, instrumentSerial)
+  } catch (error) {
     return {
       matchingResult: null,
       algorithm: ALGORITHM_VERSION_V1,
@@ -34,6 +35,7 @@ async function findResult(availableResultDetails, knex) {
       matchType: matchTypeConstant.MISSING_RESULT_DATA,
     }
   }
+
   const queryResult = await query.then(rows => rows)
   const matchingResults = queryResult.sort(oldestIsBetter)
 
@@ -84,6 +86,16 @@ async function findResult(availableResultDetails, knex) {
 
 const oldestIsBetter = (a, b) => new Date(a.createdOn) - new Date(b.createdOn)
 
+/**
+ * Generates a database query to find a result based on the provided parameters.
+ * @param {Object} knex - The Knex instance for executing the query.
+ * @param {number} partnerId - The Id of the partner.
+ * @param {string} gxAlertUniqueId - The uniqueId of the result in GXAlert format.
+ * @param {string} consumableSerial - The serial number of the consumable.
+ * @param {string} instrumentSerial - The serial number of the instrument.
+ * @returns {Object} - A query builder object with the query.
+ * @throws {Error} - If there is not enough data provided to find a result.
+ */
 function generateDbQuery(knex, partnerId, gxAlertUniqueId, consumableSerial, instrumentSerial) {
   const selectFields = [
     'r.id',
@@ -116,7 +128,7 @@ function generateDbQuery(knex, partnerId, gxAlertUniqueId, consumableSerial, ins
         this.where('r.instrumentSerial', instrumentSerial).andWhere('r.consumableSerial', consumableSerial)
       })
     } else {
-      return null
+      throw new Error('Not enough data to find a result')
     }
   })
   return query
