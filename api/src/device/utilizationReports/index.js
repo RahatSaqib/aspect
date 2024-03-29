@@ -43,7 +43,15 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
   let devices = await factTableQuery
     .clone()
     .groupBy('d.id')
-    .select('d.name', 'd.id', 'dcap.modules', 'dcap.dailyCapacity', 'st.id as stateId', 'st.name as stateName')
+    .select(
+      'd.name',
+      'd.id',
+      'dcap.modules',
+      'dcap.dailyCapacity',
+      'st.id as stateId',
+      'st.name as stateName',
+      'lg.name as lgaName'
+    )
   devices = devices.map(device => {
     const dailyCapacity = device.dailyCapacity || DEFAULT_DAILY_CAPACITY
     const modules = device.modules || DEFAULT_MODULES
@@ -130,9 +138,16 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
     return Boom.forbidden('You do not have access to results')
   }
   const timeFrame = 'year'
-  const { deviceMap, deviceCountsByPeriod, culture, minDate, maxDate } = await getAnnualUtilizationData(auth, query, {
-    timeFrame,
-  })
+  const { deviceMap, devices, deviceCountsByPeriod, culture, minDate, maxDate } = await getAnnualUtilizationData(
+    auth,
+    query,
+    {
+      timeFrame,
+    }
+  )
+
+  console.log({ devices })
+
   /**
    *
    */
@@ -186,6 +201,7 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
     (acc, stateId) => {
       const state = stateMap[stateId]
       _.keys(state.periodMap).forEach(periodName => {
+        console.log({ periodName })
         state.rates = state.rates || []
 
         const totalInPeriod = state.periodMap[periodName]
