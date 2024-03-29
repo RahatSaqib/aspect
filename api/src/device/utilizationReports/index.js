@@ -138,15 +138,9 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
     return Boom.forbidden('You do not have access to results')
   }
   const timeFrame = 'year'
-  const { deviceMap, devices, deviceCountsByPeriod, culture, minDate, maxDate } = await getAnnualUtilizationData(
-    auth,
-    query,
-    {
-      timeFrame,
-    }
-  )
-
-  console.log({ devices })
+  const { deviceMap, deviceCountsByPeriod, culture, minDate, maxDate } = await getAnnualUtilizationData(auth, query, {
+    timeFrame,
+  })
 
   /**
    *
@@ -201,7 +195,6 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
     (acc, stateId) => {
       const state = stateMap[stateId]
       _.keys(state.periodMap).forEach(periodName => {
-        console.log({ periodName })
         state.rates = state.rates || []
 
         const totalInPeriod = state.periodMap[periodName]

@@ -50,7 +50,7 @@ const BarGraph = ({
     appendPadding: 20,
     yAxis: {
       label: {
-        formatter: s => (disableFormat === false ? formatNumber(s) : s),
+        formatter: s => (disableFormat ? s : formatNumber(s)),
       },
     },
   }

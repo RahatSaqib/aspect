@@ -116,15 +116,7 @@ const UtilizationPage = () => {
       {isLoadingNational ? (
         <Loading />
       ) : (
-        <BarGraph
-          data={national.data}
-          yField="type"
-          xField="value"
-          colors="#FF0000"
-          isPercentage
-          yAxis={null}
-          xAxis={null}
-        />
+        <BarGraph data={national.data} yField="type" xField="value" colors="#FF0000" isPercentage disableFormat />
       )}
 
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
