@@ -1,7 +1,7 @@
 // External IDs of devices that we use internally and that should be excluded from some lists and counts
 const INTERNAL_DEVICE_IDS = ['GxAlert', 'Aspect']
 const RELABEL_EXCEL = { reLabel: 'aspect:report:excel' }
-
+const IGNORED_SENTRY_ERRORS = [/^Cannot authorize API Key$/]
 const GRAPH_FLAGS = {
   GET_TOTAL_RESULTS: 'GET_TOTAL_RESULTS',
   GET_TOTAL_RESULTS_IN_CURRENT_YEAR: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR',
@@ -23,7 +23,34 @@ const DAYS_STOCK_LEFT_RANGES = {
   moreThan180: { min: 181 },
 }
 
+const WEBHOOK_SERVERS = {
+  CepheidC360: 'CepheidC360',
+}
+
+const EXTERNAL_IDS = Object.freeze({
+  SEND_RESULT_TO_CEPHEID: 'sendResultToCepheid',
+})
+
+const GENEXPERT_ASSAYS = Object.freeze({
+  GX_MTB_XDR: 'GxMtbXdr',
+  GX_MTB_RIFULTRA: 'GxMtbRifUltra',
+  GX_MTB_RIF: 'GxMtbRif',
+  GX_HIV1QUAL: 'GxHiv1Qual',
+  GX_EBOLA: 'GxEbola',
+  ASSAY_GX_COVID19: 'assayGXCovid19',
+  GX_HIV1VL: 'GxHiv1Vl',
+  GX_HCV: 'GxHcv',
+})
+const ISSUE_CATEGORY_EXTERNAL_IDS = {
+  CepheidC360InstrumentLogsReceived: 'CepheidC360InstrumentLogsReceived',
+}
+
+const ISSUE_TYPE_EXTERNAL_IDS = {
+  CepheidC360InstrumentLogsReceived: 'CepheidC360InstrumentLogsReceived',
+}
+
 module.exports = {
+  IGNORED_SENTRY_ERRORS,
   INTERNAL_DEVICE_IDS,
   RELABEL_EXCEL,
   GRAPH_FLAGS,
@@ -31,4 +58,9 @@ module.exports = {
   XDR_RESISTANCES_COMBO,
   XDR_RESISTANCE_VALUES,
   DAYS_STOCK_LEFT_RANGES,
+  WEBHOOK_SERVERS,
+  EXTERNAL_IDS,
+  GENEXPERT_ASSAYS,
+  ISSUE_CATEGORY_EXTERNAL_IDS,
+  ISSUE_TYPE_EXTERNAL_IDS,
 }

@@ -1,19 +1,19 @@
-import React, { useState, useEffect } from 'react'
-import { FormControlLabel, Switch, Grid, Typography } from '@mui/material'
+import React, { useEffect, useState } from 'react'
+import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
-  LgaSelect,
-  StateSelect,
-  Loading,
-  fillYear,
   ColumnGraph,
+  fillYear,
+  LgaSelect,
   LineGraph,
+  Loading,
   objectToArray,
+  StateSelect,
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
+import useAuthState from '../../../../../hooks/useAuthState'
 import { getCustomMessage, graphMessages, months } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -23,12 +23,12 @@ const endpointParams = [
   { groupBy: 'month' },
   { minDate: `${maxDate.getFullYear() - 5}-01-01` },
   { maxDate },
-  // { assay: 'GxMtbXdr' },
-  // { resistance: 'FLQ' },
+  { assay: 'GxMtbXdr' },
+  { resistance: 'FLQ' },
 ]
 
 const NationalFQTrendPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
   const [filter, setFilter] = useState(undefined)
@@ -62,8 +62,8 @@ const NationalFQTrendPage = () => {
         return item
       })
       if (grouped) {
-        setGraphData(fillYear(grouped))
-        setAnnual(annualData)
+        setGraphData(fillYear(grouped).sort((a, b) => a.year - b.year))
+        setAnnual(annualData.sort((a, b) => a.year - b.year))
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -85,13 +85,13 @@ const NationalFQTrendPage = () => {
             value={filter?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
             value={filter?.lgaId ?? ''}
             stateId={filter?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }

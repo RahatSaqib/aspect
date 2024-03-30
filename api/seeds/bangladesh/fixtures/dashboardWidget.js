@@ -1,14 +1,12 @@
-const _ = require('lodash')
-const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
-
-const { stat } = dashboardWidgetsBase
+const { stat: dashboardWidgetsBase } = require('../../fixtures/dashboardWidgetsCommon')
+const {
+  stat: { totalModuleBays, activeModuleBays },
+} = require('../../fixtures/dashboardWidgets')
 
 module.exports = {
-  stat: _.omit(stat, [
-    'serverUptimeTitle',
-    'dashboardWidgetTitleTotalDeaths',
-    'dashboardWidgetTitleConfirmedCases',
-    'dashboardWidgetTitleTotalActiveCases',
-    'dashboardWidgetTitleTotalRecoveredCases',
-  ]),
+  stat: {
+    ...dashboardWidgetsBase,
+    totalModuleBays,
+    activeModuleBays,
+  },
 }

@@ -1,7 +1,8 @@
 import React, { useContext } from 'react'
 import { Box, Button, Grid } from '@mui/material'
 import { Formik } from 'formik'
-import { useNavigate, useParams } from 'react-router-dom'
+import { useIntl } from 'react-intl'
+import { useNavigate, useParams, useLocation } from 'react-router-dom'
 import { object, string } from 'yup'
 import {
   AssaySelect,
@@ -18,10 +19,10 @@ import {
 import useCreatePersonAsignment from '../../hooks/person/useCreatePersonAsignment'
 import useDeletePersonAsignment from '../../hooks/person/useDeletePersonAsignment'
 import usePersonAssignment from '../../hooks/person/usePersonAssignment'
-import useI18n from '../../hooks/useI18n'
+import useAuthState from '../../hooks/useAuthState'
 import { getCustomMessage } from '../../messages'
 import PersonAssignments from '../../oldPages/person/detail/PersonAssignments'
-import { useAuthState } from '../../providers/AuthProvider'
+import { gotoReturnUrl } from '../../utils/utils/browser'
 import ContactStepper from './components/ContactStepper'
 import ACTION from './constants'
 import { DirtyListener, FormStatusContext } from './context'
@@ -31,9 +32,10 @@ const JobAssigment = ({ setStep }) => {
   const { id, isAdding } = useContext(FormStatusContext)
   const auth = useAuthState()
   const { countryAbbreviation, countryId } = auth
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { personId = auth.personId } = useParams()
   const navigate = useNavigate()
+  const location = useLocation()
   const { isLoading, data: assignment } = usePersonAssignment(personId)
 
   const initialValues = {
@@ -57,7 +59,7 @@ const JobAssigment = ({ setStep }) => {
 
   return (
     <>
-      <ContactStepper step={1} onChange={(v, step) => setStep(step)} isUpdate={id !== ACTION.ADD} full />
+      <ContactStepper step={1} onChange={(v, step) => setStep(+step)} isUpdate={id !== ACTION.ADD} full />
       {isLoading ? (
         <Loading />
       ) : (
@@ -92,7 +94,7 @@ const JobAssigment = ({ setStep }) => {
                         label={`${formatMessage(messages.job)} *`}
                         value={values.jobFunctionId}
                         onChange={handleChange}
-                        error={errors.jobFunctionId ? errors.jobFunctionId : undefined}
+                        error={!!errors.jobFunctionId}
                         helperText={errors.jobFunctionId}
                       />
                     </Grid>
@@ -103,7 +105,7 @@ const JobAssigment = ({ setStep }) => {
                         label={formatMessage(messages.country)}
                         value={countryId}
                         onChange={handleChange}
-                        error={errors.countryId ? errors.countryId : undefined}
+                        error={!!errors.countryId}
                         helperText={errors.countryId}
                         disabled
                       />
@@ -112,10 +114,10 @@ const JobAssigment = ({ setStep }) => {
                       <StateSelect
                         id="stateId"
                         name="stateId"
-                        label={getCustomMessage(messages, 'state', { countryAbbreviation })}
+                        label={getCustomMessage(formatMessage, messages, 'state', { countryAbbreviation })}
                         value={values.stateId || ''}
                         onChange={handleChange}
-                        error={errors.stateId ? errors.stateId : undefined}
+                        error={!!errors.stateId}
                         helperText={errors.stateId}
                         countryId={values.countryId}
                       />
@@ -124,10 +126,10 @@ const JobAssigment = ({ setStep }) => {
                       <LgaSelect
                         id="lgaId"
                         name="lgaId"
-                        label={getCustomMessage(messages, 'lga', { countryAbbreviation })}
+                        label={getCustomMessage(formatMessage, messages, 'lga', { countryAbbreviation })}
                         value={values.lgaId || ''}
                         onChange={handleChange}
-                        error={errors.lgaId ? errors.lgaId : undefined}
+                        error={!!errors.lgaId}
                         helperText={errors.lgaId}
                         stateId={values.stateId}
                       />
@@ -139,7 +141,7 @@ const JobAssigment = ({ setStep }) => {
                         label={formatMessage(messages.site)}
                         value={values.siteId || ''}
                         onChange={handleChange}
-                        error={errors.siteId ? errors.siteId : undefined}
+                        error={!!errors.siteId}
                         helperText={errors.siteId}
                         stateId={values.stateId}
                         lgaId={values.lgaId}
@@ -159,7 +161,7 @@ const JobAssigment = ({ setStep }) => {
                             handleChange({ target: { name: 'assayId', value } })
                           }
                         }}
-                        error={errors.diseaseId ? errors.diseaseId : undefined}
+                        error={!!errors.diseaseId}
                         helperText={errors.diseaseId}
                       />
                     </Grid>
@@ -176,7 +178,7 @@ const JobAssigment = ({ setStep }) => {
                             handleChange({ target: { name: 'assayId', value } })
                           }
                         }}
-                        error={errors.deviceTypeId ? errors.deviceTypeId : undefined}
+                        error={!!errors.deviceTypeId}
                         helperText={errors.deviceTypeId}
                         disabled={values.diseaseId === ''}
                       />
@@ -193,7 +195,7 @@ const JobAssigment = ({ setStep }) => {
                             handleChange({ target: { name: 'assayId', value } })
                           }
                         }}
-                        error={errors.assayTypeId ? errors.assayTypeId : undefined}
+                        error={!!errors.assayTypeId}
                         helperText={errors.assayTypeId}
                         diseaseId={values.diseaseId}
                         disabled={values.deviceTypeId === ''}
@@ -206,7 +208,7 @@ const JobAssigment = ({ setStep }) => {
                         label={formatMessage(messages.assay)}
                         value={values.assayId || ''}
                         onChange={handleChange}
-                        error={errors.assayId ? errors.assayId : undefined}
+                        error={!!errors.assayId}
                         helperText={errors.assayId}
                         assayTypeId={values.assayTypeId || ''}
                         deviceTypeId={values.deviceTypeId}
@@ -223,7 +225,7 @@ const JobAssigment = ({ setStep }) => {
                   </Grid>
                 </Grid>
                 <Box sx={{ display: 'flex', flexDirection: 'row', pt: 2 }}>
-                  <Button onClick={() => (isAdding ? setStep(0) : navigate('/browse/person'))}>
+                  <Button onClick={() => (isAdding ? setStep(0) : gotoReturnUrl(navigate, location, '/browse/person'))}>
                     {formatMessage(messages[isAdding ? 'back' : 'backToTable'])}
                   </Button>
                   {dirty ? (

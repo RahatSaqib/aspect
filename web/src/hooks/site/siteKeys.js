@@ -4,6 +4,7 @@ const SITE_KEY_DELETE_BY_ID_ENDPOINT = '/site/disable/:siteId'
 const SITE_KEY_SITE_TYPE_ENDPOINT = '/sitetype'
 const SITE_KEY_SITE_ENDPOINT = '/site'
 const SITE_KEY_SITE_SELECT_LIST_ENDPOINT = '/site/select-list'
+const SITE_KEY_REPORTING_SITES = '/site/reportingSites'
 
 export {
   SITE_KEY,
@@ -12,4 +13,5 @@ export {
   SITE_KEY_SITE_TYPE_ENDPOINT,
   SITE_KEY_SITE_ENDPOINT,
   SITE_KEY_SITE_SELECT_LIST_ENDPOINT,
+  SITE_KEY_REPORTING_SITES,
 }

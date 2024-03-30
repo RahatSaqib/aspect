@@ -1,15 +1,12 @@
 import React from 'react'
 import { Card } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
-import styles from '../SiteDetail.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from '../SiteDetail.module.css'
 
 const messages = { ...commonDefinitions, ...localMessages }
 
@@ -28,24 +25,19 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
         </div>
       ),
     },
-    { label: getCustomMessage(messages, 'state', user), value: site.state },
-    { label: getCustomMessage(messages, 'lga', user), value: site.lga },
+    { label: getCustomMessage(formatMessage, messages, 'state', user), value: site.state },
+    { label: getCustomMessage(formatMessage, messages, 'lga', user), value: site.lga },
     { label: formatMessage(messages.fieldCity), value: site.city },
     {
       label: formatMessage(messages.fieldDevices),
-      value:
-        site.devices &&
-        site.devices.map(device => ({
-          description: device.name,
-          to: `/browse/device/list/${device.id}`,
-        })),
+      value: site.devices?.map(device => ({ description: device.name, to: `/browse/device/list/${device.id}` })),
     },
     { label: formatMessage(messages.fieldTags), value: site?.tags.map(tag => tag.title).join(', ') },
   ]
   return (
     <div>
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           {fields.map(({ label, value }) => (
             <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="4" />
           ))}
@@ -65,7 +57,6 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
 
 SiteDetailProfile.propTypes = {
   formatMessage: PropTypes.func.isRequired,
-  // eslint-disable-next-line react/forbid-prop-types
   site: PropTypes.object.isRequired,
   disabled: PropTypes.bool.isRequired,
   user: PropTypes.oneOfType([PropTypes.object]).isRequired,

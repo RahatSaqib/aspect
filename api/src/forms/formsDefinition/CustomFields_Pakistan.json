@@ -13,7 +13,6 @@
       "i18nKeyCaption": "PKPatientGenderI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.1.value",
-      "payloadDestinationPath": "patient.PatientGender",
       "source": "patientData.PatientGender",
       "mandatory": false,
       "migrateFromId": -4,
@@ -48,7 +47,6 @@
       "i18nKeyCaption": "PKPatientAgeI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.2.value",
-      "payloadDestinationPath": "patient.PatientAge",
       "source": "patientData.PatientAge",
       "mandatory": false,
       "migrateFromId": -3,
@@ -88,7 +86,6 @@
       "i18nKeyCaption": "PKHivStatusI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.3.value",
-      "payloadDestinationPath": "patient.HivStatus",
       "source": "patientData.HivStatus",
       "mandatory": false,
       "migrateFromId": -1,
@@ -124,7 +121,6 @@
       "i18nKeyCaption": "PKPatientAgeMonthsI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.4.value",
-      "payloadDestinationPath": "patient.PatientAgeMonths",
       "source": "patientData.PatientAgeMonths",
       "mandatory": false,
       "migrateFromId": -18,
@@ -163,7 +159,6 @@
       "i18nKeyCaption": "PKRepeatTestI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.5.value",
-      "payloadDestinationPath": "patient.PKRepeatTest",
       "source": "patientData.PKRepeatTest",
       "mandatory": false,
       "migrateFromId": -19,
@@ -194,7 +189,6 @@
       "i18nKeyCaption": "PKPatientStreetI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.6.value",
-      "payloadDestinationPath": "patient.PatientStreet",
       "source": "patientData.PatientStreet",
       "mandatory": false,
       "migrateFromId": -9
@@ -212,7 +206,6 @@
       "i18nKeyCaption": "PKPatientNameI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.7.value",
-      "payloadDestinationPath": "patient.PatientName",
       "source": "patientData.PatientName",
       "mandatory": false,
       "migrateFromId": 1
@@ -229,7 +222,6 @@
       "i18nKeyCaption": "PKHomeDistrictI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.8.value",
-      "payloadDestinationPath": "patient.PKHomeDistrict",
       "source": "patientData.PKHomeDistrict",
       "mandatory": false,
       "migrateFromId": 2
@@ -246,7 +238,6 @@
       "i18nKeyCaption": "PKReferringHealthFacilityI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.9.value",
-      "payloadDestinationPath": "patient.PKReferringHealthFacility",
       "source": "patientData.PKReferringHealthFacility",
       "mandatory": false,
       "optional": false,
@@ -329,7 +320,6 @@
       "i18nKeyCaption": "PKDiseaseSiteI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.10.value",
-      "payloadDestinationPath": "patient.PKDiseaseSite",
       "source": "patientData.PKDiseaseSite",
       "mandatory": false,
       "migrateFromId": 4,
@@ -364,7 +354,6 @@
       "i18nKeyCaption": "PKReferringPhysicianNameI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.11.value",
-      "payloadDestinationPath": "patient.PKReferringPhysicianName",
       "source": "patientData.PKReferringPhysicianName",
       "mandatory": false,
       "migrateFromId": 5
@@ -381,7 +370,6 @@
       "i18nKeyCaption": "PKReferringPhysicianContactI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.12.value",
-      "payloadDestinationPath": "patient.PKReferringPhysicianContact",
       "source": "patientData.PKReferringPhysicianContact",
       "mandatory": false,
       "migrateFromId": 6,
@@ -406,7 +394,6 @@
       "i18nKeyCaption": "PKSpecimenTypeI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.13.value",
-      "payloadDestinationPath": "patient.PKSpecimenType",
       "source": "patientData.PKSpecimenType",
       "mandatory": false,
       "migrateFromId": 7,
@@ -501,7 +488,6 @@
       "i18nKeyCaption": "PKAFBSmearResultsI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.14.value",
-      "payloadDestinationPath": "patient.PKAFBSmearResults",
       "source": "patientData.PKAFBSmearResults",
       "mandatory": false,
       "migrateFromId": 9,
@@ -540,7 +526,6 @@
       "i18nKeyCaption": "PKPreviousHistoryOfTbTreatmentI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.15.value",
-      "payloadDestinationPath": "patient.PKPreviousHistoryOfTbTreatment",
       "source": "patientData.PKPreviousHistoryOfTbTreatment",
       "mandatory": false,
       "migrateFromId": 10,
@@ -575,7 +560,6 @@
       "i18nKeyCaption": "PKPreviousGeneXpertResultI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.16.value",
-      "payloadDestinationPath": "patient.PKPreviousGeneXpertResult",
       "source": "patientData.PKPreviousGeneXpertResult",
       "mandatory": false,
       "items": [
@@ -626,7 +610,6 @@
       "i18nKeyCaption": "PKPatientContactNumberI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.17.value",
-      "payloadDestinationPath": "patient.PatientPhone",
       "source": "patientData.PatientPhone",
       "mandatory": false,
       "validation": [
@@ -650,7 +633,6 @@
       "i18nKeyCaption": "PKReferringHealthFacilityProvinceI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.18.value",
-      "payloadDestinationPath": "patient.PKReferringHealthFacilityProvince",
       "source": "patientData.PKReferringHealthFacilityProvince",
       "mandatory": false,
       "items": [
@@ -728,7 +710,6 @@
       "i18nKeyCaption": "PKReferringHealthFacilityDistrictI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.19.value",
-      "payloadDestinationPath": "patient.PKReferringHealthFacilityDistrict",
       "source": "patientData.PKReferringHealthFacilityDistrict",
       "mandatory": false,
       "items": [
@@ -1557,7 +1538,6 @@
       "i18nKeyCaption": "PKReferringHealthFacilityLevelI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.20.value",
-      "payloadDestinationPath": "patient.PKReferringHealthFacilityLevel",
       "source": "patientData.PKReferringHealthFacilityLevel",
       "mandatory": false,
       "items": [
@@ -1650,7 +1630,6 @@
       "i18nKeyCaption": "PKIfPreviousGeneXpertResultsIsPositiveI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.21.value",
-      "payloadDestinationPath": "patient.PKIfPreviousGeneXpertResultsIsPositive",
       "source": "patientData.PKIfPreviousGeneXpertResultsIsPositive",
       "mandatory": false,
       "items": [
@@ -1695,7 +1674,6 @@
       "i18nKeyCaption": "PKEPTissueTypeI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.22.value",
-      "payloadDestinationPath": "patient.PKEPTissueType",
       "source": "patientData.PKEPTissueType",
       "mandatory": false,
       "items": [
@@ -1740,7 +1718,6 @@
       "i18nKeyCaption": "PKTBDRTBRegNumI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.23.value",
-      "payloadDestinationPath": "patient.PKTBDRTBRegNum",
       "source": "patientData.PKTBDRTBRegNum",
       "mandatory": false
     },
@@ -1756,7 +1733,6 @@
       "i18nKeyCaption": "PKReferringHealthFacilityLocationI8nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.24.value",
-      "payloadDestinationPath": "patient.PKReferringHealthFacilityLocation",
       "source": "patientData.PKReferringHealthFacilityLocation",
       "mandatory": false,
       "items": [
@@ -1785,7 +1761,6 @@
       "i18nKeyCaption": "PKDateSpecimenCollectedI8nCaptionKey",
       "controlType": "dateTimePicker",
       "payloadOriginPath": "data.customFieldData.25.value",
-      "payloadDestinationPath": "patient.PKDateSpecimenCollected",
       "source": "patientData.PKDateSpecimenCollected",
       "mandatory": false
     },
@@ -1801,7 +1776,6 @@
       "i18nKeyCaption": "PKDateSpecimenReceivedI8nCaptionKey",
       "controlType": "dateTimePicker",
       "payloadOriginPath": "data.customFieldData.26.value",
-      "payloadDestinationPath": "patient.PKDateSpecimenReceived",
       "source": "patientData.PKDateSpecimenReceived",
       "mandatory": false,
       "condition": [
@@ -1824,7 +1798,6 @@
       "i18nKeyCaption": "PKCNICI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.27.value",
-      "payloadDestinationPath": "patient.PKCNIC",
       "source": "patientData.PKCNIC",
       "mandatory": false,
       "validation": [
@@ -1848,7 +1821,6 @@
       "i18nKeyCaption": "RemarksI8nCaptionKey",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.28.value",
-      "payloadDestinationPath": "patient.Remarks",
       "source": "patientData.Remarks",
       "mandatory": false,
       "cellSpan": 2

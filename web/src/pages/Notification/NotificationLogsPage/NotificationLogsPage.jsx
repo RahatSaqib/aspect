@@ -1,7 +1,9 @@
 import React, { Fragment, useMemo, useState } from 'react'
-import { Box, Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableRow } from '@mui/material'
+import { Close, MoreHoriz, Done } from '@mui/icons-material'
+import { Card, CardContent, CircularProgress, Table, TableBody, TableCell, TableRow, Tooltip } from '@mui/material'
 import classnames from 'classnames/bind'
 import { Helmet } from 'react-helmet'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import { DetailHeader, NotificationLogFilter, SimpleTableHeader, SimpleTablePagination } from '../../../cleanComponents'
@@ -9,26 +11,31 @@ import { allowOnlyAPIKeys, removeNullFromCollection, timeAndDate } from '../../.
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { replaceRouteParams } from '../../../components/QueryFetch/Helpers'
 import { NOTIFICATION_LOG_ENDPOINT, NOTIFICATION_LOG_KEY } from '../../../hooks/notification/notificationKeys'
-import useI18n from '../../../hooks/useI18n'
-import { useFilterValues } from '../../../providers/FilterProvider'
-import { EmailCell, SMSCell, WebhookCell } from '../NotificationHistoryPage/ErrorCell/NotificationCells'
+import useFilterValues from '../../../hooks/useFilterValues'
+import { DataCell } from './DataCell'
 import messages from './messages'
 import styles from './NotificationLogsPage.css'
-import AspectLink from '../../../components/AspectLink'
 
 const cssClasses = classnames.bind(styles)
 
+const statusIcons = {
+  Error: <Close style={{ color: 'red' }} />,
+  Sent: <Done style={{ color: 'green' }} />,
+  Pending: <MoreHoriz style={{ color: '#0095ff' }} />,
+}
+
 const NotificationHistoryPage = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const location = useLocation()
   const filters = useFilterValues(location.pathname)
   const [sortCol, setSortCol] = useState('date')
-  const [sortDir, setSortDir] = useState('asc')
+  const [sortDir, setSortDir] = useState('desc')
   const [page, setPage] = useState(0)
   const [size, setSize] = useState(10)
 
   const params = useMemo(() => {
-    const { notificationCategoryTypeId, onlyErrors, reportWithName, ...rest } = filters
+    const { notificationCategoryTypeId, notificationCategory, onlyErrors, reportWithName, ...rest } = filters
+    const [category, type] = notificationCategory?.split('=') ?? ''
     return removeNullFromCollection({
       size,
       sortCol,
@@ -37,6 +44,7 @@ const NotificationHistoryPage = () => {
       reportName: reportWithName,
       notificationTypeCategoryId: notificationCategoryTypeId,
       notificationWithErrors: onlyErrors,
+      ...(type === 'category' ? { notificationTypeName: category } : { issueTypeName: category }),
       ...rest,
     })
   }, [page, size, sortCol, sortDir, filters])
@@ -59,18 +67,28 @@ const NotificationHistoryPage = () => {
       width: 10,
     },
     {
-      id: 'notificationTypeName',
-      label: intl.formatMessage(messages.notificationsTableHeaderType),
-      width: 10,
-    },
-    {
       id: 'notificationName',
       label: intl.formatMessage(messages.notificationsTableHeaderCategory),
       width: 10,
     },
     {
+      id: 'notificationTypeName',
+      label: intl.formatMessage(messages.notificationsTableHeaderType),
+      width: 10,
+    },
+    {
       id: 'data',
       label: intl.formatMessage(messages.notificationsTableHeaderData),
+      width: 10,
+    },
+    {
+      id: 'recepientName',
+      label: intl.formatMessage(messages.notificationsTableRecepientName),
+      width: 10,
+    },
+    {
+      id: 'webhookRecepient',
+      label: intl.formatMessage(messages.notificationsTableWebhookRecepient),
       width: 10,
     },
     {
@@ -89,6 +107,18 @@ const NotificationHistoryPage = () => {
       width: 5,
     },
   ]
+
+  const getIcon = status => {
+    const icon = statusIcons[status]
+    if (icon) {
+      return (
+        <Tooltip title={status} disableInteractive>
+          {icon}
+        </Tooltip>
+      )
+    }
+    return '-'
+  }
 
   return (
     <Fragment>
@@ -119,28 +149,13 @@ const NotificationHistoryPage = () => {
                         <TableCell>{row.notificationTypeName}</TableCell>
                         <TableCell>{row.notificationName}</TableCell>
                         <TableCell>
-                          {row.data.patientId ? (
-                            <AspectLink
-                              className={{ active: cssClasses('result_link') }}
-                              to={`/browse/result/${row.resultId}`}
-                            >
-                              {`${intl.formatMessage(messages.patientId)}: ${row.data.patientId}`}
-                            </AspectLink>
-                          ) : null}
-                          {row.data.sampleId ? (
-                            <Box>{`${intl.formatMessage(messages.sampleId)}: ${row.data.sampleId}`}</Box>
-                          ) : null}
-                          {row.data.reportName ?? null}
+                          <DataCell {...row.data} resultId={row.resultId} />
                         </TableCell>
-                        <TableCell>
-                          <EmailCell item={row} value={row.emailRecipients} />
-                        </TableCell>
-                        <TableCell>
-                          <SMSCell item={row} value={row.smsRecipients} />
-                        </TableCell>
-                        <TableCell>
-                          <WebhookCell item={row} value={row.webhookRecipients} />
-                        </TableCell>
+                        <TableCell>{row.recepientName}</TableCell>
+                        <TableCell>{row.webhookRecipient}</TableCell>
+                        <TableCell>{getIcon(row.emailStatus)}</TableCell>
+                        <TableCell>{getIcon(row.smsStatus)}</TableCell>
+                        <TableCell>{getIcon(row.webHookStatus)}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>

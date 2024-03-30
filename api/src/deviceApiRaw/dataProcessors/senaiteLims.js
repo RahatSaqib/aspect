@@ -15,6 +15,7 @@ const {
 const { deviceSeen } = require('../../device/actions')
 const { SynchronousDataProcessor } = require('./_base')
 const logger = require('../../shared/logger')
+const { insertSite } = require('../../site/common/db')
 
 class DefaultSenaiteLIMS extends SynchronousDataProcessor {
   constructor(request, messageContext) {
@@ -59,8 +60,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           .leftJoin('Site as s2', 'd.siteId', 's2.id')
           .leftJoin('Geography as g1', 's2.geographyId', 'g1.id')
           .leftJoin('Geography as g2', 's1.geographyId', 'g2.id')
-          .leftJoin('Geography as g3', 'd.geographyId', 'g3.id')
-          .leftJoin('Geography as g4', 'dak.geographyId', 'g4.id')
+          .leftJoin('Geography as g3', 'dak.geographyId', 'g3.id')
           .where('dak.token', auth.credentials.token)
           .first(
             'dak.deviceId',
@@ -68,8 +68,8 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
             knex.raw('COALESCE(d.siteId, dak.siteId) as siteId'),
             knex.raw('COALESCE(s2.longitude, s1.longitude) as longitude'),
             knex.raw('COALESCE(s2.latitude, s1.latitude) as latitude'),
-            knex.raw('COALESCE(s2.geographyId, s1.geographyId, d.geographyId, dak.geographyId) as geographyId'),
-            knex.raw('COALESCE(g1.countryId, g2.countryId, g3.countryId, g4.countryId) as countryId'),
+            knex.raw('COALESCE(s2.geographyId, s1.geographyId, dak.geographyId) as geographyId'),
+            knex.raw('COALESCE(g1.countryId, g2.countryId, g3.countryId) as countryId'),
             'd.defaultReportableSiteId'
           )
       const remoteAddress = getRemoteAddress(request)
@@ -179,7 +179,7 @@ class DefaultSenaiteLIMS extends SynchronousDataProcessor {
           originSiteGeographyId = originSiteGeography.id
         }
         if (!originSiteId) {
-          ;[originSiteId] = await knex('Site').insert({
+          ;[originSiteId] = await insertSite(knex, {
             name: facilityName,
             externalId: limsFacilityId,
             partnerId,

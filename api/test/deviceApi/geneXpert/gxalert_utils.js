@@ -1,11 +1,7 @@
 const _ = require('lodash')
-const chai = require('chai')
-const { getDeviceFromApiKey } = require('../utils')
 const { run } = require('../../../src/db')
 const { waitAsyncComplete } = require('../../utils/generatorFunctionUtils')
 const { randomToken } = require('../../../src/deviceApi/apiKey')
-
-const { assert } = chai
 
 async function deleteGxAlertDeviceDataAndRefreshTokens(knex, apiKeys, clientId) {
   const deviceIds = await knex('DeviceApiKey as dak').whereIn('dak.token', apiKeys).pluck('dak.deviceId')
@@ -125,7 +121,15 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
 
   await knex('DeviceOperation').whereIn('id', opIds).delete()
 
-  await knex('Device').whereIn('siteId', siteIds).orWhereIn('id', deviceIds).delete()
+  await knex('DeviceApiKey').whereIn('siteId', siteIds).orWhereIn('deviceId', deviceIds).delete()
+
+  const devices = await knex('Device').whereIn('siteId', siteIds).orWhereIn('id', deviceIds).select('id')
+  const deviceIdsToRemove = _.map(devices, d => d.id)
+
+  await knex('FactDeviceModulesCount').whereIn('deviceId', deviceIdsToRemove).delete()
+
+  await knex('Device').whereIn('id', deviceIdsToRemove).delete()
+
   await knex('Sample').whereIn('originSiteId', siteIds).delete()
 
   await knex('FactInventoryConsumptionRate').whereIn('siteId', siteIds).delete()
@@ -155,7 +159,11 @@ class GxAlertApiTestContext {
       },
       site: null,
       log: null,
-      configuration: null,
+      configuration: {
+        data: {
+          country: 'US',
+        },
+      },
       operation: null,
       result: null,
     }
@@ -198,7 +206,6 @@ class GxAlertApiTestContext {
       const now = new Date()
       const [deviceId] = await knex('Device').insert({
         partnerId: partner.id,
-        geographyId: geography.id,
         deviceTypeId: gxAlertDeviceType.id,
         deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
         deviceApprovalId: approvedDeviceApproval.id,
@@ -218,16 +225,15 @@ class GxAlertApiTestContext {
         revoked: 0,
         partnerId: partner.id,
         geographyId: geography.id,
-        deviceId,
         createdOn: now,
         createdBy: adminUser.id,
         updatedOn: now,
         updatedBy: adminUser.id,
+        deviceId,
       })
       this.apiKeys.push(this.apiKey)
       this.deviceAuth = `Bearer ${this.apiKey}`
-      this.device = await getDeviceFromApiKey(knex, { token: this.apiKey })
-      assert.isNotEmpty(this.device, `Cannot find device created from ${this.apiKey}`)
+      this.device = await knex('Device').where({ id: deviceId }).first()
     })
   }
 
@@ -406,9 +412,7 @@ class GxAlertApiTestContext {
       const device = await knex
         .from('Device as d')
         .leftJoin('Site as s', 's.id', 'd.siteId')
-        .innerJoin('Geography as g', function () {
-          this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-        })
+        .leftJoin('Geography as g', 's.geographyId', 'g.id')
         .leftJoin('Country as c', 'g.countryId', 'c.id')
         .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
         .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')

@@ -1,13 +1,13 @@
 import * as React from 'react'
 import { useContext } from 'react'
 import { Box, Step, StepLabel, Stepper, Tab, Tabs } from '@mui/material'
+import { useIntl } from 'react-intl'
 import usePermissions from '../../../hooks/person/usePermissions'
-import useI18n from '../../../hooks/useI18n'
 import { DirtyStepsContext, FormStatusContext } from '../context'
 import messages from '../messages'
 
 const ContactStepper = ({ step, full, isUpdate, onChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { dirtySteps } = useContext(DirtyStepsContext)
   const { isRecentlyAdd } = useContext(FormStatusContext)
   const { checkPermission } = usePermissions()

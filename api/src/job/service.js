@@ -1,6 +1,6 @@
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
-const { query, knex, transact } = require('../db')
+const { query, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 
@@ -63,8 +63,8 @@ async function getPermissions(request) {
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
     .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .innerJoin('JobContext as jc', 'jc.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where('jf.partnerId', partnerId)
     .where('ps.id', personId)
     .orderBy(['p.module', 'p.activity'])
@@ -86,59 +86,18 @@ async function getJobFunction(jobFunctionId, partnerId, err) {
   }
   return jobFunction
 }
-// ----------------------------------------------------------------------------------------
-const assignJob = async request => manageJob(request, MODE_INSERT)
-const unassignJob = async request => manageJob(request, MODE_DELETE)
-async function manageJob(request, mode) {
-  const {
-    payload: { personId, jobFunctionId },
-  } = request
-  const { auth } = request
 
-  const valResult = await validateJobData({ personId, jobFunctionId, auth })
-  if (valResult.isBoom) {
-    return valResult
-  }
-
-  const job = await knex('Job').where({ personId, jobFunctionId }).first()
-
-  if (mode === MODE_INSERT) {
-    // create job if missing
-    if (!job) {
-      await knex('Job').insert({
-        personId,
-        jobFunctionId,
-      })
-    }
-  } else if (mode === MODE_DELETE) {
-    if (job) {
-      await transact(async knex => {
-        // remove all FK's entries
-        await knex('JobContext').where({ jobId: job.id }).del()
-        // remove Job
-        await knex('Job').where({ id: job.id }).del()
-      })
-    }
-  }
-
-  // return all jobs for requested person
-  const jobs = await knex('Job').where({ personId }).select('id', 'personId', 'jobFunctionId')
-  return { ok: true, data: jobs }
-}
 // ----------------------------------------------------------------------------------------
 const assignJobContext = async request => manageJobContext(request, MODE_INSERT)
 const unassignJobContext = async request => manageJobContext(request, MODE_DELETE)
 const validateAndNormalizeJobContextData = async request => {
   const { payload } = request
-  const { auth } = request
-  const { partnerId } = await getUser(auth.credentials.name)
   const { personId, jobFunctionId, geographyId, siteId } = payload
-  let { jobId } = payload
 
-  // either jobId or both (personId and jobFunctionId) are needed
+  // personId and jobFunctionId are needed
   const hasPersonAndJobFunction = !!personId && !!jobFunctionId
-  if (!jobId && !hasPersonAndJobFunction) {
-    return Boom.expectationFailed('Either jobId or (personId and jobFunctionId) is needed to manage JobContext')
+  if (!hasPersonAndJobFunction) {
+    return Boom.expectationFailed('personId and jobFunctionId is needed to manage JobContext')
   }
   // either geographyId or siteId is needed
   const bothMissing = !geographyId && !siteId
@@ -160,47 +119,19 @@ const validateAndNormalizeJobContextData = async request => {
       return Boom.badData(`Missing geography with specified geographyId=${geographyId}`)
     }
   }
-  if (jobId) {
-    const item = await knex('Job as j')
-      .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-      .where('j.id', jobId)
-      .first('j.id', 'jf.partnerId')
-    if (!item) {
-      return Boom.badData(`Missing job with specified jobId=${jobId}`)
-    }
-    if (item.partnerId !== partnerId) {
-      return Boom.expectationFailed('Only Admin with same partnerId as Job/JobFunction can manage Jobs')
-    }
-  } else if (!jobId) {
-    // if no jobId - create Job with personId/jobFunctionId
 
-    // use 'personId, jobFunctionId' from request to create/get Job
-    const jobResponse = await assignJob(request)
-    if (jobResponse.isBoom) {
-      // Boom when current Admin user and JobFunction have different partnerId's
-      return jobResponse
-    }
-    // get jobId for requested personId/jobFunctionId from list of all Jobs for personId
-    ;[{ id: jobId }] = jobResponse.data.filter(x => x.personId === personId && x.jobFunctionId === jobFunctionId)
-  } else {
-    const item = await knex('Job').where({ id: jobId }).first()
-    if (!item) {
-      return Boom.badData(`Missing job with specified jobId=${jobId}`)
-    }
-  }
-  return { jobId }
+  return {}
 }
 async function manageJobContext(request, mode) {
   const { payload } = request
-  const { geographyId, siteId } = payload
+  const { personId, jobFunctionId, geographyId, siteId } = payload
   const normalizedData = await validateAndNormalizeJobContextData(request)
   if (normalizedData.isBoom) {
     return normalizedData
   }
-  const { jobId } = normalizedData
 
   const q = knex('JobContext')
-    .where({ jobId })
+    .where({ personId, jobFunctionId })
     .where(function () {
       if (geographyId) {
         this.where({ geographyId })
@@ -211,23 +142,17 @@ async function manageJobContext(request, mode) {
   if (mode === MODE_DELETE) {
     // remove JobContext
     await q.clone().del()
-    // remove Job if requested
-    const { removeJob } = payload
-    if (removeJob) {
-      await unassignJob(request)
-    }
   } else if (mode === MODE_INSERT) {
     // create JobContext entry if missing
     const jobContext = await q.clone().first()
     if (!jobContext) {
-      await knex('JobContext').insert({ jobId, geographyId, siteId })
+      await knex('JobContext').insert({ personId, jobFunctionId, geographyId, siteId })
     }
   }
   // return all jobContexts for requested person
   const jobContexts = await knex('JobContext as jc')
-    .join('Job as j', 'jc.jobId', 'j.id')
-    .where('jc.jobId', jobId)
-    .select('jc.jobId', 'jc.geographyId', 'jc.siteId', 'j.personId', 'j.jobFunctionId')
+    .where({ personId, jobFunctionId })
+    .select('jc.geographyId', 'jc.siteId', 'jc.personId', 'jc.jobFunctionId')
   return { ok: true, data: jobContexts }
 }
 
@@ -340,40 +265,139 @@ async function unassignJobFunctionPermissions(request) {
 // ----------------------------------------------------------------------------------------
 async function assignPersonTo(request) {
   const { payload } = request
-  // ----------------
-  // jobId
-  // ----------------
-  const { personId, jobFunctionId } = payload
+
+  const { countryId, personId, jobFunctionId } = payload
   const { auth } = request
   const creator = await validateJobData({ personId, jobFunctionId, auth })
   if (creator.isBoom) {
     return creator
   }
-  let jobId
-  const jobProps = { personId, jobFunctionId }
-  const job = await knex('Job').where(jobProps).first()
-  if (!job) {
-    ;[jobId] = await knex('Job').insert(jobProps)
-  } else {
-    jobId = job.id
+  const geographyIdsInPayload = {
+    countryId: countryId ?? null,
+    stateId: payload.stateId ?? null,
+    lgaId: payload.lgaId ?? null,
+    siteId: payload.siteId ?? null,
   }
-  // ----------------
-  // siteId or geographyId
-  // ----------------
-
-  // This will used as default value for geography of assigment
-  const creatorGeography = await knex('Job as j')
-    .where({ personId: creator.personId })
-    .leftJoin('JobContext as jc', 'j.id', 'jc.jobId')
+  if (geographyIdsInPayload.siteId) {
+    const siteGeographyIds = await knex('Site as s')
+      .leftJoin('Geography as g', 's.geographyId', 'g.id')
+      .where('s.id', geographyIdsInPayload.siteId)
+      .first('g.countryId', 'g.stateId', 'g.lgaId')
+    geographyIdsInPayload.countryId = siteGeographyIds?.countryId ?? payload.countryId
+    geographyIdsInPayload.stateId = siteGeographyIds?.stateId ?? payload.stateId
+    geographyIdsInPayload.lgaId = siteGeographyIds?.lgaId ?? payload.lgaId
+  } else if (geographyIdsInPayload.lgaId) {
+    const lgaGeographyIds = await knex('Geography as g')
+      .where('g.lgaId', geographyIdsInPayload.lgaId)
+      .first('g.countryId', 'g.stateId')
+    geographyIdsInPayload.countryId = lgaGeographyIds?.countryId ?? payload.countryId
+    geographyIdsInPayload.stateId = lgaGeographyIds?.stateId ?? payload.stateId
+  } else if (geographyIdsInPayload.stateId) {
+    const stateGeographyIds = await knex('Geography as g')
+      .where('g.stateId', geographyIdsInPayload.stateId)
+      .first('g.countryId')
+    geographyIdsInPayload.countryId = stateGeographyIds?.countryId ?? payload.countryId
+  }
+  const requiredJobAssignmentBaseQuery = knex('JobContext as jc')
+    .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .join('JobFunctionPermission as jfp', 'jc.jobFunctionId', 'jfp.jobFunctionId')
+    .join('Permission as p', 'jfp.permissionId', 'p.id')
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
-    .select('g.stateId', 'g.countryId', 'g.lgaId')
-    .first()
-
+    .leftJoin('Site as s', 'jc.siteId', 's.id')
+    .where('jc.personId', creator.personId)
+    .whereIn('p.module', ['account', 'person'])
+    .whereIn('p.activity', ['edit', 'admin'])
+  const superAdminJobFunction = await requiredJobAssignmentBaseQuery
+    .clone()
+    .whereNull('s.id')
+    .whereNull('g.lgaId')
+    .whereNull('g.stateId')
+    .whereNull('g.countryId')
+    .first('jf.externalId')
+  if (!superAdminJobFunction) {
+    if (geographyIdsInPayload.siteId) {
+      const siteAdminJobFunction = await requiredJobAssignmentBaseQuery
+        .clone()
+        .andWhere(qb => {
+          qb.where('s.id', geographyIdsInPayload.siteId)
+          if (geographyIdsInPayload.lgaId) {
+            qb.orWhere(lgaQb => lgaQb.whereNull('s.id').andWhere('g.lgaId', geographyIdsInPayload.lgaId))
+          }
+          if (geographyIdsInPayload.stateId) {
+            qb.orWhere(stateQb =>
+              stateQb.whereNull('s.id').whereNull('g.lgaId').andWhere('g.stateId', geographyIdsInPayload.stateId)
+            )
+          }
+          if (geographyIdsInPayload.countryId) {
+            qb.orWhere(countryQb =>
+              countryQb
+                .whereNull('s.id')
+                .whereNull('g.lgaId')
+                .whereNull('g.stateId')
+                .where('g.countryId', geographyIdsInPayload.countryId)
+            )
+          }
+        })
+        .first('jf.externalId')
+      if (!siteAdminJobFunction) {
+        return Boom.forbidden(`Site out of scope for current user's permissions`)
+      }
+    } else if (geographyIdsInPayload.lgaId) {
+      const lgaAdminJobFunction = await requiredJobAssignmentBaseQuery
+        .clone()
+        .whereNull('s.id')
+        .andWhere(qb => {
+          qb.where('g.lgaId', geographyIdsInPayload.lgaId)
+          if (geographyIdsInPayload.stateId) {
+            qb.orWhere(stateQb => stateQb.whereNull('g.lgaId').andWhere('g.stateId', geographyIdsInPayload.stateId))
+          }
+          if (geographyIdsInPayload.countryId) {
+            qb.orWhere(countryQb =>
+              countryQb
+                .whereNull('g.lgaId')
+                .whereNull('g.stateId')
+                .andWhere('g.countryId', geographyIdsInPayload.countryId)
+            )
+          }
+        })
+        .first('jf.externalId')
+      if (!lgaAdminJobFunction) {
+        return Boom.forbidden(`LGA out of scope for current user's permissions`)
+      }
+    } else if (geographyIdsInPayload.stateId) {
+      const stateAdminJobFunction = await requiredJobAssignmentBaseQuery
+        .clone()
+        .whereNull('s.id')
+        .whereNull('g.lgaId')
+        .andWhere(qb => {
+          qb.where('g.stateId', geographyIdsInPayload.stateId)
+          if (geographyIdsInPayload.countryId) {
+            qb.orWhere(countryQb =>
+              countryQb.whereNull('g.stateId').andWhere('g.countryId', geographyIdsInPayload.countryId)
+            )
+          }
+        })
+        .first('jf.externalId')
+      if (!stateAdminJobFunction) {
+        return Boom.forbidden(`State out of scope for current user's permissions`)
+      }
+    } else if (geographyIdsInPayload.countryId) {
+      const countryAdminJobFunction = await requiredJobAssignmentBaseQuery
+        .clone()
+        .whereNull('s.id')
+        .whereNull('g.lgaId')
+        .whereNull('g.stateId')
+        .andWhere('g.countryId', countryId)
+        .first('jf.externalId')
+      if (!countryAdminJobFunction) {
+        return Boom.forbidden(`Country out of scope for current user's permissions`)
+      }
+    }
+  }
   const {
-    countryId,
-    stateId = creatorGeography?.stateId ?? null,
-    lgaId = creatorGeography?.lgaId ?? null,
-    siteId = null,
+    stateId = geographyIdsInPayload?.stateId ?? null,
+    lgaId = geographyIdsInPayload?.lgaId ?? null,
+    siteId = geographyIdsInPayload?.siteId ?? null,
     diseaseId = null,
     assayTypeId = null,
     assayId = null,
@@ -395,7 +419,9 @@ async function assignPersonTo(request) {
 
   let deviceTypeId
   if (deviceTypeExternalId) {
-    ;[deviceTypeId] = (await knex('DeviceType').where('externalId', deviceTypeExternalId).pluck('id')) || []
+    ;({ deviceTypeId } = (await knex('DeviceType')
+      .where('externalId', deviceTypeExternalId)
+      .first('id as deviceTypeId')) || { deviceTypeId: null })
   }
 
   // ----------------
@@ -405,7 +431,7 @@ async function assignPersonTo(request) {
   if (siteId || geographyId) {
     const { id: jobContextId } =
       (await knex('JobContext')
-        .where({ jobId })
+        .where({ personId, jobFunctionId })
         .andWhere(function () {
           if (siteId) {
             this.where({ siteId })
@@ -430,7 +456,8 @@ async function assignPersonTo(request) {
         .first('id')) || {}
     if (!jobContextId) {
       await knex('JobContext').insert({
-        jobId,
+        personId,
+        jobFunctionId,
         geographyId,
         siteId,
         diseaseId,
@@ -461,8 +488,7 @@ async function getPersonAssignments(request) {
 async function getAssignments({ auth, personId }) {
   const dataConstraints = await getConstraints(auth.credentials)
   const personAssignments = await knex('JobContext as jc')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
     // constraints to make sure current user can access this data
     .innerJoin('Partner as p', 'jf.partnerId', 'p.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
@@ -490,13 +516,12 @@ async function getAssignments({ auth, personId }) {
     .leftOuterJoin('DeviceType as dt2', 'a.deviceTypeId', 'dt2.id')
     .leftOuterJoin('Disease as d3', 'at2.diseaseId', 'd3.id')
     //
-    .where('j.personId', personId)
+    .where('jc.personId', personId)
     .orderBy(['jf.name', 's.name', 'c.name', 'st.name', 'l.name'])
     .select(
-      'j.personId',
+      'jc.personId',
       'jf.partnerId',
-      'jc.jobId',
-      'j.jobFunctionId',
+      'jc.jobFunctionId',
       'jf.name as jobFunctionName',
       'jc.id as jobContextId',
       'jc.siteId',
@@ -670,13 +695,12 @@ async function removePersonAssignment(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const jobContext = await knex('JobContext as jc')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
     // constraints to make sure current user can access this data
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
     .innerJoin('Partner as p', 'jf.partnerId', 'p.id')
     .modify(addConstraints, dataConstraints, { partner: 'p' })
     .where('jc.id', jobContextId)
-    .first('j.personId', 'jc.jobId', 'j.jobFunctionId')
+    .first('jc.personId', 'jc.jobFunctionId')
   // validate
   if (!jobContext) {
     return Boom.badData('Incorrect jobContextId specified')
@@ -694,11 +718,6 @@ async function removePersonAssignment(request) {
   // remove JobContext
   await knex('JobContext').where('id', jobContextId).del()
 
-  // remove also Job entry if no other JobContexts use it
-  const { count } = await knex('JobContext').where('jobId', jobContext.jobId).count('id as count').first()
-  if (count === 0) {
-    await knex('Job').where('id', jobContext.jobId).del()
-  }
   // ----------------
   // return list of remaining person assignments
   // ----------------
@@ -712,8 +731,6 @@ module.exports = {
   getJobFunctionsForSelectList,
   getPermissions,
   //
-  assignJob,
-  unassignJob,
   assignJobContext,
   unassignJobContext,
   assignJobFunctionDashboardWidgets,

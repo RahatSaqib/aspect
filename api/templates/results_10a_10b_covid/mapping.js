@@ -8,7 +8,7 @@ let sheets = [
     C6: 'stateName',
     C7: 'lgaName',
     C8: 'siteName',
-    C9: 'cntAll',
+    // ??: 'cntAll',
 
     N7: 'userName',
     M9: 'today',
@@ -180,7 +180,8 @@ let sheets = [
     R42: 'cnt_TypeOfPatient_OtherExtraPulm_Treated_Mtb',
     U42: 'cnt_TypeOfPatient_OtherExtraPulm_Treated_MtbRif',
 
-    H42: 'cnt_Tested_by_XDR_Cartridge',
+    H42: 'cnt_Xdr_Tested_From_Eligible',
+    H44: 'cnt_Xdr_Total_Tests',
   },
 ]
 sheets = [

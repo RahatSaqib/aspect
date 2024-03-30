@@ -9,6 +9,7 @@ const types = {
   DEVICE_SEEN: 'DEVICE_SEEN',
   DEVICE_OFFLINE: 'DEVICE_OFFLINE',
   DEVICE_ONLINE: 'DEVICE_ONLINE',
+  CEPHEID_C360_INSTRUMENT_LOG_RECEIVED: 'CEPHEID_C360_INSTRUMENT_LOG_RECEIVED',
   DEVICE_NO_RESULTS: 'DEVICE_NO_RESULTS',
   DEVICE_HAS_NEW_RESULTS: 'DEVICE_HAS_NEW_RESULTS',
   DEVICE_MAINTENANCE: 'DEVICE_MAINTENANCE',
@@ -81,6 +82,16 @@ function calibrationDueDateIsClose(deviceId, calibrationDueDate) {
   return {
     type: types.CALIBRATION_DUE_DATE_IS_CLOSE,
     deviceId,
+    /**
+     * set value for placeholder {{device.daysToCalibrationDueDate}} in base
+     * issue `CalibrationDueDate` in api/seeds/relatedObjects/issues.js.
+     *
+     * Notice that `issue.data.calibrationDueDate` is assigned to `issueData.calibrationDueDate`
+     * which then is assigned to `device.calibrationDueDate`. And placeholder
+     * `{{device.daysToCalibrationDueDate}}` in template is getting replaced with func
+     * `daysBeforeToday device.calibrationDueDate` - see this in `const dynamicTemplate` in
+     * `api/src/stringTemplate/service.js`
+     */
     options: { data: { calibrationDueDate } },
   }
 }
@@ -89,6 +100,14 @@ function calibrationDateUpdated(deviceId) {
   return {
     type: types.CALIBRATION_DATE_UPDATED,
     deviceId,
+  }
+}
+
+function cepheidc360InstrumentLogsReceived(deviceId, deviceOperationId) {
+  return {
+    type: types.CEPHEID_C360_INSTRUMENT_LOG_RECEIVED,
+    deviceId,
+    options: { data: { deviceOperationId } },
   }
 }
 
@@ -351,4 +370,5 @@ module.exports = {
   hardwareErrorActions,
   logDeviceMaintenanceStatus,
   deviceUpdateModuleSerials,
+  cepheidc360InstrumentLogsReceived,
 }

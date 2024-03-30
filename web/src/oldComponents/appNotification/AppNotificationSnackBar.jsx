@@ -37,7 +37,7 @@ class AppNotificationSnackBar extends PureComponent {
   static propTypes = {
     intl: PropTypeOf.intl.isRequired,
     appNotification: PropTypes.objectOf(Error),
-    classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+    classes: PropTypes.object.isRequired,
     showMoreDetails: PropTypes.func.isRequired,
     hideAppNotification: PropTypes.func.isRequired,
   }

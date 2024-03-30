@@ -13,7 +13,7 @@ const {
   differenceInBusinessDays,
 } = require('date-fns')
 const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
-const { knex, filterParams, filterDateRangeParams, sortPageParams, transact } = require('../db')
+const { knex, filterParams, filterDateRangeParams, sortPageParams, sortParams, transact } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const { allResultCategoryToId, allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
@@ -37,6 +37,7 @@ const {
   getDeviceByDeviceId,
 } = require('./common/db')
 const { getSelectListFields } = require('./common/querySelectors')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
 
 async function getDeviceByRequest(request) {
   const {
@@ -314,79 +315,93 @@ async function getDevicePerformance(request) {
 // get devices with different aggregations for reports
 // ---------------------------------
 async function getDevicesForReport(auth, query) {
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    throw Boom.badRequest('Dates are required')
+  }
+
   const dataConstraints = await getConstraints(auth.credentials)
   const { getCount, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(dataConstraints, query)
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
+
+  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
+  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+  /**
+   * normalize dates in `query` for using
+   * in func getBaseQueryForFactResultsDeviceByTimeFrame below
+   */
+  query.minDate = dateFrom
+  query.maxDate = dateTo
 
   /**
    * base query for list of devices
    */
   const getDevices = deviceQuery
     .clone()
-    .modify(sortPageParams, query, 'name')
+    .modify(sortParams, query, 'name')
     .distinct([
       ..._.filter(getSelectListFields(userTimeOffset), elem => _.isString(elem) && elem.indexOf('dms.') < 0),
       'd.serial',
-      'd.siteId',
     ])
   /**
    * get actual list of devices and value `total`
    */
-  const [{ count: total }, dataRaw] = await Promise.all([getCount, getDevices])
+  const [{ count: total }, devices] = await Promise.all([getCount, getDevices])
   /**
-   * lists of device id's and site id's
+   * lists of device id's
    */
-  const deviceIds = _.uniq(dataRaw.map(x => x.id))
-  const siteIds = _.uniq(dataRaw.map(x => x.siteId)).join(',')
+  const deviceIds = _.uniq(devices.map(x => x.id))
+
   /**
-   * base query with all result counts for target device id's and site id's
+   * base query with all result counts for target device id's
    */
-  const queryResults = knex('Result as r')
-    .leftJoin('Sample as sa', 'r.sampleId', 'sa.id')
+  const results = await getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+    timeFrame: 'day',
+  })
+    .whereIn('r.deviceId', deviceIds)
+    .groupBy('r.deviceId')
+    .select('r.deviceId')
+    .sum({
+      totalResults: 'r.resultCount',
+      totalErrors: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.Error} 
+        then r.resultCount 
+        else 0 
+        end`),
+      totalInvalid: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
+        then r.resultCount 
+        else 0 
+        end`),
+
+      totalResults_sameOriginSite: knex.raw(`r.xdrResistanceCounts ->> "$.cntSameOriginSite"`),
+      totalErrors_sameOriginSite: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.Error} 
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
+        else 0 
+        end`),
+      totalInvalid_sameOriginSite: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
+        else 0 
+        end`),
+    })
+
+  const resultsLastUploaded = await knex('Result as r')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
-      sample: 'sa',
     })
     .whereIn('r.deviceId', deviceIds)
     .modify(filterDateRangeParams, query, 'r.endedOn')
-    .select(
-      'r.deviceId',
-      /**
-       * old way to get lastUploadOn was via ResultWorkflowLog.changedOn
-       */
-      knex.raw('MAX(r.updatedOn) as lastUploadOn')
-    )
+    .select('r.deviceId', knex.raw('MAX(r.updatedOn) as lastUploadOn'))
     .groupBy('r.deviceId')
-    .count({
-      totalResults: knex.raw('DISTINCT r.id'),
-      totalErrors: knex.raw(`DISTINCT CASE WHEN r.resultCategory1 = ? THEN r.id ELSE null END`, [
-        resultCategoryIds.Error,
-      ]),
-      totalInvalid: knex.raw(`DISTINCT CASE WHEN r.resultCategory1 = ? THEN r.id ELSE null END`, [
-        resultCategoryIds.Invalid,
-      ]),
-      totalResults_sameOriginSite: knex.raw(
-        `DISTINCT
-        CASE WHEN sa.originSiteId IN (${siteIds}) THEN r.id ELSE null END`
-      ),
-      totalErrors_sameOriginSite: knex.raw(
-        `DISTINCT
-        CASE
-        WHEN sa.originSiteId IN (${siteIds}) and r.resultCategory1 = ?
-        THEN r.id ELSE null
-        END`,
-        [resultCategoryIds.Error]
-      ),
-      totalInvalid_sameOriginSite: knex.raw(
-        `DISTINCT
-        CASE
-        WHEN sa.originSiteId IN (${siteIds}) and r.resultCategory1 = ?
-        THEN r.id ELSE null
-        END`,
-        [resultCategoryIds.Invalid]
-      ),
-    })
-  const results = await queryResults
 
   /**
    * helper func to calculate percentage
@@ -397,11 +412,13 @@ async function getDevicesForReport(auth, query) {
   /**
    * add more fields which depend on aggregations
    */
-  const data = dataRaw.map(device => {
+  const data = devices.map(device => {
     const resultCounts = results.find(x => x.deviceId === device.id) || {}
+    const { lastUploadOn } = resultsLastUploaded.find(x => x.deviceId === device.id) || {}
     const it = {
       ...device,
       ..._.omit(resultCounts, ['deviceId']),
+      lastUploadOn,
     }
     it.errorRate = getPercentage(it.totalResults, it.totalErrors)
     it.errorRate_sameOriginSite = getPercentage(it.totalResults_sameOriginSite, it.totalErrors_sameOriginSite)
@@ -412,6 +429,7 @@ async function getDevicesForReport(auth, query) {
 }
 
 async function getDevicesForRifResistanceReport(auth, query) {
+  const assayExternalIds = ['GxMtbRif', 'GxMtbRifUltra']
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
   const deviceQuery = getDeviceBaseExtendedQuery(
@@ -424,46 +442,53 @@ async function getDevicesForRifResistanceReport(auth, query) {
     dataConstraints,
     { extendJoinToAssays: true }
   )
-    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    .whereIn('a.externalId', assayExternalIds)
     // Group for avoiding join duplications
     .groupBy(['d.id'])
 
-  // get total count for paging
-  const getCount = deviceQuery.clone().count('d.id as count')
+  /**
+   *
+   */
+  const baseFields = ['st.name as state', 'd.id as deviceId', 'd.name', 'lg.name as county']
+  query.assay = assayExternalIds
 
-  const queryResults = knex('Result as r')
-    .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .modify(addConstraints, dataConstraints, {
-      result: 'r',
-      sample: 's',
+  const allCounts = await getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+    timeFrame: 'day',
+  })
+    .where('rca.reportable', true)
+    .select(baseFields)
+    .groupBy('r.deviceId')
+    .sum({
+      totalResults: 'r.resultCount',
+      totalDetected1: knex.raw(`
+        case
+        when r.resultCategory1 = ${resultCategoryIds.Detected} then r.resultCount
+        else 0
+        end
+      `),
+      totalDetected2: knex.raw(`
+        case
+        when r.resultCategory2 = ${resultCategoryIds.Detected} then r.resultCount
+        else 0
+        end
+      `),
     })
-    .whereRaw('r.siteId = d.siteId')
-    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .modify(filterDateRangeParams, query, 'r.endedOn')
 
-  // get rows
-  const getItems = deviceQuery
-    .clone()
-    .modify(sortPageParams, query, 'name')
-    .select([
-      'st.name as state',
-      'd.name',
-      'lg.name as county',
-      queryResults.clone().countDistinct('r.id').as('totalResults'),
-      queryResults
-        .clone()
-        .where('r.resultCategory1', resultCategoryIds.Detected)
-        .countDistinct('r.id')
-        .as('totalDetected1'),
-      queryResults
-        .clone()
-        .where('r.resultCategory2', resultCategoryIds.Detected)
-        .countDistinct('r.id')
-        .as('totalDetected2'),
-    ])
-
-  // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const allDevices = await deviceQuery.clone().select(baseFields).orderBy('d.name')
+  const data = _.map(allDevices, d => {
+    const item = allCounts.find(it => it.deviceId === d.deviceId)
+    return {
+      ...d,
+      totalResults: item?.totalResults || 0,
+      totalDetected1: item?.totalDetected1 || 0,
+      totalDetected2: item?.totalDetected2 || 0,
+    }
+  })
+  const total = data.length
 
   // add more fields which depend on aggregations
   data.forEach(async it => {

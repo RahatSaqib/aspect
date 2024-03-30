@@ -24,6 +24,14 @@ const messages = defineMessages({
     id: 'pages.Notifications.table.categoryHeader',
     defaultMessage: 'Category',
   },
+  notificationsTableRecepientName: {
+    id: 'pages.Notifications.table.notificationsTableRecepientName',
+    defaultMessage: 'Recepient Name',
+  },
+  notificationsTableWebhookRecepient: {
+    id: 'pages.Notifications.table.notificationsTableWebhookRecepient',
+    defaultMessage: 'Webhook Recepient',
+  },
   notificationsTableHeaderData: {
     id: 'pages.Notifications.table.notificationsTableHeaderData',
     defaultMessage: 'Data',
@@ -134,6 +142,10 @@ const messages = defineMessages({
     id: 'pages.Notifications.table.patientId',
     defaultMessage: 'Patient ID',
   },
+  reportName: {
+    id: 'pages.Notifications.table.reportName',
+    defaultMessage: 'Report Name',
+  },
   eventsTableWebhookSent: {
     id: 'pages.Notifications.table.webhookSentHeader',
     defaultMessage: 'Webhook Sent',
@@ -145,6 +157,10 @@ const messages = defineMessages({
   eventsTableSmsSent: {
     id: 'pages.Notifications.table.smsSentHeader',
     defaultMessage: 'SMS Sent',
+  },
+  clickToResult: {
+    id: 'pages.Notifications.table.clickToResult',
+    defaultMessage: 'Click here to go to the result',
   },
 })
 

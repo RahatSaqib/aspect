@@ -11,7 +11,6 @@
       "gxAlertDbColumn": "PatientGender",
       "i18nKeyCaption": "Genderi18nCaptionKey",
       "controlType": "comboBox",
-      "payloadDestinationPath": "patient.PatientGender",
       "source": "patientData.gender",
       "items": [
         {
@@ -37,7 +36,6 @@
       "caption": "Age",
       "i18nKeyCaption": "Agei18nCaptionKey",
       "controlType": "textBox",
-      "payloadDestinationPath": "patient.PatientAge",
       "source": "patientData.age",
       "validation": [
         {
@@ -61,7 +59,6 @@
       "i18nKeyCaption": "RetreatmentCasei18nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.203.value",
-      "payloadDestinationPath": "patient.PreviouslyTreated",
       "source": "patientData.PreviouslyTreated",
       "items": [
         {
@@ -88,7 +85,6 @@
       "i18nKeyCaption": "ReferringFacilityi18nKeyCaption",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.204.value",
-      "payloadDestinationPath": "patient.ReferringFacility",
       "source": "patientData.ReferringFacility",
       "calculated": {
         "fieldId1": 5,
@@ -109,7 +105,6 @@
       "i18nKeyCaption": "Referringphonei18nKeyCaption",
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.205.value",
-      "payloadDestinationPath": "patient.PatientPhone",
       "source": "patientData.phone"
     },
     {
@@ -124,7 +119,6 @@
       "i18nKeyCaption": "RepeatTesti18nCaptionKey",
       "controlType": "comboBox",
       "payloadOriginPath": "data.customFieldData.206.value",
-      "payloadDestinationPath": "patient.RepeatTest",
       "source": "patientData.RepeatTest",
       "items": [
         {

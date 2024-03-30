@@ -1,11 +1,7 @@
 import React from 'react'
 import { Card, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
 import PropTypes from 'prop-types'
-import AspectTitle from './AspectTitle'
-import styles from './Card.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './Card.module.css'
 
 const CardHeader = ({ props }) => {
   const { title, actionComponent, action, classNames } = props
@@ -13,14 +9,22 @@ const CardHeader = ({ props }) => {
 
   return title || actionComponent ? (
     <Grid item xs={12}>
-      <Grid container spacing={1} className={cssClasses('card__headerContainer')}>
+      <Grid container spacing={1} className={styles.card__headerContainer}>
         {title ? (
-          <Grid item xs={6} className={cssClasses('card__title')}>
-            <AspectTitle title={title} classNames={classNames} />
+          <Grid item xs={6} className={styles.card__title}>
+            <div className={styles.title__container}>
+              <span
+                className={`${styles.title__label} ${
+                  classNames?.cardTitleText ? styles[classNames?.cardTitleText] : ''
+                }`}
+              >
+                {title}
+              </span>
+            </div>
           </Grid>
         ) : null}
         {actionComponent ? (
-          <Grid item xs={6} className={cssClasses('card__actionsContainer')}>
+          <Grid item xs={6} className={styles.card__actionsContainer}>
             <ActionComponent props={{ actionComponentProps, action }} />
           </Grid>
         ) : null}
@@ -31,10 +35,10 @@ const CardHeader = ({ props }) => {
 
 const AspectCard = ({ children, classNames, justify, innerSize, title, actionComponent, action, name }) => {
   return (
-    <Card className={cssClasses('card__container')} name={name}>
-      <Grid container justifyContent={justify} className={cssClasses('card__grid')}>
+    <Card className={styles.card__container} name={name}>
+      <Grid container justifyContent={justify} className={styles.card__grid}>
         <CardHeader props={{ title, actionComponent, action, classNames }} />
-        <Grid item xs={12} lg={innerSize} className={cssClasses('card__content')}>
+        <Grid item xs={12} lg={innerSize} className={styles.card__content}>
           {children}
         </Grid>
       </Grid>

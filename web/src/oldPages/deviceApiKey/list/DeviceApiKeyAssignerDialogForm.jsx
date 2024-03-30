@@ -4,11 +4,11 @@ import _fp from 'lodash/fp'
 import PropTypes from 'prop-types'
 import { defineMessages, injectIntl } from 'react-intl'
 import { compose, pure, setPropTypes } from 'recompose'
+import { SiteSelect } from '../../../cleanComponents'
 import CountrySelectField from '../../../oldComponents/geography/CountrySelectField'
 import PartnerSelectField from '../../../oldComponents/partner/PartnerSelectField'
 import recomposeForm from '../../../oldComponents/recomposeForm'
 import DeviceSelectField from '../../../oldComponents/resource/DeviceSelectField'
-import SiteSelectField from '../../../oldComponents/resource/SiteSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import PropTypeOf from '../../../utils/types'
 
@@ -65,7 +65,7 @@ const enhance = compose(
       },
       {
         fieldName: 'siteId',
-        valueFromChangeEvent: _fp.identity,
+        valueFromChangeEvent: event => event.target.value,
       },
       {
         fieldName: 'deviceId',
@@ -149,28 +149,17 @@ function DeviceApiKeyAssignerDialogForm({
           tabIndex="0"
           aria-haspopup
         />
-        <SiteSelectField
+        <SiteSelect
+          id="siteId"
           name="siteId"
-          emptyId="-1"
-          floatingLabelText={formatMessage(messages.siteId)}
-          countryId={values.countryId}
-          partnerId={values.partnerId}
-          value={values.siteId}
-          onSiteChange={onSiteIdChange}
-          errorStyle={{
-            float: 'left',
-            whiteSpace: 'nowrap',
-            textOverflow: 'visible',
-          }}
-          errorText={meta.siteId.touched && meta.siteId.error}
-          fullWidth
-          tabIndex="0"
-          aria-haspopup
+          label={formatMessage(messages.siteId)}
+          value={values.siteId || ''}
+          onChange={onSiteIdChange}
+          error={meta.siteId.touched && meta.siteId.error}
         />
         <DeviceSelectField
           disabled={values.deviceApiKeyIds.length > 1}
           name="deviceId"
-          emptyId="-1"
           floatingLabelText={formatMessage(messages.deviceId)}
           countryId={values.countryId}
           partnerId={values.partnerId}

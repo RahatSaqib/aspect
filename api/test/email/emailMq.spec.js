@@ -4,6 +4,7 @@ const { subDays } = require('date-fns')
 const excel = require('exceljs')
 const { Readable } = require('stream')
 const Promise = require('bluebird')
+const uuid = require('node-uuid')
 
 const { createEmailTestContext } = require('./utils')
 const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
@@ -12,7 +13,7 @@ const { createMessageContext, waitForIdle, waitForAction } = require('../utils/m
 const context = createEmailTestContext({ user: 'admin' })
 
 // action creators
-const { emailMessageCreated, emailMessageReadyForSending, emailMessageSent } = require('../../src/email/actions')
+const { emailMessageCreated, emailMessageReadyForSending, emailMessageProcessed } = require('../../src/email/actions')
 const { columnsDeviceErrorHistoryForAttachment } = require('../../src/result/serviceReport')
 const { messageStatusToId } = require('../../src/shared/dictionary')
 
@@ -35,7 +36,7 @@ describe('Sending Email via Message Queue', () => {
       const actionReady = emailMessageReadyForSending(messageId)
       const waitForReadyForSending = waitForAction(actionReady)
 
-      const actionSent = emailMessageSent(messageId)
+      const actionSent = emailMessageProcessed(messageId)
       const waitForSent = waitForAction(actionSent)
 
       // dispatch to MQ a messageId (generated in EmailMessage)
@@ -171,6 +172,7 @@ describe('Sending Email via Message Queue', () => {
           logLevel: 'SEVERE',
           logFileName: 'C:\\GeneXpert\\log\\XpertCal-2017.10.10_15.49.26.026-0.log',
         }),
+        guid: uuid.v4(),
       })
       context.deviceOperationsToDelete = [deviceOperationId]
 
@@ -181,7 +183,7 @@ describe('Sending Email via Message Queue', () => {
       const actionReady = emailMessageReadyForSending(messageId)
       const waitForReadyForSending = waitForAction(actionReady)
 
-      const actionSent = emailMessageSent(messageId)
+      const actionSent = emailMessageProcessed(messageId)
       const waitForSent = waitForAction(actionSent)
 
       // dispatch to MQ a messageId (generated in EmailMessage)

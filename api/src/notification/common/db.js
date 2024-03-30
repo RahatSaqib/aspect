@@ -13,6 +13,63 @@ async function updateNotificationType(id, fieldsToUpdate) {
   await knex('NotificationType').where({ id }).update(fieldsToUpdate)
 }
 
+async function getMessageStatusData({ emailMessageId, smsMessageId, webhookMessageId }) {
+  let data
+
+  const query = knex('Notification as n')
+    .innerJoin('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+    .innerJoin('Partner as pt', 'nt.partnerId', 'pt.id')
+    .innerJoin('NotificationTypeCategory as ntc', 'nt.notificationTypeCategoryId', 'ntc.id')
+    .select(
+      'nt.id as notificationTypeId',
+      'nt.name as notificationTypeName',
+      'ntc.name as notificationTypeCategoryName',
+      'pt.name as partnerName',
+      'n.createdOn as notificationCreatedOn'
+    )
+
+  if (smsMessageId)
+    data = await query
+      .innerJoin('SmsMessage as sm', 'n.smsMessageId', 'sm.id')
+      .innerJoin('MessageStatus as ms', 'sm.messageStatusId', 'ms.id')
+      .leftJoin('Person as p', 'sm.personId', 'p.id')
+      .select(
+        'sm.updatedOn as messageUpdatedOn',
+        'ms.externalId as messageStatus',
+        'p.name as personName',
+        'p.id as personId',
+        knex.raw('COALESCE(p.cell, p.phone, sm.phoneNumber) as phoneNumber'),
+        'sm.errorData'
+      )
+      .where('sm.id', smsMessageId)
+      .first()
+  else if (emailMessageId)
+    data = await query
+      .innerJoin('EmailMessage as em', 'n.emailMessageId', 'em.id')
+      .innerJoin('MessageStatus as ms', 'em.messageStatusId', 'ms.id')
+      .leftJoin('Person as p', 'em.personId', 'p.id')
+      .select(
+        'em.updatedOn as messageUpdatedOn',
+        'ms.externalId as messageStatus',
+        'p.name as personName',
+        'p.id as personId',
+        knex.raw('COALESCE(p.email, p.email2) as email'),
+        'em.sendResponse'
+      )
+      .where('em.id', emailMessageId)
+      .first()
+  else if (webhookMessageId)
+    data = await query
+      .innerJoin('WebhookMessage as wm', 'n.webhookMessageId', 'wm.id')
+      .innerJoin('MessageStatus as ms', 'wm.messageStatusId', 'ms.id')
+      .leftJoin('Person as p', 'wm.personId', 'p.id')
+      .select('wm.updatedOn as messageUpdatedOn', 'ms.externalId as messageStatus', 'wm.response', 'wm.url')
+      .where('wm.id', webhookMessageId)
+      .first()
+
+  return data
+}
+
 async function getNotification(
   id,
   selectFields = [
@@ -51,24 +108,13 @@ async function getListNotifications(query, credentials) {
     .leftOuterJoin('JobFunction AS jf', leftBuilder =>
       leftBuilder.on(
         knex.raw(
-          `JSON_SEARCH(
-                nti.filterCondition->>'$.jobFunctions[*].jobFunctionId',
-                'one',
-                jf.id
-              ) IS NOT NULL
-            `
+          `JSON_CONTAINS(JSON_EXTRACT(nti.filterCondition, '$.jobFunctions[*].jobFunctionId'), CAST(jf.id AS JSON))`
         )
       )
     )
     .leftOuterJoin('Person AS per', leftBuilder =>
       leftBuilder.on(
-        knex.raw(
-          ` JSON_SEARCH(
-              nti.filterCondition->>'$.persons[*].personId',
-              'one',
-              per.id
-            ) IS NOT NULL`
-        )
+        knex.raw(`JSON_CONTAINS(JSON_EXTRACT(nti.filterCondition, '$.persons[*].personId'), CAST(per.id AS JSON))`)
       )
     )
     .distinct('nti.id AS notificationTypeId', 'per.name AS personName', 'per.id as personId', 'jf.name AS jfName')
@@ -141,7 +187,7 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
         stateConstraints.map(stateId =>
           qb.orWhere(b => {
             b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'state')
-            b.whereRaw(`'${stateId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+            b.whereRaw(`${stateId} MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
           })
         )
       }
@@ -151,7 +197,7 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
         lgaConstraints.map(lgaId =>
           qb.orWhere(b => {
             b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'lga')
-            b.whereRaw(`'${lgaId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+            b.whereRaw(`${lgaId} MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
           })
         )
       }
@@ -161,7 +207,7 @@ function AddNotificationGeographyConstraints(queryBuilder, dataConstraints) {
         siteConstraints.map(siteId =>
           qb.orWhere(b => {
             b.where(knex.raw('nt.filterCondition ->> "$.deviceLevelId"'), 'lab')
-            b.whereRaw(`'${siteId}' MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
+            b.whereRaw(`${siteId} MEMBER OF(nt.filterCondition ->> "$.areaItems[*].value")`)
           })
         )
       }
@@ -466,4 +512,6 @@ module.exports = {
   getReporBasedNotifications,
   getNotificationStatusInfo,
   updateNotificationType,
+  getMessageStatusData,
+  AddNotificationGeographyConstraints,
 }

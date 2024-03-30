@@ -1,14 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import { CircularProgress, Box, Card, CardContent, Grid } from '@mui/material'
 import { useFormikContext } from 'formik'
-import './NotificationFormPage.css'
+import './NotificationFormPage.module.css'
 import isEmpty from 'lodash/isEmpty'
+import { useIntl } from 'react-intl'
 import { DetailHeader } from '../../../cleanComponents'
 import AspectForm from '../../../components/Form'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
 import useJobFunctions from '../../../hooks/jobFunction/useJobFunctions'
 import usePartner from '../../../hooks/partner/usePartner'
-import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import validationSchema from './Forms/validation'
 import messages from './messages'
@@ -16,7 +16,7 @@ import NotificationFormPreview from './NotificationFormPage.Preview'
 import { getFormConfigWithData } from './utils'
 
 const NotificationFormPage = ({ onSubmit }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const [formConfig, setFormConfig] = useState(false)
   const { data: jobFunctions, isLoading } = useJobFunctions()
   const { data: partner, isLoading: partnerLoading } = usePartner()
@@ -38,8 +38,9 @@ const NotificationFormPage = ({ onSubmit }) => {
 }
 
 const NotificationForm = ({ formConfig, onSubmit }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const { formik, meta } = useFormikContext()
+
   return (
     <>
       <DetailHeader name={formConfig.title} back="/browse/notification/types">

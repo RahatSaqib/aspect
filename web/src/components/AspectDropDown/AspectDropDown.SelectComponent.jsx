@@ -1,22 +1,16 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import React, { useEffect, useCallback, useState } from 'react'
-import classnames from 'classnames/bind'
 import find from 'lodash/find'
 import isArray from 'lodash/isArray'
 import isEqual from 'lodash/isEqual'
 import isNil from 'lodash/isNil'
-import isNumber from 'lodash/isNumber'
 import isPlainObject from 'lodash/isPlainObject'
-import isString from 'lodash/isString'
 import PropTypes from 'prop-types'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import Select from 'react-select'
-import useI18n from '../../hooks/useI18n'
 import UI_CONSTS from '../../utils/consts/UI'
 import { getMuiTheme, getAspectTheme } from './AspectDropDown.theme'
-import styles from './Dropdown.css'
-
-const cssClasses = classnames.bind(styles)
+import styles from './Dropdown.module.css'
 
 const SelectComponent = ({
   action: dispatchFromRedux,
@@ -37,7 +31,7 @@ const SelectComponent = ({
   theme,
 }) => {
   messages = messages || {}
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const [currentSelectedOption, setCurrentSelectedOption] = useState(null)
   const [defaultOption] = useState(selectedValue)
   const [options, setOptions] = useState([])
@@ -65,8 +59,11 @@ const SelectComponent = ({
     [identifier, dispatchFromRedux]
   )
 
+  const classes = `${styles.select__container} ${
+    classNames.controlContainer ? styles[classNames.controlContainer] : ''
+  }`
   return (
-    <div className={cssClasses('select__container', { [classNames.controlContainer]: !!classNames.controlContainer })}>
+    <div className={classes}>
       <Select
         components={components}
         name={identifier}
@@ -148,25 +145,18 @@ function getOptionByValue(data, requestedValue, idKey) {
     return find(data, { [idKey]: value })
   }
 
-  // When the requested value is a string key
-  if (isString(requestedValue)) {
-    // Take the option in different ways, depending on the data format
-    if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
+  // Take the option in different ways, depending on the data format
+  if (isPlainObject(data)) return find(data, { [idKey]: requestedValue })
 
-    if (isArray(data)) {
-      const simpleListFind = data.find(option => option[idKey] === requestedValue)
-      // options can be nested/grouped: ie {label:'a', options:[{label:'a1',name:'a1'}]}
-      const groupedListFind = data
-        .flatMap(o => o.options)
-        .find(option => option !== undefined && option[idKey] === requestedValue)
-      return simpleListFind || groupedListFind
-    }
+  if (isArray(data)) {
+    const simpleListFind = data.find(option => option[idKey] === requestedValue)
+    // options can be nested/grouped: ie {label:'a', options:[{label:'a1',name:'a1'}]}
+    const groupedListFind = data
+      .flatMap(o => o.options)
+      .find(option => option !== undefined && option[idKey] === requestedValue)
 
-    if (isNumber(requestedValue)) return data.find(option => option[idKey] === requestedValue)
+    return simpleListFind || groupedListFind
   }
-
-  // When the requested value is a position in the array
-  if (isNumber(requestedValue)) return data[requestedValue]
 }
 
 export function getSelectedOptions(data, someValue, idKey) {

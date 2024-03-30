@@ -1,7 +1,6 @@
-import React, { useEffect, useMemo } from 'react'
-import classnames from 'classnames/bind'
+import React from 'react'
 import { Helmet } from 'react-helmet'
-import { useDispatch, useSelector } from 'react-redux'
+import { useIntl } from 'react-intl'
 import {
   ErrorBoundary,
   CovidResultGraph,
@@ -9,7 +8,7 @@ import {
   QuartersMtbDetectedGraph,
   QuartersRifDetectedGraph,
   TbDetectedGraph,
-  TbResultsGraph,
+  TbRifDetectedGraph,
   TestsOverTimeGraph,
   TreatmentStatusGraph,
   TrendInYearsAllTestsGraph,
@@ -21,53 +20,44 @@ import {
   InventoryStatusGraph,
 } from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
-import useI18n from '../../../hooks/useI18n'
-import { useAuthState } from '../../../providers/AuthProvider'
-import { fetchAssays } from '../../../store/AssayRedux'
-import styles from './index.css'
+import useAssayList from '../../../hooks/assay/useAssayList'
+import useResultCategoryGroup from '../../../hooks/result/useResultCategoryGroup'
+import useAuthState from '../../../hooks/useAuthState'
+import styles from './index.module.css'
 import messages from './messages'
-import Reports from './Reports'
 import SummaryStatus from './SummaryStatus'
 
-const cssClasses = classnames.bind(styles)
+const tbPermissions = ['GxMtbRif', 'GxMtbRifUltra']
+const xdrPermissions = ['GxMtbXdr']
+const hivPermissions = [
+  'abbottM2000DBSHivVL',
+  'abbottM2000PlasmaHivVL',
+  'assayAlereQHiv12Detect',
+  'assayAlereQHiv12VLPlasma',
+  'assayCobasHivVl',
+  'GxHiv1Vl',
+  'QHivVL',
+  'ReporterHivVL',
+]
+const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
 
 const Status = () => {
-  const { formatMessage } = useI18n()
-  const dispatch = useDispatch()
+  const { formatMessage } = useIntl()
   const { isCountry } = useAuthState()
-  useEffect(() => {
-    dispatch(fetchAssays(false))
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
-
-  const assaysImmutable = useSelector(({ assay }) => assay.items)
-  const assays = useMemo(() => assaysImmutable.toJS(), [assaysImmutable])
-  const tbPermissions = ['GxMtbRif', 'GxMtbRifUltra']
-  const xdrPermissions = ['GxMtbXdr']
-  const hivPermissions = [
-    'abbottM2000DBSHivVL',
-    'abbottM2000PlasmaHivVL',
-    'assayAlereQHiv12Detect',
-    'assayAlereQHiv12VLPlasma',
-    'assayCobasHivVl',
-    'GxHiv1Vl',
-    'QHivVL',
-    'ReporterHivVL',
-  ]
-  const covidPermissions = ['assayGXCovid19', 'assayMP96Covid19', 'assayQS7Covid19', 'assayGenericCovid19']
-
+  const { data: assays } = useAssayList()
+  const { data: resultCategoryGroups } = useResultCategoryGroup(assays?.map(x => x.id))
   return (
-    <div className={cssClasses('Container')}>
+    <div className={styles.Container}>
       <Helmet title={formatMessage(messages.statusTitle)} />
 
       <PermissionChecker permissions={['dashboard']}>
         <ErrorBoundary>
-          <SummaryStatus className={cssClasses('Section--summary')} dashboard="home" />
+          <SummaryStatus className={styles.Section__summary} dashboard="home" />
         </ErrorBoundary>
       </PermissionChecker>
 
-      {assays ? (
-        <div className={cssClasses('wrapper')}>
+      {assays && resultCategoryGroups ? (
+        <div className={styles.wrapper}>
           <PermissionChecker permissions={['dashboard']}>
             <ErrorBoundary>
               <TestsOverTimeGraph assaysFromState={assays} /> {/*  1  */}
@@ -77,10 +67,12 @@ const Status = () => {
           {assays.some(a => tbPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <TbDetectedGraph assaysFromState={assays} /> {/* 2 */}
+                <TbDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 2 */}
               </ErrorBoundary>
               <ErrorBoundary>
-                <TbResultsGraph assaysFromState={assays} /> {/* 3 */}
+                <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 3 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -88,7 +80,8 @@ const Status = () => {
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <XDRResultsGraph assaysFromState={assays} /> {/* 4 */}
+                <XDRResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 4 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -124,7 +117,8 @@ const Status = () => {
           {assays.some(a => covidPermissions.includes(a.externalId)) && !isCountry('BD') ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <CovidResultGraph assaysFromState={assays} /> {/* 11 */}
+                <CovidResultGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 11 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -132,7 +126,8 @@ const Status = () => {
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <HivResultsGraph assaysFromState={assays} /> {/* 12 */}
+                <HivResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* 12 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -157,10 +152,6 @@ const Status = () => {
           ) : null}
         </div>
       ) : null}
-
-      <ErrorBoundary>
-        <Reports className={cssClasses('Section--withStatus')} title={formatMessage(messages.reportsTitle)} />
-      </ErrorBoundary>
     </div>
   )
 }

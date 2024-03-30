@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { startOfDay, endOfDay, subDays, endOfMonth, getDayOfYear, getDaysInYear } = require('date-fns')
+const { startOfDay, endOfDay, subDays, endOfMonth, getMonth } = require('date-fns')
 
 const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
@@ -120,7 +120,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
   const now = new Date()
-  const denominator = (getDayOfYear(now) / getDaysInYear(now)) * 12
+  const denominator = getMonth(now) + 1
   const { baseQuerySince5YearsAgo, baseQueryLast24h } = gx10CBaseQueryProvincial({
     query,
     dataConstraints,
@@ -156,7 +156,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
       acc[key][year] = acc[key][year] || {}
       acc[key][year][month] = acc[key][year][month] || { ...emptyCounts }
       counterNames.forEach(counterName => {
-        acc[key][year][month][counterName] += item[counterName]
+        acc[key][year][month][counterName] += item[counterName] ?? 0
       })
       return acc
     },
@@ -169,7 +169,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
       const key = query.lgaId ? lgaId : stateId
       acc[key] = acc[key] || { locationName, ...emptyCounts }
       counterNames.forEach(counterName => {
-        acc[key][counterName] += item[counterName]
+        acc[key][counterName] += item[counterName] ?? 0
       })
       return acc
     },
@@ -196,15 +196,15 @@ async function listGx10CTrendsProvincial({ auth, query }) {
             const year = +key
             byYear[year] = byYear[year] || { ...emptyCounts }
             _.keys(byLocation[year]).forEach(month => {
-              byYear[year][counterName] += byLocation[year][month][counterName]
+              byYear[year][counterName] += byLocation[year][month][counterName] ?? 0
               if (year === currentYear) {
-                currYearTotals[counterName] += byCurrYear[month][counterName]
+                currYearTotals[counterName] += byCurrYear[month][counterName] ?? 0
               } else if (year === previousYear) {
-                prevYearMeanPerMonth[counterName] += byPrevYear[month][counterName]
+                prevYearMeanPerMonth[counterName] += byPrevYear[month][counterName] ?? 0
               }
             })
           })
-        currYearMeanPerMonth[counterName] = currYearTotals[counterName] / denominator
+        currYearMeanPerMonth[counterName] = (currYearTotals[counterName] ?? 0) / denominator
         prevYearMeanPerMonth[counterName] /= 12
       })
 

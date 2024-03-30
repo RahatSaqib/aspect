@@ -1,47 +1,51 @@
 import React from 'react'
-import classnames from 'classnames/bind'
 import isNil from 'lodash/isNil'
-import useI18n from '../../../hooks/useI18n'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import { useIntl } from 'react-intl'
+import { Link } from 'react-router-dom'
+import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as Tr, DataTableCell as Td } from '../../../oldComponents/shared/tableBody'
-import { getAspectDisplayPreferences } from '../../../utils/LocalStorage'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-
-const TableRow = ({ item, extraColumns }) => {
-  const { formatMessage, format } = useI18n()
+const TableRow = ({ item, extraColumns, onColumnClick }) => {
+  const { formatMessage, format } = useIntl()
   const { dateTimeFormat } = getAspectDisplayPreferences().toJS()
   return (
-    <Tr className={cssClasses('TableRow')}>
-      <Td className={cssClasses('TableCell')}>{item.name}</Td>
-      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
+    <Tr style={{ cursor: 'default' }}>
+      <Td className={styles.TableCell} onClick={() => onColumnClick({ deviceId: item.deviceId })}>
+        <Link to="#"> {item.name}</Link>
+      </Td>
+      <Td hiddenOn="xl" className={styles.TableCell}>
         {item.deviceStatus ? formatMessage(messages[item.deviceStatus]) : formatMessage(messages.notAvailable)}
       </Td>
-      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={styles.TableCell}>
         {item.stateName}
       </Td>
-      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={styles.TableCell}>
         {item.lgaName}
       </Td>
-      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={styles.TableCell}>
         {isNil(item.lastPingOn)
           ? formatMessage(messages.notAvailable)
           : format(new Date(item.lastPingOn), dateTimeFormat)}
       </Td>
-      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={styles.TableCell}>
         {isNil(item.firstResultEndedOn)
           ? formatMessage(messages.notAvailable)
           : format(new Date(item.firstResultEndedOn), dateTimeFormat)}
       </Td>
-      <Td hiddenOn="xl" className={cssClasses('TableCell')}>
+      <Td hiddenOn="xl" className={styles.TableCell}>
         {isNil(item.lastResultEndedOn)
           ? formatMessage(messages.notAvailable)
           : format(new Date(item.lastResultEndedOn), dateTimeFormat)}
       </Td>
-      <Td className={cssClasses('TableCell')}>{item.total}</Td>
+      <Td onClick={() => onColumnClick({ deviceName: item.name })} className={styles.TableCell}>
+        <Link to="#"> {item.total}</Link>
+      </Td>
       {extraColumns.map(col => (
-        <Td className={cssClasses('TableCell')}>{item[col]}</Td>
+        <Td onClick={() => onColumnClick({ deviceName: item.name, fieldId: col })} className={styles.TableCell}>
+          <Link to="#">{item[col]}</Link>
+        </Td>
       ))}
     </Tr>
   )

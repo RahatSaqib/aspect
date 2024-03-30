@@ -6,3 +6,9 @@
 .result_link {
   color: var(--ming, #34717c);
 }
+
+.icon_cell {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

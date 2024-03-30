@@ -1,6 +1,7 @@
 // ----------- Action Types ---------------------
 const types = {
   NOTIFICATION_CREATED: 'NOTIFICATION_CREATED',
+  NOTIFICATION_MESSAGE_PROCESSED: 'NOTIFICATION_MESSAGE_PROCESSED',
   ISSUE_NOTIFICATION_TRIGGERED: 'ISSUE_NOTIFICATION_TRIGGERED',
   RESULT_ANALYZE_TIMEOUT: 'RESULT_ANALYZE_TIMEOUT',
 }
@@ -23,6 +24,13 @@ function notificationCreated(notificationId) {
   }
 }
 
+function notificationMessageProcessed({ smsMessageId, emailMessageId, webhookMessageId }) {
+  return {
+    type: types.NOTIFICATION_MESSAGE_PROCESSED,
+    data: { smsMessageId, emailMessageId, webhookMessageId },
+  }
+}
+
 function issueNotificationTriggered(issueId, issueTypeId) {
   return {
     type: types.ISSUE_NOTIFICATION_TRIGGERED,
@@ -42,4 +50,5 @@ module.exports = {
   notificationCreated,
   issueNotificationTriggered,
   resultAnalyzeTimeout,
+  notificationMessageProcessed,
 }

@@ -1,25 +1,29 @@
 const _ = require('lodash')
 const { startOfMonth, endOfMonth, subMonths } = require('date-fns')
-const { getBaseQuery: getResultBaseQuery, modifiers } = require('../../../result/query')
-const { filterDateRangeParams, knex } = require('../../../db')
+const Boom = require('@hapi/boom')
+const { filterParams, knex } = require('../../../db')
 const { getAllMonthsInRange } = require('../../../shared/date')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../../fact/common/db')
+const { addConstraints } = require('../../../auth/constraints')
 
 const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) => {
-  const now = new Date()
-  const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    throw Boom.badRequest('Dates are required')
+  }
   let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
   const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
 
-  const baseQuery = getResultBaseQuery(knex, dataConstraints)
-    .modify(modifiers.join.resultCategory1)
-    .modify(modifiers.join.resultCategory2)
-    .leftJoin('Device as d', 'r.deviceId', 'd.id')
+  const baseQuery = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+  })
     .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .select({
       provinceName: 'st.name',
       districtName: 'lg.name',
@@ -30,7 +34,6 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     })
     .groupBy(groupBy)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
     .orderBy('st.name', 'lg.name')
 
   const dateRanges = getAllMonthsInRange(dateFrom.toISOString(), dateTo.toISOString())
@@ -45,16 +48,16 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
 
     baseQuery.select({
       [`${alias}_total`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${minDate}' AND '${maxDate}' THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbDetectedTraceDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId IN ('Detected', 'Trace Detected') THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId IN ('Detected', 'Trace Detected') THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbTraceDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Trace Detected' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Trace Detected' THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbDetectedRifDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.endedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN 1 ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN r.resultCount ELSE 0 END), 0)`
       ),
     })
 

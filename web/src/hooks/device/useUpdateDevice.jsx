@@ -11,7 +11,12 @@ const updateDeviceById = async (device, deviceId) => {
     params: {
       name: device.name,
       shortName: device.shortName,
+      stickerInstrumentSerial: device.stickerInstrumentSerial || null,
+      instrumentModel: device.instrumentModel ?? null,
+      softwareType: device.softwareType ?? null,
+      isDaisyChained: device.isDaisyChained,
       deviceCapacityId: device.dailyCapacityId,
+      moduleBayCapacity: device.moduleBayCapacity,
       notes: device.notes,
       siteId: device.siteId,
       instrumentsConnected: device.instrumentsConnected,

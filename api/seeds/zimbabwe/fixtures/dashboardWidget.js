@@ -1,6 +1,6 @@
 const pick = require('lodash/pick')
 const values = require('lodash/values')
-const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsBase')
+const dashboardWidgetsBase = require('../../fixtures/dashboardWidgetsCommon')
 
 module.exports = {
   stat: values(
@@ -35,6 +35,8 @@ module.exports = {
       'serverUptimeTitle',
       'deviceCalibrationPastDue',
       'deviceCalibratedWhenDue',
+      'totalNumberOfModules',
+      'activeModules',
     ])
   ),
 }

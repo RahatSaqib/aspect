@@ -10,14 +10,13 @@ const issueToDeleteId = []
 async function getPersonByName(personName) {
   return knex('Person as p')
     .join('Geography as g', 'g.id', 'p.geographyId')
-    .join('Job as j', 'p.id', 'j.personId')
-    .join('JobContext as jc', 'jc.jobId', 'j.id')
+    .join('JobContext as jc', 'p.id', 'jc.personId')
     .where({ name: personName })
     .first(
       'p.id as personId',
       'p.lastPartnerId as partnerId',
       'p.geographyId',
-      'j.jobFunctionId',
+      'jc.jobFunctionId',
       'g.countryId',
       'g.stateId',
       'g.lgaId',
@@ -31,7 +30,8 @@ const beforeEachForPerson = async (personName, resultInItsGeography = true, resu
   const { id: resultId } = _.pick(
     await knex('Result as r')
       .join('Device as d', 'r.deviceId', 'd.id')
-      .join('Geography as g', 'g.id', 'd.geographyId')
+      .join('Site as s', 'd.siteId', 's.id')
+      .join('Geography as g', 's.geographyId', 'g.id')
       .where(builder => {
         builder.where('g.countryId', person.countryId)
         const operator = resultInItsGeography ? '=' : '<>'

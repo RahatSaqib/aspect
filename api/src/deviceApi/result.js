@@ -14,6 +14,8 @@ const { convertStringToFloat } = require('../shared/string')
 const { getDevice } = require('../device/service')
 const inventoryUtils = require('../inventory/common/logic')
 const { mergeResultWithPayload } = require('../result/common/logic')
+const { getCustomFieldsFromPayload } = require('../forms/service')
+const { insertSite } = require('../site/common/db')
 
 async function getExistingResult(knex, payload, deviceId) {
   let existingResult = null
@@ -256,7 +258,7 @@ async function getSiteIdVarieties(knex, payload, site, now) {
       if (newSampleOriginSite.shortName.length > 45) {
         newSampleOriginSite.shortName = newSampleOriginSite.shortName.substr(0, 45)
       }
-      const [newSampleOriginSiteId] = await knex('Site').insert(newSampleOriginSite)
+      const [newSampleOriginSiteId] = await insertSite(knex, newSampleOriginSite)
       sampleOriginSite = { id: newSampleOriginSiteId }
     } else {
       await knex('Site')
@@ -436,18 +438,8 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
 
   const existingResultPatientString = _.get(existingResult, 'patientData', null)
   const existingResultPatient = isJson(existingResultPatientString) ? JSON.parse(existingResultPatientString) : {}
-  const patientData = _.has(payload, 'patient')
-    ? JSON.stringify(deepMerge({ ...existingResultPatient }, payload.patient))
-    : existingResultPatientString
 
-  const oemData = _.has(payload, 'oemData') ? String(payload.oemData) : _.get(existingResult, 'oemData')
-
-  const rawData = _.has(payload, 'rawData') ? String(payload.rawData) : _.get(existingResult, 'rawData')
-
-  const gxAlertTestId = _.get(payload, 'gxAlertTestId')
-  const gxAlertSyncedOn = gxAlertTestId ? now : null
-
-  const result = {
+  const preProcessedResult = {
     latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', site.latitude)),
     longitude: _.get(payload, 'location.longitude', _.get(existingResult, 'longitude', site.longitude)),
     assayId: assay.id,
@@ -459,7 +451,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     sampleGroup: _.get(payload, 'sample.group', _.get(existingResult, 'sampleGroup', null)),
     resultCategory1,
     resultCategory2,
-    resultData: JSON.stringify(resultData),
+    resultData,
     resultDataHash,
     startedOn: testStartedOn,
     endedOn: _.get(payload, 'endedOn', _.get(existingResult, 'endedOn', null)),
@@ -473,10 +465,12 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     instrumentSerial: _.get(payload, 'instrument.serial', _.get(existingResult, 'instrumentSerial', null)),
     moduleSerial: _.get(payload, 'instrument.module.serial', _.get(existingResult, 'moduleSerial', null)),
     moduleName: _.get(payload, 'instrument.module.name', _.get(existingResult, 'moduleName', null)),
-    oemData,
-    rawData,
+    oemData: _.has(payload, 'oemData') ? String(payload.oemData) : _.get(existingResult, 'oemData'),
+    rawData: _.has(payload, 'rawData') ? String(payload.rawData) : _.get(existingResult, 'rawData'),
     researchId: _.get(payload, 'research.id', _.get(existingResult, 'researchId', null)),
-    patientData,
+    patientData: _.has(payload, 'patient')
+      ? deepMerge({ ...existingResultPatient }, payload.patient)
+      : existingResultPatient,
     senderVersion: _.get(payload, 'sender.version', _.get(existingResult, 'senderVersion', null)),
     senderOperator: _.get(payload, 'sender.operator', _.get(existingResult, 'senderOperator', null)),
     notes: _.get(payload, 'notes', _.get(existingResult, 'notes', null)),
@@ -485,8 +479,26 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     updatedOn: now,
     createdOn: _.get(existingResult, 'createdOn', now),
     reportableSiteId,
-    gxAlertTestId,
-    gxAlertSyncedOn,
+    gxAlertTestId: _.get(payload, 'gxAlertTestId'),
+    gxAlertSyncedOn: _.get(payload, 'gxAlertTestId') ? now : null,
+  }
+
+  // Add custom fields
+  const customFieldsData = await getCustomFieldsFromPayload(
+    payload,
+    await getCountryCodeByDeviceId(knex, deviceId),
+    site.partnerId,
+    assay.id
+  )
+
+  const preProcessedResultWithCustomFields = _.merge(preProcessedResult, customFieldsData)
+
+  const result = {
+    ...preProcessedResultWithCustomFields,
+    resultData: JSON.stringify(preProcessedResultWithCustomFields.resultData),
+    patientData: !_.isEmpty(preProcessedResultWithCustomFields.patientData)
+      ? JSON.stringify(preProcessedResultWithCustomFields.patientData)
+      : null,
   }
 
   // Processed result contains result with additional fields
@@ -805,7 +817,8 @@ function includesIgnoreCase(collection, value) {
 
 async function getCountryByDeviceId(knex, deviceId) {
   return knex('Device as d')
-    .join('Geography as g', 'd.geographyId', 'g.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('d.id', deviceId)
     .first()
@@ -913,6 +926,17 @@ async function getLatestResultWorkflowLog(knex, resultId) {
     .orderBy('id', 'desc')
     .first('operator', 'changedOn', 'resultWorkflowStatusId')
   return latestResultWorkFlowLog
+}
+
+const getCountryCodeByDeviceId = async (knex, deviceId) => {
+  const { countryCode } = await knex('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('Country as c', 'g.countryId', 'c.id')
+    .where({ 'd.id': deviceId })
+    .first('c.abbreviation as countryCode')
+
+  return countryCode
 }
 
 module.exports = {

@@ -12,7 +12,7 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
   const [device] = await knex
     .from('Device as d')
     .leftJoin('Site as s', 'd.siteId', 's.id')
-    .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .where({ 'd.id': deviceId })
     .select(
@@ -70,7 +70,10 @@ async function preProcessMergeResult({ knex, deviceId, payload, now }) {
         _.get(existingResult, 'resultCategory2') !== 'NoResult'
       ) {
         // We should never merge an incomplete result over a complete result
-        throw Boom.conflict('A later version of this result already exists')
+        const error = Boom.conflict('A later version of this result already exists')
+        error.output.statusCode = 201
+        error.reformat()
+        throw error
       }
     }
     if (!_.get(payload, 'endedOn')) {

@@ -3,10 +3,18 @@ const { validateAllGeographyFilterParams } = require('../geography/requestValida
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const createSite = require('./createSite')
 const updateSite = require('./updateSite')
-const { listSites, showSite, listSitesForSelectList, listSitesWithReporters, disableSite } = require('./service')
+const {
+  listSites,
+  showSite,
+  listSitesForSelectList,
+  listSitesWithReporters,
+  disableSite,
+  getReportingSites,
+} = require('./service')
 const { postSchema, updateSchema } = require('./common/validations')
 
 const { exportSites, exportReporters } = require('./serviceReports')
+const { reportingSitesQueryParams, reportingSitesResponse } = require('./common/validation/reportingSite')
 
 function listSitesBaseConfig() {
   return {
@@ -286,6 +294,33 @@ const routes = [
       validate: postSchema,
     },
   },
+  {
+    method: 'GET',
+    path: '/site/reportingSites',
+    handler: asyncHandler(getReportingSites),
+    config: {
+      description: 'Sites for Reporter Dashboard',
+      notes: `List of sites with some aggregations about reporters`,
+      auth: { scope: ['site:view'] },
+      validate: {
+        query: {
+          ...reportingSitesQueryParams(),
+          ...validateSortPageParams(
+            'siteName',
+            'samplesRegistered',
+            'resultsReporting',
+            'resultDownloaded',
+            'requiresFollowUp',
+            'followUpPending',
+            'followUpConfirmed',
+            'followUpNotPossible'
+          ),
+        },
+      },
+      response: {
+        schema: reportingSitesResponse(),
+      },
+    },
+  },
 ]
-
 module.exports = { routes }

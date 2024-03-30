@@ -3,7 +3,7 @@ module.exports = require('../utils').seed(seed, __filename)
 
 const bcrypt = require('bcrypt')
 const _ = require('lodash')
-const { addMilliseconds, addMinutes, subDays, differenceInDays } = require('date-fns')
+const { addMilliseconds, addMinutes, subDays, differenceInDays, subMonths } = require('date-fns')
 const { upsertJobFunctionFixture } = require('../common')
 const jobFunctionsFixtureMyanmar = require('./fixtures/jobFunctions_myanmar')
 const config = require('../../src/config')
@@ -22,6 +22,7 @@ const {
   resultWorkflowStatusToId,
   sampleTypeToId,
 } = require('../../src/shared/dictionary')
+const { insertSite } = require('../../src/site/common/db')
 
 const { loadPlugin } = require('../../src/plugin/loadPlugin')
 const { seedDataCategory } = require('../dataCategoryLow')
@@ -146,12 +147,9 @@ async function seed(knex) {
   }
 
   // Admin Job
-  const [jobIdAdmin] = await knex('Job').insert({
+  await knex('JobContext').insert({
     personId: adminPersonId,
     jobFunctionId: jobFunctionIdAdmin,
-  })
-  await knex('JobContext').insert({
-    jobId: jobIdAdmin,
     geographyId: myanmarGeographyId,
   })
 
@@ -187,12 +185,9 @@ async function seed(knex) {
         timezone: myanmarCountry.timezone,
         ...auditFields,
       })
-      const [jobIdRegion] = await knex('Job').insert({
+      await knex('JobContext').insert({
         personId: regionPersonId,
         jobFunctionId: jobFunctionIdRegionalOfficer,
-      })
-      await knex('JobContext').insert({
-        jobId: jobIdRegion,
         geographyId: regionId,
       })
       let targetTotal = 0
@@ -333,7 +328,7 @@ async function seed(knex) {
         hoursEnd: site.hoursEnd,
         ...auditFields,
       }
-      const [siteId] = await knex('Site').insert(siteData)
+      const [siteId] = await insertSite(knex, siteData)
       siteData.id = siteId
       siteDatas.push(siteData)
 
@@ -358,7 +353,6 @@ async function seed(knex) {
         _.map(site.devices, async deviceSeed => {
           const device = {
             partnerId,
-            geographyId: siteGeographyId,
             siteId,
             defaultReportableSiteId: siteId,
             deviceTypeId: deviceTypes.CepheidGeneXpert.id,
@@ -372,6 +366,7 @@ async function seed(knex) {
             timezone: deviceSeed.timezone,
             notes: deviceSeed.notes,
             lastSeenOn: now,
+            putInService: subMonths(now, 2),
           }
           const [deviceId] = await knex('Device').insert(device)
           device.id = deviceId
@@ -477,12 +472,9 @@ async function seed(knex) {
         canLogIn: true,
         ...auditFields,
       })
-      const [jobIdLab] = await knex('Job').insert({
+      await knex('JobContext').insert({
         personId: labPersonId,
         jobFunctionId: jobFunctionIdLabUser,
-      })
-      await knex('JobContext').insert({
-        jobId: jobIdLab,
         siteId,
       })
     })
@@ -649,18 +641,17 @@ async function seed(knex) {
   }
 
   const deviceIds = await knex('Device as d')
-    .select('j.personId', 'd.id as deviceId')
+    .select('jc.personId', 'd.id as deviceId')
     .join('JobContext as jc', 'jc.siteId', 'd.siteId')
-    .join('Job as j', 'jc.jobId', 'j.id')
     .where({ jobFunctionId: jobFunctionIdLabUser })
     .union(function () {
-      this.select('j.personId', 'd.id as deviceId')
+      this.select('jc.personId', 'd.id as deviceId')
         .from('Device as d')
-        .leftJoin('Geography as g1', 'd.geographyId', 'g1.id')
+        .leftJoin('Site as s', 'd.siteId', 's.id')
+        .leftJoin('Geography as g1', 's.geographyId', 'g1.id')
         .leftJoin('Geography as g2', 'g2.stateId', 'g1.stateId')
         .join('JobContext as jc', 'jc.geographyId', 'g2.id')
-        .join('Job as j', 'jc.jobId', 'j.id')
-        .where({ partnerId, jobFunctionId: jobFunctionIdRegionalOfficer })
+        .where({ 'd.partnerId': partnerId, jobFunctionId: jobFunctionIdRegionalOfficer })
     })
     .then(items =>
       _.orderBy(items, ['deviceId']).reduce((memo, row) => {
@@ -712,8 +703,7 @@ async function seed(knex) {
   const luPolicies = await knex('NotificationType as nt')
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .join('Issue as i', 'i.issueTypeId', 'nt.issueTypeId')
-    .join('Job as j', 'j.jobFunctionId', 'nt.jobFunctionId')
-    .join('JobContext as jc', 'jc.jobId', 'j.id')
+    .join('JobContext as jc', 'jc.jobFunctionId', 'nt.jobFunctionId')
     .join('AlertTemplate as at', 'at.id', 'mt.alertTemplateId')
     .where({ 'nt.partnerId': partnerId })
     .whereIn('i.id', issueIds)
@@ -722,7 +712,7 @@ async function seed(knex) {
     .select(
       'nt.id as notificationTypeId',
       'nt.jobFunctionId',
-      'j.personId',
+      'jc.personId',
       'i.id as issueId',
       'i.issueTypeId',
       'i.siteId',
@@ -815,8 +805,7 @@ async function seed(knex) {
   const roPolicies = await knex('NotificationType as nt')
     .join('MessageType as mt', 'nt.messageTypeId', 'mt.id')
     .join('Issue as i', 'i.issueTypeId', 'nt.issueTypeId')
-    .join('Job as j', 'j.jobFunctionId', 'nt.jobFunctionId')
-    .join('JobContext as jc', 'jc.jobId', 'j.id')
+    .join('JobContext as jc', 'jc.jobFunctionId', 'nt.jobFunctionId')
     .join('AlertTemplate as at', 'at.id', 'mt.alertTemplateId')
     .where({ 'nt.partnerId': partnerId })
     .whereIn('i.id', issueIds)
@@ -826,7 +815,7 @@ async function seed(knex) {
       'nt.id as notificationTypeId',
       'nt.name as notificationTypeName',
       'nt.jobFunctionId',
-      'j.personId',
+      'jc.personId',
       'i.id as issueId',
       'i.issueTypeId',
       'i.siteId',

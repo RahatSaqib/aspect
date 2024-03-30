@@ -1,38 +1,35 @@
 import React from 'react'
-import classnames from 'classnames/bind'
-import useI18n from '../../../hooks/useI18n'
-import styles from '../../../oldComponents/shared/DataTableRow.css'
+import { useIntl } from 'react-intl'
+import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
-const cssClasses = classnames.bind(styles)
-
 const InventoryLogTableRow = ({ inventoryLogItem }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   return (
-    <TableRow className={cssClasses('TableRow')}>
-      <TableCell className={cssClasses('TableCell')}>
+    <TableRow className={styles.TableRow}>
+      <TableCell className={styles.TableCell}>
         {inventoryLogItem.createdOn ? formatDateTime(inventoryLogItem.createdOn) : formatMessage(messages.notAvailable)}
       </TableCell>
-      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.siteName}</TableCell>
-      <TableCell className={cssClasses('TableCell')}>
+      <TableCell className={styles.TableCell}>{inventoryLogItem.siteName}</TableCell>
+      <TableCell className={styles.TableCell}>
         {messages[inventoryLogItem.consumableNameI18nKey]
           ? formatMessage(messages[inventoryLogItem.consumableNameI18nKey])
           : inventoryLogItem.consumableName}
       </TableCell>
 
       {inventoryLogItem.lotNumber !== undefined ? (
-        <TableCell className={cssClasses('TableCell')}>
+        <TableCell className={styles.TableCell}>
           {inventoryLogItem.lotNumber ? inventoryLogItem.lotNumber : formatMessage(messages.notAvailable)}
         </TableCell>
       ) : null}
 
-      <TableCell className={cssClasses('TableCell')}>
+      <TableCell className={styles.TableCell}>
         <span
           className={
             inventoryLogItem.expirationDate !== null && new Date(inventoryLogItem.expirationDate) < new Date()
-              ? cssClasses('alert')
+              ? styles.alert
               : null
           }
         >
@@ -42,8 +39,8 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
         </span>
       </TableCell>
 
-      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.quantity}</TableCell>
-      <TableCell className={cssClasses('TableCell')}>
+      <TableCell className={styles.TableCell}>{inventoryLogItem.quantity}</TableCell>
+      <TableCell className={styles.TableCell}>
         {messages[inventoryLogItem.consumableReasonI18nKey]
           ? formatMessage(messages[inventoryLogItem.consumableReasonI18nKey], {
               refSiteName: inventoryLogItem.refSiteName
@@ -52,7 +49,7 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
             })
           : ''}
       </TableCell>
-      <TableCell className={cssClasses('TableCell')}>{inventoryLogItem.notes}</TableCell>
+      <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
     </TableRow>
   )
 }

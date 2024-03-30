@@ -1050,6 +1050,16 @@ async function getWorkflowStatusLogByResultId(request) {
   return result
 }
 
+/*  
+When will this return a duplicate?
+ - Here is an example of a return value that was duplicated in Ukraine: 806279_634634_ee5025da
+   - Instrument 806729 ran a test that for a duplicate sample ID
+   - Sample IDs are hand entered and not unique and this is normal
+   - The test started at a time where the hour ended with 6 on the 34th minute
+   - The start time and the end time are the same which means this test hadn't completed at the time of being uploaded
+   - This time should have been 06:34 or 16:34
+   - If the same device starts 2 tests using the same sample ID at the same minute 10 hours apart, and those tests do not complete, this function will create a duplicated value
+*/
 function createUniqueIdForResult(instrumentSerial, testStartedOn, testEndedOn, sampleId) {
   if (!instrumentSerial || !testStartedOn || !testEndedOn || !sampleId) {
     return null
@@ -1491,6 +1501,26 @@ async function currentResultAggregations(request) {
     throw Boom.forbidden('You do not have access to results')
   }
 
+  /**
+   * date range must be defined
+   */
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    return Boom.badRequest('Dates are required')
+  }
+  /**
+   * See 'NOTE' in file
+   * PkDashboard/pages/MtbRifSection/CurrentTestingPage/CurrentTestingGraph.jsx.
+   *
+   * Notice here that datetime has format 'yyyy-01-01' and 'yyyy-12-31'.
+   * Like
+   *    minDate: 2024-01-01T00:00:00.000+06:00
+   *    maxDate: 2024-12-31T23:59:59.999+06:00
+   * And below we cut only date part YYYY-MM-DD for using in knex queries
+   */
+  query.minDate = minDate.substring(0, 10)
+  query.maxDate = maxDate.substring(0, 10)
+
   const now = new Date()
   const currentYear = now.getFullYear()
   const currentMonth = now.getMonth() + 1
@@ -1528,7 +1558,7 @@ async function currentResultAggregations(request) {
   /**
    * List of the number of tests in date range groupped by xxx
    */
-  const data = await processGroupedQuery(baseQuery, groupBy, dateColumn)
+  const data = await processGroupedQuery(knex, baseQuery, groupBy, dateColumn)
 
   if (groupBy.includes('month') && query.minDate && query.maxDate) {
     // Get all months in date range (YYYY-MM)
@@ -1865,7 +1895,7 @@ async function followUpAggregations(request) {
     groupBy.push('followUp')
   }
 
-  const data = await processGroupedQuery(resultQuery, groupBy)
+  const data = await processGroupedQuery(knex, resultQuery, groupBy)
 
   return { data }
 }
@@ -2286,8 +2316,17 @@ async function xdrAssayGraphAggregations(request) {
       cnt_mtb: MtbDetected = 0,
       cnt_flq: FqrDetected = 0,
       cnt_inh: InhDetected = 0,
+      cnt_amk: AmkDetected = 0,
+      cnt_kan: KanDetected = 0,
+      cnt_cap: CapDetected = 0,
+      cnt_eth: EthDetected = 0,
     } = item || {}
     const FqrToMtbPercentage = MtbDetected === 0 ? 0 : (100 * FqrDetected) / MtbDetected
+    const InhToMtbPercentage = MtbDetected === 0 ? 0 : (100 * InhDetected) / MtbDetected
+    const AmkToMtbPercentage = MtbDetected === 0 ? 0 : (100 * AmkDetected) / MtbDetected
+    const KanToMtbPercentage = MtbDetected === 0 ? 0 : (100 * KanDetected) / MtbDetected
+    const CapToMtbPercentage = MtbDetected === 0 ? 0 : (100 * CapDetected) / MtbDetected
+    const EthToMtbPercentage = MtbDetected === 0 ? 0 : (100 * EthDetected) / MtbDetected
 
     return {
       month,
@@ -2295,20 +2334,53 @@ async function xdrAssayGraphAggregations(request) {
       MtbDetected,
       FqrDetected,
       InhDetected,
+      AmkDetected,
+      KanDetected,
+      CapDetected,
+      EthDetected,
       FqrToMtbPercentage,
+      InhToMtbPercentage,
+      AmkToMtbPercentage,
+      KanToMtbPercentage,
+      CapToMtbPercentage,
+      EthToMtbPercentage,
     }
   })
 
   return {
     grouped: data,
     // series
-    keysFromGrouped: ['TotalTests', 'MtbDetected', 'FqrDetected', 'InhDetected', 'FqrToMtbPercentage'],
+    keysFromGrouped: [
+      'TotalTests',
+      'MtbDetected',
+      'FqrDetected',
+      'InhDetected',
+      'AmkDetected',
+      'KanDetected',
+      'CapDetected',
+      'EthDetected',
+      'FqrToMtbPercentage',
+      'InhToMtbPercentage',
+      'AmkToMtbPercentage',
+      'KanToMtbPercentage',
+      'CapToMtbPercentage',
+      'EthToMtbPercentage',
+    ],
     i18nKeys: {
       TotalTests: 'TotalTests',
       MtbDetected: 'MtbDetected',
       FqrDetected: 'FqrDetected',
       InhDetected: 'InhDetected',
+      AmkDetected: 'AmkDetected',
+      KanDetected: 'KanDetected',
+      CapDetected: 'CapDetected',
+      EthDetected: 'EthDetected',
       FqrToMtbPercentage: 'FQRPercent',
+      InhToMtbPercentage: 'INHPercent',
+      AmkToMtbPercentage: 'AMKPercent',
+      KanToMtbPercentage: 'KANPercent',
+      CapToMtbPercentage: 'CAPPercent',
+      EthToMtbPercentage: 'ETHPercent',
     },
   }
 }

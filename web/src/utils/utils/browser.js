@@ -1,10 +1,6 @@
-import window from 'global/window'
-
 export function getClientName() {
   return `${getBrowserNameAndVersion()} on ${window.navigator.platform}`
 }
-
-export const getClientType = 'web'
 
 export function getClientId() {
   return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, char => {
@@ -61,10 +57,19 @@ function getBrowserInfo() {
 
 export const gotoWithReturnUrl = (url, navigate, location) => {
   const searchParams = new URLSearchParams(location.search)
-
+  searchParams.delete('returnUrl')
   const q = new URLSearchParams({
     returnUrl: `${location.pathname}?${searchParams.toString()}`,
   })
 
   navigate(`${url}?${q.toString()}`)
+}
+
+export const getReturnUrl = (location, defaultReturnUrl) => {
+  const params = new URLSearchParams(location.search)
+  return params.has('returnUrl') ? params.get('returnUrl') : defaultReturnUrl
+}
+
+export const gotoReturnUrl = (navigate, location, defaultReturnUrl) => {
+  navigate(getReturnUrl(location, defaultReturnUrl))
 }

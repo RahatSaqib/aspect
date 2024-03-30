@@ -1,15 +1,13 @@
 import React from 'react'
 import { Card, IconButton, LinearProgress, TableBody } from '@mui/material'
-import classnames from 'classnames/bind'
 import Immutable from 'immutable'
 import PropTypes from 'prop-types'
 import { Helmet } from 'react-helmet'
 import { MdFileDownload } from 'react-icons/md'
-import { defineMessages } from 'react-intl'
+import { defineMessages, useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { useParams } from 'react-router-dom'
 import { compose, withProps, withHandlers, lifecycle } from 'recompose'
-import useI18n from '../../../../hooks/useI18n'
 import BrowseEmptyList from '../../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../../oldComponents/BrowseTablePaginator'
 import Summary from '../../../../oldComponents/Summary'
@@ -20,14 +18,12 @@ import {
   composeSanitizer,
 } from '../../../../utils/selectors/searchParams'
 import { formatDate } from '../../../../utils/utils/dateFormat'
-import styles from '../styles.css'
+import styles from '../styles.module.css'
 import {
   DeviceOperationDataTable,
   DeviceOperationDataTableHead,
   DeviceOperationDataTableRow,
 } from './DeviceOperationDataTable'
-
-const cssClasses = classnames.bind(styles)
 
 const EMPTY_DATE = new Date()
 
@@ -154,12 +150,12 @@ const DeviceDetailOperation = ({
   pageSize,
   onExportClick,
 }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   return (
     <div>
       <Helmet title={device.get('name')} />
-      <section className={cssClasses('Section', 'Section--first')}>
-        <Card className={cssClasses('Section__Content')}>
+      <section className={`${styles.Section} ${styles.Section__first}`}>
+        <Card className={styles.Section__Content}>
           <div>
             <Summary title="Firmware" description="TODO: 72.43.102" />
             <Summary
@@ -175,11 +171,11 @@ const DeviceDetailOperation = ({
           </div>
         </Card>
       </section>
-      <section className={cssClasses('Section')}>
-        <Card className={cssClasses('Section__Content')}>
-          <header className={cssClasses('Header')}>
-            <div className={cssClasses('Header__Title')}>Operation history</div>
-            <div className={cssClasses('Header__Actions')}>
+      <section className={styles.Section}>
+        <Card className={styles.Section__Content}>
+          <header className={styles.Header}>
+            <div className={styles.Header__Title}>Operation history</div>
+            <div className={styles.Header__Actions}>
               <IconButton onClick={onExportClick}>
                 <MdFileDownload />
               </IconButton>
@@ -191,7 +187,7 @@ const DeviceDetailOperation = ({
             ) : items.currentIdList.isEmpty() ? (
               <BrowseEmptyList />
             ) : (
-              <DeviceOperationDataTable className={cssClasses('DeviceOperationDataTable')}>
+              <DeviceOperationDataTable className={styles.DeviceOperationDataTable}>
                 <DeviceOperationDataTableHead
                   navigate={navigate}
                   location={location}

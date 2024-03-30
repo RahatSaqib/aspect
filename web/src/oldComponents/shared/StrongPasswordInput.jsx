@@ -8,7 +8,7 @@ import isEmpty from 'lodash/isEmpty'
 import PropTypes from 'prop-types'
 import { defineMessages } from 'react-intl'
 import PropTypeOf from '../../utils/types'
-import styles from './Shared.css'
+import styles from './Shared.module.css'
 
 const blue = 'rgb(78, 145, 252)'
 const red = 'rgb(226, 18, 18)'
@@ -218,11 +218,11 @@ const StrongPasswordInput = ({
 }
 
 StrongPasswordInput.propTypes = {
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
-  input: PropTypes.object.isRequired, // eslint-disable-line
-  meta: PropTypes.object.isRequired, // eslint-disable-line
-  textFieldProps: PropTypes.object.isRequired, // eslint-disable-line
-  popOverProps: PropTypes.object.isRequired, // eslint-disable-line
+  classes: PropTypes.object.isRequired,
+  input: PropTypes.object.isRequired,
+  meta: PropTypes.object.isRequired,
+  textFieldProps: PropTypes.object.isRequired,
+  popOverProps: PropTypes.object.isRequired,
   intl: PropTypeOf.intl.isRequired,
 }
 

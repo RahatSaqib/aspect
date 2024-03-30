@@ -4,7 +4,6 @@ import isPast from 'date-fns/isPast'
 import parseISO from 'date-fns/parseISO'
 import chunk from 'lodash/chunk'
 import filter from 'lodash/filter'
-import find from 'lodash/find'
 import isNil from 'lodash/isNil'
 import map from 'lodash/map'
 import max from 'lodash/max'
@@ -12,7 +11,7 @@ import min from 'lodash/min'
 import omit from 'lodash/omit'
 import omitBy from 'lodash/omitBy'
 import range from 'lodash/range'
-import { dateFNSLocales } from '../../../providers/I18nProvider'
+import dateFNSLocales from '../../../providers/I18nProvider/dateFNSLocales'
 
 function buildColumnsFromData({ columns, columnOrder, contextualMenu = false }) {
   const output = []
@@ -52,15 +51,6 @@ function getFirstAndLastVisibleRowNumbers(dataLength, pageIndex, pageSize) {
   return false
 }
 
-function getCurrentColumnIndexAndShift(visibleColumns, direction, index) {
-  const columnsToShuffle = [...visibleColumns]
-  const columns = columnsToShuffle.map(({ id }) => id)
-  const from = index
-  const to = direction === 'left' ? index - 1 : index + 1
-  columns.splice(to, 0, columns.splice(from, 1)[0])
-  return columns
-}
-
 function timeSinceFromUTC(val, locale) {
   const date = parseISO(val)
   const dateFNSLocale = dateFNSLocales[locale]
@@ -82,10 +72,6 @@ function removeNullFromCollection(collection) {
   return omitBy(collection, isNil)
 }
 
-function determineSortDirection(direction) {
-  return (direction && direction === 'desc') || false
-}
-
 function useUrlQuery(search) {
   return new URLSearchParams(search)
 }
@@ -95,47 +81,28 @@ function allowOnlyAPIKeys(params) {
   return omit(params, omitKeys)
 }
 
-function getColumnIdFromFilterKey(config, filters) {
-  const output = []
-  const { columns } = config
-  const filterStrings = Object.fromEntries(new URLSearchParams(filters))
-
-  map(filterStrings, (value, key) => {
-    const configColumn = find(columns, { filterKey: key })
-    if (configColumn) {
-      const { key: id } = configColumn
-      return output.push({ id, value })
-    }
-  })
-
-  return output
-}
-
-function getReturnUrl(returnUrlRaw, defaultUrl) {
-  if (!returnUrlRaw) {
-    return defaultUrl
-  }
-  let path = returnUrlRaw
-  let returnUrl = ''
-  const index = returnUrlRaw.indexOf('?')
-  if (index !== -1) {
-    path = returnUrlRaw.substring(0, index)
-    returnUrl = returnUrlRaw.substring(index + 1)
-  }
-  const query = new URLSearchParams(returnUrl)
-  return `${path}?${query.toString()}`
-}
+// function getReturnUrl(returnUrlRaw, defaultUrl) {
+//   if (!returnUrlRaw) {
+//     return defaultUrl
+//   }
+//   let path = returnUrlRaw
+//   let returnUrl = ''
+//   const index = returnUrlRaw.indexOf('?')
+//   if (index !== -1) {
+//     path = returnUrlRaw.substring(0, index)
+//     returnUrl = returnUrlRaw.substring(index + 1)
+//   }
+//   const query = new URLSearchParams(returnUrl)
+//   return `${path}?${query.toString()}`
+// }
 
 export {
   allowOnlyAPIKeys,
   buildColumnsFromData,
-  determineSortDirection,
-  getColumnIdFromFilterKey,
-  getCurrentColumnIndexAndShift,
   getFirstAndLastVisibleRowNumbers,
   removeNullFromCollection,
   timeAndDate,
   timeSinceFromUTC,
   useUrlQuery,
-  getReturnUrl,
+  // getReturnUrl,
 }

@@ -14,8 +14,7 @@
       "i18nKeyCaption": "MWHealthFacilityNameI8nCaptionKey",
       "gxAlertDbColumn": "MWHealthFacilityName",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.21.value",
-      "payloadDestinationPath": "patient.MWHealthFacilityName"
+      "payloadOriginPath": "data.customFieldData.21.value"
     },
     {
       "id": 22,
@@ -31,8 +30,7 @@
       "i18nKeyCaption": "MWPatientSurnameI8nCaptionKey",
       "gxAlertDbColumn": "MWPatientSurname",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.22.value",
-      "payloadDestinationPath": "patient.MWPatientSurname"
+      "payloadOriginPath": "data.customFieldData.22.value"
     },
     {
       "id": 25,
@@ -70,8 +68,7 @@
       "i18nKeyCaption": "MWGenderPregBfI8nCaptionKey",
       "gxAlertDbColumn": "MWGenderPregBf",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.25.value",
-      "payloadDestinationPath": "patient.MWGenderPregBf"
+      "payloadOriginPath": "data.customFieldData.25.value"
     },
     {
       "id": 27,
@@ -87,8 +84,7 @@
       "i18nKeyCaption": "MWDateSampleDrawnI8nCaptionKey",
       "gxAlertDbColumn": "MWDateSampleDrawn",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.27.value",
-      "payloadDestinationPath": "patient.MWDateSampleDrawn"
+      "payloadOriginPath": "data.customFieldData.27.value"
     },
     {
       "id": 20,
@@ -104,8 +100,7 @@
       "i18nKeyCaption": "MWHealthFacilityDistrictI8nCaptionKey",
       "gxAlertDbColumn": "MWHealthFacilityDistrict",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.20.value",
-      "payloadDestinationPath": "patient.MWHealthFacilityDistrict"
+      "payloadOriginPath": "data.customFieldData.20.value"
     },
     {
       "id": 23,
@@ -121,8 +116,7 @@
       "i18nKeyCaption": "MWPatientFirstNameI8nCaptionKey",
       "gxAlertDbColumn": "MWPatientFirstName",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.23.value",
-      "payloadDestinationPath": "patient.MWPatientFirstName"
+      "payloadOriginPath": "data.customFieldData.23.value"
     },
     {
       "id": 24,
@@ -138,8 +132,7 @@
       "i18nKeyCaption": "MWPatientDateOfBirthI8nCaptionKey",
       "gxAlertDbColumn": "MWPatientDateOfBirth",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.24.value",
-      "payloadDestinationPath": "patient.MWPatientDateOfBirth"
+      "payloadOriginPath": "data.customFieldData.24.value"
     },
     {
       "id": 36,
@@ -155,8 +148,7 @@
       "i18nKeyCaption": "MWPersonCollectingSampleSurnameI8nCaptionKey",
       "gxAlertDbColumn": "MWPersonCollectingSampleSurname",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.36.value",
-      "payloadDestinationPath": "patient.MWPersonCollectingSampleSurname"
+      "payloadOriginPath": "data.customFieldData.36.value"
     },
     {
       "id": 37,
@@ -172,8 +164,7 @@
       "i18nKeyCaption": "MWPersonCollectingSampleFirstNameI8nCaptionKey",
       "gxAlertDbColumn": "MWPersonCollectingSampleFirstName",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.37.value",
-      "payloadDestinationPath": "patient.MWPersonCollectingSampleFirstName"
+      "payloadOriginPath": "data.customFieldData.37.value"
     },
     {
       "id": 38,
@@ -189,8 +180,7 @@
       "i18nKeyCaption": "MWPersonCollectingSamplePhoneNumberI8nCaptionKey",
       "gxAlertDbColumn": "MWPersonCollectingSamplePhoneNumber",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.38.value",
-      "payloadDestinationPath": "patient.MWPersonCollectingSamplePhoneNumber"
+      "payloadOriginPath": "data.customFieldData.38.value"
     },
     {
       "id": 39,
@@ -206,8 +196,7 @@
       "i18nKeyCaption": "MWPersonCollectingSampleHTCProviderIDI8nCaptionKey",
       "gxAlertDbColumn": "MWPersonCollectingSampleHTCProviderID",
       "completionWeight": 10,
-      "payloadOriginPath": "data.customFieldData.39.value",
-      "payloadDestinationPath": "patient.MWPersonCollectingSampleHTCProviderID"
+      "payloadOriginPath": "data.customFieldData.39.value"
     }
   ],
   "refForms": []

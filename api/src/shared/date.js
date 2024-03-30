@@ -21,7 +21,7 @@ const {
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
-const { formatInTimeZone } = require('date-fns-tz')
+const { formatInTimeZone, zonedTimeToUtc } = require('date-fns-tz')
 
 function getDateOrDefault(object, propertyPath, defaultValue) {
   const date = _.get(object, propertyPath)
@@ -36,6 +36,42 @@ function getTimezoneOffsetFromNumber(timezoneOffset) {
   return offset
 }
 
+/** Slides an UTC date the amount of hours between UTC and the specified IANA timezone
+ * @param {date} date - An UTC date
+ * @param {string} timeZoneIANA - A String representing a IANA time zone
+ * @returns a new Date object representing the same date and time in the target timezone
+ * @example
+ * slideDateToTimeZone(new Date(2030,0,1), 'Asia/Karachi')
+ *
+ * will return 2030-01-01T05:00:00.000Z wich is zero hours of new year in Karachi (+05:00)
+ * @description This function returns a different moment that the one specified.
+ */
+const slideDateToTimeZone = (date, timeZoneIANA) => zonedTimeToUtc(date, timeZoneIANA)
+
+/** Format an UTC Date into a full ISO string in the time offset of specified time zone
+ * @param {Date} date - An UTC date
+ * @param {String} timeZoneIANA - A string representing a IANA time zone
+ * @returns a string representing the same date in the specified offset
+ * @example
+ * formatDateInTimeZone(new Date(2030,0,1), 'Asia/Karachi')
+ *
+ * Will return a '2030-01-01T05:00:00+05:00', note that it's the same date as input parameter,
+ * just expressed in Karachi time zone
+ */
+const formatDateInTimeZone = (date, timeZoneIANA) => formatInTimeZone(date, timeZoneIANA, "yyyy-MM-dd'T'HH:mm:ssXXX")
+
+/** Changes the time offset of a date to get the same date and time in the target time zone.
+ * @param {Date} date - An UTC date
+ * @param {String} timeZoneIANA - A string representing a IANA time zone
+ * @returns A new Date object slided the amount of hours between UTC and the input time zone, expressed as ISO full string
+ * @description This function it's the same as chain slideDateToTimeZone and then formatDateInTimeZone.
+ * @example
+ * Given 2020-01-01T00:00:00.000Z as date and 'Asia/Karachi' time zone, it will return 2020-01-01T00:00:00.000+05:00.
+ * Note that it takes into account DST, as it's not performing a simple replace but using date-fns-tz library.
+ */
+const replaceOffset = (date, timeZoneIANA) =>
+  formatDateInTimeZone(slideDateToTimeZone(date, timeZoneIANA), timeZoneIANA)
+
 const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset = '+00:00') => {
   return knex.raw(`CONCAT_WS(
     '-',
@@ -43,6 +79,7 @@ const getMonthYearUserTimeZoneField = (knex, field, alias = 'monthYear', offset 
     LPAD(CAST(MONTH(CONVERT_TZ(${field},'+00:00','${offset}')) AS CHAR ),2,'0')
     ) ${alias ? ` as ${alias}` : ''}`)
 }
+
 const getMonthYearField = (knex, field, alias = 'monthYear') =>
   knex.raw(`CONCAT_WS(
     '-',
@@ -61,9 +98,24 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
  * e.g.:
  * getDateTimeProjectionInUserTimeZone(knex, 'd.lastSeenOn', '+05:00', 'lastSeen')
  * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
+ * @description - NOTE: Don't use the CONVERT_TZ overload that receives a IANA time zone as parameter,
+ * use this instead and obtain the offset using date-fns-tz, as we are not updating mysql time_zone db.
  */
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
   knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`)
+
+/**
+ * - Generates knex code build an expression over a datetime field in the specified timezone.
+ * @param {*} knex - Knex ref.
+ * @param {string} field - Name of the field to select.
+ * @param {string} offset - Time offset in ISO format (e.g. +05:00)
+ * @returns Expression to be added to a Knex query, representing plain datetime value converted a specified TZ
+ * @example
+ * .where('r.endedOn', '>', getDateTimeExpressionInTimeZone(knex, 'd.lastSeenOn', '+05:00'))
+ * returns:
+ * where `r.endedOn` > CONVERT_TZ(`d.lastSeen`, '+00:00', '+05:00')
+ */
+const getDateTimeExpressionInTimeZone = (knex, field, offset) => knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}")`)
 
 const getISODateUserTimeZoneField = (knex, field, alias = 'isoDate', offset = '+00:00') =>
   knex.raw(
@@ -283,15 +335,16 @@ function getDatesFromQuery(query) {
   }
 }
 
-/**
- * Convert a Timezone name in a timeOffset
+/** Converts a Timezone name in a timeOffset
  * @param {string} timeZone - ISO 8601 timezone String (i.e. Australia/Canberra)
  * @param {Date} date - Date to consider DST offset modifiers. fallback to new Date()
  * @returns - Time Offset in '[+/-]hh:mm' format (i.e. '+05:00')
+ * @description - Useful when you need to use {@link getDateTimeProjectionInUserTimeZone} or directly mysql CONVERT_TZ function,
+ * which takes as argument the time offset in the format this function returns.
  */
-function getOffsetFromTimeZone(timeZone) {
+function getOffsetFromTimeZone(timeZone, date = new Date()) {
   try {
-    return formatToTimeZone(new Date(), 'Z', { timeZone })
+    return formatToTimeZone(date, 'Z', { timeZone })
   } catch (error) {
     return '+00:00'
   }
@@ -313,7 +366,10 @@ function getOffsetFromIsoDateStringInMinutes(isoDateTime) {
  * @returns String containing the timezone offset in '[+/-]hh:mm' format, (i.e. '-03:00')
  */
 function getOffsetFromIsoDateString(isoDateTime) {
-  return typeof isoDateTime === 'string' && REGEX_ISODATESTRING.test(isoDateTime) && isoDateTime.slice(-1) !== 'Z'
+  const isoDateTimeSting = _.isDate(isoDateTime) ? isoDateTime.toISOString() : isoDateTime
+  return typeof isoDateTime === 'string' &&
+    REGEX_ISODATESTRING.test(isoDateTimeSting) &&
+    isoDateTimeSting.slice(-1) !== 'Z'
     ? isoDateTime.slice(-6)
     : '+00:00'
 }
@@ -348,6 +404,8 @@ function arrayofIANATimezone(timezone) {
 }
 
 function getAllMonthsInRange(minDate, maxDate) {
+  minDate = _.isString(minDate) ? minDate : minDate.toISOString()
+  maxDate = _.isString(maxDate) ? maxDate : maxDate.toISOString()
   let allRanges = []
   let currentMonth = getLocalDateTimeStringInUtc(minDate)
   while (currentMonth <= getLocalDateTimeStringInUtc(maxDate)) {
@@ -355,6 +413,11 @@ function getAllMonthsInRange(minDate, maxDate) {
     currentMonth = addMonths(currentMonth, 1)
   }
   return allRanges.sort()
+}
+
+function getDateInMilliSeconds(date) {
+  const providedDate = new Date(date)
+  return providedDate.getTime()
 }
 
 module.exports = {
@@ -378,12 +441,16 @@ module.exports = {
   getMonthYearUserTimeZoneField,
   getISODateUserTimeZoneField,
   getDateTimeProjectionInUserTimeZone,
+  getDateTimeExpressionInTimeZone,
   dayOfYear,
   getWellFormattedDateStringWithTimezone,
   getFormattedDateTimeWithTimezone,
   getFormattedDate,
   getDatesFromQuery,
   getOffsetFromTimeZone,
+  slideDateToTimeZone,
+  formatDateInTimeZone,
+  replaceOffset,
   getOffsetFromIsoDateString,
   getOffsetFromIsoDateStringInMinutes,
   getTimeZoneFromUser,
@@ -394,4 +461,5 @@ module.exports = {
   daysBetweenDates,
   arrayofIANATimezone,
   getAllMonthsInRange,
+  getDateInMilliSeconds,
 }

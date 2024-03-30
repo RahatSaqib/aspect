@@ -2,7 +2,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 const bcrypt = require('bcrypt')
 const { promisify } = require('util')
-const { addMinutes } = require('date-fns')
+const { addMinutes, subMonths } = require('date-fns')
 const truenatDeviceTypes = require('./fixtures/truenatDevice/DeviceType.json')
 const truenatAssays = require('./fixtures/truenatDevice/Assays.json')
 const truenatPatientDataSchema = require('./fixtures/truenatDevice/PatientDataSchema.json')
@@ -12,6 +12,7 @@ const { deviceApprovalToId } = require('../src/shared/dictionary')
 const { randomToken } = require('../src/deviceApi/apiKey')
 const { passwordSaltRounds } = require('../src/config')
 const upsertConsumables = require('./common/upsert_consumables')
+const { insertSite } = require('../src/site/common/db')
 
 const bcryptHash = promisify(bcrypt.hash)
 
@@ -178,7 +179,7 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
       .andWhere('geographyId', geographyId)
       .first()
     if (!truenatLab) {
-      const [truenatLabId] = await knex('Site').insert({
+      const [truenatLabId] = await insertSite(knex, {
         ...auditFields,
         name: truenatDevice.siteName,
         shortName: truenatDevice.siteShortName,
@@ -204,14 +205,15 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
         deviceTypeId: truenatDeviceTypeId,
         deviceApprovalId: deviceApprovalApprovedId,
         partnerId,
-        geographyId,
         siteId: truenatLab.id,
         defaultReportableSiteId: truenatLab.id,
         serial: truenatDevice.deviceSerial,
         createdOn: new Date(),
         updatedOn: new Date(),
         lastPingOn: new Date(),
+        lastPingFromIp: `3.41.60.${Math.floor(Math.random() * 255)}`,
         lastSeenOn: new Date(),
+        putInService: subMonths(new Date(), 2),
       })
       existingTruenatDevice = await knex('Device').where('id', newTruenatDeviceId).first()
       if (existingTruenatDevice.deviceApprovalId !== deviceApprovalApprovedId) {
@@ -227,9 +229,6 @@ async function upsertTruenatDevices(knex, truenatDevices, partnerExternalId, adm
       }
       if (truenatDevice.deviceShortName && existingTruenatDevice.shortName !== truenatDevice.deviceShortName) {
         deviceUpdates.shortName = truenatDevice.deviceShortName
-      }
-      if (geographyId && existingTruenatDevice.geographyId !== geographyId) {
-        deviceUpdates.geographyId = geographyId
       }
       if (truenatLab.id && existingTruenatDevice.siteId !== truenatLab.id) {
         deviceUpdates.siteId = truenatLab.id

@@ -37,10 +37,6 @@ const admin = {
     },
     {
       module: 'device',
-      activity: 'edit',
-    },
-    {
-      module: 'device',
       activity: 'admin',
     },
     {
@@ -196,7 +192,7 @@ const manager = {
     },
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'inventory',
@@ -217,10 +213,6 @@ const manager = {
     {
       module: 'dashboard',
       activity: 'inventory',
-    },
-    {
-      module: 'dashboard',
-      activity: 'report',
     },
     {
       module: 'dashboard',
@@ -907,10 +899,6 @@ const remoteHealthWorker = {
     },
     {
       module: 'dashboard',
-      activity: 'report',
-    },
-    {
-      module: 'dashboard',
       activity: 'site',
     },
     {
@@ -965,7 +953,7 @@ const labManager = {
     },
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'person',
@@ -1296,7 +1284,7 @@ const labAdmin = {
   permissions: [
     {
       module: 'device',
-      activity: 'edit',
+      activity: 'admin',
     },
     {
       module: 'result',

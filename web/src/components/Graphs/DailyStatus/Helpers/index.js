@@ -10,19 +10,18 @@ import map from 'lodash/map'
 import mapValues from 'lodash/mapValues'
 import range from 'lodash/range'
 import { months } from '../../../../messages'
-import { i18nWrapper } from '../../../../providers/I18nProvider'
 
-const { formatMessage } = i18nWrapper()
-
-const formatDate = (month, day) => `${formatMessage(months[month])} - ${day}`
-
-function groupDateRanges(data) {
+function groupDateRanges(data, formatMessage) {
   const output = []
   map(data, (daysOfWeek, week) => {
     const firstDayOfPeriod = first(daysOfWeek)
     const lastDayOfPeriod = last(daysOfWeek)
-    const min = formatDate(firstDayOfPeriod.getMonth(), firstDayOfPeriod.getDate())
-    let max = daysOfWeek.length > 1 ? formatDate(lastDayOfPeriod.getMonth(), lastDayOfPeriod.getDate()) : false
+    const min = `${formatMessage(months[firstDayOfPeriod.getMonth()])} - ${firstDayOfPeriod.getDate()}`
+
+    let max =
+      daysOfWeek.length > 1
+        ? `${formatMessage(months[lastDayOfPeriod.getMonth()])} - ${lastDayOfPeriod.getDate()}`
+        : false
     if (max && firstDayOfPeriod.getMonth() === lastDayOfPeriod.getMonth()) {
       max = lastDayOfPeriod.getDate()
     }
@@ -84,20 +83,14 @@ const getDayTitle = ({
     : ''
 }
 
-const setClassNames = (item, cssClasses) => {
-  if (item.classNames) {
-    item.classNames = mapValues(item.classNames, className => cssClasses(className))
-  }
-}
-
-const setInitialValue = (items, id, initialValue, cssClasses, callback) => {
+const setInitialValue = (items, id, initialValue, styles, callback) => {
   const item = items.find(x => x.id === id)
   if (item) {
     if (!isUndefined(initialValue)) {
       item.initialValue = initialValue
     }
 
-    setClassNames(item, cssClasses)
+    item.classNames = mapValues(item.classNames, className => styles[className])
 
     if (callback) {
       callback(item)
@@ -106,4 +99,4 @@ const setInitialValue = (items, id, initialValue, cssClasses, callback) => {
   return item
 }
 
-export { dateRangeByWeekDay, getDayTitle, getIndex, getTotalDays, groupDateRanges, setClassNames, setInitialValue }
+export { dateRangeByWeekDay, getDayTitle, getIndex, getTotalDays, groupDateRanges, setInitialValue }

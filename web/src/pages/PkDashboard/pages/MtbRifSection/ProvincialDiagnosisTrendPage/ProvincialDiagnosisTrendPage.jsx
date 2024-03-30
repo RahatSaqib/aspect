@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Grid, Typography } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
   StateAutocomplete,
@@ -10,9 +11,8 @@ import {
   AspectSelect,
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
-import useI18n from '../../../../../hooks/useI18n'
+import useAuthState from '../../../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../../../messages'
-import { useAuthState } from '../../../../../providers/AuthProvider'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
@@ -20,7 +20,7 @@ import messages from '../../../PkDashboard.Messages'
 const endpointParams = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }, { resultCategory1: 'Detected' }]
 
 const ProvincialDiagnosisTrendPage = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const user = useAuthState()
   const [states, setState] = useState([])
   const [lgas, setLgas] = useState([])
@@ -32,7 +32,7 @@ const ProvincialDiagnosisTrendPage = () => {
     .concat(lgas.map(i => ({ lgaId: i.id })))
     .concat(states.map(i => ({ stateId: i.id })))
 
-  const { isLoading, data: { data = [] } = {} } = useQuery(
+  const { isLoading, data } = useQuery(
     ['ProvincialDiagnosisTrendPage_Mtb', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-provincial', params: mergedParams })
@@ -67,7 +67,7 @@ const ProvincialDiagnosisTrendPage = () => {
               setState(newValue)
               setLgas([])
             }}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'state' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <AspectSelect
             multiple
@@ -76,7 +76,7 @@ const ProvincialDiagnosisTrendPage = () => {
             options={states.reduce((p, c) => [...p, ...c.lgas], [])}
             value={lgas}
             onChange={v => setLgas(v)}
-            label={getCustomMessage(messages, 'selectPlaceholder', user, { entity: 'lga' })}
+            label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
       }
@@ -89,19 +89,15 @@ const ProvincialDiagnosisTrendPage = () => {
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
               {formatMessage(messages.provincialDiagnosisTrends)}
             </Typography>
-            {graphData ? (
-              <div style={{ width: '100%' }}>
-                <LineGraph data={graphData} showLabel xField="year" yField="value" seriesField="id" />
-              </div>
-            ) : null}
+            <div style={{ width: '100%' }}>
+              <LineGraph data={graphData} showLabel xField="year" yField="value" seriesField="id" />
+            </div>
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            {tableData ? (
-              <ProvinceTrendTable
-                rows={tableData}
-                title={`${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`}
-              />
-            ) : null}
+            <ProvinceTrendTable
+              rows={tableData}
+              title={`${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`}
+            />
           </Grid>
         </Grid>
       )}

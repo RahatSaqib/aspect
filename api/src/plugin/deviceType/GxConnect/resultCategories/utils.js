@@ -19,7 +19,10 @@ const sanitizeResultTextValue = resultTextValue =>
     .replace(/mtb/, '')
     .replace(/ebola gp/, '')
     .replace(/hiv-1/, '')
+    .replace(/hiv/, '')
     .replace(/sars-cov-2/, '')
+    .replace(/hcv-1/, '')
+    .replace(/hcv/, '')
     // Result Category 2 - Rif
     .replace(/rif resistance/, '')
     // Result Category 2 - XDR
@@ -33,7 +36,6 @@ const sanitizeResultTextValue = resultTextValue =>
     .replace(/ebola np/, '')
     // Needed for cases like 'Low INH Resistance @label_result_detected'
     .replace('  ', ' ')
-    .toLowerCase()
     .trim()
 
 module.exports = {

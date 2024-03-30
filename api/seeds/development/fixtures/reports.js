@@ -1,3 +1,5 @@
+const { xpertSiteSummaryReportSiteWise } = require('../../fixtures/Report')
+
 const deviceSummaryReport = {
   name: 'Device Summary Report',
   description: 'A list of all devices in the system and aggregated test results per device.',
@@ -7,6 +9,7 @@ const deviceSummaryReport = {
   fileName: 'DeviceSummaryReport',
   exportCsv: false,
   sortOrder: 11,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -33,6 +36,7 @@ const missingCartridgesReport = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -48,4 +52,5 @@ const missingCartridgesReport = {
 module.exports = {
   deviceSummaryReport,
   missingCartridgesReport,
+  xpertSiteSummaryReportSiteWise,
 }

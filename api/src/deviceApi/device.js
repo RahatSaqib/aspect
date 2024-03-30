@@ -1,5 +1,6 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
+const uuid = require('node-uuid')
 const { deviceApprovalToId, deviceMaintenanceTypeToId } = require('../shared/dictionary')
 const { parseDateOrDefault } = require('../shared/date')
 const { setDeviceCalibrationStatus } = require('../plugin/utils')
@@ -67,10 +68,10 @@ async function tryAssignLabTechnicianToSite(knex, deviceId, payload) {
   if (labContactName || labContactEmail || installerName || installerEmail) {
     // get device props
     const device = await knex('Device as d')
-      .join('Geography as g', 'd.geographyId', 'g.id')
       .join('Site as s', 'd.siteId', 's.id')
+      .join('Geography as g', 's.geographyId', 'g.id')
       .where('d.id', deviceId)
-      .first('g.countryId', 's.id as siteId', 'd.partnerId', 'd.geographyId')
+      .first('g.countryId', 's.id as siteId', 'd.partnerId', 's.geographyId')
     const { countryId, partnerId, geographyId, siteId } = device || {}
     // throw error if no device found or it is not assigned to site
     if (!device || !siteId) {
@@ -114,9 +115,8 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now, isFastImp
       const { timeZone: defaultTimeZone } =
         (await knex('Site as s')
           .join('Geography as g', 's.geographyId', 'g.id')
-          .join('Country as c', 'c.id', 'g.countryId')
-          .where('g.id', existingDevice.geographyId)
-          .orWhere('s.id', existingDevice.siteId)
+          .join('Country as c', 'g.countryId', 'c.id')
+          .where('s.id', existingDevice.siteId)
           .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
         (await knex('Country as c').first('c.timezone as timeZone'))
       const { existingTimeZone } = (await knex('TimeZone')
@@ -142,7 +142,11 @@ async function updateDeviceDetails(knex, deviceId, deviceDetails, now, isFastImp
         )
     }
   }
-  return knex('Device as d').where({ 'd.id': deviceId }).first()
+  return knex('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .where({ 'd.id': deviceId })
+    .first('d.*', 'g.id as geographyId')
 }
 
 async function getDeviceConfiguration(knex, deviceId) {
@@ -180,6 +184,7 @@ async function addDeviceOperation(knex, deviceId, payload, now = new Date()) {
     endedOn: payload.endedOn,
     createdOn: now,
     hash: payload.hash,
+    guid: uuid.v4(),
   })
   return { id: deviceOperationId }
 }
@@ -228,7 +233,6 @@ async function createNewDevice(
     serial,
     partnerId,
     siteId,
-    geographyId,
     approval,
     shortName,
     macAddress,
@@ -252,8 +256,7 @@ async function createNewDevice(
     (await knex('Site as s')
       .join('Geography as g', 's.geographyId', 'g.id')
       .join('Country as c', 'c.id', 'g.countryId')
-      .where('g.id', geographyId)
-      .orWhere('s.id', siteId)
+      .where('s.id', siteId)
       .first(knex.raw('COALESCE(s.timezoneId, c.timezone) as timeZone'))) ||
     (await knex('Country as c').first('c.timezone as timeZone'))
   const { existingTimeZone } = await knex('TimeZone')
@@ -291,7 +294,6 @@ async function createNewDevice(
   }
   const [deviceId] = await knex('Device').insert({
     partnerId,
-    geographyId,
     siteId,
     deviceTypeId: deviceType.id,
     deviceCapacityId: deviceCapacity ? deviceCapacity.id : null,
@@ -317,8 +319,8 @@ async function createNewDevice(
     createdOn: now,
     createdBy: null,
   })
-
   const device = await knex('Device as d')
+    .leftJoin('Site as s', 'd.siteId', 's.id')
     .join('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
@@ -328,7 +330,7 @@ async function createNewDevice(
       'd.id',
       'd.partnerId',
       'd.siteId',
-      'd.geographyId',
+      's.geographyId',
       'd.name',
       'd.shortName',
       'd.serial',

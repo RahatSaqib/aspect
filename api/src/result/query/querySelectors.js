@@ -54,6 +54,7 @@ const COMMON_LIST_FIELDS_UTC = {
   resultTreatmentStatusId: 'rtsl.resultTreatmentStatusId',
   reportableSiteId: 'r.reportableSiteId',
   reportableSiteName: 'sirep.name',
+  referringSiteId: 'r.referringSiteId',
   transferredBy: 'ptr.name',
   resultStatusLogId: 'r.resultStatusLogId',
   patientCaseId: 'r.patientCaseId',
@@ -287,29 +288,30 @@ const RESULT_STRING_TEMPLATE_FIELDS = [
   'pa.unreliablePatientExternalIdTemplate',
 ]
 
-// ----------------
-const caseCondition = (id, condition) =>
-  knex.raw(`
-      DISTINCT
-      CASE
-        WHEN ${condition}
-        THEN ${id}
-        ELSE null
-      END
-    `)
+const getResultCategoryGroupSumSelector = (assayId, rc1, rc2) => {
+  let query = `IFNULL(SUM(CASE WHEN r.assayId IN (${assayId}) AND r.resultCategory1 = ${rc1} `
 
-// ----------------
-const countXdr = xdrResistanceValue =>
-  caseCondition(
-    'r.id',
-    `
-      JSON_SEARCH(
-        r.resultData ->> '$.detectedResistance[*]',
-        'one',
-        '${xdrResistanceValue}'
-      ) IS NOT NULL
-    `
-  )
+  if (rc2) {
+    query += `AND r.resultCategory2 = ${rc2} `
+  } else {
+    query += `AND r.resultCategory2 IS NULL `
+  }
+
+  query += 'THEN 1 ELSE 0 END), 0)'
+
+  return knex.raw(query)
+}
+
+const getResultXdrResistanceSumSelector = resistance => {
+  return knex.raw(`SUM(
+      CASE WHEN
+        JSON_SEARCH(
+          r.resultData ->> '$.detectedResistance[*]',
+          'one',
+          '${resistance}'
+        ) IS NOT NULL
+      THEN 1 ELSE 0 END)`)
+}
 
 const SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT = {
   id: 'r.id',
@@ -467,6 +469,6 @@ module.exports = {
   SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
   SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT,
 
-  caseCondition,
-  countXdr,
+  getResultCategoryGroupSumSelector,
+  getResultXdrResistanceSumSelector,
 }

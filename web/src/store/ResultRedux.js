@@ -11,7 +11,7 @@ import {
 import { receiveList, Items } from '../utils/metaReducers/items'
 import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/table'
 import { aspectFetch } from '../utils/utils/fetch'
-import { receivedExportResponse } from './GlobalsRedux'
+import { downloadFile } from '../utils/utils/files'
 
 const types = {
   REQUEST_RESULTS: 'REQUEST_RESULTS',
@@ -103,7 +103,7 @@ export function fetchResults(filtersParams, sortCol, sortDir, page, pageSize) {
 
 // TODO: IMPORTANT!!! THIS FUNCTION SHOULD BE REMOVED ONCE WE MIGRATE ALL THE EXPORT COMPONENTS. THE MIGRATED VERSION IS AT THE ResultQueries.js FILE
 export function exportResults(filtersParams, format, sortCol, sortDir, page, pageSize, fileFormat, reportName) {
-  return dispatch => {
+  return () => {
     const filters = getFilters(filtersParams)
     return aspectFetch(
       `/result/export?${stringify({
@@ -136,7 +136,7 @@ export function exportResults(filtersParams, format, sortCol, sortDir, page, pag
       }
     ).then(async elem => {
       const file = await elem.blob
-      dispatch(receivedExportResponse(file, fileFormat, reportName))
+      downloadFile(file, reportName, fileFormat)
     })
   }
 }

@@ -31,8 +31,8 @@ async function addIssueTypes(
       // eslint-disable-next-line prefer-const
       ;({ adminId, partnerId } = await knex('User as u')
         .join('Person as p', 'u.id', 'p.userId')
-        .join('Job as j', 'p.id', 'j.personId')
-        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .join('JobContext as jc', 'p.id', 'jc.personId')
+        .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
         .where('jf.name', 'admin')
         .first('u.id as adminId', 'p.lastPartnerId as partnerId'))
       if (!adminId) return false
@@ -49,7 +49,7 @@ async function addIssueTypes(
     updatedOn: now,
     updatedBy: adminId,
   }
-  const insertedIssueTypes = _.map(await knex('IssueType').select('externalId'), elem => elem.externalId)
+  const insertedIssueTypes = await knex('IssueType').pluck('externalId')
   const issues = await getBaseIssues(auditFields)
   await Promise.each(Object.keys(issues), async elem => {
     // if defaultissues is null all are inserted
@@ -89,10 +89,12 @@ async function addIssueTypes(
           webhookTemplateId,
         })
       }
-      await knex('IssueType').insert({
-        ...issues[elem].issueType,
-        defaultMessageTypeId: messageTypeId,
-      })
+      if (!insertedIssueTypes.includes(issues[elem].issueType.externalId)) {
+        await knex('IssueType').insert({
+          ...issues[elem].issueType,
+          defaultMessageTypeId: messageTypeId,
+        })
+      }
     }
   })
 
@@ -113,8 +115,8 @@ async function addForms(knex, _partnerId, formsNeeded = Object.keys(forms)) {
       // eslint-disable-next-line prefer-const
       ;({ partnerId } = await knex('User as u')
         .join('Person as p', 'u.id', 'p.userId')
-        .join('Job as j', 'p.id', 'j.personId')
-        .join('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+        .join('JobContext as jc', 'p.id', 'jc.personId')
+        .join('JobFunction as jf', 'jf.id', 'jc.jobFunctionId')
         .where('jf.name', 'admin')
         .first('p.lastPartnerId as partnerId'))
       if (!partnerId) {

@@ -16,7 +16,7 @@ const {
 const saveNotification = require('./saveNotification')
 const changeNotificationStatus = require('./changeNotificationStatus')
 const getNotification = require('./getNotification')
-const { getHistoryById, getAllHistory } = require('./history')
+const { getAllHistory } = require('./history')
 const deleteNotification = require('./deleteNotification')
 const listPlaceholders = require('./listPlaceholders')
 const { listNotificationCategoryType, listNotificationType } = require('./listSelect')
@@ -101,63 +101,6 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/notification/history/{notificationTypeId}',
-    handler: getHistoryById,
-    config: {
-      description: 'Get all notification history',
-      notes: 'Filtered and sorted list of Notifications',
-      auth: { scope: ['notification'] },
-      validate: {
-        params: {
-          notificationTypeId: Joi.number().integer().positive().required(),
-        },
-        query: {
-          ...validateSortPageParams(),
-        },
-      },
-      response: {
-        options: {
-          allowUnknown: false,
-        },
-        schema: Joi.object().keys({
-          ok: Joi.bool().required().description('False on any non-fatal error'),
-          total: Joi.number().required().description('The total number of items aggregated by consumable'),
-          data: Joi.array()
-            .allow(null)
-            .items(
-              Joi.object().keys({
-                id: Joi.number().description('id'),
-                webhookSent: Joi.number().description('The number of webhook notification sent'),
-                webhookWithErrors: Joi.number().description('The number of webhook notification sent but with errors'),
-                webhookPending: Joi.number().description('The number of webhook notification pending to be sent'),
-                smsSent: Joi.number().description('The number of sms notification sent'),
-                smsWithErrors: Joi.number().description('The number of sms notification sent'),
-                smsPending: Joi.number().description('The number of sms notification sent'),
-                emailSent: Joi.number().description('The number of email notification sent'),
-                emailWithErrors: Joi.number().description('The number of email notification sent with errors'),
-                emailPending: Joi.number().description('The number of email notification pending to be send'),
-                date: Joi.date().description('The date notification was sent or received'),
-                issueId: Joi.number().allow(null).description(`Notification's issueId`),
-                resultId: Joi.number().allow(null).description(`Notification's resultId`),
-                sampleId: Joi.alternatives().allow(null, '').try(Joi.number(), Joi.string()).description('Sample id'),
-                patientId: Joi.string().allow(null, '').description('The patient Id'),
-                emailRecipients: Joi.array()
-                  .allow(null)
-                  .description('Comma-separated person names who get notification email'),
-                smsRecipients: Joi.array()
-                  .allow(null)
-                  .description('Comma-separated person names who get notification sms'),
-                webhookRecipients: Joi.array()
-                  .allow(null)
-                  .description('Comma-separated url who get notification the webhook'),
-              })
-            ),
-        }),
-      },
-    },
-  },
-  {
-    method: 'GET',
     path: '/notification/{id}',
     handler: getNotification,
     config: {
@@ -202,7 +145,7 @@ const routes = [
       validate: {
         payload: saveNotificationPayload,
         params: {
-          id: Joi.string().description('Item id depending on payload.notificationType').required(),
+          id: Joi.number().integer().positive().required().description('NotificationTypeId'),
         },
       },
       response: saveNotificationResponse,
@@ -234,7 +177,7 @@ const routes = [
       validate: {
         payload: changeNotificationStatusPayload,
         params: {
-          id: Joi.string().description('Item id depending on payload.notificationType').required(),
+          id: Joi.number().integer().positive().required().description('NotificationTypeId'),
         },
       },
       response: saveNotificationResponse,
@@ -309,7 +252,7 @@ const routes = [
       auth: { scope: ['notification'] },
       validate: {
         params: {
-          typeCategoryId: Joi.number().allow(null).description('Notification type category id').integer().positive(),
+          typeCategoryId: Joi.string().allow(null).description('Notification type category id'),
         },
       },
       response: {

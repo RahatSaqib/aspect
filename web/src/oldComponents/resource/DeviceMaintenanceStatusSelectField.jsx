@@ -1,13 +1,11 @@
-import React, { useEffect } from 'react'
+import React from 'react'
 import { MenuItem } from '@mui/material'
 import PropTypes from 'prop-types'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useDispatch } from 'react-redux'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { DEVICE_STATUS } from '../../components/QueryFetch/Device/index'
-import useI18n from '../../hooks/useI18n'
 import { deviceStatusMessages } from '../../messages'
-import { types } from '../../store/DeviceMaintenanceStatusRedux'
 import formatI18nMessage from '../../utils/i18n/formatterWeb'
 import SelectField from '../shared/SelectField'
 
@@ -29,19 +27,8 @@ const DeviceMaintenanceStatusSelectField = ({
   onlyManuallySetableStatuses,
   ...restProps
 }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const { data: maintenanceStatuses, isLoading } = useMaintenanceStatus(onlyManuallySetableStatuses)
-  const dispatch = useDispatch()
-
-  useEffect(() => {
-    if (maintenanceStatuses) {
-      dispatch({
-        type: types.RECEIVE_DEVICE_MAINTENCE_STATUS,
-        items: maintenanceStatuses,
-        lastRefreshed: new Date(),
-      })
-    }
-  }, [dispatch, maintenanceStatuses])
 
   const onChange = ({ target: { value } }) => {
     onDeviceMaintenanceStatusChange(value.includes('all') ? undefined : value)

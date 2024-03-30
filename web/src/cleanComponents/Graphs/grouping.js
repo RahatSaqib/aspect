@@ -251,9 +251,9 @@ const pieWidgetType = (_key, value, difference) => {
   return type
 }
 
-const buildLink = (id, assayId, resultCategoryPositiveId, mergedParams) => {
+const buildLink = (formatMessage, formatDate, id, assayId, resultCategoryPositiveId, mergedParams) => {
   let link
-  const { dateRanges } = dateRangeOptions('dateRanges')
+  const { dateRanges } = dateRangeOptions(formatMessage, formatDate, 'dateRanges')
   // const dateRanges = getDateRanges[Object.keys(getDateRanges)]
   const dateMonthStart = mergedParams && mergedParams.length ? mergedParams[0].currentMonth : false
   const dateMonthEnd =
@@ -303,7 +303,7 @@ const valueSplit = (key, value, type, difference) => {
   }
 }
 
-const groupForPieRow = (data, mergedParams) => {
+const groupForPieRow = (formatMessage, formatDate, data, mergedParams) => {
   const keysToRenderOrder = [
     'assayName',
     'cntAll',
@@ -326,7 +326,7 @@ const groupForPieRow = (data, mergedParams) => {
         const heading = `${key}`
         const type = pieWidgetType(key, value, hasChange)
         const format = pieValueFormat(key)
-        const link = buildLink(key, assayId, resultCategoryPositiveId, mergedParams)
+        const link = buildLink(formatMessage, formatDate, key, assayId, resultCategoryPositiveId, mergedParams)
         const val = valueSplit(key, value, type, hasChange)
 
         pieRow[key] = { heading, type, format, link, value: val }

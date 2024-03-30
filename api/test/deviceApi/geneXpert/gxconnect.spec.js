@@ -1424,6 +1424,8 @@ describe('Device API routes for GxConnect Devices', () => {
         assert.equal(result2.moduleSerial, '555-8')
         assert.equal(result2.researchId, 'R123')
         assert.deepEqual(JSON.parse(result2.patientData), {
+          PatientName: 'Unknown',
+          PatientSurname: 'Blood Stained',
           id: 'P-333',
           name: 'Bob',
           surname: 'Hope',
@@ -2139,9 +2141,7 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceLocationDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function () {
-                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-              })
+              .join('Geography as g', 's.geographyId', 'g.id')
               .join('Country as c', 'g.countryId', 'c.id')
               .where({ 'dak.token': apiKey })
               .first('d.id', 's.id as siteId', 'g.id as geographyId', 'c.id as countryId')
@@ -2196,9 +2196,7 @@ describe('Device API routes for GxConnect Devices', () => {
             const deviceLocationDetails = await knex('DeviceApiKey as dak')
               .join('Device as d', 'dak.DeviceId', 'd.id')
               .join('Site as s', 'd.siteId', 's.id')
-              .innerJoin('Geography as g', function () {
-                this.on('d.geographyId', 'g.id').orOn('s.geographyId', 'g.id')
-              })
+              .join('Geography as g', 's.geographyId', 'g.id')
               .join('Country as c', 'g.countryId', 'c.id')
               .where({ 'dak.token': apiKey })
               .first('d.id', 's.id as siteId', 'g.id as geographyId', 'c.id as countryId')
@@ -2409,7 +2407,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   })
                 )
                 .then(res => {
-                  assert.equal(res.status, 409)
+                  assert.equal(res.status, 201)
                 })
                 .catch(assert.fail)
               const result2 = await getLastResult()
@@ -2435,7 +2433,7 @@ describe('Device API routes for GxConnect Devices', () => {
                   })
                 )
                 .then(res => {
-                  assert.equal(res.status, 409)
+                  assert.equal(res.status, 201)
                 })
                 .catch(assert.fail)
               const result3 = await getLastResult()

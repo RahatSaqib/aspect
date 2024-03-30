@@ -4,10 +4,10 @@ exports[`ExportListButton should not render the button 1`] = `""`;
 
 exports[`ExportListButton should shallow render export list correctly 1`] = `
 <div
-  className="export-button-wrapper"
+  className="export_button_wrapper"
 >
   <ForwardRef(Button)
-    className="export-icon-button"
+    className="export_icon_button"
     onClick={[Function]}
     variant="outlined"
   >
@@ -29,7 +29,7 @@ exports[`ExportListButton should shallow render export list correctly 1`] = `
     }
     classes={
       Object {
-        "root": "export-menu-root",
+        "root": "export_menu_root",
       }
     }
     onClose={[Function]}

@@ -22,10 +22,7 @@ const fetchWrapperForQueries = ({ endpoint, method = 'GET', params = {}, customE
 
   return aspectFetch(endpoint, {
     method,
-    errorNotifications: {
-      ...defaultErrors(endpoint),
-      ...customErrorNotifications,
-    },
+    errorNotifications: { ...defaultErrors(endpoint), ...customErrorNotifications },
     body,
   })
 }

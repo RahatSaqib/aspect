@@ -20,22 +20,18 @@ async function getPartner(knex, partnerName) {
 async function getDevice(knex, { countryAbbreviation, partnerId, noResultsSince = null, notIn = [] }) {
   ensureMySqlBeforeNestedTablesOptions(knex)
   return knex('Device as d')
-    .join('Geography as lgaGeography', 'd.geographyId', 'lgaGeography.id')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as lgaGeography', 's.geographyId', 'lgaGeography.id')
     .join('Geography as regionalGeography', function () {
       this.on('lgaGeography.stateId', 'regionalGeography.stateId').onNull('regionalGeography.lgaId')
     })
     .join('Country as c', 'lgaGeography.countryId', 'c.id')
     .join('Person as labUser', 'lgaGeography.id', 'labUser.geographyId')
-    .join('Job as labUserJob', 'labUser.id', 'labUserJob.personId')
+    .join('JobContext as labUserJob', 'labUser.id', 'labUserJob.personId')
     .join('JobFunction as labUserJobFunction', 'labUserJob.jobFunctionId', 'labUserJobFunction.id')
     .join('JobContext as regionalContext', 'regionalGeography.id', 'regionalContext.geographyId')
-    .join('Job as regionalOfficerJob', 'regionalContext.jobId', 'regionalOfficerJob.id')
-    .join(
-      'JobFunction as regionalOfficerJobFunction',
-      'regionalOfficerJob.jobFunctionId',
-      'regionalOfficerJobFunction.id'
-    )
-    .join('Person as regionalOfficer', 'regionalOfficerJob.personId', 'regionalOfficer.id')
+    .join('JobFunction as regionalOfficerJobFunction', 'regionalContext.jobFunctionId', 'regionalOfficerJobFunction.id')
+    .join('Person as regionalOfficer', 'regionalContext.personId', 'regionalOfficer.id')
     .leftJoin('FactDeviceFlag as fdf', 'd.id', 'fdf.deviceId')
     .where({
       'c.abbreviation': countryAbbreviation,
@@ -72,16 +68,11 @@ async function getSite(knex, { countryAbbreviation, partnerId }) {
     })
     .join('Country as c', 'lgaGeography.countryId', 'c.id')
     .join('Person as labUser', 'lgaGeography.id', 'labUser.geographyId')
-    .join('Job as labUserJob', 'labUser.id', 'labUserJob.personId')
+    .join('JobContext as labUserJob', 'labUser.id', 'labUserJob.personId')
     .join('JobFunction as labUserJobFunction', 'labUserJob.jobFunctionId', 'labUserJobFunction.id')
     .join('JobContext as regionalContext', 'regionalGeography.id', 'regionalContext.geographyId')
-    .join('Job as regionalOfficerJob', 'regionalContext.jobId', 'regionalOfficerJob.id')
-    .join(
-      'JobFunction as regionalOfficerJobFunction',
-      'regionalOfficerJob.jobFunctionId',
-      'regionalOfficerJobFunction.id'
-    )
-    .join('Person as regionalOfficer', 'regionalOfficerJob.personId', 'regionalOfficer.id')
+    .join('JobFunction as regionalOfficerJobFunction', 'regionalContext.jobFunctionId', 'regionalOfficerJobFunction.id')
+    .join('Person as regionalOfficer', 'regionalContext.personId', 'regionalOfficer.id')
     .where({
       'c.abbreviation': countryAbbreviation,
       's.partnerId': partnerId,
@@ -164,7 +155,7 @@ async function createIssueEvent({
 async function createDeviceNoResult(knex, { countryAbbreviation, partnerId }) {
   // get 1st site for current partner
   const {
-    s: { id: siteId, geographyId },
+    s: { id: siteId },
   } = await getSite(knex, {
     countryAbbreviation,
     partnerId,
@@ -172,7 +163,6 @@ async function createDeviceNoResult(knex, { countryAbbreviation, partnerId }) {
 
   const [deviceId] = await knex('Device').insert({
     partnerId,
-    geographyId,
     siteId, // new site id
     deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
     deviceApprovalId: await deviceApprovalToId('approved'),

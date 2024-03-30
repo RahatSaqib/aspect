@@ -85,7 +85,7 @@ const IconMenu = ({ classes: classNameValues, label, icon, children }) => {
 }
 
 IconMenu.propTypes = {
-  classes: PropTypes.object.isRequired, // eslint-disable-line react/forbid-prop-types
+  classes: PropTypes.object.isRequired,
   children: PropTypes.node.isRequired,
   label: PropTypes.string,
   icon: PropTypes.node,

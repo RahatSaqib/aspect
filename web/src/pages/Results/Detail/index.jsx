@@ -2,28 +2,31 @@
 import React, { useEffect, useState } from 'react'
 import { CircularProgress, Box, CardContent, Card } from '@mui/material'
 import { useFormikContext } from 'formik'
+import keys from 'lodash/keys'
+import reduce from 'lodash/reduce'
+import startCase from 'lodash/startCase'
+import trim from 'lodash/trim'
+import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
 import { useParams, useNavigate, useLocation } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
-import { getReturnUrl, useUrlQuery } from '../../../components/AspectTable/Helpers'
 import AspectForm from '../../../components/Form'
 import { FormikProvider } from '../../../components/Form/Formik/Context'
 import { sanitizeFormValues } from '../../../components/Form/Formik/Helpers'
 import fetchWrapperForQueries from '../../../components/QueryFetch/index'
 import { RESULT_DETAIL } from '../../../components/QueryFetch/Result'
-import useI18n from '../../../hooks/useI18n'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
+import { getReturnUrl, gotoReturnUrl } from '../../../utils/utils/browser'
 import { ResultDetailsErrors as customErrorNotifications } from './errors'
 import messages from './messages'
 import ResultTransferModal from './ResultTransferModal'
 import { getFormConfigWithData, updateValidationsAndFilters } from './utils'
 
 const AspectResultDetail = () => {
-  const intl = useI18n()
+  const intl = useIntl()
   const navigate = useNavigate()
   const { resultId } = useParams()
-  const { search } = useLocation()
-  const query = useUrlQuery(search)
+  const location = useLocation()
   const [patientId, setPatientId] = useState()
   const [values, setValues] = useState(false)
   const [formConfig, setFormConfig] = useState(false)
@@ -46,13 +49,22 @@ const AspectResultDetail = () => {
     if (isLoading || !queryResponse) return
     if (queryResponse?.ok) {
       const { data } = queryResponse
-      if (data.resultCategory1) {
-        data.resultCategory1 = `${data.resultCategory1}`
-      }
-      if (data.resultCategory2) {
-        data.resultCategory2 = `${data.resultCategory2}`
-      }
       data.patientId = data?.patientId && data?.patientId !== 'null' ? data?.patientId : 'N/A'
+      /**
+       * This field `allResistances` is displayed in `textArea` component in readOnly mode.
+       * And because of that here we are joining array strings with `\n` symbol to make them
+       * looking correct in textArea.
+       */
+      data.allResistances = trim(
+        reduce(
+          keys(data.resultData.allResistances),
+          (acc, key) => {
+            acc = [...acc, `${key}: ${startCase(data.resultData.allResistances[key])}`]
+            return acc
+          },
+          []
+        ).join('\n')
+      )
       // This is for the title, so wee need the colons
       setPatientId(`: ${data.patientId}`)
 
@@ -74,7 +86,7 @@ const AspectResultDetail = () => {
         method: 'PUT',
         params: { ...values },
       }),
-    { onSuccess: () => navigate(getReturnUrl(query.get('returnUrl'), `/browse/result`)) }
+    { onSuccess: () => gotoReturnUrl(navigate, location, '/browse/result') }
   )
 
   return isLoading || !formConfig ? (
@@ -93,20 +105,21 @@ const AspectResultDetail = () => {
 }
 
 const DetailForm = ({ values, patientId, formConfig, submitResult, data }) => {
-  const intl = useI18n()
+  const intl = useIntl()
   const [isTransferResultOpenOpen, setTransferResultOpen] = useState(false)
   const { setToggleEdit, formik, toggleEdit } = useFormikContext()
+  const location = useLocation()
 
   const onSubmit = () => {
     const values = sanitizeFormValues(formik.values, { formConfig })
     submitResult({ values })
   }
 
-  formConfig.sections = updateValidationsAndFilters(formConfig.sections, data, formik)
-
+  const keepInvalidSelection = !toggleEdit
+  formConfig.sections = updateValidationsAndFilters(formConfig.sections, data, formik, keepInvalidSelection)
   return (
     <>
-      <DetailHeader name={`${formConfig.title}${patientId}`} back="/browse/result">
+      <DetailHeader name={`${formConfig.title}${patientId}`} back={getReturnUrl(location, '/browse/result')}>
         {[
           {
             label: intl.formatMessage(messages.transferResult),

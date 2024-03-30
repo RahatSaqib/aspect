@@ -1,3 +1,5 @@
+const { xpertSiteSummaryReportSiteWise } = require('../../fixtures/Report')
+
 const deviceSummaryReport = {
   name: 'Device Summary Report',
   description: 'A list of all devices in the system and aggregated test results per device.',
@@ -7,6 +9,7 @@ const deviceSummaryReport = {
   fileName: 'DeviceSummaryReport',
   exportCsv: false,
   sortOrder: 11,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -32,33 +35,12 @@ const xpertSiteDetailedReport = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: ['dateRangeRequired'],
   sheets: [
     {
       sortOrder: 0,
       moduleName: 'device/serviceReportsPakistan',
       functionName: 'xpertSiteDetailedReport',
-      query: {
-        avoidStreaming: true,
-      },
-    },
-  ],
-}
-
-const xpertSiteSummaryReportSiteWise = {
-  name: 'Xpert Site Summary Report - Site Wise',
-  description: 'List of sites with counts of the results of different types from all devices at the site',
-  i18nKey: 'xpert_site_summary_site_wise_report',
-  i18nKeyDescription: 'xpert_site_summary_site_wise_report_description',
-  externalId: 'pk_xpert_site_summary_site_wise_report', // folder name in /templates with low dash casing
-  fileName: 'xpertSiteSummaryReportSiteWise',
-  exportCsv: false,
-  exportExcel: true,
-  sortOrder: 0,
-  sheets: [
-    {
-      sortOrder: 0,
-      moduleName: 'device/serviceReportsPakistan',
-      functionName: 'xpertSiteSummarySiteWiseReport',
       query: {
         avoidStreaming: true,
       },
@@ -76,6 +58,7 @@ const xpertWorkloadSummaryReport = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: ['dateRangeRequired'],
   sheets: [
     {
       sortOrder: 0,
@@ -107,6 +90,7 @@ const missingCartridgesReport = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,
@@ -131,6 +115,7 @@ const annualUtilizationRates = {
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
+  validations: [],
   sheets: [
     {
       sortOrder: 0,

@@ -1,4 +1,5 @@
 const jobFunctions = require('./jobFunctions')
+const webhookServers = require('../../fixtures/webhookServers')
 
 module.exports = {
   adminUserName: 'admin',
@@ -27,6 +28,7 @@ module.exports = {
   ],
   fixtures: {
     jobFunctions,
+    webhookServers,
   },
   plugin: '',
   deviceLogHistoryDays: 365,
@@ -38,4 +40,5 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://bangladesh.aspect.id',
   apiUrl: 'https://bangladesh.aspect.id/api',
+  excludePattern: '\\b(EQA|VN-XPERT-23-B\\d[\\w]*)\\b',
 }

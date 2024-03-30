@@ -175,19 +175,19 @@ function geographyFilters(queryBuilder, filterConditions, aliases) {
       case 'state':
         queryBuilder.whereIn(
           `${geography}.stateId`,
-          _.map(areaItems, area => _.toInteger(area.value))
+          _.map(areaItems, area => area.value)
         )
         break
       case 'lga':
         queryBuilder.whereIn(
           `${geography}.lgaId`,
-          _.map(areaItems, area => _.toInteger(area.value))
+          _.map(areaItems, area => area.value)
         )
         break
       case 'lab':
         queryBuilder.whereIn(
           `${device}.siteId`,
-          _.map(areaItems, area => _.toInteger(area.value))
+          _.map(areaItems, area => area.value)
         )
         break
       default:
@@ -390,7 +390,8 @@ async function getNotificationPolicy(
           )
           .join('Device as d', 'result.deviceId', 'd.id')
           .join('DeviceApproval as da', 'da.id', 'd.deviceApprovalId')
-          .leftJoin('Geography as g', 'd.geographyId', 'g.id')
+          .leftJoin('Site as s', 'd.siteId', 's.id')
+          .leftJoin('Geography as g', 's.geographyId', 'g.id')
           .where('ntc.externalId', 'resultBased')
           .andWhere('da.token', 'approved')
       }
@@ -408,9 +409,9 @@ async function getNotificationPolicy(
 
 async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
   const people = txKnex('Person as p')
-    .innerJoin('Job as j', 'p.id', 'j.personId')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
-    .leftJoin('PersonTag as pt', 'j.personId', 'pt.personId')
+    .innerJoin('JobContext as jc', 'p.id', 'jc.personId')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+    .leftJoin('PersonTag as pt', 'jc.personId', 'pt.personId')
     .where('p.disabled', false)
     .modify(qWhere => {
       // Where the person is NOT disabled and...
@@ -447,7 +448,7 @@ async function getPeopleToNotify(txKnex, policy, tags, jobFunctions, persons) {
         })
       }
     })
-    .distinct('p.id as id', 'j.jobFunctionId')
+    .distinct('p.id as id', 'jc.jobFunctionId')
   return people
 }
 
@@ -543,7 +544,7 @@ async function shouldNotify(txKnex, { issueId = null, resultId = null }, personI
       if (!_.isNil(issueId)) {
         builder.leftJoin('Geography as g', 'i.geographyId', 'g.id')
       } else {
-        builder.leftJoin('Geography as g', 'd.geographyId', 'g.id')
+        builder.leftJoin('Geography as g', 's.geographyId', 'g.id')
       }
     })
     .leftJoin('Partner as p', 'i.partnerId', 'p.id')
@@ -634,7 +635,7 @@ async function createNotificationIfNotCreatedAlready(
         notification.alertMessageId = alertMessageId
       }
 
-      if (policy.emailTemplateId != null) {
+      if (policy.emailTemplateId != null && !_.isNil(to) && !_.isEmpty(to)) {
         const [emailMessageId] = await knex('EmailMessage').insert({
           emailTemplateId: policy.emailTemplateId,
           ...sharedMessageProperties,
@@ -642,7 +643,7 @@ async function createNotificationIfNotCreatedAlready(
         })
         notification.emailMessageId = emailMessageId
       }
-      if (policy.smsTemplateId != null) {
+      if (policy.smsTemplateId != null && !_.isNil(phone) && !_.isEmpty(phone)) {
         const [smsMessageId] = await knex('SmsMessage').insert({
           smsTemplateId: policy.smsTemplateId,
           ...sharedMessageProperties,
@@ -747,7 +748,7 @@ async function getNotifications(request) {
       GROUP_CONCAT(DISTINCT CONCAT(pSm.name,'-',mssms.externalId) SEPARATOR "|") AS smsRecipients
       `),
       knex.raw(`
-      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecipients
+      GROUP_CONCAT(DISTINCT CONCAT(wm.url,'-',mswebhook.externalId) SEPARATOR "|") AS webhookRecepients
       `),
       knex.raw(`
         JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id")) as patientId

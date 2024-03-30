@@ -5,6 +5,7 @@ const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 const { knex } = require('../../src/db')
 const { createMessageContext, waitForIdle, waitForAction } = require('../utils/mqUtils')
 const { missingInventoryLotsResolver } = require('../../src/inventory/actions')
+const { insertSite } = require('../../src/site/common/db')
 
 const { assert } = chai
 
@@ -30,13 +31,13 @@ describe('Missing inventory lot resolver', () => {
       .select('s.*')
       .limit(1)
 
-    const [site1Id] = await knex('Site').insert({
+    const [site1Id] = await insertSite(knex, {
       ..._.omit(site1, 'id'),
       name: 'TEST SITE 1',
       externalId: 'testSite1',
     })
 
-    await knex('Site').insert({
+    await insertSite(knex, {
       ..._.omit(site1, 'id'),
       name: 'TEST SITE 2',
       externalId: 'testSite2',
@@ -70,7 +71,6 @@ describe('Missing inventory lot resolver', () => {
 
     const [deviceId] = await knex('Device').insert({
       partnerId: site.partnerId,
-      geographyId: site.geographyId,
       siteId: site.id,
       deviceTypeId: 7,
       deviceApprovalId: 3,

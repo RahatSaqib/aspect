@@ -2,6 +2,9 @@ import AspectSelect from './AspectSelect'
 import AssayMultiSelect from './AssayMultiSelect'
 import AssaySelect from './AssaySelect'
 import AssayTypeSelect from './AssayTypeSelect'
+import CepheidInstrumentModelSelect from './CepheidInstrumentModelSelect'
+import CepheidModulesSelect from './CepheidModulesSelect'
+import CepheidSoftwareTypeSelect from './CepheidSoftwareTypeSelect'
 import ConnectorStatusSelect from './ConnectorStatusSelect'
 import ConsumableReasonSelect from './ConsumableReasonSelect'
 import ConsumableSelect from './ConsumableSelect'
@@ -54,7 +57,7 @@ import {
   QuartersMtbDetectedGraph,
   QuartersRifDetectedGraph,
   TbDetectedGraph,
-  TbResultsGraph,
+  TbRifDetectedGraph,
   TestsOverTimeGraph,
   TreatmentStatusGraph,
   TrendInYearsAllTestsGraph,
@@ -62,7 +65,6 @@ import {
   TrendInYearsRifDetectedGraph,
   XDRFLQResistanceGraph,
   XDRResultsGraph,
-  getPreviousPeriod,
   PieRowGraph,
   filterColour,
   DeviceStatusGraph,
@@ -82,8 +84,7 @@ import LgaSelect from './LgaSelect'
 import Loading from './Loading'
 import LocationSelector from './LocationSelector'
 import LoggedInLayout from './LoggedInLayout'
-import NotificationCategoryTypeSelect from './NotificationCategoryTypeSelect'
-import NotificationTypeSelect from './NotificationTypeSelect'
+import LoggedOutLayout from './LoggedOutLayout'
 import PartnerSelect from './PartnerSelect'
 import PeriodSelector from './PeriodSelector'
 import ReportSelector from './ReportSelector'
@@ -105,6 +106,9 @@ export {
   AspectSelect,
   AssaySelect,
   AssayTypeSelect,
+  CepheidInstrumentModelSelect,
+  CepheidSoftwareTypeSelect,
+  CepheidModulesSelect,
   ConnectorStatusSelect,
   ConsumableSelect,
   ContactStatusSelect,
@@ -136,8 +140,6 @@ export {
   StateSelect,
   TagSelect,
   TimezoneSelect,
-  NotificationTypeSelect,
-  NotificationCategoryTypeSelect,
   Loading,
   BarGraph,
   ColumnGraph,
@@ -155,7 +157,7 @@ export {
   QuartersMtbDetectedGraph,
   QuartersRifDetectedGraph,
   TbDetectedGraph,
-  TbResultsGraph,
+  TbRifDetectedGraph,
   TestsOverTimeGraph,
   TreatmentStatusGraph,
   TrendInYearsAllTestsGraph,
@@ -189,7 +191,6 @@ export {
   ContactTagInput,
   LocationSelector,
   AssayMultiSelect,
-  getPreviousPeriod,
   PieRowGraph,
   filterColour,
   DeviceStatusGraph,
@@ -202,4 +203,5 @@ export {
   formatDateToYYYYMMDD,
   fillData,
   DonutGraph,
+  LoggedOutLayout,
 }

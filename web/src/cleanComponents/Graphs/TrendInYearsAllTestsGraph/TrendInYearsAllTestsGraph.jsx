@@ -1,23 +1,21 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
 import { graphMessages, months } from '../../../messages'
+import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import { StateSelector, Loading } from '../../index'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import { fillYear } from '../graphUtils'
 import { LineGraph } from '../index'
-
-const cssClasses = classnames.bind(styles)
 
 const maxDate = new Date()
 
 const endpointParams = [{ groupBy: 'month' }, { minDate: `${maxDate.getFullYear() - 5}-01-01` }, { maxDate }]
 
 const TrendInYearsAllTestsGraph = () => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState()
@@ -27,7 +25,8 @@ const TrendInYearsAllTestsGraph = () => {
   const { isLoading, data } = useQuery(
     ['tbAllTestsYearlyTrends', { mergedParams }],
     async ({ queryKey: [, { mergedParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-national', params: mergedParams })
+      fetchWrapperForQueries({ endpoint: '/result/gx-10c-trends-national', params: mergedParams }),
+    { ...GRAPHS_QUERY_OPTIONS }
   )
 
   const [graphData, setGraphData] = useState(false)
@@ -49,21 +48,21 @@ const TrendInYearsAllTestsGraph = () => {
   return isLoading ? (
     <Loading />
   ) : (
-    <Grid container className={cssClasses('Graph_Container')}>
+    <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
           <CardHeader title={formatMessage(graphMessages.testingTrendsInYearTitle)} />
           <CardContent>
-            <Grid container spacing={1} className={cssClasses('Graph_Content')}>
+            <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
-                <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                  <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                <Grid container spacing={2} className={styles.Graph_Content_Container}>
+                  <Grid item xs={12} md={4} lg={12} className={styles.Graph_Content_ShowLabel}>
                     <FormControlLabel
                       label={formatMessage(graphMessages.showValuesLabel)}
                       control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
                     />
                   </Grid>
-                  <Grid item xs={12} md={8} lg={12} className={cssClasses('Graph_Content_AssaySelector')}>
+                  <Grid item xs={12} md={8} lg={12} className={styles.Graph_Content_AssaySelector}>
                     <StateSelector filter={filter} onChange={setFilter} />
                   </Grid>
                 </Grid>

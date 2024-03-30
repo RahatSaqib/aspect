@@ -1,30 +1,28 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
-import classnames from 'classnames/bind'
-import endOfMonth from 'date-fns/endOfMonth'
-import startOfMonth from 'date-fns/startOfMonth'
 import filter from 'lodash/filter'
 import reduce from 'lodash/reduce'
+import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate } from 'react-router-dom'
+import EmptyGraph from '../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
-import useI18n from '../../../hooks/useI18n'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import { graphMessages } from '../../../messages'
-import { useFilterUpdate } from '../../../providers/FilterProvider'
+import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
 import { formatDataByGraphType, Loading } from '../../index'
 import messages from '../graphMessages'
-import styles from '../graphStyles.css'
+import styles from '../graphStyles.module.css'
 import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
   getAverageFromData,
   negateTimeZoneOffset,
-  flattenAssaysStructure,
+  getMinMaxDateFromMonthString,
+  getResultCategoryGroupsForResultList,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
-
-const cssClasses = classnames.bind(styles)
 
 const endPointParams = [
   { assay: 'GxMtbXdr' },
@@ -36,23 +34,25 @@ const endPointParams = [
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
-const XdrResultsGraph = ({ assaysFromState: assays }) => {
-  const { formatMessage, format } = useI18n()
+const XdrResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromState: resultCategoryGroups }) => {
+  const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
 
-  const { data, isLoading } = useQuery(
+  const { data } = useQuery(
     ['xdrByCategory1Monthly', { endPointParams }],
     async ({ queryKey: [, { endPointParams }] }) =>
-      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams })
+      fetchWrapperForQueries({ endpoint: '/result/clinical-indicator-aggregations', params: endPointParams }),
+    { ...GRAPHS_QUERY_OPTIONS }
   )
 
   const [donutData, setDonutData] = useState({})
   const [barData, setBarData] = useState({})
   useEffect(() => {
     if (data && data.data) {
-      const info = data.data
+      const keyToConsume = 'resultCategory2'
+      const info = data.data.filter(i => !!i[keyToConsume])
       const i18nKeys = reduce(
         info,
         (acc, curr) => {
@@ -68,7 +68,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         { resultCategory1: { values: ['Detected'] } },
         'MMM yy',
         'cnt',
-        'resultCategory2',
+        keyToConsume,
         i18nKeys,
         'pie',
         endPointParams,
@@ -76,7 +76,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         messages
       )
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Detected'], 'standard')
+      const { avg: pieAvg = 0 } = getAverageFromData(pieData, 'value', ['Detected'], 'standard')
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -89,7 +89,7 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
         { resultCategory1: { values: ['Detected'] } },
         'MMM',
         'month',
-        'resultCategory2',
+        keyToConsume,
         i18nKeys,
         'bar',
         endPointParams,
@@ -116,18 +116,18 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
 
-  return isLoading ? (
+  return !data || !assays || !resultCategoryGroups ? (
     <Loading />
   ) : (
-    <Grid container className={cssClasses('Graph_Container')}>
+    <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
           <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsXdrTitle)} />
           <CardContent>
-            <Grid container spacing={1} className={cssClasses('Graph_Content')}>
+            <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
-                <Grid container spacing={2} className={cssClasses('Graph_Content_Container')}>
-                  <Grid item xs={12} md={4} lg={12} className={cssClasses('Graph_Content_ShowLabel')}>
+                <Grid container spacing={2} className={styles.Graph_Content_Container}>
+                  <Grid item xs={12} md={4} lg={12} className={styles.Graph_Content_ShowLabel}>
                     <FormControlLabel
                       label={formatMessage(graphMessages.showValuesLabel)}
                       control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
@@ -137,8 +137,8 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
               </Grid>
               <Grid item xs={12} md={12} lg={10}>
                 <Grid container>
-                  {barData.data && barData.data.length ? (
-                    <Grid item xs={12} md={8}>
+                  <Grid item xs={12} md={8}>
+                    {barData.data && barData.data.length ? (
                       <ColumnGraph
                         data={barData.data}
                         graphId="xdrByCategory1Monthly"
@@ -150,25 +150,34 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                         isPercentage
                         onReady={plot => {
                           plot.on('plot:click', evt => {
-                            const base = 'yyyy-MM-dd'
-                            const parsedDate = negateTimeZoneOffset(new Date(evt.data.data.originalMonth), base)
+                            const assayIds = assays.filter(it => ['GxMtbXdr'].includes(it.externalId)).map(it => it.id)
+                            const resultCategoryGroupId = getResultCategoryGroupsForResultList(
+                              resultCategoryGroups,
+                              assayIds,
+                              [],
+                              [evt.data.data.id]
+                            )
+                            const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
+
                             const params = {
-                              assayId: assays.filter(it => ['GxMtbXdr'].includes(it.externalId)).map(it => it.id),
-                              maxDate: format(endOfMonth(parsedDate), base),
-                              minDate: format(startOfMonth(parsedDate), base),
-                              resultCategoryId: flattenAssaysStructure({ data: assays }).filter(
-                                a => a.externalId === evt.data.data.id
-                              )[0].id,
+                              assayId: assayIds,
+                              minDate,
+                              maxDate,
+                              resultCategoryGroupId,
+                              displayResult: 'actual',
                             }
                             addFilter({ ...params }, '/browse/result')
                             navigate('/browse/result')
                           })
                         }}
                       />
-                    </Grid>
-                  ) : null}
-                  {donutData.data && donutData.data.length ? (
-                    <Grid item xs={12} md={4} lg={4}>
+                    ) : (
+                      <EmptyGraph type="bar" />
+                    )}
+                  </Grid>
+
+                  <Grid item xs={12} md={4} lg={4}>
+                    {donutData.data && donutData.data.length ? (
                       <DonutGraph
                         data={donutData.data}
                         total={donutData.total}
@@ -194,10 +203,10 @@ const XdrResultsGraph = ({ assaysFromState: assays }) => {
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
                       />
-                    </Grid>
-                  ) : (
-                    <Loading />
-                  )}
+                    ) : (
+                      <EmptyGraph type="pie" />
+                    )}
+                  </Grid>
                 </Grid>
               </Grid>
             </Grid>

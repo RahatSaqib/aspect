@@ -308,6 +308,7 @@ function validateResultDetailResponse() {
     reportableSiteName: Joi.string()
       .allow(null, '')
       .description('The name of reportable site, differ from siteName when transferred'),
+    referringSiteId: Joi.number().allow(null).integer().positive().description('The id of referring site'),
     transferredOn: Joi.date().allow(null).description('When result was transferred to another clinic'),
     firstViewedOn: Joi.date().allow(null).description('When transferred result was clicked'),
     transferredBy: Joi.string().allow(null, '').description('Who transferred result to another clinic'),
@@ -367,7 +368,7 @@ function listResultsBaseConfig() {
           .items(Joi.string().max(50))
           .single()
           .description('Specify which fields to select from the resultDataJSON'),
-        // query param 'format' is applicable only for handler 'exportDevices'
+        // query param 'format' is applicable only for handler 'deviceReport'
         format: Joi.string().allow(null, '').description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),

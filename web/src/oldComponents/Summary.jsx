@@ -1,54 +1,35 @@
-import React, { Fragment } from 'react'
+import React from 'react'
 import { Box } from '@mui/material'
-import classnames from 'classnames/bind'
-import PropTypes from 'prop-types'
 import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
-import styles from './Summary.css'
+import { useNavigate } from 'react-router'
+import styles from './Summary.module.css'
 
-const cssClasses = classnames.bind(styles)
-
-const descriptionSection = (description, to, action) => (
-  <div className={cssClasses('Summary__Description')}>
-    {description}
-    {to && <FaExternalLink onClick={to} className={cssClasses('Summary__Description__Link')} />}
-    {action && <span className={cssClasses('Summary__Description__Action')}>{action}</span>}
-  </div>
-)
-
-const Summary = ({ title, description, to, action, cols }) => (
-  <Box sx={{ margin: '0 auto', width: `${100 / cols}%` }} className={cssClasses('Summary')}>
-    <div className={cssClasses('Summary__Title')}>{title}</div>
-    {Array.isArray(description)
-      ? description.map(item => (
-          <Fragment key={item.description}>{descriptionSection(item.description, item.to, item.action)}</Fragment>
-        ))
-      : descriptionSection(description, to, action)}
-  </Box>
-)
-
-Summary.propTypes = {
-  title: PropTypes.oneOfType([PropTypes.string, PropTypes.object]).isRequired,
-  description: PropTypes.oneOfType([
-    PropTypes.string,
-    PropTypes.instanceOf(Element),
-    PropTypes.object,
-    PropTypes.arrayOf(
-      PropTypes.shape({
-        description: PropTypes.string,
-        to: PropTypes.string,
-        action: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-      })
-    ),
-  ]).isRequired,
-  to: PropTypes.string,
-  action: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
-  cols: PropTypes.string,
-}
-
-Summary.defaultProps = {
-  to: null,
-  action: null,
-  cols: '3',
+const Summary = ({ title, description, to, action, cols = 3 }) => {
+  const navigate = useNavigate()
+  return (
+    <Box sx={{ margin: '0 auto', width: `${100 / cols}%` }} className={styles.Summary}>
+      <div className={styles.Summary__Title}>{title}</div>
+      {Array.isArray(description) ? (
+        description.map(item => {
+          return (
+            <div className={styles.Summary__Description} key={item.description}>
+              {item.description}
+              {item.to ? (
+                <FaExternalLink onClick={() => navigate(item.to)} className={styles.Summary__Description__Link} />
+              ) : null}
+              {item.action && <span className={styles.Summary__Description__Action}>{item.action}</span>}
+            </div>
+          )
+        })
+      ) : (
+        <div className={styles.Summary__Description}>
+          {description}
+          {to && <FaExternalLink onClick={() => to()} className={styles.Summary__Description__Link} />}
+          {action && <span className={styles.Summary__Description__Action}>{action}</span>}
+        </div>
+      )}
+    </Box>
+  )
 }
 
 export default Summary

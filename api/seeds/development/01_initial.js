@@ -2,7 +2,8 @@ module.exports = require('../utils').seed(seed, __filename)
 const Promise = require('bluebird')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears } = require('date-fns')
+const { addMilliseconds, addMinutes, addHours, subHours, subDays, addDays, subYears, subMonths } = require('date-fns')
+const uuid = require('node-uuid')
 
 const config = require('../../src/config')
 const { seedAbbottM2000AndAssays } = require('../utils_abbott_m2000')
@@ -41,6 +42,7 @@ const upsertConsumables = require('../common/upsert_consumables')
 const {
   getDetectedResistanceCategoryTypes,
 } = require('../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
+const { insertSite } = require('../../src/site/common/db')
 
 const millisInHour = 1000 * 60 * 60
 const millisInMinute = 1000 * 60
@@ -3277,7 +3279,7 @@ async function seed(knex) {
                       longitude: _.has(state, 'lng') ? state.lng + _.random(-0.5, 0.5, true) : undefined,
                       ...auditFields,
                     }
-                    const [siteId] = await knex('Site').insert(siteData)
+                    const [siteId] = await insertSite(knex, siteData)
                     siteData.id = siteId
                     countryData.sites.push(siteData)
                   })
@@ -3394,13 +3396,14 @@ async function seed(knex) {
         deviceTypeId: deviceTypeIdRouter,
         deviceApprovalId: deviceApprovalApproved,
         partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
         siteId: siteData.id,
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         createdOn: new Date(+now - 3 * i * millisInHour),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
+        lastPingFromIp: `31.70.127.${Math.floor(Math.random() * 255)}`,
         lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+        putInService: subMonths(now, 2),
       })
       routerIds.push(routerId)
     })
@@ -3450,7 +3453,6 @@ async function seed(knex) {
             'False|Mobile Van MG 33AK L|0|1|1|False||0|-1|1|ASSAY=MTB-RIF[MTB=MTB][Rif Resistance=Rif Resistance][QC Check=QC Check]',
           longitude: -13.9833,
           shortName: 'Mobile Van LL 1',
-          lastPingOn: '2021-12-07T06:21:45Z',
           macAddress: 'MAC',
           systemTime: '2021-12-17T17:10:17.3052011Z',
           lisConfigOk: true,
@@ -3481,7 +3483,6 @@ async function seed(knex) {
           latestGrabbedModifiedDate: '2021-12-15T19:17:18.143Z',
         }),
         partnerId: siteData.partnerId,
-        geographyId: siteData.geographyId,
         siteId: siteData.id,
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         // not all sites will have a router - we only added routers to some site
@@ -3489,7 +3490,9 @@ async function seed(knex) {
         createdOn: subDays(now, _.random(0, 120)),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),
+        lastPingFromIp: `13.10.97.${Math.floor(Math.random() * 255)}`,
         lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+        putInService: subMonths(now, 2),
         hostId: _.times(8, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
         serial: _.times(24, () => String.fromCharCode(65 + _.random(25) + (_.random(1) > 0 ? 32 : 0))).join(''),
         lastInstrumentSerial: _.times(14, () =>
@@ -3567,6 +3570,7 @@ async function seed(knex) {
           ),
           startedOn: addDays(now, -1 * _.random(1, 30, true)),
           createdOn: now,
+          guid: uuid.v4(),
         })
       })
     })
@@ -4918,114 +4922,42 @@ async function seed(knex) {
     .where({ partnerId: partnerTwoId, externalId: 'labManager' })
     .pluck('id')
 
-  const [jobIdAdmin] = await knex('Job').insert([
-    {
-      personId: personIds.admin,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin2,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin3,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin4,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin5,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-    {
-      personId: personIds.admin6,
-      jobFunctionId: jobFunctionIdAdmin,
-    },
-  ])
-
-  const [jobIdJason] = await knex('Job').insert({
-    personId: personIds.jason,
-    jobFunctionId: jobFunctionIdPartnerTwo,
-  })
-
-  const [jobIdSam] = await knex('Job').insert({
-    personId: personIds.sam,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
-
-  const [jobIdDemoAdmin] = await knex('Job').insert({
-    personId: personIds.admin_us,
-    jobFunctionId: jobFunctionIdAdmin,
-  })
-
-  const [jobIdBob] = await knex('Job').insert({
-    personId: personIds.bob,
-    jobFunctionId: jobFunctionIdManager,
-  })
-
-  const [jobIdEd] = await knex('Job').insert({
-    personId: personIds.ed,
-    jobFunctionId: jobFunctionIdManager,
-  })
-  const [jobIdJim] = await knex('Job').insert({
-    personId: personIds.jim,
-    jobFunctionId: jobFunctionIdPartnerTwo,
-  })
-  const [jobIdNed] = await knex('Job').insert({
-    personId: personIds.ned,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-  const [jobIdClinicianUS] = await knex('Job').insert({
-    personId: personIds.clinician_us,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-  const [jobIdTechnicianUs] = await knex('Job').insert({
-    personId: personIds.technician_us,
-    jobFunctionId: jobFunctionIdTechnician,
-  })
-  const [jobIdJon] = await knex('Job').insert({
-    personId: personIds.jon,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-  const [jobIdSteve] = await knex('Job').insert({
-    personId: personIds.steve,
-    jobFunctionId: jobFunctionIdClinician,
-  })
-
   const sitesWithResults = await knex('Result as r')
     .join('Device as d', 'r.deviceId', 'd.id')
-    .join('Geography as g', 'g.id', 'd.geographyId')
+    .join('Site as s', 'd.siteId', 's.id')
+    .join('Geography as g', 's.geographyId', 'g.id')
     .join('Country as c', 'g.countryId', 'c.id')
     .where('c.abbreviation', 'US')
-    .distinct('d.geographyId', 'd.siteId')
+    .distinct('d.siteId', 's.geographyId')
     .orderBy('r.endedOn', 'desc')
     .limit(3)
 
   const siteSample = _.sample(sitesWithResults)
   // Constrain jobs by context
   await knex('JobContext').insert([
-    { jobId: jobIdAdmin, geographyId: countries.US.geographyId },
-    { jobId: jobIdDemoAdmin, geographyId: countries.US.geographyId },
-    { jobId: jobIdJason, geographyId: countries.US.geographyId },
-    { jobId: jobIdSam, geographyId: countries.NG.geographyId },
-    { jobId: jobIdEd, geographyId: countries.US.geographyId },
-    { jobId: jobIdJim, geographyId: countries.US.geographyId },
-    { jobId: jobIdJon, geographyId: countries.US.geographyId },
-    { jobId: jobIdSteve, geographyId: countries.US.geographyId },
-    { jobId: jobIdBob, geographyId: countries.US.states.OH.geographyId },
+    { personId: personIds.admin, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+    { personId: personIds.admin_us, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.US.geographyId },
+    { personId: personIds.jason, jobFunctionId: jobFunctionIdPartnerTwo, geographyId: countries.US.geographyId },
+    { personId: personIds.sam, jobFunctionId: jobFunctionIdAdmin, geographyId: countries.NG.geographyId },
+    { personId: personIds.ed, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.geographyId },
+    { personId: personIds.jim, jobFunctionId: jobFunctionIdPartnerTwo, geographyId: countries.US.geographyId },
+    { personId: personIds.jon, jobFunctionId: jobFunctionIdClinician, geographyId: countries.US.geographyId },
+    { personId: personIds.steve, jobFunctionId: jobFunctionIdClinician, geographyId: countries.US.geographyId },
+    { personId: personIds.bob, jobFunctionId: jobFunctionIdManager, geographyId: countries.US.states.OH.geographyId },
     {
-      jobId: jobIdClinicianUS,
+      personId: personIds.clinician_us,
+      jobFunctionId: jobFunctionIdClinician,
       geographyId: siteSample.geographyId,
       siteId: siteSample.siteId,
     },
     {
-      jobId: jobIdTechnicianUs,
+      personId: personIds.technician_us,
+      jobFunctionId: jobFunctionIdTechnician,
       geographyId: countries.US.states.MA.geographyId,
     },
     {
-      jobId: jobIdNed,
+      personId: personIds.ned,
+      jobFunctionId: jobFunctionIdClinician,
       geographyId: countries.US.states.OH.lgas.Wayne.geographyId,
     },
   ])

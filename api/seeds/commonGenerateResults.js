@@ -17,6 +17,7 @@ const {
   subDays,
   format,
   differenceInDays,
+  subMonths,
 } = require('date-fns')
 const { getLinkedResultDate, getDateFields } = require('./utils')
 const { getMGITResultFromTBPositive } = require('./commonTB')
@@ -115,12 +116,13 @@ async function createDevicesForAllMissingTypes(
           deviceTypeId: deviceType.id,
           deviceApprovalId: deviceApprovalApproved,
           partnerId,
-          geographyId: siteData.geographyId,
           siteId: siteData.id,
           createdOn: new Date(+now - 3 * i * millisInHour),
           updatedOn: new Date(+now - i * millisInHour),
           lastPingOn: new Date(+now - (i * millisInHour) / 3),
+          lastPingFromIp: `71.11.10.${Math.floor(Math.random() * 255)}`,
           lastSeenOn: new Date(+now - (i * millisInHour) / 3),
+          putInService: subMonths(new Date(), 2),
         }
         const [deviceId] = await knex('Device').insert(deviceToInsert)
         if (deviceType.requiresApiCredentials) {
@@ -188,15 +190,16 @@ async function generateResults(
       'AspectResultEntry',
       'molbioTruenat',
     ])
-  const devices = await knex('Device')
+  const devices = await knex('Device as d')
+    .join('Site as s', 's.id', 'd.siteId')
     .andWhere(qb => qb.whereIn('siteId', _.map(siteDatas, 'id')))
-    .andWhere('partnerId', partnerId)
+    .andWhere('d.partnerId', partnerId)
     .modify(queryBuilder => {
       if (deviceId) {
-        queryBuilder.where('id', deviceId)
+        queryBuilder.where('d.id', deviceId)
       }
     })
-    .select()
+    .select('d.*', 's.geographyId')
 
   const tbDevices = _.filter(devices, device => tbDeviceTypeIds.includes(device.deviceTypeId))
   const tbResults = await addTBResults(

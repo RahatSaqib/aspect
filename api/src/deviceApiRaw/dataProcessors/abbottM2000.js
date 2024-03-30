@@ -733,7 +733,7 @@ class DefaultAbbottM2000 extends SynchronousDataProcessor {
       {
         assayId: assayMappings[finalResult.assay.code].id,
         partnerId: deviceApiKey.partnerId,
-        geographyId: device.geographyId,
+        geographyId: site.geographyId,
         siteId: site.id,
         deviceId: device.id,
         longitude: site.longitude,

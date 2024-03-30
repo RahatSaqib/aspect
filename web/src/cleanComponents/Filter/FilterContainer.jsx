@@ -1,10 +1,11 @@
 import React, { useState } from 'react'
 import { Button, Card, CardActions, CardContent, Collapse } from '@mui/material'
 import { MdArrowDownward, MdArrowUpward } from 'react-icons/md'
+import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import useI18n from '../../hooks/useI18n'
+import useFilterUpdate from '../../hooks/useFilterUpdate'
+import useFilterValues from '../../hooks/useFilterValues'
 import messages from '../../messages/FilterMessages'
-import { useFilterValues, useFilterUpdate } from '../../providers/FilterProvider'
 import FilterButtons from './FilterContainer.Buttons'
 
 const cardContentStyle = {
@@ -15,7 +16,7 @@ const cardContentStyle = {
 }
 
 const FilterContainer = ({ children, state, setState, blocked }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
   const filter = useFilterValues(location.pathname)
@@ -23,7 +24,7 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
 
   const toggleOpen = () => setExpanded(state => !state)
 
-  const clear = () => {
+  const cancel = () => {
     setState({ ...filter })
     toggleOpen()
   }
@@ -34,20 +35,17 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
   }
 
   const remove = keys => {
-    const cleaned = keys.filter(el => !blocked.includes(el))
-    if (cleaned.length) {
-      removeFilter(keys, location.pathname)
-      const newState = { ...state }
-      keys.forEach(k => {
-        if (k.includes('.')) {
-          const [key, value] = k.split('.')
-          newState[key] = newState[key].filter(v => v !== value)
-        } else {
-          delete newState[k]
-        }
-      })
-      setState(newState)
-    }
+    removeFilter(keys, location.pathname)
+    const newState = { ...state }
+    keys.forEach(k => {
+      if (k.includes('.')) {
+        const [key, value] = k.split('.')
+        newState[key] = newState[key].filter(v => v !== value)
+      } else {
+        delete newState[k]
+      }
+    })
+    setState(newState)
   }
 
   const append = update => {
@@ -59,7 +57,7 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
   return (
     <Card sx={{ mb: 1 }}>
       <CardContent sx={cardContentStyle}>
-        <FilterButtons filters={filter} remove={remove} append={append} />
+        <FilterButtons filters={filter} remove={remove} append={append} blocked={blocked} />
         <Button variant="contained" color="secondary" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>
           {expanded ? <MdArrowUpward /> : <MdArrowDownward />}
         </Button>
@@ -67,7 +65,7 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
       <Collapse in={expanded} timeout="auto" unmountOnExit>
         <CardContent sx={cardContentStyle}>{children}</CardContent>
         <CardActions sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-          <Button size="small" onClick={clear}>
+          <Button size="small" onClick={cancel}>
             {formatMessage(messages.cancel)}
           </Button>
           <Button size="small" onClick={apply}>

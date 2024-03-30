@@ -43,7 +43,7 @@ describe('Query generator for filtering conditions', () => {
       {
         tags: [],
         checked: true,
-        jobFunctionId: '1',
+        jobFunctionId: 1,
       },
     ],
     deviceLevelId: 'national',
@@ -69,18 +69,18 @@ describe('Query generator for filtering conditions', () => {
     areaItems: [
       {
         label: 'Idaho',
-        value: '46',
+        value: 46,
       },
       {
         label: 'Nebraska',
-        value: '62',
+        value: 62,
       },
     ],
     jobFunctions: [
       {
         tags: [],
         checked: true,
-        jobFunctionId: '1',
+        jobFunctionId: 1,
       },
     ],
     deviceLevelId: 'state',
@@ -113,7 +113,8 @@ describe('Query generator for filtering conditions', () => {
   it('Should generate a proper query filter for state', async () => {
     const query = knex('Result as r')
       .join('Device as d', 'r.deviceid', 'd.id')
-      .join('Geography as g', 'd.geographyId', 'g.id')
+      .join('Site as s', 'd.siteId', 's.id')
+      .join('Geography as g', 's.geographyId', 'g.id')
       .modify(resultConditionsMet, filterConditionExample2, {
         result: 'r',
         geography: 'g',
@@ -124,7 +125,8 @@ describe('Query generator for filtering conditions', () => {
   it('Should generate a proper query filter for lgas', async () => {
     const query = knex('Result as r')
       .join('Device as d', 'r.deviceid', 'd.id')
-      .join('Geography as g', 'd.geographyId', 'g.id')
+      .join('Site as s', 'd.siteId', 's.id')
+      .join('Geography as g', 's.geographyId', 'g.id')
       .modify(resultConditionsMet, filterConditionExample3, {
         result: 'r',
         geography: 'g',
@@ -136,7 +138,8 @@ describe('Query generator for filtering conditions', () => {
   it('Should generate a proper query filter for labs', async () => {
     const query = knex('Result as r')
       .join('Device as d', 'r.deviceid', 'd.id')
-      .join('Geography as g', 'd.geographyId', 'g.id')
+      .join('Site as s', 'd.siteId', 's.id')
+      .join('Geography as g', 's.geographyId', 'g.id')
       .modify(resultConditionsMet, filterConditionExample4, {
         result: 'r',
         geography: 'g',

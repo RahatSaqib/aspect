@@ -1,15 +1,12 @@
 import React, { useState } from 'react'
 import { FormControlLabel, RadioGroup, Radio, Stack, TextField } from '@mui/material'
-import classNames from 'classnames/bind'
-import useI18n from '../../hooks/useI18n'
+import { useIntl } from 'react-intl'
 import { cronMessages as messages } from '../../messages/index'
 import ChooseTime from './components/ChooseTime'
-import styles from './styles.css'
-
-const classes = classNames.bind(styles)
+import styles from './styles.module.css'
 
 const Daily = ({ cronExpression, onChange }) => {
-  const { formatMessage } = useI18n()
+  const { formatMessage } = useIntl()
 
   const [days, setDays] = useState(1)
   const onDayChange = e => {
@@ -48,7 +45,7 @@ const Daily = ({ cronExpression, onChange }) => {
 
   return (
     <Stack direction="column" spacing={2} alignItems="flex-start" justifyContent="flex-start">
-      <RadioGroup row name="daily" className={classes('Radio-Group')}>
+      <RadioGroup row name="daily" className={styles.Radio_Group}>
         <FormControlLabel
           control={<Radio onChange={handleChange} checked={cronExpression[4] === '*'} />}
           label={formatMessage(messages.everyDay)}

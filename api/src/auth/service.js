@@ -33,6 +33,7 @@ const personProps = [
   'p.name as userName',
   'p.culture',
   'p.timezone',
+  'tz.timeZone as timezoneIANA',
   'p.id as personId',
   'p.lastPartnerId as partnerId',
   'p.lastCountryId as countryId',
@@ -63,6 +64,7 @@ function getUser(username, options = {}) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'u.name': username })
     .modify(q => {
@@ -76,6 +78,7 @@ function getUserByPersonId(personId) {
     .from('Person as p')
     .innerJoin('User as u', 'p.userId', 'u.id')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'p.id': personId })
     .first(userProps)
@@ -85,6 +88,7 @@ function getPersonByPersonId(personId) {
   return query('Get user details for person')
     .from('Person as p')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'p.id': personId })
     .first(personProps)
@@ -95,6 +99,7 @@ function getUserByUserId(userId) {
     .from('User as u')
     .innerJoin('Person as p', 'u.id', 'p.userId')
     .leftJoin('Country as c', 'c.id', 'p.lastCountryId')
+    .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
     .leftJoin('Geography as g', 'g.id', 'p.geographyId')
     .where({ 'u.id': userId })
     .first(userProps)
@@ -368,8 +373,8 @@ async function refreshToken(request) {
 async function getJobFunctions(id, name, partnerId) {
   return query('Get job functions for user and partner')
     .from('Person as p')
-    .innerJoin('Job as j', 'p.id', 'j.personId') // 'j.jobFunctionId', 'jf.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobContext as jc', 'p.id', 'jc.personId') // 'jc.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
     .where({ 'p.userId': id, 'jf.partnerId': partnerId })
     .orderBy(['jf.name'])
     .distinct('jf.name')
@@ -412,8 +417,8 @@ async function getUserPermissions(userId, partnerId) {
     .from('Permission as p')
     .innerJoin('JobFunctionPermission as jfp', 'p.id', 'jfp.permissionId')
     .innerJoin('JobFunction as jf', 'jfp.jobFunctionId', 'jf.id')
-    .innerJoin('Job as j', 'j.jobFunctionId', 'jf.id')
-    .innerJoin('Person as ps', 'j.personId', 'ps.id')
+    .innerJoin('JobContext as jc', 'jc.jobFunctionId', 'jf.id')
+    .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where({ 'ps.userId': userId, 'jf.partnerId': partnerId })
     .orderBy(['p.module', 'p.activity'])
     .distinct('p.module', 'p.activity')
@@ -423,12 +428,11 @@ async function getUserPermissions(userId, partnerId) {
 function getGeographyAccess(personId, partnerId) {
   return query('Get list of geographies which user can access')
     .from('JobContext as jc')
-    .innerJoin('Job as j', 'jc.jobId', 'j.id')
-    .innerJoin('JobFunction as jf', 'j.jobFunctionId', 'jf.id')
+    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
     .leftJoin('Geography as g', 'jc.geographyId', 'g.id')
     .leftJoin('Site as s', 'jc.siteId', 's.id')
     .leftJoin('Geography as gs', 's.geographyId', 'gs.id')
-    .where('j.personId', personId)
+    .where('jc.personId', personId)
     .where('jf.partnerId', partnerId)
     .distinct(
       // country-state-lga when jc.siteId = null and jc.geographyId != null
