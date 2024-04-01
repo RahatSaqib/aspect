@@ -36,7 +36,7 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     })
     .groupBy(groupBy)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .orderBy('st.name', 'lg.name')
+    .orderBy(['st.name', 'lg.name'])
 
   const offset = getOffsetFromIsoDateStringInMinutes(query.minDate || query.maxDate)
   const dateRanges = getAllUserMonthsInRange(dateFrom, dateTo, offset)
