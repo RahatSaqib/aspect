@@ -12,7 +12,7 @@ const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 const { mtbDetectedTraceDetected, mtbDetectedRifDetected, mtbValid } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
 
-const getResultCount = (dataConstraints, minDate, maxDate, offset) =>
+const getResultCount = (dataConstraints, minDate, maxDate, timezone) =>
   getBaseQueryForResults()
     .clone()
     /**
@@ -22,7 +22,7 @@ const getResultCount = (dataConstraints, minDate, maxDate, offset) =>
      */
     .whereNot('dt.externalId', 'GxAlert')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .whereBetween(getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', offset), [minDate, maxDate])
+    .whereBetween(getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', timezone), [minDate, maxDate])
     .first({
       mtbValid,
       mtbDetectedTraceDetected,
