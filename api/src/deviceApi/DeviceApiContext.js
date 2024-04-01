@@ -101,7 +101,7 @@ class DeviceApiContext {
       await sendNotificationToContacts(originalRequest.payload, device)
     }
 
-    if (device == null) {
+    if (!device) {
       // Trying to retrieve data for Device that has
       // none uploaded yet, but we have authorized the token
       return { error: Boom.notFound('No device found') }
@@ -111,7 +111,7 @@ class DeviceApiContext {
       .innerJoin('Device as d', 'd.partnerId', 'p.id')
       .where({ 'd.id': device.id })
       .first('p.id', 'p.deviceLogHistoryDays', 'p.plugin as partnerPluginName')
-    if (partner == null) {
+    if (!partner) {
       return { error: Boom.internal('Device not assigned to partner') }
     }
 
@@ -138,7 +138,7 @@ class DeviceApiContext {
     if (deviceLogType !== DEVICE_LOG_TYPE_NONE) {
       const { resultId } = request.query
 
-      if (existingDeviceAndData == null) {
+      if (!existingDeviceAndData) {
         // We will only have a device log if we already had a device
         return { error: Boom.notFound('Device does not have data.') }
       }
@@ -160,7 +160,7 @@ class DeviceApiContext {
       context.deviceLog = lastDeviceLog || null
 
       return {
-        error: lastDeviceLog == null && Boom.notFound('Cannot find Logs records for the specific device'),
+        error: lastDeviceLog ? false : Boom.notFound('Cannot find Logs records for the specific device'),
         context,
       }
     }
@@ -178,7 +178,7 @@ class DeviceApiContext {
       this.parent.addDeviceLogUpdate(prop, value)
     } else {
       let update = this.deviceLogUpdate
-      if (update == null) {
+      if (!update) {
         update = {}
         this.deviceLogUpdate = update
       }
@@ -260,7 +260,7 @@ function createNewDeviceFromRequest(request, now) {
       })
       .leftJoin('Partner as p', 'p.id', 'k.partnerId')
       .first('k.id', 'k.partnerId', 'k.geographyId', 'k.siteId', 'p.plugin')
-    if (partnerApiKey == null) {
+    if (!partnerApiKey) {
       return {
         error: Boom.notFound('Cannot find available API Key when creating new device'),
       }
@@ -287,7 +287,7 @@ function createNewDeviceFromRequest(request, now) {
     }
 
     const deviceTypeExternalId = _.get(payload, 'type.id', null)
-    if (deviceTypeExternalId == null) {
+    if (!deviceTypeExternalId) {
       return {
         error: Boom.badRequest('Must specify device type on first request with new key'),
       }
