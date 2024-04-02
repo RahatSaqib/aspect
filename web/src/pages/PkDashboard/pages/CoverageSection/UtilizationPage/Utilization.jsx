@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from 'react'
-import { Typography } from '@mui/material'
+import { colors, Typography } from '@mui/material'
 import subYears from 'date-fns/subYears'
 import round from 'lodash/round'
 import { useIntl } from 'react-intl'
@@ -90,6 +90,13 @@ const UtilizationPage = () => {
     return { data, keys: ['value'], indexBy: 'type' }
   }, [rawProvincial])
 
+  const getGraphColor = (type, data) => {
+    const value = data.find(i => i.type === type)?.value
+    return colors[
+      value <= 20 ? 'red' : value <= 30 ? 'orange' : value <= 50 ? 'yellow' : value <= 76 ? 'lightGreen' : 'green'
+    ]['500']
+  }
+
   return (
     <PkPage
       title={formatMessage(messages.utilizationTitle)}
@@ -116,7 +123,14 @@ const UtilizationPage = () => {
       {isLoadingNational ? (
         <Loading />
       ) : (
-        <BarGraph data={national.data} yField="type" xField="value" colors="#FF0000" isPercentage disableFormat />
+        <BarGraph
+          data={national.data}
+          yField="type"
+          xField="value"
+          colors={({ type }) => getGraphColor(type, national.data)}
+          isPercentage
+          disableFormat
+        />
       )}
 
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
@@ -125,7 +139,14 @@ const UtilizationPage = () => {
       {isLoadingProvincial ? (
         <Loading />
       ) : (
-        <BarGraph data={provincial.data} yField="type" xField="value" colors="#FF0000" isPercentage disableFormat />
+        <BarGraph
+          data={provincial.data}
+          yField="type"
+          xField="value"
+          colors={({ type }) => getGraphColor(type, provincial.data)}
+          isPercentage
+          disableFormat
+        />
       )}
     </PkPage>
   )
