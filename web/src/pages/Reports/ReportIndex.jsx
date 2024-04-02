@@ -1,6 +1,7 @@
-import React, { useState } from 'react'
+import React, { useState, useEffect } from 'react'
 import { Button, Grid, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
+import { useIdleTimerContext } from 'react-idle-timer'
 import { defineMessages, useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useLocation } from 'react-router-dom'
@@ -63,6 +64,14 @@ const ReportIndex = () => {
   const intl = useIntl()
   const [showProgressBar, setShowProgressBar] = useState(false)
   const filter = useFilterValues(location.pathname)
+  const idleTimer = useIdleTimerContext()
+
+  useEffect(() => {
+    return () => {
+      idleTimer.resume()
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   const { data: reportListResponse, isLoading } = useQuery([REPORT_LIST.KEY, { params: filter }], async () =>
     fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: filter })
@@ -77,6 +86,7 @@ const ReportIndex = () => {
 
     const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
     setShowProgressBar(true)
+    idleTimer.pause()
     return fetchWrapperForQueries({
       endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}`,
       params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
@@ -88,6 +98,7 @@ const ReportIndex = () => {
       })
       .finally(() => {
         setShowProgressBar(false)
+        idleTimer.resume()
       })
   }
 
