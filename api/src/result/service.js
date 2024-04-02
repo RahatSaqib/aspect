@@ -1617,7 +1617,7 @@ async function currentResultAggregations(request) {
   /**
    * Total tests in the last 24 hours
    */
-  if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS_IN_LAST_24_HOURS)) {
+  if (flags.includes(GRAPH_FLAGS.GET_TOTAL_RESULTS_FOR_TODAY)) {
     const queryParams = {
       ...query,
       minDate: replaceOffset(startOfDay(now), timeZoneIANA),

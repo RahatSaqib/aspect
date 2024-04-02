@@ -779,7 +779,7 @@ function getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupB
         this.where('rca.reportable', true)
       }
     })
-    .orderBy('r.startedOn', 'r.endedOn')
+    .orderBy('r.endedOn', 'r.startedOn')
     .count('r.id as cnt')
 }
 
