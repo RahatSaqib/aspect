@@ -6,7 +6,7 @@ const Promise = require('bluebird')
 const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
 const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
-const { addConstraints, canViewResults, getConstraints, addPartnerQueryConstraints } = require('../auth/constraints')
+const { addConstraints, canViewResults, getConstraints, addPartnerQueryConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { getUser, getUserByUserId, getPersonByPersonId } = require('../auth/service')
 const {
   allAssayToId,
@@ -1497,12 +1497,9 @@ async function getResultsForReport(auth, query) {
 
 async function currentResultAggregations(request) {
   const { auth, query } = request
-  const { timeZone: timeZoneIANA } = await knex('Person as p')
-    .join('Geography as g', 'g.id', 'p.geographyId')
-    .join('Country as c', 'c.id', 'g.countryId')
-    .join('TimeZone as tz', 'c.timezone', 'tz.id')
-    .first('tz.timeZone')
-
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA: timeZoneIANA } = user
+  
   if (!canViewResults(auth)) {
     throw Boom.forbidden('You do not have access to results')
   }
