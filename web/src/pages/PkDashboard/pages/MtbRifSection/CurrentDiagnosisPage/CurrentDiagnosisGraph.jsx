@@ -64,7 +64,7 @@ const defaultFilters = [
   { maxDate },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
-  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
+  { flags: 'GET_TOTAL_RESULTS_FOR_TODAY' },
 ]
 
 const pieGraphParams = [{ groupBy: 'resultCategory1' }, { minDate }, { maxDate }, { flags: 'GET_TOTAL_RESULTS' }]

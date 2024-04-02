@@ -64,7 +64,7 @@ const defaultFilters = [
   { resultCategory2: 'Detected' },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
-  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
+  { flags: 'GET_TOTAL_RESULTS_FOR_TODAY' },
 ]
 
 const CurrentDiagnosisGraphPage = () => {
