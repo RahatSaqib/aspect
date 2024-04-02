@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
@@ -25,6 +25,7 @@ import useAssayList from '../../../../../hooks/assay/useAssayList'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -71,7 +72,6 @@ const CurrentDiagnosisGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState({})
   const { data: assays, isLoading: isLoadingAssays } = useAssayList()
   const scopedAssays = assays?.filter(x => x.externalId === 'GxMtbRif' || x.externalId === 'GxMtbRifUltra')
   const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
@@ -79,6 +79,11 @@ const CurrentDiagnosisGraphPage = () => {
   )
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
+  const [filter, setFilter] = usePathFilter()
+  const filterRef = useRef()
+  useEffect(() => {
+    filterRef.current = filter
+  }, [filter])
 
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
@@ -188,6 +193,8 @@ const CurrentDiagnosisGraphPage = () => {
                     const baseUrl = '/browse/result'
                     addFilter(
                       {
+                        ...filterRef.current,
+                        countryId: user.countryId,
                         assayId: assayIds,
                         minDate,
                         maxDate,

@@ -1,19 +1,19 @@
-import React, { useState, useEffect, useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
-import { useLocation } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import {
-  LgaSelect,
-  StateSelect,
-  Loading,
+  ColumnGraph,
+  DonutGraph,
+  formatDataByGraphType,
   genLabel,
+  LgaSelect,
+  Loading,
   negateTimeZoneOffset,
   objectToArray,
-  ColumnGraph,
-  formatDataByGraphType,
-  DonutGraph,
+  StateSelect,
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import {
@@ -21,10 +21,10 @@ import {
   getResultCategoryGroupsForResultList,
 } from '../../../../../cleanComponents/Graphs/graphUtils'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
-import { useResultlist } from '../../../../../hooks/result'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterValues from '../../../../../hooks/useFilterValues'
+import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -72,22 +72,24 @@ const pieGraphParams = [{ groupBy: 'resultCategory1' }, { minDate }, { maxDate }
 const CurrentDiagnosisGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
-  const { navigateToResultList } = useResultlist()
-
   const [showLabel, setShowLabel] = useState(true)
   const [showPercentage, setShowPercentage] = useState(false)
-  const location = useLocation()
-  const filterValues = useFilterValues(location.pathname)
-  const filterRef = useRef(filterValues)
-  const [filter, setFilter] = useState({ ...filterValues })
   const { data: assays, isLoading: isLoadingAssays } = useAssayList()
   const scopedAssays = assays?.filter(x => x.externalId === 'GxMtbRif' || x.externalId === 'GxMtbRifUltra')
   const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
     scopedAssays?.map(x => x.id)
   )
 
-  const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filter).concat(defaultFilters))
-  const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filter).concat(pieGraphParams))
+  const [filters, setFilter] = usePathFilter()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
+  const filterRef = useRef()
+
+  useEffect(() => {
+    filterRef.current = filters
+  }, [filters])
+  const { data: mainData, isLoading: isLoadingMain } = useMtpRifResults(objectToArray(filters).concat(defaultFilters))
+  const { data: pieData, isLoading: isLoadingPie } = useMtpRifResults(objectToArray(filters).concat(pieGraphParams))
 
   const [donutData, setDonutData] = useState({})
   const [barData, setBarData] = useState({})
@@ -152,10 +154,6 @@ const CurrentDiagnosisGraphPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [mainData, pieData, assays])
 
-  useEffect(() => {
-    filterRef.current = filter
-  }, [filter])
-
   return (
     <PkPage
       title={formatMessage(messages.peopleDiagnosedRif)}
@@ -172,14 +170,14 @@ const CurrentDiagnosisGraphPage = () => {
             control={<Switch checked={showPercentage} onChange={e => setShowPercentage(e.target.checked)} />}
           />
           <StateSelect
-            value={filter?.stateId ?? ''}
+            value={filters?.stateId || ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter?.lgaId ?? ''}
-            stateId={filter?.stateId}
+            value={filters?.lgaId || ''}
+            stateId={filters?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
@@ -210,17 +208,20 @@ const CurrentDiagnosisGraphPage = () => {
                       'Detected',
                       'Trace Detected',
                     ])
-
-                    navigateToResultList(
+                    const baseUrl = '/browse/result'
+                    addFilter(
                       {
                         ...filterRef.current,
+                        countryId: user.countryId,
+                        displayResult: 'actual',
                         minDate,
                         maxDate,
                         assayId: assayIds,
                         resultCategoryGroupId,
                       },
-                      { newFilters: filterRef.current, pathname: location.pathname }
+                      baseUrl
                     )
+                    navigate(baseUrl)
                   })
                 }}
               />

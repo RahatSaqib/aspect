@@ -27,7 +27,7 @@ const ConsumableSelector = ({ onChange, ...props }) => {
     <AspectSelect
       {...props}
       onChange={onChange}
-      label={/* formatMessage(consumableMessages.consumable) */ 'Asdasd'}
+      label={formatMessage(consumableMessages.consumable)}
       isLoading={isLoading}
       options={data}
       itemToString={item => (item ? item.consumableName : '')}

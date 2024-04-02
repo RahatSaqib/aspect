@@ -1,27 +1,27 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Switch, FormControlLabel, Grid, Typography } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
+import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useLocation } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import {
-  LgaSelect,
-  StateSelect,
+  ColumnGraph,
+  formatDataByGraphType,
   genLabel,
+  LgaSelect,
+  Loading,
   negateTimeZoneOffset,
   objectToArray,
-  ColumnGraph,
-  Loading,
-  formatDataByGraphType,
+  StateSelect,
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
-import { useResultlist } from '../../../../../hooks/result'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterValues from '../../../../../hooks/useFilterValues'
+import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -72,15 +72,18 @@ const CovidGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const location = useLocation()
-  const filterValues = useFilterValues(location.pathname)
-  const filterRef = useRef(filterValues)
-  const [filter, setFilter] = useState({ ...filterValues })
+  const [filters, setFilter] = usePathFilter()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
+  const filterRef = useRef()
+
+  useEffect(() => {
+    filterRef.current = filters
+  }, [filters])
   const { data: assays } = useAssayList()
-  const { navigateToResultList } = useResultlist()
 
   const { data, isLoading } = useQuery(
-    ['covidByCategory1Monthly', { endPointParams: objectToArray(filter ?? {}).concat(defaultFilters) }],
+    ['covidByCategory1Monthly', { endPointParams: objectToArray(filters ?? {}).concat(defaultFilters) }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
@@ -132,10 +135,6 @@ const CovidGraphPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, assays])
 
-  useEffect(() => {
-    filterRef.current = filter
-  }, [filter])
-
   return (
     <PkPage
       title={formatMessage(messages.peopleTestedCovid)}
@@ -147,14 +146,14 @@ const CovidGraphPage = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
-            value={filter?.stateId ?? ''}
+            value={filters?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter?.lgaId ?? ''}
-            stateId={filter?.stateId}
+            value={filters?.lgaId ?? ''}
+            stateId={filters?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
@@ -180,15 +179,19 @@ const CovidGraphPage = () => {
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-                    navigateToResultList(
+                    addFilter(
                       {
                         ...filterRef.current,
+                        countryId: user.countryId,
+                        displayResult: 'actual',
                         minDate,
                         maxDate,
+                        onlyReportableResults: true,
                         assayId: assays.find(a => a.externalId === evt.data.data.id).id,
                       },
-                      { newFilters: filterRef.current, pathname: location.pathname }
+                      '/browse/result'
                     )
+                    navigate('/browse/result')
                   })
                 }}
               />
