@@ -8,6 +8,7 @@ import subtractDays from 'date-fns/subDays'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useAuthState from '../../hooks/useAuthState'
+import { getTimePeriod } from '../../oldComponents/shared/DateTimeInput/utils/date'
 import FilterContext from './FilterProvider.Context'
 
 const now = new Date()
@@ -30,7 +31,16 @@ export const defaultFilter = {
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate }, //
   '/reports': { minDate, maxDate }, //
   '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
-  '/dashboard/rif/current-diagnosis': {},
+  '/dashboard/rif/provincial-diagnosis-trend': { states: [], lgas: [] },
+  '/dashboard/rif/provincial-rrtb-trend-comparison': { states: [], lgas: [] },
+  '/dashboard/rif/provincial-testing-trend': { states: [], lgas: [] },
+  '/dashboard/xdr/provincial-diagnosis-trend': { states: [], lgas: [] },
+  '/dashboard/xdr/provincial-testing-trend': { states: [], lgas: [] },
+  '/dashboard/xdr/provincial-fq-diagnosis-trend': { states: [], lgas: [] },
+  '/dashboard/inventory/overview': {
+    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
+    maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+  },
 }
 
 const FilterProvider = ({ children }) => {
