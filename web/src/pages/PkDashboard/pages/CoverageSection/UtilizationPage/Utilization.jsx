@@ -1,11 +1,10 @@
 import React, { useMemo, useState } from 'react'
-import { colors, Typography } from '@mui/material'
+import { colors, Grid, Typography } from '@mui/material'
 import subYears from 'date-fns/subYears'
 import round from 'lodash/round'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { BarGraph, getTimePeriod, Loading, PeriodSelector } from '../../../../../cleanComponents'
-import EmptyGraph from '../../../../../components/Graphs/EmptyData'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
@@ -109,13 +108,15 @@ const UtilizationPage = () => {
         />
       }
     >
-      {isLoadingTable ? (
-        <Loading />
-      ) : tableData?.length === 0 ? (
-        <EmptyGraph type="bar" />
-      ) : (
-        <NestedTable columns={columns} rows={tableData} hasDetail />
-      )}
+      <Grid container>
+        {isLoadingTable ? (
+          <Grid item xs={12} my={5} alignItems="center" justifyContent="center">
+            <Loading />
+          </Grid>
+        ) : (
+          <NestedTable columns={columns} rows={tableData} hasDetail />
+        )}
+      </Grid>
 
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
         {formatMessage(messages.nationalUtilizationTrendsAnnual)}
