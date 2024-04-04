@@ -139,7 +139,7 @@ const CurrentFQTrendPage = () => {
                 label: formatMessage(messages.FQRPerMonth),
                 value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.FQRPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.FQRToday), value: `${data.totalResultsToday}` },
             ]}
           />
         </Grid>

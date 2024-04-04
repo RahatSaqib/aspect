@@ -184,7 +184,7 @@ const messages = {
       defaultMessage: 'National FQ-R Resistance Trend',
     },
     rrtbDiagnosisTitle: {
-      id: 'p.PkDashboard.rrtbDiagnosisTitle',
+      id: 'p.PkDashboard.rrtbDiagnosisTitle1',
       defaultMessage: 'Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay',
     },
     rrtbNationalDiagnosisTrendsTitle: {
@@ -222,13 +222,14 @@ const messages = {
 
     RRPerYear: { id: 'p.PkDashboard.RRPerYear', defaultMessage: 'RR cases diagnosed this year' },
     RRPerMonth: { id: 'p.PkDashboard.RRPerMonth', defaultMessage: 'Average RR cases diagnosed per month' },
-    RRToday: { id: 'p.PkDashboard.RRToday', defaultMessage: 'RR cases diagnosed today' },
+    RRToday: { id: 'p.PkDashboard.RRToday', defaultMessage: 'RR cases diagnosed today' },    
 
     currentFQDetection: { id: 'p.PkDashboard.currentFQDetection', defaultMessage: 'Current FQ Detection' },
     FQRPerYear: { id: 'p.PkDashboard.FQRPerYear', defaultMessage: 'FQ-R cases diagnosed this year' },
     FQRCurrentYear: { id: 'p.PkDashboard.FQRCurrentYear', defaultMessage: 'FQ-R cases diagnosed in current year' },
     FQRPerMonth: { id: 'p.PkDashboard.FQRPerMonth', defaultMessage: 'Average FQ-R cases diagnosed per month' },
-    FQRPerDay: { id: 'p.PkDashboard.FQRPerDay', defaultMessage: 'FQ-R cases diagnosed in last 24 hours' },
+    FQRToday: { id: 'p.PkDashboard.FQRToday', defaultMessage: 'FQ-R cases diagnosed today' },
+
 
     xdrCurrentTitle: { id: 'p.PkDashboard.xdrCurrentTitle', defaultMessage: 'Current GX-10CX Testing performed in' },
 
