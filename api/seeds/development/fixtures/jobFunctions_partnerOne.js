@@ -25,12 +25,13 @@ module.exports = [
   resultViewerYes,
   technician,
   {
-    name: 'Pakistan Dashboard Testing',
+    name: 'Pakistan Testing',
     permissions: [
       {
         module: 'dashboard-v2',
         activity: 'view',
       },
     ],
+    reports: ['pk_xpert_site_summary_site_wise_report'],
   },
 ]

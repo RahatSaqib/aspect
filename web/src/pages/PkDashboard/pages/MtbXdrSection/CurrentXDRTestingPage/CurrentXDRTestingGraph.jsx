@@ -1,10 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useRef } from 'react'
 import { Switch, FormControlLabel, Grid } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useNavigate } from 'react-router-dom'
+import { useLocation } from 'react-router'
 import {
   StateSelect,
   LgaSelect,
@@ -19,8 +19,9 @@ import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
+import { useResultlist } from '../../../../../hooks/result'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import useFilterValues from '../../../../../hooks/useFilterValues'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -70,10 +71,12 @@ const RifCurrentGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState([])
+  const location = useLocation()
+  const filterValues = useFilterValues(location.pathname)
+  const filterRef = useRef(filterValues)
+  const [filter, setFilter] = useState({ ...filterValues })
   const { data: assays } = useAssayList()
-  const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
+  const { navigateToResultList } = useResultlist()
 
   const { data, isLoading } = useQuery(
     ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
@@ -127,6 +130,10 @@ const RifCurrentGraphPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, assays])
 
+  useEffect(() => {
+    filterRef.current = filter
+  }, [filter])
+
   return (
     <PkPage
       title={formatMessage(messages.peopleTestedXdr)}
@@ -168,15 +175,15 @@ const RifCurrentGraphPage = () => {
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-
-                    const params = {
-                      displayResult: 'actual',
-                      minDate,
-                      maxDate,
-                      assayId: assays.find(a => a.externalId === evt.data.data.id).id,
-                    }
-                    addFilter({ ...params }, '/browse/result')
-                    navigate('/browse/result')
+                    navigateToResultList(
+                      {
+                        ...filterRef.current,
+                        minDate,
+                        maxDate,
+                        assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                      },
+                      { newFilters: filterRef.current, pathname: location.pathname }
+                    )
                   })
                 }}
               />
@@ -188,7 +195,7 @@ const RifCurrentGraphPage = () => {
               { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
               {
                 label: formatMessage(messages.testPerMonth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(1)}`,
+                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
               { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
             ]}

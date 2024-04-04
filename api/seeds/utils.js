@@ -754,7 +754,7 @@ async function seedIssueEventTriggersForPartner(
         await upsertSingle(knex, 'IssueEventTrigger', uniqueKeys.IssueEventTrigger, {
           ...triggerData,
           triggerConditions: JSON.stringify(triggerConditions),
-          filterIssueCondition: JSON.stringify(filterIssueCondition),
+          filterIssueCondition: filterIssueCondition ? JSON.stringify(filterIssueCondition) : null,
           createdOn: now,
           updatedOn: now,
         })
