@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import cloneDeep from 'lodash/cloneDeep'
 import findIndex from 'lodash/findIndex'
 import findLastIndex from 'lodash/findLastIndex'
@@ -32,12 +32,19 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
     isError: devicesIsError,
     data: { data: devicesDaily } = false,
     error: devicesError,
-  } = useQuery([DAILY_STATUS.KEY, { params, ...extraParams }], async ({ queryKey: [, { params }] }) =>
-    fetchWrapperForQueries({
-      endpoint,
-      params:
-        minDate && maxDate ? { ...params, ...extraParams } : Object.keys(extraParams).length > 0 ? extraParams : null,
-    })
+  } = useQuery(
+    [DAILY_STATUS.KEY, { params, ...extraParams }],
+    async ({ queryKey: [, { params }] }) =>
+      fetchWrapperForQueries({
+        endpoint,
+        params:
+          minDate && maxDate ? { ...params, ...extraParams } : Object.keys(extraParams).length > 0 ? extraParams : null,
+      }),
+    {
+      onSuccess: responseData => {
+        responseData.data = responseData.data.map(item => ({ ...item, id: +item.id }))
+      },
+    }
   )
 
   const { mutate: changeDeviceStatus } = useMutation(
@@ -136,48 +143,60 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
    * Returns data needed to open AspectDialog for setting maintenance
    * status for selected date range.
    * Notice that date range is _continuous dates with SAME status
+   *
+   * FYI - using hook useCallback to cache function reference, because
+   * this func is used in event handler `onClickDay` which is passed in a component
+   * which renders all days of a device. And func `onClickDay` is also wrapped wit
+   * useCallback.
    */
-  const getDeviceDayDetails = ({ day, deviceId }) => {
-    const { maintenanceStatusHistory, shortName, siteContacts, hoursStart, hoursEnd } = devicesDaily.find(
-      ({ id }) => +id === +deviceId
-    )
-    const { maintenanceStatusExternalId, maintenanceStatusNotes: note } = maintenanceStatusHistory.find(
-      it => it.day === day
-    )
-    const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
-    // helper to get forward or backward index of first day with another status
-    const getIndex = findFn =>
-      findFn(maintenanceStatusHistory, it => it.maintenanceStatusExternalId !== maintenanceStatusExternalId, fromIndex)
+  const getDeviceDayDetails = useCallback(
+    ({ day, deviceId }) => {
+      const { maintenanceStatusHistory, shortName, siteContacts, hoursStart, hoursEnd } = devicesDaily.find(
+        ({ id }) => +id === +deviceId
+      )
+      const { maintenanceStatusExternalId, maintenanceStatusNotes: note } = maintenanceStatusHistory.find(
+        it => it.day === day
+      )
+      const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
+      // helper to get forward or backward index of first day with another status
+      const getIndex = findFn =>
+        findFn(
+          maintenanceStatusHistory,
+          it => it.maintenanceStatusExternalId !== maintenanceStatusExternalId,
+          fromIndex
+        )
 
-    const startedOnIndex = getIndex(findLastIndex) + 1
-    let endedOnIndex = getIndex(findIndex)
-    endedOnIndex = endedOnIndex === -1 ? maintenanceStatusHistory.length - 1 : endedOnIndex - 1
-    const startedOn = maintenanceStatusHistory[startedOnIndex].day
-    const endedOn = maintenanceStatusHistory[endedOnIndex].day
+      const startedOnIndex = getIndex(findLastIndex) + 1
+      let endedOnIndex = getIndex(findIndex)
+      endedOnIndex = endedOnIndex === -1 ? maintenanceStatusHistory.length - 1 : endedOnIndex - 1
+      const startedOn = maintenanceStatusHistory[startedOnIndex].day
+      const endedOn = maintenanceStatusHistory[endedOnIndex].day
 
-    return {
-      deviceId,
-      deviceName: shortName,
-      siteProps: {
-        siteContacts,
-        hoursStart,
-        hoursEnd,
-      },
-      day, // day clicked (formatted as "YYYY-MM-DD")
-      periodWithSameStatus: {
-        startedOn,
-        endedOn,
-        maintenanceStatusExternalId,
-      },
-      note,
-    }
-  }
+      return {
+        deviceId,
+        deviceName: shortName,
+        siteProps: {
+          siteContacts,
+          hoursStart,
+          hoursEnd,
+        },
+        day, // day clicked (formatted as "YYYY-MM-DD")
+        periodWithSameStatus: {
+          startedOn,
+          endedOn,
+          maintenanceStatusExternalId,
+        },
+        note,
+      }
+    },
+    [devicesDaily]
+  )
 
   return {
     devices: {
       devicesIsLoading,
       devicesIsError,
-      devicesDaily: devicesDaily ? devicesDaily.map(item => ({ ...item, id: +item.id })) : devicesDaily,
+      devicesDaily,
       devicesError,
     },
     statuses: {

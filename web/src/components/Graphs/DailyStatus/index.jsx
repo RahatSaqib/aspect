@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, TextField, MenuItem } from '@mui/material'
 import { useIntl } from 'react-intl'
 import Loading from '../../../cleanComponents/Loading'
@@ -29,17 +29,24 @@ const DailyStatus = () => {
 
   const ops = dateRangeOptions(formatMessage, formatDate, 'deviceDateRange').deviceDateRange
 
-  const onClickDay = ({ day, deviceId }) => {
-    const {
-      deviceName,
-      siteProps,
-      periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
-      note,
-    } = getDeviceDayDetails({ day, deviceId })
-    // day clicked (formatted as "YYYY-MM-DD")
-    const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note }
-    setDialogState({ isOpen: true, deviceName, siteProps, data })
-  }
+  /**
+   * wrap with useCallback to keep same func reference - because
+   * DailyStatusClinic is cached with React.memo
+   */
+  const onClickDay = useCallback(
+    ({ day, deviceId }) => {
+      const {
+        deviceName,
+        siteProps,
+        periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
+        note,
+      } = getDeviceDayDetails({ day, deviceId })
+      // day clicked (formatted as "YYYY-MM-DD")
+      const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note }
+      setDialogState({ isOpen: true, deviceName, siteProps, data })
+    },
+    [getDeviceDayDetails]
+  )
 
   const onHideDailyStatusDialog = () => {
     setDialogState({ isOpen: false })

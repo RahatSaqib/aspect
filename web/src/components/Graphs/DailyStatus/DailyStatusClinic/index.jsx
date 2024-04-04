@@ -82,4 +82,11 @@ DailyStatusClinic.propTypes = {
   onClickDay: PropTypes.func.isRequired,
 }
 
-export default DailyStatusClinic
+/**
+ * This is pretty expensive DOM rendering component used in the loop
+ * for each device. So, wrap it with `memo` util to cache.
+ * Otherwise - parent component will re-render all devices every time
+ * a dialog `Set Maintenance Status` is opened or closed with
+ * 2-3 seconds (!) delay.
+ */
+export default React.memo(DailyStatusClinic)
