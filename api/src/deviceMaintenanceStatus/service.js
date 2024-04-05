@@ -30,11 +30,27 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
       .innerJoin('DeviceMaintenanceStatusLog as dmsl', 'd.id', 'dmsl.deviceId')
       .innerJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
       .leftJoin('Person as pe', 'dmsl.createdBy', 'pe.userId')
+      /**
+       * Notice that for getting latest entry for the deviceId/day in DeviceMaintenanceStatusLog,
+       * below we are again joining to DeviceMaintenanceStatusLog ...
+       */
       .leftOuterJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay', qb => {
+        /**
+         * for the same `deviceId` ...
+         */
         qb.on('newerDmslOnSameDay.deviceId', 'dmsl.deviceId')
+          /**
+           * for the same `day` ...
+           */
           .andOn('newerDmslOnSameDay.day', 'dmsl.day')
+          /**
+           * and make sure that `createdOn` is greater than previous ...
+           */
           .andOn(qb => {
             qb.on('newerDmslOnSameDay.createdOn', '>', 'dmsl.createdOn')
+            /**
+             * or if they are equal, then get entry with greater `id` value
+             */
             qb.orOn(qb => {
               qb.on('newerDmslOnSameDay.createdOn', '=', 'dmsl.createdOn').andOn(
                 'newerDmslOnSameDay.id',
