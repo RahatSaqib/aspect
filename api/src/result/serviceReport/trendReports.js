@@ -252,7 +252,7 @@ async function listGx10CTrendsProvincial({ auth, query }) {
      * stateId is missing in `groupedToday`
      */
     const byState = groupedToday[d.stateId] || emptyCounts
-    d.today= { ...emptyCounts }
+    d.today = { ...emptyCounts }
     counterNames.forEach(counterName => {
       d.today[counterName] += byState[counterName]
     })
