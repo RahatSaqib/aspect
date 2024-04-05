@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { startOfDay, endOfDay, subDays, endOfMonth, getMonth } = require('date-fns')
+const { startOfDay, endOfDay, endOfMonth, getMonth } = require('date-fns')
 
 const { getConstraints, getUserFromCredentials } = require('../../auth/constraints')
 const { knex } = require('../../db')
