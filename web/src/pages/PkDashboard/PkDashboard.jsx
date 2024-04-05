@@ -28,7 +28,7 @@ const PkDashboard = () => {
                   value: resultOverview.total1Year,
                   valueTooltipKey: 'peopleTestedRifTooltip',
                 },
-                { key: 'molecularAssay24', value: resultOverview.total1Day },
+                { key: 'molecularAssay25', value: resultOverview.total1Day },
               ]}
             />
           )}
@@ -40,7 +40,7 @@ const PkDashboard = () => {
             <SummaryCard
               items={[
                 { key: 'TB', value: resultOverview.mtbDetected1Year },
-                { key: 'TB24', value: resultOverview.mtbDetected1Day },
+                { key: 'TB25', value: resultOverview.mtbDetected1Day },
               ]}
             />
           )}
@@ -52,7 +52,7 @@ const PkDashboard = () => {
             <SummaryCard
               items={[
                 { key: 'RTTB', value: resultOverview.rifDetected1Year },
-                { key: 'RTTB24', value: resultOverview.rifDetected1Day },
+                { key: 'RTTB25', value: resultOverview.rifDetected1Day },
               ]}
             />
           )}
