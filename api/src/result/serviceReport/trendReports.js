@@ -5,7 +5,7 @@ const { getConstraints } = require('../../auth/constraints')
 const { knex } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
 const { getMonthYearField } = require('../../shared/date')
-const { getXdrResultCountBase, FACT_FIELD_SCOPE } = require('../common/db')
+const { getFactResultCountBase, FACT_FIELD_SCOPE } = require('../common/db')
 
 /**
  * gx10CBaseQueryNational
@@ -28,10 +28,11 @@ function gx10CBaseQueryNational({ query, dataConstraints, resultCategoryIds }) {
   /**
    * base query grouped by month
    */
-  const baseQuery = getXdrResultCountBase({
+  const baseQuery = getFactResultCountBase({
     resultCategoryIds,
     dataConstraints,
     query: { ...query, minDate, maxDate },
+    assay: ['GxMtbXdr'],
   })
     /**
      * group by month
@@ -53,11 +54,12 @@ function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds })
     /**
      * base query grouped by month
      */
-    const baseQuery = getXdrResultCountBase({
+    const baseQuery = getFactResultCountBase({
       resultCategoryIds,
       dataConstraints,
       query: { ...query, minDate, maxDate },
       fieldsScope: [FACT_FIELD_SCOPE.all],
+      assay: ['GxMtbXdr'],
     })
       .select(
         getMonthYearField(knex, 'r.startedOn', 'yearAndMonth'),

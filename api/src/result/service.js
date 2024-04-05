@@ -36,7 +36,7 @@ const {
   getQueryForResultsListAndExport,
   showFileReferencesById,
   getResultNotesByResultId,
-  getXdrResultCountBase,
+  getFactResultCountBase,
   FACT_FIELD_SCOPE,
 } = require('./common/db')
 const { getDeviceByDeviceId } = require('../device/service')
@@ -2296,11 +2296,12 @@ async function xdrAssayGraphAggregations(request) {
     monthDate = addMonths(monthDate, 1)
   }
 
-  let data = await getXdrResultCountBase({
+  let data = await getFactResultCountBase({
     resultCategoryIds,
     dataConstraints,
     query: { ...query, minDate, maxDate },
     fieldsScope: [FACT_FIELD_SCOPE.all],
+    assay: ['GxMtbXdr'],
   })
     .where('a.id', assayIds.GxMtbXdr)
     .modify(filterDateRangeParams, { minDate, maxDate }, 'r.startedOn')
