@@ -28,7 +28,7 @@ const PkDashboard = () => {
                   value: resultOverview.total1Year,
                   valueTooltipKey: 'peopleTestedRifTooltip',
                 },
-                { key: 'molecularAssay25', value: resultOverview.total1Day },
+                { key: 'molecularAssay25', value: resultOverview.totalToday },
               ]}
             />
           )}

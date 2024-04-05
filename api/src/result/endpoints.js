@@ -1186,7 +1186,7 @@ const routes = [
                 prevYearMeanPerMonth: Joi.object().keys({
                   ...validateResponseResultCounts(),
                 }),
-                last24h: Joi.object().keys({
+                today: Joi.object().keys({
                   ...validateResponseResultCounts(),
                 }),
                 trends: Joi.array()
