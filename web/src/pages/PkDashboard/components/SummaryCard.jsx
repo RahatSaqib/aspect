@@ -11,9 +11,16 @@ const SummaryCard = ({ items }) => {
       <CardContent sx={{ p: 2, '&:last-child': { pb: '16px' } }}>
         {items.map((item, index) => {
           const isLast = index === items.length - 1
+          const dataRowProps = {
+            label: formatMessage(messages[item.key]),
+            value: item.value.toString(),
+          }
+          if (item.valueTooltipKey) {
+            dataRowProps.valueTooltip = formatMessage(messages[item.valueTooltipKey])
+          }
           return (
             <React.Fragment key={index}>
-              <DataRow label={formatMessage(messages[item.key])} value={item.value.toString()} />
+              <DataRow {...dataRowProps} />
               {!isLast && <Divider />}
             </React.Fragment>
           )
