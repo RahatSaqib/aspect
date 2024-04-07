@@ -1112,13 +1112,12 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
     (acc, device) => {
       const deviceToday = allDevicesToday.find(it => it.id === device.id)
       const totalResults = allResults.find(it => it.id === device.id)?.totalResults || 0
-      /**
-       * Return data if the device's log does not exist for the given day
-       * --> REASON: We need to add the missing log
-       */
-      if (!deviceToday?.today_dmsl_id) {
-        acc = [...acc, { ...deviceToday, totalResults }]
-      } else if (
+      if (
+        /**
+         * Return data if the device's log does not exist for the given day
+         * --> REASON: We need to add the missing log
+         */
+        !deviceToday?.today_dmsl_id ||
         /**
          * Return data if the device is decommissioned but the log is not set to inactiveDecommissioned
          * --> REASON: We need to set the maintenance as 'inactiveDecommissioned' if decommission
@@ -1135,14 +1134,7 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
          */
         deviceToday.todayMaintenanceStatusExternalId === 'inactiveUnknown'
       ) {
-        acc = [
-          ...acc,
-          {
-            ...device,
-            ...deviceToday,
-            totalResults,
-          },
-        ]
+        acc = [...acc, { ...device, ...deviceToday, totalResults }]
       }
       return acc
     },
