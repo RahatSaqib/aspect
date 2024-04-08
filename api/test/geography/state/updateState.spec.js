@@ -13,7 +13,7 @@ const path = '/api/geography/states'
 
 describe.only('PUT', () => {
   const newName = 'newName'
-  const newAbbreviation = 'newAbbreviation'
+  const newAbbreviation = 'newAbbr'
   let state
 
   before(() => shared.checkToken(server, path))
@@ -37,9 +37,14 @@ describe.only('PUT', () => {
         .put(`${path}/${state.id}`)
         .send({ name: newName, abbreviation: newAbbreviation })
         .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 204)
       const updatedState = await knex('State').where({ id: state.id }).first()
-      assert.equal(res.status, 200)
-      expect(updatedState).to.containSubset([{ id: state.id, name: newName, abbreviation: newAbbreviation }])
+      expect(updatedState).to.containSubset({
+        id: state.id,
+        name: newName,
+        abbreviation: newAbbreviation,
+      })
+      chai.assert.instanceOf(updatedState.updatedOn, Date)
     })
   })
 })

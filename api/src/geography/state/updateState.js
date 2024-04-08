@@ -4,12 +4,14 @@ const { getConstraints, getUserFromCredentials } = require('../../auth/constrain
 const { checkStateAccess } = require('./common/db')
 const { auth } = require('../../../test/utils/testUtils')
 
-async function updateState({ auth, params, payload }) {
+async function updateState({ auth, params, payload }, h) {
+  console.log('\x1b[1;36m', '🚀 ➜ auth:', auth)
   const { stateId } = params
   // const user = await getUserFromCredentials(auth.credentials)
   // await validate(stateId, auth.credentials, params)
-  // const { name, abbreviation } = payload
-  // await updateStateData(stateId, name, abbreviation)
+  const { name, abbreviation } = payload
+  await updateStateData(stateId, name, abbreviation, auth.credentials.personId)
+  return h.response().code(204)
 }
 
 // const validate = async (stateId, credentials, state) => {
@@ -27,10 +29,9 @@ async function updateState({ auth, params, payload }) {
 //   }
 // }
 
-function updateStateData(stateId, name, abbreviation) {
-  return knex('State')
-    .where({ id: stateId })
-    .update({ name, abbreviation, updatedOn: new Date(), updateBy: auth.credentials.name })
+function updateStateData(stateId, name, abbreviation, user) {
+  const values = { name, abbreviation, updatedOn: new Date(), updatedBy: user }
+  return knex('State').where({ id: stateId }).update(values)
 }
 
 // async function validateNonRepeatedState(stateId, { name, abbreviation }) {
