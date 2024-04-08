@@ -11,28 +11,29 @@ const { run } = require('../../../src/db')
 const { assert, expect } = chai.use(chaiSubset)
 const path = '/api/geography/states'
 
-describe.only('PUT', () => {
+describe('PUT', () => {
   const newName = 'newName'
   const newAbbreviation = 'newAbbr'
   let state
-
+  const statesToDelete = []
   before(() => shared.checkToken(server, path))
   before(async () => {
     return run(async knex => {
       // const dataConstraints = await getConstraints({ name: 'admin' })
       const stateId = await knex('State').insert({ name: 'state', abbreviation: 'st' })
+      statesToDelete.push(stateId)
       state = await knex('State').where({ id: stateId }).first()
     })
   })
 
   after(async () => {
     return run(async knex => {
-      await knex('State').where({ id: state.id }).del()
+      await knex('State').whereIn('id', statesToDelete).del()
     })
   })
 
-  describe('/states/{stateId}', () => {
-    it.only('Should update state', async () => {
+  describe.only('/states/{stateId}', () => {
+    it('Should update state', async () => {
       const res = await server
         .put(`${path}/${state.id}`)
         .send({ name: newName, abbreviation: newAbbreviation })
@@ -45,6 +46,24 @@ describe.only('PUT', () => {
         abbreviation: newAbbreviation,
       })
       chai.assert.instanceOf(updatedState.updatedOn, Date)
+    })
+
+    it('If a state with same name of abbreviation exists, returns 409 Conflict', async () => {
+      const dupStateId = await knex('State').insert({ name: newName, abbreviation: newAbbreviation })
+      statesToDelete.push(dupStateId)
+      const res = await server
+        .put(`${path}/${state.id}`)
+        .send({ name: newName, abbreviation: newAbbreviation })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 409)
+    })
+
+    it('If Id does not exists, returns 404 Not found', async () => {
+      const res = await server
+        .put(`${path}/${999}`)
+        .send({ name: newName, abbreviation: newAbbreviation })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(res.status, 404)
     })
   })
 })
