@@ -3,10 +3,7 @@ const chaiSubset = require('chai-subset')
 const shared = require('../../utils/sharedToken')
 const server = require('../../utils/testUtils')
 const { knex } = require('../../../src/db')
-// const { getUserByToken } = require('../utils/authUtils')
-
 const { run } = require('../../../src/db')
-// const { getConstraints, addConstraints } = require('../../src/auth/constraints')
 
 const { assert, expect } = chai.use(chaiSubset)
 const path = '/api/geography/states'
@@ -19,8 +16,7 @@ describe('PUT', () => {
   before(() => shared.checkToken(server, path))
   before(async () => {
     return run(async knex => {
-      // const dataConstraints = await getConstraints({ name: 'admin' })
-      const stateId = await knex('State').insert({ name: 'state', abbreviation: 'st' })
+      const stateId = await knex('State').insert({ name: 'oldStateName', abbreviation: 'oldAbbr' })
       statesToDelete.push(stateId)
       state = await knex('State').where({ id: stateId }).first()
     })

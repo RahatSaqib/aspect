@@ -9,6 +9,7 @@ const {
 } = require('./service')
 const getLevelByUserSelectList = require('./getLevelByUserSelectList')
 const { updateState } = require('./state/updateState')
+const { updateLga } = require('./state/updateLga')
 
 const routes = [
   {
@@ -151,6 +152,25 @@ const routes = [
         payload: {
           name: Joi.string().allow('', null),
           abbreviation: Joi.string().allow('', null),
+        },
+      },
+      auth: { scope: ['admin'] },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/geography/lgas/{lgaId}',
+    handler: asyncHandler(updateLga),
+    config: {
+      description: 'Update Lga',
+      validate: {
+        params: {
+          lgaId: Joi.number().description('Lga Id').required(),
+        },
+        payload: {
+          name: Joi.string().allow('', null),
+          abbreviation: Joi.string().allow('', null),
+          stateId: Joi.number().allow('', null),
         },
       },
       //  auth: { scope: ['admin'] },
