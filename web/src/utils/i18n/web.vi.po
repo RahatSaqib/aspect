@@ -2540,10 +2540,10 @@ msgstr "Bảng điều khiển"
 
 #. [header.link.dashboardv2.title]
 #. defaultMessage is:
-#. Dashboard v2
+#. Dashboard
 #: extracted_strings.json
-msgid "Dashboard v2"
-msgstr "Bảng điều khiển v2"
+msgid "Dashboard"
+msgstr "Bảng điều khiển"
 
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
