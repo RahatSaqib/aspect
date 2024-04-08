@@ -62,7 +62,7 @@ export default function LgasPage() {
                       sx={{ zIndex: 9 }}
                       onClick={e => {
                         e.stopPropagation()
-                        setRemovingLga(i.name)
+                        setRemovingLga(i)
                       }}
                       variant="outlined"
                       startIcon={<DeleteIcon />}
@@ -88,7 +88,7 @@ export default function LgasPage() {
         </Card>
       </Box>
       <AddLgaDialog open={addLga} onOpenChange={setAddLga} />
-      <RemoveLgaDialog open={!!removingLga} onOpenChange={setRemovingLga} />
+      <RemoveLgaDialog open={!!removingLga} lga={removingLga} onOpenChange={setRemovingLga} />
       <EditLgaDialog open={!!editingLga} lga={editingLga} onOpenChange={setEditingLga} />
     </>
   )

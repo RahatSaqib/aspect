@@ -78,7 +78,7 @@ export default function StatesPage() {
                     <Button
                       onClick={e => {
                         e.stopPropagation()
-                        setRemovingState(i.name)
+                        setRemovingState(i)
                       }}
                       variant="outlined"
                       startIcon={<DeleteIcon />}
@@ -104,7 +104,7 @@ export default function StatesPage() {
         </Card>
       </Box>
       <AddStateDialog open={addState} onOpenChange={setAddState} />
-      <RemoveStateDialog open={!!removingState} onOpenChange={setRemovingState} />
+      <RemoveStateDialog open={!!removingState} state={removingState} onOpenChange={setRemovingState} />
       <EditStateDialog open={!!editingState} state={editingState} onOpenChange={setEditingState} />
     </>
   )

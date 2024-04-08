@@ -1,19 +1,21 @@
 import React from 'react'
-import { Button } from '@mui/material'
+import { Button, CircularProgress } from '@mui/material'
 import { useIntl } from 'react-intl'
+import { useDeleteLga } from '../../../hooks/admin/useDeleteLga'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
-export function RemoveLgaDialog({ open, onOpenChange }) {
+export function RemoveLgaDialog({ open, lga, onOpenChange }) {
   const { formatMessage } = useIntl()
+  const { mutate: deleteLga, isLoading } = useDeleteLga()
   return (
     <AspectDialog
       actions={[
         <Button color="primary" onClick={() => onOpenChange(false)}>
           {formatMessage(messages.cancel)}
         </Button>,
-        <Button color="primary" variant="contained" onClick={() => {}}>
-          {formatMessage(messages.yes)}
+        <Button disabled={isLoading} color="primary" variant="contained" onClick={() => deleteLga({ lgaId: lga?.id })}>
+          {isLoading ? <CircularProgress size={20} /> : formatMessage(messages.yes)}
         </Button>,
       ]}
       maxWidth="sm"

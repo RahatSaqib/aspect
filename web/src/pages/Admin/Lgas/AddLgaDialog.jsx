@@ -1,9 +1,10 @@
 import React from 'react'
-import { Box, Button, TextField } from '@mui/material'
+import { Box, Button, CircularProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { number, object, string } from 'yup'
 import { StateSelect } from '../../../cleanComponents'
+import { useCreateLga } from '../../../hooks/admin/useCreateLga'
 import useAuthState from '../../../hooks/useAuthState'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
@@ -11,6 +12,7 @@ import messages from '../messages'
 export function AddLgaDialog({ open, onOpenChange }) {
   const { formatMessage } = useIntl()
   const user = useAuthState()
+  const { mutateAsync: createLga } = useCreateLga()
 
   return (
     <AspectDialog
@@ -26,7 +28,7 @@ export function AddLgaDialog({ open, onOpenChange }) {
             name: string().required(formatMessage(messages.lgaNameRequired)),
             stateId: number().nullable().required(formatMessage(messages.stateNameRequired)),
           })}
-          onSubmit={({ values }) => {}}
+          onSubmit={values => createLga(values)}
         >
           {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
             <>
@@ -50,8 +52,14 @@ export function AddLgaDialog({ open, onOpenChange }) {
                 error={!!(touched.name && Boolean(errors.name))}
                 helperText={touched.name && errors.name}
               />
-              <Button sx={{ alignSelf: 'flex-end' }} color="primary" variant="contained" onClick={handleSubmit}>
-                {formatMessage(messages.createLga)}
+              <Button
+                disabled={isSubmitting}
+                sx={{ alignSelf: 'flex-end' }}
+                color="primary"
+                variant="contained"
+                onClick={handleSubmit}
+              >
+                {isSubmitting ? <CircularProgress size={20} /> : formatMessage(messages.createLga)}
               </Button>
             </>
           )}
