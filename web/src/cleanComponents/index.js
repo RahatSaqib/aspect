@@ -39,6 +39,7 @@ import {
   ResultFilter,
   SiteFilter,
   XDRByDeviceFilter,
+  LgasFilter,
 } from './Filter'
 import {
   BarGraph,
@@ -183,6 +184,7 @@ export {
   ResultFilter,
   SiteFilter,
   XDRByDeviceFilter,
+  LgasFilter,
   ConsumableReasonSelect,
   DeviceCapacitySelect,
   SimpleTableHeader,

@@ -5,6 +5,7 @@ import ErrorRateFilter from './FilterContainer.ErrorRate'
 import InventoryItemsFilter from './FilterContainer.InventoryItems'
 import InventoryLogFilter from './FilterContainer.InventoryLog'
 import InventoryTransferFilter from './FilterContainer.InventoryTransfer'
+import LgasFilter from './FilterContainer.Lgas'
 import NotificationFilter from './FilterContainer.Notification'
 import NotificationLogFilter from './FilterContainer.NotificationLog'
 import PersonFilter from './FilterContainer.Person'
@@ -30,4 +31,5 @@ export {
   SiteFilter,
   XDRByDeviceFilter,
   NotificationLogFilter,
+  LgasFilter,
 }

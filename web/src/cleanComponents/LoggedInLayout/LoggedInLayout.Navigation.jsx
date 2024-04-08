@@ -127,6 +127,15 @@ const getRawLinks = f => [
   { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', '+deviceApiKey'] },
   { href: '/reports', label: f(messages.reportsTitle), perm: ['+report'] },
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },
+  {
+    href: '/browse/admin',
+    label: f(messages.admin),
+    perm: ['browse', '+device'],
+    submenu: [
+      { href: '/browse/admin/states', label: f(messages.states), perm: ['device'] },
+      { href: '/browse/admin/lgas', label: f(messages.lgas), perm: ['device'] },
+    ],
+  },
 ]
 
 const NavigationMenu = () => {
