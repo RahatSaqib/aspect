@@ -13,9 +13,17 @@ export default defineMessages({
     id: 'admin.page.states.createNewState',
     defaultMessage: 'Create New State',
   },
+  editState: {
+    id: 'admin.page.states.editState',
+    defaultMessage: 'Edit State',
+  },
   createState: {
     id: 'admin.page.states.createState',
     defaultMessage: 'Create State',
+  },
+  editLga: {
+    id: 'admin.page.lgas.editLga',
+    defaultMessage: 'Edit LGA',
   },
   createLga: {
     id: 'admin.page.lgas.createLga',
@@ -68,6 +76,14 @@ export default defineMessages({
   manage: {
     id: 'admin.page.states.manage',
     defaultMessage: 'Manage',
+  },
+  edit: {
+    id: 'pages.admin.edit',
+    defaultMessage: 'Edit',
+  },
+  delete: {
+    id: 'pages.admin.delete',
+    defaultMessage: 'Delete',
   },
   cancel: {
     id: 'pages.admin.cancel',

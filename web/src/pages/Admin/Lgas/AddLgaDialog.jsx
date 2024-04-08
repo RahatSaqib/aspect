@@ -2,12 +2,16 @@ import React from 'react'
 import { Box, Button, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
-import { object, string } from 'yup'
+import { number, object, string } from 'yup'
+import { StateSelect } from '../../../cleanComponents'
+import useAuthState from '../../../hooks/useAuthState'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
 export function AddLgaDialog({ open, onOpenChange }) {
   const { formatMessage } = useIntl()
+  const user = useAuthState()
+
   return (
     <AspectDialog
       title={formatMessage(messages.createNewLga)}
@@ -17,14 +21,25 @@ export function AddLgaDialog({ open, onOpenChange }) {
     >
       <Box sx={{ my: '15px', display: 'flex', flexDirection: 'column' }}>
         <Formik
-          initialValues={{ name: '' }}
+          initialValues={{ name: '', stateId: '' }}
           validationSchema={object({
             name: string().required(formatMessage(messages.lgaNameRequired)),
+            stateId: number().nullable().required(formatMessage(messages.stateNameRequired)),
           })}
           onSubmit={({ values }) => {}}
         >
           {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
             <>
+              <StateSelect
+                id="stateId"
+                name="stateId"
+                label={formatMessage(messages.stateName)}
+                value={String(values?.stateId ?? '')}
+                onChange={handleChange}
+                error={!!errors.stateId}
+                helperText={errors.stateId}
+                countryId={user.countryId}
+              />
               <TextField
                 id="name"
                 name="name"
