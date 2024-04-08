@@ -37,6 +37,8 @@ const SiteDetail = lazy(() => import('./pages/Site/Detail'))
 const SiteList = lazy(() => import('./pages/Site/List'))
 const Status = lazy(() => import('./oldPages/dashboard/status/Status'))
 const Welcome = lazy(() => import('./pages/Welcome'))
+const AdminLgas = lazy(() => import('./pages/Admin/Lgas/LgasPage'))
+const AdminStates = lazy(() => import('./pages/Admin/States/StatesPage'))
 //
 
 const DeviceCoverage = lazy(() => import('./pages/PkDashboard/pages/CoverageSection/DeviceCoveragePage'))
@@ -249,6 +251,12 @@ const LogInApp = () => {
                 <Route path="/browse/notification/types" element={<NotificationList />} />
                 <Route path="/browse/notification/logs" element={<NotificationLogs />} />
                 <Route path="/browse/notification/:notificationId" element={<NotificationDetail />} />
+              </>
+            ) : null}
+            {a(['browse', 'notification']) ? (
+              <>
+                <Route path="/browse/admin/states" element={<AdminStates />} />
+                <Route path="/browse/admin/lgas" element={<AdminLgas />} />
               </>
             ) : null}
 
