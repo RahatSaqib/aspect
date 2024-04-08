@@ -49,7 +49,7 @@ function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds, t
   /**
    * helper func to return base query for specified dates
    */
-  const getBaseQuery = ({ minDate, maxDate }) => {
+  const getBaseQuery = ({ minDate, maxDate, timeFrame }) => {
     /**
      * base query grouped by month
      */
@@ -58,6 +58,7 @@ function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds, t
       dataConstraints,
       query: { ...query, minDate, maxDate },
       fieldsScope: [FACT_FIELD_SCOPE.all],
+      timeFrame,
     })
       .select(
         getMonthYearField(knex, 'r.startedOn', 'yearAndMonth'),
@@ -86,6 +87,7 @@ function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds, t
     baseQueryToday: getBaseQuery({
       minDate: replaceOffset(startOfDay(now), timeZoneIANA), // from the start of today
       maxDate: replaceOffset(endOfDay(now), timeZoneIANA),
+      timeFrame: 'day',
     }),
   }
 }
