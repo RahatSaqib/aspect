@@ -4,7 +4,7 @@ import { useIntl } from 'react-intl'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
-export function RemoveStateDialog({ open, onOpenChange }) {
+export function RemoveLgaDialog({ open, onOpenChange }) {
   const { formatMessage } = useIntl()
   return (
     <AspectDialog
@@ -18,10 +18,10 @@ export function RemoveStateDialog({ open, onOpenChange }) {
       ]}
       maxWidth="sm"
       open={open}
-      title={formatMessage(messages.removeState)}
+      title={formatMessage(messages.removeLga)}
       onClose={() => onOpenChange(false)}
     >
-      {formatMessage(messages.removeStateConfirmation)}
+      {formatMessage(messages.removeLgaConfirmation)}
     </AspectDialog>
   )
 }

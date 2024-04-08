@@ -17,6 +17,10 @@ export default defineMessages({
     id: 'admin.page.states.createState',
     defaultMessage: 'Create State',
   },
+  createLga: {
+    id: 'admin.page.lgas.createLga',
+    defaultMessage: 'Create LGA',
+  },
   createNewLga: {
     id: 'admin.page.lgas.createNewLga',
     defaultMessage: 'Create New LGA',
@@ -28,6 +32,10 @@ export default defineMessages({
   stateNameRequired: {
     id: 'admin.page.states.stateNameRequired',
     defaultMessage: 'State name is required',
+  },
+  lgaNameRequired: {
+    id: 'admin.page.lgas.lgaNameRequired',
+    defaultMessage: 'LGA name is required',
   },
   stateAbbreviation: {
     id: 'admin.page.states.stateAbbreviation',
@@ -41,9 +49,17 @@ export default defineMessages({
     id: 'admin.page.states.removeState',
     defaultMessage: 'Remove State',
   },
+  removeLga: {
+    id: 'admin.page.lgas.removeLga',
+    defaultMessage: 'Remove LGA',
+  },
   removeStateConfirmation: {
     id: 'admin.page.states.removeStateConfirmation',
-    defaultMessage: 'Are you sure to remove this state?',
+    defaultMessage: 'Are you sure to remove this State?',
+  },
+  removeLgaConfirmation: {
+    id: 'admin.page.lgas.removeLgaConfirmation',
+    defaultMessage: 'Are you sure to remove this LGA?',
   },
   lgaName: {
     id: 'admin.page.lgas.lgaName',
