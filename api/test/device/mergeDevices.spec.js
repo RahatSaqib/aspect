@@ -116,7 +116,7 @@ describe('Merge Devices', () => {
     await knex('Site').whereIn('id', [targetSiteId, sourceSiteId]).del()
   })
 
-  it('If source device is pings in the last 24 hs should throw validation', async () => {
+  it('If source device pings in the last 24 hs should throw validation', async () => {
     await server
       .post(path)
       .send({ sourceDevicesIds: [sourceDeviceId], targetDeviceId: targetDevice.id })
