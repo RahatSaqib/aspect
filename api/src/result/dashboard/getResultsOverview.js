@@ -1,12 +1,18 @@
-const { subDays } = require('date-fns')
-const { startOfYear } = require('date-fns')
-const { getConstraints, addPartnerQueryConstraints, addConstraints } = require('../../auth/constraints')
+const { startOfYear, endOfYear, startOfDay, endOfDay } = require('date-fns')
+const {
+  getConstraints,
+  addPartnerQueryConstraints,
+  addConstraints,
+  getUserFromCredentials,
+} = require('../../auth/constraints')
+const { knex } = require('../../db')
 const { getBaseQueryForResults } = require('../common/db')
+const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
 const { mtbDetectedTraceDetected, mtbDetectedRifDetected, mtbValid } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
 
-const getResultCount = (dataConstraints, minDate, maxDate) =>
+const getResultCount = (dataConstraints, minDate, maxDate, timezone) =>
   getBaseQueryForResults()
     .clone()
     /**
@@ -16,7 +22,7 @@ const getResultCount = (dataConstraints, minDate, maxDate) =>
      */
     .whereNot('dt.externalId', 'GxAlert')
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .whereBetween('r.endedOn', [minDate, maxDate])
+    .whereBetween(getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', timezone), [minDate, maxDate])
     .first({
       mtbValid,
       mtbDetectedTraceDetected,
@@ -39,16 +45,21 @@ const getResultCount = (dataConstraints, minDate, maxDate) =>
 
 const getResultsOverview = async ({ auth }) => {
   const dataConstraints = await getConstraints(auth.credentials)
-  const now = new Date()
+  const user = await getUserFromCredentials(auth.credentials)
 
-  const resultCountYear = await getResultCount(dataConstraints, startOfYear(now), now)
-  const resultCountDay = await getResultCount(dataConstraints, subDays(now, 1), now)
+  const now = new Date()
+  /**
+   * We need a country timezone offset to use it in CONVERT_TZ mysql func
+   * user.timezoneIANA is a country timezone - see getUser() in api/src/auth/service.js
+   */
+  const resultCountYear = await getResultCount(dataConstraints, startOfYear(now), endOfYear(now), user.timezoneIANA)
+  const resultCountDay = await getResultCount(dataConstraints, startOfDay(now), endOfDay(now), user.timezoneIANA)
 
   const data = {
     total1Year: resultCountYear.mtbValid,
     mtbDetected1Year: resultCountYear.mtbDetectedTraceDetected,
     rifDetected1Year: resultCountYear.mtbDetectedRifDetected,
-    total1Day: resultCountDay.mtbValid,
+    totalToday: resultCountDay.mtbValid,
     mtbDetected1Day: resultCountDay.mtbDetectedTraceDetected,
     rifDetected1Day: resultCountDay.mtbDetectedRifDetected,
   }

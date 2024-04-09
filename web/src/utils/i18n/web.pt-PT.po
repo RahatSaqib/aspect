@@ -2544,10 +2544,10 @@ msgstr "Painel"
 
 #. [header.link.dashboardv2.title]
 #. defaultMessage is:
-#. Dashboard v2
+#. Dashboard
 #: extracted_strings.json
-msgid "Dashboard v2"
-msgstr "Painel de controlo v2"
+msgid "Dashboard"
+msgstr "Painel de controlo"
 
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:

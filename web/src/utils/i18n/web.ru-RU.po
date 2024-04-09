@@ -2542,10 +2542,10 @@ msgstr "Панель управления"
 
 #. [header.link.dashboardv2.title]
 #. defaultMessage is:
-#. Dashboard v2
+#. Dashboard
 #: extracted_strings.json
-msgid "Dashboard v2"
-msgstr "Приборная панель v2"
+msgid "Dashboard"
+msgstr "Приборная панель"
 
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
