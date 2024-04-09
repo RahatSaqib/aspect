@@ -52,6 +52,13 @@ async function getListResults(query, auth, fields = LIST_FIELDS_UTC) {
   const selectFields = _.clone(fields)
   const sortableFields = _.clone(SORT_FIELDS)
 
+  /**
+   * Make sure minDate and maxDate are Date object - needed to let knex correctly
+   * format value for MySql format - i.e. UTC as 'yyyy-MM-dd hh:mm:ss' (without timezone offset)
+   */
+  query.minDate = query.minDate instanceof Date ? query.minDate : new Date(query.minDate)
+  query.maxDate = query.maxDate instanceof Date ? query.maxDate : new Date(query.maxDate)
+
   const assayColumns = []
   /**
    * assayColumns items shape:

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-03-13T18:16:45.673Z\n"
+"POT-Creation-Date: 2024-04-04T03:20:05.458Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -825,6 +825,13 @@ msgstr "Assay"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Assay Type"
+
+#. [p.PkDashboard.peopleTestedRifUltra]
+#. defaultMessage is:
+#. Assay for MTB Rif Ultra
+#: extracted_strings.json
+msgid "Assay for MTB Rif Ultra"
+msgstr "Assay for MTB Rif Ultra"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -2120,7 +2127,6 @@ msgstr "Covid 19"
 #. defaultMessage is:
 #. Covid Testing
 #: extracted_strings.json
-#| msgid "Covid Testing (Pending)"
 msgid "Covid Testing"
 msgstr "Covid Testing"
 
@@ -2531,10 +2537,10 @@ msgstr "Dashboard"
 
 #. [header.link.dashboardv2.title]
 #. defaultMessage is:
-#. Dashboard v2
+#. Dashboard
 #: extracted_strings.json
-msgid "Dashboard v2"
-msgstr "Dashboard v2"
+msgid "Dashboard"
+msgstr "Dashboard"
 
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
@@ -4560,6 +4566,20 @@ msgstr "GeneXpert TB Ultra Cartridge"
 msgid "GeneXpert TB Workload"
 msgstr "GeneXpert TB Workload"
 
+#. [filter.popover.geneXpertType]
+#. defaultMessage is:
+#. GeneXpert Type
+#: extracted_strings.json
+msgid "GeneXpert Type"
+msgstr "GeneXpert Type"
+
+#. [filter.btnGroup.withGeneXpertType]
+#. defaultMessage is:
+#. GeneXpert Type is {geneXpertType}
+#: extracted_strings.json
+msgid "GeneXpert Type is {geneXpertType}"
+msgstr "GeneXpert Type is {geneXpertType}"
+
 #. [legends.Unknown.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
@@ -4575,6 +4595,23 @@ msgstr "GeneXpert TB Workload"
 #: extracted_strings.json
 msgid "GeneXpert Unknown"
 msgstr "GeneXpert Unknown"
+
+#. [filter.popover.geneXpertTypeTooltip]
+#. defaultMessage is:
+#. GeneXpert type offers a way to distinguish those GeneXpert instruments that have 10-color modules installed and are capable of running XDR tests. In the devices details for the GeneXpert there is a field to record the number of 10-color (10c) modules installed in the instrument. This filter captures any instrument for which the number is 1 or more
+#: extracted_strings.json
+msgid ""
+"GeneXpert type offers a way to distinguish those GeneXpert instruments that "
+"have 10-color modules installed and are capable of running XDR tests. In the "
+"devices details for the GeneXpert there is a field to record the number of "
+"10-color (10c) modules installed in the instrument. This filter captures any "
+"instrument for which the number is 1 or more"
+msgstr ""
+"GeneXpert type offers a way to distinguish those GeneXpert instruments that "
+"have 10-color modules installed and are capable of running XDR tests. In the "
+"devices details for the GeneXpert there is a field to record the number of "
+"10-color (10c) modules installed in the instrument. This filter captures any "
+"instrument for which the number is 1 or more"
 
 #. [pages.DeviceApiKeyList.generate]
 #. defaultMessage is:
@@ -7115,7 +7152,6 @@ msgstr "National Contacts"
 #. defaultMessage is:
 #. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
 #: extracted_strings.json
-#| msgid "National Diagnosis Trends using MTB/XDR assay"
 msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
 msgstr "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
 
@@ -8064,12 +8100,12 @@ msgstr "Overall Activity Rate"
 msgid "Overall Network Health Daily"
 msgstr "Overall Network Health Daily"
 
-#. [jobFunction.pakistanDashboardTesting]
+#. [jobFunction.pakistanTesting]
 #. defaultMessage is:
-#. Pakistan Dashboard Testing
+#. Pakistan Testing
 #: extracted_strings.json
-msgid "Pakistan Dashboard Testing"
-msgstr "Pakistan Dashboard Testing"
+msgid "Pakistan Testing"
+msgstr "Pakistan Testing"
 
 #. [filter.popover.partner]
 #. defaultMessage is:
@@ -8217,9 +8253,6 @@ msgstr "People tested for Covid in current year"
 msgid "People tested for HIV in current year"
 msgstr "People tested for HIV in current year"
 
-#. [p.PkDashboard.peopleTestedRif]
-#. defaultMessage is:
-#. People tested for TB using MTB/Rif assay in current year
 #. [p.PkDashboard.molecularAssay]
 #. defaultMessage is:
 #. People tested for TB using MTB/Rif assay in current year

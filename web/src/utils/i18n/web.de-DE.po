@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-03-13T18:16:45.673Z\n"
+"POT-Creation-Date: 2024-04-04T03:20:05.458Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -826,6 +826,13 @@ msgstr "Assay"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Assay-Typ"
+
+#. [p.PkDashboard.peopleTestedRifUltra]
+#. defaultMessage is:
+#. Assay for MTB Rif Ultra
+#: extracted_strings.json
+msgid "Assay for MTB Rif Ultra"
+msgstr "Assay für MTB Rif Ultra"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -2539,9 +2546,9 @@ msgstr "Dashboard"
 
 #. [header.link.dashboardv2.title]
 #. defaultMessage is:
-#. Dashboard v2
+#. Dashboard
 #: extracted_strings.json
-msgid "Dashboard v2"
+msgid "Dashboard"
 msgstr "Dashboard"
 
 #. [pages.DeviceList.dataHealth]
@@ -4574,6 +4581,20 @@ msgstr "GeneXpert TB Ultra Kartusche"
 msgid "GeneXpert TB Workload"
 msgstr "GeneXpert TB Arbeitsbelastung"
 
+#. [filter.popover.geneXpertType]
+#. defaultMessage is:
+#. GeneXpert Type
+#: extracted_strings.json
+msgid "GeneXpert Type"
+msgstr "GeneXpert Typ"
+
+#. [filter.btnGroup.withGeneXpertType]
+#. defaultMessage is:
+#. GeneXpert Type is {geneXpertType}
+#: extracted_strings.json
+msgid "GeneXpert Type is {geneXpertType}"
+msgstr "GeneXpert Typ ist {geneXpertType}"
+
 #. [legends.Unknown.assayGeneXpertUnknown]
 #. defaultMessage is:
 #. GeneXpert Unknown
@@ -4589,6 +4610,24 @@ msgstr "GeneXpert TB Arbeitsbelastung"
 #: extracted_strings.json
 msgid "GeneXpert Unknown"
 msgstr "GeneXpert Unbekannt"
+
+#. [filter.popover.geneXpertTypeTooltip]
+#. defaultMessage is:
+#. GeneXpert type offers a way to distinguish those GeneXpert instruments that have 10-color modules installed and are capable of running XDR tests. In the devices details for the GeneXpert there is a field to record the number of 10-color (10c) modules installed in the instrument. This filter captures any instrument for which the number is 1 or more
+#: extracted_strings.json
+msgid ""
+"GeneXpert type offers a way to distinguish those GeneXpert instruments that "
+"have 10-color modules installed and are capable of running XDR tests. In the "
+"devices details for the GeneXpert there is a field to record the number of "
+"10-color (10c) modules installed in the instrument. This filter captures any "
+"instrument for which the number is 1 or more"
+msgstr ""
+"Der GeneXpert-Typ bietet eine Möglichkeit, GeneXpert-Geräte zu "
+"unterscheiden, die 10-Farben-Module installiert haben und XDR-Tests "
+"durchführen können. In den Gerätedetails des GeneXpert gibt es ein Feld, in "
+"dem die Anzahl der im Gerät installierten 10-Farben-Module (10c) angegeben "
+"ist. Dieser Filter erfasst alle Geräte, bei denen die Anzahl 1 oder mehr "
+"beträgt"
 
 #. [pages.DeviceApiKeyList.generate]
 #. defaultMessage is:
@@ -8086,12 +8125,12 @@ msgstr "Gesamtaktivitätsrate"
 msgid "Overall Network Health Daily"
 msgstr "Gesamtnetzwerkzustand Täglich"
 
-#. [jobFunction.pakistanDashboardTesting]
+#. [jobFunction.pakistanTesting]
 #. defaultMessage is:
-#. Pakistan Dashboard Testing
+#. Pakistan Testing
 #: extracted_strings.json
-msgid "Pakistan Dashboard Testing"
-msgstr "Pakistan Dashboard - Prüfung"
+msgid "Pakistan Testing"
+msgstr "Pakistan Tests"
 
 #. [filter.popover.partner]
 #. defaultMessage is:
@@ -8242,9 +8281,6 @@ msgstr "Im laufenden Jahr auf Covid getestete Personen"
 msgid "People tested for HIV in current year"
 msgstr "Im laufenden Jahr auf HIV getestete Personen"
 
-#. [p.PkDashboard.peopleTestedRif]
-#. defaultMessage is:
-#. People tested for TB using MTB/Rif assay in current year
 #. [p.PkDashboard.molecularAssay]
 #. defaultMessage is:
 #. People tested for TB using MTB/Rif assay in current year
