@@ -98,7 +98,7 @@ describe('Device result calculation test', function () {
 
   before(async () => {
     // get partnerId
-    partner = await getPartner(knex, partnerName)
+    const partner = await getPartner(knex, partnerName)
     partnerId = partner.id
 
     await knex('User as u').where('u.name', 'myanmar_admin').first('u.id')
