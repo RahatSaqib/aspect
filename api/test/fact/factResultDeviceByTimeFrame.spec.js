@@ -1,7 +1,7 @@
 const chai = require('chai')
 const chaiSubset = require('chai-subset')
-const { expect, assert } = chai.use(chaiSubset)
 
+const { expect, assert } = chai.use(chaiSubset)
 const { knex } = require('../../src/db')
 
 const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
