@@ -1,10 +1,10 @@
-const { knex } = require('../../src/db')
 const chai = require('chai')
 const chaiSubset = require('chai-subset')
+const { expect, assert } = chai.use(chaiSubset)
+const { knex } = require('../../src/db')
 
 const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
 
-const { expect, assert } = chai.use(chaiSubset)
 const devicePath = '/device'
 
 const server = require('../utils/testUtils')
@@ -28,7 +28,7 @@ const deleteResults = async resultIds => {
 }
 
 const insertDevice = async (name, siteId) => {
-  ;[deviceId] = await knex('Device').insert({
+  const [deviceId] = await knex('Device').insert({
     partnerId,
     siteId,
     deviceTypeId: await deviceTypeToId('CepheidGeneXpert'),
@@ -80,9 +80,11 @@ const countryAbbreviation = 'MM'
 
 describe('Device result calculation test', function () {
   this.timeout(12000)
+  let partnerId
   let geographyId
   let token
   let token2
+  let token3
   let siteId
   let siteId2
   let deviceId
@@ -91,7 +93,7 @@ describe('Device result calculation test', function () {
   let deviceAPiKey
   let deviceAPiKey2
   let deviceAPiKey3
-  let resultIds = []
+  const resultIds = []
   let resultPayload = {}
 
   before(async () => {
