@@ -27,7 +27,7 @@ const deleteResults = async resultIds => {
   await knex('Result').delete().whereIn('id', resultIdsToBeDeleted)
 }
 
-const insertDevice = async (name, siteId) => {
+const insertDevice = async (name, siteId, partnerId) => {
   const [deviceId] = await knex('Device').insert({
     partnerId,
     siteId,
@@ -40,7 +40,7 @@ const insertDevice = async (name, siteId) => {
   return deviceId
 }
 
-const insertDeviceApiKey = async (token, deviceId, siteId, geographyId) => {
+const insertDeviceApiKey = async (token, deviceId, siteId, geographyId, partnerId) => {
   const [deviceApiId] = await knex('DeviceApiKey').insert({
     token,
     revoked: 0,
@@ -226,17 +226,17 @@ describe('Device result calculation test', function () {
       geographyId,
     })
 
-    deviceId = await insertDevice('Test Device', siteId)
-    deviceId2 = await insertDevice('Test Device 2', siteId)
-    deviceId3 = await insertDevice('Test Device 3', siteId2)
+    deviceId = await insertDevice('Test Device', siteId, partnerId)
+    deviceId2 = await insertDevice('Test Device 2', siteId, partnerId)
+    deviceId3 = await insertDevice('Test Device 3', siteId2, partnerId)
 
     token = randomToken()
     token2 = randomToken()
     token3 = randomToken()
 
-    deviceAPiKey = await insertDeviceApiKey(token, deviceId, siteId, geographyId)
-    deviceAPiKey2 = await insertDeviceApiKey(token2, deviceId2, siteId, geographyId)
-    deviceAPiKey3 = await insertDeviceApiKey(token3, deviceId3, siteId2, geographyId)
+    deviceAPiKey = await insertDeviceApiKey(token, deviceId, siteId, geographyId, partnerId)
+    deviceAPiKey2 = await insertDeviceApiKey(token2, deviceId2, siteId, geographyId, partnerId)
+    deviceAPiKey3 = await insertDeviceApiKey(token3, deviceId3, siteId2, geographyId, partnerId)
   })
 
   afterEach(async () => {
