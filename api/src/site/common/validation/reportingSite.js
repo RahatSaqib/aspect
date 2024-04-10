@@ -9,6 +9,7 @@ const reportingSitesQueryParams = () => {
     siteId: Joi.number().allow(null, '').description('Filter for Site ID'),
     lgaId: Joi.number().allow(null, '').description('Filter for Lga ID'),
     assayId: Joi.number().allow(null, '').description('Filter for Assay ID'),
+    siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),
   }
 }
 

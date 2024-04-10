@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-04-04T03:20:05.458Z\n"
+"POT-Creation-Date: 2024-04-10T00:21:03.468Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2038,6 +2038,18 @@ msgstr "Impossible de se connecter avec vos identifiants"
 msgid "Count (1-100)"
 msgstr "Compter (1-100)"
 
+#. [p.PkDashboard.peopleTestedRifTooltip]
+#. defaultMessage is:
+#. Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.
+#: extracted_strings.json
+msgid ""
+"Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including "
+"'No Result', 'Error', 'Indeterminate', 'Invalid'."
+msgstr ""
+"Ne compter que les résultats déclarables de MTB/Rif et MTB/Rif-Ultra, à "
+"l'exclusion des \"Pas de résultat\", \"Erreur\", \"Indéterminé\", "
+"\"Invalide\"."
+
 #. [filter.popover.country]
 #. defaultMessage is:
 #. Country
@@ -2539,18 +2551,14 @@ msgstr "Daktari HIV-VL"
 msgid "Damage"
 msgstr "Dégâts"
 
+#. [header.link.dashboardv2.title]
+#. defaultMessage is:
+#. Dashboard
 #. [pages.OperationalDashboard.dashboard]
 #. defaultMessage is:
 #. Dashboard
 #: extracted_strings.json
 msgid "Dashboard"
-msgstr "Tableau de bord"
-
-#. [header.link.dashboardv2.title]
-#. defaultMessage is:
-#. Dashboard v2
-#: extracted_strings.json
-msgid "Dashboard v2"
 msgstr "Tableau de bord"
 
 #. [pages.DeviceList.dataHealth]
@@ -14418,6 +14426,9 @@ msgstr "{unit} semaine dernière"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total des étalonnages"
+
+#~ msgid "Dashboard v2"
+#~ msgstr "Tableau de bord"
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Veuillez choisir un autre site"
