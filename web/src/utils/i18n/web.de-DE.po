@@ -2546,9 +2546,9 @@ msgstr "Dashboard"
 
 #. [header.link.dashboardv2.title]
 #. defaultMessage is:
-#. Dashboard
+#. Dashboard v2
 #: extracted_strings.json
-msgid "Dashboard"
+msgid "Dashboard v2"
 msgstr "Dashboard"
 
 #. [pages.DeviceList.dataHealth]
