@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-04-04T03:20:05.458Z\n"
+"POT-Creation-Date: 2024-04-10T23:22:59.456Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2028,6 +2028,15 @@ msgstr "Бо маълумоти эътимодномаи шумо ворид ш�
 msgid "Count (1-100)"
 msgstr "Шумора (1-100)"
 
+#. [p.PkDashboard.peopleTestedRifTooltip]
+#. defaultMessage is:
+#. Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.
+#: extracted_strings.json
+msgid ""
+"Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including "
+"'No Result', 'Error', 'Indeterminate', 'Invalid'."
+msgstr ""
+
 #. [filter.popover.country]
 #. defaultMessage is:
 #. Country
@@ -2339,12 +2348,13 @@ msgstr "Ташхиси кунунии RRTB"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Тамоюлҳои ташхиси муқовимат ба рифампицин"
 
-#. [p.PkDashboard.rrtbDiagnosisTitle]
+#. [p.PkDashboard.rrtbDiagnosisTitle1]
 #. defaultMessage is:
-#. Current Rifampicin Resistance Diagnosis using MTB/Rif Assay
+#. Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay
 #: extracted_strings.json
-msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Assay"
-msgstr "Ташхиси муқовимати кунунии рифампицин бо истифода аз MTB/Rif Assay"
+msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
+msgstr ""
+"Ташхиси муқовимати кунунии Рифампицин бо истифода аз MTB/Rif Ultra Assay"
 
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
@@ -2528,19 +2538,15 @@ msgstr "Дактари ВИЧ-ВЛ"
 msgid "Damage"
 msgstr "Зарар"
 
+#. [header.link.dashboardv2.title]
+#. defaultMessage is:
+#. Dashboard
 #. [pages.OperationalDashboard.dashboard]
 #. defaultMessage is:
 #. Dashboard
 #: extracted_strings.json
 msgid "Dashboard"
 msgstr "Панели асбобҳо"
-
-#. [header.link.dashboardv2.title]
-#. defaultMessage is:
-#. Dashboard v2
-#: extracted_strings.json
-msgid "Dashboard v2"
-msgstr "Панели идоракунӣ v2"
 
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
@@ -4028,19 +4034,19 @@ msgstr "FQ-R муайян карда шуд"
 msgid "FQ-R cases diagnosed in current year"
 msgstr "Ҳодисаҳои FQ-R дар соли ҷорӣ ташхис карда шуданд"
 
-#. [p.PkDashboard.FQRPerDay]
-#. defaultMessage is:
-#. FQ-R cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "FQ-R cases diagnosed in last 24 hours"
-msgstr "Ҳодисаҳои FQ-R дар 24 соати охир ташхис карда шуданд"
-
 #. [p.PkDashboard.FQRPerYear]
 #. defaultMessage is:
 #. FQ-R cases diagnosed this year
 #: extracted_strings.json
 msgid "FQ-R cases diagnosed this year"
 msgstr "Ҳодисаҳои FQ-R имсол ташхис карда шуданд"
+
+#. [p.PkDashboard.FQRToday]
+#. defaultMessage is:
+#. FQ-R cases diagnosed today
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed today"
+msgstr "Ҳодисаҳои FQ-R имрӯз ташхис карда шуданд"
 
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
@@ -5816,19 +5822,6 @@ msgstr "Забон ва Минтақаи вақт"
 #: extracted_strings.json
 msgid "Last"
 msgstr "Охирин"
-
-#. [p.PkDashboard.molecularAssay24]
-#. defaultMessage is:
-#. Last 24 hours
-#. [p.PkDashboard.TB24]
-#. defaultMessage is:
-#. Last 24 hours
-#. [p.PkDashboard.RTTB24]
-#. defaultMessage is:
-#. Last 24 hours
-#: extracted_strings.json
-msgid "Last 24 hours"
-msgstr "24 соати охир"
 
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
@@ -9106,19 +9099,19 @@ msgstr "Меъёри муқовимати RIF (%pнатиҷаҳои мусбат
 msgid "RR cases diagnosed"
 msgstr "Ҳодисаҳои RR ташхис карда шуданд"
 
-#. [p.PkDashboard.RRPerDay]
-#. defaultMessage is:
-#. RR cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "RR cases diagnosed in last 24 hours"
-msgstr "Ҳодисаҳои RR дар 24 соати охир ташхис карда шуданд"
-
 #. [p.PkDashboard.RRPerYear]
 #. defaultMessage is:
 #. RR cases diagnosed this year
 #: extracted_strings.json
 msgid "RR cases diagnosed this year"
 msgstr "Ҳодисаҳои RR имсол ташхис карда шуданд"
+
+#. [p.PkDashboard.RRToday]
+#. defaultMessage is:
+#. RR cases diagnosed today
+#: extracted_strings.json
+msgid "RR cases diagnosed today"
+msgstr "Ҳодисаҳои RR имрӯз ташхис карда шуданд"
 
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
@@ -11536,19 +11529,19 @@ msgstr "Тамоюлҳои ташхиси сил ва RRTB"
 msgid "TB cases diagnosed in"
 msgstr "Ҳодисаҳои бемории сил дар"
 
-#. [p.PkDashboard.xdrTBLastDay]
-#. defaultMessage is:
-#. TB cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "TB cases diagnosed in last 24 hours"
-msgstr "Ҳодисаҳои бемории сил дар 24 соати охир ташхис карда шуданд"
-
 #. [p.PkDashboard.xdrTBCasesPerYear]
 #. defaultMessage is:
 #. TB cases diagnosed this year
 #: extracted_strings.json
 msgid "TB cases diagnosed this year"
 msgstr "Соли равон гирифторони бемории сил ташхис карда шуданд"
+
+#. [p.PkDashboard.xdrTBToday]
+#. defaultMessage is:
+#. TB cases diagnosed today
+#: extracted_strings.json
+msgid "TB cases diagnosed today"
+msgstr "Имрӯзҳо гирифторони бемории сил ташхис шудаанд"
 
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
@@ -11764,19 +11757,19 @@ msgstr ""
 "ки дар он инвентаризатсия дар маҳалли ҷойгиршавии дастгоҳ ё анбори он ҷойгир "
 "карда намешавад."
 
-#. [p.PkDashboard.testPerDay]
-#. defaultMessage is:
-#. Tests performed in last 24 hours
-#: extracted_strings.json
-msgid "Tests performed in last 24 hours"
-msgstr "Санҷишҳо дар давоми 24 соати охир анҷом дода шуданд"
-
 #. [p.PkDashboard.testPerYear]
 #. defaultMessage is:
 #. Tests performed this year
 #: extracted_strings.json
 msgid "Tests performed this year"
 msgstr "Санҷишҳо имсол гузаронида шуданд"
+
+#. [p.PkDashboard.testToday]
+#. defaultMessage is:
+#. Tests performed today
+#: extracted_strings.json
+msgid "Tests performed today"
+msgstr "Санҷишҳо имрӯз гузаронида шуданд"
 
 #. [component.Widget.bangladeshAverageCompletionDescription]
 #. defaultMessage is:
@@ -12657,6 +12650,15 @@ msgid "To..."
 msgstr "Ба..."
 
 #. [pages.dateRangeSelector.today]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.molecularAssay25]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.TB25]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.RTTB25]
 #. defaultMessage is:
 #. Today
 #: extracted_strings.json
@@ -14367,6 +14369,24 @@ msgstr "{unit} аз ҳафтаи гузашта"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
+
+#~ msgid "Dashboard v2"
+#~ msgstr "Панели идоракунӣ v2"
+
+#~ msgid "FQ-R cases diagnosed in last 24 hours"
+#~ msgstr "Ҳодисаҳои FQ-R дар 24 соати охир ташхис карда шуданд"
+
+#~ msgid "Last 24 hours"
+#~ msgstr "24 соати охир"
+
+#~ msgid "RR cases diagnosed in last 24 hours"
+#~ msgstr "Ҳодисаҳои RR дар 24 соати охир ташхис карда шуданд"
+
+#~ msgid "TB cases diagnosed in last 24 hours"
+#~ msgstr "Ҳодисаҳои бемории сил дар 24 соати охир ташхис карда шуданд"
+
+#~ msgid "Tests performed in last 24 hours"
+#~ msgstr "Санҷишҳо дар давоми 24 соати охир анҷом дода шуданд"
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Лутфан сайти otherро интихоб кунед"
