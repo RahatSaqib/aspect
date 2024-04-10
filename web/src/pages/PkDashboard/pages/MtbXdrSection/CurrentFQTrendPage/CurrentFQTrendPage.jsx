@@ -50,7 +50,7 @@ const defaultFilters = [
   { maxDate },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
-  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
+  { flags: 'GET_TOTAL_RESULTS_FOR_TODAY' },
 ]
 
 const CurrentFQTrendPage = () => {
@@ -140,7 +140,7 @@ const CurrentFQTrendPage = () => {
                 label: formatMessage(messages.FQRPerMonth),
                 value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.FQRPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.FQRToday), value: `${data.totalResultsToday}` },
             ]}
           />
         </Grid>

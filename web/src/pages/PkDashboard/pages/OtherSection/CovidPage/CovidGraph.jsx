@@ -65,7 +65,7 @@ const defaultFilters = [
   // { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
-  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
+  { flags: 'GET_TOTAL_RESULTS_FOR_TODAY' },
 ]
 
 const CovidGraphPage = () => {
@@ -204,7 +204,7 @@ const CovidGraphPage = () => {
                 label: formatMessage(messages.testPerMonth),
                 value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.testToday), value: `${data.totalResultsToday}` },
             ]}
           />
         </Grid>

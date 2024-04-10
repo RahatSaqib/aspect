@@ -159,6 +159,9 @@ const evaluateCondition = (condition, sourcePath, formik) => {
   const cleanValue = formik.values[sourcePath[0]][condition.propToCompare]
   switch (condition.operator) {
     case '=':
+      if (typeof condition.valueToCompare === 'number') {
+        return cleanValue === condition.valueToCompare
+      }
       return cleanValue === condition.valueToCompare?.toLowerCase()
     default:
       return false

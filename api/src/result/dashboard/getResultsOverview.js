@@ -1,4 +1,4 @@
-const { subDays, startOfYear, endOfYear } = require('date-fns')
+const { startOfYear, endOfYear, startOfDay, endOfDay } = require('date-fns')
 const {
   getConstraints,
   addPartnerQueryConstraints,
@@ -53,13 +53,13 @@ const getResultsOverview = async ({ auth }) => {
    * user.timezoneIANA is a country timezone - see getUser() in api/src/auth/service.js
    */
   const resultCountYear = await getResultCount(dataConstraints, startOfYear(now), endOfYear(now), user.timezoneIANA)
-  const resultCountDay = await getResultCount(dataConstraints, subDays(now, 1), now, user.timezoneIANA)
+  const resultCountDay = await getResultCount(dataConstraints, startOfDay(now), endOfDay(now), user.timezoneIANA)
 
   const data = {
     total1Year: resultCountYear.mtbValid,
     mtbDetected1Year: resultCountYear.mtbDetectedTraceDetected,
     rifDetected1Year: resultCountYear.mtbDetectedRifDetected,
-    total1Day: resultCountDay.mtbValid,
+    totalToday: resultCountDay.mtbValid,
     mtbDetected1Day: resultCountDay.mtbDetectedTraceDetected,
     rifDetected1Day: resultCountDay.mtbDetectedRifDetected,
   }

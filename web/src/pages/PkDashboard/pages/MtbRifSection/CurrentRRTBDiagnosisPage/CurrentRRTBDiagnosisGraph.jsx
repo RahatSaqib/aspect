@@ -65,7 +65,7 @@ const defaultFilters = [
   { resultCategory2: 'Detected' },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
-  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
+  { flags: 'GET_TOTAL_RESULTS_FOR_TODAY' },
 ]
 
 const CurrentDiagnosisGraphPage = () => {
@@ -216,7 +216,7 @@ const CurrentDiagnosisGraphPage = () => {
                 label: formatMessage(messages.RRPerMonth),
                 value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.RRPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.RRToday), value: `${data.totalResultsToday}` },
             ]}
           />
         </Grid>
