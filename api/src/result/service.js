@@ -1050,7 +1050,7 @@ async function getWorkflowStatusLogByResultId(request) {
   return result
 }
 
-/*  
+/*
 When will this return a duplicate?
  - Here is an example of a return value that was duplicated in Ukraine: 806279_634634_ee5025da
    - Instrument 806729 ran a test that for a duplicate sample ID
