@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler } = require('../routes')
+const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   buildGeographySelectList,
   countrySelectList,
@@ -14,6 +14,7 @@ const { createLga } = require('./state/createLga')
 const { createState } = require('./state/createState')
 const { deleteState } = require('./state/deleteState')
 const { deleteLga } = require('./state/deleteLga')
+const { listStates } = require('./state/listStates')
 
 const routes = [
   {
@@ -141,6 +142,47 @@ const routes = [
       auth: { scope: ['notification'] },
       description: 'Get levels by user',
       notes: 'levels and Names',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/geography/states',
+    handler: asyncHandler(listStates),
+    config: {
+      description: 'List States',
+      validate: {
+        query: {
+          ...validateSortPageParams('name', 'abbreviation'),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of states that match the given filters'),
+          length: Joi.number().required().description('The number of states included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The states')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().description('The id of the state'),
+                name: Joi.string().description('The name of the state'),
+                abbreviation: Joi.string().allow('', null).description('The abbreviation of the state'),
+                resultCount: Joi.number(),
+                deviceConfigurationCount: Joi.number(),
+                targetCount: Joi.number(),
+                siteCount: Joi.number(),
+                issueCount: Joi.number(),
+                deviceApiKeyCount: Joi.number(),
+                personCount: Joi.number(),
+                jobContextCount: Joi.number(),
+                lgaCount: Joi.number(),
+                notificationCount: Joi.number(),
+              })
+            ),
+        }),
+      },
+      // auth: { scope: ['admin'] },
     },
   },
   {
