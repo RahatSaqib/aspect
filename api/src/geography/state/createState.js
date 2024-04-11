@@ -1,5 +1,5 @@
 const Boom = require('@hapi/boom')
-const { transact, knex } = require('../../db')
+const { transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 const { getStatesByValue } = require('./common/db')
 
