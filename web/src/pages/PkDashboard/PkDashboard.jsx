@@ -23,8 +23,12 @@ const PkDashboard = () => {
           ) : (
             <SummaryCard
               items={[
-                { key: 'molecularAssay', value: resultOverview.total1Year },
-                { key: 'molecularAssay24', value: resultOverview.total1Day },
+                {
+                  key: 'molecularAssay',
+                  value: resultOverview.total1Year,
+                  valueTooltipKey: 'peopleTestedRifTooltip',
+                },
+                { key: 'molecularAssay25', value: resultOverview.totalToday },
               ]}
             />
           )}
@@ -36,7 +40,7 @@ const PkDashboard = () => {
             <SummaryCard
               items={[
                 { key: 'TB', value: resultOverview.mtbDetected1Year },
-                { key: 'TB24', value: resultOverview.mtbDetected1Day },
+                { key: 'TB25', value: resultOverview.mtbDetected1Day },
               ]}
             />
           )}
@@ -48,7 +52,7 @@ const PkDashboard = () => {
             <SummaryCard
               items={[
                 { key: 'RTTB', value: resultOverview.rifDetected1Year },
-                { key: 'RTTB24', value: resultOverview.rifDetected1Day },
+                { key: 'RTTB25', value: resultOverview.rifDetected1Day },
               ]}
             />
           )}
@@ -131,8 +135,8 @@ const PkDashboard = () => {
             <DashboardLink to="/dashboard/coverage/device" label={formatMessage(messages.genExpert)} />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.coverageperformance)}>
-            <DashboardLink to="/dashboard/coverage/utilization" label={formatMessage(messages.utilization)} />
-            <DashboardLink to="/dashboard/coverage/error-rate" label={formatMessage(messages.errorRate)} />
+            <DashboardLink disabled to="/dashboard/coverage/utilization" label={formatMessage(messages.utilization)} />
+            <DashboardLink disabled to="/dashboard/coverage/error-rate" label={formatMessage(messages.errorRate)} />
           </DashboardCard>
           <ColumnName title={formatMessage(messages.titleinventory)} />
           <DashboardCard>

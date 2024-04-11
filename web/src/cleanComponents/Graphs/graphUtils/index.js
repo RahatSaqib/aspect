@@ -401,7 +401,7 @@ const getItemsForTrendsGraph = (data, states, lgas) => {
         currYearTotals: { cntAll: '-' },
         currYearMeanPerMonth: { cntAll: '-' },
         prevYearMeanPerMonth: { cntAll: '-' },
-        last24h: { cntAll: '-' },
+        today: { cntAll: '-' },
         trends: [{ year: new Date().getFullYear() }],
         noDataAvailable: true,
       }
@@ -421,7 +421,7 @@ const getItemsForTrendsGraph = (data, states, lgas) => {
         province: it.locationName,
         perYear: it.currYearTotals.cntAll,
         monthlyAverage: it.noDataAvailable ? '-' : round(it.currYearMeanPerMonth.cntAll),
-        perDay: it.last24h.cntAll,
+        perDay: it.today.cntAll,
         trends,
         noDataAvailable: it.noDataAvailable,
       }
