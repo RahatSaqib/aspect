@@ -10,6 +10,10 @@ const {
 const getLevelByUserSelectList = require('./getLevelByUserSelectList')
 const { updateState } = require('./state/updateState')
 const { updateLga } = require('./state/updateLga')
+const { createLga } = require('./state/createLga')
+const { createState } = require('./state/createState')
+const { deleteState } = require('./state/deleteState')
+const { deleteLga } = require('./state/deleteLga')
 
 const routes = [
   {
@@ -150,11 +154,40 @@ const routes = [
           stateId: Joi.number().description('State Id').required(),
         },
         payload: {
-          name: Joi.string().allow('', null),
-          abbreviation: Joi.string().allow('', null),
+          name: Joi.string().required(),
+          abbreviation: Joi.string().required(),
         },
       },
-      auth: { scope: ['admin'] },
+      // auth: { scope: ['admin'] },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/geography/states',
+    handler: asyncHandler(createState),
+    config: {
+      description: 'Create State',
+      validate: {
+        payload: {
+          name: Joi.string().required(),
+          abbreviation: Joi.string().required(),
+        },
+      },
+      // auth: { scope: ['admin'] },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/geography/states/{stateId}',
+    handler: asyncHandler(deleteState),
+    config: {
+      description: 'Delete State',
+      validate: {
+        params: {
+          stateId: Joi.number().description('State Id').required(),
+        },
+      },
+      // auth: { scope: ['admin'] },
     },
   },
   {
@@ -168,12 +201,38 @@ const routes = [
           lgaId: Joi.number().description('Lga Id').required(),
         },
         payload: {
-          name: Joi.string().allow('', null),
-          abbreviation: Joi.string().allow('', null),
-          stateId: Joi.number().allow('', null),
+          name: Joi.string().required(),
         },
       },
-      //  auth: { scope: ['admin'] },
+      // auth: { scope: ['admin'] },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/geography/lgas',
+    handler: asyncHandler(createLga),
+    config: {
+      description: 'Create Lga',
+      validate: {
+        payload: {
+          name: Joi.string().required(),
+        },
+      },
+      // auth: { scope: ['admin'] },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/geography/lgas/{lgaId}',
+    handler: asyncHandler(deleteLga),
+    config: {
+      description: 'Delete Lga',
+      validate: {
+        params: {
+          lgaId: Joi.number().description('Lga Id').required(),
+        },
+      },
+      // auth: { scope: ['admin'] },
     },
   },
 ]

@@ -24,9 +24,27 @@ async function getLgasByValue(name, dataConstraints) {
     .select('l.id', 'l.name')
 }
 
+async function getGeographyByLgaId(knex, lgaId, dataConstraints) {
+  return knex('Geography as g').modify(addConstraints, dataConstraints, { lga: 'l' }).where('g.lgaId', lgaId).first()
+}
+
+async function upsertGeography(trknex, payload, lgaId, credentials) {
+  if (payload.stateId) {
+    const geography = await getGeographyByLgaId(trknex, lgaId, credentials)
+    if (geography) {
+      if (geography.stateId !== payload.stateId) {
+        await trknex('Geography').where({ id: geography.id }).update({ stateId: payload.stateId })
+      }
+    } else {
+      await trknex('Geography').insert({ stateId: payload.stateId, lgaId, countryId: credentials.countryId })
+    }
+  }
+}
+
 module.exports = {
   getState,
   getStatesByValue,
   getLga,
   getLgasByValue,
+  upsertGeography,
 }

@@ -28,7 +28,7 @@ describe('PUT', () => {
     })
   })
 
-  describe.only('/states/{stateId}', () => {
+  describe('/states/{stateId}', () => {
     it('Should update state', async () => {
       const res = await server
         .put(`${path}/${state.id}`)

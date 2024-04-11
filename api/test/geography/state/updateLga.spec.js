@@ -10,13 +10,12 @@ const path = '/api/geography/lgas'
 
 describe('PUT', () => {
   const newName = 'newName'
-  const newAbbreviation = 'newAbbr'
   let lga
   const lgasToDelete = []
   before(() => shared.checkToken(server, path))
   before(async () => {
     return run(async knex => {
-      const lgaId = await knex('Lga').insert({ name: 'oldLgaName', abbreviation: 'oldAbbr' })
+      const lgaId = await knex('Lga').insert({ name: 'oldLgaName' })
       lgasToDelete.push(lgaId)
       lga = await knex('Lga').where({ id: lgaId }).first()
     })
@@ -28,28 +27,27 @@ describe('PUT', () => {
     })
   })
 
-  describe.only('/lgas/{lgaId}', () => {
+  describe('/lgas/{lgaId}', () => {
     it('Should update lga', async () => {
       const res = await server
         .put(`${path}/${lga.id}`)
-        .send({ name: newName, abbreviation: newAbbreviation })
+        .send({ name: newName })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 204)
       const updatedLga = await knex('Lga').where({ id: lga.id }).first()
       expect(updatedLga).to.containSubset({
         id: lga.id,
         name: newName,
-        abbreviation: newAbbreviation,
       })
       chai.assert.instanceOf(updatedLga.updatedOn, Date)
     })
 
-    it('If a lga with same name of abbreviation exists, returns 409 Conflict', async () => {
-      const dupLgaId = await knex('Lga').insert({ name: newName, abbreviation: newAbbreviation })
+    it('If a lga with same name exists, returns 409 Conflict', async () => {
+      const dupLgaId = await knex('Lga').insert({ name: newName })
       lgasToDelete.push(dupLgaId)
       const res = await server
         .put(`${path}/${lga.id}`)
-        .send({ name: newName, abbreviation: newAbbreviation })
+        .send({ name: newName })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 409)
     })
@@ -57,7 +55,7 @@ describe('PUT', () => {
     it('If Id does not exists, returns 404 Not found', async () => {
       const res = await server
         .put(`${path}/${999}`)
-        .send({ name: newName, abbreviation: newAbbreviation })
+        .send({ name: newName })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 404)
     })

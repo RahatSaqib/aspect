@@ -5,9 +5,12 @@ const { getState, getStatesByValue } = require('./common/db')
 
 async function updateState({ auth, params, payload }, h) {
   const { stateId } = params
+
   await validate(stateId, payload, auth.credentials)
   await updateStateData(stateId, payload, auth.credentials)
-  return h.response().code(204)
+
+  const data = { id: stateId, name: payload.name, abbreviation: payload.abbreviation }
+  return h.response({ ok: true, data }).code(204)
 }
 
 const validate = async (stateId, { name, abbreviation }, credentials) => {
