@@ -749,10 +749,10 @@ function getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupB
     })
     .modify(qb => {
       if (query.minDate) {
-        qb.where('r.startedOn', '>=', query.minDate)
+        qb.where('r.endedOn', '>=', query.minDate)
       }
       if (query.maxDate) {
-        qb.where('r.startedOn', '<=', query.maxDate)
+        qb.where('r.endedOn', '<=', query.maxDate)
       }
       if (!query.assay && assay) {
         qb.whereIn('a.externalId', assay)
@@ -782,7 +782,7 @@ function getClinicalIndicatorQueryForResultsTable(dataConstraints, assay, groupB
         this.where('rca.reportable', true)
       }
     })
-    .orderBy('r.startedOn', 'r.endedOn')
+    .orderBy('r.endedOn', 'r.startedOn')
     .count('r.id as cnt')
 }
 
