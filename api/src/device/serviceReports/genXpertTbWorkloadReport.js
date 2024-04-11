@@ -24,7 +24,7 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
     .select({
       deviceId: 'r.deviceId',
       totalXpertModulesInUse: knex.raw('count(DISTINCT moduleName)'),
-      lastResultUploadedOn: knex.raw('MAX(r.createdOn)'),
+      lastResultUploadedOn: knex.raw('MAX(r.updatedOn)'),
       lastResultConductedOn: knex.raw('MAX(r.endedOn)'),
     })
     .groupBy('r.deviceId')
