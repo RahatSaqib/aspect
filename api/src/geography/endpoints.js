@@ -71,7 +71,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/geography/states/{stateId?}',
+    path: '/geography/state-select-list-by-stateId/{stateId?}',
     handler: asyncHandler(stateSelectList),
     config: {
       description: 'State List',

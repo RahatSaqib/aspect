@@ -1,5 +1,5 @@
 const GEOGRAPHY_STATES = {
-  ENDPOINT: '/geography/states',
+  ENDPOINT: '/geography/state-select-list-by-stateId',
   KEY: 'GEOGRAPHY_STATES',
 }
 
