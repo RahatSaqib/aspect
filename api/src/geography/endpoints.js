@@ -15,6 +15,7 @@ const { createState } = require('./state/createState')
 const { deleteState } = require('./state/deleteState')
 const { deleteLga } = require('./state/deleteLga')
 const { listStates } = require('./state/listStates')
+const { listLgas } = require('./state/listLgas')
 
 const routes = [
   {
@@ -228,6 +229,45 @@ const routes = [
         params: {
           stateId: Joi.number().description('State Id').required(),
         },
+      },
+      // auth: { scope: ['admin'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/geography/lgas',
+    handler: asyncHandler(listLgas),
+    config: {
+      description: 'List Lgas',
+      validate: {
+        query: {
+          ...validateSortPageParams('name'),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of lgas that match the given filters'),
+          length: Joi.number().required().description('The number of lgas included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The lgas')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().description('The id of the lga'),
+                name: Joi.string().description('The name of the lga'),
+                resultCount: Joi.number(),
+                deviceConfigurationCount: Joi.number(),
+                targetCount: Joi.number(),
+                siteCount: Joi.number(),
+                issueCount: Joi.number(),
+                deviceApiKeyCount: Joi.number(),
+                personCount: Joi.number(),
+                jobContextCount: Joi.number(),
+                notificationCount: Joi.number(),
+              })
+            ),
+        }),
       },
       // auth: { scope: ['admin'] },
     },
