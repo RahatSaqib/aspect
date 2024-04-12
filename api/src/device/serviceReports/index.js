@@ -10,6 +10,7 @@ const {
   getMonthYearUserTimeZoneField,
   getOffsetFromIsoDateString,
   getDateTimeProjectionInUserTimeZone,
+  getWorkingDays,
 } = require('../../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../../shared/query')
 const { getPersonByPersonId } = require('../../auth/service')
@@ -24,6 +25,7 @@ const { getNoStockInventoryReport } = require('./noStockInventoryReport')
 const { getModuleSwapsReportData } = require('./moduleSwapsReport')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
+const { getDevicesByTBReach } = require('./deviceReport')
 
 function getMonthsDatefields(minDate, maxDate, culture) {
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
@@ -573,6 +575,37 @@ async function getErrorsByDevicesReport(auth, query) {
   }
 }
 
+async function getDevicesForTBReachReport(auth, query) {
+  const { minDate, maxDate } = query
+  if (!minDate || !maxDate) {
+    throw Boom.badRequest('Dates are required')
+  }
+  const dataConstraints = await getConstraints(auth.credentials)
+
+  const [devicesByTBReach, errorsResult] = await Promise.all([
+    getDevicesByTBReach(dataConstraints, query),
+    getErrorsByDevices(dataConstraints, query),
+  ])
+
+  const errorsData = new Map(errorsResult.map(error => [error.deviceId, error]))
+  const workingDays = getWorkingDays(new Date(minDate), new Date(maxDate))
+
+  // Merge data from both queries
+  const mergedData = devicesByTBReach.map(device => ({
+    ...device,
+    ...errorsData.get(device.deviceId),
+    BKtotal: 0,
+    xpertPerDay: device.totalXpertTests / workingDays,
+  }))
+
+  return {
+    ok: true,
+    total: mergedData.length,
+    length: mergedData.length,
+    data: mergedData,
+  }
+}
+
 async function noStockInventoryReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { data, dynamicColumns } = await getNoStockInventoryReport(dataConstraints, query)
@@ -831,4 +864,5 @@ module.exports = {
   getErrorsByDevicesReport,
   noStockInventoryReport,
   getDeviceCoverageReport,
+  getDevicesForTBReachReport,
 }

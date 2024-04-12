@@ -591,6 +591,17 @@ const deviceAndSiteSummaryReport = {
     {
       sortOrder: 2,
       moduleName: 'device/serviceReports',
+      functionName: 'getDevicesForTBReachReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
+    {
+      sortOrder: 3,
+      moduleName: 'device/serviceReports',
       functionName: 'getErrorsByDevicesReport',
       query: {
         hasResults: 1,
