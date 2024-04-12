@@ -7,6 +7,7 @@ import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
@@ -23,9 +24,9 @@ const XDRTestingDiagnosisTrendPage = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState()
+  const [filters, setFilter] = usePathFilter()
 
-  const mergedParams = filter ? [...endpointParams, ...objectToArray(filter)] : [...endpointParams]
+  const mergedParams = filters ? [...endpointParams, ...objectToArray(filters)] : [...endpointParams]
 
   const { isLoading, data } = useQuery(
     ['rrtbMtbDetectedQuarterlyTrends', { mergedParams }],
@@ -68,13 +69,13 @@ const XDRTestingDiagnosisTrendPage = () => {
           />
           <StateSelect
             countryId={user.countryId}
-            value={filter?.stateId ?? ''}
+            value={filters?.stateId ?? ''}
             onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            stateId={filter?.stateId}
-            value={filter?.lgaId ?? ''}
+            stateId={filters?.stateId}
+            value={filters?.lgaId ?? ''}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
