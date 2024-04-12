@@ -9,7 +9,7 @@ function useFilterUpdate() {
     throw new Error('useFilter must be used within a FilterProvider')
   }
 
-  const update = (newFilter, pathname) => setFilter({ ...filter, [pathname]: { ...newFilter } })
+  const update = (newFilter, pathname) => setFilter(prev => ({ ...prev, [pathname]: { ...newFilter } }))
   const addMultipleFilter = filters => {
     // Combine all new filters into a single object
     const updatedFilters = filters.reduce((acc, { newFilter, pathname }) => {
@@ -33,7 +33,7 @@ function useFilterUpdate() {
     update(filterForLocation, pathname)
   }
 
-  const resetFilter = pathname => setFilter({ ...filter, [pathname]: { ...defaultFilter[pathname] } })
+  const resetFilter = pathname => setFilter(prev => ({ ...prev, [pathname]: { ...defaultFilter[pathname] } }))
 
   return [update, removeFilter, resetFilter, addMultipleFilter] // pathname is to allow changing the filter in other places before navigation
 }
