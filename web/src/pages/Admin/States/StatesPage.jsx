@@ -5,8 +5,10 @@ import { Box, Button, Card, Table, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
+import { Loading } from '../../../cleanComponents'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import PermissionChecker from '../../../components/PermissionChecker'
+import { useAdminStates } from '../../../hooks/admin/useAdminStates'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
@@ -17,8 +19,6 @@ import messages from '../messages'
 import { AddStateDialog } from './AddStateDialog'
 import { EditStateDialog } from './EditStateDialog'
 import { RemoveStateDialog } from './RemoveStateDialog'
-
-const states = [{ name: 'Alabama', abbreviation: 'AL', id: 30 }]
 
 export default function StatesPage() {
   const { formatMessage } = useIntl()
@@ -39,6 +39,7 @@ export default function StatesPage() {
     },
     [navigate, addFilter, user]
   )
+  const { data: states, isLoading } = useAdminStates()
 
   return (
     <>
@@ -58,49 +59,65 @@ export default function StatesPage() {
       <Box sx={{ padding: '10px', width: '100%' }}>
         <Helmet title={formatMessage(messages.states)} />
         <Card sx={{ padding: '20px' }}>
-          <Table>
-            <DataTableHead
-              location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={[
-                { key: 'name', label: formatMessage(messages.stateName), sortable: true },
-                { key: 'abbreviation', label: formatMessage(messages.stateAbbreviation), sortable: true },
-                { key: 'manage', label: formatMessage(messages.manage) },
-              ]}
-            />
-            <TableBody>
-              {states.map(i => (
-                <DataTableRow onClick={() => handleRowClick(i)} key={i.name}>
-                  <DataTableCell>{i.name}</DataTableCell>
-                  <DataTableCell>{i.abbreviation}</DataTableCell>
-                  <DataTableCell>
-                    <Button
-                      onClick={e => {
-                        e.stopPropagation()
-                        setRemovingState(i)
-                      }}
-                      variant="outlined"
-                      startIcon={<DeleteIcon />}
-                    >
-                      {formatMessage(messages.delete)}
-                    </Button>
-                    <Button
-                      sx={{ ml: '5px' }}
-                      onClick={e => {
-                        e.stopPropagation()
-                        setEditingState(i)
-                      }}
-                      variant="outlined"
-                      startIcon={<EditIcon />}
-                    >
-                      {formatMessage(messages.edit)}
-                    </Button>
-                  </DataTableCell>
-                </DataTableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <Table>
+              <DataTableHead
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={[
+                  { key: 'name', label: formatMessage(messages.stateName), sortable: true },
+                  { key: 'abbreviation', label: formatMessage(messages.stateAbbreviation), sortable: true },
+                  { key: 'apiKeys', label: formatMessage(messages.apiKeys) },
+                  { key: 'people', label: formatMessage(messages.people) },
+                  { key: 'lgas', label: formatMessage(messages.lgas) },
+                  { key: 'notificationStates', label: formatMessage(messages.notificationStates) },
+                  { key: 'peopleWithAccess', label: formatMessage(messages.peopleWithAccess) },
+                  { key: 'tests', label: formatMessage(messages.tests) },
+                  { key: 'manage', label: formatMessage(messages.manage) },
+                ]}
+              />
+              <TableBody>
+                {states.map(i => (
+                  <DataTableRow onClick={() => handleRowClick(i)} key={i.name}>
+                    <DataTableCell>{i.name}</DataTableCell>
+                    <DataTableCell>{i.abbreviation}</DataTableCell>
+                    <DataTableCell>{i.deviceApiKeyCount}</DataTableCell>
+                    <DataTableCell>{i.personCount}</DataTableCell>
+                    <DataTableCell>{i.lgaCount}</DataTableCell>
+                    <DataTableCell>{i.notificationCount}</DataTableCell>
+                    <DataTableCell>{i.jobContextCount}</DataTableCell>
+                    <DataTableCell>{i.resultCount}</DataTableCell>
+                    <DataTableCell>
+                      <Button
+                        onClick={e => {
+                          e.stopPropagation()
+                          setRemovingState(i)
+                        }}
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                      >
+                        {formatMessage(messages.delete)}
+                      </Button>
+                      <Button
+                        sx={{ ml: '5px' }}
+                        onClick={e => {
+                          e.stopPropagation()
+                          setEditingState(i)
+                        }}
+                        variant="outlined"
+                        startIcon={<EditIcon />}
+                      >
+                        {formatMessage(messages.edit)}
+                      </Button>
+                    </DataTableCell>
+                  </DataTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </Card>
       </Box>
       <AddStateDialog open={addState} onOpenChange={setAddState} />

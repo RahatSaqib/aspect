@@ -2,8 +2,10 @@ import React from 'react'
 import { Box, Button, CircularProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
+import { useQueryClient } from 'react-query'
 import { number, object, string } from 'yup'
 import { StateSelect } from '../../../cleanComponents'
+import { ADMIN_LGAS_KEYS } from '../../../hooks/admin/adminKeys'
 import { useCreateLga } from '../../../hooks/admin/useCreateLga'
 import useAuthState from '../../../hooks/useAuthState'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
@@ -12,7 +14,13 @@ import messages from '../messages'
 export function AddLgaDialog({ open, onOpenChange }) {
   const { formatMessage } = useIntl()
   const user = useAuthState()
-  const { mutateAsync: createLga } = useCreateLga()
+  const client = useQueryClient()
+  const { mutateAsync: createLga } = useCreateLga({
+    onSuccess: () => {
+      client.refetchQueries(ADMIN_LGAS_KEYS)
+      onOpenChange(false)
+    },
+  })
 
   return (
     <AspectDialog

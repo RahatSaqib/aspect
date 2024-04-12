@@ -1,14 +1,22 @@
 import React from 'react'
 import { Button, CircularProgress } from '@mui/material'
 import { useIntl } from 'react-intl'
+import { useQueryClient } from 'react-query'
+import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useDeleteState } from '../../../hooks/admin/useDeleteState'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
 export function RemoveStateDialog({ open, state, onOpenChange }) {
   const { formatMessage } = useIntl()
-  const { mutate: deleteState, isLoading } = useDeleteState()
-  console.log({ state })
+  const client = useQueryClient()
+  const { mutate: deleteState, isLoading } = useDeleteState({
+    onSuccess: () => {
+      client.refetchQueries(ADMIN_STATES_KEYS)
+      onOpenChange(false)
+    },
+  })
+
   return (
     <AspectDialog
       actions={[

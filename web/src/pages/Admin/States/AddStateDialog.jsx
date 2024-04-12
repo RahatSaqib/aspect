@@ -2,14 +2,22 @@ import React from 'react'
 import { Box, Button, CircularProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
+import { useQueryClient } from 'react-query'
 import { object, string } from 'yup'
+import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useCreateState } from '../../../hooks/admin/useCreateState'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
 export function AddStateDialog({ open, onOpenChange }) {
   const { formatMessage } = useIntl()
-  const { mutateAsync: createState } = useCreateState()
+  const client = useQueryClient()
+  const { mutateAsync: createState } = useCreateState({
+    onSuccess: () => {
+      client.refetchQueries(ADMIN_STATES_KEYS)
+      onOpenChange(false)
+    },
+  })
   return (
     <AspectDialog
       title={formatMessage(messages.createNewState)}

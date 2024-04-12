@@ -2,14 +2,22 @@ import React from 'react'
 import { Box, Button, CircularProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
+import { useQueryClient } from 'react-query'
 import { object, string } from 'yup'
+import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useEditState } from '../../../hooks/admin/useEditState'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
 export function EditStateDialog({ open, state, onOpenChange }) {
   const { formatMessage } = useIntl()
-  const { mutateAsync: editState } = useEditState()
+  const client = useQueryClient()
+  const { mutateAsync: editState } = useEditState({
+    onSuccess: () => {
+      client.refetchQueries(ADMIN_STATES_KEYS)
+      onOpenChange(false)
+    },
+  })
   return (
     <AspectDialog
       title={formatMessage(messages.editState)}
@@ -24,7 +32,7 @@ export function EditStateDialog({ open, state, onOpenChange }) {
             name: string().required(formatMessage(messages.stateNameRequired)),
             abbreviation: string().required(formatMessage(messages.stateAbbreviationRequired)),
           })}
-          onSubmit={({ abbreviation }) => editState({ stateId: state?.id, abbreviation })}
+          onSubmit={({ abbreviation, name }) => editState({ stateId: state?.id, abbreviation, name })}
         >
           {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
             <>
@@ -35,7 +43,6 @@ export function EditStateDialog({ open, state, onOpenChange }) {
                 value={values.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
-                disabled
                 error={!!(touched.name && Boolean(errors.name))}
                 helperText={touched.name && errors.name}
               />

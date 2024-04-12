@@ -1,13 +1,21 @@
 import React from 'react'
 import { Button, CircularProgress } from '@mui/material'
 import { useIntl } from 'react-intl'
+import { useQueryClient } from 'react-query'
+import { ADMIN_LGAS_KEYS } from '../../../hooks/admin/adminKeys'
 import { useDeleteLga } from '../../../hooks/admin/useDeleteLga'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
 export function RemoveLgaDialog({ open, lga, onOpenChange }) {
   const { formatMessage } = useIntl()
-  const { mutate: deleteLga, isLoading } = useDeleteLga()
+  const client = useQueryClient()
+  const { mutate: deleteLga, isLoading } = useDeleteLga({
+    onSuccess: () => {
+      client.refetchQueries(ADMIN_LGAS_KEYS)
+      onOpenChange(false)
+    },
+  })
   return (
     <AspectDialog
       actions={[

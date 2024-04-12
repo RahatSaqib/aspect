@@ -93,4 +93,24 @@ export default defineMessages({
     id: 'pages.admin.yes',
     defaultMessage: 'Yes',
   },
+  apiKeys: {
+    id: 'pages.admin.apiKeys',
+    defaultMessage: 'Api Keys',
+  },
+  people: {
+    id: 'pages.admin.people',
+    defaultMessage: 'People',
+  },
+  notificationStates: {
+    id: 'pages.admin.notificationStates',
+    defaultMessage: 'Notification States',
+  },
+  peopleWithAccess: {
+    id: 'pages.admin.peopleWithAccess',
+    defaultMessage: 'People With Access to State',
+  },
+  tests: {
+    id: 'pages.admin.tests',
+    defaultMessage: 'Tests',
+  },
 })

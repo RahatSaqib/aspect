@@ -5,9 +5,10 @@ import { Box, Button, Card, Table, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import { LgasFilter } from '../../../cleanComponents'
+import { LgasFilter, Loading } from '../../../cleanComponents'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import PermissionChecker from '../../../components/PermissionChecker'
+import { useAdminLgas } from '../../../hooks/admin/useAdminLgas'
 import AspectButton from '../../../oldComponents/shared/AspectButton'
 import { DataTableCell, DataTableRow } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
@@ -17,8 +18,6 @@ import { AddLgaDialog } from './AddLgaDialog'
 import { EditLgaDialog } from './EditLgaDialog'
 import { RemoveLgaDialog } from './RemoveLgaDialog'
 
-const lgas = [{ name: 'Lawrence', stateName: 'Alabama', stateId: 30, id: 3 }]
-
 export default function LgasPage() {
   const { formatMessage } = useIntl()
   const location = useLocation()
@@ -27,6 +26,7 @@ export default function LgasPage() {
   const [editingLga, setEditingLga] = useState()
   const sortPage = makeSortPageSelector({ sortCol: 'name' })
   const { sortCol, sortDir } = sortPage({ location })
+  const { data: lgas, isLoading } = useAdminLgas()
 
   return (
     <>
@@ -41,50 +41,64 @@ export default function LgasPage() {
         <Helmet title={formatMessage(messages.lgas)} />
         <LgasFilter />
         <Card sx={{ padding: '20px' }}>
-          <Table>
-            <DataTableHead
-              location={location}
-              sortColumnKey={sortCol}
-              sortColumnDir={sortDir}
-              columns={[
-                { key: 'name', label: formatMessage(messages.lgaName), sortable: true },
-                { key: 'stateName', label: formatMessage(messages.stateName), sortable: true },
-                { key: 'manage', label: formatMessage(messages.manage) },
-              ]}
-            />
-            <TableBody>
-              {lgas.map(i => (
-                <DataTableRow onClick={() => {}} key={i.name}>
-                  <DataTableCell>{i.name}</DataTableCell>
-                  <DataTableCell>{i.stateName}</DataTableCell>
-                  <DataTableCell>
-                    <Button
-                      sx={{ zIndex: 9 }}
-                      onClick={e => {
-                        e.stopPropagation()
-                        setRemovingLga(i)
-                      }}
-                      variant="outlined"
-                      startIcon={<DeleteIcon />}
-                    >
-                      {formatMessage(messages.delete)}
-                    </Button>
-                    <Button
-                      sx={{ ml: '5px' }}
-                      onClick={e => {
-                        e.stopPropagation()
-                        setEditingLga(i)
-                      }}
-                      variant="outlined"
-                      startIcon={<EditIcon />}
-                    >
-                      {formatMessage(messages.edit)}
-                    </Button>
-                  </DataTableCell>
-                </DataTableRow>
-              ))}
-            </TableBody>
-          </Table>
+          {isLoading ? (
+            <Loading />
+          ) : (
+            <Table>
+              <DataTableHead
+                location={location}
+                sortColumnKey={sortCol}
+                sortColumnDir={sortDir}
+                columns={[
+                  { key: 'name', label: formatMessage(messages.lgaName), sortable: true },
+                  { key: 'stateName', label: formatMessage(messages.stateName), sortable: true },
+                  { key: 'apiKeys', label: formatMessage(messages.apiKeys) },
+                  { key: 'people', label: formatMessage(messages.people) },
+                  { key: 'notificationStates', label: formatMessage(messages.notificationStates) },
+                  { key: 'peopleWithAccess', label: formatMessage(messages.peopleWithAccess) },
+                  { key: 'tests', label: formatMessage(messages.tests) },
+                  { key: 'manage', label: formatMessage(messages.manage) },
+                ]}
+              />
+              <TableBody>
+                {lgas.map(i => (
+                  <DataTableRow onClick={() => {}} key={i.name}>
+                    <DataTableCell>{i.name}</DataTableCell>
+                    <DataTableCell>{i.stateName}</DataTableCell>
+                    <DataTableCell>{i.deviceApiKeyCount}</DataTableCell>
+                    <DataTableCell>{i.personCount}</DataTableCell>
+                    <DataTableCell>{i.notificationCount}</DataTableCell>
+                    <DataTableCell>{i.jobContextCount}</DataTableCell>
+                    <DataTableCell>{i.resultCount}</DataTableCell>
+                    <DataTableCell>
+                      <Button
+                        sx={{ zIndex: 9 }}
+                        onClick={e => {
+                          e.stopPropagation()
+                          setRemovingLga(i)
+                        }}
+                        variant="outlined"
+                        startIcon={<DeleteIcon />}
+                      >
+                        {formatMessage(messages.delete)}
+                      </Button>
+                      <Button
+                        sx={{ ml: '5px' }}
+                        onClick={e => {
+                          e.stopPropagation()
+                          setEditingLga(i)
+                        }}
+                        variant="outlined"
+                        startIcon={<EditIcon />}
+                      >
+                        {formatMessage(messages.edit)}
+                      </Button>
+                    </DataTableCell>
+                  </DataTableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
         </Card>
       </Box>
       <AddLgaDialog open={addLga} onOpenChange={setAddLga} />
