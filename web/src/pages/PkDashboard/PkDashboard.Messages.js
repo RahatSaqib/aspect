@@ -58,6 +58,11 @@ const messages = {
       id: 'p.PkDashboard.peopleTestedRifUltra',
       defaultMessage: 'Assay for MTB Rif Ultra',
     },
+    peopleTestedRifTooltip: {
+      id: 'p.PkDashboard.peopleTestedRifTooltip',
+      defaultMessage:
+        "Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.",
+    },
     peopleTestedCovid: {
       id: 'p.PkDashboard.peopleTestedCovid',
       defaultMessage: 'People tested for Covid in current year',
@@ -179,8 +184,8 @@ const messages = {
       defaultMessage: 'National FQ-R Resistance Trend',
     },
     rrtbDiagnosisTitle: {
-      id: 'p.PkDashboard.rrtbDiagnosisTitle',
-      defaultMessage: 'Current Rifampicin Resistance Diagnosis using MTB/Rif Assay',
+      id: 'p.PkDashboard.rrtbDiagnosisTitle1',
+      defaultMessage: 'Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay',
     },
     rrtbNationalDiagnosisTrendsTitle: {
       id: 'p.PkDashboard.rrtbNationalDiagnosisTrendsTitle',
@@ -213,34 +218,34 @@ const messages = {
     },
     testPerYear: { id: 'p.PkDashboard.testPerYear', defaultMessage: 'Tests performed this year' },
     testPerMonth: { id: 'p.PkDashboard.testPerMonth', defaultMessage: 'Average tests performed per month' },
-    testPerDay: { id: 'p.PkDashboard.testPerDay', defaultMessage: 'Tests performed in last 24 hours' },
+    testToday: { id: 'p.PkDashboard.testToday', defaultMessage: 'Tests performed today' },
 
     RRPerYear: { id: 'p.PkDashboard.RRPerYear', defaultMessage: 'RR cases diagnosed this year' },
     RRPerMonth: { id: 'p.PkDashboard.RRPerMonth', defaultMessage: 'Average RR cases diagnosed per month' },
-    RRInToday: { id: 'p.PkDashboard.RRInToday', defaultMessage: 'RR cases diagnosed in Today' },
+    RRToday: { id: 'p.PkDashboard.RRToday', defaultMessage: 'RR cases diagnosed today' },
 
     currentFQDetection: { id: 'p.PkDashboard.currentFQDetection', defaultMessage: 'Current FQ Detection' },
     FQRPerYear: { id: 'p.PkDashboard.FQRPerYear', defaultMessage: 'FQ-R cases diagnosed this year' },
     FQRCurrentYear: { id: 'p.PkDashboard.FQRCurrentYear', defaultMessage: 'FQ-R cases diagnosed in current year' },
     FQRPerMonth: { id: 'p.PkDashboard.FQRPerMonth', defaultMessage: 'Average FQ-R cases diagnosed per month' },
-    FQRPerDay: { id: 'p.PkDashboard.FQRPerDay', defaultMessage: 'FQ-R cases diagnosed in last 24 hours' },
+    FQRToday: { id: 'p.PkDashboard.FQRToday', defaultMessage: 'FQ-R cases diagnosed today' },
 
     xdrCurrentTitle: { id: 'p.PkDashboard.xdrCurrentTitle', defaultMessage: 'Current GX-10CX Testing performed in' },
 
     xdrCurrentDiagnosisTitle: { id: 'p.PkDashboard.xdrCurrentDiagnosisTitle', defaultMessage: 'Current Diagnosis' },
     xdrTBCasesPerYear: { id: 'p.PkDashboard.xdrTBCasesPerYear', defaultMessage: 'TB cases diagnosed this year' },
     xdrAverageMoth: { id: 'p.PkDashboard.xdrAverageMoth', defaultMessage: 'Average TB cases diagnosed per month' },
-    xdrTBLastDay: { id: 'p.PkDashboard.xdrTBLastDay', defaultMessage: 'TB cases diagnosed in last 24 hours' },
+    xdrTBToday: { id: 'p.PkDashboard.xdrTBToday', defaultMessage: 'TB cases diagnosed today' },
     // summary
     molecularAssay: {
       id: 'p.PkDashboard.molecularAssay',
       defaultMessage: 'People tested for TB using MTB/Rif assay in current year',
     },
-    molecularAssay24: { id: 'p.PkDashboard.molecularAssay24', defaultMessage: 'Last 24 hours' },
+    molecularAssay25: { id: 'p.PkDashboard.molecularAssay25', defaultMessage: 'Today' },
     TB: { id: 'p.PkDashboard.TB', defaultMessage: 'TB Cases Diagnosed in current year' },
-    TB24: { id: 'p.PkDashboard.TB24', defaultMessage: 'Last 24 hours' },
+    TB25: { id: 'p.PkDashboard.TB25', defaultMessage: 'Today' },
     RTTB: { id: 'p.PkDashboard.RTTB', defaultMessage: 'RRTB Cases Diagnosed in current year' },
-    RTTB24: { id: 'p.PkDashboard.RTTB24', defaultMessage: 'Last 24 hours' },
+    RTTB25: { id: 'p.PkDashboard.RTTB25', defaultMessage: 'Today' },
     // 1st column
     titlemtbRif: { id: 'p.PkDashboard.titlemtbRif', defaultMessage: 'MTB/RIF' },
     mtbRifTbTesting: { id: 'p.PkDashboard.mtbRifTbTesting', defaultMessage: 'TB Testing' },

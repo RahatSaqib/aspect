@@ -5,14 +5,51 @@ import startOfDay from 'date-fns/startOfDay'
 import startOfMonth from 'date-fns/startOfMonth'
 import startOfYear from 'date-fns/startOfYear'
 import subtractDays from 'date-fns/subDays'
+import { useLocation } from 'react-router'
 import useAssayList from '../../hooks/assay/useAssayList'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useAuthState from '../../hooks/useAuthState'
+import { getTimePeriod } from '../../oldComponents/shared/DateTimeInput/utils/date'
 import FilterContext from './FilterProvider.Context'
 
 const now = new Date()
 const minDate = startOfDay(subtractDays(now, 30))
 const maxDate = endOfDay(now)
+
+const dashboardV2DefaultFilters = {
+  '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
+  '/dashboard/rif/provincial-diagnosis-trend': { states: [], lgas: [] },
+  '/dashboard/rif/provincial-rrtb-trend-comparison': { states: [], lgas: [] },
+  '/dashboard/rif/provincial-testing-trend': { states: [], lgas: [] },
+  '/dashboard/xdr/provincial-diagnosis-trend': { states: [], lgas: [] },
+  '/dashboard/xdr/provincial-testing-trend': { states: [], lgas: [] },
+  '/dashboard/xdr/provincial-fq-diagnosis-trend': { states: [], lgas: [] },
+  '/dashboard/inventory/overview': {
+    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
+    maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+  },
+  '/dashboard/rif/current-testing': {},
+  '/dashboard/rif/national-diagnosis': {},
+  '/dashboard/rif/national-rtb': {},
+  '/dashboard/rif/national-testing-trend': {},
+  '/dashboard/rif/current-diagnosis': {},
+  '/dashboard/rif/current-rrtb-diagnosis': {},
+  '/dashboard/rif/test-diag-trend': {},
+  '/dashboard/rif/rrtb-test-diagnosis': {},
+  '/dashboard/xdr/national-testing-trend': {},
+  '/dashboard/xdr/national-diagnosis': {},
+  '/dashboard/xdr/national-fq': {},
+  '/dashboard/xdr/current-testing': {},
+  '/dashboard/xdr/current-diagnosis': {},
+  '/dashboard/xdr/gx-testing-and-diagnosis': {},
+  '/dashboard/xdr/data-visualisation-for-xdr-resistance': {},
+  '/dashboard/xdr/testing-diagnosis-trend': {},
+  '/dashboard/xdr/current-fq-detection': {},
+  '/dashboard/coverage/device': {},
+  '/dashboard/coverage/utilization': {},
+  '/dashboard/other/covid': {},
+  '/dashboard/other/hiv': {},
+}
 
 // TODO: remove pagination from URL
 export const defaultFilter = {
@@ -30,7 +67,7 @@ export const defaultFilter = {
   '/dashboard/xdr/by-device': { minDate: startOfYear(now), maxDate }, //
   '/reports': { minDate, maxDate }, //
   '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
-  '/dashboard/rif/current-diagnosis': {},
+  ...dashboardV2DefaultFilters,
 }
 
 const FilterProvider = ({ children }) => {
@@ -39,6 +76,13 @@ const FilterProvider = ({ children }) => {
   const isUserReady = !isLoggedOut && !jwt.hasToAcceptLicenseId
   const { data: deviceTypes } = useDeviceTypeList({ enabled: isUserReady })
   const { data: assays } = useAssayList({ enabled: isUserReady })
+  const { pathname } = useLocation()
+
+  useEffect(() => {
+    if (pathname === '/dashboard-v2') {
+      setFilterState(prev => ({ ...prev, ...dashboardV2DefaultFilters }))
+    }
+  }, [pathname])
 
   useEffect(() => {
     const filters = { ...filterState }

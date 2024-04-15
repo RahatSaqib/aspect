@@ -90,6 +90,10 @@ module.exports = [
         module: 'router',
         activity: 'view',
       },
+      {
+        module: 'dashboard-v2',
+        activity: 'view',
+      },
     ],
     reports: [
       'xdr_devices_summary',
@@ -166,6 +170,10 @@ module.exports = [
       {
         module: 'deviceApiKey',
         activity: 'edit',
+      },
+      {
+        module: 'dashboard-v2',
+        activity: 'view',
       },
     ],
     reports: [
@@ -246,6 +254,10 @@ module.exports = [
       },
       {
         module: 'report',
+        activity: 'view',
+      },
+      {
+        module: 'dashboard-v2',
         activity: 'view',
       },
     ],
@@ -329,6 +341,10 @@ module.exports = [
         module: 'report',
         activity: 'view',
       },
+      {
+        module: 'dashboard-v2',
+        activity: 'view',
+      },
     ],
     reports: [
       'xdr_devices_summary',
@@ -340,7 +356,15 @@ module.exports = [
       'pk_annual_utilization_rates',
     ],
   }),
-  technician,
+  mergeJobFunctions(technician, {
+    permissions: [
+      {
+        module: 'dashboard-v2',
+        activity: 'view',
+      },
+    ],
+    reports: [],
+  }),
   {
     name: 'Aspect Tester',
     permissions: [
