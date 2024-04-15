@@ -42,17 +42,7 @@ async function seed(knex) {
 
         if (actualGeography) {
           // If the equivalent actual geography exists, then update all the tables regs that refer to the current geography id, so they start referring to the actual one
-          const tables = [
-            'Device',
-            'DeviceApiKey',
-            'DeviceConfiguration',
-            'Issue',
-            'JobContext',
-            'Person',
-            'Result',
-            'Site',
-            'Target',
-          ]
+          const tables = ['DeviceApiKey', 'DeviceConfiguration', 'Issue', 'JobContext', 'Person', 'Site', 'Target']
           await Promise.each(tables, async tbl =>
             knex(tbl).where({ geographyId: currGeography.id }).update({ geographyId: actualGeography.id })
           )

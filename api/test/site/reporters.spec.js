@@ -171,7 +171,7 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
 
   // ------------------------------------------------------------------------
   const createResults = async () => {
-    const { deviceId, geographyId, partnerId, siteId, userId } = initialState
+    const { deviceId, partnerId, siteId, userId } = initialState
     const now = new Date().toISOString()
     const auditFields = {
       createdOn: now,
@@ -222,7 +222,6 @@ describe('Reporters Dashboard - GET /site/reporters', () => {
         externalId: `UQTB-${_.times(8, () => _.toUpper(_.random(36).toString(36))).join('')}`,
         assayId: assayGeneXpertMtbRif.id,
         partnerId,
-        geographyId,
         siteId,
         reportableSiteId: sample.originSiteId,
         deviceId,
