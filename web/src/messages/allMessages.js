@@ -1,6 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
+  idleDialogTitle: { id: 'pages.IdleDialog.title', defaultMessage: 'Automatic Logout' },
+  idleDialogHelp: {
+    id: 'shared.IdleDialog.help',
+    defaultMessage:
+      'You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.',
+  },
   errorBoundaryMessage: {
     id: 'pages.errorBoundary.message',
     defaultMessage:
@@ -392,7 +398,7 @@ const messages = defineMessages({
   accountDetails: { id: 'pages.HorizontalAppBar.accountDetails', defaultMessage: 'Account Details' },
   signOut: { id: 'pages.HorizontalAppBar.signOut', defaultMessage: 'Sign Out' },
   homeTitle: { id: 'header.link.home.title', defaultMessage: 'Home' },
-  dashboardV2Title: { id: 'header.link.dashboardv2.title', defaultMessage: 'Dashboard v2' },
+  dashboardV2Title: { id: 'header.link.dashboardv2.title', defaultMessage: 'Dashboard' },
   taskListTitle: { id: 'header.link.taskList.title', defaultMessage: 'Task List' },
   operationDataTitle: { id: 'header.link.operationData.title', defaultMessage: 'Operational Data' },
   clinicalIndicatorsTitle: { id: 'header.link.clinicalIndicators.title', defaultMessage: 'Clinical Indicators' },

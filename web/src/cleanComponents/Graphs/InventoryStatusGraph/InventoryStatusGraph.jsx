@@ -27,7 +27,7 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
   const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
-  const [filter, setFilter] = useState()
+  const [filter, setFilter] = useState(null)
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
 
@@ -77,7 +77,7 @@ const InventoryStatusGraph = ({ assaysFromState }) => {
                     />
                   </Grid>
                   <Grid item xs={12} md={8} lg={12} className={styles.Graph_Content_AssaySelector}>
-                    <ConsumableSelector onChange={setFilter} />
+                    <ConsumableSelector fullWidth value={filter} onChange={setFilter} />
                   </Grid>
                 </Grid>
               </Grid>
