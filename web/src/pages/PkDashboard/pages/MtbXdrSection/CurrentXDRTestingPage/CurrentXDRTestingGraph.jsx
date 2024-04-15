@@ -1,28 +1,28 @@
-import React, { useState, useEffect, useRef } from 'react'
-import { Switch, FormControlLabel, Grid } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
+import { FormControlLabel, Grid, Switch } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useLocation } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import {
-  StateSelect,
-  LgaSelect,
+  ColumnGraph,
+  formatDataByGraphType,
   genLabel,
+  LgaSelect,
+  Loading,
   negateTimeZoneOffset,
   objectToArray,
-  ColumnGraph,
-  Loading,
-  formatDataByGraphType,
+  StateSelect,
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import { getMinMaxDateFromMonthString } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
-import { useResultlist } from '../../../../../hooks/result'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterValues from '../../../../../hooks/useFilterValues'
-import { graphMessages, getCustomMessage } from '../../../../../messages'
+import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
+import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
@@ -64,22 +64,24 @@ const defaultFilters = [
   // { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
   { flags: 'GET_TOTAL_RESULTS_IN_CURRENT_YEAR' },
   { flags: 'GET_AVERAGE_RESULTS_PER_MONTH_CURRENT_YEAR' },
-  { flags: 'GET_TOTAL_RESULTS_IN_LAST_24_HOURS' },
+  { flags: 'GET_TOTAL_RESULTS_FOR_TODAY' },
 ]
 
 const RifCurrentGraphPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const location = useLocation()
-  const filterValues = useFilterValues(location.pathname)
-  const filterRef = useRef(filterValues)
-  const [filter, setFilter] = useState({ ...filterValues })
+  const [filters, setFilter] = usePathFilter()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
+  const filterRef = useRef()
+  useEffect(() => {
+    filterRef.current = filters
+  }, [filters])
   const { data: assays } = useAssayList()
-  const { navigateToResultList } = useResultlist()
 
   const { data, isLoading } = useQuery(
-    ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
+    ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filters).concat(defaultFilters) }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
@@ -130,10 +132,6 @@ const RifCurrentGraphPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, assays])
 
-  useEffect(() => {
-    filterRef.current = filter
-  }, [filter])
-
   return (
     <PkPage
       title={formatMessage(messages.peopleTestedXdr)}
@@ -145,14 +143,14 @@ const RifCurrentGraphPage = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
-            value={filter?.stateId ?? ''}
+            value={filters?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter?.lgaId ?? ''}
-            stateId={filter?.stateId}
+            value={filters?.lgaId ?? ''}
+            stateId={filters?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
@@ -175,15 +173,16 @@ const RifCurrentGraphPage = () => {
                 onReady={plot => {
                   plot.on('plot:click', evt => {
                     const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-                    navigateToResultList(
-                      {
-                        ...filterRef.current,
-                        minDate,
-                        maxDate,
-                        assayId: assays.find(a => a.externalId === evt.data.data.id).id,
-                      },
-                      { newFilters: filterRef.current, pathname: location.pathname }
-                    )
+                    const params = {
+                      ...filterRef.current,
+                      countryId: user.countryId,
+                      displayResult: 'actual',
+                      minDate,
+                      maxDate,
+                      assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                    }
+                    addFilter({ ...params }, '/browse/result')
+                    navigate('/browse/result')
                   })
                 }}
               />
@@ -197,7 +196,7 @@ const RifCurrentGraphPage = () => {
                 label: formatMessage(messages.testPerMonth),
                 value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
               },
-              { label: formatMessage(messages.testPerDay), value: `${data.totalResultsInLast24Hours}` },
+              { label: formatMessage(messages.testToday), value: `${data.totalResultsToday}` },
             ]}
           />
         </Grid>

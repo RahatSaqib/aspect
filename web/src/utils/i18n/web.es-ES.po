@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-04-04T03:20:05.458Z\n"
+"POT-Creation-Date: 2024-04-10T00:21:03.468Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2037,6 +2037,17 @@ msgstr "No se ha podido iniciar la sesión con sus credenciales"
 msgid "Count (1-100)"
 msgstr "Recuento (1-100)"
 
+#. [p.PkDashboard.peopleTestedRifTooltip]
+#. defaultMessage is:
+#. Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.
+#: extracted_strings.json
+msgid ""
+"Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including "
+"'No Result', 'Error', 'Indeterminate', 'Invalid'."
+msgstr ""
+"Cuente sólo los resultados notificables de MTB/Rif y MTB/Rif-Ultra, sin "
+"incluir \"Sin resultado\", \"Error\", \"Indeterminado\", \"Inválido\"."
+
 #. [filter.popover.country]
 #. defaultMessage is:
 #. Country
@@ -2539,14 +2550,10 @@ msgstr "Daktari HIV-VL"
 msgid "Damage"
 msgstr "Daño"
 
-#. [pages.OperationalDashboard.dashboard]
+#. [header.link.dashboardv2.title]
 #. defaultMessage is:
 #. Dashboard
-#: extracted_strings.json
-msgid "Dashboard"
-msgstr "Panel de control"
-
-#. [header.link.dashboardv2.title]
+#. [pages.OperationalDashboard.dashboard]
 #. defaultMessage is:
 #. Dashboard
 #: extracted_strings.json
@@ -14401,6 +14408,9 @@ msgstr "{unit} desde la semana pasada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibraciones totales"
+
+#~ msgid "Dashboard v2"
+#~ msgstr "Panel de control v2"
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Por favor, elija otro sitio"

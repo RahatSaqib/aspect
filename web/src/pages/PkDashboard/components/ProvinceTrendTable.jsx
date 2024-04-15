@@ -22,7 +22,7 @@ const ProvinceTrendTable = props => {
             <TableCell align="right">{`${formatMessage(messages.testPerMonth)} ${formatMessage(
               messages.currentYear
             )}`}</TableCell>
-            <TableCell align="right">{formatMessage(messages.testPerDay)}</TableCell>
+            <TableCell align="right">{formatMessage(messages.testToday)}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>

@@ -102,6 +102,7 @@ const getSites = (dataConstraints, query) => {
       stateId: 'g.stateId',
       siteId: 's.id',
       lgaId: 'g.lgaId',
+      siteName: 's.name',
     })
 }
 
