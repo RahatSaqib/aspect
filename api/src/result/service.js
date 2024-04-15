@@ -2160,13 +2160,14 @@ async function getCustomFieldsCompletion(auth, query) {
       let { assayId } = forms[formKey]
       const header = `Total Results (${assayId ? 'Mtb-Ultra' : 'Mtb'})`
       assayId = assayId || assayIds.GxMtbRif
-      allColumns = [
-        ...allColumns,
-        {
-          key: `cntAll_${assayId}`,
-          header,
-        },
-      ]
+      if (assayId !== assayIds.GxMtbRifUltra)
+        allColumns = [
+          ...allColumns,
+          {
+            key: `cntAll_${assayId}`,
+            header,
+          },
+        ]
 
       accForm[formKey] = _.reduce(
         fields,
