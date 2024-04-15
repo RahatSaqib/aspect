@@ -1008,32 +1008,33 @@ async function deviceMaintenanceStatus(request) {
  * - (not developed yet) Were decommissioned before the given day, but their maintenance status log for the given day is not 'inactiveDecommissioned'
  * @param {*} knex
  * @param {*} today The day to be processed
+ * @param {*} timezone Timezone of current country
  * @returns
  */
-async function getDevicesMaintenanceLogForTheDay(knex, today) {
+async function getDevicesMaintenanceLogForTheDay(knex, today, timezone) {
   const devicesBase = knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
     .where('dtc.hasResults', 1)
 
   /**
-   * total results today for all devices
+   * total results today for all devices.
+   * Notice that we shift endedOn and startedOn dates to the country timezone with CONVERT_TZ directly,
+   * without using helper getDateTimeProjectionInUserTimeZone because here we wrap it with DATE() func
    */
   const allResults = await devicesBase
     .clone()
     .leftJoin('Result as r', 'd.id', 'r.deviceId')
-    .whereRaw(
-      `
-      DATE(r.endedOn) = DATE(?)
-      OR
-      (
-        r.endedOn is null
-        AND
-        DATE(r.startedOn) = DATE(?)
+    .where(function () {
+      this.where(knex.raw(`DATE(CONVERT_TZ(r.endedOn, "+00:00", "${timezone}"))`), knex.raw('DATE(?)', today)).orWhere(
+        function () {
+          this.whereNull(`r.endedOn`).andWhere(
+            knex.raw(`DATE(CONVERT_TZ(r.startedOn, "+00:00", "${timezone}"))`),
+            knex.raw(`DATE(?)`, today)
+          )
+        }
       )
-    `,
-      [today, today]
-    )
+    })
     .groupBy('d.id')
     .select('d.id', knex.raw('COUNT(r.id) as totalResults'))
 
@@ -1067,23 +1068,18 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
     .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
       queryBuilder.on('d.id', 'today_dmsl.deviceId').andOn('today_dmsl.day', knex.raw('DATE(?)', [today]))
     })
-    .leftJoin('DeviceMaintenanceStatusLog as today_dmsl_next', queryBuilder => {
-      queryBuilder.on(
-        knex.raw(`
-          today_dmsl.deviceId = today_dmsl_next.deviceId 
-          and
-          today_dmsl.day = today_dmsl_next.day
-          and
-          (
-            today_dmsl.createdOn < today_dmsl_next.createdOn
-            or
-            (
-              today_dmsl.createdOn = today_dmsl_next.createdOn
-              and
-              today_dmsl.id < today_dmsl_next.id
+    .leftJoin('DeviceMaintenanceStatusLog as today_dmsl_next', function () {
+      this.on('today_dmsl.deviceId', 'today_dmsl_next.deviceId')
+        .andOn('today_dmsl.day', 'today_dmsl_next.day')
+        .andOn(function () {
+          this.on('today_dmsl.createdOn', '<', 'today_dmsl_next.createdOn').orOn(function () {
+            this.on('today_dmsl.createdOn', 'today_dmsl_next.createdOn').andOn(
+              'today_dmsl.id',
+              '<',
+              'today_dmsl_next.id'
             )
-          )`)
-      )
+          })
+        })
     })
     .leftJoin('DeviceMaintenanceStatus as today_dms', 'today_dmsl.deviceMaintenanceStatusId', 'today_dms.id')
     /**
@@ -1146,6 +1142,15 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
 
 async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext }) {
   return messageContext.run(async knex => {
+    /**
+     * get timezone from TimeZone table for 1st country.
+     * Notice that here we use same field alias `timezoneIANA` as in
+     * `api/src/auth/service.js` for getting current user details.
+     */
+    const { timezoneIANA: timezone } = await knex('Country as c')
+      .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
+      .orderBy('c.id')
+      .first('tz.timeZone as timezoneIANA')
     const getCustomToday = today => {
       if (today) {
         if (_.isDate(today)) {
@@ -1158,7 +1163,7 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
       return startOfTodayUtc()
     }
     const today = getCustomToday(action.today)
-    const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(knex, today)
+    const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(knex, today, timezone)
 
     await Promise.each(devicesMaintenanceLogForTheDay, async device => {
       const {
