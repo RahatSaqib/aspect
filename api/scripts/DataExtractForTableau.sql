@@ -226,7 +226,8 @@ FROM
   LEFT JOIN Disease AS dis ON at.diseaseId = dis.id
   LEFT JOIN PartnerAssay AS pa ON r.assayId = pa.assayId
                                 AND r.partnerId = pa.partnerId
-  LEFT JOIN Geography AS g ON r.geographyId = g.id
+  LEFT JOIN Site AS si ON r.siteId = si.id
+  LEFT JOIN Geography AS g ON si.geographyId = g.id
   LEFT JOIN Country AS c ON g.countryId = c.id
   LEFT JOIN State AS st ON g.stateId = st.id
   LEFT JOIN Lga AS lg ON g.lgaId = lg.id
@@ -235,7 +236,6 @@ FROM
   LEFT JOIN Sample AS sp ON r.sampleId = sp.id
   LEFT JOIN SampleType AS stp ON sp.sampleTypeId = stp.id
   LEFT JOIN Site AS so ON sp.originSiteId = so.id
-  LEFT JOIN Site AS si ON r.siteId = si.id
   LEFT JOIN Geography AS go ON go.id = so.geographyId
   LEFT JOIN Lga as lgao ON lgao.id = go.lgaId
   LEFT JOIN State as stateo ON go.stateId = stateo.id
