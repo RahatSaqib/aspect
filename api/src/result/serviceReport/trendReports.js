@@ -1,11 +1,11 @@
 const _ = require('lodash')
-const { startOfDay, endOfDay, subDays, endOfMonth, getMonth } = require('date-fns')
+const { startOfDay, endOfDay, endOfMonth, getMonth } = require('date-fns')
 
-const { getConstraints } = require('../../auth/constraints')
+const { getConstraints, getUserFromCredentials } = require('../../auth/constraints')
 const { knex } = require('../../db')
 const { allResultCategoryToId } = require('../../shared/dictionary')
-const { getMonthYearField } = require('../../shared/date')
-const { getXdrResultCountBase, FACT_FIELD_SCOPE } = require('../common/db')
+const { getMonthYearField, replaceOffset } = require('../../shared/date')
+const { getFactResultCountBase, FACT_FIELD_SCOPE } = require('../common/db')
 
 /**
  * gx10CBaseQueryNational
@@ -28,10 +28,11 @@ function gx10CBaseQueryNational({ query, dataConstraints, resultCategoryIds }) {
   /**
    * base query grouped by month
    */
-  const baseQuery = getXdrResultCountBase({
+  const baseQuery = getFactResultCountBase({
     resultCategoryIds,
     dataConstraints,
     query: { ...query, minDate, maxDate },
+    assay: ['GxMtbXdr'],
   })
     /**
      * group by month
@@ -44,20 +45,22 @@ function gx10CBaseQueryNational({ query, dataConstraints, resultCategoryIds }) {
 /**
  * gx10CBaseQueryProvincial
  */
-function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds }) {
+function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds, timeZoneIANA }) {
   const now = new Date()
   /**
    * helper func to return base query for specified dates
    */
-  const getBaseQuery = ({ minDate, maxDate }) => {
+  const getBaseQuery = ({ minDate, maxDate, timeFrame }) => {
     /**
      * base query grouped by month
      */
-    const baseQuery = getXdrResultCountBase({
+    const baseQuery = getFactResultCountBase({
       resultCategoryIds,
       dataConstraints,
       query: { ...query, minDate, maxDate },
       fieldsScope: [FACT_FIELD_SCOPE.all],
+      assay: ['GxMtbXdr'],
+      timeFrame,
     })
       .select(
         getMonthYearField(knex, 'r.startedOn', 'yearAndMonth'),
@@ -83,9 +86,10 @@ function gx10CBaseQueryProvincial({ query, dataConstraints, resultCategoryIds })
       minDate: new Date(`${startYear}-01-01`), // from the start of 5 years ago
       maxDate: endOfMonth(now),
     }),
-    baseQueryLast24h: getBaseQuery({
-      minDate: startOfDay(subDays(now, 1)), // from the start of yesterday
-      maxDate: endOfDay(now),
+    baseQueryToday: getBaseQuery({
+      minDate: replaceOffset(startOfDay(now), timeZoneIANA), // from the start of today
+      maxDate: replaceOffset(endOfDay(now), timeZoneIANA),
+      timeFrame: 'day',
     }),
   }
 }
@@ -120,14 +124,17 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   const dataConstraints = await getConstraints(auth.credentials)
   const resultCategoryIds = await allResultCategoryToId()
   const now = new Date()
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA: timeZoneIANA } = user
   const denominator = getMonth(now) + 1
-  const { baseQuerySince5YearsAgo, baseQueryLast24h } = gx10CBaseQueryProvincial({
+  const { baseQuerySince5YearsAgo, baseQueryToday } = gx10CBaseQueryProvincial({
     query,
     dataConstraints,
     resultCategoryIds,
+    timeZoneIANA,
   })
   const rawSince5YearsAgo = await baseQuerySince5YearsAgo
-  const rawLast24h = await baseQueryLast24h
+  const rawToday = await baseQueryToday
 
   const emptyCounts = {
     cntAll: 0,
@@ -162,8 +169,8 @@ async function listGx10CTrendsProvincial({ auth, query }) {
     },
     {}
   )
-  const groupedLast24h = _.reduce(
-    rawLast24h,
+  const groupedToday = _.reduce(
+    rawToday,
     (acc, item) => {
       const { stateId, lgaId, locationName } = item
       const key = query.lgaId ? lgaId : stateId
@@ -240,18 +247,18 @@ async function listGx10CTrendsProvincial({ auth, query }) {
   )
 
   /**
-   * for each state - add field `last24h` with counts since start of yesterday
+   * for each state - add field `today` with counts since start of yesterday
    */
   _.forEach(data, d => {
     /**
-     * notice that data for last 24 hours (groupedLast24h) may not contain stateId
+     * notice that data for today (groupedLast24h) may not contain stateId
      * from last 5 years (data), and because of that set it to `emptyCounts` if
-     * stateId is missing in `groupedLast24h`
+     * stateId is missing in `groupedToday`
      */
-    const byState = groupedLast24h[d.stateId] || emptyCounts
-    d.last24h = { ...emptyCounts }
+    const byState = groupedToday[d.stateId] || emptyCounts
+    d.today = { ...emptyCounts }
     counterNames.forEach(counterName => {
-      d.last24h[counterName] += byState[counterName]
+      d.today[counterName] += byState[counterName]
     })
   })
 
