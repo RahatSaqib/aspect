@@ -12,6 +12,7 @@ import {
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
@@ -22,15 +23,13 @@ const endpointParams = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }]
 const ProvincialTestingTrendPage = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
-  const [states, setState] = useState([])
-  const [lgas, setLgas] = useState([])
-
+  const [filters, setFilter] = usePathFilter()
   const [graphData, setGraphData] = useState(false)
   const [tableData, setTableData] = useState([])
 
   const mergedParams = endpointParams
-    .concat(lgas.map(i => ({ lgaId: i.id })))
-    .concat(states.map(i => ({ stateId: i.id })))
+    .concat(filters.lgas.map(i => ({ lgaId: i.id })))
+    .concat(filters.states.map(i => ({ stateId: i.id })))
 
   const { isLoading, data } = useQuery(
     ['tblProvincialTrends', { mergedParams }],
@@ -46,7 +45,7 @@ const ProvincialTestingTrendPage = () => {
       )
 
       const graph = fillData(grouped).sort((a, b) => a.year - b.year)
-      const table = getItemsForTrendsGraph(data.data, states, lgas).tableData
+      const table = getItemsForTrendsGraph(data.data, filters.states, filters.lgas).tableData
 
       setGraphData(graph)
       setTableData(table)
@@ -62,20 +61,17 @@ const ProvincialTestingTrendPage = () => {
           <StateAutocomplete
             fullWidth
             countryId={user.countryId}
-            value={states}
-            onChange={(_, newValue) => {
-              setState(newValue)
-              setLgas([])
-            }}
+            value={filters.states}
+            onChange={(_, newValue) => setFilter({ states: newValue, lgas: [] })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <AspectSelect
             multiple
             fullWidth
             itemToString={i => i?.name ?? ''}
-            options={states.reduce((p, c) => [...p, ...c.lgas], [])}
-            value={lgas}
-            onChange={v => setLgas(v)}
+            options={filters.states.reduce((p, c) => [...p, ...c.lgas], [])}
+            value={filters.lgas}
+            onChange={v => setFilter(prv => ({ ...prv, lgas: v }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>
