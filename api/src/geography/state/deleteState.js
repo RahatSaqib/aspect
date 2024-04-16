@@ -11,7 +11,7 @@ async function deleteState({ auth, params }, h) {
   try {
     await deleteStateData(stateId)
   } catch (e) {
-    return h.response({ ok: false }).code(409)
+    throw Boom.conflict('Unable to delete State, as there are associated entities with it.')
   }
 
   return h.response({ ok: true }).code(204)

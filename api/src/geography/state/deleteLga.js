@@ -11,7 +11,7 @@ async function deleteLga({ auth, params }, h) {
   try {
     await deleteLgaData(lgaId)
   } catch (e) {
-    return h.response({ ok: false }).code(409)
+    throw Boom.conflict('Unable to delete LGA, as there are associated entities with it.')
   }
 
   return h.response({ ok: true }).code(204)
