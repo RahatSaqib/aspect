@@ -6,7 +6,7 @@ async function getMissingCartridgesReport(dataConstraints, query) {
   const data = await knex('MissingInventoryLots as m')
     .innerJoin('Result as r', 'm.resultId', 'r.id')
     .innerJoin('Site as s', 'm.SiteId', 's.id')
-    .innerJoin('Geography as g', 'r.geographyId', 'g.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
     .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')

@@ -253,10 +253,15 @@ function addAssaysAndDiseaseConstraints(queryBuilder, constraints, aliases) {
       queryBuilder.where(qb => isNullInOrEqual(qb, `${resultAlias}.assayId`, constraints.assay.id))
     }
     if (!aliases.geography) {
+      if (!aliases.site) {
+        aliases.site = alias('Site')
+        queryBuilder.leftOuterJoin(`Site as ${aliases.site}`, `${resultAlias}.siteId`, `${aliases.site}.id`)
+      }
+
       aliases.geography = alias('Geography')
       queryBuilder.leftOuterJoin(
         `Geography as ${aliases.geography}`,
-        `${resultAlias}.geographyId`,
+        `${aliases.site}.geographyId`,
         `${aliases.geography}.id`
       )
     }
@@ -303,9 +308,13 @@ function addGeographyConstraints(queryBuilder, constraints, aliases) {
   if (result) {
     if (!aliases.geography) {
       aliases.geography = alias('Geography')
+      if (!site) {
+        aliases.site = alias('Site')
+        queryBuilder.leftOuterJoin(`Site as ${aliases.site}`, `${result}.siteId`, `${aliases.site}.id`)
+      }
       queryBuilder.leftOuterJoin(
         `Geography as ${aliases.geography}`,
-        `${result}.geographyId`,
+        `${aliases.site}.geographyId`,
         `${aliases.geography}.id`
       )
     }

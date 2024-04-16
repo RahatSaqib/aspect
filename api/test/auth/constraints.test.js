@@ -3,7 +3,6 @@ const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
 
 describe('addConstraints should add disabled sites filter, only when applicable', async () => {
   const defaultSiteAlias = '__constraints_Site'
-  const defaultfilterDisabledAdHocSiteAlias = '__Site_filterDisabled'
   // Let's add some production like dataConstraints
   const dataConstraints = {
     partner: { id: 1 },
@@ -24,7 +23,7 @@ describe('addConstraints should add disabled sites filter, only when applicable'
       addConstraints(queryBuilder, dataConstraints, { result: 'r' })
       const query = queryBuilder.toString()
       query.should.to.have.string(
-        `(\`${defaultfilterDisabledAdHocSiteAlias}\`.\`id\` is null or \`${defaultfilterDisabledAdHocSiteAlias}\`.\`disabled\` = 0)`
+        `(\`${defaultSiteAlias}\`.\`id\` is null or \`${defaultSiteAlias}\`.\`disabled\` = 0)`
       )
     })
   })
@@ -80,7 +79,7 @@ describe('addConstraints should add disabled sites filter, only when applicable'
       })
       queries.push({
         caseDescription: 'has result alias',
-        alias: defaultfilterDisabledAdHocSiteAlias,
+        alias: defaultSiteAlias,
         sql: queryBuilderWithResult.toString(),
       })
 

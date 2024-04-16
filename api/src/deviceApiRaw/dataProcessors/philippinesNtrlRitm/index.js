@@ -173,7 +173,6 @@ class PhilippinesNtrlRitm extends PhilippinesNtrlDatabase {
         const resultWorkflowStatuses = await allResultWorkflowStatusToId()
         const baseNewResult = {
           partnerId: site.partnerId,
-          geographyId: site.geographyId,
           siteId: site.id,
           deviceId,
           longitude: site.longitude,

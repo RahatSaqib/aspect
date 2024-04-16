@@ -172,7 +172,6 @@ class PhilippinesNtrlPmdt extends PhilippinesNtrlDatabase {
 
         const baseNewResult = {
           partnerId: site.partnerId,
-          geographyId: site.geographyId,
           siteId: site.id,
           deviceId,
           longitude: site.longitude,

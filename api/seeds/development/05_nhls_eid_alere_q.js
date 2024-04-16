@@ -529,9 +529,7 @@ async function seed(knex) {
 
   await upsertConsumables(knex, true, ['assayAlereQHiv12Detect', 'assayAlereQHiv12VLPlasma'])
 
-  const { id: cmjahSiteId, geographyId: cmjahGeographyId } = await knex('Site')
-    .where({ partnerId, externalId: 'CMJAH' })
-    .first()
+  const { id: cmjahSiteId } = await knex('Site').where({ partnerId, externalId: 'CMJAH' }).first()
   // get/create device
   const { id: cmjahDeviceId, serial: cmjahDeviceSerial } = await knex('Device')
     .where({
@@ -954,7 +952,6 @@ async function seed(knex) {
         ),
         assayId: alereQHiv12VLPlasmaAssayId,
         partnerId,
-        geographyId: cmjahGeographyId,
         siteId: cmjahSiteId,
         reportableSiteId: cmjahSiteId,
         deviceId: cmjahDeviceId,
