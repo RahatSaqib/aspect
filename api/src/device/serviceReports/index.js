@@ -587,17 +587,18 @@ async function getDevicesForTBReachReport(auth, query) {
     getErrorsByDevices(dataConstraints, query),
   ])
 
-  const errorsData = new Map(errorsResult.map(error => [error.deviceId, error]))
+  const devicesByTBReachData = new Map(devicesByTBReach.map(device => [device.deviceId, device]))
   const workingDays = getWorkingDays(new Date(minDate), new Date(maxDate))
-
   // Merge data from both queries
-  const mergedData = devicesByTBReach.map(device => ({
-    ...device,
-    ...errorsData.get(device.deviceId),
-    BKtotal: 0,
-    xpertPerDay: device.totalXpertTests / workingDays,
-  }))
-
+  const mergedData = errorsResult.map(error => {
+    const TBReachDevice = devicesByTBReachData.get(error.deviceId)
+    return {
+      ...error,
+      ...devicesByTBReachData.get(error.deviceId),
+      BKtotal: 0,
+      xpertPerDay: TBReachDevice ? TBReachDevice.totalXpertTests / workingDays : 0,
+    }
+  })
   return {
     ok: true,
     total: mergedData.length,
