@@ -1,4 +1,5 @@
 const { assert } = require('chai')
+const knex = require('knex')
 
 const {
   getLocalDateTimeStringInUtc,
@@ -16,6 +17,7 @@ const {
   slideDateToTimeZone,
   formatDateInTimeZone,
   replaceOffset,
+  getDateTimeProjectionInTimeZoneIANA,
 } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
@@ -253,7 +255,7 @@ describe('Shared Date Utility Functions', () => {
         { tz: 'Asia/Baku', date: '2023-01-01:15:20:23Z', expectedDate: '2023-01-01T19:20:23+04:00' },
 
         { tz: 'Asia/Dhaka', date: '2023-03-22T10:11:00Z', expectedDate: '2023-03-22T16:11:00+06:00' },
-        { tz: 'Pacific/Fiji', date: '2023-01-01T05:00:00Z', expectedDate: '2023-01-01T17:00:00+12:00' },
+        { tz: 'Pacific/Fiji', date: '2023-01-01T05:00:00Z', expectedDate: '2023-01-01T18:00:00+13:00' },
         { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00Z' },
         { tz: 'Canada/Atlantic', date: '2023-12-15T10:00:00', expectedDate: '2023-12-15T06:00:00-04:00' },
         { tz: 'Canada/Atlantic', date: '2023-11-01T10:00:00', expectedDate: '2023-11-01T07:00:00-03:00' },
@@ -294,5 +296,24 @@ describe('replaceOffset', () => {
         `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
       )
     }
+  })
+})
+
+describe('MySql functions', () => {
+  describe('getDateTimeProjectionInTimeZoneIANA', () => {
+    const knexRef = knex({
+      client: 'mysql',
+    })
+    it('Should return a valid use of CONVERT_TZ function', () => {
+      assert.equal(
+        getDateTimeProjectionInTimeZoneIANA(
+          knexRef,
+          'r.endedOn',
+          'America/Argentina/Buenos_Aires',
+          'endedOn'
+        ).toString(),
+        'CONVERT_TZ(r.endedOn, "+00:00", "America/Argentina/Buenos_Aires") as endedOn'
+      )
+    })
   })
 })

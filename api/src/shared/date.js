@@ -90,6 +90,7 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
     ) ${alias ? ` as ${alias}` : ''}`)
 
 /**
+ * - NOTE: This function is obsolete and should be replaced by {@link getDateTimeProjectionInTimeZoneIANA}
  * - Generates knex code to project a datetime field in the specified timezone.
  * @param {*} knex - Knex ref.
  * @param {string} field - Name of the field to select.
@@ -100,11 +101,29 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
  * e.g.:
  * getDateTimeProjectionInUserTimeZone(knex, 'd.lastSeenOn', '+05:00', 'lastSeen')
  * Then, for a DB value of 10/10/2005 23:28:30, you get 11/10/2005 04:28:30.
- * @description - NOTE: Don't use the CONVERT_TZ overload that receives a IANA time zone as parameter,
- * use this instead and obtain the offset using date-fns-tz, as we are not updating mysql time_zone db.
  */
 const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
   knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}") ${alias ? `as ${alias}` : ''}`)
+
+/**
+ * Generates knex code to project a datetime field in the specified timezone.
+ * @param {*} knex - Knex ref.
+ * @param {string} field - Name of the field to select.
+ * @param {string} timeZoneIANA - Timezone name in IANA format (e.g. 'Asia/Karachi')
+ * @param {string=} alias - Optional. name to be returned if you don't want the field name.
+ * @returns Expression to be added to a Knex query, returning plain datetime value converted a specified TZ
+ * @example
+ * e.g.:
+ * getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka', 'lastSeen')
+ * Then, for a DB value of 10/10/2005 23:28:30, this function will generate:
+ * `convert_tz('2005-10-10 23:28:30', '+00:00', 'Asia/Dhaka')`, and you'll get 11/10/2005 05:28:30.
+ * @description - NOTE: Trying to use CONVERT_TZ with the overload that accepts a time offset, e.g. '+06:00'
+ * is not recommended, as will not take into account DST changes.
+ * The table mysql.time_zone_name is populated from devops project in all Aspect intances.
+ * see https://systemone.youtrack.cloud/articles/ENG-A-332/Date-and-Time-zone-handling-in-Aspect
+ */
+const getDateTimeProjectionInTimeZoneIANA = (knex, field, timeZoneIana, alias) =>
+  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${timeZoneIana}") ${alias ? `as ${alias}` : ''}`)
 
 /**
  * - Generates knex code build an expression over a datetime field in the specified timezone.
@@ -470,4 +489,5 @@ module.exports = {
   arrayofIANATimezone,
   getAllMonthsInRange,
   getDateInMilliSeconds,
+  getDateTimeProjectionInTimeZoneIANA,
 }
