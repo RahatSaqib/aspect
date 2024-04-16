@@ -56,7 +56,6 @@ export default function LgasPage() {
                   { key: 'people', label: formatMessage(messages.people) },
                   { key: 'notificationStates', label: formatMessage(messages.notificationStates) },
                   { key: 'peopleWithAccess', label: formatMessage(messages.peopleWithAccess) },
-                  { key: 'tests', label: formatMessage(messages.tests) },
                   { key: 'manage', label: formatMessage(messages.manage) },
                 ]}
               />
@@ -69,7 +68,6 @@ export default function LgasPage() {
                     <DataTableCell>{i.personCount}</DataTableCell>
                     <DataTableCell>{i.notificationCount}</DataTableCell>
                     <DataTableCell>{i.jobContextCount}</DataTableCell>
-                    <DataTableCell>{i.resultCount}</DataTableCell>
                     <DataTableCell>
                       <Button
                         sx={{ zIndex: 9 }}

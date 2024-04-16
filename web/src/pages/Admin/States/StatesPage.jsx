@@ -75,7 +75,6 @@ export default function StatesPage() {
                   { key: 'lgas', label: formatMessage(messages.lgas) },
                   { key: 'notificationStates', label: formatMessage(messages.notificationStates) },
                   { key: 'peopleWithAccess', label: formatMessage(messages.peopleWithAccess) },
-                  { key: 'tests', label: formatMessage(messages.tests) },
                   { key: 'manage', label: formatMessage(messages.manage) },
                 ]}
               />
@@ -89,7 +88,6 @@ export default function StatesPage() {
                     <DataTableCell>{i.lgaCount}</DataTableCell>
                     <DataTableCell>{i.notificationCount}</DataTableCell>
                     <DataTableCell>{i.jobContextCount}</DataTableCell>
-                    <DataTableCell>{i.resultCount}</DataTableCell>
                     <DataTableCell>
                       <Button
                         onClick={e => {

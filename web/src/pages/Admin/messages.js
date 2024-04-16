@@ -109,8 +109,4 @@ export default defineMessages({
     id: 'pages.admin.peopleWithAccess',
     defaultMessage: 'People With Access to State',
   },
-  tests: {
-    id: 'pages.admin.tests',
-    defaultMessage: 'Tests',
-  },
 })
