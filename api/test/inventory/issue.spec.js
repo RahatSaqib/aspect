@@ -411,7 +411,6 @@ async function createTestResult(knex, device) {
     externalId: `NEW RESULT ${new Date().getTime()}`,
     assayId: gxMtbRifAssay.id,
     partnerId: device.partnerId,
-    geographyId: device.geographyId,
     siteId: device.siteId,
     deviceId: device.id,
     reportableSiteId: device.siteId,
