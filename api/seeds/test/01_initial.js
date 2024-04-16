@@ -1129,7 +1129,6 @@ async function seed(knex) {
       externalId: `UQ-DAK-HIV-${i}`,
       assayId: assayDaktariHivVlId,
       partnerId: partnerOneId,
-      geographyId: siteData.geographyId,
       siteId: siteData.id,
       deviceId: device.id,
       longitude: -81.581222,

@@ -180,7 +180,8 @@ const getBaseResults = () =>
     .leftJoin('PartnerAssay as pa', q => {
       q.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
-    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Site as si', 'd.siteId', 'si.id')
+    .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
@@ -189,7 +190,6 @@ const getBaseResults = () =>
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('Site as si', 'd.siteId', 'si.id')
 
 const getBaseQueryForResults = () =>
   getBaseResults()

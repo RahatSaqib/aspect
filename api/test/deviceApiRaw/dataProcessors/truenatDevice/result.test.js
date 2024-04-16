@@ -391,7 +391,6 @@ describe('Truenat Result Upload Data Processor', () => {
             externalId: 'UQTB-13-RKHWGN4J-D',
             assayId: defaultAssay.id,
             partnerId: defaultDeviceApiKeyDetails.partnerId,
-            geographyId: defaultDeviceApiKeyDetails.geographyId,
             siteId: defaultDeviceApiKeyDetails.siteId,
             deviceId: defaultDeviceApiKeyDetails.deviceId,
             patientCaseId: 551,
@@ -438,7 +437,7 @@ describe('Truenat Result Upload Data Processor', () => {
           .build()
         const truenatResultInstance = new TruenatResult(request, messageContext)
         await truenatResultInstance.processRequest()
-        const { partnerId, geographyId, longitude, latitude, siteId, deviceId, deviceDefaultReportableSiteId } =
+        const { partnerId, longitude, latitude, siteId, deviceId, deviceDefaultReportableSiteId } =
           defaultDeviceApiKeyDetails
         const patientId = _.get(request, 'payload.PatientID')
         const patientName = _.get(request, 'payload.PatientName')
@@ -459,7 +458,6 @@ describe('Truenat Result Upload Data Processor', () => {
               }[finalResult] || resultCategoryIds.Missing
         expect(knexUpdateSpies.Result.firstCall.args[0]).to.containSubset({
           partnerId,
-          geographyId,
           siteId,
           deviceId,
           assayId: defaultAssay.id,
@@ -508,7 +506,6 @@ describe('Truenat Result Upload Data Processor', () => {
             externalId: 'UQTB-13-RKHWGN4J-D',
             assayId: defaultAssay.id,
             partnerId: defaultDeviceApiKeyDetails.partnerId,
-            geographyId: defaultDeviceApiKeyDetails.geographyId,
             siteId: defaultDeviceApiKeyDetails.siteId,
             deviceId: defaultDeviceApiKeyDetails.deviceId,
             patientCaseId: 551,
