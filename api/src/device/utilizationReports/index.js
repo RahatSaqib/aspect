@@ -34,6 +34,7 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
     filterParams,
     assay,
     query,
+    timeFrame: 'day',
   })
     .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
     .where('dt.externalId', ['CepheidGeneXpert'])
