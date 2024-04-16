@@ -36,7 +36,7 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
     query,
   })
     .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
-    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
+    .where('dt.externalId', ['CepheidGeneXpert'])
   /**
    * get all devices recorded in FactResultsDeviceByTimeFrame during whole period
    */
