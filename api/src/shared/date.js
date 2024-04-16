@@ -18,6 +18,8 @@ const {
   min,
   max,
   addMonths,
+  endOfDay,
+  subDays,
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
@@ -258,6 +260,12 @@ function startOfDayUtc(date) {
   return addMinutes(startOfDay(date), -date.getTimezoneOffset())
 }
 
+function endOfDayUtc(date) {
+  const timePart = date.toISOString().split('T')[1]
+  if (timePart && timePart === '00:00:00.000Z') return date
+  return subDays(addMinutes(endOfDay(date), -date.getTimezoneOffset()), 1)
+}
+
 function startOfTodayUtc() {
   const date = startOfToday()
   return addMinutes(date, -date.getTimezoneOffset())
@@ -330,8 +338,8 @@ function getDatesFromQuery(query) {
   const now = new Date()
   const { minDate = startOfMonth(now), maxDate = endOfMonth(now) } = query
   return {
-    dateFrom: _.isString(minDate) ? new Date(minDate) : minDate,
-    dateTo: _.isString(maxDate) ? new Date(maxDate) : maxDate,
+    dateFrom: _.isString(minDate) ? startOfDayUtc(new Date(minDate)) : minDate,
+    dateTo: _.isString(maxDate) ? endOfDayUtc(new Date(maxDate)) : maxDate,
   }
 }
 
