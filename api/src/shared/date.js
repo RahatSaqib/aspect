@@ -200,7 +200,8 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
 }
 
 function getYear(date) {
-  return parseDateOrDefault(date).getYear() + 1900
+  const year = date.split('-')?.[0] ?? format(new Date(), 'yyyy')
+  return Number(year)
 }
 
 // Returns the UTC equivalent of the passed in date/time string
@@ -440,6 +441,7 @@ module.exports = {
   getLocalDateInUtc,
   getTimeZoneById,
   startOfDayUtc,
+  endOfDayUtc,
   startOfTodayUtc,
   startOfMonthUTC,
   endOfMonthUTC,
