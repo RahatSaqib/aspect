@@ -39,7 +39,7 @@ async function seed(knex) {
       .where('r.partnerId', partnerId)
       .where('g.countryId', countryId)
       .whereNotNull('sa.originSiteId')
-      .select('sa.originSiteId as siteId', 'r.geographyId')
+      .select('sa.originSiteId as siteId', 's.geographyId')
       .count('r.id as total')
       .groupBy('sa.originSiteId')
       .orderBy('total', 'desc')

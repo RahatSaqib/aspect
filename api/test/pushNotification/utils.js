@@ -39,13 +39,9 @@ class PushNotificationTestContext {
       assert.isOk(pushNotificationTemplateId)
 
       // read 1st Result and coresponding siteId/deviceId
-      const { siteId, deviceId, partnerId, geographyId } = await knex('Result').first(
-        'id',
-        'siteId',
-        'deviceId',
-        'partnerId',
-        'geographyId'
-      )
+      const { siteId, deviceId, partnerId, geographyId } = await knex('Result as r')
+        .join('Site as s', 'r.siteId', 's.id')
+        .first('r.id', 'r.siteId', 'r.deviceId', 'r.partnerId', 's.geographyId')
 
       const issueTypeId = await issueTypeToId('NewResultsAvailable')
       const issueStatusId = await issueStatusToId('Active')

@@ -42,7 +42,7 @@ const {
   getQueryForResultsListAndExport,
   showFileReferencesById,
   getResultNotesByResultId,
-  getXdrResultCountBase,
+  getFactResultCountBase,
   FACT_FIELD_SCOPE,
 } = require('./common/db')
 const { getDeviceByDeviceId } = require('../device/service')
@@ -200,7 +200,8 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .innerJoin('Disease as dis', 'at.diseaseId', 'dis.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
-    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .leftJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
@@ -210,7 +211,6 @@ async function getDownloadResultsList(query, auth, setDelivered = false) {
     .leftJoin('ResultWorkflowStatus as rs', 'rsl.resultWorkflowStatusId', 'rs.id')
     .leftJoin('ResultTreatmentStatusLog as rtsl', 'r.treatmentStatusLogId', 'rtsl.id')
     .leftJoin('ResultTreatmentStatus as rts', 'rtsl.resultTreatmentStatusId', 'rts.id')
-    .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin('Site as sirep', 'r.reportableSiteId', 'sirep.id')
     .leftJoin('ResultStatusLog as rslog', 'r.resultStatusLogId', 'rslog.id')
     .leftJoin('Person as ptr', 'rslog.createdBy', 'ptr.userId')
@@ -1064,7 +1064,7 @@ async function getWorkflowStatusLogByResultId(request) {
   return result
 }
 
-/*  
+/*
 When will this return a duplicate?
  - Here is an example of a return value that was duplicated in Ukraine: 806279_634634_ee5025da
    - Instrument 806729 ran a test that for a duplicate sample ID
@@ -1985,7 +1985,6 @@ async function updateOrCreateResult(request, result = {}) {
     result.assayId = assay.id
     result.partnerId = partnerId
     result.siteId = site.id
-    result.geographyId = site.geographyId
     result.deviceId = device.id
     result.longitude = site.longitude
     result.latitude = site.latitude
@@ -2177,27 +2176,24 @@ async function getCustomFieldsCompletion(auth, query) {
       let { assayId } = forms[formKey]
       const header = `Total Results (${assayId ? 'Mtb-Ultra' : 'Mtb'})`
       assayId = assayId || assayIds.GxMtbRif
-      allColumns = [
-        ...allColumns,
-        {
-          key: `cntAll_${assayId}`,
-          header,
-        },
-      ]
+      if (assayId !== assayIds.GxMtbRifUltra)
+        allColumns = [
+          ...allColumns,
+          {
+            key: `cntAll_${assayId}`,
+            header,
+          },
+        ]
 
       accForm[formKey] = _.reduce(
         fields,
         (acc, field) => {
-          const { name, title, gxAlertDbColumn } = field
+          const { name, title, source, gxAlertDbColumn } = field
           const fieldName = gxAlertDbColumn || name
           acc = [
             ...acc,
             knex.raw(
-              `
-              SUM(
-                IFNULL(fcfc.completionByField ->> '$.${fieldName}.completed', 0)
-              ) as cnt_${assayId}_${fieldName}
-              `
+              `SUM(IFNULL(JSON_EXTRACT(fcfc.completionByField, '$."${source}".completed'),0)) as cnt_${assayId}_${fieldName}`
             ),
           ]
 
@@ -2313,11 +2309,12 @@ async function xdrAssayGraphAggregations(request) {
     monthDate = addMonths(monthDate, 1)
   }
 
-  let data = await getXdrResultCountBase({
+  let data = await getFactResultCountBase({
     resultCategoryIds,
     dataConstraints,
     query: { ...query, minDate, maxDate },
     fieldsScope: [FACT_FIELD_SCOPE.all],
+    assay: ['GxMtbXdr'],
   })
     .where('a.id', assayIds.GxMtbXdr)
     .modify(filterDateRangeParams, { minDate, maxDate }, 'r.startedOn')

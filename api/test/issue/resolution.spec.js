@@ -434,7 +434,6 @@ describe('Issue Resolution', () => {
           externalId: `NEW RESULT ${new Date().getTime()}`,
           assayId: gxMtbRifAssay.id,
           partnerId: partner.id,
-          geographyId: device.geographyId,
           siteId: device.siteId,
           reportableSiteId: device.siteId,
           deviceId: device.id,
