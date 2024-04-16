@@ -11,6 +11,10 @@ const messages = {
       id: 'p.PkDashboard.utilizationTitle',
       defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Utilization',
     },
+    utilizationRate: {
+      id: 'p.PkDashboard.utilizationRate',
+      defaultMessage: 'Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working days in year)',
+    },
     coverageTitle: { id: 'p.PkDashboard.coverageTitle', defaultMessage: 'Xpert MTB/RIF Coverage' },
     rifCurrentTitle: { id: 'p.PkDashboard.rifCurrentTitle', defaultMessage: 'Current Testing of MTB/RIF performed in' },
     currentYear: {

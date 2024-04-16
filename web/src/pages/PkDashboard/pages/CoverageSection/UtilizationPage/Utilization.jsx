@@ -1,10 +1,14 @@
 import React, { useMemo, useState } from 'react'
+import { Alert } from '@mui/lab'
 import { colors, Grid, Typography } from '@mui/material'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
+import subtractDays from 'date-fns/subDays'
 import subYears from 'date-fns/subYears'
 import round from 'lodash/round'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { BarGraph, getTimePeriod, Loading, PeriodSelector } from '../../../../../cleanComponents'
+import { BarGraph, Loading, PeriodSelector } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
@@ -23,8 +27,8 @@ const columns = [
 const UtilizationPage = () => {
   const { formatMessage } = useIntl()
   const [filter, setFilter] = useState({
-    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
-    maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
+    minDate: startOfDay(subtractDays(now, 30)),
+    maxDate: endOfDay(now),
   })
 
   const { isLoadingTable, tableData } = useUtilizationTable(filter)
@@ -101,6 +105,7 @@ const UtilizationPage = () => {
       title={formatMessage(messages.utilizationTitle)}
       filter={
         <PeriodSelector
+          noAny
           label={formatMessage(messages.date)}
           minDate={filter.minDate || null}
           maxDate={filter.maxDate || null}
@@ -117,6 +122,10 @@ const UtilizationPage = () => {
           <NestedTable columns={columns} rows={tableData} hasDetail />
         )}
       </Grid>
+
+      <Alert severity="info" sx={{ mt: '32px' }}>
+        {formatMessage(messages.utilizationRate)}
+      </Alert>
 
       <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
         {formatMessage(messages.nationalUtilizationTrendsAnnual)}
