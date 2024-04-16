@@ -40,6 +40,7 @@ async function listDeviceApiKeys(request) {
     .leftJoin('Device as d', 'dak.deviceId', 'd.id')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
+      stateId: 'g.stateId',
       partnerId: 'dak.partnerId',
       siteName: 's.name',
       deviceName: 'd.name',
