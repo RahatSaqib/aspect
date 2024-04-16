@@ -169,7 +169,6 @@ const routes = [
                 id: Joi.number().description('The id of the state'),
                 name: Joi.string().description('The name of the state'),
                 abbreviation: Joi.string().allow('', null).description('The abbreviation of the state'),
-                resultCount: Joi.number(),
                 deviceConfigurationCount: Joi.number(),
                 targetCount: Joi.number(),
                 siteCount: Joi.number(),
@@ -242,6 +241,7 @@ const routes = [
       validate: {
         query: {
           ...validateSortPageParams('name'),
+          stateId: Joi.number().description('The id of the state associated to the lga'),
         },
       },
       response: {
@@ -256,7 +256,8 @@ const routes = [
               Joi.object().keys({
                 id: Joi.number().description('The id of the lga'),
                 name: Joi.string().description('The name of the lga'),
-                resultCount: Joi.number(),
+                stateId: Joi.number().description('The id of the state associated to the lga'),
+                stateName: Joi.string().description('The name of the state associated to the lga'),
                 deviceConfigurationCount: Joi.number(),
                 targetCount: Joi.number(),
                 siteCount: Joi.number(),
@@ -284,6 +285,7 @@ const routes = [
         },
         payload: {
           name: Joi.string().required(),
+          stateId: Joi.number().description('State Id').required(),
         },
       },
       // auth: { scope: ['admin'] },
@@ -298,6 +300,7 @@ const routes = [
       validate: {
         payload: {
           name: Joi.string().required(),
+          stateId: Joi.number().description('State Id').required(),
         },
       },
       // auth: { scope: ['admin'] },

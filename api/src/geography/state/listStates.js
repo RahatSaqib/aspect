@@ -20,7 +20,6 @@ async function listStates({ auth, query }) {
       id: 'id',
       name: 'name',
       abbreviation: 'abbreviation',
-      resultCount: getAssociatedDataCount('Result'),
       deviceConfigurationCount: getAssociatedDataCount('DeviceConfiguration'),
       targetCount: getAssociatedDataCount('Target'),
       siteCount: getAssociatedDataCount('Site'),

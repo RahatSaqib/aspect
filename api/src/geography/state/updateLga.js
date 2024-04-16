@@ -9,7 +9,7 @@ async function updateLga({ auth, params, payload }, h) {
   await validate(lgaId, payload, dataConstraints)
 
   await transact(async trknex => {
-    await upsertGeography(trknex, payload, lgaId, auth.credentials)
+    await upsertGeography(trknex, payload, lgaId, dataConstraints)
     await updateLgaData(trknex, lgaId, payload, auth.credentials)
   })
 

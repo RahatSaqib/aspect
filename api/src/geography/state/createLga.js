@@ -10,7 +10,7 @@ async function createLga({ auth, payload }, h) {
 
   await transact(async trknex => {
     lgaId = await createLgaData(trknex, payload, auth.credentials)
-    await upsertGeography(trknex, payload, lgaId, auth.credentials)
+    await upsertGeography(trknex, payload, lgaId, dataConstraints)
   })
 
   const data = { id: lgaId, name: payload.name }

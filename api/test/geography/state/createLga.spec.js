@@ -10,18 +10,24 @@ const path = '/api/geography/lgas'
 
 describe('POST', () => {
   const newName = 'newName'
+  const stateName = 'Alabama'
   const lgasToDelete = []
   before(() => shared.checkToken(server, path))
 
   after(async () => {
     return run(async knex => {
+      await knex('Geography').whereIn('lgaId', lgasToDelete).del()
       await knex('Lga').whereIn('id', lgasToDelete).del()
     })
   })
 
   describe('/lgas', () => {
     it('Should create lga', async () => {
-      const res = await server.post(`${path}`).send({ name: newName }).set('Authorization', `Bearer ${shared.token}`)
+      const { id: stateId } = await knex('State').where('name', stateName).first()
+      const res = await server
+        .post(`${path}`)
+        .send({ name: newName, stateId })
+        .set('Authorization', `Bearer ${shared.token}`)
 
       assert.equal(res.status, 201)
       lgasToDelete.push(res.body.data.id)
@@ -35,9 +41,13 @@ describe('POST', () => {
     })
 
     it('If a lga with same name exists, returns 409 Conflict', async () => {
+      const { id: stateId } = await knex('State').where('name', stateName).first()
       const dupLgaId = await knex('Lga').insert({ name: newName })
       lgasToDelete.push(dupLgaId)
-      const res = await server.post(`${path}`).send({ name: newName }).set('Authorization', `Bearer ${shared.token}`)
+      const res = await server
+        .post(`${path}`)
+        .send({ name: newName, stateId })
+        .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 409)
     })
   })
