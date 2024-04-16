@@ -1,5 +1,5 @@
 const { getConstraints, addConstraints } = require('../../auth/constraints')
-const { knex, sortPageParams } = require('../../db')
+const { knex, sortPageParams, filterParams } = require('../../db')
 
 const getAssociatedDataCount = table =>
   knex(`${table} as t`)
@@ -11,7 +11,11 @@ const getAssociatedDataCount = table =>
 async function listStates({ auth, query }) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const stateQuery = knex('State as s').modify(addConstraints, dataConstraints, { state: 's' })
+  const stateQuery = knex('State as s')
+    .modify(filterParams, query, {
+      name: 's.name',
+    })
+    .modify(addConstraints, dataConstraints, { state: 's' })
 
   const getItems = stateQuery
     .clone()

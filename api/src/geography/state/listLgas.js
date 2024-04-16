@@ -12,6 +12,7 @@ async function listLgas({ auth, query }) {
     .join('Lga as l', 'g.lgaId', 'l.id')
     .modify(filterParams, query, {
       stateId: 'g.stateId',
+      name: 'l.name',
     })
     .modify(addConstraints, dataConstraints, { lga: 'l' })
 
