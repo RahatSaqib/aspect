@@ -1064,7 +1064,7 @@ async function getWorkflowStatusLogByResultId(request) {
   return result
 }
 
-/*  
+/*
 When will this return a duplicate?
  - Here is an example of a return value that was duplicated in Ukraine: 806279_634634_ee5025da
    - Instrument 806729 ran a test that for a duplicate sample ID
@@ -2176,27 +2176,24 @@ async function getCustomFieldsCompletion(auth, query) {
       let { assayId } = forms[formKey]
       const header = `Total Results (${assayId ? 'Mtb-Ultra' : 'Mtb'})`
       assayId = assayId || assayIds.GxMtbRif
-      allColumns = [
-        ...allColumns,
-        {
-          key: `cntAll_${assayId}`,
-          header,
-        },
-      ]
+      if (assayId !== assayIds.GxMtbRifUltra)
+        allColumns = [
+          ...allColumns,
+          {
+            key: `cntAll_${assayId}`,
+            header,
+          },
+        ]
 
       accForm[formKey] = _.reduce(
         fields,
         (acc, field) => {
-          const { name, title, gxAlertDbColumn } = field
+          const { name, title, source, gxAlertDbColumn } = field
           const fieldName = gxAlertDbColumn || name
           acc = [
             ...acc,
             knex.raw(
-              `
-              SUM(
-                IFNULL(fcfc.completionByField ->> '$.${fieldName}.completed', 0)
-              ) as cnt_${assayId}_${fieldName}
-              `
+              `SUM(IFNULL(JSON_EXTRACT(fcfc.completionByField, '$."${source}".completed'),0)) as cnt_${assayId}_${fieldName}`
             ),
           ]
 

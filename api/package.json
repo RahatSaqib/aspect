@@ -11,7 +11,7 @@
     "db:reseed": "npm-run-all db:recreate db:migrate",
     "db:reseedCI": "npm-run-all db:recreateCI db:migrate",
     "db:drop": "node ./migrations/utils/dropDB",
-    "debug": "nodemon --inspect src/server.js",
+    "debug": "TZ=UTC nodemon --trace-warnings --inspect src/server.js",
     "knex": "knex",
     "knex:migrate:latest": "knex migrate:latest",
     "knex:seed:run": "knex seed:run",
