@@ -116,32 +116,28 @@ const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
  * e.g.:
  * getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka', 'lastSeen')
  * Then, for a DB value of 10/10/2005 23:28:30, this function will generate:
- * `convert_tz('2005-10-10 23:28:30', '+00:00', 'Asia/Dhaka')`, and you'll get 11/10/2005 05:28:30.
+ * `CONVERT_TZ('2005-10-10 23:28:30', '+00:00', 'Asia/Dhaka') as lastSeen`, and you'll get 11/10/2005 05:28:30.
  * @description - NOTE: Trying to use CONVERT_TZ with the overload that accepts a time offset, e.g. '+06:00'
  * is not recommended, as will not take into account DST changes.
  * The table mysql.time_zone_name is populated from devops project in all Aspect intances.
  * see https://systemone.youtrack.cloud/articles/ENG-A-332/Date-and-Time-zone-handling-in-Aspect
  */
-const getDateTimeProjectionInTimeZoneIANA = (knex, field, timeZoneIana, alias) =>
-  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${timeZoneIana}") ${alias ? `as ${alias}` : ''}`)
+const getDateTimeProjectionInTimeZoneIANA = (knex, field, timeZoneIANA, alias) =>
+  `${getDateTimeExpressionInTimeZone(knex, field, timeZoneIANA)}${alias ? ` as ${alias}` : ''}`
 
 /**
  * - Generates knex code build an expression over a datetime field in the specified timezone.
  * @param {*} knex - Knex ref.
  * @param {string} field - Name of the field to select.
- * @param {string} offset - Time offset in ISO format (e.g. +05:00)
+ * @param {string} timeZoneIANA - Timezone name in IANA format (e.g. 'Asia/Karachi')
  * @returns Expression to be added to a Knex query, representing plain datetime value converted a specified TZ
  * @example
- * .where('r.endedOn', '>', getDateTimeExpressionInTimeZone(knex, 'd.lastSeenOn', '+05:00'))
+ * .where('r.endedOn', '>', getDateTimeExpressionInTimeZone(knex, 'd.lastSeenOn', 'Asia/Dhaka'))
  * returns:
- * where `r.endedOn` > CONVERT_TZ(`d.lastSeen`, '+00:00', '+05:00')
+ * where `r.endedOn` > CONVERT_TZ(`d.lastSeen`, '+00:00', 'Asia/Dhaka')
  */
-const getDateTimeExpressionInTimeZone = (knex, field, offset) => knex.raw(`CONVERT_TZ(${field}, "+00:00", "${offset}")`)
-
-const getISODateUserTimeZoneField = (knex, field, alias = 'isoDate', offset = '+00:00') =>
-  knex.raw(
-    `CONCAT(DATE_FORMAT(CONVERT_TZ(${field}, '+00:00', '${offset}'), '%Y-%m-%d'), 'T00:00:00.000${offset}') as ${alias}`
-  )
+const getDateTimeExpressionInTimeZone = (knex, field, timeZoneIANA) =>
+  knex.raw(`CONVERT_TZ(${field}, "+00:00", "${timeZoneIANA}")`)
 
 function parseDateOrDefault(date, options = { formatString: null, backupDate: null, defaultDate: null }) {
   const defaultValue = _.isPlainObject(options) ? options.defaultDate : options
@@ -466,7 +462,6 @@ module.exports = {
   getDateSubstring,
   getMonthYearField,
   getMonthYearUserTimeZoneField,
-  getISODateUserTimeZoneField,
   getDateTimeProjectionInUserTimeZone,
   getDateTimeExpressionInTimeZone,
   dayOfYear,

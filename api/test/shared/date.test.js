@@ -1,4 +1,4 @@
-const { assert } = require('chai')
+const { assert, expect } = require('chai')
 
 const {
   getLocalDateTimeStringInUtc,
@@ -16,6 +16,8 @@ const {
   slideDateToTimeZone,
   formatDateInTimeZone,
   replaceOffset,
+  getDateTimeProjectionInTimeZoneIANA,
+  getDateTimeExpressionInTimeZone,
 } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
@@ -294,5 +296,24 @@ describe('replaceOffset', () => {
         `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
       )
     }
+  })
+})
+
+describe('Date functions', () => {
+  const knex = require('knex')({
+    client: 'mysql',
+  })
+  describe('getDateTimeProjectionInTimeZoneIANA', () => {
+    it('should return the correct SQL expression', () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka', 'lastSeen')
+      expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka") as lastSeen')
+    })
+  })
+
+  describe('getDateTimeExpressionInTimeZone', () => {
+    it('should return the correct SQL expression', () => {
+      const result = getDateTimeExpressionInTimeZone(knex, 'd.lastSeenOn', 'Asia/Dhaka')
+      expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka")')
+    })
   })
 })
