@@ -18,7 +18,7 @@ async function listStates({ auth, query }) {
       name: 's.name',
     })
     .modify(addConstraints, dataConstraints, { country: 'c', state: 's' })
-    .groupBy('s.id')
+    .whereNull('lgaId')
 
   const getItems = stateQuery
     .clone()
