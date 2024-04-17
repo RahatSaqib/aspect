@@ -101,6 +101,18 @@ export default defineMessages({
     id: 'pages.admin.people',
     defaultMessage: 'People',
   },
+  sites: {
+    id: 'pages.admin.sites',
+    defaultMessage: 'Sites',
+  },
+  issues: {
+    id: 'pages.admin.issues',
+    defaultMessage: 'Issues',
+  },
+  deviceConfigurations: {
+    id: 'pages.admin.deviceConfigurations',
+    defaultMessage: 'Device Configurations',
+  },
   notificationStates: {
     id: 'pages.admin.notificationStates',
     defaultMessage: 'Notification States',
@@ -108,5 +120,19 @@ export default defineMessages({
   peopleWithAccess: {
     id: 'pages.admin.peopleWithAccess',
     defaultMessage: 'People With Access to State',
+  },
+  statesPaginatorStatus: {
+    id: 'pages.admin.states.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# state}
+      other {# states}
+    }`,
+  },
+  lgaPaginatorStatus: {
+    id: 'pages.admin.lga.paginatorStatus',
+    defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
+      one {# LGA}
+      other {# LGAs}
+    }`,
   },
 })
