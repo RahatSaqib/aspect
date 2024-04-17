@@ -132,8 +132,8 @@ const getRawLinks = f => [
     label: f(messages.admin),
     perm: ['admin:edit'],
     submenu: [
-      { href: '/browse/admin/states', label: f(messages.states), perm: ['device'] },
-      { href: '/browse/admin/lgas', label: f(messages.lgas), perm: ['device'] },
+      { href: '/browse/admin/states', label: f(messages.states), perm: ['admin', 'edit'] },
+      { href: '/browse/admin/lgas', label: f(messages.lgas), perm: ['admin', 'edit'] },
     ],
   },
 ]
