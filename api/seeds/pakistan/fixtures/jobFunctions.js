@@ -94,6 +94,10 @@ module.exports = [
         module: 'dashboard-v2',
         activity: 'view',
       },
+      {
+        module: 'admin',
+        activity: 'edit',
+      },
     ],
     reports: [
       'xdr_devices_summary',

@@ -8,6 +8,13 @@ const {
 } = require('../../fixtures/jobFunctionBase')
 
 const adminEnhanced = mergeJobFunctions(admin, {
+  permissions: [
+    ...admin.permissions,
+    {
+      module: 'admin',
+      activity: 'edit',
+    },
+  ],
   reports: [...admin.reports, 'genexpert_issues'],
 })
 module.exports = [

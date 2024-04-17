@@ -114,6 +114,10 @@
     {
       "name": "dashboard-v2",
       "activities": ["view"]
+    },
+    {
+      "name": "admin",
+      "activities": ["edit"]
     }
   ]
 }

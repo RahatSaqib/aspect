@@ -183,7 +183,7 @@ const routes = [
             ),
         }),
       },
-      // auth: { scope: ['admin'] },
+      auth: { scope: ['admin:edit'] },
     },
   },
   {
@@ -201,7 +201,7 @@ const routes = [
           abbreviation: Joi.string().required(),
         },
       },
-      // auth: { scope: ['admin'] },
+      auth: { scope: ['admin:edit'] },
     },
   },
   {
@@ -216,7 +216,7 @@ const routes = [
           abbreviation: Joi.string().required(),
         },
       },
-      // auth: { scope: ['admin'] },
+      auth: { scope: ['admin:edit'] },
     },
   },
   {
@@ -230,7 +230,7 @@ const routes = [
           stateId: Joi.number().description('State Id').required(),
         },
       },
-      // auth: { scope: ['admin'] },
+      auth: { scope: ['admin:edit'] },
     },
   },
   {
@@ -272,7 +272,7 @@ const routes = [
             ),
         }),
       },
-      // auth: { scope: ['admin'] },
+      auth: { scope: ['admin:edit'] },
     },
   },
   {
@@ -290,7 +290,7 @@ const routes = [
           stateId: Joi.number().description('State Id').required(),
         },
       },
-      // auth: { scope: ['admin'] },
+      auth: { scope: ['admin:edit'] },
     },
   },
   {
@@ -305,7 +305,7 @@ const routes = [
           stateId: Joi.number().description('State Id').required(),
         },
       },
-      // auth: { scope: ['admin'] },
+      auth: { scope: ['admin:edit'] },
     },
   },
   {
@@ -319,7 +319,7 @@ const routes = [
           lgaId: Joi.number().description('Lga Id').required(),
         },
       },
-      // auth: { scope: ['admin'] },
+      auth: { scope: ['admin:edit'] },
     },
   },
 ]
