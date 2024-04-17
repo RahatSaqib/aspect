@@ -190,24 +190,6 @@ async function seed(knex) {
         jobFunctionId: jobFunctionIdRegionalOfficer,
         geographyId: regionId,
       })
-      let targetTotal = 0
-      await Promise.all(
-        _.map(targetTokens, async token => {
-          let targetValue = 850 + Math.floor(Math.random() * 200 - 100)
-
-          if (token === 'Total') {
-            targetValue = targetTotal + Math.floor(Math.random() * 200)
-          } else {
-            targetTotal += targetValue
-          }
-
-          await knex('Target').insert({
-            geographyId: regionId,
-            targetToken: token,
-            targetValue,
-          })
-        })
-      )
     })
   )
 

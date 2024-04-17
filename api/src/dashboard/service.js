@@ -1,6 +1,5 @@
 const _ = require('lodash')
 const subDays = require('date-fns/subDays')
-const differenceInDays = require('date-fns/differenceInDays')
 const { knex } = require('../db')
 const {
   getConstraints,
@@ -106,49 +105,6 @@ async function summaryDashboard(request) {
       }
 
       return widget
-    })
-  )
-  return { ok: true, data }
-}
-
-async function targetDashboard(request) {
-  const { auth, query } = request
-  // get data constraints
-  const dataConstraints = await getConstraints(auth.credentials)
-
-  const user = await getUser(auth.credentials.name)
-  const widgets = await getDashboardWidget(user, { layout: 'target' })
-
-  let targetDivide = 1
-
-  const days = differenceInDays(query.maxDate, query.minDate)
-
-  if (days <= 35) {
-    targetDivide = 12
-  } else if (days <= 150) {
-    targetDivide = 4
-  }
-
-  const data = await Promise.all(
-    widgets.map(async widget => {
-      const count = await queryValue(widget.sqlForIndicator, dataConstraints, query)
-
-      const target = await knex('Target as t')
-        .innerJoin('Geography as g', 't.geographyId', 'g.id')
-        .where({ 't.targetToken': widget.targetToken })
-        .modify(addConstraints, dataConstraints, {
-          geography: 'g',
-        })
-        .sum('t.targetValue as cnt')
-        .first()
-
-      const dataCollection = await queryValue(widget.sqlForDataCollection, dataConstraints, query)
-
-      return _.assign(_.pick(widget, ['id', 'title', 'thresholdPercentageDataCollection', 'link']), {
-        count: count ? count.cnt : 0,
-        target: target ? Math.round(target.cnt / targetDivide) : 0,
-        dataCollection: dataCollection ? dataCollection.cnt : 0,
-      })
     })
   )
   return { ok: true, data }
@@ -707,7 +663,6 @@ async function getAssayResultCategoryList(dataConstraints) {
 
 module.exports = {
   summaryDashboard,
-  targetDashboard,
   resultDashboard,
   inventoryItemDashboard,
   deviceDashboard,

@@ -28,7 +28,6 @@ async function listStates({ auth, query }) {
       name: 's.name',
       abbreviation: 's.abbreviation',
       deviceConfigurationCount: getAssociatedDataCount('DeviceConfiguration'),
-      targetCount: getAssociatedDataCount('Target'),
       siteCount: getAssociatedDataCount('Site'),
       issueCount: getAssociatedDataCount('Issue'),
       deviceApiKeyCount: getAssociatedDataCount('DeviceApiKey'),
@@ -43,7 +42,6 @@ async function listStates({ auth, query }) {
 
   const isDeletionDisabled = i =>
     i.deviceConfigurationCount > 0 ||
-    i.targetCount > 0 ||
     i.siteCount > 0 ||
     i.issueCount > 0 ||
     i.deviceApiKeyCount > 0 ||

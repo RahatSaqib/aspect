@@ -83,7 +83,6 @@ exports.seed = async function (/* knex */) {
   //   'Issue',
   //   'JobContext',
   //   'DeviceApiKey',
-  //   'Target',
   //   'Person',
   //   'Site',
   //   'Result',
