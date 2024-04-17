@@ -271,17 +271,6 @@ async function seed(knex) {
     await knex('NotificationType').where({ id: notificationTypeId }).update({ messageTypeId: newMessageTypeId })
   })
 
-  const myanmarJobFunctions = await knex('JobFunction as jf').where('jf.partnerId', partnerId).select()
-
-  const modules = await getPermissionModules(knex)
-
-  await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
-    await knex('JobFunctionPermission').insert({
-      jobFunctionId: myanmarJobFunction.id,
-      permissionId: modules.actionDashboard.edit,
-    })
-  })
-
   // correction requested in SD-769
   await updateDataCategoryNotificationTypeForRO(knex, partnerMyanmar.name, partnerMyanmar.externalId)
 }

@@ -134,14 +134,11 @@ async function seed(knex) {
     modules.site.edit,
     modules.assay.view,
     modules.issue.edit,
-    modules.actionDashboard.edit,
     modules.inventory.edit,
     modules.dashboard.summary,
-    modules.dashboard.action,
     modules.dashboard.report,
     modules.dashboard.siteFilter,
     modules.dashboard.actionInventoryLevelUpdate,
-    modules.dashboard.target,
   ])
 
   const jobFunctionIdLabUser = await upsertJobFunction(knex, 'Lab User', partnerId, [

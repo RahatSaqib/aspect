@@ -272,17 +272,6 @@ async function seed(knex) {
     await knex('NotificationType').where({ id: notificationTypeId }).update({ messageTypeId: newMessageTypeId })
   })
 
-  const myanmarJobFunctions = await knex('JobFunction as jf').where('jf.partnerId', partnerId).select()
-
-  const modules = await getPermissionModules(knex)
-
-  await Promise.each(myanmarJobFunctions, async myanmarJobFunction =>
-    knex('JobFunctionPermission').insert({
-      jobFunctionId: myanmarJobFunction.id,
-      permissionId: modules.actionDashboard.edit,
-    })
-  )
-
   await updateUnknownErrorOnModuleMessage(knex)
 
   // see explanation details in calling function

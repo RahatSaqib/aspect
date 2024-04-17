@@ -271,25 +271,6 @@ async function seed(knex) {
     await knex('NotificationType').where({ id: notificationTypeId }).update({ messageTypeId: newMessageTypeId })
   })
 
-  const myanmarJobFunctions = await knex('JobFunction as jf').where('jf.partnerId', partnerId).select()
-
-  const modules = await getPermissionModules(knex)
-
-  await Promise.each(myanmarJobFunctions, async myanmarJobFunction => {
-    const existingJobFunctionPermission = await knex('JobFunctionPermission')
-      .where({
-        jobFunctionId: myanmarJobFunction.id,
-        permissionId: modules.actionDashboard.edit,
-      })
-      .first()
-    if (!existingJobFunctionPermission) {
-      await knex('JobFunctionPermission').insert({
-        jobFunctionId: myanmarJobFunction.id,
-        permissionId: modules.actionDashboard.edit,
-      })
-    }
-  })
-
   // turn off email/sms
   await knex('MessageType').update({
     emailTemplateId: null,
