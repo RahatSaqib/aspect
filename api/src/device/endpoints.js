@@ -373,6 +373,10 @@ const routes = [
             .description(
               'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.expectedBackOnline'
             ),
+          parentQuery: Joi.object().keys({
+            minDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('From Date, inclusive'),
+            maxDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('To Date, inclusive'),
+          }),
         },
       },
       response: {
@@ -408,6 +412,7 @@ const routes = [
               expectedBackOnline: Joi.string()
                 .allow('', null)
                 .description('The expected Online back date of the last the maintenance status'),
+              deviceData: joiSingleDeviceStatusOverTime,
             }),
         }),
       },
