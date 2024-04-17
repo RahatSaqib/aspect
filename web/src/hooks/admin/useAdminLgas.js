@@ -3,10 +3,8 @@ import fetchWrapperForQueries from '../../components/QueryFetch'
 import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
 import { ADMIN_LGAS_ENDPOINT, ADMIN_LGAS_KEYS } from './adminKeys'
 
-export function useAdminLgas() {
-  return useQuery(
-    ADMIN_LGAS_KEYS,
-    () => fetchWrapperForQueries({ endpoint: ADMIN_LGAS_ENDPOINT }).then(response => response.data),
-    { ...SELECTS_QUERY_OPTIONS }
-  )
+export function useAdminLgas(params) {
+  return useQuery([ADMIN_LGAS_KEYS, params], () => fetchWrapperForQueries({ endpoint: ADMIN_LGAS_ENDPOINT, params }), {
+    ...SELECTS_QUERY_OPTIONS,
+  })
 }
