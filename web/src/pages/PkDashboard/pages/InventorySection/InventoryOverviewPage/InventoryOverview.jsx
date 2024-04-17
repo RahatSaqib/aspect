@@ -1,8 +1,8 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { LinearProgress } from '@mui/material'
 import { useIntl } from 'react-intl'
-import { PeriodSelector, ConsumableSelector } from '../../../../../cleanComponents'
-import { getTimePeriod } from '../../../../../components/Graphs/Helpers/Formatters'
+import { ConsumableSelector, PeriodSelector } from '../../../../../cleanComponents'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
@@ -10,10 +10,7 @@ import useInventoryOverview from './useInventoryOverview'
 
 const InventoryOverviewPage = () => {
   const { formatMessage } = useIntl()
-  const [filter, setFilter] = useState({
-    minDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
-    maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
-  })
+  const [filters, setFilter] = usePathFilter()
 
   function getInventoryLabel(item, isState) {
     if (item.type && item[item.type]) return item.type && item[item.type]
@@ -33,11 +30,13 @@ const InventoryOverviewPage = () => {
     }))
   }
 
-  const [consumableExternalId, setConsumableExternalId] = useState()
-
   const { isLoading, data } = useInventoryOverview(
-    { consumableExternalId, minDate: filter.minDate, maxDate: filter.maxDate },
-    { enabled: !!consumableExternalId }
+    {
+      consumableExternalId: filters.consumable?.consumableExternalId,
+      minDate: filters.minDate,
+      maxDate: filters.maxDate,
+    },
+    { enabled: !!filters.consumable?.consumableExternalId }
   )
 
   const columns = [
@@ -54,12 +53,16 @@ const InventoryOverviewPage = () => {
       title={formatMessage(messages.overview)}
       filters={
         <>
-          <ConsumableSelector onChange={e => setConsumableExternalId(e.consumableExternalId)} />
+          <ConsumableSelector
+            fullWidth
+            value={filters.consumable || null}
+            onChange={consumable => setFilter(prv => ({ ...prv, consumable }))}
+          />
           <PeriodSelector
             label={formatMessage(messages.date)}
-            minDate={filter.minDate || null}
-            maxDate={filter.maxDate || null}
-            onChange={dateValues => setFilter({ ...filter, ...dateValues })}
+            minDate={filters.minDate || null}
+            maxDate={filters.maxDate || null}
+            onChange={dateValues => setFilter({ ...filters, ...dateValues })}
           />
         </>
       }

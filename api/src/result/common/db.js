@@ -180,7 +180,8 @@ const getBaseResults = () =>
     .leftJoin('PartnerAssay as pa', q => {
       q.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
-    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftJoin('Site as si', 'd.siteId', 'si.id')
+    .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
@@ -189,7 +190,6 @@ const getBaseResults = () =>
     .leftJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .leftJoin('SampleType as stp', 'sp.sampleTypeId', 'stp.id')
     .leftJoin('Site as so', 'sp.originSiteId', 'so.id')
-    .leftJoin('Site as si', 'd.siteId', 'si.id')
 
 const getBaseQueryForResults = () =>
   getBaseResults()
@@ -475,6 +475,7 @@ function getQueryForDataExtract(query, dataConstraints) {
   return resultQuery
 }
 
+// key is equal to value
 const FACT_FIELD_SCOPE = {
   all: 'all',
   mtb: 'mtb',
@@ -482,14 +483,22 @@ const FACT_FIELD_SCOPE = {
   noResult: 'noResult',
   error: 'error',
   xdrResistances: 'xdrResistances',
+  notDetected: 'notDetected',
+  detected: 'detected',
+  traceDetected: 'traceDetected',
+  mtbDetectedRifNotDetected: 'mtbDetectedRifNotDetected',
+  mtbDetectedRifDetected: 'mtbDetectedRifDetected',
+  mtbDetectedRifIndeterminate: 'mtbDetectedRifIndeterminate',
 }
 
-const getXdrResultCountBase = ({
+// TODO: Refactor with SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
+const getFactResultCountBase = ({
   resultCategoryIds,
   dataConstraints,
   query,
   fieldsScope = [], // empty array means we return default field `cntAll`
   timeFrame = 'month',
+  assay = ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'],
 }) => {
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
   const takeAll = fieldsScope.includes(FACT_FIELD_SCOPE.all)
@@ -497,53 +506,46 @@ const getXdrResultCountBase = ({
     cntAll: 'r.resultCount',
   }
   if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.mtb)) {
-    fields = {
-      ...fields,
-      cnt_mtb: knex.raw(`
-        CASE 
-          WHEN r.resultCategory1 IN (${positiveResultCategories}) 
-          THEN r.resultCount
-          ELSE IFNULL(r.xdrResistanceCounts ->> '$.MTB.detected', 0)
-        END
-      `),
-    }
+    fields.cnt_mtb = knex.raw(
+      `IF(r.resultCategory1 IN (${positiveResultCategories}), r.resultCount, IFNULL(r.xdrResistanceCounts ->> '$.MTB.detected', 0))`
+    )
   }
   if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.invalid)) {
-    fields = {
-      ...fields,
-      cnt_Invalid: knex.raw(`
-        CASE 
-          WHEN r.resultCategory1 = ${resultCategoryIds.Invalid}
-          THEN r.resultCount
-          ELSE 0
-        END
-      `),
-    }
+    fields.cnt_Invalid = knex.raw(`IF(r.resultCategory1 = ${resultCategoryIds.Invalid}, r.resultCount, 0)`)
   }
   if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.noResult)) {
-    fields = {
-      ...fields,
-      cnt_NoResult: knex.raw(`
-        CASE 
-          WHEN r.resultCategory1 = ${resultCategoryIds.NoResult}
-          THEN r.resultCount
-          ELSE 0
-        END
-      `),
-    }
+    fields.cnt_NoResult = knex.raw(`IF(r.resultCategory1 = ${resultCategoryIds.NoResult}, r.resultCount, 0)`)
   }
   if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.error)) {
-    fields = {
-      ...fields,
-      cnt_Error: knex.raw(`
-        CASE 
-          WHEN r.resultCategory1 = ${resultCategoryIds.Error}
-          THEN r.resultCount
-          ELSE 0
-        END
-      `),
-    }
+    fields.cnt_Error = knex.raw(`IF(r.resultCategory1 = ${resultCategoryIds.Error}, r.resultCount, 0)`)
   }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.notDetected)) {
+    fields.cnt_NotDetected = knex.raw(`IF(r.resultCategory1 = ${resultCategoryIds.NotDetected}, r.resultCount, 0)`)
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.detected)) {
+    fields.cnt_Detected = knex.raw(`IF(r.resultCategory1 = ${resultCategoryIds.Detected}, r.resultCount, 0)`)
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.traceDetected)) {
+    fields.cnt_TraceDetected = knex.raw(
+      `IF(r.resultCategory1 = ${resultCategoryIds['Trace Detected']}, r.resultCount, 0)`
+    )
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.mtbDetectedRifNotDetected)) {
+    fields.cnt_mtbDetectedRifNotDetected = knex.raw(
+      `IF(r.resultCategory1 = ${resultCategoryIds.Detected} AND r.resultCategory2 = ${resultCategoryIds.NotDetected}, r.resultCount, 0)`
+    )
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.mtbDetectedRifDetected)) {
+    fields.cnt_mtbDetectedRifDetected = knex.raw(
+      `IF(r.resultCategory1 = ${resultCategoryIds.Detected} AND r.resultCategory2 = ${resultCategoryIds.Detected}, r.resultCount, 0)`
+    )
+  }
+  if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.mtbDetectedRifIndeterminate)) {
+    fields.cnt_mtbDetectedRifIndeterminate = knex.raw(
+      `IF(r.resultCategory1 = ${resultCategoryIds.Detected} AND r.resultCategory2 = ${resultCategoryIds.Indeterminate}, r.resultCount, 0)`
+    )
+  }
+
   if (takeAll || fieldsScope.includes(FACT_FIELD_SCOPE.xdrResistances)) {
     fields = {
       ...fields,
@@ -564,7 +566,7 @@ const getXdrResultCountBase = ({
     dataConstraints,
     filterParams,
     query,
-    assay: ['GxMtbXdr'],
+    assay,
     timeFrame,
   })
     // .where(function () {
@@ -584,12 +586,13 @@ const getXdrDevicesSummary = async (dataConstraints, query) => {
   }
   const resultCategoryIds = await allResultCategoryToId()
 
-  const countsBase = getXdrResultCountBase({
+  const countsBase = getFactResultCountBase({
     resultCategoryIds,
     dataConstraints,
     query,
     fieldsScope: [FACT_FIELD_SCOPE.all],
     timeFrame: 'day',
+    assay: ['GxMtbXdr'],
   })
     .select(['g.stateId', 'g.lgaId', 's.id as siteId'])
     .groupBy('d.id')
@@ -792,7 +795,7 @@ module.exports = {
   getQueryForDataExtract,
   getCustomFieldsForResult,
   getXdrDevicesSummary,
-  getXdrResultCountBase,
+  getFactResultCountBase,
   processGroupedQuery,
   getClinicalIndicatorQueryForFactTable,
   getClinicalIndicatorQueryForResultsTable,

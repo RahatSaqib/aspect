@@ -174,7 +174,7 @@ async function getReasonForTestingReport(auth, query) {
   const dateTo = endOfMonthUTC(maxDateStr)
   const rows = await knex('Result as r')
     .leftJoin('Site as s', 's.id', 'r.siteId')
-    .leftJoin('Geography as g', 'g.id', 'r.geographyId')
+    .leftJoin('Geography as g', 'g.id', 's.geographyId')
     .select([
       knex.raw(
         `IF(resultData->>'$.customFieldData."251".value' = 'null', 'N/A', resultData->>'$.customFieldData."251".value') AS fields`

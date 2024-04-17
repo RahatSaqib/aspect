@@ -13,6 +13,7 @@ import {
 } from '../../../../../cleanComponents'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
@@ -56,10 +57,10 @@ const CurrentFQTrendPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState({})
+  const [filters, setFilters] = usePathFilter()
 
   const { data, isLoading } = useQuery(
-    ['mtbXdrFqDetected', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
+    ['mtbXdrFqDetected', { endPointParams: objectToArray(filters).concat(defaultFilters) }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
@@ -98,15 +99,15 @@ const CurrentFQTrendPage = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
-            value={filter?.stateId ?? ''}
+            value={filters?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setFilter({ stateId: e.target.value })}
+            onChange={e => setFilters({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter?.lgaId ?? ''}
-            stateId={filter?.stateId}
-            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
+            value={filters?.lgaId ?? ''}
+            stateId={filters?.stateId}
+            onChange={e => setFilters(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>

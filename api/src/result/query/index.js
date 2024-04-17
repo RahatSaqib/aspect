@@ -9,8 +9,8 @@ const querySelectors = require('./querySelectors')
 const getBaseQuery = (knex, dataConstraints) =>
   knex('Result as r')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
-    .leftJoin('Geography as g', 'r.geographyId', 'g.id')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
       geography: 'g',

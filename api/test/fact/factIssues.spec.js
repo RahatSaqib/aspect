@@ -999,7 +999,6 @@ describe('Fact based issues', () => {
           externalId: 'AVAILABLE_RESULT_1',
           assayId: gxMtbRifAssay.id,
           partnerId: device.partnerId,
-          geographyId: device.geographyId,
           siteId: device.siteId,
           reportableSiteId: device.siteId,
           deviceId: device.id,
