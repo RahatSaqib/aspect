@@ -92,6 +92,7 @@ const getMonthYearField = (knex, field, alias = 'monthYear') =>
 /**
  * - NOTE: This function is obsolete and should be replaced by {@link getDateTimeProjectionInTimeZoneIANA}
  * - Generates knex code to project a datetime field in the specified timezone.
+ * @deprecated use {@link getDateTimeProjectionInTimeZoneIANA} instead
  * @param {*} knex - Knex ref.
  * @param {string} field - Name of the field to select.
  * @param {string} offset - Time offset in ISO format (e.g. +05:00)
