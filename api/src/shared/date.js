@@ -125,18 +125,7 @@ const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
  * see https://systemone.youtrack.cloud/articles/ENG-A-332/Date-and-Time-zone-handling-in-Aspect
  */
 const getDateTimeProjectionInTimeZoneIANA = (knex, field, timeZoneIANA, alias) => {
-  const extractAlias = expression =>
-    expression
-      .split(/[\s/.]+/)
-      .pop()
-      .replace(/[^a-zA-Z0-9\-_]/g, '')
-
-  let actualAlias
-  if (alias !== null && alias !== '') {
-    actualAlias = alias || extractAlias(field)
-  }
-
-  return `${getDateTimeExpressionInTimeZone(knex, field, timeZoneIANA)}${actualAlias ? ` as ${actualAlias}` : ''}`
+  return `${getDateTimeExpressionInTimeZone(knex, field, timeZoneIANA)}${alias ? ` as ${alias}` : ''}`
 }
 
 /**

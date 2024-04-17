@@ -314,28 +314,9 @@ describe('Date functions', () => {
       expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka") as iWantThisAlias')
     })
 
-    it('should infer the alias if none is provided', () => {
+    it('should return empty alias if none is provided', () => {
       const result = getDateTimeProjectionInTimeZoneIANA(knex, 'lastSeenOn', 'Asia/Dhaka')
-      expect(result.toString()).to.equal('CONVERT_TZ(lastSeenOn, "+00:00", "Asia/Dhaka") as lastSeenOn')
-    })
-
-    it("should extract the field name from an expression with it's own alias", () => {
-      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka')
-      expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka") as lastSeenOn')
-    })
-
-    it('should remove invalid characters from an infered alias', () => {
-      const result = getDateTimeProjectionInTimeZoneIANA(knex, '(select d.lastSeenOn from lastDate)', 'Asia/Dhaka')
-      expect(result.toString()).to.equal(
-        'CONVERT_TZ((select d.lastSeenOn from lastDate), "+00:00", "Asia/Dhaka") as lastDate'
-      )
-    })
-
-    it('should preserve _ and -', () => {
-      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'r.lastSeen as last_check-in', 'Asia/Dhaka')
-      expect(result.toString()).to.equal(
-        'CONVERT_TZ(r.lastSeen as last_check-in, "+00:00", "Asia/Dhaka") as last_check-in'
-      )
+      expect(result.toString()).to.equal('CONVERT_TZ(lastSeenOn, "+00:00", "Asia/Dhaka")')
     })
 
     it('should skip alias in the return value if alias parameter is null or undefined', () => {
