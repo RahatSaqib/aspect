@@ -11,19 +11,22 @@ const getAssociatedDataCount = table =>
 async function listStates({ auth, query }) {
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const stateQuery = knex('State as s')
+  const stateQuery = knex('Geography as g')
+    .join('Country as c', 'g.countryId', 'c.id')
+    .join('State as s', 'g.stateId', 's.id')
     .modify(filterParams, query, {
       name: 's.name',
     })
-    .modify(addConstraints, dataConstraints, { state: 's' })
+    .modify(addConstraints, dataConstraints, { country: 'c', state: 's' })
+    .groupBy('s.id')
 
   const getItems = stateQuery
     .clone()
-    .modify(sortPageParams, query, 'name')
+    .modify(sortPageParams, query, 'name', { name: 's.name' })
     .select({
-      id: 'id',
-      name: 'name',
-      abbreviation: 'abbreviation',
+      id: 's.id',
+      name: 's.name',
+      abbreviation: 's.abbreviation',
       deviceConfigurationCount: getAssociatedDataCount('DeviceConfiguration'),
       targetCount: getAssociatedDataCount('Target'),
       siteCount: getAssociatedDataCount('Site'),
@@ -38,10 +41,21 @@ async function listStates({ auth, query }) {
         .count(),
     })
 
+  const isDeletionDisabled = i =>
+    i.deviceConfigurationCount > 0 ||
+    i.targetCount > 0 ||
+    i.siteCount > 0 ||
+    i.issueCount > 0 ||
+    i.deviceApiKeyCount > 0 ||
+    i.personCount > 0 ||
+    i.jobContextCount > 0 ||
+    i.lgaCount > 0 ||
+    i.notificationCount > 0
+
   const getCount = stateQuery.clone().count('s.id as count').first()
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  return { ok: true, total, length: data.length, data }
+  return { ok: true, total, length: data.length, data: data.map(i => ({ ...i, cannotDelete: isDeletionDisabled(i) })) }
 }
 
 module.exports = { listStates }

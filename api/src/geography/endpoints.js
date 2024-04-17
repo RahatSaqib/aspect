@@ -179,6 +179,7 @@ const routes = [
                 jobContextCount: Joi.number(),
                 lgaCount: Joi.number(),
                 notificationCount: Joi.number(),
+                cannotDelete: Joi.boolean(),
               })
             ),
         }),
@@ -268,6 +269,7 @@ const routes = [
                 personCount: Joi.number(),
                 jobContextCount: Joi.number(),
                 notificationCount: Joi.number(),
+                cannotDelete: Joi.boolean(),
               })
             ),
         }),

@@ -1,5 +1,5 @@
 const Boom = require('@hapi/boom')
-const { knex } = require('../../db')
+const { knex, transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 const { getState } = require('./common/db')
 
@@ -30,8 +30,10 @@ async function validateExistingState(stateId, dataConstraints) {
 }
 
 async function deleteStateData(stateId) {
-  await knex('Geography').where({ stateId, lgaId: null }).delete()
-  await knex('State').where({ id: stateId }).delete()
+  await transact(async trknex => {
+    await trknex('Geography').where({ stateId, lgaId: null }).delete()
+    await trknex('State').where({ id: stateId }).delete()
+  })
 }
 
 module.exports = { deleteState }

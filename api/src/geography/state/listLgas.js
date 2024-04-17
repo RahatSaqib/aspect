@@ -8,13 +8,14 @@ async function listLgas({ auth, query }) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   const lgaQuery = knex('Geography as g')
+    .join('Country as c', 'g.countryId', 'c.id')
     .join('State as s', 'g.stateId', 's.id')
     .join('Lga as l', 'g.lgaId', 'l.id')
     .modify(filterParams, query, {
       stateId: 'g.stateId',
       name: 'l.name',
     })
-    .modify(addConstraints, dataConstraints, { lga: 'l' })
+    .modify(addConstraints, dataConstraints, { country: 'c', state: 's', lga: 'l' })
 
   const getItems = lgaQuery
     .clone()
@@ -37,10 +38,25 @@ async function listLgas({ auth, query }) {
         .count(),
     })
 
+  const isDeletionDisabled = i =>
+    i.deviceConfigurationCount > 0 ||
+    i.targetCount > 0 ||
+    i.siteCount > 0 ||
+    i.issueCount > 0 ||
+    i.deviceApiKeyCount > 0 ||
+    i.personCount > 0 ||
+    i.jobContextCount > 0 ||
+    i.notificationCount > 0
+
   const getCount = lgaQuery.clone().count('l.id as count').first()
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
-  return { ok: true, total, length: data.length, data }
+  return {
+    ok: true,
+    total,
+    length: data.length,
+    data: data.map(i => ({ ...i, cannotDelete: isDeletionDisabled(i) })),
+  }
 }
 
 module.exports = { listLgas }

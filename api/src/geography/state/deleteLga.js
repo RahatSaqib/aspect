@@ -1,5 +1,5 @@
 const Boom = require('@hapi/boom')
-const { knex } = require('../../db')
+const { knex, transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 const { getLga } = require('./common/db')
 
@@ -30,8 +30,10 @@ async function validateExistingLga(lgaId, dataConstraints) {
 }
 
 async function deleteLgaData(lgaId) {
-  await knex('Geography').where({ lgaId }).delete()
-  await knex('Lga').where({ id: lgaId }).delete()
+  await transact(async trknex => {
+    await trknex('Geography').where({ lgaId }).delete()
+    await trknex('Lga').where({ id: lgaId }).delete()
+  })
 }
 
 module.exports = { deleteLga }

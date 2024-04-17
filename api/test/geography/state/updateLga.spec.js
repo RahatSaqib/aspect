@@ -10,12 +10,17 @@ const path = '/api/geography/lgas'
 
 describe('PUT', () => {
   const newName = 'newName'
+  const stateName = 'Alabama'
+  let stateId
   let lga
   const lgasToDelete = []
   before(() => shared.checkToken(server, path))
   before(async () => {
     return run(async knex => {
       const lgaId = await knex('Lga').insert({ name: 'oldLgaName' })
+      const { id: countryId } = await knex('Country').where('name', 'United States').first()
+      ;({ id: stateId } = await knex('State').where('name', stateName).first())
+      await knex('Geography').insert({ countryId, stateId, lgaId })
       lgasToDelete.push(lgaId)
       lga = await knex('Lga').where({ id: lgaId }).first()
     })
@@ -23,6 +28,7 @@ describe('PUT', () => {
 
   after(async () => {
     return run(async knex => {
+      await knex('Geography').whereIn('lgaId', lgasToDelete).del()
       await knex('Lga').whereIn('id', lgasToDelete).del()
     })
   })
@@ -31,7 +37,7 @@ describe('PUT', () => {
     it('Should update lga', async () => {
       const res = await server
         .put(`${path}/${lga.id}`)
-        .send({ name: newName })
+        .send({ name: newName, stateId })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 204)
       const updatedLga = await knex('Lga').where({ id: lga.id }).first()
@@ -47,7 +53,7 @@ describe('PUT', () => {
       lgasToDelete.push(dupLgaId)
       const res = await server
         .put(`${path}/${lga.id}`)
-        .send({ name: newName })
+        .send({ name: newName, stateId })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 409)
     })
@@ -55,7 +61,7 @@ describe('PUT', () => {
     it('If Id does not exists, returns 404 Not found', async () => {
       const res = await server
         .put(`${path}/${999}`)
-        .send({ name: newName })
+        .send({ name: newName, stateId })
         .set('Authorization', `Bearer ${shared.token}`)
       assert.equal(res.status, 404)
     })

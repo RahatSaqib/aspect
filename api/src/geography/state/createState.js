@@ -10,7 +10,7 @@ async function createState({ auth, payload }, h) {
 
   await transact(async trknex => {
     stateId = await createStateData(trknex, payload, auth.credentials)
-    await trknex('Geography').insert({ stateId })
+    await trknex('Geography').insert({ countryId: dataConstraints.country.id, stateId })
   })
 
   const data = { id: stateId, name: payload.name, abbreviation: payload.abbreviation }
