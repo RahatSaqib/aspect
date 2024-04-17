@@ -3,7 +3,7 @@ const { transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 const { getState } = require('./common/db')
 
-async function deleteState({ auth, params }, h) {
+async function deleteState({ auth, params }) {
   const { stateId } = params
 
   await validate(stateId, auth.credentials)
@@ -14,7 +14,7 @@ async function deleteState({ auth, params }, h) {
     throw Boom.conflict('Unable to delete State, as there are associated entities with it.')
   }
 
-  return h.response({ ok: true }).code(204)
+  return { ok: true }
 }
 
 const validate = async (stateId, credentials) => {

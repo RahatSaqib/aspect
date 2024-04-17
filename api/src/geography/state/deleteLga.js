@@ -3,7 +3,7 @@ const { transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 const { getLga } = require('./common/db')
 
-async function deleteLga({ auth, params }, h) {
+async function deleteLga({ auth, params }) {
   const { lgaId } = params
 
   await validate(lgaId, auth.credentials)
@@ -14,7 +14,7 @@ async function deleteLga({ auth, params }, h) {
     throw Boom.conflict('Unable to delete LGA, as there are associated entities with it.')
   }
 
-  return h.response({ ok: true }).code(204)
+  return { ok: true }
 }
 
 const validate = async (lgaId, credentials) => {
