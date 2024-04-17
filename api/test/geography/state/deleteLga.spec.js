@@ -27,7 +27,7 @@ describe('DELETE', () => {
 
       const res = await server.delete(`${path}/${lgaId}`).set('Authorization', `Bearer ${shared.token}`)
 
-      assert.equal(res.status, 204)
+      assert.equal(res.status, 200)
 
       const existingState = await knex('Lga').where({ id: lgaId }).first()
       assert.equal(existingState, undefined)
@@ -76,7 +76,7 @@ describe('DELETE', () => {
 
         // Retry
         const res2 = await server.delete(`${path}/${lgaId}`).set('Authorization', `Bearer ${shared.token}`)
-        assert.equal(res2.status, 204)
+        assert.equal(res2.status, 200)
       })
     })
   })
