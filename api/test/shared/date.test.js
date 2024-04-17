@@ -308,6 +308,42 @@ describe('Date functions', () => {
       const result = getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka', 'lastSeen')
       expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka") as lastSeen')
     })
+
+    it('should use alias parameter if it has been provided', () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka', 'iWantThisAlias')
+      expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka") as iWantThisAlias')
+    })
+
+    it('should infer the alias if none is provided', () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'lastSeenOn', 'Asia/Dhaka')
+      expect(result.toString()).to.equal('CONVERT_TZ(lastSeenOn, "+00:00", "Asia/Dhaka") as lastSeenOn')
+    })
+
+    it("should extract the field name from an expression with it's own alias", () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka')
+      expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka") as lastSeenOn')
+    })
+
+    it('should remove invalid characters from an infered alias', () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, '(select d.lastSeenOn from lastDate)', 'Asia/Dhaka')
+      expect(result.toString()).to.equal(
+        'CONVERT_TZ((select d.lastSeenOn from lastDate), "+00:00", "Asia/Dhaka") as lastDate'
+      )
+    })
+
+    it('should preserve _ and -', () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'r.lastSeen as last_check-in', 'Asia/Dhaka')
+      expect(result.toString()).to.equal(
+        'CONVERT_TZ(r.lastSeen as last_check-in, "+00:00", "Asia/Dhaka") as last_check-in'
+      )
+    })
+
+    it('should skip alias in the return value if alias parameter is null or undefined', () => {
+      for (const emptyAlias of [null, '']) {
+        const result = getDateTimeProjectionInTimeZoneIANA(knex, 'r.lastSeen', 'Asia/Dhaka', emptyAlias)
+        expect(result.toString()).to.equal('CONVERT_TZ(r.lastSeen, "+00:00", "Asia/Dhaka")')
+      }
+    })
   })
 
   describe('getDateTimeExpressionInTimeZone', () => {

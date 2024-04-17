@@ -110,7 +110,8 @@ const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
  * @param {*} knex - Knex ref.
  * @param {string} field - Name of the field to select.
  * @param {string} timeZoneIANA - Timezone name in IANA format (e.g. 'Asia/Karachi')
- * @param {string=} alias - Optional. name to be returned if you don't want the field name.
+ * @param {string=} alias - Optional. name to be returned if you don't want the field name. If it's not provided,
+ * it will be infered from the field expression. (e.g. 'd.lastSeenOn' will use 'lastSeen' as alias)
  * @returns Expression to be added to a Knex query, returning plain datetime value converted a specified TZ
  * @example
  * e.g.:
@@ -122,8 +123,20 @@ const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
  * The table mysql.time_zone_name is populated from devops project in all Aspect intances.
  * see https://systemone.youtrack.cloud/articles/ENG-A-332/Date-and-Time-zone-handling-in-Aspect
  */
-const getDateTimeProjectionInTimeZoneIANA = (knex, field, timeZoneIANA, alias) =>
-  `${getDateTimeExpressionInTimeZone(knex, field, timeZoneIANA)}${alias ? ` as ${alias}` : ''}`
+const getDateTimeProjectionInTimeZoneIANA = (knex, field, timeZoneIANA, alias) => {
+  const extractAlias = expression =>
+    expression
+      .split(/[\s/.]+/)
+      .pop()
+      .replace(/[^a-zA-Z0-9\-_]/g, '')
+
+  let actualAlias
+  if (alias !== null && alias !== '') {
+    actualAlias = alias || extractAlias(field)
+  }
+
+  return `${getDateTimeExpressionInTimeZone(knex, field, timeZoneIANA)}${actualAlias ? ` as ${actualAlias}` : ''}`
+}
 
 /**
  * - Generates knex code build an expression over a datetime field in the specified timezone.
