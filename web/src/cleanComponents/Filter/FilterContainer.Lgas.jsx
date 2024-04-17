@@ -1,11 +1,11 @@
 import React from 'react'
-import { Grid } from '@mui/material'
+import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { LgaSelect, StateSelect } from '../index'
+import { StateSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const LgasFilter = () => {
@@ -22,6 +22,13 @@ const LgasFilter = () => {
             value={state.stateId}
             onChange={e => setState({ ...state, stateId: e.target.value })}
             countryId={state.countryId}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <TextField
+            label={formatMessage(messages.lgaName)}
+            value={state.lgaName || ''}
+            onChange={e => setState({ ...state, lgaName: e.target.value ? e.target.value : null })}
           />
         </Grid>
       </Grid>

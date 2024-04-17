@@ -40,6 +40,7 @@ import {
   SiteFilter,
   XDRByDeviceFilter,
   LgasFilter,
+  StatesFilter,
 } from './Filter'
 import {
   BarGraph,
@@ -185,6 +186,7 @@ export {
   SiteFilter,
   XDRByDeviceFilter,
   LgasFilter,
+  StatesFilter,
   ConsumableReasonSelect,
   DeviceCapacitySelect,
   SimpleTableHeader,

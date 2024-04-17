@@ -13,6 +13,7 @@ import ReporterFilter from './FilterContainer.Reporter'
 import ReportsFilter from './FilterContainer.Reports'
 import ResultFilter from './FilterContainer.Result'
 import SiteFilter from './FilterContainer.Site'
+import StatesFilter from './FilterContainer.States'
 import XDRByDeviceFilter from './FilterContainer.XDRByDevice'
 
 export {
@@ -32,4 +33,5 @@ export {
   XDRByDeviceFilter,
   NotificationLogFilter,
   LgasFilter,
+  StatesFilter,
 }
