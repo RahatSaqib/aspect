@@ -159,11 +159,6 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdAdmin,
-      permissionId: modules.dashboard.target,
-    },
-
-    {
-      jobFunctionId: jobFunctionIdAdmin,
       permissionId: modules.dashboard.report,
     },
     {
@@ -197,16 +192,7 @@ async function seed(knex) {
     },
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.dashboard.target,
-    },
-
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
       permissionId: modules.dashboard.report,
-    },
-    {
-      jobFunctionId: jobFunctionIdRegionalOfficer,
-      permissionId: modules.dashboard.site,
     },
     {
       jobFunctionId: jobFunctionIdRegionalOfficer,

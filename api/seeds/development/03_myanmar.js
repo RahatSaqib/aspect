@@ -155,7 +155,6 @@ async function seed(knex) {
 
   // Regional Officer Jobs and Targets
   const adminRegions = ['AYY', 'KCN', 'MDY']
-  const targetTokens = ['MDR', 'Smear', 'HIV', 'Total']
   let regionNumber = 0
   await Promise.all(
     _.map(adminRegions, async region => {

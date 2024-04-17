@@ -1,7 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const _ = require('lodash')
-const geography = require('./fixtures/geography.json')
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {

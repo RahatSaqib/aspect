@@ -1,11 +1,9 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const _ = require('lodash')
 const Promise = require('bluebird')
 
 const { rowsAsObject } = require('../utils')
-const { getPermissionModules, upsertIssueResolutionTrigger } = require('../utils')
-const geography = require('./fixtures/geography.json')
+const { upsertIssueResolutionTrigger } = require('../utils')
 const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
 const { partner: partnerMyanmar } = require('../myanmar/fixtures/partnerData')
 

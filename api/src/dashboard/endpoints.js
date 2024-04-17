@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler, validateSortPageParams } = require('../routes')
+const { asyncHandler } = require('../routes')
 const {
   summaryDashboard,
   inventoryItemDashboard,

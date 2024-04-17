@@ -113,7 +113,6 @@ async function seed(knex) {
     modules.demo.edit,
     modules.site.edit,
     modules.result.edit,
-    modules.dashboard.result,
     modules.device.edit,
     modules.reporter.edit,
     modules.assay.edit,
@@ -121,11 +120,9 @@ async function seed(knex) {
     modules.dashboard.summary,
     modules.inventory.edit,
     modules.person.edit,
-    modules.dashboard.action,
     modules.dashboard.report,
     modules.dashboard.siteFilter,
     modules.dashboard.actionInventoryLevelUpdate,
-    modules.dashboard.target,
   ])
 
   const jobFunctionIdRegionalOfficer = await upsertJobFunction(knex, 'Regional Officer', partnerId, [
@@ -149,7 +146,6 @@ async function seed(knex) {
     modules.inventory.edit,
     modules.device.edit,
     modules.dashboard.summary,
-    modules.dashboard.action,
     modules.dashboard.report,
     modules.dashboard.actionInventoryLevelUpdate,
   ])
@@ -162,7 +158,6 @@ async function seed(knex) {
   })
 
   // Create a regional officer login and targets for every region
-  const targetTokens = ['Total', 'MDR', 'Smear', 'HIV', 'Children']
   await Promise.all(
     _.map(myanmarStates, async state => {
       const regionUserName = `${state.name.replace(/\W/gi, '').toLowerCase().trim()}_ro`

@@ -53,15 +53,7 @@ const ntpLevel = {
     },
     {
       module: 'dashboard',
-      activity: 'result',
-    },
-    {
-      module: 'dashboard',
       activity: 'inventory',
-    },
-    {
-      module: 'dashboard',
-      activity: 'target',
     },
     {
       module: 'dashboard',
