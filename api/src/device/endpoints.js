@@ -29,6 +29,8 @@ const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 const { deviceReport } = require('./serviceReports/deviceReport')
+const { REGEX_ISODATESTRING } = require('../shared/date')
+const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
 
 const routes = [
   {
@@ -447,6 +449,10 @@ const routes = [
           expectedBackOnline: Joi.string()
             .allow('', null)
             .description('The expected Online back date of the last the maintenance status'),
+          parentQuery: Joi.object().keys({
+            minDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('From Date, inclusive'),
+            maxDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('To Date, inclusive'),
+          }),
         },
       },
       response: {
@@ -482,6 +488,7 @@ const routes = [
               expectedBackOnline: Joi.string()
                 .allow('', null)
                 .description('The expected Online back date of the last the maintenance status'),
+              deviceData: joiSingleDeviceStatusOverTime,
             }),
         }),
       },

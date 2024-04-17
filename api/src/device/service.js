@@ -38,6 +38,7 @@ const {
 } = require('./common/db')
 const { getSelectListFields } = require('./common/querySelectors')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
+const { getDeviceStatusOverTime } = require('../deviceMaintenanceStatus/service')
 
 async function getDeviceByRequest(request) {
   const {
@@ -534,11 +535,24 @@ async function setStatusForDateRange(request) {
     plugins: { messageContext },
   } = request
   const { externalId, day = startOfTodayUtc(), notes, expectedBackOnline } = payload
+  let { parentQuery } = payload
   let { dateFrom, dateTo } = payload
 
   if (!dateFrom && !dateTo) {
     dateFrom = day
     dateTo = day
+  }
+
+  /**
+   * in case if `parentQuery` is missing - get minDate/maxDate for current month from dateFrom/dateTo.
+   * --> `parentQuery` is a `query` used in getDeviceStatusOverTime() func
+   * for `Overall Network Health Daily` component.
+   */
+  if (!parentQuery) {
+    parentQuery = {
+      minDate: startOfMonth(dateFrom),
+      maxDate: endOfMonth(dateTo),
+    }
   }
 
   const dataConstraints = await getConstraints(credentials)
@@ -617,6 +631,15 @@ async function setStatusForDateRange(request) {
     if (!payload.dateFrom && !payload.dateTo) {
       ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
     } else data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
+
+    /**
+     * Get all days for current device in current month.
+     * --> Call same func which is used for getting data for
+     * `Overall Network Health Daily`, but here get data
+     * for current device only
+     */
+    const deviceStatusOverTime = await getDeviceStatusOverTime(request.auth, parentQuery, [deviceId])
+    data.deviceData = deviceStatusOverTime.find(it => it.id === deviceId)
 
     return {
       ok: true,

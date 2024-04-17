@@ -4,6 +4,7 @@ const omit = require('lodash/omit')
 const min = require('lodash/min')
 const uniq = require('lodash/uniq')
 const isNil = require('lodash/isNil')
+const isArray = require('lodash/isArray')
 const isWeekend = require('date-fns/isWeekend')
 const getISOWeek = require('date-fns/getISOWeek')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -99,7 +100,7 @@ async function deviceStatusOverTime(request) {
   return { ok: true, data }
 }
 
-async function getDeviceStatusOverTime(auth, query) {
+async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { minDate, maxDate = new Date().toISOString() } = query
   const offset = getOffsetFromIsoDateString(minDate)
@@ -151,6 +152,11 @@ async function getDeviceStatusOverTime(auth, query) {
     })
     .where('dtc.hasResults', 1)
     .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
+    .where(function () {
+      if (forDeviceIds && isArray(forDeviceIds)) {
+        this.whereIn('d.id', forDeviceIds)
+      }
+    })
     .groupBy('d.id')
     .select(
       'd.id',

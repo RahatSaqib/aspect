@@ -54,7 +54,7 @@ const DailyStatus = () => {
 
   const onDailyStatusSubmit = ({ deviceId, values }) => {
     setDialogState({ isOpen: false })
-    changeDeviceStatus({ deviceId, values })
+    changeDeviceStatus({ deviceId, values, parentQuery: { minDate, maxDate } })
   }
 
   if (devicesIsError) {

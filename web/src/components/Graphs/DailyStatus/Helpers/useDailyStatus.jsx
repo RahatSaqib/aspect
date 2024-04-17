@@ -48,7 +48,7 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
   )
 
   const { mutate: changeDeviceStatus } = useMutation(
-    ({ deviceId, values }) =>
+    ({ deviceId, values, parentQuery }) =>
       fetchWrapperForQueries({
         endpoint: replaceRouteParams(DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ENDPOINT, { deviceId }),
         method: 'POST',
@@ -57,30 +57,21 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
           dateFrom: values.startedOn,
           dateTo: values.endedOn,
           notes: values.note,
+          parentQuery,
         },
         customErrorNotifications: DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ERRORS,
       }),
     {
       onSuccess: (responseData, requestData) => {
-        const { deviceId, values } = requestData
-        const selectedStatus = statuses.find(({ externalId }) => externalId === values.reason)
+        const { deviceId } = requestData
         queryClient.setQueryData([DAILY_STATUS.KEY, { params }], oldData => {
           const { data: devicesDailyOld } = oldData
           const devicesDailyNew = cloneDeep(devicesDailyOld)
-          const { maintenanceStatusHistory } = devicesDailyNew.find(({ id }) => +id === +deviceId)
-          maintenanceStatusHistory
-            .filter(
-              /**
-               * notice that all values (`day`, 'startedOn', 'endedOn') are
-               * dates formatted as 'YYYY-MM-DD'
-               */
-              ({ day }) => day >= values.startedOn && day <= values.endedOn
-            )
-            .forEach(it => {
-              it.maintenanceStatusExternalId = selectedStatus.externalId
-              it.maintenanceStatusI18nKey = selectedStatus.i18nKey
-              it.maintenanceStatusName = selectedStatus.name
-            })
+          const { deviceData } = responseData.data
+          const indexOfDeviceRow = devicesDailyNew.findIndex(({ id }) => +id === +deviceId)
+
+          devicesDailyNew[indexOfDeviceRow] = deviceData
+
           return {
             ...oldData,
             data: devicesDailyNew,
