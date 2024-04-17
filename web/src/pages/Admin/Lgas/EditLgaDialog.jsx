@@ -47,7 +47,6 @@ export function EditLgaDialog({ open, lga, onOpenChange }) {
               <TextField
                 id="name"
                 name="name"
-                disabled
                 label={formatMessage(messages.lgaName)}
                 value={values.name}
                 onChange={handleChange}
