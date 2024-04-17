@@ -264,7 +264,7 @@ const LogInApp = () => {
                   <Route path="/browse/notification/:notificationId" element={<NotificationDetail />} />
                 </>
               ) : null}
-              {a(['browse', 'notification']) ? (
+              {a(['admin:edit']) ? (
                 <>
                   <Route path="/browse/admin/states" element={<AdminStates />} />
                   <Route path="/browse/admin/lgas" element={<AdminLgas />} />
