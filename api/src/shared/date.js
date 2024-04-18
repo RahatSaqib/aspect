@@ -218,8 +218,9 @@ function getArrayOfDaysInRange(start, end, initialProperties = null, excludeWeek
 }
 
 function getYear(date) {
-  const year = date.split('-')?.[0] ?? format(new Date(), 'yyyy')
-  return Number(year)
+  const yearPart = date.split('T')[0]
+  const utcDate = yearPart ? new Date(yearPart ? `${yearPart}T00:00:00.000Z` : undefined) : new Date()
+  return utcDate.getUTCFullYear()
 }
 
 // Returns the UTC equivalent of the passed in date/time string
