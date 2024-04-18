@@ -18,7 +18,7 @@ const calculatePercentage = errorResultAgg => {
 const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, offset, state) => {
   const tzOffset = `CONVERT_TZ(r.endedOn, "+00:00", "${offset}")`
 
-  let aggQuery = getBaseQuery(knex, dataConstraints)
+  return getBaseQuery(knex, dataConstraints)
     .join('Device as d', 'd.id', 'r.deviceId')
     .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
@@ -30,16 +30,15 @@ const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, offset, 
     )
     .groupBy(knex.raw(`YEAR(${tzOffset}), MONTH(${tzOffset})`))
     .orderBy('year', 'month')
-
-  if (state) {
-    const stateIds = state
-      .split(',')
-      .map(Number)
-      .filter(n => !isNaN(n))
-    aggQuery = aggQuery.join('State as s', 'g.stateId', 's.id').whereIn('s.id', stateIds)
-  }
-
-  return aggQuery
+    .modify(queryBuilder => {
+      if (state) {
+        const stateIds = state
+          .split(',')
+          .map(Number)
+          .filter(n => !isNaN(n))
+        queryBuilder.join('State as s', 'g.stateId', 's.id').whereIn('s.id', stateIds)
+      }
+    })
 }
 
 const getMtbErrorGraph = async request => {
