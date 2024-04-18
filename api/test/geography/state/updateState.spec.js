@@ -34,7 +34,7 @@ describe('PUT', () => {
         .put(`${path}/${state.id}`)
         .send({ name: newName, abbreviation: newAbbreviation })
         .set('Authorization', `Bearer ${shared.token}`)
-      assert.equal(res.status, 204)
+      assert.equal(res.status, 200)
       const updatedState = await knex('State').where({ id: state.id }).first()
       expect(updatedState).to.containSubset({
         id: state.id,

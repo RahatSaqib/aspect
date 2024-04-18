@@ -3,14 +3,14 @@ const { knex } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 const { getState, getStatesByValue } = require('./common/db')
 
-async function updateState({ auth, params, payload }, h) {
+async function updateState({ auth, params, payload }) {
   const { stateId } = params
 
   await validate(stateId, payload, auth.credentials)
   await updateStateData(stateId, payload, auth.credentials)
 
   const data = { id: stateId, name: payload.name, abbreviation: payload.abbreviation }
-  return h.response({ ok: true, data }).code(204)
+  return { ok: true, data }
 }
 
 const validate = async (stateId, { name, abbreviation }, credentials) => {

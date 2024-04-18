@@ -39,7 +39,7 @@ describe('PUT', () => {
         .put(`${path}/${lga.id}`)
         .send({ name: newName, stateId })
         .set('Authorization', `Bearer ${shared.token}`)
-      assert.equal(res.status, 204)
+      assert.equal(res.status, 200)
       const updatedLga = await knex('Lga').where({ id: lga.id }).first()
       expect(updatedLga).to.containSubset({
         id: lga.id,

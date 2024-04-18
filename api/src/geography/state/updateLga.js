@@ -3,7 +3,7 @@ const { transact } = require('../../db')
 const { getConstraints } = require('../../auth/constraints')
 const { getLga, getLgasByValue, upsertGeography } = require('./common/db')
 
-async function updateLga({ auth, params, payload }, h) {
+async function updateLga({ auth, params, payload }) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { lgaId } = params
   await validate(lgaId, payload, dataConstraints)
@@ -14,7 +14,7 @@ async function updateLga({ auth, params, payload }, h) {
   })
 
   const data = { id: lgaId, name: payload.name }
-  return h.response({ ok: true, data }).code(204)
+  return { ok: true, data }
 }
 
 async function validate(lgaId, values, dataConstraints) {

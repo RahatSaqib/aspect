@@ -71,7 +71,6 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         }
         if (resp.ok) {
           // HTTP Status === 2xx
-          if (resp.status === 204) return true
           return resp.json()
         }
         // HTTP Status !== 2xx
