@@ -180,7 +180,7 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
     // 50% are ('Detected','NotDetected')
     // 25% are ('Detected','Detected')
     // -----------------------------
-    const { geographyId, siteId } = device
+    const { siteId } = device
     await Promise.each(dataToSeed, async ({ midMonth, totalResults }) => {
       const getRandomDate = () => new Date(`${format(midMonth, 'yyyy-MM')}-01T01:00:00.000Z`)
       const samples = []
@@ -220,7 +220,6 @@ describe('Dashboard routes - GET /api/dashboard/results-transmitted', () => {
           externalId: `UQTB-${_.times(8, () => _.toUpper(_.random(36).toString(36))).join('')}`,
           assayId: assayGeneXpertMtbRif.id,
           partnerId,
-          geographyId,
           siteId,
           reportableSiteId: sample.originSiteId || siteId,
           deviceId,

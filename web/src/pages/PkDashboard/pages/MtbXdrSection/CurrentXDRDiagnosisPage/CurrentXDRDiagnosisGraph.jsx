@@ -1,19 +1,19 @@
-import React, { useEffect, useState, useRef } from 'react'
-import { Switch, FormControlLabel, Grid } from '@mui/material'
+import React, { useEffect, useRef, useState } from 'react'
+import { FormControlLabel, Grid, Switch } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { useLocation } from 'react-router'
+import { useNavigate } from 'react-router-dom'
 import {
-  StateSelect,
-  LgaSelect,
   ColumnGraph,
-  Loading,
+  formatDataByGraphType,
   genLabel,
+  LgaSelect,
+  Loading,
   negateTimeZoneOffset,
   objectToArray,
-  formatDataByGraphType,
+  StateSelect,
 } from '../../../../../cleanComponents'
 import intlMessages from '../../../../../cleanComponents/Graphs/graphMessages'
 import {
@@ -22,11 +22,11 @@ import {
 } from '../../../../../cleanComponents/Graphs/graphUtils'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAssayList from '../../../../../hooks/assay/useAssayList'
-import { useResultlist } from '../../../../../hooks/result'
 import useResultCategoryGroup from '../../../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../../../hooks/useAuthState'
-import useFilterValues from '../../../../../hooks/useFilterValues'
-import { graphMessages, getCustomMessage } from '../../../../../messages'
+import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
+import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
@@ -76,19 +76,21 @@ const CurrentXDRDiagnosisPage = () => {
   const { formatMessage, format } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const location = useLocation()
-  const filterValues = useFilterValues(location.pathname)
-  const filterRef = useRef(filterValues)
-  const [filter, setFilter] = useState({ ...filterValues })
+  const [filters, setFilter] = usePathFilter()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
+  const filterRef = useRef()
+  useEffect(() => {
+    filterRef.current = filters
+  }, [filters])
   const { data: assays, isLoading: isLoadingAssays } = useAssayList()
   const scopedAssays = assays?.filter(x => x.externalId === 'GxMtbXdr')
   const { data: resultCategoryGroups, isLoading: isLoadingResultCategoryGroups } = useResultCategoryGroup(
     scopedAssays?.map(x => x.id)
   )
-  const { navigateToResultList } = useResultlist()
 
   const { data, isLoading } = useQuery(
-    ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filter).concat(defaultFilters) }],
+    ['testPerformedMonthlyPercentage', { endPointParams: objectToArray(filters).concat(defaultFilters) }],
     async ({ queryKey: [, { endPointParams }] }) =>
       fetchWrapperForQueries({ endpoint: '/result/current-result-aggregations', params: endPointParams })
   )
@@ -139,10 +141,6 @@ const CurrentXDRDiagnosisPage = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, assays])
 
-  useEffect(() => {
-    filterRef.current = filter
-  }, [filter])
-
   return (
     <PkPage
       title={`${formatMessage(messages.peopleDiagnosedXdr)}`}
@@ -154,14 +152,14 @@ const CurrentXDRDiagnosisPage = () => {
             control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
           />
           <StateSelect
-            value={filter?.stateId ?? ''}
+            value={filters?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter?.lgaId ?? ''}
-            stateId={filter?.stateId}
+            value={filters?.lgaId ?? ''}
+            stateId={filters?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, messages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
@@ -189,16 +187,17 @@ const CurrentXDRDiagnosisPage = () => {
                       'Detected',
                       'Trace Detected',
                     ])
-                    navigateToResultList(
-                      {
-                        ...filterRef.current,
-                        minDate,
-                        maxDate,
-                        assayId: assayIds,
-                        resultCategoryGroupId,
-                      },
-                      { newFilters: filterRef.current, pathname: location.pathname }
-                    )
+                    const params = {
+                      ...filterRef.current,
+                      countryId: user.countryId,
+                      displayResult: 'actual',
+                      minDate,
+                      maxDate,
+                      assayId: assayIds,
+                      resultCategoryGroupId,
+                    }
+                    addFilter({ ...params }, '/browse/result')
+                    navigate('/browse/result')
                   })
                 }}
               />

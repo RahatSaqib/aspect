@@ -1,6 +1,12 @@
 import { defineMessages } from 'react-intl'
 
 const messages = defineMessages({
+  idleDialogTitle: { id: 'pages.IdleDialog.title', defaultMessage: 'Automatic Logout' },
+  idleDialogHelp: {
+    id: 'shared.IdleDialog.help',
+    defaultMessage:
+      'You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.',
+  },
   errorBoundaryMessage: {
     id: 'pages.errorBoundary.message',
     defaultMessage:

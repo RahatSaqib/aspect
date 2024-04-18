@@ -64,7 +64,7 @@
     "react-google-maps": "^9.4.5",
     "react-helmet": "^6.1.0",
     "react-icons": "^4.4.0",
-    "react-idle-timer": "^5.4.2",
+    "react-idle-timer": "^5.7.2",
     "react-intl": "^6.5.2",
     "react-jss": "^10.9.2",
     "react-query": "^3.39.2",

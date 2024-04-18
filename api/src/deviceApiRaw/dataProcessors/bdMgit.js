@@ -234,7 +234,6 @@ class DefaultBDMGIT extends SynchronousDataProcessor {
       const resultFields = {
         assayId: assayIds[0],
         partnerId: device.partnerId,
-        geographyId: site ? site.geographyId : null,
         siteId: site ? site.id : null,
         deviceId,
         longitude: site ? site.longitude : null,

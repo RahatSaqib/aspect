@@ -8,6 +8,7 @@ import { LgaSelect, StateSelect, Loading, ColumnLineGraph, getTimePeriod } from 
 import messages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import pkMessages from '../../../PkDashboard.Messages'
@@ -21,7 +22,7 @@ const DataVisualisationForXDRResistance = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState(undefined)
+  const [filters, setFilter] = usePathFilter(undefined)
   const lineSource = useMemo(
     () => [
       formatMessage(messages.FQRPercent),
@@ -35,8 +36,8 @@ const DataVisualisationForXDRResistance = () => {
   )
   const [lineFor, setLineFor] = useState(lineSource[0])
 
-  const mergedParams = filter
-    ? [...endpointParams, ...Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))]
+  const mergedParams = filters
+    ? [...endpointParams, ...Object.entries(omitBy(filters, isNil)).map(([name, value]) => ({ [name]: value }))]
     : [...endpointParams]
 
   const { isLoading, data } = useQuery(
@@ -140,14 +141,14 @@ const DataVisualisationForXDRResistance = () => {
             ))}
           </TextField>
           <StateSelect
-            value={filter?.stateId ?? ''}
+            value={filters?.stateId ?? ''}
             countryId={user.countryId}
             onChange={e => setFilter({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, pkMessages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter?.lgaId ?? ''}
-            stateId={filter?.stateId}
+            value={filters?.lgaId ?? ''}
+            stateId={filters?.stateId}
             onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, pkMessages, 'selectPlaceholder', user, { entity: 'lga' })}
           />

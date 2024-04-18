@@ -1,59 +1,30 @@
 const { knex, sortPageParams, filterDateRangeParams } = require('../../db')
-const {
-  getBaseQuery: getResultBaseQuery,
-  modifiers,
-  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY,
-} = require('../../result/query')
-const { XDR_RESISTANCES } = require('../../shared/constants')
+const { getFactResultCountBase, FACT_FIELD_SCOPE } = require('../../result/common/db')
+const { allResultCategoryToId } = require('../../shared/dictionary')
+const { getBaseQuery: getResultBaseQuery } = require('../../result/query')
 const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { getBasicsForDevicesReport } = require('../common/db')
 
-const xdrExtraColumns = Object.fromEntries(
-  XDR_RESISTANCES.map(resistance => [
-    resistance,
-    knex.raw(`SUM(
-    CASE WHEN
-      JSON_SEARCH(
-        r.resultData ->> '$.detectedResistance[*]',
-        'one',
-        '${resistance}'
-      ) IS NOT NULL
-    THEN 1 ELSE 0 END)`),
-  ])
-)
-
 async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
   const { deviceQuery } = await getBasicsForDevicesReport(dataConstraints, query)
-  const {
-    mtbDetectedRifNotDetected,
-    mtbDetectedRifDetected,
-    mtbNotDetected,
-    mtbInvalid,
-    mtbError,
-    mtbNoResult,
-    mtbDetectedRifIndeterminate,
-    mtbDetected,
-    mtbTraceDetected,
-  } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
+
+  const resultCategoryIds = await allResultCategoryToId()
+  const factResultCount = getFactResultCountBase({
+    resultCategoryIds,
+    dataConstraints,
+    query,
+    fieldsScope: [FACT_FIELD_SCOPE.all],
+    timeFrame: 'day',
+    assay: ['GxMtbRif', 'GxMtbRifUltra', 'GxMtbXdr'],
+  })
+    .select('d.id AS deviceId')
+    .groupBy('d.id')
 
   const resultsCount = getResultBaseQuery(knex, dataConstraints)
-    .modify(modifiers.join.resultCategory1)
-    .modify(modifiers.join.resultCategory2)
     .select({
-      ...xdrExtraColumns,
-      deviceId: 'deviceId',
-      mtbNotDetected,
-      mtbDetectedRifNotDetected,
-      mtbDetectedRifDetected,
-      mtbDetectedRifIndeterminate,
-      mtbError,
-      mtbNoResult,
-      mtbInvalid,
-      mtbDetected,
-      mtbTraceDetected,
-      totalXpertTests: knex.raw('count(*)'),
+      deviceId: 'r.deviceId',
       totalXpertModulesInUse: knex.raw('count(DISTINCT moduleName)'),
-      lastResultUploadedOn: knex.raw('MAX(r.createdOn)'),
+      lastResultUploadedOn: knex.raw('MAX(r.updatedOn)'),
       lastResultConductedOn: knex.raw('MAX(r.endedOn)'),
     })
     .groupBy('r.deviceId')
@@ -74,6 +45,7 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
     .leftJoin(resultsCount.as('resultsCount'), function () {
       this.on('resultsCount.deviceId', 'd.id')
     })
+    .leftJoin(factResultCount.as('factResultCount'), 'factResultCount.deviceId', 'd.id')
     .leftJoin(deviceInactiveDays.as('deviceInactiveDays'), function () {
       this.on('deviceInactiveDays.deviceId', 'd.id')
     })
@@ -116,23 +88,23 @@ async function getDevicesWithCountsForTB(dataConstraints, query, timezone) {
       knex.raw('d.ConfigurationData ->> "$.sim1SerialNumber" AS sim1SerialNumber'),
       knex.raw('d.ConfigurationData ->> "$.sim2SerialNumber" AS sim2SerialNumber'),
       knex.raw('IFNULL(resultsCount.totalXpertModulesInUse, 0) AS totalXpertModulesInUse'),
-      knex.raw('IFNULL(resultsCount.INH, 0) AS INH'),
-      knex.raw('IFNULL(resultsCount.FLQ, 0) AS FLQ'),
-      knex.raw('IFNULL(resultsCount.AMK, 0) AS AMK'),
-      knex.raw('IFNULL(resultsCount.KAN, 0) AS KAN'),
-      knex.raw('IFNULL(resultsCount.CAP, 0) AS CAP'),
-      knex.raw('IFNULL(resultsCount.ETH, 0) AS ETH'),
+      knex.raw('IFNULL(factResultCount.cnt_inh, 0) AS INH'),
+      knex.raw('IFNULL(factResultCount.cnt_flq, 0) AS FLQ'),
+      knex.raw('IFNULL(factResultCount.cnt_amk, 0) AS AMK'),
+      knex.raw('IFNULL(factResultCount.cnt_kan, 0) AS KAN'),
+      knex.raw('IFNULL(factResultCount.cnt_cap, 0) AS CAP'),
+      knex.raw('IFNULL(factResultCount.cnt_eth, 0) AS ETH'),
       knex.raw('IFNULL(deviceInactiveDays.totalInactiveDays, 0) AS totalInterruptedDays'),
-      knex.raw('IFNULL(resultsCount.mtbNotDetected, 0) AS totalMtbNegative'),
-      knex.raw('IFNULL(resultsCount.mtbDetected, 0) AS totalMtbDetected'),
-      knex.raw('IFNULL(resultsCount.mtbTraceDetected, 0) AS totalMtbTraceDetected'),
-      knex.raw('IFNULL(resultsCount.mtbDetectedRifNotDetected, 0) AS totalMtbSens'),
-      knex.raw('IFNULL(resultsCount.mtbDetectedRifDetected, 0) AS totalMtbRes'),
-      knex.raw('IFNULL(resultsCount.mtbDetectedRifIndeterminate, 0) AS totalMtbIndeterminate'),
-      knex.raw('IFNULL(resultsCount.mtbError, 0) AS totalErrors'),
-      knex.raw('IFNULL(resultsCount.mtbNoResult, 0) AS mtbNoResult'),
-      knex.raw('IFNULL(resultsCount.mtbInvalid, 0) AS mtbInvalid'),
-      knex.raw('IFNULL(resultsCount.totalXpertTests, 0) AS totalXpertResults'),
+      knex.raw('IFNULL(factResultCount.cnt_NotDetected, 0) AS totalMtbNegative'),
+      knex.raw('IFNULL(factResultCount.cnt_Detected, 0) AS totalMtbDetected'),
+      knex.raw('IFNULL(factResultCount.cnt_TraceDetected, 0) AS totalMtbTraceDetected'),
+      knex.raw('IFNULL(factResultCount.cnt_mtbDetectedRifNotDetected, 0) AS totalMtbSens'),
+      knex.raw('IFNULL(factResultCount.cnt_mtbDetectedRifDetected, 0) AS totalMtbRes'),
+      knex.raw('IFNULL(factResultCount.cnt_mtbDetectedRifIndeterminate, 0) AS totalMtbIndeterminate'),
+      knex.raw('IFNULL(factResultCount.cnt_Error, 0) AS totalErrors'),
+      knex.raw('IFNULL(factResultCount.cnt_NoResult, 0) AS mtbNoResult'),
+      knex.raw('IFNULL(factResultCount.cnt_Invalid, 0) AS mtbInvalid'),
+      knex.raw('IFNULL(factResultCount.cntAll, 0) AS totalXpertResults'),
       getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', timezone, 'lastPingOn'),
       getDateTimeProjectionInUserTimeZone(knex, 'resultsCount.lastResultUploadedOn', timezone, 'lastResultUploadedOn'),
       getDateTimeProjectionInUserTimeZone(
