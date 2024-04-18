@@ -1,5 +1,6 @@
 const _ = require('lodash')
-const { mergeResult, getResult, addResultWorkflowLogIfChanged } = require('../../../deviceApi/result')
+const { getResult, addResultWorkflowLogIfChanged } = require('../../../deviceApi/result')
+const { mergeResult } = require('../../../deviceApi/mergeResult')
 const { resultUpdated } = require('../../../result/actions')
 const { resultWorkflowStatusToId } = require('../../../shared/dictionary')
 
