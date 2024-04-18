@@ -1,16 +1,18 @@
 import React from 'react'
-import { Box } from '@mui/material'
+import { Box, Typography } from '@mui/material'
 import entries from 'lodash/entries'
 import get from 'lodash/get'
 import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import { ErrorRateFilter, Loading } from '../../../../../cleanComponents'
+import { ErrorRateFilter, LineGraph, Loading } from '../../../../../cleanComponents'
 import useFilterValues from '../../../../../hooks/useFilterValues'
+import { months } from '../../../../../messages'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
+import useDeviceErrorGraph from '../../../hooks/useDeviceErrorGraph'
 import messages from '../../../PkDashboard.Messages'
 
 const values = ['numberOfModules', 'cntMtbResults', 'cntMtbError', 'cntMtbInvalid', 'cntMtbNoResult']
@@ -134,6 +136,23 @@ const ErrorRatePage = () => {
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
   const { data, isLoading } = useDeviceErrors(filter)
+  const { data: graph, isLoading: isGraphLoading } = useDeviceErrorGraph(filter, {
+    select: ({ invalidResultsGraphData, errorResultsGraphData, noResultsGraphData }) => {
+      const formatGraph = array =>
+        array
+          .sort((a, b) => b.month - a.month || b.year - a.year)
+          .map(item => ({
+            year: String(item.year),
+            month: `${formatMessage(months[item.month - 1])}`,
+            value: item.percentage,
+          }))
+      return {
+        invalidResultsGraphData: formatGraph(invalidResultsGraphData),
+        errorResultsGraphData: formatGraph(errorResultsGraphData),
+        noResultsGraphData: formatGraph(noResultsGraphData),
+      }
+    },
+  })
 
   return (
     <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.genExpertError)}>
@@ -141,6 +160,25 @@ const ErrorRatePage = () => {
         <Loading />
       ) : (
         <NestedTable columns={columns} perPage={9999} rows={makeNestedData(data ?? [])} hasDetail />
+      )}
+
+      {isGraphLoading ? (
+        <Loading />
+      ) : (
+        <>
+          <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+            {formatMessage(messages.nationalErrorRates)}
+          </Typography>
+          <LineGraph data={graph?.invalidResultsGraphData} showLabel xField="month" yField="value" seriesField="year" />
+          <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+            {formatMessage(messages.nationalInvalidRates)}
+          </Typography>
+          <LineGraph data={graph?.errorResultsGraphData} showLabel xField="month" yField="value" seriesField="year" />
+          <Typography variant="h5" color="primary" style={{ margin: '32px 16px' }}>
+            {formatMessage(messages.nationalNoResultRates)}
+          </Typography>
+          <LineGraph data={graph?.noResultsGraphData} showLabel xField="month" yField="value" seriesField="year" />
+        </>
       )}
     </PkPage>
   )

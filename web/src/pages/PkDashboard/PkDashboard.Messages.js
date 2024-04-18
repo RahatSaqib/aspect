@@ -323,6 +323,18 @@ const messages = {
       id: 'p.PkDashboard.ProvincialFQDiagnosisTrends',
       defaultMessage: 'Provincial FQ Diagnosis Trends',
     },
+    nationalErrorRates: {
+      id: 'p.PkDashboard.nationalErrorRates',
+      defaultMessage: 'National Error Rates',
+    },
+    nationalInvalidRates: {
+      id: 'p.PkDashboard.nationalInvalidRates',
+      defaultMessage: 'National Invalid Rates',
+    },
+    nationalNoResultRates: {
+      id: 'p.PkDashboard.nationalNoResultRates',
+      defaultMessage: 'National No Result Rates',
+    },
     // 3rd column
     titlecoverage: { id: 'p.PkDashboard.titlecoverage', defaultMessage: 'Coverage' },
     coverageperformance: { id: 'p.PkDashboard.coverageperformance', defaultMessage: 'Performance' },
