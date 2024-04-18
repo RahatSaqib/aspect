@@ -411,7 +411,7 @@ const routes = [
                 .description('Member responsible for manually setting the status'),
               expectedBackOnline: Joi.string()
                 .allow('', null)
-                .description('The expected Online back date of the last the maintenance status'),
+                .description('The expected back online date of the last maintenance status'),
               deviceData: joiSingleDeviceStatusOverTime,
             }),
         }),
