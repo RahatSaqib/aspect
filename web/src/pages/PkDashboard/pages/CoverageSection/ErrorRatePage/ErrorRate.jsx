@@ -1,11 +1,12 @@
 import React from 'react'
+import { Box } from '@mui/material'
 import entries from 'lodash/entries'
 import get from 'lodash/get'
 import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import { Loading, ErrorRateFilter } from '../../../../../cleanComponents'
+import { ErrorRateFilter, Loading } from '../../../../../cleanComponents'
 import useFilterValues from '../../../../../hooks/useFilterValues'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
@@ -14,16 +15,65 @@ import messages from '../../../PkDashboard.Messages'
 
 const values = ['numberOfModules', 'cntMtbResults', 'cntMtbError', 'cntMtbInvalid', 'cntMtbNoResult']
 
+const GroupedHeader = ({ title, first, second }) => (
+  <Box style={{ width: '100%' }}>
+    <Box
+      sx={{
+        display: 'flex',
+      }}
+    >
+      <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end', mr: '-18px' }}>
+        <span>{first}</span>
+      </Box>
+      <Box sx={{ flex: 1, display: 'flex', justifyContent: 'flex-end' }}>
+        <Box sx={{ flex: 1, mt: '-10px', mr: '-18px' }}>{title}</Box>
+        <span>{second}</span>
+      </Box>
+    </Box>
+  </Box>
+)
+
 const columns = [
   { name: 'Devices', prop: 'name' },
   { name: 'Total Modules', prop: 'numberOfModules' },
   { name: 'Total Tests', prop: 'cntMtbResults' },
-  { name: '# Errors', prop: 'cntMtbError' },
-  { name: '% Errors', prop: 'errorPercent' },
-  { name: '# Invalid', prop: 'cntMtbInvalid' },
-  { name: '% Invalid', prop: 'invalidPercent' },
-  { name: '# No Result', prop: 'cntMtbNoResult' },
-  { name: '% No Result', prop: 'noResultPercent' },
+  {
+    name: <GroupedHeader title="Errors" first="#" second="%" />,
+    prop: 'cntMtbError',
+    rest: { colSpan: 2, align: 'center', sx: { p: 0 } },
+    cellProp: { sx: { p: 0 } },
+  },
+  {
+    name: '% Errors',
+    prop: 'errorPercent',
+    rest: { skip: true },
+    cellProp: { style: { padding: 0 } },
+  },
+  {
+    name: <GroupedHeader title="Invalid" first="#" second="%" />,
+    prop: 'cntMtbInvalid',
+    rest: { colSpan: 2, align: 'center', sx: { p: 0 } },
+    cellProp: { sx: { p: 0 } },
+  },
+  {
+    name: '% Invalid',
+    prop: 'invalidPercent',
+    rest: { skip: true },
+    cellProp: { sx: { p: 0 } },
+  },
+
+  {
+    name: <GroupedHeader title="No Result" first="#" second="%" />,
+    prop: 'cntMtbNoResult',
+    rest: { colSpan: 2, align: 'center', sx: { p: 0 } },
+    cellProp: { sx: { p: 0 } },
+  },
+  {
+    name: '% No Result',
+    prop: 'noResultPercent',
+    rest: { skip: true },
+    cellProp: { sx: { p: 0 } },
+  },
 ]
 
 const childrenKey = 'children'
