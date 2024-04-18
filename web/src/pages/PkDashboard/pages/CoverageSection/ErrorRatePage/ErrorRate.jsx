@@ -39,15 +39,15 @@ const createNode = (name, parent) => {
     },
     { name, id: name }
   )
-  const errorPercent = (data?.cntMtbError / data?.cntMtbResults) * 100
-  const invalidPercent = (data?.cntMtbInvalid / data?.cntMtbResults) * 100
-  const noResultPercent = (data?.cntMtbNoResult / data?.cntMtbResults) * 100
+  const errorPercent = (data?.cntMtbError / data?.cntMtbResults) * 100 || 0
+  const invalidPercent = (data?.cntMtbInvalid / data?.cntMtbResults) * 100 || 0
+  const noResultPercent = (data?.cntMtbNoResult / data?.cntMtbResults) * 100 || 0
 
   return {
     ...data,
-    errorPercent: `${errorPercent.toPrecision(3)} %`,
-    invalidPercent: `${invalidPercent.toPrecision(3)} %`,
-    noResultPercent: `${noResultPercent.toPrecision(3)} %`,
+    errorPercent: `${errorPercent.toFixed(1)} %`,
+    invalidPercent: `${invalidPercent.toFixed(1)} %`,
+    noResultPercent: `${noResultPercent.toFixed(1)} %`,
   }
 }
 

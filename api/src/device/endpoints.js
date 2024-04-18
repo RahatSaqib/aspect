@@ -29,6 +29,7 @@ const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 const { deviceReport } = require('./serviceReports/deviceReport')
+const getMtbErrorsAgg = require('./getErrorAggregate')
 
 const routes = [
   {
@@ -751,6 +752,26 @@ const routes = [
       },
     },
   },
+  {
+    method: 'GET',
+    path: '/device/mtb-errors-graph',
+    handler: getMtbErrorsAgg,
+    config: {
+      description: 'List of Devices with 6- and 1-color modules aggregations',
+      notes: 'List is prepared for expandable table with nested rows for country-state-lga-site-device levels',
+      auth: { scope: ['device:view'] },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.object().keys({
+            invalidResultsGraphData: Joi.array().required().description('Invalid tests graph (% and months)'),
+            errorResultsGraphData: Joi.array().required().description('Error tests aggregate (% and months)'),
+            noResultsGraphData: Joi.array().required('no results tests aggregate (% and months)')
+          }),
+        }),
+      }
+    },
+  }
 ]
 
 module.exports = { routes }
