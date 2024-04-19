@@ -106,7 +106,7 @@ const getRawLinks = f => [
   {
     href: '/browse/inventory',
     label: f(messages.supplies),
-    perm: ['browse', '+inventory'],
+    perm: ['supplies'],
     submenu: [
       { href: '/browse/inventory/supplies', label: f(messages.inventoryItems), perm: ['inventory'] },
       { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },

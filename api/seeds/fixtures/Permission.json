@@ -119,6 +119,10 @@
     {
       "name": "dashboard-v2",
       "activities": ["view"]
+    },
+    {
+      "name": "supplies",
+      "activities": ["view"]
     }
   ]
 }
