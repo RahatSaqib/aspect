@@ -10,7 +10,7 @@ const getDeviceErrors = async params =>
   }).then(response => response.data)
 
 const useDeviceErrorGraph = (params, options) => {
-  return useQuery([DEVICE_ERRORS_GRAPH_KEY, params], () => getDeviceErrors(), options)
+  return useQuery([DEVICE_ERRORS_GRAPH_KEY, params], () => getDeviceErrors(params), options)
 }
 
 export default useDeviceErrorGraph
