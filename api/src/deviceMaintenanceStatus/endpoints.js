@@ -16,7 +16,7 @@ const routes = [
       validate: {
         query: {
           minDate: Joi.date().iso().required().description('From Date, inclusive'),
-          maxDate: Joi.date().iso().required().description('to Date, inclusive'),
+          maxDate: Joi.date().iso().required().description('To Date, inclusive'),
         },
       },
       response: {
