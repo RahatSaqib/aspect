@@ -29,7 +29,6 @@ const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 const { deviceReport } = require('./serviceReports/deviceReport')
-const { REGEX_ISODATESTRING } = require('../shared/date')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
 
 const routes = [
@@ -374,8 +373,8 @@ const routes = [
               'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.expectedBackOnline'
             ),
           parentQuery: Joi.object().keys({
-            minDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('From Date, inclusive'),
-            maxDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('To Date, inclusive'),
+            minDate: Joi.date().iso().required().description('From Date, inclusive'),
+            maxDate: Joi.date().iso().required().description('To Date, inclusive'),
           }),
         },
       },
@@ -455,8 +454,8 @@ const routes = [
             .allow('', null)
             .description('The expected Online back date of the last the maintenance status'),
           parentQuery: Joi.object().keys({
-            minDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('From Date, inclusive'),
-            maxDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('To Date, inclusive'),
+            minDate: Joi.date().iso().required().description('From Date, inclusive'),
+            maxDate: Joi.date().iso().required().description('To Date, inclusive'),
           }),
         },
       },

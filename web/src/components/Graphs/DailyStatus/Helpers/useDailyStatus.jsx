@@ -1,4 +1,7 @@
 import { useEffect, useState, useCallback } from 'react'
+import endOfMonth from 'date-fns/endOfMonth'
+import format from 'date-fns/format'
+import startOfMonth from 'date-fns/startOfMonth'
 import cloneDeep from 'lodash/cloneDeep'
 import findIndex from 'lodash/findIndex'
 import findLastIndex from 'lodash/findLastIndex'
@@ -7,10 +10,22 @@ import { useQueryClient, useMutation, useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../../../QueryFetch/Device'
 import { replaceRouteParams } from '../../../QueryFetch/Helpers'
-import { extractOptionValue } from '../../Helpers/Formatters'
 import messages from '../messages'
 import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
 
+const getParamsFormatted = params => {
+  const { minDate, maxDate } = params
+  return {
+    ...params,
+    minDate: format(minDate, "yyyy-MM-dd'T'00:00:00.000'Z'"),
+    maxDate: format(maxDate, "yyyy-MM-dd'T'23:59:59.999'Z'"),
+  }
+}
+
+/**
+ * Notice that `minDate` and `maxDate` are local Date objects
+ * (not modified into UTC or ISO)
+ */
 const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extraParams = {}) => {
   const queryClient = useQueryClient()
   const { formatMessage } = useIntl()
@@ -22,9 +37,7 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
     key: 'all',
   })
   const [params, setParams] = useState({ minDate, maxDate })
-  const startOfMonth = new Date(params.minDate)
-  const endOfPeriodDate = new Date(params.maxDate)
-  const dateRanges = dateRangeByWeekDay(startOfMonth, endOfPeriodDate)
+  const dateRanges = dateRangeByWeekDay(params.minDate, params.maxDate)
   const totalDays = getTotalDays(params)
 
   const {
@@ -38,7 +51,11 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
       fetchWrapperForQueries({
         endpoint,
         params:
-          minDate && maxDate ? { ...params, ...extraParams } : Object.keys(extraParams).length > 0 ? extraParams : null,
+          params.minDate && params.maxDate
+            ? { ...getParamsFormatted(params), ...extraParams }
+            : Object.keys(extraParams).length > 0
+            ? extraParams
+            : null,
       }),
     {
       onSuccess: responseData => {
@@ -48,7 +65,7 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
   )
 
   const { mutate: changeDeviceStatus } = useMutation(
-    ({ deviceId, values, parentQuery }) =>
+    ({ deviceId, values }) =>
       fetchWrapperForQueries({
         endpoint: replaceRouteParams(DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ENDPOINT, { deviceId }),
         method: 'POST',
@@ -57,7 +74,12 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
           dateFrom: values.startedOn,
           dateTo: values.endedOn,
           notes: values.note,
-          parentQuery,
+          /**
+           * use params from filters for entire component - needed on API side to
+           * return data for whole period (not only for selected date range) in order
+           * to show correct value for daysInSameStatus
+           */
+          parentQuery: getParamsFormatted(params),
         },
         customErrorNotifications: DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ERRORS,
       }),
@@ -125,8 +147,11 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
     }
   }, [statuses, visibleStatuses])
 
-  const updateFromActionComponent = ({ identifier, selectedOption }) =>
-    setParams(extractOptionValue(identifier, selectedOption))
+  const updateFromActionComponent = ({ selectedOption }) => {
+    const minDate = startOfMonth(new Date(selectedOption.value.minDate))
+    const maxDate = endOfMonth(new Date(selectedOption.value.maxDate))
+    setParams({ minDate, maxDate })
+  }
 
   /**
    * getDeviceDayDetails

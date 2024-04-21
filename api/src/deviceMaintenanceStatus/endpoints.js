@@ -4,8 +4,6 @@ const { asyncHandler } = require('../routes')
 const { deviceStatusOverTime, deviceStatusLastReported } = require('./service')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
 
-const { REGEX_ISODATESTRING } = require('../shared/date')
-
 const routes = [
   {
     method: 'GET',
@@ -17,8 +15,8 @@ const routes = [
       auth: { scope: ['device', 'operationalData'] },
       validate: {
         query: {
-          minDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('From Date, inclusive'),
-          maxDate: Joi.string().pattern(REGEX_ISODATESTRING).required().description('To Date, inclusive'),
+          minDate: Joi.date().iso().required().description('From Date, inclusive'),
+          maxDate: Joi.date().iso().required().description('to Date, inclusive'),
         },
       },
       response: {

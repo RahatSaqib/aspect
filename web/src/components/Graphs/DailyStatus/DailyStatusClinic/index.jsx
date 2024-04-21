@@ -46,8 +46,8 @@ const DailyStatusClinic = ({ name, data, deviceId, total, statuses, consts, tota
               />
             ) : null
         )}
-        {fillerDays.map(() => (
-          <DayBlock dayModifier="future" consts={consts} />
+        {fillerDays.map(x => (
+          <DayBlock dayModifier="future" consts={consts} key={x} onClick={() => {}} />
         ))}
         <div
           className={styles.clinic__testtotal}
