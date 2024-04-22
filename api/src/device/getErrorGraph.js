@@ -1,6 +1,5 @@
-const { getConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints } = require('../auth/constraints')
 const { knex } = require('../db')
-const { getBaseQuery } = require('../result/query')
 const { getOffsetFromUser } = require('../shared/date')
 const { allResultCategoryToId, allAssayToId } = require('../shared/dictionary')
 
@@ -18,17 +17,25 @@ const calculatePercentage = errorResultAgg => {
 const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, offset, state) => {
   const tzOffset = `CONVERT_TZ(r.endedOn, "+00:00", "${offset}")`
 
-  return getBaseQuery(knex, dataConstraints)
+  const uniqueResults = knex('Result as r')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
+    .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .join('Device as d', 'd.id', 'r.deviceId')
-    .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+    .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .innerJoin('Assay as a', 'a.deviceTypeId', 'dt.id')
+    .modify(addConstraints, dataConstraints, {
+      result: 'r',
+      geography: 'g',
+      site: 'si',
+      device: 'd',
+      deviceType: 'dt',
+    })
     .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
     .where('dt.externalId', 'CepheidGeneXpert')
     .whereRaw(`${tzOffset} >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)`)
-    .select(
-      knex.raw(`YEAR(${tzOffset}) AS year, MONTH(${tzOffset}) AS month, COUNT(*) AS total,
-                  SUM(CASE WHEN resultCategory1 = ${categoryId} THEN 1 ELSE 0 END) AS categoryTotal`)
-    )
-    .groupBy(knex.raw(`YEAR(${tzOffset}), MONTH(${tzOffset})`))
+    .distinct('r.id')
+    .select('r.resultCategory1', knex.raw(`YEAR(${tzOffset}) AS year, MONTH(${tzOffset}) AS month`))
     .orderBy('year', 'month')
     .modify(queryBuilder => {
       if (state) {
@@ -39,6 +46,18 @@ const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, offset, 
         queryBuilder.join('State as s', 'g.stateId', 's.id').whereIn('s.id', stateIds)
       }
     })
+
+  const query = knex({ ur: uniqueResults })
+    .select(
+      knex.raw(`COUNT(*) AS total`),
+      'year',
+      'month',
+      knex.raw(`SUM(CASE WHEN ur.resultCategory1 = ? THEN 1 ELSE 0 END) AS categoryTotal`, [categoryId])
+    )
+    .groupBy('year', 'month')
+    .orderBy('year', 'month')
+
+  return query
 }
 
 const getMtbErrorGraph = async request => {
