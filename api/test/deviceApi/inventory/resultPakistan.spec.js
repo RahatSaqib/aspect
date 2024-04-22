@@ -199,8 +199,6 @@ describe('inventory strategy for Pakistan', () => {
       })
       .set('Authorization', clientAuth)
 
-    console.log(res)
-
     assert.equal(res.status, 404)
     assert.typeOf(res.body, 'Object')
     assert.property(res.body, 'message')
