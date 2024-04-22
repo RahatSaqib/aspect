@@ -16,10 +16,6 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
         module: 'issue',
         activity: 'edit',
       },

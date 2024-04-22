@@ -5,6 +5,7 @@ const {
   regionalOfficer,
   mergeJobFunctions,
   technician,
+  aspectBeta,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
@@ -16,10 +17,6 @@ module.exports = [
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -115,10 +112,6 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
         module: 'notification',
         activity: 'edit',
       },
@@ -176,10 +169,6 @@ module.exports = [
       },
       {
         module: 'deviceApiKey',
-        activity: 'view',
-      },
-      {
-        module: 'inventory',
         activity: 'view',
       },
       {
@@ -259,10 +248,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'notification',
         activity: 'view',
       },
@@ -309,4 +294,5 @@ module.exports = [
     ],
   }),
   technician,
+  aspectBeta,
 ]
