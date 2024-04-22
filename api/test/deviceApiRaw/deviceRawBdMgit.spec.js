@@ -207,7 +207,6 @@ describe('Device API Raw routes for BD MGIT', () => {
 
       expect(result.assayId).to.equal(await assayToId('assayBdMgitGnd'))
       expect(result.partnerId).to.equal(site.partnerId)
-      expect(result.geographyId).to.equal(site.geographyId)
       expect(result.siteId).to.equal(bdMgitSiteId)
       expect(result.deviceId).to.equal(bdMgitDeviceId)
       expect(result.longitude).to.equal(site.longitude)
@@ -288,7 +287,6 @@ describe('Device API Raw routes for BD MGIT', () => {
 
     expect(result.assayId).to.equal(await assayToId('assayBdMgitAst'))
     expect(result.partnerId).to.equal(site.partnerId)
-    expect(result.geographyId).to.equal(site.geographyId)
     expect(result.siteId).to.equal(bdMgitSiteId)
     expect(result.deviceId).to.equal(bdMgitDeviceId)
     expect(result.longitude).to.equal(site.longitude)

@@ -46,13 +46,7 @@ describe('Device API routes for GxAlert Device', () => {
     const macAddress = 'MAC00000000PING'
 
     const context = createContext()
-    const {
-      beforeCreateGxAlertApiKey,
-      useGxAlertDeviceId,
-
-      getCurrentGeneXpertDevice,
-      afterCleanUp,
-    } = context
+    const { beforeCreateGxAlertApiKey, useGxAlertDeviceId, getCurrentGeneXpertDevice, afterCleanUp } = context
     let { deviceAuth, basicDevicePayload } = context
 
     beforeEach(async () => {
@@ -146,7 +140,6 @@ describe('Device API routes for GxAlert Device', () => {
       beforeCreateGxAlertApiKey,
       useGxAlertDeviceId,
       basicDevicePayload,
-
       getLastResult,
       getResult,
       getCurrentGeneXpertDevice,
@@ -1560,9 +1553,15 @@ describe('Device API routes for GxAlert Device', () => {
               payload: incompleteResultPayload,
               expectedStatusCode: 200,
             })
+
             const {
               body: {
-                result: { id: incompleteResultId, externalId: incompleteResultExternalId },
+                result: {
+                  id: incompleteResultId,
+                  externalId: incompleteResultExternalId,
+                  siteId: incompleteSiteId,
+                  deviceId: incompleteDeviceId,
+                },
               },
             } = deviceApiResponse
 
@@ -1583,6 +1582,7 @@ describe('Device API routes for GxAlert Device', () => {
 
             const completeResultPayload = _.merge({}, incompleteResultPayload, {
               result: {
+                name: 'different Device',
                 endedOn,
                 data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
               },
@@ -1593,9 +1593,15 @@ describe('Device API routes for GxAlert Device', () => {
               payload: completeResultPayload,
               expectedStatusCode: 200,
             })
+
             const {
               body: {
-                result: { id: completeResultId, externalId: completeResultExternalId },
+                result: {
+                  id: completeResultId,
+                  externalId: completeResultExternalId,
+                  siteId: completeSiteId,
+                  deviceId: completeDeviceId,
+                },
               },
             } = deviceApiResponse
 
@@ -1610,10 +1616,13 @@ describe('Device API routes for GxAlert Device', () => {
                 resultText: 'DETECTED MEDIUM|INDETERMINATE|',
               },
             })
-            assert.equal(completeResultId, incompleteResultId)
-            assert.notEqual(completeResultExternalId, incompleteResultExternalId)
+            assert.equal(completeSiteId, incompleteSiteId, 'site should be the same')
+            assert.equal(completeDeviceId, incompleteDeviceId, 'device should be the same')
+            assert.equal(completeResultId, incompleteResultId, 'resultId should be the same')
+            assert.notEqual(completeResultExternalId, incompleteResultExternalId, 'externalId should be different')
           })
-          it("should NOT merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", async () => {
+
+          it("if cartridge serial is not valid, should NOT merge with the existing result, matched by instrument and cartridge serials, and update it's external ID", async () => {
             const { deviceAuth } = context
             const instrumentSerial = '803165'
             const cartridgeSerial = '12345'
@@ -1668,6 +1677,105 @@ describe('Device API routes for GxAlert Device', () => {
               },
             } = deviceApiResponse
             assert.notEqual(incompleteResultId, completeResultId)
+          })
+
+          it('if Device Api Key changes, the result must not change device or site', async () => {
+            const { deviceAuth } = context
+            const instrumentSerial = '803165'
+            const cartridgeSerial = '725194650'
+            const startedOnDate = setMilliseconds(now, 0)
+            const startedOn = dateFormat(startedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+            const incompleteResultPayload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+              result: {
+                startedOn,
+                endedOn: null,
+                instrument: {
+                  serial: instrumentSerial,
+                },
+                consumable: {
+                  serial: cartridgeSerial,
+                },
+                data: { resultText: 'NO RESULT' },
+              },
+            })
+            delete incompleteResultPayload.result.id
+            // Initial incomplete result details
+            let deviceApiResponse = await postToDeviceApi({
+              authHeader: deviceAuth,
+              payload: incompleteResultPayload,
+              expectedStatusCode: 200,
+            })
+
+            const {
+              body: {
+                result: {
+                  id: incompleteResultId,
+                  externalId: incompleteResultExternalId,
+                  siteId: incompleteSiteId,
+                  deviceId: incompleteDeviceId,
+                },
+              },
+            } = deviceApiResponse
+
+            const incompleteResult = await getResult(incompleteResultId)
+            expect(incompleteResult).to.containSubset({
+              externalId: incompleteResultExternalId,
+              resultCategory1: 'NoResult',
+              resultCategory2: null,
+              startedOn: startedOnDate,
+              endedOn: null,
+              resultData: {
+                resultText: 'NO RESULT',
+              },
+            })
+
+            const endedOnDate = addMinutes(startedOnDate, 103)
+            const endedOn = dateFormat(endedOnDate, "yyyy-MM-dd'T'HH:mm:ss'Z'")
+
+            const completeResultPayload = _.merge({}, incompleteResultPayload, {
+              result: {
+                name: 'different Device',
+                endedOn,
+                data: { resultText: 'DETECTED MEDIUM|INDETERMINATE|' },
+              },
+            })
+            const newContext = createContext() // Changing API Key, the device is different, but the result should not update site or device
+            await newContext.beforeCreateGxAlertApiKey()
+            const { deviceAuth: newDeviceAuth } = newContext
+            // Then complete result details
+            deviceApiResponse = await postToDeviceApi({
+              authHeader: newDeviceAuth,
+              payload: completeResultPayload,
+              expectedStatusCode: 200,
+            })
+
+            const {
+              body: {
+                result: {
+                  id: completeResultId,
+                  externalId: completeResultExternalId,
+                  siteId: completeSiteId,
+                  deviceId: completeDeviceId,
+                },
+              },
+            } = deviceApiResponse
+
+            const completeResult = await getResult(completeResultId)
+            expect(completeResult).to.containSubset({
+              externalId: completeResultExternalId,
+              resultCategory1: 'Detected',
+              resultCategory2: 'Indeterminate',
+              startedOn: startedOnDate,
+              endedOn: endedOnDate,
+              resultData: {
+                resultText: 'DETECTED MEDIUM|INDETERMINATE|',
+              },
+            })
+            assert.equal(completeSiteId, incompleteSiteId, 'site should be the same')
+            assert.equal(completeDeviceId, incompleteDeviceId, 'device should be the same')
+            assert.equal(completeResultId, incompleteResultId, 'resultId should be the same')
+            assert.notEqual(completeResultExternalId, incompleteResultExternalId, 'externalId should be different')
           })
         })
       })
