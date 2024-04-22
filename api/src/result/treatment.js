@@ -44,7 +44,7 @@ async function confirmedTreatmentTracking(request) {
     // filter by access level of current user
     .leftOuterJoin('Site as s', 'r.siteId', 's.id')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .leftOuterJoin('Geography as g', 'r.geographyId', 'g.id')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .innerJoin('Sample as sp', 'r.sampleId', 'sp.id')
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     // add joins and different counts for results - (not)onTreatment, requiresTreatment, notPossible, ...

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-04-04T03:20:05.458Z\n"
+"POT-Creation-Date: 2024-04-10T23:22:59.456Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2032,6 +2032,15 @@ msgstr "Không thể đăng nhập bằng thông tin đăng nhập của bạn"
 msgid "Count (1-100)"
 msgstr "Đếm (1-100)"
 
+#. [p.PkDashboard.peopleTestedRifTooltip]
+#. defaultMessage is:
+#. Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.
+#: extracted_strings.json
+msgid ""
+"Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including "
+"'No Result', 'Error', 'Indeterminate', 'Invalid'."
+msgstr ""
+
 #. [filter.popover.country]
 #. defaultMessage is:
 #. Country
@@ -2342,12 +2351,12 @@ msgstr "Chẩn đoán RRTB hiện tại"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Xu hướng chẩn đoán kháng Rifampicin hiện tại"
 
-#. [p.PkDashboard.rrtbDiagnosisTitle]
+#. [p.PkDashboard.rrtbDiagnosisTitle1]
 #. defaultMessage is:
-#. Current Rifampicin Resistance Diagnosis using MTB/Rif Assay
+#. Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay
 #: extracted_strings.json
-msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Assay"
-msgstr "Chẩn đoán kháng Rifampicin hiện tại bằng xét nghiệm MTB/Rif"
+msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
+msgstr "Chẩn đoán kháng Rifampicin hiện tại bằng xét nghiệm MTB/Rif Ultra"
 
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
@@ -2531,19 +2540,15 @@ msgstr "Daktari HIV-VL"
 msgid "Damage"
 msgstr "Hư hại"
 
+#. [header.link.dashboardv2.title]
+#. defaultMessage is:
+#. Dashboard
 #. [pages.OperationalDashboard.dashboard]
 #. defaultMessage is:
 #. Dashboard
 #: extracted_strings.json
 msgid "Dashboard"
 msgstr "Bảng điều khiển"
-
-#. [header.link.dashboardv2.title]
-#. defaultMessage is:
-#. Dashboard v2
-#: extracted_strings.json
-msgid "Dashboard v2"
-msgstr "Bảng điều khiển v2"
 
 #. [pages.DeviceList.dataHealth]
 #. defaultMessage is:
@@ -4026,19 +4031,19 @@ msgstr "Đã phát hiện FQ-R"
 msgid "FQ-R cases diagnosed in current year"
 msgstr "Các trường hợp FQ-R được chẩn đoán trong năm hiện tại"
 
-#. [p.PkDashboard.FQRPerDay]
-#. defaultMessage is:
-#. FQ-R cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "FQ-R cases diagnosed in last 24 hours"
-msgstr "Các trường hợp FQ-R được chẩn đoán trong 24 giờ qua"
-
 #. [p.PkDashboard.FQRPerYear]
 #. defaultMessage is:
 #. FQ-R cases diagnosed this year
 #: extracted_strings.json
 msgid "FQ-R cases diagnosed this year"
 msgstr "Các trường hợp FQ-R được chẩn đoán trong năm nay"
+
+#. [p.PkDashboard.FQRToday]
+#. defaultMessage is:
+#. FQ-R cases diagnosed today
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed today"
+msgstr "Các trường hợp FQ-R được chẩn đoán ngày hôm nay"
 
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
@@ -5810,19 +5815,6 @@ msgstr "Ngôn ngữ & Múi giờ"
 #: extracted_strings.json
 msgid "Last"
 msgstr "Cuối cùng"
-
-#. [p.PkDashboard.molecularAssay24]
-#. defaultMessage is:
-#. Last 24 hours
-#. [p.PkDashboard.TB24]
-#. defaultMessage is:
-#. Last 24 hours
-#. [p.PkDashboard.RTTB24]
-#. defaultMessage is:
-#. Last 24 hours
-#: extracted_strings.json
-msgid "Last 24 hours"
-msgstr "24 giờ qua"
 
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
@@ -9092,19 +9084,19 @@ msgstr "Tỷ lệ kháng Rif (% kết quả dương tính)"
 msgid "RR cases diagnosed"
 msgstr "trường hợp RR được chẩn đoán"
 
-#. [p.PkDashboard.RRPerDay]
-#. defaultMessage is:
-#. RR cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "RR cases diagnosed in last 24 hours"
-msgstr "Các trường hợp RR được chẩn đoán trong 24 giờ qua"
-
 #. [p.PkDashboard.RRPerYear]
 #. defaultMessage is:
 #. RR cases diagnosed this year
 #: extracted_strings.json
 msgid "RR cases diagnosed this year"
 msgstr "Các trường hợp RR được chẩn đoán trong năm nay"
+
+#. [p.PkDashboard.RRToday]
+#. defaultMessage is:
+#. RR cases diagnosed today
+#: extracted_strings.json
+msgid "RR cases diagnosed today"
+msgstr "Các trường hợp RR được chẩn đoán ngày hôm nay"
 
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
@@ -11517,19 +11509,19 @@ msgstr "Xu hướng chẩn đoán bệnh lao và RRTB"
 msgid "TB cases diagnosed in"
 msgstr "Các trường hợp lao được chẩn đoán trong"
 
-#. [p.PkDashboard.xdrTBLastDay]
-#. defaultMessage is:
-#. TB cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "TB cases diagnosed in last 24 hours"
-msgstr "Số ca bệnh lao được chẩn đoán trong 24 giờ qua"
-
 #. [p.PkDashboard.xdrTBCasesPerYear]
 #. defaultMessage is:
 #. TB cases diagnosed this year
 #: extracted_strings.json
 msgid "TB cases diagnosed this year"
 msgstr "Số ca bệnh lao được chẩn đoán trong năm nay"
+
+#. [p.PkDashboard.xdrTBToday]
+#. defaultMessage is:
+#. TB cases diagnosed today
+#: extracted_strings.json
+msgid "TB cases diagnosed today"
+msgstr "Các trường hợp mắc bệnh lao được chẩn đoán hôm nay"
 
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
@@ -11744,19 +11736,19 @@ msgstr ""
 "Các thử nghiệm được phát hiện cho các ngày hết hạn sau khi hàng tồn kho "
 "không được theo dõi tại vị trí của thiết bị hoặc nhà kho phục vụ vị trí đó."
 
-#. [p.PkDashboard.testPerDay]
-#. defaultMessage is:
-#. Tests performed in last 24 hours
-#: extracted_strings.json
-msgid "Tests performed in last 24 hours"
-msgstr "Các thử nghiệm được thực hiện trong 24 giờ qua"
-
 #. [p.PkDashboard.testPerYear]
 #. defaultMessage is:
 #. Tests performed this year
 #: extracted_strings.json
 msgid "Tests performed this year"
 msgstr "Không có thử nghiệm nào được thực hiện"
+
+#. [p.PkDashboard.testToday]
+#. defaultMessage is:
+#. Tests performed today
+#: extracted_strings.json
+msgid "Tests performed today"
+msgstr "Các thử nghiệm được thực hiện ngày hôm nay"
 
 #. [component.Widget.bangladeshAverageCompletionDescription]
 #. defaultMessage is:
@@ -12622,6 +12614,15 @@ msgid "To..."
 msgstr "Từ..."
 
 #. [pages.dateRangeSelector.today]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.molecularAssay25]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.TB25]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.RTTB25]
 #. defaultMessage is:
 #. Today
 #: extracted_strings.json
@@ -14332,6 +14333,24 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
+
+#~ msgid "Dashboard v2"
+#~ msgstr "Bảng điều khiển v2"
+
+#~ msgid "FQ-R cases diagnosed in last 24 hours"
+#~ msgstr "Các trường hợp FQ-R được chẩn đoán trong 24 giờ qua"
+
+#~ msgid "Last 24 hours"
+#~ msgstr "24 giờ qua"
+
+#~ msgid "RR cases diagnosed in last 24 hours"
+#~ msgstr "Các trường hợp RR được chẩn đoán trong 24 giờ qua"
+
+#~ msgid "TB cases diagnosed in last 24 hours"
+#~ msgstr "Số ca bệnh lao được chẩn đoán trong 24 giờ qua"
+
+#~ msgid "Tests performed in last 24 hours"
+#~ msgstr "Các thử nghiệm được thực hiện trong 24 giờ qua"
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Vui lòng chọn một đơn vị other"

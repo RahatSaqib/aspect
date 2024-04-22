@@ -1,4 +1,4 @@
-const { assert } = require('chai')
+const { assert, expect } = require('chai')
 
 const { parseISO } = require('date-fns')
 const {
@@ -20,6 +20,8 @@ const {
   slideDateToTimeZone,
   formatDateInTimeZone,
   replaceOffset,
+  getDateTimeProjectionInTimeZoneIANA,
+  getDateTimeExpressionInTimeZone,
 } = require('../../src/shared/date')
 
 describe('Shared Date Utility Functions', () => {
@@ -451,6 +453,69 @@ describe('Shared Date Utility Functions', () => {
           `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
         )
       }
+    })
+  })
+})
+
+describe('replaceOffset', () => {
+  it('should return the input date slided the amount of hours between UTC and the target time zone and formatted in ISO-8601 full format, with the correct offset for the target time zone in the input date', () => {
+    const tzFixtures = [
+      {
+        tz: 'America/Argentina/Buenos_Aires',
+        date: '2023-01-01T00:00:00Z',
+        expectedDate: '2023-01-01T00:00:00-03:00',
+      },
+      { tz: 'Asia/Baku', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+04:00' },
+
+      { tz: 'Asia/Dhaka', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+06:00' },
+      { tz: 'Pacific/Fiji', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+12:00' },
+      { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00Z' },
+      { tz: 'Canada/Atlantic', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00-04:00' },
+      { tz: 'Canada/Atlantic', date: '2023-11-01', expectedDate: '2023-11-01T00:00:00-03:00' },
+    ]
+
+    for (const f of tzFixtures) {
+      assert.equal(
+        replaceOffset(new Date(f.date), f.tz),
+        f.expectedDate,
+        `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
+      )
+    }
+  })
+})
+
+describe('Date functions', () => {
+  const knex = require('knex')({
+    client: 'mysql',
+  })
+  describe('getDateTimeProjectionInTimeZoneIANA', () => {
+    it('should return the correct SQL expression', () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka', 'lastSeen')
+      expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka") as lastSeen')
+    })
+
+    it('should use alias parameter if it has been provided', () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastSeenOn', 'Asia/Dhaka', 'iWantThisAlias')
+      expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka") as iWantThisAlias')
+    })
+
+    it('should return empty alias if none is provided', () => {
+      const result = getDateTimeProjectionInTimeZoneIANA(knex, 'lastSeenOn', 'Asia/Dhaka')
+      expect(result.toString()).to.equal('CONVERT_TZ(lastSeenOn, "+00:00", "Asia/Dhaka")')
+    })
+
+    it('should skip alias in the return value if alias parameter is null or undefined', () => {
+      for (const emptyAlias of [null, '']) {
+        const result = getDateTimeProjectionInTimeZoneIANA(knex, 'r.lastSeen', 'Asia/Dhaka', emptyAlias)
+        expect(result.toString()).to.equal('CONVERT_TZ(r.lastSeen, "+00:00", "Asia/Dhaka")')
+      }
+    })
+  })
+
+  describe('getDateTimeExpressionInTimeZone', () => {
+    it('should return the correct SQL expression', () => {
+      const result = getDateTimeExpressionInTimeZone(knex, 'd.lastSeenOn', 'Asia/Dhaka')
+      expect(result.toString()).to.equal('CONVERT_TZ(d.lastSeenOn, "+00:00", "Asia/Dhaka")')
     })
   })
 })

@@ -56,11 +56,12 @@ function getTbResultsQueryWholeCountry(knex, constraints, from, to) {
 
 function getTbResultsStatsQuery(knex, constraints, from, to) {
   return knex('Result as r')
+    .join('Site as s', 's.id', 'r.siteId')
     .join('Device as dev', 'dev.id', 'r.deviceId')
     .join('Assay as a', 'a.id', 'r.assayId')
     .join('AssayType as at', 'at.id', 'a.assayTypeId')
     .join('Disease as d', 'd.id', 'at.diseaseId')
-    .join('Geography as g', 'g.id', 'r.geographyId')
+    .join('Geography as g', 'g.id', 's.geographyId')
     .join('ResultCategory as rcDetected', 'rcDetected.id', 'r.resultCategory1')
     .leftJoin('ResultCategory as rcDr', 'rcDr.id', 'r.resultCategory2')
     .modify(addConstraints, constraints, {
