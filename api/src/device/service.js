@@ -26,6 +26,7 @@ const {
   getMonthYearUserTimeZoneField,
   getTimezoneOffsetFromNumber,
   getOffsetFromIsoDateString,
+  getDateTimeProjectionInTimeZoneIANA,
 } = require('../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../shared/query')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
@@ -356,6 +357,8 @@ async function getDevicesForReport(auth, query) {
    */
   const deviceIds = _.uniq(devices.map(x => x.id))
 
+  const { timezoneIANA } = await getUser(auth.credentials.name)
+
   /**
    * base query with all result counts for target device id's
    */
@@ -400,8 +403,17 @@ async function getDevicesForReport(auth, query) {
       result: 'r',
     })
     .whereIn('r.deviceId', deviceIds)
-    .modify(filterDateRangeParams, query, 'r.endedOn')
-    .select('r.deviceId', knex.raw('MAX(r.updatedOn) as lastUploadOn'))
+    /**
+     * --> to compare use country timezone with further CONVERT_TZ in getDateTimeProjectionInTimeZoneIANA
+     */
+    .modify(filterDateRangeParams, query, getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA))
+    .select(
+      'r.deviceId',
+      /**
+       * --> to return use user timezone
+       */
+      knex.raw(`MAX(CONVERT_TZ(r.updatedOn, "+00:00", "${userTimeOffset}")) as lastUploadOn`)
+    )
     .groupBy('r.deviceId')
 
   /**
