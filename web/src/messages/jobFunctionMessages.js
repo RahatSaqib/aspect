@@ -5,10 +5,6 @@ export default defineMessages({
     id: 'jobFunction.admin',
     defaultMessage: 'Admin',
   },
-  // aspectTester: {
-  //   id: 'jobFunction.aspectTester',
-  //   defaultMessage: 'Aspect Tester',
-  // },
   aspectBeta: {
     id: 'jobFunction.aspectBeta',
     defaultMessage: 'Aspect Beta',
