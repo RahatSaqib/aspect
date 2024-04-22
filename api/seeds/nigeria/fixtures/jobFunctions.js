@@ -1,4 +1,11 @@
-const { admin, clinician, labUser, mergeJobFunctions, technician, aspectBeta } = require('../../fixtures/jobFunctionBase')
+const {
+  admin,
+  clinician,
+  labUser,
+  mergeJobFunctions,
+  technician,
+  aspectBeta,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
   mergeJobFunctions(admin, {
