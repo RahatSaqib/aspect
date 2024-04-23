@@ -5,6 +5,7 @@ import endOfDay from 'date-fns/endOfDay'
 import startOfDay from 'date-fns/startOfDay'
 import subtractDays from 'date-fns/subDays'
 import subYears from 'date-fns/subYears'
+import orderBy from 'lodash/orderBy'
 import round from 'lodash/round'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -23,6 +24,10 @@ const columns = [
   { name: 'Total Tests', prop: 'cnt' },
   { name: 'Utilization%', prop: 'rate' },
 ]
+const nationalFilters = {
+  minDate: subYears(startOfYearUTC, 5),
+  maxDate: now,
+}
 
 const UtilizationPage = () => {
   const { formatMessage } = useIntl()
@@ -38,10 +43,7 @@ const UtilizationPage = () => {
     async () =>
       fetchWrapperForQueries({
         endpoint: '/device/annual-utilization-rate-national',
-        params: {
-          minDate: subYears(startOfYearUTC, 5),
-          maxDate: now,
-        },
+        params: nationalFilters,
       })
   )
 
@@ -78,7 +80,11 @@ const UtilizationPage = () => {
       return acc
     }, [])
 
-    return { data, keys: ['value'], indexBy: 'type' }
+    const start = nationalFilters.minDate.getUTCFullYear()
+    const end = nationalFilters.maxDate.getUTCFullYear()
+    const years = Array.from({ length: end - start + 1 }, (_, i) => start + i)
+    years.forEach(i => !data.find(i => i.type === String(i)) && data.push({ type: String(i), value: 0 }))
+    return { data: orderBy(data, ['type'], ['desc']), keys: ['value'], indexBy: 'type' }
   }, [rawNational, WORKING_DAYS_IN_YEAR])
 
   const provincial = useMemo(() => {
@@ -102,7 +108,7 @@ const UtilizationPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.utilizationTitle)}
+      title={formatMessage(messages.geneXpertUtilizationTitle)}
       filter={
         <PeriodSelector
           noAny
