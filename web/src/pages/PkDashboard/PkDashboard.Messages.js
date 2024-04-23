@@ -341,7 +341,7 @@ const messages = {
     genExpert: { id: 'p.PkDashboard.genExpertPending', defaultMessage: 'GeneXpert Device Coverage' },
     genExpertError: { id: 'p.PkDashboard.genExpertError', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
     utilization: { id: 'p.PkDashboard.utilizationPending', defaultMessage: 'Utilization (Pending)' },
-    errorRate: { id: 'p.PkDashboard.errorRatePending', defaultMessage: 'Error Rate (Pending)' },
+    errorRate: { id: 'p.PkDashboard.errorRate', defaultMessage: 'Error Rate' },
     // 4th column
     titleinventory: { id: 'p.PkDashboard.titleinventory', defaultMessage: 'Inventory' },
     overview: { id: 'p.PkDashboard.overview', defaultMessage: 'Inventory Overview' },
