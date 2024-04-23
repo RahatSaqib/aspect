@@ -42,7 +42,7 @@ const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, offset, 
         const stateIds = state
           .split(',')
           .map(Number)
-          .filter(n => !isNaN(n))
+          .filter(n => !Number.isNaN(n))
         queryBuilder.join('State as s', 'g.stateId', 's.id').whereIn('s.id', stateIds)
       }
     })

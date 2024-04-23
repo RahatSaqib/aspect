@@ -190,7 +190,7 @@ function getDeviceBaseExtendedQuery(
     showDecommissionedDevices = false,
     excludeInternalDevices = true,
     extendJoinToAssays = false,
-    innerJoinState = false
+    innerJoinState = false,
   } = {}
 ) {
   const conditionalAliases = {}
@@ -209,9 +209,9 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if(innerJoinState){
+      if (innerJoinState) {
         queryBuilder.join('State as st', 'g.stateId', 'st.id')
-      }else{
+      } else {
         queryBuilder.leftJoin('State as st', 'g.stateId', 'st.id')
       }
       if (extendJoinToAssays || query.assayId) {
@@ -262,13 +262,16 @@ function getDeviceBaseExtendedQuery(
       },
       { showDecommissionedDevices, showUnapprovedDevices }
     )
-  
+
   return deviceQuery
 }
 
 async function getBasicsForDevicesReport(dataConstraints, query) {
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true, innerJoinState: true })
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, {
+    extendJoinToAssays: true,
+    innerJoinState: true,
+  })
 
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
