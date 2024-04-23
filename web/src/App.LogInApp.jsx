@@ -1,12 +1,13 @@
 import React, { lazy, Suspense, useEffect, useState } from 'react'
-import { useIdleTimer } from 'react-idle-timer'
-import { defineMessages, useIntl } from 'react-intl'
+import { IdleTimerProvider } from 'react-idle-timer'
+import { useIntl } from 'react-intl'
 import { useDispatch } from 'react-redux'
 import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import { Loading, ErrorBoundary, LoggedInLayout } from './cleanComponents'
 import config from './config'
 import useAuthState from './hooks/useAuthState'
 import useHashAndScroll from './hooks/useHashAndScroll'
+import messages from './messages/allMessages'
 import AspectDialog from './oldComponents/shared/AspectDialog'
 import { isPermittedUser } from './oldComponents/shared/requirePermissions'
 import { idleLogout, refreshStart } from './store/AuthRedux'
@@ -109,7 +110,7 @@ const LogInApp = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
-  const { reset } = useIdleTimer({
+  const idleTimerConfig = {
     timeout: config.userInactiveMinutes * 60 * 1000, // after minutes, user is idle
     promptTimeout: 60 * 1000, // after one minute, we call onIdle() and log user out
     stopOnIdle: true, // once user is logged out, we stop timers
@@ -122,11 +123,11 @@ const LogInApp = () => {
       dispatch(idleLogout())
     },
     // Close Modal Prompt & Do some active action (reset timer)
-    onAction: () => {
+    onAction: (event, { reset }) => {
       setShowIdleDialog(false)
       reset() // user is logged in so we reset all timers
     },
-  })
+  }
 
   const props = {
     countryId,
@@ -142,141 +143,143 @@ const LogInApp = () => {
   const a = r => isPermittedUser(userPermissions, { required: r })
 
   return (
-    <LoggedInLayout>
-      <ErrorBoundary>
-        <Suspense fallback={<Loading centered />}>
-          <Routes>
-            {a(['dashboard:summary']) ? (
-              <>
-                <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
-                <Route path="/dashboard" element={<Status />} />
-                {a(['dashboard-v2:view']) ? (
-                  <>
-                    <Route path="/dashboard-v2" element={<PkDashboard />} />
-                    <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
-                    <Route path="/dashboard/rif/national-diagnosis" element={<NationalDiagnosisRif />} />
-                    <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
-                    <Route path="/dashboard/rif/national-testing-trend" element={<NationalTestingTrends />} />
-                    <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
-                    <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
-                    <Route path="/dashboard/rif/test-diag-trend" element={<TestDiagTrend />} />
-                    <Route path="/dashboard/rif/provincial-testing-trend" element={<ProvincialRIFTestingTrend />} />
-                    <Route path="/dashboard/rif/provincial-diagnosis-trend" element={<ProvincialRIFDiagnosisTrend />} />
-                    <Route
-                      path="/dashboard/rif/provincial-rrtb-trend-comparison"
-                      element={<ProvincialRIFTestingTrendRRTB />}
-                    />
-                    <Route path="/dashboard/rif/rrtb-test-diagnosis" element={<RrtbTestDiagnosis />} />
+    <IdleTimerProvider {...idleTimerConfig}>
+      <LoggedInLayout>
+        <ErrorBoundary>
+          <Suspense fallback={<Loading centered />}>
+            <Routes>
+              {a(['dashboard:summary']) ? (
+                <>
+                  <Route path="/" element={<Navigate replace to="/dashboard" state={{ referrer: location }} />} />
+                  <Route path="/dashboard" element={<Status />} />
+                  {a(['dashboard-v2:view']) ? (
+                    <>
+                      <Route path="/dashboard-v2" element={<PkDashboard />} />
+                      <Route path="/dashboard/rif/current-testing" element={<CurrentTesting />} />
+                      <Route path="/dashboard/rif/national-diagnosis" element={<NationalDiagnosisRif />} />
+                      <Route path="/dashboard/rif/national-rtb-trends" element={<NationalRtbTrends />} />
+                      <Route path="/dashboard/rif/national-testing-trend" element={<NationalTestingTrends />} />
+                      <Route path="/dashboard/rif/current-diagnosis" element={<CurrentDiagnosis />} />
+                      <Route path="/dashboard/rif/current-rrtb-diagnosis" element={<CurrentRRTBDiagnosis />} />
+                      <Route path="/dashboard/rif/test-diag-trend" element={<TestDiagTrend />} />
+                      <Route path="/dashboard/rif/provincial-testing-trend" element={<ProvincialRIFTestingTrend />} />
+                      <Route
+                        path="/dashboard/rif/provincial-diagnosis-trend"
+                        element={<ProvincialRIFDiagnosisTrend />}
+                      />
+                      <Route
+                        path="/dashboard/rif/provincial-rrtb-trend-comparison"
+                        element={<ProvincialRIFTestingTrendRRTB />}
+                      />
+                      <Route path="/dashboard/rif/rrtb-test-diagnosis" element={<RrtbTestDiagnosis />} />
 
-                    <Route path="/dashboard/xdr/by-device" element={<XDRByDevice />} />
-                    <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
-                    <Route path="/dashboard/xdr/national-diagnosis" element={<NationalDiagnosisXdr />} />
-                    <Route path="/dashboard/xdr/national-fq" element={<NationalFQTrends />} />
-                    <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
-                    <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
-                    <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
-                    <Route
-                      path="/dashboard/xdr/data-visualisation-for-xdr-resistance"
-                      element={<DataVisualisationForXDRResistance />}
-                    />
-                    <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
-                    <Route path="/dashboard/xdr/provincial-diagnosis-trend" element={<ProvincialXDRDiagnosisTrend />} />
-                    <Route path="/dashboard/xdr/provincial-fq-diagnosis-trend" element={<ProvincialXDRTrendsFQ />} />
-                    <Route path="/dashboard/xdr/testing-diagnosis-trend" element={<XDRTestingDiagnosisTrend />} />
-                    <Route path="/dashboard/xdr/current-fq-detection" element={<CurrentFQTrend />} />
+                      <Route path="/dashboard/xdr/by-device" element={<XDRByDevice />} />
+                      <Route path="/dashboard/xdr/national-testing-trend" element={<NationalGXTestingTrends />} />
+                      <Route path="/dashboard/xdr/national-diagnosis" element={<NationalDiagnosisXdr />} />
+                      <Route path="/dashboard/xdr/national-fq" element={<NationalFQTrends />} />
+                      <Route path="/dashboard/xdr/current-testing" element={<CurrentXDRTesting />} />
+                      <Route path="/dashboard/xdr/current-diagnosis" element={<CurrentXDRDiagnosis />} />
+                      <Route path="/dashboard/xdr/gx-testing-and-diagnosis" element={<GXTestingAndDiagnosis />} />
+                      <Route
+                        path="/dashboard/xdr/data-visualisation-for-xdr-resistance"
+                        element={<DataVisualisationForXDRResistance />}
+                      />
+                      <Route path="/dashboard/xdr/provincial-testing-trend" element={<ProvincialXDRTestingTrend />} />
+                      <Route
+                        path="/dashboard/xdr/provincial-diagnosis-trend"
+                        element={<ProvincialXDRDiagnosisTrend />}
+                      />
+                      <Route path="/dashboard/xdr/provincial-fq-diagnosis-trend" element={<ProvincialXDRTrendsFQ />} />
+                      <Route path="/dashboard/xdr/testing-diagnosis-trend" element={<XDRTestingDiagnosisTrend />} />
+                      <Route path="/dashboard/xdr/current-fq-detection" element={<CurrentFQTrend />} />
 
-                    <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
-                    <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
-                    <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />
-                    <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
-                    <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
-                    <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
-                  </>
-                ) : null}
-              </>
-            ) : null}
-            {a(['operationalData']) ? (
-              <>
-                <Route path="/" element={<Navigate replace to="/operational-data" state={{ referrer: location }} />} />
-                <Route path="/operational-data" element={<OperationalData />} />
-              </>
-            ) : null}
-            {a(['account']) ? <Route path="/account-details/current/*" element={<ContactPage />} /> : null}
-            {a(['report']) ? <Route path="/reports" element={<ReportIndex />} /> : null}
+                      <Route path="/dashboard/coverage/device" element={<DeviceCoverage />} />
+                      <Route path="/dashboard/coverage/utilization" element={<Utilization />} />
+                      <Route path="/dashboard/coverage/error-rate" element={<ErrorRate />} />
+                      <Route path="/dashboard/inventory/overview" element={<InventoryOverview />} />
+                      <Route path="/dashboard/other/covid" element={<CovidGraphPage />} />
+                      <Route path="/dashboard/other/hiv" element={<HivGraphPage />} />
+                    </>
+                  ) : null}
+                </>
+              ) : null}
+              {a(['operationalData']) ? (
+                <>
+                  <Route
+                    path="/"
+                    element={<Navigate replace to="/operational-data" state={{ referrer: location }} />}
+                  />
+                  <Route path="/operational-data" element={<OperationalData />} />
+                </>
+              ) : null}
+              {a(['account']) ? <Route path="/account-details/current/*" element={<ContactPage />} /> : null}
+              {a(['report']) ? <Route path="/reports" element={<ReportIndex />} /> : null}
 
-            {a(['browse', 'device']) ? (
-              <>
-                <Route path="/browse/device/list" element={<Devices />} />
-                <Route path="/browse/device/list/:deviceId/*" element={<DeviceDetail {...props} />} />
-                <Route path="/browse/device/workload" element={<DevicesWorkload />} />
-              </>
-            ) : null}
+              {a(['browse', 'device']) ? (
+                <>
+                  <Route path="/browse/device/list" element={<Devices />} />
+                  <Route path="/browse/device/list/:deviceId/*" element={<DeviceDetail {...props} />} />
+                  <Route path="/browse/device/workload" element={<DevicesWorkload />} />
+                </>
+              ) : null}
 
-            {a(['browse', 'deviceApiKey']) ? (
-              <Route path="/browse/deviceApiKey" element={<DeviceApiKeyList />} />
-            ) : null}
+              {a(['browse', 'deviceApiKey']) ? (
+                <Route path="/browse/deviceApiKey" element={<DeviceApiKeyList />} />
+              ) : null}
 
-            {a(['browse', 'reporter']) ? <Route path="/browse/reporter" element={<ReporterList />} /> : null}
+              {a(['browse', 'reporter']) ? <Route path="/browse/reporter" element={<ReporterList />} /> : null}
 
-            {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
-            {a(['browse', 'result:edit']) ? (
-              <Route path="/browse/result/:resultId/*" element={<ResultDetail />} />
-            ) : null}
+              {a(['browse', 'result']) ? <Route path="/browse/result" element={<ResultList />} /> : null}
+              {a(['browse', 'result:edit']) ? (
+                <Route path="/browse/result/:resultId/*" element={<ResultDetail />} />
+              ) : null}
 
-            {a(['browse', 'site']) ? (
-              <>
-                <Route path="/browse/site" element={<SiteList {...props} />} />
-                <Route path="/browse/site/create" element={<EditSite />} />
-                <Route path="/browse/site/:siteId/*" element={<SiteDetail {...props} />} />
-              </>
-            ) : null}
+              {a(['browse', 'site']) ? (
+                <>
+                  <Route path="/browse/site" element={<SiteList {...props} />} />
+                  <Route path="/browse/site/create" element={<EditSite />} />
+                  <Route path="/browse/site/:siteId/*" element={<SiteDetail {...props} />} />
+                </>
+              ) : null}
 
-            {a(['browse', 'person']) ? <Route path="/browse/person" element={<PersonList />} /> : null}
-            {a(['browse', 'person:edit']) ? (
-              <Route path="/browse/person/:personId/*" element={<ContactPage />} />
-            ) : null}
+              {a(['browse', 'person']) ? <Route path="/browse/person" element={<PersonList />} /> : null}
+              {a(['browse', 'person:edit']) ? (
+                <Route path="/browse/person/:personId/*" element={<ContactPage />} />
+              ) : null}
 
-            {a(['browse', 'inventory']) ? (
-              <>
-                <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
-                <Route path="/browse/inventory/log" element={<InventoryLog />} />
-                <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
-                <Route path="/browse/inventory/overview" element={<InventoryOverview />} />
-              </>
-            ) : null}
-            {a(['browse', 'notification']) ? (
-              <>
-                <Route path="/browse/notification/types" element={<NotificationList />} />
-                <Route path="/browse/notification/logs" element={<NotificationLogs />} />
-                <Route path="/browse/notification/:notificationId" element={<NotificationDetail />} />
-              </>
-            ) : null}
+              {a(['browse', 'inventory']) ? (
+                <>
+                  <Route path="/browse/inventory/supplies" element={<InventoryItemsList />} />
+                  <Route path="/browse/inventory/log" element={<InventoryLog />} />
+                  <Route path="/browse/inventory/transfers" element={<InventoryTransfers />} />
+                  <Route path="/browse/inventory/overview" element={<InventoryOverview />} />
+                </>
+              ) : null}
+              {a(['browse', 'notification']) ? (
+                <>
+                  <Route path="/browse/notification/types" element={<NotificationList />} />
+                  <Route path="/browse/notification/logs" element={<NotificationLogs />} />
+                  <Route path="/browse/notification/:notificationId" element={<NotificationDetail />} />
+                </>
+              ) : null}
 
-            <Route path="/" element={<Navigate replace to="/welcome" state={{ referrer: location }} />} />
-            <Route path="/login" element={<Navigate replace to={{ pathname: '/' }} />} />
-            <Route path="/license" element={<Navigate replace to={{ pathname: '/' }} />} />
-            <Route path="/welcome" element={<Welcome />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
-      </ErrorBoundary>
+              <Route path="/" element={<Navigate replace to="/welcome" state={{ referrer: location }} />} />
+              <Route path="/login" element={<Navigate replace to={{ pathname: '/' }} />} />
+              <Route path="/license" element={<Navigate replace to={{ pathname: '/' }} />} />
+              <Route path="/welcome" element={<Welcome />} />
+              <Route path="*" element={<NotFound />} />
+            </Routes>
+          </Suspense>
+        </ErrorBoundary>
 
-      {showIdleDialog ? (
-        <AspectDialog title={formatMessage(messages.title)} modal open>
-          <span>{formatMessage(messages.help)}</span>
-        </AspectDialog>
-      ) : null}
-    </LoggedInLayout>
+        {showIdleDialog ? (
+          <AspectDialog title={formatMessage(messages.idleDialogTitle)} modal open>
+            <span>{formatMessage(messages.idleDialogHelp)}</span>
+          </AspectDialog>
+        ) : null}
+      </LoggedInLayout>
+    </IdleTimerProvider>
   )
 }
 
 export default LogInApp
-
-const messages = defineMessages({
-  title: { id: 'pages.IdleDialog.title', defaultMessage: 'Automatic Logout' },
-  help: {
-    id: 'shared.IdleDialog.help',
-    defaultMessage:
-      'You will be logged out automatically in one minute due to inactivity. To stay logged in, hit any button or move your mouse.',
-  },
-})

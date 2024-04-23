@@ -125,7 +125,8 @@ describe.skip('case/service', () => {
 
       const [quantity] = await knex('PatientCase as ca')
         .innerJoin('Result as r', 'ca.id', 'r.patientCaseId')
-        .innerJoin('Geography as g', 'r.geographyId', 'g.id')
+        .innerJoin('Site as s', 'r.siteId', 's.id')
+        .innerJoin('Geography as g', 's.geographyId', 'g.id')
         .where('ca.externalId', 'like', `%${externalId}%`)
         .count()
 

@@ -81,7 +81,6 @@ describe('Missing inventory lot resolver', () => {
     const resultData = {
       assayId,
       partnerId: site.partnerId,
-      geographyId: site.geographyId,
       siteId: site.id,
       deviceId,
       sampleId: 1,

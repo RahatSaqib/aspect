@@ -6,7 +6,8 @@ async function seed(knex) {
   const now = new Date()
 
   const baseResult = await knex('Result as r')
-    .innerJoin('Geography as g', 'g.id', 'r.geographyId')
+    .innerJoin('Site as s', 'r.siteId', 's.id')
+    .innerJoin('Geography as g', 'g.id', 's.geographyId')
     .innerJoin('Country as c', 'c.id', 'g.countryId')
     .where('c.name', 'United States')
     .first('r.*')

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-04-04T03:20:05.458Z\n"
+"POT-Creation-Date: 2024-04-10T23:22:59.456Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2037,6 +2037,17 @@ msgstr "Konnte sich nicht mit Ihren Anmeldedaten anmelden"
 msgid "Count (1-100)"
 msgstr "Anzahl (1-100)"
 
+#. [p.PkDashboard.peopleTestedRifTooltip]
+#. defaultMessage is:
+#. Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.
+#: extracted_strings.json
+msgid ""
+"Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including "
+"'No Result', 'Error', 'Indeterminate', 'Invalid'."
+msgstr ""
+"Zählen Sie nur meldepflichtige Ergebnisse von MTB/Rif und MTB/Rif-Ultra, "
+"ohne \"Kein Ergebnis\", \"Fehler\", \"unbestimmt\", \"ungültig\"."
+
 #. [filter.popover.country]
 #. defaultMessage is:
 #. Country
@@ -2348,12 +2359,12 @@ msgstr "Aktuelle RRTB-Diagnose"
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Aktuelle Trends bei der Diagnose von Rifampicin-Resistenz"
 
-#. [p.PkDashboard.rrtbDiagnosisTitle]
+#. [p.PkDashboard.rrtbDiagnosisTitle1]
 #. defaultMessage is:
-#. Current Rifampicin Resistance Diagnosis using MTB/Rif Assay
+#. Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay
 #: extracted_strings.json
-msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Assay"
-msgstr "Aktuelle Rifampicin-Resistenzdiagnose mit MTB/Rif Assay"
+msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
+msgstr "Aktuelle Rifampicin-Resistenzdiagnose mit MTB/Rif Ultra Assay"
 
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
@@ -2537,14 +2548,10 @@ msgstr "Daktari HIV-VL"
 msgid "Damage"
 msgstr "Schaden"
 
-#. [pages.OperationalDashboard.dashboard]
+#. [header.link.dashboardv2.title]
 #. defaultMessage is:
 #. Dashboard
-#: extracted_strings.json
-msgid "Dashboard"
-msgstr "Dashboard"
-
-#. [header.link.dashboardv2.title]
+#. [pages.OperationalDashboard.dashboard]
 #. defaultMessage is:
 #. Dashboard
 #: extracted_strings.json
@@ -4037,19 +4044,19 @@ msgstr "FQ-R Erkannt"
 msgid "FQ-R cases diagnosed in current year"
 msgstr "Im laufenden Jahr diagnostizierte FQ-R-Fälle"
 
-#. [p.PkDashboard.FQRPerDay]
-#. defaultMessage is:
-#. FQ-R cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "FQ-R cases diagnosed in last 24 hours"
-msgstr "In den letzten 24 Stunden diagnostizierte FQ-R-Fälle"
-
 #. [p.PkDashboard.FQRPerYear]
 #. defaultMessage is:
 #. FQ-R cases diagnosed this year
 #: extracted_strings.json
 msgid "FQ-R cases diagnosed this year"
 msgstr "In diesem Jahr diagnostizierte FQ-R-Fälle"
+
+#. [p.PkDashboard.FQRToday]
+#. defaultMessage is:
+#. FQ-R cases diagnosed today
+#: extracted_strings.json
+msgid "FQ-R cases diagnosed today"
+msgstr "Heute diagnostizierte FQ-R-Fälle"
 
 #. [pages.NotificationDetail.fieldFacilityCode]
 #. defaultMessage is:
@@ -5827,19 +5834,6 @@ msgstr "Sprache & Zeitzone"
 #: extracted_strings.json
 msgid "Last"
 msgstr "Letzte"
-
-#. [p.PkDashboard.molecularAssay24]
-#. defaultMessage is:
-#. Last 24 hours
-#. [p.PkDashboard.TB24]
-#. defaultMessage is:
-#. Last 24 hours
-#. [p.PkDashboard.RTTB24]
-#. defaultMessage is:
-#. Last 24 hours
-#: extracted_strings.json
-msgid "Last 24 hours"
-msgstr "Letzten 24 Stunden"
 
 #. [pages.dateRangeSelector.last30Days]
 #. defaultMessage is:
@@ -9121,19 +9115,19 @@ msgstr "Die Anzahl der positiven Ergebnisse"
 msgid "RR cases diagnosed"
 msgstr "Diagnostizierte RR-Fälle"
 
-#. [p.PkDashboard.RRPerDay]
-#. defaultMessage is:
-#. RR cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "RR cases diagnosed in last 24 hours"
-msgstr "In den letzten 24 Stunden diagnostizierte RR-Fälle"
-
 #. [p.PkDashboard.RRPerYear]
 #. defaultMessage is:
 #. RR cases diagnosed this year
 #: extracted_strings.json
 msgid "RR cases diagnosed this year"
 msgstr "In diesem Jahr diagnostizierte RR-Fälle"
+
+#. [p.PkDashboard.RRToday]
+#. defaultMessage is:
+#. RR cases diagnosed today
+#: extracted_strings.json
+msgid "RR cases diagnosed today"
+msgstr "Heute diagnostizierte RR-Fälle"
 
 #. [p.PkDashboard.rrDetected]
 #. defaultMessage is:
@@ -11553,19 +11547,19 @@ msgstr "Trends bei der Diagnose von TB und RRTB"
 msgid "TB cases diagnosed in"
 msgstr "TB-Fälle diagnostiziert in"
 
-#. [p.PkDashboard.xdrTBLastDay]
-#. defaultMessage is:
-#. TB cases diagnosed in last 24 hours
-#: extracted_strings.json
-msgid "TB cases diagnosed in last 24 hours"
-msgstr "In den letzten 24 Stunden diagnostizierte Tb-Fälle"
-
 #. [p.PkDashboard.xdrTBCasesPerYear]
 #. defaultMessage is:
 #. TB cases diagnosed this year
 #: extracted_strings.json
 msgid "TB cases diagnosed this year"
 msgstr "In diesem Jahr diagnostizierte Tb-Fälle"
+
+#. [p.PkDashboard.xdrTBToday]
+#. defaultMessage is:
+#. TB cases diagnosed today
+#: extracted_strings.json
+msgid "TB cases diagnosed today"
+msgstr "Heute diagnostizierte TB-Fälle"
 
 #. [filter.AssaySelectField.assayTbLamp]
 #. defaultMessage is:
@@ -11781,19 +11775,19 @@ msgstr ""
 "Standort des Geräts oder in dem Lager, das diesen Standort beliefert, nicht "
 "verfolgt wird."
 
-#. [p.PkDashboard.testPerDay]
-#. defaultMessage is:
-#. Tests performed in last 24 hours
-#: extracted_strings.json
-msgid "Tests performed in last 24 hours"
-msgstr "In den letzten 24 Stunden durchgeführte Tests"
-
 #. [p.PkDashboard.testPerYear]
 #. defaultMessage is:
 #. Tests performed this year
 #: extracted_strings.json
 msgid "Tests performed this year"
 msgstr "In diesem Jahr durchgeführte Tests"
+
+#. [p.PkDashboard.testToday]
+#. defaultMessage is:
+#. Tests performed today
+#: extracted_strings.json
+msgid "Tests performed today"
+msgstr "Heute durchgeführte Tests"
 
 #. [component.Widget.bangladeshAverageCompletionDescription]
 #. defaultMessage is:
@@ -12698,6 +12692,15 @@ msgid "To..."
 msgstr "Bis…"
 
 #. [pages.dateRangeSelector.today]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.molecularAssay25]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.TB25]
+#. defaultMessage is:
+#. Today
+#. [p.PkDashboard.RTTB25]
 #. defaultMessage is:
 #. Today
 #: extracted_strings.json
@@ -14412,6 +14415,24 @@ msgstr "{unit} seit letzter Woche"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} gesamt kalibrierungen"
+
+#~ msgid "FQ-R cases diagnosed in last 24 hours"
+#~ msgstr "In den letzten 24 Stunden diagnostizierte FQ-R-Fälle"
+
+#~ msgid "Last 24 hours"
+#~ msgstr "Letzten 24 Stunden"
+
+#~ msgid "RR cases diagnosed in last 24 hours"
+#~ msgstr "In den letzten 24 Stunden diagnostizierte RR-Fälle"
+
+#~ msgid "TB cases diagnosed in last 24 hours"
+#~ msgstr "In den letzten 24 Stunden diagnostizierte Tb-Fälle"
+
+#~ msgid "Tests performed in last 24 hours"
+#~ msgstr "In den letzten 24 Stunden durchgeführte Tests"
+
+#~ msgid "Dashboard v2"
+#~ msgstr "Dashboard"
 
 #~ msgid "Please choose a different site"
 #~ msgstr "Bitte wählen Sie einen anderen Standort"

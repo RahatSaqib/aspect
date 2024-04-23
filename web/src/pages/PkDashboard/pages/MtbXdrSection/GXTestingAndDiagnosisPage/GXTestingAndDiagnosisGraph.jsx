@@ -1,13 +1,14 @@
-import React, { useState, useEffect, useMemo } from 'react'
-import { FormControlLabel, Grid, Switch, Typography, MenuItem, TextField } from '@mui/material'
+import React, { useEffect, useMemo, useState } from 'react'
+import { FormControlLabel, Grid, MenuItem, Switch, TextField, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { LgaSelect, StateSelect, Loading, ColumnLineGraph, getTimePeriod } from '../../../../../cleanComponents'
+import { ColumnLineGraph, getTimePeriod, LgaSelect, Loading, StateSelect } from '../../../../../cleanComponents'
 import messages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
+import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages, months } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import pkMessages from '../../../PkDashboard.Messages'
@@ -21,15 +22,15 @@ const GXTestingAndDiagnosisGraph = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [showLabel, setShowLabel] = useState(true)
-  const [filter, setFilter] = useState(undefined)
+  const [filters, setFilters] = usePathFilter(undefined)
   const lineSource = useMemo(
     () => [formatMessage(messages.FQRPercent), formatMessage(messages.INHPercent)],
     [formatMessage]
   )
   const [lineFor, setLineFor] = useState(lineSource[0])
 
-  const mergedParams = filter
-    ? [...endpointParams, ...Object.entries(omitBy(filter, isNil)).map(([name, value]) => ({ [name]: value }))]
+  const mergedParams = filters
+    ? [...endpointParams, ...Object.entries(omitBy(filters, isNil)).map(([name, value]) => ({ [name]: value }))]
     : [...endpointParams]
 
   const { isLoading, data } = useQuery(
@@ -99,15 +100,15 @@ const GXTestingAndDiagnosisGraph = () => {
             ))}
           </TextField>
           <StateSelect
-            value={filter?.stateId ?? ''}
+            value={filters?.stateId ?? ''}
             countryId={user.countryId}
-            onChange={e => setFilter({ stateId: e.target.value })}
+            onChange={e => setFilters({ stateId: e.target.value })}
             label={getCustomMessage(formatMessage, pkMessages, 'selectPlaceholder', user, { entity: 'state' })}
           />
           <LgaSelect
-            value={filter?.lgaId ?? ''}
-            stateId={filter?.stateId}
-            onChange={e => setFilter(prv => ({ ...prv, lgaId: e.target.value }))}
+            value={filters?.lgaId ?? ''}
+            stateId={filters?.stateId}
+            onChange={e => setFilters(prv => ({ ...prv, lgaId: e.target.value }))}
             label={getCustomMessage(formatMessage, pkMessages, 'selectPlaceholder', user, { entity: 'lga' })}
           />
         </>

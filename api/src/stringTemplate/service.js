@@ -80,7 +80,7 @@ function addDataSourceToQuery(queryBuilder, aliases, dataConstraints, resultId, 
       .leftJoin('Device as d', `${message}.deviceId`, 'd.id')
       .leftJoin('DeviceType as dt', `d.deviceTypeId`, 'dt.id')
       .leftJoin('Result as r', `${message}.resultId`, 'r.id')
-      .leftJoin('Geography as rg', `r.geographyId`, 'rg.id')
+      .leftJoin('Geography as rg', `s.geographyId`, 'rg.id')
       .leftJoin('Country as rc', `rg.countryId`, 'rc.id')
       .leftJoin('Site as rs', 'r.reportableSiteId', 'rs.id')
       .leftJoin('Assay as a', assayJoin => {
