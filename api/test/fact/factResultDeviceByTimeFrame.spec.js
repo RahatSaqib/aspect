@@ -58,7 +58,7 @@ const insertDeviceApiKey = async (token, deviceId, siteId, geographyId, partnerI
   return deviceApiId
 }
 
-const sortData = data => {
+const separateData = data => {
   const quantityZero = []
   const quantityOne = []
   data.forEach(item => {
@@ -300,7 +300,7 @@ describe('Device result calculation test', function () {
     await new Promise(resolve => setTimeout(resolve, 5000))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
-    const { quantityZero, quantityOne } = sortData(factResult)
+    const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
@@ -324,7 +324,7 @@ describe('Device result calculation test', function () {
       .where({ deviceId: deviceId2 })
       .orderBy('calculatedOn', 'desc')
 
-    const { quantityZero, quantityOne } = sortData(factResult)
+    const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
@@ -348,7 +348,7 @@ describe('Device result calculation test', function () {
     await new Promise(resolve => setTimeout(resolve, 5000))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
-    const { quantityZero, quantityOne } = sortData(factResult)
+    const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
@@ -371,7 +371,7 @@ describe('Device result calculation test', function () {
     await new Promise(resolve => setTimeout(resolve, 5000))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
-    const { quantityZero, quantityOne } = sortData(factResult)
+    const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
@@ -398,7 +398,7 @@ describe('Device result calculation test', function () {
     await new Promise(resolve => setTimeout(resolve, 5000))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
-    const { quantityZero, quantityOne } = sortData(factResult)
+    const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
@@ -421,7 +421,7 @@ describe('Device result calculation test', function () {
       .where({ deviceId: deviceId3 })
       .orderBy('calculatedOn', 'desc')
 
-    const { quantityZero, quantityOne } = sortData(factResult)
+    const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
