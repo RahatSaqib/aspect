@@ -3,7 +3,7 @@ const _ = require('lodash')
 const Promise = require('bluebird')
 
 const geography = require(`../${process.env['seeds.directory']}/fixtures/geography.json`)
-const timezones = require(`../${process.env['seeds.directory']}/../fixtures/TimeZone.json`)
+const timezones = require(`../seeds/fixtures/TimeZone.json`)
 const databaseName = process.env['db.databaseName']
 
 const getIndexName = (fieldName, timeZone) => {
