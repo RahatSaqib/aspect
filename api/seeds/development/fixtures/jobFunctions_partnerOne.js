@@ -17,8 +17,8 @@ const adminEnhanced = mergeJobFunctions(admin, {
 })
 
 const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
-  ...aspectBeta.permissions,
   permissions: [
+    ...aspectBeta.permissions,
     {
       module: 'dashboard-v2',
       activity: 'view',
