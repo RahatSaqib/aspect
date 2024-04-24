@@ -585,9 +585,6 @@ const deviceAndSiteSummaryReport = {
         avoidStreaming: true,
       },
     },
-    /**
-     * sheet `GeneXpert Errors by Devices`
-     */
     {
       sortOrder: 2,
       moduleName: 'device/serviceReports',
@@ -599,6 +596,9 @@ const deviceAndSiteSummaryReport = {
         avoidStreaming: true,
       },
     },
+    /**
+     * sheet `GeneXpert Errors by Devices`
+     */
     {
       sortOrder: 3,
       moduleName: 'device/serviceReports',

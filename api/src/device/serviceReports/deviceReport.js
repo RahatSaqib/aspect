@@ -48,11 +48,12 @@ async function getDevicesByTBReach(dataConstraints, query) {
     dataConstraints,
     filterParams,
     query,
+    timeFrame: 'day',
   })
     .sum({
       totalXpertTests: 'r.resultCount',
       xpertPositive: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Detected} 
+        case when r.resultCategory1 = ${resultCategoryIds.Detected}
         then r.resultCount 
         else 0 
         end`),
@@ -61,18 +62,13 @@ async function getDevicesByTBReach(dataConstraints, query) {
         then r.resultCount 
         else 0 
         end`),
-      xpertErrorInvalid: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Invalid} OR r.resultCategory1 = ${resultCategoryIds.Error}
-        then r.resultCount 
-        else 0 
-        end`),
       xpertRIFIndeterminate: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Detected} OR r.resultCategory2 = ${resultCategoryIds.Indeterminate}
+        case when r.resultCategory1 = ${resultCategoryIds.Detected}
         then r.resultCount 
         else 0 
         end`),
       xpertRIFPositive: knex.raw(`
-        case when r.resultCategory2 = ${resultCategoryIds.Detected}
+        case when r.resultCategory2 = ${resultCategoryIds.Detected} 
         then r.resultCount 
         else 0 
         end`),

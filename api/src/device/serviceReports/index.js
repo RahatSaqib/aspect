@@ -581,6 +581,7 @@ async function getDevicesForTBReachReport(auth, query) {
     throw Boom.badRequest('Dates are required')
   }
   const dataConstraints = await getConstraints(auth.credentials)
+  query.assay = ['GxMtbRif', 'GxMtbRifUltra']
 
   const [devicesByTBReach, errorsResult] = await Promise.all([
     getDevicesByTBReach(dataConstraints, query),
@@ -594,8 +595,17 @@ async function getDevicesForTBReachReport(auth, query) {
     const TBReachDevice = devicesByTBReachData.get(error.deviceId)
     return {
       ...error,
-      ...devicesByTBReachData.get(error.deviceId),
       BKtotal: 0,
+      BKCnRec: 0,
+      BKPositive: 0,
+      BKNegative: 0,
+      totalXpertTests: TBReachDevice?.totalXpertTests ?? 0,
+      xpertPositive: TBReachDevice?.xpertPositive ?? 0,
+      xpertNegative: TBReachDevice?.xpertNegative ?? 0,
+      xpertErrorInvalid: TBReachDevice?.xpertErrorInvalid ?? 0,
+      xpertRIFPositive: TBReachDevice?.xpertRIFPositive ?? 0,
+      xpertRIFIndeterminate: TBReachDevice?.xpertRIFIndeterminate ?? 0,
+      xpertPlusTreated: TBReachDevice?.xpertPlusTreated ?? 0,
       xpertPerDay: TBReachDevice ? TBReachDevice.totalXpertTests / workingDays : 0,
     }
   })
