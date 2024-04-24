@@ -79,7 +79,7 @@ const USER_LU_NAME = 'myanmar_lab1'
 const partnerName = 'Myanmar'
 const countryAbbreviation = 'MM'
 
-describe('Device result calculation test', function () {
+describe.only('Device result calculation test', function () {
   this.timeout(12000)
   let partnerId
   let geographyId
@@ -152,8 +152,8 @@ describe('Device result calculation test', function () {
           assay: 'XPERT MTB-XDR',
           testTypeId: 4,
           assayVersion: '4',
-          testStartedOn: '2023-07-31T23:25:17Z',
-          testEndedOn: '2023-07-31T23:58:31Z',
+          testStartedOn: '2023-08-31T23:25:17Z',
+          testEndedOn: '2023-08-31T23:58:31Z',
           cartridgeExpirationDate: '2090-12-25T02:51:00',
           cartridgeSerial: '13da0ed4-471b-11ee-a7da-8def044759e9',
           moduleName: 'G3',
@@ -283,7 +283,7 @@ describe('Device result calculation test', function () {
     })
   })
 
-  it.skip('should ensure resultCount decreases in the fact table when same result resultCategory1 and resultCategory1 are changed', async () => {
+  it('should ensure resultCount decreases in the fact table when same result resultCategory1 and resultCategory1 are changed', async () => {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
@@ -309,7 +309,7 @@ describe('Device result calculation test', function () {
     assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
   })
 
-  it.skip('should ensure resultCount decreases in the fact table when same result is uploaded by different devices', async () => {
+  it('should ensure resultCount decreases in the fact table when same result is uploaded by different devices', async () => {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
@@ -324,6 +324,7 @@ describe('Device result calculation test', function () {
       .where({ deviceId: deviceId2 })
       .orderBy('calculatedOn', 'desc')
 
+    expect(factResult).to.not.be.empty
     const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
@@ -332,14 +333,14 @@ describe('Device result calculation test', function () {
     assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
   })
 
-  it.skip('should ensure resultCount decreases in the fact table when same result is uploaded with varying endedOn', async () => {
+  it('should ensure resultCount decreases in the fact table when same result is uploaded with varying endedOn', async () => {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
     await new Promise(resolve => setTimeout(resolve, 5000))
 
-    resultPayload.result.endedOn = '2023-09-01T10:25:17Z'
-    resultPayload.result.testEndedOn = '2023-09-01T10:25:17Z'
+    resultPayload.result.endedOn = '2023-10-01T10:25:17Z'
+    resultPayload.result.testEndedOn = '2023-10-01T10:25:17Z'
 
     const postResult2 = await server.post(devicePath).set('Authorization', token).send(resultPayload)
 
@@ -348,6 +349,8 @@ describe('Device result calculation test', function () {
     await new Promise(resolve => setTimeout(resolve, 5000))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
+    expect(factResult).to.not.be.empty
+
     const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
@@ -356,7 +359,7 @@ describe('Device result calculation test', function () {
     assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
   })
 
-  it.only('should ensure resultCount decreases in the fact table when same result is uploaded with varying assays', async () => {
+  it('should ensure resultCount decreases in the fact table when same result is uploaded with varying assays', async () => {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
@@ -383,7 +386,7 @@ describe('Device result calculation test', function () {
     assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
   })
 
-  it.only('should ensure resultCount decreases in the fact table when same result is uploaded from different sites', async () => {
+  it('should ensure resultCount decreases in the fact table when same result is uploaded from different sites', async () => {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
@@ -397,6 +400,8 @@ describe('Device result calculation test', function () {
     const factResult = await knex('FactResultsDeviceByTimeFrame')
       .where({ deviceId: deviceId3 })
       .orderBy('calculatedOn', 'desc')
+
+      expect(factResult).to.not.be.empty
 
     const { quantityZero, quantityOne } = separateData(factResult)
 
