@@ -3,7 +3,18 @@ import { Bar } from '@ant-design/plots'
 import { formatNumber } from '../../../../utils/utils/number'
 import { filterColour } from '../../graphUtils'
 
-const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onReady, isPercentage, colors }) => {
+const BarGraph = ({
+  data,
+  graphId,
+  xField,
+  yField,
+  seriesField,
+  showLabel,
+  onReady,
+  isPercentage,
+  colors,
+  disableFormat,
+}) => {
   const config = {
     data,
     intervalPadding: 8,
@@ -39,7 +50,7 @@ const BarGraph = ({ data, graphId, xField, yField, seriesField, showLabel, onRea
     appendPadding: 20,
     yAxis: {
       label: {
-        formatter: formatNumber,
+        formatter: s => (disableFormat ? s : formatNumber(s)),
       },
     },
   }
