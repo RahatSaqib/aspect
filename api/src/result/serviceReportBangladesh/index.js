@@ -2086,6 +2086,25 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
   }
 }
 
+// ---------------------------------------------------------------------------
+async function getDataForReportForNtpUse(auth, query, timezone, options) {
+  const { sharedResults, useNamedData } = options
+  /**
+   * get data from some of previous worksheet saved in cache.
+   *
+   * --> See func `getSheetData` in `api/src/report/serviceReports.js`
+   * and for line `sharedResults[nameOfSharedData] = result`
+   * --> Also see file `api/seeds/bangladesh/fixtures/reports.js`
+   * for this worksheet and see there `useNamedData: 'results_10a_for_nt_use'`
+   */
+  const { data } = sharedResults[useNamedData]
+
+  return {
+    ok: true,
+    data,
+  }
+}
+
 module.exports = {
   getDataForReportDrTb10A,
   getDataForReportDrTb10AStool,
@@ -2093,4 +2112,5 @@ module.exports = {
   getDataForReportCovid19,
   getReportDrTb10a10bCovidNtpUse,
   getReportCustomFieldsCompletion,
+  getDataForReportForNtpUse,
 }
