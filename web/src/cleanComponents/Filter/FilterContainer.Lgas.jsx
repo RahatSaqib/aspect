@@ -26,7 +26,7 @@ const LgasFilter = () => {
         </Grid>
         <Grid item xs={3}>
           <TextField
-            label={formatMessage(messages.lgaName)}
+            label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaName || ''}
             onChange={e => setState({ ...state, lgaName: e.target.value ? e.target.value : null })}
           />

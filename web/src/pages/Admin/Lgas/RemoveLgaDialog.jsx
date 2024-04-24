@@ -4,12 +4,15 @@ import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { ADMIN_LGAS_KEYS } from '../../../hooks/admin/adminKeys'
 import { useDeleteLga } from '../../../hooks/admin/useDeleteLga'
+import useAuthState from '../../../hooks/useAuthState'
+import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
 export function RemoveLgaDialog({ open, lga, onOpenChange }) {
   const { formatMessage } = useIntl()
   const client = useQueryClient()
+  const user = useAuthState()
   const { mutate: deleteLga, isLoading } = useDeleteLga({
     onSuccess: () => {
       client.refetchQueries(ADMIN_LGAS_KEYS)
@@ -28,10 +31,10 @@ export function RemoveLgaDialog({ open, lga, onOpenChange }) {
       ]}
       maxWidth="sm"
       open={open}
-      title={formatMessage(messages.removeLga)}
+      title={`${formatMessage(messages.delete)} ${getCustomMessage(formatMessage, messages, 'lga', user)}`}
       onClose={() => onOpenChange(false)}
     >
-      {formatMessage(messages.removeLgaConfirmation)}
+      {formatMessage(messages.deleteConfirmation, { entity: getCustomMessage(formatMessage, messages, 'lga', user) })}
     </AspectDialog>
   )
 }

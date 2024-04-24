@@ -4,12 +4,15 @@ import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useDeleteState } from '../../../hooks/admin/useDeleteState'
+import useAuthState from '../../../hooks/useAuthState'
+import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
 export function RemoveStateDialog({ open, state, onOpenChange }) {
   const { formatMessage } = useIntl()
   const client = useQueryClient()
+  const user = useAuthState()
   const { mutate: deleteState, isLoading } = useDeleteState({
     onSuccess: () => {
       client.refetchQueries(ADMIN_STATES_KEYS)
@@ -34,10 +37,10 @@ export function RemoveStateDialog({ open, state, onOpenChange }) {
       ]}
       maxWidth="sm"
       open={open}
-      title={formatMessage(messages.removeState)}
+      title={`${formatMessage(messages.delete)} ${getCustomMessage(formatMessage, messages, 'state', user)}`}
       onClose={() => onOpenChange(false)}
     >
-      {formatMessage(messages.removeStateConfirmation)}
+      {formatMessage(messages.deleteConfirmation, { entity: getCustomMessage(formatMessage, messages, 'state', user) })}
     </AspectDialog>
   )
 }

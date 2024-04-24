@@ -1,6 +1,8 @@
 import { defineMessages } from 'react-intl'
+import { commonDefinitions } from './customMessages'
 
 const messages = defineMessages({
+  ...commonDefinitions,
   idleDialogTitle: { id: 'pages.IdleDialog.title', defaultMessage: 'Automatic Logout' },
   idleDialogHelp: {
     id: 'shared.IdleDialog.help',

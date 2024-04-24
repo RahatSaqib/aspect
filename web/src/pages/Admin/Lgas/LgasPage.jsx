@@ -1,7 +1,5 @@
 import React, { useState } from 'react'
-import DeleteIcon from '@mui/icons-material/Delete'
-import EditIcon from '@mui/icons-material/Edit'
-import { Box, Button, Card, LinearProgress, Table, TableBody } from '@mui/material'
+import { Box, Card, LinearProgress, Table, TableBody, TableRow } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
@@ -22,6 +20,9 @@ import messages from '../messages'
 import { AddLgaDialog } from './AddLgaDialog'
 import { EditLgaDialog } from './EditLgaDialog'
 import { RemoveLgaDialog } from './RemoveLgaDialog'
+import AspectVertMenu from '../../../components/AspectVertMenu'
+import { getCustomMessage } from '../../../messages'
+import useAuthState from '../../../hooks/useAuthState'
 
 export default function LgasPage() {
   const { formatMessage } = useIntl()
@@ -31,6 +32,7 @@ export default function LgasPage() {
   const [removingLga, setRemovingLga] = useState()
   const [editingLga, setEditingLga] = useState()
   const [filters] = usePathFilter()
+  const user = useAuthState()
   const sortPage = makeSortPageSelector({ sortCol: 'name' })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const { data, isLoading } = useAdminLgas(
@@ -39,15 +41,15 @@ export default function LgasPage() {
 
   return (
     <>
-      <DetailHeader name={formatMessage(messages.lgas)} disableBack>
+      <DetailHeader name={getCustomMessage(formatMessage, messages, 'lga', user)} disableBack>
         <PermissionChecker permissions={['deviceApiKey:edit', 'deviceApiKey:admin']}>
           <AspectButton onClick={() => setAddLga(true)} type="button" color="primary" variant="contained" browseButton>
-            {formatMessage(messages.createNewLga)}
+            {formatMessage(messages.createNew)} {getCustomMessage(formatMessage, messages, 'lga', user)}
           </AspectButton>
         </PermissionChecker>
       </DetailHeader>
       <Box sx={{ padding: '10px', width: '100%' }}>
-        <Helmet title={formatMessage(messages.lgas)} />
+        <Helmet title={getCustomMessage(formatMessage, messages, 'lga', user)} />
         <LgasFilter />
         <Card sx={{ padding: '20px' }}>
           {isLoading ? (
@@ -62,8 +64,8 @@ export default function LgasPage() {
                   sortColumnKey={sortCol}
                   sortColumnDir={sortDir}
                   columns={[
-                    { key: 'name', label: formatMessage(messages.lgaName), sortable: true },
-                    { key: 'stateName', label: formatMessage(messages.stateName) },
+                    { key: 'name', label: formatMessage(messages.name), sortable: true },
+                    { key: 'stateName', label: getCustomMessage(formatMessage, messages, 'state', user) },
                     { key: 'apiKeys', label: formatMessage(messages.apiKeys) },
                     { key: 'people', label: formatMessage(messages.people) },
                     { key: 'sites', label: formatMessage(messages.sites) },
@@ -75,42 +77,35 @@ export default function LgasPage() {
                   ]}
                 />
                 <TableBody>
-                  {data.data.map(i => (
-                    <DataTableRow onClick={() => {}} key={i.name}>
-                      <DataTableCell>{i.name}</DataTableCell>
-                      <DataTableCell>{i.stateName}</DataTableCell>
-                      <DataTableCell>{i.deviceApiKeyCount}</DataTableCell>
-                      <DataTableCell>{i.personCount}</DataTableCell>
-                      <DataTableCell>{i.siteCount}</DataTableCell>
-                      <DataTableCell>{i.issueCount}</DataTableCell>
-                      <DataTableCell>{i.deviceConfigurationCount}</DataTableCell>
-                      <DataTableCell>{i.notificationCount}</DataTableCell>
-                      <DataTableCell>{i.jobContextCount}</DataTableCell>
+                  {data.data.map((l, i) => (
+                    <TableRow sx={{ bgcolor: i % 2 ? '#fff' : '#eef1f8' }} onClick={() => {}} key={l.name}>
+                      <DataTableCell style={{ pointerEvents: 'none' }}>{l.name}</DataTableCell>
+                      <DataTableCell>{l.stateName}</DataTableCell>
+                      <DataTableCell>{l.deviceApiKeyCount}</DataTableCell>
+                      <DataTableCell>{l.personCount}</DataTableCell>
+                      <DataTableCell>{l.siteCount}</DataTableCell>
+                      <DataTableCell>{l.issueCount}</DataTableCell>
+                      <DataTableCell>{l.deviceConfigurationCount}</DataTableCell>
+                      <DataTableCell>{l.notificationCount}</DataTableCell>
+                      <DataTableCell>{l.jobContextCount}</DataTableCell>
                       <DataTableCell>
-                        <Button
-                          disabled={!!i.cannotDelete}
-                          onClick={e => {
-                            e.stopPropagation()
-                            setRemovingLga(i)
-                          }}
-                          variant="outlined"
-                          startIcon={<DeleteIcon />}
-                        >
-                          {formatMessage(messages.delete)}
-                        </Button>
-                        <Button
-                          sx={{ ml: '5px' }}
-                          onClick={e => {
-                            e.stopPropagation()
-                            setEditingLga(i)
-                          }}
-                          variant="outlined"
-                          startIcon={<EditIcon />}
-                        >
-                          {formatMessage(messages.edit)}
-                        </Button>
+                        <AspectVertMenu
+                          actions={[
+                            {
+                              icon: 'FaEdit',
+                              text: formatMessage(messages.edit),
+                              action: () => setEditingLga(l),
+                            },
+                            {
+                              icon: 'FaTrash',
+                              text: formatMessage(messages.delete),
+                              disabled: !!l.cannotDelete,
+                              action: () => setRemovingLga(l),
+                            },
+                          ]}
+                        />
                       </DataTableCell>
-                    </DataTableRow>
+                    </TableRow>
                   ))}
                 </TableBody>
               </Table>

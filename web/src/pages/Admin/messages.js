@@ -1,77 +1,15 @@
 import { defineMessages } from 'react-intl'
+import { commonDefinitions } from '../../messages'
 
 export default defineMessages({
-  states: {
-    id: 'admin.page.states.title',
-    defaultMessage: 'States',
+  ...commonDefinitions,
+  createNew: {
+    id: 'admin.page.states.createNew',
+    defaultMessage: 'Create New',
   },
-  lgas: {
-    id: 'admin.page.lgas.title',
-    defaultMessage: 'LGAs',
-  },
-  createNewState: {
-    id: 'admin.page.states.createNewState',
-    defaultMessage: 'Create New State',
-  },
-  editState: {
-    id: 'admin.page.states.editState',
-    defaultMessage: 'Edit State',
-  },
-  createState: {
-    id: 'admin.page.states.createState',
-    defaultMessage: 'Create State',
-  },
-  editLga: {
-    id: 'admin.page.lgas.editLga',
-    defaultMessage: 'Edit LGA',
-  },
-  createLga: {
-    id: 'admin.page.lgas.createLga',
-    defaultMessage: 'Create LGA',
-  },
-  createNewLga: {
-    id: 'admin.page.lgas.createNewLga',
-    defaultMessage: 'Create New LGA',
-  },
-  stateName: {
-    id: 'admin.page.states.stateName',
-    defaultMessage: 'State Name',
-  },
-  stateNameRequired: {
-    id: 'admin.page.states.stateNameRequired',
-    defaultMessage: 'State name is required',
-  },
-  lgaNameRequired: {
-    id: 'admin.page.lgas.lgaNameRequired',
-    defaultMessage: 'LGA name is required',
-  },
-  stateAbbreviation: {
-    id: 'admin.page.states.stateAbbreviation',
-    defaultMessage: 'State Abbreviation',
-  },
-  stateAbbreviationRequired: {
-    id: 'admin.page.states.stateAbbreviationRequired',
-    defaultMessage: 'State abbreviation is required',
-  },
-  removeState: {
-    id: 'admin.page.states.removeState',
-    defaultMessage: 'Remove State',
-  },
-  removeLga: {
-    id: 'admin.page.lgas.removeLga',
-    defaultMessage: 'Remove LGA',
-  },
-  removeStateConfirmation: {
-    id: 'admin.page.states.removeStateConfirmation',
-    defaultMessage: 'Are you sure to remove this State?',
-  },
-  removeLgaConfirmation: {
-    id: 'admin.page.lgas.removeLgaConfirmation',
-    defaultMessage: 'Are you sure to remove this LGA?',
-  },
-  lgaName: {
-    id: 'admin.page.lgas.lgaName',
-    defaultMessage: 'LGA Name',
+  deleteConfirmation: {
+    id: 'admin.page.removeConfirmation',
+    defaultMessage: 'Are you sure to delete this {entity}?',
   },
   manage: {
     id: 'admin.page.states.manage',
@@ -92,6 +30,18 @@ export default defineMessages({
   yes: {
     id: 'pages.admin.yes',
     defaultMessage: 'Yes',
+  },
+  create: {
+    id: 'pages.admin.create',
+    defaultMessage: 'Create',
+  },
+  name: {
+    id: 'pages.admin.name',
+    defaultMessage: 'Name',
+  },
+  abbreviation: {
+    id: 'pages.admin.abbreviation',
+    defaultMessage: 'Abbreviation',
   },
   apiKeys: {
     id: 'pages.admin.apiKeys',
@@ -124,15 +74,15 @@ export default defineMessages({
   statesPaginatorStatus: {
     id: 'pages.admin.states.paginatorStatus',
     defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# state}
-      other {# states}
+      one {# }
+      other {# }
     }`,
   },
   lgaPaginatorStatus: {
     id: 'pages.admin.lga.paginatorStatus',
     defaultMessage: `Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural,
-      one {# LGA}
-      other {# LGAs}
+      one {# }
+      other {# }
     }`,
   },
 })

@@ -8,6 +8,7 @@ import { StateSelect } from '../../../cleanComponents'
 import { ADMIN_LGAS_KEYS } from '../../../hooks/admin/adminKeys'
 import { useCreateLga } from '../../../hooks/admin/useCreateLga'
 import useAuthState from '../../../hooks/useAuthState'
+import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
 
@@ -24,7 +25,7 @@ export function AddLgaDialog({ open, onOpenChange }) {
 
   return (
     <AspectDialog
-      title={formatMessage(messages.createNewLga)}
+      title={`${formatMessage(messages.createNew)} ${getCustomMessage(formatMessage, messages, 'lga', user)}`}
       maxWidth="sm"
       open={open}
       onClose={() => onOpenChange(false)}
@@ -33,41 +34,39 @@ export function AddLgaDialog({ open, onOpenChange }) {
         <Formik
           initialValues={{ name: '', stateId: '' }}
           validationSchema={object({
-            name: string().required(formatMessage(messages.lgaNameRequired)),
-            stateId: number().nullable().required(formatMessage(messages.stateNameRequired)),
+            name: string().required(),
+            stateId: number().nullable().required(),
           })}
           onSubmit={values => createLga(values)}
         >
-          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (
             <>
               <StateSelect
                 id="stateId"
                 name="stateId"
-                label={formatMessage(messages.stateName)}
+                label={getCustomMessage(formatMessage, messages, 'state', user)}
                 value={String(values?.stateId ?? '')}
                 onChange={handleChange}
                 error={!!errors.stateId}
-                helperText={errors.stateId}
                 countryId={user.countryId}
               />
               <TextField
                 id="name"
                 name="name"
-                label={formatMessage(messages.lgaName)}
+                label={formatMessage(messages.name)}
                 value={values.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={!!(touched.name && Boolean(errors.name))}
-                helperText={touched.name && errors.name}
               />
               <Button
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isValid}
                 sx={{ alignSelf: 'flex-end' }}
                 color="primary"
                 variant="contained"
                 onClick={handleSubmit}
               >
-                {isSubmitting ? <CircularProgress size={20} /> : formatMessage(messages.createLga)}
+                {isSubmitting ? <CircularProgress size={20} /> : formatMessage(messages.create)}
               </Button>
             </>
           )}

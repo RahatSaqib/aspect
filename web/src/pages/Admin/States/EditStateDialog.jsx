@@ -8,10 +8,13 @@ import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useEditState } from '../../../hooks/admin/useEditState'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import messages from '../messages'
+import useAuthState from '../../../hooks/useAuthState'
+import { getCustomMessage } from '../../../messages'
 
 export function EditStateDialog({ open, state, onOpenChange }) {
   const { formatMessage } = useIntl()
   const client = useQueryClient()
+  const user = useAuthState()
   const { mutateAsync: editState } = useEditState({
     onSuccess: () => {
       client.refetchQueries(ADMIN_STATES_KEYS)
@@ -20,7 +23,7 @@ export function EditStateDialog({ open, state, onOpenChange }) {
   })
   return (
     <AspectDialog
-      title={formatMessage(messages.editState)}
+      title={`${formatMessage(messages.edit)} ${getCustomMessage(formatMessage, messages, 'state', user)}`}
       maxWidth="sm"
       open={open}
       onClose={() => onOpenChange(false)}
@@ -29,35 +32,33 @@ export function EditStateDialog({ open, state, onOpenChange }) {
         <Formik
           initialValues={{ name: state?.name, abbreviation: state?.abbreviation }}
           validationSchema={object({
-            name: string().required(formatMessage(messages.stateNameRequired)),
-            abbreviation: string().required(formatMessage(messages.stateAbbreviationRequired)),
+            name: string().required(),
+            abbreviation: string().required(),
           })}
           onSubmit={({ abbreviation, name }) => editState({ stateId: state?.id, abbreviation, name })}
         >
-          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting }) => (
+          {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (
             <>
               <TextField
                 id="name"
                 name="name"
-                label={formatMessage(messages.stateName)}
+                label={formatMessage(messages.name)}
                 value={values.name}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={!!(touched.name && Boolean(errors.name))}
-                helperText={touched.name && errors.name}
               />
               <TextField
                 id="abbreviation"
                 name="abbreviation"
-                label={formatMessage(messages.stateAbbreviation)}
+                label={formatMessage(messages.abbreviation)}
                 value={values.abbreviation}
                 onChange={handleChange}
                 onBlur={handleBlur}
                 error={!!(touched.abbreviation && Boolean(errors.abbreviation))}
-                helperText={touched.abbreviation && errors.abbreviation}
               />
               <Button
-                disabled={isSubmitting}
+                disabled={isSubmitting || !isValid}
                 sx={{ alignSelf: 'flex-end' }}
                 color="primary"
                 variant="contained"
