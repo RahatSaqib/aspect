@@ -19,5 +19,5 @@ module.exports = [
   countryReportsDecorator(clinician, countryReports),
   countryReportsDecorator(remoteHealthWorker, countryReports),
   countryReportsDecorator(technician, countryReports),
-  countryReportsDecorator(aspectBeta, countryReports),
+  aspectBeta,
 ]

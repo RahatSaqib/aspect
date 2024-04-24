@@ -29,5 +29,5 @@ module.exports = [
   withNoReporterPermissions(clinician),
   withNoReporterPermissions(remoteHealthWorker),
   withNoReporterPermissions(technician),
-  withNoReporterPermissions(withNewReports(aspectBeta)),
+  aspectBeta
 ]
