@@ -20,8 +20,8 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
    * then it means user wants to see data for May 1, but in ISO date is
    * '2024-04-30 19:44:55.123Z' and `startOfDayUtc` returns '2024-04-30 00:00:00.000Z'
    */
-  const minDateStatus = format(minDate, 'yyyy-MM-dd')
-  const maxDateStatus = format(maxDate, 'yyyy-MM-dd')
+  const minDateStatus = format(new Date(minDate), 'yyyy-MM-dd')
+  const maxDateStatus = format(new Date(maxDate), 'yyyy-MM-dd')
 
   return (
     knex('Device as d')
