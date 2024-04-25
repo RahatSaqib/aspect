@@ -89,10 +89,6 @@ const admin = {
     },
     {
       module: 'dashboard',
-      activity: 'inventory',
-    },
-    {
-      module: 'dashboard',
       activity: 'site',
     },
     {
@@ -126,10 +122,6 @@ const admin = {
     {
       module: 'taskMenu',
       activity: 'view',
-    },
-    {
-      module: 'inventory',
-      activity: 'edit',
     },
     {
       module: 'notification',
@@ -195,10 +187,6 @@ const manager = {
       activity: 'admin',
     },
     {
-      module: 'inventory',
-      activity: 'edit',
-    },
-    {
       module: 'person',
       activity: 'edit',
     },
@@ -209,10 +197,6 @@ const manager = {
     {
       module: 'site',
       activity: 'edit',
-    },
-    {
-      module: 'dashboard',
-      activity: 'inventory',
     },
     {
       module: 'dashboard',
@@ -279,10 +263,6 @@ const regionalOfficer = {
     },
     {
       module: 'deviceApiKey',
-      activity: 'edit',
-    },
-    {
-      module: 'inventory',
       activity: 'edit',
     },
     {
@@ -429,10 +409,6 @@ const labUser = {
       activity: 'view',
     },
     {
-      module: 'inventory',
-      activity: 'view',
-    },
-    {
       module: 'notification',
       activity: 'view',
     },
@@ -513,10 +489,6 @@ const clinician = {
     },
     {
       module: 'dashboard',
-      activity: 'inventory',
-    },
-    {
-      module: 'dashboard',
       activity: 'site',
     },
     {
@@ -541,10 +513,6 @@ const clinician = {
     },
     {
       module: 'taskMenu',
-      activity: 'view',
-    },
-    {
-      module: 'inventory',
       activity: 'view',
     },
     {
@@ -575,10 +543,6 @@ const deviceMaker = {
     },
     {
       module: 'assay',
-      activity: 'view',
-    },
-    {
-      module: 'inventory',
       activity: 'view',
     },
     {
@@ -739,10 +703,6 @@ const donor = {
       activity: 'view',
     },
     {
-      module: 'inventory',
-      activity: 'view',
-    },
-    {
       module: 'operationalData',
       activity: 'view',
     },
@@ -895,10 +855,6 @@ const remoteHealthWorker = {
     },
     {
       module: 'dashboard',
-      activity: 'inventory',
-    },
-    {
-      module: 'dashboard',
       activity: 'site',
     },
     {
@@ -988,10 +944,6 @@ const labManager = {
       activity: 'view',
     },
     {
-      module: 'inventory',
-      activity: 'edit',
-    },
-    {
       module: 'operationalData',
       activity: 'view',
     },
@@ -1075,10 +1027,6 @@ const labSupervisor = {
       activity: 'view',
     },
     {
-      module: 'inventory',
-      activity: 'edit',
-    },
-    {
       module: 'operationalData',
       activity: 'view',
     },
@@ -1152,10 +1100,6 @@ const medTech = {
     {
       module: 'dashboard',
       activity: 'view',
-    },
-    {
-      module: 'inventory',
-      activity: 'edit',
     },
     {
       module: 'operationalData',
@@ -1305,6 +1249,25 @@ const labAdmin = {
   ],
 }
 
+const aspectBeta = {
+  ...admin,
+  name: 'Aspect Beta',
+  permissions: [
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
+    {
+      module: 'inventory',
+      activity: 'view',
+    },
+  ],
+}
+
 const concatUniqOrderedArray = (arr1, arr2, sortedFunction = _.identity) =>
   _.compact(_.sortBy(_.uniq(_.concat(arr1, arr2)), arr1 && arr2 ? sortedFunction : _.identity))
 
@@ -1351,6 +1314,7 @@ module.exports = {
   ntpNoResults,
   systemOne,
   labAdmin,
+  aspectBeta,
   mergeJobFunctions,
   countryReportsDecorator,
 }
