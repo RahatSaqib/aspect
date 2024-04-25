@@ -1,4 +1,4 @@
-const { xpertSiteSummaryReportSiteWise } = require('../../fixtures/Report')
+const { xpertSiteSummaryReportSiteWise, deviceAndSiteSummaryReport } = require('../../fixtures/Report')
 
 const deviceSummaryReport = {
   name: 'Device Summary Report',
@@ -143,4 +143,5 @@ module.exports = {
   xpertWorkloadSummaryReport,
   missingCartridgesReport,
   annualUtilizationRates,
+  deviceAndSiteSummaryReport,
 }
