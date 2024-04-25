@@ -18,9 +18,9 @@ const {
   min,
   max,
   addMonths,
-  subMinutes,
   endOfDay,
   subDays,
+  addMilliseconds,
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
@@ -433,22 +433,11 @@ function arrayofIANATimezone(timezone) {
 }
 
 function getUserStartOfMonth(date, userTimeZoneOffsetInMinutes) {
-  // Adjust the date for the user's timezone offset
-
-  const adjustedDate = addMinutes(date, userTimeZoneOffsetInMinutes)
-
-  if (userTimeZoneOffsetInMinutes < 0) {
-    return subMinutes(startOfMonth(date), userTimeZoneOffsetInMinutes)
-  }
-  return startOfMonth(adjustedDate)
+  return addMinutes(startOfMonth(addMinutes(date, userTimeZoneOffsetInMinutes)), -userTimeZoneOffsetInMinutes)
 }
 
 function getUserEndOfMonth(date, userTimeZoneOffsetInMinutes) {
-  const adjustedDate = addMinutes(date, userTimeZoneOffsetInMinutes)
-  if (userTimeZoneOffsetInMinutes < 0) {
-    return subMinutes(endOfMonth(date), userTimeZoneOffsetInMinutes)
-  }
-  return endOfMonth(adjustedDate)
+  return addMinutes(endOfMonth(addMinutes(date, userTimeZoneOffsetInMinutes)), -userTimeZoneOffsetInMinutes)
 }
 
 /**
@@ -461,30 +450,19 @@ function getUserEndOfMonth(date, userTimeZoneOffsetInMinutes) {
 function getAllUserMonthsInRange(minDate, maxDate, userTimeZoneOffsetInMinutes) {
   const allRanges = []
   let currentDate = minDate
-  let i = 0
-  while (currentDate <= maxDate && i < 12) {
-    // Get the end of the month adjusted for the user's timezone offset
-    const userEndOfMonth = getUserEndOfMonth(currentDate, userTimeZoneOffsetInMinutes)
-
-    // Ensure that the end of the month doesn't exceed the maxDate
-    const maxCurrentDate = maxDate < userEndOfMonth ? maxDate : userEndOfMonth
-
-    // Format the month in the user's timezone
+  let endOfMonthDate = getUserEndOfMonth(currentDate, userTimeZoneOffsetInMinutes)
+  while (currentDate <= maxDate) {
     const userMonth = format(addMinutes(currentDate, userTimeZoneOffsetInMinutes), 'yyyy-MM')
 
-    // Add the month and date range to the collection
+    const maxCurrentDate = maxDate < endOfMonthDate ? maxDate : endOfMonthDate
+
     allRanges.push({
       userMonth,
       minDate: currentDate,
       maxDate: maxCurrentDate,
     })
-
-    // Move to the start of the next month
-    const userStartOfMonth = getUserStartOfMonth(addMonths(currentDate, 1), userTimeZoneOffsetInMinutes)
-    currentDate = userStartOfMonth
-    // console.log('updated current date', currentDate)
-    // Increment the counter
-    i += 1
+    currentDate = addMilliseconds(maxCurrentDate, 1)
+    endOfMonthDate = getUserEndOfMonth(currentDate, userTimeZoneOffsetInMinutes)
   }
 
   return allRanges
