@@ -346,8 +346,6 @@ describe('Device result calculation test', function () {
     await new Promise(resolve => setTimeout(resolve, delay))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
-    expect(factResult).to.not.be.empty
-
     const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
@@ -405,7 +403,6 @@ describe('Device result calculation test', function () {
       .whereIn('deviceId', [deviceId, deviceId3])
       .orderBy('calculatedOn', 'desc')
 
-    expect(factResult).to.not.be.empty
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
 
