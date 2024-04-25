@@ -78,7 +78,14 @@ const getMtbErrorGraph = async request => {
 
   const { timezoneIANA } = user
 
-  const errorResultAgg = await getErrorResultAgg(knex, assayIds, dataConstraints, categoryMap[category], timezoneIANA, state)
+  const errorResultAgg = await getErrorResultAgg(
+    knex,
+    assayIds,
+    dataConstraints,
+    categoryMap[category],
+    timezoneIANA,
+    state
+  )
 
   const graphData = calculatePercentage(errorResultAgg)
 
