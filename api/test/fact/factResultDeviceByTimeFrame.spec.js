@@ -2,7 +2,7 @@ const chai = require('chai')
 const chaiSubset = require('chai-subset')
 const uuid = require('node-uuid')
 
-const { expect, assert } = chai.use(chaiSubset)
+const { expect } = chai.use(chaiSubset)
 const { knex } = require('../../src/db')
 
 const { deviceTypeToId, deviceApprovalToId } = require('../../src/shared/dictionary')
@@ -101,7 +101,6 @@ describe.only('Device result calculation test', function () {
   let resultPayload = {}
 
   before(async () => {
-    // get partnerId
     const partner = await getPartner(knex, partnerName)
     partnerId = partner.id
 
