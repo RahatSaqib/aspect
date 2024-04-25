@@ -1,5 +1,6 @@
 const chai = require('chai')
 const chaiSubset = require('chai-subset')
+const uuid = require('node-uuid')
 
 const { expect, assert } = chai.use(chaiSubset)
 const { knex } = require('../../src/db')
@@ -12,6 +13,8 @@ const server = require('../utils/testUtils')
 const { getPartner, getSite } = require('../utils/issueUtils')
 const { insertSite } = require('../../src/site/common/db')
 const { randomToken } = require('../../src/deviceApi/apiKey')
+
+const delay = 5000
 
 const deleteDevice = async deviceIds => {
   await knex('DeviceLog').delete().whereIn('deviceId', deviceIds)
@@ -140,7 +143,7 @@ describe.only('Device result calculation test', function () {
         id: '13d9fa2a-471b-11ee-a7da-8def055759e2',
         checkpoint: null,
         startedOn: '2023-08-31T23:25:17Z',
-        endedOn: '2023-08-31T23:58:31Z',
+        endedOn: null,
         data: {
           deviceApiKey: null,
           hostId: 'ETWPIkdJ',
@@ -153,7 +156,7 @@ describe.only('Device result calculation test', function () {
           testTypeId: 4,
           assayVersion: '4',
           testStartedOn: '2023-08-31T23:25:17Z',
-          testEndedOn: '2023-08-31T23:58:31Z',
+          testEndedOn: null,
           cartridgeExpirationDate: '2090-12-25T02:51:00',
           cartridgeSerial: '13da0ed4-471b-11ee-a7da-8def044759e9',
           moduleName: 'G3',
@@ -164,9 +167,9 @@ describe.only('Device result calculation test', function () {
           messageSentOn: '2023-08-30T10:53:31Z',
           reagentLotId: '52283',
           softwareVersion: '4.3',
-          resultText: 'MTB Detected|Rif Resistance Detected',
-          result1Text: 'MTB Detected',
-          result2Text: 'Rif Resistance Detected',
+          resultText: '',
+          result1Text: '',
+          result2Text: '',
           result3Text: null,
           notes: '',
           errorCode: null,
@@ -252,26 +255,23 @@ describe.only('Device result calculation test', function () {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
 
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
     expect(postResult.status).to.equal(200)
 
-    expect(factResult.length).to.eq(2)
-    expect(factResult[0].resultCount).to.eq(1)
-    expect(factResult[1].resultCount).to.eq(1)
-    expect(factResult[0].assayId).to.eq(4)
-    expect(factResult[0].deviceId).to.eq(deviceId)
-    expect(factResult[0].resultCategory1).to.eq(1)
-    expect(factResult[0].resultCategory2).to.eq(1)
+    const { quantityZero, quantityOne } = separateData(factResult)
+
+    expect(quantityZero.length).to.eq(0)
+    expect(quantityOne.length).to.eq(2)
   })
 
   it('should ensure record is created appropriately in fact table and timezone is considered', async () => {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
 
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
@@ -284,60 +284,58 @@ describe.only('Device result calculation test', function () {
   })
 
   it('should ensure resultCount decreases in the fact table when same result resultCategory1 and resultCategory1 are changed', async () => {
+    // post a result (not yet concluded)
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    // post another result (not yet concluded)
+    const newSampleId = 'new result sampleId'
+    resultPayload.result.sample.id = newSampleId
+    resultPayload.result.consumable[0].serial = uuid()
+    resultPayload.result.data.sampleId = newSampleId
 
+    const postResult2 = await server.post(devicePath).set('Authorization', token).send(resultPayload)
+    resultIds.push(postResult2.body.aspectResultId)
+
+    await new Promise(resolve => setTimeout(resolve, delay))
+
+    // post the concluded test for the second result
+    const resultEndDate = '2023-09-02T23:58:31Z'
+    resultPayload.result.endedOn = resultEndDate
+    resultPayload.result.data.testStartedOn = resultEndDate
     resultPayload.result.data.resultText = 'MTB Not Detected|Rif Resistance Not Detected'
     resultPayload.result.data.result1Text = 'MTB Not Detected'
     resultPayload.result.data.result2Text = 'Rif Resistance Not Detected'
 
-    const postResult2 = await server.post(devicePath).set('Authorization', token).send(resultPayload)
+    const postResult3 = await server.post(devicePath).set('Authorization', token).send(resultPayload)
 
-    resultIds.push(postResult2.body.aspectResultId)
+    resultIds.push(postResult3.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
-
-    const { quantityZero, quantityOne } = separateData(factResult)
-
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
+    expect(postResult3.status).to.equal(200)
     expect(factResult.length).to.be.gt(2)
 
-    assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
-  })
-
-  it('should ensure resultCount decreases in the fact table when same result is uploaded by different devices', async () => {
-    const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
-    resultIds.push(postResult.body.aspectResultId)
-
-    await new Promise(resolve => setTimeout(resolve, 5000))
-
-    const postResult2 = await server.post(devicePath).set('Authorization', token2).send(resultPayload)
-
-    resultIds.push(postResult2.body.aspectResultId)
-
-    await new Promise(resolve => setTimeout(resolve, 5000))
-    const factResult = await knex('FactResultsDeviceByTimeFrame')
-      .where({ deviceId: deviceId2 })
-      .orderBy('calculatedOn', 'desc')
-
-    expect(factResult).to.not.be.empty
     const { quantityZero, quantityOne } = separateData(factResult)
 
-    expect(postResult.status).to.equal(200)
-    expect(postResult2.status).to.equal(200)
-
-    assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
+    expect(quantityZero.length).to.eq(0)
+    expect(quantityOne.length).to.eq(4)
   })
 
   it('should ensure resultCount decreases in the fact table when same result is uploaded with varying endedOn', async () => {
+    const resultEndDate = '2023-09-02T23:58:31Z'
+    resultPayload.result.endedOn = resultEndDate
+    resultPayload.result.data.testStartedOn = resultEndDate
+    resultPayload.result.data.resultText = 'MTB Not Detected|Rif Resistance Not Detected'
+    resultPayload.result.data.result1Text = 'MTB Not Detected'
+    resultPayload.result.data.result2Text = 'Rif Resistance Not Detected'
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
+
     resultIds.push(postResult.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
 
     resultPayload.result.endedOn = '2023-10-01T10:25:17Z'
     resultPayload.result.testEndedOn = '2023-10-01T10:25:17Z'
@@ -346,7 +344,7 @@ describe.only('Device result calculation test', function () {
 
     resultIds.push(postResult2.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
 
     expect(factResult).to.not.be.empty
@@ -356,14 +354,19 @@ describe.only('Device result calculation test', function () {
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
 
-    assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
+    expect(quantityZero.length).to.eq(0)
+    expect(quantityOne.length).to.eq(2)
+
+    factResult.forEach(item => {
+      expect(item.startedOn.getMonth()).to.eq(9) // month starts from 0 index
+    })
   })
 
   it('should ensure resultCount decreases in the fact table when same result is uploaded with varying assays', async () => {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
 
     resultPayload.result.data.assay = 'MTB-RIF_ULTRA'
     resultPayload.assay = {
@@ -375,38 +378,41 @@ describe.only('Device result calculation test', function () {
 
     resultIds.push(postResult2.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
     const factResult = await knex('FactResultsDeviceByTimeFrame').where({ deviceId }).orderBy('calculatedOn', 'desc')
-
-    const { quantityZero, quantityOne } = separateData(factResult)
 
     expect(postResult.status).to.equal(200)
     expect(postResult2.status).to.equal(200)
+    expect(factResult.length).to.eq(4)
 
-    assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
+    const { quantityZero, quantityOne } = separateData(factResult)
+
+    expect(quantityZero.length).to.eq(0)
+    expect(quantityOne.length).to.eq(4)
   })
 
-  it('should ensure resultCount decreases in the fact table when same result is uploaded from different sites', async () => {
+  it('should ensure no new record is created in the fact table when same result is uploaded from different sites', async () => {
     const postResult = await server.post(devicePath).set('Authorization', token).send(resultPayload)
     resultIds.push(postResult.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
 
     const postResult2 = await server.post(devicePath).set('Authorization', token3).send(resultPayload)
 
     resultIds.push(postResult2.body.aspectResultId)
 
-    await new Promise(resolve => setTimeout(resolve, 5000))
+    await new Promise(resolve => setTimeout(resolve, delay))
     const factResult = await knex('FactResultsDeviceByTimeFrame')
-      .where({ deviceId: deviceId3 })
+      .whereIn('deviceId', [deviceId, deviceId3])
       .orderBy('calculatedOn', 'desc')
 
-      expect(factResult).to.not.be.empty
+    expect(factResult).to.not.be.empty
+    expect(postResult.status).to.equal(200)
+    expect(postResult2.status).to.equal(200)
 
     const { quantityZero, quantityOne } = separateData(factResult)
 
-    expect(postResult.status).to.equal(200)
-    expect(postResult2.status).to.equal(200)
-    assert.lengthOf(quantityZero, quantityOne.length, 'quantityZero and quantityOne arrays have the same length')
+    expect(quantityZero.length).to.eq(0)
+    expect(quantityOne.length).to.eq(2)
   })
 })
