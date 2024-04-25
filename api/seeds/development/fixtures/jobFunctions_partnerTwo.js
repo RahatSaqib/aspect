@@ -29,10 +29,6 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'inventory',
-      },
-      {
-        module: 'dashboard',
         activity: 'result',
       },
       {
@@ -49,10 +45,6 @@ module.exports = [
       },
       {
         module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'inventory',
         activity: 'view',
       },
       {
