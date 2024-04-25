@@ -51,7 +51,7 @@ const columns = [
   {
     name: '% Errors',
     prop: 'errorPercent',
-    rest: { skip: true },
+    rest: { skip: true }, // skip rendering header for this one , because we are creating a grouped header manually
     cellProp: { style: { padding: 0 } },
   },
   {
@@ -63,7 +63,7 @@ const columns = [
   {
     name: '% Invalid',
     prop: 'invalidPercent',
-    rest: { skip: true },
+    rest: { skip: true }, // skip rendering header for this one , because we are creating a grouped header manually
     cellProp: { sx: { p: 0 } },
   },
 
@@ -76,7 +76,7 @@ const columns = [
   {
     name: '% No Result',
     prop: 'noResultPercent',
-    rest: { skip: true },
+    rest: { skip: true }, // skip rendering header for this one , because we are creating a grouped header manually
     cellProp: { sx: { p: 0 } },
   },
 ]
