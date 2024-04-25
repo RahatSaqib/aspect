@@ -82,7 +82,7 @@ const USER_LU_NAME = 'myanmar_lab1'
 const partnerName = 'Myanmar'
 const countryAbbreviation = 'MM'
 
-describe.only('Device result calculation test', function () {
+describe('Device result calculation test', function () {
   this.timeout(12000)
   let partnerId
   let geographyId
