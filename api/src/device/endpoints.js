@@ -718,6 +718,7 @@ const routes = [
               Joi.object().keys({
                 stateId: Joi.number().allow(null).description('The ID of the state'),
                 stateName: Joi.string().allow('', null).description('The state where the device is located'),
+                lgaName: Joi.string().allow('', null).description('The lga where the device is located'),
                 modules: Joi.number().required().description('Total number of modules across all devices in the state'),
                 dailyCapacity: Joi.number().required().description('Daily capacity of all devices in the state'),
                 rates: Joi.array()

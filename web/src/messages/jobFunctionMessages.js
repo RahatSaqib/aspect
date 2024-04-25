@@ -5,13 +5,9 @@ export default defineMessages({
     id: 'jobFunction.admin',
     defaultMessage: 'Admin',
   },
-  aspectTester: {
-    id: 'jobFunction.aspectTester',
-    defaultMessage: 'Aspect Tester',
-  },
-  pakistanTesting: {
-    id: 'jobFunction.pakistanTesting',
-    defaultMessage: 'Pakistan Testing',
+  aspectBeta: {
+    id: 'jobFunction.aspectBeta',
+    defaultMessage: 'Aspect Beta',
   },
   clinician: {
     id: 'jobFunction.clinician',
