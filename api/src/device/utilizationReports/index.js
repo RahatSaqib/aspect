@@ -34,16 +34,25 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
     filterParams,
     assay,
     query,
+    timeFrame: 'day',
   })
     .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
-    .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
+    .where('dt.externalId', ['CepheidGeneXpert'])
   /**
    * get all devices recorded in FactResultsDeviceByTimeFrame during whole period
    */
   let devices = await factTableQuery
     .clone()
     .groupBy('d.id')
-    .select('d.name', 'd.id', 'dcap.modules', 'dcap.dailyCapacity', 'st.id as stateId', 'st.name as stateName')
+    .select(
+      'd.name',
+      'd.id',
+      'dcap.modules',
+      'dcap.dailyCapacity',
+      'st.id as stateId',
+      'st.name as stateName',
+      'lg.name as lgaName'
+    )
   devices = devices.map(device => {
     const dailyCapacity = device.dailyCapacity || DEFAULT_DAILY_CAPACITY
     const modules = device.modules || DEFAULT_MODULES
@@ -133,6 +142,7 @@ async function getAnnualUtilizationRatesProvincialBase(auth, query) {
   const { deviceMap, deviceCountsByPeriod, culture, minDate, maxDate } = await getAnnualUtilizationData(auth, query, {
     timeFrame,
   })
+
   /**
    *
    */

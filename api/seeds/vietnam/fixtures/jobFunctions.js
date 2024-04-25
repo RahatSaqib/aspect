@@ -5,6 +5,7 @@ const {
   clinician,
   remoteHealthWorker,
   technician,
+  aspectBeta,
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
@@ -34,5 +35,9 @@ module.exports = [
   {
     ...technician,
     reports: [...technician.reports, ...countryReports],
+  },
+  {
+    ...aspectBeta,
+    reports: [...aspectBeta.reports, ...countryReports],
   },
 ]
