@@ -461,7 +461,7 @@ function getAllUserMonthsInRange(minDate, maxDate, userTimeZoneOffsetInMinutes) 
       minDate: currentDate,
       maxDate: maxCurrentDate,
     })
-    currentDate = addMilliseconds(maxCurrentDate, 1)
+    currentDate = addMilliseconds(maxCurrentDate, 1) // next starting date
     endOfMonthDate = getUserEndOfMonth(currentDate, userTimeZoneOffsetInMinutes)
   }
 
