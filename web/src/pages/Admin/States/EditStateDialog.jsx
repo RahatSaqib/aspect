@@ -6,10 +6,10 @@ import { useQueryClient } from 'react-query'
 import { object, string } from 'yup'
 import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useEditState } from '../../../hooks/admin/useEditState'
-import AspectDialog from '../../../oldComponents/shared/AspectDialog'
-import messages from '../messages'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
+import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import messages from '../messages'
 
 export function EditStateDialog({ open, state, onOpenChange }) {
   const { formatMessage } = useIntl()
