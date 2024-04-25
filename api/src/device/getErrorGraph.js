@@ -1,6 +1,5 @@
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex } = require('../db')
-const { getOffsetFromUser } = require('../shared/date')
 const { allResultCategoryToId, allAssayToId } = require('../shared/dictionary')
 
 const calculatePercentage = errorResultAgg => {
@@ -14,8 +13,8 @@ const calculatePercentage = errorResultAgg => {
   })
 }
 
-const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, offset, state) => {
-  const tzOffset = `CONVERT_TZ(r.endedOn, "+00:00", "${offset}")`
+const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, timezoneIANA, state) => {
+  const tzOffset = `CONVERT_TZ(r.endedOn, "+00:00", "${timezoneIANA}")`
 
   const uniqueResults = knex('Result as r')
     .leftJoin('Site as si', 'r.siteId', 'si.id')
@@ -75,9 +74,11 @@ const getMtbErrorGraph = async request => {
     noResult: resultCategoryIds.NoResult,
   }
 
-  const offset = await getOffsetFromUser(knex, auth.credentials.name)
+  const user = await getUserFromCredentials(auth.credentials)
 
-  const errorResultAgg = await getErrorResultAgg(knex, assayIds, dataConstraints, categoryMap[category], offset, state)
+  const { timezoneIANA } = user
+
+  const errorResultAgg = await getErrorResultAgg(knex, assayIds, dataConstraints, categoryMap[category], timezoneIANA, state)
 
   const graphData = calculatePercentage(errorResultAgg)
 
