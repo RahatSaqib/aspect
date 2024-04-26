@@ -5,10 +5,6 @@ module.exports = [
     permissions: [
       {
         module: 'dashboard',
-        activity: 'action',
-      },
-      {
-        module: 'dashboard',
         activity: 'actionInventoryLevelUpdate',
       },
       {
@@ -49,10 +45,6 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'target',
-      },
-      {
-        module: 'dashboard',
         activity: 'siteFilter',
       },
       {
@@ -71,10 +63,6 @@ module.exports = [
   }),
   mergeJobFunctions(labUser, {
     permissions: [
-      {
-        module: 'dashboard',
-        activity: 'action',
-      },
       {
         module: 'dashboard',
         activity: 'actionInventoryLevelUpdate',
@@ -117,10 +105,6 @@ module.exports = [
     permissions: [
       {
         module: 'dashboard',
-        activity: 'action',
-      },
-      {
-        module: 'dashboard',
         activity: 'actionInventoryLevelUpdate',
       },
       {
@@ -141,15 +125,7 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'site',
-      },
-      {
-        module: 'dashboard',
         activity: 'summary',
-      },
-      {
-        module: 'dashboard',
-        activity: 'target',
       },
       {
         module: 'task',
