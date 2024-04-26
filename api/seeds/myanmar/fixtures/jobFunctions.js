@@ -64,18 +64,6 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'result',
-      },
-      {
-        module: 'dashboard',
-        activity: 'target',
-      },
-      {
-        module: 'dashboard',
-        activity: 'action',
-      },
-      {
-        module: 'dashboard',
         activity: 'actionInventoryLevelUpdate',
       },
       {
@@ -121,10 +109,6 @@ module.exports = [
       {
         module: 'dashboard',
         activity: 'summary',
-      },
-      {
-        module: 'dashboard',
-        activity: 'target',
       },
       {
         module: 'assay',

@@ -140,11 +140,6 @@
         "description": "Can view the Browse menu"
     },
     {
-        "module": "actionDashboard",
-        "activity": "view",
-        "description": "Can view the Action Dashboard"
-    },
-    {
         "module": "reporter",
         "activity": "view",
         "description": "Can view a list of Reporters"
@@ -196,28 +191,8 @@
     },
     {
         "module": "dashboard",
-        "activity": "site",
-        "description": "Can view the dashboard's 'Sites' panel (including sites summary)"
-    },
-    {
-        "module": "dashboard",
         "activity": "inventory",
         "description": "Can view the dashboard's 'Consumables' panel"
-    },
-    {
-        "module": "dashboard",
-        "activity": "device",
-        "description": "Can view the summary of devices inside the 'Sites' panel"
-    },
-    {
-        "module": "dashboard",
-        "activity": "result",
-        "description": "Can view the dashboard's 'Result Status'"
-    },
-    {
-        "module": "dashboard",
-        "activity": "target",
-        "description": "Can view the action dashboard's 'Regional Progress Indicators' panel and download the higher level reports from the Reports panel (Rif, MTB+, TI, Failed Test, Quarterly)"
     },
     {
         "module": "dashboard",

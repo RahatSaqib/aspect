@@ -1,11 +1,9 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const _ = require('lodash')
 const Promise = require('bluebird')
 
 const { rowsAsObject, updateUnknownErrorOnModuleMessage } = require('../utils')
-const { getPermissionModules, upsertIssueResolutionTrigger } = require('../utils')
-const geography = require('./fixtures/geography.json')
+const { upsertIssueResolutionTrigger } = require('../utils')
 const { updateDashboardWidgetQueries } = require('../utils_myanmar')
 const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
 
@@ -103,28 +101,6 @@ async function seed(knex) {
       updatedOn: now,
     })
   }
-
-  // SD-621 Ensure targets have updated values
-  // TODO move Target updates to static utils
-  await Promise.all(
-    _.map(geography.countries[0].states, async state => {
-      const geography = await knex('Geography')
-        .join('State', 'Geography.stateId', 'State.id')
-        .whereNotNull('stateId')
-        .whereNull('lgaId')
-        .where('State.name', state.name)
-        .first('Geography.id')
-
-      await Promise.all(
-        _.map(state.targets, async (value, key) => {
-          await knex('Target')
-            .where({ geographyId: geography.id })
-            .where({ targetToken: key })
-            .update({ targetValue: value })
-        })
-      )
-    })
-  )
 
   // SD-589 Format Issue Dates
   await knex('AlertTemplate')
@@ -293,17 +269,6 @@ async function seed(knex) {
 
     await knex('NotificationType').where({ id: notificationTypeId }).update({ messageTypeId: newMessageTypeId })
   })
-
-  const myanmarJobFunctions = await knex('JobFunction as jf').where('jf.partnerId', partnerId).select()
-
-  const modules = await getPermissionModules(knex)
-
-  await Promise.each(myanmarJobFunctions, async myanmarJobFunction =>
-    knex('JobFunctionPermission').insert({
-      jobFunctionId: myanmarJobFunction.id,
-      permissionId: modules.actionDashboard.edit,
-    })
-  )
 
   await updateUnknownErrorOnModuleMessage(knex)
 
