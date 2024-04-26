@@ -15,13 +15,13 @@ const {
 const adminEnhanced = mergeJobFunctions(admin, {
   permissions: [
     ...admin.permissions,
+    ...aspectBeta.permissions,
     {
       module: 'admin',
       activity: 'edit',
     },
   ],
   reports: [...admin.reports, 'genexpert_issues', 'device_summary_report', 'pk_missing_cartridges_report'],
-  permissions: [...admin.permissions, ...aspectBeta.permissions],
 })
 
 const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
