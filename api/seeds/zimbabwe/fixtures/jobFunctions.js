@@ -9,6 +9,7 @@ const {
   labUser,
   regionalOfficer,
   systemOne,
+  aspectBeta,
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
@@ -25,10 +26,6 @@ module.exports = [
       },
       {
         module: 'device',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -117,10 +114,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'notification',
         activity: 'view',
       },
@@ -162,10 +155,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'operationalData',
         activity: 'view',
       },
@@ -184,10 +173,6 @@ module.exports = [
     permissions: [
       {
         module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -252,10 +237,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'operationalData',
         activity: 'view',
       },
@@ -297,10 +278,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'operationalData',
         activity: 'view',
       },
@@ -327,10 +304,6 @@ module.exports = [
     permissions: [
       {
         module: 'account',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -398,10 +371,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'operationalData',
         activity: 'view',
       },
@@ -435,10 +404,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'operationalData',
         activity: 'view',
       },
@@ -452,4 +417,5 @@ module.exports = [
       },
     ],
   }),
+  aspectBeta,
 ]

@@ -1,12 +1,8 @@
-const { admin, labUser, regionalOfficer, mergeJobFunctions } = require('../../fixtures/jobFunctionBase')
+const { admin, labUser, regionalOfficer, mergeJobFunctions, aspectBeta } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
   mergeJobFunctions(admin, {
     permissions: [
-      {
-        module: 'dashboard',
-        activity: 'action',
-      },
       {
         module: 'dashboard',
         activity: 'actionInventoryLevelUpdate',
@@ -21,10 +17,6 @@ module.exports = [
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -53,10 +45,6 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'target',
-      },
-      {
-        module: 'dashboard',
         activity: 'siteFilter',
       },
       {
@@ -77,18 +65,10 @@ module.exports = [
     permissions: [
       {
         module: 'dashboard',
-        activity: 'action',
-      },
-      {
-        module: 'dashboard',
         activity: 'actionInventoryLevelUpdate',
       },
       {
         module: 'device',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -125,18 +105,10 @@ module.exports = [
     permissions: [
       {
         module: 'dashboard',
-        activity: 'action',
-      },
-      {
-        module: 'dashboard',
         activity: 'actionInventoryLevelUpdate',
       },
       {
         module: 'device',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -153,15 +125,7 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'site',
-      },
-      {
-        module: 'dashboard',
         activity: 'summary',
-      },
-      {
-        module: 'dashboard',
-        activity: 'target',
       },
       {
         module: 'task',
@@ -173,4 +137,5 @@ module.exports = [
       },
     ],
   }),
+  aspectBeta,
 ]

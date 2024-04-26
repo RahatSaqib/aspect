@@ -126,7 +126,7 @@ const getDateTimeProjectionInUserTimeZone = (knex, field, offset, alias) =>
  * see https://systemone.youtrack.cloud/articles/ENG-A-332/Date-and-Time-zone-handling-in-Aspect
  */
 const getDateTimeProjectionInTimeZoneIANA = (knex, field, timeZoneIANA, alias) => {
-  return `${getDateTimeExpressionInTimeZone(knex, field, timeZoneIANA)}${alias ? ` as ${alias}` : ''}`
+  return knex.raw(`CONVERT_TZ(${field}, "+00:00", "${timeZoneIANA}")${alias ? ` as ${alias}` : ''}`)
 }
 
 /**

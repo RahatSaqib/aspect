@@ -2,7 +2,6 @@ import React, { useState } from 'react'
 import { Button } from '@mui/material'
 import { useIntl } from 'react-intl'
 import AspectDialog from '../../../../oldComponents/shared/AspectDialog'
-import { getISOFromString } from '../../../../oldComponents/shared/DateTimeInput/utils/date'
 import AspectForm from '../../../Form'
 import { FormikProvider } from '../../../Form/Formik/Context'
 import ButtonSave from './ButtonSave'
@@ -22,9 +21,12 @@ const DailyStatusDialog = ({ data = {}, onCancel, onSubmit, statuses, title, dev
       deviceId,
       values: {
         ...values,
-        // make sure dates are strings as 'YYYY-MM-DD'
-        startedOn: getISOFromString(values.startedOn),
-        endedOn: getISOFromString(values.endedOn),
+        /**
+         * Make sure to use local datetime as-is it returns from DatePicker.
+         * Dates are converted into ISO format only on posting to API
+         */
+        startedOn: new Date(values.startedOn),
+        endedOn: new Date(values.endedOn),
       },
     })
   }

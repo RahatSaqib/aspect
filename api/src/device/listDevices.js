@@ -1,19 +1,16 @@
 const _ = require('lodash')
-const { subMonths, endOfMonth, startOfMonth } = require('date-fns')
-const { utcToZonedTime, zonedTimeToUtc } = require('date-fns-tz')
-const { getAccountDetailsForUsername } = require('../accountDetails/service')
+const { format, subMonths, endOfMonth, startOfMonth } = require('date-fns')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const { resultCategoryToId } = require('../shared/dictionary')
 const { INTERNAL_DEVICE_IDS } = require('../shared/constants')
 const { getSelectListFields } = require('./common/querySelectors')
-const { convertTimezonetoIANA } = require('../shared/date')
+const { getUser } = require('../auth/service')
 
 async function getListDevices(query, auth) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
-  const loggedUserName = auth.credentials.name
-  const accountDetails = await getAccountDetailsForUsername(loggedUserName)
+  const { personId, timezoneIANA, personTimezoneIANA } = await getUser(auth.credentials.name)
   const resultCategoryErrorId = await resultCategoryToId('Error')
   const { assayId, geneXpertType } = query
   /**
@@ -142,15 +139,14 @@ async function getListDevices(query, auth) {
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
 
-  const userTimeOffset = '+00:00' // TODO: get time offset from somewhere and put here, as there is no datetime parameter to use getOffsetFromIsoDateString(someIsoDateParam) here.
-
-  const timezone = convertTimezonetoIANA(accountDetails.timezone || 'UTC')
-  const now = utcToZonedTime(new Date(), timezone)
+  const now = new Date()
   const previousMonth = subMonths(now, 1)
-  const maxCurrentDate = zonedTimeToUtc(endOfMonth(now), timezone)
-  const minCurrentDate = zonedTimeToUtc(startOfMonth(now), timezone)
-  const maxPreviousDate = zonedTimeToUtc(endOfMonth(previousMonth), timezone)
-  const minPreviousDate = zonedTimeToUtc(startOfMonth(previousMonth), timezone)
+  // minDate for current and previous month
+  const minCurrentDate = format(startOfMonth(now), "yyyy-MM-dd'T'00:00:00.000'Z'")
+  const minPreviousDate = format(startOfMonth(previousMonth), "yyyy-MM-dd'T'00:00:00.000'Z'")
+  // maxDate for current and previous month
+  const maxCurrentDate = format(endOfMonth(now), "yyyy-MM-dd'T'23:59:59.999'Z'")
+  const maxPreviousDate = format(endOfMonth(previousMonth), "yyyy-MM-dd'T'23:59:59.999'Z'")
 
   // get rows
   const getItems = deviceQuery
@@ -160,14 +156,19 @@ async function getListDevices(query, auth) {
         .select({
           deviceId: 'deviceId',
           lastResultConductedOn: knex.raw('MAX(resDevice.endedOn)'),
-          totalCurrentMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
-            minCurrentDate,
-            maxCurrentDate,
-          ]),
-          totalPreviousMonth: knex.raw(`SUM(CASE WHEN resDevice.endedOn BETWEEN ? AND ? THEN 1 ELSE 0 END)`, [
-            minPreviousDate,
-            maxPreviousDate,
-          ]),
+          /**
+           * --> to compare use country timezone in CONVERT_TZ to get a correct local (in-country) date value.
+           * Notice that passing params (minCurrentDate, maxCurrentDate, ...) are correctly formatted
+           * for start/end of local day - i.e. 00:00:00 and 23:59:59. And MySql uses these values as-is.
+           */
+          totalCurrentMonth: knex.raw(
+            `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
+            [minCurrentDate, maxCurrentDate]
+          ),
+          totalPreviousMonth: knex.raw(
+            `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
+            [minPreviousDate, maxPreviousDate]
+          ),
         })
         .groupBy('deviceId')
         .as('deviceResult'),
@@ -199,7 +200,7 @@ async function getListDevices(query, auth) {
         .modify(queryBuilder => {
           if (query.issueTypeId) queryBuilder.whereIn('it.externalId', query.issueTypeId)
         })
-        .where('a.personId', accountDetails.id)
+        .where('a.personId', personId)
         .groupBy('i.deviceId')
         .as('issues'),
       'issues.deviceId',
@@ -208,7 +209,10 @@ async function getListDevices(query, auth) {
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
-      ...getSelectListFields(userTimeOffset),
+      /**
+       * --> to return use user timezone
+       */
+      ...getSelectListFields(personTimezoneIANA),
       'deviceResult.totalCurrentMonth as resultCountThisMonth',
       'deviceResult.totalPreviousMonth as resultCountLastMonth',
       'frd30Errors.resultCount as thisMonthErrors',

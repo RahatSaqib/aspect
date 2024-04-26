@@ -5,20 +5,15 @@ const { getDeviceBaseExtendedQuery } = require('../device/service')
 const { deviceStatusByDayQuery, getDeviceStatusOverTime } = require('./service')
 const { knex, sortPageParams } = require('../db')
 const { getConstraints } = require('../auth/constraints')
-const {
-  getMonthYearField,
-  getOffsetFromIsoDateString,
-  parseDateOrDefault,
-  getDateTimeProjectionInUserTimeZone,
-} = require('../shared/date')
-const { getPersonByPersonId } = require('../auth/service')
+const { getMonthYearField, parseDateOrDefault, getDateTimeProjectionInTimeZoneIANA } = require('../shared/date')
+const { getUser, getPersonByPersonId } = require('../auth/service')
 
 async function getDeviceActivityPercentReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
+  const { timezoneIANA } = await getUser(auth.credentials.name)
   const { culture } = await getPersonByPersonId(auth.credentials.personId)
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
   const { minDate = subMonths(new Date(), 12).toISOString(), maxDate = new Date().toISOString() } = query
-  const offset = getOffsetFromIsoDateString(maxDate)
 
   // get rows
   const getItems = deviceQuery
@@ -32,7 +27,7 @@ async function getDeviceActivityPercentReport(auth, query) {
       'd.serial',
       'da.name as deviceApprovalStatus',
       'dms.name as deviceMaintenanceStatus',
-      getDateTimeProjectionInUserTimeZone(knex, 'MAX(r.updatedOn)', offset, 'lastUploadOn')
+      getDateTimeProjectionInTimeZoneIANA(knex, 'MAX(r.updatedOn)', timezoneIANA, 'lastUploadOn')
     )
     .whereNotIn('dt.externalId', ['Aspect', 'GxAlert'])
     .groupBy('d.id', 'd.name', 'd.serial')
@@ -46,8 +41,12 @@ async function getDeviceActivityPercentReport(auth, query) {
         .from(deviceStatusByDayQuery(dataConstraints, minDate, maxDate).as('deviceStatusByDay'))
         .leftJoin('Result as r', qb => {
           qb.on('deviceStatusByDay.deviceId', 'r.deviceId')
-            .andOn('r.endedOn', '>=', 'deviceStatusByDay.day')
-            .andOn('r.endedOn', '<', knex.raw('DATE_ADD(deviceStatusByDay.day, INTERVAL 1 DAY)'))
+            .andOn(getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA), '>=', 'deviceStatusByDay.day')
+            .andOn(
+              getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
+              '<',
+              knex.raw('DATE_ADD(deviceStatusByDay.day, INTERVAL 1 DAY)')
+            )
         })
         .select(
           'deviceStatusByDay.deviceId',
@@ -70,7 +69,7 @@ async function getDeviceActivityPercentReport(auth, query) {
       // then we will just transform (not convert!!!) those dates to the given offset
       knex.raw(`MONTH(deviceStatusByDayWithResultCounts.day) as monthNumber`),
       knex.raw(`YEAR(deviceStatusByDayWithResultCounts.day) as year`),
-      getMonthYearField(knex, 'MAX(deviceStatusByDayWithResultCounts.day)', 'monthYear', offset),
+      getMonthYearField(knex, 'MAX(deviceStatusByDayWithResultCounts.day)', 'monthYear'),
       knex.raw(
         `SUM(CASE WHEN DAYOFWEEK(deviceStatusByDayWithResultCounts.day) = 7 OR DAYOFWEEK(deviceStatusByDayWithResultCounts.day) = 1 OR (deviceStatusByDayWithResultCounts.maintenanceStatusExternalId = 'active' AND deviceStatusByDayWithResultCounts.numberOfResultsForDay = 0) THEN 0 ELSE deviceStatusByDayWithResultCounts.maintenanceStatusIsActive END) AS activeDaysInMonth`
       ),

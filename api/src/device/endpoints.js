@@ -29,6 +29,7 @@ const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 const { deviceReport } = require('./serviceReports/deviceReport')
+const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
 
 const routes = [
   {
@@ -371,6 +372,10 @@ const routes = [
             .description(
               'Shallow access to the value inside DeviceMaintenanceStatusLog -> data.options.data.expectedBackOnline'
             ),
+          parentQuery: Joi.object().keys({
+            minDate: Joi.date().iso().required().description('From Date, inclusive'),
+            maxDate: Joi.date().iso().required().description('To Date, inclusive'),
+          }),
         },
       },
       response: {
@@ -405,7 +410,8 @@ const routes = [
                 .description('Member responsible for manually setting the status'),
               expectedBackOnline: Joi.string()
                 .allow('', null)
-                .description('The expected Online back date of the last the maintenance status'),
+                .description('The expected back online date of the last maintenance status'),
+              deviceData: joiSingleDeviceStatusOverTime,
             }),
         }),
       },
@@ -447,6 +453,10 @@ const routes = [
           expectedBackOnline: Joi.string()
             .allow('', null)
             .description('The expected Online back date of the last the maintenance status'),
+          parentQuery: Joi.object().keys({
+            minDate: Joi.date().iso().required().description('From Date, inclusive'),
+            maxDate: Joi.date().iso().required().description('To Date, inclusive'),
+          }),
         },
       },
       response: {
@@ -482,6 +492,7 @@ const routes = [
               expectedBackOnline: Joi.string()
                 .allow('', null)
                 .description('The expected Online back date of the last the maintenance status'),
+              deviceData: joiSingleDeviceStatusOverTime,
             }),
         }),
       },

@@ -4,6 +4,8 @@ import { MdKeyboardArrowDown, MdKeyboardArrowUp } from 'react-icons/md'
 import { useIntl } from 'react-intl'
 import { Link as RouterLink, useLocation } from 'react-router-dom'
 import PermissionChecker from '../../components/PermissionChecker'
+import useAuthState from '../../hooks/useAuthState'
+import { getCustomMessage } from '../../messages'
 import messages from '../../messages/allMessages'
 import styles from './styles.module.css'
 
@@ -82,7 +84,7 @@ const Submenu = ({ link, level, setParentAnchorEl }) => {
   )
 }
 
-const getRawLinks = f => [
+const getRawLinks = (f, user) => [
   { href: '/dashboard', label: f(messages.homeTitle), perm: ['dashboard:summary'] },
   { href: '/dashboard-v2', label: f(messages.dashboardV2Title), perm: ['dashboard:summary', '+dashboard-v2:view'] },
   { href: '/operational-data', label: f(messages.operationDataTitle), perm: ['operationalData'] },
@@ -106,7 +108,7 @@ const getRawLinks = f => [
   {
     href: '/browse/inventory',
     label: f(messages.supplies),
-    perm: ['browse', '+inventory'],
+    perm: ['+inventory'],
     submenu: [
       { href: '/browse/inventory/supplies', label: f(messages.inventoryItems), perm: ['inventory'] },
       { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },
@@ -127,12 +129,21 @@ const getRawLinks = f => [
   { href: '/browse/deviceApiKey', label: f(messages.deviceApiKey), perm: ['browse', '+deviceApiKey'] },
   { href: '/reports', label: f(messages.reportsTitle), perm: ['+report'] },
   { href: '/manage', label: f(messages.manageTitle), perm: ['manage'] },
+  {
+    href: '/browse/admin',
+    label: f(messages.admin),
+    perm: ['admin:edit'],
+    submenu: [
+      { href: '/browse/admin/states', label: getCustomMessage(f, messages, 'state', user), perm: ['admin', 'edit'] },
+      { href: '/browse/admin/lgas', label: getCustomMessage(f, messages, 'lga', user), perm: ['admin', 'edit'] },
+    ],
+  },
 ]
 
 const NavigationMenu = () => {
   const { formatMessage } = useIntl()
-
-  const rawLinks = getRawLinks(formatMessage)
+  const user = useAuthState()
+  const rawLinks = getRawLinks(formatMessage, user)
 
   return (
     <nav className={`${styles.Navigation} ${styles.Navigation__horizontal}`}>

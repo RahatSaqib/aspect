@@ -313,7 +313,7 @@ function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
 
 async function listSitesWithReporters(request) {
   const { auth, query } = request
-  const dataConstraints = await getConstraints(auth.credentials, 'actionDashboard')
+  const dataConstraints = await getConstraints(auth.credentials)
   const { minDate, maxDate } = query
   const resultStatusTransferId = await resultStatusToId('Transfer')
 

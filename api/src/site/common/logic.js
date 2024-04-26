@@ -7,7 +7,7 @@ const isEmpty = require('lodash/isEmpty')
  * @returns - Normalized site parameters
  */
 function normalizeSiteParameters(payload) {
-  let site = filterNotNeededParameters(payload)
+  let site = sanitizeParameters(payload)
 
   site = normalizeFields(site)
 
@@ -19,7 +19,7 @@ function normalizeSiteParameters(payload) {
  * @param {Object} payload - Site parameters
  * @returns New sanitized object only with site fields
  */
-function filterNotNeededParameters(payload) {
+function sanitizeParameters(payload) {
   return Object.assign(
     pick(payload, [
       'name',
