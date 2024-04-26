@@ -1,10 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useCallback } from 'react'
 import { Card, CardContent, CardHeader, TextField, MenuItem } from '@mui/material'
+import endOfMonth from 'date-fns/endOfMonth'
+import startOfMonth from 'date-fns/startOfMonth'
+import subMonths from 'date-fns/subMonths'
 import { useIntl } from 'react-intl'
 import Loading from '../../../cleanComponents/Loading'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import GRAPH_CONSTS from '../../../utils/consts/Graphs/CONSTS'
-import { getPreviousPeriod, dateRangeOptions } from '../Helpers/Formatters'
+import { dateRangeOptions } from '../Helpers/Formatters'
 import styles from './DailyStatus.module.css'
 import DailyStatusClinic from './DailyStatusClinic'
 import DailyStatusDialog from './DailyStatusDialog'
@@ -17,8 +20,12 @@ const { DATE_RANGE_OPTIONS } = DATE_CONSTS
 
 const DailyStatus = () => {
   const [dialogState, setDialogState] = useState({ isOpen: false })
-  const minDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").start
-  const maxDate = getPreviousPeriod('months', "yyyy-MM-dd'T'HH:mm:ss.SSSXXX").end
+
+  // get starting min/max dates for previous month
+  const now = new Date()
+  const minDate = startOfMonth(subMonths(now, 1))
+  const maxDate = endOfMonth(subMonths(now, 1))
+
   const { formatMessage, formatDate } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
@@ -29,17 +36,24 @@ const DailyStatus = () => {
 
   const ops = dateRangeOptions(formatMessage, formatDate, 'deviceDateRange').deviceDateRange
 
-  const onClickDay = ({ day, deviceId }) => {
-    const {
-      deviceName,
-      siteProps,
-      periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
-      note,
-    } = getDeviceDayDetails({ day, deviceId })
-    // day clicked (formatted as "YYYY-MM-DD")
-    const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note }
-    setDialogState({ isOpen: true, deviceName, siteProps, data })
-  }
+  /**
+   * wrap with useCallback to keep same func reference - because
+   * DailyStatusClinic is cached with React.memo
+   */
+  const onClickDay = useCallback(
+    ({ day, deviceId }) => {
+      const {
+        deviceName,
+        siteProps,
+        periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
+        note,
+      } = getDeviceDayDetails({ day, deviceId })
+      // day clicked (formatted as "YYYY-MM-DD")
+      const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note }
+      setDialogState({ isOpen: true, deviceName, siteProps, data })
+    },
+    [getDeviceDayDetails]
+  )
 
   const onHideDailyStatusDialog = () => {
     setDialogState({ isOpen: false })
@@ -61,7 +75,7 @@ const DailyStatus = () => {
   const [range, setRange] = useState(DATE_RANGE_OPTIONS.LAST_MONTH)
 
   const onChange = e => {
-    const selectedOption = ops.filter(o => o.id === e.target.value)[0]
+    const selectedOption = ops.find(o => o.id === e.target.value)
     updateFromActionComponent({ identifier: 'dateRange', selectedOption })
     setRange(selectedOption.id)
   }

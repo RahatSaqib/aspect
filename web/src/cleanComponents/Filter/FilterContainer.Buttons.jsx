@@ -75,6 +75,8 @@ const buttonMapping = {
     <LgaId stateId={stateId} lgaId={lgaId} remove={remove} blocked={blocked} />
   ),
   siteName: ({ siteName, remove, blocked }) => <SiteName siteName={siteName} remove={remove} blocked={blocked} />,
+  lgaName: ({ lgaName, remove, blocked }) => <LgaName lgaName={lgaName} remove={remove} blocked={blocked} />,
+  stateName: ({ stateName, remove, blocked }) => <StateName stateName={stateName} remove={remove} blocked={blocked} />,
   originSiteName: ({ originSiteName, remove, blocked }) => (
     <OriginSiteName originSiteName={originSiteName} remove={remove} blocked={blocked} />
   ),
@@ -277,6 +279,25 @@ const SiteName = ({ siteName, remove, blocked }) => {
     <Btn
       lbl={formatMessage(messages.whereSiteNameIncludes, { siteName })}
       del={blocked.includes('siteName') ? undefined : () => remove(['siteName'])}
+    />
+  )
+}
+const LgaName = ({ lgaName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereLgaNameIncludes, { lgaName })}
+      del={blocked.includes('lgaName') ? undefined : () => remove(['lgaName'])}
+    />
+  )
+}
+
+const StateName = ({ stateName, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereStateNameIncludes, { stateName })}
+      del={blocked.includes('stateName') ? undefined : () => remove(['stateName'])}
     />
   )
 }

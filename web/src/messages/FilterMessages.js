@@ -350,6 +350,14 @@ const messages = {
       id: 'filter.popover.selectDisplayResult',
       defaultMessage: 'Select result scope...',
     },
+    stateName: {
+      id: 'filter.popover.stateName',
+      defaultMessage: 'State name',
+    },
+    lgaName: {
+      id: 'filter.popover.lgaName',
+      defaultMessage: 'LGA name',
+    },
     breakOutByLot: {
       id: 'pages.InventoryItemsList.breakOutByLot',
       defaultMessage: 'Break out by lot',
