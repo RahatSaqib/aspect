@@ -231,7 +231,7 @@ const getAllDaysInCurrentMonth = (upToToday = false, dateFormat = 'yyyy-MM-dd') 
   return { start: format(start, dateFormat), end: format(end, dateFormat) }
 }
 
-const getPreviousPeriod = (period = 'month', dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") => {
+const getPreviousPeriod = (period = 'months', dateFormat = "yyyy-MM-dd'T'HH:mm:ss.SSSXXX") => {
   // currently only works for month
   const previousPeriodStart = getTimePeriod(1, period, dateFormat)
   const previousPeriodEnd = format(endOfMonth(new Date(previousPeriodStart)), dateFormat)
@@ -294,6 +294,19 @@ const dateRangeOptions = (formatMessage, formatDate, key, showLast30Days = true)
   })
   return {
     [key]: [...dateRange],
+  }
+}
+
+const formatDateAs = (date, dateFormat) => {
+  switch (true) {
+    case isObject(date):
+      return format(date, dateFormat)
+
+    case isString(date):
+      return format(new Date(date), dateFormat)
+
+    default:
+      return date
   }
 }
 
@@ -365,4 +378,5 @@ export {
   getTimePeriod,
   getPreviousPeriod,
   negateTimeZoneOffset,
+  formatDateAs,
 }
