@@ -5,6 +5,7 @@ const {
   clinician,
   technician,
   mergeJobFunctions,
+  aspectBeta,
 } = require('../../fixtures/jobFunctionBase')
 
 const adminEnhanced = mergeJobFunctions(admin, {
@@ -12,6 +13,18 @@ const adminEnhanced = mergeJobFunctions(admin, {
     ...admin.permissions,
     {
       module: 'admin',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'inventory',
+      activity: 'view',
+    },
+    {
+      module: 'inventory',
       activity: 'edit',
     },
   ],
@@ -63,4 +76,5 @@ module.exports = [
     ],
   },
   technician,
+  aspectBeta,
 ]

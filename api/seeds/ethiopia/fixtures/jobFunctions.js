@@ -6,6 +6,7 @@ const {
   remoteHealthWorker,
   mergeJobFunctions,
   technician,
+  aspectBeta,
 } = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
@@ -180,10 +181,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'notification',
         activity: 'view',
       },
@@ -258,4 +255,5 @@ module.exports = [
     ],
   }),
   technician,
+  aspectBeta,
 ]

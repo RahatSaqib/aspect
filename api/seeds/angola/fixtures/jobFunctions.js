@@ -6,6 +6,7 @@ const {
   clinician,
   remoteHealthWorker,
   technician,
+  aspectBeta,
 } = require('../../fixtures/jobFunctionBase')
 
 const ntpLevel = {
@@ -124,4 +125,5 @@ module.exports = [
   technician,
   ntpLevel,
   partners,
+  aspectBeta,
 ]

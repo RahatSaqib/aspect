@@ -25,18 +25,10 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'inventory',
-      },
-      {
-        module: 'dashboard',
         activity: 'summary',
       },
       {
         module: 'assay',
-        activity: 'view',
-      },
-      {
-        module: 'inventory',
         activity: 'view',
       },
       {

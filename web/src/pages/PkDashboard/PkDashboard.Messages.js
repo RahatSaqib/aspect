@@ -7,9 +7,13 @@ const messages = {
     // page titles
     aspectDashboard: { id: 'p.PkDashboard.aspectDashboard', defaultMessage: 'Aspect Dashboard' },
     errorRateTitle: { id: 'p.PkDashboard.errorRateTitle', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
-    utilizationTitle: {
-      id: 'p.PkDashboard.utilizationTitle',
-      defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Utilization',
+    geneXpertUtilizationTitle: {
+      id: 'p.PkDashboard.geneXpertUtilizationTitle',
+      defaultMessage: 'GeneXpert Device Utilization',
+    },
+    utilizationRate: {
+      id: 'p.PkDashboard.utilizationRate',
+      defaultMessage: 'Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working days in year)',
     },
     coverageTitle: { id: 'p.PkDashboard.coverageTitle', defaultMessage: 'Xpert MTB/RIF Coverage' },
     rifCurrentTitle: { id: 'p.PkDashboard.rifCurrentTitle', defaultMessage: 'Current Testing of MTB/RIF performed in' },
@@ -112,11 +116,11 @@ const messages = {
       defaultMessage: 'XDR FLQ Resistance',
     },
     nationalUtilizationTrendsAnnual: {
-      id: 'p.PkDashboard.nationalTrendsAnnual',
+      id: 'p.PkDashboard.nationalUtilizationTrendsAnnual',
       defaultMessage: 'National annual utilization rates',
     },
     provincesUtilizationTrendsAnnual: {
-      id: 'p.PkDashboard.nationalTrendsAnnual',
+      id: 'p.PkDashboard.provincesUtilizationTrendsAnnual',
       defaultMessage: 'Provinces annual utilization rates',
     },
     testingAndDiagnosisUsingXdr: {
@@ -328,7 +332,7 @@ const messages = {
     coverageperformance: { id: 'p.PkDashboard.coverageperformance', defaultMessage: 'Performance' },
     genExpert: { id: 'p.PkDashboard.genExpertPending', defaultMessage: 'GeneXpert Device Coverage' },
     genExpertError: { id: 'p.PkDashboard.genExpertError', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
-    utilization: { id: 'p.PkDashboard.utilizationPending', defaultMessage: 'Utilization (Pending)' },
+    utilization: { id: 'p.PkDashboard.utilization', defaultMessage: 'Utilization' },
     errorRate: { id: 'p.PkDashboard.errorRatePending', defaultMessage: 'Error Rate (Pending)' },
     // 4th column
     titleinventory: { id: 'p.PkDashboard.titleinventory', defaultMessage: 'Inventory' },
