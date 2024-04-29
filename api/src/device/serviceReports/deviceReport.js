@@ -63,7 +63,7 @@ async function getDevicesByTBReach(dataConstraints, query) {
         else 0 
         end`),
       xpertRIFIndeterminate: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Detected}
+        case when r.resultCategory1 = ${resultCategoryIds.Detected} And r.resultCategory2 = ${resultCategoryIds.Indeterminate} 
         then r.resultCount 
         else 0 
         end`),
