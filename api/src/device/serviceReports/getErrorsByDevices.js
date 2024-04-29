@@ -17,6 +17,9 @@ async function getErrorsByDevices(dataConstraints, query) {
     query,
     timeFrame: 'day',
   })
+    .modify(filterParams, query, {
+      assayIds: 'a.id',
+    })
     .groupBy('r.deviceId')
     .sum({
       ..._.reduce(

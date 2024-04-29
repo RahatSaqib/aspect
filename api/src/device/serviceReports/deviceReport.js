@@ -76,7 +76,9 @@ async function getDevicesByTBReach(dataConstraints, query) {
     .select({
       deviceId: 'd.id',
     })
-    .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
+    .modify(filterParams, query, {
+      assayIds: 'a.id',
+    })
     .groupBy('r.deviceId')
     .orderBy('st.name', 'lg.name')
 

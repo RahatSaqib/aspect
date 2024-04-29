@@ -26,6 +26,7 @@ const { getModuleSwapsReportData } = require('./moduleSwapsReport')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 const { getDevicesByTBReach } = require('./deviceReport')
+const { assayToId } = require('../../shared/dictionary')
 
 function getMonthsDatefields(minDate, maxDate, culture) {
   const maxDateFormatted = _.isDate(maxDate) ? maxDate : parseISO(maxDate)
@@ -576,39 +577,35 @@ async function getErrorsByDevicesReport(auth, query) {
 }
 
 async function getDevicesForTBReachReport(auth, query) {
-  const { minDate, maxDate } = query
+  const { minDate, maxDate, assayId } = query
   if (!minDate || !maxDate) {
     throw Boom.badRequest('Dates are required')
   }
   const dataConstraints = await getConstraints(auth.credentials)
-  query.assay = ['GxMtbRif', 'GxMtbRifUltra']
-
+  const assayExternlId = ['GxMtbRif', 'GxMtbRifUltra']
+  const assayIds = await Promise.all(assayExternlId.map(async externalId => assayToId(externalId)))
+  query.assayIds = assayId ?? assayIds
   const [devicesByTBReach, errorsResult] = await Promise.all([
     getDevicesByTBReach(dataConstraints, query),
     getErrorsByDevices(dataConstraints, query),
   ])
-
   const devicesByTBReachData = new Map(devicesByTBReach.map(device => [device.deviceId, device]))
   const workingDays = getWorkingDays(new Date(minDate), new Date(maxDate))
   // Merge data from both queries
-  const mergedData = errorsResult.map(error => {
+  let mergedData = errorsResult.map(error => {
     const TBReachDevice = devicesByTBReachData.get(error.deviceId)
     return {
       ...error,
-      BKtotal: 0,
-      BKCnRec: 0,
-      BKPositive: 0,
-      BKNegative: 0,
       totalXpertTests: TBReachDevice?.totalXpertTests ?? 0,
       xpertPositive: TBReachDevice?.xpertPositive ?? 0,
       xpertNegative: TBReachDevice?.xpertNegative ?? 0,
       xpertErrorInvalid: TBReachDevice?.xpertErrorInvalid ?? 0,
       xpertRIFPositive: TBReachDevice?.xpertRIFPositive ?? 0,
       xpertRIFIndeterminate: TBReachDevice?.xpertRIFIndeterminate ?? 0,
-      xpertPlusTreated: TBReachDevice?.xpertPlusTreated ?? 0,
       xpertPerDay: TBReachDevice ? TBReachDevice.totalXpertTests / workingDays : 0,
     }
   })
+  mergedData = assayId && !assayIds.includes(assayId) ? [] : mergedData
   return {
     ok: true,
     total: mergedData.length,
