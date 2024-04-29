@@ -25,9 +25,9 @@ const messages = defineMessages({
     id: 'pages.InventoryAdjustmentDialogForm.lotNumber',
     defaultMessage: 'Lot Number',
   },
-  boxLotNumber: {
-    id: 'pages.InventoryAdjustmentDialogForm.boxLotNumber',
-    defaultMessage: 'Box Lot Number',
+  cartridgeLotNumber: {
+    id: 'pages.InventoryAdjustmentDialogForm.cartridgeLotNumber',
+    defaultMessage: 'Cartridge Lot number',
   },
   expiryDate: {
     id: 'pages.InventoryAdjustmentDialogForm.expiryDate',
