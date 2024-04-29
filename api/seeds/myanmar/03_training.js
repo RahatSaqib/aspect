@@ -1,7 +1,5 @@
 module.exports = require('../utils').seed(seed, __filename)
 
-const _ = require('lodash')
-const geography = require('./fixtures/geography.json')
 const { rowsAsObject, getDefaultMessageTypes } = require('../utils')
 
 async function seed(knex) {
@@ -268,27 +266,6 @@ async function seed(knex) {
     sqlForIndicator:
       "select ifnull(count(r.id), 0) as cnt from Result as r inner join Device as d on d.id = r.deviceId inner join Site as s on s.id = d.siteId inner join Partner p on s.partnerId = p.id left outer join Geography as g on s.geographyId = g.id inner join Assay as a on a.id = r.assayId where ifnull(JSON_EXTRACT(patientData, \"$.microscopyResult\"), '') LIKE '%Positive\"' and r.assayId in (1,2)",
   })
-
-  // update Targets for the states with real values
-  await Promise.all(
-    _.map(geography.countries[0].states, async state => {
-      const geography = await knex('Geography')
-        .join('State', 'Geography.stateId', 'State.id')
-        .whereNotNull('stateId')
-        .whereNull('lgaId')
-        .where('State.name', state.name)
-        .first('Geography.id')
-
-      await Promise.all(
-        _.map(state.targets, async (value, key) => {
-          await knex('Target')
-            .where({ geographyId: geography.id })
-            .where({ targetToken: key })
-            .update({ targetValue: value })
-        })
-      )
-    })
-  )
 
   // update ro stock level update to be acknowledgable
   await knex('NotificationType').where('name', 'RO Stock Level Update').update('canAcknowledge', 1)

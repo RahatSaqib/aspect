@@ -24,14 +24,18 @@ module.exports = {
     'GxEbola',
     'assayGXCovid19',
   ],
+  /* Author : Mehdi Ghorbani
+   * Reason : Add Lot Number to Rif , Rif Ultra & Xdr consumables
+   * Ticket : HD-1471
+   * */
   consumableStrategies: {
-    GxMtbRifCartridge: 'withExpirationDateStrategy',
-    GxMtbRifUltraCartridge: 'withExpirationDateStrategy',
+    GxMtbRifCartridge: 'withLotAndExpirationDateStrategy',
+    GxMtbRifUltraCartridge: 'withLotAndExpirationDateStrategy',
     GxHiv1VlCartridge: 'withExpirationDateStrategy',
     GxHiv1QualCartridge: 'withExpirationDateStrategy',
     GxEbolaCartridge: 'withExpirationDateStrategy',
     assayGXCovid19Cartridge: 'withExpirationDateStrategy',
-    GxMtbXdrCartridge: 'withExpirationDateStrategy',
+    GxMtbXdrCartridge: 'withLotAndExpirationDateStrategy',
     GxHCVCartridge: 'withExpirationDateStrategy',
   },
   fixtures: {

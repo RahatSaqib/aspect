@@ -77,10 +77,6 @@
       "activities": ["view"]
     },
     {
-      "name": "actionDashboard",
-      "activities": ["view", "edit"]
-    },
-    {
       "name": "account",
       "activities": ["view", "edit"]
     },
@@ -97,7 +93,6 @@
         "inventory",
         "device",
         "result",
-        "target",
         "action",
         "actionInventoryLevelUpdate",
         "report",
@@ -119,6 +114,10 @@
     {
       "name": "dashboard-v2",
       "activities": ["view"]
+    },
+    {
+      "name": "admin",
+      "activities": ["edit"]
     }
   ]
 }

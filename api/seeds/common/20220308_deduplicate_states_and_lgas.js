@@ -68,9 +68,8 @@ module.exports = async (knex, countryId) => {
         .distinct()
       const duplicateGeographyIds = duplicatedGeographyRecords.map(g => g.id)
 
-      await Promise.each(
-        ['Target', 'Site', 'Person', 'JobContext', 'Issue', 'DeviceConfiguration', 'DeviceApiKey'],
-        table => knex(table).whereIn('geographyId', duplicateGeographyIds).update({ geographyId: geography.originalId })
+      await Promise.each(['Site', 'Person', 'JobContext', 'Issue', 'DeviceConfiguration', 'DeviceApiKey'], table =>
+        knex(table).whereIn('geographyId', duplicateGeographyIds).update({ geographyId: geography.originalId })
       )
 
       await knex('Geography').whereIn('id', duplicateGeographyIds).delete()

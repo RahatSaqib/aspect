@@ -1,4 +1,11 @@
-const { admin, labUser, regionalOfficer, mergeJobFunctions, technician } = require('../../fixtures/jobFunctionBase')
+const {
+  admin,
+  labUser,
+  regionalOfficer,
+  mergeJobFunctions,
+  technician,
+  aspectBeta,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
   mergeJobFunctions(admin, {
@@ -21,10 +28,6 @@ module.exports = [
       },
       {
         module: 'device',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -61,18 +64,6 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'result',
-      },
-      {
-        module: 'dashboard',
-        activity: 'target',
-      },
-      {
-        module: 'dashboard',
-        activity: 'action',
-      },
-      {
-        module: 'dashboard',
         activity: 'actionInventoryLevelUpdate',
       },
       {
@@ -100,10 +91,6 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
         module: 'issue',
         activity: 'edit',
       },
@@ -122,10 +109,6 @@ module.exports = [
       {
         module: 'dashboard',
         activity: 'summary',
-      },
-      {
-        module: 'dashboard',
-        activity: 'target',
       },
       {
         module: 'assay',
@@ -164,10 +147,6 @@ module.exports = [
         activity: 'edit',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
         module: 'issue',
         activity: 'edit',
       },
@@ -194,4 +173,5 @@ module.exports = [
     ],
   }),
   technician,
+  aspectBeta,
 ]

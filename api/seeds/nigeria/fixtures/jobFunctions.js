@@ -1,4 +1,11 @@
-const { admin, clinician, labUser, mergeJobFunctions, technician } = require('../../fixtures/jobFunctionBase')
+const {
+  admin,
+  clinician,
+  labUser,
+  mergeJobFunctions,
+  technician,
+  aspectBeta,
+} = require('../../fixtures/jobFunctionBase')
 
 module.exports = [
   mergeJobFunctions(admin, {
@@ -17,10 +24,6 @@ module.exports = [
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -128,10 +131,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'notification',
         activity: 'view',
       },
@@ -204,10 +203,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'notification',
         activity: 'view',
       },
@@ -257,10 +252,6 @@ module.exports = [
       },
       {
         module: 'deviceApiKey',
-        activity: 'edit',
-      },
-      {
-        module: 'inventory',
         activity: 'edit',
       },
       {
@@ -364,10 +355,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'notification',
         activity: 'view',
       },
@@ -398,4 +385,5 @@ module.exports = [
     ],
   }),
   technician,
+  aspectBeta,
 ]

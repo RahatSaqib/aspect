@@ -11,7 +11,6 @@ async function seed(knex) {
     mapJobFunctionPermissions(knex, [modules.account.view], [modules.account.edit]),
     mapJobFunctionPermissions(knex, [modules.issue.edit], [modules.issue.view]),
     mapJobFunctionPermissions(knex, [modules.report.edit], [modules.report.view]),
-    mapJobFunctionPermissions(knex, [modules.actionDashboard.edit], [modules.dashboard.action]),
     mapJobFunctionPermissions(knex, [modules.operationalData.edit], [modules.operationalData.view]),
   ])
 
@@ -22,7 +21,6 @@ async function seed(knex) {
     modules.issue.view,
     modules.task.edit,
     modules.report.edit,
-    modules.actionDashboard.edit,
     modules.operationalData.edit,
   ]
   await removePermissions(knex, permissionsToRemove)

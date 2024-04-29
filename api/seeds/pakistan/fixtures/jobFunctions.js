@@ -4,8 +4,20 @@ const {
   labUser,
   regionalOfficer,
   technician,
+  aspectBeta,
   mergeJobFunctions,
 } = require('../../fixtures/jobFunctionBase')
+
+const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
+  ...aspectBeta.permissions,
+  permissions: [
+    {
+      module: 'dashboard-v2',
+      activity: 'view',
+    },
+  ],
+  reports: ['pk_xpert_site_summary_site_wise_report'],
+})
 
 module.exports = [
   mergeJobFunctions(admin, {
@@ -67,10 +79,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'edit',
-      },
-      {
         module: 'notification',
         activity: 'edit',
       },
@@ -93,6 +101,10 @@ module.exports = [
       {
         module: 'dashboard-v2',
         activity: 'view',
+      },
+      {
+        module: 'admin',
+        activity: 'edit',
       },
     ],
     reports: [
@@ -158,10 +170,6 @@ module.exports = [
       {
         module: 'taskMenu',
         activity: 'view',
-      },
-      {
-        module: 'inventory',
-        activity: 'edit',
       },
       {
         module: 'notification',
@@ -238,10 +246,6 @@ module.exports = [
       },
       {
         module: 'taskMenu',
-        activity: 'view',
-      },
-      {
-        module: 'inventory',
         activity: 'view',
       },
       {
@@ -326,10 +330,6 @@ module.exports = [
         activity: 'view',
       },
       {
-        module: 'inventory',
-        activity: 'view',
-      },
-      {
         module: 'notification',
         activity: 'view',
       },
@@ -365,13 +365,5 @@ module.exports = [
     ],
     reports: [],
   }),
-  {
-    name: 'Aspect Tester',
-    permissions: [
-      {
-        module: 'dashboard-v2',
-        activity: 'view',
-      },
-    ],
-  },
+  aspectBetaEnhanced,
 ]
