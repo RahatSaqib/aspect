@@ -5,6 +5,7 @@ import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import { useIntl } from 'react-intl'
 import Loading from '../../../cleanComponents/Loading'
+import useDeviceMaintenanceStatus from '../../../hooks/device/useDeviceMaintenanceStatus'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import GRAPH_CONSTS from '../../../utils/consts/Graphs/CONSTS'
 import { dateRangeOptions } from '../Helpers/Formatters'
@@ -29,10 +30,11 @@ const DailyStatus = () => {
   const { formatMessage, formatDate } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
-    statuses: { allStatuses, visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },
+    statuses: { visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },
     actions: { changeDeviceStatus, getDeviceDayDetails, toggleAll, toggleStatusVisibility, updateFromActionComponent },
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
+  const { data: maintenanceStatuses } = useDeviceMaintenanceStatus(true)
 
   const ops = dateRangeOptions(formatMessage, formatDate, 'deviceDateRange').deviceDateRange
 
@@ -116,7 +118,7 @@ const DailyStatus = () => {
                 siteProps={dialogState.siteProps}
                 onCancel={onHideDailyStatusDialog}
                 onSubmit={onDailyStatusSubmit}
-                statuses={allStatuses}
+                statuses={maintenanceStatuses ?? []}
               />
             ) : null}
           </div>
