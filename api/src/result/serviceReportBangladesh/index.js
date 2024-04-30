@@ -2099,6 +2099,9 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
    */
   const { data } = sharedResults[useNamedData]
 
+  data.rows = data.rows.filter(it => it.resultMtbRif === 'RR')
+  data.total = data.rows.length
+
   return {
     ok: true,
     data,
