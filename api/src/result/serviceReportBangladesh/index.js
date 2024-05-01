@@ -2099,12 +2099,26 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
    */
   const { data } = sharedResults[useNamedData]
 
-  data.rows = data.rows.filter(it => it.resultMtbRif === 'RR')
-  data.total = data.rows.length
+  /**
+   * show only Detected Mtb/Rif and Mtb/Rif-Ultra (RR) data or `Resistance Detected` Xdr data
+   */
+  const dataRR = _.cloneDeep(data)
+  dataRR.rows = dataRR.rows.filter(
+    it =>
+      it.resultMtbRif === 'RR' ||
+      it.inhDetected?.includes('Resistance Detected') ||
+      it.flqDetected?.includes('Resistance Detected') ||
+      it.amkDetected?.includes('Resistance Detected') ||
+      it.kanDetected?.includes('Resistance Detected') ||
+      it.capDetected?.includes('Resistance Detected') ||
+      it.ethDetected?.includes('Resistance Detected')
+  )
+
+  dataRR.total = dataRR.rows.length
 
   return {
     ok: true,
-    data,
+    data: dataRR,
   }
 }
 
