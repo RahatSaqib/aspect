@@ -47,7 +47,7 @@ async function getAnnualUtilizationData(auth, query, { timeFrame }) {
     .select(
       'd.name',
       'd.id',
-      'dcap.modules',
+      knex.raw('COALESCE(d.gx6cModulesCount, 0) + COALESCE(d.gx10cModulesCount, 0) as modules'),
       'dcap.dailyCapacity',
       'st.id as stateId',
       'st.name as stateName',
