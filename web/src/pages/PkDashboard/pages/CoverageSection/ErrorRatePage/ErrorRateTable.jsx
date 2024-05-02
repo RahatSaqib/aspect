@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material'
@@ -24,7 +24,7 @@ const useStyles = makeStyles({
 })
 
 const Row = ({ row, isChild, index }) => {
-  const { sort } = useContext(SortContext)
+  const { renderRow } = useContext(SortContext)
   const [open, setOpen] = useState(-1)
   const colors = isChild ? ['#dadbdf', '#e6e6e6'] : ['#eef1f8', '#ffffff']
   return (
@@ -47,18 +47,21 @@ const Row = ({ row, isChild, index }) => {
         <TableCell align="center">{row.cntMtbNoResult}</TableCell>
         <TableCell align="center">{row.noResultPercent}</TableCell>
       </TableRow>
-      {open === row.id
-        ? orderBy(row.children, sort.name, sort.order).map((row, index) => (
-            <Row key={row.name} row={row} index={index} isChild />
-          ))
-        : null}
+      {open === row.id ? renderRow(row.children, { isChild: true }) : null}
     </>
   )
 }
 
 export const ErrorRateTable = ({ items }) => {
-  const [sort, setSort] = useState({ name: 'name', order: 'desc' })
-  const rows = addDepth(makeNestedData(items ?? []))
+  const [sort, setSort] = useState({ name: 'name', order: 'asc' })
+  const rows = useMemo(() => addDepth(makeNestedData(items ?? [])), [items])
+  const renderRow = useCallback(
+    (items, props) =>
+      orderBy(items, sort.name, sort.order).map((row, index) => (
+        <Row key={row.name} row={row} index={index} {...props} />
+      )),
+    [sort]
+  )
   const classes = useStyles()
   const topHeaders = [
     { id: 'name', title: 'Name', colSpan: 1 },
@@ -69,7 +72,7 @@ export const ErrorRateTable = ({ items }) => {
     { id: 'cntMtbNoResult', title: 'No Result', colSpan: 2 },
   ]
   return (
-    <SortContext.Provider value={{ sort }}>
+    <SortContext.Provider value={{ renderRow }}>
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
@@ -107,11 +110,7 @@ export const ErrorRateTable = ({ items }) => {
             <TableCell align="center">%</TableCell>
           </TableRow>
         </TableHead>
-        <TableBody>
-          {orderBy(rows, sort.name, sort.order)?.map((row, index) => (
-            <Row key={row.name} row={row} index={index} />
-          ))}
-        </TableBody>
+        <TableBody>{renderRow(rows)}</TableBody>
       </Table>
     </SortContext.Provider>
   )
