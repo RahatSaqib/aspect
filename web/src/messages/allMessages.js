@@ -1,6 +1,8 @@
 import { defineMessages } from 'react-intl'
+import { commonDefinitions } from './customMessages'
 
 const messages = defineMessages({
+  ...commonDefinitions,
   idleDialogTitle: { id: 'pages.IdleDialog.title', defaultMessage: 'Automatic Logout' },
   idleDialogHelp: {
     id: 'shared.IdleDialog.help',
@@ -60,6 +62,14 @@ const messages = defineMessages({
   whereSiteNameIncludes: {
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'site name includes "{siteName}"',
+  },
+  whereLgaNameIncludes: {
+    id: 'filter.btnGroup.whereLgaNameIncludes',
+    defaultMessage: 'lga name includes "{lgaName}"',
+  },
+  whereStateNameIncludes: {
+    id: 'filter.btnGroup.whereStateNameIncludes',
+    defaultMessage: 'state name includes "{stateName}"',
   },
   whereOriginSiteNameIncludes: {
     id: 'filter.btnGroup.whereOriginSiteNameIncludes',
@@ -422,6 +432,9 @@ const messages = defineMessages({
   reports: { id: 'browsePage.browseDropdown.reports', defaultMessage: 'Reports' },
   deviceApiKey: { id: 'browsePage.browseDropdown.deviceApiKey', defaultMessage: 'Device API Keys' },
   cases: { id: 'browsePage.browseDropdown.cases', defaultMessage: 'Cases' },
+  admin: { id: 'browsePage.browseDropdown.admin', defaultMessage: 'Admin' },
+  states: { id: 'browsePage.browseDropdown.states', defaultMessage: 'States' },
+  lgas: { id: 'browsePage.browseDropdown.lgas', defaultMessage: 'LGAs' },
   reportsTitle: { id: 'header.link.reports.title', defaultMessage: 'Reports' },
   manageTitle: { id: 'header.link.manage.title', defaultMessage: 'Manage' },
   any: { id: 'pages.dateRangeSelector.any', defaultMessage: 'Any' },

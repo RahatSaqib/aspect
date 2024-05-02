@@ -4,10 +4,6 @@ module.exports = [
   mergeJobFunctions(labManager, {
     permissions: [
       {
-        module: 'dashboard',
-        activity: 'device',
-      },
-      {
         module: 'account',
         activity: 'edit',
       },
@@ -29,19 +25,7 @@ module.exports = [
       },
       {
         module: 'dashboard',
-        activity: 'result',
-      },
-      {
-        module: 'dashboard',
-        activity: 'site',
-      },
-      {
-        module: 'dashboard',
         activity: 'summary',
-      },
-      {
-        module: 'dashboard',
-        activity: 'target',
       },
       {
         module: 'assay',

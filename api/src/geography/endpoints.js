@@ -1,5 +1,5 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler } = require('../routes')
+const { asyncHandler, validateSortPageParams } = require('../routes')
 const {
   buildGeographySelectList,
   countrySelectList,
@@ -8,6 +8,14 @@ const {
   lgaSelectList,
 } = require('./service')
 const getLevelByUserSelectList = require('./getLevelByUserSelectList')
+const { updateState } = require('./state/updateState')
+const { updateLga } = require('./state/updateLga')
+const { createLga } = require('./state/createLga')
+const { createState } = require('./state/createState')
+const { deleteState } = require('./state/deleteState')
+const { deleteLga } = require('./state/deleteLga')
+const { listStates } = require('./state/listStates')
+const { listLgas } = require('./state/listLgas')
 
 const routes = [
   {
@@ -65,7 +73,7 @@ const routes = [
   },
   {
     method: 'GET',
-    path: '/geography/states/{stateId?}',
+    path: '/geography/state-select-list-by-stateId/{stateId?}',
     handler: asyncHandler(stateSelectList),
     config: {
       description: 'State List',
@@ -135,6 +143,183 @@ const routes = [
       auth: { scope: ['notification'] },
       description: 'Get levels by user',
       notes: 'levels and Names',
+    },
+  },
+  {
+    method: 'GET',
+    path: '/geography/states',
+    handler: asyncHandler(listStates),
+    config: {
+      description: 'List States',
+      validate: {
+        query: {
+          ...validateSortPageParams('name', 'abbreviation'),
+          name: Joi.string().description('The name of the state'),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of states that match the given filters'),
+          length: Joi.number().required().description('The number of states included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The states')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().description('The id of the state'),
+                name: Joi.string().description('The name of the state'),
+                abbreviation: Joi.string().allow('', null).description('The abbreviation of the state'),
+                deviceConfigurationCount: Joi.number(),
+                siteCount: Joi.number(),
+                issueCount: Joi.number(),
+                deviceApiKeyCount: Joi.number(),
+                personCount: Joi.number(),
+                jobContextCount: Joi.number(),
+                lgaCount: Joi.number(),
+                notificationCount: Joi.number(),
+                cannotDelete: Joi.boolean(),
+              })
+            ),
+        }),
+      },
+      auth: { scope: ['admin:edit'] },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/geography/states/{stateId}',
+    handler: asyncHandler(updateState),
+    config: {
+      description: 'Update State',
+      validate: {
+        params: {
+          stateId: Joi.number().description('State Id').required(),
+        },
+        payload: {
+          name: Joi.string().required(),
+          abbreviation: Joi.string().required(),
+        },
+      },
+      auth: { scope: ['admin:edit'] },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/geography/states',
+    handler: asyncHandler(createState),
+    config: {
+      description: 'Create State',
+      validate: {
+        payload: {
+          name: Joi.string().required(),
+          abbreviation: Joi.string().required(),
+        },
+      },
+      auth: { scope: ['admin:edit'] },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/geography/states/{stateId}',
+    handler: asyncHandler(deleteState),
+    config: {
+      description: 'Delete State',
+      validate: {
+        params: {
+          stateId: Joi.number().description('State Id').required(),
+        },
+      },
+      auth: { scope: ['admin:edit'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/geography/lgas',
+    handler: asyncHandler(listLgas),
+    config: {
+      description: 'List Lgas',
+      validate: {
+        query: {
+          ...validateSortPageParams('name'),
+          name: Joi.string().description('The name of the lga'),
+          stateId: Joi.number().description('The id of the state associated to the lga'),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          total: Joi.number().required().description('The total number of lgas that match the given filters'),
+          length: Joi.number().required().description('The number of lgas included in this response'),
+          data: Joi.array()
+            .required()
+            .description('The lgas')
+            .items(
+              Joi.object().keys({
+                id: Joi.number().description('The id of the lga'),
+                name: Joi.string().description('The name of the lga'),
+                stateId: Joi.number().description('The id of the state associated to the lga'),
+                stateName: Joi.string().description('The name of the state associated to the lga'),
+                deviceConfigurationCount: Joi.number(),
+                siteCount: Joi.number(),
+                issueCount: Joi.number(),
+                deviceApiKeyCount: Joi.number(),
+                personCount: Joi.number(),
+                jobContextCount: Joi.number(),
+                notificationCount: Joi.number(),
+                cannotDelete: Joi.boolean(),
+              })
+            ),
+        }),
+      },
+      auth: { scope: ['admin:edit'] },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/geography/lgas/{lgaId}',
+    handler: asyncHandler(updateLga),
+    config: {
+      description: 'Update Lga',
+      validate: {
+        params: {
+          lgaId: Joi.number().description('Lga Id').required(),
+        },
+        payload: {
+          name: Joi.string().required(),
+          stateId: Joi.number().description('State Id').required(),
+        },
+      },
+      auth: { scope: ['admin:edit'] },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/geography/lgas',
+    handler: asyncHandler(createLga),
+    config: {
+      description: 'Create Lga',
+      validate: {
+        payload: {
+          name: Joi.string().required(),
+          stateId: Joi.number().description('State Id').required(),
+        },
+      },
+      auth: { scope: ['admin:edit'] },
+    },
+  },
+  {
+    method: 'DELETE',
+    path: '/geography/lgas/{lgaId}',
+    handler: asyncHandler(deleteLga),
+    config: {
+      description: 'Delete Lga',
+      validate: {
+        params: {
+          lgaId: Joi.number().description('Lga Id').required(),
+        },
+      },
+      auth: { scope: ['admin:edit'] },
     },
   },
 ]

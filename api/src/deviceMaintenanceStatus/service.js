@@ -1,20 +1,28 @@
-const groupBy = require('lodash/groupBy')
-const orderBy = require('lodash/orderBy')
-const omit = require('lodash/omit')
-const min = require('lodash/min')
-const uniq = require('lodash/uniq')
-const isNil = require('lodash/isNil')
-const isWeekend = require('date-fns/isWeekend')
-const getISOWeek = require('date-fns/getISOWeek')
+const { groupBy, orderBy, omit, min, uniq, isNil, isArray } = require('lodash')
+const { format, isWeekend, getISOWeek } = require('date-fns')
 const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getUser } = require('../auth/service')
 const { knex, filterParams } = require('../db')
-const { getArrayOfDaysInRange, getOffsetFromIsoDateString, startOfDayUtc, getDateSubstring } = require('../shared/date')
+const { getArrayOfDaysInRange, getDateTimeExpressionInTimeZone, getDateSubstring } = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 const { getPeopleBase } = require('../shared/utilsPerson')
 
+/**
+ * minDate and maxDate - are LOCAL user date-time
+ */
 function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
-  const minDateStatus = startOfDayUtc(new Date(minDate))
-  const maxDateStatus = startOfDayUtc(new Date(maxDate))
+  /**
+   * get formatted DATE part which corresponds with date from observer
+   * point of view (on user's side).
+   * --> why we need to use user's local time here instead of previous way of running
+   *   startOfDayUtc(new Date(minDate))
+   * is because if time is '2024-05-01 01:44:55.123+06:00' on user's side
+   * then it means user wants to see data for May 1, but in ISO date is
+   * '2024-04-30 19:44:55.123Z' and `startOfDayUtc` returns '2024-04-30 00:00:00.000Z'
+   */
+  const minDateStatus = format(new Date(minDate), 'yyyy-MM-dd')
+  const maxDateStatus = format(new Date(maxDate), 'yyyy-MM-dd')
+
   return (
     knex('Device as d')
       .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -30,11 +38,27 @@ function deviceStatusByDayQuery(dataConstraints, minDate, maxDate) {
       .innerJoin('DeviceMaintenanceStatusLog as dmsl', 'd.id', 'dmsl.deviceId')
       .innerJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
       .leftJoin('Person as pe', 'dmsl.createdBy', 'pe.userId')
+      /**
+       * Notice that for getting latest entry for the deviceId/day in DeviceMaintenanceStatusLog,
+       * below we are again joining to DeviceMaintenanceStatusLog ...
+       */
       .leftOuterJoin('DeviceMaintenanceStatusLog as newerDmslOnSameDay', qb => {
+        /**
+         * for the same `deviceId` ...
+         */
         qb.on('newerDmslOnSameDay.deviceId', 'dmsl.deviceId')
+          /**
+           * for the same `day` ...
+           */
           .andOn('newerDmslOnSameDay.day', 'dmsl.day')
+          /**
+           * and make sure that `createdOn` is greater than previous ...
+           */
           .andOn(qb => {
             qb.on('newerDmslOnSameDay.createdOn', '>', 'dmsl.createdOn')
+            /**
+             * or if they are equal, then get entry with greater `id` value
+             */
             qb.orOn(qb => {
               qb.on('newerDmslOnSameDay.createdOn', '=', 'dmsl.createdOn').andOn(
                 'newerDmslOnSameDay.id',
@@ -83,23 +107,22 @@ async function deviceStatusOverTime(request) {
   return { ok: true, data }
 }
 
-async function getDeviceStatusOverTime(auth, query) {
+async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { minDate, maxDate = new Date().toISOString() } = query
-  const offset = getOffsetFromIsoDateString(minDate)
+  const { timezoneIANA } = await getUser(auth.credentials.name)
 
-  // Filters for results: results should be filtered normally, just converting the received date to UTC
-  const minDateResults = new Date(minDate).toISOString()
-  const maxDateResults = min([new Date(maxDate), new Date()]).toISOString()
+  /**
+   * minDate and maxDate are Date object, because we used
+   * Joi.date() validation in endpoints.js
+   */
+  const { minDate, maxDate } = query
+  const minDateFormat = "yyyy-MM-dd'T'00:00:00.000'Z'"
+  const maxDateFormat = "yyyy-MM-dd'T'23:59:59.999'Z'"
 
-  // Filters for statuses: statuses should be filtered differently, as they are saved as only date.
-  // If a date time like '2020-01-01T00:00:00.000-03:00' is received, then we should convert it to '2020-01-01T00:00:00.000Z' (same date, same day, but in Z timezone)
-  const minDatePart = minDateResults.substring(0, 10)
-  const maxDatePart = maxDateResults.substring(0, 10)
-  const minDateStatus = `${minDatePart}T00:00:00.000Z`
-  const maxDateStatus = `${maxDatePart}T00:00:00.000Z`
+  const minDateResults = format(minDate, minDateFormat)
+  const maxDateResults = min([format(maxDate, maxDateFormat), format(new Date(), maxDateFormat)])
 
-  const days = getArrayOfDaysInRange(minDateStatus, maxDateStatus)
+  const days = getArrayOfDaysInRange(minDate, maxDate)
 
   // helpers
   const deviceMaintenanceStatuses = await allDeviceMaintenanceStatusToId()
@@ -135,6 +158,11 @@ async function getDeviceStatusOverTime(auth, query) {
     })
     .where('dtc.hasResults', 1)
     .whereNotIn('dt.externalId', ['GxAlert', 'Aspect'])
+    .where(function () {
+      if (forDeviceIds && isArray(forDeviceIds)) {
+        this.whereIn('d.id', forDeviceIds)
+      }
+    })
     .groupBy('d.id')
     .select(
       'd.id',
@@ -155,8 +183,8 @@ async function getDeviceStatusOverTime(auth, query) {
 
   const results = await knex('Result as r')
     .whereIn('r.deviceId', deviceIds)
-    .where('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
-    .where('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
+    .where(getDateTimeExpressionInTimeZone(knex, 'r.endedOn', timezoneIANA), '>=', knex.raw(`'${minDateResults}'`))
+    .where(getDateTimeExpressionInTimeZone(knex, 'r.endedOn', timezoneIANA), '<=', knex.raw(`'${maxDateResults}'`))
     .modify(addConstraints, dataConstraints, {
       result: 'r',
     })
@@ -171,8 +199,8 @@ async function getDeviceStatusOverTime(auth, query) {
     .leftJoin('Result as r', joinQuery => {
       joinQuery
         .on('d.id', 'r.deviceId')
-        .andOn('r.endedOn', '>=', knex.raw(`'${minDateResults}'`))
-        .andOn('r.endedOn', '<=', knex.raw(`'${maxDateResults}'`))
+        .andOn(getDateTimeExpressionInTimeZone(knex, 'r.endedOn', timezoneIANA), '>=', knex.raw(`'${minDateResults}'`))
+        .andOn(getDateTimeExpressionInTimeZone(knex, 'r.endedOn', timezoneIANA), '<=', knex.raw(`'${maxDateResults}'`))
     })
     .modify(addConstraints, dataConstraints, {
       result: 'r',
@@ -182,9 +210,12 @@ async function getDeviceStatusOverTime(auth, query) {
     .select(
       'd.id',
       knex.raw('COUNT(r.id) as totalResults'),
+      /**
+       * convert date from UTC onto country timezone
+       */
       knex.raw(`
         DATE_FORMAT(
-          CONVERT_TZ(r.endedOn, '+00:00', '${offset}'),
+          CONVERT_TZ(r.endedOn, '+00:00', '${timezoneIANA}'),
           '%Y-%m-%d'
         ) as dayDate
       `)

@@ -81,22 +81,6 @@ const admin = {
     },
     {
       module: 'dashboard',
-      activity: 'device',
-    },
-    {
-      module: 'dashboard',
-      activity: 'result',
-    },
-    {
-      module: 'dashboard',
-      activity: 'site',
-    },
-    {
-      module: 'dashboard',
-      activity: 'target',
-    },
-    {
-      module: 'dashboard',
       activity: 'view',
     },
     {
@@ -168,10 +152,6 @@ const manager = {
   permissions: [
     {
       module: 'dashboard',
-      activity: 'device',
-    },
-    {
-      module: 'dashboard',
       activity: 'view',
     },
     {
@@ -200,15 +180,7 @@ const manager = {
     },
     {
       module: 'dashboard',
-      activity: 'site',
-    },
-    {
-      module: 'dashboard',
       activity: 'summary',
-    },
-    {
-      module: 'dashboard',
-      activity: 'target',
     },
     {
       module: 'dashboard',
@@ -276,10 +248,6 @@ const regionalOfficer = {
     {
       module: 'treatmentStatus',
       activity: 'edit',
-    },
-    {
-      module: 'dashboard',
-      activity: 'result',
     },
     {
       module: 'dashboard',
@@ -390,10 +358,6 @@ const labUser = {
     },
     {
       module: 'dashboard',
-      activity: 'result',
-    },
-    {
-      module: 'dashboard',
       activity: 'view',
     },
     {
@@ -486,22 +450,6 @@ const clinician = {
     {
       module: 'dashboard',
       activity: 'summary',
-    },
-    {
-      module: 'dashboard',
-      activity: 'site',
-    },
-    {
-      module: 'dashboard',
-      activity: 'target',
-    },
-    {
-      module: 'dashboard',
-      activity: 'result',
-    },
-    {
-      module: 'dashboard',
-      activity: 'device',
     },
     {
       module: 'dashboard',
@@ -852,10 +800,6 @@ const remoteHealthWorker = {
     {
       module: 'dashboard',
       activity: 'summary',
-    },
-    {
-      module: 'dashboard',
-      activity: 'site',
     },
     {
       module: 'dashboard',

@@ -65,7 +65,7 @@ function InventoryAdjustmentDialog(props) {
                     fullWidth
                     type="text"
                     name="lotNumber"
-                    label={formatMessage(messages.boxLotNumber)}
+                    label={formatMessage(messages.cartridgeLotNumber)}
                     value={values.lotNumber}
                     onChange={handleChange}
                     disabled={!!initialValues?.lotNumber}

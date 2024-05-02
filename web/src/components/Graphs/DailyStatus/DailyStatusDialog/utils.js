@@ -18,7 +18,7 @@ export const getFormConfig = (formConfig, statuses, data) => {
         // init dropdown options
         item.controlType.options = statuses.map(({ externalId, name }) => ({ label: name, value: externalId }))
       })
-      setInitialValue(items, 'note', data.note, styles)
+      setInitialValue(items, 'note', data.note || '', styles)
     })
   })
 

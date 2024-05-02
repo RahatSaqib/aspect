@@ -2086,6 +2086,42 @@ const getReportCustomFieldsCompletion = async (auth, query) => {
   }
 }
 
+// ---------------------------------------------------------------------------
+async function getDataForReportForNtpUse(auth, query, timezone, options) {
+  const { sharedResults, useNamedData } = options
+  /**
+   * get data from some of previous worksheet saved in cache.
+   *
+   * --> See func `getSheetData` in `api/src/report/serviceReports.js`
+   * and for line `sharedResults[nameOfSharedData] = result`
+   * --> Also see file `api/seeds/bangladesh/fixtures/reports.js`
+   * for this worksheet and see there `useNamedData: 'results_10a_for_nt_use'`
+   */
+  const { data } = sharedResults[useNamedData]
+
+  /**
+   * show only Detected Mtb/Rif and Mtb/Rif-Ultra (RR) data or `Resistance Detected` Xdr data
+   */
+  const dataRR = _.cloneDeep(data)
+  dataRR.rows = dataRR.rows.filter(
+    it =>
+      it.resultMtbRif === 'RR' ||
+      it.inhDetected?.includes('Resistance Detected') ||
+      it.flqDetected?.includes('Resistance Detected') ||
+      it.amkDetected?.includes('Resistance Detected') ||
+      it.kanDetected?.includes('Resistance Detected') ||
+      it.capDetected?.includes('Resistance Detected') ||
+      it.ethDetected?.includes('Resistance Detected')
+  )
+
+  dataRR.total = dataRR.rows.length
+
+  return {
+    ok: true,
+    data: dataRR,
+  }
+}
+
 module.exports = {
   getDataForReportDrTb10A,
   getDataForReportDrTb10AStool,
@@ -2093,4 +2129,5 @@ module.exports = {
   getDataForReportCovid19,
   getReportDrTb10a10bCovidNtpUse,
   getReportCustomFieldsCompletion,
+  getDataForReportForNtpUse,
 }
