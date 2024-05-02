@@ -22,6 +22,7 @@ const {
   isWeekend,
   endOfDay,
   subDays,
+  addMilliseconds,
 } = require('date-fns')
 
 const { convertToLocalTime, formatToTimeZone } = require('date-fns-timezone')
@@ -433,6 +434,42 @@ function arrayofIANATimezone(timezone) {
   return findIana(timezone)
 }
 
+function getUserStartOfMonth(date, userTimeZoneOffsetInMinutes) {
+  return addMinutes(startOfMonth(addMinutes(date, userTimeZoneOffsetInMinutes)), -userTimeZoneOffsetInMinutes)
+}
+
+function getUserEndOfMonth(date, userTimeZoneOffsetInMinutes) {
+  return addMinutes(endOfMonth(addMinutes(date, userTimeZoneOffsetInMinutes)), -userTimeZoneOffsetInMinutes)
+}
+
+/**
+ * This function is used for reports that show data grouped in months and accept date-range filtering. Expects a min and max date objects, and the offset in minutes of the user's timezone, and generates the collection of user months and the UTC ranges to filter in the database.
+ * @param {*} minDate The min date object from the filter
+ * @param {*} maxDate The max date object from the filter
+ * @param {*} userTimeZoneOffsetInMinutes The timezone offset of the user
+ * @returns The collection of months and date ranges for db queries
+ */
+function getAllUserMonthsInRange(minDate, maxDate, userTimeZoneOffsetInMinutes) {
+  const allRanges = []
+  let currentDate = minDate
+  let endOfMonthDate = getUserEndOfMonth(currentDate, userTimeZoneOffsetInMinutes)
+  while (currentDate <= maxDate) {
+    const userMonth = format(addMinutes(currentDate, userTimeZoneOffsetInMinutes), 'yyyy-MM')
+
+    const maxCurrentDate = maxDate < endOfMonthDate ? maxDate : endOfMonthDate
+
+    allRanges.push({
+      userMonth,
+      minDate: currentDate,
+      maxDate: maxCurrentDate,
+    })
+    currentDate = addMilliseconds(maxCurrentDate, 1) // next starting date
+    endOfMonthDate = getUserEndOfMonth(currentDate, userTimeZoneOffsetInMinutes)
+  }
+
+  return allRanges
+}
+
 function getAllMonthsInRange(minDate, maxDate) {
   minDate = _.isString(minDate) ? minDate : minDate.toISOString()
   maxDate = _.isString(maxDate) ? maxDate : maxDate.toISOString()
@@ -508,6 +545,9 @@ module.exports = {
   daysBetweenDates,
   arrayofIANATimezone,
   getAllMonthsInRange,
+  getAllUserMonthsInRange,
+  getUserEndOfMonth,
+  getUserStartOfMonth,
   getDateInMilliSeconds,
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
