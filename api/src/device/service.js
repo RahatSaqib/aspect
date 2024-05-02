@@ -26,6 +26,7 @@ const {
   getMonthYearUserTimeZoneField,
   getTimezoneOffsetFromNumber,
   getOffsetFromIsoDateString,
+  getDateTimeProjectionInTimeZoneIANA,
 } = require('../shared/date')
 const { lastDayOfMonthByOffsetAndResultEndedOn } = require('../shared/query')
 const { shouldTriggerInstrumentReplaced } = require('../plugin/utils')
@@ -38,6 +39,7 @@ const {
 } = require('./common/db')
 const { getSelectListFields } = require('./common/querySelectors')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
+const { getDeviceStatusOverTime } = require('../deviceMaintenanceStatus/service')
 
 async function getDeviceByRequest(request) {
   const {
@@ -355,6 +357,8 @@ async function getDevicesForReport(auth, query) {
    */
   const deviceIds = _.uniq(devices.map(x => x.id))
 
+  const { timezoneIANA } = await getUser(auth.credentials.name)
+
   /**
    * base query with all result counts for target device id's
    */
@@ -399,8 +403,17 @@ async function getDevicesForReport(auth, query) {
       result: 'r',
     })
     .whereIn('r.deviceId', deviceIds)
-    .modify(filterDateRangeParams, query, 'r.endedOn')
-    .select('r.deviceId', knex.raw('MAX(r.updatedOn) as lastUploadOn'))
+    /**
+     * --> to compare use country timezone with further CONVERT_TZ in getDateTimeProjectionInTimeZoneIANA
+     */
+    .modify(filterDateRangeParams, query, getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA))
+    .select(
+      'r.deviceId',
+      /**
+       * --> to return use user timezone
+       */
+      knex.raw(`MAX(CONVERT_TZ(r.updatedOn, "+00:00", "${userTimeOffset}")) as lastUploadOn`)
+    )
     .groupBy('r.deviceId')
 
   /**
@@ -534,11 +547,24 @@ async function setStatusForDateRange(request) {
     plugins: { messageContext },
   } = request
   const { externalId, day = startOfTodayUtc(), notes, expectedBackOnline } = payload
+  let { parentQuery } = payload
   let { dateFrom, dateTo } = payload
 
   if (!dateFrom && !dateTo) {
     dateFrom = day
     dateTo = day
+  }
+
+  /**
+   * in case if `parentQuery` is missing - get minDate/maxDate for current month from dateFrom/dateTo.
+   * --> `parentQuery` is a `query` used in getDeviceStatusOverTime() func
+   * for `Overall Network Health Daily` component.
+   */
+  if (!parentQuery) {
+    parentQuery = {
+      minDate: startOfMonth(dateFrom),
+      maxDate: endOfMonth(dateTo),
+    }
   }
 
   const dataConstraints = await getConstraints(credentials)
@@ -617,6 +643,15 @@ async function setStatusForDateRange(request) {
     if (!payload.dateFrom && !payload.dateTo) {
       ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
     } else data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
+
+    /**
+     * Get all days for current device in current month.
+     * --> Call same func which is used for getting data for
+     * `Overall Network Health Daily`, but here get data
+     * for current device only
+     */
+    const deviceStatusOverTime = await getDeviceStatusOverTime(request.auth, parentQuery, [deviceId])
+    data.deviceData = deviceStatusOverTime.find(it => it.id === deviceId)
 
     return {
       ok: true,
@@ -1008,46 +1043,44 @@ async function deviceMaintenanceStatus(request) {
  * - (not developed yet) Were decommissioned before the given day, but their maintenance status log for the given day is not 'inactiveDecommissioned'
  * @param {*} knex
  * @param {*} today The day to be processed
+ * @param {*} timezone Timezone of current country
  * @returns
  */
-async function getDevicesMaintenanceLogForTheDay(knex, today) {
-  return knex('Device as d')
+async function getDevicesMaintenanceLogForTheDay(knex, today, timezone) {
+  const devicesBase = knex('Device as d')
     .join('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .join('DeviceTypeCategory as dtc', 'dt.deviceTypeCategoryId', 'dtc.id')
-    .leftJoin('DeviceMaintenanceStatusLog as current_dmsl', 'd.deviceMaintenanceStatusLogId', 'current_dmsl.id')
-    .leftJoin('DeviceMaintenanceStatus as current_dms', 'current_dmsl.deviceMaintenanceStatusId', 'current_dms.id')
-    .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
-      queryBuilder.on('d.id', 'today_dmsl.deviceId').andOn('today_dmsl.day', knex.raw('DATE(?)', [today]))
-    })
-    .leftJoin('DeviceMaintenanceStatus as today_dms', 'today_dmsl.deviceMaintenanceStatusId', 'today_dms.id')
-    .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
-    .leftJoin('Result as r', queryBuilder => {
-      queryBuilder.on('d.id', 'r.deviceId').andOn(function () {
-        this.on(knex.raw('DATE(r.endedOn)'), knex.raw('DATE(?)', [today])).orOn(
-          knex.raw('DATE(r.startedOn)'),
-          knex.raw('DATE(?)', [today])
-        )
-      })
-    })
-    .where('dtc.hasResults', true)
-    .andWhere(queryBuilder => {
-      // Return data if the device's log does not exist for the given day
-      // >>> REASON: We need to add the missing log
-      queryBuilder
-        .whereNull('today_dmsl.id')
-        // Return data if the device is decommissioned but the log is not set to inactiveDecommissioned
-        // >>> REASON: We need to set the maintenance as 'inactiveDecommissioned'
-        // TODO: compare only decommissioned if the approval status decommissioned was set before the given day (we need to change relationships, from device-deviceApprovalStatus to device-deviceApprovalLog)
-        .orWhere(queryBuilder => {
-          queryBuilder
-            .where('da.token', 'decommissioned')
-            .andWhere('today_dms.externalId', '<>', 'inactiveDecommissioned')
-        })
-        // Return data if the device has a log for the given day, which is set to 'inactiveUnknown'
-        // >>> REASON: We will need to to check if the device has future results, and set the current log to 'inactiveNoTestsPerformed' if that is true
-        .orWhere('today_dms.externalId', 'inactiveUnknown')
+    .where('dtc.hasResults', 1)
+
+  /**
+   * total results today for all devices.
+   * Notice that we shift endedOn and startedOn dates to the country timezone with CONVERT_TZ directly,
+   * without using helper getDateTimeProjectionInUserTimeZone because here we wrap it with DATE() func
+   */
+  const allResults = await devicesBase
+    .clone()
+    .leftJoin('Result as r', 'd.id', 'r.deviceId')
+    .where(function () {
+      this.where(knex.raw(`DATE(CONVERT_TZ(r.endedOn, "+00:00", "${timezone}"))`), knex.raw('DATE(?)', today)).orWhere(
+        function () {
+          this.whereNull(`r.endedOn`).andWhere(
+            knex.raw(`DATE(CONVERT_TZ(r.startedOn, "+00:00", "${timezone}"))`),
+            knex.raw(`DATE(?)`, today)
+          )
+        }
+      )
     })
     .groupBy('d.id')
+    .select('d.id', knex.raw('COUNT(r.id) as totalResults'))
+
+  /**
+   * all devices
+   */
+  const allDevices = await devicesBase
+    .clone()
+    .leftJoin('DeviceMaintenanceStatusLog as current_dmsl', 'd.deviceMaintenanceStatusLogId', 'current_dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as current_dms', 'current_dmsl.deviceMaintenanceStatusId', 'current_dms.id')
+    .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .select(
       'd.id',
       'current_dms.externalId as currentMaintenanceStatusExternalId',
@@ -1055,13 +1088,104 @@ async function getDevicesMaintenanceLogForTheDay(knex, today) {
       'current_dmsl.data as currentMaintenanceStatusLogData',
       'current_dmsl.day as currentMaintenanceStatusDay',
       'da.token as approvalToken',
-      'd.deviceApprovalId as deviceApprovalId',
-      knex.raw('COUNT(r.id) as totalResults')
+      'd.deviceApprovalId as deviceApprovalId'
     )
+
+  /**
+   * all devices with latest entry from DeviceMaintenanceStatusLog for today
+   */
+  const allDevicesToday = await devicesBase
+    .clone()
+    /**
+     * use 2 left joins for the same table with special conditions to get the latest entry for `today_dmsl`
+     * for each device/day
+     */
+    .leftJoin('DeviceMaintenanceStatusLog as today_dmsl', queryBuilder => {
+      queryBuilder.on('d.id', 'today_dmsl.deviceId').andOn('today_dmsl.day', knex.raw('DATE(?)', [today]))
+    })
+    .leftJoin('DeviceMaintenanceStatusLog as today_dmsl_next', function () {
+      this.on('today_dmsl.deviceId', 'today_dmsl_next.deviceId')
+        .andOn('today_dmsl.day', 'today_dmsl_next.day')
+        .andOn(function () {
+          this.on('today_dmsl.createdOn', '<', 'today_dmsl_next.createdOn').orOn(function () {
+            this.on('today_dmsl.createdOn', 'today_dmsl_next.createdOn').andOn(
+              'today_dmsl.id',
+              '<',
+              'today_dmsl_next.id'
+            )
+          })
+        })
+    })
+    .leftJoin('DeviceMaintenanceStatus as today_dms', 'today_dmsl.deviceMaintenanceStatusId', 'today_dms.id')
+    /**
+     * mandatory condition to get latest `today_dmsl` entry in above `left join`
+     */
+    .whereNull('today_dmsl_next.id')
+    .select(
+      'd.id',
+      'today_dms.externalId as todayMaintenanceStatusExternalId',
+      'today_dms.active as todayMaintenanceStatusActive',
+      'today_dmsl.id as today_dmsl_id',
+      'today_dmsl.data as todayMaintenanceStatusLogData',
+      'today_dmsl.day as todayMaintenanceStatusDay'
+    )
+
+  /**
+   * Notice that `allDevices` and `allDevicesToday` contain same number of devices,
+   * i.e. all devices from Device table where deviceTypeCategory allow results (dtc.hasResults = 1).
+   */
+
+  /**
+   * prepare data to return
+   */
+  const data = _.reduce(
+    allDevices,
+    (acc, device) => {
+      const deviceToday = allDevicesToday.find(it => it.id === device.id)
+      const totalResults = allResults.find(it => it.id === device.id)?.totalResults || 0
+      if (
+        /**
+         * Return data if the device's log does not exist for the given day
+         * --> REASON: We need to add the missing log
+         */
+        !deviceToday?.today_dmsl_id ||
+        /**
+         * Return data if the device is decommissioned but the log is not set to inactiveDecommissioned
+         * --> REASON: We need to set the maintenance as 'inactiveDecommissioned' if decommission
+         * happened before 'today'.
+         * TODO: compare only decommissioned if the approval status decommissioned was set before the given
+         * day (we need to change relationships, from device-deviceApprovalStatus to device-deviceApprovalLog)
+         */
+        (device.approvalToken === 'decommissioned' &&
+          deviceToday.todayMaintenanceStatusExternalId !== 'inactiveDecommissioned') ||
+        /**
+         * Return data if the device has a log for the given day, which is set to 'inactiveUnknown'
+         * --> REASON: We'll check if the device has future results, and set the current
+         * log to 'inactiveNoTestsPerformed' if that is true
+         */
+        deviceToday.todayMaintenanceStatusExternalId === 'inactiveUnknown'
+      ) {
+        acc = [...acc, { ...device, ...deviceToday, totalResults }]
+      }
+      return acc
+    },
+    []
+  )
+
+  return data
 }
 
 async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext }) {
   return messageContext.run(async knex => {
+    /**
+     * get timezone from TimeZone table for 1st country.
+     * Notice that here we use same field alias `timezoneIANA` as in
+     * `api/src/auth/service.js` for getting current user details.
+     */
+    const { timezoneIANA: timezone } = await knex('Country as c')
+      .leftJoin('TimeZone as tz', 'tz.id', 'c.timezone')
+      .orderBy('c.id')
+      .first('tz.timeZone as timezoneIANA')
     const getCustomToday = today => {
       if (today) {
         if (_.isDate(today)) {
@@ -1074,7 +1198,7 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
       return startOfTodayUtc()
     }
     const today = getCustomToday(action.today)
-    const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(knex, today)
+    const devicesMaintenanceLogForTheDay = await getDevicesMaintenanceLogForTheDay(knex, today, timezone)
 
     await Promise.each(devicesMaintenanceLogForTheDay, async device => {
       const {
@@ -1084,7 +1208,7 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
         currentMaintenanceStatusLogData = '{}',
         currentMaintenanceStatusDay,
         currentMaintenanceStatusActive,
-        deviceApprovalId,
+        todayMaintenanceStatusExternalId,
         totalResults,
       } = device
 
@@ -1113,19 +1237,28 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
       if (approvalToken === 'decommissioned') {
         /**
          * If the device's last approval log is 'inactiveDecommissioned', and the day to process is after that approval log,
-         * then we can assume the device inactivty reason is that it was decommissioned and no longer working
+         * then we can assume the device inactivity reason is that it was decommissioned and no longer working
          * */
-        const decommissionedId = deviceApprovalId
         const lastDeviceApprovalLog = await knex('DeviceApprovalLog')
           .where({ deviceId: id })
           .orderBy('createdOn', 'desc')
           .first()
 
         if (lastDeviceApprovalLog) {
-          const { createdOn: lastApprovalDate, deviceApprovalId: lastApprovalDeviceApprovalId } = lastDeviceApprovalLog
-          if (lastApprovalDate < today && lastApprovalDeviceApprovalId === decommissionedId)
+          const { createdOn: lastApprovalDate } = lastDeviceApprovalLog
+          if (lastApprovalDate <= today) {
             deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
-        } else deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
+          } else {
+            /**
+             * treat `active` if there are results for the day, or use
+             * todayMaintenanceStatusExternalId with default deviceMaintenanceStatusForTheDay
+             */
+            deviceMaintenanceStatusForTheDay =
+              totalResults > 0 ? 'active' : todayMaintenanceStatusExternalId || deviceMaintenanceStatusForTheDay
+          }
+        } else {
+          deviceMaintenanceStatusForTheDay = 'inactiveDecommissioned'
+        }
       } else if (totalResults === 0 && deviceMaintenanceStatusForTheDay === 'inactiveUnknown') {
         /**
          * If the device didn't report results in the day and we don't know the inactivity reason,
@@ -1138,9 +1271,10 @@ async function onDeviceMaintenanceStatusLogScheduled(action, { messageContext })
           .count('id as totalFutureResults')
           .first()
 
-        if (totalFutureResults > 0)
+        if (totalFutureResults > 0) {
           // If has newer results, then we know that the device didn't performed tests in the day
           deviceMaintenanceStatusForTheDay = 'inactiveNoTestsPerformed'
+        }
       } else if (
         // if has result for the processed day, but the status is not active - then set it to active for TODAY
         totalResults > 0 &&

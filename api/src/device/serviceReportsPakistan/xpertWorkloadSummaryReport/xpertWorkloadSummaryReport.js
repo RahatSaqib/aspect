@@ -1,8 +1,8 @@
 const _ = require('lodash')
-const { startOfMonth, endOfMonth, subMonths } = require('date-fns')
+const { subMonths } = require('date-fns')
 const Boom = require('@hapi/boom')
-const { filterParams, knex } = require('../../../db')
-const { getAllMonthsInRange } = require('../../../shared/date')
+const { knex, filterParams } = require('../../../db')
+const { getAllUserMonthsInRange, getOffsetFromIsoDateStringInMinutes } = require('../../../shared/date')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../../fact/common/db')
 const { addConstraints } = require('../../../auth/constraints')
 
@@ -23,41 +23,45 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     filterParams,
     query,
   })
-    .leftJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
+    .leftJoin('Partner as ip', 'd.implementingPartnerId', 'ip.id')
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .select({
       provinceName: 'st.name',
       districtName: 'lg.name',
       deviceName: 'd.name',
       assayName: 'a.name',
-      approvalStatus: 'da.name',
-      responsible: knex.raw(`'Aspect'`),
+      maintenanceStatus: 'dms.name',
+      responsible: 'ip.name',
     })
     .groupBy(groupBy)
     .whereIn('a.externalId', ['GxMtbRif', 'GxMtbRifUltra'])
-    .orderBy('st.name', 'lg.name')
+    .orderBy(['st.name', 'lg.name'])
 
-  const dateRanges = getAllMonthsInRange(dateFrom.toISOString(), dateTo.toISOString())
+  const offset = getOffsetFromIsoDateStringInMinutes(query.minDate || query.maxDate)
+  const dateRanges = getAllUserMonthsInRange(dateFrom, dateTo, offset)
   const totalColumns = []
 
   for (const dateRange of dateRanges) {
-    const date = new Date(`${dateRange}-01`)
-    const minDate = startOfMonth(date).toISOString()
-    const maxDate = endOfMonth(date).toISOString()
+    const { userMonth, minDate, maxDate } = dateRange
 
-    const alias = `resultsCount${dateRange}`
+    const alias = `resultsCount${userMonth}`
+
+    const isoMinDate = minDate.toISOString()
+    const isoMaxDate = maxDate.toISOString()
 
     baseQuery.select({
       [`${alias}_total`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${minDate}' AND '${maxDate}' THEN r.resultCount ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbDetectedTraceDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId IN ('Detected', 'Trace Detected') THEN r.resultCount ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId IN ('Detected', 'Trace Detected') THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbTraceDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Trace Detected' THEN r.resultCount ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId = 'Trace Detected' THEN r.resultCount ELSE 0 END), 0)`
       ),
       [`${alias}_mtbDetectedRifDetected`]: knex.raw(
-        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${minDate}' AND '${maxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN r.resultCount ELSE 0 END), 0)`
+        `IFNULL(SUM(CASE WHEN r.startedOn BETWEEN '${isoMinDate}' AND '${isoMaxDate}' AND rc1.externalId = 'Detected' AND rc2.externalId = 'Detected' THEN r.resultCount ELSE 0 END), 0)`
       ),
     })
 
@@ -81,60 +85,54 @@ const getXpertWorkloadSummaryReport = async (dataConstraints, query, groupBy) =>
     { key: 'mtbDetectedRifDetected', name: 'Rif Resistant' },
   ].map(column => ({
     header: column.name,
-    subHeaders: dateRanges.map(dateRange => ({
-      key: `resultsCount${dateRange}_${column.key}`,
-      text: dateRange,
+    subHeaders: dateRanges.map(({ userMonth }) => ({
+      key: `resultsCount${userMonth}_${column.key}`,
+      text: userMonth,
     })),
   }))
 
   return { data: newData, dynamicColumns }
 }
 
-const sumOfColumns = (rows, columns) => {
-  // Create a seed object with all columns as keys and initializing them with zero
-  const countersSeed = columns.reduce((object, column) => {
-    return { ...object, [column]: 0 }
-  }, {})
-
-  // Sum all the columns
-  return rows.reduce((counters, row) => {
-    columns.forEach(column => {
-      counters[column] += row[column]
-    })
-    return counters
-  }, countersSeed)
-}
-
 const addTotalRowByProvince = (rows, columnsToSum) => {
   const newData = []
-  let group = [] // group of rows with the same province
-  for (const [i, row] of rows.entries()) {
-    const isLastRow = i === rows.length - 1
-    const shouldCreateNewGroup = isLastRow || (group.length > 0 && group[0].provinceName !== row.provinceName)
-    if (shouldCreateNewGroup) {
-      const { provinceName } = group[0]
-      const counters = sumOfColumns(group, columnsToSum)
 
-      // Add total row before the group of rows
-      newData.push({
-        provinceName,
-        districtName: 'All',
-        ...counters,
-      })
+  // Group rows by province
+  const groupedRows = groupRowsByProvince(rows)
 
-      // Add rows of the group
-      newData.push(...group)
-
-      // Start a new group
-      group = []
-    }
-
-    if (!isLastRow) {
-      group.push(row)
-    }
-  }
+  // Add total row for each province and concatenate with original rows
+  groupedRows.forEach(provinceGroup => {
+    const { rows: provinceRows } = provinceGroup
+    const totalRow = createTotalRow(provinceRows, columnsToSum)
+    newData.push(totalRow, ...provinceRows)
+  })
 
   return newData
+}
+
+// group rows by province
+const groupRowsByProvince = rows => {
+  const groupedRows = new Map()
+  rows.forEach(row => {
+    const { provinceName } = row
+    if (!groupedRows.has(provinceName)) {
+      groupedRows.set(provinceName, { provinceName, rows: [] })
+    }
+    groupedRows.get(provinceName).rows.push(row)
+  })
+  return Array.from(groupedRows.values())
+}
+
+// calculate sum of specified columns for a group of rows
+const createTotalRow = (rows, columnsToSum) => {
+  const totalRow = {
+    provinceName: rows[0].provinceName,
+    districtName: 'All',
+  }
+  columnsToSum.forEach(column => {
+    totalRow[column] = rows.reduce((sum, row) => sum + row[column], 0)
+  })
+  return totalRow
 }
 
 const getXpertWorkloadSummaryReportByDistrict = async (dataConstraints, query) =>

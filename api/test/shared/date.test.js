@@ -1,5 +1,6 @@
 const { assert, expect } = require('chai')
 
+const { parseISO } = require('date-fns')
 const {
   getLocalDateTimeStringInUtc,
   getArrayOfDaysInRange,
@@ -13,6 +14,9 @@ const {
   REGEX_ISODATESTRING,
   getOffsetFromIsoDateString,
   getOffsetFromTimeZone,
+  getAllUserMonthsInRange,
+  getUserEndOfMonth,
+  getUserStartOfMonth,
   slideDateToTimeZone,
   formatDateInTimeZone,
   replaceOffset,
@@ -217,11 +221,219 @@ describe('Shared Date Utility Functions', () => {
     })
   })
 
-  describe('slideDateToTimeZone', () => {
-    it('should return the input date slided the amount of hours between UTC and target timeZone during the specified date', () => {
+  describe('Generate date ranges collection for reports', () => {
+    describe('getUserEndOfMonth', () => {
+      it('get user end of the month for negative timezones for min dates', () => {
+        const userEOM = getUserEndOfMonth(parseISO('2023-01-01T00:00:00.000-03:00'), -180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-31T23:59:59.999-03:00').toISOString())
+      })
+
+      it('get user end of the month for negative timezones for max dates', () => {
+        const userEOM = getUserEndOfMonth(parseISO('2023-01-31T23:59:59.999-03:00'), -180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-31T23:59:59.999-03:00').toISOString())
+      })
+
+      it('get user end of the month for positive timezones for min dates', () => {
+        const userEOM = getUserEndOfMonth(parseISO('2023-01-01T00:00:00.000+03:00'), 180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-31T23:59:59.999+03:00').toISOString())
+      })
+
+      it('get user end of the month for positive timezones for max dates', () => {
+        const userEOM = getUserEndOfMonth(parseISO('2023-01-31T23:59:59.999+03:00'), 180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-31T23:59:59.999+03:00').toISOString())
+      })
+
+      it('get user start of the month for negative timezones for min dates', () => {
+        const userEOM = getUserStartOfMonth(parseISO('2023-01-01T00:00:00.000-03:00'), -180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-01T00:00:00.000-03:00').toISOString())
+      })
+
+      it('get user start of the month for negative timezones for max dates', () => {
+        const userEOM = getUserStartOfMonth(parseISO('2023-01-31T23:59:59.999-03:00'), -180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-01T00:00:00.000-03:00').toISOString())
+      })
+
+      it('get user start of month for positive timezones for min dates', () => {
+        const userEOM = getUserStartOfMonth(parseISO('2023-01-01T00:00:00.000+03:00'), 180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-01T00:00:00.000+03:00').toISOString())
+      })
+
+      it('get user start of month for positive timezones for max dates', () => {
+        const userEOM = getUserStartOfMonth(parseISO('2023-01-31T23:59:59.999+03:00'), 180)
+        assert.equal(userEOM.toISOString(), parseISO('2023-01-01T00:00:00.000+03:00').toISOString())
+      })
+    })
+
+    describe('getAllUserMonthsInRange', () => {
+      describe('get date range collection for negative timezones', () => {
+        it('should process correctly limit dates', () => {
+          const minsOffset = -180
+          const months = getAllUserMonthsInRange(
+            parseISO('2023-01-01T00:00:00.000-03:00'),
+            parseISO('2023-01-31T23:59:59.999-03:00'),
+            minsOffset
+          )
+          assert.deepEqual(months, [
+            {
+              userMonth: '2023-01',
+              minDate: parseISO('2023-01-01T00:00:00.000-03:00'),
+              maxDate: parseISO('2023-01-31T23:59:59.999-03:00'),
+            },
+          ])
+        })
+
+        it('should process correctly middle dates', () => {
+          const minsOffset = -180
+          const months = getAllUserMonthsInRange(
+            parseISO('2023-01-01T00:00:00.000-03:00'),
+            parseISO('2023-01-23T00:00:00.000-03:00'),
+            minsOffset
+          )
+          assert.deepEqual(months, [
+            {
+              userMonth: '2023-01',
+              minDate: parseISO('2023-01-01T00:00:00.000-03:00'),
+              maxDate: parseISO('2023-01-23T00:00:00.000-03:00'),
+            },
+          ])
+        })
+
+        it('should process correctly more than 1 month-far dates', () => {
+          const minsOffset = -180
+          const months = getAllUserMonthsInRange(
+            parseISO('2023-01-03T00:00:00.000-03:00'),
+            parseISO('2023-02-23T00:00:00.000-03:00'),
+            minsOffset
+          )
+          assert.deepEqual(months, [
+            {
+              userMonth: '2023-01',
+              minDate: parseISO('2023-01-03T00:00:00.000-03:00'),
+              maxDate: parseISO('2023-01-31T23:59:59.999-03:00'),
+            },
+            {
+              userMonth: '2023-02',
+              minDate: parseISO('2023-02-01T00:00:00.000-03:00'),
+              maxDate: parseISO('2023-02-23T00:00:00.000-03:00'),
+            },
+          ])
+        })
+      })
+    })
+    describe('get date range collection for positive timezones', () => {
+      it('should process correctly limit dates', () => {
+        const minsOffset = +180
+        const months = getAllUserMonthsInRange(
+          parseISO('2023-01-01T00:00:00.00+03:00'),
+          parseISO('2023-01-31T23:59:59.999+03:00'),
+          minsOffset
+        )
+        assert.deepEqual(months, [
+          {
+            userMonth: '2023-01',
+            minDate: parseISO('2023-01-01T00:00:00.000+03:00'),
+            maxDate: parseISO('2023-01-31T23:59:59.999+03:00'),
+          },
+        ])
+      })
+
+      it('should process correctly middle dates', () => {
+        const minsOffset = +180
+        const months = getAllUserMonthsInRange(
+          parseISO('2023-01-01T00:00:00.000+03:00'),
+          parseISO('2023-01-23T00:00:00.000+03:00'),
+          minsOffset
+        )
+        assert.deepEqual(months, [
+          {
+            userMonth: '2023-01',
+            minDate: parseISO('2023-01-01T00:00:00.000+03:00'),
+            maxDate: parseISO('2023-01-23T00:00:00.000+03:00'),
+          },
+        ])
+      })
+
+      it('should process correctly more than 1 month-far dates', () => {
+        const minsOffset = +180
+        const months = getAllUserMonthsInRange(
+          parseISO('2023-01-03T00:00:00.000+03:00'),
+          parseISO('2023-02-23T00:00:00.000+03:00'),
+          minsOffset
+        )
+        assert.deepEqual(months, [
+          {
+            userMonth: '2023-01',
+            minDate: parseISO('2023-01-03T00:00:00.000+03:00'),
+            maxDate: parseISO('2023-01-31T23:59:59.999+03:00'),
+          },
+          {
+            userMonth: '2023-02',
+            minDate: parseISO('2023-02-01T00:00:00.000+03:00'),
+            maxDate: parseISO('2023-02-23T00:00:00.000+03:00'),
+          },
+        ])
+      })
+    })
+    describe('slideDateToTimeZone', () => {
+      it('should return the input date slided the amount of hours between UTC and target timeZone during the specified date', () => {
+        const tzFixtures = [
+          {
+            tz: 'America/Buenos_Aires',
+            date: '2023-01-01T00:00:00Z',
+            expectedDate: '2023-01-01T00:00:00-03:00',
+          },
+          { tz: 'Asia/Baku', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+04:00' },
+
+          { tz: 'Asia/Dhaka', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+06:00' },
+          { tz: 'Pacific/Fiji', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+12:00' },
+          { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01' },
+          { tz: 'Canada/Atlantic', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00-04:00' },
+          { tz: 'Canada/Atlantic', date: '2023-11-01', expectedDate: '2023-11-01T00:00:00-03:00' },
+        ]
+
+        for (const f of tzFixtures) {
+          assert.equal(
+            slideDateToTimeZone(new Date(f.date), f.tz).toISOString(),
+            new Date(f.expectedDate).toISOString(),
+            `Cannot slide ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
+          )
+        }
+      })
+    })
+
+    describe('replaceOffset', () => {
+      it('should return the input date formatted in ISO-8601 full format, with the correct offset for the target time zone in the input date', () => {
+        const tzFixtures = [
+          {
+            tz: 'America/Argentina/Buenos_Aires',
+            date: '2023-01-01T00:00:00Z',
+            expectedDate: '2022-12-31T21:00:00-03:00',
+          },
+          { tz: 'Asia/Baku', date: '2023-01-01:15:20:23Z', expectedDate: '2023-01-01T19:20:23+04:00' },
+
+          { tz: 'Asia/Dhaka', date: '2023-03-22T10:11:00Z', expectedDate: '2023-03-22T16:11:00+06:00' },
+          { tz: 'Pacific/Fiji', date: '2023-01-01T05:00:00Z', expectedDate: '2023-01-01T17:00:00+12:00' },
+          { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00Z' },
+          { tz: 'Canada/Atlantic', date: '2023-12-15T10:00:00', expectedDate: '2023-12-15T06:00:00-04:00' },
+          { tz: 'Canada/Atlantic', date: '2023-11-01T10:00:00', expectedDate: '2023-11-01T07:00:00-03:00' },
+        ]
+
+        for (const f of tzFixtures) {
+          assert.equal(
+            formatDateInTimeZone(new Date(f.date), f.tz),
+            f.expectedDate,
+            `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
+          )
+        }
+      })
+    })
+  })
+
+  describe('replaceOffset', () => {
+    it('should return the input date slided the amount of hours between UTC and the target time zone and formatted in ISO-8601 full format, with the correct offset for the target time zone in the input date', () => {
       const tzFixtures = [
         {
-          tz: 'America/Buenos_Aires',
+          tz: 'America/Argentina/Buenos_Aires',
           date: '2023-01-01T00:00:00Z',
           expectedDate: '2023-01-01T00:00:00-03:00',
         },
@@ -229,41 +441,14 @@ describe('Shared Date Utility Functions', () => {
 
         { tz: 'Asia/Dhaka', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+06:00' },
         { tz: 'Pacific/Fiji', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00+12:00' },
-        { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01' },
+        { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00Z' },
         { tz: 'Canada/Atlantic', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00-04:00' },
         { tz: 'Canada/Atlantic', date: '2023-11-01', expectedDate: '2023-11-01T00:00:00-03:00' },
       ]
 
       for (const f of tzFixtures) {
         assert.equal(
-          slideDateToTimeZone(new Date(f.date), f.tz).toISOString(),
-          new Date(f.expectedDate).toISOString(),
-          `Cannot slide ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
-        )
-      }
-    })
-  })
-
-  describe('replaceOffset', () => {
-    it('should return the input date formatted in ISO-8601 full format, with the correct offset for the target time zone in the input date', () => {
-      const tzFixtures = [
-        {
-          tz: 'America/Argentina/Buenos_Aires',
-          date: '2023-01-01T00:00:00Z',
-          expectedDate: '2022-12-31T21:00:00-03:00',
-        },
-        { tz: 'Asia/Baku', date: '2023-01-01:15:20:23Z', expectedDate: '2023-01-01T19:20:23+04:00' },
-
-        { tz: 'Asia/Dhaka', date: '2023-03-22T10:11:00Z', expectedDate: '2023-03-22T16:11:00+06:00' },
-        { tz: 'Pacific/Fiji', date: '2023-01-01T05:00:00Z', expectedDate: '2023-01-01T17:00:00+12:00' },
-        { tz: 'GMT', date: '2023-01-01', expectedDate: '2023-01-01T00:00:00Z' },
-        { tz: 'Canada/Atlantic', date: '2023-12-15T10:00:00', expectedDate: '2023-12-15T06:00:00-04:00' },
-        { tz: 'Canada/Atlantic', date: '2023-11-01T10:00:00', expectedDate: '2023-11-01T07:00:00-03:00' },
-      ]
-
-      for (const f of tzFixtures) {
-        assert.equal(
-          formatDateInTimeZone(new Date(f.date), f.tz),
+          replaceOffset(new Date(f.date), f.tz),
           f.expectedDate,
           `Format for ${f.date} to timeZone '${f.tz},'${f.obs || ''}`
         )

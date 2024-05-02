@@ -6,6 +6,7 @@ const {
   remoteHealthWorker,
   technician,
   countryReportsDecorator,
+  aspectBeta,
 } = require('../../fixtures/jobFunctionBase')
 const reports = require('./reports')
 
@@ -18,4 +19,5 @@ module.exports = [
   countryReportsDecorator(clinician, countryReports),
   countryReportsDecorator(remoteHealthWorker, countryReports),
   countryReportsDecorator(technician, countryReports),
+  aspectBeta,
 ]

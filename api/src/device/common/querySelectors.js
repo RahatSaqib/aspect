@@ -1,12 +1,12 @@
 const { knex } = require('../../db')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
-function getSelectListFields(userTimeOffset, { lastSeenField } = {}) {
+function getSelectListFields(timeZoneIANA, { lastSeenField } = {}) {
   return [
     ...SELECT_LIST_FIELDS,
-    getDateTimeProjectionInUserTimeZone(knex, 'd.createdOn', userTimeOffset, 'createdOn'),
-    getDateTimeProjectionInUserTimeZone(knex, 'd.lastPingOn', userTimeOffset, 'lastPingOn'),
-    getDateTimeProjectionInUserTimeZone(knex, lastSeenField ?? 'd.lastSeenOn', userTimeOffset, 'lastSeen'),
+    getDateTimeProjectionInTimeZoneIANA(knex, 'd.createdOn', timeZoneIANA, 'createdOn'),
+    getDateTimeProjectionInTimeZoneIANA(knex, 'd.lastPingOn', timeZoneIANA, 'lastPingOn'),
+    getDateTimeProjectionInTimeZoneIANA(knex, lastSeenField ?? 'd.lastSeenOn', timeZoneIANA, 'lastSeen'),
   ]
 }
 
