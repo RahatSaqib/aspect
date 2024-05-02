@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useCallback, useContext, useMemo, useState } from 'react'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material'
@@ -8,6 +8,9 @@ import { addDepth } from '../../../../../utils/utils/table'
 import { makeNestedData } from './helpers'
 
 const border = '1px solid rgba(224, 224, 224, 1)'
+
+const SortContext = React.createContext(null)
+
 const useStyles = makeStyles({
   table: {
     borderRight: border,
@@ -21,6 +24,7 @@ const useStyles = makeStyles({
 })
 
 const Row = ({ row, isChild, index }) => {
+  const { renderRow } = useContext(SortContext)
   const [open, setOpen] = useState(-1)
   const colors = isChild ? ['#dadbdf', '#e6e6e6'] : ['#eef1f8', '#ffffff']
   return (
@@ -43,16 +47,21 @@ const Row = ({ row, isChild, index }) => {
         <TableCell align="center">{row.cntMtbNoResult}</TableCell>
         <TableCell align="center">{row.noResultPercent}</TableCell>
       </TableRow>
-      {open === row.id
-        ? row.children?.map((row, index) => <Row key={row.name} row={row} index={index} isChild />)
-        : null}
+      {open === row.id ? renderRow(row.children, { isChild: true }) : null}
     </>
   )
 }
 
 export const ErrorRateTable = ({ items }) => {
-  const [sort, setSort] = useState({ name: 'name', order: 'desc' })
-  const rows = addDepth(makeNestedData(orderBy(items ?? [], [sort.name], [sort.order])))
+  const [sort, setSort] = useState({ name: 'name', order: 'asc' })
+  const rows = useMemo(() => addDepth(makeNestedData(items ?? [])), [items])
+  const renderRow = useCallback(
+    (items, props) =>
+      orderBy(items, sort.name, sort.order).map((row, index) => (
+        <Row key={row.name} row={row} index={index} {...props} />
+      )),
+    [sort]
+  )
   const classes = useStyles()
   const topHeaders = [
     { id: 'name', title: 'Name', colSpan: 1 },
@@ -63,48 +72,46 @@ export const ErrorRateTable = ({ items }) => {
     { id: 'cntMtbNoResult', title: 'No Result', colSpan: 2 },
   ]
   return (
-    <Table className={classes.table}>
-      <TableHead>
-        <TableRow>
-          {topHeaders.map(h => (
-            <TableCell
-              key={h.id}
-              sx={h.colSpan <= 1 ? { borderBottom: 'unset' } : undefined}
-              colSpan={h.colSpan}
-              align={h.colSpan > 1 ? 'center' : 'left'}
-            >
-              <TableSortLabel
-                active={sort?.name === h.id}
-                direction={sort?.order}
-                onClick={() =>
-                  setSort({
-                    name: h.id,
-                    order: sort?.order === 'asc' ? 'desc' : 'asc',
-                  })
-                }
+    <SortContext.Provider value={{ renderRow }}>
+      <Table className={classes.table}>
+        <TableHead>
+          <TableRow>
+            {topHeaders.map(h => (
+              <TableCell
+                key={h.id}
+                sx={h.colSpan <= 1 ? { borderBottom: 'unset' } : undefined}
+                colSpan={h.colSpan}
+                align={h.colSpan > 1 ? 'center' : 'left'}
               >
-                {h.title}
-              </TableSortLabel>
-            </TableCell>
-          ))}
-        </TableRow>
-        <TableRow>
-          <TableCell />
-          <TableCell />
-          <TableCell />
-          <TableCell align="center">#</TableCell>
-          <TableCell align="center">%</TableCell>
-          <TableCell align="center">#</TableCell>
-          <TableCell align="center">%</TableCell>
-          <TableCell align="center">#</TableCell>
-          <TableCell align="center">%</TableCell>
-        </TableRow>
-      </TableHead>
-      <TableBody>
-        {rows?.map((row, index) => (
-          <Row key={row.name} row={row} index={index} />
-        ))}
-      </TableBody>
-    </Table>
+                <TableSortLabel
+                  active={sort?.name === h.id}
+                  direction={sort?.order}
+                  onClick={() =>
+                    setSort({
+                      name: h.id,
+                      order: sort?.order === 'asc' ? 'desc' : 'asc',
+                    })
+                  }
+                >
+                  {h.title}
+                </TableSortLabel>
+              </TableCell>
+            ))}
+          </TableRow>
+          <TableRow>
+            <TableCell />
+            <TableCell />
+            <TableCell />
+            <TableCell align="center">#</TableCell>
+            <TableCell align="center">%</TableCell>
+            <TableCell align="center">#</TableCell>
+            <TableCell align="center">%</TableCell>
+            <TableCell align="center">#</TableCell>
+            <TableCell align="center">%</TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>{renderRow(rows)}</TableBody>
+      </Table>
+    </SortContext.Provider>
   )
 }
