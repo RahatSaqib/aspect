@@ -56,4 +56,3 @@ export const makeNestedData = array => {
 
   return result
 }
-

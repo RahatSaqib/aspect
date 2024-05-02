@@ -61,7 +61,7 @@ const listDeviceMtbErrors = async request => {
   // add more fields which depend on aggregations
   data.forEach(it => {
     // check if modules has already been considered for the device
-    if(moduleTracker[it.id]){
+    if (moduleTracker[it.id]) {
       it.numberOfModules = 0
     } else {
       moduleTracker[it.id] = true
