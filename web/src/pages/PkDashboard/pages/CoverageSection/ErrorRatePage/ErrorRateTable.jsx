@@ -7,14 +7,15 @@ import orderBy from 'lodash/orderBy'
 import { addDepth } from '../../../../../utils/utils/table'
 import { makeNestedData } from './helpers'
 
+const border = '1px solid rgba(224, 224, 224, 1)'
 const useStyles = makeStyles({
   table: {
-    borderRight: '1px solid rgba(224, 224, 224, 1)',
-    borderTop: '1px solid rgba(224, 224, 224, 1)',
+    borderRight: border,
+    borderTop: border,
     '& .MuiTableCell-root': {
       width: 100,
       maxWidth: 100,
-      borderLeft: '1px solid rgba(224, 224, 224, 1)',
+      borderLeft: border,
     },
   },
 })
@@ -68,7 +69,7 @@ export const ErrorRateTable = ({ items }) => {
           {topHeaders.map(h => (
             <TableCell
               key={h.id}
-              sx={{ borderBottom: 'unset' }}
+              sx={h.colSpan <= 1 ? { borderBottom: 'unset' } : undefined}
               colSpan={h.colSpan}
               align={h.colSpan > 1 ? 'center' : 'left'}
             >
