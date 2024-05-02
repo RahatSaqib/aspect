@@ -56,8 +56,16 @@ const listDeviceMtbErrors = async request => {
   const getPercentage = (numerator, denominator) => {
     return Math.round(100 * (denominator ? numerator / denominator : 0)) / 100
   }
+
+  const moduleTracker = {}
   // add more fields which depend on aggregations
-  data.forEach(async it => {
+  data.forEach(it => {
+    // check if modules has already been considered for the device
+    if(moduleTracker[it.id]){
+      it.numberOfModules = 0
+    } else {
+      moduleTracker[it.id] = true
+    }
     it.percentMtbError = getPercentage(it.cntMtbError, it.cntMtbResults)
     it.percentMtbInvalid = getPercentage(it.cntMtbInvalid, it.cntMtbResults)
     it.percentMtbNoResult = getPercentage(it.cntMtbNoResult, it.cntMtbResults)
