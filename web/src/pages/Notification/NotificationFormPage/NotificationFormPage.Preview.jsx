@@ -118,9 +118,9 @@ const NotificationFormPreview = ({ values }) => {
 
       {values.notificationType === 'DeviceOffline' ? (
         <span style={rowStyle}>
-          <h4 style={labelStyle}>{formatMessage(messages.whenDeviceHasBeenOfflineForMoreThan)}:</h4>
+          <h4 style={labelStyle}>{formatMessage(messages.whenDeviceHasBeenInactiveForMoreThan)}:</h4>
           <span style={labelStyle}>
-            {values.daysOffline} {formatMessage(messages.daysOffline)}
+            {values.daysInactive} {formatMessage(messages.daysInactive)}
           </span>
         </span>
       ) : null}

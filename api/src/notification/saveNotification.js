@@ -4,6 +4,7 @@ const { saveNotificationType } = require('./common/db')
 const { notificationTypeCreated } = require('../notificationType/actions')
 const ReportBasedNotificationCacheSingleton = require('./reportBased/reportBasedNotificationCache')
 const { reportDispatchHandler } = require('./reportBased/reportBasedCronHandler')
+const { knex } = require('../db')
 
 module.exports = async function (request) {
   const {
@@ -15,6 +16,12 @@ module.exports = async function (request) {
   const { id } = params
   const user = await getUser(auth.credentials.name)
   const { partnerId, id: userId } = user
+
+  // Update maxDaysDeviceOffline
+  if(payload.issueType === 'DeviceOffline'){
+    console.log('partnerId', partnerId)
+    await knex('Partner').update({ maxDaysDeviceOffline: Number(payload.daysInactive)}).where({ id: partnerId})
+  }
 
   const result = await saveNotificationType({
     id,

@@ -36,30 +36,25 @@ const lowInventorySection = (formatMessage, partner) => {
 
 const deviceOfflineSection = (formatMessage, partner) => {
   return {
-    id: 'whenDeviceHasBeenOfflineForMoreThan',
-    label: 'whenDeviceHasBeenOfflineForMoreThan',
-    labelI18nKey: 'whenDeviceHasBeenOfflineForMoreThan',
+    id: 'whenDeviceHasBeenInactiveForMoreThan',
+    label: 'whenDeviceHasBeenInactiveForMoreThan',
+    labelI18nKey: 'whenDeviceHasBeenInactiveForMoreThan',
     visibleIf: values => ['DeviceOffline'].includes(values.notificationType),
     rows: [
       {
         id: 83,
         items: [
           {
-            id: 'daysOffline',
-            label: formatMessage(messages.daysOffline),
-            initialValue: [`${partner.maxDaysDeviceOffline}`],
-            type: 'readOnly',
-            controlType: {
-              component: 'select',
-              hideIfNoOptions: false,
-              options: [{ value: `${partner.maxDaysDeviceOffline}`, label: `${partner.maxDaysDeviceOffline}` }],
-            },
+            id: 'daysInactive',
+            label: formatMessage(messages.daysInactive),
+            initialValue: `${partner.maxDaysDeviceOffline}`,
+            controlType: { component: 'numberField', min: 1, max: 90 },
             classNames: {
               itemContainer: 'max_width_100pc tags_container',
               controlContainer: styles.full_width_100pc,
               item: styles.full_width_100pc,
             },
-            labelI18nKey: 'daysOffline',
+            labelI18nKey: 'daysInactive',
           },
         ],
       },

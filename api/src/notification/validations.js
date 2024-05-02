@@ -100,6 +100,7 @@ const saveNotificationPayload = Joi.object({
     })
     .description('Report ExternalId'),
   name: Joi.string().description('Name of new notification').required(),
+  daysInactive: Joi.string().description('Number of days before notification is sent').required(),
   hasRecurrency: Joi.when('notificationType', {
     // check first sendSms...
     is: 'reportBased',

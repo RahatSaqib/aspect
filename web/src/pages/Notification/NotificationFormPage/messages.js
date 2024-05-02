@@ -364,9 +364,13 @@ export default defineMessages({
     id: 'pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan',
     defaultMessage: 'When the device has been offline for more than ...',
   },
-  daysOffline: {
-    id: 'pages.NotificationDetail.daysOffline',
-    defaultMessage: 'Days Offline',
+  whenDeviceHasBeenInactiveForMoreThan: {
+    id: 'pages.NotificationDetail.whenDeviceHasBeenInactiveForMoreThan',
+    defaultMessage: 'When the device has been inactive for more than ...',
+  },
+  daysInactive: {
+    id: 'pages.NotificationDetail.daysInactive',
+    defaultMessage: 'Days',
   },
   whenDeviceDidNotSendResultsForMoreThan: {
     id: 'pages.NotificationDetail.whenDeviceDidNotSendResultsForMoreThan',
@@ -469,8 +473,8 @@ export default defineMessages({
     defaultMessage: 'No Result',
   },
   notificationTypeOffline: {
-    id: 'pages.Notification.type.Offline',
-    defaultMessage: 'Offline',
+    id: 'pages.Notification.type.Inactive',
+    defaultMessage: 'Device Inactive',
   },
   notificationTypeCalibration: {
     id: 'pages.Notification.type.Calibration',
