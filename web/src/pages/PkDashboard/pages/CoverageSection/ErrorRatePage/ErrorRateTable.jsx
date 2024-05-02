@@ -1,0 +1,109 @@
+import React, { useState } from 'react'
+import ExpandLess from '@mui/icons-material/ExpandLess'
+import ExpandMore from '@mui/icons-material/ExpandMore'
+import { Box, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material'
+import { makeStyles } from '@mui/styles'
+import orderBy from 'lodash/orderBy'
+import { addDepth } from '../../../../../utils/utils/table'
+import { makeNestedData } from './helpers'
+
+const useStyles = makeStyles({
+  table: {
+    borderRight: '1px solid rgba(224, 224, 224, 1)',
+    borderTop: '1px solid rgba(224, 224, 224, 1)',
+    '& .MuiTableCell-root': {
+      width: 100,
+      maxWidth: 100,
+      borderLeft: '1px solid rgba(224, 224, 224, 1)',
+    },
+  },
+})
+
+const Row = ({ row, isChild, index }) => {
+  const [open, setOpen] = useState(-1)
+  const colors = isChild ? ['#dadbdf', '#e6e6e6'] : ['#eef1f8', '#ffffff']
+  return (
+    <>
+      <TableRow sx={{ bgcolor: colors[index % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
+        <TableCell align="left" style={{ width: '15%', paddingLeft: isChild ? row?.depth * 12.5 : null }}>
+          <Box display="flex">
+            <Box sx={{ opacity: row.children?.length ? 1 : 0, display: 'flex', alignItems: 'center' }}>
+              {open === row.id ? <ExpandLess /> : <ExpandMore />}
+            </Box>
+            <span>{row.name}</span>
+          </Box>
+        </TableCell>
+        <TableCell>{row.numberOfModules}</TableCell>
+        <TableCell>{row.cntMtbResults}</TableCell>
+        <TableCell align="center">{row.cntMtbError}</TableCell>
+        <TableCell align="center">{row.errorPercent}</TableCell>
+        <TableCell align="center">{row.cntMtbInvalid}</TableCell>
+        <TableCell align="center">{row.invalidPercent}</TableCell>
+        <TableCell align="center">{row.cntMtbNoResult}</TableCell>
+        <TableCell align="center">{row.noResultPercent}</TableCell>
+      </TableRow>
+      {open === row.id
+        ? row.children?.map((row, index) => <Row key={row.name} row={row} index={index} isChild />)
+        : null}
+    </>
+  )
+}
+
+export const ErrorRateTable = ({ items }) => {
+  const [sort, setSort] = useState({ name: 'name', order: 'desc' })
+  const rows = addDepth(makeNestedData(orderBy(items ?? [], [sort.name], [sort.order])))
+  const classes = useStyles()
+  const topHeaders = [
+    { id: 'name', title: 'Name', colSpan: 1 },
+    { id: 'numberOfModules', title: 'Total Modules', colSpan: 1 },
+    { id: 'cntMtbResults', title: 'Total Tests', colSpan: 1 },
+    { id: 'cntMtbError', title: 'Errors', colSpan: 2 },
+    { id: 'cntMtbInvalid', title: 'Invalid', colSpan: 2 },
+    { id: 'cntMtbNoResult', title: 'No Result', colSpan: 2 },
+  ]
+  return (
+    <Table className={classes.table}>
+      <TableHead>
+        <TableRow>
+          {topHeaders.map(h => (
+            <TableCell
+              key={h.id}
+              sx={{ borderBottom: 'unset' }}
+              colSpan={h.colSpan}
+              align={h.colSpan > 1 ? 'center' : 'left'}
+            >
+              <TableSortLabel
+                active={sort?.name === h.id}
+                direction={sort?.order}
+                onClick={() =>
+                  setSort({
+                    name: h.id,
+                    order: sort?.order === 'asc' ? 'desc' : 'asc',
+                  })
+                }
+              >
+                {h.title}
+              </TableSortLabel>
+            </TableCell>
+          ))}
+        </TableRow>
+        <TableRow>
+          <TableCell />
+          <TableCell />
+          <TableCell />
+          <TableCell align="center">#</TableCell>
+          <TableCell align="center">%</TableCell>
+          <TableCell align="center">#</TableCell>
+          <TableCell align="center">%</TableCell>
+          <TableCell align="center">#</TableCell>
+          <TableCell align="center">%</TableCell>
+        </TableRow>
+      </TableHead>
+      <TableBody>
+        {rows?.map((row, index) => (
+          <Row key={row.name} row={row} index={index} />
+        ))}
+      </TableBody>
+    </Table>
+  )
+}
