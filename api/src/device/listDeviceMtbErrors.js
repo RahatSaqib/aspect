@@ -27,7 +27,7 @@ const listDeviceMtbErrors = async request => {
   )
 
   const getResultsBase = () =>
-    queryResults.clone().whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra]).countDistinct('r.id')
+    queryResults.clone().whereIn('r.assayId', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra]).countDistinct('r.id')
 
   // get rows
   const getItems = deviceQuery
@@ -49,6 +49,8 @@ const listDeviceMtbErrors = async request => {
       getResultsBase().where('r.resultCategory1', resultCategoryIds.Invalid).as('cntMtbInvalid'),
       getResultsBase().where('r.resultCategory1', resultCategoryIds.NoResult).as('cntMtbNoResult'),
     ])
+
+    console.log(getItems.toString())
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

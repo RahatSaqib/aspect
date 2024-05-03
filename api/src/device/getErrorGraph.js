@@ -30,7 +30,7 @@ const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, timezone
       device: 'd',
       deviceType: 'dt',
     })
-    .whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+    .whereIn('r.assayId', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
     .where('dt.externalId', 'CepheidGeneXpert')
     .whereRaw(`${tzOffset} >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)`)
     .distinct('r.id')
@@ -55,6 +55,10 @@ const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, timezone
     )
     .groupBy('year', 'month')
     .orderBy('year', 'month')
+
+    console.log(query.toString())
+
+    console.log('------------------------------------------------------')
 
   return query
 }
