@@ -50,8 +50,6 @@ const listDeviceMtbErrors = async request => {
       getResultsBase().where('r.resultCategory1', resultCategoryIds.NoResult).as('cntMtbNoResult'),
     ])
 
-  console.log(getItems.toString())
-
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])
 
