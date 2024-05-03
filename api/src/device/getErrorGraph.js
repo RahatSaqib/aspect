@@ -56,9 +56,9 @@ const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, timezone
     .groupBy('year', 'month')
     .orderBy('year', 'month')
 
-    console.log(query.toString())
+  console.log(query.toString())
 
-    console.log('------------------------------------------------------')
+  console.log('------------------------------------------------------')
 
   return query
 }
