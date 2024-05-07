@@ -1,12 +1,5 @@
-const {
-  admin,
-  clinician,
-  labUser,
-  regionalOfficer,
-  technician,
-  aspectBeta,
-  mergeJobFunctions,
-} = require('../../fixtures/jobFunctionBase')
+let { admin, clinician, labUser, regionalOfficer, technician } = require('../../fixtures/jobFunctionBase')
+const { aspectBeta, mergeJobFunctions } = require('../../fixtures/jobFunctionBase')
 
 const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
   ...aspectBeta.permissions,
@@ -18,6 +11,18 @@ const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
   ],
   reports: ['pk_xpert_site_summary_site_wise_report'],
 })
+
+
+/* Temporarily disabling  */
+admin = removeInventoryPermissions(admin)
+clinician = removeInventoryPermissions(clinician)
+labUser = removeInventoryPermissions(labUser)
+regionalOfficer = removeInventoryPermissions(regionalOfficer)
+technician = removeInventoryPermissions(technician)
+
+function removeInventoryPermissions(jobFunction) {
+  return { ...jobFunction, permissions: jobFunction.permissions.filter(p => p.module !== 'inventory') }
+}
 
 module.exports = [
   mergeJobFunctions(admin, {
