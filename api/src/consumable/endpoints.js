@@ -17,7 +17,6 @@ const routes = [
     config: {
       description: 'Consumable Types',
       notes: 'Pageable and sortable list of consumable types',
-      auth: { scope: ['inventory'] },
       validate: {
         query: {
           name: Joi.string().allow('').description('Filter for consumable type'),
