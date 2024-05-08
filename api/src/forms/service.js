@@ -191,7 +191,7 @@ function getFormsBaseQuery(partnerId, query) {
 /*
  * Create an object for merging with the result to save it directly in the database
  */
-const getCustomFieldsFromPayload = async (payload, countryCode, partnerId, assayId, diseaseId = null) => {
+const getCustomFieldsFromPayload = async (payload, countryAbbreviation, partnerId, assayId, diseaseId = null) => {
   const forms = createFormObject(await getFormsBaseQuery(partnerId, { formType: 'gxConnectForm', assayId, diseaseId }))
   const fields = Object.values(forms).flatMap(form => form.fields)
 
@@ -203,7 +203,7 @@ const getCustomFieldsFromPayload = async (payload, countryCode, partnerId, assay
     const value = _.get(payload, payloadOriginPath)
     if (value && source) {
       if (_.includes(['patientCellphone', 'clinicianCellphone', 'phone'], fieldType))
-        _.set(obj, source, normalizePhoneNumber(value, countryCode))
+        _.set(obj, source, normalizePhoneNumber(value, countryAbbreviation))
       else if (source === 'referringSiteId') {
         // This case will be removed in the future because the payloadOriginPath should take the key instead of the value
         const key = _.get(payload, `data.customFieldData.${field.id}.key`)
