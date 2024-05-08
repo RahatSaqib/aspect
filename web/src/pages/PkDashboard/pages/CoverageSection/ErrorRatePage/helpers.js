@@ -1,5 +1,4 @@
 import entries from 'lodash/entries'
-import get from 'lodash/get'
 import groupBy from 'lodash/groupBy'
 import set from 'lodash/set'
 
@@ -29,37 +28,20 @@ const createNode = (name, parent) => {
   }
 }
 
-export const makeNestedData = array => {
-  const result = []
+export const makeNestedData = (array, nestingProperties) => {
+  const rootNodes = []
 
-  entries(groupBy(array, 'stateName')).forEach(([stateName, stateValues]) => {
-    const state = createNode(stateName, stateValues)
-
-    if (state.name === 'null') {
-      result.push({ ...state, name: 'N/A', [childrenKey]: stateValues })
-      return
-    }
-
-    entries(groupBy(stateValues, 'lgaName')).forEach(([lgaName, lgaValues]) => {
-      const lga = createNode(lgaName, lgaValues)
-
-      entries(groupBy(lgaValues, 'siteName')).forEach(([siteName, sitesValues]) => {
-        const sites = createNode(siteName, sitesValues)
-
-        entries(groupBy(sitesValues, 'name')).forEach(([names, namesValues]) => {
-          const name = createNode(names, namesValues)
-
-          set(sites, childrenKey, [...get(sites, childrenKey, []), name])
-        })
-
-        set(lga, childrenKey, [...get(lga, childrenKey, []), sites])
-      })
-
-      set(state, childrenKey, [...get(state, childrenKey, []), lga])
+  const nestData = (parentNode, data, properties, level) => {
+    if (level >= properties.length) return
+    entries(groupBy(data, properties[level])).forEach(([groupName, groupValues]) => {
+      const node = createNode(groupName, groupValues)
+      nestData(node, groupValues, properties, level + 1)
+      if (parentNode) set(parentNode, childrenKey, [...(parentNode?.children ?? []), node])
+      else rootNodes.push(node)
     })
+  }
 
-    result.push(state)
-  })
+  nestData(null, array, nestingProperties, 0)
 
-  return result
+  return rootNodes
 }

@@ -54,7 +54,11 @@ const Row = ({ row, isChild, index }) => {
 
 export const ErrorRateTable = ({ items }) => {
   const [sort, setSort] = useState({ name: 'name', order: 'asc' })
-  const rows = useMemo(() => addDepth(makeNestedData(items ?? [])), [items])
+  const rows = useMemo(
+    () => addDepth(makeNestedData(items ?? [], ['stateName', 'lgaName', 'siteName', 'name'])),
+    [items]
+  )
+
   const renderRow = useCallback(
     (items, props) =>
       orderBy(items, sort.name, sort.order).map((row, index) => (
