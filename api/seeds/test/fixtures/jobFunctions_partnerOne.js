@@ -62,6 +62,10 @@ module.exports = [
         module: 'reporter',
         activity: 'edit',
       },
+      {
+        module: 'browse',
+        activity: 'view',
+      },
     ],
     reports: [
       'mtb_detected_rr_detected',
