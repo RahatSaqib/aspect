@@ -13,6 +13,7 @@ module.exports = async function (request) {
     'ModuleDisabled',
     'UnusedModules',
     'InstrumentReplaced',
+    'DeviceExpectedBackOnline',
   ]
 
   /**
