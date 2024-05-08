@@ -43,9 +43,16 @@ export const makeNestedData = array => {
     entries(groupBy(stateValues, 'lgaName')).forEach(([lgaName, lgaValues]) => {
       const lga = createNode(lgaName, lgaValues)
 
-      entries(groupBy(lgaValues, 'name')).forEach(([typeName, typeValues]) => {
-        const type = createNode(typeName, typeValues)
-        set(lga, childrenKey, [...get(lga, childrenKey, []), type])
+      entries(groupBy(lgaValues, 'siteName')).forEach(([siteName, sitesValues]) => {
+        const sites = createNode(siteName, sitesValues)
+
+        entries(groupBy(sitesValues, 'name')).forEach(([names, namesValues]) => {
+          const name = createNode(names, namesValues)
+
+          set(sites, childrenKey, [...get(sites, childrenKey, []), name])
+        })
+
+        set(lga, childrenKey, [...get(lga, childrenKey, []), sites])
       })
 
       set(state, childrenKey, [...get(state, childrenKey, []), lga])
