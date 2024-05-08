@@ -1,3 +1,25 @@
-const { admin, clinician, labUser, regionalOfficer, technician, aspectBeta } = require('../../fixtures/jobFunctionBase')
+const {
+  admin,
+  clinician,
+  labUser,
+  regionalOfficer,
+  technician,
+  aspectBeta,
+  mergeJobFunctions,
+} = require('../../fixtures/jobFunctionBase')
 
-module.exports = [admin, regionalOfficer, labUser, clinician, technician, aspectBeta]
+module.exports = [
+  admin,
+  regionalOfficer,
+  mergeJobFunctions(labUser, {
+    permissions: [
+      {
+        module: 'inventory',
+        activity: 'edit',
+      },
+    ],
+  }),
+  clinician,
+  technician,
+  aspectBeta,
+]
