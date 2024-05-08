@@ -12,7 +12,6 @@ const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {
   reports: ['pk_xpert_site_summary_site_wise_report'],
 })
 
-
 /* Temporarily disabling  */
 admin = removeInventoryPermissions(admin)
 clinician = removeInventoryPermissions(clinician)
