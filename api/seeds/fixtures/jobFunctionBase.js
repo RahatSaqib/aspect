@@ -119,6 +119,14 @@ const admin = {
       module: 'report',
       activity: 'view',
     },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
   ],
 }
 
@@ -196,6 +204,14 @@ const manager = {
     },
     {
       module: 'result',
+      activity: 'edit',
+    },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'inventory',
       activity: 'edit',
     },
   ],
@@ -293,6 +309,10 @@ const regionalOfficer = {
       module: 'assay',
       activity: 'view',
     },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
   ],
 }
 
@@ -384,6 +404,10 @@ const labUser = {
       module: 'report',
       activity: 'view',
     },
+    {
+      module: 'inventory',
+      activity: 'view',
+    },
   ],
 }
 
@@ -471,6 +495,14 @@ const clinician = {
       module: 'report',
       activity: 'view',
     },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
+    {
+      module: 'inventory',
+      activity: 'view',
+    },
   ],
 }
 
@@ -503,6 +535,10 @@ const deviceMaker = {
     },
     {
       module: 'site',
+      activity: 'view',
+    },
+    {
+      module: 'inventory',
       activity: 'view',
     },
   ],
@@ -662,6 +698,10 @@ const donor = {
       module: 'site',
       activity: 'view',
     },
+    {
+      module: 'inventory',
+      activity: 'view',
+    },
   ],
 }
 
@@ -817,6 +857,10 @@ const remoteHealthWorker = {
       module: 'report',
       activity: 'view',
     },
+    {
+      module: 'dashboard',
+      activity: 'inventory',
+    },
   ],
 }
 
@@ -897,6 +941,10 @@ const labManager = {
     },
     {
       module: 'task',
+      activity: 'view',
+    },
+    {
+      module: 'inventory',
       activity: 'view',
     },
   ],
@@ -982,6 +1030,10 @@ const labSupervisor = {
       module: 'task',
       activity: 'view',
     },
+    {
+      module: 'inventory',
+      activity: 'edit',
+    },
   ],
 }
 
@@ -1056,6 +1108,10 @@ const medTech = {
     {
       module: 'task',
       activity: 'view',
+    },
+    {
+      module: 'inventory',
+      activity: 'edit',
     },
   ],
 }
