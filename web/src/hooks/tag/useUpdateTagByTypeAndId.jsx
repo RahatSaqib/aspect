@@ -13,7 +13,7 @@ const updateTagByTypeAndId = async (tags, type, id) =>
 const useUpdateTagByTypeAndId = (type, id) => {
   const queryClient = useQueryClient()
   const mutation = useMutation(data => updateTagByTypeAndId(data, type, id), {
-    onSuccess: () => queryClient.invalidateQueries([TAG_KEY, type, id]),
+    onSuccess: () => queryClient.invalidateQueries([TAG_KEY, type, String(id)]),
   })
   return mutation
 }

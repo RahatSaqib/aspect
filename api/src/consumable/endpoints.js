@@ -17,7 +17,7 @@ const routes = [
     config: {
       description: 'Consumable Types',
       notes: 'Pageable and sortable list of consumable types',
-      auth: { scope: ['inventory'] },
+      auth: { scope: ['browse'] },
       validate: {
         query: {
           name: Joi.string().allow('').description('Filter for consumable type'),
@@ -54,7 +54,7 @@ const routes = [
     config: {
       description: 'Consumable Reason',
       notes: 'Pageable and sortable list for reaons that a consumable was used',
-      auth: { scope: ['inventory'] },
+      auth: { scope: ['browse'] },
       validate: {
         query: {
           name: Joi.string().allow('').description('Filter for consumable reason'),
