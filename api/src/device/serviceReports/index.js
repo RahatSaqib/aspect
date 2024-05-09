@@ -585,7 +585,7 @@ async function getDevicesForTBReachReport(auth, query) {
   const assayExternlId = ['GxMtbRif', 'GxMtbRifUltra']
   const assayIds = await Promise.all(assayExternlId.map(async externalId => assayToId(externalId)))
   query.assayIds = assayId ?? assayIds
-  query.noResults = 'true'
+  query.noResults = true
   const [devicesByTBReach, errorsResult] = await Promise.all([
     getDevicesByTBReach(dataConstraints, query),
     getErrorsByDevices(dataConstraints, query),
