@@ -43,7 +43,7 @@ const listDeviceMtbErrors = async request => {
       'lg.name as lgaName',
       's.name as siteName',
 
-      'dcp.modules as numberOfModules',
+      'd.moduleBayCapacity as numberOfModules',
       getResultsBase().as('cntMtbResults'),
       getResultsBase().where('r.resultCategory1', resultCategoryIds.Error).as('cntMtbError'),
       getResultsBase().where('r.resultCategory1', resultCategoryIds.Invalid).as('cntMtbInvalid'),
