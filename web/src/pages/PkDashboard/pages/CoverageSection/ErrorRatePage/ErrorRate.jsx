@@ -7,7 +7,7 @@ import { useLocation } from 'react-router'
 import { ErrorRateFilter, LineGraph, Loading, StateSelect } from '../../../../../cleanComponents'
 import useAuthState from '../../../../../hooks/useAuthState'
 import useFilterValues from '../../../../../hooks/useFilterValues'
-import { graphMessages, months } from '../../../../../messages'
+import { getCustomMessage, graphMessages, months } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
 import useDeviceErrorGraph from '../../../hooks/useDeviceErrorGraph'
@@ -16,7 +16,7 @@ import { ErrorRateTable } from './ErrorRateTable'
 
 const ErrorRateGraph = ({ category, title }) => {
   const { formatMessage } = useIntl()
-  const { countryId } = useAuthState()
+  const user = useAuthState()
   const [state, setState] = useState()
   const [showLabel, setShowLabel] = useState(false)
   const { data, isLoading } = useDeviceErrorGraph(omitBy({ category, state }, isNil), {
@@ -26,7 +26,7 @@ const ErrorRateGraph = ({ category, title }) => {
         .map(item => ({
           year: String(item.year),
           month: `${formatMessage(months[item.month - 1])}`,
-          value: Number(item.percentage.replace('%', '')),
+          value: item.percentage,
         })),
   })
   return (
@@ -41,10 +41,10 @@ const ErrorRateGraph = ({ category, title }) => {
           control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
         />
         <StateSelect
-          label={formatMessage(messages.state)}
+          label={getCustomMessage(formatMessage, messages, 'state', user)}
           value={state || ''}
           onChange={e => setState(e.target.value)}
-          countryId={countryId}
+          countryId={user.countryId}
         />
       </Box>
       <Box flex={3}>
