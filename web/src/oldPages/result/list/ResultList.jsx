@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useEffect, useState } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import * as Sentry from '@sentry/react'
 import Immutable from 'immutable'
@@ -12,7 +12,7 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useDispatch } from 'react-redux'
-import { useNavigate, useLocation } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { DetailHeader, ResultFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
@@ -22,7 +22,7 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
-import { receiveListWithSet, Items } from '../../../utils/metaReducers/items'
+import { Items, receiveListWithSet } from '../../../utils/metaReducers/items'
 import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
@@ -189,15 +189,14 @@ const ResultList = () => {
   )
   const [total, setTotal] = useState()
   const [isLoading, setIsLoading] = useState(true)
-  const [pagination, setPagination] = useState({})
   const [columns, setColumns] = useState([])
-
+  const sortPage = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })
+  const { sortCol, sortDir, pageAt: page, pageSize: size } = sortPage({ location })
   // >>>>>> Constants <<<<<<
-  const { sortCol, sortDir, page, size } = pagination
   const searchParams = new URLSearchParams()
   searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
 
-  const params = { ...pagination, ...filters }
+  const params = { sortCol, sortDir, page, size, ...filters }
   const { minDate, maxDate } = params
   delete params.assayOverride
   // >>>>>> Queries <<<<<<
@@ -216,12 +215,6 @@ const ResultList = () => {
   useEffect(() => {
     setIsLoading(tableLoading)
   }, [tableLoading])
-
-  useEffect(() => {
-    const sortPage = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })
-    const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
-    setPagination({ sortCol, sortDir, page: pageAt, size: pageSize })
-  }, [location])
 
   // >>>>>> Lifecycles <<<<<<
   useEffect(() => {
