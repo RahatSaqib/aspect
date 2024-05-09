@@ -26,7 +26,7 @@ const ErrorRateGraph = ({ category, title }) => {
         .map(item => ({
           year: String(item.year),
           month: `${formatMessage(months[item.month - 1])}`,
-          value: item.percentage,
+          value: Number(item.percentage.replace('%', '')),
         })),
   })
   return (
@@ -51,7 +51,21 @@ const ErrorRateGraph = ({ category, title }) => {
         {isLoading ? (
           <Loading />
         ) : (
-          <LineGraph showLabel={showLabel} data={data} xField="month" yField="value" seriesField="year" />
+          <LineGraph
+            tooltip={{
+              formatter: datum => ({ name: datum.year, value: `${datum.value}%` }),
+            }}
+            yAxis={{
+              label: {
+                formatter: text => `${text}%`,
+              },
+            }}
+            showLabel={showLabel}
+            data={data}
+            xField="month"
+            yField="value"
+            seriesField="year"
+          />
         )}
       </Box>
     </Box>
