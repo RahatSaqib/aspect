@@ -785,7 +785,7 @@ const routes = [
               Joi.object().keys({
                 month: Joi.number().description('The month of the year'),
                 year: Joi.number(),
-                percentage: Joi.string().description('The percentage of th error'),
+                percentage: Joi.number().description('The percentage of th error'),
               })
             ),
         }),

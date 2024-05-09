@@ -2,13 +2,50 @@ const { getConstraints, addConstraints, getUserFromCredentials } = require('../a
 const { knex } = require('../db')
 const { allResultCategoryToId, allAssayToId } = require('../shared/dictionary')
 
+const generateDataForPastFiveYears = (existingData = []) => {
+  const filledData = []
+  const currentDate = new Date()
+  const currentYear = currentDate.getFullYear()
+  const currentMonth = currentDate.getMonth() + 1 // Adjust to human-readable format (1-12)
+
+  // Determine the start year for the 5-year period
+  let startYear = currentYear - 5
+
+  // Calculate total months to be generated
+  let totalMonths = (currentYear - startYear + 1) * 12 - (12 - currentMonth)
+
+  // Create a map of existing data for quick lookup
+  const dataMap = new Map(existingData.map(item => [`${item.year}-${item.month}`, item.percentage]))
+
+  // Generate data for each month in the calculated range
+  for (let i = 0; i < totalMonths; i++) {
+    // Calculate year and month from the index
+    let year = startYear + Math.floor(i / 12)
+    let month = (i % 12) + 1
+
+    // Check if the year and month already exist in the passed data
+    let key = `${year}-${month}`
+    let percentage = dataMap.get(key) !== undefined ? dataMap.get(key) : 0
+
+    filledData.push({
+      year: year,
+      month: month,
+      percentage: percentage, // Use existing data or default to 0
+    })
+  }
+
+  return filledData
+}
+
 const calculatePercentage = errorResultAgg => {
-  return errorResultAgg.map(item => {
-    const percentage = item.total > 0 ? ((item.categoryTotal / item.total) * 100).toFixed(1) : '0.0'
+  const filteredData = errorResultAgg.filter(item => item.categoryTotal > 0)
+
+  return filteredData.map(item => {
+    const percentage = ((item.categoryTotal / item.total) * 100).toFixed(1)
     return {
       year: item.year,
       month: item.month,
-      percentage: `${percentage}%`,
+      percentage: Number(percentage),
     }
   })
 }
@@ -89,7 +126,11 @@ const getMtbErrorGraph = async request => {
 
   const graphData = calculatePercentage(errorResultAgg)
 
-  return { ok: true, data: graphData }
+  const formattedData = generateDataForPastFiveYears(graphData)
+
+  console.log(formattedData)
+
+  return { ok: true, data: formattedData }
 }
 
 module.exports = getMtbErrorGraph
