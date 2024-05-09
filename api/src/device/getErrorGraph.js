@@ -9,10 +9,10 @@ const generateDataForPastFiveYears = (existingData = []) => {
   const currentMonth = currentDate.getMonth() + 1 // Adjust to human-readable format (1-12)
 
   // Determine the start year for the 5-year period
-  let startYear = currentYear - 5
+  const startYear = currentYear - 5
 
   // Calculate total months to be generated
-  let totalMonths = (currentYear - startYear + 1) * 12 - (12 - currentMonth)
+  const totalMonths = (currentYear - startYear + 1) * 12 - (12 - currentMonth)
 
   // Create a map of existing data for quick lookup
   const dataMap = new Map(existingData.map(item => [`${item.year}-${item.month}`, item.percentage]))
@@ -20,17 +20,17 @@ const generateDataForPastFiveYears = (existingData = []) => {
   // Generate data for each month in the calculated range
   for (let i = 0; i < totalMonths; i++) {
     // Calculate year and month from the index
-    let year = startYear + Math.floor(i / 12)
-    let month = (i % 12) + 1
+    const year = startYear + Math.floor(i / 12)
+    const month = (i % 12) + 1
 
     // Check if the year and month already exist in the passed data
-    let key = `${year}-${month}`
-    let percentage = dataMap.get(key) !== undefined ? dataMap.get(key) : 0
+    const key = `${year}-${month}`
+    const percentage = dataMap.get(key) !== undefined ? dataMap.get(key) : 0
 
     filledData.push({
-      year: year,
-      month: month,
-      percentage: percentage, // Use existing data or default to 0
+      year,
+      month,
+      percentage, // Use existing data or default to 0
     })
   }
 
@@ -127,8 +127,6 @@ const getMtbErrorGraph = async request => {
   const graphData = calculatePercentage(errorResultAgg)
 
   const formattedData = generateDataForPastFiveYears(graphData)
-
-  console.log(formattedData)
 
   return { ok: true, data: formattedData }
 }
