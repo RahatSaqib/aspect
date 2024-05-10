@@ -38,8 +38,8 @@ const Row = ({ row, isChild, index }) => {
             <span>{row.name}</span>
           </Box>
         </TableCell>
-        <TableCell>{row.numberOfModules}</TableCell>
-        <TableCell>{row.cntMtbResults}</TableCell>
+        <TableCell align="center">{row.numberOfModules}</TableCell>
+        <TableCell align="center">{row.cntMtbResults}</TableCell>
         <TableCell align="center">{row.cntMtbError}</TableCell>
         <TableCell align="center">{row.errorPercent}</TableCell>
         <TableCell align="center">{row.cntMtbInvalid}</TableCell>
@@ -80,12 +80,12 @@ export const ErrorRateTable = ({ items }) => {
       <Table className={classes.table}>
         <TableHead>
           <TableRow>
-            {topHeaders.map(h => (
+            {topHeaders.map((h, index) => (
               <TableCell
                 key={h.id}
                 sx={h.colSpan <= 1 ? { borderBottom: 'unset' } : undefined}
                 colSpan={h.colSpan}
-                align={h.colSpan > 1 ? 'center' : 'left'}
+                align={index === 0 ? 'left' : 'center'}
               >
                 <TableSortLabel
                   active={sort?.name === h.id}
