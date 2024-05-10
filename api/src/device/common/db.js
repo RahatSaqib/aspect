@@ -190,7 +190,6 @@ function getDeviceBaseExtendedQuery(
     showDecommissionedDevices = false,
     excludeInternalDevices = true,
     extendJoinToAssays = false,
-    innerJoinState = false,
   } = {}
 ) {
   const conditionalAliases = {}
@@ -201,6 +200,7 @@ function getDeviceBaseExtendedQuery(
     .innerJoin('DeviceTypeCategory as dc', 'dt.deviceTypeCategoryId', 'dc.id')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .where(queryBuilder => {
       if (!query.deviceIds) {
@@ -209,11 +209,6 @@ function getDeviceBaseExtendedQuery(
       queryBuilder.whereIn('d.id', query.deviceIds.split(','))
     })
     .modify(queryBuilder => {
-      if (innerJoinState) {
-        queryBuilder.join('State as st', 'g.stateId', 'st.id')
-      } else {
-        queryBuilder.leftJoin('State as st', 'g.stateId', 'st.id')
-      }
       if (extendJoinToAssays || query.assayId) {
         queryBuilder.leftJoin('Assay as a', 'dt.id', 'a.deviceTypeId')
         conditionalAliases.assay = 'a'
@@ -270,7 +265,6 @@ async function getBasicsForDevicesReport(dataConstraints, query) {
   const resultCategoryIds = await allResultCategoryToId()
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, {
     extendJoinToAssays: true,
-    innerJoinState: true,
   })
 
   // get total count for paging
