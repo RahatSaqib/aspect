@@ -73,6 +73,7 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
           externalId: values.reason,
           dateFrom: values.startedOn,
           dateTo: values.endedOn,
+          expectedBackOnline: values.expectedBackOnline,
           notes: values.note,
           /**
            * use params from filters for entire component - needed on API side to
@@ -170,9 +171,11 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
       const { maintenanceStatusHistory, shortName, siteContacts, hoursStart, hoursEnd } = devicesDaily.find(
         ({ id }) => +id === +deviceId
       )
-      const { maintenanceStatusExternalId, maintenanceStatusNotes: note } = maintenanceStatusHistory.find(
-        it => it.day === day
-      )
+      const {
+        maintenanceStatusExternalId,
+        maintenanceStatusNotes: note,
+        expectedBackOnline,
+      } = maintenanceStatusHistory.find(it => it.day === day)
       const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
       // helper to get forward or backward index of first day with another status
       const getIndex = findFn =>
@@ -203,11 +206,11 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
           maintenanceStatusExternalId,
         },
         note,
+        expectedBackOnline,
       }
     },
     [devicesDaily]
   )
-
   return {
     devices: {
       devicesIsLoading,

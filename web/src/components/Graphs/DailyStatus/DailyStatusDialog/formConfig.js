@@ -96,6 +96,27 @@ export default {
             },
           ],
         },
+        {
+          id: 3,
+          items: [
+            {
+              id: 'expectedBackOnline',
+              labelI18nKey: 'expectedBackOnline',
+              controlType: {
+                component: 'datePicker',
+                format: 'dd MMM yyyy',
+                minDate: new Date(), // for minDate
+              },
+              type: 'string',
+              label: 'Expected Back Online',
+              initialValue: '',
+              classNames: {
+                itemContainer: 'date-range-item-container',
+              },
+              disabledIf: values => values.reason === 'reportedActive',
+            },
+          ],
+        },
       ],
     },
   ],

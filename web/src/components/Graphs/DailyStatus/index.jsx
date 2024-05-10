@@ -30,7 +30,7 @@ const DailyStatus = () => {
   const { formatMessage, formatDate } = useIntl()
   const {
     devices: { devicesIsLoading, devicesIsError, devicesDaily, devicesError },
-    statuses: { visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },
+    statuses: { allStatuses, visibleStatuses, deviceStatusesIsLoading, deviceStatusesIsError, deviceStatusesError },
     actions: { changeDeviceStatus, getDeviceDayDetails, toggleAll, toggleStatusVisibility, updateFromActionComponent },
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
@@ -49,9 +49,10 @@ const DailyStatus = () => {
         siteProps,
         periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
         note,
+        expectedBackOnline,
       } = getDeviceDayDetails({ day, deviceId })
       // day clicked (formatted as "YYYY-MM-DD")
-      const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note }
+      const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note, expectedBackOnline }
       setDialogState({ isOpen: true, deviceName, siteProps, data })
     },
     [getDeviceDayDetails]
@@ -81,7 +82,6 @@ const DailyStatus = () => {
     updateFromActionComponent({ identifier: 'dateRange', selectedOption })
     setRange(selectedOption.id)
   }
-
   return (
     <Card>
       <CardHeader title={formatMessage(messages.dailyStatusMainTitle)} />
@@ -118,7 +118,8 @@ const DailyStatus = () => {
                 siteProps={dialogState.siteProps}
                 onCancel={onHideDailyStatusDialog}
                 onSubmit={onDailyStatusSubmit}
-                statuses={maintenanceStatuses ?? []}
+                statuses={allStatuses}
+                manualStatuses={maintenanceStatuses}
               />
             ) : null}
           </div>

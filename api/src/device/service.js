@@ -623,7 +623,6 @@ async function setStatusForDateRange(request) {
     }
     if (expectedBackOnline) {
       _.set(payload, 'options.data.expectedBackOnline', expectedBackOnline)
-      delete payload.expectedBackOnline
     }
 
     const deviceMaintenanceStatusLogIds = []
