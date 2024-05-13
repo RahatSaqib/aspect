@@ -93,6 +93,7 @@ const AspectDatePickerBase = props => {
       dateFormat={dateFormat}
       {...optionalProps}
       label={placeholder}
+      showToolbar={false}
       value={value}
       renderDay={(date, selectedDays, pickersDayProps) =>
         renderWeekPickerDay(props.startDate, props.endDate, date, selectedDays, pickersDayProps)
