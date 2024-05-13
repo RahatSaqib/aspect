@@ -96,6 +96,11 @@ module.exports = async function (request) {
           nameI18nKey: 'placeHolderDaysToCalibrationDueDate',
           name: 'Days To Calibration Due Date',
         },
+        {
+          id: 'device.expectedBackOnlineDate',
+          nameI18nKey: 'placeHolderExpectedBackOnlineDate',
+          name: 'Expected Back Online Date',
+        },
       ],
     },
     {
