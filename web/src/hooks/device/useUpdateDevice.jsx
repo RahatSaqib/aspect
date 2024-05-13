@@ -33,7 +33,7 @@ const useUpdateDevice = deviceId => {
   const queryClient = useQueryClient()
 
   const mutation = useMutation(data => updateDeviceById(data, deviceId), {
-    onSuccess: () => queryClient.invalidateQueries([DEVICE_KEY, deviceId]),
+    onSuccess: () => queryClient.invalidateQueries([DEVICE_KEY, String(deviceId)]),
   })
 
   return mutation
