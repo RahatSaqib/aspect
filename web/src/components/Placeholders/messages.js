@@ -33,6 +33,10 @@ const messages = defineMessages({
     id: 'placeholder.placeHolderDaysToCalibrationDueDate',
     defaultMessage: `Days to Calibration Due Date`,
   },
+  placeHolderDaysInactive: {
+    id: 'placeholder.placeHolderDaysInactive',
+    defaultMessage: `Days inactive`,
+  },
   placeholderNameShort: {
     id: 'placeholder.name.short',
     defaultMessage: `Short Name`,

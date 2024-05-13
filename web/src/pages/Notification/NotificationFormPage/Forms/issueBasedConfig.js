@@ -48,13 +48,41 @@ const deviceOfflineSection = (formatMessage, partner) => {
             id: 'daysInactive',
             label: formatMessage(messages.daysInactive),
             initialValue: `${partner.maxDaysDeviceOffline}`,
-            controlType: { component: 'numberField', min: 1, max: 90 },
+            controlType: { component: 'numberField', min: 1, max: 60 },
             classNames: {
               itemContainer: 'max_width_100pc tags_container',
               controlContainer: styles.full_width_100pc,
               item: styles.full_width_100pc,
             },
             labelI18nKey: 'daysInactive',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const deviceOfflineRecurringSection = formatMessage => {
+  return {
+    id: 'repeatCheckAndNotifyInactive',
+    label: 'repeatCheckAndNotifyInactive',
+    labelI18nKey: 'repeatCheckAndNotifyInactive',
+    visibleIf: values => ['DeviceOffline'].includes(values.notificationType),
+    rows: [
+      {
+        id: 83,
+        items: [
+          {
+            id: 'recurrenceFactor',
+            label: formatMessage(messages.recurrenceFactor),
+            initialValue: `0`,
+            controlType: { component: 'numberField', min: 1, max: 3 },
+            classNames: {
+              itemContainer: 'max_width_100pc tags_container',
+              controlContainer: styles.full_width_100pc,
+              item: styles.full_width_100pc,
+            },
+            labelI18nKey: 'recurrenceFactor',
           },
         ],
       },
@@ -247,4 +275,5 @@ export {
   deviceOfflineSection,
   stockExpiringSection,
   calibrationSection,
+  deviceOfflineRecurringSection,
 }

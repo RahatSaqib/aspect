@@ -10,7 +10,7 @@ const {
   siteWithLowCompletionRateIssue,
 } = require('./actions')
 const { resolveIssues, escalateIssues } = require('../issue/actions')
-const { deviceOffline, deviceOnline, deviceNoResults, deviceHasNewResults } = require('../device/actions')
+const { deviceOnline, deviceNoResults, deviceHasNewResults } = require('../device/actions')
 const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const logger = require('../shared/logger')
@@ -21,7 +21,6 @@ const MIN_PERCENTAGE_FIELDS_COMPLETION_RATE = 0.8
 
 async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }) {
   const context = messageContext.bindActionCreators({
-    deviceOffline,
     deviceNoResults,
   })
   return context.run(async knex => {
@@ -71,7 +70,6 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
         id,
         maxDaysDeviceOffline,
         maxDaysDeviceNoResults,
-        lastPingOn,
         lastSeenOn,
         deviceCreatedOn,
         lastResultOn,
@@ -87,19 +85,7 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
         if (lastResultOn == null) {
           lastResultOn = deviceCreatedOn
         }
-        // Signal the DEVICE_OFFLINE action when the device has been in
-        // the Aspect database but has not uploaded data for the amount
-        // of time that the partner expects it to have sent some type of
-        // upload
-        if (
-          maxLastDateOffline != null &&
-          deviceCreatedOn < maxLastDateOffline &&
-          (!lastPingOn || (!!maxLastDateOffline && lastPingOn <= maxLastDateOffline)) &&
-          (!lastSeenOn || (!!maxLastDateOffline && lastSeenOn <= maxLastDateOffline))
-        ) {
-          // Number of days of "heartbeat" > X days
-          context.deviceOffline(id, { lastSeenOn, lastPingOn })
-        }
+
         // Only signal a DEVICE_NO_RESULTS action if the device has
         // been connected before the last result was expected
         if (maxLastDateNoResult != null && deviceCreatedOn < maxLastDateNoResult) {

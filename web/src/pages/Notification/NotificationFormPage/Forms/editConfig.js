@@ -21,6 +21,7 @@ import {
   deviceNoResultsSection,
   lowInventorySection,
   stockExpiringSection,
+  deviceOfflineRecurringSection,
 } from './issueBasedConfig'
 import notificationTypeSection from './notificationTypeSection'
 import { reportBasedSection } from './reportBasedConfig'
@@ -50,6 +51,7 @@ const getFormConfig = (formatMessage, jobFunctions, partner, isEdit) => ({
     geographySection(formatMessage), // only for ['DeviceNoResults', 'DeviceOffline', 'CalibrationDueDate', 'ModuleReplaced', 'ModuleDisabled', 'UnusedModules', 'InstrumentReplaced']
     lowInventorySection(formatMessage, partner), // only for ['InventoryStockout']
     deviceOfflineSection(formatMessage, partner), // only for ['DeviceOffline']
+    deviceOfflineRecurringSection(formatMessage), // only for ['DeviceOffline']
     deviceNoResultsSection(formatMessage, partner), // only for ['deviceNoResultsSection']
     stockExpiringSection(formatMessage, partner), // only for ['InventoryStockExpiring']
     calibrationSection(formatMessage), // only for ['CalibrationDueDate']

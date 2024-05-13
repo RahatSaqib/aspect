@@ -248,6 +248,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     reportId: reportExternalId,
     notificationType: notificationTypeCategoryExternalId,
     resultBasedScope,
+    recurrenceFactor,
+    daysInactive,
   } = payload
 
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeCategoryExternalId)
@@ -318,6 +320,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
         issueTypeId,
         reportId,
         cronRecurrency,
+        recurrenceFactor,
+        daysInactive,
         level: 1,
         canAcknowledge: 0,
         name,

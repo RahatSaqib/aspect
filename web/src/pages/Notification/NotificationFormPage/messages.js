@@ -368,9 +368,17 @@ export default defineMessages({
     id: 'pages.NotificationDetail.whenDeviceHasBeenInactiveForMoreThan',
     defaultMessage: 'When the device has been inactive for more than ...',
   },
+  repeatCheckAndNotifyInactive: {
+    id: 'pages.NotificationDetail.repeatCheckAndNotifyInactive',
+    defaultMessage: 'Number of times to repeat check and notify if inactive',
+  },
   daysInactive: {
     id: 'pages.NotificationDetail.daysInactive',
     defaultMessage: 'Days',
+  },
+  recurrenceFactor: {
+    id: 'pages.NotificationDetail.recurrenceFactor',
+    defaultMessage: 'Times',
   },
   whenDeviceDidNotSendResultsForMoreThan: {
     id: 'pages.NotificationDetail.whenDeviceDidNotSendResultsForMoreThan',
