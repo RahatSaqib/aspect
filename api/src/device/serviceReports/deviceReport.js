@@ -53,7 +53,7 @@ async function getDevicesByTBReach(dataConstraints, query) {
     .sum({
       totalXpertTests: 'r.resultCount',
       xpertPositive: knex.raw(`
-        case when r.resultCategory1 = ${resultCategoryIds.Detected}
+        case when r.resultCategory1 = ${resultCategoryIds.Detected} OR r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
         then r.resultCount 
         else 0 
         end`),
