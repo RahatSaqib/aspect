@@ -68,7 +68,6 @@ async function startDeviceInactiveRecurringNotification({}, { messageContext }) 
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'dmsl.id', 'latestDms.logId')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dms.id', 'dmsl.deviceMaintenanceStatusId')
     .where('da.token', 'approved')
-    .whereIn('d.id', [101])
     .select(
       'd.id as deviceId',
       'dmsl.id as logId',
@@ -111,14 +110,8 @@ async function startDeviceInactiveRecurringNotification({}, { messageContext }) 
   }
 
   for (const device of devices) {
-    // Output the last seen date to the console for debugging
-    console.log(device.lastSeenOn)
-
     // Calculate the number of days since the device was last seen
     const lastSeenOnDiff = calculateDaysDifference(device.lastSeenOn) || 0
-
-    // Debug output of days difference since last seen
-    console.log(lastSeenOnDiff)
 
     // Calculate the number of days since the device last pinged
     const lastPingOnDiff = calculateDaysDifference(device.lastPingOn) || 0
