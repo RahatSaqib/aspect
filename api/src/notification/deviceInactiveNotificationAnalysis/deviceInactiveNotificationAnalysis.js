@@ -14,7 +14,7 @@ const calculateMinimumDaysInactive = (...values) => {
   const nonZeroValues = values.filter(val => val !== 0)
 
   if (nonZeroValues.length === 0) {
-      return 0
+    return 0
   }
 
   return Math.min(...nonZeroValues)
