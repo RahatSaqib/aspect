@@ -148,6 +148,13 @@ async function getListDevices(query, auth) {
   const maxCurrentDate = format(endOfMonth(now), "yyyy-MM-dd'T'23:59:59.999'Z'")
   const maxPreviousDate = format(endOfMonth(previousMonth), "yyyy-MM-dd'T'23:59:59.999'Z'")
 
+  // Get current date in ISO format
+  const currentDateISO = format(now, 'yyyy-MM-dd')
+
+  // Define start and end of current day
+  const currentDayStart = `${currentDateISO}T00:00:00`
+  const currentDayEnd = `${currentDateISO}T23:59:59`
+
   // get rows
   const getItems = deviceQuery
     .clone()
@@ -168,6 +175,10 @@ async function getListDevices(query, auth) {
           totalPreviousMonth: knex.raw(
             `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
             [minPreviousDate, maxPreviousDate]
+          ),
+          totalCurrentDay: knex.raw(
+            `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
+            [currentDayStart, currentDayEnd]
           ),
         })
         .groupBy('deviceId')
