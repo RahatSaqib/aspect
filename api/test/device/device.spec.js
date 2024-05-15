@@ -745,6 +745,10 @@ describe('Device routes', () => {
           .update({ deviceMaintenanceStatusId: activeStatusId })
 
         // Active days cannot be changed
+        const createdResultsIds = await statusTestDeviceContext.createResultForThisDevice({
+          resultDetails: { startedOn: dateFrom, endedOn: dateFrom },
+        })
+
         payload.externalId = 'inactiveDownForRepair'
         const fromActiveResponse = await server
           .post(`${maintenanceStatusByPeriodPath}/${deviceId}`)
@@ -755,6 +759,8 @@ describe('Device routes', () => {
           fromActiveResponse.body.message,
           'You cannot change the status of a device in days when it was active'
         )
+
+        await statusTestDeviceContext.removeResults([createdResultsIds])
 
         // Active status cannot be manuallyset
         payload.externalId = 'active'
