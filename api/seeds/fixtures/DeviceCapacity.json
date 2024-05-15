@@ -4,25 +4,29 @@
       "deviceTypeExternalId": "CepheidGeneXpert",
       "defaultForDeviceType": true,
       "name": "4 modules",
-      "dailyCapacity": 12
+      "dailyCapacity": 12,
+      "modules": 4
     },
     {
       "deviceTypeExternalId": "CepheidGeneXpert",
       "defaultForDeviceType": false,
       "name": "8 modules",
-      "dailyCapacity": 24
+      "dailyCapacity": 24,
+      "modules": 8
     },
     {
       "deviceTypeExternalId": "CepheidGeneXpert",
       "defaultForDeviceType": false,
       "name": "16 modules",
-      "dailyCapacity": 48
+      "dailyCapacity": 48,
+      "modules": 16
     },
     {
       "deviceTypeExternalId": "CepheidGeneXpert",
       "defaultForDeviceType": false,
       "name": "32 modules",
-      "dailyCapacity": 96
+      "dailyCapacity": 96,
+      "modules": 32
     },
     {
       "deviceTypeExternalId": "AlereQ",

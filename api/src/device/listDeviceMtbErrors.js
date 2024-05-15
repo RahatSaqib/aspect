@@ -27,7 +27,7 @@ const listDeviceMtbErrors = async request => {
   )
 
   const getResultsBase = () =>
-    queryResults.clone().whereIn('a.id', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra]).countDistinct('r.id')
+    queryResults.clone().whereIn('r.assayId', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra]).countDistinct('r.id')
 
   // get rows
   const getItems = deviceQuery
@@ -43,7 +43,7 @@ const listDeviceMtbErrors = async request => {
       'lg.name as lgaName',
       's.name as siteName',
 
-      'dcp.modules as numberOfModules',
+      'd.moduleBayCapacity as numberOfModules',
       getResultsBase().as('cntMtbResults'),
       getResultsBase().where('r.resultCategory1', resultCategoryIds.Error).as('cntMtbError'),
       getResultsBase().where('r.resultCategory1', resultCategoryIds.Invalid).as('cntMtbInvalid'),
@@ -56,8 +56,16 @@ const listDeviceMtbErrors = async request => {
   const getPercentage = (numerator, denominator) => {
     return Math.round(100 * (denominator ? numerator / denominator : 0)) / 100
   }
+
+  const moduleTracker = {}
   // add more fields which depend on aggregations
-  data.forEach(async it => {
+  data.forEach(it => {
+    // check if modules has already been considered for the device
+    if (moduleTracker[it.id]) {
+      it.numberOfModules = 0
+    } else {
+      moduleTracker[it.id] = true
+    }
     it.percentMtbError = getPercentage(it.cntMtbError, it.cntMtbResults)
     it.percentMtbInvalid = getPercentage(it.cntMtbInvalid, it.cntMtbResults)
     it.percentMtbNoResult = getPercentage(it.cntMtbNoResult, it.cntMtbResults)
