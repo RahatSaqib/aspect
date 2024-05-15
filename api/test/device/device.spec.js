@@ -710,7 +710,7 @@ describe('Device routes', () => {
         assert.equal(deviceMaintenanceStatusLogIds.length, 8)
       }
 
-      it.only('should save the maintenance status of the device for a date range', async () => {
+      it('should save the maintenance status of the device for a date range', async () => {
         const { id: deviceId } = theGreatestDeviceIEverCreated
 
         const dateFrom = '2020-12-12T00:00:00.000-03:00'
