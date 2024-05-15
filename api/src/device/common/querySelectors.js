@@ -25,15 +25,9 @@ const SELECT_LIST_FIELDS = [
   knex.raw(
     'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.externalId ELSE null END maintenanceStatus'
   ),
-  knex.raw(`
-  CASE 
-    WHEN dmsl.day >= DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN
-      CASE 
-        WHEN deviceResult.totalCurrentDay = 0 AND dms.externalId = 'active' THEN 'inactiveUnknown'
-        ELSE dms.i18nKey 
-      END
-    ELSE NULL
-  END AS maintenanceStatusI18nKey`),
+  knex.raw(
+    'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.i18nKey ELSE null END as maintenanceStatusI18nKey'
+  ),
   'da.i18nKey as approvalStatusI18nKey',
   knex.raw(
     'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.name ELSE null END as maintenanceStatusName'

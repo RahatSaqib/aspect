@@ -226,6 +226,15 @@ async function getListDevices(query, auth) {
       ...getSelectListFields(personTimezoneIANA),
       'deviceResult.totalCurrentMonth as resultCountThisMonth',
       'deviceResult.totalPreviousMonth as resultCountLastMonth',
+      knex.raw(`
+       CASE 
+         WHEN dmsl.day >= DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN
+           CASE 
+             WHEN deviceResult.totalCurrentDay = 0 AND dms.externalId = 'active' THEN 'inactiveUnknown'
+             ELSE dms.i18nKey 
+           END
+         ELSE NULL
+       END AS maintenanceStatusI18nKey`),
       'frd30Errors.resultCount as thisMonthErrors',
       knex.raw('count(distinct dmslActivity.day) as totalDays'),
       knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
