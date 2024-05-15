@@ -4,7 +4,6 @@ const { saveNotificationType } = require('./common/db')
 const { notificationTypeCreated } = require('../notificationType/actions')
 const ReportBasedNotificationCacheSingleton = require('./reportBased/reportBasedNotificationCache')
 const { reportDispatchHandler } = require('./reportBased/reportBasedCronHandler')
-const { knex } = require('../db')
 
 module.exports = async function (request) {
   const {

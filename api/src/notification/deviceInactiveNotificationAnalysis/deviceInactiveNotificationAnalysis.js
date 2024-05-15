@@ -41,7 +41,7 @@ function calculateDaysDifference(targetDate) {
   return days
 }
 
-async function startDeviceInactiveRecurringNotification({}, { messageContext }) {
+async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
   const context = messageContext.bindActionCreators({
     deviceOffline,
   })
@@ -86,11 +86,11 @@ async function startDeviceInactiveRecurringNotification({}, { messageContext }) 
   for (const type of offlineNotificationTypes) {
     // Convert recurrenceFactor to a number, defaulting to 0 if not specified
     const recurrenceFactor = Number(type.recurrenceFactor) || 0
-    const issueTypeId = type.issueTypeId // Issue type identifier
+    const { issueTypeId } = type // Issue type identifier
 
     // Check if daysInactive is specified for the notification type
     if (type.daysInactive) {
-      const daysInactive = type.daysInactive // Days until the issue is considered inactive
+      const { daysInactive } = type // Days until the issue is considered inactive
 
       // Calculate unique notification intervals based on the recurrence factor
       for (let i = 0; i <= recurrenceFactor; i++) {
@@ -127,12 +127,11 @@ async function startDeviceInactiveRecurringNotification({}, { messageContext }) 
 
     if (deviceNotificationMatch) {
       const { recurrenceFactor, notificationDaysInactive, offlineIssueType } = deviceNotificationMatch
-      // context.deviceOffline(device.id, {
-      //   deviceRecurrenceGroup: recurrenceFactor,
-      //   notificationDaysInactive,
-      //   offlineIssueType,
-      // })
-      console.log('HEWLEOEOEO')
+      context.deviceOffline(device.id, {
+        deviceRecurrenceGroup: recurrenceFactor,
+        notificationDaysInactive,
+        offlineIssueType,
+      })
     }
   }
 }

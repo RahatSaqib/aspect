@@ -128,7 +128,7 @@ async function analyzeNotifications(context, action) {
         issueTypeId,
       }) => {
         // check if it's a device offline issue and if issue belongs to a notification type
-        if(options){
+        if (options) {
           const { deviceRecurrenceGroup, notificationDaysInactive, offlineIssueType } = options
           if (issueTypeId === offlineIssueType) {
             if (
