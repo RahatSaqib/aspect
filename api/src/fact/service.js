@@ -66,15 +66,7 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
     }
     const devicesQ = await queryBase
     devicesQ.map(
-      ({
-        id,
-        maxDaysDeviceNoResults,
-        lastSeenOn,
-        deviceCreatedOn,
-        lastResultOn,
-        maintenance,
-        maintenanceDueOn,
-      }) => {
+      ({ id, maxDaysDeviceNoResults, lastSeenOn, deviceCreatedOn, lastResultOn, maintenance, maintenanceDueOn }) => {
         const maxLastDateNoResult = maxDaysDeviceNoResults == null ? null : subDays(now, maxDaysDeviceNoResults)
         // TODO move #days to partner config
         const maxMaintenanceDateNoResult = addDays(lastSeenOn, 30)
