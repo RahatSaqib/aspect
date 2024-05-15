@@ -127,11 +127,12 @@ async function startDeviceInactiveRecurringNotification({}, { messageContext }) 
 
     if (deviceNotificationMatch) {
       const { recurrenceFactor, notificationDaysInactive, offlineIssueType } = deviceNotificationMatch
-      context.deviceOffline(device.id, {
-        deviceRecurrenceGroup: recurrenceFactor,
-        notificationDaysInactive,
-        offlineIssueType,
-      })
+      // context.deviceOffline(device.id, {
+      //   deviceRecurrenceGroup: recurrenceFactor,
+      //   notificationDaysInactive,
+      //   offlineIssueType,
+      // })
+      console.log('HEWLEOEOEO')
     }
   }
 }

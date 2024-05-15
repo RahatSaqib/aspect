@@ -128,13 +128,15 @@ async function analyzeNotifications(context, action) {
         issueTypeId,
       }) => {
         // check if it's a device offline issue and if issue belongs to a notification type
-        const { deviceRecurrenceGroup, notificationDaysInactive, offlineIssueType } = options
-        if (issueTypeId === offlineIssueType) {
-          if (
-            notificationDaysInactive !== daysInactive ||
-            (deviceRecurrenceGroup && deviceRecurrenceGroup !== +recurrenceFactor)
-          ) {
-            return
+        if(options){
+          const { deviceRecurrenceGroup, notificationDaysInactive, offlineIssueType } = options
+          if (issueTypeId === offlineIssueType) {
+            if (
+              notificationDaysInactive !== daysInactive ||
+              (deviceRecurrenceGroup && deviceRecurrenceGroup !== +recurrenceFactor)
+            ) {
+              return
+            }
           }
         }
 
