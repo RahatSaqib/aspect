@@ -76,7 +76,6 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
         maintenance,
         maintenanceDueOn,
       }) => {
-        const maxLastDateOffline = maxDaysDeviceOffline == null ? null : subDays(now, maxDaysDeviceOffline)
         const maxLastDateNoResult = maxDaysDeviceNoResults == null ? null : subDays(now, maxDaysDeviceNoResults)
         // TODO move #days to partner config
         const maxMaintenanceDateNoResult = addDays(lastSeenOn, 30)
