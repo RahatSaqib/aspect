@@ -68,7 +68,6 @@ async function onFactGenerateDeviceConnectivity({ deviceId }, { messageContext }
     devicesQ.map(
       ({
         id,
-        maxDaysDeviceOffline,
         maxDaysDeviceNoResults,
         lastSeenOn,
         deviceCreatedOn,
