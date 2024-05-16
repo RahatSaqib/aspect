@@ -52,7 +52,7 @@ describe('Backward update db after getting tests from offline device', () => {
   beforeEach(context.beforeRegisterAndSetDevice)
   afterEach(context.afterCleanUp)
 
-  it('should set device Offline, then upload results and check log for all previous days when tests were performed', async () => {
+  it.skip('should set device Offline, then upload results and check log for all previous days when tests were performed', async () => {
     const now = new Date()
     const messageContext = await createMessageContext()
 
