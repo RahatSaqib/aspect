@@ -29,6 +29,7 @@ const { listDevices } = require('./listDevices')
 const { updateDevice } = require('./updateDevice')
 const { listAnnualUtilizationRateNational, listAnnualUtilizationRateProvincial } = require('./utilizationReports')
 const { deviceReport } = require('./serviceReports/deviceReport')
+const getMtbErrorGraph = require('./getErrorGraph')
 const { joiSingleDeviceStatusOverTime } = require('../shared/validation')
 
 const routes = [
@@ -760,6 +761,34 @@ const routes = [
           assay: Joi.alternatives().try(Joi.array(), Joi.string()).description('Filter for assay'),
           ...validateDateRangeParams(false),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/device/mtb-errors-graph',
+    handler: getMtbErrorGraph,
+    config: {
+      auth: { scope: ['device:view'] },
+      validate: {
+        query: {
+          category: Joi.string().valid('invalid', 'error', 'noResult').required(),
+          state: Joi.string(),
+        },
+      },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.array()
+            .required()
+            .items(
+              Joi.object().keys({
+                month: Joi.number().description('The month of the year'),
+                year: Joi.number(),
+                percentage: Joi.number().description('The percentage of th error'),
+              })
+            ),
+        }),
       },
     },
   },

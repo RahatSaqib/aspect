@@ -327,13 +327,25 @@ const messages = {
       id: 'p.PkDashboard.ProvincialFQDiagnosisTrends',
       defaultMessage: 'Provincial FQ Diagnosis Trends',
     },
+    nationalErrorRates: {
+      id: 'p.PkDashboard.nationalErrorRates',
+      defaultMessage: 'National Error Rates',
+    },
+    nationalInvalidRates: {
+      id: 'p.PkDashboard.nationalInvalidRates',
+      defaultMessage: 'National Invalid Rates',
+    },
+    nationalNoResultRates: {
+      id: 'p.PkDashboard.nationalNoResultRates',
+      defaultMessage: 'National No Result Rates',
+    },
     // 3rd column
     titlecoverage: { id: 'p.PkDashboard.titlecoverage', defaultMessage: 'Coverage' },
     coverageperformance: { id: 'p.PkDashboard.coverageperformance', defaultMessage: 'Performance' },
     genExpert: { id: 'p.PkDashboard.genExpertPending', defaultMessage: 'GeneXpert Device Coverage' },
     genExpertError: { id: 'p.PkDashboard.genExpertError', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
     utilization: { id: 'p.PkDashboard.utilization', defaultMessage: 'Utilization' },
-    errorRate: { id: 'p.PkDashboard.errorRatePending', defaultMessage: 'Error Rate (Pending)' },
+    errorRate: { id: 'p.PkDashboard.errorRate', defaultMessage: 'Error Rate' },
     // 4th column
     titleinventory: { id: 'p.PkDashboard.titleinventory', defaultMessage: 'Inventory' },
     overview: { id: 'p.PkDashboard.overview', defaultMessage: 'Inventory Overview' },
