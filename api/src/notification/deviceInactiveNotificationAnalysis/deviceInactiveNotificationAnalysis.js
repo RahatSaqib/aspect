@@ -1,6 +1,7 @@
 const { differenceInMilliseconds } = require('date-fns')
 const { knex } = require('../../db')
 const { deviceOffline } = require('../../device/actions')
+const { issueTypeToId } = require('../../shared/dictionary')
 
 /**
  * Calculates the minimum number of days a device has been inactive,
@@ -46,7 +47,9 @@ async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
     deviceOffline,
   })
 
-  const issue = await knex('IssueType').where({ externalId: 'DeviceOffline' }).first().select('id')
+  const deviceOfflineIssue = await issueTypeToId('DeviceOffline')
+
+  const issue = await knex('IssueType').where({ id: deviceOfflineIssue }).first().select('id')
 
   // Get all offline notification types
   const offlineNotificationTypes = await knex('NotificationType')
@@ -71,10 +74,10 @@ async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
     .select(
       'd.id as deviceId',
       'dmsl.id as logId',
-      'dmsl.day as lastReportedOn',
+      'dmsl.createdOn as lastReportedOn',
       'dms.externalId',
-      'd.lastPingOn',
-      'd.lastSeenOn'
+      'd.lastSeenOn',
+      'd.lastPingOn'
     )
     .distinct('d.id')
 
@@ -113,14 +116,11 @@ async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
     // Calculate the number of days since the device was last seen
     const lastSeenOnDiff = calculateDaysDifference(device.lastSeenOn) || 0
 
-    // Calculate the number of days since the device last pinged
-    const lastPingOnDiff = calculateDaysDifference(device.lastPingOn) || 0
-
     // Calculate the number of days since the last reported date of the device
     const lastReportedOnDiff = calculateDaysDifference(device.lastReportedOn) || 0
 
     // Determine the smallest number of days from the last seen, ping, and reported metrics
-    const deviceInactiveDays = calculateMinimumDaysInactive(lastSeenOnDiff, lastPingOnDiff, lastReportedOnDiff)
+    const deviceInactiveDays = calculateMinimumDaysInactive(lastSeenOnDiff, lastReportedOnDiff)
 
     // find a notification setting that matches the device's inactive days
     const deviceNotificationMatch = possibleValues.find(value => value.notificationDaysInactive === deviceInactiveDays)
@@ -128,6 +128,8 @@ async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
     if (deviceNotificationMatch) {
       const { recurrenceFactor, notificationDaysInactive, offlineIssueType } = deviceNotificationMatch
       context.deviceOffline(device.id, {
+        lastSeenOn: device.lastSeenOn,
+        lastPingOn: device.lastPingOn,
         deviceRecurrenceGroup: recurrenceFactor,
         notificationDaysInactive,
         offlineIssueType,
