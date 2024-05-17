@@ -585,11 +585,22 @@ const deviceAndSiteSummaryReport = {
         avoidStreaming: true,
       },
     },
+    {
+      sortOrder: 2,
+      moduleName: 'device/serviceReports',
+      functionName: 'getDevicesForTBReachReport',
+      query: {
+        hasResults: 1,
+        sortCol: 'deviceName',
+        sortDir: 'asc',
+        avoidStreaming: true,
+      },
+    },
     /**
      * sheet `GeneXpert Errors by Devices`
      */
     {
-      sortOrder: 2,
+      sortOrder: 3,
       moduleName: 'device/serviceReports',
       functionName: 'getErrorsByDevicesReport',
       query: {

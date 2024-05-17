@@ -2220,7 +2220,7 @@ async function addDeviceCapacities(knex, data) {
 
   await Promise.each(
     deviceCapacitiesByPartner,
-    async ({ deviceTypeExternalId, defaultForDeviceType, name, dailyCapacity }) => {
+    async ({ deviceTypeExternalId, defaultForDeviceType, name, dailyCapacity, modules }) => {
       if (deviceTypes[deviceTypeExternalId]) {
         await upsertItems(
           knex,
@@ -2232,6 +2232,7 @@ async function addDeviceCapacities(knex, data) {
             defaultForDeviceType,
             name,
             dailyCapacity,
+            modules,
           }))
         )
       } else {
