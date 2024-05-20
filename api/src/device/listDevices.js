@@ -71,9 +71,6 @@ async function getListDevices(query, auth) {
       if (query.deviceIds) {
         queryBuilder.whereIn('d.id', query.deviceIds.split(','))
       }
-      if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
-        queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
-      }
       if (query.connectorStatus) {
         queryBuilder.whereIn(
           knex.raw('CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END'),
@@ -217,6 +214,18 @@ async function getListDevices(query, auth) {
       'issues.deviceId',
       'd.id'
     )
+    .modify(queryBuilder => {
+      if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
+        queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
+
+        if (query.deviceMaintenanceStatusId.includes('active')) {
+          queryBuilder.andWhere('deviceResult.totalCurrentDay', '>', 0)
+        }
+        if (query.deviceMaintenanceStatusId.includes('inactiveUnknown')) {
+          queryBuilder.orWhere('dms.externalId', 'active').andWhere('deviceResult.totalCurrentDay', 0)
+        }
+      }
+    })
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
@@ -255,6 +264,7 @@ async function getListDevices(query, auth) {
       knex.raw(`
         CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN
           CASE 
+            WHEN dms.externalId = 'active' AND deviceResult.totalCurrentDay = 0 THEN 'unknown'
             WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
             WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
             ELSE 'down' END
