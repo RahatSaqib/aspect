@@ -3,6 +3,10 @@ const { format } = require('date-fns')
 const { exportData, getBaseReplacements } = require('../../shared/excel')
 const { issueCategoryIntlToShortname } = require('../../shared/dictionary')
 const { listDevices } = require('../listDevices')
+const { knex, filterParams } = require('../../db')
+const { addConstraints } = require('../../auth/constraints')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
+const { allResultCategoryToId } = require('../../shared/dictionary')
 
 async function deviceReport(request, reply) {
   const { data: dataSet } = await listDevices(request)
@@ -36,6 +40,53 @@ async function deviceReport(request, reply) {
   })
 }
 
+async function getDevicesByTBReach(dataConstraints, query) {
+  const resultCategoryIds = await allResultCategoryToId()
+
+  const data = await getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
+    dataConstraints,
+    filterParams,
+    query,
+    timeFrame: 'day',
+  })
+    .sum({
+      totalXpertTests: 'r.resultCount',
+      xpertPositive: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.Detected} OR r.resultCategory1 = ${resultCategoryIds['Trace Detected']}
+        then r.resultCount 
+        else 0 
+        end`),
+      xpertNegative: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.NotDetected}
+        then r.resultCount 
+        else 0 
+        end`),
+      xpertRIFIndeterminate: knex.raw(`
+        CASE 
+          WHEN (r.resultCategory1 = ${resultCategoryIds.Detected} OR r.resultCategory1 = ${resultCategoryIds['Trace Detected']}) 
+               AND r.resultCategory2 = ${resultCategoryIds.Indeterminate} 
+          THEN r.resultCount 
+          ELSE 0 
+        END`),
+      xpertRIFPositive: knex.raw(`
+        case when r.resultCategory2 = ${resultCategoryIds.Detected} 
+        then r.resultCount 
+        else 0 
+        end`),
+    })
+    .select({
+      deviceId: 'd.id',
+    })
+    .modify(filterParams, query, {
+      assayIds: 'a.id',
+    })
+    .groupBy('r.deviceId')
+    .orderBy('st.name', 'lg.name')
+
+  return data
+}
 module.exports = {
   deviceReport,
+  getDevicesByTBReach,
 }
