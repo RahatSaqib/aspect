@@ -133,8 +133,6 @@ async function getListDevices(query, auth) {
       },
       { showUnapprovedDevices: true, showDecommissionedDevices: true }
     )
-  // get total count for paging
-  const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
 
   const now = new Date()
   const previousMonth = subMonths(now, 1)
@@ -226,6 +224,9 @@ async function getListDevices(query, auth) {
         }
       }
     })
+
+  const getDevices = getItems
+    .clone()
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
@@ -273,8 +274,10 @@ async function getListDevices(query, auth) {
     ])
     .distinct()
 
+  const getCount = getItems.clone().countDistinct('d.id as count').first()
+
   // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getDevices])
 
   const toSyncDmslAndDevice = {}
   data.forEach(it => {
