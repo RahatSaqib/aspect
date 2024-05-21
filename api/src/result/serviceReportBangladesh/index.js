@@ -1257,12 +1257,7 @@ async function getDataForReportDrTb10B(auth, query) {
           ELSE ''
           END as resultMtbRif
       `),
-      knex.raw(`
-        CASE WHEN a.id IN (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})
-        THEN s.name
-        ELSE ''
-        END as siteMtbRif
-      `)
+      's.name as siteMtbRif'
     )
   const data = await dataQuery
 
