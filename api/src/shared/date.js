@@ -18,6 +18,8 @@ const {
   min,
   max,
   addMonths,
+  eachDayOfInterval,
+  isWeekend,
   endOfDay,
   subDays,
   addMilliseconds,
@@ -485,6 +487,23 @@ function getDateInMilliSeconds(date) {
   return providedDate.getTime()
 }
 
+/**
+ *  Retrieves the No of working days excluding weekends
+ * @param {*} startDate
+ * @param {*} endDate
+ * @returns number - Return the count of working days
+ */
+function getWorkingDays(startDate, endDate) {
+  // Generate an array of all dates between the start and end dates
+  const allDates = eachDayOfInterval({ start: startDate, end: endDate })
+
+  // Filter out weekends (Saturdays and Sundays)
+  const workingDays = allDates.filter(date => !isWeekend(date))
+
+  // Return the count of working days
+  return workingDays.length
+}
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -530,5 +549,6 @@ module.exports = {
   getUserEndOfMonth,
   getUserStartOfMonth,
   getDateInMilliSeconds,
+  getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
 }

@@ -3,7 +3,7 @@ import { Line } from '@ant-design/plots'
 import { formatNumber } from '../../../../utils/utils/number'
 import { filterColour } from '../../graphUtils'
 
-const LineGraph = ({ data, graphId, showLabel, xField, yField, seriesField }) => {
+const LineGraph = ({ data, graphId, showLabel, xField, yField, seriesField, ...rest }) => {
   const config = {
     data,
     color: graphId ? datum => filterColour(datum.year, graphId) : undefined,
@@ -23,6 +23,7 @@ const LineGraph = ({ data, graphId, showLabel, xField, yField, seriesField }) =>
         formatter: text => formatNumber(text),
       },
     },
+    ...rest,
   }
 
   return <Line {...config} />

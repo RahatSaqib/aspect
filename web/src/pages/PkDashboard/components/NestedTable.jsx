@@ -69,26 +69,29 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
       {!isDetail ? (
         <TableHead>
           <TableRow>
-            {columns.map((c, idx) => (
-              <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined}>
-                {allowCustomOrder ? (
-                  <TableSortLabel
-                    active={orderBy === c.prop}
-                    direction={orderBy === c.prop ? order : 'asc'}
-                    onClick={() => {
-                      const isAsc = orderBy === c.prop && order === 'asc'
-                      setOrder(isAsc ? 'desc' : 'asc')
-                      setOrderBy(c.prop)
-                      setPage(0)
-                    }}
-                  >
-                    {c.name}
-                  </TableSortLabel>
-                ) : (
-                  c.name
-                )}
-              </TableCell>
-            ))}
+            {columns.map((c, idx) =>
+              c?.rest?.skip ? null : (
+                <TableCell key={c.prop} align={idx !== 0 ? 'right' : undefined} {...c.rest}>
+                  {allowCustomOrder ? (
+                    <TableSortLabel
+                      style={{ width: '100%' }}
+                      active={orderBy === c.prop}
+                      direction={orderBy === c.prop ? order : 'asc'}
+                      onClick={() => {
+                        const isAsc = orderBy === c.prop && order === 'asc'
+                        setOrder(isAsc ? 'desc' : 'asc')
+                        setOrderBy(c.prop)
+                        setPage(0)
+                      }}
+                    >
+                      {c.name}
+                    </TableSortLabel>
+                  ) : (
+                    c.name
+                  )}
+                </TableCell>
+              )
+            )}
           </TableRow>
         </TableHead>
       ) : null}
@@ -105,6 +108,7 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
                     style={{ paddingLeft: isDetail ? row?.depth * 20 : null }}
                     key={c.prop}
                     align={i !== 0 ? 'right' : undefined}
+                    {...c.cellProp}
                   >
                     {i === 0 ? (
                       <Box display="flex">
