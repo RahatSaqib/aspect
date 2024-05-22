@@ -1256,7 +1256,8 @@ async function getDataForReportDrTb10B(auth, query) {
             END)
           ELSE ''
           END as resultMtbRif
-      `)
+      `),
+      's.name as siteMtbRif'
     )
   const data = await dataQuery
 
