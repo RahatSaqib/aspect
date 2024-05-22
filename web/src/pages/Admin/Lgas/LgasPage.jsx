@@ -70,7 +70,6 @@ export default function LgasPage() {
                     { key: 'people', label: formatMessage(messages.people) },
                     { key: 'sites', label: formatMessage(messages.sites) },
                     { key: 'issues', label: formatMessage(messages.issues) },
-                    { key: 'deviceConfigurations', label: formatMessage(messages.deviceConfigurations) },
                     { key: 'notificationStates', label: formatMessage(messages.notificationStates) },
                     { key: 'peopleWithAccess', label: formatMessage(messages.peopleWithAccess) },
                     { key: 'manage', label: formatMessage(messages.manage) },
@@ -85,7 +84,6 @@ export default function LgasPage() {
                       <DataTableCell>{l.personCount}</DataTableCell>
                       <DataTableCell>{l.siteCount}</DataTableCell>
                       <DataTableCell>{l.issueCount}</DataTableCell>
-                      <DataTableCell>{l.deviceConfigurationCount}</DataTableCell>
                       <DataTableCell>{l.notificationCount}</DataTableCell>
                       <DataTableCell>{l.jobContextCount}</DataTableCell>
                       <DataTableCell>
