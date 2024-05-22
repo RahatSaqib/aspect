@@ -2107,6 +2107,7 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
   dataRR.rows = dataRR.rows.filter(
     it =>
       it.resultMtbRif === 'RR' ||
+      it.mtbDetected?.includes('Detected') ||
       it.inhDetected?.includes('Resistance Detected') ||
       it.flqDetected?.includes('Resistance Detected') ||
       it.amkDetected?.includes('Resistance Detected') ||
