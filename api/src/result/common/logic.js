@@ -161,4 +161,5 @@ module.exports = {
   mergeResultWithPayload,
   clinicalIndicatorAggregations,
   getGroupBy,
+  getResultDataHash,
 }
