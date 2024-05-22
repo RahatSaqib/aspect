@@ -2099,7 +2099,6 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
    * for this worksheet and see there `useNamedData: 'results_10a_for_nt_use'`
    */
   const { data } = sharedResults[useNamedData]
-
   /**
    * show only Detected Mtb/Rif and Mtb/Rif-Ultra (RR) data or `Resistance Detected` Xdr data
    */
@@ -2107,7 +2106,7 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
   dataRR.rows = dataRR.rows.filter(
     it =>
       it.resultMtbRif === 'RR' ||
-      it.mtbDetected?.includes('Detected') ||
+      it.mtbDetected === 'Detected' ||
       it.inhDetected?.includes('Resistance Detected') ||
       it.flqDetected?.includes('Resistance Detected') ||
       it.amkDetected?.includes('Resistance Detected') ||
