@@ -456,6 +456,10 @@ class GxConnectApiTestContext {
     })
   }
 
+  async removeResults(resultIds) {
+    return knex('Result').whereIn('id', resultIds).delete()
+  }
+
   async getAllResults() {
     return knex('Result as r').where('r.deviceId', this.device.id).select()
   }
