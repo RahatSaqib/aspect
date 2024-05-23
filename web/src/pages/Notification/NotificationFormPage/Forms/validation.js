@@ -38,6 +38,7 @@ const validationSchema = formatMessage =>
             'UnusedModules',
             'InstrumentReplaced',
             'SiteWithLowFieldCompletionRate',
+            'DeviceExpectedBackOnline',
           ])
           .required(),
       }),
