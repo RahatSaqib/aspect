@@ -61,9 +61,16 @@ export const ErrorRateTable = ({ items }) => {
 
   const renderRow = useCallback(
     (items, props) =>
-      orderBy(items, sort.name, sort.order).map((row, index) => (
-        <Row key={row.name} row={row} index={index} {...props} />
-      )),
+      orderBy(
+        items,
+        [
+          i => {
+            const sortName = i?.[sort.name]
+            return typeof sortName === 'string' ? sortName.toLowerCase() : sortName
+          },
+        ],
+        sort.order
+      ).map((row, index) => <Row key={row.name} row={row} index={index} {...props} />),
     [sort]
   )
   const classes = useStyles()
