@@ -50,7 +50,7 @@ exports.seed = async function (knex) {
           .stream()
 
         for await (const row of stream) {
-          let resultData = JSON.parse(row.resultData)
+          const resultData = JSON.parse(row.resultData)
           delete resultData.analytes
           delete resultData.testData
 
@@ -141,13 +141,13 @@ exports.seed = async function (knex) {
       `)
       await trx.schema.raw(`CALL UpdateDeviceLog();`)
 
-      await trx.schema.raw('DROP PROCEDURE IF EXISTS UpdateResultFromTemp;');
-      await trx.schema.raw('DROP PROCEDURE IF EXISTS UpdateDeviceLog;');
-      await trx.schema.raw('DROP TEMPORARY TABLE IF EXISTS processed_results;');
+      await trx.schema.raw('DROP PROCEDURE IF EXISTS UpdateResultFromTemp;')
+      await trx.schema.raw('DROP PROCEDURE IF EXISTS UpdateDeviceLog;')
+      await trx.schema.raw('DROP TEMPORARY TABLE IF EXISTS processed_results;')
     } catch (error) {
-      await trx.schema.raw('DROP PROCEDURE IF EXISTS UpdateResultFromTemp;');
-      await trx.schema.raw('DROP PROCEDURE IF EXISTS UpdateDeviceLog;');
-      await trx.schema.raw('DROP TEMPORARY TABLE IF EXISTS processed_results;');
+      await trx.schema.raw('DROP PROCEDURE IF EXISTS UpdateResultFromTemp;')
+      await trx.schema.raw('DROP PROCEDURE IF EXISTS UpdateDeviceLog;')
+      await trx.schema.raw('DROP TEMPORARY TABLE IF EXISTS processed_results;')
       console.error(`Error in script execution: ${error.message}`)
       throw error
     }
