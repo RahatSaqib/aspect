@@ -68,7 +68,18 @@ const getResultDataHash = obj => {
   return objHash
 }
 
-const mergeResultWithPayload = (existingResult, payload) => {
+/**
+ * Removes the 'analytes' and 'testData' properties from the result payload.
+ */
+const removeAdditionalData = resultData => {
+  if (_.has(resultData, 'data')) {
+    resultData.data = _.omit(resultData.data, ['analytes', 'testData'])
+  }
+  return resultData
+}
+
+const mergeResultWithPayload = (existingResult, resultPayload) => {
+  const payload = removeAdditionalData(resultPayload)
   const existingResultDataString = _.get(existingResult, 'resultData', null)
   const existingResultDataHash = _.get(existingResult, 'resultDataHash', null)
   const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}

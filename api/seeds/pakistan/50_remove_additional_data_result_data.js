@@ -9,7 +9,6 @@ exports.seed = async function (knex) {
   const processBatch = async (trx, rows) => {
     try {
       await trx('processed_results').insert(rows)
-      console.log('processed....', rows.length)
     } catch (error) {
       console.error(`Error inserting batch: ${error.message}`)
       throw error
