@@ -49,7 +49,7 @@ const DailyStatusDialog = ({ data, onCancel, onSubmit, statuses, manualStatuses,
     <CircularProgress />
   ) : (
     <FormikProvider config={form}>
-      <DailyStatusFormForm
+      <DailyStatusForm
         formConfig={formConfig}
         onSubmit={onSubmit}
         onCancel={onCancel}
@@ -62,7 +62,7 @@ const DailyStatusDialog = ({ data, onCancel, onSubmit, statuses, manualStatuses,
   )
 }
 
-const DailyStatusFormForm = ({ formConfig, data = {}, onCancel, onSubmit, title, deviceName, siteProps }) => {
+const DailyStatusForm = ({ formConfig, data = {}, onCancel, onSubmit, title, deviceName, siteProps }) => {
   const [mode, setMode] = useState(MODE.EDITING)
   const { formatMessage } = useIntl()
   const { formik } = useFormikContext()
