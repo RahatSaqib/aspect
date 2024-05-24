@@ -630,7 +630,6 @@ async function setStatusForDateRange(request) {
     expectedBackOnline,
   }
 
-
   // Everything all right, then insert logs
   if (notes) {
     _.set(payload, 'options.data.notes', notes)
