@@ -28,7 +28,7 @@ async function listStates({ auth, query }) {
       name: 's.name',
       abbreviation: 's.abbreviation',
       deviceConfigurationCount: getAssociatedDataCount('DeviceConfiguration'),
-      siteCount: getAssociatedDataCount('Site'),
+      siteCount: getAssociatedDataCount('Site').where('t.disabled', 0),
       issueCount: getAssociatedDataCount('Issue'),
       deviceApiKeyCount: getAssociatedDataCount('DeviceApiKey'),
       personCount: getAssociatedDataCount('Person'),
