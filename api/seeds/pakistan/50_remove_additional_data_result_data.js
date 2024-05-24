@@ -26,24 +26,23 @@ exports.seed = async function (knex) {
     const resultsToUpdate = await getResultsToUpdateInRange(knex, start, end)
 
     if (resultsToUpdate.length > 0) {
-      await Promise.all(resultsToUpdate.map(result => {
-        const resultUpdate = knex('Result')
-          .where('id', result.id)
-          .update({
+      await Promise.all(
+        resultsToUpdate.map(result => {
+          const resultUpdate = knex('Result').where('id', result.id).update({
             resultData: result.resultData,
             resultDataHash: result.resultDataHash,
           })
 
-        const deviceLogUpdate = knex('DeviceLog')
-          .where('resultId', result.id)
-          .where(knex.raw(`JSON_CONTAINS_PATH(rawMessage, 'one', '$.result.data.analytes')`))
-          .update({
-            rawMessage: knex.raw(`JSON_REMOVE(rawMessage, '$.result.data.testData', '$.result.data.analytes')`)
-          })
+          const deviceLogUpdate = knex('DeviceLog')
+            .where('resultId', result.id)
+            .where(knex.raw(`JSON_CONTAINS_PATH(rawMessage, 'one', '$.result.data.analytes')`))
+            .update({
+              rawMessage: knex.raw(`JSON_REMOVE(rawMessage, '$.result.data.testData', '$.result.data.analytes')`),
+            })
 
-        return Promise.all([resultUpdate, deviceLogUpdate])
-      }))
-
+          return Promise.all([resultUpdate, deviceLogUpdate])
+        })
+      )
     }
     processed = end
   }
