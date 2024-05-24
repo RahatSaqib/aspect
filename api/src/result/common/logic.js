@@ -72,9 +72,14 @@ const getResultDataHash = obj => {
  * Removes the 'analytes' and 'testData' properties from the result payload.
  */
 const removeAdditionalData = resultData => {
-  if (_.has(resultData, 'data')) {
+  if (resultData.data) {
     resultData.data = _.omit(resultData.data, ['analytes', 'testData'])
   }
+
+  if (resultData.result && resultData.result.data) {
+    resultData.result.data = _.omit(resultData.result.data, ['analytes', 'testData'])
+  }
+
   return resultData
 }
 
@@ -173,4 +178,5 @@ module.exports = {
   clinicalIndicatorAggregations,
   getGroupBy,
   getResultDataHash,
+  removeAdditionalData,
 }

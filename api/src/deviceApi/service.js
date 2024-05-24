@@ -28,6 +28,7 @@ const { DeviceApiContext } = require('./DeviceApiContext')
 
 const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 const { DEVICE_LOG_TYPE_OPTIONAL, DEVICE_LOG_TYPE_RESULT, DEVICE_LOG_TYPE_OPERATION } = require('./constants')
+const { removeAdditionalData } = require('../result/common/logic')
 
 const getDeviceDataHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_OPTIONAL,
@@ -92,8 +93,10 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}, isFastImport = fa
     let deviceLogId = null
     let deviceLogRawMessage = null
     if (updateDeviceLog) {
+      const formattedResult = removeAdditionalData(request.plugins.rawPayload)
+
       // TODO DeviceLog handle non-JSON payloads
-      deviceLogRawMessage = JSON.stringify(request.plugins.rawPayload)
+      deviceLogRawMessage = JSON.stringify(formattedResult)
 
       logger.debug('need to ensure DeviceLog is inserted even if failure below', {
         reLabel: 'deviceApi:deviceApiHandler',
@@ -743,7 +746,7 @@ async function updateLogs(request) {
     source: _.get(request.payload, 'log.source', ''),
     createdOn: new Date(),
     senderIp: getRemoteAddress(request),
-    rawMessage: JSON.stringify(request.plugins.rawPayload),
+    rawMessage: JSON.stringify(formattedResult),
   })
 }
 
