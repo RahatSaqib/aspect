@@ -468,6 +468,10 @@ export default defineMessages({
     id: 'pages.NotificationDetail.type.NoResult',
     defaultMessage: 'No Result',
   },
+  notificationTypeDeviceExpectedBackOnline: {
+    id: 'pages.NotificationDetail.type.DeviceExpectedBackOnline',
+    defaultMessage: 'Expected Back Online',
+  },
   notificationTypeOffline: {
     id: 'pages.Notification.type.Offline',
     defaultMessage: 'Offline',

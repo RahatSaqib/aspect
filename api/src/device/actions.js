@@ -20,6 +20,7 @@ const types = {
   DEVICE_INSTRUMENT_REPLACED: 'DEVICE_INSTRUMENT_REPLACED',
   DEVICE_UNUSED_MODULES: 'DEVICE_UNUSED_MODULES',
   DEVICE_UPDATE_MODULE_SERIALS: 'DEVICE_UPDATE_MODULE_SERIALS',
+  DEVICE_EXPECTED_BACK_ONLINE: 'DEVICE_EXPECTED_BACK_ONLINE',
   HARDWARE_SYRINGE_STALL_ERROR: 'HARDWARE_SYRINGE_STALL_ERROR', // 2005
   HARDWARE_SYRINGE_PRESSURE_TOOHIGH: 'HARDWARE_SYRINGE_PRESSURE_TOOHIGH', // 2008
   HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE: 'HARDWARE_ULTRASONIC_HORN_CURRENT_OUT_OF_RANGE', // 2026
@@ -31,6 +32,7 @@ const types = {
   HARDWARE_MODULE_WAS_RESET: 'HARDWARE_MODULE_WAS_RESET', // 2126
   HARDWARE_POWER_SUPPLY_VOLTAGE_OUT_OF_RANGE: 'HARDWARE_POWER_SUPPLY_VOLTAGE_OUT_OF_RANGE', // 4008
   HARDWARE_TEMPERATURE_ERRORS: 'HARDWARE_TEMPERATURE_ERRORS', // 4017
+  EXPECTED_BACK_ONLINE_ANALYSIS: 'EXPECTED_BACK_ONLINE_ANALYSIS',
 }
 
 const hardwareErrorActions = {
@@ -349,6 +351,36 @@ function deviceUpdateModuleSerials() {
   }
 }
 
+/**
+ * Runs a process to detect devices which are overdue to get back online
+ */
+function expectedBackOnlineAnalysis() {
+  return {
+    type: types.EXPECTED_BACK_ONLINE_ANALYSIS,
+  }
+}
+
+/**
+ * Creates an action to notify the device with given id
+ * has been passed maintenanceDueOn.
+ *
+ * deviceId is required.
+ * maintenanceDueOn: is required date device was marked to be expected back online
+ */
+function deviceExpectedBackOnline(deviceId, maintenanceDueOn) {
+  if (!deviceId) {
+    throw new Error('Must specify deviceId to notify deviceExpectedBackOnline')
+  }
+  if (!maintenanceDueOn) {
+    throw new Error('Must specify maintenanceDueOn date to notify deviceExpectedBackOnline')
+  }
+  return {
+    type: types.DEVICE_EXPECTED_BACK_ONLINE,
+    deviceId,
+    options: { maintenanceDueOn },
+  }
+}
+
 module.exports = {
   types,
   calibrationDueDateAnalysis,
@@ -371,4 +403,6 @@ module.exports = {
   logDeviceMaintenanceStatus,
   deviceUpdateModuleSerials,
   cepheidc360InstrumentLogsReceived,
+  deviceExpectedBackOnline,
+  expectedBackOnlineAnalysis,
 }
