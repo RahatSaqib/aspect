@@ -36,6 +36,7 @@ const processResults = async knex => {
     const resultsToUpdate = await getResultsToUpdateInRange(knex, start, end, startDate)
 
     if (resultsToUpdate.length > 0) {
+      // eslint-disable-next-line no-await-in-loop
       await knex('Result').insert(resultsToUpdate).onConflict('id').merge()
     }
     resultProcessed = end
@@ -63,6 +64,7 @@ const processDeviceLogs = async knex => {
     const deviceLogsToUpdate = await getDeviceLogsInRange(knex, start, end, logStartDate)
 
     if (deviceLogsToUpdate.length > 0) {
+      // eslint-disable-next-line no-await-in-loop
       await knex('DeviceLog').insert(deviceLogsToUpdate).onConflict('id').merge()
     }
     deviceLogProcessed = end
