@@ -746,7 +746,7 @@ async function updateLogs(request) {
     source: _.get(request.payload, 'log.source', ''),
     createdOn: new Date(),
     senderIp: getRemoteAddress(request),
-    rawMessage: JSON.stringify(formattedResult),
+    rawMessage: JSON.stringify(request.plugins.rawPayload),
   })
 }
 

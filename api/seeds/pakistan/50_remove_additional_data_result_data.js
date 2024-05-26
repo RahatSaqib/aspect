@@ -27,7 +27,6 @@ const processResults = async knex => {
   const resultBatchSize = 100
   let resultProcessed = minResultId - 1
   const resultEndAt = maxResultId
-  let resultTotal = 0
 
   while (resultProcessed < resultEndAt) {
     const start = resultProcessed + 1
@@ -36,7 +35,6 @@ const processResults = async knex => {
     // eslint-disable-next-line no-await-in-loop
     const resultsToUpdate = await getResultsToUpdateInRange(knex, start, end, startDate)
 
-    resultTotal += resultsToUpdate.length
     if (resultsToUpdate.length > 0) {
       await knex('Result').insert(resultsToUpdate).onConflict('id').merge()
     }
@@ -56,7 +54,6 @@ const processDeviceLogs = async knex => {
   const deviceLogBatchSize = 100
   let deviceLogProcessed = minDeviceLogId - 1
   const deviceLogEndAt = maxDeviceLogId
-  let deviceLogTotal = 0
 
   while (deviceLogProcessed < deviceLogEndAt) {
     const start = deviceLogProcessed + 1
@@ -65,7 +62,6 @@ const processDeviceLogs = async knex => {
     // eslint-disable-next-line no-await-in-loop
     const deviceLogsToUpdate = await getDeviceLogsInRange(knex, start, end, logStartDate)
 
-    deviceLogTotal += deviceLogsToUpdate.length
     if (deviceLogsToUpdate.length > 0) {
       await knex('DeviceLog').insert(deviceLogsToUpdate).onConflict('id').merge()
     }
