@@ -45,7 +45,7 @@ const processResults = async knex => {
 }
 
 const processDeviceLogs = async knex => {
-  const logStartDate = '2024-02-26' // earliest log date
+  const logStartDate = '2024-02-26' // day before earliest log date
   const { minId: minDeviceLogId, maxId: maxDeviceLogId } = await getRange(
     knex,
     'DeviceLog',
