@@ -114,7 +114,7 @@ async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
 
   for (const device of devices) {
     // Calculate the number of days since the device was last seen
-    const lastSeenOnDiff = calculateDaysDifference(device.lastSeenOn) || 0
+    const lastSeenOnDiff = calculateDaysDifference(device.lastPingOn) || 0
 
     // Calculate the number of days since the last reported date of the device
     const lastReportedOnDiff = calculateDaysDifference(device.lastReportedOn) || 0

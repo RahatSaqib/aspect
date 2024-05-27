@@ -96,7 +96,7 @@ module.exports = async function (request) {
           name: 'Days To Calibration Due Date',
         },
         {
-          id: 'numberOfDays device.lastSeenOn',
+          id: 'numberOfDays device.lastPingOn',
           nameI18nKey: 'placeHolderDaysInactive',
           name: 'Days inactive',
         },
