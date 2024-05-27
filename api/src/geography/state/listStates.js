@@ -15,7 +15,7 @@ async function listStates({ auth, query }) {
     .join('Country as c', 'g.countryId', 'c.id')
     .join('State as s', 'g.stateId', 's.id')
     .modify(filterParams, query, {
-      name: 's.name',
+      stateId: 's.id',
     })
     .modify(addConstraints, dataConstraints, { country: 'c', state: 's' })
     .whereNull('lgaId')
