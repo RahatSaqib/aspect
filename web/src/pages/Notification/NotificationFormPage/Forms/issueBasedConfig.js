@@ -34,7 +34,7 @@ const lowInventorySection = (formatMessage, partner) => {
   }
 }
 
-const deviceOfflineSection = (formatMessage) => {
+const deviceOfflineSection = formatMessage => {
   return {
     id: 'whenDeviceHasBeenInactiveForMoreThan',
     label: 'whenDeviceHasBeenInactiveForMoreThan',
