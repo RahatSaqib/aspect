@@ -118,6 +118,11 @@ const NotificationFormPage = ({ id, onSubmit }) => {
       newValues.reportStartingWeekDay = filter.reportStartingWeekDay
     }
 
+    if (issueType === 'DeviceOffline') {
+      newValues.recurrenceFactor = initialValues.recurrenceFactor?.toString()
+      newValues.daysInactive = initialValues.daysInactive?.toString()
+    }
+
     const form = getFormConfigWithData(
       intl,
       jobFunctions,
