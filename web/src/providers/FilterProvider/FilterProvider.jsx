@@ -17,7 +17,10 @@ const minDate = startOfDay(subtractDays(now, 30))
 const maxDate = endOfDay(now)
 
 const dashboardV2DefaultFilters = {
-  '/dashboard/coverage/error-rate': { minDate: startOfMonth(now), maxDate: endOfMonth(now) },
+  '/dashboard/coverage/error-rate': {
+    minDate,
+    maxDate,
+  },
   '/dashboard/rif/provincial-diagnosis-trend': { states: [], lgas: [] },
   '/dashboard/rif/provincial-rrtb-trend-comparison': { states: [], lgas: [] },
   '/dashboard/rif/provincial-testing-trend': { states: [], lgas: [] },

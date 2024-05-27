@@ -13,6 +13,7 @@ module.exports = async function (request) {
     'ModuleDisabled',
     'UnusedModules',
     'InstrumentReplaced',
+    'DeviceExpectedBackOnline',
   ]
 
   /**
@@ -94,6 +95,11 @@ module.exports = async function (request) {
           id: 'device.daysToCalibrationDueDate',
           nameI18nKey: 'placeHolderDaysToCalibrationDueDate',
           name: 'Days To Calibration Due Date',
+        },
+        {
+          id: 'device.expectedBackOnlineDate',
+          nameI18nKey: 'placeHolderExpectedBackOnlineDate',
+          name: 'Expected Back Online Date',
         },
         {
           id: 'numberOfDays device.lastPingOn',

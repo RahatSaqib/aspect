@@ -94,6 +94,11 @@ const notificationTypeSection = (formatMessage, partner, isEdit) => ({
                     label: formatMessage(messages.notificationTypeInstrumentReplaced),
                     icon: 'AiOutlineTool',
                   },
+                  {
+                    value: 'DeviceExpectedBackOnline',
+                    label: formatMessage(messages.notificationTypeDeviceExpectedBackOnline),
+                    icon: 'AiOutlineFieldTime',
+                  },
                 ],
               },
             ],

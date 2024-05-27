@@ -1552,6 +1552,30 @@ async function seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFi
       }),
       ...auditDates,
     },
+
+    /**
+     * see ASP-6671
+     */
+    {
+      issueTypeId: issueTypes.DeviceExpectedBackOnline.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 7 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.DeviceExpectedBackOnline.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 14 },
+      }),
+      ...auditDates,
+    },
   ])
 }
 
@@ -2220,7 +2244,7 @@ async function addDeviceCapacities(knex, data) {
 
   await Promise.each(
     deviceCapacitiesByPartner,
-    async ({ deviceTypeExternalId, defaultForDeviceType, name, dailyCapacity }) => {
+    async ({ deviceTypeExternalId, defaultForDeviceType, name, dailyCapacity, modules }) => {
       if (deviceTypes[deviceTypeExternalId]) {
         await upsertItems(
           knex,
@@ -2232,6 +2256,7 @@ async function addDeviceCapacities(knex, data) {
             defaultForDeviceType,
             name,
             dailyCapacity,
+            modules,
           }))
         )
       } else {

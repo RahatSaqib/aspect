@@ -1419,6 +1419,35 @@ async function getBaseIssues(auditFields) {
         ...auditFields,
       },
     },
+    DeviceExpectedBackOnline: {
+      issueType: {
+        name: 'Device Expected Back Online',
+        externalId: 'DeviceExpectedBackOnline',
+        i18nKey: 'issueStatusDeviceExpectedBackOnline',
+        issueCategoryId: issueCategories.DeviceHealth,
+        readyForNotification: true,
+      },
+      MessageType: {
+        messageSeverityId: messageSeverities.Alert,
+      },
+      AlertTemplate: {
+        message:
+          'Device "{{device.name}}" was expected back online on {{issue.data.maintenanceDueOn}}, but is still offline.',
+        ...auditFields,
+      },
+      SmsTemplate: {
+        message:
+          'Device "{{device.name}}" was expected back online on {{issue.data.maintenanceDueOn}}, but is still offline.',
+        ...auditFields,
+      },
+      EmailTemplate: {
+        subject: '{{device.name}}: No Testing',
+        body: 'Device "{{device.name}}" was expected back online on {{issue.data.maintenanceDueOn}}, but is still offline.',
+        htmlBody:
+          'Device <em>"{{device.name}}"</em> was expected back online on {{issue.data.maintenanceDueOn}}, but is still offline.',
+        ...auditFields,
+      },
+    },
   }
   return IssueDefinition
 }

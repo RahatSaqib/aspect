@@ -1,97 +1,90 @@
-import React from 'react'
-import entries from 'lodash/entries'
-import get from 'lodash/get'
-import groupBy from 'lodash/groupBy'
-import set from 'lodash/set'
+import React, { useState } from 'react'
+import { Box, FormControlLabel, Switch, Typography } from '@mui/material'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
-import { Loading, ErrorRateFilter } from '../../../../../cleanComponents'
+import { ErrorRateFilter, LineGraph, Loading, StateSelect } from '../../../../../cleanComponents'
+import useAuthState from '../../../../../hooks/useAuthState'
 import useFilterValues from '../../../../../hooks/useFilterValues'
-import NestedTable from '../../../components/NestedTable'
+import { getCustomMessage, graphMessages, months } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
+import useDeviceErrorGraph from '../../../hooks/useDeviceErrorGraph'
 import messages from '../../../PkDashboard.Messages'
+import { ErrorRateTable } from './ErrorRateTable'
 
-const values = ['numberOfModules', 'cntMtbResults', 'cntMtbError', 'cntMtbInvalid', 'cntMtbNoResult']
-
-const columns = [
-  { name: 'Devices', prop: 'name' },
-  { name: 'Total Modules', prop: 'numberOfModules' },
-  { name: 'Total Tests', prop: 'cntMtbResults' },
-  { name: '# Errors', prop: 'cntMtbError' },
-  { name: '% Errors', prop: 'errorPercent' },
-  { name: '# Invalid', prop: 'cntMtbInvalid' },
-  { name: '% Invalid', prop: 'invalidPercent' },
-  { name: '# No Result', prop: 'cntMtbNoResult' },
-  { name: '% No Result', prop: 'noResultPercent' },
-]
-
-const childrenKey = 'children'
-
-const createNode = (name, parent) => {
-  const data = parent.reduce(
-    (prev, curr) => {
-      values.forEach(key => {
-        const sum = (prev?.[key] ?? 0) + (curr?.[key] ?? 0)
-        set(prev, key, Number(sum.toFixed(2)))
-      })
-      return prev
-    },
-    { name, id: name }
-  )
-  const errorPercent = (data?.cntMtbError / data?.cntMtbResults) * 100
-  const invalidPercent = (data?.cntMtbInvalid / data?.cntMtbResults) * 100
-  const noResultPercent = (data?.cntMtbNoResult / data?.cntMtbResults) * 100
-
-  return {
-    ...data,
-    errorPercent: `${errorPercent.toPrecision(3)} %`,
-    invalidPercent: `${invalidPercent.toPrecision(3)} %`,
-    noResultPercent: `${noResultPercent.toPrecision(3)} %`,
-  }
-}
-
-const makeNestedData = array => {
-  const result = []
-
-  entries(groupBy(array, 'stateName')).forEach(([stateName, stateValues]) => {
-    const state = createNode(stateName, stateValues)
-
-    if (state.name === 'null') {
-      result.push({ ...state, name: 'N/A', [childrenKey]: stateValues })
-      return
-    }
-
-    entries(groupBy(stateValues, 'lgaName')).forEach(([lgaName, lgaValues]) => {
-      const lga = createNode(lgaName, lgaValues)
-
-      entries(groupBy(lgaValues, 'name')).forEach(([typeName, typeValues]) => {
-        const type = createNode(typeName, typeValues)
-        set(lga, childrenKey, [...get(lga, childrenKey, []), type])
-      })
-
-      set(state, childrenKey, [...get(state, childrenKey, []), lga])
-    })
-
-    result.push(state)
+const ErrorRateGraph = ({ category, title }) => {
+  const { formatMessage } = useIntl()
+  const user = useAuthState()
+  const [state, setState] = useState()
+  const [showLabel, setShowLabel] = useState(false)
+  const { data, isLoading } = useDeviceErrorGraph(omitBy({ category, state }, isNil), {
+    select: array =>
+      array
+        .sort((a, b) => a.month - b.month)
+        .map(item => ({
+          year: String(item.year),
+          month: `${formatMessage(months[item.month - 1])}`,
+          value: item.percentage,
+        })),
   })
-
-  return result
+  return (
+    <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', my: '25px' }}>
+      <Box flex={1}>
+        <Typography variant="h5" color="primary">
+          {title}
+        </Typography>
+        <FormControlLabel
+          sx={{ mt: '20px' }}
+          label={formatMessage(graphMessages.showValuesLabel)}
+          control={<Switch checked={showLabel} onChange={e => setShowLabel(e.target.checked)} />}
+        />
+        <StateSelect
+          label={getCustomMessage(formatMessage, messages, 'state', user)}
+          value={state || ''}
+          onChange={e => setState(e.target.value)}
+          countryId={user.countryId}
+        />
+      </Box>
+      <Box flex={3}>
+        {isLoading ? (
+          <Loading />
+        ) : (
+          <LineGraph
+            tooltip={{
+              formatter: datum => ({ name: datum.year, value: `${datum.value}%` }),
+            }}
+            yAxis={{
+              label: {
+                formatter: text => `${text}%`,
+              },
+            }}
+            showLabel={showLabel}
+            data={data}
+            xField="month"
+            yField="value"
+            seriesField="year"
+          />
+        )}
+      </Box>
+    </Box>
+  )
 }
 
 const ErrorRatePage = () => {
   const { formatMessage } = useIntl()
   const location = useLocation()
   const filter = useFilterValues(location.pathname)
-  const { data, isLoading } = useDeviceErrors(filter)
+  const { data, isLoading } = useDeviceErrors({ ...filter })
+  const [sort, setSort] = useState({ name: 'name', order: 'asc' })
 
   return (
     <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.genExpertError)}>
-      {isLoading ? (
-        <Loading />
-      ) : (
-        <NestedTable columns={columns} perPage={9999} rows={makeNestedData(data ?? [])} hasDetail />
-      )}
+      {isLoading ? <Loading /> : <ErrorRateTable sort={sort} onSortChange={setSort} items={data} />}
+      <ErrorRateGraph title={formatMessage(messages.nationalErrorRates)} category="error" />
+      <ErrorRateGraph title={formatMessage(messages.nationalInvalidRates)} category="invalid" />
+      <ErrorRateGraph title={formatMessage(messages.nationalNoResultRates)} category="noResult" />
     </PkPage>
   )
 }
