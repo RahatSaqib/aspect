@@ -47,7 +47,7 @@ const deviceOfflineSection = (formatMessage, partner) => {
           {
             id: 'daysInactive',
             label: formatMessage(messages.daysInactive),
-            initialValue: `${partner.maxDaysDeviceOffline}`,
+            initialValue: '1',
             controlType: { component: 'numberField', min: 1, max: 60 },
             classNames: {
               itemContainer: 'max_width_100pc tags_container',

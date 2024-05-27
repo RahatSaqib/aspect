@@ -366,6 +366,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           issueTypeId,
           notificationTypeCategoryId,
           cronRecurrency,
+          recurrenceFactor,
+          daysInactive,
         })
         .where({ id: notificationTypeId })
       ;({ messageTypeId } = await knex

@@ -370,7 +370,7 @@ export default defineMessages({
   },
   repeatCheckAndNotifyInactive: {
     id: 'pages.NotificationDetail.repeatCheckAndNotifyInactive',
-    defaultMessage: 'Number of times to repeat check and notify if inactive',
+    defaultMessage: 'Number of times to repeat check and notify if inactive ...',
   },
   daysInactive: {
     id: 'pages.NotificationDetail.daysInactive',
