@@ -1,6 +1,7 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
 const { getServersByPartner } = require('./getServersByPartner')
+const { triggerJob } = require('../scheduler/triggerJob')
 const { getStatistics } = require('./getStatistics')
 const { getVersion } = require('./getVersion')
 const { getStatus } = require('./getStatus')
@@ -153,6 +154,20 @@ const routes = [
     handler: asyncHandler(getStatus),
     config: {
       auth: false,
+    },
+  },
+  {
+    method: 'POST',
+    path: '/triggerjob/{jobName}',
+    handler: triggerJob,
+    config: {
+      auth: false,
+      description: 'Force to trigger a scheduled job',
+      validate: {
+        params: {
+          jobName: Joi.string().description('JobName'),
+        },
+      },
     },
   },
 ]
