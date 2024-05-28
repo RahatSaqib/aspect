@@ -630,57 +630,45 @@ async function setStatusForDateRange(request) {
     expectedBackOnline,
   }
 
-  if (
-    /**
-     * TODO: empty/disable days in UI for dates BEFORE device createdOn
-     * see ASP-2007 for details
-     */
-    // dateFrom >= startOfDayUtc(device.createdOn) &&
-    dateFrom <= dateTo &&
-    dateTo <= new Date()
-  ) {
-    // Everything all right, then insert logs
-    if (notes) {
-      _.set(payload, 'options.data.notes', notes)
-    }
-    if (expectedBackOnline) {
-      _.set(payload, 'options.data.expectedBackOnline', expectedBackOnline)
-      delete payload.expectedBackOnline
-    }
-
-    const deviceMaintenanceStatusLogIds = []
-    await Promise.mapSeries(getArrayOfDaysInRange(dateFrom, dateTo), async day => {
-      deviceMaintenanceStatusLogIds.push(
-        await setDeviceMaintenanceStatus(
-          deviceId,
-          user.id,
-          deviceMaintenanceStatus.id,
-          startOfDayUtc(day),
-          payload,
-          messageContext
-        )
-      )
-    })
-
-    if (!payload.dateFrom && !payload.dateTo) {
-      ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
-    } else data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
-
-    /**
-     * Get all days for current device in current month.
-     * --> Call same func which is used for getting data for
-     * `Overall Network Health Daily`, but here get data
-     * for current device only
-     */
-    const deviceStatusOverTime = await getDeviceStatusOverTime(request.auth, parentQuery, [deviceId])
-    data.deviceData = deviceStatusOverTime.find(it => it.id === deviceId)
-
-    return {
-      ok: true,
-      data,
-    }
+  // Everything all right, then insert logs
+  if (notes) {
+    _.set(payload, 'options.data.notes', notes)
   }
-  throw Boom.badRequest('Invalid date range')
+  if (expectedBackOnline) {
+    _.set(payload, 'options.data.expectedBackOnline', expectedBackOnline)
+  }
+
+  const deviceMaintenanceStatusLogIds = []
+  await Promise.mapSeries(getArrayOfDaysInRange(dateFrom, dateTo), async day => {
+    deviceMaintenanceStatusLogIds.push(
+      await setDeviceMaintenanceStatus(
+        deviceId,
+        user.id,
+        deviceMaintenanceStatus.id,
+        startOfDayUtc(day),
+        payload,
+        messageContext
+      )
+    )
+  })
+
+  if (!payload.dateFrom && !payload.dateTo) {
+    ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
+  } else data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
+
+  /**
+   * Get all days for current device in current month.
+   * --> Call same func which is used for getting data for
+   * `Overall Network Health Daily`, but here get data
+   * for current device only
+   */
+  const deviceStatusOverTime = await getDeviceStatusOverTime(request.auth, parentQuery, [deviceId])
+  data.deviceData = deviceStatusOverTime.find(it => it.id === deviceId)
+
+  return {
+    ok: true,
+    data,
+  }
 }
 
 async function automaticallySetDeviceMaintenanceStatus(

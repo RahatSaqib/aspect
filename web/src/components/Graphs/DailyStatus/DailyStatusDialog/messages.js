@@ -25,6 +25,10 @@ const messages = defineMessages({
     id: 'pages.DailyStatusDialog.note',
     defaultMessage: 'Note',
   },
+  expectedBackOnline: {
+    id: 'pages.DailyStatusDialog.expectedBackOnline',
+    defaultMessage: 'Expected Back Online',
+  },
   submit: {
     id: 'pages.DailyStatusDialog.submit',
     defaultMessage: 'Submit',
