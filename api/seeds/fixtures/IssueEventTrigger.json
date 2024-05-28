@@ -743,6 +743,20 @@
           }
         }
       }
+    },
+    {
+      "issueType": "DeviceExpectedBackOnline",
+      "issueEventStatus": "Triggered",
+      "triggerConditions": {
+        "action": "DEVICE_EXPECTED_BACK_ONLINE"
+      }
+    },
+    {
+      "issueType": "DeviceExpectedBackOnline",
+      "issueEventStatus": "Resolved",
+      "triggerConditions": {
+        "action": "DEVICE_ONLINE"
+      }
     }
   ]
 }

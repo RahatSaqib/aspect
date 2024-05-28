@@ -1552,6 +1552,30 @@ async function seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFi
       }),
       ...auditDates,
     },
+
+    /**
+     * see ASP-6671
+     */
+    {
+      issueTypeId: issueTypes.DeviceExpectedBackOnline.id,
+      partnerId,
+      escalateToLevel: 2,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 7 },
+      }),
+      ...auditDates,
+    },
+    {
+      issueTypeId: issueTypes.DeviceExpectedBackOnline.id,
+      partnerId,
+      escalateToLevel: 3,
+      escalationConditions: JSON.stringify({
+        evaluationMethod: 'issue-age',
+        evaluationParameter: { days: 14 },
+      }),
+      ...auditDates,
+    },
   ])
 }
 

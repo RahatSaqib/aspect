@@ -11,6 +11,7 @@ const {
   onDeviceMaintenanceStatusLogScheduled,
   onDeviceUpdateModuleSerials,
 } = require('./service')
+const expectedBackOnlineAnalysis = require('./expectedBackOnlineAnalysis')
 
 const subscriptions = [
   {
@@ -26,6 +27,7 @@ const subscriptions = [
       DEVICE_MAINTENANCE_STATUS_LOG_SCHEDULED: async (action, context) =>
         taskTracker(onDeviceMaintenanceStatusLogScheduled, action, context),
       DEVICE_UPDATE_MODULE_SERIALS: onDeviceUpdateModuleSerials,
+      EXPECTED_BACK_ONLINE_ANALYSIS: expectedBackOnlineAnalysis,
     },
   },
 ]
