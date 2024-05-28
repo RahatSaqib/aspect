@@ -34,7 +34,6 @@ const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, timezone
     .whereIn('r.assayId', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
     .whereRaw(`${tzOffset} >= DATE_SUB(CURDATE(), INTERVAL 5 YEAR)`)
     .select(
-      'r.resultCategory1',
       knex.raw(`YEAR(r.startedOn) AS year,  MONTH(r.startedOn) AS month`),
       knex.raw(`SUM(CASE WHEN r.resultCategory1 = ? THEN r.resultCount ELSE 0 END) AS categoryTotal`, [categoryId])
     )
@@ -47,7 +46,7 @@ const getErrorResultAgg = (knex, assayIds, dataConstraints, categoryId, timezone
           .split(',')
           .map(Number)
           .filter(n => !Number.isNaN(n))
-        queryBuilder.join('State as s', 'g.stateId', 's.id').whereIn('s.id', stateIds)
+        queryBuilder.join('State as stt', 'g.stateId', 'stt.id').whereIn('stt.id', stateIds)
       }
     })
 
