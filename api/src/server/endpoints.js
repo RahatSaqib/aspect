@@ -161,7 +161,7 @@ const routes = [
     path: '/triggerjob/{jobName}',
     handler: triggerJob,
     config: {
-      auth: false,
+      auth: { scope: ['admin:edit'] },
       description: 'Force to trigger a scheduled job',
       validate: {
         params: {

@@ -133,7 +133,8 @@ const messageQueuePlugin = {
       addLoggers(server, queue)
       await addSubscriptions(queue)
       if (config.scheduler.enabled) {
-        startScheduler(queue, server)
+        const dispatcher = startScheduler(queue)
+        server.app.dispatcher = dispatcher
       }
     } catch (err) {
       logger.error(err)

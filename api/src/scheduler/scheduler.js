@@ -26,7 +26,7 @@ const { tryToContinueUnprocessedRawData } = require('../deviceApiRaw/actions')
 const { webhookServerCheckTokens } = require('../webhook/actions')
 const config = require('../config')
 
-function startScheduler(queue, server) {
+function startScheduler(queue) {
   // run hourly tasks on startup and cron every hour
   const dispatcher = createActionDispatcher(queue, {
     calibrationDueDateAnalysis,
@@ -50,8 +50,6 @@ function startScheduler(queue, server) {
     webhookServerCheckTokens,
     expectedBackOnlineAnalysis,
   })
-
-  server.app.dispatcher = dispatcher
 
   dispatcher.webhookServerCheckTokens()
   dispatcher.factGenerateResultCounts()
@@ -108,6 +106,8 @@ function startScheduler(queue, server) {
   }
 
   cron.schedule(config.scheduler.cron.logDeviceMaintenanceStatus, dispatcher.logDeviceMaintenanceStatus) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
+
+  return dispatcher
 }
 
 function createActionDispatcher(queue, actionCreators) {
