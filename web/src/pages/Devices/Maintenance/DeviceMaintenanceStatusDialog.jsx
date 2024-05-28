@@ -151,7 +151,7 @@ const FormDialog = ({
               type="expectedBack"
               value={values.expectedBack}
               minDate={new Date()}
-              disabled={form.submitting}
+              disabled={values.maintenanceStatus === 'reportedActive' || form.submitting}
               onChange={date => {
                 onExpectedBackChange(format(date, 'yyyy-MM-dd'))
               }}

@@ -53,6 +53,10 @@ const messagesBase = defineMessages({
     id: 'forms.formItem.notes',
     defaultMessage: 'Notes',
   },
+  expectedBackOnline: {
+    id: 'forms.formItem.expectedBackOnline',
+    defaultMessage: 'Expected Back Online',
+  },
   startDate: {
     id: 'forms.formItem.startDate',
     defaultMessage: 'Start Date',
