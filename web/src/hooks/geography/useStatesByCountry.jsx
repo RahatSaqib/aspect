@@ -4,14 +4,14 @@ import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
 import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
 import { STATE_KEY, STATE_KEY_BY_COUNTRY_ID_ENDPOINT } from './geographyKeys.js'
 
-const getStatesByCountryId = async (countryId, returnAll) =>
+const getStatesByCountryId = async (countryId, returnAll, onlyAssociatedSites) =>
   fetchWrapperForQueries({
     endpoint: replaceRouteParams(STATE_KEY_BY_COUNTRY_ID_ENDPOINT, { countryId }),
-    params: { all: returnAll },
+    params: { all: returnAll, onlyAssociatedSites },
   }).then(response => response.data)
 
-const useStatesByCountry = ({ countryId, returnAll = false }, options) =>
-  useQuery([STATE_KEY, countryId, returnAll], () => getStatesByCountryId(countryId, returnAll), {
+const useStatesByCountry = ({ countryId, returnAll = false, onlyAssociatedSites = false }, options) =>
+  useQuery([STATE_KEY, countryId, returnAll], () => getStatesByCountryId(countryId, returnAll, onlyAssociatedSites), {
     ...SELECTS_QUERY_OPTIONS,
     ...options,
   })

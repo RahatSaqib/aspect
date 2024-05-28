@@ -150,9 +150,9 @@ async function countrySelectList(request) {
 
 async function stateSelectListForUser(request) {
   const { countryId } = request.params
-  const { all } = request.query
+  const { all, onlyAssociatedSites } = request.query
   const dataConstraints = await getConstraints(request.auth.credentials)
-  return getStates(dataConstraints, { countryId, all })
+  return getStates(dataConstraints, { countryId, all, onlyAssociatedSites })
 }
 
 async function stateSelectList(request) {
@@ -160,7 +160,7 @@ async function stateSelectList(request) {
   return getStates(null, { stateId })
 }
 
-async function getStates(dataConstraints, { countryId, stateId, all }) {
+async function getStates(dataConstraints, { countryId, stateId, all, onlyAssociatedSites }) {
   let states = []
   const statesAndLgas = await query(
     stateId ? 'Get states and state LGAs for select lists' : 'Get states for select list'
@@ -175,6 +175,9 @@ async function getStates(dataConstraints, { countryId, stateId, all }) {
     })
     .modify(q => {
       if (countryId) q.where('g.countryId', countryId)
+    })
+    .modify(q => {
+      if (onlyAssociatedSites) q.innerJoin('Site as si', 'si.geographyId', 'g.id')
     })
     .modify(q => {
       if (dataConstraints) q.modify(addConstraints, dataConstraints, all ? {} : { geography: 'g' })
