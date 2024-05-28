@@ -5,6 +5,7 @@ const { triggerJob } = require('../scheduler/triggerJob')
 const { getStatistics } = require('./getStatistics')
 const { getVersion } = require('./getVersion')
 const { getStatus } = require('./getStatus')
+const { listJobs } = require('../scheduler/listJobs')
 
 const countryBase = {
   CountryId: Joi.number().integer().positive().required().description('Country Id'),
@@ -154,6 +155,15 @@ const routes = [
     handler: asyncHandler(getStatus),
     config: {
       auth: false,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/listjobs',
+    handler: asyncHandler(listJobs),
+    config: {
+      auth: { scope: ['admin:edit'] },
+      description: 'Returns a list of all scheduled Jobs',
     },
   },
   {
