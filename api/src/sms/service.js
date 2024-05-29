@@ -140,4 +140,5 @@ async function createSmsMessageFromTemplate(knex, smsMessageId) {
 module.exports = {
   onSmsMessageCreated,
   onSmsMessageReadyForSending,
+  doSendSmsMessage,
 }

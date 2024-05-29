@@ -16,6 +16,7 @@
     "knex:migrate:latest": "knex migrate:latest",
     "knex:seed:run": "knex seed:run",
     "lint": "eslint ./src ./test ./migrations ./seeds ./knexfile.js --ext .js",
+    "lint:fix": "eslint ./src ./test ./migrations ./seeds ./knexfile.js --ext .js --fix",
     "mocha:contract": "TZ=UTC mocha --config test/contract.mocharc.js ",
     "mocha:contract:ci": "TZ=UTC mocha --config test/ci-contract.mocharc.js",
     "mocha:unit": "TZ=UTC mocha --config test/unit.mocharc.js",
