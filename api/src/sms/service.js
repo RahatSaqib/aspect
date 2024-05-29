@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { stringify } = require('flatted')
 const { smsMessageReadyForSending, smsMessageProcessed } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
@@ -84,7 +85,7 @@ async function doSendSmsMessage(context, knex, smsMessageId) {
   let errorData = null
   // send sms
   await sendSms(cell, message).catch(ex => {
-    errorData = JSON.stringify({ ...ex, cell, message })
+    errorData = stringify({ ...ex, cell, message })
     // set status to 'Error'
 
     messageStatusId = messageStatusIdError
