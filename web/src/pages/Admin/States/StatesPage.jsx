@@ -36,7 +36,7 @@ export default function StatesPage() {
   const sortPage = makeSortPageSelector({ sortCol: 'name' })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const { data, isLoading } = useAdminStates(
-    omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, name: filters.stateName }, isNil)
+    omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, stateId: filters.stateId }, isNil)
   )
 
   return (
@@ -77,7 +77,6 @@ export default function StatesPage() {
                     { key: 'lgas', label: getCustomMessage(formatMessage, messages, 'lga', user) },
                     { key: 'sites', label: formatMessage(messages.sites) },
                     { key: 'issues', label: formatMessage(messages.issues) },
-                    { key: 'deviceConfigurations', label: formatMessage(messages.deviceConfigurations) },
                     { key: 'notificationStates', label: formatMessage(messages.notificationStates) },
                     { key: 'peopleWithAccess', label: formatMessage(messages.peopleWithAccess) },
                     { key: 'manage', label: formatMessage(messages.manage) },
@@ -93,7 +92,6 @@ export default function StatesPage() {
                       <DataTableCell>{state.lgaCount}</DataTableCell>
                       <DataTableCell>{state.siteCount}</DataTableCell>
                       <DataTableCell>{state.issueCount}</DataTableCell>
-                      <DataTableCell>{state.deviceConfigurationCount}</DataTableCell>
                       <DataTableCell>{state.notificationCount}</DataTableCell>
                       <DataTableCell>{state.jobContextCount}</DataTableCell>
                       <DataTableCell>

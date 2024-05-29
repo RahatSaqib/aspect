@@ -7,6 +7,7 @@ const {
   calibrationDueDateAnalysis,
   calibrationIssueNotificationTrigger,
   deviceUpdateModuleSerials,
+  expectedBackOnlineAnalysis,
 } = require('../device/actions')
 const {
   factGenerateDeviceConnectivity,
@@ -47,6 +48,7 @@ function startScheduler(queue) {
     missingInventoryLotsResolver,
     deviceUpdateModuleSerials,
     webhookServerCheckTokens,
+    expectedBackOnlineAnalysis,
   })
 
   dispatcher.webhookServerCheckTokens()
@@ -62,6 +64,7 @@ function startScheduler(queue) {
   dispatcher.resultAnalyzeTimeout()
   dispatcher.missingInventoryLotsResolver()
   dispatcher.deviceUpdateModuleSerials()
+  dispatcher.expectedBackOnlineAnalysis()
 
   cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
@@ -88,6 +91,8 @@ function startScheduler(queue) {
 
   cron.schedule('0 */8 * * *', dispatcher.deviceUpdateModuleSerials) // run every 8 hours
 
+  cron.schedule('30 6 * * *', dispatcher.expectedBackOnlineAnalysis) // daily at 6:30 am
+
   if (_.get(config, 'uptimerobot.api.key')) {
     const dispatchCheckUptimeRobot = () => {
       dispatchActionToQueue(
@@ -101,6 +106,8 @@ function startScheduler(queue) {
   }
 
   cron.schedule(config.scheduler.cron.logDeviceMaintenanceStatus, dispatcher.logDeviceMaintenanceStatus) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
+
+  return dispatcher
 }
 
 function createActionDispatcher(queue, actionCreators) {

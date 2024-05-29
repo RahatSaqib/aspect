@@ -6,14 +6,13 @@ const { getBaseNotificationTypes } = require('../relatedObjects/notificationType
 const { notificationTypeCategoryToId } = require('../../src/shared/dictionary')
 const { upsertSingle } = require('../utils')
 
-const now = new Date()
-
 async function upsertMessageAndNotificationTypes(
   knex,
   partnerId,
   adminId,
   issueTypeExternalIds = ['DeviceOffline', 'DeviceNoResults', 'InventoryStockExpiring']
 ) {
+  const now = new Date()
   const auditFields = {
     createdOn: now,
     createdBy: adminId,
@@ -34,17 +33,17 @@ async function upsertMessageAndNotificationTypes(
     const notificationType = notificationTypes[issueTypeInDb.externalId]
 
     if (issueTypeInDb && issue && notificationType) {
-      const { id: alertTemplateId } = issue.AlertTemplate
+      const { id: alertTemplateId = null } = issue.AlertTemplate
         ? (await knex('AlertTemplate').where('message', issue.AlertTemplate.message).first('id')) || {}
-        : null
+        : {}
 
-      const { id: smsTemplateId } = issue.SmsTemplate
+      const { id: smsTemplateId = null } = issue.SmsTemplate
         ? (await knex('SmsTemplate').where('message', issue.SmsTemplate.message).first('id')) || {}
-        : null
+        : {}
 
-      const { id: emailTemplateId } = issue.EmailTemplate
+      const { id: emailTemplateId = null } = issue.EmailTemplate
         ? (await knex('EmailTemplate').where('subject', issue.EmailTemplate.subject).first('id')) || {}
-        : null
+        : {}
 
       // get all job functions that should be notified in any way of the issue
       const jobFunctionIds = _.uniq(_.concat(notificationType.alert, notificationType.email, notificationType.sms))

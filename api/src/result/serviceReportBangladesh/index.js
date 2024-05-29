@@ -1072,6 +1072,8 @@ async function getDataForReportDrTb10B(auth, query) {
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('State as st', 'st.id', 'g.stateId')
+    .leftOuterJoin('Lga as lg', 'lg.id', 'g.lgaId')
     .leftOuterJoin('ResultCategory as rc1', 'r.resultCategory1', 'rc1.id')
     .leftOuterJoin('ResultCategory as rc2', 'r.resultCategory2', 'rc2.id')
     .leftOuterJoin('Site as rs', 'r.referringSiteId', 'rs.id')
@@ -1256,7 +1258,11 @@ async function getDataForReportDrTb10B(auth, query) {
             END)
           ELSE ''
           END as resultMtbRif
-      `)
+      `),
+      's.name as siteMtbRif',
+      's.name as siteName',
+      'lg.name as lgaName',
+      'st.name as stateName'
     )
   const data = await dataQuery
 
@@ -2098,7 +2104,6 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
    * for this worksheet and see there `useNamedData: 'results_10a_for_nt_use'`
    */
   const { data } = sharedResults[useNamedData]
-
   /**
    * show only Detected Mtb/Rif and Mtb/Rif-Ultra (RR) data or `Resistance Detected` Xdr data
    */
@@ -2106,6 +2111,7 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
   dataRR.rows = dataRR.rows.filter(
     it =>
       it.resultMtbRif === 'RR' ||
+      it.mtbDetected === 'Detected' ||
       it.inhDetected?.includes('Resistance Detected') ||
       it.flqDetected?.includes('Resistance Detected') ||
       it.amkDetected?.includes('Resistance Detected') ||

@@ -257,12 +257,15 @@ function getDeviceBaseExtendedQuery(
       },
       { showDecommissionedDevices, showUnapprovedDevices }
     )
+
   return deviceQuery
 }
 
 async function getBasicsForDevicesReport(dataConstraints, query) {
   const resultCategoryIds = await allResultCategoryToId()
-  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
+  const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, {
+    extendJoinToAssays: true,
+  })
 
   // get total count for paging
   const getCount = deviceQuery.clone().countDistinct('d.id as count').first()

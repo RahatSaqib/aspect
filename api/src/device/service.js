@@ -40,6 +40,7 @@ const {
 const { getSelectListFields } = require('./common/querySelectors')
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
 const { getDeviceStatusOverTime } = require('../deviceMaintenanceStatus/service')
+const { getDateTimeExpressionInTimeZone } = require('../shared/date')
 
 async function getDeviceByRequest(request) {
   const {
@@ -539,6 +540,26 @@ const getDeviceMaintenanceStatusesInRange = async (deviceId, dateFrom, dateTo) =
     .distinct('dms.externalId')
     .pluck('dms.externalId')
 
+const getDeviceResultCount = (deviceId, dateFrom, dateTo, timezoneIANA) => {
+  const minDateFormat = "yyyy-MM-dd'T'00:00:00.000'Z'"
+  const maxDateFormat = "yyyy-MM-dd'T'23:59:59.999'Z'"
+  return knex('Result as r')
+    .leftJoin('Device as d', 'r.deviceId', 'd.id')
+    .where('d.id', deviceId)
+    .where(
+      getDateTimeExpressionInTimeZone(knex, 'r.endedOn', timezoneIANA),
+      '>=',
+      knex.raw(`'${format(dateFrom, minDateFormat)}'`)
+    )
+    .where(
+      getDateTimeExpressionInTimeZone(knex, 'r.endedOn', timezoneIANA),
+      '<=',
+      knex.raw(`'${format(dateTo, maxDateFormat)}'`)
+    )
+    .count('r.id as resultCount')
+    .first()
+}
+
 async function setStatusForDateRange(request) {
   const {
     auth: { credentials },
@@ -587,9 +608,10 @@ async function setStatusForDateRange(request) {
     if (statusesInDateRange.includes('inactiveDecommissioned'))
       throw Boom.badRequest('You cannot change the status of a device in days when it was decommissioned')
     else if (!manuallySet) throw Boom.badRequest("The status you are trying to assign can't be set manually")
-    else if (statusesInDateRange.includes('active'))
-      throw Boom.badRequest('You cannot change the status of a device in days when it was active')
-    else if (externalId === 'inactiveDecommissioned')
+    else if (statusesInDateRange.includes('active')) {
+      const { resultCount } = await getDeviceResultCount(deviceId, dateFrom, dateTo, user.timezoneIANA)
+      if (resultCount > 0) throw Boom.badRequest('You cannot change the status of a device in days when it was active')
+    } else if (externalId === 'inactiveDecommissioned')
       throw Boom.badRequest('Status "Decommissioned" cannot be set for a date range')
     else if (statusesInDateRange.includes('inactiveNoTestsPerformed') && externalId === 'reportedActive')
       throw Boom.badRequest(
@@ -608,57 +630,45 @@ async function setStatusForDateRange(request) {
     expectedBackOnline,
   }
 
-  if (
-    /**
-     * TODO: empty/disable days in UI for dates BEFORE device createdOn
-     * see ASP-2007 for details
-     */
-    // dateFrom >= startOfDayUtc(device.createdOn) &&
-    dateFrom <= dateTo &&
-    dateTo <= new Date()
-  ) {
-    // Everything all right, then insert logs
-    if (notes) {
-      _.set(payload, 'options.data.notes', notes)
-    }
-    if (expectedBackOnline) {
-      _.set(payload, 'options.data.expectedBackOnline', expectedBackOnline)
-      delete payload.expectedBackOnline
-    }
-
-    const deviceMaintenanceStatusLogIds = []
-    await Promise.mapSeries(getArrayOfDaysInRange(dateFrom, dateTo), async day => {
-      deviceMaintenanceStatusLogIds.push(
-        await setDeviceMaintenanceStatus(
-          deviceId,
-          user.id,
-          deviceMaintenanceStatus.id,
-          startOfDayUtc(day),
-          payload,
-          messageContext
-        )
-      )
-    })
-
-    if (!payload.dateFrom && !payload.dateTo) {
-      ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
-    } else data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
-
-    /**
-     * Get all days for current device in current month.
-     * --> Call same func which is used for getting data for
-     * `Overall Network Health Daily`, but here get data
-     * for current device only
-     */
-    const deviceStatusOverTime = await getDeviceStatusOverTime(request.auth, parentQuery, [deviceId])
-    data.deviceData = deviceStatusOverTime.find(it => it.id === deviceId)
-
-    return {
-      ok: true,
-      data,
-    }
+  // Everything all right, then insert logs
+  if (notes) {
+    _.set(payload, 'options.data.notes', notes)
   }
-  throw Boom.badRequest('Invalid date range')
+  if (expectedBackOnline) {
+    _.set(payload, 'options.data.expectedBackOnline', expectedBackOnline)
+  }
+
+  const deviceMaintenanceStatusLogIds = []
+  await Promise.mapSeries(getArrayOfDaysInRange(dateFrom, dateTo), async day => {
+    deviceMaintenanceStatusLogIds.push(
+      await setDeviceMaintenanceStatus(
+        deviceId,
+        user.id,
+        deviceMaintenanceStatus.id,
+        startOfDayUtc(day),
+        payload,
+        messageContext
+      )
+    )
+  })
+
+  if (!payload.dateFrom && !payload.dateTo) {
+    ;[data.deviceMaintenanceStatusLogId] = deviceMaintenanceStatusLogIds
+  } else data.deviceMaintenanceStatusLogIds = deviceMaintenanceStatusLogIds
+
+  /**
+   * Get all days for current device in current month.
+   * --> Call same func which is used for getting data for
+   * `Overall Network Health Daily`, but here get data
+   * for current device only
+   */
+  const deviceStatusOverTime = await getDeviceStatusOverTime(request.auth, parentQuery, [deviceId])
+  data.deviceData = deviceStatusOverTime.find(it => it.id === deviceId)
+
+  return {
+    ok: true,
+    data,
+  }
 }
 
 async function automaticallySetDeviceMaintenanceStatus(
