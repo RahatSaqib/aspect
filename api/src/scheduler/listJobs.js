@@ -3,4 +3,4 @@ async function listJobs(request) {
   return Object.keys(dispatcher)
 }
 
-module.exports = { listJobs 
+module.exports = { listJobs }
