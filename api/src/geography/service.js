@@ -177,7 +177,8 @@ async function getStates(dataConstraints, { countryId, stateId, all, onlyAssocia
       if (countryId) q.where('g.countryId', countryId)
     })
     .modify(q => {
-      if (onlyAssociatedSites) q.innerJoin('Site as si', 'si.geographyId', 'g.id')
+      if (onlyAssociatedSites)
+        q.innerJoin('Site as si', 'si.geographyId', 'g.id').innerJoin('Device as d', 'd.siteId', 's.id')
     })
     .modify(q => {
       if (dataConstraints) q.modify(addConstraints, dataConstraints, all ? {} : { geography: 'g' })
