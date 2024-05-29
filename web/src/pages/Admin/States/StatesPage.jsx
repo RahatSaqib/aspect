@@ -36,7 +36,7 @@ export default function StatesPage() {
   const sortPage = makeSortPageSelector({ sortCol: 'name' })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const { data, isLoading } = useAdminStates(
-    omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, name: filters.stateName }, isNil)
+    omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, stateId: filters.stateId }, isNil)
   )
 
   return (

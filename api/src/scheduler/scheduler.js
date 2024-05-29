@@ -106,6 +106,8 @@ function startScheduler(queue) {
   }
 
   cron.schedule(config.scheduler.cron.logDeviceMaintenanceStatus, dispatcher.logDeviceMaintenanceStatus) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
+
+  return dispatcher
 }
 
 function createActionDispatcher(queue, actionCreators) {

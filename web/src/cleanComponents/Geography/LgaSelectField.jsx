@@ -17,6 +17,7 @@ const LgaSelectField = ({ allItemText, lgaId, stateId, onLgaIdChange, floatingLa
       select
       label={floatingLabelText}
       variant="standard"
+      disabled={!stateId}
       value={lgaId}
       onChange={handleSelectFieldChange}
       style={{ width: '98%', margin: '0 1%' }}
