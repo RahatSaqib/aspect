@@ -154,7 +154,7 @@ const routes = [
       validate: {
         query: {
           ...validateSortPageParams('name', 'abbreviation'),
-          name: Joi.string().description('The name of the state'),
+          stateId: Joi.string().description('The id of the state'),
         },
       },
       response: {

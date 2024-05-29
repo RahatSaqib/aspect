@@ -239,7 +239,8 @@ async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
       'deviceStatusByDay.maintenanceStatusManuallySetById',
       'deviceStatusByDay.maintenanceStatusManuallySetByName',
       'deviceStatusByDay.maintenanceStatusManuallySetByDate',
-      'deviceStatusByDay.maintenanceStatusNotes'
+      'deviceStatusByDay.maintenanceStatusNotes',
+      'deviceStatusByDay.expectedBackOnline'
     )
   statusData = groupListBy(statusData, 'deviceId', 'day')
 

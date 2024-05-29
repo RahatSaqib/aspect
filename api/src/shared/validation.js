@@ -31,6 +31,9 @@ const joiSingleDeviceStatusOverTime = Joi.object().keys({
           .allow(null)
           .description('Member responsible for manually setting the status'),
         maintenanceStatusNotes: Joi.string().description('The note for current maintenance status').allow('', null),
+        expectedBackOnline: Joi.string()
+          .description('The expected back online date of the last maintenance status')
+          .allow('', null),
       })
     )
     .description('The maintenance status of the device in each day of the date range'),
