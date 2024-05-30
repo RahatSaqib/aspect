@@ -11,7 +11,6 @@ describe('doSendSmsMessage', () => {
   let sendSmsStub
   let allMessageStatusToIdStub
   let doSendSmsMessage
-  let stringifyStub
 
   beforeEach(() => {
     knexStub = sinon.stub()
@@ -35,12 +34,9 @@ describe('doSendSmsMessage', () => {
       Error: 2,
     })
 
-    stringifyStub = sinon.stub(flatted, 'stringify')
-
     doSendSmsMessage = proxyquire('../../src/sms/service', {
       '../../src/sms/smsUtil': { sendSms: sendSmsStub },
       '../../src/shared/dictionary': { allMessageStatusToId: allMessageStatusToIdStub },
-      flatted: { stringify: stringifyStub },
     }).doSendSmsMessage
   })
 
@@ -79,7 +75,7 @@ describe('doSendSmsMessage', () => {
     )
   })
 
-  it('should handle SMS sending error and update message status to Error', async () => {
+  it('should handle SMS sending error response with circular structures', async () => {
     const smsMessageId = 1
     const sms = {
       message: 'Test message',
@@ -98,8 +94,11 @@ describe('doSendSmsMessage', () => {
 
     sendSmsStub.rejects(circularError)
 
-    const stringifiedError = flatted.stringify(circularError)
-    stringifyStub.returns(stringifiedError)
+    const stringifiedError = flatted.stringify({
+      ...circularError,
+      cell: sms.cell,
+      message: sms.message,
+    })
 
     await doSendSmsMessage(contextStub, knexStub, smsMessageId)
 
@@ -117,7 +116,6 @@ describe('doSendSmsMessage', () => {
       contextStub.notificationMessageProcessed.calledWith({ smsMessageId }),
       'contextStub.notificationMessageProcessed called with smsMessageId'
     )
-    assert(stringifyStub.calledWith(circularError), 'stringifyStub called with circularError')
     assert(
       knexStub('SmsMessage').update.calledWith(
         sinon.match({
