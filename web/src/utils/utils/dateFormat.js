@@ -1,4 +1,5 @@
 import format from 'date-fns/format'
+import * as moment from 'moment-timezone'
 import startOfDay from 'date-fns/startOfDay'
 import isDate from 'lodash/isDate'
 import isEmpty from 'lodash/isEmpty'
@@ -108,4 +109,48 @@ export const formatRelative = (date, formatRelativeTime, defaultMessage = '') =>
   return formatRelativeTime(Math.round(timeDiffInMilliseconds / denom), unit, {
     number: 'auto',
   })
+}
+
+export const getTimeDifference = (date, targetTimeZone) => {
+  if (isNil(date)) return ''
+
+  const givenTime = date.replace('Z', '')
+
+  console.log('givenTime', givenTime)
+
+  // Parse the given time in the target time zone
+  const parsedGivenTime = moment.tz(givenTime, targetTimeZone)
+
+  // Get the current time in the target time zone
+  const currentTimeInTargetZone = moment.tz(targetTimeZone)
+
+  // Calculate the difference in milliseconds
+  const differenceInMilliseconds = currentTimeInTargetZone.diff(parsedGivenTime)
+
+  // Convert the difference to a duration object
+  const duration = moment.duration(differenceInMilliseconds)
+
+  // Determine the appropriate time unit
+  if (duration.asSeconds() < 60) {
+    return `${Math.floor(duration.asSeconds())} seconds ago`
+  }
+  if (duration.asMinutes() < 60) {
+    return `${Math.floor(duration.asMinutes())} minutes ago`
+  }
+  if (duration.asHours() < 24) {
+    return `${Math.floor(duration.asHours())} hours ago`
+  }
+  if (duration.asDays() < 7) {
+    return `${Math.floor(duration.asDays())} days ago`
+  }
+  if (duration.asWeeks() < 4) {
+    return `${Math.floor(duration.asWeeks())} weeks ago`
+  }
+  if (duration.asMonths() < 3) {
+    return `${Math.floor(duration.asMonths())} months ago`
+  }
+  if (duration.asMonths() < 12) {
+    return `${Math.floor(duration.asQuarters())} quarters ago`
+  }
+  return `${Math.floor(duration.asYears())} years ago`
 }

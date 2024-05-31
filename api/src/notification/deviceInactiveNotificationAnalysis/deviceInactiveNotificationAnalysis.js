@@ -1,4 +1,4 @@
-const { differenceInMilliseconds } = require('date-fns')
+const moment = require('moment')
 const { knex } = require('../../db')
 const { deviceOffline } = require('../../device/actions')
 const { issueTypeToId } = require('../../shared/dictionary')
@@ -28,18 +28,22 @@ const calculateMinimumDaysInactive = (...values) => {
  * @param {Date} targetDate - The date to compare with the current date.
  * @returns {number} The number of full days difference.
  */
-function calculateDaysDifference(targetDate) {
+const calculateDaysDifference = targetDate => {
   if (!targetDate) return 0
+  // Parse the given time as a moment object in UTC
+  const parsedGivenTime = moment.utc(targetDate)
 
-  const now = new Date()
+  // Get the current time in UTC
+  const currentTimeInUTC = moment.utc()
 
   // Calculate the difference in milliseconds
-  const diffInMs = differenceInMilliseconds(now, targetDate)
+  const differenceInMilliseconds = currentTimeInUTC.diff(parsedGivenTime)
 
-  // Convert milliseconds to full days, ignoring any fraction of a day
-  const days = Math.floor(diffInMs / (24 * 60 * 60 * 1000))
+  // Convert the difference to a duration object
+  const duration = moment.duration(differenceInMilliseconds)
 
-  return days
+  // Return the difference in days
+  return Math.floor(duration.asDays())
 }
 
 async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
@@ -60,9 +64,8 @@ async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .innerJoin('DeviceApproval as da', 'd.deviceApprovalId', 'da.id')
     .leftJoin(
-      knex
+      knex('DeviceMaintenanceStatusLog as dms2')
         .select('dms2.deviceId', knex.raw('MAX(dms2.id) as logId'))
-        .from('DeviceMaintenanceStatusLog as dms2')
         .groupBy('dms2.deviceId')
         .as('latestDms'),
       'latestDms.deviceId',
@@ -71,15 +74,15 @@ async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
     .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'dmsl.id', 'latestDms.logId')
     .leftJoin('DeviceMaintenanceStatus as dms', 'dms.id', 'dmsl.deviceMaintenanceStatusId')
     .where('da.token', 'approved')
+    // .where('d.id', 39)
     .select(
-      'd.id as deviceId',
-      'dmsl.id as logId',
-      'dmsl.createdOn as lastReportedOn',
-      'dms.externalId',
-      'd.lastSeenOn',
+      'd.id',
+      knex.raw('MAX(CASE WHEN dms.externalId = ? THEN dmsl.createdOn ELSE NULL END) as lastReportedOn', [
+        'reportedActive',
+      ]),
       'd.lastPingOn'
     )
-    .distinct('d.id')
+    .groupBy('d.id')
 
   // Initialize storage for possible values and a set for tracking unique cron/days combinations
   const possibleValues = []
