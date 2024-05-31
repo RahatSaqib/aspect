@@ -17,6 +17,7 @@ const StateSelectField = ({ allItemText, countryId, stateId, onStateIdChange, fl
       select
       variant="standard"
       value={stateId}
+      disabled={!countryId}
       onChange={handleSelectFieldChange}
       label={floatingLabelText}
       style={{ width: '98%', margin: '0 1%' }}
