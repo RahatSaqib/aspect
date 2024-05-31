@@ -7,7 +7,6 @@ import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
 import * as moment from 'moment-timezone'
-
 import { withProps } from 'recompose'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import getLocale from './locale'
