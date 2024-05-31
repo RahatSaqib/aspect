@@ -223,6 +223,15 @@ async function listSitesForSelectList(request) {
   return response
 }
 
+async function listSitesForTransferSelectList(request) {
+  const { auth } = request
+
+  const { personId } = await getUser(auth.credentials.name)
+  const data = await getListSitesForTransferSelectList(personId)
+
+  return { ok: true, data }
+}
+
 async function getListSitesForSelectList(dataConstraints, opt = {}) {
   const { excludeSiteIds, mode, siteTypeExternalIds, tags } = opt
   let sitesQuery = knex('Site as s')
@@ -285,6 +294,25 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     mode,
     data: sites,
   }
+}
+
+async function getListSitesForTransferSelectList(personId) {
+  return knex('Site as s')
+    .leftJoin('Geography as sg', 's.geographyId', 'sg.id')
+    .leftJoin('JobContext as jc', personId, 'jc.personId')
+    .leftJoin('Site as jcs', function () {
+      this.on('jc.siteId', 'jcs.id').andOnNull('jc.geographyId')
+    })
+    .leftJoin('Geography as g', function () {
+      this.on('jc.geographyId', '=', 'g.id').orOn('jcs.geographyId', '=', 'g.id')
+    })
+    .andWhere(function () {
+      this.whereNotNull('g.stateId').andWhere('g.stateId', '=', knex.raw('sg.stateId'))
+    })
+    .orWhere(function () {
+      this.whereNull('g.stateId')
+    })
+    .select(['s.id', 's.name'])
 }
 
 function getSiteByPartnerCountry(siteId, { partnerId, countryId }) {
@@ -557,6 +585,7 @@ module.exports = {
   getSiteByPartnerCountry,
   showSite,
   listSitesForSelectList,
+  listSitesForTransferSelectList,
   listSitesWithReporters,
   getListSitesForSelectList,
   disableSite,
