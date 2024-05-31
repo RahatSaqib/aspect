@@ -1,5 +1,4 @@
 import format from 'date-fns/format'
-import * as moment from 'moment-timezone'
 import startOfDay from 'date-fns/startOfDay'
 import isDate from 'lodash/isDate'
 import isEmpty from 'lodash/isEmpty'
@@ -7,6 +6,8 @@ import isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
+import * as moment from 'moment-timezone'
+
 import { withProps } from 'recompose'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import getLocale from './locale'
@@ -115,8 +116,6 @@ export const getTimeDifference = (date, targetTimeZone) => {
   if (isNil(date)) return ''
 
   const givenTime = date.replace('Z', '')
-
-  console.log('givenTime', givenTime)
 
   // Parse the given time in the target time zone
   const parsedGivenTime = moment.tz(givenTime, targetTimeZone)
