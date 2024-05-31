@@ -26,7 +26,7 @@ const Rate = ({ it, messageId, threshold }) => {
 }
 
 const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateThreshold }, ...restProps }) => {
-  const { formatMessage, formatNumber, formatRelativeTime } = useIntl()
+  const { formatMessage, formatNumber } = useIntl()
   return (
     <TableRow {...restProps} className={`TableRow ${restProps.className}`}>
       <TableCell>{device.get('name')}</TableCell>
