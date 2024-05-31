@@ -6,6 +6,7 @@ import { RESULT_TRANSFER } from '../../../components/QueryFetch/Result'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import CheckboxField from '../../../oldComponents/shared/CheckboxField'
+import { SitesToTransferSelect } from '../../../cleanComponents'
 import { errorPleaseTryAgainInAFewMinutes } from '../../../utils/error/CommonErrorNotifications'
 import { aspectFetch } from '../../../utils/utils/fetch'
 import styles from './Detail.module.css'
@@ -60,7 +61,7 @@ const ResultTransferModal = ({
     return aspectFetch(`${RESULT_TRANSFER.ENDPOINT}/${resultId}`, {
       method: 'POST',
       body: JSON.stringify({
-        siteId: selectedSite.value,
+        siteId: selectedSite.id,
         timestamp: new Date().getTime(),
         comment,
         includeAllResults,
@@ -127,7 +128,7 @@ const ResultTransferModal = ({
             {formatMessage(messages.successMessagePatient, {
               patientId: <strong>{patientId}</strong>,
               oldSiteName: <strong>{sourceSite?.name}</strong>,
-              newSiteName: <strong>{selectedSite?.text}</strong>,
+              newSiteName: <strong>{selectedSite?.name}</strong>,
             })}
           </p>
           <br />
@@ -135,7 +136,7 @@ const ResultTransferModal = ({
         </div>
       </AspectDialog>
     )
-  }, [formatMessage, patientId, sourceSite?.name, selectedSite?.text, navigate, onRequestClose])
+  }, [formatMessage, patientId, sourceSite?.name, selectedSite?.name, navigate, onRequestClose])
 
   return (
     <AspectDialog
@@ -160,15 +161,15 @@ const ResultTransferModal = ({
       disableEscapeKeyDown
     >
       <div>
-        <SiteAutoCompleteField
+        <SitesToTransferSelect
           name="siteName"
-          value={selectedSite}
-          onChange={(_, value) => setSelectedSite(value)}
-          floatingLabelFixed
-          hintText={formatMessage(messages.hint)}
-          floatingLabelText={formatMessage(messages.titleSites)}
           width="100%"
+          value={selectedSite}
+          onChange={v => setSelectedSite(v)}
+          label={formatMessage(messages.hint)}
+          placeholder={formatMessage(messages.titleSites)}
         />
+
         <TextField
           fullWidth
           multiline
