@@ -1,6 +1,21 @@
 const { getConstraints, addConstraints } = require('../../auth/constraints')
 const { knex, sortPageParams, filterParams } = require('../../db')
 
+const getAssociatedDataCount2 = (table, dataConstraints) => {
+  return knex(`${table} as t`)
+    .join('Geography as g', 't.geographyId', 'g.id')
+    .leftJoin('Site as si', 't.siteId', 'si.id')
+    .leftJoin('Device as d', 't.deviceId', 'd.id')
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      geography: 'g',
+      site: 'si',
+    })
+    .where('stateId', knex.ref('s.id'))
+    .count()
+    .clone()
+}
+
 const getAssociatedDataCount = table =>
   knex(`${table} as t`)
     .join('Geography as g', 't.geographyId', 'g.id')
@@ -30,7 +45,7 @@ async function listStates({ auth, query }) {
       deviceConfigurationCount: getAssociatedDataCount('DeviceConfiguration'),
       siteCount: getAssociatedDataCount('Site').where('t.disabled', 0),
       issueCount: getAssociatedDataCount('Issue'),
-      deviceApiKeyCount: getAssociatedDataCount('DeviceApiKey'),
+      deviceApiKeyCount: getAssociatedDataCount2('DeviceApiKey', dataConstraints),
       personCount: getAssociatedDataCount('Person'),
       jobContextCount: getAssociatedDataCount('JobContext'),
       lgaCount: knex('Lga as l').join('Geography as g', 'l.id', 'g.lgaId').where('g.stateId', knex.ref('s.id')).count(),
