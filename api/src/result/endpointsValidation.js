@@ -10,7 +10,10 @@ const getResultAggregationsValidate = validGroups => ({
   source: Joi.string().description('Source type for the detection in place'),
   assayType: Joi.string().allow(null, '').description('Filter for assay type'),
   assay: Joi.alternatives().try(Joi.array(), Joi.string()).description('Filter for assay'),
-  resultCategory1: Joi.string().allow(null, '').description('Filter for result category 1'),
+  resultCategory1: Joi.alternatives()
+    .try(Joi.array(), Joi.string())
+    .allow(null, '')
+    .description('Filter for result category 1'),
   resultCategory2: Joi.string().allow(null, '').description('Filter for result category 2'),
   resistance: Joi.string().allow(null, '').description('Filter for xdr resistance'),
   siteName: Joi.string().allow(null, '').description('Filter for site'),
