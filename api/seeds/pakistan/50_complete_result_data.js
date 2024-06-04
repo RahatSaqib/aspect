@@ -25,7 +25,7 @@ async function seed(knex) {
   const startFrom = minResultId
   const endAt = maxResultId
 
-  let processed = startFrom
+  let processed = startFrom - 1
   while (processed < endAt) {
     const start = processed + 1
     const end = Math.min(processed + batchSize, endAt)
@@ -35,7 +35,7 @@ async function seed(knex) {
     // eslint-disable-next-line no-await-in-loop
     const resultsToUpdate = await getResultsToUpdateInRange(knex, assayIds, partnerId, start, end)
 
-    if (resultsToUpdate.length > 1) {
+    if (resultsToUpdate.length > 0) {
       // eslint-disable-next-line no-await-in-loop
       await knex('Result').insert(resultsToUpdate).onConflict('id').merge()
     }
