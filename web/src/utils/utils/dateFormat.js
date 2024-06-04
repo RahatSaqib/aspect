@@ -110,6 +110,11 @@ export const formatRelative = (date, formatRelativeTime, defaultMessage = '') =>
     number: 'auto',
   })
 }
+// Helper function to determine the correct singular or plural form
+const formatDuration = (value, unit) => {
+  const singularUnit = unit.slice(0, -1) // Remove the trailing 's'
+  return `${Math.floor(value)} ${Math.floor(value) === 1 ? singularUnit : unit} ago`
+}
 
 export const getTimeDifference = (date, targetTimeZone) => {
   if (isNil(date)) return ''
@@ -130,25 +135,25 @@ export const getTimeDifference = (date, targetTimeZone) => {
 
   // Determine the appropriate time unit
   if (duration.asSeconds() < 60) {
-    return `${Math.floor(duration.asSeconds())} seconds ago`
+    return formatDuration(duration.asSeconds(), 'seconds')
   }
   if (duration.asMinutes() < 60) {
-    return `${Math.floor(duration.asMinutes())} minutes ago`
+    return formatDuration(duration.asMinutes(), 'minutes')
   }
   if (duration.asHours() < 24) {
-    return `${Math.floor(duration.asHours())} hours ago`
+    return formatDuration(duration.asHours(), 'hours')
   }
   if (duration.asDays() < 7) {
-    return `${Math.floor(duration.asDays())} days ago`
+    return formatDuration(duration.asDays(), 'days')
   }
   if (duration.asWeeks() < 4) {
-    return `${Math.floor(duration.asWeeks())} weeks ago`
+    return formatDuration(duration.asWeeks(), 'weeks')
   }
   if (duration.asMonths() < 3) {
-    return `${Math.floor(duration.asMonths())} months ago`
+    return formatDuration(duration.asMonths(), 'months')
   }
   if (duration.asMonths() < 12) {
-    return `${Math.floor(duration.asQuarters())} quarters ago`
+    return formatDuration(duration.asQuarters(), 'quarters')
   }
-  return `${Math.floor(duration.asYears())} years ago`
+  return formatDuration(duration.asYears(), 'years')
 }
