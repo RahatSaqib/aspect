@@ -298,7 +298,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
 
 async function getListSitesForTransferSelectList({ personId, partnerId, countryId }) {
   return knex('Site as s')
-    .join('JobContext as jc', personId, 'jc.personId')
+    .join('JobContext as jc', 'jc.personId', personId)
     .leftJoin('Geography as sg', 's.geographyId', 'sg.id')
     .leftJoin('Site as jcs', function () {
       this.on('jc.siteId', 'jcs.id').andOnNull('jc.geographyId')
