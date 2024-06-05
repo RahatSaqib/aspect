@@ -124,7 +124,7 @@ const FormItem = ({
         controlType={controlTypeActual}
         label={`${getLabel({ ...i18nTools, labelI18nKey, label })}${isRequired ? '*' : ''}`}
         link={link}
-        placeholder={getFormattedString(placeholder, i18nTools, ' - ')}
+        placeholder={getFormattedString(placeholder, i18nTools, '')}
         className={innerClasses}
         classNames={classNames}
         fullWidth
