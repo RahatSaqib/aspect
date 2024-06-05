@@ -226,8 +226,8 @@ async function listSitesForSelectList(request) {
 async function listSitesForTransferSelectList(request) {
   const { auth } = request
 
-  const { personId } = await getUser(auth.credentials.name)
-  const data = await getListSitesForTransferSelectList(personId)
+  const { personId, partnerId } = await getUser(auth.credentials.name)
+  const data = await getListSitesForTransferSelectList({ personId, partnerId })
 
   return { ok: true, data }
 }
@@ -296,7 +296,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
   }
 }
 
-async function getListSitesForTransferSelectList(personId) {
+async function getListSitesForTransferSelectList({ personId, partnerId }) {
   return knex('Site as s')
     .join('JobContext as jc', personId, 'jc.personId')
     .leftJoin('Geography as sg', 's.geographyId', 'sg.id')
@@ -306,6 +306,7 @@ async function getListSitesForTransferSelectList(personId) {
     .leftJoin('Geography as g', function () {
       this.on('jc.geographyId', '=', 'g.id').orOn('jcs.geographyId', '=', 'g.id')
     })
+    .where('s.partnerId', partnerId)
     .andWhere(function () {
       this.whereNotNull('g.stateId').andWhere('g.stateId', '=', knex.raw('sg.stateId'))
     })
