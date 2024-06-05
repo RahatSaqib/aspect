@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-05-02T02:32:51.135Z\n"
+"POT-Creation-Date: 2024-05-29T16:46:30.984Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -3459,19 +3459,15 @@ msgstr "Хатогӣ ҳангоми боркунии тафсилоти нати
 #. [component.Widget.errorRateTitle]
 #. defaultMessage is:
 #. Error Rate
+#. [p.PkDashboard.errorRate]
+#. defaultMessage is:
+#. Error Rate
 #. [pages.DeviceDetailProfile.errorRate]
 #. defaultMessage is:
 #. Error Rate
 #: extracted_strings.json
 msgid "Error Rate"
 msgstr "Сатҳи хатогиҳо"
-
-#. [p.PkDashboard.errorRatePending]
-#. defaultMessage is:
-#. Error Rate (Pending)
-#: extracted_strings.json
-msgid "Error Rate (Pending)"
-msgstr "Сатҳи хатогиҳо (интизор аст)"
 
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
@@ -3556,6 +3552,26 @@ msgstr "Сатрро васеъ кунед"
 #: extracted_strings.json
 msgid "Expect Back Online"
 msgstr "Бозгашти онлайнро интизор шавед"
+
+#. [forms.formItem.expectedBackOnline]
+#. defaultMessage is:
+#. Expected Back Online
+#. [pages.NotificationDetail.type.DeviceExpectedBackOnline]
+#. defaultMessage is:
+#. Expected Back Online
+#. [pages.DailyStatusDialog.expectedBackOnline]
+#. defaultMessage is:
+#. Expected Back Online
+#: extracted_strings.json
+msgid "Expected Back Online"
+msgstr "Бозгашти онлайн интизор аст"
+
+#. [placeholder.placeHolderExpectedBackOnlineDate]
+#. defaultMessage is:
+#. Expected Back Online Date
+#: extracted_strings.json
+msgid "Expected Back Online Date"
+msgstr "Санаи бозгашти интизории онлайн"
 
 #. [forms.formItem.consumableExpirationDate]
 #. defaultMessage is:
@@ -6702,6 +6718,13 @@ msgstr "Тамоюлҳои миллии ташхис бо истифода аз 
 msgid "National Diagnosis Trends using MTB/XDR assay"
 msgstr "Тамоюлҳои миллии ташхис бо истифода аз таҳлили MTB/XDR"
 
+#. [p.PkDashboard.nationalErrorRates]
+#. defaultMessage is:
+#. National Error Rates
+#: extracted_strings.json
+msgid "National Error Rates"
+msgstr "Сатҳи хатогиҳои миллӣ"
+
 #. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
 #. National FQ Resistance Trend
@@ -6729,6 +6752,20 @@ msgstr "Тамоюлҳои ташхиси миллии GX-10C дар"
 #: extracted_strings.json
 msgid "National GX-10C Testing Trends"
 msgstr "Тамоюлҳои миллии санҷиши GX-10C"
+
+#. [p.PkDashboard.nationalInvalidRates]
+#. defaultMessage is:
+#. National Invalid Rates
+#: extracted_strings.json
+msgid "National Invalid Rates"
+msgstr "Меъёрҳои миллии беэътибор"
+
+#. [p.PkDashboard.nationalNoResultRates]
+#. defaultMessage is:
+#. National No Result Rates
+#: extracted_strings.json
+msgid "National No Result Rates"
+msgstr "Нархҳои натиҷавии миллӣ"
 
 #. [p.PkDashboard.RRNationalTrend]
 #. defaultMessage is:
@@ -13207,6 +13244,9 @@ msgstr "{unit} аз ҳафтаи гузашта"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
+
+#~ msgid "Error Rate (Pending)"
+#~ msgstr "Сатҳи хатогиҳо (интизор аст)"
 
 #~ msgid "1-14 Days"
 #~ msgstr "1-14 рӯз"
