@@ -1,6 +1,6 @@
 const { getResultDataHash } = require('../../src/result/common/logic')
 
-exports.seed = async function (knex) {
+const seed = async function (knex) {
   await Promise.all([processResults(knex), processDeviceLogs(knex)])
 }
 
@@ -147,3 +147,5 @@ const getDeviceLogsInRange = async (knex, minLogId, maxLogId, logStartDate) => {
     rawMessage: log.rawMessage,
   }))
 }
+
+module.exports = require('../utils').seed(seed, __filename)
