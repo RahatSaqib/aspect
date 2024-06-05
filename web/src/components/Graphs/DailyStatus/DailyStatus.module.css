@@ -58,9 +58,12 @@
   background-color: var(--aspect-device-weekend);
 }
 
-.clinic__day__active,
-.clinic__day__reportedActive {
+.clinic__day__active {
   background-color: var(--aspect-device-active);
+  color: var(--aspect-color-black-2);
+}
+.clinic__day__reportedActive {
+  background-color: var(--aspect-device-reportedActive);
   color: var(--aspect-color-black-2);
 }
 
@@ -117,9 +120,11 @@
   color: var(--aspect-color-cyan) !important;
   background-color: transparent;
 }
-.status__checkbox__active,
-.status__checkbox__reportedActive {
+.status__checkbox__active {
   color: var(--aspect-device-active) !important;
+}
+.status__checkbox__reportedActive {
+  color: var(--aspect-device-reportedActive) !important;
 }
 .status__checkbox__inactiveUnknown {
   color: var(--aspect-device-inactiveUnknown) !important;

@@ -1,9 +1,11 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler } = require('../routes')
 const { getServersByPartner } = require('./getServersByPartner')
+const { triggerJob } = require('../scheduler/triggerJob')
 const { getStatistics } = require('./getStatistics')
 const { getVersion } = require('./getVersion')
 const { getStatus } = require('./getStatus')
+const { listJobs } = require('../scheduler/listJobs')
 
 const countryBase = {
   CountryId: Joi.number().integer().positive().required().description('Country Id'),
@@ -153,6 +155,29 @@ const routes = [
     handler: asyncHandler(getStatus),
     config: {
       auth: false,
+    },
+  },
+  {
+    method: 'GET',
+    path: '/listjobs',
+    handler: asyncHandler(listJobs),
+    config: {
+      auth: { scope: ['admin:edit'] },
+      description: 'Returns a list of all scheduled Jobs',
+    },
+  },
+  {
+    method: 'POST',
+    path: '/triggerjob/{jobName}',
+    handler: triggerJob,
+    config: {
+      auth: { scope: ['admin:edit'] },
+      description: 'Force to trigger a scheduled job',
+      validate: {
+        params: {
+          jobName: Joi.string().description('JobName'),
+        },
+      },
     },
   },
 ]

@@ -2,6 +2,7 @@ import { stringify } from 'querystring'
 import differenceInMinutes from 'date-fns/differenceInMinutes'
 import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
+import { DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../components/QueryFetch/Device'
 import { getDateObject } from '../oldComponents/shared/DateTimeInput/utils/date'
 import { getFilters } from '../oldComponents/utils'
 import { filterFieldsRejectedError, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
@@ -197,6 +198,7 @@ export function updateDeviceMaintenanceStatus({ externalId, device, notes, expec
           ...i18nErrorTitleDescriptor(externalId),
           onClose: () => dispatch(showDialog('maintenance', device)),
         }),
+        ...DEVICE_MAINTENANCE_STATUS_BY_PERIOD.ERRORS,
       },
     })
       .then(json => {
