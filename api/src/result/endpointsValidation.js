@@ -215,7 +215,7 @@ function validateResultDetailResponse() {
     resultCategory2: asPositiveInteger.allow(null).description('Value of ResultCategory1'),
     resultCategory1Name: Joi.string().allow(null, '').description("The result's category 1 name"),
     resultCategory2Name: Joi.string().allow(null, '').description("The result's category 2 name"),
-    resultWorkflowStatusId: Joi.number().integer().description("The result's workflow status id"),
+    resultWorkflowStatusId: Joi.number().allow(null, '').integer().description("The result's workflow status id"),
     resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
     resultWorkflowStatusExternalId: Joi.string().allow(null, '').description("The result's Workflow status name"),
     resultData: Joi.object().description('The result data'),
