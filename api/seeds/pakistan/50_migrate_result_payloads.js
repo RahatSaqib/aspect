@@ -4,7 +4,6 @@ const customFieldsPakistan = require('../../src/forms/formsDefinition/CustomFiel
 const { getOffsetFromTimeZone } = require('../../src/shared/date')
 
 async function seed(knex) {
-  return
   const { minDeviceLogId, maxDeviceLogId } = await knex('DeviceLog')
     .whereNotNull('resultId') // Only result payloads
     .first({
@@ -12,7 +11,7 @@ async function seed(knex) {
       maxDeviceLogId: knex.raw('MAX(id)'),
     })
 
-  const batchSize = 50
+  const batchSize = 100
   const startFrom = minDeviceLogId
   const endAt = maxDeviceLogId
 
@@ -43,28 +42,56 @@ const getDeviceLogsToUpdateInRange = async (knex, minDeviceLogId, maxDeviceLogId
     .join('TimeZone as tz', 'd.timezone', 'tz.id')
     .whereNotNull('resultId') // Only result payloads
     .whereBetween('dl.id', range)
-    .select({ id: 'dl.id', rawMessage: 'dl.rawMessage', timezone: 'd.timezone', timezoneIANA: 'tz.timeZone' })
+    .select({
+      id: 'dl.id',
+      deviceId: 'dl.deviceId',
+      source: 'dl.source',
+      createdOn: 'dl.createdOn',
+      senderIp: 'dl.senderIp',
+      rawMessage: 'dl.rawMessage',
+      deviceConfigurationUpdated: 'dl.deviceConfigurationUpdated',
+      resultId: 'dl.resultId',
+      deviceOperationId: 'dl.deviceOperationId',
+      timezone: 'd.timezone',
+      timezoneIANA: 'tz.timeZone',
+    })
 
-  return Promise.all(
-    deviceLogsToUpdate.map(async data => {
-      const pakistanTimeZoneData = {
-        timezone: data.timezone,
-        timezoneIANA: data.timezoneIANA,
-        timezoneUtcOffset: getOffsetFromTimeZone(data.timezoneIANA),
-      }
+  const transformedDeviceLogs = []
 
+  for (const deviceLogToUpdate of deviceLogsToUpdate) {
+    const pakistanTimeZoneData = {
+      timezone: deviceLogToUpdate.timezone,
+      timezoneIANA: deviceLogToUpdate.timezoneIANA,
+      timezoneUtcOffset: getOffsetFromTimeZone(deviceLogToUpdate.timezoneIANA),
+    }
+
+    try {
       const transformedPayload = transformPayload(
-        JSON.parse(data.rawMessage),
+        JSON.parse(deviceLogToUpdate.rawMessage),
         true,
         pakistanTimeZoneData,
         customFieldsPakistan
       )
 
-      const deviceLogToUpdate = {
-        id: data.id,
+      const transformedDeviceLog = {
+        id: deviceLogToUpdate.id,
+        deviceId: deviceLogToUpdate.deviceId,
+        source: deviceLogToUpdate.source,
+        createdOn: deviceLogToUpdate.createdOn,
+        senderIp: deviceLogToUpdate.senderIp,
+        rawMessage: deviceLogToUpdate.rawMessage,
+        deviceConfigurationUpdated: deviceLogToUpdate.deviceConfigurationData,
+        resultId: deviceLogToUpdate.resultId,
+        deviceOperationId: deviceLogToUpdate.deviceOperationId,
         rawMessage2: JSON.stringify(transformedPayload),
       }
-      return deviceLogToUpdate
-    })
-  )
+
+      transformedDeviceLogs.push(transformedDeviceLog)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(`skip deviceLogId ${deviceLogToUpdate.id} - Error: ${error}`)
+    }
+  }
+
+  return transformedDeviceLogs
 }

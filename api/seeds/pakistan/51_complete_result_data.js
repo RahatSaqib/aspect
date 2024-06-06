@@ -16,10 +16,12 @@ const { allAssayToId } = require('../../src/shared/dictionary')
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
   const assayIds = await allAssayToId()
-  const { minResultId, maxResultId } = await knex('Result').first({
-    minResultId: knex.raw('MIN(id)'),
-    maxResultId: knex.raw('MAX(id)'),
-  })
+  const { minResultId, maxResultId } = await knex('Result')
+    .whereNotNull('lastDeviceLogId')
+    .first({
+      minResultId: knex.raw('MIN(id)'),
+      maxResultId: knex.raw('MAX(id)'),
+    })
 
   const batchSize = 100
   const startFrom = minResultId
@@ -50,12 +52,14 @@ const getResultsToUpdateInRange = async (knex, assayIds, partnerId, minResultId,
   const resultsToUpdate = await knex('Result as r')
     .join('DeviceLog as dl', 'dl.id', 'r.lastDeviceLogId')
     .whereBetween('r.id', range)
-    .select({ resultId: 'r.id', payload: 'dl.rawMessage' })
+    .select('r.*', 'dl.rawMessage')
 
-  return Promise.all(
-    resultsToUpdate.map(async data => {
-      const { resultId } = data
-      const payload = JSON.parse(data.payload)
+  const transformedResults = []
+  for (const resultToUpdate of resultsToUpdate) {
+    const { rawMessage, ...originalResult } = resultToUpdate
+
+    try {
+      const payload = JSON.parse(rawMessage)
       const payloadAssayName = _.get(payload.result, 'data.assay', '')
 
       const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
@@ -68,23 +72,30 @@ const getResultsToUpdateInRange = async (knex, assayIds, partnerId, minResultId,
       }
       const assayId = assayIds[mappedAssayExternalId]
 
+      // eslint-disable-next-line no-await-in-loop
       const customFieldsData = await getCustomFieldsFromPayload(payload.result, countryAbbreviation, partnerId, assayId)
       const additionalData = getAdditionalDataFromPayload(payload.result, potentialAssayIds)
+
       const baseResult = {
-        id: resultId,
+        ...originalResult,
         ...customFieldsData,
         consumableLot: _.get(payload, 'result.consumable[0].lot'),
         resultData: deepMerge(payload.result.data, additionalData),
         patientData: deepMerge(payload.result.patient, customFieldsData.patientData),
       }
 
-      const resultToUpdate = {
+      const transformedResult = {
         ...baseResult,
         resultData: JSON.stringify(baseResult.resultData),
         resultDataHash: getResultDataHash(baseResult.resultData),
         patientData: !_.isEmpty(baseResult.patientData) ? JSON.stringify(baseResult.patientData) : null,
       }
-      return resultToUpdate
-    })
-  )
+      transformedResults.push(transformedResult)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(`skip resultId ${originalResult.id} - Error: ${error}`)
+    }
+  }
+
+  return transformedResults
 }
