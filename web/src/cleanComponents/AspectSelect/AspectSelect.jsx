@@ -5,7 +5,8 @@ import isArray from 'lodash/isArray'
 import map from 'lodash/map'
 
 export default function AspectSelect(props) {
-  const { label, itemToString, value, onChange, isLoading, valueBy, multiple, error, options, ...rest } = props
+  const { label, itemToString, value, onChange, isLoading, valueBy, multiple, error, options, placeholder, ...rest } =
+    props
 
   if (isLoading) return <LinearProgress />
 
@@ -20,6 +21,7 @@ export default function AspectSelect(props) {
         <TextField
           {...params}
           error={!!error}
+          placeholder={placeholder}
           InputLabelProps={{ shrink: true }}
           helperText={error}
           variant="standard"
