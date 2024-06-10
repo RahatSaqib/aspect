@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { ADMIN_LGAS_KEYS } from '../../../hooks/admin/adminKeys'
 import { useDeleteLga } from '../../../hooks/admin/useDeleteLga'
+import { LGA_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
@@ -16,6 +17,7 @@ export function RemoveLgaDialog({ open, lga, onOpenChange }) {
   const { mutate: deleteLga, isLoading } = useDeleteLga({
     onSuccess: () => {
       client.refetchQueries(ADMIN_LGAS_KEYS)
+      client.refetchQueries(LGA_KEY)
       onOpenChange(false)
     },
   })
