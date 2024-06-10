@@ -20,7 +20,7 @@ export function EditLgaDialog({ open, lga, onOpenChange }) {
   const { mutateAsync: editLga } = useEditLga({
     onSuccess: () => {
       client.refetchQueries(ADMIN_LGAS_KEYS)
-      client.refetchQueries(LGA_KEY)
+      client.removeQueries(LGA_KEY)
       onOpenChange(false)
     },
   })

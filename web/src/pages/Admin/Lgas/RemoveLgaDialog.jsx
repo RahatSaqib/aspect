@@ -17,7 +17,7 @@ export function RemoveLgaDialog({ open, lga, onOpenChange }) {
   const { mutate: deleteLga, isLoading } = useDeleteLga({
     onSuccess: () => {
       client.refetchQueries(ADMIN_LGAS_KEYS)
-      client.refetchQueries(LGA_KEY)
+      client.removeQueries(LGA_KEY)
       onOpenChange(false)
     },
   })
