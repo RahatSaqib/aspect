@@ -1,5 +1,8 @@
 import React from 'react'
 import { Select, MenuItem, Box, Chip } from '@mui/material'
+import get from 'lodash/get'
+import isObject from 'lodash/isObject'
+import last from 'lodash/last'
 import PropTypes from 'prop-types'
 import useAvailablePerson from '../../hooks/person/useAvailablePerson'
 import useUpdateContactByOperationAndSiteId from '../../hooks/person/useUpdateContactByOperationAndSiteId'
@@ -12,8 +15,11 @@ const ContactTagInput = ({ siteId, value }) => {
   const handleClose = () => setOpen(false)
   const handleOpen = () => setOpen(true)
 
-  const onChange = e =>
-    updateContacts({ id: e.target.value.filter(v => typeof v === 'string')[0], operation: 'assign' })
+  const onChange = e => {
+    const latest = last(e.target.value)
+    const id = isObject(latest) ? get(latest, 'id') : latest
+    if (id) updateContacts({ id, operation: 'assign' })
+  }
 
   const handleDelete = id => updateContacts({ id, operation: 'unassign' })
 
