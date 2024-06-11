@@ -3,12 +3,13 @@ import { Box, Button, CircularProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
-import { object, string } from 'yup'
 import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useCreateState } from '../../../hooks/admin/useCreateState'
+import { STATE_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import { stateFormValidation } from '../consts'
 import messages from '../messages'
 
 export function AddStateDialog({ open, onOpenChange }) {
@@ -18,6 +19,7 @@ export function AddStateDialog({ open, onOpenChange }) {
   const { mutateAsync: createState } = useCreateState({
     onSuccess: () => {
       client.refetchQueries(ADMIN_STATES_KEYS)
+      client.refetchQueries(STATE_KEY)
       onOpenChange(false)
     },
   })
@@ -31,10 +33,7 @@ export function AddStateDialog({ open, onOpenChange }) {
       <Box sx={{ my: '15px', display: 'flex', flexDirection: 'column' }}>
         <Formik
           initialValues={{ name: '', abbreviation: '' }}
-          validationSchema={object({
-            name: string().required(),
-            abbreviation: string().required(),
-          })}
+          validationSchema={stateFormValidation}
           onSubmit={values => createState(values)}
         >
           {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (

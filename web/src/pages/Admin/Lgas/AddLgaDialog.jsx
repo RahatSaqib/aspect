@@ -3,13 +3,14 @@ import { Box, Button, CircularProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
-import { number, object, string } from 'yup'
 import { StateSelect } from '../../../cleanComponents'
 import { ADMIN_LGAS_KEYS } from '../../../hooks/admin/adminKeys'
 import { useCreateLga } from '../../../hooks/admin/useCreateLga'
+import { LGA_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import { lgaFormValidation } from '../consts'
 import messages from '../messages'
 
 export function AddLgaDialog({ open, onOpenChange }) {
@@ -19,6 +20,7 @@ export function AddLgaDialog({ open, onOpenChange }) {
   const { mutateAsync: createLga } = useCreateLga({
     onSuccess: () => {
       client.refetchQueries(ADMIN_LGAS_KEYS)
+      client.removeQueries(LGA_KEY)
       onOpenChange(false)
     },
   })
@@ -33,10 +35,7 @@ export function AddLgaDialog({ open, onOpenChange }) {
       <Box sx={{ my: '15px', display: 'flex', flexDirection: 'column' }}>
         <Formik
           initialValues={{ name: '', stateId: '' }}
-          validationSchema={object({
-            name: string().required(),
-            stateId: number().nullable().required(),
-          })}
+          validationSchema={lgaFormValidation}
           onSubmit={values => createLga(values)}
         >
           {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (

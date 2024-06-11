@@ -4,6 +4,7 @@ import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
 import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useDeleteState } from '../../../hooks/admin/useDeleteState'
+import { STATE_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
@@ -16,6 +17,7 @@ export function RemoveStateDialog({ open, state, onOpenChange }) {
   const { mutate: deleteState, isLoading } = useDeleteState({
     onSuccess: () => {
       client.refetchQueries(ADMIN_STATES_KEYS)
+      client.refetchQueries(STATE_KEY)
       onOpenChange(false)
     },
   })
