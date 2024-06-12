@@ -81,7 +81,7 @@ export const getMuiTheme = () => {
       ...provided,
       ...styleOptionBase,
     }),
-    control: provided => ({
+    control: (provided, state) => ({
       ...provided,
       display: 'flex',
       alignItems: 'center',
@@ -101,7 +101,7 @@ export const getMuiTheme = () => {
         content: '" "',
         position: 'absolute',
         transition: 'border-bottom-color 200ms cubic-bezier(0.4, 0, 0.2, 1) 0ms',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.42)',
+        borderBottom: `1px solid ${state.selectProps?.isError ? 'red' : 'rgba(0, 0, 0, 0.42)'}`,
         pointerEvents: 'none',
       },
       '&::after': {
