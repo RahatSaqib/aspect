@@ -86,7 +86,8 @@ const validationSchema = formatMessage =>
           is: 'state',
           then: Yup.array()
             .required(formatMessage(messages.geographyRequired))
-            .min(1, formatMessage(messages.geographyRequired)),
+            .min(1, formatMessage(messages.geographyRequired))
+            .nullable(),
           otherwise: Yup.array().min(0),
         }),
       areaItemsLGA: Yup.array()
@@ -95,7 +96,8 @@ const validationSchema = formatMessage =>
           is: 'lga',
           then: Yup.array()
             .required(formatMessage(messages.geographyRequired))
-            .min(1, formatMessage(messages.geographyRequired)),
+            .min(1, formatMessage(messages.geographyRequired))
+            .nullable(),
           otherwise: Yup.array().min(0),
         }),
       areaItemsLab: Yup.array()
@@ -104,7 +106,8 @@ const validationSchema = formatMessage =>
           is: 'lab',
           then: Yup.array()
             .required(formatMessage(messages.geographyRequired))
-            .min(1, formatMessage(messages.geographyRequired)),
+            .min(1, formatMessage(messages.geographyRequired))
+            .nullable(),
           otherwise: Yup.array().min(0),
         }),
       sendToPatient: Yup.boolean(),
