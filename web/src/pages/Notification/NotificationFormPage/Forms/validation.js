@@ -4,7 +4,7 @@ import messages from './messages'
 
 const optionsForSendXXX = requiredMessage => ({
   is: true,
-  then: Yup.string().required(requiredMessage),
+  then: Yup.string().trim().required(requiredMessage),
   otherwise: Yup.string().nullable(),
 })
 
@@ -57,7 +57,7 @@ const validationSchema = formatMessage =>
         then: Yup.string().required(formatMessage(messages.required)),
         otherwise: Yup.string().notRequired(),
       }),
-      name: Yup.string().required(formatMessage(messages.notificationNameRequired)),
+      name: Yup.string().trim().required(formatMessage(messages.notificationNameRequired)),
       result: Yup.array().when('notificationType', {
         is: 'resultBased',
         then: Yup.array()
