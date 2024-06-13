@@ -7,6 +7,7 @@ const {
   listSites,
   showSite,
   listSitesForSelectList,
+  listSitesForTransferSelectList,
   listSitesWithReporters,
   disableSite,
   getReportingSites,
@@ -240,6 +241,29 @@ const routes = [
                   })
                   .description('External ID of the site'),
                 customProperties: Joi.string().allow(null, '').description('Custom properties of the site'),
+              })
+            ),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/site/transfer-select-list',
+    handler: asyncHandler(listSitesForTransferSelectList),
+    config: {
+      description: 'States for available to transfer',
+      notes: 'List of sites in the same state as the currently logged in user',
+      auth: { scope: ['site:view'] },
+      response: {
+        schema: Joi.object().keys({
+          ok: Joi.bool().required().description('False if there was some sort of error'),
+          data: Joi.array()
+            .required()
+            .items(
+              Joi.object().keys({
+                id: Joi.number().required().description('Unique ID of the site'),
+                name: Joi.string().required().description('Name of the site'),
               })
             ),
         }),

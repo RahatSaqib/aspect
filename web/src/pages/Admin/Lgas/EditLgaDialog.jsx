@@ -3,13 +3,14 @@ import { Box, Button, CircularProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
-import { number, object, string } from 'yup'
 import { StateSelect } from '../../../cleanComponents'
 import { ADMIN_LGAS_KEYS } from '../../../hooks/admin/adminKeys'
 import { useEditLga } from '../../../hooks/admin/useEditLga'
+import { LGA_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import { lgaFormValidation } from '../consts'
 import messages from '../messages'
 
 export function EditLgaDialog({ open, lga, onOpenChange }) {
@@ -19,6 +20,7 @@ export function EditLgaDialog({ open, lga, onOpenChange }) {
   const { mutateAsync: editLga } = useEditLga({
     onSuccess: () => {
       client.refetchQueries(ADMIN_LGAS_KEYS)
+      client.removeQueries(LGA_KEY)
       onOpenChange(false)
     },
   })
@@ -32,10 +34,7 @@ export function EditLgaDialog({ open, lga, onOpenChange }) {
       <Box sx={{ my: '15px', display: 'flex', flexDirection: 'column' }}>
         <Formik
           initialValues={{ name: lga?.name, stateId: lga?.stateId }}
-          validationSchema={object({
-            name: string().required(),
-            stateId: number().required(),
-          })}
+          validationSchema={lgaFormValidation}
           onSubmit={values => editLga({ lgaId: lga?.id, stateId: values.stateId, name: values.name })}
         >
           {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (

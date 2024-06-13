@@ -45,6 +45,7 @@ const ErrorRateGraph = ({ category, title }) => {
           value={state || ''}
           onChange={e => setState(e.target.value)}
           countryId={user.countryId}
+          onlyAssociatedSites
         />
       </Box>
       <Box flex={3}>
