@@ -2,14 +2,15 @@ const jobFunctions = require('./jobFunctions')
 const webhookServers = require('../../fixtures/webhookServers')
 
 module.exports = {
+  adminUserName: 'admin',
+  adminPassword: '8v5TMxkpzP',
   partner: {
     name: 'Myanmar',
     externalId: 'myanmar',
   },
   deviceApiToken: 'ukpjat39531egjy4pc20',
   partnerAbbreviation: 'MM',
-  adminUserName: 'myanmar_admin',
-  adminPassword: '8v5TMxkpzP',
+  lowerLevelUserPassword: 'AL21Uqpo$^hT3',
   plugin: '',
   fixtures: {
     jobFunctions,
