@@ -84,11 +84,13 @@ async function findDevices({ deviceId, partnerId, serial, deviceTypeExternalId }
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
     .where(function () {
       if (deviceId) {
         this.where('d.id', deviceId)
       } else {
-        this.where('d.partnerId', partnerId)
+        this.where('d.partnerId', partnerId).whereNot('dms.externalId', 'inactiveDecommissioned')
         if (serial) {
           this.andWhere('d.serial', serial)
         }
