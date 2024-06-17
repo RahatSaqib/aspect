@@ -23,6 +23,7 @@ const SelectComponent = ({
   isClearable,
   isDisabled,
   isLoading,
+  isError,
   isMulti,
   keyMapping: { idKey, nameKey = 'i18nKey' },
   messages,
@@ -75,6 +76,7 @@ const SelectComponent = ({
         isLoading={isLoading}
         isMulti={isMulti}
         options={options}
+        isError={isError}
         menuPlacement="auto"
         isOptionDisabled={option => option.disabled}
         placeholder={defaultOption || placeholder}
@@ -100,6 +102,7 @@ SelectComponent.defaultProps = {
   isClearable: true,
   isDisabled: false,
   isLoading: false,
+  isError: false,
   isMulti: false,
   messages: null,
   placeholder: 'Select...',
@@ -123,6 +126,7 @@ SelectComponent.propTypes = {
   isClearable: PropTypes.bool,
   isDisabled: PropTypes.bool,
   isLoading: PropTypes.bool,
+  isError: PropTypes.bool,
   isMulti: PropTypes.bool,
   keyMapping: PropTypes.oneOfType([PropTypes.object]).isRequired,
   messages: PropTypes.oneOfType([PropTypes.object]),
