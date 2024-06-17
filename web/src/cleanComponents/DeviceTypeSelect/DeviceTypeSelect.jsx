@@ -15,7 +15,7 @@ const DeviceTypeSelect = ({ id, name, label, value, onChange, error, helperText,
       error={error}
       helperText={helperText}
       select
-      value={value}
+      value={value || ''}
       onChange={e => onChange(e.target.value)}
       disabled={disabled}
       SelectProps={{ IconComponent: () => null }}
