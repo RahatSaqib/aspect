@@ -101,6 +101,7 @@ const criticalErrorsByDevice = {
       query: {
         hasResults: 1,
         sortCol: 'deviceName',
+        noResults: true,
         sortDir: 'asc',
         avoidStreaming: true,
       },
