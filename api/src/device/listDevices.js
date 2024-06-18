@@ -71,7 +71,7 @@ async function getListDevices(query, auth) {
       if (query.deviceIds) {
         queryBuilder.whereIn('d.id', query.deviceIds.split(','))
       }
-      if (query.connectorStatus) {
+      if (query.connectorStatus && !query.connectorStatus?.includes('all')) {
         queryBuilder.whereIn(
           knex.raw('CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END'),
           query.connectorStatus
