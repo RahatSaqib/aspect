@@ -55,7 +55,7 @@ const Row = ({ row, isChild, index }) => {
 export const ErrorRateTable = ({ items }) => {
   const [sort, setSort] = useState({ name: 'name', order: 'asc' })
   const rows = useMemo(
-    () => addDepth(makeNestedData(items ?? [], ['stateName', 'lgaName', 'siteName', 'name'])),
+    () => addDepth(makeNestedData(items ?? [], ['stateName', 'lgaName', 'siteName', 'name'], 'No Location')),
     [items]
   )
 
