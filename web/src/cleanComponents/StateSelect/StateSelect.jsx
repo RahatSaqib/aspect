@@ -30,7 +30,7 @@ const StateSelect = ({
       error={error}
       helperText={helperText}
       select
-      value={value}
+      value={value || ''}
       onChange={onChange}
       disabled={(states || []).length === 0}
       SelectProps={{ IconComponent: () => null }}
