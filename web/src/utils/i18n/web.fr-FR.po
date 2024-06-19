@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-05-29T16:46:30.984Z\n"
+"POT-Creation-Date: 2024-06-13T14:54:33.379Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11528,6 +11528,20 @@ msgstr "Le {representing} est inférieur à {comparedTo}"
 msgid "The {representing} is one of {comparedTo}"
 msgstr "Le {representing} est l'un des {comparedTo}"
 
+#. [errorResponseMessages.lgaMutation.message]
+#. defaultMessage is:
+#. There are existing ones with the same name
+#: extracted_strings.json
+msgid "There are existing ones with the same name"
+msgstr "Il en existe déjà d'autres qui portent le même nom"
+
+#. [errorResponseMessages.stateMutation.message]
+#. defaultMessage is:
+#. There are existing ones with the same name or abbreviation
+#: extracted_strings.json
+msgid "There are existing ones with the same name or abbreviation"
+msgstr "Il en existe déjà qui portent le même nom ou la même abréviation"
+
 #. [errorResponseMessages.common.conflict.resolution]
 #. defaultMessage is:
 #. There is a conflict between this request and the existent data in the system. Please review, try again, or contact your administrator for help.
@@ -12156,6 +12170,20 @@ msgstr "METTRE À JOUR"
 msgid "Unable to Reset Password"
 msgstr "Impossible de réinitialiser le mot de passe"
 
+#. [errorResponseMessages.stateDelete.message]
+#. defaultMessage is:
+#. Unable to delete since there are associated entities with it
+#: extracted_strings.json
+msgid "Unable to delete since there are associated entities with it"
+msgstr "Impossible à supprimer car des entités y sont associées"
+
+#. [errorResponseMessages.lgaDelete.message]
+#. defaultMessage is:
+#. Unable to delete since there are associated entities with it.
+#: extracted_strings.json
+msgid "Unable to delete since there are associated entities with it."
+msgstr "Impossible à supprimer car des entités y sont associées."
+
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -12302,6 +12330,18 @@ msgstr "Tests valides"
 msgid "Validated"
 msgstr "Validé"
 
+#. [errorResponseMessages.stateMutation.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.stateDelete.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.lgaMutation.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.lgaDelete.title]
+#. defaultMessage is:
+#. Validation error
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.title]
 #. defaultMessage is:
 #. Validation error

@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-05-29T16:46:30.984Z\n"
+"POT-Creation-Date: 2024-06-13T14:54:33.379Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -11488,6 +11488,20 @@ msgstr "{representing} камтар аз {comparedTo} аст"
 msgid "The {representing} is one of {comparedTo}"
 msgstr "{representing} яке аз {comparedTo} аст"
 
+#. [errorResponseMessages.lgaMutation.message]
+#. defaultMessage is:
+#. There are existing ones with the same name
+#: extracted_strings.json
+msgid "There are existing ones with the same name"
+msgstr "Онҳое ҳастанд, ки бо ҳамон ном вуҷуд доранд"
+
+#. [errorResponseMessages.stateMutation.message]
+#. defaultMessage is:
+#. There are existing ones with the same name or abbreviation
+#: extracted_strings.json
+msgid "There are existing ones with the same name or abbreviation"
+msgstr "Онҳое ҳастанд, ки бо як ном ё ихтисорот мавҷуданд"
+
 #. [errorResponseMessages.common.conflict.resolution]
 #. defaultMessage is:
 #. There is a conflict between this request and the existent data in the system. Please review, try again, or contact your administrator for help.
@@ -12113,6 +12127,20 @@ msgstr "НАВОР"
 msgid "Unable to Reset Password"
 msgstr "Паролро барқарор кардан ғайриимкон аст"
 
+#. [errorResponseMessages.stateDelete.message]
+#. defaultMessage is:
+#. Unable to delete since there are associated entities with it
+#: extracted_strings.json
+msgid "Unable to delete since there are associated entities with it"
+msgstr "Ҳазф кардан ғайриимкон аст, зеро бо он объектҳои алоқаманд мавҷуданд"
+
+#. [errorResponseMessages.lgaDelete.message]
+#. defaultMessage is:
+#. Unable to delete since there are associated entities with it.
+#: extracted_strings.json
+msgid "Unable to delete since there are associated entities with it."
+msgstr "Ҳазф кардан ғайриимкон аст, зеро бо он объектҳои алоқаманд мавҷуданд."
+
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -12259,6 +12287,18 @@ msgstr "Санҷишҳои эътибор"
 msgid "Validated"
 msgstr "Тасдиқ карда шудааст"
 
+#. [errorResponseMessages.stateMutation.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.stateDelete.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.lgaMutation.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.lgaDelete.title]
+#. defaultMessage is:
+#. Validation error
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.title]
 #. defaultMessage is:
 #. Validation error

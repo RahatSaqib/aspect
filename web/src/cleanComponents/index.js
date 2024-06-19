@@ -97,6 +97,7 @@ import RevokeSelect from './RevokeSelect'
 import { SimpleTableHeader, SimpleTablePagination } from './SimpleTable'
 import SiteListSelect from './SiteListSelect'
 import SiteSelect from './SiteSelect'
+import SitesToTransferSelect from './SitesToTransferSelect'
 import SiteTagInput from './SiteTagInput'
 import StateAutocomplete from './StateAutocomplete'
 import StateSelect from './StateSelect'
@@ -138,6 +139,7 @@ export {
   RevokeSelect,
   SiteListSelect,
   SiteSelect,
+  SitesToTransferSelect,
   SiteTagInput,
   StateSelect,
   TagSelect,

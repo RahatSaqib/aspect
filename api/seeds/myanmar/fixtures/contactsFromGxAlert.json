@@ -1,0 +1,6965 @@
+[
+  {
+    "personName": "Country Admin",
+    "personTitle": "Country Admin",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "gxalert.ntp.mm@gmail.com",
+    "personCell": "+95 9953041365",
+    "username": "myanmar",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Dr. Si Thu Aung",
+    "personTitle": "Program Manager",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "dr.sithuaung.ntp@gmail.com",
+    "personPhone": "+95 95188751",
+    "username": "dr.sta.ntp@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "NTRL",
+    "personTitle": "National TB Reference Lab",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personPhone": "+95 01647706",
+    "username": "NTRL",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Dr. Tin Tin Mar",
+    "personTitle": "Microbiologist",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "tintinmar189@gmail.com",
+    "personCell": "+95 95155437",
+    "username": "tintinmar189@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "U Aye Kyu",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "uayekyulab.tech@gmail.com",
+    "personCell": "+95 9 420036744",
+    "username": "Thanlyin TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thanlyin"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Htin Zaw Aung",
+    "personTitle": "Regional TB Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "htinzawag77@gmail.com",
+    "personCell": "+95 9425321581",
+    "username": "Dr. Htin Zaw Aung",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Tanintharyi"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Hay Mar Phyo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9770741838",
+    "username": "Zin Wah Thein",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "UTI-1"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Myat Myat Moe",
+    "personTitle": "Assistant Director",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "eimonchit@gmail.com",
+    "personCell": "+95 95138212",
+    "username": "eimonchit@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Thandar Thwin",
+    "personTitle": "Upper Myanmar TB officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "drthandarthwin1966@gmail.com",
+    "personCell": "+95 92022176",
+    "username": "drthandarthwin1966@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mandalay"
+      }
+    ]
+  },
+  {
+    "personName": "Sein Lai Lai Moe",
+    "personTitle": "Pharmacist",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "moemoelay55@gmail.com",
+    "personCell": "+95 9402662708",
+    "username": "moemoelay55@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Myat Mon Aung",
+    "personTitle": "Med Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myatmonaung08@gmail.com",
+    "personCell": "+95 943130194",
+    "username": "Myat Mon Aung",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Zaw Htet Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9798424263",
+    "username": "SH-Waibargi",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "SH-WBG"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Moe Zaw",
+    "personTitle": "Medical Superintendent",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "moezaww07@gmail.com",
+    "personPhone": "+95 92020622",
+    "personCell": "+95 979510899",
+    "username": "moezaww07@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Myat Thuzar Nwe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9985830832",
+    "username": "Patheingyi TBH",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Patheingyi TBH"
+      }
+    ]
+  },
+  {
+    "personName": "Ei Mon Phyu",
+    "personTitle": "Med Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 943186915",
+    "username": "eimonphyu",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Win Min Than",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9787700721",
+    "username": "myintthu.mc@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Myingyan TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Thida Win_DA",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "thidawin.bw@gmail.com",
+    "personPhone": "+95 09970674856",
+    "personCell": "+95 9425266686",
+    "username": "thidawin.bw@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mon"
+      }
+    ]
+  },
+  {
+    "personName": "Nan Seint Seint Phaung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntpkayinstate@gmail.com",
+    "personCell": "+95 9697667882",
+    "username": "Hpa An TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Hpa An TBC"
+      }
+    ]
+  },
+  {
+    "personName": "MGH TB-OPD 2",
+    "personTitle": "Lab Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9798692755",
+    "username": "MGH TB-OPD 2",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Tun Kyaw Soe",
+    "personTitle": "TB Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "kotunkyawsoeww@gmail.com",
+    "personCell": "+95 943107716",
+    "username": "kotunkyawsoeww@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Naypyitaw Union Territoriality"
+      }
+    ]
+  },
+  {
+    "personName": "Pyinmana TBC",
+    "personTitle": "consultant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "naylin73@gmail.com",
+    "personCell": "+95 9448535262",
+    "username": "Pyinmana TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Thu Zar Htun",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "thuzarhtun146215@gmail.com",
+    "personCell": "+95 9425422417",
+    "username": "Kyaing Tong",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kyaing Tong TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Nan Saung Kham",
+    "personTitle": "TB Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "saungkham.sk@gmail.com",
+    "personCell": "+95 95252832",
+    "username": "saungkham.sk@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Shan (East)"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Ei Ei Chaw",
+    "personTitle": "Regional Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "shweeieichaw21@gmail.com",
+    "personPhone": "+95 7420229",
+    "personCell": "+95 9402751782",
+    "username": "shweeieichaw21@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kayah"
+      },
+      {
+        "stateName": "Shan (South)"
+      }
+    ]
+  },
+  {
+    "personName": "Khin Myo Aye",
+    "personTitle": "Latha Gene Xpert Center",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kmyoaye27@gmail.com",
+    "personCell": "+95 9450021838",
+    "username": "khinmyoaye",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Myingyan TBC",
+    "personTitle": "Myingyan TB Team",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9971464146",
+    "username": "Myingyan TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Ohnmar Myint",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "ohnmarmyint.dr@gmail.com",
+    "personCell": "+95 260073722",
+    "username": "ohnmarmyint.dr@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Ayeyarwady"
+      }
+    ]
+  },
+  {
+    "personName": "Patheingyi TBC",
+    "personTitle": "Patheingyi TB Team",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ohnmarmoe.tech@gmail.com",
+    "personPhone": "+95 257356",
+    "personCell": "+95 9791266140",
+    "username": "Patheingyi TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Phyu Phyu Thet",
+    "personTitle": "Lab Level",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "phyuphyuthet161729@gmail.com",
+    "personCell": "+95 9422449747",
+    "username": "Pathein TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pathein TBC"
+      },
+      {
+        "shortName": "Pathein TBC(Ayw)"
+      }
+    ]
+  },
+  {
+    "personName": "U Thet Wai Aung",
+    "personTitle": "Lab Level",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9401527645",
+    "username": "thetwai",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Myaungmya TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Thin Thin Htay",
+    "personTitle": "TB Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "thinthinhtay000146@gmail.com",
+    "personPhone": "+95 95149219",
+    "personCell": "+95 9799148975",
+    "username": "thinthinhtay000146@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Ayeyarwady",
+        "lgaName": "Myaungmya"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Kyaw Moe Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kaungkhant47@gmail.com",
+    "personCell": "+95 943082168",
+    "username": "Sittwe TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kyaukpyu TBC"
+      },
+      {
+        "shortName": "Maungdaw TBC"
+      },
+      {
+        "shortName": "Mrauk U TBC"
+      },
+      {
+        "shortName": "Sittwe TBC"
+      },
+      {
+        "shortName": "Thandwe TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Sittwe TB Officer",
+    "personTitle": "Sittwe TB Officer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "username": "Sittwe TB Officer",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Tun Aung Aung",
+    "personTitle": "Lab Level",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "mgmg121188@gmail.com",
+    "personCell": "+95 9764239470",
+    "username": "Maubin TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Maubin TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Mar Mar Oo",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "marmaroo061189@gmail.com",
+    "personCell": "+95 9451237409",
+    "username": "marmaroo",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Nyi Nyi Lwin",
+    "personTitle": "DYDMO (Deputy District Medical officer)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "nyilwin02@gmail.com",
+    "personCell": "+95 9401539930",
+    "username": "Dr. Nyi Nyi Lwin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Thein Win",
+    "personTitle": "Senior Technician and Laboratory Supervisor",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "theinwin.cwd@gmail.com",
+    "personCell": "+95 943009226",
+    "username": "theinwin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Magway"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Tin Tin Win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9256460428",
+    "username": "tintinwin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pakokku TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Htike Htike Ei",
+    "personTitle": "TB Team Leader",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "drhtikehtikeei@gmail.com",
+    "personPhone": "+95 9797278563",
+    "personCell": "+95 974397649",
+    "username": "Dr. Htike Htike Ei",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Tay Zar",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "tz25916@gmail.com",
+    "personCell": "+95 949350825",
+    "username": "Tayzar",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kayah",
+        "lgaName": "Loikaw"
+      },
+      {
+        "stateName": "Shan (South)",
+        "lgaName": "Kalaw"
+      },
+      {
+        "stateName": "Shan (South)",
+        "lgaName": "Laikha"
+      },
+      {
+        "stateName": "Shan (South)",
+        "lgaName": "Loilen"
+      },
+      {
+        "stateName": "Shan (South)",
+        "lgaName": "Taunggyi"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Zaw Myint",
+    "personTitle": "Lower Myanmar TB Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "zawmyintdr@gmail.com",
+    "personCell": "+95 9454052355",
+    "username": "zawmyintdr@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "U Kyaw Zin Oo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kyawzkz13@gmail.com",
+    "personCell": "+95 9686671102",
+    "username": "LSOTBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kunlong TBC"
+      },
+      {
+        "shortName": "Lashio TBC"
+      },
+      {
+        "shortName": "Muse GH"
+      }
+    ]
+  },
+  {
+    "personName": "Saw Tha Taw Lwin",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "thatawlwin.saw@gmail.com",
+    "personPhone": "+95 250754592",
+    "personCell": "+95 9428005833",
+    "username": "Loikaw TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kayin"
+      }
+    ]
+  },
+  {
+    "personName": "U Dawt Lain Sang",
+    "personTitle": "Lab Level",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "dl.sangpi143@gmail.com",
+    "personCell": "+95 9442000545",
+    "username": "dl.sangpi143@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Hakha TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Tin Naing Tun",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "tinnaingtun177@gmail.com",
+    "personCell": "+95 9771659238",
+    "username": "Tin Naing Tun",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Monywa TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Naw Nilar Nyein Aung",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "aungnaw@who.int",
+    "personPhone": "+95 9444673889",
+    "username": "aungnaw@who.int",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Sagaing"
+      }
+    ]
+  },
+  {
+    "personName": "Daw May Lae Phyo",
+    "personTitle": "Kale TB Team",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 9263048386",
+    "personCell": "+95 9697622807",
+    "username": "susuwin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kalay TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Myint Myint Yee",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myintmyintyee749@gmail.com",
+    "personCell": "+95 95071029",
+    "username": "myintmyintyee749@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "SH-Mingaladon"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Thyn Lei Swe",
+    "personTitle": "Senior Consultant Microbiologist",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "thynleiswe@gmail.com",
+    "personCell": "+9595175218",
+    "username": "thynleiswe@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Dr. Khaing Myint Zin",
+    "personTitle": "Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "pontpontpaing@gmail.com",
+    "personCell": "+95 9401613467",
+    "username": "drthinzarmin82@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Chin"
+      },
+      {
+        "stateName": "Magway"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Pwint Phu",
+    "personTitle": "Train Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "pwintphu.ntp74@gmail.com",
+    "personCell": "+95 453219992",
+    "username": "Thaton TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thaton TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Phone Myint Maung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myaoo@who.int",
+    "personCell": "+95 9970010717",
+    "username": "kyawyn",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Taungoo TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Thwe Thwe Sein",
+    "personTitle": "State TB Officer  AD TB & Leprosy",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "thwethwe1272@gmail.com",
+    "personCell": "+95 92400721",
+    "username": "thwethwe1272@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kachin"
+      }
+    ]
+  },
+  {
+    "personName": "Mai Thandar Kyaw",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "maithandarkyaw@gmail.com",
+    "personCell": "+95 9260794925",
+    "username": "mailay",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ms N Dup Seng Ra_DA",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "ndupsengra@gmail.com",
+    "personCell": "+95 9440001708",
+    "username": "ndupsengra@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kachin"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Aung Kaung Khant",
+    "personTitle": "Medical Officer (Central NTP)",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "dr.aungkaungkhant@gmail.com",
+    "personPhone": "+95 9796149417",
+    "personCell": "+95 97996149417",
+    "username": "dr.aungkaungkhant@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Sai Sai Maung",
+    "personTitle": "Lab Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "saix2saix2@gmail.com",
+    "personCell": "+95 95230423",
+    "username": "U SAI SAI",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Lewe TB Center",
+    "personTitle": "TB Coordinator",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "komin7@gmail.com",
+    "personCell": "+95 9970411717",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Ye Htet Hein",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "yehtethein26297@gmail.com",
+    "personCell": "+95 9775733779",
+    "username": "Myeik TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Myeik TBC"
+      }
+    ]
+  },
+  {
+    "personName": "War War Soe",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9425344159",
+    "username": "War War Soe",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Khin Phyo Wai",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "phyophyo.thipaw@gmail.com",
+    "personCell": "+95 9797621045",
+    "username": "Khin Phyo Wai",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Khin Maung Than",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "tbcmohnyin@gmail.com",
+    "personCell": "+95 947010365",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kachin",
+        "lgaName": "Mohnyin"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Yee Yee Aye",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "yeey83398@gmail.com",
+    "personCell": "+95 9261290420",
+    "username": "yee yee",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kalaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Aung Win Nyunt",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personCell": "+95 9421739897",
+    "username": "aungwin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Rakhine",
+        "lgaName": "Kyaukpyu"
+      }
+    ]
+  },
+  {
+    "personName": "Phyo Wai Soe",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "phyowaisoe239590@gmail.com",
+    "personCell": "+959422444565",
+    "username": "phyowaisoe",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pathein TBC"
+      },
+      {
+        "shortName": "Pathein TBC(Ayw)"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Moe Hnin Phyu",
+    "personTitle": "MO (NTP), Country Focal",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "dr.moehninphyu.mhp@gmail.com",
+    "personCell": "+95 9402586265",
+    "username": "gxalert.ntp.mm@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Daw Mar Mar WIn",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9402687513",
+    "username": "Htun Wai",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "NyaungOo TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Nay Win Maung",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "naywinmaung1983@gmail.com",
+    "personCell": "+95 9402500309",
+    "username": "Nay Win Maung",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Than Than Naing",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "shielhi.uk@gmail.com",
+    "personCell": "+95 9250483959",
+    "username": "thanthan",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Zarni Win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9694289064",
+    "username": "phyomyintnaing06@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pyinoolwin TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Thin Thin Myint",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "tmyat5300@gmail.com",
+    "personCell": "+95 9422799368",
+    "username": "Hlaing TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Hlaing TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Yi Yi Win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9795304911",
+    "username": "yiyiwin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thaketa TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Gangaw TBC",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "khaingmue11@gamil.com",
+    "personCell": "+95 9421344947",
+    "username": "Gangaw TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Moe Moe Win",
+    "personTitle": "Lab Level",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "moemoewin46@gmail.com",
+    "personCell": "+95 9797543431",
+    "username": "Moe Moe Win",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Laputta TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Dawt Lain Sang",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "dl.sangpi143@gmail.com",
+    "personCell": "+95 9442000545",
+    "username": "Law har mg",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Mindat TBC "
+      }
+    ]
+  },
+  {
+    "personName": "Ahlone TBC_Daw Myint Nwe",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 9421037176",
+    "personCell": "+95 9978306669",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Bahan TBC_Daw Nyo Nyo San",
+    "personTitle": "Health Assistant-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 931288639",
+    "personCell": "+95 9978306831",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Bothataung TBC_Aye Aye Maw",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.botahtaung@gmail.com",
+    "personCell": "+95 9443018685",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dagon TBC_Daw Me Me Aung",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.dagon@gmail.com",
+    "personPhone": "+95 9786459653",
+    "personCell": "+95 9978306863",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dagon East TBC_U San San Lin",
+    "personTitle": "Train Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9977844217",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dagon North TBC_Daw Thi Thi Swe",
+    "personTitle": "Train Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9420154735",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dala TBC_Than Than Ngwe",
+    "personTitle": "Township TB Coordinator",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.dala@gmail.com",
+    "personCell": "+95 9773127617",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dawbon TBC_Naw Dah Say",
+    "personTitle": "Health Assistant-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.dawbon@gmail.com",
+    "personCell": "+95 9260816020",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Hlaing TBC_Daw Thin Thin Yee",
+    "personTitle": "Township TB Coordinator",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.hlaing@gmail.com",
+    "personPhone": "+95 9262187220",
+    "personCell": "+95 9978311768",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Hlaingtharya TBC_Nwet Nwet Htay",
+    "personTitle": "Health Assistant-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.hlaingtharya@gmail.com",
+    "personCell": "+95 9421101257",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kyauktada TBC_Hlawn Hning",
+    "personTitle": "Township Health Nurse-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.kyauktada@gmail.com",
+    "personPhone": "+95 931587220",
+    "personCell": "+95 9978311831",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kyauktan TBC_Khin Aye Maw",
+    "personTitle": "Township Health Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.kyauktan@gmail.com",
+    "personCell": "+95 95031853",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kyeemyindaing TBC_U Tin Aung",
+    "personTitle": "Health Assistant-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.kmd@gmail.com",
+    "personPhone": "+95 943025501",
+    "personCell": "+95 9978311862",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Latha TBC_Ni Ni Win",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.latha@gmail.com",
+    "personPhone": "+95 9773466316",
+    "personCell": "+95 9978311898",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mayangone TBC_Wint Wint Khaing",
+    "personTitle": "Township TB Coordinator",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.myg@gmail.com",
+    "personPhone": "+95 9420130141",
+    "personCell": "+95 9978312056",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mingalardon TBC_Daw Min Min Myant",
+    "personTitle": "Township Health Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.mingalardon@gmail.com",
+    "personCell": "+95 9262609713",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mingalartaungnyunt TBC_Daw Ni Ni Win",
+    "personTitle": "Senior Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.mgtn@gmail.com",
+    "personCell": "+95 9450002837",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Pabedan TBC_Aye Aye Yu",
+    "personTitle": "Township Health Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.pabedan@gmail.com",
+    "personCell": "+95 9448041778",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Sanchaung TBC_Pyoe Phyo Win",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 9401560058",
+    "personCell": "+95 9978312369",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "South Okkalapa TBC_Aye Myint Htay",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.southokkalapa@gmail.com",
+    "personCell": "+95 9799651604",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Thanlyin TBC_Daw Lay Nwe",
+    "personTitle": "Statistician",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.thanlyin@gmail.com",
+    "personCell": "+95 9420286572",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Thaketa TBC_Khin Nwe Nwe Win",
+    "personTitle": "Health Assistant-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9422450246",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Twantay TBC_Zin Mar Win",
+    "personTitle": "Mid-wife",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.twantay@gmail.com",
+    "personCell": "+95 9799290661",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Yakin TBC_Aung Phyo",
+    "personTitle": "Public Health Supervisor 2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.yakin@gmail.com",
+    "personCell": "+95 9423320035",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dagon South TBC_Aye Aye Thwe",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.dagonmyothitsouth@gmail.com",
+    "personCell": "+95 9421083630",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Lamadaw TBC_Yin Nwe Soe",
+    "personTitle": "Township TB Coordinator",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.lanmadaw@gmail.com",
+    "personPhone": "+95 9254031012",
+    "personCell": "+95 9978311873",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dagon Seikan TBC_Daw Thet Thet Khaing",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9420705213",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kamayut TBC_Tin Naung Win",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.kamaryut@gmail.com",
+    "personPhone": "+95 9250083353",
+    "personCell": "+95 9978311847",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Mrauk U TBC",
+    "personTitle": "Mrauk U TB Team, Lab Technician G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9254692583",
+    "username": "Mrauk U TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr.Htoo Htet Aung",
+    "personTitle": "National Technical Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "dr.htoohtetaung@gmail.com",
+    "personPhone": "+95 95087333",
+    "personCell": "+95 95087333",
+    "username": "dr.htoohtetaung@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mandalay"
+      }
+    ]
+  },
+  {
+    "personName": "NTP Central",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "central.ntp.mm@gmail.com",
+    "personCell": "+95 9960161019",
+    "username": "haung@clintonhealthaccess.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "CH Sapele"
+      },
+      {
+        "shortName": "DASH_HO"
+      }
+    ]
+  },
+  {
+    "personName": "Shwepyithar TBC_Hla Hla Htet",
+    "personTitle": "Senior Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.shwepyithar@gmail.com",
+    "personPhone": "+95 9252050684",
+    "personCell": "+95 9423872342",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Hlegu TBC_San San",
+    "personTitle": "TB Coordinator",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.hlegu@gmail.com",
+    "personPhone": "+95 971184174",
+    "personCell": "+95 9421030464",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Hmawbi TBC_Tin Ma Ma Cho",
+    "personTitle": "HA",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.hmawbi@gmail.com",
+    "personCell": "+95 975290650",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Htantapin TBC_Daw Nwet Nwet",
+    "personTitle": "Health Assistant-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.htantabin@gmail.com",
+    "personCell": "+95 9797985110",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Taikkyi TBC_Daw Tin Kyu",
+    "personTitle": "Health Assistant-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.taikkyi@gmail.com",
+    "personCell": "+95 9420119956",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "North Okkalapa TBC_Moe Moe Ei",
+    "personTitle": "Lady Health Visitor",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.northokkalapa@gmail.com",
+    "personCell": "+95 9260545484",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kawhmu TBC_Thin Thin Kyu",
+    "personTitle": "Public Health Supervisor 2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.kawhmu@gmail.com",
+    "personCell": "+95 9781267112",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kayan TBC_ Thet Naing Shwe",
+    "personTitle": "TB Coordinator",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.kayan@gmail.com",
+    "personPhone": "+95 9762413488",
+    "personCell": "+95 9420107344",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kungyangon TBC_Aung Myint Thein",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.kgg@gmail.com",
+    "personPhone": "+95 9794360715",
+    "personCell": "+95 9448014672",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Seikgyikanaungto TBC_Khin Pa Pa Lwin",
+    "personTitle": "Township Health Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.skt@gmail.com",
+    "personCell": "+95 9421079630",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Thongwa TBC_Khin Win Nwe",
+    "personTitle": "Junior TB  Worker",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.thonegwa@gmail.com",
+    "personPhone": "+95 425315593",
+    "personCell": "+95 9420072237",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Si Thu",
+    "personTitle": "Regional Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "doctorsithu@gmail.com",
+    "personCell": "+95 95061594",
+    "username": "Dr Si Thu",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Naypyitaw Union Territoriality"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Myint Myint Kyew",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myaoo@who.int",
+    "personCell": "+95 9254291153",
+    "username": "ukyawgyi.ygn@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Bago TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Win Pa Pa Htun",
+    "personTitle": "Medical Officer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "winpapa@shoklo-unit.com",
+    "username": "winpapa@shoklo-unit.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "SMRU GXP"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Aye Thida",
+    "personTitle": "National Technical Officer",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "ayethida0612@gmail.com",
+    "personCell": "+95 95007308",
+    "username": "ayethida0612@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Dr. Tin Ma Ma Nyein",
+    "personTitle": "Regional Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "tinmamanyein23@gmail.com",
+    "personPhone": "+95 9256341188",
+    "personCell": "+95 95210148",
+    "username": "naychisunshines82@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Ayeyarwady"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Sandar Thein",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9263955023",
+    "username": "Ei Thu Zin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Moegok TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ko Zaw Win Tun",
+    "personTitle": "HA Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "zawmintun2727z@gmail.com",
+    "personCell": "+95 9423670934",
+    "username": "zwin50993@gmail.comm",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Bago",
+        "lgaName": "Thayarwady"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Khine Thinzar Soe",
+    "personTitle": "District TB Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personPhone": "+95 95148526",
+    "personCell": "+95 95148526",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Phyu Phyu Mhwe",
+    "personTitle": "Med Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "phyuphyukonsong@gmail.com",
+    "personCell": "+95 9442450360",
+    "username": "Homalin GXP",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Salai",
+    "personTitle": "Engineer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "salaipoeyannainghtetsalai@gmail.com",
+    "personCell": "+959770007819",
+    "username": "salaipoeyannainghtetsalai@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Chin"
+      },
+      {
+        "stateName": "Kachin"
+      },
+      {
+        "stateName": "Kayah"
+      },
+      {
+        "stateName": "Magway"
+      },
+      {
+        "stateName": "Mandalay"
+      },
+      {
+        "stateName": "Naypyitaw Union Territoriality"
+      },
+      {
+        "stateName": "Sagaing"
+      },
+      {
+        "stateName": "Shan (North)"
+      },
+      {
+        "stateName": "Shan (South)"
+      }
+    ]
+  },
+  {
+    "personName": "U Soe Myint Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "soemyintaung907@gmail.com",
+    "personCell": "+95 9254511008",
+    "username": "soemyintaung907@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "South Dagon TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Myat lay Khaing",
+    "personTitle": "Lab Supervisor",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "msfch-dawei-lab@geneva.msf.org",
+    "personCell": "+959450989789",
+    "username": "msfch-dawei-lab@geneva.msf.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Dawei MSF-CH"
+      }
+    ]
+  },
+  {
+    "personName": "NOKA TBC",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9794082843",
+    "username": "suthaung",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Sai Wunna",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "saiwunnatgi2015@gmail.com",
+    "personPhone": "+95 9979460460",
+    "personCell": "+95 9256868366",
+    "username": "saiwunnatgi2015@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Shan (South)"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Aung Kyaw Soe",
+    "personTitle": "Regional Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "agkyawsoe.kse@gmail.com",
+    "personCell": "+95 9960665858",
+    "username": "agkyawsoe.trandam@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mandalay"
+      }
+    ]
+  },
+  {
+    "personName": "Dr Nay Woon Linn",
+    "personTitle": "Regional Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "dr.naywoonlinn@gmail.com",
+    "personCell": "+95 95660344",
+    "username": "drminmyokyi.vbdc.mm@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kayin"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Kyi Kyi Swe",
+    "personTitle": "Microbiologist",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "drkyikyiswe1986@gmail.com",
+    "personCell": "+959797194087",
+    "username": "Dr. Kyi Kyi Swe",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Chin"
+      },
+      {
+        "stateName": "Kachin"
+      },
+      {
+        "stateName": "Kayah"
+      },
+      {
+        "stateName": "Kayin"
+      },
+      {
+        "stateName": "Magway"
+      },
+      {
+        "stateName": "Mandalay"
+      },
+      {
+        "stateName": "Naypyitaw Union Territoriality"
+      },
+      {
+        "stateName": "Sagaing"
+      },
+      {
+        "stateName": "Shan (East)"
+      },
+      {
+        "stateName": "Shan (North)"
+      },
+      {
+        "stateName": "Shan (South)"
+      }
+    ]
+  },
+  {
+    "personName": "U Aung Kyaw San",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "aungkyawsan.try@gmail.com",
+    "personCell": "+95 9796682717",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thayarwady TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Nyi Nyi Naing",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "drnyinyinaing80@gmail.com",
+    "personCell": "+95 92305328",
+    "username": "drnyinyinaing80@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Kyaw Swe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9789813183",
+    "username": "kyawzayarthein221@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "CPH_Mandalay"
+      }
+    ]
+  },
+  {
+    "personName": "Dr Khaing Win Htun",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "drkwhtun@gmail.com",
+    "personCell": "+95 9448535257",
+    "username": "drkwhtun@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Bedded 1000"
+      }
+    ]
+  },
+  {
+    "personName": "Win Zaw Oo",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "winzawoo413@gmail.com",
+    "personCell": "+95 9971960575",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Kyaw Moe Htun",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kokokyawmoetun21@gmail.com",
+    "personCell": "+95 9422203447",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ma Aye Aye Swe",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9401532903",
+    "username": "ayeayeswe",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ma Khine Mi Mi Oo",
+    "personTitle": "Med Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kmmospring11@gmail.com",
+    "personCell": "+95 9401615215",
+    "username": "khinemimioo",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ma Ei Ei Khine",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9256340549",
+    "username": "eieikhine",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Ciang Sian Nuam",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9264992736",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Sui Taung",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9400311583",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Aye Myat Mon",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9442450390",
+    "username": "Aye Myat",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Yamin Latt",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9425306612",
+    "username": "Yamin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ma Theint Yin Yin Phyo",
+    "personTitle": "Med Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "theintyinyinphyo@gmail.com",
+    "personCell": "+95 9251004442",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Nyein Nyein Ei",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9252781624",
+    "username": "nyein nyein",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Nwe Nwe Oo",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9251032547",
+    "username": "Nwe Nwe Oo",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Pan Muan Sang",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9427591077",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Thida Aye Maung",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "thidaayemaung968@gmail.com",
+    "personCell": "+95 9422198194",
+    "username": "Kawthaung TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kawthaung TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Cho Cho Oo",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "chochooo112@gmail.com",
+    "personCell": "+95 9253045343",
+    "username": "cho cho",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Shan (East)"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Toe Myar",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 936269792",
+    "username": "toemyar",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Loikaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Thandar Win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myaoo@who.int",
+    "personCell": "+95 9971658402",
+    "username": "Thandar Win",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pyay TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Zun Pwint Phyu",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9773627998",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Wutyee Thant",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "wutyeet528@gmail.com",
+    "personCell": "+95 9798699849",
+    "username": "Htike Htike Than",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Shwebo TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Aung Myint Myat",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9799576948",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Aung Myat Soe",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9421730224",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Mya Myint Zu",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "daeun110690@gmail.com",
+    "personCell": "+95 9778193650",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thayet TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ko Kyaw Khaing",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "kywkhng@gmail.com",
+    "personCell": "+95 9420041242",
+    "username": "kyawkhaing",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Ma Naw Ah Phaw",
+    "personTitle": "Office Assitant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "el.phaw.89@gmail.com",
+    "personCell": "+95 9780169114",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Aye Aye Nwe",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ayenwe9363@gmail.com",
+    "personCell": "+95 9252533112",
+    "username": "Tachileik TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Tachileik TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Thazin Aye",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 699535363",
+    "username": "Thazin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw May Thet Mon",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "maym83619@gmail.com",
+    "personCell": "+95 9423533172",
+    "username": "Khet Khet Hlaing",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Tamu TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ma Nyaung Siam Lun",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9400512372",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Phone Myint Shwe",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "phonemyintshwe@gmail.com",
+    "personCell": "+95 9254692583",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Kyaw Moe Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kaungkhant47@gmail.com",
+    "personCell": "+95 943082168",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Maungdaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ma Ei Ei Mon",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9969678597",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ma Myo Pa Pa Nyein",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9789261820",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Kyaw Lin Htwe",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "herrystyle.mdy@gmail.com",
+    "personCell": "+95 9797764653",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ma Nwe Nwe Kyawt",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9798692755",
+    "username": "Nwe Nwe Kyawt",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Ohanmar Khin",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntpkayinstate@gmail.com",
+    "personCell": "+95 9791857826",
+    "username": "ohnmarkhin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Myawaddy TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Naw May Htoo Phaw",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "nilarphoo@gmail.com",
+    "personCell": "+95 9450017156",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Nan Thi Thi Soe",
+    "personTitle": "Med Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "nanthithisoe@gmail.com",
+    "personCell": "+95 9769847882",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ma Thandar",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9261596828",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Bahan TBC_ U Maung Myint",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9421087707",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Taunggyi",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9428334773",
+    "username": "Taunggyi TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Insein TBC_Daw Khin Cho Satt",
+    "personTitle": "Train Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.ygn.insein@gmail.com",
+    "personCell": "+95 9796614502",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Tamwe TBC_Aung Ko Htwe",
+    "personTitle": "Health Assistant-2",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personCell": "+95 9451863653",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Ko Ko",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9458127036",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Khin Nan Soe",
+    "personTitle": "Blue Staff",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "khinnansoe@gmail.com",
+    "personCell": "+95 9788834032",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Thaw Thaw Wai",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9459222864",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Nu Wai Lin",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9428315058",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "San San Seint",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9421022671",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Thein Nyi Nyi Oo",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9975985949",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Salai Phone Zin",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9401025010",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Thaw Phyo Wai",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9458127036",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Su Thaung",
+    "personTitle": "Lab Tech G-1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9794082843",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Nu Nu Hlaing",
+    "personTitle": "Senior Lab Quality Officer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "nunuhlaing@ahrnmyanmar.org",
+    "personCell": "+95 95091291",
+    "username": "nunuhlaing@ahrnmyanmar.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Sum Lang Ja Nau",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "labtech1.mogaung.myanmar@medecinsdumonde.net",
+    "personCell": "+95 9400025947",
+    "username": "labsupermdm@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MDM Moegaung"
+      }
+    ]
+  },
+  {
+    "personName": "U Tun Aung Kyaw",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9254106928",
+    "username": "TGG GXP",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thingangyun TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Thuzar",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9255680332",
+    "username": "thu zar",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kyaukme TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Minbu GXP Center",
+    "personTitle": "Minbu General Lab",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "minbu.lab@gmail.com",
+    "personPhone": "+95 9962026920",
+    "personCell": "+95 92026920",
+    "username": "minbu.lab@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Arkar Min Maung",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "khunjoesephlay@gmail.com",
+    "personCell": "+95 9428003122",
+    "username": "Dawei TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Dawei TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ma Thinzar  Lin",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 9455194190",
+    "personCell": "+95 9788717301",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Lae Lae Tun",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ahrn.pk.labtech@ahrnmyanmar.org",
+    "personCell": "+95 9256495114",
+    "username": "ahrn.pk.labtech@ahrnmyanmar.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "AHRN-PKT"
+      }
+    ]
+  },
+  {
+    "personName": "U Khin Maung Htun",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myaoo@who.int",
+    "personCell": "+95 9976252363",
+    "username": "khin maung",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Hinthada TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ma Aye Nyein Phyo",
+    "personTitle": "Lab Tech G-2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 9694946541",
+    "personCell": "+95 9450576706",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Myo Min Thu",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myomimthu31@gmail.com",
+    "personCell": "+95 9428363671",
+    "username": "Loilem TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "LoiLem TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr Than Lwin Aung",
+    "personTitle": "State TB Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "thanlwin.dr@gmail.com",
+    "personCell": "+95 9452186671",
+    "username": "lenyowin@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kayah"
+      }
+    ]
+  },
+  {
+    "personName": "U Dawt Lain Sang",
+    "personTitle": "TB Focal",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "yamindoctor@gmail.com",
+    "personCell": "+95 9442000545",
+    "username": "yamindoctor@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Chin"
+      }
+    ]
+  },
+  {
+    "personName": "Shein Shein Phyo",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "sheinsheinphyo@gmail.com",
+    "personCell": "+95 9797182100",
+    "username": "sheinsheinphyo@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Chin"
+      },
+      {
+        "stateName": "Magway"
+      }
+    ]
+  },
+  {
+    "personName": "Ma Hnin Yu Wai",
+    "personTitle": "Data Assistant (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "hninyuwai292@gmail.com",
+    "personPhone": "+95 9401634562",
+    "username": "hninyu",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Tanintharyi"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Cho Cho San",
+    "personTitle": "Deputy Director (NTP)",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "drchochosanmph@gmail.com",
+    "personPhone": "+95 9 4207052258",
+    "username": "dr.chochosan",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Nyein Chan Thu",
+    "personTitle": "Lab Assistance",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95  9457160893",
+    "username": "nyeinchanthu",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Myat Moe Tun",
+    "personTitle": "Health Assistant",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "username": "myatmoetun",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Sagaing"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Khine Zin Thin",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "khinezinthin112@gmail.com",
+    "personCell": "+95 9260115100",
+    "username": "hninsabai.htut@savethechildren.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "IOM, Mawlamyine"
+      },
+      {
+        "shortName": "Mawlamyine TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Khin Htay Oo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.magwayregion@gmail.com",
+    "personCell": "+95 9457585651",
+    "username": "arkarphyo",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Gangaw TBC"
+      },
+      {
+        "shortName": "Magway TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Naw Gloria Khu Gay Htoo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ngkghtoo@schmyanmar.org",
+    "personCell": "+95 9254253351",
+    "username": "zwin@psimyanmar.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "PSI Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "PSI QC Lab",
+    "personTitle": "Lab Technicain",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "username": "qclab",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "PSI Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Zayar Win",
+    "personTitle": "Engineer (WHO)",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "zayarwin2015@gmail.com",
+    "personCell": "+959450044434",
+    "username": "zayarwin2015@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Mya Mya Su",
+    "personTitle": "Lab Officer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9798581477",
+    "username": "myamyasu",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Su Su Khaing",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kaungglaxy1@gmail.com",
+    "personCell": "+95 9427297997",
+    "username": "chawsumon.cwh@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "SH-Thaketa"
+      }
+    ]
+  },
+  {
+    "personName": "Khaung Zal",
+    "personTitle": "Clerk",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 770308009",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Ni Ni Win",
+    "personTitle": "TB Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "nini.ymt@gmail.com",
+    "personCell": "+95 9798886991",
+    "username": "nini.ymt@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mandalay",
+        "lgaName": "Yamethin"
+      }
+    ]
+  },
+  {
+    "personName": "U Hein Htet Aung",
+    "personTitle": "Lab technician",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "nyisoe6486@gmail.com",
+    "personCell": "+95 9771292747",
+    "username": "nyisoe6486@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Yamethin TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Mar Mar",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "cuckoogirl88@gmail.com",
+    "personCell": "+959454710700",
+    "username": "dawmarmar",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Myint Tun Naing",
+    "personTitle": "Data Assistant/MMA",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "umyinttunnaing@gmail.com",
+    "personPhone": "+95 9420184551",
+    "username": "umyinttunnaing@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon",
+        "lgaName": "Yangon (East)"
+      },
+      {
+        "stateName": "Yangon",
+        "lgaName": "Yangon (North)"
+      },
+      {
+        "stateName": "Yangon",
+        "lgaName": "Yangon (South)"
+      },
+      {
+        "stateName": "Yangon",
+        "lgaName": "Yangon (West)"
+      }
+    ]
+  },
+  {
+    "personName": "Ko Min Thant",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "soemoethu09@gmail.com",
+    "personCell": "+959963997885",
+    "username": "soemoethu09@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Sagaing",
+        "lgaName": "Sagaing"
+      }
+    ]
+  },
+  {
+    "personName": "Dr Thin Thin Thwe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "yangon-med@oca.msf.org",
+    "personCell": "+959977455768",
+    "username": "yangon-med@oca.msf.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Khin Yupar Soe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9795509454",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Khin Maung Win",
+    "personTitle": "Lab Technician (MMA)",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 95033368",
+    "username": "Hlaingtharya TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Min Yaung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 9258564165",
+    "personCell": "+95 9771672492",
+    "username": "Nang Hom Kham",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Khamti TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Thant Nay Aung",
+    "personTitle": "NTO (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "tnaung.mgy@gmail.com",
+    "personCell": "+95 9972 846857",
+    "username": "tnaung.mgy@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Ayeyarwady"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Myat Kyaw Thu",
+    "personTitle": "Deputy SHD (DC)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "drmyatkyawthu@gmail.com",
+    "personCell": "+95 92032803",
+    "username": "drmyatkyawthu@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Sagaing"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Ei Ei Khaing",
+    "personTitle": "MO_MSF-H",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kachin-med@oca.msf.org",
+    "personCell": "+95 9892952629",
+    "username": "KachinMSF",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MSF-HKT"
+      },
+      {
+        "shortName": "MSF-MKN1 "
+      }
+    ]
+  },
+  {
+    "personName": "InfoSolve",
+    "personTitle": "InfoSolve",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "username": "InfoSolve",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Sat Paing oo",
+    "personTitle": "Lab Tech_2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "sailu965@gmail.com",
+    "personCell": "+95 09692044971",
+    "username": "Sat Paing Oo",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Tun oo",
+    "personTitle": "Regional Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "dr.tunoo.ntp@gmail.com",
+    "personCell": "+95 9788268581",
+    "username": "Tun Oo",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mon"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Thet Lwin Min",
+    "personTitle": "TB Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personCell": "+95 943004574",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mon"
+      }
+    ]
+  },
+  {
+    "personName": "Prof Dr. Tint Tint Kyi",
+    "personTitle": "Professor,",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "tinttint.kyi@gmail.com",
+    "personCell": "+95 95660172",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "AP Dr. Kyaw Kyaw Oo",
+    "personTitle": "Associate Professor",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "drkyawkyawoo@gmail.com",
+    "personCell": "+95 9974214933",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Pa Pa",
+    "personTitle": "MS-1000 Bedded Hospital",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "dr.papa84@gmail.com",
+    "personCell": "+95 9250291595",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Naing Tuu",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "naingtuu708@gmail.com",
+    "personCell": "+959797731894",
+    "username": "naingtuu",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Thant Su Htet",
+    "personTitle": "M&E Officer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "thantsu.htet@savethechildren.org",
+    "personCell": "+95 9261396190",
+    "username": "thantsu.htet@savethechildren.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Zaw Win Htin",
+    "personTitle": "Regional Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "dr.zawwinhtin30@gmail.com",
+    "personCell": "+95 95179002",
+    "username": "uwaiphyoaung123@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Bago"
+      }
+    ]
+  },
+  {
+    "personName": "Theingi Tun",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "lab.mggmdm.myanmar@gmail.com",
+    "personCell": "+959781066960",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MDM Moegaung"
+      }
+    ]
+  },
+  {
+    "personName": "Ms. Ei Thu Zin",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95925611843",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr.Wint Wint Nyunt",
+    "personTitle": "Senior Consultant Microbiologist",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "wintwintnyunt@gmail.com",
+    "personCell": "+95973199658",
+    "username": "wintwintnyunt@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Lae Lae Win",
+    "personTitle": "Laboratory Officer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "lywin@iom.int",
+    "personCell": "+95 9444412733",
+    "username": "lywin@iom.int",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Nwe Nwe Kyawt",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9795656994",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MGH TB OPD-2"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Tin Tin Moe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9258136220",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "UMTBC"
+      }
+    ]
+  },
+  {
+    "personName": "Kyaw Ye Han",
+    "personTitle": "Lab Tech Grate II",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "kyawyehan2577@gmail.com",
+    "personCell": "+95 9770812010",
+    "username": "kyawyehan2577@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mon",
+        "lgaName": "Mawlamyine"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Su Myat Khaing",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9258572834",
+    "username": "sumyatkhaing",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Chaw Su Win",
+    "personTitle": "Lab Tech",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 9409066196",
+    "username": "chawsuwin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Myat Myat Thin",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.kcn.mohnyin@gmail.com",
+    "personCell": "+95 9666978869",
+    "username": "myanyeinwai",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Mohnyin TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Zin Mar Htwe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9259799383",
+    "username": "thaenuhtwe",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Katha GXP Center"
+      }
+    ]
+  },
+  {
+    "personName": "Daw May Thet Mon",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "maythetmon155565@gmail.com",
+    "personCell": "+95 9254565998",
+    "username": "maythetmon",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kanbalu TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Mai Pyae Phyo Wai",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "khinlay085@gmail.com",
+    "personCell": "+959256219434",
+    "username": "maipyoephyowai",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thayet TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Kyaw Swar Oo",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9259534840",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Aye Myo Lwin",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9969811380",
+    "username": "aungmyolwin",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Law Har Moung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959442002026",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Khine Kyaw Thant",
+    "personTitle": "Installer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kthant@clintonhealthaccess.org",
+    "personCell": "+9595077105",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Su Thaung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kominthar33@gmail.com",
+    "personCell": "+95 9794082843",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "NOKA TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Thin Naing Win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9788840020",
+    "username": "Thin Naing Win",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Insein Prison"
+      }
+    ]
+  },
+  {
+    "personName": "Moe Pa Pa Kyi",
+    "personTitle": "Data Assistant",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "mppk2012@gmail.com",
+    "personCell": "+95 9421083987",
+    "username": "mppk2012",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "U Myo Myint",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "mgy.ntpminbu@gmail.com",
+    "personCell": "+95 9401618735",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Minbu TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Thin Thin Naing",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959250483959",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "LoiLem TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Htay Myint",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959798139762",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thingangyun TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Hpe Sar Ram",
+    "personTitle": "Lab Tech-GII",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9447069091",
+    "username": "Putao TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Sann Maung",
+    "personTitle": "TB Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "sannmaung23@gmail.com",
+    "personCell": "+95 9422194793",
+    "username": "sannmaung23@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Tanintharyi",
+        "lgaName": "Myeik"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Khaing Lay Oo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.kcn.bhamo@gmail.com",
+    "personCell": "+95 9798161744",
+    "username": "Bhamaw TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Bhamaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Thin Zar Khine",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "thuthuayezaw@gmail.com",
+    "personCell": "+959792502971",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Stefan",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "stefanbaumg@gmail.com",
+    "personCell": "+1 413 548 5003",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Poe Ei Phyu",
+    "personTitle": "Lab Level",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "pharpontb@gmail.com",
+    "personCell": "+95 9261142353",
+    "username": "ntp.aya.pyapon@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pyapon TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Wint Zarchi Naing",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9974270798",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Meikhtila TBC"
+      }
+    ]
+  },
+  {
+    "personName": "AHRN",
+    "personTitle": "Lab Coordinator",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "lealeacho@ahrnmyanmar.org",
+    "personCell": "+95 9254986032",
+    "username": "AHRN",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "AHRN-PKT"
+      },
+      {
+        "shortName": "AHRN-Waingmaw"
+      }
+    ]
+  },
+  {
+    "personName": "Pabedan_Daw Zin Mar Thu",
+    "personTitle": "PHSII",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "tlay21569@gmail.com",
+    "personPhone": "+95 9440056706",
+    "personCell": "+95 9978312138",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Phyo Wai Myint / May Soe Lwin",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ahrn.wm.labtech@ahrnmyanmar.org",
+    "personPhone": "+95 9766577236",
+    "personCell": "+95 9253133556",
+    "username": "phyoew17@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "AHRN-Waingmaw"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Htay Min",
+    "personTitle": "District TB TL",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "dr.htaymin@gmail.com",
+    "personCell": "+95 9974309284",
+    "username": "dr.htaymin@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Bago",
+        "lgaName": "Taungoo"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Latt Thu Thu Kyaw",
+    "personTitle": "TB TL",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "lattthuthukyaw23@gmail.com",
+    "personCell": "+95 95068386",
+    "username": "lattthuthukyaw23@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Bago",
+        "lgaName": "Pyay"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Thet Zaw-",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Thet Zaw Tun",
+    "personTitle": "NTO (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "n.thetzaw@gmail.com",
+    "personCell": "+95 9458514041",
+    "username": "n.thetzaw@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Shan (East)"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Mee Mee Soe",
+    "personTitle": "TB Team Lader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "memesoe10987@gmail.com",
+    "personCell": "+95 9767742722",
+    "username": "memesoe10987@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Shan (North)"
+      }
+    ]
+  },
+  {
+    "personName": "Yar Yar Htun",
+    "personTitle": "HA (NTP_Central)",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "yaryarhtun181198@gmail.com",
+    "personCell": "+95 9256529737",
+    "username": "yaryarhtun181198@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Thin Thin Swe",
+    "personTitle": "DA (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "thinthinswe592@gmail.com",
+    "personCell": "+95 9969652037",
+    "username": "thinthinswe592@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Bago"
+      }
+    ]
+  },
+  {
+    "personName": "Nyein Thant Yi",
+    "personTitle": "DA (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "nyeinthantyi.smile@gmail.com",
+    "personCell": "+95 9401632768",
+    "username": "nyeinthantyi.smile@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Ayeyarwady"
+      }
+    ]
+  },
+  {
+    "personName": "Mya Myo Thet",
+    "personTitle": "DA (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "myothettwai@gmail.com",
+    "personCell": "+95 9421757303",
+    "username": "myothettwai@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Rakhine"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Zarni Tun",
+    "personTitle": "TB TL",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "zn6194897@gmail.com",
+    "personCell": "+95 9259484247",
+    "username": "zn6194897@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mandalay",
+        "lgaName": "Meiktila"
+      }
+    ]
+  },
+  {
+    "personName": "Htet Htet Kyaw",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 09973373450",
+    "username": "Htet Htet Kyaw",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Mya Lwin Lwin",
+    "personTitle": "Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "myalwinlwin1234@gmail.com",
+    "personCell": "+95 9420145222",
+    "username": "myalwinlwin1234@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Ayeyarwady"
+      }
+    ]
+  },
+  {
+    "personName": "Hsu Thinzar Lat",
+    "personTitle": "STLS (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "hsulatt099@gmail.com",
+    "personCell": "+95 9979187050",
+    "username": "hsulatt099@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Tanintharyi"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Htoo Han Paing",
+    "personTitle": "NTO (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "htoohanpaing.hhp@gmail.com",
+    "personCell": "+95 9400138587",
+    "username": "htoohanpaing.hhp@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Tanintharyi"
+      }
+    ]
+  },
+  {
+    "personName": "Aye Thinzar",
+    "personTitle": "STLS (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "ayethinzar86@gmail.com",
+    "personCell": "+95 9963585190",
+    "username": "ayethinzar86@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Myo Thet Khine",
+    "personTitle": "Lab Tech_G1",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myothetkhine4@gmail.com",
+    "personCell": "+95 9256324549",
+    "username": "myothetkhine4@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Htet Htet Win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "htethtetwin.umt@gmail.com",
+    "personCell": "+9592026920",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Minbu TBC"
+      }
+    ]
+  },
+  {
+    "personName": "ygn_inventory_test",
+    "personTitle": "ygn_inventory_test",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "username": "ygn_inventory_test",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "South Dagon TBC"
+      }
+    ]
+  },
+  {
+    "personName": "May Thet Naing",
+    "personTitle": "Medical Officer",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "ntp.ygn@gmail.com",
+    "personCell": "+95 95105385",
+    "username": "maythetnaing84@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Aye Thida Aung",
+    "personTitle": "Laboratory Officer",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "dawayethidaaung@gmail.com",
+    "personCell": "+95 9261284431",
+    "username": "dawayethidaaung@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Dr Kyaw Moe Aung",
+    "personTitle": "Team Leader",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "kaungkhant47@gmail.com",
+    "personCell": "+95 943082168",
+    "username": "dr.thanhtike005@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Rakhine"
+      }
+    ]
+  },
+  {
+    "personName": "U Chit Hlaing_Kyaikto TB Coordinator",
+    "personTitle": "HA",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.mon.kyaikto@gmail.com",
+    "personCell": "+95 9964050259",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Than Than Maw_Belin TBC",
+    "personTitle": "TN",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.mon.bilin@gmail.com",
+    "personPhone": "+95 9425349343",
+    "personCell": "+95 9964050258",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Chaw Su Yin_Paung TBC",
+    "personTitle": "HA",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.mon.paung@gmail.com",
+    "personPhone": "+95 943071684",
+    "personCell": "+95 9775802727",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Naw Khin Saw Htay_Chaungzon TBC",
+    "personTitle": "HA",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.mon.chaungzon@gmail.com",
+    "personPhone": "+95 9425037452",
+    "personCell": "+95 9892941676",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Ni Ni Lwin_Kyaikmaraw TBC",
+    "personTitle": "SN",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.mon.kyaikmaraw@gmail.com",
+    "personPhone": "+95 9425271768",
+    "personCell": "+95 9964050253",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Aye Mya Thu_Mudon TBC",
+    "personTitle": "TB Nurse",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.mon.mudon@gmail.com",
+    "personCell": "+95 9780890646",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Ohmar Oo_Thanbuzayat TBC",
+    "personTitle": "TN",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntp.mon.thanbuzayat@gmail.com",
+    "personPhone": "+95 9255852355",
+    "personCell": "+95 9964050296",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Myo Oo_Ye TBC",
+    "personTitle": "PHS I",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "npt.mon.ye@gmail.com",
+    "personPhone": "+95 9425318211",
+    "personCell": "+95 9964050295",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "UTI Yangon",
+    "personTitle": "Lab Technician (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "thuzar.ag1987@gmail.com",
+    "personCell": "+95 9776810276",
+    "username": "UTI Yangon",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Hay Mar Phoo",
+    "personTitle": "Lab Technician",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "phoohaymar@gmail.com",
+    "personCell": "+95 9770741838",
+    "username": "phoohaymar@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Khin Hnin Soe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "khinhninsoe343@gmail.com",
+    "personCell": "+95 9269532497",
+    "username": "zinwahtheinmmtn@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "UTI XVI"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Thet Naing Oo",
+    "personTitle": "NTO (eR&R)",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "drthetnaing084@gmail.com",
+    "personCell": "+95 943077302",
+    "username": "drthetnaing084@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Dr Thet Zaw Tun",
+    "personTitle": "NTO",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "n.thetzaw@gmail.com",
+    "personPhone": "+95 9458514041",
+    "username": "noahthetzaw@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Lab Manager",
+    "personTitle": "Lab Manager",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "lab.mkn@mam.org.mm",
+    "personPhone": "+95 9989118997",
+    "personCell": "+95 9989118997",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Philip Gum San Awung",
+    "personTitle": "Technician",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "lab.mkn@mam.org.mm",
+    "personPhone": "+95 9989118997",
+    "personCell": "+95 9989118997",
+    "username": "lab.mkn@mam.org.mm",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MAM Myitgyina"
+      }
+    ]
+  },
+  {
+    "personName": "khine zin thin",
+    "personTitle": "Mtech (WHO)",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "khinezinthin112@gmail.com",
+    "personPhone": "+95 09260115100",
+    "personCell": "+95 09260115100",
+    "username": "khinezinthin112@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mon"
+      }
+    ]
+  },
+  {
+    "personName": "thet aung soe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "moonfang.tas@gmail.com",
+    "personPhone": "+95 9793663398",
+    "personCell": "+959793663397",
+    "username": "thetaung@23453",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Myitkyina TBC"
+      },
+      {
+        "shortName": "Myitkyina TBC-2"
+      }
+    ]
+  },
+  {
+    "personName": "Lab Technician",
+    "personTitle": "NPTGH Microbiology Technician",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "microlab4u@gmail.com",
+    "personPhone": "+95 765466985",
+    "username": "microlab4u@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "S1 Admin",
+    "personTitle": "Admin",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "username": "s1admin",
+    "timezone": "Argentina Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "imtiaz",
+    "personTitle": "Mr",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "imtiaz@gmail.com",
+    "personPhone": "+880 01712208209",
+    "personCell": "+951712208209",
+    "username": "iesayeed@systemone.co",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "Thein Htay",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "2013theinhtay@gmail.com",
+    "personCell": "+95943145205",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Monywa TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Chit Su",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "chitsumyat2691988@gmail.com",
+    "personPhone": "+95 740886877",
+    "username": "chitsumyat2691988@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Ma Ei Ei Khaing",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9789813183",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kyaukse TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Imtiaz",
+    "personTitle": "Installer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "iesayed@systemone.id",
+    "personCell": "+8801712208209",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kyaukse TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Phe Sa Rem",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959951123407",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Thet Phyu Sin",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959401799979",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Mohnyin TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Aye Swe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959446999631",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Khaing Lay Oo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959686065544",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Bhamaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ye Thu Kyaw",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "vanmizo546@gmail.com",
+    "personCell": "+959266031933",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw Hsu Yandanar Nyein",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "muse-labtech@oca.msf.org",
+    "personCell": "+95 9688317172",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MSF-LSH-1"
+      },
+      {
+        "shortName": "MSFH Muse"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Maw Maw Aye",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "amawmaw78@gmail.com",
+    "personCell": "+95 9263737414",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Waingmaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Thida Tun",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 425266117",
+    "username": "tinnilartun583@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thanbyuzayat TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Kyaw Moe Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kaungkhant47@gmail.com",
+    "personCell": "+95 943082168",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Mrauk U TBC"
+      }
+    ]
+  },
+  {
+    "personName": "imtiaz",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "test@gx.com",
+    "personCell": "+951712208209",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "TestTraining"
+      }
+    ]
+  },
+  {
+    "personName": "salai",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "salai@gmail.com",
+    "personCell": "+95877878778",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "test up mm"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Eaint Myat Chal",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "eaintmyetchal17598@gmail.com",
+    "personCell": "+95 9452872508",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Taunggyi TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Moesandar",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "moesandar888ns@gmail.com",
+    "personCell": "+959698994871",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Laikha TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Nang Khin April Tun",
+    "personTitle": "G2",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "nangkhinaprilhtun28@gmail.com",
+    "personCell": "+95 9680398798",
+    "username": "moesandar888ns@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Laikha TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Pae Sar Ram",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "putaotownship@gmail.com",
+    "personPhone": "+95 9662715111",
+    "personCell": "+95 9955256212",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Putao TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Win Han Oo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ntpkayinstate@gmail.com",
+    "personCell": "+95 9762384519",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Hpa An TBC"
+      },
+      {
+        "shortName": "SMRU GXP"
+      }
+    ]
+  },
+  {
+    "personName": "Nwe Nwe Kyawt",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95940414573",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr. Zin Mg Nwe",
+    "personTitle": "TMO",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "laihkahospital081@gmail.com",
+    "personPhone": "+95 253095027",
+    "username": "laihkahospital081@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "nwe nwe kyawt",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "nwenwekyawt01@gmail.comn",
+    "personCell": "+959795656994",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MGH TB OPD"
+      }
+    ]
+  },
+  {
+    "personName": "momothihun",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "momothihun1375@gmail.com",
+    "personPhone": "+95 9425715122",
+    "username": "momothihun1375@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Mandalay",
+        "lgaName": "Mandalay"
+      }
+    ]
+  },
+  {
+    "personName": "U Myat Min Oo",
+    "personTitle": "NTO",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "myaoo@who.int",
+    "personCell": "+95 9253536157",
+    "username": "myaoo@who.int",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": true,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "zaw moe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "zawmoe82lab@gmail.com",
+    "personCell": "+959789772735",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Hlaingtharya TBC"
+      }
+    ]
+  },
+  {
+    "personName": "daw yi win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959795304911",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thaketa TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Nawazesh Irani",
+    "personTitle": "Director - Customer Experience",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "nirani@systemone.co",
+    "username": "nawazesh",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "U Aye Ko",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "ako223820@gmail.com",
+    "personCell": "+95 9797989468",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pyinmana TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Khin Aye Mu",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9264924374",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Latha No-2"
+      },
+      {
+        "shortName": "Latha XVI"
+      }
+    ]
+  },
+  {
+    "personName": "Dr. Kyaw Kan Kaung",
+    "personTitle": "Deputy Director General",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "kyawkankaungmo@gmail.com",
+    "username": "kyawkankaungmo@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "sayeed",
+    "personTitle": "National",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "imtiazchapai@gmail.com",
+    "username": "imtiazchapai@gmail.com",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "kalaw tbc",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959945951999",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kalaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "tin tin win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959256460428",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pakokku TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw San San Win",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 943152776",
+    "username": "Dalla TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Dala Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "san san win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95943152776",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Dala Hospital"
+      }
+    ]
+  },
+  {
+    "personName": "Ei Mon Chit",
+    "personTitle": "DA",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "chite@who.int",
+    "personPhone": "+95 402791807",
+    "username": "chite@who.int",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Kayin"
+      }
+    ]
+  },
+  {
+    "personName": "U Soe Moe Aung",
+    "personTitle": "Phakant TBC",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "hpakant.ntp@gmail.com",
+    "personCell": "+95 9259776337",
+    "username": "Phakant TBC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Phakant TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Sai Warlar Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "saiwalaraung55@gmail.com",
+    "personCell": "+95 9421561260",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Homalin TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Thidar Aung",
+    "personTitle": "MAM ORG",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "labcoord.hiv@mam.org",
+    "personCell": "+95 9797841825",
+    "username": "labcoord.hiv@mam.org",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MAM Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Dr.Min Min Zaw",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "mrzaw710@gmail.com",
+    "personCell": "+95 9420141618",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "DSMRC"
+      }
+    ]
+  },
+  {
+    "personName": "DSMRC",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 09420141618",
+    "username": "DSMRC",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "U Thein Win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95943009226",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Magway TBC"
+      }
+    ]
+  },
+  {
+    "personName": "smon@who.int",
+    "jobFunctions": [
+      "Regional Officer"
+    ],
+    "personEmailAddress": "smon@who.int",
+    "username": "smon@who.int",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {
+        "stateName": "Ayeyarwady"
+      },
+      {
+        "stateName": "Bago"
+      },
+      {
+        "stateName": "Chin"
+      },
+      {
+        "stateName": "Kachin"
+      },
+      {
+        "stateName": "Kayah"
+      },
+      {
+        "stateName": "Kayin"
+      },
+      {
+        "stateName": "Magway"
+      },
+      {
+        "stateName": "Mandalay"
+      },
+      {
+        "stateName": "Mon"
+      },
+      {
+        "stateName": "Naypyitaw Union Territoriality"
+      },
+      {
+        "stateName": "Rakhine"
+      },
+      {
+        "stateName": "Sagaing"
+      },
+      {
+        "stateName": "Shan (East)"
+      },
+      {
+        "stateName": "Shan (North)"
+      },
+      {
+        "stateName": "Shan (South)"
+      },
+      {
+        "stateName": "Tanintharyi"
+      },
+      {
+        "stateName": "Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Nwe Nwe Kyawt",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "nwenwekyawt01@gmail.com",
+    "personCell": "+9597795656994",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "UMTBC"
+      }
+    ]
+  },
+  {
+    "personName": "Salai Poe Yan Naing Htet",
+    "personTitle": "Installer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "salaipoeyannaindgtetsalai@gmail.com",
+    "personCell": "+959770007819",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Salai",
+    "personTitle": "Installer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "salaipoeyannainghtetsalai@gmail.com",
+    "personCell": "+959770078199",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Dr Than Htike Aung",
+    "personTitle": "National Technical Officer",
+    "jobFunctions": [
+      "Admin"
+    ],
+    "personEmailAddress": "thaung@who.int",
+    "personPhone": "+95 9899899901",
+    "username": "thaung@who.int",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "geographies": [
+      {}
+    ]
+  },
+  {
+    "personName": "htay Naing Oo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95943056889",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Gyobingauk TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Htay Naing Oo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myaoo@who.int",
+    "personCell": "+95 943056889",
+    "username": "Htay Naing Oo",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Gyobingauk TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Lei Lei Win",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "leileiwin131322@gmail.com",
+    "personPhone": "+95 9422502175",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Ingabu TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Chit Su Myat Tun",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "chitsumyat2691988@gmail.com",
+    "personCell": "+95 740886877",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "UTI-2"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Nan Myint Khain",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9402611491",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Minbu TBC"
+      },
+      {
+        "shortName": "Myitkyina TBC"
+      },
+      {
+        "shortName": "PSI Yangon"
+      },
+      {
+        "shortName": "South Dagon TBC"
+      },
+      {
+        "shortName": "UMTBC XVI"
+      }
+    ]
+  },
+  {
+    "personName": "Eaint Myat Chal",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959452872508",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Taunggyi TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Daw Hla Hla Myint",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9448021917",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Mingalardon TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Dr.Myint Thazin Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "myintthazinaung@gmail.com",
+    "personCell": "+95 9455767022",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "NOKA_HOSP"
+      }
+    ]
+  },
+  {
+    "personName": "Daw San San Hlaing",
+    "personEmailAddress": "myaoo@who.int",
+    "personCell": "+95 9440859561",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true
+  },
+  {
+    "personName": "Daw San San Hlaing",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9440859561",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Tamwe TBC"
+      }
+    ]
+  },
+  {
+    "personName": "ma roi seng",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "shan-labtech@oca.msf.org",
+    "personCell": "+959765615976",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MSF-LSH-1"
+      },
+      {
+        "shortName": "MSFH Muse"
+      }
+    ]
+  },
+  {
+    "personName": "PSI-QC",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "zwin@psimyanmar.org",
+    "personCell": "+959457779510",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "PSI Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Aung Ko Min",
+    "personTitle": "Installer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "aungkomin.mr@gmail.com",
+    "personCell": "+95943041365",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Bhamaw TBC"
+      },
+      {
+        "shortName": "Dawei MSF-CH"
+      },
+      {
+        "shortName": "Hinthada TBC"
+      },
+      {
+        "shortName": "Kyaing Tong TBC"
+      },
+      {
+        "shortName": "Kyaukpyu TBC"
+      },
+      {
+        "shortName": "Lashio TBC"
+      },
+      {
+        "shortName": "MDM Moegaung"
+      },
+      {
+        "shortName": "Meikhtila TBC"
+      },
+      {
+        "shortName": "Minbu TBC"
+      },
+      {
+        "shortName": "Myitkyina TBC"
+      },
+      {
+        "shortName": "Patheingyi TBH"
+      },
+      {
+        "shortName": "PSI Yangon"
+      },
+      {
+        "shortName": "Pyay TBC"
+      },
+      {
+        "shortName": "South Dagon TBC"
+      },
+      {
+        "shortName": "Tachileik TBC"
+      },
+      {
+        "shortName": "UMTBC XVI"
+      },
+      {
+        "shortName": "UTI XVI"
+      }
+    ]
+  },
+  {
+    "personName": "U Thaung Htike Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9427154107",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Lehe TBC"
+      }
+    ]
+  },
+  {
+    "personName": "U Min Thant",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+95 9963997885",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Sagaing TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Thida Aye",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959256348935",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": true,
+    "hideSampleId": true,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Waingmaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "kalaw tbc",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "username": "kalaw tbc",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kalaw TBC"
+      }
+    ]
+  },
+  {
+    "personName": "NbwiRoi Seng",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959765615976",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MSF-LSH-1"
+      }
+    ]
+  },
+  {
+    "personName": "Save The Children",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personPhone": "+95 261357823",
+    "username": "Save The Children",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "AHRN-PKT"
+      },
+      {
+        "shortName": "AHRN-Waingmaw"
+      },
+      {
+        "shortName": "IOM, Mawlamyine"
+      },
+      {
+        "shortName": "MDM Moegaung"
+      },
+      {
+        "shortName": "PSI Yangon"
+      }
+    ]
+  },
+  {
+    "personName": "Htet Arkar",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959256452528",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Meikhtila TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ei Ei Khaing",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "eieikhaingkse92@gmail.com",
+    "personCell": "+95978981318",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Kyaukse TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Ma Khin Myo Aye",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959450021838",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Latha No-2"
+      },
+      {
+        "shortName": "Latha XVI"
+      }
+    ]
+  },
+  {
+    "personName": "nwe nwe kyawt",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "nwenwekyawt01@gmail.comn",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "MGH TB OPD"
+      }
+    ]
+  },
+  {
+    "personName": "U Kyi Soe",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959265970231",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Pyinmana TBC"
+      }
+    ]
+  },
+  {
+    "personName": "Chaw Su Mon",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "chawsumon.cwh@gmail.com",
+    "personCell": "+959762803327",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "SH-Thaketa"
+      }
+    ]
+  },
+  {
+    "personName": "mytel",
+    "personTitle": "Installer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959686189947",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Taungoo TBC"
+      }
+    ]
+  },
+  {
+    "personName": "thu wai aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959401527645",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Thanlyin"
+      }
+    ]
+  },
+  {
+    "personName": "Pyae Sone Aung",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959257806196",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Tanyang TBC"
+      }
+    ]
+  },
+  {
+    "personName": "kyaw zin oo",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "kyawzkkz13@gmail.com",
+    "personCell": "+959426820572",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Lashio TBC"
+      }
+    ]
+  },
+  {
+    "personName": "DAW TIN TIN MOE",
+    "personTitle": "Lab Contact",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personCell": "+959979910473",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "UMTBC XVI"
+      }
+    ]
+  },
+  {
+    "personName": "zayarwin",
+    "personTitle": "Installer",
+    "jobFunctions": [
+      "Lab User"
+    ],
+    "personEmailAddress": "zayarwin2015@gamil.com",
+    "personCell": "+9594544434",
+    "timezone": "Myanmar Standard Time",
+    "hidePatientId": false,
+    "hideSampleId": false,
+    "hideNotes": false,
+    "getPasswordFromGxAlert": true,
+    "sites": [
+      {
+        "shortName": "Magway TBC"
+      }
+    ]
+  }
+]

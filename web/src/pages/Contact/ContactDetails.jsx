@@ -106,7 +106,7 @@ const ContactDetails = ({ setStep }) => {
             cell: person?.cell?.length > 5 ? person.cell : null,
           }}
           validationSchema={validationSchema}
-          onSubmit={(values, { resetForm }) => {
+          onSubmit={(values, { resetForm, setSubmitting }) => {
             const noField = [
               'country',
               'stateName',
@@ -122,8 +122,10 @@ const ContactDetails = ({ setStep }) => {
             ]
             values.tags = (values.tags || []).join(',')
             noField.map(f => delete values[f])
+            setSubmitting(true)
             if (id === ACTION.ADD) {
               addPerson(values, {
+                onSettled: () => setSubmitting(false),
                 onSuccess: ({ data }) => {
                   navigate(`/browse/person/${data.id}${location.search}${location.search ? '&' : '?'}add=true`)
                   setStep(1)
@@ -132,6 +134,7 @@ const ContactDetails = ({ setStep }) => {
               })
             } else if (id === ACTION.SELF) {
               updateSelf(values, {
+                onSettled: () => setSubmitting(false),
                 onSuccess: () => {
                   localStorage.setItem('asTimezoneId', getTimezoneById(values.timezone))
                   resetForm({ values })
@@ -139,6 +142,7 @@ const ContactDetails = ({ setStep }) => {
               })
             } else {
               updatePerson(values, {
+                onSettled: () => setSubmitting(false),
                 onSuccess: () => {
                   resetForm({ values })
                   if (isRecentlyAdd) setStep(1)
@@ -147,7 +151,7 @@ const ContactDetails = ({ setStep }) => {
             }
           }}
         >
-          {({ handleSubmit, handleChange, setFieldValue, values, errors, isValid, dirty }) => (
+          {({ handleSubmit, handleChange, setFieldValue, values, errors, isValid, isSubmitting, dirty }) => (
             <form onSubmit={handleSubmit}>
               <DirtyListener step={0} />
               <Grid container spacing={2}>
@@ -365,7 +369,7 @@ const ContactDetails = ({ setStep }) => {
                 {isRecentlyAdd && !dirty ? (
                   <Button onClick={() => setStep(1)}>{formatMessage(messages.next)}</Button>
                 ) : dirty || isAdding ? (
-                  <Button disabled={!isValid} type="submit">
+                  <Button disabled={!isValid || isSubmitting} type="submit">
                     {formatMessage(messages[isAdding ? 'saveAndNext' : 'save'])}
                   </Button>
                 ) : null}

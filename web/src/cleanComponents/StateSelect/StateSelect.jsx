@@ -3,9 +3,20 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 
-const StateSelect = ({ id, name, label, value, onChange, error, helperText, countryId, returnAll }) => {
+const StateSelect = ({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  error,
+  helperText,
+  countryId,
+  returnAll,
+  onlyAssociatedSites,
+}) => {
   const { isLoading: isStateLoading, data: states } = useStatesByCountry(
-    { countryId, returnAll },
+    { countryId, returnAll, onlyAssociatedSites },
     { enabled: !!countryId }
   )
 
@@ -19,7 +30,7 @@ const StateSelect = ({ id, name, label, value, onChange, error, helperText, coun
       error={error}
       helperText={helperText}
       select
-      value={value}
+      value={value || ''}
       onChange={onChange}
       disabled={(states || []).length === 0}
       SelectProps={{ IconComponent: () => null }}

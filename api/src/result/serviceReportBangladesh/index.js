@@ -175,7 +175,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * for each device
          */
         knex.raw(`
-          ROUND(IFNULL(dc.dailyCapacity, 12) / 2, 0) as cntModules
+         d.moduleBayCapacity as cntModules
         `)
       )
       .groupBy('r.deviceId', 'sampleType')
@@ -2108,17 +2108,6 @@ async function getDataForReportForNtpUse(auth, query, timezone, options) {
    * show only Detected Mtb/Rif and Mtb/Rif-Ultra (RR) data or `Resistance Detected` Xdr data
    */
   const dataRR = _.cloneDeep(data)
-  dataRR.rows = dataRR.rows.filter(
-    it =>
-      it.resultMtbRif === 'RR' ||
-      it.mtbDetected === 'Detected' ||
-      it.inhDetected?.includes('Resistance Detected') ||
-      it.flqDetected?.includes('Resistance Detected') ||
-      it.amkDetected?.includes('Resistance Detected') ||
-      it.kanDetected?.includes('Resistance Detected') ||
-      it.capDetected?.includes('Resistance Detected') ||
-      it.ethDetected?.includes('Resistance Detected')
-  )
 
   dataRR.total = dataRR.rows.length
 

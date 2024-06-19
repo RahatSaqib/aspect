@@ -142,6 +142,7 @@ const AspectDropDown = ({
     identifier,
     isClearable,
     isDisabled,
+    isError: isInputError,
     isMulti,
     keyMapping = {
       idKey: 'id',
@@ -265,6 +266,7 @@ const AspectDropDown = ({
       identifier={identifier}
       isClearable={isClearable}
       isDisabled={isDisabled}
+      isError={isInputError}
       isMulti={isMulti}
       keyMapping={keyMapping}
       messages={messages}
@@ -300,6 +302,7 @@ AspectDropDown.propTypes = {
     identifier: PropTypes.string.isRequired,
     isClearable: PropTypes.bool,
     isDisabled: PropTypes.bool,
+    isError: PropTypes.bool,
     isMulti: PropTypes.bool,
     keyMapping: PropTypes.shape({
       idKey: PropTypes.string,

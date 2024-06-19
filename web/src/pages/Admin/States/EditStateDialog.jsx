@@ -3,12 +3,13 @@ import { Box, Button, CircularProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { useQueryClient } from 'react-query'
-import { object, string } from 'yup'
 import { ADMIN_STATES_KEYS } from '../../../hooks/admin/adminKeys'
 import { useEditState } from '../../../hooks/admin/useEditState'
+import { STATE_KEY } from '../../../hooks/geography/geographyKeys'
 import useAuthState from '../../../hooks/useAuthState'
 import { getCustomMessage } from '../../../messages'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
+import { stateFormValidation } from '../consts'
 import messages from '../messages'
 
 export function EditStateDialog({ open, state, onOpenChange }) {
@@ -18,6 +19,7 @@ export function EditStateDialog({ open, state, onOpenChange }) {
   const { mutateAsync: editState } = useEditState({
     onSuccess: () => {
       client.refetchQueries(ADMIN_STATES_KEYS)
+      client.refetchQueries(STATE_KEY)
       onOpenChange(false)
     },
   })
@@ -31,10 +33,7 @@ export function EditStateDialog({ open, state, onOpenChange }) {
       <Box sx={{ my: '15px', display: 'flex', flexDirection: 'column' }}>
         <Formik
           initialValues={{ name: state?.name, abbreviation: state?.abbreviation }}
-          validationSchema={object({
-            name: string().required(),
-            abbreviation: string().required(),
-          })}
+          validationSchema={stateFormValidation}
           onSubmit={({ abbreviation, name }) => editState({ stateId: state?.id, abbreviation, name })}
         >
           {({ values, errors, touched, handleChange, handleBlur, handleSubmit, isSubmitting, isValid }) => (
