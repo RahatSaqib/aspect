@@ -65,7 +65,6 @@ function startScheduler(queue) {
   dispatcher.resultAnalyzeTimeout()
   dispatcher.missingInventoryLotsResolver()
   dispatcher.deviceUpdateModuleSerials()
-  dispatcher.deviceInactiveNotificationAnalysis()
   dispatcher.expectedBackOnlineAnalysis()
 
   cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
