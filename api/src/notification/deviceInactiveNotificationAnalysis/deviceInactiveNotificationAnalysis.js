@@ -14,7 +14,7 @@ async function startDeviceInactiveRecurringNotification(_, { messageContext }) {
 
   // Get all offline notification types
   const offlineNotificationTypes = await knex('NotificationType')
-    .where({ issueTypeId: issue.id })
+    .where({ issueTypeId: issue.id, enabled: true })
     .select('recurrenceFactor', 'daysInactive', 'issueTypeId')
 
   const devices = await knex('Device as d')
