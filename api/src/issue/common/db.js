@@ -91,7 +91,12 @@ async function createNewIssue(knex, issueType, action) {
     // Issue not configured for this deployment
     return null
   }
-  const issueStatusId = await issueStatusToId('Active')
+  let issueStatusId = await issueStatusToId('Active')
+
+  // Resolve offline issues because the scheduler handles the escalation
+  if (action.type === 'DEVICE_OFFLINE') {
+    issueStatusId = await issueStatusToId('Resolved')
+  }
   const { consumableId = null } = action
 
   const issueContext = await lookupIssueContext(action, knex)

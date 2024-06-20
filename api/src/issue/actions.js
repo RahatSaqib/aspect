@@ -17,7 +17,7 @@ const types = {
  *
  * issueId is required.
  */
-function issueCreated(issueId, issueTypeId) {
+function issueCreated(issueId, issueTypeId, options) {
   if (!issueId) {
     throw new Error('Must specify issueId')
   }
@@ -25,6 +25,7 @@ function issueCreated(issueId, issueTypeId) {
     type: types.ISSUE_CREATED,
     issueId,
     issueTypeId,
+    options,
   }
 }
 
