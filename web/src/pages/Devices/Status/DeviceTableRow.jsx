@@ -5,7 +5,7 @@ import stylesShared from '../../../oldComponents/shared/DataTableRow.module.css'
 import StatusIcon from '../../../oldComponents/shared/StatusIcon'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
-import { formatRelative } from '../../../utils/utils/dateFormat'
+import { getTimeDifference } from '../../../utils/utils/dateFormat'
 import styles from './DeviceTableRow.module.css'
 import messages from './messages'
 
@@ -26,7 +26,7 @@ const Rate = ({ it, messageId, threshold }) => {
 }
 
 const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateThreshold }, ...restProps }) => {
-  const { formatMessage, formatNumber, formatRelativeTime } = useIntl()
+  const { formatMessage, formatNumber } = useIntl()
   return (
     <TableRow {...restProps} className={`TableRow ${restProps.className}`}>
       <TableCell>{device.get('name')}</TableCell>
@@ -55,14 +55,14 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
           ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
           : formatMessage(messages.notAvailable)}
       </TableCell>
-      <TableCell>{formatRelative(device.get('lastResultConductedOn'), formatRelativeTime)}</TableCell>
+      <TableCell>{getTimeDifference(device.get('lastResultConductedOn'), device.get('timezoneIANA'))}</TableCell>
       <TableCell>
         <StatusIcon
           title={formatMessage(messages[device.get('connectorStatus')])}
           status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
         />
       </TableCell>
-      <TableCell>{formatRelative(device.get('lastPingOn'), formatRelativeTime)}</TableCell>
+      <TableCell>{getTimeDifference(device.get('lastPingOn'), device.get('timezoneIANA'))}</TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
       </TableCell>
@@ -87,7 +87,7 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
       <TableCell hiddenOn="lg">
         <Rate it={device.get('error').toJS()} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
       </TableCell>
-      <TableCell hiddenOn="lg">{formatRelative(device.get('createdOn'), formatRelativeTime)}</TableCell>
+      <TableCell hiddenOn="lg">{getTimeDifference(device.get('createdOn'), device.get('timezoneIANA'))}</TableCell>
       <TableCell hiddenOn="lg" numeric>
         {formatNumber(device.get('resultCountLastMonth'))}
       </TableCell>

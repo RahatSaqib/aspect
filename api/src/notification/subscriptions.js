@@ -1,6 +1,7 @@
 const actionHandlers = require('./actionHandler')
 const onResultAnalyzeTimeout = require('./resultBased/notifyTimedOutResults.js')
 const { notifyMessageWithErrorToSlack } = require('./common/logic')
+const startDeviceInactiveRecurringNotification = require('./deviceInactiveNotificationAnalysis/deviceInactiveNotificationAnalysis')
 
 async function getNotificationSubscriptions(knex) {
   const actionParameters = await knex('NotificationTypeCategory as ntc')
@@ -20,6 +21,7 @@ async function getNotificationSubscriptions(knex) {
       ...actionParameters,
       RESULT_ANALYZE_TIMEOUT: onResultAnalyzeTimeout,
       NOTIFICATION_MESSAGE_PROCESSED: onNotificationMessageProcessed,
+      DEVICE_INACTIVE_NOTIFICATION_ANALYSIS: startDeviceInactiveRecurringNotification,
     },
   }
 }
