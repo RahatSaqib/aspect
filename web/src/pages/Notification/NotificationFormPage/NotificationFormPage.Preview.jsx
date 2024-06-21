@@ -117,10 +117,19 @@ const NotificationFormPreview = ({ values }) => {
       ) : null}
 
       {values.notificationType === 'DeviceOffline' ? (
-        <span style={rowStyle}>
-          <h4 style={labelStyle}>{formatMessage(messages.whenDeviceHasBeenOfflineForMoreThan)}:</h4>
-          <span style={labelStyle}>
-            {values.daysOffline} {formatMessage(messages.daysOffline)}
+        <span>
+          <span style={rowStyle}>
+            <h4 style={labelStyle}>{formatMessage(messages.whenDeviceHasBeenInactiveForMoreThan)}:</h4>
+            <span style={labelStyle}>
+              {values.daysInactive} {formatMessage(messages.daysInactive)}
+            </span>
+          </span>
+
+          <span style={rowStyle}>
+            <h4 style={labelStyle}>{formatMessage(messages.repeatCheckAndNotifyInactive)}:</h4>
+            <span style={labelStyle}>
+              {values.recurrenceFactor} {formatMessage(messages.recurrenceFactor)}
+            </span>
           </span>
         </span>
       ) : null}

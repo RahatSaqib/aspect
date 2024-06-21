@@ -1,7 +1,7 @@
 const _ = require('lodash')
 const cron = require('node-cron')
 const { startUp: reportBasedCronStartUp } = require('../notification/reportBased/reportBasedCronHandler')
-const { resultAnalyzeTimeout } = require('../notification/actions')
+const { resultAnalyzeTimeout, deviceInactiveNotificationAnalysis } = require('../notification/actions')
 const { missingInventoryLotsResolver } = require('../inventory/actions')
 const {
   calibrationDueDateAnalysis,
@@ -48,6 +48,7 @@ function startScheduler(queue) {
     missingInventoryLotsResolver,
     deviceUpdateModuleSerials,
     webhookServerCheckTokens,
+    deviceInactiveNotificationAnalysis,
     expectedBackOnlineAnalysis,
   })
 
@@ -91,6 +92,7 @@ function startScheduler(queue) {
 
   cron.schedule('0 */8 * * *', dispatcher.deviceUpdateModuleSerials) // run every 8 hours
 
+  cron.schedule('0 3 * * *', dispatcher.deviceInactiveNotificationAnalysis) // daily at 3 am
   cron.schedule('30 6 * * *', dispatcher.expectedBackOnlineAnalysis) // daily at 6:30 am
 
   if (_.get(config, 'uptimerobot.api.key')) {

@@ -4,6 +4,7 @@ const types = {
   NOTIFICATION_MESSAGE_PROCESSED: 'NOTIFICATION_MESSAGE_PROCESSED',
   ISSUE_NOTIFICATION_TRIGGERED: 'ISSUE_NOTIFICATION_TRIGGERED',
   RESULT_ANALYZE_TIMEOUT: 'RESULT_ANALYZE_TIMEOUT',
+  DEVICE_INACTIVE_NOTIFICATION_ANALYSIS: 'DEVICE_INACTIVE_NOTIFICATION_ANALYSIS',
 }
 
 // ----------- Action Creators -------------------
@@ -45,10 +46,17 @@ function resultAnalyzeTimeout() {
   }
 }
 
+function deviceInactiveNotificationAnalysis() {
+  return {
+    type: types.DEVICE_INACTIVE_NOTIFICATION_ANALYSIS,
+  }
+}
+
 module.exports = {
   types,
   notificationCreated,
   issueNotificationTriggered,
   resultAnalyzeTimeout,
   notificationMessageProcessed,
+  deviceInactiveNotificationAnalysis,
 }

@@ -147,17 +147,6 @@ const notificationTypeSection = (formatMessage, partner, isEdit) => ({
           },
         },
         {
-          id: 'deviceOfflineDescription',
-          visibleIf: values => values.notificationType === 'DeviceOffline',
-          fullWidth: true,
-          controlType: {
-            component: 'messageField',
-            icon: 'MdHelp',
-            text: formatMessage(messages.notificationTypeDeviceOffline),
-            color: 'cadetblue',
-          },
-        },
-        {
           id: 'name',
           controlType: { component: 'textField' },
           fullWidth: true,
