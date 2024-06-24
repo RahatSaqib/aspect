@@ -62,9 +62,9 @@ const DailyStatus = () => {
     setDialogState({ isOpen: false })
   }
 
-  const onDailyStatusSubmit = ({ deviceId, values }) => {
+  const onDailyStatusSubmit = ({ deviceId, values, onSuccess }) => {
     setDialogState({ isOpen: false })
-    changeDeviceStatus({ deviceId, values })
+    changeDeviceStatus({ deviceId, values }, { onSuccess })
   }
 
   if (devicesIsError) {

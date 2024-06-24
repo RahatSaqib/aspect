@@ -31,7 +31,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const { mutate: updateSite } = useUpdateSite(site.id)
   const { mutate: deleteSite } = useDeleteSite(site.id)
   const { mutate: createSite } = useCreateSite()
-
+  const [submitting, setSubmitting] = useState(false)
   const [editSite, setEditSite] = useState({ ...site })
   const [queryParamsForWarehouse] = useState({ siteTypeExternalIds: ['warehouse'], excludeSiteIds: [site.id] })
 
@@ -55,6 +55,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
   }
 
   const handleSubmit = async data => {
+    setSubmitting(true)
     if (!data.longitude || !data.latitude) {
       await updateSiteLatLong({
         country: editSite.country,
@@ -65,9 +66,15 @@ const SiteForm = ({ site, onLatLongChange }) => {
       })
     }
     if (isNew) {
-      createSite(editSite, { onSuccess: newId => navigate(`/browse/site/${newId}${location.search}`) })
+      createSite(editSite, {
+        onSuccess: newId => navigate(`/browse/site/${newId}${location.search}`),
+        onSettled: () => setSubmitting(false),
+      })
     } else {
-      updateSite(editSite, { onSuccess: navigate(`/browse/site/${site.id}${location.search}`) })
+      updateSite(editSite, {
+        onSuccess: navigate(`/browse/site/${site.id}${location.search}`),
+        onSettled: () => setSubmitting(false),
+      })
     }
   }
 
@@ -352,7 +359,12 @@ const SiteForm = ({ site, onLatLongChange }) => {
               onChange={e => setEditSite({ ...editSite, notes: e.target.value })}
             />
           </div>
-          <Button color="secondary" variant="contained" onClick={handleSubmit} disabled={isPristine || isError}>
+          <Button
+            color="secondary"
+            variant="contained"
+            onClick={handleSubmit}
+            disabled={isPristine || isError || submitting}
+          >
             {isNew ? formatMessage(messages.buttonCreate) : formatMessage(messages.buttonUpdate)}
           </Button>
           {isNew ? null : (
