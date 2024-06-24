@@ -380,6 +380,11 @@ async function getDevicesForReport(auth, query) {
         then r.resultCount 
         else 0 
         end`),
+      noResults: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
+        then r.resultCount 
+        else 0 
+        end`),
       totalInvalid: knex.raw(`
         case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
         then r.resultCount 
@@ -389,6 +394,11 @@ async function getDevicesForReport(auth, query) {
       totalResults_sameOriginSite: knex.raw(`r.xdrResistanceCounts ->> "$.cntSameOriginSite"`),
       totalErrors_sameOriginSite: knex.raw(`
         case when r.resultCategory1 = ${resultCategoryIds.Error} 
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
+        else 0 
+        end`),
+      noResults_sameOriginSite: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
         then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
         else 0 
         end`),
