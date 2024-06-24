@@ -376,6 +376,7 @@ async function updateCreatePerson(knex, gxUser, { userId, partnerId: lastPartner
     timezone: gxUser.timezoneId,
     culture: gxUser.culture,
     updatedOn: now,
+    canLogin: true,
     // optional fields
     geographyId,
     title: gxUser.title,
