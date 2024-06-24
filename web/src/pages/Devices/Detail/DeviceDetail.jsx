@@ -59,7 +59,7 @@ export const DeviceDetail = props => {
     onSuccess,
   })
 
-  const { mutate: onMaintenanceSubmit } = useMutation(
+  const { mutateAsync: onMaintenanceSubmit } = useMutation(
     values =>
       dispatch(
         updateDeviceMaintenanceStatus({
@@ -71,12 +71,12 @@ export const DeviceDetail = props => {
       ),
     { onSuccess }
   )
-  const { mutate: onCalibrationSubmit } = useMutation(
+  const { mutateAsync: onCalibrationSubmit } = useMutation(
     values =>
       dispatch(updateDeviceMaintenance({ externalId: 'calibration', device: Immutable.fromJS(device), values })),
     { onSuccess }
   )
-  const { mutate: onWarrantySubmit } = useMutation(
+  const { mutateAsync: onWarrantySubmit } = useMutation(
     values => dispatch(updateDeviceMaintenance({ externalId: 'warranty', device: Immutable.fromJS(device), values })),
     { onSuccess }
   )
