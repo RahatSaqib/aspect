@@ -149,9 +149,13 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
   }, [statuses, visibleStatuses])
 
   const updateFromActionComponent = ({ selectedOption }) => {
-    const minDate = startOfMonth(new Date(selectedOption.value.minDate))
-    const maxDate = endOfMonth(new Date(selectedOption.value.maxDate))
-    setParams({ minDate, maxDate })
+    const isLast30Days = selectedOption?.id === 'LAST_30_DAYS'
+    const minDate = new Date(selectedOption.value.minDate)
+    const maxDate = new Date(selectedOption.value.maxDate)
+    setParams({
+      minDate: isLast30Days ? minDate : startOfMonth(minDate),
+      maxDate: isLast30Days ? maxDate : endOfMonth(maxDate),
+    })
   }
 
   /**
