@@ -52,7 +52,9 @@ const Login = ({ setStep }) => {
     userLockedOut: string().nullable(),
   })
 
-  const { mutate: updateLogin } = useUpdatePersonLogin(id === ACTION.SELF ? loggedInPersonId : id)
+  const { mutate: updateLogin, isLoading: isUpdating } = useUpdatePersonLogin(
+    id === ACTION.SELF ? loggedInPersonId : id
+  )
 
   return (
     <>
@@ -170,7 +172,7 @@ const Login = ({ setStep }) => {
 
                   <Box sx={{ flex: '1 1 auto' }} />
                   {dirty ? (
-                    <Button type="submit" disabled={!isValid}>
+                    <Button type="submit" disabled={!isValid || isUpdating}>
                       {formatMessage(messages.save)}
                     </Button>
                   ) : (

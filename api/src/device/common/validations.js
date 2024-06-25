@@ -213,9 +213,7 @@ function listDevicesBaseResponse() {
               deliveredThisMonth: Joi.number()
                 .allow(null)
                 .description('Number of results delivered in the last 30 days'),
-              deliveredLastMonth: Joi.number()
-                .allow(null)
-                .description('Number of results delivered in the 30 days before that'),
+              timezoneIANA: Joi.string().allow(null).description('IANA timezone of the country'),
               issueCategories: Joi.array()
                 .required()
                 .description('The categories of issues currently active for this device.'),

@@ -318,12 +318,13 @@ async function setJobContext(knex, personId, jobFunctionId, gxUser) {
         const shortName = deployment.shortName || deployment.description || deployment.hostId
 
         let { siteId } =
-          (await knex('Device')
+          (await knex('Device as d')
+            .join('Site as s', 'd.siteId', 's.id')
             .where({ geographyId }) // Geography will never be undefined
             .where(function () {
-              this.where({ shortName }).orWhere('name', shortName)
+              this.where('d.shortName', shortName).orWhere('d.name', shortName)
             })
-            .first()) || {}
+            .first('d.siteId')) || {}
 
         if (!siteId) {
           const site =
@@ -375,6 +376,7 @@ async function updateCreatePerson(knex, gxUser, { userId, partnerId: lastPartner
     timezone: gxUser.timezoneId,
     culture: gxUser.culture,
     updatedOn: now,
+    canLogin: true,
     // optional fields
     geographyId,
     title: gxUser.title,
