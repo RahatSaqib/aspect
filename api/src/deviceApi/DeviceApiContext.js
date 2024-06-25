@@ -300,10 +300,17 @@ function createNewDeviceFromRequest(request, now) {
     })
     if (siteExternalId && !apiKey.geographyId && !apiKey.siteId)
       defaultSite = await knex('Site as s').where('externalId', siteExternalId).first()
+
+    const hostId = _.get(payload, 'configuration.data.hostId', null) || payload.hostId
+    const serial = _.get(payload, 'configuration.data.deviceSerialNumber') || payload.serial
+    const macAddress = _.get(payload, 'configuration.data.macAddress') || payload.macAddress
+
     const { device, error } = await createNewDevice(knex, now, {
       deviceTypeExternalId,
       name: payload.name,
-      serial: payload.serial,
+      hostId: hostId || payload.name,
+      serial,
+      macAddress,
       partnerId: apiKey.partnerId,
       siteId: apiKey.siteId || _.get(defaultSite, 'id', null),
       approval: apiKey.siteId ? 'approved' : 'provisioned',
