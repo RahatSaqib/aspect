@@ -12,6 +12,7 @@ import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from
 import { replaceRouteParams } from '../../../QueryFetch/Helpers'
 import messages from '../messages'
 import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
+import CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 
 const getParamsFormatted = params => {
   const { minDate, maxDate } = params
@@ -149,7 +150,7 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
   }, [statuses, visibleStatuses])
 
   const updateFromActionComponent = ({ selectedOption }) => {
-    const isLast30Days = selectedOption?.id === 'LAST_30_DAYS'
+    const isLast30Days = selectedOption?.id === CONSTS.DATE_RANGE_OPTIONS.LAST_30_DAYS
     const minDate = new Date(selectedOption.value.minDate)
     const maxDate = new Date(selectedOption.value.maxDate)
     setParams({
