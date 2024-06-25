@@ -95,6 +95,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         `errorNotifications.${err.statusCode}`,
         get(options, 'errorNotifications.default')
       )
+
       if (errorNotification) {
         if (err.data?.errorKeyCode && errorNotification[err.data.errorKeyCode]) {
           errorNotification = { message: errorNotification[err.data.errorKeyCode] }
@@ -120,7 +121,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
         }
         // If the statusCode is 401 unauthorized the system should redirect the user to the logout screen
         // For all other types of errors the user should be shown an error message.
-        if (err.statusCode === 401) {
+        if (err.statusCode === 401 && input !== `${config.aspectApi}/auth`) {
           store.dispatch(expiredTokenLogout())
         } else {
           let customErrorNotification = null
