@@ -17,6 +17,7 @@ import { getCustomMessage } from '../../../../../messages'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
+import { formatNumber } from '../../../../../utils/utils/number'
 
 const endpointParams = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }]
 
@@ -87,7 +88,16 @@ const ProvincialTestingTrendPage = () => {
             </Typography>
             {graphData ? (
               <div style={{ width: '100%' }}>
-                <LineGraph data={graphData} showLabel xField="year" yField="value" seriesField="id" />
+                <LineGraph
+                  data={graphData}
+                  tooltip={{
+                    formatter: datum => ({ name: datum.id, value: formatNumber(datum.value) }),
+                  }}
+                  showLabel
+                  xField="year"
+                  yField="value"
+                  seriesField="id"
+                />
               </div>
             ) : null}
           </Grid>
