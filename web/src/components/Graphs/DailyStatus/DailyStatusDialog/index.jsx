@@ -73,8 +73,10 @@ const DailyStatusForm = ({ formConfig, data = {}, onCancel, onSubmit, title, dev
   }
   const onSaveChanges = (deviceId, values) => {
     setMode(MODE.SAVING)
+    formik.setSubmitting(true)
     onSubmit({
       deviceId,
+      onSuccess: () => formik.setSubmitting(false),
       values: {
         ...values,
         /**
@@ -95,7 +97,7 @@ const DailyStatusForm = ({ formConfig, data = {}, onCancel, onSubmit, title, dev
         </Button>,
         <Button
           color="primary"
-          disabled={!formik.dirty || !formik.isValid}
+          disabled={!formik.dirty || !formik.isValid || formik.isSubmitting}
           onClick={() => {
             onSaveChanges(data.deviceId, formik.values)
             formik.resetForm()

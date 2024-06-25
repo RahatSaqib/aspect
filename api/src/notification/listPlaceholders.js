@@ -101,6 +101,11 @@ module.exports = async function (request) {
           nameI18nKey: 'placeHolderExpectedBackOnlineDate',
           name: 'Expected Back Online Date',
         },
+        {
+          id: 'numberOfDays device.lastPingOn',
+          nameI18nKey: 'placeHolderDaysInactive',
+          name: 'Days inactive',
+        },
       ],
     },
     {
