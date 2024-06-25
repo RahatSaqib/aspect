@@ -52,7 +52,7 @@ function startScheduler(queue) {
     expectedBackOnlineAnalysis,
   })
 
-  dispatcher.webhookServerCheckTokens()
+  // dispatcher.webhookServerCheckTokens()
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
   dispatcher.factDataCategoryLowCheck()
@@ -67,7 +67,7 @@ function startScheduler(queue) {
   dispatcher.deviceUpdateModuleSerials()
   dispatcher.expectedBackOnlineAnalysis()
 
-  cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
+  // cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
