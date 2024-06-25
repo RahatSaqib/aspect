@@ -7,12 +7,12 @@ import findIndex from 'lodash/findIndex'
 import findLastIndex from 'lodash/findLastIndex'
 import { useIntl } from 'react-intl'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
+import CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../../../QueryFetch/Device'
 import { replaceRouteParams } from '../../../QueryFetch/Helpers'
 import messages from '../messages'
 import { getIndex, getTotalDays, dateRangeByWeekDay } from './index'
-import CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 
 const getParamsFormatted = params => {
   const { minDate, maxDate } = params
