@@ -16,7 +16,7 @@ const ConnectorStatusSelect = ({ id, name, label, value, onChange, error, helper
       helperText={helperText}
       select
       variant="standard"
-      value={value}
+      value={value || ''}
       onChange={onChange}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
