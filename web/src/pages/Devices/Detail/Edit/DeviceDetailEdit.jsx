@@ -36,6 +36,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   const [editDeviceTags, setEditDeviceTags] = useState([...deviceTags])
   const isPristine = isEqual(device, editDevice) && isEqual(deviceTags, editDeviceTags)
   const [error, setError] = useState({})
+  const [submitting, setSubmitting] = useState(false)
 
   const onDiscardClick = () => {
     setError({})
@@ -55,9 +56,14 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
   }
 
   const handleSubmit = async () => {
+    setSubmitting(true)
     updateDeviceTags(editDeviceTags.map(deviceTag => deviceTag.title).join(','), {
+      onError: () => setSubmitting(false),
       onSuccess: () => {
-        updateDevice(editDevice, { onSuccess: navigate(`/browse/device/list/${device.id}${location.search}`) })
+        updateDevice(editDevice, {
+          onSettled: () => setSubmitting(false),
+          onSuccess: () => navigate(`/browse/device/list/${device.id}${location.search}`),
+        })
       },
     })
   }
@@ -251,7 +257,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
                   color="primary"
                   variant="contained"
                   onClick={handleSubmit}
-                  disabled={isPristine || !values(error).every(v => v === false)}
+                  disabled={isPristine || !values(error).every(v => v === false) || submitting}
                 >
                   {intl.formatMessage(messages.save)}
                 </Button>

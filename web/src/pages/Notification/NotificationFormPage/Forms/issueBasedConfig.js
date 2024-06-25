@@ -34,32 +34,63 @@ const lowInventorySection = (formatMessage, partner) => {
   }
 }
 
-const deviceOfflineSection = (formatMessage, partner) => {
+const deviceOfflineSection = formatMessage => {
   return {
-    id: 'whenDeviceHasBeenOfflineForMoreThan',
-    label: 'whenDeviceHasBeenOfflineForMoreThan',
-    labelI18nKey: 'whenDeviceHasBeenOfflineForMoreThan',
+    id: 'whenDeviceHasBeenInactiveForMoreThan',
+    label: 'whenDeviceHasBeenInactiveForMoreThan',
+    labelI18nKey: 'whenDeviceHasBeenInactiveForMoreThan',
     visibleIf: values => ['DeviceOffline'].includes(values.notificationType),
     rows: [
       {
         id: 83,
         items: [
           {
-            id: 'daysOffline',
-            label: formatMessage(messages.daysOffline),
-            initialValue: [`${partner.maxDaysDeviceOffline}`],
-            type: 'readOnly',
+            id: 'daysInactive',
+            label: formatMessage(messages.daysInactive),
+            initialValue: '1',
+            controlType: { component: 'numberField', min: 1, max: 60 },
+            classNames: {
+              itemContainer: 'max_width_100pc tags_container',
+              controlContainer: styles.full_width_100pc,
+              item: styles.full_width_100pc,
+            },
+            labelI18nKey: 'daysInactive',
+          },
+        ],
+      },
+    ],
+  }
+}
+
+const deviceOfflineRecurringSection = formatMessage => {
+  return {
+    id: 'repeatCheckAndNotifyInactive',
+    label: 'repeatCheckAndNotifyInactive',
+    labelI18nKey: 'repeatCheckAndNotifyInactive',
+    visibleIf: values => ['DeviceOffline'].includes(values.notificationType),
+    rows: [
+      {
+        id: 83,
+        items: [
+          {
+            id: 'recurrenceFactor',
+            label: formatMessage(messages.recurrenceFactor),
+            initialValue: '0',
             controlType: {
               component: 'select',
-              hideIfNoOptions: false,
-              options: [{ value: `${partner.maxDaysDeviceOffline}`, label: `${partner.maxDaysDeviceOffline}` }],
+              options: [
+                { value: '0', label: '0' },
+                { value: '1', label: '1' },
+                { value: '2', label: '2' },
+                { value: '3', label: '3' },
+              ],
             },
             classNames: {
               itemContainer: 'max_width_100pc tags_container',
               controlContainer: styles.full_width_100pc,
               item: styles.full_width_100pc,
             },
-            labelI18nKey: 'daysOffline',
+            labelI18nKey: 'recurrenceFactor',
           },
         ],
       },
@@ -252,4 +283,5 @@ export {
   deviceOfflineSection,
   stockExpiringSection,
   calibrationSection,
+  deviceOfflineRecurringSection,
 }

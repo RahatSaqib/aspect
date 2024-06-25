@@ -86,6 +86,8 @@ async function getNotification(
     'wt.payload as webBody',
     'nt.enabled',
     'nt.cronRecurrency',
+    'nt.daysInactive',
+    'nt.recurrenceFactor',
     knex.raw(`nt.filterCondition -> '$.daysBeforeCalibrationDueDate'  as daysBeforeCalibrationDueDate`),
   ]
 ) {
@@ -248,6 +250,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     reportId: reportExternalId,
     notificationType: notificationTypeCategoryExternalId,
     resultBasedScope,
+    recurrenceFactor,
+    daysInactive,
   } = payload
 
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeCategoryExternalId)
@@ -318,6 +322,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
         issueTypeId,
         reportId,
         cronRecurrency,
+        recurrenceFactor,
+        daysInactive,
         level: 1,
         canAcknowledge: 0,
         name,
@@ -360,6 +366,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           issueTypeId,
           notificationTypeCategoryId,
           cronRecurrency,
+          recurrenceFactor,
+          daysInactive,
         })
         .where({ id: notificationTypeId })
       ;({ messageTypeId } = await knex
