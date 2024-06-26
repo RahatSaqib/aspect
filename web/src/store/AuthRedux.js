@@ -82,25 +82,6 @@ export function loginStart({ user, password }) {
             severity: 'warn',
             ...defineMessages({
               title: {
-                id: 'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title',
-                defaultMessage: 'Login Failed',
-              },
-              message: {
-                id: 'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message',
-                defaultMessage: 'Invalid username or password',
-              },
-              resolution: {
-                id: 'errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution',
-                defaultMessage:
-                  "We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
-              },
-            }),
-          },
-          // eslint-disable-next-line no-dupe-keys
-          'Authentication failed. Wrong username or password.': {
-            severity: 'warn',
-            ...defineMessages({
-              title: {
                 id: 'errorResponseMessages.loginStart.POST.401.authenticationFailed.title',
                 defaultMessage: 'Login Failed',
               },
