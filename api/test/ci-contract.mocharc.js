@@ -1,5 +1,6 @@
 module.exports = {
   recursive: true,
+  reporter: 'mocha-multi',
   'reporter-option': ['spec=-', 'json=./contract-test-results.json'],
   extension: ['.spec.js'],
   checkLeaks: true,
