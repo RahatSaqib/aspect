@@ -1,0 +1,12 @@
+{
+  "CustomFields_Myanmar": {
+    "fileName": "CustomFields_Myanmar.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Myanmar",
+      "i18nKeyTitle": "CustomFields_Myanmar_i18nkey",
+      "externalId": "CustomFields_Myanmar",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  }
+}
