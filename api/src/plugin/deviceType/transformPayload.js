@@ -20,7 +20,9 @@ const transformZonedDateTimeToUTC = (dateTime, timezoneIANA) => {
 
 const transformCustomFields = (gxAlertCustomFieldsData, customFields) => {
   return gxAlertCustomFieldsData.Values.reduce((acc, customField) => {
-    const customFieldSchema = customFields.fields.find(cf => cf.id === customField.Id)
+    const customFieldSchema =
+      customFields.fields.find(cf => cf.id === customField.Id) ||
+      customFields.fields.find(cf => cf.migrateFromId === customField.Id)
 
     if (customFieldSchema) {
       const customFieldData = {
