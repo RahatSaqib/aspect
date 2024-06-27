@@ -7,6 +7,7 @@ import findIndex from 'lodash/findIndex'
 import findLastIndex from 'lodash/findLastIndex'
 import { useIntl } from 'react-intl'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
+import CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../../../QueryFetch/Device'
 import { replaceRouteParams } from '../../../QueryFetch/Helpers'
@@ -149,9 +150,13 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
   }, [statuses, visibleStatuses])
 
   const updateFromActionComponent = ({ selectedOption }) => {
-    const minDate = startOfMonth(new Date(selectedOption.value.minDate))
-    const maxDate = endOfMonth(new Date(selectedOption.value.maxDate))
-    setParams({ minDate, maxDate })
+    const isLast30Days = selectedOption?.id === CONSTS.DATE_RANGE_OPTIONS.LAST_30_DAYS
+    const minDate = new Date(selectedOption.value.minDate)
+    const maxDate = new Date(selectedOption.value.maxDate)
+    setParams({
+      minDate: isLast30Days ? minDate : startOfMonth(minDate),
+      maxDate: isLast30Days ? maxDate : endOfMonth(maxDate),
+    })
   }
 
   /**

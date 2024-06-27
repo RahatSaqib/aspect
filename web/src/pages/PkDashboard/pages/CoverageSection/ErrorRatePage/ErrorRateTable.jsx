@@ -52,10 +52,11 @@ const Row = ({ row, isChild, index }) => {
   )
 }
 
+const defaultValue = 'No Location'
 export const ErrorRateTable = ({ items }) => {
   const [sort, setSort] = useState({ name: 'name', order: 'asc' })
   const rows = useMemo(
-    () => addDepth(makeNestedData(items ?? [], ['stateName', 'lgaName', 'siteName', 'name'])),
+    () => addDepth(makeNestedData(items ?? [], ['stateName', 'lgaName', 'siteName', 'name'], defaultValue)),
     [items]
   )
 
@@ -64,12 +65,13 @@ export const ErrorRateTable = ({ items }) => {
       orderBy(
         items,
         [
+          i => i?.[sort.name] === defaultValue,
           i => {
             const sortName = i?.[sort.name]
             return typeof sortName === 'string' ? sortName.toLowerCase() : sortName
           },
         ],
-        sort.order
+        ['asc', sort.order]
       ).map((row, index) => <Row key={row.name} row={row} index={index} {...props} />),
     [sort]
   )

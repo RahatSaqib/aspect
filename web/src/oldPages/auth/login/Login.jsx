@@ -37,7 +37,7 @@ const enhance = compose(
 
     const onSubmit = data => {
       const { loginStart, loggedOutReason } = props
-      loginStart(data).then(() => {
+      return loginStart(data).then(() => {
         const referrer = flowRight(
           x => omit(x, 'search'),
           x => get(x, 'state.referrer', { pathname: '/' })
@@ -124,7 +124,7 @@ export const Login = ({ intl, location, form, meta, values, onUserChange, onPass
                 data-test="loginSubmit"
                 color="primary"
                 className={styles.Button}
-                disabled={!form.valid}
+                disabled={!form.valid || form.submitting}
               >
                 {intl.formatMessage(messages.login)}
               </Button>
