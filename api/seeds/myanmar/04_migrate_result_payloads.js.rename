@@ -59,7 +59,7 @@ const getDeviceLogsToUpdateInRange = async (knex, minDeviceLogId, maxDeviceLogId
   const transformedDeviceLogs = []
 
   for (const deviceLogToUpdate of deviceLogsToUpdate) {
-    const pakistanTimeZoneData = {
+    const countryTimeZoneData = {
       timezone: deviceLogToUpdate.timezone,
       timezoneIANA: deviceLogToUpdate.timezoneIANA,
       timezoneUtcOffset: getOffsetFromTimeZone(deviceLogToUpdate.timezoneIANA),
@@ -69,7 +69,7 @@ const getDeviceLogsToUpdateInRange = async (knex, minDeviceLogId, maxDeviceLogId
       const transformedPayload = transformPayload(
         JSON.parse(deviceLogToUpdate.rawMessage),
         true,
-        pakistanTimeZoneData,
+        countryTimeZoneData,
         customFieldsMyanmar
       )
 
