@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-13T14:54:33.379Z\n"
+"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2467,12 +2467,12 @@ msgstr "(Các) ngày trước khi kết thúc Quý"
 msgid "Day(s) before the end of the month"
 msgstr "(Những) ngày trước cuối tháng"
 
-#. [pages.NotificationDetail.daysOffline]
+#. [pages.NotificationDetail.daysInactive]
 #. defaultMessage is:
-#. Days Offline
+#. Days
 #: extracted_strings.json
-msgid "Days Offline"
-msgstr "Ngoại tuyến"
+msgid "Days"
+msgstr "Ngày"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -2500,6 +2500,13 @@ msgstr "Số ngày bị gián đoạn dịch vụ"
 #: extracted_strings.json
 msgid "Days active"
 msgstr "Ngày hoạt động"
+
+#. [placeholder.placeHolderDaysInactive]
+#. defaultMessage is:
+#. Days inactive
+#: extracted_strings.json
+msgid "Days inactive"
+msgstr "Số ngày không hoạt động"
 
 #. [pages.NotificationDetail.daysOfInventoryLeft]
 #. defaultMessage is:
@@ -2714,6 +2721,13 @@ msgstr "Báo cáo hiệu chuẩn thiết bị"
 #: extracted_strings.json
 msgid "Device Country"
 msgstr "Quốc gia thiết bị"
+
+#. [pages.Notification.type.Inactive]
+#. defaultMessage is:
+#. Device Inactive
+#: extracted_strings.json
+msgid "Device Inactive"
+msgstr "Thiết bị không hoạt động"
 
 #. [pages.MaintenanceStatusDialog.dialogTitle]
 #. defaultMessage is:
@@ -5125,13 +5139,6 @@ msgstr ""
 msgid "Invalid email"
 msgstr "Email không hợp lệ"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message]
-#. defaultMessage is:
-#. Invalid username or password
-#: extracted_strings.json
-msgid "Invalid username or password"
-msgstr "Tên người dùng hoặc mật khẩu không hợp lệ"
-
 #. [pages.Notifications.invalidWebhookUrl]
 #. defaultMessage is:
 #. Invalid webhook url
@@ -5715,9 +5722,6 @@ msgstr "Đăng nhập"
 msgid "Login Error"
 msgstr "Lỗi đăng nhập"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title]
-#. defaultMessage is:
-#. Login Failed
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.title]
 #. defaultMessage is:
 #. Login Failed
@@ -7362,6 +7366,13 @@ msgstr ""
 msgid "Number of sites tested MTB/XDR Assay"
 msgstr "Số lượng địa điểm được xét nghiệm Xét nghiệm MTB/XDR"
 
+#. [pages.NotificationDetail.repeatCheckAndNotifyInactive]
+#. defaultMessage is:
+#. Number of times to repeat check and notify if inactive ...
+#: extracted_strings.json
+msgid "Number of times to repeat check and notify if inactive ..."
+msgstr "Số lần lặp lại kiểm tra và thông báo nếu không hoạt động..."
+
 #. [months.october]
 #. defaultMessage is:
 #. OCT
@@ -7386,9 +7397,6 @@ msgstr "OK"
 #. defaultMessage is:
 #. Offline
 #. [pages.DeviceList.offline]
-#. defaultMessage is:
-#. Offline
-#. [pages.Notification.type.Offline]
 #. defaultMessage is:
 #. Offline
 #: extracted_strings.json
@@ -11741,6 +11749,13 @@ msgstr "Thứ năm"
 msgid "Time Zone"
 msgstr "Múi giờ"
 
+#. [pages.NotificationDetail.recurrenceFactor]
+#. defaultMessage is:
+#. Times
+#: extracted_strings.json
+msgid "Times"
+msgstr "Thời gian"
+
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
 #. Title
@@ -12314,18 +12329,6 @@ msgstr "Ngày đến hạn bảo hành"
 msgid "Warranty Due Date is required"
 msgstr "Ngày đến hạn bảo hành là bắt buộc"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution]
-#. defaultMessage is:
-#. We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
-#: extracted_strings.json
-msgid ""
-"We couldn't establish a connection with GxAlert. If you are trying to login "
-"with an Aspect user, you probably entered invalid credentials."
-msgstr ""
-"Chúng tôi không thể thiết lập kết nối với GxAlert. Nếu bạn đang cố gắng đăng "
-"nhập bằng người dùng Aspect, có thể bạn đã nhập thông tin đăng nhập không "
-"hợp lệ."
-
 #. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message]
 #. defaultMessage is:
 #. We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
@@ -12484,6 +12487,13 @@ msgstr "Khi có hàng..."
 #: extracted_strings.json
 msgid "When the device didn't send results for more than ..."
 msgstr "Khi thiết bị không gửi kết quả trong hơn ..."
+
+#. [pages.NotificationDetail.whenDeviceHasBeenInactiveForMoreThan]
+#. defaultMessage is:
+#. When the device has been inactive for more than ...
+#: extracted_strings.json
+msgid "When the device has been inactive for more than ..."
+msgstr "Khi thiết bị không hoạt động trong hơn ..."
 
 #. [pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan]
 #. defaultMessage is:
@@ -13256,6 +13266,20 @@ msgstr "{unit} kể từ tuần trước"
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
 
+#~ msgid "Days Offline"
+#~ msgstr "Ngoại tuyến"
+
+#~ msgid "Invalid username or password"
+#~ msgstr "Tên người dùng hoặc mật khẩu không hợp lệ"
+
+#~ msgid ""
+#~ "We couldn't establish a connection with GxAlert. If you are trying to "
+#~ "login with an Aspect user, you probably entered invalid credentials."
+#~ msgstr ""
+#~ "Chúng tôi không thể thiết lập kết nối với GxAlert. Nếu bạn đang cố gắng "
+#~ "đăng nhập bằng người dùng Aspect, có thể bạn đã nhập thông tin đăng nhập "
+#~ "không hợp lệ."
+
 #~ msgid "Error Rate (Pending)"
 #~ msgstr "Tỷ lệ lỗi (Đang chờ xử lý)"
 
@@ -13776,9 +13800,6 @@ msgstr "{unit} tổng số lần hiệu chuẩn"
 
 #~ msgid "Tasks"
 #~ msgstr "Nhiệm vụ"
-
-#~ msgid "Time"
-#~ msgstr "Thời gian"
 
 #~ msgid "Topic"
 #~ msgstr "Chủ đề"

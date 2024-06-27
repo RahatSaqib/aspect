@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-13T14:54:33.379Z\n"
+"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2470,12 +2470,12 @@ msgstr "За день(ы) до окончания квартала"
 msgid "Day(s) before the end of the month"
 msgstr "За день(ы) до окончания квартала"
 
-#. [pages.NotificationDetail.daysOffline]
+#. [pages.NotificationDetail.daysInactive]
 #. defaultMessage is:
-#. Days Offline
+#. Days
 #: extracted_strings.json
-msgid "Days Offline"
-msgstr "Не в сети"
+msgid "Days"
+msgstr "Дней"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -2503,6 +2503,13 @@ msgstr "Дней с перебоями в обслуживании"
 #: extracted_strings.json
 msgid "Days active"
 msgstr "Дней Активности"
+
+#. [placeholder.placeHolderDaysInactive]
+#. defaultMessage is:
+#. Days inactive
+#: extracted_strings.json
+msgid "Days inactive"
+msgstr "Неактивные дни"
 
 #. [pages.NotificationDetail.daysOfInventoryLeft]
 #. defaultMessage is:
@@ -2717,6 +2724,13 @@ msgstr "Калибровка устройства"
 #: extracted_strings.json
 msgid "Device Country"
 msgstr "Выберите страну"
+
+#. [pages.Notification.type.Inactive]
+#. defaultMessage is:
+#. Device Inactive
+#: extracted_strings.json
+msgid "Device Inactive"
+msgstr "Устройство неактивно"
 
 #. [pages.MaintenanceStatusDialog.dialogTitle]
 #. defaultMessage is:
@@ -5136,13 +5150,6 @@ msgstr ""
 msgid "Invalid email"
 msgstr "Неверный E-mail"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message]
-#. defaultMessage is:
-#. Invalid username or password
-#: extracted_strings.json
-msgid "Invalid username or password"
-msgstr "Неверный логин или пароль"
-
 #. [pages.Notifications.invalidWebhookUrl]
 #. defaultMessage is:
 #. Invalid webhook url
@@ -5727,9 +5734,6 @@ msgstr "Вход"
 msgid "Login Error"
 msgstr "Ошибка входа"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title]
-#. defaultMessage is:
-#. Login Failed
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.title]
 #. defaultMessage is:
 #. Login Failed
@@ -7378,6 +7382,13 @@ msgstr ""
 msgid "Number of sites tested MTB/XDR Assay"
 msgstr "Количество сайтов, прошедших тестирование MTB/XDR Assay"
 
+#. [pages.NotificationDetail.repeatCheckAndNotifyInactive]
+#. defaultMessage is:
+#. Number of times to repeat check and notify if inactive ...
+#: extracted_strings.json
+msgid "Number of times to repeat check and notify if inactive ..."
+msgstr "Количество повторов проверки и уведомление о неактивности ..."
+
 #. [months.october]
 #. defaultMessage is:
 #. OCT
@@ -7402,9 +7413,6 @@ msgstr "ОК"
 #. defaultMessage is:
 #. Offline
 #. [pages.DeviceList.offline]
-#. defaultMessage is:
-#. Offline
-#. [pages.Notification.type.Offline]
 #. defaultMessage is:
 #. Offline
 #: extracted_strings.json
@@ -11783,6 +11791,13 @@ msgstr "Четверг"
 msgid "Time Zone"
 msgstr "Часовой пояс"
 
+#. [pages.NotificationDetail.recurrenceFactor]
+#. defaultMessage is:
+#. Times
+#: extracted_strings.json
+msgid "Times"
+msgstr "Время"
+
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
 #. Title
@@ -12356,17 +12371,6 @@ msgstr "Срок гарантии"
 msgid "Warranty Due Date is required"
 msgstr "Требуется гарантийный срок выполнения обязательств"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution]
-#. defaultMessage is:
-#. We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
-#: extracted_strings.json
-msgid ""
-"We couldn't establish a connection with GxAlert. If you are trying to login "
-"with an Aspect user, you probably entered invalid credentials."
-msgstr ""
-"Мы не смогли установить связь с GxAlert. Если вы пытаетесь войти с "
-"пользователем Aspect, вероятно, вы ввели недействительные учетные данные."
-
 #. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message]
 #. defaultMessage is:
 #. We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
@@ -12525,6 +12529,13 @@ msgstr "Когда акции..."
 #: extracted_strings.json
 msgid "When the device didn't send results for more than ..."
 msgstr "Если устройство не отправляло результаты более ..."
+
+#. [pages.NotificationDetail.whenDeviceHasBeenInactiveForMoreThan]
+#. defaultMessage is:
+#. When the device has been inactive for more than ...
+#: extracted_strings.json
+msgid "When the device has been inactive for more than ..."
+msgstr "Если устройство было неактивно более ..."
 
 #. [pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan]
 #. defaultMessage is:
@@ -13297,6 +13308,19 @@ msgstr "{unit} с прошлой недели"
 msgid "{unit} total calibrations"
 msgstr "{unit} суммарные калибровки"
 
+#~ msgid "Days Offline"
+#~ msgstr "Не в сети"
+
+#~ msgid "Invalid username or password"
+#~ msgstr "Неверный логин или пароль"
+
+#~ msgid ""
+#~ "We couldn't establish a connection with GxAlert. If you are trying to "
+#~ "login with an Aspect user, you probably entered invalid credentials."
+#~ msgstr ""
+#~ "Мы не смогли установить связь с GxAlert. Если вы пытаетесь войти с "
+#~ "пользователем Aspect, вероятно, вы ввели недействительные учетные данные."
+
 #~ msgid "Error Rate (Pending)"
 #~ msgstr "Коэффициент ошибок (в ожидании)"
 
@@ -13820,9 +13844,6 @@ msgstr "{unit} суммарные калибровки"
 
 #~ msgid "Tasks"
 #~ msgstr "Задачи"
-
-#~ msgid "Time"
-#~ msgstr "Время"
 
 #~ msgid "Topic"
 #~ msgstr "Тема"
