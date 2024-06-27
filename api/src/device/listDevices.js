@@ -71,9 +71,6 @@ async function getListDevices(query, auth) {
       if (query.deviceIds) {
         queryBuilder.whereIn('d.id', query.deviceIds.split(','))
       }
-      if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
-        queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
-      }
       if (query.connectorStatus) {
         queryBuilder.whereIn(
           knex.raw('CASE WHEN d.lastPingOn > DATE_ADD(NOW(), INTERVAL -1 DAY) THEN "online" ELSE "offline" END'),
@@ -136,8 +133,6 @@ async function getListDevices(query, auth) {
       },
       { showUnapprovedDevices: true, showDecommissionedDevices: true }
     )
-  // get total count for paging
-  const getCount = deviceQuery.clone().countDistinct('d.id as count').first()
 
   const now = new Date()
   const previousMonth = subMonths(now, 1)
@@ -147,6 +142,13 @@ async function getListDevices(query, auth) {
   // maxDate for current and previous month
   const maxCurrentDate = format(endOfMonth(now), "yyyy-MM-dd'T'23:59:59.999'Z'")
   const maxPreviousDate = format(endOfMonth(previousMonth), "yyyy-MM-dd'T'23:59:59.999'Z'")
+
+  // Get current date in ISO format
+  const currentDateISO = format(now, 'yyyy-MM-dd')
+
+  // Define start and end of current day
+  const currentDayStart = `${currentDateISO}T00:00:00`
+  const currentDayEnd = `${currentDateISO}T23:59:59`
 
   // get rows
   const getItems = deviceQuery
@@ -168,6 +170,10 @@ async function getListDevices(query, auth) {
           totalPreviousMonth: knex.raw(
             `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
             [minPreviousDate, maxPreviousDate]
+          ),
+          totalCurrentDay: knex.raw(
+            `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
+            [currentDayStart, currentDayEnd]
           ),
         })
         .groupBy('deviceId')
@@ -206,6 +212,21 @@ async function getListDevices(query, auth) {
       'issues.deviceId',
       'd.id'
     )
+    .modify(queryBuilder => {
+      if (query.deviceMaintenanceStatusId && !_.isEmpty(query.deviceMaintenanceStatusId)) {
+        queryBuilder.whereIn('dms.externalId', query.deviceMaintenanceStatusId)
+
+        if (query.deviceMaintenanceStatusId.includes('active')) {
+          queryBuilder.andWhere('deviceResult.totalCurrentDay', '>', 0)
+        }
+        if (query.deviceMaintenanceStatusId.includes('inactiveUnknown')) {
+          queryBuilder.orWhere('dms.externalId', 'active').andWhere('deviceResult.totalCurrentDay', 0)
+        }
+      }
+    })
+
+  const getDevices = getItems
+    .clone()
     .modify(sortPageParams, query, 'name')
     .groupBy('d.id')
     .select([
@@ -215,6 +236,15 @@ async function getListDevices(query, auth) {
       ...getSelectListFields(personTimezoneIANA),
       'deviceResult.totalCurrentMonth as resultCountThisMonth',
       'deviceResult.totalPreviousMonth as resultCountLastMonth',
+      knex.raw(`
+       CASE 
+         WHEN dmsl.day >= DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN
+           CASE 
+             WHEN deviceResult.totalCurrentDay = 0 AND dms.externalId = 'active' THEN 'inactiveUnknown'
+             ELSE dms.i18nKey 
+           END
+         ELSE NULL
+       END AS maintenanceStatusI18nKey`),
       'frd30Errors.resultCount as thisMonthErrors',
       knex.raw('count(distinct dmslActivity.day) as totalDays'),
       knex.raw('count(distinct case when dmslActivity.active = 1 then dmslActivity.day else null end) as activeDays'),
@@ -235,6 +265,7 @@ async function getListDevices(query, auth) {
       knex.raw(`
         CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN
           CASE 
+            WHEN dms.externalId = 'active' AND deviceResult.totalCurrentDay = 0 THEN 'unknown'
             WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
             WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
             ELSE 'down' END
@@ -243,8 +274,10 @@ async function getListDevices(query, auth) {
     ])
     .distinct()
 
+  const getCount = getItems.clone().countDistinct('d.id as count').first()
+
   // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, getDevices])
 
   const toSyncDmslAndDevice = {}
   data.forEach(it => {
@@ -271,6 +304,7 @@ async function getListDevices(query, auth) {
     if (+it.isDeviceActive && it.deviceLastSeenOn && it.dmslDay && it.deviceLastSeenOn < it.dmslDay) {
       toSyncDmslAndDevice[it.id] = { lastSeenOn: it.dmslDay }
     }
+    it.timezoneIANA = timezoneIANA
     delete it.dmslDay
     delete it.deviceLastSeenOn
     delete it.isDeviceActive

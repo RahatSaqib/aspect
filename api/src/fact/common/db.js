@@ -1,3 +1,4 @@
+const _ = require('lodash')
 /**
  * @param {Object} knex - knex instance
  * @param {Object} parameters
@@ -80,9 +81,12 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
       if (query.assayType) {
         qb.where('at.externalId', '=', query.assayType)
       }
-      if (query.resultCategory1) {
+      if (_.isArray(query.resultCategory1)) {
+        qb.whereIn('rc1.externalId', query.resultCategory1)
+      } else if (query.resultCategory1) {
         qb.where('rc1.externalId', '=', query.resultCategory1)
       }
+
       if (query.resultCategory2) {
         qb.where('rc2.externalId', '=', query.resultCategory2)
       }

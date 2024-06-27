@@ -1,12 +1,13 @@
 const _ = require('lodash')
 const cron = require('node-cron')
 const { startUp: reportBasedCronStartUp } = require('../notification/reportBased/reportBasedCronHandler')
-const { resultAnalyzeTimeout } = require('../notification/actions')
+const { resultAnalyzeTimeout, deviceInactiveNotificationAnalysis } = require('../notification/actions')
 const { missingInventoryLotsResolver } = require('../inventory/actions')
 const {
   calibrationDueDateAnalysis,
   calibrationIssueNotificationTrigger,
   deviceUpdateModuleSerials,
+  expectedBackOnlineAnalysis,
 } = require('../device/actions')
 const {
   factGenerateDeviceConnectivity,
@@ -47,9 +48,11 @@ function startScheduler(queue) {
     missingInventoryLotsResolver,
     deviceUpdateModuleSerials,
     webhookServerCheckTokens,
+    deviceInactiveNotificationAnalysis,
+    expectedBackOnlineAnalysis,
   })
 
-  dispatcher.webhookServerCheckTokens()
+  // dispatcher.webhookServerCheckTokens()
   dispatcher.factGenerateResultCounts()
   dispatcher.factGenerateDeviceConnectivity()
   dispatcher.factDataCategoryLowCheck()
@@ -62,8 +65,9 @@ function startScheduler(queue) {
   dispatcher.resultAnalyzeTimeout()
   dispatcher.missingInventoryLotsResolver()
   dispatcher.deviceUpdateModuleSerials()
+  dispatcher.expectedBackOnlineAnalysis()
 
-  cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
+  // cron.schedule('*/5 * * * *', dispatcher.webhookServerCheckTokens) // run every 5 minutes
   reportBasedCronStartUp(queue.createMessageContext('aspect_cron_reportBasedNotification'))
   cron.schedule('30 00 * * *', dispatcher.factFillCustomFieldsCompletionStatsLast30Days) // daily at 00:30 am
   cron.schedule('0 1 * * *', dispatcher.factCheckInventoryStock) // daily at 1 am
@@ -88,6 +92,9 @@ function startScheduler(queue) {
 
   cron.schedule('0 */8 * * *', dispatcher.deviceUpdateModuleSerials) // run every 8 hours
 
+  cron.schedule('0 3 * * *', dispatcher.deviceInactiveNotificationAnalysis) // daily at 3 am
+  cron.schedule('30 6 * * *', dispatcher.expectedBackOnlineAnalysis) // daily at 6:30 am
+
   if (_.get(config, 'uptimerobot.api.key')) {
     const dispatchCheckUptimeRobot = () => {
       dispatchActionToQueue(
@@ -101,6 +108,8 @@ function startScheduler(queue) {
   }
 
   cron.schedule(config.scheduler.cron.logDeviceMaintenanceStatus, dispatcher.logDeviceMaintenanceStatus) // Determined by scheduler.cron.logDeviceMaintenanceStatus in .env but defaults to daily at 6pm
+
+  return dispatcher
 }
 
 function createActionDispatcher(queue, actionCreators) {

@@ -10,7 +10,10 @@ const getResultAggregationsValidate = validGroups => ({
   source: Joi.string().description('Source type for the detection in place'),
   assayType: Joi.string().allow(null, '').description('Filter for assay type'),
   assay: Joi.alternatives().try(Joi.array(), Joi.string()).description('Filter for assay'),
-  resultCategory1: Joi.string().allow(null, '').description('Filter for result category 1'),
+  resultCategory1: Joi.alternatives()
+    .try(Joi.array(), Joi.string())
+    .allow(null, '')
+    .description('Filter for result category 1'),
   resultCategory2: Joi.string().allow(null, '').description('Filter for result category 2'),
   resistance: Joi.string().allow(null, '').description('Filter for xdr resistance'),
   siteName: Joi.string().allow(null, '').description('Filter for site'),
@@ -212,7 +215,7 @@ function validateResultDetailResponse() {
     resultCategory2: asPositiveInteger.allow(null).description('Value of ResultCategory1'),
     resultCategory1Name: Joi.string().allow(null, '').description("The result's category 1 name"),
     resultCategory2Name: Joi.string().allow(null, '').description("The result's category 2 name"),
-    resultWorkflowStatusId: Joi.number().integer().description("The result's workflow status id"),
+    resultWorkflowStatusId: Joi.number().allow(null, '').integer().description("The result's workflow status id"),
     resultWorkflowStatus: Joi.string().allow(null, '').description("The result's Workflow status name"),
     resultWorkflowStatusExternalId: Joi.string().allow(null, '').description("The result's Workflow status name"),
     resultData: Joi.object().description('The result data'),

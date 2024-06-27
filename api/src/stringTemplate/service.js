@@ -464,6 +464,7 @@ async function getBaseDataSource(data, auth) {
       computerOsVersion: d.computerOsVersion,
       moduleColor: d.moduleColor,
       stickerInstrumentSerial: d.deviceStickerInstrumentSerial,
+      expectedBackOnlineDate: issueData.maintenanceDueOn,
     },
     result: {
       id: d.id,
@@ -592,7 +593,7 @@ function processUsingDynamicHelpers(template, ds) {
       (str, match) => `\${openMustaches}localizedDateTime ${match} timezone\${closeMustaches}`
     )
     // eslint-disable-next-line no-unused-vars
-    .replace(/{{\s*(device.calibrationDueDate)\s*}}/g, (_str, match) => {
+    .replace(/{{\s*(device.calibrationDueDate|device.expectedBackOnlineDate)\s*}}/g, (_str, match) => {
       return `\${openMustaches}localizedDate ${match} timezone\${closeMustaches}`
     })
     // eslint-disable-next-line no-unused-vars

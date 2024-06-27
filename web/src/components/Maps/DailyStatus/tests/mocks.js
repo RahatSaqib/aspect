@@ -322,7 +322,7 @@ export const visibleAllExpected = [
     shortName: 'D-352297',
   },
   {
-    color: '#99D25D',
+    color: '#cdf3a4',
     id: '102',
     lat: 32.684361,
     lng: -86.959908,
@@ -347,7 +347,7 @@ export const visibleOnlyActiveExpected = [
     shortName: 'GeneXpert #41',
   },
   {
-    color: '#99D25D',
+    color: '#cdf3a4',
     id: '102',
     lat: 32.684361,
     lng: -86.959908,

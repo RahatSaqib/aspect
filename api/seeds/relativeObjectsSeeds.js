@@ -52,8 +52,12 @@ async function addIssueTypes(
   const insertedIssueTypes = await knex('IssueType').pluck('externalId')
   const issues = await getBaseIssues(auditFields)
   await Promise.each(Object.keys(issues), async elem => {
-    // if defaultissues is null all are inserted
-    if (insertedIssueTypes.indexOf(elem) === -1 && (!defaultIssues || defaultIssues.indexOf(elem) >= 0)) {
+    if (
+      // issue doesn't exist in db
+      !insertedIssueTypes.includes(elem) &&
+      // defaultIssues is null or contains issue externalId (elem)
+      (!defaultIssues || defaultIssues.includes(elem))
+    ) {
       let alertTemplateId
       let smsTemplateId
       let emailTemplateId

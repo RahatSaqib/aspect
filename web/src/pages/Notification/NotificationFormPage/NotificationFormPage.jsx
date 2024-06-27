@@ -109,9 +109,11 @@ const NotificationFormPage = () => {
         values.reportFrequency = frequency
       }
 
+      formik.setSubmitting(true)
       submitNotification(
         { values, id: isNew ? undefined : notificationId },
         {
+          onSettled: () => formik.setSubmitting(false),
           onSuccess: () => {
             /**
              * invalidate query cache for entire notification list - this is needed when

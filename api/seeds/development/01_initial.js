@@ -3487,6 +3487,7 @@ async function seed(knex) {
         defaultReportableSiteId: i % 2 === 0 ? siteData.id : null,
         // not all sites will have a router - we only added routers to some site
         deviceId: routerId || null,
+        moduleBayCapacity: 4,
         createdOn: subDays(now, _.random(0, 120)),
         updatedOn: new Date(+now - i * millisInHour),
         lastPingOn: new Date(+now - (i * millisInHour) / 3),

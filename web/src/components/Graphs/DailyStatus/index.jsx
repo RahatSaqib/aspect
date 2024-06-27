@@ -5,6 +5,7 @@ import startOfMonth from 'date-fns/startOfMonth'
 import subMonths from 'date-fns/subMonths'
 import { useIntl } from 'react-intl'
 import Loading from '../../../cleanComponents/Loading'
+import useDeviceMaintenanceStatus from '../../../hooks/device/useDeviceMaintenanceStatus'
 import DATE_CONSTS from '../../../utils/consts/DateTime/CONSTS'
 import GRAPH_CONSTS from '../../../utils/consts/Graphs/CONSTS'
 import { dateRangeOptions } from '../Helpers/Formatters'
@@ -33,6 +34,7 @@ const DailyStatus = () => {
     actions: { changeDeviceStatus, getDeviceDayDetails, toggleAll, toggleStatusVisibility, updateFromActionComponent },
     dateTime: { dateRanges, totalDays },
   } = useDailyStatus(minDate, maxDate)
+  const { data: maintenanceStatuses } = useDeviceMaintenanceStatus(true)
 
   const ops = dateRangeOptions(formatMessage, formatDate, 'deviceDateRange').deviceDateRange
 
@@ -47,9 +49,10 @@ const DailyStatus = () => {
         siteProps,
         periodWithSameStatus: { startedOn, endedOn, maintenanceStatusExternalId },
         note,
+        expectedBackOnline,
       } = getDeviceDayDetails({ day, deviceId })
       // day clicked (formatted as "YYYY-MM-DD")
-      const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note }
+      const data = { day, startedOn, endedOn, deviceId, maintenanceStatusExternalId, note, expectedBackOnline }
       setDialogState({ isOpen: true, deviceName, siteProps, data })
     },
     [getDeviceDayDetails]
@@ -59,9 +62,9 @@ const DailyStatus = () => {
     setDialogState({ isOpen: false })
   }
 
-  const onDailyStatusSubmit = ({ deviceId, values }) => {
+  const onDailyStatusSubmit = ({ deviceId, values, onSuccess }) => {
     setDialogState({ isOpen: false })
-    changeDeviceStatus({ deviceId, values })
+    changeDeviceStatus({ deviceId, values }, { onSuccess })
   }
 
   if (devicesIsError) {
@@ -79,7 +82,6 @@ const DailyStatus = () => {
     updateFromActionComponent({ identifier: 'dateRange', selectedOption })
     setRange(selectedOption.id)
   }
-
   return (
     <Card>
       <CardHeader title={formatMessage(messages.dailyStatusMainTitle)} />
@@ -117,6 +119,7 @@ const DailyStatus = () => {
                 onCancel={onHideDailyStatusDialog}
                 onSubmit={onDailyStatusSubmit}
                 statuses={allStatuses}
+                manualStatuses={maintenanceStatuses}
               />
             ) : null}
           </div>

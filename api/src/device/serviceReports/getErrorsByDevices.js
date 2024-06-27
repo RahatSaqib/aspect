@@ -10,6 +10,10 @@ async function getErrorsByDevices(dataConstraints, query) {
   const resultCategoryIds = await allResultCategoryToId()
   const errorCodes = [5011, 5007, 5006, 2008, 2005, 2037, 2025, 2022]
 
+  const invalidCategories = query.noResults
+    ? [resultCategoryIds.Invalid, resultCategoryIds.Indeterminate]
+    : [resultCategoryIds.Invalid, resultCategoryIds.Indeterminate, resultCategoryIds.NoResult]
+
   const allCounts = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
     addConstraints,
     dataConstraints,
@@ -17,6 +21,9 @@ async function getErrorsByDevices(dataConstraints, query) {
     query,
     timeFrame: 'day',
   })
+    .modify(filterParams, query, {
+      assayIds: 'a.id',
+    })
     .groupBy('r.deviceId')
     .sum({
       ..._.reduce(
@@ -40,8 +47,13 @@ async function getErrorsByDevices(dataConstraints, query) {
         END`),
       invalidResults: knex.raw(`
         CASE
-          WHEN r.resultCategory1 IN (${resultCategoryIds.NoResult}, ${resultCategoryIds.Invalid}, ${resultCategoryIds.Indeterminate})
+          WHEN r.resultCategory1 IN (${invalidCategories})
           THEN r.xdrResistanceCounts ->> "$.errors.invalid"
+          ELSE 0
+        END`),
+      noResults: knex.raw(`
+        CASE
+          WHEN r.resultCategory1 IN (${resultCategoryIds.NoResult}) THEN r.xdrResistanceCounts ->> "$.errors.invalid"
           ELSE 0
         END`),
     })
@@ -61,6 +73,7 @@ async function getErrorsByDevices(dataConstraints, query) {
       ),
       otherErrors: knex.raw('IFNULL(counts.otherErrors, 0)'),
       invalidResults: knex.raw('IFNULL(counts.invalidResults, 0)'),
+      noResults: knex.raw('IFNULL(counts.noResults, 0)'),
       deviceName: 'd.name',
       /**
        * should select also device id for returning `distinct` entries, because

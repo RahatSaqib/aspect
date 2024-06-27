@@ -74,7 +74,7 @@ function InventoryAdjustmentDialog(props) {
                     FormHelperTextProps={{
                       margin: 'dense',
                     }}
-                    inputProps={{ maxLength: 500 }}
+                    inputProps={{ maxLength: 100 }}
                   />
                 ) : null}
 

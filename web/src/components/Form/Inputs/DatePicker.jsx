@@ -59,7 +59,7 @@ const renderWeekPickerDay = (start, end, date, selectedDates, pickersDayProps) =
 }
 
 const AspectDatePickerBase = props => {
-  const { className, dateFormat, InputProps, onChange, placeholder, value } = props
+  const { className, dateFormat, InputProps, onChange, error, placeholder, value } = props
 
   const optionalProps = omitBy(
     pick(props, [
@@ -93,6 +93,7 @@ const AspectDatePickerBase = props => {
       dateFormat={dateFormat}
       {...optionalProps}
       label={placeholder}
+      showToolbar={false}
       value={value}
       renderDay={(date, selectedDays, pickersDayProps) =>
         renderWeekPickerDay(props.startDate, props.endDate, date, selectedDays, pickersDayProps)
@@ -119,6 +120,7 @@ const AspectDatePickerBase = props => {
             'isClearable',
             'transformTimezone',
           ])}
+          error={error}
           className={styles.datepicker__TextField}
         />
       )}
@@ -143,6 +145,7 @@ const AspectDatePicker = props => {
     minDateId,
     maxDateId,
     timeIntervals,
+    minDate,
   } = controlType
   let { isClearable } = controlType
   if (isClearable && rest?.InputProps?.disabled) {
@@ -156,7 +159,7 @@ const AspectDatePicker = props => {
       selectsEnd,
       startDate: startDateId ? getDateObject(values[startDateId], null) : null,
       endDate: endDateId ? getDateObject(values[endDateId], null) : null,
-      minDate: minDateId ? getDateObject(values[minDateId], null) : null,
+      minDate: minDate || (minDateId ? getDateObject(values[minDateId], null) : null),
       maxDate: maxDateId ? getDateObject(values[maxDateId], null) : null,
       timeIntervals,
       isClearable,

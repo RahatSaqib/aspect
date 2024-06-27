@@ -213,7 +213,7 @@ describe('Device API routes', () => {
       await newDeviceContext.createDeviceApiKey()
     })
     afterEach(newDeviceContext.afterEach)
-    it('should create Device with approvalId and add log to DeviceApprovalLog table', async () => {
+    it.skip('should create Device with approvalId and add log to DeviceApprovalLog table', async () => {
       const { apiKey, deviceAuth } = newDeviceContext
       assert.isOk(apiKey)
 

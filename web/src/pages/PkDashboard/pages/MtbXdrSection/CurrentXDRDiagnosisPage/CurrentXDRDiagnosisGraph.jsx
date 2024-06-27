@@ -59,6 +59,7 @@ const defaultFilters = [
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { resultCategory1: 'Detected' },
+  { resultCategory1: 'Trace Detected' },
   { minDate },
   { maxDate },
   /**

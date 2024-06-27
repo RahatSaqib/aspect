@@ -96,6 +96,7 @@ const routes = [
       validate: {
         query: {
           all: Joi.boolean().description('Should return all of states').allow(null),
+          onlyAssociatedSites: Joi.boolean().description('Should return states has only associated sites').allow(null),
         },
         params: {
           countryId: Joi.number().description('Country ID').required(),
@@ -154,7 +155,7 @@ const routes = [
       validate: {
         query: {
           ...validateSortPageParams('name', 'abbreviation'),
-          name: Joi.string().description('The name of the state'),
+          stateId: Joi.string().description('The id of the state'),
         },
       },
       response: {

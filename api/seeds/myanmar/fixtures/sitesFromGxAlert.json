@@ -1,0 +1,2358 @@
+[
+  {
+    "externalId": "Laboratory Central Store (NTRL)",
+    "type": "warehouse",
+    "name": "Laboratory Central Store (NTRL)",
+    "customProperties": "",
+    "warehouse_source": "no warehouse"
+  },
+  {
+    "externalId": "Chin State Store",
+    "type": "warehouse",
+    "stateName": "Chin",
+    "lgaName": "Hakha",
+    "name": "Chin State Store",
+    "customProperties": "",
+    "warehouse_externalId": "Chin State Store",
+    "warehouse_source": "lga"
+  },
+  {
+    "externalId": "LM Sub-Main Store (NTRL)",
+    "type": "warehouse",
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "LM Sub-Main Store (NTRL)",
+    "customProperties": "",
+    "warehouse_externalId": "Laboratory Central Store (NTRL)",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Yangon Regional Laboratory Store",
+    "type": "warehouse",
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "Yangon Regional Laboratory Store",
+    "customProperties": "",
+    "warehouse_externalId": "LM Sub-Main Store (NTRL)",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Mandalay Region GXP Store",
+    "type": "warehouse",
+    "stateName": "Mandalay",
+    "lgaName": "Mandalay",
+    "name": "Mandalay Region GXP Store",
+    "customProperties": "",
+    "warehouse_externalId": "UM-Laboratory Store",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "UM-Laboratory Store",
+    "type": "warehouse",
+    "stateName": "Mandalay",
+    "lgaName": "Mandalay",
+    "name": "UM-Laboratory Store",
+    "customProperties": "",
+    "warehouse_externalId": "Laboratory Central Store (NTRL)",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Mon State GXP Store",
+    "type": "warehouse",
+    "stateName": "Mon",
+    "lgaName": "Mawlamyine",
+    "name": "Mon State GXP Store",
+    "customProperties": "",
+    "warehouse_externalId": "LM Sub-Main Store (NTRL)",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Kayin State GXP Store",
+    "type": "warehouse",
+    "stateName": "Kayin",
+    "lgaName": "Hpa-An",
+    "name": "Kayin State GXP Store",
+    "customProperties": "",
+    "warehouse_externalId": "LM Sub-Main Store (NTRL)",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Naypyitaw TB Store",
+    "type": "warehouse",
+    "stateName": "Naypyitaw Union Territoriality",
+    "lgaName": "Detkhina",
+    "name": "Naypyitaw TB Store",
+    "customProperties": "",
+    "warehouse_externalId": "UM-Laboratory Store",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Tanintharyi  Reggion TB Store",
+    "type": "warehouse",
+    "stateName": "Tanintharyi",
+    "lgaName": "Dawei",
+    "name": "Tanintharyi  Reggion TB Store",
+    "customProperties": "",
+    "warehouse_externalId": "LM Sub-Main Store (NTRL)",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Thanlyin TBC",
+    "type": "lab",
+    "latitude": 96.252045,
+    "longitude": 16.759691,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (South)",
+    "name": "Thanlyin TBC",
+    "shortName": "Thanlyin",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Thanlyin TBC",
+        "shortName": "Thanlyin",
+        "macAddress": "MACB00CD1C4297F",
+        "hostId": "Thanlyin TBC",
+        "serial": "ThanlyinTBC",
+        "gxAlertDeviceId": 242,
+        "apiKey": "n2lmr6dpbvgrvw3kpwoq"
+      }
+    ]
+  },
+  {
+    "externalId": "MGH TB OPD-2",
+    "type": "lab",
+    "latitude": 16.880890,
+    "longitude": 96.049187,
+    "stateName": "Mandalay",
+    "lgaName": "Mandalay",
+    "name": "MGH TB OPD-2",
+    "shortName": "MGH TB OPD-2",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "MGH TB OPD-2",
+        "shortName": "MGH TB OPD-2",
+        "macAddress": "MAC04D4C44D96DF",
+        "hostId": "MGH TB OPD-2",
+        "serial": "computer_1",
+        "gxAlertDeviceId": 279,
+        "apiKey": "j4cwwvu5qrfwgpz7pdwq"
+      }
+    ]
+  },
+  {
+    "externalId": "SH-Waibargi",
+    "type": "lab",
+    "latitude": 96.153847,
+    "longitude": 16.920885,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (East)",
+    "name": "SH-Waibargi",
+    "shortName": "SH-WBG",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "SH-Waibargi",
+        "shortName": "SH-WBG",
+        "macAddress": "MAC6805CA20C490",
+        "hostId": "WBG",
+        "serial": "Cepheid-3520VW6",
+        "gxAlertDeviceId": 358,
+        "apiKey": "pun2bitg37mtajlfehyq"
+      }
+    ]
+  },
+  {
+    "externalId": "Patheingyi TBH",
+    "type": "lab",
+    "latitude": 96.170601,
+    "longitude": 22.007799,
+    "stateName": "Mandalay",
+    "lgaName": "Mandalay",
+    "name": "Patheingyi TBH",
+    "shortName": "Patheingyi TBH",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Patheingyi TBH",
+        "shortName": "Patheingyi TBH",
+        "macAddress": "MAC6805CA20C511",
+        "hostId": "Patheingyi TBH",
+        "serial": "Cepheid-3520VY9",
+        "gxAlertDeviceId": 359,
+        "apiKey": "e5m5n75bttpskb477ghq"
+      }
+    ]
+  },
+  {
+    "externalId": "Myingyan TBC",
+    "type": "lab",
+    "latitude": 95.390999,
+    "longitude": 21.453699,
+    "stateName": "Mandalay",
+    "lgaName": "Myingyan",
+    "name": "Myingyan TBC",
+    "shortName": "Myingyan TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Myingyan TBC",
+        "shortName": "Myingyan TBC",
+        "macAddress": "MAC6805CA1C5690",
+        "hostId": "Myingyan",
+        "serial": "Cepheid-3381P3S",
+        "gxAlertDeviceId": 360,
+        "apiKey": "tkdmvzscp7o6t7mgc2tq"
+      }
+    ]
+  },
+  {
+    "externalId": "Pyay TBC",
+    "type": "lab",
+    "latitude": 18.823280,
+    "longitude": 95.246040,
+    "stateName": "Bago",
+    "lgaName": "Pyay",
+    "name": "Pyay TBC",
+    "shortName": "Pyay TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Pyay TBC",
+        "shortName": "Pyay TBC",
+        "macAddress": "MAC6805CA2044FB",
+        "hostId": "Pyay TBC",
+        "serial": "Cepheid-3481GM9",
+        "gxAlertDeviceId": 378,
+        "apiKey": "4v6ew4q5v3zdtqitb7yq"
+      }
+    ]
+  },
+  {
+    "externalId": "Mawlamyine TBC",
+    "type": "lab",
+    "latitude": 95.268204,
+    "longitude": 16.376801,
+    "stateName": "Mon",
+    "lgaName": "Mawlamyine",
+    "name": "Mawlamyine TBC",
+    "shortName": "Mawlamyine TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mawlamyine GXP Lab",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Mawlamyine TBC",
+        "shortName": "Mawlamyine TBC",
+        "macAddress": "MAC705A0F3BAFB3",
+        "hostId": "Mawlamyine TBC",
+        "serial": "CepheidB7T58V1",
+        "gxAlertDeviceId": 382,
+        "apiKey": "jcw6ank3poc6xl2cuksa"
+      }
+    ]
+  },
+  {
+    "externalId": "Bago TBC",
+    "type": "lab",
+    "latitude": 17.338144,
+    "longitude": 96.483940,
+    "stateName": "Bago",
+    "lgaName": "Bago",
+    "name": "Bago TBC",
+    "shortName": "Bago TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Bago TBC",
+        "shortName": "Bago TBC",
+        "macAddress": "MAC480FCF5B97DE",
+        "hostId": "Bago TBC",
+        "serial": "Cepheid2HJC7V1",
+        "gxAlertDeviceId": 383,
+        "apiKey": "kur4j7xsvb5ntstnnoca"
+      }
+    ]
+  },
+  {
+    "externalId": "Hpa An TBC",
+    "type": "lab",
+    "latitude": 16.879530,
+    "longitude": 97.650093,
+    "stateName": "Kayin",
+    "lgaName": "Hpa-An",
+    "name": "Hpa An TBC",
+    "shortName": "Hpa An TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Kayin State GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Hpa An TBC",
+        "shortName": "Hpa An TBC",
+        "macAddress": "MAC6805CA208DD9",
+        "hostId": "Hpa An TBC",
+        "serial": "Cepheid-3481GMT",
+        "gxAlertDeviceId": 385,
+        "apiKey": "e7ydxtrgondnbtt7xohq"
+      }
+    ]
+  },
+  {
+    "externalId": "Pyinmana TBC",
+    "type": "lab",
+    "latitude": 96.214600,
+    "longitude": 19.741199,
+    "stateName": "Naypyitaw Union Territoriality",
+    "lgaName": "Detkhina",
+    "name": "Pyinmana TBC",
+    "shortName": "Pyinmana TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Naypyitaw TB Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Pyinmana TBC",
+        "shortName": "Pyinmana TBC",
+        "macAddress": "MAC6805CA208D1C",
+        "hostId": "Pyinmana TBC",
+        "serial": "Cepheid-3481GMC",
+        "gxAlertDeviceId": 386,
+        "apiKey": "ptcdpm4rvahmxbe57nqq"
+      }
+    ]
+  },
+  {
+    "externalId": "Kyaing Tong TBC",
+    "type": "lab",
+    "latitude": 99.611198,
+    "longitude": 21.288500,
+    "stateName": "Shan (East)",
+    "lgaName": "Kengtung",
+    "name": "Kyaing Tong TBC",
+    "shortName": "Kyaing Tong TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Kyaing Tong TBC",
+        "shortName": "Kyaing Tong TBC",
+        "macAddress": "MAC6805CA12A0BF",
+        "hostId": "KengTung TBC",
+        "serial": "Cepheid-3481GMB",
+        "gxAlertDeviceId": 388,
+        "apiKey": "syemmh6cm57fe557fq4a"
+      }
+    ]
+  },
+  {
+    "externalId": "Pathein TBC",
+    "type": "lab",
+    "latitude": 94.740402,
+    "longitude": 16.777901,
+    "stateName": "Ayeyarwady",
+    "lgaName": "Pathein",
+    "name": "Pathein TBC",
+    "shortName": "Pathein TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Pathein TBC",
+        "shortName": "Pathein TBC",
+        "macAddress": "MAC8C8CAAF22659",
+        "hostId": "Pathein TBC",
+        "serial": "CepheidB7DX7V1",
+        "gxAlertDeviceId": 394,
+        "apiKey": "jqcp5eoqkdq6k5x3oviq"
+      }
+    ]
+  },
+  {
+    "externalId": "Myaungmya TBC",
+    "type": "lab",
+    "latitude": 94.923203,
+    "longitude": 16.601801,
+    "stateName": "Ayeyarwady",
+    "lgaName": "Myaungmya",
+    "name": "Myaungmya TBC",
+    "shortName": "Myaungmya TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Myaungmya TBC",
+        "shortName": "Myaungmya TBC",
+        "macAddress": "MAC6805CA1C5839",
+        "hostId": "Myaungmya TBC",
+        "serial": "Myaungmya_TBC",
+        "gxAlertDeviceId": 395,
+        "apiKey": "56hwm2y37q5frydldq5a"
+      }
+    ]
+  },
+  {
+    "externalId": "Sittwe TBC",
+    "type": "lab",
+    "latitude": 92.903397,
+    "longitude": 20.143801,
+    "stateName": "Rakhine",
+    "lgaName": "Sittwe",
+    "name": "Sittwe TBC",
+    "shortName": "Sittwe TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Sittwe TBC",
+        "shortName": "Sittwe TBC",
+        "macAddress": "MAC6805CA208894",
+        "hostId": "Sittwe TBC",
+        "serial": "Cepheid-3481GMG",
+        "gxAlertDeviceId": 396,
+        "apiKey": "hzxhmc6aylkdqgt5edya"
+      }
+    ]
+  },
+  {
+    "externalId": "Hinthada TBC",
+    "type": "lab",
+    "latitude": 95.466797,
+    "longitude": 17.644800,
+    "stateName": "Ayeyarwady",
+    "lgaName": "Hinthada",
+    "name": "Hinthada TBC",
+    "shortName": "Hinthada TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Hinthada TBC",
+        "shortName": "Hinthada TBC",
+        "macAddress": "MAC6805CA1C6130",
+        "hostId": "Hinthada TBC",
+        "serial": "Cepheid-3381P34",
+        "gxAlertDeviceId": 397,
+        "apiKey": "mzpxtur3b3rsxt5yjelq"
+      }
+    ]
+  },
+  {
+    "externalId": "Maubin TBC",
+    "type": "lab",
+    "latitude": 95.654198,
+    "longitude": 16.730400,
+    "stateName": "Ayeyarwady",
+    "lgaName": "Maubin",
+    "name": "Maubin TBC",
+    "shortName": "Maubin TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Maubin TBC",
+        "shortName": "Maubin TBC",
+        "macAddress": "MAC6805CA20B532",
+        "hostId": "Maubin TBC",
+        "serial": "Cepheid-3520VZZ",
+        "gxAlertDeviceId": 399,
+        "apiKey": "p3qwfk6tinwi7n3rhimq"
+      }
+    ]
+  },
+  {
+    "externalId": "Pyapon TBC",
+    "type": "lab",
+    "latitude": 96.445198,
+    "longitude": 18.481899,
+    "stateName": "Ayeyarwady",
+    "lgaName": "Pyapon",
+    "name": "Pyapon TBC",
+    "shortName": "Pyapon TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Pyapon TBC",
+        "shortName": "Pyapon TBC",
+        "macAddress": "MAC6805CA20B309",
+        "hostId": "Pyapon TBC",
+        "serial": "Cepheid-3520VYM",
+        "gxAlertDeviceId": 401,
+        "apiKey": "lsdqep62nz4o65qg7knq"
+      }
+    ]
+  },
+  {
+    "externalId": "Magway TBC",
+    "type": "lab",
+    "latitude": 94.931297,
+    "longitude": 20.144300,
+    "stateName": "Magway",
+    "lgaName": "Magway",
+    "name": "Magway TBC",
+    "shortName": "Magway TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Magway TBC",
+        "shortName": "Magway TBC",
+        "macAddress": "MAC902E1682F648",
+        "hostId": "Magway TBC",
+        "serial": "Cepheid-3031JB2",
+        "gxAlertDeviceId": 411,
+        "apiKey": "zb4bnjjjg345wosqg3ua"
+      }
+    ]
+  },
+  {
+    "externalId": "Pakokku TBC",
+    "type": "lab",
+    "latitude": 95.084396,
+    "longitude": 21.333700,
+    "stateName": "Magway",
+    "lgaName": "Pakokku",
+    "name": "Pakokku TBC",
+    "shortName": "Pakokku TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Pakokku TBC",
+        "shortName": "Pakokku TBC",
+        "macAddress": "MAC6805CA1C5612",
+        "hostId": "Pakokku TBC",
+        "serial": "Cepheid-3381P3Z",
+        "gxAlertDeviceId": 413,
+        "apiKey": "4mr4224rrrtusyilplza"
+      }
+    ]
+  },
+  {
+    "externalId": "Taunggyi TBC",
+    "type": "lab",
+    "latitude": 97.042801,
+    "longitude": 20.778099,
+    "stateName": "Shan (South)",
+    "lgaName": "Taunggyi",
+    "name": "Taunggyi TBC",
+    "shortName": "Taunggyi TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Taunggyi TBC",
+        "shortName": "Taunggyi TBC",
+        "macAddress": "MAC6805CA129CAE",
+        "hostId": "Taunggyi TBC",
+        "serial": "Chepeid-3031JBJ",
+        "gxAlertDeviceId": 1111,
+        "apiKey": "2gdlvnkxfhahtjxqcixq"
+      }
+    ]
+  },
+  {
+    "externalId": "Loikaw TBC",
+    "type": "lab",
+    "latitude": 19.678900,
+    "longitude": 97.213333,
+    "stateName": "Kayah",
+    "lgaName": "Loikaw",
+    "name": "Loikaw TBC",
+    "shortName": "Loikaw TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Loikaw TBC",
+        "shortName": "Loikaw TBC",
+        "macAddress": "MAC6805CA20C43F",
+        "hostId": "Loikaw TBC",
+        "serial": "Cepheid-3520VWS",
+        "gxAlertDeviceId": 415,
+        "apiKey": "pe37iulmi2ix5epy7sbq"
+      }
+    ]
+  },
+  {
+    "externalId": "Lashio TBC",
+    "type": "lab",
+    "latitude": 97.747803,
+    "longitude": 22.933500,
+    "stateName": "Shan (North)",
+    "lgaName": "Lashio",
+    "name": "Lashio TBC",
+    "shortName": "Lashio TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Lashio TBC",
+        "shortName": "Lashio TBC",
+        "macAddress": "MAC6805CA129B09",
+        "hostId": "Lashio TBC",
+        "serial": "Cepheid-7392DG1",
+        "gxAlertDeviceId": 416,
+        "apiKey": "gzfsfqaseo4caouzer7a"
+      }
+    ]
+  },
+  {
+    "externalId": "Monywa TBC",
+    "type": "lab",
+    "latitude": 95.136101,
+    "longitude": 22.111401,
+    "stateName": "Sagaing",
+    "lgaName": "Monywa",
+    "name": "Monywa TBC",
+    "shortName": "Monywa TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Monywa TBC",
+        "shortName": "Monywa TBC",
+        "macAddress": "MAC705A0F4029AA",
+        "hostId": "Monywa TBC",
+        "serial": "Cepheid-70329C5",
+        "gxAlertDeviceId": 418,
+        "apiKey": "zvock7zqmppipvbduo7q"
+      }
+    ]
+  },
+  {
+    "externalId": "Kalay TBC",
+    "type": "lab",
+    "latitude": 94.067596,
+    "longitude": 23.184999,
+    "stateName": "Sagaing",
+    "lgaName": "Kale",
+    "name": "Kalay TBC",
+    "shortName": "Kalay TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Kalay TBC",
+        "shortName": "Kalay TBC",
+        "macAddress": "MAC6805CA18D3DB",
+        "hostId": "Kalay TBC",
+        "serial": "Cepheid-3300V8R",
+        "gxAlertDeviceId": 419,
+        "apiKey": "lbvinlzff4x7xbeguyna"
+      }
+    ]
+  },
+  {
+    "externalId": "Hakha TBC",
+    "type": "lab",
+    "latitude": 22.647720,
+    "longitude": 93.608368,
+    "stateName": "Chin",
+    "lgaName": "Hakha",
+    "name": "Hakha TBC",
+    "shortName": "Hakha TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Chin State Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Hakha TBC",
+        "shortName": "Hakha TBC",
+        "macAddress": "MAC2C44FD29E81C",
+        "hostId": "Hakha TBC",
+        "serial": "Cepheid-3520VVX",
+        "gxAlertDeviceId": 423,
+        "apiKey": "h5qgu3zpdoq3wpsdfiaa"
+      }
+    ]
+  },
+  {
+    "externalId": "Dawei TBC",
+    "type": "lab",
+    "latitude": 14.077750,
+    "longitude": 98.202133,
+    "stateName": "Tanintharyi",
+    "lgaName": "Dawei",
+    "name": "Dawei TBC",
+    "shortName": "Dawei TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Tanintharyi  Reggion TB Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Dawei TBC",
+        "shortName": "Dawei TBC",
+        "macAddress": "MAC",
+        "hostId": "Dawei TBC",
+        "serial": "Cepheid-3520VZ1",
+        "gxAlertDeviceId": 427,
+        "apiKey": "td57h4ktmzbqpzlxukla"
+      }
+    ]
+  },
+  {
+    "externalId": "UTI-1 (UNOPS)",
+    "type": "lab",
+    "latitude": 96.139397,
+    "longitude": 16.920000,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "UTI-1 (UNOPS)",
+    "shortName": "UTI-1",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "UTI (Aung San) GXP Lab",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "UTI-1 (UNOPS)",
+        "shortName": "UTI-1",
+        "macAddress": "MAC705A0F38DD61",
+        "hostId": "UTI-1",
+        "serial": "CepheidB7F18V1",
+        "gxAlertDeviceId": 255,
+        "apiKey": "echmr7ylqgp5jkmhcaga"
+      }
+    ]
+  },
+  {
+    "externalId": "Myawaddy TBC",
+    "type": "lab",
+    "latitude": 16.685410,
+    "longitude": 98.505966,
+    "stateName": "Kayin",
+    "lgaName": "Myawaddy",
+    "name": "Myawaddy TBC",
+    "shortName": "Myawaddy TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Kayin State GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Myawaddy TBC",
+        "shortName": "Myawaddy TBC",
+        "macAddress": "MACC4346B5CF23E",
+        "hostId": "Myawaddy TBC",
+        "serial": "Cepheid-44413RT",
+        "gxAlertDeviceId": 548,
+        "apiKey": "3yzi6gmc7cd7lhzfidpa"
+      }
+    ]
+  },
+  {
+    "externalId": "Latha XVI",
+    "type": "lab",
+    "stateName": "Yangon",
+    "lgaName": "Yangon (West)",
+    "name": "Latha XVI",
+    "customProperties": "",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Meikhtila TBC",
+    "type": "lab",
+    "latitude": 95.861397,
+    "longitude": 20.876301,
+    "stateName": "Mandalay",
+    "lgaName": "Meiktila",
+    "name": "Meikhtila TBC",
+    "shortName": "Meikhtila TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Meikhtila TBC",
+        "shortName": "Meikhtila TBC",
+        "macAddress": "MAC8CDCD4491C80",
+        "hostId": "Meikhtila TBC",
+        "serial": "Meikhtila TBC",
+        "gxAlertDeviceId": 609,
+        "apiKey": "rpuwlfwuofs2jpu4o2rq"
+      }
+    ]
+  },
+  {
+    "externalId": "UMTBC Gene 1",
+    "type": "lab",
+    "latitude": 96.097000,
+    "longitude": 21.955601,
+    "stateName": "Mandalay",
+    "lgaName": "Mandalay",
+    "name": "UMTBC",
+    "shortName": "UMTBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "UMTBC Lab",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "UMTBC",
+        "shortName": "UMTBC",
+        "macAddress": "MAC902E1682F87A",
+        "hostId": "Patheingyi",
+        "serial": "CEPHEID55MZ9S1",
+        "gxAlertDeviceId": 277,
+        "apiKey": "undi6trqwachtnnbtukq"
+      }
+    ]
+  },
+  {
+    "externalId": "SH-Mingaladon",
+    "type": "lab",
+    "latitude": 96.129997,
+    "longitude": 16.951401,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "SH-Mingaladon",
+    "shortName": "SH-Mingaladon",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "SH-Mingaladon",
+        "shortName": "SH-Mingaladon",
+        "macAddress": "MAC6805CA1C583E",
+        "hostId": "SH-Mingaladon",
+        "serial": "DELL-PC",
+        "gxAlertDeviceId": 627,
+        "apiKey": "3e6dm2r3sh4kfp27pfpa"
+      }
+    ]
+  },
+  {
+    "externalId": "Myeik TBC",
+    "type": "lab",
+    "latitude": 12.439400,
+    "longitude": 98.602013,
+    "stateName": "Tanintharyi",
+    "lgaName": "Myeik",
+    "name": "Myeik TBC",
+    "shortName": "Myeik TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Tanintharyi  Reggion TB Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Myeik TBC",
+        "shortName": "Myeik TBC",
+        "macAddress": "MAC8CDCD443A1FD",
+        "hostId": "Myeik TBC",
+        "serial": "Cepheid-5201PJ7",
+        "gxAlertDeviceId": 663,
+        "apiKey": "gcke4ajybcy5gejtlw7q"
+      }
+    ]
+  },
+  {
+    "externalId": "Bhamaw TBC",
+    "type": "lab",
+    "latitude": 97.230301,
+    "longitude": 24.256201,
+    "stateName": "Kachin",
+    "lgaName": "Bhamo",
+    "name": "Bhamaw TBC",
+    "shortName": "Bhamaw TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Bhamaw TBC",
+        "shortName": "Bhamaw TBC",
+        "macAddress": "MACC4346B780E57",
+        "hostId": "Bhamaw TBC",
+        "serial": "Cepheid-44819DK",
+        "gxAlertDeviceId": 733,
+        "apiKey": "2jxbt4u4miv7uit35vpa"
+      }
+    ]
+  },
+  {
+    "externalId": "Thaton TBC",
+    "type": "lab",
+    "latitude": 97.367798,
+    "longitude": 16.919701,
+    "stateName": "Mon",
+    "lgaName": "Thaton",
+    "name": "Thaton TBC",
+    "shortName": "Thaton TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mon State GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Thaton TBC",
+        "shortName": "Thaton TBC",
+        "macAddress": "MACC4346B73C7F9",
+        "hostId": "Thaton TBC",
+        "serial": "Cepheid-44413RW",
+        "gxAlertDeviceId": 762,
+        "apiKey": "qn2eolxqbw6d62epcwgq"
+      }
+    ]
+  },
+  {
+    "externalId": "Taungoo TBC",
+    "type": "lab",
+    "latitude": 18.938520,
+    "longitude": 96.442673,
+    "stateName": "Bago",
+    "lgaName": "Taungoo",
+    "name": "Taungoo TBC",
+    "shortName": "Taungoo TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Taungoo TBC",
+        "shortName": "Taungoo TBC",
+        "macAddress": "MACC4346B5CF23B",
+        "hostId": "Taungoo TBC",
+        "serial": "Cepheid-44413RM",
+        "gxAlertDeviceId": 766,
+        "apiKey": "uhxwat34gwfqqjrf5y2q"
+      }
+    ]
+  },
+  {
+    "externalId": "Shwebo TBC",
+    "type": "lab",
+    "latitude": 95.704697,
+    "longitude": 22.571501,
+    "stateName": "Sagaing",
+    "lgaName": "Shwebo",
+    "name": "Shwebo TBC",
+    "shortName": "Shwebo TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Shwebo TBC",
+        "shortName": "Shwebo TBC",
+        "macAddress": "MAC6805CA1C5C58",
+        "hostId": "Shwebo TBC",
+        "serial": "CEPEHID-3381P3J",
+        "gxAlertDeviceId": 768,
+        "apiKey": "draqhao3q5gqz7z5lvpq"
+      }
+    ]
+  },
+  {
+    "externalId": "Myitkyina TBC",
+    "type": "lab",
+    "latitude": 97.403297,
+    "longitude": 25.382999,
+    "stateName": "Kachin",
+    "lgaName": "Myitkyina",
+    "name": "Myitkyina TBC",
+    "shortName": "Myitkyina TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Myitkyina TBC",
+        "shortName": "Myitkyina TBC",
+        "macAddress": "MACD067E51B7179",
+        "hostId": "Myitkyina TBC",
+        "serial": "Admin-PC",
+        "gxAlertDeviceId": 771,
+        "apiKey": "mcq2flblxsw7kfzz6esq"
+      }
+    ]
+  },
+  {
+    "externalId": "Thandwe TBC",
+    "type": "lab",
+    "latitude": 94.365097,
+    "longitude": 18.463699,
+    "stateName": "Rakhine",
+    "lgaName": "Thandwe",
+    "name": "Thandwe TBC",
+    "shortName": "Thandwe TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Thandwe TBC",
+        "shortName": "Thandwe TBC",
+        "macAddress": "MACC4346B5CEABB",
+        "hostId": "Thandwe TBC",
+        "serial": "Cepheid-44413RV",
+        "gxAlertDeviceId": 924,
+        "apiKey": "txsy4nljjxlxvfgg2zia"
+      }
+    ]
+  },
+  {
+    "externalId": "Muse GH",
+    "type": "lab",
+    "latitude": 97.901649,
+    "longitude": 23.989889,
+    "stateName": "Shan (North)",
+    "lgaName": "Muse",
+    "name": "Muse GH",
+    "shortName": "Muse GH",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Muse GH",
+        "shortName": "Muse GH",
+        "macAddress": "MACECB1D74859F0",
+        "hostId": "Muse GH",
+        "serial": "Muse GH",
+        "gxAlertDeviceId": 981,
+        "apiKey": "7goyeciz2eqbpk6inyaq"
+      }
+    ]
+  },
+  {
+    "externalId": "Bedded 1000",
+    "type": "lab",
+    "latitude": 96.185661,
+    "longitude": 19.803261,
+    "stateName": "Naypyitaw Union Territoriality",
+    "lgaName": "Oketara",
+    "name": "Bedded 1000",
+    "shortName": "Bedded 1000",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Naypyitaw TB Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Bedded 1000",
+        "shortName": "Bedded 1000",
+        "macAddress": "MACECB1D73F331D",
+        "hostId": "Bedded 1000",
+        "serial": "Cepheid-530PD6B",
+        "gxAlertDeviceId": 1008,
+        "apiKey": "q2d77u2p72vu36mhcurq"
+      }
+    ]
+  },
+  {
+    "externalId": "Mohnyin TBC",
+    "type": "lab",
+    "latitude": 96.373199,
+    "longitude": 24.779060,
+    "stateName": "Kachin",
+    "lgaName": "Mohnyin",
+    "name": "Mohnyin TBC",
+    "shortName": "Mohnyin TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Mohnyin TBC",
+        "shortName": "Mohnyin TBC",
+        "macAddress": "MACECB1D73F333B",
+        "hostId": "Mohnyin",
+        "serial": "Cepheid-530PD66",
+        "gxAlertDeviceId": 1047,
+        "apiKey": "e5li7aaf77hmtshl7xwa"
+      }
+    ]
+  },
+  {
+    "externalId": "Kyaukpyu TBC",
+    "type": "lab",
+    "latitude": 93.554398,
+    "longitude": 19.423901,
+    "stateName": "Rakhine",
+    "lgaName": "Kyaukpyu",
+    "name": "Kyaukpyu TBC",
+    "shortName": "Kyaukpyu TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Kyaukpyu TBC",
+        "shortName": "Kyaukpyu TBC",
+        "macAddress": "MACC4346B780F4D",
+        "hostId": "Kyaukphyu TBC",
+        "serial": "Cepheid-44819D1",
+        "gxAlertDeviceId": 1095,
+        "apiKey": "gz74jvnkrpuqcsvmzotq"
+      }
+    ]
+  },
+  {
+    "externalId": "Kawthaung TBC",
+    "type": "lab",
+    "latitude": 9.983000,
+    "longitude": 98.550003,
+    "stateName": "Tanintharyi",
+    "lgaName": "Kawthoung",
+    "name": "Kawthaung TBC",
+    "shortName": "Kawthaung TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Tanintharyi  Reggion TB Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Kawthaung TBC",
+        "shortName": "Kawthaung TBC",
+        "macAddress": "MAC48BA4EEB030E",
+        "hostId": "Kawthaung TBC",
+        "serial": "Cepheid-44819DZ",
+        "gxAlertDeviceId": 1125,
+        "apiKey": "rw544ptrzo5qfwt55taq"
+      }
+    ]
+  },
+  {
+    "externalId": "NyaungOo TBC",
+    "type": "lab",
+    "latitude": 94.905998,
+    "longitude": 21.198000,
+    "stateName": "Mandalay",
+    "lgaName": "Nyaung-U",
+    "name": "NyaungOo TBC",
+    "shortName": "NyaungOo TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "NyaungOo TBC",
+        "shortName": "NyaungOo TBC",
+        "macAddress": "MAC5065F349FD5F",
+        "hostId": "NyaungOo TBC",
+        "serial": "Cepheid-6050XPW",
+        "gxAlertDeviceId": 1129,
+        "apiKey": "fccqsndmb22p2ceci4pa"
+      }
+    ]
+  },
+  {
+    "externalId": "Tachileik TBC",
+    "type": "lab",
+    "latitude": 99.884033,
+    "longitude": 20.453039,
+    "stateName": "Shan (East)",
+    "lgaName": "Tachileik",
+    "name": "Tachileik TBC",
+    "shortName": "Tachileik TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Tachileik TBC",
+        "shortName": "Tachileik TBC",
+        "macAddress": "MAC6805CA20BDD5",
+        "hostId": "Tachileik TBC",
+        "serial": "Cepheid-3520W0K",
+        "gxAlertDeviceId": 1140,
+        "apiKey": "ie5xnhiphrztv3625ema"
+      }
+    ]
+  },
+  {
+    "externalId": "LoiLem TBC",
+    "type": "lab",
+    "latitude": 97.565811,
+    "longitude": 20.925360,
+    "stateName": "Shan (South)",
+    "lgaName": "Loilen",
+    "name": "LoiLem TBC",
+    "shortName": "LoiLem TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "LoiLem TBC",
+        "shortName": "LoiLem TBC",
+        "macAddress": "MAC480FCF30ADE9",
+        "hostId": "LoiLem TBC",
+        "serial": "Cepheid-530PDFJ",
+        "gxAlertDeviceId": 1145,
+        "apiKey": "be4tsj5mckys5lv34wza"
+      }
+    ]
+  },
+  {
+    "externalId": "Pyinoolwin TBC",
+    "type": "lab",
+    "latitude": 96.456337,
+    "longitude": 22.013969,
+    "stateName": "Mandalay",
+    "lgaName": "Pyinoolwin",
+    "name": "Pyinoolwin TBC",
+    "shortName": "Pyinoolwin TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Pyinoolwin TBC",
+        "shortName": "Pyinoolwin TBC",
+        "macAddress": "MAC480FCF57EC74",
+        "hostId": "PyinoolwinTBC",
+        "serial": "Cepheid-6201QJZ",
+        "gxAlertDeviceId": 1147,
+        "apiKey": "sofcani6yasl6tw5sd2a"
+      }
+    ]
+  },
+  {
+    "externalId": "Katha GXP Center",
+    "type": "lab",
+    "latitude": 94.300362,
+    "longitude": 23.199800,
+    "stateName": "Sagaing",
+    "lgaName": "Katha",
+    "name": "Katha GXP Center",
+    "shortName": "Katha GXP Center",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Katha GXP Center",
+        "shortName": "Katha GXP Center",
+        "macAddress": "MAC309C2383DEA1",
+        "hostId": "Katha GXP Center",
+        "serial": "Cepheid-530PD4H",
+        "gxAlertDeviceId": 1152,
+        "apiKey": "iy3mce67dyzp2t4hdbfa"
+      }
+    ]
+  },
+  {
+    "externalId": "Thingangyun GXP Centre",
+    "type": "lab",
+    "latitude": 96.188332,
+    "longitude": 16.834410,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (East)",
+    "name": "Thingangyun TBC",
+    "shortName": "Thingangyun TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Thingangyun TBC",
+        "shortName": "Thingangyun TBC",
+        "macAddress": "MAC480FCF3191A4",
+        "hostId": "Thingangyun",
+        "serial": "Cepheid-6011N6R",
+        "gxAlertDeviceId": 1153,
+        "apiKey": "jneah6qrl54qchg3z2ma"
+      }
+    ]
+  },
+  {
+    "externalId": "Thayarwady TBC",
+    "type": "lab",
+    "latitude": 17.624451,
+    "longitude": 95.707123,
+    "stateName": "Bago",
+    "lgaName": "Thayarwady",
+    "name": "Thayarwady TBC",
+    "shortName": "Thayarwady TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Thayarwady TBC",
+        "shortName": "Thayarwady TBC",
+        "macAddress": "MAC5065F348F672",
+        "hostId": "Thayarwady TBC",
+        "serial": "Cepheid-6050XQR",
+        "gxAlertDeviceId": 1158,
+        "apiKey": "y5z5hsgjdwr6jdnfjzca"
+      }
+    ]
+  },
+  {
+    "externalId": "Laputta TBC",
+    "type": "lab",
+    "latitude": 94.758888,
+    "longitude": 16.145571,
+    "stateName": "Ayeyarwady",
+    "lgaName": "Labutta",
+    "name": "Laputta TBC",
+    "shortName": "Laputta TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Laputta TBC",
+        "shortName": "Laputta TBC",
+        "macAddress": "MAC5065F348F67B",
+        "hostId": "Laputta TBC",
+        "serial": "Cepheid-6050XPT",
+        "gxAlertDeviceId": 1162,
+        "apiKey": "qangslmnhishtookzpua"
+      }
+    ]
+  },
+  {
+    "externalId": "Thaketa TBC",
+    "type": "lab",
+    "latitude": 96.167000,
+    "longitude": 17.000000,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (East)",
+    "name": "Thaketa TBC",
+    "shortName": "Thaketa TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Thaketa TBC",
+        "shortName": "Thaketa TBC",
+        "macAddress": "MAC2CF05D107D9A",
+        "hostId": "Thaketa TBC",
+        "serial": "Cepheid-6050XQ8",
+        "gxAlertDeviceId": 1166,
+        "apiKey": "63oth6d7nt5ozoql2bhq"
+      }
+    ]
+  },
+  {
+    "externalId": "Mindat TBC ",
+    "type": "lab",
+    "latitude": 21.371040,
+    "longitude": 93.963242,
+    "stateName": "Chin",
+    "lgaName": "Mindat",
+    "name": "Mindat TBC ",
+    "shortName": "Mindat TBC ",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Chin State Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Mindat TBC ",
+        "shortName": "Mindat TBC ",
+        "macAddress": "MAC5065F349FD51",
+        "hostId": "Mindat TBC",
+        "serial": "Cepheid-6050XQK",
+        "gxAlertDeviceId": 1173,
+        "apiKey": "uba4d3cbsynl2xrycroq"
+      }
+    ]
+  },
+  {
+    "externalId": "Gangaw TBC",
+    "type": "lab",
+    "latitude": 94.135818,
+    "longitude": 22.174210,
+    "stateName": "Magway",
+    "lgaName": "Gangaw",
+    "name": "Gangaw TBC",
+    "shortName": "Gangaw TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Gangaw TBC",
+        "shortName": "Gangaw TBC",
+        "macAddress": "MACA0369F969196",
+        "hostId": "Gangaw TBC",
+        "serial": "Cepheid-6201QK0",
+        "gxAlertDeviceId": 1188,
+        "apiKey": "m2soudufb3l4jxsjtsbq"
+      }
+    ]
+  },
+  {
+    "externalId": "Tamu TBC",
+    "type": "lab",
+    "latitude": 94.315338,
+    "longitude": 24.211491,
+    "stateName": "Sagaing",
+    "lgaName": "Tamu",
+    "name": "Tamu TBC",
+    "shortName": "Tamu TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Tamu TBC",
+        "shortName": "Tamu TBC",
+        "macAddress": "MAC480FCF577440",
+        "hostId": "Tamu TBC",
+        "serial": "Cepheid-6201QMJ",
+        "gxAlertDeviceId": 1200,
+        "apiKey": "jybacysoe2hymgt55xxq"
+      }
+    ]
+  },
+  {
+    "externalId": "Kyaukme TBC",
+    "type": "lab",
+    "latitude": 97.036713,
+    "longitude": 22.541719,
+    "stateName": "Shan (North)",
+    "lgaName": "Kyaukme",
+    "name": "Kyaukme TBC",
+    "shortName": "Kyaukme TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Kyaukme TBC",
+        "shortName": "Kyaukme TBC",
+        "macAddress": "MAC480FCF577455",
+        "hostId": "Kyaukme TBC",
+        "serial": "Cepheid-6201QMB",
+        "gxAlertDeviceId": 1217,
+        "apiKey": "zmdaomsqh7tnybyk4x7q"
+      }
+    ]
+  },
+  {
+    "externalId": "Mrauk U TBC",
+    "type": "lab",
+    "latitude": 20.607943,
+    "longitude": 93.175583,
+    "stateName": "Rakhine",
+    "lgaName": "Mrauk-U",
+    "name": "Mrauk U TBC",
+    "shortName": "Mrauk U TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Mrauk U TBC",
+        "shortName": "Mrauk U TBC",
+        "macAddress": "MAC480FCF58A34E",
+        "hostId": "Mrauk U TBC",
+        "serial": "Cepheid-6211LS5",
+        "gxAlertDeviceId": 1221,
+        "apiKey": "rkuhcxo5uyhsdpvb7kqq"
+      }
+    ]
+  },
+  {
+    "externalId": "Minbu TBC",
+    "type": "lab",
+    "latitude": 94.875183,
+    "longitude": 20.171610,
+    "stateName": "Magway",
+    "lgaName": "Minbu",
+    "name": "Minbu TBC",
+    "shortName": "Minbu TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Minbu TBC",
+        "shortName": "Minbu TBC",
+        "macAddress": "MAC480FCF577480",
+        "hostId": "Minbu TBC",
+        "serial": "Cepheid-6201QKQ",
+        "gxAlertDeviceId": 1232,
+        "apiKey": "72gssjwdbgluxmotw6tq"
+      }
+    ]
+  },
+  {
+    "externalId": "SMRU GXP",
+    "type": "lab",
+    "latitude": 98.508003,
+    "longitude": 16.688000,
+    "stateName": "Kayin",
+    "lgaName": "Myawaddy",
+    "name": "SMRU GXP",
+    "shortName": "SMRU GXP",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Kayin State GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "SMRU GXP",
+        "shortName": "SMRU GXP",
+        "macAddress": "MACA0369F8886F8",
+        "hostId": "SMRU GXP",
+        "serial": "SMRU-TB",
+        "gxAlertDeviceId": 1264,
+        "apiKey": "inrzcbh7o4tyordaydeq"
+      }
+    ]
+  },
+  {
+    "externalId": "Thayet TBC",
+    "type": "lab",
+    "latitude": 95.179703,
+    "longitude": 19.322800,
+    "stateName": "Magway",
+    "lgaName": "Thayet",
+    "name": "Thayet TBC",
+    "shortName": "Thayet TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Thayet TBC",
+        "shortName": "Thayet TBC",
+        "macAddress": "MAC480FCF57ED39",
+        "hostId": "Thayet TBC",
+        "serial": "Cepheid-6201QN2",
+        "gxAlertDeviceId": 1293,
+        "apiKey": "xjg5xotxvq5xjqdy2gla"
+      }
+    ]
+  },
+  {
+    "externalId": "Moegok TBC",
+    "type": "lab",
+    "latitude": 96.471703,
+    "longitude": 22.039200,
+    "stateName": "Mandalay",
+    "lgaName": "Pyinoolwin",
+    "name": "Moegok TBC",
+    "shortName": "Moegok TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Moegok TBC",
+        "shortName": "Moegok TBC",
+        "macAddress": "MAC480FCF30AE9C",
+        "hostId": "Moegoke TBC",
+        "serial": "Cepheid-6050XPX",
+        "gxAlertDeviceId": 1470,
+        "apiKey": "q6ionh5xio4w5h6gpixa"
+      }
+    ]
+  },
+  {
+    "externalId": "Homalin TBC",
+    "type": "lab",
+    "latitude": 95.690498,
+    "longitude": 25.997700,
+    "stateName": "Sagaing",
+    "lgaName": "Hkamti",
+    "name": "Homalin TBC",
+    "shortName": "Homalin TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Homalin TBC",
+        "shortName": "Homalin TBC",
+        "macAddress": "MAC18037321907B",
+        "hostId": "Homalin TBC",
+        "serial": "Cepheid-7122C76",
+        "gxAlertDeviceId": 1741,
+        "apiKey": "jwrtmmzx2xjvtbltwg3a"
+      }
+    ]
+  },
+  {
+    "externalId": "South Dagon TBC",
+    "type": "lab",
+    "latitude": 96.129997,
+    "longitude": 16.951401,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (East)",
+    "name": "South Dagon TBC",
+    "shortName": "South Dagon TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "South Dagon TBC",
+        "shortName": "South Dagon TBC",
+        "macAddress": "MAC705A0F38A04A",
+        "hostId": "South Dagon TBC",
+        "serial": "Cepheid-70329BB",
+        "gxAlertDeviceId": 1763,
+        "apiKey": "cnulk2j3buoasmji4wrq"
+      }
+    ]
+  },
+  {
+    "externalId": "Dawei MSF-CH",
+    "type": "lab",
+    "latitude": 98.195999,
+    "longitude": 14.097000,
+    "stateName": "Tanintharyi",
+    "lgaName": "Dawei",
+    "name": "Dawei MSF-CH",
+    "shortName": "Dawei MSF-CH",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Tanintharyi  Reggion TB Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Dawei MSF-CH",
+        "shortName": "Dawei MSF-CH",
+        "macAddress": "MAC6805CA129C12",
+        "hostId": "Dawei MSF-CH",
+        "serial": "Cepheid-3031JCD",
+        "gxAlertDeviceId": 1811,
+        "apiKey": "ys67wtv24wzx6mchgheq"
+      }
+    ]
+  },
+  {
+    "externalId": "Hlaing TBC",
+    "type": "lab",
+    "latitude": 96.139397,
+    "longitude": 16.920000,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (West)",
+    "name": "Hlaing TBC",
+    "shortName": "Hlaing TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Hlaing TBC",
+        "shortName": "Hlaing TBC",
+        "macAddress": "MAC48BA4EEDC852",
+        "hostId": "Hlaing TBC",
+        "serial": "Cepheid-7392GX8",
+        "gxAlertDeviceId": 1950,
+        "apiKey": "z5kb3e34s3oiei25yinq"
+      }
+    ]
+  },
+  {
+    "externalId": "CPH_Mandalay",
+    "type": "lab",
+    "latitude": 96.139397,
+    "longitude": 16.920000,
+    "stateName": "Mandalay",
+    "lgaName": "Mandalay",
+    "name": "CPH_Mandalay",
+    "shortName": "CPH_Mandalay",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "CPH_Mandalay",
+        "shortName": "CPH_Mandalay",
+        "macAddress": "MACEC8EB550411B",
+        "hostId": "CPH_Mandalay",
+        "serial": "Cepheid-7392J05",
+        "gxAlertDeviceId": 2016,
+        "apiKey": "lxqzh4xckhru6ahrxhba"
+      }
+    ]
+  },
+  {
+    "externalId": "AHRN-PKT",
+    "type": "lab",
+    "latitude": 96.936996,
+    "longitude": 25.304399,
+    "stateName": "Kachin",
+    "lgaName": "Mohnyin",
+    "name": "AHRN-PKT",
+    "shortName": "AHRN-PKT",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "AHRN-PKT",
+        "shortName": "AHRN-PKT",
+        "macAddress": "MACACED5C3EDBCC",
+        "hostId": "AHRN-PKT",
+        "serial": "Cepheid-7295ZMG",
+        "gxAlertDeviceId": 2098,
+        "apiKey": "w5foienqwgpgx5bbxanq"
+      }
+    ]
+  },
+  {
+    "externalId": "IOM, Mawlamyine",
+    "type": "lab",
+    "latitude": 95.268204,
+    "longitude": 16.376801,
+    "stateName": "Mon",
+    "lgaName": "Mawlamyine",
+    "name": "IOM, Mawlamyine",
+    "shortName": "IOM, Mawlamyine",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mon State GXP Store",
+    "warehouse_source": "lga",
+    "devices": [
+      {
+        "name": "IOM, Mawlamyine",
+        "shortName": "IOM, Mawlamyine",
+        "macAddress": "MAC186024441381",
+        "hostId": "IOM, Mawlamyine",
+        "serial": "Cepheid-7295Z9W",
+        "gxAlertDeviceId": 2156,
+        "apiKey": "o2qctpjxgozsurg72ipq"
+      }
+    ]
+  },
+  {
+    "externalId": "MDM Moegaung",
+    "type": "lab",
+    "latitude": 96.936996,
+    "longitude": 25.304399,
+    "stateName": "Kachin",
+    "lgaName": "Mohnyin",
+    "name": "MDM Moegaung",
+    "shortName": "MDM Moegaung",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "MDM Moegaung",
+        "shortName": "MDM Moegaung",
+        "macAddress": "MAC18602445A2BB",
+        "hostId": "MDM Moegaung",
+        "serial": "Cepheid-7295Y2K",
+        "gxAlertDeviceId": 2162,
+        "apiKey": "hkdcszqfg5ck34ygvooa"
+      }
+    ]
+  },
+  {
+    "externalId": "PSI Yangon",
+    "type": "lab",
+    "latitude": 96.139397,
+    "longitude": 16.920000,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (West)",
+    "name": "PSI Yangon",
+    "shortName": "PSI Yangon",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "PSI Yangon",
+        "shortName": "PSI Yangon",
+        "macAddress": "MACF430B9D18A71",
+        "hostId": "PSI Yangon",
+        "serial": "Cepheid-7295ZXS",
+        "gxAlertDeviceId": 2186,
+        "apiKey": "caxr3srld2dunjhmproq"
+      }
+    ]
+  },
+  {
+    "externalId": "SH-Thaketa",
+    "type": "lab",
+    "latitude": 96.216118,
+    "longitude": 16.805588,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (East)",
+    "name": "SH-Thaketa",
+    "shortName": "SH-Thaketa",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "SH-Thaketa",
+        "shortName": "SH-Thaketa",
+        "macAddress": "MAC",
+        "hostId": "SH-Thaketa",
+        "serial": "Cepheid-7392JNL",
+        "gxAlertDeviceId": 2270,
+        "apiKey": "ajyqgvhj6y3ez5szshdq"
+      }
+    ]
+  },
+  {
+    "externalId": "Yamethin TBC",
+    "type": "lab",
+    "latitude": 96.137466,
+    "longitude": 20.430500,
+    "stateName": "Mandalay",
+    "lgaName": "Yamethin",
+    "name": "Yamethin TBC",
+    "shortName": "Yamethin TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Yamethin TBC",
+        "shortName": "Yamethin TBC",
+        "macAddress": "MAC02346D6E0174",
+        "hostId": "Yamethin TBC",
+        "serial": "Cepheid-7392FMC",
+        "gxAlertDeviceId": 2410,
+        "apiKey": "eylvdgalzj37jbjxgwxq"
+      }
+    ]
+  },
+  {
+    "externalId": "Phakant TBC",
+    "type": "lab",
+    "latitude": 96.312119,
+    "longitude": 25.612801,
+    "stateName": "Kachin",
+    "lgaName": "Mohnyin",
+    "name": "Phakant TBC",
+    "shortName": "Phakant TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Phakant TBC",
+        "shortName": "Phakant TBC",
+        "macAddress": "MAC40B0343D0B5A",
+        "hostId": "Phakant TBC",
+        "serial": "Cepheid-7382PFM",
+        "gxAlertDeviceId": 2417,
+        "apiKey": "4l2edzswerg5xzhnlcxa"
+      }
+    ]
+  },
+  {
+    "externalId": "Kanbalu TBC",
+    "type": "lab",
+    "latitude": 95.518860,
+    "longitude": 23.203051,
+    "stateName": "Sagaing",
+    "lgaName": "Shwebo",
+    "name": "Kanbalu TBC",
+    "shortName": "Kanbalu TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Kanbalu TBC",
+        "shortName": "Kanbalu TBC",
+        "macAddress": "MAC40B034197441",
+        "hostId": "Kanbalu TBC",
+        "serial": "Cepheid-7361P9J",
+        "gxAlertDeviceId": 2427,
+        "apiKey": "by3cjgoypywjc3c5vz3q"
+      }
+    ]
+  },
+  {
+    "externalId": "Sagaing TBC",
+    "type": "lab",
+    "latitude": 95.962311,
+    "longitude": 21.880079,
+    "stateName": "Sagaing",
+    "lgaName": "Sagaing",
+    "name": "Sagaing TBC",
+    "shortName": "Sagaing TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Sagaing TBC",
+        "shortName": "Sagaing TBC",
+        "macAddress": "MAC48BA4EEB4882",
+        "hostId": "Sagaing TBC",
+        "serial": "Cepheid-7392C9V",
+        "gxAlertDeviceId": 2433,
+        "apiKey": "zbvypx5vcejdsi5obz3a"
+      }
+    ]
+  },
+  {
+    "externalId": "Hlaingtharya TBC",
+    "type": "lab",
+    "latitude": 16.882673,
+    "longitude": 96.052902,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "Hlaingtharya TBC",
+    "shortName": "Hlaingtharya TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Hlaingtharya TBC",
+        "shortName": "Hlaingtharya TBC",
+        "macAddress": "MAC",
+        "hostId": "Hlaingtharya TBC",
+        "serial": "Cepheid-7392GQV",
+        "gxAlertDeviceId": 2453,
+        "apiKey": "aq7ibdxzq7wenvpov6yq"
+      }
+    ]
+  },
+  {
+    "externalId": "Khamti TBC",
+    "type": "lab",
+    "latitude": 27.340429,
+    "longitude": 97.420662,
+    "stateName": "Sagaing",
+    "lgaName": "Hkamti",
+    "name": "Khamti TBC",
+    "shortName": "Khamti TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Khamti TBC",
+        "shortName": "Khamti TBC",
+        "macAddress": "MAC40B0341CD642",
+        "hostId": "Khamti TBC",
+        "serial": "Cepheid-7361P85",
+        "gxAlertDeviceId": 2494,
+        "apiKey": "blq72fwcgorbfxmb2drq"
+      }
+    ]
+  },
+  {
+    "externalId": "NOKA_HOSP",
+    "type": "lab",
+    "latitude": 96.157097,
+    "longitude": 16.900970,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (East)",
+    "name": "NOKA_HOSP",
+    "shortName": "NOKA_HOSP",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "NOKA_HOSP",
+        "shortName": "NOKA_HOSP",
+        "macAddress": "MAC48BA4EEDE8ED",
+        "hostId": "NOKA_HOSP",
+        "serial": "Cepheid-7392FC4",
+        "gxAlertDeviceId": 2500,
+        "apiKey": "sm3k2ivuodjs2e6xe7sa"
+      }
+    ]
+  },
+  {
+    "externalId": "Kunlong TBC",
+    "type": "lab",
+    "latitude": 21.185169,
+    "longitude": 96.519203,
+    "stateName": "Shan (North)",
+    "lgaName": "Lashio",
+    "name": "Kunlong TBC",
+    "shortName": "Kunlong TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Kunlong TBC",
+        "shortName": "Kunlong TBC",
+        "macAddress": "MAC",
+        "hostId": "Kunlong TBC",
+        "serial": "Cepheid-7392HDX",
+        "gxAlertDeviceId": 2517,
+        "apiKey": "576ilsp3ih4oqvwlk5oa"
+      }
+    ]
+  },
+  {
+    "externalId": "MSF-MKN1",
+    "type": "lab",
+    "latitude": 25.388479,
+    "longitude": 97.374931,
+    "stateName": "Kachin",
+    "lgaName": "Myitkyina",
+    "name": "MSF-MKN1 ",
+    "shortName": "MSF-MKN1 ",
+    "customProperties": "",
+    "timeZoneId": "Eastern Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "MSF-MKN1 ",
+        "shortName": "MSF-MKN1 ",
+        "macAddress": "MAC480FCF57F4F0",
+        "hostId": "MSF-MKN1",
+        "serial": "Cepheid-6211LSN",
+        "gxAlertDeviceId": 2528,
+        "apiKey": "3zke7ewtlcrxexrxh3pq"
+      }
+    ]
+  },
+  {
+    "externalId": "MSF-HKT",
+    "type": "lab",
+    "latitude": 21.185175,
+    "longitude": 96.519203,
+    "stateName": "Kachin",
+    "lgaName": "Mohnyin",
+    "name": "MSF-HKT",
+    "shortName": "MSF-HKT",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "MSF-HKT",
+        "shortName": "MSF-HKT",
+        "macAddress": "MACA0369F975D1B",
+        "hostId": "MSF-HKT",
+        "serial": "Cepheid-3520W1Q",
+        "gxAlertDeviceId": 2568,
+        "apiKey": "u2ayc6bgptpwuxchns6q"
+      }
+    ]
+  },
+  {
+    "externalId": "DSMRC",
+    "type": "lab",
+    "latitude": 21.185150,
+    "longitude": 96.519203,
+    "stateName": "Naypyitaw Union Territoriality",
+    "lgaName": "Oketara",
+    "name": "DSMRC",
+    "shortName": "DSMRC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Naypyitaw TB Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "DSMRC",
+        "shortName": "DSMRC",
+        "macAddress": "MAC02004C4F4F50",
+        "hostId": "DSMRC",
+        "serial": "Cepheid-3401C44",
+        "gxAlertDeviceId": 2822,
+        "apiKey": "rc5xiuclrjhzax63xbna"
+      }
+    ]
+  },
+  {
+    "externalId": "Insein Prison",
+    "type": "lab",
+    "latitude": 96.095253,
+    "longitude": 16.893250,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "Insein Prison",
+    "shortName": "Insein Prison",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site",
+    "devices": [
+      {
+        "name": "Insein Prison",
+        "shortName": "Insein Prison",
+        "macAddress": "MAC9061AEF08C05",
+        "hostId": "Insein Jail",
+        "serial": "Cepheid-7392DPH",
+        "gxAlertDeviceId": 3099,
+        "apiKey": "7zcmywdnhxv27aanaxqq"
+      }
+    ]
+  },
+  {
+    "externalId": "Lehe TBC",
+    "type": "lab",
+    "stateName": "Sagaing",
+    "lgaName": "Hkamti",
+    "name": "Lehe TBC",
+    "shortName": "Lehe TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Lehe TBC",
+        "shortName": "Lehe TBC",
+        "macAddress": "MAC40B0343D2B4C",
+        "hostId": "Lehe TBC",
+        "serial": "Cepheid-7382N5G",
+        "gxAlertDeviceId": 3111,
+        "apiKey": "wjnxtkm6ipr6xr3mperq"
+      }
+    ]
+  },
+  {
+    "externalId": "Putao TBC",
+    "type": "lab",
+    "latitude": 27.340429,
+    "longitude": 97.420662,
+    "stateName": "Kachin",
+    "lgaName": "Puta-O",
+    "name": "Putao TBC",
+    "shortName": "Putao TBC",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "Putao TBC",
+        "shortName": "Putao TBC",
+        "macAddress": "MACDC4A3E9C3960",
+        "hostId": "Putao TBC",
+        "serial": "Cepheid-703299L",
+        "gxAlertDeviceId": 3195,
+        "apiKey": "i7wtigelchz2sphmqqtq"
+      }
+    ]
+  },
+  {
+    "externalId": "MSF-LSH-2",
+    "type": "lab",
+    "name": "MSF-LSH-2",
+    "customProperties": "",
+    "warehouse_source": "no warehouse"
+  },
+  {
+    "externalId": "AHRN-Waingmaw",
+    "type": "lab",
+    "stateName": "Kachin",
+    "lgaName": "Myitkyina",
+    "name": "AHRN-Waingmaw",
+    "shortName": "AHRN-Waingmaw",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_source": "no warehouse",
+    "devices": [
+      {
+        "name": "AHRN-Waingmaw",
+        "shortName": "AHRN-Waingmaw",
+        "macAddress": "MAC00E04C3DDBE5",
+        "hostId": "AHRN-Waingmaw",
+        "serial": "Cepheid-7481KR8",
+        "gxAlertDeviceId": 3365,
+        "apiKey": "kdpmnnij4oa7rzqqajpa"
+      }
+    ]
+  },
+  {
+    "externalId": "Patheingy",
+    "type": "lab",
+    "name": "Patheingy",
+    "customProperties": "",
+    "warehouse_source": "no warehouse"
+  },
+  {
+    "externalId": "Patheingy",
+    "type": "lab",
+    "name": "Patheingy",
+    "customProperties": "",
+    "warehouse_source": "no warehouse"
+  },
+  {
+    "externalId": "UTI (Aung San) GXP Lab",
+    "type": "lab",
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "UTI (Aung San) GXP Lab",
+    "customProperties": "",
+    "warehouse_externalId": "Yangon Regional Laboratory Store",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "UMTBC Lab",
+    "type": "lab",
+    "stateName": "Mandalay",
+    "lgaName": "Mandalay",
+    "name": "UMTBC Lab",
+    "customProperties": "",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Mawlamyine GXP Lab",
+    "type": "lab",
+    "stateName": "Mon",
+    "lgaName": "Mawlamyine",
+    "name": "Mawlamyine GXP Lab",
+    "customProperties": "",
+    "warehouse_externalId": "Mon State GXP Store",
+    "warehouse_source": "site"
+  },
+  {
+    "externalId": "Latha No-3 (UNOPS)",
+    "type": "lab",
+    "latitude": 96.153099,
+    "longitude": 16.779200,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (West)",
+    "name": "Latha XVI",
+    "shortName": "Latha XVI",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "LM Sub-Main Store (NTRL)",
+    "warehouse_source": "state",
+    "devices": [
+      {
+        "name": "Latha XVI",
+        "shortName": "Latha XVI",
+        "macAddress": "MACA0369F4C8B5D",
+        "hostId": "Latha 16M",
+        "serial": "Cepheid-44819G8",
+        "gxAlertDeviceId": 566,
+        "apiKey": "j6ue2qytipfvwenaltwq"
+      }
+    ]
+  },
+  {
+    "externalId": "UTI-2 (UNOPS)",
+    "type": "lab",
+    "latitude": 96.139397,
+    "longitude": 16.920000,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "UTI 8 Modules (USAID + GF)",
+    "shortName": "UTI-2",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "LM Sub-Main Store (NTRL)",
+    "warehouse_source": "lga",
+    "devices": [
+      {
+        "name": "UTI 8 Modules (USAID + GF)",
+        "shortName": "UTI-2",
+        "macAddress": "MAC705A0F3F2F10",
+        "hostId": "UTI-2",
+        "serial": "Cepheid-HP",
+        "gxAlertDeviceId": 256,
+        "apiKey": "ppjhbg5x7nnfqsk37moq"
+      }
+    ]
+  },
+  {
+    "externalId": "UMTBC-2 Gene 1",
+    "type": "lab",
+    "latitude": 96.139397,
+    "longitude": 16.920000,
+    "stateName": "Yangon",
+    "lgaName": "Yangon (North)",
+    "name": "UTI XVI",
+    "shortName": "UTI XVI",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "LM Sub-Main Store (NTRL)",
+    "warehouse_source": "lga",
+    "devices": [
+      {
+        "name": "UTI XVI",
+        "shortName": "UTI XVI",
+        "macAddress": "MACC4346B73E69E",
+        "hostId": "UTI XVI",
+        "serial": "Cepheid-44819DD",
+        "gxAlertDeviceId": 490,
+        "apiKey": "upkmlcrtzlktmmtaww6a"
+      }
+    ]
+  },
+  {
+    "externalId": "UTI-3 (UNOPS)",
+    "type": "lab",
+    "latitude": 96.097000,
+    "longitude": 21.955601,
+    "stateName": "Mandalay",
+    "lgaName": "Mandalay",
+    "name": "UMTBC XVI",
+    "shortName": "UMTBC XVI",
+    "customProperties": "",
+    "timeZoneId": "Myanmar Standard Time",
+    "warehouse_externalId": "Mandalay Region GXP Store",
+    "warehouse_source": "lga",
+    "devices": [
+      {
+        "name": "UMTBC XVI",
+        "shortName": "UMTBC XVI",
+        "macAddress": "MACC4346B5E1FC6",
+        "hostId": "UMTBC XVI",
+        "serial": "Cepheid-4421HKN",
+        "gxAlertDeviceId": 613,
+        "apiKey": "f3w5e7nwl4jkmmintrpa"
+      }
+    ]
+  }
+]

@@ -16,7 +16,7 @@ const PlaceholderTextField = props => {
   }
 
   const onSelectPlaceholder = placeholderId => {
-    let value = formik.values[fieldName]
+    let value = formik.values[fieldName] ?? ''
     const placeholder = `{{${placeholderId}}}`
     const { selectionStart, selectionEnd } = inputRef.current
 

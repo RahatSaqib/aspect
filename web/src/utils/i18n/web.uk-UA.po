@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-05-02T02:32:51.135Z\n"
+"POT-Creation-Date: 2024-06-13T14:54:33.379Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.2\n"
+"X-Generator: Poedit 3.4.4\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -3464,19 +3464,15 @@ msgstr "Помилка завантаження деталей результа�
 #. [component.Widget.errorRateTitle]
 #. defaultMessage is:
 #. Error Rate
+#. [p.PkDashboard.errorRate]
+#. defaultMessage is:
+#. Error Rate
 #. [pages.DeviceDetailProfile.errorRate]
 #. defaultMessage is:
 #. Error Rate
 #: extracted_strings.json
 msgid "Error Rate"
 msgstr "Частота помилок"
-
-#. [p.PkDashboard.errorRatePending]
-#. defaultMessage is:
-#. Error Rate (Pending)
-#: extracted_strings.json
-msgid "Error Rate (Pending)"
-msgstr "Рівень помилок (на розгляді)"
 
 #. [errorResponseMessages.resetPasswordEnterPassword.POST.default.title]
 #. defaultMessage is:
@@ -3561,6 +3557,26 @@ msgstr "Розгорнути рядок"
 #: extracted_strings.json
 msgid "Expect Back Online"
 msgstr "Очікуйте на повернення в мережу"
+
+#. [forms.formItem.expectedBackOnline]
+#. defaultMessage is:
+#. Expected Back Online
+#. [pages.NotificationDetail.type.DeviceExpectedBackOnline]
+#. defaultMessage is:
+#. Expected Back Online
+#. [pages.DailyStatusDialog.expectedBackOnline]
+#. defaultMessage is:
+#. Expected Back Online
+#: extracted_strings.json
+msgid "Expected Back Online"
+msgstr "Очікується повернення в мережу"
+
+#. [placeholder.placeHolderExpectedBackOnlineDate]
+#. defaultMessage is:
+#. Expected Back Online Date
+#: extracted_strings.json
+msgid "Expected Back Online Date"
+msgstr "Очікувана дата повернення до роботи"
 
 #. [forms.formItem.consumableExpirationDate]
 #. defaultMessage is:
@@ -6706,6 +6722,13 @@ msgstr ""
 msgid "National Diagnosis Trends using MTB/XDR assay"
 msgstr "Національні тенденції діагностики з використанням тесту MTB/XDR"
 
+#. [p.PkDashboard.nationalErrorRates]
+#. defaultMessage is:
+#. National Error Rates
+#: extracted_strings.json
+msgid "National Error Rates"
+msgstr "Національні показники помилок"
+
 #. [p.PkDashboard.NationalFQResistanceTrend]
 #. defaultMessage is:
 #. National FQ Resistance Trend
@@ -6733,6 +6756,20 @@ msgstr "Національний GX-10C діагностував тенденц�
 #: extracted_strings.json
 msgid "National GX-10C Testing Trends"
 msgstr "Тестування та діагностика GX-10C"
+
+#. [p.PkDashboard.nationalInvalidRates]
+#. defaultMessage is:
+#. National Invalid Rates
+#: extracted_strings.json
+msgid "National Invalid Rates"
+msgstr "Національні показники непрацездатності"
+
+#. [p.PkDashboard.nationalNoResultRates]
+#. defaultMessage is:
+#. National No Result Rates
+#: extracted_strings.json
+msgid "National No Result Rates"
+msgstr "Національні показники безрезультативності"
 
 #. [p.PkDashboard.RRNationalTrend]
 #. defaultMessage is:
@@ -11449,6 +11486,20 @@ msgstr "Значення {representing} менше {comparedTo}"
 msgid "The {representing} is one of {comparedTo}"
 msgstr "{representing} є одним із {comparedTo}"
 
+#. [errorResponseMessages.lgaMutation.message]
+#. defaultMessage is:
+#. There are existing ones with the same name
+#: extracted_strings.json
+msgid "There are existing ones with the same name"
+msgstr "Існують вже існуючі з такою ж назвою"
+
+#. [errorResponseMessages.stateMutation.message]
+#. defaultMessage is:
+#. There are existing ones with the same name or abbreviation
+#: extracted_strings.json
+msgid "There are existing ones with the same name or abbreviation"
+msgstr "Існують існуючі з такою ж назвою або абревіатурою"
+
 #. [errorResponseMessages.common.conflict.resolution]
 #. defaultMessage is:
 #. There is a conflict between this request and the existent data in the system. Please review, try again, or contact your administrator for help.
@@ -12070,6 +12121,20 @@ msgstr "ОНОВЛЕННЯ"
 msgid "Unable to Reset Password"
 msgstr "Не вдається скинути пароль"
 
+#. [errorResponseMessages.stateDelete.message]
+#. defaultMessage is:
+#. Unable to delete since there are associated entities with it
+#: extracted_strings.json
+msgid "Unable to delete since there are associated entities with it"
+msgstr "Неможливо видалити, оскільки з ним пов'язані сутності"
+
+#. [errorResponseMessages.lgaDelete.message]
+#. defaultMessage is:
+#. Unable to delete since there are associated entities with it.
+#: extracted_strings.json
+msgid "Unable to delete since there are associated entities with it."
+msgstr "Неможливо видалити, оскільки з ним пов'язані сутності."
+
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
 #. Unknown
@@ -12216,6 +12281,18 @@ msgstr "Дійсні тести"
 msgid "Validated"
 msgstr "Перевірено"
 
+#. [errorResponseMessages.stateMutation.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.stateDelete.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.lgaMutation.title]
+#. defaultMessage is:
+#. Validation error
+#. [errorResponseMessages.lgaDelete.title]
+#. defaultMessage is:
+#. Validation error
 #. [errorResponseMessages.updateMaintenanceStatusByPeriod.POST.400.title]
 #. defaultMessage is:
 #. Validation error
@@ -13198,6 +13275,9 @@ msgstr "{unit} з минулого тижня"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} загальна калібрування"
+
+#~ msgid "Error Rate (Pending)"
+#~ msgstr "Рівень помилок (на розгляді)"
 
 #~ msgid "1-14 Days"
 #~ msgstr "1-14 днів"

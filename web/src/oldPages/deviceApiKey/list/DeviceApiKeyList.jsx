@@ -46,8 +46,8 @@ export const DeviceApiKeyList = () => {
     { sortCol, sortDir, page: pageAt, size: pageSize, ...filters },
     { enabled: !!sortCol }
   )
-  const { mutate: generate } = useDeviceApiKeyGenerate()
-  const { mutate: assign } = useDeviceApiKeyAssign()
+  const { mutateAsync: generate } = useDeviceApiKeyGenerate()
+  const { mutateAsync: assign } = useDeviceApiKeyAssign()
   const { mutate: update } = useDeviceApiKeyUpdate()
 
   useExportDeviceApiKey({ filters, sortCol, sortDir, page: pageAt, pageSize, ...download })
@@ -73,7 +73,7 @@ export const DeviceApiKeyList = () => {
   const onCloseAssignerDialog = () => onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false })
   const onGeneratorFormChange = generatorValues => onChangeDialogState({ ...dialogState, generatorValues })
   const onGenerate = generatorValues => {
-    generate(generatorValues, {
+    return generate(generatorValues, {
       onSuccess: () => {
         onChangeDialogState({ ...dialogState, isGeneratorDialogOpen: false, generatorValues: DEFAULT_GENERATOR_VALUES })
         refetch()
@@ -81,7 +81,7 @@ export const DeviceApiKeyList = () => {
     })
   }
   const onAssign = assignerValues => {
-    assign(assignerValues, {
+    return assign(assignerValues, {
       onSuccess: () => {
         onChangeDialogState({ ...dialogState, isAssignerDialogOpen: false, assignerValues: DEFAULT_ASSIGNER_VALUES })
         refetch()

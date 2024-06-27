@@ -118,6 +118,11 @@ const NotificationFormPage = ({ id, onSubmit }) => {
       newValues.reportStartingWeekDay = filter.reportStartingWeekDay
     }
 
+    if (issueType === 'DeviceOffline') {
+      newValues.recurrenceFactor = initialValues.recurrenceFactor?.toString()
+      newValues.daysInactive = initialValues.daysInactive?.toString()
+    }
+
     const form = getFormConfigWithData(
       intl,
       jobFunctions,
@@ -147,7 +152,7 @@ const NotificationForm = ({ formConfig, onSubmit }) => {
       <DetailHeader name={formConfig.title} back="/browse/notification/types">
         {[
           {
-            disabled: !formik.dirty || !formik.isValid,
+            disabled: !formik.dirty || !formik.isValid || formik.isSubmitting,
             label: intl.formatMessage(messages.save),
             onClick: async () => {
               const errors = await formik.validateForm()

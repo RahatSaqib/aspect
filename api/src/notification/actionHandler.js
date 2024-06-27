@@ -56,7 +56,7 @@ async function getConditionsToEvaluate(knex, category) {
 
 async function analyzeNotifications(context, action) {
   return context.run(async knex => {
-    const { type, issueId, issueTypeId, resultId, isResultUpdated } = action
+    const { type, issueId, issueTypeId, resultId, isResultUpdated, options } = action
 
     // HACK: Calibration notification must be avoided on issue creation and sent only when ISSUE_NOTIFICATION_TRIGGERED
     // event is dispatched
@@ -118,14 +118,36 @@ async function analyzeNotifications(context, action) {
     })
     await Promise.each(
       notificationTypes,
-      async ({ filterCondition, notificationTypeCategoryExternalId, notificationTypeId, reportId }) => {
+      async ({
+        filterCondition,
+        notificationTypeCategoryExternalId,
+        notificationTypeId,
+        reportId,
+        recurrenceFactor,
+        daysInactive,
+        issueTypeId,
+      }) => {
+        // check if it's a device offline issue and if issue belongs to a notification type
+        if (options) {
+          const { deviceRecurrenceGroup, notificationDaysInactive, offlineIssueType } = options
+          if (issueTypeId === offlineIssueType) {
+            if (
+              notificationDaysInactive !== daysInactive ||
+              (deviceRecurrenceGroup && deviceRecurrenceGroup !== +recurrenceFactor)
+            ) {
+              return
+            }
+          }
+        }
+
         let props = {
           filterCondition: JSON.parse(filterCondition),
           notificationTypeCategoryExternalId,
           notificationTypeId,
         }
+
         if (category === CATEGORY.ISSUE_BASED) {
-          props = { ...props, issueId }
+          props = { ...props, issueId, ...options }
         } else if (category === CATEGORY.RESULT_BASED) {
           props = { ...props, resultId, isResultUpdated }
         } else if (category === CATEGORY.REPORT_BASED) {

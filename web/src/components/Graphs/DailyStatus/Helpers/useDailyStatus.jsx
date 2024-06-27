@@ -7,6 +7,7 @@ import findIndex from 'lodash/findIndex'
 import findLastIndex from 'lodash/findLastIndex'
 import { useIntl } from 'react-intl'
 import { useQueryClient, useMutation, useQuery } from 'react-query'
+import CONSTS from '../../../../utils/consts/DateTime/CONSTS'
 import fetchWrapperForQueries from '../../../QueryFetch'
 import { DAILY_STATUS, DEVICE_STATUS, DEVICE_MAINTENANCE_STATUS_BY_PERIOD } from '../../../QueryFetch/Device'
 import { replaceRouteParams } from '../../../QueryFetch/Helpers'
@@ -73,6 +74,7 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
           externalId: values.reason,
           dateFrom: values.startedOn,
           dateTo: values.endedOn,
+          expectedBackOnline: values.expectedBackOnline,
           notes: values.note,
           /**
            * use params from filters for entire component - needed on API side to
@@ -148,9 +150,13 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
   }, [statuses, visibleStatuses])
 
   const updateFromActionComponent = ({ selectedOption }) => {
-    const minDate = startOfMonth(new Date(selectedOption.value.minDate))
-    const maxDate = endOfMonth(new Date(selectedOption.value.maxDate))
-    setParams({ minDate, maxDate })
+    const isLast30Days = selectedOption?.id === CONSTS.DATE_RANGE_OPTIONS.LAST_30_DAYS
+    const minDate = new Date(selectedOption.value.minDate)
+    const maxDate = new Date(selectedOption.value.maxDate)
+    setParams({
+      minDate: isLast30Days ? minDate : startOfMonth(minDate),
+      maxDate: isLast30Days ? maxDate : endOfMonth(maxDate),
+    })
   }
 
   /**
@@ -170,9 +176,11 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
       const { maintenanceStatusHistory, shortName, siteContacts, hoursStart, hoursEnd } = devicesDaily.find(
         ({ id }) => +id === +deviceId
       )
-      const { maintenanceStatusExternalId, maintenanceStatusNotes: note } = maintenanceStatusHistory.find(
-        it => it.day === day
-      )
+      const {
+        maintenanceStatusExternalId,
+        maintenanceStatusNotes: note,
+        expectedBackOnline,
+      } = maintenanceStatusHistory.find(it => it.day === day)
       const fromIndex = maintenanceStatusHistory.findIndex(it => it.day === day)
       // helper to get forward or backward index of first day with another status
       const getIndex = findFn =>
@@ -203,11 +211,11 @@ const useDailyStatus = (minDate, maxDate, endpoint = DAILY_STATUS.ENDPOINT, extr
           maintenanceStatusExternalId,
         },
         note,
+        expectedBackOnline,
       }
     },
     [devicesDaily]
   )
-
   return {
     devices: {
       devicesIsLoading,

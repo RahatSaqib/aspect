@@ -416,6 +416,8 @@ async function findDevices(availableDeviceDetails, knex) {
     'dt.plugin as deviceTypePluginName',
     'p.plugin as partnerPluginName',
     'dtc.name as deviceTypeCategory',
+    'dms.externalId as deviceMaintenanceStatusExternalId',
+    'dms.id as deviceMaintenanceStatusId',
   ]
   const deviceQuery = knex
     .from('Device as d')
@@ -426,6 +428,8 @@ async function findDevices(availableDeviceDetails, knex) {
     .leftJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
     .leftJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .leftJoin('Partner as p', 'd.partnerId', 'p.id')
+    .leftJoin('DeviceMaintenanceStatusLog as dmsl', 'd.deviceMaintenanceStatusLogId', 'dmsl.id')
+    .leftJoin('DeviceMaintenanceStatus as dms', 'dmsl.deviceMaintenanceStatusId', 'dms.id')
   if (deviceId) {
     return deviceQuery.clone().where('d.id', deviceId).select(fields)
   }

@@ -258,6 +258,12 @@ async function triggerIssue(request) {
       triggered = true
       break
     }
+    case 'DeviceExpectedBackOnline'.toLowerCase(): {
+      const { deviceId, maintenanceDueOn } = data
+      await messageContext.deviceExpectedBackOnline(deviceId, maintenanceDueOn)
+      triggered = true
+      break
+    }
   }
 
   return {

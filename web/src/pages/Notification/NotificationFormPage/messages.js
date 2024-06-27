@@ -364,9 +364,21 @@ export default defineMessages({
     id: 'pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan',
     defaultMessage: 'When the device has been offline for more than ...',
   },
-  daysOffline: {
-    id: 'pages.NotificationDetail.daysOffline',
-    defaultMessage: 'Days Offline',
+  whenDeviceHasBeenInactiveForMoreThan: {
+    id: 'pages.NotificationDetail.whenDeviceHasBeenInactiveForMoreThan',
+    defaultMessage: 'When the device has been inactive for more than ...',
+  },
+  repeatCheckAndNotifyInactive: {
+    id: 'pages.NotificationDetail.repeatCheckAndNotifyInactive',
+    defaultMessage: 'Number of times to repeat check and notify if inactive ...',
+  },
+  daysInactive: {
+    id: 'pages.NotificationDetail.daysInactive',
+    defaultMessage: 'Days',
+  },
+  recurrenceFactor: {
+    id: 'pages.NotificationDetail.recurrenceFactor',
+    defaultMessage: 'Times',
   },
   whenDeviceDidNotSendResultsForMoreThan: {
     id: 'pages.NotificationDetail.whenDeviceDidNotSendResultsForMoreThan',
@@ -468,9 +480,13 @@ export default defineMessages({
     id: 'pages.NotificationDetail.type.NoResult',
     defaultMessage: 'No Result',
   },
+  notificationTypeDeviceExpectedBackOnline: {
+    id: 'pages.NotificationDetail.type.DeviceExpectedBackOnline',
+    defaultMessage: 'Expected Back Online',
+  },
   notificationTypeOffline: {
-    id: 'pages.Notification.type.Offline',
-    defaultMessage: 'Offline',
+    id: 'pages.Notification.type.Inactive',
+    defaultMessage: 'Device Inactive',
   },
   notificationTypeCalibration: {
     id: 'pages.Notification.type.Calibration',
