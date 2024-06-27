@@ -23,7 +23,21 @@ async function preProcessCreateDevice({ auth, payload }) {
         macAddress,
         countryCode,
       }
-      const matchingDevices = await findDevices(deviceDetails, knex)
+      /**
+       * get ALL devices which match parameters
+       */
+      let matchingDevices = await findDevices(deviceDetails, knex)
+      /**
+       * filter out decommissioned devices.
+       * --> Notice that same device may be moved out to another location, and for changing location - it
+       * should be first decommissioned, then re-installed in new location. In this case we create a new entry in
+       * Device table. And in this case func findDevices returns old decommissioned devices (matching deviceSerialNumber or
+       * macAddress, etc). And in below line we clean returned list from all decommissioned devices.
+       */
+      matchingDevices = matchingDevices.filter(
+        it => it.deviceMaintenanceStatusExternalId !== 'inactiveDecommissioned' && it.approval !== 'decommissioned'
+      )
+
       if (!_.isEmpty(matchingDevices)) {
         let matchingDevice = null
         if (matchingDevices.length > 1) {
