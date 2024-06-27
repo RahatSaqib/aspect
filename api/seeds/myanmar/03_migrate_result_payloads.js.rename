@@ -1,6 +1,6 @@
 module.exports = require('../utils').seed(seed, __filename)
 const { transformPayload } = require('../../src/plugin/deviceType/transformPayload')
-const customFieldsPakistan = require('../../src/forms/formsDefinition/CustomFields_Pakistan.json')
+const customFieldsMyanmar = require('../../src/forms/formsDefinition/CustomFields_Myanmar.json')
 const { getOffsetFromTimeZone } = require('../../src/shared/date')
 
 async function seed(knex) {
@@ -70,7 +70,7 @@ const getDeviceLogsToUpdateInRange = async (knex, minDeviceLogId, maxDeviceLogId
         JSON.parse(deviceLogToUpdate.rawMessage),
         true,
         pakistanTimeZoneData,
-        customFieldsPakistan
+        customFieldsMyanmar
       )
 
       const transformedDeviceLog = {
