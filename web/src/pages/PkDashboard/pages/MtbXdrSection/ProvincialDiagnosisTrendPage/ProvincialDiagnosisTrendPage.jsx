@@ -14,10 +14,10 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage } from '../../../../../messages'
+import { formatNumber } from '../../../../../utils/utils/number'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
-import { formatNumber } from '../../../../../utils/utils/number'
 
 const endpointParams = [{ assay: 'GxMtbXdr' }, { resultCategory1: 'Detected' }]
 
