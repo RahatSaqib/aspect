@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-13T14:54:33.379Z\n"
+"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2465,12 +2465,12 @@ msgstr "Рӯз(ҳо) пеш аз анҷоми семоҳа"
 msgid "Day(s) before the end of the month"
 msgstr "Рӯз(ҳо) пеш аз анҷоми моҳ"
 
-#. [pages.NotificationDetail.daysOffline]
+#. [pages.NotificationDetail.daysInactive]
 #. defaultMessage is:
-#. Days Offline
+#. Days
 #: extracted_strings.json
-msgid "Days Offline"
-msgstr "Рӯзҳои офлайнӣ"
+msgid "Days"
+msgstr "Рузхо"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -2498,6 +2498,13 @@ msgstr "Рӯзҳо бо қатъи хидмат"
 #: extracted_strings.json
 msgid "Days active"
 msgstr "Рӯзҳои фаъол"
+
+#. [placeholder.placeHolderDaysInactive]
+#. defaultMessage is:
+#. Days inactive
+#: extracted_strings.json
+msgid "Days inactive"
+msgstr "Рӯзҳои ғайрифаъол"
 
 #. [pages.NotificationDetail.daysOfInventoryLeft]
 #. defaultMessage is:
@@ -2712,6 +2719,13 @@ msgstr "Ҳисобот дар бораи калибрченкунии дастг
 #: extracted_strings.json
 msgid "Device Country"
 msgstr "Кишвари дастгоҳ"
+
+#. [pages.Notification.type.Inactive]
+#. defaultMessage is:
+#. Device Inactive
+#: extracted_strings.json
+msgid "Device Inactive"
+msgstr "Дастгоҳ ғайрифаъол"
 
 #. [pages.MaintenanceStatusDialog.dialogTitle]
 #. defaultMessage is:
@@ -5132,13 +5146,6 @@ msgstr ""
 msgid "Invalid email"
 msgstr "Почтаи электронӣ нодуруст"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message]
-#. defaultMessage is:
-#. Invalid username or password
-#: extracted_strings.json
-msgid "Invalid username or password"
-msgstr "Номи корбар ё парол нодуруст"
-
 #. [pages.Notifications.invalidWebhookUrl]
 #. defaultMessage is:
 #. Invalid webhook url
@@ -5723,9 +5730,6 @@ msgstr "Даромадан"
 msgid "Login Error"
 msgstr "Хатогии воридшавӣ"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title]
-#. defaultMessage is:
-#. Login Failed
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.title]
 #. defaultMessage is:
 #. Login Failed
@@ -7373,6 +7377,15 @@ msgstr ""
 msgid "Number of sites tested MTB/XDR Assay"
 msgstr "Шумораи сайтҳои санҷидашудаи MTB/XDR Assay"
 
+#. [pages.NotificationDetail.repeatCheckAndNotifyInactive]
+#. defaultMessage is:
+#. Number of times to repeat check and notify if inactive ...
+#: extracted_strings.json
+msgid "Number of times to repeat check and notify if inactive ..."
+msgstr ""
+"Шумораи маротиба барои такрори санҷиш ва огоҳ кардан дар ҳолати "
+"ғайрифаъол ..."
+
 #. [months.october]
 #. defaultMessage is:
 #. OCT
@@ -7397,9 +7410,6 @@ msgstr "Хуб"
 #. defaultMessage is:
 #. Offline
 #. [pages.DeviceList.offline]
-#. defaultMessage is:
-#. Offline
-#. [pages.Notification.type.Offline]
 #. defaultMessage is:
 #. Offline
 #: extracted_strings.json
@@ -11769,6 +11779,13 @@ msgstr "Панҷшанбе"
 msgid "Time Zone"
 msgstr "Минтақаи вақт"
 
+#. [pages.NotificationDetail.recurrenceFactor]
+#. defaultMessage is:
+#. Times
+#: extracted_strings.json
+msgid "Times"
+msgstr "Вақтҳо"
+
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
 #. Title
@@ -12344,18 +12361,6 @@ msgstr "Мӯҳлати анҷоми кафолат"
 msgid "Warranty Due Date is required"
 msgstr "Мӯҳлати анҷоми кафолат талаб карда мешавад"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution]
-#. defaultMessage is:
-#. We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
-#: extracted_strings.json
-msgid ""
-"We couldn't establish a connection with GxAlert. If you are trying to login "
-"with an Aspect user, you probably entered invalid credentials."
-msgstr ""
-"Мо бо GxAlert пайваст шуда натавонистем. Агар шумо кӯшиш кунед, ки бо "
-"корбари Aspect ворид шавед, эҳтимол шумо маълумоти эътибори нодуруст ворид "
-"кардаед."
-
 #. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message]
 #. defaultMessage is:
 #. We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
@@ -12514,7 +12519,14 @@ msgstr "Вақте ки саҳмияҳо ..."
 #. When the device didn't send results for more than ...
 #: extracted_strings.json
 msgid "When the device didn't send results for more than ..."
-msgstr "Вақте ки дастгоҳ натиҷаҳои бештар аз ... нафиристод"
+msgstr "Вақте ки дастгоҳ зиёда аз он натиҷа нафиристод ..."
+
+#. [pages.NotificationDetail.whenDeviceHasBeenInactiveForMoreThan]
+#. defaultMessage is:
+#. When the device has been inactive for more than ...
+#: extracted_strings.json
+msgid "When the device has been inactive for more than ..."
+msgstr "Вақте ки дастгоҳ зиёда аз ... ғайрифаъол буд."
 
 #. [pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan]
 #. defaultMessage is:
@@ -13285,6 +13297,20 @@ msgstr "{unit} аз ҳафтаи гузашта"
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
 
+#~ msgid "Days Offline"
+#~ msgstr "Рӯзҳои офлайнӣ"
+
+#~ msgid "Invalid username or password"
+#~ msgstr "Номи корбар ё парол нодуруст"
+
+#~ msgid ""
+#~ "We couldn't establish a connection with GxAlert. If you are trying to "
+#~ "login with an Aspect user, you probably entered invalid credentials."
+#~ msgstr ""
+#~ "Мо бо GxAlert пайваст шуда натавонистем. Агар шумо кӯшиш кунед, ки бо "
+#~ "корбари Aspect ворид шавед, эҳтимол шумо маълумоти эътибори нодуруст "
+#~ "ворид кардаед."
+
 #~ msgid "Error Rate (Pending)"
 #~ msgstr "Сатҳи хатогиҳо (интизор аст)"
 
@@ -13815,9 +13841,6 @@ msgstr "{unit} калибровкаи умумӣ"
 
 #~ msgid "Tasks"
 #~ msgstr "Вазифахо"
-
-#~ msgid "Time"
-#~ msgstr "Вақт"
 
 #~ msgid "Topic"
 #~ msgstr "Мавзӯъ"
