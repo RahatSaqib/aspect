@@ -327,18 +327,6 @@ async function getDevicesForReport(auth, query) {
   const { getCount, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(dataConstraints, query)
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
 
-  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
-  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
-  if (dateFrom >= dateTo) {
-    dateFrom = subMonths(dateTo, 1)
-  }
-  /**
-   * normalize dates in `query` for using
-   * in func getBaseQueryForFactResultsDeviceByTimeFrame below
-   */
-  query.minDate = dateFrom
-  query.maxDate = dateTo
-
   /**
    * base query for list of devices
    */
@@ -363,7 +351,7 @@ async function getDevicesForReport(auth, query) {
   /**
    * base query with all result counts for target device id's
    */
-  const results = await getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+  const results1 = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
     addConstraints,
     dataConstraints,
     filterParams,
@@ -408,7 +396,7 @@ async function getDevicesForReport(auth, query) {
         else 0 
         end`),
     })
-
+  const results = await results1
   const resultsLastUploaded = await knex('Result as r')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
