@@ -387,8 +387,8 @@ async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, devi
     geographyId,
     deviceId: device.id,
   }
-  const { id: gxAlertDeviceApiKeyId } =
-    (await knex('DeviceApiKey').where('token', deviceApiToken).orWhere('deviceId', device.id).first('id')) || {}
+  const { id: gxAlertDeviceApiKeyId } = (await knex('DeviceApiKey').where('token', deviceApiToken).first('id')) || {}
+
   if (!gxAlertDeviceApiKeyId) {
     await knex('DeviceApiKey').insert({
       ...deviceApiKey,
