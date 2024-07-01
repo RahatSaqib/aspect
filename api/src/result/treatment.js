@@ -87,6 +87,8 @@ async function confirmedTreatmentTracking(request) {
     )
     .groupBy('monthTested')
 
+  console.log(data.toString())
+
   data = data.map(d => {
     // add percentages
     const getPercentage = (total, value) => {

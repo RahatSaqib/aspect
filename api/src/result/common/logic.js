@@ -145,7 +145,14 @@ async function clinicalIndicatorAggregations(request) {
       resp.totalResults = cnt
     }
 
-    resp.data = await processGroupedQuery(knex, factTableQuery, groupBy, 'r.startedOn')
+    data = await processGroupedQuery(knex, factTableQuery, groupBy, 'r.startedOn')
+
+    if (query.resultCategoryGroupId) {
+      resp.data = mergeAndNormalizeCategories(data)
+      return resp
+    }
+
+    resp.data = data
     return resp
   }
 
@@ -158,6 +165,33 @@ async function clinicalIndicatorAggregations(request) {
 
   resp.data = await processGroupedQuery(knex, resultQuery, groupBy)
   return resp
+}
+
+const mergeAndNormalizeCategories = data => {
+  const mergedData = {}
+
+  data.forEach(record => {
+    const { month, resultCategory2, cnt } = record
+    const key = `${month}_${resultCategory2}`
+
+    if (!mergedData[key]) {
+      mergedData[key] = { ...record }
+      if (record.resultCategory1 === 'Trace Detected' || record.resultCategory1 === 'NotDetected') {
+        mergedData[key].resultCategory1 = 'Detected'
+      }
+    } else {
+      mergedData[key].cnt += cnt
+      // Set resultCategory1 to 'Detected' if any record requires it
+      if (
+        record.resultCategory1 === 'Trace Detected' ||
+        record.resultCategory1 === 'NotDetected' ||
+        mergedData[key].resultCategory1 === 'Detected'
+      ) {
+        mergedData[key].resultCategory1 = 'Detected'
+      }
+    }
+  })
+  return Object.values(mergedData)
 }
 
 function getGroupBy(query) {

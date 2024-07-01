@@ -112,6 +112,11 @@ const addResultCountsQuery = (queryBuilder, knex, { withResultCategory2 = true }
           WHEN rca.requiresTreatment = 1  AND  rca.reportable = 1  AND  r.reportableSiteId = s.id  AND  (rts.externalId = 'AwaitingTreatment' OR rts.id is null)
           THEN rdl.resultId ELSE null
         END`),
+      awaitingTreatment: knex.raw(`DISTINCT
+        CASE
+          WHEN rca.requiresTreatment = 1 AND rca.reportable = 1 AND (rts.externalId = 'AwaitingTreatment' OR rts.externalId IS NULL)
+          THEN r.id ELSE NULL
+        END`),
     })
 }
 
