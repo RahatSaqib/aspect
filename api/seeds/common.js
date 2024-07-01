@@ -430,7 +430,7 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
       .where('s.geographyId', countryGeographyId)
       .first()) || {}
 
-  const site = (await knex('Site as s').where('s.name', name).where('s.externalId', externalId).first()) || {}
+  const site = (await knex('Site as s').where('s.externalId', externalId).first()) || {}
 
   let { id: siteId } = site
   if (!siteId) {
