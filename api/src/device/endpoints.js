@@ -659,7 +659,7 @@ const routes = [
         'The National Trends in annual utilization rates displays the percentage of utilization for the current year and the previous 5 years of data',
       auth: { scope: ['device:view', 'operationalData:view'] },
       validate: {
-        query: { ...validateDateRangeParams(false) },
+        query: { ...validateDateRangeParams(false), tableData: Joi.string().optional() },
       },
       response: {
         options: {
