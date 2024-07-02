@@ -1,6 +1,5 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
-const { isJson, deepMerge } = require('../shared/json')
 const { mergeResultWithPayload } = require('../result/common/logic')
 const { getCustomFieldsFromPayload } = require('../forms/service')
 const { convertStringToFloat } = require('../shared/string')
