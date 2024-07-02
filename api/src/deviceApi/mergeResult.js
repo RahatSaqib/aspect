@@ -128,7 +128,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   // Add custom fields
   const customFieldsData = await getCustomFieldsFromPayload(
     payload,
-    await getCountryCodeByDeviceId(knex, deviceId),
+    await getCountryAbbreviationByDeviceId(knex, deviceId),
     site.partnerId,
     assay.id
   )
@@ -544,15 +544,15 @@ async function getSiteAndAssays(knex, payload, existingResult, deviceId) {
   return { assays, site }
 }
 
-const getCountryCodeByDeviceId = async (knex, deviceId) => {
-  const { countryCode } = await knex('Device as d')
+const getCountryAbbreviationByDeviceId = async (knex, deviceId) => {
+  const { countryAbbreviation } = await knex('Device as d')
     .leftJoin('Site as s', 'd.siteId', 's.id')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .where({ 'd.id': deviceId })
-    .first('c.abbreviation as countryCode')
+    .first('c.abbreviation as countryAbbreviation')
 
-  return countryCode
+  return countryAbbreviation
 }
 
 module.exports = { mergeResult }

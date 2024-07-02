@@ -20,7 +20,9 @@ class NotificationCache {
         'nt.id as notificationTypeId',
         'ntc.externalId as notificationTypeCategoryExternalId',
         'nt.issueTypeId',
-        'nt.reportId'
+        'nt.reportId',
+        'nt.recurrenceFactor',
+        'nt.daysInactive'
       )
   }
 

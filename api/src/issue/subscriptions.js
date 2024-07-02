@@ -143,7 +143,7 @@ function onIssueEvent(actionParametersList) {
                 )
                 issue = await createNewIssue(knex, issueType, action)
                 if (issue != null) {
-                  context.issueCreated(issue.id, issue.issueTypeId)
+                  context.issueCreated(issue.id, issue.issueTypeId, action.options)
                 }
               }
 

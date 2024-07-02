@@ -304,6 +304,7 @@ async function getListDevices(query, auth) {
     if (+it.isDeviceActive && it.deviceLastSeenOn && it.dmslDay && it.deviceLastSeenOn < it.dmslDay) {
       toSyncDmslAndDevice[it.id] = { lastSeenOn: it.dmslDay }
     }
+    it.timezoneIANA = timezoneIANA
     delete it.dmslDay
     delete it.deviceLastSeenOn
     delete it.isDeviceActive

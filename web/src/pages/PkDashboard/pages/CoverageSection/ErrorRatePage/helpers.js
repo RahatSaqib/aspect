@@ -28,14 +28,14 @@ const createNode = (name, parent) => {
   }
 }
 
-export const makeNestedData = (array, nestingProperties) => {
+export const makeNestedData = (array, nestingProperties, defaultName) => {
   const rootNodes = []
 
   const nestData = (parentNode, data, properties, level) => {
     if (level >= properties.length) return
     entries(groupBy(data, properties[level])).forEach(([groupName, groupValues]) => {
-      const node = createNode(groupName, groupValues)
-      nestData(node, groupValues, properties, level + 1)
+      const node = createNode(groupName !== 'null' ? groupName : defaultName, groupValues)
+      nestData(node, groupValues, properties, groupName !== 'null' ? level + 1 : nestingProperties.length - 1)
       if (parentNode) set(parentNode, childrenKey, [...(parentNode?.children ?? []), node])
       else rootNodes.push(node)
     })

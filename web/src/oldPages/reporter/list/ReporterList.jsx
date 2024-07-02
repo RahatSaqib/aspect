@@ -103,7 +103,7 @@ const ReporterList = () => {
                     { key: 'samplesRegistered', label: formatMessage(messages.samplesRegistered), sortable: true },
                     { key: 'resultsReporting', label: formatMessage(messages.resultsReporting), sortable: true },
                     { key: 'downloaded', label: formatMessage(messages.downloaded), sortable: true },
-                    { key: 'followUpRequired', label: formatMessage(messages.followUpRequired), sortable: true },
+                    { key: 'requiresFollowUp', label: formatMessage(messages.followUpRequired), sortable: true },
                     { key: 'followUpPending', label: formatMessage(messages.followUpPending), sortable: true },
                     { key: 'followUpConfirmed', label: formatMessage(messages.followUpConfirmed), sortable: true },
                     { key: 'followUpNotPossible', label: formatMessage(messages.followUpNotPossible), sortable: true },

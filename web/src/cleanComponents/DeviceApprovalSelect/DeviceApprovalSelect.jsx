@@ -19,8 +19,7 @@ const DeviceApprovalSelect = ({ id, name, label, value, onChange, error, helperT
       error={error}
       helperText={helperText}
       select
-      variant="standard"
-      value={value}
+      value={value || ''}
       onChange={onChange}
       SelectProps={{ IconComponent: () => null }}
       InputProps={{
