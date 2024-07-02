@@ -7,7 +7,7 @@ const { getConstraints, canViewResults, addConstraints } = require('../../auth/c
 const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../fact/common/db')
 const { getPersonByPersonId } = require('../../auth/service')
 
-let WORKING_DAYS_IN_YEAR = 252
+const WORKING_DAYS_IN_YEAR = 252
 const DEFAULT_MODULES = 4
 const DEFAULT_DAILY_CAPACITY = DEFAULT_MODULES * 3
 
@@ -22,7 +22,7 @@ const getWorkingDays = (minDate, maxDate) => {
     const dayOfWeek = startDate.getDay()
     if (dayOfWeek !== 0 && dayOfWeek !== 6) {
       // 0 = Sunday, 6 = Saturday
-      totalWorkingDays++
+      totalWorkingDays += 1
     }
     startDate.setDate(startDate.getDate() + 1)
   }
