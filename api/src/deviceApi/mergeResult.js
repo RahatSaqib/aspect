@@ -73,13 +73,10 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
   const existingSampleDetails = await getExistingSample(knex, payload, existingResult, opts)
   ;({ sampleId } = existingSampleDetails)
 
-  const { resultData, resultDataHash, shouldTriggerResultNotification } = mergeResultWithPayload(
+  const { patientData, resultData, resultDataHash, shouldTriggerResultNotification } = mergeResultWithPayload(
     existingResult,
     payload
   )
-
-  const existingResultPatientString = _.get(existingResult, 'patientData', null)
-  const existingResultPatient = isJson(existingResultPatientString) ? JSON.parse(existingResultPatientString) : {}
 
   const preProcessedResult = {
     latitude: _.get(payload, 'location.latitude', _.get(existingResult, 'latitude', site.latitude)),
@@ -110,9 +107,7 @@ async function mergeResult(knex, deviceId, payload, { now = new Date(), sampleId
     oemData: _.has(payload, 'oemData') ? String(payload.oemData) : _.get(existingResult, 'oemData'),
     rawData: _.has(payload, 'rawData') ? String(payload.rawData) : _.get(existingResult, 'rawData'),
     researchId: _.get(payload, 'research.id', _.get(existingResult, 'researchId', null)),
-    patientData: _.has(payload, 'patient')
-      ? deepMerge({ ...existingResultPatient }, payload.patient)
-      : existingResultPatient,
+    patientData,
     senderVersion: _.get(payload, 'sender.version', _.get(existingResult, 'senderVersion', null)),
     senderOperator: _.get(payload, 'sender.operator', _.get(existingResult, 'senderOperator', null)),
     notes: _.get(payload, 'notes', _.get(existingResult, 'notes', null)),

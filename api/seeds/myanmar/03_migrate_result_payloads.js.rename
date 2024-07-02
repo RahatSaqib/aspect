@@ -11,7 +11,7 @@ async function seed(knex) {
       maxDeviceLogId: knex.raw('MAX(id)'),
     })
 
-  const batchSize = 100
+  const batchSize = 1000
   const startFrom = minDeviceLogId
   const endAt = maxDeviceLogId
 
@@ -79,11 +79,10 @@ const getDeviceLogsToUpdateInRange = async (knex, minDeviceLogId, maxDeviceLogId
         source: deviceLogToUpdate.source,
         createdOn: deviceLogToUpdate.createdOn,
         senderIp: deviceLogToUpdate.senderIp,
-        rawMessage: deviceLogToUpdate.rawMessage,
         deviceConfigurationUpdated: deviceLogToUpdate.deviceConfigurationData,
         resultId: deviceLogToUpdate.resultId,
         deviceOperationId: deviceLogToUpdate.deviceOperationId,
-        rawMessage2: JSON.stringify(transformedPayload),
+        rawMessage: JSON.stringify(transformedPayload),
       }
 
       transformedDeviceLogs.push(transformedDeviceLog)
