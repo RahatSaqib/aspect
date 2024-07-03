@@ -1457,12 +1457,6 @@
       "stateName": "Blantyre"
     },
     {
-      "externalId": "2998",
-      "name": "Blantyre Civic Center Dispensary",
-      "shortName": "Blantyre Civic Center Dispensary",
-      "stateName": "Blantyre"
-    },
-    {
       "externalId": "1566",
       "name": "Blessings Hospital",
       "shortName": "Blessings Hospital",
@@ -2564,12 +2558,6 @@
       "stateName": "Kasungu"
     },
     {
-      "externalId": "1020",
-      "name": "Linyangwa Health Center",
-      "shortName": "Linyangwa Health Center",
-      "stateName": "Kasungu"
-    },
-    {
       "externalId": "2909",
       "name": "Lirangwe Health Center",
       "shortName": "Lirangwe Health Center",
@@ -3386,12 +3374,6 @@
       "stateName": "Mwanza"
     },
     {
-      "externalId": "3008",
-      "name": "Mwanza District Hospital",
-      "shortName": "Mwanza District Hospital",
-      "stateName": "Mwanza"
-    },
-    {
       "externalId": "0414",
       "name": "Mwazisi Health Center",
       "shortName": "Mwazisi Health Center",
@@ -4118,12 +4100,6 @@
       "stateName": "Mwanza"
     },
     {
-      "externalId": "3012",
-      "name": "Thambani Health Center",
-      "shortName": "Thambani Health Center",
-      "stateName": "Mwanza"
-    },
-    {
       "externalId": "1417",
       "name": "Thavite Health Center",
       "shortName": "Thavite Health Center",
@@ -4179,12 +4155,6 @@
     },
     {
       "externalId": "3003",
-      "name": "Tulonkhondo Health Center",
-      "shortName": "Tulonkhondo Health Center",
-      "stateName": "Mwanza"
-    },
-    {
-      "externalId": "3013",
       "name": "Tulonkhondo Health Center",
       "shortName": "Tulonkhondo Health Center",
       "stateName": "Mwanza"
