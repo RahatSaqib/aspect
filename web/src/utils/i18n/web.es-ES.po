@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-13T14:54:33.379Z\n"
+"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2476,12 +2476,12 @@ msgstr "Día(s) antes del final del trimestre"
 msgid "Day(s) before the end of the month"
 msgstr "Día(s) antes de fin de mes"
 
-#. [pages.NotificationDetail.daysOffline]
+#. [pages.NotificationDetail.daysInactive]
 #. defaultMessage is:
-#. Days Offline
+#. Days
 #: extracted_strings.json
-msgid "Days Offline"
-msgstr "Días sin conexión"
+msgid "Days"
+msgstr "Días"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -2509,6 +2509,13 @@ msgstr "Días de servicio interrumpido"
 #: extracted_strings.json
 msgid "Days active"
 msgstr "Días activo"
+
+#. [placeholder.placeHolderDaysInactive]
+#. defaultMessage is:
+#. Days inactive
+#: extracted_strings.json
+msgid "Days inactive"
+msgstr "Días inactivo"
 
 #. [pages.NotificationDetail.daysOfInventoryLeft]
 #. defaultMessage is:
@@ -2723,6 +2730,13 @@ msgstr "Reporte de Calibración de dispositivos"
 #: extracted_strings.json
 msgid "Device Country"
 msgstr "País del dispositivo"
+
+#. [pages.Notification.type.Inactive]
+#. defaultMessage is:
+#. Device Inactive
+#: extracted_strings.json
+msgid "Device Inactive"
+msgstr "Dispositivo inactivo"
 
 #. [pages.MaintenanceStatusDialog.dialogTitle]
 #. defaultMessage is:
@@ -5146,13 +5160,6 @@ msgstr ""
 msgid "Invalid email"
 msgstr "Email no válido"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.message]
-#. defaultMessage is:
-#. Invalid username or password
-#: extracted_strings.json
-msgid "Invalid username or password"
-msgstr "Usuario o contraseña incorrectos"
-
 #. [pages.Notifications.invalidWebhookUrl]
 #. defaultMessage is:
 #. Invalid webhook url
@@ -5737,9 +5744,6 @@ msgstr "Iniciar sesión"
 msgid "Login Error"
 msgstr "Error de inicio de sesión"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.title]
-#. defaultMessage is:
-#. Login Failed
 #. [errorResponseMessages.loginStart.POST.401.authenticationFailed.title]
 #. defaultMessage is:
 #. Login Failed
@@ -7389,6 +7393,13 @@ msgstr ""
 msgid "Number of sites tested MTB/XDR Assay"
 msgstr "Número de sitios analizados, MTB/XDR"
 
+#. [pages.NotificationDetail.repeatCheckAndNotifyInactive]
+#. defaultMessage is:
+#. Number of times to repeat check and notify if inactive ...
+#: extracted_strings.json
+msgid "Number of times to repeat check and notify if inactive ..."
+msgstr ""
+
 #. [months.october]
 #. defaultMessage is:
 #. OCT
@@ -7413,9 +7424,6 @@ msgstr "Aceptar"
 #. defaultMessage is:
 #. Offline
 #. [pages.DeviceList.offline]
-#. defaultMessage is:
-#. Offline
-#. [pages.Notification.type.Offline]
 #. defaultMessage is:
 #. Offline
 #: extracted_strings.json
@@ -11806,6 +11814,13 @@ msgstr "Jueves"
 msgid "Time Zone"
 msgstr "Zona horaria"
 
+#. [pages.NotificationDetail.recurrenceFactor]
+#. defaultMessage is:
+#. Times
+#: extracted_strings.json
+msgid "Times"
+msgstr "Veces"
+
 #. [pages.ContactDetails.title]
 #. defaultMessage is:
 #. Title
@@ -12379,18 +12394,6 @@ msgstr "Fecha de vencimiento de la garantía"
 msgid "Warranty Due Date is required"
 msgstr "Se requiere la fecha de vencimiento de la garantía"
 
-#. [errorResponseMessages.loginStart.POST.401.wrongUsernameOrPassword.resolution]
-#. defaultMessage is:
-#. We couldn't establish a connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
-#: extracted_strings.json
-msgid ""
-"We couldn't establish a connection with GxAlert. If you are trying to login "
-"with an Aspect user, you probably entered invalid credentials."
-msgstr ""
-"No hemos podido establecer una conexión con GxAlert. Si está intentando "
-"conectarse con un usuario de Aspect, probablemente haya introducido "
-"credenciales no válidas."
-
 #. [errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message]
 #. defaultMessage is:
 #. We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.
@@ -12550,6 +12553,13 @@ msgstr "Cuando el stock es..."
 #: extracted_strings.json
 msgid "When the device didn't send results for more than ..."
 msgstr "Cuando el dispositivo no enviaba resultados durante más de ..."
+
+#. [pages.NotificationDetail.whenDeviceHasBeenInactiveForMoreThan]
+#. defaultMessage is:
+#. When the device has been inactive for more than ...
+#: extracted_strings.json
+msgid "When the device has been inactive for more than ..."
+msgstr "Cuando el dispositivo ha estado inactivo durante más de ..."
 
 #. [pages.NotificationDetail.whenDeviceHasBeenOfflineForMoreThan]
 #. defaultMessage is:
@@ -13321,6 +13331,20 @@ msgstr "{unit} desde la semana pasada"
 msgid "{unit} total calibrations"
 msgstr "{unit} calibraciones totales"
 
+#~ msgid "Days Offline"
+#~ msgstr "Días sin conexión"
+
+#~ msgid "Invalid username or password"
+#~ msgstr "Usuario o contraseña incorrectos"
+
+#~ msgid ""
+#~ "We couldn't establish a connection with GxAlert. If you are trying to "
+#~ "login with an Aspect user, you probably entered invalid credentials."
+#~ msgstr ""
+#~ "No hemos podido establecer una conexión con GxAlert. Si está intentando "
+#~ "conectarse con un usuario de Aspect, probablemente haya introducido "
+#~ "credenciales no válidas."
+
 #~ msgid "Error Rate (Pending)"
 #~ msgstr "Tasa de error (pendiente)"
 
@@ -13847,9 +13871,6 @@ msgstr "{unit} calibraciones totales"
 
 #~ msgid "Tasks"
 #~ msgstr "Tareas"
-
-#~ msgid "Time"
-#~ msgstr "Hora"
 
 #~ msgid "Topic"
 #~ msgstr "Tema"
