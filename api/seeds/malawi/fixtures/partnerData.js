@@ -7,7 +7,7 @@ module.exports = {
     externalId: 'malawi',
   },
   adminUserName: 'admin',
-  adminPassword: 'yIeRINEZ',
+  adminPassword: 'test07',
   deviceApiToken: 'RMENANyMAcKSKInABeAtHIcuRSiCiTZe',
   lowerLevelUserPassword: 'Y29bDu28',
   partnerAbbreviation: 'MW',

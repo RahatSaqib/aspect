@@ -2,7 +2,7 @@ const jobFunctions = require('../../shared/fixtures/jobFunctions')
 
 module.exports = {
   adminUserName: 'hiv_admin',
-  adminPassword: 'dh8sEakm6y',
+  adminPassword: 'test07',
   partner: {
     name: 'Lesotho HIV',
     externalId: 'lesothoHiv',

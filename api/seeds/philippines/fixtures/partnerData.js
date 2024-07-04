@@ -7,7 +7,7 @@ module.exports = {
     externalId: 'philippines',
   },
   adminUserName: 'admin',
-  adminPassword: 'e5wQ40TLzd',
+  adminPassword: 'test07',
   deviceApiToken: 'jdk5ctyu8jhwimkvfc99',
   partnerAbbreviation: 'PH',
   plugin: 'philippines',

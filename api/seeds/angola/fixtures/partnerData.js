@@ -2,7 +2,7 @@ const jobFunctions = require('./jobFunctions')
 
 module.exports = {
   adminUserName: 'admin',
-  adminPassword: '8Zx8z8CR',
+  adminPassword: 'test07',
   partner: {
     name: 'Angola',
     externalId: 'angola',

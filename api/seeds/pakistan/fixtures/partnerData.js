@@ -7,7 +7,7 @@ module.exports = {
     externalId: 'pakistanNtp',
   },
   adminUserName: 'admin',
-  adminPassword: 'x2KusKKEqR8M',
+  adminPassword: 'test07',
   deviceApiToken: '77zc0ar862xcys2626w6',
   statsQueryDeviceApiToken: 'kcf2ve9wy96pp800kdk0',
   lowerLevelUserPassword: '324PoCbqIeBG',
