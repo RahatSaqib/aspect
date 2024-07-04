@@ -20,7 +20,7 @@ const millisInHour = 1000 * 60 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
-  const pluginName = 'myanmar'
+  const pluginName = 'mohs'
   // Skip this seed file if we already have an admin user
   const existingAdminUser = await knex('User').where({ name: 'myanmar_admin' }).first('id')
   if (existingAdminUser) {

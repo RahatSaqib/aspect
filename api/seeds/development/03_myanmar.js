@@ -66,10 +66,10 @@ async function seed(knex) {
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
-    name: 'Myanmar',
-    externalId: 'myanmar',
+    name: 'MoHS',
+    externalId: 'mohs',
     partnerTypeId: await partnerTypeToId('operating'),
-    plugin: 'myanmar',
+    plugin: 'mohs',
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
@@ -80,7 +80,7 @@ async function seed(knex) {
 
   // -------------------------
   // add and randomly populate DataCategory fields
-  const partnerPluginName = 'myanmar'
+  const partnerPluginName = 'mohs'
   const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { addDataCategoryFields } = plugin
   if (addDataCategoryFields) {
@@ -830,7 +830,7 @@ async function seed(knex) {
 
   await seedIssues(knex, baseProps)
 
-  await seedDataCategory(knex, 'Myanmar', 'myanmar')
+  await seedDataCategory(knex, 'MoHS', 'mohs')
 }
 
 function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {
