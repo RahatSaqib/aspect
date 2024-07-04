@@ -5,8 +5,8 @@ module.exports = {
   adminUserName: 'admin',
   adminPassword: '8v5TMxkpzP',
   partner: {
-    name: 'Myanmar',
-    externalId: 'myanmar',
+    name: 'MoHS',
+    externalId: 'mohs',
   },
   deviceApiToken: 'ukpjat39531egjy4pc20',
   partnerAbbreviation: 'MM',
