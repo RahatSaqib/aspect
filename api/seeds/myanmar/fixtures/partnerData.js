@@ -25,4 +25,21 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://myanmar.aspect.id',
   apiUrl: 'https://myanmar.aspect.id/api',
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        EnableInventoryModule: false,
+        ShowPopupWindowOnNewTest: true,
+        ClearLISSettingsIfTheyPointToGxAlert: false,
+        HideArchivedTestsWithoutSampleIdFromTestDetails: true,
+        EnableAspectSync: true,
+        SendResultsToAspect: true,
+        AspectUploadExcludePatientId: false,
+        AspectApiEndpoint: 'https://myanmar.aspect.id/api',
+        MigrateAspectApiKey: true,
+        ConnectSettingsAndCustomFieldsSource: 'aspect',
+      },
+    },
+  ],
 }
