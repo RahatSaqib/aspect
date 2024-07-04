@@ -3145,6 +3145,31 @@ const gxConnectResultPayloadWithCustomFieldsV1 = {
           value: null,
           label: 'Disease Site',
         },
+        '-1': {
+          label: 'HIV Status',
+          notAvailable: true,
+          value: null,
+        },
+        '-18': {
+          label: 'Age in Months (for children under 2 years)',
+          notAvailable: true,
+          value: null,
+        },
+        '-19': {
+          label: 'Is GeneXpert Test Performed Previously?',
+          notAvailable: false,
+          value: '0',
+        },
+        '-3': {
+          label: 'Age',
+          notAvailable: false,
+          value: '70',
+        },
+        '-4': {
+          label: 'Gender',
+          notAvailable: false,
+          value: '0',
+        },
       },
     },
     assay: {
@@ -3180,10 +3205,8 @@ const gxConnectResultPayloadWithCustomFieldsV1 = {
     },
     research: null,
     patient: {
-      gender: 'Sultana Begum',
       id: 'Hussan Bano ( 70 Yrs )',
       surname: '',
-      name: 'Sputum',
     },
     sender: {
       version: '6.4',
