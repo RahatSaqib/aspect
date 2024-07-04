@@ -7,7 +7,7 @@ module.exports = {
   },
   partnerAbbreviation: 'GH',
   adminUserName: 'admin',
-  adminPassword: '3law734i4g',
+  adminPassword: 'test07',
   deviceApiToken: '0ziykx2taf8kdmvqk304',
   fixtures: {
     jobFunctions,

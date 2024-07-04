@@ -8,7 +8,7 @@ module.exports = {
   },
   partnerAbbreviation: 'ZW',
   adminUserName: 'admin',
-  adminPassword: '54wzDZPtOs',
+  adminPassword: 'test07',
   fixtures: {
     jobFunctions,
     webhookServers,
