@@ -2,6 +2,7 @@ import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import { Tooltip } from '@mui/material'
 import identity from 'lodash/identity'
+import isEmpty from 'lodash/isEmpty'
 import isNumber from 'lodash/isNumber'
 import partial from 'lodash/partial'
 import { useIntl } from 'react-intl'
@@ -10,7 +11,6 @@ import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import formatters from '../formatters'
-import isEmpty from 'lodash/isEmpty'
 
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { format, formatMessage, formatNumber } = useIntl()
