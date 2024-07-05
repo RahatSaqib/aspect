@@ -195,7 +195,6 @@ const TablePaginator = ({
             classes={{
               root: styles.Right__Button,
             }}
-            
             className={`${(key !== ALL_KEY ? key === pageSize : pageSize === total) ? 'selected' : ''}`}
             onClick={restProps[`onPageSizeChange${key}`]}
             variant="contained"
