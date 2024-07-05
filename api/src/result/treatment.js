@@ -108,17 +108,16 @@ async function confirmedTreatmentTracking(request) {
   while (dt >= minDate) {
     const monthTested = dateFormat(dt, 'yyyy-MM')
     if (!data.find(x => x.monthTested === monthTested)) {
-      // Parse the given month and year to a Date object (assuming the format "yyyy-MM")
-      const givenDate = parse(monthTested, 'yyyy-MM', new Date())
+      const parsedDate = parse(monthTested, 'yyyy-MM', new Date())
 
       // Get the start of the current month
       const currentDate = startOfMonth(new Date())
 
       // Compare the given date with the current date
-      const isGivenMonthGreaterThanCurrent = isAfter(givenDate, currentDate)
+      const isParsedMonthGreaterThanCurrent = isAfter(parsedDate, currentDate)
 
       // only process months are not greater than current month
-      if (!isGivenMonthGreaterThanCurrent) {
+      if (!isParsedMonthGreaterThanCurrent) {
         data.push({
           monthTested,
           pcOnTreatment: 0,
