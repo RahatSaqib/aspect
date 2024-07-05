@@ -1,4 +1,3 @@
-const Boom = require('@hapi/boom')
 const dateFormat = require('date-fns/format')
 const parseISO = require('date-fns/parseISO')
 const sortBy = require('lodash/sortBy')
