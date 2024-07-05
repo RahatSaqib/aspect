@@ -48,7 +48,7 @@ const getWhitelistedAssays = ({ assays, assaysFromState }) => {
 
 const endPointParams = {
   minDate: startOfMonth(subMonths(new Date(), 12)),
-  maxDate: endOfMonth(subMonths(new Date(), 1)),
+  maxDate: endOfMonth(new Date()),
 }
 
 const TreatmentStatusGraph = ({ assaysFromState }) => {
