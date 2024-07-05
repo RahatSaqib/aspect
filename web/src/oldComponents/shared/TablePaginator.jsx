@@ -165,7 +165,7 @@ const TablePaginator = ({
         </div>
         <Button
           classes={{
-            root: [styles.Left__Button, styles.Left__Button__next],
+            root: [styles.Left__Button],
           }}
           disabled={!hasNextPage}
           color="primary"
@@ -177,7 +177,7 @@ const TablePaginator = ({
         </Button>
         <Button
           classes={{
-            root: [styles.Left__Button, styles.Left__Button__next],
+            root: [styles.Left__Button],
           }}
           disabled={!hasLastPage}
           color="primary"
@@ -195,6 +195,7 @@ const TablePaginator = ({
             classes={{
               root: styles.Right__Button,
             }}
+            
             className={`${(key !== ALL_KEY ? key === pageSize : pageSize === total) ? 'selected' : ''}`}
             onClick={restProps[`onPageSizeChange${key}`]}
             variant="contained"
