@@ -134,13 +134,12 @@ const lastDayOfMonthByOffsetAndResultEndedOn = (knex, offset, alias) => {
 
 const addResultCountsQueryExtended = (queryBuilder, knex, options) => {
   // Call the original function to set up the base query
-  addResultCountsQuery(queryBuilder, knex, options);
+  addResultCountsQuery(queryBuilder, knex, options)
 
   queryBuilder.clearSelect()
 
   // Modify the counts to remove r.reportableSiteId
-  queryBuilder
-  .count({
+  queryBuilder.count({
     totalResults: knex.raw(`DISTINCT
       CASE
         WHEN rca.reportable = 1
@@ -158,7 +157,7 @@ const addResultCountsQueryExtended = (queryBuilder, knex, options) => {
       END`),
   })
 
-  return queryBuilder;
+  return queryBuilder
 }
 
 module.exports = {

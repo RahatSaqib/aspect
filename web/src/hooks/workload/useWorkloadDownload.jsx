@@ -67,8 +67,8 @@ const useWorkloadDownload = requestParams => {
       getDownload(
         {
           ...filtersParams,
-          minDate: getISOFromString(minDate?.toString()),
-          maxDate: getISOFromString(maxDate?.toString()),
+          minDate: getISOFromString(minDate),
+          maxDate: getISOFromString(maxDate),
         },
         fileFormat
       ),

@@ -6,10 +6,7 @@ const { subMonths, startOfMonth, endOfMonth, parse, isAfter } = require('date-fn
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const { addConstraints, getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { resultStatusToId } = require('../shared/dictionary')
-const {
-  addTransferredQuery,
-  addResultCountsQueryExtended,
-} = require('../shared/query')
+const { addTransferredQuery, addResultCountsQueryExtended } = require('../shared/query')
 
 async function confirmedTreatmentTracking(request) {
   const { auth, query } = request
@@ -122,7 +119,7 @@ async function confirmedTreatmentTracking(request) {
       const isGivenMonthGreaterThanCurrent = isAfter(givenDate, currentDate)
 
       // only process months are not greater than current month
-      if(!isGivenMonthGreaterThanCurrent){
+      if (!isGivenMonthGreaterThanCurrent) {
         data.push({
           monthTested,
           pcOnTreatment: 0,

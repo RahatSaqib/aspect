@@ -145,7 +145,7 @@ async function clinicalIndicatorAggregations(request) {
       resp.totalResults = cnt
     }
 
-    data = await processGroupedQuery(knex, factTableQuery, groupBy, 'r.startedOn')
+    const data = await processGroupedQuery(knex, factTableQuery, groupBy, 'r.startedOn')
 
     if (query.resultCategoryGroupId) {
       resp.data = mergeAndNormalizeCategories(data)
