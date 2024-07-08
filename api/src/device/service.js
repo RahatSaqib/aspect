@@ -351,7 +351,7 @@ async function getDevicesForReport(auth, query) {
   /**
    * base query with all result counts for target device id's
    */
-  const results1 = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+  const results = await getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
     addConstraints,
     dataConstraints,
     filterParams,
@@ -396,7 +396,6 @@ async function getDevicesForReport(auth, query) {
         else 0 
         end`),
     })
-  const results = await results1
   const resultsLastUploaded = await knex('Result as r')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
@@ -436,8 +435,9 @@ async function getDevicesForReport(auth, query) {
     it.errorRate_sameOriginSite = getPercentage(it.totalResults_sameOriginSite, it.totalErrors_sameOriginSite)
     return it
   })
+  const filteredData = data.filter(deviceData => deviceData.totalErrors >= 1)
 
-  return { ok: true, total, length: data.length, data }
+  return { ok: true, total, length: filteredData.length, data: filteredData }
 }
 
 async function getDevicesForRifResistanceReport(auth, query) {

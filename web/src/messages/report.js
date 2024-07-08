@@ -110,8 +110,8 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.RIF_Resistance_Rate_description',
     defaultMessage: 'Listing RIF Resistance Rate for all facilities, ranked highest to lowest',
   },
-  Critical_Errors_By_Device_description: {
-    id: 'pages.ReportIndex.Critical_Errors_By_Device_description',
+  Critical_Errors_by_Device_description: {
+    id: 'pages.ReportIndex.Critical_Errors_by_Device_description',
     defaultMessage: 'Includes a list of GeneXpert devices that had at least 1 critical errors',
   },
   MTB_Detected_RR_Detected_description: {
