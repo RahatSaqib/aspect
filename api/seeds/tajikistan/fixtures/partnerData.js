@@ -6,7 +6,7 @@ module.exports = {
     externalId: 'tajikistan',
   },
   adminUserName: 'admin',
-  adminPassword: 'Gx@l3rt!Adm1111n',
+  adminPassword: 'test07',
   deviceApiToken: 'yepp5hrgmzt6e1hxhw03',
   lowerLevelUserPassword: 'OZ75VHP8w2je',
   partnerAbbreviation: 'TJ',

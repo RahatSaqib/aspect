@@ -387,8 +387,8 @@ async function upsertGxAlertDevice(knex, countryId, partnerId, auditFields, devi
     geographyId,
     deviceId: device.id,
   }
-  const { id: gxAlertDeviceApiKeyId } =
-    (await knex('DeviceApiKey').where('token', deviceApiToken).orWhere('deviceId', device.id).first('id')) || {}
+  const { id: gxAlertDeviceApiKeyId } = (await knex('DeviceApiKey').where('token', deviceApiToken).first('id')) || {}
+
   if (!gxAlertDeviceApiKeyId) {
     await knex('DeviceApiKey').insert({
       ...deviceApiKey,
@@ -430,7 +430,9 @@ async function ensureCountryLevelInformationSystemExists(knex, countryId, partne
       .where('s.geographyId', countryGeographyId)
       .first()) || {}
 
-  let { siteId } = device
+  const site = (await knex('Site as s').where('s.externalId', externalId).first()) || {}
+
+  let { id: siteId } = site
   if (!siteId) {
     ;[siteId] = await insertSite(knex, {
       ...auditFields,

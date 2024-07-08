@@ -9,7 +9,7 @@ module.exports = {
   deviceApiToken: 'q5zh29mw0a01zkqzq1yg',
   partnerAbbreviation: 'NG',
   adminUserName: 'admin',
-  adminPassword: 'bC2B04ABra',
+  adminPassword: 'test07',
   defaultPassword: 'azD45r', // default password for users that are not admins
   plugin: '',
   fixtures: {
