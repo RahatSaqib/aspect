@@ -1,23 +1,36 @@
 module.exports = require('../utils').seed(seed, __filename)
-const { message } = require('hapi-sentry/schema')
+const { times } = require('lodash')
 const { notificationTypeCategoryToId, issueTypeToId, reportToId, jobFunctionToId } = require('../../src/shared/dictionary')
-const { filter } = require('lodash')
-
-// TODO: Pending JobFunctions and values inside JSON....
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner').where({ externalId: 'MoHS' }).first('id')
 
-  const sourceTable = 'mig_Notifications' // This table is created by the migration script (file A2A-notifications.sql)
+  const sourceTable = 'mig_Notification' // This table is created by the migration script (file A2A-notifications.sql)
 
   const notificationDefs = await knex(sourceTable).select()
 
-  notificationDefs.forEach(async ndef => {
+  for (let ndef of notificationDefs) {
     const notificationTypeCategoryId = await notificationTypeCategoryToId(ndef.notificationTypeCategory)
+
     const issueTypeId = await issueTypeToId(ndef.issueType)
+    if (ndef.issueType && !issueTypeId) {
+      await logError(knex, 'IssueType', ndef.issueType, `No IssueType in target db with source IssueType externalId. Notification (${ndef.name}) has been omitted.`)
+      continue
+    }
+
     const reportId = await reportToId(ndef.report)
+    if (ndef.report && !reportId) {
+      await logError(knex, 'Report', ndef.report, `No Report in target db with source Report externalId. Notification (${ndef.name}) has been omitted.`)
+      continue
+    }
     const jobFunctionId = await jobFunctionToId(ndef.jobFunction)
+    if (ndef.jobFunction && !jobFunctionId) {
+      await logError(knex, 'JobFunction', ndef.jobFunction, `No JobFunction in target db with source JobFunction externalId. Notification (${ndef.name}) has been omitted.`)
+      continue
+    }
+
     const messageTypeId = await createMessageType(knex, ndef)
+
     const notificationType = {
       partnerId,
       notificationTypeCategoryId,
@@ -37,13 +50,16 @@ async function seed(knex) {
       enabled: ndef.enabled,
       cronRecurrency: ndef.cronRecurrency,
     }
+
     if (ndef.filterCondition) {
-      await preprocessFilterConditions(knex, ndef.filterCondition)
+      const mappedFilterCondition = await preprocessFilterConditions(knex, ndef.name, JSON.parse(ndef.filterCondition))
+      notificationType.filterCondition = mappedFilterCondition
     }
 
-    knex('NotificationType').insert(notificationType)
-  });
+    await knex('NotificationType').insert(notificationType)
+  }
 }
+
 async function createMessageType(knex, ndef) {
   const messageType = {
     messageSeverityId: ndef.messageSeverityId
@@ -114,24 +130,62 @@ async function createMessageType(knex, ndef) {
   return messageTypeId
 }
 
-async function preprocessFilterConditions(knex, filterCondition) {
+async function preprocessFilterConditions(knex, notificationName, filterCondition) {
   if (filterCondition.jobFunctions) {
-    filterCondition.jobFunctions.forEach(async jf => {
-      const { externalId: jobFunctionExternalId } = await knex("mig_JobFunctions").first("id", jf.jobFunctionId).externalId
+    let validJobFunctions = []
+    for (let jf of filterCondition.jobFunctions) {
+      const { externalId: jobFunctionExternalId } = await knex("mig_JobFunction").where("id", jf.jobFunctionId).first()
       jf.jobFunctionId = await jobFunctionToId(jobFunctionExternalId)
-    })
+      if (jf.jobFunctionId) {
+        validJobFunctions.push(jf)
+      } else {
+        await logError(knex, 'JobFunction', jf.jobFunctionId, `No JobFunction in target db with source JobFunction externalId.(${jobFunctionExternalId}) JobFunction has been omitted for '${notificationName}'.`)
+      }
+      filterCondition.jobFunctions = validJobFunctions
+    }
   }
 
   if (filterCondition.persons) {
-    filterCondition.persons.forEach(async p => {
-      const sourcePerson = await knex("mig_Persons").where('id', p.id).first()
-      const person = await knex('Person as p')
-        .where({ email: sourcePerson.email })
-        .orWhere({ cell: sourcePerson.cell })
-        .first('id')
-
-    })
+    const validPersons = []
+    for (const personRecipient of filterCondition.persons) {
+      const targetPerson = await getLastLoggedInPersonWithSameContactInfo(knex, personRecipient.personId)
+      if (targetPerson) {
+        personRecipient.personId = targetPerson.id
+        validPersons.push(personRecipient)
+      } else {
+        await logError(knex, 'Person', personRecipient.personId, `No Person in target db with source Person email or cell. Recipient (${personRecipient.name}) has been omitted for '${notificationName}'.`)
+      }
+    }
+    filterCondition.persons = validPersons
   }
-
   return filterCondition
+}
+
+async function logError(knex, sourceTable, sourceValue, message) {
+  await knex('mig_Error')
+    .insert({
+      sourceTable,
+      sourceValue,
+      message,
+      timestamp: new Date()
+    })
+}
+
+async function getLastLoggedInPersonWithSameContactInfo(knex, recipientPersonId) {
+  let targetPerson = null
+  const sourcePerson = await knex("mig_Person")
+    .where('id', recipientPersonId)
+    .first()
+  if (sourcePerson) {
+    targetPerson = await knex('Person as p')
+      .leftJoin('User as u', 'u.id', 'p.userId')
+      .whereNull('disabledOn')
+      .andWhere(function () {
+        this.where({ email: sourcePerson.email })
+          .orWhere({ cell: sourcePerson.cell })
+      })
+      .orderBy('lastLogin', 'desc')
+      .first('p.id as id')
+  }
+  return targetPerson
 }
