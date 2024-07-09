@@ -132,9 +132,38 @@ const lastDayOfMonthByOffsetAndResultEndedOn = (knex, offset, alias) => {
   )
 }
 
+const addResultCountsQueryExtended = (queryBuilder, knex, options) => {
+  // Call the original function to set up the base query
+  addResultCountsQuery(queryBuilder, knex, options)
+
+  queryBuilder.clearSelect()
+
+  // Modify the counts to remove r.reportableSiteId
+  queryBuilder.count({
+    totalResults: knex.raw(`DISTINCT
+      CASE
+        WHEN rca.reportable = 1
+        THEN r.id ELSE null
+      END`),
+    onTreatment: knex.raw(`DISTINCT
+      CASE
+        WHEN rca.requiresTreatment = 1 AND  rts.externalId = 'OnTreatment'
+        THEN r.id ELSE null
+      END`),
+    awaitingTreatment: knex.raw(`DISTINCT
+      CASE
+        WHEN rca.requiresTreatment = 1 AND (rts.externalId = 'AwaitingTreatment' OR rts.externalId IS NULL)
+        THEN r.id ELSE NULL
+      END`),
+  })
+
+  return queryBuilder
+}
+
 module.exports = {
   addResultCountsQuery,
   addTransferredQuery,
   whereWorkingDaysDateRange,
   lastDayOfMonthByOffsetAndResultEndedOn,
+  addResultCountsQueryExtended,
 }

@@ -712,6 +712,10 @@ function getClinicalIndicatorQueryForFactTable(dataConstraints, assay, groupBy, 
     if (!groupBy.includes('assay')) {
       this.where('rca.reportable', true)
     }
+
+    if (query.resultCategoryGroupId) {
+      this.whereIn('rcg.externalId', query.resultCategoryGroupId)
+    }
   })
 }
 
