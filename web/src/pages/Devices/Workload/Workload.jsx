@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
-import { TableBody, Table, LinearProgress, TableContainer } from '@mui/material'
+import { TableBody, Table, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
-import { DetailHeader, DeviceWorkloadFilter } from '../../../cleanComponents'
+import { DetailHeader, DeviceWorkloadFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import useResultCategoryGroup from '../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../hooks/useAuthState'
@@ -167,13 +167,7 @@ const Workload = () => {
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
-                <TableContainer
-                  sx={theme => ({
-                    [theme.breakpoints.down('lg')]: {
-                      maxHeight: '300px',
-                    },
-                  })}
-                >
+                <TableContainer>
                   <Table className={styles.InventoryDataTable}>
                     <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
                     <TableBody>
