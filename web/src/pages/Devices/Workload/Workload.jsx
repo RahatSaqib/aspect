@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { TableBody, Table, LinearProgress } from '@mui/material'
+import { TableBody, Table, LinearProgress, TableContainer } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
@@ -36,6 +36,17 @@ const availableSortCol = [
   'stateName',
   'lgaName',
 ]
+
+const lat = theme => ({
+  root: {
+    backgroundColor: 'blue',
+    // Match [md, ∞)
+    //       [900px, ∞)
+    [theme.breakpoints.up('md')]: {
+      backgroundColor: 'red',
+    },
+  },
+})
 
 const Workload = () => {
   const navigate = useNavigate()
@@ -156,19 +167,27 @@ const Workload = () => {
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
-                <Table className={styles.InventoryDataTable}>
-                  <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
-                  <TableBody>
-                    {workloadList.map((item, index) => (
-                      <TableRow
-                        key={`workload--${index}`}
-                        item={item}
-                        extraColumns={extraColumnsProps}
-                        onColumnClick={onColumnClick}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
+                <TableContainer
+                  sx={theme => ({
+                    [theme.breakpoints.down('lg')]: {
+                      maxHeight: '300px',
+                    },
+                  })}
+                >
+                  <Table className={styles.InventoryDataTable}>
+                    <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
+                    <TableBody>
+                      {workloadList.map((item, index) => (
+                        <TableRow
+                          key={`workload--${index}`}
+                          item={item}
+                          extraColumns={extraColumnsProps}
+                          onColumnClick={onColumnClick}
+                        />
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </div>
               <BrowseTablePaginator
                 navigate={navigate}
