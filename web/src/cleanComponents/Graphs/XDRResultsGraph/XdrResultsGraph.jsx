@@ -34,6 +34,17 @@ const endPointParams = [
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
+const resultCategoryGroupIds = [
+  'GxMtbXdrMtbDetectedXdrDetected',
+  'GxMtbXdrMtbDetectedXdrNotDetected',
+  'GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
+  'GxMtbXdrMtbDetectedXdrIndeterminate',
+]
+
+for (const resultCategoryGroupId of resultCategoryGroupIds) {
+  endPointParams.push({ resultCategoryGroupId })
+}
+
 const XdrResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromState: resultCategoryGroups }) => {
   const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)

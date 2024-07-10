@@ -34,6 +34,20 @@ const endPointParams = [
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
+const resultCategoryGroupIds = [
+  'GxMtbRifMtbDetectedRifNotDetected',
+  'GxMtbRifUltraMtbDetectedRifNotDetected',
+  'GxMtbRifMtbDetectedRifDetected',
+  'GxMtbRifUltraMtbDetectedRifDetected',
+  'GxMtbRifMtbDetectedRifIndeterminate',
+  'GxMtbRifUltraMtbDetectedRifIndeterminate',
+  'GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
+]
+
+for (const resultCategoryGroupId of resultCategoryGroupIds) {
+  endPointParams.push({ resultCategoryGroupId })
+}
+
 const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromState: resultCategoryGroups }) => {
   const { formatMessage, format } = useIntl()
   const [showLabel, setShowLabel] = useState(false)
