@@ -50,7 +50,7 @@ export default function ResultList() {
     }
   )
 
-  const { isLoading: isExporting, mutate: onExportClick } = useMutation(formatType =>
+  const { isLoading: isExporting, mutateAsync: onExportClick } = useMutation(formatType =>
     getExportableFile(filters, formatType, sortCol, sortDir, 'results')
   )
 
