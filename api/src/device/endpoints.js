@@ -630,6 +630,9 @@ const routes = [
                 cntMtbResults: Joi.number()
                   .allow(null)
                   .description('Number of MTB and MTB-Ultra results delivered from the device'),
+                cnt: Joi.number()
+                  .allow(null)
+                  .description('Number of MTB and MTB-Ultra results delivered from the device'),
                 cntMtbError: Joi.number().allow(null).description('# of Errors for MTB and MTB-Ultra results'),
                 cntMtbInvalid: Joi.number().allow(null).description('# of Invalids for MTB and MTB-Ultra results'),
                 cntMtbNoResult: Joi.number().allow(null).description('# of NoResults for MTB and MTB-Ultra results'),

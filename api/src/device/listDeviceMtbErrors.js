@@ -1,11 +1,15 @@
-const { sortPageParams } = require('../db')
+const _ = require('lodash')
+const { subMonths } = require('date-fns')
+const { filterParams, knex } = require('../db')
 const { getBasicsForDevicesReport } = require('./common/db')
 const { allAssayToId } = require('../shared/dictionary')
-const { getConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../fact/common/db')
 
 const listDeviceMtbErrors = async request => {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
+  const { minDate, maxDate } = query
 
   /**
    * get all devices without pagination.
@@ -21,37 +25,72 @@ const listDeviceMtbErrors = async request => {
 
   const assayIds = await allAssayToId()
 
-  const { getCount, queryResults, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(
+  const { getCount, resultCategoryIds } = await getBasicsForDevicesReport(dataConstraints, query)
+
+  let assay = null
+  if (query.assay && !Array.isArray(query.assay)) {
+    assay = [query.assay]
+  } else if (query.assay) {
+    assay = query.assay
+  }
+
+  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
+  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
+  if (dateFrom >= dateTo) {
+    dateFrom = subMonths(dateTo, 1)
+  }
+  /**
+   * normalize dates in `query` for using
+   * in func getBaseQueryForFactResultsDeviceByTimeFrame below
+   */
+  query.minDate = dateFrom
+  query.maxDate = dateTo
+
+  /**
+   * get base query which uses FactResultsDeviceByTimeFrame table
+   */
+  const factTableQuery = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+    addConstraints,
     dataConstraints,
-    query
-  )
-
-  const getResultsBase = () =>
-    queryResults.clone().whereIn('r.assayId', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra]).countDistinct('r.id')
-
-  // get rows
-  const getItems = deviceQuery
-    .clone()
-    .leftJoin('DeviceCapacity as dcp', 'd.deviceCapacityId', 'dcp.id')
-    .modify(sortPageParams, query, 'name')
-    .distinct([
-      'd.id',
+    filterParams,
+    assay,
+    query,
+    timeFrame: 'day',
+  })
+    .leftJoin('DeviceCapacity as dcap', 'd.deviceCapacityId', 'dcap.id')
+    .sum({
+      cntMtbResults: 'r.resultCount',
+      cntMtbError: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.Error}
+        then r.resultCount 
+        else 0 
+        end`),
+      cntMtbInvalid: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.Invalid}
+        then r.resultCount 
+        else 0 
+        end`),
+      cntMtbNoResult: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult}
+        then r.resultCount 
+        else 0 
+        end`),
+    })
+    .select(
       'd.name',
+      'd.id',
       'd.shortName',
       'dt.name as type',
-      'st.name as stateName',
-      'lg.name as lgaName',
       's.name as siteName',
-
       'd.moduleBayCapacity as numberOfModules',
-      getResultsBase().as('cntMtbResults'),
-      getResultsBase().where('r.resultCategory1', resultCategoryIds.Error).as('cntMtbError'),
-      getResultsBase().where('r.resultCategory1', resultCategoryIds.Invalid).as('cntMtbInvalid'),
-      getResultsBase().where('r.resultCategory1', resultCategoryIds.NoResult).as('cntMtbNoResult'),
-    ])
+      'st.name as stateName',
+      'lg.name as lgaName'
+    )
+    .whereIn('r.assayId', [assayIds.GxMtbRif, assayIds.GxMtbRifUltra])
+    .groupBy('d.id')
 
   // return result when both queries are finished
-  const [{ count: total }, data] = await Promise.all([getCount, getItems])
+  const [{ count: total }, data] = await Promise.all([getCount, factTableQuery])
 
   const getPercentage = (numerator, denominator) => {
     return Math.round(100 * (denominator ? numerator / denominator : 0)) / 100
@@ -70,7 +109,8 @@ const listDeviceMtbErrors = async request => {
     it.percentMtbInvalid = getPercentage(it.cntMtbInvalid, it.cntMtbResults)
     it.percentMtbNoResult = getPercentage(it.cntMtbNoResult, it.cntMtbResults)
   })
-
+  // console.log('data', data)
+  // console.log('data2', data2)
   return { ok: true, total, length: data.length, data }
 }
 
