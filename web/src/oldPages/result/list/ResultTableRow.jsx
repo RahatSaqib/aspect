@@ -2,6 +2,7 @@ import React from 'react'
 import PermIdentity from '@mui/icons-material/PermIdentity'
 import { Tooltip } from '@mui/material'
 import identity from 'lodash/identity'
+import isEmpty from 'lodash/isEmpty'
 import isNumber from 'lodash/isNumber'
 import partial from 'lodash/partial'
 import { useIntl } from 'react-intl'
@@ -14,7 +15,7 @@ import formatters from '../formatters'
 const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
   const { format, formatMessage, formatNumber } = useIntl()
   const { dateFormat } = getAspectDisplayPreferences().toJS()
-  let patientId = result?.get('patientId')
+  let patientId = result?.patientId
   patientId = !patientId || patientId === 'null' ? 'N/A' : patientId
   const formatterByType = partial(
     // TODO: refactor, see DeviceOperationTableRow
@@ -28,67 +29,53 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
 
   return (
     <TableRow {...restProps} className={styles[restProps.className]}>
-      <TableCell>{result.get('endedOn') ? format(new Date(result.get('endedOn')), dateFormat) : ''}</TableCell>
-      <TableCell hiddenOn="xs">{result.get('deviceName')}</TableCell>
-      <TableCell hiddenOn="sm">{result.get('sampleOriginSiteName')}</TableCell>
-      <TableCell>{result.get('sampleId')}</TableCell>
-      <TableCell>{formatMessage(messages[result.get('assayI18nKey')], null, result.get('assayName'))}</TableCell>
-      {extraColumns.isEmpty() ? (
+      <TableCell>{result.endedOn ? format(new Date(result.endedOn), dateFormat) : ''}</TableCell>
+      <TableCell hiddenOn="xs">{result.deviceName}</TableCell>
+      <TableCell hiddenOn="sm">{result.sampleOriginSiteName}</TableCell>
+      <TableCell>{result.sampleId}</TableCell>
+      <TableCell>{formatMessage(messages[result.assayI18nKey], null, result.assayName)}</TableCell>
+      {isEmpty(extraColumns) ? (
         <TableCell>
           {`${formatMessage(
-            messages[result.get('resultCategory1Titlei18nKey')],
+            messages[result.resultCategory1Titlei18nKey],
             null,
-            result.get('resultCategory1Title')
-          )}:${formatMessage(messages[result.get('resultCategory1I18nKey')], null, result.get('resultCategory1Name'))}`}
-          {result.get('resultCategory2I18nKey') &&
-            result.get('resultCategory2Titlei18nKey') &&
+            result.resultCategory1Title
+          )}:${formatMessage(messages[result.resultCategory1I18nKey], null, result.resultCategory1Name)}`}
+          {result.resultCategory2I18nKey &&
+            result.resultCategory2Titlei18nKey &&
             ` | ${formatMessage(
-              messages[result.get('resultCategory2Titlei18nKey')],
+              messages[result.resultCategory2Titlei18nKey],
               null,
-              result.get('resultCategory2Title')
-            )}:${formatMessage(
-              messages[result.get('resultCategory2I18nKey')],
-              null,
-              result.get('resultCategory2Name')
-            )}`}
-          {result.get('resultCategory2I18nKey') &&
-            !result.get('resultCategory2Titlei18nKey') &&
-            ` | ${formatMessage(
-              messages[result.get('resultCategory2I18nKey')],
-              null,
-              result.get('resultCategory2Name')
-            )}`}
+              result.resultCategory2Title
+            )}:${formatMessage(messages[result.resultCategory2I18nKey], null, result.resultCategory2Name)}`}
+          {result.resultCategory2I18nKey &&
+            !result.resultCategory2Titlei18nKey &&
+            ` | ${formatMessage(messages[result.resultCategory2I18nKey], null, result.resultCategory2Name)}`}
         </TableCell>
       ) : (
         extraColumns.map(column => (
           // TODO: refactor, see DeviceOperationTableRow
-          <TableCell key={column.get('i18nKey')} hiddenOn="nd">
-            {formatterByType(column.get('type'))(
-              column.get('formatter')
-                ? formatters[column.get('formatter')](result.get(column.get('fieldName')))
-                : result.get(column.get('fieldName'))
+          <TableCell key={column.i18nKey} hiddenOn="nd">
+            {formatterByType(column.type)(
+              column.formatter ? formatters[column.formatter](result.column?.fieldName) : result.column?.fieldName
             )}
           </TableCell>
         ))
       )}
-      <TableCell hiddenOn="lg">{result.get('errorCode')}</TableCell>
+      <TableCell hiddenOn="lg">{result.errorCode}</TableCell>
       <PermissionChecker permissions={['+reporter']}>
         <TableCell hiddenOn="md">
-          {formatMessage(messages[result.get('resultWorkflowStatusI18nkey')], null, result.get('resultWorkflowStatus'))}
+          {formatMessage(messages[result.resultWorkflowStatusI18nkey], null, result.resultWorkflowStatus)}
         </TableCell>
       </PermissionChecker>
       <PermissionChecker permissions={['+reporter']}>
         <TableCell hiddenOn="md">
-          {result.get('treatmentStatusInfo') && (
+          {result.treatmentStatusInfo && (
             <Tooltip
-              title={formatMessage(
-                messages[result.get('resultTreatmentStatusI18nKey')],
-                null,
-                result.get('resultTreatmentStatus')
-              )}
+              title={formatMessage(messages[result.resultTreatmentStatusI18nKey], null, result.resultTreatmentStatus)}
               disableInteractive
             >
-              <PermIdentity className={styles[`${result.get('treatmentStatusInfo')}`]} />
+              <PermIdentity className={styles[`${result.treatmentStatusInfo}`]} />
             </Tooltip>
           )}
         </TableCell>
