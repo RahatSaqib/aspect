@@ -14,6 +14,7 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage } from '../../../../../messages'
+import { formatNumber } from '../../../../../utils/utils/number'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
@@ -86,7 +87,16 @@ const ProvincialDiagnosisTrendPage = () => {
               {formatMessage(messages.provincialDiagnosisTrends)}
             </Typography>
             <div style={{ width: '100%' }}>
-              <LineGraph data={graphData} showLabel xField="year" yField="value" seriesField="id" />
+              <LineGraph
+                tooltip={{
+                  formatter: datum => ({ name: datum.id, value: formatNumber(datum.value) }),
+                }}
+                data={graphData}
+                showLabel
+                xField="year"
+                yField="value"
+                seriesField="id"
+              />
             </div>
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>

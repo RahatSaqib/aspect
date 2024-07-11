@@ -46,6 +46,11 @@ function getBaseQueryForFactResultsDeviceByTimeFrame(
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'st.id', 'g.stateId')
     .leftOuterJoin('Lga as lg', 'lg.id', 'g.lgaId')
+    .leftOuterJoin('ResultCategoryGroup as rcg', join => {
+      join.on('r.resultCategory1', 'rcg.resultCategory1Id')
+      join.andOn(knex.raw('r.resultCategory2 <=> rcg.resultCategory2Id'))
+      join.andOn('r.assayId', 'rcg.assayId')
+    })
     .modify(
       addConstraints,
       dataConstraints,

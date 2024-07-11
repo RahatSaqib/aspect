@@ -448,11 +448,11 @@ const paginateAndSort = (data, query) => {
   const { page = 0, size = 10, sortCol = defaultSortCol, sortDir = defaultSortDirection } = query
 
   // Sorting the data
-  const sortedData = data.sort((a, b) => {
-    if (a[sortCol] < b[sortCol]) return sortDir === 'asc' ? -1 : 1
-    if (a[sortCol] > b[sortCol]) return sortDir === 'asc' ? 1 : -1
-    return 0
-  })
+  const sortedData = _.orderBy(
+    data,
+    [item => (typeof item[sortCol] === 'string' ? item[sortCol].toLowerCase() : item[sortCol])],
+    [sortDir]
+  )
 
   // Calculating pagination
   const start = page * size
