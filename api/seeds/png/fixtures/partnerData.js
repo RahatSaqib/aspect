@@ -3,7 +3,7 @@ const webhookServers = require('../../fixtures/webhookServers')
 
 module.exports = {
   adminUserName: 'admin',
-  adminPassword: '#&Nps5MKj9hL',
+  adminPassword: 'test07',
   partner: {
     name: 'Papua New Guinea',
     externalId: 'papuaNewGuinea',

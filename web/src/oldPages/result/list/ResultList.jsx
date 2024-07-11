@@ -1,143 +1,97 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
-import * as Sentry from '@sentry/react'
-import Immutable from 'immutable'
-import filter from 'lodash/filter'
-import identity from 'lodash/identity'
 import isEmpty from 'lodash/isEmpty'
-import map from 'lodash/map'
-import partial from 'lodash/partial'
-import without from 'lodash/without'
+import isNil from 'lodash/isNil'
+import omit from 'lodash/omit'
+import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { useQuery } from 'react-query'
-import { useDispatch } from 'react-redux'
+import { useMutation, useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { DetailHeader, ResultFilter } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { RESULT_LIST } from '../../../components/QueryFetch/Result'
-import useFilterValues from '../../../hooks/useFilterValues'
+import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
-import BrowseTablePaginator, { ALL_KEY, PAGE_SIZE_BUTTON_KEYS } from '../../../oldComponents/BrowseTablePaginator'
+import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
-import { fetchTreatmentStatuses } from '../../../store/ResultTreatmentStatusRedux'
-import { Items, receiveListWithSet } from '../../../utils/metaReducers/items'
-import { receiveTableItems, Table } from '../../../utils/metaReducers/table'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import getExportableFile from '../ResultQueries'
 import messages from './messages'
 import { ResultDataTable, ResultDataTableHead, ResultDataTableRow } from './ResultDataTable'
 import styles from './ResultList.module.css'
+import { getBaseColumns, RESULT_PAGE_SIZE_BUTTON_KEYS } from './utils'
 
-const getBaseColumns = (extraColumns = [], formatMessage) => {
-  return Immutable.List(
-    filter(
-      [
-        { key: 'endedOn', label: formatMessage(messages.endedOn), sortable: true },
-        { key: 'deviceName', label: formatMessage(messages.deviceName), sortable: true, hiddenOn: 'xs' },
-        {
-          key: 'sampleOriginSiteName',
-          label: formatMessage(messages.sampleOriginSiteName),
-          sortable: true,
-          hiddenOn: 'sm',
-        },
-        { key: 'sampleId', label: formatMessage(messages.sampleId), sortable: true },
-        { key: 'assayName', label: formatMessage(messages.assayName), sortable: true },
-        { key: 'resultText', label: formatMessage(messages.resultText), sortable: true },
-        ...map(extraColumns, column => ({
-          key: column?.fieldName,
-          label: messageByI18nKey(column?.i18nKey)(column?.title, formatMessage),
-          sortable: true,
-          hiddenOn: 'md',
-        })),
-        { key: 'errorCode', label: formatMessage(messages.errorCode), sortable: true, hiddenOn: 'lg' },
-        {
-          key: 'resultWorkflowStatus',
-          label: formatMessage(messages.resultWorkflowStatus),
-          sortable: true,
-          hiddenOn: 'md',
-          auth: ['+reporter'],
-        },
-        {
-          key: 'treatmentStatusInfo',
-          label: formatMessage(messages.resultTreatmentStatus),
-          sortable: true,
-          hiddenOn: 'md',
-          auth: ['+reporter'],
-        },
-        { key: 'patientId', label: formatMessage(messages.patientId), sortable: true, hiddenOn: 'xs' },
-      ],
-      elem => (extraColumns.length > 0 && elem.key !== 'resultText') || extraColumns.length === 0
-    )
+export default function ResultList() {
+  const intl = useIntl()
+  const navigate = useNavigate()
+  const location = useLocation()
+  const [filters] = usePathFilter()
+  const {
+    sortCol,
+    sortDir,
+    pageAt: page,
+    pageSize: size,
+  } = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })({ location })
+
+  const params = omitBy(omit({ sortCol, sortDir, page, size, ...filters }, ['assayOverride']), isNil)
+  const { isLoading, isError, data, error } = useQuery(
+    [RESULT_LIST.KEY, { ...params }],
+    () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params }),
+    {
+      select: ({ data, total, extraColumns }) => ({
+        items: data,
+        total,
+        extraColumns,
+        columns: getBaseColumns(extraColumns, intl.formatMessage),
+      }),
+    }
   )
-}
 
-const RESULT_PAGE_SIZE_BUTTON_KEYS = without(PAGE_SIZE_BUTTON_KEYS, ALL_KEY)
+  const { isLoading: isExporting, mutateAsync: onExportClick } = useMutation(formatType =>
+    getExportableFile(filters, formatType, sortCol, sortDir, 'results')
+  )
 
-const messageByI18nKey = partial(
-  // Explicit declare messageBy[i18nKey] so that the keys are searchable.
-  (messageBy, i18nKey) => messageBy[i18nKey] || messageBy.default,
-  {
-    resultCategoryCopiesMl: (title, formatMessage) => formatMessage(messages.resultCategoryCopiesMl),
-    default: identity,
-  }
-)
+  if (isError) throw new Error(error)
 
-export const ResultListWithProps = ({
-  intl,
-  // history,
-  navigate,
-  location,
-  isLoading,
-  items,
-  sortCol,
-  sortDir,
-  columns,
-  onExportClick,
-  table,
-  total,
-  pageAt,
-  pageSize,
-}) => (
-  <>
-    <DetailHeader name={intl.formatMessage(messages.resultsTitle)} disableBack />
-    <div className={styles.Container}>
-      <Helmet title={intl.formatMessage(messages.resultsTitle)} />
-      <ResultFilter />
-      <DataTableCard key={`DataTableCard__table-Result-list---${location.key}`}>
-        <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-          <AspectExportListButton
-            onExport={onExportClick}
-            visible={!items.currentIdList.isEmpty()}
-            reportName="Results"
-            disableExcel
-          />
-        </div>
+  return (
+    <>
+      <DetailHeader name={intl.formatMessage(messages.resultsTitle)} disableBack />
+      <div className={styles.Container}>
+        <Helmet title={intl.formatMessage(messages.resultsTitle)} />
+        <ResultFilter />
+        <DataTableCard key={`DataTableCard__table-Result-list---${location.key}`}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+            <AspectExportListButton
+              onExport={onExportClick}
+              visible={!isEmpty(data?.items)}
+              reportName="Results"
+              disableExcel
+            />
+          </div>
 
-        {isLoading ? (
-          <LinearProgress />
-        ) : items.currentIdList.isEmpty() ? (
-          <BrowseEmptyList />
-        ) : (
-          <>
-            <ResultDataTable className={styles.ResultDataTable}>
-              <ResultDataTableHead
-                navigate={navigate}
-                location={location}
-                sortColumnKey={sortCol}
-                sortColumnDir={sortDir}
-                columns={columns}
-              />
-              <TableBody>
-                {items.currentIdList
-                  .map(id => items.byId.get(id))
-                  .map(result => (
+          {isLoading || isExporting ? (
+            <LinearProgress />
+          ) : isEmpty(data?.items) ? (
+            <BrowseEmptyList />
+          ) : (
+            <>
+              <ResultDataTable className={styles.ResultDataTable}>
+                <ResultDataTableHead
+                  navigate={navigate}
+                  location={location}
+                  sortColumnKey={sortCol}
+                  sortColumnDir={sortDir}
+                  columns={data?.columns ?? []}
+                />
+                <TableBody>
+                  {data?.items?.map(result => (
                     <ResultDataTableRow
-                      key={result.get('id')}
+                      key={result.id}
                       intl={intl}
-                      extraColumns={table.extraColumns}
+                      extraColumns={data?.extraColumns ?? []}
                       result={result}
                       onClick={e =>
                         gotoWithReturnUrl(
@@ -146,127 +100,27 @@ export const ResultListWithProps = ({
                           location
                         )
                       }
-                      data-result-id={result.get('id')}
+                      data-result-id={result.id}
                       messages={messages}
                     />
                   ))}
-              </TableBody>
-            </ResultDataTable>
-            <BrowseTablePaginator
-              navigate={navigate}
-              location={location}
-              intl={intl}
-              timedMessageUsed={sortCol === 'endedOn'}
-              paginatorStatus={messages.paginatorStatus}
-              total={total}
-              pageAt={pageAt}
-              pageSize={pageSize}
-              pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
-            />
-          </>
-        )}
-      </DataTableCard>
-    </div>
-  </>
-)
-
-const ResultList = () => {
-  // >>>>>> hooks/ <<<<<<
-  const intl = useIntl()
-  const navigate = useNavigate()
-  const dispatch = useDispatch()
-  const location = useLocation()
-  const filters = useFilterValues(location.pathname)
-  // >>>>>> Local state <<<<<<
-  const [items, setItems] = useState(new Items())
-  const [table, setTable] = useState(
-    new Table({
-      sortCol: 'endedOn',
-      sortDir: 'desc',
-      filters: Immutable.fromJS({ sampleId: '', sampleGroup: '', assayId: null }),
-      extraColumns: Immutable.List(),
-    })
+                </TableBody>
+              </ResultDataTable>
+              <BrowseTablePaginator
+                navigate={navigate}
+                location={location}
+                intl={intl}
+                timedMessageUsed={sortCol === 'endedOn'}
+                paginatorStatus={messages.paginatorStatus}
+                total={data?.total}
+                pageAt={page}
+                pageSize={size}
+                pageSizeButtonKeys={RESULT_PAGE_SIZE_BUTTON_KEYS}
+              />
+            </>
+          )}
+        </DataTableCard>
+      </div>
+    </>
   )
-  const [total, setTotal] = useState()
-  const [isLoading, setIsLoading] = useState(true)
-  const [columns, setColumns] = useState([])
-  const sortPage = makeSortPageSelector({ sortCol: 'endedOn', sortDir: 'desc' })
-  const { sortCol, sortDir, pageAt: page, pageSize: size } = sortPage({ location })
-  // >>>>>> Constants <<<<<<
-  const searchParams = new URLSearchParams()
-  searchParams.set('filters', new URLSearchParams(location.search).get('filters') || '')
-
-  const params = { sortCol, sortDir, page, size, ...filters }
-  const { minDate, maxDate } = params
-  delete params.assayOverride
-  // >>>>>> Queries <<<<<<
-  const {
-    isLoading: tableLoading,
-    isError,
-    data,
-    error,
-  } = useQuery(
-    [RESULT_LIST.KEY, { params }],
-    async () => fetchWrapperForQueries({ endpoint: RESULT_LIST.ENDPOINT, params: { ...params, minDate, maxDate } }),
-    { enabled: !isEmpty(params) }
-  )
-
-  useEffect(() => dispatch(fetchTreatmentStatuses()), [dispatch])
-  useEffect(() => {
-    setIsLoading(tableLoading)
-  }, [tableLoading])
-
-  // >>>>>> Lifecycles <<<<<<
-  useEffect(() => {
-    if (data) {
-      const { data: list, total: totalItems, extraColumns } = data
-      setItems(receiveListWithSet(items, Immutable.fromJS(list)))
-      setTotal(totalItems)
-      const newTable = receiveTableItems(table, totalItems, extraColumns)
-      setTable(newTable)
-
-      setColumns(getBaseColumns(extraColumns, intl.formatMessage))
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
-
-  // >>>>>> Callbacks <<<<<<
-  const onExportClick = formatType => {
-    setIsLoading(true)
-    return getExportableFile(filters, formatType, sortCol, sortDir, 'results')
-      .then(response => {
-        setIsLoading(false)
-        return response
-      })
-      .catch(error => {
-        setIsLoading(false)
-        throw error
-      })
-  }
-
-  if (typeof items.currentIdList.map !== 'function') {
-    Sentry.captureMessage(`Potential Error on result Page. Filters : ${JSON.stringify(filters, null, 2)}`)
-  }
-
-  const baseProps = {
-    intl,
-    // history,
-    navigate,
-    location,
-    isLoading,
-    items,
-    sortCol,
-    sortDir,
-    columns,
-    onExportClick,
-    table,
-    total,
-    pageAt: page,
-    pageSize: size,
-  }
-  if (isError) throw new Error(error)
-
-  return <ResultListWithProps {...baseProps} />
 }
-
-export default ResultList

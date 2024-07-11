@@ -2,7 +2,7 @@ const jobFunctions = require('../../shared/fixtures/jobFunctions')
 
 module.exports = {
   adminUserName: 'tb_admin',
-  adminPassword: 'DM3tFfbQnx',
+  adminPassword: 'test07',
   partner: {
     name: 'Lesotho TB',
     externalId: 'lesothoTb',

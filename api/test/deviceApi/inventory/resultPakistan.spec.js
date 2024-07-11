@@ -16,7 +16,7 @@ const transferInventoryPath = '/api/inventory/transfer'
 describe('inventory strategy for Pakistan', () => {
   const context = createTestContext(knex, server, {
     user: 'pk_admin',
-    password: 'x2KusKKEqR8M',
+    password: 'test07',
     type: 'DaktariVirology',
     partner: 'Pakistan NTP',
   })
