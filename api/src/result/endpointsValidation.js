@@ -35,6 +35,9 @@ const getResultAggregationsValidate = validGroups => ({
     .allow(null, '')
     .try(Joi.array().items(Joi.string()), Joi.string())
     .description('XDR Resistance value or array of values'),
+  resultCategoryGroupId: Joi.alternatives()
+    .try(Joi.array(), Joi.string())
+    .description('Filter for result category group'),
 })
 
 const resultAggregationsValidGroups = [
