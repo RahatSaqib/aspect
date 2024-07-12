@@ -11,6 +11,7 @@ const { getSelectCommonListFieldsTZ, SORT_FIELDS } = require('../query')
 const { getOffsetFromIsoDateString } = require('../../shared/date')
 const { getQueryForResultsListAndExport, getCustomFieldsForResult } = require('../common/db')
 const { getConstraints } = require('../../auth/constraints')
+const { XDR_RESISTANCES } = require('../../shared/constants')
 
 /**
  This report logic is consumed by the all results report, as well as from the csv download of the result list.
@@ -68,14 +69,7 @@ module.exports = async (auth, query) => {
     { key: 'resultCategoryGroup', header: 'Result' },
     { key: 'resultData.resultText', header: 'Raw Result' },
     ...(dataIncludesResistances
-      ? [
-          { key: 'resultData.allResistances.INH', header: 'INH' },
-          { key: 'resultData.allResistances.FLQ', header: 'FLQ' },
-          { key: 'resultData.allResistances.AMK', header: 'AMK' },
-          { key: 'resultData.allResistances.KAN', header: 'KAN' },
-          { key: 'resultData.allResistances.CAP', header: 'CAP' },
-          { key: 'resultData.allResistances.ETH', header: 'ETH' },
-        ]
+      ? XDR_RESISTANCES.map(name => ({ key: `resultData.allResistances.${name}`, header: name }))
       : []),
     { key: 'sampleCollectedOn', header: 'Sample Collected Date' },
     { key: 'sampleOriginSiteName', header: 'Sample Collection Site' },
@@ -302,12 +296,27 @@ const humanizeResistancesTexts = resultDataString => {
   // Hack to present a little bit clearer texts due to the lack of i18n handling in backend:
   const resultData = JSON.parse(resultDataString)
   if (resultData.allResistances) {
-    resultData.allResistances.INH = startCase(resultData.allResistances.INH)
-    resultData.allResistances.FLQ = startCase(resultData.allResistances.FLQ)
-    resultData.allResistances.AMK = startCase(resultData.allResistances.AMK)
-    resultData.allResistances.KAN = startCase(resultData.allResistances.KAN)
-    resultData.allResistances.CAP = startCase(resultData.allResistances.CAP)
-    resultData.allResistances.ETH = startCase(resultData.allResistances.ETH)
+    /**
+     * if XDR was Detected (i.e. is in `detectedResistance` array), then add it's high/low/veryLow
+     * details to the value.
+     * --> Check helper func `checkResistance` in api/src/result/serviceReportBangladesh/index.js
+     * to see how we handle this addition in the query.
+     */
+    const { resultText, detectedResistance } = resultData
+    XDR_RESISTANCES.forEach(resistance => {
+      let resistanceValue = startCase(resultData.allResistances[resistance])
+      if (detectedResistance?.includes(resistance)) {
+        if (resultText?.includes(`High ${resistance} Resistance @label_result_detected`)) {
+          resistanceValue = `${resistanceValue}, High Resistance`
+        } else if (resultText?.includes(`Very Low ${resistance} Resistance @label_result_detected`)) {
+          resistanceValue = `${resistanceValue}, Very Low Resistance`
+        } else if (resultText?.includes(`Low ${resistance} Resistance @label_result_detected`)) {
+          resistanceValue = `${resistanceValue}, Low Resistance`
+        }
+      }
+
+      resultData.allResistances[resistance] = resistanceValue
+    })
   }
   return resultData
 }
