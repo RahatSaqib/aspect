@@ -15,7 +15,6 @@ import styles from '../graphStyles.module.css'
 import {
   calcPercentageForGraphs,
   genLabel,
-  getAverageFromData,
   getTimePeriod,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,

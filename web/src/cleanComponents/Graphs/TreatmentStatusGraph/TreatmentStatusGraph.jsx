@@ -16,7 +16,6 @@ import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
 import {
   prepAssaysForParams,
-  getAverageFromData,
   calcPercentageForGraphs,
   genLabel,
   prepParamsForEndPoint,

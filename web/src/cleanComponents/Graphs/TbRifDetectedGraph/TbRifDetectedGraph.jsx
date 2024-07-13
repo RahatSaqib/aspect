@@ -17,7 +17,6 @@ import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
-  getAverageFromData,
   negateTimeZoneOffset,
   getResultCategoryGroupsForResultList,
 } from '../graphUtils'

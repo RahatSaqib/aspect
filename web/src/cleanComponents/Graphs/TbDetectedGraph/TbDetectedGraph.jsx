@@ -16,7 +16,6 @@ import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
-  getAverageFromData,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
   getResultCategoryGroupsForResultList,
