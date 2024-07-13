@@ -23,8 +23,6 @@ import {
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
 
-const numberOfMonthsInAYear = 12
-
 const endPointParams = [
   { assay: 'GxMtbXdr' },
   { groupBy: 'month' },
@@ -87,6 +85,8 @@ const XdrResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         formatMessage,
         messages
       )
+      const numberOfMonthsInAYear = 12
+
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       const detected = pieData.find(elem => (elem.id = 'Detected')) || {}
       const pieAvg = +calcPercentageForGraphs(detected.value, numberOfMonthsInAYear, 2)
