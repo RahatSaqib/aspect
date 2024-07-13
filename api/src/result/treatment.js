@@ -1,7 +1,7 @@
 const dateFormat = require('date-fns/format')
 const parseISO = require('date-fns/parseISO')
 const sortBy = require('lodash/sortBy')
-const { subMonths, startOfMonth, endOfMonth, parse, isAfter } = require('date-fns')
+const { subMonths, startOfMonth, endOfMonth, parse, isAfter, isSameMonth } = require('date-fns')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
 const { addConstraints, getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { resultStatusToId } = require('../shared/dictionary')
@@ -114,10 +114,10 @@ async function confirmedTreatmentTracking(request) {
       const currentDate = startOfMonth(new Date())
 
       // Compare the given date with the current date
-      const isParsedMonthGreaterThanCurrent = isAfter(parsedDate, currentDate)
+      const isParsedMonthSameOrAfterCurrent = isSameMonth(parsedDate, currentDate) || isAfter(parsedDate, currentDate)
 
       // only process months are not greater than current month
-      if (!isParsedMonthGreaterThanCurrent) {
+      if (!isParsedMonthSameOrAfterCurrent) {
         data.push({
           monthTested,
           pcOnTreatment: 0,

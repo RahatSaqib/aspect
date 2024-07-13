@@ -22,6 +22,7 @@ import {
   prepParamsForEndPoint,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
+  getTimePeriod,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
 
@@ -47,8 +48,8 @@ const getWhitelistedAssays = ({ assays, assaysFromState }) => {
 }
 
 const endPointParams = {
-  minDate: startOfMonth(subMonths(new Date(), 12)),
-  maxDate: endOfMonth(new Date()),
+  minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+  maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
 }
 
 const TreatmentStatusGraph = ({ assaysFromState }) => {
@@ -96,12 +97,15 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
         formatMessage,
         messages
       )
+      const numberOfMonthsInAYear = 12
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Confirmed'], 'standard')
+      const confirmed = pieData.find(elem => (elem.id = 'Detected')) || {}
+
+      const pieAvg = +calcPercentageForGraphs(confirmed.value, numberOfMonthsInAYear, 2)
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assaysFromState, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, numberOfMonthsInAYear, 2),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(

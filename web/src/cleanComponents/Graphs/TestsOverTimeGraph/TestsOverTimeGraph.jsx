@@ -39,7 +39,7 @@ const endPointParams = [
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd') },
 ]
 
 const filterFunctionPie = (data, props) => {
@@ -109,13 +109,14 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
         formatMessage,
         messages
       )
+      const numberOfMonthsInAYear = 12
       const pieData = filterFunctionPie(groupedForPie, filter)
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       const { totals: pieAverage } = getAverageFromData(pieData, 'value', '*', 'standard')
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, numberOfMonthsInAYear, 2),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(

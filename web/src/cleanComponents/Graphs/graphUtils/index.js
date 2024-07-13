@@ -1,4 +1,4 @@
-import { subDays, subMonths, getYear, subYears, startOfMonth } from 'date-fns'
+import { subDays, subMonths, getYear, subYears, startOfMonth, endOfMonth } from 'date-fns'
 import { format } from 'date-fns-tz'
 import filter from 'lodash/filter'
 import flatten from 'lodash/flatten'
@@ -228,7 +228,11 @@ const getTimePeriod = (cnt, period, dateFormat) => {
       timePeriod = subDays(dateNow, cnt)
       break
     case period === 'months':
-      timePeriod = startOfMonthUTC(subMonths(dateNow, cnt).toISOString())
+      if (cnt === 12) {
+        timePeriod = startOfMonthUTC(subMonths(dateNow, cnt).toISOString())
+      } else if (cnt === 1) {
+        timePeriod = endOfMonthUTC(subMonths(dateNow, cnt).toISOString())
+      }
       break
     case period === 'years':
       timePeriod = startOfYearsAgo(cnt)
@@ -266,7 +270,7 @@ const genLabel = (string, assaysFromState, formatMessage, intlMessages, i18nKeys
     : startCase(removeStringsFromArray(string))
 }
 
-const calcPercentageForGraphs = (value, total, precision = 4) => {
+const calcPercentageForGraphs = (value = 0, total, precision = 4) => {
   return ((value / total) * 100).toFixed(precision)
 }
 
@@ -343,6 +347,16 @@ const startOfMonthUTC = dateString => {
     startOfMonth(new Date(`${datepart}T00:00:00.000Z`))
       .toISOString()
       .replace('T00:00:00.000Z', `T00:00:00.000${offset}`)
+  )
+}
+
+const endOfMonthUTC = dateString => {
+  const [datepart, time] = dateString.split('T')
+  const offset = time.split(/[0-2]\d:[0-5]\d:[0-5]\d\.\d+|[0-2]\d:[0-5]\d:[0-5]\d/)[1]
+  return new Date(
+    endOfMonth(new Date(`${datepart}T23:59:59.999Z`))
+      .toISOString()
+      .replace('T23:59:59.999Z', `T23:59:59.999${offset}`)
   )
 }
 
