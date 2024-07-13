@@ -75,12 +75,13 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
 
       const numberOfMonthsInAYear = 12
       const detected = pieData.find(elem => elem.id === 'Detected') || {}
-      const pieAvg = +calcPercentageForGraphs(detected.value, numberOfMonthsInAYear, 2)
+
+      const pieAvg = detected.value / numberOfMonthsInAYear
 
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, numberOfMonthsInAYear, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(
@@ -111,7 +112,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAvg}%` })
+      setDonutData({ data: pie, total: `${pieAvg}` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])

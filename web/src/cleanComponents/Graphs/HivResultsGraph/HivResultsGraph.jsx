@@ -72,17 +72,18 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         messages
       )
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
+      const numberOfMonthsInAYear = 12
 
       const suppression = pieData.filter(
         elem => elem.id === 'LessThan40' || elem.id === 'LessThan1000' || elem.id === 'NotDetected'
       )
       const totalSuppression = suppression.reduce((sum, elem) => sum + elem.value, 0)
-      const pieAvg = +calcPercentageForGraphs(totalSuppression, 12, 2)
+      const pieAvg = (totalSuppression / numberOfMonthsInAYear).toFixed(2)
 
       const parsedData = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
-        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, 12, 2),
+        value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
       }))
       // code for column
       const groupedForBar = formatDataByGraphType(
@@ -113,7 +114,7 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: parsedData, total: `${pieAvg}%` })
+      setDonutData({ data: parsedData, total: `${pieAvg}` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
