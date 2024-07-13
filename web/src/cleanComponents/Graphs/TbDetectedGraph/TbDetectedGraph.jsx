@@ -76,7 +76,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       const numberOfMonthsInAYear = 12
       const detected = pieData.find(elem => elem.id === 'Detected') || {}
 
-      const pieAvg = detected.value / numberOfMonthsInAYear
+      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(2)
 
       const pie = pieData.map(d => ({
         ...d,
