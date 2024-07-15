@@ -39,7 +39,7 @@ const context = createTestContext(knex, server, {
   // We want to create a new device for this test, so use a type
   // that is not seeded
   type: 'GenericRDT',
-  partner: 'Myanmar',
+  partner: 'MoHS',
 })
 
 describe('Fact based issues', () => {

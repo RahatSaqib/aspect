@@ -119,21 +119,8 @@ async function preProcessMergeResult(context) {
     potentialAssayIds.push('GxMtbRif')
   }
 
-  if (potentialAssayIds.includes('GxMtbRif') && _.get(payload, 'data.resultText')) {
-    const bacterialLoad = getBacterialLoad(_.get(payload, 'data.resultText'))
-    if (bacterialLoad) _.set(payload, 'data.bacterialLoad', bacterialLoad)
-  }
-
-  if (potentialAssayIds.includes('GxHiv1Vl')) {
-    const copies = getVLCopies(_.get(payload, 'data.resultText'))
-    if (copies) _.set(payload, 'data.copies', copies)
-  }
-
-  if (potentialAssayIds.includes('GxMtbXdr')) {
-    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(_.get(payload, 'data.resultText'))
-    _.set(payload, 'data.detectedResistance', detectedResistance)
-    _.set(payload, 'data.allResistances', allResistances)
-  }
+  const additionalData = getAdditionalDataFromPayload(payload, potentialAssayIds)
+  payload.data = _.assign(payload.data, additionalData)
 
   const resultFindings = await findResult(
     {
@@ -206,6 +193,27 @@ async function preProcessMergeResult(context) {
     if (moduleName) _.set(payload, moduleNamePath, moduleName)
     else _.unset(payload, moduleNamePath)
   }
+}
+
+function getAdditionalDataFromPayload(payload, assays) {
+  const data = {}
+  if (assays.includes('GxMtbRif') && _.get(payload, 'data.resultText')) {
+    const bacterialLoad = getBacterialLoad(_.get(payload, 'data.resultText'))
+    if (bacterialLoad) data.bacterialLoad = bacterialLoad
+  }
+
+  if (assays.includes('GxHiv1Vl')) {
+    const copies = getVLCopies(_.get(payload, 'data.resultText'))
+    if (copies) data.copies = copies
+  }
+
+  if (assays.includes('GxMtbXdr')) {
+    const { detectedResistance, allResistances } = getDetectedResistanceCategoryTypes(_.get(payload, 'data.resultText'))
+    data.detectedResistance = detectedResistance
+    data.allResistances = allResistances
+  }
+
+  return data
 }
 
 async function transformMergeResultPayload({ deviceId, payload, knex }) {
@@ -695,8 +703,6 @@ module.exports = {
   transformMergeResultPayload,
   postProcessAddDeviceOperation,
   postProcessUpdateDeviceConfiguration,
-  getResultCategoriesHivVL,
+  getAdditionalDataFromPayload,
   getResultCategories,
-  getVLCopies,
-  getModuleNameForResult,
 }

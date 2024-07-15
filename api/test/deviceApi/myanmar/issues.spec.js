@@ -43,7 +43,7 @@ describe.skip('Myanmar Issue endpoints', () => {
     run(async () => {
       await beforeCreateGxAlertApiKey({
         countryAbbreviation: 'MM',
-        partnerName: 'Myanmar',
+        partnerName: 'MoHS',
       })
       useGxAlertDeviceId(gxAlertDeviceId)
       ;({ deviceAuth } = context)
@@ -1302,7 +1302,7 @@ describe.skip('Myanmar Issue endpoints', () => {
       run(async () => {
         await beforeCreateGxAlertApiKey({
           countryAbbreviation: 'MM',
-          partnerName: 'Myanmar',
+          partnerName: 'MoHS',
         })
         useGxAlertDeviceId(gxAlertDeviceId)
         ;({ deviceAuth } = context)
