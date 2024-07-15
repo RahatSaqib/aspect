@@ -11,7 +11,7 @@ module.exports = {
   deviceApiToken: 'ukpjat39531egjy4pc20',
   partnerAbbreviation: 'MM',
   lowerLevelUserPassword: 'AL21Uqpo$^hT3',
-  plugin: '',
+  plugin: 'myanmar',
   fixtures: {
     jobFunctions,
     webhookServers,

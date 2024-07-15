@@ -3662,7 +3662,7 @@ async function seed(knex) {
     })
 
     // only seed GeneXpert results for specific countries
-    if (['Nigeria', 'United States', 'MoHS'].indexOf(country.name) >= 0) {
+    if (['Nigeria', 'United States', 'Myanmar'].indexOf(country.name) >= 0) {
       const { DBS: sampleTypeDBSId, Plasma: sampleTypePlasmaId } = await allSampleTypeToId()
 
       // some TB samples:

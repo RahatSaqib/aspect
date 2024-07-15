@@ -80,7 +80,7 @@ async function seed(knex) {
 
   // -------------------------
   // add and randomly populate DataCategory fields
-  const partnerPluginName = 'mohs'
+  const partnerPluginName = 'myanmar'
   const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { addDataCategoryFields } = plugin
   if (addDataCategoryFields) {
@@ -830,7 +830,7 @@ async function seed(knex) {
 
   await seedIssues(knex, baseProps)
 
-  await seedDataCategory(knex, 'MoHS', 'mohs')
+  await seedDataCategory(knex, 'mohs', partnerPluginName)
 }
 
 function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {
