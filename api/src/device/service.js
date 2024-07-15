@@ -327,18 +327,6 @@ async function getDevicesForReport(auth, query) {
   const { getCount, deviceQuery, resultCategoryIds } = await getBasicsForDevicesReport(dataConstraints, query)
   const userTimeOffset = getOffsetFromIsoDateString(query.maxDate)
 
-  let dateFrom = _.isString(minDate) ? new Date(minDate) : minDate
-  const dateTo = _.isString(maxDate) ? new Date(maxDate) : maxDate
-  if (dateFrom >= dateTo) {
-    dateFrom = subMonths(dateTo, 1)
-  }
-  /**
-   * normalize dates in `query` for using
-   * in func getBaseQueryForFactResultsDeviceByTimeFrame below
-   */
-  query.minDate = dateFrom
-  query.maxDate = dateTo
-
   /**
    * base query for list of devices
    */
@@ -380,6 +368,11 @@ async function getDevicesForReport(auth, query) {
         then r.resultCount 
         else 0 
         end`),
+      noResults: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
+        then r.resultCount 
+        else 0 
+        end`),
       totalInvalid: knex.raw(`
         case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
         then r.resultCount 
@@ -392,13 +385,17 @@ async function getDevicesForReport(auth, query) {
         then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
         else 0 
         end`),
+      noResults_sameOriginSite: knex.raw(`
+        case when r.resultCategory1 = ${resultCategoryIds.NoResult} 
+        then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
+        else 0 
+        end`),
       totalInvalid_sameOriginSite: knex.raw(`
         case when r.resultCategory1 = ${resultCategoryIds.Invalid} 
         then r.xdrResistanceCounts ->> "$.cntSameOriginSite" 
         else 0 
         end`),
     })
-
   const resultsLastUploaded = await knex('Result as r')
     .modify(addConstraints, dataConstraints, {
       result: 'r',
@@ -438,8 +435,9 @@ async function getDevicesForReport(auth, query) {
     it.errorRate_sameOriginSite = getPercentage(it.totalResults_sameOriginSite, it.totalErrors_sameOriginSite)
     return it
   })
+  const filteredData = data.filter(deviceData => deviceData.totalErrors >= 1)
 
-  return { ok: true, total, length: data.length, data }
+  return { ok: true, total, length: filteredData.length, data: filteredData }
 }
 
 async function getDevicesForRifResistanceReport(auth, query) {
