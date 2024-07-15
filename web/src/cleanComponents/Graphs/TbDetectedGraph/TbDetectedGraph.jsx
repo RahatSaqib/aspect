@@ -74,9 +74,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
 
       const numberOfMonthsInAYear = 12
-      const detected = pieData.filter(
-        elem => elem.id === 'Detected' || elem.id === 'Trace Detected'
-      )
+      const detected = pieData.filter(elem => elem.id === 'Detected' || elem.id === 'Trace Detected')
       const totalDetected = detected.reduce((sum, elem) => sum + elem.value, 0)
 
       const pieAvg = (totalDetected / numberOfMonthsInAYear).toFixed(2)
