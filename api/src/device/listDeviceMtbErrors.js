@@ -109,8 +109,7 @@ const listDeviceMtbErrors = async request => {
     it.percentMtbInvalid = getPercentage(it.cntMtbInvalid, it.cntMtbResults)
     it.percentMtbNoResult = getPercentage(it.cntMtbNoResult, it.cntMtbResults)
   })
-  // console.log('data', data)
-  // console.log('data2', data2)
+
   return { ok: true, total, length: data.length, data }
 }
 
