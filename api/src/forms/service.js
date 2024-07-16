@@ -198,15 +198,18 @@ const getCustomFieldsFromPayload = async (payload, countryAbbreviation, partnerI
   const obj = {}
 
   for (const field of fields) {
-    const { payloadOriginPath = `data.customFieldData.${field.id}.value`, source, fieldType } = field
+    const { payloadOriginPath = `data.customFieldData.${field.id}.value`, migrateFromId, source, fieldType } = field
+    const oldPayloadOriginPath = `data.customFieldData.${migrateFromId}.value`
 
-    const value = _.get(payload, payloadOriginPath)
+    const value = _.get(payload, payloadOriginPath) || _.get(payload, oldPayloadOriginPath)
     if (value && source) {
       if (_.includes(['patientCellphone', 'clinicianCellphone', 'phone'], fieldType))
         _.set(obj, source, normalizePhoneNumber(value, countryAbbreviation))
       else if (source === 'referringSiteId') {
         // This case will be removed in the future because the payloadOriginPath should take the key instead of the value
-        const key = _.get(payload, `data.customFieldData.${field.id}.key`)
+        const key =
+          _.get(payload, `data.customFieldData.${field.id}.key`) ||
+          _.get(payload, `data.customFieldData.${migrateFromId}.key`) // Might not be necessary, but it's safer to check it as well.
         // eslint-disable-next-line no-await-in-loop
         _.set(obj, source, key || (await getSiteIdByName(value)))
       } else _.set(obj, source, value)

@@ -197,7 +197,7 @@ describe('Issue Escalation', () => {
   }
 
   describe.skip('For Myanmar', () => {
-    const partnerName = 'Myanmar'
+    const partnerName = 'MoHS'
     const countryAbbreviation = 'MM'
 
     let partner

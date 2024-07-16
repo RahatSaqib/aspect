@@ -85,8 +85,14 @@ const removeAdditionalData = resultData => {
 
 const mergeResultWithPayload = (existingResult, resultPayload) => {
   const payload = removeAdditionalData(resultPayload)
+
+  // PatientData
+  const existingPatientDataString = _.get(existingResult, 'patientData', null)
+  const existingPatientData = isJson(existingPatientDataString) ? JSON.parse(existingPatientDataString) : {}
+  const patientData = payload.patient ? deepMerge({ ...existingPatientData }, payload.patient) : existingPatientData
+
+  // ResultData
   const existingResultDataString = _.get(existingResult, 'resultData', null)
-  const existingResultDataHash = _.get(existingResult, 'resultDataHash', null)
   const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}
   const resultData = payload.data ? deepMerge({ ...existingResultData }, payload.data) : existingResultData
 
@@ -94,6 +100,7 @@ const mergeResultWithPayload = (existingResult, resultPayload) => {
    * get hash of new resultData and if it is the same as already saved `resultDataHash` then
    * skip ResultUpdated notification because we already processed it
    */
+  const existingResultDataHash = _.get(existingResult, 'resultDataHash', null)
   const resultDataHash = payload.data ? getResultDataHash(resultData) : null
   const shouldTriggerResultNotification =
     // send notification if Result.resultData is null
@@ -103,7 +110,7 @@ const mergeResultWithPayload = (existingResult, resultPayload) => {
     // send notification if Result.resultDataHash is NOT equal new resultDataHash from payload
     (!!resultDataHash && existingResultDataHash !== resultDataHash)
 
-  return { resultData, resultDataHash, shouldTriggerResultNotification }
+  return { patientData, resultData, resultDataHash, shouldTriggerResultNotification }
 }
 
 async function clinicalIndicatorAggregations(request) {

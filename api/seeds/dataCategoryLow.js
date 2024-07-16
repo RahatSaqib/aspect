@@ -78,7 +78,7 @@ async function removeOld(knex) {
 // -------------------------------------------------------
 // seedDataCategory
 // -------------------------------------------------------
-async function seedDataCategory(knex, partnerExternalId, partnerName) {
+async function seedDataCategory(knex, partnerExternalId, partnerPluginName) {
   // remove old data seeded in previous seed files
   await removeOld(knex)
 
@@ -117,7 +117,6 @@ async function seedDataCategory(knex, partnerExternalId, partnerName) {
   // ----------------------------------------------------------------------
   // read dataCategories
   // ----------------------------------------------------------------------
-  const partnerPluginName = partnerName.toLowerCase()
   const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { dataCategories = [] } = plugin
 
