@@ -74,9 +74,7 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       const numberOfMonthsInAYear = 12
 
-      const suppression = pieData.filter(
-        elem => elem.id === 'LessThan40' || elem.id === 'LessThan1000' || elem.id === 'NotDetected'
-      )
+      const suppression = pieData.filter(elem => ['LessThan40', 'LessThan1000', 'NotDetected'].includes(elem.id))
       const totalSuppression = suppression.reduce((sum, elem) => sum + elem.value, 0)
       const pieAvg = (totalSuppression / numberOfMonthsInAYear).toFixed(2)
 
