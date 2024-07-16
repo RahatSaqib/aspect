@@ -78,11 +78,13 @@ const getResultsToUpdateInRange = async (knex, assayIds, partnerId, minDeviceLog
       const customFieldsData = await getCustomFieldsFromPayload(payload.result, countryAbbreviation, partnerId, assayId)
       const additionalData = getAdditionalDataFromPayload(payload.result, potentialAssayIds)
 
+      const notesLegacyCustomFields = customParse(payload.result.notes)
+
       const baseResult = {
         ...existingResult,
         ...customFieldsData,
         resultData: deepMerge(resultData, { ...customFieldsData.resultData, ...additionalData }),
-        patientData: deepMerge(patientData, customFieldsData.patientData),
+        patientData: deepMerge(patientData, { ...notesLegacyCustomFields.patientData, ...customFieldsData.patientData }),
       }
 
       const transformedResult = {

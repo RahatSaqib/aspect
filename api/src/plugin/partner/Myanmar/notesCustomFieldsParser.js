@@ -1,7 +1,7 @@
 const startOfRegex = /^\s*/
 const separator = /(?:\s?,\s?)?/
 
-function customParse(notes) {
+function parseNotes(notes) {
   const expression = [
     startOfRegex,
     /(?<age>\d{1,2})?/,
@@ -39,7 +39,7 @@ function customParse(notes) {
     patientData.hivStatus = hivStatusMap[hiv]
   }
   if (reason) {
-    patientData.MMTestReason = reason.toLocaleLowerCase() // Map to MMTestReason Custom fiedl.
+    patientData.MMTestReason = reason.toLocaleLowerCase() // TODO: Map to MMTestReason Custom field.
   }
   if (microscope) {
     patientData.MicroscopyResult = microscopeMap[microscope]
@@ -48,7 +48,7 @@ function customParse(notes) {
     patientData.SampleType = specimenMap[specimen]
   }
 
-  return {patientData}
+  return { patientData }
 }
 
 hivStatusMap = {
@@ -82,4 +82,4 @@ previousMap = {
   unk: 'Unknown',
 }
 
-module.exports = { customParse }
+module.exports = { parseNotes }
