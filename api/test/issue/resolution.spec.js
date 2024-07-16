@@ -26,7 +26,7 @@ const { assert } = chai
 
 describe('Issue Resolution', () => {
   describe.skip('For Myanmar', () => {
-    const partnerName = 'Myanmar'
+    const partnerName = 'MoHS'
     const countryAbbreviation = 'MM'
     let activeIssueStatus
     let resolvedIssueStatus

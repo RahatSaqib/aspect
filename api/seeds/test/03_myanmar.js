@@ -10,7 +10,7 @@ const { upsertJobFunction } = require('../common')
 const { rowsAsObject, getPermissionModules, seedNotificationTypes, seedIssues } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
-const { partner: myanmarPartner } = require('../myanmar/fixtures/partnerData')
+const { partner: myanmarPartner, plugin: myanmarPlugin } = require('../myanmar/fixtures/partnerData')
 const { seedDataCategory } = require('../dataCategoryLow')
 const { insertSite } = require('../../src/site/common/db')
 
@@ -704,7 +704,7 @@ async function seed(knex) {
 
   await seedIssues(knex, baseProps)
 
-  await seedDataCategory(knex, myanmarPartner.name, myanmarPartner.externalId)
+  await seedDataCategory(knex, myanmarPartner.externalId, myanmarPlugin)
 }
 
 async function getId(knex, table, externalId) {

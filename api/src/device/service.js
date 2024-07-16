@@ -1323,7 +1323,7 @@ async function getDeviceCalibrationsForReport(auth, query) {
       queryBuilder.on('d.id', 'dm.deviceId').andOn('dm.current', 1)
     })
     .modify(sortPageParams, query, 'name')
-    .distinct([
+    .select([
       ..._.filter(
         getSelectListFields(userTimeOffset),
         /**
@@ -1338,6 +1338,7 @@ async function getDeviceCalibrationsForReport(auth, query) {
       'd.serial',
       'dm.contextDate as calibratedOn',
     ])
+    .groupBy(['d.id', 'd.serial'])
 
   // return result when both queries are finished
   const [{ count: total }, data] = await Promise.all([getCount, getItems])

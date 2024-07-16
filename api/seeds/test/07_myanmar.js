@@ -42,7 +42,7 @@ async function seed(knex) {
       htmlBody: 'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })
 
-  const { id: partnerId } = await knex('Partner').where({ name: 'Myanmar' }).first()
+  const { id: partnerId } = await knex('Partner').where({ name: 'MoHS' }).first()
 
   await knex('IssueEscalationTrigger')
     .update({
@@ -81,7 +81,7 @@ async function seed(knex) {
       `irt.resolutionConditions->"$.evaluationParameter" = './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql'`
     )
     .andWhere({
-      'p.name': 'Myanmar',
+      'p.name': 'MoHS',
       'it.externalId': 'DeviceNoResults',
     })
     .first()
