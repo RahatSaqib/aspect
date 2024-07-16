@@ -201,7 +201,7 @@ async function seedStockIssues(knex) {
     dueDaysInventoryStockExpiring: 30,
   })
 
-  const { id: partnerId } = await knex('Partner').where({ externalId: 'myanmar' }).first()
+  const { id: partnerId } = await knex('Partner').where({ externalId: 'mohs' }).first()
 
   const now = new Date()
   const auditFields = {
@@ -2037,7 +2037,7 @@ async function seedIssues(
   { partnerId, pluginName, auditFields, issueTypeBlacklist = [], issueTypeWhitelist = [] }
 ) {
   await seedStockIssues(knex)
-  await seedStockIssuesUpdate(knex, 'myanmar')
+  await seedStockIssuesUpdate(knex, 'mohs')
   await seedUnknownErrorsIssue(knex, { partnerId, auditFields })
   await seedIssueEventTriggersForPartner(knex, partnerId, {
     issueTypeWhitelist,
