@@ -1,6 +1,10 @@
 module.exports = require('../utils').seed(seed, __filename)
-const { times } = require('lodash')
-const { notificationTypeCategoryToId, issueTypeToId, reportToId, jobFunctionToId } = require('../../src/shared/dictionary')
+const {
+  notificationTypeCategoryToId,
+  issueTypeToId,
+  reportToId,
+  jobFunctionToId,
+} = require('../../src/shared/dictionary')
 
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner').where({ externalId: 'MoHS' }).first('id')
@@ -9,26 +13,50 @@ async function seed(knex) {
 
   const notificationDefs = await knex(sourceTable).select()
 
-  for (let ndef of notificationDefs) {
+  for (const ndef of notificationDefs) {
+    // eslint-disable-next-line no-await-in-loop
     const notificationTypeCategoryId = await notificationTypeCategoryToId(ndef.notificationTypeCategory)
-
+    // eslint-disable-next-line no-await-in-loop
     const issueTypeId = await issueTypeToId(ndef.issueType)
     if (ndef.issueType && !issueTypeId) {
-      await logError(knex, 'IssueType', ndef.issueType, `No IssueType in target db with source IssueType externalId. Notification (${ndef.name}) has been omitted.`)
+      // eslint-disable-next-line no-await-in-loop
+      await logError(
+        knex,
+        'IssueType',
+        ndef.issueType,
+        `No IssueType in target db with source IssueType externalId. Notification (${ndef.name}) has been omitted.`
+      )
+      // eslint-disable-next-line no-continue
       continue
     }
-
+    // eslint-disable-next-line no-await-in-loop
     const reportId = await reportToId(ndef.report)
     if (ndef.report && !reportId) {
-      await logError(knex, 'Report', ndef.report, `No Report in target db with source Report externalId. Notification (${ndef.name}) has been omitted.`)
+      // eslint-disable-next-line no-await-in-loop
+      await logError(
+        knex,
+        'Report',
+        ndef.report,
+        `No Report in target db with source Report externalId. Notification (${ndef.name}) has been omitted.`
+      )
+      // eslint-disable-next-line no-continue
       continue
     }
+    // eslint-disable-next-line no-await-in-loop
     const jobFunctionId = await jobFunctionToId(ndef.jobFunction)
     if (ndef.jobFunction && !jobFunctionId) {
-      await logError(knex, 'JobFunction', ndef.jobFunction, `No JobFunction in target db with source JobFunction externalId. Notification (${ndef.name}) has been omitted.`)
+      // eslint-disable-next-line no-await-in-loop
+      await logError(
+        knex,
+        'JobFunction',
+        ndef.jobFunction,
+        `No JobFunction in target db with source JobFunction externalId. Notification (${ndef.name}) has been omitted.`
+      )
+      // eslint-disable-next-line no-continue
       continue
     }
 
+    // eslint-disable-next-line no-await-in-loop
     const messageTypeId = await createMessageType(knex, ndef)
 
     const notificationType = {
@@ -52,17 +80,18 @@ async function seed(knex) {
     }
 
     if (ndef.filterCondition) {
+      // eslint-disable-next-line no-await-in-loop
       const mappedFilterCondition = await preprocessFilterConditions(knex, ndef.name, JSON.parse(ndef.filterCondition))
       notificationType.filterCondition = mappedFilterCondition
     }
-
+    // eslint-disable-next-line no-await-in-loop
     await knex('NotificationType').insert(notificationType)
   }
 }
 
 async function createMessageType(knex, ndef) {
   const messageType = {
-    messageSeverityId: ndef.messageSeverityId
+    messageSeverityId: ndef.messageSeverityId,
   }
   if (ndef.alertMessage) {
     const alertTemplate = {
@@ -122,7 +151,9 @@ async function createMessageType(knex, ndef) {
     const [pushNotificationTemplateId] = await knex('PushNotificationTemplate').insert(pushNotificationTemplate)
     messageType.pushNotificationTemplateId = pushNotificationTemplateId
   }
-  const { id: messageSeverityId } = await knex('MessageSeverity').where({ externalId: ndef.messageSeverity }).first('id')
+  const { id: messageSeverityId } = await knex('MessageSeverity')
+    .where({ externalId: ndef.messageSeverity })
+    .first('id')
   messageType.messageSeverityId = messageSeverityId
 
   // Insert NotificationType
@@ -132,14 +163,22 @@ async function createMessageType(knex, ndef) {
 
 async function preprocessFilterConditions(knex, notificationName, filterCondition) {
   if (filterCondition.jobFunctions) {
-    let validJobFunctions = []
-    for (let jf of filterCondition.jobFunctions) {
-      const { externalId: jobFunctionExternalId } = await knex("mig_JobFunction").where("id", jf.jobFunctionId).first()
+    const validJobFunctions = []
+    for (const jf of filterCondition.jobFunctions) {
+      // eslint-disable-next-line no-await-in-loop
+      const { externalId: jobFunctionExternalId } = await knex('mig_JobFunction').where('id', jf.jobFunctionId).first()
+      // eslint-disable-next-line no-await-in-loop
       jf.jobFunctionId = await jobFunctionToId(jobFunctionExternalId)
       if (jf.jobFunctionId) {
         validJobFunctions.push(jf)
       } else {
-        await logError(knex, 'JobFunction', jf.jobFunctionId, `No JobFunction in target db with source JobFunction externalId.(${jobFunctionExternalId}) JobFunction has been omitted for '${notificationName}'.`)
+        // eslint-disable-next-line no-await-in-loop
+        await logError(
+          knex,
+          'JobFunction',
+          jf.jobFunctionId,
+          `No JobFunction in target db with source JobFunction externalId.(${jobFunctionExternalId}) JobFunction has been omitted for '${notificationName}'.`
+        )
       }
       filterCondition.jobFunctions = validJobFunctions
     }
@@ -148,12 +187,19 @@ async function preprocessFilterConditions(knex, notificationName, filterConditio
   if (filterCondition.persons) {
     const validPersons = []
     for (const personRecipient of filterCondition.persons) {
+      // eslint-disable-next-line no-await-in-loop
       const targetPerson = await getLastLoggedInPersonWithSameContactInfo(knex, personRecipient.personId)
       if (targetPerson) {
         personRecipient.personId = targetPerson.id
         validPersons.push(personRecipient)
       } else {
-        await logError(knex, 'Person', personRecipient.personId, `No Person in target db with source Person email or cell. Recipient (${personRecipient.name}) has been omitted for '${notificationName}'.`)
+        // eslint-disable-next-line no-await-in-loop
+        await logError(
+          knex,
+          'Person',
+          personRecipient.personId,
+          `No Person in target db with source Person email or cell. Recipient (${personRecipient.name}) has been omitted for '${notificationName}'.`
+        )
       }
     }
     filterCondition.persons = validPersons
@@ -162,27 +208,23 @@ async function preprocessFilterConditions(knex, notificationName, filterConditio
 }
 
 async function logError(knex, sourceTable, sourceValue, message) {
-  await knex('mig_Error')
-    .insert({
-      sourceTable,
-      sourceValue,
-      message,
-      timestamp: new Date()
-    })
+  await knex('mig_Error').insert({
+    sourceTable,
+    sourceValue,
+    message,
+    timestamp: new Date(),
+  })
 }
 
 async function getLastLoggedInPersonWithSameContactInfo(knex, recipientPersonId) {
   let targetPerson = null
-  const sourcePerson = await knex("mig_Person")
-    .where('id', recipientPersonId)
-    .first()
+  const sourcePerson = await knex('mig_Person').where('id', recipientPersonId).first()
   if (sourcePerson) {
     targetPerson = await knex('Person as p')
       .leftJoin('User as u', 'u.id', 'p.userId')
       .whereNull('disabledOn')
       .andWhere(function () {
-        this.where({ email: sourcePerson.email })
-          .orWhere({ cell: sourcePerson.cell })
+        this.where({ email: sourcePerson.email }).orWhere({ cell: sourcePerson.cell })
       })
       .orderBy('lastLogin', 'desc')
       .first('p.id as id')
