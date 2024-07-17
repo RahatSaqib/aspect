@@ -1,6 +1,10 @@
 const startOfRegex = /^\s*/
 const separator = /(?:\s?,\s?)?/
 
+// Ad-hoc parser for legacy custom fields in Myanmar using 'result.notes' field.
+// see: https://github.com/SystemOneId/GxAlert/blob/b3c327a9199cfb1985750a53cd326706ece74253/Utilities/Parsing.cs#L936 
+// for the original implementation in GxAlert and https://github.com/SystemOneId/aspect/commit/4cfe1068154618ac9597b2d7ab4de07cb63182dd
+// for the original implementation in Aspect (never released to production).
 function parseNotes(notes) {
   const expression = [
     startOfRegex,
@@ -27,7 +31,7 @@ function parseNotes(notes) {
   const { age, gender, previous, hiv, reason, microscope, specimen } = match.groups
 
   if (age) {
-    patientData.PatientAge = age
+    patientData.PatientAge = +age
   }
   if (gender) {
     patientData.PatientGender = genderMap[gender]
