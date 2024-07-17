@@ -5,7 +5,7 @@ const { parseNotes } = require('../../src/plugin/partner/Myanmar/notesCustomFiel
 
 async function seed(knex) {
   const resultsToUpdate = []
-  const xdrAssayId = await assayToId('GxMtbXdr');
+  const xdrAssayId = await assayToId('GxMtbXdr')
   const xdrResults = await knex('Result as r')
     .where('r.assayId', xdrAssayId)
     .select('*')
@@ -15,5 +15,5 @@ async function seed(knex) {
     result.patientData = { ...JSON.parse(result.patientData), ...notesLegacyCustomFields.patientData }
     resultsToUpdate.push(result)
   }
-  await knex('Result').insert(resultsToUpdate).onConflict('id').merge();
+  await knex('Result').insert(resultsToUpdate).onConflict('id').merge()
 }

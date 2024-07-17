@@ -2,7 +2,7 @@ const startOfRegex = /^\s*/
 const separator = /(?:\s?,\s?)?/
 
 // Ad-hoc parser for legacy custom fields in Myanmar using 'result.notes' field.
-// see: https://github.com/SystemOneId/GxAlert/blob/b3c327a9199cfb1985750a53cd326706ece74253/Utilities/Parsing.cs#L936 
+// see: https://github.com/SystemOneId/GxAlert/blob/b3c327a9199cfb1985750a53cd326706ece74253/Utilities/Parsing.cs#L936
 // for the original implementation in GxAlert and https://github.com/SystemOneId/aspect/commit/4cfe1068154618ac9597b2d7ab4de07cb63182dd
 // for the original implementation in Aspect (never released to production).
 function parseNotes(notes) {
@@ -11,16 +11,17 @@ function parseNotes(notes) {
     /(?<age>\d{1,2})?/,
     /(?<gender>m|f)?/,
     /(?<previous>yes|no|unk)?/,
-    /(?<hiv>hiv\+|hiv\-|hiv\?)?/,
+    /(?<hiv>hiv\+|hiv-|hiv\?)?/,
     /(?<reason>dx|fu|mdr|dm|con|xray)?/,
     /(?<reason2>dx|fu|mdr|dm|con|xray)?/,
     /(?:dx|fu|mdr|dm|con|xray)?/, // discard eventually more reason
     /(?<microscopy>pos|neg|nd)?/,
     /(?<specimen>spu|csf|gl|ln|oth)?/,
-  ].map((r) => r.source)
+  ]
+    .map(r => r.source)
     .join(separator.source)
 
-  const rexp = new RegExp(expression, "gi")
+  const rexp = new RegExp(expression, 'gi')
 
   const match = rexp.exec(notes)
 
@@ -62,24 +63,24 @@ function parseNotes(notes) {
   return { patientData }
 }
 
-hivStatusMap = {
+const hivStatusMap = {
   'hiv+': 'Positive',
   'hiv-': 'Negative',
   'hiv?': 'HIV Unknown',
 }
 
-microscopyMap = {
+const microscopyMap = {
   pos: 'Smear Positive',
   neg: 'Smear Negative',
   nd: 'Not Done',
 }
 
-genderMap = {
+const genderMap = {
   m: 'M',
   f: 'F',
 }
 
-specimenMap = {
+const specimenMap = {
   spu: 'Sputum',
   csf: 'CSF',
   gl: 'Gastric Lavage',
@@ -87,7 +88,7 @@ specimenMap = {
   oth: 'Other',
 }
 
-previousMap = {
+const previousMap = {
   yes: 'Previously Treated',
   no: 'No Previous Treatment',
   unk: 'Unknown',
