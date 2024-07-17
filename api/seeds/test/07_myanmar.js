@@ -270,5 +270,5 @@ async function seed(knex) {
   })
 
   // correction requested in SD-769
-  await updateDataCategoryNotificationTypeForRO(knex, partnerMyanmar.name, partnerMyanmar.externalId)
+  await updateDataCategoryNotificationTypeForRO(knex, partnerMyanmar.externalId, 'deprecatedMyanmar')
 }
