@@ -1,7 +1,8 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { sampleTypeToId, deviceTypeToPlugin } = require('../../../shared/dictionary')
-
+// This plugin implementation wheren't maintained since before Aspect reach production level, it's now deprecated
+// and replaced by the new implementation in transformMergeResultPayload.js
 async function transformMergeResultPayload(context) {
   const { knex, deviceType } = context
   const deviceTypePluginName = await deviceTypeToPlugin(deviceType)
