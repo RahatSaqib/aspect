@@ -13,7 +13,9 @@ function parseNotes(notes) {
     /(?<previous>yes|no|unk)?/,
     /(?<hiv>hiv\+|hiv\-|hiv\?)?/,
     /(?<reason>dx|fu|mdr|dm|con|xray)?/,
-    /(?<microscope>pos|neg|nd)?/,
+    /(?<reason2>dx|fu|mdr|dm|con|xray)?/,
+    /(?:dx|fu|mdr|dm|con|xray)?/, // discard eventually more reason
+    /(?<microscopy>pos|neg|nd)?/,
     /(?<specimen>spu|csf|gl|ln|oth)?/,
   ].map((r) => r.source)
     .join(separator.source)
@@ -28,7 +30,7 @@ function parseNotes(notes) {
 
   const patientData = {}
 
-  const { age, gender, previous, hiv, reason, microscope, specimen } = match.groups
+  const { age, gender, previous, hiv, reason, microscopy, specimen } = match.groups
 
   if (age) {
     patientData.PatientAge = +age
@@ -43,10 +45,15 @@ function parseNotes(notes) {
     patientData.HivStatus = hivStatusMap[hiv]
   }
   if (reason) {
-    patientData.MMTestReason = reason.toLocaleLowerCase() // TODO: Map to MMTestReason Custom field.
+    // concatenate reason and reason2 with a comma if there are 2 reasons
+    if (match.groups.reason2) {
+      patientData.MMTestReason = `${reason},${match.groups.reason2}`.toLocaleLowerCase() // TODO: Map to MMTestReason Custom field.
+    } else {
+      patientData.MMTestReason = reason.toLocaleLowerCase() // TODO: Map to MMTestReason Custom field.
+    }
   }
-  if (microscope) {
-    patientData.MicroscopyResult = microscopeMap[microscope]
+  if (microscopy) {
+    patientData.MicroscopyResult = microscopyMap[microscopy]
   }
   if (specimen) {
     patientData.SampleType = specimenMap[specimen]
@@ -61,7 +68,7 @@ hivStatusMap = {
   'hiv?': 'HIV Unknown',
 }
 
-microscopeMap = {
+microscopyMap = {
   pos: 'Smear Positive',
   neg: 'Smear Negative',
   nd: 'Not Done',
