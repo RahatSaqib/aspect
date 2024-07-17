@@ -22,14 +22,12 @@ function parseNotes(notes) {
     .join(separator.source)
 
   const rexp = new RegExp(expression, 'gi')
-
   const match = rexp.exec(notes)
+  const patientData = {}
 
   if (!match) {
-    return {}
+    return { patientData }
   }
-
-  const patientData = {}
 
   const { age, gender, previous, hiv, reason, microscopy, specimen } = match.groups
 

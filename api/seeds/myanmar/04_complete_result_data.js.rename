@@ -12,6 +12,7 @@ const { assayNameToExternalId } = require('../../src/shared/assayNameToExternalI
 const { deepMerge } = require('../../src/shared/json')
 const { allAssayToId } = require('../../src/shared/dictionary')
 const { mergeResultWithPayload } = require('../../src/result/common/logic')
+const { parseNotes } = require('../../src/plugin/partner/Myanmar/notesCustomFieldsParser')
 
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
@@ -78,7 +79,7 @@ const getResultsToUpdateInRange = async (knex, assayIds, partnerId, minDeviceLog
       const customFieldsData = await getCustomFieldsFromPayload(payload.result, countryAbbreviation, partnerId, assayId)
       const additionalData = getAdditionalDataFromPayload(payload.result, potentialAssayIds)
 
-      const notesLegacyCustomFields = customParse(payload.result.notes)
+      const notesLegacyCustomFields = parseNotes(payload.result.notes)
 
       const baseResult = {
         ...existingResult,
