@@ -1,0 +1,19 @@
+module.exports = require('../utils').seed(seed, __filename)
+
+const { assayToId } = require('../../src/shared/dictionary')
+const { parseNotes } = require('../../src/plugin/partner/Myanmar/notesCustomFieldsParser')
+
+async function seed(knex) {
+  const resultsToUpdate = []
+  const xdrAssayId = await assayToId('GxMtbXdr');
+  const xdrResults = await knex('Result as r')
+    .where('r.assayId', xdrAssayId)
+    .select('*')
+
+  for (const result of xdrResults) {
+    const notesLegacyCustomFields = parseNotes(result.notes)
+    result.patientData = { ...JSON.parse(result.patientData), ...notesLegacyCustomFields.patientData }
+    resultsToUpdate.push(result)
+  }
+  await knex('Result').insert(resultsToUpdate).onConflict('id').merge();
+}

@@ -7,7 +7,7 @@ function parseNotes(notes) {
     /(?<age>\d{1,2})?/,
     /(?<gender>m|f)?/,
     /(?<previous>yes|no|unk)?/,
-    /(?<hiv>hiv\+|hiv\-|hiv?)?/,
+    /(?<hiv>hiv\+|hiv\-|hiv\?)?/,
     /(?<reason>dx|fu|mdr|dm|con|xray)?/,
     /(?<microscope>pos|neg|nd)?/,
     /(?<specimen>spu|csf|gl|ln|oth)?/,
@@ -36,7 +36,7 @@ function parseNotes(notes) {
     patientData.PreviousTreatmentHistory = previousMap[previous]
   }
   if (hiv) {
-    patientData.hivStatus = hivStatusMap[hiv]
+    patientData.HivStatus = hivStatusMap[hiv]
   }
   if (reason) {
     patientData.MMTestReason = reason.toLocaleLowerCase() // TODO: Map to MMTestReason Custom field.
