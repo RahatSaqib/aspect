@@ -74,9 +74,9 @@ const allResults = {
 }
 const criticalErrorsByDevice = {
   name: 'Critical Errors By Device',
-  description: 'Includes a list of GeneXpert devices that had at least 2 critical errors',
+  description: 'Includes a list of GeneXpert devices that had at least 1 critical error',
   i18nKey: 'Critical_Errors_By_Device',
-  i18nKeyDescription: 'Critical_Errors_By_Device_description',
+  i18nKeyDescription: 'Critical_Errors_by_Device_description',
   externalId: 'critical_errors_by_device',
   fileName: 'DevicesWithErrors',
   availableForNotification: 1,

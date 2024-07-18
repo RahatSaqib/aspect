@@ -1,7 +1,6 @@
 module.exports = {
   recursive: true,
-  reporter: 'mocha-multi',
-  'reporter-option': ['spec=-', 'mocha-bamboo-reporter=-'],
+  'reporter-option': ['spec=-'],
   extension: ['.spec.js'],
   file: 'test/utils/contractTestSetup.js',
   timeout: 60000,

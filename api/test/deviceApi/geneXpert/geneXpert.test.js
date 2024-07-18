@@ -1,6 +1,9 @@
 const { assert } = require('chai')
 const _ = require('lodash')
-const { getResultCategoriesHivVL, getResultCategories, getVLCopies } = require('../../../src/plugin/deviceType/gxUtils')
+const {
+  getResultCategoriesHivVL,
+  getVLCopies,
+} = require('../../../src/plugin/deviceType/GxConnect/resultCategories/resultCategoriesMapping')
 const {
   detectedLess1000,
   detectedMoreThan1000,
@@ -12,6 +15,7 @@ const {
   badCategorizedResults,
   badCategorizedResults2,
 } = require('./HIV_VL_payload')
+const { getResultCategories } = require('../../../src/plugin/deviceType/gxUtils')
 
 describe('Extracting data from Result Text HIV VL', () => {
   it('it extract the number of copies and categorizes it', () => {

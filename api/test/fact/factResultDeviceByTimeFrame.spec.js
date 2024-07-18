@@ -79,7 +79,7 @@ const now = new Date()
 
 const USER_LU_NAME = 'myanmar_lab1'
 
-const partnerName = 'Myanmar'
+const partnerName = 'MoHS'
 const countryAbbreviation = 'MM'
 
 describe('Device result calculation test', function () {
