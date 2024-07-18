@@ -12,6 +12,7 @@ import LocalStorage from '../oldComponents/LocalStorage'
 import store from '../store/store'
 import getTheme from '../theme'
 import AnalyticsProvider from './AnalyticsProvider'
+import RecordPageViewProvider from './RecordPageViewProvider'
 import AuthProvider from './AuthProvider'
 import FilterProvider from './FilterProvider'
 import I18nProvider from './I18nProvider'
@@ -40,7 +41,9 @@ const AppWithProviders = ({ children }) => {
               <BrowserRouter>
                 <AuthProvider>
                   <FilterProvider>
-                    <AnalyticsProvider>{children}</AnalyticsProvider>
+                    <AnalyticsProvider>
+                      <RecordPageViewProvider>{children}</RecordPageViewProvider>
+                    </AnalyticsProvider>
                   </FilterProvider>
                 </AuthProvider>
               </BrowserRouter>
