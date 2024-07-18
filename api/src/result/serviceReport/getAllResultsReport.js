@@ -68,6 +68,7 @@ module.exports = async (auth, query) => {
     { key: 'caseExternalId', header: 'Case ID' },
     { key: 'resultCategoryGroup', header: 'Result' },
     { key: 'resultData.resultText', header: 'Raw Result' },
+    { key: `mtbResistance`, header: 'MTB' }, // mtbResistance is defined in func dataSelector()
     ...(dataIncludesResistances
       ? XDR_RESISTANCES.map(name => ({ key: `resultData.allResistances.${name}`, header: name }))
       : []),
@@ -117,16 +118,19 @@ module.exports = async (auth, query) => {
     ],
     dataSelector: (
       dataRow // if you need to transform your dataset to another format, you should pass the transformation function to avoid iterate twice the datasource.
-    ) =>
-      require('flat')({
+    ) => {
+      const { resultData, mtbResistance } = humanizeResistances(dataRow, dataRow.assayId === xdrAssayId)
+      return require('flat')({
         ...dataRow,
+        mtbResistance,
         patientData: JSON.parse(dataRow.patientData),
-        resultData: dataRow.assayId === xdrAssayId ? humanizeResistancesTexts(dataRow.resultData) : dataRow.resultData,
+        resultData,
         formData: JSON.parse(dataRow.formData),
         errorCode: _.replace(dataRow.errorCode || '', /(\r\n|\n|\r)/gm, ''),
         errorNotes: _.replace(dataRow.errorNotes || '', /(\r\n|\n|\r)/gm, ''),
         notes: _.replace(dataRow.notes || '', /(\r\n|\n|\r)/gm, ''),
-      }),
+      })
+    },
     // TODO: use i18n string, because `exportData()` uses locale file templates with all labels translated
     defaultNoDataMessage: 'No data',
   }
@@ -292,33 +296,49 @@ const queryIncludesXdr = (query, xdrAssayId) => {
   )
 }
 
-const humanizeResistancesTexts = resultDataString => {
-  // Hack to present a little bit clearer texts due to the lack of i18n handling in backend:
-  const resultData = JSON.parse(resultDataString)
-  if (resultData.allResistances) {
-    /**
-     * if XDR was Detected (i.e. is in `detectedResistance` array), then add it's high/low/veryLow
-     * details to the value.
-     * --> Check helper func `checkResistance` in api/src/result/serviceReportBangladesh/index.js
-     * to see how we handle this addition in the query.
-     */
-    const { resultText, detectedResistance } = resultData
-    XDR_RESISTANCES.forEach(resistance => {
-      let resistanceValue = startCase(resultData.allResistances[resistance])
-      if (detectedResistance?.includes(resistance)) {
-        if (resultText?.includes(`High ${resistance} Resistance @label_result_detected`)) {
-          resistanceValue = `${resistanceValue}, High Resistance`
-        } else if (resultText?.includes(`Very Low ${resistance} Resistance @label_result_detected`)) {
-          resistanceValue = `${resistanceValue}, Very Low Resistance`
-        } else if (resultText?.includes(`Low ${resistance} Resistance @label_result_detected`)) {
-          resistanceValue = `${resistanceValue}, Low Resistance`
-        }
-      }
-
-      resultData.allResistances[resistance] = resistanceValue
-    })
+const getResistanceValue = (resistance, resultText, defaultValue) => {
+  if (resultText?.includes(`High ${resistance} Resistance @label_result_detected`)) {
+    return `Detected, High Resistance`
   }
-  return resultData
+  if (resultText?.includes(`Very Low ${resistance} Resistance @label_result_detected`)) {
+    return `Detected, Very Low Resistance`
+  }
+  if (resultText?.includes(`Low ${resistance} Resistance @label_result_detected`)) {
+    return `Detected, Low Resistance`
+  }
+  if (resultText?.includes(`${resistance} Resistance @label_result_indeterminate`)) {
+    return `Indeterminate`
+  }
+  return defaultValue
+}
+
+const humanizeResistances = (dataRow, isMtbXdr) => {
+  let { resultData, resultCategoryGroup: mtbResistance } = dataRow
+  // mtbResistance: dataRow.assayId === xdrAssayId ? dataRow.resultCategoryGroup : dataRow.resultCategoryGroup
+  if (isMtbXdr) {
+    resultData = JSON.parse(resultData)
+    const { resultText } = resultData
+    // Hack to present a little bit clearer texts due to the lack of i18n handling in backend:
+    if (resultData.allResistances) {
+      /**
+       * if XDR was Detected (i.e. is in `detectedResistance` array), then add it's high/low/veryLow
+       * details to the value.
+       * --> Check helper func `checkResistance` in api/src/result/serviceReportBangladesh/index.js
+       * to see how we handle this addition in the query.
+       */
+      const { detectedResistance } = resultData
+      XDR_RESISTANCES.forEach(resistance => {
+        let resistanceValue = startCase(resultData.allResistances[resistance])
+        if (detectedResistance?.includes(resistance)) {
+          resistanceValue = getResistanceValue(resistance, resultText, resistanceValue)
+        }
+
+        resultData.allResistances[resistance] = resistanceValue
+      })
+    }
+    mtbResistance = getResistanceValue('MTB', resultText, 'Not Detected')
+  }
+  return { resultData, mtbResistance }
 }
 
 async function getColumnsFromCustomFields({ partnerId, assayId }) {
