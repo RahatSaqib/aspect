@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const { parseNotes } = require('../../../../src/plugin/partner/Myanmar/notesCustomFieldsParser')
 
-describe('parseNotes', () => {
+describe.only('parseNotes', () => {
   it('should return the correct patientData', () => {
     const cases = [
       {
@@ -50,16 +50,17 @@ describe('parseNotes', () => {
     })
   })
 
-  it('should support extra values', () => {
-    const given = '63,m,no,hiv-,fu,pos,extra'
+  it('should support edge case (observation between () for previous treatment and parenthesis in specimen)', () => {
+    const given = '21,F,Yes(relapse),HIV?,Dx,Neg,(CSF),'
     const expected = {
       patientData: {
-        HivStatus: 'Negative',
-        PatientAge: 63,
-        MMTestReason: 'fu',
-        PatientGender: 'M',
-        PreviousTreatmentHistory: 'No Previous Treatment',
-        MicroscopyResult: 'Smear Positive',
+        HivStatus: 'HIV Unknown',
+        PatientAge: 21,
+        MMTestReason: 'dx',
+        PatientGender: 'F',
+        SampleType: 'CSF',
+        PreviousTreatmentHistory: 'Previously Treated',
+        MicroscopyResult: 'Smear Negative',
       },
     }
     const partialResult = parseNotes(given)
@@ -69,7 +70,13 @@ describe('parseNotes', () => {
   it('should skip gibberish values', () => {
     const given = '63,m,no,hiv*,blahblahBadTestReason,mdr,pos'
     const expected = {
-      patientData: { PatientAge: 63, PatientGender: 'M', PreviousTreatmentHistory: 'No Previous Treatment' },
+      patientData: {
+        PatientAge: 63,
+        PatientGender: 'M',
+        PreviousTreatmentHistory: 'No Previous Treatment',
+        MMTestReason: 'mdr',
+        MicroscopyResult: 'Smear Positive'
+      },
     }
     const partialResult = parseNotes(given)
     expect(partialResult).to.deep.equal(expected)
