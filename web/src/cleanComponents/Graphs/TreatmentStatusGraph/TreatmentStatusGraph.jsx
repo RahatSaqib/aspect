@@ -48,7 +48,7 @@ const getWhitelistedAssays = ({ assays, assaysFromState }) => {
 
 const endPointParams = {
   minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
-  maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd'),
+  maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true),
 }
 
 const TreatmentStatusGraph = ({ assaysFromState }) => {
@@ -98,7 +98,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
       )
       const numberOfMonthsInAYear = 12
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const confirmed = pieData.find(elem => (elem.id = 'Confirmed')) || {}
+      const confirmed = pieData.find(elem => elem.id === 'Confirmed') || {}
 
       const pieAvg = (confirmed.value / numberOfMonthsInAYear).toFixed(2)
       const pie = pieData.map(d => ({

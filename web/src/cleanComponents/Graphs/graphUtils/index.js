@@ -217,7 +217,7 @@ const filterColour = (valueId, graphId) => {
   return graphColorMap.filter(color => color.externalId === colorValue || color.id === 999)[0].color
 }
 
-const getTimePeriod = (cnt, period, dateFormat) => {
+const getTimePeriod = (cnt, period, dateFormat, end) => {
   let timePeriod
   const dateNow = new Date()
   switch (true) {
@@ -228,12 +228,13 @@ const getTimePeriod = (cnt, period, dateFormat) => {
       timePeriod = subDays(dateNow, cnt)
       break
     case period === 'months':
-      if (cnt === 12) {
-        timePeriod = startOfMonthUTC(subMonths(dateNow, cnt).toISOString())
-      } else if (cnt === 1) {
+      if (end) {
         timePeriod = endOfMonthUTC(subMonths(dateNow, cnt).toISOString())
+      } else {
+        timePeriod = startOfMonthUTC(subMonths(dateNow, cnt).toISOString())
       }
       break
+    case period === 'months-end':
     case period === 'years':
       timePeriod = startOfYearsAgo(cnt)
       break

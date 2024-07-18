@@ -28,7 +28,7 @@ const endPointParams = [
   { groupBy: 'month' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true) },
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 

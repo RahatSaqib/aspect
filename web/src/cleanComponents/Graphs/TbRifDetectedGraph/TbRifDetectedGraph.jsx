@@ -29,7 +29,7 @@ const endPointParams = [
   { groupBy: 'resultCategory2' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true) },
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
@@ -89,7 +89,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
       )
       const numberOfMonthsInAYear = 12
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const detected = pieData.find(elem => (elem.id = 'Detected')) || {}
+      const detected = pieData.find(elem => elem.id === 'Detected') || {}
 
       const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(2)
 
