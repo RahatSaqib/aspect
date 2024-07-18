@@ -98,7 +98,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
       )
       const numberOfMonthsInAYear = 12
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const confirmed = pieData.find(elem => (elem.id = 'Detected')) || {}
+      const confirmed = pieData.find(elem => (elem.id = 'Confirmed')) || {}
 
       const pieAvg = (confirmed.value / numberOfMonthsInAYear).toFixed(2)
       const pie = pieData.map(d => ({
