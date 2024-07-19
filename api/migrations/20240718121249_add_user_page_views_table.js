@@ -1,5 +1,5 @@
-exports.up = function (knex) {
-  return knex.schema.createTable('UserPageViews', function (table) {
+exports.up = async function (knex) {
+  await knex.schema.createTable('UserPageViews', function (table) {
     table.increments('id').primary()
     table.integer('personId').unsigned().notNullable()
     table.string('timeframe', 10).notNullable()
@@ -8,6 +8,6 @@ exports.up = function (knex) {
   })
 }
 
-exports.down = function (knex) {
-  return knex.schema.dropTableIfExists('UserPageViews')
+exports.down = async function (knex) {
+  await knex.schema.dropTableIfExists('UserPageViews')
 }
