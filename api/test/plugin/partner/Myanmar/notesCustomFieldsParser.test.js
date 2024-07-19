@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const { parseNotes } = require('../../../../src/plugin/partner/Myanmar/notesCustomFieldsParser')
 
-describe.only('parseNotes', () => {
+describe('parseNotes', () => {
   it('should return the correct patientData', () => {
     const cases = [
       {
@@ -75,7 +75,7 @@ describe.only('parseNotes', () => {
         PatientGender: 'M',
         PreviousTreatmentHistory: 'No Previous Treatment',
         MMTestReason: 'fu,mdr', // The reasons don't support non-exact matches, as we need to limit the lookup to the first comma to prevent match false positives at the end of the text (like in the name the users use to put at the end)
-        MicroscopyResult: 'Smear Positive'
+        MicroscopyResult: 'Smear Positive',
       },
     }
     const partialResult = parseNotes(given)

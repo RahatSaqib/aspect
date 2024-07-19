@@ -1,13 +1,7 @@
-const startOfRegex = /^\s*/
-// const separator = /(?:\s?,\s?)?/
-const separator = /(?:\s?,\s?)?/
-
-
 // Ad-hoc parser for legacy custom fields in Myanmar using 'result.notes' field.
 // see: https://github.com/SystemOneId/GxAlert/blob/b3c327a9199cfb1985750a53cd326706ece74253/Utilities/Parsing.cs#L936
 // for the original implementation in GxAlert and https://github.com/SystemOneId/aspect/commit/4cfe1068154618ac9597b2d7ab4de07cb63182dd
 // for the original implementation in Aspect (never released to production).
-
 
 function parseNotes(notes) {
   const patientData = {}
@@ -40,42 +34,30 @@ function parseNotes(notes) {
   return { patientData }
 }
 
-function getNextItem(vars, index) {
-  if (index + 1 >= vars.length) {
-    return { hasValue: false }
-  }
-  else {
-    const newIndex = index + 1
-    return { hasValue: true, lastIndex: newIndex, value: vars[newIndex] }
-  }
-}
-
 function getNotesValues(notes) {
   const regexs = [
-    { key: "age", expression: /^\d{1,2}/, transformation: (v) => +v },
-    { key: "gender", expression: /m|f|male|female/i },
-    { key: "previous", expression: /yes|no|unk/i },
-    { key: "hiv", expression: /hiv\+|hiv-|hiv\?/i },
+    { key: 'age', expression: /^\d{1,2}/, transformation: v => +v },
+    { key: 'gender', expression: /m|f|male|female/i },
+    { key: 'previous', expression: /yes|no|unk/i },
+    { key: 'hiv', expression: /hiv\+|hiv-|hiv\?/i },
     {
-      key: "reasons",
+      key: 'reasons',
       expression: /dx|fu|mdr|dm|con|xray(?=[^,]*$)/i,
       repetable: true,
     },
-    { key: "microscopy", expression: /pos|neg|nd/i },
-    { key: "specimen", expression: /spu|csf|gl|ln|oth/i },
+    { key: 'microscopy', expression: /pos|neg|nd/i },
+    { key: 'specimen', expression: /spu|csf|gl|ln|oth/i },
   ]
 
-  let acc = { text: notes, cur: {} }
+  const acc = { text: notes, cur: {} }
   let i = 0
   while (i < regexs.length) {
     const def = regexs[i]
-    const transform = def.transformation ?? ((v) => v)
-    while (acc.text.match(/^[\/,|]/)) {
+    const transform = def.transformation ?? (v => v)
+    while (acc.text.match(/^[/,|]/)) {
       acc.text = acc.text.slice(1)
     }
-    let match = def.repetable
-      ? acc.text.split(/[\/,|]/)[0].match(def.expression)
-      : acc.text.match(def.expression)
+    const match = def.repetable ? acc.text.split(/[/,|]/)[0].match(def.expression) : acc.text.match(def.expression)
     if (match) {
       acc.text = acc.text.substring(match.index + match[0].length)
       const value = transform(match[0].toLowerCase())
@@ -84,22 +66,23 @@ function getNotesValues(notes) {
         acc.cur[def.key].push(value)
       } else {
         acc.cur[def.key] = value
-        i++
+        i += 1
       }
     } else {
       if (!def.repetable) {
         acc.text = trimToSplitter(acc.text)
       }
-      i++
+      i += 1
     }
   }
   // console.log("\x1b[1;36m", "🚀 ➜ acc.cur:", acc.cur)
   return acc.cur
 }
+
 function trimToSplitter(text) {
-  const split = text.split(",")
+  const split = text.split(',')
   if (split.length > 1) {
-    return split.slice(1).join(",")
+    return split.slice(1).join(',')
   }
   return text
 }
