@@ -12,12 +12,12 @@ import LocalStorage from '../oldComponents/LocalStorage'
 import store from '../store/store'
 import getTheme from '../theme'
 import AnalyticsProvider from './AnalyticsProvider'
-import RecordPageViewProvider from './RecordPageViewProvider'
 import AuthProvider from './AuthProvider'
 import FilterProvider from './FilterProvider'
 import I18nProvider from './I18nProvider'
 import dateFNSLocales from './I18nProvider/dateFNSLocales'
 import QueryClientProvider from './QueryClientProvider'
+import RecordPageViewProvider from './RecordPageViewProvider'
 
 const jss = create({ ...jssPreset(), insertionPoint: 'insertion-point-jss' })
 
