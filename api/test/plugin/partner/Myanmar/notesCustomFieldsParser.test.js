@@ -68,13 +68,13 @@ describe.only('parseNotes', () => {
   })
 
   it('should skip gibberish values', () => {
-    const given = '63,m,no,hiv*,blahblahBadTestReason,mdr,pos'
+    const given = '63,m,no,blahblah--BadHIV,fu,mdr,pos'
     const expected = {
       patientData: {
         PatientAge: 63,
         PatientGender: 'M',
         PreviousTreatmentHistory: 'No Previous Treatment',
-        MMTestReason: 'mdr',
+        MMTestReason: 'fu,mdr', // The reasons don't support non-exact matches, as we need to limit the lookup to the first comma to prevent match false positives at the end of the text (like in the name the users use to put at the end)
         MicroscopyResult: 'Smear Positive'
       },
     }
@@ -84,6 +84,22 @@ describe.only('parseNotes', () => {
 
   it('should accept double reason values, and concatenate them with ","', () => {
     const given = '63,m,no,hiv-,fu,mdr,pos'
+    const expected = {
+      patientData: {
+        HivStatus: 'Negative',
+        PatientAge: 63,
+        PatientGender: 'M',
+        PreviousTreatmentHistory: 'No Previous Treatment',
+        MMTestReason: 'fu,mdr',
+        MicroscopyResult: 'Smear Positive',
+      },
+    }
+    const partialResult = parseNotes(given)
+    expect(partialResult).to.deep.equal(expected)
+  })
+
+  it('should accept values without separator', () => {
+    const given = '63,m,no,hiv-fu,mdr,pos'
     const expected = {
       patientData: {
         HivStatus: 'Negative',

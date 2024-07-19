@@ -51,78 +51,58 @@ function getNextItem(vars, index) {
 }
 
 function getNotesValues(notes) {
-  const values = {}
-  const vars = notes.split(',')
-  let item = getNextItem(vars, -1)
-  if (!item.hasValue) return values
+  const regexs = [
+    { key: "age", expression: /^\d{1,2}/, transformation: (v) => +v },
+    { key: "gender", expression: /m|f|male|female/i },
+    { key: "previous", expression: /yes|no|unk/i },
+    { key: "hiv", expression: /hiv\+|hiv-|hiv\?/i },
+    {
+      key: "reasons",
+      expression: /dx|fu|mdr|dm|con|xray(?=[^,]*$)/i,
+      repetable: true,
+    },
+    { key: "microscopy", expression: /pos|neg|nd/i },
+    { key: "specimen", expression: /spu|csf|gl|ln|oth/i },
+  ]
 
-  const ageValue = item.value
-  if (ageValue.match(/^\d{1,2}$/)) {
-    values.age = +ageValue
-  }
-
-  item = getNextItem(vars, item.lastIndex)
-  if (!item.hasValue) return values
-
-  const genderValue = item.value
-  if (genderValue.match(/m|f/i)) {
-    values.gender = genderValue.toLowerCase()
-  }
-
-  item = getNextItem(vars, item.lastIndex)
-  if (!item.hasValue) return values
-
-  const previousValue = item.value
-  const previousValueMatch = previousValue.match(/.*(?<previous>yes|no|unk).*/i)
-  if (previousValueMatch) {
-    values.previous = previousValueMatch.groups.previous.toLowerCase()
-  }
-
-  item = getNextItem(vars, item.lastIndex)
-  if (!item.hasValue) return values
-
-  const hivValue = item.value
-  if (hivValue.match(/.*(hiv\+|hiv-|hiv\?).*/i)) {
-    values.hiv = hivValue.toLowerCase()
-  }
-
-  const reasons = []
-
-  item = getNextItem(vars, item.lastIndex)
-  while (item.hasValue) {
-
-    const reasonMatch = item.value.match(/.*(?<reason>(dx|fu|mdr|dm|con|xray)).*/i)
-    if (reasonMatch) {
-      reasons.push(reasonMatch.groups.reason.toLowerCase())
+  let acc = { text: notes, cur: {} }
+  let i = 0
+  while (i < regexs.length) {
+    const def = regexs[i]
+    const transform = def.transformation ?? ((v) => v)
+    while (acc.text.match(/^[\/,|]/)) {
+      acc.text = acc.text.slice(1)
     }
-    else {
-      if (reasons.length > 0) {
-        values.reasons = reasons
-        break
+    let match = def.repetable
+      ? acc.text.split(/[\/,|]/)[0].match(def.expression)
+      : acc.text.match(def.expression)
+    if (match) {
+      acc.text = acc.text.substring(match.index + match[0].length)
+      const value = transform(match[0].toLowerCase())
+      if (def.repetable) {
+        acc.cur[def.key] = acc.cur[def.key] || []
+        acc.cur[def.key].push(value)
+      } else {
+        acc.cur[def.key] = value
+        i++
       }
+    } else {
+      if (!def.repetable) {
+        acc.text = trimToSplitter(acc.text)
+      }
+      i++
     }
-    item = getNextItem(vars, item.lastIndex)
   }
-
-  if (!item.hasValue) return values
-
-  const microscopyValue = item.value
-  const microscopyMatch = microscopyValue.match(/.*(?<microscopy>(pos|neg|nd)).*/i)
-  if (microscopyMatch) {
-    values.microscopy = microscopyMatch.groups.microscopy.toLowerCase()
-  }
-
-  item = getNextItem(vars, item.lastIndex)
-  if (!item.hasValue) return values
-
-  const specimenValue = item.value
-  const specimentMatch = specimenValue.match(/.*(?<specimen>(spu|csf|gl|ln|oth)).*/i)
-  if (specimentMatch) {
-    values.specimen = specimentMatch.groups.specimen.toLowerCase()
-  }
-  return values
+  // console.log("\x1b[1;36m", "🚀 ➜ acc.cur:", acc.cur)
+  return acc.cur
 }
-
+function trimToSplitter(text) {
+  const split = text.split(",")
+  if (split.length > 1) {
+    return split.slice(1).join(",")
+  }
+  return text
+}
 const hivStatusMap = {
   'hiv+': 'Positive',
   'hiv-': 'Negative',
