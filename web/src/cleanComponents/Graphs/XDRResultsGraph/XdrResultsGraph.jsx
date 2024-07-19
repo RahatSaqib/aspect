@@ -17,7 +17,6 @@ import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
-  getAverageFromData,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
   getResultCategoryGroupsForResultList,
@@ -30,7 +29,7 @@ const endPointParams = [
   { groupBy: 'resultCategory2' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true) },
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
@@ -86,8 +85,13 @@ const XdrResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         formatMessage,
         messages
       )
+      const numberOfMonthsInAYear = 12
+
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg = 0 } = getAverageFromData(pieData, 'value', ['Detected'], 'standard')
+      const detected = pieData.find(elem => elem.id === 'Detected') || {}
+
+      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(2)
+
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -122,7 +126,7 @@ const XdrResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAvg}%` })
+      setDonutData({ data: pie, total: `${pieAvg}` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
