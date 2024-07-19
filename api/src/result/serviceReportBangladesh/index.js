@@ -1026,12 +1026,12 @@ async function getDataForSheet1or2(
   } else {
     data.stateName = 'All'
     data.lgaName = 'All'
-    if (stateId) {
-      ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
-    }
-    if (lgaId) {
-      ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
-    }
+  }
+  if (stateId) {
+    ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
+  }
+  if (lgaId) {
+    ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
   }
   return data
 }
