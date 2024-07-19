@@ -2,8 +2,8 @@ const { deviceTypeToPlugin } = require('../../../shared/dictionary')
 const { parseNotes } = require('./notesCustomFieldsParser')
 
 async function transformMergeResultPayload(context) {
-  const customFieldsFromNotes = parseNotes(context.payload)
-  context.payload.patientData = { ...context.payload.patientData, ...customFieldsFromNotes }
+  const customFieldsFromNotes = parseNotes(context.payload.notes)
+  context.payload.patient = { ...context.payload.patient, ...customFieldsFromNotes.patientData }
   return defaultOrDeviceTypeTransformMergeResultPayload(context)
 }
 

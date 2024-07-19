@@ -1,10 +1,16 @@
+const _ = require('lodash')
+
 // Ad-hoc parser for legacy custom fields in Myanmar using 'result.notes' field.
 // see: https://github.com/SystemOneId/GxAlert/blob/b3c327a9199cfb1985750a53cd326706ece74253/Utilities/Parsing.cs#L936
 // for the original implementation in GxAlert and https://github.com/SystemOneId/aspect/commit/4cfe1068154618ac9597b2d7ab4de07cb63182dd
 // for the original implementation in Aspect (never released to production).
-
 function parseNotes(notes) {
   const patientData = {}
+
+  if (!_.isString(notes)) {
+    return { patientData }
+  }
+
   const rawValues = getNotesValues(notes)
 
   const { age, gender, previous, hiv, reasons, microscopy, specimen } = rawValues
@@ -75,7 +81,6 @@ function getNotesValues(notes) {
       i += 1
     }
   }
-  // console.log("\x1b[1;36m", "🚀 ➜ acc.cur:", acc.cur)
   return acc.cur
 }
 
