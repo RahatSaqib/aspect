@@ -1,5 +1,5 @@
 const { knex } = require('../../db')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInUserTimeZone, getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 const COMMON_LIST_FIELDS_UTC = {
   id: 'r.id',
@@ -459,6 +459,117 @@ const SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT = {
   longitude: 'si.longitude',
 }
 
+const getFieldsForQuarterlyReport = timezoneIANA => {
+  return {
+    id: 'r.id',
+    patientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))'),
+    sampleId: 'r.sampleId',
+    testDate: getDateTimeProjectionInTimeZoneIANA(knex, 'COALESCE(r.endedOn, r.startedOn)', timezoneIANA),
+    startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
+    endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
+    deviceName: 'd.name',
+    assay: 'a.name',
+    assayVersion: 'r.assayVersion',
+    result1: 'rc2.name',
+    result2: 'rc2.name',
+    resultText: knex.raw(
+      `IFNULL(
+        JSON_UNQUOTE(  JSON_EXTRACT(r.resultData, "$.resultText")  ),
+        CONCAT(  IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, '')  )
+      )`
+    ),
+    patientAgeYears: knex.raw(
+      `COALESCE(
+        JSON_VALUE(r.patientData, "$.age" RETURNING CHAR),
+        JSON_VALUE(r.patientData, "$.PatientAge" RETURNING CHAR)
+      )`
+    ),
+    patientName: knex.raw(
+      `COALESCE(
+        JSON_VALUE(r.patientData, "$.name"  RETURNING CHAR),
+        JSON_VALUE(r.patientData, "$.patientName"  RETURNING CHAR)
+      )`
+    ),
+    patientStreet: knex.raw(
+      `COALESCE(
+        JSON_VALUE(r.patientData, "$.street" RETURNING CHAR),
+        JSON_VALUE(r.patientData, "$.patientStreet"  RETURNING CHAR)
+      )`
+    ),
+    patientCity: knex.raw(
+      `COALESCE(
+        JSON_VALUE(r.patientData, "$.city" RETURNING CHAR),
+        JSON_VALUE(r.patientData, "$.patientCity" RETURNING CHAR)
+      )`
+    ),
+    hivStatus: knex.raw(
+      `case
+      when dis.externalId <> 'hiv' then
+        COALESCE(
+          JSON_VALUE( r.patientData, '$.HIVStatus'),
+          JSON_VALUE( r.patientData, '$.hivStatus'),
+          JSON_VALUE( r.patientData, '$.HivStatus')
+        )
+      else 'N/A'
+    end`
+    ),
+    /**
+     * Note: PreviouslyTreated has less data than GxAlert,
+     * for example 'OnTreatment' or 'N/A'
+     */
+    previouslyTreated: knex.raw(
+      `CASE
+        WHEN IFNULL( JSON_VALUE(r.patientData, '$.previouslyTreated'), '') IN ('Yes', 'true') THEN 'Yes'
+        ELSE 'No'
+      END`
+    ),
+    gender: knex.raw(
+      `COALESCE(
+        JSON_VALUE(r.patientData, '$.gender'),
+        JSON_VALUE(r.patientData, '$.PatientGender'),
+        JSON_VALUE(r.patientData, '$.patientGender')
+      )`
+    ),
+    // microscopyResult only seems to exists in dev seeding so far
+    microscopyResult: knex.raw(`JSON_VALUE(r.patientData, '$.microscopyResult')`),
+    repeatTest: knex.raw(
+      `CASE JSON_VALUE(r.patientData, '$.repeatTest')
+        WHEN '0' THEN 'First or second'
+        WHEN '1' THEN 'Follow-up'
+        WHEN '2' THEN 'Repeat Baseline'
+        ELSE NULL
+      END`
+    ),
+    // testReasonShortName seems to be always null in resultData
+    testReason: knex.raw('JSON_VALUE(r.resultData, "$.testReasonShortName")'),
+
+    // HealthFacility custom field seems to be in declared for zw, but no present: JSON_VALUE(r.patientData, '$.healthFacility') as HealthFacility,
+    healthFacility: 'so.name',
+
+    errorCode: knex.raw('REGEXP_REPLACE(r.errorCode,"(\\r\\n|\\n|\\r)"," ")'),
+    errorNotes: knex.raw('REGEXP_REPLACE(r.errorNotes,"(\\r\\n|\\n|\\r)"," ")'),
+
+    assayName: 'a.name',
+    assayHostTestCode: 'r.assayVersion',
+    insertedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.createdOn', timezoneIANA),
+    updatedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.updatedOn', timezoneIANA),
+    consumableLot: 'r.consumableLot',
+    instrumentSerial: 'r.instrumentSerial',
+    moduleSerial: 'r.moduleSerial',
+    cartridgeSerial: 'r.consumableSerial',
+    cartridgeExpirationDate: 'r.consumableExpirationDate',
+    senderVersion: 'r.senderVersion',
+    senderIp: 'd.lastPingFromIp',
+
+    notes: knex.raw('REGEXP_REPLACE(r.notes,"(\\r\\n|\\n|\\r)"," ")'),
+    country: 'c.name',
+    state: 'st.name',
+    lga: 'lg.name',
+
+    tag: 'tags.tagsCsv',
+  }
+}
+
 module.exports = {
   getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
@@ -471,4 +582,5 @@ module.exports = {
 
   getResultCategoryGroupSumSelector,
   getResultXdrResistanceSumSelector,
+  getFieldsForQuarterlyReport,
 }
