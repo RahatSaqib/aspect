@@ -276,5 +276,5 @@ async function seed(knex) {
   await updateDashboardWidgetQueries(knex)
 
   // correction requested in SD-769
-  await updateDataCategoryNotificationTypeForRO(knex, 'MoHS', 'mohs')
+  await updateDataCategoryNotificationTypeForRO(knex, 'MoHS', 'deprecatedMyanmar')
 }
