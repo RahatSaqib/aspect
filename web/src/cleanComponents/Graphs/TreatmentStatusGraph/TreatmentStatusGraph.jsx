@@ -16,12 +16,12 @@ import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
 import {
   prepAssaysForParams,
-  getAverageFromData,
   calcPercentageForGraphs,
   genLabel,
   prepParamsForEndPoint,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
+  getTimePeriod,
 } from '../graphUtils'
 import { DonutGraph, ColumnGraph } from '../index'
 
@@ -47,8 +47,8 @@ const getWhitelistedAssays = ({ assays, assaysFromState }) => {
 }
 
 const endPointParams = {
-  minDate: startOfMonth(subMonths(new Date(), 12)),
-  maxDate: endOfMonth(new Date()),
+  minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd'),
+  maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true),
 }
 
 const TreatmentStatusGraph = ({ assaysFromState }) => {
@@ -96,8 +96,11 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
         formatMessage,
         messages
       )
+      const numberOfMonthsInAYear = 12
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Confirmed'], 'standard')
+      const confirmed = pieData.find(elem => elem.id === 'Confirmed') || {}
+
+      const pieAvg = (confirmed.value / numberOfMonthsInAYear).toFixed(2)
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assaysFromState, formatMessage, messages, i18nKeys),
@@ -132,7 +135,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAvg}%` })
+      setDonutData({ data: pie, total: `${pieAvg}` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
