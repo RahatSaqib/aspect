@@ -481,7 +481,7 @@ const DeviceDetailProfile = ({
                   onClick={onToggleDeviceApproval}
                   disabled={
                     disabled ||
-                    formatMessage(messages[device.get('approvalStatusI18nKey')]).toLowerCase() === 'decommissioned'
+                    formatMessage(messages[device.get('approvalStatusI18nKey')]).toLowerCase() === tokens.DECOMMISSIONED
                   }
                 >
                   {formatMessage(messages.buttonChange)}
