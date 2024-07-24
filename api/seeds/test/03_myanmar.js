@@ -10,7 +10,6 @@ const { upsertJobFunction } = require('../common')
 const { rowsAsObject, getPermissionModules, seedNotificationTypes, seedIssues } = require('../utils')
 const { addIssueTypes } = require('../relativeObjectsSeeds')
 const { deviceApprovalToId, deviceTypeToId, partnerTypeToId } = require('../../src/shared/dictionary')
-const { partner: myanmarPartner } = require('../myanmar/fixtures/partnerData')
 const { seedDataCategory } = require('../dataCategoryLow')
 const { insertSite } = require('../../src/site/common/db')
 
@@ -20,7 +19,7 @@ const millisInHour = 1000 * 60 * 60
 const saltRounds = parseInt(config.passwordSaltRounds, 10)
 
 async function seed(knex) {
-  const pluginName = 'myanmar'
+  const pluginName = 'deprecatedMyanmar'
   // Skip this seed file if we already have an admin user
   const existingAdminUser = await knex('User').where({ name: 'myanmar_admin' }).first('id')
   if (existingAdminUser) {
@@ -45,8 +44,8 @@ async function seed(knex) {
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
-    name: myanmarPartner.name,
-    externalId: myanmarPartner.externalId,
+    name: 'MoHS',
+    externalId: 'mohs',
     partnerTypeId: await partnerTypeToId('operating'),
     plugin: pluginName,
     deviceLogHistoryDays: 365,
@@ -704,7 +703,7 @@ async function seed(knex) {
 
   await seedIssues(knex, baseProps)
 
-  await seedDataCategory(knex, myanmarPartner.name, myanmarPartner.externalId)
+  await seedDataCategory(knex, 'mohs', 'deprecatedMyanmar')
 }
 
 async function getId(knex, table, externalId) {

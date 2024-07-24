@@ -5,7 +5,6 @@ const Promise = require('bluebird')
 const { rowsAsObject } = require('../utils')
 const { upsertIssueResolutionTrigger } = require('../utils')
 const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
-const { partner: partnerMyanmar } = require('../myanmar/fixtures/partnerData')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -42,7 +41,7 @@ async function seed(knex) {
       htmlBody: 'Possible module failure on module <em>{{issue.data.moduleName}}</em> contact engineer',
     })
 
-  const { id: partnerId } = await knex('Partner').where({ name: 'Myanmar' }).first()
+  const { id: partnerId } = await knex('Partner').where({ name: 'MoHS' }).first()
 
   await knex('IssueEscalationTrigger')
     .update({
@@ -81,7 +80,7 @@ async function seed(knex) {
       `irt.resolutionConditions->"$.evaluationParameter" = './src/plugin/partner/Myanmar/sqlScripts/shouldResolveDeviceNoResults.sql'`
     )
     .andWhere({
-      'p.name': 'Myanmar',
+      'p.name': 'MoHS',
       'it.externalId': 'DeviceNoResults',
     })
     .first()
@@ -270,5 +269,5 @@ async function seed(knex) {
   })
 
   // correction requested in SD-769
-  await updateDataCategoryNotificationTypeForRO(knex, partnerMyanmar.name, partnerMyanmar.externalId)
+  await updateDataCategoryNotificationTypeForRO(knex, 'mohs', 'deprecatedMyanmar')
 }
