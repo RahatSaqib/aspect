@@ -17,7 +17,7 @@ export default function RecordPageViewProvider({ children }) {
   useEffect(() => {
     const viewedPages = getViewedPages()?.split(',') ?? []
     const isRecorded = viewedPages.find(i => i === pathname)
-    if (!isRecorded) recordPageView(pathname)
+    if (!isRecorded && pathname !== '/') recordPageView(pathname)
   }, [pathname, recordPageView])
 
   return children
