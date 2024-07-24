@@ -297,16 +297,34 @@ const queryIncludesXdr = (query, xdrAssayId) => {
 }
 
 const getResistanceValue = (resistance, resultText, defaultValue) => {
-  if (resultText?.includes(`High ${resistance} Resistance @label_result_detected`)) {
+  if (
+    resultText?.includes(`High ${resistance} Resistance @label_result_detected`) ||
+    resultText?.includes(`High ${resistance} @label_result_detected`)
+  ) {
     return `Detected, High Resistance`
   }
-  if (resultText?.includes(`Very Low ${resistance} Resistance @label_result_detected`)) {
+  if (
+    resultText?.includes(`Very Low ${resistance} Resistance @label_result_detected`) ||
+    resultText?.includes(`Very Low ${resistance} @label_result_detected`)
+  ) {
     return `Detected, Very Low Resistance`
   }
-  if (resultText?.includes(`Low ${resistance} Resistance @label_result_detected`)) {
+  if (
+    resultText?.includes(`Low ${resistance} Resistance @label_result_detected`) ||
+    resultText?.includes(`Low ${resistance} @label_result_detected`)
+  ) {
     return `Detected, Low Resistance`
   }
-  if (resultText?.includes(`${resistance} Resistance @label_result_indeterminate`)) {
+  if (
+    resultText?.includes(`${resistance} Resistance @label_result_detected`) ||
+    resultText?.includes(`${resistance} @label_result_detected`)
+  ) {
+    return `Detected`
+  }
+  if (
+    resultText?.includes(`${resistance} Resistance @label_result_indeterminate`) ||
+    resultText?.includes(`${resistance} @label_result_indeterminate`)
+  ) {
     return `Indeterminate`
   }
   return defaultValue
