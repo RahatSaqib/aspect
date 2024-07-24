@@ -37,17 +37,6 @@ const availableSortCol = [
   'lgaName',
 ]
 
-const lat = theme => ({
-  root: {
-    backgroundColor: 'blue',
-    // Match [md, ∞)
-    //       [900px, ∞)
-    [theme.breakpoints.up('md')]: {
-      backgroundColor: 'red',
-    },
-  },
-})
-
 const Workload = () => {
   const navigate = useNavigate()
   const location = useLocation()
