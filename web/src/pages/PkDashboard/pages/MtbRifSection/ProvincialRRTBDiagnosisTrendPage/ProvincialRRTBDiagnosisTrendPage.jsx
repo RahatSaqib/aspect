@@ -110,6 +110,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
               <ProvinceTrendTable
                 title={`${formatMessage(messages.provincialRRDiagnosisTrends)} ${new Date().getFullYear()}`}
                 rows={tableData}
+                resultType="RR-TB"
               />
             ) : null}
           </Grid>

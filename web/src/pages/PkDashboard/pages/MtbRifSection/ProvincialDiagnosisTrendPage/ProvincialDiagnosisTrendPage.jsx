@@ -103,6 +103,7 @@ const ProvincialDiagnosisTrendPage = () => {
             <ProvinceTrendTable
               rows={tableData}
               title={`${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`}
+              resultType="MTB+"
             />
           </Grid>
         </Grid>

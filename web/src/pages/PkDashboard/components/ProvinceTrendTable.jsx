@@ -4,8 +4,18 @@ import { useIntl } from 'react-intl'
 import messages from '../PkDashboard.Messages'
 
 const ProvinceTrendTable = props => {
-  const { rows, title } = props
+  const { rows, title, resultType } = props
   const { formatMessage } = useIntl()
+
+  const yearTableCell = resultType
+    ? `${resultType} ${formatMessage(messages.customPerYear)}`
+    : `${formatMessage(messages.testPerYear)}`
+  const monthTableCell = resultType
+    ? `${resultType} ${formatMessage(messages.customPerMonth)}`
+    : `${formatMessage(messages.testPerMonth)}`
+  const todayTableCell = resultType
+    ? `${resultType} ${formatMessage(messages.customToday)}`
+    : `${formatMessage(messages.testToday)}`
 
   return (
     <Box>
@@ -18,11 +28,9 @@ const ProvinceTrendTable = props => {
         <TableHead>
           <TableRow>
             <TableCell>{formatMessage(messages.state_PK)}</TableCell>
-            <TableCell align="right">{formatMessage(messages.testPerYear)}</TableCell>
-            <TableCell align="right">{`${formatMessage(messages.testPerMonth)} ${formatMessage(
-              messages.currentYear
-            )}`}</TableCell>
-            <TableCell align="right">{formatMessage(messages.testToday)}</TableCell>
+            <TableCell align="right">{`${yearTableCell}`}</TableCell>
+            <TableCell align="right">{`${monthTableCell} ${formatMessage(messages.currentYear)}`}</TableCell>
+            <TableCell align="right">{todayTableCell}</TableCell>
           </TableRow>
         </TableHead>
         <TableBody>
