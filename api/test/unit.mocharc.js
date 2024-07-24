@@ -1,7 +1,6 @@
 module.exports = {
   recursive: true,
-  reporter: 'mocha-multi',
-  'reporter-option': ['spec=-', 'mocha-bamboo-reporter=-'],
+  'reporter-option': ['spec=-', 'maxDiffSize=250000'],
   extension: ['.test.js'],
   file: 'test/utils/unitTestSetup.js',
   timeout: 10000,
