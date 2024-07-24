@@ -323,6 +323,7 @@ const routes = [
     path: '/person/record-page-view',
     handler: asyncHandler(recordPageView),
     config: {
+      auth: { scope: ['person:view'] },
       description: 'RecordPage View',
       notes: 'Increase count of viewed pages for user',
       response: {
