@@ -15,7 +15,6 @@ import styles from '../graphStyles.module.css'
 import {
   calcPercentageForGraphs,
   genLabel,
-  getAverageFromData,
   getTimePeriod,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
@@ -28,7 +27,7 @@ const endPointParams = [
   { groupBy: 'month' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true) },
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
@@ -73,12 +72,12 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         messages
       )
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg } = getAverageFromData(
-        pieData,
-        'value',
-        ['LessThan40', 'LessThan1000', 'NotDetected'],
-        'standard'
-      )
+      const numberOfMonthsInAYear = 12
+
+      const suppression = pieData.filter(elem => ['LessThan40', 'LessThan1000', 'NotDetected'].includes(elem.id))
+      const totalSuppression = suppression.reduce((sum, elem) => sum + elem.value, 0)
+      const pieAvg = (totalSuppression / numberOfMonthsInAYear).toFixed(2)
+
       const parsedData = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -113,7 +112,7 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: parsedData, total: `${pieAvg}%` })
+      setDonutData({ data: parsedData, total: `${pieAvg}` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
