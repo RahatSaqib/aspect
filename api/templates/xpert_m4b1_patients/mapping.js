@@ -21,7 +21,7 @@ module.exports = [
     E26: 'NotDetected_NA_(MDR7) Người nghi lao có tiền sử điều trị thuốc lao trên 1 tháng',
     E27: 'NotDetected_NA_(MDR8) Người bệnh lao mới',
     E29: 'NotDetected_NA_Other',
-    
+
     F13: 'Detected_NotDetected_(TB1) Nhóm H nghi lao_Chưa điều trị hoặc điều trị <1 tháng',
     F14: 'Detected_NotDetected_(TB2) Trẻ em nghi lao_Chưa điều trị hoặc điều trị <1 tháng',
     F15: 'Detected_NotDetected_(TB3) Nghi lao phổi_Chưa điều trị hoặc điều trị <1 tháng',
@@ -162,7 +162,6 @@ module.exports = [
     N28: null,
     N29: null,
     N30: null,
-    N29: null,
     N32: null,
   },
 ]
