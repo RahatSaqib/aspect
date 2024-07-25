@@ -1,0 +1,73 @@
+module.exports = require('../utils').seed(seed, __filename)
+async function seed(knex) {
+
+  const gxRelationsTableName = 'mig_SiteContacts'
+  const gxRelations = await knex(gxRelationsTableName).select()
+
+  const { id: jobFunctionLabUserId } = await knex('JobFunction').where('name', 'Lab User').select('id').first()
+
+  const jobContextsToInsert = []
+  //persons grouped by siteId
+  const sites = gxRelations.reduce((acc, { siteId, email, phone, name, stateName, lgaName }) => {
+    acc[siteId] = acc[siteId] || []
+    acc[siteId].push({ email, phone, name, stateName, lgaName })
+    return acc
+  }, {})
+
+  for (const siteId in sites) {
+    const site = await knex('Site').where('id', siteId).select()
+    if (!site.length) {
+      console.warn(`Site with id ${siteId} not found`)
+      continue
+    }
+    const contacts = sites[siteId]
+    for (const { email, phone, name, stateName, lgaName } of contacts) {
+      // bring from table Person where email, phone or name match) 
+      const candidatesQuery = knex('Person as p')
+        .leftJoin('Geography as g', 'p.geographyId', 'g.id')
+        .leftJoin('State as st', 'g.stateId', 'st.id')
+        .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+        .select('p.id', 'p.email', 'p.phone', 'p.name', 'st.name as stateName', 'l.name as lgaName')
+
+      if (email) {
+        candidatesQuery.modify(qb => qb.where('p.email', email))
+      }
+      if (phone) {
+        candidatesQuery.modify(qb => qb.orWhere('p.phone', phone))
+      }
+      if (name) {
+        candidatesQuery.modify(qb => qb.orWhere('p.name', name))
+      }
+
+      const candidates = await candidatesQuery
+      if (candidates.length === 1) {
+        jobContextsToInsert.push({ siteId, personId: candidates[0].id, jobFunctionId: jobFunctionLabUserId })
+      }
+      else {
+        for (const candidate of candidates) {
+          // rate the candidate based on the match (1st, email; then phone and finally name)
+          candidate.rate = 1000 * (candidate.email === email) + 100 * (candidate.phone === phone) + 10 * (candidate.name === name)
+        }
+        // get all candidates with highest rate
+        const bestCandidates = candidates.filter(c => c.rate === Math.max(...candidates.map(c => c.rate)))
+        if (bestCandidates.length === 1) {
+          jobContextsToInsert.push({ siteId, personId: bestCandidates[0].id, jobFunctionId: jobFunctionLabUserId })
+          break
+        } else if (bestCandidates.length > 1) {
+          // if there are multiple candidates with the same rate, we need to filter by geography
+          // get site with state and lga pivoting on geography
+          const finalContact = bestCandidates.find(candidate =>
+            candidate.stateName === stateName
+            && candidate.lgaName === lgaName)
+            || bestCandidates[0]
+          jobContextsToInsert.push({ siteId, personId: finalContact.id, jobFunctionId: jobFunctionLabUserId })
+        }
+      }
+    }
+  }
+
+  if (jobContextsToInsert.length) {
+    await knex('JobContext').insert(jobContextsToInsert)
+  }
+}
+
