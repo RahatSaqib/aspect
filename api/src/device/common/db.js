@@ -8,6 +8,8 @@ const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { usedAssay } = require('../../assay/common/db')
 const { INTERNAL_DEVICE_IDS } = require('../../shared/constants')
 const { XDR_RESISTANCES } = require('../../shared/constants')
+const { getUser } = require('../../auth/service')
+const { transformUTCDateTimeToZoned } = require('../../plugin/deviceType/transformPayload')
 
 const SELECT_SHOW_FIELDS = [
   'd.id',
@@ -593,8 +595,12 @@ function getFirstAndLastResults(dataConstraints, assayId, deviceIds) {
     .as('firstAndLastResults')
 }
 
-async function getDeviceWorkload(extraColumns, dataConstraints, query) {
+async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
   const { assayId } = query
+
+  const { timezoneIANA } = await getUser(auth.credentials.name)
+
+  console.log('timezoneIANA', timezoneIANA)
 
   const q = knex('Device as d')
     .innerJoin('Site as s', 'd.siteId', 's.id')
@@ -659,8 +665,8 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
   const deviceFirstAndLastResultMap = _.keyBy(deviceFirstAndLastResult, 'deviceId')
 
   const updatedData = _.map(data, ({ id, ...deviceResponse }) => {
-    const firstResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'firstEndedOn'], null)
-    const lastResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'lastEndedOn'], null)
+    let firstResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'firstEndedOn'], null)
+    let lastResultEndedOn = _.get(deviceFirstAndLastResultMap, [id, 'lastEndedOn'], null)
 
     deviceResponse.total = deviceResponse.total || 0
 
@@ -668,6 +674,10 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query) {
       deviceResponse[fieldId] = deviceResponse[fieldId] || 0
     })
 
+    firstResultEndedOn = formatTimeZoneDate(firstResultEndedOn, timezoneIANA)
+    lastResultEndedOn = formatTimeZoneDate(lastResultEndedOn, timezoneIANA)
+
+    // console.log(firstResultEndedOn, datahere)
     return {
       ...deviceResponse,
       firstResultEndedOn,
@@ -811,6 +821,14 @@ function modulesWithLastResultBeforeMinDate(minDate) {
     .groupBy('r.deviceId', 'r.moduleName', 'r.moduleSerial')
     .having('endedOn', '<', minDate) // only bays with last result before minDate -> inactive
     .as('r')
+}
+
+const formatTimeZoneDate = (date, timezoneIANA) => {
+  if (!date) {
+    return date
+  }
+  console.log('DATATTA', date)
+  return transformUTCDateTimeToZoned(date.toISOString(), timezoneIANA)
 }
 
 module.exports = {
