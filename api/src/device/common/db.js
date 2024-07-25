@@ -599,9 +599,6 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
   const { assayId } = query
 
   const { timezoneIANA } = await getUser(auth.credentials.name)
-
-  console.log('timezoneIANA', timezoneIANA)
-
   const q = knex('Device as d')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
@@ -676,12 +673,13 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
 
     firstResultEndedOn = formatTimeZoneDate(firstResultEndedOn, timezoneIANA)
     lastResultEndedOn = formatTimeZoneDate(lastResultEndedOn, timezoneIANA)
+    const lastPingOnWithTimeZone = formatTimeZoneDate(deviceResponse.lastPingOn, timezoneIANA)
 
-    // console.log(firstResultEndedOn, datahere)
     return {
       ...deviceResponse,
       firstResultEndedOn,
       lastResultEndedOn,
+      lastPingOn: lastPingOnWithTimeZone,
     }
   })
   const { length } = data
@@ -827,7 +825,6 @@ const formatTimeZoneDate = (date, timezoneIANA) => {
   if (!date) {
     return date
   }
-  console.log('DATATTA', date)
   return transformUTCDateTimeToZoned(date.toISOString(), timezoneIANA)
 }
 
