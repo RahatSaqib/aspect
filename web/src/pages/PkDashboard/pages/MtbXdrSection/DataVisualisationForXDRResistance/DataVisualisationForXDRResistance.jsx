@@ -86,17 +86,17 @@ const DataVisualisationForXDRResistance = () => {
         } = dat
 
         if (lineFor === FQRPercentMessage) {
-          line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+          line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed() })
         } else if (lineFor === INHPercentMessage) {
-          line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+          line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed() })
         } else if (lineFor === AMKPercentMessage) {
-          line.push({ month, [AMKPercentMessage]: +AmkToMtbPercentage.toFixed(2) })
+          line.push({ month, [AMKPercentMessage]: +AmkToMtbPercentage.toFixed() })
         } else if (lineFor === KANPercentMessage) {
-          line.push({ month, [KANPercentMessage]: +KanToMtbPercentage.toFixed(2) })
+          line.push({ month, [KANPercentMessage]: +KanToMtbPercentage.toFixed() })
         } else if (lineFor === CAPPercentMessage) {
-          line.push({ month, [CAPPercentMessage]: +CapToMtbPercentage.toFixed(2) })
+          line.push({ month, [CAPPercentMessage]: +CapToMtbPercentage.toFixed() })
         } else if (lineFor === ETHPercentMessage) {
-          line.push({ month, [ETHPercentMessage]: +EthToMtbPercentage.toFixed(2) })
+          line.push({ month, [ETHPercentMessage]: +EthToMtbPercentage.toFixed() })
         }
 
         bar.push({ month, value: TotalTests, type: totalTestsMessage })
@@ -177,6 +177,10 @@ const DataVisualisationForXDRResistance = () => {
             ]}
             xField="month"
             yField={['value', lineFor]}
+            getCustomProps={({ geometryOptions: [column, line], ...rest }) => ({
+              ...rest,
+              geometryOptions: [{ ...column, label: false }, line],
+            })}
           />
         </Grid>
       </Grid>
