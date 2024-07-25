@@ -3,7 +3,7 @@ import { TableBody, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
-import { DetailHeader, PersonFilter } from '../../../cleanComponents'
+import { DetailHeader, PersonFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import usePersons from '../../../hooks/person/usePersons'
@@ -84,35 +84,37 @@ export const PersonList = () => {
             <BrowseEmptyList />
           ) : (
             <>
-              <PersonDataTable className={styles.PersonDataTable}>
-                <PersonDataTableHead
-                  navigate={navigate}
-                  location={location}
-                  sortColumnKey={sortCol}
-                  sortColumnDir={sortDir}
-                  columns={[
-                    { key: 'name', label: formatMessage(messages.personName), sortable: true },
-                    { key: 'level', label: formatMessage(messages.level), sortable: true },
-                    { key: 'state', label: getCustomMessage(formatMessage, messages, 'state', user), sortable: true },
-                    { key: 'lga', label: getCustomMessage(formatMessage, messages, 'lga', user), sortable: true },
-                    { key: 'tags', label: formatMessage(messages.tags), sortable: true },
-                    isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
-                  ]}
-                />
-                <TableBody>
-                  {data.data.map(person => (
-                    <PersonDataTableRow
-                      key={person.id}
-                      person={person}
-                      onClick={e =>
-                        gotoWithReturnUrl(`/browse/person/${e.currentTarget.dataset.personId}`, navigate, location)
-                      }
-                      data-person-id={person.id}
-                      personEditPermission={isEditAllow && user?.userId !== person.id}
-                    />
-                  ))}
-                </TableBody>
-              </PersonDataTable>
+              <TableContainer>
+                <PersonDataTable className={styles.PersonDataTable}>
+                  <PersonDataTableHead
+                    navigate={navigate}
+                    location={location}
+                    sortColumnKey={sortCol}
+                    sortColumnDir={sortDir}
+                    columns={[
+                      { key: 'name', label: formatMessage(messages.personName), sortable: true },
+                      { key: 'level', label: formatMessage(messages.level), sortable: true },
+                      { key: 'state', label: getCustomMessage(formatMessage, messages, 'state', user), sortable: true },
+                      { key: 'lga', label: getCustomMessage(formatMessage, messages, 'lga', user), sortable: true },
+                      { key: 'tags', label: formatMessage(messages.tags), sortable: true },
+                      isEditAllow && { key: 'actions', label: formatMessage(messages.enableDisable), sortable: false },
+                    ]}
+                  />
+                  <TableBody>
+                    {data.data.map(person => (
+                      <PersonDataTableRow
+                        key={person.id}
+                        person={person}
+                        onClick={e =>
+                          gotoWithReturnUrl(`/browse/person/${e.currentTarget.dataset.personId}`, navigate, location)
+                        }
+                        data-person-id={person.id}
+                        personEditPermission={isEditAllow && user?.userId !== person.id}
+                      />
+                    ))}
+                  </TableBody>
+                </PersonDataTable>
+              </TableContainer>
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}

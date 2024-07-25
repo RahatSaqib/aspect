@@ -12,7 +12,7 @@ const { assayNameToExternalId } = require('../../src/shared/assayNameToExternalI
 const { deepMerge } = require('../../src/shared/json')
 const { allAssayToId } = require('../../src/shared/dictionary')
 const { mergeResultWithPayload } = require('../../src/result/common/logic')
-const { parseNotes } = require('../../src/plugin/partner/Myanmar/notesCustomFieldsParser')
+const { parseNotes, parsePatientId } = require('../../src/plugin/partner/Myanmar/customFieldsParser')
 
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
@@ -79,13 +79,18 @@ const getResultsToUpdateInRange = async (knex, assayIds, partnerId, minDeviceLog
       const customFieldsData = await getCustomFieldsFromPayload(payload.result, countryAbbreviation, partnerId, assayId)
       const additionalData = getAdditionalDataFromPayload(payload.result, potentialAssayIds)
 
-      const notesLegacyCustomFields = parseNotes(payload.result.notes)
+      const customFieldsFromNotes = parseNotes(payload.result.notes)
+      const customFieldsFromPatientId = parsePatientId(_.get(payload.result, 'patient.id'))
 
       const baseResult = {
         ...existingResult,
         ...customFieldsData,
         resultData: deepMerge(resultData, { ...customFieldsData.resultData, ...additionalData }),
-        patientData: deepMerge(patientData, { ...notesLegacyCustomFields.patientData, ...customFieldsData.patientData }),
+        patientData: deepMerge(patientData, {
+          ...customFieldsFromNotes.patientData,
+          ...customFieldsFromPatientId.patientData,
+          ...customFieldsData.patientData,
+        }),
       }
 
       const transformedResult = {

@@ -2,7 +2,7 @@ import React, { useState, useEffect, useCallback } from 'react'
 import { LinearProgress, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
-import { DetailHeader, SiteFilter } from '../../../cleanComponents'
+import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
@@ -122,26 +122,28 @@ const SiteList = ({ navigate, location }) => {
             <BrowseEmptyList />
           ) : (
             <>
-              <SiteDataTable className={styles.SiteDataTable}>
-                <SiteDataTableHead
-                  navigate={navigate}
-                  location={location}
-                  sortColumnKey={sortCol}
-                  sortColumnDir={sortDir}
-                  columns={tableColumns}
-                />
-                <TableBody>
-                  {data?.siteList?.map(site => (
-                    <SiteDataTableRow
-                      key={site.id}
-                      site={site}
-                      onClick={onRowClick}
-                      onAlertClick={onAlertClick}
-                      data-site-id={site.id}
-                    />
-                  ))}
-                </TableBody>
-              </SiteDataTable>
+              <TableContainer>
+                <SiteDataTable className={styles.SiteDataTable}>
+                  <SiteDataTableHead
+                    navigate={navigate}
+                    location={location}
+                    sortColumnKey={sortCol}
+                    sortColumnDir={sortDir}
+                    columns={tableColumns}
+                  />
+                  <TableBody>
+                    {data?.siteList?.map(site => (
+                      <SiteDataTableRow
+                        key={site.id}
+                        site={site}
+                        onClick={onRowClick}
+                        onAlertClick={onAlertClick}
+                        data-site-id={site.id}
+                      />
+                    ))}
+                  </TableBody>
+                </SiteDataTable>
+              </TableContainer>
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}
