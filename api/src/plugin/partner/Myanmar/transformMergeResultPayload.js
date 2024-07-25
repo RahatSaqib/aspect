@@ -1,9 +1,16 @@
+const _ = require('lodash')
 const { deviceTypeToPlugin } = require('../../../shared/dictionary')
-const { parseNotes } = require('./notesCustomFieldsParser')
+const { parsePatientId } = require('./customFieldsParser')
+const { parseNotes } = require('./customFieldsParser')
 
 async function transformMergeResultPayload(context) {
   const customFieldsFromNotes = parseNotes(context.payload.notes)
-  context.payload.patient = { ...context.payload.patient, ...customFieldsFromNotes.patientData }
+  const customFieldsFromPatientId = parsePatientId(_.get(context.payload, 'patient.id'))
+  context.payload.patient = {
+    ...context.payload.patient,
+    ...customFieldsFromNotes.patientData,
+    ...customFieldsFromPatientId.patientData,
+  }
   return defaultOrDeviceTypeTransformMergeResultPayload(context)
 }
 
