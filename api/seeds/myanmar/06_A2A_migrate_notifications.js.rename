@@ -224,7 +224,11 @@ async function getLastLoggedInPersonWithSameContactInfo(knex, recipientPersonId)
       .leftJoin('User as u', 'u.id', 'p.userId')
       .whereNull('disabledOn')
       .andWhere(function () {
-        this.where({ email: sourcePerson.email }).orWhere({ cell: sourcePerson.cell })
+        this.where({ name: sourcePerson.name })
+          .andWhere(function () {
+            this.where({ email: sourcePerson.email })
+              .orWhere({ cell: sourcePerson.cell })
+          })
       })
       .orderBy('lastLogin', 'desc')
       .first('p.id as id')
