@@ -102,6 +102,7 @@ import SiteTagInput from './SiteTagInput'
 import StateAutocomplete from './StateAutocomplete'
 import StateSelect from './StateSelect'
 import StateSelector from './StateSelector'
+import { TableContainer } from './Table/TableContainer'
 import TagSelect from './TagSelect'
 import TimezoneSelect from './TimezoneSelect'
 
@@ -210,4 +211,5 @@ export {
   fillData,
   DonutGraph,
   LoggedOutLayout,
+  TableContainer,
 }

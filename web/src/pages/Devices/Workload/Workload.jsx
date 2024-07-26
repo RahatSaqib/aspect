@@ -3,7 +3,7 @@ import { TableBody, Table, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
-import { DetailHeader, DeviceWorkloadFilter } from '../../../cleanComponents'
+import { DetailHeader, DeviceWorkloadFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import useResultCategoryGroup from '../../../hooks/result/useResultCategoryGroup'
 import useAuthState from '../../../hooks/useAuthState'
@@ -156,19 +156,21 @@ const Workload = () => {
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
-                <Table className={styles.InventoryDataTable}>
-                  <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
-                  <TableBody>
-                    {workloadList.map((item, index) => (
-                      <TableRow
-                        key={`workload--${index}`}
-                        item={item}
-                        extraColumns={extraColumnsProps}
-                        onColumnClick={onColumnClick}
-                      />
-                    ))}
-                  </TableBody>
-                </Table>
+                <TableContainer>
+                  <Table className={styles.InventoryDataTable}>
+                    <DataTableHead sortColumnKey={sortCol} sortColumnDir={sortDir} columns={columns} />
+                    <TableBody>
+                      {workloadList.map((item, index) => (
+                        <TableRow
+                          key={`workload--${index}`}
+                          item={item}
+                          extraColumns={extraColumnsProps}
+                          onColumnClick={onColumnClick}
+                        />
+                      ))}
+                    </TableBody>
+                  </Table>
+                </TableContainer>
               </div>
               <BrowseTablePaginator
                 navigate={navigate}

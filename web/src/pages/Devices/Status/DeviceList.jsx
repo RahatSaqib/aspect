@@ -22,7 +22,7 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { DetailHeader, DeviceListFilter } from '../../../cleanComponents'
+import { DetailHeader, DeviceListFilter, TableContainer } from '../../../cleanComponents'
 import ExportListButton from '../../../components/AspectExportListButton'
 import PermissionChecker from '../../../components/PermissionChecker/index'
 import { DEVICE_LIST } from '../../../components/QueryFetch/Device/index'
@@ -262,30 +262,32 @@ const DeviceList = () => {
           ) : (
             <>
               <div style={{ overflowY: 'hidden', overflowX: 'scroll' }}>
-                <DeviceDataTable className={styles.DeviceDataTable}>
-                  <DeviceDataTableHead
-                    navigate={navigate}
-                    location={location}
-                    sortColumnKey={sortCol}
-                    sortColumnDir={sortDir}
-                    columns={getColumns(formatMessage)}
-                  />
-                  <TableBody>
-                    {!items.currentIdList.isEmpty() &&
-                      items.currentIdList
-                        .map(id => items.byId.get(id))
-                        .map(device => (
-                          <DeviceDataTableRow
-                            key={device.get('id')}
-                            device={device}
-                            onClick={onRowClick}
-                            onAlertClick={onAlertClick}
-                            displayPreferences={displayPreferences}
-                            data-device-id={device.get('id')}
-                          />
-                        ))}
-                  </TableBody>
-                </DeviceDataTable>
+                <TableContainer>
+                  <DeviceDataTable className={styles.DeviceDataTable}>
+                    <DeviceDataTableHead
+                      navigate={navigate}
+                      location={location}
+                      sortColumnKey={sortCol}
+                      sortColumnDir={sortDir}
+                      columns={getColumns(formatMessage)}
+                    />
+                    <TableBody>
+                      {!items.currentIdList.isEmpty() &&
+                        items.currentIdList
+                          .map(id => items.byId.get(id))
+                          .map(device => (
+                            <DeviceDataTableRow
+                              key={device.get('id')}
+                              device={device}
+                              onClick={onRowClick}
+                              onAlertClick={onAlertClick}
+                              displayPreferences={displayPreferences}
+                              data-device-id={device.get('id')}
+                            />
+                          ))}
+                    </TableBody>
+                  </DeviceDataTable>
+                </TableContainer>
               </div>
               <BrowseTablePaginator
                 navigate={navigate}
