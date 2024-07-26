@@ -297,36 +297,99 @@ const queryIncludesXdr = (query, xdrAssayId) => {
 }
 
 const getResistanceValue = (resistance, resultText, defaultValue) => {
-  if (
-    resultText?.includes(`High ${resistance} Resistance @label_result_detected`) ||
-    resultText?.includes(`High ${resistance} @label_result_detected`)
-  ) {
-    return `Detected, High Resistance`
+  if (!resultText) return defaultValue
+
+  /**
+   * helper func to construct regex for different values with prefixes, like
+   *   PREFIX XXX Resistance @label_result_detected
+   *   PREFIX XXX @label_result_detected
+   *   PREFIX XXX detected
+   *
+   * example:
+   *   High INH Resistance @label_result_detected
+   *   Very Low ETH @label_result-detected
+   *   High MTB @label_result-detected
+   *   Low MTB detected
+   */
+  const getRegexForPrefix = prefix => {
+    prefix = prefix.replace(' ', '\\s?')
+    return new RegExp(
+      `
+\\b
+      ${prefix}
+\\s+
+      ${resistance}
+\\s+
+      (?:
+        resistance
+\\s+
+      )?
+      (?:
+        @label[_-]result[_-]
+      )?
+      detected
+\\b
+    `.replace(/\s/g, ''), // remove all white spaces, tabs and line breaks
+      'gim'
+    )
   }
-  if (
-    resultText?.includes(`Very Low ${resistance} Resistance @label_result_detected`) ||
-    resultText?.includes(`Very Low ${resistance} @label_result_detected`)
-  ) {
-    return `Detected, Very Low Resistance`
+
+  if (getRegexForPrefix('High').test(resultText)) {
+    return `Detected, High`
   }
-  if (
-    resultText?.includes(`Low ${resistance} Resistance @label_result_detected`) ||
-    resultText?.includes(`Low ${resistance} @label_result_detected`)
-  ) {
-    return `Detected, Low Resistance`
+  if (getRegexForPrefix('Very Low').test(resultText)) {
+    return `Detected, Very Low`
   }
-  if (
-    resultText?.includes(`${resistance} Resistance @label_result_detected`) ||
-    resultText?.includes(`${resistance} @label_result_detected`)
-  ) {
-    return `Detected`
+  if (getRegexForPrefix('Low').test(resultText)) {
+    return `Detected, Low`
   }
-  if (
-    resultText?.includes(`${resistance} Resistance @label_result_indeterminate`) ||
-    resultText?.includes(`${resistance} @label_result_indeterminate`)
-  ) {
-    return `Indeterminate`
+
+  /**
+   * patterns:
+   *   XXX Resistance @label_result_detected
+   *   XXX @label_result_detected
+   *   XXX detected
+   *   XXX Resistance @label_result_detected YYY
+   *   XXX @label_result_detected YYY
+   *   XXX detected YYY
+   *
+   * example:
+   *   INH Resistance @label_result_detected
+   *   ENH @label_result_detected
+   *   MTB detected
+   *   MTB detected MEDIUM
+   */
+  const re = new RegExp(
+    `
+\\b
+    ${resistance}
+\\s+
+    (?:
+      resistance
+\\s+
+    )?
+    (?:
+      @label[_-]result[_-]
+    )?
+    (Detected|Indeterminate)
+    (
+\\s+
+      [a-z]+
+    )?
+\\b
+  `.replace(/\s/g, ''), // remove all white spaces, tabs and line breaks
+    'im' // <-- do not include `g`
+  )
+  const match = resultText.match(re)
+  if (match) {
+    const [
+      ,
+      status, // i.e. Detected or Indeterminate
+      details, // i.e. empty or Medium, etc
+    ] = match
+    return _.startCase(`${status}${details ? `, ${details}` : ''}`)
   }
+
   return defaultValue
 }
 
@@ -354,7 +417,7 @@ const humanizeResistances = (dataRow, isMtbXdr) => {
         resultData.allResistances[resistance] = resistanceValue
       })
     }
-    mtbResistance = getResistanceValue('MTB', resultText, 'Not Detected')
+    mtbResistance = getResistanceValue('MTB', resultText, '')
   }
   return { resultData, mtbResistance }
 }
