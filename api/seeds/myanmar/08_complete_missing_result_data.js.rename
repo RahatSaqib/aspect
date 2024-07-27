@@ -67,7 +67,7 @@ const getResultsToUpdateInRange = async (knex, minId, maxId) => {
       const additionalData = getAdditionalDataFromPayload({ data: resultData }, potentialAssayIds)
 
       const customFieldsFromNotes = parseNotes(existingResult.notes)
-      const customFieldsData = transformCustomFields(customFields)
+      const customFieldsData = transformCustomFields(JSON.parse(customFields))
 
       const baseResult = {
         ...existingResult,
