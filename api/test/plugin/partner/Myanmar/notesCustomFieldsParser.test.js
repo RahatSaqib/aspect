@@ -1,7 +1,7 @@
 const { expect } = require('chai')
 const { parseNotes } = require('../../../../src/plugin/partner/Myanmar/notesCustomFieldsParser')
 
-describe.only('parseNotes', () => {
+describe('parseNotes', () => {
   it('should return the correct patientData', () => {
     const cases = [
       {
