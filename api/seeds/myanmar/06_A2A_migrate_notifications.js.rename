@@ -9,9 +9,7 @@ const {
 async function seed(knex) {
   const { id: partnerId } = await knex('Partner').where({ externalId: 'mohs' }).first('id')
 
-  const sourceTable = 'mig_Notification' // This table is created by the migration script (file A2A-notifications.sql)
-
-  const notificationDefs = await knex(sourceTable).select()
+  const notificationDefs = await knex('mig_Notification').select() // This table is created by the migration script (file A2A-notifications.sql)
 
   for (const ndef of notificationDefs) {
     // eslint-disable-next-line no-await-in-loop
