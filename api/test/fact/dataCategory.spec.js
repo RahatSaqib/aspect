@@ -82,7 +82,7 @@ async function initUserAndJobs(knex, partnerId, siteId) {
 }
 
 describe.skip('DataCategoryLow Issues Endpoint', () => {
-  const partnerName = 'Myanmar'
+  const partnerName = 'MoHS'
   const countryAbbreviation = 'MM'
 
   let dataCategories

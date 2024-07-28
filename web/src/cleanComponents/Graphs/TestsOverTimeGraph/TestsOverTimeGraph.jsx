@@ -39,7 +39,7 @@ const endPointParams = [
   { groupBy: 'month' },
   { groupBy: 'assay' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true) },
 ]
 
 const filterFunctionPie = (data, props) => {

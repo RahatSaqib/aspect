@@ -28,7 +28,7 @@ async function getBaseReports() {
     },
     {
       name: 'Critical Errors By Device',
-      description: 'Includes a list of devices that had at least 2 critical errors',
+      description: 'Includes a list of devices that had at least 1 critical errors',
       i18nKey: 'Critical_Errors_By_Device',
       externalId: 'critical_errors_by_device',
       fileName: 'DevicesWithErrors',

@@ -58,7 +58,7 @@ describe.skip('CommCare Result API routes', () => {
       user: 'myanmar_admin',
       password: 'test07',
       type: 'CommCareApp',
-      partner: 'Myanmar',
+      partner: 'MoHS',
       site: 'commcare2',
     })
 
