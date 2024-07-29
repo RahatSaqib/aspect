@@ -22,14 +22,15 @@ const AssaySelect = ({
   const { isLoading, data: assayList } = useAssayList()
   const { formatMessage } = useIntl()
 
-  let data =
-    assayList && assayTypeId && deviceTypeId
-      ? assayList.filter(s => s.assayTypeId === assayTypeId && s.deviceTypeId === deviceTypeId)
-      : assayList && assayTypeId
+  let data = assayList
+    ? assayTypeId && deviceTypeId
+      ? assayList.filter(s => s.assayTypeId === assayTypeId && s.deviceTypeExternalId === deviceTypeId)
+      : assayTypeId
       ? assayList.filter(s => s.assayTypeId === assayTypeId)
-      : assayList && deviceTypeId
+      : deviceTypeId
       ? assayList.filter(s => s.deviceTypeId === deviceTypeId)
       : assayList
+    : []
 
   data = assayList && onlyResults ? data.filter(a => a.hasResults) : data
 

@@ -1,0 +1,91 @@
+module.exports = require('../utils').seed(seed, __filename)
+async function seed(knex) {
+
+  const gxRelations = await knex('mig_SiteContacts').select()
+
+  const { id: jobFunctionLabUserId } = await knex('JobFunction').where('name', 'Lab User').select('id').first()
+
+  const jobContextsToInsert = []
+  //persons grouped by siteId
+  const sites = gxRelations.reduce((acc, { siteId, email, phone, name, stateName, lgaName }) => {
+    acc[siteId] = acc[siteId] || []
+    acc[siteId].push({ email, phone, name, stateName, lgaName })
+    return acc
+  }, {})
+
+  for (const siteId in sites) {
+    const site = await knex('Site as s')
+      .where('s.id', siteId).select('s.id')
+    if (!site.length) {
+      console.warn(`Site with id ${siteId} not found`)
+      continue
+    }
+    const contacts = sites[siteId]
+    for (const { email, phone, cell, name, stateName, lgaName } of contacts) {
+      // bring from table Person where email, cell, phone or name match) 
+      const candidatesQuery = knex('Person as p')
+        .leftJoin('Geography as g', 'p.geographyId', 'g.id')
+        .leftJoin('State as st', 'g.stateId', 'st.id')
+        .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+        .leftJoin(
+          knex('JobContext as jc')
+            .join('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
+            .where('jf.externalId', 'labUser')
+            .select('jc.personId', 'jc.id as jobContextId')
+            .where('jc.siteId', siteId).as('jc'), function () {
+              this.on('p.id', 'jc.personId')
+            })
+        .select('p.id', 'p.email', 'p.phone', 'p.cell', 'p.name', 'st.name as stateName', 'l.name as lgaName')
+        .whereNull('jc.personId')
+
+      if (email) {
+        candidatesQuery.modify(qb => qb.where('p.email', email))
+      }
+      if (cell) {
+        candidatesQuery.modify(qb => qb.orWhere('p.cell', cell))
+      }
+      if (phone) {
+        candidatesQuery.modify(qb => qb.orWhere('p.phone', phone))
+      }
+      if (name) {
+        candidatesQuery.modify(qb => qb.orWhere('p.name', name))
+      }
+
+      const candidates = await candidatesQuery
+      if (candidates.length === 1) {
+        jobContextsToInsert.push({ siteId, personId: candidates[0].id, jobFunctionId: jobFunctionLabUserId })
+      }
+      else {
+        for (const candidate of candidates) {
+          // rate the candidate based on the match (1st, email; then phone and finally name)
+          candidate.rate =
+            + 10000 * (candidate.cell === cell) * (cell !== null)
+            + 1000 * (candidate.email === email)
+            + 100 * (candidate.phone === phone) * (phone !== null)
+            + 10 * (candidate.name === name) * (name !== null)
+        }
+        // get all candidates with highest rate
+        const maxRate = Math.max(...candidates.map(c => c.rate))
+        const bestCandidates = candidates.filter(c => c.rate === maxRate)
+        if (bestCandidates.length === 1) {
+          jobContextsToInsert.push({ siteId, personId: bestCandidates[0].id, jobFunctionId: jobFunctionLabUserId })
+          continue
+        } else if (bestCandidates.length > 1) {
+          // if there are multiple candidates with the same rate, we need to filter by geography
+          // get site with state and lga pivoting on geography (Maybe better to select the person with general geography, most likely the real user,
+          // as the rest are most probably created automatically by GxConnect at the installation)
+          const finalContact = bestCandidates.find(candidate =>
+            candidate.stateName === stateName
+            && candidate.lgaName === lgaName)
+            || bestCandidates[0]
+          jobContextsToInsert.push({ siteId, personId: finalContact.id, jobFunctionId: jobFunctionLabUserId })
+        }
+      }
+    }
+  }
+  if (jobContextsToInsert.length) {
+    await knex('JobContext').insert(jobContextsToInsert)
+  }
+}
+
+
