@@ -2190,6 +2190,13 @@ msgstr "Текущее тестирование на туберкулез"
 msgid "Current Testing"
 msgstr "Текущее тестирование"
 
+#. [p.PkDashboard.currentMtbXdrTesting]
+#. defaultMessage is:
+#. Current MTB/XDR Testing
+#: extracted_strings.json
+msgid "Current MTB/XDR Testing"
+msgstr "Current MTB/XDR Testing"
+
 #. [p.PkDashboard.rifCurrentTitle]
 #. defaultMessage is:
 #. Current Testing of MTB/RIF performed in
@@ -6800,6 +6807,13 @@ msgstr "Национальные тенденции диагностики ус�
 msgid "National TB Diagnosis Trends"
 msgstr "Национальные тенденции диагностики ТБ"
 
+#. [p.PkDashboard.nationalMtbDetectionTrends]
+#. defaultMessage is:
+#. National MTB Detection Trends
+#: extracted_strings.json
+msgid "National MTB Detection Trends"
+msgstr "National MTB Detection Trends"
+
 #. [p.PkDashboard.TbNationalTrend]
 #. defaultMessage is:
 #. National TB Testing Trends
@@ -6813,6 +6827,13 @@ msgstr "Национальные тенденции тестирования н�
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Тенденции национального тестирования"
+
+#. [p.PkDashboard.nationalMtbXdrTestingTrends]
+#. defaultMessage is:
+#. National MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "National MTB/XDR Testing Trends"
+msgstr "National MTB/XDR Testing Trends"
 
 #. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
@@ -8342,6 +8363,13 @@ msgstr "Тенденции диагностики РРТБ в провинция
 msgid "Provincial TB Diagnosis Trends Comparison"
 msgstr "Сравнение тенденций диагностики туберкулеза в регионах"
 
+#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
+#. defaultMessage is:
+#. Provincial MTB Detection Trends Comparison
+#: extracted_strings.json
+msgid "Provincial MTB Detection Trends Comparison"
+msgstr "Provincial MTB Detection Trends Comparison"
+
 #. [p.PkDashboard.ProvincialTBTestingTrend]
 #. defaultMessage is:
 #. Provincial TB Testing Trend
@@ -8355,6 +8383,13 @@ msgstr "Провинциальная тенденция тестирования
 #: extracted_strings.json
 msgid "Provincial Testing Trend"
 msgstr "Тенденция провинциального тестирования"
+
+#. [p.PkDashboard.provincialMtbXdrTestingTrends]
+#. defaultMessage is:
+#. Provincial MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "Provincial MTB/XDR Testing Trends"
+msgstr "Provincial MTB/XDR Testing Trends"
 
 #. [p.PkDashboard.provincialTestingTrendsYear]
 #. defaultMessage is:
@@ -12598,6 +12633,13 @@ msgstr "XDR FLQ Сопротивление"
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "Тенденции в области тестирования и диагностики ХДР"
+
+#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
+#. defaultMessage is:
+#. XDR Testing and MTB Detection Trends
+#: extracted_strings.json
+msgid "XDR Testing and MTB Detection Trends"
+msgstr "XDR Testing and MTB Detection Trends"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
