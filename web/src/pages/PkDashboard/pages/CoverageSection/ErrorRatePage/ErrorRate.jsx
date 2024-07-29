@@ -8,15 +8,15 @@ import { ErrorRateFilter, LineGraph, Loading, StateSelect } from '../../../../..
 import useAuthState from '../../../../../hooks/useAuthState'
 import useFilterValues from '../../../../../hooks/useFilterValues'
 import { getCustomMessage, graphMessages, months } from '../../../../../messages'
+import { WHOBenchmark } from '../../../../../utils/consts/WHOBenchmark'
 import PkPage from '../../../components/PkPage'
 import useDeviceErrors from '../../../hooks/useDeviceError'
 import useDeviceErrorGraph from '../../../hooks/useDeviceErrorGraph'
 import messages from '../../../PkDashboard.Messages'
 import { ErrorRateTable } from './ErrorRateTable'
 
-const ErrorRateGraph = ({ category, title }) => {
+const ErrorRateGraph = ({ category, title, user }) => {
   const { formatMessage } = useIntl()
-  const user = useAuthState()
   const [state, setState] = useState()
   const [showLabel, setShowLabel] = useState(false)
   const { data, isLoading } = useDeviceErrorGraph(omitBy({ category, state }, isNil), {
@@ -44,7 +44,7 @@ const ErrorRateGraph = ({ category, title }) => {
           label={getCustomMessage(formatMessage, messages, 'state', user)}
           value={state || ''}
           onChange={e => setState(e.target.value)}
-          countryId={user.countryId}
+          countryId={user?.countryId}
           onlyAssociatedSites
         />
       </Box>
@@ -61,6 +61,28 @@ const ErrorRateGraph = ({ category, title }) => {
                 formatter: text => `${text}%`,
               },
             }}
+            annotations={[
+              {
+                type: 'line',
+                start: ['min', WHOBenchmark[`${category}`]], // Start at the minimum x-value and 5% y-value
+                end: ['max', WHOBenchmark[`${category}`]], // End at the maximum x-value and 5% y-value
+                style: {
+                  stroke: 'red',
+                  lineDash: [4, 4],
+                  lineWidth: 2,
+                },
+                text: {
+                  content: `WHO Benchmark(${WHOBenchmark[category]}%)`,
+                  position: 'start',
+                  offsetY: -10,
+                  style: {
+                    fill: 'red',
+                    fontSize: 10,
+                    fontWeight: 'bold',
+                  },
+                },
+              },
+            ]}
             showLabel={showLabel}
             data={data}
             xField="month"
@@ -76,12 +98,17 @@ const ErrorRateGraph = ({ category, title }) => {
 const ErrorRatePage = () => {
   const { formatMessage } = useIntl()
   const location = useLocation()
+  const user = useAuthState()
+
   const filter = useFilterValues(location.pathname)
   const { data, isLoading } = useDeviceErrors({ ...filter })
   const [sort, setSort] = useState({ name: 'name', order: 'asc' })
-
   return (
-    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.genExpertError)}>
+    <PkPage
+      header={<ErrorRateFilter />}
+      user={user}
+      title={formatMessage(!user.isCountry('PK') ? messages.errorRatePageTitle : messages.genExpertError)}
+    >
       {isLoading ? <Loading /> : <ErrorRateTable sort={sort} onSortChange={setSort} items={data} />}
       <ErrorRateGraph title={formatMessage(messages.nationalErrorRates)} category="error" />
       <ErrorRateGraph title={formatMessage(messages.nationalInvalidRates)} category="invalid" />

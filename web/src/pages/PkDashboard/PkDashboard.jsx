@@ -2,6 +2,7 @@ import React from 'react'
 import { Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { Loading } from '../../cleanComponents'
+import useAuthState from '../../hooks/useAuthState'
 import ColumnName from './components/ColumnName'
 import DashboardCard from './components/DashboardCard'
 import DashboardLink from './components/DashboardLink'
@@ -13,6 +14,7 @@ import messages from './PkDashboard.Messages'
 const PkDashboard = () => {
   const { formatMessage } = useIntl()
   const { data: resultOverview, isLoading } = useResultOverview()
+  const user = useAuthState()
 
   return (
     <PkPage title={formatMessage(messages.aspectDashboard)} full>
@@ -136,7 +138,10 @@ const PkDashboard = () => {
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.coverageperformance)}>
             <DashboardLink to="/dashboard/coverage/utilization" label={formatMessage(messages.utilization)} />
-            <DashboardLink to="/dashboard/coverage/error-rate" label={formatMessage(messages.errorRate)} />
+            <DashboardLink
+              to="/dashboard/coverage/error-rate"
+              label={formatMessage(!user.isCountry('PK') ? messages.errorRatePageTitle : messages.errorRate)}
+            />
           </DashboardCard>
           <ColumnName title={formatMessage(messages.titleinventory)} />
           <DashboardCard>
