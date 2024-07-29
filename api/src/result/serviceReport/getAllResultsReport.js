@@ -298,125 +298,122 @@ const queryIncludesXdr = (query, xdrAssayId) => {
 
 const getResistanceValue = (resistance, resultText, defaultValue) => {
   if (!resultText) return defaultValue
-
   /**
-   * helper func to construct regex for different values with prefixes, like
+   * patterns:
    *   PREFIX XXX Resistance @label_result_detected
    *   PREFIX XXX @label_result_detected
    *   PREFIX XXX detected
+   *   PREFIX XXX Resistance @label_result_detected SUFFIX
+   *   PREFIX XXX @label_result_detected SUFFIX
+   *   PREFIX XXX detected SUFFIX
    *
-   * example:
+   * examples:
+   *   INH Resistance @label_result_detected
+   *   ENH @label_result_detected
    *   High INH Resistance @label_result_detected
    *   Very Low ETH @label_result-detected
    *   High MTB @label_result-detected
    *   Low MTB detected
-   */
-  const getRegexForPrefix = prefix => {
-    prefix = prefix.replace(' ', '\\s?')
-    return new RegExp(
-      `
-\\b
-      ${prefix}
-\\s+
-      ${resistance}
-\\s+
-      (?:
-        resistance
-\\s+
-      )?
-      (?:
-        @label[_-]result[_-]
-      )?
-      detected
-\\b
-    `.replace(/\s/g, ''), // remove all white spaces, tabs and line breaks
-      'gim'
-    )
-  }
-
-  if (getRegexForPrefix('High').test(resultText)) {
-    return `Detected, High`
-  }
-  if (getRegexForPrefix('Very Low').test(resultText)) {
-    return `Detected, Very Low`
-  }
-  if (getRegexForPrefix('Low').test(resultText)) {
-    return `Detected, Low`
-  }
-
-  /**
-   * patterns:
-   *   XXX Resistance @label_result_detected
-   *   XXX @label_result_detected
-   *   XXX detected
-   *   XXX Resistance @label_result_detected YYY
-   *   XXX @label_result_detected YYY
-   *   XXX detected YYY
-   *
-   * example:
-   *   INH Resistance @label_result_detected
-   *   ENH @label_result_detected
    *   MTB detected
    *   MTB detected MEDIUM
+   *   MTB DETECTED VERY LOW
+   *   MTB @label_result_concatenate_two @label_result_detected @label_semi_quant_level_text_very_low
+   *   MTB @label_result_concatenate_two @label_result_detected @label_semi_quant_level_text_high
+   *   VeryLow MTB Detected
+   *   Very-Low MTB Detected
+   *   Very_Low MTB Detected
+   *   Very Low MTB Detected
    */
   const re = new RegExp(
     `
 \\b
+    (?:
+      (
+        high  |  low  |  very[\\s-_]?low
+      )?
+      \\s+
+    )?
     ${resistance}
 \\s+
+    (?:resistance\\s+)?
     (?:
-      resistance
-\\s+
+      @label_result_concatenate_two
+      [\\s,]+
     )?
+    (?:@label[_-]result[_-])?
+    (Detected)
     (?:
-      @label[_-]result[_-]
-    )?
-    (Detected|Indeterminate)
-    (
-\\s+
-      [a-z]+
+      [\\s,]+
+      (?:
+        @label[a-z_]+_text_
+      )?
+      (
+        high  |  low  |  very[\\s-_]?low  |  [a-z]+
+      )
     )?
 \\b
   `.replace(/\s/g, ''), // remove all white spaces, tabs and line breaks
-    'im' // <-- do not include `g`
+    'im' // <-- do not include `g` to let STRING.match(re) catch groups
   )
+  /**
+   * process found match and return constructed value, or ...
+   */
   const match = resultText.match(re)
   if (match) {
-    const [
+    let [
       ,
-      status, // i.e. Detected or Indeterminate
-      details, // i.e. empty or Medium, etc
+      prefix,
+      status, // only `Detected` now, but may be extended to Indeterminate or other statuses
+      suffix, // i.e. empty or Medium, etc
     ] = match
-    return _.startCase(`${status}${details ? `, ${details}` : ''}`)
+    const getStartCase = txt => {
+      if (!txt) return txt || ''
+      txt = txt.toLowerCase()
+      if (txt === 'verylow') txt = 'very low'
+      return _.startCase(txt)
+    }
+    prefix = getStartCase(prefix)
+    status = _.startCase(status.toLowerCase())
+    suffix = getStartCase(suffix)
+    const details = prefix || suffix
+    return `${status}${details ? `, ${details}` : ''}`
   }
-
+  /**
+   * ... otherwise return default value
+   */
   return defaultValue
 }
 
 const humanizeResistances = (dataRow, isMtbXdr) => {
   let { resultData, resultCategoryGroup: mtbResistance } = dataRow
-  // mtbResistance: dataRow.assayId === xdrAssayId ? dataRow.resultCategoryGroup : dataRow.resultCategoryGroup
-  if (isMtbXdr) {
+  if (resultData) {
+    /**
+     * Hack to present a little bit clearer texts due to the lack of i18n handling in backend:
+     */
     resultData = JSON.parse(resultData)
     const { resultText } = resultData
-    // Hack to present a little bit clearer texts due to the lack of i18n handling in backend:
-    if (resultData.allResistances) {
-      /**
-       * if XDR was Detected (i.e. is in `detectedResistance` array), then add it's high/low/veryLow
-       * details to the value.
-       * --> Check helper func `checkResistance` in api/src/result/serviceReportBangladesh/index.js
-       * to see how we handle this addition in the query.
-       */
-      const { detectedResistance } = resultData
-      XDR_RESISTANCES.forEach(resistance => {
-        let resistanceValue = startCase(resultData.allResistances[resistance])
-        if (detectedResistance?.includes(resistance)) {
-          resistanceValue = getResistanceValue(resistance, resultText, resistanceValue)
-        }
+    if (isMtbXdr) {
+      if (resultData.allResistances) {
+        /**
+         * if XDR was Detected (i.e. is in `detectedResistance` array), then add it's high/low/veryLow
+         * details to the value.
+         * --> Check helper func `checkResistance` in api/src/result/serviceReportBangladesh/index.js
+         * to see how we handle this addition in the query.
+         */
+        const { detectedResistance } = resultData
+        XDR_RESISTANCES.forEach(resistance => {
+          let resistanceValue = startCase(resultData.allResistances[resistance])
+          if (detectedResistance?.includes(resistance)) {
+            resistanceValue = getResistanceValue(resistance, resultText, resistanceValue)
+          }
 
-        resultData.allResistances[resistance] = resistanceValue
-      })
+          resultData.allResistances[resistance] = resistanceValue
+        })
+      }
     }
+    /**
+     * show empty cell if MTB is not detected in resultText
+     */
     mtbResistance = getResistanceValue('MTB', resultText, '')
   }
   return { resultData, mtbResistance }
