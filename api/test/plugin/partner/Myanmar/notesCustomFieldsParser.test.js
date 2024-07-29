@@ -11,7 +11,7 @@ describe('parseNotes', () => {
             HivStatus: 'Negative',
             PatientAge: 63,
             MMTestReason: 'fu,mdr',
-            PatientGender: 'M',
+            PatientGender: 'Male',
             MicroscopyResult: 'Not Done',
             PreviousTreatmentHistory: 'No Previous Treatment',
           },
@@ -21,10 +21,10 @@ describe('parseNotes', () => {
         given: '20,f,no,hiv?,mdr,fu,neg,',
         expected: {
           patientData: {
-            HivStatus: 'HIV Unknown',
+            HivStatus: 'Unknown',
             PatientAge: 20,
             MMTestReason: 'mdr,fu',
-            PatientGender: 'F',
+            PatientGender: 'Female',
             MicroscopyResult: 'Smear Negative',
             PreviousTreatmentHistory: 'No Previous Treatment',
           },
@@ -37,7 +37,7 @@ describe('parseNotes', () => {
             HivStatus: 'Negative',
             PatientAge: 78,
             MMTestReason: 'mdr',
-            PatientGender: 'M',
+            PatientGender: 'Male',
             MicroscopyResult: 'Smear Positive',
             PreviousTreatmentHistory: 'Previously Treated',
           },
@@ -54,10 +54,10 @@ describe('parseNotes', () => {
     const given = '21,F,Yes(relapse),HIV?,Dx,Neg,(CSF),'
     const expected = {
       patientData: {
-        HivStatus: 'HIV Unknown',
+        HivStatus: 'Unknown',
         PatientAge: 21,
         MMTestReason: 'dx',
-        PatientGender: 'F',
+        PatientGender: 'Female',
         SampleType: 'CSF',
         PreviousTreatmentHistory: 'Previously Treated',
         MicroscopyResult: 'Smear Negative',
@@ -72,7 +72,7 @@ describe('parseNotes', () => {
     const expected = {
       patientData: {
         PatientAge: 63,
-        PatientGender: 'M',
+        PatientGender: 'Male',
         PreviousTreatmentHistory: 'No Previous Treatment',
         MMTestReason: 'fu,mdr', // The reasons don't support non-exact matches, as we need to limit the lookup to the first comma to prevent match false positives at the end of the text (like in the name the users use to put at the end)
         MicroscopyResult: 'Smear Positive',
@@ -88,7 +88,7 @@ describe('parseNotes', () => {
       patientData: {
         HivStatus: 'Negative',
         PatientAge: 63,
-        PatientGender: 'M',
+        PatientGender: 'Male',
         PreviousTreatmentHistory: 'No Previous Treatment',
         MMTestReason: 'fu,mdr',
         MicroscopyResult: 'Smear Positive',
@@ -104,7 +104,7 @@ describe('parseNotes', () => {
       patientData: {
         HivStatus: 'Negative',
         PatientAge: 63,
-        PatientGender: 'M',
+        PatientGender: 'Male',
         PreviousTreatmentHistory: 'No Previous Treatment',
         MMTestReason: 'fu,mdr',
         MicroscopyResult: 'Smear Positive',
