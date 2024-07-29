@@ -80,7 +80,7 @@ async function seed(knex) {
 
   // -------------------------
   // add and randomly populate DataCategory fields
-  const partnerPluginName = 'myanmar'
+  const partnerPluginName = 'deprecatedMyanmar'
   const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { addDataCategoryFields } = plugin
   if (addDataCategoryFields) {

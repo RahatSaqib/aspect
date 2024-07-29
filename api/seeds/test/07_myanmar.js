@@ -5,7 +5,6 @@ const Promise = require('bluebird')
 const { rowsAsObject } = require('../utils')
 const { upsertIssueResolutionTrigger } = require('../utils')
 const { updateDataCategoryNotificationTypeForRO } = require('../dataCategoryLow')
-const { partner: partnerMyanmar } = require('../myanmar/fixtures/partnerData')
 
 async function seed(knex) {
   const alertTemplateWithHideFlag = await knex('AlertTemplate')
@@ -270,5 +269,5 @@ async function seed(knex) {
   })
 
   // correction requested in SD-769
-  await updateDataCategoryNotificationTypeForRO(knex, partnerMyanmar.name, partnerMyanmar.externalId)
+  await updateDataCategoryNotificationTypeForRO(knex, 'mohs', 'deprecatedMyanmar')
 }
