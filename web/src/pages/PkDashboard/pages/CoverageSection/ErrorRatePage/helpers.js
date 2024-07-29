@@ -38,7 +38,10 @@ const createNode = (name, parent) => {
 
 export const makeNestedData = (array, nestingProperties, defaultName) => {
   const rootNodes = []
-  const total = { cntMtbResults: 0, cntMtbError: 0, cntMtbInvalid: 0, cntMtbNoResult: 0, numberOfModules: 0 }
+  const total = values.reduce((acc, key) => {
+    acc[key] = 0
+    return acc
+  }, {})
 
   const nestData = (parentNode, data, properties, level) => {
     if (level >= properties.length) return
