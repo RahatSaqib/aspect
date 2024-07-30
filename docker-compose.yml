@@ -1,8 +1,9 @@
-version: '3'
+version: '3.2'
 
 services:
   rabbitmq:
-    image: rabbitmq:management
+    image: rabbitmq:3.12-management-alpine
+    container_name: rabbitmq-aspect
     restart: always
     ports:
       - '5672:5672' # RabbitMQ default port
@@ -18,7 +19,14 @@ services:
 
   mysql:
     image: mysql:8.0
-    command: --default-authentication-plugin=mysql_native_password
+    command: >
+      --mysql-native-password=ON
+      --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      --default-time-zone=+00:00
+      --innodb-buffer-pool-size=4G
+      --innodb-buffer-pool-instances=4
+      --innodb-buffer-pool-chunk-size=1G
+    container_name: mysql-aspect
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 1234
@@ -28,13 +36,16 @@ services:
     ports:
       - '3306:3306' # MySQL default port
     volumes:
-      - ./data/db:/var/lib/mysql
-      - ./my.cnf:/etc/mysql/my.cnf
+      - ./.devcontainer/data/db:/var/lib/mysql
+      - ./.devcontainer/data/mysqld.cnf:/etc/mysql/my.cnf
     healthcheck:
       test:
         ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p1234']
       timeout: 20s
       retries: 10
+    networks:
+      - aspectnet
 
-volumes:
-  dbdata:
+networks:
+  aspectnet:
+    driver: bridge
