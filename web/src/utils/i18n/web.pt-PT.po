@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
+"POT-Creation-Date: 2024-07-30T04:19:47.445Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4991,15 +4991,15 @@ msgstr "Inativo"
 msgid "Include ALL results related to Patient ID"
 msgstr "Incluir TODOS os resultados relacionados à identificação do paciente"
 
-#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
-#. Includes a list of GeneXpert devices that had at least 2 critical errors
+#. Includes a list of GeneXpert devices that had at least 1 critical errors
 #: extracted_strings.json
 msgid ""
-"Includes a list of GeneXpert devices that had at least 2 critical errors"
+"Includes a list of GeneXpert devices that had at least 1 critical errors"
 msgstr ""
-"Inclui uma lista de dispositivos GeneXpert que tiveram pelo menos 2 erros "
-"críticos"
+"Inclui uma lista de dispositivos GeneXpert que apresentaram pelo menos 1 "
+"erro crítico"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
