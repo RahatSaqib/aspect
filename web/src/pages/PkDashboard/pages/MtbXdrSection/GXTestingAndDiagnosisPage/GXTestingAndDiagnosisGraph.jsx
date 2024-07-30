@@ -57,9 +57,9 @@ const GXTestingAndDiagnosisGraph = () => {
         if (+monthStr[0] >= 2021) {
           const translatedDate = `${formatMessage(months[+monthStr[1] - 1])}-${monthStr[0]}`
           if (lineFor === FQRPercentMessage) {
-            line.push({ month: translatedDate, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed() })
+            line.push({ month: translatedDate, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(1) })
           } else if (lineFor === INHPercentMessage) {
-            line.push({ month: translatedDate, [INHPercentMessage]: +InhToMtbPercentage.toFixed() })
+            line.push({ month: translatedDate, [INHPercentMessage]: +InhToMtbPercentage.toFixed(1) })
           }
           bar.push({ month: translatedDate, value: TotalTests, type: totalTestsMessage })
           bar.push({ month: translatedDate, value: MtbDetected, type: mtbDetectedMessage })
