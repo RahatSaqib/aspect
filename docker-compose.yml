@@ -11,6 +11,9 @@ services:
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    volumes:
+      - .devcontainer/data/rabbitmq/data:/var/lib/rabbitmq
+      - .devcontainer/data/rabbitmq/log:/var/log/rabbitmq
     healthcheck:
       test: ['CMD', 'nc', '-z', 'localhost', '5672']
       interval: 5s
@@ -18,7 +21,7 @@ services:
       retries: 1
 
   mysql:
-    image: mysql:8.0
+    image: mysql:8
     command: >
       --mysql-native-password=ON
       --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
