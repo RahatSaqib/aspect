@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
+"POT-Creation-Date: 2024-07-30T04:19:47.445Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -4984,14 +4984,14 @@ msgstr "Ғайрифаъол"
 msgid "Include ALL results related to Patient ID"
 msgstr "ҲАМАИ натиҷаҳои марбут ба ID беморро дохил кунед"
 
-#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
-#. Includes a list of GeneXpert devices that had at least 2 critical errors
+#. Includes a list of GeneXpert devices that had at least 1 critical errors
 #: extracted_strings.json
 msgid ""
-"Includes a list of GeneXpert devices that had at least 2 critical errors"
+"Includes a list of GeneXpert devices that had at least 1 critical errors"
 msgstr ""
-"Рӯйхати дастгоҳҳои GeneXpert-ро дар бар мегирад, ки ҳадди аққал 2 хатогии "
+"Рӯйхати дастгоҳҳои GeneXpert-ро дар бар мегирад, ки ҳадди аққал 1 хатогии "
 "ҷиддӣ доштанд"
 
 #. [legends.Unknown.resultCategoryInconclusive]
