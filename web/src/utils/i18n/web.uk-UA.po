@@ -2193,7 +2193,7 @@ msgstr "Поточне тестування"
 #. Current MTB/XDR Testing
 #: extracted_strings.json
 msgid "Current MTB/XDR Testing"
-msgstr "Current MTB/XDR Testing"
+msgstr "Поточне тестування MTB/XDR"
 
 #. [p.PkDashboard.rifCurrentTitle]
 #. defaultMessage is:
@@ -6811,7 +6811,7 @@ msgstr "Національні тенденції діагностики ТВ"
 #. National MTB Detection Trends
 #: extracted_strings.json
 msgid "National MTB Detection Trends"
-msgstr "National MTB Detection Trends"
+msgstr "Національні тенденції виявлення MTB"
 
 #. [p.PkDashboard.TbNationalTrend]
 #. defaultMessage is:
@@ -6832,7 +6832,7 @@ msgstr "Національні тенденції тестування"
 #. National MTB/XDR Testing Trends
 #: extracted_strings.json
 msgid "National MTB/XDR Testing Trends"
-msgstr "National MTB/XDR Testing Trends"
+msgstr "Національні тенденції тестування MTB/XDR"
 
 #. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
@@ -8364,7 +8364,7 @@ msgstr "Порівняння тенденцій діагностики ТВ у �
 #. Provincial MTB Detection Trends Comparison
 #: extracted_strings.json
 msgid "Provincial MTB Detection Trends Comparison"
-msgstr "Provincial MTB Detection Trends Comparison"
+msgstr "Порівняння тенденцій виявлення MTB у провінції"
 
 #. [p.PkDashboard.ProvincialTBTestingTrend]
 #. defaultMessage is:
@@ -8385,7 +8385,7 @@ msgstr "Тенденція тестування в провінціях"
 #. Provincial MTB/XDR Testing Trends
 #: extracted_strings.json
 msgid "Provincial MTB/XDR Testing Trends"
-msgstr "Provincial MTB/XDR Testing Trends"
+msgstr "Провінційні тенденції тестування MTB/XDR"
 
 #. [p.PkDashboard.provincialTestingTrendsYear]
 #. defaultMessage is:
@@ -12620,7 +12620,7 @@ msgstr "Тенденції тестування та діагностики XDR"
 #. XDR Testing and MTB Detection Trends
 #: extracted_strings.json
 msgid "XDR Testing and MTB Detection Trends"
-msgstr "XDR Testing and MTB Detection Trends"
+msgstr "Тестування XDR і тенденції виявлення MTB"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
