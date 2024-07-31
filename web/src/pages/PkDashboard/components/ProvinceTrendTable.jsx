@@ -8,14 +8,16 @@ const ProvinceTrendTable = props => {
   const { formatMessage } = useIntl()
 
   const yearTableCell = resultType
-    ? `${resultType} ${formatMessage(messages.customPerYear)}`
-    : `${formatMessage(messages.testPerYear)}`
+    ? formatMessage(messages.customPerYear, { resultType })
+    : formatMessage(messages.testPerYear)
+
   const monthTableCell = resultType
-    ? `${resultType} ${formatMessage(messages.customPerMonth)}`
-    : `${formatMessage(messages.testPerMonth)}`
+    ? formatMessage(messages.customPerMonth, { resultType })
+    : formatMessage(messages.testPerMonth)
+
   const todayTableCell = resultType
-    ? `${resultType} ${formatMessage(messages.customToday)}`
-    : `${formatMessage(messages.testToday)}`
+    ? formatMessage(messages.customToday, { resultType })
+    : formatMessage(messages.testToday)
 
   return (
     <Box>
@@ -28,8 +30,8 @@ const ProvinceTrendTable = props => {
         <TableHead>
           <TableRow>
             <TableCell>{formatMessage(messages.state_PK)}</TableCell>
-            <TableCell align="right">{`${yearTableCell}`}</TableCell>
-            <TableCell align="right">{`${monthTableCell} ${formatMessage(messages.currentYear)}`}</TableCell>
+            <TableCell align="right">{yearTableCell}</TableCell>
+            <TableCell align="right">{monthTableCell}</TableCell>
             <TableCell align="right">{todayTableCell}</TableCell>
           </TableRow>
         </TableHead>

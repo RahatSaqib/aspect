@@ -224,10 +224,12 @@ const messages = {
     testPerMonth: { id: 'p.PkDashboard.testPerMonth', defaultMessage: 'Average tests performed per month' },
     testToday: { id: 'p.PkDashboard.testToday', defaultMessage: 'Tests performed today' },
 
-    customPerYear: { id: 'p.PkDashboard.customPerYear', defaultMessage: 'detected this year' },
-    customPerMonth: { id: 'p.PkDashboard.customPerMonth', defaultMessage: 'detected per month' },
-    customToday: { id: 'p.PkDashboard.customToday', defaultMessage: 'detected today' },
-
+    customPerYear: { id: 'p.PkDashboard.customPerYear', defaultMessage: '{resultType} detected this year' },
+    customPerMonth: {
+      id: 'p.PkDashboard.customPerMonth',
+      defaultMessage: 'Average {resultType} detected per month in current year',
+    },
+    customToday: { id: 'p.PkDashboard.customToday', defaultMessage: '{resultType} detected today' },
 
     RRPerYear: { id: 'p.PkDashboard.RRPerYear', defaultMessage: 'RR cases diagnosed this year' },
     RRPerMonth: { id: 'p.PkDashboard.RRPerMonth', defaultMessage: 'Average RR cases diagnosed per month' },

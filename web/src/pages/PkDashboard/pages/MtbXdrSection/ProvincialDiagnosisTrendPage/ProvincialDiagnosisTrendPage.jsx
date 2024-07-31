@@ -105,7 +105,8 @@ const ProvincialDiagnosisTrendPage = () => {
             <ProvinceTrendTable
               title={formatMessage(messages.provincialDiagnosisTrendsCurrentYear)}
               rows={tableData}
-              resultType="MTB+"
+              resultType={!user.isPakistan ? 'MTB+' : undefined}
+
             />
           </Grid>
         </Grid>
