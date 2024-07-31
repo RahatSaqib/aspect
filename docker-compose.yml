@@ -12,10 +12,10 @@ services:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
     volumes:
-      - .devcontainer/data/rabbitmq/data:/var/lib/rabbitmq
-      - .devcontainer/data/rabbitmq/log:/var/log/rabbitmq
+      - ./.devcontainer/data/rabbitmq/data:/var/lib/rabbitmq
+      - ./.devcontainer/data/rabbitmq/log:/var/log/rabbitmq
     healthcheck:
-      test: ['CMD', 'nc', '-z', 'localhost', '5672']
+      test: [ 'CMD', 'nc', '-z', 'localhost', '5672' ]
       interval: 5s
       timeout: 15s
       retries: 1
@@ -23,12 +23,7 @@ services:
   mysql:
     image: mysql:8
     command: >
-      --mysql-native-password=ON
-      --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
-      --default-time-zone=+00:00
-      --innodb-buffer-pool-size=4G
-      --innodb-buffer-pool-instances=4
-      --innodb-buffer-pool-chunk-size=1G
+      --mysql-native-password=ON --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION --default-time-zone=+00:00 --innodb-buffer-pool-size=4G --innodb-buffer-pool-instances=4 --innodb-buffer-pool-chunk-size=1G
     container_name: mysql-aspect
     restart: always
     environment:
@@ -40,10 +35,19 @@ services:
       - '3306:3306' # MySQL default port
     volumes:
       - ./.devcontainer/data/db:/var/lib/mysql
-      - ./.devcontainer/data/mysqld.cnf:/etc/mysql/my.cnf
+      - ./.devcontainer/data/db/mysqld.cnf:/etc/mysql/my.cnf
     healthcheck:
       test:
-        ['CMD', 'mysqladmin', 'ping', '-h', 'localhost', '-u', 'root', '-p1234']
+        [
+          'CMD',
+          'mysqladmin',
+          'ping',
+          '-h',
+          'localhost',
+          '-u',
+          'root',
+          '-p1234'
+        ]
       timeout: 20s
       retries: 10
     networks:
