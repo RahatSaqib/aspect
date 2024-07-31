@@ -50,18 +50,21 @@ export const makeNestedData = (array, nestingProperties, defaultName) => {
       nestData(node, groupValues, properties, groupName !== 'null' ? level + 1 : nestingProperties.length - 1)
       if (parentNode) set(parentNode, childrenKey, [...(parentNode?.children ?? []), node])
       else rootNodes.push(node)
-
-      values.forEach(key => {
-        total[key] += node[key]
-      })
     })
   }
 
   nestData(null, array, nestingProperties, 0)
 
+  rootNodes.forEach(node => {
+    values.forEach(key => {
+      total[key] += node[key]
+    })
+  })
+
   const totalSum = {
     ...total,
     ...calculatePercentages(total),
   }
+
   return { rootNodes, totalSum }
 }
