@@ -94,7 +94,7 @@ function trimToSplitter(text) {
 const hivStatusMap = {
   'hiv+': 'Positive',
   'hiv-': 'Negative',
-  'hiv?': 'HIV Unknown',
+  'hiv?': 'Unknown',
 }
 
 const microscopyMap = {
@@ -104,8 +104,10 @@ const microscopyMap = {
 }
 
 const genderMap = {
-  m: 'M',
-  f: 'F',
+  m: 'Male',
+  f: 'Female',
+  male: 'Male',
+  female: 'Female',
 }
 
 const specimenMap = {
