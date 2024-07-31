@@ -5,12 +5,12 @@ services:
     image: rabbitmq:3.12-management-alpine
     container_name: rabbitmq-aspect
     restart: always
-    ports:
-      - '5672:5672' # RabbitMQ default port
-      - '15672:15672' # RabbitMQ management console port
     environment:
       - RABBITMQ_DEFAULT_USER=guest
       - RABBITMQ_DEFAULT_PASS=guest
+    ports:
+      - '5672:5672' # RabbitMQ default port
+      - '15672:15672' # RabbitMQ management console port
     volumes:
       - ./.devcontainer/data/rabbitmq/data:/var/lib/rabbitmq
       - ./.devcontainer/data/rabbitmq/log:/var/log/rabbitmq
@@ -22,10 +22,15 @@ services:
 
   mysql:
     image: mysql:8
-    command: >
-      --mysql-native-password=ON --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION --default-time-zone=+00:00 --innodb-buffer-pool-size=4G --innodb-buffer-pool-instances=4 --innodb-buffer-pool-chunk-size=1G
     container_name: mysql-aspect
     restart: always
+    command: >
+      --mysql-native-password=ON
+      --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
+      --default-time-zone=+00:00
+      --innodb-buffer-pool-size=4G
+      --innodb-buffer-pool-instances=4
+      --innodb-buffer-pool-chunk-size=1G
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: aspect
