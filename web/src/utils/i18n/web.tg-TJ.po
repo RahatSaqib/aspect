@@ -2185,13 +2185,6 @@ msgstr "Санҷиши кунунии бемории сил"
 msgid "Current Testing"
 msgstr "Санҷиши ҷорӣ"
 
-#. [p.PkDashboard.currentMtbXdrTesting]
-#. defaultMessage is:
-#. Current MTB/XDR Testing
-#: extracted_strings.json
-msgid "Current MTB/XDR Testing"
-msgstr "Санҷиши ҷорӣ MTB/XDR"
-
 #. [p.PkDashboard.rifCurrentTitle]
 #. defaultMessage is:
 #. Current Testing of MTB/RIF performed in
@@ -6802,13 +6795,6 @@ msgstr "Тамоюлҳои ташхиси муқовимати миллии ри
 msgid "National TB Diagnosis Trends"
 msgstr "Тамоюлҳои миллии ташхиси бемории сил"
 
-#. [p.PkDashboard.nationalMtbDetectionTrends]
-#. defaultMessage is:
-#. National MTB Detection Trends
-#: extracted_strings.json
-msgid "National MTB Detection Trends"
-msgstr "Тамоюлҳои миллии ошкоркунии MTB"
-
 #. [p.PkDashboard.TbNationalTrend]
 #. defaultMessage is:
 #. National TB Testing Trends
@@ -6822,13 +6808,6 @@ msgstr "Тамоюлҳои миллии санҷиши бемории сил"
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Тамоюлҳои имтиҳони миллӣ"
-
-#. [p.PkDashboard.nationalMtbXdrTestingTrends]
-#. defaultMessage is:
-#. National MTB/XDR Testing Trends
-#: extracted_strings.json
-msgid "National MTB/XDR Testing Trends"
-msgstr "Тамоюлҳои миллии санҷиши MTB/XDR"
 
 #. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
@@ -8361,13 +8340,6 @@ msgstr "Тамоюлҳои ташхиси вилоятии RRTB"
 msgid "Provincial TB Diagnosis Trends Comparison"
 msgstr "Муқоисаи тамоюлҳои ташхиси бемории сил дар вилоят"
 
-#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
-#. defaultMessage is:
-#. Provincial MTB Detection Trends Comparison
-#: extracted_strings.json
-msgid "Provincial MTB Detection Trends Comparison"
-msgstr "Муқоисаи тамоюлҳои ошкоркунии MTB вилоятӣ"
-
 #. [p.PkDashboard.ProvincialTBTestingTrend]
 #. defaultMessage is:
 #. Provincial TB Testing Trend
@@ -8381,13 +8353,6 @@ msgstr "Тамоюли санҷиши сил дар вилоят"
 #: extracted_strings.json
 msgid "Provincial Testing Trend"
 msgstr "Тамоюли санҷиши вилоят"
-
-#. [p.PkDashboard.provincialMtbXdrTestingTrends]
-#. defaultMessage is:
-#. Provincial MTB/XDR Testing Trends
-#: extracted_strings.json
-msgid "Provincial MTB/XDR Testing Trends"
-msgstr "Тамоюлҳои санҷиши вилоятии MTB/XDR"
 
 #. [p.PkDashboard.provincialTestingTrendsYear]
 #. defaultMessage is:
@@ -12624,13 +12589,6 @@ msgstr "Муқовимат ба XDR FLQ"
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "Тамоюлҳои санҷиш ва ташхиси XDR"
-
-#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
-#. defaultMessage is:
-#. XDR Testing and MTB Detection Trends
-#: extracted_strings.json
-msgid "XDR Testing and MTB Detection Trends"
-msgstr "Санҷиши XDR ва тамоюлҳои муайянкунии MTB"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:

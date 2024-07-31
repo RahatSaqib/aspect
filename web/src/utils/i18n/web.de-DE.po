@@ -2193,13 +2193,6 @@ msgstr "Aktuelle TB-Tests"
 msgid "Current Testing"
 msgstr "Aktuelle Tests"
 
-#. [p.PkDashboard.currentMtbXdrTesting]
-#. defaultMessage is:
-#. Current MTB/XDR Testing
-#: extracted_strings.json
-msgid "Current MTB/XDR Testing"
-msgstr "Aktuelle MTB/XDR-Tests"
-
 #. [p.PkDashboard.rifCurrentTitle]
 #. defaultMessage is:
 #. Current Testing of MTB/RIF performed in
@@ -6812,13 +6805,6 @@ msgstr "Nationale Trends bei der Diagnose von Rifampicin-Resistenz"
 msgid "National TB Diagnosis Trends"
 msgstr "Nationale TB-Diagnosetrends"
 
-#. [p.PkDashboard.nationalMtbDetectionTrends]
-#. defaultMessage is:
-#. National MTB Detection Trends
-#: extracted_strings.json
-msgid "National MTB Detection Trends"
-msgstr "Nationale MTB-Erkennungstrends"
-
 #. [p.PkDashboard.TbNationalTrend]
 #. defaultMessage is:
 #. National TB Testing Trends
@@ -6832,13 +6818,6 @@ msgstr "Nationale TB-Test-Trends"
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Nationale Trends bei Tests"
-
-#. [p.PkDashboard.nationalMtbXdrTestingTrends]
-#. defaultMessage is:
-#. National MTB/XDR Testing Trends
-#: extracted_strings.json
-msgid "National MTB/XDR Testing Trends"
-msgstr "Nationale MTB/XDR-Testtrends"
 
 #. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
@@ -8371,13 +8350,6 @@ msgstr "RRTB-Diagnosetrends in den Provinzen"
 msgid "Provincial TB Diagnosis Trends Comparison"
 msgstr "Vergleich der TB-Diagnosetrends in den Provinzen"
 
-#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
-#. defaultMessage is:
-#. Provincial MTB Detection Trends Comparison
-#: extracted_strings.json
-msgid "Provincial MTB Detection Trends Comparison"
-msgstr "Vergleich der MTB-Erkennungstrends der Provinzen"
-
 #. [p.PkDashboard.ProvincialTBTestingTrend]
 #. defaultMessage is:
 #. Provincial TB Testing Trend
@@ -8391,13 +8363,6 @@ msgstr "Trend zu TB-Tests in den Provinzen"
 #: extracted_strings.json
 msgid "Provincial Testing Trend"
 msgstr "Trend zu Provinztests"
-
-#. [p.PkDashboard.provincialMtbXdrTestingTrends]
-#. defaultMessage is:
-#. Provincial MTB/XDR Testing Trends
-#: extracted_strings.json
-msgid "Provincial MTB/XDR Testing Trends"
-msgstr "Trends bei MTB/XDR-Tests der Provinzen"
 
 #. [p.PkDashboard.provincialTestingTrendsYear]
 #. defaultMessage is:
@@ -12664,13 +12629,6 @@ msgstr "XDR FLQ-Widerstand"
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "Trends bei XDR-Tests und -Diagnosen"
-
-#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
-#. defaultMessage is:
-#. XDR Testing and MTB Detection Trends
-#: extracted_strings.json
-msgid "XDR Testing and MTB Detection Trends"
-msgstr "Trends bei XDR-Tests und MTB-Erkennung"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:

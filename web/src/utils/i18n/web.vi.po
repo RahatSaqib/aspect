@@ -2187,13 +2187,6 @@ msgstr "Xét nghiệm bệnh lao hiện tại"
 msgid "Current Testing"
 msgstr "Thử nghiệm hiện tại"
 
-#. [p.PkDashboard.currentMtbXdrTesting]
-#. defaultMessage is:
-#. Current MTB/XDR Testing
-#: extracted_strings.json
-msgid "Current MTB/XDR Testing"
-msgstr "Kiểm tra MTB/XDR hiện tại"
-
 #. [p.PkDashboard.rifCurrentTitle]
 #. defaultMessage is:
 #. Current Testing of MTB/RIF performed in
@@ -6794,13 +6787,6 @@ msgstr "Xu hướng chẩn đoán kháng thuốc Rifampicin quốc gia"
 msgid "National TB Diagnosis Trends"
 msgstr "Xu hướng chẩn đoán lao quốc gia"
 
-#. [p.PkDashboard.nationalMtbDetectionTrends]
-#. defaultMessage is:
-#. National MTB Detection Trends
-#: extracted_strings.json
-msgid "National MTB Detection Trends"
-msgstr "Xu hướng phát hiện MTB quốc gia"
-
 #. [p.PkDashboard.TbNationalTrend]
 #. defaultMessage is:
 #. National TB Testing Trends
@@ -6814,13 +6800,6 @@ msgstr "Xu hướng xét nghiệm lao quốc gia"
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Xu hướng thử nghiệm quốc gia"
-
-#. [p.PkDashboard.nationalMtbXdrTestingTrends]
-#. defaultMessage is:
-#. National MTB/XDR Testing Trends
-#: extracted_strings.json
-msgid "National MTB/XDR Testing Trends"
-msgstr "Xu hướng thử nghiệm MTB/XDR quốc gia"
 
 #. [p.PkDashboard.nationalXdrTestingTrends]
 #. defaultMessage is:
@@ -8343,13 +8322,6 @@ msgstr "Xu hướng chẩn đoán RRTB cấp tỉnh"
 msgid "Provincial TB Diagnosis Trends Comparison"
 msgstr "So sánh xu hướng chẩn đoán bệnh lao cấp tỉnh"
 
-#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
-#. defaultMessage is:
-#. Provincial MTB Detection Trends Comparison
-#: extracted_strings.json
-msgid "Provincial MTB Detection Trends Comparison"
-msgstr "So sánh xu hướng phát hiện MTB cấp tỉnh"
-
 #. [p.PkDashboard.ProvincialTBTestingTrend]
 #. defaultMessage is:
 #. Provincial TB Testing Trend
@@ -8363,13 +8335,6 @@ msgstr "Xu hướng xét nghiệm lao cấp tỉnh"
 #: extracted_strings.json
 msgid "Provincial Testing Trend"
 msgstr "Xu hướng kiểm tra và chẩn đoán XDR"
-
-#. [p.PkDashboard.provincialMtbXdrTestingTrends]
-#. defaultMessage is:
-#. Provincial MTB/XDR Testing Trends
-#: extracted_strings.json
-msgid "Provincial MTB/XDR Testing Trends"
-msgstr "Xu hướng thử nghiệm MTB/XDR cấp tỉnh"
 
 #. [p.PkDashboard.provincialTestingTrendsYear]
 #. defaultMessage is:
@@ -12591,13 +12556,6 @@ msgstr "Kháng XDR FLQ"
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "Xu hướng chẩn đoán và kiểm tra XDR"
-
-#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
-#. defaultMessage is:
-#. XDR Testing and MTB Detection Trends
-#: extracted_strings.json
-msgid "XDR Testing and MTB Detection Trends"
-msgstr "Xu hướng kiểm tra XDR và phát hiện MTB"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
