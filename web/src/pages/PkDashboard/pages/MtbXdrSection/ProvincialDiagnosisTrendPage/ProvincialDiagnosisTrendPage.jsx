@@ -106,7 +106,6 @@ const ProvincialDiagnosisTrendPage = () => {
               title={formatMessage(messages.provincialDiagnosisTrendsCurrentYear)}
               rows={tableData}
               resultType={!user.isPakistan ? 'MTB+' : undefined}
-
             />
           </Grid>
         </Grid>
