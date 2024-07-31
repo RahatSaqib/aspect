@@ -2,6 +2,7 @@ import React from 'react'
 import { Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { Loading } from '../../cleanComponents'
+import useAuthState from '../../hooks/useAuthState'
 import ColumnName from './components/ColumnName'
 import DashboardCard from './components/DashboardCard'
 import DashboardLink from './components/DashboardLink'
@@ -12,6 +13,7 @@ import messages from './PkDashboard.Messages'
 
 const PkDashboard = () => {
   const { formatMessage } = useIntl()
+  const { isCountry } = useAuthState()
   const { data: resultOverview, isLoading } = useResultOverview()
 
   return (
@@ -24,9 +26,9 @@ const PkDashboard = () => {
             <SummaryCard
               items={[
                 {
-                  key: 'molecularAssay',
+                  key: isCountry('PK') ? 'molecularAssay' : 'totalReportableTBTests',
                   value: resultOverview.total1Year,
-                  valueTooltipKey: 'peopleTestedRifTooltip',
+                  valueTooltipKey: isCountry('PK') ? 'peopleTestedRifTooltip' : 'reportableCount',
                 },
                 { key: 'molecularAssay25', value: resultOverview.totalToday },
               ]}
@@ -39,7 +41,11 @@ const PkDashboard = () => {
           ) : (
             <SummaryCard
               items={[
-                { key: 'TB', value: resultOverview.mtbDetected1Year },
+                {
+                  key: 'TB',
+                  value: resultOverview.mtbDetected1Year,
+                  valueTooltipKey: isCountry('PK') ? undefined : 'reportableCount',
+                },
                 { key: 'TB25', value: resultOverview.mtbDetected1Day },
               ]}
             />
