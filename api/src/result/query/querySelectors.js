@@ -462,76 +462,106 @@ const SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT = {
 const getFieldsForQuarterlyReport = timezoneIANA => {
   return {
     id: 'r.id',
-    patientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))'),
-    sampleId: 'r.sampleId',
+    patientId: knex.raw(`r.patientData ->> '$.id'`),
+    // sampleId: 'r.sampleId',
+    sampleId: knex.raw(`r.patientData ->> '$.SampleType'`),
     testDate: getDateTimeProjectionInTimeZoneIANA(knex, 'COALESCE(r.endedOn, r.startedOn)', timezoneIANA),
     startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
     endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
     deviceName: 'd.name',
     assay: 'a.name',
     assayVersion: 'r.assayVersion',
-    result1: 'rc2.name',
+    result1: 'rc1.name',
     result2: 'rc2.name',
     resultText: knex.raw(
       `IFNULL(
-        JSON_UNQUOTE(  JSON_EXTRACT(r.resultData, "$.resultText")  ),
+        r.resultData ->> '$.resultText',
         CONCAT(  IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, '')  )
       )`
     ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
     patientAgeYears: knex.raw(
       `COALESCE(
-        JSON_VALUE(r.patientData, "$.age" RETURNING CHAR),
-        JSON_VALUE(r.patientData, "$.PatientAge" RETURNING CHAR)
+        r.patientData ->> '$.PatientAge',
+        r.patientData ->> '$.age'
       )`
     ),
     patientName: knex.raw(
       `COALESCE(
-        JSON_VALUE(r.patientData, "$.name"  RETURNING CHAR),
-        JSON_VALUE(r.patientData, "$.patientName"  RETURNING CHAR)
+        r.patientData ->> '$.name',
+        r.patientData ->> '$.patientName'
       )`
     ),
     patientStreet: knex.raw(
       `COALESCE(
-        JSON_VALUE(r.patientData, "$.street" RETURNING CHAR),
-        JSON_VALUE(r.patientData, "$.patientStreet"  RETURNING CHAR)
+        r.patientData ->> '$.street',
+        r.patientData ->> '$.patientStreet'
       )`
     ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
     patientCity: knex.raw(
       `COALESCE(
-        JSON_VALUE(r.patientData, "$.city" RETURNING CHAR),
-        JSON_VALUE(r.patientData, "$.patientCity" RETURNING CHAR)
+        r.patientData ->> '$.PatientTownship',
+        r.patientData ->> '$.city',
+        r.patientData ->> '$.patientCity'
       )`
     ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
     hivStatus: knex.raw(
       `case
       when dis.externalId <> 'hiv' then
         COALESCE(
-          JSON_VALUE( r.patientData, '$.HIVStatus'),
-          JSON_VALUE( r.patientData, '$.hivStatus'),
-          JSON_VALUE( r.patientData, '$.HivStatus')
+          r.patientData ->> '$.HIVStatus',
+          r.patientData ->> '$.hivStatus',
+          r.patientData ->> '$.HivStatus'
         )
       else 'N/A'
     end`
     ),
     /**
-     * Note: PreviouslyTreated has less data than GxAlert,
-     * for example 'OnTreatment' or 'N/A'
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     * Note: PreviousTreatmentHistory has more options than in GxAlert,
+     * so - map values in Aspect to values in GxAlert to use same formulas as in GxAlert
      */
     previouslyTreated: knex.raw(
-      `CASE
-        WHEN IFNULL( JSON_VALUE(r.patientData, '$.previouslyTreated'), '') IN ('Yes', 'true') THEN 'Yes'
-        ELSE 'No'
+      `CASE r.patientData ->> '$.PreviousTreatmentHistory'
+        WHEN 'Previously Treated' THEN 'Yes'
+        WHEN 'No Previous Treatment' THEN 'No'
+        WHEN 'On Treatment' THEN 'No'
+        WHEN 'Unknown' THEN 'Unknown'
+        ELSE 'N/A'
       END`
     ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
     gender: knex.raw(
       `COALESCE(
-        JSON_VALUE(r.patientData, '$.gender'),
-        JSON_VALUE(r.patientData, '$.PatientGender'),
-        JSON_VALUE(r.patientData, '$.patientGender')
+        r.patientData ->> '$.PatientGender',
+        r.patientData ->> '$.gender',
+        r.patientData ->> '$.patientGender'
       )`
     ),
-    // microscopyResult only seems to exists in dev seeding so far
-    microscopyResult: knex.raw(`JSON_VALUE(r.patientData, '$.microscopyResult')`),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    microscopyResult: knex.raw(
+      `COALESCE(
+        r.patientData ->> '$.MicroscopyResult',
+        r.patientData ->> '$.microscopyResult'
+      )`
+    ),
+    /**
+     * hmm, we do not have such custom field in Myanmar.
+     * But still leave this here.
+     * TODO: discuss with PO about this custom field
+     */
     repeatTest: knex.raw(
       `CASE JSON_VALUE(r.patientData, '$.repeatTest')
         WHEN '0' THEN 'First or second'
@@ -540,14 +570,23 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
         ELSE NULL
       END`
     ),
-    // testReasonShortName seems to be always null in resultData
-    testReason: knex.raw('JSON_VALUE(r.resultData, "$.testReasonShortName")'),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    testReason: knex.raw(`r.patientData ->> '$.MMTestReason'`),
 
-    // HealthFacility custom field seems to be in declared for zw, but no present: JSON_VALUE(r.patientData, '$.healthFacility') as HealthFacility,
-    healthFacility: 'so.name',
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    notes: knex.raw('REGEXP_REPLACE(r.patientData ->> "$.OtherNotes", "(\\r\\n|\\n|\\r)"," ")'),
+    // notes: knex.raw('REGEXP_REPLACE(r.notes,"(\\r\\n|\\n|\\r)"," ")'),
 
     errorCode: knex.raw('REGEXP_REPLACE(r.errorCode,"(\\r\\n|\\n|\\r)"," ")'),
     errorNotes: knex.raw('REGEXP_REPLACE(r.errorNotes,"(\\r\\n|\\n|\\r)"," ")'),
+
+    tag: 'tags.tagsCsv',
+
+    healthFacility: 'so.name',
 
     assayName: 'a.name',
     assayHostTestCode: 'r.assayVersion',
@@ -561,12 +600,9 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
     senderVersion: 'r.senderVersion',
     senderIp: 'd.lastPingFromIp',
 
-    notes: knex.raw('REGEXP_REPLACE(r.notes,"(\\r\\n|\\n|\\r)"," ")'),
     country: 'c.name',
     state: 'st.name',
     lga: 'lg.name',
-
-    tag: 'tags.tagsCsv',
   }
 }
 

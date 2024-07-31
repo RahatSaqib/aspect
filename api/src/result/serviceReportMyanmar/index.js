@@ -36,7 +36,6 @@ function mapGxAlertResultToAspect(val = '') {
       'Positive',
       'Indeterminate',
       'No Result',
-      'Not Detected',
       '< 40 cp/ml',
       '< 1000 cp/ml',
       '>= 1000 cp/ml',
@@ -48,6 +47,9 @@ function mapGxAlertResultToAspect(val = '') {
   if (val === 'Detected' || val?.includes('Positive')) {
     return 'Positive'
   }
+  if (val === 'Not Detected') {
+    return 'Negative'
+  }
   if (val === 'Trace Detected') {
     return 'Trace'
   }
@@ -55,7 +57,7 @@ function mapGxAlertResultToAspect(val = '') {
     return '< 1000 cp/ml'
   }
 
-  return 'Unknown'
+  return !val ? '' : 'Unknown'
 }
 
 module.exports = {
