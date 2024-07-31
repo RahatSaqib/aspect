@@ -7,11 +7,9 @@ const {
 } = require('../../src/shared/dictionary')
 
 async function seed(knex) {
-  const { id: partnerId } = await knex('Partner').where({ externalId: 'MoHS' }).first('id')
+  const { id: partnerId } = await knex('Partner').where({ externalId: 'mohs' }).first('id')
 
-  const sourceTable = 'mig_Notification' // This table is created by the migration script (file A2A-notifications.sql)
-
-  const notificationDefs = await knex(sourceTable).select()
+  const notificationDefs = await knex('mig_Notification').select() // This table is created by the migration script (file A2A-notifications.sql)
 
   for (const ndef of notificationDefs) {
     // eslint-disable-next-line no-await-in-loop
@@ -224,7 +222,11 @@ async function getLastLoggedInPersonWithSameContactInfo(knex, recipientPersonId)
       .leftJoin('User as u', 'u.id', 'p.userId')
       .whereNull('disabledOn')
       .andWhere(function () {
-        this.where({ email: sourcePerson.email }).orWhere({ cell: sourcePerson.cell })
+        this.where('p.name', sourcePerson.name)
+          .andWhere(function () {
+            this.where({ email: sourcePerson.email })
+              .orWhere({ cell: sourcePerson.cell })
+          })
       })
       .orderBy('lastLogin', 'desc')
       .first('p.id as id')

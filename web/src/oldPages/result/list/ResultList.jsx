@@ -8,7 +8,7 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useMutation, useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router-dom'
-import { DetailHeader, ResultFilter } from '../../../cleanComponents'
+import { DetailHeader, ResultFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { RESULT_LIST } from '../../../components/QueryFetch/Result'
@@ -78,34 +78,36 @@ export default function ResultList() {
             <BrowseEmptyList />
           ) : (
             <>
-              <ResultDataTable className={styles.ResultDataTable}>
-                <ResultDataTableHead
-                  navigate={navigate}
-                  location={location}
-                  sortColumnKey={sortCol}
-                  sortColumnDir={sortDir}
-                  columns={data?.columns ?? []}
-                />
-                <TableBody>
-                  {data?.items?.map(result => (
-                    <ResultDataTableRow
-                      key={result.id}
-                      intl={intl}
-                      extraColumns={data?.extraColumns ?? []}
-                      result={result}
-                      onClick={e =>
-                        gotoWithReturnUrl(
-                          `/browse/result/${e.currentTarget.dataset.resultId || 'add'}`,
-                          navigate,
-                          location
-                        )
-                      }
-                      data-result-id={result.id}
-                      messages={messages}
-                    />
-                  ))}
-                </TableBody>
-              </ResultDataTable>
+              <TableContainer>
+                <ResultDataTable className={styles.ResultDataTable}>
+                  <ResultDataTableHead
+                    navigate={navigate}
+                    location={location}
+                    sortColumnKey={sortCol}
+                    sortColumnDir={sortDir}
+                    columns={data?.columns ?? []}
+                  />
+                  <TableBody>
+                    {data?.items?.map(result => (
+                      <ResultDataTableRow
+                        key={result.id}
+                        intl={intl}
+                        extraColumns={data?.extraColumns ?? []}
+                        result={result}
+                        onClick={e =>
+                          gotoWithReturnUrl(
+                            `/browse/result/${e.currentTarget.dataset.resultId || 'add'}`,
+                            navigate,
+                            location
+                          )
+                        }
+                        data-result-id={result.id}
+                        messages={messages}
+                      />
+                    ))}
+                  </TableBody>
+                </ResultDataTable>
+              </TableContainer>
               <BrowseTablePaginator
                 navigate={navigate}
                 location={location}

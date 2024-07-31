@@ -504,6 +504,7 @@ export default function authReducer(state = initialState, action) {
     // fallthrough
     case types.REFRESH_FAILURE:
     case types.LOGOUT:
+      sessionStorage.clear()
       return state.clear().set('loggedOutReason', action.data.reason)
 
     case types.RESET_PASSWORD_ENTER_PASSWORD_SUCCESS:
