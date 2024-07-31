@@ -52,6 +52,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       resultCategory1: 'r.resultCategory1',
       resultCategory2: 'r.resultCategory2',
       sampleTypeId: 'stp.id',
+      sampleCollectedBy: 'sp.collectedBy',
       resultSourceExternalId: 'rso.externalId',
       partnerId: 'p.id',
       partnerPluginName: 'p.plugin',
