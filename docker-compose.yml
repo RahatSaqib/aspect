@@ -40,7 +40,7 @@ services:
       - '3306:3306' # MySQL default port
     volumes:
       - ./.devcontainer/data/db:/var/lib/mysql
-      - ./.devcontainer/data/db/mysqld.cnf:/etc/mysql/my.cnf
+      - ./.devcontainer/data/mysqld.cnf:/etc/mysql/my.cnf
     healthcheck:
       test:
         [
