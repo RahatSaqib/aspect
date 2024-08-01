@@ -378,6 +378,10 @@ const messages = {
       id: 'p.PkDashboard.totalMTBTraceDetected',
       defaultMessage: 'Total MTB detected and MTB Trace detected',
     },
+    totalRRTBDetectedInCurrentYear: {
+      id: 'p.PkDashboard.totalRRTBDetectedInCurrentYear',
+      defaultMessage: 'Total RRTB detected in current year',
+    },
     dataVisualisationForXDRResistanceGraphTitle: {
       id: 'p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle',
       defaultMessage: 'Data Visualisation For XDR Resistance Over Time',

@@ -42,8 +42,11 @@ const PkDashboard = () => {
             <SummaryCard
               items={[
                 {
-                  key: 'TB',
+                  key: isCountry('PK') ? 'TB' : 'totalTBDetectedInCurrentYear',
                   value: resultOverview.mtbDetected1Year,
+                  info: isCountry('PK')
+                    ? undefined
+                    : `${((resultOverview.mtbDetected1Year / resultOverview.total1Year) * 100).toFixed()}%`,
                   valueTooltipKey: isCountry('PK') ? undefined : 'reportableCount',
                 },
                 { key: 'TB25', value: resultOverview.mtbDetected1Day },
@@ -57,7 +60,14 @@ const PkDashboard = () => {
           ) : (
             <SummaryCard
               items={[
-                { key: 'RTTB', value: resultOverview.rifDetected1Year },
+                {
+                  key: isCountry('PK') ? 'RTTB' : 'totalRRTBDetectedInCurrentYear',
+                  value: resultOverview.rifDetected1Year,
+                  info: isCountry('PK')
+                    ? undefined
+                    : `${((resultOverview.rifDetected1Year / resultOverview.mtbDetected1Year) * 100).toFixed()}%`,
+                  valueTooltipKey: isCountry('PK') ? undefined : 'reportableCount',
+                },
                 { key: 'RTTB25', value: resultOverview.rifDetected1Day },
               ]}
             />
