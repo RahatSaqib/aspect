@@ -117,7 +117,7 @@ const GXTestingAndDiagnosisGraph = () => {
       <Grid container>
         <Grid item xs={12} md={12} lg={12}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(pkMessages.xdrFlqResistance)}
+            {formatMessage(pkMessages[user.isCountry('PK') ? 'xdrFlqResistance' : 'xdrFLQAndINHTrends'])}
           </Typography>
           <ColumnLineGraph
             data={graphData}
