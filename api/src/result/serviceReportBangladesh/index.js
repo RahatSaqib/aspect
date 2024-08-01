@@ -115,6 +115,13 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
+  // /**
+  //  * Make sure minDate and maxDate are Date object - needed to let knex correctly
+  //  * format value for MySql format - i.e. UTC as 'yyyy-MM-dd hh:mm:ss' (without timezone offset)
+  //  */
+  query.minDate = query.minDate instanceof Date ? query.minDate : new Date(query.minDate)
+  query.maxDate = query.maxDate instanceof Date ? query.maxDate : new Date(query.maxDate)
+
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
@@ -166,7 +173,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         assay: 'a',
         result: 'r',
       })
-      .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+      .modify(filterDateRangeParams, query, 'r.endedOn')
       .modify(filterParams, query, {
         countryId: 'g.countryId',
         stateId: 'g.stateId',
@@ -878,7 +885,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * use only value of Date filter and skip all other filters and constraints
          * applied to main query `drTb10AData` above
          */
-        .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+        .modify(filterDateRangeParams, query, 'r.endedOn')
         /**
          * condition is "referringSiteId should point
          * to our sites, but result's siteId should not be among our sites"
