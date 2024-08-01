@@ -36,6 +36,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       <TableCell>{formatMessage(messages[result.assayI18nKey], null, result.assayName)}</TableCell>
       {isEmpty(extraColumns) ? (
         <TableCell>
+          {formatMessage(messages[result.resultTextI18nKey], null, result.resultText)}
           {`${formatMessage(
             messages[result.resultCategory1Titlei18nKey],
             null,
@@ -53,14 +54,16 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
             ` | ${formatMessage(messages[result.resultCategory2I18nKey], null, result.resultCategory2Name)}`}
         </TableCell>
       ) : (
-        extraColumns.map(column => (
-          // TODO: refactor, see DeviceOperationTableRow
-          <TableCell key={column.i18nKey} hiddenOn="nd">
-            {formatterByType(column.type)(
-              column.formatter ? formatters[column.formatter](result.column?.fieldName) : result.column?.fieldName
-            )}
-          </TableCell>
-        ))
+        extraColumns.map(column => {
+          const columnData = result[column.fieldName];
+          return (
+            <TableCell key={column.i18nKey} hiddenOn="nd">
+              {formatterByType(column.type)(
+                column.formatter ? formatters[column.formatter](columnData) : columnData
+              )}
+            </TableCell>
+          );
+        })
       )}
       <TableCell hiddenOn="lg">{result.errorCode}</TableCell>
       <PermissionChecker permissions={['+reporter']}>
