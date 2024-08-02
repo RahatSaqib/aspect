@@ -384,7 +384,7 @@ async function seed(knex) {
                 sampleGroup: `GRP-TB-${i % 5}`,
                 resultCategory1: result.category1,
                 resultCategory2: result.category2,
-                resultData: JSON.stringify(resultData),
+                resultData: JSON.stringify({ ...resultData, assay: 'Xpert MTB-RIF Assay G4' }),
                 assayVersion: '4',
                 startedOn: randomDate,
                 endedOn: addMinutes(randomDate, 100),
