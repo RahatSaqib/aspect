@@ -20,15 +20,39 @@ const ErrorRateGraph = ({ category, title, user }) => {
   const [state, setState] = useState()
   const [showLabel, setShowLabel] = useState(false)
   const { data, isLoading } = useDeviceErrorGraph(omitBy({ category, state }, isNil), {
-    select: array =>
-      array
-        .sort((a, b) => a.month - b.month)
-        .map(item => ({
-          year: String(item.year),
-          month: `${formatMessage(months[item.month - 1])}`,
-          value: item.percentage,
-        })),
+    select: array => {
+      const currentYear = new Date().getFullYear()
+      const monthsOfYear = Array.from({ length: 12 }, (_, i) => i + 1)
+      const monthNames = monthsOfYear.map(month => formatMessage(months[month - 1]))
+
+      if (!array.length) {
+        return monthsOfYear.map(month => ({
+          year: String(currentYear),
+          month: monthNames[month - 1],
+          value: 0,
+        }))
+      }
+
+      const dataByYear = array.reduce((acc, item) => {
+        if (!acc[item.year]) acc[item.year] = {}
+        acc[item.year][item.month] = item.percentage
+        return acc
+      }, {})
+
+      return monthsOfYear
+        .flatMap(month =>
+          Object.keys(dataByYear).flatMap(year => ({
+            year: String(year),
+            month: monthNames[month - 1],
+            value: dataByYear[year][month] || 0,
+          }))
+        )
+        .sort((a, b) => a.year - b.year || a.month - b.month)
+    },
   })
+
+  const maxValue = data?.reduce((max, item) => Math.max(max, item.value), 0)
+
   return (
     <Box sx={{ display: 'flex', flexDirection: 'row', alignItems: 'center', my: '25px' }}>
       <Box flex={1}>
@@ -60,6 +84,8 @@ const ErrorRateGraph = ({ category, title, user }) => {
               label: {
                 formatter: text => `${text}%`,
               },
+              min: 0,
+              max: maxValue + 5,
             }}
             annotations={[
               {
