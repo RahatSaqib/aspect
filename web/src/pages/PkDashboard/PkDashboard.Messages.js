@@ -33,7 +33,6 @@ const messages = {
       id: 'p.PkDashboard.annualRRDiagnosedTrends',
       defaultMessage: 'Annual RR Diagnosis',
     },
-
     annualDiagnosedTrends: {
       id: 'p.PkDashboard.annualDiagnosedTrends',
       defaultMessage: 'Annual diagnosis Trends',
