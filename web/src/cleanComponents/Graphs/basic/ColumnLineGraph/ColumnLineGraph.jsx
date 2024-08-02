@@ -1,9 +1,10 @@
 import React from 'react'
 import { DualAxes } from '@ant-design/plots'
+import isNil from 'lodash/isNil'
 import { formatNumber } from '../../../../utils/utils/number'
 import { filterColour } from '../../graphUtils'
 
-const ColumnLineGraph = ({ data, colors, graphId, showLabel, xField, yField }) => {
+const ColumnLineGraph = ({ data, colors, graphId, showLabel, xField, yField, getCustomProps }) => {
   const config = {
     data, // [bar, line]
     intervalPadding: 4,
@@ -60,7 +61,10 @@ const ColumnLineGraph = ({ data, colors, graphId, showLabel, xField, yField }) =
     animation: false,
     appendPadding: 20,
   }
-  return data ? <DualAxes {...config} /> : null
+
+  const props = !isNil(getCustomProps) ? getCustomProps(config) : config
+
+  return data ? <DualAxes {...props} /> : null
 }
 
 export default ColumnLineGraph
