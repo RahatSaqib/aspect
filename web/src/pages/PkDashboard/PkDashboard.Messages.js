@@ -292,21 +292,42 @@ const messages = {
       defaultMessage: 'XDR Assay Summary Result by device',
     },
     TCurrent: { id: 'p.PkDashboard.TCurrent', defaultMessage: 'Current Testing' },
+    currentMtbXdrTesting: { id: 'p.PkDashboard.currentMtbXdrTesting', defaultMessage: 'Current MTB/XDR Testing' },
     TNationalTrend: { id: 'p.PkDashboard.TNationalTrend', defaultMessage: 'National Testing Trends' },
+    nationalMtbXdrTestingTrends: {
+      id: 'p.PkDashboard.nationalMtbXdrTestingTrends',
+      defaultMessage: 'National MTB/XDR Testing Trends',
+    },
     ProvincialTestingTrend: {
       id: 'p.PkDashboard.ProvincialTestingTrend',
       defaultMessage: 'Provincial Testing Trend',
+    },
+    provincialMtbXdrTestingTrends: {
+      id: 'p.PkDashboard.provincialMtbXdrTestingTrends',
+      defaultMessage: 'Provincial MTB/XDR Testing Trends',
     },
     XDRTestingandDiagnosisTrends: {
       id: 'p.PkDashboard.XDRTestingandDiagnosisTrends',
       defaultMessage: 'XDR Testing and Diagnosis Trends',
     },
+    xdrTestingAndMtbDetectionTrends: {
+      id: 'p.PkDashboard.xdrTestingAndMtbDetectionTrends',
+      defaultMessage: 'XDR Testing and MTB Detection Trends',
+    },
     DCurrent: { id: 'p.PkDashboard.DCurrent', defaultMessage: 'Current MTB Detection' },
     DCurrentPending: { id: 'p.PkDashboard.DCurrentPending', defaultMessage: 'Current MTB Detection' },
     DNationalTrend: { id: 'p.PkDashboard.DNationalTrend', defaultMessage: 'National TB Diagnosis Trends' },
+    nationalMtbDetectionTrends: {
+      id: 'p.PkDashboard.nationalMtbDetectionTrends',
+      defaultMessage: 'National MTB Detection Trends',
+    },
     ProvincialTBDiagnosisTrendsComparison: {
       id: 'p.PkDashboard.ProvincialTBDiagnosisTrendsComparison',
       defaultMessage: 'Provincial TB Diagnosis Trends Comparison',
+    },
+    provincialMtbDetectionTrendsComparison: {
+      id: 'p.PkDashboard.provincialMtbDetectionTrendsComparison',
+      defaultMessage: 'Provincial MTB Detection Trends Comparison',
     },
     fqInhTestingDiagnosis: {
       id: 'p.PkDashboard.fqInhTestingDiagnosis',
