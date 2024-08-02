@@ -160,7 +160,7 @@ exports.customPropertiesVariables = {
   '--aspect-color-supernova': '#f0bc2c',
   '--aspect-color-supernova-2': '#fcb124',
   '--aspect-color-sushi': '#7cb342',
-  '--aspect-color-mint': '#d4ffdf',
+  '--aspect-color-mint': '#439B45',
   '--aspect-color-slate': '#666666',
   '--aspect-color-crayola': '#FFC099',
   '--aspect-color-powder': '#BCE9F0',
