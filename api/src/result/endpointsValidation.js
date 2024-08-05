@@ -251,6 +251,7 @@ function validateResultDetailResponse() {
     sampleId: Joi.string().allow(null, '').description('Sample id'),
     sampleGroup: Joi.string().allow(null, '').description('Sample group'),
     sampleCollectedOn: Joi.date().allow(null).description('The date when the sample has been collected'),
+    sampleCollectedBy: Joi.string().allow(null, '').description('the person who collect the sample'),
     sampleOriginSiteName: Joi.string().allow(null, '').description('Sample original site name'),
     sampleTypeName: Joi.string().allow(null, '').description('Sample type name'),
     sampleTypeId: asPositiveInteger.allow(null).description('Sample type Id'),
