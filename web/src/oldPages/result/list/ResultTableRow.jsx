@@ -36,22 +36,21 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
       <TableCell>{formatMessage(messages[result.assayI18nKey], null, result.assayName)}</TableCell>
       {isEmpty(extraColumns) ? (
         <TableCell>
-          {formatMessage(messages[result.resultTextI18nKey], null, result.resultText)}
-          {`${formatMessage(
+          {/* {`${formatMessage(
             messages[result.resultCategory1Titlei18nKey],
             null,
             result.resultCategory1Title
-          )}:${formatMessage(messages[result.resultCategory1I18nKey], null, result.resultCategory1Name)}`}
+          )}:${formatMessage(messages[result.resultCategory1I18nKey], null, result.resultCategory1Name)}`} */}
           {result.resultCategory2I18nKey &&
             result.resultCategory2Titlei18nKey &&
-            ` | ${formatMessage(
+            `  ${formatMessage(
               messages[result.resultCategory2Titlei18nKey],
               null,
               result.resultCategory2Title
             )}:${formatMessage(messages[result.resultCategory2I18nKey], null, result.resultCategory2Name)}`}
           {result.resultCategory2I18nKey &&
             !result.resultCategory2Titlei18nKey &&
-            ` | ${formatMessage(messages[result.resultCategory2I18nKey], null, result.resultCategory2Name)}`}
+            `  ${formatMessage(messages[result.resultCategory2I18nKey], null, result.resultCategory2Name)}`}
         </TableCell>
       ) : (
         extraColumns.map(column => {
