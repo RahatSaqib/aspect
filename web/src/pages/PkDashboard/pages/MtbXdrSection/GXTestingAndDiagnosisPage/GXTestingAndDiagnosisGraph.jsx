@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react'
 import { FormControlLabel, Grid, MenuItem, Switch, TextField, Typography } from '@mui/material'
+import format from 'date-fns/format'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
-import { ColumnLineGraph, getTimePeriod, LgaSelect, Loading, StateSelect } from '../../../../../cleanComponents'
+import { ColumnLineGraph, LgaSelect, Loading, StateSelect } from '../../../../../cleanComponents'
 import messages from '../../../../../cleanComponents/Graphs/graphMessages'
 import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
@@ -13,10 +14,9 @@ import { getCustomMessage, graphMessages, months } from '../../../../../messages
 import PkPage from '../../../components/PkPage'
 import pkMessages from '../../../PkDashboard.Messages'
 
-const endpointParams = [
-  { minDate: getTimePeriod(5, 'years', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
-]
+const now = new Date()
+
+const endpointParams = [{ minDate: format(now, 'yyyy-01-01') }, { maxDate: format(now, 'yyyy-12-31') }]
 
 const GXTestingAndDiagnosisGraph = () => {
   const { formatMessage } = useIntl()
@@ -57,9 +57,9 @@ const GXTestingAndDiagnosisGraph = () => {
         if (+monthStr[0] >= 2021) {
           const translatedDate = `${formatMessage(months[+monthStr[1] - 1])}-${monthStr[0]}`
           if (lineFor === FQRPercentMessage) {
-            line.push({ month: translatedDate, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+            line.push({ month: translatedDate, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(1) })
           } else if (lineFor === INHPercentMessage) {
-            line.push({ month: translatedDate, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+            line.push({ month: translatedDate, [INHPercentMessage]: +InhToMtbPercentage.toFixed(1) })
           }
           bar.push({ month: translatedDate, value: TotalTests, type: totalTestsMessage })
           bar.push({ month: translatedDate, value: MtbDetected, type: mtbDetectedMessage })
@@ -131,6 +131,10 @@ const GXTestingAndDiagnosisGraph = () => {
               { name: lineFor, colorId: 'casePercentDetectedOfTotal' },
             ]}
             xField="month"
+            getCustomProps={({ geometryOptions: [column, line], ...rest }) => ({
+              ...rest,
+              geometryOptions: [{ ...column, label: false }, line],
+            })}
             yField={['value', lineFor]}
           />
         </Grid>

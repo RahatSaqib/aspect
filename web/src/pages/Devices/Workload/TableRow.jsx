@@ -2,14 +2,17 @@ import React from 'react'
 import isNil from 'lodash/isNil'
 import { useIntl } from 'react-intl'
 import { Link } from 'react-router-dom'
-import { getAspectDisplayPreferences } from '../../../oldComponents/LocalStorage'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as Tr, DataTableCell as Td } from '../../../oldComponents/shared/tableBody'
 import messages from './messages'
 
 const TableRow = ({ item, extraColumns, onColumnClick }) => {
-  const { formatMessage, format } = useIntl()
-  const { dateTimeFormat } = getAspectDisplayPreferences().toJS()
+  const { formatMessage } = useIntl()
+
+  const formatDateTimeString = dateString => {
+    return dateString.replace('T', ' ').substring(0, 16)
+  }
+
   return (
     <Tr style={{ cursor: 'default' }}>
       <Td className={styles.TableCell} onClick={() => onColumnClick({ deviceId: item.deviceId })}>
@@ -25,19 +28,17 @@ const TableRow = ({ item, extraColumns, onColumnClick }) => {
         {item.lgaName}
       </Td>
       <Td hiddenOn="xl" className={styles.TableCell}>
-        {isNil(item.lastPingOn)
-          ? formatMessage(messages.notAvailable)
-          : format(new Date(item.lastPingOn), dateTimeFormat)}
+        {isNil(item.lastPingOn) ? formatMessage(messages.notAvailable) : formatDateTimeString(item.lastPingOn)}
       </Td>
       <Td hiddenOn="xl" className={styles.TableCell}>
         {isNil(item.firstResultEndedOn)
           ? formatMessage(messages.notAvailable)
-          : format(new Date(item.firstResultEndedOn), dateTimeFormat)}
+          : formatDateTimeString(item.firstResultEndedOn)}
       </Td>
       <Td hiddenOn="xl" className={styles.TableCell}>
         {isNil(item.lastResultEndedOn)
           ? formatMessage(messages.notAvailable)
-          : format(new Date(item.lastResultEndedOn), dateTimeFormat)}
+          : formatDateTimeString(item.lastResultEndedOn)}
       </Td>
       <Td onClick={() => onColumnClick({ deviceName: item.name })} className={styles.TableCell}>
         <Link to="#"> {item.total}</Link>
