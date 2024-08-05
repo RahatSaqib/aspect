@@ -110,6 +110,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
               <ProvinceTrendTable
                 title={`${formatMessage(messages.provincialRRDiagnosisTrends)} ${new Date().getFullYear()}`}
                 rows={tableData}
+                resultType={!user.isPakistan ? 'RR-TB' : undefined}
               />
             ) : null}
           </Grid>
