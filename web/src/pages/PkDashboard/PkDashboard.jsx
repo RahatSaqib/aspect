@@ -74,7 +74,6 @@ const PkDashboard = () => {
                   info: isCountry('PK')
                     ? undefined
                     : `${((resultOverview.rifDetected1Year / resultOverview.mtbDetected1Year) * 100).toFixed()}%`,
-                  valueTooltipKey: isCountry('PK') ? undefined : 'reportableCount',
                 },
                 { key: 'RTTB25', value: resultOverview.rifDetected1Day },
               ]}
