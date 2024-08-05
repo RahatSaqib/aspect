@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { Grid } from '@mui/material'
+import { Grid, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import {
@@ -83,6 +83,12 @@ const ProvincialTestingTrendPage = () => {
       ) : (
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
+            {user.isCountry('PK') ? undefined : (
+              <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
+                {formatMessage(messages.provincialXDRTestingTrends)}
+              </Typography>
+            )}
+
             {graphData ? (
               <div style={{ width: '100%' }}>
                 <LineGraph
@@ -99,7 +105,10 @@ const ProvincialTestingTrendPage = () => {
             ) : null}
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            <ProvinceTrendTable rows={tableData} />
+            <ProvinceTrendTable
+              rows={tableData}
+              title={user.isCountry('PK') ? undefined : formatMessage(messages.provincialXDRTestingTrendsCurrentYear)}
+            />
           </Grid>
         </Grid>
       )}

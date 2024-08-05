@@ -299,7 +299,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                 type: 'readOnly',
               },
               {
-                id: 'senderOperator',
+                id: 'sampleCollectedBy',
                 controlType: {
                   component: 'textField',
                 },
@@ -432,7 +432,7 @@ const getConfig = (formatMessage, isNew, { resultCategory1i18nKey, resultCategor
                  * field name to save change - see API endpoint for POST/PUT
                  * of result form
                  */
-                id: 'senderOperator2',
+                id: 'senderOperator',
                 controlType: {
                   component: 'textField',
                 },

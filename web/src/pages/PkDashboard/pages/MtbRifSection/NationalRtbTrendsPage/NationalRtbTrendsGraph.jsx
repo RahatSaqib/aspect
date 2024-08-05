@@ -102,7 +102,7 @@ const NationalRtbTrendsGraph = () => {
       <Grid container>
         <Grid item xs={12} md={4}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(messages.annualRRDiagnosedTrends)}
+            {formatMessage(messages[user.isCountry('PK') ? 'annualRRDiagnosedTrends' : 'annualRRTBDiagnosisTrends'])}
           </Typography>
           <ColumnGraph
             data={annual}
@@ -135,7 +135,7 @@ const NationalRtbTrendsGraph = () => {
         </Grid>
         <Grid item xs={12} md={8}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(messages.monthlyDiagnosedTrends)}
+            {formatMessage(messages[user.isCountry('PK') ? 'monthlyDiagnosedTrends' : 'monthlyRRTBDiagnosis'])}
           </Typography>
           <LineGraph
             data={graphData}
