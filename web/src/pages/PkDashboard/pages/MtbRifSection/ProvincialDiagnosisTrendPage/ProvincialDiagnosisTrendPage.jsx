@@ -102,6 +102,7 @@ const ProvincialDiagnosisTrendPage = () => {
           <Grid item xs={12} md={4} lg={4} container>
             <ProvinceTrendTable
               rows={tableData}
+              resultType={!user.isPakistan ? 'MTB+' : undefined}
               title={
                 user.isCountry('PK')
                   ? `${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`

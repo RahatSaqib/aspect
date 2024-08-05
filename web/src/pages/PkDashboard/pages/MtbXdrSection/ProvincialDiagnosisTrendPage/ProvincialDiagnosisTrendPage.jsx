@@ -112,6 +112,7 @@ const ProvincialDiagnosisTrendPage = () => {
                     : 'provincialMTBPositivesTrendsCurrentYear'
                 ]
               )}
+              resultType={!user.isPakistan ? 'MTB+' : undefined}
               rows={tableData}
             />
           </Grid>

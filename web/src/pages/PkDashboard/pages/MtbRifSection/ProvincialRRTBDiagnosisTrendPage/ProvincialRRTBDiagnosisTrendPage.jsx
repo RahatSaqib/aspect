@@ -116,6 +116,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
                     : formatMessage(messages.provincialRRTBDiagnosisTrendsCurrentYear)
                 }
                 rows={tableData}
+                resultType={!user.isPakistan ? 'RR-TB' : undefined}
               />
             ) : null}
           </Grid>
