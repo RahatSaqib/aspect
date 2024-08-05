@@ -55,14 +55,12 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
         </TableCell>
       ) : (
         extraColumns.map(column => {
-          const columnData = result[column.fieldName];
+          const columnData = result[column.fieldName]
           return (
             <TableCell key={column.i18nKey} hiddenOn="nd">
-              {formatterByType(column.type)(
-                column.formatter ? formatters[column.formatter](columnData) : columnData
-              )}
+              {formatterByType(column.type)(column.formatter ? formatters[column.formatter](columnData) : columnData)}
             </TableCell>
-          );
+          )
         })
       )}
       <TableCell hiddenOn="lg">{result.errorCode}</TableCell>
