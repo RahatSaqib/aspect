@@ -100,7 +100,7 @@ const NationalDiagnosisGraph = () => {
       <Grid container>
         <Grid item xs={12} md={4}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(messages.annualDiagnosedTrends)}
+            {formatMessage(messages[user.isCountry('PK') ? 'annualDiagnosedTrends' : 'mtbPlusDetectionTrends'])}
           </Typography>
           <ColumnGraph
             data={annual}
@@ -133,7 +133,7 @@ const NationalDiagnosisGraph = () => {
         </Grid>
         <Grid item xs={12} md={8}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(messages.monthlyDiagnosedTrends)}
+            {formatMessage(messages[user.isCountry('PK') ? 'monthlyDiagnosedTrends' : 'mtbPlusMonthlyDetectionTrends'])}
           </Typography>
           <LineGraph
             data={graphData}
