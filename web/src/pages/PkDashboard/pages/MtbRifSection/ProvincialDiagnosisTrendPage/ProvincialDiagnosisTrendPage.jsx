@@ -84,7 +84,7 @@ const ProvincialDiagnosisTrendPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} container>
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-              {formatMessage(messages.provincialDiagnosisTrends)}
+              {formatMessage(messages[user.isCountry('PK') ? 'provincialDiagnosisTrends' : 'provincialMTBDiagnosis'])}
             </Typography>
             <div style={{ width: '100%' }}>
               <LineGraph
@@ -102,7 +102,12 @@ const ProvincialDiagnosisTrendPage = () => {
           <Grid item xs={12} md={4} lg={4} container>
             <ProvinceTrendTable
               rows={tableData}
-              title={`${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`}
+              resultType={!user.isPakistan ? 'MTB+' : undefined}
+              title={
+                user.isCountry('PK')
+                  ? `${formatMessage(messages.provincialDiagnosisTrends)} ${formatMessage(messages.currentYear)}`
+                  : formatMessage(messages.provincialMTBDiagnosisCurrentYear)
+              }
             />
           </Grid>
         </Grid>
