@@ -28,10 +28,13 @@ const PkDashboard = () => {
               items={[
                 {
                   key: isCountry('PK') ? 'molecularAssay' : 'totalReportableTBTests',
-                  value: resultOverview.total1Year,
+                  value: isCountry('PK') ? resultOverview.total1Year : resultOverview.mtbValidWithIndeterminate,
                   valueTooltipKey: isCountry('PK') ? 'peopleTestedRifTooltip' : 'reportableCount',
                 },
-                { key: 'molecularAssay25', value: resultOverview.totalToday },
+                {
+                  key: 'molecularAssay25',
+                  value: isCountry('PK') ? resultOverview.totalToday : resultOverview.mtbValidWithIndeterminateToday,
+                },
               ]}
             />
           )}
@@ -47,7 +50,11 @@ const PkDashboard = () => {
                   value: resultOverview.mtbDetected1Year,
                   info: isCountry('PK')
                     ? undefined
-                    : `${((resultOverview.mtbDetected1Year / resultOverview.total1Year) * 100).toFixed()}%`,
+                    : `${(
+                        (resultOverview.mtbDetected1Year /
+                          (isCountry('PK') ? resultOverview.total1Year : resultOverview.mtbValidWithIndeterminate)) *
+                        100
+                      ).toFixed()}%`,
                   valueTooltipKey: isCountry('PK') ? undefined : 'reportableCount',
                 },
                 { key: 'TB25', value: resultOverview.mtbDetected1Day },
