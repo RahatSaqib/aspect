@@ -107,6 +107,7 @@ const ProvincialXDRTrendsFQPage = () => {
             <ProvinceTrendTable
               title={`${formatMessage(messages.provincialFqrDiagnosisTrends)} in current year`}
               rows={tableData}
+              resultType={!user.isPakistan ? 'FQ-R' : undefined}
             />
           </Grid>
         </Grid>
