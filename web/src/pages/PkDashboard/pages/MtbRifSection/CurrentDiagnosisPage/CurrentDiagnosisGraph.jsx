@@ -192,7 +192,7 @@ const CurrentDiagnosisGraphPage = () => {
           {barData.data && barData.data.length ? (
             <Grid item xs={12} md={8}>
               <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-                {formatMessage(messages.testsPerformedYear)}
+                {formatMessage(messages[user.isCountry('PK') ? 'testsPerformedYear' : 'mtbPositiveCurrentYear'])}
               </Typography>
               <ColumnGraph
                 data={barData.data}
