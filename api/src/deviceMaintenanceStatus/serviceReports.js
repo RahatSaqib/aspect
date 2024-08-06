@@ -4,14 +4,13 @@ const locales = require('date-fns/locale')
 const { getDeviceBaseExtendedQuery } = require('../device/service')
 const { deviceStatusByDayQuery, getDeviceStatusOverTime } = require('./service')
 const { knex, sortPageParams } = require('../db')
-const { getConstraints } = require('../auth/constraints')
+const { getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { getMonthYearField, parseDateOrDefault, getDateTimeProjectionInTimeZoneIANA } = require('../shared/date')
-const { getUser, getPersonByPersonId } = require('../auth/service')
 
 async function getDeviceActivityPercentReport(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { timezoneIANA } = await getUser(auth.credentials.name)
-  const { culture } = await getPersonByPersonId(auth.credentials.personId)
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA, culture } = user
   const deviceQuery = getDeviceBaseExtendedQuery(query, dataConstraints, { extendJoinToAssays: true })
   const { minDate = subMonths(new Date(), 12).toISOString(), maxDate = new Date().toISOString() } = query
 
