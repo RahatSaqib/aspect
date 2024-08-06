@@ -53,7 +53,7 @@ const Row = ({ row, isChild, index }) => {
 }
 
 const defaultValue = 'No Location'
-export const ErrorRateTable = ({ items }) => {
+export const ErrorRateTable = ({ items, showTotal }) => {
   const [sort, setSort] = useState({ name: 'name', order: 'asc' })
   const { rootNodes: rows, totalSum } = useMemo(
     () => addDepth(makeNestedData(items ?? [], ['stateName', 'lgaName', 'siteName', 'name'], defaultValue)),
@@ -124,7 +124,7 @@ export const ErrorRateTable = ({ items }) => {
           </TableRow>
         </TableHead>
         <TableBody>
-          <Row key="row.name" row={{ ...totalSum, name: 'Total' }} index={323} />
+          {showTotal && <Row key="row.name" row={{ ...totalSum, name: 'Total' }} index={totalSum} />}
           {renderRow(rows)}
         </TableBody>
       </Table>

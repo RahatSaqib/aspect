@@ -68,7 +68,7 @@ const ErrorRateGraph = ({ category, title, user }) => {
           label={getCustomMessage(formatMessage, messages, 'state', user)}
           value={state || ''}
           onChange={e => setState(e.target.value)}
-          countryId={user?.countryId}
+          countryId={user.countryId}
           onlyAssociatedSites
         />
       </Box>
@@ -87,28 +87,30 @@ const ErrorRateGraph = ({ category, title, user }) => {
               min: 0,
               max: maxValue + 5,
             }}
-            annotations={[
-              {
-                type: 'line',
-                start: ['min', WHOBenchmark[`${category}`]], // Start at the minimum x-value and 5% y-value
-                end: ['max', WHOBenchmark[`${category}`]], // End at the maximum x-value and 5% y-value
-                style: {
-                  stroke: 'red',
-                  lineDash: [4, 4],
-                  lineWidth: 2,
-                },
-                text: {
-                  content: `WHO Benchmark(${WHOBenchmark[category]}%)`,
-                  position: 'start',
-                  offsetY: -10,
+            annotations={
+              !user.isCountry('PK') && [
+                {
+                  type: 'line',
+                  start: ['min', WHOBenchmark[`${category}`]], // Start at the minimum x-value and 5% y-value
+                  end: ['max', WHOBenchmark[`${category}`]], // End at the maximum x-value and 5% y-value
                   style: {
-                    fill: 'red',
-                    fontSize: 10,
-                    fontWeight: 'bold',
+                    stroke: 'red',
+                    lineDash: [4, 4],
+                    lineWidth: 2,
+                  },
+                  text: {
+                    content: `WHO Benchmark(${WHOBenchmark[category]}%)`,
+                    position: 'start',
+                    offsetY: -10,
+                    style: {
+                      fill: 'red',
+                      fontSize: 10,
+                      fontWeight: 'bold',
+                    },
                   },
                 },
-              },
-            ]}
+              ]
+            }
             showLabel={showLabel}
             data={data}
             xField="month"
@@ -132,13 +134,16 @@ const ErrorRatePage = () => {
   return (
     <PkPage
       header={<ErrorRateFilter />}
-      user={user}
       title={formatMessage(!user.isCountry('PK') ? messages.errorRatePageTitle : messages.genExpertError)}
     >
-      {isLoading ? <Loading /> : <ErrorRateTable sort={sort} onSortChange={setSort} items={data} />}
-      <ErrorRateGraph title={formatMessage(messages.nationalErrorRates)} category="error" />
-      <ErrorRateGraph title={formatMessage(messages.nationalInvalidRates)} category="invalid" />
-      <ErrorRateGraph title={formatMessage(messages.nationalNoResultRates)} category="noResult" />
+      {isLoading ? (
+        <Loading />
+      ) : (
+        <ErrorRateTable showTotal={!user.isCountry('PK')} sort={sort} onSortChange={setSort} items={data} />
+      )}
+      <ErrorRateGraph title={formatMessage(messages.nationalErrorRates)} user={user} category="error" />
+      <ErrorRateGraph title={formatMessage(messages.nationalInvalidRates)} user={user} category="invalid" />
+      <ErrorRateGraph title={formatMessage(messages.nationalNoResultRates)} user={user} category="noResult" />
     </PkPage>
   )
 }
