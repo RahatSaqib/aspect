@@ -7,6 +7,7 @@ const messages = {
     // page titles
     aspectDashboard: { id: 'p.PkDashboard.aspectDashboard', defaultMessage: 'Aspect Dashboard' },
     errorRateTitle: { id: 'p.PkDashboard.errorRateTitle', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
+    errorRatePageTitle: { id: 'p.PkDashboard.errorRatePageTitle', defaultMessage: 'Non-reportable results' },
     geneXpertUtilizationTitle: {
       id: 'p.PkDashboard.geneXpertUtilizationTitle',
       defaultMessage: 'GeneXpert Device Utilization',
