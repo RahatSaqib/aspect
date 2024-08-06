@@ -55,7 +55,7 @@ const PkDashboard = () => {
                           (isCountry('PK') ? resultOverview.total1Year : resultOverview.mtbValidWithIndeterminate)) *
                         100
                       ).toFixed()}%`,
-                  valueTooltipKey: isCountry('PK') ? undefined : 'reportableCount',
+                  valueTooltipKey: isCountry('PK') ? undefined : 'countIncludesMTBAndTrace',
                 },
                 { key: 'TB25', value: resultOverview.mtbDetected1Day },
               ]}
