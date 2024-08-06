@@ -87,6 +87,8 @@ const getReportCommonFieldsTZ = userTimeOffset => ({
   sampleId: 'sp.externalId',
   patientAge: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.age"))'),
   deviceName: 'd.name',
+  instrumentSerial: 'r.instrumentSerial',
+  assayName: knex.raw(`r.resultData ->> '$.assay'`),
   notes: 'r.notes',
   resultCategory1Name: 'rc1.name',
   resultCategory2Name: 'rc2.name',

@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useRef } from 'react'
-import { Switch, FormControlLabel, Grid } from '@mui/material'
+import { Switch, FormControlLabel, Grid, Typography } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
@@ -170,56 +170,64 @@ const CurrentDiagnosisGraphPage = () => {
       {isLoading || isLoadingAssays || isLoadingResultCategoryGroups ? (
         <Loading />
       ) : (
-        <Grid container sx={{ mt: 2 }}>
-          {barData.data && barData.data.length ? (
-            <Grid item xs={12} md={8}>
-              <ColumnGraph
-                data={barData.data}
-                graphId="testPerformedMonthlyPercentage"
-                xField="month"
-                yField="value"
-                seriesField="type"
-                showLabel={showLabel}
-                onReady={plot => {
-                  plot.on('plot:click', evt => {
-                    const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-                    const assayIds = [assays.find(a => a.externalId === evt.data.data.id).id]
-                    const resultCategoryGroupId = getResultCategoryGroupsForResultList(
-                      resultCategoryGroups,
-                      assayIds,
-                      [],
-                      ['Detected']
-                    )
-                    const baseUrl = '/browse/result'
-                    addFilter(
-                      {
-                        ...filterRef.current,
-                        countryId: user.countryId,
-                        assayId: assayIds,
-                        minDate,
-                        maxDate,
-                        resultCategoryGroupId,
-                        displayResult: 'actual',
-                      },
-                      baseUrl
-                    )
-                    navigate(baseUrl)
-                  })
-                }}
-              />
-            </Grid>
-          ) : null}
-          <TripleCardSide
-            data={[
-              { label: formatMessage(messages.RRPerYear), value: `${data.totalResultsCurrentYear}` },
-              {
-                label: formatMessage(messages.RRPerMonth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
-              },
-              { label: formatMessage(messages.RRToday), value: `${data.totalResultsToday}` },
-            ]}
-          />
-        </Grid>
+        <>
+          {!user.isCountry('PK') ? (
+            <Typography sx={{ m: '20px 10px' }} variant="h6" color="primary" component="div">
+              {formatMessage(messages.rrtbDiagnosedCurrentYear)}
+            </Typography>
+          ) : undefined}
+
+          <Grid container sx={{ mt: 2 }}>
+            {barData.data && barData.data.length ? (
+              <Grid item xs={12} md={8}>
+                <ColumnGraph
+                  data={barData.data}
+                  graphId="testPerformedMonthlyPercentage"
+                  xField="month"
+                  yField="value"
+                  seriesField="type"
+                  showLabel={showLabel}
+                  onReady={plot => {
+                    plot.on('plot:click', evt => {
+                      const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
+                      const assayIds = [assays.find(a => a.externalId === evt.data.data.id).id]
+                      const resultCategoryGroupId = getResultCategoryGroupsForResultList(
+                        resultCategoryGroups,
+                        assayIds,
+                        [],
+                        ['Detected']
+                      )
+                      const baseUrl = '/browse/result'
+                      addFilter(
+                        {
+                          ...filterRef.current,
+                          countryId: user.countryId,
+                          assayId: assayIds,
+                          minDate,
+                          maxDate,
+                          resultCategoryGroupId,
+                          displayResult: 'actual',
+                        },
+                        baseUrl
+                      )
+                      navigate(baseUrl)
+                    })
+                  }}
+                />
+              </Grid>
+            ) : null}
+            <TripleCardSide
+              data={[
+                { label: formatMessage(messages.RRPerYear), value: `${data.totalResultsCurrentYear}` },
+                {
+                  label: formatMessage(messages.RRPerMonth),
+                  value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
+                },
+                { label: formatMessage(messages.RRToday), value: `${data.totalResultsToday}` },
+              ]}
+            />
+          </Grid>
+        </>
       )}
     </PkPage>
   )

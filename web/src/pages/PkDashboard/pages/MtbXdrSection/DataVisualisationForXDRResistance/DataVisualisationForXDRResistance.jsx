@@ -86,17 +86,17 @@ const DataVisualisationForXDRResistance = () => {
         } = dat
 
         if (lineFor === FQRPercentMessage) {
-          line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+          line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(1) })
         } else if (lineFor === INHPercentMessage) {
-          line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+          line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(1) })
         } else if (lineFor === AMKPercentMessage) {
-          line.push({ month, [AMKPercentMessage]: +AmkToMtbPercentage.toFixed(2) })
+          line.push({ month, [AMKPercentMessage]: +AmkToMtbPercentage.toFixed(1) })
         } else if (lineFor === KANPercentMessage) {
-          line.push({ month, [KANPercentMessage]: +KanToMtbPercentage.toFixed(2) })
+          line.push({ month, [KANPercentMessage]: +KanToMtbPercentage.toFixed(1) })
         } else if (lineFor === CAPPercentMessage) {
-          line.push({ month, [CAPPercentMessage]: +CapToMtbPercentage.toFixed(2) })
+          line.push({ month, [CAPPercentMessage]: +CapToMtbPercentage.toFixed(1) })
         } else if (lineFor === ETHPercentMessage) {
-          line.push({ month, [ETHPercentMessage]: +EthToMtbPercentage.toFixed(2) })
+          line.push({ month, [ETHPercentMessage]: +EthToMtbPercentage.toFixed(1) })
         }
 
         bar.push({ month, value: TotalTests, type: totalTestsMessage })
@@ -158,7 +158,7 @@ const DataVisualisationForXDRResistance = () => {
       <Grid container>
         <Grid item xs={12} md={12} lg={12}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(pkMessages.xdrFlqResistance)}
+            {formatMessage(pkMessages[user.isCountry('PK') ? 'xdrFlqResistance' : 'xdrDrugResistance'])}
           </Typography>
           <ColumnLineGraph
             data={graphData}
@@ -177,6 +177,10 @@ const DataVisualisationForXDRResistance = () => {
             ]}
             xField="month"
             yField={['value', lineFor]}
+            getCustomProps={({ geometryOptions: [column, line], ...rest }) => ({
+              ...rest,
+              geometryOptions: [{ ...column, label: false }, line],
+            })}
           />
         </Grid>
       </Grid>

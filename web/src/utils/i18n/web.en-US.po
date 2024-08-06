@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
+"POT-Creation-Date: 2024-08-02T00:11:12.662Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2128,6 +2128,13 @@ msgstr "Current GX-10CX Testing performed in"
 msgid "Current MTB Detection"
 msgstr "Current MTB Detection"
 
+#. [p.PkDashboard.currentMtbXdrTesting]
+#. defaultMessage is:
+#. Current MTB/XDR Testing
+#: extracted_strings.json
+msgid "Current MTB/XDR Testing"
+msgstr "Current MTB/XDR Testing"
+
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
 #. Current Network Status
@@ -2468,7 +2475,6 @@ msgstr "Day(s) before the end of the month"
 #. defaultMessage is:
 #. Days
 #: extracted_strings.json
-#| msgid "Days..."
 msgid "Days"
 msgstr "Days"
 
@@ -2503,7 +2509,6 @@ msgstr "Days active"
 #. defaultMessage is:
 #. Days inactive
 #: extracted_strings.json
-#| msgid "Days active"
 msgid "Days inactive"
 msgstr "Days inactive"
 
@@ -2725,7 +2730,6 @@ msgstr "Device Country"
 #. defaultMessage is:
 #. Device Inactive
 #: extracted_strings.json
-#| msgid "Devices Active"
 msgid "Device Inactive"
 msgstr "Device Inactive"
 
@@ -4981,14 +4985,14 @@ msgstr "Inactive"
 msgid "Include ALL results related to Patient ID"
 msgstr "Include ALL results related to Patient ID"
 
-#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
-#. Includes a list of GeneXpert devices that had at least 2 critical errors
+#. Includes a list of GeneXpert devices that had at least 1 critical errors
 #: extracted_strings.json
 msgid ""
-"Includes a list of GeneXpert devices that had at least 2 critical errors"
+"Includes a list of GeneXpert devices that had at least 1 critical errors"
 msgstr ""
-"Includes a list of GeneXpert devices that had at least 2 critical errors"
+"Includes a list of GeneXpert devices that had at least 1 critical errors"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -6756,6 +6760,20 @@ msgstr "National GX-10C Testing Trends"
 msgid "National Invalid Rates"
 msgstr "National Invalid Rates"
 
+#. [p.PkDashboard.nationalMtbDetectionTrends]
+#. defaultMessage is:
+#. National MTB Detection Trends
+#: extracted_strings.json
+msgid "National MTB Detection Trends"
+msgstr "National MTB Detection Trends"
+
+#. [p.PkDashboard.nationalMtbXdrTestingTrends]
+#. defaultMessage is:
+#. National MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "National MTB/XDR Testing Trends"
+msgstr "National MTB/XDR Testing Trends"
+
 #. [p.PkDashboard.nationalNoResultRates]
 #. defaultMessage is:
 #. National No Result Rates
@@ -8294,6 +8312,20 @@ msgstr "Provincial Diagnosis Trends for the current year"
 #: extracted_strings.json
 msgid "Provincial FQ Diagnosis Trends"
 msgstr "Provincial FQ Diagnosis Trends"
+
+#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
+#. defaultMessage is:
+#. Provincial MTB Detection Trends Comparison
+#: extracted_strings.json
+msgid "Provincial MTB Detection Trends Comparison"
+msgstr "Provincial MTB Detection Trends Comparison"
+
+#. [p.PkDashboard.provincialMtbXdrTestingTrends]
+#. defaultMessage is:
+#. Provincial MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "Provincial MTB/XDR Testing Trends"
+msgstr "Provincial MTB/XDR Testing Trends"
 
 #. [p.PkDashboard.provincialRRDiagnosisTrends]
 #. defaultMessage is:
@@ -11749,7 +11781,6 @@ msgstr "Time Zone"
 #. defaultMessage is:
 #. Times
 #: extracted_strings.json
-#| msgid "Time"
 msgid "Times"
 msgstr "Times"
 
@@ -12488,7 +12519,6 @@ msgstr "When the device didn't send results for more than ..."
 #. defaultMessage is:
 #. When the device has been inactive for more than ...
 #: extracted_strings.json
-#| msgid "When the device has been offline for more than ..."
 msgid "When the device has been inactive for more than ..."
 msgstr "When the device has been inactive for more than ..."
 
@@ -12553,6 +12583,13 @@ msgstr "XDR FLQ Resistance"
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "XDR Testing and Diagnosis Trends"
+
+#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
+#. defaultMessage is:
+#. XDR Testing and MTB Detection Trends
+#: extracted_strings.json
+msgid "XDR Testing and MTB Detection Trends"
+msgstr "XDR Testing and MTB Detection Trends"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:

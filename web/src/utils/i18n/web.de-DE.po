@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
+"POT-Creation-Date: 2024-08-02T00:11:12.662Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2136,6 +2136,13 @@ msgstr "Aktueller GX-10CX Test durchgeführt in"
 #: extracted_strings.json
 msgid "Current MTB Detection"
 msgstr "MTB"
+
+#. [p.PkDashboard.currentMtbXdrTesting]
+#. defaultMessage is:
+#. Current MTB/XDR Testing
+#: extracted_strings.json
+msgid "Current MTB/XDR Testing"
+msgstr "Aktuelle MTB/XDR-Tests"
 
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
@@ -4994,14 +5001,14 @@ msgstr "Inaktiv"
 msgid "Include ALL results related to Patient ID"
 msgstr "ALLE Ergebnisse in Bezug auf die Patienten-ID einbeziehen"
 
-#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
-#. Includes a list of GeneXpert devices that had at least 2 critical errors
+#. Includes a list of GeneXpert devices that had at least 1 critical errors
 #: extracted_strings.json
 msgid ""
-"Includes a list of GeneXpert devices that had at least 2 critical errors"
+"Includes a list of GeneXpert devices that had at least 1 critical errors"
 msgstr ""
-"Enthält eine Liste der GeneXpert-Geräte, die mindestens 2 kritische Fehler "
+"Enthält eine Liste der GeneXpert-Geräte, die mindestens 1 kritischen Fehler "
 "aufwiesen"
 
 #. [legends.Unknown.resultCategoryInconclusive]
@@ -6774,6 +6781,20 @@ msgstr "Nationale GX-10C-Prüfungstendenzen"
 msgid "National Invalid Rates"
 msgstr "Nationale Invaliditätsraten"
 
+#. [p.PkDashboard.nationalMtbDetectionTrends]
+#. defaultMessage is:
+#. National MTB Detection Trends
+#: extracted_strings.json
+msgid "National MTB Detection Trends"
+msgstr "Nationale MTB-Erkennungstrends"
+
+#. [p.PkDashboard.nationalMtbXdrTestingTrends]
+#. defaultMessage is:
+#. National MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "National MTB/XDR Testing Trends"
+msgstr "Nationale Trends bei MTB/XDR-Tests"
+
 #. [p.PkDashboard.nationalNoResultRates]
 #. defaultMessage is:
 #. National No Result Rates
@@ -8328,6 +8349,20 @@ msgstr "Provinziale Diagnosetrends für das laufende Jahr"
 #: extracted_strings.json
 msgid "Provincial FQ Diagnosis Trends"
 msgstr "Provinzielle FQ-Diagnosetrends"
+
+#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
+#. defaultMessage is:
+#. Provincial MTB Detection Trends Comparison
+#: extracted_strings.json
+msgid "Provincial MTB Detection Trends Comparison"
+msgstr "Vergleich der MTB-Entdeckungstrends in den Provinzen"
+
+#. [p.PkDashboard.provincialMtbXdrTestingTrends]
+#. defaultMessage is:
+#. Provincial MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "Provincial MTB/XDR Testing Trends"
+msgstr "Trends bei MTB/XDR-Tests in den Provinzen"
 
 #. [p.PkDashboard.provincialRRDiagnosisTrends]
 #. defaultMessage is:
@@ -12629,6 +12664,13 @@ msgstr "XDR FLQ-Widerstand"
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "Trends bei XDR-Tests und -Diagnosen"
+
+#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
+#. defaultMessage is:
+#. XDR Testing and MTB Detection Trends
+#: extracted_strings.json
+msgid "XDR Testing and MTB Detection Trends"
+msgstr "XDR-Tests und Trends bei der MTB-Erkennung"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:

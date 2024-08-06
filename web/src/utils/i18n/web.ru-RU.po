@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
+"POT-Creation-Date: 2024-08-02T00:11:12.662Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2131,6 +2131,13 @@ msgstr "Текущее тестирование GX-10CX, выполненное 
 #: extracted_strings.json
 msgid "Current MTB Detection"
 msgstr "Текущее обнаружение МТБ"
+
+#. [p.PkDashboard.currentMtbXdrTesting]
+#. defaultMessage is:
+#. Current MTB/XDR Testing
+#: extracted_strings.json
+msgid "Current MTB/XDR Testing"
+msgstr "Текущее тестирование на MTB/XDR"
 
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
@@ -4988,15 +4995,15 @@ msgstr "Неактивно"
 msgid "Include ALL results related to Patient ID"
 msgstr "Включите ВСЕ результаты, связанные с идентификатором пациента"
 
-#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
-#. Includes a list of GeneXpert devices that had at least 2 critical errors
+#. Includes a list of GeneXpert devices that had at least 1 critical errors
 #: extracted_strings.json
 msgid ""
-"Includes a list of GeneXpert devices that had at least 2 critical errors"
+"Includes a list of GeneXpert devices that had at least 1 critical errors"
 msgstr ""
-"Включает список устройств GeneXpert, на которых было обнаружено не менее 2 "
-"критических ошибок"
+"Включает список устройств GeneXpert, в которых было обнаружено не менее 1 "
+"критической ошибки"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -6769,6 +6776,20 @@ msgstr "Национальные тенденции тестирования GX-
 msgid "National Invalid Rates"
 msgstr "Национальные коэффициенты недействительности"
 
+#. [p.PkDashboard.nationalMtbDetectionTrends]
+#. defaultMessage is:
+#. National MTB Detection Trends
+#: extracted_strings.json
+msgid "National MTB Detection Trends"
+msgstr "Тенденции выявления МТБ в стране"
+
+#. [p.PkDashboard.nationalMtbXdrTestingTrends]
+#. defaultMessage is:
+#. National MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "National MTB/XDR Testing Trends"
+msgstr "Тенденции национального тестирования на МТБ/ШЛУ"
+
 #. [p.PkDashboard.nationalNoResultRates]
 #. defaultMessage is:
 #. National No Result Rates
@@ -8320,6 +8341,20 @@ msgstr "Провинциальные диагнозы Тенденции раз�
 #: extracted_strings.json
 msgid "Provincial FQ Diagnosis Trends"
 msgstr "Провинциальные тенденции диагностики FQ"
+
+#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
+#. defaultMessage is:
+#. Provincial MTB Detection Trends Comparison
+#: extracted_strings.json
+msgid "Provincial MTB Detection Trends Comparison"
+msgstr "Сравнение тенденций выявления МТБ в провинциях"
+
+#. [p.PkDashboard.provincialMtbXdrTestingTrends]
+#. defaultMessage is:
+#. Provincial MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "Provincial MTB/XDR Testing Trends"
+msgstr "Тенденции тестирования на МТБ/ШЛУ в провинциях"
 
 #. [p.PkDashboard.provincialRRDiagnosisTrends]
 #. defaultMessage is:
@@ -12598,6 +12633,13 @@ msgstr "XDR FLQ Сопротивление"
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "Тенденции в области тестирования и диагностики ХДР"
+
+#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
+#. defaultMessage is:
+#. XDR Testing and MTB Detection Trends
+#: extracted_strings.json
+msgid "XDR Testing and MTB Detection Trends"
+msgstr "Тестирование на ШЛУ и тенденции выявления МТБ"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:

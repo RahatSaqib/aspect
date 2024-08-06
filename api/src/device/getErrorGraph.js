@@ -69,7 +69,6 @@ const getMtbErrorGraph = async request => {
   }
 
   const user = await getUserFromCredentials(auth.credentials)
-
   const { timezoneIANA } = user
 
   const errorResultAgg = await getErrorResultAgg(

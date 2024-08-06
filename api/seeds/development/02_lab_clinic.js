@@ -763,7 +763,7 @@ async function seed(knex) {
       sampleRunNumber: `${(i % 2) + 1}`,
       sampleGroup: sample.externalId.substring(0, 10),
       resultCategory1: result.category1,
-      resultData: JSON.stringify(resultData),
+      resultData: JSON.stringify({ ...resultData, assay: 'Xpert_HIV-1 Viral Load' }),
       assayVersion: '3',
       startedOn: randomDate,
       endedOn: addMinutes(randomDate, 100),

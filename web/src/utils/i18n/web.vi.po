@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
+"POT-Creation-Date: 2024-08-02T00:11:12.662Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2130,6 +2130,13 @@ msgstr "Thử nghiệm GX-10CX hiện tại được thực hiện trong"
 #: extracted_strings.json
 msgid "Current MTB Detection"
 msgstr "Phát hiện MTB hiện tại"
+
+#. [p.PkDashboard.currentMtbXdrTesting]
+#. defaultMessage is:
+#. Current MTB/XDR Testing
+#: extracted_strings.json
+msgid "Current MTB/XDR Testing"
+msgstr "Kiểm tra MTB/XDR hiện tại"
 
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
@@ -4979,13 +4986,13 @@ msgstr "Không hoạt động"
 msgid "Include ALL results related to Patient ID"
 msgstr "Bao gồm TẤT CẢ kết quả liên quan đến ID bệnh nhân"
 
-#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
-#. Includes a list of GeneXpert devices that had at least 2 critical errors
+#. Includes a list of GeneXpert devices that had at least 1 critical errors
 #: extracted_strings.json
 msgid ""
-"Includes a list of GeneXpert devices that had at least 2 critical errors"
-msgstr "Bao gồm danh sách các thiết bị GeneXpert có ít nhất 2 lỗi nghiêm trọng"
+"Includes a list of GeneXpert devices that had at least 1 critical errors"
+msgstr "Bao gồm danh sách các thiết bị GeneXpert có ít nhất 1 lỗi nghiêm trọng"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -6756,6 +6763,20 @@ msgstr "Xu hướng thử nghiệm GX-10C quốc gia"
 msgid "National Invalid Rates"
 msgstr "Giá không hợp lệ quốc gia"
 
+#. [p.PkDashboard.nationalMtbDetectionTrends]
+#. defaultMessage is:
+#. National MTB Detection Trends
+#: extracted_strings.json
+msgid "National MTB Detection Trends"
+msgstr "Xu hướng phát hiện MTB quốc gia"
+
+#. [p.PkDashboard.nationalMtbXdrTestingTrends]
+#. defaultMessage is:
+#. National MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "National MTB/XDR Testing Trends"
+msgstr "Xu hướng thử nghiệm MTB/XDR quốc gia"
+
 #. [p.PkDashboard.nationalNoResultRates]
 #. defaultMessage is:
 #. National No Result Rates
@@ -8300,6 +8321,20 @@ msgstr "Xu hướng chẩn đoán cấp tỉnh trong năm hiện tại"
 #: extracted_strings.json
 msgid "Provincial FQ Diagnosis Trends"
 msgstr "Xu hướng chẩn đoán FQ cấp tỉnh"
+
+#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
+#. defaultMessage is:
+#. Provincial MTB Detection Trends Comparison
+#: extracted_strings.json
+msgid "Provincial MTB Detection Trends Comparison"
+msgstr "So sánh xu hướng phát hiện MTB cấp tỉnh"
+
+#. [p.PkDashboard.provincialMtbXdrTestingTrends]
+#. defaultMessage is:
+#. Provincial MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "Provincial MTB/XDR Testing Trends"
+msgstr "Xu hướng thử nghiệm MTB/XDR cấp tỉnh"
 
 #. [p.PkDashboard.provincialRRDiagnosisTrends]
 #. defaultMessage is:
@@ -12556,6 +12591,13 @@ msgstr "Kháng XDR FLQ"
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "Xu hướng chẩn đoán và kiểm tra XDR"
+
+#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
+#. defaultMessage is:
+#. XDR Testing and MTB Detection Trends
+#: extracted_strings.json
+msgid "XDR Testing and MTB Detection Trends"
+msgstr "Xu hướng kiểm tra XDR và phát hiện MTB"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
