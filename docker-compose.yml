@@ -6,8 +6,8 @@ services:
     container_name: rabbitmq-aspect
     restart: always
     environment:
-      - RABBITMQ_DEFAULT_USER=guest
-      - RABBITMQ_DEFAULT_PASS=guest
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
     ports:
       - '5672:5672' # RabbitMQ default port
       - '15672:15672' # RabbitMQ management console port
@@ -19,6 +19,8 @@ services:
       interval: 5s
       timeout: 15s
       retries: 1
+    networks:
+      - aspectnet
 
   mysql:
     image: mysql:8.0.35
@@ -37,6 +39,7 @@ services:
       MYSQL_DATABASE: aspect
       MYSQL_USER: aspectapi
       MYSQL_PASSWORD: mypassword
+      TZ: UTC
     ports:
       - '3306:3306' # MySQL default port
     volumes:
