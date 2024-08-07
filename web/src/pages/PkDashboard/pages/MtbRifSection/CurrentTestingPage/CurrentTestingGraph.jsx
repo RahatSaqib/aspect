@@ -157,7 +157,7 @@ const RifCurrentGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.peopleTestedRif)}
+      title={formatMessage(messages.CurrentTBTesting)}
       filters={
         <>
           <FormControlLabel

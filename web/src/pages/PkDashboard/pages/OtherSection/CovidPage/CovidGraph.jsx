@@ -137,7 +137,7 @@ const CovidGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.peopleTestedCovid)}
+      title={formatMessage(messages.covidTesting)}
       filters={
         <>
           <FormControlLabel

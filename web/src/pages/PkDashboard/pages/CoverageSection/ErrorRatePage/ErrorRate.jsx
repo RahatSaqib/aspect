@@ -81,7 +81,7 @@ const ErrorRatePage = () => {
   const [sort, setSort] = useState({ name: 'name', order: 'asc' })
 
   return (
-    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.genExpertError)}>
+    <PkPage header={<ErrorRateFilter />} title={formatMessage(messages.errorRate)}>
       {isLoading ? <Loading /> : <ErrorRateTable sort={sort} onSortChange={setSort} items={data} />}
       <ErrorRateGraph title={formatMessage(messages.nationalErrorRates)} category="error" />
       <ErrorRateGraph title={formatMessage(messages.nationalInvalidRates)} category="invalid" />

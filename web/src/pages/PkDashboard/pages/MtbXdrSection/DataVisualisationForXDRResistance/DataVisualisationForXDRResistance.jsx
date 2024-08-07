@@ -119,7 +119,7 @@ const DataVisualisationForXDRResistance = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(pkMessages.dataVisualisationForXDRResistanceGraphTitle)}
+      title={formatMessage(pkMessages.dataVisualisationForXDR)}
       filters={
         <>
           <FormControlLabel

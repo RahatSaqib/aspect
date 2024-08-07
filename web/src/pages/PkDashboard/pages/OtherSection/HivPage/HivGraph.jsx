@@ -104,7 +104,7 @@ const HivGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(pkMessages.peopleTestedHiv)}
+      title={formatMessage(pkMessages.hiv)}
       filters={
         <FormControlLabel
           sx={{ minWidth: '145px' }}

@@ -15,6 +15,7 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages, months } from '../../../../../messages'
+import COUNTRY_ISO_MAPPING from '../../../../../utils/consts/Countries/CONSTS'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -74,7 +75,9 @@ const NationalDiagnosisGraph = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(messages.nationalDiagnosisXdr)}
+      title={formatMessage(
+        user.isCountry(COUNTRY_ISO_MAPPING.PAK) ? messages.DNationalTrend : messages.nationalMtbDetectionTrends
+      )}
       filters={
         <>
           <FormControlLabel

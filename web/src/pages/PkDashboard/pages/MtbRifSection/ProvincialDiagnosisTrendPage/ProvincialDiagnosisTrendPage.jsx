@@ -56,7 +56,7 @@ const ProvincialDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.provincialDiagnosisTrendsMtbRif)}
+      title={formatMessage(messages.ProvincialTBDiagnosisTrendsComparison)}
       filters={
         <>
           <StateAutocomplete
