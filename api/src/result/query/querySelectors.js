@@ -212,6 +212,9 @@ const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
   mtbValid: knex.raw(
     "IFNULL(SUM(CASE WHEN rc1.externalId NOT IN ('NoResult', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0) - IFNULL(SUM(CASE WHEN rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"
   ),
+  mtbValidWithIndeterminate: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId NOT IN ('NoResult', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0)"
+  ),
   mtbInconclusive: knex.raw(
     "IFNULL(SUM(CASE WHEN rc1.externalId IN ('NoResult', 'Indeterminate', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0)"
   ),
