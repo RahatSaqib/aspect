@@ -166,7 +166,10 @@ const PkDashboard = () => {
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.coverageperformance)}>
             <DashboardLink to="/dashboard/coverage/utilization" label={formatMessage(messages.utilization)} />
-            <DashboardLink to="/dashboard/coverage/error-rate" label={formatMessage(messages.errorRate)} />
+            <DashboardLink
+              to="/dashboard/coverage/error-rate"
+              label={formatMessage(!isCountry('PK') ? messages.errorRatePageTitle : messages.errorRate)}
+            />
           </DashboardCard>
           <ColumnName title={formatMessage(messages.titleinventory)} />
           <DashboardCard>
