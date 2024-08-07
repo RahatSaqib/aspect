@@ -79,7 +79,7 @@ const NationalTestingTrendsGraph = () => {
       <Grid container>
         <Grid item xs={12}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(messages.monthlyTestingTrends)}
+            {formatMessage(messages[user.isCountry('PK') ? 'monthlyTestingTrends' : 'monthlyXDRTrends'])}
           </Typography>
           {graphData ? (
             <LineGraph

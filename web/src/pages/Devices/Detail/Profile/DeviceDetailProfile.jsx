@@ -475,7 +475,15 @@ const DeviceDetailProfile = ({
               title={formatMessage(messages.approval)}
               description={formatMessage(messages[device.get('approvalStatusI18nKey')])}
               action={
-                <Button variant="contained" color="success" onClick={onToggleDeviceApproval} disabled={disabled}>
+                <Button
+                  variant="contained"
+                  color="success"
+                  onClick={onToggleDeviceApproval}
+                  disabled={
+                    disabled ||
+                    formatMessage(messages[device.get('approvalStatusI18nKey')]).toLowerCase() === tokens.DECOMMISSIONED
+                  }
+                >
                   {formatMessage(messages.buttonChange)}
                 </Button>
               }
