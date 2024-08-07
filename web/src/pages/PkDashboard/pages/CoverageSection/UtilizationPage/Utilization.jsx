@@ -108,7 +108,7 @@ const UtilizationPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.utilization)}
+      title={formatMessage(messages.geneXpertUtilizationTitle)}
       filter={
         <PeriodSelector
           noAny

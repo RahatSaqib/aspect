@@ -39,7 +39,7 @@ const DeviceCoveragePage = () => {
       fetchWrapperForQueries({ endpoint: '/device/coverage', params: endPointParams })
   )
   return (
-    <PkPage title={formatMessage(messages.genExpert)}>
+    <PkPage title={formatMessage(messages.coverageTitle)}>
       {isLoading ? (
         <Loading />
       ) : (
