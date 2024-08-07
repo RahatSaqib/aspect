@@ -27,11 +27,14 @@ const PkDashboard = () => {
             <SummaryCard
               items={[
                 {
-                  key: 'molecularAssay',
-                  value: resultOverview.total1Year,
-                  valueTooltipKey: 'peopleTestedRifTooltip',
+                  key: isCountry('PK') ? 'molecularAssay' : 'totalReportableTBTests',
+                  value: isCountry('PK') ? resultOverview.total1Year : resultOverview.mtbValidWithIndeterminate,
+                  valueTooltipKey: isCountry('PK') ? 'peopleTestedRifTooltip' : 'reportableCount',
                 },
-                { key: 'molecularAssay25', value: resultOverview.totalToday },
+                {
+                  key: 'molecularAssay25',
+                  value: isCountry('PK') ? resultOverview.totalToday : resultOverview.mtbValidWithIndeterminateToday,
+                },
               ]}
             />
           )}
@@ -42,7 +45,18 @@ const PkDashboard = () => {
           ) : (
             <SummaryCard
               items={[
-                { key: 'TB', value: resultOverview.mtbDetected1Year },
+                {
+                  key: isCountry('PK') ? 'TB' : 'totalTBDetectedInCurrentYear',
+                  value: resultOverview.mtbDetected1Year,
+                  info: isCountry('PK')
+                    ? undefined
+                    : `${(
+                        (resultOverview.mtbDetected1Year /
+                          (isCountry('PK') ? resultOverview.total1Year : resultOverview.mtbValidWithIndeterminate)) *
+                        100
+                      ).toFixed()}%`,
+                  valueTooltipKey: isCountry('PK') ? undefined : 'countIncludesMTBAndTrace',
+                },
                 { key: 'TB25', value: resultOverview.mtbDetected1Day },
               ]}
             />
@@ -54,7 +68,13 @@ const PkDashboard = () => {
           ) : (
             <SummaryCard
               items={[
-                { key: 'RTTB', value: resultOverview.rifDetected1Year },
+                {
+                  key: isCountry('PK') ? 'RTTB' : 'totalRRTBDetectedInCurrentYear',
+                  value: resultOverview.rifDetected1Year,
+                  info: isCountry('PK')
+                    ? undefined
+                    : `${((resultOverview.rifDetected1Year / resultOverview.mtbDetected1Year) * 100).toFixed()}%`,
+                },
                 { key: 'RTTB25', value: resultOverview.rifDetected1Day },
               ]}
             />
