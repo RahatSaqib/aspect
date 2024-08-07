@@ -6,7 +6,6 @@ const messages = {
   ...consumableMessages,
   ...deviceStatusMessages,
   ...defineMessages({
-    XDRAssayResultsSummary: { id: 'pages.XDR.AssayResultsSummary', defaultMessage: 'XDR Assay Results Summary' },
     goTo: { id: 'pages.XDR.goTo', defaultMessage: 'Go to XDR assay result summary by device' },
 
     site: { id: 'pages.XDR.site', defaultMessage: 'Site' },
