@@ -19,7 +19,12 @@ import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
 import messages from '../../../PkDashboard.Messages'
 
-const endpointParams = [{ assay: 'GxMtbRif' }, { assay: 'GxMtbRifUltra' }, { resultCategory1: 'Detected' }]
+const endpointParams = [
+  { assay: 'GxMtbRif' },
+  { assay: 'GxMtbRifUltra' },
+  { resultCategory1: 'Detected' },
+  { resultCategory1: 'Trace Detected' },
+]
 
 const ProvincialDiagnosisTrendPage = () => {
   const { formatMessage } = useIntl()
