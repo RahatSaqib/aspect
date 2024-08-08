@@ -15,7 +15,6 @@ import {
   TrendInYearsMtbDetectedGraph,
   TrendInYearsRifDetectedGraph,
   XDRFLQResistanceGraph,
-  XDRResultsGraph,
   DeviceStatusGraph,
   InventoryStatusGraph,
 } from '../../../cleanComponents'
