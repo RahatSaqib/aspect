@@ -100,7 +100,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       const confirmed = pieData.find(elem => elem.id === 'Confirmed') || {}
 
-      const pieAvg = (confirmed.value / numberOfMonthsInAYear).toFixed(2)
+      const pieAvg = (confirmed.value / numberOfMonthsInAYear).toFixed(1)
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assaysFromState, formatMessage, messages, i18nKeys),

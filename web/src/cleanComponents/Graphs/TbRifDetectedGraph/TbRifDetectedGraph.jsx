@@ -91,7 +91,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       const detected = pieData.find(elem => elem.id === 'Detected') || {}
 
-      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(2)
+      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(1)
 
       const pie = pieData.map(d => ({
         ...d,
