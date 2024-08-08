@@ -80,8 +80,7 @@ const Status = () => {
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <XDRResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                {/* 4 */}
+                <XDRFLQResistanceGraph /> {/* 4 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
@@ -102,14 +101,6 @@ const Status = () => {
               </ErrorBoundary>
               <ErrorBoundary>
                 <QuartersRifDetectedGraph /> {/* 9 */}
-              </ErrorBoundary>
-            </PermissionChecker>
-          ) : null}
-
-          {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
-            <PermissionChecker permissions={['dashboard']}>
-              <ErrorBoundary>
-                <XDRFLQResistanceGraph /> {/* 10 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
