@@ -9,7 +9,6 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
-import COUNTRY_ISO_MAPPING from '../../../../../utils/consts/Countries/CONSTS'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -61,9 +60,7 @@ const XDRTestingDiagnosisTrendPage = () => {
   return (
     <PkPage
       title={formatMessage(
-        user.isCountry(COUNTRY_ISO_MAPPING.PAK)
-          ? messages.XDRTestingandDiagnosisTrends
-          : messages.xdrTestingAndMtbDetectionTrends
+        user.isPakistan ? messages.XDRTestingandDiagnosisTrends : messages.xdrTestingAndMtbDetectionTrends
       )}
       filters={
         <>

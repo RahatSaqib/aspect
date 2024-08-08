@@ -14,7 +14,6 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage } from '../../../../../messages'
-import COUNTRY_ISO_MAPPING from '../../../../../utils/consts/Countries/CONSTS'
 import { formatNumber } from '../../../../../utils/utils/number'
 import PkPage from '../../../components/PkPage'
 import ProvinceTrendTable from '../../../components/ProvinceTrendTable'
@@ -57,11 +56,7 @@ const ProvincialTestingTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(
-        user.isCountry(COUNTRY_ISO_MAPPING.PAK)
-          ? messages.ProvincialTestingTrend
-          : messages.provincialMtbXdrTestingTrends
-      )}
+      title={formatMessage(user.isPakistan ? messages.ProvincialTestingTrend : messages.provincialMtbXdrTestingTrends)}
       filters={
         <>
           <StateAutocomplete

@@ -23,7 +23,6 @@ import useAuthState from '../../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
-import COUNTRY_ISO_MAPPING from '../../../../../utils/consts/Countries/CONSTS'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import messages from '../../../PkDashboard.Messages'
@@ -135,7 +134,7 @@ const RifCurrentGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(user.isCountry(COUNTRY_ISO_MAPPING.PAK) ? messages.TCurrent : messages.currentMtbXdrTesting)}
+      title={formatMessage(user.isPakistan ? messages.TCurrent : messages.currentMtbXdrTesting)}
       filters={
         <>
           <FormControlLabel
