@@ -28,7 +28,6 @@ services:
     restart: always
     command: >
       --default_authentication_plugin=mysql_native_password
-      --log-bin-trust-function-creators=1
       --sql_mode=STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION
       --default-time-zone=+00:00
       --innodb-buffer-pool-size=4G
@@ -37,8 +36,6 @@ services:
     environment:
       MYSQL_ROOT_PASSWORD: 1234
       MYSQL_DATABASE: aspect
-      MYSQL_USER: aspectapi
-      MYSQL_PASSWORD: mypassword
       TZ: UTC
     ports:
       - '3306:3306' # MySQL default port
