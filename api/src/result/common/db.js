@@ -52,6 +52,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
       resultCategory1: 'r.resultCategory1',
       resultCategory2: 'r.resultCategory2',
       sampleTypeId: 'stp.id',
+      sampleCollectedBy: 'sp.collectedBy',
       resultSourceExternalId: 'rso.externalId',
       partnerId: 'p.id',
       partnerPluginName: 'p.plugin',
@@ -341,6 +342,19 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       },
       { displayResult, showUnapprovedDevices }
     )
+    .modify(queryBuilder => {
+      if (query.withTags) {
+        queryBuilder.leftJoin(
+          knex('Tag as tag')
+            .innerJoin('ResultTag as rtg', 'rtg.tagId', 'tag.id')
+            .groupBy('rtg.resultId')
+            .select('rtg.resultId', knex.raw('GROUP_CONCAT(DISTINCT tag.title  SEPARATOR ", ") as tagsCsv'))
+            .as('tags'),
+          'r.id',
+          'tags.resultId'
+        )
+      }
+    })
 
   return resultQuery
 }

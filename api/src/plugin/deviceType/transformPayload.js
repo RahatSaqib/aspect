@@ -226,4 +226,5 @@ const transformPayload = (gxAlertPayload, isResultPayload, timeZoneData = {}, cu
 
 module.exports = {
   transformPayload,
+  transformUTCDateTimeToZoned,
 }

@@ -7,6 +7,7 @@ const messages = {
     // page titles
     aspectDashboard: { id: 'p.PkDashboard.aspectDashboard', defaultMessage: 'Aspect Dashboard' },
     errorRateTitle: { id: 'p.PkDashboard.errorRateTitle', defaultMessage: 'GeneXpert MTB-RIF/Ultra Device Errors' },
+    errorRatePageTitle: { id: 'p.PkDashboard.errorRatePageTitle', defaultMessage: 'Non-reportable results' },
     geneXpertUtilizationTitle: {
       id: 'p.PkDashboard.geneXpertUtilizationTitle',
       defaultMessage: 'GeneXpert Device Utilization',
@@ -33,7 +34,6 @@ const messages = {
       id: 'p.PkDashboard.annualRRDiagnosedTrends',
       defaultMessage: 'Annual RR Diagnosis',
     },
-
     annualDiagnosedTrends: {
       id: 'p.PkDashboard.annualDiagnosedTrends',
       defaultMessage: 'Annual diagnosis Trends',
@@ -82,6 +82,90 @@ const messages = {
     peopleDiagnosedRif: {
       id: 'p.PkDashboard.peopleDiagnosedRifUltra',
       defaultMessage: 'People diagnosed for TB using MTB/Rif Ultra assay in current year',
+    },
+    mtbPositiveCurrentYear: {
+      id: 'p.PkDashboard.mtbPositiveCurrentYear',
+      defaultMessage: 'MTB positives diagnosed in current year',
+    },
+    annualMTBDiagnosis: {
+      id: 'p.PkDashboard.annualMTBDiagnosis',
+      defaultMessage: 'Annual MTB+ diagnosis trends',
+    },
+    monthlyMTBDiagnosis: {
+      id: 'p.PkDashboard.monthlyMTBDiagnosis',
+      defaultMessage: 'Monthly MTB+ diagnosis trends',
+    },
+    provincialMTBDiagnosis: {
+      id: 'p.PkDashboard.provincialMTBDiagnosis',
+      defaultMessage: 'Provincial MTB+ diagnosis trends',
+    },
+    provincialMTBDiagnosisCurrentYear: {
+      id: 'p.PkDashboard.provincialMTBDiagnosisCurrentYear',
+      defaultMessage: 'Provincial MTB+ diagnosed in current year',
+    },
+    rrtbDiagnosedCurrentYear: {
+      id: 'p.PkDashboard.rrtbDiagnosedCurrentYear',
+      defaultMessage: 'RR-TB diagnosed in current year',
+    },
+    annualRRTBDiagnosisTrends: {
+      id: 'p.PkDashboard.annualRRTBDiagnosisTrends',
+      defaultMessage: 'Annual RR-TB diagnosis trends',
+    },
+    monthlyRRTBDiagnosis: {
+      id: 'p.PkDashboard.monthlyRRTBDiagnosis',
+      defaultMessage: 'Monthly RR-TB diagnosis trends',
+    },
+    provincialRRTBDiagnosisTrends: {
+      id: 'p.PkDashboard.provincialRRTBDiagnosisTrends',
+      defaultMessage: 'Provincial RR-TB diagnosis trends',
+    },
+    provincialRRTBDiagnosisTrendsCurrentYear: {
+      id: 'p.PkDashboard.provincialRRTBDiagnosisTrendsCurrentYear',
+      defaultMessage: 'Provincial RR-TB diagnosed in current year',
+    },
+    TBXDRTest: {
+      id: 'p.PkDashboard.TBXDRTest',
+      defaultMessage: 'TB XDR tests performed in current year',
+    },
+    monthlyXDRTrends: {
+      id: 'p.PkDashboard.monthlyXDRTrends',
+      defaultMessage: 'Monthly XDR testing trends',
+    },
+    mtbPlusDetectionTrends: {
+      id: 'p.PkDashboard.mtbPlusDetectionTrends',
+      defaultMessage: 'Annual MTB+ detection trends',
+    },
+    mtbPlusMonthlyDetectionTrends: {
+      id: 'p.PkDashboard.mtbPlusMonthlyDetectionTrends',
+      defaultMessage: 'Monthly MTB+ detection trends',
+    },
+    provincialXDRTestingTrends: {
+      id: 'p.PkDashboard.provincialXDRTestingTrends',
+      defaultMessage: 'Provincial XDR testing trends',
+    },
+    provincialXDRTestingTrendsCurrentYear: {
+      id: 'p.PkDashboard.provincialXDRTestingTrendsCurrentYear',
+      defaultMessage: 'Provincial XDR testing in current year',
+    },
+    xdrDrugResistance: {
+      id: 'p.PkDashboard.xdrDrugResistance',
+      defaultMessage: 'XDR drug resistance trends',
+    },
+    mtbPositivesCurrentYear: {
+      id: 'p.PkDashboard.mtbPositivesCurrentYear',
+      defaultMessage: 'MTB positives detected in current year',
+    },
+    provincialMTBPositivesTrends: {
+      id: 'p.PkDashboard.provincialMTBPositivesTrends',
+      defaultMessage: 'Provincial MTB+ detection trends',
+    },
+    provincialMTBPositivesTrendsCurrentYear: {
+      id: 'p.PkDashboard.provincialMTBPositivesTrends',
+      defaultMessage: 'Provincial MTB+ detected in current year',
+    },
+    xdrFLQAndINHTrends: {
+      id: 'p.PkDashboard.xdrFLQAndINHTrends',
+      defaultMessage: 'XDR FLQ and INH resistance trends',
     },
     peopleDiagnosedXdr: {
       id: 'p.PkDashboard.peopleDiagnosedXdr',
@@ -223,6 +307,13 @@ const messages = {
     testPerYear: { id: 'p.PkDashboard.testPerYear', defaultMessage: 'Tests performed this year' },
     testPerMonth: { id: 'p.PkDashboard.testPerMonth', defaultMessage: 'Average tests performed per month' },
     testToday: { id: 'p.PkDashboard.testToday', defaultMessage: 'Tests performed today' },
+
+    customPerYear: { id: 'p.PkDashboard.customPerYear', defaultMessage: '{resultType} detected this year' },
+    customPerMonth: {
+      id: 'p.PkDashboard.customPerMonth',
+      defaultMessage: 'Average {resultType} detected per month in current year',
+    },
+    customToday: { id: 'p.PkDashboard.customToday', defaultMessage: '{resultType} detected today' },
 
     RRPerYear: { id: 'p.PkDashboard.RRPerYear', defaultMessage: 'RR cases diagnosed this year' },
     RRPerMonth: { id: 'p.PkDashboard.RRPerMonth', defaultMessage: 'Average RR cases diagnosed per month' },
@@ -383,6 +474,30 @@ const messages = {
     noAssociatedLga: { id: 'p.PkDashboard.noAssociatedLga', defaultMessage: 'No Associated LGA' },
 
     showLineFor: { id: 'p.PkDashboard.showLineFor', defaultMessage: 'Show line for' },
+    totalReportableTBTests: {
+      id: 'p.PkDashboard.totalReportableTBTests',
+      defaultMessage: 'Total TB tests with a reportable result in current year',
+    },
+    reportableCount: {
+      id: 'p.PkDashboard.reportableCount',
+      defaultMessage: 'Count only reportable results, exclude errors, no results and invalids',
+    },
+    totalTBDetectedInCurrentYear: {
+      id: 'p.PkDashboard.totalTBDetectedInCurrentYear',
+      defaultMessage: 'Total TB detected in current year',
+    },
+    totalMTBTraceDetected: {
+      id: 'p.PkDashboard.totalMTBTraceDetected',
+      defaultMessage: 'Total MTB detected and MTB Trace detected',
+    },
+    countIncludesMTBAndTrace: {
+      id: 'p.PkDashboard.countIncludesMTBAndTrace',
+      defaultMessage: 'Count includes MTB detected and MTB Trace detected',
+    },
+    totalRRTBDetectedInCurrentYear: {
+      id: 'p.PkDashboard.totalRRTBDetectedInCurrentYear',
+      defaultMessage: 'Total RRTB detected in current year',
+    },
     dataVisualisationForXDRResistanceGraphTitle: {
       id: 'p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle',
       defaultMessage: 'Data Visualisation For XDR Resistance Over Time',

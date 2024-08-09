@@ -14,7 +14,7 @@ const {
 } = require('date-fns')
 const { deviceMaintenanceStatusLogged, calibrationDateUpdated } = require('./actions')
 const { knex, filterParams, filterDateRangeParams, sortPageParams, sortParams, transact } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { getUser } = require('../auth/service')
 const { allResultCategoryToId, allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
 const {
@@ -346,7 +346,8 @@ async function getDevicesForReport(auth, query) {
    */
   const deviceIds = _.uniq(devices.map(x => x.id))
 
-  const { timezoneIANA } = await getUser(auth.credentials.name)
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA } = user
 
   /**
    * base query with all result counts for target device id's

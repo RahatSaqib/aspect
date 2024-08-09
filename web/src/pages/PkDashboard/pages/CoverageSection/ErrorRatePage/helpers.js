@@ -5,6 +5,18 @@ import set from 'lodash/set'
 const childrenKey = 'children'
 const values = ['numberOfModules', 'cntMtbResults', 'cntMtbError', 'cntMtbInvalid', 'cntMtbNoResult']
 
+const calculatePercentages = data => {
+  const errorPercent = (data?.cntMtbError / data?.cntMtbResults) * 100 || 0
+  const invalidPercent = (data?.cntMtbInvalid / data?.cntMtbResults) * 100 || 0
+  const noResultPercent = (data?.cntMtbNoResult / data?.cntMtbResults) * 100 || 0
+
+  return {
+    errorPercent: `${errorPercent.toFixed(1)} %`,
+    invalidPercent: `${invalidPercent.toFixed(1)} %`,
+    noResultPercent: `${noResultPercent.toFixed(1)} %`,
+  }
+}
+
 const createNode = (name, parent) => {
   const data = parent.reduce(
     (prev, curr) => {
@@ -16,20 +28,20 @@ const createNode = (name, parent) => {
     },
     { name, id: name }
   )
-  const errorPercent = (data?.cntMtbError / data?.cntMtbResults) * 100 || 0
-  const invalidPercent = (data?.cntMtbInvalid / data?.cntMtbResults) * 100 || 0
-  const noResultPercent = (data?.cntMtbNoResult / data?.cntMtbResults) * 100 || 0
+  const percentages = calculatePercentages(data)
 
   return {
     ...data,
-    errorPercent: `${errorPercent.toFixed(1)} %`,
-    invalidPercent: `${invalidPercent.toFixed(1)} %`,
-    noResultPercent: `${noResultPercent.toFixed(1)} %`,
+    ...percentages,
   }
 }
 
 export const makeNestedData = (array, nestingProperties, defaultName) => {
   const rootNodes = []
+  const total = values.reduce((acc, key) => {
+    acc[key] = 0
+    return acc
+  }, {})
 
   const nestData = (parentNode, data, properties, level) => {
     if (level >= properties.length) return
@@ -43,5 +55,16 @@ export const makeNestedData = (array, nestingProperties, defaultName) => {
 
   nestData(null, array, nestingProperties, 0)
 
-  return rootNodes
+  rootNodes.forEach(node => {
+    values.forEach(key => {
+      total[key] += node[key]
+    })
+  })
+
+  const totalSum = {
+    ...total,
+    ...calculatePercentages(total),
+  }
+
+  return { rootNodes, totalSum }
 }
