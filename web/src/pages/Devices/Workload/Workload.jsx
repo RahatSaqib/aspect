@@ -16,7 +16,6 @@ import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import colMessages from '../../../oldPages/result/list/messages'
 import { XDR_RESISTANCES } from '../../../utils/consts'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
@@ -90,9 +89,7 @@ const Workload = () => {
     { key: 'total', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
-      label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
-        colMessages[c.resultCategoryI18nKey]
-      )}`,
+      label: c.label,
       sortable: false,
     })),
   ]
@@ -133,7 +130,6 @@ const Workload = () => {
     )
     navigate(baseUrl)
   }
-
   return (
     <>
       <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack />
