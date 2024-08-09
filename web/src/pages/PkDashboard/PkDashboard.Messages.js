@@ -474,6 +474,30 @@ const messages = {
     noAssociatedLga: { id: 'p.PkDashboard.noAssociatedLga', defaultMessage: 'No Associated LGA' },
 
     showLineFor: { id: 'p.PkDashboard.showLineFor', defaultMessage: 'Show line for' },
+    totalReportableTBTests: {
+      id: 'p.PkDashboard.totalReportableTBTests',
+      defaultMessage: 'Total TB tests with a reportable result in current year',
+    },
+    reportableCount: {
+      id: 'p.PkDashboard.reportableCount',
+      defaultMessage: 'Count only reportable results, exclude errors, no results and invalids',
+    },
+    totalTBDetectedInCurrentYear: {
+      id: 'p.PkDashboard.totalTBDetectedInCurrentYear',
+      defaultMessage: 'Total TB detected in current year',
+    },
+    totalMTBTraceDetected: {
+      id: 'p.PkDashboard.totalMTBTraceDetected',
+      defaultMessage: 'Total MTB detected and MTB Trace detected',
+    },
+    countIncludesMTBAndTrace: {
+      id: 'p.PkDashboard.countIncludesMTBAndTrace',
+      defaultMessage: 'Count includes MTB detected and MTB Trace detected',
+    },
+    totalRRTBDetectedInCurrentYear: {
+      id: 'p.PkDashboard.totalRRTBDetectedInCurrentYear',
+      defaultMessage: 'Total RRTB detected in current year',
+    },
     dataVisualisationForXDRResistanceGraphTitle: {
       id: 'p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle',
       defaultMessage: 'Data Visualisation For XDR Resistance Over Time',
