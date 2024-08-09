@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-02T00:11:12.662Z\n"
+"POT-Creation-Date: 2024-08-09T03:15:45.784Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -582,12 +582,33 @@ msgstr ""
 msgid "Annual FQ-R Diagnosis"
 msgstr "Щорічна діагностика FQ-R"
 
+#. [p.PkDashboard.mtbPlusDetectionTrends]
+#. defaultMessage is:
+#. Annual MTB+ detection trends
+#: extracted_strings.json
+msgid "Annual MTB+ detection trends"
+msgstr "Щорічні тенденції щодо виявлення туберкульозу легень та малярії"
+
+#. [p.PkDashboard.annualMTBDiagnosis]
+#. defaultMessage is:
+#. Annual MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Annual MTB+ diagnosis trends"
+msgstr "Щорічні тенденції діагностики МРТБ+"
+
 #. [p.PkDashboard.annualRRDiagnosedTrends]
 #. defaultMessage is:
 #. Annual RR Diagnosis
 #: extracted_strings.json
 msgid "Annual RR Diagnosis"
 msgstr "Щорічна діагностика РР"
+
+#. [p.PkDashboard.annualRRTBDiagnosisTrends]
+#. defaultMessage is:
+#. Annual RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Annual RR-TB diagnosis trends"
+msgstr "Щорічні тенденції діагностики РР-ТБ"
 
 #. [p.PkDashboard.annualTestingTrends]
 #. defaultMessage is:
@@ -952,6 +973,13 @@ msgstr "Середня кількість тестів, виконаних за 
 #: extracted_strings.json
 msgid "Average time to replace disabled module"
 msgstr "Середній час заміни відключеного модуля"
+
+#. [p.PkDashboard.customPerMonth]
+#. defaultMessage is:
+#. Average {resultType} detected per month in current year
+#: extracted_strings.json
+msgid "Average {resultType} detected per month in current year"
+msgstr "Середній показник {resultType}, виявлений за місяць у поточному році"
 
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
@@ -1850,6 +1878,13 @@ msgstr "Не вдалося ввійти за допомогою своїх об
 msgid "Count (1-100)"
 msgstr "Кількість (1-100)"
 
+#. [p.PkDashboard.countIncludesMTBAndTrace]
+#. defaultMessage is:
+#. Count includes MTB detected and MTB Trace detected
+#: extracted_strings.json
+msgid "Count includes MTB detected and MTB Trace detected"
+msgstr "Кількість включає виявлені MTB та виявлені MTB Trace"
+
 #. [p.PkDashboard.peopleTestedRifTooltip]
 #. defaultMessage is:
 #. Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.
@@ -1860,6 +1895,15 @@ msgid ""
 msgstr ""
 "Враховуйте лише звітні результати МТБ/Ріф та МТБ/Ріф-Ультра, не враховуючи "
 "\"Немає результату\", \"Помилка\", \"Невизначено\", \"Недійсний\"."
+
+#. [p.PkDashboard.reportableCount]
+#. defaultMessage is:
+#. Count only reportable results, exclude errors, no results and invalids
+#: extracted_strings.json
+msgid "Count only reportable results, exclude errors, no results and invalids"
+msgstr ""
+"Підраховуйте лише ті результати, що підлягають звітуванню, виключайте "
+"помилки, відсутність результатів та недійсні результати"
 
 #. [filter.popover.country]
 #. defaultMessage is:
@@ -6275,6 +6319,20 @@ msgstr "Виявлено сліди MTB Rif Безрезультатно"
 msgid "MTB Unknown"
 msgstr "MTB Невідомий"
 
+#. [p.PkDashboard.mtbPositivesCurrentYear]
+#. defaultMessage is:
+#. MTB positives detected in current year
+#: extracted_strings.json
+msgid "MTB positives detected in current year"
+msgstr "Виявлено позитивних результатів на туберкульоз у поточному році"
+
+#. [p.PkDashboard.mtbPositiveCurrentYear]
+#. defaultMessage is:
+#. MTB positives diagnosed in current year
+#: extracted_strings.json
+msgid "MTB positives diagnosed in current year"
+msgstr "Діагностовано позитивних випадків МРТБ у поточному році"
+
 #. [pages.XDR.cnt_mtb]
 #. defaultMessage is:
 #. MTB+
@@ -6579,12 +6637,40 @@ msgstr "Щомісяця"
 msgid "Monthly FQ-R Diagnosis"
 msgstr "Щомісячна діагностика FQ-R"
 
+#. [p.PkDashboard.mtbPlusMonthlyDetectionTrends]
+#. defaultMessage is:
+#. Monthly MTB+ detection trends
+#: extracted_strings.json
+msgid "Monthly MTB+ detection trends"
+msgstr "Щомісячні тенденції виявлення туберкульозу+"
+
+#. [p.PkDashboard.monthlyMTBDiagnosis]
+#. defaultMessage is:
+#. Monthly MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Monthly MTB+ diagnosis trends"
+msgstr "Щомісячні тенденції діагностики МРТБ+"
+
+#. [p.PkDashboard.monthlyRRTBDiagnosis]
+#. defaultMessage is:
+#. Monthly RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Monthly RR-TB diagnosis trends"
+msgstr "Щомісячні тенденції діагностики МР ТБ"
+
 #. [p.PkDashboard.monthlyTestingTrends]
 #. defaultMessage is:
 #. Monthly Testing Trends
 #: extracted_strings.json
 msgid "Monthly Testing Trends"
 msgstr "Щомісячні тенденції тестування"
+
+#. [p.PkDashboard.monthlyXDRTrends]
+#. defaultMessage is:
+#. Monthly XDR testing trends
+#: extracted_strings.json
+msgid "Monthly XDR testing trends"
+msgstr "Щомісячні тенденції тестування XDR"
 
 #. [p.PkDashboard.monthlyDiagnosedTrends]
 #. defaultMessage is:
@@ -7129,6 +7215,13 @@ msgstr "Неперетворювачі категорії I"
 #: extracted_strings.json
 msgid "Non converters of Retreatment"
 msgstr "Ті, хто не звернувся до реколекцій"
+
+#. [p.PkDashboard.errorRatePageTitle]
+#. defaultMessage is:
+#. Non-reportable results
+#: extracted_strings.json
+msgid "Non-reportable results"
+msgstr "Непідзвітні результати"
 
 #. [filter.popover.none]
 #. defaultMessage is:
@@ -8345,6 +8438,27 @@ msgstr "Провінційні тенденції діагностики ФКУ"
 msgid "Provincial MTB Detection Trends Comparison"
 msgstr "Порівняння тенденцій виявлення туберкульозу в областях"
 
+#. [p.PkDashboard.provincialMTBPositivesTrends]
+#. defaultMessage is:
+#. Provincial MTB+ detected in current year
+#: extracted_strings.json
+msgid "Provincial MTB+ detected in current year"
+msgstr "У поточному році в провінції виявлено випадки МРТБ+"
+
+#. [p.PkDashboard.provincialMTBDiagnosisCurrentYear]
+#. defaultMessage is:
+#. Provincial MTB+ diagnosed in current year
+#: extracted_strings.json
+msgid "Provincial MTB+ diagnosed in current year"
+msgstr "Провінційні діагнози МРТБ+ у поточному році"
+
+#. [p.PkDashboard.provincialMTBDiagnosis]
+#. defaultMessage is:
+#. Provincial MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Provincial MTB+ diagnosis trends"
+msgstr "Тенденції діагностики МРТБ+ у провінціях"
+
 #. [p.PkDashboard.provincialMtbXdrTestingTrends]
 #. defaultMessage is:
 #. Provincial MTB/XDR Testing Trends
@@ -8358,6 +8472,20 @@ msgstr "Тенденції тестування MTB/XDR у провінціях"
 #: extracted_strings.json
 msgid "Provincial RR Diagnosis Trends"
 msgstr "Тенденції діагностики РР у провінціях"
+
+#. [p.PkDashboard.provincialRRTBDiagnosisTrendsCurrentYear]
+#. defaultMessage is:
+#. Provincial RR-TB diagnosed in current year
+#: extracted_strings.json
+msgid "Provincial RR-TB diagnosed in current year"
+msgstr "Провінційний РР ТБ, діагностований у поточному році"
+
+#. [p.PkDashboard.provincialRRTBDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Provincial RR-TB diagnosis trends"
+msgstr "Провінційні тенденції діагностики РР-ТБ"
 
 #. [p.PkDashboard.ProvincialRRTBDiagnosisTrends]
 #. defaultMessage is:
@@ -8393,6 +8521,20 @@ msgstr "Тенденція тестування в провінціях"
 #: extracted_strings.json
 msgid "Provincial Testing in current year"
 msgstr "Провінційне тестування в поточному році"
+
+#. [p.PkDashboard.provincialXDRTestingTrendsCurrentYear]
+#. defaultMessage is:
+#. Provincial XDR testing in current year
+#: extracted_strings.json
+msgid "Provincial XDR testing in current year"
+msgstr "Тестування XDR у провінціях у поточному році"
+
+#. [p.PkDashboard.provincialXDRTestingTrends]
+#. defaultMessage is:
+#. Provincial XDR testing trends
+#: extracted_strings.json
+msgid "Provincial XDR testing trends"
+msgstr "Тенденції тестування XDR у провінціях"
 
 #. [p.PkDashboard.provincialXdrDiagnosisTrends]
 #. defaultMessage is:
@@ -8594,6 +8736,13 @@ msgstr "RR+"
 #: extracted_strings.json
 msgid "RR+ percentage of MTB+"
 msgstr "РР до ТБ Загальний відсоток"
+
+#. [p.PkDashboard.rrtbDiagnosedCurrentYear]
+#. defaultMessage is:
+#. RR-TB diagnosed in current year
+#: extracted_strings.json
+msgid "RR-TB diagnosed in current year"
+msgstr "РР ТБ, діагностований у поточному році"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -10806,6 +10955,13 @@ msgstr ""
 msgid "TB XDR Drug Resistances"
 msgstr "Стійкість до ліків TB XDR"
 
+#. [p.PkDashboard.TBXDRTest]
+#. defaultMessage is:
+#. TB XDR tests performed in current year
+#: extracted_strings.json
+msgid "TB XDR tests performed in current year"
+msgstr "Тестування на ТБ XDR, проведені в поточному році"
+
 #. [p.PkDashboard.testingDiagnosisTrendsRR]
 #. defaultMessage is:
 #. TB and RRTB Diagnosis Trends
@@ -11923,12 +12079,41 @@ msgstr "Загальна кількість інцидентів"
 msgid "Total Errors"
 msgstr "Загальна кількість помилок"
 
+#. [p.PkDashboard.totalMTBTraceDetected]
+#. defaultMessage is:
+#. Total MTB detected and MTB Trace detected
+#: extracted_strings.json
+msgid "Total MTB detected and MTB Trace detected"
+msgstr "Загальна кількість виявлених MTB та виявлених MTB-відстежень"
+
+#. [p.PkDashboard.totalRRTBDetectedInCurrentYear]
+#. defaultMessage is:
+#. Total RRTB detected in current year
+#: extracted_strings.json
+msgid "Total RRTB detected in current year"
+msgstr "Загальна кількість РРТБ, виявлених у поточному році"
+
 #. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
 #: extracted_strings.json
 msgid "Total Results"
 msgstr "Всього результатів"
+
+#. [p.PkDashboard.totalTBDetectedInCurrentYear]
+#. defaultMessage is:
+#. Total TB detected in current year
+#: extracted_strings.json
+msgid "Total TB detected in current year"
+msgstr "Загальна кількість виявлених випадків туберкульозу в поточному році"
+
+#. [p.PkDashboard.totalReportableTBTests]
+#. defaultMessage is:
+#. Total TB tests with a reportable result in current year
+#: extracted_strings.json
+msgid "Total TB tests with a reportable result in current year"
+msgstr ""
+"Загальна кількість тестувань на ТБ зі звітним результатом у поточному році"
 
 #. [pages.workload.totalTests]
 #. defaultMessage is:
@@ -12608,6 +12793,13 @@ msgstr "XDR Assay Summary Result by device"
 msgid "XDR FLQ Resistance"
 msgstr "Опір XDR FLQ"
 
+#. [p.PkDashboard.xdrFLQAndINHTrends]
+#. defaultMessage is:
+#. XDR FLQ and INH resistance trends
+#: extracted_strings.json
+msgid "XDR FLQ and INH resistance trends"
+msgstr "Тенденції резистентності до XDR FLQ та INH"
+
 #. [p.PkDashboard.XDRTestingandDiagnosisTrends]
 #. defaultMessage is:
 #. XDR Testing and Diagnosis Trends
@@ -12621,6 +12813,13 @@ msgstr "Тенденції тестування та діагностики XDR"
 #: extracted_strings.json
 msgid "XDR Testing and MTB Detection Trends"
 msgstr "Тенденції тестування XDR та виявлення МТБ"
+
+#. [p.PkDashboard.xdrDrugResistance]
+#. defaultMessage is:
+#. XDR drug resistance trends
+#: extracted_strings.json
+msgid "XDR drug resistance trends"
+msgstr "Тенденції резистентності до лікарських засобів XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -13290,6 +13489,20 @@ msgstr ""
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
 msgstr "{numberOfModules, множина, один {# модуль} інші {# модулі} } }"
+
+#. [p.PkDashboard.customPerYear]
+#. defaultMessage is:
+#. {resultType} detected this year
+#: extracted_strings.json
+msgid "{resultType} detected this year"
+msgstr "{resultType} виявлено цього року"
+
+#. [p.PkDashboard.customToday]
+#. defaultMessage is:
+#. {resultType} detected today
+#: extracted_strings.json
+msgid "{resultType} detected today"
+msgstr "{resultType} виявлено сьогодні"
 
 #. [component.Widget.ytd]
 #. defaultMessage is:
