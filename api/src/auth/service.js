@@ -225,7 +225,7 @@ async function authenticate(request, response) {
     lastActive: now,
   })
 
-  const permissions = await getUserPermissions(user.id, user.partnerId)
+  const { permissions } = await getUserPermissions(user.id, user.partnerId)
   if (_.isEmpty(permissions)) {
     return loginHistoryCodeDecorator(
       Boom.expectationFailed('Your credentials were not configured properly. Please, contact your administrator.'),
@@ -392,8 +392,7 @@ async function hasPermissions(auth, modules) {
 
 // generate a new jwt for the given user data
 async function getAccessToken({ id, name, partnerId, personId }, clientType = 'web') {
-  const permissions = await getUserPermissions(id, partnerId)
-
+  const { permissions, jobFunctionNames } = await getUserPermissions(id, partnerId)
   const applicableLicense = await getApplicableLicense(personId, partnerId)
 
   // create a new token
@@ -401,6 +400,7 @@ async function getAccessToken({ id, name, partnerId, personId }, clientType = 'w
     {
       personId,
       name,
+      jobFunctionNames,
       permissions,
       hasToAcceptLicenseId:
         clientType.includes(clientTypes.app) || !applicableLicense || applicableLicense.acceptedOn
@@ -426,8 +426,20 @@ async function getUserPermissions(userId, partnerId) {
     .innerJoin('Person as ps', 'jc.personId', 'ps.id')
     .where({ 'ps.userId': userId, 'jf.partnerId': partnerId })
     .orderBy(['p.module', 'p.activity'])
-    .distinct('p.module', 'p.activity')
-    .then(data => data.map(p => `${p.module}:${p.activity}`))
+    .distinct('p.module', 'p.activity', 'jf.name')
+    .then(data => {
+      const permissions = []
+      const jobFunctionNamesSet = new Set()
+
+      data?.forEach(item => {
+        permissions.push(`${item.module}:${item.activity}`)
+        jobFunctionNamesSet.add(item.name)
+      })
+
+      const jobFunctionNames = Array.from(jobFunctionNamesSet)
+
+      return { permissions, jobFunctionNames }
+    })
 }
 
 function getGeographyAccess(personId, partnerId) {
