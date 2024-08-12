@@ -124,7 +124,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsTBDetected)} />
+          <CardHeader title={formatMessage(graphMessages.mtbDetection)} />
           <CardContent>
             <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
