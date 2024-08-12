@@ -5,11 +5,7 @@ import fetchWrapperForQueries from '../../components/QueryFetch'
 import { DEVICE_KEY } from '../device/deviceKeys'
 import { DEVICE_WORKLOAD_KEY_BY_ASSAY_ID_ENDPOINT } from './workloadKeys'
 
-const getDeviceWorkload = async originalParams => {
-  const params = { ...originalParams }
-  delete params.singleAssayId
-  params.assayId = originalParams.singleAssayId
-
+const getDeviceWorkload = async params => {
   return fetchWrapperForQueries({
     endpoint: DEVICE_WORKLOAD_KEY_BY_ASSAY_ID_ENDPOINT,
     params: omitBy(params, isNil),

@@ -56,12 +56,9 @@ const Workload = () => {
     error,
   } = useWorkload({ ...filter, size: pageSize, page: pageAt, sortCol, sortDir })
 
-  const { isLoading: isresultCategoryLoading, data: resultCategoryGroups } = useResultCategoryGroup(
-    [filter.singleAssayId],
-    {
-      enabled: !!filter.singleAssayId,
-    }
-  )
+  const { isLoading: isresultCategoryLoading, data: resultCategoryGroups } = useResultCategoryGroup([filter.assayId], {
+    enabled: !!filter.assayId,
+  })
 
   if (isError) throw new Error(error)
 
@@ -127,7 +124,7 @@ const Workload = () => {
       {
         minDate,
         maxDate,
-        assayId: [filter.singleAssayId],
+        ...(filter.assayId ? { assayId: [filter.assayId] } : {}),
         resultCategoryGroupId: resultGroupId ?? null,
         deviceName,
       },

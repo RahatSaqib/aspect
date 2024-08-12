@@ -11,6 +11,8 @@ import {
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
 import { WORKLOAD_KEY, WORKLOAD_KEY_EXPORT_ENDPOINT } from './workloadKeys.js'
+import omitBy from 'lodash/omitBy'
+import isNil from 'lodash/isNil'
 
 const getDownload = async (filtersParams, fileFormat) => {
   return aspectFetch(
@@ -54,10 +56,6 @@ const getDownload = async (filtersParams, fileFormat) => {
 
 const useWorkloadDownload = requestParams => {
   const { fileFormat, enabled, sortDir, sortCol, size, page, minDate, maxDate, ...filtersParams } = requestParams
-  const assayId = filtersParams.singleAssayId
-
-  filtersParams.assayId = assayId
-  delete filtersParams.singleAssayId
   const queryClient = useQueryClient()
   const dispatch = useDispatch()
 
@@ -65,11 +63,14 @@ const useWorkloadDownload = requestParams => {
     [WORKLOAD_KEY, 'download'],
     () =>
       getDownload(
-        {
-          ...filtersParams,
-          minDate: getISOFromString(minDate),
-          maxDate: getISOFromString(maxDate),
-        },
+        omitBy(
+          {
+            ...filtersParams,
+            minDate: getISOFromString(minDate),
+            maxDate: getISOFromString(maxDate),
+          },
+          isNil
+        ),
         fileFormat
       ),
     {

@@ -22,8 +22,8 @@ const useResultCategoryGroup = (assayIds = [], options) => {
     () => getResultCategoryGroup(assayIds),
     {
       ...SELECTS_QUERY_OPTIONS,
-      ...options,
       enabled: assayIdsLength > 0,
+      ...options,
       select: data =>
         data?.map(category => ({
           ...category,

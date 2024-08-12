@@ -5,7 +5,7 @@ const { validateAllGeographyFilterParams } = require('../../geography/requestVal
 
 const exportWorkloadRequestSchema = {
   query: {
-    assayId: Joi.number().description('Filter for assay ID').required(),
+    assayId: Joi.number().allow(null, '').description('Filter for assay ID'),
     deviceName: Joi.string().allow('').description('Filter for device name'),
     deviceMaintenanceStatusId: Joi.array()
       .items(Joi.string())
