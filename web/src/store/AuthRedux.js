@@ -451,6 +451,7 @@ export function acceptLicenseStart(licenseId) {
 const JWT = Immutable.Record({
   name: '',
   permissions: Immutable.Set(),
+  jobFunctionNames: Immutable.Set(),
   hasToAcceptLicenseId: undefined,
   iat: undefined,
   exp: undefined,
@@ -494,7 +495,15 @@ export default function authReducer(state = initialState, action) {
         })
         mutState.mergeDeepIn(
           ['jwt'],
-          pick(jwtDecode(action.data.access), ['name', 'permissions', 'hasToAcceptLicenseId', 'iat', 'exp', 'iss'])
+          pick(jwtDecode(action.data.access), [
+            'name',
+            'permissions',
+            'jobFunctionNames',
+            'hasToAcceptLicenseId',
+            'iat',
+            'exp',
+            'iss',
+          ])
         )
       })
     case types.LOGIN_FAILURE:
