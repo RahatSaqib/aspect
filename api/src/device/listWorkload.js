@@ -16,35 +16,28 @@ const getCommonLabel = name => {
 
 const buildNewColumns = resultCategories => {
   const uniqueLabels = new Set()
+  const resultCategoryGroupColumn = []
 
-  const extraColumns = resultCategories
-    // eslint-disable-next-line array-callback-return
-    .map(result => {
-      const label = getCommonLabel(result.name)
+  resultCategories.forEach(result => {
+    const label = getCommonLabel(result.name)
 
-      // Only add the result if the label has not been used
-      if (!uniqueLabels.has(label)) {
-        uniqueLabels.add(label)
+    // Only add the result if the label has not been used
+    if (!uniqueLabels.has(label) && label !== 'MTB Detected' && label !== 'MTB Trace Detected') {
+      uniqueLabels.add(label)
 
-        return {
-          label,
-          fieldId: `${result.assayI18nKey}-${result.i18nKey}`,
-          resultCategoryLabelI18nKey: result.assayI18nKey,
-          resultCategoryI18nKey: result.i18nKey,
-          selector: result.resultCategory2
-            ? `SUM(CASE WHEN resultCategory1 = ${result.resultCategory1} AND resultCategory2 = ${result.resultCategory2} THEN 1 ELSE 0 END)`
-            : `SUM(CASE WHEN resultCategory1 = ${result.resultCategory1} THEN 1 ELSE 0 END)`,
-        }
-      }
-    })
-    .filter(Boolean) // Filter out the null values
-
-  // Filter out specific categories
-  const filteredColumns = extraColumns.filter(column => {
-    return column.label !== 'MTB Detected' && column.label !== 'MTB Trace Detected'
+      resultCategoryGroupColumn.push({
+        label,
+        fieldId: `${result.assayI18nKey}-${result.i18nKey}`,
+        resultCategoryLabelI18nKey: result.assayI18nKey,
+        resultCategoryI18nKey: result.i18nKey,
+        selector: result.resultCategory2
+          ? `SUM(CASE WHEN resultCategory1 = ${result.resultCategory1} AND resultCategory2 = ${result.resultCategory2} THEN 1 ELSE 0 END)`
+          : `SUM(CASE WHEN resultCategory1 = ${result.resultCategory1} THEN 1 ELSE 0 END)`,
+      })
+    }
   })
 
-  return filteredColumns
+  return resultCategoryGroupColumn
 }
 
 const buildXdrExtraColumns = isExport => {
@@ -87,7 +80,7 @@ const listWorkload = async request => {
   extraColumns = buildNewColumns(resultCategories)
   if (assay.externalId === 'GxMtbXdr') {
     const filteredColumns = extraColumns.filter(col => commonCategories.includes(col.label))
-    extraColumns = [...filteredColumns, ...buildXdrExtraColumns(query.isExport)]
+    extraColumns = [...buildXdrExtraColumns(query.isExport), ...filteredColumns]
   }
 
   const { total, length, data } = await getDeviceWorkload(extraColumns, dataConstraints, query, auth)
