@@ -58,7 +58,7 @@ const dashboardV2DefaultFilters = {
 export const defaultFilter = {
   '/browse/deviceApiKey': {},
   '/browse/device/list': { connectorStatus: 'all' },
-  '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now), singleAssayId: -1 }, //
+  '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now) }, //
   '/browse/inventory/log': { minDate, maxDate }, //
   '/browse/inventory/supplies': { hasStock: true, minDate, maxDate }, //
   '/browse/inventory/transfers': { minDate, maxDate }, //

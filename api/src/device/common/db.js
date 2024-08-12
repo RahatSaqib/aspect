@@ -590,7 +590,10 @@ function getFirstAndLastResults(dataConstraints, assayId, deviceIds) {
       firstEndedOn: knex.raw('MIN(endedOn)'),
       lastEndedOn: knex.raw('MAX(endedOn)'),
     })
-    .where('assayId', assayId)
+    .modify(qb => {
+      if (assayId) qb.where('assayId', assayId)
+    })
+
     .whereIn('deviceId', deviceIds)
     .as('firstAndLastResults')
 }
@@ -607,12 +610,23 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
     .innerJoin('State as st', 'g.stateId', 'st.id')
     .innerJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .innerJoin('Assay as a', joinAssay => {
-      joinAssay.on('dt.id', 'a.deviceTypeId').andOn('a.id', knex.raw(assayId))
+      joinAssay.on(function () {
+        if (assayId !== undefined) {
+          this.on('a.id', knex.raw(assayId))
+        } else {
+          this.on('dt.id', 'a.deviceTypeId')
+        }
+      })
     })
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Result as r', joinResultQuery => {
-      joinResultQuery.on('d.id', 'r.deviceId').andOn('r.assayId', knex.raw(assayId))
-
+      joinResultQuery.on(function () {
+        if (assayId !== undefined) {
+          this.on('r.assayId', knex.raw(assayId))
+        } else {
+          this.on('r.deviceId', 'd.id')
+        }
+      })
       if (query.minDate) joinResultQuery.andOn('r.endedOn', '>', knex.raw(`'${query.minDate.toISOString()}'`))
 
       if (query.maxDate) joinResultQuery.andOn('r.endedOn', '<=', knex.raw(`'${query.maxDate.toISOString()}'`))

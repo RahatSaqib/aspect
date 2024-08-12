@@ -54,45 +54,47 @@ const buildXdrExtraColumns = isExport => {
 const listWorkload = async request => {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-
-  const { assayId } = query
-  const assay = await getAssay(assayId)
-
-  const resultCategoryAssay = await getResultCategoriesByAssay(assayId)
-  const resultCategory1ResultsI18nKey = resultCategoryAssay.resultCategory1ResultsI18nKey?.split(',') || []
-  const resultCategory1ResultsLabel = resultCategoryAssay.resultCategory1ResultsLabel?.split(',') || []
-  const resultCategory2ResultsLabel = resultCategoryAssay.resultCategory2ResultsLabel?.split(',') || []
-  const resultCategory1ResultsId = resultCategoryAssay.resultCategory1ResultsId?.split(',') || []
-  const resultCategory2ResultsI18nKey = resultCategoryAssay.resultCategory2ResultsI18nKey?.split(',') || []
-  const resultCategory2ResultsId = resultCategoryAssay.resultCategory2ResultsId?.split(',') || []
-
   let extraColumns = []
 
-  if (resultCategory1ResultsId !== null) {
-    extraColumns = buildExtraColumns(
-      1,
-      resultCategory1ResultsId,
-      resultCategory1ResultsI18nKey,
-      resultCategoryAssay.resultCategory1LabelI18nKey,
-      resultCategoryAssay.resultCategory1Label,
-      resultCategory1ResultsLabel
-    )
-  }
+  const { assayId } = query
 
-  if (assay.externalId === 'GxMtbXdr') {
-    extraColumns = [...extraColumns, ...buildXdrExtraColumns(query.isExport)]
-  } else if (resultCategory1ResultsId !== null) {
-    extraColumns = [
-      ...extraColumns,
-      ...buildExtraColumns(
-        2,
-        resultCategory2ResultsId,
-        resultCategory2ResultsI18nKey,
-        resultCategoryAssay.resultCategory2LabelI18nKey,
-        resultCategoryAssay.resultCategory2Label,
-        resultCategory2ResultsLabel
-      ),
-    ]
+  if (assayId) {
+    const assay = await getAssay(assayId)
+
+    const resultCategoryAssay = await getResultCategoriesByAssay(assayId)
+    const resultCategory1ResultsI18nKey = resultCategoryAssay.resultCategory1ResultsI18nKey?.split(',') || []
+    const resultCategory1ResultsLabel = resultCategoryAssay.resultCategory1ResultsLabel?.split(',') || []
+    const resultCategory2ResultsLabel = resultCategoryAssay.resultCategory2ResultsLabel?.split(',') || []
+    const resultCategory1ResultsId = resultCategoryAssay.resultCategory1ResultsId?.split(',') || []
+    const resultCategory2ResultsI18nKey = resultCategoryAssay.resultCategory2ResultsI18nKey?.split(',') || []
+    const resultCategory2ResultsId = resultCategoryAssay.resultCategory2ResultsId?.split(',') || []
+
+    if (resultCategory1ResultsId !== null) {
+      extraColumns = buildExtraColumns(
+        1,
+        resultCategory1ResultsId,
+        resultCategory1ResultsI18nKey,
+        resultCategoryAssay.resultCategory1LabelI18nKey,
+        resultCategoryAssay.resultCategory1Label,
+        resultCategory1ResultsLabel
+      )
+    }
+
+    if (assay.externalId === 'GxMtbXdr') {
+      extraColumns = [...extraColumns, ...buildXdrExtraColumns(query.isExport)]
+    } else if (resultCategory1ResultsId !== null) {
+      extraColumns = [
+        ...extraColumns,
+        ...buildExtraColumns(
+          2,
+          resultCategory2ResultsId,
+          resultCategory2ResultsI18nKey,
+          resultCategoryAssay.resultCategory2LabelI18nKey,
+          resultCategoryAssay.resultCategory2Label,
+          resultCategory2ResultsLabel
+        ),
+      ]
+    }
   }
 
   const { total, length, data } = await getDeviceWorkload(extraColumns, dataConstraints, query, auth)
