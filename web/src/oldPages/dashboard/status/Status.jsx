@@ -12,7 +12,6 @@ import {
   TestsOverTimeGraph,
   TreatmentStatusGraph,
   XDRFLQResistanceGraph,
-  XDRResultsGraph,
 } from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useAssayList from '../../../hooks/assay/useAssayList'
@@ -75,16 +74,7 @@ const Status = () => {
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <XDRResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                {/* 4 */}
-              </ErrorBoundary>
-            </PermissionChecker>
-          ) : null}
-
-          {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
-            <PermissionChecker permissions={['dashboard']}>
-              <ErrorBoundary>
-                <XDRFLQResistanceGraph /> {/* 10 */}
+                <XDRFLQResistanceGraph /> {/* 4 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}
