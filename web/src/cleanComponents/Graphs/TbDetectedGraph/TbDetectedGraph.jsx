@@ -200,6 +200,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
                             .join(' '),
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
+                        legend={false}
                       />
                     </Grid>
                   ) : (
