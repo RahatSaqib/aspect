@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useMemo } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
 import { startOfMonth, endOfMonth, subMonths } from 'date-fns'
 import { format } from 'date-fns-tz'
@@ -6,8 +6,9 @@ import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages } from '../../../messages'
+import pkMessages from '../../../pages/PkDashboard/PkDashboard.Messages'
 import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
-import { StateSelector, Loading } from '../../index'
+import { StateSelector, Loading, AspectSelect } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
 import { ColumnLineGraph } from '../index'
@@ -19,6 +20,13 @@ const endpointParams = [{ minDate }, { maxDate }]
 
 const XDRFLQResistanceGraph = () => {
   const { formatMessage } = useIntl()
+
+  const lineSource = useMemo(
+    () => [formatMessage(messages.FQRPercent), formatMessage(messages.INHPercent)],
+    [formatMessage]
+  )
+
+  const [lineFor, setLineFor] = useState(lineSource[0])
 
   const [showLabel, setShowLabel] = useState(false)
   const [filter, setFilter] = useState()
@@ -37,25 +45,32 @@ const XDRFLQResistanceGraph = () => {
   const fqrDetectedMessage = formatMessage(messages.FqrDetected)
   const totalTestsMessage = formatMessage(messages.TotalTests)
   const FQRPercentMessage = formatMessage(messages.FQRPercent)
+  const INHPercentMessage = formatMessage(messages.INHPercent)
 
   const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
       const line = []
       const bar = []
-      data.grouped.map(({ month, FqrToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected }) => {
-        line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
-        bar.push({ month, value: TotalTests, type: totalTestsMessage })
-        bar.push({ month, value: MtbDetected, type: mtbDetectedMessage })
-        bar.push({ month, value: FqrDetected, type: fqrDetectedMessage })
-        bar.push({ month, value: InhDetected, type: inhDetectedMessage })
-        return {}
-      })
+      data.grouped.map(
+        ({ month, FqrToMtbPercentage, InhToMtbPercentage, TotalTests, MtbDetected, FqrDetected, InhDetected }) => {
+          if (lineFor === FQRPercentMessage) {
+            line.push({ month, [FQRPercentMessage]: +FqrToMtbPercentage.toFixed(2) })
+          } else if (lineFor === INHPercentMessage) {
+            line.push({ month, [INHPercentMessage]: +InhToMtbPercentage.toFixed(2) })
+          }
+          bar.push({ month, value: TotalTests, type: totalTestsMessage })
+          bar.push({ month, value: MtbDetected, type: mtbDetectedMessage })
+          bar.push({ month, value: FqrDetected, type: fqrDetectedMessage })
+          bar.push({ month, value: InhDetected, type: inhDetectedMessage })
+          return {}
+        }
+      )
 
       setGraphData([bar, line])
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data])
+  }, [data, lineFor])
 
   return isLoading ? (
     <Loading />
@@ -63,7 +78,7 @@ const XDRFLQResistanceGraph = () => {
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title={formatMessage(graphMessages.xdrPercentageFQRDetectedOverMTBDetectedGraphTitle)} />
+          <CardHeader title={formatMessage(graphMessages.mtbXDRDrugResistance)} />
           <CardContent>
             <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
@@ -76,6 +91,17 @@ const XDRFLQResistanceGraph = () => {
                   </Grid>
                   <Grid item xs={12} md={8} lg={12} className={styles.Graph_Content_AssaySelector}>
                     <StateSelector filter={filter} onChange={setFilter} />
+                  </Grid>
+                  <Grid item xs={12} md={8} lg={12} className={styles.Graph_Content_AssaySelector}>
+                    <AspectSelect
+                      fullWidth
+                      disableClearable
+                      options={lineSource}
+                      label={formatMessage(pkMessages.showLineFor)}
+                      value={lineFor}
+                      onChange={setLineFor}
+                      itemToString={i => i ?? ''}
+                    />
                   </Grid>
                 </Grid>
               </Grid>
@@ -91,10 +117,10 @@ const XDRFLQResistanceGraph = () => {
                         { name: mtbDetectedMessage, colorId: '--aspect-color-slate' },
                         { name: fqrDetectedMessage, colorId: 'caseDetected' },
                         { name: inhDetectedMessage, colorId: 'casePercentDetectedOfTotal' },
-                        { name: FQRPercentMessage, colorId: 'casePercentDetectedOfTotal' },
+                        { name: lineFor, colorId: 'casePercentDetectedOfTotal' },
                       ]}
                       xField="month"
-                      yField={['value', FQRPercentMessage]}
+                      yField={['value', lineFor]}
                     />
                   </Grid>
                 </Grid>
