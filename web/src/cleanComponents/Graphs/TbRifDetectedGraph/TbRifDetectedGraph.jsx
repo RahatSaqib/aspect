@@ -138,7 +138,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsTBTitle)} />
+          <CardHeader title={formatMessage(graphMessages.mtbRifResistance)} />
           <CardContent>
             <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
@@ -216,6 +216,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
                             .join(' '),
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
+                        legend={false}
                       />
                     </Grid>
                   ) : (
