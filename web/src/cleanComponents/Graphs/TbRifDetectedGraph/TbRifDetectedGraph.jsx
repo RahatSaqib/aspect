@@ -216,6 +216,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
                             .join(' '),
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
+                        legend={false}
                       />
                     </Grid>
                   ) : (
