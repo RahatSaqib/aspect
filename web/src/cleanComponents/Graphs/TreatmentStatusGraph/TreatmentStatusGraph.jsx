@@ -211,6 +211,7 @@ const TreatmentStatusGraph = ({ assaysFromState }) => {
                             .join(' '),
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
+                        legend={false}
                       />
                     </Grid>
                   ) : (
