@@ -74,7 +74,7 @@ const NationalDiagnosisGraph = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(messages.nationalDiagnosisXdr)}
+      title={formatMessage(user.isPakistan ? messages.DNationalTrend : messages.nationalMtbDetectionTrends)}
       filters={
         <>
           <FormControlLabel
