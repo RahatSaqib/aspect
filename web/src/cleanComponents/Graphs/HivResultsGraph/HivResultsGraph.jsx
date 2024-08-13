@@ -112,7 +112,7 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: parsedData, total: `${pieAvg}` })
+      setDonutData({ data: parsedData, total: `${pieAvg}%` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])

@@ -127,7 +127,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAvg}` })
+      setDonutData({ data: pie, total: `${pieAvg}%` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])

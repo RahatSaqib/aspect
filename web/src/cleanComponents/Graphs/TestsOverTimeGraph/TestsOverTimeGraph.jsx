@@ -149,7 +149,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
       })
 
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: pieAverage })
+      setDonutData({ data: pie, total: `${pieAverage}%` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
