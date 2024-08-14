@@ -436,9 +436,7 @@ async function getUserPermissions(userId, partnerId) {
         jobFunctionNamesSet.add(item.name)
       })
 
-      const jobFunctionNames = Array.from(jobFunctionNamesSet)
-
-      return { permissions, jobFunctionNames }
+      return { permissions, jobFunctionNames: [...jobFunctionNamesSet] }
     })
 }
 
