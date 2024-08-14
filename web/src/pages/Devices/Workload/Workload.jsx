@@ -105,7 +105,8 @@ const Workload = () => {
     const resultGroupId =
       fieldId &&
       resultCategoryGroups.find(categoryGroup => {
-        const found = categoryGroup.name.includes(column)
+        const columnName = categoryGroup.name.toLowerCase().replace(' - ', ' ')
+        const found = columnName.includes(column) || columnName === column
         if (!found && categoryGroup.assayI18nKey === 'assayGeneXpertMtbXdr') {
           const hasResitanceString = XDR_RESISTANCES.some(resistance => column.includes(resistance.toLowerCase()))
           if (hasResitanceString)
@@ -114,7 +115,7 @@ const Workload = () => {
               column
             )
         }
-        return categoryGroup.name.toLowerCase().includes(column)
+        return found
       }).externalId
     const { minDate, maxDate } = filter
     const baseUrl = '/browse/result'
