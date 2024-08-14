@@ -6,6 +6,8 @@ const { getConstraints } = require('../auth/constraints')
 const { XDR_RESISTANCES } = require('../shared/constants')
 const { listResultCategoryGroupsForSelectList } = require('../resultCategoryGroup/service')
 
+const commonCategories = ['Error', 'Invalid', 'No Result']
+
 // Helper function to determine the label based on the result name
 const getCommonLabel = name => {
   if (name.includes('Error')) return 'Error'
@@ -37,7 +39,9 @@ const buildNewColumns = resultCategories => {
     }
   })
 
-  return resultCategoryGroupColumn
+  return resultCategoryGroupColumn.sort(
+    (a, b) => commonCategories.includes(a.label) - commonCategories.includes(b.label)
+  )
 }
 
 const buildXdrExtraColumns = isExport => {
@@ -77,12 +81,12 @@ const listWorkload = async request => {
   let extraColumns = []
 
   const detectedCategories = ['MTB Detected', 'MTB Trace Detected']
-  const commonCategories = [...detectedCategories, 'MTB Not Detected', 'No Result', 'Error', 'Invalid']
 
   extraColumns = buildNewColumns(resultCategories, assay.externalId)
 
   if (assay.externalId === 'GxMtbXdr') {
-    const filteredColumns = extraColumns.filter(col => commonCategories.includes(col.label))
+    const xdrCategories = ['MTB Not Detected', ...detectedCategories, ...commonCategories]
+    const filteredColumns = extraColumns.filter(col => xdrCategories.includes(col.label))
     extraColumns = [...buildXdrExtraColumns(query.isExport), ...filteredColumns]
   } else extraColumns = extraColumns.filter(col => !detectedCategories.includes(col.label))
 
