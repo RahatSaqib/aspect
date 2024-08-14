@@ -77,7 +77,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       const detected = pieData.filter(elem => elem.id === 'Detected' || elem.id === 'Trace Detected')
       const totalDetected = detected.reduce((sum, elem) => sum + elem.value, 0)
 
-      const pieAvg = (totalDetected / numberOfMonthsInAYear).toFixed(2)
+      const pieAvg = (totalDetected / numberOfMonthsInAYear).toFixed(1)
 
       const pie = pieData.map(d => ({
         ...d,
@@ -113,7 +113,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAvg}` })
+      setDonutData({ data: pie, total: `${pieAvg}%` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
