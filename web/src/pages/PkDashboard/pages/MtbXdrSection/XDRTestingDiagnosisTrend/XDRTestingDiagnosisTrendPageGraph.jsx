@@ -59,7 +59,9 @@ const XDRTestingDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.testingAndDiagnosisUsingXdr)}
+      title={formatMessage(
+        user.isPakistan ? messages.XDRTestingandDiagnosisTrends : messages.xdrTestingAndMtbDetectionTrends
+      )}
       filters={
         <>
           <FormControlLabel

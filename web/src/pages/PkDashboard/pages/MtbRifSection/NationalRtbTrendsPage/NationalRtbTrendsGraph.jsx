@@ -76,7 +76,7 @@ const NationalRtbTrendsGraph = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(messages.rrtbNationalDiagnosisTrendsTitle)}
+      title={formatMessage(messages.RRNationalTrend)}
       filters={
         <>
           <FormControlLabel

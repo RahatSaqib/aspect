@@ -59,7 +59,7 @@ const TestDiagTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.mtbRifTestingDiagnosed)}
+      title={formatMessage(messages.TbDTestingDiagnosis)}
       filters={
         <>
           <FormControlLabel
