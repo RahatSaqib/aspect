@@ -32,7 +32,7 @@ Quick Start for development. Everything is explained in more detail throughout t
 
 #### Once completed, clone the repo as follow:
 
-Follow these steps for a one-time setup:
+##### Follow these steps for a one-time setup:
 
 ```bash
 git clone git@github.com:SystemOneId/aspect
@@ -47,8 +47,11 @@ yarn install
 # seeds.directory='./seeds/development'
 cp .env.example .env
 vim .env
+```
 
-# Populate the following fields in the .env file:
+##### Populate the following fields in the .env file:
+
+```bash
 secret = <some_secret_random_string>
 
 admin.email = 'your_email@systemone.co'
@@ -63,8 +66,11 @@ twilioMessagingServiceSid = "MG3ce426d5d330c9720bff0237690cba14"
 
 webhook.redcap.url= 'asdf'
 webhook.redcap.authToken= 'jkasd'
+```
 
-# create database
+##### Create and configure the database:
+
+```bash
 yarn run db:recreate
 
 # Run migrations
@@ -76,7 +82,7 @@ yarn run knex seed:run
 
 ### Starting the Server
 
-To run the application:
+##### To run the application, use the following command:
 
 ```bash
 # Start the server
