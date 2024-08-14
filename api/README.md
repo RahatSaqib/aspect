@@ -18,17 +18,21 @@ Quick Start for development. Everything is explained in more detail throughout t
 
 ### New Development Setup
 
+#### Follow this guide to set up MySQL and other necessary tools:
+
+- <https://systemone.youtrack.cloud/articles/ASP-A-27164676/Developer-Setup>
+
+**Note**: If you are using the Docker setup described in the guide, you do not need to install MySQL, RabbitMQ, or any other third-party software on your local machine.
+
 #### RabbitMQ Installation
 
 - MAC OS: Follow steps from <https://www.rabbitmq.com/install-homebrew.html>
 - Windows: Follow steps from <https://www.rabbitmq.com/install-windows-manual.html>
 - Ubuntu: Follow steps from <https://www.rabbitmq.com/install-debian.html>
 
-#### Follow this guide for setting up MySQL and all other tools:
-
-- <https://systemone.youtrack.cloud/articles/ASP-A-27164676/Developer-Setup>
-
 #### Once completed, clone the repo as follow:
+
+Follow these steps for a one-time setup:
 
 ```bash
 git clone git@github.com:SystemOneId/aspect
@@ -60,24 +64,6 @@ twilioMessagingServiceSid = "MG3ce426d5d330c9720bff0237690cba14"
 webhook.redcap.url= 'asdf'
 webhook.redcap.authToken= 'jkasd'
 
-# Alter user for native password in MySQL. Login as root user to perform it.
-ALTER USER 'username'@'localhost' IDENTIFIED WITH mysql_native_password BY 'password';
-flush privileges;
-
-# MySQL set-mode & log_bin_trust_function_creators, open the local MySQL config (MacOS: /etc/my.cnf, WAMP: C:\wamp64\bin\mysql\mysql8.x.x\my.ini) and add these settings.
-[mysqld]
-sql-mode="STRICT_TRANS_TABLES,NO_ZERO_IN_DATE,NO_ZERO_DATE,ERROR_FOR_DIVISION_BY_ZERO,NO_ENGINE_SUBSTITUTION"
-log_bin_trust_function_creators=1
-
-# Create new db user
-CREATE USER 'aspectapi'@'localhost' IDENTIFIED BY 'mypassword';
-
-# Grant user full privilege
-GRANT ALL PRIVILEGES ON *.* TO 'aspectapi'@'localhost';
-
-# Apply changes
-FLUSH PRIVILEGES;
-
 # create database
 yarn run db:recreate
 
@@ -86,7 +72,13 @@ yarn run knex migrate:latest
 
 # Populate database with seed files (optional)
 yarn run knex seed:run
+```
 
+### Starting the Server
+
+To run the application:
+
+```bash
 # Start the server
 yarn start
 ```
@@ -420,7 +412,7 @@ return err
 
 ## API Versioning
 
-API versioning supports multiple versions of api end points. This mechanism enables api versioning based on custom header api-version. We can support/target individual endpoint by implementing this mechanism. 
+API versioning supports multiple versions of api end points. This mechanism enables api versioning based on custom header api-version. We can support/target individual endpoint by implementing this mechanism.
 
 API versioning plugin is stored in /src/plugin/apiVersioning.js
 
@@ -429,10 +421,10 @@ API versioning plugin is stored in /src/plugin/apiVersioning.js
 - Check if a versioned route (like /v2/users) exists -> if so rewrite the url from /users to /v2/users, otherwise do nothing
 
 API versioning have three options
+
 - defaultVersion (required) : If any versioned endpoint is requested without api-version custom header, then it will take defaultVersion.
 - versionHeader (optional) : Configure this param if want to access different custom header instead of api-version
 - mobileApiPath (optional) : In case we have a base path different from / (example: /api/). Per default this is /.
-
 
 Following are the use-cases for the api versioning
 
@@ -442,9 +434,8 @@ Following are the use-cases for the api versioning
 
 ### Testing with Postman
 
-To test API, go to Aspect API postman collection. 
+To test API, go to Aspect API postman collection.
 Select Environment - Aspect Local Development
 Go to Auth folder under Aspect API collection
 Select auth api and hit send button
 It will return success response with the Token
-
