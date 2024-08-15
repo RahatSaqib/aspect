@@ -76,7 +76,7 @@ const NationalDiagnosisGraph = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(messages.nationalMtbRifUltraDiagnosed)}
+      title={formatMessage(messages.TbDNationalTrend)}
       filters={
         <>
           <FormControlLabel

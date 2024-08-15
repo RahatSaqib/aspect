@@ -58,10 +58,6 @@ const messages = {
       id: 'p.PkDashboard.monthlyMTBDiagnosedTrends',
       defaultMessage: 'MTB+ Trends In Month',
     },
-    peopleTestedRif: {
-      id: 'p.PkDashboard.peopleTestedRifUltra',
-      defaultMessage: 'Assay for MTB Rif Ultra',
-    },
     peopleTestedRifTooltip: {
       id: 'p.PkDashboard.peopleTestedRifTooltip',
       defaultMessage:
@@ -74,14 +70,6 @@ const messages = {
     peopleTestedHiv: {
       id: 'p.PkDashboard.peopleTestedHiv',
       defaultMessage: 'People tested for HIV in current year',
-    },
-    peopleTestedXdr: {
-      id: 'p.PkDashboard.peopleTestedXdr',
-      defaultMessage: 'People tested using MTB/XDR assay in current year',
-    },
-    peopleDiagnosedRif: {
-      id: 'p.PkDashboard.peopleDiagnosedRifUltra',
-      defaultMessage: 'People diagnosed for TB using MTB/Rif Ultra assay in current year',
     },
     mtbPositiveCurrentYear: {
       id: 'p.PkDashboard.mtbPositiveCurrentYear',
@@ -167,25 +155,13 @@ const messages = {
       id: 'p.PkDashboard.xdrFLQAndINHTrends',
       defaultMessage: 'XDR FLQ and INH resistance trends',
     },
-    peopleDiagnosedXdr: {
-      id: 'p.PkDashboard.peopleDiagnosedXdr',
-      defaultMessage: 'People diagnosed using MTB/XDR assay in current year',
-    },
     testsPerformedYear: {
       id: 'p.PkDashboard.testsPerformedYear',
       defaultMessage: 'Tests Performed in current year',
     },
-    mtbRifTestingDiagnosed: {
-      id: 'p.PkDashboard.mtbRifTestingDiagnosed',
-      defaultMessage: 'TB Testing & Diagnosis Trends using MTB/Rif Assay',
-    },
     provincialTestingTrends: {
       id: 'p.PkDashboard.provincialTestingTrends',
       defaultMessage: 'Provincial/District Testing Trends',
-    },
-    provincialTBTestingTrends: {
-      id: 'p.PkDashboard.provincialTBTestingTrends',
-      defaultMessage: 'Provincial/District TB Testing Trends',
     },
     tbCasesDiagnosed: {
       id: 'p.PkDashboard.tbCasesDiagnosed',
@@ -207,41 +183,17 @@ const messages = {
       id: 'p.PkDashboard.provincesUtilizationTrendsAnnual',
       defaultMessage: 'Provinces annual utilization rates',
     },
-    testingAndDiagnosisUsingXdr: {
-      id: 'p.PkDashboard.testingAndDiagnosisUsingXdr',
-      defaultMessage: 'Testing & Diagnosis Trends using MTB/XDR Assay',
-    },
     provincialDiagnosisTrendsCurrentYear: {
       id: 'p.PkDashboard.tbCasesDiagnosed',
       defaultMessage: 'Provincial Diagnosis Trends for the current year',
-    },
-    provincialXdrTestingTrends: {
-      id: 'p.PkDashboard.provincialXdrTestingTrends',
-      defaultMessage: 'Provincial/District Testing Trends using MTB/XDR Assay in current year',
-    },
-    provincialDiagnosisTrendsMtbRif: {
-      id: 'p.PkDashboard.provincialDiagnosisTrends',
-      defaultMessage: 'Provincial/District TB Diagnosis Trends using MTB/Rif Assay',
     },
     provincialDiagnosisTrendsComparison: {
       id: 'p.PkDashboard.provincialDiagnosisTrendsComparison',
       defaultMessage: 'Provincial Diagnosis Trends Comparison',
     },
-    provincialDiagnosisTrendsRRTBComparison: {
-      id: 'p.PkDashboard.provincialDiagnosisTrendsRRTBComparison',
-      defaultMessage: 'Provincial/District RR Diagnosis Trends',
-    },
-    testingDiagnosisTrendsRR: {
-      id: 'p.PkDashboard.testingDiagnosisTrendsRR',
-      defaultMessage: 'TB and RRTB Diagnosis Trends',
-    },
     provincialDiagnosisTrends: {
       id: 'p.PkDashboard.provincialDiagnosisTrends',
       defaultMessage: 'Provincial Diagnosis Trends',
-    },
-    provincialXdrDiagnosisTrends: {
-      id: 'p.PkDashboard.provincialXdrDiagnosisTrends',
-      defaultMessage: 'Provincial/District Diagnosis Trends using MTB/XDR Assay',
     },
     provincialTestingTrendsYear: {
       id: 'p.PkDashboard.provincialTestingTrendsYear',
@@ -255,29 +207,9 @@ const messages = {
       id: 'p.PkDashboard.provincialFqrDiagnosisTrends',
       defaultMessage: 'Provincial FQ Diagnosis Trends',
     },
-    nationalMtbRifUltraDiagnosed: {
-      id: 'p.PkDashboard.nationalMtbRifUltraDiagnosed',
-      defaultMessage: 'National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay',
-    },
-    nationalDiagnosisXdr: {
-      id: 'p.PkDashboard.nationalDiagnosisXdr',
-      defaultMessage: 'National Diagnosis Trends using MTB/XDR assay',
-    },
-    nationalXdrTestingTrends: {
-      id: 'p.PkDashboard.nationalXdrTestingTrends',
-      defaultMessage: 'National Testing Trends using MTB/XDR Assay',
-    },
     nationalFqrResistanceTrend: {
       id: 'p.PkDashboard.nationalFqrResistanceTrend',
       defaultMessage: 'National FQ-R Resistance Trend',
-    },
-    rrtbDiagnosisTitle: {
-      id: 'p.PkDashboard.rrtbDiagnosisTitle1',
-      defaultMessage: 'Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay',
-    },
-    rrtbNationalDiagnosisTrendsTitle: {
-      id: 'p.PkDashboard.rrtbNationalDiagnosisTrendsTitle',
-      defaultMessage: 'National Rifampicin Resistance Diagnosis Trends',
     },
     rrToMtbPercentage: {
       id: 'p.PkDashboard.rrToMtbPercentage',
