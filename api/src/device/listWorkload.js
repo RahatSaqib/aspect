@@ -17,7 +17,7 @@ const getCommonLabel = name => {
 }
 
 const sortCommonCategories = categories =>
-  categories.sort((a, b) => commonCategories.includes(a.label) - commonCategories.includes(b.label))
+  [...categories].sort((a, b) => commonCategories.includes(a.label) - commonCategories.includes(b.label))
 
 const buildNewColumns = resultCategories => {
   const uniqueLabels = new Set()

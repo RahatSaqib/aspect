@@ -116,7 +116,7 @@ const Workload = () => {
             )
         }
         return found
-      }).externalId
+      })?.externalId
     const { minDate, maxDate } = filter
     const baseUrl = '/browse/result'
     addFilter(
