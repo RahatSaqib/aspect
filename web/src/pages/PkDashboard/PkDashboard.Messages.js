@@ -434,6 +434,10 @@ const messages = {
       id: 'p.PkDashboard.dataVisualisationForXDRResistanceGraphTitle',
       defaultMessage: 'Data Visualisation For XDR Resistance Over Time',
     },
+    mtbPlusAndTrace: {
+      id: 'p.PkDashboard.mtbPlusAndTrace',
+      defaultMessage: 'MTB+ and Trace',
+    },
   }),
 }
 
