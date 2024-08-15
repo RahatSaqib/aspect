@@ -16,6 +16,9 @@ const getCommonLabel = name => {
   return name
 }
 
+const sortCommonCategories = categories =>
+  categories.sort((a, b) => commonCategories.includes(a.label) - commonCategories.includes(b.label))
+
 const buildNewColumns = resultCategories => {
   const uniqueLabels = new Set()
   const resultCategoryGroupColumn = []
@@ -39,9 +42,7 @@ const buildNewColumns = resultCategories => {
     }
   })
 
-  return resultCategoryGroupColumn.sort(
-    (a, b) => commonCategories.includes(a.label) - commonCategories.includes(b.label)
-  )
+  return resultCategoryGroupColumn
 }
 
 const buildXdrExtraColumns = isExport => {
@@ -87,11 +88,12 @@ const listWorkload = async request => {
   if (assay.externalId === 'GxMtbXdr') {
     const xdrCategories = ['MTB Not Detected', ...detectedCategories, ...commonCategories]
     const filteredColumns = extraColumns.filter(col => xdrCategories.includes(col.label))
-    extraColumns = [...buildXdrExtraColumns(query.isExport), ...filteredColumns]
+    extraColumns = [...filteredColumns, ...buildXdrExtraColumns(query.isExport)]
   } else extraColumns = extraColumns.filter(col => !detectedCategories.includes(col.label))
 
   const { total, length, data } = await getDeviceWorkload(extraColumns, dataConstraints, query, auth)
   extraColumns = extraColumns.map(ec => omit(ec, 'selector'))
+  extraColumns = sortCommonCategories(extraColumns)
   return { ok: true, total, length, data, extraColumns }
 }
 
