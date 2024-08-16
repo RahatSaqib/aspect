@@ -27,6 +27,7 @@ const endpointParams = [
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { resultCategory1: 'Detected' },
+  { resultCategory1: 'Trace Detected' },
 ]
 
 const NationalDiagnosisGraph = () => {

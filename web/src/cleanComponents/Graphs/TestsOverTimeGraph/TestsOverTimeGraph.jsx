@@ -111,7 +111,8 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
       )
       const pieData = filterFunctionPie(groupedForPie, filter)
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { totals: pieAverage } = getAverageFromData(pieData, 'value', '*', 'standard')
+      let { totals: pieAverage } = getAverageFromData(pieData, 'value', '*', 'standard')
+      pieAverage = parseFloat(pieAverage).toFixed(1)
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -147,7 +148,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
       })
 
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: pieAverage })
+      setDonutData({ data: pie, total: `${pieAverage}%` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
