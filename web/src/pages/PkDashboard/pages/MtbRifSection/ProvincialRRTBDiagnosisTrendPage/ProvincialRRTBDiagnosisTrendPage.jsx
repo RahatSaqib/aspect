@@ -60,7 +60,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.provincialDiagnosisTrendsRRTBComparison)}`}
+      title={formatMessage(messages.ProvincialRRTBDiagnosisTrends)}
       filters={
         <>
           <StateAutocomplete
@@ -88,7 +88,9 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} container>
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-              {formatMessage(messages.provincialRRDiagnosisTrends)}
+              {formatMessage(
+                messages[user.isCountry('PK') ? 'provincialRRDiagnosisTrends' : 'provincialRRTBDiagnosisTrends']
+              )}
             </Typography>
             {graphData ? (
               <div style={{ width: '100%' }}>
@@ -108,8 +110,13 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
           <Grid item xs={12} md={4} lg={4} container>
             {tableData ? (
               <ProvinceTrendTable
-                title={`${formatMessage(messages.provincialRRDiagnosisTrends)} ${new Date().getFullYear()}`}
+                title={
+                  user.isCountry('PK')
+                    ? `${formatMessage(messages.provincialRRDiagnosisTrends)} ${new Date().getFullYear()}`
+                    : formatMessage(messages.provincialRRTBDiagnosisTrendsCurrentYear)
+                }
                 rows={tableData}
+                resultType={!user.isPakistan ? 'RR-TB' : undefined}
               />
             ) : null}
           </Grid>

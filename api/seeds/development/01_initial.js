@@ -3242,6 +3242,7 @@ async function seed(knex) {
             stateId,
           })
           stateData.geographyId = stateGeographyId
+          let incremental = 1
 
           await Promise.all(
             _.map(state.lgas || [], async lga => {
@@ -3259,7 +3260,6 @@ async function seed(knex) {
 
               // up to 5 of sites at each LGA
               if (!preventRandomSitesForCountries.includes(countryData.abbreviation)) {
-                let incremental = 1
                 await Promise.all(
                   _.map(_.range(1, 6 - (lgaData.id % 5)), async siteNumber => {
                     const city = lga.cities && lga.cities[siteNumber - 1] ? lga.cities[siteNumber - 1] : null
@@ -3784,7 +3784,7 @@ async function seed(knex) {
           sampleGroup: `GRP-HIV-${i % 5}`,
           resultCategory1: result.category1,
           resultCategory2: result.category2,
-          resultData: JSON.stringify(resultData),
+          resultData: JSON.stringify({ ...resultData, assay: 'Xpert MTB-RIF Assay G4' }),
           assayVersion: '4',
           startedOn: randomDate,
           endedOn: addMinutes(randomDate, 100),
@@ -4069,7 +4069,7 @@ async function seed(knex) {
           sampleGroup: `GRP-TBU-${i % 5}`,
           resultCategory1: result.category1,
           resultCategory2: result.category2,
-          resultData: JSON.stringify(resultData),
+          resultData: JSON.stringify({ ...resultData, assay: 'Xpert MTB-RIF Ultra' }),
           assayVersion: '4',
           startedOn: randomDate,
           endedOn: addMinutes(randomDate, 100),
@@ -4303,7 +4303,7 @@ async function seed(knex) {
           sampleGroup: `GRP-TBXDR-${i % 5}`,
           resultCategory1: result.category1,
           resultCategory2: result.category2,
-          resultData: JSON.stringify(resultData),
+          resultData: JSON.stringify({ ...resultData, assay: 'Xpert MTB-XDR' }),
           assayVersion: '4',
           startedOn: randomDate,
           endedOn: addMinutes(randomDate, 100),
@@ -4508,7 +4508,7 @@ async function seed(knex) {
               resultCategory1: result.category1,
               sampleGroup: `GRP-HIV-${i % 5}`,
               resultCategory2: result.category2,
-              resultData: JSON.stringify(resultData),
+              resultData: JSON.stringify({ ...resultData, assay: 'Xpert Ebola CE-IVD' }),
               assayVersion: '4',
               startedOn: randomDate,
               endedOn: addMinutes(randomDate, 100),
@@ -4687,7 +4687,7 @@ async function seed(knex) {
           sampleId: sample.id,
           sampleRunNumber: `${(i % 2) + 1}`,
           resultCategory1: result.category1,
-          resultData: JSON.stringify(resultData),
+          resultData: JSON.stringify({ ...resultData, assay: 'Xpert_HIV-1 Viral Load' }),
           assayVersion: '4',
           startedOn: randomDate,
           endedOn: addMinutes(randomDate, 92),
@@ -4835,7 +4835,7 @@ async function seed(knex) {
                 resultCategory1: result.category1,
                 sampleGroup: `GRP-HCV-${i % 5}`,
                 resultCategory2: result.category2,
-                resultData: JSON.stringify(resultData),
+                resultData: JSON.stringify({ ...resultData, assay: 'Xpert_HCV Viral Load' }),
                 assayVersion: '4',
                 startedOn: randomDate,
                 endedOn: addMinutes(randomDate, 100),

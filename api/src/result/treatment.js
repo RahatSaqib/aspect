@@ -1,15 +1,17 @@
-const Boom = require('@hapi/boom')
 const dateFormat = require('date-fns/format')
 const parseISO = require('date-fns/parseISO')
 const sortBy = require('lodash/sortBy')
-const { subMonths, startOfMonth, endOfMonth } = require('date-fns')
+const { subMonths, startOfMonth, endOfMonth, parse, isAfter, isSameMonth } = require('date-fns')
 const { knex, filterParams, filterDateRangeParams } = require('../db')
-const { addConstraints, getConstraints } = require('../auth/constraints')
+const { addConstraints, getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { resultStatusToId } = require('../shared/dictionary')
-const { addResultCountsQuery, addTransferredQuery } = require('../shared/query')
+const { addTransferredQuery, addResultCountsQueryExtended } = require('../shared/query')
 
 async function confirmedTreatmentTracking(request) {
   const { auth, query } = request
+
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA } = user
 
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
@@ -27,9 +29,6 @@ async function confirmedTreatmentTracking(request) {
     maxDate = maxDate instanceof Date ? maxDate : parseISO(maxDate)
   } else {
     maxDate = endOfMonth(subMonths(now, 1))
-  }
-  if (maxDate > endOfMonth(now)) {
-    return Boom.expectationFailed('"maxDate" can not be greater than current month')
   }
   let { minDate } = query
   if (minDate) {
@@ -49,7 +48,7 @@ async function confirmedTreatmentTracking(request) {
     .innerJoin('Assay as a', 'a.id', 'r.assayId')
     // add joins and different counts for results - (not)onTreatment, requiresTreatment, notPossible, ...
     .modify(queryBuilder => {
-      addResultCountsQuery(queryBuilder, knex)
+      addResultCountsQueryExtended(queryBuilder, knex)
     })
     // add joins/count for 'transferred' results
     .modify(queryBuilder => {
@@ -82,9 +81,7 @@ async function confirmedTreatmentTracking(request) {
       site: 's',
       sample: 'sp',
     })
-    .select(
-      knex.raw(`date_format(r.endedOn, '%Y-%m') AS monthTested`) // group by r.endedOn as 'yyyy-MM'
-    )
+    .select(knex.raw(`DATE_FORMAT(CONVERT_TZ(r.endedOn, '+00:00', ?) , '%Y-%m') AS monthTested`, [timezoneIANA]))
     .groupBy('monthTested')
 
   data = data.map(d => {
@@ -102,7 +99,7 @@ async function confirmedTreatmentTracking(request) {
      * define 'total' prop as alias for 'delivered' (defined in func addResultCountsQuery),
      * mostly for graphs which already may use it
      */
-    d.total = d.delivered
+    d.total = d.awaitingTreatment + d.onTreatment
     d.pcOnTreatment = getPercentage(d.total, d.onTreatment)
     return d
   })
@@ -111,19 +108,29 @@ async function confirmedTreatmentTracking(request) {
   while (dt >= minDate) {
     const monthTested = dateFormat(dt, 'yyyy-MM')
     if (!data.find(x => x.monthTested === monthTested)) {
-      data.push({
-        monthTested,
-        pcOnTreatment: 0,
-        total: 0,
+      const parsedDate = parse(monthTested, 'yyyy-MM', new Date())
 
-        totalResults: 0,
-        delivered: 0,
-        requiresTreatment: 0,
-        onTreatment: 0,
-        notPossible: 0,
-        notOnTreatment: 0,
-        transferred: 0,
-      })
+      // Get the start of the current month
+      const currentDate = startOfMonth(new Date())
+
+      // Compare the given date with the current date
+      const isParsedMonthSameOrAfterCurrent = isSameMonth(parsedDate, currentDate) || isAfter(parsedDate, currentDate)
+
+      // only process months are not greater than current month
+      if (!isParsedMonthSameOrAfterCurrent) {
+        data.push({
+          monthTested,
+          pcOnTreatment: 0,
+          total: 0,
+          totalResults: 0,
+          delivered: 0,
+          requiresTreatment: 0,
+          onTreatment: 0,
+          notPossible: 0,
+          notOnTreatment: 0,
+          transferred: 0,
+        })
+      }
     }
     dt = endOfMonth(subMonths(dt, 1))
   }

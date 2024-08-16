@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FormControlLabel, Grid, Switch } from '@mui/material'
+import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
@@ -134,7 +134,7 @@ const RifCurrentGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.peopleTestedXdr)}
+      title={formatMessage(user.isPakistan ? messages.TCurrent : messages.currentMtbXdrTesting)}
       filters={
         <>
           <FormControlLabel
@@ -160,46 +160,53 @@ const RifCurrentGraphPage = () => {
       {isLoading ? (
         <Loading />
       ) : (
-        <Grid container sx={{ mt: 2 }}>
-          {barData.data && barData.data.length ? (
-            <Grid item xs={12} md={8}>
-              <ColumnGraph
-                data={barData.data}
-                graphId="testPerformedMonthlyPercentage"
-                xField="month"
-                yField="value"
-                seriesField="type"
-                showLabel={showLabel}
-                onReady={plot => {
-                  plot.on('plot:click', evt => {
-                    const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
-                    const params = {
-                      ...filterRef.current,
-                      countryId: user.countryId,
-                      displayResult: 'actual',
-                      minDate,
-                      maxDate,
-                      assayId: assays.find(a => a.externalId === evt.data.data.id).id,
-                    }
-                    addFilter({ ...params }, '/browse/result')
-                    navigate('/browse/result')
-                  })
-                }}
-              />
-            </Grid>
-          ) : null}
+        <>
+          {!user.isCountry('PK') ? (
+            <Typography sx={{ m: '20px 10px' }} variant="h6" color="primary" component="div">
+              {formatMessage(messages.TBXDRTest)}
+            </Typography>
+          ) : undefined}
+          <Grid container sx={{ mt: 2 }}>
+            {barData.data && barData.data.length ? (
+              <Grid item xs={12} md={8}>
+                <ColumnGraph
+                  data={barData.data}
+                  graphId="testPerformedMonthlyPercentage"
+                  xField="month"
+                  yField="value"
+                  seriesField="type"
+                  showLabel={showLabel}
+                  onReady={plot => {
+                    plot.on('plot:click', evt => {
+                      const { minDate, maxDate } = getMinMaxDateFromMonthString(evt.data.data.originalMonth)
+                      const params = {
+                        ...filterRef.current,
+                        countryId: user.countryId,
+                        displayResult: 'actual',
+                        minDate,
+                        maxDate,
+                        assayId: assays.find(a => a.externalId === evt.data.data.id).id,
+                      }
+                      addFilter({ ...params }, '/browse/result')
+                      navigate('/browse/result')
+                    })
+                  }}
+                />
+              </Grid>
+            ) : null}
 
-          <TripleCardSide
-            data={[
-              { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
-              {
-                label: formatMessage(messages.testPerMonth),
-                value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
-              },
-              { label: formatMessage(messages.testToday), value: `${data.totalResultsToday}` },
-            ]}
-          />
-        </Grid>
+            <TripleCardSide
+              data={[
+                { label: formatMessage(messages.testPerYear), value: `${data.totalResultsCurrentYear}` },
+                {
+                  label: formatMessage(messages.testPerMonth),
+                  value: `${data.averageTestsPerMonthCurrentYear.toFixed(0)}`,
+                },
+                { label: formatMessage(messages.testToday), value: `${data.totalResultsToday}` },
+              ]}
+            />
+          </Grid>
+        </>
       )}
     </PkPage>
   )

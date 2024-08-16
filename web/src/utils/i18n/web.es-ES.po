@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-06-27T17:46:09.240Z\n"
+"POT-Creation-Date: 2024-08-09T03:15:45.784Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -583,12 +583,33 @@ msgstr ""
 msgid "Annual FQ-R Diagnosis"
 msgstr "Diagnóstico anual FQ-R"
 
+#. [p.PkDashboard.mtbPlusDetectionTrends]
+#. defaultMessage is:
+#. Annual MTB+ detection trends
+#: extracted_strings.json
+msgid "Annual MTB+ detection trends"
+msgstr "Tendencias anuales de detección de MTB"
+
+#. [p.PkDashboard.annualMTBDiagnosis]
+#. defaultMessage is:
+#. Annual MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Annual MTB+ diagnosis trends"
+msgstr "Tendencias anuales del diagnóstico de MTB"
+
 #. [p.PkDashboard.annualRRDiagnosedTrends]
 #. defaultMessage is:
 #. Annual RR Diagnosis
 #: extracted_strings.json
 msgid "Annual RR Diagnosis"
 msgstr "Diagnóstico anual RR"
+
+#. [p.PkDashboard.annualRRTBDiagnosisTrends]
+#. defaultMessage is:
+#. Annual RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Annual RR-TB diagnosis trends"
+msgstr "Tendencias anuales del diagnóstico de la TB-RR"
 
 #. [p.PkDashboard.annualTestingTrends]
 #. defaultMessage is:
@@ -957,6 +978,13 @@ msgstr "Promedio de pruebas realizadas por mes"
 #: extracted_strings.json
 msgid "Average time to replace disabled module"
 msgstr "Tiempo promedio transcurrido para el reemplazo de módulos inutilizados"
+
+#. [p.PkDashboard.customPerMonth]
+#. defaultMessage is:
+#. Average {resultType} detected per month in current year
+#: extracted_strings.json
+msgid "Average {resultType} detected per month in current year"
+msgstr "Media {resultType} detectada por mes en el año en curso"
 
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
@@ -1856,6 +1884,13 @@ msgstr "No se ha podido iniciar la sesión con sus credenciales"
 msgid "Count (1-100)"
 msgstr "Recuento (1-100)"
 
+#. [p.PkDashboard.countIncludesMTBAndTrace]
+#. defaultMessage is:
+#. Count includes MTB detected and MTB Trace detected
+#: extracted_strings.json
+msgid "Count includes MTB detected and MTB Trace detected"
+msgstr "El recuento incluye MTB detectado y MTB Trace detectado"
+
 #. [p.PkDashboard.peopleTestedRifTooltip]
 #. defaultMessage is:
 #. Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.
@@ -1866,6 +1901,15 @@ msgid ""
 msgstr ""
 "Cuente sólo los resultados notificables de MTB/Rif y MTB/Rif-Ultra, sin "
 "incluir \"Sin resultado\", \"Error\", \"Indeterminado\", \"Inválido\"."
+
+#. [p.PkDashboard.reportableCount]
+#. defaultMessage is:
+#. Count only reportable results, exclude errors, no results and invalids
+#: extracted_strings.json
+msgid "Count only reportable results, exclude errors, no results and invalids"
+msgstr ""
+"Contabilizar sólo los resultados notificables, excluir los errores, los no "
+"resultados y los inválidos"
 
 #. [filter.popover.country]
 #. defaultMessage is:
@@ -2136,6 +2180,13 @@ msgstr "Pruebas actuales de GX-10CX realizadas en"
 #: extracted_strings.json
 msgid "Current MTB Detection"
 msgstr "Detección de MTB actual"
+
+#. [p.PkDashboard.currentMtbXdrTesting]
+#. defaultMessage is:
+#. Current MTB/XDR Testing
+#: extracted_strings.json
+msgid "Current MTB/XDR Testing"
+msgstr "Pruebas actuales de MTB/XDR"
 
 #. [pages.DailyStatus.dailyStatusMapTitle]
 #. defaultMessage is:
@@ -4998,15 +5049,15 @@ msgstr "Inactivo"
 msgid "Include ALL results related to Patient ID"
 msgstr "Incluya TODOS los resultados relacionados con el ID del paciente"
 
-#. [pages.ReportIndex.Critical_Errors_By_Device_description]
+#. [pages.ReportIndex.Critical_Errors_by_Device_description]
 #. defaultMessage is:
-#. Includes a list of GeneXpert devices that had at least 2 critical errors
+#. Includes a list of GeneXpert devices that had at least 1 critical errors
 #: extracted_strings.json
 msgid ""
-"Includes a list of GeneXpert devices that had at least 2 critical errors"
+"Includes a list of GeneXpert devices that had at least 1 critical errors"
 msgstr ""
-"Incluye una lista de dispositivos GeneXpert que tuvieron al menos 2 errores "
-"críticos"
+"Incluye una lista de dispositivos GeneXpert que tuvieron al menos 1 error "
+"crítico"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -6279,6 +6330,20 @@ msgstr "Traza MTB detectada Rif sin resultado"
 msgid "MTB Unknown"
 msgstr "MTB Desconocido"
 
+#. [p.PkDashboard.mtbPositivesCurrentYear]
+#. defaultMessage is:
+#. MTB positives detected in current year
+#: extracted_strings.json
+msgid "MTB positives detected in current year"
+msgstr "Positivos en MTB detectados en el año en curso"
+
+#. [p.PkDashboard.mtbPositiveCurrentYear]
+#. defaultMessage is:
+#. MTB positives diagnosed in current year
+#: extracted_strings.json
+msgid "MTB positives diagnosed in current year"
+msgstr "Positivos en MTB diagnosticados en el año en curso"
+
 #. [pages.XDR.cnt_mtb]
 #. defaultMessage is:
 #. MTB+
@@ -6583,12 +6648,40 @@ msgstr "Mensual"
 msgid "Monthly FQ-R Diagnosis"
 msgstr "Diagnóstico mensual FQ-R"
 
+#. [p.PkDashboard.mtbPlusMonthlyDetectionTrends]
+#. defaultMessage is:
+#. Monthly MTB+ detection trends
+#: extracted_strings.json
+msgid "Monthly MTB+ detection trends"
+msgstr "Tendencias mensuales de detección de MTB"
+
+#. [p.PkDashboard.monthlyMTBDiagnosis]
+#. defaultMessage is:
+#. Monthly MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Monthly MTB+ diagnosis trends"
+msgstr "Tendencias mensuales del diagnóstico de MTB"
+
+#. [p.PkDashboard.monthlyRRTBDiagnosis]
+#. defaultMessage is:
+#. Monthly RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Monthly RR-TB diagnosis trends"
+msgstr "Tendencias mensuales del diagnóstico de la TB-RR"
+
 #. [p.PkDashboard.monthlyTestingTrends]
 #. defaultMessage is:
 #. Monthly Testing Trends
 #: extracted_strings.json
 msgid "Monthly Testing Trends"
 msgstr "Tendencias mensuales de las pruebas"
+
+#. [p.PkDashboard.monthlyXDRTrends]
+#. defaultMessage is:
+#. Monthly XDR testing trends
+#: extracted_strings.json
+msgid "Monthly XDR testing trends"
+msgstr "Tendencias mensuales de las pruebas XDR"
 
 #. [p.PkDashboard.monthlyDiagnosedTrends]
 #. defaultMessage is:
@@ -6779,6 +6872,20 @@ msgstr "Tendencias nacionales de pruebas GX-10C"
 #: extracted_strings.json
 msgid "National Invalid Rates"
 msgstr "Tasas nacionales de no válidos"
+
+#. [p.PkDashboard.nationalMtbDetectionTrends]
+#. defaultMessage is:
+#. National MTB Detection Trends
+#: extracted_strings.json
+msgid "National MTB Detection Trends"
+msgstr "Tendencias nacionales de detección de la MTB"
+
+#. [p.PkDashboard.nationalMtbXdrTestingTrends]
+#. defaultMessage is:
+#. National MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "National MTB/XDR Testing Trends"
+msgstr "Tendencias nacionales de las pruebas MTB/XDR"
 
 #. [p.PkDashboard.nationalNoResultRates]
 #. defaultMessage is:
@@ -7123,6 +7230,13 @@ msgstr "No convertidores de categoría I"
 msgid "Non converters of Retreatment"
 msgstr "No convertidores de Retreatment"
 
+#. [p.PkDashboard.errorRatePageTitle]
+#. defaultMessage is:
+#. Non-reportable results
+#: extracted_strings.json
+msgid "Non-reportable results"
+msgstr "Resultados no comunicables"
+
 #. [filter.popover.none]
 #. defaultMessage is:
 #. None
@@ -7399,6 +7513,7 @@ msgstr "Número de sitios analizados, MTB/XDR"
 #: extracted_strings.json
 msgid "Number of times to repeat check and notify if inactive ..."
 msgstr ""
+"Número de veces para repetir la comprobación y notificar si está inactivo ..."
 
 #. [months.october]
 #. defaultMessage is:
@@ -8329,12 +8444,61 @@ msgstr "Tendencias del diagnóstico provincial para el año en curso"
 msgid "Provincial FQ Diagnosis Trends"
 msgstr "Tendencias provinciales del diagnóstico de FQ"
 
+#. [p.PkDashboard.provincialMtbDetectionTrendsComparison]
+#. defaultMessage is:
+#. Provincial MTB Detection Trends Comparison
+#: extracted_strings.json
+msgid "Provincial MTB Detection Trends Comparison"
+msgstr "Comparación de las tendencias provinciales de detección de la MTB"
+
+#. [p.PkDashboard.provincialMTBPositivesTrends]
+#. defaultMessage is:
+#. Provincial MTB+ detected in current year
+#: extracted_strings.json
+msgid "Provincial MTB+ detected in current year"
+msgstr "MTB+ provincial detectada en el año en curso"
+
+#. [p.PkDashboard.provincialMTBDiagnosisCurrentYear]
+#. defaultMessage is:
+#. Provincial MTB+ diagnosed in current year
+#: extracted_strings.json
+msgid "Provincial MTB+ diagnosed in current year"
+msgstr "MTB+ provincial diagnosticada en el año en curso"
+
+#. [p.PkDashboard.provincialMTBDiagnosis]
+#. defaultMessage is:
+#. Provincial MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Provincial MTB+ diagnosis trends"
+msgstr "Tendencias provinciales del diagnóstico de la MTB"
+
+#. [p.PkDashboard.provincialMtbXdrTestingTrends]
+#. defaultMessage is:
+#. Provincial MTB/XDR Testing Trends
+#: extracted_strings.json
+msgid "Provincial MTB/XDR Testing Trends"
+msgstr "Tendencias provinciales de las pruebas MTB/XDR"
+
 #. [p.PkDashboard.provincialRRDiagnosisTrends]
 #. defaultMessage is:
 #. Provincial RR Diagnosis Trends
 #: extracted_strings.json
 msgid "Provincial RR Diagnosis Trends"
 msgstr "Tendencias provinciales del diagnóstico de RR"
+
+#. [p.PkDashboard.provincialRRTBDiagnosisTrendsCurrentYear]
+#. defaultMessage is:
+#. Provincial RR-TB diagnosed in current year
+#: extracted_strings.json
+msgid "Provincial RR-TB diagnosed in current year"
+msgstr "TB-RR provincial diagnosticada en el año en curso"
+
+#. [p.PkDashboard.provincialRRTBDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Provincial RR-TB diagnosis trends"
+msgstr "Tendencias provinciales del diagnóstico de la TB-RR"
 
 #. [p.PkDashboard.ProvincialRRTBDiagnosisTrends]
 #. defaultMessage is:
@@ -8370,6 +8534,20 @@ msgstr "Tendencia provincial de las pruebas"
 #: extracted_strings.json
 msgid "Provincial Testing in current year"
 msgstr "Pruebas provinciales en el año en curso"
+
+#. [p.PkDashboard.provincialXDRTestingTrendsCurrentYear]
+#. defaultMessage is:
+#. Provincial XDR testing in current year
+#: extracted_strings.json
+msgid "Provincial XDR testing in current year"
+msgstr "Pruebas provinciales de XDR en el año en curso"
+
+#. [p.PkDashboard.provincialXDRTestingTrends]
+#. defaultMessage is:
+#. Provincial XDR testing trends
+#: extracted_strings.json
+msgid "Provincial XDR testing trends"
+msgstr "Tendencias provinciales de las pruebas XDR"
 
 #. [p.PkDashboard.provincialXdrDiagnosisTrends]
 #. defaultMessage is:
@@ -8571,6 +8749,13 @@ msgstr "RR+"
 #: extracted_strings.json
 msgid "RR+ percentage of MTB+"
 msgstr "RR A Tb Total Porcentaje"
+
+#. [p.PkDashboard.rrtbDiagnosedCurrentYear]
+#. defaultMessage is:
+#. RR-TB diagnosed in current year
+#: extracted_strings.json
+msgid "RR-TB diagnosed in current year"
+msgstr "TB-RR diagnosticada en el año en curso"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -10793,6 +10978,13 @@ msgstr ""
 msgid "TB XDR Drug Resistances"
 msgstr "Resistencias a los medicamentos TB XDR"
 
+#. [p.PkDashboard.TBXDRTest]
+#. defaultMessage is:
+#. TB XDR tests performed in current year
+#: extracted_strings.json
+msgid "TB XDR tests performed in current year"
+msgstr "Pruebas de TB XDR realizadas en el año en curso"
+
 #. [p.PkDashboard.testingDiagnosisTrendsRR]
 #. defaultMessage is:
 #. TB and RRTB Diagnosis Trends
@@ -11929,12 +12121,40 @@ msgstr "Total de casos"
 msgid "Total Errors"
 msgstr "Total de errores"
 
+#. [p.PkDashboard.totalMTBTraceDetected]
+#. defaultMessage is:
+#. Total MTB detected and MTB Trace detected
+#: extracted_strings.json
+msgid "Total MTB detected and MTB Trace detected"
+msgstr "Total MTB detectado y Rastro MTB detectado"
+
+#. [p.PkDashboard.totalRRTBDetectedInCurrentYear]
+#. defaultMessage is:
+#. Total RRTB detected in current year
+#: extracted_strings.json
+msgid "Total RRTB detected in current year"
+msgstr "Total de RRTB detectadas en el año en curso"
+
 #. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
 #: extracted_strings.json
 msgid "Total Results"
 msgstr "Total de resultados"
+
+#. [p.PkDashboard.totalTBDetectedInCurrentYear]
+#. defaultMessage is:
+#. Total TB detected in current year
+#: extracted_strings.json
+msgid "Total TB detected in current year"
+msgstr "Total de TB detectadas en el año en curso"
+
+#. [p.PkDashboard.totalReportableTBTests]
+#. defaultMessage is:
+#. Total TB tests with a reportable result in current year
+#: extracted_strings.json
+msgid "Total TB tests with a reportable result in current year"
+msgstr "Total de pruebas de TB con resultado notificable en el año en curso"
 
 #. [pages.workload.totalTests]
 #. defaultMessage is:
@@ -12616,12 +12836,33 @@ msgstr "Resultado resumido del ensayo XDR por dispositivo"
 msgid "XDR FLQ Resistance"
 msgstr "Resistencia XDR FLQ"
 
+#. [p.PkDashboard.xdrFLQAndINHTrends]
+#. defaultMessage is:
+#. XDR FLQ and INH resistance trends
+#: extracted_strings.json
+msgid "XDR FLQ and INH resistance trends"
+msgstr "Tendencias de la resistencia a XDR FLQ e INH"
+
 #. [p.PkDashboard.XDRTestingandDiagnosisTrends]
 #. defaultMessage is:
 #. XDR Testing and Diagnosis Trends
 #: extracted_strings.json
 msgid "XDR Testing and Diagnosis Trends"
 msgstr "XDR Testing and Diagnosis Trends"
+
+#. [p.PkDashboard.xdrTestingAndMtbDetectionTrends]
+#. defaultMessage is:
+#. XDR Testing and MTB Detection Trends
+#: extracted_strings.json
+msgid "XDR Testing and MTB Detection Trends"
+msgstr "Pruebas XDR y tendencias en la detección de la MTB"
+
+#. [p.PkDashboard.xdrDrugResistance]
+#. defaultMessage is:
+#. XDR drug resistance trends
+#: extracted_strings.json
+msgid "XDR drug resistance trends"
+msgstr "Tendencias de la farmacorresistencia XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -13292,6 +13533,20 @@ msgstr ""
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
 msgstr "{numberOfModules, plural, un {# módulo} otro {# módulos} }"
+
+#. [p.PkDashboard.customPerYear]
+#. defaultMessage is:
+#. {resultType} detected this year
+#: extracted_strings.json
+msgid "{resultType} detected this year"
+msgstr "{resultType} detectados este año"
+
+#. [p.PkDashboard.customToday]
+#. defaultMessage is:
+#. {resultType} detected today
+#: extracted_strings.json
+msgid "{resultType} detected today"
+msgstr "{resultType} detectado hoy"
 
 #. [component.Widget.ytd]
 #. defaultMessage is:

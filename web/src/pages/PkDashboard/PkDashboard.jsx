@@ -2,6 +2,8 @@ import React from 'react'
 import { Grid } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { Loading } from '../../cleanComponents'
+import useAuthState from '../../hooks/useAuthState'
+import COUNTRY_ISO_MAPPING from '../../utils/consts/Countries/CONSTS'
 import ColumnName from './components/ColumnName'
 import DashboardCard from './components/DashboardCard'
 import DashboardLink from './components/DashboardLink'
@@ -13,6 +15,7 @@ import messages from './PkDashboard.Messages'
 const PkDashboard = () => {
   const { formatMessage } = useIntl()
   const { data: resultOverview, isLoading } = useResultOverview()
+  const { isCountry } = useAuthState()
 
   return (
     <PkPage title={formatMessage(messages.aspectDashboard)} full>
@@ -24,11 +27,14 @@ const PkDashboard = () => {
             <SummaryCard
               items={[
                 {
-                  key: 'molecularAssay',
-                  value: resultOverview.total1Year,
-                  valueTooltipKey: 'peopleTestedRifTooltip',
+                  key: isCountry('PK') ? 'molecularAssay' : 'totalReportableTBTests',
+                  value: isCountry('PK') ? resultOverview.total1Year : resultOverview.mtbValidWithIndeterminate,
+                  valueTooltipKey: isCountry('PK') ? 'peopleTestedRifTooltip' : 'reportableCount',
                 },
-                { key: 'molecularAssay25', value: resultOverview.totalToday },
+                {
+                  key: 'molecularAssay25',
+                  value: isCountry('PK') ? resultOverview.totalToday : resultOverview.mtbValidWithIndeterminateToday,
+                },
               ]}
             />
           )}
@@ -39,7 +45,18 @@ const PkDashboard = () => {
           ) : (
             <SummaryCard
               items={[
-                { key: 'TB', value: resultOverview.mtbDetected1Year },
+                {
+                  key: isCountry('PK') ? 'TB' : 'totalTBDetectedInCurrentYear',
+                  value: resultOverview.mtbDetected1Year,
+                  info: isCountry('PK')
+                    ? undefined
+                    : `${(
+                        (resultOverview.mtbDetected1Year /
+                          (isCountry('PK') ? resultOverview.total1Year : resultOverview.mtbValidWithIndeterminate)) *
+                        100
+                      ).toFixed()}%`,
+                  valueTooltipKey: isCountry('PK') ? undefined : 'countIncludesMTBAndTrace',
+                },
                 { key: 'TB25', value: resultOverview.mtbDetected1Day },
               ]}
             />
@@ -51,7 +68,13 @@ const PkDashboard = () => {
           ) : (
             <SummaryCard
               items={[
-                { key: 'RTTB', value: resultOverview.rifDetected1Year },
+                {
+                  key: isCountry('PK') ? 'RTTB' : 'totalRRTBDetectedInCurrentYear',
+                  value: resultOverview.rifDetected1Year,
+                  info: isCountry('PK')
+                    ? undefined
+                    : `${((resultOverview.rifDetected1Year / resultOverview.mtbDetected1Year) * 100).toFixed()}%`,
+                },
                 { key: 'RTTB25', value: resultOverview.rifDetected1Day },
               ]}
             />
@@ -89,11 +112,25 @@ const PkDashboard = () => {
         <Grid item lg={4} style={{ padding: '8px 8px 0' }}>
           <ColumnName title={formatMessage(messages.titlemtbXdr)} />
           <DashboardCard title={formatMessage(messages.mtbXdrTesting)}>
-            <DashboardLink to="/dashboard/xdr/current-testing" label={formatMessage(messages.TCurrent)} />
-            <DashboardLink to="/dashboard/xdr/national-testing-trend" label={formatMessage(messages.TNationalTrend)} />
+            <DashboardLink
+              to="/dashboard/xdr/current-testing"
+              label={formatMessage(
+                isCountry(COUNTRY_ISO_MAPPING.PAK) ? messages.TCurrent : messages.currentMtbXdrTesting
+              )}
+            />
+            <DashboardLink
+              to="/dashboard/xdr/national-testing-trend"
+              label={formatMessage(
+                isCountry(COUNTRY_ISO_MAPPING.PAK) ? messages.TNationalTrend : messages.nationalMtbXdrTestingTrends
+              )}
+            />
             <DashboardLink
               to="/dashboard/xdr/provincial-testing-trend"
-              label={formatMessage(messages.ProvincialTestingTrend)}
+              label={formatMessage(
+                isCountry(COUNTRY_ISO_MAPPING.PAK)
+                  ? messages.ProvincialTestingTrend
+                  : messages.provincialMtbXdrTestingTrends
+              )}
             />
             <DashboardLink to="/dashboard/xdr/by-device" label={formatMessage(messages.XDRByDevice)} />
             <DashboardLink
@@ -103,14 +140,27 @@ const PkDashboard = () => {
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrmtbDetection)}>
             <DashboardLink to="/dashboard/xdr/current-diagnosis" label={formatMessage(messages.DCurrentPending)} />
-            <DashboardLink to="/dashboard/xdr/national-diagnosis" label={formatMessage(messages.DNationalTrend)} />
+            <DashboardLink
+              to="/dashboard/xdr/national-diagnosis"
+              label={formatMessage(
+                isCountry(COUNTRY_ISO_MAPPING.PAK) ? messages.DNationalTrend : messages.nationalMtbDetectionTrends
+              )}
+            />
             <DashboardLink
               to="/dashboard/xdr/provincial-diagnosis-trend"
-              label={formatMessage(messages.ProvincialTBDiagnosisTrendsComparison)}
+              label={formatMessage(
+                isCountry(COUNTRY_ISO_MAPPING.PAK)
+                  ? messages.ProvincialTBDiagnosisTrendsComparison
+                  : messages.provincialMtbDetectionTrendsComparison
+              )}
             />
             <DashboardLink
               to="/dashboard/xdr/testing-diagnosis-trend"
-              label={formatMessage(messages.XDRTestingandDiagnosisTrends)}
+              label={formatMessage(
+                isCountry(COUNTRY_ISO_MAPPING.PAK)
+                  ? messages.XDRTestingandDiagnosisTrends
+                  : messages.xdrTestingAndMtbDetectionTrends
+              )}
             />
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.mtbXdrFQResistance)}>
@@ -136,7 +186,10 @@ const PkDashboard = () => {
           </DashboardCard>
           <DashboardCard title={formatMessage(messages.coverageperformance)}>
             <DashboardLink to="/dashboard/coverage/utilization" label={formatMessage(messages.utilization)} />
-            <DashboardLink to="/dashboard/coverage/error-rate" label={formatMessage(messages.errorRate)} />
+            <DashboardLink
+              to="/dashboard/coverage/error-rate"
+              label={formatMessage(!isCountry('PK') ? messages.errorRatePageTitle : messages.errorRate)}
+            />
           </DashboardCard>
           <ColumnName title={formatMessage(messages.titleinventory)} />
           <DashboardCard>

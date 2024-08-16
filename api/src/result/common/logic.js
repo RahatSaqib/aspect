@@ -85,8 +85,14 @@ const removeAdditionalData = resultData => {
 
 const mergeResultWithPayload = (existingResult, resultPayload) => {
   const payload = removeAdditionalData(resultPayload)
+
+  // PatientData
+  const existingPatientDataString = _.get(existingResult, 'patientData', null)
+  const existingPatientData = isJson(existingPatientDataString) ? JSON.parse(existingPatientDataString) : {}
+  const patientData = payload.patient ? deepMerge({ ...existingPatientData }, payload.patient) : existingPatientData
+
+  // ResultData
   const existingResultDataString = _.get(existingResult, 'resultData', null)
-  const existingResultDataHash = _.get(existingResult, 'resultDataHash', null)
   const existingResultData = isJson(existingResultDataString) ? JSON.parse(existingResultDataString) : {}
   const resultData = payload.data ? deepMerge({ ...existingResultData }, payload.data) : existingResultData
 
@@ -94,6 +100,7 @@ const mergeResultWithPayload = (existingResult, resultPayload) => {
    * get hash of new resultData and if it is the same as already saved `resultDataHash` then
    * skip ResultUpdated notification because we already processed it
    */
+  const existingResultDataHash = _.get(existingResult, 'resultDataHash', null)
   const resultDataHash = payload.data ? getResultDataHash(resultData) : null
   const shouldTriggerResultNotification =
     // send notification if Result.resultData is null
@@ -103,7 +110,7 @@ const mergeResultWithPayload = (existingResult, resultPayload) => {
     // send notification if Result.resultDataHash is NOT equal new resultDataHash from payload
     (!!resultDataHash && existingResultDataHash !== resultDataHash)
 
-  return { resultData, resultDataHash, shouldTriggerResultNotification }
+  return { patientData, resultData, resultDataHash, shouldTriggerResultNotification }
 }
 
 async function clinicalIndicatorAggregations(request) {
@@ -145,7 +152,14 @@ async function clinicalIndicatorAggregations(request) {
       resp.totalResults = cnt
     }
 
-    resp.data = await processGroupedQuery(knex, factTableQuery, groupBy, 'r.startedOn')
+    const data = await processGroupedQuery(knex, factTableQuery, groupBy, 'r.startedOn')
+
+    if (query.resultCategoryGroupId) {
+      resp.data = mergeAndNormalizeCategories(data)
+      return resp
+    }
+
+    resp.data = data
     return resp
   }
 
@@ -158,6 +172,33 @@ async function clinicalIndicatorAggregations(request) {
 
   resp.data = await processGroupedQuery(knex, resultQuery, groupBy)
   return resp
+}
+
+const mergeAndNormalizeCategories = data => {
+  const mergedData = {}
+
+  data.forEach(record => {
+    const { month, resultCategory2, cnt } = record
+    const key = `${month}_${resultCategory2}`
+
+    if (!mergedData[key]) {
+      mergedData[key] = { ...record }
+      if (record.resultCategory1 === 'Trace Detected' || record.resultCategory1 === 'NotDetected') {
+        mergedData[key].resultCategory1 = 'Detected'
+      }
+    } else {
+      mergedData[key].cnt += cnt
+      // Set resultCategory1 to 'Detected' if any record requires it
+      if (
+        record.resultCategory1 === 'Trace Detected' ||
+        record.resultCategory1 === 'NotDetected' ||
+        mergedData[key].resultCategory1 === 'Detected'
+      ) {
+        mergedData[key].resultCategory1 = 'Detected'
+      }
+    }
+  })
+  return Object.values(mergedData)
 }
 
 function getGroupBy(query) {

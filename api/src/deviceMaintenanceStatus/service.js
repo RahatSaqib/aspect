@@ -1,7 +1,6 @@
 const { groupBy, orderBy, omit, min, uniq, isNil, isArray } = require('lodash')
 const { format, isWeekend, getISOWeek } = require('date-fns')
-const { getConstraints, addConstraints } = require('../auth/constraints')
-const { getUser } = require('../auth/service')
+const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex, filterParams } = require('../db')
 const { getArrayOfDaysInRange, getDateTimeExpressionInTimeZone, getDateSubstring } = require('../shared/date')
 const { allDeviceMaintenanceStatusToId } = require('../shared/dictionary')
@@ -109,7 +108,8 @@ async function deviceStatusOverTime(request) {
 
 async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
   const dataConstraints = await getConstraints(auth.credentials)
-  const { timezoneIANA } = await getUser(auth.credentials.name)
+  const user = await getUserFromCredentials(auth.credentials)
+  const { timezoneIANA } = user
 
   /**
    * minDate and maxDate are Date object, because we used

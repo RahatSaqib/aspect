@@ -16,7 +16,6 @@ import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
-  getAverageFromData,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
   getResultCategoryGroupsForResultList,
@@ -29,7 +28,7 @@ const endPointParams = [
   { groupBy: 'month' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true) },
   { flags: 'GET_TOTAL_RESULTS' },
 ]
 
@@ -73,7 +72,13 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         messages
       )
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Detected', 'Trace Detected'], 'standard')
+
+      const numberOfMonthsInAYear = 12
+      const detected = pieData.filter(elem => elem.id === 'Detected' || elem.id === 'Trace Detected')
+      const totalDetected = detected.reduce((sum, elem) => sum + elem.value, 0)
+
+      const pieAvg = (totalDetected / numberOfMonthsInAYear).toFixed(1)
+
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -119,7 +124,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsTBDetected)} />
+          <CardHeader title={formatMessage(graphMessages.mtbDetection)} />
           <CardContent>
             <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
@@ -195,6 +200,7 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
                             .join(' '),
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
+                        legend={false}
                       />
                     </Grid>
                   ) : (

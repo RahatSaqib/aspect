@@ -23,7 +23,7 @@ const {
 } = require('../../src/shared/dictionary')
 
 describe('Inventory Stock Issues Endpoint', () => {
-  const partnerName = 'Myanmar'
+  const partnerName = 'MoHS'
   const countryAbbreviation = 'MM'
 
   let messageContext

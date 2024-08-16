@@ -7,7 +7,7 @@ module.exports = {
     name: 'DRC',
   },
   adminUserName: 'admin',
-  adminPassword: 'JP8VQ7H6uT',
+  adminPassword: 'test07',
   deviceApiToken: '2k8BAP8zBdS2SuxG8nsxmwsQC43PT6nF',
   lowerLevelUserPassword: 'Y29bDu28',
   partnerAbbreviation: 'CD',

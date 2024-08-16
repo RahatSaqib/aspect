@@ -27,6 +27,7 @@ const endpointParams = [
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { resultCategory1: 'Detected' },
+  { resultCategory1: 'Trace Detected' },
 ]
 
 const NationalDiagnosisGraph = () => {
@@ -75,7 +76,7 @@ const NationalDiagnosisGraph = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(messages.nationalMtbRifUltraDiagnosed)}
+      title={formatMessage(messages.TbDNationalTrend)}
       filters={
         <>
           <FormControlLabel
@@ -101,7 +102,7 @@ const NationalDiagnosisGraph = () => {
       <Grid container>
         <Grid item xs={12} md={4}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(messages.annualDiagnosedTrends)}
+            {formatMessage(messages[user.isCountry('PK') ? 'annualDiagnosedTrends' : 'annualMTBDiagnosis'])}
           </Typography>
           <ColumnGraph
             data={annual}
@@ -134,7 +135,7 @@ const NationalDiagnosisGraph = () => {
         </Grid>
         <Grid item xs={12} md={8}>
           <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-            {formatMessage(messages.annualMTBDiagnosedTrends)}
+            {formatMessage(messages[user.isCountry('PK') ? 'annualMTBDiagnosedTrends' : 'monthlyMTBDiagnosis'])}
           </Typography>
           <LineGraph
             data={graphData}

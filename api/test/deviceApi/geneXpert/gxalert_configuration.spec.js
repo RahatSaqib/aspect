@@ -1601,7 +1601,7 @@ describe('Device API routes for GxAlert Device', () => {
       const deviceSerial = 'Cepheid-1874GX'
       const hostId = 'MaintenanceXpertLab'
       const country = 'MM'
-      const partner = 'Myanmar'
+      const partner = 'MoHS'
       const gxAlertDeviceId = 1777
 
       const { beforeCreateGxAlertApiKey, useGxAlertDeviceId, getCurrentGeneXpertDevice, afterCleanUp } = context
@@ -2057,7 +2057,7 @@ describe('Device API routes for GxAlert Device', () => {
       const deviceSerial = 'Cepheid-19921GX'
       const hostId = 'StateLGAXpertLab'
       const country = 'MM'
-      const partner = 'Myanmar'
+      const partner = 'MoHS'
       const gxAlertDeviceId = 19921
 
       const {

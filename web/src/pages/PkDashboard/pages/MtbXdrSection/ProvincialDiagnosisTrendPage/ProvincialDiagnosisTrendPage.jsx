@@ -56,7 +56,11 @@ const ProvincialDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.provincialXdrDiagnosisTrends)}
+      title={formatMessage(
+        user.isPakistan
+          ? messages.ProvincialTBDiagnosisTrendsComparison
+          : messages.provincialMtbDetectionTrendsComparison
+      )}
       filters={
         <>
           <StateAutocomplete
@@ -84,7 +88,9 @@ const ProvincialDiagnosisTrendPage = () => {
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12} md={8} lg={8} sx={{ p: 1 }} container>
             <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
-              {formatMessage(messages.provincialDiagnosisTrendsComparison)}
+              {formatMessage(
+                messages[user.isCountry('PK') ? 'provincialDiagnosisTrendsComparison' : 'provincialMTBPositivesTrends']
+              )}
             </Typography>
             {graphData ? (
               <div style={{ width: '100%' }}>
@@ -102,7 +108,17 @@ const ProvincialDiagnosisTrendPage = () => {
             ) : null}
           </Grid>
           <Grid item xs={12} md={4} lg={4} container>
-            <ProvinceTrendTable title={formatMessage(messages.provincialDiagnosisTrendsCurrentYear)} rows={tableData} />
+            <ProvinceTrendTable
+              title={formatMessage(
+                messages[
+                  user.isCountry('PK')
+                    ? 'provincialDiagnosisTrendsCurrentYear'
+                    : 'provincialMTBPositivesTrendsCurrentYear'
+                ]
+              )}
+              resultType={!user.isPakistan ? 'MTB+' : undefined}
+              rows={tableData}
+            />
           </Grid>
         </Grid>
       )}

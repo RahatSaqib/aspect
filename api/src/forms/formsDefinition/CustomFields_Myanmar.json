@@ -36,12 +36,12 @@
             "items": [
                 {
                     "key": "Male",
-                    "value": "M",
+                    "value": "Male",
                     "order": 10
                 },
                 {
                     "key": "Female",
-                    "value": "F",
+                    "value": "Female",
                     "order": 20
                 },
                 {
@@ -281,7 +281,7 @@
                 },
                 {
                     "key": "MDR Contact",
-                    "value": "MDR-TB Contact Case",
+                    "value": "MDR Contact",
                     "order": 30
                 },
                 {

@@ -47,9 +47,9 @@ const XDRTestingDiagnosisTrendPage = () => {
         .filter(g => g.year >= 2022)
         .slice(-5)
         .map(({ year, MtbToTotalPercentage, Total, MtbDetected }) => {
-          line.push({ year, [percentageMessage]: +MtbToTotalPercentage.toFixed(2) })
-          bar.push({ year, value: MtbDetected, type: mtbPlusMessage })
+          line.push({ year, [percentageMessage]: +MtbToTotalPercentage.toFixed(1) })
           bar.push({ year, value: Total, type: totalMessage })
+          bar.push({ year, value: MtbDetected, type: mtbPlusMessage })
           return {}
         })
       setGraphData([bar, line])
@@ -59,7 +59,9 @@ const XDRTestingDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.testingAndDiagnosisUsingXdr)}
+      title={formatMessage(
+        user.isPakistan ? messages.XDRTestingandDiagnosisTrends : messages.xdrTestingAndMtbDetectionTrends
+      )}
       filters={
         <>
           <FormControlLabel

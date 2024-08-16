@@ -35,6 +35,9 @@ const getResultAggregationsValidate = validGroups => ({
     .allow(null, '')
     .try(Joi.array().items(Joi.string()), Joi.string())
     .description('XDR Resistance value or array of values'),
+  resultCategoryGroupId: Joi.alternatives()
+    .try(Joi.array(), Joi.string())
+    .description('Filter for result category group'),
 })
 
 const resultAggregationsValidGroups = [
@@ -248,6 +251,7 @@ function validateResultDetailResponse() {
     sampleId: Joi.string().allow(null, '').description('Sample id'),
     sampleGroup: Joi.string().allow(null, '').description('Sample group'),
     sampleCollectedOn: Joi.date().allow(null).description('The date when the sample has been collected'),
+    sampleCollectedBy: Joi.string().allow(null, '').description('the person who collect the sample'),
     sampleOriginSiteName: Joi.string().allow(null, '').description('Sample original site name'),
     sampleTypeName: Joi.string().allow(null, '').description('Sample type name'),
     sampleTypeId: asPositiveInteger.allow(null).description('Sample type Id'),

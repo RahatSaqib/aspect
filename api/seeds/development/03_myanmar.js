@@ -66,10 +66,10 @@ async function seed(knex) {
 
   const maxDaysDeviceNoResults = 14
   const [partnerId] = await knex('Partner').insert({
-    name: 'Myanmar',
-    externalId: 'myanmar',
+    name: 'MoHS',
+    externalId: 'mohs',
     partnerTypeId: await partnerTypeToId('operating'),
-    plugin: 'myanmar',
+    plugin: 'mohs',
     deviceLogHistoryDays: 365,
     autoAcknowledgeOlderThanDays: 28,
     numberToLeaveUnacknowledged: 15,
@@ -80,7 +80,7 @@ async function seed(knex) {
 
   // -------------------------
   // add and randomly populate DataCategory fields
-  const partnerPluginName = 'myanmar'
+  const partnerPluginName = 'deprecatedMyanmar'
   const plugin = await loadPlugin(partnerPluginName, undefined, 'dataCategories')
   const { addDataCategoryFields } = plugin
   if (addDataCategoryFields) {
@@ -384,7 +384,7 @@ async function seed(knex) {
                 sampleGroup: `GRP-TB-${i % 5}`,
                 resultCategory1: result.category1,
                 resultCategory2: result.category2,
-                resultData: JSON.stringify(resultData),
+                resultData: JSON.stringify({ ...resultData, assay: 'Xpert MTB-RIF Assay G4' }),
                 assayVersion: '4',
                 startedOn: randomDate,
                 endedOn: addMinutes(randomDate, 100),
@@ -830,7 +830,7 @@ async function seed(knex) {
 
   await seedIssues(knex, baseProps)
 
-  await seedDataCategory(knex, 'Myanmar', 'myanmar')
+  await seedDataCategory(knex, 'mohs', partnerPluginName)
 }
 
 function calculateDateForResult(currentResult, totalResults, randomMillisToAdd) {

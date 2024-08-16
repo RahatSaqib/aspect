@@ -3,15 +3,15 @@ const webhookServers = require('../../fixtures/webhookServers')
 
 module.exports = {
   adminUserName: 'admin',
-  adminPassword: '8v5TMxkpzP',
+  adminPassword: 'test07',
   partner: {
-    name: 'Myanmar',
-    externalId: 'myanmar',
+    name: 'MoHS',
+    externalId: 'mohs',
   },
   deviceApiToken: 'ukpjat39531egjy4pc20',
   partnerAbbreviation: 'MM',
   lowerLevelUserPassword: 'AL21Uqpo$^hT3',
-  plugin: '',
+  plugin: 'myanmar',
   fixtures: {
     jobFunctions,
     webhookServers,
@@ -25,4 +25,21 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://myanmar.aspect.id',
   apiUrl: 'https://myanmar.aspect.id/api',
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        EnableInventoryModule: false,
+        ShowPopupWindowOnNewTest: true,
+        ClearLISSettingsIfTheyPointToGxAlert: false,
+        HideArchivedTestsWithoutSampleIdFromTestDetails: true,
+        EnableAspectSync: true,
+        SendResultsToAspect: true,
+        AspectUploadExcludePatientId: false,
+        AspectApiEndpoint: 'https://myanmar.aspect.id/api',
+        MigrateAspectApiKey: true,
+        ConnectSettingsAndCustomFieldsSource: 'aspect',
+      },
+    },
+  ],
 }

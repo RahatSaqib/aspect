@@ -71,7 +71,7 @@ const inTypeOfPatient = (typeOfPatientValues, moreConditions) => {
   return counter('r.id', condition)
 }
 // ----------------
-const andByHistory = (typeOfPatientValue, patientHistoryValue, resultCategoryCondition) => {
+const andByHistory = (typeOfPatientValue, patientHistoryValue, resultCategoryCondition, assaysCondition) => {
   let condition = `
     ${typeOfPatient(typeOfPatientValue)}
   `
@@ -81,10 +81,14 @@ const andByHistory = (typeOfPatientValue, patientHistoryValue, resultCategoryCon
   if (resultCategoryCondition) {
     condition += ` and ${resultCategoryCondition} `
   }
+  if (assaysCondition) {
+    condition += ` and ${assaysCondition} `
+  }
+
   return counter('r.id', condition)
 }
 // ----------------
-const andByRetreatment = (typeOfPatientValue, patientRetreatmentValue, resultCategoryCondition) => {
+const andByRetreatment = (typeOfPatientValue, patientRetreatmentValue, resultCategoryCondition, assaysCondition) => {
   let condition = `
     ${typeOfPatient(typeOfPatientValue)}
   `
@@ -94,6 +98,10 @@ const andByRetreatment = (typeOfPatientValue, patientRetreatmentValue, resultCat
   if (resultCategoryCondition) {
     condition += ` and ${resultCategoryCondition} `
   }
+  if (assaysCondition) {
+    condition += ` and ${assaysCondition} `
+  }
+
   return counter('r.id', condition)
 }
 
@@ -107,6 +115,13 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   if (dateFrom >= dateTo) {
     dateFrom = subMonths(dateTo, 1)
   }
+  // /**
+  //  * Make sure minDate and maxDate are Date object - needed to let knex correctly
+  //  * format value for MySql format - i.e. UTC as 'yyyy-MM-dd hh:mm:ss' (without timezone offset)
+  //  */
+  query.minDate = query.minDate instanceof Date ? query.minDate : new Date(query.minDate)
+  query.maxDate = query.maxDate instanceof Date ? query.maxDate : new Date(query.maxDate)
+
   const assayIds = await allAssayToId()
   const resultCategoryIds = await allResultCategoryToId()
   const positiveResultCategories = _.values(_.pick(resultCategoryIds, getPositiveCategoriesExternalIds()))
@@ -158,7 +173,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         assay: 'a',
         result: 'r',
       })
-      .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+      .modify(filterDateRangeParams, query, 'r.endedOn')
       .modify(filterParams, query, {
         countryId: 'g.countryId',
         stateId: 'g.stateId',
@@ -387,7 +402,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_MtbRif: andByHistory(
           'Presumptive TB',
           'Unknown history',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         /** -----------------
          * Patient History = New
@@ -397,7 +413,12 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell C29
         cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb: andByHistory('Presumptive TB', 'New', mtbDetected),
         // cell C32
-        cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif: andByHistory('Presumptive TB', 'New', mtbRifDetected),
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif: andByHistory(
+          'Presumptive TB',
+          'New',
+          mtbRifDetected,
+          assayMtb
+        ),
         /**
          * ****************************************
          * Block 2 - Type of Patient : Presumptive DR TB Cases
@@ -411,7 +432,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell E29
         cnt_TypeOfPatient_Column_3_Mtb: andByRetreatment('Failures of Category I', null, mtbDetected),
         // cell E32
-        cnt_TypeOfPatient_Column_3_MtbRif: andByRetreatment('Failures of Category I', null, mtbRifDetected),
+        cnt_TypeOfPatient_Column_3_MtbRif: andByRetreatment('Failures of Category I', null, mtbRifDetected, assayMtb),
         /** -----------------
          * Column (4) - remain positive at month 5 or later
          */
@@ -420,7 +441,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell F29
         cnt_TypeOfPatient_Column_4_Mtb: andByRetreatment('Failures of Retreatment', null, mtbDetected),
         // cell F32
-        cnt_TypeOfPatient_Column_4_MtbRif: andByRetreatment('Failures of Retreatment', null, mtbRifDetected),
+        cnt_TypeOfPatient_Column_4_MtbRif: andByRetreatment('Failures of Retreatment', null, mtbRifDetected, assayMtb),
         /** -----------------
          * Column (5) - remain positive at month 2
          */
@@ -429,7 +450,12 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell G29
         cnt_TypeOfPatient_Column_5_Mtb: andByRetreatment('Non converters of Category I', null, mtbDetected),
         // cell G32
-        cnt_TypeOfPatient_Column_5_MtbRif: andByRetreatment('Non converters of Category I', null, mtbRifDetected),
+        cnt_TypeOfPatient_Column_5_MtbRif: andByRetreatment(
+          'Non converters of Category I',
+          null,
+          mtbRifDetected,
+          assayMtb
+        ),
         /** -----------------
          * Column (6) - remain positive at month 3
          */
@@ -438,7 +464,12 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell H29
         cnt_TypeOfPatient_Column_6_Mtb: andByRetreatment('Non converters of Retreatment', null, mtbDetected),
         // cell H32
-        cnt_TypeOfPatient_Column_6_MtbRif: andByRetreatment('Non converters of Retreatment', null, mtbRifDetected),
+        cnt_TypeOfPatient_Column_6_MtbRif: andByRetreatment(
+          'Non converters of Retreatment',
+          null,
+          mtbRifDetected,
+          assayMtb
+        ),
         /** -----------------
          * Column (7) - Relapses (CAT I)
          */
@@ -447,7 +478,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell I29
         cnt_TypeOfPatient_Column_7_Mtb: andByRetreatment('Relapses', 'Category I', mtbDetected),
         // cell I32
-        cnt_TypeOfPatient_Column_7_MtbRif: andByRetreatment('Relapses', 'Category I', mtbRifDetected),
+        cnt_TypeOfPatient_Column_7_MtbRif: andByRetreatment('Relapses', 'Category I', mtbRifDetected, assayMtb),
         /** -----------------
          * Column (8) - Relapses (CAT II)
          */
@@ -456,7 +487,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell J29
         cnt_TypeOfPatient_Column_8_Mtb: andByRetreatment('Relapses', 'Retreatment', mtbDetected),
         // cell J32
-        cnt_TypeOfPatient_Column_8_MtbRif: andByRetreatment('Relapses', 'Retreatment', mtbRifDetected),
+        cnt_TypeOfPatient_Column_8_MtbRif: andByRetreatment('Relapses', 'Retreatment', mtbRifDetected, assayMtb),
         /** -----------------
          * Column (9) - Treatment after loss to follow up (CAT I)
          */
@@ -472,7 +503,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Column_9_MtbRif: andByRetreatment(
           'Treatment after loss to follow up',
           'Category I',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         /** -----------------
          * Column (10) - Treatment after loss to follow up (CAT II)
@@ -489,7 +521,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Column_10_MtbRif: andByRetreatment(
           'Treatment after loss to follow up',
           'Retreatment',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         /** -----------------
          * Column (11) - Close contacts of DR TB patient with symptoms
@@ -530,19 +563,22 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Column_11_MtbRif_UnknownHistory: andByHistory(
           'Close contacts of DR TB patient with symptoms',
           'Unknown history',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         // cell O33
         cnt_TypeOfPatient_Column_11_MtbRif_New: andByHistory(
           'Close contacts of DR TB patient with symptoms',
           'New',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         // cell O34
         cnt_TypeOfPatient_Column_11_MtbRif_PrevTreated: andByHistory(
           'Close contacts of DR TB patient with symptoms',
           'Previously treated',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         /** -----------------
          * Column (12) - HIV infected person with TB S/S
@@ -579,15 +615,22 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Column_12_MtbRif_UnknownHistory: andByHistory(
           'HIV infected person, with TB S/S',
           'Unknown history',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         // cell R33
-        cnt_TypeOfPatient_Column_12_MtbRif_New: andByHistory('HIV infected person, with TB S/S', 'New', mtbRifDetected),
+        cnt_TypeOfPatient_Column_12_MtbRif_New: andByHistory(
+          'HIV infected person, with TB S/S',
+          'New',
+          mtbRifDetected,
+          assayMtb
+        ),
         // cell R34
         cnt_TypeOfPatient_Column_12_MtbRif_PrevTreated: andByHistory(
           'HIV infected person, with TB S/S',
           'Previously treated',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
 
         /**
@@ -673,7 +716,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_OtherPulmClinDiag_UnknownHistory_MtbRif: andByHistory(
           'Others - Pulmonary, clinically diagnosed',
           'Unknown history',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         // ------------
         // cell M41
@@ -691,7 +735,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_OtherExtraPulm_UnknownHistory_MtbRif: andByHistory(
           'Others - Extra Pulmonary',
           'Unknown history',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         // ------------
         // cell M42
@@ -709,7 +754,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_OtherPulmBactConf_UnknownHistory_MtbRif: andByHistory(
           'Others - Pulmonary, Bacteriologically Confirmed',
           'Unknown history',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
 
         /**
@@ -728,7 +774,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_OtherPulmClinDiag_New_MtbRif: andByHistory(
           'Others - Pulmonary, clinically diagnosed',
           'New',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         // ------------
         // cell N41
@@ -736,7 +783,12 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell Q41
         cnt_TypeOfPatient_OtherExtraPulm_New_Mtb: andByHistory('Others - Extra Pulmonary', 'New', mtbDetected),
         // cell T41
-        cnt_TypeOfPatient_OtherExtraPulm_New_MtbRif: andByHistory('Others - Extra Pulmonary', 'New', mtbRifDetected),
+        cnt_TypeOfPatient_OtherExtraPulm_New_MtbRif: andByHistory(
+          'Others - Extra Pulmonary',
+          'New',
+          mtbRifDetected,
+          assayMtb
+        ),
         // ------------
         // cell N42
         cnt_TypeOfPatient_OtherPulmBactConf_New_all: andByHistory(
@@ -753,7 +805,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_OtherPulmBactConf_New_MtbRif: andByHistory(
           'Others - Pulmonary, Bacteriologically Confirmed',
           'New',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         /**
          * Patient History = Previously treated
@@ -774,7 +827,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_OtherPulmClinDiag_Treated_MtbRif: andByHistory(
           'Others - Pulmonary, clinically diagnosed',
           'Previously treated',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
         // ------------
         // cell O41
@@ -789,7 +843,8 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_OtherExtraPulm_Treated_MtbRif: andByHistory(
           'Others - Extra Pulmonary',
           'Previously treated',
-          mtbRifDetected
+          mtbRifDetected,
+          assayMtb
         ),
 
         /**
@@ -830,7 +885,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
          * use only value of Date filter and skip all other filters and constraints
          * applied to main query `drTb10AData` above
          */
-        .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+        .modify(filterDateRangeParams, query, 'r.endedOn')
         /**
          * condition is "referringSiteId should point
          * to our sites, but result's siteId should not be among our sites"
@@ -978,12 +1033,12 @@ async function getDataForSheet1or2(
   } else {
     data.stateName = 'All'
     data.lgaName = 'All'
-    if (stateId) {
-      ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
-    }
-    if (lgaId) {
-      ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
-    }
+  }
+  if (stateId) {
+    ;[{ name: data.stateName }] = await knex('State').where('id', stateId).select('name')
+  }
+  if (lgaId) {
+    ;[{ name: data.lgaName }] = await knex('Lga').where('id', lgaId).select('name')
   }
   return data
 }

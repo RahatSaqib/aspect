@@ -17,7 +17,6 @@ import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
-  getAverageFromData,
   negateTimeZoneOffset,
   getResultCategoryGroupsForResultList,
 } from '../graphUtils'
@@ -30,9 +29,23 @@ const endPointParams = [
   { groupBy: 'resultCategory2' },
   { groupBy: 'resultCategory1' },
   { minDate: getTimePeriod(12, 'months', 'yyyy-MM-dd') },
-  { maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd') },
+  { maxDate: getTimePeriod(1, 'months', 'yyyy-MM-dd', true) },
   { flags: 'GET_TOTAL_RESULTS' },
 ]
+
+const resultCategoryGroupIds = [
+  'GxMtbRifMtbDetectedRifNotDetected',
+  'GxMtbRifUltraMtbDetectedRifNotDetected',
+  'GxMtbRifMtbDetectedRifDetected',
+  'GxMtbRifUltraMtbDetectedRifDetected',
+  'GxMtbRifMtbDetectedRifIndeterminate',
+  'GxMtbRifUltraMtbDetectedRifIndeterminate',
+  'GxMtbRifUltraMTBTraceDetectedRifIndeterminate',
+]
+
+for (const resultCategoryGroupId of resultCategoryGroupIds) {
+  endPointParams.push({ resultCategoryGroupId })
+}
 
 const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromState: resultCategoryGroups }) => {
   const { formatMessage, format } = useIntl()
@@ -74,8 +87,12 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
         formatMessage,
         messages
       )
+      const numberOfMonthsInAYear = 12
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Detected'], 'standard')
+      const detected = pieData.find(elem => elem.id === 'Detected') || {}
+
+      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(1)
+
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -121,7 +138,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsTBTitle)} />
+          <CardHeader title={formatMessage(graphMessages.mtbRifResistance)} />
           <CardContent>
             <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
@@ -199,6 +216,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
                             .join(' '),
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
+                        legend={false}
                       />
                     </Grid>
                   ) : (

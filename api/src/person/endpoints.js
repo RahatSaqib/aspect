@@ -16,6 +16,7 @@ const { updatePerson } = require('./updatePerson')
 const { updatePersonUserPreferences } = require('./updatePersonUserPreferences')
 const { createPerson } = require('./createPerson')
 const { showPerson } = require('./showPerson')
+const { recordPageView } = require('./recordPageView')
 
 function listContactBaseConfig() {
   return {
@@ -314,6 +315,24 @@ const routes = [
         params: {
           personId: Joi.string().description('Person ID').required(),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/record-page-view',
+    handler: asyncHandler(recordPageView),
+    config: {
+      auth: { scope: ['person:view'] },
+      description: 'RecordPage View',
+      notes: 'Increase count of viewed pages for user',
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.boolean().required(),
+        }),
       },
     },
   },

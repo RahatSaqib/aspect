@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { FormControlLabel, Grid, Switch } from '@mui/material'
+import { FormControlLabel, Grid, Switch, Typography } from '@mui/material'
 import format from 'date-fns/format'
 import reduce from 'lodash/reduce'
 import { useIntl } from 'react-intl'
@@ -144,7 +144,7 @@ const CurrentXDRDiagnosisPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.peopleDiagnosedXdr)}`}
+      title={formatMessage(messages.DCurrentPending)}
       filters={
         <>
           <FormControlLabel
@@ -173,6 +173,12 @@ const CurrentXDRDiagnosisPage = () => {
         <Grid container sx={{ mt: 2 }}>
           {barData.data && barData.data.length ? (
             <Grid item xs={12} md={8}>
+              {user.isCountry('PK') ? undefined : (
+                <Typography sx={{ m: '10px' }} variant="h6" color="primary" component="div">
+                  {formatMessage(messages.mtbPositivesCurrentYear)}
+                </Typography>
+              )}
+
               <ColumnGraph
                 data={barData.data}
                 graphId="testPerformedMonthlyPercentage"
