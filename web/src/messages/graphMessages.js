@@ -144,6 +144,18 @@ const messages = defineMessages({
     id: 'pages.Status.XDR.PercentageFQRDetectedOverMTBDetectedGraph.title',
     defaultMessage: 'XDR FLQ Resistance',
   },
+  mtbXDRDrugResistance: {
+    id: 'pages.Status.mtbXDRDrugResistance',
+    defaultMessage: 'MTB/XDR drug resistance',
+  },
+  mtbDetection: {
+    id: 'pages.Status.mtbDetection',
+    defaultMessage: 'MTB Detection',
+  },
+  mtbRifResistance: {
+    id: 'pages.Status.mtbRifResistance',
+    defaultMessage: 'MTB Rif Resistance',
+  },
   date: {
     id: 'forms.formSectionHeader.date',
     defaultMessage: 'Date',

@@ -2,7 +2,7 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 const Stream = require('stream')
 const _ = require('lodash')
-const { formatInTimeZone } = require('date-fns-tz')
+const { format } = require('date-fns')
 const csv = require('fast-csv')
 const { knex, filterParams } = require('../db')
 const {
@@ -15,6 +15,7 @@ const {
 } = require('../shared/excel')
 const logger = require('../shared/logger')
 const { getReportDetails } = require('./service')
+const { getDatesFromQuery } = require('../shared/date')
 
 /**
  * constants for statuses of report processing
@@ -88,18 +89,20 @@ async function getSheetData(auth, queryParams, timezone, sheet, sharedResults) {
 }
 
 // ----------------------------------------------------------------------------------------------
-function getDateRangeString({ minDate, maxDate, timeZone = 'America/New_York' }) {
+function getDateRangeString({ minDate, maxDate }) {
   const dateFormat = 'dd-MM-yyyy'
   if (!minDate && !maxDate) {
     return 'all'
   }
+  const { dateFrom, dateTo } = getDatesFromQuery({ minDate, maxDate })
+
   const dates = []
   if (minDate) {
-    dates.push(minDate ? formatInTimeZone(new Date(minDate), timeZone, dateFormat) : '')
+    dates.push(minDate ? format(dateFrom, dateFormat) : '')
   }
   dates.push(' — ') // long dash
   if (maxDate) {
-    dates.push(maxDate ? formatInTimeZone(new Date(maxDate), timeZone, dateFormat) : '')
+    dates.push(maxDate ? format(dateTo, dateFormat) : '')
   }
   return dates.join('')
 }

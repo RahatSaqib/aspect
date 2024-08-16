@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-02T00:11:12.662Z\n"
+"POT-Creation-Date: 2024-08-09T03:15:45.784Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -580,12 +580,33 @@ msgstr ""
 msgid "Annual FQ-R Diagnosis"
 msgstr "Ташхиси солонаи FQ-R"
 
+#. [p.PkDashboard.mtbPlusDetectionTrends]
+#. defaultMessage is:
+#. Annual MTB+ detection trends
+#: extracted_strings.json
+msgid "Annual MTB+ detection trends"
+msgstr "Тамоюлҳои солонаи ошкоркунии MTB+"
+
+#. [p.PkDashboard.annualMTBDiagnosis]
+#. defaultMessage is:
+#. Annual MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Annual MTB+ diagnosis trends"
+msgstr "Тамоюлҳои ташхиси солонаи MTB+"
+
 #. [p.PkDashboard.annualRRDiagnosedTrends]
 #. defaultMessage is:
 #. Annual RR Diagnosis
 #: extracted_strings.json
 msgid "Annual RR Diagnosis"
 msgstr "Ташхиси солонаи RR"
+
+#. [p.PkDashboard.annualRRTBDiagnosisTrends]
+#. defaultMessage is:
+#. Annual RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Annual RR-TB diagnosis trends"
+msgstr "Тамоюлҳои солонаи ташхиси RR-TB"
 
 #. [p.PkDashboard.annualTestingTrends]
 #. defaultMessage is:
@@ -951,6 +972,14 @@ msgstr "Санҷишҳои миёна дар як моҳ гузаронида м
 #: extracted_strings.json
 msgid "Average time to replace disabled module"
 msgstr "Вақти миёна барои иваз кардани модули ғайрифаъол"
+
+#. [p.PkDashboard.customPerMonth]
+#. defaultMessage is:
+#. Average {resultType} detected per month in current year
+#: extracted_strings.json
+msgid "Average {resultType} detected per month in current year"
+msgstr ""
+"Ба ҳисоби миёна {resultType} дар як моҳ дар соли ҷорӣ муайян карда шудааст"
 
 #. [pages.ResultTreatmentStatusFilter.ResultTreatmentStatusAwaitingTreatment]
 #. defaultMessage is:
@@ -1847,6 +1876,13 @@ msgstr "Бо маълумоти эътимодномаи шумо ворид ш�
 msgid "Count (1-100)"
 msgstr "Шумора (1-100)"
 
+#. [p.PkDashboard.countIncludesMTBAndTrace]
+#. defaultMessage is:
+#. Count includes MTB detected and MTB Trace detected
+#: extracted_strings.json
+msgid "Count includes MTB detected and MTB Trace detected"
+msgstr "Ба ҳисоб MTB ошкоршуда ва MTB Trace муайяншуда дохил мешаванд"
+
 #. [p.PkDashboard.peopleTestedRifTooltip]
 #. defaultMessage is:
 #. Count only Reportable Results of MTB/Rif and MTB/Rif-Ultra, not including 'No Result', 'Error', 'Indeterminate', 'Invalid'.
@@ -1857,6 +1893,15 @@ msgid ""
 msgstr ""
 "Танҳо Натоиҷи гузоришшавандаи MTB/Rif ва MTB/Rif-Ultraро ҳисоб кунед, аз он "
 "ҷумла \"Натиҷа нест\", \"Хато\", \"Номуайян\", \"Беэътибор\"."
+
+#. [p.PkDashboard.reportableCount]
+#. defaultMessage is:
+#. Count only reportable results, exclude errors, no results and invalids
+#: extracted_strings.json
+msgid "Count only reportable results, exclude errors, no results and invalids"
+msgstr ""
+"Танҳо натиҷаҳои гузоришшавандаро ҳисоб кунед, хатогиҳоро истисно кунед, "
+"натиҷаҳо ва беэътиборро истисно кунед"
 
 #. [filter.popover.country]
 #. defaultMessage is:
@@ -6272,6 +6317,20 @@ msgstr "MTB Trace Retected Rif Не натиҷа"
 msgid "MTB Unknown"
 msgstr "MTB номаълум"
 
+#. [p.PkDashboard.mtbPositivesCurrentYear]
+#. defaultMessage is:
+#. MTB positives detected in current year
+#: extracted_strings.json
+msgid "MTB positives detected in current year"
+msgstr "Дар соли ҷорӣ мусбати MTB ошкор карда шуд"
+
+#. [p.PkDashboard.mtbPositiveCurrentYear]
+#. defaultMessage is:
+#. MTB positives diagnosed in current year
+#: extracted_strings.json
+msgid "MTB positives diagnosed in current year"
+msgstr "Ташхиси мусбати MTB дар соли ҷорӣ"
+
 #. [pages.XDR.cnt_mtb]
 #. defaultMessage is:
 #. MTB+
@@ -6576,12 +6635,40 @@ msgstr "Меъёри миёнаи ҳармоҳаи муқовимати Rif"
 msgid "Monthly FQ-R Diagnosis"
 msgstr "Ташхиси ҳармоҳаи FQ-R"
 
+#. [p.PkDashboard.mtbPlusMonthlyDetectionTrends]
+#. defaultMessage is:
+#. Monthly MTB+ detection trends
+#: extracted_strings.json
+msgid "Monthly MTB+ detection trends"
+msgstr "Тамоюлҳои ошкоркунии ҳармоҳаи MTB+"
+
+#. [p.PkDashboard.monthlyMTBDiagnosis]
+#. defaultMessage is:
+#. Monthly MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Monthly MTB+ diagnosis trends"
+msgstr "Тамоюлҳои ташхиси ҳармоҳаи MTB+"
+
+#. [p.PkDashboard.monthlyRRTBDiagnosis]
+#. defaultMessage is:
+#. Monthly RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Monthly RR-TB diagnosis trends"
+msgstr "Тамоюлҳои ҳармоҳаи ташхиси RR-TB"
+
 #. [p.PkDashboard.monthlyTestingTrends]
 #. defaultMessage is:
 #. Monthly Testing Trends
 #: extracted_strings.json
 msgid "Monthly Testing Trends"
 msgstr "Тамоюлҳои санҷиши моҳона"
+
+#. [p.PkDashboard.monthlyXDRTrends]
+#. defaultMessage is:
+#. Monthly XDR testing trends
+#: extracted_strings.json
+msgid "Monthly XDR testing trends"
+msgstr "Тамоюлҳои санҷиши ҳармоҳаи XDR"
 
 #. [p.PkDashboard.monthlyDiagnosedTrends]
 #. defaultMessage is:
@@ -7125,6 +7212,13 @@ msgstr "Табдилдиҳандаи категорияи I"
 #: extracted_strings.json
 msgid "Non converters of Retreatment"
 msgstr "Табдилдиҳандаҳои такрорӣ"
+
+#. [p.PkDashboard.errorRatePageTitle]
+#. defaultMessage is:
+#. Non-reportable results
+#: extracted_strings.json
+msgid "Non-reportable results"
+msgstr "Натиҷаҳои гузоришнашаванда"
 
 #. [filter.popover.none]
 #. defaultMessage is:
@@ -8347,6 +8441,27 @@ msgstr "Тамоюлҳои ташхиси вилоятии FQ"
 msgid "Provincial MTB Detection Trends Comparison"
 msgstr "Муқоисаи тамоюлҳои ошкоркунии MTB вилоятӣ"
 
+#. [p.PkDashboard.provincialMTBPositivesTrends]
+#. defaultMessage is:
+#. Provincial MTB+ detected in current year
+#: extracted_strings.json
+msgid "Provincial MTB+ detected in current year"
+msgstr "MTB+ музофотӣ дар соли ҷорӣ ошкор карда шуд"
+
+#. [p.PkDashboard.provincialMTBDiagnosisCurrentYear]
+#. defaultMessage is:
+#. Provincial MTB+ diagnosed in current year
+#: extracted_strings.json
+msgid "Provincial MTB+ diagnosed in current year"
+msgstr "Дар соли ҷорӣ MTB+ музофотӣ ташхис шудааст"
+
+#. [p.PkDashboard.provincialMTBDiagnosis]
+#. defaultMessage is:
+#. Provincial MTB+ diagnosis trends
+#: extracted_strings.json
+msgid "Provincial MTB+ diagnosis trends"
+msgstr "Тамоюлҳои ташхиси музофотии MTB+"
+
 #. [p.PkDashboard.provincialMtbXdrTestingTrends]
 #. defaultMessage is:
 #. Provincial MTB/XDR Testing Trends
@@ -8360,6 +8475,20 @@ msgstr "Тамоюлҳои санҷиши вилоятии MTB/XDR"
 #: extracted_strings.json
 msgid "Provincial RR Diagnosis Trends"
 msgstr "Тамоюлҳои ташхиси вилоятии RR"
+
+#. [p.PkDashboard.provincialRRTBDiagnosisTrendsCurrentYear]
+#. defaultMessage is:
+#. Provincial RR-TB diagnosed in current year
+#: extracted_strings.json
+msgid "Provincial RR-TB diagnosed in current year"
+msgstr "Соли равон дар вилоят бемории сил ташхис шудааст"
+
+#. [p.PkDashboard.provincialRRTBDiagnosisTrends]
+#. defaultMessage is:
+#. Provincial RR-TB diagnosis trends
+#: extracted_strings.json
+msgid "Provincial RR-TB diagnosis trends"
+msgstr "Тамоюлҳои ташхиси RR-TB-и музофотӣ"
 
 #. [p.PkDashboard.ProvincialRRTBDiagnosisTrends]
 #. defaultMessage is:
@@ -8395,6 +8524,20 @@ msgstr "Тамоюли санҷиши вилоят"
 #: extracted_strings.json
 msgid "Provincial Testing in current year"
 msgstr "Имтиҳони вилоятӣ дар соли ҷорӣ"
+
+#. [p.PkDashboard.provincialXDRTestingTrendsCurrentYear]
+#. defaultMessage is:
+#. Provincial XDR testing in current year
+#: extracted_strings.json
+msgid "Provincial XDR testing in current year"
+msgstr "Санҷиши вилоятии XDR дар соли ҷорӣ"
+
+#. [p.PkDashboard.provincialXDRTestingTrends]
+#. defaultMessage is:
+#. Provincial XDR testing trends
+#: extracted_strings.json
+msgid "Provincial XDR testing trends"
+msgstr "Тамоюлҳои санҷиши вилояти XDR"
 
 #. [p.PkDashboard.provincialXdrDiagnosisTrends]
 #. defaultMessage is:
@@ -8594,6 +8737,13 @@ msgstr "RR+"
 #: extracted_strings.json
 msgid "RR+ percentage of MTB+"
 msgstr "RR ба Tb Фоизи умумӣ"
+
+#. [p.PkDashboard.rrtbDiagnosedCurrentYear]
+#. defaultMessage is:
+#. RR-TB diagnosed in current year
+#: extracted_strings.json
+msgid "RR-TB diagnosed in current year"
+msgstr "РР-сил дар соли ҷорӣ ташхис шудааст"
 
 #. [pages.Status.TB.rifDetectedTrendsInQuarterTitle.title]
 #. defaultMessage is:
@@ -10810,6 +10960,13 @@ msgstr "Тамоюлҳои санҷиш ва ташхиси сил бо исти
 msgid "TB XDR Drug Resistances"
 msgstr "Муқовимат ба маводи мухаддир TB XDR"
 
+#. [p.PkDashboard.TBXDRTest]
+#. defaultMessage is:
+#. TB XDR tests performed in current year
+#: extracted_strings.json
+msgid "TB XDR tests performed in current year"
+msgstr "Санҷишҳои TB XDR дар соли ҷорӣ гузаронида шуданд"
+
 #. [p.PkDashboard.testingDiagnosisTrendsRR]
 #. defaultMessage is:
 #. TB and RRTB Diagnosis Trends
@@ -11931,12 +12088,40 @@ msgstr "Ҳодисаҳои умумӣ"
 msgid "Total Errors"
 msgstr "Хатогиҳои умумӣ"
 
+#. [p.PkDashboard.totalMTBTraceDetected]
+#. defaultMessage is:
+#. Total MTB detected and MTB Trace detected
+#: extracted_strings.json
+msgid "Total MTB detected and MTB Trace detected"
+msgstr "Маҷмӯи MTB ошкор ва MTB Trace муайян карда шуд"
+
+#. [p.PkDashboard.totalRRTBDetectedInCurrentYear]
+#. defaultMessage is:
+#. Total RRTB detected in current year
+#: extracted_strings.json
+msgid "Total RRTB detected in current year"
+msgstr "Ҳамагӣ RRTB дар соли ҷорӣ ошкор карда шудааст"
+
 #. [performance.barChart.results]
 #. defaultMessage is:
 #. Total Results
 #: extracted_strings.json
 msgid "Total Results"
 msgstr "Натиҷаҳои умумӣ"
+
+#. [p.PkDashboard.totalTBDetectedInCurrentYear]
+#. defaultMessage is:
+#. Total TB detected in current year
+#: extracted_strings.json
+msgid "Total TB detected in current year"
+msgstr "Дар соли ҷорӣ умумии бемории сил ошкор карда шудааст"
+
+#. [p.PkDashboard.totalReportableTBTests]
+#. defaultMessage is:
+#. Total TB tests with a reportable result in current year
+#: extracted_strings.json
+msgid "Total TB tests with a reportable result in current year"
+msgstr "Санҷишҳои умумии бемории сил бо натиҷаи гузоришшаванда дар соли ҷорӣ"
 
 #. [pages.workload.totalTests]
 #. defaultMessage is:
@@ -12618,6 +12803,13 @@ msgstr "Натиҷаи хулосаи таҳлили XDR аз рӯи дастг�
 msgid "XDR FLQ Resistance"
 msgstr "Муқовимат ба XDR FLQ"
 
+#. [p.PkDashboard.xdrFLQAndINHTrends]
+#. defaultMessage is:
+#. XDR FLQ and INH resistance trends
+#: extracted_strings.json
+msgid "XDR FLQ and INH resistance trends"
+msgstr "Тамоюлҳои муқовимати XDR FLQ ва INH"
+
 #. [p.PkDashboard.XDRTestingandDiagnosisTrends]
 #. defaultMessage is:
 #. XDR Testing and Diagnosis Trends
@@ -12631,6 +12823,13 @@ msgstr "Тамоюлҳои санҷиш ва ташхиси XDR"
 #: extracted_strings.json
 msgid "XDR Testing and MTB Detection Trends"
 msgstr "Санҷиши XDR ва тамоюлҳои муайянкунии MTB"
+
+#. [p.PkDashboard.xdrDrugResistance]
+#. defaultMessage is:
+#. XDR drug resistance trends
+#: extracted_strings.json
+msgid "XDR drug resistance trends"
+msgstr "Тамоюлҳои муқовимат ба маводи мухаддир XDR"
 
 #. [consumable.gxHcvCartridge]
 #. defaultMessage is:
@@ -13300,6 +13499,20 @@ msgstr ""
 #: extracted_strings.json
 msgid "{numberOfModules, plural, one {# module} other {# modules} }"
 msgstr "{numberOfModules, plural, one {# модул} other {# модул} }"
+
+#. [p.PkDashboard.customPerYear]
+#. defaultMessage is:
+#. {resultType} detected this year
+#: extracted_strings.json
+msgid "{resultType} detected this year"
+msgstr "{resultType} дар ин сол муайян карда шуд"
+
+#. [p.PkDashboard.customToday]
+#. defaultMessage is:
+#. {resultType} detected today
+#: extracted_strings.json
+msgid "{resultType} detected today"
+msgstr "{resultType} имрӯз муайян карда шуд"
 
 #. [component.Widget.ytd]
 #. defaultMessage is:

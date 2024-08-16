@@ -67,7 +67,7 @@ const RrtbTestDiagnosisPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.testingDiagnosisTrendsRR)}
+      title={formatMessage(messages.RRTestingDiagnosis)}
       filters={
         <>
           <FormControlLabel

@@ -134,7 +134,7 @@ const RifCurrentGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.peopleTestedXdr)}
+      title={formatMessage(user.isPakistan ? messages.TCurrent : messages.currentMtbXdrTesting)}
       filters={
         <>
           <FormControlLabel
