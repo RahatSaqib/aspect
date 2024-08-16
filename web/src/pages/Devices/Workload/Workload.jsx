@@ -11,6 +11,7 @@ import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../hooks/useFilterValues'
 import useWorkload from '../../../hooks/workload/useWorkload'
 import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
+import { resultCategory } from '../../../messages'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -106,17 +107,14 @@ const Workload = () => {
       fieldId &&
       resultCategoryGroups.find(categoryGroup => {
         const columnName = categoryGroup.name.toLowerCase().replace(' - ', ' ')
-        const found = columnName.includes(column) || columnName === column
-        if (!found && categoryGroup.assayI18nKey === 'assayGeneXpertMtbXdr') {
-          const hasResitanceString = XDR_RESISTANCES.some(resistance => column.includes(resistance.toLowerCase()))
-          if (hasResitanceString)
-            column = XDR_RESISTANCES.reduce(
-              (result, resistance) => result.replace(resistance.toLowerCase(), ''),
-              column
-            )
+        const isXdrCase = XDR_RESISTANCES.some(resistance => column.includes(resistance.toLowerCase()))
+
+        if (isXdrCase && categoryGroup.assayI18nKey === 'assayGeneXpertMtbXdr') {
+          column = formatMessage(resultCategory.gxMtbXdrMtbDetectedXdrDetected).toLowerCase()
         }
-        return found
+        return columnName === column || columnName.includes(column)
       })?.externalId
+
     const { minDate, maxDate } = filter
     const baseUrl = '/browse/result'
     addFilter(
