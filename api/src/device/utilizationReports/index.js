@@ -11,6 +11,25 @@ const WORKING_DAYS_IN_YEAR = 252
 const DEFAULT_MODULES = 4
 const DEFAULT_DAILY_CAPACITY = DEFAULT_MODULES * 3
 
+const getWorkingDays = (minDate, maxDate) => {
+  // Parse the input dates and reset time to midnight without considering time zone
+  const startDate = new Date(minDate.split('T')[0])
+  const endDate = new Date(maxDate.split('T')[0])
+
+  let totalWorkingDays = 0
+
+  while (startDate <= endDate) {
+    const dayOfWeek = startDate.getDay()
+    if (dayOfWeek !== 0 && dayOfWeek !== 6) {
+      // 0 = Sunday, 6 = Saturday
+      totalWorkingDays += 1
+    }
+    startDate.setDate(startDate.getDate() + 1)
+  }
+
+  return totalWorkingDays
+}
+
 async function getAnnualUtilizationData(auth, query, { timeFrame }) {
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
@@ -96,6 +115,10 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
   const { deviceMap, deviceCountsByPeriod, culture, minDate, maxDate } = await getAnnualUtilizationData(auth, query, {
     timeFrame,
   })
+
+  const CUSTOM_WORKING_DAYS_IN_YEAR = query.tableData
+    ? getWorkingDays(query.minDate, query.maxDate)
+    : WORKING_DAYS_IN_YEAR
   /**
    *
    */
@@ -106,7 +129,7 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
   _.each(deviceCountsByPeriod, item => {
     const device = deviceMap[item.id]
     device.rates = device.rates || []
-    const percent = (item.cnt * 100) / Math.max(device.dailyCapacity * WORKING_DAYS_IN_YEAR, 1)
+    const percent = (item.cnt * 100) / Math.max(device.dailyCapacity * CUSTOM_WORKING_DAYS_IN_YEAR, 1)
     const rateItem = { year: item.year_value, count: item.cnt, rate: _.round(percent, 2) }
     device.rates = [...device.rates, rateItem]
   })
@@ -131,7 +154,7 @@ async function getAnnualUtilizationRatesNationalBase(auth, query) {
     length: data.length,
     data: _.orderBy(data, 'name'),
     dynamicColumns,
-    WORKING_DAYS_IN_YEAR,
+    WORKING_DAYS_IN_YEAR: CUSTOM_WORKING_DAYS_IN_YEAR,
   }
 }
 
