@@ -116,21 +116,15 @@ const criticalErrorsByModule = {
   i18nKeyDescription: 'criticalErrorsByModule_description',
   externalId: 'critical_errors_by_module',
   fileName: 'ModulesWithErrors',
-  availableForNotification: 1,
-  sortOrder: 2,
+  exportCsv: true,
+  exportExcel: true,
+  sortOrder: 0,
   validations: ['dateRangeRequired'],
   sheets: [
     {
       sortOrder: 0,
       moduleName: 'device/modules/serviceReports',
       functionName: 'getErrorsByModulesReport',
-      query: {
-        hasResults: 1,
-        sortCol: 'deviceName',
-        noResults: true,
-        sortDir: 'asc',
-        avoidStreaming: true,
-      },
     },
   ],
 }

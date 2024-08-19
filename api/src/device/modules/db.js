@@ -17,50 +17,28 @@ const _ = require('lodash')
  * @param {boolean} opts.showUnapprovedDevices - show unapproved devices
  * @returns {Object} - base query without projection. Constraints and filter params are applied.
  */
-function getResultsByModuleWithinTimeFrame(
+function getResultsByModuleErrorsWithinTimeFrame(
   knex,
   { addConstraints, dataConstraints, filterParams, assay, query, timeFrame = 'month', joinSiteWith = 'device' },
   opts
 ) {
   const { showDecommissionedDevices = false, showUnapprovedDevices = false } = opts || {}
-  const qb = knex('Result as r').groupBy('r.moduleSerial as moduleSerial', 'r.moduleName as moduleName')
-
-  switch (joinSiteWith) {
-    case 'result':
-      qb.leftJoin('Site as s', 's.id', 'r.siteId')
-      break
-    default: // device
-      qb.innerJoin('Site as s', 's.id', 'd.siteId')
-      break
-  }
-
-  qb.innerJoin('Assay as a', 'a.id', 'r.assayId')
-    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
-    .innerJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
-    .innerJoin('ResultCategoryAssay as rca', function () {
-      this.on('r.assayId', 'rca.assayId').andOn('r.resultCategory1', 'rca.resultCategoryId')
-    })
-    .leftOuterJoin('ResultCategory as rc2', 'rc2.id', 'r.resultCategory2')
+  const qb = knex('Result as r')
+    // .groupBy('r.moduleSerial as moduleSerial', 'r.moduleName as moduleName')
+    .leftJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'st.id', 'g.stateId')
     .leftOuterJoin('Lga as lg', 'lg.id', 'g.lgaId')
-    .leftOuterJoin('ResultCategoryGroup as rcg', join => {
-      join.on('r.resultCategory1', 'rcg.resultCategory1Id')
-      join.andOn(knex.raw('r.resultCategory2 <=> rcg.resultCategory2Id'))
-      join.andOn('r.assayId', 'rcg.assayId')
-    })
-    .modify(
-      addConstraints,
-      dataConstraints,
-      {
-        assay: 'a',
-        assayType: 'at',
-        device: 'd',
-        site: 's',
-        geography: 'g',
-      },
-      { showDecommissionedDevices, showUnapprovedDevices }
-    )
+
+  qb.modify(
+    addConstraints,
+    dataConstraints,
+    {
+      site: 's',
+      geography: 'g',
+    },
+    { showDecommissionedDevices, showUnapprovedDevices }
+  )
     .modify(filterParams, query, {
       assay: 'a.externalId',
       countryId: 'g.countryId',
@@ -71,35 +49,18 @@ function getResultsByModuleWithinTimeFrame(
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
     })
-    .modify(qb => {
-      if (query.minDate) {
-        qb.where('r.startedOn', '>=', query.minDate)
-      }
-      if (query.maxDate) {
-        qb.where('r.startedOn', '<=', query.maxDate)
-      }
-      if (!query.assay && assay) {
-        qb.whereIn('a.externalId', assay)
-      }
-      if (query.assayType) {
-        qb.where('at.externalId', '=', query.assayType)
-      }
-      if (_.isArray(query.resultCategory1)) {
-        qb.whereIn('rc1.externalId', query.resultCategory1)
-      } else if (query.resultCategory1) {
-        qb.where('rc1.externalId', '=', query.resultCategory1)
-      }
-
-      if (query.resultCategory2) {
-        qb.where('rc2.externalId', '=', query.resultCategory2)
-      }
-    })
-    .where('r.timeFrame', timeFrame)
-    .sum('r.resultCount as cnt')
+    .where('r.startedOn', '>=', query.minDate)
+    .where('r.startedOn', '<=', query.maxDate)
+    .select('moduleName', 'moduleSerial', 'instrumentSerial', 'errorCode', 'r.errorNotes as errorDescription')
+    .select(knex.raw('DATE(r.startedOn) as dateOfError'))
+    .select(knex.raw('COUNT(r.id) as totalTests'))
+    .groupBy('r.id')
+    .select(knex.raw('SUM(CASE WHEN r.errorCode IS NOT NULL THEN 1 ELSE 0 END) as totalErrors'))
+    .select('lg.name as district', 'st.name as zone', 's.name as deploymentName')
 
   return qb
 }
 
 module.exports = {
-  getResultsByModuleWithinTimeFrame,
+  getResultsByModuleErrorsWithinTimeFrame,
 }
