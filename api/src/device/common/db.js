@@ -821,6 +821,15 @@ function modulesWithLastResultBeforeMinDate(minDate) {
     .as('r')
 }
 
+function getResultWithUsedModules(knex, minDate, maxDate) {
+  return knex('Result as r')
+    .select('r.deviceId')
+    .count('r.id as totalTests')
+    .countDistinct('moduleName as modulesReporting')
+    .whereBetween('endedOn', [minDate, maxDate])
+    .groupBy('r.deviceId')
+}
+
 const formatTimeZoneDate = (date, timezoneIANA) => {
   if (!date) {
     return date
@@ -868,4 +877,5 @@ module.exports = {
   getDeviceByIdBaseQuery,
   getLastUploadDateBySites,
   deleteMissingInventoryLots,
+  getResultWithUsedModules,
 }
