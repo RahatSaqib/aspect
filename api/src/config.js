@@ -5,6 +5,7 @@ const { IGNORED_SENTRY_ERRORS } = require('./shared/constants')
 const port = process.env.PORT || 8080
 const host = '127.0.0.1'
 const hostName = 'localhost'
+console.log('What is database ', process.env['db.databaseName'])
 module.exports = {
   port,
   host,

@@ -115,7 +115,7 @@ const criticalErrorsByModule = {
   i18nKey: 'criticalErrorsByModule',
   i18nKeyDescription: 'criticalErrorsByModule_description',
   externalId: 'critical_errors_by_module',
-  fileName: 'getErrorsByModules',
+  fileName: 'ModulesWithErrors',
   availableForNotification: 1,
   sortOrder: 2,
   validations: ['dateRangeRequired'],

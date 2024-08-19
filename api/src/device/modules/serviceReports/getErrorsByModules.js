@@ -2,7 +2,7 @@ const _ = require('lodash')
 const { knex, sortPageParams, filterParams } = require('../../../db')
 const { addConstraints } = require('../../../auth/constraints')
 const { getBasicsForDevicesReport } = require('../../common/db')
-const { getBaseQueryForFactResultsDeviceByTimeFrame } = require('../../../fact/common/db')
+const { getResultsByModuleWithinTimeFrame } = require('../db')
 const { allResultCategoryToId } = require('../../../shared/dictionary')
 
 async function getErrorsByModules(dataConstraints, query) {
@@ -14,7 +14,7 @@ async function getErrorsByModules(dataConstraints, query) {
     ? [resultCategoryIds.Invalid, resultCategoryIds.Indeterminate]
     : [resultCategoryIds.Invalid, resultCategoryIds.Indeterminate, resultCategoryIds.NoResult]
 
-  const allCounts = getBaseQueryForFactResultsDeviceByTimeFrame(knex, {
+  const allCounts = getResultsByModuleWithinTimeFrame(knex, {
     addConstraints,
     dataConstraints,
     filterParams,
@@ -82,7 +82,25 @@ async function getErrorsByModules(dataConstraints, query) {
       deviceId: 'd.id',
     })
 
-  return data
+  const object = {}
+  ;[
+    'Deployment Name',
+    'Zone',
+    'District',
+    'InstrumentSerial',
+    'ModuleSerial',
+    'Module Name',
+    'Date of error',
+    'Error code',
+    'Error Category',
+    'Error description',
+    'Total Tests Run During Period',
+    'Total Errors During Period',
+  ].forEach(element => {
+    object[element] = element
+  })
+
+  return [object]
 }
 
 module.exports = {
