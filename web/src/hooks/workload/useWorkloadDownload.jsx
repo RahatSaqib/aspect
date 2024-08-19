@@ -1,4 +1,6 @@
 import { stringify } from 'querystring'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
@@ -11,8 +13,6 @@ import {
 import { aspectFetch } from '../../utils/utils/fetch'
 import { downloadFile } from '../../utils/utils/files'
 import { WORKLOAD_KEY, WORKLOAD_KEY_EXPORT_ENDPOINT } from './workloadKeys.js'
-import omitBy from 'lodash/omitBy'
-import isNil from 'lodash/isNil'
 
 const getDownload = async (filtersParams, fileFormat) => {
   return aspectFetch(
