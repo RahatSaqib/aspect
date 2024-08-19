@@ -17,14 +17,9 @@ const _ = require('lodash')
  * @param {boolean} opts.showUnapprovedDevices - show unapproved devices
  * @returns {Object} - base query without projection. Constraints and filter params are applied.
  */
-function getResultsByModuleErrorsWithinTimeFrame(
-  knex,
-  { addConstraints, dataConstraints, filterParams, assay, query, timeFrame = 'month', joinSiteWith = 'device' },
-  opts
-) {
+function getResultsByModuleErrorsWithinTimeFrame(knex, { addConstraints, dataConstraints, filterParams, query }, opts) {
   const { showDecommissionedDevices = false, showUnapprovedDevices = false } = opts || {}
   const qb = knex('Result as r')
-    // .groupBy('r.moduleSerial as moduleSerial', 'r.moduleName as moduleName')
     .leftJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'st.id', 'g.stateId')
