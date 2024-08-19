@@ -13,8 +13,9 @@ const messages = {
       defaultMessage: 'GeneXpert Device Utilization',
     },
     utilizationRate: {
-      id: 'p.PkDashboard.utilizationRate',
-      defaultMessage: 'Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working days in year)',
+      id: 'p.PkDashboard.utilizationRate1',
+      defaultMessage:
+        'Utilization Rate : (Total tests in the selected period * 100) / (Daily Capacity of device * Working days in the selected period)',
     },
     coverageTitle: { id: 'p.PkDashboard.coverageTitle', defaultMessage: 'Xpert MTB/RIF Coverage' },
     rifCurrentTitle: { id: 'p.PkDashboard.rifCurrentTitle', defaultMessage: 'Current Testing of MTB/RIF performed in' },

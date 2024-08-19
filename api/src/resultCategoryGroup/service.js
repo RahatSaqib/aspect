@@ -26,6 +26,8 @@ async function listResultCategoryGroupsForSelectList(request) {
       'rcg.i18nKey',
       'rc1.externalId as resultCategory1ExternalId',
       'rc2.externalId as resultCategory2ExternalId',
+      'rc1.id as resultCategory1',
+      'rc2.id as resultCategory2',
     ])
 
   return { ok: true, data }
