@@ -8,7 +8,6 @@ async function getErrorsByModulesReport(auth, query) {
     throw Boom.badRequest('Dates are required')
   }
   const dataConstraints = await getConstraints(auth.credentials)
-  console.log('WHat is data Constraints ::: === >', dataConstraints)
   const data = await getErrorsByModules(dataConstraints, query)
   return {
     ok: true,

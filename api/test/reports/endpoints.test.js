@@ -20,7 +20,7 @@ describe('API Reports Endpoint', () => {
       runTestWithKnex(async () => {
         const response = await server
           .get(apiPath)
-          .query({ minDate: subMonths(new Date(), 1), maxDate: new Date(), format: 'csv' })
+          .query({ minDate: subMonths(new Date(), 1), maxDate: new Date(), format: 'csv', timeZone: 'Asia/Calcutta' })
           .set('Authorization', `Bearer ${shared.token}`)
         assert.equal(response.status, 200)
         let csvContent = response.body.toString()

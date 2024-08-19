@@ -23,9 +23,7 @@ function getResultsByModuleWithinTimeFrame(
   opts
 ) {
   const { showDecommissionedDevices = false, showUnapprovedDevices = false } = opts || {}
-  const qb = knex('FactResultsDeviceByTimeFrame as r')
-    .innerJoin('Device as d', 'd.id', 'r.deviceId')
-    .innerJoin('DeviceType as dt', 'd.deviceTypeId', 'dt.id')
+  const qb = knex('Result as r').groupBy('r.moduleSerial as moduleSerial', 'r.moduleName as moduleName')
 
   switch (joinSiteWith) {
     case 'result':
