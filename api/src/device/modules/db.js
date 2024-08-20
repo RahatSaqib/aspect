@@ -44,7 +44,7 @@ function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filt
     })
     .where('r.startedOn', '>=', query.minDate)
     .where('r.startedOn', '<=', query.maxDate)
-    .select('moduleName', 'moduleSerial', 'instrumentSerial', 'errorCode', 'r.errorNotes as errorDescription')
+    .select('siteId', 'moduleName', 'moduleSerial', 'instrumentSerial', 'errorCode', 'r.errorNotes as errorDescription')
     .select('lg.name as district', 'st.name as zone', 's.name as deploymentName')
     .select(knex.raw('DATE(r.startedOn) as dateOfError'))
 
