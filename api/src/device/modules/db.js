@@ -47,6 +47,7 @@ function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filt
     .select('siteId', 'moduleName', 'moduleSerial', 'instrumentSerial', 'errorCode', 'r.errorNotes as errorDescription')
     .select('lg.name as district', 'st.name as zone', 's.name as deploymentName')
     .select(knex.raw('DATE(r.startedOn) as dateOfError'))
+    .orderBy('deploymentName', 'moduleName')
 
   return queryBuilder
 }
