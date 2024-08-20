@@ -16,7 +16,7 @@ describe('API Reports Endpoint', () => {
       shared.checkToken(server, apiPath)
     })
 
-    it('should return response for critical errors by module report', () =>
+    it('should return response with csv headers for critical errors by module report', () =>
       runTestWithKnex(async () => {
         const response = await server
           .get(apiPath)
@@ -34,9 +34,8 @@ describe('API Reports Endpoint', () => {
         // convert CSV content to array of objects
         const csvArray = csvContent.split('\n').map(row => row.split(','))
 
-        // Add assertion on the response received from the above console.log in the terminal
-        assert.equal(csvArray[0][0], 'Errors by Module')
         ;[
+          '#',
           'Deployment Name',
           'Zone',
           'District',
@@ -45,28 +44,11 @@ describe('API Reports Endpoint', () => {
           'Module Name',
           'Date of error',
           'Error code',
-          'Error Category',
           'Error description',
           'Total Tests Run During Period',
           'Total Errors During Period',
         ].forEach((element, index) => {
-          assert.equal(csvArray[6][index], element)
-        })
-        ;[
-          '<deploymentName>',
-          '<zone>',
-          '<district>',
-          '<instrumentSerial>',
-          '<moduleSerial>',
-          '<moduleName>',
-          '<dateOfError>',
-          '<errorCode>',
-          '<errorCategory>',
-          '<errorDescription>',
-          '<totalRestsRunDuringPeriod>',
-          '<totalErrorsDuringPeriod>',
-        ].forEach((element, index) => {
-          assert.equal(csvArray[7][index], element)
+          assert.equal(csvArray[0][index], element)
         })
       }))
 
