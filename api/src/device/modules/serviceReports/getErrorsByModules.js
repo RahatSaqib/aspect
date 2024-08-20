@@ -1,4 +1,3 @@
-const _ = require('lodash')
 const { knex, filterParams } = require('../../../db')
 const { addConstraints } = require('../../../auth/constraints')
 const { getResultsWithinTimeFrame } = require('../db')

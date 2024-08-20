@@ -1,5 +1,5 @@
 const chai = require('chai')
-const { subYears, subMonths } = require('date-fns')
+const { subMonths } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
