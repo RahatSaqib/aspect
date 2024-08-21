@@ -36,7 +36,7 @@ const UtilizationPage = () => {
     maxDate: endOfDay(now),
   })
 
-  const { isLoadingTable, tableData } = useUtilizationTable(filter)
+  const { isLoadingTable, tableData } = useUtilizationTable({ ...filter, tableData: 'tableData' })
 
   const { isLoading: isLoadingNational, data: { data: rawNational = [], WORKING_DAYS_IN_YEAR } = {} } = useQuery(
     ['tblUtilizationPage_National'],
