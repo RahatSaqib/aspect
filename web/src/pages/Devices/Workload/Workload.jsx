@@ -54,9 +54,12 @@ const Workload = () => {
     error,
   } = useWorkload({ ...filter, size: pageSize, page: pageAt, sortCol, sortDir })
 
-  const { isLoading: isresultCategoryLoading, data: resultCategoryGroups } = useResultCategoryGroup([filter.assayId], {
-    enabled: !!filter.assayId,
-  })
+  const { isLoading: isresultCategoryLoading, data: resultCategoryGroups } = useResultCategoryGroup(
+    filter.assayId ? [filter.assayId] : undefined,
+    {
+      enabled: !!filter.assayId,
+    }
+  )
 
   if (isError) throw new Error(error)
 

@@ -13,17 +13,16 @@ const getResultCategoryGroup = async assayId =>
     params: isArray(assayId) ? assayId.map(id => ({ assayId: id })) : [{ assayId }],
   }).then(response => response.data)
 
-const useResultCategoryGroup = (assayIds = [], options) => {
+const useResultCategoryGroup = (assayIds = []) => {
   const { formatMessage } = useIntl()
   const assayIdsLength = assayIds?.length
 
   return useQuery(
-    [RESULT_KEY, 'category-group', { assay: sortBy(assayIds).join(',') }],
+    [RESULT_KEY, 'category-group', ...(assayIdsLength ? [{ assay: sortBy(assayIds).join(',') }] : [])],
     () => getResultCategoryGroup(assayIds),
     {
       ...SELECTS_QUERY_OPTIONS,
       enabled: assayIdsLength > 0,
-      ...options,
       select: data =>
         data?.map(category => ({
           ...category,
