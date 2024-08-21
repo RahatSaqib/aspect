@@ -612,7 +612,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
     .innerJoin('Assay as a', joinAssay => {
       joinAssay.on(function () {
         if (assayId !== undefined) {
-          this.on('a.id', knex.raw(assayId))
+          this.on('dt.id', 'a.deviceTypeId').andOn('a.id', knex.raw(assayId))
         } else {
           this.on('dt.id', 'a.deviceTypeId')
         }
@@ -622,7 +622,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
     .innerJoin('Result as r', joinResultQuery => {
       joinResultQuery.on(function () {
         if (assayId !== undefined) {
-          this.on('r.assayId', knex.raw(assayId))
+          this.on('r.deviceId', 'd.id').andOn('r.assayId', knex.raw(assayId))
         } else {
           this.on('r.deviceId', 'd.id')
         }
@@ -648,7 +648,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
     .modify(q => {
       extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
     })
-    .select('r.deviceId', knex.raw('COUNT(r.id) as total'))
+    .select('r.deviceId', knex.raw('COUNT(DISTINCT r.id) as total'))
 
   const { totalRows } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as totalRows')).first()
 
