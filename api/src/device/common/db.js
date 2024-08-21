@@ -621,7 +621,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Result as r', joinResultQuery => {
       joinResultQuery.on(function () {
-        if (assayId !== undefined) {
+        if (assayId) {
           this.on('r.deviceId', 'd.id').andOn('r.assayId', knex.raw(assayId))
         } else {
           this.on('r.deviceId', 'd.id')
