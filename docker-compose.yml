@@ -1,6 +1,21 @@
 version: '3.2'
 
 services:
+  redis:
+    image: redis:6.2.5-alpine
+    container_name: redis-aspect
+    restart: always
+    ports:
+      - '6379:6379' # Redis default port
+    volumes:
+      - ./.devcontainer/data/redis/data:/data
+    healthcheck:
+      test: [ 'CMD', 'redis-cli', 'ping' ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+    networks:
+      - aspectnet
   rabbitmq:
     image: rabbitmq:3.12-management-alpine
     container_name: rabbitmq-aspect
