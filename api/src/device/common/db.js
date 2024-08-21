@@ -68,14 +68,15 @@ const SELECT_SHOW_FIELDS = [
   'd.isDaisyChained',
 ]
 
-async function getDeviceInfo(dataConstraints, query) {
+async function getDeviceInfo(credentials, query) {
+  const dataConstraints = await getConstraints(credentials)
   const getDeviceQuery = knex('Device as d')
     .innerJoin('Site as s', 's.id', 'd.siteId')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .innerJoin('State as st', 'st.id', 'g.stateId')
-    .innerJoin('Lga as lga', 'lga.id', 'g.lgaId')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .count({
-      cntDevices: knex.raw('DISTINCT d.id'),
+      cntDevices: knex.raw('d.id'),
     })
     .sum({
       cntModules: knex.raw('d.moduleBayCapacity'),

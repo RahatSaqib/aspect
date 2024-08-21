@@ -856,7 +856,6 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           cnt_Xdr_Total_Tests: knex.raw(`DISTINCT r.id`),
         })
         .first(),
-    deviceInfo: getDeviceInfo(dataConstraints, query),
   }
 }
 
@@ -876,10 +875,9 @@ async function getDataForReportDrTb10A(auth, query, timezone, options) {
     dateFrom = subMonths(dateTo, 1)
   }
 
-  const { drTb10AData, getQueryForXdrCountsByReferringSiteIds, deviceInfo } = await reportDrTb10ABaseQuery(auth, query)
-  let data = await drTb10AData
+  const { drTb10AData, getQueryForXdrCountsByReferringSiteIds } = await reportDrTb10ABaseQuery(auth, query)
   // eslint-disable-next-line prefer-const
-  const [devicesData] = await Promise.all([deviceInfo])
+  let [data, devicesData] = await Promise.all([drTb10AData, getDeviceInfo(auth.credentials, query)])
 
   sharedResults[nameOfSharedData] = data
 
@@ -975,9 +973,9 @@ async function getDataForSheet1or2(
   /**
    * set `cntDevices` and remove temporal prop `devices`
    */
-  // if (!_.isEmpty(data)) {
-  //   data.cntDevices = item.devices?.size || 0
-  // }
+  if (!_.isEmpty(data)) {
+    data.cntDevices = item.devices?.size || 0
+  }
   delete data.devices
   /**
    * additional props
