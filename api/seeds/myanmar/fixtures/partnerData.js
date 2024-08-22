@@ -39,6 +39,7 @@ module.exports = {
         AspectApiEndpoint: 'https://myanmar.aspect.id/api',
         MigrateAspectApiKey: true,
         ConnectSettingsAndCustomFieldsSource: 'aspect',
+        CustomFieldsEnabled: true,
       },
     },
   ],
