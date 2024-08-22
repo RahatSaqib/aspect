@@ -8,6 +8,7 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
+import allmessages from '../../../../../messages/allMessages'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -37,7 +38,7 @@ const TestDiagTrendPage = () => {
   )
 
   const MTBPlusMessage = formatMessage(intlMessages.MTBPlus)
-  const TotalMessage = formatMessage(intlMessages.ReportableResults)
+  const TotalMessage = formatMessage(allmessages.reportableResults)
   const MTBPercentMessage = formatMessage(intlMessages.MTBPercent)
 
   const [graphData, setGraphData] = useState()
