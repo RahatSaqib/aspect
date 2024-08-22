@@ -64,7 +64,6 @@ const RrtbTestDiagnosisPage = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data])
-console.log(graphData,"RR GRAPH DATA")
   return (
     <PkPage
       title={formatMessage(messages.RRTestingDiagnosis)}

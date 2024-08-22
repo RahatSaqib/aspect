@@ -244,7 +244,7 @@ const CurrentDiagnosisGraphPage = () => {
                 data={donutData.data}
                 total={donutData.total}
                 graphId="tbResultsByCategory1Aggregate"
-                graphTitle = {`Reportable results`}
+                graphTitle={formatMessage(graphMessages.reportableResults)}
                 showLabel={showLabel}
                 tooltip={v => (!showPercentage ? `${v}` : `${((v * 100) / donutData.total).toFixed(2)}%`)}
                 label={obj => (!showPercentage ? obj.cnt : `${(obj.percent * 100).toFixed(2)}%`)}

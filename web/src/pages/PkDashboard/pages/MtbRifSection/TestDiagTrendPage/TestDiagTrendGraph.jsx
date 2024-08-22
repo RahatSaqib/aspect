@@ -37,21 +37,18 @@ const TestDiagTrendPage = () => {
   )
 
   const MTBPlusMessage = formatMessage(intlMessages.MTBPlus)
-  const TotalMessage = "Reportable Result"
+  const TotalMessage = formatMessage(intlMessages.ReportableResults)
   const MTBPercentMessage = formatMessage(intlMessages.MTBPercent)
-  const TraceDetatcted = formatMessage(intlMessages.GxMtbRifUltraMTBTraceDetectedRifIndeterminate)
 
   const [graphData, setGraphData] = useState()
   useEffect(() => {
     if (data) {
-      console.log(data.grouped,"DATA")
       const line = []
       const bar = []
       data.grouped.map(({ year, MtbToTotalPercentage, Total, MtbDetected }) => {
         line.push({ year, [MTBPercentMessage]: +MtbToTotalPercentage.toFixed(2) })
         bar.push({ year, value: Total, type: TotalMessage })
         bar.push({ year, value: MtbDetected, type: MTBPlusMessage })
-        bar.push({ year, value: null, type: TraceDetatcted })
         return {}
       })
 
@@ -97,7 +94,6 @@ const TestDiagTrendPage = () => {
               { name: TotalMessage, colorId: 'caseTotal' },
               { name: MTBPlusMessage, colorId: 'caseDetected' },
               { name: MTBPercentMessage, colorId: 'casePercentDetectedOfTotal' },
-              { name: TraceDetatcted, colorId: 'caseTraceDetected' },
             ]}
             xField="year"
             yField={['value', MTBPercentMessage]}
