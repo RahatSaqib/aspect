@@ -87,7 +87,7 @@
     "base32": "^0.0.7",
     "bcrypt": "5.1.0",
     "bluebird": "^3.7.2",
-    "bullmq": "5.12.9",
+    "bullmq": "5.12.10",
     "date-fns": "^2.29.3",
     "date-fns-timezone": "^0.1.4",
     "date-fns-tz": "^2.0.0",

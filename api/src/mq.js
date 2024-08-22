@@ -367,6 +367,9 @@ class MessageContext {
     this.isFinalState = false
   }
 
+  /**
+   * Why can't we directly call this function by importing it, instead of appending it into this MessageContext?
+   */
   async initDictionaryTables() {
     await initDictionaryTables()
   }
@@ -375,6 +378,9 @@ class MessageContext {
     return new MessageContext(this.queue, `${this.id} clone`)
   }
 
+  /**
+   * With transaction used directly from `db` file, we can simplify this function by using dispatch function.
+   */
   dispatch(action, bindingKey) {
     if (this.isFinalState) {
       throw new Error('Cannot dispatch after final state, create new context')
@@ -391,6 +397,12 @@ class MessageContext {
     }
   }
 
+  /**
+   * Can we not remove this and directly use `transact` from `db` file directly?
+   * I see, their is no additional dispatch functions while the transaction running to queue
+   * the actions. So, we can directly use `transact` from `db` file.
+   * With the transact function removed, we can get rid of `commit`, `rollback` functions as well.
+   */
   transact(task) {
     if (this.transaction) {
       throw new Error('Cannot create multiple transactions, create new context')
@@ -405,6 +417,10 @@ class MessageContext {
     return this.transaction
   }
 
+  /**
+   * Why we need this as well? Can we not directly use `run` from `db` file?
+   * I see, their is no additional dispatch functions while the task running to queue
+   */
   run(task) {
     return run(async knex => task(knex))
   }
