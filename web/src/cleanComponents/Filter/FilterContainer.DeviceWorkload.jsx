@@ -38,8 +38,8 @@ const DeviceWorkloadFilter = () => {
         <Grid item xs={3}>
           <AssaySelect
             label={formatMessage(messages.assay)}
-            value={state.singleAssayId}
-            onChange={e => setState({ ...state, singleAssayId: e.target.value })}
+            value={state.assayId}
+            onChange={e => setState({ ...state, assayId: e.target.value })}
             single
           />
         </Grid>
