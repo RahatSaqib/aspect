@@ -5,10 +5,6 @@ const messages = defineMessages({
     id: 'pages.Status.total',
     defaultMessage: 'Total',
   },
-  reportableResults: {
-    id: 'pages.Status.reportableResults',
-    defaultMessage: 'Reportable Results',
-  },
   showValuesLabel: {
     id: 'pages.Status.showValuesLabel',
     defaultMessage: 'Show Label',

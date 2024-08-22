@@ -26,6 +26,7 @@ import useAuthState from '../../../../../hooks/useAuthState'
 import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { getCustomMessage, graphMessages } from '../../../../../messages'
+import allmessages from '../../../../../messages/allMessages'
 import PkPage from '../../../components/PkPage'
 import TripleCardSide from '../../../components/TripleCardSide'
 import { useMtpRifResults } from '../../../hooks/useMtpRifResults'
@@ -244,7 +245,7 @@ const CurrentDiagnosisGraphPage = () => {
                 data={donutData.data}
                 total={donutData.total}
                 graphId="tbResultsByCategory1Aggregate"
-                graphTitle={formatMessage(graphMessages.reportableResults)}
+                graphTitle={formatMessage(allmessages.reportableResults)}
                 showLabel={showLabel}
                 tooltip={v => (!showPercentage ? `${v}` : `${((v * 100) / donutData.total).toFixed(2)}%`)}
                 label={obj => (!showPercentage ? obj.cnt : `${(obj.percent * 100).toFixed(2)}%`)}
