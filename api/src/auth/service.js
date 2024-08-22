@@ -6,8 +6,6 @@ const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
 require('isomorphic-fetch')
-const emailUtil = require('../email/emailUtil')
-const templateProcessor = require('../email/templateProcessor')
 const logger = require('../shared/logger')
 
 const bcryptCompare = promisify(bcrypt.compare)
@@ -16,17 +14,12 @@ const bcryptHash = promisify(bcrypt.hash)
 const config = require('../config')
 const { query, knex } = require('../db')
 const { gxAlertAuthenticate } = require('./gxalert')
-const { getRemoteAddress } = require('../shared/request')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
 
 const clientTypes = {
   app: 'reporter_app',
   web: 'web',
-}
-
-async function checkAuthentication() {
-  return { message: 'Welcome to the API!' }
 }
 
 const personProps = [
@@ -375,17 +368,6 @@ async function refreshToken(request) {
   }
 }
 
-async function getJobFunctions(id, name, partnerId) {
-  return query('Get job functions for user and partner')
-    .from('Person as p')
-    .innerJoin('JobContext as jc', 'p.id', 'jc.personId') // 'jc.jobFunctionId', 'jf.id')
-    .innerJoin('JobFunction as jf', 'jc.jobFunctionId', 'jf.id')
-    .where({ 'p.userId': id, 'jf.partnerId': partnerId })
-    .orderBy(['jf.name'])
-    .distinct('jf.name')
-    .pluck('jf.name')
-}
-
 async function hasPermissions(auth, modules) {
   return _.intersection(auth.credentials.permissions, modules).length > 0
 }
@@ -595,52 +577,6 @@ async function updateUsernameAndPasswordForLoggedInUser(request) {
   }
 }
 
-async function createResetPasswordToken(request) {
-  const { params } = request
-
-  const users = await query('Get user details from email address')
-    .from('Person as p')
-    .innerJoin('User as u', 'p.userId', 'u.id')
-    .where({ 'p.email': params.email })
-    .orWhere({ 'p.email2': params.email })
-    .select('u.id', 'p.name', 'p.culture')
-
-  if (users.length === 1) {
-    const resetPasswordToken = uuid.v4()
-    const now = new Date()
-    const expires = new Date(now.getTime() + 3600000)
-    const generatedEmail = await templateProcessor.process(
-      'resetPassword',
-      {
-        name: users[0].name,
-        aspectUrl: process.env.aspectUrl,
-        resetPasswordToken,
-      },
-      users[0].culture
-    )
-    const inlineImageAttachments = await templateProcessor.getInlineImageAttachments(generatedEmail.html)
-
-    await emailUtil.sendEmail(
-      params.email,
-      generatedEmail.subject,
-      generatedEmail.html,
-      generatedEmail.text,
-      inlineImageAttachments
-    )
-
-    await query('Save reset password token').from('User as u').where('u.id', users[0].id).update({
-      resetPasswordToken,
-      resetPasswordTokenExpires: expires,
-    })
-  } else if (users.length > 1) {
-    return Boom.conflict('Could not pinpoint the user from the email address provided')
-  }
-
-  return {
-    ok: true,
-  }
-}
-
 async function updatePasswordWithResetPasswordToken(request) {
   const { payload, params } = request
 
@@ -757,87 +693,18 @@ async function getApplicableLicense(personId, partnerId) {
   return latestLicense
 }
 
-async function getLicense(request) {
-  const {
-    query: { licenseId },
-  } = request
-
-  const license = await query('Get license').from('License').where('id', licenseId).first('id', 'createdOn', 'content')
-
-  return { ok: true, data: license }
-}
-
-async function acceptLicense(request) {
-  const {
-    payload: { licenseId },
-  } = request
-
-  const loggedInUser = await getUser(request.auth.credentials.name)
-
-  const licenseUpdates = {
-    acceptedOn: new Date(),
-    ip: getRemoteAddress(request),
-  }
-
-  await query('Insert or update accepted license for user').raw(
-    'INSERT INTO LicensePerson set ? ON DUPLICATE KEY UPDATE ?',
-    [
-      {
-        licenseId,
-        personId: loggedInUser.personId,
-        ...licenseUpdates,
-      },
-      licenseUpdates,
-    ]
-  )
-
-  // need to return a new JWT, now without hasToAcceptLicenseId
-  return refreshToken(request)
-}
-
-// / Revoke/Grant access to specific user
-async function revokeUsersToken(userId, revoke) {
-  await query('change revoked state for the specific user in refresh token tables')
-    .from('RefreshToken')
-    .where({ userId })
-    .update({
-      revoked: revoke,
-    })
-}
-
-// Lockedout and grant access to login to specific user.
-async function lockedOutUser(userId, lockedOut) {
-  await query('change Lockout state for the specific user ').from('User').where({ id: userId }).update({
-    lockedOut,
-  })
-}
-
-async function getUserJobFunctions(request) {
-  const { auth } = request
-  const { id, name, partnerId } = await getUser(auth.credentials.name)
-  const jobFunctions = await getJobFunctions(id, name, partnerId)
-  return { ok: true, data: jobFunctions }
-}
-
 module.exports = {
   getUser,
   getUserByUserId,
   getUserByPersonId,
   authenticate,
-  checkAuthentication,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser,
   updateUsernameAndPasswordForPerson,
-  createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
-  getLicense,
-  acceptLicense,
-  revokeUsersToken,
-  lockedOutUser,
   hasPermissions,
   clientTypes,
   getGeographyAccess,
-  getUserJobFunctions,
   getPersonByPersonId,
   getDisplayPreferences,
 }
