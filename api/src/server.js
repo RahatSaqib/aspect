@@ -142,6 +142,28 @@ const messageQueuePlugin = {
   },
 }
 
+/**
+ * TODO: Once the rabbit mq is removed make this plugin name generic
+ */
+const bullMessageQueuePlugin = {
+  name: 'bullMessageQueue',
+  version,
+  register: async server => {
+    const queueName = config.messageQueue.name
+    try {
+      const queue = await createMessageQueue(queueName)
+
+      if (config.scheduler.enabled) {
+        queue.addScheduledJobs(queue)
+      }
+
+      addLoggers(server, queue)
+    } catch (err) {
+      logger.error(err)
+    }
+  },
+}
+
 const plugins = [
   // logging framework
   require('./shared/hapi-logger'),
@@ -164,7 +186,8 @@ const plugins = [
 
   // Set message queue
   messageQueuePlugin,
-  // Set sentry hapi pugin
+  bullMessageQueuePlugin,
+  // Set sentry hapi plugin
   ...sentryPlugins,
 ]
 
