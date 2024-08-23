@@ -31,7 +31,12 @@ class MessageQueue {
     this.queueName = queueName
     // useWorkerThreads: true options is used to launch node Worker Threads library for each queue processing job
     // Documentation here: https://docs.bullmq.io/guide/workers/sandboxed-processors#worker-threads
-    this.queue = new Queue(queueName, { connection: this.connection, concurrency: 10, useWorkerThreads: true })
+    this.queue = new Queue(queueName, {
+      connection: this.connection,
+      concurrency: 10,
+      useWorkerThreads: true,
+      attempts: 3, // TODO: Check with team on what is the current rabbit mq retry count and configure it accordingly
+    })
 
     const processorFile = path.join(__dirname, 'mqProcessor.js')
 
