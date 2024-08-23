@@ -4,6 +4,7 @@ const Path = require('path')
 const Boom = require('@hapi/boom')
 const { respondFile } = require('../shared/response')
 const { saveReportToFile } = require('./saveReportToFile')
+const { queue } = require('../messageQueue')
 
 /**
  * This method execute a report and return the result over a hapi reply object.
@@ -16,6 +17,7 @@ module.exports = async function downloadReport(request, reply) {
   const { externalId } = params
 
   try {
+    queue().addJob('asyncReports', { auth, query, externalId })
     const dataBuffer = new Stream.PassThrough()
     const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true)
 

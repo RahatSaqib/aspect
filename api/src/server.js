@@ -21,6 +21,7 @@ const { initDictionaryTables } = require('./shared/dictionary')
 const { port } = config
 
 const AspectCacheSingleton = require('../aspectCache')
+const { registerMessageQueue } = require('./messageQueue')
 
 // version is cached to indicate the new version only when Aspect api restarts,
 // instead of doing so directly when package.json is updated.
@@ -132,7 +133,7 @@ const messageQueuePlugin = {
 
       addLoggers(server, queue)
       await addSubscriptions(queue)
-      if (config.scheduler.enabled) {
+      if (false) {
         const dispatcher = startScheduler(queue)
         server.app.dispatcher = dispatcher
       }
@@ -148,20 +149,7 @@ const messageQueuePlugin = {
 const bullMessageQueuePlugin = {
   name: 'bullMessageQueue',
   version,
-  register: async server => {
-    const queueName = config.messageQueue.name
-    try {
-      const queue = await createMessageQueue(queueName)
-
-      if (config.scheduler.enabled) {
-        queue.addScheduledJobs(queue)
-      }
-
-      addLoggers(server, queue)
-    } catch (err) {
-      logger.error(err)
-    }
-  },
+  register: registerMessageQueue,
 }
 
 const plugins = [
