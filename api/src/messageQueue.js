@@ -29,11 +29,13 @@ class MessageQueue {
     this.connection = new IORedis(config.redis.url, { maxRetriesPerRequest: null })
 
     this.queueName = queueName
-    this.queue = new Queue(queueName, { connection: this.connection, concurrency: 10 })
+    // useWorkerThreads: true options is used to launch node Worker Threads library for each queue processing job
+    // Documentation here: https://docs.bullmq.io/guide/workers/sandboxed-processors#worker-threads
+    this.queue = new Queue(queueName, { connection: this.connection, concurrency: 10, useWorkerThreads: true })
 
     const processorFile = path.join(__dirname, 'mqProcessor.js')
 
-    this.worker = new Worker(queueName, processorFile, { connection: this.connection, concurrency: 10 })
+    this.worker = new Worker(queueName, processorFile, { connection: this.connection })
 
     this.worker.on('completed', job => {
       logger.debug(`completed job: ${job.id} in ${this.queueName}`, { reLabel: 'aspect:mq:completed' })
