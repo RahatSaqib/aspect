@@ -54,7 +54,7 @@ class MessageQueue {
    * @param {string} name - Name of the job
    * @param {object} data - Data to be processed
    */
-  async addJob(name, data, options) {
+  async add(name, data, options) {
     try {
       const job = await this.queue.add(name, data, { removeOnComplete: true, removeOnFail: true, ...options })
       logger.debug(`Added job ${job.id} to the queue with options: ${options}`, { reLabel: 'aspect:mq:added' })

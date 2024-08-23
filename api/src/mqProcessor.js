@@ -6,7 +6,7 @@ const jobStrategies = {
     const result = await knex('Result').where({ externalId: job.data.externalId }).first()
     logger.debug(`result: ${JSON.stringify(result)}, job data: ${job.data.externalId}`)
     // Function calling to generate async reports will come here.
-    return job.data
+    return job.id
   },
   testJobName: async job => {
     // Test job will be removed after real job is added.

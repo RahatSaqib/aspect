@@ -17,7 +17,7 @@ module.exports = async function downloadReport(request, reply) {
   const { externalId } = params
 
   try {
-    queue().addJob('asyncReports', { auth, query, externalId })
+    queue().add('asyncReports', { auth, query, externalId })
     const dataBuffer = new Stream.PassThrough()
     const { fileName, extension, promise } = await saveReportToFile(auth, query, externalId, true)
 
