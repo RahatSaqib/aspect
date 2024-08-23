@@ -10,7 +10,6 @@ describe('Message Queue', () => {
   })
 
   after(async () => {
-    // await new Promise(resolve => delay(resolve, 1000))
     await messageQueue.close()
   })
 
