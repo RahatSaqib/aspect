@@ -15,6 +15,7 @@ import fetchWrapperForQueries from '../../../../../components/QueryFetch'
 import useAuthState from '../../../../../hooks/useAuthState'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import { graphMessages, getCustomMessage } from '../../../../../messages'
+import allmessages from '../../../../../messages/allMessages'
 import PkPage from '../../../components/PkPage'
 import messages from '../../../PkDashboard.Messages'
 
@@ -42,7 +43,7 @@ const RrtbTestDiagnosisPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
-  const testsPerformedMessage = formatMessage(messages.testsPerformed)
+  const testsPerformedMessage = formatMessage(allmessages.reportableResults)
   const rrDetectedMessage = formatMessage(messages.rrDetected)
   const mtbDetectedMessage = formatMessage(intlMessages.MTBPlus)
   const rrToMtbPercentageMessage = formatMessage(messages.rrToMtbPercentage)
