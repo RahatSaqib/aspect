@@ -17,10 +17,15 @@
 function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filterParams, query }, opts) {
   const { showDecommissionedDevices = false, showUnapprovedDevices = false } = opts || {}
   const queryBuilder = knex('Result as r')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
+    .innerJoin('ResultSource as rso', 'r.resultSourceId', 'rso.id')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .leftJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
     .leftJoin('Site as s', 's.id', 'r.siteId')
-    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftOuterJoin('State as st', 'st.id', 'g.stateId')
-    .leftOuterJoin('Lga as lg', 'lg.id', 'g.lgaId')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'st.id', 'g.stateId')
+    .leftJoin('Lga as lg', 'lg.id', 'g.lgaId')
 
   queryBuilder
     .modify(
@@ -37,16 +42,24 @@ function getResultsWithinTimeFrame(knex, { addConstraints, dataConstraints, filt
       countryId: 'g.countryId',
       partnerId: 'g.partnerId',
       stateId: 'g.stateId',
+      errorCode: 'r.errorCode',
       lgaId: 'g.lgaId',
       siteName: 's.name',
       deviceName: 'd.name',
       deviceType: 'dt.externalId',
     })
-    .where('r.startedOn', '>=', query.minDate)
-    .where('r.startedOn', '<=', query.maxDate)
-    .select('siteId', 'moduleName', 'moduleSerial', 'instrumentSerial', 'errorCode', 'r.errorNotes as errorDescription')
+    .where('r.endedOn', '>=', query.minDate)
+    .where('r.endedOn', '<=', query.maxDate)
+    .select(
+      'r.siteId as siteId',
+      'moduleName',
+      'moduleSerial',
+      'instrumentSerial',
+      'errorCode',
+      'r.errorNotes as errorDescription'
+    )
     .select('lg.name as district', 'st.name as zone', 's.name as deploymentName')
-    .select(knex.raw('DATE(r.startedOn) as dateOfError'))
+    .select(knex.raw('DATE_FORMAT(r.startedOn, GET_FORMAT(DATETIME, "ISO")) as dateOfError'))
     .orderBy('deploymentName', 'moduleName')
 
   return queryBuilder

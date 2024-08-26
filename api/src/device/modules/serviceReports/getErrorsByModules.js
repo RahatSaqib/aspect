@@ -17,19 +17,19 @@ async function getErrorsByModules(dataConstraints, query) {
     query,
     timeFrame: 'day',
   })
-  const totalByModuleSerial = new Map()
+  const totalBySiteId = new Map()
   results.forEach(result => {
-    const { moduleSerial, errorCode, siteId } = result
+    const { errorCode, siteId } = result
     // Found few duplicate moduleSerial at multiple sites, so used siteId with module serial as key here.
-    const key = `${siteId}-${moduleSerial}`
-    if (totalByModuleSerial.has(key)) {
-      const moduleSerialData = totalByModuleSerial.get(key)
-      totalByModuleSerial.set(key, {
+    const key = siteId
+    if (totalBySiteId.has(key)) {
+      const moduleSerialData = totalBySiteId.get(key)
+      totalBySiteId.set(key, {
         totalTests: moduleSerialData.totalTests + 1,
         totalErrors: moduleSerialData.totalErrors + (errorCode ? 1 : 0),
       })
     } else {
-      totalByModuleSerial.set(key, { totalTests: 1, totalErrors: errorCode ? 1 : 0 })
+      totalBySiteId.set(key, { totalTests: 1, totalErrors: errorCode ? 1 : 0 })
     }
   })
 
@@ -37,7 +37,7 @@ async function getErrorsByModules(dataConstraints, query) {
     .filter(result => result.errorCode)
     .map(result => {
       return {
-        ...totalByModuleSerial.get(`${result.siteId}-${result.moduleSerial}`),
+        ...totalBySiteId.get(result.siteId),
         ...result,
       }
     })
