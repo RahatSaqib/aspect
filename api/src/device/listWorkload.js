@@ -73,27 +73,29 @@ const buildXdrExtraColumns = isExport => {
 const listWorkload = async request => {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-
-  const { assayId } = query
-  const assay = await getAssay(assayId)
-
-  const { data: resultCategories } = await listResultCategoryGroupsForSelectList(request)
-
   let extraColumns = []
 
-  const detectedCategories = ['MTB Detected', 'MTB Trace Detected']
+  const { assayId } = query
 
-  extraColumns = buildNewColumns(resultCategories, assay.externalId)
+  if (assayId) {
+    const assay = await getAssay(assayId)
 
-  if (assay.externalId === 'GxMtbXdr') {
-    const xdrCategories = ['MTB Not Detected', ...detectedCategories, ...commonCategories]
-    const filteredColumns = extraColumns.filter(col => xdrCategories.includes(col.label))
-    extraColumns = [...filteredColumns, ...buildXdrExtraColumns(query.isExport)]
-  } else extraColumns = extraColumns.filter(col => !detectedCategories.includes(col.label))
+    const { data: resultCategories } = await listResultCategoryGroupsForSelectList(request)
 
+    const detectedCategories = ['MTB Detected', 'MTB Trace Detected']
+
+    extraColumns = buildNewColumns(resultCategories, assay.externalId)
+
+    if (assay.externalId === 'GxMtbXdr') {
+      const xdrCategories = ['MTB Not Detected', ...detectedCategories, ...commonCategories]
+      const filteredColumns = extraColumns.filter(col => xdrCategories.includes(col.label))
+      extraColumns = [...filteredColumns, ...buildXdrExtraColumns(query.isExport)]
+    } else extraColumns = extraColumns.filter(col => !detectedCategories.includes(col.label))
+  }
   const { total, length, data } = await getDeviceWorkload(extraColumns, dataConstraints, query, auth)
   extraColumns = extraColumns.map(ec => omit(ec, 'selector'))
   extraColumns = sortCommonCategories(extraColumns)
+
   return { ok: true, total, length, data, extraColumns }
 }
 
