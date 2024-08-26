@@ -50,9 +50,15 @@ function createHashPassword(salt) {
   return nodeCrypto.toString(outputEncoding)
 }
 
+function getHash(stringValue) {
+  const hash = crypto.createHash('md5').update(stringValue).digest('hex')
+  return hash
+}
+
 module.exports = {
   oneDirectionalMd5Hash,
   createSalt,
   encrypt,
   decrypt,
+  getHash,
 }
