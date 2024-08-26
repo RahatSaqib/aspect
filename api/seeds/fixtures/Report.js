@@ -111,7 +111,7 @@ const criticalErrorsByDevice = {
 
 const criticalErrorsByModule = {
   name: 'Critical Errors By Module',
-  description: 'Includes a list of GeneXpert modules that had at least 1 critical error',
+  description: 'Includes a list of modules that had at least 1 critical error',
   i18nKey: 'criticalErrorsByModule',
   i18nKeyDescription: 'criticalErrorsByModule_description',
   externalId: 'critical_errors_by_module',
