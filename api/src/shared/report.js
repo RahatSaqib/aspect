@@ -87,7 +87,6 @@ const processNewReport = async payload => {
   const [asyncReportId] = await knex('AsyncReport').insert({
     reportId,
     hash,
-    auth: JSON.stringify(auth),
     query: JSON.stringify(query),
     queryHash,
     statusId,

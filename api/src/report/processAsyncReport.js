@@ -45,7 +45,6 @@ module.exports = async function processAsyncReport(request) {
   } else {
     const payload = {
       reportId,
-      auth,
       query,
       hash,
       queryHash,
