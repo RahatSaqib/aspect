@@ -181,7 +181,7 @@ const getBaseResults = () =>
     .leftJoin('PartnerAssay as pa', q => {
       q.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
-    .leftJoin('Site as si', 'd.siteId', 'si.id')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
