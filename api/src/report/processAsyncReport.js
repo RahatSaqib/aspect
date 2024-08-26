@@ -60,9 +60,9 @@ module.exports = async function processAsyncReport(request) {
   /**
    * get all reports requested by current user within last 24 hours
    */
-  const items = await getAllAsyncReportsForUser(auth.credentials.name)
+  const reports = await getAllAsyncReportsForUser(auth.credentials.name)
 
   return {
-    items,
+    reports,
   }
 }
