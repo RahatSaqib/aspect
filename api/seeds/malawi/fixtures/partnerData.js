@@ -51,7 +51,7 @@ module.exports = {
         EnableInventoryModule: false,
         ClearLISSettingsIfTheyPointToGxAlert: false,
         AspectUploadExcludePatientId: false,
-        ConnectSettingsAndCustomFieldsSource: 'ASPECT',
+        ConnectSettingsAndCustomFieldsSource: 'GXALERT',
       },
     },
   ],
