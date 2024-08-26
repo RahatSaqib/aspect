@@ -13,7 +13,7 @@ const bcryptHash = promisify(bcrypt.hash)
 
 const config = require('../config')
 const { query, knex } = require('../db')
-const { gxAlertAuthenticate } = require('./gxalert')
+const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
 
@@ -115,61 +115,56 @@ function getTokenExpiry(clientType, currentTime) {
 async function authenticate(request, response) {
   const { payload } = request
   let user = await getUser(payload.name)
-  if (!user) {
-    try {
-      // no user with such username in Aspect yet - check it in GxAlert
-      user = await gxAlertAuthenticate(payload.name, payload.password)
-      response.user = user
-      if (!user) {
-        // TODO: Check if what is wrong is the user or the password
 
-        const err = Boom.unauthorized('Authentication failed. Wrong username or password.', null, {
-          errorKeyCode: 'wrongUserOrPassword',
-        })
-        err.output.payload.data = err.data
-        return loginHistoryCodeDecorator(err, LOGIN_HISTORY_CODES.userNotExists)
-      }
-    } catch (err) {
-      const data = {
-        userName: payload.name,
-        message: err.message,
-      }
-      if (err.isConnectionError !== undefined) {
-        if (err.isConnectionError) return Boom.conflict("Couldn't connect to GxAlert", data)
+  if (!user || (user.password && user.legacyPassword)) {
+    // GxAlert authentication
+    if (user && user.password && user.password.includes(';')) {
+      const [passwordHash, passwordKey] = user.password.split(';')
+      if (gxAlertHashPassword(payload.password, passwordKey) !== passwordHash) {
         return loginHistoryCodeDecorator(
-          Boom.unauthorized('There was a conflict with your GxAlert credentials', data),
+          Boom.unauthorized('Authentication failed. Wrong username or password.'),
+          LOGIN_HISTORY_CODES.wrongPassword,
+          user.id
+        )
+      }
+      // update user password to the new aspect hashing method
+      const pw = await bcryptHash(payload.password, parseInt(config.passwordSaltRounds, 10))
+      await knex('User').update({ password: pw, legacyPassword: 0 }).where({ id: user.id })
+    } else {
+      // The user might exist or not, but try logging in to gxAlert anyway
+      try {
+        user = await gxAlertAuthenticate(payload.name, payload.password)
+        response.user = user
+        if (!user) {
+          // TODO: Check if what is wrong is the user or the password
+
+          const err = Boom.unauthorized('Authentication failed. Wrong username or password.', null, {
+            errorKeyCode: 'wrongUserOrPassword',
+          })
+          err.output.payload.data = err.data
+          return loginHistoryCodeDecorator(err, LOGIN_HISTORY_CODES.userNotExists)
+        }
+      } catch (err) {
+        const data = {
+          userName: payload.name,
+          message: err.message,
+        }
+        if (err.isConnectionError !== undefined) {
+          if (err.isConnectionError) return Boom.conflict("Couldn't connect to GxAlert", data)
+          return loginHistoryCodeDecorator(
+            Boom.unauthorized('There was a conflict with your GxAlert credentials', JSON.stringify(data)),
+            LOGIN_HISTORY_CODES.unexpected
+          )
+        }
+
+        return loginHistoryCodeDecorator(
+          Boom.internal('Authentication failed because an internal server error', JSON.stringify(data)),
           LOGIN_HISTORY_CODES.unexpected
         )
       }
-
-      return loginHistoryCodeDecorator(
-        Boom.internal('Authentication failed because an internal server error', data),
-        LOGIN_HISTORY_CODES.unexpected
-      )
-    }
-  }
-
-  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
-    return loginHistoryCodeDecorator(
-      Boom.forbidden('Your account is locked.'),
-      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
-      user.id
-    )
-  }
-
-  // if password isn't a bcrypt hash, user was migrated from
-  // GxAlert and password wasn't set yet in aspect:
-  if (user.password && user.legacyPassword) {
-    // check login at GxAlert and return created/updated user from Aspect if login match in GxAlert
-    user = await gxAlertAuthenticate(payload.name, payload.password)
-    if (!user) {
-      return loginHistoryCodeDecorator(
-        Boom.unauthorized('Authentication failed. Wrong username or password.'),
-        LOGIN_HISTORY_CODES.gxAlertWrongPassword,
-        user.id
-      )
     }
   } else {
+    // Aspect
     // this is for "regular" accounts that were either created in aspect
     // or migrated from GxAlert and updated their password
     const pwResult = await bcryptCompare(payload.password, user.password)
@@ -199,6 +194,14 @@ async function authenticate(request, response) {
         user.id
       )
     }
+  }
+
+  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
+    return loginHistoryCodeDecorator(
+      Boom.forbidden('Your account is locked.'),
+      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
+      user.id
+    )
   }
 
   const now = new Date()
