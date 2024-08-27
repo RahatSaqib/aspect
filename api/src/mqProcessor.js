@@ -25,5 +25,5 @@ module.exports = async job => {
   if (strategy) {
     return strategy(job)
   }
-  return true
+  return false
 }

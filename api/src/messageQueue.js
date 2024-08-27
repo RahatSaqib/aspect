@@ -35,7 +35,6 @@ class MessageQueue {
       connection: this.connection,
       concurrency: 10,
       useWorkerThreads: true,
-      attempts: 3, // TODO: Check with team on what is the current rabbit mq retry count and configure it accordingly
     })
 
     const processorFile = path.join(__dirname, 'mqProcessor.js')
