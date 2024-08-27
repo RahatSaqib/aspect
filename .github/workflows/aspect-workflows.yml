@@ -58,7 +58,7 @@ jobs:
       - name: Clone and install backend environment
         if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
         uses: ./.github/workflows/setups/front-end-setup
-
+   
       - name: Lint code
         if: ${{ needs.check-web-changes.outputs.web-changed == 'true' }}
         run: |
@@ -117,13 +117,6 @@ jobs:
           RABBITMQ_PORT: 5672
           RABBITMQ_MNG_PORT: 15672
           RABBITMQ_TAG: '3-management-alpine'
-
-      - name: 'Setup Redis'
-        uses: supercharge/redis-github-action@1.7.0
-        if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
-        with:
-          redis-image: redis:7.4.0-alpine
-          redis-port: 6379
 
       - uses: actions/checkout@v3
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
@@ -285,6 +278,7 @@ jobs:
         if: ${{ needs.check-api-changes.outputs.api-changed == 'true' }}
         run: yarn stop:api:bg
 
+
   check-api-migrations-changes:
     name: 'Check Changes (API Migrations)'
     runs-on: ubuntu-latest
@@ -313,31 +307,7 @@ jobs:
       fail-fast: false
       matrix:
         # find seeds -mindepth 1 -maxdepth 1 -type d ! -path "seeds/relatedObjects" ! -path "seeds/test" ! -path "seeds/daily_new_results" ! -path "seeds/zz_shared" ! -path "seeds/fixtures" ! -path "seeds/common" ! -path "seeds/scripts"
-        seed:
-          [
-            './seeds/philippines',
-            './seeds/pakistan',
-            './seeds/bangladesh',
-            './seeds/timorLeste',
-            './seeds/ukraine',
-            './seeds/png',
-            './seeds/tanzania',
-            './seeds/nigeria',
-            './seeds/angola',
-            './seeds/eswatini',
-            './seeds/drc',
-            './seeds/ghana',
-            './seeds/vietnam',
-            './seeds/zimbabwe',
-            './seeds/malawi',
-            './seeds/myanmar',
-            './seeds/mozambique',
-            './seeds/tajikistan',
-            './seeds/development',
-            './seeds/ethiopia',
-            './seeds/lesotho/tb',
-            './seeds/lesotho/hiv',
-          ]
+        seed: ['./seeds/philippines','./seeds/pakistan','./seeds/bangladesh','./seeds/timorLeste','./seeds/ukraine','./seeds/png','./seeds/tanzania','./seeds/nigeria','./seeds/angola','./seeds/eswatini','./seeds/drc','./seeds/ghana','./seeds/vietnam','./seeds/zimbabwe','./seeds/malawi','./seeds/myanmar','./seeds/mozambique','./seeds/tajikistan','./seeds/development','./seeds/ethiopia','./seeds/lesotho/tb','./seeds/lesotho/hiv']
     steps:
       - name: Setup MySQL
         if: ${{ needs.check-api-migrations-changes.outputs.api-migrations-changed == 'true' }}
