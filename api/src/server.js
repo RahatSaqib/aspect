@@ -146,6 +146,7 @@ const messageQueuePlugin = {
 /**
  * TODO: Once the rabbit mq is removed make this plugin name generic
  */
+// eslint-disable-next-line no-unused-vars
 const bullMessageQueuePlugin = {
   name: 'bullMessageQueue',
   version,
