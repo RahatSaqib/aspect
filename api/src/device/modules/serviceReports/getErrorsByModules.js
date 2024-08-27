@@ -19,9 +19,9 @@ async function getErrorsByModules(dataConstraints, query) {
   })
   const totalBySiteId = new Map()
   results.forEach(result => {
-    const { errorCode, siteId } = result
+    const { moduleSerial, errorCode, siteId } = result
     // Found few duplicate moduleSerial at multiple sites, so used siteId with module serial as key here.
-    const key = siteId
+    const key = `${siteId}-${moduleSerial}`
     if (totalBySiteId.has(key)) {
       const moduleSerialData = totalBySiteId.get(key)
       totalBySiteId.set(key, {
@@ -36,8 +36,9 @@ async function getErrorsByModules(dataConstraints, query) {
   return results
     .filter(result => result.errorCode)
     .map(result => {
+      const key = `${result.siteId}-${result.moduleSerial}`
       return {
-        ...totalBySiteId.get(result.siteId),
+        ...totalBySiteId.get(key),
         ...result,
       }
     })
