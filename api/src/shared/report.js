@@ -88,7 +88,6 @@ const processNewReport = async payload => {
     reportId,
     hash,
     query: JSON.stringify(query),
-    queryHash,
     statusId,
   })
 
