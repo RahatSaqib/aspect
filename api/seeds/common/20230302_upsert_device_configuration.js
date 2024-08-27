@@ -28,6 +28,10 @@ module.exports = async (knex, partnerData, countryName) => {
         updatedOn: now,
       }
     })
-    await knex('DeviceConfiguration').insert(await Promise.all(deviceConfigurations))
+
+    await knex.transaction(async knex => {
+      await knex('DeviceConfiguration').where('partnerId', partnerId).delete()
+      await knex('DeviceConfiguration').insert(await Promise.all(deviceConfigurations))
+    })
   }
 }
