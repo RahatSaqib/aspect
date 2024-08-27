@@ -44,7 +44,6 @@ describe('API Reports Endpoint', () => {
           'Module Name',
           'Date of error',
           'Error code',
-          'Error description',
           'Total Tests Run During Period',
           'Total Errors During Period',
         ].forEach((element, index) => {
