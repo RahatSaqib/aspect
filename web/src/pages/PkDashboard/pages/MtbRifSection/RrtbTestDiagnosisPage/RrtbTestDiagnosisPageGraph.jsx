@@ -43,7 +43,7 @@ const RrtbTestDiagnosisPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
-  const testsPerformedMessage = formatMessage(allmessages.reportableResults)
+  const testsPerformedMessage = formatMessage(allmessages.Total)
   const rrDetectedMessage = formatMessage(messages.rrDetected)
   const mtbDetectedMessage = formatMessage(intlMessages.MTBPlus)
   const rrToMtbPercentageMessage = formatMessage(messages.rrToMtbPercentage)
