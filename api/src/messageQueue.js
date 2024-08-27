@@ -118,20 +118,21 @@ class MessageQueue {
     await this.worker.close()
     await this.queue.close()
     await this.connection.quit()
-  }
-}
-
-const registerMessageQueue = async server => {
-  try {
-    const queue = await createMessageQueue(defaultQueueName)
-    server.app.queue = queue
-  } catch (err) {
-    logger.error(err)
+    delete messageQueues[this.queueName]
   }
 }
 
 function getMessageQueue(name = defaultQueueName) {
   return messageQueues[name]
+}
+
+const registerMessageQueue = async server => {
+  try {
+    await createMessageQueue(defaultQueueName)
+    server.app.queue = getMessageQueue
+  } catch (err) {
+    logger.error(err)
+  }
 }
 
 module.exports = { queue: getMessageQueue, registerMessageQueue }
