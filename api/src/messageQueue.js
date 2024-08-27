@@ -42,14 +42,24 @@ class MessageQueue {
     this.worker = new Worker(queueName, processorFile, { connection: this.connection })
 
     this.worker.on('completed', job => {
-      logger.debug(`completed job: ${job.id} in ${this.queueName}`, { reLabel: 'aspect:mq:completed' })
+      logger.debug(`completed job: ${job.id} in ${this.queueName}`, { reLabel: 'aspect:mq:worker:completed' })
     })
 
+    // Failed imply some issue with code that is running in the worker
     this.worker.on('failed', (job, err) => {
       logger.debug(`failed job: ${job.id} in ${this.queueName} with error: ${err.message}`, {
         meta: { stack: err.stack },
-        reLabel: 'aspect:mq:failed',
+        reLabel: 'aspect:mq:worker:failed',
       })
+    })
+
+    // 'error' event is used to log connection issues: https://docs.bullmq.io/guide/going-to-production#log-errors
+    this.queue.on('error', err => {
+      logger.error(`Error in queue: ${err.message}`, { reLabel: 'aspect:mq:error' })
+    })
+
+    this.worker.on('error', err => {
+      logger.error(`Error in worker: ${err.message}`, { reLabel: 'aspect:mq:worker:error' })
     })
   }
 
@@ -60,7 +70,16 @@ class MessageQueue {
    */
   async add(name, data, options) {
     try {
-      const job = await this.queue.add(name, data, { removeOnComplete: true, removeOnFail: true, ...options })
+      const job = await this.queue.add(name, data, {
+        removeOnComplete: {
+          age: 24 * 3600, // keep up to 24 hour
+          count: 1000, // keep up to 1000 jobs
+        },
+        removeOnFail: {
+          age: 24 * 3600, // keep up to 24 hours
+        },
+        ...options,
+      })
       logger.debug(`Added job ${job.id} to the queue with options: ${options}`, { reLabel: 'aspect:mq:added' })
       return job
     } catch (err) {
