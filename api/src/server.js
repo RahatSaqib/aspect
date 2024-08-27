@@ -174,7 +174,7 @@ const plugins = [
 
   // Set message queue
   messageQueuePlugin,
-  bullMessageQueuePlugin,
+  // bullMessageQueuePlugin,
   // Set sentry hapi plugin
   ...sentryPlugins,
 ]

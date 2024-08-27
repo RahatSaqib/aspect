@@ -53,7 +53,7 @@ function logRequest(queue, request) {
 
 function logAction(action, dispatcher = null) {
   logConsole(action)
-  if (dispatcher != null && typeof dispatcher?.dispatch === 'function') {
+  if (dispatcher != null) {
     dispatcher.dispatch(action)
   }
 }
