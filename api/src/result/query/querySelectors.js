@@ -488,9 +488,11 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
     patientAgeYears: knex.raw(
-      `COALESCE(
-        r.patientData ->> '$.PatientAge',
-        r.patientData ->> '$.age'
+      `CAST(
+        COALESCE(
+          r.patientData ->> '$.PatientAge',
+          r.patientData ->> '$.age'
+        ) AS UNSIGNED
       )`
     ),
     patientName: knex.raw(
@@ -546,13 +548,21 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
     /**
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
-    gender: knex.raw(
-      `COALESCE(
+    gender: knex.raw(`
+      CASE COALESCE(
         r.patientData ->> '$.PatientGender',
         r.patientData ->> '$.gender',
         r.patientData ->> '$.patientGender'
-      )`
-    ),
+      )
+      WHEN 'F' THEN 'Female'
+      WHEN 'M' THEN 'Male'
+      ELSE COALESCE(
+        r.patientData ->> '$.PatientGender',
+        r.patientData ->> '$.gender',
+        r.patientData ->> '$.patientGender'
+      )
+      END
+    `),
     /**
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
