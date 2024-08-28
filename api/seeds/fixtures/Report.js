@@ -118,7 +118,7 @@ const criticalErrorsByModule = {
   fileName: 'ModulesWithErrors',
   exportCsv: true,
   exportExcel: true,
-  sortOrder: 0,
+  sortOrder: 2,
   validations: ['dateRangeRequired'],
   sheets: [
     {
