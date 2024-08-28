@@ -11,12 +11,12 @@ import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../hooks/useFilterValues'
 import useWorkload from '../../../hooks/workload/useWorkload'
 import useWorkloadDownload from '../../../hooks/workload/useWorkloadDownload'
+import { resultCategory } from '../../../messages'
 import { getCustomMessage } from '../../../messages/customMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
-import colMessages from '../../../oldPages/result/list/messages'
 import { XDR_RESISTANCES } from '../../../utils/consts'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
@@ -55,9 +55,9 @@ const Workload = () => {
   } = useWorkload({ ...filter, size: pageSize, page: pageAt, sortCol, sortDir })
 
   const { isLoading: isresultCategoryLoading, data: resultCategoryGroups } = useResultCategoryGroup(
-    [filter.singleAssayId],
+    filter.assayId ? [filter.assayId] : undefined,
     {
-      enabled: !!filter.singleAssayId,
+      enabled: !!filter.assayId,
     }
   )
 
@@ -90,9 +90,7 @@ const Workload = () => {
     { key: 'total', label: formatMessage(messages.totalTests), sortable: true },
     ...extraColumns.map(c => ({
       key: c.fieldId,
-      label: `${formatMessage(colMessages[c.resultCategoryLabelI18nKey])} ${formatMessage(
-        colMessages[c.resultCategoryI18nKey]
-      )}`,
+      label: c.label,
       sortable: false,
     })),
   ]
@@ -108,24 +106,22 @@ const Workload = () => {
     const resultGroupId =
       fieldId &&
       resultCategoryGroups.find(categoryGroup => {
-        const found = categoryGroup.name.includes(column)
-        if (!found && categoryGroup.assayI18nKey === 'assayGeneXpertMtbXdr') {
-          const hasResitanceString = XDR_RESISTANCES.some(resistance => column.includes(resistance.toLowerCase()))
-          if (hasResitanceString)
-            column = XDR_RESISTANCES.reduce(
-              (result, resistance) => result.replace(resistance.toLowerCase(), ''),
-              column
-            )
+        const columnName = categoryGroup.name.toLowerCase().replace(' - ', ' ')
+        const isXdrCase = XDR_RESISTANCES.some(resistance => column.includes(resistance.toLowerCase()))
+
+        if (isXdrCase && categoryGroup.assayI18nKey === 'assayGeneXpertMtbXdr') {
+          column = formatMessage(resultCategory.gxMtbXdrMtbDetectedXdrDetected).toLowerCase()
         }
-        return categoryGroup.name.toLowerCase().includes(column)
-      }).externalId
+        return columnName === column || columnName.includes(column)
+      })?.externalId
+
     const { minDate, maxDate } = filter
     const baseUrl = '/browse/result'
     addFilter(
       {
         minDate,
         maxDate,
-        assayId: [filter.singleAssayId],
+        ...(filter.assayId ? { assayId: [filter.assayId] } : {}),
         resultCategoryGroupId: resultGroupId ?? null,
         deviceName,
       },
@@ -133,7 +129,6 @@ const Workload = () => {
     )
     navigate(baseUrl)
   }
-
   return (
     <>
       <DetailHeader name={formatMessage(messages.workloadTitle)} disableBack />

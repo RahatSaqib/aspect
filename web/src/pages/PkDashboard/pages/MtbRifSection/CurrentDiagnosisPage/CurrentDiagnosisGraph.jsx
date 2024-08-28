@@ -157,7 +157,7 @@ const CurrentDiagnosisGraphPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.peopleDiagnosedRif)}
+      title={formatMessage(messages.TbDCurrent)}
       filters={
         <>
           <FormControlLabel

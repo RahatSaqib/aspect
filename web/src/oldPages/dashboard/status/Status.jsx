@@ -2,22 +2,16 @@ import React from 'react'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import {
-  ErrorBoundary,
   CovidResultGraph,
+  DeviceStatusGraph,
+  ErrorBoundary,
   HivResultsGraph,
-  QuartersMtbDetectedGraph,
-  QuartersRifDetectedGraph,
+  InventoryStatusGraph,
   TbDetectedGraph,
   TbRifDetectedGraph,
   TestsOverTimeGraph,
   TreatmentStatusGraph,
-  TrendInYearsAllTestsGraph,
-  TrendInYearsMtbDetectedGraph,
-  TrendInYearsRifDetectedGraph,
   XDRFLQResistanceGraph,
-  XDRResultsGraph,
-  DeviceStatusGraph,
-  InventoryStatusGraph,
 } from '../../../cleanComponents'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useAssayList from '../../../hooks/assay/useAssayList'
@@ -80,36 +74,7 @@ const Status = () => {
           {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
-                <XDRResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
-                {/* 4 */}
-              </ErrorBoundary>
-            </PermissionChecker>
-          ) : null}
-
-          {assays.some(a => tbPermissions.includes(a.externalId)) ? (
-            <PermissionChecker permissions={['dashboard']}>
-              <ErrorBoundary>
-                <TrendInYearsAllTestsGraph /> {/* 5 */}
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <TrendInYearsMtbDetectedGraph /> {/* 6 */}
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <TrendInYearsRifDetectedGraph /> {/* 7 */}
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <QuartersMtbDetectedGraph /> {/* 8 */}
-              </ErrorBoundary>
-              <ErrorBoundary>
-                <QuartersRifDetectedGraph /> {/* 9 */}
-              </ErrorBoundary>
-            </PermissionChecker>
-          ) : null}
-
-          {assays.some(a => xdrPermissions.includes(a.externalId)) ? (
-            <PermissionChecker permissions={['dashboard']}>
-              <ErrorBoundary>
-                <XDRFLQResistanceGraph /> {/* 10 */}
+                <XDRFLQResistanceGraph /> {/* 4 */}
               </ErrorBoundary>
             </PermissionChecker>
           ) : null}

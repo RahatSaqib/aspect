@@ -91,7 +91,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       const detected = pieData.find(elem => elem.id === 'Detected') || {}
 
-      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(2)
+      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(1)
 
       const pie = pieData.map(d => ({
         ...d,
@@ -127,7 +127,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
         return result
       })
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAvg}` })
+      setDonutData({ data: pie, total: `${pieAvg}%` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
@@ -138,7 +138,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
     <Grid container className={styles.Graph_Container}>
       <Grid item xs={12}>
         <Card>
-          <CardHeader title={formatMessage(graphMessages.clinicalIndicatorsTBTitle)} />
+          <CardHeader title={formatMessage(graphMessages.mtbRifResistance)} />
           <CardContent>
             <Grid container spacing={1} className={styles.Graph_Content}>
               <Grid item xs={12} md={12} lg={2}>
@@ -216,6 +216,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
                             .join(' '),
                         ].join('<br/>')} // "Average Monthly<br/>Test Performed"
                         showLabel={showLabel}
+                        legend={false}
                       />
                     </Grid>
                   ) : (
