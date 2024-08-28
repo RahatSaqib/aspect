@@ -23,6 +23,8 @@ module.exports = async function processAsyncReport(request) {
   const reportId = await reportToId(externalId)
 
   const now = new Date()
+  const querySorted = jsonToArraySorted(query)
+  const queryHash = getHash(JSON.stringify(querySorted))
   delete dataConstraints.person // <-- remove personality and leave only country/partner/jobFunction details
 
   /**
@@ -44,6 +46,7 @@ module.exports = async function processAsyncReport(request) {
       reportId,
       query,
       hash,
+      queryHash,
       currentUserId,
       now,
     }

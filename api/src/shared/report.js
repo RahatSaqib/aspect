@@ -81,12 +81,13 @@ const getExistingReportWithHash = async hash => {
 }
 
 const processNewReport = async payload => {
-  const { reportId, hash, query } = payload
+  const { reportId, hash, query, queryHash } = payload
 
   const statusId = await asyncReportStatusToId('queued')
   const [asyncReportId] = await knex('AsyncReport').insert({
     reportId,
     hash,
+    queryHash,
     query: JSON.stringify(query),
     statusId,
   })

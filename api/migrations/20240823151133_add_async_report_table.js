@@ -17,6 +17,7 @@ exports.up = async function (knex) {
     tbl.integer('reportId').unsigned().notNullable().references('id').inTable('Report')
     tbl.string('hash', 32).notNullable().index()
     tbl.specificType('query', 'JSON').notNullable()
+    tbl.string('queryHash', 32).notNullable().index()
 
     /**
      * status fields
