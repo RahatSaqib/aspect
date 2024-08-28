@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-09T03:15:45.784Z\n"
+"POT-Creation-Date: 2024-08-27T23:24:25.912Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -736,13 +736,6 @@ msgstr "Khảo nghiệm"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Loại thử nghiệm"
-
-#. [p.PkDashboard.peopleTestedRifUltra]
-#. defaultMessage is:
-#. Assay for MTB Rif Ultra
-#: extracted_strings.json
-msgid "Assay for MTB Rif Ultra"
-msgstr "Xét nghiệm MTB Rif Ultra"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -2209,13 +2202,6 @@ msgstr "Chẩn đoán RRTB hiện tại"
 #: extracted_strings.json
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Xu hướng chẩn đoán kháng Rifampicin hiện tại"
-
-#. [p.PkDashboard.rrtbDiagnosisTitle1]
-#. defaultMessage is:
-#. Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay
-#: extracted_strings.json
-msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
-msgstr "Chẩn đoán kháng Rifampicin hiện tại bằng xét nghiệm MTB/Rif Ultra"
 
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
@@ -6039,6 +6025,9 @@ msgstr "MTB phát hiện điện trở kháng"
 msgid "MTB Detected Resistance Susceptible"
 msgstr "MTB đã phát hiện điện trở Nhạy cảm"
 
+#. [pages.Status.mtbDetection]
+#. defaultMessage is:
+#. MTB Detection
 #. [p.PkDashboard.mtbXdrmtbDetection]
 #. defaultMessage is:
 #. MTB Detection
@@ -6247,6 +6236,13 @@ msgstr "MTB Tích cực MTB Kháng chiến Nhạy cảm"
 msgid "MTB Positivity In Quarters"
 msgstr "Độ nhạy của MTB trong khoảng thời gian"
 
+#. [pages.Status.mtbRifResistance]
+#. defaultMessage is:
+#. MTB Rif Resistance
+#: extracted_strings.json
+msgid "MTB Rif Resistance"
+msgstr "Sức đề kháng của MTB Rif"
+
 #. [assayGenericDstresultCategorySuccess]
 #. defaultMessage is:
 #. MTB Success
@@ -6353,6 +6349,13 @@ msgstr "# địa điểm được thử nghiệm Xét nghiệm MTB/XDR"
 msgid "MTB+ Trends In Year"
 msgstr "MTB + Xu hướng trong năm"
 
+#. [p.PkDashboard.mtbPlusAndTrace]
+#. defaultMessage is:
+#. MTB+ and Trace
+#: extracted_strings.json
+msgid "MTB+ and Trace"
+msgstr "MTB+ và Trace"
+
 #. [p.PkDashboard.titlemtbRif]
 #. defaultMessage is:
 #. MTB/RIF
@@ -6376,6 +6379,13 @@ msgstr "MTB / Rif"
 #: extracted_strings.json
 msgid "MTB/XDR"
 msgstr "MTB/XDR"
+
+#. [pages.Status.mtbXDRDrugResistance]
+#. defaultMessage is:
+#. MTB/XDR drug resistance
+#: extracted_strings.json
+msgid "MTB/XDR drug resistance"
+msgstr "Kháng thuốc MTB/XDR"
 
 #. [filter.AssaySelectField.assayMP96Covid19]
 #. defaultMessage is:
@@ -6793,20 +6803,6 @@ msgstr "Quốc gia"
 msgid "National Contacts"
 msgstr "Liên hệ quốc gia"
 
-#. [p.PkDashboard.nationalMtbRifUltraDiagnosed]
-#. defaultMessage is:
-#. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
-#: extracted_strings.json
-msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
-msgstr "Xu hướng chẩn đoán quốc gia sử dụng xét nghiệm MTB-Rif / MTB Rif Ultra"
-
-#. [p.PkDashboard.nationalDiagnosisXdr]
-#. defaultMessage is:
-#. National Diagnosis Trends using MTB/XDR assay
-#: extracted_strings.json
-msgid "National Diagnosis Trends using MTB/XDR assay"
-msgstr "Xu hướng chẩn đoán quốc gia sử dụng xét nghiệm MTB/XDR"
-
 #. [p.PkDashboard.nationalErrorRates]
 #. defaultMessage is:
 #. National Error Rates
@@ -6877,13 +6873,6 @@ msgstr "Tỷ lệ không có kết quả toàn quốc"
 msgid "National RRTB Trends"
 msgstr "Xu hướng RRTB quốc gia"
 
-#. [p.PkDashboard.rrtbNationalDiagnosisTrendsTitle]
-#. defaultMessage is:
-#. National Rifampicin Resistance Diagnosis Trends
-#: extracted_strings.json
-msgid "National Rifampicin Resistance Diagnosis Trends"
-msgstr "Xu hướng chẩn đoán kháng thuốc Rifampicin quốc gia"
-
 #. [p.PkDashboard.TbDNationalTrend]
 #. defaultMessage is:
 #. National TB Diagnosis Trends
@@ -6907,13 +6896,6 @@ msgstr "Xu hướng xét nghiệm lao quốc gia"
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Xu hướng thử nghiệm quốc gia"
-
-#. [p.PkDashboard.nationalXdrTestingTrends]
-#. defaultMessage is:
-#. National Testing Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "National Testing Trends using MTB/XDR Assay"
-msgstr "Xu hướng Thử nghiệm Quốc gia sử dụng Xét nghiệm MTB/XDR"
 
 #. [pages.ReportIndex.annualUtilizationRates]
 #. defaultMessage is:
@@ -7806,22 +7788,6 @@ msgstr "ID bệnh nhân / trường hợp"
 msgid "Pending changes"
 msgstr "Các thay đổi đang chờ xử lý"
 
-#. [p.PkDashboard.peopleDiagnosedRifUltra]
-#. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif Ultra assay in current year
-#: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
-msgstr ""
-"Số người được chẩn đoán mắc bệnh lao bằng xét nghiệm MTB/Rif Ultra trong năm "
-"hiện tại"
-
-#. [p.PkDashboard.peopleDiagnosedXdr]
-#. defaultMessage is:
-#. People diagnosed using MTB/XDR assay in current year
-#: extracted_strings.json
-msgid "People diagnosed using MTB/XDR assay in current year"
-msgstr "Những người được chẩn đoán bằng xét nghiệm MTB/XDR trong năm hiện tại"
-
 #. [p.PkDashboard.peopleTestedCovid]
 #. defaultMessage is:
 #. People tested for Covid in current year
@@ -7843,13 +7809,6 @@ msgstr "Số người được xét nghiệm HIV trong năm hiện tại"
 msgid "People tested for TB using MTB/Rif assay in current year"
 msgstr ""
 "Những người được xét nghiệm lao bằng xét nghiệm MTB/Rif trong năm hiện tại"
-
-#. [p.PkDashboard.peopleTestedXdr]
-#. defaultMessage is:
-#. People tested using MTB/XDR assay in current year
-#: extracted_strings.json
-msgid "People tested using MTB/XDR assay in current year"
-msgstr "Những người được xét nghiệm bằng xét nghiệm MTB/XDR trong năm hiện tại"
 
 #. [pages.ReportIndex.reportCustomFieldsCompletion]
 #. defaultMessage is:
@@ -8520,42 +8479,12 @@ msgstr "Kiểm tra XDR của tỉnh trong năm hiện tại"
 msgid "Provincial XDR testing trends"
 msgstr "Xu hướng thử nghiệm XDR của tỉnh"
 
-#. [p.PkDashboard.provincialXdrDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial/District Diagnosis Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
-msgstr "Xu hướng chẩn đoán cấp tỉnh/huyện sử dụng xét nghiệm MTB/XDR"
-
-#. [p.PkDashboard.provincialDiagnosisTrendsRRTBComparison]
-#. defaultMessage is:
-#. Provincial/District RR Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial/District RR Diagnosis Trends"
-msgstr "Xu hướng chẩn đoán RR tỉnh/huyện"
-
-#. [p.PkDashboard.provincialTBTestingTrends]
-#. defaultMessage is:
-#. Provincial/District TB Testing Trends
-#: extracted_strings.json
-msgid "Provincial/District TB Testing Trends"
-msgstr "Xu hướng xét nghiệm lao cấp tỉnh/huyện"
-
 #. [p.PkDashboard.provincialTestingTrends]
 #. defaultMessage is:
 #. Provincial/District Testing Trends
 #: extracted_strings.json
 msgid "Provincial/District Testing Trends"
 msgstr "Xu hướng thi cấp tỉnh/huyện"
-
-#. [p.PkDashboard.provincialXdrTestingTrends]
-#. defaultMessage is:
-#. Provincial/District Testing Trends using MTB/XDR Assay in current year
-#: extracted_strings.json
-msgid "Provincial/District Testing Trends using MTB/XDR Assay in current year"
-msgstr ""
-"Xu hướng xét nghiệm cấp tỉnh/huyện sử dụng xét nghiệm MTB/XDR trong năm hiện "
-"tại"
 
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
@@ -10925,13 +10854,6 @@ msgstr "xét nghiệm bệnh lao"
 msgid "TB Testing & Diagnosis Trends"
 msgstr "Xu hướng Xét nghiệm & Chẩn đoán Lao"
 
-#. [p.PkDashboard.mtbRifTestingDiagnosed]
-#. defaultMessage is:
-#. TB Testing & Diagnosis Trends using MTB/Rif Assay
-#: extracted_strings.json
-msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
-msgstr "Xu hướng xét nghiệm và chẩn đoán bệnh lao bằng xét nghiệm MTB/Rif"
-
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
 #. TB XDR Drug Resistances
@@ -10945,13 +10867,6 @@ msgstr "Lao XDR kháng thuốc"
 #: extracted_strings.json
 msgid "TB XDR tests performed in current year"
 msgstr "Các xét nghiệm TB XDR được thực hiện trong năm hiện tại"
-
-#. [p.PkDashboard.testingDiagnosisTrendsRR]
-#. defaultMessage is:
-#. TB and RRTB Diagnosis Trends
-#: extracted_strings.json
-msgid "TB and RRTB Diagnosis Trends"
-msgstr "Xu hướng chẩn đoán bệnh lao và RRTB"
 
 #. [p.PkDashboard.rifCurrentDiagnosisTitle]
 #. defaultMessage is:
@@ -11110,13 +11025,6 @@ msgstr "Lịch sử kiểm tra"
 #: extracted_strings.json
 msgid "Testing"
 msgstr "Thử nghiệm"
-
-#. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
-msgstr "Xu hướng Xét nghiệm & Chẩn đoán bằng Xét nghiệm MTB/XDR"
 
 #. [pages.Status.TB.testingTrendsInYear.title]
 #. defaultMessage is:
@@ -12452,16 +12360,17 @@ msgstr "Sử dụng"
 msgid "Utilization Rate"
 msgstr "Tỷ lệ sử dụng"
 
-#. [p.PkDashboard.utilizationRate]
+#. [p.PkDashboard.utilizationRate1]
 #. defaultMessage is:
-#. Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working days in year)
+#. Utilization Rate : (Total tests in the selected period * 100) / (Daily Capacity of device * Working days in the selected period)
 #: extracted_strings.json
 msgid ""
-"Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working "
-"days in year)"
+"Utilization Rate : (Total tests in the selected period * 100) / (Daily "
+"Capacity of device * Working days in the selected period)"
 msgstr ""
-"Tỷ lệ sử dụng : (Tổng số lần kiểm tra * 100) / (Công suất thiết bị hàng ngày "
-"* Số ngày làm việc trong năm)"
+"Tỷ lệ sử dụng: (Tổng số xét nghiệm trong khoảng thời gian đã chọn * 100) / "
+"(Công suất thiết bị hàng ngày * Số ngày làm việc trong khoảng thời gian đã "
+"chọn)"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -12744,13 +12653,6 @@ msgstr "Trạng thái quy trình làm việc"
 #: extracted_strings.json
 msgid "Workload"
 msgstr "Khối lượng công việc"
-
-#. [pages.XDR.AssayResultsSummary]
-#. defaultMessage is:
-#. XDR Assay Results Summary
-#: extracted_strings.json
-msgid "XDR Assay Results Summary"
-msgstr "Tóm tắt kết quả xét nghiệm XDR"
 
 #. [p.PkDashboard.XDRByDevice]
 #. defaultMessage is:
@@ -13519,6 +13421,65 @@ msgstr "{unit} kể từ tuần trước"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} tổng số lần hiệu chuẩn"
+
+#~ msgid "Assay for MTB Rif Ultra"
+#~ msgstr "Xét nghiệm MTB Rif Ultra"
+
+#~ msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
+#~ msgstr "Chẩn đoán kháng Rifampicin hiện tại bằng xét nghiệm MTB/Rif Ultra"
+
+#~ msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+#~ msgstr ""
+#~ "Xu hướng chẩn đoán quốc gia sử dụng xét nghiệm MTB-Rif / MTB Rif Ultra"
+
+#~ msgid "National Diagnosis Trends using MTB/XDR assay"
+#~ msgstr "Xu hướng chẩn đoán quốc gia sử dụng xét nghiệm MTB/XDR"
+
+#~ msgid "National Rifampicin Resistance Diagnosis Trends"
+#~ msgstr "Xu hướng chẩn đoán kháng thuốc Rifampicin quốc gia"
+
+#~ msgid "National Testing Trends using MTB/XDR Assay"
+#~ msgstr "Xu hướng Thử nghiệm Quốc gia sử dụng Xét nghiệm MTB/XDR"
+
+#~ msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
+#~ msgstr ""
+#~ "Số người được chẩn đoán mắc bệnh lao bằng xét nghiệm MTB/Rif Ultra trong "
+#~ "năm hiện tại"
+
+#~ msgid "People diagnosed using MTB/XDR assay in current year"
+#~ msgstr ""
+#~ "Những người được chẩn đoán bằng xét nghiệm MTB/XDR trong năm hiện tại"
+
+#~ msgid "People tested using MTB/XDR assay in current year"
+#~ msgstr ""
+#~ "Những người được xét nghiệm bằng xét nghiệm MTB/XDR trong năm hiện tại"
+
+#~ msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
+#~ msgstr "Xu hướng chẩn đoán cấp tỉnh/huyện sử dụng xét nghiệm MTB/XDR"
+
+#~ msgid "Provincial/District RR Diagnosis Trends"
+#~ msgstr "Xu hướng chẩn đoán RR tỉnh/huyện"
+
+#~ msgid "Provincial/District TB Testing Trends"
+#~ msgstr "Xu hướng xét nghiệm lao cấp tỉnh/huyện"
+
+#~ msgid ""
+#~ "Provincial/District Testing Trends using MTB/XDR Assay in current year"
+#~ msgstr ""
+#~ "Xu hướng xét nghiệm cấp tỉnh/huyện sử dụng xét nghiệm MTB/XDR trong năm "
+#~ "hiện tại"
+
+#~ msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
+#~ msgstr "Xu hướng xét nghiệm và chẩn đoán bệnh lao bằng xét nghiệm MTB/Rif"
+
+#~ msgid "TB and RRTB Diagnosis Trends"
+#~ msgstr "Xu hướng chẩn đoán bệnh lao và RRTB"
+
+#~ msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
+#~ msgstr "Xu hướng Xét nghiệm & Chẩn đoán bằng Xét nghiệm MTB/XDR"
+
+#~ msgid "XDR Assay Results Summary"
+#~ msgstr "Tóm tắt kết quả xét nghiệm XDR"
 
 #~ msgid "Days Offline"
 #~ msgstr "Ngoại tuyến"

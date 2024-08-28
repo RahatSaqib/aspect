@@ -20,7 +20,7 @@ services:
       yarn install --frozen-lockfile
 
       sleep infinity
-     
+
     volumes:
       - ../:/app
     depends_on:
@@ -30,6 +30,17 @@ services:
       - env.yml
     network_mode: service:mysql
 
+  redis:
+    image: redis:7.4.0-alpine
+    restart: always
+    environment:
+      - REDIS_REPLICATION_MODE=master
+    healthcheck:
+      test: [ "CMD", "redis-cli", "ping" ]
+      interval: 5s
+      timeout: 15s
+      retries: 1
+    network_mode: service:mysql
   rabbitmq:
     image: rabbitmq:management
     restart: always
