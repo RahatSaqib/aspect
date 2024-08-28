@@ -28,10 +28,9 @@ module.exports = {
     timezone: 'UTC',
     ssl: true,
   },
-  // uncomment below after adding redis url in the remote servers
-  // redis: {
-  //   url: process.env['redis.url']
-  // },
+  redis: {
+    url: process.env['redis.url'] || 'redis://localhost:6379', // until we add redis for all the environments, we will add default value for now.
+  },
   log: {
     file: {
       logLevel: process.env['log.file.logLevel'] || 'info',
