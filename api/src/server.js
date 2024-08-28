@@ -21,6 +21,7 @@ const { initDictionaryTables } = require('./shared/dictionary')
 const { port } = config
 
 const AspectCacheSingleton = require('../aspectCache')
+const { registerMessageQueue } = require('./messageQueue')
 
 // version is cached to indicate the new version only when Aspect api restarts,
 // instead of doing so directly when package.json is updated.
@@ -142,6 +143,16 @@ const messageQueuePlugin = {
   },
 }
 
+/**
+ * TODO: Once the rabbit mq is removed make this plugin name generic
+ */
+// eslint-disable-next-line no-unused-vars
+const bullMessageQueuePlugin = {
+  name: 'bullMessageQueue',
+  version,
+  register: registerMessageQueue,
+}
+
 const plugins = [
   // logging framework
   require('./shared/hapi-logger'),
@@ -164,7 +175,8 @@ const plugins = [
 
   // Set message queue
   messageQueuePlugin,
-  // Set sentry hapi pugin
+  // bullMessageQueuePlugin,
+  // Set sentry hapi plugin
   ...sentryPlugins,
 ]
 
