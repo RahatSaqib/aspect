@@ -13,6 +13,7 @@ module.exports = {
   url: `http://${hostName}:${port}`,
   passwordAttempts: process.env.passwordAttempts,
   passwordSaltRounds: process.env.passwordSaltRounds,
+  gxAlertRemoteAuthentication: process.env.gxAlertRemoteAuthentication === 'true',
   gxAlertApi: process.env.gxAlertApi,
   isDevelopment: process.env.NODE_ENV === 'development',
   environment: process.env.NODE_ENV,

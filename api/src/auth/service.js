@@ -130,7 +130,7 @@ async function authenticate(request, response) {
       // update user password to the new aspect hashing method
       const pw = await bcryptHash(payload.password, parseInt(config.passwordSaltRounds, 10))
       await knex('User').update({ password: pw, legacyPassword: 0 }).where({ id: user.id })
-    } else {
+    } else if (config.gxAlertRemoteAuthentication) {
       // The user might exist or not, but try logging in to gxAlert anyway
       try {
         user = await gxAlertAuthenticate(payload.name, payload.password)
@@ -162,6 +162,11 @@ async function authenticate(request, response) {
           LOGIN_HISTORY_CODES.unexpected
         )
       }
+    } else {
+      return loginHistoryCodeDecorator(
+        Boom.unauthorized('Authentication failed. Wrong username or password.'),
+        LOGIN_HISTORY_CODES.wrongPassword
+      )
     }
   } else {
     // Aspect
