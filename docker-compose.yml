@@ -9,6 +9,8 @@ services:
       - '6379:6379' # Redis default port
     volumes:
       - ./.devcontainer/data/redis/data:/data
+    # Using same configuration suggested by bullmq documentation [here](https://docs.bullmq.io/guide/going-to-production#max-memory-policy)
+    command: redis-server --maxmemory-policy noeviction
     healthcheck:
       test: [ 'CMD', 'redis-cli', 'ping' ]
       interval: 5s
