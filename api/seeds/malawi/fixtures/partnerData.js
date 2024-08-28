@@ -1,6 +1,8 @@
 const jobFunctions = require('./jobFunctions')
 const webhookServers = require('../../fixtures/webhookServers')
 
+const apiUrl = 'https://malawi.aspect.id:2083/api'
+
 module.exports = {
   partner: {
     name: 'Malawi',
@@ -35,5 +37,22 @@ module.exports = {
   dueDaysInventoryStockout: 30,
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://malawi.aspect.id:2083',
-  apiUrl: 'https://malawi.aspect.id:2083/api',
+  apiUrl,
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        HideArchivedTestsWithoutSampleIdFromTestDetails: true,
+        ShowPopupWindowOnNewTest: true,
+        EnableAspectSync: true,
+        SendResultsToAspect: true,
+        MigrateAspectApiKey: true,
+        AspectApiEndpoint: apiUrl,
+        EnableInventoryModule: false,
+        ClearLISSettingsIfTheyPointToGxAlert: false,
+        AspectUploadExcludePatientId: false,
+        ConnectSettingsAndCustomFieldsSource: 'GXALERT',
+      },
+    },
+  ],
 }

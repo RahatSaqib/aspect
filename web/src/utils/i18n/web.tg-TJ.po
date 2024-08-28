@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-09T03:15:45.784Z\n"
+"POT-Creation-Date: 2024-08-27T23:24:25.912Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -736,13 +736,6 @@ msgstr "Таҳлил"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Навъи таҳлил"
-
-#. [p.PkDashboard.peopleTestedRifUltra]
-#. defaultMessage is:
-#. Assay for MTB Rif Ultra
-#: extracted_strings.json
-msgid "Assay for MTB Rif Ultra"
-msgstr "Таҳлил барои MTB Rif Ultra"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -2207,14 +2200,6 @@ msgstr "Ташхиси кунунии RRTB"
 #: extracted_strings.json
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Тамоюлҳои ташхиси муқовимат ба рифампицин"
-
-#. [p.PkDashboard.rrtbDiagnosisTitle1]
-#. defaultMessage is:
-#. Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay
-#: extracted_strings.json
-msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
-msgstr ""
-"Ташхиси муқовимати кунунии Рифампицин бо истифода аз MTB/Rif Ultra Assay"
 
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
@@ -6048,6 +6033,9 @@ msgstr "Муқовимати муқовимати MTB ошкоршуда"
 msgid "MTB Detected Resistance Susceptible"
 msgstr "Муқовимати ошкоршудаи MTB ҳассос"
 
+#. [pages.Status.mtbDetection]
+#. defaultMessage is:
+#. MTB Detection
 #. [p.PkDashboard.mtbXdrmtbDetection]
 #. defaultMessage is:
 #. MTB Detection
@@ -6256,6 +6244,13 @@ msgstr "Муқовимати MTB мусбати MTB ҳассос"
 msgid "MTB Positivity In Quarters"
 msgstr "Муносибати MTB дар кварталҳо"
 
+#. [pages.Status.mtbRifResistance]
+#. defaultMessage is:
+#. MTB Rif Resistance
+#: extracted_strings.json
+msgid "MTB Rif Resistance"
+msgstr "Муқовимати MTB Rif"
+
 #. [assayGenericDstresultCategorySuccess]
 #. defaultMessage is:
 #. MTB Success
@@ -6362,6 +6357,13 @@ msgstr "Тамоюлҳои MTB + дар моҳ"
 msgid "MTB+ Trends In Year"
 msgstr "Тамоюлҳои MTB + дар сол"
 
+#. [p.PkDashboard.mtbPlusAndTrace]
+#. defaultMessage is:
+#. MTB+ and Trace
+#: extracted_strings.json
+msgid "MTB+ and Trace"
+msgstr "MTB+ ва Trace"
+
 #. [p.PkDashboard.titlemtbRif]
 #. defaultMessage is:
 #. MTB/RIF
@@ -6385,6 +6387,13 @@ msgstr "MTB/Rif"
 #: extracted_strings.json
 msgid "MTB/XDR"
 msgstr "MTB/XDR"
+
+#. [pages.Status.mtbXDRDrugResistance]
+#. defaultMessage is:
+#. MTB/XDR drug resistance
+#: extracted_strings.json
+msgid "MTB/XDR drug resistance"
+msgstr "Муқовимати маводи мухаддир MTB / XDR"
 
 #. [filter.AssaySelectField.assayMP96Covid19]
 #. defaultMessage is:
@@ -6802,20 +6811,6 @@ msgstr "Миллӣ"
 msgid "National Contacts"
 msgstr "Тамосҳои миллӣ"
 
-#. [p.PkDashboard.nationalMtbRifUltraDiagnosed]
-#. defaultMessage is:
-#. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
-#: extracted_strings.json
-msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
-msgstr "Тамоюлҳои миллии ташхис бо истифода аз MTB-Rif / MTB Rif Ultra"
-
-#. [p.PkDashboard.nationalDiagnosisXdr]
-#. defaultMessage is:
-#. National Diagnosis Trends using MTB/XDR assay
-#: extracted_strings.json
-msgid "National Diagnosis Trends using MTB/XDR assay"
-msgstr "Тамоюлҳои миллии ташхис бо истифода аз таҳлили MTB/XDR"
-
 #. [p.PkDashboard.nationalErrorRates]
 #. defaultMessage is:
 #. National Error Rates
@@ -6886,13 +6881,6 @@ msgstr "Нархҳои натиҷавии миллӣ"
 msgid "National RRTB Trends"
 msgstr "Тамоюлҳои миллии RRTB"
 
-#. [p.PkDashboard.rrtbNationalDiagnosisTrendsTitle]
-#. defaultMessage is:
-#. National Rifampicin Resistance Diagnosis Trends
-#: extracted_strings.json
-msgid "National Rifampicin Resistance Diagnosis Trends"
-msgstr "Тамоюлҳои ташхиси муқовимати миллии рифампицин"
-
 #. [p.PkDashboard.TbDNationalTrend]
 #. defaultMessage is:
 #. National TB Diagnosis Trends
@@ -6916,13 +6904,6 @@ msgstr "Тамоюлҳои миллии санҷиши бемории сил"
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Тамоюлҳои имтиҳони миллӣ"
-
-#. [p.PkDashboard.nationalXdrTestingTrends]
-#. defaultMessage is:
-#. National Testing Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "National Testing Trends using MTB/XDR Assay"
-msgstr "Тамоюлҳои миллии тестӣ бо истифода аз MTB/XDR Assay"
 
 #. [pages.ReportIndex.annualUtilizationRates]
 #. defaultMessage is:
@@ -7820,23 +7801,6 @@ msgstr "Бемор/Идентификатсияи парванда"
 msgid "Pending changes"
 msgstr "Тағйироти интизорӣ"
 
-#. [p.PkDashboard.peopleDiagnosedRifUltra]
-#. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif Ultra assay in current year
-#: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
-msgstr ""
-"Одамоне, ки дар соли ҷорӣ бо истифода аз таҳлили MTB/Rif Ultra ба бемории "
-"сил ташхис шудаанд"
-
-#. [p.PkDashboard.peopleDiagnosedXdr]
-#. defaultMessage is:
-#. People diagnosed using MTB/XDR assay in current year
-#: extracted_strings.json
-msgid "People diagnosed using MTB/XDR assay in current year"
-msgstr ""
-"Одамоне, ки дар соли ҷорӣ бо истифода аз ташхиси MTB/XDR ташхис шудаанд"
-
 #. [p.PkDashboard.peopleTestedCovid]
 #. defaultMessage is:
 #. People tested for Covid in current year
@@ -7860,13 +7824,6 @@ msgid "People tested for TB using MTB/Rif assay in current year"
 msgstr ""
 "Одамоне, ки дар соли ҷорӣ бо истифода аз MTB/Rif ташхиси бемории силро "
 "санҷидаанд"
-
-#. [p.PkDashboard.peopleTestedXdr]
-#. defaultMessage is:
-#. People tested using MTB/XDR assay in current year
-#: extracted_strings.json
-msgid "People tested using MTB/XDR assay in current year"
-msgstr "Одамоне, ки дар соли ҷорӣ бо истифода аз MTB/XDR санҷида шуданд"
 
 #. [pages.ReportIndex.reportCustomFieldsCompletion]
 #. defaultMessage is:
@@ -8539,41 +8496,12 @@ msgstr "Санҷиши вилоятии XDR дар соли ҷорӣ"
 msgid "Provincial XDR testing trends"
 msgstr "Тамоюлҳои санҷиши вилояти XDR"
 
-#. [p.PkDashboard.provincialXdrDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial/District Diagnosis Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
-msgstr "Тамоюлҳои ташхиси вилоятӣ/ноҳиявӣ бо истифода аз MTB/XDR Tahlil"
-
-#. [p.PkDashboard.provincialDiagnosisTrendsRRTBComparison]
-#. defaultMessage is:
-#. Provincial/District RR Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial/District RR Diagnosis Trends"
-msgstr "Тамоюлҳои ташхиси вилоятӣ/ноҳиявии RR"
-
-#. [p.PkDashboard.provincialTBTestingTrends]
-#. defaultMessage is:
-#. Provincial/District TB Testing Trends
-#: extracted_strings.json
-msgid "Provincial/District TB Testing Trends"
-msgstr "Тамоюлҳои санҷиши бемории сил дар вилоят/ноҳия"
-
 #. [p.PkDashboard.provincialTestingTrends]
 #. defaultMessage is:
 #. Provincial/District Testing Trends
 #: extracted_strings.json
 msgid "Provincial/District Testing Trends"
 msgstr "Тамоюлҳои санҷиши бемории сил дар вилоят/ноҳия"
-
-#. [p.PkDashboard.provincialXdrTestingTrends]
-#. defaultMessage is:
-#. Provincial/District Testing Trends using MTB/XDR Assay in current year
-#: extracted_strings.json
-msgid "Provincial/District Testing Trends using MTB/XDR Assay in current year"
-msgstr ""
-"Тамоюлҳои санҷиши вилоятӣ/ноҳиявӣ бо истифода аз MTB/XDR Tahlil дар соли ҷорӣ"
 
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
@@ -10946,13 +10874,6 @@ msgstr "Санҷиши бемории сил"
 msgid "TB Testing & Diagnosis Trends"
 msgstr "Тамоюлҳои санҷиш ва ташхиси сил"
 
-#. [p.PkDashboard.mtbRifTestingDiagnosed]
-#. defaultMessage is:
-#. TB Testing & Diagnosis Trends using MTB/Rif Assay
-#: extracted_strings.json
-msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
-msgstr "Тамоюлҳои санҷиш ва ташхиси сил бо истифода аз MTB/Rif Assay"
-
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
 #. TB XDR Drug Resistances
@@ -10966,13 +10887,6 @@ msgstr "Муқовимат ба маводи мухаддир TB XDR"
 #: extracted_strings.json
 msgid "TB XDR tests performed in current year"
 msgstr "Санҷишҳои TB XDR дар соли ҷорӣ гузаронида шуданд"
-
-#. [p.PkDashboard.testingDiagnosisTrendsRR]
-#. defaultMessage is:
-#. TB and RRTB Diagnosis Trends
-#: extracted_strings.json
-msgid "TB and RRTB Diagnosis Trends"
-msgstr "Тамоюлҳои ташхиси сил ва RRTB"
 
 #. [p.PkDashboard.rifCurrentDiagnosisTitle]
 #. defaultMessage is:
@@ -11131,13 +11045,6 @@ msgstr "Таърихи санҷиш"
 #: extracted_strings.json
 msgid "Testing"
 msgstr "Санҷиш"
-
-#. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
-msgstr "Тамоюлҳои санҷиш ва ташхис бо истифода аз MTB/XDR Assay"
 
 #. [pages.Status.TB.testingTrendsInYear.title]
 #. defaultMessage is:
@@ -12485,16 +12392,16 @@ msgstr "Истифода"
 msgid "Utilization Rate"
 msgstr "Меъёри истифода"
 
-#. [p.PkDashboard.utilizationRate]
+#. [p.PkDashboard.utilizationRate1]
 #. defaultMessage is:
-#. Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working days in year)
+#. Utilization Rate : (Total tests in the selected period * 100) / (Daily Capacity of device * Working days in the selected period)
 #: extracted_strings.json
 msgid ""
-"Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working "
-"days in year)"
+"Utilization Rate : (Total tests in the selected period * 100) / (Daily "
+"Capacity of device * Working days in the selected period)"
 msgstr ""
-"Меъёри истифода: (Санҷишҳои умумӣ * 100) / (Иқтидори ҳаррӯзаи дастгоҳ * "
-"Рӯзҳои корӣ дар сол)"
+"Меъёри истифода: (Ҷамъи санҷишҳо дар давраи интихобшуда * 100) / (Иқтидори "
+"ҳаррӯзаи дастгоҳ * Рӯзҳои корӣ дар давраи интихобшуда)"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -12778,13 +12685,6 @@ msgstr "Ҳолати ҷараёни корӣ"
 #: extracted_strings.json
 msgid "Workload"
 msgstr "Сарбории кор"
-
-#. [pages.XDR.AssayResultsSummary]
-#. defaultMessage is:
-#. XDR Assay Results Summary
-#: extracted_strings.json
-msgid "XDR Assay Results Summary"
-msgstr "Хулосаи натиҷаҳои таҳлили XDR"
 
 #. [p.PkDashboard.XDRByDevice]
 #. defaultMessage is:
@@ -13551,6 +13451,64 @@ msgstr "{unit} аз ҳафтаи гузашта"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} калибровкаи умумӣ"
+
+#~ msgid "Assay for MTB Rif Ultra"
+#~ msgstr "Таҳлил барои MTB Rif Ultra"
+
+#~ msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
+#~ msgstr ""
+#~ "Ташхиси муқовимати кунунии Рифампицин бо истифода аз MTB/Rif Ultra Assay"
+
+#~ msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+#~ msgstr "Тамоюлҳои миллии ташхис бо истифода аз MTB-Rif / MTB Rif Ultra"
+
+#~ msgid "National Diagnosis Trends using MTB/XDR assay"
+#~ msgstr "Тамоюлҳои миллии ташхис бо истифода аз таҳлили MTB/XDR"
+
+#~ msgid "National Rifampicin Resistance Diagnosis Trends"
+#~ msgstr "Тамоюлҳои ташхиси муқовимати миллии рифампицин"
+
+#~ msgid "National Testing Trends using MTB/XDR Assay"
+#~ msgstr "Тамоюлҳои миллии тестӣ бо истифода аз MTB/XDR Assay"
+
+#~ msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
+#~ msgstr ""
+#~ "Одамоне, ки дар соли ҷорӣ бо истифода аз таҳлили MTB/Rif Ultra ба бемории "
+#~ "сил ташхис шудаанд"
+
+#~ msgid "People diagnosed using MTB/XDR assay in current year"
+#~ msgstr ""
+#~ "Одамоне, ки дар соли ҷорӣ бо истифода аз ташхиси MTB/XDR ташхис шудаанд"
+
+#~ msgid "People tested using MTB/XDR assay in current year"
+#~ msgstr "Одамоне, ки дар соли ҷорӣ бо истифода аз MTB/XDR санҷида шуданд"
+
+#~ msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
+#~ msgstr "Тамоюлҳои ташхиси вилоятӣ/ноҳиявӣ бо истифода аз MTB/XDR Tahlil"
+
+#~ msgid "Provincial/District RR Diagnosis Trends"
+#~ msgstr "Тамоюлҳои ташхиси вилоятӣ/ноҳиявии RR"
+
+#~ msgid "Provincial/District TB Testing Trends"
+#~ msgstr "Тамоюлҳои санҷиши бемории сил дар вилоят/ноҳия"
+
+#~ msgid ""
+#~ "Provincial/District Testing Trends using MTB/XDR Assay in current year"
+#~ msgstr ""
+#~ "Тамоюлҳои санҷиши вилоятӣ/ноҳиявӣ бо истифода аз MTB/XDR Tahlil дар соли "
+#~ "ҷорӣ"
+
+#~ msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
+#~ msgstr "Тамоюлҳои санҷиш ва ташхиси сил бо истифода аз MTB/Rif Assay"
+
+#~ msgid "TB and RRTB Diagnosis Trends"
+#~ msgstr "Тамоюлҳои ташхиси сил ва RRTB"
+
+#~ msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
+#~ msgstr "Тамоюлҳои санҷиш ва ташхис бо истифода аз MTB/XDR Assay"
+
+#~ msgid "XDR Assay Results Summary"
+#~ msgstr "Хулосаи натиҷаҳои таҳлили XDR"
 
 #~ msgid "Days Offline"
 #~ msgstr "Рӯзҳои офлайнӣ"
