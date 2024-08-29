@@ -74,7 +74,7 @@ async function getDeviceInfo(credentials, query) {
     .innerJoin('Site as s', 's.id', 'd.siteId')
     .leftJoin('Geography as g', 's.geographyId', 'g.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .leftJoin('Lga as lga', 'g.lgaId', 'lga.id')
     .count({
       cntDevices: knex.raw('d.id'),
     })
