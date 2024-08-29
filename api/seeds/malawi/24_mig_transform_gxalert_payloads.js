@@ -8,7 +8,6 @@ const customFieldsHiv = require('../../src/forms/formsDefinition/CustomFields_Ma
 const customFieldsHivQual = require('../../src/forms/formsDefinition/CustomFields_Malawi_HivQual.json')
 const customFieldsHivVL = require('../../src/forms/formsDefinition/CustomFields_Malawi_HivVL.json')
 
-
 async function seed(knex) {
   const { minDeviceLogId, maxDeviceLogId } = await knex('DeviceLog')
     .whereNotNull('resultId') // Only result payloads
