@@ -38,6 +38,7 @@ module.exports = {
         AspectUploadExcludePatientId: false,
         AspectApiEndpoint: 'https://myanmar.aspect.id/api',
         MigrateAspectApiKey: true,
+        CustomFieldsEnabled: true,
         ConnectSettingsAndCustomFieldsSource: 'ASPECT',
       },
     },
