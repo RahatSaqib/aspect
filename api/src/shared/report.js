@@ -18,7 +18,7 @@ function getSinceThreshold() {
   return since24HoursAgoISO
 }
 
-async function getAllAsyncReportsForUser(username) {
+async function getAllAsyncReportsForUser(personId) {
   const since24HoursAgoISO = getSinceThreshold()
 
   /**
@@ -29,7 +29,8 @@ async function getAllAsyncReportsForUser(username) {
     .join('AsyncReportStatus as s', 'ar.statusId', 's.id')
     .join('UserReportRequest as urr', 'ar.id', 'urr.asyncReportId')
     .join('User as u', 'u.id', 'urr.userId')
-    .where('u.name', username)
+    .join('Person as p', 'u.id', 'p.userId')
+    .where('p.id', personId)
     .where('ar.createdOn', '>=', since24HoursAgoISO)
     .orderBy(['ar.createdOn'], 'desc')
     .select(ASYNC_REPORT_FIELDS)
