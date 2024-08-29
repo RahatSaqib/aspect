@@ -77,6 +77,31 @@ const ReportIndex = () => {
     fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: filter })
   )
 
+  const onClickRaiseReportRequest = async (report, fileExtension = 'xlsx') => {
+    if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
+      const store = require('../../store/store').default
+      store.dispatch(showError(getDateRangeValidationError(report.name)))
+      return
+    }
+
+    const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
+    setShowProgressBar(true)
+    idleTimer.pause()
+    return fetchWrapperForQueries({
+      endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}`,
+      params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
+      customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
+    })
+      .then(async resp => {
+        const file = await resp.blob
+        safeDownloadFile(file, resp.fileName)
+      })
+      .finally(() => {
+        setShowProgressBar(false)
+        idleTimer.resume()
+      })
+  }
+
   const onClickDownload = (report, fileExtension = 'xlsx') => {
     if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
       const store = require('../../store/store').default
