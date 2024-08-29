@@ -94,7 +94,8 @@ const processNewReport = async payload => {
     dataConstraintsHash,
   })
 
-  // TODO: Push to Bull MQ
+  // TODO: Push to BULL MQ
+  // queue().add('asyncReports', { asyncReportId, auth, query, externalId, useUserPlaceHolders = false })
 
   return asyncReportId
 }
