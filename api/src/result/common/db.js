@@ -41,7 +41,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
         device: 'd',
         resultTransferFlag: true,
       },
-      { displayResult: 'all', showUnapprovedDevices: true }
+      { displayResult: 'all', showUnapprovedDevices: true, showDecommissionedDevices: true }
     )
     .select({
       resultText: knex.raw(
@@ -211,7 +211,7 @@ const getBaseQueryForResults = () =>
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false, assayId } = query
+  const { showUnapprovedDevices = false, showDecommissionedDevices = false, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseQueryForResults()
@@ -340,7 +340,7 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { displayResult, showUnapprovedDevices }
+      { displayResult, showUnapprovedDevices, showDecommissionedDevices }
     )
     .modify(queryBuilder => {
       if (query.withTags) {
@@ -434,7 +434,7 @@ async function getResultNotesByResultId(resultId) {
 }
 
 function getQueryForDataExtract(query, dataConstraints) {
-  const { showUnapprovedDevices = false } = query
+  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = query
   const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseResults()
@@ -483,7 +483,7 @@ function getQueryForDataExtract(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { showUnapprovedDevices, displayResult }
+      { showUnapprovedDevices, showDecommissionedDevices, displayResult }
     )
 
   return resultQuery

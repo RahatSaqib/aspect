@@ -115,7 +115,7 @@ async function listMaintenanceStatuses(request) {
 async function listDevicesForSelectList(request) {
   const {
     query,
-    query: { showUnapprovedDevices, onlyResultDevices },
+    query: { showUnapprovedDevices, showDecommissionedDevices, onlyResultDevices },
     auth,
   } = request
   // get data constraints
@@ -126,7 +126,12 @@ async function listDevicesForSelectList(request) {
     .innerJoin('DeviceTypeCategory as dtc', 'dtc.id', 'dt.deviceTypeCategoryId')
     .innerJoin('Site as s', 'd.siteId', 's.id')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', geography: 'g' }, { showUnapprovedDevices })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      { device: 'd', geography: 'g' },
+      { showUnapprovedDevices, showDecommissionedDevices }
+    )
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       partnerId: 'd.partnerId',
@@ -238,7 +243,12 @@ async function getDevicePerformance(request) {
   const devicePerformance = await knex('Result as r')
     .leftJoin('ResultCategory as rc1', 'rc1.id', 'r.resultCategory1')
     .innerJoin('Device as d', 'r.deviceId', 'd.id')
-    .modify(addConstraints, dataConstraints, { result: 'r', device: 'd' }, { showUnapprovedDevices: true })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      { result: 'r', device: 'd' },
+      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+    )
     .where('r.deviceId', deviceId)
     .whereRaw('DATE(r.endedOn) between date(?) and date(?)', [startedOn, endedOn])
     .select([
