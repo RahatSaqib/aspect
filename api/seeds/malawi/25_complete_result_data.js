@@ -16,13 +16,13 @@ const { mergeResultWithPayload } = require('../../src/result/common/logic')
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
   const assayIds = await allAssayToId()
-  const [minDeviceLogId, maxDeviceLogId] = [34808943, 34808943]// await knex('DeviceLog')
-  // const { minDeviceLogId, maxDeviceLogId } = await knex('DeviceLog')
-  //   .whereNotNull('resultId') // Only result payloads
-  //   .first({
-  //     minDeviceLogId: knex.raw('MIN(id)'),
-  //     maxDeviceLogId: knex.raw('MAX(id)'),
-  //   })
+  await knex('DeviceLog')
+  const { minDeviceLogId, maxDeviceLogId } = await knex('DeviceLog')
+    .whereNotNull('resultId') // Only result payloads
+    .first({
+      minDeviceLogId: knex.raw('MIN(id)'),
+      maxDeviceLogId: knex.raw('MAX(id)'),
+    })
 
   const batchSize = 1000
   const startFrom = minDeviceLogId
