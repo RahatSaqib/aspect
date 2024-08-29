@@ -18,6 +18,7 @@ exports.up = async function (knex) {
     tbl.string('hash', 32).notNullable().index()
     tbl.specificType('query', 'JSON').notNullable()
     tbl.string('queryHash', 32).notNullable().index()
+    tbl.string('dataConstraintsHash', 32).notNullable().index()
 
     /**
      * status fields

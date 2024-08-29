@@ -82,7 +82,7 @@ const getExistingReportWithHash = async hash => {
 }
 
 const processNewReport = async payload => {
-  const { reportId, hash, query, queryHash } = payload
+  const { reportId, hash, query, queryHash, dataConstraintsHash } = payload
 
   const statusId = await asyncReportStatusToId('queued')
   const [asyncReportId] = await knex('AsyncReport').insert({
@@ -91,6 +91,7 @@ const processNewReport = async payload => {
     queryHash,
     query: JSON.stringify(query),
     statusId,
+    dataConstraintsHash,
   })
 
   // TODO: Push to Bull MQ
@@ -99,7 +100,11 @@ const processNewReport = async payload => {
 }
 
 const getReportRequest = async (asyncReportId, currentUserId) => {
-  return knex('UserReportRequest').where({ userId: currentUserId, asyncReportId }).first()
+  return knex('UserReportRequest')
+    .join('AsyncReport', 'AsyncReport.id', 'UserReportRequest.asyncReportId')
+    .where({ userId: currentUserId, asyncReportId })
+    .where('AsyncReport.createdOn', '>=', getSinceThreshold())
+    .first()
 }
 
 const createReportRequest = async (asyncReportId, currentUserId) => {
