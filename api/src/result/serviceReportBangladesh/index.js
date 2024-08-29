@@ -409,13 +409,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell C26
         cnt_TypeOfPatient_Presumptive_TB_Cases_New_all: andByHistory('Presumptive TB', 'New', null, assayMtb),
         // cell C29
-        cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb: andByHistory(
-          'Presumptive TB',
-          'New',
-          mtbDetected,
-          null,
-          assayMtb
-        ),
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb: andByHistory('Presumptive TB', 'New', mtbDetected, assayMtb),
         // cell C32
         cnt_TypeOfPatient_Presumptive_TB_Cases_New_MtbRif: andByHistory(
           'Presumptive TB',
