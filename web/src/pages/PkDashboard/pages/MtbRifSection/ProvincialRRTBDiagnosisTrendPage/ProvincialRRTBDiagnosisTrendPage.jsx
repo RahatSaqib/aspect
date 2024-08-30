@@ -60,7 +60,7 @@ const ProvincialRRTBDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.provincialDiagnosisTrendsRRTBComparison)}`}
+      title={formatMessage(messages.ProvincialRRTBDiagnosisTrends)}
       filters={
         <>
           <StateAutocomplete

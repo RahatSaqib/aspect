@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { Card, CardContent, CardHeader, Switch, FormControlLabel, Grid } from '@mui/material'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
+import subtractDays from 'date-fns/subDays'
 import filter from 'lodash/filter'
 import sumBy from 'lodash/sumBy'
 import { useIntl } from 'react-intl'
@@ -7,7 +10,7 @@ import { useQuery } from 'react-query'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { graphMessages } from '../../../messages'
 import { GRAPHS_QUERY_OPTIONS } from '../../../utils/consts/ReactQuery/CONSTS'
-import { getTimePeriod, formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
+import { formatDataByGraphType, Loading, ColumnGraph, PeriodSelector, genLabel } from '../../index'
 import messages from '../graphMessages'
 import styles from '../graphStyles.module.css'
 
@@ -37,14 +40,17 @@ const calcOverallRate = (keyToCalc, totalTotal, gData, filterCriteria) => {
   return percentage
 }
 
+const today = new Date()
+const defaultFilters = {
+  minDate: startOfDay(subtractDays(today, 30)),
+  maxDate: endOfDay(today),
+}
+
 const DeviceStatusGraph = ({ assaysFromState }) => {
   const { formatMessage } = useIntl()
 
   const [showLabel, setShowLabel] = useState(false)
-  const [filter, setFilter] = useState({
-    minDate: getTimePeriod(29, 'day', 'yyyy-MM-dd'),
-    maxDate: getTimePeriod(0, 'day', 'yyyy-MM-dd'),
-  })
+  const [filter, setFilter] = useState(defaultFilters)
 
   const mergedParams = [{ minDate: filter.minDate }, { maxDate: filter.maxDate }]
 

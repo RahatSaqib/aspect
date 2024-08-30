@@ -36,7 +36,7 @@ const TestDiagTrendPage = () => {
       fetchWrapperForQueries({ endpoint: '/result/tb-testing-diagnosis-trend', params: mergedParams })
   )
 
-  const MTBPlusMessage = formatMessage(intlMessages.MTBPlus)
+  const MTBPlusMessage = formatMessage(messages.mtbPlusAndTrace)
   const TotalMessage = formatMessage(intlMessages.Total)
   const MTBPercentMessage = formatMessage(intlMessages.MTBPercent)
 
@@ -59,7 +59,7 @@ const TestDiagTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.mtbRifTestingDiagnosed)}
+      title={formatMessage(messages.TbDTestingDiagnosis)}
       filters={
         <>
           <FormControlLabel

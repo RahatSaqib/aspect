@@ -27,6 +27,7 @@ const endpointParams = [
   { assay: 'GxMtbRif' },
   { assay: 'GxMtbRifUltra' },
   { resultCategory1: 'Detected' },
+  { resultCategory1: 'Trace Detected' },
 ]
 
 const NationalDiagnosisGraph = () => {
@@ -75,7 +76,7 @@ const NationalDiagnosisGraph = () => {
     <Loading />
   ) : (
     <PkPage
-      title={formatMessage(messages.nationalMtbRifUltraDiagnosed)}
+      title={formatMessage(messages.TbDNationalTrend)}
       filters={
         <>
           <FormControlLabel

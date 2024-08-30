@@ -181,7 +181,7 @@ const getBaseResults = () =>
     .leftJoin('PartnerAssay as pa', q => {
       q.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
-    .leftJoin('Site as si', 'd.siteId', 'si.id')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -342,6 +342,19 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       },
       { displayResult, showUnapprovedDevices }
     )
+    .modify(queryBuilder => {
+      if (query.withTags) {
+        queryBuilder.leftJoin(
+          knex('Tag as tag')
+            .innerJoin('ResultTag as rtg', 'rtg.tagId', 'tag.id')
+            .groupBy('rtg.resultId')
+            .select('rtg.resultId', knex.raw('GROUP_CONCAT(DISTINCT tag.title  SEPARATOR ", ") as tagsCsv'))
+            .as('tags'),
+          'r.id',
+          'tags.resultId'
+        )
+      }
+    })
 
   return resultQuery
 }

@@ -13,6 +13,7 @@ module.exports = {
   url: `http://${hostName}:${port}`,
   passwordAttempts: process.env.passwordAttempts,
   passwordSaltRounds: process.env.passwordSaltRounds,
+  gxAlertRemoteAuthentication: process.env.gxAlertRemoteAuthentication === 'true',
   gxAlertApi: process.env.gxAlertApi,
   isDevelopment: process.env.NODE_ENV === 'development',
   environment: process.env.NODE_ENV,
@@ -27,6 +28,9 @@ module.exports = {
     debug: process.env['db.debug'] === 'true',
     timezone: 'UTC',
     ssl: true,
+  },
+  redis: {
+    url: process.env['redis.url'] || 'redis://localhost:6379', // until we add redis for all the environments, we will add default value for now.
   },
   log: {
     file: {
@@ -58,6 +62,9 @@ module.exports = {
   amqp: {
     url: process.env['amqp.url'],
     name: `${process.env['amqp.name'] || 'aspect'}${process.env['scheduler.enabled'] === 'true' ? '' : '_for_testing'}`,
+  },
+  messageQueue: {
+    name: process.env['messageQueue.name'] || 'aspect',
   },
   swagger: {
     enabled: process.env['swagger.enabled'] === 'true',

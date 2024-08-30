@@ -67,7 +67,6 @@ const basePlugin = {
   postProcessAddDeviceOperation,
   preProcessUpdateSite,
   postProcessUpdateSite,
-  preProcessGetResult,
   postProcessGetResult,
   preProcessMergeResult,
   excludeResult,
@@ -200,14 +199,6 @@ async function postProcessAddDeviceOperation(/* context */) {
  * or querying of site.
  */
 async function postProcessUpdateSite(/* context, site, previousSite */) {
-  // nothing to do by default
-}
-
-/**
- * A result is queried
- * called prior to any processing of result.
- */
-async function preProcessGetResult(/* context */) {
   // nothing to do by default
 }
 

@@ -1,29 +1,48 @@
 const omit = require('lodash/omit')
 const startCase = require('lodash/startCase')
-const { getResultCategoriesByAssay, getDeviceWorkload } = require('./common/db')
+const { getDeviceWorkload } = require('./common/db')
 const { getAssay } = require('../assay/common/db')
 const { getConstraints } = require('../auth/constraints')
 const { XDR_RESISTANCES } = require('../shared/constants')
+const { listResultCategoryGroupsForSelectList } = require('../resultCategoryGroup/service')
 
-const buildExtraColumns = (
-  resultCategoryIx,
-  resultCategoryResultsId,
-  resultCategoryResultsI18nKey,
-  resultCategoryLabelI18nKey,
-  resultCategoryLabel,
-  resultCategoryResultsLabel
-) => {
-  const extraColumns = []
-  for (let index = 0; index < resultCategoryResultsId.length; index++) {
-    extraColumns.push({
-      label: `${resultCategoryLabel}-${resultCategoryResultsLabel[index]}`,
-      resultCategoryLabelI18nKey,
-      resultCategoryI18nKey: resultCategoryResultsI18nKey[index],
-      fieldId: `${resultCategoryLabelI18nKey}-${resultCategoryResultsI18nKey[index]}`,
-      selector: `SUM(CASE WHEN resultCategory${resultCategoryIx} = ${resultCategoryResultsId[index]} THEN 1 ELSE 0 END)`,
-    })
-  }
-  return extraColumns
+const commonCategories = ['Error', 'Invalid', 'No Result']
+
+// Helper function to determine the label based on the result name
+const getCommonLabel = name => {
+  if (name.includes('Error')) return 'Error'
+  if (name.includes('Invalid')) return 'Invalid'
+  if (name.includes('No Result')) return 'No Result'
+  return name
+}
+
+const sortCommonCategories = categories =>
+  [...categories].sort((a, b) => commonCategories.includes(a.label) - commonCategories.includes(b.label))
+
+const buildNewColumns = resultCategories => {
+  const uniqueLabels = new Set()
+  const resultCategoryGroupColumn = []
+
+  resultCategories.forEach(result => {
+    const label = getCommonLabel(result.name)
+
+    // Only add the result if the label has not been used
+    if (!uniqueLabels.has(label)) {
+      uniqueLabels.add(label)
+
+      resultCategoryGroupColumn.push({
+        label,
+        fieldId: `${result.assayI18nKey}-${result.i18nKey}`,
+        resultCategoryLabelI18nKey: result.assayI18nKey,
+        resultCategoryI18nKey: result.i18nKey,
+        selector: result.resultCategory2
+          ? `SUM(CASE WHEN resultCategory1 = ${result.resultCategory1} AND resultCategory2 = ${result.resultCategory2} THEN 1 ELSE 0 END)`
+          : `SUM(CASE WHEN resultCategory1 = ${result.resultCategory1} THEN 1 ELSE 0 END)`,
+      })
+    }
+  })
+
+  return resultCategoryGroupColumn
 }
 
 const buildXdrExtraColumns = isExport => {
@@ -54,49 +73,29 @@ const buildXdrExtraColumns = isExport => {
 const listWorkload = async request => {
   const { query, auth } = request
   const dataConstraints = await getConstraints(auth.credentials)
-
-  const { assayId } = query
-  const assay = await getAssay(assayId)
-
-  const resultCategoryAssay = await getResultCategoriesByAssay(assayId)
-  const resultCategory1ResultsI18nKey = resultCategoryAssay.resultCategory1ResultsI18nKey?.split(',') || []
-  const resultCategory1ResultsLabel = resultCategoryAssay.resultCategory1ResultsLabel?.split(',') || []
-  const resultCategory2ResultsLabel = resultCategoryAssay.resultCategory2ResultsLabel?.split(',') || []
-  const resultCategory1ResultsId = resultCategoryAssay.resultCategory1ResultsId?.split(',') || []
-  const resultCategory2ResultsI18nKey = resultCategoryAssay.resultCategory2ResultsI18nKey?.split(',') || []
-  const resultCategory2ResultsId = resultCategoryAssay.resultCategory2ResultsId?.split(',') || []
-
   let extraColumns = []
 
-  if (resultCategory1ResultsId !== null) {
-    extraColumns = buildExtraColumns(
-      1,
-      resultCategory1ResultsId,
-      resultCategory1ResultsI18nKey,
-      resultCategoryAssay.resultCategory1LabelI18nKey,
-      resultCategoryAssay.resultCategory1Label,
-      resultCategory1ResultsLabel
-    )
-  }
+  const { assayId } = query
 
-  if (assay.externalId === 'GxMtbXdr') {
-    extraColumns = [...extraColumns, ...buildXdrExtraColumns(query.isExport)]
-  } else if (resultCategory1ResultsId !== null) {
-    extraColumns = [
-      ...extraColumns,
-      ...buildExtraColumns(
-        2,
-        resultCategory2ResultsId,
-        resultCategory2ResultsI18nKey,
-        resultCategoryAssay.resultCategory2LabelI18nKey,
-        resultCategoryAssay.resultCategory2Label,
-        resultCategory2ResultsLabel
-      ),
-    ]
-  }
+  if (assayId) {
+    const assay = await getAssay(assayId)
 
+    const { data: resultCategories } = await listResultCategoryGroupsForSelectList(request)
+
+    const detectedCategories = ['MTB Detected', 'MTB Trace Detected']
+
+    extraColumns = buildNewColumns(resultCategories, assay.externalId)
+
+    if (assay.externalId === 'GxMtbXdr') {
+      const xdrCategories = ['MTB Not Detected', ...detectedCategories, ...commonCategories]
+      const filteredColumns = extraColumns.filter(col => xdrCategories.includes(col.label))
+      extraColumns = [...filteredColumns, ...buildXdrExtraColumns(query.isExport)]
+    } else extraColumns = extraColumns.filter(col => !detectedCategories.includes(col.label))
+  }
   const { total, length, data } = await getDeviceWorkload(extraColumns, dataConstraints, query, auth)
   extraColumns = extraColumns.map(ec => omit(ec, 'selector'))
+  extraColumns = sortCommonCategories(extraColumns)
+
   return { ok: true, total, length, data, extraColumns }
 }
 

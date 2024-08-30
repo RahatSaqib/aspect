@@ -16,6 +16,7 @@ import BrowseTablePaginator from '../../../../../oldComponents/BrowseTablePagina
 import DataTableCard from '../../../../../oldComponents/shared/DataTableCard'
 import DataTableHead from '../../../../../oldComponents/shared/tableHead'
 import { makeSortPageSelector } from '../../../../../utils/selectors/searchParams'
+import dashboardMessages from '../../../PkDashboard.Messages'
 import messages from './messages'
 import styles from './styles.module.css'
 import TableRow from './TableRow'
@@ -83,9 +84,9 @@ const XdrByDevice = () => {
 
   return (
     <>
-      <DetailHeader name={formatMessage(messages.XDRAssayResultsSummary)} />
+      <DetailHeader name={formatMessage(dashboardMessages.XDRByDevice)} />
       <div className={styles.Container}>
-        <Helmet title={formatMessage(messages.XDRAssayResultsSummary)} />
+        <Helmet title={formatMessage(dashboardMessages.XDRByDevice)} />
         <XDRByDeviceFilter />
         <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>

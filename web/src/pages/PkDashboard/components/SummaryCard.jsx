@@ -14,6 +14,7 @@ const SummaryCard = ({ items }) => {
           const dataRowProps = {
             label: formatMessage(messages[item.key]),
             value: item.value.toString(),
+            info: item?.info,
           }
           if (item.valueTooltipKey) {
             dataRowProps.valueTooltip = formatMessage(messages[item.valueTooltipKey])
