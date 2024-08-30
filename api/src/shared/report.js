@@ -100,7 +100,7 @@ const processNewReport = async payload => {
   return asyncReportId
 }
 
-const getReportRequest = async (asyncReportId, currentUserId) => {
+const auditReportCaller = async (asyncReportId, currentUserId) => {
   return knex('UserReportRequest')
     .join('AsyncReport', 'AsyncReport.id', 'UserReportRequest.asyncReportId')
     .where({ userId: currentUserId, asyncReportId })
@@ -117,7 +117,7 @@ const createReportRequest = async (asyncReportId, currentUserId) => {
 }
 
 const handleExistingReport = async (asyncReportId, currentUserId) => {
-  const existingRequest = await getReportRequest(asyncReportId, currentUserId)
+  const existingRequest = await auditReportCaller(asyncReportId, currentUserId)
 
   if (existingRequest) {
     return knex('UserReportRequest').where({ userId: currentUserId, asyncReportId }).increment('requestCount', 1)
