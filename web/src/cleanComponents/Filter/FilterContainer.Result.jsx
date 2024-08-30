@@ -217,6 +217,18 @@ const ResultFilter = () => {
             sx={{ m: 2 }}
           />
         </Grid>
+        <Grid item xs={3}>
+          <FormControlLabel
+            control={
+              <Checkbox
+                checked={[true, 'true'].includes(state.showDecommissionedDevices)}
+                onChange={e => setState({ ...state, showDecommissionedDevices: e.target.checked || null })}
+              />
+            }
+            label={formatMessage(messages.showDecommissionedDevices)}
+            sx={{ m: 2 }}
+          />
+        </Grid>
       </Grid>
     </FilterContainer>
   )
