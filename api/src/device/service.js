@@ -266,7 +266,12 @@ async function getDevicePerformance(request) {
   const resultsByCategory = await knex('FactResultsDeviceByCategory1 as f')
     .innerJoin('Device as d', 'f.deviceId', 'd.id')
     .innerJoin('Assay as a', 'f.assayId', 'a.id')
-    .modify(addConstraints, dataConstraints, { device: 'd', assay: 'a' })
+    .modify(
+      addConstraints,
+      dataConstraints,
+      { device: 'd', assay: 'a' },
+      { showUnapprovedDevices: true, showDecommissionedDevices: true }
+    )
     .where('f.days', 365)
     .groupBy('f.resultCategory1')
     .select([knex.raw('f.resultCategory1 as resultCategoryId'), knex.raw(`sum(f.resultCount) as resultCount`)])
