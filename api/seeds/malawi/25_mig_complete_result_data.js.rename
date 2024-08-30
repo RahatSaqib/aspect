@@ -16,7 +16,7 @@ const { mergeResultWithPayload } = require('../../src/result/common/logic')
 async function seed(knex) {
   const { id: partnerId } = await getPartnerByExternalId(knex, partnerExternalId)
   const assayIds = await allAssayToId()
-  await knex('DeviceLog')
+
   const { minDeviceLogId, maxDeviceLogId } = await knex('DeviceLog')
     .whereNotNull('resultId') // Only result payloads
     .first({
