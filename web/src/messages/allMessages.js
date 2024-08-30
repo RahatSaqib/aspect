@@ -150,6 +150,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.onlyTreatmentRequired',
     defaultMessage: 'Show Only Results With Treatment Required',
   },
+  showDecommissionedDevices: {
+    id: 'filter.btnGroup.showDecommissionedDevices',
+    defaultMessage: 'Show Results From Decommissioned Devices',
+  },
   deviceIssueType: { id: 'filter.btnGroup.deviceIssueType', defaultMessage: 'Device Issue: {issueTypeId}' },
   hasStock: { id: 'filter.btnGroup.hasStock', defaultMessage: 'Only lots with stock' },
   // outOfStock: { id: 'filter.btnGroup.daysStockLeft.outOfStock', defaultMessage: 'Out of Stock' },

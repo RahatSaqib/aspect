@@ -365,30 +365,47 @@ function addDevicesAndSitesConstraints(queryBuilder, constraints, aliases, optio
   if (aliases.site || filterAlias) {
     excludeDisabledSites(queryBuilder, aliases.site || filterAlias)
   }
-  if (device && !showUnapprovedDevices) {
-    queryBuilder.leftOuterJoin(`DeviceApproval as deviceApproval`, `${device}.deviceApprovalId`, `deviceApproval.id`)
-    queryBuilder.where(qb =>
-      qb.where({ [`deviceApproval.token`]: 'approved' }).orWhere(knex.raw('isnull(`deviceApproval`.`token`)'))
-    )
-  }
-  if (device && !showDecommissionedDevices) {
-    // latest maintenance status for device is NOT 'inactiveDecommissioned'
-    queryBuilder
-      .leftOuterJoin(
-        `DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog`,
-        `${device}.deviceMaintenanceStatusLogId`,
-        `deviceMaintenanceStatusLog.id`
-      )
-      .leftOuterJoin(
-        'DeviceMaintenanceStatus AS deviceMaintenanceStatus',
-        'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
-        'deviceMaintenanceStatus.id'
-      )
-    queryBuilder.where(qb =>
-      qb
-        .whereNull('deviceMaintenanceStatus.externalId')
-        .orWhereNot('deviceMaintenanceStatus.externalId', 'inactiveDecommissioned')
-    )
+  if (device) {
+    const hideUnapprovedDevices = !showUnapprovedDevices
+    const hideDecommissionedDevices = !showDecommissionedDevices
+    if (hideUnapprovedDevices || hideDecommissionedDevices) {
+      queryBuilder.leftOuterJoin(`DeviceApproval as deviceApproval`, `${device}.deviceApprovalId`, `deviceApproval.id`)
+
+      if (hideDecommissionedDevices /* showUnapprovedDevices may be true or false */) {
+        queryBuilder
+          .leftOuterJoin(
+            `DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog`,
+            `${device}.deviceMaintenanceStatusLogId`,
+            `deviceMaintenanceStatusLog.id`
+          )
+          .leftOuterJoin(
+            'DeviceMaintenanceStatus AS deviceMaintenanceStatus',
+            'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
+            'deviceMaintenanceStatus.id'
+          )
+
+        queryBuilder.whereRaw(`
+          ifnull(deviceMaintenanceStatus.externalId, '') != 'inactiveDecommissioned'
+        `)
+        /**
+         * any deviceApproval except 'decommissioned'
+         */
+        queryBuilder.whereRaw(`        
+          ifnull(deviceApproval.token, '') != 'decommissioned'
+        `)
+        if (hideUnapprovedDevices) {
+          /**
+           * deviceApproval is null or 'approved' only
+           */
+          queryBuilder.whereRaw(`ifnull(deviceApproval.token, 'approved') = 'approved'`)
+        }
+      } else if (hideUnapprovedDevices /* showDecommissionedDevices = true */) {
+        /**
+         * deviceApproval is null or 'approved' or 'decommissioned' only
+         */
+        queryBuilder.whereRaw(`ifnull(deviceApproval.token, 'approved') in ('approved', 'decommissioned')`)
+      }
+    }
   }
 }
 
