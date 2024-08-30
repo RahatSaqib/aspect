@@ -70,12 +70,23 @@ const getDeviceLogsToUpdateInRange = async (knex, minDeviceLogId, maxDeviceLogId
       timezoneUtcOffset: getOffsetFromTimeZone(deviceLogToUpdate.timezoneIANA),
     }
 
+    const customFields = {
+      fields: [
+        ...customFieldsMalawi.fields,
+        ...customFieldsMtb.fields,
+        ...customFieldsHiv.fields,
+        ...customFieldsHivQual.fields,
+        ...customFieldsHivVL.fields,
+      ],
+      refForms: [],
+    }
+
     try {
       const transformedPayload = transformPayload(
         JSON.parse(deviceLogToUpdate.rawMessage),
         true,
         countryTimeZoneData,
-        deepMerge(customFieldsMalawi, customFieldsMtb, customFieldsHiv, customFieldsHivQual, customFieldsHivVL)
+        customFields
       )
 
       const transformedDeviceLog = {
