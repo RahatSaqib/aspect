@@ -264,6 +264,10 @@ const messages = {
       id: 'filter.popover.onlyTreatmentRequired',
       defaultMessage: 'Only Results With Treatment Required',
     },
+    showDecommissionedDevices: {
+      id: 'filter.popover.showDecommissionedDevices',
+      defaultMessage: 'Show Results From Decommissioned Devices',
+    },
     deviceMaintenanceStatus: {
       id: 'filter.popover.deviceMaintenanceStatus',
       defaultMessage: 'Maintenance Status',
