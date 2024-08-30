@@ -17,6 +17,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.Critical_Errors_By_Device',
     defaultMessage: 'Critical Errors By Device',
   },
+  criticalErrorsByModule: {
+    id: 'pages.ReportIndex.criticalErrorsByModule',
+    defaultMessage: 'Critical Errors By Module',
+  },
+  criticalErrorsByModule_description: {
+    id: 'pages.ReportIndex.criticalErrorsByModule_description',
+    defaultMessage: 'Includes a list of GeneXpert modules that had at least 1 critical error',
+  },
   all_results: {
     id: 'pages.ReportIndex.all_results',
     defaultMessage: 'All Results',
