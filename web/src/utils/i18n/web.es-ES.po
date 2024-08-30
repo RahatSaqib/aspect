@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-09T03:15:45.784Z\n"
+"POT-Creation-Date: 2024-08-27T23:24:25.912Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -739,13 +739,6 @@ msgstr "Ensayo"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Tipo de ensayo"
-
-#. [p.PkDashboard.peopleTestedRifUltra]
-#. defaultMessage is:
-#. Assay for MTB Rif Ultra
-#: extracted_strings.json
-msgid "Assay for MTB Rif Ultra"
-msgstr "Ensayo para MTB Rif Ultra"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -2215,15 +2208,6 @@ msgstr "Diagnóstico actual de RRTB"
 #: extracted_strings.json
 msgid "Current Rifampicin Resistance Diagnosis Trends"
 msgstr "Tendencias actuales de diagnóstico de resistencia a la rifampicina"
-
-#. [p.PkDashboard.rrtbDiagnosisTitle1]
-#. defaultMessage is:
-#. Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay
-#: extracted_strings.json
-msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
-msgstr ""
-"Diagnóstico actual de la resistencia a la rifampicina mediante el ensayo MTB/"
-"Rif Ultra"
 
 #. [p.PkDashboard.TbDCurrent]
 #. defaultMessage is:
@@ -6061,6 +6045,9 @@ msgstr "MTB Detectado Resistencia Resistente"
 msgid "MTB Detected Resistance Susceptible"
 msgstr "MTB Detectado Resistencia Susceptible"
 
+#. [pages.Status.mtbDetection]
+#. defaultMessage is:
+#. MTB Detection
 #. [p.PkDashboard.mtbXdrmtbDetection]
 #. defaultMessage is:
 #. MTB Detection
@@ -6269,6 +6256,13 @@ msgstr "MTB Positivo MTB Resistencia Susceptible"
 msgid "MTB Positivity In Quarters"
 msgstr "Positividad de la MTB en cuartos"
 
+#. [pages.Status.mtbRifResistance]
+#. defaultMessage is:
+#. MTB Rif Resistance
+#: extracted_strings.json
+msgid "MTB Rif Resistance"
+msgstr "Resistencia MTB Rif"
+
 #. [assayGenericDstresultCategorySuccess]
 #. defaultMessage is:
 #. MTB Success
@@ -6375,6 +6369,13 @@ msgstr "Tendencias MTB+ en el mes"
 msgid "MTB+ Trends In Year"
 msgstr "Tendencias de MTB+ en el año"
 
+#. [p.PkDashboard.mtbPlusAndTrace]
+#. defaultMessage is:
+#. MTB+ and Trace
+#: extracted_strings.json
+msgid "MTB+ and Trace"
+msgstr "MTB+ y Traza"
+
 #. [p.PkDashboard.titlemtbRif]
 #. defaultMessage is:
 #. MTB/RIF
@@ -6398,6 +6399,13 @@ msgstr "MTB/Rif"
 #: extracted_strings.json
 msgid "MTB/XDR"
 msgstr "MTB/XDR"
+
+#. [pages.Status.mtbXDRDrugResistance]
+#. defaultMessage is:
+#. MTB/XDR drug resistance
+#: extracted_strings.json
+msgid "MTB/XDR drug resistance"
+msgstr "Farmacorresistencia MTB/XDR"
 
 #. [filter.AssaySelectField.assayMP96Covid19]
 #. defaultMessage is:
@@ -6815,22 +6823,6 @@ msgstr "Nacional"
 msgid "National Contacts"
 msgstr "Contactos nacionales"
 
-#. [p.PkDashboard.nationalMtbRifUltraDiagnosed]
-#. defaultMessage is:
-#. National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay
-#: extracted_strings.json
-msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
-msgstr ""
-"Tendencias nacionales de diagnóstico mediante el ensayo MTB-Rif / MTB Rif "
-"Ultra"
-
-#. [p.PkDashboard.nationalDiagnosisXdr]
-#. defaultMessage is:
-#. National Diagnosis Trends using MTB/XDR assay
-#: extracted_strings.json
-msgid "National Diagnosis Trends using MTB/XDR assay"
-msgstr "Tendencias nacionales del diagnóstico mediante el ensayo MTB/XDR"
-
 #. [p.PkDashboard.nationalErrorRates]
 #. defaultMessage is:
 #. National Error Rates
@@ -6901,14 +6893,6 @@ msgstr "Tasas nacionales sin resultado"
 msgid "National RRTB Trends"
 msgstr "Tendencias nacionales de RRTB"
 
-#. [p.PkDashboard.rrtbNationalDiagnosisTrendsTitle]
-#. defaultMessage is:
-#. National Rifampicin Resistance Diagnosis Trends
-#: extracted_strings.json
-msgid "National Rifampicin Resistance Diagnosis Trends"
-msgstr ""
-"Tendencias nacionales del diagnóstico de la resistencia a la rifampicina"
-
 #. [p.PkDashboard.TbDNationalTrend]
 #. defaultMessage is:
 #. National TB Diagnosis Trends
@@ -6932,13 +6916,6 @@ msgstr "Tendencias nacionales en las pruebas de TB"
 #: extracted_strings.json
 msgid "National Testing Trends"
 msgstr "Tendencias nacionales de pruebas"
-
-#. [p.PkDashboard.nationalXdrTestingTrends]
-#. defaultMessage is:
-#. National Testing Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "National Testing Trends using MTB/XDR Assay"
-msgstr "Tendencias nacionales de las pruebas con el ensayo MTB/XDR"
 
 #. [pages.ReportIndex.annualUtilizationRates]
 #. defaultMessage is:
@@ -7834,22 +7811,6 @@ msgstr "ID del paciente o el caso"
 msgid "Pending changes"
 msgstr "Cambios pendientes"
 
-#. [p.PkDashboard.peopleDiagnosedRifUltra]
-#. defaultMessage is:
-#. People diagnosed for TB using MTB/Rif Ultra assay in current year
-#: extracted_strings.json
-msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
-msgstr ""
-"Personas diagnosticadas de TB mediante la prueba MTB/Rif Ultra en el año en "
-"curso"
-
-#. [p.PkDashboard.peopleDiagnosedXdr]
-#. defaultMessage is:
-#. People diagnosed using MTB/XDR assay in current year
-#: extracted_strings.json
-msgid "People diagnosed using MTB/XDR assay in current year"
-msgstr "Personas diagnosticadas con la prueba MTB/XDR en el año en curso"
-
 #. [p.PkDashboard.peopleTestedCovid]
 #. defaultMessage is:
 #. People tested for Covid in current year
@@ -7872,13 +7833,6 @@ msgid "People tested for TB using MTB/Rif assay in current year"
 msgstr ""
 "Personas sometidas a pruebas de TB mediante el ensayo MTB/Rif en el año en "
 "curso"
-
-#. [p.PkDashboard.peopleTestedXdr]
-#. defaultMessage is:
-#. People tested using MTB/XDR assay in current year
-#: extracted_strings.json
-msgid "People tested using MTB/XDR assay in current year"
-msgstr "Personas sometidas a la prueba MTB/XDR en el año en curso"
 
 #. [pages.ReportIndex.reportCustomFieldsCompletion]
 #. defaultMessage is:
@@ -8549,43 +8503,12 @@ msgstr "Pruebas provinciales de XDR en el año en curso"
 msgid "Provincial XDR testing trends"
 msgstr "Tendencias provinciales de las pruebas XDR"
 
-#. [p.PkDashboard.provincialXdrDiagnosisTrends]
-#. defaultMessage is:
-#. Provincial/District Diagnosis Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
-msgstr ""
-"Tendencias del diagnóstico provincial/distrital mediante el ensayo MTB/XDR"
-
-#. [p.PkDashboard.provincialDiagnosisTrendsRRTBComparison]
-#. defaultMessage is:
-#. Provincial/District RR Diagnosis Trends
-#: extracted_strings.json
-msgid "Provincial/District RR Diagnosis Trends"
-msgstr "Tendencias provinciales/de distrito del diagnóstico de RR"
-
-#. [p.PkDashboard.provincialTBTestingTrends]
-#. defaultMessage is:
-#. Provincial/District TB Testing Trends
-#: extracted_strings.json
-msgid "Provincial/District TB Testing Trends"
-msgstr "Tendencias provinciales/distritales de las pruebas de TB"
-
 #. [p.PkDashboard.provincialTestingTrends]
 #. defaultMessage is:
 #. Provincial/District Testing Trends
 #: extracted_strings.json
 msgid "Provincial/District Testing Trends"
 msgstr "Tendencias de los exámenes provinciales y de distrito"
-
-#. [p.PkDashboard.provincialXdrTestingTrends]
-#. defaultMessage is:
-#. Provincial/District Testing Trends using MTB/XDR Assay in current year
-#: extracted_strings.json
-msgid "Provincial/District Testing Trends using MTB/XDR Assay in current year"
-msgstr ""
-"Tendencias de las pruebas provinciales/de distrito con el ensayo MTB/XDR en "
-"el año en curso"
 
 #. [pages.shared.deviceApproval.provisioned]
 #. defaultMessage is:
@@ -10962,15 +10885,6 @@ msgstr "Pruebas de TB"
 msgid "TB Testing & Diagnosis Trends"
 msgstr "Tendencias en las pruebas y el diagnóstico de la tuberculosis"
 
-#. [p.PkDashboard.mtbRifTestingDiagnosed]
-#. defaultMessage is:
-#. TB Testing & Diagnosis Trends using MTB/Rif Assay
-#: extracted_strings.json
-msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
-msgstr ""
-"Tendencias en las pruebas y el diagnóstico de la tuberculosis mediante el "
-"ensayo MTB/Rif"
-
 #. [pages.Status.clinicalIndicatorsXdr.title]
 #. defaultMessage is:
 #. TB XDR Drug Resistances
@@ -10984,13 +10898,6 @@ msgstr "Resistencias a los medicamentos TB XDR"
 #: extracted_strings.json
 msgid "TB XDR tests performed in current year"
 msgstr "Pruebas de TB XDR realizadas en el año en curso"
-
-#. [p.PkDashboard.testingDiagnosisTrendsRR]
-#. defaultMessage is:
-#. TB and RRTB Diagnosis Trends
-#: extracted_strings.json
-msgid "TB and RRTB Diagnosis Trends"
-msgstr "Tendencias en el diagnóstico de la TB y la RRTB"
 
 #. [p.PkDashboard.rifCurrentDiagnosisTitle]
 #. defaultMessage is:
@@ -11149,13 +11056,6 @@ msgstr "Historial de pruebas"
 #: extracted_strings.json
 msgid "Testing"
 msgstr "Probando"
-
-#. [p.PkDashboard.testingAndDiagnosisUsingXdr]
-#. defaultMessage is:
-#. Testing & Diagnosis Trends using MTB/XDR Assay
-#: extracted_strings.json
-msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
-msgstr "Tendencias de pruebas y diagnóstico utilizando el ensayo MTB/XDR"
 
 #. [pages.Status.TB.testingTrendsInYear.title]
 #. defaultMessage is:
@@ -12518,16 +12418,17 @@ msgstr "Ocupación"
 msgid "Utilization Rate"
 msgstr "Tasa de utilización"
 
-#. [p.PkDashboard.utilizationRate]
+#. [p.PkDashboard.utilizationRate1]
 #. defaultMessage is:
-#. Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working days in year)
+#. Utilization Rate : (Total tests in the selected period * 100) / (Daily Capacity of device * Working days in the selected period)
 #: extracted_strings.json
 msgid ""
-"Utilization Rate : (Total tests * 100) / (Daily Capacity of device * Working "
-"days in year)"
+"Utilization Rate : (Total tests in the selected period * 100) / (Daily "
+"Capacity of device * Working days in the selected period)"
 msgstr ""
-"Índice de utilización : (Total de pruebas * 100) / (Capacidad diaria del "
-"dispositivo * Días laborables al año)"
+"Índice de utilización : (Total de pruebas en el periodo seleccionado * "
+"100) / (Capacidad diaria del dispositivo * Días laborables en el periodo "
+"seleccionado)"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -12811,13 +12712,6 @@ msgstr "Estado de flujo de trabajo"
 #: extracted_strings.json
 msgid "Workload"
 msgstr "Volumen de trabajo"
-
-#. [pages.XDR.AssayResultsSummary]
-#. defaultMessage is:
-#. XDR Assay Results Summary
-#: extracted_strings.json
-msgid "XDR Assay Results Summary"
-msgstr "Resumen de los resultados del ensayo XDR"
 
 #. [p.PkDashboard.XDRByDevice]
 #. defaultMessage is:
@@ -13585,6 +13479,70 @@ msgstr "{unit} desde la semana pasada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibraciones totales"
+
+#~ msgid "Assay for MTB Rif Ultra"
+#~ msgstr "Ensayo para MTB Rif Ultra"
+
+#~ msgid "Current Rifampicin Resistance Diagnosis using MTB/Rif Ultra Assay"
+#~ msgstr ""
+#~ "Diagnóstico actual de la resistencia a la rifampicina mediante el ensayo "
+#~ "MTB/Rif Ultra"
+
+#~ msgid "National Diagnosis Trends using MTB-Rif / MTB Rif Ultra assay"
+#~ msgstr ""
+#~ "Tendencias nacionales de diagnóstico mediante el ensayo MTB-Rif / MTB Rif "
+#~ "Ultra"
+
+#~ msgid "National Diagnosis Trends using MTB/XDR assay"
+#~ msgstr "Tendencias nacionales del diagnóstico mediante el ensayo MTB/XDR"
+
+#~ msgid "National Rifampicin Resistance Diagnosis Trends"
+#~ msgstr ""
+#~ "Tendencias nacionales del diagnóstico de la resistencia a la rifampicina"
+
+#~ msgid "National Testing Trends using MTB/XDR Assay"
+#~ msgstr "Tendencias nacionales de las pruebas con el ensayo MTB/XDR"
+
+#~ msgid "People diagnosed for TB using MTB/Rif Ultra assay in current year"
+#~ msgstr ""
+#~ "Personas diagnosticadas de TB mediante la prueba MTB/Rif Ultra en el año "
+#~ "en curso"
+
+#~ msgid "People diagnosed using MTB/XDR assay in current year"
+#~ msgstr "Personas diagnosticadas con la prueba MTB/XDR en el año en curso"
+
+#~ msgid "People tested using MTB/XDR assay in current year"
+#~ msgstr "Personas sometidas a la prueba MTB/XDR en el año en curso"
+
+#~ msgid "Provincial/District Diagnosis Trends using MTB/XDR Assay"
+#~ msgstr ""
+#~ "Tendencias del diagnóstico provincial/distrital mediante el ensayo MTB/XDR"
+
+#~ msgid "Provincial/District RR Diagnosis Trends"
+#~ msgstr "Tendencias provinciales/de distrito del diagnóstico de RR"
+
+#~ msgid "Provincial/District TB Testing Trends"
+#~ msgstr "Tendencias provinciales/distritales de las pruebas de TB"
+
+#~ msgid ""
+#~ "Provincial/District Testing Trends using MTB/XDR Assay in current year"
+#~ msgstr ""
+#~ "Tendencias de las pruebas provinciales/de distrito con el ensayo MTB/XDR "
+#~ "en el año en curso"
+
+#~ msgid "TB Testing & Diagnosis Trends using MTB/Rif Assay"
+#~ msgstr ""
+#~ "Tendencias en las pruebas y el diagnóstico de la tuberculosis mediante el "
+#~ "ensayo MTB/Rif"
+
+#~ msgid "TB and RRTB Diagnosis Trends"
+#~ msgstr "Tendencias en el diagnóstico de la TB y la RRTB"
+
+#~ msgid "Testing & Diagnosis Trends using MTB/XDR Assay"
+#~ msgstr "Tendencias de pruebas y diagnóstico utilizando el ensayo MTB/XDR"
+
+#~ msgid "XDR Assay Results Summary"
+#~ msgstr "Resumen de los resultados del ensayo XDR"
 
 #~ msgid "Days Offline"
 #~ msgstr "Días sin conexión"
