@@ -3,8 +3,9 @@ import { Button, Grid, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIdleTimerContext } from 'react-idle-timer'
 import { defineMessages, useIntl } from 'react-intl'
-import { useQuery } from 'react-query'
+import { useQuery, useMutation } from 'react-query'
 import { useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { DetailHeader, ReportsFilter } from '../../cleanComponents'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { REPORT_LIST } from '../../components/QueryFetch/Report/index'
@@ -59,6 +60,8 @@ const getDateRangeValidationError = reportName => ({
   messageValues: { reportName },
 })
 
+const asyncReportsFeatureEnabled = true
+
 const ReportIndex = () => {
   const location = useLocation()
   const intl = useIntl()
@@ -77,30 +80,30 @@ const ReportIndex = () => {
     fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: filter })
   )
 
-  const onClickRaiseReportRequest = async (report, fileExtension = 'xlsx') => {
-    if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
-      const store = require('../../store/store').default
-      store.dispatch(showError(getDateRangeValidationError(report.name)))
-      return
+  const {
+    mutate: onClickSubmitAsyncReportRequest,
+    isLoading: isSubmitting,
+    isSuccess,
+    isError,
+  } = useMutation(
+    async ({ report, fileExtension }) => {
+      const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
+      return fetchWrapperForQueries({
+        endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}/async`,
+        method: 'POST',
+        params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
+        customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
+      })
+    },
+    {
+      onSettled: () => {
+        console.info('inside onSettled')
+      },
+      onSuccess: () => {
+        console.info('inside onSuccess ::::::: ')
+      },
     }
-
-    const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
-    setShowProgressBar(true)
-    idleTimer.pause()
-    return fetchWrapperForQueries({
-      endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}`,
-      params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
-      customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
-    })
-      .then(async resp => {
-        const file = await resp.blob
-        safeDownloadFile(file, resp.fileName)
-      })
-      .finally(() => {
-        setShowProgressBar(false)
-        idleTimer.resume()
-      })
-  }
+  )
 
   const onClickDownload = (report, fileExtension = 'xlsx') => {
     if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
@@ -144,15 +147,35 @@ const ReportIndex = () => {
                 description={report.description}
                 i18nKey={report.i18nKey}
                 i18nKeyDescription={report.i18nKeyDescription}
-                onClick={() => onClickDownload(report, 'xlsx')}
+                onClick={() =>
+                  asyncReportsFeatureEnabled
+                    ? onClickSubmitAsyncReportRequest({ report, fileExtension: 'xlsx' })
+                    : onClickDownload(report, 'xlsx')
+                }
               >
                 {report.exportExcel === 1 && (
-                  <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={() =>
+                      asyncReportsFeatureEnabled
+                        ? onClickSubmitAsyncReportRequest({ report, fileExtension: 'xlsx' })
+                        : onClickDownload(report, 'xlsx')
+                    }
+                  >
                     Excel
                   </Button>
                 )}
                 {report.exportCsv === 1 && (
-                  <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
+                  <Button
+                    size="small"
+                    color="primary"
+                    onClick={() =>
+                      asyncReportsFeatureEnabled
+                        ? onClickSubmitAsyncReportRequest({ report, fileExtension: 'csv' })
+                        : onClickDownload(report, 'csv')
+                    }
+                  >
                     CSV
                   </Button>
                 )}
