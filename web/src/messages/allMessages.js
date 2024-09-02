@@ -150,6 +150,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.onlyTreatmentRequired',
     defaultMessage: 'Show Only Results With Treatment Required',
   },
+  showDecommissionedDevices: {
+    id: 'filter.btnGroup.showDecommissionedDevices',
+    defaultMessage: 'Show Results From Decommissioned Devices',
+  },
   deviceIssueType: { id: 'filter.btnGroup.deviceIssueType', defaultMessage: 'Device Issue: {issueTypeId}' },
   hasStock: { id: 'filter.btnGroup.hasStock', defaultMessage: 'Only lots with stock' },
   // outOfStock: { id: 'filter.btnGroup.daysStockLeft.outOfStock', defaultMessage: 'Out of Stock' },
@@ -381,6 +385,7 @@ const messages = defineMessages({
     defaultMessage: 'Supply in Stock',
   },
   Total: { id: 'legends.Unknown.Total', defaultMessage: 'Total' },
+  reportableResults: { id: 'legends.Unknown.ReportableResults', defaultMessage: 'Reportable Results' },
   MTBPlus: { id: 'legends.Unknown.MTBPlus', defaultMessage: 'MTB+' },
   MTBPercent: { id: 'legends.Unknown.MTBPercent', defaultMessage: 'MTB%' },
   RRDHash: { id: 'legends.Unknown.RRDHash', defaultMessage: 'RRD#' },

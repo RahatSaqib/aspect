@@ -402,6 +402,9 @@ function listResultsBaseConfig() {
         showUnapprovedDevices: Joi.boolean()
           .default(false)
           .description('If true, will include all the results of unapproved devices'),
+        showDecommissionedDevices: Joi.boolean()
+          .default(false)
+          .description('If true, will include results from decommissioned devices'),
         displayResult: Joi.string()
           .allow(null, '')
           .optional()
