@@ -593,8 +593,12 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
     /**
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
-    notes: knex.raw('REGEXP_REPLACE(r.patientData ->> "$.OtherNotes", "(\\r\\n|\\n|\\r)"," ")'),
-    // notes: knex.raw('REGEXP_REPLACE(r.notes,"(\\r\\n|\\n|\\r)"," ")'),
+    notes: knex.raw(
+      `COALESCE(
+        REGEXP_REPLACE(r.notes,"(\\r\\n|\\n|\\r)"," "),
+        REGEXP_REPLACE(r.patientData ->> "$.OtherNotes", "(\\r\\n|\\n|\\r)"," ")
+      )`
+    ),
 
     errorCode: knex.raw('REGEXP_REPLACE(r.errorCode,"(\\r\\n|\\n|\\r)"," ")'),
     errorNotes: knex.raw('REGEXP_REPLACE(r.errorNotes,"(\\r\\n|\\n|\\r)"," ")'),
