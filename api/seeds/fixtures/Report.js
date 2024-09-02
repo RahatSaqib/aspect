@@ -109,6 +109,26 @@ const criticalErrorsByDevice = {
   ],
 }
 
+const criticalErrorsByModule = {
+  name: 'Critical Errors By Module',
+  description: 'Includes a list of modules that had at least 1 critical error',
+  i18nKey: 'criticalErrorsByModule',
+  i18nKeyDescription: 'criticalErrorsByModule_description',
+  externalId: 'critical_errors_by_module',
+  fileName: 'ModulesWithErrors',
+  exportCsv: true,
+  exportExcel: true,
+  sortOrder: 2,
+  validations: ['dateRangeRequired'],
+  sheets: [
+    {
+      sortOrder: 0,
+      moduleName: 'device/modules/serviceReports',
+      functionName: 'getErrorsByModulesReport',
+    },
+  ],
+}
+
 const rifResistanceRate = {
   name: 'RIF Resistance Rate (%positive results)',
   description: 'Listing MTB/Rif and MTB/Rif Ultra Resistance Rate for all GeneXpert devices, ranked highest to lowest',
@@ -788,6 +808,7 @@ module.exports = {
   resultsHivNotSuppressed,
   rifResistanceRate,
   criticalErrorsByDevice,
+  criticalErrorsByModule,
   mtbDetectedRRDetected,
   deviceActivity,
   deviceActivityPercent,

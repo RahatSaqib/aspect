@@ -5,6 +5,7 @@ const admin = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -136,6 +137,7 @@ const manager = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -223,6 +225,7 @@ const regionalOfficer = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -323,6 +326,7 @@ const labUser = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -419,6 +423,7 @@ const clinician = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -514,6 +519,7 @@ const deviceMaker = {
   name: 'Device Maker',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -553,6 +559,7 @@ const ntp = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -598,6 +605,7 @@ const ntpNoResults = {
   name: 'NTP - No Results',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -625,6 +633,7 @@ const technician = {
   name: 'Technician',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -675,6 +684,7 @@ const donor = {
   name: 'Donor',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -714,6 +724,7 @@ const resultViewerNo = {
   name: 'Result Viewer - No',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -753,6 +764,7 @@ const resultViewerYes = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -807,6 +819,7 @@ const remoteHealthWorker = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -875,6 +888,7 @@ const labManager = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -962,6 +976,7 @@ const labSupervisor = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1050,6 +1065,7 @@ const medTech = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1129,6 +1145,7 @@ const dataViewer = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1213,6 +1230,7 @@ const labAdmin = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
