@@ -274,7 +274,9 @@ async function authenticate(request, response) {
     deviceTokenId,
     userId: user.id,
     personId: user.personId,
-    activeStatus : partner.activeStatus
+    activeStatus : partner.activeStatus,
+    activeStatusMessage : partner?.activeStatusMessage || 'no message',
+
   }
 }
 
