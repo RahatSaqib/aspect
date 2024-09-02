@@ -68,6 +68,33 @@ const SELECT_SHOW_FIELDS = [
   'd.isDaisyChained',
 ]
 
+async function getDeviceInfo(credentials, query) {
+  const dataConstraints = await getConstraints(credentials)
+  const getDeviceQuery = knex('Device as d')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lga', 'g.lgaId', 'lga.id')
+    .count({
+      cntDevices: knex.raw('d.id'),
+    })
+    .sum({
+      cntModules: knex.raw('d.moduleBayCapacity'),
+    })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      state: 'st',
+    })
+    .modify(filterParams, query, {
+      stateId: 'st.id',
+      lgaId: 'lga.id',
+      siteName: 's.name',
+    })
+  return getDeviceQuery
+}
+
 async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW_FIELDS }) {
   const dataConstraints = await getConstraints(credentials)
 
@@ -878,4 +905,5 @@ module.exports = {
   getDeviceByIdBaseQuery,
   getLastUploadDateBySites,
   deleteMissingInventoryLots,
+  getDeviceInfo,
 }
