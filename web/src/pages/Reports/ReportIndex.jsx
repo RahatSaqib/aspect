@@ -63,7 +63,7 @@ const getDateRangeValidationError = reportName => ({
 /**
  * This feature flag is used to enable/disable the async report generation feature.
  */
-const asyncReportsFeatureEnabled = true
+const asyncReportsFeatureEnabled = false
 
 const ReportIndex = () => {
   const location = useLocation()
