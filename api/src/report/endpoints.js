@@ -4,6 +4,7 @@ const { getReports, proxyGxReport } = require('./service')
 const downloadReport = require('./downloadReport')
 const downloadScheduledReport = require('./downloadScheduledReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const processAsyncReport = require('./processAsyncReport')
 
 function requestBaseQuery() {
   const { minDate, maxDate } = validateDateRangeParams()
@@ -158,6 +159,25 @@ const routes = [
       auth: { scope: ['report:view'] },
       response: {
         ...responseBaseReports(),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/report/{externalId}/async',
+    handler: processAsyncReport,
+    config: {
+      description: 'Process report asynchronously',
+      notes: 'Returns a list of reports requested by the user within the last 24 hours',
+      auth: { scope: ['report:view'] },
+      validate: {
+        query: {
+          ...requestBaseQuery(),
+          format: Joi.string().allow('', null, 'xlsx', 'csv').description('File format for exporting data'),
+        },
+        params: {
+          externalId: Joi.string().description('Value of externalId in table Report').required(),
+        },
       },
     },
   },

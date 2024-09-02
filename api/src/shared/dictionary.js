@@ -10,6 +10,7 @@ const cacheConfig = {
   AssayType: {
     keyColumn: 'name',
   },
+  AsyncReportStatus: {},
   Consumable: {},
   ConsumableReason: {
     keyColumn: 'name',

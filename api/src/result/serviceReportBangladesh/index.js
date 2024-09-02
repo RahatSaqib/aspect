@@ -428,7 +428,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         // cell E26
         cnt_TypeOfPatient_Column_3_all: andByRetreatment('Failures of Category I', null, null, assayMtb),
         // cell E29
-        cnt_TypeOfPatient_Column_3_Mtb: andByRetreatment('Failures of Category I', null, mtbDetected, null, assayMtb),
+        cnt_TypeOfPatient_Column_3_Mtb: andByRetreatment('Failures of Category I', null, mtbDetected, assayMtb),
         // cell E32
         cnt_TypeOfPatient_Column_3_MtbRif: andByRetreatment('Failures of Category I', null, mtbRifDetected, assayMtb),
         /** -----------------
@@ -1294,6 +1294,8 @@ async function getDataForReportDrTb10B(auth, query) {
           WHEN r.resultData ->> '$.customFieldData."1211".value' = 'Stool' THEN 'Stool'
           ELSE ''
         END as sampleType`),
+
+      knex.raw(`r.patientData->>'$.RepeatTest' as repeatTest`),
       knex.raw(`r.patientData->>'$.TBRegistrationNumberCurrent' as tbRegistrationNumber`),
       knex.raw(`r.resultData->>'$.bacterialLoad' as bacterialLoad`),
       knex.raw(`CASE WHEN a.id = ${assayIds.GxMtbXdr} THEN rc1.name ELSE '' END as mtbDetected`),

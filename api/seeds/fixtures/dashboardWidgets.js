@@ -1638,8 +1638,8 @@ const averageDurationServiceInterruption = {
     WHERE dmsl.day>= DATE_FORMAT(NOW(),"%Y-%m-01")
     AND dms.externalId = 'inactiveDownForRepair'
     AND dtc.hasResults = 1
-    GROUP BY deviceId
-    ORDER BY deviceId , minInactive) AS innerQuery
+    GROUP BY dmsl.deviceId
+    ORDER BY dmsl.deviceId , minInactive) AS innerQuery
   `,
   sqlForStatUnit: `
   SELECT IFNULL(ROUND(AVG(days/times)), 0) AS cnt
@@ -1652,7 +1652,7 @@ const averageDurationServiceInterruption = {
       INNER JOIN DeviceMaintenanceStatus AS dms ON dmsl.deviceMaintenanceStatusId = dms.id
       INNER JOIN Device AS d ON dmsl.deviceId = d.id
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
+      INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN
@@ -1669,8 +1669,8 @@ const averageDurationServiceInterruption = {
     AND dmsl.day < DATE_FORMAT(NOW(),"%Y-%m-01")
     AND dms.externalId = 'inactiveDownForRepair'
     AND dtc.hasResults = 1
-    GROUP BY deviceId
-    ORDER BY deviceId , minInactive) AS innerQuery
+    GROUP BY dmsl.deviceId
+    ORDER BY dmsl.deviceId , minInactive) AS innerQuery
   `,
   statUnit: '{unit} last month',
   statUnitI18nKey: 'lastMonth',
@@ -1723,7 +1723,7 @@ const percentageOfDaysWithServiceInterruption = {
   '%') AS cnt
       FROM Device AS d
       INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-      INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
+      INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
       INNER JOIN Site AS s ON s.id = d.siteId
       LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
       LEFT OUTER JOIN (
@@ -1759,7 +1759,7 @@ const percentageOfDaysWithServiceInterruption = {
   '%') AS cnt
     FROM Device AS d
     INNER JOIN DeviceType AS dt ON dt.id = d.deviceTypeId
-    INNER JOIN DeviceTypeCategory dtc ON dt.deviceTypeCategoryId = dtc.id
+    INNER JOIN DeviceTypeCategory AS dtc ON dt.deviceTypeCategoryId = dtc.id
     INNER JOIN Site AS s ON s.id = d.siteId
     LEFT OUTER JOIN Geography AS g ON s.geographyId = g.id
     LEFT OUTER JOIN (
