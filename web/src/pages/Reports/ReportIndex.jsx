@@ -60,6 +60,9 @@ const getDateRangeValidationError = reportName => ({
   messageValues: { reportName },
 })
 
+/**
+ * This feature flag is used to enable/disable the async report generation feature.
+ */
 const asyncReportsFeatureEnabled = true
 
 const ReportIndex = () => {
