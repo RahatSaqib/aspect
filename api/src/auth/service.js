@@ -51,6 +51,9 @@ const userProps = [
   'c.timezone as defaultTimezone',
   ...personProps,
 ]
+const partnerProps = [
+  'p.activeStatus',
+]
 
 function getUser(username, options = {}) {
   const { partnerId = false } = options
@@ -66,6 +69,11 @@ function getUser(username, options = {}) {
       if (partnerId) q.where('p.lastPartnerId', partnerId)
     })
     .first(userProps)
+}
+function getPartner() {
+  return query('Get account status from partner')
+    .from('Partner as p')
+    .first(partnerProps)
 }
 
 function getUserByPersonId(personId) {
@@ -114,7 +122,8 @@ function getTokenExpiry(clientType, currentTime) {
 
 async function authenticate(request, response) {
   const { payload } = request
-  let user = await getUser(payload.name)
+  let user = await getUser(payload.name);
+  let partner = await getPartner();
 
   if (!user || (user.password && user.legacyPassword)) {
     // GxAlert authentication
@@ -201,7 +210,7 @@ async function authenticate(request, response) {
     }
   }
 
-  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
+  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0 || partner.activeStatus === 2) {
     return loginHistoryCodeDecorator(
       Boom.forbidden('Your account is locked.'),
       user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
@@ -265,6 +274,7 @@ async function authenticate(request, response) {
     deviceTokenId,
     userId: user.id,
     personId: user.personId,
+    activeStatus : partner.activeStatus
   }
 }
 
