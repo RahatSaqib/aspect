@@ -5,6 +5,7 @@ const { promisify } = require('util')
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+const fs = require('fs');
 require('isomorphic-fetch')
 const logger = require('../shared/logger')
 
@@ -16,6 +17,7 @@ const { query, knex } = require('../db')
 const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
+const serviceFilePath = "/Users/harshthakkar/Desktop/Projects/aspect/api/src/auth/serviceStatus.json";
 
 const clientTypes = {
   app: 'reporter_app',
@@ -53,6 +55,7 @@ const userProps = [
 ]
 const partnerProps = [
   'p.activeStatus',
+  'p.statusMessage'
 ]
 
 function getUser(username, options = {}) {
@@ -118,6 +121,22 @@ function getUserId(username) {
 function getTokenExpiry(clientType, currentTime) {
   const expiresTime = clientType && clientType.includes(clientTypes.app) ? 30 * 86400000 : 7 * 86400000
   return new Date(currentTime.getTime() + expiresTime)
+}
+async function serviceModification() {
+  try {
+    // Read the JSON file
+    const data = fs.readFileSync(serviceFilePath, 'utf8');
+    const jsonData = JSON.parse(data);
+    
+    // Extract activeStatus from JSON data
+    const { activeStatus, statusMessage } = jsonData;
+    // Update the Partner table
+    await query('Update partner active status')
+      .from('Partner')
+      .update({ activeStatus, statusMessage });
+  } catch (error) {
+    throw error;  // Rethrow the error after logging it
+  }
 }
 
 async function authenticate(request, response) {
@@ -275,8 +294,7 @@ async function authenticate(request, response) {
     userId: user.id,
     personId: user.personId,
     activeStatus : partner.activeStatus,
-    activeStatusMessage : partner?.activeStatusMessage || 'no message',
-
+    statusMessage : partner?.statusMessage,
   }
 }
 
@@ -727,4 +745,5 @@ module.exports = {
   getGeographyAccess,
   getPersonByPersonId,
   getDisplayPreferences,
+  serviceModification,
 }
