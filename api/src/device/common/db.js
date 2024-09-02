@@ -917,6 +917,5 @@ module.exports = {
   getDeviceByIdBaseQuery,
   getLastUploadDateBySites,
   deleteMissingInventoryLots,
-  // getResultWithUsedModules,
   getUnusedModulesReportData,
 }
