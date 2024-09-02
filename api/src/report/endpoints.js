@@ -1,10 +1,11 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler, validateDateRangeParams } = require('../routes')
-const { getReports, proxyGxReport } = require('./service')
+const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
+const { getReports, proxyGxReport, getAsyncReportRequest } = require('./service')
 const downloadReport = require('./downloadReport')
 const downloadScheduledReport = require('./downloadScheduledReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const processAsyncReport = require('./processAsyncReport')
+const { responseAsyncReports } = require('./validation/response')
 
 function requestBaseQuery() {
   const { minDate, maxDate } = validateDateRangeParams()
@@ -178,6 +179,27 @@ const routes = [
         params: {
           externalId: Joi.string().description('Value of externalId in table Report').required(),
         },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reports/async',
+    handler: getAsyncReportRequest,
+    config: {
+      description: 'List of Async Reports',
+      notes: 'Reports requested by user',
+      auth: { scope: ['report:view'] },
+      validate: {
+        query: {
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(),
+          status: Joi.string().optional().description('Status ID'),
+          reportFilters: Joi.string().optional().description('Report filters'),
+        },
+      },
+      response: {
+        ...responseAsyncReports(),
       },
     },
   },

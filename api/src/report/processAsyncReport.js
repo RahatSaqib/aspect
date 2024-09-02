@@ -4,7 +4,6 @@ const { reportToId } = require('../shared/dictionary')
 const {
   processNewReport,
   getExistingReportWithHash,
-  getAllAsyncReportsForUser,
   handleExistingReport,
   createReportRequest,
 } = require('../shared/report')
@@ -38,6 +37,8 @@ module.exports = async function processAsyncReport(request) {
   })
   const hash = getHash(JSON.stringify(sortedCombination))
 
+  let report = {}
+
   const existingReport = await getExistingReportWithHash(hash)
 
   if (existingReport) {
@@ -54,14 +55,9 @@ module.exports = async function processAsyncReport(request) {
 
     const asyncReportId = await processNewReport(payload)
     await createReportRequest(asyncReportId, currentUserId)
+
+    report = await getExistingReportWithHash(hash)
   }
 
-  /**
-   * get all reports requested by current user within last 24 hours
-   */
-  const reports = await getAllAsyncReportsForUser(auth.credentials.personId)
-
-  return {
-    reports,
-  }
+  return existingReport || report
 }
