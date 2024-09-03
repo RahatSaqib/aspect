@@ -228,8 +228,15 @@ async function authenticate(request, response) {
       )
     }
   }
+  if (partner.activeStatus === 2) {
+    return loginHistoryCodeDecorator(
+      Boom.forbidden(partner?.statusMessage),
+      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
+      user.id
+    )
+  }
 
-  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0 || partner.activeStatus === 2) {
+  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0 ) {
     return loginHistoryCodeDecorator(
       Boom.forbidden('Your account is locked.'),
       user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
