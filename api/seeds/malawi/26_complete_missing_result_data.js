@@ -57,6 +57,7 @@ const getResultsToUpdateInRange = async (knex, minId, maxId) => {
   const resultsToUpdate = await knex('Result as r')
     .join('mig_missingCustomFields as mcf', 'mcf.resultId', 'r.id')
     .whereBetween('mcf.resultId', range)
+    .where('r.id', 1988273)
     .select('r.*', 'mcf.customFields')
 
   const transformedResults = []
@@ -85,7 +86,7 @@ const getResultsToUpdateInRange = async (knex, minId, maxId) => {
       const baseResult = {
         ...existingResult,
         ...customFieldsData,
-        resultData: deepMerge(resultData, { ...additionalData }),
+        resultData: deepMerge(resultData, { ...additionalData, updated: 'Ale', }),
         patientData: deepMerge(patientData, {
           ...customFieldsData.patientData,
         }),
