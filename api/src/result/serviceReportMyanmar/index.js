@@ -18,6 +18,13 @@ async function getDataForQuarterlyReport(auth, query) {
   _.each(result.data, d => {
     d.result1 = mapGxAlertResultToAspect(d.result1)
     d.result2 = mapGxAlertResultToAspect(d.result2)
+    if (d.notes) {
+      const [age, gender, , , testReason] = d.notes.split(',')
+      d.gender = gender?.toUpperCase() === 'M' ? 'Male' : gender?.toUpperCase() === 'F' ? 'Female' : '' || d.gender
+      d.patientAgeYears = age ? Number(age) : d.patientAgeYears ? Number(d.patientAgeYears) : d.patientAgeYears
+      d.testReason = testReason || d.testReason
+      d.cxrAbnormalities = testReason.toLowerCase().includes('cxr') ? 'CXR' : ''
+    }
   })
 
   return result
