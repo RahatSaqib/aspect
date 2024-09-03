@@ -18,7 +18,7 @@ const { getModuleActivityReportData } = require('./moduleActivityReport')
 const { getDoNotUseModulesReportData } = require('./doNotUseModulesReport')
 const getDevicesWithCountsForTB = require('./genXpertTbWorkloadReport')
 const { getAllDeviceReportData } = require('./deviceAndSiteSummaryReport')
-const { getResultCategoryGroupColumns } = require('../common/db')
+const { getResultCategoryGroupColumns, getUnusedModulesReportData } = require('../common/db')
 const { getErrorsByDevices } = require('./getErrorsByDevices')
 const { getErrorRateByDevice, getErrorRateByModule, getErrorRateByUser } = require('./errorRatesReport')
 const { getNoStockInventoryReport } = require('./noStockInventoryReport')
@@ -855,6 +855,19 @@ async function getDeviceCoverageReport(request) {
   }
 }
 
+async function getUnusedModulesReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const unusedModules = await getUnusedModulesReportData(dataConstraints, query)
+
+  const rows = unusedModules.filter(elem => elem.modulesAvailable > elem.modulesReporting)
+
+  return {
+    ok: true,
+    data: rows,
+    total: rows.length,
+  }
+}
+
 module.exports = {
   getDeviceActivityReport,
   getModuleSwapsReport,
@@ -874,4 +887,5 @@ module.exports = {
   noStockInventoryReport,
   getDeviceCoverageReport,
   getDevicesForTBReachReport,
+  getUnusedModulesReport,
 }
