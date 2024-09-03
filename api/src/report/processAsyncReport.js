@@ -4,8 +4,8 @@ const { reportToId } = require('../shared/dictionary')
 const {
   processNewReport,
   getExistingReportWithHash,
-  handleExistingReport,
   createReportRequest,
+  incrementRequestCount,
 } = require('../shared/report')
 const { jsonToArraySorted } = require('../shared/sort')
 const { getHash } = require('../shared/encryption')
@@ -23,9 +23,6 @@ module.exports = async function processAsyncReport(request) {
 
   const querySorted = jsonToArraySorted(query)
   const queryHash = getHash(JSON.stringify(querySorted))
-  delete dataConstraints.person // <-- remove personality and leave only country/partner/jobFunction details
-
-  const dataConstraintsHash = getHash(JSON.stringify(dataConstraints))
 
   /**
    * generate hash from combination of report, query and data constraints
@@ -42,7 +39,7 @@ module.exports = async function processAsyncReport(request) {
   const existingReport = await getExistingReportWithHash(hash)
 
   if (existingReport) {
-    await handleExistingReport(existingReport.id, currentUserId)
+    await incrementRequestCount(existingReport.id, currentUserId)
   } else {
     const payload = {
       reportId,
@@ -50,7 +47,6 @@ module.exports = async function processAsyncReport(request) {
       hash,
       queryHash,
       currentUserId,
-      dataConstraintsHash,
     }
 
     const asyncReportId = await processNewReport(payload)

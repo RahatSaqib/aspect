@@ -93,7 +93,7 @@ const getExistingReportWithHash = async hash => {
 }
 
 const processNewReport = async payload => {
-  const { reportId, hash, query, queryHash, dataConstraintsHash } = payload
+  const { reportId, hash, query, queryHash } = payload
 
   const statusId = await asyncReportStatusToId('queued')
   const [asyncReportId] = await knex('AsyncReport').insert({
@@ -102,21 +102,12 @@ const processNewReport = async payload => {
     queryHash,
     query: JSON.stringify(query),
     statusId,
-    dataConstraintsHash,
   })
 
   // TODO: Push to BULL MQ
   // queue().add('asyncReports', { asyncReportId, auth, query, externalId, useUserPlaceHolders = false })
 
   return asyncReportId
-}
-
-const auditReportCaller = async (asyncReportId, currentUserId) => {
-  return knex('UserReportRequest')
-    .join('AsyncReport', 'AsyncReport.id', 'UserReportRequest.asyncReportId')
-    .where({ userId: currentUserId, asyncReportId })
-    .where('AsyncReport.createdOn', '>=', getSinceThreshold())
-    .first()
 }
 
 const createReportRequest = async (asyncReportId, currentUserId) => {
@@ -127,21 +118,15 @@ const createReportRequest = async (asyncReportId, currentUserId) => {
   })
 }
 
-const handleExistingReport = async (asyncReportId, currentUserId) => {
-  const existingRequest = await auditReportCaller(asyncReportId, currentUserId)
-
-  if (existingRequest) {
-    return knex('UserReportRequest').where({ userId: currentUserId, asyncReportId }).increment('requestCount', 1)
-  }
-
-  return this.createReportRequest(asyncReportId, currentUserId)
+const incrementRequestCount = async (asyncReportId, currentUserId) => {
+  return knex('UserReportRequest').where({ userId: currentUserId, asyncReportId }).increment('requestCount', 1)
 }
 
 module.exports = {
   getSinceThreshold,
   getExistingReportWithHash,
   processNewReport,
-  handleExistingReport,
   createReportRequest,
   getAllAsyncReportsForUser,
+  incrementRequestCount,
 }
