@@ -9,7 +9,7 @@ function responseAsyncReports() {
       total: Joi.number().required(),
       data: Joi.array()
         .required()
-        .description('List of reports')
+        .description('List of report requests')
         .items(
           Joi.object().keys({
             reportId: Joi.number().required().description('Report id'),
