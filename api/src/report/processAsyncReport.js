@@ -37,7 +37,7 @@ module.exports = async function processAsyncReport(request) {
   })
   const hash = getHash(JSON.stringify(sortedCombination))
 
-  let report = {}
+  let report = null
 
   const existingReport = await getExistingReportWithHash(hash)
 
