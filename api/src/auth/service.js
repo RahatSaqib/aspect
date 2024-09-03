@@ -5,7 +5,7 @@ const { promisify } = require('util')
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const fs = require('fs');
+const fs = require('fs')
 require('isomorphic-fetch')
 const logger = require('../shared/logger')
 
@@ -17,7 +17,8 @@ const { query, knex } = require('../db')
 const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
-const serviceFilePath = "/Users/harshthakkar/Desktop/Projects/aspect/api/src/auth/serviceStatus.json";
+
+const serviceFilePath = '/Users/harshthakkar/Desktop/Projects/aspect/api/src/auth/serviceStatus.json'
 
 const clientTypes = {
   app: 'reporter_app',
@@ -53,10 +54,7 @@ const userProps = [
   'c.timezone as defaultTimezone',
   ...personProps,
 ]
-const partnerProps = [
-  'p.activeStatus',
-  'p.statusMessage'
-]
+const partnerProps = ['p.activeStatus', 'p.statusMessage']
 
 function getUser(username, options = {}) {
   const { partnerId = false } = options
@@ -73,10 +71,9 @@ function getUser(username, options = {}) {
     })
     .first(userProps)
 }
+
 function getPartner() {
-  return query('Get account status from partner')
-    .from('Partner as p')
-    .first(partnerProps)
+  return query('Get account status from partner').from('Partner as p').first(partnerProps)
 }
 
 function getUserByPersonId(personId) {
@@ -122,27 +119,21 @@ function getTokenExpiry(clientType, currentTime) {
   const expiresTime = clientType && clientType.includes(clientTypes.app) ? 30 * 86400000 : 7 * 86400000
   return new Date(currentTime.getTime() + expiresTime)
 }
+
 async function serviceModification() {
-  try {
-    // Read the JSON file
-    const data = fs.readFileSync(serviceFilePath, 'utf8');
-    const jsonData = JSON.parse(data);
-    
-    // Extract activeStatus from JSON data
-    const { activeStatus, statusMessage } = jsonData;
-    // Update the Partner table
-    await query('Update partner active status')
-      .from('Partner')
-      .update({ activeStatus, statusMessage });
-  } catch (error) {
-    throw error;  // Rethrow the error after logging it
-  }
+  // Read the JSON file
+  const data = fs.readFileSync(serviceFilePath, 'utf8')
+  const jsonData = JSON.parse(data)
+  // Extract activeStatus from JSON data
+  const { activeStatus, statusMessage } = jsonData
+  // Update the Partner table
+  await query('Update partner active status').from('Partner').update({ activeStatus, statusMessage })
 }
 
 async function authenticate(request, response) {
   const { payload } = request
-  let user = await getUser(payload.name);
-  let partner = await getPartner();
+  let user = await getUser(payload.name)
+  const partner = await getPartner()
 
   if (!user || (user.password && user.legacyPassword)) {
     // GxAlert authentication
@@ -236,7 +227,7 @@ async function authenticate(request, response) {
     )
   }
 
-  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0 ) {
+  if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
     return loginHistoryCodeDecorator(
       Boom.forbidden('Your account is locked.'),
       user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
@@ -300,8 +291,8 @@ async function authenticate(request, response) {
     deviceTokenId,
     userId: user.id,
     personId: user.personId,
-    activeStatus : partner.activeStatus,
-    statusMessage : partner?.statusMessage,
+    activeStatus: partner.activeStatus,
+    statusMessage: partner?.statusMessage,
   }
 }
 
