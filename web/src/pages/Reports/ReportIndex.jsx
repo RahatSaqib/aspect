@@ -5,7 +5,7 @@ import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
 import { useIdleTimerContext } from 'react-idle-timer'
 import { defineMessages, useIntl } from 'react-intl'
-import { useQuery } from 'react-query'
+import { useQuery, useMutation } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import { DetailHeader, ReportsFilter } from '../../cleanComponents'
 import fetchWrapperForQueries from '../../components/QueryFetch'
@@ -14,6 +14,7 @@ import useFilterValues from '../../hooks/useFilterValues'
 import messages from '../../messages/report'
 import { showError } from '../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../utils/utils/files'
+import { ReportActions } from './ReportActions'
 import ReportCard from './ReportCard'
 import styles from './styles.module.css'
 
@@ -84,6 +85,26 @@ const ReportIndex = () => {
     fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: filter })
   )
 
+  const { mutate: onClickSubmitAsyncReportRequest } = useMutation(
+    async ({ report, fileExtension }) => {
+      const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
+      return fetchWrapperForQueries({
+        endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}/async`,
+        method: 'POST',
+        params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
+        customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
+      })
+    },
+    {
+      onSettled: () => {
+        // toast component will come here.
+      },
+      onSuccess: () => {
+        // toast notification component implemented under: ASP-7168 will come here.
+      },
+    }
+  )
+
   const onClickDownload = (report, fileExtension = 'xlsx') => {
     if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
       const store = require('../../store/store').default
@@ -147,17 +168,27 @@ const ReportIndex = () => {
                 description={report.description}
                 i18nKey={report.i18nKey}
                 i18nKeyDescription={report.i18nKeyDescription}
-                onClick={() => onClickDownload(report, 'xlsx')}
+                onClick={() =>
+                  asyncReportsFeatureEnabled
+                    ? onClickSubmitAsyncReportRequest({ report, fileExtension: 'xlsx' })
+                    : onClickDownload(report, 'xlsx')
+                }
               >
-                {report.exportExcel === 1 && (
-                  <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
-                    Excel
-                  </Button>
-                )}
-                {report.exportCsv === 1 && (
-                  <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
-                    CSV
-                  </Button>
+                {asyncReportsFeatureEnabled ? (
+                  <ReportActions onClickSubmitAsyncReportRequest={onClickSubmitAsyncReportRequest} report={report} />
+                ) : (
+                  <>
+                    {report.exportExcel === 1 && (
+                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
+                        Excel
+                      </Button>
+                    )}
+                    {report.exportCsv === 1 && (
+                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
+                        CSV
+                      </Button>
+                    )}
+                  </>
                 )}
               </ReportCard>
             ))}
