@@ -8,6 +8,7 @@ const config = require('../config')
 const { filterParams, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
+const { getAllAsyncReportsForUser } = require('../shared/report')
 
 async function getReports(request) {
   const { query, auth } = request
@@ -165,8 +166,20 @@ async function proxyGxReportAsync(request) {
   return gxFetch(reportName)
 }
 
+const getAsyncReportRequest = async request => {
+  const { query, auth } = request
+
+  const reports = await getAllAsyncReportsForUser(query, auth.credentials.personId)
+
+  return {
+    data: reports,
+    total: reports.length,
+  }
+}
+
 module.exports = {
   getReports,
   getReportDetails,
   proxyGxReport,
+  getAsyncReportRequest,
 }
