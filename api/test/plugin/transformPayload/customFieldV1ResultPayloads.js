@@ -3158,7 +3158,7 @@ const gxConnectResultPayloadWithCustomFieldsV1 = {
         '-19': {
           label: 'Is GeneXpert Test Performed Previously?',
           notAvailable: false,
-          value: '0',
+          value: 'No',
         },
         '-3': {
           label: 'Age',
@@ -3168,7 +3168,7 @@ const gxConnectResultPayloadWithCustomFieldsV1 = {
         '-4': {
           label: 'Gender',
           notAvailable: false,
-          value: '0',
+          value: 'Female',
         },
       },
     },
