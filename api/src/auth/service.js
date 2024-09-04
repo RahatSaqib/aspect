@@ -5,7 +5,7 @@ const { promisify } = require('util')
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
-const fs = require('fs')
+const AWS = require('aws-sdk')
 require('isomorphic-fetch')
 const logger = require('../shared/logger')
 
@@ -18,7 +18,11 @@ const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
 
-const serviceFilePath = '/Users/harshthakkar/Desktop/Projects/aspect/api/src/auth/serviceStatus.json'
+const s3 = new AWS.S3({
+  accessKeyId: config.aws.accessKeyId,
+  secretAccessKey: config.aws.secretAccessKey,
+  region: config.aws.region,
+})
 
 const clientTypes = {
   app: 'reporter_app',
@@ -121,10 +125,13 @@ function getTokenExpiry(clientType, currentTime) {
 }
 
 async function serviceModification() {
-  // Read the JSON file
-  const data = fs.readFileSync(serviceFilePath, 'utf8')
-  const jsonData = JSON.parse(data)
-  // Extract activeStatus from JSON data
+  const params = {
+    Bucket: config.aws.serviceBucket,
+    Key: config.serviceStatusFile,
+  }
+  const data = await s3.getObject(params).promise()
+  const jsonString = data.Body.toString('utf-8')
+  const jsonData = JSON.parse(jsonString)
   const { activeStatus, statusMessage } = jsonData
   // Update the Partner table
   await query('Update partner active status').from('Partner').update({ activeStatus, statusMessage })
@@ -134,7 +141,6 @@ async function authenticate(request, response) {
   const { payload } = request
   let user = await getUser(payload.name)
   const partner = await getPartner()
-
   if (!user || (user.password && user.legacyPassword)) {
     // GxAlert authentication
     if (user && user.password && user.password.includes(';')) {
