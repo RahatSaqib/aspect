@@ -165,7 +165,7 @@ const routes = [
   },
   {
     method: 'POST',
-    path: '/report/{externalId}/async',
+    path: '/reports/{externalId}/async',
     handler: processAsyncReport,
     config: {
       description: 'Process report asynchronously',
