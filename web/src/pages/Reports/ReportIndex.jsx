@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Grid, LinearProgress } from '@mui/material'
+import { Alert, Button, Grid, LinearProgress, List, ListItem } from '@mui/material'
 import { Helmet } from 'react-helmet'
+import { FaDownload, FaHourglassStart } from 'react-icons/fa'
+import { FiRefreshCw } from 'react-icons/fi'
 import { useIdleTimerContext } from 'react-idle-timer'
 import { defineMessages, useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
@@ -59,6 +61,11 @@ const getDateRangeValidationError = reportName => ({
   messageValues: { reportName },
 })
 
+/**
+ * This feature flag is used to enable/disable the async report generation feature.
+ */
+const asyncReportsFeatureEnabled = true
+
 const ReportIndex = () => {
   const location = useLocation()
   const intl = useIntl()
@@ -108,6 +115,27 @@ const ReportIndex = () => {
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
         <ReportsFilter />
+        {asyncReportsFeatureEnabled ? (
+          <Alert severity="info" sx={{ marginY: 2 }}>
+            You can download your report if it’s already generated. If it’s not yet available, you can continue browsing
+            the application without interruption. We will notify you once the report is ready for download. <br />
+            Below are the details of different statuses and it's meaning:
+            <List>
+              <ListItem>
+                <FaDownload />
+                Download: Your report is ready to download
+              </ListItem>
+              <ListItem>
+                <FaHourglassStart />
+                Processing: Your report is processing stage and it will be ready in anytime soon
+              </ListItem>
+              <ListItem>
+                <FiRefreshCw />
+                Generate: You can generate your report and we will notify once it's ready
+              </ListItem>
+            </List>
+          </Alert>
+        ) : null}
         {isLoading || showProgressBar ? (
           <LinearProgress />
         ) : (
