@@ -15,7 +15,6 @@ const {
 } = require('../shared/excel')
 const logger = require('../shared/logger')
 const { getReportDetails } = require('./service')
-const { getDatesFromQuery } = require('../shared/date')
 
 /**
  * constants for statuses of report processing
@@ -94,7 +93,8 @@ function getDateRangeString({ minDate, maxDate }) {
   if (!minDate && !maxDate) {
     return 'all'
   }
-  const { dateFrom, dateTo } = getDatesFromQuery({ minDate, maxDate })
+  const dateFrom = _.isString(minDate) ? new Date(minDate.split('T')[0]) : minDate
+  const dateTo = _.isString(maxDate) ? new Date(maxDate.split('T')[0]) : maxDate
 
   const dates = []
   if (minDate) {
