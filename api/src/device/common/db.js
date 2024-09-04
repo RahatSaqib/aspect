@@ -560,6 +560,7 @@ async function deleteDeviceFromDeviceTag(deviceId, trknex) {
 async function deleteDeviceFromFactTables(deviceId, trknex) {
   await trknex('FactDeviceExternalSource').where({ deviceId }).del()
   await trknex('FactDeviceFlag').where({ deviceId }).del()
+  await trknex('FactDeviceModulesCount').where({ deviceId }).del()
   await trknex('FactResultsDevice').where({ deviceId }).del()
   await trknex('FactResultsDeviceByAssay').where({ deviceId }).del()
   await trknex('FactResultsDeviceByCategory1').where({ deviceId }).del()
