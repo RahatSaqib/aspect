@@ -1,5 +1,4 @@
 module.exports = require('../utils').seed(seed, __filename)
-const { deepMerge } = require('../../src/shared/json')
 const { transformPayload } = require('../../src/plugin/deviceType/transformPayload')
 const { getOffsetFromTimeZone } = require('../../src/shared/date')
 const customFieldsMalawi = require('../../src/forms/formsDefinition/CustomFields_Malawi.json')
