@@ -34,8 +34,6 @@ module.exports = async function processAsyncReport(request) {
   })
   const hash = getHash(JSON.stringify(sortedCombination))
 
-  let report = null
-
   const existingReport = await getExistingReportWithHash(hash)
 
   if (existingReport) {
@@ -51,9 +49,9 @@ module.exports = async function processAsyncReport(request) {
 
     const asyncReportId = await processNewReport(payload)
     await createReportRequest(asyncReportId, currentUserId)
-
-    report = await getExistingReportWithHash(hash)
   }
 
-  return existingReport || report
+  return {
+    message: 'Report requested',
+  }
 }
