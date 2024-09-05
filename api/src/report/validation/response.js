@@ -20,6 +20,7 @@ function responseAsyncReports() {
             expiresOn: Joi.date().allow(null).required().description('Report expiration date'),
             createdOn: Joi.date().required().description('Report creation date'),
             reportFormat: Joi.string().required().description('Report format(csv/xlsx)'),
+            query: Joi.any().required().description('Applied report filters'),
           })
         ),
     }),

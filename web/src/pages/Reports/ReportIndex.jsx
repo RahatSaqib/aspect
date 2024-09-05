@@ -121,12 +121,17 @@ const ReportIndex = () => {
     data: reportRequestResponse,
     isLoading: reportRequestLoading,
     refetch: refetchReportRequest,
-  } = useQuery([`${REPORT_LIST.KEY}/async`, { params: filter }], async () =>
-    fetchWrapperForQueries({
-      method: 'POST',
-      endpoint: `${REPORT_LIST.ENDPOINT}/async`,
-      params: { reportsFilter: filter },
-    })
+  } = useQuery(
+    [`${REPORT_LIST.KEY}/async`, { params: filter }],
+    async () =>
+      fetchWrapperForQueries({
+        method: 'POST',
+        endpoint: `${REPORT_LIST.ENDPOINT}/async`,
+        params: { reportsFilter: filter },
+      }),
+    {
+      enabled: asyncReportsFeatureEnabled,
+    }
   )
 
   const groupedResponse = groupBy(reportRequestResponse?.data ?? [], 'externalId')

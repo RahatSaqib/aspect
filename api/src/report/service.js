@@ -178,9 +178,7 @@ const getAsyncReportRequest = async request => {
 }
 
 const getAsyncReportRequestWithReportsFilter = async request => {
-  const { payload, auth, query } = request
-
-  console.log('Payload is ', payload, JSON.stringify(query))
+  const { payload, auth } = request
 
   const reports = await getAllAsyncReportsForUser(payload, auth.credentials.personId)
 

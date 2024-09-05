@@ -1,12 +1,23 @@
 import React, { Fragment } from 'react'
-import { Box, Button, Typography } from '@mui/material'
+import { Box, Button, Tooltip, Typography } from '@mui/material'
+import { formatDistanceToNow, parseISO } from 'date-fns'
 import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
 
 function ReportAction(props) {
-  const { onClickReportSubmit, report, fileExtension, requestType = 'download' } = props
+  const { onClickReportSubmit, report, reportRequestsData, fileExtension } = props
 
   const label = fileExtension === 'xlsx' ? 'Excel' : 'CSV'
+
+  const requestType = findFinalRequestType(reportRequestsData.filter(r => r.reportFormat === fileExtension))
+
+  const reportRequest = reportRequestsData
+    .filter(r => r.reportFormat === fileExtension)
+    .find(r => {
+      if (requestType === 'generate') return true
+      if (requestType === 'download') return r.status === 'ready'
+      return r.status === 'queued'
+    })
 
   return (
     <Button
@@ -16,11 +27,13 @@ function ReportAction(props) {
       onClick={() => onClickReportSubmit({ report, fileExtension, requestType })}
     >
       {requestType === 'download' && (
-        <>
-          {' '}
-          <FaDownload style={{ marginRight: 4 }} />
-          Download {label}
-        </>
+        <Tooltip title="The report you are downloading was generated 3 minutes ago" placement="top">
+          <Box>
+            {' '}
+            <FaDownload style={{ marginRight: 4 }} />
+            Download {label}
+          </Box>
+        </Tooltip>
       )}
       {requestType === 'generate' && (
         <>
@@ -28,9 +41,20 @@ function ReportAction(props) {
         </>
       )}
       {requestType === 'processing' && (
-        <>
-          <FaHourglassStart style={{ marginRight: 4 }} /> Processing {label}
-        </>
+        <Tooltip
+          title={
+            reportRequest?.createdOn
+              ? `Request is in progress and it was started ${formatDistanceToNow(parseISO(reportRequest.createdOn), {
+                  addSuffix: true,
+                })}`
+              : null
+          }
+          placement="top"
+        >
+          <Box>
+            <FaHourglassStart style={{ marginRight: 4 }} /> Processing {label}
+          </Box>
+        </Tooltip>
       )}
     </Button>
   )
@@ -38,23 +62,36 @@ function ReportAction(props) {
 
 function findFinalRequestType(reportRequestsData) {
   if (reportRequestsData.length === 0) return 'generate'
-  if (reportRequestsData.some(r => r.status === 'queued')) return 'processing'
-  return 'download'
+  if (reportRequestsData.some(r => r.status === 'ready')) return 'download'
+  return 'processing'
 }
 
 export function ReportActions(props) {
-  const { report, reportRequests } = props
-  const { data = [], isLoading } = reportRequests
+  const { report, reportRequests, onClickReportSubmit } = props
+  const { data = [] } = reportRequests
 
   const csvRequestType = findFinalRequestType(data.filter(r => r.reportFormat === 'csv'))
   const xlsxRequestType = findFinalRequestType(data.filter(r => r.reportFormat === 'xlsx'))
   return (
     <Box>
-      {report.exportExcel === 1 && <ReportAction {...props} fileExtension="xlsx" requestType={xlsxRequestType} />}
-      {report.exportCsv === 1 && <ReportAction {...props} fileExtension="csv" requestType={csvRequestType} />}
-      <Typography variant="body2" fontSize={12} marginLeft={2} marginTop={1}>
-        The report you are downloading was generated 3 minutes ago
-      </Typography>
+      {report.exportExcel === 1 && (
+        <ReportAction
+          report={report}
+          onClickReportSubmit={onClickReportSubmit}
+          reportRequestsData={data}
+          fileExtension="xlsx"
+          requestType={xlsxRequestType}
+        />
+      )}
+      {report.exportCsv === 1 && (
+        <ReportAction
+          report={report}
+          onClickReportSubmit={onClickReportSubmit}
+          reportRequestsData={data}
+          fileExtension="csv"
+          requestType={csvRequestType}
+        />
+      )}
     </Box>
   )
 }

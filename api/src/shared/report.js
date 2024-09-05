@@ -13,6 +13,7 @@ const ASYNC_REPORT_FIELDS = [
   'r.externalId',
   'urr.createdOn',
   knex.raw("ar.query->>'$.format' as reportFormat"),
+  knex.raw("ar.query->>'$' as query"),
 ]
 
 const sortColumnMapping = {
