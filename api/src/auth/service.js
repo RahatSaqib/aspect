@@ -18,8 +18,6 @@ const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
 
-
-
 const clientTypes = {
   app: 'reporter_app',
   web: 'web',
@@ -121,21 +119,25 @@ function getTokenExpiry(clientType, currentTime) {
 }
 
 async function serviceModification() {
-  const s3 = new AWS.S3({
-    accessKeyId: config.aws.accessKeyId,
-    secretAccessKey: config.aws.secretAccessKey,
-    region: config.aws.region,
-  })
-  const params = {
-    Bucket: config.aws.serviceBucket,
-    Key: config.serviceStatusFile,
+  try {
+    const s3 = new AWS.S3({
+      accessKeyId: config.aws.accessKeyId,
+      secretAccessKey: config.aws.secretAccessKey,
+      region: config.aws.region,
+    })
+    const params = {
+      Bucket: config.aws.serviceBucket,
+      Key: config.serviceStatusFile,
+    }
+    const data = await s3.getObject(params).promise()
+    const jsonString = data.Body.toString('utf-8')
+    const jsonData = JSON.parse(jsonString)
+    const { activeStatus, statusMessage } = jsonData
+    // Update the Partner table
+    await query('Update partner active status').from('Partner').update({ activeStatus, statusMessage })
+  } catch (error) {
+    console.error('Error while updating partner active status:', error)
   }
-  const data = await s3.getObject(params).promise()
-  const jsonString = data.Body.toString('utf-8')
-  const jsonData = JSON.parse(jsonString)
-  const { activeStatus, statusMessage } = jsonData
-  // Update the Partner table
-  await query('Update partner active status').from('Partner').update({ activeStatus, statusMessage })
 }
 
 async function authenticate(request, response) {
