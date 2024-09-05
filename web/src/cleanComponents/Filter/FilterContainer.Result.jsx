@@ -35,7 +35,7 @@ const ResultFilter = () => {
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
-            onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
+            onChange={e => setState({ ...state, stateId: e.target.value })}
             countryId={state.countryId}
           />
         </Grid>
@@ -43,7 +43,7 @@ const ResultFilter = () => {
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
-            onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
+            onChange={e => setState({ ...state, lgaId: e.target.value })}
             stateId={state.stateId}
           />
         </Grid>
@@ -53,7 +53,7 @@ const ResultFilter = () => {
               <AssayMultiSelect
                 valueBy="id"
                 value={state?.assayId ?? []}
-                onChange={val => setState({ ...state, assayId: val, resultCategoryGroupId: null })}
+                onChange={val => setState({ ...state, assayId: val })}
                 filters={{
                   hasResults: true,
                 }}
