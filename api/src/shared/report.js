@@ -17,9 +17,9 @@ const ASYNC_REPORT_FIELDS = [
   knex.raw("ar.query->>'$.minDate' as reportFromDate"),
   knex.raw("ar.query->>'$.maxDate' as reportToDate"),
   knex.raw("ar.query->>'$.siteName' as reportSiteName"),
-  knex.raw("ar.query->>'$.consumableId' as reportConsumableName"),
-  knex.raw("ar.query->>'$.stateId' as reportStateName"),
-  knex.raw("ar.query->>'$.countryId' as reportCountryName"),
+  knex.raw("(SELECT name FROM Consumable WHERE id = ar.query->>'$.consumableId') as reportConsumableName"),
+  knex.raw("(SELECT name FROM State WHERE id = ar.query->>'$.stateId') as reportStateName"),
+  knex.raw("(SELECT name FROM Country WHERE id = ar.query->>'$.countryId') as reportCountryName"),
 ]
 
 const sortColumnMapping = {
@@ -57,6 +57,15 @@ async function getAllAsyncReportsForUser(query, personId) {
     .join('AsyncReportStatus as ars', 'ar.statusId', 'ars.id')
     .join('UserReportRequest as urr', 'ar.id', 'urr.asyncReportId')
     .join('User as u', 'u.id', 'urr.userId')
+    .leftJoin('State as state', function () {
+      this.on('state.id', knex.raw("COALESCE(ar.query->>'$.stateId', 'null')"))
+    })
+    .leftJoin('Consumable as consumable', function () {
+      this.on('consumable.id', knex.raw("COALESCE(ar.query->>'$.consumableId', 'null')"))
+    })
+    .leftJoin('Country as country', function () {
+      this.on('country.id', knex.raw("COALESCE(ar.query->>'$.countryId', 'null')"))
+    })
     .join('Person as p', 'u.id', 'p.userId')
     .where('p.id', personId)
     .where(function () {

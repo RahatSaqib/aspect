@@ -19,8 +19,8 @@ const { dateFormat } = getAspectDisplayPreferences().toJS()
 
 const listItemTextWithOrder = [
   { key: 'reportSiteName', label: 'Site Name' },
-  { key: 'reportStateName', label: 'State' },
   { key: 'reportConsumableName', label: 'Consumable Name' },
+  { key: 'reportStateName', label: 'State' },
   { key: 'reportCountryName', label: 'Country Name' },
   { key: 'reportFormat', label: 'Format' },
 ]
@@ -52,7 +52,7 @@ export function ReportRecentRequests(props) {
       </AccordionSummary>
       {count > 0 ? (
         <AccordionDetails>
-          <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+          <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
             {reportRequests?.map(request => (
               <Fragment key={request.requestId}>
                 <Divider />
