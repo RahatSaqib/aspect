@@ -1,5 +1,5 @@
-import React, { Fragment } from 'react'
-import { Box, Button, Tooltip, Typography } from '@mui/material'
+import React from 'react'
+import { Box, Button, Tooltip } from '@mui/material'
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
@@ -21,7 +21,7 @@ function ReportAction(props) {
 
   return (
     <Button
-      sx={{ marginX: 1 }}
+      sx={{ marginX: 1, paddingX: 2, paddingY: 1 }}
       size="small"
       color="primary"
       onClick={() => onClickReportSubmit({ report, fileExtension, requestType })}

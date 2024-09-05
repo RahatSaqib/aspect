@@ -193,39 +193,41 @@ const ReportIndex = () => {
         ) : (
           <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
             {reportListResponse.data.map(report => (
-              <ReportCard
-                key={report.externalId}
-                title={report.name}
-                description={report.description}
-                i18nKey={report.i18nKey}
-                i18nKeyDescription={report.i18nKeyDescription}
-                onClick={() =>
-                  asyncReportsFeatureEnabled
-                    ? onClickReportSubmit({ report, fileExtension: 'xlsx' })
-                    : onClickDownload(report, 'xlsx')
-                }
-              >
-                {asyncReportsFeatureEnabled ? (
-                  <ReportActions
-                    onClickReportSubmit={onClickReportSubmit}
-                    report={report}
-                    reportRequests={{ data: groupedResponse[report.externalId], isLoading: reportRequestLoading }}
-                  />
-                ) : (
-                  <>
-                    {report.exportExcel === 1 && (
-                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
-                        Excel
-                      </Button>
-                    )}
-                    {report.exportCsv === 1 && (
-                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
-                        CSV
-                      </Button>
-                    )}
-                  </>
-                )}
-              </ReportCard>
+              <>
+                <ReportCard
+                  key={report.externalId}
+                  title={report.name}
+                  description={report.description}
+                  i18nKey={report.i18nKey}
+                  i18nKeyDescription={report.i18nKeyDescription}
+                  onClick={() =>
+                    asyncReportsFeatureEnabled
+                      ? onClickReportSubmit({ report, fileExtension: 'xlsx' })
+                      : onClickDownload(report, 'xlsx')
+                  }
+                >
+                  {asyncReportsFeatureEnabled ? (
+                    <ReportActions
+                      onClickReportSubmit={onClickReportSubmit}
+                      report={report}
+                      reportRequests={{ data: groupedResponse[report.externalId], isLoading: reportRequestLoading }}
+                    />
+                  ) : (
+                    <>
+                      {report.exportExcel === 1 && (
+                        <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
+                          Excel
+                        </Button>
+                      )}
+                      {report.exportCsv === 1 && (
+                        <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
+                          CSV
+                        </Button>
+                      )}
+                    </>
+                  )}
+                </ReportCard>
+              </>
             ))}
           </Grid>
         )}
