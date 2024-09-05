@@ -18,11 +18,7 @@ const { gxAlertAuthenticate, gxAlertHashPassword } = require('./gxalert')
 const { LOGIN_HISTORY_CODES, loginHistoryCodeDecorator } = require('./loginHistory')
 const { convertTimezonetoIANA } = require('../shared/date')
 
-const s3 = new AWS.S3({
-  accessKeyId: config.aws.accessKeyId,
-  secretAccessKey: config.aws.secretAccessKey,
-  region: config.aws.region,
-})
+
 
 const clientTypes = {
   app: 'reporter_app',
@@ -125,6 +121,11 @@ function getTokenExpiry(clientType, currentTime) {
 }
 
 async function serviceModification() {
+  const s3 = new AWS.S3({
+    accessKeyId: config.aws.accessKeyId,
+    secretAccessKey: config.aws.secretAccessKey,
+    region: config.aws.region,
+  })
   const params = {
     Bucket: config.aws.serviceBucket,
     Key: config.serviceStatusFile,
@@ -225,13 +226,13 @@ async function authenticate(request, response) {
       )
     }
   }
-  if (partner.activeStatus === 2) {
-    return loginHistoryCodeDecorator(
-      Boom.forbidden(partner?.statusMessage),
-      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
-      user.id
-    )
-  }
+  // if (partner.activeStatus === 2) {
+  //   return loginHistoryCodeDecorator(
+  //     Boom.forbidden(partner?.statusMessage),
+  //     user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
+  //     user.id
+  //   )
+  // }
 
   if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
     return loginHistoryCodeDecorator(
