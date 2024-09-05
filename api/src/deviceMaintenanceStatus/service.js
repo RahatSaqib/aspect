@@ -119,7 +119,7 @@ async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
   const minDateFormat = "yyyy-MM-dd'T'00:00:00.000'Z'"
   const maxDateFormat = "yyyy-MM-dd'T'23:59:59.999'Z'"
 
-  const minDateResults = format(parseISO(minDate), minDateFormat)
+  const minDateResults = format(typeof minDate === 'string' ? parseISO(minDate) : minDate, minDateFormat)
   const maxDateResults = min([format(maxDate, maxDateFormat), format(new Date(), maxDateFormat)])
 
   const days = getArrayOfDaysInRange(minDate, maxDate)
