@@ -21,7 +21,7 @@ function ReportAction(props) {
 
   return (
     <Button
-      sx={{ marginX: 1, paddingX: 2, paddingY: 1 }}
+      sx={{ paddingX: 2, paddingY: 1 }}
       size="small"
       color="primary"
       onClick={() => onClickReportSubmit({ report, fileExtension, requestType })}
