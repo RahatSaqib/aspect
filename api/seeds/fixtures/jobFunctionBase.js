@@ -5,6 +5,7 @@ const admin = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -29,6 +30,7 @@ const admin = {
     'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -135,6 +137,7 @@ const manager = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -222,6 +225,7 @@ const regionalOfficer = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -243,6 +247,7 @@ const regionalOfficer = {
     'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -321,6 +326,7 @@ const labUser = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -338,6 +344,7 @@ const labUser = {
     'xdr_devices_summary',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -416,6 +423,7 @@ const clinician = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -433,6 +441,7 @@ const clinician = {
     'xdr_devices_summary',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -510,6 +519,7 @@ const deviceMaker = {
   name: 'Device Maker',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -549,6 +559,7 @@ const ntp = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -568,6 +579,7 @@ const ntp = {
     'xdr_devices_summary',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -593,6 +605,7 @@ const ntpNoResults = {
   name: 'NTP - No Results',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -620,6 +633,7 @@ const technician = {
   name: 'Technician',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -670,6 +684,7 @@ const donor = {
   name: 'Donor',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -709,6 +724,7 @@ const resultViewerNo = {
   name: 'Result Viewer - No',
   reports: [
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'device_calibration_report',
     'device_activity',
     'device_utilization',
@@ -748,6 +764,7 @@ const resultViewerYes = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -763,6 +780,7 @@ const resultViewerYes = {
     'do_not_use_modules_report',
     'report_custom_fields_completion',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -801,6 +819,7 @@ const remoteHealthWorker = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -869,6 +888,7 @@ const labManager = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -889,6 +909,7 @@ const labManager = {
     'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -955,6 +976,7 @@ const labSupervisor = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -976,6 +998,7 @@ const labSupervisor = {
     'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -1042,6 +1065,7 @@ const medTech = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1121,6 +1145,7 @@ const dataViewer = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1137,6 +1162,7 @@ const dataViewer = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -1204,6 +1230,7 @@ const labAdmin = {
   reports: [
     'mtb_detected_rr_detected',
     'critical_errors_by_device',
+    'critical_errors_by_module',
     'rif_resistance_rate',
     'results_hiv_not_suppressed',
     'device_calibration_report',
@@ -1224,6 +1251,7 @@ const labAdmin = {
     'usage_statistics_report',
     'device_and_site_summary_report',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {

@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react'
-import { Button, Grid, LinearProgress } from '@mui/material'
+import { Alert, Button, Grid, LinearProgress } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIdleTimerContext } from 'react-idle-timer'
 import { defineMessages, useIntl } from 'react-intl'
-import { useQuery } from 'react-query'
+import { useQuery, useMutation } from 'react-query'
 import { useLocation } from 'react-router-dom'
 import { DetailHeader, ReportsFilter } from '../../cleanComponents'
 import fetchWrapperForQueries from '../../components/QueryFetch'
@@ -12,6 +12,7 @@ import useFilterValues from '../../hooks/useFilterValues'
 import messages from '../../messages/report'
 import { showError } from '../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../utils/utils/files'
+import { ReportActions } from './ReportActions'
 import ReportCard from './ReportCard'
 import styles from './styles.module.css'
 
@@ -59,6 +60,11 @@ const getDateRangeValidationError = reportName => ({
   messageValues: { reportName },
 })
 
+/**
+ * This feature flag is used to enable/disable the async report generation feature.
+ */
+const asyncReportsFeatureEnabled = false
+
 const ReportIndex = () => {
   const location = useLocation()
   const intl = useIntl()
@@ -75,6 +81,26 @@ const ReportIndex = () => {
 
   const { data: reportListResponse, isLoading } = useQuery([REPORT_LIST.KEY, { params: filter }], async () =>
     fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: filter })
+  )
+
+  const { mutate: onClickSubmitAsyncReportRequest } = useMutation(
+    async ({ report, fileExtension }) => {
+      const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
+      return fetchWrapperForQueries({
+        endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}/async`,
+        method: 'POST',
+        params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
+        customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
+      })
+    },
+    {
+      onSettled: () => {
+        // toast component will come here.
+      },
+      onSuccess: () => {
+        // toast notification component implemented under: ASP-7168 will come here.
+      },
+    }
   )
 
   const onClickDownload = (report, fileExtension = 'xlsx') => {
@@ -108,6 +134,12 @@ const ReportIndex = () => {
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.reportsTitle)} />
         <ReportsFilter />
+        {asyncReportsFeatureEnabled ? (
+          <Alert severity="info" sx={{ marginY: 2 }}>
+            You can download your report if it’s already generated. If it’s not yet available, you can continue browsing
+            the application without interruption. We will notify you once the report is ready for download.
+          </Alert>
+        ) : null}
         {isLoading || showProgressBar ? (
           <LinearProgress />
         ) : (
@@ -119,17 +151,27 @@ const ReportIndex = () => {
                 description={report.description}
                 i18nKey={report.i18nKey}
                 i18nKeyDescription={report.i18nKeyDescription}
-                onClick={() => onClickDownload(report, 'xlsx')}
+                onClick={() =>
+                  asyncReportsFeatureEnabled
+                    ? onClickSubmitAsyncReportRequest({ report, fileExtension: 'xlsx' })
+                    : onClickDownload(report, 'xlsx')
+                }
               >
-                {report.exportExcel === 1 && (
-                  <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
-                    Excel
-                  </Button>
-                )}
-                {report.exportCsv === 1 && (
-                  <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
-                    CSV
-                  </Button>
+                {asyncReportsFeatureEnabled ? (
+                  <ReportActions onClickSubmitAsyncReportRequest={onClickSubmitAsyncReportRequest} report={report} />
+                ) : (
+                  <>
+                    {report.exportExcel === 1 && (
+                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
+                        Excel
+                      </Button>
+                    )}
+                    {report.exportCsv === 1 && (
+                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
+                        CSV
+                      </Button>
+                    )}
+                  </>
                 )}
               </ReportCard>
             ))}

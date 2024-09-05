@@ -3,6 +3,7 @@ const { promisify } = require('util')
 const bcrypt = require('bcrypt')
 const { createFetch, base, accept, header, method, body } = require('http-client')
 const Promise = require('bluebird')
+const { createHmac } = require('crypto')
 
 require('isomorphic-fetch')
 
@@ -521,7 +522,19 @@ async function updateTagsForPerson(knex, { partnerId, personId, tagTitles = [] }
   })
 }
 
+// Aspnet Membership Hash Algorithm
+// This method of encryption is used by GxAlert
+// Original implementation: https://github.com/mysql/mysql-connector-net/blob/87939c99fdad68b30803e9f4bb115e17cfabb8ce/MySql.Web/src/MembershipProvider.cs#L1474
+const gxAlertHashPassword = (password, passwordKey) => {
+  const passwordBytes = Buffer.from(password, 'utf16le') // Encoding in 'utf16le' to match C# Unicode
+  const keyBytes = Buffer.from(passwordKey, 'base64')
+  const keyedBytes = Buffer.concat([keyBytes, passwordBytes])
+
+  return createHmac('sha256', keyBytes).update(keyedBytes).digest('base64')
+}
+
 module.exports = {
   gxAlertAuthenticate,
   GxAlertLoginError,
+  gxAlertHashPassword,
 }

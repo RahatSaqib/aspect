@@ -385,6 +385,7 @@ const messages = defineMessages({
     defaultMessage: 'Supply in Stock',
   },
   Total: { id: 'legends.Unknown.Total', defaultMessage: 'Total' },
+  reportableResults: { id: 'legends.Unknown.ReportableResults', defaultMessage: 'Reportable Results' },
   MTBPlus: { id: 'legends.Unknown.MTBPlus', defaultMessage: 'MTB+' },
   MTBPercent: { id: 'legends.Unknown.MTBPercent', defaultMessage: 'MTB%' },
   RRDHash: { id: 'legends.Unknown.RRDHash', defaultMessage: 'RRD#' },

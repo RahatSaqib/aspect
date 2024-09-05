@@ -1,9 +1,11 @@
 const Joi = require('@hapi/joi')
-const { asyncHandler, validateDateRangeParams } = require('../routes')
-const { getReports, proxyGxReport } = require('./service')
+const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
+const { getReports, proxyGxReport, getAsyncReportRequest } = require('./service')
 const downloadReport = require('./downloadReport')
 const downloadScheduledReport = require('./downloadScheduledReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
+const processAsyncReport = require('./processAsyncReport')
+const { responseAsyncReports } = require('./validation/response')
 
 function requestBaseQuery() {
   const { minDate, maxDate } = validateDateRangeParams()
@@ -158,6 +160,46 @@ const routes = [
       auth: { scope: ['report:view'] },
       response: {
         ...responseBaseReports(),
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/reports/{externalId}/async',
+    handler: processAsyncReport,
+    config: {
+      description: 'Process report asynchronously',
+      notes: 'Returns a list of reports requested by the user within the last 24 hours',
+      auth: { scope: ['report:view'] },
+      validate: {
+        query: {
+          ...requestBaseQuery(),
+          format: Joi.string().allow('', null, 'xlsx', 'csv').description('File format for exporting data'),
+        },
+        params: {
+          externalId: Joi.string().description('Value of externalId in table Report').required(),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/reports/async',
+    handler: getAsyncReportRequest,
+    config: {
+      description: 'List of Async Reports',
+      notes: 'Reports requested by user',
+      auth: { scope: ['report:view'] },
+      validate: {
+        query: {
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(),
+          status: Joi.string().optional().description('Status ID'),
+          reportFilters: Joi.string().optional().description('Report filters'),
+        },
+      },
+      response: {
+        ...responseAsyncReports(),
       },
     },
   },

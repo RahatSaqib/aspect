@@ -4,17 +4,17 @@ const { loginHistoryWrapper } = require('./loginHistory')
 
 const {
   authenticate,
-  checkAuthentication,
   refreshToken,
   updateUsernameAndPasswordForLoggedInUser,
   updateUsernameAndPasswordForPerson,
-  createResetPasswordToken,
   updatePasswordWithResetPasswordToken,
   clientTypes,
-  getLicense,
-  acceptLicense,
-  getUserJobFunctions,
 } = require('./service')
+const { checkAuthentication } = require('./checkAuthentication')
+const { getLicense } = require('./getLicense')
+const { acceptLicense } = require('./acceptLicense')
+const { createResetPasswordToken } = require('./createResetPasswordToken')
+const { getUserJobFunctions } = require('./getUserJobFunctions')
 
 const routes = [
   {
