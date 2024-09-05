@@ -79,6 +79,7 @@ async function getAllAsyncReportsForUser(query, personId) {
     })
     .modify(sortPageParams, query, 'urr.createdOn', sortColumnMapping)
     .select(ASYNC_REPORT_FIELDS)
+    .orderBy(['ar.createdOn'], 'asc')
 
   return reports
 }

@@ -64,17 +64,19 @@ export function ReportRecentRequests(props) {
                     primary={buildDateRangeString(request.reportFromDate, request.reportToDate)}
                     secondary={
                       <Box sx={{ flexDirection: 'column' }}>
-                        {listItemTextWithOrder.map(({ key, label }) =>
-                          request[key] ? (
-                            <Typography
-                              component="span"
-                              variant="body2"
-                              sx={{ color: 'text.primary', display: 'block', fontSize: 12 }}
-                            >
-                              {label} - {request[key]}
-                            </Typography>
-                          ) : null
-                        )}
+                        {listItemTextWithOrder.map(({ key, label }) => (
+                          <Fragment key={key}>
+                            {request[key] ? (
+                              <Typography
+                                component="span"
+                                variant="body2"
+                                sx={{ color: 'text.primary', display: 'block', fontSize: 12 }}
+                              >
+                                {label} - {request[key]}
+                              </Typography>
+                            ) : null}
+                          </Fragment>
+                        ))}
                       </Box>
                     }
                   />
