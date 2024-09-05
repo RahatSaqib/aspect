@@ -58,6 +58,14 @@ const messages = defineMessages({
     defaultMessage:
       "A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.",
   },
+  unusedModulesReport: {
+    id: 'pages.ReportIndex.unUsedModulesReport',
+    defaultMessage: 'Unused Modules',
+  },
+  unusedModulesReport_Description: {
+    id: 'pages.ReportIndex.unUsedModulesReport_Description',
+    defaultMessage: "Shows all devices that haven't used all available modules in the selected time period.",
+  },
   no_stock: {
     id: 'pages.ReportIndex.no_stock',
     defaultMessage: '"No Stock" Inventory Report',

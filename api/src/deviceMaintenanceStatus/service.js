@@ -1,5 +1,5 @@
 const { groupBy, orderBy, omit, min, uniq, isNil, isArray } = require('lodash')
-const { format, isWeekend, getISOWeek } = require('date-fns')
+const { format, isWeekend, getISOWeek, parseISO } = require('date-fns')
 const { getConstraints, addConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { knex, filterParams } = require('../db')
 const { getArrayOfDaysInRange, getDateTimeExpressionInTimeZone, getDateSubstring } = require('../shared/date')
@@ -119,7 +119,7 @@ async function getDeviceStatusOverTime(auth, query, forDeviceIds) {
   const minDateFormat = "yyyy-MM-dd'T'00:00:00.000'Z'"
   const maxDateFormat = "yyyy-MM-dd'T'23:59:59.999'Z'"
 
-  const minDateResults = format(minDate, minDateFormat)
+  const minDateResults = format(typeof minDate === 'string' ? parseISO(minDate) : minDate, minDateFormat)
   const maxDateResults = min([format(maxDate, maxDateFormat), format(new Date(), maxDateFormat)])
 
   const days = getArrayOfDaysInRange(minDate, maxDate)

@@ -18,6 +18,25 @@ const transformZonedDateTimeToUTC = (dateTime, timezoneIANA) => {
   return zonedTimeToUtc(parseISO(dateTime), timezoneIANA).toISOString().replace('.000', '')
 }
 
+const getCustomFieldValue = (customField, customFieldSchema) => {
+  if (!customField.HasValue) {
+    return null
+  }
+
+  if (customField.Text) {
+    return customField.Text
+  }
+
+  if (customFieldSchema.items) {
+    const item = customFieldSchema.items.find(item => item.key.toString() === customField.Value.toString())
+    if (item) {
+      return item.value
+    }
+  }
+
+  return customField.Value
+}
+
 const transformCustomFields = (gxAlertCustomFieldsData, customFields) => {
   return gxAlertCustomFieldsData.Values.reduce((acc, customField) => {
     const customFieldSchema =
@@ -29,7 +48,7 @@ const transformCustomFields = (gxAlertCustomFieldsData, customFields) => {
         label: customFieldSchema.title, // customField.ExternalId,
         notAvailable: customField.NotAvailable,
         // key: customField.Value,
-        value: customField.HasValue ? customField.Text || customField.Value : null,
+        value: getCustomFieldValue(customField, customFieldSchema),
       }
 
       acc[customField.Id] = customFieldData
