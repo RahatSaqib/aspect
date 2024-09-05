@@ -490,9 +490,11 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
     patientAgeYears: knex.raw(
-      `COALESCE(
-        r.patientData ->> '$.PatientAge',
-        r.patientData ->> '$.age'
+      `CAST(
+        COALESCE(
+          r.patientData ->> '$.PatientAge',
+          r.patientData ->> '$.age'
+        ) AS UNSIGNED
       )`
     ),
     patientName: knex.raw(
@@ -548,13 +550,21 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
     /**
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
-    gender: knex.raw(
-      `COALESCE(
+    gender: knex.raw(`
+      CASE COALESCE(
         r.patientData ->> '$.PatientGender',
         r.patientData ->> '$.gender',
         r.patientData ->> '$.patientGender'
-      )`
-    ),
+      )
+      WHEN 'F' THEN 'Female'
+      WHEN 'M' THEN 'Male'
+      ELSE COALESCE(
+        r.patientData ->> '$.PatientGender',
+        r.patientData ->> '$.gender',
+        r.patientData ->> '$.patientGender'
+      )
+      END
+    `),
     /**
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
@@ -585,8 +595,12 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
     /**
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
-    notes: knex.raw('REGEXP_REPLACE(r.patientData ->> "$.OtherNotes", "(\\r\\n|\\n|\\r)"," ")'),
-    // notes: knex.raw('REGEXP_REPLACE(r.notes,"(\\r\\n|\\n|\\r)"," ")'),
+    notes: knex.raw(
+      `COALESCE(
+        REGEXP_REPLACE(r.notes,"(\\r\\n|\\n|\\r)"," "),
+        REGEXP_REPLACE(r.patientData ->> "$.OtherNotes", "(\\r\\n|\\n|\\r)"," ")
+      )`
+    ),
 
     errorCode: knex.raw('REGEXP_REPLACE(r.errorCode,"(\\r\\n|\\n|\\r)"," ")'),
     errorNotes: knex.raw('REGEXP_REPLACE(r.errorNotes,"(\\r\\n|\\n|\\r)"," ")'),

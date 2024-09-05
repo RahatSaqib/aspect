@@ -30,6 +30,7 @@ const admin = {
     'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -246,6 +247,7 @@ const regionalOfficer = {
     'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -342,6 +344,7 @@ const labUser = {
     'xdr_devices_summary',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -438,6 +441,7 @@ const clinician = {
     'xdr_devices_summary',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -575,6 +579,7 @@ const ntp = {
     'xdr_devices_summary',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -775,6 +780,7 @@ const resultViewerYes = {
     'do_not_use_modules_report',
     'report_custom_fields_completion',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -903,6 +909,7 @@ const labManager = {
     'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -991,6 +998,7 @@ const labSupervisor = {
     'device_and_site_summary_report',
     'result_notifications',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -1154,6 +1162,7 @@ const dataViewer = {
     'tb_workload_summary',
     'xdr_devices_summary',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
@@ -1242,6 +1251,7 @@ const labAdmin = {
     'usage_statistics_report',
     'device_and_site_summary_report',
     'no_stock',
+    'unused_modules_report',
   ],
   permissions: [
     {
