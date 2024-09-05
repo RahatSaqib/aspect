@@ -12,6 +12,7 @@ const ASYNC_REPORT_FIELDS = [
   'ars.externalId as status',
   'r.externalId',
   'urr.createdOn',
+  knex.raw("ar.query->>'$.format' as reportFormat"),
 ]
 
 const sortColumnMapping = {
@@ -30,13 +31,12 @@ function getSinceThreshold() {
 
 async function getAllAsyncReportsForUser(query, personId) {
   /**
-   * If reportFilters is passed, we need to hash the query
+   * If reportsFilter is passed, we need to hash the query
    */
-  if (query.reportFilters) {
-    /* eslint no-unused-vars: 0 */
-    const { reportFilters, ...filteredQuery } = query
+  if (query.reportsFilter) {
+    const { reportsFilter, ...filteredQuery } = query
 
-    const querySorted = jsonToArraySorted(filteredQuery)
+    const querySorted = jsonToArraySorted(reportsFilter)
 
     const queryHash = getHash(JSON.stringify(querySorted))
     query = filteredQuery

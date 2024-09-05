@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Alert, Button, Grid, LinearProgress, List, ListItem } from '@mui/material'
+import groupBy from 'lodash/groupBy'
 import { Helmet } from 'react-helmet'
 import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
@@ -88,10 +89,11 @@ const ReportIndex = () => {
   const { mutate: onClickSubmitAsyncReportRequest } = useMutation(
     async ({ report, fileExtension }) => {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
+
       return fetchWrapperForQueries({
         endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}/async`,
         method: 'POST',
-        params: { ...filter, format: fileExtension, timeZone, maxDate: filter.maxDate || new Date() },
+        params: { reportsFilter: filter, format: fileExtension, timeZone },
         customErrorNotifications: getCustomErrorNotifications(fileExtension, report.name),
       })
     },
@@ -101,9 +103,33 @@ const ReportIndex = () => {
       },
       onSuccess: () => {
         // toast notification component implemented under: ASP-7168 will come here.
+        refetchReportRequest()
       },
+      onError: () => {},
     }
   )
+
+  const onClickReportSubmit = async ({ report, fileExtension, requestType }) => {
+    if (requestType === 'generate') {
+      onClickSubmitAsyncReportRequest({ report, fileExtension })
+    } else if (requestType === 'download') {
+      // Report download mutation comes here
+    }
+  }
+
+  const {
+    data: reportRequestResponse,
+    isLoading: reportRequestLoading,
+    refetch: refetchReportRequest,
+  } = useQuery([`${REPORT_LIST.KEY}/async`, { params: filter }], async () =>
+    fetchWrapperForQueries({
+      method: 'POST',
+      endpoint: `${REPORT_LIST.ENDPOINT}/async`,
+      params: { reportsFilter: filter },
+    })
+  )
+
+  const groupedResponse = groupBy(reportRequestResponse?.data ?? [], 'externalId')
 
   const onClickDownload = (report, fileExtension = 'xlsx') => {
     if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
@@ -170,12 +196,16 @@ const ReportIndex = () => {
                 i18nKeyDescription={report.i18nKeyDescription}
                 onClick={() =>
                   asyncReportsFeatureEnabled
-                    ? onClickSubmitAsyncReportRequest({ report, fileExtension: 'xlsx' })
+                    ? onClickReportSubmit({ report, fileExtension: 'xlsx' })
                     : onClickDownload(report, 'xlsx')
                 }
               >
                 {asyncReportsFeatureEnabled ? (
-                  <ReportActions onClickSubmitAsyncReportRequest={onClickSubmitAsyncReportRequest} report={report} />
+                  <ReportActions
+                    onClickReportSubmit={onClickReportSubmit}
+                    report={report}
+                    reportRequests={{ data: groupedResponse[report.externalId], isLoading: reportRequestLoading }}
+                  />
                 ) : (
                   <>
                     {report.exportExcel === 1 && (
