@@ -12,6 +12,7 @@ function responseAsyncReports() {
         .description('List of report requests')
         .items(
           Joi.object().keys({
+            requestId: Joi.number().required().description('Request id'),
             reportId: Joi.number().required().description('Report id'),
             name: Joi.string().required().description('Report name'),
             filePath: Joi.string().allow('', null).required().description('Report description'),
@@ -19,8 +20,13 @@ function responseAsyncReports() {
             status: Joi.string().required().description('Report status'),
             expiresOn: Joi.date().allow(null).required().description('Report expiration date'),
             createdOn: Joi.date().required().description('Report creation date'),
-            reportFormat: Joi.string().required().description('Report format(csv/xlsx)'),
-            query: Joi.any().required().description('Applied report filters'),
+            reportFormat: Joi.string().allow(null).description('Report format(csv/xlsx)'),
+            reportFromDate: Joi.string().allow(null).description('Report start date'),
+            reportToDate: Joi.string().allow(null).description('Report end date'),
+            reportSiteName: Joi.string().allow(null).description('Report site name'),
+            reportConsumableName: Joi.string().allow(null).description('Report consumable name'),
+            reportStateName: Joi.string().allow(null).description('Report state name'),
+            reportCountryName: Joi.string().allow(null).description('Report country name'),
           })
         ),
     }),

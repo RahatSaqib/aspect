@@ -1,17 +1,89 @@
-import React from 'react'
-import { Accordion, AccordionDetails, AccordionSummary } from '@mui/material'
+import React, { Fragment } from 'react'
+import {
+  Accordion,
+  AccordionDetails,
+  AccordionSummary,
+  Box,
+  Divider,
+  List,
+  ListItem,
+  ListItemText,
+  Typography,
+} from '@mui/material'
+import { parseISO } from 'date-fns'
+import { format } from 'date-fns-tz'
 import { MdExpandMore } from 'react-icons/md'
+import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 
-export function ReportRecentRequests() {
+const { dateFormat } = getAspectDisplayPreferences().toJS()
+
+const listItemTextWithOrder = [
+  { key: 'reportSiteName', label: 'Site Name' },
+  { key: 'reportStateName', label: 'State' },
+  { key: 'reportConsumableName', label: 'Consumable Name' },
+  { key: 'reportCountryName', label: 'Country Name' },
+  { key: 'reportFormat', label: 'Format' },
+]
+
+function buildDateRangeString(reportFromDate, reportToDate) {
+  if (reportFromDate && reportToDate) {
+    return `${format(parseISO(reportFromDate), dateFormat)} - ${format(parseISO(reportToDate), dateFormat)}`
+  }
+  if (reportFromDate) {
+    return `From ${format(parseISO(reportFromDate), dateFormat)}`
+  }
+  if (reportToDate) {
+    return `To ${format(parseISO(reportToDate), dateFormat)}`
+  }
+  return 'No date range'
+}
+
+export function ReportRecentRequests(props) {
+  const { reportRequests, reportId } = props
+  const count = reportRequests?.length ?? 0
   return (
-    <Accordion>
-      <AccordionSummary expandIcon={<MdExpandMore />} aria-controls="panel1-content" id="panel1-header">
-        Accordion 1
+    <Accordion sx={{ width: '100%', boxShadow: 'none', marginTop: 1 }}>
+      <AccordionSummary
+        expandIcon={<MdExpandMore />}
+        aria-controls={`panel${reportId}-content`}
+        id={`panel${reportId}-header`}
+      >
+        Recent requests ({count})
       </AccordionSummary>
-      <AccordionDetails>
-        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse malesuada lacus ex, sit amet blandit leo
-        lobortis eget.
-      </AccordionDetails>
+      {count > 0 ? (
+        <AccordionDetails>
+          <List sx={{ width: '100%', maxWidth: 360, bgcolor: 'background.paper' }}>
+            {reportRequests?.map(request => (
+              <Fragment key={request.requestId}>
+                <Divider />
+                <ListItem
+                  sx={{ alignItems: 'flex-start', minWidth: '100%' }}
+                  secondaryAction={<Typography>{request.status}</Typography>}
+                >
+                  <ListItemText
+                    primary={buildDateRangeString(request.reportFromDate, request.reportToDate)}
+                    secondary={
+                      <Box sx={{ flexDirection: 'column' }}>
+                        {listItemTextWithOrder.map(({ key, label }) =>
+                          request[key] ? (
+                            <Typography
+                              component="span"
+                              variant="body2"
+                              sx={{ color: 'text.primary', display: 'block', fontSize: 12 }}
+                            >
+                              {label} - {request[key]}
+                            </Typography>
+                          ) : null
+                        )}
+                      </Box>
+                    }
+                  />
+                </ListItem>
+              </Fragment>
+            ))}
+          </List>
+        </AccordionDetails>
+      ) : null}
     </Accordion>
   )
 }

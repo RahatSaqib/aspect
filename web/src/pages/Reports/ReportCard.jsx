@@ -15,6 +15,7 @@ const styles = {
   actions: {
     display: 'flex',
     justifyContent: 'space-between',
+    width: '100%',
   },
 }
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react'
-import { Alert, Button, Grid, LinearProgress, List, ListItem } from '@mui/material'
+import { Alert, Box, Button, Grid, LinearProgress, List, ListItem } from '@mui/material'
 import groupBy from 'lodash/groupBy'
 import { Helmet } from 'react-helmet'
 import { FaDownload, FaHourglassStart } from 'react-icons/fa'
@@ -17,6 +17,7 @@ import { showError } from '../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../utils/utils/files'
 import { ReportActions } from './ReportActions'
 import ReportCard from './ReportCard'
+import { ReportRecentRequests } from './ReportRecentRequests'
 import styles from './styles.module.css'
 
 const getFileType = fileExtension => (fileExtension === 'xlsx' ? 'Excel' : 'CSV')
@@ -104,8 +105,16 @@ const ReportIndex = () => {
       onSuccess: () => {
         // toast notification component implemented under: ASP-7168 will come here.
         refetchReportRequest()
+        refetchAllReportRequests()
       },
       onError: () => {},
+      onMutate: ({ report }) => {
+        if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
+          const store = require('../../store/store').default
+          store.dispatch(showError(getDateRangeValidationError(report.name)))
+          throw new Error('Date range required')
+        }
+      },
     }
   )
 
@@ -133,6 +142,24 @@ const ReportIndex = () => {
       enabled: asyncReportsFeatureEnabled,
     }
   )
+
+  const {
+    data: allReportRequestsResponse,
+    isLoading: allReportRequestsLoading,
+    refetch: refetchAllReportRequests,
+  } = useQuery(
+    [`${REPORT_LIST.KEY}/async`, 'all-reports'], // unique key to ensure react-query play well with caching for this API.
+    async () =>
+      fetchWrapperForQueries({
+        method: 'POST',
+        endpoint: `${REPORT_LIST.ENDPOINT}/async`,
+      }),
+    {
+      enabled: asyncReportsFeatureEnabled,
+    }
+  )
+
+  const groupedAllReportRequestsResponse = groupBy(allReportRequestsResponse?.data ?? [], 'externalId')
 
   const groupedResponse = groupBy(reportRequestResponse?.data ?? [], 'externalId')
 
@@ -193,41 +220,45 @@ const ReportIndex = () => {
         ) : (
           <Grid container spacing={16} sx={{ width: 'auto', margin: 0 }}>
             {reportListResponse.data.map(report => (
-              <>
-                <ReportCard
-                  key={report.externalId}
-                  title={report.name}
-                  description={report.description}
-                  i18nKey={report.i18nKey}
-                  i18nKeyDescription={report.i18nKeyDescription}
-                  onClick={() =>
-                    asyncReportsFeatureEnabled
-                      ? onClickReportSubmit({ report, fileExtension: 'xlsx' })
-                      : onClickDownload(report, 'xlsx')
-                  }
-                >
-                  {asyncReportsFeatureEnabled ? (
+              <ReportCard
+                key={report.externalId}
+                title={report.name}
+                description={report.description}
+                i18nKey={report.i18nKey}
+                i18nKeyDescription={report.i18nKeyDescription}
+                onClick={() =>
+                  asyncReportsFeatureEnabled
+                    ? onClickReportSubmit({ report, fileExtension: 'xlsx' })
+                    : onClickDownload(report, 'xlsx')
+                }
+              >
+                {asyncReportsFeatureEnabled ? (
+                  <Box sx={{ width: '100%' }}>
                     <ReportActions
                       onClickReportSubmit={onClickReportSubmit}
                       report={report}
                       reportRequests={{ data: groupedResponse[report.externalId], isLoading: reportRequestLoading }}
                     />
-                  ) : (
-                    <>
-                      {report.exportExcel === 1 && (
-                        <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
-                          Excel
-                        </Button>
-                      )}
-                      {report.exportCsv === 1 && (
-                        <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
-                          CSV
-                        </Button>
-                      )}
-                    </>
-                  )}
-                </ReportCard>
-              </>
+                    <ReportRecentRequests
+                      reportRequests={groupedAllReportRequestsResponse[report.externalId]}
+                      reportId={report.externalId}
+                    />
+                  </Box>
+                ) : (
+                  <>
+                    {report.exportExcel === 1 && (
+                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'xlsx')}>
+                        Excel
+                      </Button>
+                    )}
+                    {report.exportCsv === 1 && (
+                      <Button size="small" color="primary" onClick={() => onClickDownload(report, 'csv')}>
+                        CSV
+                      </Button>
+                    )}
+                  </>
+                )}
+              </ReportCard>
             ))}
           </Grid>
         )}

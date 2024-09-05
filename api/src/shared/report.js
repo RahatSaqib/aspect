@@ -5,6 +5,7 @@ const { getHash } = require('./encryption')
 const { jsonToArraySorted } = require('./sort')
 
 const ASYNC_REPORT_FIELDS = [
+  'ar.id as requestId',
   'r.name',
   'ar.filePath',
   'ar.reportId',
@@ -13,7 +14,12 @@ const ASYNC_REPORT_FIELDS = [
   'r.externalId',
   'urr.createdOn',
   knex.raw("ar.query->>'$.format' as reportFormat"),
-  knex.raw("ar.query->>'$' as query"),
+  knex.raw("ar.query->>'$.minDate' as reportFromDate"),
+  knex.raw("ar.query->>'$.maxDate' as reportToDate"),
+  knex.raw("ar.query->>'$.siteName' as reportSiteName"),
+  knex.raw("ar.query->>'$.consumableId' as reportConsumableName"),
+  knex.raw("ar.query->>'$.stateId' as reportStateName"),
+  knex.raw("ar.query->>'$.countryId' as reportCountryName"),
 ]
 
 const sortColumnMapping = {
