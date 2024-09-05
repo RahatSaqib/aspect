@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-27T23:24:25.912Z\n"
+"POT-Creation-Date: 2024-09-05T18:28:58.893Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2042,6 +2042,13 @@ msgstr "Критична помилка"
 #: extracted_strings.json
 msgid "Critical Errors By Device"
 msgstr "Критичні помилки за пристроєм"
+
+#. [pages.ReportIndex.criticalErrorsByModule]
+#. defaultMessage is:
+#. Critical Errors By Module
+#: extracted_strings.json
+msgid "Critical Errors By Module"
+msgstr "Критичні помилки за модулями"
 
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
@@ -5030,6 +5037,14 @@ msgid ""
 "Includes a list of GeneXpert devices that had at least 1 critical errors"
 msgstr ""
 "Включає список пристроїв GeneXpert, які мали щонайменше 1 критичну помилку"
+
+#. [pages.ReportIndex.criticalErrorsByModule_description]
+#. defaultMessage is:
+#. Includes a list of GeneXpert modules that had at least 1 critical error
+#: extracted_strings.json
+msgid "Includes a list of GeneXpert modules that had at least 1 critical error"
+msgstr ""
+"Включає список модулів GeneXpert, які мали щонайменше 1 критичну помилку"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -10160,6 +10175,13 @@ msgstr "Показати етикетку"
 msgid "Show Percentage"
 msgstr "Показати відсоток"
 
+#. [filter.popover.showDecommissionedDevices]
+#. defaultMessage is:
+#. Show Results From Decommissioned Devices
+#: extracted_strings.json
+msgid "Show Results From Decommissioned Devices"
+msgstr "Показати результати з виведених з експлуатації пристроїв"
+
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
 #. Show line for
@@ -10295,6 +10317,17 @@ msgid ""
 msgstr ""
 "Показано {firstItemIndex} - {lastItemIndex} з {itemCount, plural, one {# "
 "постачання} other {# припаси}}"
+
+#. [pages.ReportIndex.unUsedModulesReport_Description]
+#. defaultMessage is:
+#. Shows all devices that haven't used all available modules in the selected time period.
+#: extracted_strings.json
+msgid ""
+"Shows all devices that haven't used all available modules in the selected "
+"time period."
+msgstr ""
+"Показує всі пристрої, які не використали всі доступні модулі за вибраний "
+"період часу."
 
 #. [pages.ReportIndex.moduleActivityReport_description]
 #. defaultMessage is:
@@ -12298,6 +12331,13 @@ msgstr "Невідомо"
 #: extracted_strings.json
 msgid "Unlocked"
 msgstr "Блокування користувача"
+
+#. [pages.ReportIndex.unUsedModulesReport]
+#. defaultMessage is:
+#. Unused Modules
+#: extracted_strings.json
+msgid "Unused Modules"
+msgstr "Невикористані модулі"
 
 #. [pages.DeviceList.up]
 #. defaultMessage is:
