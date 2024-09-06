@@ -11,7 +11,7 @@ import store from './store/store'
 import './index.css'
 
 const prepareApp = async () => {
-  // Sentry initialization at the top level of application.
+  // Sentry initiaization at the top level of application.
   if (config.sentry.dsn && config.sentry.tracingOrigins && config.sentry.tracesSampleRate) {
     Sentry.init({
       dsn: config.sentry.dsn,
