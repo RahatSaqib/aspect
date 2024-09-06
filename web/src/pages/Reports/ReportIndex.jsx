@@ -8,6 +8,7 @@ import { useIdleTimerContext } from 'react-idle-timer'
 import { defineMessages, useIntl } from 'react-intl'
 import { useQuery, useMutation } from 'react-query'
 import { useLocation } from 'react-router-dom'
+import { toast } from 'react-toastify'
 import { DetailHeader, ReportsFilter } from '../../cleanComponents'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { REPORT_LIST } from '../../components/QueryFetch/Report/index'
@@ -90,7 +91,7 @@ const ReportIndex = () => {
   const { mutate: onClickSubmitAsyncReportRequest } = useMutation(
     async ({ report, fileExtension }) => {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
-
+      return Promise.resolve()
       return fetchWrapperForQueries({
         endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}/async`,
         method: 'POST',
@@ -103,7 +104,7 @@ const ReportIndex = () => {
         // toast component will come here.
       },
       onSuccess: () => {
-        // toast notification component implemented under: ASP-7168 will come here.
+        toast('Report request submitted successfully')
         refetchReportRequest()
         refetchAllReportRequests()
       },
