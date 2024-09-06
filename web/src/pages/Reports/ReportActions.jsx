@@ -71,7 +71,7 @@ function findFinalRequestType(reportRequestsData) {
 
 export function ReportActions(props) {
   const { report, reportRequests, onClickReportSubmit } = props
-  const { data = [], isLoading, isSubmitting } = reportRequests
+  const { data = [] } = reportRequests
 
   const csvRequestType = findFinalRequestType(data.filter(r => r.reportFormat === 'csv'))
   const xlsxRequestType = findFinalRequestType(data.filter(r => r.reportFormat === 'xlsx'))
