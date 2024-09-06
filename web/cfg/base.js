@@ -23,7 +23,7 @@ module.exports = NODE_ENV => {
           use: ['babel-loader'],
         },
         {
-          test: /\.css$/,
+          test: /\.modules\.css$/,
           use: [
             NODE_ENV === 'development' ? 'style-loader' : MiniCssExtractPlugin.loader,
             {
@@ -37,6 +37,11 @@ module.exports = NODE_ENV => {
               },
             },
           ],
+        },
+        {
+          test: /\.css$/,
+          exclude: /\.modules\.css$/,
+          use: [NODE_ENV === 'development' ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
         },
         {
           test: /\.(png|jpg|gif|woff|woff2)$/,
