@@ -10,6 +10,8 @@ const ASYNC_REPORT_FIELDS = [
   'ar.filePath',
   'ar.reportId',
   'ar.expiresOn',
+  'ar.startedOn',
+  'ar.endedOn',
   'ars.externalId as status',
   'r.externalId',
   'urr.createdOn',
@@ -79,7 +81,6 @@ async function getAllAsyncReportsForUser(query, personId) {
     })
     .modify(sortPageParams, query, 'urr.createdOn', sortColumnMapping)
     .select(ASYNC_REPORT_FIELDS)
-    .orderBy(['ar.createdOn'], 'asc')
 
   return reports
 }

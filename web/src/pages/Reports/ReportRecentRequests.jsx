@@ -58,7 +58,7 @@ export function ReportRecentRequests(props) {
                 <Divider />
                 <ListItem
                   sx={{ alignItems: 'flex-start', minWidth: '100%' }}
-                  secondaryAction={<Typography>{request.status}</Typography>}
+                  secondaryAction={<Typography sx={{ cursor: 'pointer' }}>{request.status}</Typography>}
                 >
                   <ListItemText
                     primary={buildDateRangeString(request.reportFromDate, request.reportToDate)}

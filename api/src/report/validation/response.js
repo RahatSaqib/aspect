@@ -20,6 +20,8 @@ function responseAsyncReports() {
             status: Joi.string().required().description('Report status'),
             expiresOn: Joi.date().allow(null).required().description('Report expiration date'),
             createdOn: Joi.date().required().description('Report creation date'),
+            startedOn: Joi.date().allow(null).description('Report start date'),
+            endedOn: Joi.date().allow(null).description('Report end date'),
             reportFormat: Joi.string().allow(null).description('Report format(csv/xlsx)'),
             reportFromDate: Joi.string().allow(null).description('Report start date'),
             reportToDate: Joi.string().allow(null).description('Report end date'),
