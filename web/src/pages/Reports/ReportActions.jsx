@@ -1,5 +1,5 @@
 import React from 'react'
-import { Box, Button, Tooltip } from '@mui/material'
+import { Box, Button, Skeleton, Tooltip } from '@mui/material'
 import { formatDistanceToNow, parseISO } from 'date-fns'
 import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
@@ -21,6 +21,42 @@ function ReportAction(props) {
       return r.status === 'queued'
     })
 
+  let buttonContent
+  if (requestType === 'download') {
+    buttonContent = (
+      <Tooltip title="The report you are downloading was generated 3 minutes ago" placement="top">
+        <Box>
+          {' '}
+          <FaDownload style={{ marginRight: 4 }} />
+          Download {label}
+        </Box>
+      </Tooltip>
+    )
+  } else if (requestType === 'generate') {
+    buttonContent = (
+      <>
+        <FiRefreshCw style={{ marginRight: 4 }} /> Generate {label}
+      </>
+    )
+  } else if (requestType === 'processing') {
+    buttonContent = (
+      <Tooltip
+        title={
+          reportRequest?.createdOn
+            ? `Request is in progress and it was started ${formatDistanceToNow(parseISO(reportRequest.createdOn), {
+                addSuffix: true,
+              })}`
+            : null
+        }
+        placement="top"
+      >
+        <Box>
+          <FaHourglassStart style={{ marginRight: 4 }} /> Processing {label}
+        </Box>
+      </Tooltip>
+    )
+  }
+
   return (
     <Button
       sx={{ paddingX: 2, paddingY: 1, cursor: requestType !== 'processing' ? 'pointer' : 'not-allowed' }}
@@ -29,36 +65,7 @@ function ReportAction(props) {
       disabled={isSubmitting || isLoading}
       onClick={() => onClickReportSubmit({ report, fileExtension, requestType })}
     >
-      {requestType === 'download' && (
-        <Tooltip title="The report you are downloading was generated 3 minutes ago" placement="top">
-          <Box>
-            {' '}
-            <FaDownload style={{ marginRight: 4 }} />
-            Download {label}
-          </Box>
-        </Tooltip>
-      )}
-      {requestType === 'generate' && (
-        <>
-          <FiRefreshCw style={{ marginRight: 4 }} /> Generate {label}
-        </>
-      )}
-      {requestType === 'processing' && (
-        <Tooltip
-          title={
-            reportRequest?.createdOn
-              ? `Request is in progress and it was started ${formatDistanceToNow(parseISO(reportRequest.createdOn), {
-                  addSuffix: true,
-                })}`
-              : null
-          }
-          placement="top"
-        >
-          <Box>
-            <FaHourglassStart style={{ marginRight: 4 }} /> Processing {label}
-          </Box>
-        </Tooltip>
-      )}
+      {isSubmitting || isLoading ? <Skeleton width="100%" /> : buttonContent}
     </Button>
   )
 }

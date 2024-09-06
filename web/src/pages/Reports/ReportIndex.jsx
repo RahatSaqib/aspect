@@ -103,11 +103,13 @@ const ReportIndex = () => {
         // toast component will come here.
       },
       onSuccess: () => {
-        toast.success('Report request submitted successfully')
+        toast.success('Report request submitted successfully and you will be notified once it is ready for download.')
         refetchReportRequest()
         refetchAllReportRequests()
       },
-      onError: () => {},
+      onError: () => {
+        toast.error('Report request failed. Please try again later.')
+      },
       onMutate: ({ report }) => {
         if (report.validations.includes('dateRangeRequired') && (!filter.minDate || !filter.maxDate)) {
           const store = require('../../store/store').default
@@ -151,8 +153,9 @@ const ReportIndex = () => {
     [`${REPORT_LIST.KEY}/async`, 'all-reports'], // unique key to ensure react-query play well with caching for this API.
     async () =>
       fetchWrapperForQueries({
-        method: 'POST',
+        method: 'GET',
         endpoint: `${REPORT_LIST.ENDPOINT}/async`,
+        params: { sortCol: 'createdOn', sortDir: 'desc' },
       }),
     {
       enabled: asyncReportsFeatureEnabled,
