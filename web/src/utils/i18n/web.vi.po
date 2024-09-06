@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-27T23:24:25.912Z\n"
+"POT-Creation-Date: 2024-09-05T18:28:58.893Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2043,6 +2043,13 @@ msgstr "Lỗi nghiêm trọng"
 #: extracted_strings.json
 msgid "Critical Errors By Device"
 msgstr "Các lỗi nghiêm trọng của thiết bị"
+
+#. [pages.ReportIndex.criticalErrorsByModule]
+#. defaultMessage is:
+#. Critical Errors By Module
+#: extracted_strings.json
+msgid "Critical Errors By Module"
+msgstr "Lỗi nghiêm trọng theo mô-đun"
 
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
@@ -5023,6 +5030,13 @@ msgstr "Bao gồm TẤT CẢ kết quả liên quan đến ID bệnh nhân"
 msgid ""
 "Includes a list of GeneXpert devices that had at least 1 critical errors"
 msgstr "Bao gồm danh sách các thiết bị GeneXpert có ít nhất 1 lỗi nghiêm trọng"
+
+#. [pages.ReportIndex.criticalErrorsByModule_description]
+#. defaultMessage is:
+#. Includes a list of GeneXpert modules that had at least 1 critical error
+#: extracted_strings.json
+msgid "Includes a list of GeneXpert modules that had at least 1 critical error"
+msgstr "Bao gồm danh sách các mô-đun GeneXpert có ít nhất 1 lỗi nghiêm trọng"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -10153,6 +10167,13 @@ msgstr "Hiển thị nhãn"
 msgid "Show Percentage"
 msgstr "Hiển thị tỷ lệ phần trăm"
 
+#. [filter.popover.showDecommissionedDevices]
+#. defaultMessage is:
+#. Show Results From Decommissioned Devices
+#: extracted_strings.json
+msgid "Show Results From Decommissioned Devices"
+msgstr "Hiển thị kết quả từ các thiết bị đã ngừng hoạt động"
+
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
 #. Show line for
@@ -10288,6 +10309,17 @@ msgid ""
 msgstr ""
 "Hiển thị {firstItemIndex} - {lastItemIndex} trong tổng số {itemCount, "
 "plural, one {# cung cấp} other {# cung cấp}}"
+
+#. [pages.ReportIndex.unUsedModulesReport_Description]
+#. defaultMessage is:
+#. Shows all devices that haven't used all available modules in the selected time period.
+#: extracted_strings.json
+msgid ""
+"Shows all devices that haven't used all available modules in the selected "
+"time period."
+msgstr ""
+"Hiển thị tất cả các thiết bị chưa sử dụng hết tất cả các mô-đun có sẵn trong "
+"khoảng thời gian đã chọn."
 
 #. [pages.ReportIndex.moduleActivityReport_description]
 #. defaultMessage is:
@@ -12281,6 +12313,13 @@ msgstr "Không xác định"
 #: extracted_strings.json
 msgid "Unlocked"
 msgstr "Đã mở khóa"
+
+#. [pages.ReportIndex.unUsedModulesReport]
+#. defaultMessage is:
+#. Unused Modules
+#: extracted_strings.json
+msgid "Unused Modules"
+msgstr "Các mô-đun chưa sử dụng"
 
 #. [pages.DeviceList.up]
 #. defaultMessage is:
