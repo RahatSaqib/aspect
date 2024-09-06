@@ -5,7 +5,7 @@ const findResult = require('../result/geneXpert/resultIdentification/findResult_
 const malawiPlugin = {
   settings,
   excludeResult,
-  findResult
+  findResult,
 }
 
 module.exports = {

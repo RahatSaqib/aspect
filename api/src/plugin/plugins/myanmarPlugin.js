@@ -5,7 +5,7 @@ const findResult = require('../result/geneXpert/resultIdentification/findResult_
 const myanmarPlugin = {
   settings,
   transformMergeResultPayload,
-  findResult
+  findResult,
 }
 
 module.exports = {
