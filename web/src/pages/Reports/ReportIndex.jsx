@@ -16,6 +16,7 @@ import useFilterValues from '../../hooks/useFilterValues'
 import messages from '../../messages/report'
 import { showError } from '../../store/AppNotificationRedux'
 import { safeDownloadFile } from '../../utils/utils/files'
+import { asyncReportsFeatureEnabled } from './constants'
 import { ReportActions } from './ReportActions'
 import ReportCard from './ReportCard'
 import { ReportRecentRequests } from './ReportRecentRequests'
@@ -64,11 +65,6 @@ const getDateRangeValidationError = reportName => ({
   }),
   messageValues: { reportName },
 })
-
-/**
- * This feature flag is used to enable/disable the async report generation feature.
- */
-const asyncReportsFeatureEnabled = false
 
 const ReportIndex = () => {
   const location = useLocation()
