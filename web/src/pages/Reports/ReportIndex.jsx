@@ -88,10 +88,9 @@ const ReportIndex = () => {
     fetchWrapperForQueries({ endpoint: REPORT_LIST.ENDPOINT, params: filter })
   )
 
-  const { mutate: onClickSubmitAsyncReportRequest } = useMutation(
+  const { mutate: onClickSubmitAsyncReportRequest, isSubmitting: isSubmittingReportRequest } = useMutation(
     async ({ report, fileExtension }) => {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions()
-      return Promise.resolve()
       return fetchWrapperForQueries({
         endpoint: `${REPORT_LIST.ENDPOINT}/${report.externalId}/async`,
         method: 'POST',
@@ -104,7 +103,7 @@ const ReportIndex = () => {
         // toast component will come here.
       },
       onSuccess: () => {
-        toast('Report request submitted successfully')
+        toast.success('Report request submitted successfully')
         refetchReportRequest()
         refetchAllReportRequests()
       },
@@ -238,10 +237,15 @@ const ReportIndex = () => {
                     <ReportActions
                       onClickReportSubmit={onClickReportSubmit}
                       report={report}
-                      reportRequests={{ data: groupedResponse[report.externalId], isLoading: reportRequestLoading }}
+                      reportRequests={{
+                        data: groupedResponse[report.externalId],
+                        isLoading: reportRequestLoading,
+                        isSubmitting: isSubmittingReportRequest,
+                      }}
                     />
                     <ReportRecentRequests
                       reportRequests={groupedAllReportRequestsResponse[report.externalId]}
+                      isLoading={allReportRequestsLoading}
                       reportId={report.externalId}
                     />
                   </Box>

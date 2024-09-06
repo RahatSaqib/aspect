@@ -5,7 +5,9 @@ import { FaDownload, FaHourglassStart } from 'react-icons/fa'
 import { FiRefreshCw } from 'react-icons/fi'
 
 function ReportAction(props) {
-  const { onClickReportSubmit, report, reportRequestsData, fileExtension } = props
+  const { onClickReportSubmit, report, reportRequests, fileExtension } = props
+
+  const { data: reportRequestsData = [], isLoading, isSubmitting } = reportRequests
 
   const label = fileExtension === 'xlsx' ? 'Excel' : 'CSV'
 
@@ -21,9 +23,10 @@ function ReportAction(props) {
 
   return (
     <Button
-      sx={{ paddingX: 2, paddingY: 1 }}
+      sx={{ paddingX: 2, paddingY: 1, cursor: requestType !== 'processing' ? 'pointer' : 'not-allowed' }}
       size="small"
       color="primary"
+      disabled={isSubmitting || isLoading}
       onClick={() => onClickReportSubmit({ report, fileExtension, requestType })}
     >
       {requestType === 'download' && (
@@ -68,7 +71,7 @@ function findFinalRequestType(reportRequestsData) {
 
 export function ReportActions(props) {
   const { report, reportRequests, onClickReportSubmit } = props
-  const { data = [] } = reportRequests
+  const { data = [], isLoading, isSubmitting } = reportRequests
 
   const csvRequestType = findFinalRequestType(data.filter(r => r.reportFormat === 'csv'))
   const xlsxRequestType = findFinalRequestType(data.filter(r => r.reportFormat === 'xlsx'))
@@ -78,7 +81,7 @@ export function ReportActions(props) {
         <ReportAction
           report={report}
           onClickReportSubmit={onClickReportSubmit}
-          reportRequestsData={data}
+          reportRequests={reportRequests}
           fileExtension="xlsx"
           requestType={xlsxRequestType}
         />
@@ -87,7 +90,7 @@ export function ReportActions(props) {
         <ReportAction
           report={report}
           onClickReportSubmit={onClickReportSubmit}
-          reportRequestsData={data}
+          reportRequests={reportRequests}
           fileExtension="csv"
           requestType={csvRequestType}
         />

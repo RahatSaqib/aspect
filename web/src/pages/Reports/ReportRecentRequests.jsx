@@ -8,6 +8,7 @@ import {
   List,
   ListItem,
   ListItemText,
+  Skeleton,
   Typography,
 } from '@mui/material'
 import { parseISO } from 'date-fns'
@@ -39,7 +40,7 @@ function buildDateRangeString(reportFromDate, reportToDate) {
 }
 
 export function ReportRecentRequests(props) {
-  const { reportRequests, reportId } = props
+  const { reportRequests, reportId, isLoading } = props
   const count = reportRequests?.length ?? 0
   return (
     <Accordion sx={{ width: '100%', boxShadow: 'none', marginTop: 1 }}>
@@ -48,7 +49,7 @@ export function ReportRecentRequests(props) {
         aria-controls={`panel${reportId}-content`}
         id={`panel${reportId}-header`}
       >
-        Recent requests ({count})
+        {isLoading ? <Skeleton width={200} /> : <>Recent requests ({count})</>}
       </AccordionSummary>
       {count > 0 ? (
         <AccordionDetails>
