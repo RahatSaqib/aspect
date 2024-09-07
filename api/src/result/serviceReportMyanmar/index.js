@@ -23,7 +23,7 @@ async function getDataForQuarterlyReport(auth, query) {
       d.gender = gender?.toUpperCase() === 'M' ? 'Male' : gender?.toUpperCase() === 'F' ? 'Female' : '' || d.gender
       d.patientAgeYears = age ? Number(age) : d.patientAgeYears ? Number(d.patientAgeYears) : d.patientAgeYears
       d.testReason = testReason || d.testReason
-      d.cxrAbnormalities = testReason.toLowerCase().includes('cxr') ? 'CXR' : ''
+      d.cxrAbnormalities = testReason?.toLowerCase().includes('cxr') ? 'CXR' : ''
     }
   })
 
