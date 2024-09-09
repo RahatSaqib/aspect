@@ -112,6 +112,20 @@ export function loginStart({ user, password }) {
               },
             }),
           },
+          'There was a conflict with your GxAlert credentials': {
+            severity: 'warn',
+            ...defineMessages({
+              title: {
+                id: 'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title',
+                defaultMessage: "Couldn't login with your credentials",
+              },
+              message: {
+                id: 'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message',
+                defaultMessage:
+                  'There was a conflict with your credentials. Please, contact an administrator for support.',
+              },
+            }),
+          },
         },
         409: {
           "Couldn't connect to GxAlert": {
@@ -125,20 +139,6 @@ export function loginStart({ user, password }) {
                 id: 'errorResponseMessages.loginStart.POST.409.couldntConnectToGxAlert.message',
                 defaultMessage:
                   "We couldn't establish connection with GxAlert. If you are trying to login with an Aspect user, you probably entered invalid credentials.",
-              },
-            }),
-          },
-          'There was a conflict with your credentials': {
-            severity: 'warn',
-            ...defineMessages({
-              title: {
-                id: 'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.title',
-                defaultMessage: "Couldn't login with your credentials",
-              },
-              message: {
-                id: 'errorResponseMessages.loginStart.POST.409.thereWasAConflictWithYourCredentials.message',
-                defaultMessage:
-                  'There was a conflict with your credentials. Please, contact an administrator for support.',
               },
             }),
           },
@@ -451,6 +451,7 @@ export function acceptLicenseStart(licenseId) {
 const JWT = Immutable.Record({
   name: '',
   permissions: Immutable.Set(),
+  jobFunctionNames: Immutable.Set(),
   hasToAcceptLicenseId: undefined,
   iat: undefined,
   exp: undefined,
@@ -494,7 +495,15 @@ export default function authReducer(state = initialState, action) {
         })
         mutState.mergeDeepIn(
           ['jwt'],
-          pick(jwtDecode(action.data.access), ['name', 'permissions', 'hasToAcceptLicenseId', 'iat', 'exp', 'iss'])
+          pick(jwtDecode(action.data.access), [
+            'name',
+            'permissions',
+            'jobFunctionNames',
+            'hasToAcceptLicenseId',
+            'iat',
+            'exp',
+            'iss',
+          ])
         )
       })
     case types.LOGIN_FAILURE:

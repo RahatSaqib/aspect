@@ -56,7 +56,7 @@ const ProvincialTestingTrendPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.provincialTBTestingTrends)}`}
+      title={formatMessage(messages.ProvincialTBTestingTrend)}
       filters={
         <>
           <StateAutocomplete

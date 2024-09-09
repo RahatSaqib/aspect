@@ -41,7 +41,7 @@ async function getResultByResultId(auth, resultId, fields = SELECT_FIELDS_UTC) {
         device: 'd',
         resultTransferFlag: true,
       },
-      { displayResult: 'all', showUnapprovedDevices: true }
+      { displayResult: 'all', showUnapprovedDevices: true, showDecommissionedDevices: true }
     )
     .select({
       resultText: knex.raw(
@@ -181,7 +181,7 @@ const getBaseResults = () =>
     .leftJoin('PartnerAssay as pa', q => {
       q.on('r.assayId', 'pa.assayId').andOn('r.partnerId', 'pa.partnerId')
     })
-    .leftJoin('Site as si', 'd.siteId', 'si.id')
+    .leftJoin('Site as si', 'r.siteId', 'si.id')
     .leftJoin('Geography as g', 'si.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
@@ -211,7 +211,7 @@ const getBaseQueryForResults = () =>
     .leftJoin('PatientCase as ca', 'ca.id', 'r.patientCaseId')
 
 function getQueryForResultsListAndExport(query, dataConstraints) {
-  const { showUnapprovedDevices = false, assayId } = query
+  const { showUnapprovedDevices = false, showDecommissionedDevices = false, assayId } = query
   const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseQueryForResults()
@@ -340,8 +340,21 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { displayResult, showUnapprovedDevices }
+      { displayResult, showUnapprovedDevices, showDecommissionedDevices }
     )
+    .modify(queryBuilder => {
+      if (query.withTags) {
+        queryBuilder.leftJoin(
+          knex('Tag as tag')
+            .innerJoin('ResultTag as rtg', 'rtg.tagId', 'tag.id')
+            .groupBy('rtg.resultId')
+            .select('rtg.resultId', knex.raw('GROUP_CONCAT(DISTINCT tag.title  SEPARATOR ", ") as tagsCsv'))
+            .as('tags'),
+          'r.id',
+          'tags.resultId'
+        )
+      }
+    })
 
   return resultQuery
 }
@@ -421,7 +434,7 @@ async function getResultNotesByResultId(resultId) {
 }
 
 function getQueryForDataExtract(query, dataConstraints) {
-  const { showUnapprovedDevices = false } = query
+  const { showUnapprovedDevices = false, showDecommissionedDevices = false } = query
   const displayResult = query.displayResult || 'actual'
 
   const resultQuery = getBaseResults()
@@ -470,7 +483,7 @@ function getQueryForDataExtract(query, dataConstraints) {
         country: 'c',
         disease: 'dis',
       },
-      { showUnapprovedDevices, displayResult }
+      { showUnapprovedDevices, showDecommissionedDevices, displayResult }
     )
 
   return resultQuery

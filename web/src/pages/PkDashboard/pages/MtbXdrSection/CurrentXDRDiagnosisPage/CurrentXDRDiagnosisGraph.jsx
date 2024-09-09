@@ -144,7 +144,7 @@ const CurrentXDRDiagnosisPage = () => {
 
   return (
     <PkPage
-      title={`${formatMessage(messages.peopleDiagnosedXdr)}`}
+      title={formatMessage(messages.DCurrentPending)}
       filters={
         <>
           <FormControlLabel

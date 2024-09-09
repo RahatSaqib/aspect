@@ -1,4 +1,6 @@
 import { stringify } from 'querystring'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { defineMessages } from 'react-intl'
 import { useQuery, useQueryClient } from 'react-query'
 import { useDispatch } from 'react-redux'
@@ -54,10 +56,6 @@ const getDownload = async (filtersParams, fileFormat) => {
 
 const useWorkloadDownload = requestParams => {
   const { fileFormat, enabled, sortDir, sortCol, size, page, minDate, maxDate, ...filtersParams } = requestParams
-  const assayId = filtersParams.singleAssayId
-
-  filtersParams.assayId = assayId
-  delete filtersParams.singleAssayId
   const queryClient = useQueryClient()
   const dispatch = useDispatch()
 
@@ -65,11 +63,14 @@ const useWorkloadDownload = requestParams => {
     [WORKLOAD_KEY, 'download'],
     () =>
       getDownload(
-        {
-          ...filtersParams,
-          minDate: getISOFromString(minDate),
-          maxDate: getISOFromString(maxDate),
-        },
+        omitBy(
+          {
+            ...filtersParams,
+            minDate: getISOFromString(minDate),
+            maxDate: getISOFromString(maxDate),
+          },
+          isNil
+        ),
         fileFormat
       ),
     {

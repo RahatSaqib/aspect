@@ -56,7 +56,11 @@ const ProvincialDiagnosisTrendPage = () => {
 
   return (
     <PkPage
-      title={formatMessage(messages.provincialXdrDiagnosisTrends)}
+      title={formatMessage(
+        user.isPakistan
+          ? messages.ProvincialTBDiagnosisTrendsComparison
+          : messages.provincialMtbDetectionTrendsComparison
+      )}
       filters={
         <>
           <StateAutocomplete

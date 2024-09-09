@@ -1,5 +1,5 @@
 const { knex } = require('../../db')
-const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
+const { getDateTimeProjectionInUserTimeZone, getDateTimeProjectionInTimeZoneIANA } = require('../../shared/date')
 
 const COMMON_LIST_FIELDS_UTC = {
   id: 'r.id',
@@ -211,6 +211,9 @@ const SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY = {
   // Grouped mtb cnt
   mtbValid: knex.raw(
     "IFNULL(SUM(CASE WHEN rc1.externalId NOT IN ('NoResult', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0) - IFNULL(SUM(CASE WHEN rc2.externalId = 'Indeterminate' THEN 1 ELSE 0 END), 0)"
+  ),
+  mtbValidWithIndeterminate: knex.raw(
+    "IFNULL(SUM(CASE WHEN rc1.externalId NOT IN ('NoResult', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0)"
   ),
   mtbInconclusive: knex.raw(
     "IFNULL(SUM(CASE WHEN rc1.externalId IN ('NoResult', 'Indeterminate', 'Error', 'Invalid') THEN 1 ELSE 0 END), 0)"
@@ -461,6 +464,167 @@ const SELECT_FIELDS_FOR_DATA_EXTRACT_REPORT = {
   longitude: 'si.longitude',
 }
 
+const getFieldsForQuarterlyReport = timezoneIANA => {
+  return {
+    id: 'r.id',
+    patientId: knex.raw(`r.patientData ->> '$.id'`),
+    // sampleId: 'r.sampleId',
+    sampleId: knex.raw(`r.patientData ->> '$.SampleType'`),
+    testDate: getDateTimeProjectionInTimeZoneIANA(knex, 'COALESCE(r.endedOn, r.startedOn)', timezoneIANA),
+    startedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.startedOn', timezoneIANA),
+    endedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.endedOn', timezoneIANA),
+    deviceName: 'd.name',
+    assay: 'a.name',
+    assayVersion: 'r.assayVersion',
+    result1: 'rc1.name',
+    result2: 'rc2.name',
+    resultText: knex.raw(
+      `IFNULL(
+        r.resultData ->> '$.resultText',
+        CONCAT(  IFNULL(rc1.name, ''), '|', IFNULL(rc2.name, '')  )
+      )`
+    ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    patientAgeYears: knex.raw(
+      `CAST(
+        COALESCE(
+          r.patientData ->> '$.PatientAge',
+          r.patientData ->> '$.age'
+        ) AS UNSIGNED
+      )`
+    ),
+    patientName: knex.raw(
+      `COALESCE(
+        r.patientData ->> '$.name',
+        r.patientData ->> '$.patientName'
+      )`
+    ),
+    patientStreet: knex.raw(
+      `COALESCE(
+        r.patientData ->> '$.street',
+        r.patientData ->> '$.patientStreet'
+      )`
+    ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    patientCity: knex.raw(
+      `COALESCE(
+        r.patientData ->> '$.PatientTownship',
+        r.patientData ->> '$.city',
+        r.patientData ->> '$.patientCity'
+      )`
+    ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    hivStatus: knex.raw(
+      `case
+      when dis.externalId <> 'hiv' then
+        COALESCE(
+          r.patientData ->> '$.HIVStatus',
+          r.patientData ->> '$.hivStatus',
+          r.patientData ->> '$.HivStatus'
+        )
+      else 'N/A'
+    end`
+    ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     * Note: PreviousTreatmentHistory has more options than in GxAlert,
+     * so - map values in Aspect to values in GxAlert to use same formulas as in GxAlert
+     */
+    previouslyTreated: knex.raw(
+      `CASE r.patientData ->> '$.PreviousTreatmentHistory'
+        WHEN 'Previously Treated' THEN 'Yes'
+        WHEN 'No Previous Treatment' THEN 'No'
+        WHEN 'On Treatment' THEN 'No'
+        WHEN 'Unknown' THEN 'Unknown'
+        ELSE 'N/A'
+      END`
+    ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    gender: knex.raw(`
+      CASE COALESCE(
+        r.patientData ->> '$.PatientGender',
+        r.patientData ->> '$.gender',
+        r.patientData ->> '$.patientGender'
+      )
+      WHEN 'F' THEN 'Female'
+      WHEN 'M' THEN 'Male'
+      ELSE COALESCE(
+        r.patientData ->> '$.PatientGender',
+        r.patientData ->> '$.gender',
+        r.patientData ->> '$.patientGender'
+      )
+      END
+    `),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    microscopyResult: knex.raw(
+      `COALESCE(
+        r.patientData ->> '$.MicroscopyResult',
+        r.patientData ->> '$.microscopyResult'
+      )`
+    ),
+    /**
+     * hmm, we do not have such custom field in Myanmar.
+     * But still leave this here.
+     * TODO: discuss with PO about this custom field
+     */
+    repeatTest: knex.raw(
+      `CASE JSON_VALUE(r.patientData, '$.repeatTest')
+        WHEN '0' THEN 'First or second'
+        WHEN '1' THEN 'Follow-up'
+        WHEN '2' THEN 'Repeat Baseline'
+        ELSE NULL
+      END`
+    ),
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    testReason: knex.raw(`r.patientData ->> '$.MMTestReason'`),
+
+    /**
+     * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
+     */
+    notes: knex.raw(
+      `COALESCE(
+        REGEXP_REPLACE(r.notes,"(\\r\\n|\\n|\\r)"," "),
+        REGEXP_REPLACE(r.patientData ->> "$.OtherNotes", "(\\r\\n|\\n|\\r)"," ")
+      )`
+    ),
+
+    errorCode: knex.raw('REGEXP_REPLACE(r.errorCode,"(\\r\\n|\\n|\\r)"," ")'),
+    errorNotes: knex.raw('REGEXP_REPLACE(r.errorNotes,"(\\r\\n|\\n|\\r)"," ")'),
+
+    tag: 'tags.tagsCsv',
+
+    healthFacility: 'so.name',
+
+    assayName: 'a.name',
+    assayHostTestCode: 'r.assayVersion',
+    insertedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.createdOn', timezoneIANA),
+    updatedOn: getDateTimeProjectionInTimeZoneIANA(knex, 'r.updatedOn', timezoneIANA),
+    consumableLot: 'r.consumableLot',
+    instrumentSerial: 'r.instrumentSerial',
+    moduleSerial: 'r.moduleSerial',
+    cartridgeSerial: 'r.consumableSerial',
+    cartridgeExpirationDate: 'r.consumableExpirationDate',
+    senderVersion: 'r.senderVersion',
+    senderIp: 'd.lastPingFromIp',
+
+    country: 'c.name',
+    state: 'st.name',
+    lga: 'lg.name',
+  }
+}
+
 module.exports = {
   getSelectCommonListFieldsTZ,
   getReportCommonFieldsTZ,
@@ -473,4 +637,5 @@ module.exports = {
 
   getResultCategoryGroupSumSelector,
   getResultXdrResistanceSumSelector,
+  getFieldsForQuarterlyReport,
 }

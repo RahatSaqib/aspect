@@ -18,7 +18,7 @@ function renderStatistic(containerWidth, text, style) {
   </div>`
 }
 
-const DonutGraph = ({ data, graphId, showLabel, graphTitle, total, label, tooltip }) => {
+const DonutGraph = ({ data, graphId, showLabel, graphTitle, total, label, tooltip, legend = true }) => {
   const config = {
     data,
     color: datum => filterColour(data.find(d => d.label === datum.label).id, graphId),
@@ -61,9 +61,7 @@ const DonutGraph = ({ data, graphId, showLabel, graphTitle, total, label, toolti
     innerRadius: 0.64,
     meta: { value: { formatter: tooltip || (v => `${v} %`) } }, // format for hover tooltip
     animation: false,
-    legend: {
-      position: 'bottom',
-    },
+    legend: legend ? { position: 'bottom' } : false,
     appendPadding: 10,
   }
   return <Pie {...config} />

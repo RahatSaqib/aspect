@@ -17,6 +17,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.Critical_Errors_By_Device',
     defaultMessage: 'Critical Errors By Device',
   },
+  criticalErrorsByModule: {
+    id: 'pages.ReportIndex.criticalErrorsByModule',
+    defaultMessage: 'Critical Errors By Module',
+  },
+  criticalErrorsByModule_description: {
+    id: 'pages.ReportIndex.criticalErrorsByModule_description',
+    defaultMessage: 'Includes a list of GeneXpert modules that had at least 1 critical error',
+  },
   all_results: {
     id: 'pages.ReportIndex.all_results',
     defaultMessage: 'All Results',
@@ -49,6 +57,14 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.doNotUseModulesReport_Description',
     defaultMessage:
       "A list of all GeneXpert device modules marked as 'do not use'. Includes device name, module serial.",
+  },
+  unusedModulesReport: {
+    id: 'pages.ReportIndex.unUsedModulesReport',
+    defaultMessage: 'Unused Modules',
+  },
+  unusedModulesReport_Description: {
+    id: 'pages.ReportIndex.unUsedModulesReport_Description',
+    defaultMessage: "Shows all devices that haven't used all available modules in the selected time period.",
   },
   no_stock: {
     id: 'pages.ReportIndex.no_stock',

@@ -68,6 +68,33 @@ const SELECT_SHOW_FIELDS = [
   'd.isDaisyChained',
 ]
 
+async function getDeviceInfo(credentials, query) {
+  const dataConstraints = await getConstraints(credentials)
+  const getDeviceQuery = knex('Device as d')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .leftJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lga', 'g.lgaId', 'lga.id')
+    .count({
+      cntDevices: knex.raw('d.id'),
+    })
+    .sum({
+      cntModules: knex.raw('d.moduleBayCapacity'),
+    })
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      state: 'st',
+    })
+    .modify(filterParams, query, {
+      stateId: 'st.id',
+      lgaId: 'lga.id',
+      siteName: 's.name',
+    })
+  return getDeviceQuery
+}
+
 async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW_FIELDS }) {
   const dataConstraints = await getConstraints(credentials)
 
@@ -590,7 +617,6 @@ function getFirstAndLastResults(dataConstraints, assayId, deviceIds) {
       firstEndedOn: knex.raw('MIN(endedOn)'),
       lastEndedOn: knex.raw('MAX(endedOn)'),
     })
-    .where('assayId', assayId)
     .whereIn('deviceId', deviceIds)
     .as('firstAndLastResults')
 }
@@ -607,12 +633,23 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
     .innerJoin('State as st', 'g.stateId', 'st.id')
     .innerJoin('Lga as lg', 'g.lgaId', 'lg.id')
     .innerJoin('Assay as a', joinAssay => {
-      joinAssay.on('dt.id', 'a.deviceTypeId').andOn('a.id', knex.raw(assayId))
+      joinAssay.on(function () {
+        if (assayId) {
+          this.on('dt.id', 'a.deviceTypeId').andOn('a.id', knex.raw(assayId))
+        } else {
+          this.on('dt.id', 'a.deviceTypeId')
+        }
+      })
     })
     .innerJoin('AssayType as at', 'a.assayTypeId', 'at.id')
     .innerJoin('Result as r', joinResultQuery => {
-      joinResultQuery.on('d.id', 'r.deviceId').andOn('r.assayId', knex.raw(assayId))
-
+      joinResultQuery.on(function () {
+        if (assayId) {
+          this.on('r.deviceId', 'd.id').andOn('r.assayId', knex.raw(assayId))
+        } else {
+          this.on('r.deviceId', 'd.id')
+        }
+      })
       if (query.minDate) joinResultQuery.andOn('r.endedOn', '>', knex.raw(`'${query.minDate.toISOString()}'`))
 
       if (query.maxDate) joinResultQuery.andOn('r.endedOn', '<=', knex.raw(`'${query.maxDate.toISOString()}'`))
@@ -634,7 +671,7 @@ async function getDeviceWorkload(extraColumns, dataConstraints, query, auth) {
     .modify(q => {
       extraColumns.forEach(ec => q.select({ [ec.fieldId]: knex.raw(ec.selector) }))
     })
-    .select('r.deviceId', knex.raw('COUNT(r.id) as total'))
+    .select('r.deviceId', knex.raw('COUNT(DISTINCT r.id) as total'))
 
   const { totalRows } = await q.clone().select(knex.raw('COUNT(DISTINCT d.id) as totalRows')).first()
 
@@ -821,11 +858,50 @@ function modulesWithLastResultBeforeMinDate(minDate) {
     .as('r')
 }
 
+function getResultWithUsedModules(knex, minDate, maxDate) {
+  return knex('Result as r')
+    .select('r.deviceId')
+    .count('r.id as totalTests')
+    .countDistinct('moduleName as modulesReporting')
+    .whereBetween('endedOn', [minDate, maxDate])
+    .groupBy('r.deviceId')
+}
+
 const formatTimeZoneDate = (date, timezoneIANA) => {
   if (!date) {
     return date
   }
   return transformUTCDateTimeToZoned(date.toISOString(), timezoneIANA)
+}
+
+async function getUnusedModulesReportData(dataConstraints, query) {
+  return getResultWithUsedModules(knex, query.minDate, query.maxDate)
+    .innerJoin('Device as d', 'd.id', 'r.deviceId')
+    .innerJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .innerJoin('Partner as p', 'p.id', 'd.partnerId')
+    .innerJoin('Site as s', 's.id', 'd.siteId')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as lg', 'g.lgaId', 'lg.id')
+    .whereNot('dt.externalId', 'GxAlert')
+    .select([
+      'd.name as deploymentName',
+      'd.moduleBayCapacity as modulesAvailable',
+      'd.lastInstrumentSerial as instrumentSerial',
+      'st.name as State',
+      'lg.name as Lga',
+    ])
+    .modify(addConstraints, dataConstraints, {
+      device: 'd',
+      site: 's',
+      geography: 'g',
+      partner: 'p',
+    })
+    .modify(filterParams, query, {
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+    })
 }
 
 module.exports = {
@@ -868,4 +944,6 @@ module.exports = {
   getDeviceByIdBaseQuery,
   getLastUploadDateBySites,
   deleteMissingInventoryLots,
+  getUnusedModulesReportData,
+  getDeviceInfo,
 }

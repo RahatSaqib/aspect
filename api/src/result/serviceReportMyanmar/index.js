@@ -1,0 +1,72 @@
+const _ = require('lodash')
+
+const { getListResults } = require('../service')
+const { getFieldsForQuarterlyReport } = require('../query')
+const { getUser } = require('../../auth/service')
+
+// ---------------------------------------------------------------
+async function getDataForQuarterlyReport(auth, query) {
+  const { timezoneIANA } = await getUser(auth.credentials.name)
+
+  const fields = getFieldsForQuarterlyReport(timezoneIANA)
+
+  if (_.isNil(query.withTags)) {
+    query.withTags = true
+  }
+  const result = await getListResults(query, auth, fields)
+
+  _.each(result.data, d => {
+    d.result1 = mapGxAlertResultToAspect(d.result1)
+    d.result2 = mapGxAlertResultToAspect(d.result2)
+    if (d.notes) {
+      const [age, gender, , , testReason] = d.notes.split(',')
+      d.gender = gender?.toUpperCase() === 'M' ? 'Male' : gender?.toUpperCase() === 'F' ? 'Female' : '' || d.gender
+      d.patientAgeYears = age ? Number(age) : d.patientAgeYears ? Number(d.patientAgeYears) : d.patientAgeYears
+      d.testReason = testReason || d.testReason
+      d.cxrAbnormalities = testReason.toLowerCase().includes('cxr') ? 'CXR' : ''
+    }
+  })
+
+  return result
+}
+
+function mapGxAlertResultToAspect(val = '') {
+  if (
+    [
+      /**
+       * list of resultCategory for 1-to-1 mapping,
+       * same order as in BigPicture db in GxAlert
+       */
+      'Invalid',
+      'Error',
+      'Negative',
+      'Positive',
+      'Indeterminate',
+      'No Result',
+      '< 40 cp/ml',
+      '< 1000 cp/ml',
+      '>= 1000 cp/ml',
+      'Presumptive Positive',
+    ].includes(val)
+  ) {
+    return val
+  }
+  if (val === 'Detected' || val?.includes('Positive')) {
+    return 'Positive'
+  }
+  if (val === 'Not Detected') {
+    return 'Negative'
+  }
+  if (val === 'Trace Detected') {
+    return 'Trace'
+  }
+  if (['>= 40 cp/mL', '< 150 cp/mL', '>= 150 cp/mL', '< 550 cp/mL', '>= 550 cp/mL'].includes(val)) {
+    return '< 1000 cp/ml'
+  }
+
+  return !val ? '' : 'Unknown'
+}
+
+module.exports = {
+  getDataForQuarterlyReport,
+}

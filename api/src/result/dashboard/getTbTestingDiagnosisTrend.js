@@ -37,10 +37,11 @@ const reduceByTbDetected = (dataRaw, fromYear, toYear) => {
   }
 
   const DETECTED = 'Detected'
+  const TRACE_DETECTED = 'Trace Detected'
 
   const reducedYears = dataRaw.reduce((acc, it) => {
     const year = acc[it.year]
-    if (it.resultCategory1 === DETECTED) {
+    if (it.resultCategory1 === DETECTED || it.resultCategory1 === TRACE_DETECTED) {
       year.MtbDetected += it.cnt
     }
     year.Total += it.cnt

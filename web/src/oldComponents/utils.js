@@ -123,6 +123,7 @@ const sanitizerByConfigKey = {
   contactStatus: defaultSanitizer,
   displayResult: defaultSanitizer,
   onlyTransfers: defaultSanitizer,
+  showDecommissionedDevices: defaultSanitizer,
 }
 
 /**

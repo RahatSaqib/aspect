@@ -10,7 +10,8 @@ const { getBaseQueryForResults } = require('../common/db')
 const { getDateTimeProjectionInUserTimeZone } = require('../../shared/date')
 const { SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY } = require('../query')
 
-const { mtbDetectedTraceDetected, mtbDetectedRifDetected, mtbValid } = SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
+const { mtbDetectedTraceDetected, mtbDetectedRifDetected, mtbValid, mtbValidWithIndeterminate } =
+  SELECT_GX_MTB_CNT_BY_RESULT_CATEGORY
 
 const getResultCount = (dataConstraints, minDate, maxDate, timezone) =>
   getBaseQueryForResults()
@@ -25,6 +26,7 @@ const getResultCount = (dataConstraints, minDate, maxDate, timezone) =>
     .whereBetween(getDateTimeProjectionInUserTimeZone(knex, 'r.endedOn', timezone), [minDate, maxDate])
     .first({
       mtbValid,
+      mtbValidWithIndeterminate,
       mtbDetectedTraceDetected,
       mtbDetectedRifDetected,
     })
@@ -57,9 +59,11 @@ const getResultsOverview = async ({ auth }) => {
 
   const data = {
     total1Year: resultCountYear.mtbValid,
+    mtbValidWithIndeterminate: resultCountYear.mtbValidWithIndeterminate,
     mtbDetected1Year: resultCountYear.mtbDetectedTraceDetected,
     rifDetected1Year: resultCountYear.mtbDetectedRifDetected,
     totalToday: resultCountDay.mtbValid,
+    mtbValidWithIndeterminateToday: resultCountDay.mtbValidWithIndeterminate,
     mtbDetected1Day: resultCountDay.mtbDetectedTraceDetected,
     rifDetected1Day: resultCountDay.mtbDetectedRifDetected,
   }

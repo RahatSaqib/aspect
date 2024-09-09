@@ -64,6 +64,7 @@ const filtersOrdering = {
   daysStockLeft: 31,
   minExpirationDate: 31,
   maxExpirationDate: 32,
+  showDecommissionedDevices: 33,
 }
 
 const buttonMapping = {
@@ -203,6 +204,7 @@ const buttonMapping = {
   onlyReportableResults: ({ remove, blocked }) => <OnlyReportableResults remove={remove} blocked={blocked} />,
   onlyDownloadedByReporter: ({ remove, blocked }) => <OnlyDownloadedByReporter remove={remove} blocked={blocked} />,
   onlyTreatmentRequired: ({ remove, blocked }) => <OnlyTreatmentRequired remove={remove} blocked={blocked} />,
+  showDecommissionedDevices: ({ remove, blocked }) => <ShowDecommissionedDevices remove={remove} blocked={blocked} />,
   revoked: ({ revoked, remove, blocked }) => <Revoked revoked={revoked} remove={remove} blocked={blocked} />,
   assayOverride: () => null,
   singleAssayId: ({ singleAssayId }) => <AssayId assayId={singleAssayId} />, // only one permanent
@@ -831,6 +833,17 @@ const OnlyTreatmentRequired = ({ remove, blocked }) => {
     <Btn
       lbl={formatMessage(messages.onlyTreatmentRequired)}
       del={blocked.includes('onlyTreatmentRequired') ? undefined : () => remove(['onlyTreatmentRequired'])}
+    />
+  )
+}
+
+const ShowDecommissionedDevices = ({ remove, blocked }) => {
+  const { formatMessage } = useIntl()
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.showDecommissionedDevices)}
+      del={blocked.includes('showDecommissionedDevices') ? undefined : () => remove(['showDecommissionedDevices'])}
     />
   )
 }

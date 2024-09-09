@@ -264,6 +264,7 @@ const routes = [
           partnerId: Joi.number().allow('').description('Partner ID'),
           siteId: Joi.number().allow('').description('Site ID'),
           showUnapprovedDevices: Joi.bool().optional().default(false).description('Show unapproved devices'),
+          showDecommissionedDevices: Joi.bool().optional().default(false).description('Show decommissioned devices'),
           onlyResultDevices: Joi.bool().optional().default(false).description('Show only devices that process results'),
         },
       },
@@ -662,7 +663,7 @@ const routes = [
         'The National Trends in annual utilization rates displays the percentage of utilization for the current year and the previous 5 years of data',
       auth: { scope: ['device:view', 'operationalData:view'] },
       validate: {
-        query: { ...validateDateRangeParams(false) },
+        query: { ...validateDateRangeParams(false), tableData: Joi.string().optional() },
       },
       response: {
         options: {
