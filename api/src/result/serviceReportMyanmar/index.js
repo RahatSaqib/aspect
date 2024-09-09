@@ -18,10 +18,7 @@ async function getDataForQuarterlyReport(auth, query) {
   _.each(result.data, d => {
     d.result1 = mapGxAlertResultToAspect(d.result1)
     d.result2 = mapGxAlertResultToAspect(d.result2)
-    if (d.notes) {
-      const [, , , , testReason] = d.notes.split(',')
-      d.cxrAbnormalities = testReason?.toLowerCase().includes('cxr') ? 'CXR' : ''
-    }
+    d.cxrAbnormalities = d.notes?.toLowerCase().includes('cxr') ? 'CXR' : ''
   })
 
   return result
