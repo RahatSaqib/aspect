@@ -119,6 +119,13 @@ module.exports = {
   pushNotification: {
     testDeviceTokenId: process.env['pushNotification.testDeviceTokenId'],
   },
+  aws: {
+    accessKeyId: process.env['aws.accessKeyId'],
+    secretAccessKey: process.env['aws.secretAccessKey'],
+    region: process.env['aws.region'],
+    serviceBucket: process.env['aws.serviceBucket'],
+  },
+  serviceStatusFile: process.env.serviceStatusFile,
 }
 
 configureOptional(module.exports)
