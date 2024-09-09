@@ -1,6 +1,4 @@
-const { subHours } = require('date-fns')
 const { knex, sortPageParams, filterParams, filterDateRangeParams } = require('../db')
-const { asyncReportStatusToId } = require('./dictionary')
 const { getHash } = require('./encryption')
 const { jsonToArraySorted } = require('./sort')
 
@@ -21,11 +19,6 @@ const sortColumnMapping = {
   externalId: 'r.externalId',
   status: 'ars.externalId',
   name: 'r.name',
-}
-
-function getSinceThreshold() {
-  const since24HoursAgoISO = subHours(new Date(), 24).toISOString().split('.')[0]
-  return since24HoursAgoISO
 }
 
 async function getAllAsyncReportsForUser(query, personId) {
@@ -92,41 +85,12 @@ const getExistingReportWithHash = async hash => {
     ])
 }
 
-const processNewReport = async payload => {
-  const { reportId, hash, query, queryHash } = payload
-
-  const statusId = await asyncReportStatusToId('queued')
-  const [asyncReportId] = await knex('AsyncReport').insert({
-    reportId,
-    hash,
-    queryHash,
-    query: JSON.stringify(query),
-    statusId,
-  })
-
-  // TODO: Push to BULL MQ
-  // queue().add('asyncReports', { asyncReportId, auth, query, externalId, useUserPlaceHolders = false })
-
-  return asyncReportId
-}
-
-const createReportRequest = async (asyncReportId, currentUserId) => {
-  return knex('UserReportRequest').insert({
-    userId: currentUserId,
-    asyncReportId,
-    requestCount: 1,
-  })
-}
-
-const incrementRequestCount = async (asyncReportId, currentUserId) => {
-  return knex('UserReportRequest').where({ userId: currentUserId, asyncReportId }).increment('requestCount', 1)
+const updateAsyncReport = async (asyncReportId, payload) => {
+  return knex('AsyncReport').where('id', asyncReportId).update(payload)
 }
 
 module.exports = {
-  getSinceThreshold,
   getExistingReportWithHash,
-  processNewReport,
-  createReportRequest,
   getAllAsyncReportsForUser,
-  incrementRequestCount,
+  updateAsyncReport,
 }
