@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-27T23:24:25.912Z\n"
+"POT-Creation-Date: 2024-09-05T18:28:58.893Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -2047,6 +2047,13 @@ msgstr "Erro Crítico"
 #: extracted_strings.json
 msgid "Critical Errors By Device"
 msgstr "Erros Críticos por Dispositivo"
+
+#. [pages.ReportIndex.criticalErrorsByModule]
+#. defaultMessage is:
+#. Critical Errors By Module
+#: extracted_strings.json
+msgid "Critical Errors By Module"
+msgstr "Erros críticos por módulo"
 
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
@@ -5035,6 +5042,14 @@ msgid ""
 msgstr ""
 "Inclui uma lista de dispositivos GeneXpert que apresentaram pelo menos 1 "
 "erro crítico"
+
+#. [pages.ReportIndex.criticalErrorsByModule_description]
+#. defaultMessage is:
+#. Includes a list of GeneXpert modules that had at least 1 critical error
+#: extracted_strings.json
+msgid "Includes a list of GeneXpert modules that had at least 1 critical error"
+msgstr ""
+"Inclui uma lista de módulos GeneXpert que tiveram pelo menos 1 erro crítico"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -10168,6 +10183,13 @@ msgstr "Mostrar Etiqueta"
 msgid "Show Percentage"
 msgstr "Mostrar Porcentagem"
 
+#. [filter.popover.showDecommissionedDevices]
+#. defaultMessage is:
+#. Show Results From Decommissioned Devices
+#: extracted_strings.json
+msgid "Show Results From Decommissioned Devices"
+msgstr "Mostrar resultados de dispositivos desactivados"
+
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
 #. Show line for
@@ -10303,6 +10325,17 @@ msgid ""
 msgstr ""
 "Mostrando {firstItemIndex}-{lastItemIndex} de {itemCount, plural, one {# "
 "suprimento} other {# suprimentos} }"
+
+#. [pages.ReportIndex.unUsedModulesReport_Description]
+#. defaultMessage is:
+#. Shows all devices that haven't used all available modules in the selected time period.
+#: extracted_strings.json
+msgid ""
+"Shows all devices that haven't used all available modules in the selected "
+"time period."
+msgstr ""
+"Mostra todos os dispositivos que não utilizaram todos os módulos disponíveis "
+"no período de tempo selecionado."
 
 #. [pages.ReportIndex.moduleActivityReport_description]
 #. defaultMessage is:
@@ -12309,6 +12342,13 @@ msgstr "Desconhecido"
 #: extracted_strings.json
 msgid "Unlocked"
 msgstr "Desbloqueado"
+
+#. [pages.ReportIndex.unUsedModulesReport]
+#. defaultMessage is:
+#. Unused Modules
+#: extracted_strings.json
+msgid "Unused Modules"
+msgstr "Módulos não utilizados"
 
 #. [pages.DeviceList.up]
 #. defaultMessage is:
