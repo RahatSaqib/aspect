@@ -531,7 +531,7 @@ async function renderExcelTemplate({
           worksheet.getRow(1).values = headerValues
 
           // remove all rows between 1st row and table body (remove table headers too)
-          worksheet.spliceRows(2, patternRowNumber - 1 - 1)
+          worksheet.spliceRows(0, patternRowNumber - 1 - 1)
         }
       }
     })
