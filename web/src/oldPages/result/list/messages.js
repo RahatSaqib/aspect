@@ -273,6 +273,10 @@ const messages = {
       id: 'pages.ResultList.assayTbLamp',
       defaultMessage: 'TB LAMP',
     },
+    notProvided: {
+      id: 'pages.ResultList.notProvided',
+      defaultMessage: 'Not provided',
+    },
     ...resultCategory,
     ...resultCategoryType,
   }),
