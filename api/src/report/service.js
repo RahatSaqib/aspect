@@ -1,4 +1,3 @@
-const fs = require('fs')
 const { promises: fsPromises } = require('fs')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
