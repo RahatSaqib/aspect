@@ -1,16 +1,5 @@
 import React, { Fragment } from 'react'
-import {
-  Accordion,
-  AccordionDetails,
-  AccordionSummary,
-  Box,
-  Divider,
-  List,
-  ListItem,
-  ListItemText,
-  Skeleton,
-  Typography,
-} from '@mui/material'
+import { Box, Button, Divider, List, ListItemText, Menu, MenuItem, Skeleton, Typography } from '@mui/material'
 import { parseISO } from 'date-fns'
 import { format } from 'date-fns-tz'
 import { MdExpandMore } from 'react-icons/md'
@@ -19,10 +8,10 @@ import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 const { dateFormat } = getAspectDisplayPreferences().toJS()
 
 const listItemTextWithOrder = [
-  { key: 'reportSiteName', label: 'Site Name' },
-  { key: 'reportConsumableName', label: 'Consumable Name' },
+  { key: 'reportSiteName', label: 'Site' },
+  { key: 'reportConsumableName', label: 'Consumable' },
   { key: 'reportStateName', label: 'State' },
-  { key: 'reportCountryName', label: 'Country Name' },
+  { key: 'reportCountryName', label: 'Country' },
   { key: 'reportFormat', label: 'Format' },
 ]
 
@@ -42,51 +31,76 @@ function buildDateRangeString(reportFromDate, reportToDate) {
 export function ReportRecentRequests(props) {
   const { reportRequests, reportId, isLoading } = props
   const count = reportRequests?.length ?? 0
+  const [anchorEl, setAnchorEl] = React.useState(null)
+
+  const handleClick = event => {
+    setAnchorEl(event.currentTarget)
+  }
+
+  const handleClose = () => {
+    setAnchorEl(null)
+  }
+
+  const actionDisabled = isLoading || count === 0
+
   return (
-    <Accordion sx={{ width: '100%', boxShadow: 'none', marginTop: 1 }}>
-      <AccordionSummary
-        expandIcon={<MdExpandMore />}
-        aria-controls={`panel${reportId}-content`}
-        id={`panel${reportId}-header`}
+    <Box sx={{ width: '100%', boxShadow: 'none', marginTop: 2, paddingX: 1 }}>
+      <Divider />
+      <Button
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'space-between',
+          cursor: 'pointer',
+          width: '100%',
+        }}
+        disabled={actionDisabled}
+        onClick={handleClick}
       >
         {isLoading ? <Skeleton width={200} /> : <>Recent requests ({count})</>}
-      </AccordionSummary>
-      {count > 0 ? (
-        <AccordionDetails>
-          <List sx={{ width: '100%', bgcolor: 'background.paper' }}>
-            {reportRequests?.map(request => (
-              <Fragment key={request.requestId}>
-                <Divider />
-                <ListItem
-                  sx={{ alignItems: 'flex-start', minWidth: '100%' }}
-                  secondaryAction={<Typography sx={{ cursor: 'pointer' }}>{request.status}</Typography>}
-                >
-                  <ListItemText
-                    primary={buildDateRangeString(request.reportFromDate, request.reportToDate)}
-                    secondary={
-                      <Box sx={{ flexDirection: 'column' }}>
-                        {listItemTextWithOrder.map(({ key, label }) => (
-                          <Fragment key={key}>
-                            {request[key] ? (
-                              <Typography
-                                component="span"
-                                variant="body2"
-                                sx={{ color: 'text.primary', display: 'block', fontSize: 12 }}
-                              >
-                                {label} - {request[key]}
-                              </Typography>
-                            ) : null}
-                          </Fragment>
-                        ))}
-                      </Box>
-                    }
-                  />
-                </ListItem>
-              </Fragment>
-            ))}
-          </List>
-        </AccordionDetails>
-      ) : null}
-    </Accordion>
+        {count > 0 && <MdExpandMore />}
+      </Button>
+      <Menu
+        id={`menu-${reportId}`}
+        anchorEl={anchorEl}
+        divider
+        open={Boolean(anchorEl)}
+        onClose={handleClose}
+        sx={{ width: '100%' }}
+      >
+        {reportRequests?.map(request => (
+          <MenuItem
+            sx={{ alignItems: 'flex-start', minWidth: '100%' }}
+            onClick={handleClose}
+            key={request.requestId}
+            divider
+          >
+            <Box as="span" sx={{ width: '100%', display: 'flex', gap: 4, justifyContent: 'space-between' }}>
+              <Box as="span">
+                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                  {buildDateRangeString(request.reportFromDate, request.reportToDate)}
+                </Typography>
+                {listItemTextWithOrder.map(({ key, label }) => (
+                  <Fragment key={key}>
+                    {request[key] ? (
+                      <Typography
+                        component="span"
+                        variant="body2"
+                        sx={{ color: 'text.primary', display: 'block', fontSize: 12 }}
+                      >
+                        {label} - {request[key]}
+                      </Typography>
+                    ) : null}
+                  </Fragment>
+                ))}
+              </Box>
+              <Typography variant="link" sx={{ color: 'primary.main', fontSize: 12, textTransform: 'capitalize' }}>
+                {request.status}
+              </Typography>
+            </Box>
+          </MenuItem>
+        ))}
+      </Menu>
+    </Box>
   )
 }
