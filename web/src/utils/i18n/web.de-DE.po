@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-08-27T23:24:25.912Z\n"
+"POT-Creation-Date: 2024-09-05T18:28:58.893Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -82,7 +82,7 @@ msgstr ""
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{Kontakte, plural, one {# mehr {name}} other {# mehr {name}s}} }"
+msgstr "...{Kontakte, Plural, eine {# mehr {name}} andere {# mehr {name}s} }"
 
 #. [pages.DeviceList.mergeDeviceActionDescription]
 #. defaultMessage is:
@@ -2050,6 +2050,13 @@ msgstr "Kritischer Fehler"
 #: extracted_strings.json
 msgid "Critical Errors By Device"
 msgstr "Kritische Fehler nach Gerät"
+
+#. [pages.ReportIndex.criticalErrorsByModule]
+#. defaultMessage is:
+#. Critical Errors By Module
+#: extracted_strings.json
+msgid "Critical Errors By Module"
+msgstr "Kritische Fehler nach Modul"
 
 #. [filter.AssaySelectField.assayCulture]
 #. defaultMessage is:
@@ -5041,6 +5048,15 @@ msgid ""
 msgstr ""
 "Enthält eine Liste der GeneXpert-Geräte, die mindestens 1 kritischen Fehler "
 "aufwiesen"
+
+#. [pages.ReportIndex.criticalErrorsByModule_description]
+#. defaultMessage is:
+#. Includes a list of GeneXpert modules that had at least 1 critical error
+#: extracted_strings.json
+msgid "Includes a list of GeneXpert modules that had at least 1 critical error"
+msgstr ""
+"Enthält eine Liste der GeneXpert-Module, die mindestens 1 kritischen Fehler "
+"hatten"
 
 #. [legends.Unknown.resultCategoryInconclusive]
 #. defaultMessage is:
@@ -10187,6 +10203,13 @@ msgstr "Beschriftung anzeigen"
 msgid "Show Percentage"
 msgstr "Angabe in Prozent"
 
+#. [filter.popover.showDecommissionedDevices]
+#. defaultMessage is:
+#. Show Results From Decommissioned Devices
+#: extracted_strings.json
+msgid "Show Results From Decommissioned Devices"
+msgstr "Ergebnisse von außer Betrieb genommenen Geräten anzeigen"
+
 #. [p.PkDashboard.showLineFor]
 #. defaultMessage is:
 #. Show line for
@@ -10322,6 +10345,17 @@ msgid ""
 msgstr ""
 "Zeigt {firstItemIndex}-{lastItemIndex} von {itemCount, plural, one {# "
 "Verbrauchsmaterial} other {# Verbrauchsmaterialien} }"
+
+#. [pages.ReportIndex.unUsedModulesReport_Description]
+#. defaultMessage is:
+#. Shows all devices that haven't used all available modules in the selected time period.
+#: extracted_strings.json
+msgid ""
+"Shows all devices that haven't used all available modules in the selected "
+"time period."
+msgstr ""
+"Zeigt alle Geräte an, die im ausgewählten Zeitraum nicht alle verfügbaren "
+"Module verwendet haben."
 
 #. [pages.ReportIndex.moduleActivityReport_description]
 #. defaultMessage is:
@@ -12353,6 +12387,13 @@ msgstr "Unbekannt"
 #: extracted_strings.json
 msgid "Unlocked"
 msgstr "Entsperrt"
+
+#. [pages.ReportIndex.unUsedModulesReport]
+#. defaultMessage is:
+#. Unused Modules
+#: extracted_strings.json
+msgid "Unused Modules"
+msgstr "Unbenutzte Module"
 
 #. [pages.DeviceList.up]
 #. defaultMessage is:
