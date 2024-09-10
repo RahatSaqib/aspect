@@ -1,5 +1,5 @@
 import React, { Fragment } from 'react'
-import { Box, Button, Divider, List, ListItemText, Menu, MenuItem, Skeleton, Typography } from '@mui/material'
+import { Box, Button, ClickAwayListener, Divider, List, ListItem, Popover, Skeleton, Typography } from '@mui/material'
 import { parseISO } from 'date-fns'
 import { format } from 'date-fns-tz'
 import { MdExpandMore } from 'react-icons/md'
@@ -60,47 +60,53 @@ export function ReportRecentRequests(props) {
         {isLoading ? <Skeleton width={200} /> : <>Recent requests ({count})</>}
         {count > 0 && <MdExpandMore />}
       </Button>
-      <Menu
-        id={`menu-${reportId}`}
-        anchorEl={anchorEl}
-        divider
-        open={Boolean(anchorEl)}
-        onClose={handleClose}
-        sx={{ width: '100%' }}
-      >
-        {reportRequests?.map(request => (
-          <MenuItem
-            sx={{ alignItems: 'flex-start', minWidth: '100%' }}
-            onClick={handleClose}
-            key={request.requestId}
-            divider
-          >
-            <Box as="span" sx={{ width: '100%', display: 'flex', gap: 4, justifyContent: 'space-between' }}>
-              <Box as="span">
-                <Typography variant="caption" sx={{ color: 'text.secondary' }}>
-                  {buildDateRangeString(request.reportFromDate, request.reportToDate)}
-                </Typography>
-                {listItemTextWithOrder.map(({ key, label }) => (
-                  <Fragment key={key}>
-                    {request[key] ? (
-                      <Typography
-                        component="span"
-                        variant="body2"
-                        sx={{ color: 'text.primary', display: 'block', fontSize: 12 }}
-                      >
-                        {label} - {request[key]}
-                      </Typography>
-                    ) : null}
-                  </Fragment>
-                ))}
-              </Box>
-              <Typography variant="link" sx={{ color: 'primary.main', fontSize: 12, textTransform: 'capitalize' }}>
-                {request.status}
-              </Typography>
-            </Box>
-          </MenuItem>
-        ))}
-      </Menu>
+      <Popover open={Boolean(anchorEl)} anchorEl={anchorEl} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
+        <ClickAwayListener onClickAway={handleClose}>
+          <List sx={{ width: '100%', backgroundColor: 'background.paper', boxShadow: 3, borderRadius: 2 }}>
+            {reportRequests?.map((request, index) => (
+              <ListItem
+                sx={{ alignItems: 'flex-start', minWidth: '100%', padding: 2 }}
+                key={request.requestId}
+                divider={count - 1 !== index}
+              >
+                <Box as="span" sx={{ width: '100%', display: 'flex', gap: 4, justifyContent: 'space-between' }}>
+                  <Box as="span">
+                    <Typography variant="caption" sx={{ color: 'text.secondary' }}>
+                      {buildDateRangeString(request.reportFromDate, request.reportToDate)}
+                    </Typography>
+                    {listItemTextWithOrder.map(({ key, label }) => (
+                      <Fragment key={key}>
+                        {request[key] ? (
+                          <Typography
+                            component="span"
+                            variant="body2"
+                            sx={{ color: 'text.primary', display: 'block', fontSize: 12 }}
+                          >
+                            {label} - {request[key]}
+                          </Typography>
+                        ) : null}
+                      </Fragment>
+                    ))}
+                  </Box>
+                  <Typography
+                    variant="link"
+                    sx={{
+                      color: 'primary.main',
+                      fontSize: 12,
+                      textTransform: 'capitalize',
+                      cursor: 'pointer',
+                      display: 'flex',
+                      alignItems: 'center',
+                    }}
+                  >
+                    {request.status}
+                  </Typography>
+                </Box>
+              </ListItem>
+            ))}
+          </List>
+        </ClickAwayListener>
+      </Popover>
     </Box>
   )
 }
