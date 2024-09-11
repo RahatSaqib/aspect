@@ -1,5 +1,17 @@
 import React, { Fragment } from 'react'
-import { Box, Button, ClickAwayListener, Divider, List, ListItem, Popover, Skeleton, Typography } from '@mui/material'
+import {
+  Box,
+  Button,
+  Dialog,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  Divider,
+  List,
+  ListItem,
+  Skeleton,
+  Typography,
+} from '@mui/material'
 import { parseISO } from 'date-fns'
 import { format } from 'date-fns-tz'
 import { MdExpandMore } from 'react-icons/md'
@@ -29,16 +41,16 @@ function buildDateRangeString(reportFromDate, reportToDate) {
 }
 
 export function ReportRecentRequests(props) {
-  const { reportRequests, reportId, isLoading } = props
+  const { reportRequests, report, reportId, isLoading } = props
   const count = reportRequests?.length ?? 0
-  const [anchorEl, setAnchorEl] = React.useState(null)
+  const [open, setOpen] = React.useState(false)
 
-  const handleClick = event => {
-    setAnchorEl(event.currentTarget)
+  const handleClick = () => {
+    setOpen(!open)
   }
 
   const handleClose = () => {
-    setAnchorEl(null)
+    setOpen(false)
   }
 
   const actionDisabled = isLoading || count === 0
@@ -60,9 +72,11 @@ export function ReportRecentRequests(props) {
         {isLoading ? <Skeleton width={200} /> : <>Recent requests ({count})</>}
         {count > 0 && <MdExpandMore />}
       </Button>
-      <Popover open={Boolean(anchorEl)} anchorEl={anchorEl} anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}>
-        <ClickAwayListener onClickAway={handleClose}>
-          <List sx={{ width: '100%', backgroundColor: 'background.paper', boxShadow: 3, borderRadius: 2 }}>
+      <Dialog open={open} onClose={handleClose}>
+        <DialogTitle>{report.name}</DialogTitle>
+        <Divider />
+        <DialogContent>
+          <List sx={{ width: '100%' }}>
             {reportRequests?.map((request, index) => (
               <ListItem
                 sx={{ alignItems: 'flex-start', minWidth: '100%', padding: 2 }}
@@ -105,8 +119,11 @@ export function ReportRecentRequests(props) {
               </ListItem>
             ))}
           </List>
-        </ClickAwayListener>
-      </Popover>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={handleClose}>Close</Button>
+        </DialogActions>
+      </Dialog>
     </Box>
   )
 }

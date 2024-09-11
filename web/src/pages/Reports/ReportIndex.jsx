@@ -246,6 +246,7 @@ const ReportIndex = () => {
                       reportRequests={groupedAllReportRequestsResponse[report.externalId]}
                       isLoading={allReportRequestsLoading}
                       reportId={report.externalId}
+                      report={report}
                     />
                   </Box>
                 ) : (
