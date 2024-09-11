@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react'
 import { Stack, Typography, Divider } from '@mui/material'
 import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
-import styles from './DataRow.css'
+import styles from './DataRow.module.css'
 
 const DataRow = ({ label, value, info, valueTooltip, ...props }) => {
   const data = useMemo(
