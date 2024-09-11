@@ -5,6 +5,7 @@ const { promisify } = require('util')
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const bcrypt = require('bcrypt')
+const AWS = require('aws-sdk')
 require('isomorphic-fetch')
 const logger = require('../shared/logger')
 
@@ -51,6 +52,7 @@ const userProps = [
   'c.timezone as defaultTimezone',
   ...personProps,
 ]
+const partnerProps = ['p.activeStatus', 'p.statusMessage']
 
 function getUser(username, options = {}) {
   const { partnerId = false } = options
@@ -66,6 +68,10 @@ function getUser(username, options = {}) {
       if (partnerId) q.where('p.lastPartnerId', partnerId)
     })
     .first(userProps)
+}
+
+function getPartner() {
+  return query('Get account status from partner').from('Partner as p').first(partnerProps)
 }
 
 function getUserByPersonId(personId) {
@@ -112,10 +118,32 @@ function getTokenExpiry(clientType, currentTime) {
   return new Date(currentTime.getTime() + expiresTime)
 }
 
+async function serviceModification() {
+  try {
+    const s3 = new AWS.S3({
+      accessKeyId: config.aws.accessKeyId,
+      secretAccessKey: config.aws.secretAccessKey,
+      region: config.aws.region,
+    })
+    const params = {
+      Bucket: config.aws.serviceBucket,
+      Key: config.serviceStatusFile,
+    }
+    const data = await s3.getObject(params).promise()
+    const jsonString = data.Body.toString('utf-8')
+    const jsonData = JSON.parse(jsonString)
+    const { activeStatus, statusMessage } = jsonData
+    // Update the Partner table
+    await query('Update partner active status').from('Partner').update({ activeStatus, statusMessage })
+  } catch (error) {
+    console.error('Error while updating partner active status:', error)
+  }
+}
+
 async function authenticate(request, response) {
   const { payload } = request
   let user = await getUser(payload.name)
-
+  const partner = await getPartner()
   if (!user || (user.password && user.legacyPassword)) {
     // GxAlert authentication
     if (user && user.password && user.password.includes(';')) {
@@ -200,6 +228,13 @@ async function authenticate(request, response) {
       )
     }
   }
+  if (partner.activeStatus === 2) {
+    return loginHistoryCodeDecorator(
+      Boom.forbidden(partner?.statusMessage),
+      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
+      user.id
+    )
+  }
 
   if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
     return loginHistoryCodeDecorator(
@@ -265,6 +300,8 @@ async function authenticate(request, response) {
     deviceTokenId,
     userId: user.id,
     personId: user.personId,
+    activeStatus: partner.activeStatus,
+    statusMessage: partner?.statusMessage,
   }
 }
 
@@ -715,4 +752,5 @@ module.exports = {
   getGeographyAccess,
   getPersonByPersonId,
   getDisplayPreferences,
+  serviceModification,
 }

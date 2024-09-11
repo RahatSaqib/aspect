@@ -85,7 +85,11 @@ const COMMON_LIST_FIELDS_UTC = {
 const getReportCommonFieldsTZ = userTimeOffset => ({
   patientId: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.id"))'),
   sampleId: 'sp.externalId',
-  patientAge: knex.raw('JSON_UNQUOTE(JSON_EXTRACT(r.patientData, "$.age"))'),
+  patientAge: knex.raw(
+    `COALESCE(
+    r.patientData ->> '$.PatientAge',
+    r.patientData ->> '$.age')`
+  ),
   deviceName: 'd.name',
   instrumentSerial: 'r.instrumentSerial',
   assayName: knex.raw(`r.resultData ->> '$.assay'`),
