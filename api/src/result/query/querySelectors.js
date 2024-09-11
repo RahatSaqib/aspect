@@ -553,20 +553,11 @@ const getFieldsForQuarterlyReport = timezoneIANA => {
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
     gender: knex.raw(`
-      CASE COALESCE(
+       COALESCE(
         r.patientData ->> '$.PatientGender',
         r.patientData ->> '$.gender',
         r.patientData ->> '$.patientGender'
-      )
-      WHEN 'F' THEN 'Female'
-      WHEN 'M' THEN 'Male'
-      ELSE COALESCE(
-        r.patientData ->> '$.PatientGender',
-        r.patientData ->> '$.gender',
-        r.patientData ->> '$.patientGender'
-      )
-      END
-    `),
+      )`),
     /**
      * see `api/src/forms/formsDefinition/CustomFields_Myanmar.json`
      */
