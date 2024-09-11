@@ -1,20 +1,21 @@
-import React, { Fragment } from 'react'
+import React, { Fragment, useState } from 'react'
 import {
   Box,
   Button,
   Dialog,
-  DialogActions,
   DialogContent,
   DialogTitle,
   Divider,
+  IconButton,
   List,
   ListItem,
+  Pagination,
   Skeleton,
   Typography,
 } from '@mui/material'
 import { parseISO } from 'date-fns'
 import { format } from 'date-fns-tz'
-import { MdExpandMore } from 'react-icons/md'
+import { MdClose, MdExpandMore } from 'react-icons/md'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 
 const { dateFormat } = getAspectDisplayPreferences().toJS()
@@ -40,8 +41,11 @@ function buildDateRangeString(reportFromDate, reportToDate) {
   return 'No date range'
 }
 
+const PAGE_SIZE = 5
+
 export function ReportRecentRequests(props) {
-  const { reportRequests, report, reportId, isLoading } = props
+  const { reportRequests, report, isLoading } = props
+  const [page, setPage] = useState(1)
   const count = reportRequests?.length ?? 0
   const [open, setOpen] = React.useState(false)
 
@@ -72,12 +76,23 @@ export function ReportRecentRequests(props) {
         {isLoading ? <Skeleton width={200} /> : <>Recent requests ({count})</>}
         {count > 0 && <MdExpandMore />}
       </Button>
-      <Dialog open={open} onClose={handleClose}>
+      <Dialog open={open} onClose={handleClose} sx={{ minWidth: 450, minHeight: 450 }}>
         <DialogTitle>{report.name}</DialogTitle>
-        <Divider />
-        <DialogContent>
-          <List sx={{ width: '100%' }}>
-            {reportRequests?.map((request, index) => (
+        <IconButton
+          aria-label="close"
+          onClick={handleClose}
+          sx={theme => ({
+            position: 'absolute',
+            right: 8,
+            top: 14,
+            color: theme.palette.grey[500],
+          })}
+        >
+          <MdClose />
+        </IconButton>
+        <DialogContent dividers>
+          <List sx={{ width: '100%', minWidth: 400, minHeight: 200 }}>
+            {reportRequests?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)?.map((request, index) => (
               <ListItem
                 sx={{ alignItems: 'flex-start', minWidth: '100%', padding: 2 }}
                 key={request.requestId}
@@ -119,10 +134,14 @@ export function ReportRecentRequests(props) {
               </ListItem>
             ))}
           </List>
+          <Pagination
+            count={Math.ceil(count / PAGE_SIZE)}
+            page={page}
+            shape="rounded"
+            onChange={(_, pageNumber) => setPage(pageNumber)}
+            sx={{ display: 'flex', justifyContent: 'flex-end', marginTop: 2 }}
+          />
         </DialogContent>
-        <DialogActions>
-          <Button onClick={handleClose}>Close</Button>
-        </DialogActions>
       </Dialog>
     </Box>
   )
