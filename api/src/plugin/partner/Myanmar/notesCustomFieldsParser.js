@@ -102,7 +102,6 @@ const microscopyMap = {
   neg: 'Smear Negative',
   nd: 'Not Done',
 }
-
 const genderMap = {
   m: 'Male',
   f: 'Female',
@@ -124,4 +123,4 @@ const previousMap = {
   unk: 'Unknown',
 }
 
-module.exports = { parseNotes }
+module.exports = { parseNotes, genderMap }
