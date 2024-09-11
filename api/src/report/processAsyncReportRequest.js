@@ -25,13 +25,6 @@ const saveReportAndPushToQueue = async payload => {
   const { reportId, hash, query, queryHash, auth, useUserPlaceHolders, externalId } = payload
 
   const statusId = await asyncReportStatusToId('queued')
-  const [asyncReportId] = await knex('AsyncReport').insert({
-    reportId,
-    hash,
-    queryHash,
-    query: JSON.stringify(query),
-    statusId,
-  })
 
   const user = await getUserFromCredentials(auth.credentials)
 
@@ -50,7 +43,15 @@ const saveReportAndPushToQueue = async payload => {
       }
     : {}
 
-  const fullPath = `/tmp/${fileName}`
+  const [asyncReportId] = await knex('AsyncReport').insert({
+    reportId,
+    hash,
+    queryHash,
+    query: JSON.stringify(query),
+    statusId,
+  })
+
+  const fullPath = `/tmp/async-reports/${fileName}`
 
   // TODO: Push to BULL MQ
   await queue().add('asyncReports', {

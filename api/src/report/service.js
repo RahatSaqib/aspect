@@ -190,17 +190,21 @@ const unlinkAsyncReports = async () => {
       .andWhereNot('statusId', statusId)
       .select('id', 'filePath')
 
-    await Promise.map(reports, async report => {
-      const { filePath, id } = report
-      try {
-        await fsPromises.unlink(filePath)
-        await knex('AsyncReport').where('id', id).update({ statusId })
-      } catch (err) {
-        console.error(`Failed to unlink file: ${filePath}`, err)
-      }
-    })
+    await Promise.map(
+      reports,
+      async report => {
+        const { filePath, id } = report
+        try {
+          await fsPromises.unlink(filePath)
+          await knex('AsyncReport').where('id', id).update({ statusId })
+        } catch (err) {
+          logger.error(`Failed to unlink file: ${filePath}`, err)
+        }
+      },
+      { concurrency: 5 }
+    )
   } catch (err) {
-    console.error('Error retrieving or processing reports:', err)
+    logger.error('Error retrieving or processing reports:', err)
   }
 }
 
