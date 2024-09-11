@@ -76,7 +76,7 @@ export function ReportRecentRequests(props) {
         {isLoading ? <Skeleton width={200} /> : <>Recent requests ({count})</>}
         {count > 0 && <MdExpandMore />}
       </Button>
-      <Dialog open={open} onClose={handleClose} sx={{ minWidth: 450, minHeight: 450 }}>
+      <Dialog open={open} onClose={handleClose}>
         <DialogTitle>{report.name}</DialogTitle>
         <IconButton
           aria-label="close"
@@ -91,7 +91,7 @@ export function ReportRecentRequests(props) {
           <MdClose />
         </IconButton>
         <DialogContent dividers>
-          <List sx={{ width: '100%', minWidth: 400, minHeight: 200 }}>
+          <List sx={{ width: '100%', minWidth: 400, minHeight: 400 }}>
             {reportRequests?.slice((page - 1) * PAGE_SIZE, page * PAGE_SIZE)?.map((request, index) => (
               <ListItem
                 sx={{ alignItems: 'flex-start', minWidth: '100%', padding: 2 }}
