@@ -1,20 +1,17 @@
 import React, { useState } from 'react'
 import { Typography } from '@mui/material'
 import Alert from '@mui/material/Alert'
-import Backdrop from '@mui/material/Backdrop'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
-import { useDevToolsStatus } from '../../hooks/useDevToolsStatus'
+import { useSelector } from 'react-redux'
 
 const ErrorAlert = ({ message, children }) => {
-  const isDevToolsOpen = useDevToolsStatus()
   return (
     <Stack>
       <Alert severity="error" sx={{ zIndex: theme => theme.zIndex.drawer + 2, alignItems: 'center' }}>
         <Typography variant="body1">{message}</Typography>
       </Alert>
-      <Backdrop sx={{ color: '#fff', zIndex: theme => theme.zIndex.drawer + 1 }} open />
-      {!isDevToolsOpen ? children : null}
+      {children}
     </Stack>
   )
 }
@@ -43,5 +40,13 @@ const InfoAlert = ({ message, children }) => {
 }
 
 export function AlertProvider({ children }) {
-  return <ErrorAlert message="Aspect is shutdown , Please consider to update the contract!">{children}</ErrorAlert>
+  const alert = useSelector(state => state?.serviceDegradation)
+  if (alert) {
+    return alert.variant === 'error' ? (
+      <ErrorAlert message={alert.message}>{children}</ErrorAlert>
+    ) : (
+      <InfoAlert message={alert.message}>{children}</InfoAlert>
+    )
+  }
+  return children
 }
