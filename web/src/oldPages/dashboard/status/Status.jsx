@@ -65,7 +65,11 @@ const Status = () => {
                 {/* 2 */}
               </ErrorBoundary>
               <ErrorBoundary>
-                <TbRifDetectedGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
+                {/* Monthly Ruf Resistance Rate */}
+                <TbRifDetectedGraph
+                  assaysFromState={assays}
+                  resultCategoryGroupsFromState={resultCategoryGroups}
+                />{' '}
                 {/* 3 */}
               </ErrorBoundary>
             </PermissionChecker>
@@ -91,6 +95,7 @@ const Status = () => {
           {assays.some(a => hivPermissions.includes(a.externalId)) ? (
             <PermissionChecker permissions={['dashboard']}>
               <ErrorBoundary>
+                {/* suppression Rate */}
                 <HivResultsGraph assaysFromState={assays} resultCategoryGroupsFromState={resultCategoryGroups} />{' '}
                 {/* 12 */}
               </ErrorBoundary>

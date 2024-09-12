@@ -92,7 +92,6 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
       const detected = pieData.find(elem => elem.id === 'Detected') || {}
 
       const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(1)
-
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -126,6 +125,7 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
         )
         return result
       })
+      debugger
       setBarData({ data: expandedBarData })
       setDonutData({ data: pie, total: `${pieAvg}%` })
     }

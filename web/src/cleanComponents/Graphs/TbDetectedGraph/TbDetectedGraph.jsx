@@ -76,8 +76,9 @@ const TbDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       const numberOfMonthsInAYear = 12
       const detected = pieData.filter(elem => elem.id === 'Detected' || elem.id === 'Trace Detected')
       const totalDetected = detected.reduce((sum, elem) => sum + elem.value, 0)
-
-      const pieAvg = (totalDetected / numberOfMonthsInAYear).toFixed(1)
+      const totalValidResults = pieData.reduce((sum, elem) => sum + elem.value, 0)
+      const mtbPos = (totalDetected / totalValidResults) * 100
+      const pieAvg = (mtbPos / numberOfMonthsInAYear).toFixed(1)
 
       const pie = pieData.map(d => ({
         ...d,
