@@ -72,7 +72,6 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         messages
       )
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      const numberOfMonthsInAYear = 12
 
       const suppression = pieData.filter(elem => ['LessThan40', 'LessThan1000', 'NotDetected'].includes(elem.id))
       const totalSuppression = suppression.reduce((sum, elem) => sum + elem.value, 0)
@@ -80,9 +79,7 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
         elem => elem.id === 'Detected' || elem.id === 'Trace Detected' || elem.id === 'NotDetected'
       )
       const totalValidResults = validReportableResults.reduce((sum, elem) => sum + elem.value, 0)
-      const total = (totalSuppression / totalValidResults) * 100
-      const pieAvg = (total / numberOfMonthsInAYear).toFixed(1)
-      // debugger
+      const pieAvg = ((totalSuppression / totalValidResults) * 100).toFixed(1)
       const parsedData = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
