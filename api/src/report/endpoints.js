@@ -222,7 +222,6 @@ const routes = [
           ...validateDateRangeParams(),
           ...validateSortPageParams(),
           status: Joi.string().optional().description('Status ID'),
-          reportsFilter: Joi.object().unknown(true).description('Report filters'),
         },
       },
       response: {
