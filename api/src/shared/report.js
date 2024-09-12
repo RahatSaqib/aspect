@@ -16,10 +16,6 @@ const ASYNC_REPORT_FIELDS = [
   'ars.externalId as status',
   'r.externalId',
   'urr.createdOn',
-  knex.raw("ar.query->>'$.format' as reportFormat"),
-  knex.raw("ar.query->>'$.minDate' as reportFromDate"),
-  knex.raw("ar.query->>'$.maxDate' as reportToDate"),
-  knex.raw("ar.query->>'$.siteName' as reportSiteName"),
 ]
 
 const sortColumnMapping = {
@@ -71,17 +67,23 @@ async function getAllAsyncReportsForUser(query, personId) {
     .modify(sortPageParams, query, 'urr.createdOn', sortColumnMapping)
     .select(ASYNC_REPORT_FIELDS)
 
+  const reportsWithParsedQuery = await reports.map(report => ({ ...report, query: JSON.parse(report.query) }))
+
   // for efficient usage of indices we are fetching the data in sub queries
-  const { states, consumables, countries } = await fetchAllSubqueriesData(reports)
+  const { states, consumables, countries } = await fetchAllSubqueriesData(reportsWithParsedQuery)
 
   const statesById = states.reduce((acc, state) => ({ ...acc, [state.id]: state }), {})
   const consumablesById = consumables.reduce((acc, consumable) => ({ ...acc, [consumable.id]: consumable }), {})
   const countriesById = countries.reduce((acc, country) => ({ ...acc, [country.id]: country }), {})
 
-  return reports.map(({ query, ...report }) => {
+  return reportsWithParsedQuery.map(({ query, ...report }) => {
     // removing query from the report
     return {
       ...report,
+      reportFormat: query?.format ?? null,
+      reportFromDate: query?.minDate ?? null,
+      reportToDate: query?.maxDate ?? null,
+      reportSiteName: query?.siteName ?? null,
       reportConsumableName: consumablesById[query?.consumableId]?.name ?? null,
       reportStateName: statesById[query?.stateId]?.name ?? null,
       reportCountryName: countriesById[query?.countryId]?.name ?? null,
