@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { getListResults } = require('../service')
 const { getFieldsForQuarterlyReport } = require('../query')
 const { getUser } = require('../../auth/service')
-const { genderMap } = require('../../plugin/partner/Myanmar/notesCustomFieldsParser')
+const { GENDER_MAP } = require('../../shared/constants')
 
 // ---------------------------------------------------------------
 async function getDataForQuarterlyReport(auth, query) {
@@ -20,7 +20,7 @@ async function getDataForQuarterlyReport(auth, query) {
     d.result1 = mapGxAlertResultToAspect(d.result1)
     d.result2 = mapGxAlertResultToAspect(d.result2)
     d.cxrAbnormalities = d.notes?.toLowerCase().includes('cxr') ? 'CXR' : ''
-    if (d.gender) d.gender = genderMap[d.gender.toLowerCase()]
+    if (d.gender) d.gender = GENDER_MAP[d.gender.toLowerCase()]
   })
 
   return result

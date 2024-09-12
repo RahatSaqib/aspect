@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { GENDER_MAP, PREVIOUS_MAP, MICROSCOPY_MAP, HIV_STATUS_MAP, SPECIMEN_MAP } = require('../../../shared/constants')
 
 // Ad-hoc parser for legacy custom fields in Myanmar using 'result.notes' field.
 // see: https://github.com/SystemOneId/GxAlert/blob/b3c327a9199cfb1985750a53cd326706ece74253/Utilities/Parsing.cs#L936
@@ -19,22 +20,22 @@ function parseNotes(notes) {
     patientData.PatientAge = +age
   }
   if (gender) {
-    patientData.PatientGender = genderMap[gender]
+    patientData.PatientGender = GENDER_MAP[gender]
   }
   if (previous) {
-    patientData.PreviousTreatmentHistory = previousMap[previous]
+    patientData.PreviousTreatmentHistory = PREVIOUS_MAP[previous]
   }
   if (hiv) {
-    patientData.HivStatus = hivStatusMap[hiv.toLowerCase()]
+    patientData.HivStatus = HIV_STATUS_MAP[hiv.toLowerCase()]
   }
   if (reasons) {
     patientData.MMTestReason = reasons.join(',')
   }
   if (microscopy) {
-    patientData.MicroscopyResult = microscopyMap[microscopy]
+    patientData.MicroscopyResult = MICROSCOPY_MAP[microscopy]
   }
   if (specimen) {
-    patientData.SampleType = specimenMap[specimen]
+    patientData.SampleType = SPECIMEN_MAP[specimen]
   }
 
   return { patientData }
@@ -91,36 +92,5 @@ function trimToSplitter(text) {
   }
   return text
 }
-const hivStatusMap = {
-  'hiv+': 'Positive',
-  'hiv-': 'Negative',
-  'hiv?': 'Unknown',
-}
 
-const microscopyMap = {
-  pos: 'Smear Positive',
-  neg: 'Smear Negative',
-  nd: 'Not Done',
-}
-const genderMap = {
-  m: 'Male',
-  f: 'Female',
-  male: 'Male',
-  female: 'Female',
-}
-
-const specimenMap = {
-  spu: 'Sputum',
-  csf: 'CSF',
-  gl: 'Gastric Lavage',
-  ln: 'Lymph Node',
-  oth: 'Other',
-}
-
-const previousMap = {
-  yes: 'Previously Treated',
-  no: 'No Previous Treatment',
-  unk: 'Unknown',
-}
-
-module.exports = { parseNotes, genderMap }
+module.exports = { parseNotes }
