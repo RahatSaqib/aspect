@@ -14,7 +14,7 @@ import { NOTIFICATION_LOG_ENDPOINT, NOTIFICATION_LOG_KEY } from '../../../hooks/
 import useFilterValues from '../../../hooks/useFilterValues'
 import { DataCell } from './DataCell'
 import messages from './messages'
-import styles from './NotificationLogsPage.css'
+import styles from './NotificationLogsPage.module.css'
 
 const cssClasses = classnames.bind(styles)
 

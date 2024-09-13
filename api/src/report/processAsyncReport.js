@@ -11,17 +11,19 @@ const { jsonToArraySorted } = require('../shared/sort')
 const { getHash } = require('../shared/encryption')
 
 module.exports = async function processAsyncReport(request) {
-  const { auth: authRaw, query, params } = request
+  const { auth: authRaw, params, payload } = request
 
   // const socketId = request.headers['socket-id']
   const auth = { credentials: authRaw.credentials }
+  const { reportsFilter, format } = payload
 
   const { id: currentUserId } = await getUser(auth.credentials.name)
+  // All the logic to fetch details appropriately rely on this destructuring correctly.
   const { externalId } = params
   const dataConstraints = await getConstraints(auth.credentials)
   const reportId = await reportToId(externalId)
 
-  const querySorted = jsonToArraySorted(query)
+  const querySorted = jsonToArraySorted(reportsFilter)
   const queryHash = getHash(JSON.stringify(querySorted))
 
   /**
@@ -30,7 +32,7 @@ module.exports = async function processAsyncReport(request) {
   const sortedCombination = jsonToArraySorted({
     reportId,
     dataConstraints,
-    query,
+    query: { ...reportsFilter, format },
   })
   const hash = getHash(JSON.stringify(sortedCombination))
 
@@ -41,7 +43,7 @@ module.exports = async function processAsyncReport(request) {
   } else {
     const payload = {
       reportId,
-      query,
+      query: { ...reportsFilter, format },
       hash,
       queryHash,
       currentUserId,
