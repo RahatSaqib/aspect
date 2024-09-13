@@ -2,6 +2,7 @@ import React from 'react'
 import { Card, CardActionArea, CardActions, CardContent, Grid, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import { report as messages } from '../../messages'
+import { asyncReportsFeatureEnabled } from './constants'
 
 const styles = {
   formatCard: {
@@ -15,6 +16,7 @@ const styles = {
   actions: {
     display: 'flex',
     justifyContent: 'space-between',
+    ...(asyncReportsFeatureEnabled ? { width: '100%' } : {}),
   },
 }
 
