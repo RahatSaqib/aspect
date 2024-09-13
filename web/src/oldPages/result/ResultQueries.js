@@ -4,7 +4,7 @@ import omitBy from 'lodash/omitBy'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 
 async function getExportableFile(filters, fileFormat, sortCol, sortDir, reportName, endpoint = '/result/export') {
-  const cleanedFilters = omitBy(omit({ ...filters }, ['assayOverride']), isNil)
+  const cleanedFilters = omitBy(omit(filters, ['assayOverride']), isNil)
   const elem = await fetchWrapperForQueries({
     endpoint,
     params: {
