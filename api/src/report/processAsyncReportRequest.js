@@ -69,19 +69,20 @@ const saveReportAndPushToQueue = async payload => {
 }
 
 async function processAsyncReportRequest(request) {
-  const { auth: authRaw, query, params } = request
+  const { auth: authRaw, payload, params } = request
 
   // const socketId = request.headers['socket-id']
   const auth = { credentials: authRaw.credentials }
 
   const { id: currentUserId } = await getUser(auth.credentials.name)
+  const { reportsFilter, ...restPayload } = payload
   const { externalId } = params
   const dataConstraints = await getConstraints(auth.credentials)
   const reportId = await reportToId(externalId)
 
-  const querySorted = jsonToArraySorted(query)
+  const querySorted = jsonToArraySorted(reportsFilter)
   const queryHash = getHash(JSON.stringify(querySorted))
-
+  const query = { ...reportsFilter, ...restPayload }
   /**
    * generate hash from combination of report, query and data constraints
    */

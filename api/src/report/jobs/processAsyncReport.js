@@ -5,7 +5,7 @@ const { generateReport } = require('../serviceReports')
 
 const logger = require('../../shared/logger')
 
-const { asyncReportStatusToId } = require('../shared/dictionary')
+const { asyncReportStatusToId } = require('../../shared/dictionary')
 
 const processAsyncReport = async reportPayload => {
   const { asyncReportId, externalId, query, auth, user, userPlaceHolders, fullPath, extension } = reportPayload
