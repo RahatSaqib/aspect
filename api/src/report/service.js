@@ -208,10 +208,22 @@ const unlinkAsyncReports = async () => {
   }
 }
 
+const getAsyncReportRequestWithReportsFilter = async request => {
+  const { payload, auth } = request
+
+  const reports = await getAllAsyncReportsForUser(payload, auth.credentials.personId)
+
+  return {
+    data: reports,
+    total: reports.length,
+  }
+}
+
 module.exports = {
   getReports,
   getReportDetails,
   proxyGxReport,
   getAsyncReportRequest,
   unlinkAsyncReports,
+  getAsyncReportRequestWithReportsFilter,
 }
