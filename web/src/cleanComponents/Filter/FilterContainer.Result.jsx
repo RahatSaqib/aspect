@@ -35,7 +35,7 @@ const ResultFilter = () => {
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
             value={state.stateId}
-            onChange={e => setState({ ...state, stateId: e.target.value })}
+            onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
             countryId={state.countryId}
           />
         </Grid>
@@ -43,7 +43,7 @@ const ResultFilter = () => {
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
             value={state.lgaId}
-            onChange={e => setState({ ...state, lgaId: e.target.value })}
+            onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
             stateId={state.stateId}
           />
         </Grid>
@@ -53,7 +53,7 @@ const ResultFilter = () => {
               <AssayMultiSelect
                 valueBy="id"
                 value={state?.assayId ?? []}
-                onChange={val => setState({ ...state, assayId: val })}
+                onChange={val => setState({ ...state, assayId: val, resultCategoryGroupId: null })}
                 filters={{
                   hasResults: true,
                 }}
@@ -210,7 +210,7 @@ const ResultFilter = () => {
             control={
               <Checkbox
                 checked={[true, 'true'].includes(state.onlyTreatmentRequired)}
-                onChange={e => setState({ ...state, onlyTreatmentRequired: e.target.checked || null })}
+                onChange={e => setState({ ...state, onlyTreatmentRequired: e.target.checked || false })}
               />
             }
             label={formatMessage(messages.onlyTreatmentRequired)}
