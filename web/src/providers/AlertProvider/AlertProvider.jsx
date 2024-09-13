@@ -8,7 +8,7 @@ import { useSelector } from 'react-redux'
 const ErrorAlert = ({ message, children }) => {
   return (
     <Stack>
-      <Alert severity="error" sx={{ zIndex: theme => theme.zIndex.drawer + 2, alignItems: 'center' }}>
+      <Alert severity="error" sx={{ zIndex: theme => theme.zIndex.snackbar, alignItems: 'center' }}>
         <Typography variant="body1">{message}</Typography>
       </Alert>
       {children}
@@ -28,7 +28,7 @@ const InfoAlert = ({ message, children }) => {
             </Button>
           }
           severity="warning"
-          sx={{ zIndex: theme => theme.zIndex.drawer + 2, alignItems: 'center' }}
+          sx={{ zIndex: theme => theme.zIndex.snackbar, alignItems: 'center' }}
         >
           <Typography variant="body1">{message}</Typography>
         </Alert>
