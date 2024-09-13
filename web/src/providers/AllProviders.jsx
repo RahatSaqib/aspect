@@ -8,6 +8,7 @@ import { JssProvider } from 'react-jss'
 import { ReactQueryDevtools } from 'react-query/devtools'
 import { useSelector, Provider } from 'react-redux'
 import { BrowserRouter } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
 import LocalStorage from '../oldComponents/LocalStorage'
 import store from '../store/store'
 import getTheme from '../theme'
@@ -50,6 +51,7 @@ const AppWithProviders = ({ children }) => {
             </LocalizationProvider>
             <ReactQueryDevtools initialIsOpen={false} />
           </QueryClientProvider>
+          <ToastContainer />
         </ThemeProvider>
       </I18nProvider>
     </JssProvider>
