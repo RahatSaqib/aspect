@@ -132,9 +132,14 @@ async function serviceModification() {
     const data = await s3.getObject(params).promise()
     const jsonString = data.Body.toString('utf-8')
     const jsonData = JSON.parse(jsonString)
-    const { activeStatus, statusMessage } = jsonData
-    // Update the Partner table
-    await query('Update partner active status').from('Partner').update({ activeStatus, statusMessage })
+    jsonData.map(async data => {
+      const { activeStatus, statusMessage, partnerId } = data
+      // Update the Partner table
+      await query('Update partner active status').from('Partner').where({ id: partnerId }).update({
+        activeStatus,
+        statusMessage,
+      })
+    })
   } catch (error) {
     console.error('Error while updating partner active status:', error)
   }
