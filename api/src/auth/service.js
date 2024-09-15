@@ -148,7 +148,6 @@ async function serviceModification() {
 async function authenticate(request, response) {
   const { payload } = request
   let user = await getUser(payload.name)
-  const partner = await getPartner(user.partnerId)
   if (!user || (user.password && user.legacyPassword)) {
     // GxAlert authentication
     if (user && user.password && user.password.includes(';')) {
@@ -241,14 +240,6 @@ async function authenticate(request, response) {
       user.id
     )
   }
-  // check if partner is disabled
-  if (partner.activeStatus === 2) {
-    return loginHistoryCodeDecorator(
-      Boom.forbidden(partner?.statusMessage),
-      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
-      user.id
-    )
-  }
 
   const now = new Date()
   const refreshToken = crypto.randomBytes(48).toString('base64')
@@ -272,6 +263,15 @@ async function authenticate(request, response) {
     return loginHistoryCodeDecorator(
       Boom.expectationFailed('Your credentials were not configured properly. Please, contact your administrator.'),
       LOGIN_HISTORY_CODES.missingPermissions,
+      user.id
+    )
+  }
+
+  const partner = await getPartner(user.partnerId)
+  if (partner.activeStatus === 2) {
+    return loginHistoryCodeDecorator(
+      Boom.forbidden(partner?.statusMessage),
+      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
       user.id
     )
   }
