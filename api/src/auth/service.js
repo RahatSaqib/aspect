@@ -70,8 +70,8 @@ function getUser(username, options = {}) {
     .first(userProps)
 }
 
-function getPartner() {
-  return query('Get account status from partner').from('Partner as p').first(partnerProps)
+function getPartner(id) {
+  return query('Get account status from partner').from('Partner as p').where({ 'p.id': id }).first(partnerProps)
 }
 
 function getUserByPersonId(personId) {
@@ -148,7 +148,7 @@ async function serviceModification() {
 async function authenticate(request, response) {
   const { payload } = request
   let user = await getUser(payload.name)
-  const partner = await getPartner()
+  const partner = await getPartner(user.partnerId)
   if (!user || (user.password && user.legacyPassword)) {
     // GxAlert authentication
     if (user && user.password && user.password.includes(';')) {
@@ -233,17 +233,18 @@ async function authenticate(request, response) {
       )
     }
   }
-  if (partner.activeStatus === 2) {
-    return loginHistoryCodeDecorator(
-      Boom.forbidden(partner?.statusMessage),
-      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
-      user.id
-    )
-  }
 
   if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
     return loginHistoryCodeDecorator(
       Boom.forbidden('Your account is locked.'),
+      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
+      user.id
+    )
+  }
+  // check if partner is disabled
+  if (partner.activeStatus === 2) {
+    return loginHistoryCodeDecorator(
+      Boom.forbidden(partner?.statusMessage),
       user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
       user.id
     )
