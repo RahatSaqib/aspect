@@ -10,8 +10,8 @@ const {
 const downloadReport = require('./downloadReport')
 const downloadScheduledReport = require('./downloadScheduledReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
-const processAsyncReport = require('./processAsyncReport')
 const { responseAsyncReports } = require('./validation/response')
+const { processAsyncReportRequest } = require('./processAsyncReportRequest')
 
 function requestBaseQuery() {
   const { minDate, maxDate } = validateDateRangeParams()
@@ -172,7 +172,7 @@ const routes = [
   {
     method: 'POST',
     path: '/reports/{externalId}/async',
-    handler: processAsyncReport,
+    handler: processAsyncReportRequest,
     config: {
       description: 'Process report asynchronously',
       notes: 'Returns a list of reports requested by the user within the last 24 hours',
