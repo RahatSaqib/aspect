@@ -1,3 +1,4 @@
+const { promises: fsPromises } = require('fs')
 const _ = require('lodash')
 const Boom = require('@hapi/boom')
 const { createFetch, base, method, params } = require('http-client')
@@ -9,6 +10,8 @@ const { filterParams, knex } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
 const { getAllAsyncReportsForUser } = require('../shared/report')
+
+const { asyncReportStatusToId } = require('../shared/dictionary')
 
 async function getReports(request) {
   const { query, auth } = request
@@ -177,9 +180,50 @@ const getAsyncReportRequest = async request => {
   }
 }
 
+const unlinkAsyncReports = async () => {
+  const statusId = await asyncReportStatusToId('expired')
+
+  try {
+    const now = new Date()
+    const reports = await knex('AsyncReport')
+      .where('expiresOn', '<', now)
+      .andWhereNot('statusId', statusId)
+      .select('id', 'filePath')
+
+    await Promise.map(
+      reports,
+      async report => {
+        const { filePath, id } = report
+        try {
+          await fsPromises.unlink(filePath)
+          await knex('AsyncReport').where('id', id).update({ statusId })
+        } catch (err) {
+          logger.error(`Failed to unlink file: ${filePath}`, err)
+        }
+      },
+      { concurrency: 5 }
+    )
+  } catch (err) {
+    logger.error('Error retrieving or processing reports:', err)
+  }
+}
+
+const getAsyncReportRequestWithReportsFilter = async request => {
+  const { payload, auth } = request
+
+  const reports = await getAllAsyncReportsForUser(payload, auth.credentials.personId)
+
+  return {
+    data: reports,
+    total: reports.length,
+  }
+}
+
 module.exports = {
   getReports,
   getReportDetails,
   proxyGxReport,
   getAsyncReportRequest,
+  unlinkAsyncReports,
+  getAsyncReportRequestWithReportsFilter,
 }
