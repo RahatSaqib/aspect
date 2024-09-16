@@ -210,7 +210,7 @@ const ResultFilter = () => {
             control={
               <Checkbox
                 checked={[true, 'true'].includes(state.onlyTreatmentRequired)}
-                onChange={e => setState({ ...state, onlyTreatmentRequired: e.target.checked || null })}
+                onChange={e => setState({ ...state, onlyTreatmentRequired: !!e.target.checked })}
               />
             }
             label={formatMessage(messages.onlyTreatmentRequired)}
