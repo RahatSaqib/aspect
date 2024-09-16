@@ -70,8 +70,8 @@ function getUser(username, options = {}) {
     .first(userProps)
 }
 
-function getPartner() {
-  return query('Get account status from partner').from('Partner as p').first(partnerProps)
+function getPartner(id) {
+  return query('Get account status from partner').from('Partner as p').where({ 'p.id': id }).first(partnerProps)
 }
 
 function getUserByPersonId(personId) {
@@ -132,9 +132,14 @@ async function serviceModification() {
     const data = await s3.getObject(params).promise()
     const jsonString = data.Body.toString('utf-8')
     const jsonData = JSON.parse(jsonString)
-    const { activeStatus, statusMessage } = jsonData
-    // Update the Partner table
-    await query('Update partner active status').from('Partner').update({ activeStatus, statusMessage })
+    jsonData.map(async data => {
+      const { activeStatus, statusMessage, partnerId } = data
+      // Update the Partner table
+      await query('Update partner active status').from('Partner').where({ id: partnerId }).update({
+        activeStatus,
+        statusMessage,
+      })
+    })
   } catch (error) {
     console.error('Error while updating partner active status:', error)
   }
@@ -143,7 +148,6 @@ async function serviceModification() {
 async function authenticate(request, response) {
   const { payload } = request
   let user = await getUser(payload.name)
-  const partner = await getPartner()
   if (!user || (user.password && user.legacyPassword)) {
     // GxAlert authentication
     if (user && user.password && user.password.includes(';')) {
@@ -228,13 +232,6 @@ async function authenticate(request, response) {
       )
     }
   }
-  if (partner.activeStatus === 2) {
-    return loginHistoryCodeDecorator(
-      Boom.forbidden(partner?.statusMessage),
-      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
-      user.id
-    )
-  }
 
   if (user.lockedOut === 1 || user.disabled === 1 || user.canLogIn === 0) {
     return loginHistoryCodeDecorator(
@@ -266,6 +263,15 @@ async function authenticate(request, response) {
     return loginHistoryCodeDecorator(
       Boom.expectationFailed('Your credentials were not configured properly. Please, contact your administrator.'),
       LOGIN_HISTORY_CODES.missingPermissions,
+      user.id
+    )
+  }
+
+  const partner = await getPartner(user.partnerId)
+  if (partner.activeStatus === 2) {
+    return loginHistoryCodeDecorator(
+      Boom.forbidden(partner?.statusMessage),
+      user.lockedOut ? LOGIN_HISTORY_CODES.lockedOut : LOGIN_HISTORY_CODES.disabled,
       user.id
     )
   }
