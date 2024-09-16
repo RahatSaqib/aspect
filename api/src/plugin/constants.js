@@ -7,7 +7,7 @@ const GENDER_MAP = {
 const HIV_STATUS_MAP = {
   'hiv+': 'Positive',
   'hiv-': 'Negative',
-  'hiv?': 'Unknown',
+  'hiv?': 'HIV Unknown',
 }
 
 const MICROSCOPY_MAP = {
