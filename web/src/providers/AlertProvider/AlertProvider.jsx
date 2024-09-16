@@ -3,7 +3,8 @@ import { Typography } from '@mui/material'
 import Alert from '@mui/material/Alert'
 import Button from '@mui/material/Button'
 import Stack from '@mui/material/Stack'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
+import { hideServiceDegradation } from '../../store/ServiceDegradation'
 
 const ErrorAlert = ({ message, children }) => {
   return (
@@ -18,12 +19,20 @@ const ErrorAlert = ({ message, children }) => {
 
 const InfoAlert = ({ message, children }) => {
   const [open, setOpen] = useState(true)
+  const dispatch = useDispatch()
   return (
     <Stack>
       {open ? (
         <Alert
           action={
-            <Button onClick={() => setOpen(false)} color="inherit" size="small">
+            <Button
+              onClick={() => {
+                setOpen(false)
+                dispatch(hideServiceDegradation())
+              }}
+              color="inherit"
+              size="small"
+            >
               Continue
             </Button>
           }
