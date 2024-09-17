@@ -6,7 +6,7 @@ import { SITE_KEY, SITE_KEY_SITE_SELECT_LIST_ENDPOINT } from './siteKeys.js'
 const getSiteList = async params =>
   fetchWrapperForQueries({ endpoint: SITE_KEY_SITE_SELECT_LIST_ENDPOINT, params }).then(response => response.data)
 
-const useSiteList = queryParams =>
-  useQuery([SITE_KEY, 'list'], () => getSiteList(queryParams), { ...SELECTS_QUERY_OPTIONS })
+const useSiteList = (queryParams, options) =>
+  useQuery([SITE_KEY, 'list'], () => getSiteList(queryParams), { ...SELECTS_QUERY_OPTIONS, ...options })
 
 export default useSiteList

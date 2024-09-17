@@ -28,7 +28,7 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const [isHierarchicalView, setIsHierarchicalView] = useState(false)
+  const [isHierarchicalView, setIsHierarchicalView] = useState(true)
 
   const { data, isLoading: tableLoading } = useSites(
     { sortCol, sortDir, pageAt, pageSize, filters },
@@ -115,7 +115,7 @@ const SiteList = ({ navigate, location }) => {
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
         <SiteFilter />
         <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 1 }}>
-          {isHierarchicalView && <HierarchicalSiteView />}
+          {isHierarchicalView && <HierarchicalSiteView countryId={user.countryId} />}
           <DataTableCard key={`DataTableCard__table-${location.key}`} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
               <Typography variant="subtitle2" color="textSecondary">
