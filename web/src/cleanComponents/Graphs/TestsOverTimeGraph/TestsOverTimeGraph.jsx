@@ -29,7 +29,7 @@ import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
-  getAverageFromData,
+  // getAverageFromData,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
 } from '../graphUtils'
