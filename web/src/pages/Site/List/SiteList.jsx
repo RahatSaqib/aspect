@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { LinearProgress, TableBody } from '@mui/material'
+import { LinearProgress, Switch, TableBody, Typography } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
@@ -27,6 +27,7 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
+  const [isHierarchicalView, setIsHierarchicalView] = useState(false)
 
   const { data, isLoading: tableLoading } = useSites(
     { sortCol, sortDir, pageAt, pageSize, filters },
@@ -113,7 +114,14 @@ const SiteList = ({ navigate, location }) => {
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
         <SiteFilter />
         <DataTableCard key={`DataTableCard__table-${location.key}`}>
-          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
+          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
+            <Typography variant="subtitle2" color="textSecondary">
+              <Switch
+                checked={isHierarchicalView}
+                onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
+              />
+              Hierarchical View
+            </Typography>
             <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
           </div>
           {isLoading ? (
