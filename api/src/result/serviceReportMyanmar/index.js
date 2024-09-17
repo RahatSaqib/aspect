@@ -3,7 +3,7 @@ const _ = require('lodash')
 const { getListResults } = require('../service')
 const { getFieldsForQuarterlyReport } = require('../query')
 const { getUser } = require('../../auth/service')
-const { GENDER_MAP } = require('../../plugin/constants')
+const { GENDER_MAP } = require('../../plugin/partner/Myanmar/shared/constants')
 
 // ---------------------------------------------------------------
 async function getDataForQuarterlyReport(auth, query) {

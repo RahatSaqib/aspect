@@ -1,5 +1,5 @@
 const _ = require('lodash')
-const { GENDER_MAP, PREVIOUS_MAP, HIV_STATUS_MAP, MICROSCOPY_MAP, SPECIMEN_MAP } = require('../../constants')
+const { GENDER_MAP, PREVIOUS_MAP, HIV_STATUS_MAP, MICROSCOPY_MAP, SPECIMEN_MAP } = require('./shared/constants')
 
 // Ad-hoc parser for legacy custom fields in Myanmar using 'result.patient.id' field.
 // see: https://github.com/SystemOneId/GxAlert/blob/6f3bc6fac9b92ad9e3cf45f6bc7dff541c7f4d29/Utilities/Parsing.cs#L1547
