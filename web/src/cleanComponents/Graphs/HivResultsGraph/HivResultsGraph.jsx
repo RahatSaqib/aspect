@@ -19,6 +19,7 @@ import {
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
   getResultCategoryGroupsForResultList,
+  getValidResults,
 } from '../graphUtils'
 import { ColumnGraph, DonutGraph } from '../index'
 
@@ -76,7 +77,7 @@ const HivResultsGraph = ({ assaysFromState: assays, resultCategoryGroupsFromStat
       const suppression = pieData.filter(elem => ['LessThan40', 'LessThan1000', 'NotDetected'].includes(elem.id))
       const totalSuppression = suppression.reduce((sum, elem) => sum + elem.value, 0)
 
-      const totalValidResults = pieData.reduce((sum, elem) => sum + elem.value, 0)
+      const totalValidResults = getValidResults(pieData)
       const pieAvg = ((totalSuppression / totalValidResults) * 100).toFixed(2)
       const parsedData = pieData.map(d => ({
         ...d,
