@@ -127,6 +127,7 @@ function handleFetchResponseOrError(fetch, input, options = {}) {
           let customErrorNotification = null
           if (typeof errorNotification === 'function') {
             customErrorNotification = errorNotification(err.data, true)
+            if (!customErrorNotification) return Promise.reject(err)
           }
           // Maybe dont dispatch always the message? in case we need to do something else with the response.
           store.dispatch(showError(customErrorNotification || errorNotification, err))
