@@ -29,7 +29,7 @@ import {
   getTimePeriod,
   genLabel,
   calcPercentageForGraphs,
-  getAverageFromData,
+  // getAverageFromData,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
 } from '../graphUtils'
@@ -111,8 +111,9 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
       )
       const pieData = filterFunctionPie(groupedForPie, filter)
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
-      let { totals: pieAverage } = getAverageFromData(pieData, 'value', '*', 'standard')
-      pieAverage = parseFloat(pieAverage).toFixed(1)
+      // const { totals: pieAverage } = getAverageFromData(pieData, 'value', '*', 'standard')
+      // pieAverage = parseFloat(pieAverage).toFixed(1)
+      const totalAverage = (pieTotal / 12)?.toFixed(2)
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -148,7 +149,7 @@ const TestsOverTimeGraph = ({ assaysFromState: assays }) => {
       })
 
       setBarData({ data: expandedBarData })
-      setDonutData({ data: pie, total: `${pieAverage}%` })
+      setDonutData({ data: pie, total: `${totalAverage}` })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, filter])
