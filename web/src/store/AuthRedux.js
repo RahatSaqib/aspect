@@ -13,7 +13,7 @@ import {
 } from '../utils/error/CommonErrorNotifications'
 import { getClientId, getClientName } from '../utils/utils/browser'
 import { aspectFetch } from '../utils/utils/fetch'
-import { showServiceDegradation } from './ServiceDegradation'
+import { hideServiceDegradation, showServiceDegradation } from './ServiceDegradation'
 
 export const types = {
   LOGIN_REQUEST: 'LOGIN_REQUEST',
@@ -67,6 +67,7 @@ export function loginStart({ user, password }) {
     // that the API call is starting.
     const requestedAt = Date.now()
     dispatch(loginRequest(requestedAt))
+    dispatch(hideServiceDegradation())
     const clientId = localStorage.getItem('asClientId') || getClientId()
     return aspectFetch('/auth', {
       method: 'POST',
