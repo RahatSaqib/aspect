@@ -9,7 +9,7 @@ import useSites from '../../../hooks/site/useSites'
 function HierarchyLoader() {
   return (
     <Stack>
-      {Array(10)
+      {Array(3)
         .fill()
         .map(() => (
           <Skeleton height={40} />
@@ -81,8 +81,11 @@ export function HierarchicalSiteView(props) {
                 selectedId={selected.stateId}
                 options={{ showChevron: true, noLeftPadding: true }}
               >
-                {selected.stateId === state.id
-                  ? lgasData?.map(county => (
+                {selected.stateId === state.id ? (
+                  isLgaLoading ? (
+                    <HierarchyLoader />
+                  ) : (
+                    lgasData?.map(county => (
                       <TreeNode
                         data={{ id: county.id, name: county.name }}
                         selectedId={selected.countyId}
@@ -94,8 +97,11 @@ export function HierarchicalSiteView(props) {
                         }
                         options={{ showChevron: true }}
                       >
-                        {county.id === selected.countyId
-                          ? sitesData?.map(site => (
+                        {county.id === selected.countyId ? (
+                          isSiteLoading ? (
+                            <HierarchyLoader />
+                          ) : (
+                            sitesData?.map(site => (
                               <TreeNode
                                 key={site.id}
                                 data={{ id: site.id, name: site.name }}
@@ -108,10 +114,12 @@ export function HierarchicalSiteView(props) {
                                 }
                               />
                             ))
-                          : null}
+                          )
+                        ) : null}
                       </TreeNode>
                     ))
-                  : null}
+                  )
+                ) : null}
               </TreeNode>
             </Stack>
           ))
