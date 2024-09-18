@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react'
+import React, { useState } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import useCountries from '../../../hooks/geography/useCountries'
@@ -7,27 +7,13 @@ import useStatesByCountry from '../../../hooks/geography/useStatesByCountry'
 import useSites from '../../../hooks/site/useSites'
 
 function HierarchyLoader() {
-  return Array(10)
-    .fill()
-    .map(() => <Skeleton height={40} />)
-}
-
-function Hierarchy(props) {
-  const { data, isLoading, selectedId, callback, uniqueKey, children } = props
-
-  if (isLoading) {
-    return <HierarchyLoader />
-  }
-
-  if (!data?.length) return null
-
   return (
-    <Stack sx={{ flexDirection: 'column', pl: 2 }} spacing={1}>
-      {data?.map(({ id, name }) => (
-        <TreeNode data={{ id, name }} callback={callback} key={`${uniqueKey}-${id}`}>
-          {children}
-        </TreeNode>
-      ))}
+    <Stack>
+      {Array(10)
+        .fill()
+        .map(() => (
+          <Skeleton height={40} />
+        ))}
     </Stack>
   )
 }
@@ -37,7 +23,7 @@ function TreeNode(props) {
   const { id, name } = data
 
   return (
-    <Stack sx={{ justifyContent: 'center' }}>
+    <Stack sx={{ justifyContent: 'center', pl: 2 }}>
       <Stack
         sx={{ flexDirection: 'row', cursor: 'pointer', alignItems: 'center' }}
         onClick={() => callback(id)}
@@ -66,45 +52,45 @@ export function HierarchicalSiteView(props) {
     { enabled: Boolean(selected.stateId) }
   )
 
-  const { isLoading: isSiteLoading, data: siteData } = useSites(
+  const { isLoading: isSiteLoading, data: { siteList: sitesData } = { siteList: [] } } = useSites(
     { filters: { lgaId: selected.countyId }, sortCol: 'name', sortDir: 'asc', pageAt: 0, pageSize: 100 },
     { enabled: Boolean(selected.countyId) }
   )
 
-  const treeViewData = useMemo(() => {
-    states.forEach(state => {})
-    return states
-  }, [states, lgasData, selected])
-
   return (
     <Card sx={{ minWidth: 300, p: 2, maxHeight: 600, overflowY: 'auto' }}>
       {isCountryLoading ? <Skeleton height={40} /> : <Typography variant="h6">{selectedCountry.name}</Typography>}
-      <Stack spacing={1}>
+      <Stack spacing={2}>
         {isStateLoading ? (
-          <Stack>
-            {Array(10)
-              .fill()
-              .map(() => (
-                <Skeleton height={40} />
-              ))}
-          </Stack>
+          <HierarchyLoader />
         ) : (
-          treeViewData.map(state => (
+          states.map(state => (
             <Stack key={state.id} sx={{ flexDirection: 'column' }}>
               <TreeNode
                 data={{ id: state.id, name: state.name }}
                 callback={() => setSelected({ ...selected, stateId: state.id })}
                 selectedId={selected.stateId}
               >
-                {selected.stateId === state.id ? (
-                  <Hierarchy
-                    uniqueKey={state.id}
-                    data={lgasData}
-                    isLoading={isLgaLoading}
-                    selectedId={selected.countyId}
-                    callback={countyId => setSelected({ ...selected, countyId })}
-                  />
-                ) : null}
+                {selected.stateId === state.id
+                  ? lgasData?.map(county => (
+                      <TreeNode
+                        data={{ id: county.id, name: county.name }}
+                        selectedId={selected.countyId}
+                        callback={() => setSelected({ ...selected, countyId: county.id })}
+                      >
+                        {county.id === selected.countyId
+                          ? sitesData?.map(site => (
+                              <TreeNode
+                                key={site.id}
+                                data={{ id: site.id, name: site.name }}
+                                selected={selected.siteId}
+                                callback={() => setSelected({ ...selected, siteId: site.id })}
+                              />
+                            ))
+                          : null}
+                      </TreeNode>
+                    ))
+                  : null}
               </TreeNode>
             </Stack>
           ))
