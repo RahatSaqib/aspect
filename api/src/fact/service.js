@@ -193,7 +193,11 @@ async function onResultLogged({ resultId }, { messageContext }) {
     const now = new Date()
     const maxLastDateNoResult = maxDaysDeviceNoResults == null ? null : subDays(now, maxDaysDeviceNoResults)
 
-    // if no results flag is set, and incoming result date is less than the maxLastDateNoResult
+    if (noResults === 1 && !endedOn) {
+      context.deviceHasNewResults(deviceId)
+    }
+
+    // if no results flag is set, and incoming result date is  within last configured days
     if (noResults === 1 && endedOn > maxLastDateNoResult) {
       context.deviceHasNewResults(deviceId)
     }
