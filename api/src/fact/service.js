@@ -160,8 +160,18 @@ async function onResultLogged({ resultId }, { messageContext }) {
     deviceHasNewResults,
   })
   return context.transact(async knex => {
-    const { deviceId, assayId, resultCategory1, resultCategory2, noResults, endedOn, deviceType } =
+    const {
+      deviceId,
+      assayId,
+      resultCategory1,
+      resultCategory2,
+      noResults,
+      endedOn,
+      deviceType,
+      maxDaysDeviceNoResults,
+    } =
       (await knex('Result as r')
+        .leftJoin('Partner as p', 'r.partnerId', 'p.id')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
         .leftJoin('Device as d', 'd.id', 'r.deviceId')
         .leftJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
@@ -173,12 +183,18 @@ async function onResultLogged({ resultId }, { messageContext }) {
           'r.resultCategory2',
           'fdf.noResults',
           'r.endedOn',
-          'dt.externalId as deviceType'
+          'dt.externalId as deviceType',
+          'p.maxDaysDeviceNoResults'
         )) || {}
     if (!deviceId) {
       return
     }
-    if (noResults === 1) {
+
+    const now = new Date()
+    const maxLastDateNoResult = maxDaysDeviceNoResults == null ? null : subDays(now, maxDaysDeviceNoResults)
+
+    // if no results flag is set, and incoming result date is less than the maxLastDateNoResult
+    if (noResults === 1 && endedOn > maxLastDateNoResult) {
       context.deviceHasNewResults(deviceId)
     }
 
