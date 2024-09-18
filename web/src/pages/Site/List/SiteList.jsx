@@ -115,7 +115,14 @@ const SiteList = ({ navigate, location }) => {
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
         <SiteFilter />
         <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 1 }}>
-          {isHierarchicalView && <HierarchicalSiteView countryId={user.countryId} />}
+          {isHierarchicalView && (
+            <HierarchicalSiteView
+              countryId={user.countryId}
+              stateId={filters.stateId}
+              countyId={filters.lgaId}
+              siteName={filters.siteName}
+            />
+          )}
           <DataTableCard key={`DataTableCard__table-${location.key}`} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
               <Typography variant="subtitle2" color="textSecondary">

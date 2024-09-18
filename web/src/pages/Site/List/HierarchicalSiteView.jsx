@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import useCountries from '../../../hooks/geography/useCountries'
 import useLgaByState from '../../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../../hooks/geography/useStatesByCountry'
 import useSites from '../../../hooks/site/useSites'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 
 function HierarchyLoader() {
   return (
@@ -39,13 +40,15 @@ function TreeNode(props) {
 }
 
 export function HierarchicalSiteView(props) {
-  const { countryId, returnAll, onlyAssociatedSites } = props
+  const { countryId, stateId, countyId, siteId } = props
+
+  const [addFilter] = useFilterUpdate()
 
   const { isLoading: isCountryLoading, isError: isCountryError, data: countries } = useCountries()
-  const [selected, setSelected] = useState({ stateId: null, countyId: null })
+  const [selected, setSelected] = useState({ countryId, stateId: null, countyId: null, siteId: null })
   const selectedCountry = countries?.find(({ id }) => id === countryId)
   const { isLoading: isStateLoading, data: states = [] } = useStatesByCountry(
-    { countryId, returnAll, onlyAssociatedSites },
+    { countryId },
     { enabled: !isCountryLoading && !isCountryError && !!countryId && Boolean(selectedCountry) }
   )
   const { isLoading: isLgaLoading, data: lgasData } = useLgaByState(
@@ -57,6 +60,12 @@ export function HierarchicalSiteView(props) {
     { filters: { lgaId: selected.countyId }, sortCol: 'name', sortDir: 'asc', pageAt: 0, pageSize: 100 },
     { enabled: Boolean(selected.countyId) }
   )
+
+  useEffect(() => {
+    setSelected({ countryId, stateId, countyId, siteId })
+  }, [countryId, stateId, countyId, siteId, setSelected])
+
+  useEffect(() => {}, [addFilter])
 
   return (
     <Card sx={{ minWidth: 300, p: 2, maxHeight: 600, overflowY: 'auto' }}>
