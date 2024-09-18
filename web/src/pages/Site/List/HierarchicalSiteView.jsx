@@ -1,18 +1,22 @@
 import React, { useMemo, useState } from 'react'
-import { Box, Card, Skeleton, Stack, Typography } from '@mui/material'
+import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import useCountries from '../../../hooks/geography/useCountries'
 import useLgaByState from '../../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../../hooks/geography/useStatesByCountry'
-import useSiteList from '../../../hooks/site/useSiteList'
+import useSites from '../../../hooks/site/useSites'
+
+function HierarchyLoader() {
+  return Array(10)
+    .fill()
+    .map(() => <Skeleton height={40} />)
+}
 
 function Hierarchy(props) {
   const { data, isLoading, selectedId, callback, uniqueKey, children } = props
 
   if (isLoading) {
-    return Array(10)
-      .fill()
-      .map(() => <Skeleton height={40} />)
+    return <HierarchyLoader />
   }
 
   if (!data?.length) return null
@@ -49,12 +53,10 @@ export function HierarchicalSiteView(props) {
     { enabled: Boolean(selected.stateId) }
   )
 
-  const { isLoading: isSiteLoading, data: siteData } = useSiteList(
-    { lgaId: selected.countyId },
+  const { isLoading: isSiteLoading, data: siteData } = useSites(
+    { filters: { lgaId: selected.countyId }, sortCol: 'name', sortDir: 'asc', pageAt: 0, pageSize: 100 },
     { enabled: Boolean(selected.countyId) }
   )
-
-  console.log('inside loading ', isSiteLoading, siteData, selected)
 
   const treeViewData = useMemo(() => {
     states.forEach(state => {})
