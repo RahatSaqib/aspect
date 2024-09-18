@@ -11,8 +11,8 @@ function HierarchyLoader() {
     <Stack>
       {Array(3)
         .fill()
-        .map(() => (
-          <Skeleton height={40} />
+        .map((_, key) => (
+          <Skeleton height={40} key={key} />
         ))}
     </Stack>
   )
