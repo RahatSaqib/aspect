@@ -23,7 +23,7 @@ function TreeNode(props) {
   const { id, name } = data
 
   return (
-    <Stack sx={{ justifyContent: 'center', pl: 2 }}>
+    <Stack sx={{ justifyContent: 'center', pl: 2 }} spacing={2}>
       <Stack
         sx={{ flexDirection: 'row', cursor: 'pointer', alignItems: 'center' }}
         onClick={() => callback(id)}
