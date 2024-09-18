@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import React, { useCallback, useEffect, useState } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import useCountries from '../../../hooks/geography/useCountries'
@@ -40,32 +40,28 @@ function TreeNode(props) {
 }
 
 export function HierarchicalSiteView(props) {
-  const { countryId, stateId, countyId, siteId } = props
+  const { filters, pathname, countryId } = props
 
-  const [addFilter] = useFilterUpdate()
+  const { stateId, lgaId, siteName } = filters
+
+  const [update] = useFilterUpdate()
 
   const { isLoading: isCountryLoading, isError: isCountryError, data: countries } = useCountries()
-  const [selected, setSelected] = useState({ countryId, stateId: null, countyId: null, siteId: null })
   const selectedCountry = countries?.find(({ id }) => id === countryId)
   const { isLoading: isStateLoading, data: states = [] } = useStatesByCountry(
     { countryId },
-    { enabled: !isCountryLoading && !isCountryError && !!countryId && Boolean(selectedCountry) }
+    { enabled: !isCountryLoading && !isCountryError && Boolean(countryId) && Boolean(selectedCountry) }
   )
-  const { isLoading: isLgaLoading, data: lgasData } = useLgaByState(
-    { stateId: selected.stateId },
-    { enabled: Boolean(selected.stateId) }
-  )
+  const { isLoading: isLgaLoading, data: lgasData } = useLgaByState({ stateId }, { enabled: Boolean(stateId) })
 
   const { isLoading: isSiteLoading, data: { siteList: sitesData } = { siteList: [] } } = useSites(
-    { filters: { lgaId: selected.countyId }, sortCol: 'name', sortDir: 'asc', pageAt: 0, pageSize: 100 },
-    { enabled: Boolean(selected.countyId) }
+    { filters: { lgaId }, sortCol: 'name', sortDir: 'asc', pageAt: 0, pageSize: 100 },
+    { enabled: Boolean(lgaId) }
   )
 
-  useEffect(() => {
-    setSelected({ countryId, stateId, countyId, siteId })
-  }, [countryId, stateId, countyId, siteId, setSelected])
-
-  useEffect(() => {}, [addFilter])
+  const updateHierarchy = filter => {
+    update({ countryId, ...filters, ...filter }, pathname)
+  }
 
   return (
     <Card sx={{ minWidth: 300, p: 2, maxHeight: 600, overflowY: 'auto' }}>
@@ -84,29 +80,26 @@ export function HierarchicalSiteView(props) {
             <Stack key={state.id} sx={{ flexDirection: 'column' }}>
               <TreeNode
                 data={{ id: state.id, name: state.name }}
-                callback={() =>
-                  setSelected({ ...selected, stateId: selected.stateId === state.id ? undefined : state.id })
-                }
-                selectedId={selected.stateId}
+                callback={() => updateHierarchy({ stateId: stateId === state.id ? undefined : state.id })}
+                selectedId={stateId}
                 options={{ showChevron: true, noLeftPadding: true }}
               >
-                {selected.stateId === state.id ? (
+                {stateId === state.id ? (
                   isLgaLoading ? (
                     <HierarchyLoader />
                   ) : (
                     lgasData?.map(county => (
                       <TreeNode
                         data={{ id: county.id, name: county.name }}
-                        selectedId={selected.countyId}
+                        selectedId={lgaId}
                         callback={() =>
-                          setSelected({
-                            ...selected,
-                            countyId: selected.countyId === county.id ? undefined : county.id,
+                          updateHierarchy({
+                            lgaId: lgaId === county.id ? undefined : county.id,
                           })
                         }
                         options={{ showChevron: true }}
                       >
-                        {county.id === selected.countyId ? (
+                        {county.id === lgaId ? (
                           isSiteLoading ? (
                             <HierarchyLoader />
                           ) : (
@@ -114,11 +107,10 @@ export function HierarchicalSiteView(props) {
                               <TreeNode
                                 key={site.id}
                                 data={{ id: site.id, name: site.name }}
-                                selected={selected.siteId}
+                                selected={siteName}
                                 callback={() =>
-                                  setSelected({
-                                    ...selected,
-                                    siteId: selected.siteId === site.id ? undefined : site.id,
+                                  updateHierarchy({
+                                    siteName: siteName === site.name ? undefined : site.name,
                                   })
                                 }
                               />

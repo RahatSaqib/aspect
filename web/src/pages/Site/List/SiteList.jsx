@@ -116,12 +116,7 @@ const SiteList = ({ navigate, location }) => {
         <SiteFilter />
         <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
-            <HierarchicalSiteView
-              countryId={user.countryId}
-              stateId={filters.stateId}
-              countyId={filters.lgaId}
-              siteName={filters.siteName}
-            />
+            <HierarchicalSiteView countryId={user.countryId} filters={filters} pathname="/browse/site" />
           )}
           <DataTableCard key={`DataTableCard__table-${location.key}`} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
