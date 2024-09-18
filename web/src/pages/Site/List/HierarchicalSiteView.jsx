@@ -24,16 +24,29 @@ function Hierarchy(props) {
   return (
     <Stack sx={{ flexDirection: 'column', pl: 2 }} spacing={1}>
       {data?.map(({ id, name }) => (
-        <Stack
-          key={`${uniqueKey}-${id}`}
-          sx={{ cursor: 'pointer', flexDirection: 'row', alignItems: 'center' }}
-          onClick={() => callback(id)}
-        >
-          {selectedId === id ? <FaChevronDown fontSize={12} /> : <FaChevronRight fontSize={12} />}
-          <Typography variant="body2">{name}</Typography>
+        <TreeNode data={{ id, name }} callback={callback} key={`${uniqueKey}-${id}`}>
           {children}
-        </Stack>
+        </TreeNode>
       ))}
+    </Stack>
+  )
+}
+
+function TreeNode(props) {
+  const { data, callback, children, selectedId } = props
+  const { id, name } = data
+
+  return (
+    <Stack sx={{ justifyContent: 'center' }}>
+      <Stack
+        sx={{ flexDirection: 'row', cursor: 'pointer', alignItems: 'center' }}
+        onClick={() => callback(id)}
+        gap={1}
+      >
+        {selectedId === id ? <FaChevronDown fontSize={12} /> : <FaChevronRight fontSize={12} />}
+        <Typography variant="body2">{name}</Typography>
+      </Stack>
+      {children}
     </Stack>
   )
 }
@@ -78,23 +91,21 @@ export function HierarchicalSiteView(props) {
         ) : (
           treeViewData.map(state => (
             <Stack key={state.id} sx={{ flexDirection: 'column' }}>
-              <Stack
-                sx={{ cursor: 'pointer', flexDirection: 'row', alignItems: 'center' }}
-                gap={1}
-                onClick={() => setSelected({ ...selected, stateId: state.id })}
+              <TreeNode
+                data={{ id: state.id, name: state.name }}
+                callback={() => setSelected({ ...selected, stateId: state.id })}
+                selectedId={selected.stateId}
               >
-                {selected.stateId === state.id ? <FaChevronDown fontSize={12} /> : <FaChevronRight fontSize={12} />}
-                <Typography variant="body2">{state.name}</Typography>
-              </Stack>
-              {selected.stateId === state.id ? (
-                <Hierarchy
-                  uniqueKey={state.id}
-                  data={lgasData}
-                  isLoading={isLgaLoading}
-                  selectedId={selected.countyId}
-                  callback={countyId => setSelected({ ...selected, countyId })}
-                />
-              ) : null}
+                {selected.stateId === state.id ? (
+                  <Hierarchy
+                    uniqueKey={state.id}
+                    data={lgasData}
+                    isLoading={isLgaLoading}
+                    selectedId={selected.countyId}
+                    callback={countyId => setSelected({ ...selected, countyId })}
+                  />
+                ) : null}
+              </TreeNode>
             </Stack>
           ))
         )}
