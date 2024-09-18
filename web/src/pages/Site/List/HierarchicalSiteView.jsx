@@ -19,17 +19,18 @@ function HierarchyLoader() {
 }
 
 function TreeNode(props) {
-  const { data, callback, children, selectedId } = props
+  const { data, callback, children, selectedId, options = {} } = props
   const { id, name } = data
+  const { showChevron, noLeftPadding } = options
 
   return (
-    <Stack sx={{ justifyContent: 'center', pl: 2 }} spacing={2}>
+    <Stack sx={{ justifyContent: 'center', pl: noLeftPadding ? 0 : 2 }} spacing={2}>
       <Stack
         sx={{ flexDirection: 'row', cursor: 'pointer', alignItems: 'center' }}
         onClick={() => callback(id)}
         gap={1}
       >
-        {selectedId === id ? <FaChevronDown fontSize={12} /> : <FaChevronRight fontSize={12} />}
+        {showChevron && (selectedId === id ? <FaChevronDown fontSize={12} /> : <FaChevronRight fontSize={12} />)}
         <Typography variant="body2">{name}</Typography>
       </Stack>
       {children}
@@ -59,7 +60,13 @@ export function HierarchicalSiteView(props) {
 
   return (
     <Card sx={{ minWidth: 300, p: 2, maxHeight: 600, overflowY: 'auto' }}>
-      {isCountryLoading ? <Skeleton height={40} /> : <Typography variant="h6">{selectedCountry.name}</Typography>}
+      {isCountryLoading ? (
+        <Skeleton height={40} />
+      ) : (
+        <Typography variant="h6" sx={{ mb: 2 }}>
+          {selectedCountry.name}
+        </Typography>
+      )}
       <Stack spacing={2}>
         {isStateLoading ? (
           <HierarchyLoader />
@@ -68,15 +75,24 @@ export function HierarchicalSiteView(props) {
             <Stack key={state.id} sx={{ flexDirection: 'column' }}>
               <TreeNode
                 data={{ id: state.id, name: state.name }}
-                callback={() => setSelected({ ...selected, stateId: state.id })}
+                callback={() =>
+                  setSelected({ ...selected, stateId: selected.stateId === state.id ? undefined : state.id })
+                }
                 selectedId={selected.stateId}
+                options={{ showChevron: true, noLeftPadding: true }}
               >
                 {selected.stateId === state.id
                   ? lgasData?.map(county => (
                       <TreeNode
                         data={{ id: county.id, name: county.name }}
                         selectedId={selected.countyId}
-                        callback={() => setSelected({ ...selected, countyId: county.id })}
+                        callback={() =>
+                          setSelected({
+                            ...selected,
+                            countyId: selected.countyId === county.id ? undefined : county.id,
+                          })
+                        }
+                        options={{ showChevron: true }}
                       >
                         {county.id === selected.countyId
                           ? sitesData?.map(site => (
@@ -84,7 +100,12 @@ export function HierarchicalSiteView(props) {
                                 key={site.id}
                                 data={{ id: site.id, name: site.name }}
                                 selected={selected.siteId}
-                                callback={() => setSelected({ ...selected, siteId: site.id })}
+                                callback={() =>
+                                  setSelected({
+                                    ...selected,
+                                    siteId: selected.siteId === site.id ? undefined : site.id,
+                                  })
+                                }
                               />
                             ))
                           : null}
