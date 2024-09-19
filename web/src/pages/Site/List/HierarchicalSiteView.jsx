@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect, useRef } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import useCountries from '../../../hooks/geography/useCountries'
@@ -43,6 +43,7 @@ export function HierarchicalSiteView(props) {
   const { filters, pathname, countryId } = props
 
   const { stateId, lgaId, siteName } = filters
+  const hierarchyRef = useRef(null)
 
   const [update] = useFilterUpdate()
 
@@ -63,8 +64,14 @@ export function HierarchicalSiteView(props) {
     update({ countryId, ...filters, ...filter }, pathname)
   }
 
+  useEffect(() => {
+    if (hierarchyRef.current && stateId) {
+      hierarchyRef.current.querySelector(`[data-state-id="${stateId}"]`)?.scrollIntoView()
+    }
+  }, [stateId])
+
   return (
-    <Card sx={{ minWidth: 300, p: 2, maxHeight: 640, overflowY: 'auto' }}>
+    <Card sx={{ minWidth: 300, p: 2, maxHeight: 640, overflowY: 'auto' }} ref={hierarchyRef}>
       {isCountryLoading ? (
         <Skeleton height={40} />
       ) : (
@@ -77,7 +84,7 @@ export function HierarchicalSiteView(props) {
           <HierarchyLoader />
         ) : (
           states.map(state => (
-            <Stack key={state.id} sx={{ flexDirection: 'column' }}>
+            <Stack key={state.id} sx={{ flexDirection: 'column' }} data-state-id={state.id}>
               <TreeNode
                 data={{ id: state.id, name: state.name }}
                 callback={() =>
