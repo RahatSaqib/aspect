@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from 'react'
+import React from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import useCountries from '../../../hooks/geography/useCountries'
@@ -64,7 +64,7 @@ export function HierarchicalSiteView(props) {
   }
 
   return (
-    <Card sx={{ minWidth: 300, p: 2, maxHeight: 600, overflowY: 'auto' }}>
+    <Card sx={{ minWidth: 300, p: 2, maxHeight: 640, overflowY: 'auto' }}>
       {isCountryLoading ? (
         <Skeleton height={40} />
       ) : (
