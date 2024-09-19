@@ -12,6 +12,7 @@ import jobs from './JobRedux'
 import person from './PersonRedux'
 import result from './ResultRedux'
 import resultTreatmentStatus from './ResultTreatmentStatusRedux'
+import serviceDegradation from './ServiceDegradation'
 
 const appReducer = combineReducers({
   appNotification,
@@ -26,6 +27,7 @@ const appReducer = combineReducers({
   person,
   result,
   resultTreatmentStatus,
+  serviceDegradation,
 })
 
 const App = Immutable.Record({
@@ -41,6 +43,7 @@ const App = Immutable.Record({
   person: undefined,
   result: undefined,
   resultTreatmentStatus: undefined,
+  serviceDegradation: undefined,
 })
 
 const initialState = new App()
