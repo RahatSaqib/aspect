@@ -7,9 +7,9 @@ export function useHierarchicalSwitch(props) {
 
   useEffect(() => {
     if (Object.values(hierarchicalToggleSettingsLocalStorageKey).includes(localStorageKey)) {
-      localStorage.setItem(localStorageKey, isHierarchicalView)
+      localStorage.setItem(localStorageKey, isHierarchicalView.toString())
     }
-  }, [isHierarchicalView, setIsHierarchicalView, localStorageKey])
+  }, [isHierarchicalView, localStorageKey])
 
   return [isHierarchicalView, setIsHierarchicalView]
 }
