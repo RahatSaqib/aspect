@@ -1,11 +1,11 @@
 import React, { useEffect, useRef } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
-import useCountries from '../../../hooks/geography/useCountries'
-import useLgaByState from '../../../hooks/geography/useLgaByState'
-import useStatesByCountry from '../../../hooks/geography/useStatesByCountry'
-import useSites from '../../../hooks/site/useSites'
-import useFilterUpdate from '../../../hooks/useFilterUpdate'
+import useCountries from '../../hooks/geography/useCountries'
+import useLgaByState from '../../hooks/geography/useLgaByState'
+import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
+import useSites from '../../hooks/site/useSites'
+import useFilterUpdate from '../../hooks/useFilterUpdate'
 
 function HierarchyLoader() {
   return (

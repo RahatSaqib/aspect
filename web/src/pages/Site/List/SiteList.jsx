@@ -4,6 +4,9 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
+import { HierarchicalSiteView } from '../../../components/HierarchicalSiteView'
+import { hierarchicalToggleSettingsLocalStorageKey } from '../../../components/HierarchicalSiteView/constants'
+import { useHierarchicalSwitch } from '../../../components/HierarchicalSiteView/useHierarchicalSwitch'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
@@ -16,7 +19,6 @@ import AspectButton from '../../../oldComponents/shared/AspectButton'
 import DataTableCard from '../../../oldComponents/shared/DataTableCard'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import { gotoWithReturnUrl } from '../../../utils/utils/browser'
-import { HierarchicalSiteView } from './HierarchicalSiteView'
 import messages from './messages'
 import { SiteDataTable, SiteDataTableHead, SiteDataTableRow } from './SiteDataTable'
 import styles from './SiteList.module.css'
@@ -28,7 +30,9 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const [isHierarchicalView, setIsHierarchicalView] = useState(false)
+  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.SITE_ALL,
+  })
 
   const { data, isLoading: tableLoading } = useSites(
     { sortCol, sortDir, pageAt, pageSize, filters },
