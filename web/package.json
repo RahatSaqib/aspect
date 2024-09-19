@@ -39,7 +39,6 @@
     "@mui/material": "^5.10.14",
     "@mui/styles": "^5.10.14",
     "@mui/x-date-pickers": "^5.0.8",
-    "@mui/x-tree-view": "^7.17.0",
     "@react-google-maps/api": "^2.12.1",
     "@sentry/react": "^7.11.1",
     "@sentry/tracing": "^7.11.1",
