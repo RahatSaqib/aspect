@@ -80,7 +80,13 @@ export function HierarchicalSiteView(props) {
             <Stack key={state.id} sx={{ flexDirection: 'column' }}>
               <TreeNode
                 data={{ id: state.id, name: state.name }}
-                callback={() => updateHierarchy({ stateId: stateId === state.id ? undefined : state.id })}
+                callback={() =>
+                  updateHierarchy({
+                    stateId: stateId === state.id ? undefined : state.id,
+                    lgaId: undefined,
+                    siteName: undefined,
+                  })
+                }
                 selectedId={stateId}
                 options={{ showChevron: true, noLeftPadding: true }}
               >
@@ -95,6 +101,7 @@ export function HierarchicalSiteView(props) {
                         callback={() =>
                           updateHierarchy({
                             lgaId: lgaId === county.id ? undefined : county.id,
+                            siteName: undefined,
                           })
                         }
                         options={{ showChevron: true }}
