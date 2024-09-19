@@ -4,9 +4,11 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
-import { HierarchicalSiteView } from '../../../components/HierarchicalSiteView'
-import { hierarchicalToggleSettingsLocalStorageKey } from '../../../components/HierarchicalSiteView/constants'
-import { useHierarchicalSwitch } from '../../../components/HierarchicalSiteView/useHierarchicalSwitch'
+import {
+  HierarchicalSiteView,
+  useHierarchicalSwitch,
+  hierarchicalToggleSettingsLocalStorageKey,
+} from '../../../components/HierarchicalSiteView'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
