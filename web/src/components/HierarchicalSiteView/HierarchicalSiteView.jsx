@@ -153,19 +153,19 @@ export function HierarchicalSiteView(props) {
                             />
                           </Stack>
                         ))}
-                        {lgasData?.map(county => (
+                        {lgasData?.map(lga => (
                           <TreeNode
-                            data={{ id: county.id, name: county.name }}
-                            selected={lgaId === county.id}
+                            data={{ id: lga.id, name: lga.name }}
+                            selected={lgaId === lga.id}
                             callback={() =>
                               updateHierarchy({
-                                lgaId: lgaId === county.id ? undefined : county.id,
+                                lgaId: lgaId === lga.id ? undefined : lga.id,
                                 siteName: undefined,
                               })
                             }
                             options={{ showChevron: true }}
                           >
-                            {county.id === lgaId ? (
+                            {lga.id === lgaId ? (
                               isSiteLoading ? (
                                 <HierarchyLoader />
                               ) : (

@@ -33,7 +33,7 @@ const SiteList = ({ navigate, location }) => {
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
-    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.SITE_ALL,
+    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.SITE_LIST,
   })
 
   const { data, isLoading: tableLoading } = useSites(
