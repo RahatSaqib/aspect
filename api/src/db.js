@@ -50,7 +50,7 @@ function getWhereArgs(columnName, paramValue, options = {}) {
   if (_.isArray(paramValue)) {
     return [columnName, paramValue]
   }
-  if (options.handleNullValues && _.isNull(paramValue)) {
+  if (options.handleNullValues && paramValue === null) {
     return [columnName, 'is', paramValue]
   }
   return [columnName, '=', paramValue]
