@@ -65,7 +65,7 @@ function getSitesQuery(dataConstraints) {
 async function listSites(request) {
   const { query, auth } = request
 
-  // This is required to ensure the `stateId` and `lgaId` empty values i.e equal to null on the database is queried correctly
+  // To ensure correct database queries, the `stateId` and `lgaId` values should be converted from empty strings to `null`.
   ;['stateId', 'lgaId'].forEach(property => {
     if (query[property] === '') {
       query[property] = null
