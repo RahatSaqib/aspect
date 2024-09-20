@@ -113,7 +113,7 @@ export function HierarchicalSiteView(props) {
                       siteName: wareHouse.name,
                     })
                   }
-                  selected={stateId === wareHouse.id}
+                  selected={siteName === wareHouse.name}
                   options={{ showChevron: false, noLeftPadding: true }}
                 />
               </Stack>
@@ -136,38 +136,56 @@ export function HierarchicalSiteView(props) {
                     isLgaLoading || isStateLevelSitesLoading ? (
                       <HierarchyLoader />
                     ) : (
-                      lgasData?.map(county => (
-                        <TreeNode
-                          data={{ id: county.id, name: county.name }}
-                          selected={lgaId === county.id}
-                          callback={() =>
-                            updateHierarchy({
-                              lgaId: lgaId === county.id ? undefined : county.id,
-                              siteName: undefined,
-                            })
-                          }
-                          options={{ showChevron: true }}
-                        >
-                          {county.id === lgaId ? (
-                            isSiteLoading ? (
-                              <HierarchyLoader />
-                            ) : (
-                              sitesData?.map(site => (
-                                <TreeNode
-                                  key={site.id}
-                                  data={{ id: site.id, name: site.name }}
-                                  selected={siteName}
-                                  callback={() =>
-                                    updateHierarchy({
-                                      siteName: siteName === site.name ? undefined : site.name,
-                                    })
-                                  }
-                                />
-                              ))
-                            )
-                          ) : null}
-                        </TreeNode>
-                      ))
+                      <>
+                        {stateLevelSitesData.map(warehouse => (
+                          <Stack key={warehouse.id} sx={{ flexDirection: 'column' }}>
+                            <TreeNode
+                              data={{ id: warehouse.id, name: warehouse.name }}
+                              callback={() =>
+                                updateHierarchy({
+                                  stateId: state.id,
+                                  lgaId: undefined,
+                                  siteName: warehouse.name,
+                                })
+                              }
+                              selected={siteName === warehouse.name}
+                              options={{ showChevron: false, noLeftPadding: true }}
+                            />
+                          </Stack>
+                        ))}
+                        {lgasData?.map(county => (
+                          <TreeNode
+                            data={{ id: county.id, name: county.name }}
+                            selected={lgaId === county.id}
+                            callback={() =>
+                              updateHierarchy({
+                                lgaId: lgaId === county.id ? undefined : county.id,
+                                siteName: undefined,
+                              })
+                            }
+                            options={{ showChevron: true }}
+                          >
+                            {county.id === lgaId ? (
+                              isSiteLoading ? (
+                                <HierarchyLoader />
+                              ) : (
+                                sitesData?.map(site => (
+                                  <TreeNode
+                                    key={site.id}
+                                    data={{ id: site.id, name: site.name }}
+                                    selected={siteName}
+                                    callback={() =>
+                                      updateHierarchy({
+                                        siteName: siteName === site.name ? undefined : site.name,
+                                      })
+                                    }
+                                  />
+                                ))
+                              )
+                            ) : null}
+                          </TreeNode>
+                        ))}
+                      </>
                     )
                   ) : null}
                 </TreeNode>
