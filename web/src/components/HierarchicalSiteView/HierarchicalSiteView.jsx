@@ -114,7 +114,7 @@ export function HierarchicalSiteView(props) {
                     })
                   }
                   selected={siteName === wareHouse.name}
-                  options={{ showChevron: false, noLeftPadding: true }}
+                  options={{ showChevron: false, noLeftPadding: false }}
                 />
               </Stack>
             ))}
@@ -149,7 +149,7 @@ export function HierarchicalSiteView(props) {
                                 })
                               }
                               selected={siteName === warehouse.name}
-                              options={{ showChevron: false, noLeftPadding: true }}
+                              options={{ showChevron: false, noLeftPadding: false }}
                             />
                           </Stack>
                         ))}
@@ -173,7 +173,7 @@ export function HierarchicalSiteView(props) {
                                   <TreeNode
                                     key={site.id}
                                     data={{ id: site.id, name: site.name }}
-                                    selected={siteName}
+                                    selected={siteName === site.name}
                                     callback={() =>
                                       updateHierarchy({
                                         siteName: siteName === site.name ? undefined : site.name,
