@@ -98,13 +98,18 @@ async function listSites(request) {
       this.whereIn('s.id', deviceQuery)
     })
     .modify(filterDateRangeParams, query, 's.createdOn')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-      externalId: 's.externalId',
-    })
+    .modify(
+      filterParams,
+      query,
+      {
+        countryId: 'g.countryId',
+        stateId: 'g.stateId',
+        lgaId: 'g.lgaId',
+        siteName: 's.name',
+        externalId: 's.externalId',
+      },
+      { whereArgs: { handleNullValues: true } }
+    )
 
   const getCount = knex
     .count('siteId as count')

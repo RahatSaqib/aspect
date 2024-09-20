@@ -6,9 +6,7 @@ import { checkIfParamsIsDate } from '../../../oldComponents/shared/DateTimeInput
 
 const buildEndpointAndQueryString = (endpoint, params) => {
   if ((!isEmpty(params) && isPlainObject(params)) || isArray(params)) {
-    const queryParams = checkIfParamsIsDate(params)
-    console.log('What is the queryParams :: ===== >> ++ ', queryParams)
-    return `${endpoint}?${queryParams.join('&')}`
+    return `${endpoint}?${checkIfParamsIsDate(params).join('&')}`
   }
   return endpoint
 }

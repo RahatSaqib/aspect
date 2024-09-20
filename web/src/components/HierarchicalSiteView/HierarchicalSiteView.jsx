@@ -20,7 +20,7 @@ function HierarchyLoader() {
 }
 
 function TreeNode(props) {
-  const { data, callback, children, selectedId, options = {} } = props
+  const { data, callback, children, selected, options = {} } = props
   const { id, name } = data
   const { showChevron, noLeftPadding } = options
 
@@ -31,8 +31,10 @@ function TreeNode(props) {
         onClick={() => callback(id)}
         gap={1}
       >
-        {showChevron && (selectedId === id ? <FaChevronDown fontSize={12} /> : <FaChevronRight fontSize={12} />)}
-        <Typography variant="body2">{name}</Typography>
+        {showChevron && (selected ? <FaChevronDown fontSize={12} /> : <FaChevronRight fontSize={12} />)}
+        <Typography variant="body2" sx={{ fontWeight: selected ? 'bold' : 'unset' }}>
+          {name}
+        </Typography>
       </Stack>
       {children}
     </Stack>
@@ -59,18 +61,28 @@ export function HierarchicalSiteView(props) {
     { enabled: Boolean(lgaId) }
   )
 
-  const { isLoading: isNationalSitesLoading, data: { siteList: nationalSitesData } = { siteList: [] } } = useSites(
+  const { isLoading: isNationalLevelSitesLoading, data: { siteList: nationalLevelSitesData } = { siteList: [] } } =
+    useSites(
+      {
+        filters: { countryId, stateId: '' },
+        sortCol: 'name',
+        sortDir: 'asc',
+        pageAt: 0,
+        pageSize: 100,
+      },
+      { enabled: Boolean(countryId) && !lgaId && !stateId }
+    )
+
+  const { isLoading: isStateLevelSitesLoading, data: { siteList: stateLevelSitesData } = { siteList: [] } } = useSites(
     {
-      filters: { countryId, lgaId: '', stateId: 11 },
+      filters: { countryId, stateId, lgaId: '' },
       sortCol: 'name',
       sortDir: 'asc',
       pageAt: 0,
       pageSize: 100,
     },
-    { enabled: Boolean(countryId) && !lgaId && !stateId }
+    { enabled: Boolean(countryId) && !lgaId && Boolean(stateId) }
   )
-
-  console.log('What is national level sites data ', nationalSitesData)
 
   const updateHierarchy = filter => {
     update({ countryId, ...filters, ...filter }, pathname)
@@ -86,64 +98,82 @@ export function HierarchicalSiteView(props) {
         </Typography>
       )}
       <Stack spacing={2}>
-        {isStateLoading ? (
+        {isStateLoading || isNationalLevelSitesLoading ? (
           <HierarchyLoader />
         ) : (
-          states.map(state => (
-            <Stack key={state.id} sx={{ flexDirection: 'column' }}>
-              <TreeNode
-                data={{ id: state.id, name: state.name }}
-                callback={() =>
-                  updateHierarchy({
-                    stateId: stateId === state.id ? undefined : state.id,
-                    lgaId: undefined,
-                    siteName: undefined,
-                  })
-                }
-                selectedId={stateId}
-                options={{ showChevron: true, noLeftPadding: true }}
-              >
-                {stateId === state.id ? (
-                  isLgaLoading ? (
-                    <HierarchyLoader />
-                  ) : (
-                    lgasData?.map(county => (
-                      <TreeNode
-                        data={{ id: county.id, name: county.name }}
-                        selectedId={lgaId}
-                        callback={() =>
-                          updateHierarchy({
-                            lgaId: lgaId === county.id ? undefined : county.id,
-                            siteName: undefined,
-                          })
-                        }
-                        options={{ showChevron: true }}
-                      >
-                        {county.id === lgaId ? (
-                          isSiteLoading ? (
-                            <HierarchyLoader />
-                          ) : (
-                            sitesData?.map(site => (
-                              <TreeNode
-                                key={site.id}
-                                data={{ id: site.id, name: site.name }}
-                                selected={siteName}
-                                callback={() =>
-                                  updateHierarchy({
-                                    siteName: siteName === site.name ? undefined : site.name,
-                                  })
-                                }
-                              />
-                            ))
-                          )
-                        ) : null}
-                      </TreeNode>
-                    ))
-                  )
-                ) : null}
-              </TreeNode>
-            </Stack>
-          ))
+          <>
+            {nationalLevelSitesData.map(wareHouse => (
+              <Stack key={wareHouse.id} sx={{ flexDirection: 'column' }}>
+                <TreeNode
+                  data={{ id: wareHouse.id, name: wareHouse.name }}
+                  callback={() =>
+                    updateHierarchy({
+                      stateId: undefined,
+                      lgaId: undefined,
+                      siteName: wareHouse.name,
+                    })
+                  }
+                  selected={stateId === wareHouse.id}
+                  options={{ showChevron: false, noLeftPadding: true }}
+                />
+              </Stack>
+            ))}
+            {states.map(state => (
+              <Stack key={state.id} sx={{ flexDirection: 'column' }}>
+                <TreeNode
+                  data={{ id: state.id, name: state.name }}
+                  callback={() =>
+                    updateHierarchy({
+                      stateId: stateId === state.id ? undefined : state.id,
+                      lgaId: undefined,
+                      siteName: undefined,
+                    })
+                  }
+                  selected={stateId === state.id}
+                  options={{ showChevron: true, noLeftPadding: true }}
+                >
+                  {stateId === state.id ? (
+                    isLgaLoading || isStateLevelSitesLoading ? (
+                      <HierarchyLoader />
+                    ) : (
+                      lgasData?.map(county => (
+                        <TreeNode
+                          data={{ id: county.id, name: county.name }}
+                          selected={lgaId === county.id}
+                          callback={() =>
+                            updateHierarchy({
+                              lgaId: lgaId === county.id ? undefined : county.id,
+                              siteName: undefined,
+                            })
+                          }
+                          options={{ showChevron: true }}
+                        >
+                          {county.id === lgaId ? (
+                            isSiteLoading ? (
+                              <HierarchyLoader />
+                            ) : (
+                              sitesData?.map(site => (
+                                <TreeNode
+                                  key={site.id}
+                                  data={{ id: site.id, name: site.name }}
+                                  selected={siteName}
+                                  callback={() =>
+                                    updateHierarchy({
+                                      siteName: siteName === site.name ? undefined : site.name,
+                                    })
+                                  }
+                                />
+                              ))
+                            )
+                          ) : null}
+                        </TreeNode>
+                      ))
+                    )
+                  ) : null}
+                </TreeNode>
+              </Stack>
+            ))}
+          </>
         )}
       </Stack>
     </Card>
