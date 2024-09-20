@@ -1,4 +1,4 @@
-import React, { useEffect, useRef } from 'react'
+import React from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import { FaChevronDown, FaChevronRight } from 'react-icons/fa'
 import useCountries from '../../hooks/geography/useCountries'
@@ -49,7 +49,7 @@ export function HierarchicalSiteView(props) {
   const { isLoading: isCountryLoading, isError: isCountryError, data: countries } = useCountries()
   const selectedCountry = countries?.find(({ id }) => id === countryId)
   const { isLoading: isStateLoading, data: states = [] } = useStatesByCountry(
-    { countryId },
+    { countryId, returnAll: true },
     { enabled: !isCountryLoading && !isCountryError && Boolean(countryId) && Boolean(selectedCountry) }
   )
   const { isLoading: isLgaLoading, data: lgasData } = useLgaByState({ stateId }, { enabled: Boolean(stateId) })
@@ -58,6 +58,19 @@ export function HierarchicalSiteView(props) {
     { filters: { lgaId }, sortCol: 'name', sortDir: 'asc', pageAt: 0, pageSize: 100 },
     { enabled: Boolean(lgaId) }
   )
+
+  const { isLoading: isNationalSitesLoading, data: { siteList: nationalSitesData } = { siteList: [] } } = useSites(
+    {
+      filters: { countryId, lgaId: '', stateId: 11 },
+      sortCol: 'name',
+      sortDir: 'asc',
+      pageAt: 0,
+      pageSize: 100,
+    },
+    { enabled: Boolean(countryId) && !lgaId && !stateId }
+  )
+
+  console.log('What is national level sites data ', nationalSitesData)
 
   const updateHierarchy = filter => {
     update({ countryId, ...filters, ...filter }, pathname)

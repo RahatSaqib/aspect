@@ -42,6 +42,9 @@ function getWhereArgs(columnName, paramValue) {
   if (_.isArray(paramValue)) {
     return [columnName, paramValue]
   }
+  if (_.isNull(paramValue)) {
+    return [columnName, 'is', paramValue]
+  }
   return [columnName, '=', paramValue]
 }
 

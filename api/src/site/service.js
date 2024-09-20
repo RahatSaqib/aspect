@@ -65,6 +65,12 @@ function getSitesQuery(dataConstraints) {
 async function listSites(request) {
   const { query, auth } = request
 
+  ;['stateId', 'lgaId'].forEach(property => {
+    if (query[property] === '') {
+      query[property] = null
+    }
+  })
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
