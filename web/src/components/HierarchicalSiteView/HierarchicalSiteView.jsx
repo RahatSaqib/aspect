@@ -102,18 +102,18 @@ export function HierarchicalSiteView(props) {
           <HierarchyLoader />
         ) : (
           <>
-            {nationalLevelSitesData.map(wareHouse => (
-              <Stack key={wareHouse.id} sx={{ flexDirection: 'column' }}>
+            {nationalLevelSitesData.map(warehouse => (
+              <Stack key={warehouse.id} sx={{ flexDirection: 'column' }}>
                 <TreeNode
-                  data={{ id: wareHouse.id, name: wareHouse.name }}
+                  data={{ id: warehouse.id, name: warehouse.name }}
                   callback={() =>
                     updateHierarchy({
                       stateId: undefined,
                       lgaId: undefined,
-                      siteName: wareHouse.name,
+                      siteName: siteName === warehouse.name ? undefined : warehouse.name,
                     })
                   }
-                  selected={siteName === wareHouse.name}
+                  selected={siteName === warehouse.name}
                   options={{ showChevron: false, noLeftPadding: false }}
                 />
               </Stack>
@@ -145,7 +145,7 @@ export function HierarchicalSiteView(props) {
                                 updateHierarchy({
                                   stateId: state.id,
                                   lgaId: undefined,
-                                  siteName: warehouse.name,
+                                  siteName: siteName === warehouse.name ? undefined : warehouse.name,
                                 })
                               }
                               selected={siteName === warehouse.name}
