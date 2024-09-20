@@ -35,19 +35,37 @@ function pageParams(queryBuilder, params) {
   }
 }
 
-function getWhereArgs(columnName, paramValue) {
+/**
+ * Generates the WHERE clause arguments for a database query based on the given column name, parameter value, and options.
+ * @param {string} columnName - The name of the column to filter on.
+ * @param {string|Array} paramValue - The value(s) to filter by.
+ * @param {Object} [options={}] - Additional options for generating the WHERE clause arguments.
+ * @param {boolean} [options.handleNullValues=false] - Specifies whether to handle null values in the WHERE clause. Added to ensure backward compatibility and migrate without code breakages
+ * @returns {Array} An array containing the WHERE clause arguments.
+ */
+function getWhereArgs(columnName, paramValue, options = {}) {
   if (_.isString(paramValue)) {
     return [columnName, 'like', `%${paramValue}%`]
   }
   if (_.isArray(paramValue)) {
     return [columnName, paramValue]
   }
+  if (options.handleNullValues && _.isNull(paramValue)) {
+    return [columnName, 'is', paramValue]
+  }
   return [columnName, '=', paramValue]
 }
 
-// extracts the parameters related to filtering from the candidate
-// params and modifies the query builder with the filter modifications
-function filterParams(queryBuilder, params, filters) {
+/**
+ * Extract and apply filters to a query builder based on the provided parameters.
+ *
+ * @param {QueryBuilder} queryBuilder - The query builder object.
+ * @param {Object} params - The parameters object containing the filter values.
+ * @param {Object} filters - The filters object mapping parameter names to column names or arrays of column names.
+ * @param {Object} [options] - The optional options object.
+ * @param {Object} [options.whereArgs] - The optional where arguments object.
+ */
+function filterParams(queryBuilder, params, filters, options = {}) {
   _.each(filters, (columnNameOrArray, paramName) => {
     if (_.isUndefined(params[paramName])) {
       return
@@ -59,16 +77,16 @@ function filterParams(queryBuilder, params, filters) {
         // http://knexjs.org/#Builder-where
         columnNameOrArray.forEach(columnName => {
           if (_.isArray(params[paramName])) {
-            this.orWhereIn(...getWhereArgs(columnName, params[paramName]))
+            this.orWhereIn(...getWhereArgs(columnName, params[paramName], options.whereArgs))
           } else {
-            this.orWhere(...getWhereArgs(columnName, params[paramName]))
+            this.orWhere(...getWhereArgs(columnName, params[paramName], options.whereArgs))
           }
         })
       })
     } else if (_.isArray(params[paramName])) {
-      queryBuilder.whereIn(...getWhereArgs(columnNameOrArray, params[paramName]))
+      queryBuilder.whereIn(...getWhereArgs(columnNameOrArray, params[paramName], options.whereArgs))
     } else {
-      queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName]))
+      queryBuilder.where(...getWhereArgs(columnNameOrArray, params[paramName], options.whereArgs))
     }
   })
 }
