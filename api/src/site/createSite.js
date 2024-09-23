@@ -1,5 +1,5 @@
 const Boom = require('@hapi/boom')
-const { insertSite } = require('./common/db')
+const { insertSite, insertSiteConsumables } = require('./common/db')
 const { knex } = require('../db')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
@@ -36,6 +36,10 @@ module.exports = async function (request) {
   }
 
   const [newId] = await insertSite(knex, values)
+
+  if (payload.consumableIds) {
+    await insertSiteConsumables(newId, payload.consumableIds.split(',').map(Number))
+  }
 
   await updateTagsById(newId, tagType, tags, auth)
 
