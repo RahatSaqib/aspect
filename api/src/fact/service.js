@@ -193,7 +193,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
     }
 
     const now = new Date()
-    const maxLastDateNoResult = maxDaysDeviceNoResults == null ? null : subDays(now, maxDaysDeviceNoResults)
+    const maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults || 14)
 
     const resultDate = endedOn || startedOn || createdOn
 
