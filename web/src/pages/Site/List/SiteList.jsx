@@ -114,7 +114,7 @@ const SiteList = ({ navigate, location }) => {
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-        <SiteFilter  />
+        <SiteFilter />
         <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
