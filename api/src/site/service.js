@@ -15,10 +15,13 @@ const SELECT_LIST_FIELDS = [
   's.name',
   's.shortName',
   'sta.name as state',
+  'st.name as siteType',
+  'spw.name as parentWarehouseName',
   'l.name as lga',
   's.createdOn',
   's.externalId',
   knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
+  knex.raw('COALESCE(COUNT(DISTINCT sc.consumableId), 0) as siteConsumableCount'),
 ]
 
 const SELECT_SHOW_FIELDS = [
@@ -48,6 +51,7 @@ const SELECT_SHOW_FIELDS = [
   's.parentWarehouseId',
   's.hoursStart',
   's.hoursEnd',
+  knex.raw('COALESCE(GROUP_CONCAT(sc.consumableId), NULL) as consumableIds'),
 ]
 
 function getSitesQuery(dataConstraints) {
@@ -57,6 +61,8 @@ function getSitesQuery(dataConstraints) {
     .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
+    .leftOuterJoin('Site as spw', 's.parentWarehouseId', 'spw.id')
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
     .groupBy(['s.id'])
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
@@ -97,7 +103,9 @@ async function listSites(request) {
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
       siteName: 's.name',
+      siteTypeId: 'st.id',
       externalId: 's.externalId',
+      parentWarehouseId: 's.parentWarehouseId',
     })
 
   const getCount = knex
@@ -126,6 +134,7 @@ function getSite(siteId, dataConstraints) {
     .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
     .where('s.id', siteId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .first([
