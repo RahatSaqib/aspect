@@ -3,12 +3,12 @@ import { Box, LinearProgress, Switch, TableBody, Typography } from '@mui/materia
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
-import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import {
   HierarchicalSiteView,
   useHierarchicalSwitch,
   hierarchicalToggleSettingsLocalStorageKey,
-} from '../../../components/HierarchicalSiteView'
+} from '../../../cleanComponents/HierarchicalSiteView'
+import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
 import useSitesDownload from '../../../hooks/site/useSitesDownload'
