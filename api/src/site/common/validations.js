@@ -20,6 +20,7 @@ const entitySchema = {
   hoursStart: Joi.number().allow('', null),
   hoursEnd: Joi.number().allow('', null),
   tags: Joi.string().allow('', null),
+  consumableIds: Joi.string().allow('', null),
   siteTypeId: Joi.number().integer().positive().required(),
   parentWarehouseId: Joi.number().integer().positive().allow('', null),
 }
@@ -36,6 +37,16 @@ const updateSchema = {
 const postSchema = {
   payload: {
     ...entitySchema,
+  },
+}
+
+const updateConsumableSchema = {
+  params: {
+    siteId: Joi.number().integer().positive().description('Site id').required(),
+  },
+  payload: {
+    consumableId: Joi.number().required().integer().positive(),
+    modify: Joi.string().valid('add', 'remove').required(),
   },
 }
 
@@ -62,4 +73,4 @@ function throwExistingSiteError(name, shortName, externalId, existingSite) {
   throw Boom.conflict('', problems)
 }
 
-module.exports = { postSchema, updateSchema, throwExistingSiteError }
+module.exports = { postSchema, updateSchema, updateConsumableSchema, throwExistingSiteError }
