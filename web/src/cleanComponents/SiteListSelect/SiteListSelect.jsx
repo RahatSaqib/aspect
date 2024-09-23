@@ -3,7 +3,7 @@ import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
 import useSiteList from '../../hooks/site/useSiteList'
 
-const SiteListSelect = ({ name, label, value, onChange, width, disabled, queryParams, isClearable }) => {
+const SiteListSelect = ({ name, label, value, onChange, width, disabled, queryParams, isClearable, style }) => {
   const { isLoading: isSiteListLoading, data: siteList } = useSiteList(queryParams)
   const inputProps = useMemo(() => {
     let iProps = {}
@@ -43,7 +43,7 @@ const SiteListSelect = ({ name, label, value, onChange, width, disabled, queryPa
           variant="standard"
           value={value}
           onChange={e => onChange(e.target.value)}
-          style={{ width: '98%', marginRight: '1%', marginLeft: '1%', marginTop: '16px' }}
+          style={style}
           InputProps={inputProps}
         >
           {(siteList || []).map(site => (
