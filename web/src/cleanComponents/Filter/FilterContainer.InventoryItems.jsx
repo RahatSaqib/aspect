@@ -1,5 +1,5 @@
 import React from 'react'
-import { Grid, TextField, FormControlLabel, Checkbox } from '@mui/material'
+import { Grid, TextField, FormControlLabel, Checkbox, Switch } from '@mui/material'
 import { useIntl } from 'react-intl'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
@@ -61,7 +61,7 @@ const InventoryItemsFilter = () => {
         <Grid item xs={3}>
           <FormControlLabel
             control={
-              <Checkbox
+              <Switch
                 checked={[true, 'true'].includes(state.breakOutByLot)}
                 onChange={e => setState({ ...state, breakOutByLot: e.target.checked || null })}
               />

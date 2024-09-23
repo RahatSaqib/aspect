@@ -79,7 +79,9 @@ export const InventoryItemsListWithProps = ({
   refetch,
 }) => {
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
-
+  useEffect(() => {
+    setEnableInventoryOnHandField(filter.breakOutByLot && enableInventoryOnHandField)
+  }, [filter.breakOutByLot])
   const columns = [
     {
       key: 'siteName',
@@ -95,12 +97,14 @@ export const InventoryItemsListWithProps = ({
       key: 'quantityOnHand',
       label: intl.formatMessage(messages.quantityOnHand),
       sortable: true,
+      tooltip: intl.formatMessage(messages.quantityOnHandDescription),
     },
     {
       key: 'dailyConsumptionRate',
       label: intl.formatMessage(messages.dailyConsumptionRate),
       sortable: true,
       isHidden: filter.breakOutByLot,
+      tooltip: intl.formatMessage(messages.dailyConsumptionRateDescription),
     },
     {
       key: 'lotNumber',
@@ -185,6 +189,7 @@ export const InventoryItemsListWithProps = ({
                   sx={{ p: 2 }}
                   control={
                     <Switch
+                      checked={enableInventoryOnHandField}
                       onChange={event => setEnableInventoryOnHandField(filter.breakOutByLot && event.target.checked)}
                     />
                   }
