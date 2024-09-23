@@ -188,6 +188,7 @@ async function onResultLogged({ resultId }, { messageContext }) {
           'dt.externalId as deviceType',
           'p.maxDaysDeviceNoResults'
         )) || {}
+
     if (!deviceId) {
       return
     }
