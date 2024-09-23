@@ -57,6 +57,9 @@ const SiteList = ({ navigate, location }) => {
     { key: 'lga', label: getCustomMessage(intl.formatMessage, messages, 'lga', user), sortable: true },
     { key: 'externalId', label: intl.formatMessage(messages.externalId), sortable: true },
     { key: 'totalDevices', label: intl.formatMessage(messages.totalDevices), sortable: true },
+    { key: 'siteConsumableCount', label: intl.formatMessage(messages.consumables), sortable: false },
+    { key: 'siteType', label: intl.formatMessage(messages.siteType), sortable: false },
+    { key: 'parentWarehouseName', label: intl.formatMessage(messages.siteProvider), sortable: false },
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
   ]
 
@@ -111,7 +114,7 @@ const SiteList = ({ navigate, location }) => {
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-        <SiteFilter />
+        <SiteFilter  />
         <DataTableCard key={`DataTableCard__table-${location.key}`}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
             <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
