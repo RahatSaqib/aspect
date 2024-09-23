@@ -6,7 +6,8 @@ import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { StateSelect, LgaSelect } from '../index'
+import SiteTypeSelect from '../../pages/Site/Detail/Edit/SiteTypeSelect'
+import { StateSelect, LgaSelect, SiteListSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
 const SiteFilter = () => {
@@ -31,6 +32,24 @@ const SiteFilter = () => {
             value={state.lgaId}
             onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
             stateId={state.stateId}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <SiteTypeSelect
+            name="siteType"
+            label={formatMessage(messages.siteType)}
+            value={state.siteTypeId}
+            onChange={siteTypeId => setState({ ...state, siteTypeId })}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <SiteListSelect
+            name="parentWarehouseId"
+            label={formatMessage(messages.siteProvider)}
+            value={state.parentWarehouseId || ''}
+            onChange={parentWarehouseId => setState({ ...state, parentWarehouseId })}
+            queryParams={{ siteTypeExternalIds: ['warehouse'], excludeSiteIds: [] }}
+            isClearable
           />
         </Grid>
         <Grid item xs={3}>

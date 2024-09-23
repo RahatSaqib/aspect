@@ -362,6 +362,14 @@ const messages = {
       id: 'filter.popover.lgaName',
       defaultMessage: 'LGA name',
     },
+    siteType: {
+      id: 'filter.popover.siteType',
+      defaultMessage: 'Site Type',
+    },
+    siteProvider: {
+      id: 'filter.popover.siteProvider',
+      defaultMessage: 'Site Provider',
+    },
     breakOutByLot: {
       id: 'pages.InventoryItemsList.breakOutByLot',
       defaultMessage: 'Break out by lot',
