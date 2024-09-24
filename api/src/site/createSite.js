@@ -38,7 +38,7 @@ module.exports = async function (request) {
   const [newId] = await insertSite(knex, values)
 
   if (payload.consumableIds) {
-    await insertSiteConsumables(newId, payload.consumableIds.split(',').map(Number))
+    await insertSiteConsumables(newId, payload.consumableIds)
   }
 
   await updateTagsById(newId, tagType, tags, auth)

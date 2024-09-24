@@ -8,7 +8,7 @@ const createSite = async site => {
   const submitSite = {
     ...site,
     tags: site?.tags?.map(t => t?.title)?.join(','),
-    consumableIds: (site.consumableIds ?? []).join(','),
+    consumableIds: site?.consumableIds ?? [],
   }
   delete submitSite.id
   delete submitSite.country

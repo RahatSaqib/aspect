@@ -51,7 +51,6 @@ const SELECT_SHOW_FIELDS = [
   's.parentWarehouseId',
   's.hoursStart',
   's.hoursEnd',
-  knex.raw('COALESCE(GROUP_CONCAT(sc.consumableId), NULL) as consumableIds'),
 ]
 
 function getSitesQuery(dataConstraints) {
@@ -134,7 +133,6 @@ function getSite(siteId, dataConstraints) {
     .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Country as ct', 'g.countryId', 'ct.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
-    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
     .where('s.id', siteId)
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .first([
@@ -157,6 +155,8 @@ async function showSite(request) {
   }
 
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
+
+  site.consumableIds = await getSiteConsumables(site.id)
 
   site.devices = await getNotDecommissionedDevices(dataConstraints)
     .where('siteId', params.siteId)
@@ -587,6 +587,10 @@ const getReportingSites = async request => {
     length: _.size(paginatedData),
     data: paginatedData,
   }
+}
+
+const getSiteConsumables = siteId => {
+  return knex('SiteConsumable').where('siteId', siteId).pluck('consumableId')
 }
 
 module.exports = {

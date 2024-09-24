@@ -4,7 +4,7 @@ import PropTypes from 'prop-types'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
-import Consumables from '../Consumables/Consumables'
+import Consumables from '../../../Inventory/Consumables/Consumables'
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
 import styles from '../SiteDetail.module.css'
@@ -55,10 +55,7 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
               </PermissionChecker>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Consumables
-                siteId={site.id}
-                consumableIds={site?.consumableIds ? site.consumableIds.split(',').map(Number) : []}
-              />
+              <Consumables siteId={site.id} consumableIds={site.consumableIds} />
             </Grid>
           </Grid>
         </Card>
