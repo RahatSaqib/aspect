@@ -20,7 +20,7 @@ const entitySchema = {
   hoursStart: Joi.number().allow('', null),
   hoursEnd: Joi.number().allow('', null),
   tags: Joi.string().allow('', null),
-  consumableIds: Joi.array().items(Joi.number()).required(),
+  consumableIds: Joi.array().items(Joi.number()).allow(null),
   siteTypeId: Joi.number().integer().positive().required(),
   parentWarehouseId: Joi.number().integer().positive().allow('', null),
 }
