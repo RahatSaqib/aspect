@@ -81,7 +81,7 @@ export const InventoryItemsListWithProps = ({
   const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
   useEffect(() => {
     setEnableInventoryOnHandField(filter.breakOutByLot && enableInventoryOnHandField)
-  }, [filter.breakOutByLot])
+  }, [filter.breakOutByLot, enableInventoryOnHandField])
   const columns = [
     {
       key: 'siteName',
