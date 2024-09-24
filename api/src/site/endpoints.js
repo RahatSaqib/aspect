@@ -39,7 +39,10 @@ function listSitesBaseConfig() {
           'createdOn',
           'totalDevices',
           'externalId',
-          'inventoryUpdatedOn'
+          'inventoryUpdatedOn',
+          'siteType',
+          'parentWarehouseName',
+          'siteConsumableCount'
         ),
       },
     },
