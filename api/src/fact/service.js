@@ -14,6 +14,7 @@ const { deviceOnline, deviceNoResults, deviceHasNewResults } = require('../devic
 const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const logger = require('../shared/logger')
+const config = require('../config')
 
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
@@ -192,9 +193,8 @@ async function onResultLogged({ resultId }, { messageContext }) {
     if (!deviceId) {
       return
     }
-
     const now = new Date()
-    const maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults || 14)
+    const maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults || config.maxDaysDeviceNoResults)
 
     const resultDate = endedOn || startedOn || createdOn
 
