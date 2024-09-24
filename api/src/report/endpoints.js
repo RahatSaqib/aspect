@@ -1,11 +1,17 @@
 const Joi = require('@hapi/joi')
+const { pick } = require('lodash')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
-const { getReports, proxyGxReport, getAsyncReportRequest } = require('./service')
+const {
+  getReports,
+  proxyGxReport,
+  getAsyncReportRequest,
+  getAsyncReportRequestWithReportsFilter,
+} = require('./service')
 const downloadReport = require('./downloadReport')
 const downloadScheduledReport = require('./downloadScheduledReport')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
-const processAsyncReport = require('./processAsyncReport')
 const { responseAsyncReports } = require('./validation/response')
+const { processAsyncReportRequest } = require('./processAsyncReportRequest')
 
 function requestBaseQuery() {
   const { minDate, maxDate } = validateDateRangeParams()
@@ -166,19 +172,40 @@ const routes = [
   {
     method: 'POST',
     path: '/reports/{externalId}/async',
-    handler: processAsyncReport,
+    handler: processAsyncReportRequest,
     config: {
       description: 'Process report asynchronously',
       notes: 'Returns a list of reports requested by the user within the last 24 hours',
       auth: { scope: ['report:view'] },
       validate: {
-        query: {
-          ...requestBaseQuery(),
+        payload: {
+          reportsFilter: {
+            ...requestBaseQuery(),
+          },
+          ...pick(requestBaseQuery(), ['timeZone']),
           format: Joi.string().allow('', null, 'xlsx', 'csv').description('File format for exporting data'),
         },
         params: {
           externalId: Joi.string().description('Value of externalId in table Report').required(),
         },
+      },
+    },
+  },
+  {
+    method: 'POST',
+    path: '/reports/async',
+    handler: getAsyncReportRequestWithReportsFilter,
+    config: {
+      description: 'List of Async Reports',
+      notes: 'Reports requested by user',
+      auth: { scope: ['report:view'] },
+      validate: {
+        payload: {
+          reportsFilter: Joi.object().unknown(true).description('Report filters'),
+        },
+      },
+      response: {
+        ...responseAsyncReports(),
       },
     },
   },
@@ -195,7 +222,6 @@ const routes = [
           ...validateDateRangeParams(),
           ...validateSortPageParams(),
           status: Joi.string().optional().description('Status ID'),
-          reportFilters: Joi.string().optional().description('Report filters'),
         },
       },
       response: {

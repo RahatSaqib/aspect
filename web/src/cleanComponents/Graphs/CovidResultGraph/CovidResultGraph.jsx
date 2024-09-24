@@ -75,7 +75,7 @@ const CovidResultGraph = ({ assaysFromState: assays, resultCategoryGroupsFromSta
       )
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       let { avg: pieAvg } = getAverageFromData(pieData, 'value', ['Positive', 'PresumptivePositive'], 'standard')
-      pieAvg = parseFloat(pieAvg.toFixed(1))
+      pieAvg = parseFloat(pieAvg?.toFixed(1))
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
@@ -102,7 +102,7 @@ const CovidResultGraph = ({ assaysFromState: assays, resultCategoryGroupsFromSta
           expandedBarData.push({
             id: key,
             month: format(negateTimeZoneOffset(new Date(result.month)), 'MMM-yyyy'),
-            value: +result[key].toFixed(3).slice(0, -1),
+            value: +result[key]?.toFixed(3).slice(0, -1),
             type: genLabel(key, assays, formatMessage, messages, i18nKeys),
             originalMonth: result.month,
           })

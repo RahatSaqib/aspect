@@ -3,6 +3,7 @@ const _ = require('lodash')
 const { getListResults } = require('../service')
 const { getFieldsForQuarterlyReport } = require('../query')
 const { getUser } = require('../../auth/service')
+const { GENDER_MAP } = require('../../plugin/partner/Myanmar/shared/constants')
 
 // ---------------------------------------------------------------
 async function getDataForQuarterlyReport(auth, query) {
@@ -18,13 +19,8 @@ async function getDataForQuarterlyReport(auth, query) {
   _.each(result.data, d => {
     d.result1 = mapGxAlertResultToAspect(d.result1)
     d.result2 = mapGxAlertResultToAspect(d.result2)
-    if (d.notes) {
-      const [age, gender, , , testReason] = d.notes.split(',')
-      d.gender = gender?.toUpperCase() === 'M' ? 'Male' : gender?.toUpperCase() === 'F' ? 'Female' : '' || d.gender
-      d.patientAgeYears = age ? Number(age) : d.patientAgeYears ? Number(d.patientAgeYears) : d.patientAgeYears
-      d.testReason = testReason || d.testReason
-      d.cxrAbnormalities = testReason.toLowerCase().includes('cxr') ? 'CXR' : ''
-    }
+    d.cxrAbnormalities = d.notes?.toLowerCase().includes('cxr') ? 'CXR' : ''
+    if (d.gender) d.gender = GENDER_MAP[d.gender.toLowerCase()]
   })
 
   return result
