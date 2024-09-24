@@ -1,5 +1,6 @@
 const uuid = require('node-uuid')
 const Boom = require('@hapi/boom')
+const Promise = require('bluebird')
 const { knex, filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
@@ -20,10 +21,17 @@ async function updateSite(siteId, params) {
 
 async function updateSiteConsumable(siteId, { modify, consumableId }) {
   if (modify === 'add') {
-    return knex('SiteConsumable').insert({
-      siteId,
-      consumableId,
-    })
+    return knex('SiteConsumable')
+      .insert({
+        siteId,
+        consumableId,
+      })
+      .whereNotExists(function () {
+        this.select('*').from('SiteConsumable').where({
+          siteId,
+          consumableId,
+        })
+      })
   }
   const exists = await knex('InventoryItem').where({ siteId, consumableId }).first()
   if (exists) {
@@ -123,12 +131,19 @@ const getSites = (dataConstraints, query) => {
 }
 
 const insertSiteConsumables = (siteId, consumableIds) => {
-  const recordsToInsert = consumableIds.map(consumableId => ({
-    siteId,
-    consumableId,
-  }))
-
-  return knex('SiteConsumable').insert(recordsToInsert)
+  return Promise.each(consumableIds, async consumableId => {
+    await knex('SiteConsumable')
+      .insert({
+        siteId,
+        consumableId,
+      })
+      .whereNotExists(function () {
+        this.select('*').from('SiteConsumable').where({
+          siteId,
+          consumableId,
+        })
+      })
+  })
 }
 const insertSite = (knex, site) => {
   if (!site.guid) site.guid = uuid.v4()
