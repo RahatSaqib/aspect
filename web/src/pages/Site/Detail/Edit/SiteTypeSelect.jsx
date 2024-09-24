@@ -2,7 +2,7 @@ import React from 'react'
 import { LinearProgress, MenuItem, TextField } from '@mui/material'
 import useSiteType from '../../../../hooks/site/useSiteType'
 
-const SiteTypeSelect = ({ name, label, value, onChange, width, disabled, style }) => {
+const SiteTypeSelect = ({ name, label, value, onChange, width, disabled, className }) => {
   const { isLoading: isSiteTypeLoading, data: siteType } = useSiteType()
 
   return (
@@ -15,11 +15,11 @@ const SiteTypeSelect = ({ name, label, value, onChange, width, disabled, style }
           disabled={disabled}
           name={name}
           label={label}
+          className={className}
           fullWidth
           variant="standard"
           value={value}
           onChange={e => onChange(e.target.value)}
-          style={style}
         >
           {(siteType || []).map(site => (
             <MenuItem key={site.id} value={site.id}>

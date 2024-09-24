@@ -149,7 +149,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             <SiteTypeSelect
               name="siteType"
               width="33%"
-              style={{ width: '98%', marginRight: '1%', marginLeft: '1%', marginTop: '16px' }}
+              className={styles.site_list_select}
               label={formatMessage(messages.fieldSiteType)}
               value={editSite.siteTypeId}
               onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
@@ -259,8 +259,8 @@ const SiteForm = ({ site, onLatLongChange }) => {
             />
             <SiteListSelect
               name="belongsTo"
+              className={styles.site_list_select}
               width="33%"
-              style={{ width: '98%', marginRight: '1%', marginLeft: '1%', marginTop: '16px' }}
               label={formatMessage(messages.fieldBelongTo)}
               value={editSite.parentWarehouseId || ''}
               onChange={parentWarehouseId => setEditSite({ ...editSite, parentWarehouseId })}
