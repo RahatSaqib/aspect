@@ -21,28 +21,7 @@ const routes = [
       validate: {
         query: {
           name: Joi.string().allow('').description('Filter for consumable type'),
-          ...validateSortPageParams('name'),
-        },
-      },
-      response: {
-        schema: {
-          ok: Joi.bool().required(),
-          total: Joi.number().integer().required(),
-          length: Joi.number().integer().required(),
-          data: Joi.array().items(
-            Joi.object().keys({
-              id: Joi.number().integer().required(),
-              name: Joi.string().max(255).allow('', null),
-              i18nKey: Joi.string().max(255).allow('', null),
-              unit: Joi.string().max(50).allow('', null),
-              unitShortName: Joi.string().max(50).allow('', null),
-              canExpire: Joi.number().integer(),
-              manufacturer: Joi.string().max(500).allow('', null),
-              autoInclude: Joi.number().integer(),
-              showLot: Joi.number().integer().required(),
-              showExpirationDate: Joi.number().integer().required(),
-            })
-          ),
+          ...validateSortPageParams('name', 'quantityOnHand', 'unit'),
         },
       },
     },

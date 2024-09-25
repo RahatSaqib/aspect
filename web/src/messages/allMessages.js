@@ -426,6 +426,7 @@ const messages = defineMessages({
   sites: { id: 'browsePage.browseDropdown.sites', defaultMessage: 'Sites' },
   supplies: { id: 'browsePage.browseDropdown.supplies', defaultMessage: 'Supplies' },
   inventoryItems: { id: 'browsePage.browseDropdown.inventoryItems', defaultMessage: 'Inventory on Hand' },
+  inventoryList: { id: 'browsePage.browseDropdown.inventoryList', defaultMessage: 'Inventory Items' },
   inventoryLog: { id: 'browsePage.browseDropdown.inventoryLog', defaultMessage: 'Inventory Log' },
   inventoryTransfers: { id: 'browsePage.browseDropdown.inventoryTransfers', defaultMessage: 'Transfers' },
   InventoryOverview: { id: 'browsePage.browseDropdown.inventoryOverview', defaultMessage: 'Inventory Overview' },

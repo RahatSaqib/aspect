@@ -136,6 +136,11 @@ const getRawLinks = (f, user) => [
     submenu: [
       { href: '/browse/admin/states', label: getCustomMessage(f, messages, 'state', user), perm: ['admin', 'edit'] },
       { href: '/browse/admin/lgas', label: getCustomMessage(f, messages, 'lga', user), perm: ['admin', 'edit'] },
+      {
+        href: '/browse/admin/inventoryList',
+        label: getCustomMessage(f, messages, 'inventoryList', user),
+        perm: ['admin', 'edit'],
+      },
     ],
   },
 ]
