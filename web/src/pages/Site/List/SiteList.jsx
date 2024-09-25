@@ -59,7 +59,7 @@ const SiteList = ({ navigate, location }) => {
     { key: 'totalDevices', label: intl.formatMessage(messages.totalDevices), sortable: true },
     { key: 'siteConsumableCount', label: intl.formatMessage(messages.consumables), sortable: true },
     { key: 'siteType', label: intl.formatMessage(messages.siteType), sortable: true },
-    { key: 'parentWarehouseName', label: intl.formatMessage(messages.siteProvider), sortable: true },
+    { key: 'parentWarehouseName', label: intl.formatMessage(messages.stockProvider), sortable: true },
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
   ]
 
