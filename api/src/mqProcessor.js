@@ -1,11 +1,11 @@
-const { knex } = require('./db')
 const logger = require('./shared/logger')
+const { processAsyncReport } = require('./report/jobs/processAsyncReport')
 
 const jobStrategies = {
   asyncReports: async job => {
-    const result = await knex('Result').where({ externalId: job.data.externalId }).first()
-    logger.debug(`result: ${JSON.stringify(result)}, job data: ${job.data.externalId}`)
-    // Function calling to generate async reports will come here.
+    logger.debug(`job data: ${job.data}`)
+
+    await processAsyncReport(job.data)
     return job.id
   },
   testJobName: async job => {

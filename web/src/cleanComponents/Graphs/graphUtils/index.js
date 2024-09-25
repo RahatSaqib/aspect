@@ -548,6 +548,14 @@ const fillData = data => {
   return result
 }
 
+const getValidResults = data => {
+  const validResults = data.filter(elem => !['Invalid', 'NoResult', 'Error'].includes(elem.id))
+
+  const totalValidResults = validResults.reduce((sum, elem) => sum + elem.value, 0)
+
+  return totalValidResults
+}
+
 export {
   filterColour,
   getTimePeriod,
@@ -566,4 +574,5 @@ export {
   getResultCategoryGroupsForResultList,
   negateTimeZoneOffset,
   getMinMaxDateFromMonthString,
+  getValidResults,
 }

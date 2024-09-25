@@ -87,18 +87,17 @@ const TbRifDetectedGraph = ({ assaysFromState: assays, resultCategoryGroupsFromS
         formatMessage,
         messages
       )
-      const numberOfMonthsInAYear = 12
       const pieTotal = pieData.reduce((acc, curr) => acc + curr.value, 0)
       const detected = pieData.find(elem => elem.id === 'Detected') || {}
 
-      const pieAvg = (detected.value / numberOfMonthsInAYear).toFixed(1)
+      const pieAvg = ((detected.value / pieTotal) * 100).toFixed(2)
 
       const pie = pieData.map(d => ({
         ...d,
         label: genLabel(d.id, assays, formatMessage, messages, i18nKeys),
         value: pieTotal < 1 ? pieTotal : +calcPercentageForGraphs(d.value, pieTotal, 2),
       }))
-      // code for column
+      // code for columns
       const groupedForBar = formatDataByGraphType(
         info,
         'percentage',

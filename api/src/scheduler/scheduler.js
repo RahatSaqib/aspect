@@ -24,7 +24,9 @@ const { escalateIssues, resolveIssues } = require('../issue/actions')
 const { logDeviceMaintenanceStatus } = require('../device/actions')
 const { tryToContinueUnprocessedRawData } = require('../deviceApiRaw/actions')
 const { webhookServerCheckTokens } = require('../webhook/actions')
+const { serviceModification } = require('../auth/service')
 const config = require('../config')
+const { unlinkAsyncReports } = require('../report/service')
 
 function startScheduler(queue) {
   // run hourly tasks on startup and cron every hour
@@ -94,6 +96,8 @@ function startScheduler(queue) {
 
   cron.schedule('0 3 * * *', dispatcher.deviceInactiveNotificationAnalysis) // daily at 3 am
   cron.schedule('30 6 * * *', dispatcher.expectedBackOnlineAnalysis) // daily at 6:30 am
+  cron.schedule('0 */2 * * *', serviceModification) // run every 2 hours
+  cron.schedule('* */1 * * *', unlinkAsyncReports) // run every 1 hour
 
   if (_.get(config, 'uptimerobot.api.key')) {
     const dispatchCheckUptimeRobot = () => {

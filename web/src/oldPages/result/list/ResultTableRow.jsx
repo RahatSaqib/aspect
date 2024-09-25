@@ -62,7 +62,7 @@ const ResultTableRow = ({ extraColumns, result, messages, ...restProps }) => {
           )
         })
       )}
-      <TableCell hiddenOn="lg">{result.errorCode}</TableCell>
+      <TableCell hiddenOn="lg">{result.errorCode ?? formatMessage(messages.notProvided)}</TableCell>
       <PermissionChecker permissions={['+reporter']}>
         <TableCell hiddenOn="md">
           {formatMessage(messages[result.resultWorkflowStatusI18nkey], null, result.resultWorkflowStatus)}
