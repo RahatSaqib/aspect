@@ -732,7 +732,7 @@ async function removePersonAssignment(request) {
 
 // ----------------------------------------------------------------------------------------
 
-function getRoleLevel(CreaterRoles, personRole) {
+function getRoleLevel(creatorRoles, personRole) {
   // Object mapping roles to their respective levels
   const roleLevels = {
     Admin: 5,
@@ -757,7 +757,7 @@ function getRoleLevel(CreaterRoles, personRole) {
   let highestLevel = -1
 
   // Iterate through the roles array to find the highest level
-  CreaterRoles.forEach(role => {
+  creatorRoles.forEach(role => {
     const level = roleLevels[role] || 0 // Default to 0 if role not found
     if (level > highestLevel) {
       highestLevel = level
