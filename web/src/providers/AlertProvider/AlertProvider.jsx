@@ -33,7 +33,7 @@ const InfoAlert = ({ message, children }) => {
               color="inherit"
               size="small"
             >
-              Continue
+              Skip
             </Button>
           }
           severity="warning"
