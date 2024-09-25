@@ -830,7 +830,7 @@ function moduleDisabledIssues(onlyActiveIssues = false) {
        */
       knex.raw('i2.data->>"$.moduleName" as moduleName'),
       knex.raw('i2.data->>"$.moduleSerial" as moduleSerial'),
-      'i2.createdOn as dateLastIssue',
+      knex.raw('i2.data->>"$.disabledOn" as dateLastIssue'),
       'it.name as lastIssue'
     )
     .as('i')
