@@ -66,6 +66,10 @@ export default defineMessages({
     id: 'pages.SiteDetail.fieldDevices',
     defaultMessage: 'Devices',
   },
+  consumablesForSite: {
+    id: 'pages.SiteDetail.consumablesForSite',
+    defaultMessage: 'Consumables applicable for the site',
+  },
   fieldContact: {
     id: 'pages.SiteDetail.fieldContact',
     defaultMessage: 'Site Contacts',

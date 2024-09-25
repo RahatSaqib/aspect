@@ -2,7 +2,7 @@ const Joi = require('@hapi/joi')
 const { validateAllGeographyFilterParams } = require('../geography/requestValidation')
 const { asyncHandler, validateDateRangeParams, validateSortPageParams } = require('../routes')
 const createSite = require('./createSite')
-const updateSite = require('./updateSite')
+const { update: updateSite, updateConsumable: updateSiteConsumable } = require('./updateSite')
 const {
   listSites,
   showSite,
@@ -12,7 +12,7 @@ const {
   disableSite,
   getReportingSites,
 } = require('./service')
-const { postSchema, updateSchema } = require('./common/validations')
+const { postSchema, updateSchema, updateConsumableSchema } = require('./common/validations')
 
 const { exportSites, exportReporters } = require('./serviceReports')
 const { reportingSitesQueryParams, reportingSitesResponse } = require('./common/validation/reportingSite')
@@ -25,6 +25,8 @@ function listSitesBaseConfig() {
         siteIds: Joi.string().allow('').description('Filter for site ids'),
         deviceName: Joi.string().allow('').description('Filter for device name'),
         siteName: Joi.string().allow('').description('Filter for site name'),
+        siteTypeId: Joi.string().allow('').description('Filter for site type'),
+        parentWarehouseId: Joi.string().allow('').description('Filter for warehouse'),
         externalId: Joi.string().allow('').description('Filter for facility code'),
         format: Joi.string().allow('').description('File format for exporting data'),
         ...validateAllGeographyFilterParams(),
@@ -37,7 +39,10 @@ function listSitesBaseConfig() {
           'createdOn',
           'totalDevices',
           'externalId',
-          'inventoryUpdatedOn'
+          'inventoryUpdatedOn',
+          'siteType',
+          'parentWarehouseName',
+          'siteConsumableCount'
         ),
       },
     },
@@ -167,6 +172,17 @@ const routes = [
       notes: 'Detail of a site',
       auth: { scope: ['site:edit'] },
       validate: updateSchema,
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/site/consumable/{siteId}',
+    handler: updateSiteConsumable,
+    config: {
+      description: 'Update Site Consumables',
+      notes: 'Add or Remove consumable from a site',
+      auth: { scope: ['site:edit'] },
+      validate: updateConsumableSchema,
     },
   },
   {

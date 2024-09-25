@@ -63,6 +63,14 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'site name includes "{siteName}"',
   },
+  whereSiteTypeIs: {
+    id: 'filter.btnGroup.whereSiteTypeIs',
+    defaultMessage: 'site type is "{siteType}"',
+  },
+  whereSiteProviderIs: {
+    id: 'filter.btnGroup.whereSiteProviderIs',
+    defaultMessage: 'site provider is "{siteProvider}"',
+  },
   whereLgaNameIncludes: {
     id: 'filter.btnGroup.whereLgaNameIncludes',
     defaultMessage: 'lga name includes "{lgaName}"',

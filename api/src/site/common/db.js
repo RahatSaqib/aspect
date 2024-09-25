@@ -1,4 +1,6 @@
 const uuid = require('node-uuid')
+const Boom = require('@hapi/boom')
+const Promise = require('bluebird')
 const { knex, filterParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
 
@@ -15,6 +17,28 @@ async function getExistingSiteExcludingCurrent(siteId, name, shortName, external
 
 async function updateSite(siteId, params) {
   await knex('Site as s').where('s.id', siteId).update(params)
+}
+
+async function updateSiteConsumable(siteId, { modify, consumableId }) {
+  if (modify === 'add') {
+    return knex('SiteConsumable')
+      .insert({
+        siteId,
+        consumableId,
+      })
+      .whereNotExists(function () {
+        this.select('*').from('SiteConsumable').where({
+          siteId,
+          consumableId,
+        })
+      })
+  }
+  const exists = await knex('InventoryItem').where({ siteId, consumableId }).first()
+  if (exists) {
+    throw Boom.conflict('Unable to remove the cartridge')
+  } else {
+    return knex('SiteConsumable').where({ siteId, consumableId }).del()
+  }
 }
 
 async function checkSiteAccess(siteId, dataConstraints) {
@@ -106,6 +130,21 @@ const getSites = (dataConstraints, query) => {
     })
 }
 
+const insertSiteConsumables = (siteId, consumableIds) => {
+  return Promise.each(consumableIds, async consumableId => {
+    await knex('SiteConsumable')
+      .insert({
+        siteId,
+        consumableId,
+      })
+      .whereNotExists(function () {
+        this.select('*').from('SiteConsumable').where({
+          siteId,
+          consumableId,
+        })
+      })
+  })
+}
 const insertSite = (knex, site) => {
   if (!site.guid) site.guid = uuid.v4()
   if (!site.institutionGuid) site.institutionGuid = uuid.v4()
@@ -118,6 +157,8 @@ module.exports = {
   getExistingSite,
   getExistingSiteExcludingCurrent,
   updateSite,
+  updateSiteConsumable,
+  insertSiteConsumables,
   checkSiteAccess,
   getSiteIdByName,
   getLinkedResults,
