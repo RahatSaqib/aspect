@@ -45,12 +45,4 @@ export default defineMessages({
     id: 'pages.NotificationDetail.New.no',
     defaultMessage: 'No',
   },
-  buildNotification: {
-    id: 'pages.NotificationDetail.New.buildNotification',
-    defaultMessage: 'Build Notification',
-  },
-  editNotification: {
-    id: 'pages.NotificationDetail.New.editNotification',
-    defaultMessage: 'Edit Notification',
-  },
 })
