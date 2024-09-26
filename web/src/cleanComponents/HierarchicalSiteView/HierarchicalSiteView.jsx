@@ -15,10 +15,10 @@ export function HierarchicalSiteView(props) {
 
   const [update] = useFilterUpdate()
 
-  const { isLoading: isCountryLoading, isError: isCountryError, data: countries } = useCountries()
+  const { isLoading: isCountryLoading, isError: isCountryError, data: countries } = useCountries(true)
   const selectedCountry = countries?.find(({ id }) => id === countryId)
   const { isLoading: isStateLoading, data: states = [] } = useStatesByCountry(
-    { countryId, returnAll: true },
+    { countryId, all: true },
     { enabled: !isCountryLoading && !isCountryError && Boolean(countryId) && Boolean(selectedCountry) }
   )
   const { isLoading: isLgaLoading, data: lgasData } = useLgaByState({ stateId }, { enabled: Boolean(stateId) })
@@ -61,7 +61,7 @@ export function HierarchicalSiteView(props) {
         <Skeleton height={40} />
       ) : (
         <Typography variant="h6" sx={{ mb: 2 }}>
-          {selectedCountry.name}
+          {selectedCountry?.name}
         </Typography>
       )}
       <Stack spacing={2}>
