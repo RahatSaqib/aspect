@@ -1,8 +1,13 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { LinearProgress, TableBody } from '@mui/material'
+import { Box, LinearProgress, Switch, TableBody, Typography } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
+import {
+  HierarchicalSiteView,
+  useHierarchicalSwitch,
+  hierarchicalToggleSettingsLocalStorageKey,
+} from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useSites from '../../../hooks/site/useSites'
@@ -27,6 +32,9 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
+  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.SITE_LIST,
+  })
 
   const { data, isLoading: tableLoading } = useSites(
     { sortCol, sortDir, pageAt, pageSize, filters },
@@ -112,49 +120,61 @@ const SiteList = ({ navigate, location }) => {
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
         <SiteFilter />
-        <DataTableCard key={`DataTableCard__table-${location.key}`}>
-          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
-          </div>
-          {isLoading ? (
-            <LinearProgress />
-          ) : !data || !data.siteList || data.siteList.length === 0 ? (
-            <BrowseEmptyList />
-          ) : (
-            <>
-              <TableContainer>
-                <SiteDataTable className={styles.SiteDataTable}>
-                  <SiteDataTableHead
-                    navigate={navigate}
-                    location={location}
-                    sortColumnKey={sortCol}
-                    sortColumnDir={sortDir}
-                    columns={tableColumns}
-                  />
-                  <TableBody>
-                    {data?.siteList?.map(site => (
-                      <SiteDataTableRow
-                        key={site.id}
-                        site={site}
-                        onClick={onRowClick}
-                        onAlertClick={onAlertClick}
-                        data-site-id={site.id}
-                      />
-                    ))}
-                  </TableBody>
-                </SiteDataTable>
-              </TableContainer>
-              <BrowseTablePaginator
-                navigate={navigate}
-                location={location}
-                paginatorStatus={messages.paginatorStatus}
-                total={data.total}
-                pageAt={pageAt}
-                pageSize={pageSize}
-              />
-            </>
+        <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 1 }}>
+          {isHierarchicalView && (
+            <HierarchicalSiteView countryId={user.countryId} filters={filters} pathname="/browse/site" />
           )}
-        </DataTableCard>
+          <DataTableCard key={`DataTableCard__table-${location.key}`} sx={{ width: '100%' }}>
+            <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
+              <Typography variant="subtitle2" color="textSecondary">
+                <Switch
+                  checked={isHierarchicalView}
+                  onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
+                />
+                Hierarchical View
+              </Typography>
+              <AspectExportListButton onExport={onExportClick} reportName="Sites" visible />
+            </Box>
+            {isLoading ? (
+              <LinearProgress />
+            ) : !data || !data.siteList || data.siteList.length === 0 ? (
+              <BrowseEmptyList />
+            ) : (
+              <>
+                <TableContainer>
+                  <SiteDataTable className={styles.SiteDataTable}>
+                    <SiteDataTableHead
+                      navigate={navigate}
+                      location={location}
+                      sortColumnKey={sortCol}
+                      sortColumnDir={sortDir}
+                      columns={tableColumns}
+                    />
+                    <TableBody>
+                      {data?.siteList?.map(site => (
+                        <SiteDataTableRow
+                          key={site.id}
+                          site={site}
+                          onClick={onRowClick}
+                          onAlertClick={onAlertClick}
+                          data-site-id={site.id}
+                        />
+                      ))}
+                    </TableBody>
+                  </SiteDataTable>
+                </TableContainer>
+                <BrowseTablePaginator
+                  navigate={navigate}
+                  location={location}
+                  paginatorStatus={messages.paginatorStatus}
+                  total={data.total}
+                  pageAt={pageAt}
+                  pageSize={pageSize}
+                />
+              </>
+            )}
+          </DataTableCard>
+        </Box>
       </div>
     </>
   )
