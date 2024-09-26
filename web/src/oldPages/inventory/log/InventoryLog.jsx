@@ -1,13 +1,19 @@
 import React from 'react'
-import { LinearProgress, TableBody } from '@mui/material'
+import { LinearProgress, Switch, TableBody, Typography, Stack } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryLogFilter } from '../../../cleanComponents'
+import {
+  HierarchicalSiteView,
+  hierarchicalToggleSettingsLocalStorageKey,
+  useHierarchicalSwitch,
+} from '../../../cleanComponents/HierarchicalSiteView'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LOG } from '../../../components/QueryFetch/Inventory'
+import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -38,7 +44,12 @@ export const InventoryLogWithProps = ({
   sortDir,
   pageAt,
   pageSize,
+  filters,
 }) => {
+  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LOG,
+  })
+  const user = useAuthState()
   const columns = [
     {
       key: 'createdOn',
@@ -89,43 +100,61 @@ export const InventoryLogWithProps = ({
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
         <InventoryLogFilter />
-        <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
-          {isLoading ? (
-            <LinearProgress />
-          ) : !hasItems ? (
-            <BrowseEmptyList />
-          ) : (
-            <>
-              <InventoryLogDataTable className={styles.InventoryDataTable}>
-                <InventoryLogDataTableHead
+        <Stack sx={{ flexDirection: 'row', width: '100%', gap: 1 }}>
+          {isHierarchicalView && (
+            <HierarchicalSiteView countryId={user.countryId} filters={filters} pathname="/browse/inventory/log" />
+          )}
+          <DataTableCard
+            key={`DataTableCard__table-${location.key}`}
+            className={styles.DataTableCard__table}
+            sx={{ width: '100%' }}
+          >
+            <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between', width: '100%' }}>
+              <Typography variant="subtitle2" color="textSecondary">
+                <Switch
+                  checked={isHierarchicalView}
+                  onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
+                />
+                Hierarchical View
+              </Typography>
+            </Stack>
+            {isLoading ? (
+              <LinearProgress />
+            ) : !hasItems ? (
+              <BrowseEmptyList />
+            ) : (
+              <>
+                <InventoryLogDataTable className={styles.InventoryDataTable}>
+                  <InventoryLogDataTableHead
+                    navigate={navigate}
+                    location={location}
+                    sortColumnKey={sortCol}
+                    sortColumnDir={sortDir}
+                    columns={columns}
+                  />
+                  <TableBody>
+                    {items.map((inventoryLogItem, index) => (
+                      <InventoryLogTableRow
+                        key={`InventoryLog---${location.key}--${index}`}
+                        inventoryLogItem={inventoryLogItem}
+                      />
+                    ))}
+                  </TableBody>
+                </InventoryLogDataTable>
+                <BrowseTablePaginator
                   navigate={navigate}
                   location={location}
-                  sortColumnKey={sortCol}
-                  sortColumnDir={sortDir}
-                  columns={columns}
+                  intl={intl}
+                  pageSizeButtonKeys={[10, 25, 50, 100]}
+                  paginatorStatus={messages.paginatorStatus}
+                  total={total}
+                  pageAt={pageAt}
+                  pageSize={pageSize}
                 />
-                <TableBody>
-                  {items.map((inventoryLogItem, index) => (
-                    <InventoryLogTableRow
-                      key={`InventoryLog---${location.key}--${index}`}
-                      inventoryLogItem={inventoryLogItem}
-                    />
-                  ))}
-                </TableBody>
-              </InventoryLogDataTable>
-              <BrowseTablePaginator
-                navigate={navigate}
-                location={location}
-                intl={intl}
-                pageSizeButtonKeys={[10, 25, 50, 100]}
-                paginatorStatus={messages.paginatorStatus}
-                total={total}
-                pageAt={pageAt}
-                pageSize={pageSize}
-              />
-            </>
-          )}
-        </DataTableCard>
+              </>
+            )}
+          </DataTableCard>
+        </Stack>
       </div>
     </>
   )
@@ -179,7 +208,8 @@ const InventoryLog = () => {
     location,
     isLoading,
     data,
-    ...{ sortCol, sortDir, pageAt, pageSize, page: pageAt, size: pageSize, ...filters },
+    filters,
+    ...{ sortCol, sortDir, pageAt, pageSize, page: pageAt, size: pageSize },
   }
   return <InventoryLogWithProps {...props} />
 }
