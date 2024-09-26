@@ -106,6 +106,7 @@ import StateSelector from './StateSelector'
 import { TableContainer } from './Table/TableContainer'
 import TagSelect from './TagSelect'
 import TimezoneSelect from './TimezoneSelect'
+import UnitSelect from './UnitSelect'
 
 export {
   AspectSelect,
@@ -141,6 +142,7 @@ export {
   RevokeSelect,
   SiteListSelect,
   SiteSelect,
+  UnitSelect,
   SitesToTransferSelect,
   SiteTagInput,
   StateSelect,

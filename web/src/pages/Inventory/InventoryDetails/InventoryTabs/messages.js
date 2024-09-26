@@ -15,7 +15,7 @@ export default defineMessages({
   },
   consumpationRate: {
     id: 'pages.InventoryTabs.New.consumpationRate',
-    defaultMessage: 'Consumpation Rate',
+    defaultMessage: 'Consumption Rate',
   },
   headerText: {
     id: 'pages.InventoryTabs.New.headerText',

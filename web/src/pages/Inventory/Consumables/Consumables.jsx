@@ -2,7 +2,7 @@ import React from 'react'
 import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
 import CircularProgress from '@mui/material/CircularProgress'
 import FormGroup from '@mui/material/FormGroup'
-import useConsumable from '../../../hooks/inventory/useConsumable'
+import { useConsumable } from '../../../hooks/inventory/useConsumable'
 import useUpdateConsumable from '../../../hooks/site/useUpdateConsumable'
 import Summary from '../../../oldComponents/Summary'
 

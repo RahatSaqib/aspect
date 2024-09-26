@@ -19,6 +19,7 @@ const SELECT_LIST_FIELDS = [
         ii.quantityOnHand
       ), 0) as quantityOnHand`
   ),
+  knex.raw('COALESCE(COUNT(DISTINCT sc.siteId), 0) as locationTracking'),
 ]
 
 async function listConsumableTypes(request) {
@@ -29,6 +30,7 @@ async function listConsumableTypes(request) {
   const consumableQuery = knex('Consumable as c')
     .leftJoin('Unit as u', 'c.unit', 'u.id')
     .leftJoin('InventoryItem as ii', 'ii.consumableId', 'c.id')
+    .leftOuterJoin('SiteConsumable as sc', 'c.id', 'sc.consumableId')
     .leftJoin('PartnerConsumable as pc', function () {
       this.on('c.id', 'pc.consumableId').andOn('pc.partnerId', knex.raw(dataConstraints.partner.id))
     })
@@ -86,9 +88,66 @@ async function findConsumableReason(consumableReasonName) {
   return consumableReason
 }
 
+function getconsumableSites(consumableId) {
+  return knex('SiteConsumable').where('consumableId', consumableId).pluck('siteId')
+}
+
+async function getConsumableById(request) {
+  const {
+    params: { consumableId },
+  } = request
+
+  const consumable = await knex('Consumable as c')
+    .select([
+      'c.id',
+      'c.name',
+      'c.i18nKey',
+      'c.canExpire as trackByExpiration',
+      'c.manufacturer',
+      'c.unit',
+      'c.price',
+      'c.includeLocation',
+      'c.partNumber',
+    ])
+    .where({ 'c.id': consumableId })
+  const siteIds = await getconsumableSites(consumableId)
+
+  return consumable.length ? { ...consumable[0], siteIds } : {}
+}
+
+async function updateConsumable(request) {
+  const {
+    params: { consumableId },
+    payload: { name, manufacturer, partNumber, price, unit, trackByExpirationDate, includeLocation },
+  } = request
+
+  const updatedValue = knex('Consumable')
+    .update({
+      id: consumableId,
+      name,
+      canExpire: trackByExpirationDate,
+      manufacturer,
+      unit,
+      price,
+      includeLocation,
+      partNumber,
+    })
+    .where('id', consumableId)
+
+  return updatedValue
+}
+
+async function getUnits() {
+  const unit = await knex('Unit as u').select(['u.id', 'u.name', 'u.shortName'])
+  return unit
+}
+
 module.exports = {
   listConsumableTypes,
   listConsumableReasons,
   findConsumables,
   findConsumableReason,
+  getConsumableById,
+  getUnits,
+  updateConsumable,
 }

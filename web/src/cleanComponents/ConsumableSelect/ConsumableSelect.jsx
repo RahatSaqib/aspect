@@ -1,6 +1,6 @@
 import React from 'react'
 import { useIntl } from 'react-intl'
-import useConsumable from '../../hooks/inventory/useConsumable'
+import { useConsumable } from '../../hooks/inventory/useConsumable'
 import { consumableMessages } from '../../messages'
 import AspectSelect from '../AspectSelect'
 

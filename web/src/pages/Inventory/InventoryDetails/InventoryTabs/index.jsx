@@ -1,10 +1,9 @@
 import React, { useState } from 'react'
-import { Box, Tabs, Tab, Typography, Table, TableBody, TableCell, TableRow } from '@mui/material'
+import { Box, Tabs, Tab, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
-import { useLocation, useNavigate } from 'react-router'
-import DataTableHead from '../../../oldComponents/shared/tableHead'
-import styles from './InventoryTabs.module.css'
+import { ConsumptionRate } from './ConsumptionRate.jsx'
 import messages from './messages'
+import { TrackByLocation } from './TrackByLocation'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props
@@ -16,20 +15,13 @@ function TabPanel(props) {
   )
 }
 
-export default function TabsWithDynamicList() {
+export const InventoryTabs = ({ consumableId, siteIds }) => {
   const [tabValue, setTabValue] = useState(0)
   const { formatMessage } = useIntl()
-  const location = useLocation()
-  const navigate = useNavigate()
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue)
   }
-
-  const tableColumns = [
-    { key: 'name', label: formatMessage(messages.assay), sortable: false },
-    { key: 'trackByDate', label: formatMessage(messages.quantity), sortable: false },
-  ]
 
   return (
     <Box sx={{ width: '100%' }}>
@@ -50,23 +42,13 @@ export default function TabsWithDynamicList() {
       </Tabs>
 
       <TabPanel value={tabValue} index={0}>
-        <Typography>Form or other content can go here.</Typography>
+        <h4>Location with this Item</h4>
+        <Typography>Select all Locations to track inventory for this item</Typography>
+        <TrackByLocation consumableId={consumableId} siteIds={siteIds} />
       </TabPanel>
 
       <TabPanel value={tabValue} index={1}>
-        <h4>{formatMessage(messages.headerText)}</h4>
-        <div>{formatMessage(messages.definitionText)}</div>
-        <Table className={styles.SiteDataTable}>
-          <DataTableHead navigate={navigate} location={location} columns={tableColumns} />
-          <TableBody>
-            {[{ name: 'GeneXpert Ebola Result', quantity: 4 }].map(row => (
-              <TableRow key={row}>
-                <TableCell>{row.name}</TableCell>
-                <TableCell>{row.quantity}</TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <ConsumptionRate consumableId={consumableId} />
       </TabPanel>
     </Box>
   )

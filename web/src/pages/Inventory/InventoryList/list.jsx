@@ -1,15 +1,17 @@
 import React from 'react'
-import { Card, CardContent, LinearProgress, Table, TableBody, TableCell, TableRow } from '@mui/material'
+import { Card, CardContent, LinearProgress, Table, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader } from '../../../cleanComponents'
-import useConsumable from '../../../hooks/inventory/useConsumable'
+import { useConsumable } from '../../../hooks/inventory/useConsumable'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
+import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import messages from './messages'
 import styles from './styles.module.css'
 
@@ -56,11 +58,21 @@ const InventoryList = () => {
                     columns={tableColumns}
                   />
                   <TableBody>
-                    {consumables.map(row => (
-                      <TableRow key={row.name}>
+                    {consumables?.map(row => (
+                      <TableRow
+                        key={row.id}
+                        onClick={e => {
+                          gotoWithReturnUrl(
+                            `/browse/admin/inventoryList/${e.currentTarget.dataset.cartridgeId}`,
+                            navigate,
+                            location
+                          )
+                        }}
+                        data-cartridge-id={row.id}
+                      >
                         <TableCell>{row.name}</TableCell>
-                        <TableCell>Yes</TableCell>
-                        <TableCell>{formatMessage(consumables[row.consumableNameI18nKey])}</TableCell>
+                        <TableCell>{row.canExpire ? 'Yes' : 'No'}</TableCell>
+                        <TableCell>{row.locationTracking}</TableCell>
                         <TableCell>{row.quantityOnHand}</TableCell>
                         <TableCell>{row.unit}</TableCell>
                       </TableRow>

@@ -23,7 +23,7 @@ export default defineMessages({
   },
   includeLocation: {
     id: 'pages.Consumable.New.includeLocation',
-    defaultMessage: 'Automatice include location with reported consumpation',
+    defaultMessage: 'Automatic include location with reported consumption',
   },
   manufacturer: {
     id: 'pages.Consumable.New.manufacturer',
