@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-05T18:28:58.893Z\n"
+"POT-Creation-Date: 2024-09-18T14:06:03.204Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -7289,6 +7289,13 @@ msgstr "Pas possible"
 #: extracted_strings.json
 msgid "Not Recorded"
 msgstr "Pas enregistré"
+
+#. [pages.ResultList.notProvided]
+#. defaultMessage is:
+#. Not provided
+#: extracted_strings.json
+msgid "Not provided"
+msgstr "Non fourni"
 
 #. [page.contacts.person.notSpecified]
 #. defaultMessage is:
