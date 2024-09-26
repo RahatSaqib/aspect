@@ -42,7 +42,7 @@ const InventoryTransfers = () => {
   const filter = useFilterValues(location.pathname)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
   const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
-    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LOG,
+    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_TRANSFERS,
   })
 
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'originSiteName' })({ location })
