@@ -1,12 +1,29 @@
 import React, { useEffect, useState } from 'react'
-import { Card, CardContent, LinearProgress, Table, TableBody, TableCell, TableRow } from '@mui/material'
+import {
+  Card,
+  CardContent,
+  LinearProgress,
+  Stack,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableRow,
+  Typography,
+} from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryTransferFilter } from '../../../cleanComponents'
+import {
+  HierarchicalSiteView,
+  hierarchicalToggleSettingsLocalStorageKey,
+  useHierarchicalSwitch,
+} from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import useInventoryTransferDownload from '../../../hooks/inventory/useInventoryTransferDownload'
 import useInventoryTransferList from '../../../hooks/inventory/useInventoryTransferList'
+import useAuthState from '../../../hooks/useAuthState'
 import useFilterValues from '../../../hooks/useFilterValues'
 import consumables from '../../../messages/consumableMessages'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
@@ -18,11 +35,15 @@ import messages from './messages'
 import styles from './styles.module.css'
 
 const InventoryTransfers = () => {
+  const user = useAuthState()
   const location = useLocation()
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
   const filter = useFilterValues(location.pathname)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
+  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LOG,
+  })
 
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'originSiteName' })({ location })
 
@@ -56,57 +77,76 @@ const InventoryTransfers = () => {
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.InventoryTransferTitle)} />
         <InventoryTransferFilter />
-        <Card>
-          <CardContent>
-            <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-              <AspectExportListButton onExport={onExcelClick} visible />
-            </div>
-            {isLoading ? (
-              <LinearProgress />
-            ) : data.data.length === 0 ? (
-              <BrowseEmptyList />
-            ) : (
-              <>
-                <Table className={styles.SiteDataTable}>
-                  <DataTableHead
+        <Stack sx={{ flexDirection: 'row', width: '100%', gap: 1 }}>
+          {isHierarchicalView && (
+            <HierarchicalSiteView
+              countryId={user.countryId}
+              filters={filter}
+              pathname="/browse/inventory/transfers"
+              filterMaps={{ siteName: 'originSiteName' }}
+            />
+          )}
+          <Card sx={{ width: '100%' }}>
+            <CardContent>
+              <Stack sx={{ flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
+                <Typography variant="subtitle2" color="textSecondary">
+                  <Switch
+                    checked={isHierarchicalView}
+                    onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
+                  />
+                  Hierarchical View
+                </Typography>
+                <AspectExportListButton onExport={onExcelClick} visible />
+              </Stack>
+              {isLoading ? (
+                <LinearProgress />
+              ) : data.data.length === 0 ? (
+                <BrowseEmptyList />
+              ) : (
+                <>
+                  <Table className={styles.SiteDataTable}>
+                    <DataTableHead
+                      navigate={navigate}
+                      location={location}
+                      sortColumnKey={sortCol}
+                      sortColumnDir={sortDir}
+                      columns={tableColumns}
+                    />
+                    <TableBody>
+                      {data.data.map(row => (
+                        <TableRow key={row.sentOn}>
+                          <TableCell>{formatDateTime(row.sentOn)}</TableCell>
+                          <TableCell>
+                            {row.receivedOn ? formatDateTime(row.receivedOn) : formatMessage(messages.notAvailable)}
+                          </TableCell>
+                          <TableCell>{formatMessage(consumables[row.consumableNameI18nKey])}</TableCell>
+                          <TableCell>{row.receivedQuantity || formatMessage(messages.notAvailable)}</TableCell>
+                          <TableCell>{row.sentQuantity}</TableCell>
+                          <TableCell>{row.originSiteName}</TableCell>
+                          <TableCell>{row.destinationSiteName || formatMessage(messages.notAvailable)}</TableCell>
+                          <TableCell>{row.lotNumber || formatMessage(messages.notAvailable)}</TableCell>
+                          <TableCell style={{ color: new Date(row.expirationDate) < new Date() ? 'red' : undefined }}>
+                            {row.expirationDate
+                              ? row.expirationDate.split('T')[0]
+                              : formatMessage(messages.notAvailable)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                  <BrowseTablePaginator
                     navigate={navigate}
                     location={location}
-                    sortColumnKey={sortCol}
-                    sortColumnDir={sortDir}
-                    columns={tableColumns}
+                    paginatorStatus={messages.paginatorStatus}
+                    total={data.total}
+                    pageAt={pageAt}
+                    pageSize={pageSize}
                   />
-                  <TableBody>
-                    {data.data.map(row => (
-                      <TableRow key={row.sentOn}>
-                        <TableCell>{formatDateTime(row.sentOn)}</TableCell>
-                        <TableCell>
-                          {row.receivedOn ? formatDateTime(row.receivedOn) : formatMessage(messages.notAvailable)}
-                        </TableCell>
-                        <TableCell>{formatMessage(consumables[row.consumableNameI18nKey])}</TableCell>
-                        <TableCell>{row.receivedQuantity || formatMessage(messages.notAvailable)}</TableCell>
-                        <TableCell>{row.sentQuantity}</TableCell>
-                        <TableCell>{row.originSiteName}</TableCell>
-                        <TableCell>{row.destinationSiteName || formatMessage(messages.notAvailable)}</TableCell>
-                        <TableCell>{row.lotNumber || formatMessage(messages.notAvailable)}</TableCell>
-                        <TableCell style={{ color: new Date(row.expirationDate) < new Date() ? 'red' : undefined }}>
-                          {row.expirationDate ? row.expirationDate.split('T')[0] : formatMessage(messages.notAvailable)}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
-                <BrowseTablePaginator
-                  navigate={navigate}
-                  location={location}
-                  paginatorStatus={messages.paginatorStatus}
-                  total={data.total}
-                  pageAt={pageAt}
-                  pageSize={pageSize}
-                />
-              </>
-            )}
-          </CardContent>
-        </Card>
+                </>
+              )}
+            </CardContent>
+          </Card>
+        </Stack>
       </div>
     </>
   )
