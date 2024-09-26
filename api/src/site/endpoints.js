@@ -257,6 +257,11 @@ const routes = [
                   })
                   .description('External ID of the site'),
                 customProperties: Joi.string().allow(null, '').description('Custom properties of the site'),
+                // siteConsumables2: Joi.string().allow(null, '').description('Site consumables for the site'),
+                siteConsumables: Joi.array()
+                  .allow(null)
+                  .items(Joi.number())
+                  .description(`Site consumables (id's) for the site`),
               })
             ),
         }),
