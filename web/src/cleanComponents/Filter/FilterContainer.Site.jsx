@@ -45,7 +45,7 @@ const SiteFilter = () => {
         <Grid item xs={3}>
           <SiteListSelect
             name="parentWarehouseId"
-            label={formatMessage(messages.siteProvider)}
+            label={formatMessage(messages.stockProvider)}
             value={state.parentWarehouseId || ''}
             onChange={parentWarehouseId => setState({ ...state, parentWarehouseId })}
             queryParams={{ siteTypeExternalIds: ['warehouse'], excludeSiteIds: [] }}

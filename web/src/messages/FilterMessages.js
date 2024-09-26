@@ -366,9 +366,9 @@ const messages = {
       id: 'filter.popover.siteType',
       defaultMessage: 'Site Type',
     },
-    siteProvider: {
-      id: 'filter.popover.siteProvider',
-      defaultMessage: 'Site Provider',
+    stockProvider: {
+      id: 'filter.popover.stockProvider',
+      defaultMessage: 'Stock Provider',
     },
     breakOutByLot: {
       id: 'pages.InventoryItemsList.breakOutByLot',

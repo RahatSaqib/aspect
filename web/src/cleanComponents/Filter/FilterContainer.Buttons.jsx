@@ -297,11 +297,11 @@ const SiteName = ({ siteName, remove, blocked }) => {
 const ParentWarehouseId = ({ parentWarehouseId, remove, blocked }) => {
   const { formatMessage } = useIntl()
   const { data } = useSiteList()
-  const siteProvider = data?.find(i => i.id === parentWarehouseId)
+  const stockProvider = data?.find(i => i.id === parentWarehouseId)
 
   return (
     <Btn
-      lbl={formatMessage(messages.whereSiteProviderIs, { siteProvider: siteProvider.name })}
+      lbl={formatMessage(messages.whereStockProviderIs, { stockProvider: stockProvider.name })}
       del={blocked.includes('parentWarehouseId') ? undefined : () => remove(['parentWarehouseId'])}
     />
   )

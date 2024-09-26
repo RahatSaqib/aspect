@@ -67,9 +67,9 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteTypeIs',
     defaultMessage: 'site type is "{siteType}"',
   },
-  whereSiteProviderIs: {
-    id: 'filter.btnGroup.whereSiteProviderIs',
-    defaultMessage: 'site provider is "{siteProvider}"',
+  whereStockProviderIs: {
+    id: 'filter.btnGroup.whereStockProviderIs',
+    defaultMessage: 'stock provider is "{stockProvider}"',
   },
   whereLgaNameIncludes: {
     id: 'filter.btnGroup.whereLgaNameIncludes',

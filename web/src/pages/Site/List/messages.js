@@ -39,9 +39,9 @@ const messages = {
       id: 'pages.SiteList.siteType',
       defaultMessage: 'Site Type',
     },
-    siteProvider: {
-      id: 'pages.SiteList.siteProvider',
-      defaultMessage: 'Site Provider',
+    stockProvider: {
+      id: 'pages.SiteList.stockProvider',
+      defaultMessage: 'Stock Provider',
     },
     createSite: {
       id: 'pages.SiteList.createSite',
