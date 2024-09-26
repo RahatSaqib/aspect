@@ -4,7 +4,7 @@ import useConsumable from '../../hooks/inventory/useConsumable'
 import { consumableMessages } from '../../messages'
 import AspectSelect from '../AspectSelect'
 
-export default function ConsumableSelect({ onlyWhitelisted, whitelistIds, ...props}) {
+export default function ConsumableSelect({ onlyWhitelisted, whitelistIds, ...props }) {
   const { formatMessage } = useIntl()
   const { isLoading: isConsumableLoading, data } = useConsumable()
   const consumables = useMemo(() => {

@@ -3,6 +3,7 @@ import { Button, DialogActions, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
+import useSiteList from '../../../hooks/site/useSiteList'
 import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
@@ -11,7 +12,6 @@ import { types } from '../../../store/InventoryRedux'
 import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, transformValues } from './helpers'
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
-import useSiteList from '../../../hooks/site/useSiteList'
 
 function InventoryAdjustmentDialog(props) {
   const { data: allSites = [] } = useSiteList()
@@ -54,7 +54,7 @@ function InventoryAdjustmentDialog(props) {
             setFieldValue('consumable', undefined)
           }
         }
-        
+
         return (
           <AspectDialog
             maxWidth="sm"

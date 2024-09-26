@@ -268,11 +268,11 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
   }
 
   let columnsToSelect = [
-    's.id', 
-    's.name', 
-    'g.stateId', 
-    'st.name as stateName', 
-    knex.raw(`GROUP_CONCAT(sc.consumableId SEPARATOR ',') as siteConsumables`)
+    's.id',
+    's.name',
+    'g.stateId',
+    'st.name as stateName',
+    knex.raw(`GROUP_CONCAT(sc.consumableId SEPARATOR ',') as siteConsumables`),
   ]
 
   if (mode !== 'reporter') {
