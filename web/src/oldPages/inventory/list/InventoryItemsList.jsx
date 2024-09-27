@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FormControlLabel, Switch, TableBody, LinearProgress, Grid } from '@mui/material'
+import { FormControlLabel, Switch, TableBody, LinearProgress } from '@mui/material'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -62,7 +62,6 @@ export const InventoryItemsListWithProps = ({
   intl,
   navigate,
   location,
-  filter,
   dispatch,
   isLoading,
   onExportClick,

@@ -57,18 +57,6 @@ const InventoryItemsFilter = props => {
             />
           </Grid>
         ) : null}
-        {/* <Grid item xs={3}>
-          <FormControlLabel
-            control={
-              <Switch
-                checked={[true, 'true'].includes(state.breakOutByLot)}
-                onChange={e => setState({ ...state, breakOutByLot: e.target.checked || null })}
-              />
-            }
-            label={formatMessage(messages.breakOutByLot)}
-            sx={{ m: 2 }}
-          />
-        </Grid> */}
         {state.breakOutByLot ? (
           <>
             <Grid item xs={3}>
