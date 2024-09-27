@@ -192,7 +192,11 @@ export const InventoryItemsListWithProps = ({
           {isHierarchicalView && (
             <HierarchicalSiteView countryId={user.countryId} filters={filter} pathname="/browse/inventory/supplies" />
           )}
-          <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
+          <DataTableCard
+            key={`DataTableCard__table-${location.key}`}
+            className={styles.DataTableCard__table}
+            sx={{ width: '100%' }}
+          >
             <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Typography variant="subtitle2" color="textSecondary">
                 <Switch
