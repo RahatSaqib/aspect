@@ -38,6 +38,7 @@ export default function useUpdateConsumable() {
       queryClient.refetchQueries([SITE_KEY, 'list'])
       queryClient.refetchQueries([SITE_KEY, 'table'])
       queryClient.refetchQueries([INVENTORY_KEY, 'consumable'])
+      queryClient.refetchQueries([INVENTORY_KEY, 'consumableList'])
     },
   })
 
