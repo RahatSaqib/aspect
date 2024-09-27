@@ -44,7 +44,7 @@ const InventoryOverviewPage = () => {
     {
       name: 'Current Qty.',
       prop: 'quantity',
-      tooltip: 'Its the current quantity in hand, not including the expired quantity.',
+      tooltip: 'Its the current quantity in hand, including the expired quantity.',
     },
     {
       name: 'Last 6 Months',

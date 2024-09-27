@@ -1,19 +1,18 @@
 import React from 'react'
-import { Grid, TextField, FormControlLabel, Checkbox, Switch } from '@mui/material'
+import { Grid, TextField, FormControlLabel, Checkbox } from '@mui/material'
 import { useIntl } from 'react-intl'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
-import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector, DaysStockLeftSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
-const InventoryItemsFilter = () => {
+const InventoryItemsFilter = props => {
+  const { state, setState } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
-  const [state, setState] = useFilterSync()
 
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
@@ -58,7 +57,7 @@ const InventoryItemsFilter = () => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
+        {/* <Grid item xs={3}>
           <FormControlLabel
             control={
               <Switch
@@ -69,7 +68,7 @@ const InventoryItemsFilter = () => {
             label={formatMessage(messages.breakOutByLot)}
             sx={{ m: 2 }}
           />
-        </Grid>
+        </Grid> */}
         {state.breakOutByLot ? (
           <>
             <Grid item xs={3}>

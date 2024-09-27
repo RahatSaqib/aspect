@@ -38,7 +38,7 @@ const messages = {
     },
     quantityOnHandDescription: {
       id: 'pages.InventoryItemsList.quantityOnHandDescription',
-      defaultMessage: 'Its the current quantity in hand, not including the expired quantity.',
+      defaultMessage: 'Its the current quantity in hand, including the expired quantity.',
     },
     dailyConsumptionRate: {
       id: 'pages.InventoryItemsList.dailyConsumptionRate',

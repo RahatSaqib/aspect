@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FormControlLabel, Switch, TableBody, LinearProgress } from '@mui/material'
+import { FormControlLabel, Switch, TableBody, LinearProgress, Grid } from '@mui/material'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -12,6 +12,7 @@ import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
+import useFilterSync from '../../../hooks/useFilterSync'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -79,6 +80,7 @@ export const InventoryItemsListWithProps = ({
   refetch,
 }) => {
   const [inventoryOnField, setInventoryOnField] = useState(false)
+  const [state, setState] = useFilterSync()
   const columns = [
     {
       key: 'siteName',
@@ -100,20 +102,20 @@ export const InventoryItemsListWithProps = ({
       key: 'dailyConsumptionRate',
       label: intl.formatMessage(messages.dailyConsumptionRate),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
       tooltip: intl.formatMessage(messages.dailyConsumptionRateDescription),
     },
     {
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
       sortable: true,
-      isHidden: !filter.breakOutByLot,
+      isHidden: !state.breakOutByLot,
     },
     {
       key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
-      isHidden: !filter.breakOutByLot,
+      isHidden: !state.breakOutByLot,
     },
     {
       key: 'newQuantity',
@@ -135,14 +137,14 @@ export const InventoryItemsListWithProps = ({
       label: intl.formatMessage(messages.daysStockLeft),
       tooltip: intl.formatMessage(messages.daysStockLeftDescription),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
     },
     {
       key: 'projectedWaste',
       label: intl.formatMessage(messages.projectedWaste),
       tooltip: intl.formatMessage(messages.projectedWasteDescription),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
     },
     {
       key: 'action',
@@ -165,7 +167,7 @@ export const InventoryItemsListWithProps = ({
       }
     }
   }
-  const enableInventoryOnHandField = filter.breakOutByLot && inventoryOnField
+  const enableInventoryOnHandField = state.breakOutByLot && inventoryOnField
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
@@ -177,10 +179,23 @@ export const InventoryItemsListWithProps = ({
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-        <InventoryItemsFilter />
+        <InventoryItemsFilter state={state} setState={setState} />
         <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
           <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            {filter.breakOutByLot ? (
+            <FormControlLabel
+              control={
+                <Switch
+                  checked={[true, 'true'].includes(state.breakOutByLot)}
+                  onChange={e => {
+                    setState({ ...state, breakOutByLot: e.target.checked || null })
+                    setInventoryOnField(false)
+                  }}
+                />
+              }
+              label={intl.formatMessage(messages.breakOutByLot)}
+              sx={{ m: 2 }}
+            />
+            {state.breakOutByLot ? (
               <PermissionChecker permissions={['inventory:edit']}>
                 <FormControlLabel
                   sx={{ p: 2 }}
@@ -217,7 +232,7 @@ export const InventoryItemsListWithProps = ({
                       <InventoryDataTableRow
                         key={inventoryItem.get('id')}
                         inventoryItem={inventoryItem}
-                        breakOutByLot={filter.breakOutByLot}
+                        breakOutByLot={state.breakOutByLot}
                         inventoryOnHand={enableInventoryOnHandField}
                         refetch={refetch}
                         navigate={navigate}
