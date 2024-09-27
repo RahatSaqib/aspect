@@ -121,6 +121,10 @@ const messages = {
     },
     inventoryOnHand: {
       id: 'pages.InventoryItemsList.inventoryOnHand',
+      defaultMessage: 'Inventory on Hand',
+    },
+    adjustQuantity: {
+      id: 'pages.InventoryItemsList.adjustQuantity',
       defaultMessage: 'Adjust Quantity',
     },
     newQuantityOnHand: {

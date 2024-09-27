@@ -190,7 +190,7 @@ export const InventoryItemsListWithProps = ({
                       onChange={event => setInventoryOnField(event.target.checked)}
                     />
                   }
-                  label={intl.formatMessage(messages.inventoryOnHand)}
+                  label={intl.formatMessage(messages.adjustQuantity)}
                 />
               </PermissionChecker>
             ) : null}
