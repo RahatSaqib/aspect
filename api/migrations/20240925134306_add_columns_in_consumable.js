@@ -2,7 +2,7 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.alterTable('Consumable', t => {
-    t.boolean('includeLocation').nullable()
+    t.boolean('includeLocation').default(false)
     t.string('partNumber').nullable()
     t.integer('price').unsigned().nullable()
   })

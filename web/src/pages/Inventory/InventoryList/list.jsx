@@ -63,7 +63,7 @@ const InventoryList = () => {
                         key={row.id}
                         onClick={e => {
                           gotoWithReturnUrl(
-                            `/browse/admin/inventoryList/${e.currentTarget.dataset.cartridgeId}`,
+                            `/browse/admin/inventory-list/${e.currentTarget.dataset.cartridgeId}`,
                             navigate,
                             location
                           )

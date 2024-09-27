@@ -88,16 +88,12 @@ async function findConsumableReason(consumableReasonName) {
   return consumableReason
 }
 
-function getconsumableSites(consumableId) {
+function getConsumableSites(consumableId) {
   return knex('SiteConsumable').where('consumableId', consumableId).pluck('siteId')
 }
 
-async function getConsumableById(request) {
-  const {
-    params: { consumableId },
-  } = request
-
-  const consumable = await knex('Consumable as c')
+async function getConsumableDetail(consumableId) {
+  const consumableQuery = knex('Consumable as c')
     .select([
       'c.id',
       'c.name',
@@ -110,9 +106,17 @@ async function getConsumableById(request) {
       'c.partNumber',
     ])
     .where({ 'c.id': consumableId })
-  const siteIds = await getconsumableSites(consumableId)
+  const [consumable, siteIds] = await Promise.all([consumableQuery, getConsumableSites(consumableId)])
 
   return consumable.length ? { ...consumable[0], siteIds } : {}
+}
+
+async function getConsumableById(request) {
+  const {
+    params: { consumableId },
+  } = request
+  const consumable = await getConsumableDetail(consumableId)
+  return consumable
 }
 
 async function updateConsumable(request) {

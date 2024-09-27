@@ -3,7 +3,6 @@ import DeviceListFilter from './FilterContainer.DeviceList'
 import DeviceWorkloadFilter from './FilterContainer.DeviceWorkload'
 import ErrorRateFilter from './FilterContainer.ErrorRate'
 import InventoryItemsFilter from './FilterContainer.InventoryItems'
-import InventoryListFilter from './FilterContainer.InventoryList'
 import InventoryLogFilter from './FilterContainer.InventoryLog'
 import InventoryTransferFilter from './FilterContainer.InventoryTransfer'
 import LgasFilter from './FilterContainer.Lgas'
@@ -35,5 +34,4 @@ export {
   NotificationLogFilter,
   LgasFilter,
   StatesFilter,
-  InventoryListFilter,
 }

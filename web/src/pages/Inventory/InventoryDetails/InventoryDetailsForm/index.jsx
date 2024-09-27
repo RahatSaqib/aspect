@@ -41,7 +41,7 @@ export const InventoryDetailsForm = ({ data, cartridgeId }) => {
                   control={
                     <Checkbox
                       color="primary"
-                      checked={values.trackByExpiration || false} // Ensure a boolean is passed
+                      checked={Boolean(values.trackByExpiration)} // Ensure a boolean is passed
                       onChange={e => setFieldValue('trackByExpiration', e.target.checked)} // Manually update the field value
                       name="trackByExpiration"
                     />
@@ -55,7 +55,7 @@ export const InventoryDetailsForm = ({ data, cartridgeId }) => {
                   control={
                     <Checkbox
                       color="primary"
-                      checked={values.includeLocation || false} // Ensure a boolean is passed
+                      checked={Boolean(values.includeLocation)} // Ensure a boolean is passed
                       onChange={e => setFieldValue('includeLocation', e.target.checked)} // Manually update the field value
                       name="includeLocation"
                     />
@@ -73,7 +73,7 @@ export const InventoryDetailsForm = ({ data, cartridgeId }) => {
                   value={values.manufacturer}
                   onChange={handleChange}
                   onBlur={handleBlur}
-                  error={!!(touched.manufacturer && Boolean(errors.manufacturer))}
+                  error={Boolean(touched.manufacturer && Boolean(errors.manufacturer))}
                   fullWidth
                 />
               </Grid>

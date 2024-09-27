@@ -51,7 +51,7 @@ const getUnits = async () =>
 
 export const useUnit = () => useQuery([INVENTORY_KEY, 'unit'], () => getUnits())
 
-function updateConsumable({ consumableId, payload }) {
+const updateConsumable = ({ consumableId, payload }) => {
   return fetchWrapperForQueries({
     endpoint: replaceRouteParams(UPDATE_CONSUMABLE_KEY, { consumableId }),
     method: 'PUT',
@@ -67,10 +67,6 @@ function updateConsumable({ consumableId, payload }) {
   })
 }
 
-function useUpdateConsumableById() {
-  const mutation = useMutation(variables => updateConsumable(variables), {})
-
-  return mutation
-}
+const useUpdateConsumableById = () => useMutation(variables => updateConsumable(variables), {})
 
 export { useConsumable, useConsumableById, useConsumableAssay, useUpdateConsumableById }

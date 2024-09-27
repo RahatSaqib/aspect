@@ -262,8 +262,8 @@ const LogInApp = () => {
                   <>
                     <Route path="/browse/admin/states" element={<AdminStates />} />
                     <Route path="/browse/admin/lgas" element={<AdminLgas />} />
-                    <Route path="/browse/admin/inventoryList" element={<InventoryList />} />
-                    <Route path="/browse/admin/inventoryList/:cartridgeId/*" element={<InventoryDetails />} />
+                    <Route path="/browse/admin/inventory-list" element={<InventoryList />} />
+                    <Route path="/browse/admin/inventory-list/:cartridgeId/*" element={<InventoryDetails />} />
                   </>
                 ) : null}
 

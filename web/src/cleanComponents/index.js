@@ -41,7 +41,6 @@ import {
   XDRByDeviceFilter,
   LgasFilter,
   StatesFilter,
-  InventoryListFilter,
 } from './Filter'
 import {
   BarGraph,
@@ -215,5 +214,4 @@ export {
   DonutGraph,
   LoggedOutLayout,
   TableContainer,
-  InventoryListFilter,
 }
