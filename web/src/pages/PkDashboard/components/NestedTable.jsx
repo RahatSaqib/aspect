@@ -85,23 +85,15 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
                         setPage(0)
                       }}
                     >
-                      <Box display="flex" alignItems="center" justifyContent="end">
+                      <Box sx={{ display: 'flex', justifyContent: idx !== 0 ? 'end' : undefined }}>
                         {c.name}
-                        {c?.tooltip && (
-                          <Box ml={1}>
-                            <AspectTooltip title={c?.tooltip} showHelpIcon />
-                          </Box>
-                        )}
+                        {c.tooltip && <AspectTooltip title={c.tooltip} showHelpIcon />}
                       </Box>
                     </TableSortLabel>
                   ) : (
-                    <Box display="flex" alignItems="center" justifyContent="end">
+                    <Box sx={{ display: 'flex', justifyContent: idx !== 0 ? 'end' : undefined }}>
                       {c.name}
-                      {c?.tooltip && (
-                        <Box ml={1}>
-                          <AspectTooltip title={c?.tooltip} showHelpIcon />
-                        </Box>
-                      )}
+                      {c.tooltip && <AspectTooltip title={c?.tooltip} showHelpIcon />}
                     </Box>
                   )}
                 </TableCell>

@@ -60,7 +60,7 @@ const InventoryOverviewPage = () => {
     {
       name: 'Consumption Rate',
       prop: 'dailyConsumptionRate',
-      tooltip: 'its the average daily consumption of the specific cartridge considering the date range selected',
+      tooltip: 'Its the average daily consumption of the specific cartridge considering the date range selected',
     },
     {
       name: 'Days Left',

@@ -78,10 +78,7 @@ export const InventoryItemsListWithProps = ({
   onAddInventorySubmit,
   refetch,
 }) => {
-  const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
-  useEffect(() => {
-    setEnableInventoryOnHandField(filter.breakOutByLot && enableInventoryOnHandField)
-  }, [filter.breakOutByLot, enableInventoryOnHandField])
+  const [inventoryOnField, setInventoryOnField] = useState(false)
   const columns = [
     {
       key: 'siteName',
@@ -168,7 +165,7 @@ export const InventoryItemsListWithProps = ({
       }
     }
   }
-
+  const enableInventoryOnHandField = filter.breakOutByLot && inventoryOnField
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
@@ -190,7 +187,7 @@ export const InventoryItemsListWithProps = ({
                   control={
                     <Switch
                       checked={enableInventoryOnHandField}
-                      onChange={event => setEnableInventoryOnHandField(filter.breakOutByLot && event.target.checked)}
+                      onChange={event => setInventoryOnField(event.target.checked)}
                     />
                   }
                   label={intl.formatMessage(messages.inventoryOnHand)}

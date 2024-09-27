@@ -14,7 +14,7 @@ const messages = {
     daysStockLeftDescription: {
       id: 'pages.InventoryItemsList.daysStockLeftDescription',
       defaultMessage:
-        'The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges',
+        'The number of days left with available and not-expired stock, assuming that the cartridges to be consumed are always the ones closer to their expiration',
     },
     inventoryItemsTitle: {
       id: 'pages.InventoryItemsList.inventoryItemsTitle',
