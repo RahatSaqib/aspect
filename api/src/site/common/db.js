@@ -19,9 +19,9 @@ async function updateSite(siteId, params) {
   await knex('Site as s').where('s.id', siteId).update(params)
 }
 
-async function updateSiteConsumable(siteId, { modify, consumableId }) {
+async function updateSiteConsumable(siteId, { modify, consumableId }, _knex = knex) {
   if (modify === 'add') {
-    return knex('SiteConsumable')
+    return _knex('SiteConsumable')
       .insert({
         siteId,
         consumableId,
@@ -33,11 +33,11 @@ async function updateSiteConsumable(siteId, { modify, consumableId }) {
         })
       })
   }
-  const exists = await knex('InventoryItem').where({ siteId, consumableId }).first()
+  const exists = await _knex('InventoryItem').where({ siteId, consumableId }).first()
   if (exists) {
     throw Boom.conflict('Unable to remove the cartridge')
   } else {
-    return knex('SiteConsumable').where({ siteId, consumableId }).del()
+    return _knex('SiteConsumable').where({ siteId, consumableId }).del()
   }
 }
 
