@@ -13,6 +13,7 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
 import useFilterSync from '../../../hooks/useFilterSync'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -80,6 +81,8 @@ export const InventoryItemsListWithProps = ({
 }) => {
   const [inventoryOnField, setInventoryOnField] = useState(false)
   const [state, setState] = useFilterSync()
+  const [addFilter] = useFilterUpdate()
+  const enableInventoryOnHandField = state.breakOutByLot && inventoryOnField
   const columns = [
     {
       key: 'siteName',
@@ -166,7 +169,6 @@ export const InventoryItemsListWithProps = ({
       }
     }
   }
-  const enableInventoryOnHandField = state.breakOutByLot && inventoryOnField
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
@@ -186,8 +188,10 @@ export const InventoryItemsListWithProps = ({
                 <Switch
                   checked={[true, 'true'].includes(state.breakOutByLot)}
                   onChange={e => {
-                    setState({ ...state, breakOutByLot: e.target.checked || null })
+                    const payload = { ...state, breakOutByLot: e.target.checked || null }
+                    setState(payload)
                     setInventoryOnField(false)
+                    addFilter(payload, location.pathname)
                   }}
                 />
               }
