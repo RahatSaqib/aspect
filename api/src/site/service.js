@@ -70,6 +70,13 @@ function getSitesQuery(dataConstraints) {
 async function listSites(request) {
   const { query, auth } = request
 
+  // To ensure correct database queries, the `stateId` and `lgaId` values should be converted from empty strings to `null`.
+  ;['stateId', 'lgaId'].forEach(property => {
+    if (query[property] === '') {
+      query[property] = null
+    }
+  })
+
   // get data constraints
   const dataConstraints = await getConstraints(auth.credentials)
 
@@ -97,15 +104,20 @@ async function listSites(request) {
       this.whereIn('s.id', deviceQuery)
     })
     .modify(filterDateRangeParams, query, 's.createdOn')
-    .modify(filterParams, query, {
-      countryId: 'g.countryId',
-      stateId: 'g.stateId',
-      lgaId: 'g.lgaId',
-      siteName: 's.name',
-      siteTypeId: 'st.id',
-      externalId: 's.externalId',
-      parentWarehouseId: 's.parentWarehouseId',
-    })
+    .modify(
+      filterParams,
+      query,
+      {
+        countryId: 'g.countryId',
+        stateId: 'g.stateId',
+        lgaId: 'g.lgaId',
+        siteName: 's.name',
+        externalId: 's.externalId',
+        parentWarehouseId: 's.parentWarehouseId',
+        siteTypeId: 'st.id',
+      },
+      { whereArgs: { handleNullValues: true } }
+    )
 
   const getCount = knex
     .count('siteId as count')
