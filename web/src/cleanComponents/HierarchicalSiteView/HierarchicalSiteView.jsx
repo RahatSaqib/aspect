@@ -9,7 +9,7 @@ import { HierarchyLoader } from './HierarchyLoader'
 import { StateTreeNode } from './StateTreeNode'
 
 export function HierarchicalSiteView(props) {
-  const { filters, pathname, countryId } = props
+  const { filters, pathname, countryId, filterMaps } = props
 
   const { stateId, lgaId, siteName } = filters
 
@@ -51,7 +51,21 @@ export function HierarchicalSiteView(props) {
     { enabled: Boolean(countryId) && !lgaId && Boolean(stateId) }
   )
 
+  /**
+   * Updates the hierarchy filter by mapping the filter keys to their corresponding values
+   * as defined in filterMaps. Useful when parent components expect different property names.
+   *
+   * For example, `siteName` might be accessible with `originSiteName`.
+   *
+   * @param {Object} filter - The filter object containing key-value pairs to be updated.
+   */
   const updateHierarchy = filter => {
+    for (const key in filter) {
+      if (filterMaps?.[key]) {
+        filter[filterMaps[key]] = filter[key]
+        delete filter[key]
+      }
+    }
     update({ countryId, ...filters, ...filter }, pathname)
   }
 

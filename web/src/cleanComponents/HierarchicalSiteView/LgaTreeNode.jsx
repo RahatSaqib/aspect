@@ -33,6 +33,7 @@ export function LgaTreeNode(props) {
               siteName: undefined,
             })
           }
+          key={lga.id}
           options={{ showChevron: true }}
         >
           {lga.id === lgaId ? (
