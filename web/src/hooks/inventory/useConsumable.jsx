@@ -11,16 +11,9 @@ import {
   UPDATE_CONSUMABLE_KEY,
 } from './inventoryKeys'
 
-const getConsumableList = async ({ sortCol, sortDir, pageAt, pageSize, filters }) =>
+const getConsumableList = async () =>
   fetchWrapperForQueries({
     endpoint: INVENTORY_TYPE_KEY_LIST_ENDPOINT,
-    params: {
-      sortCol,
-      sortDir,
-      page: pageAt,
-      size: pageSize,
-      ...filters,
-    },
   }).then(response => response)
 
 const useConsumable = params =>

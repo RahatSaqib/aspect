@@ -6,7 +6,7 @@ import AspectSelect from '../AspectSelect'
 
 export default function ConsumableSelect({ onlyWhitelisted, whitelistIds, ...props }) {
   const { formatMessage } = useIntl()
-  const { isLoading: isConsumableLoading, data } = useConsumable()
+  const { isLoading: isConsumableLoading, data: { data } = {} } = useConsumable()
   const consumables = useMemo(() => {
     if (isConsumableLoading) {
       return []

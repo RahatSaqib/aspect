@@ -114,6 +114,7 @@ export const InventoryDetailsForm = ({ data, cartridgeId }) => {
                   id="unit"
                   label={formatMessage(messages.unit)}
                   value={values.unit}
+                  disabled
                   onChange={handleChange}
                   sx={{ width: '200px' }}
                 />

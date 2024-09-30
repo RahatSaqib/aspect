@@ -7,9 +7,8 @@ import useUpdateConsumable from '../../../hooks/site/useUpdateConsumable'
 import Summary from '../../../oldComponents/Summary'
 
 export default function Consumables({ siteId, consumableIds }) {
-  const { data: consumables, isLoading } = useConsumable()
+  const { data: { data: consumables } = {}, isLoading } = useConsumable()
   const { mutateAsync: changeApplicable, isLoading: isChanging } = useUpdateConsumable()
-
   return (
     <Summary
       title={
@@ -27,7 +26,7 @@ export default function Consumables({ siteId, consumableIds }) {
             </Stack>
           ) : (
             <FormGroup>
-              {consumables.map(({ name, id }) => (
+              {consumables?.map(({ name, id }) => (
                 <FormControlLabel
                   id={id}
                   label={name}
