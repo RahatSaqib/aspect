@@ -70,7 +70,7 @@ export function HierarchicalSiteView(props) {
   }
 
   return (
-    <Card sx={{ minWidth: 300, p: 2, maxHeight: 640, overflowY: 'auto' }}>
+    <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto', boxShadow: 0 }}>
       {isCountryLoading ? (
         <Skeleton height={40} />
       ) : (

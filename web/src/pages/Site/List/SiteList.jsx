@@ -4,9 +4,9 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
 import {
-  HierarchicalSiteView,
   useHierarchicalSwitch,
   hierarchicalToggleSettingsLocalStorageKey,
+  HierarchicalView,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
@@ -122,7 +122,7 @@ const SiteList = ({ navigate, location }) => {
         <SiteFilter />
         <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
-            <HierarchicalSiteView countryId={user.countryId} filters={filters} pathname="/browse/site" />
+            <HierarchicalView countryId={user.countryId} filters={filters} pathname="/browse/site" />
           )}
           <DataTableCard key={`DataTableCard__table-${location.key}`} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
