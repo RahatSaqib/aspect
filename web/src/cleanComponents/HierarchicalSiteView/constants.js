@@ -4,3 +4,9 @@ export const hierarchicalToggleSettingsLocalStorageKey = {
   INVENTORY_LOG: 'browse/inventory-log-hierarchical-switch',
   INVENTORY_TRANSFERS: 'browse/inventory-transfers-hierarchical-switch',
 }
+
+export const siteTypeExternalIds = {
+  warehouse: 'warehouse',
+  clinic: 'clinic',
+  lab: 'lab',
+}

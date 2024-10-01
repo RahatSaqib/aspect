@@ -27,7 +27,8 @@ function listSitesBaseConfig() {
         siteName: Joi.string().allow('').description('Filter for site name'),
         externalId: Joi.string().allow('').description('Filter for facility code'),
         format: Joi.string().allow('').description('File format for exporting data'),
-        siteType: Joi.string().allow('').description('Allowed site types'),
+        siteTypeExternalId: Joi.string().allow('').description('Allowed site types'),
+        parentWarehouseId: Joi.number().allow('').description('Allow parent warehouse id'),
         ...validateAllGeographyFilterParams(),
         ...validateDateRangeParams(),
         ...validateSortPageParams(
