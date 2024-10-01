@@ -18,6 +18,8 @@ import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
 import useAuthState from '../../../hooks/useAuthState'
+import useFilterSync from '../../../hooks/useFilterSync'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -67,7 +69,6 @@ export const InventoryItemsListWithProps = ({
   intl,
   navigate,
   location,
-  filter,
   dispatch,
   isLoading,
   onExportClick,
@@ -84,13 +85,15 @@ export const InventoryItemsListWithProps = ({
   onAddInventorySubmit,
   refetch,
 }) => {
+  const [inventoryOnField, setInventoryOnField] = useState(false)
+  const [state, setState] = useFilterSync()
+  const [addFilter] = useFilterUpdate()
   const user = useAuthState()
-  const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
-
   const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LIST,
   })
 
+  const enableInventoryOnHandField = state.breakOutByLot && inventoryOnField
   const columns = [
     {
       key: 'siteName',
@@ -106,24 +109,26 @@ export const InventoryItemsListWithProps = ({
       key: 'quantityOnHand',
       label: intl.formatMessage(messages.quantityOnHand),
       sortable: true,
+      tooltip: intl.formatMessage(messages.quantityOnHandDescription),
     },
     {
       key: 'dailyConsumptionRate',
       label: intl.formatMessage(messages.dailyConsumptionRate),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
+      tooltip: intl.formatMessage(messages.dailyConsumptionRateDescription),
     },
     {
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
       sortable: true,
-      isHidden: !filter.breakOutByLot,
+      isHidden: !state.breakOutByLot,
     },
     {
       key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
-      isHidden: !filter.breakOutByLot,
+      isHidden: !state.breakOutByLot,
     },
     {
       key: 'newQuantity',
@@ -145,14 +150,14 @@ export const InventoryItemsListWithProps = ({
       label: intl.formatMessage(messages.daysStockLeft),
       tooltip: intl.formatMessage(messages.daysStockLeftDescription),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
     },
     {
       key: 'projectedWaste',
       label: intl.formatMessage(messages.projectedWaste),
       tooltip: intl.formatMessage(messages.projectedWasteDescription),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
     },
     {
       key: 'action',
@@ -175,7 +180,6 @@ export const InventoryItemsListWithProps = ({
       }
     }
   }
-
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
@@ -187,10 +191,10 @@ export const InventoryItemsListWithProps = ({
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-        <InventoryItemsFilter />
+        <InventoryItemsFilter state={state} setState={setState} />
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
           {isHierarchicalView && (
-            <HierarchicalSiteView countryId={user.countryId} filters={filter} pathname="/browse/inventory/supplies" />
+            <HierarchicalSiteView countryId={user.countryId} filters={state} pathname="/browse/inventory/supplies" />
           )}
           <DataTableCard
             key={`DataTableCard__table-${location.key}`}
@@ -206,18 +210,32 @@ export const InventoryItemsListWithProps = ({
                 Hierarchical View
               </Typography>
               <Stack sx={{ flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-                {filter.breakOutByLot ? (
+                <FormControlLabel
+                  control={
+                    <Switch
+                      checked={[true, 'true'].includes(state.breakOutByLot)}
+                      onChange={e => {
+                        const payload = { ...state, breakOutByLot: e.target.checked || null }
+                        setState(payload)
+                        setInventoryOnField(false)
+                        addFilter(payload, location.pathname)
+                      }}
+                    />
+                  }
+                  label={intl.formatMessage(messages.breakOutByLot)}
+                  sx={{ m: 2 }}
+                />
+                {state.breakOutByLot ? (
                   <PermissionChecker permissions={['inventory:edit']}>
                     <FormControlLabel
                       sx={{ p: 2 }}
                       control={
                         <Switch
-                          onChange={event =>
-                            setEnableInventoryOnHandField(filter.breakOutByLot && event.target.checked)
-                          }
+                          checked={enableInventoryOnHandField}
+                          onChange={event => setInventoryOnField(event.target.checked)}
                         />
                       }
-                      label={intl.formatMessage(messages.inventoryOnHand)}
+                      label={intl.formatMessage(messages.adjustQuantity)}
                     />
                   </PermissionChecker>
                 ) : null}
@@ -245,7 +263,7 @@ export const InventoryItemsListWithProps = ({
                         <InventoryDataTableRow
                           key={inventoryItem.get('id')}
                           inventoryItem={inventoryItem}
-                          breakOutByLot={filter.breakOutByLot}
+                          breakOutByLot={state.breakOutByLot}
                           inventoryOnHand={enableInventoryOnHandField}
                           refetch={refetch}
                           navigate={navigate}
