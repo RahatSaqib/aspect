@@ -51,10 +51,12 @@ export function getValidations(format, actionType, inventory) {
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         })
         .min(new Date(), format(validationMessages.expiryDateAfterToday)),
-      lotNumber: string().when('consumable', {
-        is: consumable => !!(consumable?.showLot || inventory?.lotNumber),
-        then: sch => sch.required(format(validationMessages.lotNumberRequired)),
-      }),
+      lotNumber: string()
+        .nullable()
+        .when('consumable', {
+          is: consumable => !!(consumable?.showLot || inventory?.lotNumber),
+          then: sch => sch.required(format(validationMessages.lotNumberRequired)),
+        }),
     })
   }
 
