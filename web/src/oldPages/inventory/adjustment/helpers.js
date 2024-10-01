@@ -24,18 +24,23 @@ export function transformValues(values) {
 
 export function getValidations(format, actionType, inventory) {
   let schema = object({
-    consumable: object()
-      .nullable()
-      .when('toSiteId', {
-        is: val => !!val,
-        then: sch => sch.required(format(validationMessages.consumableRequired)),
-      }),
     quantity: number()
       .typeError(format(validationMessages.quantityNumber))
       .required(format(validationMessages.quantityRequired))
       .positive(format(validationMessages.quantityPositive))
       .integer(format(validationMessages.quantityInteger)),
   })
+
+  if (!inventory) {
+    schema = schema.shape({
+      consumable: object()
+        .nullable()
+        .when('toSiteId', {
+          is: val => !!val,
+          then: sch => sch.required(format(validationMessages.consumableRequired)),
+        }),
+    })
+  }
 
   if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
     schema = schema.shape({
