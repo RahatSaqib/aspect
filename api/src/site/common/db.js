@@ -26,12 +26,8 @@ async function updateSiteConsumable(siteId, { modify, consumableId }, _knex = kn
         siteId,
         consumableId,
       })
-      .whereNotExists(function () {
-        this.select('*').from('SiteConsumable').where({
-          siteId,
-          consumableId,
-        })
-      })
+      .onConflict(['siteId', 'consumableId'])
+      .ignore()
   }
   const exists = await _knex('InventoryItem').where({ siteId, consumableId }).first()
   if (exists) {
@@ -137,12 +133,8 @@ const insertSiteConsumables = (siteId, consumableIds) => {
         siteId,
         consumableId,
       })
-      .whereNotExists(function () {
-        this.select('*').from('SiteConsumable').where({
-          siteId,
-          consumableId,
-        })
-      })
+      .onConflict(['siteId', 'consumableId'])
+      .ignore()
   })
 }
 const insertSite = (knex, site) => {
