@@ -9,6 +9,7 @@ const removeInventory = require('./removeInventory')
 const transferInventory = require('./transferInventory')
 const receiveInventory = require('./receiveInventory')
 const listInventory = require('./listInventory')
+const listReconciliation = require('./listReconciliation')
 const getInventoryOverview = require('./getInventoryOverview')
 const listInventoryLog = require('./listInventoryLog')
 const listInventoryTransfer = require('./listInventoryTransfer')
@@ -20,6 +21,7 @@ const {
   removeInventoryCommonPayloadFields,
   modifyInventoryCommonPayloadFields,
   inventoryFilters,
+  inventoryReconciliationFilters,
   inventoryTransferFilters,
 } = require('./requestValidation')
 
@@ -49,6 +51,32 @@ const routes = [
             'daysStockLeft',
             'projectedWaste',
             'dailyConsumptionRate',
+            'lotNumber'
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/reconciliation',
+    handler: asyncHandler(listReconciliation),
+    config: {
+      description: 'List of Consumables on Hand At Site',
+      notes: 'Pageable and sortable list of inventory items',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          ...inventoryReconciliationFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateSortPageParams(
+            'consumableName',
+            'siteName',
+            'countryName',
+            'stateName',
+            'lgaName',
+            'quantityOnHand',
+            'expiresOn',
             'lotNumber'
           ),
         },

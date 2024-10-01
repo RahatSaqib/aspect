@@ -57,45 +57,6 @@ const InventoryReconciliationFilter = props => {
             />
           </Grid>
         ) : null}
-        {state.breakOutByLot ? (
-          <>
-            <Grid item xs={3}>
-              <PeriodSelector
-                label={formatMessage(messages.expiresOn)}
-                minDate={state.minDate || null}
-                maxDate={state.maxDate || null}
-                onChange={dateValues => setState({ ...state, ...dateValues })}
-              />
-            </Grid>
-            <Grid item xs={3}>
-              <TextField
-                label={formatMessage(messages.lotNumber)}
-                value={state.lotNumber || ''}
-                onChange={e => setState({ ...state, lotNumber: e.target.value })}
-              />
-            </Grid>
-          </>
-        ) : (
-          <Grid item xs={3}>
-            <DaysStockLeftSelect
-              label={formatMessage(messages.daysStockLeft)}
-              value={`${state.daysStockLeft}`}
-              onChange={e => setState({ ...state, daysStockLeft: e.target.value })}
-            />
-          </Grid>
-        )}
-        <Grid item xs={3}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={[true, 'true'].includes(state.hasStock)}
-                onChange={e => setState({ ...state, hasStock: e.target.checked || null })}
-              />
-            }
-            label={formatMessage(messages.hasStock)}
-            sx={{ m: 2 }}
-          />
-        </Grid>
       </Grid>
     </FilterContainer>
   )
