@@ -3,9 +3,7 @@ const { getPartnerByExternalId, getCountryByAbbreviation } = require('../utils')
 const { getListSitesForSelectList } = require('../../src/site/service')
 const { getConsumableTypes, getSiteConsumable } = require('../../src/consumable/common/db')
 
-const partnerData = require(`../${process.env['seeds.directory'].replace('./seeds/', '')}/fixtures/partnerData`)
-
-async function seedSiteConsumables(knex) {
+async function seedSiteConsumables(knex, partnerData) {
   const {
     partner: { externalId },
     partnerAbbreviation,
