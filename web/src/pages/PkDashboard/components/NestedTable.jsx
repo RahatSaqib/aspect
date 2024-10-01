@@ -13,6 +13,7 @@ import {
   TableRow,
   TableSortLabel,
 } from '@mui/material'
+import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
 
 function addDepth(items) {
   const tree = { children: items }
@@ -84,10 +85,16 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
                         setPage(0)
                       }}
                     >
-                      {c.name}
+                      <Box sx={{ display: 'flex', justifyContent: idx !== 0 ? 'end' : undefined }}>
+                        {c.name}
+                        {c.tooltip && <AspectTooltip title={c.tooltip} showHelpIcon />}
+                      </Box>
                     </TableSortLabel>
                   ) : (
-                    c.name
+                    <Box sx={{ display: 'flex', justifyContent: idx !== 0 ? 'end' : undefined }}>
+                      {c.name}
+                      {c.tooltip && <AspectTooltip title={c?.tooltip} showHelpIcon />}
+                    </Box>
                   )}
                 </TableCell>
               )
