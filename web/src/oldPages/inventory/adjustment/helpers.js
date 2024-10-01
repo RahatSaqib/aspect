@@ -24,18 +24,23 @@ export function transformValues(values) {
 
 export function getValidations(format, actionType, inventory) {
   let schema = object({
-    consumable: object()
-      .nullable()
-      .when('toSiteId', {
-        is: val => !!val,
-        then: sch => sch.required(format(validationMessages.consumableRequired)),
-      }),
     quantity: number()
       .typeError(format(validationMessages.quantityNumber))
       .required(format(validationMessages.quantityRequired))
       .positive(format(validationMessages.quantityPositive))
       .integer(format(validationMessages.quantityInteger)),
   })
+
+  if (!inventory) {
+    schema = schema.shape({
+      consumable: object()
+        .nullable()
+        .when('toSiteId', {
+          is: val => !!val,
+          then: sch => sch.required(format(validationMessages.consumableRequired)),
+        }),
+    })
+  }
 
   if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
     schema = schema.shape({
@@ -46,10 +51,12 @@ export function getValidations(format, actionType, inventory) {
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         })
         .min(new Date(), format(validationMessages.expiryDateAfterToday)),
-      lotNumber: string().when('consumable', {
-        is: consumable => !!(consumable?.showLot || inventory?.lotNumber),
-        then: sch => sch.required(format(validationMessages.lotNumberRequired)),
-      }),
+      lotNumber: string()
+        .nullable()
+        .when('consumable', {
+          is: consumable => !!(consumable?.showLot || inventory?.lotNumber),
+          then: sch => sch.required(format(validationMessages.lotNumberRequired)),
+        }),
     })
   }
 
