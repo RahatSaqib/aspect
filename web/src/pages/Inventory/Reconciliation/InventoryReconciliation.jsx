@@ -1,5 +1,7 @@
 import React, { useMemo } from 'react'
 import { Box, Card, LinearProgress, Stack, Switch, Table, TableBody, TableRow, Typography } from '@mui/material'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
@@ -10,10 +12,11 @@ import {
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
+import useInventoryReconciliation from '../../../hooks/inventory/useInventoryReconciliation'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterSync from '../../../hooks/useFilterSync'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
-import useInventoryReconciliation from '../../../hooks/inventory/useInventoryReconciliation'
+import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { DataTableCell } from '../../../oldComponents/shared/tableBody'
@@ -22,8 +25,6 @@ import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import { getColumns } from './tools'
 
-const data = { data: [] }
-const isLoading = false
 export function InventoryReconciliation() {
   const { formatMessage } = useIntl()
   const user = useAuthState()
@@ -31,15 +32,20 @@ export function InventoryReconciliation() {
   const navigate = useNavigate()
   const [addFilter] = useFilterUpdate()
   const [state, setState] = useFilterSync()
+  const filters = useFilterValues(location.pathname)
   const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_RECONCILIATION,
   })
-  const sortPage = makeSortPageSelector({ sortCol: 'name' })
+  const sortPage = makeSortPageSelector({ sortCol: 'siteName' })
   const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
   const columns = useMemo(
     () => getColumns(formatMessage, [true, 'true'].includes(state.breakOutByLot), user),
     [formatMessage, state.breakOutByLot, user]
   )
+  const { data, isLoading } = useInventoryReconciliation(
+    omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters }, isNil)
+  )
+
   return (
     <>
       <DetailHeader name={formatMessage(messages.inventoryReconciliation)} disableBack />
@@ -90,16 +96,26 @@ export function InventoryReconciliation() {
                     columns={columns}
                   />
                   <TableBody>
-                    {data.data.map((state, index) => (
-                      <TableRow sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }} key={state.name}>
-                        <DataTableCell>{state.name}</DataTableCell>
+                    {data.data.map((item, index) => (
+                      <TableRow sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }} key={item.name}>
+                        <DataTableCell>{item.stateName}</DataTableCell>
+                        <DataTableCell>{item.lgaName}</DataTableCell>
+                        <DataTableCell>{item.siteName}</DataTableCell>
+                        <DataTableCell>{item.consumableName}</DataTableCell>
+                        {state.breakOutByLot ? (
+                          <>
+                            <DataTableCell>{item.expiresOn}</DataTableCell>
+                            <DataTableCell>{item.lotNumber}</DataTableCell>
+                          </>
+                        ) : null}
+                        <DataTableCell>{item.quantity}</DataTableCell>
                       </TableRow>
                     ))}
                   </TableBody>
                 </Table>
                 <BrowseTablePaginator
                   location={location}
-                  paginatorStatus={messages.statesPaginatorStatus}
+                  paginatorStatus={messages.paginatorStatus}
                   total={data.total}
                   pageAt={pageAt}
                   pageSize={pageSize}

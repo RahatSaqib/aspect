@@ -72,10 +72,9 @@ const routes = [
           ...validateSortPageParams(
             'consumableName',
             'siteName',
-            'countryName',
             'stateName',
             'lgaName',
-            'quantityOnHand',
+            'quantity',
             'expiresOn',
             'lotNumber'
           ),
