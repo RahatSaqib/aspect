@@ -14,7 +14,7 @@ const getInventoryOverview = require('./getInventoryOverview')
 const listInventoryLog = require('./listInventoryLog')
 const listInventoryTransfer = require('./listInventoryTransfer')
 const exportInventoryTransfer = require('./exportInventoryTransfer')
-const { exportSupplies } = require('./serviceReports')
+const { exportSupplies, exportReconciliation } = require('./serviceReports')
 const {
   listSuppliesBaseConfig,
   adjustInventoryCommonPayloadFields,
@@ -31,8 +31,8 @@ const routes = [
     path: '/inventory',
     handler: asyncHandler(listInventory),
     config: {
-      description: 'List of Consumables on Hand At Site',
-      notes: 'Pageable and sortable list of inventory items',
+      description: 'List of Reconciliation',
+      notes: 'Pageable and sortable list of reconciliation',
       auth: { scope: ['inventory:view'] },
       validate: {
         query: {
@@ -67,6 +67,32 @@ const routes = [
       auth: { scope: ['inventory:view'] },
       validate: {
         query: {
+          ...inventoryReconciliationFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateSortPageParams(
+            'consumableName',
+            'siteName',
+            'stateName',
+            'lgaName',
+            'quantity',
+            'expiresOn',
+            'lotNumber'
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/reconciliation/export',
+    handler: asyncHandler(exportReconciliation),
+    config: {
+      description: 'Export List of Reconciliation',
+      notes: 'Pageable and sortable list of reconciliation',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          format: Joi.string().allow('').description('File format for exporting data'),
           ...inventoryReconciliationFilters,
           ...validateAllGeographyFilterParams(),
           ...validateSortPageParams(

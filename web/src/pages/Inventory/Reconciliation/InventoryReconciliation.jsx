@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react'
+import React, { useCallback, useMemo } from 'react'
 import { Box, Card, LinearProgress, Stack, Switch, Table, TableBody, TableRow, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
@@ -12,6 +12,7 @@ import {
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
+import AspectExportListButton from '../../../components/AspectExportListButton'
 import useInventoryReconciliation from '../../../hooks/inventory/useInventoryReconciliation'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterSync from '../../../hooks/useFilterSync'
@@ -23,7 +24,8 @@ import { DataTableCell } from '../../../oldComponents/shared/tableBody'
 import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
-import { getColumns } from './tools'
+import { getColumns, getExportableFile } from './tools'
+import { format } from 'date-fns'
 
 export function InventoryReconciliation() {
   const { formatMessage } = useIntl()
@@ -44,6 +46,10 @@ export function InventoryReconciliation() {
   )
   const { data, isLoading } = useInventoryReconciliation(
     omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters }, isNil)
+  )
+  const handleExport = useCallback(
+    formatType => getExportableFile(filters, formatType, sortCol, sortDir, data?.data?.length, 'reconciliation'),
+    [data?.data?.length, filters, sortCol, sortDir]
   )
 
   return (
@@ -70,17 +76,25 @@ export function InventoryReconciliation() {
                 />
                 Hierarchical View
               </Typography>
-              <Typography variant="subtitle2" color="textSecondary">
-                <Switch
-                  checked={[true, 'true'].includes(state.breakOutByLot)}
-                  onChange={e => {
-                    const payload = { ...state, breakOutByLot: e.target.checked || null }
-                    setState(payload)
-                    addFilter(payload, location.pathname)
-                  }}
+
+              <Stack sx={{ flexDirection: 'row', gap: 1 }}>
+                <Typography variant="subtitle2" color="textSecondary">
+                  <Switch
+                    checked={[true, 'true'].includes(state.breakOutByLot)}
+                    onChange={e => {
+                      const payload = { ...state, breakOutByLot: e.target.checked || null }
+                      setState(payload)
+                      addFilter(payload, location.pathname)
+                    }}
+                  />
+                  Breakdown by Lots
+                </Typography>
+                <AspectExportListButton
+                  onExport={handleExport}
+                  reportName="Reconciliation"
+                  visible={data?.data?.length !== 0}
                 />
-                Breakdown by Lots
-              </Typography>
+              </Stack>
             </Stack>
             {isLoading ? (
               <LinearProgress />
@@ -97,14 +111,19 @@ export function InventoryReconciliation() {
                   />
                   <TableBody>
                     {data.data.map((item, index) => (
-                      <TableRow sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }} key={item.name}>
+                      <TableRow
+                        sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }}
+                        key={`${item.siteName}-${item.consumableName}${item.lotNumber ? `-${item.lotNumber}` : ''}`}
+                      >
                         <DataTableCell>{item.stateName}</DataTableCell>
                         <DataTableCell>{item.lgaName}</DataTableCell>
                         <DataTableCell>{item.siteName}</DataTableCell>
                         <DataTableCell>{item.consumableName}</DataTableCell>
                         {state.breakOutByLot ? (
                           <>
-                            <DataTableCell>{item.expiresOn}</DataTableCell>
+                            <DataTableCell>
+                              {item.expiresOn ? format(new Date(item.expiresOn), 'yyyy-MM-dd') : ''}
+                            </DataTableCell>
                             <DataTableCell>{item.lotNumber}</DataTableCell>
                           </>
                         ) : null}

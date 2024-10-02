@@ -5,6 +5,7 @@ const { INVENTORY_LOG_LIST } = require('./common/querySelectors')
 const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
 const listInventoryLog = require('./listInventoryLog')
 const listInventory = require('./listInventory')
+const listReconciliation = require('./listReconciliation')
 
 async function exportSupplies(request, reply) {
   const { query } = request
@@ -49,7 +50,17 @@ async function inventoryLog(auth, query) {
   }
 }
 
+async function exportReconciliation(request, replay) {
+  const { query } = request
+  const { data } = await listReconciliation(request)
+  const sheetData = { data, defaultNoDataMessage: 'No data' }
+  const scope = query.breakOutByLot ? 'reconciliation-by-lot' : 'reconciliation'
+
+  return exportData(request, replay, sheetData, scope, { replacements: getBaseReplacements() })
+}
+
 module.exports = {
   exportSupplies,
+  exportReconciliation,
   inventoryLog,
 }
