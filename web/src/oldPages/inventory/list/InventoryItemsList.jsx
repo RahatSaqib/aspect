@@ -84,10 +84,10 @@ export const InventoryItemsListWithProps = ({
   onTransferInventorySubmit,
   onAddInventorySubmit,
   refetch,
+  filter,
 }) => {
   const [inventoryOnField, setInventoryOnField] = useState(false)
   const [state, setState] = useFilterSync()
-  const [addFilter] = useFilterUpdate()
   const user = useAuthState()
   const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LIST,
@@ -180,6 +180,14 @@ export const InventoryItemsListWithProps = ({
       }
     }
   }
+
+  /**
+   * When the actual filter is update the internal state is not updating to handle it we are using below useEffect
+   */
+  useEffect(() => {
+    setState(filter)
+  }, [setState, filter])
+
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
@@ -194,7 +202,7 @@ export const InventoryItemsListWithProps = ({
         <InventoryItemsFilter state={state} setState={setState} />
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
           {isHierarchicalView && (
-            <HierarchicalSiteView countryId={user.countryId} filters={state} pathname="/browse/inventory/supplies" />
+            <HierarchicalSiteView countryId={user.countryId} filters={filter} pathname="/browse/inventory/supplies" />
           )}
           <DataTableCard
             key={`DataTableCard__table-${location.key}`}
@@ -218,7 +226,6 @@ export const InventoryItemsListWithProps = ({
                         const payload = { ...state, breakOutByLot: e.target.checked || null }
                         setState(payload)
                         setInventoryOnField(false)
-                        addFilter(payload, location.pathname)
                       }}
                     />
                   }
