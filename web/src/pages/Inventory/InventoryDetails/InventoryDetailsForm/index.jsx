@@ -147,7 +147,7 @@ export const InventoryDetailsForm = ({ data, cartridgeId }) => {
                 <Grid item xs={12} sx={{ textAlign: 'left' }}>
                   <Button
                     type="submit"
-                    disabled={isSubmitting || !dirty || !isValid} // Disable button if form is not dirty or not valid
+                    disabled={isSubmitting || !(dirty && isValid)}
                     color="primary"
                     variant="contained"
                   >
