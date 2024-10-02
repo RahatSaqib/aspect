@@ -72,7 +72,7 @@ const InventoryList = () => {
                       >
                         <TableCell>{row.name}</TableCell>
                         <TableCell>{row.canExpire ? 'Yes' : 'No'}</TableCell>
-                        <TableCell>{row.locationTracking}</TableCell>
+                        <TableCell>{row.totalConsumablesTracked}</TableCell>
                         <TableCell>{row.quantityOnHand}</TableCell>
                         <TableCell>{row.unit}</TableCell>
                       </TableRow>

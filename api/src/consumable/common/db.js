@@ -18,7 +18,7 @@ const SELECT_LIST_FIELDS = [
         ii.quantityOnHand
       ), 0) as quantityOnHand`
   ),
-  knex.raw('COALESCE(COUNT(DISTINCT sc.siteId), 0) as locationTracking'),
+  knex.raw('COALESCE(COUNT(DISTINCT sc.siteId), 0) as totalConsumablesTracked'),
 ]
 
 function getConsumableTypes(dataConstraints, query) {
