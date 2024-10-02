@@ -26,7 +26,7 @@ export const InventoryTabs = ({ consumableId, siteIds }) => {
   return (
     <Box sx={{ width: '100%' }}>
       {/* Tabs Navigation */}
-      <Tabs value={tabValue} onChange={handleTabChange} aria-label="Tabs example">
+      <Tabs value={tabValue} onChange={handleTabChange} aria-label="Inventory tabs">
         <Tab
           sx={{ textTransform: 'none' }}
           label={formatMessage(messages.trackByLocation)}

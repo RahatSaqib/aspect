@@ -38,9 +38,9 @@ const InventoryList = () => {
 
   return (
     <>
-      <DetailHeader name={formatMessage(messages.inventoryList)} disableBack />
+      <DetailHeader name={formatMessage(messages.inventoryItems)} disableBack />
       <div className={styles.Container}>
-        <Helmet title={formatMessage(messages.inventoryList)} />
+        <Helmet title={formatMessage(messages.inventoryItems)} />
         <Card>
           <CardContent>
             {isLoading ? (

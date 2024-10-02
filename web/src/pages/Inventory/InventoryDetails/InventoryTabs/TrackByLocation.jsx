@@ -13,14 +13,26 @@ export const TrackByLocation = ({ siteIds, consumableId }) => {
   return (
     <Summary
       title={
-        <Stack direction="row" alignItems="center" gap={1}>
+        <Stack
+          sx={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
           {isChanging ? <CircularProgress size={15} /> : null}
         </Stack>
       }
       description={
         <>
           {isLoading ? (
-            <Stack direction="row" alignItems="center" gap={1}>
+            <Stack
+              sx={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
               <CircularProgress size={15} />
               <Typography>Loading</Typography>
             </Stack>

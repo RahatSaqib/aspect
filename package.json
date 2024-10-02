@@ -36,8 +36,5 @@
     "web:test": "yarn --cwd ./web test:ci",
     "web:lint": "yarn --cwd ./web lint",
     "act": "act pull_request -P ubuntu-latest=node:14"
-  },
-  "dependencies": {
-    "bluebird": "^3.7.2"
   }
 }

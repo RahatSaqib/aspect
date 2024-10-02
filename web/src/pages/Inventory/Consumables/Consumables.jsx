@@ -12,7 +12,13 @@ export default function Consumables({ siteId, consumableIds }) {
   return (
     <Summary
       title={
-        <Stack direction="row" alignItems="center" gap={1}>
+        <Stack
+          sx={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
           <>Consumables applicable for the site</>
           {isChanging ? <CircularProgress size={15} /> : null}
         </Stack>
@@ -20,7 +26,13 @@ export default function Consumables({ siteId, consumableIds }) {
       description={
         <>
           {isLoading ? (
-            <Stack direction="row" alignItems="center" gap={1}>
+            <Stack
+              sx={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
               <CircularProgress size={15} />
               <Typography>Loading</Typography>
             </Stack>
