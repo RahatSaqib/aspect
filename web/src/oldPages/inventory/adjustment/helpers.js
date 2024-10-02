@@ -31,15 +31,26 @@ export function getValidations(format, actionType, inventory) {
       .integer(format(validationMessages.quantityInteger)),
   })
 
+  /**
+   * `inventory` is not set only for global add inventory (actionType === types.SHOW_NEW_INVENTORY_DIALOG)
+   * so below for `consumable` field depends only on `toSiteId`
+   */
   if (!inventory) {
-    schema = schema.shape({
-      consumable: object()
-        .nullable()
-        .when('toSiteId', {
-          is: val => !!val,
-          then: sch => sch.required(format(validationMessages.consumableRequired)),
-        }),
-    })
+    /**
+     * show error for required field only when toSiteId is defined,
+     * because value of `consumable` field depend on corresponding toSite.siteConsumables and no need
+     * to bother user's eyes with `consumable` validation message when toSite is not selected
+     */
+    if (actionType === types.SHOW_NEW_INVENTORY_DIALOG) {
+      schema = schema.shape({
+        consumable: object()
+          .nullable()
+          .when('toSiteId', {
+            is: val => !!val,
+            then: sch => sch.required(format(validationMessages.consumableRequired)),
+          }),
+      })
+    }
   }
 
   if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {

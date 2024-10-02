@@ -19,6 +19,9 @@ function InventoryAdjustmentDialog(props) {
   const { formatMessage, ...intl } = useIntl()
   const inventory = inventoryItem?.toJS?.() ?? undefined
   const labels = getLabels(actionType)
+  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
+  const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
+  const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
 
   return (
     <Formik
@@ -37,21 +40,25 @@ function InventoryAdjustmentDialog(props) {
         setFieldValue,
         isSubmitting,
       }) => {
+        const fromSite = allSites.find(it => it.id === values.fromSiteId)
         const toSite = allSites.find(it => it.id === values.toSiteId)
         const onToSiteChange = event => {
-          const toSiteId = event.target.value
+          const toSiteId = event.target.value || undefined
           setFieldValue('toSiteId', toSiteId)
-          let resetConsumable = true
-          if (toSiteId) {
-            /**
-             * if just selected toSite doesn't have currently selected (for previous toSite) consumableId -
-             * then reset `consumable` field
-             */
-            const site = allSites.find(it => it.id === +toSiteId)
-            resetConsumable = values.consumable && !site?.siteConsumables?.includes(values.consumable.id)
-          }
-          if (resetConsumable) {
-            setFieldValue('consumable', undefined)
+          //
+          if (actionType === types.SHOW_NEW_INVENTORY_DIALOG) {
+            let resetConsumable = true
+            if (toSiteId) {
+              /**
+               * if just selected toSite doesn't include current consumable  -
+               * then reset `consumable` field
+               */
+              const site = allSites.find(it => it.id === +toSiteId)
+              resetConsumable = values.consumable && !site?.siteConsumables?.includes(values.consumable.id)
+            }
+            if (resetConsumable) {
+              setFieldValue('consumable', undefined)
+            }
           }
         }
 
@@ -82,7 +89,10 @@ function InventoryAdjustmentDialog(props) {
                 {actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG ? (
                   <SiteSelect
                     name="toSiteId"
-                    disabled={actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG}
+                    disabled={
+                      actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG ||
+                      actionType === types.SHOW_ADD_INVENTORY_DIALOG
+                    }
                     error={!!errors.toSiteId}
                     helperText={errors.toSiteId}
                     label={formatMessage(messages.toSiteName)}
@@ -100,20 +110,31 @@ function InventoryAdjustmentDialog(props) {
                     onChange={consumable => setFieldValue('consumable', consumable)}
                     fullWidth
                     /**
-                     * show only those consumables which are linked to selected toSite,
+                     * show only those consumables which are linked to selected toSite/fromSite,
                      * (see table SiteConsumable)
                      */
                     onlyWhitelisted
-                    whitelistIds={toSite?.siteConsumables}
+                    whitelistIds={
+                      uiAdd ? toSite?.siteConsumables : uiTransfer || uiRemove ? fromSite?.siteConsumables : null
+                    }
                     /**
-                     * wait until site selected and disable this component
+                     * disable this component if...
                      */
-                    disabled={!values.toSiteId}
+                    disabled={
+                      // ...global adding inventory but toSite is not selected
+                      (actionType === types.SHOW_NEW_INVENTORY_DIALOG && !values.toSiteId) ||
+                      // ...or local adding inventory (`toSite` and `consumable` fields are prefilled)
+                      actionType === types.SHOW_ADD_INVENTORY_DIALOG ||
+                      // ...or remove (`fromSite` and `consumable` fields are prefilled)
+                      actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ||
+                      // ...or transferring inventory
+                      uiTransfer
+                    }
                   />
                 ) : null}
 
                 {values?.consumable?.showExpirationDate || inventory?.expiresOn ? (
-                  <FormGroup label={formatMessage(messages.expiryDate)}>
+                  <FormGroup label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}>
                     <DateTimeInput
                       fullWidth
                       margin="normal"
@@ -217,7 +238,7 @@ function InventoryAdjustmentDialog(props) {
                   </>
                 ) : null}
 
-                <FormGroup label={formatMessage(labels.dateAdjusted)}>
+                <FormGroup label={`${formatMessage(labels.dateAdjusted)} (yyyy-mm-dd)`}>
                   <DateTimeInput
                     fullWidth
                     intl={{ formatMessage, ...intl }}
