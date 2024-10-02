@@ -20,6 +20,9 @@ const inventoryReconciliationFilters = {
   siteName: Joi.string().allow('', null),
   breakOutByLot: Joi.bool().allow(null),
   consumableId: Joi.number().integer().positive().allow('', null),
+  lotNumber: Joi.string().allow('', null),
+  minExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('From Date'),
+  maxExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('To Date'),
 }
 
 const inventoryTransferFilters = {

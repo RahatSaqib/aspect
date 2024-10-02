@@ -27,6 +27,14 @@ const messages = defineMessages({
     id: 'pages.inventoryReconciliation.lotNumber',
     defaultMessage: 'Lot Number',
   },
+  hierarchicalView: {
+    id: 'pages.inventoryReconciliation.hierarchicalView',
+    defaultMessage: 'Hierarchical View',
+  },
+  breakdownByLots: {
+    id: 'pages.inventoryReconciliation.breakdownByLots',
+    defaultMessage: 'Breakdown by Lots',
+  },
   unreconciledQuantity: {
     id: 'pages.inventoryReconciliation.unreconciledQuantity',
     defaultMessage: 'Unreconciled quantity',

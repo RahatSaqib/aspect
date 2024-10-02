@@ -12,7 +12,7 @@ const getReconciliationList = async (query, dataConstraints) => {
     .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .modify(filterDateRangeParams, query, 'r.endedOn')
+    .modify(filterDateRangeParams, query, 'm.expirationDate')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -20,6 +20,7 @@ const getReconciliationList = async (query, dataConstraints) => {
       siteName: 's.name',
       assayId: 'r.assayId',
       consumableId: 'ca.consumableId',
+      lotNumber: 'm.lotNumber',
     })
     .groupBy(['s.id', 'c.id', ...(query.breakOutByLot ? ['m.lotNumber'] : [])])
     .count('* as quantity')

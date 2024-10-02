@@ -1,18 +1,19 @@
 import React from 'react'
-import { Grid, TextField, FormControlLabel, Checkbox } from '@mui/material'
+import { Grid, TextField } from '@mui/material'
 import { useIntl } from 'react-intl'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
+import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
-import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector, DaysStockLeftSelect } from '../index'
+import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 
-const InventoryReconciliationFilter = props => {
-  const { state, setState } = props
+const InventoryReconciliationFilter = () => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
+  const [state, setState] = useFilterSync()
 
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
@@ -56,6 +57,26 @@ const InventoryReconciliationFilter = props => {
               width="100%"
             />
           </Grid>
+        ) : null}
+
+        {state.breakOutByLot ? (
+          <>
+            <Grid item xs={3}>
+              <PeriodSelector
+                label={formatMessage(messages.expiresOn)}
+                minDate={state.minDate || null}
+                maxDate={state.maxDate || null}
+                onChange={dateValues => setState({ ...state, ...dateValues })}
+              />
+            </Grid>
+            <Grid item xs={3}>
+              <TextField
+                label={formatMessage(messages.lotNumber)}
+                value={state.lotNumber || ''}
+                onChange={e => setState({ ...state, lotNumber: e.target.value })}
+              />
+            </Grid>
+          </>
         ) : null}
       </Grid>
     </FilterContainer>

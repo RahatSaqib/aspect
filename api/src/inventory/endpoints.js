@@ -69,6 +69,7 @@ const routes = [
         query: {
           ...inventoryReconciliationFilters,
           ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
           ...validateSortPageParams(
             'consumableName',
             'siteName',

@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { Box, Card, LinearProgress, Stack, Switch, Table, TableBody, TableRow, Typography } from '@mui/material'
+import format from 'date-fns/format'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
@@ -15,9 +16,7 @@ import {
 import AspectExportListButton from '../../../components/AspectExportListButton'
 import useInventoryReconciliation from '../../../hooks/inventory/useInventoryReconciliation'
 import useAuthState from '../../../hooks/useAuthState'
-import useFilterSync from '../../../hooks/useFilterSync'
-import useFilterUpdate from '../../../hooks/useFilterUpdate'
-import useFilterValues from '../../../hooks/useFilterValues'
+import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
 import { DataTableCell } from '../../../oldComponents/shared/tableBody'
@@ -25,30 +24,30 @@ import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
 import messages from './messages'
 import { getColumns, getExportableFile } from './tools'
-import { format } from 'date-fns'
 
 export function InventoryReconciliation() {
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const location = useLocation()
   const navigate = useNavigate()
-  const [addFilter] = useFilterUpdate()
-  const [state, setState] = useFilterSync()
-  const filters = useFilterValues(location.pathname)
+  const [filters, setFilters] = usePathFilter()
   const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_RECONCILIATION,
   })
-  const sortPage = makeSortPageSelector({ sortCol: 'siteName' })
-  const { sortCol, sortDir, pageAt, pageSize } = sortPage({ location })
+  const { sortCol, sortDir, pageAt, pageSize } = useMemo(
+    () => makeSortPageSelector({ sortCol: 'siteName' })({ location }),
+    [location]
+  )
   const columns = useMemo(
-    () => getColumns(formatMessage, [true, 'true'].includes(state.breakOutByLot), user),
-    [formatMessage, state.breakOutByLot, user]
+    () => getColumns(formatMessage, [true, 'true'].includes(filters.breakOutByLot), user),
+    [formatMessage, filters.breakOutByLot, user]
   )
   const { data, isLoading } = useInventoryReconciliation(
     omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters }, isNil)
   )
   const handleExport = useCallback(
-    formatType => getExportableFile(filters, formatType, sortCol, sortDir, data?.data?.length, 'reconciliation'),
+    formatType =>
+      getExportableFile(omitBy(filters, isNil), formatType, sortCol, sortDir, data?.data?.length, 'reconciliation'),
     [data?.data?.length, filters, sortCol, sortDir]
   )
 
@@ -57,37 +56,35 @@ export function InventoryReconciliation() {
       <DetailHeader name={formatMessage(messages.inventoryReconciliation)} disableBack />
       <Helmet title={formatMessage(messages.inventoryReconciliation)} />
       <Box sx={{ width: '100%', p: '10px' }}>
-        <InventoryReconciliationFilter state={state} setState={setState} />
+        <InventoryReconciliationFilter />
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
-          {isHierarchicalView && (
-            <HierarchicalSiteView
-              countryId={user.countryId}
-              filters={state}
-              pathname="/browse/inventory/reconciliation"
-            />
-          )}
-
-          <Card sx={{ padding: '20px', flex: 1 }}>
+          {isHierarchicalView ? (
+            <HierarchicalSiteView countryId={user.countryId} filters={filters} pathname={location.pathname} />
+          ) : null}
+          <Card sx={{ p: '20px', flex: 1 }}>
             <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Typography variant="subtitle2" color="textSecondary">
                 <Switch
                   checked={isHierarchicalView}
                   onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
                 />
-                Hierarchical View
+                {formatMessage(messages.hierarchicalView)}
               </Typography>
 
               <Stack sx={{ flexDirection: 'row', gap: 1 }}>
                 <Typography variant="subtitle2" color="textSecondary">
                   <Switch
-                    checked={[true, 'true'].includes(state.breakOutByLot)}
+                    checked={[true, 'true'].includes(filters.breakOutByLot)}
                     onChange={e => {
-                      const payload = { ...state, breakOutByLot: e.target.checked || null }
-                      setState(payload)
-                      addFilter(payload, location.pathname)
+                      const value = e.target.checked || null
+                      setFilters(prev => ({
+                        ...prev,
+                        ...(!value ? { minDate: null, maxDate: null, lotNumber: null } : {}),
+                        breakOutByLot: value,
+                      }))
                     }}
                   />
-                  Breakdown by Lots
+                  {formatMessage(messages.breakdownByLots)}
                 </Typography>
                 <AspectExportListButton
                   onExport={handleExport}
@@ -98,7 +95,7 @@ export function InventoryReconciliation() {
             </Stack>
             {isLoading ? (
               <LinearProgress />
-            ) : !data || !data.data || data.data.length === 0 ? (
+            ) : !data || !data?.data || data?.data?.length === 0 ? (
               <BrowseEmptyList />
             ) : (
               <>
@@ -119,10 +116,10 @@ export function InventoryReconciliation() {
                         <DataTableCell>{item.lgaName}</DataTableCell>
                         <DataTableCell>{item.siteName}</DataTableCell>
                         <DataTableCell>{item.consumableName}</DataTableCell>
-                        {state.breakOutByLot ? (
+                        {filters.breakOutByLot ? (
                           <>
                             <DataTableCell>
-                              {item.expiresOn ? format(new Date(item.expiresOn), 'yyyy-MM-dd') : ''}
+                              {item.expiresOn ? format(new Date(item.expiresOn), 'yyyy-MM-dd') : null}
                             </DataTableCell>
                             <DataTableCell>{item.lotNumber}</DataTableCell>
                           </>
