@@ -126,6 +126,7 @@ module.exports = {
     serviceBucket: process.env['aws.serviceBucket'],
   },
   serviceStatusFile: process.env.serviceStatusFile,
+  maxDaysDeviceNoResults: 14,
 }
 
 configureOptional(module.exports)
