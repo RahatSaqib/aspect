@@ -22,7 +22,7 @@ const InventoryItemsFilter = props => {
         <Grid item xs={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
-            value={state.stateId}
+            value={state.stateId ?? ''}
             onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
             countryId={state.countryId}
           />
@@ -30,7 +30,7 @@ const InventoryItemsFilter = props => {
         <Grid item xs={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
-            value={state.lgaId}
+            value={state.lgaId ?? ''}
             onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
             stateId={state.stateId}
           />
