@@ -1,4 +1,5 @@
 import React from 'react'
+import { formatDistanceToNow } from 'date-fns'
 import { useIntl } from 'react-intl'
 import ColoredNumber from '../../../oldComponents/shared/ColoredNumber'
 import stylesShared from '../../../oldComponents/shared/DataTableRow.module.css'
@@ -55,14 +56,14 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
           ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
           : formatMessage(messages.notAvailable)}
       </TableCell>
-      <TableCell>{getTimeDifference(device.get('lastResultConductedOn'), device.get('timezoneIANA'))}</TableCell>
+      <TableCell>{formatDistanceToNow(new Date(device.get('lastResultConductedOn')), { addSuffix: true })}</TableCell>
       <TableCell>
         <StatusIcon
           title={formatMessage(messages[device.get('connectorStatus')])}
           status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
         />
       </TableCell>
-      <TableCell>{getTimeDifference(device.get('lastPingOn'), device.get('timezoneIANA'))}</TableCell>
+      <TableCell>{formatDistanceToNow(new Date(device.get('lastPingOn')), { addSuffix: true })}</TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
       </TableCell>
@@ -87,7 +88,7 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
       <TableCell hiddenOn="lg">
         <Rate it={device.get('error').toJS()} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
       </TableCell>
-      <TableCell hiddenOn="lg">{getTimeDifference(device.get('createdOn'), device.get('timezoneIANA'))}</TableCell>
+      <TableCell hiddenOn="lg">{formatDistanceToNow(new Date(device.get('createdOn')), { addSuffix: true })}</TableCell>
       <TableCell hiddenOn="lg" numeric>
         {formatNumber(device.get('resultCountLastMonth'))}
       </TableCell>
