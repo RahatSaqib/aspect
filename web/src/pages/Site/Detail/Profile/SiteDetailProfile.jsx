@@ -1,9 +1,10 @@
 import React from 'react'
-import { Card } from '@mui/material'
+import { Card, Grid } from '@mui/material'
 import PropTypes from 'prop-types'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import { commonDefinitions, getCustomMessage } from '../../../../messages/customMessages'
 import Summary from '../../../../oldComponents/Summary'
+import Consumables from '../../../Inventory/Consumables/Consumables'
 import Contacts from '../Contacts/Contacts'
 import localMessages from '../messages'
 import styles from '../SiteDetail.module.css'
@@ -37,18 +38,26 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
   return (
     <div>
       <section className={`${styles.Section} ${styles.Section__first}`}>
+        {' '}
         <Card className={styles.Section__Content}>
-          {fields.map(({ label, value }) => (
-            <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="4" />
-          ))}
-          <PermissionChecker permissions={['person:view', 'admin', 'person:admin', 'person:edit']}>
-            <Contacts
-              id={site.id}
-              formatMessage={formatMessage}
-              title={formatMessage(messages.fieldContact)}
-              disabled={disabled}
-            />
-          </PermissionChecker>
+          <Grid container>
+            <Grid item xs={12} md={6}>
+              {fields.map(({ label, value }) => (
+                <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="4" />
+              ))}
+              <PermissionChecker permissions={['person:view', 'admin', 'person:admin', 'person:edit']}>
+                <Contacts
+                  id={site.id}
+                  formatMessage={formatMessage}
+                  title={formatMessage(messages.fieldContact)}
+                  disabled={disabled}
+                />
+              </PermissionChecker>
+            </Grid>
+            <Grid item xs={12} md={6}>
+              <Consumables siteId={site.id} consumableIds={site.consumableIds} />
+            </Grid>
+          </Grid>
         </Card>
       </section>
     </div>

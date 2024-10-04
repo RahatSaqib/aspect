@@ -64,13 +64,33 @@ export const validationMessages = defineMessages({
     id: 'pages.InventoryAdjustmentDialogForm.consumableRequired',
     defaultMessage: 'Please specify a consumable',
   },
+  quantityNumber: {
+    id: 'pages.NewInventoryDialogForm.quantityNumber',
+    defaultMessage: 'Please enter positive integer value',
+  },
   quantityRequired: {
     id: 'pages.NewInventoryDialogForm.quantityRequired',
     defaultMessage: 'Please specify the quantity',
   },
+  quantityPositive: {
+    id: 'pages.NewInventoryDialogForm.quantityPositive',
+    defaultMessage: 'Please enter positive value',
+  },
+  quantityInteger: {
+    id: 'pages.NewInventoryDialogForm.quantityInteger',
+    defaultMessage: 'Please enter integer value',
+  },
   expiryDateRequired: {
     id: 'pages.InventoryAdjustmentDialogForm.expiryDateRequired',
     defaultMessage: 'Please specify an expiry date',
+  },
+  expiryDateAfterToday: {
+    id: 'pages.InventoryAdjustmentDialogForm.expiryDateAfterToday',
+    defaultMessage: 'Must be later than today',
+  },
+  lotNumberRequired: {
+    id: 'pages.InventoryAdjustmentDialogForm.lotNumberRequired',
+    defaultMessage: 'Please specify a lot number',
   },
   siteRequired: {
     id: 'pages.InventoryAdjustmentDialogForm.siteRequired',
