@@ -7,7 +7,6 @@ import Summary from '../../oldComponents/Summary'
 const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSelect, isLoading, listData = [] }) => {
   const [selectAll, setSelectAll] = useState(false)
 
-  // Synchronize selectAll state with selectedList
   useEffect(() => {
     setSelectAll(selectedList.length === listData.length && listData.length > 0)
   }, [selectedList, listData.length])
@@ -65,7 +64,7 @@ const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSele
                   control={
                     <Checkbox
                       disabled={isChanging || disabledList.includes(id)}
-                      checked={selectedList.includes(id)}
+                      checked={selectedList.includes(id) || disabledList.includes(id)}
                       onChange={e => onSelect(e.target.checked, id)}
                     />
                   }
