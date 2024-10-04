@@ -15,7 +15,7 @@ function TabPanel(props) {
   )
 }
 
-export const InventoryTabs = ({ consumableId, siteIds }) => {
+export const InventoryTabs = ({ consumableId, siteIds, disabledSites }) => {
   const [tabValue, setTabValue] = useState(0)
   const { formatMessage } = useIntl()
 
@@ -44,7 +44,7 @@ export const InventoryTabs = ({ consumableId, siteIds }) => {
       <TabPanel value={tabValue} index={0}>
         <h4>Location with this Item</h4>
         <Typography>Select all Locations to track inventory for this item</Typography>
-        <TrackByLocation consumableId={consumableId} siteIds={siteIds} />
+        <TrackByLocation consumableId={consumableId} disabledSites={disabledSites} siteIds={siteIds} />
       </TabPanel>
 
       <TabPanel value={tabValue} index={1}>

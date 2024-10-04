@@ -1,0 +1,83 @@
+import React, { useState, useEffect } from 'react'
+import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
+import CircularProgress from '@mui/material/CircularProgress'
+import FormGroup from '@mui/material/FormGroup'
+import Summary from '../../oldComponents/Summary'
+
+const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSelect, isLoading, listData = [] }) => {
+  const [selectAll, setSelectAll] = useState(false)
+
+  // Synchronize selectAll state with selectedList
+  useEffect(() => {
+    setSelectAll(selectedList.length === listData.length && listData.length > 0)
+  }, [selectedList, listData.length])
+
+  const handleSelect = e => {
+    const { checked } = e.target
+    setSelectAll(checked)
+    onSelect(checked)
+  }
+
+  return (
+    <Summary
+      title={
+        <Stack
+          sx={{
+            flexDirection: 'row',
+            alignItems: 'center',
+            gap: 1,
+          }}
+        >
+          {isChanging || isLoading ? <CircularProgress size={15} /> : null}
+        </Stack>
+      }
+      description={
+        <>
+          {isLoading ? (
+            <Stack
+              sx={{
+                flexDirection: 'row',
+                alignItems: 'center',
+                gap: 1,
+              }}
+            >
+              <CircularProgress size={15} />
+              <Typography>Loading</Typography>
+            </Stack>
+          ) : (
+            <FormGroup>
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={selectAll}
+                    indeterminate={selectedList.length > 0 && selectedList.length < listData.length}
+                    onChange={handleSelect}
+                    disabled={isChanging}
+                  />
+                }
+                label="Select All / Unselect All"
+              />
+              {listData.map(({ name, id }) => (
+                <FormControlLabel
+                  id={id}
+                  label={name}
+                  key={id}
+                  control={
+                    <Checkbox
+                      disabled={isChanging || disabledList.includes(id)}
+                      checked={selectedList.includes(id)}
+                      onChange={e => onSelect(e.target.checked, id)}
+                    />
+                  }
+                />
+              ))}
+            </FormGroup>
+          )}
+        </>
+      }
+      cols="1"
+    />
+  )
+}
+
+export default CheckBoxList
