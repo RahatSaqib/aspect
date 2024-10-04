@@ -6,7 +6,6 @@ import stylesShared from '../../../oldComponents/shared/DataTableRow.module.css'
 import StatusIcon from '../../../oldComponents/shared/StatusIcon'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
-import { getTimeDifference } from '../../../utils/utils/dateFormat'
 import styles from './DeviceTableRow.module.css'
 import messages from './messages'
 
@@ -56,14 +55,20 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
           ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
           : formatMessage(messages.notAvailable)}
       </TableCell>
-      <TableCell>{formatDistanceToNow(new Date(device.get('lastResultConductedOn')), { addSuffix: true })}</TableCell>
+      <TableCell>
+        {device.get('lastResultConductedOn')
+          ? formatDistanceToNow(new Date(device.get('lastResultConductedOn')), { addSuffix: true })
+          : null}
+      </TableCell>
       <TableCell>
         <StatusIcon
           title={formatMessage(messages[device.get('connectorStatus')])}
           status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
         />
       </TableCell>
-      <TableCell>{formatDistanceToNow(new Date(device.get('lastPingOn')), { addSuffix: true })}</TableCell>
+      <TableCell>
+        {device.get('lastPingOn') ? formatDistanceToNow(new Date(device.get('lastPingOn')), { addSuffix: true }) : null}
+      </TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
       </TableCell>
@@ -88,7 +93,9 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
       <TableCell hiddenOn="lg">
         <Rate it={device.get('error').toJS()} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
       </TableCell>
-      <TableCell hiddenOn="lg">{formatDistanceToNow(new Date(device.get('createdOn')), { addSuffix: true })}</TableCell>
+      <TableCell hiddenOn="lg">
+        {device.get('createdOn') ? formatDistanceToNow(new Date(device.get('createdOn')), { addSuffix: true }) : null}
+      </TableCell>
       <TableCell hiddenOn="lg" numeric>
         {formatNumber(device.get('resultCountLastMonth'))}
       </TableCell>
