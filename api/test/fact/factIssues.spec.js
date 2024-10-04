@@ -584,6 +584,7 @@ describe('Fact based issues', () => {
         assay: { id: 'GenericRDT' },
         instrument: { serial: '1234567' },
         sample: { id: '76543789' },
+        endedOn: addDays(new Date(), 2),
       }
       await server
         .post(devicePath)
@@ -905,6 +906,7 @@ describe('Fact based issues', () => {
         assay: { id: 'GenericRDT' },
         instrument: { serial: '1234567' },
         sample: { id: '76543789' },
+        endedOn: addDays(new Date(), 2),
       }
       await server
         .post(devicePath)
