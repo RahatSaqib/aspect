@@ -259,6 +259,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Site as stp', 's.parentWarehouseId', 'stp.id')
     .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
 
@@ -284,6 +285,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     's.name',
     'g.stateId',
     'st.name as stateName',
+    'stp.id as parentWarehouseId',
     knex.raw(`GROUP_CONCAT(sc.consumableId SEPARATOR ',') as siteConsumables`),
   ]
 
