@@ -57,11 +57,17 @@ export function getValidations(format, actionType, inventory) {
     schema = schema.shape({
       toSiteId: string().required(format(validationMessages.siteRequired)),
       expiresOn: date()
+        .nullable()
         .when('consumable', {
           is: consumable => !!(consumable?.showExpirationDate || inventory?.expiresOn),
-          then: sch => sch.required(format(validationMessages.expiryDateRequired)),
-        })
-        .min(new Date(), format(validationMessages.expiryDateAfterToday)),
+          then: sch => {
+            let validation = sch.required(format(validationMessages.expiryDateRequired))
+            if (![types.SHOW_RECEIVE_INVENTORY_DIALOG, types.SHOW_TRANSFER_INVENTORY_DIALOG].includes(actionType)) {
+              validation = validation.min(new Date(), format(validationMessages.expiryDateAfterToday))
+            }
+            return validation
+          },
+        }),
       lotNumber: string()
         .nullable()
         .when('consumable', {
