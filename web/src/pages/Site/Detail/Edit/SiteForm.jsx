@@ -8,7 +8,13 @@ import times from 'lodash/times'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { SiteListSelect, SiteTagInput, LocationSelector, TimezoneSelect } from '../../../../cleanComponents'
+import {
+  SiteListSelect,
+  SiteTagInput,
+  LocationSelector,
+  TimezoneSelect,
+  ConsumableSelect,
+} from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
 import useDeleteSite from '../../../../hooks/site/useDeleteSite'
@@ -143,6 +149,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             <SiteTypeSelect
               name="siteType"
               width="33%"
+              className={styles.site_list_select}
               label={formatMessage(messages.fieldSiteType)}
               value={editSite.siteTypeId}
               onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
@@ -252,6 +259,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             />
             <SiteListSelect
               name="belongsTo"
+              className={styles.site_list_select}
               width="33%"
               label={formatMessage(messages.fieldBelongTo)}
               value={editSite.parentWarehouseId || ''}
@@ -348,6 +356,16 @@ const SiteForm = ({ site, onLatLongChange }) => {
             onChange={tags => setEditSite(prv => ({ ...prv, tags }))}
             value={editSite?.tags ?? []}
           />
+
+          {isNew ? (
+            <ConsumableSelect
+              label={formatMessage(messages.consumablesForSite)}
+              valueBy="id"
+              multiple
+              value={editSite?.consumableIds ?? []}
+              onChange={consumableIds => setEditSite(prv => ({ ...prv, consumableIds }))}
+            />
+          ) : null}
 
           <div className={`${styles.container} ${styles.coordinate}`}>
             <TextField
