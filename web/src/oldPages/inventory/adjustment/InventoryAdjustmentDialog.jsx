@@ -42,6 +42,12 @@ function InventoryAdjustmentDialog(props) {
       }) => {
         const fromSite = allSites.find(it => it.id === values.fromSiteId)
         const toSite = allSites.find(it => it.id === values.toSiteId)
+        const toSiteFilter = sites => {
+          if (uiTransfer && inventory?.expiresOn && new Date(inventory?.expiresOn) < new Date()) {
+            return sites?.filter(it => it.id === fromSite.parentWarehouseId)
+          }
+          return sites
+        }
         const onToSiteChange = event => {
           const toSiteId = event.target.value || undefined
           setFieldValue('toSiteId', toSiteId)
@@ -95,6 +101,7 @@ function InventoryAdjustmentDialog(props) {
                     }
                     error={!!errors.toSiteId}
                     helperText={errors.toSiteId}
+                    customFilter={toSiteFilter}
                     label={formatMessage(messages.toSiteName)}
                     value={values.toSiteId || ''}
                     onChange={onToSiteChange}
