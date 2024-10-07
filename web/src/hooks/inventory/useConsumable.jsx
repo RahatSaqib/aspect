@@ -54,7 +54,7 @@ const updateConsumable = ({ consumableId, payload }) => {
       partNumber: payload.partNumber,
       price: payload.price,
       unit: payload.unit,
-      trackByExpiration: Boolean(payload.trackByExpiration),
+      canExpire: Boolean(payload.canExpire),
       includeLocation: Boolean(payload.includeLocation),
     },
   })
