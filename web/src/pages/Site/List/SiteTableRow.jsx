@@ -13,6 +13,9 @@ const SiteTableRow = ({ site, onAlertClick, ...restProps }) => {
       <TableCell>{site.lga}</TableCell>
       <TableCell>{site.externalId}</TableCell>
       <TableCell>{site.totalDevices}</TableCell>
+      <TableCell>{site.siteConsumableCount}</TableCell>
+      <TableCell>{site.siteType}</TableCell>
+      <TableCell>{site.parentWarehouseName}</TableCell>
       <TableCell>{formatRelative(site.inventoryUpdatedOn, formatRelativeTime, 'N/A')}</TableCell>
     </TableRow>
   )

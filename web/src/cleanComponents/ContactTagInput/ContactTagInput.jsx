@@ -63,7 +63,7 @@ const ContactTagInput = ({ siteId, value }) => {
 
 ContactTagInput.propTypes = {
   value: PropTypes.oneOfType([PropTypes.array, PropTypes.object]).isRequired,
-  siteId: PropTypes.string.isRequired,
+  siteId: PropTypes.number.isRequired,
 }
 
 export default ContactTagInput

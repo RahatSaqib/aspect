@@ -2,11 +2,18 @@ const Boom = require('@hapi/boom')
 const { getConstraints, getUserFromCredentials } = require('../auth/constraints')
 const { transformGeographyFromUpdates } = require('../geography/service')
 const { normalizeSiteParameters } = require('./common/logic')
-const { getExistingSiteExcludingCurrent, updateSite, checkSiteAccess } = require('./common/db')
+const { getExistingSiteExcludingCurrent, updateSite, updateSiteConsumable, checkSiteAccess } = require('./common/db')
 const { throwExistingSiteError } = require('./common/validations')
 const { updateTagsById } = require('../tag/service')
 
-module.exports = async function (request) {
+async function updateConsumable(request) {
+  const { auth, params, payload } = request
+  await validateConstraints(params.siteId, auth.credentials)
+  await updateSiteConsumable(params.siteId, payload)
+  return { ok: true }
+}
+
+async function update(request) {
   const {
     auth,
     params,
@@ -53,4 +60,9 @@ async function validateNonRepeatedSite(siteId, { name, shortName, externalId }) 
   if (existingSite) {
     throwExistingSiteError(name, shortName, externalId, existingSite)
   }
+}
+
+module.exports = {
+  update,
+  updateConsumable,
 }
