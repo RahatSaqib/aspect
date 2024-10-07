@@ -76,6 +76,7 @@ const INVENTORY_LOG_LIST = {
       END`),
   notes: knex.raw(`case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`),
   consumableReasonI18nKey: 'cr.i18nKey',
+  transactionDate: 'il.adjustedFrom',
 }
 
 const INVENTORY_LOG_UILIST = {
@@ -131,6 +132,7 @@ const INVENTORY_LOG_SORT_FIELDS = {
     WHEN cr.name = 'Transfer Received' THEN CONCAT('Received from ', IFNULL(refSite.name, 'N/A'))
     ELSE cr.name
   END`),
+  transactionDate: 'il.adjustedFrom',
 }
 
 const INVENTORY_ITEM_SORT_FIELDS = {
