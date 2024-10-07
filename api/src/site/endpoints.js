@@ -235,6 +235,7 @@ const routes = [
                   })
                   .description("Unique ID of the site's country"),
                 stateId: Joi.number().allow(null).description("Unique ID of the site's state"),
+                parentWarehouseId: Joi.number().allow(null).description("ID of stock provider"),
                 lgaId: Joi.number()
                   .when('mode', {
                     not: 'reporter',
