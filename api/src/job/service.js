@@ -660,7 +660,7 @@ async function getAssignments({ auth, personId }) {
 // ----------------------------------------------------------------------------------------
 async function validateJobData({ personId, jobFunctionId, auth }) {
   const creator = await getUser(auth.credentials.name)
-  const personAssignments = await getAssignments({ auth, personId: creator.id })
+  const personAssignments = await getAssignments({ auth, personId: creator.personId })
   const jobFunctionNames = personAssignments.map(item => item.jobFunctionName)
   // should be same 'partnerId' in requested jobFunction and current user
   const err = 'Only Admin with same partnerId as JobFunction can manage Jobs'
@@ -756,7 +756,6 @@ function getRoleLevel(creatorRoles, personRole) {
 
   // Initialize highest level to -1 or a value lower than the lowest level
   let highestLevel = -1
-
   // Iterate through the roles array to find the highest level
   creatorRoles.forEach(role => {
     const level = roleLevels[role] || 0 // Default to 0 if role not found
