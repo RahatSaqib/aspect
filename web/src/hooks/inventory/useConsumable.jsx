@@ -1,4 +1,4 @@
-import { useQuery, useMutation } from 'react-query'
+import { useQuery, useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
 import { SELECTS_QUERY_OPTIONS } from '../../utils/consts/ReactQuery/CONSTS'
@@ -60,6 +60,13 @@ const updateConsumable = ({ consumableId, payload }) => {
   })
 }
 
-const useUpdateConsumableById = () => useMutation(variables => updateConsumable(variables), {})
+const useUpdateConsumableById = () => {
+  const queryClient = useQueryClient()
+  return useMutation(variables => updateConsumable(variables), {
+    onSuccess: () => {
+      queryClient.refetchQueries([INVENTORY_KEY, 'consumableList'])
+    },
+  })
+}
 
 export { useConsumable, useConsumableById, useConsumableAssay, useUpdateConsumableById }
