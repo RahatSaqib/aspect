@@ -741,7 +741,7 @@ async function seedIssueEventTriggersForPartner(
         .where({
           ...triggerData,
         })
-        .orWhere(function () {
+        .where(function () {
           if (triggerConditions && triggerConditions.length > 1) {
             this.whereRaw("JSON_CONTAINS(triggerConditions, '?')", triggerConditions)
           }
