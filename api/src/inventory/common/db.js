@@ -735,8 +735,8 @@ function filteredInventoryItemsBase(request, dataConstraints) {
   return inventoryItemsQuery
 }
 
-async function getReconciliationList(query, dataConstraints) {
-  const baseQuery = knex('MissingInventoryLots as m')
+function baseMissingInventoryLotsQuery() {
+  return knex('MissingInventoryLots as m')
     .innerJoin('Result as r', 'm.resultId', 'r.id')
     .innerJoin('Site as s', 'm.SiteId', 's.id')
     .innerJoin('Geography as g', 's.geographyId', 'g.id')
@@ -745,6 +745,10 @@ async function getReconciliationList(query, dataConstraints) {
     .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
     .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
+}
+
+async function getReconciliationList(query, dataConstraints) {
+  const baseQuery = baseMissingInventoryLotsQuery()
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
     .modify(filterDateRangeParams, query, 'm.expirationDate')
     .modify(filterParams, query, {
@@ -775,6 +779,7 @@ async function getReconciliationList(query, dataConstraints) {
 }
 
 module.exports = {
+  baseMissingInventoryLotsQuery,
   findInventoryItem,
   updateInventoryItem,
   insertInventoryItem,
