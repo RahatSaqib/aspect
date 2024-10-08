@@ -13,6 +13,7 @@ module.exports = {
     jobFunctions,
   },
   deviceLogHistoryDays: 365,
+  partnerAbbreviation: 'LS',
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,
   maxDaysDeviceOffline: 7,
