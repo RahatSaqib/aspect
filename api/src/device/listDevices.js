@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const { map: promiseMap } = require('bluebird')
 const { format, subMonths, endOfMonth, startOfMonth } = require('date-fns')
 const { knex, filterParams, sortPageParams } = require('../db')
 const { getConstraints, addConstraints } = require('../auth/constraints')
@@ -237,11 +238,11 @@ async function getListDevices(query, auth) {
       'deviceResult.totalCurrentMonth as resultCountThisMonth',
       'deviceResult.totalPreviousMonth as resultCountLastMonth',
       knex.raw(`
-       CASE 
+       CASE
          WHEN dmsl.day >= DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN
-           CASE 
+           CASE
              WHEN deviceResult.totalCurrentDay = 0 AND dms.externalId = 'active' THEN 'inactiveUnknown'
-             ELSE dms.i18nKey 
+             ELSE dms.i18nKey
            END
          ELSE NULL
        END AS maintenanceStatusI18nKey`),
@@ -264,7 +265,7 @@ async function getListDevices(query, auth) {
       // ...else, it's considered notRecorded because we didn't register a status since the day previous yesterday
       knex.raw(`
         CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN
-          CASE 
+          CASE
             WHEN dms.externalId = 'active' AND deviceResult.totalCurrentDay = 0 THEN 'unknown'
             WHEN dms.externalId IN ('active', 'reportedActive', 'inactiveNoTestsPerformed') THEN 'up'
             WHEN dms.externalId IN ('inactiveUnknown') THEN 'unknown'
@@ -311,11 +312,13 @@ async function getListDevices(query, auth) {
   })
 
   if (!_.isEmpty(toSyncDmslAndDevice)) {
-    await Promise.all(
-      _.map(_.keys(toSyncDmslAndDevice), async deviceId => {
+    await promiseMap(
+      _.keys(toSyncDmslAndDevice),
+      async deviceId => {
         const { lastSeenOn } = toSyncDmslAndDevice[deviceId]
         return knex('Device').where({ id: deviceId }).update({ lastSeenOn, updatedOn: new Date() })
-      })
+      },
+      { concurrency: 10 }
     )
   }
 
