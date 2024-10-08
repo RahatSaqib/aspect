@@ -268,8 +268,10 @@ const DeviceDetailProfile = ({
     : formatMessage(messages.undefinedValue)
 
   // convert 0/1 numbers of maintenanceStatusActive and maintenanceStatusManuallySet to bool
-  const isMaintenanceStatusChangeDisabled = !!(
-    device.get('maintenanceStatusActive') && !device.get('maintenanceStatusManuallySet')
+  const isMaintenanceStatusChangeDisabled = Boolean(
+    device.get('maintenanceStatusI18nKey') !== 'inactiveUnknown' &&
+      device.get('maintenanceStatusActive') &&
+      !device.get('maintenanceStatusManuallySet')
   )
 
   const formatMaintenanceDate = date => (date ? formatDate(date) : formatMessage(messages.undefinedValue))
