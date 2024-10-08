@@ -750,7 +750,7 @@ async function seedIssueEventTriggersForPartner(
           }
         })
         .first('id')
-      if (existingTrigger == null) {
+      if (!existingTrigger) {
         await upsertSingle(knex, 'IssueEventTrigger', uniqueKeys.IssueEventTrigger, {
           ...triggerData,
           triggerConditions: JSON.stringify(triggerConditions),
@@ -2425,6 +2425,11 @@ async function getPartnerByName(knex, name) {
   return partner
 }
 
+async function getCountryByAbbreviation(knex, abbreviation) {
+  const country = await knex('Country').where('abbreviation', abbreviation).first()
+  return country
+}
+
 async function getPartnerByExternalId(knex, externalId) {
   const partner = await knex('Partner').where({ externalId }).first()
   return partner
@@ -3058,7 +3063,6 @@ async function upsertForms(knex, partnerId, forms) {
   })
   return true
 }
-
 module.exports = {
   seed,
   seedTable,
@@ -3076,6 +3080,7 @@ module.exports = {
   getPartnerByName,
   getPartnerByExternalId,
   getPermissonByModuleAndActivity,
+  getCountryByAbbreviation,
 
   seedNotificationTypes,
   upsertNotificationTypes,
