@@ -20,7 +20,13 @@ async function addIssueTypes(
   knex,
   _partnerId,
   _adminId,
-  defaultIssues = ['DeviceOffline', 'DeviceNoResults', 'InventoryStockExpiring', 'NewResultsAvailable']
+  defaultIssues = [
+    'DeviceOffline',
+    'DeviceNoResults',
+    'InventoryStockExpiring',
+    'NewResultsAvailable',
+    'ResultReceived',
+  ]
 ) {
   // here is preferible to add an enviroment variable just
   // for defining the admin user name and remove the hardcoded one
