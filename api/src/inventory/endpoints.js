@@ -62,8 +62,8 @@ const routes = [
     path: '/inventory/reconciliation',
     handler: asyncHandler(listReconciliation),
     config: {
-      description: 'List of Consumables on Hand At Site',
-      notes: 'Pageable and sortable list of inventory items',
+      description: 'List of Unreconciled Inventory',
+      notes: 'Pageable and sortable list of unreconciled inventories',
       auth: { scope: ['inventory:view'] },
       validate: {
         query: {
