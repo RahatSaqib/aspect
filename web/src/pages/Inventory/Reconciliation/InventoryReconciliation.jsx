@@ -1,6 +1,5 @@
 import React, { useCallback, useMemo } from 'react'
-import { Box, Card, LinearProgress, Stack, Switch, Table, TableBody, TableRow, Typography } from '@mui/material'
-import format from 'date-fns/format'
+import { Box, Card, LinearProgress, Stack, Switch, Typography } from '@mui/material'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
@@ -19,11 +18,10 @@ import useAuthState from '../../../hooks/useAuthState'
 import { usePathFilter } from '../../../hooks/usePathFilter'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
-import { DataTableCell } from '../../../oldComponents/shared/tableBody'
-import DataTableHead from '../../../oldComponents/shared/tableHead'
 import { makeSortPageSelector } from '../../../utils/selectors/searchParams'
+import { InventoryReconciliationList } from './InventoryReconciliationList'
 import messages from './messages'
-import { getColumns, getExportableFile } from './tools'
+import { getExportableFile } from './tools'
 
 export function InventoryReconciliation() {
   const { formatMessage } = useIntl()
@@ -37,10 +35,6 @@ export function InventoryReconciliation() {
   const { sortCol, sortDir, pageAt, pageSize } = useMemo(
     () => makeSortPageSelector({ sortCol: 'siteName' })({ location }),
     [location]
-  )
-  const columns = useMemo(
-    () => getColumns(formatMessage, [true, 'true'].includes(filters.breakOutByLot), user),
-    [formatMessage, filters.breakOutByLot, user]
   )
   const { data, isLoading } = useInventoryReconciliation(
     omitBy({ sortCol, sortDir, page: pageAt, size: pageSize, ...filters }, isNil)
@@ -99,36 +93,12 @@ export function InventoryReconciliation() {
               <BrowseEmptyList />
             ) : (
               <>
-                <Table>
-                  <DataTableHead
-                    location={location}
-                    sortColumnKey={sortCol}
-                    sortColumnDir={sortDir}
-                    columns={columns}
-                  />
-                  <TableBody>
-                    {data.data.map((item, index) => (
-                      <TableRow
-                        sx={{ bgcolor: index % 2 ? '#fff' : '#eef1f8' }}
-                        key={`${item.siteName}-${item.consumableName}${item.lotNumber ? `-${item.lotNumber}` : ''}`}
-                      >
-                        <DataTableCell>{item.stateName}</DataTableCell>
-                        <DataTableCell>{item.lgaName}</DataTableCell>
-                        <DataTableCell>{item.siteName}</DataTableCell>
-                        <DataTableCell>{item.consumableName}</DataTableCell>
-                        {filters.breakOutByLot ? (
-                          <>
-                            <DataTableCell>
-                              {item.expiresOn ? format(new Date(item.expiresOn), 'yyyy-MM-dd') : null}
-                            </DataTableCell>
-                            <DataTableCell>{item.lotNumber}</DataTableCell>
-                          </>
-                        ) : null}
-                        <DataTableCell>{item.quantity}</DataTableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
+                <InventoryReconciliationList
+                  items={data?.data ?? []}
+                  sortDir={sortDir}
+                  sortCol={sortCol}
+                  breakOutByLot={filters.breakOutByLot}
+                />
                 <BrowseTablePaginator
                   location={location}
                   paginatorStatus={messages.paginatorStatus}
