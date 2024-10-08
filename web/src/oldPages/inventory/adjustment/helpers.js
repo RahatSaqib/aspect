@@ -1,6 +1,6 @@
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
-import { object, string } from 'yup'
+import { object, string, number, date } from 'yup'
 import { types } from '../../../store/InventoryRedux'
 import {
   newInventoryMessages,
@@ -22,17 +22,58 @@ export function transformValues(values) {
   )
 }
 
-export function getValidations(format, actionType) {
+export function getValidations(format, actionType, inventory) {
   let schema = object({
-    consumable: object().nullable().required(format(validationMessages.consumableRequired)),
-    quantity: string().required(format(validationMessages.quantityRequired)),
+    quantity: number()
+      .typeError(format(validationMessages.quantityNumber))
+      .required(format(validationMessages.quantityRequired))
+      .positive(format(validationMessages.quantityPositive))
+      .integer(format(validationMessages.quantityInteger)),
   })
 
-  if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG)
-    schema = schema.shape({ toSiteId: string().required(format(validationMessages.siteRequired)) })
+  /**
+   * `inventory` is not set only for global add inventory (actionType === types.SHOW_NEW_INVENTORY_DIALOG)
+   * so below for `consumable` field depends only on `toSiteId`
+   */
+  if (!inventory) {
+    /**
+     * show error for required field only when toSiteId is defined,
+     * because value of `consumable` field depend on corresponding toSite.siteConsumables and no need
+     * to bother user's eyes with `consumable` validation message when toSite is not selected
+     */
+    if (actionType === types.SHOW_NEW_INVENTORY_DIALOG) {
+      schema = schema.shape({
+        consumable: object()
+          .nullable()
+          .when('toSiteId', {
+            is: val => !!val,
+            then: sch => sch.required(format(validationMessages.consumableRequired)),
+          }),
+      })
+    }
+  }
 
-  if (actionType === types.SHOW_REMOVE_INVENTORY_DIALOG)
+  if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
+    schema = schema.shape({
+      toSiteId: string().required(format(validationMessages.siteRequired)),
+      expiresOn: date()
+        .when('consumable', {
+          is: consumable => !!(consumable?.showExpirationDate || inventory?.expiresOn),
+          then: sch => sch.required(format(validationMessages.expiryDateRequired)),
+        })
+        .min(new Date(), format(validationMessages.expiryDateAfterToday)),
+      lotNumber: string()
+        .nullable()
+        .when('consumable', {
+          is: consumable => !!(consumable?.showLot || inventory?.lotNumber),
+          then: sch => sch.required(format(validationMessages.lotNumberRequired)),
+        }),
+    })
+  }
+
+  if (actionType === types.SHOW_REMOVE_INVENTORY_DIALOG) {
     schema = schema.shape({ reason: object().nullable().required(format(validationMessages.reasonRequired)) })
+  }
 
   return schema
 }

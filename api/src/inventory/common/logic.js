@@ -8,6 +8,7 @@ const defaultInventoryStrategy = require('../strategies')
 
 const { knex, transact } = require('../../db')
 const { getSite } = require('../../site/service')
+const { updateSiteConsumable } = require('../../site/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { selectAssayConsumables } = require('../../consumable/assayConsumableService')
 const { findConsumableReason } = require('../../consumable/consumableService')
@@ -305,6 +306,9 @@ async function addInventory({ auth, payload, plugins }) {
   if (Boom.isBoom(res)) {
     return res
   }
+
+  await updateSiteConsumable(toSite.id, { modify: 'add', consumableId })
+
   return getInventoryItem(res.inventoryItemId)
 }
 
@@ -542,6 +546,8 @@ async function receiveInventory(request) {
       userId: currentlyLoggedInUser.id,
     })
 
+    await updateSiteConsumable(toSiteId, { modify: 'add', consumableId }, knex)
+
     const { id: transferReceivedConsumableReasonId } = await findConsumableReason('Transfer Received')
 
     const incomeInventoryLogId = await logInventoryChange({
@@ -653,6 +659,12 @@ async function consumeInventoryForResult(
           'ii.consumableId': consumableId,
         })
         .first('ii.id', 'il.inventoryItemId')
+
+      /**
+       * Add consumable to site if not exits
+       */
+      await updateSiteConsumable(siteId, { modify: 'add', consumableId }, knex)
+
       /**
        * Don't double deduct inventory for the same result
        */

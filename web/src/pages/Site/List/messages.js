@@ -31,6 +31,18 @@ const messages = {
       id: 'pages.SiteList.latestInventoryUpdate',
       defaultMessage: 'Latest Inventory Update',
     },
+    consumables: {
+      id: 'pages.SiteList.consumables',
+      defaultMessage: 'Consumables',
+    },
+    siteType: {
+      id: 'pages.SiteList.siteType',
+      defaultMessage: 'Site Type',
+    },
+    stockProvider: {
+      id: 'pages.SiteList.stockProvider',
+      defaultMessage: 'Stock Provider',
+    },
     createSite: {
       id: 'pages.SiteList.createSite',
       defaultMessage: 'Create Site',
