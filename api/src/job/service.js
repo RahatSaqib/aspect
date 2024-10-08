@@ -76,7 +76,8 @@ async function getPermissions(request) {
 
 // ----------------------------------------------------------------------------------------
 async function getJobFunction(jobFunctionId, partnerId, err) {
-  const jobFunction = await knex('JobFunction').where({ id: jobFunctionId }).first('partnerId')
+  const jobFunction = await knex('JobFunction').where({ id: jobFunctionId }).first()
+
   if (!jobFunction) {
     return Boom.notFound('Requested JobFunction is missing')
   }
@@ -659,7 +660,8 @@ async function getAssignments({ auth, personId }) {
 // ----------------------------------------------------------------------------------------
 async function validateJobData({ personId, jobFunctionId, auth }) {
   const creator = await getUser(auth.credentials.name)
-
+  const personAssignments = await getAssignments({ auth, personId: creator.personId })
+  const jobFunctionNames = personAssignments.map(item => item.jobFunctionName)
   // should be same 'partnerId' in requested jobFunction and current user
   const err = 'Only Admin with same partnerId as JobFunction can manage Jobs'
   const jf = await getJobFunction(jobFunctionId, creator.partnerId, err)
@@ -681,6 +683,9 @@ async function validateJobData({ personId, jobFunctionId, auth }) {
     return Boom.badData(
       `Different countryIds in current Admin user (${creator.countryId}) and requested person ${person.countryId}`
     )
+  }
+  if (!getRoleLevel(jobFunctionNames, jf.name)) {
+    return Boom.badData(`You did not have permission to create this Job.`)
   }
 
   return creator
@@ -726,6 +731,43 @@ async function removePersonAssignment(request) {
 }
 
 // ----------------------------------------------------------------------------------------
+
+function getRoleLevel(creatorRoles, personRole) {
+  // Object mapping roles to their respective levels
+  const roleLevels = {
+    Admin: 5,
+    SystemOne: 5,
+    Manager: 4,
+    'Regional Officer': 3,
+    'Lab User': 2,
+    Clinician: 2,
+    'Device Maker': 1,
+    NTP: 1,
+    'NTP - No Results': 1,
+    Technician: 1,
+    Donor: 1,
+    'Result Viewer - No': 1,
+    'Result Viewer - Yes': 3,
+    'Remote Health Worker': 1,
+    'Lab Manager': 2,
+    'Lab Supervisor': 3,
+    'Aspect Beta': 1,
+  }
+
+  // Initialize highest level to -1 or a value lower than the lowest level
+  let highestLevel = -1
+  // Iterate through the roles array to find the highest level
+  creatorRoles.forEach(role => {
+    const level = roleLevels[role] || 0 // Default to 0 if role not found
+    if (level > highestLevel) {
+      highestLevel = level
+    }
+  })
+  if (highestLevel >= roleLevels[personRole]) {
+    return true
+  }
+  return false
+}
 
 module.exports = {
   getJobFunctionsForSelectList,
