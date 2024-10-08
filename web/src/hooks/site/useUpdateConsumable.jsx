@@ -2,6 +2,7 @@ import { defineMessages } from 'react-intl'
 import { useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
+import { INVENTORY_KEY } from '../inventory/inventoryKeys'
 import { SITE_KEY, SITE_KEY_UPDATE_CONSUMABLE } from './siteKeys'
 
 function updateConsumable({ siteId, modify, consumable }) {
@@ -36,6 +37,8 @@ export default function useUpdateConsumable() {
       queryClient.refetchQueries([SITE_KEY, String(variables.siteId)])
       queryClient.refetchQueries([SITE_KEY, 'list'])
       queryClient.refetchQueries([SITE_KEY, 'table'])
+      queryClient.refetchQueries([INVENTORY_KEY, 'consumable'])
+      queryClient.refetchQueries([INVENTORY_KEY, 'consumableList'])
     },
   })
 
