@@ -31,8 +31,8 @@ const routes = [
     path: '/inventory',
     handler: asyncHandler(listInventory),
     config: {
-      description: 'List of Reconciliation',
-      notes: 'Pageable and sortable list of reconciliation',
+      description: 'List of Consumables on Hand At Site',
+      notes: 'Pageable and sortable list of inventory items',
       auth: { scope: ['inventory:view'] },
       validate: {
         query: {
