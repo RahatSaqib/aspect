@@ -3,17 +3,17 @@ import * as Yup from 'yup'
 export const validationSchema = () =>
   Yup.object().shape({
     name: Yup.string().required('Item name is required'),
-    trackByExpiration: Yup.boolean(),
+    canExpire: Yup.boolean(),
     includeLocation: Yup.boolean(),
     manufacturer: Yup.string().required('Manufacturer is required'),
-    partNumber: Yup.string(),
+    partNumber: Yup.string().nullable(),
     price: Yup.number().nullable().typeError('Price must be a number'),
     unit: Yup.number().required('Unit is required'),
   })
 
 export const initialValues = {
   name: '',
-  trackByExpiration: false,
+  canExpire: false,
   includeLocation: false,
   manufacturer: '',
   partNumber: '',

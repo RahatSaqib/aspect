@@ -63,9 +63,9 @@ export const InventoryDetailsForm = ({ data, cartridgeId }) => {
                     control={
                       <Checkbox
                         color="primary"
-                        checked={Boolean(values.trackByExpiration)}
-                        onChange={e => setFieldValue('trackByExpiration', e.target.checked)}
-                        name="trackByExpiration"
+                        checked={Boolean(values.canExpire)}
+                        onChange={e => setFieldValue('canExpire', e.target.checked)}
+                        name="canExpire"
                       />
                     }
                     label={formatMessage(messages.trackByExpirationDate)}

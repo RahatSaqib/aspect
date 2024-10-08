@@ -750,7 +750,7 @@ async function seedIssueEventTriggersForPartner(
           }
         })
         .first('id')
-      if (existingTrigger == null) {
+      if (!existingTrigger) {
         await upsertSingle(knex, 'IssueEventTrigger', uniqueKeys.IssueEventTrigger, {
           ...triggerData,
           triggerConditions: JSON.stringify(triggerConditions),

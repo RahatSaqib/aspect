@@ -62,7 +62,7 @@ async function getConsumableDetail(consumableId) {
       'c.id',
       'c.name',
       'c.i18nKey',
-      'c.canExpire as trackByExpiration',
+      'c.canExpire',
       'c.manufacturer',
       'c.unit',
       'c.price',
@@ -89,14 +89,14 @@ async function getConsumableById(request) {
 async function updateConsumable(request) {
   const {
     params: { consumableId },
-    payload: { name, manufacturer, partNumber, price, unit, trackByExpirationDate, includeLocation },
+    payload: { name, manufacturer, partNumber, price, unit, canExpire, includeLocation },
   } = request
 
   const updatedValue = knex('Consumable')
     .update({
       id: consumableId,
       name,
-      canExpire: trackByExpirationDate,
+      canExpire,
       manufacturer,
       unit,
       price,

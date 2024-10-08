@@ -194,7 +194,7 @@ const routes = [
           partNumber: Joi.string().allow('', null),
           price: Joi.number().allow('', null),
           unit: Joi.number().allow('', null),
-          trackByExpiration: Joi.boolean().allow(null),
+          canExpire: Joi.boolean().allow(null),
           includeLocation: Joi.boolean().allow(null),
         },
       },
