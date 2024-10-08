@@ -41,7 +41,7 @@ const PartnerSelect = ({ id, name, label, value, onChange, error, helperText }) 
         ),
       }}
     >
-      {(partnersData || []).map(c => (
+      {(partnersData || [])?.map(c => (
         <MenuItem key={c.value} value={c.value}>
           {c.label}
         </MenuItem>
