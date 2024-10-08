@@ -5,7 +5,7 @@ const { INVENTORY_LOG_LIST } = require('./common/querySelectors')
 const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = require('../shared/date')
 const listInventoryLog = require('./listInventoryLog')
 const listInventory = require('./listInventory')
-const listReconciliation = require('./listReconciliation')
+const { listReconciliation } = require('./service')
 
 async function exportSupplies(request, reply) {
   const { query } = request
