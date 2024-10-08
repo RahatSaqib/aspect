@@ -5,7 +5,7 @@ module.exports = {
     name: 'Partner One',
     externalId: 'partnerOne',
   },
-  partnerAbbreviation: 'NG',
+  partnerAbbreviation: 'US',
   jobFunctionsToNotify: ['admin'],
   plugin: '',
   deviceLogHistoryDays: 365,

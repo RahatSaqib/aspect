@@ -24,6 +24,8 @@ const EditSite = lazy(() => import('./pages/Site/Detail/Edit'))
 const InventoryItemsList = lazy(() => import('./oldPages/inventory/list/InventoryItemsList'))
 const InventoryLog = lazy(() => import('./oldPages/inventory/log/InventoryLog'))
 const InventoryTransfers = lazy(() => import('./pages/Inventory/Transfers'))
+const InventoryList = lazy(() => import('./pages/Inventory/InventoryList'))
+const InventoryDetails = lazy(() => import('./pages/Inventory/InventoryDetails'))
 const NotFound = lazy(() => import('./pages/NotFound/NotFound'))
 const NotificationDetail = lazy(() => import('./pages/Notification/NotificationFormPage'))
 const NotificationList = lazy(() => import('./pages/Notification/NotificationListPage'))
@@ -260,6 +262,8 @@ const LogInApp = () => {
                   <>
                     <Route path="/browse/admin/states" element={<AdminStates />} />
                     <Route path="/browse/admin/lgas" element={<AdminLgas />} />
+                    <Route path="/browse/admin/inventory-list" element={<InventoryList />} />
+                    <Route path="/browse/admin/inventory-list/:cartridgeId/*" element={<InventoryDetails />} />
                   </>
                 ) : null}
 
