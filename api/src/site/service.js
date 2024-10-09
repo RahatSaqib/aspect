@@ -166,12 +166,13 @@ async function showSite(request) {
     .leftOuterJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
     .leftOuterJoin('Consumable as c', 'ca.consumableId', 'c.id')
     .select([knex.raw('GROUP_CONCAT(DISTINCT c.id) as unreconciledConsumables')])
+    .groupBy('m.siteId')
 
   const site = await siteQuery
   if (!site) {
     return Boom.notFound()
   }
-  site.unreconciledConsumables = site.unreconciledConsumables.split(',').map(Number)
+  site.unreconciledConsumables = site.unreconciledConsumables?.split(',').map(Number)
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
 
   site.consumableIds = await getSiteConsumables(site.id)

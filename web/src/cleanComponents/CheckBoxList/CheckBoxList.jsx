@@ -27,7 +27,7 @@ const CheckBoxList = ({ selectedList = [], disabledList = [], isChanging, onSele
             gap: 1,
           }}
         >
-          {isChanging || isLoading ? <CircularProgress size={15} /> : null}
+          {isChanging ? <CircularProgress size={15} /> : null}
         </Stack>
       }
       description={
