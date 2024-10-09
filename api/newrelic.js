@@ -12,12 +12,12 @@ exports.config = {
   license_key: config.newRelic.appName,
   agent_enabled: config.newRelic.enabled,
   // TODO:: Check why the labels/tags are not appearing on the Dashboard UI
-  labels: [
-    `appVersion: ${pkgJSON.version}`,
-    `appName: ${pkgJSON.name}`,
-    `countryName: ${config.countryName}`,
-    `environment: ${config.environment}`,
-  ].join(';'),
+  labels: {
+    appVersion: pkgJSON.version,
+    appName: pkgJSON.name,
+    countryName: config.countryName,
+    environment: config.environment,
+  },
 }
 
 module.exports = {
