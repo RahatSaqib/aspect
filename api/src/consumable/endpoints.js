@@ -1,6 +1,12 @@
 const Joi = require('@hapi/joi')
 const { asyncHandler, validateSortPageParams } = require('../routes')
-const { listConsumableTypes, listConsumableReasons } = require('./consumableService')
+const {
+  listConsumableTypes,
+  listConsumableReasons,
+  getConsumableById,
+  getUnits,
+  updateConsumable,
+} = require('./consumableService')
 const {
   getConsumableAssays,
   getAssayConsumables,
@@ -21,29 +27,33 @@ const routes = [
       validate: {
         query: {
           name: Joi.string().allow('').description('Filter for consumable type'),
-          ...validateSortPageParams('name'),
+          ...validateSortPageParams('name', 'quantityOnHand', 'unit'),
         },
       },
-      response: {
-        schema: {
-          ok: Joi.bool().required(),
-          total: Joi.number().integer().required(),
-          length: Joi.number().integer().required(),
-          data: Joi.array().items(
-            Joi.object().keys({
-              id: Joi.number().integer().required(),
-              name: Joi.string().max(255).allow('', null),
-              i18nKey: Joi.string().max(255).allow('', null),
-              unit: Joi.string().max(50).allow('', null),
-              unitShortName: Joi.string().max(50).allow('', null),
-              canExpire: Joi.number().integer(),
-              manufacturer: Joi.string().max(500).allow('', null),
-              autoInclude: Joi.number().integer(),
-              showLot: Joi.number().integer().required(),
-              showExpirationDate: Joi.number().integer().required(),
-            })
-          ),
-        },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/unit',
+    handler: asyncHandler(getUnits),
+    config: {
+      description: 'Unit',
+      notes: 'list of unit',
+      auth: { scope: ['browse'] },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/{consumableId}',
+    handler: asyncHandler(getConsumableById),
+    config: {
+      description: 'Gets the consumable By Id',
+      notes: 'Returns consumable details',
+      auth: { scope: ['browse'] },
+      validate: {
+        params: Joi.object({
+          consumableId: Joi.number().integer().positive().required(),
+        }),
       },
     },
   },
@@ -162,6 +172,30 @@ const routes = [
             .precision(2)
             .required()
             .description('Amount of consumable used per test (up to 2 decimal places)'),
+        },
+      },
+    },
+  },
+  {
+    method: 'PUT',
+    path: '/inventory/consumable/{consumableId}',
+    handler: asyncHandler(updateConsumable),
+    config: {
+      description: 'Update Consumable',
+      auth: { scope: ['assay'] },
+      notes: 'Update a consumable',
+      validate: {
+        params: {
+          consumableId: Joi.number().integer().positive().description('Consumable id').required(),
+        },
+        payload: {
+          name: Joi.string().required(),
+          manufacturer: Joi.string().required(),
+          partNumber: Joi.string().allow('', null),
+          price: Joi.number().allow('', null),
+          unit: Joi.number().allow('', null),
+          canExpire: Joi.boolean().allow(null),
+          includeLocation: Joi.boolean().allow(null),
         },
       },
     },
