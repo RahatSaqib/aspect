@@ -18,7 +18,11 @@ module.exports = {
   isDevelopment: process.env.NODE_ENV === 'development',
   environment: process.env.NODE_ENV,
   countryName: process.env.countryName || 'DEV',
-  newRelicEnabled: process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY, // Only if this variables are set enable the newrelic and these variables are required ones as well
+  newRelic: {
+    enabled: process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY, // Only if this variables are set enable the newrelic and these variables are required ones as well
+    appName: process.env.NEW_RELIC_APP_NAME,
+    licenseKey: process.env.NEW_RELIC_LICENSE_KEY,
+  },
   db: {
     connectionLimit: parseInt(process.env['db.connectionLimit'], 10) || 100,
     host: process.env['db.host'],
