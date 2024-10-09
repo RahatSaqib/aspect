@@ -1,6 +1,7 @@
 module.exports = require('../utils').seed(seed, __filename)
 const { transformPayload } = require('../../src/plugin/deviceType/transformPayload')
 const { getOffsetFromTimeZone } = require('../../src/shared/date')
+const customFieldsGhana = require('../../src/forms/formsDefinition/CustomFields_Ghana.json')
 
 async function seed(knex) {
   const { minDeviceLogId, maxDeviceLogId } = await knex('DeviceLog')
@@ -65,7 +66,7 @@ const getDeviceLogsToUpdateInRange = async (knex, minDeviceLogId, maxDeviceLogId
     }
 
     const customFields = {
-      fields: [],
+      fields: [...customFieldsGhana.fields],
       refForms: [],
     }
 
