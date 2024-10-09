@@ -1,7 +1,9 @@
 // eslint-disable-next-line import/order
-const config = require('./config') // Loading environment variables before newrelic is loaded
+const config = require('./config') // Loading environment variables before newrelic is required to have Newrelic configurations
 
-require('newrelic')
+if (config.newRelicEnabled) {
+  require('newrelic')
+}
 // =======================
 // configuration =========
 // =======================
