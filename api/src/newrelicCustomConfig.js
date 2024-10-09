@@ -1,4 +1,4 @@
-const newrelic = require('newrelic')
+const { addCustomAttributes } = require('../newrelic')
 
 const newrelicCustomConfig = {
   name: 'newrelicCustomConfig',
@@ -6,7 +6,7 @@ const newrelicCustomConfig = {
   register: async server => {
     server.ext('onRequest', (request, reply) => {
       const requestSize = Buffer.byteLength(JSON.stringify(request.payload || {})) // Calculate the request size
-      newrelic.addCustomAttribute({ requestSize })
+      addCustomAttributes({ requestSize })
       return reply.continue
     })
 
@@ -19,7 +19,7 @@ const newrelicCustomConfig = {
       }
 
       const responseSize = Buffer.byteLength(JSON.stringify(response.source || {})) // Calculate the response size
-      newrelic.addCustomAttributes({ responseSize })
+      addCustomAttributes({ responseSize })
 
       return h.continue
     })

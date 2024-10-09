@@ -1,7 +1,5 @@
 // eslint-disable-next-line import/order
-const config = require('./config') // Loading environment variables before newrelic to ensure environment variables are available for newrelic
-
-require('newrelic')
+require('../newrelic')
 // =======================
 // configuration =========
 // =======================
@@ -10,6 +8,7 @@ const Hapi = require('@hapi/hapi')
 const Joi = require('@hapi/joi')
 const Sentry = require('@sentry/node')
 const fs = require('fs')
+const config = require('./config')
 const { version } = require('../package.json')
 const { addClientRoutes, addDeviceRoutes, addDeviceRawRoutes, addMobileRoutes } = require('./routes')
 const { createMessageQueue } = require('./mq')
