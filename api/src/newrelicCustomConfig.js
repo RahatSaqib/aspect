@@ -1,5 +1,15 @@
-const { addCustomAttributes } = require('../newrelic')
+const config = require('./config')
 
+let newrelic = null
+if (config.newRelic.enabled) {
+  newrelic = require('newrelic')
+}
+
+function addCustomAttributes(...args) {
+  if (config.newRelic.enabled) {
+    newrelic.addCustomAttributes(...args)
+  }
+}
 const newrelicCustomConfig = {
   name: 'newrelicCustomConfig',
   version: '1.0.0',

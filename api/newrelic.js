@@ -19,11 +19,3 @@ exports.config = {
     environment: config.environment,
   },
 }
-
-module.exports = {
-  addCustomAttributes(...args) {
-    if (config.newRelic.enabled) {
-      newrelic?.addCustomAttributes(...args)
-    }
-  },
-}
