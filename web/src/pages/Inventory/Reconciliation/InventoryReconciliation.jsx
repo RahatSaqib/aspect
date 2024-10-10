@@ -5,6 +5,7 @@ import omitBy from 'lodash/omitBy'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
+import { useSearchParams } from 'react-router-dom'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import { InventoryReconciliationFilter } from '../../../cleanComponents/Filter'
 import {
@@ -28,6 +29,7 @@ export function InventoryReconciliation() {
   const user = useAuthState()
   const location = useLocation()
   const navigate = useNavigate()
+  const [, setSearchParams] = useSearchParams()
   const [filters, setFilters] = usePathFilter()
   const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_RECONCILIATION,
@@ -43,6 +45,19 @@ export function InventoryReconciliation() {
     formatType =>
       getExportableFile(omitBy(filters, isNil), formatType, sortCol, sortDir, data?.data?.length, 'reconciliation'),
     [data?.data?.length, filters, sortCol, sortDir]
+  )
+
+  const handleBreakOutByLot = useCallback(
+    e => {
+      const value = e.target.checked || null
+      setSearchParams([])
+      setFilters(prev => ({
+        ...prev,
+        ...(!value ? { minDate: null, maxDate: null, lotNumber: null } : {}),
+        breakOutByLot: value,
+      }))
+    },
+    [setFilters, setSearchParams]
   )
 
   return (
@@ -67,17 +82,7 @@ export function InventoryReconciliation() {
 
               <Stack sx={{ flexDirection: 'row', gap: 1 }}>
                 <Typography variant="subtitle2" color="textSecondary">
-                  <Switch
-                    checked={[true, 'true'].includes(filters.breakOutByLot)}
-                    onChange={e => {
-                      const value = e.target.checked || null
-                      setFilters(prev => ({
-                        ...prev,
-                        ...(!value ? { minDate: null, maxDate: null, lotNumber: null } : {}),
-                        breakOutByLot: value,
-                      }))
-                    }}
-                  />
+                  <Switch checked={[true, 'true'].includes(filters.breakOutByLot)} onChange={handleBreakOutByLot} />
                   {formatMessage(messages.breakdownByLots)}
                 </Typography>
                 <AspectExportListButton
