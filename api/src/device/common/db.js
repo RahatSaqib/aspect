@@ -33,7 +33,16 @@ const SELECT_SHOW_FIELDS = [
       ELSE NULL
     END AS maintenanceStatusI18nKey`),
   'dms.name as maintenanceStatusName',
-  'dms.active as maintenanceStatusActive',
+  knex.raw(
+    `CASE
+      WHEN dmsl.day >= DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN
+        CASE
+          WHEN deviceResult.totalCurrentDay = 0 AND dms.active THEN 0
+          ELSE dms.active
+        END
+      ELSE NULL
+    END AS maintenanceStatusActive`
+  ),
   'dms.manuallySet as maintenanceStatusManuallySet',
   'da.token as approvalToken',
   'da.i18nKey as approvalStatusI18nKey',
