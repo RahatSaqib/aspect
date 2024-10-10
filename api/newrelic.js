@@ -9,7 +9,7 @@ const pkgJSON = require('./package.json')
 // Properties and their intended functionality is documented [here](https://docs.newrelic.com/docs/apm/agents/nodejs-agent/installation-configuration/nodejs-agent-configuration/)
 exports.config = {
   app_name: config.newRelic.appName,
-  license_key: config.newRelic.appName,
+  license_key: config.newRelic.licenceKey,
   agent_enabled: config.newRelic.enabled,
   // TODO:: Check why the labels/tags are not appearing on the Dashboard UI
   labels: {
@@ -17,13 +17,5 @@ exports.config = {
     appName: pkgJSON.name,
     countryName: config.countryName,
     environment: config.environment,
-  },
-}
-
-module.exports = {
-  addCustomAttributes(...args) {
-    if (config.newRelic.enabled) {
-      newrelic?.addCustomAttributes(...args)
-    }
   },
 }
