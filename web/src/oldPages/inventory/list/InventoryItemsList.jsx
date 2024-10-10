@@ -75,13 +75,12 @@ export default function InventoryItemsList() {
   })
   const enableInventoryOnHandField = filter.breakOutByLot && inventoryOnField
   const columns = useMemo(
-    () => getColumns(intl, filter.breakOutByLot, enableInventoryOnHandField),
+    () => getColumns(intl, { breakOutByLot: filter.breakOutByLot, enableInventoryOnHandField }),
     [enableInventoryOnHandField, filter.breakOutByLot, intl]
   )
   const location = useLocation()
   const navigate = useNavigate()
   const dispatch = useDispatch()
-  const [isLoading, setIsLoading] = useState(true)
   const inventory = useSelector(state => state.inventory)
   const { data: consumableReasons } = useConsumableReasons()
   const { table, items, inventoryAdjustment } = inventory
@@ -109,7 +108,7 @@ export default function InventoryItemsList() {
   )
   const {
     isError,
-    isLoading: tableLoading,
+    isLoading: isLoadingData,
     data = false,
     error,
     refetch,
@@ -117,27 +116,14 @@ export default function InventoryItemsList() {
     fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
 
-  useEffect(() => {
-    setIsLoading(tableLoading)
-  }, [tableLoading])
-
-  const onExportClick = formatType => {
-    setIsLoading(true)
-    return getExportableFile(filter, formatType, sortCol, sortDir, data.total, 'supplies')
-      .then(response => {
-        setIsLoading(false)
-        return response
-      })
-      .catch(error => {
-        setIsLoading(false)
-        throw error
-      })
-  }
-
   const onSuccess = () => {
     refetch()
     onAdjustInventorySucceeded()
   }
+
+  const { mutateAsync: onExportClick, isLoading: isExporting } = useMutation(formatType =>
+    getExportableFile(filter, formatType, sortCol, sortDir, data.total, 'supplies')
+  )
 
   const { mutate: onRemoveInventorySubmit } = useMutation(
     values => {
@@ -255,7 +241,7 @@ export default function InventoryItemsList() {
                 <AspectExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
               </Stack>
             </Stack>
-            {isLoading ? (
+            {isLoadingData || isExporting ? (
               <LinearProgress />
             ) : items.currentIdList.length === 0 ? (
               <BrowseEmptyList />
