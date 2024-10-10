@@ -463,10 +463,11 @@ const ResultCategoryGroupId = ({ resultCategoryGroupId, assayId, assayOverride, 
 const ConsumableId = ({ consumableId, remove, blocked }) => {
   const { formatMessage } = useIntl()
   const { data } = useConsumable()
+  const item = data?.data?.find(a => a.id === consumableId)
 
-  return data && consumableId ? (
+  return item && consumableId ? (
     <Btn
-      lbl={formatMessage(messages[data.find(a => a.id === consumableId).i18nKey])}
+      lbl={formatMessage(messages[item.i18nKey])}
       del={blocked.includes('consumableId') ? undefined : () => remove(['consumableId'])}
     />
   ) : null
