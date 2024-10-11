@@ -268,7 +268,7 @@ const DeviceDetailProfile = ({
     : formatMessage(messages.undefinedValue)
 
   // convert 0/1 numbers of maintenanceStatusActive and maintenanceStatusManuallySet to bool
-  const isMaintenanceStatusChangeDisabled = !!(
+  const isMaintenanceStatusChangeDisabled = Boolean(
     device.get('maintenanceStatusActive') && !device.get('maintenanceStatusManuallySet')
   )
 

@@ -25,7 +25,7 @@ const SELECT_LIST_FIELDS = [
   ),
   'da.name as approval',
   knex.raw(
-    'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.externalId ELSE null END maintenanceStatus'
+    'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.externalId ELSE null END as maintenanceStatus'
   ),
   knex.raw(
     'CASE WHEN dmsl.day >= DATE(DATE_ADD(now(), INTERVAL -1 DAY)) THEN dms.i18nKey ELSE null END as maintenanceStatusI18nKey'
