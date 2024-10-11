@@ -43,7 +43,7 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
           <Grid container>
             <Grid item xs={12} md={6}>
               {fields.map(({ label, value }) => (
-                <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="4" />
+                <Summary key={`${label}_${site.id}`} title={label} description={value || ''} cols="1" />
               ))}
               <PermissionChecker permissions={['person:view', 'admin', 'person:admin', 'person:edit']}>
                 <Contacts
@@ -55,7 +55,11 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
               </PermissionChecker>
             </Grid>
             <Grid item xs={12} md={6}>
-              <Consumables siteId={site.id} consumableIds={site.consumableIds} />
+              <Consumables
+                siteId={site.id}
+                consumableIds={site.consumableIds}
+                disabledSites={site.selectedConsumables}
+              />
             </Grid>
           </Grid>
         </Card>

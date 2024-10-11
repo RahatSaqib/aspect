@@ -5,6 +5,7 @@ import AssayTypeSelect from './AssayTypeSelect'
 import CepheidInstrumentModelSelect from './CepheidInstrumentModelSelect'
 import CepheidModulesSelect from './CepheidModulesSelect'
 import CepheidSoftwareTypeSelect from './CepheidSoftwareTypeSelect'
+import CheckBoxList from './CheckBoxList'
 import ConnectorStatusSelect from './ConnectorStatusSelect'
 import ConsumableReasonSelect from './ConsumableReasonSelect'
 import ConsumableSelect from './ConsumableSelect'
@@ -173,6 +174,7 @@ export {
   XDRFLQResistanceGraph,
   XDRResultsGraph,
   Cron,
+  CheckBoxList,
   getCronHumanValue,
   DetailHeader,
   DeviceApiKeyFilter,

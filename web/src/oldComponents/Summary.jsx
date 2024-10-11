@@ -4,7 +4,7 @@ import { FaExternalLinkAlt as FaExternalLink } from 'react-icons/fa'
 import { useNavigate } from 'react-router'
 import styles from './Summary.module.css'
 
-const Summary = ({ title, description, to, action, cols = 3 }) => {
+const Summary = ({ title, description, to, action, cols = 1 }) => {
   const navigate = useNavigate()
   return (
     <Box sx={{ margin: '0 auto', width: `${100 / cols}%` }} className={styles.Summary}>
