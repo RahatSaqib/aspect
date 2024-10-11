@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { FormControlLabel, Switch, TableBody, LinearProgress } from '@mui/material'
+import { FormControlLabel, Switch, TableBody, LinearProgress, Stack, Typography } from '@mui/material'
 import omit from 'lodash/omit'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
@@ -7,11 +7,18 @@ import { useMutation, useQuery } from 'react-query'
 import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryItemsFilter } from '../../../cleanComponents'
+import {
+  HierarchicalSiteView,
+  hierarchicalToggleSettingsLocalStorageKey,
+  useHierarchicalSwitch,
+} from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
 import fetchWrapperForQueries from '../../../components/QueryFetch'
 import { INVENTORY_LIST } from '../../../components/QueryFetch/Inventory'
 import useConsumableReasons from '../../../hooks/inventory/useConsumableReasons'
+import useAuthState from '../../../hooks/useAuthState'
+import useFilterSync from '../../../hooks/useFilterSync'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -61,7 +68,6 @@ export const InventoryItemsListWithProps = ({
   intl,
   navigate,
   location,
-  filter,
   dispatch,
   isLoading,
   onExportClick,
@@ -77,9 +83,16 @@ export const InventoryItemsListWithProps = ({
   onTransferInventorySubmit,
   onAddInventorySubmit,
   refetch,
+  filter,
 }) => {
-  const [enableInventoryOnHandField, setEnableInventoryOnHandField] = useState(false)
+  const [inventoryOnField, setInventoryOnField] = useState(false)
+  const [state, setState] = useFilterSync()
+  const user = useAuthState()
+  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LIST,
+  })
 
+  const enableInventoryOnHandField = state.breakOutByLot && inventoryOnField
   const columns = [
     {
       key: 'siteName',
@@ -95,24 +108,26 @@ export const InventoryItemsListWithProps = ({
       key: 'quantityOnHand',
       label: intl.formatMessage(messages.quantityOnHand),
       sortable: true,
+      tooltip: intl.formatMessage(messages.quantityOnHandDescription),
     },
     {
       key: 'dailyConsumptionRate',
       label: intl.formatMessage(messages.dailyConsumptionRate),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
+      tooltip: intl.formatMessage(messages.dailyConsumptionRateDescription),
     },
     {
       key: 'lotNumber',
       label: intl.formatMessage(messages.lotNumber),
       sortable: true,
-      isHidden: !filter.breakOutByLot,
+      isHidden: !state.breakOutByLot,
     },
     {
       key: 'expiresOn',
       label: intl.formatMessage(messages.expiresOn),
       sortable: true,
-      isHidden: !filter.breakOutByLot,
+      isHidden: !state.breakOutByLot,
     },
     {
       key: 'newQuantity',
@@ -134,14 +149,14 @@ export const InventoryItemsListWithProps = ({
       label: intl.formatMessage(messages.daysStockLeft),
       tooltip: intl.formatMessage(messages.daysStockLeftDescription),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
     },
     {
       key: 'projectedWaste',
       label: intl.formatMessage(messages.projectedWaste),
       tooltip: intl.formatMessage(messages.projectedWasteDescription),
       sortable: true,
-      isHidden: filter.breakOutByLot,
+      isHidden: state.breakOutByLot,
     },
     {
       key: 'action',
@@ -165,6 +180,13 @@ export const InventoryItemsListWithProps = ({
     }
   }
 
+  /**
+   * When the actual filter is update the internal state is not updating to handle it we are using below useEffect
+   */
+  useEffect(() => {
+    setState(filter)
+  }, [setState, filter])
+
   return (
     <>
       <DetailHeader name={intl.formatMessage(messages.inventoryItemsTitle)} disableBack>
@@ -176,66 +198,99 @@ export const InventoryItemsListWithProps = ({
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-        <InventoryItemsFilter />
-        <DataTableCard key={`DataTableCard__table-${location.key}`} className={styles.DataTableCard__table}>
-          <div style={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
-            {filter.breakOutByLot ? (
-              <PermissionChecker permissions={['inventory:edit']}>
+        <InventoryItemsFilter state={state} setState={setState} />
+        <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
+          {isHierarchicalView && (
+            <HierarchicalSiteView countryId={user.countryId} filters={filter} pathname="/browse/inventory/supplies" />
+          )}
+          <DataTableCard
+            key={`DataTableCard__table-${location.key}`}
+            className={styles.DataTableCard__table}
+            sx={{ width: '100%' }}
+          >
+            <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Typography variant="subtitle2" color="textSecondary">
+                <Switch
+                  checked={isHierarchicalView}
+                  onChange={event => setIsHierarchicalView(event.currentTarget.checked)}
+                />
+                Hierarchical View
+              </Typography>
+              <Stack sx={{ flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'flex-end' }}>
                 <FormControlLabel
-                  sx={{ p: 2 }}
                   control={
                     <Switch
-                      onChange={event => setEnableInventoryOnHandField(filter.breakOutByLot && event.target.checked)}
+                      checked={[true, 'true'].includes(state.breakOutByLot)}
+                      onChange={e => {
+                        const payload = { ...state, breakOutByLot: e.target.checked || null }
+                        setState(payload)
+                        setInventoryOnField(false)
+                      }}
                     />
                   }
-                  label={intl.formatMessage(messages.inventoryOnHand)}
+                  label={intl.formatMessage(messages.breakOutByLot)}
+                  sx={{ m: 2 }}
                 />
-              </PermissionChecker>
-            ) : null}
-            <AspectExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
-          </div>
-          {isLoading ? (
-            <LinearProgress />
-          ) : items.currentIdList.length === 0 ? (
-            <BrowseEmptyList />
-          ) : (
-            <>
-              <InventoryDataTable className={styles.InventoryDataTable}>
-                <InventoryDataTableHead
+                {state.breakOutByLot ? (
+                  <PermissionChecker permissions={['inventory:edit']}>
+                    <FormControlLabel
+                      sx={{ p: 2 }}
+                      control={
+                        <Switch
+                          checked={enableInventoryOnHandField}
+                          onChange={event => setInventoryOnField(event.target.checked)}
+                        />
+                      }
+                      label={intl.formatMessage(messages.adjustQuantity)}
+                    />
+                  </PermissionChecker>
+                ) : null}
+                <AspectExportListButton onExport={onExportClick} visible={!items.currentIdList.isEmpty()} />
+              </Stack>
+            </Stack>
+            {isLoading ? (
+              <LinearProgress />
+            ) : items.currentIdList.length === 0 ? (
+              <BrowseEmptyList />
+            ) : (
+              <>
+                <InventoryDataTable className={styles.InventoryDataTable}>
+                  <InventoryDataTableHead
+                    navigate={navigate}
+                    location={location}
+                    sortColumnKey={sortCol}
+                    sortColumnDir={sortDir}
+                    columns={columns}
+                  />
+                  <TableBody>
+                    {items.currentIdList
+                      .map(id => items.byId.get(id))
+                      .map(inventoryItem => (
+                        <InventoryDataTableRow
+                          key={inventoryItem.get('id')}
+                          inventoryItem={inventoryItem}
+                          breakOutByLot={state.breakOutByLot}
+                          inventoryOnHand={enableInventoryOnHandField}
+                          refetch={refetch}
+                          navigate={navigate}
+                          location={location}
+                        />
+                      ))}
+                  </TableBody>
+                </InventoryDataTable>
+                <BrowseTablePaginator
                   navigate={navigate}
                   location={location}
-                  sortColumnKey={sortCol}
-                  sortColumnDir={sortDir}
-                  columns={columns}
+                  intl={intl}
+                  paginatorStatus={messages.paginatorStatus}
+                  total={table.total}
+                  pageAt={pageAt}
+                  pageSize={pageSize}
                 />
-                <TableBody>
-                  {items.currentIdList
-                    .map(id => items.byId.get(id))
-                    .map(inventoryItem => (
-                      <InventoryDataTableRow
-                        key={inventoryItem.get('id')}
-                        inventoryItem={inventoryItem}
-                        breakOutByLot={filter.breakOutByLot}
-                        inventoryOnHand={enableInventoryOnHandField}
-                        refetch={refetch}
-                        navigate={navigate}
-                        location={location}
-                      />
-                    ))}
-                </TableBody>
-              </InventoryDataTable>
-              <BrowseTablePaginator
-                navigate={navigate}
-                location={location}
-                intl={intl}
-                paginatorStatus={messages.paginatorStatus}
-                total={table.total}
-                pageAt={pageAt}
-                pageSize={pageSize}
-              />
-            </>
-          )}
-        </DataTableCard>
+              </>
+            )}
+          </DataTableCard>
+        </Stack>
 
         {inventoryAdjustment.get('actionType') ? (
           <PakistanInventoryAdjustmentDialog

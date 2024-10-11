@@ -2,7 +2,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: \n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2024-09-18T14:06:03.204Z\n"
+"POT-Creation-Date: 2024-10-01T16:44:10.702Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -10,7 +10,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -370,6 +370,13 @@ msgstr "Adresse 2"
 #: extracted_strings.json
 msgid "Adjust"
 msgstr "Régler"
+
+#. [pages.InventoryItemsList.adjustQuantity]
+#. defaultMessage is:
+#. Adjust Quantity
+#: extracted_strings.json
+msgid "Adjust Quantity"
+msgstr "Ajuster les quantitées"
 
 #. [jobFunction.admin]
 #. defaultMessage is:
@@ -5353,6 +5360,25 @@ msgstr "Types de problèmes"
 #: extracted_strings.json
 msgid "It might have been deleted or renamed"
 msgstr "Il a peut-être été supprimé ou renommé"
+
+#. [pages.InventoryItemsList.dailyConsumptionRateDescription]
+#. defaultMessage is:
+#. Its the average daily consumption of the specific cartridge considering the last 180 day period
+#: extracted_strings.json
+msgid ""
+"Its the average daily consumption of the specific cartridge considering the "
+"last 180 day period"
+msgstr ""
+"Il s'agit de la consommation journalière moyenne de la cartouche spécifique "
+"au cours des 180 derniers jours"
+
+#. [pages.InventoryItemsList.quantityOnHandDescription]
+#. defaultMessage is:
+#. Its the current quantity in hand, including the expired quantity.
+#: extracted_strings.json
+msgid "Its the current quantity in hand, including the expired quantity."
+msgstr ""
+"Il s'agit de la quantité actuelle en stock, y compris la quantité périmée."
 
 #. [months.january]
 #. defaultMessage is:
