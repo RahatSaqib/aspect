@@ -67,7 +67,9 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
         />
       </TableCell>
       <TableCell>
-        {device.get('lastPingOn') ? formatDistanceToNow(new Date(device.get('lastPingOn')), { addSuffix: true }) : null}
+        {device.get('lastPingInUtc')
+          ? formatDistanceToNow(new Date(device.get('lastPingInUtc')), { addSuffix: true })
+          : null}
       </TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
@@ -94,7 +96,9 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
         <Rate it={device.get('error').toJS()} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
       </TableCell>
       <TableCell hiddenOn="lg">
-        {device.get('createdOn') ? formatDistanceToNow(new Date(device.get('createdOn')), { addSuffix: true }) : null}
+        {device.get('createdOnInUtc')
+          ? formatDistanceToNow(new Date(device.get('createdOnInUtc')), { addSuffix: true })
+          : null}
       </TableCell>
       <TableCell hiddenOn="lg" numeric>
         {formatNumber(device.get('resultCountLastMonth'))}
