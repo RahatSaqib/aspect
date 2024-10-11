@@ -14,8 +14,6 @@ const SELECT_LIST_FIELDS = [
   'd.id',
   'd.name',
   'd.shortName',
-  'd.lastPingOn as lastPingInUtc',
-  'd.createdOn as createdOnInUtc',
   'st.name as state',
   'dt.name as type',
   's.name as siteName',

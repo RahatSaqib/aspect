@@ -235,6 +235,10 @@ async function getListDevices(query, auth) {
        * --> to return use user timezone
        */
       ...getSelectListFields(personTimezoneIANA),
+      // The lastPingOn and createdOn fields from the getSelectListFields function are adjusted to UTC by accounting for the user's timezone offset.
+      // These UTC values are then used in reports and are sent separately for further processing.
+      'd.lastPingOn as lastPingInUtc',
+      'd.createdOn as createdOnInUtc',
       'deviceResult.totalCurrentMonth as resultCountThisMonth',
       'deviceResult.totalPreviousMonth as resultCountLastMonth',
       knex.raw(`
