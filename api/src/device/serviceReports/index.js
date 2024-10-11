@@ -686,6 +686,8 @@ async function getDeviceCoverageReport(request) {
       'd.id as deviceId',
       'd.name as deviceName',
       'd.configurationData',
+      'd.gx6cModulesCount as cnt6cModules',
+      'd.gx10cModulesCount as cnt10cModules',
     ])
     .orderBy('st.name', 'lg.name', 's.name', 'd.name')
   /**
@@ -736,13 +738,26 @@ async function getDeviceCoverageReport(request) {
           // const devicesInState = rawDevices.filter(x => !x.siteId && !x.lgaId && x.stateId === stateId)
           const devices = devicesInSite.map(dev => {
             const { deviceId, deviceName } = dev
-            const configurationData = dev.configurationData ? JSON.parse(dev.configurationData) : {}
-            const { moduleSerials = [], tenColorModules = [] } = configurationData
-            const tenColors = moduleSerials.filter(
-              moduleSerial => !!tenColorModules.find(it => it.SiteSerialNumber === moduleSerial)
-            )
-            const cnt6cModules = moduleSerials.length - tenColors.length
-            const cnt10cModules = tenColors.length
+            /**
+             * We used bellow commented code to get number of 6c/10c modules from Device.configurationData props
+             * See - https://systemone.youtrack.cloud/issue/HD-15418/Bangladesh-Dashboard-GeneXpert-Device-Coverage-data-need-to-rechecknot-showing-correct-data#focus=Comments-4-66139.0-0
+             * 
+             // const configurationData = dev.configurationData ? JSON.parse(dev.configurationData) : {}
+             // const { moduleSerials = [], tenColorModules = [] } = configurationData
+             // const tenColors = moduleSerials.filter(
+             //   moduleSerial => !!tenColorModules.find(it => it.SiteSerialNumber === moduleSerial)
+             // )
+             // const cnt6cModules = moduleSerials.length - tenColors.length
+             // const cnt10cModules = tenColors.length
+             * 
+             * And to show correct values in `GeneXpert Device Coverage` nesting tables - we changed that and started using 
+             * of Device.gx6cModulesCount and Device.gx10cModulesCount fields directly
+             * See - https://systemone.youtrack.cloud/issue/HD-15418/Bangladesh-Dashboard-GeneXpert-Device-Coverage-data-need-to-rechecknot-showing-correct-data#focus=Comments-4-66141.0-0
+             * 
+             */
+            let { cnt6cModules, cnt10cModules } = dev
+            cnt6cModules = cnt6cModules ?? 0
+            cnt10cModules = cnt10cModules ?? 0
 
             id += 1
             const cnt6cDevices = cnt6cModules > 0 ? 1 : 0
