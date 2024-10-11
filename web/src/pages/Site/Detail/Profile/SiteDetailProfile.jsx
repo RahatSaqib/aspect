@@ -58,7 +58,7 @@ const SiteDetailProfile = ({ site, formatMessage, disabled, user }) => {
               <Consumables
                 siteId={site.id}
                 consumableIds={site.consumableIds}
-                disabledSites={site.unreconciledConsumables}
+                disabledSites={site.selectedConsumables}
               />
             </Grid>
           </Grid>

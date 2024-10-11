@@ -73,9 +73,21 @@ async function getConsumableDetail(consumableId) {
     .where({ 'c.id': consumableId })
     .groupBy('c.id')
 
-  const [consumable, siteIds] = await Promise.all([consumableQuery, getConsumableSites(consumableId)])
-  consumable[0].unreconciledSites = consumable[0].unreconciledSites?.split(',').map(Number)
-  return consumable.length ? { ...consumable[0], siteIds } : {}
+  const reconciledSitesQuery = knex('InventoryItem').where({ consumableId }).pluck('siteId')
+
+  const [consumable, siteIds, reconciledSites] = await Promise.all([
+    consumableQuery,
+    getConsumableSites(consumableId),
+    reconciledSitesQuery,
+  ])
+
+  consumable[0].unreconciledSites = consumable[0].unreconciledSites
+    ? consumable[0].unreconciledSites.split(',').map(Number)
+    : []
+
+  const selectedSites = [...new Set([...consumable[0].unreconciledSites, ...reconciledSites])]
+
+  return consumable.length ? { ...consumable[0], siteIds, selectedSites } : {}
 }
 
 async function getConsumableById(request) {

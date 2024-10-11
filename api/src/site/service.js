@@ -172,7 +172,10 @@ async function showSite(request) {
   if (!site) {
     return Boom.notFound()
   }
-  site.unreconciledConsumables = site.unreconciledConsumables?.split(',').map(Number)
+  const reconciledConsumables = await knex('InventoryItem').where({ siteId: params.siteId }).pluck('consumableId')
+
+  site.unreconciledConsumables = site.unreconciledConsumables ? site.unreconciledConsumables.split(',').map(Number) : []
+  site.selectedConsumables = [...new Set([...site.unreconciledConsumables, ...reconciledConsumables])]
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
 
   site.consumableIds = await getSiteConsumables(site.id)

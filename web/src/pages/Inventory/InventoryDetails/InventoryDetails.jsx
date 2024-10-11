@@ -28,11 +28,7 @@ export const InventoryDetails = () => {
             {' '}
             <Card>
               <CardContent>
-                <InventoryTabs
-                  consumableId={cartridgeId}
-                  siteIds={data.siteIds}
-                  disabledSites={data.unreconciledSites}
-                />
+                <InventoryTabs consumableId={cartridgeId} siteIds={data.siteIds} disabledSites={data.selectedSites} />
               </CardContent>
             </Card>
           </Grid>
