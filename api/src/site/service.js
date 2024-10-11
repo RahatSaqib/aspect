@@ -160,12 +160,22 @@ async function showSite(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // get item
-  const site = await getSite(params.siteId, dataConstraints)
+  const siteQuery = getSite(params.siteId, dataConstraints)
+    .leftOuterJoin('MissingInventoryLots as m', 'm.siteId', 's.id')
+    .leftOuterJoin('Result as r', 'r.siteId', 'm.siteId')
+    .leftOuterJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
+    .leftOuterJoin('Consumable as c', 'ca.consumableId', 'c.id')
+    .select([knex.raw('GROUP_CONCAT(DISTINCT c.id) as unreconciledConsumables')])
+    .groupBy('m.siteId')
 
+  const site = await siteQuery
   if (!site) {
     return Boom.notFound()
   }
+  const reconciledConsumables = await knex('InventoryItem').where({ siteId: params.siteId }).pluck('consumableId')
 
+  site.unreconciledConsumables = site.unreconciledConsumables ? site.unreconciledConsumables.split(',').map(Number) : []
+  site.selectedConsumables = [...new Set([...site.unreconciledConsumables, ...reconciledConsumables])]
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
 
   site.consumableIds = await getSiteConsumables(site.id)

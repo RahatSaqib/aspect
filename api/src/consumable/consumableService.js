@@ -55,6 +55,9 @@ function getConsumableSites(consumableId) {
 
 async function getConsumableDetail(consumableId) {
   const consumableQuery = knex('Consumable as c')
+    .innerJoin('ConsumableAssay as ca', 'ca.consumableId', 'c.id')
+    .leftJoin('Result as r', 'ca.assayId', 'r.assayId')
+    .leftJoin('MissingInventoryLots as m', 'm.siteId', 'r.siteId')
     .select([
       'c.id',
       'c.name',
@@ -65,11 +68,26 @@ async function getConsumableDetail(consumableId) {
       'c.price',
       'c.includeLocation',
       'c.partNumber',
+      knex.raw('GROUP_CONCAT(DISTINCT m.siteId) as unreconciledSites'),
     ])
     .where({ 'c.id': consumableId })
-  const [consumable, siteIds] = await Promise.all([consumableQuery, getConsumableSites(consumableId)])
+    .groupBy('c.id')
 
-  return consumable.length ? { ...consumable[0], siteIds } : {}
+  const reconciledSitesQuery = knex('InventoryItem').where({ consumableId }).pluck('siteId')
+
+  const [consumable, siteIds, reconciledSites] = await Promise.all([
+    consumableQuery,
+    getConsumableSites(consumableId),
+    reconciledSitesQuery,
+  ])
+
+  consumable[0].unreconciledSites = consumable[0].unreconciledSites
+    ? consumable[0].unreconciledSites.split(',').map(Number)
+    : []
+
+  const selectedSites = [...new Set([...consumable[0].unreconciledSites, ...reconciledSites])]
+
+  return consumable.length ? { ...consumable[0], siteIds, selectedSites } : {}
 }
 
 async function getConsumableById(request) {

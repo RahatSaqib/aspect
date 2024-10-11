@@ -13,6 +13,11 @@ export default defineMessages({
     id: 'pages.InventoryTabs.New.trackByLocation',
     defaultMessage: 'Track By Location',
   },
+  trackByLocationTooltip: {
+    id: 'pages.InventoryTabs.New.trackByLocationTooltip',
+    defaultMessage:
+      'Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item',
+  },
   consumpationRate: {
     id: 'pages.InventoryTabs.New.consumpationRate',
     defaultMessage: 'Consumption Rate',

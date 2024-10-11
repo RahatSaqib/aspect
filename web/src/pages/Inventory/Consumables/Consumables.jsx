@@ -1,67 +1,54 @@
 import React from 'react'
-import { Checkbox, FormControlLabel, Stack, Typography } from '@mui/material'
-import CircularProgress from '@mui/material/CircularProgress'
-import FormGroup from '@mui/material/FormGroup'
+import { Typography, Box } from '@mui/material'
+import { CheckBoxList } from '../../../cleanComponents'
 import { useConsumable } from '../../../hooks/inventory/useConsumable'
 import useUpdateConsumable from '../../../hooks/site/useUpdateConsumable'
-import Summary from '../../../oldComponents/Summary'
+import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
 
-export default function Consumables({ siteId, consumableIds }) {
-  const { data: { data: consumables } = {}, isLoading } = useConsumable()
+const Consumables = ({ consumableIds, siteId, disabledSites }) => {
   const { mutateAsync: changeApplicable, isLoading: isChanging } = useUpdateConsumable()
+  const { data: { data: consumables } = {}, isLoading } = useConsumable()
+
+  const handleSelectAll = (checked, id) => {
+    if (id) {
+      changeApplicable({
+        siteId,
+        modify: checked ? 'add' : 'remove',
+        consumable: { id },
+      })
+    } else {
+      consumables.forEach(({ id }) => {
+        if (!disabledSites?.includes(id)) {
+          changeApplicable({
+            siteId,
+            modify: checked ? 'add' : 'remove',
+            consumable: { id },
+          })
+        }
+      })
+    }
+  }
+
   return (
-    <Summary
-      title={
-        <Stack
-          sx={{
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 1,
-          }}
-        >
-          <>Consumables applicable for the site</>
-          {isChanging ? <CircularProgress size={15} /> : null}
-        </Stack>
-      }
-      description={
-        <>
-          {isLoading ? (
-            <Stack
-              sx={{
-                flexDirection: 'row',
-                alignItems: 'center',
-                gap: 1,
-              }}
-            >
-              <CircularProgress size={15} />
-              <Typography>Loading</Typography>
-            </Stack>
-          ) : (
-            <FormGroup>
-              {consumables?.map(({ name, id }) => (
-                <FormControlLabel
-                  id={id}
-                  label={name}
-                  key={id}
-                  control={
-                    <Checkbox
-                      disabled={isChanging}
-                      checked={consumableIds.includes(id)}
-                      onChange={e =>
-                        changeApplicable({
-                          siteId,
-                          modify: e.target.checked ? 'add' : 'remove',
-                          consumable: { id, name },
-                        })
-                      }
-                    />
-                  }
-                />
-              ))}
-            </FormGroup>
-          )}
-        </>
-      }
-    />
+    <>
+      <Box display="flex" alignItems="center">
+        <Typography>Consumables applicable for this site</Typography>
+        <AspectTooltip
+          showHelpIcon
+          title="Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions"
+        />
+      </Box>
+
+      <CheckBoxList
+        listData={consumables}
+        isChanging={isChanging}
+        disabledList={disabledSites}
+        selectedList={consumableIds}
+        onSelect={handleSelectAll}
+        isLoading={isLoading}
+      />
+    </>
   )
 }
+
+export default Consumables
