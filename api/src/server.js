@@ -1,3 +1,5 @@
+// eslint-disable-next-line import/order
+require('../newrelic')
 // =======================
 // configuration =========
 // =======================
@@ -154,6 +156,7 @@ const bullMessageQueuePlugin = {
 }
 
 const plugins = [
+  require('./newrelicCustomConfig'),
   // logging framework
   require('./shared/hapi-logger'),
   require('@hapi/inert'), // eslint-disable-line import/order
