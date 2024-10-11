@@ -105,51 +105,53 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
       <TableBody>
         {rows.map((row, i) => {
           const hasChildren = row?.children?.length > 0 ?? false
-          return (
-            <>
-              <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
-                {columns.map((c, i) => (
-                  <TableCell
-                    width="10%"
-                    scope={i === 0 ? 'row' : undefined}
-                    style={{ paddingLeft: isDetail ? row?.depth * 20 : null }}
-                    key={c.prop}
-                    align={i !== 0 ? 'right' : undefined}
-                    {...c.cellProp}
-                  >
-                    {i === 0 ? (
-                      <Box display="flex">
-                        <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
-                          {open === row.id ? <ExpandLess /> : <ExpandMore />}
-                        </Box>
-                        <span>{row?.[c.prop] ?? 'N/A'}</span>
+          return [
+            <TableRow
+              key={`${row.id}_1`}
+              sx={{ backgroundColor: colors[i % 2] }}
+              onClick={() => setOpen(open === row.id ? -1 : row.id)}
+            >
+              {columns.map((c, i) => (
+                <TableCell
+                  width="10%"
+                  scope={i === 0 ? 'row' : undefined}
+                  style={{ paddingLeft: isDetail ? row?.depth * 20 : null }}
+                  key={`${row.id}_1_${c.prop}`}
+                  align={i !== 0 ? 'right' : undefined}
+                  {...c.cellProp}
+                >
+                  {i === 0 ? (
+                    <Box display="flex">
+                      <Box sx={{ opacity: hasChildren ? 1 : 0, display: 'flex', alignItems: 'center' }}>
+                        {open === row.id ? <ExpandLess /> : <ExpandMore />}
                       </Box>
-                    ) : (
-                      row?.[c.prop] ?? 'N/A'
-                    )}
-                  </TableCell>
-                ))}
+                      <span>{row?.[c.prop] ?? 'N/A'}</span>
+                    </Box>
+                  ) : (
+                    row?.[c.prop] ?? 'N/A'
+                  )}
+                </TableCell>
+              ))}
+            </TableRow>,
+            hasChildren ? (
+              <TableRow key={`${row.id}_2`} sx={{ '& > *': { borderBottom: 'unset' } }}>
+                <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
+                  <Collapse in={open === row.id} timeout="auto" unmountOnExit>
+                    <Box sx={{ backgroundColor: colors[i % 2] }}>
+                      <NestedTable
+                        perPage={rowsPerPage}
+                        columns={columns}
+                        isDetail
+                        rows={row.children}
+                        allowCustomOrder={allowCustomOrder}
+                        allowPagination={allowPagination}
+                      />
+                    </Box>
+                  </Collapse>
+                </TableCell>
               </TableRow>
-              {hasChildren ? (
-                <TableRow sx={{ '& > *': { borderBottom: 'unset' } }}>
-                  <TableCell sx={{ p: 0 }} colSpan={columns?.length}>
-                    <Collapse in={open === row.id} timeout="auto" unmountOnExit>
-                      <Box sx={{ backgroundColor: colors[i % 2] }}>
-                        <NestedTable
-                          perPage={rowsPerPage}
-                          columns={columns}
-                          isDetail
-                          rows={row.children}
-                          allowCustomOrder={allowCustomOrder}
-                          allowPagination={allowPagination}
-                        />
-                      </Box>
-                    </Collapse>
-                  </TableCell>
-                </TableRow>
-              ) : null}
-            </>
-          )
+            ) : null,
+          ]
         })}
 
         {emptyRows > 0 && (
