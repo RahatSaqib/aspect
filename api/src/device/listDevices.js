@@ -318,7 +318,7 @@ async function getListDevices(query, auth) {
         const { lastSeenOn } = toSyncDmslAndDevice[deviceId]
         return knex('Device').where({ id: deviceId }).update({ lastSeenOn, updatedOn: new Date() })
       },
-      { concurrency: 10 }
+      { concurrency: 20 }
     )
   }
 
