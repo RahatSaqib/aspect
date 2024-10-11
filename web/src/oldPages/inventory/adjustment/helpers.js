@@ -29,6 +29,7 @@ export function getValidations(format, actionType, inventory) {
       .required(format(validationMessages.quantityRequired))
       .positive(format(validationMessages.quantityPositive))
       .integer(format(validationMessages.quantityInteger)),
+    dateAdjusted: date().max(new Date(), format(validationMessages.dateAdjustedGreaterThanToday)),
   })
 
   /**

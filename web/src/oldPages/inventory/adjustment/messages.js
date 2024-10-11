@@ -108,6 +108,10 @@ export const validationMessages = defineMessages({
     id: 'pages.InventoryAdjustmentDialogForm.dateFromAfterDateTo',
     defaultMessage: 'Please choose a date later or equal to from date',
   },
+  dateAdjustedGreaterThanToday: {
+    id: 'pages.InventoryAdjustmentDialogForm.dateAdjustedGreaterThanToday',
+    defaultMessage: 'Please enter date until today',
+  },
 })
 
 export const newInventoryMessages = defineMessages({

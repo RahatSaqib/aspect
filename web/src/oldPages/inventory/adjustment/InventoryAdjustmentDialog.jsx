@@ -22,6 +22,7 @@ function InventoryAdjustmentDialog(props) {
   const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
+  const now = new Date()
 
   return (
     <Formik
@@ -249,6 +250,7 @@ function InventoryAdjustmentDialog(props) {
                     }}
                     value={values.dateAdjusted}
                     onChange={(_, date) => setFieldValue('dateAdjusted', date)}
+                    maxDate={now}
                   />
                 </FormGroup>
 
