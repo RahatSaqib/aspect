@@ -74,7 +74,7 @@ function InventoryAdjustmentDialog(props) {
         }
         const onExpiresChange = (_, date) => {
           setFieldValue('expiresOn', date)
-          if (isExpired(date) && fromSite.parentWarehouseId !== values.toSiteId) {
+          if (uiTransfer && isExpired(date) && fromSite?.parentWarehouseId !== values.toSiteId) {
             setFieldValue('toSiteId', undefined)
           }
         }
