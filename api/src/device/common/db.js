@@ -1,5 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
+const { format } = require('date-fns')
 const { knex, filterParams, sortPageParams, filterDateRangeParams } = require('../../db')
 const { allResultCategoryToId, resultCategoryToId, deviceMaintenanceTypeToId } = require('../../shared/dictionary')
 const { getConstraints, addConstraints } = require('../../auth/constraints')
@@ -22,9 +23,26 @@ const SELECT_SHOW_FIELDS = [
   'ip.name as implementingPartnerName',
   'da.name as approval',
   'dms.externalId as maintenanceStatus',
-  'dms.i18nKey as maintenanceStatusI18nKey',
+  knex.raw(`
+    CASE
+      WHEN dmsl.day >= DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN
+        CASE
+          WHEN deviceResult.totalCurrentDay = 0 AND dms.externalId = 'active' THEN 'inactiveUnknown'
+          ELSE dms.i18nKey
+        END
+      ELSE NULL
+    END AS maintenanceStatusI18nKey`),
   'dms.name as maintenanceStatusName',
-  'dms.active as maintenanceStatusActive',
+  knex.raw(
+    `CASE
+      WHEN dmsl.day >= DATE(DATE_ADD(NOW(), INTERVAL -1 DAY)) THEN
+        CASE
+          WHEN deviceResult.totalCurrentDay = 0 AND dms.active THEN 0
+          ELSE dms.active
+        END
+      ELSE NULL
+    END AS maintenanceStatusActive`
+  ),
   'dms.manuallySet as maintenanceStatusManuallySet',
   'da.token as approvalToken',
   'da.i18nKey as approvalStatusI18nKey',
@@ -98,6 +116,16 @@ async function getDeviceInfo(credentials, query) {
 async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW_FIELDS }) {
   const dataConstraints = await getConstraints(credentials)
 
+  const { timezoneIANA } = await getUser(credentials.name)
+
+  const now = new Date()
+  // Get current date in ISO format
+  const currentDateISO = format(now, 'yyyy-MM-dd')
+
+  // Define start and end of current day
+  const currentDayStart = `${currentDateISO}T00:00:00`
+  const currentDayEnd = `${currentDateISO}T23:59:59`
+
   const maintenanceCalibrationId = await deviceMaintenanceTypeToId('calibration')
   const maintenanceWarrantyId = await deviceMaintenanceTypeToId('warranty')
 
@@ -124,6 +152,20 @@ async function getDeviceByDeviceId({ deviceId, credentials, fields = SELECT_SHOW
         .andOn('frd60Errors.days', 60)
         .andOn('frd60Errors.resultCategory1', resultCategoryErrorId)
     })
+    .leftJoin(
+      knex('Result as resDevice')
+        .select({
+          deviceId: 'deviceId',
+          totalCurrentDay: knex.raw(
+            `SUM(CASE WHEN CONVERT_TZ(resDevice.endedOn, '+00:00', '${timezoneIANA}') BETWEEN ? AND ? THEN 1 ELSE 0 END)`,
+            [currentDayStart, currentDayEnd]
+          ),
+        })
+        .groupBy('deviceId')
+        .as('deviceResult'),
+      'd.id',
+      'deviceResult.deviceId'
+    )
     // device calibration
     .leftOuterJoin('DeviceMaintenance as dmC', function () {
       this.on('d.id', 'dmC.deviceId')
