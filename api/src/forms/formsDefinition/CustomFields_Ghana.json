@@ -1,0 +1,224 @@
+{
+    "fields": [
+        {
+            "id": 71,
+            "name": "GHRequestorPhone",
+            "title": "Referring Clinician or Facility Phone Number (if known)",
+            "i18nKey": "GHRequestorPhoneI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 50,
+            "gxAlertDbColumn": "RequestorPhone",
+            "caption": "Referring Clinician or Facility Phone Number (if known)",
+            "i18nKeyCaption": "GHRequestorPhoneI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.71.value",
+            "source": "patientData.RequestorPhone",
+            "mandatory": false,
+            "migrateFromId": -15
+        },
+        {
+            "id": 70,
+            "name": "GHRequestorName",
+            "title": "Name of Person Requesting Test",
+            "i18nKey": "GHRequestorNameI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 40,
+            "gxAlertDbColumn": "RequestorName",
+            "caption": "Name of Person Requesting Test",
+            "i18nKeyCaption": "GHRequestorNameI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.70.value",
+            "source": "patientData.RequestorName",
+            "mandatory": false,
+            "migrateFromId": -14
+        },
+        {
+            "id": 69,
+            "name": "GHTestReason",
+            "title": "Reason for Test",
+            "i18nKey": "GHTestReasonI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 30,
+            "gxAlertDbColumn": "TestReason",
+            "caption": "Reason for Test",
+            "i18nKeyCaption": "GHTestReasonI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.69.value",
+            "source": "patientData.TestReason",
+            "mandatory": false,
+            "migrateFromId": -12,
+            "items": [
+                {
+                    "key": "TB Diagnosis",
+                    "value": "TB Diagnosis",
+                    "order": 0
+                },
+                {
+                    "key": "Drug Resistance Diagnosis",
+                    "value": "Drug Resistance Diagnosis",
+                    "order": 1
+                }
+            ]
+        },
+        {
+            "id": 68,
+            "name": "GHPatientStreet",
+            "title": "Patient Address",
+            "i18nKey": "GHPatientStreetI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 20,
+            "gxAlertDbColumn": "PatientStreet",
+            "caption": "Patient Address",
+            "i18nKeyCaption": "GHPatientStreetI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.68.value",
+            "source": "patientData.PatientStreet",
+            "mandatory": false,
+            "migrateFromId": -9
+        },
+        {
+            "id": 73,
+            "name": "GHPreviouslyTreated",
+            "title": "Retreatment Case",
+            "i18nKey": "GHPreviouslyTreatedI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 70,
+            "gxAlertDbColumn": "PreviouslyTreated",
+            "caption": "Retreatment Case",
+            "i18nKeyCaption": "GHPreviouslyTreatedI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.73.value",
+            "source": "patientData.PreviouslyTreated",
+            "mandatory": false,
+            "migrateFromId": -7,
+            "items": [
+                {
+                    "key": 0,
+                    "value": "No, new patient",
+                    "order": 0
+                },
+                {
+                    "key": 1,
+                    "value": "Yes, previously tested",
+                    "order": 1
+                }
+            ]
+        },
+        {
+            "id": 74,
+            "name": "GHHealthFacility",
+            "title": "Referring Facility",
+            "i18nKey": "GHHealthFacilityI18nKey",
+            "fieldType": "text",
+            "completionWeight": 10,
+            "order": 80,
+            "gxAlertDbColumn": "HealthFacility",
+            "caption": "Referring Facility",
+            "i18nKeyCaption": "GHHealthFacilityI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.74.value",
+            "source": "patientData.HealthFacility",
+            "mandatory": false,
+            "migrateFromId": -6
+        },
+        {
+            "id": 67,
+            "name": "GHPatientGender",
+            "title": "Gender",
+            "i18nKey": "GHPatientGenderI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 10,
+            "gxAlertDbColumn": "PatientGender",
+            "caption": "Gender",
+            "i18nKeyCaption": "GHPatientGenderI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.67.value",
+            "source": "patientData.PatientGender",
+            "mandatory": false,
+            "migrateFromId": -4,
+            "items": [
+                {
+                    "key": 1,
+                    "value": "Male",
+                    "order": 0
+                },
+                {
+                    "key": 0,
+                    "value": "Female",
+                    "order": 10
+                },
+                {
+                    "key": 2,
+                    "value": "Other",
+                    "order": 20
+                }
+            ]
+        },
+        {
+            "id": 66,
+            "name": "GHPatientAge",
+            "title": "Age",
+            "i18nKey": "GHPatientAgeI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 0,
+            "gxAlertDbColumn": "PatientAge",
+            "caption": "Age",
+            "i18nKeyCaption": "GHPatientAgeI18nCaptionKey",
+            "controlType": "textBox",
+            "payloadOriginPath": "data.customFieldData.66.value",
+            "source": "patientData.PatientAge",
+            "mandatory": false,
+            "migrateFromId": -3,
+            "validation": [
+                {
+                    "validationType": "regex",
+                    "value": "^[2-9]$|^[1-9][0-9]$|^1[0-4][0-9]$|^150$",
+                    "errorMessage": "Patient Age should be a number between 2 and 150. For lower age please use field Age in Months.",
+                    "errorMessageI18nKey": "GHPatientAgeValidationFieldi18nKey"
+                }
+            ]
+        },
+        {
+            "id": 72,
+            "name": "GHHivStatus",
+            "title": "HIV Status",
+            "i18nKey": "GHHivStatusI18nKey",
+            "fieldType": "number",
+            "completionWeight": 10,
+            "order": 60,
+            "gxAlertDbColumn": "HivStatus",
+            "caption": "HIV Status",
+            "i18nKeyCaption": "GHHivStatusI18nCaptionKey",
+            "controlType": "comboBox",
+            "payloadOriginPath": "data.customFieldData.72.value",
+            "source": "patientData.HivStatus",
+            "mandatory": false,
+            "migrateFromId": -1,
+            "items": [
+                {
+                    "key": 1,
+                    "value": "HIV Positive",
+                    "order": 0
+                },
+                {
+                    "key": 0,
+                    "value": "HIV Negative",
+                    "order": 10
+                },
+                {
+                    "key": 2,
+                    "value": "HIV Unknown",
+                    "order": 20
+                }
+            ]
+        }
+    ],
+    "refForms": []
+}

@@ -1,0 +1,12 @@
+{
+  "CustomFields_Ghana": {
+    "fileName": "CustomFields_Ghana.json",
+    "formDefinition": {
+      "order": 1,
+      "title": "CustomFields_Ghana",
+      "i18nKeyTitle": "CustomFields_Ghana_i18nkey",
+      "externalId": "CustomFields_Ghana",
+      "formTypeExternalId": "gxConnectForm"
+    }
+  }
+}
