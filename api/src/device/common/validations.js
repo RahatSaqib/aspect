@@ -173,6 +173,8 @@ function listDevicesBaseResponse() {
                 .description(
                   'When the device was last seen. Unlike the ping, this date is also updated whenever the device sends a results, not just on an explicit ping.'
                 ),
+              lastPingInUtc: Joi.date().allow(null).description('When the device last pinged'),
+              createdOnInUtc: Joi.date().required().description('When the device was added to the database'),
               state: Joi.string().allow('', null).description('The state where the device is located'),
               type: Joi.string().allow('', null).description('The type of the device'),
               siteName: Joi.string().allow('', null).description('The name of the site where the device is located'),

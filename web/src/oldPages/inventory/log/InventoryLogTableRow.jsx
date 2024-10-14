@@ -2,7 +2,7 @@ import React from 'react'
 import { useIntl } from 'react-intl'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import { formatDateTime } from '../../../utils/utils/dateFormat'
+import { formatDateTime, formatDate } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
 const InventoryLogTableRow = ({ inventoryLogItem }) => {
@@ -48,6 +48,11 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
                 : formatMessage(messages.notAvailable),
             })
           : ''}
+      </TableCell>
+      <TableCell className={styles.TableCell}>
+        {inventoryLogItem.transactionDate
+          ? formatDate(inventoryLogItem.transactionDate)
+          : formatMessage(messages.notAvailable)}
       </TableCell>
       <TableCell className={styles.TableCell}>{inventoryLogItem.notes}</TableCell>
     </TableRow>

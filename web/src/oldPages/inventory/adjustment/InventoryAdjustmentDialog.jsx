@@ -3,6 +3,7 @@ import { Button, DialogActions, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
+import useSiteList from '../../../hooks/site/useSiteList'
 import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
@@ -13,14 +14,19 @@ import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
 
 function InventoryAdjustmentDialog(props) {
+  const { data: allSites = [] } = useSiteList()
   const { onCancel, onSubmit, inventoryItem, actionType } = props
   const { formatMessage, ...intl } = useIntl()
   const inventory = inventoryItem?.toJS?.() ?? undefined
   const labels = getLabels(actionType)
+  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
+  const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
+  const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
+  const now = new Date()
 
   return (
     <Formik
-      validationSchema={getValidations(formatMessage, actionType)}
+      validationSchema={getValidations(formatMessage, actionType, inventory)}
       initialValues={transformInitialValue(inventory, actionType)}
       onSubmit={values => onSubmit(transformValues(values))}
     >
@@ -35,6 +41,44 @@ function InventoryAdjustmentDialog(props) {
         setFieldValue,
         isSubmitting,
       }) => {
+        const fromSite = allSites.find(it => it.id === values.fromSiteId)
+        const toSite = allSites.find(it => it.id === values.toSiteId)
+        const isExpired = date => date && new Date(date) < new Date()
+        const toSiteFilter = sites => {
+          if (uiTransfer) {
+            sites = sites.filter(s => s.siteConsumables?.includes(values.consumable.id))
+            if (isExpired(values.expiresOn ?? inventory?.expiresOn)) {
+              sites = sites?.filter(it => it.id === fromSite.parentWarehouseId)
+            }
+          }
+          return sites
+        }
+        const onToSiteChange = event => {
+          const toSiteId = event.target.value || undefined
+          setFieldValue('toSiteId', toSiteId)
+          //
+          if (actionType === types.SHOW_NEW_INVENTORY_DIALOG) {
+            let resetConsumable = true
+            if (toSiteId) {
+              /**
+               * if just selected toSite doesn't include current consumable  -
+               * then reset `consumable` field
+               */
+              const site = allSites.find(it => it.id === +toSiteId)
+              resetConsumable = values.consumable && !site?.siteConsumables?.includes(values.consumable.id)
+            }
+            if (resetConsumable) {
+              setFieldValue('consumable', undefined)
+            }
+          }
+        }
+        const onExpiresChange = (_, date) => {
+          setFieldValue('expiresOn', date)
+          if (uiTransfer && isExpired(date) && fromSite?.parentWarehouseId !== values.toSiteId) {
+            setFieldValue('toSiteId', undefined)
+          }
+        }
+
         return (
           <AspectDialog
             maxWidth="sm"
@@ -49,6 +93,32 @@ function InventoryAdjustmentDialog(props) {
           >
             <form className={styles.Form}>
               <div className={styles.Form__Content}>
+                {initialValues?.fromSiteId ? (
+                  <SiteSelect
+                    name="fromSiteId"
+                    label={formatMessage(messages.fromSiteName)}
+                    disabled
+                    value={values.fromSiteId ?? null}
+                    onChange={handleChange}
+                  />
+                ) : null}
+
+                {actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG ? (
+                  <SiteSelect
+                    name="toSiteId"
+                    disabled={
+                      actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG ||
+                      actionType === types.SHOW_ADD_INVENTORY_DIALOG
+                    }
+                    error={!!errors.toSiteId}
+                    helperText={errors.toSiteId}
+                    customFilter={toSiteFilter}
+                    label={formatMessage(messages.toSiteName)}
+                    value={values.toSiteId || ''}
+                    onChange={onToSiteChange}
+                  />
+                ) : null}
+
                 {!inventory ? (
                   <ConsumableSelect
                     name="consumable"
@@ -57,7 +127,46 @@ function InventoryAdjustmentDialog(props) {
                     value={values.consumable ?? null}
                     onChange={consumable => setFieldValue('consumable', consumable)}
                     fullWidth
+                    /**
+                     * show only those consumables which are linked to selected toSite/fromSite,
+                     * (see table SiteConsumable)
+                     */
+                    onlyWhitelisted
+                    whitelistIds={
+                      uiAdd ? toSite?.siteConsumables : uiTransfer || uiRemove ? fromSite?.siteConsumables : null
+                    }
+                    /**
+                     * disable this component if...
+                     */
+                    disabled={
+                      // ...global adding inventory but toSite is not selected
+                      (actionType === types.SHOW_NEW_INVENTORY_DIALOG && !values.toSiteId) ||
+                      // ...or local adding inventory (`toSite` and `consumable` fields are prefilled)
+                      actionType === types.SHOW_ADD_INVENTORY_DIALOG ||
+                      // ...or remove (`fromSite` and `consumable` fields are prefilled)
+                      actionType === types.SHOW_REMOVE_INVENTORY_DIALOG ||
+                      // ...or transferring inventory
+                      uiTransfer
+                    }
                   />
+                ) : null}
+
+                {values?.consumable?.showExpirationDate || inventory?.expiresOn ? (
+                  <FormGroup label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}>
+                    <DateTimeInput
+                      fullWidth
+                      margin="normal"
+                      dateFormat="yyyy-MM-dd"
+                      disabled={!!initialValues?.expiresOn}
+                      RootProps={{
+                        name: 'expiresOn',
+                      }}
+                      onChange={onExpiresChange}
+                      value={values.expiresOn}
+                      error={!!errors.expiresOn}
+                      helperText={errors.expiresOn}
+                    />
+                  </FormGroup>
                 ) : null}
 
                 {values?.consumable?.showLot || inventory?.lotNumber ? (
@@ -75,43 +184,8 @@ function InventoryAdjustmentDialog(props) {
                       margin: 'dense',
                     }}
                     inputProps={{ maxLength: 100 }}
-                  />
-                ) : null}
-
-                {values?.consumable?.showExpirationDate || inventory?.expiresOn ? (
-                  <FormGroup label={formatMessage(messages.expiryDate)}>
-                    <DateTimeInput
-                      fullWidth
-                      margin="normal"
-                      dateFormat="yyyy-MM-dd"
-                      disabled={!!initialValues?.expiresOn}
-                      RootProps={{
-                        name: 'expiresOn',
-                      }}
-                      onChange={(_, date) => setFieldValue('expiresOn', date)}
-                      value={values.expiresOn}
-                    />
-                  </FormGroup>
-                ) : null}
-
-                {initialValues?.fromSiteId ? (
-                  <SiteSelect
-                    name="fromSiteId"
-                    label={formatMessage(messages.fromSiteName)}
-                    disabled
-                    value={values.fromSiteId ?? null}
-                    onChange={handleChange}
-                  />
-                ) : null}
-
-                {actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG ? (
-                  <SiteSelect
-                    name="toSiteId"
-                    disabled={actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG}
-                    error={errors?.toSiteId ?? null}
-                    label={formatMessage(messages.toSiteName)}
-                    value={values.toSiteId || ''}
-                    onChange={handleChange}
+                    error={!!errors.lotNumber}
+                    helperText={errors.lotNumber}
                   />
                 ) : null}
 
@@ -182,7 +256,7 @@ function InventoryAdjustmentDialog(props) {
                   </>
                 ) : null}
 
-                <FormGroup label={formatMessage(labels.dateAdjusted)}>
+                <FormGroup label={`${formatMessage(labels.dateAdjusted)} (yyyy-mm-dd)`}>
                   <DateTimeInput
                     fullWidth
                     intl={{ formatMessage, ...intl }}
@@ -193,6 +267,7 @@ function InventoryAdjustmentDialog(props) {
                     }}
                     value={values.dateAdjusted}
                     onChange={(_, date) => setFieldValue('dateAdjusted', date)}
+                    maxDate={now}
                   />
                 </FormGroup>
 

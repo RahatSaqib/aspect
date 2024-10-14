@@ -11,11 +11,13 @@ import useDeviceApprovalType from '../../hooks/device/useDeviceApprovalType'
 import useDeviceTypeList from '../../hooks/device/useDeviceTypeList'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
-import useConsumable from '../../hooks/inventory/useConsumable'
+import { useConsumable } from '../../hooks/inventory/useConsumable'
 import useNotificationType from '../../hooks/notification/useNotificationType'
 import useResultCategoryGroup from '../../hooks/result/useResultCategoryGroup'
 import useTreatmentStatus from '../../hooks/result/useTreatmentStatus'
 import useWorkflowStatus from '../../hooks/result/useWorkflowStatus'
+import useSiteList from '../../hooks/site/useSiteList'
+import useSiteType from '../../hooks/site/useSiteType'
 import { commonDefinitions } from '../../messages/customMessages'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import { cepheidModulesOptions } from '../CepheidModulesSelect/CepheidModulesSelect'
@@ -65,6 +67,8 @@ const filtersOrdering = {
   minExpirationDate: 31,
   maxExpirationDate: 32,
   showDecommissionedDevices: 33,
+  siteTypeId: 34,
+  parentWarehouseId: 35,
 }
 
 const buttonMapping = {
@@ -76,6 +80,12 @@ const buttonMapping = {
     <LgaId stateId={stateId} lgaId={lgaId} remove={remove} blocked={blocked} />
   ),
   siteName: ({ siteName, remove, blocked }) => <SiteName siteName={siteName} remove={remove} blocked={blocked} />,
+  parentWarehouseId: ({ parentWarehouseId, remove, blocked }) => (
+    <ParentWarehouseId parentWarehouseId={parentWarehouseId} remove={remove} blocked={blocked} />
+  ),
+  siteTypeId: ({ siteTypeId, remove, blocked }) => (
+    <SiteTypeId siteTypeId={siteTypeId} remove={remove} blocked={blocked} />
+  ),
   lgaName: ({ lgaName, remove, blocked }) => <LgaName lgaName={lgaName} remove={remove} blocked={blocked} />,
   stateName: ({ stateName, remove, blocked }) => <StateName stateName={stateName} remove={remove} blocked={blocked} />,
   originSiteName: ({ originSiteName, remove, blocked }) => (
@@ -281,6 +291,30 @@ const SiteName = ({ siteName, remove, blocked }) => {
     <Btn
       lbl={formatMessage(messages.whereSiteNameIncludes, { siteName })}
       del={blocked.includes('siteName') ? undefined : () => remove(['siteName'])}
+    />
+  )
+}
+const ParentWarehouseId = ({ parentWarehouseId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const { data } = useSiteList()
+  const stockProvider = data?.find(i => i.id === parentWarehouseId)
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereStockProviderIs, { stockProvider: stockProvider.name })}
+      del={blocked.includes('parentWarehouseId') ? undefined : () => remove(['parentWarehouseId'])}
+    />
+  )
+}
+const SiteTypeId = ({ siteTypeId, remove, blocked }) => {
+  const { formatMessage } = useIntl()
+  const { data } = useSiteType()
+  const type = data?.find(i => i.id === siteTypeId)
+
+  return (
+    <Btn
+      lbl={formatMessage(messages.whereSiteTypeIs, { siteType: type.name })}
+      del={blocked.includes('siteTypeId') ? undefined : () => remove(['siteTypeId'])}
     />
   )
 }

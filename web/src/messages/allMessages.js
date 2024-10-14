@@ -63,6 +63,14 @@ const messages = defineMessages({
     id: 'filter.btnGroup.whereSiteNameIncludes',
     defaultMessage: 'site name includes "{siteName}"',
   },
+  whereSiteTypeIs: {
+    id: 'filter.btnGroup.whereSiteTypeIs',
+    defaultMessage: 'site type is "{siteType}"',
+  },
+  whereStockProviderIs: {
+    id: 'filter.btnGroup.whereStockProviderIs',
+    defaultMessage: 'stock provider is "{stockProvider}"',
+  },
   whereLgaNameIncludes: {
     id: 'filter.btnGroup.whereLgaNameIncludes',
     defaultMessage: 'lga name includes "{lgaName}"',
@@ -425,7 +433,8 @@ const messages = defineMessages({
   contacts: { id: 'browsePage.browseDropdown.contacts', defaultMessage: 'Contacts' },
   sites: { id: 'browsePage.browseDropdown.sites', defaultMessage: 'Sites' },
   supplies: { id: 'browsePage.browseDropdown.supplies', defaultMessage: 'Supplies' },
-  inventoryItems: { id: 'browsePage.browseDropdown.inventoryItems', defaultMessage: 'Inventory on Hand' },
+  inventoryOnHand: { id: 'browsePage.browseDropdown.inventoryOnHand', defaultMessage: 'Inventory on Hand' },
+  inventoryItems: { id: 'browsePage.browseDropdown.inventoryItems', defaultMessage: 'Inventory Items' },
   inventoryLog: { id: 'browsePage.browseDropdown.inventoryLog', defaultMessage: 'Inventory Log' },
   inventoryTransfers: { id: 'browsePage.browseDropdown.inventoryTransfers', defaultMessage: 'Transfers' },
   InventoryOverview: { id: 'browsePage.browseDropdown.inventoryOverview', defaultMessage: 'Inventory Overview' },
