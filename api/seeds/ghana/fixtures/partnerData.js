@@ -19,4 +19,17 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://ghana.aspect.id',
   apiUrl: 'https://ghana.aspect.id/api',
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        GxAlertApiEndpoint: 'https://ghana.gxalert.com/api/',
+        EnableAspectSync: true,
+        SendResultsToAspect: true,
+        AspectUploadExcludePatientId: false,
+        AspectApiEndpoint: 'https://ghana.aspect.id/api',
+        MigrateAspectApiKey: true,
+      },
+    },
+  ],
 }

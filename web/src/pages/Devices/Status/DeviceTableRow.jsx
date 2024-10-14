@@ -1,11 +1,11 @@
 import React from 'react'
+import { formatDistanceToNow } from 'date-fns'
 import { useIntl } from 'react-intl'
 import ColoredNumber from '../../../oldComponents/shared/ColoredNumber'
 import stylesShared from '../../../oldComponents/shared/DataTableRow.module.css'
 import StatusIcon from '../../../oldComponents/shared/StatusIcon'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import ColoredButton from '../../../oldComponents/themedReactToolbox/ColoredButton'
-import { getTimeDifference } from '../../../utils/utils/dateFormat'
 import styles from './DeviceTableRow.module.css'
 import messages from './messages'
 
@@ -55,14 +55,22 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
           ? formatMessage(messages[device.get('maintenanceStatusI18nKey')])
           : formatMessage(messages.notAvailable)}
       </TableCell>
-      <TableCell>{getTimeDifference(device.get('lastResultConductedOn'), device.get('timezoneIANA'))}</TableCell>
+      <TableCell>
+        {device.get('lastResultConductedOn')
+          ? formatDistanceToNow(new Date(device.get('lastResultConductedOn')), { addSuffix: true })
+          : null}
+      </TableCell>
       <TableCell>
         <StatusIcon
           title={formatMessage(messages[device.get('connectorStatus')])}
           status={device.get('connectorStatus') === 'online' ? 'success' : 'error'}
         />
       </TableCell>
-      <TableCell>{getTimeDifference(device.get('lastPingOn'), device.get('timezoneIANA'))}</TableCell>
+      <TableCell>
+        {device.get('lastPingInUtc')
+          ? formatDistanceToNow(new Date(device.get('lastPingInUtc')), { addSuffix: true })
+          : null}
+      </TableCell>
       <TableCell hiddenOn="lg">
         {device.get('connectorVersion') ? device.get('connectorVersion') : formatMessage(messages.notAvailable)}
       </TableCell>
@@ -87,7 +95,11 @@ const DeviceTableRow = ({ device, onAlertClick, displayPreferences: { errorRateT
       <TableCell hiddenOn="lg">
         <Rate it={device.get('error').toJS()} threshold={errorRateThreshold} messageId={messages.errorOfTotal} />
       </TableCell>
-      <TableCell hiddenOn="lg">{getTimeDifference(device.get('createdOn'), device.get('timezoneIANA'))}</TableCell>
+      <TableCell hiddenOn="lg">
+        {device.get('createdOnInUtc')
+          ? formatDistanceToNow(new Date(device.get('createdOnInUtc')), { addSuffix: true })
+          : null}
+      </TableCell>
       <TableCell hiddenOn="lg" numeric>
         {formatNumber(device.get('resultCountLastMonth'))}
       </TableCell>

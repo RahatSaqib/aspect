@@ -43,6 +43,16 @@ function InventoryAdjustmentDialog(props) {
       }) => {
         const fromSite = allSites.find(it => it.id === values.fromSiteId)
         const toSite = allSites.find(it => it.id === values.toSiteId)
+        const isExpired = date => date && new Date(date) < new Date()
+        const toSiteFilter = sites => {
+          if (uiTransfer) {
+            sites = sites.filter(s => s.siteConsumables?.includes(values.consumable.id))
+            if (isExpired(values.expiresOn ?? inventory?.expiresOn)) {
+              sites = sites?.filter(it => it.id === fromSite.parentWarehouseId)
+            }
+          }
+          return sites
+        }
         const onToSiteChange = event => {
           const toSiteId = event.target.value || undefined
           setFieldValue('toSiteId', toSiteId)
@@ -60,6 +70,12 @@ function InventoryAdjustmentDialog(props) {
             if (resetConsumable) {
               setFieldValue('consumable', undefined)
             }
+          }
+        }
+        const onExpiresChange = (_, date) => {
+          setFieldValue('expiresOn', date)
+          if (uiTransfer && isExpired(date) && fromSite?.parentWarehouseId !== values.toSiteId) {
+            setFieldValue('toSiteId', undefined)
           }
         }
 
@@ -96,6 +112,7 @@ function InventoryAdjustmentDialog(props) {
                     }
                     error={!!errors.toSiteId}
                     helperText={errors.toSiteId}
+                    customFilter={toSiteFilter}
                     label={formatMessage(messages.toSiteName)}
                     value={values.toSiteId || ''}
                     onChange={onToSiteChange}
@@ -144,7 +161,7 @@ function InventoryAdjustmentDialog(props) {
                       RootProps={{
                         name: 'expiresOn',
                       }}
-                      onChange={(_, date) => setFieldValue('expiresOn', date)}
+                      onChange={onExpiresChange}
                       value={values.expiresOn}
                       error={!!errors.expiresOn}
                       helperText={errors.expiresOn}
