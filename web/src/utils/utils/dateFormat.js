@@ -6,7 +6,6 @@ import isNaN from 'lodash/isNaN'
 import isNil from 'lodash/isNil'
 import isNumber from 'lodash/isNumber'
 import isString from 'lodash/isString'
-import * as moment from 'moment-timezone'
 import { withProps } from 'recompose'
 import { getAspectDisplayPreferences } from '../../oldComponents/LocalStorage'
 import getLocale from './locale'
@@ -109,51 +108,4 @@ export const formatRelative = (date, formatRelativeTime, defaultMessage = '') =>
   return formatRelativeTime(Math.round(timeDiffInMilliseconds / denom), unit, {
     number: 'auto',
   })
-}
-// Helper function to determine the correct singular or plural form
-const formatDuration = (value, unit) => {
-  const singularUnit = unit.slice(0, -1) // Remove the trailing 's'
-  return `${Math.floor(value)} ${Math.floor(value) === 1 ? singularUnit : unit} ago`
-}
-
-export const getTimeDifference = (date, targetTimeZone) => {
-  if (isNil(date)) return ''
-
-  const givenTime = date.replace('Z', '')
-
-  // Parse the given time in the target time zone
-  const parsedGivenTime = moment.tz(givenTime, targetTimeZone)
-
-  // Get the current time in the target time zone
-  const currentTimeInTargetZone = moment.tz(targetTimeZone)
-
-  // Calculate the difference in milliseconds
-  const differenceInMilliseconds = currentTimeInTargetZone.diff(parsedGivenTime)
-
-  // Convert the difference to a duration object
-  const duration = moment.duration(differenceInMilliseconds)
-
-  // Determine the appropriate time unit
-  if (duration.asSeconds() < 60) {
-    return formatDuration(duration.asSeconds(), 'seconds')
-  }
-  if (duration.asMinutes() < 60) {
-    return formatDuration(duration.asMinutes(), 'minutes')
-  }
-  if (duration.asHours() < 24) {
-    return formatDuration(duration.asHours(), 'hours')
-  }
-  if (duration.asDays() < 7) {
-    return formatDuration(duration.asDays(), 'days')
-  }
-  if (duration.asWeeks() < 4) {
-    return formatDuration(duration.asWeeks(), 'weeks')
-  }
-  if (duration.asMonths() < 3) {
-    return formatDuration(duration.asMonths(), 'months')
-  }
-  if (duration.asMonths() < 12) {
-    return formatDuration(duration.asQuarters(), 'quarters')
-  }
-  return formatDuration(duration.asYears(), 'years')
 }
