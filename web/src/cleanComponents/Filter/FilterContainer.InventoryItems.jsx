@@ -3,17 +3,16 @@ import { Grid, TextField, FormControlLabel, Checkbox } from '@mui/material'
 import { useIntl } from 'react-intl'
 import SiteAutoCompleteField from '../../components/SiteAutocompleteField'
 import useAuthState from '../../hooks/useAuthState'
-import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
 import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector, DaysStockLeftSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
-const InventoryItemsFilter = () => {
+const InventoryItemsFilter = props => {
+  const { state, setState } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
-  const [state, setState] = useFilterSync()
 
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
@@ -23,7 +22,7 @@ const InventoryItemsFilter = () => {
         <Grid item xs={3}>
           <StateSelect
             label={getCustomMessage(formatMessage, messages, 'state', user)}
-            value={state.stateId}
+            value={state.stateId ?? ''}
             onChange={e => setState({ ...state, stateId: e.target.value, lgaId: null, siteName: null })}
             countryId={state.countryId}
           />
@@ -31,7 +30,7 @@ const InventoryItemsFilter = () => {
         <Grid item xs={3}>
           <LgaSelect
             label={getCustomMessage(formatMessage, messages, 'lga', user)}
-            value={state.lgaId}
+            value={state.lgaId ?? ''}
             onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
             stateId={state.stateId}
           />
@@ -58,18 +57,6 @@ const InventoryItemsFilter = () => {
             />
           </Grid>
         ) : null}
-        <Grid item xs={3}>
-          <FormControlLabel
-            control={
-              <Checkbox
-                checked={[true, 'true'].includes(state.breakOutByLot)}
-                onChange={e => setState({ ...state, breakOutByLot: e.target.checked || null })}
-              />
-            }
-            label={formatMessage(messages.breakOutByLot)}
-            sx={{ m: 2 }}
-          />
-        </Grid>
         {state.breakOutByLot ? (
           <>
             <Grid item xs={3}>

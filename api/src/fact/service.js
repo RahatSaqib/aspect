@@ -14,6 +14,7 @@ const { deviceOnline, deviceNoResults, deviceHasNewResults } = require('../devic
 const { issueTypeToId, issueStatusToId, issueEventStatusToId } = require('../shared/dictionary')
 const { auditInventoryStockout, auditInventoryStockExpiring } = require('../shared/utilsInventory')
 const logger = require('../shared/logger')
+const config = require('../config')
 
 const MIN_RESULTS_TO_TRIGGER_DATA_CATEGORY_LOW = 10
 
@@ -160,8 +161,20 @@ async function onResultLogged({ resultId }, { messageContext }) {
     deviceHasNewResults,
   })
   return context.transact(async knex => {
-    const { deviceId, assayId, resultCategory1, resultCategory2, noResults, endedOn, deviceType } =
+    const {
+      deviceId,
+      assayId,
+      resultCategory1,
+      resultCategory2,
+      noResults,
+      endedOn,
+      startedOn,
+      createdOn,
+      deviceType,
+      maxDaysDeviceNoResults,
+    } =
       (await knex('Result as r')
+        .leftJoin('Partner as p', 'r.partnerId', 'p.id')
         .leftJoin('FactDeviceFlag as fdf', 'fdf.deviceId', 'r.deviceId')
         .leftJoin('Device as d', 'd.id', 'r.deviceId')
         .leftJoin('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
@@ -173,12 +186,20 @@ async function onResultLogged({ resultId }, { messageContext }) {
           'r.resultCategory2',
           'fdf.noResults',
           'r.endedOn',
-          'dt.externalId as deviceType'
+          'dt.externalId as deviceType',
+          'p.maxDaysDeviceNoResults'
         )) || {}
+
     if (!deviceId) {
       return
     }
-    if (noResults === 1) {
+    const now = new Date()
+    const maxLastDateNoResult = subDays(now, maxDaysDeviceNoResults || config.maxDaysDeviceNoResults)
+
+    const resultDate = endedOn || startedOn || createdOn
+
+    // if no results flag is set, and incoming result date is  within last configured days
+    if (noResults === 1 && resultDate > maxLastDateNoResult) {
       context.deviceHasNewResults(deviceId)
     }
 

@@ -36,9 +36,17 @@ const messages = {
       id: 'pages.InventoryItemsList.quantityOnHand',
       defaultMessage: 'Quantity on Hand',
     },
+    quantityOnHandDescription: {
+      id: 'pages.InventoryItemsList.quantityOnHandDescription',
+      defaultMessage: 'Its the current quantity in hand, including the expired quantity.',
+    },
     dailyConsumptionRate: {
       id: 'pages.InventoryItemsList.dailyConsumptionRate',
       defaultMessage: 'Daily Consumption',
+    },
+    dailyConsumptionRateDescription: {
+      id: 'pages.InventoryItemsList.dailyConsumptionRateDescription',
+      defaultMessage: 'Its the average daily consumption of the specific cartridge considering the last 180 day period',
     },
     notRecorded: {
       id: 'pages.InventoryItemsList.notRecorded',
@@ -114,6 +122,10 @@ const messages = {
     inventoryOnHand: {
       id: 'pages.InventoryItemsList.inventoryOnHand',
       defaultMessage: 'Inventory on Hand',
+    },
+    adjustQuantity: {
+      id: 'pages.InventoryItemsList.adjustQuantity',
+      defaultMessage: 'Adjust Quantity',
     },
     newQuantityOnHand: {
       id: 'pages.InventoryItemsList.newQuantityOnHand',

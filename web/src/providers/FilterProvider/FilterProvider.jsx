@@ -60,8 +60,8 @@ export const defaultFilter = {
   '/browse/device/list': { connectorStatus: 'all' },
   '/browse/device/workload': { minDate: startOfMonth(now), maxDate: endOfMonth(now) }, //
   '/browse/inventory/log': { minDate, maxDate }, //
-  '/browse/inventory/supplies': { hasStock: true, minDate, maxDate }, //
-  '/browse/inventory/transfers': { minDate, maxDate }, //
+  '/browse/inventory/supplies': { hasStock: true }, //
+  '/browse/inventory/transfers': {}, //
   '/browse/notification/types': {},
   '/browse/person': { contactStatus: 0 },
   '/browse/reporter': { minDate, maxDate }, //
