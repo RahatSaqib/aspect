@@ -1,0 +1,59 @@
+module.exports = require('../utils').seed(seed, __filename)
+
+const _ = require('lodash')
+const { getAdditionalDataFromPayload } = require('../../src/plugin/deviceType/gxUtils')
+const { assayNameToExternalId } = require('../../src/shared/assayNameToExternalId')
+const { deepMerge } = require('../../src/shared/json')
+const { getResultDataHash } = require('../../src/result/common/logic')
+
+async function seed(knex) {
+  const resultsToUpdate = await getResultsToUpdateInRange(knex)
+
+  if (resultsToUpdate.length > 0) {
+    // eslint-disable-next-line no-await-in-loop
+    await knex('Result').insert(resultsToUpdate).onConflict('id').merge()
+  }
+}
+
+const getResultsToUpdateInRange = async knex => {
+  const resultsToUpdate = await knex('Result as r').whereNull('resultDataHash').select('r.*')
+
+  const transformedResults = []
+  for (const resultToUpdate of resultsToUpdate) {
+    const existingResult = resultToUpdate
+
+    try {
+      const resultData = JSON.parse(existingResult.resultData)
+
+      const payloadAssayName = _.get(resultData, 'assay', '')
+
+      const mappedAssayExternalId = assayNameToExternalId[payloadAssayName.toUpperCase()] || 'GxUnknown'
+      const potentialAssayIds = [mappedAssayExternalId]
+      if (potentialAssayIds.includes('GxMtbRif') && !potentialAssayIds.includes('GxMtbRifUltra')) {
+        potentialAssayIds.push('GxMtbRifUltra')
+      }
+      if (potentialAssayIds.includes('GxMtbRifUltra') && !potentialAssayIds.includes('GxMtbRif')) {
+        potentialAssayIds.push('GxMtbRif')
+      }
+
+      const additionalData = getAdditionalDataFromPayload({ data: resultData }, potentialAssayIds)
+
+      const baseResult = {
+        ...existingResult,
+        resultData: deepMerge(resultData, { ...additionalData }),
+      }
+
+      const transformedResult = {
+        ...baseResult,
+        resultData: JSON.stringify(baseResult.resultData),
+        resultDataHash: getResultDataHash(resultData),
+      }
+      transformedResults.push(transformedResult)
+    } catch (error) {
+      // eslint-disable-next-line no-console
+      console.log(`skip resultId ${existingResult.id} - Error: ${error}`)
+    }
+  }
+
+  return transformedResults
+}
