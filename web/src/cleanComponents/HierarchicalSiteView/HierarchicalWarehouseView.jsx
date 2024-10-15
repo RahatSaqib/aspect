@@ -6,6 +6,40 @@ import { siteTypeExternalIds } from './constants'
 import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
 
+function buildParentHierarchy(parentWarehouseId, data, level) {
+  const child = []
+  if (level === 0 || !data) {
+    return child
+  }
+  for (const [key, value] of data) {
+    if (key === parentWarehouseId) {
+      data.delete(key)
+      child.push({ ...value, child: buildParentHierarchy(value.id, data, level - 1) })
+    }
+  }
+  return child
+}
+
+function buildTheHierarchicalDataStructure(apiData) {
+  const data = new Map()
+  const auxiliaryData = new Map()
+  // We should do full iteration to capture data that is without parentWarehouseId because we use this data during our iteration, if we are to do it single iteration we may miss out on few values.
+  for (const value of apiData) {
+    // Top level national warehouse is captured here
+    if (!value.parentWarehouseId) {
+      data.set(value.id, { ...value, child: [] })
+    } else {
+      auxiliaryData.set(value.parentWarehouseId, value)
+    }
+  }
+
+  for (const [key, value] of new Map(data)) {
+    data.set(key, { ...value, child: buildParentHierarchy(key, auxiliaryData, 3) })
+  }
+
+  return { data: [...data.values()], outsideDistribution: [...auxiliaryData.values()] }
+}
+
 export function HierarchicalWarehouseView(props) {
   const { countryId } = props
 
@@ -20,32 +54,16 @@ export function HierarchicalWarehouseView(props) {
         filters: {
           countryId,
           siteTypeExternalId: [siteTypeExternalIds.warehouse].join(','),
-          parentWarehouseId: selectedWarehouseId,
         },
         sortCol: 'name',
         sortDir: 'asc',
         pageAt: 0,
-        pageSize: 100,
+        pageSize: 10000,
       },
-      { enabled: Boolean(countryId) && !selectedWarehouseId }
+      { enabled: Boolean(countryId) }
     )
 
-  const { isLoading: isChildLevelSitesData, data: { siteList: childSiteData } = { siteList: [] } } = useSites(
-    {
-      filters: {
-        countryId,
-        siteTypeExternalId: [siteTypeExternalIds.warehouse].join(','),
-        parentWarehouseId: selectedWarehouseId,
-      },
-      sortCol: 'name',
-      sortDir: 'asc',
-      pageAt: 0,
-      pageSize: 100,
-    },
-    { enabled: Boolean(countryId) && Boolean(selectedWarehouseId) }
-  )
-
-  console.info('inside checking the ', childSiteData, nationalLevelSitesData)
+  console.log('Data after processing is ::: ==== >>> ', buildTheHierarchicalDataStructure(nationalLevelSitesData))
 
   const callback = data => {
     setSelectedWarehouseId(data.warehouseId)
@@ -77,7 +95,7 @@ export function HierarchicalWarehouseView(props) {
                 options={{ showChevron: true, noLeftPadding: true }}
               >
                 {selectedWarehouseId && selectedWarehouseId === warehouse.id
-                  ? childSiteData.map(site => (
+                  ? [].map(site => (
                       <TreeNode
                         data={{ id: site.id, name: site.name }}
                         callback={() =>
