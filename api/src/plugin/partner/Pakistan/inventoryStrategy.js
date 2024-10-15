@@ -101,5 +101,6 @@ module.exports = {
    * below funcs overwrite default funcs exported from `/inventory/strategies/index.js`
    */
   getNewQuantityOnHand,
+  logMissingInventory,
   transferInPendingMode,
 }
