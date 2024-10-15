@@ -766,6 +766,7 @@ async function getReconciliationList(query, dataConstraints) {
   const getItems = baseQuery
     .clone()
     .modify(sortPageParams, query, 's.name')
+    .orderBy('m.id')
     .select([
       's.name as siteName',
       'c.name as consumableName',
