@@ -1,17 +1,29 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import ClearIcon from '@mui/icons-material/Clear'
 import { LinearProgress, MenuItem, TextField, IconButton } from '@mui/material'
+import filter from 'lodash/filter'
 import useSiteList from '../../hooks/site/useSiteList'
 
-const SiteSelect = ({ id, name, label, value, onChange, error, helperText, disabled, stateId, lgaId }) => {
+const SiteSelect = ({
+  id,
+  name,
+  label,
+  value,
+  onChange,
+  error,
+  helperText,
+  disabled,
+  stateId,
+  lgaId,
+  customFilter,
+}) => {
   const { isLoading, data: sites } = useSiteList()
 
-  const data =
-    sites && lgaId
-      ? sites.filter(s => s.lgaId === lgaId)
-      : sites && stateId
-      ? sites.filter(s => s.stateId === stateId)
-      : sites
+  const data = useMemo(() => {
+    if (!sites) return []
+    const items = lgaId ? filter(sites, { lgaId }) : stateId ? filter(sites, { stateId }) : sites
+    return customFilter ? customFilter(items) : items
+  }, [customFilter, lgaId, sites, stateId])
 
   return isLoading ? (
     <LinearProgress />

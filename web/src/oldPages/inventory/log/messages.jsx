@@ -26,6 +26,10 @@ const messages = {
       id: 'pages.InventoryLog.reason',
       defaultMessage: 'Reason',
     },
+    transactionDate: {
+      id: 'pages.InventoryLog.transactionDate',
+      defaultMessage: 'Transaction Date',
+    },
     quantity: {
       id: 'pages.InventoryLog.quantity',
       defaultMessage: 'Quantity',
