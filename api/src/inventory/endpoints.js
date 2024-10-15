@@ -130,7 +130,8 @@ const routes = [
             'movementReason',
             'consumableName',
             'expiresOn',
-            'quantity'
+            'quantity',
+            'transactionDate'
           ),
         },
       },

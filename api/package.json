@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.44.0",
+  "version": "1.44.1",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
@@ -116,6 +116,7 @@
     "lodash": "^4.17.21",
     "media-type": "^0.3.1",
     "mysql": "^2.18.1",
+    "newrelic": "10.2.0",
     "node-base64-image": "^2.0.4",
     "node-cache": "^5.1.2",
     "node-cron": "^3.0.2",

@@ -31,6 +31,7 @@ const availableSortCol = [
   'movementReason',
   'expiresOn',
   'quantity',
+  'transactionDate',
   'notes',
 ]
 
@@ -84,6 +85,11 @@ export const InventoryLogWithProps = ({
     {
       key: 'movementReason',
       label: intl.formatMessage(messages.reason),
+      sortable: true,
+    },
+    {
+      key: 'transactionDate',
+      label: intl.formatMessage(messages.transactionDate),
       sortable: true,
     },
     {
