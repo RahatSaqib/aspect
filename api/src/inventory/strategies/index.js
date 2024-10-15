@@ -1,15 +1,7 @@
 const _ = require('lodash')
-const { logMissingInventory } = require('../../plugin/partner/Pakistan/inventoryStrategy')
 
 // ----------------------------------------------------------------------------------
-async function getNewQuantityOnHand(
-  knex,
-  inventoryItem,
-  operation,
-  quantityOnHand,
-  quantity,
-  { resultId, userId } = {}
-) {
+async function getNewQuantityOnHand(knex, inventoryItem, operation, quantityOnHand, quantity) {
   let newQuantityOnHand = inventoryItem?.quantityOnHand || 0
 
   switch (operation) {
@@ -30,9 +22,6 @@ async function getNewQuantityOnHand(
        * see `api/src/plugin/partner/Pakistan/inventoryStrategy.js` for another implementation
        * which takes into account parent warehouse(s) and doesn't allow negative number
        */
-      if (resultId && (!inventoryItem || inventoryItem?.quantityOnHand < quantity)) {
-        await logMissingInventory(knex, resultId, userId)
-      }
       newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
       break
     default: {
