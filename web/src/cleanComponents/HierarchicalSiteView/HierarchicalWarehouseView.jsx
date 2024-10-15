@@ -1,10 +1,11 @@
-import React, { useState } from 'react'
+import React, { useMemo, useReducer, useState } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import useCountries from '../../hooks/geography/useCountries'
 import useSites from '../../hooks/site/useSites'
 import { siteTypeExternalIds } from './constants'
 import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
+import { loadInitialDataAction, selectUnselectWarehouseAction, warehouseReducer } from './warehouseReducer'
 
 function buildParentHierarchy(parentWarehouseId, data, level) {
   const child = []
@@ -43,31 +44,28 @@ function buildTheHierarchicalDataStructure(apiData) {
 export function HierarchicalWarehouseView(props) {
   const { countryId } = props
 
-  const [selectedWarehouseId, setSelectedWarehouseId] = useState('')
+  const [{ data }, dispatch] = useReducer(warehouseReducer, { data: [], outsideDistribution: [] })
 
   const { isLoading: isCountryLoading, data: countries } = useCountries(true)
   const selectedCountry = countries?.find(({ id }) => id === countryId)
 
-  const { isLoading: isNationalLevelSitesLoading, data: { siteList: nationalLevelSitesData } = { siteList: [] } } =
-    useSites(
-      {
-        filters: {
-          countryId,
-          siteTypeExternalId: [siteTypeExternalIds.warehouse].join(','),
-        },
-        sortCol: 'name',
-        sortDir: 'asc',
-        pageAt: 0,
-        pageSize: 10000,
+  const { isLoading } = useSites(
+    {
+      filters: {
+        countryId,
+        siteTypeExternalId: [siteTypeExternalIds.warehouse].join(','),
       },
-      { enabled: Boolean(countryId) }
-    )
-
-  console.log('Data after processing is ::: ==== >>> ', buildTheHierarchicalDataStructure(nationalLevelSitesData))
-
-  const callback = data => {
-    setSelectedWarehouseId(data.warehouseId)
-  }
+      sortCol: 'name',
+      sortDir: 'asc',
+      pageAt: 0,
+      pageSize: 10000,
+    },
+    {
+      onSuccess: ({ siteList = [] }) => {
+        dispatch(loadInitialDataAction(buildTheHierarchicalDataStructure(siteList)))
+      },
+    }
+  )
 
   return (
     <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto', boxShadow: 0 }}>
@@ -79,31 +77,23 @@ export function HierarchicalWarehouseView(props) {
         </Typography>
       )}
       <Stack spacing={2}>
-        {isNationalLevelSitesLoading ? (
+        {isLoading ? (
           <HierarchyLoader />
         ) : (
-          nationalLevelSitesData.map(warehouse => (
+          data.map(warehouse => (
             <Stack key={warehouse.id} sx={{ flexDirection: 'column' }}>
               <TreeNode
                 data={{ id: warehouse.id, name: warehouse.name }}
-                callback={() =>
-                  callback({
-                    warehouseId: warehouse.id,
-                  })
-                }
-                selected={selectedWarehouseId && selectedWarehouseId === warehouse.id}
+                callback={() => dispatch(selectUnselectWarehouseAction(`${warehouse.id}`))}
+                selected={warehouse.selected}
                 options={{ showChevron: true, noLeftPadding: true }}
               >
-                {selectedWarehouseId && selectedWarehouseId === warehouse.id
-                  ? [].map(site => (
+                {warehouse.selected
+                  ? warehouse.child.map(site => (
                       <TreeNode
                         data={{ id: site.id, name: site.name }}
-                        callback={() =>
-                          callback({
-                            warehouseId: site.id,
-                          })
-                        }
-                        selected={selectedWarehouseId && selectedWarehouseId === site.id}
+                        callback={() => dispatch(selectUnselectWarehouseAction(`${warehouse.id}-${site.id}`))}
+                        selected={site.selected}
                         options={{ showChevron: true, noLeftPadding: false }}
                       />
                     ))
