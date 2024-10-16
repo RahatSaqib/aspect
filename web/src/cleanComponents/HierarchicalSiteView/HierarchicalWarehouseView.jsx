@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import useCountries from '../../hooks/geography/useCountries'
 import useSites from '../../hooks/site/useSites'
-import { buildTheHierarchicalDataStructure } from './buildHierarchicalDataStructure'
+import { buildTheHierarchicalDataStructure, getAllIdsFromChildren } from './buildHierarchicalDataStructure'
 import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
 import {
@@ -45,7 +45,14 @@ export function HierarchicalWarehouseView(props) {
     if (outsideDistributionSelected) {
       setSelectedSiteIds([...outsideDistribution.map(site => site.id)])
     } else {
-      setSelectedSiteIds([...underDistributionSelectedSiteIds])
+      const underDistributionSelectedSiteIdsArray = [...underDistributionSelectedSiteIds]
+      const selectedSiteIds = []
+      let underDistributionSites = underDistribution
+      underDistributionSelectedSiteIdsArray.forEach(siteId => {
+        selectedSiteIds.push(siteId)
+        underDistributionSites = underDistributionSites.find(site => site.id === siteId)?.child || []
+      })
+      setSelectedSiteIds([...selectedSiteIds, ...getAllIdsFromChildren(underDistributionSites)])
     }
   }, [
     underDistribution,

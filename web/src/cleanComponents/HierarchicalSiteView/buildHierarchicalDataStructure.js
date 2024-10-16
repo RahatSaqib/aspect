@@ -39,3 +39,14 @@ export function buildTheHierarchicalDataStructure(apiData) {
 
   return { underDistribution: [...underDistribution.values()], outsideDistribution: [...outsideDistribution.values()] }
 }
+
+export function getAllIdsFromChildren(data) {
+  const ids = []
+  for (const value of data) {
+    ids.push(value.id)
+    if (value.child) {
+      ids.push(...getAllIdsFromChildren(value.child))
+    }
+  }
+  return ids
+}
