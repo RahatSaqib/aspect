@@ -15,11 +15,14 @@ import {
 export function HierarchicalWarehouseView(props) {
   const { countryId } = props
 
-  const [{ data, outsideDistribution, outsideDistributionSelected }, dispatch] = useReducer(warehouseReducer, {
-    data: [],
-    outsideDistribution: [],
-    outsideDistributionSelected: false,
-  })
+  const [{ underDistribution, outsideDistribution, outsideDistributionSelected }, dispatch] = useReducer(
+    warehouseReducer,
+    {
+      underDistribution: [],
+      outsideDistribution: [],
+      outsideDistributionSelected: false,
+    }
+  )
 
   const { isLoading: isCountryLoading, data: countries } = useCountries(true)
   const selectedCountry = countries?.find(({ id }) => id === countryId)
@@ -55,7 +58,7 @@ export function HierarchicalWarehouseView(props) {
           <HierarchyLoader />
         ) : (
           <>
-            {data.map(warehouse => (
+            {underDistribution.map(warehouse => (
               <Stack key={warehouse.id} sx={{ flexDirection: 'column' }}>
                 <TreeNode
                   data={{ id: warehouse.id, name: warehouse.name }}

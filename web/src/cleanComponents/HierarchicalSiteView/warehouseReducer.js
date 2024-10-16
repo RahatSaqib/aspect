@@ -22,18 +22,18 @@ export function warehouseReducer(state, action) {
   switch (action.type) {
     case 'SELECT_UNSELECT_LINKED_WAREHOUSE': {
       const selectedId = action.id.split('-').map(Number)
-      let { data } = state
+      let { underDistribution } = state
       while (selectedId.length >= 1) {
         const id = selectedId.shift()
-        data = data.find(({ id: dataId }) => dataId === id)
+        underDistribution = underDistribution.find(({ id: dataId }) => dataId === id)
         if (selectedId.length === 0) {
-          data.selected = !data.selected
+          underDistribution.selected = !underDistribution.selected
         }
-        data = data.child
+        underDistribution = underDistribution.child
       }
       return {
         ...state,
-        data: state.data,
+        underDistribution: state.underDistribution,
       }
     }
     case 'SELECT_UNSELECT_UNLINKED_SITES': {

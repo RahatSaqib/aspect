@@ -15,14 +15,14 @@ function buildParentHierarchy(parentWarehouseId, data, level) {
 }
 
 export function buildTheHierarchicalDataStructure(apiData) {
-  const data = new Map()
+  const underDistribution = new Map()
   const withParentWarehouse = new Map()
   const outsideDistribution = new Map()
   // We should do full iteration to capture data that is without parentWarehouseId because we use this data during our iteration, if we are to do it single iteration we may miss out on few values.
   for (const value of apiData) {
     // Top level national warehouse is captured here
     if (!value.parentWarehouseId && value.siteType === 'Warehouse') {
-      data.set(value.id, { ...value, child: [] })
+      underDistribution.set(value.id, { ...value, child: [] })
     } else if (value.parentWarehouseId) {
       withParentWarehouse.set(
         value.parentWarehouseId,
@@ -33,9 +33,9 @@ export function buildTheHierarchicalDataStructure(apiData) {
     }
   }
 
-  for (const [key, value] of new Map(data)) {
-    data.set(key, { ...value, child: buildParentHierarchy(key, withParentWarehouse, 3) })
+  for (const [key, value] of new Map(underDistribution)) {
+    underDistribution.set(key, { ...value, child: buildParentHierarchy(key, withParentWarehouse, 3) })
   }
 
-  return { data: [...data.values()], outsideDistribution: [...outsideDistribution.values()] }
+  return { underDistribution: [...underDistribution.values()], outsideDistribution: [...outsideDistribution.values()] }
 }
