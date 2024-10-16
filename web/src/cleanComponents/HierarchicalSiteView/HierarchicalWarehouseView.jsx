@@ -119,8 +119,32 @@ export function HierarchicalWarehouseView(props) {
                                     )
                                   }
                                   selected={underDistributionSelectedSiteIds.has(regional.id)}
-                                  options={{ showChevron: false, noLeftPadding: false }}
-                                />
+                                  options={{ showChevron: Boolean(regional.child?.length), noLeftPadding: false }}
+                                >
+                                  {underDistributionSelectedSiteIds.has(regional.id)
+                                    ? regional.child?.map(site => (
+                                        <TreeNode
+                                          key={`${warehouse.id}-${national.id}-${regional.id}-${site.id}`}
+                                          data={{ id: site.id, name: site.name }}
+                                          callback={() =>
+                                            dispatch(
+                                              selectUnselectLinkedWarehouseAction([
+                                                warehouse.id,
+                                                national.id,
+                                                regional.id,
+                                                site.id,
+                                              ])
+                                            )
+                                          }
+                                          selected={underDistributionSelectedSiteIds.has(site.id)}
+                                          options={{
+                                            showChevron: Boolean(site.child?.length),
+                                            noLeftPadding: false,
+                                          }}
+                                        />
+                                      ))
+                                    : null}
+                                </TreeNode>
                               ))
                             : null}
                         </TreeNode>
