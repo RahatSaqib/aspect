@@ -38,7 +38,7 @@ const SiteFilter = () => {
           <SiteTypeSelect
             name="siteType"
             label={formatMessage(messages.siteType)}
-            value={state.siteTypeId}
+            value={state.siteTypeId ?? ''}
             onChange={siteTypeId => setState({ ...state, siteTypeId })}
           />
         </Grid>

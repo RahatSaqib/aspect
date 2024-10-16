@@ -18,5 +18,5 @@ export function useHierarchicalSwitch(props) {
     }
   }, [isHierarchicalView, localStorageKey])
 
-  return [isHierarchicalView, setIsHierarchicalView]
+  return { isHierarchicalView, setIsHierarchicalView }
 }

@@ -47,7 +47,7 @@ export const InventoryLogWithProps = ({
   pageSize,
   filters,
 }) => {
-  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+  const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LOG,
   })
   const user = useAuthState()

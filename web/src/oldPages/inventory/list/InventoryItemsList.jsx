@@ -70,7 +70,7 @@ export default function InventoryItemsList() {
   const [filter, setFilter] = usePathFilter()
   const intl = useIntl()
   const user = useAuthState()
-  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+  const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LIST,
   })
   const enableInventoryOnHandField = filter.breakOutByLot && inventoryOnField
