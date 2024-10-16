@@ -45,7 +45,7 @@ const DeviceCoveragePage = () => {
       ) : (
         <Grid container sx={{ mt: 2 }}>
           <Grid item xs={12}>
-            <NestedTable columns={columns} rows={data} hasDetail />
+            <NestedTable columns={columns} rows={data} hasDetail allowPagination={false} />
           </Grid>
         </Grid>
       )}

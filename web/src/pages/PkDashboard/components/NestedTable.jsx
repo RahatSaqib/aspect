@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useState, Fragment } from 'react'
 import ExpandLess from '@mui/icons-material/ExpandLess'
 import ExpandMore from '@mui/icons-material/ExpandMore'
 import {
@@ -106,14 +106,14 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
         {rows.map((row, i) => {
           const hasChildren = row?.children?.length > 0 ?? false
           return (
-            <>
+            <Fragment key={row.id}>
               <TableRow sx={{ backgroundColor: colors[i % 2] }} onClick={() => setOpen(open === row.id ? -1 : row.id)}>
                 {columns.map((c, i) => (
                   <TableCell
                     width="10%"
                     scope={i === 0 ? 'row' : undefined}
                     style={{ paddingLeft: isDetail ? row?.depth * 20 : null }}
-                    key={c.prop}
+                    key={`${row.id}_1_${c.prop}`}
                     align={i !== 0 ? 'right' : undefined}
                     {...c.cellProp}
                   >
@@ -148,7 +148,7 @@ const NestedTable = ({ columns, rows, isDetail, perPage = 10, allowPagination = 
                   </TableCell>
                 </TableRow>
               ) : null}
-            </>
+            </Fragment>
           )
         })}
 
