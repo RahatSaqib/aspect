@@ -82,7 +82,7 @@ export function HierarchicalWarehouseView(props) {
                   data={{ id: warehouse.id, name: warehouse.name }}
                   callback={() => dispatch(selectUnselectLinkedWarehouseAction([warehouse.id]))}
                   selected={underDistributionSelectedSiteIds.has(warehouse.id)}
-                  options={{ showChevron: true, noLeftPadding: true }}
+                  options={{ showChevron: Boolean(warehouse.child?.length), noLeftPadding: true }}
                 >
                   {underDistributionSelectedSiteIds.has(warehouse.id)
                     ? warehouse.child.map(national => (
