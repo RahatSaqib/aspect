@@ -72,7 +72,7 @@ export function HierarchicalWarehouseView(props) {
                             dispatch(selectUnselectLinkedWarehouseAction(`${warehouse.id}-${national.id}`))
                           }
                           selected={national.selected}
-                          options={{ showChevron: true, noLeftPadding: false }}
+                          options={{ showChevron: Boolean(national.child?.length), noLeftPadding: false }}
                         >
                           {national.selected
                             ? national.child.map(regional => (
