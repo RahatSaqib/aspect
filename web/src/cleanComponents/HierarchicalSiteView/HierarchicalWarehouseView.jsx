@@ -161,7 +161,7 @@ export function HierarchicalWarehouseView(props) {
                 }}
                 callback={() => dispatch(selectUnselectUnlinkedSitesAction())}
                 selected={outsideDistributionSelected}
-                options={{ showChevron: true, noLeftPadding: true }}
+                options={{ showChevron: Boolean(outsideDistribution.length), noLeftPadding: true }}
               >
                 {outsideDistributionSelected
                   ? outsideDistribution.map(site => (
