@@ -97,7 +97,15 @@
       "controlType": "textBox",
       "payloadOriginPath": "data.customFieldData.1105.value",
       "source": "patientData.PatientPhone",
-      "mandatory": true
+      "mandatory": true,
+      "validation": [
+        {
+          "validationType": "regex",
+          "value": "^0\\d{10}\\b$",
+          "errorMessage": "Mobile Number should consist of 11 consecutive digits with the first leftmost digit must be 0",
+          "errorMessageI18nKey": "BDMobileNumberValidationI18nKey"
+        }
+      ]
     },
     {
       "id": 1106,
