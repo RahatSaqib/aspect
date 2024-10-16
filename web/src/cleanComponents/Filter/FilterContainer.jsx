@@ -66,7 +66,8 @@ const FilterContainer = ({ children, state, setState, blocked, disabled }) => {
             right: 0,
             zIndex: 1,
             cursor: 'not-allowed',
-            backgroundColor: 'white',
+            opacity: 0.8,
+            backgroundColor: 'grey.50',
           }}
         />
       ) : null}
