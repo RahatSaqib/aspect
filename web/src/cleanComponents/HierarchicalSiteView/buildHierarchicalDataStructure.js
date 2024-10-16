@@ -20,8 +20,8 @@ export function buildTheHierarchicalDataStructure(apiData) {
   const outsideDistribution = new Map()
   // We should do full iteration to capture data that is without parentWarehouseId because we use this data during our iteration, if we are to do it single iteration we may miss out on few values.
   for (const value of apiData) {
-    // Top level national warehouse is captured here
-    if (!value.parentWarehouseId && value.siteType === 'Warehouse') {
+    // Top level national warehouse is captured here, we have cases where parentWarehouseId is same as id, we are capturing those as well.
+    if ((!value.parentWarehouseId || value.parentWarehouseId === value.id) && value.siteType === 'Warehouse') {
       underDistribution.set(value.id, { ...value, child: [] })
     } else if (value.parentWarehouseId) {
       withParentWarehouse.set(
