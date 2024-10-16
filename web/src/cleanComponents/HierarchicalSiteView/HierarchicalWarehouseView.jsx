@@ -1,50 +1,17 @@
-import React, { useMemo, useReducer, useState } from 'react'
+import React, { useReducer } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import useCountries from '../../hooks/geography/useCountries'
 import useSites from '../../hooks/site/useSites'
+import { buildTheHierarchicalDataStructure } from './buildHierarchicalDataStructure'
 import { siteTypeExternalIds } from './constants'
 import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
 import { loadInitialDataAction, selectUnselectWarehouseAction, warehouseReducer } from './warehouseReducer'
 
-function buildParentHierarchy(parentWarehouseId, data, level) {
-  const child = []
-  if (level === 0 || !data) {
-    return child
-  }
-  for (const [key, value] of data) {
-    if (key === parentWarehouseId) {
-      data.delete(key)
-      child.push({ ...value, child: buildParentHierarchy(value.id, data, level - 1) })
-    }
-  }
-  return child
-}
-
-function buildTheHierarchicalDataStructure(apiData) {
-  const data = new Map()
-  const auxiliaryData = new Map()
-  // We should do full iteration to capture data that is without parentWarehouseId because we use this data during our iteration, if we are to do it single iteration we may miss out on few values.
-  for (const value of apiData) {
-    // Top level national warehouse is captured here
-    if (!value.parentWarehouseId) {
-      data.set(value.id, { ...value, child: [] })
-    } else {
-      auxiliaryData.set(value.parentWarehouseId, value)
-    }
-  }
-
-  for (const [key, value] of new Map(data)) {
-    data.set(key, { ...value, child: buildParentHierarchy(key, auxiliaryData, 3) })
-  }
-
-  return { data: [...data.values()], outsideDistribution: [...auxiliaryData.values()] }
-}
-
 export function HierarchicalWarehouseView(props) {
   const { countryId } = props
 
-  const [{ data }, dispatch] = useReducer(warehouseReducer, { data: [], outsideDistribution: [] })
+  const [{ data, outsideDistribution }, dispatch] = useReducer(warehouseReducer, { data: [], outsideDistribution: [] })
 
   const { isLoading: isCountryLoading, data: countries } = useCountries(true)
   const selectedCountry = countries?.find(({ id }) => id === countryId)
@@ -53,7 +20,6 @@ export function HierarchicalWarehouseView(props) {
     {
       filters: {
         countryId,
-        siteTypeExternalId: [siteTypeExternalIds.warehouse].join(','),
       },
       sortCol: 'name',
       sortDir: 'asc',
@@ -66,6 +32,8 @@ export function HierarchicalWarehouseView(props) {
       },
     }
   )
+
+  console.log('outsideDistribution ::: == ', data, outsideDistribution)
 
   return (
     <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto', boxShadow: 0 }}>
@@ -89,13 +57,30 @@ export function HierarchicalWarehouseView(props) {
                 options={{ showChevron: true, noLeftPadding: true }}
               >
                 {warehouse.selected
-                  ? warehouse.child.map(site => (
+                  ? warehouse.child.map(national => (
                       <TreeNode
-                        data={{ id: site.id, name: site.name }}
-                        callback={() => dispatch(selectUnselectWarehouseAction(`${warehouse.id}-${site.id}`))}
-                        selected={site.selected}
+                        key={`${warehouse.id}-${national.id}`}
+                        data={{ id: national.id, name: national.name }}
+                        callback={() => dispatch(selectUnselectWarehouseAction(`${warehouse.id}-${national.id}`))}
+                        selected={national.selected}
                         options={{ showChevron: true, noLeftPadding: false }}
-                      />
+                      >
+                        {national.selected
+                          ? national.child.map(regional => (
+                              <TreeNode
+                                key={`${warehouse.id}-${national.id}-${regional.id}`}
+                                data={{ id: regional.id, name: regional.name }}
+                                callback={() =>
+                                  dispatch(
+                                    selectUnselectWarehouseAction(`${warehouse.id}-${national.id}-${regional.id}`)
+                                  )
+                                }
+                                selected={regional.selected}
+                                options={{ showChevron: false, noLeftPadding: false }}
+                              />
+                            ))
+                          : null}
+                      </TreeNode>
                     ))
                   : null}
               </TreeNode>

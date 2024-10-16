@@ -20,7 +20,9 @@ export function warehouseReducer(state, action) {
       while (selectedId.length >= 1) {
         const id = selectedId.shift()
         data = data.find(({ id: dataId }) => dataId === id)
-        data.selected = !data.selected
+        if (selectedId.length === 0) {
+          data.selected = !data.selected
+        }
         data = data.child
       }
       return {
