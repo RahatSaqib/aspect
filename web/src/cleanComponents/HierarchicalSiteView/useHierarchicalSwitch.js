@@ -10,13 +10,15 @@ import { hierarchicalToggleSettingsLocalStorageKey } from './constants'
  */
 export function useHierarchicalSwitch(props) {
   const { localStorageKey } = props
-  const [isHierarchicalView, setIsHierarchicalView] = useState(localStorage.getItem(localStorageKey) === 'true')
+  const hierarchicalViewSetting = JSON.parse(localStorage.getItem(localStorageKey) ?? '{}')
+  const [isHierarchicalView, setIsHierarchicalView] = useState(hierarchicalViewSetting?.isHierarchicalView === true)
+  const [isWarehouseView, setIsWarehouseView] = useState(hierarchicalViewSetting?.isWarehouseView === true)
 
   useEffect(() => {
     if (Object.values(hierarchicalToggleSettingsLocalStorageKey).includes(localStorageKey)) {
-      localStorage.setItem(localStorageKey, isHierarchicalView.toString())
+      localStorage.setItem(localStorageKey, JSON.stringify({ isHierarchicalView, isWarehouseView }))
     }
-  }, [isHierarchicalView, localStorageKey])
+  }, [isHierarchicalView, isWarehouseView, localStorageKey])
 
-  return { isHierarchicalView, setIsHierarchicalView }
+  return { isHierarchicalView, setIsHierarchicalView, isWarehouseView, setIsWarehouseView }
 }

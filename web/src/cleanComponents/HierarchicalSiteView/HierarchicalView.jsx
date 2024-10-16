@@ -1,10 +1,10 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Card, Switch, Typography } from '@mui/material'
 import { HierarchicalSiteView } from './HierarchicalSiteView'
 import { HierarchicalWarehouseView } from './HierarchicalWarehouseView'
 
 export function HierarchicalView(props) {
-  const [isWarehouseView, setIsWarehouseView] = useState(false)
+  const { isWarehouseView, setIsWarehouseView } = props
 
   return (
     <Card sx={{ minWidth: 300, p: 2, maxHeight: 640, overflowY: 'auto' }}>

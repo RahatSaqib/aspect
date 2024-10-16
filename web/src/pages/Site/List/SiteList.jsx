@@ -32,7 +32,7 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
+  const { isHierarchicalView, setIsHierarchicalView, isWarehouseView, setIsWarehouseView } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.SITE_LIST,
   })
 
@@ -125,7 +125,13 @@ const SiteList = ({ navigate, location }) => {
         <SiteFilter />
         <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
-            <HierarchicalView countryId={user.countryId} filters={filters} pathname="/browse/site" />
+            <HierarchicalView
+              countryId={user.countryId}
+              filters={filters}
+              pathname="/browse/site"
+              isWarehouseView={isWarehouseView}
+              setIsWarehouseView={setIsWarehouseView}
+            />
           )}
           <DataTableCard key={`DataTableCard__table-${location.key}`} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>
