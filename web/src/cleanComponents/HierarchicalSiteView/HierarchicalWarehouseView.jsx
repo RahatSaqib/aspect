@@ -99,7 +99,10 @@ export function HierarchicalWarehouseView(props) {
             ))}
             {
               <TreeNode
-                data={{ id: `sites-outside-distribution-channel`, name: `Sites out of distribution channel` }}
+                data={{
+                  id: `sites-outside-distribution-channel`,
+                  name: `Sites out of distribution channel (${outsideDistribution.length})`,
+                }}
                 callback={() => dispatch(selectUnselectUnlinkedSitesAction())}
                 selected={outsideDistributionSelected}
                 options={{ showChevron: true, noLeftPadding: true }}
