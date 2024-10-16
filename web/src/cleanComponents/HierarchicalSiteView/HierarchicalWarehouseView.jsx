@@ -48,8 +48,10 @@ export function HierarchicalWarehouseView(props) {
       const underDistributionSelectedSiteIdsArray = [...underDistributionSelectedSiteIds]
       const selectedSiteIds = []
       let underDistributionSites = underDistribution
-      underDistributionSelectedSiteIdsArray.forEach(siteId => {
-        selectedSiteIds.push(siteId)
+      underDistributionSelectedSiteIdsArray.forEach((siteId, index) => {
+        if (index === underDistributionSelectedSiteIdsArray.length - 1) {
+          selectedSiteIds.push(siteId)
+        }
         underDistributionSites = underDistributionSites.find(site => site.id === siteId)?.child || []
       })
       setSelectedSiteIds([...selectedSiteIds, ...getAllIdsFromChildren(underDistributionSites)])
