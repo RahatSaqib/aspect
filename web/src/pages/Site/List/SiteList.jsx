@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Box, LinearProgress, Switch, TableBody, Typography } from '@mui/material'
+import { Box, LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
@@ -122,7 +122,7 @@ const SiteList = ({ navigate, location }) => {
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-        <SiteFilter />
+        <SiteFilter disabled={isHierarchicalView && isWarehouseView} />
         <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
             <HierarchicalView
