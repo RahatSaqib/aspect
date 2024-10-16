@@ -1,4 +1,4 @@
-import React, { useReducer } from 'react'
+import React, { useEffect, useReducer } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import useCountries from '../../hooks/geography/useCountries'
 import useSites from '../../hooks/site/useSites'
@@ -6,6 +6,7 @@ import { buildTheHierarchicalDataStructure } from './buildHierarchicalDataStruct
 import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
 import {
+  initialWarehouseState,
   loadInitialDataAction,
   selectUnselectLinkedWarehouseAction,
   selectUnselectUnlinkedSitesAction,
@@ -13,16 +14,12 @@ import {
 } from './warehouseReducer'
 
 export function HierarchicalWarehouseView(props) {
-  const { countryId } = props
+  const { countryId, setSelectedSiteIds } = props
 
-  const [{ underDistribution, outsideDistribution, outsideDistributionSelected }, dispatch] = useReducer(
-    warehouseReducer,
-    {
-      underDistribution: [],
-      outsideDistribution: [],
-      outsideDistributionSelected: false,
-    }
-  )
+  const [
+    { underDistribution, underDistributionSelectedSiteIds, outsideDistribution, outsideDistributionSelected },
+    dispatch,
+  ] = useReducer(warehouseReducer, initialWarehouseState)
 
   const { isLoading: isCountryLoading, data: countries } = useCountries(true)
   const selectedCountry = countries?.find(({ id }) => id === countryId)
@@ -44,6 +41,20 @@ export function HierarchicalWarehouseView(props) {
     }
   )
 
+  useEffect(() => {
+    if (outsideDistributionSelected) {
+      setSelectedSiteIds([...outsideDistribution.map(site => site.id)])
+    } else {
+      setSelectedSiteIds([...underDistributionSelectedSiteIds])
+    }
+  }, [
+    underDistribution,
+    outsideDistribution,
+    underDistributionSelectedSiteIds,
+    outsideDistributionSelected,
+    setSelectedSiteIds,
+  ])
+
   return (
     <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto', boxShadow: 0 }}>
       {isCountryLoading ? (
@@ -62,34 +73,30 @@ export function HierarchicalWarehouseView(props) {
               <Stack key={warehouse.id} sx={{ flexDirection: 'column' }}>
                 <TreeNode
                   data={{ id: warehouse.id, name: warehouse.name }}
-                  callback={() => dispatch(selectUnselectLinkedWarehouseAction(`${warehouse.id}`))}
-                  selected={warehouse.selected}
+                  callback={() => dispatch(selectUnselectLinkedWarehouseAction([warehouse.id]))}
+                  selected={underDistributionSelectedSiteIds.has(warehouse.id)}
                   options={{ showChevron: true, noLeftPadding: true }}
                 >
-                  {warehouse.selected
+                  {underDistributionSelectedSiteIds.has(warehouse.id)
                     ? warehouse.child.map(national => (
                         <TreeNode
                           key={`${warehouse.id}-${national.id}`}
                           data={{ id: national.id, name: national.name }}
-                          callback={() =>
-                            dispatch(selectUnselectLinkedWarehouseAction(`${warehouse.id}-${national.id}`))
-                          }
-                          selected={national.selected}
+                          callback={() => dispatch(selectUnselectLinkedWarehouseAction([warehouse.id, national.id]))}
+                          selected={underDistributionSelectedSiteIds.has(national.id)}
                           options={{ showChevron: Boolean(national.child?.length), noLeftPadding: false }}
                         >
-                          {national.selected
+                          {underDistributionSelectedSiteIds.has(national.id)
                             ? national.child.map(regional => (
                                 <TreeNode
                                   key={`${warehouse.id}-${national.id}-${regional.id}`}
                                   data={{ id: regional.id, name: regional.name }}
                                   callback={() =>
                                     dispatch(
-                                      selectUnselectLinkedWarehouseAction(
-                                        `${warehouse.id}-${national.id}-${regional.id}`
-                                      )
+                                      selectUnselectLinkedWarehouseAction([warehouse.id, national.id, regional.id])
                                     )
                                   }
-                                  selected={regional.selected}
+                                  selected={underDistributionSelectedSiteIds.has(regional.id)}
                                   options={{ showChevron: false, noLeftPadding: false }}
                                 />
                               ))

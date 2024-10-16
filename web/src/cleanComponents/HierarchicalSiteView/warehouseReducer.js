@@ -1,7 +1,13 @@
-export const selectUnselectLinkedWarehouseAction = id => {
+export const initialWarehouseState = {
+  underDistribution: [],
+  outsideDistribution: [],
+  outsideDistributionSelected: false,
+  underDistributionSelectedSiteIds: new Set(),
+}
+export const selectUnselectLinkedWarehouseAction = siteIds => {
   return {
     type: 'SELECT_UNSELECT_LINKED_WAREHOUSE',
-    id,
+    siteIds,
   }
 }
 
@@ -21,25 +27,19 @@ export const loadInitialDataAction = data => {
 export function warehouseReducer(state, action) {
   switch (action.type) {
     case 'SELECT_UNSELECT_LINKED_WAREHOUSE': {
-      const selectedId = action.id.split('-').map(Number)
-      let { underDistribution } = state
-      while (selectedId.length >= 1) {
-        const id = selectedId.shift()
-        underDistribution = underDistribution.find(({ id: dataId }) => dataId === id)
-        if (selectedId.length === 0) {
-          underDistribution.selected = !underDistribution.selected
-        }
-        underDistribution = underDistribution.child
-      }
+      const { siteIds } = action
+      const siteIdsSet = new Set(siteIds)
       return {
         ...state,
-        underDistribution: state.underDistribution,
+        outsideDistributionSelected: false,
+        underDistributionSelectedSiteIds: siteIdsSet,
       }
     }
     case 'SELECT_UNSELECT_UNLINKED_SITES': {
       const { outsideDistributionSelected } = state
       return {
         ...state,
+        underDistributionSelectedSiteIds: new Set(),
         outsideDistributionSelected: !outsideDistributionSelected,
       }
     }
