@@ -66,6 +66,8 @@ export function HierarchicalWarehouseView(props) {
       })
       setSelectedSiteIds([...selectedSiteIds, ...getAllIdsFromChildren(underDistributionSites)])
     }
+
+    return () => setSelectedSiteIds([])
   }, [
     underDistribution,
     outsideDistribution,
