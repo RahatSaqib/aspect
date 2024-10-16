@@ -2,6 +2,7 @@ export const initialWarehouseState = {
   underDistribution: [],
   outsideDistribution: [],
   outsideDistributionSelected: false,
+  outsideDistributionSelectedSiteIds: new Set(),
   underDistributionSelectedSiteIds: new Set(),
 }
 export const selectUnselectLinkedWarehouseAction = siteIds => {
@@ -11,9 +12,10 @@ export const selectUnselectLinkedWarehouseAction = siteIds => {
   }
 }
 
-export function selectUnselectUnlinkedSitesAction() {
+export function selectUnselectUnlinkedSitesAction(id) {
   return {
     type: 'SELECT_UNSELECT_UNLINKED_SITES',
+    id,
   }
 }
 
@@ -32,15 +34,19 @@ export function warehouseReducer(state, action) {
       return {
         ...state,
         outsideDistributionSelected: false,
+        outsideDistributionSelectedSiteIds: new Set(),
         underDistributionSelectedSiteIds: siteIdsSet,
       }
     }
     case 'SELECT_UNSELECT_UNLINKED_SITES': {
       const { outsideDistributionSelected } = state
+      const { id } = action
       return {
         ...state,
         underDistributionSelectedSiteIds: new Set(),
-        outsideDistributionSelected: !outsideDistributionSelected,
+        outsideDistributionSelectedSiteIds:
+          state.outsideDistributionSelectedSiteIds.has(id) && id ? new Set() : new Set([id].filter(Boolean)),
+        outsideDistributionSelected: id ? true : !outsideDistributionSelected,
       }
     }
     case 'SET_INITIAL_DATA':

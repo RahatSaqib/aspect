@@ -17,7 +17,13 @@ export function HierarchicalWarehouseView(props) {
   const { countryId, setSelectedSiteIds } = props
 
   const [
-    { underDistribution, underDistributionSelectedSiteIds, outsideDistribution, outsideDistributionSelected },
+    {
+      underDistribution,
+      underDistributionSelectedSiteIds,
+      outsideDistribution,
+      outsideDistributionSelected,
+      outsideDistributionSelectedSiteIds,
+    },
     dispatch,
   ] = useReducer(warehouseReducer, initialWarehouseState)
 
@@ -43,8 +49,12 @@ export function HierarchicalWarehouseView(props) {
 
   useEffect(() => {
     if (outsideDistributionSelected) {
-      setSelectedSiteIds([...outsideDistribution.map(site => site.id)])
-    } else {
+      setSelectedSiteIds(
+        outsideDistributionSelectedSiteIds.size
+          ? [...outsideDistributionSelectedSiteIds]
+          : [...outsideDistribution.map(site => site.id)]
+      )
+    } else if (underDistributionSelectedSiteIds.size) {
       const underDistributionSelectedSiteIdsArray = [...underDistributionSelectedSiteIds]
       const selectedSiteIds = []
       let underDistributionSites = underDistribution
@@ -61,6 +71,7 @@ export function HierarchicalWarehouseView(props) {
     outsideDistribution,
     underDistributionSelectedSiteIds,
     outsideDistributionSelected,
+    outsideDistributionSelectedSiteIds,
     setSelectedSiteIds,
   ])
 
@@ -132,6 +143,8 @@ export function HierarchicalWarehouseView(props) {
                         key={site.id}
                         data={{ id: site.id, name: site.name }}
                         options={{ showChevron: false, noLeftPadding: false }}
+                        callback={() => dispatch(selectUnselectUnlinkedSitesAction(site.id))}
+                        selected={outsideDistributionSelectedSiteIds.has(site.id)}
                       />
                     ))
                   : null}
