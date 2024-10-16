@@ -1,5 +1,5 @@
 import React, { useState, useEffect, useCallback } from 'react'
-import { Box, LinearProgress, Stack, Switch, TableBody, Typography } from '@mui/material'
+import { Box, LinearProgress, Switch, TableBody, Typography } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
