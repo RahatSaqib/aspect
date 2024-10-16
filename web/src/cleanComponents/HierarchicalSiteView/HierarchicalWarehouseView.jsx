@@ -3,15 +3,23 @@ import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import useCountries from '../../hooks/geography/useCountries'
 import useSites from '../../hooks/site/useSites'
 import { buildTheHierarchicalDataStructure } from './buildHierarchicalDataStructure'
-import { siteTypeExternalIds } from './constants'
 import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
-import { loadInitialDataAction, selectUnselectWarehouseAction, warehouseReducer } from './warehouseReducer'
+import {
+  loadInitialDataAction,
+  selectUnselectLinkedWarehouseAction,
+  selectUnselectUnlinkedSitesAction,
+  warehouseReducer,
+} from './warehouseReducer'
 
 export function HierarchicalWarehouseView(props) {
   const { countryId } = props
 
-  const [{ data, outsideDistribution }, dispatch] = useReducer(warehouseReducer, { data: [], outsideDistribution: [] })
+  const [{ data, outsideDistribution, outsideDistributionSelected }, dispatch] = useReducer(warehouseReducer, {
+    data: [],
+    outsideDistribution: [],
+    outsideDistributionSelected: false,
+  })
 
   const { isLoading: isCountryLoading, data: countries } = useCountries(true)
   const selectedCountry = countries?.find(({ id }) => id === countryId)
@@ -33,8 +41,6 @@ export function HierarchicalWarehouseView(props) {
     }
   )
 
-  console.log('outsideDistribution ::: == ', data, outsideDistribution)
-
   return (
     <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto', boxShadow: 0 }}>
       {isCountryLoading ? (
@@ -48,44 +54,68 @@ export function HierarchicalWarehouseView(props) {
         {isLoading ? (
           <HierarchyLoader />
         ) : (
-          data.map(warehouse => (
-            <Stack key={warehouse.id} sx={{ flexDirection: 'column' }}>
+          <>
+            {data.map(warehouse => (
+              <Stack key={warehouse.id} sx={{ flexDirection: 'column' }}>
+                <TreeNode
+                  data={{ id: warehouse.id, name: warehouse.name }}
+                  callback={() => dispatch(selectUnselectLinkedWarehouseAction(`${warehouse.id}`))}
+                  selected={warehouse.selected}
+                  options={{ showChevron: true, noLeftPadding: true }}
+                >
+                  {warehouse.selected
+                    ? warehouse.child.map(national => (
+                        <TreeNode
+                          key={`${warehouse.id}-${national.id}`}
+                          data={{ id: national.id, name: national.name }}
+                          callback={() =>
+                            dispatch(selectUnselectLinkedWarehouseAction(`${warehouse.id}-${national.id}`))
+                          }
+                          selected={national.selected}
+                          options={{ showChevron: true, noLeftPadding: false }}
+                        >
+                          {national.selected
+                            ? national.child.map(regional => (
+                                <TreeNode
+                                  key={`${warehouse.id}-${national.id}-${regional.id}`}
+                                  data={{ id: regional.id, name: regional.name }}
+                                  callback={() =>
+                                    dispatch(
+                                      selectUnselectLinkedWarehouseAction(
+                                        `${warehouse.id}-${national.id}-${regional.id}`
+                                      )
+                                    )
+                                  }
+                                  selected={regional.selected}
+                                  options={{ showChevron: false, noLeftPadding: false }}
+                                />
+                              ))
+                            : null}
+                        </TreeNode>
+                      ))
+                    : null}
+                </TreeNode>
+              </Stack>
+            ))}
+            {
               <TreeNode
-                data={{ id: warehouse.id, name: warehouse.name }}
-                callback={() => dispatch(selectUnselectWarehouseAction(`${warehouse.id}`))}
-                selected={warehouse.selected}
+                data={{ id: `sites-outside-distribution-channel`, name: `Sites out of distribution channel` }}
+                callback={() => dispatch(selectUnselectUnlinkedSitesAction())}
+                selected={outsideDistributionSelected}
                 options={{ showChevron: true, noLeftPadding: true }}
               >
-                {warehouse.selected
-                  ? warehouse.child.map(national => (
+                {outsideDistributionSelected
+                  ? outsideDistribution.map(site => (
                       <TreeNode
-                        key={`${warehouse.id}-${national.id}`}
-                        data={{ id: national.id, name: national.name }}
-                        callback={() => dispatch(selectUnselectWarehouseAction(`${warehouse.id}-${national.id}`))}
-                        selected={national.selected}
-                        options={{ showChevron: true, noLeftPadding: false }}
-                      >
-                        {national.selected
-                          ? national.child.map(regional => (
-                              <TreeNode
-                                key={`${warehouse.id}-${national.id}-${regional.id}`}
-                                data={{ id: regional.id, name: regional.name }}
-                                callback={() =>
-                                  dispatch(
-                                    selectUnselectWarehouseAction(`${warehouse.id}-${national.id}-${regional.id}`)
-                                  )
-                                }
-                                selected={regional.selected}
-                                options={{ showChevron: false, noLeftPadding: false }}
-                              />
-                            ))
-                          : null}
-                      </TreeNode>
+                        key={site.id}
+                        data={{ id: site.id, name: site.name }}
+                        options={{ showChevron: false, noLeftPadding: false }}
+                      />
                     ))
                   : null}
               </TreeNode>
-            </Stack>
-          ))
+            }
+          </>
         )}
       </Stack>
     </Card>

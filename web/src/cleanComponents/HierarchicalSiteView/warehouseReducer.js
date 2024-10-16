@@ -1,7 +1,13 @@
-export const selectUnselectWarehouseAction = id => {
+export const selectUnselectLinkedWarehouseAction = id => {
   return {
     type: 'SELECT_UNSELECT_LINKED_WAREHOUSE',
     id,
+  }
+}
+
+export function selectUnselectUnlinkedSitesAction() {
+  return {
+    type: 'SELECT_UNSELECT_UNLINKED_SITES',
   }
 }
 
@@ -28,6 +34,13 @@ export function warehouseReducer(state, action) {
       return {
         ...state,
         data: state.data,
+      }
+    }
+    case 'SELECT_UNSELECT_UNLINKED_SITES': {
+      const { outsideDistributionSelected } = state
+      return {
+        ...state,
+        outsideDistributionSelected: !outsideDistributionSelected,
       }
     }
     case 'SET_INITIAL_DATA':
