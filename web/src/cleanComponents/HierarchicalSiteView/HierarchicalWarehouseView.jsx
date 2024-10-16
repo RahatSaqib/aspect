@@ -77,6 +77,25 @@ export function HierarchicalWarehouseView(props) {
     setSelectedSiteIds,
   ])
 
+  const renderTreeNodes = (nodes, parentIds, level) => {
+    return nodes.map(node => {
+      const currentIds = [...parentIds, node.id]
+      return (
+        <TreeNode
+          key={currentIds.join('-')}
+          data={{ id: node.id, name: node.name }}
+          callback={() => dispatch(selectUnselectLinkedWarehouseAction(currentIds))}
+          selected={underDistributionSelectedSiteIds.has(node.id)}
+          options={{ showChevron: Boolean(node.child?.length), noLeftPadding: parentIds.length === 0 }}
+        >
+          {underDistributionSelectedSiteIds.has(node.id) && node.child && level > 0
+            ? renderTreeNodes(node.child, currentIds, level - 1)
+            : null}
+        </TreeNode>
+      )
+    })
+  }
+
   return (
     <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto', boxShadow: 0 }}>
       {isCountryLoading ? (
@@ -91,91 +110,28 @@ export function HierarchicalWarehouseView(props) {
           <HierarchyLoader />
         ) : (
           <>
-            {underDistribution.map(warehouse => (
-              <Stack key={warehouse.id} sx={{ flexDirection: 'column' }}>
-                <TreeNode
-                  data={{ id: warehouse.id, name: warehouse.name }}
-                  callback={() => dispatch(selectUnselectLinkedWarehouseAction([warehouse.id]))}
-                  selected={underDistributionSelectedSiteIds.has(warehouse.id)}
-                  options={{ showChevron: Boolean(warehouse.child?.length), noLeftPadding: true }}
-                >
-                  {underDistributionSelectedSiteIds.has(warehouse.id)
-                    ? warehouse.child.map(national => (
-                        <TreeNode
-                          key={`${warehouse.id}-${national.id}`}
-                          data={{ id: national.id, name: national.name }}
-                          callback={() => dispatch(selectUnselectLinkedWarehouseAction([warehouse.id, national.id]))}
-                          selected={underDistributionSelectedSiteIds.has(national.id)}
-                          options={{ showChevron: Boolean(national.child?.length), noLeftPadding: false }}
-                        >
-                          {underDistributionSelectedSiteIds.has(national.id)
-                            ? national.child.map(regional => (
-                                <TreeNode
-                                  key={`${warehouse.id}-${national.id}-${regional.id}`}
-                                  data={{ id: regional.id, name: regional.name }}
-                                  callback={() =>
-                                    dispatch(
-                                      selectUnselectLinkedWarehouseAction([warehouse.id, national.id, regional.id])
-                                    )
-                                  }
-                                  selected={underDistributionSelectedSiteIds.has(regional.id)}
-                                  options={{ showChevron: Boolean(regional.child?.length), noLeftPadding: false }}
-                                >
-                                  {underDistributionSelectedSiteIds.has(regional.id)
-                                    ? regional.child?.map(site => (
-                                        <TreeNode
-                                          key={`${warehouse.id}-${national.id}-${regional.id}-${site.id}`}
-                                          data={{ id: site.id, name: site.name }}
-                                          callback={() =>
-                                            dispatch(
-                                              selectUnselectLinkedWarehouseAction([
-                                                warehouse.id,
-                                                national.id,
-                                                regional.id,
-                                                site.id,
-                                              ])
-                                            )
-                                          }
-                                          selected={underDistributionSelectedSiteIds.has(site.id)}
-                                          options={{
-                                            showChevron: Boolean(site.child?.length),
-                                            noLeftPadding: false,
-                                          }}
-                                        />
-                                      ))
-                                    : null}
-                                </TreeNode>
-                              ))
-                            : null}
-                        </TreeNode>
-                      ))
-                    : null}
-                </TreeNode>
-              </Stack>
-            ))}
-            {
-              <TreeNode
-                data={{
-                  id: `sites-outside-distribution-channel`,
-                  name: `Sites out of distribution channel (${outsideDistribution.length})`,
-                }}
-                callback={() => dispatch(selectUnselectUnlinkedSitesAction())}
-                selected={outsideDistributionSelected}
-                options={{ showChevron: Boolean(outsideDistribution.length), noLeftPadding: true }}
-              >
-                {outsideDistributionSelected
-                  ? outsideDistribution.map(site => (
-                      <TreeNode
-                        key={site.id}
-                        data={{ id: site.id, name: site.name }}
-                        options={{ showChevron: false, noLeftPadding: false }}
-                        callback={() => dispatch(selectUnselectUnlinkedSitesAction(site.id))}
-                        selected={outsideDistributionSelectedSiteIds.has(site.id)}
-                      />
-                    ))
-                  : null}
-              </TreeNode>
-            }
+            {renderTreeNodes(underDistribution, [], 4)}
+            <TreeNode
+              data={{
+                id: `sites-outside-distribution-channel`,
+                name: `Sites out of distribution channel (${outsideDistribution.length})`,
+              }}
+              callback={() => dispatch(selectUnselectUnlinkedSitesAction())}
+              selected={outsideDistributionSelected}
+              options={{ showChevron: Boolean(outsideDistribution.length), noLeftPadding: true }}
+            >
+              {outsideDistributionSelected
+                ? outsideDistribution.map(site => (
+                    <TreeNode
+                      key={site.id}
+                      data={{ id: site.id, name: site.name }}
+                      options={{ showChevron: false, noLeftPadding: false }}
+                      callback={() => dispatch(selectUnselectUnlinkedSitesAction(site.id))}
+                      selected={outsideDistributionSelectedSiteIds.has(site.id)}
+                    />
+                  ))
+                : null}
+            </TreeNode>
           </>
         )}
       </Stack>
