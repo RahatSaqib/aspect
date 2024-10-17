@@ -7,7 +7,6 @@ import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
 import {
   initialWarehouseState,
-  loadInitialDataAction,
   selectUnselectLinkedWarehouseAction,
   selectUnselectUnlinkedSitesAction,
   warehouseReducer,
@@ -17,20 +16,14 @@ export function HierarchicalWarehouseView(props) {
   const { countryId, setSelectedSiteIds } = props
 
   const [
-    {
-      underDistribution,
-      underDistributionSelectedSiteIds,
-      outsideDistribution,
-      outsideDistributionSelected,
-      outsideDistributionSelectedSiteIds,
-    },
+    { underDistributionSelectedSiteIds, outsideDistributionSelected, outsideDistributionSelectedSiteIds },
     dispatch,
   ] = useReducer(warehouseReducer, initialWarehouseState)
 
   const { isLoading: isCountryLoading, data: countries } = useCountries(true)
   const selectedCountry = countries?.find(({ id }) => id === countryId)
 
-  const { isLoading } = useSites(
+  const { isLoading, data: { underDistribution, outsideDistribution } = {} } = useSites(
     {
       filters: {
         countryId,
@@ -41,8 +34,8 @@ export function HierarchicalWarehouseView(props) {
       pageSize: 10000,
     },
     {
-      onSuccess: ({ siteList = [] }) => {
-        dispatch(loadInitialDataAction(buildTheHierarchicalDataStructure(siteList)))
+      select: ({ siteList = [] }) => {
+        return buildTheHierarchicalDataStructure(siteList)
       },
     }
   )
