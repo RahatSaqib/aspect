@@ -31,7 +31,7 @@ export function HierarchicalWarehouseView(props) {
       sortCol: 'name',
       sortDir: 'asc',
       pageAt: 0,
-      pageSize: 10000,
+      pageSize: 1000,
     },
     {
       select: ({ siteList = [] }) => {
