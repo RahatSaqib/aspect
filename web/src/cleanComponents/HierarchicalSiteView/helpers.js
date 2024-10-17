@@ -41,12 +41,13 @@ export function buildTheHierarchicalDataStructure(apiData) {
   return { underDistribution: [...underDistribution.values()], outsideDistribution: [...outsideDistribution.values()] }
 }
 
-export function getAllIdsFromChildren(data) {
+export function getAllIdsFromChildren(data, level = 0) {
   const ids = []
+  if (level >= 4) return ids
   for (const value of data) {
     ids.push(value.id)
     if (value.child) {
-      ids.push(...getAllIdsFromChildren(value.child))
+      ids.push(...getAllIdsFromChildren(value.child, level + 1))
     }
   }
   return ids
