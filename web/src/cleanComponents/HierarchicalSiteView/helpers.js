@@ -41,6 +41,7 @@ export function buildTheHierarchicalDataStructure(apiData) {
   return { underDistribution: [...underDistribution.values()], outsideDistribution: [...outsideDistribution.values()] }
 }
 
+// This function is used to get all child ids from the hierarchical data structure
 export function getAllIdsFromChildren(data, level = 0) {
   const ids = []
   if (level >= 4) return ids
