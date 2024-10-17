@@ -20,6 +20,7 @@ const SELECT_LIST_FIELDS = [
   'l.name as lga',
   's.createdOn',
   's.externalId',
+  's.parentWarehouseId',
   knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
   knex.raw('COALESCE(COUNT(DISTINCT sc.consumableId), 0) as siteConsumableCount'),
 ]
