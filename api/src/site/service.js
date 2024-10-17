@@ -20,7 +20,6 @@ const SELECT_LIST_FIELDS = [
   'l.name as lga',
   's.createdOn',
   's.externalId',
-  's.parentWarehouseId',
   knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
   knex.raw('COALESCE(COUNT(DISTINCT sc.consumableId), 0) as siteConsumableCount'),
 ]
@@ -72,7 +71,7 @@ async function listSites(request) {
   const { query, auth } = request
 
   // To ensure correct database queries, the `stateId` and `lgaId` values should be converted from empty strings to `null`.
-  ;['stateId', 'lgaId', 'parentWarehouseId'].forEach(property => {
+  ;['stateId', 'lgaId'].forEach(property => {
     if (query[property] === '') {
       query[property] = null
     }
@@ -89,12 +88,6 @@ async function listSites(request) {
         return
       }
       this.whereIn('s.id', query.siteIds.split(','))
-    })
-    .andWhere(function () {
-      if (!query.siteTypeExternalId) {
-        return
-      }
-      this.whereIn('st.externalId', query.siteTypeExternalId.split(','))
     })
     .andWhere(function () {
       if (!query.deviceName) {
