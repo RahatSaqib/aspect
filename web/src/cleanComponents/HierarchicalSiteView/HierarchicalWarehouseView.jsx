@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import useCountries from '../../hooks/geography/useCountries'
 import useSites from '../../hooks/site/useSites'
-import { buildTheHierarchicalDataStructure, getAllIdsFromChildren } from './buildHierarchicalDataStructure'
+import { buildTheHierarchicalDataStructure, getAllIdsFromChildren } from './helpers'
 import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
 import {
@@ -41,6 +41,7 @@ export function HierarchicalWarehouseView(props) {
   )
 
   useEffect(() => {
+    // This useEffect is used to update parent state to get the results of sites on the table view on a sibling component
     if (outsideDistributionSelected) {
       setSelectedSiteIds(
         outsideDistributionSelectedSiteIds.size

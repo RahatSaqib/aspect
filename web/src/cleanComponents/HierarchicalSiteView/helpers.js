@@ -15,6 +15,7 @@ function buildParentHierarchy(parentWarehouseId, data, level) {
 }
 
 export function buildTheHierarchicalDataStructure(apiData) {
+  if (!apiData) return { underDistribution: [], outsideDistribution: [] }
   const underDistribution = new Map()
   const withParentWarehouse = new Map()
   const outsideDistribution = new Map()
