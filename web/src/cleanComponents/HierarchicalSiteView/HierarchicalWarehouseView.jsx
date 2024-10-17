@@ -80,7 +80,10 @@ export function HierarchicalWarehouseView(props) {
           data={{ id: node.id, name: node.name }}
           callback={() => dispatch(selectUnselectLinkedWarehouseAction(currentIds))}
           selected={underDistributionSelectedSiteIds.has(node.id)}
-          options={{ showChevron: Boolean(node.child?.length), noLeftPadding: Boolean(node.child?.length) }}
+          options={{
+            showChevron: Boolean(node.child?.length),
+            noLeftPadding: parentIds.length === 0 && Boolean(node.child?.length),
+          }}
         >
           {underDistributionSelectedSiteIds.has(node.id) && node.child && level > 0
             ? renderTreeNodes(node.child, currentIds, level - 1)
