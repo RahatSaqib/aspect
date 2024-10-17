@@ -80,7 +80,7 @@ export function HierarchicalWarehouseView(props) {
           data={{ id: node.id, name: node.name }}
           callback={() => dispatch(selectUnselectLinkedWarehouseAction(currentIds))}
           selected={underDistributionSelectedSiteIds.has(node.id)}
-          options={{ showChevron: Boolean(node.child?.length), noLeftPadding: parentIds.length === 0 }}
+          options={{ showChevron: Boolean(node.child?.length), noLeftPadding: Boolean(node.child?.length) }}
         >
           {underDistributionSelectedSiteIds.has(node.id) && node.child && level > 0
             ? renderTreeNodes(node.child, currentIds, level - 1)
@@ -91,7 +91,7 @@ export function HierarchicalWarehouseView(props) {
   }
 
   return (
-    <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto', boxShadow: 0 }}>
+    <Card sx={{ minWidth: 300, p: 2, maxHeight: 640, overflowY: 'auto', boxShadow: 0 }}>
       {isCountryLoading ? (
         <Skeleton height={40} />
       ) : (

@@ -7,8 +7,8 @@ export function HierarchicalView(props) {
   const { isWarehouseView, setIsWarehouseView } = props
 
   return (
-    <Card sx={{ minWidth: 300, p: 2, maxHeight: 640, overflowY: 'auto' }}>
-      <Typography variant="body2" color="textSecondary">
+    <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto' }}>
+      <Typography variant="body2" color="textSecondary" sx={{ px: 2 }}>
         Geographical
         <Switch checked={isWarehouseView} onChange={event => setIsWarehouseView(event.currentTarget.checked)} />
         Warehouse
