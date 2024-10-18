@@ -271,6 +271,11 @@ async function getInventoryTransfer(query, dataConstraints, querySelector = INVE
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
     })
+    .modify(queryBuilder => {
+      if (query.originSiteIds) {
+        queryBuilder.whereIn('originSite.id', query.originSiteIds.split(','))
+      }
+    })
 
   const { total } = await inventoryTransferQuery.clone().count('it.id as total').first()
 
