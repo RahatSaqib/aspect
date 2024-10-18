@@ -114,6 +114,15 @@ const getRawLinks = (f, user) => [
       { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },
       { href: '/browse/inventory/transfers', label: f(messages.inventoryTransfers), perm: ['inventory'] },
       { href: '/browse/inventory/overview', label: f(messages.InventoryOverview), perm: ['inventory'] },
+      ...(user.isPakistan
+        ? [
+            {
+              href: '/browse/inventory/reconciliation',
+              label: f(messages.inventoryReconciliation),
+              perm: ['inventory'],
+            },
+          ]
+        : []),
     ],
   },
   { href: '/browse/reporter', label: f(messages.reporters), perm: ['browse', '+reporter'] },

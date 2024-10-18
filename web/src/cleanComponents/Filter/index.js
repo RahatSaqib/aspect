@@ -4,6 +4,7 @@ import DeviceWorkloadFilter from './FilterContainer.DeviceWorkload'
 import ErrorRateFilter from './FilterContainer.ErrorRate'
 import InventoryItemsFilter from './FilterContainer.InventoryItems'
 import InventoryLogFilter from './FilterContainer.InventoryLog'
+import InventoryReconciliationFilter from './FilterContainer.InventoryReconciliation'
 import InventoryTransferFilter from './FilterContainer.InventoryTransfer'
 import LgasFilter from './FilterContainer.Lgas'
 import NotificationFilter from './FilterContainer.Notification'
@@ -22,6 +23,7 @@ export {
   DeviceWorkloadFilter,
   ErrorRateFilter,
   InventoryItemsFilter,
+  InventoryReconciliationFilter,
   InventoryLogFilter,
   InventoryTransferFilter,
   NotificationFilter,
