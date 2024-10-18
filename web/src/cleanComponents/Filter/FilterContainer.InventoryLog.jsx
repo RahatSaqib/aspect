@@ -11,7 +11,8 @@ import { isPermittedUser } from '../../oldComponents/shared/requirePermissions'
 import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 
-const InventoryLogFilter = () => {
+const InventoryLogFilter = props => {
+  const { disabled } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [state, setState] = useFilterSync()
@@ -19,7 +20,12 @@ const InventoryLogFilter = () => {
   const allowed = required => isPermittedUser(user.userPermissions, { required })
 
   return (
-    <FilterContainer state={state} setState={setState} blocked={['minExpirationDate', 'maxExpirationDate']}>
+    <FilterContainer
+      state={state}
+      setState={setState}
+      blocked={['minExpirationDate', 'maxExpirationDate']}
+      disabled={disabled}
+    >
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect

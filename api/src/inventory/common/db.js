@@ -144,7 +144,7 @@ function getInventorySitesQuery(constraints, request) {
       knex.raw('SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'),
       knex.raw(
         `sum(
-          case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end 
+          case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end
         ) as qtyExpired`
       ),
       knex.raw(
@@ -232,6 +232,11 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
     .modify(queryBuilder => {
       if (query.onlyTransfers)
         queryBuilder.whereIn('cr.i18nKey', ['ConsumableReason_TransferReceived', 'ConsumableReason_TransferSent'])
+    })
+    .modify(queryBuilder => {
+      if (query.siteIds) {
+        queryBuilder.whereIn('s.id', query.siteIds.split(','))
+      }
     })
   const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
 
