@@ -1,17 +1,9 @@
-const { knex } = require('../../db')
 const { filterParams, filterDateRangeParams } = require('../../db')
 const { addConstraints } = require('../../auth/constraints')
+const { baseMissingInventoryLotsQuery } = require('../common/db')
 
 async function getMissingCartridgesReport(dataConstraints, query) {
-  const data = await knex('MissingInventoryLots as m')
-    .innerJoin('Result as r', 'm.resultId', 'r.id')
-    .innerJoin('Site as s', 'm.SiteId', 's.id')
-    .innerJoin('Geography as g', 's.geographyId', 'g.id')
-    .leftJoin('State as st', 'g.stateId', 'st.id')
-    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
-    .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
-    .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
-    .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
+  const data = await baseMissingInventoryLotsQuery()
     .modify(addConstraints, dataConstraints, {
       result: 'r',
       geography: 'g',

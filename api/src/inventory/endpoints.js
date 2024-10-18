@@ -9,17 +9,19 @@ const removeInventory = require('./removeInventory')
 const transferInventory = require('./transferInventory')
 const receiveInventory = require('./receiveInventory')
 const listInventory = require('./listInventory')
+const { listReconciliation } = require('./service')
 const getInventoryOverview = require('./getInventoryOverview')
 const listInventoryLog = require('./listInventoryLog')
 const listInventoryTransfer = require('./listInventoryTransfer')
 const exportInventoryTransfer = require('./exportInventoryTransfer')
-const { exportSupplies } = require('./serviceReports')
+const { exportSupplies, exportReconciliation } = require('./serviceReports')
 const {
   listSuppliesBaseConfig,
   adjustInventoryCommonPayloadFields,
   removeInventoryCommonPayloadFields,
   modifyInventoryCommonPayloadFields,
   inventoryFilters,
+  inventoryReconciliationFilters,
   inventoryTransferFilters,
 } = require('./requestValidation')
 
@@ -49,6 +51,58 @@ const routes = [
             'daysStockLeft',
             'projectedWaste',
             'dailyConsumptionRate',
+            'lotNumber'
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/reconciliation',
+    handler: asyncHandler(listReconciliation),
+    config: {
+      description: 'List of Unreconciled Inventory',
+      notes: 'Pageable and sortable list of unreconciled inventories',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          ...inventoryReconciliationFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateDateRangeParams(),
+          ...validateSortPageParams(
+            'consumableName',
+            'siteName',
+            'stateName',
+            'lgaName',
+            'quantity',
+            'expiresOn',
+            'lotNumber'
+          ),
+        },
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/inventory/reconciliation/export',
+    handler: asyncHandler(exportReconciliation),
+    config: {
+      description: 'Export List of Reconciliation',
+      notes: 'Pageable and sortable list of reconciliation',
+      auth: { scope: ['inventory:view'] },
+      validate: {
+        query: {
+          format: Joi.string().allow('').description('File format for exporting data'),
+          ...inventoryReconciliationFilters,
+          ...validateAllGeographyFilterParams(),
+          ...validateSortPageParams(
+            'consumableName',
+            'siteName',
+            'stateName',
+            'lgaName',
+            'quantity',
+            'expiresOn',
             'lotNumber'
           ),
         },
