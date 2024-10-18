@@ -10,9 +10,9 @@ import { useDispatch, useSelector } from 'react-redux'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryItemsFilter } from '../../../cleanComponents'
 import {
-  HierarchicalSiteView,
-  hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
+  hierarchicalToggleSettingsLocalStorageKey,
+  HierarchicalView,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
@@ -70,7 +70,14 @@ export default function InventoryItemsList() {
   const [filter, setFilter] = usePathFilter()
   const intl = useIntl()
   const user = useAuthState()
-  const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
+  const {
+    isHierarchicalView,
+    setIsHierarchicalView,
+    isWarehouseView,
+    setIsWarehouseView,
+    selectedSiteIds,
+    setSelectedSiteIds,
+  } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LIST,
   })
   const enableInventoryOnHandField = filter.breakOutByLot && inventoryOnField
@@ -96,23 +103,27 @@ export default function InventoryItemsList() {
     })
   }
 
-  const params = omitBy(
-    {
-      sortCol,
-      sortDir,
-      page: pageAt,
-      size: pageSize,
-      ...filter,
-    },
-    isNil
-  )
+  // Disabling the filters since we don't have the filters on warehouse level
+  const disableFilters = isHierarchicalView && isWarehouseView
+  const params = disableFilters
+    ? selectedSiteIds.map(i => ({ siteId: i }))
+    : omitBy(
+        {
+          sortCol,
+          sortDir,
+          page: pageAt,
+          size: pageSize,
+          ...filter,
+        },
+        isNil
+      )
   const {
     isError,
     isLoading: isLoadingData,
     data = false,
     error,
     refetch,
-  } = useQuery([INVENTORY_LIST.KEY, params, filter], async () =>
+  } = useQuery([INVENTORY_LIST.KEY, params], async () =>
     fetchWrapperForQueries({ endpoint: INVENTORY_LIST.ENDPOINT, params })
   )
 
@@ -192,10 +203,17 @@ export default function InventoryItemsList() {
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryItemsTitle)} />
-        <InventoryItemsFilter />
+        <InventoryItemsFilter disabled={disableFilters} />
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
           {isHierarchicalView && (
-            <HierarchicalSiteView countryId={user.countryId} filters={filter} pathname="/browse/inventory/supplies" />
+            <HierarchicalView
+              pathname="/browse/inventory/supplies"
+              countryId={user.countryId}
+              filters={filter}
+              isWarehouseView={isWarehouseView}
+              setIsWarehouseView={setIsWarehouseView}
+              setSelectedSiteIds={setSelectedSiteIds}
+            />
           )}
           <DataTableCard
             key={`DataTableCard__table-${location.key}`}
