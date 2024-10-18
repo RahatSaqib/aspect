@@ -31,7 +31,7 @@ export function InventoryReconciliation() {
   const navigate = useNavigate()
   const [, setSearchParams] = useSearchParams()
   const [filters, setFilters] = usePathFilter()
-  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+  const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_RECONCILIATION,
   })
   const { sortCol, sortDir, pageAt, pageSize } = useMemo(
