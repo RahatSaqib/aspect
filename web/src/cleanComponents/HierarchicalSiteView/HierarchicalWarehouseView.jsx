@@ -2,7 +2,7 @@ import React, { useEffect, useReducer } from 'react'
 import { Card, Skeleton, Stack, Typography } from '@mui/material'
 import useCountries from '../../hooks/geography/useCountries'
 import useSites from '../../hooks/site/useSites'
-import { buildTheHierarchicalDataStructure, getAllIdsFromChildren } from './helpers'
+import { buildTheHierarchicalDataStructure, getAllIdsFromChildren, TREE_HIERARCHICAL_VIEW_LEVELS } from './helpers'
 import { HierarchyLoader } from './HierarchyLoader'
 import { TreeNode } from './TreeNode'
 import {
@@ -107,7 +107,7 @@ export function HierarchicalWarehouseView(props) {
           <HierarchyLoader />
         ) : (
           <>
-            {renderTreeNodes(underDistribution, [], 4)}
+            {renderTreeNodes(underDistribution, [], TREE_HIERARCHICAL_VIEW_LEVELS)}
             <TreeNode
               data={{
                 id: `sites-outside-distribution-channel`,
