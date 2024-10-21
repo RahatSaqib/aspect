@@ -41,7 +41,7 @@ const InventoryTransfers = () => {
   const { formatMessage } = useIntl()
   const filter = useFilterValues(location.pathname)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+  const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_TRANSFERS,
   })
 

@@ -4,9 +4,9 @@ import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { DetailHeader, SiteFilter, TableContainer } from '../../../cleanComponents'
 import {
-  HierarchicalSiteView,
   useHierarchicalSwitch,
   hierarchicalToggleSettingsLocalStorageKey,
+  HierarchicalView,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton/index'
 import PermissionChecker from '../../../components/PermissionChecker'
@@ -32,12 +32,22 @@ const SiteList = ({ navigate, location }) => {
   const filters = useFilterValues(location.pathname)
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
+  const {
+    isHierarchicalView,
+    setIsHierarchicalView,
+    isWarehouseView,
+    setIsWarehouseView,
+    selectedSiteIds,
+    setSelectedSiteIds,
+  } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.SITE_LIST,
   })
 
+  // Disabling the filters since we don't have the filters on warehouse level
+  const disableFilters = isHierarchicalView && isWarehouseView
+
   const { data, isLoading: tableLoading } = useSites(
-    { sortCol, sortDir, pageAt, pageSize, filters },
+    { sortCol, sortDir, pageAt, pageSize, filters: disableFilters ? { siteIds: selectedSiteIds.join(',') } : filters },
     { enabled: !!sortCol }
   )
   useSitesDownload({
@@ -122,10 +132,17 @@ const SiteList = ({ navigate, location }) => {
       </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.sitesTitle)} />
-        <SiteFilter />
+        <SiteFilter disabled={disableFilters} />
         <Box sx={{ display: 'flex', flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
-            <HierarchicalSiteView countryId={user.countryId} filters={filters} pathname="/browse/site" />
+            <HierarchicalView
+              countryId={user.countryId}
+              filters={filters}
+              pathname="/browse/site"
+              isWarehouseView={isWarehouseView}
+              setIsWarehouseView={setIsWarehouseView}
+              setSelectedSiteIds={setSelectedSiteIds}
+            />
           )}
           <DataTableCard key={`DataTableCard__table-${location.key}`} sx={{ width: '100%' }}>
             <Box sx={{ display: 'flex', flexDirection: 'row', flexWrap: 'nowrap', justifyContent: 'space-between' }}>

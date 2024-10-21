@@ -1,5 +1,5 @@
 import React, { useState } from 'react'
-import { Button, Card, CardActions, CardContent, Collapse } from '@mui/material'
+import { Button, Card, CardActions, CardContent, Collapse, Stack } from '@mui/material'
 import { MdArrowDownward, MdArrowUpward } from 'react-icons/md'
 import { useIntl } from 'react-intl'
 import { useLocation } from 'react-router'
@@ -15,7 +15,7 @@ const cardContentStyle = {
   p: '16px !important',
 }
 
-const FilterContainer = ({ children, state, setState, blocked }) => {
+const FilterContainer = ({ children, state, setState, blocked, disabled }) => {
   const { formatMessage } = useIntl()
   const location = useLocation()
   const [expanded, setExpanded] = useState(false)
@@ -55,7 +55,22 @@ const FilterContainer = ({ children, state, setState, blocked }) => {
   }
 
   return (
-    <Card sx={{ mb: 1 }}>
+    <Card sx={{ mb: 1, position: 'relative' }}>
+      {disabled ? (
+        <Stack
+          sx={{
+            position: 'absolute',
+            top: 0,
+            left: 0,
+            bottom: 0,
+            right: 0,
+            zIndex: 1,
+            cursor: 'not-allowed',
+            opacity: 0.8,
+            backgroundColor: 'grey.50',
+          }}
+        />
+      ) : null}
       <CardContent sx={cardContentStyle}>
         <FilterButtons filters={filter} remove={remove} append={append} blocked={blocked} />
         <Button variant="contained" color="secondary" sx={{ m: 0.25, height: '36px' }} onClick={toggleOpen}>

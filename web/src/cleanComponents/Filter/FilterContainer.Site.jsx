@@ -10,13 +10,14 @@ import SiteTypeSelect from '../../pages/Site/Detail/Edit/SiteTypeSelect'
 import { StateSelect, LgaSelect, SiteListSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
-const SiteFilter = () => {
+const SiteFilter = props => {
+  const { disabled } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [state, setState] = useFilterSync()
 
   return (
-    <FilterContainer state={state} setState={setState}>
+    <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
@@ -38,7 +39,7 @@ const SiteFilter = () => {
           <SiteTypeSelect
             name="siteType"
             label={formatMessage(messages.siteType)}
-            value={state.siteTypeId}
+            value={state.siteTypeId ?? ''}
             onChange={siteTypeId => setState({ ...state, siteTypeId })}
           />
         </Grid>
