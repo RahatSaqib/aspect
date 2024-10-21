@@ -27,6 +27,7 @@ const inventoryReconciliationFilters = {
 }
 
 const inventoryTransferFilters = {
+  originSiteIds: Joi.string().allow('', null),
   originSiteName: Joi.string().allow('', null),
   destinationSiteName: Joi.string().allow('', null),
   consumableId: Joi.number().integer().positive().allow('', null),

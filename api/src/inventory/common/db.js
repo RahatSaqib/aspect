@@ -144,7 +144,7 @@ function getInventorySitesQuery(constraints, request) {
       knex.raw('SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'),
       knex.raw(
         `sum(
-          case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end 
+          case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end
         ) as qtyExpired`
       ),
       knex.raw(
@@ -233,6 +233,11 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
       if (query.onlyTransfers)
         queryBuilder.whereIn('cr.i18nKey', ['ConsumableReason_TransferReceived', 'ConsumableReason_TransferSent'])
     })
+    .modify(queryBuilder => {
+      if (query.siteIds) {
+        queryBuilder.whereIn('s.id', query.siteIds.split(','))
+      }
+    })
   const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
 
   const data = await inventoryLogQuery
@@ -265,6 +270,11 @@ async function getInventoryTransfer(query, dataConstraints, querySelector = INVE
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
+    })
+    .modify(queryBuilder => {
+      if (query.originSiteIds) {
+        queryBuilder.whereIn('originSite.id', query.originSiteIds.split(','))
+      }
     })
 
   const { total } = await inventoryTransferQuery.clone().count('it.id as total').first()
