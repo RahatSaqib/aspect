@@ -1,3 +1,6 @@
+// This level is used to build the tree structure of the warehouse view. Number here defines how many levels of hierarchy we want to show.
+export const TREE_HIERARCHICAL_VIEW_LEVELS = 5
+
 function buildParentHierarchy(parentWarehouseId, data, level) {
   const child = []
   if (level === 0 || !data) {
@@ -35,7 +38,17 @@ export function buildTheHierarchicalDataStructure(apiData) {
   }
 
   for (const [key, value] of new Map(underDistribution)) {
-    underDistribution.set(key, { ...value, child: buildParentHierarchy(key, withParentWarehouse, 3) })
+    underDistribution.set(key, {
+      ...value,
+      child: buildParentHierarchy(key, withParentWarehouse, TREE_HIERARCHICAL_VIEW_LEVELS),
+    })
+  }
+
+  // If their are any values in withParentWarehouse that are not captured in underDistribution, we should push them in outsideDistribution
+  for (const value of withParentWarehouse.values()) {
+    for (const v of value) {
+      outsideDistribution.set(v.id, v)
+    }
   }
 
   return { underDistribution: [...underDistribution.values()], outsideDistribution: [...outsideDistribution.values()] }
@@ -44,7 +57,7 @@ export function buildTheHierarchicalDataStructure(apiData) {
 // This function is used to get all child ids from the hierarchical data structure
 export function getAllIdsFromChildren(data, level = 0) {
   const ids = []
-  if (level >= 4) return ids
+  if (level > TREE_HIERARCHICAL_VIEW_LEVELS) return ids
   for (const value of data) {
     ids.push(value.id)
     if (value.child) {
