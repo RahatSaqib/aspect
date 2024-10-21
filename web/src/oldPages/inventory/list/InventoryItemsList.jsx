@@ -105,18 +105,16 @@ export default function InventoryItemsList() {
 
   // Disabling the filters since we don't have the filters on warehouse level
   const disableFilters = isHierarchicalView && isWarehouseView
-  const params = disableFilters
-    ? { siteIds: selectedSiteIds.join(',') }
-    : omitBy(
-        {
-          sortCol,
-          sortDir,
-          page: pageAt,
-          size: pageSize,
-          ...filter,
-        },
-        isNil
-      )
+  const params = omitBy(
+    {
+      sortCol,
+      sortDir,
+      page: pageAt,
+      size: pageSize,
+      ...(disableFilters ? filter : { siteIds: selectedSiteIds.join(',') }),
+    },
+    isNil
+  )
   const {
     isError,
     isLoading: isLoadingData,
