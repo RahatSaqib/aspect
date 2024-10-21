@@ -304,6 +304,11 @@ function getInventoryLots(request, dataConstraints) {
       ...INVENTORY_ITEM_FILTER_FIELDS,
       ...SUM_STOCK_LEFT_FILTER_FIELDS,
     })
+    .modify(queryBuilder => {
+      if (request.query.siteIds) {
+        queryBuilder.whereIn('s.id', request.query.siteIds.split(','))
+      }
+    })
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
     .groupBy([
       knex.raw(CONCATENATED_ID),
@@ -357,6 +362,12 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     .modify(filterParams, request.query, {
       assayId: 'a.id',
     })
+    .modify(queryBuilder => {
+      if (request.query.siteIds) {
+        queryBuilder.whereIn('s.id', request.query.siteIds.split(','))
+      }
+    })
+
   return knex
     .from(inventoryQuery.as('t2'))
     .modify(builder => {

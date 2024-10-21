@@ -106,7 +106,7 @@ export default function InventoryItemsList() {
   // Disabling the filters since we don't have the filters on warehouse level
   const disableFilters = isHierarchicalView && isWarehouseView
   const params = disableFilters
-    ? selectedSiteIds.map(i => ({ siteId: i }))
+    ? { siteIds: selectedSiteIds.join(',') }
     : omitBy(
         {
           sortCol,

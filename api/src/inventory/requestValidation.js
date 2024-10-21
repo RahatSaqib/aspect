@@ -4,7 +4,8 @@ const { validateDateRangeParams, validateSortPageParams } = require('../routes')
 const { REGEX_ISODATESTRING } = require('../shared/date')
 
 const inventoryFilters = {
-  siteId: Joi.alternatives().try(Joi.array(), Joi.string()).allow('', null).description('Filter for assay'),
+  siteIds: Joi.string().allow('', null),
+  siteId: Joi.number().integer().positive().allow('', null),
   consumableId: Joi.number().integer().positive().allow('', null),
   consumableExternalId: Joi.string().optional().allow('', null).description('The external id of the consumable item'),
   siteName: Joi.string().allow('', null),
