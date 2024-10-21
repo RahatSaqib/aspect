@@ -111,7 +111,12 @@ export default function InventoryItemsList() {
       sortDir,
       page: pageAt,
       size: pageSize,
-      ...(disableFilters ? { siteIds: selectedSiteIds.join(',') } : filter),
+      ...(disableFilters
+        ? {
+            siteIds: selectedSiteIds.join(','),
+            breakOutByLot: filter.breakOutByLot,
+          }
+        : filter),
     },
     isNil
   )
