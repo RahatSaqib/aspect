@@ -1,5 +1,3 @@
-import api from 'sinon'
-
 // This level is used to build the tree structure of the warehouse view. Number here defines how many levels of hierarchy we want to show.
 export const TREE_HIERARCHICAL_VIEW_LEVELS = 5
 
