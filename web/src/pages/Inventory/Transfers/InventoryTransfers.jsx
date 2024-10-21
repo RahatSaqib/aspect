@@ -16,7 +16,7 @@ import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryTransferFilter } from '../../../cleanComponents'
 import {
-  HierarchicalSiteView,
+  HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
@@ -41,13 +41,28 @@ const InventoryTransfers = () => {
   const { formatMessage } = useIntl()
   const filter = useFilterValues(location.pathname)
   const [download, setDownload] = useState({ fileFormat: '', enabled: false })
-  const { isHierarchicalView, setIsHierarchicalView } = useHierarchicalSwitch({
+  const {
+    isHierarchicalView,
+    setIsHierarchicalView,
+    isWarehouseView,
+    setIsWarehouseView,
+    selectedSiteIds,
+    setSelectedSiteIds,
+  } = useHierarchicalSwitch({
     localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_TRANSFERS,
   })
 
+  // Disabling the filters since we don't have the filters on warehouse level
+  const disableFilters = isHierarchicalView && isWarehouseView
+
+  const transferApiFilters = disableFilters ? { originSiteIds: selectedSiteIds.join(',') } : filter
+
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'originSiteName' })({ location })
 
-  const { data, isLoading } = useInventoryTransferList({ sortCol, sortDir, ...filter }, { enabled: !!sortCol })
+  const { data, isLoading } = useInventoryTransferList(
+    { sortCol, sortDir, ...transferApiFilters },
+    { enabled: !!sortCol }
+  )
 
   useInventoryTransferDownload({ ...download, ...filter })
 
@@ -76,14 +91,17 @@ const InventoryTransfers = () => {
       <DetailHeader name={formatMessage(messages.InventoryTransferTitle)} disableBack />
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.InventoryTransferTitle)} />
-        <InventoryTransferFilter />
+        <InventoryTransferFilter disabled={disableFilters} />
         <Stack sx={{ flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
-            <HierarchicalSiteView
+            <HierarchicalView
               countryId={user.countryId}
               filters={filter}
               pathname="/browse/inventory/transfers"
               filterMaps={{ siteName: 'originSiteName' }}
+              isWarehouseView={isWarehouseView}
+              setIsWarehouseView={setIsWarehouseView}
+              setSelectedSiteIds={setSelectedSiteIds}
             />
           )}
           <Card sx={{ width: '100%' }}>

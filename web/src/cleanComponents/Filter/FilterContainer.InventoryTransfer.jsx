@@ -9,13 +9,14 @@ import messages from '../../messages/FilterMessages'
 import { StateSelect, LgaSelect, ConsumableSelect, PeriodSelector } from '../index'
 import FilterContainer from './FilterContainer'
 
-const InventoryTransferFilter = () => {
+const InventoryTransferFilter = props => {
+  const { disabled } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [state, setState] = useFilterSync()
 
   return (
-    <FilterContainer state={state} setState={setState}>
+    <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
