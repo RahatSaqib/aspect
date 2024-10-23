@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { Autocomplete, TextField } from '@mui/material'
+import isFunction from 'lodash/isFunction'
 import isNumber from 'lodash/isNumber'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
@@ -36,7 +37,7 @@ const SiteAutoCompleteField = ({
    */
   const options = useMemo(() => {
     const filteredSites = siteData?.filter(o => (!stateId || stateId === o.stateId) && (!lgaId || lgaId === o.lgaId))
-    return customFilter ? customFilter(filteredSites) : filteredSites // Apply custom filter if provided
+    return isFunction(customFilter) ? customFilter(filteredSites) : filteredSites // Apply custom filter if provided
   }, [siteData, stateId, lgaId, customFilter])
 
   /**
