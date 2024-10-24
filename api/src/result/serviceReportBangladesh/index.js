@@ -132,7 +132,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
 
-  const nonResultCategories = `r.resultCategory1 NOT IN (
+  const excludeNonResultCategories = `r.resultCategory1 NOT IN (
                       ${resultCategoryIds.Invalid},
                       ${resultCategoryIds.Error},
                       ${resultCategoryIds.NoResult})`
@@ -391,7 +391,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_all: andByHistory(
           'Presumptive TB',
           'Unknown history',
-          nonResultCategories,
+          excludeNonResultCategories,
           assayMtb
         ),
         // cell B29
@@ -415,7 +415,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         cnt_TypeOfPatient_Presumptive_TB_Cases_New_all: andByHistory(
           'Presumptive TB',
           'New',
-          nonResultCategories,
+          excludeNonResultCategories,
           assayMtb
         ),
         // cell C29
