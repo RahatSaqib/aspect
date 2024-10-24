@@ -132,6 +132,11 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
 
+  const nonResultCategories = `r.resultCategory1 IN (
+                      ${resultCategoryIds.Invalid},
+                      ${resultCategoryIds.Error},
+                      ${resultCategoryIds.NoResult})`
+
   return {
     drTb10AData: knex('Result as r')
       .innerJoin('Device as d', 'r.deviceId', 'd.id')
@@ -382,11 +387,11 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         /** -----------------
          * Patient History = Unknown History
          */
-        // cell B26
+        // cell B27
         cnt_TypeOfPatient_Presumptive_TB_Cases_UnknownHistory_all: andByHistory(
           'Presumptive TB',
           'Unknown history',
-          null,
+          nonResultCategories,
           assayMtb
         ),
         // cell B29
@@ -406,8 +411,13 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
         /** -----------------
          * Patient History = New
          */
-        // cell C26
-        cnt_TypeOfPatient_Presumptive_TB_Cases_New_all: andByHistory('Presumptive TB', 'New', null, assayMtb),
+        // cell C27
+        cnt_TypeOfPatient_Presumptive_TB_Cases_New_all: andByHistory(
+          'Presumptive TB',
+          'New',
+          nonResultCategories,
+          assayMtb
+        ),
         // cell C29
         cnt_TypeOfPatient_Presumptive_TB_Cases_New_Mtb: andByHistory('Presumptive TB', 'New', mtbDetected, assayMtb),
         // cell C32
@@ -838,7 +848,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
           assayMtb
         ),
         // ------------
-        // cell N41
+        // cell N42
         cnt_TypeOfPatient_OtherExtraPulm_New_all: andByHistory('Others - Extra Pulmonary', 'New', null, assayMtb),
         // cell Q41
         cnt_TypeOfPatient_OtherExtraPulm_New_Mtb: andByHistory(
