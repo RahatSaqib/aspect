@@ -132,7 +132,7 @@ const reportDrTb10ABaseQuery = async (auth, query) => {
   const assayMtb = `r.assayId in (${assayIds.GxMtbRif}, ${assayIds.GxMtbRifUltra})`
   const assayXdr = `r.assayId = ${assayIds.GxMtbXdr}`
 
-  const nonResultCategories = `r.resultCategory1 IN (
+  const nonResultCategories = `r.resultCategory1 NOT IN (
                       ${resultCategoryIds.Invalid},
                       ${resultCategoryIds.Error},
                       ${resultCategoryIds.NoResult})`
