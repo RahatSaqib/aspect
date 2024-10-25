@@ -13,7 +13,7 @@ import {
 } from './warehouseReducer'
 
 export function HierarchicalWarehouseView(props) {
-  const { countryId, setSelectedSiteIds } = props
+  const { countryId, setSelectedSiteIds, expanded } = props
 
   const [
     { underDistributionSelectedSiteIds, outsideDistributionSelected, outsideDistributionSelectedSiteIds },
@@ -85,7 +85,7 @@ export function HierarchicalWarehouseView(props) {
             noLeftPadding: parentIds.length === 0 && Boolean(node.child?.length),
           }}
         >
-          {underDistributionSelectedSiteIds.has(node.id) && node.child && level > 0
+          {(underDistributionSelectedSiteIds.has(node.id) || expanded) && node.child && level > 0
             ? renderTreeNodes(node.child, currentIds, level - 1)
             : null}
         </TreeNode>
@@ -117,7 +117,7 @@ export function HierarchicalWarehouseView(props) {
               selected={outsideDistributionSelected}
               options={{ showChevron: Boolean(outsideDistribution.length), noLeftPadding: true }}
             >
-              {outsideDistributionSelected
+              {outsideDistributionSelected || expanded
                 ? outsideDistribution.map(site => (
                     <TreeNode
                       key={site.id}
