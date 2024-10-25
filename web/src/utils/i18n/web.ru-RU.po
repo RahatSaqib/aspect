@@ -2390,7 +2390,7 @@ msgstr "Суточная производительность"
 #. Daily Confirmed Cases
 #: extracted_strings.json
 msgid "Daily Confirmed Cases"
-msgstr "Ежедневно подтверждаемые случаи"
+msgstr "Ежедневные подтвержденные случаи"
 
 #. [pages.InventoryItemsList.dailyConsumptionRate]
 #. defaultMessage is:
@@ -2797,7 +2797,7 @@ msgstr "Активность устройства (в процентах)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Уровень устройства"
+msgstr "Состояние устройства"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -11725,13 +11725,13 @@ msgid ""
 "{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
 "was done"
 msgstr ""
-"Уведомление о результате может быть отправлено при создании теста или при "
-"создании и обновлении теста. Кроме того, тест инициирует уведомление только "
-"в том случае, если ему меньше {daysLimitToNotifyResults} дней, оно было "
-"выполнено до последнего обновления этого уведомления, и если выполнено любое "
-"из следующих условий: - Все настраиваемые поля, указанные в шаблоны "
-"уведомления были заполнены в тесте - с момента теста прошло "
-"{hoursNotificationsShouldWaitForCustomFields} часов"
+"Уведомление о результатах может быть отправлено при создании теста или при "
+"создании и обновлении теста. Кроме того, тест будет вызывать уведомление "
+"только в том случае, если его возраст менее {daysLimitToNotifyResults} дней, "
+"он был выполнен до последнего обновления этого уведомления и если выполнено "
+"одно из следующих условий: - все пользовательские поля, на которые ссылаются "
+"шаблоны уведомления, были заполнены в тесте - с момента выполнения теста "
+"прошло {hoursNotificationsShouldWaitForCustomFields} часов"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:

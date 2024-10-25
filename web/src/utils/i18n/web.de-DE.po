@@ -2404,7 +2404,7 @@ msgstr "Täglich Bestätigte Fälle"
 #. Daily Consumption
 #: extracted_strings.json
 msgid "Daily Consumption"
-msgstr "Kein Verbrauch"
+msgstr "Täglicher Verbrauch"
 
 #. [pages.Status.covidGraphDailyMortalityAndrecovery.pie]
 #. defaultMessage is:
@@ -2803,7 +2803,7 @@ msgstr "Geräteaktivität (Prozent)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Geräte Level"
+msgstr "Gerätebereich Ebene"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:

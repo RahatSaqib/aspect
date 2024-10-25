@@ -2796,7 +2796,7 @@ msgstr "Активність на пристрої (у відсотках)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Рівень площі пристрою"
+msgstr "Рівень області пристрою"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -2851,7 +2851,7 @@ msgstr "Технічне обслуговування пристрою"
 #. Device Maker
 #: extracted_strings.json
 msgid "Device Maker"
-msgstr "Device Maker"
+msgstr "Виробник пристроїв"
 
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
@@ -11712,12 +11712,12 @@ msgid ""
 "{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
 "was done"
 msgstr ""
-"Сповіщення на основі результатів можна надіслати під час створення тесту або "
-"під час створення та оновлення тесту. Крім того, тест ініціюватиме "
-"сповіщення, лише якщо воно минуло менше ніж {daysLimitToNotifyResults} дн., "
-"його було виконано до останнього оновлення цього сповіщення та якщо виконано "
-"будь-яку з наступних умов: - Усі спеціальні поля, на які посилається в "
-"шаблони сповіщень були заповнені в тесті - з моменту виконання тесту пройшло "
+"Сповіщення на основі результатів може бути надіслано при створенні тесту або "
+"при створенні та оновленні тесту. Крім того, тест викличе сповіщення, тільки "
+"якщо йому менше {daysLimitToNotifyResults} днів, він був виконаний до "
+"останнього оновлення цього сповіщення і якщо виконано одну з наступних умов: "
+"- всі кастомні поля, на які є посилання в шаблонах сповіщення, були "
+"заповнені в тесті - з моменту виконання тесту пройшло "
 "{hoursNotificationsShouldWaitForCustomFields} годин"
 
 #. [errorResponseMessages.common.filterError.message]

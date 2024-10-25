@@ -2094,7 +2094,7 @@ msgstr "Criado em"
 #. Critical Error
 #: extracted_strings.json
 msgid "Critical Error"
-msgstr "Erro Crítico"
+msgstr "Erro crítico"
 
 #. [pages.ReportIndex.Critical_Errors_By_Device]
 #. defaultMessage is:
@@ -2854,7 +2854,7 @@ msgstr "Manutenção de dispositivos"
 #. Device Maker
 #: extracted_strings.json
 msgid "Device Maker"
-msgstr "Fabricante de dispositivos"
+msgstr "Criador de dispositivos"
 
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
@@ -11717,14 +11717,14 @@ msgid ""
 "{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
 "was done"
 msgstr ""
-"A notificação baseada no resultado pode ser enviada na criação do teste ou "
-"na criação e atualização do teste. Além disso, um teste só acionará uma "
-"notificação se tiver menos de {daysLimitToNotifyResults} dias, tiver sido "
-"feito antes da última atualização desta notificação e se qualquer uma das "
-"próximas condições for atendida: - Todos os campos personalizados "
-"referenciados em os modelos da notificação foram preenchidos no teste - "
-"{hoursNotificationsShouldWaitForCustomFields} horas se passaram desde que o "
-"teste foi feito"
+"A notificação baseada em resultados pode ser enviada na criação do teste ou "
+"na criação e atualização do teste. Além disso, um teste só vai desencadear "
+"uma notificação se tiver menos de {daysLimitToNotifyResults} dias, se tiver "
+"sido efectuado antes da última atualização desta notificação e se alguma das "
+"condições seguintes for cumprida: - Todos os campos personalizados "
+"referenciados nos modelos da notificação foram preenchidos no teste - "
+"Passaram {hoursNotificationsShouldWaitForCustomFields} horas desde que o "
+"teste foi efectuado"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:

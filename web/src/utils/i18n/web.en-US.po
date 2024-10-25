@@ -2087,7 +2087,7 @@ msgstr "Created On"
 #. Critical Error
 #: extracted_strings.json
 msgid "Critical Error"
-msgstr "Critical Errors By Device"
+msgstr "Critical Error"
 
 #. [pages.ReportIndex.Critical_Errors_By_Device]
 #. defaultMessage is:
@@ -2393,7 +2393,7 @@ msgstr "Daily Confirmed Cases"
 #. Daily Consumption
 #: extracted_strings.json
 msgid "Daily Consumption"
-msgstr "Daily Consumption Rate"
+msgstr "Daily Consumption"
 
 #. [pages.Status.covidGraphDailyMortalityAndrecovery.pie]
 #. defaultMessage is:
@@ -2792,7 +2792,7 @@ msgstr "Device Activity (Percent)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Device Level"
+msgstr "Device Area Level"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -2847,7 +2847,7 @@ msgstr "Device Maintenance"
 #. Device Maker
 #: extracted_strings.json
 msgid "Device Maker"
-msgstr "Demo Device"
+msgstr "Device Maker"
 
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
@@ -11703,10 +11703,9 @@ msgstr ""
 "creation and update. Also, a test is only going to trigger a notification if "
 "it is less than {daysLimitToNotifyResults} days old, it was done before the "
 "last update of this notification, and if any of the next conditions are "
-"accomplished:\n"
-"- All the custom fields referenced in the templates of the notification were "
-"filled in the test\n"
-"- {hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
+"accomplished: - All the custom fields referenced in the templates of the "
+"notification were filled in the test - "
+"{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
 "was done"
 
 #. [errorResponseMessages.common.filterError.message]
@@ -12682,7 +12681,7 @@ msgstr "Valid Tests"
 #. Validated
 #: extracted_strings.json
 msgid "Validated"
-msgstr "Valid Tests"
+msgstr "Validated"
 
 #. [errorResponseMessages.stateMutation.title]
 #. defaultMessage is:

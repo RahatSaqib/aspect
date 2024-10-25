@@ -2857,7 +2857,7 @@ msgstr "Mantenimiento del dispositivos"
 #. Device Maker
 #: extracted_strings.json
 msgid "Device Maker"
-msgstr "Dispositivo de demostración"
+msgstr "Fabricante de dispositivos"
 
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
@@ -11745,15 +11745,14 @@ msgid ""
 "{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
 "was done"
 msgstr ""
-"La notificación basada en resultados se puede enviar en la creación de la "
-"prueba o en la creación y actualización de la prueba. Además, una prueba "
-"solo activará una notificación si tiene menos de {daysLimitToNotifyResults} "
-"días de antigüedad, se realizó antes de la última actualización de esta "
-"notificación y si se cumple alguna de las siguientes condiciones: - Todos "
-"los campos personalizados a los que se hace referencia en las plantillas de "
-"la notificación se rellenaron en la prueba - "
-"{hoursNotificationsShouldWaitForCustomFields} horas pasadas desde que se "
-"realizó la prueba"
+"La notificación basada en resultados puede enviarse al crear la prueba o al "
+"crearla y actualizarla. Además, una prueba sólo activará una notificación si "
+"tiene menos de {daysLimitToNotifyResults} días de antigüedad, se realizó "
+"antes de la última actualización de esta notificación y si se cumple alguna "
+"de las siguientes condiciones: - Todos los campos personalizados a los que "
+"se hace referencia en las plantillas de la notificación se rellenaron en la "
+"prueba - Pasaron {hoursNotificationsShouldWaitForCustomFields} horas desde "
+"que se realizó la prueba"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:

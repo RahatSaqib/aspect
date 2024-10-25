@@ -2396,7 +2396,7 @@ msgstr "Các trường hợp được xác nhận hàng ngày"
 #. Daily Consumption
 #: extracted_strings.json
 msgid "Daily Consumption"
-msgstr "Tiêu dùng hàng ngày"
+msgstr "Tiêu thụ hàng ngày"
 
 #. [pages.Status.covidGraphDailyMortalityAndrecovery.pie]
 #. defaultMessage is:
@@ -2795,7 +2795,7 @@ msgstr "Hoạt động thiết bị (Phần trăm)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Mức khu vực thiết bị"
+msgstr "Mức độ khu vực thiết bị"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -2850,7 +2850,7 @@ msgstr "Bảo trì thiết bị"
 #. Device Maker
 #: extracted_strings.json
 msgid "Device Maker"
-msgstr "Demo thiết bị"
+msgstr "Nhà sản xuất thiết bị"
 
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
@@ -11696,12 +11696,12 @@ msgid ""
 msgstr ""
 "Thông báo dựa trên kết quả có thể được gửi khi tạo thử nghiệm hoặc khi tạo "
 "và cập nhật thử nghiệm. Ngoài ra, một thử nghiệm sẽ chỉ kích hoạt thông báo "
-"nếu nó chưa đến {daysLimitToNotifyResults} ngày, nó đã được thực hiện trước "
-"lần cập nhật cuối cùng của thông báo này và nếu bất kỳ điều kiện nào tiếp "
-"theo được thực hiện: - Tất cả các trường tùy chỉnh được tham chiếu trong các "
-"mẫu thông báo đã được điền trong bài kiểm tra - "
-"{hoursNotificationsShouldWaitForCustomFields} giờ đã trôi qua kể từ khi bài "
-"kiểm tra được thực hiện"
+"nếu thử nghiệm đó có tuổi đời dưới {daysLimitToNotifyResults} ngày, được "
+"thực hiện trước lần cập nhật cuối cùng của thông báo này và nếu bất kỳ điều "
+"kiện nào sau đây được thực hiện: - Tất cả các trường tùy chỉnh được tham "
+"chiếu trong các mẫu của thông báo đã được điền trong thử nghiệm - "
+"{hoursNotificationsShouldWaitForCustomFields} giờ đã trôi qua kể từ khi thử "
+"nghiệm được thực hiện"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:

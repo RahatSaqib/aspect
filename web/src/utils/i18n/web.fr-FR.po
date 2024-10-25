@@ -11758,10 +11758,10 @@ msgstr ""
 "plus, un test ne déclenchera une notification que s'il date de moins de "
 "{daysLimitToNotifyResults} jours, s'il a été effectué avant la dernière mise "
 "à jour de cette notification et si l'une des conditions suivantes est "
-"remplie : - Tous les champs personnalisés référencés dans les modèles de "
+"remplie : - Tous les champs personnalisés référencés dans les modèles de la "
 "notification ont été remplis dans le test - "
-"{hoursNotificationsShouldWaitForCustomFields} heures se sont écoulées depuis "
-"la fin du test"
+"{hoursNotificationsShouldWaitForCustomFields} heures se sont écoulées depuis "
+"que le test a été effectué"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
