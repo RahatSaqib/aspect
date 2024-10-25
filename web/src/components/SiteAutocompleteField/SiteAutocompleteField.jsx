@@ -47,7 +47,7 @@ const SiteAutoCompleteField = ({
    */
   const selectedValue = useMemo(() => {
     let v
-    if (isNumber(v) || isNumber(value)) {
+    if (isNumber(value)) {
       v = options?.find(e => e.id === value)
     } else {
       v = options?.find(e => e.name === value)
