@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-01T16:44:10.702Z\n"
+"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -691,6 +691,19 @@ msgstr ""
 "¿Está seguro de que desea eliminar este sitio? Esta acción está pensada sólo "
 "para sitios de prueba, todos los datos del sitio se perderán."
 
+#. [errorResponseMessages.updateConsumable.message]
+#. defaultMessage is:
+#. As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"As there is unreconciled consumption for the specified cartridge, "
+"{consumableName}, system cant allow delisting of the same at the site. "
+"Please reconcile your inventory to complete this action"
+msgstr ""
+"Como hay consumo no conciliado para el cartucho especificado, "
+"{consumableName}, el sistema no puede permitir la eliminación del mismo en "
+"el sitio. Por favor, concilie su inventario para completar esta acción"
+
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
 #. Aspect Beta
@@ -736,6 +749,9 @@ msgstr "Aspect ha encontrado un problema."
 #. [pages.NotificationDetail.assayTitle]
 #. defaultMessage is:
 #. Assay
+#. [pages.InventoryTabs.New.assay]
+#. defaultMessage is:
+#. Assay
 #: extracted_strings.json
 msgid "Assay"
 msgstr "Ensayo"
@@ -746,6 +762,13 @@ msgstr "Ensayo"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Tipo de ensayo"
+
+#. [pages.InventoryTabs.New.headerText]
+#. defaultMessage is:
+#. Assay that Consume this Item
+#: extracted_strings.json
+msgid "Assay that Consume this Item"
+msgstr "Ensayo que consume este artículo"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -827,6 +850,13 @@ msgstr ""
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Se debe seleccionar al menos uno de los canales de notificación"
+
+#. [pages.Consumable.New.includeLocation]
+#. defaultMessage is:
+#. Automatic include location with reported consumption
+#: extracted_strings.json
+msgid "Automatic include location with reported consumption"
+msgstr "Incluir automáticamente la ubicación con el consumo notificado"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -1773,6 +1803,27 @@ msgstr "Razón consumible"
 msgid "Consumable Serial"
 msgstr "Número de serie del consumible"
 
+#. [pages.SiteList.consumables]
+#. defaultMessage is:
+#. Consumables
+#: extracted_strings.json
+msgid "Consumables"
+msgstr "Consumibles"
+
+#. [pages.SiteDetail.consumablesForSite]
+#. defaultMessage is:
+#. Consumables applicable for the site
+#: extracted_strings.json
+msgid "Consumables applicable for the site"
+msgstr "Consumibles aplicables al emplazamiento"
+
+#. [pages.InventoryTabs.New.consumpationRate]
+#. defaultMessage is:
+#. Consumption Rate
+#: extracted_strings.json
+msgid "Consumption Rate"
+msgstr "Tasa de consumo"
+
 #. [pages.PersonDetails.detailsCreatedSuccessfully]
 #. defaultMessage is:
 #. Contact Created Successfully
@@ -2617,6 +2668,13 @@ msgstr "Retirado de servicio"
 #: extracted_strings.json
 msgid "Define date range for report"
 msgstr "Definir el intervalo de fechas del informe"
+
+#. [pages.InventoryTabs.New.definitionText]
+#. defaultMessage is:
+#. Define which Assay consume this inventory item
+#: extracted_strings.json
+msgid "Define which Assay consume this inventory item"
+msgstr "Defina qué Ensayo consume este artículo del inventario"
 
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
@@ -5252,6 +5310,20 @@ msgstr "Inventario que expira"
 msgid "Inventory Item"
 msgstr "Artículo del inventario"
 
+#. [pages.Consumable.New.name]
+#. defaultMessage is:
+#. Inventory Item Name
+#: extracted_strings.json
+msgid "Inventory Item Name"
+msgstr "Nombre del artículo del inventario"
+
+#. [pages.Consumable.New.inventoryItemNameRequired]
+#. defaultMessage is:
+#. Inventory Item Name Required
+#: extracted_strings.json
+msgid "Inventory Item Name Required"
+msgstr "Nombre del artículo de inventario Obligatorio"
+
 #. [pages.ReportIndex.inventoryLog]
 #. defaultMessage is:
 #. Inventory Log
@@ -6509,6 +6581,13 @@ msgstr "Gerente"
 msgid "Manually set by {username} ({updatedDate})"
 msgstr "Actualizado por {username} ({updatedDate})"
 
+#. [pages.Consumable.New.manufacturer]
+#. defaultMessage is:
+#. Manufacturer
+#: extracted_strings.json
+msgid "Manufacturer"
+msgstr "Fabricante"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -6773,6 +6852,13 @@ msgstr "Más de 550 cp/mL"
 #: extracted_strings.json
 msgid "More filters"
 msgstr "Más filtros"
+
+#. [pages.InventoryAdjustmentDialogForm.expiryDateAfterToday]
+#. defaultMessage is:
+#. Must be later than today
+#: extracted_strings.json
+msgid "Must be later than today"
+msgstr "Debe ser más tarde que hoy"
 
 #. [pages.common.notAvailable]
 #. defaultMessage is:
@@ -7748,6 +7834,13 @@ msgstr "Tasa de actividad general"
 msgid "Overall Network Health Daily"
 msgstr "Salud general diaria de la red"
 
+#. [pages.Consumable.New.partNumber]
+#. defaultMessage is:
+#. Part Number
+#: extracted_strings.json
+msgid "Part Number"
+msgstr "Numero de parte"
+
 #. [filter.popover.partner]
 #. defaultMessage is:
 #. Partner
@@ -8001,6 +8094,34 @@ msgstr "Por favor introduce una dirección de correo electrónico válida"
 msgid "Please enter a valid url"
 msgstr "Por favor introduzca un URL válido"
 
+#. [pages.InventoryAdjustmentDialogForm.dateAdjustedGreaterThanToday]
+#. defaultMessage is:
+#. Please enter date until today
+#: extracted_strings.json
+msgid "Please enter date until today"
+msgstr "Introduzca la fecha hasta hoy"
+
+#. [pages.NewInventoryDialogForm.quantityInteger]
+#. defaultMessage is:
+#. Please enter integer value
+#: extracted_strings.json
+msgid "Please enter integer value"
+msgstr "Introduzca un valor entero"
+
+#. [pages.NewInventoryDialogForm.quantityNumber]
+#. defaultMessage is:
+#. Please enter positive integer value
+#: extracted_strings.json
+msgid "Please enter positive integer value"
+msgstr "Introduzca un valor entero positivo"
+
+#. [pages.NewInventoryDialogForm.quantityPositive]
+#. defaultMessage is:
+#. Please enter positive value
+#: extracted_strings.json
+msgid "Please enter positive value"
+msgstr "Introduzca un valor positivo"
+
 #. [pages.ResetPassword.enterEmailAddressContent]
 #. defaultMessage is:
 #. Please enter the email address that you are registered with
@@ -8114,6 +8235,13 @@ msgstr "Por favor, especifique un consumible"
 #: extracted_strings.json
 msgid "Please specify a date"
 msgstr "Por favor, especifique una fecha"
+
+#. [pages.InventoryAdjustmentDialogForm.lotNumberRequired]
+#. defaultMessage is:
+#. Please specify a lot number
+#: extracted_strings.json
+msgid "Please specify a lot number"
+msgstr "Especifique un número de lote"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDateRequired]
 #. defaultMessage is:
@@ -8349,6 +8477,13 @@ msgstr "Año anterior"
 #: extracted_strings.json
 msgid "Previously treated"
 msgstr "Tratados anteriormente"
+
+#. [pages.Consumable.New.price]
+#. defaultMessage is:
+#. Price in $
+#: extracted_strings.json
+msgid "Price in $"
+msgstr "Precio en $"
 
 #. [errorResponseMessages.generic.proceedText]
 #. defaultMessage is:
@@ -8621,6 +8756,9 @@ msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
 
 #. [pages.InventoryLog.quantity]
+#. defaultMessage is:
+#. Quantity
+#. [pages.InventoryTabs.New.quantity]
 #. defaultMessage is:
 #. Quantity
 #: extracted_strings.json
@@ -9738,6 +9876,9 @@ msgstr "Sábado"
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
 #. Save
+#. [pages.Consumable.New.save]
+#. defaultMessage is:
+#. Save
 #. [pages.NotificationDetail.save]
 #. defaultMessage is:
 #. Save
@@ -10509,7 +10650,13 @@ msgstr "La identificación del sitio ya está en uso"
 msgid "Site Name"
 msgstr "Nombre del sitio"
 
+#. [filter.popover.siteType]
+#. defaultMessage is:
+#. Site Type
 #. [pages.SiteDetail.fieldSiteType]
+#. defaultMessage is:
+#. Site Type
+#. [pages.SiteList.siteType]
 #. defaultMessage is:
 #. Site Type
 #: extracted_strings.json
@@ -10637,6 +10784,18 @@ msgstr "El mensaje SMS no debe superar los 2000 caracteres"
 msgid "Software Type"
 msgstr "Tipo de software"
 
+#. [pages.InventoryTabs.New.trackByLocationTooltip]
+#. defaultMessage is:
+#. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
+#: extracted_strings.json
+msgid ""
+"Some sites may appear unavailable for selection change as they have "
+"inventory or unreconciled transactions for the selected Inventory item"
+msgstr ""
+"Algunos sitios pueden aparecer como no disponibles para el cambio de "
+"selección ya que tienen inventario o transacciones no conciliadas para el "
+"artículo de Inventario seleccionado"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -10737,6 +10896,16 @@ msgstr "Estado"
 #: extracted_strings.json
 msgid "Sticker Instrument Serial"
 msgstr "Pegatina Instrumento Serie"
+
+#. [filter.popover.stockProvider]
+#. defaultMessage is:
+#. Stock Provider
+#. [pages.SiteList.stockProvider]
+#. defaultMessage is:
+#. Stock Provider
+#: extracted_strings.json
+msgid "Stock Provider"
+msgstr "Proveedor de existencias"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -12146,6 +12315,20 @@ msgstr "Total de disparos"
 msgid "Trace Detected"
 msgstr "Rastro detectado"
 
+#. [pages.InventoryTabs.New.trackByLocation]
+#. defaultMessage is:
+#. Track By Location
+#: extracted_strings.json
+msgid "Track By Location"
+msgstr "Seguimiento por ubicación"
+
+#. [pages.Consumable.New.trackByExpirationDate]
+#. defaultMessage is:
+#. Track by expiration date
+#: extracted_strings.json
+msgid "Track by expiration date"
+msgstr "Seguimiento por fecha de caducidad"
+
 #. [pages.resultEdit.Training]
 #. defaultMessage is:
 #. Training
@@ -12166,6 +12349,13 @@ msgstr "Transferencia recibida de {refSiteName}"
 #: extracted_strings.json
 msgid "Tranfer sent to {refSiteName}"
 msgstr "Transferencia enviada a {refSiteName}"
+
+#. [pages.InventoryLog.transactionDate]
+#. defaultMessage is:
+#. Transaction Date
+#: extracted_strings.json
+msgid "Transaction Date"
+msgstr "Fecha de Transacción"
 
 #. [pages.transferResult.buttonTransfer]
 #. defaultMessage is:
@@ -12376,6 +12566,20 @@ msgstr "No se puede eliminar porque hay entidades asociadas a él"
 #: extracted_strings.json
 msgid "Unable to delete since there are associated entities with it."
 msgstr "No se puede eliminar porque hay entidades asociadas."
+
+#. [errorResponseMessages.updateConsumable.title]
+#. defaultMessage is:
+#. Unable to delist the cartridge !
+#: extracted_strings.json
+msgid "Unable to delist the cartridge !"
+msgstr "¡No se puede eliminar el cartucho de la lista!"
+
+#. [pages.Consumable.New.unit]
+#. defaultMessage is:
+#. Unit
+#: extracted_strings.json
+msgid "Unit"
+msgstr "Unidad"
 
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
