@@ -1,5 +1,6 @@
 import React, { useCallback, useMemo } from 'react'
 import { Autocomplete, TextField } from '@mui/material'
+import isFunction from 'lodash/isFunction'
 import isNumber from 'lodash/isNumber'
 import PropTypes from 'prop-types'
 import { useQuery } from 'react-query'
@@ -19,6 +20,8 @@ const SiteAutoCompleteField = ({
   width,
   stateId,
   lgaId,
+  disabled,
+  customFilter,
 }) => {
   /**
    * 1. get list of all sites
@@ -32,10 +35,10 @@ const SiteAutoCompleteField = ({
   /**
    * 2. filtered by stateId/lgaId list of sites
    */
-  const options = useMemo(
-    () => siteData?.filter(o => (!stateId || stateId === o.stateId) && (!lgaId || lgaId === o.lgaId)),
-    [siteData, stateId, lgaId]
-  )
+  const options = useMemo(() => {
+    const filteredSites = siteData?.filter(o => (!stateId || stateId === o.stateId) && (!lgaId || lgaId === o.lgaId))
+    return isFunction(customFilter) ? customFilter(filteredSites) : filteredSites // Apply custom filter if provided
+  }, [siteData, stateId, lgaId, customFilter])
 
   /**
    * 3. Based on value of `value` - find actual object to set it as `selectedValue`.
@@ -44,7 +47,7 @@ const SiteAutoCompleteField = ({
    */
   const selectedValue = useMemo(() => {
     let v
-    if (isNumber(v)) {
+    if (isNumber(value)) {
       v = options?.find(e => e.id === value)
     } else {
       v = options?.find(e => e.name === value)
@@ -65,6 +68,7 @@ const SiteAutoCompleteField = ({
 
   return siteData ? (
     <Autocomplete
+      disabled={disabled}
       name={name}
       isOptionEqualToValue={(o, val) => o.name === (val?.name || val) || o.id === (val?.id || val)}
       getOptionLabel={option => option.name ?? option}
@@ -112,6 +116,8 @@ SiteAutoCompleteField.defaultProps = {
   width: 250,
   stateId: undefined,
   lgaId: undefined,
+  disabled: false,
+  customFilter: sites => sites,
 }
 SiteAutoCompleteField.propTypes = {
   name: PropTypes.string,
@@ -125,4 +131,6 @@ SiteAutoCompleteField.propTypes = {
   width: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   stateId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   lgaId: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+  disabled: PropTypes.bool,
+  customFilter: PropTypes.func,
 }
