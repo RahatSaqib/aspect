@@ -2,7 +2,6 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
-import isNil from 'lodash/isNil'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
@@ -27,6 +26,7 @@ import styles from '../SiteDetail.module.css'
 import { convertToFloat, getLatLongFromAddress } from './address'
 import SiteTypeSelect from './SiteTypeSelect'
 
+const WAREHOUSE_SITE_TYPE_ID = 3
 const SiteForm = ({ site, onLatLongChange }) => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
@@ -38,10 +38,11 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const { mutate: deleteSite } = useDeleteSite(site.id)
   const { mutate: createSite } = useCreateSite()
   const [submitting, setSubmitting] = useState(false)
-  const [editSite, setEditSite] = useState({ ...site })
+  const [editSite, setEditSite] = useState({ ...site, ...(!site.countryId ? { countryId: user.countryId } : {}) })
   const [queryParamsForWarehouse] = useState({ siteTypeExternalIds: ['warehouse'], excludeSiteIds: [site.id] })
 
   const isPristine = isEqual(site, editSite)
+  const isWarehouse = editSite.siteTypeId === WAREHOUSE_SITE_TYPE_ID
   const isNew = site.id === 0
   const goBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
 
@@ -98,7 +99,11 @@ const SiteForm = ({ site, onLatLongChange }) => {
 
   const isError =
     !isPristine &&
-    (isEmpty(editSite.name) || isEmpty(editSite.shortName) || isNil(editSite.countryId) || isEmpty(editSite.externalId))
+    (isEmpty(editSite.name) ||
+      isEmpty(editSite.shortName) ||
+      isEmpty(editSite.countryId?.toString()) ||
+      isEmpty(editSite.externalId) ||
+      (!isWarehouse && (isEmpty(editSite.stateId?.toString()) || isEmpty(editSite.lgaId?.toString()))))
 
   return (
     <Box width="100%">
@@ -199,7 +204,11 @@ const SiteForm = ({ site, onLatLongChange }) => {
               countryId={editSite.countryId}
               stateId={editSite.stateId}
               lgaId={editSite.lgaId}
-              validators={{ country: { error: !isPristine && isNil(editSite.countryId), helperText: 'is required' } }}
+              validators={{
+                country: { error: !isPristine && isEmpty(editSite.countryId?.toString()) },
+                state: !isWarehouse ? { error: !isPristine && isEmpty(editSite.stateId?.toString()) } : {},
+                lga: !isWarehouse ? { error: !isPristine && isEmpty(editSite.lgaId?.toString()) } : {},
+              }}
               onChange={location => {
                 setEditSite({
                   ...editSite,
