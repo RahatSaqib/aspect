@@ -3,7 +3,15 @@ import { LinearProgress, MenuItem, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
 import useStatesByCountry from '../../hooks/geography/useStatesByCountry'
 
-const StateSelectField = ({ allItemText, countryId, stateId, onStateIdChange, floatingLabelText }) => {
+const StateSelectField = ({
+  allItemText,
+  countryId,
+  stateId,
+  onStateIdChange,
+  floatingLabelText,
+  error,
+  helperText,
+}) => {
   const { isLoading: isStateLoading, data: states } = useStatesByCountry({ countryId }, { enabled: !!countryId })
 
   const handleSelectFieldChange = ({ target: { value } }) => {
@@ -18,6 +26,8 @@ const StateSelectField = ({ allItemText, countryId, stateId, onStateIdChange, fl
       variant="standard"
       value={stateId}
       disabled={!countryId}
+      error={error}
+      helperText={error ? helperText : null}
       onChange={handleSelectFieldChange}
       label={floatingLabelText}
       style={{ width: '98%', margin: '0 1%' }}
@@ -40,6 +50,8 @@ StateSelectField.propTypes = {
   countryId: PropTypes.number,
   stateId: PropTypes.number,
   floatingLabelText: PropTypes.string.isRequired,
+  helperText: PropTypes.string,
+  error: PropTypes.bool,
 }
 
 StateSelectField.defaultProps = {
@@ -47,4 +59,6 @@ StateSelectField.defaultProps = {
   onStateIdChange: () => {},
   countryId: null,
   stateId: null,
+  helperText: undefined,
+  error: undefined,
 }

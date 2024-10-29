@@ -1,7 +1,7 @@
 const Boom = require('@hapi/boom')
 const { postProcessMergeResult } = require('../../deviceApi/result')
 const excludeResult = require('../result/excludeResult')
-const findResult = require('../result/geneXpert/resultIdentification/findResult_v0')
+const findResult = require('../result/geneXpert/resultIdentification/findResult_v1')
 const issueTriggers = require('../issueTriggers')
 const issueResolutions = require('../issueResolutions')
 const filtersOpenIssues = require('../../issue/filterConditions')
