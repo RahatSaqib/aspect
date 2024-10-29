@@ -6,16 +6,18 @@ import useAuthState from '../../hooks/useAuthState'
 import useFilterSync from '../../hooks/useFilterSync'
 import { getCustomMessage } from '../../messages'
 import messages from '../../messages/FilterMessages'
-import { StateSelect, LgaSelect } from '../index'
+import SiteTypeSelect from '../../pages/Site/Detail/Edit/SiteTypeSelect'
+import { StateSelect, LgaSelect, SiteListSelect } from '../index'
 import FilterContainer from './FilterContainer'
 
-const SiteFilter = () => {
+const SiteFilter = props => {
+  const { disabled } = props
   const { formatMessage } = useIntl()
   const user = useAuthState()
   const [state, setState] = useFilterSync()
 
   return (
-    <FilterContainer state={state} setState={setState}>
+    <FilterContainer state={state} setState={setState} disabled={disabled}>
       <Grid container spacing={2}>
         <Grid item xs={3}>
           <StateSelect
@@ -31,6 +33,24 @@ const SiteFilter = () => {
             value={state.lgaId ?? ''}
             onChange={e => setState({ ...state, lgaId: e.target.value, siteName: null })}
             stateId={state.stateId}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <SiteTypeSelect
+            name="siteType"
+            label={formatMessage(messages.siteType)}
+            value={state.siteTypeId ?? ''}
+            onChange={siteTypeId => setState({ ...state, siteTypeId })}
+          />
+        </Grid>
+        <Grid item xs={3}>
+          <SiteListSelect
+            name="parentWarehouseId"
+            label={formatMessage(messages.stockProvider)}
+            value={state.parentWarehouseId || ''}
+            onChange={parentWarehouseId => setState({ ...state, parentWarehouseId })}
+            queryParams={{ siteTypeExternalIds: ['warehouse'], excludeSiteIds: [] }}
+            isClearable
           />
         </Grid>
         <Grid item xs={3}>

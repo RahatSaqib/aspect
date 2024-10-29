@@ -144,7 +144,7 @@ function getInventorySitesQuery(constraints, request) {
       knex.raw('SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'),
       knex.raw(
         `sum(
-          case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end 
+          case when ii.expiresOn < DATE(NOW()) then ii.quantityOnHand else 0 end
         ) as qtyExpired`
       ),
       knex.raw(
@@ -233,6 +233,11 @@ async function getInventoryLog(query, dataConstraints, querySelector = INVENTORY
       if (query.onlyTransfers)
         queryBuilder.whereIn('cr.i18nKey', ['ConsumableReason_TransferReceived', 'ConsumableReason_TransferSent'])
     })
+    .modify(queryBuilder => {
+      if (query.siteIds) {
+        queryBuilder.whereIn('s.id', query.siteIds.split(','))
+      }
+    })
   const { total } = await inventoryLogQuery.clone().count('il.id as total').first()
 
   const data = await inventoryLogQuery
@@ -265,6 +270,11 @@ async function getInventoryTransfer(query, dataConstraints, querySelector = INVE
       countryId: 'g.countryId',
       stateId: 'g.stateId',
       lgaId: 'g.lgaId',
+    })
+    .modify(queryBuilder => {
+      if (query.originSiteIds) {
+        queryBuilder.whereIn('originSite.id', query.originSiteIds.split(','))
+      }
     })
 
   const { total } = await inventoryTransferQuery.clone().count('it.id as total').first()
@@ -303,6 +313,11 @@ function getInventoryLots(request, dataConstraints) {
     .modify(filterParams, request.query, {
       ...INVENTORY_ITEM_FILTER_FIELDS,
       ...SUM_STOCK_LEFT_FILTER_FIELDS,
+    })
+    .modify(queryBuilder => {
+      if (request.query.siteIds) {
+        queryBuilder.whereIn('s.id', request.query.siteIds.split(','))
+      }
     })
     .modify(addConstraints, dataConstraints, INVENTORY_ITEM_DATA_CONSTRAINT_ALIASES)
     .groupBy([
@@ -357,6 +372,12 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     .modify(filterParams, request.query, {
       assayId: 'a.id',
     })
+    .modify(queryBuilder => {
+      if (request.query.siteIds) {
+        queryBuilder.whereIn('s.id', request.query.siteIds.split(','))
+      }
+    })
+
   return knex
     .from(inventoryQuery.as('t2'))
     .modify(builder => {
@@ -735,7 +756,54 @@ function filteredInventoryItemsBase(request, dataConstraints) {
   return inventoryItemsQuery
 }
 
+function baseMissingInventoryLotsQuery() {
+  return knex('MissingInventoryLots as m')
+    .innerJoin('Result as r', 'm.resultId', 'r.id')
+    .innerJoin('Site as s', 'm.SiteId', 's.id')
+    .innerJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftJoin('State as st', 'g.stateId', 'st.id')
+    .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .innerJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+    .innerJoin('Consumable as c', 'ca.consumableId', 'c.id')
+    .leftJoin('Site as pa', 's.parentWarehouseId', 'pa.id')
+}
+
+async function getReconciliationList(query, dataConstraints) {
+  const baseQuery = baseMissingInventoryLotsQuery()
+    .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
+    .modify(filterDateRangeParams, query, 'm.expirationDate')
+    .modify(filterParams, query, {
+      countryId: 'g.countryId',
+      stateId: 'g.stateId',
+      lgaId: 'g.lgaId',
+      siteName: 's.name',
+      assayId: 'r.assayId',
+      consumableId: 'ca.consumableId',
+      lotNumber: 'm.lotNumber',
+    })
+    .groupBy(['s.id', 'c.id', ...(query.breakOutByLot ? ['m.lotNumber'] : [])])
+    .count('* as quantity')
+
+  const getItems = baseQuery
+    .clone()
+    .modify(sortPageParams, query, 's.name')
+    .orderBy('m.id')
+    .select([
+      's.name as siteName',
+      'c.name as consumableName',
+      'st.name as stateName',
+      'l.name as lgaName',
+      ...(query.breakOutByLot ? ['m.lotNumber'] : []),
+      ...(query.breakOutByLot ? ['m.expirationDate as expiresOn'] : []),
+    ])
+
+  const getCount = knex.from(baseQuery.clone().as('q')).count('* as total').first()
+
+  return Promise.all([getCount, getItems])
+}
+
 module.exports = {
+  baseMissingInventoryLotsQuery,
   findInventoryItem,
   updateInventoryItem,
   insertInventoryItem,
@@ -756,4 +824,5 @@ module.exports = {
   getInventoryTransferForExport,
   createInventoryTransfer,
   updateInventoryTransfer,
+  getReconciliationList,
 }

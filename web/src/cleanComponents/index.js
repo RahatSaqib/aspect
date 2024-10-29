@@ -5,6 +5,7 @@ import AssayTypeSelect from './AssayTypeSelect'
 import CepheidInstrumentModelSelect from './CepheidInstrumentModelSelect'
 import CepheidModulesSelect from './CepheidModulesSelect'
 import CepheidSoftwareTypeSelect from './CepheidSoftwareTypeSelect'
+import CheckBoxList from './CheckBoxList'
 import ConnectorStatusSelect from './ConnectorStatusSelect'
 import ConsumableReasonSelect from './ConsumableReasonSelect'
 import ConsumableSelect from './ConsumableSelect'
@@ -105,6 +106,7 @@ import StateSelector from './StateSelector'
 import { TableContainer } from './Table/TableContainer'
 import TagSelect from './TagSelect'
 import TimezoneSelect from './TimezoneSelect'
+import UnitSelect from './UnitSelect'
 
 export {
   AspectSelect,
@@ -140,6 +142,7 @@ export {
   RevokeSelect,
   SiteListSelect,
   SiteSelect,
+  UnitSelect,
   SitesToTransferSelect,
   SiteTagInput,
   StateSelect,
@@ -171,6 +174,7 @@ export {
   XDRFLQResistanceGraph,
   XDRResultsGraph,
   Cron,
+  CheckBoxList,
   getCronHumanValue,
   DetailHeader,
   DeviceApiKeyFilter,

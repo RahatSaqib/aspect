@@ -7,7 +7,7 @@ import { useQuery } from 'react-query'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader, InventoryLogFilter } from '../../../cleanComponents'
 import {
-  HierarchicalSiteView,
+  HierarchicalView,
   hierarchicalToggleSettingsLocalStorageKey,
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
@@ -31,6 +31,7 @@ const availableSortCol = [
   'movementReason',
   'expiresOn',
   'quantity',
+  'transactionDate',
   'notes',
 ]
 
@@ -45,10 +46,13 @@ export const InventoryLogWithProps = ({
   pageAt,
   pageSize,
   filters,
+  isHierarchicalView,
+  setIsHierarchicalView,
+  isWarehouseView,
+  setIsWarehouseView,
+  setSelectedSiteIds,
+  disableFilters,
 }) => {
-  const [isHierarchicalView, setIsHierarchicalView] = useHierarchicalSwitch({
-    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LOG,
-  })
   const user = useAuthState()
   const columns = [
     {
@@ -87,6 +91,11 @@ export const InventoryLogWithProps = ({
       sortable: true,
     },
     {
+      key: 'transactionDate',
+      label: intl.formatMessage(messages.transactionDate),
+      sortable: true,
+    },
+    {
       key: 'notes',
       label: intl.formatMessage(messages.notes),
       sortable: true,
@@ -99,10 +108,17 @@ export const InventoryLogWithProps = ({
       <DetailHeader name={intl.formatMessage(messages.inventoryLogTitle)} disableBack />
       <div className={styles.Container}>
         <Helmet title={intl.formatMessage(messages.inventoryLogTitle)} />
-        <InventoryLogFilter />
+        <InventoryLogFilter disabled={disableFilters} />
         <Stack sx={{ flexDirection: 'row', width: '100%', gap: 1 }}>
           {isHierarchicalView && (
-            <HierarchicalSiteView countryId={user.countryId} filters={filters} pathname="/browse/inventory/log" />
+            <HierarchicalView
+              countryId={user.countryId}
+              filters={filters}
+              pathname="/browse/inventory/log"
+              isWarehouseView={isWarehouseView}
+              setIsWarehouseView={setIsWarehouseView}
+              setSelectedSiteIds={setSelectedSiteIds}
+            />
           )}
           <DataTableCard
             key={`DataTableCard__table-${location.key}`}
@@ -186,16 +202,47 @@ const InventoryLog = () => {
   }
 
   const {
+    isHierarchicalView,
+    setIsHierarchicalView,
+    isWarehouseView,
+    setIsWarehouseView,
+    selectedSiteIds,
+    setSelectedSiteIds,
+  } = useHierarchicalSwitch({
+    localStorageKey: hierarchicalToggleSettingsLocalStorageKey.INVENTORY_LOG,
+  })
+
+  // Disabling the filters since we don't have the filters on warehouse level
+  const disableFilters = isHierarchicalView && isWarehouseView
+
+  const inventoryLogFilters = disableFilters ? { siteIds: selectedSiteIds.join(',') } : apiFilters
+
+  const {
     isError,
     isLoading,
     data = false,
     error,
   } = useQuery(
-    [INVENTORY_LOG.KEY, { sortCol, sortDir, page: pageAt, size: pageSize, ...apiFilters }],
+    [
+      INVENTORY_LOG.KEY,
+      {
+        sortCol,
+        sortDir,
+        page: pageAt,
+        size: pageSize,
+        ...inventoryLogFilters,
+      },
+    ],
     async () =>
       fetchWrapperForQueries({
         endpoint: INVENTORY_LOG.ENDPOINT,
-        params: { sortCol, sortDir, page: pageAt, size: pageSize, ...apiFilters },
+        params: {
+          sortCol,
+          sortDir,
+          page: pageAt,
+          size: pageSize,
+          ...inventoryLogFilters,
+        },
       }),
     { enable: !isEmpty(apiFilters) }
   )
@@ -209,6 +256,12 @@ const InventoryLog = () => {
     isLoading,
     data,
     filters,
+    isHierarchicalView,
+    setIsHierarchicalView,
+    isWarehouseView,
+    setIsWarehouseView,
+    setSelectedSiteIds,
+    disableFilters,
     ...{ sortCol, sortDir, pageAt, pageSize, page: pageAt, size: pageSize },
   }
   return <InventoryLogWithProps {...props} />

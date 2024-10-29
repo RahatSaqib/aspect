@@ -15,10 +15,14 @@ const SELECT_LIST_FIELDS = [
   's.name',
   's.shortName',
   'sta.name as state',
+  'st.name as siteType',
+  'spw.name as parentWarehouseName',
   'l.name as lga',
   's.createdOn',
   's.externalId',
+  's.parentWarehouseId',
   knex.raw('MAX(ii.updatedOn) as inventoryUpdatedOn'),
+  knex.raw('COALESCE(COUNT(DISTINCT sc.consumableId), 0) as siteConsumableCount'),
 ]
 
 const SELECT_SHOW_FIELDS = [
@@ -57,6 +61,8 @@ function getSitesQuery(dataConstraints) {
     .leftOuterJoin('State as sta', 'g.stateId', 'sta.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
     .leftOuterJoin('InventoryItem as ii', 's.id', 'ii.siteId')
+    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
+    .leftOuterJoin('Site as spw', 's.parentWarehouseId', 'spw.id')
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
     .groupBy(['s.id'])
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
@@ -108,6 +114,8 @@ async function listSites(request) {
         lgaId: 'g.lgaId',
         siteName: 's.name',
         externalId: 's.externalId',
+        parentWarehouseId: 's.parentWarehouseId',
+        siteTypeId: 'st.id',
       },
       { whereArgs: { handleNullValues: true } }
     )
@@ -153,13 +161,25 @@ async function showSite(request) {
   const dataConstraints = await getConstraints(auth.credentials)
 
   // get item
-  const site = await getSite(params.siteId, dataConstraints)
+  const siteQuery = getSite(params.siteId, dataConstraints)
+    .leftOuterJoin('MissingInventoryLots as m', 'm.siteId', 's.id')
+    .leftOuterJoin('Result as r', 'r.siteId', 'm.siteId')
+    .leftOuterJoin('ConsumableAssay as ca', 'ca.assayId', 'r.assayId')
+    .leftOuterJoin('Consumable as c', 'ca.consumableId', 'c.id')
+    .select([knex.raw('GROUP_CONCAT(DISTINCT c.id) as unreconciledConsumables')])
+    .groupBy('m.siteId')
 
+  const site = await siteQuery
   if (!site) {
     return Boom.notFound()
   }
+  const reconciledConsumables = await knex('InventoryItem').where({ siteId: params.siteId }).pluck('consumableId')
 
+  site.unreconciledConsumables = site.unreconciledConsumables ? site.unreconciledConsumables.split(',').map(Number) : []
+  site.selectedConsumables = [...new Set([...site.unreconciledConsumables, ...reconciledConsumables])]
   const tags = (await getTagsById(auth, site.id, 'site')) ?? []
+
+  site.consumableIds = await getSiteConsumables(site.id)
 
   site.devices = await getNotDecommissionedDevices(dataConstraints)
     .where('siteId', params.siteId)
@@ -250,6 +270,8 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('State as st', 'g.stateId', 'st.id')
     .leftOuterJoin('Lga as l', 'g.lgaId', 'l.id')
+    .leftOuterJoin('Site as stp', 's.parentWarehouseId', 'stp.id')
+    .leftOuterJoin('SiteConsumable as sc', 's.id', 'sc.siteId')
     .whereNotIn('s.externalId', INTERNAL_DEVICE_IDS)
 
   if (tags && tags.length > 0) {
@@ -269,7 +291,14 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     sitesQuery = sitesQuery.whereNotIn('s.id', siteIds)
   }
 
-  let columnsToSelect = ['s.id', 's.name', 'g.stateId', 'st.name as stateName']
+  let columnsToSelect = [
+    's.id',
+    's.name',
+    'g.stateId',
+    'st.name as stateName',
+    'stp.id as parentWarehouseId',
+    knex.raw(`GROUP_CONCAT(sc.consumableId SEPARATOR ',') as siteConsumables`),
+  ]
 
   if (mode !== 'reporter') {
     columnsToSelect = [
@@ -287,9 +316,17 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     .modify(addConstraints, dataConstraints, { site: 's', geography: 'g' })
     .orderBy(['s.name'], 'asc')
     .select(columnsToSelect)
+    .groupBy('s.id')
     .distinct()
 
   const sites = await sitesQuery
+  /**
+   * convert csv string of siteConsumables into array of numbers
+   */
+  const data = sites.map(it => {
+    it.siteConsumables = it.siteConsumables?.split(',').map(x => +x)
+    return it
+  })
 
   const countryState = await knex('Country as c')
     .innerJoin('Geography as g', 'g.countryId', 'c.id')
@@ -304,7 +341,7 @@ async function getListSitesForSelectList(dataConstraints, opt = {}) {
     countryName: countryState.countryName,
     stateName: countryState.stateName,
     mode,
-    data: sites,
+    data,
   }
 }
 
@@ -590,6 +627,10 @@ const getReportingSites = async request => {
     length: _.size(paginatedData),
     data: paginatedData,
   }
+}
+
+const getSiteConsumables = siteId => {
+  return knex('SiteConsumable').where('siteId', siteId).pluck('consumableId')
 }
 
 module.exports = {

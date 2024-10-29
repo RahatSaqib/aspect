@@ -2,13 +2,18 @@ import React, { useEffect, useState, useCallback } from 'react'
 import { Box, Button, Card, MenuItem, TextField } from '@mui/material'
 import isEmpty from 'lodash/isEmpty'
 import isEqual from 'lodash/isEqual'
-import isNil from 'lodash/isNil'
 import padStart from 'lodash/padStart'
 import times from 'lodash/times'
 import PropTypes from 'prop-types'
 import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { SiteListSelect, SiteTagInput, LocationSelector, TimezoneSelect } from '../../../../cleanComponents'
+import {
+  SiteListSelect,
+  SiteTagInput,
+  LocationSelector,
+  TimezoneSelect,
+  ConsumableSelect,
+} from '../../../../cleanComponents'
 import PermissionChecker from '../../../../components/PermissionChecker'
 import useCreateSite from '../../../../hooks/site/useCreateSite'
 import useDeleteSite from '../../../../hooks/site/useDeleteSite'
@@ -21,6 +26,7 @@ import styles from '../SiteDetail.module.css'
 import { convertToFloat, getLatLongFromAddress } from './address'
 import SiteTypeSelect from './SiteTypeSelect'
 
+const WAREHOUSE_SITE_TYPE_ID = 3
 const SiteForm = ({ site, onLatLongChange }) => {
   const { formatMessage } = useIntl()
   const user = useAuthState()
@@ -32,10 +38,11 @@ const SiteForm = ({ site, onLatLongChange }) => {
   const { mutate: deleteSite } = useDeleteSite(site.id)
   const { mutate: createSite } = useCreateSite()
   const [submitting, setSubmitting] = useState(false)
-  const [editSite, setEditSite] = useState({ ...site })
+  const [editSite, setEditSite] = useState({ ...site, ...(!site.countryId ? { countryId: user.countryId } : {}) })
   const [queryParamsForWarehouse] = useState({ siteTypeExternalIds: ['warehouse'], excludeSiteIds: [site.id] })
 
   const isPristine = isEqual(site, editSite)
+  const isWarehouse = editSite.siteTypeId === WAREHOUSE_SITE_TYPE_ID
   const isNew = site.id === 0
   const goBack = useCallback(() => gotoReturnUrl(navigate, location, '/browse/site'), [navigate, location])
 
@@ -71,6 +78,8 @@ const SiteForm = ({ site, onLatLongChange }) => {
         onSettled: () => setSubmitting(false),
       })
     } else {
+      delete editSite.unreconciledConsumables
+      delete editSite.selectedConsumables
       updateSite(editSite, {
         onSuccess: navigate(`/browse/site/${site.id}${location.search}`),
         onSettled: () => setSubmitting(false),
@@ -90,7 +99,11 @@ const SiteForm = ({ site, onLatLongChange }) => {
 
   const isError =
     !isPristine &&
-    (isEmpty(editSite.name) || isEmpty(editSite.shortName) || isNil(editSite.countryId) || isEmpty(editSite.externalId))
+    (isEmpty(editSite.name) ||
+      isEmpty(editSite.shortName) ||
+      isEmpty(editSite.countryId?.toString()) ||
+      isEmpty(editSite.externalId) ||
+      (!isWarehouse && (isEmpty(editSite.stateId?.toString()) || isEmpty(editSite.lgaId?.toString()))))
 
   return (
     <Box width="100%">
@@ -143,6 +156,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             <SiteTypeSelect
               name="siteType"
               width="33%"
+              className={styles.site_list_select}
               label={formatMessage(messages.fieldSiteType)}
               value={editSite.siteTypeId}
               onChange={siteTypeId => setEditSite({ ...editSite, siteTypeId })}
@@ -190,7 +204,11 @@ const SiteForm = ({ site, onLatLongChange }) => {
               countryId={editSite.countryId}
               stateId={editSite.stateId}
               lgaId={editSite.lgaId}
-              validators={{ country: { error: !isPristine && isNil(editSite.countryId), helperText: 'is required' } }}
+              validators={{
+                country: { error: !isPristine && isEmpty(editSite.countryId?.toString()) },
+                state: !isWarehouse ? { error: !isPristine && isEmpty(editSite.stateId?.toString()) } : {},
+                lga: !isWarehouse ? { error: !isPristine && isEmpty(editSite.lgaId?.toString()) } : {},
+              }}
               onChange={location => {
                 setEditSite({
                   ...editSite,
@@ -252,6 +270,7 @@ const SiteForm = ({ site, onLatLongChange }) => {
             />
             <SiteListSelect
               name="belongsTo"
+              className={styles.site_list_select}
               width="33%"
               label={formatMessage(messages.fieldBelongTo)}
               value={editSite.parentWarehouseId || ''}
@@ -348,6 +367,16 @@ const SiteForm = ({ site, onLatLongChange }) => {
             onChange={tags => setEditSite(prv => ({ ...prv, tags }))}
             value={editSite?.tags ?? []}
           />
+
+          {isNew ? (
+            <ConsumableSelect
+              label={formatMessage(messages.consumablesForSite)}
+              valueBy="id"
+              multiple
+              value={editSite?.consumableIds ?? []}
+              onChange={consumableIds => setEditSite(prv => ({ ...prv, consumableIds }))}
+            />
+          ) : null}
 
           <div className={`${styles.container} ${styles.coordinate}`}>
             <TextField

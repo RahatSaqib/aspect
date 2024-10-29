@@ -110,10 +110,19 @@ const getRawLinks = (f, user) => [
     label: f(messages.supplies),
     perm: ['+inventory'],
     submenu: [
-      { href: '/browse/inventory/supplies', label: f(messages.inventoryItems), perm: ['inventory'] },
+      { href: '/browse/inventory/supplies', label: f(messages.inventoryOnHand), perm: ['inventory'] },
       { href: '/browse/inventory/log', label: f(messages.inventoryLog), perm: ['inventory'] },
       { href: '/browse/inventory/transfers', label: f(messages.inventoryTransfers), perm: ['inventory'] },
       { href: '/browse/inventory/overview', label: f(messages.InventoryOverview), perm: ['inventory'] },
+      ...(user.isPakistan
+        ? [
+            {
+              href: '/browse/inventory/reconciliation',
+              label: f(messages.inventoryReconciliation),
+              perm: ['inventory'],
+            },
+          ]
+        : []),
     ],
   },
   { href: '/browse/reporter', label: f(messages.reporters), perm: ['browse', '+reporter'] },
@@ -136,6 +145,11 @@ const getRawLinks = (f, user) => [
     submenu: [
       { href: '/browse/admin/states', label: getCustomMessage(f, messages, 'state', user), perm: ['admin', 'edit'] },
       { href: '/browse/admin/lgas', label: getCustomMessage(f, messages, 'lga', user), perm: ['admin', 'edit'] },
+      {
+        href: '/browse/admin/inventory-list',
+        label: getCustomMessage(f, messages, 'inventoryItems', user),
+        perm: ['admin', 'edit'],
+      },
     ],
   },
 ]

@@ -1,0 +1,19 @@
+import React from 'react'
+import { Card, Switch, Typography } from '@mui/material'
+import { HierarchicalSiteView } from './HierarchicalSiteView'
+import { HierarchicalWarehouseView } from './HierarchicalWarehouseView'
+
+export function HierarchicalView(props) {
+  const { isWarehouseView, setIsWarehouseView } = props
+
+  return (
+    <Card sx={{ minWidth: 300, py: 2, maxHeight: 640, overflowY: 'auto' }}>
+      <Typography variant="body2" color="textSecondary" sx={{ px: 2 }}>
+        Geographical
+        <Switch checked={isWarehouseView} onChange={event => setIsWarehouseView(event.currentTarget.checked)} />
+        Warehouse
+      </Typography>
+      {isWarehouseView ? <HierarchicalWarehouseView {...props} /> : <HierarchicalSiteView {...props} />}
+    </Card>
+  )
+}

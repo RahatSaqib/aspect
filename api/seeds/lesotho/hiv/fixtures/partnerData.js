@@ -12,6 +12,7 @@ module.exports = {
   fixtures: {
     jobFunctions,
   },
+  partnerAbbreviation: 'LS',
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
   numberToLeaveUnacknowledged: null,

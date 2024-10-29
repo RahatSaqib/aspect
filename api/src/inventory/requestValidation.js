@@ -4,6 +4,7 @@ const { validateDateRangeParams, validateSortPageParams } = require('../routes')
 const { REGEX_ISODATESTRING } = require('../shared/date')
 
 const inventoryFilters = {
+  siteIds: Joi.string().allow('', null),
   siteId: Joi.number().integer().positive().allow('', null),
   consumableId: Joi.number().integer().positive().allow('', null),
   consumableExternalId: Joi.string().optional().allow('', null).description('The external id of the consumable item'),
@@ -16,8 +17,17 @@ const inventoryFilters = {
   minExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('From Date'),
   maxExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('To Date'),
 }
+const inventoryReconciliationFilters = {
+  siteName: Joi.string().allow('', null),
+  breakOutByLot: Joi.bool().allow(null),
+  consumableId: Joi.number().integer().positive().allow('', null),
+  lotNumber: Joi.string().allow('', null),
+  minExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('From Date'),
+  maxExpirationDate: Joi.string().pattern(REGEX_ISODATESTRING).allow(null).description('To Date'),
+}
 
 const inventoryTransferFilters = {
+  originSiteIds: Joi.string().allow('', null),
   originSiteName: Joi.string().allow('', null),
   destinationSiteName: Joi.string().allow('', null),
   consumableId: Joi.number().integer().positive().allow('', null),
@@ -80,5 +90,6 @@ module.exports = {
   removeInventoryCommonPayloadFields,
   adjustInventoryCommonPayloadFields,
   inventoryFilters,
+  inventoryReconciliationFilters,
   inventoryTransferFilters,
 }
