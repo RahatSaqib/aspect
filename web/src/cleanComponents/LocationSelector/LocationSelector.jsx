@@ -58,9 +58,13 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validator
         <StateSelectField
           onStateIdChange={updateState}
           stateId={selectedState.id}
+          error={validators.state.error}
           countryId={selectedCountry.id}
           tabIndex="0"
           aria-haspopup
+          helperText={formatMessage(messages.isRequired, {
+            entity: getCustomMessage(formatMessage, messages, 'state', user),
+          })}
           floatingLabelText={getCustomMessage(formatMessage, messages, 'state', user)}
           style={styles.field}
         />
@@ -71,6 +75,10 @@ const LocationSelector = ({ countryId, stateId, lgaId, user, onChange, validator
           countryId={selectedCountry.id}
           stateId={selectedState.id}
           lgaId={selectedLga.id}
+          error={validators.lga.error}
+          helperText={formatMessage(messages.isRequired, {
+            entity: getCustomMessage(formatMessage, messages, 'lga', user),
+          })}
           tabIndex="0"
           aria-haspopup
           floatingLabelText={getCustomMessage(formatMessage, messages, 'lga', user)}
