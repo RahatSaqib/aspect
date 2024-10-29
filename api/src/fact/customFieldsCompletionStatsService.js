@@ -44,17 +44,16 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
     async day => {
       const results = await getResultsCustomFields(selectColumnClauses, day, addDays(day, 1))
       const stats = generateStatsResult(allFields, results)
+
       await Promise.all(
         stats.map(async ({ siteId, assayId, date, ...rest }) => {
-          const query = knex('FactCustomFieldCompletion').where({ siteId, assayId, date })
-          const existedStat = await query.first()
-
-          if (existedStat)
-            await query.update({
+          await knex('FactCustomFieldCompletion')
+            .insert({ siteId, assayId, date, ...rest })
+            .onConflict(['siteId', 'assayId', 'date'])
+            .merge({
               ...rest,
               completionByField: JSON.stringify(rest.completionByField),
             })
-          else await knex('FactCustomFieldCompletion').insert({ siteId, assayId, date, ...rest })
         })
       )
 
@@ -105,11 +104,12 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .modify(queryBuilder => {
-      queryBuilder.orWhere(function () {
-        this.where('r.updatedOn', '>=', dateFrom).where('r.updatedOn', '<', dateTo)
-      })
-      queryBuilder.orWhere(function () {
-        this.where('r.endedOn', '>=', dateFrom).where('r.endedOn', '<', dateTo)
+      queryBuilder.where(function () {
+        this.where(function () {
+          this.where('r.endedOn', '>=', dateFrom).where('r.endedOn', '<', dateTo)
+        }).orWhere(function () {
+          this.where('r.updatedOn', '>=', dateFrom).where('r.updatedOn', '<', dateTo)
+        })
       })
     })
     .where('s.disabled', 0)
@@ -124,6 +124,7 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
     .count('* as recordCount')
     .select(...customFieldsClauses.map(cf => cf.clause))
     .orderBy('s.name')
+
   return data
 }
 
