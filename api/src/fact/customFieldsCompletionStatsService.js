@@ -45,20 +45,15 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
       const results = await getResultsCustomFields(selectColumnClauses, day, addDays(day, 1))
       const stats = generateStatsResult(allFields, results)
 
-      await Promise.all(
-        stats.map(async ({ siteId, assayId, date, ...rest }) => {
-          await knex('FactCustomFieldCompletion')
-            .insert({ siteId, assayId, date, ...rest })
-            .onConflict(['siteId', 'assayId', 'date'])
-            .merge({
-              siteId,
-              assayId,
-              date,
-              ...rest,
-              completionByField: JSON.stringify(rest.completionByField),
-            })
-        })
-      )
+      await Promise.each(stats, async ({ siteId, assayId, date, ...rest }) => {
+        await knex('FactCustomFieldCompletion')
+          .insert({ siteId, assayId, date, ...rest })
+          .onConflict(['siteId', 'assayId', 'date'])
+          .merge({
+            ...rest,
+            completionByField: JSON.stringify(rest.completionByField),
+          })
+      })
 
       insertedStats += stats.length
     },
