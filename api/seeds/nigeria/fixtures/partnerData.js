@@ -1,5 +1,4 @@
-const jobFunctions = require('./jobFunctions')
-const webhookServers = require('../../fixtures/webhookServers')
+const jobFunctions = require('../../fixtures/jobFunctions')
 
 module.exports = {
   partner: {
@@ -14,7 +13,6 @@ module.exports = {
   plugin: '',
   fixtures: {
     jobFunctions,
-    webhookServers,
   },
   deviceLogHistoryDays: 365,
   autoAcknowledgeOlderThanDays: null,
@@ -25,4 +23,17 @@ module.exports = {
   dueDaysInventoryStockExpiring: 30,
   serverUrl: 'https://nigeria.aspect.id',
   apiUrl: 'https://nigeria.aspect.id/api',
+  deviceConfiguration: [
+    {
+      deviceType: 'GeneXpert',
+      data: {
+        GxAlertApiEndpoint: 'https://nigeria.gxalert.com/api/',
+        EnableAspectSync: true,
+        SendResultsToAspect: true,
+        AspectUploadExcludePatientId: false,
+        AspectApiEndpoint: 'https://nigeria.aspect.id/api',
+        MigrateAspectApiKey: true,
+      },
+    },
+  ],
 }
