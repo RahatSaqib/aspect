@@ -88,6 +88,7 @@ async function getNotification(
     'nt.cronRecurrency',
     'nt.daysInactive',
     'nt.recurrenceFactor',
+    'nt.hasPassword',
     knex.raw(`nt.filterCondition -> '$.daysBeforeCalibrationDueDate'  as daysBeforeCalibrationDueDate`),
   ]
 ) {
@@ -377,6 +378,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
           cronRecurrency,
           recurrenceFactor,
           daysInactive,
+          hasPassword,
+          reportPassword: encryptedPassword,
         })
         .where({ id: notificationTypeId })
       ;({ messageTypeId } = await knex
