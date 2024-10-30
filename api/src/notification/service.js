@@ -489,7 +489,15 @@ async function sendNotificationsToPeople(txKnex, context, people, policy, notifi
             personId,
           },
         }
-        const { fileName: reportFileName, promise } = await saveReportToFile(auth, filters, externalId, false)
+        const notificationType = await knex('NotificationType').where({ id: notification.notificationTypeId }).first()
+
+        const { fileName: reportFileName, promise } = await saveReportToFile(
+          auth,
+          filters,
+          externalId,
+          false,
+          notificationType.reportPassword
+        )
         fileName = reportFileName
         // wait until report end
         await promise

@@ -252,6 +252,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     resultBasedScope,
     recurrenceFactor,
     daysInactive,
+    hasPassword,
+    reportPassword,
   } = payload
 
   const notificationTypeCategoryId = await notificationTypeCategoryToId(notificationTypeCategoryExternalId)
@@ -271,6 +273,11 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
     createdBy: userId,
     updatedOn: now,
     updatedBy: userId,
+  }
+  let encryptedPassword
+
+  if (hasPassword && reportPassword) {
+    encryptedPassword = Buffer.from(reportPassword).toString('base64')
   }
 
   return transact(async knex => {
@@ -328,6 +335,8 @@ async function saveNotificationType({ id: notificationTypeId, partnerId, userId,
         canAcknowledge: 0,
         name,
         enabled,
+        hasPassword,
+        reportPassword: encryptedPassword,
         ...auditFields,
       })
       /**
