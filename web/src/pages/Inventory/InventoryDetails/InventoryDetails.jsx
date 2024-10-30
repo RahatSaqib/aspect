@@ -3,7 +3,7 @@ import { Box, Card, CardContent, CircularProgress, Grid } from '@mui/material'
 import { useParams } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
 import { useConsumableById } from '../../../hooks/inventory/useConsumable'
-import { InventoryDetailsForm } from './InventoryDetailsForm'
+import { InventoryForm } from './InventoryForm/InventoryForm'
 import { InventoryTabs } from './InventoryTabs'
 
 export const InventoryDetails = () => {
@@ -20,7 +20,7 @@ export const InventoryDetails = () => {
         <Grid container spacing={3}>
           {/* Form Section */}
           <Grid item xs={12} md={8}>
-            <InventoryDetailsForm data={data} cartridgeId={cartridgeId} />
+            <InventoryForm data={data} cartridgeId={cartridgeId} />
           </Grid>
 
           {/* Tabs Section */}
