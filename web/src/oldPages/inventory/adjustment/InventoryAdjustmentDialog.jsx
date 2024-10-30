@@ -3,6 +3,7 @@ import { Button, DialogActions, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
+import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
 import useSiteList from '../../../hooks/site/useSiteList'
 import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
@@ -46,7 +47,7 @@ function InventoryAdjustmentDialog(props) {
         const isExpired = date => date && new Date(date) < new Date()
         const toSiteFilter = sites => {
           if (uiTransfer) {
-            sites = sites.filter(s => s.siteConsumables?.includes(values.consumable.id))
+            sites = sites?.filter(s => s.siteConsumables?.includes(values.consumable.id))
             if (isExpired(values.expiresOn ?? inventory?.expiresOn)) {
               sites = sites?.filter(it => it.id === fromSite.parentWarehouseId)
             }
@@ -54,7 +55,7 @@ function InventoryAdjustmentDialog(props) {
           return sites
         }
         const onToSiteChange = event => {
-          const toSiteId = event.target.value || undefined
+          const toSiteId = event.id || undefined
           setFieldValue('toSiteId', toSiteId)
           //
           if (actionType === types.SHOW_NEW_INVENTORY_DIALOG) {
@@ -104,21 +105,21 @@ function InventoryAdjustmentDialog(props) {
                 ) : null}
 
                 {actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG ? (
-                  <SiteSelect
+                  <SiteAutoCompleteField
                     name="toSiteId"
+                    value={values.toSiteId || ''}
+                    onChange={onToSiteChange}
+                    errorText={errors.toSiteId}
                     disabled={
                       actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG ||
                       actionType === types.SHOW_ADD_INVENTORY_DIALOG
                     }
-                    error={!!errors.toSiteId}
-                    helperText={errors.toSiteId}
+                    floatingLabelFixed
+                    floatingLabelText={formatMessage(messages.toSiteName)}
+                    width="100%"
                     customFilter={toSiteFilter}
-                    label={formatMessage(messages.toSiteName)}
-                    value={values.toSiteId || ''}
-                    onChange={onToSiteChange}
                   />
                 ) : null}
-
                 {!inventory ? (
                   <ConsumableSelect
                     name="consumable"

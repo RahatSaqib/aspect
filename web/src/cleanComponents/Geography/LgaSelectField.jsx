@@ -3,7 +3,7 @@ import { LinearProgress, MenuItem, TextField } from '@mui/material'
 import PropTypes from 'prop-types'
 import useLgaByState from '../../hooks/geography/useLgaByState'
 
-const LgaSelectField = ({ allItemText, lgaId, stateId, onLgaIdChange, floatingLabelText }) => {
+const LgaSelectField = ({ allItemText, lgaId, stateId, onLgaIdChange, floatingLabelText, error, helperText }) => {
   const { isLoading: isLgaLoading, data: lgas } = useLgaByState({ stateId }, { enabled: !!stateId })
 
   const handleSelectFieldChange = ({ target: { value } }) => {
@@ -17,6 +17,8 @@ const LgaSelectField = ({ allItemText, lgaId, stateId, onLgaIdChange, floatingLa
       select
       label={floatingLabelText}
       variant="standard"
+      error={error}
+      helperText={error ? helperText : null}
       disabled={!stateId}
       value={lgaId}
       onChange={handleSelectFieldChange}
@@ -40,6 +42,8 @@ LgaSelectField.propTypes = {
   lgaId: PropTypes.number,
   stateId: PropTypes.number,
   floatingLabelText: PropTypes.string.isRequired,
+  helperText: PropTypes.string,
+  error: PropTypes.bool,
 }
 
 LgaSelectField.defaultProps = {
@@ -47,4 +51,6 @@ LgaSelectField.defaultProps = {
   onLgaIdChange: () => {},
   lgaId: null,
   stateId: null,
+  helperText: undefined,
+  error: undefined,
 }

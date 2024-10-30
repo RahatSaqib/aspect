@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-09-05T18:28:58.893Z\n"
+"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"X-Generator: Poedit 3.4.4\n"
+"X-Generator: Poedit 3.5\n"
 
 #. [pages.ReportIndex.doNotUseModulesReport]
 #. defaultMessage is:
@@ -369,6 +369,13 @@ msgstr "Địa chỉ 2"
 msgid "Adjust"
 msgstr "Điều chỉnh"
 
+#. [pages.InventoryItemsList.adjustQuantity]
+#. defaultMessage is:
+#. Adjust Quantity
+#: extracted_strings.json
+msgid "Adjust Quantity"
+msgstr "Điều chỉnh số lượng"
+
 #. [jobFunction.admin]
 #. defaultMessage is:
 #. Admin
@@ -681,6 +688,19 @@ msgstr ""
 "Bạn có chắc chắn muốn xóa trang web này không? Hành động này chỉ dành cho "
 "các trang web thử nghiệm, tất cả dữ liệu trang web sẽ bị mất."
 
+#. [errorResponseMessages.updateConsumable.message]
+#. defaultMessage is:
+#. As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"As there is unreconciled consumption for the specified cartridge, "
+"{consumableName}, system cant allow delisting of the same at the site. "
+"Please reconcile your inventory to complete this action"
+msgstr ""
+"Vì có mức tiêu thụ chưa được đối chiếu cho hộp mực được chỉ định, "
+"{consumableName}, hệ thống không thể cho phép hủy niêm yết hộp mực đó tại "
+"trang web. Vui lòng đối chiếu hàng tồn kho của bạn để hoàn tất hành động này"
+
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
 #. Aspect Beta
@@ -726,6 +746,9 @@ msgstr "Aspect đã gặp vấn đề."
 #. [pages.NotificationDetail.assayTitle]
 #. defaultMessage is:
 #. Assay
+#. [pages.InventoryTabs.New.assay]
+#. defaultMessage is:
+#. Assay
 #: extracted_strings.json
 msgid "Assay"
 msgstr "Khảo nghiệm"
@@ -736,6 +759,13 @@ msgstr "Khảo nghiệm"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Loại thử nghiệm"
+
+#. [pages.InventoryTabs.New.headerText]
+#. defaultMessage is:
+#. Assay that Consume this Item
+#: extracted_strings.json
+msgid "Assay that Consume this Item"
+msgstr "Thử nghiệm tiêu thụ mặt hàng này"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -816,6 +846,13 @@ msgstr "Cần ít nhất một thử nghiệm để có thông báo dựa trên 
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Ít nhất một trong các kênh thông báo nên được chọn"
+
+#. [pages.Consumable.New.includeLocation]
+#. defaultMessage is:
+#. Automatic include location with reported consumption
+#: extracted_strings.json
+msgid "Automatic include location with reported consumption"
+msgstr "Tự động bao gồm vị trí với mức tiêu thụ được báo cáo"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -1761,6 +1798,27 @@ msgstr "Lý do tiêu thụ"
 msgid "Consumable Serial"
 msgstr "Serial tiêu dùng"
 
+#. [pages.SiteList.consumables]
+#. defaultMessage is:
+#. Consumables
+#: extracted_strings.json
+msgid "Consumables"
+msgstr "Tiêu thụ"
+
+#. [pages.SiteDetail.consumablesForSite]
+#. defaultMessage is:
+#. Consumables applicable for the site
+#: extracted_strings.json
+msgid "Consumables applicable for the site"
+msgstr "Vật tư tiêu hao áp dụng cho trang web"
+
+#. [pages.InventoryTabs.New.consumpationRate]
+#. defaultMessage is:
+#. Consumption Rate
+#: extracted_strings.json
+msgid "Consumption Rate"
+msgstr "Tỷ lệ tiêu thụ"
+
 #. [pages.PersonDetails.detailsCreatedSuccessfully]
 #. defaultMessage is:
 #. Contact Created Successfully
@@ -2338,7 +2396,7 @@ msgstr "Các trường hợp được xác nhận hàng ngày"
 #. Daily Consumption
 #: extracted_strings.json
 msgid "Daily Consumption"
-msgstr "Tiêu dùng hàng ngày"
+msgstr "Tiêu thụ hàng ngày"
 
 #. [pages.Status.covidGraphDailyMortalityAndrecovery.pie]
 #. defaultMessage is:
@@ -2604,6 +2662,13 @@ msgstr "Ngừng hoạt động"
 msgid "Define date range for report"
 msgstr "Xác định phạm vi ngày cho báo cáo"
 
+#. [pages.InventoryTabs.New.definitionText]
+#. defaultMessage is:
+#. Define which Assay consume this inventory item
+#: extracted_strings.json
+msgid "Define which Assay consume this inventory item"
+msgstr "Xác định Assay nào tiêu thụ mặt hàng tồn kho này"
+
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
 #. Delete (Only 0 triggers)
@@ -2730,7 +2795,7 @@ msgstr "Hoạt động thiết bị (Phần trăm)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Mức khu vực thiết bị"
+msgstr "Mức độ khu vực thiết bị"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -2785,7 +2850,7 @@ msgstr "Bảo trì thiết bị"
 #. Device Maker
 #: extracted_strings.json
 msgid "Device Maker"
-msgstr "Demo thiết bị"
+msgstr "Nhà sản xuất thiết bị"
 
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
@@ -5224,6 +5289,20 @@ msgstr "Hàng tồn kho sắp hết hạn"
 msgid "Inventory Item"
 msgstr "Mục hàng tồn kho"
 
+#. [pages.Consumable.New.name]
+#. defaultMessage is:
+#. Inventory Item Name
+#: extracted_strings.json
+msgid "Inventory Item Name"
+msgstr "Tên mặt hàng tồn kho"
+
+#. [pages.Consumable.New.inventoryItemNameRequired]
+#. defaultMessage is:
+#. Inventory Item Name Required
+#: extracted_strings.json
+msgid "Inventory Item Name Required"
+msgstr "Tên mặt hàng tồn kho bắt buộc"
+
 #. [pages.ReportIndex.inventoryLog]
 #. defaultMessage is:
 #. Inventory Log
@@ -5331,6 +5410,24 @@ msgstr "Các loại vấn đề"
 #: extracted_strings.json
 msgid "It might have been deleted or renamed"
 msgstr "Nó có thể đã bị xóa hoặc đổi tên"
+
+#. [pages.InventoryItemsList.dailyConsumptionRateDescription]
+#. defaultMessage is:
+#. Its the average daily consumption of the specific cartridge considering the last 180 day period
+#: extracted_strings.json
+msgid ""
+"Its the average daily consumption of the specific cartridge considering the "
+"last 180 day period"
+msgstr ""
+"Đây là mức tiêu thụ trung bình hàng ngày của hộp mực cụ thể trong khoảng "
+"thời gian 180 ngày qua"
+
+#. [pages.InventoryItemsList.quantityOnHandDescription]
+#. defaultMessage is:
+#. Its the current quantity in hand, including the expired quantity.
+#: extracted_strings.json
+msgid "Its the current quantity in hand, including the expired quantity."
+msgstr "Đó là số lượng hiện có trong tay, bao gồm cả số lượng đã hết hạn."
 
 #. [months.january]
 #. defaultMessage is:
@@ -6462,6 +6559,13 @@ msgstr "Quản lý"
 msgid "Manually set by {username} ({updatedDate})"
 msgstr "Được đặt thủ công bởi {username} ({updatedDate})"
 
+#. [pages.Consumable.New.manufacturer]
+#. defaultMessage is:
+#. Manufacturer
+#: extracted_strings.json
+msgid "Manufacturer"
+msgstr "Nhà sản xuất"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -6726,6 +6830,13 @@ msgstr "Hơn 550 cp / mL"
 #: extracted_strings.json
 msgid "More filters"
 msgstr "Nhiều bộ lọc hơn"
+
+#. [pages.InventoryAdjustmentDialogForm.expiryDateAfterToday]
+#. defaultMessage is:
+#. Must be later than today
+#: extracted_strings.json
+msgid "Must be later than today"
+msgstr "Phải muộn hơn hôm nay"
 
 #. [pages.common.notAvailable]
 #. defaultMessage is:
@@ -7265,6 +7376,13 @@ msgstr "Không thể"
 msgid "Not Recorded"
 msgstr "Không được ghi lại"
 
+#. [pages.ResultList.notProvided]
+#. defaultMessage is:
+#. Not provided
+#: extracted_strings.json
+msgid "Not provided"
+msgstr "Không cung cấp"
+
 #. [page.contacts.person.notSpecified]
 #. defaultMessage is:
 #. Not specified
@@ -7691,6 +7809,13 @@ msgstr "Tỷ lệ hoạt động tổng thể"
 msgid "Overall Network Health Daily"
 msgstr "Tình trạng tổng thể hệ thống hàng ngày"
 
+#. [pages.Consumable.New.partNumber]
+#. defaultMessage is:
+#. Part Number
+#: extracted_strings.json
+msgid "Part Number"
+msgstr "Số phần"
+
 #. [filter.popover.partner]
 #. defaultMessage is:
 #. Partner
@@ -7943,6 +8068,34 @@ msgstr "Vui lòng nhập địa chỉ email phù hợp"
 msgid "Please enter a valid url"
 msgstr "Vui lòng nhập một url hợp lệ"
 
+#. [pages.InventoryAdjustmentDialogForm.dateAdjustedGreaterThanToday]
+#. defaultMessage is:
+#. Please enter date until today
+#: extracted_strings.json
+msgid "Please enter date until today"
+msgstr "Vui lòng nhập ngày cho đến hôm nay"
+
+#. [pages.NewInventoryDialogForm.quantityInteger]
+#. defaultMessage is:
+#. Please enter integer value
+#: extracted_strings.json
+msgid "Please enter integer value"
+msgstr "Vui lòng nhập giá trị số nguyên"
+
+#. [pages.NewInventoryDialogForm.quantityNumber]
+#. defaultMessage is:
+#. Please enter positive integer value
+#: extracted_strings.json
+msgid "Please enter positive integer value"
+msgstr "Vui lòng nhập giá trị số nguyên dương"
+
+#. [pages.NewInventoryDialogForm.quantityPositive]
+#. defaultMessage is:
+#. Please enter positive value
+#: extracted_strings.json
+msgid "Please enter positive value"
+msgstr "Vui lòng nhập giá trị dương"
+
 #. [pages.ResetPassword.enterEmailAddressContent]
 #. defaultMessage is:
 #. Please enter the email address that you are registered with
@@ -8057,6 +8210,13 @@ msgstr "Vui lòng chỉ định một vật tư tiêu hao"
 #: extracted_strings.json
 msgid "Please specify a date"
 msgstr "Vui lòng chỉ định một ngày"
+
+#. [pages.InventoryAdjustmentDialogForm.lotNumberRequired]
+#. defaultMessage is:
+#. Please specify a lot number
+#: extracted_strings.json
+msgid "Please specify a lot number"
+msgstr "Vui lòng chỉ định số lô"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDateRequired]
 #. defaultMessage is:
@@ -8291,6 +8451,13 @@ msgstr "Năm trước"
 #: extracted_strings.json
 msgid "Previously treated"
 msgstr "Đã từng điều trị"
+
+#. [pages.Consumable.New.price]
+#. defaultMessage is:
+#. Price in $
+#: extracted_strings.json
+msgid "Price in $"
+msgstr "Giá bằng $"
 
 #. [errorResponseMessages.generic.proceedText]
 #. defaultMessage is:
@@ -8563,6 +8730,9 @@ msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
 
 #. [pages.InventoryLog.quantity]
+#. defaultMessage is:
+#. Quantity
+#. [pages.InventoryTabs.New.quantity]
 #. defaultMessage is:
 #. Quantity
 #: extracted_strings.json
@@ -9677,6 +9847,9 @@ msgstr "Thứ bảy"
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
 #. Save
+#. [pages.Consumable.New.save]
+#. defaultMessage is:
+#. Save
 #. [pages.NotificationDetail.save]
 #. defaultMessage is:
 #. Save
@@ -10445,7 +10618,13 @@ msgstr "Id trang web đã được sử dụng"
 msgid "Site Name"
 msgstr "Tên đơn vị"
 
+#. [filter.popover.siteType]
+#. defaultMessage is:
+#. Site Type
 #. [pages.SiteDetail.fieldSiteType]
+#. defaultMessage is:
+#. Site Type
+#. [pages.SiteList.siteType]
 #. defaultMessage is:
 #. Site Type
 #: extracted_strings.json
@@ -10573,6 +10752,17 @@ msgstr "Tin nhắn sms không được dài quá 2000 ký tự"
 msgid "Software Type"
 msgstr "Loại phần mềm"
 
+#. [pages.InventoryTabs.New.trackByLocationTooltip]
+#. defaultMessage is:
+#. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
+#: extracted_strings.json
+msgid ""
+"Some sites may appear unavailable for selection change as they have "
+"inventory or unreconciled transactions for the selected Inventory item"
+msgstr ""
+"Một số trang web có thể không khả dụng để thay đổi lựa chọn vì chúng có hàng "
+"tồn kho hoặc giao dịch chưa đối chiếu cho mục Hàng tồn kho đã chọn"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -10673,6 +10863,16 @@ msgstr "Trạng thái"
 #: extracted_strings.json
 msgid "Sticker Instrument Serial"
 msgstr "Nhãn dán nhạc cụ nối tiếp"
+
+#. [filter.popover.stockProvider]
+#. defaultMessage is:
+#. Stock Provider
+#. [pages.SiteList.stockProvider]
+#. defaultMessage is:
+#. Stock Provider
+#: extracted_strings.json
+msgid "Stock Provider"
+msgstr "Nhà cung cấp cổ phiếu"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11496,12 +11696,12 @@ msgid ""
 msgstr ""
 "Thông báo dựa trên kết quả có thể được gửi khi tạo thử nghiệm hoặc khi tạo "
 "và cập nhật thử nghiệm. Ngoài ra, một thử nghiệm sẽ chỉ kích hoạt thông báo "
-"nếu nó chưa đến {daysLimitToNotifyResults} ngày, nó đã được thực hiện trước "
-"lần cập nhật cuối cùng của thông báo này và nếu bất kỳ điều kiện nào tiếp "
-"theo được thực hiện: - Tất cả các trường tùy chỉnh được tham chiếu trong các "
-"mẫu thông báo đã được điền trong bài kiểm tra - "
-"{hoursNotificationsShouldWaitForCustomFields} giờ đã trôi qua kể từ khi bài "
-"kiểm tra được thực hiện"
+"nếu thử nghiệm đó có tuổi đời dưới {daysLimitToNotifyResults} ngày, được "
+"thực hiện trước lần cập nhật cuối cùng của thông báo này và nếu bất kỳ điều "
+"kiện nào sau đây được thực hiện: - Tất cả các trường tùy chỉnh được tham "
+"chiếu trong các mẫu của thông báo đã được điền trong thử nghiệm - "
+"{hoursNotificationsShouldWaitForCustomFields} giờ đã trôi qua kể từ khi thử "
+"nghiệm được thực hiện"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -12054,6 +12254,20 @@ msgstr "Tổng số kích hoạt"
 msgid "Trace Detected"
 msgstr "Đã phát hiện dấu vết"
 
+#. [pages.InventoryTabs.New.trackByLocation]
+#. defaultMessage is:
+#. Track By Location
+#: extracted_strings.json
+msgid "Track By Location"
+msgstr "Theo dõi theo vị trí"
+
+#. [pages.Consumable.New.trackByExpirationDate]
+#. defaultMessage is:
+#. Track by expiration date
+#: extracted_strings.json
+msgid "Track by expiration date"
+msgstr "Theo dõi theo ngày hết hạn"
+
 #. [pages.resultEdit.Training]
 #. defaultMessage is:
 #. Training
@@ -12074,6 +12288,13 @@ msgstr "Tranfer nhận được từ {refSiteName}"
 #: extracted_strings.json
 msgid "Tranfer sent to {refSiteName}"
 msgstr "Tranfer được gửi tới {refSiteName}"
+
+#. [pages.InventoryLog.transactionDate]
+#. defaultMessage is:
+#. Transaction Date
+#: extracted_strings.json
+msgid "Transaction Date"
+msgstr "Ngày giao dịch"
 
 #. [pages.transferResult.buttonTransfer]
 #. defaultMessage is:
@@ -12284,6 +12505,20 @@ msgstr "Không thể xóa vì có các thực thể liên kết với nó"
 #: extracted_strings.json
 msgid "Unable to delete since there are associated entities with it."
 msgstr "Không thể xóa vì có các thực thể liên kết với nó."
+
+#. [errorResponseMessages.updateConsumable.title]
+#. defaultMessage is:
+#. Unable to delist the cartridge !
+#: extracted_strings.json
+msgid "Unable to delist the cartridge !"
+msgstr "Không thể xóa hộp mực!"
+
+#. [pages.Consumable.New.unit]
+#. defaultMessage is:
+#. Unit
+#: extracted_strings.json
+msgid "Unit"
+msgstr "Đơn vị"
 
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
