@@ -47,7 +47,7 @@ function InventoryAdjustmentDialog(props) {
         const isExpired = date => date && new Date(date) < new Date()
         const toSiteFilter = sites => {
           if (uiTransfer) {
-            sites = sites.filter(s => s.siteConsumables?.includes(values.consumable.id))
+            sites = sites?.filter(s => s.siteConsumables?.includes(values.consumable.id))
             if (isExpired(values.expiresOn ?? inventory?.expiresOn)) {
               sites = sites?.filter(it => it.id === fromSite.parentWarehouseId)
             }

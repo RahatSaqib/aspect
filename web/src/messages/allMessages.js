@@ -418,6 +418,7 @@ const messages = defineMessages({
   numbersIncluded: { id: 'component.InputPassword.numbersIncluded', defaultMessage: 'Numbers Included' },
   country: { id: 'pages.LocationSelector.country', defaultMessage: 'Country' },
   countryRequired: { id: 'pages.LocationSelector.countryRequired', defaultMessage: 'Country is required' },
+  isRequired: { id: 'pages.LocationSelector.isRequired', defaultMessage: '{entity} is required' },
   accountDetails: { id: 'pages.HorizontalAppBar.accountDetails', defaultMessage: 'Account Details' },
   signOut: { id: 'pages.HorizontalAppBar.signOut', defaultMessage: 'Sign Out' },
   homeTitle: { id: 'header.link.home.title', defaultMessage: 'Home' },
