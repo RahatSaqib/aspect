@@ -221,9 +221,9 @@ const reportBasedSection = formatMessage => {
           items: [
             {
               id: 'reportPassword',
-              controlType: { component: 'textField' },
+              controlType: { component: 'passwordField' },
               classNames: { itemContainer: styles.item_in_group_container },
-              type: 'text',
+              type: 'password',
               labelI18nKey: 'password',
               visibleIf: values => values.hasPassword === true,
             },
