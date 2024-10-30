@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-01T16:44:10.702Z\n"
+"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -688,6 +688,19 @@ msgstr ""
 "Шумо мутмаин ҳастед, ки мехоҳед ин сайтро нест кунед? Ин амал танҳо барои "
 "сайтҳои санҷишӣ пешбинӣ шудааст, ҳама маълумоти сайт гум мешаванд."
 
+#. [errorResponseMessages.updateConsumable.message]
+#. defaultMessage is:
+#. As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"As there is unreconciled consumption for the specified cartridge, "
+"{consumableName}, system cant allow delisting of the same at the site. "
+"Please reconcile your inventory to complete this action"
+msgstr ""
+"Азбаски барои картриджи муайяншуда, {consumableName} истеъмоли номувофиқ "
+"мавҷуд аст, система имкон намедиҳад, ки аз рӯйхат хориҷ карда шавад. Лутфан "
+"инвентаризатсияи худро барои анҷом додани ин амал мувофиқат кунед"
+
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
 #. Aspect Beta
@@ -733,6 +746,9 @@ msgstr "Aspect ба мушкилот дучор шуд."
 #. [pages.NotificationDetail.assayTitle]
 #. defaultMessage is:
 #. Assay
+#. [pages.InventoryTabs.New.assay]
+#. defaultMessage is:
+#. Assay
 #: extracted_strings.json
 msgid "Assay"
 msgstr "Таҳлил"
@@ -743,6 +759,13 @@ msgstr "Таҳлил"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Навъи таҳлил"
+
+#. [pages.InventoryTabs.New.headerText]
+#. defaultMessage is:
+#. Assay that Consume this Item
+#: extracted_strings.json
+msgid "Assay that Consume this Item"
+msgstr "Санҷед, ки ин ашёро истеъмол кунед"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -823,6 +846,13 @@ msgstr "Барои огоҳиномаҳо дар асоси натиҷа ҳад�
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Ақаллан яке аз каналҳои огоҳӣ бояд интихоб карда шавад"
+
+#. [pages.Consumable.New.includeLocation]
+#. defaultMessage is:
+#. Automatic include location with reported consumption
+#: extracted_strings.json
+msgid "Automatic include location with reported consumption"
+msgstr "Ҷойгиркунии худкор бо истеъмоли гузоришшуда"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -1765,6 +1795,27 @@ msgstr "Сабаби истеъмолӣ"
 msgid "Consumable Serial"
 msgstr "Силсилаи истеъмолӣ"
 
+#. [pages.SiteList.consumables]
+#. defaultMessage is:
+#. Consumables
+#: extracted_strings.json
+msgid "Consumables"
+msgstr "Маводҳои истеъмолӣ"
+
+#. [pages.SiteDetail.consumablesForSite]
+#. defaultMessage is:
+#. Consumables applicable for the site
+#: extracted_strings.json
+msgid "Consumables applicable for the site"
+msgstr "Маводҳои истеъмолӣ барои сайт"
+
+#. [pages.InventoryTabs.New.consumpationRate]
+#. defaultMessage is:
+#. Consumption Rate
+#: extracted_strings.json
+msgid "Consumption Rate"
+msgstr "Меъёри истеъмол"
+
 #. [pages.PersonDetails.detailsCreatedSuccessfully]
 #. defaultMessage is:
 #. Contact Created Successfully
@@ -2608,6 +2659,14 @@ msgstr "Ба кор андохта шуд"
 #: extracted_strings.json
 msgid "Define date range for report"
 msgstr "Диапазони санаи гузоришро муайян кунед"
+
+#. [pages.InventoryTabs.New.definitionText]
+#. defaultMessage is:
+#. Define which Assay consume this inventory item
+#: extracted_strings.json
+msgid "Define which Assay consume this inventory item"
+msgstr ""
+"Муайян кунед, ки кадом Таҳлил ин ашёи инвентаризатсияро истеъмол мекунад"
 
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
@@ -5240,6 +5299,20 @@ msgstr "Мӯҳлати инвентаризатсия"
 msgid "Inventory Item"
 msgstr "Объекти инвентаризатсия"
 
+#. [pages.Consumable.New.name]
+#. defaultMessage is:
+#. Inventory Item Name
+#: extracted_strings.json
+msgid "Inventory Item Name"
+msgstr "Номи ашёи инвентаризатсия"
+
+#. [pages.Consumable.New.inventoryItemNameRequired]
+#. defaultMessage is:
+#. Inventory Item Name Required
+#: extracted_strings.json
+msgid "Inventory Item Name Required"
+msgstr "Номи ашёи инвентаризатсия талаб карда мешавад"
+
 #. [pages.ReportIndex.inventoryLog]
 #. defaultMessage is:
 #. Inventory Log
@@ -6497,6 +6570,13 @@ msgstr "Менеҷер"
 msgid "Manually set by {username} ({updatedDate})"
 msgstr "Аз ҷониби {username} ({updatedDate}) ба таври дастӣ насб карда шудааст"
 
+#. [pages.Consumable.New.manufacturer]
+#. defaultMessage is:
+#. Manufacturer
+#: extracted_strings.json
+msgid "Manufacturer"
+msgstr "Истеҳсолкунанда"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -6761,6 +6841,13 @@ msgstr "Зиёда аз 550 cp/mL"
 #: extracted_strings.json
 msgid "More filters"
 msgstr "Филтрҳои бештар"
+
+#. [pages.InventoryAdjustmentDialogForm.expiryDateAfterToday]
+#. defaultMessage is:
+#. Must be later than today
+#: extracted_strings.json
+msgid "Must be later than today"
+msgstr "Бояд аз имрӯз дертар бошад"
 
 #. [pages.common.notAvailable]
 #. defaultMessage is:
@@ -7738,6 +7825,13 @@ msgstr "Сатҳи умумии фаъолият"
 msgid "Overall Network Health Daily"
 msgstr "Ҳамарӯза саломатии шабакавӣ"
 
+#. [pages.Consumable.New.partNumber]
+#. defaultMessage is:
+#. Part Number
+#: extracted_strings.json
+msgid "Part Number"
+msgstr "Рақами қисм"
+
 #. [filter.popover.partner]
 #. defaultMessage is:
 #. Partner
@@ -7992,6 +8086,34 @@ msgstr "Лутфан нишонаи имейли амалкунандаро во
 msgid "Please enter a valid url"
 msgstr "Лутфан URL-и дурустро ворид кунед"
 
+#. [pages.InventoryAdjustmentDialogForm.dateAdjustedGreaterThanToday]
+#. defaultMessage is:
+#. Please enter date until today
+#: extracted_strings.json
+msgid "Please enter date until today"
+msgstr "Лутфан санаи то имрӯзро ворид кунед"
+
+#. [pages.NewInventoryDialogForm.quantityInteger]
+#. defaultMessage is:
+#. Please enter integer value
+#: extracted_strings.json
+msgid "Please enter integer value"
+msgstr "Лутфан арзиши бутунро ворид кунед"
+
+#. [pages.NewInventoryDialogForm.quantityNumber]
+#. defaultMessage is:
+#. Please enter positive integer value
+#: extracted_strings.json
+msgid "Please enter positive integer value"
+msgstr "Лутфан арзиши бутуни мусбатро ворид кунед"
+
+#. [pages.NewInventoryDialogForm.quantityPositive]
+#. defaultMessage is:
+#. Please enter positive value
+#: extracted_strings.json
+msgid "Please enter positive value"
+msgstr "Лутфан арзиши мусбатро ворид кунед"
+
 #. [pages.ResetPassword.enterEmailAddressContent]
 #. defaultMessage is:
 #. Please enter the email address that you are registered with
@@ -8107,6 +8229,13 @@ msgstr "Лутфан, маводи истеъмолиро муайян куне�
 #: extracted_strings.json
 msgid "Please specify a date"
 msgstr "Лутфан санаро муайян кунед"
+
+#. [pages.InventoryAdjustmentDialogForm.lotNumberRequired]
+#. defaultMessage is:
+#. Please specify a lot number
+#: extracted_strings.json
+msgid "Please specify a lot number"
+msgstr "Лутфан рақами зиёдеро нишон диҳед"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDateRequired]
 #. defaultMessage is:
@@ -8342,6 +8471,13 @@ msgstr "Соли гузашта"
 #: extracted_strings.json
 msgid "Previously treated"
 msgstr "Пештар табобат карда шуд"
+
+#. [pages.Consumable.New.price]
+#. defaultMessage is:
+#. Price in $
+#: extracted_strings.json
+msgid "Price in $"
+msgstr "Нарх бо доллар"
 
 #. [errorResponseMessages.generic.proceedText]
 #. defaultMessage is:
@@ -8614,6 +8750,9 @@ msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
 
 #. [pages.InventoryLog.quantity]
+#. defaultMessage is:
+#. Quantity
+#. [pages.InventoryTabs.New.quantity]
 #. defaultMessage is:
 #. Quantity
 #: extracted_strings.json
@@ -9729,6 +9868,9 @@ msgstr "шанбе"
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
 #. Save
+#. [pages.Consumable.New.save]
+#. defaultMessage is:
+#. Save
 #. [pages.NotificationDetail.save]
 #. defaultMessage is:
 #. Save
@@ -10498,7 +10640,13 @@ msgstr "Id сайт аллакай истифода мешавад"
 msgid "Site Name"
 msgstr "Номи сайт"
 
+#. [filter.popover.siteType]
+#. defaultMessage is:
+#. Site Type
 #. [pages.SiteDetail.fieldSiteType]
+#. defaultMessage is:
+#. Site Type
+#. [pages.SiteList.siteType]
 #. defaultMessage is:
 #. Site Type
 #: extracted_strings.json
@@ -10626,6 +10774,18 @@ msgstr "Паёми SMS набояд аз 2000 аломат зиёд бошад"
 msgid "Software Type"
 msgstr "Навъи нармафзор"
 
+#. [pages.InventoryTabs.New.trackByLocationTooltip]
+#. defaultMessage is:
+#. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
+#: extracted_strings.json
+msgid ""
+"Some sites may appear unavailable for selection change as they have "
+"inventory or unreconciled transactions for the selected Inventory item"
+msgstr ""
+"Баъзе сайтҳо метавонанд барои тағир додани интихоб дастнорас бошанд, зеро "
+"онҳо дорои инвентаризатсия ё муомилоти оштӣнашудаи ашёи инвентаризатсияи "
+"интихобшуда мебошанд."
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -10726,6 +10886,16 @@ msgstr "Статус"
 #: extracted_strings.json
 msgid "Sticker Instrument Serial"
 msgstr "Силсилаи асбобҳои стикер"
+
+#. [filter.popover.stockProvider]
+#. defaultMessage is:
+#. Stock Provider
+#. [pages.SiteList.stockProvider]
+#. defaultMessage is:
+#. Stock Provider
+#: extracted_strings.json
+msgid "Stock Provider"
+msgstr "Таъминкунандаи саҳмияҳо"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11559,9 +11729,9 @@ msgstr ""
 "навсозии санҷиш фиристода шавад. Инчунин, санҷиш танҳо огоҳиномаро оғоз "
 "мекунад, агар он аз {daysLimitToNotifyResults} рӯз камтар бошад, он пеш аз "
 "навсозии охирини ин огоҳинома анҷом дода шуда буд ва агар яке аз шартҳои "
-"навбатӣ иҷро шавад: - Ҳама майдонҳои фармоишӣ, ки дар Шаблонҳои огоҳинома "
-"дар санҷиш пур карда шуданд - {hoursNotificationsShouldWaitForCustomFields} "
-"аз замони анҷоми санҷиш соат гузашт"
+"навбатӣ иҷро шавад: - Ҳама майдонҳои фармоишии дар қолибҳои огоҳинома дар "
+"санҷиш пур карда шуданд - {hoursNotificationsShouldWaitForCustomFields} соат "
+"аз анҷоми санҷиш гузашт"
 
 #. [errorResponseMessages.common.filterError.message]
 #. defaultMessage is:
@@ -12120,6 +12290,20 @@ msgstr "Ҳама триггерҳо"
 msgid "Trace Detected"
 msgstr "Муайян карда шуд"
 
+#. [pages.InventoryTabs.New.trackByLocation]
+#. defaultMessage is:
+#. Track By Location
+#: extracted_strings.json
+msgid "Track By Location"
+msgstr "Аз рӯи макон пайгирӣ кунед"
+
+#. [pages.Consumable.New.trackByExpirationDate]
+#. defaultMessage is:
+#. Track by expiration date
+#: extracted_strings.json
+msgid "Track by expiration date"
+msgstr "Аз рӯи санаи анҷомёбӣ пайгирӣ кунед"
+
 #. [pages.resultEdit.Training]
 #. defaultMessage is:
 #. Training
@@ -12140,6 +12324,13 @@ msgstr "Интиқол аз {refSiteName} гирифта шудааст"
 #: extracted_strings.json
 msgid "Tranfer sent to {refSiteName}"
 msgstr "Интиқол ба {refSiteName} фиристода шуд"
+
+#. [pages.InventoryLog.transactionDate]
+#. defaultMessage is:
+#. Transaction Date
+#: extracted_strings.json
+msgid "Transaction Date"
+msgstr "Санаи муомилот"
 
 #. [pages.transferResult.buttonTransfer]
 #. defaultMessage is:
@@ -12350,6 +12541,20 @@ msgstr "Ҳазф кардан ғайриимкон аст, зеро бо он о
 #: extracted_strings.json
 msgid "Unable to delete since there are associated entities with it."
 msgstr "Ҳазф кардан ғайриимкон аст, зеро бо он объектҳои алоқаманд мавҷуданд."
+
+#. [errorResponseMessages.updateConsumable.title]
+#. defaultMessage is:
+#. Unable to delist the cartridge !
+#: extracted_strings.json
+msgid "Unable to delist the cartridge !"
+msgstr "Картриджро аз рӯйхат хориҷ кардан ғайриимкон аст!"
+
+#. [pages.Consumable.New.unit]
+#. defaultMessage is:
+#. Unit
+#: extracted_strings.json
+msgid "Unit"
+msgstr "Воҳиди"
 
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:

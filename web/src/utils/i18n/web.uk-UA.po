@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-01T16:44:10.702Z\n"
+"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -690,6 +690,19 @@ msgstr ""
 "Ви впевнені, що хочете видалити цей сайт? Ця дія призначена лише для "
 "тестових сайтів, усі дані сайту будуть втрачені."
 
+#. [errorResponseMessages.updateConsumable.message]
+#. defaultMessage is:
+#. As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action
+#: extracted_strings.json
+msgid ""
+"As there is unreconciled consumption for the specified cartridge, "
+"{consumableName}, system cant allow delisting of the same at the site. "
+"Please reconcile your inventory to complete this action"
+msgstr ""
+"Оскільки для вказаного картриджа {consumableName} існує неузгоджене "
+"споживання, система не може дозволити видалення його з переліку на сайті. "
+"Будь ласка, звірте свої запаси, щоб виконати цю дію"
+
 #. [jobFunction.aspectBeta]
 #. defaultMessage is:
 #. Aspect Beta
@@ -735,6 +748,9 @@ msgstr "Аспект зіткнувся з проблемою."
 #. [pages.NotificationDetail.assayTitle]
 #. defaultMessage is:
 #. Assay
+#. [pages.InventoryTabs.New.assay]
+#. defaultMessage is:
+#. Assay
 #: extracted_strings.json
 msgid "Assay"
 msgstr "Проба"
@@ -745,6 +761,13 @@ msgstr "Проба"
 #: extracted_strings.json
 msgid "Assay Type"
 msgstr "Тип аналізу"
+
+#. [pages.InventoryTabs.New.headerText]
+#. defaultMessage is:
+#. Assay that Consume this Item
+#: extracted_strings.json
+msgid "Assay that Consume this Item"
+msgstr "Аналізи, які використовують цей елемент"
 
 #. [pages.InventoryLog.ConsumableReason_AssertedInventoryOnHandAdd]
 #. defaultMessage is:
@@ -825,6 +848,13 @@ msgstr "Для сповіщень на основі результатів по�
 #: extracted_strings.json
 msgid "At least one of the notification channels should be selected"
 msgstr "Необхідно вибрати принаймні один із каналів сповіщень"
+
+#. [pages.Consumable.New.includeLocation]
+#. defaultMessage is:
+#. Automatic include location with reported consumption
+#: extracted_strings.json
+msgid "Automatic include location with reported consumption"
+msgstr "Автоматичне включення місцезнаходження зі звітом про споживання"
 
 #. [pages.Status.treatmentStatusTotalTitle.graph]
 #. defaultMessage is:
@@ -1767,6 +1797,27 @@ msgstr "Витратна причина"
 msgid "Consumable Serial"
 msgstr "Серійний витратний матеріал"
 
+#. [pages.SiteList.consumables]
+#. defaultMessage is:
+#. Consumables
+#: extracted_strings.json
+msgid "Consumables"
+msgstr "Витратні матеріали"
+
+#. [pages.SiteDetail.consumablesForSite]
+#. defaultMessage is:
+#. Consumables applicable for the site
+#: extracted_strings.json
+msgid "Consumables applicable for the site"
+msgstr "Витратні матеріали, що застосовуються для сайту"
+
+#. [pages.InventoryTabs.New.consumpationRate]
+#. defaultMessage is:
+#. Consumption Rate
+#: extracted_strings.json
+msgid "Consumption Rate"
+msgstr "Рівень споживання"
+
 #. [pages.PersonDetails.detailsCreatedSuccessfully]
 #. defaultMessage is:
 #. Contact Created Successfully
@@ -2612,6 +2663,13 @@ msgstr "Знятий з експлуатації"
 msgid "Define date range for report"
 msgstr "Визначте діапазон дат для звіту"
 
+#. [pages.InventoryTabs.New.definitionText]
+#. defaultMessage is:
+#. Define which Assay consume this inventory item
+#: extracted_strings.json
+msgid "Define which Assay consume this inventory item"
+msgstr "Визначте, який аналіз споживає цю позицію запасів"
+
 #. [contextualMenu.notifications.delete.title]
 #. defaultMessage is:
 #. Delete (Only 0 triggers)
@@ -2738,7 +2796,7 @@ msgstr "Активність на пристрої (у відсотках)"
 #. Device Area Level
 #: extracted_strings.json
 msgid "Device Area Level"
-msgstr "Рівень площі пристрою"
+msgstr "Рівень області пристрою"
 
 #. [pages.ReportIndex."deviceUtilizationReport"]
 #. defaultMessage is:
@@ -2793,7 +2851,7 @@ msgstr "Технічне обслуговування пристрою"
 #. Device Maker
 #: extracted_strings.json
 msgid "Device Maker"
-msgstr "Device Maker"
+msgstr "Виробник пристроїв"
 
 #. [forms.formItem.deviceName]
 #. defaultMessage is:
@@ -5239,6 +5297,20 @@ msgstr "Закінчується термін зберігання запасі�
 msgid "Inventory Item"
 msgstr "Тип картриджу"
 
+#. [pages.Consumable.New.name]
+#. defaultMessage is:
+#. Inventory Item Name
+#: extracted_strings.json
+msgid "Inventory Item Name"
+msgstr "Назва інвентарної позиції Назва інвентарної позиції"
+
+#. [pages.Consumable.New.inventoryItemNameRequired]
+#. defaultMessage is:
+#. Inventory Item Name Required
+#: extracted_strings.json
+msgid "Inventory Item Name Required"
+msgstr "Обов'язкова назва інвентарної позиції"
+
 #. [pages.ReportIndex.inventoryLog]
 #. defaultMessage is:
 #. Inventory Log
@@ -6497,6 +6569,13 @@ msgstr "Менеджер"
 msgid "Manually set by {username} ({updatedDate})"
 msgstr "Вручну встановлено {username} ({updatedDate})"
 
+#. [pages.Consumable.New.manufacturer]
+#. defaultMessage is:
+#. Manufacturer
+#: extracted_strings.json
+msgid "Manufacturer"
+msgstr "Виробник"
+
 #. [pages.DeviceList.merge]
 #. defaultMessage is:
 #. Merge
@@ -6761,6 +6840,13 @@ msgstr "Більше 550 cp/mL"
 #: extracted_strings.json
 msgid "More filters"
 msgstr "Більше фільтрів"
+
+#. [pages.InventoryAdjustmentDialogForm.expiryDateAfterToday]
+#. defaultMessage is:
+#. Must be later than today
+#: extracted_strings.json
+msgid "Must be later than today"
+msgstr "Має бути пізніше, ніж сьогодні"
 
 #. [pages.common.notAvailable]
 #. defaultMessage is:
@@ -7735,6 +7821,13 @@ msgstr "Загальний показник активності"
 msgid "Overall Network Health Daily"
 msgstr "Загальне здоров’я мережі щодня"
 
+#. [pages.Consumable.New.partNumber]
+#. defaultMessage is:
+#. Part Number
+#: extracted_strings.json
+msgid "Part Number"
+msgstr "Номер за каталогом"
+
 #. [filter.popover.partner]
 #. defaultMessage is:
 #. Partner
@@ -7988,6 +8081,34 @@ msgstr "Введіть дійсну адресу електронної пошт
 msgid "Please enter a valid url"
 msgstr "Введіть дійсну URL-адресу"
 
+#. [pages.InventoryAdjustmentDialogForm.dateAdjustedGreaterThanToday]
+#. defaultMessage is:
+#. Please enter date until today
+#: extracted_strings.json
+msgid "Please enter date until today"
+msgstr "Будь ласка, введіть дату до сьогоднішнього дня"
+
+#. [pages.NewInventoryDialogForm.quantityInteger]
+#. defaultMessage is:
+#. Please enter integer value
+#: extracted_strings.json
+msgid "Please enter integer value"
+msgstr "Будь ласка, введіть ціле значення"
+
+#. [pages.NewInventoryDialogForm.quantityNumber]
+#. defaultMessage is:
+#. Please enter positive integer value
+#: extracted_strings.json
+msgid "Please enter positive integer value"
+msgstr "Будь ласка, введіть додатне ціле число"
+
+#. [pages.NewInventoryDialogForm.quantityPositive]
+#. defaultMessage is:
+#. Please enter positive value
+#: extracted_strings.json
+msgid "Please enter positive value"
+msgstr "Будь ласка, введіть додатне значення"
+
 #. [pages.ResetPassword.enterEmailAddressContent]
 #. defaultMessage is:
 #. Please enter the email address that you are registered with
@@ -8100,6 +8221,13 @@ msgstr "Будь ласка, вкажіть витратний матеріал"
 #: extracted_strings.json
 msgid "Please specify a date"
 msgstr "Вкажіть дату"
+
+#. [pages.InventoryAdjustmentDialogForm.lotNumberRequired]
+#. defaultMessage is:
+#. Please specify a lot number
+#: extracted_strings.json
+msgid "Please specify a lot number"
+msgstr "Будь ласка, вкажіть номер лоту"
 
 #. [pages.InventoryAdjustmentDialogForm.expiryDateRequired]
 #. defaultMessage is:
@@ -8334,6 +8462,13 @@ msgstr "Попередньому році"
 #: extracted_strings.json
 msgid "Previously treated"
 msgstr "Попередній"
+
+#. [pages.Consumable.New.price]
+#. defaultMessage is:
+#. Price in $
+#: extracted_strings.json
+msgid "Price in $"
+msgstr "Ціна в доларах США"
 
 #. [errorResponseMessages.generic.proceedText]
 #. defaultMessage is:
@@ -8606,6 +8741,9 @@ msgid "QuantStudio7 Flex COVID-19"
 msgstr "QuantStudio7 Flex COVID-19"
 
 #. [pages.InventoryLog.quantity]
+#. defaultMessage is:
+#. Quantity
+#. [pages.InventoryTabs.New.quantity]
 #. defaultMessage is:
 #. Quantity
 #: extracted_strings.json
@@ -9718,6 +9856,9 @@ msgstr "Субота"
 #. [pages.PersonDetails.save]
 #. defaultMessage is:
 #. Save
+#. [pages.Consumable.New.save]
+#. defaultMessage is:
+#. Save
 #. [pages.NotificationDetail.save]
 #. defaultMessage is:
 #. Save
@@ -10485,7 +10626,13 @@ msgstr "Ідентифікатор сайту вже використовуєт�
 msgid "Site Name"
 msgstr "Назва сайту"
 
+#. [filter.popover.siteType]
+#. defaultMessage is:
+#. Site Type
 #. [pages.SiteDetail.fieldSiteType]
+#. defaultMessage is:
+#. Site Type
+#. [pages.SiteList.siteType]
 #. defaultMessage is:
 #. Site Type
 #: extracted_strings.json
@@ -10613,6 +10760,18 @@ msgstr "SMS-повідомлення не повинно бути довшим �
 msgid "Software Type"
 msgstr "Тип програмного забезпечення"
 
+#. [pages.InventoryTabs.New.trackByLocationTooltip]
+#. defaultMessage is:
+#. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
+#: extracted_strings.json
+msgid ""
+"Some sites may appear unavailable for selection change as they have "
+"inventory or unreconciled transactions for the selected Inventory item"
+msgstr ""
+"Деякі об'єкти можуть виявитися недоступними для зміни вибору, оскільки вони "
+"мають інвентаризацію або неузгоджені транзакції для вибраного об'єкта "
+"інвентаризації"
+
 #. [pages.DeviceList.sourceDevices]
 #. defaultMessage is:
 #. Source devices
@@ -10713,6 +10872,16 @@ msgstr "Статус"
 #: extracted_strings.json
 msgid "Sticker Instrument Serial"
 msgstr "Серійний номер приладу для наклейки"
+
+#. [filter.popover.stockProvider]
+#. defaultMessage is:
+#. Stock Provider
+#. [pages.SiteList.stockProvider]
+#. defaultMessage is:
+#. Stock Provider
+#: extracted_strings.json
+msgid "Stock Provider"
+msgstr "Постачальник акцій"
 
 #. [component.Widget.stockNotRecordedTitle]
 #. defaultMessage is:
@@ -11543,12 +11712,12 @@ msgid ""
 "{hoursNotificationsShouldWaitForCustomFields} hours passed since the test "
 "was done"
 msgstr ""
-"Сповіщення на основі результатів можна надіслати під час створення тесту або "
-"під час створення та оновлення тесту. Крім того, тест ініціюватиме "
-"сповіщення, лише якщо воно минуло менше ніж {daysLimitToNotifyResults} дн., "
-"його було виконано до останнього оновлення цього сповіщення та якщо виконано "
-"будь-яку з наступних умов: - Усі спеціальні поля, на які посилається в "
-"шаблони сповіщень були заповнені в тесті - з моменту виконання тесту пройшло "
+"Сповіщення на основі результатів може бути надіслано при створенні тесту або "
+"при створенні та оновленні тесту. Крім того, тест викличе сповіщення, тільки "
+"якщо йому менше {daysLimitToNotifyResults} днів, він був виконаний до "
+"останнього оновлення цього сповіщення і якщо виконано одну з наступних умов: "
+"- всі кастомні поля, на які є посилання в шаблонах сповіщення, були "
+"заповнені в тесті - з моменту виконання тесту пройшло "
 "{hoursNotificationsShouldWaitForCustomFields} годин"
 
 #. [errorResponseMessages.common.filterError.message]
@@ -12104,6 +12273,20 @@ msgstr "Всього тригерів"
 msgid "Trace Detected"
 msgstr "Виявлено слід"
 
+#. [pages.InventoryTabs.New.trackByLocation]
+#. defaultMessage is:
+#. Track By Location
+#: extracted_strings.json
+msgid "Track By Location"
+msgstr "Відстежувати за місцем розташування"
+
+#. [pages.Consumable.New.trackByExpirationDate]
+#. defaultMessage is:
+#. Track by expiration date
+#: extracted_strings.json
+msgid "Track by expiration date"
+msgstr "Відстежувати за терміном придатності"
+
 #. [pages.resultEdit.Training]
 #. defaultMessage is:
 #. Training
@@ -12124,6 +12307,13 @@ msgstr "Отримано переказ від {refSiteName}"
 #: extracted_strings.json
 msgid "Tranfer sent to {refSiteName}"
 msgstr "Переказ надіслано до {refSiteName}"
+
+#. [pages.InventoryLog.transactionDate]
+#. defaultMessage is:
+#. Transaction Date
+#: extracted_strings.json
+msgid "Transaction Date"
+msgstr "Дата транзакції"
 
 #. [pages.transferResult.buttonTransfer]
 #. defaultMessage is:
@@ -12334,6 +12524,20 @@ msgstr "Неможливо видалити, оскільки з ним пов'�
 #: extracted_strings.json
 msgid "Unable to delete since there are associated entities with it."
 msgstr "Неможливо видалити, оскільки з ним пов'язані сутності."
+
+#. [errorResponseMessages.updateConsumable.title]
+#. defaultMessage is:
+#. Unable to delist the cartridge !
+#: extracted_strings.json
+msgid "Unable to delist the cartridge !"
+msgstr "Неможливо видалити картридж зі списку!"
+
+#. [pages.Consumable.New.unit]
+#. defaultMessage is:
+#. Unit
+#: extracted_strings.json
+msgid "Unit"
+msgstr "Секція"
 
 #. [filter.AssayTypeSelectField.assayTypeUnknown]
 #. defaultMessage is:
