@@ -80,6 +80,7 @@ export function HierarchicalWarehouseView(props) {
           data={{ id: node.id, name: node.name }}
           callback={() => dispatch(selectUnselectLinkedWarehouseAction(currentIds))}
           selected={underDistributionSelectedSiteIds.has(node.id)}
+          expanded={expanded}
           options={{
             showChevron: Boolean(node.child?.length),
             noLeftPadding: parentIds.length === 0 && Boolean(node.child?.length),
@@ -115,6 +116,7 @@ export function HierarchicalWarehouseView(props) {
               }}
               callback={() => dispatch(selectUnselectUnlinkedSitesAction())}
               selected={outsideDistributionSelected}
+              expanded={expanded}
               options={{ showChevron: Boolean(outsideDistribution.length), noLeftPadding: true }}
             >
               {outsideDistributionSelected || expanded
@@ -125,6 +127,7 @@ export function HierarchicalWarehouseView(props) {
                       options={{ showChevron: false, noLeftPadding: false }}
                       callback={() => dispatch(selectUnselectUnlinkedSitesAction(site.id))}
                       selected={outsideDistributionSelectedSiteIds.has(site.id)}
+                      expanded={expanded}
                     />
                   ))
                 : null}

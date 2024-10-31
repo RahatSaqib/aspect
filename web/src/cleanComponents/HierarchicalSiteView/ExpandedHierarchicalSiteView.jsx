@@ -68,6 +68,7 @@ const Row = ({ item, options }) => {
   const { countryId } = useAuthState()
   return (
     <TreeNode
+      expanded
       selected={isMatch(filters, omitBy(item.filter, isNil))}
       callback={() => {
         if (item.filter) {
