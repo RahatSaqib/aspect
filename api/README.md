@@ -233,16 +233,41 @@ $ curl -H 'Authorization: Bearer ${jwt_token}' -H 'Content-Type: application/jso
 
 ## Tests
 
-Tests are in /test and written in Mocha/Chai
-To run tests, `yarn test` in the terminal
+Tests are located in the `/test` folder and are written using Mocha and Chai.
 
-### Running tests against a local database
+### Running Unit Tests
 
-The test suite makes actual requests to the API which queries a MySQL database. The connection settings are stored as environment variables.
-Environment variables are loaded from a file, called .env, that you need to add to the root of the application.
-See [Environment Configuration](#environment-configuration) in order to change the config, on your machine, to point to a local database
+To run unit tests from the root folder, use the following command:
 
-Once your environment is configured run tests using the `yarn test` command
+```bash
+yarn api:unit
+```
+
+To run unit tests from the `/api` folder, use this command:
+
+```bash
+yarn mocha:unit
+```
+
+These tests can run without the local development instance running in parallel.
+
+### Running Contract Tests Locally
+
+To run contract tests from the root folder, use this command:
+
+```bash
+yarn api:contract
+```
+
+To run contract tests from the `/api` folder, use this command:
+
+```bash
+yarn mocha:contract
+```
+
+The contract test suite makes actual requests to the API, utilizing all our real services like the database, message queue, and background jobs. Ensure the local server is running when executing contract tests.
+
+The connection settings are stored as environment variables. These variables are loaded from a file named `.env`, which you need to add to the root of the application. Refer to the [Environment Configuration](#environment-configuration) section to modify the configuration on your machine to point to a local database.
 
 ## Migrations
 
