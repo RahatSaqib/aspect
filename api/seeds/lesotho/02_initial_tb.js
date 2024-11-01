@@ -1,16 +1,22 @@
 module.exports = require('../utils').seed(seed, __filename)
 const bcrypt = require('bcrypt')
+const _ = require('lodash')
 const config = require('../../src/config')
 const { partnerTypeToId } = require('../../src/shared/dictionary')
 const updateReportsAndJobFunctions = require('../common/upsert_reports_&_job_functions')
 const upsertPartnerData = require('../common/upsert_partner_data')
 const { upsertMessageAndNotificationTypes } = require('../common/upsert_message_and_notification_types')
 const upsertTags = require('../common/upsert_tags')
-const { addDeviceCapacities, setCapacityForExistingDevices, seedIssueEscalationTrigger, seedIssueResolutionTrigger, upsertIssueResolutionTrigger } = require('../utils')
+const {
+  addDeviceCapacities,
+  setCapacityForExistingDevices,
+  seedIssueEscalationTrigger,
+  seedIssueResolutionTrigger,
+  upsertIssueResolutionTrigger,
+} = require('../utils')
 const { upsertFixture } = require('../common/upsert_Fixture')
 const upsertIssueEventTrigger = require('../common/upsert_issue_event_triggers')
 const seedModuleDisabledIssue = require('../common/20200902_add_issue_module_disabled')
-const _ = require('lodash')
 
 const {
   commonUpserts,
@@ -37,7 +43,7 @@ const {
   deviceApiToken,
   lowerLevelUserPassword,
   partnerAbbreviation,
-  partnerPlugin: pluginName
+  partnerPlugin: pluginName,
 } = partnerData
 
 async function seed(knex) {
@@ -88,28 +94,27 @@ async function seed(knex) {
   ])
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
 
-
-//   await baseGxAlertMigration(
-//     {
-//       admin: {
-//         name: adminUserName,
-//       },
-//       partner: {
-//         name: partnerName,
-//         externalId: partnerExternalId,
-//         serverUrl,
-//       },
-//       geographyFromGxAlert: geography,
-//       gxAlertDevice: {
-//         deviceApiKeyToken: deviceApiToken,
-//       },
-//     //   sitesFromGxAlert,
-//       jobFunctionsFixture,
-//     //   contactsFromGxAlert,
-//     },
-//     knex,
-//     partnerData
-//   )
+  //   await baseGxAlertMigration(
+  //     {
+  //       admin: {
+  //         name: adminUserName,
+  //       },
+  //       partner: {
+  //         name: partnerName,
+  //         externalId: partnerExternalId,
+  //         serverUrl,
+  //       },
+  //       geographyFromGxAlert: geography,
+  //       gxAlertDevice: {
+  //         deviceApiKeyToken: deviceApiToken,
+  //       },
+  //     //   sitesFromGxAlert,
+  //       jobFunctionsFixture,
+  //     //   contactsFromGxAlert,
+  //     },
+  //     knex,
+  //     partnerData
+  //   )
 
   await upsertDashboardWidgets(knex, partnerId)
   await updateReportsAndJobFunctions(knex, jobFunctionsFixture, partnerExternalId)
@@ -117,13 +122,13 @@ async function seed(knex) {
   await setCapacityForExistingDevices(knex)
   // await upsertMessageAndNotificationTypes(knex, partnerId, adminId)
   await upsertTags(knex, partnerExternalId)
-//   await upsertFixture(knex, notificationTypeCategories, 'NotificationTypeCategory')
+  //   await upsertFixture(knex, notificationTypeCategories, 'NotificationTypeCategory')
   await upsertIssueEventTrigger(knex, partnerExternalId)
   await addIssueTypes(knex, partnerId, adminId, null)
   await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
   await upsertIssueResolutionTrigger(knex, [
     // Module
-  
+
     {
       issueTypeId: 6,
       partnerId,

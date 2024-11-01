@@ -230,5 +230,4 @@ module.exports = [
   dataViewer,
   technician,
   aspectBeta,
-  
 ]
