@@ -2,14 +2,12 @@ const chai = require('chai')
 const addDays = require('date-fns/addDays')
 const subDays = require('date-fns/subDays')
 
-const { Promise } = require('bluebird')
 const { createTestContext, postToDeviceApi } = require('./utils')
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
 const { startOfDayUtc } = require('../../src/shared/date')
 const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 const { getPeopleBase } = require('../../src/shared/utilsPerson')
-const { waitForIdle } = require('../utils/mqUtils')
 
 const { assert } = chai
 
@@ -251,56 +249,6 @@ describe('Device daily details', () => {
       assert.equal(person.id, personNew.id)
       assert.equal(person.email, personNew.email)
       assert.equal(person.cell, personNew.cell)
-    })
-  })
-
-  describe('when a result is reported to a disabled device', () => {
-    afterEach(async () => {})
-
-    it('should activate the disabled device and resolve previously reported issues linked to disabling device', async () => {
-      const { deviceAuth, deviceId } = context
-      await waitForIdle()
-      const responseWithIssue = await postToDeviceApi({
-        authHeader: deviceAuth,
-        payload: {
-          includeDeviceConfiguration: true,
-          name: 'Abura Dunkwa district Hospital',
-          serial: 'Cepheid-982347-1',
-          status: null,
-          type: {
-            id: 'CepheidGeneXpert',
-          },
-          site: null,
-          checkpoint: null,
-          log: null,
-          configuration: {
-            checkpoint: null,
-            data: {
-              macAddress: 'MAC345345390',
-              shortName: 'test 17',
-              hostId: null,
-              country: 'US',
-              deviceSerialNumber: 'Cep1-0',
-              lastPingOn: '2024-06-04T04:10:41Z',
-              disabledModules: [
-                {
-                  SiteSerialNumber: 'M-1234-0',
-                  UserId: '6',
-                  Creation: '2024-10-26T10:54:58.61Z',
-                },
-              ],
-            },
-          },
-          operation: null,
-        },
-      })
-
-      await waitForIdle()
-      console.log('What si the response ', responseWithIssue.body)
-      const issues = await knex('Issue').where({ deviceId }).select('id', 'deviceId')
-      const devices = await knex('Device').where({ id: deviceId })
-      console.log('Issues count ::::: ====== >>>>>>>', issues)
-      console.log('Devices count ::::: ====== >>>>>>>', devices)
     })
   })
 })
