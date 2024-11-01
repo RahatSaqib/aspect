@@ -235,6 +235,9 @@ $ curl -H 'Authorization: Bearer ${jwt_token}' -H 'Content-Type: application/jso
 
 Tests are located in the `/test` folder and are written using Mocha and Chai.
 
+Unit test files should have a `.test.js` suffix.
+Contract test files should have a `.spec.js` suffix.
+
 ### Running Unit Tests
 
 To run unit tests from the root folder, use the following command:
