@@ -87,7 +87,7 @@ function deviceApiHandler(handler, defaultHandlerOptions = {}, isFastImport = fa
     const deviceId = device.id
     // TODO Does Hapi Remote address work through proxies? Check headers?
     const remoteAddress = getRemoteAddress(request)
-    console.log('What is teh handlerOptions ', handlerOptions)
+
     // Insert Device Log and Update Ping prior to calling handler and
     // in separate transaction so it is recorded even if handler fails
     let deviceLogId = null
@@ -217,10 +217,9 @@ async function addDeviceDataWithContext(context) {
     logger.debug('executing updateSiteWithContext', {
       reLabel: 'deviceApi:updateDeviceConfigurationWithContext',
     })
-    const whatsTheContext = context.withPayload(configuration)
     response = {
       ...response,
-      ...(await updateDeviceConfigurationWithContext(whatsTheContext)),
+      ...(await updateDeviceConfigurationWithContext(context.withPayload(configuration))),
     }
   }
   if (includeDeviceConfiguration) {
@@ -501,7 +500,6 @@ async function updateDeviceConfigurationWithContext(context) {
     deviceTypePluginName,
     messageContext,
   } = context
-
   const preProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessUpdateDeviceConfiguration')
   await preProcess(context)
 
