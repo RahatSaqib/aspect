@@ -201,7 +201,9 @@ async function createDevice(
   const deviceTypeId = await deviceTypeToId(type)
 
   const deviceCapacity = await knex('DeviceCapacity')
-    .where({ deviceTypeId, partnerId, defaultForDeviceType: 1 })
+    .where({ deviceTypeId })
+    .where({ partnerId })
+    .where({ defaultForDeviceType: 1 })
     .first('id')
 
   const [deviceId] = await knex('Device').insert({
