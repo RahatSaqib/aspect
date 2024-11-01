@@ -109,7 +109,7 @@ describe('Integration test for bangladesh device status', () => {
         ),
       })
 
-      // assert.equal(response.statusCode, 200)
+      assert.equal(response.statusCode, 200)
 
       await waitForModuleDisabledIssue
       await waitForIdle()

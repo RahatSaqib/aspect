@@ -247,7 +247,6 @@ function deviceModuleDisabled(device, moduleSerial, disabledOn) {
   if (!device || !moduleSerial || !disabledOn) {
     throw new Error('Must specify deviceId, moduleSerial and disabledOn and for deviceModuleDisable')
   }
-  console.log('This is queued :::: === > ', device)
   return {
     type: types.DEVICE_MODULE_DISABLE_RECEIVED,
     deviceId: device.id,

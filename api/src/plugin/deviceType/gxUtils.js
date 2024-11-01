@@ -61,7 +61,6 @@ async function preProcessAddDeviceData({ knex, device, payload, now, messageCont
   }
 
   if (configurationData.disabledModules) {
-    console.log('Inside checking the disabled modules::: ', configurationData.disabledModules)
     await Promise.each(configurationData.disabledModules, modules =>
       shouldTriggerModuleDisabled(knex, messageContext, device, modules)
     )
@@ -308,8 +307,6 @@ async function postProcessUpdateDeviceConfiguration({ knex, payload, device: { i
     const {
       data: { macAddress, hostId, culture, timezone, deviceSerialNumber, lastPingOn, state, lga, latitude, longitude },
     } = payload
-
-    console.log('Came inside ra rey, payload is::: ', payload)
 
     const deviceDetails = {
       hostId,
