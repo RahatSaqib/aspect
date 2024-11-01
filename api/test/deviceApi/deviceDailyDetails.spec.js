@@ -283,7 +283,7 @@ describe('Device daily details', () => {
     })
 
     it('should activate the disabled device and resolve previously reported issues linked to disabling device', async () => {
-      const { deviceAuth, userId, deviceId, siteId } = context
+      const { deviceAuth, userId } = context
 
       // no Person with such name
       let person = await knex('Person').where('name', labContactName).first()
@@ -314,7 +314,7 @@ describe('Device daily details', () => {
 
       await Promise.delay(2000)
 
-      const device = await knex('Issue').where({})
+      await knex('Issue').where({})
     })
   })
 })
