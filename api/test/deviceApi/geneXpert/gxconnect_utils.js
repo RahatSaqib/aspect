@@ -199,7 +199,7 @@ class GxConnectApiTestContext {
       site: null,
       log: null,
       configuration: {
-        data: { macAddress, hostId, deviceSerialNumber },
+        data: { macAddress, hostId, deviceSerialNumber, country: 'BD' },
       },
       operation: null,
       result: null,
@@ -312,6 +312,7 @@ class GxConnectApiTestContext {
         })
       )
       .then(res => {
+        console.log('What is teh issue ', res)
         assert.equal(res.statusCode, 200)
       })
       .catch(assert.fail)

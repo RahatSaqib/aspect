@@ -9,6 +9,7 @@ const { knex } = require('../../src/db')
 const { startOfDayUtc } = require('../../src/shared/date')
 const { deviceMaintenanceTypeToId } = require('../../src/shared/dictionary')
 const { getPeopleBase } = require('../../src/shared/utilsPerson')
+const { waitForIdle } = require('../utils/mqUtils')
 
 const { assert } = chai
 
@@ -254,67 +255,52 @@ describe('Device daily details', () => {
   })
 
   describe('when a result is reported to a disabled device', () => {
-    const now = new Date()
-    const labContactName = `Lab Contact ${now.getTime()}`
-    const installerName = `Installer ${now.getTime()}`
-    const configurationData = {
-      culture: 'en-US',
-      timezone: 'Myanmar Standard Time',
-      labContactName,
-      labContactEmail: 'test@contract.co',
-      labContactCell: '+27800243232',
-      installerName,
-      installerEmail: 'another@email.io',
-      installerCell: '+27831238183',
-    }
-    let personIds = []
-
-    beforeEach(() => {
-      personIds = []
-    })
-    afterEach(async () => {
-      await knex('JobContext').where('siteId', context.siteId).del()
-      await knex('JobContext').whereIn('personId', personIds).del()
-      await knex('Person')
-        .where(builder => {
-          builder.whereIn('name', [labContactName, installerName]).whereIn('id', personIds)
-        })
-        .del()
-    })
+    afterEach(async () => {})
 
     it('should activate the disabled device and resolve previously reported issues linked to disabling device', async () => {
-      const { deviceAuth, userId } = context
-
-      // no Person with such name
-      let person = await knex('Person').where('name', labContactName).first()
-      assert.isUndefined(person)
-      ;[person] = [await knex('Person').where('name', installerName).first()]
-      assert.isUndefined(person)
-
-      /**
-       * post and create person
-       */
-      await postToDeviceApi({
+      const { deviceAuth, deviceId } = context
+      await waitForIdle()
+      const responseWithIssue = await postToDeviceApi({
         authHeader: deviceAuth,
         payload: {
+          includeDeviceConfiguration: true,
+          name: 'Abura Dunkwa district Hospital',
+          serial: 'Cepheid-982347-1',
+          status: null,
+          type: {
+            id: 'CepheidGeneXpert',
+          },
+          site: null,
+          checkpoint: null,
+          log: null,
           configuration: {
+            checkpoint: null,
             data: {
-              ...configurationData,
+              macAddress: 'MAC345345390',
+              shortName: 'test 17',
+              hostId: null,
+              country: 'US',
+              deviceSerialNumber: 'Cep1-0',
+              lastPingOn: '2024-06-04T04:10:41Z',
               disabledModules: [
                 {
-                  SiteSerialNumber: '1234',
-                  UserId: userId,
-                  Creation: new Date().toISOString(),
+                  SiteSerialNumber: 'M-1234-0',
+                  UserId: '6',
+                  Creation: '2024-10-26T10:54:58.61Z',
                 },
               ],
             },
           },
+          operation: null,
         },
       })
 
-      await Promise.delay(2000)
-
-      await knex('Issue').where({})
+      await waitForIdle()
+      console.log('What si the response ', responseWithIssue.body)
+      const issues = await knex('Issue').where({ deviceId }).select('id', 'deviceId')
+      const devices = await knex('Device').where({ id: deviceId })
+      console.log('Issues count ::::: ====== >>>>>>>', issues)
+      console.log('Devices count ::::: ====== >>>>>>>', devices)
     })
   })
 })
