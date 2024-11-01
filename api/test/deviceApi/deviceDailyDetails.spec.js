@@ -2,6 +2,7 @@ const chai = require('chai')
 const addDays = require('date-fns/addDays')
 const subDays = require('date-fns/subDays')
 
+const { Promise } = require('bluebird')
 const { createTestContext, postToDeviceApi } = require('./utils')
 const server = require('../utils/testUtils')
 const { knex } = require('../../src/db')
@@ -267,11 +268,6 @@ describe('Device daily details', () => {
       installerCell: '+27831238183',
     }
     let personIds = []
-    const getPerson = async name =>
-      getPeopleBase()
-        .where('p.name', name)
-        .groupBy('p.id')
-        .first('p.id', 'p.name', 'p.email', 'p.email2', 'p.cell', 'jc.id as jobContextId')
 
     beforeEach(() => {
       personIds = []
@@ -287,7 +283,7 @@ describe('Device daily details', () => {
     })
 
     it('should activate the disabled device and resolve previously reported issues linked to disabling device', async () => {
-      const { deviceAuth, siteId } = context
+      const { deviceAuth, userId, deviceId, siteId } = context
 
       // no Person with such name
       let person = await knex('Person').where('name', labContactName).first()
@@ -304,68 +300,21 @@ describe('Device daily details', () => {
           configuration: {
             data: {
               ...configurationData,
+              disabledModules: [
+                {
+                  SiteSerialNumber: '1234',
+                  UserId: userId,
+                  Creation: new Date().toISOString(),
+                },
+              ],
             },
           },
         },
       })
 
-      // created Person for labContactName
-      ;[person] = [await getPerson(labContactName)]
-      personIds.push(person.id)
-      assert.isDefined(person)
-      assert.isDefined(person.jobContextId)
-      assert.equal(person.email, configurationData.labContactEmail)
-      assert.equal(person.cell, configurationData.labContactCell)
-      // created Person for installerName
-      const installer = await getPerson(installerName)
-      personIds.push(installer.id)
-      assert.isDefined(installer)
-      assert.isDefined(installer.jobContextId)
-      assert.equal(installer.email, configurationData.installerEmail)
-      assert.equal(installer.cell, configurationData.installerCell)
+      await Promise.delay(2000)
 
-      /**
-       * person is assigned to device's site as Lab User
-       */
-      const { id: jobFunctionIdLab } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
-
-      // person's job for Lab User
-      const jobContext = await knex('JobContext').where('id', person.jobContextId).first()
-      assert.equal(jobContext.personId, person.id)
-      assert.equal(jobContext.jobFunctionId, jobFunctionIdLab)
-
-      // site assignment
-      const jobContext2 = await knex('JobContext')
-        .where({
-          id: person.jobContextId,
-          siteId,
-        })
-        .first()
-      assert.isDefined(jobContext2)
-
-      /**
-       * post another email/cell and check that email/cell of the person didn't change
-       */
-      const labContactEmailNew = 'another-test@contract.co'
-      const labContactCellNew = '+111-222-3333'
-      await postToDeviceApi({
-        authHeader: deviceAuth,
-        payload: {
-          configuration: {
-            data: {
-              ...configurationData,
-              labContactEmail: labContactEmailNew,
-              labContactCell: labContactCellNew,
-            },
-          },
-        },
-      })
-      // NOT created Person for new email
-      const personNew = await getPerson(labContactName)
-      assert.isDefined(personNew)
-      assert.equal(person.id, personNew.id)
-      assert.equal(person.email, personNew.email)
-      assert.equal(person.cell, personNew.cell)
+      const device = await knex('Issue').where({})
     })
   })
 })

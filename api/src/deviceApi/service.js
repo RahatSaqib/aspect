@@ -500,6 +500,7 @@ async function updateDeviceConfigurationWithContext(context) {
     deviceTypePluginName,
     messageContext,
   } = context
+
   const preProcess = await loadPlugin(partnerPluginName, deviceTypePluginName, 'preProcessUpdateDeviceConfiguration')
   await preProcess(context)
 

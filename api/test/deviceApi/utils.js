@@ -477,15 +477,12 @@ class DeviceApiTestContext {
     this.siteIds.push(siteId)
     this.siteIds.push(site2Id)
 
-    console.log('What are the siteIds ', this.siteIds, this.type, this.approval, this.baseConfig)
-
     const deviceId = await createDevice(knex, {
       siteId,
       type: this.type,
       approval: this.approval,
       baseConfig: this.baseConfig,
     })
-    console.log('What are the deviceId ', deviceId)
     this.deviceId = deviceId
     this.deviceIds.push(deviceId)
     this.siteId = siteId // device is assigned to this site

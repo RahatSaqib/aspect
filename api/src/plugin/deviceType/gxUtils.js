@@ -56,8 +56,6 @@ async function preProcessAddDeviceData({ knex, device, payload, now, messageCont
     deviceDetails.lastPingOn = parseDateOrDefault(configurationData.lastPingOn, now)
   }
 
-  console.log('Came inside to check it ::: ==== >>>> ', configurationData)
-
   if (!isFastImport) {
     await knex.from('Device').where({ id: device.id }).update(deviceDetails)
   }
