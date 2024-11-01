@@ -251,4 +251,121 @@ describe('Device daily details', () => {
       assert.equal(person.cell, personNew.cell)
     })
   })
+
+  describe('when a result is reported to a disabled device', () => {
+    const now = new Date()
+    const labContactName = `Lab Contact ${now.getTime()}`
+    const installerName = `Installer ${now.getTime()}`
+    const configurationData = {
+      culture: 'en-US',
+      timezone: 'Myanmar Standard Time',
+      labContactName,
+      labContactEmail: 'test@contract.co',
+      labContactCell: '+27800243232',
+      installerName,
+      installerEmail: 'another@email.io',
+      installerCell: '+27831238183',
+    }
+    let personIds = []
+    const getPerson = async name =>
+      getPeopleBase()
+        .where('p.name', name)
+        .groupBy('p.id')
+        .first('p.id', 'p.name', 'p.email', 'p.email2', 'p.cell', 'jc.id as jobContextId')
+
+    beforeEach(() => {
+      personIds = []
+    })
+    afterEach(async () => {
+      await knex('JobContext').where('siteId', context.siteId).del()
+      await knex('JobContext').whereIn('personId', personIds).del()
+      await knex('Person')
+        .where(builder => {
+          builder.whereIn('name', [labContactName, installerName]).whereIn('id', personIds)
+        })
+        .del()
+    })
+
+    it('should activate the disabled device and resolve previously reported issues linked to disabling device', async () => {
+      const { deviceAuth, siteId } = context
+
+      // no Person with such name
+      let person = await knex('Person').where('name', labContactName).first()
+      assert.isUndefined(person)
+      ;[person] = [await knex('Person').where('name', installerName).first()]
+      assert.isUndefined(person)
+
+      /**
+       * post and create person
+       */
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: {
+          configuration: {
+            data: {
+              ...configurationData,
+            },
+          },
+        },
+      })
+
+      // created Person for labContactName
+      ;[person] = [await getPerson(labContactName)]
+      personIds.push(person.id)
+      assert.isDefined(person)
+      assert.isDefined(person.jobContextId)
+      assert.equal(person.email, configurationData.labContactEmail)
+      assert.equal(person.cell, configurationData.labContactCell)
+      // created Person for installerName
+      const installer = await getPerson(installerName)
+      personIds.push(installer.id)
+      assert.isDefined(installer)
+      assert.isDefined(installer.jobContextId)
+      assert.equal(installer.email, configurationData.installerEmail)
+      assert.equal(installer.cell, configurationData.installerCell)
+
+      /**
+       * person is assigned to device's site as Lab User
+       */
+      const { id: jobFunctionIdLab } = await knex('JobFunction').where({ name: 'Lab User' }).first('id')
+
+      // person's job for Lab User
+      const jobContext = await knex('JobContext').where('id', person.jobContextId).first()
+      assert.equal(jobContext.personId, person.id)
+      assert.equal(jobContext.jobFunctionId, jobFunctionIdLab)
+
+      // site assignment
+      const jobContext2 = await knex('JobContext')
+        .where({
+          id: person.jobContextId,
+          siteId,
+        })
+        .first()
+      assert.isDefined(jobContext2)
+
+      /**
+       * post another email/cell and check that email/cell of the person didn't change
+       */
+      const labContactEmailNew = 'another-test@contract.co'
+      const labContactCellNew = '+111-222-3333'
+      await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: {
+          configuration: {
+            data: {
+              ...configurationData,
+              labContactEmail: labContactEmailNew,
+              labContactCell: labContactCellNew,
+            },
+          },
+        },
+      })
+      // NOT created Person for new email
+      const personNew = await getPerson(labContactName)
+      assert.isDefined(personNew)
+      assert.equal(person.id, personNew.id)
+      assert.equal(person.email, personNew.email)
+      assert.equal(person.cell, personNew.cell)
+    })
+  })
 })

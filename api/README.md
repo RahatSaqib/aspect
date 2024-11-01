@@ -272,6 +272,8 @@ The contract test suite makes actual requests to the API, utilizing all our real
 
 The connection settings are stored as environment variables. These variables are loaded from a file named `.env`, which you need to add to the root of the application. Refer to the [Environment Configuration](#environment-configuration) section to modify the configuration on your machine to point to a local database.
 
+The `seeds/test` directory is utilized to seed the necessary data for executing contract tests.
+
 ## Migrations
 
 Migrations are managed with [knex](http://knexjs.org/#Migrations).
