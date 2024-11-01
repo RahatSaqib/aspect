@@ -13,7 +13,7 @@ import {
 } from './warehouseReducer'
 
 export function HierarchicalWarehouseView(props) {
-  const { countryId, setSelectedSiteIds } = props
+  const { countryId, setSelectedSiteIds, expanded } = props
 
   const [
     { underDistributionSelectedSiteIds, outsideDistributionSelected, outsideDistributionSelectedSiteIds },
@@ -80,12 +80,13 @@ export function HierarchicalWarehouseView(props) {
           data={{ id: node.id, name: node.name }}
           callback={() => dispatch(selectUnselectLinkedWarehouseAction(currentIds))}
           selected={underDistributionSelectedSiteIds.has(node.id)}
+          expanded={expanded}
           options={{
             showChevron: Boolean(node.child?.length),
             noLeftPadding: parentIds.length === 0 && Boolean(node.child?.length),
           }}
         >
-          {underDistributionSelectedSiteIds.has(node.id) && node.child && level > 0
+          {(underDistributionSelectedSiteIds.has(node.id) || expanded) && node.child && level > 0
             ? renderTreeNodes(node.child, currentIds, level - 1)
             : null}
         </TreeNode>
@@ -115,9 +116,10 @@ export function HierarchicalWarehouseView(props) {
               }}
               callback={() => dispatch(selectUnselectUnlinkedSitesAction())}
               selected={outsideDistributionSelected}
+              expanded={expanded}
               options={{ showChevron: Boolean(outsideDistribution.length), noLeftPadding: true }}
             >
-              {outsideDistributionSelected
+              {outsideDistributionSelected || expanded
                 ? outsideDistribution.map(site => (
                     <TreeNode
                       key={site.id}
@@ -125,6 +127,7 @@ export function HierarchicalWarehouseView(props) {
                       options={{ showChevron: false, noLeftPadding: false }}
                       callback={() => dispatch(selectUnselectUnlinkedSitesAction(site.id))}
                       selected={outsideDistributionSelectedSiteIds.has(site.id)}
+                      expanded={expanded}
                     />
                   ))
                 : null}
