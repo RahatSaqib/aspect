@@ -1,13 +1,13 @@
 const jobFunctions = require('./jobFunctions')
 
 module.exports = {
-  adminUserName: 'hiv_admin',
-  adminPassword: 'test08',
+  adminUserName: 'tb_admin',
+  adminPassword: 'test07',
   partner: {
-    name: 'Lesotho HIV',
-    externalId: 'lesothoHiv',
+    name: 'Lesotho TB',
+    externalId: 'lesothoTb',
   },
-  gxAlertDeviceApiKey: 'bnhqb0a2jkfajhut2x3g',
+  gxAlertDeviceApiKey: 'auv294emdbaervaeqzxc',
   plugin: '',
   fixtures: {
     jobFunctions,

@@ -61,6 +61,12 @@ async function seed(knex) {
     },
     partnerData
   )
+  const auditFields = {
+    createdOn: now,
+    createdBy: adminId,
+    updatedOn: now,
+    updatedBy: adminId,
+  }
 
   // GeneXpert
   await upsertGeneXpertDeviceTypeAndAssays(knex, [
@@ -74,12 +80,6 @@ async function seed(knex) {
     'GxEbola',
     'GxMtbXdr',
   ])
-  const auditFields = {
-    createdOn: now,
-    createdBy: adminId,
-    updatedOn: now,
-    updatedBy: adminId,
-  }
   const auditDates = _.pick(auditFields, ['createdOn', 'updatedOn'])
 
   await upsertDashboardWidgets(knex, partnerId)
@@ -87,12 +87,17 @@ async function seed(knex) {
   await addDeviceCapacities(knex)
   await setCapacityForExistingDevices(knex)
   await upsertTags(knex, partnerExternalId)
-  await upsertTags(knex, partnerExternalId)
   await upsertIssueEventTrigger(knex, partnerExternalId)
   await addIssueTypes(knex, partnerId, adminId, null)
   await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
   const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   await upsertIssueResolutionTrigger(knex, [
+    {
+      issueTypeId: issueTypes.NewResultsAvailable.id,
+      partnerId,
+      resolutionConditions: JSON.stringify({ evaluationMethod: 'issue-age', evaluationParameter: { minutes: 1430 } }),
+      ...auditDates,
+    },
     {
       issueTypeId: issueTypes.UnusedModules.id,
       partnerId,
@@ -109,25 +114,6 @@ async function seed(knex) {
       resolutionConditions: JSON.stringify({
         evaluationMethod: 'plugin-function',
         evaluationParameter: 'resolveIssueModuleDisabled',
-      }),
-      ...auditDates,
-    },
-
-    {
-      issueTypeId: issueTypes.SiteWithLowFieldCompletionRate.id,
-      partnerId,
-      resolutionConditions: JSON.stringify({
-        evaluationMethod: 'plugin-function',
-        evaluationParameter: 'resolveIssueSiteWithLowFieldCompletionRate',
-      }),
-      ...auditDates,
-    },
-    {
-      issueTypeId: issueTypes.CalibrationDueDate.id,
-      partnerId,
-      resolutionConditions: JSON.stringify({
-        evaluationMethod: 'plugin-function',
-        evaluationParameter: 'resolveIssueCalibrationDueDate',
       }),
       ...auditDates,
     },
