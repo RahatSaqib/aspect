@@ -11,6 +11,7 @@ const {
   setCapacityForExistingDevices,
   seedIssueEscalationTrigger,
   upsertIssueResolutionTrigger,
+  rowsAsObject,
 } = require('../utils')
 const upsertIssueEventTrigger = require('../common/upsert_issue_event_triggers')
 const seedModuleDisabledIssue = require('../common/20200902_add_issue_module_disabled')
@@ -90,72 +91,31 @@ async function seed(knex) {
   await upsertIssueEventTrigger(knex, partnerExternalId)
   await addIssueTypes(knex, partnerId, adminId, null)
   await seedIssueEscalationTrigger(knex, { partnerId, pluginName, auditFields })
+  const issueTypes = await rowsAsObject(knex, 'IssueType', 'externalId')
   await upsertIssueResolutionTrigger(knex, [
-    // Module
-
     {
-      issueTypeId: 6,
+      issueTypeId: issueTypes.NewResultsAvailable.id,
       partnerId,
-      resolutionConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldResolveDeviceOffline.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'plugin-function',
-            evaluationParameter: 'resolveDeviceOfflineError',
-          }),
-      ...auditDates,
-    },
-    // Machine
-    {
-      issueTypeId: 21,
-      partnerId,
-      resolutionConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldResolveDeviceOffline.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'plugin-function',
-            evaluationParameter: 'resolveDeviceOfflineError',
-          }),
+      resolutionConditions: JSON.stringify({ evaluationMethod: 'issue-age', evaluationParameter: { minutes: 1430 } }),
       ...auditDates,
     },
     {
-      issueTypeId: 55,
+      issueTypeId: issueTypes.UnusedModules.id,
       partnerId,
-      resolutionConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldResolveDeviceOffline.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'plugin-function',
-            evaluationParameter: 'resolveDeviceOfflineError',
-          }),
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveIssueUnusedModules',
+        evaluationFilterParameters: { minResults: 20, expectedUsedModules: 4 },
+      }),
       ...auditDates,
     },
     {
-      issueTypeId: 56,
+      issueTypeId: issueTypes.ModuleDisabled.id,
       partnerId,
-      resolutionConditions: pluginName
-        ? JSON.stringify({
-            evaluationMethod: 'sql-script',
-            evaluationParameter: `./src/plugin/partner/${_.upperFirst(
-              pluginName
-            )}/sqlScripts/shouldResolveDeviceOffline.sql`,
-          })
-        : JSON.stringify({
-            evaluationMethod: 'plugin-function',
-            evaluationParameter: 'resolveDeviceOfflineError',
-          }),
+      resolutionConditions: JSON.stringify({
+        evaluationMethod: 'plugin-function',
+        evaluationParameter: 'resolveIssueModuleDisabled',
+      }),
       ...auditDates,
     },
   ])
