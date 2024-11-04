@@ -2249,7 +2249,7 @@ async function getCustomFieldsCompletion(auth, query) {
       geography: 'g',
       assay: 'a',
     })
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'fcfc.date')
+    .modify(filterDateRangeParams, query, 'fcfc.date')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
