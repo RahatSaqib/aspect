@@ -50,6 +50,9 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
           .insert({ siteId, assayId, date, ...rest })
           .onConflict(['siteId', 'assayId', 'date'])
           .merge({
+            siteId,
+            assayId,
+            date,
             ...rest,
             completionByField: JSON.stringify(rest.completionByField),
           })
@@ -117,7 +120,7 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
       's.name as siteName',
       'a.id as assayId',
       'at.diseaseId',
-      knex.raw('DATE(r.endedOn) as date')
+      knex.raw('DATE(COALESCE(r.endedOn, r.startedOn,r.createdOn)) as date')
     )
     .count('* as recordCount')
     .select(...customFieldsClauses.map(cf => cf.clause))
