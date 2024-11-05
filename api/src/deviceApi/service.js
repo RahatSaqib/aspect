@@ -661,11 +661,6 @@ async function mergeResultWithContext(context) {
     const isResultUpdated = !!plainPreviousResult
     context.messageContext.resultReadyForNotification(plainResult.id, isResultUpdated)
   }
-  console.log(
-    'The dedevice and module serial exists:::::: ===== >>>>> ',
-    plainResult?.moduleSerial,
-    plainResult?.deviceId
-  )
   if (plainResult?.moduleSerial && plainResult?.deviceId) {
     const openModuleDisabledIssuesByModuleSerial = await findOpenModuleDisabledIssuesByModuleSerial(
       knex,
