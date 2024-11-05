@@ -79,9 +79,9 @@ async function findOpenModuleDisabledIssuesByModuleSerial(knex, deviceId, module
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
     .join('Device as d', 'i.deviceId', 'd.id')
     .where('d.id', deviceId)
-    .where('it.externalId', 'Module Disabled')
+    .where('it.externalId', 'ModuleDisabled')
     .whereNotIn('is.externalId', nonActiveStatuses)
-    .whereRaw("i.data->>'moduleSerial' = ?", [moduleSerial])
+    .whereRaw("JSON_EXTRACT(i.data, '$.moduleSerial') = ?", [moduleSerial])
     .select('i.id', 'i.data')
   return findOpenIssuesQuery
 }

@@ -30,6 +30,7 @@ const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 const { DEVICE_LOG_TYPE_OPTIONAL, DEVICE_LOG_TYPE_RESULT, DEVICE_LOG_TYPE_OPERATION } = require('./constants')
 const { removeAdditionalData } = require('../result/common/logic')
 const { findOpenModuleDisabledIssuesByModuleSerial } = require('../issue/common/db')
+const { resolveIssues } = require('../issue/actions')
 
 const getDeviceDataHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_OPTIONAL,
@@ -672,12 +673,10 @@ async function mergeResultWithContext(context) {
       plainResult.moduleSerial
     )
 
-    console.log(
-      'What are the results ::: === >>> ',
-      openModuleDisabledIssuesByModuleSerial,
-      plainResult?.deviceId,
-      plainResult?.moduleSerial
-    )
+    if (openModuleDisabledIssuesByModuleSerial.length > 0) {
+      context.messageContext.bindActionCreators({ resolveIssues })
+      openModuleDisabledIssuesByModuleSerial.map(issue => context.messageContext.resolveIssues(issue.id))
+    }
   }
 
   return {

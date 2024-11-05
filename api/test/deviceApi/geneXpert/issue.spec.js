@@ -251,7 +251,6 @@ describe('Integration test for device status', () => {
         }),
       })
 
-      await waitForIdle()
       const issues = await knex('Issue')
         .where({ deviceId: response.body.device.id })
         .orderBy('createdOn', 'DESC')
@@ -264,7 +263,7 @@ describe('Integration test for device status', () => {
 
       assert.isOk(moduleDisabledIssue)
       assert.equal(moduleDisabledIssue.issueStatusId, await issueStatusToId('Active'))
-      await dispatchAndWaitForAction(resolveIssues())
+      await dispatchAndWaitForAction(resolveIssues(waitForModuleDisabledIssue.id))
       await waitForIdle()
       await checkIssueStatusByIssueId(knex, moduleDisabledIssue.id, 'Resolved')
     })
