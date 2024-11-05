@@ -43,6 +43,7 @@ const NotificationSchema = Joi.object().keys({
       enabled: Joi.number().min(0).max(1).required().description('is the notification enable'),
       daysInactive: Joi.number().optional().allow('', null),
       recurrenceFactor: Joi.number().optional().allow('', null),
+      hasPassword: Joi.bool().description('Password protected notification'),
       daysBeforeCalibrationDueDate: Joi.number()
         .allow(null)
         .min(0)
@@ -104,6 +105,8 @@ const saveNotificationPayload = Joi.object({
   name: Joi.string().description('Name of new notification').required(),
   daysInactive: Joi.string().description('Number of days a device is offline before notification is sent'),
   recurrenceFactor: Joi.string().description('Number of times notification should reoccur'),
+  hasPassword: Joi.bool().description('Password protected notification'),
+  reportPassword: Joi.string().optional().allow('', null).description('Password for report'),
   hasRecurrency: Joi.when('notificationType', {
     // check first sendSms...
     is: 'reportBased',
