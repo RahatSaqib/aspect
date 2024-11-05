@@ -954,7 +954,6 @@
         }
       ]
     }
-
   ],
   "tagRegexSampleId": "-([A-Z]){3}$",
   "tagRegexPatientId": "-([A-Z]){3}$",

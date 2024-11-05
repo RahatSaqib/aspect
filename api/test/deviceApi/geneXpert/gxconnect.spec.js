@@ -61,7 +61,6 @@ describe('Device API routes for GxConnect Devices', () => {
         macAddress,
         adminUsername,
         adminPassword,
-        countryCode,
       })
 
       const { runTest } = context
