@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React from 'react'
 import { Box, Card, CardContent, Tab, Tabs } from '@mui/material'
 import { useIntl } from 'react-intl'
 import messages from '../messages'
@@ -15,9 +15,8 @@ function TabPanel(props) {
   )
 }
 
-export const InventoryForm = ({ data, cartridgeId }) => {
+export const InventoryForm = ({ data, cartridgeId, setTabValue, tabValue }) => {
   const { formatMessage } = useIntl()
-  const [tabValue, setTabValue] = useState(0)
 
   const handleTabChange = (event, newValue) => {
     setTabValue(newValue)
