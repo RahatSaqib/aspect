@@ -73,7 +73,7 @@ async function findOpenIssue(knex, issueType, action, filterIssueCondition = {})
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
 
-async function findOpenModuleDisabledIssuesByModuleSerial(knex, deviceId, moduleSerial) {
+async function findOpenModuleDisabledIssues(knex, deviceId, moduleSerial) {
   const findOpenIssuesQuery = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
     .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
@@ -195,5 +195,5 @@ module.exports = {
   createNewIssue,
   getActionData,
   hasIssueEventTrigger,
-  findOpenModuleDisabledIssuesByModuleSerial,
+  findOpenModuleDisabledIssues,
 }
