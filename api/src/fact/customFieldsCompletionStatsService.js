@@ -1,9 +1,10 @@
 const { startOfToday, addDays, format } = require('date-fns')
 const { Promise } = require('bluebird')
-const { getArrayOfDaysInRange } = require('../shared/date')
+const { getArrayOfDaysInRange, slideDateToTimeZone } = require('../shared/date')
 const { knex } = require('../db')
 const formDictionary = require('../forms/formsFileDictionary')
 const { factCheckCompletionRatePerSite } = require('./actions')
+const config = require('../config')
 
 /**
  * Clean and fills FactCustomFieldCompletion table with stats for last 30 days
@@ -32,36 +33,36 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   const days = getArrayOfDaysInRange(dateFrom, dateTo)
 
   const definitions = await getCustomFieldsDefinitions()
+  const { timeZone } = await knex('Country as c')
+    .innerJoin('TimeZone as tz', 'tz.id', 'c.timezone')
+    .where('c.abbreviation', config.countryName)
+    .first()
 
   const selectColumnClauses = convertCustomFieldsToColumnKnexClauses(definitions)
 
   const allFields = definitions.map(d => d.fields).flat()
-
   await knex.raw('delete from FactCustomFieldCompletion where date >= ?', dateFrom)
 
-  await Promise.map(
-    days,
-    async day => {
-      const results = await getResultsCustomFields(selectColumnClauses, day, addDays(day, 1))
-      const stats = generateStatsResult(allFields, results)
+  await Promise.each(days, async day => {
+    const startOfDay = slideDateToTimeZone(day, timeZone)
+    const endOfDay = slideDateToTimeZone(addDays(day, 1), timeZone)
+    const results = await getResultsCustomFields(selectColumnClauses, startOfDay, endOfDay)
 
-      await Promise.each(stats, async ({ siteId, assayId, date, ...rest }) => {
+    const stats = generateStatsResult(allFields, results)
+
+    await Promise.map(
+      stats,
+      async ({ siteId, assayId, date, ...rest }) => {
         await knex('FactCustomFieldCompletion')
           .insert({ siteId, assayId, date, ...rest })
           .onConflict(['siteId', 'assayId', 'date'])
-          .merge({
-            siteId,
-            assayId,
-            date,
-            ...rest,
-            completionByField: JSON.stringify(rest.completionByField),
-          })
-      })
+          .merge()
+      },
+      { concurrency: 10 }
+    )
 
-      insertedStats += stats.length
-    },
-    { concurrency: 10 }
-  )
+    insertedStats += stats.length
+  })
 
   return insertedStats
 }
@@ -104,23 +105,42 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('Country as c', 'c.id', 'g.countryId')
+    .leftOuterJoin('TimeZone as tz', 'c.timezone', 'tz.id')
+    .leftOuterJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
+    .leftOuterJoin(
+      'DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog',
+      'd.deviceMaintenanceStatusLogId',
+      'deviceMaintenanceStatusLog.id'
+    )
+    .leftOuterJoin(
+      'DeviceMaintenanceStatus as deviceMaintenanceStatus',
+      'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
+      'deviceMaintenanceStatus.id'
+    )
+    .innerJoin('ResultType as __constraints_ResultType', 'r.resultTypeId', '__constraints_ResultType.id')
     .modify(queryBuilder => {
       queryBuilder.where(function () {
         this.where(function () {
-          this.where('r.endedOn', '>=', dateFrom).where('r.endedOn', '<', dateTo)
+          this.where('r.endedOn', '>=', dateFrom).where('endedOn', '<', dateTo)
         }).orWhere(function () {
           this.where('r.updatedOn', '>=', dateFrom).where('r.updatedOn', '<', dateTo)
         })
       })
     })
     .where('s.disabled', 0)
-    .groupBy('s.id', 'a.id', knex.raw('DATE(r.endedOn)'))
+    .whereRaw("IFNULL(deviceMaintenanceStatus.externalId, '') != 'inactiveDecommissioned'")
+    .whereRaw("IFNULL(deviceApproval.token, '') != 'decommissioned'")
+    .whereRaw("IFNULL(deviceApproval.token, 'approved') = 'approved'")
+    .where('__constraints_ResultType.excluded', false)
+    .groupBy('s.id', 'a.id', `groupByDate`)
     .select(
       's.id as siteId',
       's.name as siteName',
       'a.id as assayId',
       'at.diseaseId',
-      knex.raw('DATE(COALESCE(r.endedOn, r.startedOn,r.createdOn)) as date')
+      knex.raw(`Date(CONVERT_TZ(r.endedOn, '+00:00', tz.timeZone)) as groupByDate`),
+      knex.raw(`Date(CONVERT_TZ(COALESCE(r.endedOn, r.startedOn,r.createdOn),'+00:00', tz.timeZone)) as date`)
     )
     .count('* as recordCount')
     .select(...customFieldsClauses.map(cf => cf.clause))
@@ -182,30 +202,33 @@ function generateStatsResult(fields, res) {
         siteId: r.siteId,
         assayId: r.assayId,
         date: r.date,
-        completionByField: Object.fromEntries(
-          currentFields.map(f => {
-            const completionCount = r[f.fieldName]
+        completionByField: JSON.stringify(
+          Object.fromEntries(
+            currentFields.map(f => {
+              const completionCount = r[f.fieldName]
 
-            const totalWeight = fields.reduce((acc, cur) => {
-              if ((!cur.assayId && !cur.diseaseId) || cur.assayId === r.assayId || cur.diseaseId === r.diseaseId) {
-                acc += cur.completionWeight
-              }
-              return acc
-            }, 0)
-            // completion weighting for current field
-            // * is expressed as coefficient (i.e. 0.5 = 50% completion)
-            // * all values references this date/site/assay combination:
-            // (100 / record count) * (completion count / total weight) * completion weight / 100
-            const fieldWeighting = ((100 / r.recordCount) * (completionCount / totalWeight) * f.completionWeight) / 100
-            completionRate += fieldWeighting
-            return [
-              f.fieldName,
-              {
-                completed: completionCount,
-                weighting: fieldWeighting.toFixed(5),
-              },
-            ]
-          })
+              const totalWeight = fields.reduce((acc, cur) => {
+                if ((!cur.assayId && !cur.diseaseId) || cur.assayId === r.assayId || cur.diseaseId === r.diseaseId) {
+                  acc += cur.completionWeight
+                }
+                return acc
+              }, 0)
+              // completion weighting for current field
+              // * is expressed as coefficient (i.e. 0.5 = 50% completion)
+              // * all values references this date/site/assay combination:
+              // (100 / record count) * (completion count / total weight) * completion weight / 100
+              const fieldWeighting =
+                ((100 / r.recordCount) * (completionCount / totalWeight) * f.completionWeight) / 100
+              completionRate += fieldWeighting
+              return [
+                f.fieldName,
+                {
+                  completed: completionCount,
+                  weighting: fieldWeighting.toFixed(5),
+                },
+              ]
+            })
+          )
         ),
         recordCount: r.recordCount,
         completionRate: completionRate.toFixed(5),
