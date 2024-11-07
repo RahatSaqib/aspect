@@ -3,7 +3,13 @@ const _ = require('lodash')
 const dateFormat = require('date-fns/format')
 const { format, addMonths, subMonths, startOfDay, endOfDay } = require('date-fns')
 const Promise = require('bluebird')
-const { getOffsetFromIsoDateString, getAllMonthsInRange } = require('../shared/date')
+const {
+  getOffsetFromIsoDateString,
+  getAllMonthsInRange,
+  getMonthYearField,
+  getDatesFromQuery,
+  returnIso8601StringWithoutTimeZoneOffset,
+} = require('../shared/date')
 const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
 const { knex, filterParams, filterDateRangeParams, sortPageParams } = require('../db')
 const {
@@ -24,7 +30,6 @@ const {
   resultTypeToId,
   resultCategoryToId,
 } = require('../shared/dictionary')
-const { getMonthYearField, getDatesFromQuery, returnIso8601StringWithoutTimeZoneOffset } = require('../shared/date')
 const { oneDirectionalMd5Hash } = require('../shared/encryption')
 const { getPathFromFileReferenceId } = require('../file/service')
 const { getSiteByPartnerCountry, getSite } = require('../site/service')
@@ -2147,6 +2152,7 @@ async function listSampleTypes() {
 async function getCustomFieldsCompletion(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { partnerId } = await getPersonByPersonId(auth.credentials.personId)
+  const { minDate, maxDate } = query
   const dates = getDatesFromQuery(query)
   let { dateFrom } = dates
   const { dateTo } = dates
@@ -2236,7 +2242,8 @@ async function getCustomFieldsCompletion(auth, query) {
     },
     {}
   )
-
+  const startDate = new Date(minDate.split('T')[0])
+  const endDate = new Date(maxDate.split('T')[0])
   const allCustomFields = _.reduce(_.values(allFormFields), (acc, formFields) => [...acc, ...formFields], [])
 
   const data = await knex('Site as s')
@@ -2249,7 +2256,8 @@ async function getCustomFieldsCompletion(auth, query) {
       geography: 'g',
       assay: 'a',
     })
-    .modify(filterDateRangeParams, query, 'fcfc.date')
+    .where('fcfc.date', '>=', startDate)
+    .where('fcfc.date', '<', endDate)
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
