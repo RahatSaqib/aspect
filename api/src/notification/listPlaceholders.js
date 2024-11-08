@@ -36,6 +36,11 @@ module.exports = async function (request) {
           nameI18nKey: 'placeholderReportDateRange',
           name: 'Date Range',
         },
+        {
+          id: 'person.name',
+          nameI18nKey: 'placeholderReportPersonName',
+          name: 'Person',
+        },
       ],
     },
     {
@@ -69,6 +74,11 @@ module.exports = async function (request) {
           id: 'site.completionRatePercentage',
           nameI18nKey: 'placeholderCompletionRatePercentage',
           name: 'Custom Fields Completion Rate Percentage',
+        },
+        {
+          id: 'person.name',
+          nameI18nKey: 'placeholderSitePersonName',
+          name: 'Person',
         },
       ],
     },
@@ -105,6 +115,11 @@ module.exports = async function (request) {
           id: 'numberOfDays device.lastPingOn',
           nameI18nKey: 'placeHolderDaysInactive',
           name: 'Days inactive',
+        },
+        {
+          id: 'person.name',
+          nameI18nKey: 'placeholderDevicePersonName',
+          name: 'Person',
         },
       ],
     },
@@ -183,6 +198,11 @@ module.exports = async function (request) {
           id: 'result.category2.id',
           nameI18nKey: 'placeholderResult2',
           name: 'Result 2',
+        },
+        {
+          id: 'person.name',
+          nameI18nKey: 'placeholderResultPersonName',
+          name: 'Person',
         },
       ],
     },
