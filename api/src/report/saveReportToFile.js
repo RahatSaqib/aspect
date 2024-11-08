@@ -9,7 +9,7 @@ const { getReportDetails } = require('./service')
  * @param {Object} query - query params
  * @param {string} externalId - externalId of the report
  */
-async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = false) {
+async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = false, reportPassword = undefined) {
   const user = await getUserFromCredentials(auth.credentials)
 
   const { fileNamePrefix, exportExcel } = await getReportDetails(externalId, { personId: user.personId })
@@ -42,6 +42,7 @@ async function saveReportToFile(auth, query, externalId, useUserPlaceHolders = f
       userPlaceHolders,
       fullPath,
       extension,
+      reportPassword,
     },
   })
 

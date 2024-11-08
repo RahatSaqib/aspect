@@ -1,3 +1,10 @@
+import filter from 'lodash/filter'
+import groupBy from 'lodash/groupBy'
+import join from 'lodash/join'
+import map from 'lodash/map'
+import mapKeys from 'lodash/mapKeys'
+import reject from 'lodash/reject'
+
 // This level is used to build the tree structure of the warehouse view. Number here defines how many levels of hierarchy we want to show.
 export const TREE_HIERARCHICAL_VIEW_LEVELS = 5
 
@@ -73,3 +80,58 @@ export function getAllIdsFromChildren(data, level = 0) {
   }
   return ids
 }
+
+export const createGroupedData = (statesResponse, sites, filterMaps) => {
+  const createFilters = (stateId, lgaId = null, siteName = null) => {
+    const filters = {
+      stateId,
+      lgaId,
+      siteName,
+    }
+    return filterMaps ? mapKeys(filters, (value, key) => filterMaps[key] || key) : filters
+  }
+
+  const noStateSites = reject(sites, site => site.state)
+  const validSites = filter(sites, site => site.state && site.lga)
+  const groupedSites = groupBy(validSites, 'state')
+  const noLgaSites = filter(sites, site => site.state && !site.lga)
+  const groupedData = map(statesResponse, state => {
+    const stateSites = groupedSites[state.name] || []
+    const stateNoLgaSites = filter(noLgaSites, { state: state.name })
+    return {
+      name: state.name,
+      filter: createFilters(state.id),
+      nodes: [
+        ...map(stateNoLgaSites, site => ({
+          name: site.name,
+          filter: createFilters(state.id, null, site.name),
+        })),
+        ...map(state.lgas, lga => {
+          const sitesInLga = filter(stateSites, { lga: lga.name })
+          return {
+            filter: createFilters(state.id, lga.id),
+            name: lga.name,
+            nodes: map(sitesInLga, site => ({
+              name: site.name,
+              filter: createFilters(state.id, lga.id, site.name),
+            })),
+          }
+        }),
+      ],
+    }
+  })
+
+  return [
+    ...map(noStateSites, site => ({
+      name: site.name,
+      filter: createFilters(null, null, site.name),
+    })),
+    ...groupedData,
+  ]
+}
+
+export const getKey = item =>
+  join(
+    map(item.filter, (value, key) => `${key}-${value}`),
+    '-'
+  )
