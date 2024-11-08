@@ -10,7 +10,7 @@ module.exports = {
   adminUserName: 'admin',
   adminPassword: 'test07',
   defaultPassword: 'azD45r', // default password for users that are not admins
-  plugin: '',
+  plugin: 'nigeria',
   fixtures: {
     jobFunctions,
   },

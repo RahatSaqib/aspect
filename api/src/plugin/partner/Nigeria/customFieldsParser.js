@@ -1,8 +1,9 @@
 const _ = require('lodash')
 
-const hivRegex = /HIV.?POSITIVE|HIV.?POS|HIV[\s=\-]*P|HIV.?NEGATIVE|HIV.?NEG|HIV[\s=\-]*N|HIV.?UNK(NOWN)|HIV.?\?/i
+const hivRegex =
+  /HIV.?POSITIVE|HIV.?POS|HIV[\s=\-]*P|HIV\+|HIV.?UNK(NOWN)|HIV.?\?|HIV.?NEGATIVE|HIV.?NEG|HIV[\s=\-]*N|HIV-/i
 const drRegex = /(^|\s)(dr[\?]),?($|\s)/i
-const ageYearsRegex = /(^|,|\s)([1]?[0-9]{1,2})(YRS|YEARS|YRS,|YEARS,|,)?($|\s)/i
+const ageYearsRegex = /(^|,|\s|:)([1]?[0-9]{1,2})(YRS|YEARS|,)?($|\s|,|\/)/i
 const genderRegex = /\b(female|male|m|f)\b/i
 
 // Ad-hoc parser for legacy custom fields in Nigeria using 'result.notes' field.
@@ -34,9 +35,9 @@ function parseNotes(notes) {
   }
 
   // HIV status
-  if (/HIV.?POSITIVE|HIV.?POS|HIV[\s=\-]*P/i.test(notes)) patientData.HivStatus = 1
-  else if (/HIV.?NEGATIVE|HIV.?NEG|HIV[\s=\-]*N/i.test(notes)) patientData.HivStatus = 0
-  else if (/HIV.?UNK(NOWN)|HIV.?\?/i.test(notes)) patientData.HivStatus = 2
+  if (/HIV.?POSITIVE|HIV.?POS|HIV[\s=\-]*P|HIV\+/i.test(notes)) patientData.HivStatus = 'HIV Positive'
+  else if (/HIV.?UNK(NOWN)|HIV.?\?/i.test(notes)) patientData.HivStatus = 'HIV Unknown'
+  else if (/HIV.?NEGATIVE|HIV.?NEG|HIV[\s=\-]*N|HIV-/i.test(notes)) patientData.HivStatus = 'HIV Negative'
 
   // DR suspect
   const drMatch = notes.match(drRegex)
@@ -50,8 +51,8 @@ function parseNotes(notes) {
   if (ageMatch) {
     const parsedAgeInYears = parseInt(ageMatch[2], 10)
     if (parsedAgeInYears >= 0 && parsedAgeInYears <= 120) {
-      patientData.PatientAgeYears = parsedAgeInYears
-      cleanedNotes = cleanedNotes.replace(ageMatch[2], ' ')
+      patientData.PatientAge = parsedAgeInYears
+      cleanedNotes = cleanedNotes.replace(ageMatch[2], '')
     }
   }
 
@@ -60,41 +61,36 @@ function parseNotes(notes) {
   const maleRegex = /\b(male|m)\b/i
 
   if (notes.match(femaleRegex)) {
-    patientData.PatientGender = 0
+    patientData.PatientGender = 'Female'
   } else if (notes.match(maleRegex)) {
-    patientData.PatientGender = 1
+    patientData.PatientGender = 'Male'
   }
 
   if (
     patientData.HivStatus !== null ||
     patientData.DrSuspect === 1 ||
-    patientData.PatientAgeYears !== null ||
+    patientData.PatientAge !== null ||
     patientData.PatientGender !== null
   ) {
-    cleanedNotes = CleanNotes(cleanedNotes)
-    patientData.City = cleanedNotes && cleanedNotes.length > 255 ? cleanedNotes.substring(0, 255) : cleanedNotes
+    cleanedNotes = cleanNotes(cleanedNotes)
+    patientData.PatientStreet =
+      cleanedNotes && cleanedNotes.length > 255 ? cleanedNotes.substring(0, 255) : cleanedNotes
   }
 
   return { patientData }
 }
 
-function CleanNotes(notes) {
+function cleanNotes(notes) {
   const stringsToRemove = [
     'nte',
     ',',
     '\\.',
-    // 'female',
-    // 'male',
     'years',
     'yrs',
     '\\bage\\b',
     '\\bold\\b',
     '\\bfrom\\b',
     'plhiv',
-    // "hiv positive", "hiv-positive", "hiv-p", "hiv - p", "hiv p ", "hiv - pos", "hiv pos",
-    // "hiv negative", "hiv-negative", "hiv-n", "hiv - n", "hiv n ", "hiv - neg", "hiv neg",
-    // "hiv unknown", "hiv-unknown", "hiv-u", "hiv - u", "hiv u ",
-    // "hiv-?", "hiv - ?", "hiv ? ",
     'routine',
     'relapse',
     'purulent',
