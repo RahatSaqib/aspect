@@ -152,43 +152,39 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {values?.consumable?.showExpirationDate || inventory?.expiresOn ? (
-                  <FormGroup label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}>
-                    <DateTimeInput
-                      fullWidth
-                      margin="normal"
-                      dateFormat="yyyy-MM-dd"
-                      disabled={!!initialValues?.expiresOn}
-                      RootProps={{
-                        name: 'expiresOn',
-                      }}
-                      onChange={onExpiresChange}
-                      value={values.expiresOn}
-                      error={!!errors.expiresOn}
-                      helperText={errors.expiresOn}
-                    />
-                  </FormGroup>
-                ) : null}
-
-                {values?.consumable?.showLot || inventory?.lotNumber ? (
-                  <TextField
+                <FormGroup label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}>
+                  <DateTimeInput
                     fullWidth
-                    type="text"
-                    name="lotNumber"
-                    label={formatMessage(messages.cartridgeLotNumber)}
-                    value={values.lotNumber}
-                    onChange={handleChange}
-                    disabled={!!initialValues?.lotNumber}
-                    onBlur={handleBlur}
                     margin="normal"
-                    FormHelperTextProps={{
-                      margin: 'dense',
+                    dateFormat="yyyy-MM-dd"
+                    disabled={!!initialValues?.expiresOn}
+                    RootProps={{
+                      name: 'expiresOn',
                     }}
-                    inputProps={{ maxLength: 100 }}
-                    error={!!errors.lotNumber}
-                    helperText={errors.lotNumber}
+                    onChange={onExpiresChange}
+                    value={values.expiresOn}
+                    error={!!errors.expiresOn}
+                    helperText={errors.expiresOn}
                   />
-                ) : null}
+                </FormGroup>
+
+                <TextField
+                  fullWidth
+                  type="text"
+                  name="lotNumber"
+                  label={formatMessage(messages.cartridgeLotNumber)}
+                  value={values.lotNumber}
+                  onChange={handleChange}
+                  disabled={!!initialValues?.lotNumber}
+                  onBlur={handleBlur}
+                  margin="normal"
+                  FormHelperTextProps={{
+                    margin: 'dense',
+                  }}
+                  inputProps={{ maxLength: 100 }}
+                  error={!!errors.lotNumber}
+                  helperText={errors.lotNumber}
+                />
 
                 <TextField
                   fullWidth
