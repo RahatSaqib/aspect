@@ -33,6 +33,7 @@ const INVENTORY_COMMON_FIELDS = [
   'c.name as consumableName',
   'c.manufacturer',
   'c.canExpire',
+  'c.strategy',
   'u.shortName as unitShortName',
   's.id as siteId',
   's.name as siteName',
