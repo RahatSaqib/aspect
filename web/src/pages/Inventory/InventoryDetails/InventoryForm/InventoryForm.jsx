@@ -15,7 +15,7 @@ function TabPanel(props) {
   )
 }
 
-export const InventoryForm = ({ data, cartridgeId, setTabValue, tabValue }) => {
+export const InventoryForm = ({ data, cartridgeId, setTabValue, tabValue, hasPermission }) => {
   const { formatMessage } = useIntl()
 
   const handleTabChange = (event, newValue) => {
@@ -32,12 +32,14 @@ export const InventoryForm = ({ data, cartridgeId, setTabValue, tabValue }) => {
             id="tab-0"
             aria-controls="tabpanel-0"
           />
-          <Tab
-            sx={{ textTransform: 'none' }}
-            label={formatMessage(messages.reconciliationConfiguration)}
-            id="tab-1"
-            aria-controls="tabpanel-1"
-          />
+          {hasPermission ? (
+            <Tab
+              sx={{ textTransform: 'none' }}
+              label={formatMessage(messages.reconciliationConfiguration)}
+              id="tab-1"
+              aria-controls="tabpanel-1"
+            />
+          ) : null}
         </Tabs>
         <TabPanel value={tabValue} index={0}>
           <InventoryDetailsForm data={data} cartridgeId={cartridgeId} />
