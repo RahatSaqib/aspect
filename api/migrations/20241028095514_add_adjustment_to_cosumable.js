@@ -1,5 +1,5 @@
 exports.up = function (knex) {
-  return knex.schema.table('Consumable', function (table) {
+  return knex.schema.alterTable('Consumable', function (table) {
     table
       .enum('adjustment', [
         'currentSiteAdjustment',
@@ -12,7 +12,7 @@ exports.up = function (knex) {
 }
 
 exports.down = function (knex) {
-  return knex.schema.table('Consumable', function (table) {
+  return knex.schema.alterTable('Consumable', function (table) {
     table.dropColumn('adjustment')
   })
 }
