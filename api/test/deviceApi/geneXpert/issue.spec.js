@@ -115,7 +115,6 @@ describe('Integration test for device status', () => {
       await waitForIdle()
 
       assert.equal(responseDeviceWithDisabledModule.statusCode, 200)
-
       const yesterday = subDays(new Date(), 1)
       const responseWithIssue = await postToDeviceApi({
         authHeader: deviceAuth,
@@ -155,6 +154,116 @@ describe('Integration test for device status', () => {
       assert.isOk(moduleDisabledIssue)
       assert.equal(moduleDisabledIssue.issueStatusId, await issueStatusToId('Active'))
       await dispatchAndWaitForAction(resolveIssues())
+      await waitForIdle()
+      await checkIssueStatusByIssueId(knex, moduleDisabledIssue.id, 'Resolved')
+    })
+
+    it('should create new issue for module disabled and resolve it when new result for the same module is sent', async () => {
+      /**
+       * This test represent the whole workflow of module reactivation.
+       * 1) Creates a device with a result with a specific module serial
+       * 2) Creates a module disable issue, based on the information received in data:{ disabledModules:[....]}
+       *    property of the device payload
+       * 3) Send a new result for the disabled module.
+       * 4) Check if the module disabled issue is resolved.
+       *
+       */
+
+      const { basicDevicePayload } = context
+      const { deviceAuth } = context
+
+      const firstPayload = _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+        result: {
+          startedOn: subDays(new Date(), 2),
+          endedOn: subDays(new Date(), 2),
+          instrument: {
+            serial: '123456',
+            module: {
+              serial: '234',
+              name: 'A1',
+            },
+          },
+        },
+      })
+
+      // Post to deviceApi to ensure the device in  Aspect and with 1 result with a particular module
+      const response = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: firstPayload,
+      })
+
+      // Wait for module disable
+      const messageContext = await createMessageContext()
+      messageContext.bindActionCreators({ deviceModuleDisabled })
+      const waitForModuleDisabledIssue = waitForAction(
+        deviceModuleDisabled(response.body.device.id, '234', '2020-08-18T17:08:22.515Z')
+      )
+      const responseDeviceWithDisabledModule = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge(
+          {},
+          basicDevicePayload,
+          { name: deviceName },
+          {
+            configuration: {
+              data: {
+                disabledModules: [
+                  {
+                    SiteSerialNumber: '234',
+                    UserId: '1',
+                    Creation: '2020-08-18T17:08:22.515Z',
+                  },
+                ],
+              },
+            },
+          }
+        ),
+      })
+
+      assert.equal(response.statusCode, 200)
+
+      await waitForModuleDisabledIssue
+      await waitForIdle()
+
+      assert.equal(responseDeviceWithDisabledModule.statusCode, 200)
+      const yesterday = subDays(new Date(), 1)
+      const reactivationResultResponse = await postToDeviceApi({
+        authHeader: deviceAuth,
+        payload: _.merge({}, basicDevicePayload, { name: deviceName }, basicResultPayload, {
+          result: {
+            id: 'UNIQUE-RESULT-ID2',
+            startedOn: yesterday,
+            endedOn: yesterday,
+            sample: {
+              id: 'ANOTHERSAMPLE-ID',
+            },
+            patient: {
+              id: 'another-patient',
+            },
+            instrument: {
+              serial: '123456',
+              module: {
+                serial: '234',
+                name: 'A1',
+              },
+            },
+          },
+        }),
+      })
+
+      const issues = await knex('Issue')
+        .where({ deviceId: response.body.device.id })
+        .orderBy('createdOn', 'DESC')
+        .select()
+
+      assert.equal(reactivationResultResponse.statusCode, 200)
+      assert.equal(issues.length, 1)
+      const moduleDisabledIssueTypeId = await issueTypeToId('ModuleDisabled')
+      const moduleDisabledIssue = _.find(issues, issue => issue.issueTypeId === moduleDisabledIssueTypeId)
+
+      assert.isOk(moduleDisabledIssue)
+      assert.equal(moduleDisabledIssue.issueStatusId, await issueStatusToId('Active'))
+      await dispatchAndWaitForAction(resolveIssues(waitForModuleDisabledIssue.id))
       await waitForIdle()
       await checkIssueStatusByIssueId(knex, moduleDisabledIssue.id, 'Resolved')
     })
