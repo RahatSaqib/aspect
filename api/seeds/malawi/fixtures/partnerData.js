@@ -53,6 +53,8 @@ module.exports = {
         AspectUploadExcludePatientId: false,
         CustomFieldsEnabled: true,
         ConnectSettingsAndCustomFieldsSource: 'ASPECT',
+        SendResultsToGxAlert: false,
+        EnableGxAlertSync: false,
       },
     },
   ],

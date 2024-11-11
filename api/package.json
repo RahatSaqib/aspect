@@ -1,7 +1,7 @@
 {
   "name": "aspect-api",
   "private": true,
-  "version": "1.45.0",
+  "version": "1.46.0",
   "description": "The API for aspect clients",
   "main": "server.js",
   "scripts": {
@@ -134,7 +134,8 @@
     "windows-iana": "^5.1.0",
     "winston": "^3.8.2",
     "winston-mail": "^2.0.0",
-    "winston-sentry-log": "^1.0.26"
+    "winston-sentry-log": "^1.0.26",
+    "xlsx-populate": "^1.21.0"
   },
   "devDependencies": {
     "@babel/core": "^7.21.5",

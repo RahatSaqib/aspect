@@ -4,6 +4,12 @@ import isString from 'lodash/isString'
 import { REPORT_LIST } from '../../../../components/QueryFetch/Report'
 import { cronMessages } from '../../../../messages/index'
 import messages from '../../NotificationListPage/messages'
+import styles from '../NotificationFormPage.module.css'
+
+const checkboxClassNames = {
+  itemContainer: styles.checkbox_item_container,
+  controlContainer: styles.checkbox_container,
+}
 
 /**
  * helpers
@@ -187,6 +193,39 @@ const reportBasedSection = formatMessage => {
                 const frequency = getFrequency(values)
                 return frequency === 'weekly' && values.reportDateRange === DATE_RANGES.PREVIOUS_WEEK
               },
+            },
+          ],
+        },
+      ],
+    },
+    {
+      id: 'section_reportBased_setting',
+      label: 'Setting',
+      labelI18nKey: 'setting',
+      visibleIf: values => ['reportBased'].includes(values.notificationType),
+      rows: [
+        {
+          id: 423,
+          items: [
+            {
+              id: 'hasPassword',
+              controlType: { component: 'checkbox' },
+              classNames: checkboxClassNames,
+              initialValue: false,
+              labelI18nKey: 'protectWithPassword',
+            },
+          ],
+        },
+        {
+          id: 429,
+          items: [
+            {
+              id: 'reportPassword',
+              controlType: { component: 'passwordField' },
+              classNames: { itemContainer: styles.item_in_group_container },
+              type: 'password',
+              labelI18nKey: 'password',
+              visibleIf: values => values.hasPassword === true,
             },
           ],
         },
