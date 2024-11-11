@@ -76,7 +76,7 @@ export const InventoryDetailsForm = ({ data, cartridgeId }) => {
                   <FormControlLabel
                     control={
                       <Checkbox
-                        disabled
+                        // disabled
                         color="primary"
                         checked={Boolean(values.includeLocation)}
                         onChange={e => setFieldValue('includeLocation', e.target.checked)}
