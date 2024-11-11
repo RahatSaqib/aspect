@@ -6,5 +6,7 @@ module.exports = async request => {
 
   const data = await getNotification(id)
 
+  data.hasPassword = !!data.hasPassword
+
   return { ok: true, data }
 }

@@ -73,6 +73,19 @@ async function findOpenIssue(knex, issueType, action, filterIssueCondition = {})
   return findOpenIssue.first('i.id', 'i.partnerId', 'i.data')
 }
 
+async function findOpenModuleDisabledIssues(knex, deviceId, moduleSerial) {
+  const findOpenIssuesQuery = knex('Issue as i')
+    .join('IssueType as it', 'i.issueTypeId', 'it.id')
+    .join('IssueStatus as is', 'i.issueStatusId', 'is.id')
+    .join('Device as d', 'i.deviceId', 'd.id')
+    .where('d.id', deviceId)
+    .where('it.externalId', 'ModuleDisabled')
+    .whereNotIn('is.externalId', nonActiveStatuses)
+    .whereRaw("JSON_EXTRACT(i.data, '$.moduleSerial') = ?", [moduleSerial])
+    .select('i.id', 'i.data')
+  return findOpenIssuesQuery
+}
+
 async function findOpenIssues(knex, issueType, modifiers) {
   const findOpenIssuesQuery = knex('Issue as i')
     .join('IssueType as it', 'i.issueTypeId', 'it.id')
@@ -182,4 +195,5 @@ module.exports = {
   createNewIssue,
   getActionData,
   hasIssueEventTrigger,
+  findOpenModuleDisabledIssues,
 }
