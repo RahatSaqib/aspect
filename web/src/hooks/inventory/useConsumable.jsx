@@ -1,3 +1,5 @@
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { useQuery, useMutation, useQueryClient } from 'react-query'
 import fetchWrapperForQueries from '../../components/QueryFetch'
 import { replaceRouteParams } from '../../components/QueryFetch/Helpers'
@@ -56,6 +58,7 @@ const updateConsumable = ({ consumableId, payload }) => {
       unit: payload.unit,
       canExpire: Boolean(payload.canExpire),
       includeLocation: Boolean(payload.includeLocation),
+      ...omitBy({ strategy: payload.strategy, adjustment: payload.adjustment }, isNil),
     },
   })
 }

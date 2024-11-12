@@ -192,6 +192,8 @@ const routes = [
           name: Joi.string().required(),
           manufacturer: Joi.string().required(),
           partNumber: Joi.string().allow('', null),
+          adjustment: Joi.string().allow('', null),
+          strategy: Joi.string().allow('', null),
           price: Joi.number().allow('', null),
           unit: Joi.number().allow('', null),
           canExpire: Joi.boolean().allow(null),
