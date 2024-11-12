@@ -1,8 +1,8 @@
 async function up(knex) {
   await knex.schema.alterTable('Partner', Partner => {
-    Partner.integer('serviceStartDate')
     Partner.string('serviceStartDate')
-    Partner.string('notificationLimit')
+    Partner.string('serviceEndDate')
+    Partner.integer('notificationLimit')
   })
 }
 
