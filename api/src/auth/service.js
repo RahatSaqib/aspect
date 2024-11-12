@@ -138,9 +138,9 @@ async function serviceModification() {
       await query('Update partner active status').from('Partner').where({ id: partnerId }).update({
         activeStatus,
         statusMessage,
-        serviceStartDate, 
-        serviceEndDate, 
-        notificationLimit
+        serviceStartDate,
+        serviceEndDate,
+        notificationLimit,
       })
     })
   } catch (error) {

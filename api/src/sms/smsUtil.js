@@ -2,6 +2,7 @@ const fetch = require('node-fetch')
 const twilio = require('twilio')
 const config = require('../config')
 const logger = require('../shared/logger')
+const { knex } = require('../db')
 
 async function sendSms(cellNumber, message) {
   const { adn, twilio: twilioConf } = config.sms
@@ -10,16 +11,17 @@ async function sendSms(cellNumber, message) {
     .where('createdOn', '>', partnerDetails[0].serviceStartDate)
     .where('createdOn', '<', partnerDetails[0].serviceEndDate)
     .count('* as count')
-    // check for partner service end date should be less then current date
-  if (new Date(partnerDetails[0].serviceEndDate) > new Date() && SmsMessageCount[0].count <= partnerDetails[0].notificationLimit) {
+  // check for partner service end date should be less then current date
+  if (
+    new Date(partnerDetails[0].serviceEndDate) > new Date() &&
+    SmsMessageCount[0].count <= partnerDetails[0].notificationLimit
+  ) {
     if (adn.api_key) return sendSmsAdn(cellNumber, message, adn)
-      return sendSmsTwilio(cellNumber, message, twilioConf)
+    return sendSmsTwilio(cellNumber, message, twilioConf)
   }
-  else {
-    // return error 
-    return Promise.reject({ message: 'Service is not available' })
-  }
-  
+
+  // return error
+  return Promise.reject(new Error('Service is not available'))
 }
 
 async function sendSmsAdn(cellNumber, message, adn) {

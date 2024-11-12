@@ -42,7 +42,6 @@ async function generateAttachment(pathToFile, mimeType = 'application/octet-stre
   }
 }
 
-
 async function getInlineImageAttachments(htmlContent) {
   const templateDir = path.join(__dirname, 'templates')
   const extensionMimeTypeMappings = {
