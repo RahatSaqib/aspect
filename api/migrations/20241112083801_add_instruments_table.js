@@ -12,6 +12,8 @@ exports.up = function (knex) {
     // Will be used to determine if the instrument is still in use or it is retired
     table.enum('status', ['active', 'inactive', 'retired']).defaultTo('active').notNullable()
     table.foreign('deviceId').references('Device.id')
+
+    table.unique(['deviceId', 'instrumentSerial', 'moduleSerial'])
   })
 }
 
