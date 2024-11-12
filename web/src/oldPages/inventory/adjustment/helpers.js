@@ -57,9 +57,8 @@ export function getValidations(format, actionType, inventory) {
     }
   }
 
-  if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
+  if (actionType !== types.SHOW_RECEIVE_INVENTORY_DIALOG) {
     schema = schema.shape({
-      toSiteId: string().required(format(validationMessages.siteRequired)),
       expiresOn: date()
         .nullable()
         .when('consumable', {
@@ -80,6 +79,12 @@ export function getValidations(format, actionType, inventory) {
           is: consumable => hasLot(consumable?.strategy || inventory?.strategy),
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
+    })
+  }
+
+  if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
+    schema = schema.shape({
+      toSiteId: string().required(format(validationMessages.siteRequired)),
     })
   }
 

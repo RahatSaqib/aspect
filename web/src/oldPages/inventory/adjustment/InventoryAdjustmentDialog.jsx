@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Button, DialogActions, TextField } from '@mui/material'
+import { Button, DialogActions, FormLabel, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
@@ -10,7 +10,15 @@ import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { types } from '../../../store/InventoryRedux'
-import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, transformValues } from './helpers'
+import {
+  getLabels,
+  getQuantityOnHand,
+  getValidations,
+  hasExpireDate,
+  hasLot,
+  transformInitialValue,
+  transformValues,
+} from './helpers'
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
 
@@ -152,7 +160,12 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                <FormGroup label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}>
+                <FormGroup
+                  labelProps={{
+                    required: hasExpireDate(values?.consumable?.strategy || inventory?.strategy),
+                  }}
+                  label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
+                >
                   <DateTimeInput
                     fullWidth
                     margin="normal"
@@ -169,6 +182,7 @@ function InventoryAdjustmentDialog(props) {
                 </FormGroup>
 
                 <TextField
+                  required={hasLot(values?.consumable?.strategy || inventory?.strategy)}
                   fullWidth
                   type="text"
                   name="lotNumber"
