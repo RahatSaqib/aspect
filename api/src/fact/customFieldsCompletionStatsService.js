@@ -33,10 +33,11 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   const days = getArrayOfDaysInRange(dateFrom, dateTo)
 
   const definitions = await getCustomFieldsDefinitions()
-  const { timeZone } = await knex('Country as c')
-    .innerJoin('TimeZone as tz', 'tz.id', 'c.timezone')
-    .where('c.abbreviation', config.countryName)
-    .first()
+  const { timeZone } =
+    (await knex('Country as c')
+      .innerJoin('TimeZone as tz', 'tz.id', 'c.timezone')
+      .where('c.abbreviation', config.countryName)
+      .first()) || {}
 
   const selectColumnClauses = convertCustomFieldsToColumnKnexClauses(definitions)
 
@@ -44,8 +45,8 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   await knex.raw('delete from FactCustomFieldCompletion where date >= ?', dateFrom)
 
   await Promise.each(days, async day => {
-    const startOfDay = slideDateToTimeZone(day, timeZone)
-    const endOfDay = slideDateToTimeZone(addDays(day, 1), timeZone)
+    const startOfDay = timeZone ? slideDateToTimeZone(day, timeZone) : day
+    const endOfDay = timeZone ? slideDateToTimeZone(addDays(day, 1), timeZone) : addDays(day, 1)
     const results = await getResultsCustomFields(selectColumnClauses, startOfDay, endOfDay)
 
     const stats = generateStatsResult(allFields, results)
