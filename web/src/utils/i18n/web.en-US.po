@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
+"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1632,6 +1632,14 @@ msgstr "Close"
 msgid "Close contacts of DR TB patient with symptoms"
 msgstr "Close contacts of DR TB patient with symptoms"
 
+#. [hierarchicalSiteView.collapseAll]
+#. defaultMessage is:
+#. Collapse All
+#: extracted_strings.json
+#| msgid "Toggle All"
+msgid "Collapse All"
+msgstr "Collapse All"
+
 #. [legends.Unknown.resultCategoryCollectNewSample]
 #. defaultMessage is:
 #. Collect new sample
@@ -1799,7 +1807,6 @@ msgstr "Consumable Serial"
 #. defaultMessage is:
 #. Consumables
 #: extracted_strings.json
-#| msgid "Consumable"
 msgid "Consumables"
 msgstr "Consumables"
 
@@ -1814,7 +1821,6 @@ msgstr "Consumables applicable for the site"
 #. defaultMessage is:
 #. Consumption Rate
 #: extracted_strings.json
-#| msgid "No Consumption"
 msgid "Consumption Rate"
 msgstr "Consumption Rate"
 
@@ -3658,6 +3664,14 @@ msgstr "Excluded Reason"
 msgid "Execute"
 msgstr "Execute"
 
+#. [hierarchicalSiteView.expandAll]
+#. defaultMessage is:
+#. Expand All
+#: extracted_strings.json
+#| msgid "Expand Row"
+msgid "Expand All"
+msgstr "Expand All"
+
 #. [pages.TableCell.expandRow]
 #. defaultMessage is:
 #. Expand Row
@@ -4505,6 +4519,13 @@ msgstr "GenoType MTBDRsl VER 2.0 Test Strip"
 msgid "GenoType Test Strip"
 msgstr "GenoType Test Strip"
 
+#. [hierarchicalSiteView.geographical]
+#. defaultMessage is:
+#. Geographical
+#: extracted_strings.json
+msgid "Geographical"
+msgstr "Geographical"
+
 #. [pages.OperationalDashboard.dailyStatusNav]
 #. defaultMessage is:
 #. Go To Daily Status
@@ -5294,7 +5315,6 @@ msgstr "Inventory Item"
 #. defaultMessage is:
 #. Inventory Item Name
 #: extracted_strings.json
-#| msgid "Inventory Item"
 msgid "Inventory Item Name"
 msgstr "Inventory Item Name"
 
@@ -5302,7 +5322,6 @@ msgstr "Inventory Item Name"
 #. defaultMessage is:
 #. Inventory Item Name Required
 #: extracted_strings.json
-#| msgid "Inventory Item"
 msgid "Inventory Item Name Required"
 msgstr "Inventory Item Name Required"
 
@@ -7813,7 +7832,6 @@ msgstr "Overall Network Health Daily"
 #. defaultMessage is:
 #. Part Number
 #: extracted_strings.json
-#| msgid "Lot Number"
 msgid "Part Number"
 msgstr "Part Number"
 
@@ -7834,6 +7852,9 @@ msgid "Partner"
 msgstr "Partner"
 
 #. [pages.Login.password]
+#. defaultMessage is:
+#. Password
+#. [pages.Notifications.password]
 #. defaultMessage is:
 #. Password
 #: extracted_strings.json
@@ -8071,7 +8092,6 @@ msgstr "Please enter a valid url"
 #. defaultMessage is:
 #. Please enter date until today
 #: extracted_strings.json
-#| msgid "Please enter a new password"
 msgid "Please enter date until today"
 msgstr "Please enter date until today"
 
@@ -8079,7 +8099,6 @@ msgstr "Please enter date until today"
 #. defaultMessage is:
 #. Please enter integer value
 #: extracted_strings.json
-#| msgid "Please enter a valid url"
 msgid "Please enter integer value"
 msgstr "Please enter integer value"
 
@@ -8087,7 +8106,6 @@ msgstr "Please enter integer value"
 #. defaultMessage is:
 #. Please enter positive integer value
 #: extracted_strings.json
-#| msgid "Please enter your email"
 msgid "Please enter positive integer value"
 msgstr "Please enter positive integer value"
 
@@ -8095,7 +8113,6 @@ msgstr "Please enter positive integer value"
 #. defaultMessage is:
 #. Please enter positive value
 #: extracted_strings.json
-#| msgid "Please enter a valid url"
 msgid "Please enter positive value"
 msgstr "Please enter positive value"
 
@@ -8216,7 +8233,6 @@ msgstr "Please specify a date"
 #. defaultMessage is:
 #. Please specify a lot number
 #: extracted_strings.json
-#| msgid "Please specify a consumable"
 msgid "Please specify a lot number"
 msgstr "Please specify a lot number"
 
@@ -8501,6 +8517,13 @@ msgstr "Profile"
 #: extracted_strings.json
 msgid "Projected stock waste"
 msgstr "Projected stock waste"
+
+#. [pages.Notifications.protectWithPassword]
+#. defaultMessage is:
+#. Protect report file with this password
+#: extracted_strings.json
+msgid "Protect report file with this password"
+msgstr "Protect report file with this password"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -10262,6 +10285,14 @@ msgstr "Set Maintenance Status"
 msgid "Set based on address"
 msgstr "Set based on address"
 
+#. [pages.Notifications.setting]
+#. defaultMessage is:
+#. Setting
+#: extracted_strings.json
+#| msgid "Testing"
+msgid "Setting"
+msgstr "Setting"
+
 #. [errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title]
 #. defaultMessage is:
 #. Setting Device Calibration Date Failed
@@ -10872,7 +10903,6 @@ msgstr "Sticker Instrument Serial"
 #. defaultMessage is:
 #. Stock Provider
 #: extracted_strings.json
-#| msgid "Stock provider"
 msgid "Stock Provider"
 msgstr "Stock Provider"
 
@@ -12264,7 +12294,6 @@ msgstr "Trace Detected"
 #. defaultMessage is:
 #. Track By Location
 #: extracted_strings.json
-#| msgid "Location"
 msgid "Track By Location"
 msgstr "Track By Location"
 
@@ -12272,7 +12301,6 @@ msgstr "Track By Location"
 #. defaultMessage is:
 #. Track by expiration date
 #: extracted_strings.json
-#| msgid "Expiration date"
 msgid "Track by expiration date"
 msgstr "Track by expiration date"
 
@@ -12301,7 +12329,6 @@ msgstr "Tranfer sent to {refSiteName}"
 #. defaultMessage is:
 #. Transaction Date
 #: extracted_strings.json
-#| msgid "Expiration Date"
 msgid "Transaction Date"
 msgstr "Transaction Date"
 
@@ -12519,7 +12546,6 @@ msgstr "Unable to delete since there are associated entities with it."
 #. defaultMessage is:
 #. Unable to delist the cartridge !
 #: extracted_strings.json
-#| msgid "Unable to Reset Password"
 msgid "Unable to delist the cartridge !"
 msgstr "Unable to delist the cartridge !"
 
@@ -12715,6 +12741,13 @@ msgstr "View Log"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Voltage"
+
+#. [hierarchicalSiteView.warehouse]
+#. defaultMessage is:
+#. Warehouse
+#: extracted_strings.json
+msgid "Warehouse"
+msgstr "Warehouse"
 
 #. [pages.DeviceList.warranty]
 #. defaultMessage is:
