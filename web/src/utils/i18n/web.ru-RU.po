@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
+"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1634,6 +1634,13 @@ msgstr "Закрыть"
 #: extracted_strings.json
 msgid "Close contacts of DR TB patient with symptoms"
 msgstr "Близкие контакты пациента с симптомами ДР ТБ"
+
+#. [hierarchicalSiteView.collapseAll]
+#. defaultMessage is:
+#. Collapse All
+#: extracted_strings.json
+msgid "Collapse All"
+msgstr "Свернуть все"
 
 #. [legends.Unknown.resultCategoryCollectNewSample]
 #. defaultMessage is:
@@ -3666,6 +3673,13 @@ msgstr "Причина исключения"
 msgid "Execute"
 msgstr "Выполнение"
 
+#. [hierarchicalSiteView.expandAll]
+#. defaultMessage is:
+#. Expand All
+#: extracted_strings.json
+msgid "Expand All"
+msgstr "Развернуть все"
+
 #. [pages.TableCell.expandRow]
 #. defaultMessage is:
 #. Expand Row
@@ -4513,6 +4527,13 @@ msgstr "Тест-полоска GenoType MTBDRsl VER 2.0"
 #: extracted_strings.json
 msgid "GenoType Test Strip"
 msgstr "Тестовая полоса GenoType"
+
+#. [hierarchicalSiteView.geographical]
+#. defaultMessage is:
+#. Geographical
+#: extracted_strings.json
+msgid "Geographical"
+msgstr "Географический"
 
 #. [pages.OperationalDashboard.dailyStatusNav]
 #. defaultMessage is:
@@ -7850,6 +7871,9 @@ msgstr "Партнер"
 #. [pages.Login.password]
 #. defaultMessage is:
 #. Password
+#. [pages.Notifications.password]
+#. defaultMessage is:
+#. Password
 #: extracted_strings.json
 msgid "Password"
 msgstr "Пароль"
@@ -8516,6 +8540,13 @@ msgstr "Профиль"
 #: extracted_strings.json
 msgid "Projected stock waste"
 msgstr "Прогнозируемые складские отходы"
+
+#. [pages.Notifications.protectWithPassword]
+#. defaultMessage is:
+#. Protect report file with this password
+#: extracted_strings.json
+msgid "Protect report file with this password"
+msgstr "Защитите файл отчета этим паролем"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -10282,6 +10313,13 @@ msgstr "Задать статус обслуживания"
 #: extracted_strings.json
 msgid "Set based on address"
 msgstr "Устанавливается на основе адреса"
+
+#. [pages.Notifications.setting]
+#. defaultMessage is:
+#. Setting
+#: extracted_strings.json
+msgid "Setting"
+msgstr "Настройки"
 
 #. [errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title]
 #. defaultMessage is:
@@ -12743,6 +12781,13 @@ msgstr "Показать журнал"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Напряжение"
+
+#. [hierarchicalSiteView.warehouse]
+#. defaultMessage is:
+#. Warehouse
+#: extracted_strings.json
+msgid "Warehouse"
+msgstr "Склад"
 
 #. [pages.DeviceList.warranty]
 #. defaultMessage is:
