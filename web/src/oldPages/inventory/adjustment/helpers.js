@@ -63,7 +63,8 @@ export function getValidations(format, actionType, inventory) {
         .nullable()
         .when('consumable', {
           is: consumable => {
-            return hasExpireDate(consumable?.strategy || inventory?.strategy)
+            // return hasExpireDate(consumable?.strategy || inventory?.strategy)
+            return true
           },
           then: sch => {
             let validation = sch.required(format(validationMessages.expiryDateRequired))
@@ -76,7 +77,10 @@ export function getValidations(format, actionType, inventory) {
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: consumable => hasLot(consumable?.strategy || inventory?.strategy),
+          is: consumable => {
+            // return hasLot(consumable?.strategy || inventory?.strategy)
+            return true
+          },
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })

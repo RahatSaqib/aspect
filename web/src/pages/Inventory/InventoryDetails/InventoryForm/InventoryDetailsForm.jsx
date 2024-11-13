@@ -62,7 +62,8 @@ export function InventoryDetailsForm(props) {
                 control={
                   <Checkbox
                     color="primary"
-                    checked={Boolean(values.canExpire)}
+                    checked
+                    disabled
                     onChange={e => setFieldValue('canExpire', e.target.checked)}
                     name="canExpire"
                   />
