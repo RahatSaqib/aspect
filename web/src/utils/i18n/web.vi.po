@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
+"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1634,6 +1634,13 @@ msgstr "Đóng"
 #: extracted_strings.json
 msgid "Close contacts of DR TB patient with symptoms"
 msgstr "Những người tiếp xúc gần với bệnh nhân lao DR có triệu chứng"
+
+#. [hierarchicalSiteView.collapseAll]
+#. defaultMessage is:
+#. Collapse All
+#: extracted_strings.json
+msgid "Collapse All"
+msgstr "Thu gọn tất cả"
 
 #. [legends.Unknown.resultCategoryCollectNewSample]
 #. defaultMessage is:
@@ -3661,6 +3668,13 @@ msgstr "Lý do loại trừ"
 msgid "Execute"
 msgstr "Thi hành"
 
+#. [hierarchicalSiteView.expandAll]
+#. defaultMessage is:
+#. Expand All
+#: extracted_strings.json
+msgid "Expand All"
+msgstr "Mở rộng tất cả"
+
 #. [pages.TableCell.expandRow]
 #. defaultMessage is:
 #. Expand Row
@@ -4505,6 +4519,13 @@ msgstr "Dải thử nghiệm GenoType MTBDRsl VER 2.0"
 #: extracted_strings.json
 msgid "GenoType Test Strip"
 msgstr "Dải thử nghiệm GenoType"
+
+#. [hierarchicalSiteView.geographical]
+#. defaultMessage is:
+#. Geographical
+#: extracted_strings.json
+msgid "Geographical"
+msgstr "Địa lý"
 
 #. [pages.OperationalDashboard.dailyStatusNav]
 #. defaultMessage is:
@@ -7835,6 +7856,9 @@ msgstr "Đối tác"
 #. [pages.Login.password]
 #. defaultMessage is:
 #. Password
+#. [pages.Notifications.password]
+#. defaultMessage is:
+#. Password
 #: extracted_strings.json
 msgid "Password"
 msgstr "Mật khẩu"
@@ -8499,6 +8523,13 @@ msgstr "Hồ sơ"
 #: extracted_strings.json
 msgid "Projected stock waste"
 msgstr "Chất thải dự kiến"
+
+#. [pages.Notifications.protectWithPassword]
+#. defaultMessage is:
+#. Protect report file with this password
+#: extracted_strings.json
+msgid "Protect report file with this password"
+msgstr "Bảo vệ tệp báo cáo bằng mật khẩu này"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -10261,6 +10292,13 @@ msgstr "Đặt trạng thái bảo trì"
 #: extracted_strings.json
 msgid "Set based on address"
 msgstr "Đặt dựa trên địa chỉ"
+
+#. [pages.Notifications.setting]
+#. defaultMessage is:
+#. Setting
+#: extracted_strings.json
+msgid "Setting"
+msgstr "Cài đặt"
 
 #. [errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title]
 #. defaultMessage is:
@@ -12706,6 +12744,13 @@ msgstr "Xem Log"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Vôn"
+
+#. [hierarchicalSiteView.warehouse]
+#. defaultMessage is:
+#. Warehouse
+#: extracted_strings.json
+msgid "Warehouse"
+msgstr "Kho"
 
 #. [pages.DeviceList.warranty]
 #. defaultMessage is:
