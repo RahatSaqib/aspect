@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
+"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1631,6 +1631,13 @@ msgstr "Пӯшед"
 #: extracted_strings.json
 msgid "Close contacts of DR TB patient with symptoms"
 msgstr "Алоқаҳои наздики бемори DR сил бо нишонаҳо"
+
+#. [hierarchicalSiteView.collapseAll]
+#. defaultMessage is:
+#. Collapse All
+#: extracted_strings.json
+msgid "Collapse All"
+msgstr "Ҳамаро вайрон кунед"
 
 #. [legends.Unknown.resultCategoryCollectNewSample]
 #. defaultMessage is:
@@ -3663,6 +3670,13 @@ msgstr "Сабаби истисно"
 msgid "Execute"
 msgstr "Иҷро кунед"
 
+#. [hierarchicalSiteView.expandAll]
+#. defaultMessage is:
+#. Expand All
+#: extracted_strings.json
+msgid "Expand All"
+msgstr "Ҳамаро васеъ кунед"
+
 #. [pages.TableCell.expandRow]
 #. defaultMessage is:
 #. Expand Row
@@ -4511,6 +4525,13 @@ msgstr "GenoType MTBDRsl VER 2.0 Санҷиши тасма"
 #: extracted_strings.json
 msgid "GenoType Test Strip"
 msgstr "Сатри озмоишии GenoType"
+
+#. [hierarchicalSiteView.geographical]
+#. defaultMessage is:
+#. Geographical
+#: extracted_strings.json
+msgid "Geographical"
+msgstr "Ҷуғрофӣ"
 
 #. [pages.OperationalDashboard.dailyStatusNav]
 #. defaultMessage is:
@@ -7851,6 +7872,9 @@ msgstr "Шарик"
 #. [pages.Login.password]
 #. defaultMessage is:
 #. Password
+#. [pages.Notifications.password]
+#. defaultMessage is:
+#. Password
 #: extracted_strings.json
 msgid "Password"
 msgstr "Рамз"
@@ -8519,6 +8543,13 @@ msgstr "Профил"
 #: extracted_strings.json
 msgid "Projected stock waste"
 msgstr "Партовҳои захираҳои пешбинишуда"
+
+#. [pages.Notifications.protectWithPassword]
+#. defaultMessage is:
+#. Protect report file with this password
+#: extracted_strings.json
+msgid "Protect report file with this password"
+msgstr "Файли гузоришро бо ин парол муҳофизат кунед"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -10282,6 +10313,13 @@ msgstr "Ҳолати Нигоҳдорӣ таъин кунед"
 #: extracted_strings.json
 msgid "Set based on address"
 msgstr "Дар асоси суроға муқаррар карда мешавад"
+
+#. [pages.Notifications.setting]
+#. defaultMessage is:
+#. Setting
+#: extracted_strings.json
+msgid "Setting"
+msgstr "Танзимот"
 
 #. [errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title]
 #. defaultMessage is:
@@ -12741,6 +12779,13 @@ msgstr "Намоиши гузориш"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Шиддат"
+
+#. [hierarchicalSiteView.warehouse]
+#. defaultMessage is:
+#. Warehouse
+#: extracted_strings.json
+msgid "Warehouse"
+msgstr "Анбор"
 
 #. [pages.DeviceList.warranty]
 #. defaultMessage is:
