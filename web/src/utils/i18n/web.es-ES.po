@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-10-25T02:12:49.468Z\n"
+"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1639,6 +1639,13 @@ msgstr "Cerrar"
 #: extracted_strings.json
 msgid "Close contacts of DR TB patient with symptoms"
 msgstr "Contactos cercanos del paciente con TB DR con síntomas"
+
+#. [hierarchicalSiteView.collapseAll]
+#. defaultMessage is:
+#. Collapse All
+#: extracted_strings.json
+msgid "Collapse All"
+msgstr "Colapsar todo"
 
 #. [legends.Unknown.resultCategoryCollectNewSample]
 #. defaultMessage is:
@@ -3672,6 +3679,13 @@ msgstr "Motivo excluido"
 msgid "Execute"
 msgstr "Ejecutar"
 
+#. [hierarchicalSiteView.expandAll]
+#. defaultMessage is:
+#. Expand All
+#: extracted_strings.json
+msgid "Expand All"
+msgstr "Expandir todo"
+
 #. [pages.TableCell.expandRow]
 #. defaultMessage is:
 #. Expand Row
@@ -4522,6 +4536,13 @@ msgstr "Tira reactiva GenoType MTBDRsl VER 2.0"
 #: extracted_strings.json
 msgid "GenoType Test Strip"
 msgstr "Tira reactiva GenoType"
+
+#. [hierarchicalSiteView.geographical]
+#. defaultMessage is:
+#. Geographical
+#: extracted_strings.json
+msgid "Geographical"
+msgstr "Geografía"
 
 #. [pages.OperationalDashboard.dailyStatusNav]
 #. defaultMessage is:
@@ -7860,6 +7881,9 @@ msgstr "Asociado"
 #. [pages.Login.password]
 #. defaultMessage is:
 #. Password
+#. [pages.Notifications.password]
+#. defaultMessage is:
+#. Password
 #: extracted_strings.json
 msgid "Password"
 msgstr "Contraseña"
@@ -8525,6 +8549,13 @@ msgstr "Perfil"
 #: extracted_strings.json
 msgid "Projected stock waste"
 msgstr "Residuos de stock proyectados"
+
+#. [pages.Notifications.protectWithPassword]
+#. defaultMessage is:
+#. Protect report file with this password
+#: extracted_strings.json
+msgid "Protect report file with this password"
+msgstr "Proteger el archivo de informe con esta contraseña"
 
 #. [pages.common.state_ZANHLS]
 #. defaultMessage is:
@@ -10290,6 +10321,13 @@ msgstr "Establecer el estado de mantenimiento"
 #: extracted_strings.json
 msgid "Set based on address"
 msgstr "Ingresar  dirección de residencia"
+
+#. [pages.Notifications.setting]
+#. defaultMessage is:
+#. Setting
+#: extracted_strings.json
+msgid "Setting"
+msgstr "Configuración"
 
 #. [errorResponseMessages.updateDeviceMaintenance.calibration.POST.default.title]
 #. defaultMessage is:
@@ -12766,6 +12804,13 @@ msgstr "Ver registro"
 #: extracted_strings.json
 msgid "Voltage"
 msgstr "Voltaje"
+
+#. [hierarchicalSiteView.warehouse]
+#. defaultMessage is:
+#. Warehouse
+#: extracted_strings.json
+msgid "Warehouse"
+msgstr "Almacén"
 
 #. [pages.DeviceList.warranty]
 #. defaultMessage is:
