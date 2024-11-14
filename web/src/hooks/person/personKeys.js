@@ -11,6 +11,8 @@ const PERSON_KEY_ASSIGNMENTS_BY_PERSON_ID = '/job-function/person-assignments/:p
 const PERSON_KEY_ASSIGNMENTS_DELETE = '/job-function/person-assignment/:personId/:jobContextId'
 const PERSON_KEY_ASSIGNMENTS_CREATE = '/job-function/assign-person-to-job-and-context'
 const PERSON_KEY_LIST = '/person/select-list'
+const PERSON_HAS_PERMISSION_ENDPOINT = '/person/has-permission'
+const PERSON_HAS_PERMISSION_KEY = 'HAS_PERMISSION'
 
 export {
   PERSON_KEY,
@@ -26,4 +28,6 @@ export {
   PERSON_KEY_ASSIGNMENTS_DELETE,
   PERSON_KEY_ASSIGNMENTS_CREATE,
   PERSON_KEY_LIST,
+  PERSON_HAS_PERMISSION_ENDPOINT,
+  PERSON_HAS_PERMISSION_KEY,
 }

@@ -14,6 +14,9 @@ function updateConsumable({ siteId, modify, consumable }) {
       409: {
         default: {
           severity: 'warn',
+          messageValues: {
+            consumableName: consumable.name,
+          },
           ...defineMessages({
             title: {
               id: 'errorResponseMessages.updateConsumable.title',
@@ -21,7 +24,7 @@ function updateConsumable({ siteId, modify, consumable }) {
             },
             message: {
               id: 'errorResponseMessages.updateConsumable.message',
-              defaultMessage: `As there is unreconciled consumption for the specified cartridge, ${consumable.name}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action`,
+              defaultMessage: `As there is unreconciled consumption for the specified cartridge, {consumableName}, system cant allow delisting of the same at the site. Please reconcile your inventory to complete this action`,
             },
           }),
         },
