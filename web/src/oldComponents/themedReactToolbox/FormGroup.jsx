@@ -17,9 +17,11 @@ const styles = {
   },
 }
 
-const FormGroup = ({ classes: classNameValues, className, label, htmlFor, children }) => (
+const FormGroup = ({ classes: classNameValues, className, label, htmlFor, children, labelProps }) => (
   <FormControl className={classnames(classNameValues.root, className)}>
-    <FormLabel className={classNameValues.label}>{label}</FormLabel>
+    <FormLabel className={classNameValues.label} {...labelProps}>
+      {label}
+    </FormLabel>
     <div id={htmlFor} className={classnames(classNameValues.input)}>
       {children}
     </div>
