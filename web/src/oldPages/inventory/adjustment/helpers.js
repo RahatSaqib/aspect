@@ -62,7 +62,7 @@ export function getValidations(format, actionType, inventory) {
       expiresOn: date()
         .nullable()
         .when('consumable', {
-          is: consumable => {
+          is: () => {
             // return hasExpireDate(consumable?.strategy || inventory?.strategy)
             return true
           },
@@ -77,7 +77,7 @@ export function getValidations(format, actionType, inventory) {
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: consumable => {
+          is: () => {
             // return hasLot(consumable?.strategy || inventory?.strategy)
             return true
           },

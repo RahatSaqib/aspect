@@ -1,5 +1,5 @@
 import React, { memo } from 'react'
-import { Button, DialogActions, FormLabel, TextField } from '@mui/material'
+import { Button, DialogActions, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'

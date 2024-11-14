@@ -15,7 +15,7 @@ function TabPanel(props) {
   )
 }
 
-export const InventoryForm = ({ data, cartridgeId, setTabValue, tabValue, hasPermission }) => {
+export const InventoryForm = ({ data, cartridgeId, setTabValue, tabValue }) => {
   const { formatMessage } = useIntl()
 
   const handleTabChange = (event, newValue) => {
