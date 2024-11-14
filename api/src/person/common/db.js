@@ -106,7 +106,7 @@ async function listPeople(request) {
   const { auth, query } = request
   const dataConstraints = await getConstraints(auth.credentials)
 
-  const countryLevelPermission = await hasCountryLevelPermission(dataConstraints)
+  const countryLevelPermission = await hasCountryLevelPermission(dataConstraints, ['person:edit', 'person:admin'])
 
   const { geographicLevel, tags } = query
 
