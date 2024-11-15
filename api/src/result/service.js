@@ -2243,7 +2243,7 @@ async function getCustomFieldsCompletion(auth, query) {
     {}
   )
   const startDate = new Date(minDate.split('T')[0])
-  const endDate = new Date(maxDate.split('T')[0])
+  const endDate = endOfDay(new Date(maxDate.split('T')[0]))
   const allCustomFields = _.reduce(_.values(allFormFields), (acc, formFields) => [...acc, ...formFields], [])
 
   const data = await knex('Site as s')
