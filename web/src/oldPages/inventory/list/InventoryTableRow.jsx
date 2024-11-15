@@ -2,14 +2,18 @@ import React, { useState } from 'react'
 import CheckIcon from '@mui/icons-material/Check'
 import ErrorIcon from '@mui/icons-material/Error'
 import { TextField } from '@mui/material'
+import isNil from 'lodash/isNil'
 import isNull from 'lodash/isNull'
+import omitBy from 'lodash/omitBy'
 import round from 'lodash/round'
 import { useIntl } from 'react-intl'
 import { useMutation } from 'react-query'
 import { useDispatch } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
 import AspectVertMenu from '../../../components/AspectVertMenu'
 import PermissionChecker from '../../../components/PermissionChecker'
 import useAuthState from '../../../hooks/useAuthState'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
 import {
@@ -23,8 +27,9 @@ import messages from './messages'
 
 const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refetch }) => {
   const { formatMessage, formatNumber } = useIntl()
-
-  const { isCountry } = useAuthState()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
+  const { isCountry, countryId } = useAuthState()
   const [newQtyOnHand, setNewQtyOnHand] = useState('')
   const [newQtyOnHandError, setNewQtyOnHandError] = useState(false)
   const [showCheck, setShowCheck] = useState(false)
@@ -164,6 +169,35 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
           </span>
         ) : null}
       </TableCell>
+      {!breakOutByLot ? (
+        <TableCell
+          onClick={() => {
+            addFilter(
+              omitBy(
+                {
+                  onlyUnreconciled: true,
+                  countryId,
+                  assayId: inventoryItem.get('assayId'),
+                  stateId: inventoryItem.get('stateId'),
+                  lgaId: inventoryItem.get('lgaId'),
+                  siteName: inventoryItem.get('siteName'),
+                },
+                isNil
+              ),
+              '/browse/result'
+            )
+            navigate('/browse/result')
+          }}
+          sx={
+            inventoryItem.get('unreconciledQuantity')
+              ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
+              : {}
+          }
+          className={styles.TableCell}
+        >
+          {inventoryItem.get('unreconciledQuantity')}
+        </TableCell>
+      ) : null}
       {inventoryItem.get('dailyConsumptionRate') !== undefined ? (
         <TableCell className={styles.TableCell} rowSpan={rowSpan('dailyConsumptionRate')}>
           {hasDailyConsumption(inventoryItem.get('dailyConsumptionRate'))}

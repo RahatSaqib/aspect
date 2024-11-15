@@ -1,7 +1,11 @@
-import React from 'react'
+import React, { useCallback } from 'react'
 import { LinearProgress } from '@mui/material'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
 import { ConsumableSelector, PeriodSelector } from '../../../../../cleanComponents'
+import useFilterUpdate from '../../../../../hooks/useFilterUpdate'
 import { usePathFilter } from '../../../../../hooks/usePathFilter'
 import NestedTable from '../../../components/NestedTable'
 import PkPage from '../../../components/PkPage'
@@ -11,6 +15,8 @@ import useInventoryOverview from './useInventoryOverview'
 const InventoryOverviewPage = () => {
   const { formatMessage } = useIntl()
   const [filters, setFilter] = usePathFilter()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
 
   function getInventoryLabel(item, isState) {
     if (item.type && item[item.type]) return item.type && item[item.type]
@@ -39,12 +45,32 @@ const InventoryOverviewPage = () => {
     { enabled: !!filters.consumable?.consumableExternalId }
   )
 
+  const handleUnreconciledClick = useCallback(
+    ({ countryId, stateId, lgaId }) => {
+      addFilter(
+        omitBy({ assayId: filters?.consumable?.assayId, onlyUnreconciled: true, countryId, stateId, lgaId }, isNil),
+        '/browse/result'
+      )
+      navigate('/browse/result')
+    },
+    [addFilter, filters, navigate]
+  )
+
   const columns = [
     { name: 'Name', prop: 'name' },
     {
       name: 'Current Qty.',
       prop: 'quantity',
       tooltip: 'Its the current quantity in hand, including the expired quantity.',
+    },
+    {
+      name: 'Unreconciled Qty.',
+      prop: 'unreconciledQuantity',
+      cellProp: c => ({
+        sx: c.unreconciledQuantity ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' } : undefined,
+        onClick: () => handleUnreconciledClick(c),
+      }),
+      tooltip: 'Total cartridges consumed and reported under tests but not yet adjusted against the inventory',
     },
     {
       name: 'Last 6 Months',
