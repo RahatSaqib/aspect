@@ -48,19 +48,15 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
     const startOfDay = timeZone ? slideDateToTimeZone(day, timeZone) : day
     const endOfDay = timeZone ? slideDateToTimeZone(addDays(day, 1), timeZone) : addDays(day, 1)
     const results = await getResultsCustomFields(selectColumnClauses, startOfDay, endOfDay)
-
     const stats = generateStatsResult(allFields, results)
 
-    await Promise.map(
-      stats,
-      async ({ siteId, assayId, date, ...rest }) => {
-        await knex('FactCustomFieldCompletion')
-          .insert({ siteId, assayId, date, ...rest })
-          .onConflict(['siteId', 'assayId', 'date'])
-          .merge()
-      },
-      { concurrency: 10 }
-    )
+    const batchSize = 10
+    for (let i = 0; i < stats.length; i += batchSize) {
+      const batch = stats.slice(i, i + batchSize)
+
+      // eslint-disable-next-line no-await-in-loop
+      await knex('FactCustomFieldCompletion').insert(batch).onConflict(['siteId', 'assayId', 'date']).merge()
+    }
 
     insertedStats += stats.length
   })
@@ -123,7 +119,7 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
     .modify(queryBuilder => {
       queryBuilder.where(function () {
         this.where(function () {
-          this.where('r.endedOn', '>=', dateFrom).where('endedOn', '<', dateTo)
+          this.where('r.endedOn', '>=', dateFrom).where('r.endedOn', '<', dateTo)
         }).orWhere(function () {
           this.where('r.updatedOn', '>=', dateFrom).where('r.updatedOn', '<', dateTo)
         })
