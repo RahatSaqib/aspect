@@ -10,7 +10,6 @@ const { getConstraints } = require('../auth/constraints')
 const { generateCsvAttachment } = require('../shared/io')
 const { getDeviceErrorHistoryForAttachment } = require('../result/serviceReport')
 const { startOfDayUtc, startOfMonthUTC, endOfMonthUTC } = require('../shared/date')
-const { knex } = require('../db')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -56,23 +55,10 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
   const context = messageContext.bindActionCreators({
     emailMessageProcessed,
   })
-  const partnerDetails = await knex('Partner')
-  const SmsMessageCount = await knex('SmsMessage')
-    .where('createdOn', '>', partnerDetails[0].serviceStartDate)
-    .where('createdOn', '<', partnerDetails[0].serviceEndDate)
-    .count('* as count')
-  // check for partner service end date should be less then current date
-  if (
-    new Date(partnerDetails[0].serviceEndDate) > new Date() &&
-    SmsMessageCount[0].count <= partnerDetails[0].notificationLimit
-  ) {
-    return context.transact(async knex => {
-      await doSendEmailMessage(context, knex, emailMessageId)
-    })
-  }
 
-  // return error
-  return Promise.reject(new Error('Service is not available'))
+  return context.transact(async knex => {
+    await doSendEmailMessage(context, knex, emailMessageId)
+  })
 }
 
 // -----------------------------
