@@ -23,6 +23,7 @@ module.exports = async function (query, constraints) {
         .leftJoin('State as st', 'g.stateId', 'st.id')
         .leftJoin('Lga as l', 'g.lgaId', 'l.id')
         .leftJoin('Result as r', 'r.siteId', 's.id')
+        .leftJoin('MissingInventoryLots as mil', 'r.id', 'mil.resultId')
         .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
         .leftJoin('Assay as a', 'a.id', 'ca.assayId')
         .leftJoin('Consumable as c', q =>
@@ -64,6 +65,7 @@ module.exports = async function (query, constraints) {
           'g.stateId',
           'g.lgaId',
           knex.raw('min(r.endedOn) as firstResultDateInLastSixMonths'),
+          knex.raw('COUNT(mil.id) as unreconciledQuantity'),
         ])
         .as('site')
     )

@@ -101,10 +101,12 @@ function addAggregations(item) {
       item.usedLastSixMonths = 0
       item.usedInDateRange = 0
       item.dailyConsumptionRate = 0
+      item.unreconciledQuantity = 0
 
       item.children.forEach(child => {
         addAggregations(child)
         item.quantity += child.quantity
+        item.unreconciledQuantity += child.unreconciledQuantity
         if (child.usedLastSixMonths) {
           item.usedLastSixMonths = parseFloat((item.usedLastSixMonths + child.usedLastSixMonths).toFixed(2))
         }
@@ -140,9 +142,6 @@ function reduceItemAuxiliarProperties(item) {
   const reduced = { ...item }
   delete reduced.consumableId
   delete reduced.geographyId
-  delete reduced.stateId
-  delete reduced.countryId
-  delete reduced.lgaId
   delete reduced.firstResultDateInLastSixMonths
   if (reduced.type === 'warehouse') {
     delete reduced.usedLastSixMonths

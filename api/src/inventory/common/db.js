@@ -66,28 +66,31 @@ function baseInventoryQuery(siteId, consumableId, inTransitFromSiteId) {
 }
 
 // ----------------------------------------------------------------------------------
-function getInventoryItemsRawQuery() {
-  const fldExpiresOn = `DATE_FORMAT(IFNULL(ii.expiresOn, NOW()), '%Y-%m-%d')`
-  const fldQuantity = `CAST(IFNULL(ii.quantityOnHand, 0) AS CHAR(10))`
-  const itemRaw = `CONCAT(
-    '{ "expiresOn": "', ${fldExpiresOn}, '", "quantityOnHand": "', ${fldQuantity}, '" }'
-  )`
 
-  /**
-   * assemble json array from '[' and ']', and json object strings of all
-   * grouped items
-   * with props `{ "expiresOn": "...", "quantityOnHand": "..." }`
-   */
-  return `CONCAT(
-    '[',
-      GROUP_CONCAT(${itemRaw} SEPARATOR ','),
-    ']'
-  )`
+function getInventoryItemsRawQuery() {
+  return knex.raw(`
+    JSON_ARRAYAGG(
+      JSON_OBJECT(
+        'expiresOn', DATE_FORMAT(IFNULL(ii.expiresOn, NOW()), '%Y-%m-%d'),
+        'quantityOnHand', IFNULL(ii.quantityOnHand, 0)
+      )
+    )
+  `)
+}
+
+function getUnreconciledCount(siteId, consumableId) {
+  return knex('MissingInventoryLots as mil')
+    .leftJoin('Result as r', 'mil.resultId', 'r.id')
+    .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
+    .where('mil.siteId', siteId)
+    .andWhere('ca.consumableId', consumableId)
+    .count('r.id as resultCount')
+    .then(([result]) => result.resultCount)
 }
 
 // ----------------------------------------------------------------------------------
 function getInventorySitesQuery(constraints, request) {
-  const inventoryItemsRaw = getInventoryItemsRawQuery()
+  const inventoryItemsRaw = getInventoryItemsRawQuery() // This will generate the raw SQL for inventory items
 
   return query('Search Inventory Sites')
     .from('Site as s')
@@ -125,6 +128,7 @@ function getInventorySitesQuery(constraints, request) {
     .select([
       knex.raw("CONCAT(c.id, '-', s.id) as id"),
       'c.id as consumableId',
+      'a.id as assayId',
       'c.name as consumableName',
       'c.strategy',
       'c.i18nKey as consumableNameI18nKey',
@@ -140,7 +144,8 @@ function getInventorySitesQuery(constraints, request) {
       'st.name as stateName',
       'l.name as lgaName',
       'ficr.rate as dailyConsumptionRate',
-      knex.raw('SUM(ii.quantityOnHand) as quantityOnHand'),
+      // Use DISTINCT to ensure that we only sum `quantityOnHand` once per unique inventory item
+      knex.raw('SUM(DISTINCT ii.quantityOnHand) as quantityOnHand'),
       knex.raw('COUNT(ii_transfer.id) as pendingTransfers'),
       knex.raw('SUM(ii_transfer.quantityOnHand) as pendingTransfersQuantityOnHand'),
       knex.raw(
@@ -395,18 +400,27 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
     .select(columns)
 }
 
-// ----------------------------------------------------------------------------------
 async function getInventoryBySitesAndConsumable(request, dataConstraints, range) {
   let inventoryQuery = getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints, range)
 
+  // Get the total count of all items
   const [{ total }] = await inventoryQuery.clone().count('id as total')
 
-  // sorting and pagination
+  // Sorting and pagination
   inventoryQuery = inventoryQuery.modify(sortPageParams, request.query, 'siteName')
 
+  // Fetch the inventory sites
   const inventorySites = await inventoryQuery
 
-  return { data: inventorySites, total }
+  // Add count of results to each inventory item
+  const inventoryWithCounts = await Promise.all(
+    inventorySites.map(async item => {
+      const unreconciledQuantity = await getUnreconciledCount(item.siteId, item.consumableId)
+      return { ...item, unreconciledQuantity }
+    })
+  )
+
+  return { data: inventoryWithCounts, total }
 }
 
 // ----------------------------------------------------------------------------------
@@ -772,7 +786,6 @@ function baseMissingInventoryLotsQuery() {
 async function getReconciliationList(query, dataConstraints) {
   const baseQuery = baseMissingInventoryLotsQuery()
     .modify(addConstraints, dataConstraints, { result: 'r', geography: 'g' })
-    .modify(filterDateRangeParams, query, 'm.expirationDate')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
