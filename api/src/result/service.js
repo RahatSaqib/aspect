@@ -1,13 +1,12 @@
 const Boom = require('@hapi/boom')
 const _ = require('lodash')
 const dateFormat = require('date-fns/format')
-const { format, addMonths, subMonths, startOfDay, endOfDay } = require('date-fns')
+const { format, addMonths, startOfDay, endOfDay } = require('date-fns')
 const Promise = require('bluebird')
 const {
   getOffsetFromIsoDateString,
   getAllMonthsInRange,
   getMonthYearField,
-  getDatesFromQuery,
   returnIso8601StringWithoutTimeZoneOffset,
 } = require('../shared/date')
 const { getReportCommonFieldsTZ, LIST_FIELDS_UTC, SORT_FIELDS, RESULT_STRING_TEMPLATE_FIELDS } = require('./query')
@@ -2153,12 +2152,7 @@ async function getCustomFieldsCompletion(auth, query) {
   const dataConstraints = await getConstraints(auth.credentials)
   const { partnerId } = await getPersonByPersonId(auth.credentials.personId)
   const { minDate, maxDate } = query
-  const dates = getDatesFromQuery(query)
-  let { dateFrom } = dates
-  const { dateTo } = dates
-  if (dateFrom >= dateTo) {
-    dateFrom = subMonths(dateTo, 1)
-  }
+
   const assayIds = await allAssayToId()
 
   const queryForm = await knex('FormType AS ft')
@@ -2256,8 +2250,7 @@ async function getCustomFieldsCompletion(auth, query) {
       geography: 'g',
       assay: 'a',
     })
-    .where('fcfc.date', '>=', startDate)
-    .where('fcfc.date', '<', endDate)
+    .modify(filterDateRangeParams, { minDate: startDate, maxDate: endDate }, 'fcfc.date')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
