@@ -4,6 +4,7 @@ const SELECT_LIST_FIELDS = [
   'c.id',
   'c.name',
   'c.i18nKey',
+  'c.strategy',
   'u.name as unit',
   'u.shortName as unitShortName',
   'c.canExpire',
