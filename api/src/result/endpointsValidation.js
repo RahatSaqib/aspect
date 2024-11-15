@@ -399,6 +399,9 @@ function listResultsBaseConfig() {
         onlyReportableResults: Joi.boolean()
           .optional()
           .description('It filters only results with no "Invalid", "No result" or "Error" categories'),
+        onlyUnreconciled: Joi.boolean()
+          .optional()
+          .description('It filters only results that has unreconciled inventories'),
         showUnapprovedDevices: Joi.boolean()
           .default(false)
           .description('If true, will include all the results of unapproved devices'),

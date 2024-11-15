@@ -224,6 +224,11 @@ function getQueryForResultsListAndExport(query, dataConstraints) {
       join.andOn('r.assayId', 'rcg.assayId')
     })
     .modify(queryBuilder => {
+      if (query.onlyUnreconciled) {
+        queryBuilder
+          .innerJoin('MissingInventoryLots as mil', 'r.id', 'mil.resultId') // Join based on resultId
+          .whereNotNull('mil.resultId')
+      }
       if (query.consumableId)
         queryBuilder.join('InventoryLog as il', 'il.resultId', 'r.id').where('il.consumableId', query.consumableId)
       if (!_.isEmpty(assayId)) queryBuilder.whereIn('r.assayId', assayId)
