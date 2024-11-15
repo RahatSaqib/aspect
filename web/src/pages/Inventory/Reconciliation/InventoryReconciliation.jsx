@@ -9,8 +9,8 @@ import { useSearchParams } from 'react-router-dom'
 import DetailHeader from '../../../cleanComponents/DetailHeader'
 import { InventoryReconciliationFilter } from '../../../cleanComponents/Filter'
 import {
-  HierarchicalSiteView,
   hierarchicalToggleSettingsLocalStorageKey,
+  HierarchicalView,
   useHierarchicalSwitch,
 } from '../../../cleanComponents/HierarchicalSiteView'
 import AspectExportListButton from '../../../components/AspectExportListButton'
@@ -68,7 +68,12 @@ export function InventoryReconciliation() {
         <InventoryReconciliationFilter />
         <Stack sx={{ flexDirection: 'row', gap: 1, width: '100%' }}>
           {isHierarchicalView ? (
-            <HierarchicalSiteView countryId={user.countryId} filters={filters} pathname={location.pathname} />
+            <HierarchicalView
+              onlyGeographical
+              countryId={user.countryId}
+              filters={filters}
+              pathname={location.pathname}
+            />
           ) : null}
           <Card sx={{ p: '20px', flex: 1 }}>
             <Stack sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>

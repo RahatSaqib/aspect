@@ -4,6 +4,7 @@ import Checkbox from './Checkbox'
 import CronForm from './CronForm'
 import { AspectDatePicker, AspectDateTimePicker, AspectDatePickerNoTimezone } from './DatePicker'
 import AspectNumberField from './NumberField'
+import PasswordInput from './PasswordInput'
 import PlaceholderTextArea from './PlaceholderTextArea'
 import PlaceholderTextField from './PlaceholderTextField'
 import RadioButtonList from './RadioButtonList'
@@ -13,6 +14,7 @@ import AspectTextField from './TextField'
 
 const Inputs = {
   textArea: AspectTextArea,
+  passwordField: PasswordInput,
   textField: AspectTextField,
   numberField: AspectNumberField,
   messageField: AspectMessageField,

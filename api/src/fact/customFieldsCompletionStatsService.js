@@ -1,7 +1,7 @@
 const { startOfToday, addDays, format } = require('date-fns')
 const { Promise } = require('bluebird')
 const { getArrayOfDaysInRange } = require('../shared/date')
-const { knex, filterDateRangeParams } = require('../db')
+const { knex } = require('../db')
 const formDictionary = require('../forms/formsFileDictionary')
 const { factCheckCompletionRatePerSite } = require('./actions')
 
@@ -41,16 +41,25 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
 
   await Promise.map(
     days,
-    async day =>
-      getResultsCustomFields(selectColumnClauses, day, addDays(day, 1)).then(async r => {
-        const stats = generateStatsResult(allFields, r)
-        if (stats.length > 0) {
-          await knex('FactCustomFieldCompletion').insert(stats)
-        }
-        insertedStats += stats.length
-      }),
+    async day => {
+      const results = await getResultsCustomFields(selectColumnClauses, day, addDays(day, 1))
+      const stats = generateStatsResult(allFields, results)
+
+      await Promise.each(stats, async ({ siteId, assayId, date, ...rest }) => {
+        await knex('FactCustomFieldCompletion')
+          .insert({ siteId, assayId, date, ...rest })
+          .onConflict(['siteId', 'assayId', 'date'])
+          .merge({
+            ...rest,
+            completionByField: JSON.stringify(rest.completionByField),
+          })
+      })
+
+      insertedStats += stats.length
+    },
     { concurrency: 10 }
   )
+
   return insertedStats
 }
 
@@ -92,7 +101,15 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
     .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
     .leftOuterJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-    .modify(filterDateRangeParams, { minDate: dateFrom, maxDate: dateTo }, 'r.endedOn')
+    .modify(queryBuilder => {
+      queryBuilder.where(function () {
+        this.where(function () {
+          this.where('r.endedOn', '>=', dateFrom).where('r.endedOn', '<', dateTo)
+        }).orWhere(function () {
+          this.where('r.updatedOn', '>=', dateFrom).where('r.updatedOn', '<', dateTo)
+        })
+      })
+    })
     .where('s.disabled', 0)
     .groupBy('s.id', 'a.id', knex.raw('DATE(r.endedOn)'))
     .select(
@@ -105,6 +122,7 @@ async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
     .count('* as recordCount')
     .select(...customFieldsClauses.map(cf => cf.clause))
     .orderBy('s.name')
+
   return data
 }
 
