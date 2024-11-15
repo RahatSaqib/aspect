@@ -158,6 +158,10 @@ const messages = defineMessages({
     id: 'filter.btnGroup.onlyTreatmentRequired',
     defaultMessage: 'Show Only Results With Treatment Required',
   },
+  onlyUnreconciled: {
+    id: 'filter.btnGroup.onlyTreatmentRequired',
+    defaultMessage: 'Show Results With Unreconciled Inventories',
+  },
   showDecommissionedDevices: {
     id: 'filter.btnGroup.showDecommissionedDevices',
     defaultMessage: 'Show Results From Decommissioned Devices',
