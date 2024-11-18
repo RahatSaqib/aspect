@@ -7,6 +7,7 @@ const { addDataSourceToQuery, processUsingDataSourceQuery } = require('../string
 const { getConstraints } = require('../auth/constraints')
 const logger = require('../shared/logger')
 const { normalizePhoneNumber } = require('../shared/phoneNormalization')
+const { knex } = require('../db')
 
 // -----------------------------
 // onSmsMessageCreated - event handler for action SMS_MESSAGE_CREATED
@@ -58,10 +59,20 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
   const context = messageContext.bindActionCreators({
     smsMessageProcessed,
   })
+  const partnerDetails = await knex('SmsMessage as em')
+    .join('Device as d', 'em.deviceId', 'd.id')
+    .join('Partner as p', 'd.partnerId', 'p.id')
+    .where({ 'em.id': smsMessageId })
+    .select('*')
+  // check for partner service end date should be less then current date
+  if (new Date(partnerDetails[0].serviceEndDate) > new Date()) {
+    return context.transact(async knex => {
+      await doSendSmsMessage(context, knex, smsMessageId)
+    })
+  }
 
-  return context.transact(async knex => {
-    await doSendSmsMessage(context, knex, smsMessageId)
-  })
+  // return error
+  return Promise.reject(new Error('Service is not available'))
 }
 
 // -----------------------------
