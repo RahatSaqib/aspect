@@ -10,7 +10,6 @@ const { getConstraints } = require('../auth/constraints')
 const { generateCsvAttachment } = require('../shared/io')
 const { getDeviceErrorHistoryForAttachment } = require('../result/serviceReport')
 const { startOfDayUtc, startOfMonthUTC, endOfMonthUTC } = require('../shared/date')
-const { knex } = require('../db')
 
 // -----------------------------
 // onEmailMessageCreated - event handler for action EMAIL_MESSAGE_CREATED
@@ -56,20 +55,19 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
   const context = messageContext.bindActionCreators({
     emailMessageProcessed,
   })
-  const partnerDetails = await knex('EmailMessage as em')
-    .join('Device as d', 'em.deviceId', 'd.id')
-    .join('Partner as p', 'd.partnerId', 'p.id')
-    .where({ 'em.id': emailMessageId })
-    .select('*')
-  // check for partner service end date should be less then current date
-  if (new Date(partnerDetails[0].serviceEndDate) > new Date()) {
-    return context.transact(async knex => {
-      await doSendEmailMessage(context, knex, emailMessageId)
-    })
-  }
 
-  // return error
-  return Promise.reject(new Error('Service is not available'))
+  // check for partner service end date should be less then current date
+
+  return context.transact(async knex => {
+    const partnerDetails = await knex('EmailMessage as em')
+      .join('Device as d', 'em.deviceId', 'd.id')
+      .join('Partner as p', 'd.partnerId', 'p.id')
+      .where({ 'em.id': emailMessageId })
+      .select('*')
+    if (new Date(partnerDetails[0].serviceEndDate) > new Date()) {
+      await doSendEmailMessage(context, knex, emailMessageId)
+    } else return Promise.reject(new Error('Service is not available'))
+  })
 }
 
 // -----------------------------
