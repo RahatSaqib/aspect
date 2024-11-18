@@ -389,6 +389,11 @@ const themeDefinition = {
         InputLabelProps: { shrink: true },
       },
     },
+    MuiFormLabel: {
+      styleOverrides: {
+        asterisk: { color: 'red' },
+      },
+    },
   },
 }
 
