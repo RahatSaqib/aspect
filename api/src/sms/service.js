@@ -65,7 +65,7 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
       .join('Partner as p', 'd.partnerId', 'p.id')
       .where({ 'em.id': smsMessageId })
       .select('*')
-    if (new Date(partnerDetails[0].serviceEndDate) > new Date()) {
+    if (new Date(partnerDetails?.[0]?.serviceEndDate) > new Date()) {
       await doSendSmsMessage(context, knex, smsMessageId)
     } else return Promise.reject(new Error('Service is not available'))
   })

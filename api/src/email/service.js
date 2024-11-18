@@ -64,7 +64,7 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .join('Partner as p', 'd.partnerId', 'p.id')
       .where({ 'em.id': emailMessageId })
       .select('*')
-    if (new Date(partnerDetails[0].serviceEndDate) > new Date()) {
+    if (new Date(partnerDetails?.[0]?.serviceEndDate) > new Date()) {
       await doSendEmailMessage(context, knex, emailMessageId)
     } else return Promise.reject(new Error('Service is not available'))
   })
