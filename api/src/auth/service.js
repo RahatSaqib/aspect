@@ -133,11 +133,14 @@ async function serviceModification() {
     const jsonString = data.Body.toString('utf-8')
     const jsonData = JSON.parse(jsonString)
     jsonData.map(async data => {
-      const { activeStatus, statusMessage, partnerId } = data
+      const { activeStatus, statusMessage, partnerId, serviceStartDate, serviceEndDate, notificationLimit } = data
       // Update the Partner table
       await query('Update partner active status').from('Partner').where({ id: partnerId }).update({
         activeStatus,
         statusMessage,
+        serviceStartDate,
+        serviceEndDate,
+        notificationLimit,
       })
     })
   } catch (error) {
