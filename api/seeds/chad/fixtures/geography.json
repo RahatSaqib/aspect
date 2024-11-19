@@ -1,0 +1,325 @@
+{
+  "countries": [
+    {
+      "abbreviation": "TD",
+      "name": "Chad",
+      "a3": "TCD",
+      "culture": "en-US",
+      "countryCode": "235",
+      "timezone": "W. Central Africa Standard Time",
+      "portNumber": null,
+      "exportColumns": "DeploymentDescription|TestEndedOn|AssayName|AssayVersion|User|Result1|Result2|ResultText|PatientId|ReagentLotID|ExpirationDate|CartridgeSerial|ModuleSerial|SoftwareVersion|ErrorCode|ErrorCategory|ErrorDescription|SampleId|Notes|ProbeDCt|ProbeCCt|ProbeECt|ProbeBCt|Qc1Ct|Qc2Ct",
+      "inventoryDaysThreshold": 21,
+      "monthStartsOnDay": null,
+      "states": [
+        {
+          "name": "Bahr el Gazel",
+          "lgas": [
+            {
+              "name": "Barh El Gazel Nord"
+            },
+            {
+              "name": "Barh El Gazel Sud"
+            }
+          ]
+        },
+        {
+          "name": "Batha",
+          "lgas": [
+            {
+              "name": "Batha Est"
+            },
+            {
+              "name": "Batha Ouest"
+            },
+            {
+              "name": "Fitri"
+            }
+          ]
+        },
+        {
+          "name": "Borkou",
+          "lgas": [
+            {
+              "name": "Borkou"
+            },
+            {
+              "name": "Borkou Yala"
+            }
+          ]
+        },
+        {
+          "name": "Chari-Baguirmi",
+          "lgas": [
+            {
+              "name": "Baguirmi"
+            },
+            {
+              "name": "Chari"
+            },
+            {
+              "name": "Loug Chari"
+            }
+          ]
+        },
+        {
+          "name": "Ennedi-Est",
+          "lgas": [
+            {
+              "name": "Am-Djarass"
+            },
+            {
+              "name": "Wadi Hawar"
+            }
+          ]
+        },
+        {
+          "name": "Ennedi-Ouest",
+          "lgas": [
+            {
+              "name": "Fada"
+            },
+            {
+              "name": "Mourtcha"
+            }
+          ]
+        },
+        {
+          "name": "Guéra",
+          "lgas": [
+            {
+              "name": "Abtouyour"
+            },
+            {
+              "name": "Barh Signaka"
+            },
+            {
+              "name": "Guéra"
+            },
+            {
+              "name": "Mangalmé"
+            }
+          ]
+        },
+        {
+          "name": "Hadjer-Lamis",
+          "lgas": [
+            {
+              "name": "Dababa"
+            },
+            {
+              "name": "Dagana"
+            },
+            {
+              "name": "Haraze Al Biar"
+            }
+          ]
+        },
+        {
+          "name": "Kanem",
+          "lgas": [
+            {
+              "name": "Kanem"
+            },
+            {
+              "name": "Nord Kanem"
+            },
+            {
+              "name": "Wadi Bissam"
+            }
+          ]
+        },
+        {
+          "name": "Lac",
+          "lgas": [
+            {
+              "name": "Mamdi"
+            },
+            {
+              "name": "Wayi"
+            }
+          ]
+        },
+        {
+          "name": "Logone Occidental",
+          "lgas": [
+            {
+              "name": "Dodjé"
+            },
+            {
+              "name": "Guéni"
+            },
+            {
+              "name": "Lac Wey"
+            },
+            {
+              "name": "Ngourkosso"
+            }
+          ]
+        },
+        {
+          "name": "Logone Oriental",
+          "lgas": [
+            {
+              "name": "La Nya"
+            },
+            {
+              "name": "La Nya Pendé"
+            },
+            {
+              "name": "La Pendé"
+            },
+            {
+              "name": "Kouh-Est"
+            },
+            {
+              "name": "Kouh-Ouest"
+            },
+            {
+              "name": "Monts de Lam"
+            }
+          ]
+        },
+        {
+          "name": "Mandoul",
+          "lgas": [
+            {
+              "name": "Barh Sara"
+            },
+            {
+              "name": "Mandoul Occidental"
+            },
+            {
+              "name": "Mandoul Oriental"
+            }
+          ]
+        },
+        {
+          "name": "Mayo-Kebbi Est",
+          "lgas": [
+            {
+              "name": "Kabbia"
+            },
+            {
+              "name": "Mayo-Boneye"
+            },
+            {
+              "name": "Mayo-Lémié"
+            },
+            {
+              "name": "Mont d'Illi"
+            }
+          ]
+        },
+        {
+          "name": "Mayo-Kebbi Ouest",
+          "lgas": [
+            {
+              "name": "Lac Léré"
+            },
+            {
+              "name": "Mayo-Dallah"
+            }
+          ]
+        },
+        {
+          "name": "Moyen-Chari",
+          "lgas": [
+            {
+              "name": "Barh Kôh"
+            },
+            {
+              "name": "Grande Sido"
+            },
+            {
+              "name": "Lac Iro"
+            }
+          ]
+        },
+        {
+          "name": "N'Djamena",
+          "lgas": [
+            {
+              "name": "10 dawāʾir or arrondissements"
+            }
+          ]
+        },
+        {
+          "name": "Ouaddaï",
+          "lgas": [
+            {
+              "name": "Abdi"
+            },
+            {
+              "name": "Assoungha"
+            },
+            {
+              "name": "Ouara"
+            }
+          ]
+        },
+        {
+          "name": "Salamat",
+          "lgas": [
+            {
+              "name": "Aboudeïa"
+            },
+            {
+              "name": "Barh Azoum"
+            },
+            {
+              "name": "Haraze-Mangueigne"
+            }
+          ]
+        },
+        {
+          "name": "Sila",
+          "lgas": [
+            {
+              "name": "Djourf Al Ahmar"
+            },
+            {
+              "name": "Kimiti"
+            }
+          ]
+        },
+        {
+          "name": "Tandjilé",
+          "lgas": [
+            {
+              "name": "Tandjilé Est"
+            },
+            {
+              "name": "Tandjilé Ouest"
+            }
+          ]
+        },
+        {
+          "name": "Tibesti",
+          "lgas": [
+            {
+              "name": "Tibesti Est"
+            },
+            {
+              "name": "Tibesti Ouest"
+            }
+          ]
+        },
+        {
+          "name": "Wadi Fira",
+          "lgas": [
+            {
+              "name": "Biltine"
+            },
+            {
+              "name": "Dar Tama"
+            },
+            {
+              "name": "Kobé"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
