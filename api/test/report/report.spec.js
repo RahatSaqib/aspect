@@ -1,5 +1,5 @@
 const chai = require('chai')
-const { subYears, subMonths } = require('date-fns')
+const { subYears, subMonths, startOfToday, addDays } = require('date-fns')
 
 const shared = require('../utils/sharedToken')
 const { runTestWithKnex } = require('../utils/generatorFunctionUtils')
@@ -71,8 +71,8 @@ describe('Global reports', () => {
       await server
         .get(`${path}/${nonStremeableReportExternalId}`)
         .query({
-          minDate: '2024-08-01T00:00:00.000Z',
-          maxDate: '2024-08-07T00:00:00.000Z',
+          minDate: startOfToday(),
+          maxDate: addDays(startOfToday(), -30),
         })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {

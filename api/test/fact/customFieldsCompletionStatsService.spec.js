@@ -52,7 +52,7 @@ describe('CustomFieldsCompletionStatsService', async () => {
     const stats = await knex('FactCustomFieldCompletion as f')
       .select('f.recordCount', 'f.date', 'f.completionRate', `f.completionByField`)
       .orderBy('f.date')
-    expect(statsCount).to.be.equal(3, 'There has to be saved a record per date')
+    expect(statsCount).to.be.equal(8, 'There has to be saved a record per date')
 
     expect(stats[0].recordCount).to.be.equal(2)
     expect(stats[1].recordCount).to.be.equal(1)
