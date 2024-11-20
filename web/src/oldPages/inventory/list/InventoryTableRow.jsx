@@ -107,8 +107,11 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
   const hasDailyConsumption = qty => (isNull(qty) ? formatMessage(messages.noConsumption) : formatNumber(round(qty, 2)))
   const newQtyHandler = evt => {
     const { value } = evt.target
-
-    setNewQtyOnHandError(Number(value) < 0)
+    if (Number(value) < 0) {
+      setNewQtyOnHandError(true)
+      return
+    }
+    setNewQtyOnHandError(false)
 
     if (!value) {
       return setNewQtyOnHand('')
