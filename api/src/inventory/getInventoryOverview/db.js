@@ -26,9 +26,7 @@ module.exports = async function (query, constraints) {
         .leftJoin('MissingInventoryLots as mil', 'r.id', 'mil.resultId')
         .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
         .leftJoin('Assay as a', 'a.id', 'ca.assayId')
-        .leftJoin('Consumable as c', q =>
-          q.on('c.id', 'ca.consumableId').andOn('c.externalId', knex.raw(`'${query.consumableExternalId}'`))
-        )
+        .leftJoin('Consumable as c', 'c.id', 'ca.consumableId')
         .leftJoin('Unit as u', 'c.unit', 'u.id')
         .where(q =>
           q
@@ -42,8 +40,7 @@ module.exports = async function (query, constraints) {
             )
         )
         .modify(addConstraints, constraints, { geography: 'g', site: 's' })
-        .where(q => q.where('c.externalId', query.consumableExternalId).orWhereNull('c.externalId'))
-        .andWhere(q => q.whereIn('stype.externalId', ['warehouse', 'lab']))
+        .where(q => q.where('c.externalId', query.consumableExternalId))
         .groupBy('s.id', 'c.id')
         .select([
           's.id as id',

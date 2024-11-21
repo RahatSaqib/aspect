@@ -51,7 +51,7 @@ function buildHierarchy(geo, sites) {
   sites = sites.sort((a, b) => {
     if (a.type === b.type) return 0
 
-    if (a.type === 'warehouse' && b.type === 'lab') return -1
+    if (a.type === 'warehouse' && b.type === 'lab' && b.type === 'clinic') return -1
 
     return 1
   })
@@ -63,7 +63,7 @@ function buildHierarchy(geo, sites) {
       s =>
         s.lgaId === g.lgaId &&
         s.stateId === g.stateId &&
-        (s.type === 'lab' ||
+        (['lab', 'clinic'].includes(s.type) ||
           // Only lga-level warehouses are going to be included in the site-level
           (s.type === 'warehouse' && s.lgaId !== 'NO_LGA' && s.lgaId !== `STATE_${s.stateId}_NO_LGA`))
     )

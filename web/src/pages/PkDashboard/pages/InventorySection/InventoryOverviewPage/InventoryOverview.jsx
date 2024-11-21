@@ -19,6 +19,7 @@ const InventoryOverviewPage = () => {
   const navigate = useNavigate()
 
   function getInventoryLabel(item, isState) {
+    if (item.type === 'clinic') return item?.lab
     if (item.type && item[item.type]) return item.type && item[item.type]
     return isState ? formatMessage(messages.noAssociatedState) : formatMessage(messages.noAssociatedLga)
   }
@@ -46,9 +47,19 @@ const InventoryOverviewPage = () => {
   )
 
   const handleUnreconciledClick = useCallback(
-    ({ countryId, stateId, lgaId }) => {
+    ({ countryId, stateId, lgaId, name, type }) => {
       addFilter(
-        omitBy({ assayId: filters?.consumable?.assayId, onlyUnreconciled: true, countryId, stateId, lgaId }, isNil),
+        omitBy(
+          {
+            assayId: filters?.consumable?.assayId,
+            onlyUnreconciled: true,
+            countryId,
+            stateId,
+            lgaId,
+            siteName: type === 'lab' || type === 'clinic' ? name : null,
+          },
+          isNil
+        ),
         '/browse/result'
       )
       navigate('/browse/result')
@@ -64,7 +75,7 @@ const InventoryOverviewPage = () => {
       tooltip: 'Its the current quantity in hand, including the expired quantity.',
     },
     {
-      name: 'Unreconciled Qty.',
+      name: 'Current Unreconciled Qty.',
       prop: 'unreconciledQuantity',
       cellProp: c => ({
         sx: c.unreconciledQuantity ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' } : undefined,
