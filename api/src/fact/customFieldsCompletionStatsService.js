@@ -1,5 +1,6 @@
 const { startOfToday, addDays, format } = require('date-fns')
 const { Promise } = require('bluebird')
+const _ = require('lodash')
 const { getArrayOfDaysInRange, slideDateToTimeZone } = require('../shared/date')
 const { knex } = require('../db')
 const formDictionary = require('../forms/formsFileDictionary')
@@ -21,6 +22,7 @@ const factFillCustomFieldsCompletionStatsLast30Days = async (_, { messageContext
     await context.factCheckCompletionRatePerSite()
   })
 }
+const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
 
 /**
  * Clean and fills FactCustomFieldCompletion table with stats for the specified date range
@@ -30,7 +32,7 @@ const factFillCustomFieldsCompletionStatsLast30Days = async (_, { messageContext
  */
 async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   let insertedStats = 0
-  const days = getArrayOfDaysInRange(dateFrom, dateTo)
+  let days = getArrayOfDaysInRange(dateFrom, dateTo)
 
   const definitions = await getCustomFieldsDefinitions()
   const { timeZone } =
@@ -44,10 +46,45 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   const allFields = definitions.map(d => d.fields).flat()
   await knex.raw('delete from FactCustomFieldCompletion where date >= ?', dateFrom)
 
-  await Promise.each(days, async day => {
-    const results = await getResultsCustomFields(selectColumnClauses, day, addDays(day, 1), timeZone)
-    const stats = generateStatsResult(allFields, results)
+  const allUpdatedRecords = await Promise.map(
+    days,
+    async day => {
+      const startOfDay = adjustDate(day, timeZone)
+      const endOfDay = adjustDate(addDays(day, 1), timeZone)
 
+      const updatedRecords = await getUpdatedRecords(startOfDay, endOfDay, dateFrom, dateTo)
+
+      return updatedRecords
+    },
+    {
+      concurrency: 5,
+    }
+  )
+
+  const flatUpdatedRecords = allUpdatedRecords.flat()
+
+  const uniqueOutOfRangeDates = new Set()
+
+  flatUpdatedRecords.forEach(record => {
+    const { date } = record
+
+    if (new Date(date) < new Date(dateFrom) || new Date(date) > new Date(dateTo)) {
+      const formattedDate = new Date(date).toISOString().split('T')[0]
+      uniqueOutOfRangeDates.add(formattedDate)
+    }
+  })
+
+  const outOfRangeRecords = _.uniq(Array.from(uniqueOutOfRangeDates))
+
+  const sortedDate = outOfRangeRecords.sort((a, b) => new Date(a) - new Date(b))
+
+  days = [...sortedDate, ...days]
+
+  await Promise.each(days, async day => {
+    const startOfDay = adjustDate(new Date(day), timeZone)
+    const endOfDay = adjustDate(addDays(new Date(day), 1), timeZone)
+    const results = await getResultsCustomFields(selectColumnClauses, startOfDay, endOfDay)
+    const stats = generateStatsResult(allFields, results)
     const batchSize = 10
     for (let i = 0; i < stats.length; i += batchSize) {
       const batch = stats.slice(i, i + batchSize)
@@ -85,6 +122,38 @@ function convertCustomFieldsToColumnKnexClauses(formDefinitions) {
     )
 }
 
+function getUpdatedRecords(startOfDay, endOfDay, dateFrom, dateTo) {
+  return knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
+    .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+    .innerJoin('Site as s', 's.id', 'r.siteId')
+    .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
+    .leftOuterJoin('Country as c', 'c.id', 'g.countryId')
+    .leftOuterJoin('TimeZone as tz', 'c.timezone', 'tz.id')
+    .leftOuterJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
+    .leftOuterJoin(
+      'DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog',
+      'd.deviceMaintenanceStatusLogId',
+      'deviceMaintenanceStatusLog.id'
+    )
+    .leftOuterJoin(
+      'DeviceMaintenanceStatus as deviceMaintenanceStatus',
+      'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
+      'deviceMaintenanceStatus.id'
+    )
+    .innerJoin('ResultType as __constraints_ResultType', 'r.resultTypeId', '__constraints_ResultType.id')
+    .where('s.disabled', 0)
+    .whereRaw("IFNULL(deviceMaintenanceStatus.externalId, '') != 'inactiveDecommissioned'")
+    .whereRaw("IFNULL(deviceApproval.token, '') != 'decommissioned'")
+    .whereRaw("IFNULL(deviceApproval.token, 'approved') = 'approved'")
+    .where('__constraints_ResultType.excluded', false)
+    .whereBetween('r.updatedOn', [startOfDay, endOfDay])
+    .whereNotBetween('r.endedOn', [dateFrom, dateTo])
+    .select(knex.raw(`Date(CONVERT_TZ(COALESCE(r.endedOn, r.startedOn, r.createdOn), '+00:00', tz.timeZone)) as date`))
+    .groupBy(`date`)
+}
+
 /**
  * Retrieve specified custom fields from Results
  * @param {*} customFieldsClauses - knex select clauses for each custom field
@@ -93,94 +162,48 @@ function convertCustomFieldsToColumnKnexClauses(formDefinitions) {
  * @param {*} timeZone - timeZone
  * @returns Result set with a column for each custom field, and rows for each site, assay and date
  */
-async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo, timeZone) {
-  const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
-
-  const startOfDay = adjustDate(dateFrom, timeZone)
-  const endOfDay = adjustDate(dateTo, timeZone)
-
-  const updatedOnData = await knex('Result as r')
-    .innerJoin('Site as s', 's.id', 'r.siteId')
+async function getResultsCustomFields(customFieldsClauses, dateFrom, dateTo) {
+  const resultQuery = knex('Result as r')
+    .innerJoin('Device as d', 'r.deviceId', 'd.id')
     .innerJoin('Assay as a', 'r.assayId', 'a.id')
+    .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
+    .innerJoin('Site as s', 's.id', 'r.siteId')
     .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
     .leftOuterJoin('Country as c', 'c.id', 'g.countryId')
     .leftOuterJoin('TimeZone as tz', 'c.timezone', 'tz.id')
-    .whereBetween('r.updatedOn', [startOfDay, endOfDay])
+    .leftOuterJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
+    .leftOuterJoin(
+      'DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog',
+      'd.deviceMaintenanceStatusLogId',
+      'deviceMaintenanceStatusLog.id'
+    )
+    .leftOuterJoin(
+      'DeviceMaintenanceStatus as deviceMaintenanceStatus',
+      'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
+      'deviceMaintenanceStatus.id'
+    )
+    .innerJoin('ResultType as __constraints_ResultType', 'r.resultTypeId', '__constraints_ResultType.id')
+    .where('s.disabled', 0)
+    .whereRaw("IFNULL(deviceMaintenanceStatus.externalId, '') != 'inactiveDecommissioned'")
+    .whereRaw("IFNULL(deviceApproval.token, '') != 'decommissioned'")
+    .whereRaw("IFNULL(deviceApproval.token, 'approved') = 'approved'")
+    .where('__constraints_ResultType.excluded', false)
+    .whereBetween('r.endedOn', [dateFrom, dateTo])
+    .groupBy('s.id', 'a.id', knex.raw(`Date(CONVERT_TZ(r.endedOn, '+00:00', tz.timeZone))`))
     .select(
-      knex.raw(`Date(CONVERT_TZ(COALESCE(r.endedOn, r.startedOn, r.createdOn), '+00:00', tz.timeZone)) as date`),
       's.id as siteId',
-      'a.id as assayId'
+      's.name as siteName',
+      'a.id as assayId',
+      'at.diseaseId',
+      knex.raw(`Date(CONVERT_TZ(r.endedOn, '+00:00', tz.timeZone)) as groupByDate`),
+      knex.raw(`Date(CONVERT_TZ(COALESCE(r.endedOn, r.startedOn, r.createdOn), '+00:00', tz.timeZone)) as date`),
+      ...customFieldsClauses.map(cf => cf.clause)
     )
-    .groupBy('r.siteId', 'a.id', knex.raw(`Date(CONVERT_TZ(r.endedOn, '+00:00', tz.timeZone))`))
     .count('* as recordCount')
+    .orderBy('s.name')
 
-  /**
-   * Build query dynamically for a specific date range, assay, and site.
-   */
-  const buildQuery = ({ start, end }, assayId, siteId) =>
-    knex('Result as r')
-      .innerJoin('Device as d', 'r.deviceId', 'd.id')
-      .innerJoin('Assay as a', 'r.assayId', 'a.id')
-      .innerJoin('AssayType as at', 'at.id', 'a.assayTypeId')
-      .innerJoin('Site as s', 's.id', 'r.siteId')
-      .leftOuterJoin('Geography as g', 's.geographyId', 'g.id')
-      .leftOuterJoin('Country as c', 'c.id', 'g.countryId')
-      .leftOuterJoin('TimeZone as tz', 'c.timezone', 'tz.id')
-      .leftOuterJoin('DeviceApproval as deviceApproval', 'd.deviceApprovalId', 'deviceApproval.id')
-      .leftOuterJoin(
-        'DeviceMaintenanceStatusLog as deviceMaintenanceStatusLog',
-        'd.deviceMaintenanceStatusLogId',
-        'deviceMaintenanceStatusLog.id'
-      )
-      .leftOuterJoin(
-        'DeviceMaintenanceStatus as deviceMaintenanceStatus',
-        'deviceMaintenanceStatusLog.deviceMaintenanceStatusId',
-        'deviceMaintenanceStatus.id'
-      )
-      .innerJoin('ResultType as __constraints_ResultType', 'r.resultTypeId', '__constraints_ResultType.id')
-      .where('s.disabled', 0)
-      .whereRaw("IFNULL(deviceMaintenanceStatus.externalId, '') != 'inactiveDecommissioned'")
-      .whereRaw("IFNULL(deviceApproval.token, '') != 'decommissioned'")
-      .whereRaw("IFNULL(deviceApproval.token, 'approved') = 'approved'")
-      .where('__constraints_ResultType.excluded', false)
-      .whereBetween('r.endedOn', [start, end])
-      .modify(query => {
-        if (assayId) query.andWhere('a.id', assayId)
-        if (siteId) query.andWhere('s.id', siteId)
-      })
-      .groupBy('s.id', 'a.id', knex.raw(`Date(CONVERT_TZ(r.endedOn, '+00:00', tz.timeZone))`))
-      .select(
-        's.id as siteId',
-        's.name as siteName',
-        'a.id as assayId',
-        'at.diseaseId',
-        knex.raw(`Date(CONVERT_TZ(r.endedOn, '+00:00', tz.timeZone)) as groupByDate`),
-        knex.raw(`Date(CONVERT_TZ(COALESCE(r.endedOn, r.startedOn, r.createdOn), '+00:00', tz.timeZone)) as date`),
-        ...customFieldsClauses.map(cf => cf.clause)
-      )
-      .count('* as recordCount')
-      .orderBy('s.name')
-
-  const combinedResults = (
-    await Promise.map(
-      updatedOnData,
-      async ({ date, assayId, siteId }) => {
-        const dayStart = adjustDate(date, timeZone)
-        const dayEnd = adjustDate(addDays(date, 1), timeZone)
-        return buildQuery({ start: dayStart, end: dayEnd }, assayId, siteId)
-      },
-      { concurrency: 5 }
-    )
-  ).flat()
-
-  const currentDayData = await buildQuery({ start: startOfDay, end: addDays(endOfDay, 1) })
-
-  const finalResults = [...combinedResults, ...currentDayData]
-  const uniqueResults = Array.from(
-    new Map(finalResults.map(item => [`${item.siteId}-${item.assayId}-${item.date}`, item])).values()
-  )
-
-  return uniqueResults
+  const results = await resultQuery
+  return results
 }
 
 /**
