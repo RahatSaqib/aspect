@@ -1,10 +1,11 @@
-import React from 'react'
-import { Card, CardContent, LinearProgress, Table, TableBody } from '@mui/material'
+import React, { useState } from 'react'
+import { Box, Button, Card, CardContent, CircularProgress, LinearProgress, Table, TableBody } from '@mui/material'
 import { Helmet } from 'react-helmet'
 import { useIntl } from 'react-intl'
 import { useLocation, useNavigate } from 'react-router'
 import { DetailHeader } from '../../../cleanComponents'
 import { useConsumable } from '../../../hooks/inventory/useConsumable'
+import useHasCountryPermission from '../../../hooks/person/useHasCountryPermission'
 import useFilterValues from '../../../hooks/useFilterValues'
 import BrowseEmptyList from '../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../oldComponents/BrowseTablePaginator'
@@ -19,7 +20,9 @@ const InventoryList = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
+
   const filters = useFilterValues(location.pathname)
+  const { data: permissions, isLoading: isLoadingPermission } = useHasCountryPermission(['inventory:edit'])
 
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
 
@@ -36,9 +39,22 @@ const InventoryList = () => {
     { key: 'unit', label: formatMessage(messages.unit), sortable: true },
   ]
 
+  if (isLoadingPermission)
+    return (
+      <Box sx={{ flex: 1, display: 'flex', margin: 10, justifyContent: 'center' }}>
+        <CircularProgress size={35} />
+      </Box>
+    )
+
   return (
     <>
-      <DetailHeader name={formatMessage(messages.inventoryItems)} disableBack />
+      <DetailHeader name={formatMessage(messages.inventoryItems)} disableBack>
+        {permissions?.hasPermission ? (
+          <Button onClick={() => navigate('/browse/inventory/reconciliation/form')}>
+            {formatMessage(messages.reconciliationConfiguration)}
+          </Button>
+        ) : null}
+      </DetailHeader>
       <div className={styles.Container}>
         <Helmet title={formatMessage(messages.inventoryItems)} />
         <Card>
