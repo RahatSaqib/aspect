@@ -1,7 +1,7 @@
 const { startOfToday, addDays, format } = require('date-fns')
 const { Promise } = require('bluebird')
 const _ = require('lodash')
-const { getArrayOfDaysInRange, slideDateToTimeZone } = require('../shared/date')
+const { getArrayOfDaysInRange, adjustDate } = require('../shared/date')
 const { knex } = require('../db')
 const formDictionary = require('../forms/formsFileDictionary')
 const { factCheckCompletionRatePerSite } = require('./actions')
@@ -22,7 +22,6 @@ const factFillCustomFieldsCompletionStatsLast30Days = async (_, { messageContext
     await context.factCheckCompletionRatePerSite()
   })
 }
-const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
 
 /**
  * Clean and fills FactCustomFieldCompletion table with stats for the specified date range
