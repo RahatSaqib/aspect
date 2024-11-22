@@ -76,8 +76,6 @@ describe('Global reports', () => {
         })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
-          // eslint-disable-next-line no-console
-          console.log('res', res)
           assert.equal(res.status, 200)
           // assert.typeOf(res.body, 'Object')
 

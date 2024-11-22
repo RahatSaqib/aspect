@@ -51,7 +51,7 @@ function getTimezoneOffsetFromNumber(timezoneOffset) {
  * will return 2030-01-01T05:00:00.000Z wich is zero hours of new year in Karachi (+05:00)
  * @description This function returns a different moment that the one specified.
  */
-const slideDateToTimeZone = (date, timeZoneIANA) => zonedTimeToUtc(date, timeZoneIANA)
+const slideDateToTimeZone = (date, timeZoneIANA) => (timeZoneIANA ? zonedTimeToUtc(date, timeZoneIANA) : date)
 
 /** Format an UTC Date into a full ISO string in the time offset of specified time zone
  * @param {Date} date - An UTC date
@@ -504,8 +504,6 @@ function getWorkingDays(startDate, endDate) {
   return workingDays.length
 }
 
-const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
-
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -553,5 +551,4 @@ module.exports = {
   getDateInMilliSeconds,
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
-  adjustDate,
 }
