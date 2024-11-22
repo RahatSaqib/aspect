@@ -207,6 +207,11 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
               FormHelperTextProps={{
                 margin: 'dense',
               }}
+              onKeyDown={e => {
+                if (e.key === '-' || e.key === 'e' || e.key === 'E') {
+                  e.preventDefault()
+                }
+              }}
             />
           </TableCell>
           <TableCell className={styles.TableCell} size="small">
