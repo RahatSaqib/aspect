@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
+"POT-Creation-Date: 2024-11-19T04:17:38.787Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -232,6 +232,24 @@ msgstr "Überdurchschnittlich"
 #: extracted_strings.json
 msgid "Above Target"
 msgstr "Über dem Ziel"
+
+#. [pages.Consumable.New.aboveRuleAndParentSites]
+#. defaultMessage is:
+#. Above rule and Parent sites of Stock Provider site or Regional or National warehouses in the hierarchical sequence
+#: extracted_strings.json
+msgid ""
+"Above rule and Parent sites of Stock Provider site or Regional or National "
+"warehouses in the hierarchical sequence"
+msgstr ""
+"Übergeordnete Regel und übergeordnete Betriebe des Bestandsversorgerbetriebs "
+"oder regionale oder nationale Lager in der hierarchischen Reihenfolge"
+
+#. [pages.Consumable.New.aboveRuleAndStockProvider]
+#. defaultMessage is:
+#. Above rule and Stock Provider site mentioned
+#: extracted_strings.json
+msgid "Above rule and Stock Provider site mentioned"
+msgstr "Die oben genannte Regel und die Website des Stock Providers"
 
 #. [queryFetch.errorResponseMessages.GET.403.title]
 #. defaultMessage is:
@@ -1467,12 +1485,26 @@ msgstr "Kapazität"
 msgid "Captured"
 msgstr "Erfasst"
 
+#. [pages.Consumable.New.cartridgeLotNumber]
+#. defaultMessage is:
+#. Cartridge Lot Number
+#: extracted_strings.json
+msgid "Cartridge Lot Number"
+msgstr "Kartuschen-Losnummer"
+
 #. [pages.InventoryAdjustmentDialogForm.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot number
 #: extracted_strings.json
 msgid "Cartridge Lot number"
 msgstr "Patrone Losnummer"
+
+#. [pages.Consumable.New.cartridgesManagedThrough]
+#. defaultMessage is:
+#. Cartridges are managed through
+#: extracted_strings.json
+msgid "Cartridges are managed through"
+msgstr "Kassetten werden verwaltet durch"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -3777,9 +3809,19 @@ msgstr "Verfall in Tagen"
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.Consumable.New.expiryDate]
+#. defaultMessage is:
+#. Expiry Date
 #: extracted_strings.json
 msgid "Expiry Date"
 msgstr "Ablaufdatum"
+
+#. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
+#. defaultMessage is:
+#. Expiry Date and Cartridge Lot Number
+#: extracted_strings.json
+msgid "Expiry Date and Cartridge Lot Number"
+msgstr "Verfallsdatum und Chargennummer der Kartusche"
 
 #. [pages.DeviceList.exportDevices]
 #. defaultMessage is:
@@ -5314,6 +5356,13 @@ msgstr "Ungültige Webhook-URL"
 msgid "Inventory"
 msgstr "Inventar"
 
+#. [pages.Consumable.New.inventoryDetails]
+#. defaultMessage is:
+#. Inventory Details
+#: extracted_strings.json
+msgid "Inventory Details"
+msgstr "Inventar Details"
+
 #. [notificationCategoryTypeSelect.notificationTypeInventoryExpiring]
 #. defaultMessage is:
 #. Inventory Expiring
@@ -5364,6 +5413,22 @@ msgstr "Bericht"
 #: extracted_strings.json
 msgid "Inventory Overview"
 msgstr "Inventarübersicht"
+
+#. [pages.Consumable.New.inventoryAtCurrentSite]
+#. defaultMessage is:
+#. Inventory at Current Site only
+#: extracted_strings.json
+msgid "Inventory at Current Site only"
+msgstr "Bestandsaufnahme nur am aktuellen Standort"
+
+#. [pages.Consumable.New.inventoryAdjustedAgainst]
+#. defaultMessage is:
+#. Inventory at site is adjusted against results by considering
+#: extracted_strings.json
+msgid "Inventory at site is adjusted against results by considering"
+msgstr ""
+"Der Bestand am Standort wird unter Berücksichtigung folgender Faktoren an "
+"die Ergebnisse angepasst"
 
 #. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
 #. defaultMessage is:
@@ -8983,6 +9048,13 @@ msgstr "Empfange {consumableName}"
 msgid "Recepient Name"
 msgstr "Name des Empfängers"
 
+#. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#: extracted_strings.json
+msgid "Reconciliation Configuration"
+msgstr "Abstimmungskonfiguration"
+
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
 #. Recovered cases
@@ -10330,6 +10402,15 @@ msgstr "Wartungsstatus festlegen"
 #: extracted_strings.json
 msgid "Set based on address"
 msgstr "Eingestellt auf Basis der Adresse"
+
+#. [pages.Consumable.New.reconciliationTitle]
+#. defaultMessage is:
+#. Set the below configurations to manage Inventory across the sites
+#: extracted_strings.json
+msgid "Set the below configurations to manage Inventory across the sites"
+msgstr ""
+"Legen Sie die folgenden Konfigurationen fest, um das Inventar "
+"standortübergreifend zu verwalten"
 
 #. [pages.Notifications.setting]
 #. defaultMessage is:
@@ -14795,9 +14876,6 @@ msgstr "{unit} gesamt kalibrierungen"
 
 #~ msgid "Assign DeviceApiKeys Failed"
 #~ msgstr "Zuweisen von DeviceApiKeys fehlgeschlagen"
-
-#~ msgid "Configuration"
-#~ msgstr "Konfiguration"
 
 #~ msgid "Connected"
 #~ msgstr "Verbunden"
