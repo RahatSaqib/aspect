@@ -149,6 +149,7 @@ const ContactDetails = ({ setStep }) => {
                 },
               })
             }
+            if (person.culture !== values.culture) localStorage.setItem('asCulture', values.culture)
           }}
         >
           {({ handleSubmit, handleChange, setFieldValue, values, errors, isValid, isSubmitting, dirty }) => (
