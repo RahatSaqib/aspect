@@ -199,6 +199,11 @@ async function addDeviceDataWithContext(context) {
     reLabel: 'deviceApi:preProcessAddDeviceData',
   })
   await preProcessAddDeviceData(context)
+  const transformMergeResultResponse = await loadPlugin(
+    partnerPluginName,
+    deviceTypePluginName,
+    'transformMergeResultResponse'
+  )
 
   const { now, payload } = context
   const { configuration, includeDeviceConfiguration, log, operation, result, site, getFormsDefinition } = payload
@@ -255,6 +260,7 @@ async function addDeviceDataWithContext(context) {
       ...response,
       ...(await mergeResultWithContext(context.withPayload(result))),
     }
+    response = transformMergeResultResponse(response)
   }
 
   if (log) {

@@ -99,9 +99,14 @@ describe('Device API routes for GxAlert Device', () => {
                 name: deviceName,
               }),
             })
+
+            const device = await knex('Device')
+              .where('id', response.body.device.id)
+              .first('name', 'deviceTypeId', 'macAddress', 'configurationData')
+
             expect({
-              ...response.body.device,
-              configurationData: JSON.parse(response.body.device.configurationData),
+              ...device,
+              configurationData: JSON.parse(device.configurationData),
             }).to.containSubset({
               name: deviceName,
               deviceTypeId: geneXpertDeviceType.id,
@@ -189,9 +194,13 @@ describe('Device API routes for GxAlert Device', () => {
                 },
               }),
             })
+            const device = await knex('Device')
+              .where('id', response.body.device.id)
+              .first('name', 'shortName', 'macAddress', 'serial', 'hostId', 'configurationData')
+
             expect({
-              ...response.body.device,
-              configurationData: JSON.parse(response.body.device.configurationData),
+              ...device,
+              configurationData: JSON.parse(device.configurationData),
             }).to.containSubset({
               name: deviceName,
               shortName: deviceShortName,
@@ -244,9 +253,13 @@ describe('Device API routes for GxAlert Device', () => {
                   },
                 }),
               })
+              const device = await knex('Device')
+                .where('id', response.body.device.id)
+                .first('name', 'shortName', 'macAddress', 'serial', 'hostId', 'configurationData')
+
               expect({
-                ...response.body.device,
-                configurationData: JSON.parse(response.body.device.configurationData),
+                ...device,
+                configurationData: JSON.parse(device.configurationData),
               }).to.containSubset({
                 name: deviceName,
                 shortName: deviceShortName,
@@ -390,9 +403,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', response.body.device.id)
+            .first('name', 'deviceTypeId', 'macAddress', 'configurationData')
+
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -469,9 +486,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', response.body.device.id)
+            .first('name', 'deviceTypeId', 'macAddress', 'configurationData')
+
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -541,9 +562,12 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', responseForSecondDevice.body.device.id)
+            .first('name', 'deviceTypeId', 'macAddress', 'configurationData')
           expect({
-            ...responseForSecondDevice.body.device,
-            configurationData: JSON.parse(responseForSecondDevice.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -600,9 +624,12 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device2 = await knex('Device')
+            .where('id', responseAfterSecondDeviceUpdate.body.device.id)
+            .first('name', 'deviceTypeId', 'macAddress', 'configurationData')
           expect({
-            ...responseAfterSecondDeviceUpdate.body.device,
-            configurationData: JSON.parse(responseAfterSecondDeviceUpdate.body.device.configurationData),
+            ...device2,
+            configurationData: JSON.parse(device2.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -661,9 +688,12 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', response.body.device.id)
+            .first('macAddress', 'configurationData')
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             macAddress: validMacAddress,
             configurationData: {
@@ -692,9 +722,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device2 = await knex('Device')
+            .where('id', nextResponse.body.device.id)
+            .first('name', 'shortName', 'macAddress', 'serial', 'hostId', 'configurationData')
+
           expect({
-            ...nextResponse.body.device,
-            configurationData: JSON.parse(nextResponse.body.device.configurationData),
+            ...device2,
+            configurationData: JSON.parse(device2.configurationData),
           }).to.containSubset({
             macAddress: validMacAddress,
             configurationData: {
@@ -790,9 +824,12 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', response.body.device.id)
+            .first('name', 'deviceTypeId', 'serial', 'configurationData')
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -870,9 +907,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', response.body.device.id)
+            .first('name', 'deviceTypeId', 'serial', 'configurationData')
+
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -942,9 +983,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', responseForSecondDevice.body.device.id)
+            .first('name', 'deviceTypeId', 'serial', 'configurationData')
+
           expect({
-            ...responseForSecondDevice.body.device,
-            configurationData: JSON.parse(responseForSecondDevice.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -1001,9 +1046,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device2 = await knex('Device')
+            .where('id', responseAfterSecondDeviceUpdate.body.device.id)
+            .first('name', 'deviceTypeId', 'serial', 'configurationData')
+
           expect({
-            ...responseAfterSecondDeviceUpdate.body.device,
-            configurationData: JSON.parse(responseAfterSecondDeviceUpdate.body.device.configurationData),
+            ...device2,
+            configurationData: JSON.parse(device2.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -1081,9 +1130,10 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device').where('id', response.body.device.id).first('serial', 'configurationData')
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             serial: deviceSerialNumber,
             configurationData: {
@@ -1179,9 +1229,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', response.body.device.id)
+            .first('name', 'deviceTypeId', 'hostId', 'configurationData')
+
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -1259,9 +1313,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', response.body.device.id)
+            .first('name', 'deviceTypeId', 'hostId', 'configurationData')
+
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -1331,9 +1389,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device')
+            .where('id', responseForSecondDevice.body.device.id)
+            .first('name', 'deviceTypeId', 'hostId', 'configurationData')
+
           expect({
-            ...responseForSecondDevice.body.device,
-            configurationData: JSON.parse(responseForSecondDevice.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -1384,9 +1446,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device2 = await knex('Device')
+            .where('id', responseAfterSecondDeviceUpdate.body.device.id)
+            .first('name', 'deviceTypeId', 'hostId', 'configurationData')
+
           expect({
-            ...responseAfterSecondDeviceUpdate.body.device,
-            configurationData: JSON.parse(responseAfterSecondDeviceUpdate.body.device.configurationData),
+            ...device2,
+            configurationData: JSON.parse(device2.configurationData),
           }).to.containSubset({
             name: deviceName,
             deviceTypeId: geneXpertDeviceType.id,
@@ -1445,9 +1511,11 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device = await knex('Device').where('id', response.body.device.id).first('hostId', 'configurationData')
+
           expect({
-            ...response.body.device,
-            configurationData: JSON.parse(response.body.device.configurationData),
+            ...device,
+            configurationData: JSON.parse(device.configurationData),
           }).to.containSubset({
             hostId: validHostId,
             configurationData: {
@@ -1476,9 +1544,13 @@ describe('Device API routes for GxAlert Device', () => {
               },
             }),
           })
+          const device2 = await knex('Device')
+            .where('id', nextResponse.body.device.id)
+            .first('hostId', 'configurationData')
+
           expect({
-            ...nextResponse.body.device,
-            configurationData: JSON.parse(nextResponse.body.device.configurationData),
+            ...device2,
+            configurationData: JSON.parse(device2.configurationData),
           }).to.containSubset({
             hostId: validHostId,
             configurationData: {
@@ -1588,8 +1660,9 @@ describe('Device API routes for GxAlert Device', () => {
           },
         })
         const geneXpertDeviceAfterPing = await getCurrentGeneXpertDevice()
+        const device = await knex('Device').where('id', response.body.device.id).first('configurationData')
 
-        assert.deepEqual(JSON.parse(response.body.device.configurationData), geneXpertDeviceAfterPing.configurationData)
+        assert.deepEqual(JSON.parse(device.configurationData), geneXpertDeviceAfterPing.configurationData)
 
         assert.deepEqual(geneXpertDeviceAfterPing.configurationData, geneXpertDeviceAfterDailyDetails.configurationData)
       })
