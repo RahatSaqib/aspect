@@ -65,7 +65,16 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
       .join('Partner as p', 'd.partnerId', 'p.id')
       .where({ 'em.id': smsMessageId })
       .first('*')
-    if (new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+    const SmsMessageCount = await knex('SmsMessage as sm')
+      .join('Device as d', 'sm.deviceId', 'd.id')
+      .where('sm.createdOn', '>', partnerDetails?.serviceStartDate)
+      .where('sm.createdOn', '<', partnerDetails?.serviceEndDate)
+      .andWhere('d.partnerId', partnerDetails?.partnerId)
+      .first('*')
+      .count('* as count')
+  
+    if (new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()&&
+    SmsMessageCount?.count <= partnerDetails?.notificationLimit) {
       await doSendSmsMessage(context, knex, smsMessageId)
     } else return Promise.reject(new Error('Service is not available'))
   })

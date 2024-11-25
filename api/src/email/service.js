@@ -64,7 +64,15 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .join('Partner as p', 'd.partnerId', 'p.id')
       .where({ 'em.id': emailMessageId })
       .first('*')
-    if (new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+      const EmailMessageCount = await knex('EmailMessage as em')
+      .join('Device as d', 'em.deviceId', 'd.id')
+      .where('sm.createdOn', '>', partnerDetails?.serviceStartDate)
+      .where('sm.createdOn', '<', partnerDetails?.serviceEndDate)
+      .andWhere('d.partnerId', partnerDetails?.partnerId)
+      .first('*')
+      .count('* as count')
+    if (new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()  &&
+    EmailMessageCount?.count <= partnerDetails?.notificationLimit) {
       await doSendEmailMessage(context, knex, emailMessageId)
     } else return Promise.reject(new Error('Service is not available'))
   })
