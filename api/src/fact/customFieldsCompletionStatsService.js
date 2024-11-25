@@ -40,6 +40,9 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
       .where('c.abbreviation', config.countryName)
       .first()) || {}
 
+  // eslint-disable-next-line no-console
+  console.log('\x1b[1;36m", "🚀 ➜ config.countryName:', config.countryName)
+
   const selectColumnClauses = convertCustomFieldsToColumnKnexClauses(definitions)
 
   const allFields = definitions.map(d => d.fields).flat()
