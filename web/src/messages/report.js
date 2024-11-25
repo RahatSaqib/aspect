@@ -319,7 +319,7 @@ const messages = defineMessages({
   },
   unreconciled_inventory_report: {
     id: 'pages.ReportIndex.unreconciled_inventory_report',
-    defaultMessage: 'List of Missing Lots',
+    defaultMessage: 'List of Unreconciled Inventory',
   },
   unreconciled_inventory_report_description: {
     id: 'pages.ReportIndex.unreconciled_inventory_report_description',

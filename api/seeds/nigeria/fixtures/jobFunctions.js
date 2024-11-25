@@ -238,6 +238,7 @@ module.exports = [
       'mtb_detected_rr_detected',
       'critical_errors_by_device',
       'critical_errors_by_module',
+      'unreconciled_inventory_report',
       'rif_resistance_rate',
       'results_hiv_not_suppressed',
       'device_calibration_report',
