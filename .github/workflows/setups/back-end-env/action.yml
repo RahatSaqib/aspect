@@ -82,5 +82,5 @@ runs:
         echo scheduler.enabled=true >> ./api/.env
         echo webhook.redcap.url='asdf' >> ./api/.env
         echo webhook.redcap.authToken='jkasd' >> ./api/.env
-        echo countryName='github-actions' >> ./api/.env
+        echo countryName='US' >> ./api/.env
       shell: bash
