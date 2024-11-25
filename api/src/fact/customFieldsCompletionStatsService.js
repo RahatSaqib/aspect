@@ -1,7 +1,7 @@
 const { startOfToday, addDays, format } = require('date-fns')
 const { Promise } = require('bluebird')
 const _ = require('lodash')
-const { getArrayOfDaysInRange, adjustDate } = require('../shared/date')
+const { getArrayOfDaysInRange, slideDateToTimeZone } = require('../shared/date')
 const { knex } = require('../db')
 const formDictionary = require('../forms/formsFileDictionary')
 const { factCheckCompletionRatePerSite } = require('./actions')
@@ -40,6 +40,9 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
       .where('c.abbreviation', config.countryName)
       .first()) || {}
 
+  // eslint-disable-next-line no-console
+  console.log('\x1b[1;36m", "🚀 ➜ config.countryName:', config.countryName)
+
   const selectColumnClauses = convertCustomFieldsToColumnKnexClauses(definitions)
 
   const allFields = definitions.map(d => d.fields).flat()
@@ -48,11 +51,9 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   const allUpdatedRecords = await Promise.map(
     days,
     async day => {
-      const startOfDay = adjustDate(day, timeZone)
-      const endOfDay = adjustDate(addDays(day, 1), timeZone)
-
+      const startOfDay = slideDateToTimeZone(day, timeZone)
+      const endOfDay = slideDateToTimeZone(addDays(day, 1), timeZone)
       const updatedRecords = await getUpdatedRecords(startOfDay, endOfDay, dateFrom, dateTo)
-
       return updatedRecords
     },
     {
@@ -80,8 +81,8 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   days = [...sortedDate, ...days]
 
   await Promise.each(days, async day => {
-    const startOfDay = adjustDate(new Date(day), timeZone)
-    const endOfDay = adjustDate(addDays(new Date(day), 1), timeZone)
+    const startOfDay = slideDateToTimeZone(new Date(day), timeZone)
+    const endOfDay = slideDateToTimeZone(addDays(new Date(day), 1), timeZone)
     const results = await getResultsCustomFields(selectColumnClauses, startOfDay, endOfDay)
     const stats = generateStatsResult(allFields, results)
     const batchSize = 10
