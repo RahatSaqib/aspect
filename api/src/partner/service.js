@@ -1,5 +1,5 @@
 const { knex, filterParams, sortPageParams } = require('../db')
-const { getConstraints, addConstraints } = require('../auth/constraints')
+const { getUser } = require('../auth/service')
 
 const SELECT_LIST_FIELDS = ['p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName']
 
@@ -50,8 +50,8 @@ async function showPartner(request) {
 
 async function updatePartnerInventory(request) {
   const { inventoryAdjustment, inventoryStrategy } = request.payload
-  const dataConstraints = await getConstraints(request.auth.credentials)
-  await knex('Partner as p').modify(addConstraints, dataConstraints, { partner: 'p' }).update({
+  const { partnerId } = await getUser(request.auth.credentials.name)
+  await knex('Partner as p').where({ id: partnerId }).update({
     inventoryAdjustment,
     inventoryStrategy,
   })
