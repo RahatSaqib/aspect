@@ -83,8 +83,8 @@ const unreconciledInventoryReport = {
   name: 'List of Unreconciled Inventory',
   description:
     "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
-  i18nKey: 'missing_cartridges_report',
-  i18nKeyDescription: 'missing_cartridges_report_description',
+  i18nKey: 'unreconciled_inventory_report',
+  i18nKeyDescription: 'unreconciled_inventory_report_description',
   externalId: 'unreconciled_inventory_report', // folder name in /templates with low dash casing
   fileName: 'unreconciledInventoryReport',
   exportCsv: false,
