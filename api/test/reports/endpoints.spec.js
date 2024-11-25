@@ -68,4 +68,28 @@ describe('API Reports Endpoint', () => {
       assert.equal(response.headers['content-type'], 'application/octet-stream')
     })
   })
+
+  describe('GET: /api/reports', () => {
+    const apiPath = '/api/reports'
+
+    before(() => {
+      shared.checkToken(server, apiPath)
+    })
+
+    it('should return missing unreconciled inventory report', () =>
+      runTestWithKnex(async () => {
+        const response = await server.get(apiPath).set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(response.status, 200)
+        assert.isAbove(response.body.data.length, 0)
+
+        // Assertion to find the unreconciled inventory report
+        const missingCartridgesReport = response.body.data.find(
+          report => report.externalId === 'pk_missing_cartridges_report'
+        )
+        assert.exists(missingCartridgesReport)
+        assert.equal(missingCartridgesReport.name, 'List of Unreconciled Inventory')
+        assert.equal(missingCartridgesReport.exportExcel, true)
+        assert.equal(missingCartridgesReport.fileName, 'unReconciledInventoryReport')
+      }))
+  })
 })
