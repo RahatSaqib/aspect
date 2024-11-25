@@ -504,6 +504,8 @@ function getWorkingDays(startDate, endDate) {
   return workingDays.length
 }
 
+const adjustDate = (date, tz) => (tz ? slideDateToTimeZone(date, tz) : date)
+
 module.exports = {
   getDateOrDefault,
   parseDateOrDefault,
@@ -551,4 +553,5 @@ module.exports = {
   getDateInMilliSeconds,
   getWorkingDays,
   getDateTimeProjectionInTimeZoneIANA,
+  adjustDate,
 }

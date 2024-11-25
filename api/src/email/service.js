@@ -56,8 +56,17 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
     emailMessageProcessed,
   })
 
+  // check for partner service end date should be less then current date
+
   return context.transact(async knex => {
-    await doSendEmailMessage(context, knex, emailMessageId)
+    const partnerDetails = await knex('EmailMessage as em')
+      .join('Device as d', 'em.deviceId', 'd.id')
+      .join('Partner as p', 'd.partnerId', 'p.id')
+      .where({ 'em.id': emailMessageId })
+      .first('*')
+    if (new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+      await doSendEmailMessage(context, knex, emailMessageId)
+    } else return Promise.reject(new Error('Service is not available'))
   })
 }
 

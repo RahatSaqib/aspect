@@ -50,9 +50,7 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
     async day => {
       const startOfDay = slideDateToTimeZone(day, timeZone)
       const endOfDay = slideDateToTimeZone(addDays(day, 1), timeZone)
-
       const updatedRecords = await getUpdatedRecords(startOfDay, endOfDay, dateFrom, dateTo)
-
       return updatedRecords
     },
     {

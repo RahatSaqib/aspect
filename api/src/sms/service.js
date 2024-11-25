@@ -60,7 +60,14 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
   })
 
   return context.transact(async knex => {
-    await doSendSmsMessage(context, knex, smsMessageId)
+    const partnerDetails = await knex('SmsMessage as em')
+      .join('Device as d', 'em.deviceId', 'd.id')
+      .join('Partner as p', 'd.partnerId', 'p.id')
+      .where({ 'em.id': smsMessageId })
+      .first('*')
+    if (new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date()) {
+      await doSendSmsMessage(context, knex, smsMessageId)
+    } else return Promise.reject(new Error('Service is not available'))
   })
 }
 
