@@ -83,13 +83,13 @@ describe('API Reports Endpoint', () => {
         assert.isAbove(response.body.data.length, 0)
 
         // Assertion to find the unreconciled inventory report
-        const missingCartridgesReport = response.body.data.find(
-          report => report.externalId === 'pk_missing_cartridges_report'
+        const unreconciledInventoryReport = response.body.data.find(
+          report => report.externalId === 'unreconciled_inventory_report'
         )
-        assert.exists(missingCartridgesReport)
-        assert.equal(missingCartridgesReport.name, 'List of Unreconciled Inventory')
-        assert.equal(missingCartridgesReport.exportExcel, true)
-        assert.equal(missingCartridgesReport.fileName, 'unReconciledInventoryReport')
+        assert.exists(unreconciledInventoryReport)
+        assert.equal(unreconciledInventoryReport.name, 'List of Unreconciled Inventory')
+        assert.equal(unreconciledInventoryReport.exportExcel, true)
+        assert.equal(unreconciledInventoryReport.fileName, 'unreconciledInventoryReport')
       }))
   })
 })

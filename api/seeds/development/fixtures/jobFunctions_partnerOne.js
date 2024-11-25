@@ -21,7 +21,7 @@ const adminEnhanced = mergeJobFunctions(admin, {
       activity: 'edit',
     },
   ],
-  reports: [...admin.reports, 'genexpert_issues', 'device_summary_report', 'pk_missing_cartridges_report'],
+  reports: [...admin.reports, 'genexpert_issues', 'device_summary_report', 'unreconciled_inventory_report'],
 })
 
 const aspectBetaEnhanced = mergeJobFunctions(aspectBeta, {

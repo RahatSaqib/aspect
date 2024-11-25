@@ -25,14 +25,14 @@ const deviceSummaryReport = {
   ],
 }
 
-const missingCartridgesReport = {
+const unreconciledInventoryReport = {
   name: 'List of Unreconciled Inventory',
   description:
     "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
   i18nKey: 'missing_cartridges_report',
   i18nKeyDescription: 'missing_cartridges_report_description',
-  externalId: 'pk_missing_cartridges_report', // folder name in /templates with low dash casing
-  fileName: 'unReconciledInventoryReport',
+  externalId: 'unreconciled_inventory_report', // folder name in /templates with low dash casing
+  fileName: 'unreconciledInventoryReport',
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,
@@ -40,8 +40,8 @@ const missingCartridgesReport = {
   sheets: [
     {
       sortOrder: 0,
-      moduleName: 'inventory/serviceReportsPakistan',
-      functionName: 'missingCartridgesReport',
+      moduleName: 'inventory/serviceReports',
+      functionName: 'unreconciledInventoryReport',
       query: {
         avoidStreaming: true,
       },
@@ -51,6 +51,6 @@ const missingCartridgesReport = {
 
 module.exports = {
   deviceSummaryReport,
-  missingCartridgesReport,
+  unreconciledInventoryReport,
   xpertSiteSummaryReportSiteWise,
 }
