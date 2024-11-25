@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
+"POT-Creation-Date: 2024-11-19T04:17:38.787Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -232,6 +232,24 @@ msgstr "Вище середнього"
 #: extracted_strings.json
 msgid "Above Target"
 msgstr "Над ціллю"
+
+#. [pages.Consumable.New.aboveRuleAndParentSites]
+#. defaultMessage is:
+#. Above rule and Parent sites of Stock Provider site or Regional or National warehouses in the hierarchical sequence
+#: extracted_strings.json
+msgid ""
+"Above rule and Parent sites of Stock Provider site or Regional or National "
+"warehouses in the hierarchical sequence"
+msgstr ""
+"Вище за правилом і батьківські сайти сайту постачальника запасів або "
+"регіональних чи національних складів в ієрархічній послідовності"
+
+#. [pages.Consumable.New.aboveRuleAndStockProvider]
+#. defaultMessage is:
+#. Above rule and Stock Provider site mentioned
+#: extracted_strings.json
+msgid "Above rule and Stock Provider site mentioned"
+msgstr "Вищезгадане правило та сайт постачальника акцій"
 
 #. [queryFetch.errorResponseMessages.GET.403.title]
 #. defaultMessage is:
@@ -1459,12 +1477,26 @@ msgstr "Загальна місткість"
 msgid "Captured"
 msgstr "Полонений"
 
+#. [pages.Consumable.New.cartridgeLotNumber]
+#. defaultMessage is:
+#. Cartridge Lot Number
+#: extracted_strings.json
+msgid "Cartridge Lot Number"
+msgstr "Номер партії картриджа"
+
 #. [pages.InventoryAdjustmentDialogForm.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot number
 #: extracted_strings.json
 msgid "Cartridge Lot number"
 msgstr "Номер партії картриджа"
+
+#. [pages.Consumable.New.cartridgesManagedThrough]
+#. defaultMessage is:
+#. Cartridges are managed through
+#: extracted_strings.json
+msgid "Cartridges are managed through"
+msgstr "Керування картриджами здійснюється через"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -3770,9 +3802,19 @@ msgstr "Термін дії в днях"
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.Consumable.New.expiryDate]
+#. defaultMessage is:
+#. Expiry Date
 #: extracted_strings.json
 msgid "Expiry Date"
 msgstr "Термін придатності"
+
+#. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
+#. defaultMessage is:
+#. Expiry Date and Cartridge Lot Number
+#: extracted_strings.json
+msgid "Expiry Date and Cartridge Lot Number"
+msgstr "Термін придатності та номер партії картриджа"
 
 #. [pages.DeviceList.exportDevices]
 #. defaultMessage is:
@@ -5301,6 +5343,13 @@ msgstr "Недійсна URL-адреса вебхуку"
 msgid "Inventory"
 msgstr "Склад"
 
+#. [pages.Consumable.New.inventoryDetails]
+#. defaultMessage is:
+#. Inventory Details
+#: extracted_strings.json
+msgid "Inventory Details"
+msgstr "Деталі інвентаризації"
+
 #. [notificationCategoryTypeSelect.notificationTypeInventoryExpiring]
 #. defaultMessage is:
 #. Inventory Expiring
@@ -5351,6 +5400,21 @@ msgstr "Журнал інвентаризації"
 #: extracted_strings.json
 msgid "Inventory Overview"
 msgstr "Огляд інвентаризації"
+
+#. [pages.Consumable.New.inventoryAtCurrentSite]
+#. defaultMessage is:
+#. Inventory at Current Site only
+#: extracted_strings.json
+msgid "Inventory at Current Site only"
+msgstr "Інвентаризація тільки на поточному сайті"
+
+#. [pages.Consumable.New.inventoryAdjustedAgainst]
+#. defaultMessage is:
+#. Inventory at site is adjusted against results by considering
+#: extracted_strings.json
+msgid "Inventory at site is adjusted against results by considering"
+msgstr ""
+"Інвентаризація на місці коригується відповідно до результатів, враховуючи"
 
 #. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
 #. defaultMessage is:
@@ -8961,6 +9025,13 @@ msgstr "Отримати {consumableName}"
 msgid "Recepient Name"
 msgstr "Ім'я одержувача"
 
+#. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#: extracted_strings.json
+msgid "Reconciliation Configuration"
+msgstr "Конфігурація узгодження"
+
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
 #. Recovered cases
@@ -10300,6 +10371,15 @@ msgstr "Встановіть стан обслуговування"
 #: extracted_strings.json
 msgid "Set based on address"
 msgstr "Встановити на основі адреси"
+
+#. [pages.Consumable.New.reconciliationTitle]
+#. defaultMessage is:
+#. Set the below configurations to manage Inventory across the sites
+#: extracted_strings.json
+msgid "Set the below configurations to manage Inventory across the sites"
+msgstr ""
+"Встановіть наведені нижче конфігурації для керування Інвентарем на всіх "
+"сайтах"
 
 #. [pages.Notifications.setting]
 #. defaultMessage is:
@@ -14727,9 +14807,6 @@ msgstr "{unit} загальна калібрування"
 
 #~ msgid "Assign DeviceApiKeys Failed"
 #~ msgstr "Не вдалося призначити DeviceApiKeys"
-
-#~ msgid "Configuration"
-#~ msgstr "Конфігурація"
 
 #~ msgid "Connected"
 #~ msgstr "Контакт створено"
