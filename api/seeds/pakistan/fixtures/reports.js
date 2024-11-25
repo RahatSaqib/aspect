@@ -79,30 +79,6 @@ const xpertWorkloadSummaryReport = {
   ],
 }
 
-const unreconciledInventoryReport = {
-  name: 'List of Unreconciled Inventory',
-  description:
-    "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
-  i18nKey: 'unreconciled_inventory_report',
-  i18nKeyDescription: 'unreconciled_inventory_report_description',
-  externalId: 'unreconciled_inventory_report', // folder name in /templates with low dash casing
-  fileName: 'unreconciledInventoryReport',
-  exportCsv: false,
-  exportExcel: true,
-  sortOrder: 0,
-  validations: [],
-  sheets: [
-    {
-      sortOrder: 0,
-      moduleName: 'inventory/serviceReports',
-      functionName: 'unreconciledInventoryReport',
-      query: {
-        avoidStreaming: true,
-      },
-    },
-  ],
-}
-
 const annualUtilizationRates = {
   name: 'National and Provincial Trends in Annual Utilization Rates',
   description:
@@ -141,6 +117,5 @@ module.exports = {
   xpertSiteDetailedReport,
   xpertSiteSummaryReportSiteWise,
   xpertWorkloadSummaryReport,
-  unreconciledInventoryReport,
   annualUtilizationRates,
 }
