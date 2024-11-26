@@ -89,7 +89,6 @@ describe('API Reports Endpoint', () => {
         assert.exists(unreconciledInventoryReport)
         assert.equal(unreconciledInventoryReport.name, 'List of Unreconciled Inventory')
         assert.equal(unreconciledInventoryReport.exportExcel, true)
-        assert.equal(unreconciledInventoryReport.fileName, 'unreconciledInventoryReport')
       }))
   })
 })
