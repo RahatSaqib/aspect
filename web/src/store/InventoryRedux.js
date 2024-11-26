@@ -23,70 +23,68 @@ export const types = {
 }
 
 function getErrorsForRemove() {
-  const failedDefaultTitleMessage = 'Removing Inventory Failed'
+  const messages = defineMessages({
+    notExistedTitle: {
+      id: 'errorResponseMessages.removeInventory.PUT.notExisted.title',
+      defaultMessage: 'Removing Inventory Failed',
+    },
+    notExisted: {
+      id: 'errorResponseMessages.removeInventory.PUT.notExisted.resolution',
+      defaultMessage: 'Can not deduct from non-existed inventory item.',
+    },
+    negativeQuantityTitle: {
+      id: 'errorResponseMessages.removeInventory.PUT.negativeQuantity.title',
+      defaultMessage: 'Removing Inventory Failed',
+    },
+    negativeQuantity: {
+      id: 'errorResponseMessages.removeInventory.PUT.negativeQuantity.resolution',
+      defaultMessage: 'Quantity is negative for current inventory.',
+    },
+    notEnoughInventoryTitle: {
+      id: 'errorResponseMessages.removeInventory.PUT.notEnoughInventory.title',
+      defaultMessage: 'Removing Inventory Failed',
+    },
+    notEnoughInventory: {
+      id: 'errorResponseMessages.removeInventory.PUT.notEnoughInventory.resolution',
+      defaultMessage: 'Not enough inventory items on the site to remove.',
+    },
+  })
+
   return {
-    404: badRequestBuilder({
-      ...defineMessages({
-        notExistedTitle: {
-          id: 'errorResponseMessages.removeInventory.PUT.notExisted.title',
-          defaultMessage: failedDefaultTitleMessage,
-        },
-        notExisted: {
-          id: 'errorResponseMessages.removeInventory.PUT.notExisted.resolution',
-          defaultMessage: 'Can not deduct from non-existed inventory item.',
-        },
-        negativeQuantityTitle: {
-          id: 'errorResponseMessages.removeInventory.PUT.negativeQuantity.title',
-          defaultMessage: failedDefaultTitleMessage,
-        },
-        negativeQuantity: {
-          id: 'errorResponseMessages.removeInventory.PUT.negativeQuantity.resolution',
-          defaultMessage: 'Quantity is negative for current inventory.',
-        },
-        notEnoughInventoryTitle: {
-          id: 'errorResponseMessages.removeInventory.PUT.notEnoughInventory.title',
-          defaultMessage: failedDefaultTitleMessage,
-        },
-        notEnoughInventory: {
-          id: 'errorResponseMessages.removeInventory.PUT.notEnoughInventory.resolution',
-          defaultMessage: 'Not enough inventory items on the site to remove.',
-        },
-      }),
-    }),
+    404: badRequestBuilder(messages),
   }
 }
 
 function getErrorsForTransfer() {
-  const failedDefaultTitleMessage = 'Transferring Inventory Failed'
+  const messages = defineMessages({
+    notExistedTitle: {
+      id: 'errorResponseMessages.transferInventory.transfer.notExisted.PUT.title',
+      defaultMessage: 'Transferring Inventory Failed',
+    },
+    notExisted: {
+      id: 'errorResponseMessages.transferInventory.transfer.PUT.notExisted.resolution',
+      defaultMessage: 'Can not deduct from non-existed inventory item.',
+    },
+    negativeQuantityTitle: {
+      id: 'errorResponseMessages.transferInventory.transfer.negativeQuantity.notExisted.PUT.title',
+      defaultMessage: 'Transferring Inventory Failed',
+    },
+    negativeQuantity: {
+      id: 'errorResponseMessages.transferInventory.transfer.PUT.negativeQuantity.resolution',
+      defaultMessage: 'Quantity is negative for current inventory.',
+    },
+    notEnoughInventoryTitle: {
+      id: 'errorResponseMessages.transferInventory.transfer.notExisted.notEnough.PUT.title',
+      defaultMessage: 'Transferring Inventory Failed',
+    },
+    notEnoughInventory: {
+      id: 'errorResponseMessages.transferInventory.transfer.PUT.notEnoughInventory.resolution',
+      defaultMessage: 'Not enough inventory items on the site to remove.',
+    },
+  })
+
   return {
-    404: badRequestBuilder({
-      ...defineMessages({
-        notExistedTitle: {
-          id: 'errorResponseMessages.transferInventory.transfer.notExisted.PUT.title',
-          defaultMessage: failedDefaultTitleMessage,
-        },
-        notExisted: {
-          id: 'errorResponseMessages.transferInventory.transfer.PUT.notExisted.resolution',
-          defaultMessage: 'Can not deduct from non-existed inventory item.',
-        },
-        negativeQuantityTitle: {
-          id: 'errorResponseMessages.transferInventory.transfer.negativeQuantity.notExisted.PUT.title',
-          defaultMessage: failedDefaultTitleMessage,
-        },
-        negativeQuantity: {
-          id: 'errorResponseMessages.transferInventory.transfer.PUT.negativeQuantity.resolution',
-          defaultMessage: 'Quantity is negative for current inventory.',
-        },
-        notEnoughInventoryTitle: {
-          id: 'errorResponseMessages.transferInventory.transfer.notExisted.notEnough.PUT.title',
-          defaultMessage: failedDefaultTitleMessage,
-        },
-        notEnoughInventory: {
-          id: 'errorResponseMessages.transferInventory.transfer.PUT.notEnoughInventory.resolution',
-          defaultMessage: 'Not enough inventory items on the site to remove.',
-        },
-      }),
-    }),
+    404: badRequestBuilder(messages),
   }
 }
 
