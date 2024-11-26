@@ -212,7 +212,7 @@ const messages = {
       id: 'pages.filters.GxMtbXdrMTBNotDetectedDrugResistanceNotDetected',
       defaultMessage: 'MTB Not Detected Drug Resistance Not Detected',
     },
-    breakOutByLot: { id: 'pages.InventoryItemsList.breakOutByLot', defaultMessage: 'Break Out by Lot' },
+    breakOutByLot: { id: 'pages.allMessages.InventoryItemsList.breakOutByLot', defaultMessage: 'Break Out by Lot' },
     onlyErrors: { id: 'pages.filters.onlyErrors', defaultMessage: 'Show only notifications with errors' },
     reportWithName: { id: 'filter.btnGroup.reportWithName', defaultMessage: 'Report name includes "{reportWithName}"' },
     patientId: { id: 'filter.btnGroup.patientId', defaultMessage: 'Patient Id includes "{patientId}"' },
