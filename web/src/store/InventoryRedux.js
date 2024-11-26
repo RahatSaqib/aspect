@@ -2,8 +2,8 @@ import Immutable from 'immutable'
 import { defineMessages } from 'react-intl'
 import fetchWrapperForQueries from '../components/QueryFetch'
 import { badRequestBuilder, errorPleaseTryAgainInAFewMinutes } from '../utils/error/CommonErrorNotifications'
-import { receiveList, Items } from '../utils/metaReducers/groupedItems'
-import { requestTable, receiveTableItems, Table } from '../utils/metaReducers/groupedTable'
+import { Items, receiveList } from '../utils/metaReducers/groupedItems'
+import { Table, receiveTableItems, requestTable } from '../utils/metaReducers/groupedTable'
 
 export const types = {
   REQUEST_INVENTORY_ITEMS: 'REQUEST_INVENTORY_ITEMS',
@@ -22,27 +22,67 @@ export const types = {
   HIDE_ADJUST_INVENTORY_DIALOG: 'HIDE_ADJUST_INVENTORY_DIALOG',
 }
 
-function getErrors(action) {
-  const title = {
-    id: `errorResponseMessages.${action}Inventory.PUT.title`,
-    defaultMessage: action === 'remove' ? 'Removing Inventory Failed' : 'Transferring Inventory Failed',
-  }
+function getErrorsForRemove() {
+  const failedDefaultTitleMessage = 'Removing Inventory Failed'
   return {
     404: badRequestBuilder({
       ...defineMessages({
-        notExistedTitle: title,
+        notExistedTitle: {
+          id: 'errorResponseMessages.removeInventory.PUT.notExisted.title',
+          defaultMessage: failedDefaultTitleMessage,
+        },
         notExisted: {
-          id: `errorResponseMessages.${action}Inventory.PUT.notExisted.resolution`,
+          id: 'errorResponseMessages.removeInventory.PUT.notExisted.resolution',
           defaultMessage: 'Can not deduct from non-existed inventory item.',
         },
-        negativeQuantityTitle: title,
+        negativeQuantityTitle: {
+          id: 'errorResponseMessages.removeInventory.PUT.negativeQuantity.title',
+          defaultMessage: failedDefaultTitleMessage,
+        },
         negativeQuantity: {
-          id: `errorResponseMessages.${action}Inventory.PUT.negativeQuantity.resolution`,
+          id: 'errorResponseMessages.removeInventory.PUT.negativeQuantity.resolution',
           defaultMessage: 'Quantity is negative for current inventory.',
         },
-        notEnoughInventoryTitle: title,
+        notEnoughInventoryTitle: {
+          id: 'errorResponseMessages.removeInventory.PUT.notEnoughInventory.title',
+          defaultMessage: failedDefaultTitleMessage,
+        },
         notEnoughInventory: {
-          id: `errorResponseMessages.${action}Inventory.PUT.notEnoughInventory.resolution`,
+          id: 'errorResponseMessages.removeInventory.PUT.notEnoughInventory.resolution',
+          defaultMessage: 'Not enough inventory items on the site to remove.',
+        },
+      }),
+    }),
+  }
+}
+
+function getErrorsForTransfer() {
+  const failedDefaultTitleMessage = 'Transferring Inventory Failed'
+  return {
+    404: badRequestBuilder({
+      ...defineMessages({
+        notExistedTitle: {
+          id: 'errorResponseMessages.transferInventory.transfer.notExisted.PUT.title',
+          defaultMessage: failedDefaultTitleMessage,
+        },
+        notExisted: {
+          id: 'errorResponseMessages.transferInventory.transfer.PUT.notExisted.resolution',
+          defaultMessage: 'Can not deduct from non-existed inventory item.',
+        },
+        negativeQuantityTitle: {
+          id: 'errorResponseMessages.transferInventory.transfer.negativeQuantity.notExisted.PUT.title',
+          defaultMessage: failedDefaultTitleMessage,
+        },
+        negativeQuantity: {
+          id: 'errorResponseMessages.transferInventory.transfer.PUT.negativeQuantity.resolution',
+          defaultMessage: 'Quantity is negative for current inventory.',
+        },
+        notEnoughInventoryTitle: {
+          id: 'errorResponseMessages.transferInventory.transfer.notExisted.notEnough.PUT.title',
+          defaultMessage: failedDefaultTitleMessage,
+        },
+        notEnoughInventory: {
+          id: 'errorResponseMessages.transferInventory.transfer.PUT.notEnoughInventory.resolution',
           defaultMessage: 'Not enough inventory items on the site to remove.',
         },
       }),
@@ -148,7 +188,7 @@ function removeInventory(data, dispatch, inventoryState) {
       consumableId,
     },
     customErrorNotifications: {
-      ...getErrors('remove'),
+      ...getErrorsForRemove(),
       default: errorPleaseTryAgainInAFewMinutes({
         ...defineMessages({
           title: {
@@ -182,7 +222,7 @@ function transferInventory(data, dispatch, inventoryState) {
       consumableId,
     },
     customErrorNotifications: {
-      ...getErrors('transfer'),
+      ...getErrorsForTransfer(),
       default: errorPleaseTryAgainInAFewMinutes({
         ...defineMessages({
           title: {
@@ -320,16 +360,7 @@ export default function inventoryItemsReducer(state = initialState, action) {
 }
 
 export {
-  receiveInventoryItems,
-  showNewInventoryDialog,
-  showAddInventoryDialog,
-  showRemoveInventoryDialog,
-  showTransferInventoryDialog,
-  showReceiveInventoryDialog,
-  hideAdjustInventoryDialog,
-  addInventory,
-  removeInventory,
-  transferInventory,
-  receiveInventory,
-  modifyInventoryOnHand,
+  addInventory, hideAdjustInventoryDialog, modifyInventoryOnHand, receiveInventory, receiveInventoryItems, removeInventory, showAddInventoryDialog, showNewInventoryDialog, showReceiveInventoryDialog, showRemoveInventoryDialog,
+  showTransferInventoryDialog, transferInventory
 }
+
