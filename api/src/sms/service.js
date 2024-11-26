@@ -74,8 +74,10 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
       .count('* as count')
 
     if (
-      new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
-      smsMessageCount?.count <= partnerDetails?.notificationLimit
+      (partnerDetails?.serviceStartDate &&
+        new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
+        smsMessageCount?.count <= partnerDetails?.notificationLimit) ||
+      !partnerDetails?.serviceStartDate
     ) {
       await doSendSmsMessage(context, knex, smsMessageId)
     } else return Promise.reject(new Error('Service is not available'))

@@ -72,8 +72,10 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .first('*')
       .count('* as count')
     if (
-      new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
-      emailMessageCount?.count <= partnerDetails?.notificationLimit
+      (partnerDetails?.serviceStartDate &&
+        new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
+        emailMessageCount?.count <= partnerDetails?.notificationLimit) ||
+      !partnerDetails?.serviceStartDate
     ) {
       await doSendEmailMessage(context, knex, emailMessageId)
     } else return Promise.reject(new Error('Service is not available'))
