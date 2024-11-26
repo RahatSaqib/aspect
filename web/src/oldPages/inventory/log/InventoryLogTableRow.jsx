@@ -1,12 +1,22 @@
 import React from 'react'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
+import useAuthState from '../../../hooks/useAuthState'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
 import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
 import { formatDateTime, formatDate } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
+const TEST_CONDUCTED_KEY = 'ConsumableReason_TestConducted'
+
 const InventoryLogTableRow = ({ inventoryLogItem }) => {
   const { formatMessage } = useIntl()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
+  const { isCountry, countryId } = useAuthState()
   return (
     <TableRow className={styles.TableRow}>
       <TableCell className={styles.TableCell}>
@@ -39,7 +49,34 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
         </span>
       </TableCell>
 
-      <TableCell className={styles.TableCell}>{inventoryLogItem.quantity}</TableCell>
+      <TableCell
+        className={styles.TableCell}
+        onClick={() => {
+          if (inventoryLogItem.consumableReasonI18nKey === TEST_CONDUCTED_KEY) {
+            addFilter(
+              omitBy(
+                {
+                  countryId,
+                  minDate: inventoryLogItem.createdOn,
+                  maxDate: inventoryLogItem.createdOn,
+                  assayId: inventoryLogItem.assayId,
+                  siteName: inventoryLogItem.siteName,
+                },
+                isNil
+              ),
+              '/browse/result'
+            )
+            navigate('/browse/result')
+          }
+        }}
+        sx={
+          inventoryLogItem.consumableReasonI18nKey === TEST_CONDUCTED_KEY
+            ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
+            : {}
+        }
+      >
+        {inventoryLogItem.quantity}
+      </TableCell>
       <TableCell className={styles.TableCell}>
         {messages[inventoryLogItem.consumableReasonI18nKey]
           ? formatMessage(messages[inventoryLogItem.consumableReasonI18nKey], {
