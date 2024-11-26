@@ -119,7 +119,7 @@ export function getValidations(format, actionType, { inventory, allSites }) {
               // do return `false` only for Warehouse
               return !isWarehouse
             }
-            return true
+            return !uiAdd
           },
           then: sch => sch.min(new Date(), format(validationMessages.expiryDateAfterToday)),
         }),
