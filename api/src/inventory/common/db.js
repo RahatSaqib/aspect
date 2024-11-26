@@ -78,14 +78,31 @@ function getInventoryItemsRawQuery() {
   `)
 }
 
-function getUnreconciledCount(siteId, consumableId) {
-  return knex('MissingInventoryLots as mil')
+async function getUnreconciledCount(siteId, consumableId) {
+  const recursiveQuery = knex.raw(
+    `
+    WITH RECURSIVE site_hierarchy AS (
+      SELECT id, parentWarehouseId
+      FROM Site
+      WHERE id = ?
+      UNION ALL
+      SELECT s.id, s.parentWarehouseId
+      FROM Site s
+      INNER JOIN site_hierarchy sh ON s.parentWarehouseId = sh.id
+    )
+    SELECT id FROM site_hierarchy
+  `,
+    [siteId]
+  )
+  const result = await knex('MissingInventoryLots as mil')
     .leftJoin('Result as r', 'mil.resultId', 'r.id')
     .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
-    .where('mil.siteId', siteId)
+    .whereIn('mil.siteId', knex.raw('(?)', [recursiveQuery]))
     .andWhere('ca.consumableId', consumableId)
     .count('r.id as resultCount')
     .then(([result]) => result.resultCount)
+
+  return result
 }
 
 // ----------------------------------------------------------------------------------
@@ -100,6 +117,7 @@ function getInventorySitesQuery(constraints, request) {
     .leftJoin('Country as co', 'g.countryId', 'co.id')
     .leftJoin('State as st', 'g.stateId', 'st.id')
     .leftJoin('Lga as l', 'g.lgaId', 'l.id')
+    .join('SiteType as sty', 's.siteTypeId', 'sty.id')
     .leftJoin('FactInventoryConsumptionRate as ficr', builder => {
       builder.on('s.id', 'ficr.siteId').andOn('c.id', 'ficr.consumableId').andOn(knex.raw('ficr.days = 1'))
     })
@@ -140,6 +158,8 @@ function getInventorySitesQuery(constraints, request) {
       'g.countryId',
       'g.stateId',
       'g.lgaId',
+      'sty.externalId as siteType',
+      's.parentWarehouseId',
       'co.name as countryName',
       'st.name as stateName',
       'l.name as lgaName',

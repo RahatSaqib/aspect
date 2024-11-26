@@ -175,24 +175,26 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       {!breakOutByLot ? (
         <TableCell
           onClick={() => {
-            addFilter(
-              omitBy(
-                {
-                  onlyUnreconciled: true,
-                  countryId,
-                  assayId: inventoryItem.get('assayId'),
-                  stateId: inventoryItem.get('stateId'),
-                  lgaId: inventoryItem.get('lgaId'),
-                  siteName: inventoryItem.get('siteName'),
-                },
-                isNil
-              ),
-              '/browse/result'
-            )
-            navigate('/browse/result')
+            if (inventoryItem.get('siteType') !== 'warehouse') {
+              addFilter(
+                omitBy(
+                  {
+                    onlyUnreconciled: true,
+                    countryId,
+                    assayId: inventoryItem.get('assayId'),
+                    stateId: inventoryItem.get('stateId'),
+                    lgaId: inventoryItem.get('lgaId'),
+                    siteName: inventoryItem.get('siteName'),
+                  },
+                  isNil
+                ),
+                '/browse/result'
+              )
+              navigate('/browse/result')
+            }
           }}
           sx={
-            inventoryItem.get('unreconciledQuantity')
+            inventoryItem.get('unreconciledQuantity') && inventoryItem.get('siteType') !== 'warehouse'
               ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
               : {}
           }

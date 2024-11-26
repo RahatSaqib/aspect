@@ -54,6 +54,8 @@ const InventoryOverviewPage = () => {
             assayId: filters?.consumable?.assayId,
             onlyUnreconciled: true,
             countryId,
+            minDate: filters.minDate,
+            maxDate: filters.maxDate,
             stateId,
             lgaId,
             siteName: type === 'lab' || type === 'clinic' ? name : null,

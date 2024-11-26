@@ -32,11 +32,7 @@ module.exports = async function (query, constraints) {
           q
             .whereNull('r.id')
             .orWhere(q2 =>
-              q2.modify(
-                filterDateRangeParams,
-                { minDate: min(sixMonthsBeforeToday, query.minDate), maxDate: query.maxDate },
-                'r.endedOn'
-              )
+              q2.modify(filterDateRangeParams, { minDate: query.minDate, maxDate: query.maxDate }, 'r.endedOn')
             )
         )
         .modify(addConstraints, constraints, { geography: 'g', site: 's' })
