@@ -62,7 +62,7 @@ export default defineMessages({
     defaultMessage: 'Truenat MTB Plus Test Kit',
   },
   truenatMTBRifTestKit: {
-    id: 'consumable.truenatMTBRifTestKit',
+    id: 'consumable.rif.truenatMTBRifTestKit',
     defaultMessage: 'Truenat MTB Rif Test Kit',
   },
   truenatMTBTestKit: {
