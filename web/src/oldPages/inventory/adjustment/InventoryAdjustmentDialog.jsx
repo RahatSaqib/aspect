@@ -10,9 +10,17 @@ import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { types } from '../../../store/InventoryRedux'
-import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, transformValues } from './helpers'
+import {
+  getLabels,
+  getQuantityOnHand,
+  getValidations,
+  transformInitialValue,
+  transformValues,
+  withLotNumber,
+} from './helpers'
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
+import { validationMessages } from './messages'
 
 function InventoryAdjustmentDialog(props) {
   const { data: allSites = [] } = useSiteList()
@@ -27,7 +35,7 @@ function InventoryAdjustmentDialog(props) {
 
   return (
     <Formik
-      validationSchema={getValidations(formatMessage, actionType, inventory)}
+      validationSchema={() => getValidations(formatMessage, actionType, { inventory, allSites })}
       initialValues={transformInitialValue(inventory, actionType)}
       onSubmit={values => onSubmit(transformValues(values))}
     >
@@ -41,15 +49,21 @@ function InventoryAdjustmentDialog(props) {
         handleChange,
         setFieldValue,
         isSubmitting,
+        touched,
       }) => {
         const fromSite = allSites.find(it => it.id === values.fromSiteId)
         const toSite = allSites.find(it => it.id === values.toSiteId)
         const isExpired = date => date && new Date(date) < new Date()
         const toSiteFilter = sites => {
           if (uiTransfer) {
-            sites = sites?.filter(s => s.siteConsumables?.includes(values.consumable.id))
+            sites = sites?.filter(s => 
+              // toSite is not the same as fromSite
+              s.id !== values.fromSiteId && 
+              // cartridge is applicable (via SiteConsumable table mapping)
+              s.siteConsumables?.includes(values.consumable.id)
+            )
             if (isExpired(values.expiresOn ?? inventory?.expiresOn)) {
-              sites = sites?.filter(it => it.id === fromSite.parentWarehouseId)
+              sites = sites?.filter(it => it.siteType === 'warehouse')
             }
           }
           return sites
@@ -80,6 +94,18 @@ function InventoryAdjustmentDialog(props) {
           }
         }
 
+        if (!touched.quantity) {
+          delete errors.quantity
+        }
+        if (inventory?.quantityOnHand <= 0) {
+          if (uiTransfer) {
+            errors.quantity = formatMessage(validationMessages.quantityMissingToTransfer)
+          }
+          else if (uiRemove) {
+            errors.quantity = formatMessage(validationMessages.quantityMissingToRemove)
+          }
+        }
+
         return (
           <AspectDialog
             maxWidth="sm"
@@ -104,7 +130,7 @@ function InventoryAdjustmentDialog(props) {
                   />
                 ) : null}
 
-                {actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG ? (
+                {uiAdd ? (
                   <SiteAutoCompleteField
                     name="toSiteId"
                     value={values.toSiteId || ''}
@@ -116,6 +142,15 @@ function InventoryAdjustmentDialog(props) {
                     }
                     floatingLabelFixed
                     floatingLabelText={formatMessage(messages.toSiteName)}
+                    floatingLabelClasses={{
+                      error: styles.Field__label__when__error,
+                    }}
+                    floatingHelperTextProps={{
+                      margin: 'dense',
+                      classes: {
+                        error: styles.Field__error__message,
+                      }
+                    }}
                     width="100%"
                     customFilter={toSiteFilter}
                   />
@@ -149,6 +184,15 @@ function InventoryAdjustmentDialog(props) {
                       // ...or transferring inventory
                       uiTransfer
                     }
+                    floatingLabelClasses={{
+                      error: styles.Field__label__when__error,
+                    }}
+                    floatingHelperTextProps={{
+                      margin: 'dense',
+                      classes: {
+                        error: styles.Field__error__message,
+                      }
+                    }}
                   />
                 ) : null}
 
@@ -157,6 +201,8 @@ function InventoryAdjustmentDialog(props) {
                     required: true,
                   }}
                   label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
+                  error={!!errors.expiresOn}
+                  helperText={errors.expiresOn}
                 >
                   <DateTimeInput
                     fullWidth
@@ -168,31 +214,70 @@ function InventoryAdjustmentDialog(props) {
                     }}
                     onChange={onExpiresChange}
                     value={values.expiresOn}
-                    error={!!errors.expiresOn}
-                    helperText={errors.expiresOn}
                   />
                 </FormGroup>
 
-                <TextField
-                  required
-                  fullWidth
-                  type="text"
-                  name="lotNumber"
-                  label={formatMessage(messages.cartridgeLotNumber)}
-                  value={values.lotNumber}
-                  onChange={handleChange}
-                  disabled={!!initialValues?.lotNumber}
-                  onBlur={handleBlur}
-                  margin="normal"
-                  FormHelperTextProps={{
-                    margin: 'dense',
-                  }}
-                  inputProps={{ maxLength: 100 }}
-                  error={!!errors.lotNumber}
-                  helperText={errors.lotNumber}
-                />
+                {
+                  withLotNumber(inventory, values.consumable)
+                  ? (
+                    <TextField
+                      required
+                      fullWidth
+                      type="text"
+                      name="lotNumber"
+                      label={formatMessage(messages.cartridgeLotNumber)}
+                      value={values.lotNumber}
+                      onChange={handleChange}
+                      disabled={!!initialValues?.lotNumber}
+                      onBlur={handleBlur}
+                      margin="normal"
+                      FormHelperTextProps={{
+                        margin: 'dense',
+                        classes: {
+                          error: styles.Field__error__message,
+                        }
+                      }}
+                      InputLabelProps={{
+                        shrink: true,
+                        classes: {
+                          error: styles.Field__label__when__error,
+                        }
+                      }}
+                      inputProps={{ maxLength: 100 }}
+                      error={!!errors.lotNumber}
+                      helperText={errors.lotNumber}
+                    />
+                  ) : null
+                }
+
+                {uiTransfer ? (
+                  <SiteAutoCompleteField
+                    name="toSiteId"
+                    value={values.toSiteId || ''}
+                    onChange={onToSiteChange}
+                    errorText={errors.toSiteId}
+                    disabled={
+                      actionType === types.SHOW_RECEIVE_INVENTORY_DIALOG ||
+                      actionType === types.SHOW_ADD_INVENTORY_DIALOG
+                    }
+                    floatingLabelFixed
+                    floatingLabelText={formatMessage(messages.toSiteName)}
+                    floatingLabelClasses={{
+                      error: styles.Field__label__when__error,
+                    }}
+                    floatingHelperTextProps={{
+                      margin: 'dense',
+                      classes: {
+                        error: styles.Field__error__message,
+                      }
+                    }}
+                    width="100%"
+                    customFilter={toSiteFilter}
+                  />
+                ) : null}
 
                 <TextField
+                  required
                   fullWidth
                   type="text"
                   name="quantity"
@@ -205,6 +290,15 @@ function InventoryAdjustmentDialog(props) {
                   margin="normal"
                   FormHelperTextProps={{
                     margin: 'dense',
+                    classes: {
+                      error: styles.Field__error__message,
+                    }
+                  }}
+                  InputLabelProps={{
+                    shrink: true,
+                    classes: {
+                      error: styles.Field__label__when__error,
+                    }
                   }}
                   inputProps={{ maxLength: 500 }}
                 />

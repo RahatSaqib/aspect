@@ -14,6 +14,8 @@ const SiteAutoCompleteField = ({
   onChange,
   floatingLabelFixed,
   floatingLabelText,
+  floatingLabelClasses,
+  floatingHelperTextProps,
   hintText,
   disableClearable,
   errorText,
@@ -91,7 +93,11 @@ const SiteAutoCompleteField = ({
           {...params}
           label={floatingLabelText}
           placeholder={hintText}
-          InputLabelProps={{ shrink: floatingLabelFixed }}
+          InputLabelProps={{ 
+            shrink: floatingLabelFixed,
+            classes: floatingLabelClasses,
+          }}
+          FormHelperTextProps={floatingHelperTextProps}
           variant="standard"
           style={{ width }}
           error={!!errorText}
@@ -110,6 +116,8 @@ SiteAutoCompleteField.defaultProps = {
   onChange: () => {},
   floatingLabelFixed: false,
   floatingLabelText: '',
+  floatingLabelClasses: undefined,
+  floatingHelperTextProps: undefined,
   hintText: '',
   disableClearable: false,
   errorText: undefined,
@@ -121,10 +129,12 @@ SiteAutoCompleteField.defaultProps = {
 }
 SiteAutoCompleteField.propTypes = {
   name: PropTypes.string,
-  value: PropTypes.string,
+  value: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   onChange: PropTypes.func,
   floatingLabelFixed: PropTypes.bool,
   floatingLabelText: PropTypes.string,
+  floatingLabelClasses: PropTypes.object,
+  floatingHelperTextProps: PropTypes.object,
   hintText: PropTypes.string,
   disableClearable: PropTypes.bool,
   errorText: PropTypes.string,

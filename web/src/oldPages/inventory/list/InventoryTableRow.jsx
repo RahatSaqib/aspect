@@ -33,37 +33,46 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
   const [notes, setNotes] = useState('')
   const dispatch = useDispatch()
 
-  const getActions = isInTransit => [
-    ...(!isCountry('PK')
-      ? [
-          {
-            icon: 'FaCheck',
-            text: formatMessage(messages.receiveInventory),
-            disabled: !isInTransit,
-            action: ({ inventoryItemId }) => dispatch(showReceiveInventoryDialog(inventoryItemId)),
-          },
-        ]
-      : []),
+  const getActions = inventoryItem => {
+    const { 
+      inTransitFromSiteId: isInTransit,
+      consumableId,
+      siteConsumables,
+    } = inventoryItem.toJS()
+    const isCartridgeConfigured = siteConsumables.includes(consumableId)
 
-    {
-      icon: 'FaPlus',
-      text: formatMessage(messages.addInventory),
-      disabled: isInTransit,
-      action: ({ inventoryItemId }) => dispatch(showAddInventoryDialog(inventoryItemId)),
-    },
-    {
-      icon: 'FaExchangeAlt',
-      text: formatMessage(messages.transferInventory),
-      disabled: isInTransit,
-      action: ({ inventoryItemId }) => dispatch(showTransferInventoryDialog(inventoryItemId)),
-    },
-    {
-      icon: 'FaMinus',
-      text: formatMessage(messages.removeInventory),
-      disabled: isInTransit,
-      action: ({ inventoryItemId }) => dispatch(showRemoveInventoryDialog(inventoryItemId)),
-    },
-  ]
+    return [
+      ...(!isCountry('PK')
+        ? [
+            {
+              icon: 'FaCheck',
+              text: formatMessage(messages.receiveInventory),
+              disabled: !isInTransit,
+              action: ({ inventoryItemId }) => dispatch(showReceiveInventoryDialog(inventoryItemId)),
+            },
+          ]
+        : []),
+
+      {
+        icon: 'FaPlus',
+        text: formatMessage(messages.addInventory),
+        disabled: isInTransit || !isCartridgeConfigured,
+        action: ({ inventoryItemId }) => dispatch(showAddInventoryDialog(inventoryItemId)),
+      },
+      {
+        icon: 'FaExchangeAlt',
+        text: formatMessage(messages.transferInventory),
+        disabled: isInTransit,
+        action: ({ inventoryItemId }) => dispatch(showTransferInventoryDialog(inventoryItemId)),
+      },
+      {
+        icon: 'FaMinus',
+        text: formatMessage(messages.removeInventory),
+        disabled: isInTransit,
+        action: ({ inventoryItemId }) => dispatch(showRemoveInventoryDialog(inventoryItemId)),
+      },
+    ]
+  }
   const { mutate: onModifyInventoryOnHandSubmit } = useMutation(
     values =>
       resultQtyOnHand !== inventoryItem.get('quantityOnHand')
@@ -250,7 +259,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
                 inventoryItemId: inventoryItem.get('id'),
                 inventoryItem,
               }}
-              actions={getActions(inventoryItem.get('inTransitFromSiteId'))}
+              actions={getActions(inventoryItem)}
             />
           </TableCell>
         </PermissionChecker>

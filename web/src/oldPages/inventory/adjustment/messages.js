@@ -64,6 +64,14 @@ export const validationMessages = defineMessages({
     id: 'pages.InventoryAdjustmentDialogForm.consumableRequired',
     defaultMessage: 'Please specify a consumable',
   },
+  quantityMissingToTransfer: {
+    id: 'pages.NewInventoryDialogForm.quantityMissingToTransfer',
+    defaultMessage: 'No inventory to transfer',
+  },
+  quantityMissingToRemove: {
+    id: 'pages.NewInventoryDialogForm.quantityMissingToRemove',
+    defaultMessage: 'No inventory to remove',
+  },
   quantityNumber: {
     id: 'pages.NewInventoryDialogForm.quantityNumber',
     defaultMessage: 'Please enter positive integer value',

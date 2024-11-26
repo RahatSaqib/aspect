@@ -10,8 +10,8 @@ import {
   validationMessages,
 } from './messages'
 
-export const hasExpireDate = strategy => !!strategy?.includes('ExpirationDate')
-export const hasLot = strategy => !!strategy?.includes('Lot')
+export const strategyRequireExpirationDate = strategy => !!strategy?.includes('ExpirationDate')
+export const strategyRequireLot = strategy => !!strategy?.includes('Lot')
 
 export function transformValues(values) {
   const { consumable, reason, ...rest } = values
@@ -25,7 +25,35 @@ export function transformValues(values) {
   )
 }
 
-export function getValidations(format, actionType, inventory) {
+/**
+ * helper funcs
+ * if particular inventoryItem has defined `strategy` then see if it
+ * uses ExpirationDate or Lot, otherwise - check `consumable`. In order to require 
+ * them in `then` section (see below).
+ * Notice that inventoryItem.startegy is defined in API by getting effective
+ * value based on country-, state-, lga- level definitions.
+ * So far the country-level is implemented
+ */
+export const withExpirationDate = (inventory, consumable) => {
+  return (
+    (!!inventory?.strategy && strategyRequireExpirationDate(inventory.strategy))
+    ||
+    (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
+  )
+}
+export const withLotNumber = (inventory, consumable) => {
+  return (
+    (!!inventory?.strategy && strategyRequireLot(inventory.strategy))
+    ||
+    (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))
+  )
+}
+
+export function getValidations(format, actionType, { inventory, allSites }) {
+  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
+  const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
+  const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
+
   let schema = object({
     quantity: number()
       .typeError(format(validationMessages.quantityNumber))
@@ -61,26 +89,44 @@ export function getValidations(format, actionType, inventory) {
     schema = schema.shape({
       expiresOn: date()
         .nullable()
-        .when('consumable', {
-          is: () => {
-            // return hasExpireDate(consumable?.strategy || inventory?.strategy)
-            return true
-          },
+        .when(['consumable', 'toSiteId'], {
+          is: consumable => withExpirationDate(inventory, consumable),
           then: sch => {
             let validation = sch.required(format(validationMessages.expiryDateRequired))
-            if (![types.SHOW_RECEIVE_INVENTORY_DIALOG, types.SHOW_TRANSFER_INVENTORY_DIALOG].includes(actionType)) {
+            if (uiAdd) {
+              /**
+               * do nothing here - Add Inventory has only `require` validation rule.
+               * see `User should be able to Add inventory for expired cartirdge` in task ASP-7408
+               */
+            }
+            else if (uiRemove) {
+              /**
+               * do not allow Remove Inventory for expired cartridges, i.e. when ExpiresOn < now()
+               */
               validation = validation.min(new Date(), format(validationMessages.expiryDateAfterToday))
             }
             return validation
           },
+        })
+        .when(['toSiteId'], {
+          is: toSiteId => {
+            if (uiTransfer) {
+              /**
+               * Transfer inventory shouldn't allow Expired Cartridge to be transferred to sites other than warehouses
+               */
+              const site = allSites.find(it => it.id === +toSiteId)
+              const isWarehouse = site?.siteType === 'warehouse'
+              // do return `false` only for Warehouse
+              return !isWarehouse
+            }
+            return true
+          },
+          then: sch => sch.min(new Date(), format(validationMessages.expiryDateAfterToday)),
         }),
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => {
-            // return hasLot(consumable?.strategy || inventory?.strategy)
-            return true
-          },
+          is: consumable => withLotNumber(inventory, consumable),
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })
@@ -146,8 +192,8 @@ export function transformInitialValue(inventory, actionType) {
           : ![types.SHOW_ADD_INVENTORY_DIALOG, types.SHOW_NEW_INVENTORY_DIALOG].includes(actionType)
           ? inventory.siteId
           : undefined,
-      lotNumber: inventory?.lotNumber,
-      expiresOn: inventory?.expiresOn,
+      lotNumber: inventory?.lotNumber || '',
+      expiresOn: inventory?.expiresOn || null,
       consumable: {
         id: inventory.consumableId,
         name: inventory.consumableName,
