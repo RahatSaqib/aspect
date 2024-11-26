@@ -10,6 +10,9 @@ import {
   validationMessages,
 } from './messages'
 
+export const hasExpireDate = strategy => !!strategy?.includes('ExpirationDate')
+export const hasLot = strategy => !!strategy?.includes('Lot')
+
 export function transformValues(values) {
   const { consumable, reason, ...rest } = values
   return omitBy(
@@ -54,13 +57,15 @@ export function getValidations(format, actionType, inventory) {
     }
   }
 
-  if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
+  if (actionType !== types.SHOW_RECEIVE_INVENTORY_DIALOG) {
     schema = schema.shape({
-      toSiteId: string().required(format(validationMessages.siteRequired)),
       expiresOn: date()
         .nullable()
         .when('consumable', {
-          is: consumable => !!(consumable?.showExpirationDate || inventory?.expiresOn),
+          is: () => {
+            // return hasExpireDate(consumable?.strategy || inventory?.strategy)
+            return true
+          },
           then: sch => {
             let validation = sch.required(format(validationMessages.expiryDateRequired))
             if (![types.SHOW_RECEIVE_INVENTORY_DIALOG, types.SHOW_TRANSFER_INVENTORY_DIALOG].includes(actionType)) {
@@ -72,9 +77,18 @@ export function getValidations(format, actionType, inventory) {
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: consumable => !!(consumable?.showLot || inventory?.lotNumber),
+          is: () => {
+            // return hasLot(consumable?.strategy || inventory?.strategy)
+            return true
+          },
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
+    })
+  }
+
+  if (actionType !== types.SHOW_REMOVE_INVENTORY_DIALOG) {
+    schema = schema.shape({
+      toSiteId: string().required(format(validationMessages.siteRequired)),
     })
   }
 

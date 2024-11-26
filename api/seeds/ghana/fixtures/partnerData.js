@@ -29,6 +29,8 @@ module.exports = {
         AspectUploadExcludePatientId: false,
         AspectApiEndpoint: 'https://ghana.aspect.id/api',
         MigrateAspectApiKey: true,
+        CustomFieldsEnabled: true,
+        ConnectSettingsAndCustomFieldsSource: 'ASPECT',
       },
     },
   ],

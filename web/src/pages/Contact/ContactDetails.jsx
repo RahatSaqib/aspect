@@ -33,6 +33,7 @@ import messages from './messages'
 const ContactDetails = ({ setStep }) => {
   const navigate = useNavigate()
   const location = useLocation()
+  const event = new Event('storage')
 
   const { isRecentlyAdd, isAdding, id } = useContext(FormStatusContext)
 
@@ -120,6 +121,9 @@ const ContactDetails = ({ setStep }) => {
               'userLockedOut',
               'canLogIn',
             ]
+            if (person.culture !== values.culture) localStorage.setItem('asCulture', values.culture)
+            window.dispatchEvent(event) // Trigger the listener manually
+
             values.tags = (values.tags || []).join(',')
             noField.map(f => delete values[f])
             setSubmitting(true)
