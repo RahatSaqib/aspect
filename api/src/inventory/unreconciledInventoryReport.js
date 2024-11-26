@@ -1,6 +1,6 @@
-const { filterParams, filterDateRangeParams } = require('../../db')
-const { addConstraints } = require('../../auth/constraints')
-const { baseMissingInventoryLotsQuery } = require('../common/db')
+const { filterParams, filterDateRangeParams } = require('../db')
+const { addConstraints } = require('../auth/constraints')
+const { baseMissingInventoryLotsQuery } = require('./common/db')
 
 async function getUnreconciledInventoryReport(dataConstraints, query) {
   const data = await baseMissingInventoryLotsQuery()

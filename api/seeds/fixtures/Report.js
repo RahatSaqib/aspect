@@ -811,7 +811,7 @@ const unreconciledInventoryReport = {
   i18nKey: 'unreconciled_inventory_report',
   i18nKeyDescription: 'unreconciled_inventory_report_description',
   externalId: 'unreconciled_inventory_report', // folder name in /templates with low dash casing
-  fileName: 'unreconciledInventoryReport',
+  fileName: 'UnReconciledInventoryReport',
   exportCsv: false,
   exportExcel: true,
   sortOrder: 0,

@@ -6,6 +6,14 @@ const { getOffsetFromIsoDateString, getDateTimeProjectionInUserTimeZone } = requ
 const listInventoryLog = require('./listInventoryLog')
 const listInventory = require('./listInventory')
 const { listReconciliation } = require('./service')
+const { getConstraints } = require('../auth/constraints')
+const { getUnreconciledInventoryReport } = require('./unreconciledInventoryReport')
+
+async function unreconciledInventoryReport(auth, query) {
+  const dataConstraints = await getConstraints(auth.credentials)
+  const dataSet = await getUnreconciledInventoryReport(dataConstraints, query)
+  return dataSet
+}
 
 async function exportSupplies(request, reply) {
   const { query } = request
@@ -63,4 +71,5 @@ module.exports = {
   exportSupplies,
   exportReconciliation,
   inventoryLog,
+  unreconciledInventoryReport,
 }

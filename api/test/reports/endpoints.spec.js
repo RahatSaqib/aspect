@@ -69,6 +69,40 @@ describe('API Reports Endpoint', () => {
     })
   })
 
+  describe('GET: /api/reports/unreconciled_inventory_report', () => {
+    const apiPath = '/api/reports/unreconciled_inventory_report'
+
+    before(() => {
+      shared.checkToken(server, apiPath)
+    })
+
+    it('should return response with csv headers for unreconciled inventory report', () =>
+      runTestWithKnex(async () => {
+        const response = await server
+          .get(apiPath)
+          .query({ minDate: subMonths(new Date(), 1), maxDate: new Date(), format: 'xlsx', timeZone: 'Asia/Calcutta' })
+          .set('Authorization', `Bearer ${shared.token}`)
+        assert.equal(response.status, 200)
+      }))
+
+    it('should return an CSV file for report requested with `externalId` if the report is not an stremeable one', async () => {
+      const response = await server
+        .get(apiPath)
+        .query({ minDate: subMonths(new Date(), 1), maxDate: new Date(), format: 'xlsx' })
+        .set('Authorization', `Bearer ${shared.token}`)
+      assert.equal(response.status, 200)
+
+      // special header Content-Disposition for generated Excel file is used to specify file name
+      assert.typeOf(response.headers['content-disposition'], 'string')
+      assert.equal(response.headers['content-disposition'].includes('attachment'), true)
+      assert.equal(response.headers['content-disposition'].includes('filename='), true)
+
+      // Content-Type should match CSV file with extension .csv
+      assert.typeOf(response.headers['content-type'], 'string')
+      assert.equal(response.headers['content-type'], 'application/octet-stream')
+    })
+  })
+
   describe('GET: /api/reports', () => {
     const apiPath = '/api/reports'
 
