@@ -371,7 +371,7 @@ const messages = {
       defaultMessage: 'Stock Provider',
     },
     breakOutByLot: {
-      id: 'pages.InventoryItemsList.breakOutByLot',
+      id: 'pages.filter.InventoryItemsList.breakOutByLot',
       defaultMessage: 'Break out by lot',
     },
     expiresOn: {

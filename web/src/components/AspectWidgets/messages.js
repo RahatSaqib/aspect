@@ -105,6 +105,14 @@ const messages = defineMessages({
     id: 'component.Widget.resultsDescription',
     defaultMessage: 'The number of results in the last 30 days',
   },
+  instrumentsConnectedTitle: {
+    id: 'component.Widget.instrumentsConnectedTitle',
+    defaultMessage: 'Instruments',
+  },
+  instrumentsConnectedDescription: {
+    id: 'component.Widget.instrumentsConnectedDescription',
+    defaultMessage: 'The number of instruments connected to a single laptop in multi-device connector configuration.',
+  },
   sitesTitle: {
     id: 'component.Widget.sitesTitle',
     defaultMessage: 'Sites',

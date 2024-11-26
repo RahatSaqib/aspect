@@ -111,7 +111,7 @@ const messages = {
       defaultMessage: 'EID',
     },
     resultCategoryCopiesMl: {
-      id: 'pages.ResultList.resultCategoryHiv',
+      id: 'pages.ResultList.resultCategoryHivCopiesMl',
       defaultMessage: 'Copies/ML',
     },
     resultCategoryCultureResult: {
@@ -139,7 +139,7 @@ const messages = {
       defaultMessage: 'Status',
     },
     resultCategory2Name: {
-      id: 'pages.ResultList.resultCategory1Name',
+      id: 'pages.ResultList.resultCategory2Name',
       defaultMessage: 'Category 2',
     },
     paginatorStatus: {
