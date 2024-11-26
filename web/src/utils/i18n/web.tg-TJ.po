@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-05T02:37:54.550Z\n"
+"POT-Creation-Date: 2024-11-19T04:17:38.787Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -231,6 +231,24 @@ msgstr "Зиёда аз миёна"
 #: extracted_strings.json
 msgid "Above Target"
 msgstr "Дар болои Ҳадаф"
+
+#. [pages.Consumable.New.aboveRuleAndParentSites]
+#. defaultMessage is:
+#. Above rule and Parent sites of Stock Provider site or Regional or National warehouses in the hierarchical sequence
+#: extracted_strings.json
+msgid ""
+"Above rule and Parent sites of Stock Provider site or Regional or National "
+"warehouses in the hierarchical sequence"
+msgstr ""
+"Дар боло қоида ва сайтҳои волидайни сайти провайдери саҳҳомӣ ё анборҳои "
+"минтақавӣ ё миллӣ дар пайдарпаии иерархӣ"
+
+#. [pages.Consumable.New.aboveRuleAndStockProvider]
+#. defaultMessage is:
+#. Above rule and Stock Provider site mentioned
+#: extracted_strings.json
+msgid "Above rule and Stock Provider site mentioned"
+msgstr "Дар боло қоида ва сайти провайдери саҳҳомӣ зикр шудааст"
 
 #. [queryFetch.errorResponseMessages.GET.403.title]
 #. defaultMessage is:
@@ -1457,12 +1475,26 @@ msgstr "Иқтидор"
 msgid "Captured"
 msgstr "Забт карда шуд"
 
+#. [pages.Consumable.New.cartridgeLotNumber]
+#. defaultMessage is:
+#. Cartridge Lot Number
+#: extracted_strings.json
+msgid "Cartridge Lot Number"
+msgstr "Рақами лотҳои картридж"
+
 #. [pages.InventoryAdjustmentDialogForm.cartridgeLotNumber]
 #. defaultMessage is:
 #. Cartridge Lot number
 #: extracted_strings.json
 msgid "Cartridge Lot number"
 msgstr "Рақами лот"
+
+#. [pages.Consumable.New.cartridgesManagedThrough]
+#. defaultMessage is:
+#. Cartridges are managed through
+#: extracted_strings.json
+msgid "Cartridges are managed through"
+msgstr "Картриджҳо тавассути идора карда мешаванд"
 
 #. [forms.formItem.caseId]
 #. defaultMessage is:
@@ -3768,9 +3800,19 @@ msgstr "Дар рӯзҳо ба охир мерасад"
 #. [pages.InventoryAdjustmentDialogForm.expiryDate]
 #. defaultMessage is:
 #. Expiry Date
+#. [pages.Consumable.New.expiryDate]
+#. defaultMessage is:
+#. Expiry Date
 #: extracted_strings.json
 msgid "Expiry Date"
 msgstr "Санаи поёни бақо"
+
+#. [pages.Consumable.New.cartridgeLotNumberAndExpiryDate]
+#. defaultMessage is:
+#. Expiry Date and Cartridge Lot Number
+#: extracted_strings.json
+msgid "Expiry Date and Cartridge Lot Number"
+msgstr "Санаи анҷоми кор ва рақами лот"
 
 #. [pages.DeviceList.exportDevices]
 #. defaultMessage is:
@@ -5303,6 +5345,13 @@ msgstr "URL-и вебхук нодуруст"
 msgid "Inventory"
 msgstr "Инвентаризатсия"
 
+#. [pages.Consumable.New.inventoryDetails]
+#. defaultMessage is:
+#. Inventory Details
+#: extracted_strings.json
+msgid "Inventory Details"
+msgstr "Тафсилоти инвентаризатсия"
+
 #. [notificationCategoryTypeSelect.notificationTypeInventoryExpiring]
 #. defaultMessage is:
 #. Inventory Expiring
@@ -5353,6 +5402,21 @@ msgstr "Сабти инвентаризатсия"
 #: extracted_strings.json
 msgid "Inventory Overview"
 msgstr "Баррасии инвентаризатсия"
+
+#. [pages.Consumable.New.inventoryAtCurrentSite]
+#. defaultMessage is:
+#. Inventory at Current Site only
+#: extracted_strings.json
+msgid "Inventory at Current Site only"
+msgstr "Инвентаризатсия танҳо дар сайти ҷорӣ"
+
+#. [pages.Consumable.New.inventoryAdjustedAgainst]
+#. defaultMessage is:
+#. Inventory at site is adjusted against results by considering
+#: extracted_strings.json
+msgid "Inventory at site is adjusted against results by considering"
+msgstr ""
+"Инвентаризатсия дар сайт бо назардошти натиҷаҳо мувофиқат карда мешавад"
 
 #. [pages.InventoryItemsList.inventoryAdjustedSuccessfully]
 #. defaultMessage is:
@@ -8970,6 +9034,13 @@ msgstr "Гирифтани {consumableName}"
 msgid "Recepient Name"
 msgstr "Номи қабулкунанда"
 
+#. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#: extracted_strings.json
+msgid "Reconciliation Configuration"
+msgstr "Конфигуратсияи ҳамоҳангсозӣ"
+
 #. [component.Widget.dashboardWidgetTitleTotalRecoveredCases]
 #. defaultMessage is:
 #. Recovered cases
@@ -10313,6 +10384,14 @@ msgstr "Ҳолати Нигоҳдорӣ таъин кунед"
 #: extracted_strings.json
 msgid "Set based on address"
 msgstr "Дар асоси суроға муқаррар карда мешавад"
+
+#. [pages.Consumable.New.reconciliationTitle]
+#. defaultMessage is:
+#. Set the below configurations to manage Inventory across the sites
+#: extracted_strings.json
+msgid "Set the below configurations to manage Inventory across the sites"
+msgstr ""
+"Барои идоракунии инвентаризатсия дар сайтҳо конфигуратсияҳои зерро насб кунед"
 
 #. [pages.Notifications.setting]
 #. defaultMessage is:
@@ -14745,9 +14824,6 @@ msgstr "{unit} калибровкаи умумӣ"
 
 #~ msgid "Assign DeviceApiKeys Failed"
 #~ msgstr "Таъин кардани DeviceApiKeys ноком шуд"
-
-#~ msgid "Configuration"
-#~ msgstr "Конфигуратсия"
 
 #~ msgid "Connected"
 #~ msgstr "Пайваст"

@@ -235,6 +235,7 @@ jobs:
           dbname: ${{ env.dbname }}
           dbuser: ${{ env.dbuser }}
           dbpassword: ${{ env.dbpassword }}
+          countryName: US
           dbseedfolder: ${{ env.dbseedfolder }}
           TWILIOACCOUNTSID: ${{secrets.TWILIOACCOUNTSID}}
           TWILIOAUTHTOKEN: ${{secrets.TWILIOAUTHTOKEN}}
