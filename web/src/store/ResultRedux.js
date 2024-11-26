@@ -119,7 +119,7 @@ export function exportResults(filtersParams, format, sortCol, sortDir, page, pag
           400: filterFieldsRejectedError(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.exportResults.GET.400.title',
+                id: 'errorResponseMessages.result.exportResults.GET.400.title',
                 defaultMessage: 'Exporting Results Failed',
               },
             })
@@ -127,7 +127,7 @@ export function exportResults(filtersParams, format, sortCol, sortDir, page, pag
           default: errorPleaseTryAgainInAFewMinutes(
             defineMessages({
               title: {
-                id: 'errorResponseMessages.exportResults.GET.default.title',
+                id: 'errorResponseMessages.result.exportResults.GET.default.title',
                 defaultMessage: 'Exporting Results Failed',
               },
             })
