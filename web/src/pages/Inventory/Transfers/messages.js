@@ -24,7 +24,7 @@ const messages = {
       other {# Transfers}
     }`,
     },
-  })
+  }),
 }
 
 export default messages

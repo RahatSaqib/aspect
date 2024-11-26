@@ -358,7 +358,16 @@ export default function inventoryItemsReducer(state = initialState, action) {
 }
 
 export {
-  addInventory, hideAdjustInventoryDialog, modifyInventoryOnHand, receiveInventory, receiveInventoryItems, removeInventory, showAddInventoryDialog, showNewInventoryDialog, showReceiveInventoryDialog, showRemoveInventoryDialog,
-  showTransferInventoryDialog, transferInventory
+  addInventory,
+  hideAdjustInventoryDialog,
+  modifyInventoryOnHand,
+  receiveInventory,
+  receiveInventoryItems,
+  removeInventory,
+  showAddInventoryDialog,
+  showNewInventoryDialog,
+  showReceiveInventoryDialog,
+  showRemoveInventoryDialog,
+  showTransferInventoryDialog,
+  transferInventory,
 }
-

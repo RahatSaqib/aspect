@@ -16,7 +16,7 @@ const messages = {
       other {# Consumables}
     }`,
     },
-  })
+  }),
 }
 
 export default messages

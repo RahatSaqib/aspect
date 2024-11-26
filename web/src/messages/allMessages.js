@@ -2,8 +2,8 @@ import { defineMessages } from 'react-intl'
 import { commonDefinitions } from './customMessages'
 
 const messages = {
-  ...commonDefinitions, ...defineMessages({
-
+  ...commonDefinitions,
+  ...defineMessages({
     idleDialogTitle: { id: 'pages.IdleDialog.title', defaultMessage: 'Automatic Logout' },
     idleDialogHelp: {
       id: 'shared.IdleDialog.help',
@@ -55,7 +55,10 @@ const messages = {
       id: 'filter.btnGroup.whereDeviceNameIncludes',
       defaultMessage: 'device name includes "{deviceName}"',
     },
-    withResultCategory: { id: 'filter.btnGroup.withResultCategory', defaultMessage: 'with result {resultCategoryName}' },
+    withResultCategory: {
+      id: 'filter.btnGroup.withResultCategory',
+      defaultMessage: 'with result {resultCategoryName}',
+    },
     withResultCategoryGroup: {
       id: 'filter.btnGroup.withResultCategoryGroup',
       defaultMessage: 'with result {resultCategoryGroupName}',
@@ -284,8 +287,14 @@ const messages = {
       id: 'legends.Unknown.assayGenoTypeMTBDRplusV2',
       defaultMessage: 'GenoType MTBDRplus VER 2.0',
     },
-    assayGenoTypeMTBDRslV1: { id: 'legends.Unknown.assayGenoTypeMTBDRslV1', defaultMessage: 'GenoType MTBDRsl VER 1.0' },
-    assayGenoTypeMTBDRslV2: { id: 'legends.Unknown.assayGenoTypeMTBDRslV2', defaultMessage: 'GenoType MTBDRsl VER 2.0' },
+    assayGenoTypeMTBDRslV1: {
+      id: 'legends.Unknown.assayGenoTypeMTBDRslV1',
+      defaultMessage: 'GenoType MTBDRsl VER 1.0',
+    },
+    assayGenoTypeMTBDRslV2: {
+      id: 'legends.Unknown.assayGenoTypeMTBDRslV2',
+      defaultMessage: 'GenoType MTBDRsl VER 2.0',
+    },
     assayGeneXpertMtbRif: { id: 'legends.Unknown.assayGeneXpertMtbRif', defaultMessage: 'GeneXpert MTB/Rif' },
     assayGeneXpertMtbXdr: { id: 'legends.Unknown.assayGeneXpertMtbXdr', defaultMessage: 'GeneXpert MTB/XDR' },
     assayGeneXpertMtbRifUltra: {
@@ -322,7 +331,10 @@ const messages = {
     assayGXCovid19: { id: 'legends.Unknown.assayGXCovid19', defaultMessage: 'GeneXpert COVID-19' },
     // Result categories.
     ResultCategoryDetected: { id: 'legends.Unknown.ResultCategoryDetected', defaultMessage: 'Detected' },
-    ResultCategoryTraceDetected: { id: 'legends.Unknown.ResultCategoryTraceDetected', defaultMessage: 'Trace Detected' },
+    ResultCategoryTraceDetected: {
+      id: 'legends.Unknown.ResultCategoryTraceDetected',
+      defaultMessage: 'Trace Detected',
+    },
     resultCategoryNotDetected: { id: 'legends.Unknown.resultCategoryNotDetected', defaultMessage: 'Not Detected' },
     resultCategoryIndeterminate: { id: 'legends.Unknown.resultCategoryIndeterminate', defaultMessage: 'Indeterminate' },
     resultCategoryInvalid: { id: 'legends.Unknown.resultCategoryInvalid', defaultMessage: 'Invalid' },
@@ -336,10 +348,22 @@ const messages = {
     resultCategoryDiscordant: { id: 'legends.Unknown.resultCategoryDiscordant', defaultMessage: 'Discordant' },
     resultCategoryLessThan40: { id: 'legends.Unknown.resultCategoryLessThan40', defaultMessage: 'Less Than 40 cp/mL' },
     resultCategoryMoreThan40: { id: 'legends.Unknown.resultCategoryMoreThan40', defaultMessage: 'More Than 40 cp/mL' },
-    resultCategoryLessThan150: { id: 'legends.Unknown.resultCategoryLessThan150', defaultMessage: 'Less Than 150 cp/mL' },
-    resultCategoryMoreThan150: { id: 'legends.Unknown.resultCategoryMoreThan150', defaultMessage: 'More Than 150 cp/mL' },
-    resultCategoryLessThan550: { id: 'legends.Unknown.resultCategoryLessThan550', defaultMessage: 'Less Than 550 cp/mL' },
-    resultCategoryMoreThan550: { id: 'legends.Unknown.resultCategoryMoreThan550', defaultMessage: 'More Than 550 cp/mL' },
+    resultCategoryLessThan150: {
+      id: 'legends.Unknown.resultCategoryLessThan150',
+      defaultMessage: 'Less Than 150 cp/mL',
+    },
+    resultCategoryMoreThan150: {
+      id: 'legends.Unknown.resultCategoryMoreThan150',
+      defaultMessage: 'More Than 150 cp/mL',
+    },
+    resultCategoryLessThan550: {
+      id: 'legends.Unknown.resultCategoryLessThan550',
+      defaultMessage: 'Less Than 550 cp/mL',
+    },
+    resultCategoryMoreThan550: {
+      id: 'legends.Unknown.resultCategoryMoreThan550',
+      defaultMessage: 'More Than 550 cp/mL',
+    },
     resultCategoryLessThan1000: {
       id: 'legends.Unknown.resultCategoryLessThan1000',
       defaultMessage: 'Less Than 1000 cp/mL',
@@ -537,6 +561,6 @@ const messages = {
     last: { id: 'pages.TablePaginator.last', defaultMessage: 'Last' },
     optionFalse: { id: 'pages.revokedSelectField.false', defaultMessage: 'False' },
     optionTrue: { id: 'pages.revokedSelectField.true', defaultMessage: 'True' },
-  })
+  }),
 }
 export default messages

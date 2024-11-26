@@ -1,3 +1,4 @@
+import { defineMessages } from 'react-intl'
 import { commonDefinitions } from '../../../messages'
 
 const messages = {
@@ -46,7 +47,7 @@ const messages = {
       other {# }
     }`,
     },
-  })
+  }),
 }
 
 export default messages
