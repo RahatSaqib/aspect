@@ -1,21 +1,31 @@
 import React, { memo } from 'react'
-import { Button, DialogActions, TextField } from '@mui/material'
+import { Button, DialogActions, LinearProgress, TextField } from '@mui/material'
 import { Formik } from 'formik'
 import { useIntl } from 'react-intl'
 import { ConsumableSelect, SiteSelect, ConsumableReasonSelect } from '../../../cleanComponents'
 import SiteAutoCompleteField from '../../../components/SiteAutocompleteField'
+import usePartner from '../../../hooks/partner/usePartner'
 import useSiteList from '../../../hooks/site/useSiteList'
 import { testConductedReasonI18nKey } from '../../../oldComponents/resource/ConsumableReasonSelectField'
 import AspectDialog from '../../../oldComponents/shared/AspectDialog'
 import DateTimeInput from '../../../oldComponents/shared/DateTimeInput'
 import FormGroup from '../../../oldComponents/themedReactToolbox/FormGroup'
 import { types } from '../../../store/InventoryRedux'
-import { getLabels, getQuantityOnHand, getValidations, transformInitialValue, transformValues } from './helpers'
+import {
+  getLabels,
+  getQuantityOnHand,
+  getValidations,
+  hasExpireDate,
+  hasLot,
+  transformInitialValue,
+  transformValues,
+} from './helpers'
 import styles from './InventoryAdjustmentDialogForm.module.css'
 import messages from './messages'
 
 function InventoryAdjustmentDialog(props) {
   const { data: allSites = [] } = useSiteList()
+  const { isLoading, data: partner } = usePartner()
   const { onCancel, onSubmit, inventoryItem, actionType } = props
   const { formatMessage, ...intl } = useIntl()
   const inventory = inventoryItem?.toJS?.() ?? undefined
@@ -27,7 +37,7 @@ function InventoryAdjustmentDialog(props) {
 
   return (
     <Formik
-      validationSchema={getValidations(formatMessage, actionType, inventory)}
+      validationSchema={getValidations(formatMessage, actionType, inventory, partner)}
       initialValues={transformInitialValue(inventory, actionType)}
       onSubmit={values => onSubmit(transformValues(values))}
     >
@@ -93,6 +103,7 @@ function InventoryAdjustmentDialog(props) {
             })}
           >
             <form className={styles.Form}>
+              {isLoading ? <LinearProgress /> : null}
               <div className={styles.Form__Content}>
                 {initialValues?.fromSiteId ? (
                   <SiteSelect
@@ -154,7 +165,7 @@ function InventoryAdjustmentDialog(props) {
 
                 <FormGroup
                   labelProps={{
-                    required: true,
+                    required: hasExpireDate(partner?.inventoryStrategy),
                   }}
                   label={`${formatMessage(messages.expiryDate)} (yyyy-mm-dd)`}
                 >
@@ -174,7 +185,7 @@ function InventoryAdjustmentDialog(props) {
                 </FormGroup>
 
                 <TextField
-                  required
+                  required={hasLot(partner?.inventoryStrategy)}
                   fullWidth
                   type="text"
                   name="lotNumber"
