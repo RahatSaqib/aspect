@@ -2555,7 +2555,7 @@ msgstr "Diagnostic actuel"
 #. Current FQ Detection
 #: extracted_strings.json
 msgid "Current FQ Detection"
-msgstr "Détection actuelle du quotient familial"
+msgstr "Détection actuelle du QF"
 
 #. [p.PkDashboard.xdrCurrentTitle]
 #. defaultMessage is:
@@ -2853,7 +2853,7 @@ msgstr "Visualisation des données relatives à la résistance XDR"
 #. Date
 #: extracted_strings.json
 msgid "Date"
-msgstr "Rendez-vous amoureux"
+msgstr "Date"
 
 #. [pages.NewInventoryDialogForm.dateAdjusted]
 #. defaultMessage is:
@@ -8369,7 +8369,7 @@ msgstr "Le type de notification est \"{notificationType}\""
 #. Notifications
 #: extracted_strings.json
 msgid "Notifications"
-msgstr "Les notifications"
+msgstr "Notifications"
 
 #. [pages.NotificationList.notificationsTitle]
 #. defaultMessage is:
@@ -8577,7 +8577,7 @@ msgstr "Résultats uniquement transférés"
 #. Only Reportable Results
 #: extracted_strings.json
 msgid "Only Reportable Results"
-msgstr "Seuls les résultats à déclarer"
+msgstr "Seuls les résultats à signaler"
 
 #. [filter.popover.onlyDownloadedByReporter]
 #. defaultMessage is:
@@ -8598,7 +8598,7 @@ msgstr "Résultats uniquement avec traitement requis"
 #. Only lots with stock
 #: extracted_strings.json
 msgid "Only lots with stock"
-msgstr "Seuls les lots en stock"
+msgstr "Uniquement les lots avec stock"
 
 #. [filter.popover.onlyTransfers]
 #. defaultMessage is:
@@ -9517,7 +9517,7 @@ msgstr "Province/Région"
 #. Provinces annual utilization rates
 #: extracted_strings.json
 msgid "Provinces annual utilization rates"
-msgstr "Provinces annual utilization rates"
+msgstr "Taux d’utilisation annuel des provinces"
 
 #. [p.PkDashboard.provincialDiagnosisTrends]
 #. defaultMessage is:
@@ -13718,7 +13718,7 @@ msgstr "Total en caisse"
 #. Total RRTB detected in current year
 #: extracted_strings.json
 msgid "Total RRTB detected in current year"
-msgstr "Total des cas de TBRP détectés pendant l'année en cours"
+msgstr "Total des cas de RRTB détectés pendant l’année en cours"
 
 #. [pages.OperationalData.cntAll]
 #. defaultMessage is:
