@@ -34,14 +34,21 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
   let days = getArrayOfDaysInRange(dateFrom, dateTo)
 
   const definitions = await getCustomFieldsDefinitions()
-  const { timeZone } =
+
+  let { timeZone } =
     (await knex('Country as c')
       .innerJoin('TimeZone as tz', 'tz.id', 'c.timezone')
       .where('c.abbreviation', config.countryName)
-      .first()) || {}
+      .first('tz.timeZone')) || {}
 
-  // eslint-disable-next-line no-console
-  console.log('\x1b[1;36m", "🚀 ➜ config.countryName:', config.countryName)
+  if (!timeZone) {
+    // To support local environment seeding without the correct countryName in .env
+    // will get the first country in the database
+    const firstCountry = await knex('Country as c')
+      .innerJoin('TimeZone as tz', 'tz.id', 'c.timezone')
+      .first('tz.timeZone')
+    timeZone = firstCountry?.timeZone
+  }
 
   const selectColumnClauses = convertCustomFieldsToColumnKnexClauses(definitions)
 
