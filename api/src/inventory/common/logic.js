@@ -3,12 +3,13 @@ const Boom = require('@hapi/boom')
 const Promise = require('bluebird')
 
 const { getUser } = require('../../auth/service')
-const { getPartnerPluginName, getDeviceTypePluginName } = require('../../plugin/utils')
+// const { getPartnerPluginName, getDeviceTypePluginName } = require('../../plugin/utils')
 const defaultInventoryStrategy = require('../strategies')
 
 const { knex, transact } = require('../../db')
-const { getSite } = require('../../site/service')
+const { getSite, getSiteById } = require('../../site/service')
 const { updateSiteConsumable } = require('../../site/common/db')
+const { getAdjustmentById } = require('../../partner/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { selectAssayConsumables } = require('../../consumable/assayConsumableService')
 const { findConsumableReason } = require('../../consumable/consumableService')
@@ -37,10 +38,10 @@ async function getInventoryStrategy({ partnerId, deviceId, userId }) {
   const inventoryStrategyKey = `partnerId-${partnerId || 0}_deviceId-${deviceId || 0}`
   let inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
   if (!inventoryStrategy) {
-    const partnerPluginName = await getPartnerPluginName({ partnerId })
-    const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
-    const { loadPlugin } = require('../../plugin/loadPlugin')
-    const specificInventoryStrategy = await loadPlugin(partnerPluginName, deviceTypePluginName, 'inventoryStrategy')
+    // const partnerPluginName = await getPartnerPluginName({ partnerId })
+    // const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
+    // const { loadPlugin } = require('../../plugin/loadPlugin')
+    // const specificInventoryStrategy = await loadPlugin(partnerPluginName, deviceTypePluginName, 'inventoryStrategy')
     cachedInventoryStrategies[inventoryStrategyKey] = {
       /**
        * first add all exported items for default strategy...
@@ -50,7 +51,7 @@ async function getInventoryStrategy({ partnerId, deviceId, userId }) {
        * ...and then overwrite those which are defined in
        * partner or deviceType specific strategy
        */
-      ...specificInventoryStrategy,
+      // ...specificInventoryStrategy,
     }
     inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
     inventoryStrategy.setUserId(userId)
@@ -674,6 +675,29 @@ async function consumeInventoryForResult(
         const lotNumber = consumableStrategy.find(({ name }) => name.includes('withLot'))
           ? _.get(consumablesInResultData, '[0].lot')
           : undefined
+
+        const { adjustment } = await getAdjustmentById(consumableId)
+        const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber)
+
+        if (adjustment === 'currentSiteAndProviderAdjustment') {
+          if (inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
+            const site = getSiteById(siteId)
+            if (site.parentWarehouseId) {
+              const payload = {
+                dateAdjusted: new Date().toISOString(),
+                quantity,
+                lotNumber,
+                toSiteId: site,
+                fromSiteId: site.parentWarehouseId,
+                expiresOn,
+                consumableId,
+              }
+              const res = await transferInventory({ payload, partnerId, userId, messageContext })
+              if (Boom.isBoom(res)) return res
+            }
+          }
+        }
+
         return changeInventoryQuantity(inventoryStrategy, {
           knex,
           consumableId,

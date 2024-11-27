@@ -20,4 +20,9 @@ async function getPartnerByConstraints(dataConstraints) {
   return partner
 }
 
-module.exports = { getPartnerByConstraints }
+async function getAdjustmentById(consumableId) {
+  const inventoryAdjutment = knex('Consumable').first(['adjustment']).where('id', consumableId)
+  return inventoryAdjutment
+}
+
+module.exports = { getPartnerByConstraints, getAdjustmentById }

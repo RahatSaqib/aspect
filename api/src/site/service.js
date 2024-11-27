@@ -25,18 +25,11 @@ const SELECT_LIST_FIELDS = [
   knex.raw('COALESCE(COUNT(DISTINCT sc.consumableId), 0) as siteConsumableCount'),
 ]
 
-const SELECT_SHOW_FIELDS = [
+const SITE_FIELDS = [
   's.id',
   's.name',
   's.shortName',
   's.externalId',
-  'sta.name as state',
-  'l.name as lga',
-  'ct.name as country',
-  's.createdOn',
-  'g.countryId',
-  'g.stateId',
-  'g.lgaId',
   's.timezoneId as timezone',
   's.city',
   's.zip',
@@ -52,6 +45,17 @@ const SELECT_SHOW_FIELDS = [
   's.parentWarehouseId',
   's.hoursStart',
   's.hoursEnd',
+  's.createdOn',
+]
+
+const SELECT_SHOW_FIELDS = [
+  'sta.name as state',
+  'l.name as lga',
+  'ct.name as country',
+  'g.countryId',
+  'g.stateId',
+  'g.lgaId',
+  ...SITE_FIELDS,
 ]
 
 function getSitesQuery(dataConstraints) {
@@ -153,6 +157,12 @@ function getSite(siteId, dataConstraints) {
       getNotDecommissionedDevices(dataConstraints).whereRaw('d.siteId = s.id').count('d.siteId').as('totalDevices'),
     ])
     .select('st.name as siteType')
+}
+
+function getSiteById(siteId) {
+  return knex('Site as s')
+    .where('s.id', siteId)
+    .first([...SITE_FIELDS])
 }
 
 async function showSite(request) {
@@ -645,4 +655,5 @@ module.exports = {
   getListSitesForSelectList,
   disableSite,
   getReportingSites,
+  getSiteById,
 }

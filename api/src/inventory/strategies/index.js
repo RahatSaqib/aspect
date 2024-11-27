@@ -1,7 +1,14 @@
 const _ = require('lodash')
 
 // ----------------------------------------------------------------------------------
-async function getNewQuantityOnHand(knex, inventoryItem, operation, quantityOnHand, quantity) {
+async function getNewQuantityOnHand(
+  knex,
+  inventoryItem,
+  operation,
+  quantityOnHand,
+  quantity,
+  { resultId, userId } = {}
+) {
   let newQuantityOnHand = inventoryItem?.quantityOnHand || 0
 
   switch (operation) {
@@ -17,12 +24,22 @@ async function getNewQuantityOnHand(knex, inventoryItem, operation, quantityOnHa
     case 'transfer':
     case 'transfer sent':
     case 'transfer from':
-      /**
-       * this allows negative numbers for `quantityOnHand` -
-       * see `api/src/plugin/partner/Pakistan/inventoryStrategy.js` for another implementation
-       * which takes into account parent warehouse(s) and doesn't allow negative number
-       */
-      newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
+      if (resultId)
+        if (inventoryItem && inventoryItem.quantityOnHand >= quantity) {
+          /**
+           * normal mode - deduct `quantity` from current site
+           */
+          newQuantityOnHand -= quantity
+        } else {
+          // log missing lots only for results, and not for manual changes
+          await logMissingInventory(knex, resultId, userId)
+        }
+      else if (inventoryItem && inventoryItem.quantityOnHand >= quantity) {
+        /**
+         * normal mode - deduct `quantity` from current site
+         */
+        newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
+      }
       break
     default: {
       // do not change quantityOnHand
@@ -39,6 +56,23 @@ function setUserId(userId) {
 
 function getUserId() {
   return currentUserId
+}
+
+// ----------------------------------------------------------------------------------
+async function logMissingInventory(knex, resultId, userId) {
+  const now = new Date()
+
+  const { siteId, lotNumber, expiresOn } = await knex('Result as r')
+    .where({ id: resultId })
+    .first('siteId', 'consumableLot as lotNumber', 'consumableExpirationDate as expiresOn')
+  await knex('MissingInventoryLots').insert({
+    resultId,
+    expirationDate: expiresOn,
+    lotNumber,
+    siteId,
+    createdOn: now,
+    createdBy: userId,
+  })
 }
 
 /**
