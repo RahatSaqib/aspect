@@ -18,6 +18,11 @@ export default defineMessages({
     defaultMessage:
       'Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item',
   },
+  selectAllLocations: {
+    id: 'pages.InventoryTabs.siteList.selectAllLocations',
+    defaultMessage:
+      'Select all Locations to track inventory for this item',
+  },
   consumpationRate: {
     id: 'pages.InventoryTabs.New.consumpationRate',
     defaultMessage: 'Consumption Rate',
