@@ -88,6 +88,10 @@ export const validationMessages = defineMessages({
     id: 'pages.NewInventoryDialogForm.quantityInteger',
     defaultMessage: 'Please enter integer value',
   },
+  quantityNotMoreThanOnHand: {
+    id: 'pages.NewInventoryDialogForm.quantityNotMoreThanOnHand',
+    defaultMessage: 'Can not be greater than on-hand',
+  },
   expiryDateRequired: {
     id: 'pages.InventoryAdjustmentDialogForm.expiryDateRequired',
     defaultMessage: 'Please specify an expiry date',

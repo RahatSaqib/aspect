@@ -59,7 +59,13 @@ export function getValidations(format, actionType, { inventory, allSites }) {
       .typeError(format(validationMessages.quantityNumber))
       .required(format(validationMessages.quantityRequired))
       .positive(format(validationMessages.quantityPositive))
-      .integer(format(validationMessages.quantityInteger)),
+      .integer(format(validationMessages.quantityInteger))
+      .when('consumable', {
+        is: () => {
+          return uiTransfer || uiRemove
+        },
+        then: sch => sch.max(inventory.quantityOnHand, format(validationMessages.quantityNotMoreThanOnHand))
+      }),
     dateAdjusted: date().max(new Date(), format(validationMessages.dateAdjustedGreaterThanToday)),
   })
 
