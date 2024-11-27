@@ -35,14 +35,15 @@ async function factFillCustomFieldsCompletionStats(dateFrom, dateTo) {
 
   const definitions = await getCustomFieldsDefinitions()
 
-  let { timeZone } = await knex('Country as c')
-    .innerJoin('TimeZone as tz', 'tz.id', 'c.timezone')
-    .where('c.abbreviation', config.countryName)
-    .first('tz.timeZone') || {}
+  let { timeZone } =
+    (await knex('Country as c')
+      .innerJoin('TimeZone as tz', 'tz.id', 'c.timezone')
+      .where('c.abbreviation', config.countryName)
+      .first('tz.timeZone')) || {}
 
   if (!timeZone) {
-    //To support local environment seeding without the correct countryName in .env
-    //will get the first country in the database
+    // To support local environment seeding without the correct countryName in .env
+    // will get the first country in the database
     const firstCountry = await knex('Country as c')
       .innerJoin('TimeZone as tz', 'tz.id', 'c.timezone')
       .first('tz.timeZone')
