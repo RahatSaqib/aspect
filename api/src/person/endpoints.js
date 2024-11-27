@@ -17,6 +17,7 @@ const { updatePersonUserPreferences } = require('./updatePersonUserPreferences')
 const { createPerson } = require('./createPerson')
 const { showPerson } = require('./showPerson')
 const { recordPageView } = require('./recordPageView')
+const { hasPermission } = require('./hasPermission')
 
 function listContactBaseConfig() {
   return {
@@ -332,6 +333,30 @@ const routes = [
         },
         schema: Joi.object().keys({
           ok: Joi.boolean().required(),
+        }),
+      },
+    },
+  },
+  {
+    method: 'GET',
+    path: '/person/has-permission',
+    handler: asyncHandler(hasPermission),
+    config: {
+      auth: { scope: ['person:view'] },
+      description: 'Check user permission',
+      notes: 'Check if user has country level permission',
+      validate: {
+        query: {
+          permissions: Joi.alternatives().try(Joi.array(), Joi.string()).description('Permissions'),
+        },
+      },
+      response: {
+        options: {
+          allowUnknown: false,
+        },
+        schema: Joi.object().keys({
+          ok: Joi.boolean().required(),
+          hasPermission: Joi.boolean().required(),
         }),
       },
     },

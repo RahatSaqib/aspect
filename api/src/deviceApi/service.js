@@ -29,6 +29,8 @@ const { DeviceApiContext } = require('./DeviceApiContext')
 const getResultPakistanHandler = deviceApiHandler(getTbResultsStats)
 const { DEVICE_LOG_TYPE_OPTIONAL, DEVICE_LOG_TYPE_RESULT, DEVICE_LOG_TYPE_OPERATION } = require('./constants')
 const { removeAdditionalData } = require('../result/common/logic')
+const { findOpenModuleDisabledIssues } = require('../issue/common/db')
+const { resolveIssues } = require('../issue/actions')
 
 const getDeviceDataHandler = deviceApiHandler(getDeviceDataWithContext, {
   deviceLogType: DEVICE_LOG_TYPE_OPTIONAL,
@@ -664,6 +666,18 @@ async function mergeResultWithContext(context) {
     context.messageContext.bindActionCreators({ resultReadyForNotification })
     const isResultUpdated = !!plainPreviousResult
     context.messageContext.resultReadyForNotification(plainResult.id, isResultUpdated)
+  }
+  if (plainResult?.moduleSerial && plainResult?.deviceId) {
+    const openModuleDisabledIssuesByModuleSerial = await findOpenModuleDisabledIssues(
+      knex,
+      plainResult.deviceId,
+      plainResult.moduleSerial
+    )
+
+    if (openModuleDisabledIssuesByModuleSerial.length > 0) {
+      context.messageContext.bindActionCreators({ resolveIssues })
+      openModuleDisabledIssuesByModuleSerial.map(issue => context.messageContext.resolveIssues(issue.id))
+    }
   }
 
   return {

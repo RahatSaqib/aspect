@@ -126,6 +126,7 @@ function getInventorySitesQuery(constraints, request) {
       knex.raw("CONCAT(c.id, '-', s.id) as id"),
       'c.id as consumableId',
       'c.name as consumableName',
+      'c.strategy',
       'c.i18nKey as consumableNameI18nKey',
       'c.manufacturer',
       'c.canExpire',

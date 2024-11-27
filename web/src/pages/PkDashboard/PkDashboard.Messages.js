@@ -149,7 +149,7 @@ const messages = {
       defaultMessage: 'Provincial MTB+ detection trends',
     },
     provincialMTBPositivesTrendsCurrentYear: {
-      id: 'p.PkDashboard.provincialMTBPositivesTrends',
+      id: 'p.PkDashboard.provincialMTBPositivesTrends.currentYear',
       defaultMessage: 'Provincial MTB+ detected in current year',
     },
     xdrFLQAndINHTrends: {
@@ -185,7 +185,7 @@ const messages = {
       defaultMessage: 'Provinces annual utilization rates',
     },
     provincialDiagnosisTrendsCurrentYear: {
-      id: 'p.PkDashboard.tbCasesDiagnosed',
+      id: 'p.PkDashboard.tbCasesDiagnosed.currentYear',
       defaultMessage: 'Provincial Diagnosis Trends for the current year',
     },
     provincialDiagnosisTrendsComparison: {
@@ -201,7 +201,7 @@ const messages = {
       defaultMessage: 'Provincial Testing in current year',
     },
     provincialDistrictFqrDiagnosisTrends: {
-      id: 'p.PkDashboard.provincialFqrDiagnosisTrends',
+      id: 'p.PkDashboard.provincial.district.FqrDiagnosisTrends',
       defaultMessage: 'Provincial/District FQ Diagnosis Trends',
     },
     provincialFqrDiagnosisTrends: {

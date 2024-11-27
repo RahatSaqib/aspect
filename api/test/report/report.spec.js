@@ -70,8 +70,14 @@ describe('Global reports', () => {
       const nonStremeableReportExternalId = 'report_custom_fields_completion'
       await server
         .get(`${path}/${nonStremeableReportExternalId}`)
+        .query({
+          minDate: '2024-08-01T00:00:00.000Z',
+          maxDate: '2024-08-07T00:00:00.000Z',
+        })
         .set('Authorization', `Bearer ${shared.token}`)
         .then(res => {
+          // eslint-disable-next-line no-console
+          console.log('res', res)
           assert.equal(res.status, 200)
           // assert.typeOf(res.body, 'Object')
 
