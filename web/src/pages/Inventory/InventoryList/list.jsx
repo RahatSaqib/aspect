@@ -16,13 +16,17 @@ import { gotoWithReturnUrl } from '../../../utils/utils/browser'
 import messages from './messages'
 import styles from './styles.module.css'
 
+const SHOW_RECONCILIATION_FORM = process.env.showReconciliationForm
+
 const InventoryList = () => {
   const location = useLocation()
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
 
   const filters = useFilterValues(location.pathname)
-  const { data: permissions, isLoading: isLoadingPermission } = useHasCountryPermission(['inventory:edit'])
+  const { data: permissions, isLoading: isLoadingPermission } = useHasCountryPermission(['inventory:edit'], {
+    enabled: !!SHOW_RECONCILIATION_FORM,
+  })
 
   const { sortCol, sortDir, pageAt, pageSize } = makeSortPageSelector({ sortCol: 'name' })({ location })
 
@@ -39,7 +43,7 @@ const InventoryList = () => {
     { key: 'unit', label: formatMessage(messages.unit), sortable: true },
   ]
 
-  if (isLoadingPermission)
+  if (SHOW_RECONCILIATION_FORM && isLoadingPermission)
     return (
       <Box sx={{ flex: 1, display: 'flex', margin: 10, justifyContent: 'center' }}>
         <CircularProgress size={35} />
@@ -49,7 +53,7 @@ const InventoryList = () => {
   return (
     <>
       <DetailHeader name={formatMessage(messages.inventoryItems)} disableBack>
-        {permissions?.hasPermission ? (
+        {SHOW_RECONCILIATION_FORM && permissions?.hasPermission ? (
           <Button onClick={() => navigate('/browse/inventory/reconciliation/form')}>
             {formatMessage(messages.reconciliationConfiguration)}
           </Button>
