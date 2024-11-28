@@ -99,7 +99,7 @@ async function getUnreconciledCount(siteId, consumableId) {
     .leftJoin('ConsumableAssay as ca', 'r.assayId', 'ca.assayId')
     .whereIn('mil.siteId', knex.raw('(?)', [recursiveQuery]))
     .andWhere('ca.consumableId', consumableId)
-    .count('r.id as resultCount')
+    .count('DISTINCT r.id as resultCount')
     .then(([result]) => result.resultCount)
 
   return result
