@@ -812,7 +812,6 @@ module.exports = {
   getInventoryItem,
   getInventoryItems,
   getInventorySitesQuery,
-  getInventoryLogBaseQuery,
   getInventoryLog,
   getInventoryLots,
   getInventoryByLot,
