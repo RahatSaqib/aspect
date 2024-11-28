@@ -16,7 +16,7 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
   const { formatMessage } = useIntl()
   const [addFilter] = useFilterUpdate()
   const navigate = useNavigate()
-  const { isCountry, countryId } = useAuthState()
+  const { countryId } = useAuthState()
   return (
     <TableRow className={styles.TableRow}>
       <TableCell className={styles.TableCell}>
