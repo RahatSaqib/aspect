@@ -7,15 +7,15 @@ import { MdFileDownload } from 'react-icons/md'
 import { defineMessages, useIntl } from 'react-intl'
 import { connect } from 'react-redux'
 import { useParams } from 'react-router-dom'
-import { compose, withProps, withHandlers, lifecycle } from 'recompose'
+import { compose, lifecycle, withHandlers, withProps } from 'recompose'
 import BrowseEmptyList from '../../../../oldComponents/BrowseEmptyList'
 import BrowseTablePaginator from '../../../../oldComponents/BrowseTablePaginator'
 import Summary from '../../../../oldComponents/Summary'
 import { fetchDeviceOperations } from '../../../../store/DeviceOperationRedux'
 import {
-  makeSortPageSelector,
-  makeSearchParamsSanitizer,
   composeSanitizer,
+  makeSearchParamsSanitizer,
+  makeSortPageSelector,
 } from '../../../../utils/selectors/searchParams'
 import { formatDate } from '../../../../utils/utils/dateFormat'
 import styles from '../styles.module.css'
@@ -37,7 +37,7 @@ const messages = defineMessages({
     defaultMessage: 'Require printer',
   },
   hostId: {
-    id: 'pages.DeviceDetailEdit.hostId',
+    id: 'pages.DeviceDetail.operation.hostId',
     defaultMessage: 'Host ID',
   },
   serialNumber: {
