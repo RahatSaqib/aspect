@@ -78,7 +78,9 @@ const INVENTORY_LOG_LIST = {
       END`),
   notes: knex.raw(`case when sam.externalId is not null then concat('Sample ID: ', sam.externalId) else il.notes end`),
   consumableReasonI18nKey: 'cr.i18nKey',
+  consumableReasonExternalId: 'cr.externalId',
   transactionDate: 'il.adjustedFrom',
+  resultEndedOn: 'r.endedOn',
 }
 
 const INVENTORY_LOG_UILIST = {

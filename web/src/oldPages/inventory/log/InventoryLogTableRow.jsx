@@ -6,11 +6,11 @@ import { useNavigate } from 'react-router-dom'
 import useAuthState from '../../../hooks/useAuthState'
 import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import { formatDateTime, formatDate } from '../../../utils/utils/dateFormat'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
+import { formatDate, formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
 
-const TEST_CONDUCTED_KEY = 'ConsumableReason_TestConducted'
+const TEST_CONDUCTED_EXTERNAL_ID = 'used'
 
 const InventoryLogTableRow = ({ inventoryLogItem }) => {
   const { formatMessage } = useIntl()
@@ -52,7 +52,7 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
       <TableCell
         className={styles.TableCell}
         onClick={() => {
-          if (inventoryLogItem.consumableReasonI18nKey === TEST_CONDUCTED_KEY) {
+          if (inventoryLogItem.consumableReasonExternalId === TEST_CONDUCTED_EXTERNAL_ID) {
             addFilter(
               omitBy(
                 {
@@ -70,7 +70,7 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
           }
         }}
         sx={
-          inventoryLogItem.consumableReasonI18nKey === TEST_CONDUCTED_KEY
+          inventoryLogItem.consumableReasonExternalId === TEST_CONDUCTED_EXTERNAL_ID
             ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
             : {}
         }
