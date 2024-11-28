@@ -66,7 +66,6 @@ module.exports = async function (query, constraints) {
       builder.on('site.id', 'ii.siteId').andOn(knex.raw('ii.inTransitFromSiteId IS NULL'))
     })
     .leftJoin('Consumable as c', 'ii.consumableId', 'c.id')
-    .where(q => q.where('c.externalId', knex.raw(`'${query.consumableExternalId}'`)).orWhereNull('c.id'))
     .groupBy('site.id')
     .select([knex.raw('SUM(IFNULL(ii.quantityOnHand,0)) as quantity'), 'site.*'])
 
