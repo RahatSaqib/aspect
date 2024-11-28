@@ -184,6 +184,7 @@ const routes = [
             .min(0)
             .description('Number of GX-10C modules on GenExpert device'),
           deviceCapacityId: Joi.number().allow(null).optional(),
+          dailyTestCapacity: Joi.number().allow(null).optional(),
           moduleBayCapacity: Joi.number()
             .optional()
             .min(0)

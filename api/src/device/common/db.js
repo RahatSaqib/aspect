@@ -18,6 +18,7 @@ const SELECT_SHOW_FIELDS = [
   'd.shortName',
   'd.createdOn',
   'd.lastPingOn',
+  'd.dailyTestCapacity',
   'd.lastSeenOn as lastSeen',
   'd.implementingPartnerId',
   'ip.name as implementingPartnerName',

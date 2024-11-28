@@ -320,6 +320,7 @@ const deviceDetailsResponseFields = Joi.object()
     errorRateThisMonth: Joi.number().allow(null).description('Error rate in last 30 days'),
     dailyCapacity: Joi.number().allow(null).description('Number of results delivered in the last 30 days'),
     dailyCapacityId: Joi.number().allow(null).description('Id of the device capacity'),
+    dailyTestCapacity: Joi.number().allow(null).description('daily test capacity'),
     dailyCapacityModules: Joi.number().allow(null).description('Number of DeviceCapacity modules'),
     dailyCapacityExternalId: Joi.string().allow(null, '').description('field externalId of DeviceCapacity'),
     dailyCapacityModulesI18nKey: Joi.string().allow(null, '').description('Intl key of DeviceCapacity modules'),

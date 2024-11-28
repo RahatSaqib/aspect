@@ -493,7 +493,7 @@ const DeviceDetailProfile = ({
             <Summary
               title={formatMessage(messages.dailyCapacity)}
               description={
-                device.get('dailyCapacity') +
+                device.get('dailyTestCapacity') +
                 (device.get('dailyCapacityModules')
                   ? ` (${formatMessage(messages.deviceCapacityModules, {
                       numberOfModules: device.get('dailyCapacityModules'),

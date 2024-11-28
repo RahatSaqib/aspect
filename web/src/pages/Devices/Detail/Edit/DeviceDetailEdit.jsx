@@ -10,7 +10,6 @@ import { useIntl } from 'react-intl'
 import { useNavigate, useLocation } from 'react-router-dom'
 import {
   ImplementingPartnerSelect,
-  DeviceCapacitySelect,
   SiteSelect,
   CepheidInstrumentModelSelect,
   CepheidSoftwareTypeSelect,
@@ -113,13 +112,19 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               value={editDevice?.implementingPartnerId ?? null}
               onChange={implementingPartnerId => setEditDevice(prv => ({ ...prv, implementingPartnerId }))}
             />
-
-            <DeviceCapacitySelect
-              name="capacity"
-              deviceTypeId={editDevice.deviceType.externalId}
+            <TextField
               label={intl.formatMessage(messages.capacity)}
-              value={editDevice.dailyCapacityId}
-              onChange={dailyCapacityId => setEditDevice({ ...editDevice, dailyCapacityId })}
+              type="number"
+              name="capacity"
+              error={error?.dailyTestCapacity}
+              value={editDevice.dailyTestCapacity}
+              onChange={({ target: { value } }) => {
+                setError(error => ({ ...error, dailyTestCapacity: Number(value) < 1 || Number(value) > 256 }))
+                setEditDevice({ ...editDevice, dailyTestCapacity: value ? parseInt(value, 10) : '' })
+              }}
+              InputLabelProps={{
+                shrink: true,
+              }}
             />
 
             <TextField
