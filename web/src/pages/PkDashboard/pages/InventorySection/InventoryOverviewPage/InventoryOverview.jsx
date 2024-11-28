@@ -38,11 +38,14 @@ const InventoryOverviewPage = () => {
   }
 
   const { isLoading, data } = useInventoryOverview(
-    {
-      consumableExternalId: filters.consumable?.consumableExternalId,
-      minDate: filters.minDate,
-      maxDate: filters.maxDate,
-    },
+    omitBy(
+      {
+        consumableExternalId: filters.consumable?.consumableExternalId,
+        minDate: filters.minDate,
+        maxDate: filters.maxDate,
+      },
+      isNil
+    ),
     { enabled: !!filters.consumable?.consumableExternalId }
   )
 

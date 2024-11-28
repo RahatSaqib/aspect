@@ -55,7 +55,7 @@ const ResultFilter = () => {
                 value={state?.assayId ?? []}
                 onChange={val => setState({ ...state, assayId: val, resultCategoryGroupId: null })}
                 filters={{
-                  hasResults: true,
+                  hasResults: ![true, 'true'].includes(state.onlyUnreconciled),
                 }}
               />
             </Grid>

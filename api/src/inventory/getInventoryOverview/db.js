@@ -1,4 +1,4 @@
-const { max, min, subDays, startOfDay, differenceInDays } = require('date-fns')
+const { max, min, subDays, subYears, startOfDay, differenceInDays } = require('date-fns')
 const { knex, filterDateRangeParams } = require('../../db')
 
 const { addConstraints } = require('../../auth/constraints')
@@ -10,7 +10,7 @@ module.exports = async function (query, constraints) {
     query.maxDate = new Date()
   }
   if (!query?.minDate) {
-    query.minDate = sixMonthsBeforeToday
+    query.minDate = startOfDay(subYears(new Date(), 5))
   }
 
   const overviewQuery = knex
