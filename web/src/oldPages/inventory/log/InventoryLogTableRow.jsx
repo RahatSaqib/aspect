@@ -1,6 +1,8 @@
-import React from 'react'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
 import isNil from 'lodash/isNil'
 import omitBy from 'lodash/omitBy'
+import React from 'react'
 import { useIntl } from 'react-intl'
 import { useNavigate } from 'react-router-dom'
 import useAuthState from '../../../hooks/useAuthState'
@@ -57,8 +59,8 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
               omitBy(
                 {
                   countryId,
-                  minDate: inventoryLogItem.createdOn,
-                  maxDate: inventoryLogItem.createdOn,
+                  minDate: startOfDay(new Date(inventoryLogItem.resultEndedOn)),
+                  maxDate: endOfDay(new Date(inventoryLogItem.resultEndedOn)),
                   assayId: inventoryLogItem.assayId,
                   siteName: inventoryLogItem.siteName,
                 },
