@@ -10,7 +10,7 @@ const hasCountryPermission = async permissions =>
     params: isArray(permissions) ? permissions.map(p => ({ permissions: p })) : [{ permissions }],
   })
 
-const useHasCountryPermission = (permissions, options) =>
-  useQuery([PERSON_HAS_PERMISSION_KEY, permissions], () => hasCountryPermission(permissions), options)
+const useHasCountryPermission = permissions =>
+  useQuery([PERSON_HAS_PERMISSION_KEY, permissions], () => hasCountryPermission(permissions), {})
 
 export default useHasCountryPermission
