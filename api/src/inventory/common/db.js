@@ -811,7 +811,7 @@ async function appendSiteConsumables(data) {
     .groupBy('siteId')
   data.map(d => {
     const { siteId } = d
-    d.siteConsumables = items.find(it => it.siteId === siteId)?.siteConsumables || []
+    d.siteConsumables = items.find(it => it.siteId === siteId)?.siteConsumables || ''
     d.siteConsumables = d.siteConsumables.split(',').map(x => +x)
     return d
   })
