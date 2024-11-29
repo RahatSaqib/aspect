@@ -27,27 +27,22 @@ export function transformValues(values) {
 
 /**
  * helper funcs
- * if particular inventoryItem has defined `strategy` then see if it
- * uses ExpirationDate or Lot, otherwise - check `consumable`. In order to require
- * them in `then` section (see below).
- * Notice that inventoryItem.startegy is defined in API by getting effective
- * value based on country-, state-, lga- level definitions.
- * So far the country-level is implemented
+ * Check if partner has defined this strategy, then see in consumable
  */
-export const withExpirationDate = (inventory, consumable) => {
+export const withExpirationDate = (partner, consumable) => {
   return (
-    (!!inventory?.strategy && strategyRequireExpirationDate(inventory.strategy)) ||
+    strategyRequireExpirationDate(partner?.inventoryStrategy) ||
     (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
   )
 }
-export const withLotNumber = (inventory, consumable) => {
+export const withLotNumber = (partner, consumable) => {
   return (
-    (!!inventory?.strategy && strategyRequireLot(inventory.strategy)) ||
+    strategyRequireLot(partner?.inventoryStrategy) ||
     (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))
   )
 }
 
-export function getValidations(format, actionType, { inventory, allSites }) {
+export function getValidations(format, actionType, { partner, inventory, allSites }) {
   // const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
@@ -60,7 +55,7 @@ export function getValidations(format, actionType, { inventory, allSites }) {
       .integer(format(validationMessages.quantityInteger))
       .when('consumable', {
         is: () => {
-          return uiTransfer || uiRemove
+          return !!inventory && (uiTransfer || uiRemove)
         },
         then: sch => sch.max(inventory.quantityOnHand, format(validationMessages.quantityNotMoreThanOnHand)),
       }),
@@ -97,7 +92,7 @@ export function getValidations(format, actionType, { inventory, allSites }) {
           /**
            * require
            */
-          is: consumable => withExpirationDate(inventory, consumable),
+          is: consumable => withExpirationDate(partner, consumable),
           then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         })
         .when(['toSiteId'], {
@@ -133,7 +128,7 @@ export function getValidations(format, actionType, { inventory, allSites }) {
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: consumable => withLotNumber(inventory, consumable),
+          is: consumable => withLotNumber(partner, consumable),
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })
