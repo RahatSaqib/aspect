@@ -4402,7 +4402,7 @@
             "gxAlertDbColumn": "SampleOriginLocationId",
             "caption": "Referring Facility",
             "i18nKeyCaption": "NGSampleOriginLocationIdI18nCaptionKey",
-            "controlType": null,
+            "controlType": "autoComplete",
             "payloadOriginPath": "data.customFieldData.14.value",
             "source": "patientData.SampleOriginLocationId",
             "mandatory": false,
@@ -4437,9 +4437,11 @@
                     "operator": "property-not-set"
                 }
             ],
-            "itemsSource": {
-                "name": "location",
-                "type": "clinic"
+            "itemsSource": "all-sites-clinics",
+            "itemsSourceConfig": {
+                "key": "id",
+                "value": "name",
+                "stateLgaMode": "id"
             }
         },
         {
@@ -4469,13 +4471,11 @@
             "gxAlertDbColumn": "SampleOriginStateId",
             "caption": "Referring Facility State",
             "i18nKeyCaption": "NGSampleOriginStateIdI18nCaptionKey",
-            "controlType": null,
+            "controlType": "autoComplete",
             "payloadOriginPath": "data.customFieldData.16.value",
             "source": "patientData.SampleOriginStateId",
             "mandatory": false,
-            "itemsSource": {
-                "name": "state"
-            }
+            "itemsSource": "state"
         },
         {
             "id": 17,
@@ -4488,7 +4488,7 @@
             "gxAlertDbColumn": "SampleOriginLgaId",
             "caption": "Referring Facility LGA",
             "i18nKeyCaption": "NGSampleOriginLgaIdI18nCaptionKey",
-            "controlType": null,
+            "controlType": "autoComplete",
             "payloadOriginPath": "data.customFieldData.17.value",
             "source": "patientData.SampleOriginLgaId",
             "mandatory": false,
@@ -4511,9 +4511,7 @@
                     "operator": "property-not-set"
                 }
             ],
-            "itemsSource": {
-                "name": "lga"
-            }
+            "itemsSource": "lga"
         }
     ],
     "refForms": []
