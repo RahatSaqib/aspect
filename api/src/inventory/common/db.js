@@ -388,6 +388,9 @@ function getGeneXpertInventoryBySitesAndConsumableQuery(request, dataConstraints
   const inventoryQuery = getInventorySitesQuery(dataConstraints, request)
     .innerJoin('ConsumableAssay as ca', 'c.id', 'ca.consumableId')
     .innerJoin('Assay as a', 'ca.assayId', 'a.id')
+    .innerJoin('SiteConsumable as sc', function () {
+      this.on('s.id', '=', 'sc.siteId').andOn('c.id', '=', 'sc.consumableId')
+    })
     .innerJoin('DeviceType as dt', 'a.deviceTypeId', 'dt.id')
     /**
      * exclude testing device type `GxAlert`, allowing any other device types (`CepheidGeneXpert`, `molbioTruenat`, etc).
