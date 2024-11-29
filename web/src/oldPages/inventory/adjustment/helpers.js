@@ -48,7 +48,7 @@ export const withLotNumber = (inventory, consumable) => {
 }
 
 export function getValidations(format, actionType, { inventory, allSites }) {
-  const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
+  // const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
   const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
   const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
 
@@ -93,36 +93,40 @@ export function getValidations(format, actionType, { inventory, allSites }) {
     schema = schema.shape({
       expiresOn: date()
         .nullable()
-        .when(['consumable', 'toSiteId'], {
+        .when(['consumable'], {
+          /**
+           * require
+           */
           is: consumable => withExpirationDate(inventory, consumable),
-          then: sch => {
-            let validation = sch.required(format(validationMessages.expiryDateRequired))
-            if (uiAdd) {
-              /**
-               * do nothing here - Add Inventory has only `require` validation rule.
-               * see `User should be able to Add inventory for expired cartirdge` in task ASP-7408
-               */
-            } else if (uiRemove) {
-              /**
-               * do not allow Remove Inventory for expired cartridges, i.e. when ExpiresOn < now()
-               */
-              validation = validation.min(new Date(), format(validationMessages.expiryDateAfterToday))
-            }
-            return validation
-          },
+          then: sch => sch.required(format(validationMessages.expiryDateRequired)),
         })
         .when(['toSiteId'], {
+          /**
+           * can Remove expired cartridges only from Warehouse
+           */
           is: toSiteId => {
-            if (uiTransfer) {
-              /**
-               * Transfer inventory shouldn't allow Expired Cartridge to be transferred to sites other than warehouses
-               */
+            if (uiRemove) {
               const site = allSites.find(it => it.id === +toSiteId)
               const isWarehouse = site?.siteType === 'warehouse'
               // do return `false` only for Warehouse
               return !isWarehouse
             }
-            return !uiAdd
+            return false
+          },
+          then: sch => sch.min(new Date(), format(validationMessages.expiryDateAfterToday)),
+        })
+        .when(['toSiteId'], {
+          /**
+           * can Transfer expired cartridges only to Warehouse
+           */
+          is: toSiteId => {
+            if (uiTransfer) {
+              const site = allSites.find(it => it.id === +toSiteId)
+              const isWarehouse = site?.siteType === 'warehouse'
+              // do return `false` only for Warehouse
+              return !isWarehouse
+            }
+            return false
           },
           then: sch => sch.min(new Date(), format(validationMessages.expiryDateAfterToday)),
         }),
