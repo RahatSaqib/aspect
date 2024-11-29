@@ -60,10 +60,11 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
   })
 
   return context.transact(async knex => {
-    const partnerDetails = await knex('SmsMessage as em')
-      .join('Device as d', 'em.deviceId', 'd.id')
-      .join('Partner as p', 'd.partnerId', 'p.id')
-      .where({ 'em.id': smsMessageId })
+    const partnerDetails = await knex('SmsMessage as sm')
+      .join('Notification as n', 'sm.id', 'n.emailMessageId')
+      .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+      .join('Partner as p', 'nt.partnerId', 'p.id')
+      .where({ 'sm.id': smsMessageId })
       .first('*')
     const smsMessageCount = await knex('SmsMessage as sm')
       .join('Device as d', 'sm.deviceId', 'd.id')
@@ -80,7 +81,12 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
       !partnerDetails?.serviceStartDate
     ) {
       await doSendSmsMessage(context, knex, smsMessageId)
-    } else return Promise.reject(new Error('Service is not available'))
+    } else {
+      await knex('SmsMessage').where({ id: smsMessageId }).update({
+        messageStatusId: 4,
+        updatedOn: new Date(),
+      })
+    }
   })
 }
 

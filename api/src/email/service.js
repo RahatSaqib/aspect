@@ -1,7 +1,6 @@
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { subDays, subMonths } = require('date-fns')
-
 const { emailMessageReadyForSending, emailMessageProcessed } = require('./actions')
 const { notificationMessageProcessed } = require('../notification/actions')
 const { allMessageStatusToId, messageStatusToId } = require('../shared/dictionary')
@@ -60,8 +59,9 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
 
   return context.transact(async knex => {
     const partnerDetails = await knex('EmailMessage as em')
-      .join('Device as d', 'em.deviceId', 'd.id')
-      .join('Partner as p', 'd.partnerId', 'p.id')
+      .join('Notification as n', 'em.id', 'n.emailMessageId')
+      .join('NotificationType as nt', 'n.notificationTypeId', 'nt.id')
+      .join('Partner as p', 'nt.partnerId', 'p.id')
       .where({ 'em.id': emailMessageId })
       .first('*')
     const emailMessageCount = await knex('EmailMessage as em')
@@ -78,7 +78,12 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       !partnerDetails?.serviceStartDate
     ) {
       await doSendEmailMessage(context, knex, emailMessageId)
-    } else return Promise.reject(new Error('Service is not available'))
+    } else {
+      await knex('EmailMessage').where({ id: emailMessageId }).update({
+        messageStatusId: 4,
+        updatedOn: new Date(),
+      })
+    }
   })
 }
 
