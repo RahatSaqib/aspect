@@ -1,4 +1,5 @@
 const { knex, filterParams, sortPageParams } = require('../db')
+const { getUser } = require('../auth/service')
 
 const SELECT_LIST_FIELDS = ['p.id', 'p.name', 'p.partnerTypeId', 'pt.name as partnerTypeName']
 
@@ -47,7 +48,18 @@ async function showPartner(request) {
   return result
 }
 
+async function updatePartnerInventory(request) {
+  const { inventoryAdjustment, inventoryStrategy } = request.payload
+  const { partnerId } = await getUser(request.auth.credentials.name)
+  await knex('Partner as p').where({ id: partnerId }).update({
+    inventoryAdjustment,
+    inventoryStrategy,
+  })
+  return { ok: true }
+}
+
 module.exports = {
   listPartners,
+  updatePartnerInventory,
   showPartner,
 }
