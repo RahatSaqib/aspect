@@ -221,7 +221,7 @@ const routes = [
               Joi.object().keys({
                 id: Joi.number().required().description('Unique ID of the site'),
                 name: Joi.string().required().description('Name of the site'),
-                siteType: Joi.string().allow(null,'').description('SiteType of the site'),
+                siteType: Joi.string().allow(null, '').description('SiteType of the site'),
                 partnerId: Joi.number()
                   .when('mode', {
                     not: 'reporter',

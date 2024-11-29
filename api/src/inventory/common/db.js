@@ -805,11 +805,9 @@ async function getReconciliationList(query, dataConstraints) {
 
 async function appendSiteConsumables(data) {
   const siteIds = [...new Set(data.map(it => it.siteId))]
-  const items = await knex('SiteConsumable').whereIn('siteId', siteIds)
-    .select(
-      'siteId', 
-      knex.raw(`GROUP_CONCAT(consumableId SEPARATOR ',') as siteConsumables`),
-    )
+  const items = await knex('SiteConsumable')
+    .whereIn('siteId', siteIds)
+    .select('siteId', knex.raw(`GROUP_CONCAT(consumableId SEPARATOR ',') as siteConsumables`))
     .groupBy('siteId')
   data.map(d => {
     const { siteId } = d
