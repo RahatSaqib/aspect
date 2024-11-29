@@ -2,13 +2,17 @@ module.exports = require('../src/db').migration(up, down)
 
 async function up(knex) {
   await knex.schema.alterTable('Device', t => {
-    t.integer('dailyTestCapacity').nullable()
+    t.integer('dailyTestCapacity').unsigned().notNullable().defaultTo(0)
   })
   await knex('Device').update({
-    dailyTestCapacity: knex
-      .select('dc.dailyCapacity')
-      .from('DeviceCapacity as dc')
-      .where('Device.deviceCapacityId', '=', knex.raw('dc.id')),
+    dailyTestCapacity: knex.raw(`
+      COALESCE(
+        (SELECT dc.dailyCapacity 
+         FROM DeviceCapacity AS dc 
+         WHERE Device.deviceCapacityId = dc.id),
+        0
+      )
+    `),
   })
 }
 
