@@ -6,6 +6,14 @@ const { transformSampleData } = require('../result/common/helpers/transformSampl
 const { sampleTypeToId } = require('../../../shared/dictionary')
 const { getConstraints } = require('../../../auth/constraints')
 const { getSite, getSitesQuery } = require('../../../site/service')
+const { knex } = require('../../../db')
+const {
+  allResultWorkflowStatusToId,
+  allAssayToId,
+  allResultCategoryToId,
+  allResultSourceToId,
+  allResultTypeToId,
+} = require('../../../shared/dictionary')
 
 async function registerNewSample(request) {
   const {
@@ -75,8 +83,63 @@ async function registerNewSample(request) {
   _.set(sampleData, 'patientExternalId', _.trim(payload?.patientExternalId).toString() ?? null)
   _.set(payloadForDb, 'sampleData', JSON.stringify(sampleData))
 
-  const newSample = await insertNewSample(payloadForDb, request.auth)
-  return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample[0]) }
+  const [newSample] = await insertNewSample(payloadForDb, request.auth)
+
+  if (process.env['seeds.directory'] === './seeds/development') {
+    await createFakeResult(payload.originSiteId, newSample)
+  }
+  return { ok: !_.isEmpty(newSample), data: transformSampleData(newSample) }
+}
+
+const createFakeResult = async (siteId, { sampleId, sampleExternalId }) => {
+  const resultWorkflowStatuses = await allResultWorkflowStatusToId()
+  const assayIds = await allAssayToId()
+  const resultCategories = await allResultCategoryToId()
+  const resultSources = await allResultSourceToId()
+  const resultTypes = await allResultTypeToId()
+
+  const device = await knex('Device as d')
+    .join('DeviceType as dt', 'dt.id', 'd.deviceTypeId')
+    .where('dt.externalId', 'CepheidGeneXpert')
+    .andWhere({ siteId })
+    .first('d.id', 'partnerId')
+
+  if (device) {
+    const { id: deviceId, partnerId } = device
+    const now = new Date()
+    const [resultId] = await knex('Result').insert({
+      externalId: `${sampleExternalId}_${_.random(0, 100)}`,
+      assayId: assayIds.GxMtbRif,
+      partnerId,
+      siteId,
+      deviceId,
+      resultSourceId: resultSources.DiagnosticDevice,
+      resultTypeId: resultTypes.Patient,
+      sampleId,
+      resultCategory1: resultCategories.NotDetected,
+      resultCategory2: null,
+      resultData: '{"assay": "Xpert MTB-RIF Assay G4", "resultText": "Not Detected"}',
+      resultDataHash: null,
+      assayVersion: '4',
+      startedOn: now,
+      endedOn: now,
+      patientData: '{}',
+      notes: 'This is a test... result',
+      createdOn: now,
+      createdBy: 1,
+      updatedOn: now,
+      updatedBy: 1,
+      reportableSiteId: siteId,
+    })
+
+    const [resultWorkflowStatusLogId] = await knex('ResultWorkflowLog').insert({
+      resultId,
+      resultWorkflowStatusId: resultWorkflowStatuses.Deliverable,
+      changedOn: now,
+      createdOn: now,
+    })
+    await knex('Result').where('id', resultId).update({ resultWorkflowStatusLogId })
+  }
 }
 
 module.exports = { registerNewSample }

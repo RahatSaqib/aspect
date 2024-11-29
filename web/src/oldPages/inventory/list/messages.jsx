@@ -96,11 +96,11 @@ const messages = {
       }`,
     },
     inTransitFromSiteName: {
-      id: 'pages.InventoryItemsList.inTransitFromSiteName',
+      id: 'pages.inTransit.InventoryItemsList.inTransitFromSiteName',
       defaultMessage: '* in transit from {inTransitFromSiteName}',
     },
     excludedLotInTransit: {
-      id: 'pages.InventoryItemsList.inTransitFromSiteName',
+      id: 'pages.excluded.InventoryItemsList.inTransitFromSiteName',
       defaultMessage: '* excluded {pendingTransfersQuantityOnHand} items in {pendingTransfers} lot/s in transit',
     },
     never: {
