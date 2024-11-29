@@ -58,13 +58,13 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
       {
         icon: 'FaExchangeAlt',
         text: formatMessage(messages.transferInventory),
-        disabled: isInTransit,
+        disabled: isInTransit || !breakOutByLot,
         action: ({ inventoryItemId }) => dispatch(showTransferInventoryDialog(inventoryItemId)),
       },
       {
         icon: 'FaMinus',
         text: formatMessage(messages.removeInventory),
-        disabled: isInTransit,
+        disabled: isInTransit || !breakOutByLot,
         action: ({ inventoryItemId }) => dispatch(showRemoveInventoryDialog(inventoryItemId)),
       },
     ]
