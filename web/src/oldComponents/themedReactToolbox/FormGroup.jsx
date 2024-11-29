@@ -24,16 +24,29 @@ const styles = {
     marginRight: 0,
     lineHeight: '1.4375em',
     marginBottom: '6px',
-  }
+  },
 }
 
-const FormGroup = ({ classes: classNameValues, className, label, htmlFor, children, labelProps, error, helperText }) => (
+const FormGroup = ({
+  classes: classNameValues,
+  className,
+  label,
+  htmlFor,
+  children,
+  labelProps,
+  error,
+  helperText,
+}) => (
   <FormControl className={classnames(classNameValues.root, className)}>
     <div className={classNameValues.labelWrapper}>
       <FormLabel className={classNameValues.label} {...labelProps}>
         {label}
       </FormLabel>
-      {error && helperText ? <FormHelperText error className={classNameValues.error}>{helperText}</FormHelperText> : null}
+      {error && helperText ? (
+        <FormHelperText error className={classNameValues.error}>
+          {helperText}
+        </FormHelperText>
+      ) : null}
     </div>
     <div id={htmlFor} className={classnames(classNameValues.input)}>
       {children}

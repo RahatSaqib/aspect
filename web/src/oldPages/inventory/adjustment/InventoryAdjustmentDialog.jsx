@@ -19,8 +19,7 @@ import {
   withLotNumber,
 } from './helpers'
 import styles from './InventoryAdjustmentDialogForm.module.css'
-import messages from './messages'
-import { validationMessages } from './messages'
+import messages, { validationMessages } from './messages'
 
 function InventoryAdjustmentDialog(props) {
   const { data: allSites = [] } = useSiteList()
@@ -56,11 +55,12 @@ function InventoryAdjustmentDialog(props) {
         const isExpired = date => date && new Date(date) < new Date()
         const toSiteFilter = sites => {
           if (uiTransfer) {
-            sites = sites?.filter(s => 
-              // toSite is not the same as fromSite
-              s.id !== values.fromSiteId && 
-              // cartridge is applicable (via SiteConsumable table mapping)
-              s.siteConsumables?.includes(values.consumable.id)
+            sites = sites?.filter(
+              s =>
+                // toSite is not the same as fromSite
+                s.id !== values.fromSiteId &&
+                // cartridge is applicable (via SiteConsumable table mapping)
+                s.siteConsumables?.includes(values.consumable.id)
             )
             if (isExpired(values.expiresOn ?? inventory?.expiresOn)) {
               sites = sites?.filter(it => it.siteType === 'warehouse')
@@ -100,8 +100,7 @@ function InventoryAdjustmentDialog(props) {
         if (inventory?.quantityOnHand <= 0) {
           if (uiTransfer) {
             errors.quantity = formatMessage(validationMessages.quantityMissingToTransfer)
-          }
-          else if (uiRemove) {
+          } else if (uiRemove) {
             errors.quantity = formatMessage(validationMessages.quantityMissingToRemove)
           }
         }
@@ -149,7 +148,7 @@ function InventoryAdjustmentDialog(props) {
                       margin: 'dense',
                       classes: {
                         error: styles.Field__error__message,
-                      }
+                      },
                     }}
                     width="100%"
                     customFilter={toSiteFilter}
@@ -191,7 +190,7 @@ function InventoryAdjustmentDialog(props) {
                       margin: 'dense',
                       classes: {
                         error: styles.Field__error__message,
-                      }
+                      },
                     }}
                   />
                 ) : null}
@@ -217,38 +216,35 @@ function InventoryAdjustmentDialog(props) {
                   />
                 </FormGroup>
 
-                {
-                  withLotNumber(inventory, values.consumable)
-                  ? (
-                    <TextField
-                      required
-                      fullWidth
-                      type="text"
-                      name="lotNumber"
-                      label={formatMessage(messages.cartridgeLotNumber)}
-                      value={values.lotNumber}
-                      onChange={handleChange}
-                      disabled={!!initialValues?.lotNumber}
-                      onBlur={handleBlur}
-                      margin="normal"
-                      FormHelperTextProps={{
-                        margin: 'dense',
-                        classes: {
-                          error: styles.Field__error__message,
-                        }
-                      }}
-                      InputLabelProps={{
-                        shrink: true,
-                        classes: {
-                          error: styles.Field__label__when__error,
-                        }
-                      }}
-                      inputProps={{ maxLength: 100 }}
-                      error={!!errors.lotNumber}
-                      helperText={errors.lotNumber}
-                    />
-                  ) : null
-                }
+                {withLotNumber(inventory, values.consumable) ? (
+                  <TextField
+                    required
+                    fullWidth
+                    type="text"
+                    name="lotNumber"
+                    label={formatMessage(messages.cartridgeLotNumber)}
+                    value={values.lotNumber}
+                    onChange={handleChange}
+                    disabled={!!initialValues?.lotNumber}
+                    onBlur={handleBlur}
+                    margin="normal"
+                    FormHelperTextProps={{
+                      margin: 'dense',
+                      classes: {
+                        error: styles.Field__error__message,
+                      },
+                    }}
+                    InputLabelProps={{
+                      shrink: true,
+                      classes: {
+                        error: styles.Field__label__when__error,
+                      },
+                    }}
+                    inputProps={{ maxLength: 100 }}
+                    error={!!errors.lotNumber}
+                    helperText={errors.lotNumber}
+                  />
+                ) : null}
 
                 {uiTransfer ? (
                   <SiteAutoCompleteField
@@ -269,7 +265,7 @@ function InventoryAdjustmentDialog(props) {
                       margin: 'dense',
                       classes: {
                         error: styles.Field__error__message,
-                      }
+                      },
                     }}
                     width="100%"
                     customFilter={toSiteFilter}
@@ -292,13 +288,13 @@ function InventoryAdjustmentDialog(props) {
                     margin: 'dense',
                     classes: {
                       error: styles.Field__error__message,
-                    }
+                    },
                   }}
                   InputLabelProps={{
                     shrink: true,
                     classes: {
                       error: styles.Field__label__when__error,
-                    }
+                    },
                   }}
                   inputProps={{ maxLength: 500 }}
                 />

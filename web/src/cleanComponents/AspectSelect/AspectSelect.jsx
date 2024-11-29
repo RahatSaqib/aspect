@@ -5,10 +5,20 @@ import isArray from 'lodash/isArray'
 import map from 'lodash/map'
 
 export default function AspectSelect(props) {
-  const { label, itemToString, value, onChange, isLoading, valueBy, multiple, error, options, placeholder, 
+  const {
+    label,
+    itemToString,
+    value,
+    onChange,
+    isLoading,
+    valueBy,
+    multiple,
+    error,
+    options,
+    placeholder,
     floatingLabelClasses,
     floatingHelperTextProps,
-    ...rest 
+    ...rest
   } = props
 
   if (isLoading) return <LinearProgress />
@@ -25,7 +35,7 @@ export default function AspectSelect(props) {
           {...params}
           error={!!error}
           placeholder={placeholder}
-          InputLabelProps={{ 
+          InputLabelProps={{
             shrink: true,
             classes: floatingLabelClasses,
           }}

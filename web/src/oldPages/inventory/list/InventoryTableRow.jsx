@@ -34,11 +34,7 @@ const InventoryTableRow = ({ inventoryItem, breakOutByLot, inventoryOnHand, refe
   const dispatch = useDispatch()
 
   const getActions = inventoryItem => {
-    const { 
-      inTransitFromSiteId: isInTransit,
-      consumableId,
-      siteConsumables,
-    } = inventoryItem.toJS()
+    const { inTransitFromSiteId: isInTransit, consumableId, siteConsumables } = inventoryItem.toJS()
     const isCartridgeConfigured = siteConsumables.includes(consumableId)
 
     return [

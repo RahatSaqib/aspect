@@ -28,7 +28,7 @@ export function transformValues(values) {
 /**
  * helper funcs
  * if particular inventoryItem has defined `strategy` then see if it
- * uses ExpirationDate or Lot, otherwise - check `consumable`. In order to require 
+ * uses ExpirationDate or Lot, otherwise - check `consumable`. In order to require
  * them in `then` section (see below).
  * Notice that inventoryItem.startegy is defined in API by getting effective
  * value based on country-, state-, lga- level definitions.
@@ -36,15 +36,13 @@ export function transformValues(values) {
  */
 export const withExpirationDate = (inventory, consumable) => {
   return (
-    (!!inventory?.strategy && strategyRequireExpirationDate(inventory.strategy))
-    ||
+    (!!inventory?.strategy && strategyRequireExpirationDate(inventory.strategy)) ||
     (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
   )
 }
 export const withLotNumber = (inventory, consumable) => {
   return (
-    (!!inventory?.strategy && strategyRequireLot(inventory.strategy))
-    ||
+    (!!inventory?.strategy && strategyRequireLot(inventory.strategy)) ||
     (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))
   )
 }
@@ -64,7 +62,7 @@ export function getValidations(format, actionType, { inventory, allSites }) {
         is: () => {
           return uiTransfer || uiRemove
         },
-        then: sch => sch.max(inventory.quantityOnHand, format(validationMessages.quantityNotMoreThanOnHand))
+        then: sch => sch.max(inventory.quantityOnHand, format(validationMessages.quantityNotMoreThanOnHand)),
       }),
     dateAdjusted: date().max(new Date(), format(validationMessages.dateAdjustedGreaterThanToday)),
   })
@@ -104,8 +102,7 @@ export function getValidations(format, actionType, { inventory, allSites }) {
                * do nothing here - Add Inventory has only `require` validation rule.
                * see `User should be able to Add inventory for expired cartirdge` in task ASP-7408
                */
-            }
-            else if (uiRemove) {
+            } else if (uiRemove) {
               /**
                * do not allow Remove Inventory for expired cartridges, i.e. when ExpiresOn < now()
                */

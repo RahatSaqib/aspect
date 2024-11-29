@@ -93,7 +93,7 @@ const SiteAutoCompleteField = ({
           {...params}
           label={floatingLabelText}
           placeholder={hintText}
-          InputLabelProps={{ 
+          InputLabelProps={{
             shrink: floatingLabelFixed,
             classes: floatingLabelClasses,
           }}
