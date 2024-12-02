@@ -160,9 +160,10 @@ function getSite(siteId, dataConstraints) {
 }
 
 function getSiteById(siteId) {
-  return knex('Site as s')
+  const siteQuery = knex('Site as s')
     .where('s.id', siteId)
     .first([...SITE_FIELDS])
+  return siteQuery
 }
 
 async function showSite(request) {

@@ -1,4 +1,5 @@
 const _ = require('lodash')
+const Boom = require('@hapi/boom')
 
 // ----------------------------------------------------------------------------------
 async function getNewQuantityOnHand(
@@ -34,10 +35,26 @@ async function getNewQuantityOnHand(
           // log missing lots only for results, and not for manual changes
           await logMissingInventory(knex, resultId, userId)
         }
-      else if (inventoryItem && inventoryItem.quantityOnHand >= quantity) {
+      else {
         /**
          * normal mode - deduct `quantity` from current site
          */
+        // case of ui operation
+        if (!inventoryItem) {
+          return Boom.notFound('Can not deduct from non-existed inventory item', { errorKeyCode: 'notExisted' })
+        }
+        if (inventoryItem.quantityOnHand < 0) {
+          return Boom.notFound(
+            `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`,
+            { errorKeyCode: 'negativeQuantity' }
+          )
+        }
+        if (inventoryItem.quantityOnHand < quantity) {
+          return Boom.notFound(
+            `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`,
+            { errorKeyCode: 'notEnoughInventory' }
+          )
+        }
         newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
       }
       break

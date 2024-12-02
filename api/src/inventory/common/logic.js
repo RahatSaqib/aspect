@@ -9,7 +9,7 @@ const defaultInventoryStrategy = require('../strategies')
 const { knex, transact } = require('../../db')
 const { getSite, getSiteById } = require('../../site/service')
 const { updateSiteConsumable } = require('../../site/common/db')
-const { getAdjustmentById } = require('../../partner/common/db')
+const { getPartnerByConstraints } = require('../../partner/common/db')
 const { getConstraints } = require('../../auth/constraints')
 const { selectAssayConsumables } = require('../../consumable/assayConsumableService')
 const { findConsumableReason } = require('../../consumable/consumableService')
@@ -38,6 +38,7 @@ async function getInventoryStrategy({ partnerId, deviceId, userId }) {
   const inventoryStrategyKey = `partnerId-${partnerId || 0}_deviceId-${deviceId || 0}`
   let inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
   if (!inventoryStrategy) {
+    // TODO: Remove this part if we will use single strategy for all countries
     // const partnerPluginName = await getPartnerPluginName({ partnerId })
     // const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
     // const { loadPlugin } = require('../../plugin/loadPlugin')
@@ -118,13 +119,16 @@ async function getActualQuantityOnHand(
   { quantityOnHand, quantity }
 ) {
   const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber, fromSiteId)
-  const newQuantityOnHand = await inventoryStrategy.getNewQuantityOnHand(
+  const newQuantityOnHand = await defaultInventoryStrategy.getNewQuantityOnHand(
     knex,
     inventoryItem,
     operation,
     quantityOnHand,
     quantity,
-    { resultId, userId: inventoryStrategy.getUserId() }
+    {
+      resultId,
+      userId: inventoryStrategy.getUserId(),
+    }
   )
   if (Boom.isBoom(newQuantityOnHand)) {
     return newQuantityOnHand
@@ -644,8 +648,14 @@ async function consumeInventoryForResult(
 ) {
   const now = new Date()
   const inventoryStrategy = await getInventoryStrategy({ partnerId })
+  const dataConstraints = {
+    partner: {
+      id: partnerId,
+    },
+  }
+  const { inventoryAdjustment } = await getPartnerByConstraints(dataConstraints)
 
-  const assayConsumables = await selectAssayConsumables(knex, { partner: { id: partnerId } }, assayId)
+  const assayConsumables = await selectAssayConsumables(knex, dataConstraints, assayId)
 
   const { id: testRunConsumableReasonId } = await findConsumableReason('Test Conducted')
   return Promise.all(
@@ -676,28 +686,35 @@ async function consumeInventoryForResult(
           ? _.get(consumablesInResultData, '[0].lot')
           : undefined
 
-        const { adjustment } = await getAdjustmentById(consumableId)
         const inventoryItem = await findInventoryItem(siteId, consumableId, expiresOn, lotNumber)
-
-        if (adjustment === 'currentSiteAndProviderAdjustment') {
+        if (inventoryAdjustment === 'currentSiteAndProviderAdjustment') {
           if (inventoryItem?.quantityOnHand <= 0 || inventoryItem?.quantityOnHand < quantity) {
-            const site = getSiteById(siteId)
+            const site = await getSiteById(siteId)
             if (site.parentWarehouseId) {
-              const payload = {
-                dateAdjusted: new Date().toISOString(),
-                quantity,
-                lotNumber,
-                toSiteId: site,
-                fromSiteId: site.parentWarehouseId,
-                expiresOn,
+              const parentInventoryItem = await findInventoryItem(
+                site.parentWarehouseId,
                 consumableId,
+                expiresOn,
+                lotNumber
+              )
+
+              if (parentInventoryItem?.quantityOnHand > quantity) {
+                const payload = {
+                  dateAdjusted: new Date(),
+                  quantity,
+                  lotNumber,
+                  toSiteId: siteId,
+                  fromSiteId: site.parentWarehouseId,
+                  expiresOn,
+                  consumableId,
+                  force: true,
+                }
+                const res = await transferInventory({ payload, partnerId, userId, messageContext })
+                if (Boom.isBoom(res)) return res
               }
-              const res = await transferInventory({ payload, partnerId, userId, messageContext })
-              if (Boom.isBoom(res)) return res
             }
           }
         }
-
         return changeInventoryQuantity(inventoryStrategy, {
           knex,
           consumableId,
