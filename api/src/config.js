@@ -17,7 +17,7 @@ module.exports = {
   gxAlertApi: process.env.gxAlertApi,
   isDevelopment: process.env.NODE_ENV === 'development',
   environment: process.env.NODE_ENV,
-  countryName: process.env.countryName || 'US',
+  countryName: process.env.countryName,
   newRelic: {
     enabled: Boolean(process.env.NEW_RELIC_APP_NAME && process.env.NEW_RELIC_LICENSE_KEY), // Only if this variables are set enable the newrelic and these variables are required ones as well
     appName: process.env.NEW_RELIC_APP_NAME,

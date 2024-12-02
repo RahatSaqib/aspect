@@ -4,6 +4,10 @@ import allMessages from '../../../messages/allMessages'
 const messages = {
   ...allMessages,
   ...defineMessages({
+    reconciliationConfiguration: {
+      id: 'pages.inventoryList.reconciliationConfiguration',
+      defaultMessage: 'Reconciliation Configuration',
+    },
     inventoryItemName: { id: 'pages.inventoryList.InventoryItemName', defaultMessage: 'Inventory Item Name' },
     trackByDate: { id: 'pages.inventoryList.trackByDate', defaultMessage: 'Track by expiry date' },
     locationTracking: { id: 'pages.inventoryList.locationTracking', defaultMessage: 'Location Tracking' },
