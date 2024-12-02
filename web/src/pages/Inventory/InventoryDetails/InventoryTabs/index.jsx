@@ -1,10 +1,10 @@
-import { Box, Tab, Tabs, Typography } from '@mui/material'
 import React, { useState } from 'react'
+import { Box, Tab, Tabs, Typography } from '@mui/material'
 import { useIntl } from 'react-intl'
 import AspectTooltip from '../../../../oldComponents/shared/AspectTooltip'
 import { ConsumptionRate } from './ConsumptionRate.jsx'
-import { TrackByLocation } from './TrackByLocation'
 import messages from './messages'
+import { TrackByLocation } from './TrackByLocation'
 
 function TabPanel(props) {
   const { children, value, index, ...other } = props

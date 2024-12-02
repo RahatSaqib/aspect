@@ -20,8 +20,7 @@ export default defineMessages({
   },
   selectAllLocations: {
     id: 'pages.InventoryTabs.siteList.selectAllLocations',
-    defaultMessage:
-      'Select all Locations to track inventory for this item',
+    defaultMessage: 'Select all Locations to track inventory for this item',
   },
   consumpationRate: {
     id: 'pages.InventoryTabs.New.consumpationRate',
@@ -37,7 +36,6 @@ export default defineMessages({
   },
   locationsWithThisItem: {
     id: 'pages.InventoryTabs.New.locationsWithThisItem',
-    defaultMessage:
-      'Locations with this Item',
+    defaultMessage: 'Locations with this Item',
   },
 })

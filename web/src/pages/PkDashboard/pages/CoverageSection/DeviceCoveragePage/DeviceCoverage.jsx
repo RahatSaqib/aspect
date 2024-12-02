@@ -19,20 +19,22 @@ const defaultFilters = [
   { maxDate: endOfYearUTC },
 ]
 
-
-
 const DeviceCoveragePage = () => {
   const { formatMessage } = useIntl()
   const [filter] = useState()
 
   const columns = [
-    { key: 'Province/Region', name:  formatMessage(messages.provinceRegion), prop: 'name' },
-    { key: 'GX Sites',name: formatMessage(messages.gxSites), prop: 'cntSites' },
-    { key: 'GX-6C Devices',name: formatMessage(messages.gx6CDevices), prop: 'cnt6cDevices' },
-    { key: 'GX-10C Devices',name: formatMessage(messages.gx10CDevices), prop: 'cnt10cDevices' },
-    { key: 'Combined GX-6C/GX-10C Devices',name:formatMessage(messages.combinedGX6CGX10CDevices), prop: 'cnt6c10cCombo' },
-    { key: 'GX-6C Modules',name: formatMessage(messages.gx6CModules), prop: 'cnt6cModules' },
-    { key: 'GX-10C Modules',name: formatMessage(messages.gx10CModules), prop: 'cnt10cModules' },
+    { key: 'Province/Region', name: formatMessage(messages.provinceRegion), prop: 'name' },
+    { key: 'GX Sites', name: formatMessage(messages.gxSites), prop: 'cntSites' },
+    { key: 'GX-6C Devices', name: formatMessage(messages.gx6CDevices), prop: 'cnt6cDevices' },
+    { key: 'GX-10C Devices', name: formatMessage(messages.gx10CDevices), prop: 'cnt10cDevices' },
+    {
+      key: 'Combined GX-6C/GX-10C Devices',
+      name: formatMessage(messages.combinedGX6CGX10CDevices),
+      prop: 'cnt6c10cCombo',
+    },
+    { key: 'GX-6C Modules', name: formatMessage(messages.gx6CModules), prop: 'cnt6cModules' },
+    { key: 'GX-10C Modules', name: formatMessage(messages.gx10CModules), prop: 'cnt10cModules' },
   ]
 
   const { data: { data } = {}, isLoading } = useQuery(

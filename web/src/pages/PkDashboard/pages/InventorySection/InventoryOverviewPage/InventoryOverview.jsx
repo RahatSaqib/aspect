@@ -40,7 +40,7 @@ const InventoryOverviewPage = () => {
   )
 
   const columns = [
-    { key: 'Name',name: formatMessage(messages.utilizationName), prop: 'name' },
+    { key: 'Name', name: formatMessage(messages.utilizationName), prop: 'name' },
     {
       key: 'Current Qty.',
       name: formatMessage(messages.currentQty),

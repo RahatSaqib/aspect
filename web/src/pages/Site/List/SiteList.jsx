@@ -79,7 +79,7 @@ const SiteList = ({ navigate, location }) => {
     { key: 'siteType', label: intl.formatMessage(messages.siteType), sortable: true },
     { key: 'parentWarehouseName', label: intl.formatMessage(messages.stockProvider), sortable: true },
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
-  ] 
+  ]
 
   const onAlertClick = useCallback(
     event => {

@@ -1,11 +1,11 @@
 import React from 'react'
 import { Typography, Box } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { CheckBoxList } from '../../../cleanComponents'
 import { useConsumable } from '../../../hooks/inventory/useConsumable'
 import useUpdateConsumable from '../../../hooks/site/useUpdateConsumable'
 import AspectTooltip from '../../../oldComponents/shared/AspectTooltip'
 import messages from './messages'
-import { useIntl } from 'react-intl'
 
 const Consumables = ({ consumableIds, siteId, disabledSites }) => {
   const { mutateAsync: changeApplicable, isLoading: isChanging } = useUpdateConsumable()
