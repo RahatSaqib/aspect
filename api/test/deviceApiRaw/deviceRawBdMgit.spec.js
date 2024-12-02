@@ -109,6 +109,7 @@ describe('Device API Raw routes for BD MGIT', () => {
     await knex('FactResultsDeviceByCategory1And2').where('deviceId', deviceId).delete()
     await knex('InventoryLog').whereIn('resultId', resultIds).delete()
     await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
+    await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
     await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
     await knex('ResultGeneratedResult')
       .whereIn('sourceResultId', resultIds)
