@@ -317,12 +317,12 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.deviceSummaryReport',
     defaultMessage: 'Device Summary Report',
   },
-  missing_cartridges_report: {
-    id: 'pages.ReportIndex.missing_cartridges_report',
-    defaultMessage: 'List of Missing Lots',
+  unreconciled_inventory_report: {
+    id: 'pages.ReportIndex.unreconciled_inventory_report',
+    defaultMessage: 'List of Unreconciled Inventory',
   },
-  missing_cartridges_report_description: {
-    id: 'pages.ReportIndex.missing_cartridges_report_description',
+  unreconciled_inventory_report_description: {
+    id: 'pages.ReportIndex.unreconciled_inventory_report_description',
     defaultMessage:
       "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
   },

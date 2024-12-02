@@ -1145,7 +1145,7 @@ export default defineMessages({
   },
   pk_missing_cartridges_report: {
     id: 'pages.ReportIndex.pk_missing_cartridges_report',
-    defaultMessage: 'List of Missing Lots',
+    defaultMessage: 'List of Unreconciled Inventory',
   },
 
   ...assay,

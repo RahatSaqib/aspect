@@ -47,6 +47,7 @@ describe('Seed helpers unit functions', () => {
             reports: [
               'mtb_detected_rr_detected',
               'critical_errors_by_device',
+              'unreconciled_inventory_report',
               'rif_resistance_rate',
               'results_hiv_not_suppressed',
               'device_calibration_report',
@@ -116,6 +117,7 @@ describe('Seed helpers unit functions', () => {
             'mtb_detected_rr_detected',
             'results_hiv_not_suppressed',
             'rif_resistance_rate',
+            'unreconciled_inventory_report',
           ],
           permissions: [
             {
@@ -157,6 +159,7 @@ describe('Seed helpers unit functions', () => {
             reports: [
               'mtb_detected_rr_detected',
               'critical_errors_by_device',
+              'unreconciled_inventory_report',
               'rif_resistance_rate',
               'results_hiv_not_suppressed',
               'device_calibration_report',
@@ -174,6 +177,7 @@ describe('Seed helpers unit functions', () => {
             'mtb_detected_rr_detected',
             'results_hiv_not_suppressed',
             'rif_resistance_rate',
+            'unreconciled_inventory_report',
           ],
         }
       )
