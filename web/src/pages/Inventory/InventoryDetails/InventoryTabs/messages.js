@@ -35,4 +35,9 @@ export default defineMessages({
     id: 'pages.InventoryTabs.New.definitionText',
     defaultMessage: 'Define which Assay consume this inventory item',
   },
+  locationswiththisItem: {
+    id: 'pages.InventoryTabs.New.locationswiththisItem',
+    defaultMessage:
+      'Locations with this Item',
+  },
 })

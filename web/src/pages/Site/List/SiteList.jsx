@@ -79,7 +79,7 @@ const SiteList = ({ navigate, location }) => {
     { key: 'siteType', label: intl.formatMessage(messages.siteType), sortable: true },
     { key: 'parentWarehouseName', label: intl.formatMessage(messages.stockProvider), sortable: true },
     { key: 'inventoryUpdatedOn', label: intl.formatMessage(messages.latestInventoryUpdate), sortable: true },
-  ]
+  ] 
 
   const onAlertClick = useCallback(
     event => {
@@ -117,7 +117,7 @@ const SiteList = ({ navigate, location }) => {
 
   return (
     <>
-      <DetailHeader name={intl.formatMessage(messages.sitesTitle)} disableBack>
+      <DetailHeader name={intl.formatMessage(messages.sitesTitle)+1} disableBack>
         <PermissionChecker permissions={['site:admin']}>
           <AspectButton
             type="button"
