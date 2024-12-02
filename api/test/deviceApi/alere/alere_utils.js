@@ -91,6 +91,8 @@ async function deleteDeviceSiteDataAndRefreshTokens(knex, alereDeviceSerialNumbe
 
   await knex('ResultQualityControlLog').whereIn('resultId', resultIds).delete()
 
+  await knex('MissingInventoryLots').whereIn('resultId', resultIds).delete()
+
   await knex('ResultWorkflowLog').whereIn('resultId', resultIds).delete()
 
   await knex('ResultGeneratedResult')
