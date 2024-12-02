@@ -485,7 +485,7 @@ const messages = {
     },
     currentQty: {
       id: 'p.PkDashboard.currentQty',
-      defaultMessage: 'Current Qty',
+      defaultMessage: 'Current Qty.',
     },
     used: {
       id: 'p.PkDashboard.used',
