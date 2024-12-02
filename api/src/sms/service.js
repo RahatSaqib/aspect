@@ -78,7 +78,7 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
       (partnerDetails?.serviceStartDate &&
         new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
         smsMessageCount?.count <= partnerDetails?.notificationLimit) ||
-      !partnerDetails?.serviceStartDate
+        (!partnerDetails?.serviceStartDate || !partnerDetails?.notificationLimit)
     ) {
       await doSendSmsMessage(context, knex, smsMessageId)
     } else {

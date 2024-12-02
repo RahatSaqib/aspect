@@ -75,7 +75,7 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       (partnerDetails?.serviceStartDate &&
         new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
         emailMessageCount?.count <= partnerDetails?.notificationLimit) ||
-      !partnerDetails?.serviceStartDate
+      (!partnerDetails?.serviceStartDate || !partnerDetails?.notificationLimit)
     ) {
       await doSendEmailMessage(context, knex, emailMessageId)
     } else {
