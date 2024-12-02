@@ -25,7 +25,7 @@ export function transformValues(values) {
   )
 }
 
-export function getValidations(format, actionType, inventory) {
+export function getValidations(format, actionType, inventory, partner) {
   let schema = object({
     quantity: number()
       .typeError(format(validationMessages.quantityNumber))
@@ -63,8 +63,7 @@ export function getValidations(format, actionType, inventory) {
         .nullable()
         .when('consumable', {
           is: () => {
-            // return hasExpireDate(consumable?.strategy || inventory?.strategy)
-            return true
+            return hasExpireDate(partner?.inventoryStrategy)
           },
           then: sch => {
             let validation = sch.required(format(validationMessages.expiryDateRequired))
@@ -78,8 +77,7 @@ export function getValidations(format, actionType, inventory) {
         .nullable()
         .when('consumable', {
           is: () => {
-            // return hasLot(consumable?.strategy || inventory?.strategy)
-            return true
+            return hasLot(partner.inventoryStrategy)
           },
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
