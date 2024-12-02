@@ -36,7 +36,7 @@ const Consumables = ({ consumableIds, siteId, disabledSites }) => {
   return (
     <>
       <Box display="flex" alignItems="center">
-        <Typography>{formatMessage(messages.consumablesapplicableforthissite)}</Typography>
+        <Typography>{formatMessage(messages.consumablesApplicableForThisSite)}</Typography>
         <AspectTooltip
           showHelpIcon
           title="Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions"

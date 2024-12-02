@@ -117,7 +117,7 @@ const SiteList = ({ navigate, location }) => {
 
   return (
     <>
-      <DetailHeader name={intl.formatMessage(messages.sitesTitle)+1} disableBack>
+      <DetailHeader name={intl.formatMessage(messages.sitesTitle)} disableBack>
         <PermissionChecker permissions={['site:admin']}>
           <AspectButton
             type="button"

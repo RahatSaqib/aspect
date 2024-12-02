@@ -479,8 +479,8 @@ const messages = {
       id: 'p.PkDashboard.utilizationTotalTests',
       defaultMessage: 'Total Tests',
     },
-    utilizationPer: {
-      id: 'p.PkDashboard.utilizationPer',
+    utilizationPercent: {
+      id: 'p.PkDashboard.utilizationPercent',
       defaultMessage: 'Utilization%',
     },
     currentQty: {

@@ -44,7 +44,7 @@ export const InventoryTabs = ({ consumableId, siteIds, disabledSites }) => {
 
       <TabPanel value={tabValue} index={0}>
         <Box display="flex" alignItems="center">
-          <h4>{formatMessage(messages.locationswiththisItem)}</h4>
+          <h4>{formatMessage(messages.locationsWithThisItem)}</h4>
           <AspectTooltip showHelpIcon title={formatMessage(messages.trackByLocationTooltip)} />
         </Box>
         <Typography>{formatMessage(messages.selectAllLocations)}</Typography>

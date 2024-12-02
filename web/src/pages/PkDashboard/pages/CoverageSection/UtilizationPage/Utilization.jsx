@@ -34,7 +34,7 @@ const UtilizationPage = () => {
     { key: 'Name', name: formatMessage(messages.utilizationName), prop: 'name' },
     { key: 'Total Modules', name: formatMessage(messages.utilizationTotalModules), prop: 'modules' },
     { key: 'Total Tests', name: formatMessage(messages.utilizationTotalTests), prop: 'cnt' },
-    { key: 'Utilization%', name: formatMessage(messages.utilizationPer), prop: 'rate' },
+    { key: 'Utilization%', name: formatMessage(messages.utilizationPercent), prop: 'rate' },
   ]
 
   const { isLoadingTable, tableData } = useUtilizationTable({ ...filter, tableData: 'tableData' })

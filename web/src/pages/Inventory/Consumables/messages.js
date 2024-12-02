@@ -1,8 +1,8 @@
 import { defineMessages } from 'react-intl'
 
 export default defineMessages({
-  consumablesapplicableforthissite: {
-    id: 'pages.consumables.consumablesapplicableforthissite',
+  consumablesApplicableForThisSite: {
+    id: 'pages.consumables.consumablesApplicableForThisSite',
     defaultMessage: 'Consumables applicable for this site',
   },
 })
