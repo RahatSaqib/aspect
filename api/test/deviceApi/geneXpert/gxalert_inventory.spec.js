@@ -566,7 +566,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    it.only('should accept different reasons', async () => {
+    it('should accept different reasons', async () => {
       const now = new Date()
       const inventoryItemsAtSiteBefore = await knex('InventoryItem')
         .where({ siteId: geneXpertDevice.siteId })
