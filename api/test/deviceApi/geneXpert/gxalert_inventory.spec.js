@@ -566,7 +566,7 @@ describe('Device API routes for GxAlert Device', () => {
       })
     })
 
-    it('should accept different reasons', async () => {
+    it.only('should accept different reasons', async () => {
       const now = new Date()
       const inventoryItemsAtSiteBefore = await knex('InventoryItem')
         .where({ siteId: geneXpertDevice.siteId })
@@ -644,16 +644,21 @@ describe('Device API routes for GxAlert Device', () => {
         },
       ]
 
+      const payload = _.merge({}, basicDevicePayload, {
+        name: deviceName,
+        operation: {
+          startedOn,
+          endedOn,
+          data: { inventoryChanges },
+        },
+      })
+
+      // eslint-disable-next-line no-console
+      console.log('payload', payload)
+
       await postToDeviceApi({
         authHeader: deviceAuth,
-        payload: _.merge({}, basicDevicePayload, {
-          name: deviceName,
-          operation: {
-            startedOn,
-            endedOn,
-            data: { inventoryChanges },
-          },
-        }),
+        payload,
       })
 
       const inventoryItemsAtSiteAfter = await knex('InventoryItem as ii')
