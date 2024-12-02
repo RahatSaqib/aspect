@@ -37,7 +37,7 @@ async function listDeviceApiKeys(request) {
     .leftJoin('Geography as g', 'dak.geographyId', 'g.id')
     .leftJoin('Country as c', 'g.countryId', 'c.id')
     .leftJoin('Device as d', 'dak.deviceId', 'd.id')
-    .leftJoin('Site as s', 'd.siteId', 's.id')
+    .leftJoin('Site as s', 'dak.siteId', 's.id')
     .modify(filterParams, query, {
       countryId: 'g.countryId',
       stateId: 'g.stateId',
@@ -173,7 +173,7 @@ async function generateDeviceApiKeys(request) {
 
   let geographyId
   if (payload.countryId) {
-    ;({ id: geographyId } = await knex('Geography as g')
+    ; ({ id: geographyId } = await knex('Geography as g')
       .where({
         'g.countryId': payload.countryId,
         'g.stateId': null,
@@ -209,7 +209,7 @@ async function assignDeviceApiKeys(request) {
 
   let geographyId
   if (payload.countryId) {
-    ;({ id: geographyId } = await knex('Geography as g')
+    ; ({ id: geographyId } = await knex('Geography as g')
       .where({
         'g.countryId': payload.countryId,
         'g.stateId': null,
