@@ -73,6 +73,7 @@ async function onEmailMessageReadyForSending({ emailMessageId }, { messageContex
       .count('* as count')
     if (
       (partnerDetails?.serviceStartDate &&
+        partnerDetails?.notificationLimit &&
         new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
         emailMessageCount?.count <= partnerDetails?.notificationLimit) ||
       !partnerDetails?.serviceStartDate ||

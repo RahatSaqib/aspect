@@ -76,6 +76,7 @@ async function onSmsMessageReadyForSending({ smsMessageId }, { messageContext })
 
     if (
       (partnerDetails?.serviceStartDate &&
+        partnerDetails?.notificationLimit &&
         new Date(partnerDetails?.serviceEndDate || '2099-01-01') > new Date() &&
         smsMessageCount?.count <= partnerDetails?.notificationLimit) ||
       !partnerDetails?.serviceStartDate ||
