@@ -173,7 +173,7 @@ async function generateDeviceApiKeys(request) {
 
   let geographyId
   if (payload.countryId) {
-    ; ({ id: geographyId } = await knex('Geography as g')
+    ;({ id: geographyId } = await knex('Geography as g')
       .where({
         'g.countryId': payload.countryId,
         'g.stateId': null,
@@ -209,7 +209,7 @@ async function assignDeviceApiKeys(request) {
 
   let geographyId
   if (payload.countryId) {
-    ; ({ id: geographyId } = await knex('Geography as g')
+    ;({ id: geographyId } = await knex('Geography as g')
       .where({
         'g.countryId': payload.countryId,
         'g.stateId': null,
