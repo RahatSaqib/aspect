@@ -1,12 +1,24 @@
 import React from 'react'
+import endOfDay from 'date-fns/endOfDay'
+import startOfDay from 'date-fns/startOfDay'
+import isNil from 'lodash/isNil'
+import omitBy from 'lodash/omitBy'
 import { useIntl } from 'react-intl'
+import { useNavigate } from 'react-router-dom'
+import useAuthState from '../../../hooks/useAuthState'
+import useFilterUpdate from '../../../hooks/useFilterUpdate'
 import styles from '../../../oldComponents/shared/DataTableRow.module.css'
-import { DataTableRow as TableRow, DataTableCell as TableCell } from '../../../oldComponents/shared/tableBody'
-import { formatDateTime, formatDate } from '../../../utils/utils/dateFormat'
+import { DataTableCell as TableCell, DataTableRow as TableRow } from '../../../oldComponents/shared/tableBody'
+import { formatDate, formatDateTime } from '../../../utils/utils/dateFormat'
 import messages from './messages'
+
+const TEST_CONDUCTED_EXTERNAL_ID = 'used'
 
 const InventoryLogTableRow = ({ inventoryLogItem }) => {
   const { formatMessage } = useIntl()
+  const [addFilter] = useFilterUpdate()
+  const navigate = useNavigate()
+  const { countryId } = useAuthState()
   return (
     <TableRow className={styles.TableRow}>
       <TableCell className={styles.TableCell}>
@@ -39,7 +51,34 @@ const InventoryLogTableRow = ({ inventoryLogItem }) => {
         </span>
       </TableCell>
 
-      <TableCell className={styles.TableCell}>{inventoryLogItem.quantity}</TableCell>
+      <TableCell
+        className={styles.TableCell}
+        onClick={() => {
+          if (inventoryLogItem.consumableReasonExternalId === TEST_CONDUCTED_EXTERNAL_ID) {
+            addFilter(
+              omitBy(
+                {
+                  countryId,
+                  minDate: startOfDay(new Date(inventoryLogItem.resultEndedOn)),
+                  maxDate: endOfDay(new Date(inventoryLogItem.resultEndedOn)),
+                  assayId: inventoryLogItem.assayId,
+                  siteName: inventoryLogItem.siteName,
+                },
+                isNil
+              ),
+              '/browse/result'
+            )
+            navigate('/browse/result')
+          }
+        }}
+        sx={
+          inventoryLogItem.consumableReasonExternalId === TEST_CONDUCTED_EXTERNAL_ID
+            ? { cursor: 'pointer', color: 'blue', textDecoration: 'underline' }
+            : {}
+        }
+      >
+        {inventoryLogItem.quantity}
+      </TableCell>
       <TableCell className={styles.TableCell}>
         {messages[inventoryLogItem.consumableReasonI18nKey]
           ? formatMessage(messages[inventoryLogItem.consumableReasonI18nKey], {
