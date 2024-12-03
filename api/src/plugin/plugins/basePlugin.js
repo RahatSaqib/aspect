@@ -71,6 +71,7 @@ const basePlugin = {
   preProcessMergeResult,
   excludeResult,
   transformMergeResultPayload,
+  transformMergeResultResponse,
   postProcessMergeResult,
   onResultLogged,
   onGxAlertAuthenticated,
@@ -226,6 +227,13 @@ async function preProcessMergeResult(/* context */) {
  */
 async function transformMergeResultPayload(context) {
   return context.payload
+}
+
+/**
+ * A new result is processed and transformed into a new response
+ */
+function transformMergeResultResponse(response) {
+  return response
 }
 
 /**

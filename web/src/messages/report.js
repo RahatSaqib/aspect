@@ -244,8 +244,7 @@ const messages = defineMessages({
   },
   reportTBWorkloadSummaryDescription: {
     id: 'pages.ReportIndex.reportTBWorkloadSummaryDescription',
-    defaultMessage:
-      'Summary of TB Workload grouped by month, quarter and year for all regions.',
+    defaultMessage: 'Summary of TB Workload grouped by month, quarter and year for all regions.',
   },
   xdrDevicesSummary: {
     id: 'pages.ReportIndex.xdrDevicesSummary',
@@ -318,17 +317,20 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.deviceSummaryReport',
     defaultMessage: 'Device Summary Report',
   },
+  unreconciled_inventory_report: {
+    id: 'pages.ReportIndex.unreconciled_inventory_report',
+    defaultMessage: 'List of Unreconciled Inventory',
+  },
   deviceSummaryReportDescription: {
     id: 'pages.ReportIndex.deviceSummaryReportDescription',
     defaultMessage: 'A list of all devices in the system and aggregated test results per device.',
   },
-
   missing_cartridges_report: {
     id: 'pages.ReportIndex.missing_cartridges_report',
     defaultMessage: 'List of Missing Lots',
   },
-  missing_cartridges_report_description: {
-    id: 'pages.ReportIndex.missing_cartridges_report_description',
+  unreconciled_inventory_report_description: {
+    id: 'pages.ReportIndex.unreconciled_inventory_report_description',
     defaultMessage:
       "Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.",
   },
