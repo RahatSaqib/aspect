@@ -43,6 +43,12 @@ async function deleteGeneXpertDeviceSiteDataAndRefreshTokens(knex, gxAlertDevice
     .distinct('ii.id')
     .pluck('ii.id')
 
+  const inventoryLogIds = await knex('InventoryLog')
+    .whereIn('inventoryItemId', inventoryItemIds)
+    .distinct('id')
+    .pluck('id')
+
+  await knex('InventoryTransfer').whereIn('incomeInventoryLogId', inventoryLogIds).delete()
   await knex('InventoryLog').whereIn('inventoryItemId', inventoryItemIds).delete()
 
   await knex('InventoryItem').whereIn('id', inventoryItemIds).delete()

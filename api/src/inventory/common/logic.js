@@ -224,6 +224,7 @@ async function changeInventoryQuantity(inventoryStrategy, params) {
       operation,
       { quantityOnHand, quantity }
     )
+    console.log(`responseeeee`, res)
     if (Boom.isBoom(res)) {
       return res
     }

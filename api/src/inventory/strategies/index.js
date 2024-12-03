@@ -1,5 +1,5 @@
 const _ = require('lodash')
-// const Boom = require('@hapi/boom')
+const Boom = require('@hapi/boom')
 
 // ----------------------------------------------------------------------------------
 async function getNewQuantityOnHand(
@@ -40,21 +40,23 @@ async function getNewQuantityOnHand(
          * normal mode - deduct `quantity` from current site
          */
         // case of ui operation
-        // if (!inventoryItem) {
-        //   return Boom.notFound('Can not deduct from non-existed inventory item', { errorKeyCode: 'notExisted' })
-        // }
-        // if (inventoryItem.quantityOnHand < 0) {
-        //   return Boom.notFound(
-        //     `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`,
-        //     { errorKeyCode: 'negativeQuantity' }
-        //   )
-        // }
-        // if (inventoryItem.quantityOnHand < quantity) {
-        //   return Boom.notFound(
-        //     `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`,
-        //     { errorKeyCode: 'notEnoughInventory' }
-        //   )
-        // }
+        if (_.isUndefined(quantityOnHand)) {
+          if (!inventoryItem) {
+            return Boom.notFound('Can not deduct from non-existed inventory item', { errorKeyCode: 'notExisted' })
+          }
+          if (inventoryItem.quantityOnHand < 0) {
+            return Boom.notFound(
+              `quantityOnHand is negative ${inventoryItem.quantityOnHand} for current inventoryItemId=${inventoryItem.id}`,
+              { errorKeyCode: 'negativeQuantity' }
+            )
+          }
+          if (inventoryItem.quantityOnHand < quantity) {
+            return Boom.notFound(
+              `Not enough inventory items (${inventoryItem.quantityOnHand}) on the site to remove ${quantity} items`,
+              { errorKeyCode: 'notEnoughInventory' }
+            )
+          }
+        }
         newQuantityOnHand = _.isUndefined(quantityOnHand) ? newQuantityOnHand - quantity : quantityOnHand
       }
       break
