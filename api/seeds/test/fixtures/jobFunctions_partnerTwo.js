@@ -4,6 +4,7 @@ module.exports = [
     reports: [
       'mtb_detected_rr_detected',
       'critical_errors_by_device',
+      'unreconciled_inventory_report',
       'rif_resistance_rate',
       'results_hiv_not_suppressed',
       'device_calibration_report',

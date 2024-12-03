@@ -9,7 +9,7 @@ runs:
     - name: 'Setup NODE'
       uses: actions/setup-node@v2
       with:
-        node-version: '14.19.0'
+        node-version: '14.17.0'
 
     - uses: actions/cache@v2
       with:

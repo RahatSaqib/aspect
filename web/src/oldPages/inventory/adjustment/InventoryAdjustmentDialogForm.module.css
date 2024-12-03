@@ -7,3 +7,16 @@
   color: var(--aspect-color-grey-3);
   font-size: var(--aspect-font-size-sm);
 }
+
+.Field__label__when__error {
+  color: rgba(0, 0, 0, 0.6) !important;
+}
+.Field__error__message {
+  position: absolute;
+  right: 0;
+  top: 0;
+  line-height: 1.4375em;
+  margin: 0 0 6px 0;
+  padding: 0;
+  transform: translate(0, -1.5px);
+}
