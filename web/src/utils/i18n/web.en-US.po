@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-26T04:43:44.240Z\n"
+"POT-Creation-Date: 2024-12-03T04:30:39.539Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -302,7 +302,6 @@ msgstr "Abbott m2000 Plasma HIV VL"
 #. defaultMessage is:
 #. Abbreviation
 #: extracted_strings.json
-#| msgid "Calibration"
 msgid "Abbreviation"
 msgstr "Abbreviation"
 
@@ -837,7 +836,6 @@ msgstr "Are you sure to delete notification {notificationName}?"
 #. defaultMessage is:
 #. Are you sure to delete this {entity}?
 #: extracted_strings.json
-#| msgid "Are you sure to delete notification {notificationName}?"
 msgid "Are you sure to delete this {entity}?"
 msgstr "Are you sure to delete this {entity}?"
 
@@ -1308,7 +1306,6 @@ msgstr ""
 #. defaultMessage is:
 #. Break Out by Lot
 #: extracted_strings.json
-#| msgid "Break out by lot"
 msgid "Break Out by Lot"
 msgstr "Break Out by Lot"
 
@@ -1326,7 +1323,6 @@ msgstr "Break out by lot"
 #. defaultMessage is:
 #. Breakdown by Lots
 #: extracted_strings.json
-#| msgid "Break out by lot"
 msgid "Breakdown by Lots"
 msgstr "Breakdown by Lots"
 
@@ -1613,6 +1609,14 @@ msgstr "Calibration Date is required"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Calibration Due Date"
+
+#. [pages.NewInventoryDialogForm.quantityNotMoreThanOnHand]
+#. defaultMessage is:
+#. Can not be greater than on-hand
+#: extracted_strings.json
+#| msgid "Time cannot be greater than current time"
+msgid "Can not be greater than on-hand"
+msgstr "Can not be greater than on-hand"
 
 #. [errorResponseMessages.removeInventory.PUT.notExisted.resolution]
 #. defaultMessage is:
@@ -2378,7 +2382,6 @@ msgstr "Create"
 #. defaultMessage is:
 #. Create New
 #: extracted_strings.json
-#| msgid "Create Site"
 msgid "Create New"
 msgstr "Create New"
 
@@ -3188,7 +3191,6 @@ msgstr "Device Calibration Report"
 #. defaultMessage is:
 #. Device Configurations
 #: extracted_strings.json
-#| msgid "Device Calibration"
 msgid "Device Configurations"
 msgstr "Device Configurations"
 
@@ -4232,7 +4234,6 @@ msgstr "Export device list"
 #. defaultMessage is:
 #. Exporting Device Log Failed
 #: extracted_strings.json
-#| msgid "Exporting Devices Failed"
 msgid "Exporting Device Log Failed"
 msgstr "Exporting Device Log Failed"
 
@@ -4260,7 +4261,6 @@ msgstr "Exporting DeviceApiKeys Failed"
 #. defaultMessage is:
 #. Exporting DeviceLog Failed
 #: extracted_strings.json
-#| msgid "Exporting Devices Failed"
 msgid "Exporting DeviceLog Failed"
 msgstr "Exporting DeviceLog Failed"
 
@@ -5789,7 +5789,6 @@ msgstr "Instrument Serial"
 #. defaultMessage is:
 #. Instruments
 #: extracted_strings.json
-#| msgid "Instrument Model"
 msgid "Instruments"
 msgstr "Instruments"
 
@@ -5931,7 +5930,6 @@ msgstr "Inventory Item Name Required"
 #. defaultMessage is:
 #. Inventory Items
 #: extracted_strings.json
-#| msgid "Inventory Item"
 msgid "Inventory Items"
 msgstr "Inventory Items"
 
@@ -5968,7 +5966,6 @@ msgstr "Inventory Overview"
 #. defaultMessage is:
 #. Inventory Reconciliation
 #: extracted_strings.json
-#| msgid "Inventory on Hand"
 msgid "Inventory Reconciliation"
 msgstr "Inventory Reconciliation"
 
@@ -6453,15 +6450,16 @@ msgstr "License"
 msgid "Lipid Panel"
 msgstr "Lipid Panel"
 
-#. [pages.ReportIndex.missing_cartridges_report]
+#. [pages.ReportIndex.unreconciled_inventory_report]
 #. defaultMessage is:
-#. List of Missing Lots
+#. List of Unreconciled Inventory
 #. [pages.ReportIndex.pk_missing_cartridges_report]
 #. defaultMessage is:
-#. List of Missing Lots
+#. List of Unreconciled Inventory
 #: extracted_strings.json
-msgid "List of Missing Lots"
-msgstr "List of Missing Lots"
+#| msgid "Unreconciled quantity"
+msgid "List of Unreconciled Inventory"
+msgstr "List of Unreconciled Inventory"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -6578,7 +6576,6 @@ msgstr "Location"
 #. defaultMessage is:
 #. Location Tracking
 #: extracted_strings.json
-#| msgid "Location"
 msgid "Location Tracking"
 msgstr "Location Tracking"
 
@@ -8042,6 +8039,22 @@ msgstr "No Tests Performed"
 msgid "No contacts assigned to site"
 msgstr "No contacts assigned to site"
 
+#. [pages.NewInventoryDialogForm.quantityMissingToRemove]
+#. defaultMessage is:
+#. No inventory to remove
+#: extracted_strings.json
+#| msgid "Inventory Item"
+msgid "No inventory to remove"
+msgstr "No inventory to remove"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToTransfer]
+#. defaultMessage is:
+#. No inventory to transfer
+#: extracted_strings.json
+#| msgid "Inventory Transfer"
+msgid "No inventory to transfer"
+msgstr "No inventory to transfer"
+
 #. [pages.SiteDetail.siteWithoutLocation]
 #. defaultMessage is:
 #. No location set to this site - Please, edit to assign the latitude and longitude fields.
@@ -8266,7 +8279,6 @@ msgstr "Notification Logs"
 #. defaultMessage is:
 #. Notification States
 #: extracted_strings.json
-#| msgid "Notifications"
 msgid "Notification States"
 msgstr "Notification States"
 
@@ -8839,7 +8851,6 @@ msgstr "Pending changes"
 #. defaultMessage is:
 #. People
 #: extracted_strings.json
-#| msgid "People alerted"
 msgid "People"
 msgstr "People"
 
@@ -9427,7 +9438,6 @@ msgstr "Processed"
 #. defaultMessage is:
 #. Processing ...
 #: extracted_strings.json
-#| msgid "Processing..."
 msgid "Processing ..."
 msgstr "Processing ..."
 
@@ -9538,7 +9548,6 @@ msgstr "Provincial MTB+ detected in current year"
 #. defaultMessage is:
 #. Provincial MTB+ detection trends
 #: extracted_strings.json
-#| msgid "Annual MTB+ detection trends"
 msgid "Provincial MTB+ detection trends"
 msgstr "Provincial MTB+ detection trends"
 
@@ -9637,7 +9646,6 @@ msgstr "Provincial XDR testing trends"
 #. defaultMessage is:
 #. Provincial/District FQ Diagnosis Trends
 #: extracted_strings.json
-#| msgid "Provincial/District RR Diagnosis Trends"
 msgid "Provincial/District FQ Diagnosis Trends"
 msgstr "Provincial/District FQ Diagnosis Trends"
 
@@ -9941,7 +9949,6 @@ msgstr "Received On"
 #. defaultMessage is:
 #. Received Qty
 #: extracted_strings.json
-#| msgid "Received On"
 msgid "Received Qty"
 msgstr "Received Qty"
 
@@ -9960,6 +9967,9 @@ msgid "Recepient Name"
 msgstr "Recepient Name"
 
 #. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#. [pages.inventoryList.reconciliationConfiguration]
 #. defaultMessage is:
 #. Reconciliation Configuration
 #: extracted_strings.json
@@ -10163,7 +10173,6 @@ msgstr "Report on Xpert MTB/RIF and Covid - NTP Use"
 #. defaultMessage is:
 #. Reportable Results
 #: extracted_strings.json
-#| msgid "Only Reportable Results"
 msgid "Reportable Results"
 msgstr "Reportable Results"
 
@@ -11605,9 +11614,6 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# Consumable} other {# Consumables} }
 #: extracted_strings.json
-#| msgid ""
-#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#| "supply} other {# supplies} }"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
 "Consumable} other {# Consumables} }"
@@ -11747,9 +11753,6 @@ msgstr ""
 #. defaultMessage is:
 #. Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } other {# } }
 #: extracted_strings.json
-#| msgid ""
-#| "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# "
-#| "log} other {# logs} }"
 msgid ""
 "Showing {firstItemIndex}-{lastItemIndex} of {itemCount, plural, one {# } "
 "other {# } }"
@@ -12135,7 +12138,6 @@ msgstr "State/Region"
 #. defaultMessage is:
 #. States
 #: extracted_strings.json
-#| msgid "State"
 msgid "States"
 msgstr "States"
 
@@ -12331,7 +12333,6 @@ msgstr "TB AST"
 #. defaultMessage is:
 #. TB Cases Diagnosed
 #: extracted_strings.json
-#| msgid "TB cases diagnosed in"
 msgid "TB Cases Diagnosed"
 msgstr "TB Cases Diagnosed"
 
@@ -12651,7 +12652,7 @@ msgstr "Tests Performed in current year"
 msgid "Tests Run Between"
 msgstr "Tests Run Between"
 
-#. [pages.ReportIndex.missing_cartridges_report_description]
+#. [pages.ReportIndex.unreconciled_inventory_report_description]
 #. defaultMessage is:
 #. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
 #: extracted_strings.json
@@ -13730,7 +13731,6 @@ msgstr "Track by expiration date"
 #. defaultMessage is:
 #. Track by expiry date
 #: extracted_strings.json
-#| msgid "Track by expiration date"
 msgid "Track by expiry date"
 msgstr "Track by expiry date"
 
@@ -13886,7 +13886,6 @@ msgstr "Truenat MTB Plus Test Kit"
 #. defaultMessage is:
 #. Truenat MTB Rif Test Kit
 #: extracted_strings.json
-#| msgid "Truenat MTB Test Kit"
 msgid "Truenat MTB Rif Test Kit"
 msgstr "Truenat MTB Rif Test Kit"
 
@@ -15034,7 +15033,6 @@ msgstr "indicator"
 #. defaultMessage is:
 #. lga name includes "{lgaName}"
 #: extracted_strings.json
-#| msgid "site name includes \"{siteName}\""
 msgid "lga name includes \"{lgaName}\""
 msgstr "lga name includes \"{lgaName}\""
 
@@ -15301,7 +15299,6 @@ msgstr "site name includes \"{siteName}\""
 #. defaultMessage is:
 #. site type is "{siteType}"
 #: extracted_strings.json
-#| msgid "site name includes \"{siteName}\""
 msgid "site type is \"{siteType}\""
 msgstr "site type is \"{siteType}\""
 
@@ -15309,7 +15306,6 @@ msgstr "site type is \"{siteType}\""
 #. defaultMessage is:
 #. state name includes "{stateName}"
 #: extracted_strings.json
-#| msgid "site name includes \"{siteName}\""
 msgid "state name includes \"{stateName}\""
 msgstr "state name includes \"{stateName}\""
 
@@ -15403,7 +15399,6 @@ msgstr "{elapsed} elapsed, {upcoming} upcoming"
 #. defaultMessage is:
 #. {entity} is required
 #: extracted_strings.json
-#| msgid "Site is required"
 msgid "{entity} is required"
 msgstr "{entity} is required"
 
@@ -15522,6 +15517,9 @@ msgstr "{unit} since last week"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} total calibrations"
+
+#~ msgid "List of Missing Lots"
+#~ msgstr "List of Missing Lots"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Assay for MTB Rif Ultra"
@@ -16248,9 +16246,6 @@ msgstr "{unit} total calibrations"
 
 #~ msgid "Start time cannot be after End time"
 #~ msgstr "Start time cannot be after End time"
-
-#~ msgid "Time cannot be greater than current time"
-#~ msgstr "Time cannot be greater than current time"
 
 #~ msgid ""
 #~ "This notification will be triggered for results ended on within last 30 "

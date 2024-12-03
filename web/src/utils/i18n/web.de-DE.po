@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-11-26T04:43:44.240Z\n"
+"POT-Creation-Date: 2024-12-03T04:30:39.539Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -1619,6 +1619,13 @@ msgstr "Kalibrierungsdatum ist erforderlich"
 #: extracted_strings.json
 msgid "Calibration Due Date"
 msgstr "Fälligkeitsdatum der Kalibrierung"
+
+#. [pages.NewInventoryDialogForm.quantityNotMoreThanOnHand]
+#. defaultMessage is:
+#. Can not be greater than on-hand
+#: extracted_strings.json
+msgid "Can not be greater than on-hand"
+msgstr "Kann nicht größer sein als der Bestand"
 
 #. [errorResponseMessages.removeInventory.PUT.notExisted.resolution]
 #. defaultMessage is:
@@ -6469,15 +6476,15 @@ msgstr "Lizenz"
 msgid "Lipid Panel"
 msgstr "Lipid-Panel"
 
-#. [pages.ReportIndex.missing_cartridges_report]
+#. [pages.ReportIndex.unreconciled_inventory_report]
 #. defaultMessage is:
-#. List of Missing Lots
+#. List of Unreconciled Inventory
 #. [pages.ReportIndex.pk_missing_cartridges_report]
 #. defaultMessage is:
-#. List of Missing Lots
+#. List of Unreconciled Inventory
 #: extracted_strings.json
-msgid "List of Missing Lots"
-msgstr "Liste der fehlenden Lose"
+msgid "List of Unreconciled Inventory"
+msgstr "Liste der nicht übereinstimmenden Bestände"
 
 #. [pages.ReportIndex.listRResistantTestReport]
 #. defaultMessage is:
@@ -8060,6 +8067,20 @@ msgstr "Durchgeführte Tests"
 #: extracted_strings.json
 msgid "No contacts assigned to site"
 msgstr "Keine Kontakte dem Standort zugeordnet"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToRemove]
+#. defaultMessage is:
+#. No inventory to remove
+#: extracted_strings.json
+msgid "No inventory to remove"
+msgstr "Kein Inventar zu entfernen"
+
+#. [pages.NewInventoryDialogForm.quantityMissingToTransfer]
+#. defaultMessage is:
+#. No inventory to transfer
+#: extracted_strings.json
+msgid "No inventory to transfer"
+msgstr "Kein Inventar zu übertragen"
 
 #. [pages.SiteDetail.siteWithoutLocation]
 #. defaultMessage is:
@@ -9989,6 +10010,9 @@ msgid "Recepient Name"
 msgstr "Name des Empfängers"
 
 #. [pages.Consumable.New.reconciliationConfiguration]
+#. defaultMessage is:
+#. Reconciliation Configuration
+#. [pages.inventoryList.reconciliationConfiguration]
 #. defaultMessage is:
 #. Reconciliation Configuration
 #: extracted_strings.json
@@ -12682,7 +12706,7 @@ msgstr "Im laufenden Jahr durchgeführte Tests"
 msgid "Tests Run Between"
 msgstr "Tests zwischen"
 
-#. [pages.ReportIndex.missing_cartridges_report_description]
+#. [pages.ReportIndex.unreconciled_inventory_report_description]
 #. defaultMessage is:
 #. Tests detected for following expiration dates where inventory is not tracked at the device's location or the warehouse that serves that location.
 #: extracted_strings.json
@@ -15601,6 +15625,9 @@ msgstr "{unit} seit letzter Woche"
 msgid "{unit} total calibrations"
 msgstr "{unit} gesamt kalibrierungen"
 
+#~ msgid "List of Missing Lots"
+#~ msgstr "Liste der fehlenden Lose"
+
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Assay für MTB Rif Ultra"
 
@@ -16346,9 +16373,6 @@ msgstr "{unit} gesamt kalibrierungen"
 #~ "Diese Benachrichtigung wird für Ergebnisse ausgelöst, die innerhalb der "
 #~ "letzten 30 Tage erzielt wurden. Für ältere Ergebnisse wird die "
 #~ "Benachrichtigung nicht ausgelöst."
-
-#~ msgid "Time cannot be greater than current time"
-#~ msgstr "Die Zeit kann nicht größer sein als die aktuelle Zeit"
 
 #~ msgid "A person with the same email exists. Please use a different email."
 #~ msgstr ""
