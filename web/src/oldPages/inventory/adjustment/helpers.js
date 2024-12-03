@@ -10,8 +10,8 @@ import {
   validationMessages,
 } from './messages'
 
-export const hasExpireDate = strategy => !!strategy?.includes('ExpirationDate')
-export const hasLot = strategy => !!strategy?.includes('Lot')
+export const strategyRequireExpirationDate = strategy => !!strategy?.includes('ExpirationDate')
+export const strategyRequireLot = strategy => !!strategy?.includes('Lot')
 
 export function transformValues(values) {
   const { consumable, reason, ...rest } = values
@@ -25,13 +25,40 @@ export function transformValues(values) {
   )
 }
 
-export function getValidations(format, actionType, inventory) {
+/**
+ * helper funcs
+ * Check if partner has defined this strategy, then see in consumable
+ */
+export const withExpirationDate = (partner, consumable) => {
+  return (
+    strategyRequireExpirationDate(partner?.inventoryStrategy) ||
+    (!!consumable && (strategyRequireExpirationDate(consumable.strategy) || consumable.showExpirationDate === 1))
+  )
+}
+export const withLotNumber = (partner, consumable) => {
+  return (
+    strategyRequireLot(partner?.inventoryStrategy) ||
+    (!!consumable && (strategyRequireLot(consumable.strategy) || consumable.showLot === 1))
+  )
+}
+
+export function getValidations(format, actionType, { partner, inventory, allSites }) {
+  // const uiAdd = [types.SHOW_NEW_INVENTORY_DIALOG, types.SHOW_ADD_INVENTORY_DIALOG].includes(actionType)
+  const uiTransfer = actionType === types.SHOW_TRANSFER_INVENTORY_DIALOG
+  const uiRemove = actionType === types.SHOW_REMOVE_INVENTORY_DIALOG
+
   let schema = object({
     quantity: number()
       .typeError(format(validationMessages.quantityNumber))
       .required(format(validationMessages.quantityRequired))
       .positive(format(validationMessages.quantityPositive))
-      .integer(format(validationMessages.quantityInteger)),
+      .integer(format(validationMessages.quantityInteger))
+      .when('consumable', {
+        is: () => {
+          return !!inventory && (uiTransfer || uiRemove)
+        },
+        then: sch => sch.max(inventory.quantityOnHand, format(validationMessages.quantityNotMoreThanOnHand)),
+      }),
     dateAdjusted: date().max(new Date(), format(validationMessages.dateAdjustedGreaterThanToday)),
   })
 
@@ -61,26 +88,47 @@ export function getValidations(format, actionType, inventory) {
     schema = schema.shape({
       expiresOn: date()
         .nullable()
-        .when('consumable', {
-          is: () => {
-            // return hasExpireDate(consumable?.strategy || inventory?.strategy)
-            return true
-          },
-          then: sch => {
-            let validation = sch.required(format(validationMessages.expiryDateRequired))
-            if (![types.SHOW_RECEIVE_INVENTORY_DIALOG, types.SHOW_TRANSFER_INVENTORY_DIALOG].includes(actionType)) {
-              validation = validation.min(new Date(), format(validationMessages.expiryDateAfterToday))
+        .when(['consumable'], {
+          /**
+           * require
+           */
+          is: consumable => withExpirationDate(partner, consumable),
+          then: sch => sch.required(format(validationMessages.expiryDateRequired)),
+        })
+        .when(['toSiteId'], {
+          /**
+           * can Remove expired cartridges only from Warehouse
+           */
+          is: toSiteId => {
+            if (uiRemove) {
+              const site = allSites.find(it => it.id === +toSiteId)
+              const isWarehouse = site?.siteType === 'warehouse'
+              // do return `false` only for Warehouse
+              return !isWarehouse
             }
-            return validation
+            return false
           },
+          then: sch => sch.min(new Date(), format(validationMessages.expiryDateAfterToday)),
+        })
+        .when(['toSiteId'], {
+          /**
+           * can Transfer expired cartridges only to Warehouse
+           */
+          is: toSiteId => {
+            if (uiTransfer) {
+              const site = allSites.find(it => it.id === +toSiteId)
+              const isWarehouse = site?.siteType === 'warehouse'
+              // do return `false` only for Warehouse
+              return !isWarehouse
+            }
+            return false
+          },
+          then: sch => sch.min(new Date(), format(validationMessages.expiryDateAfterToday)),
         }),
       lotNumber: string()
         .nullable()
         .when('consumable', {
-          is: () => {
-            // return hasLot(consumable?.strategy || inventory?.strategy)
-            return true
-          },
+          is: consumable => withLotNumber(partner, consumable),
           then: sch => sch.required(format(validationMessages.lotNumberRequired)),
         }),
     })
@@ -146,8 +194,8 @@ export function transformInitialValue(inventory, actionType) {
           : ![types.SHOW_ADD_INVENTORY_DIALOG, types.SHOW_NEW_INVENTORY_DIALOG].includes(actionType)
           ? inventory.siteId
           : undefined,
-      lotNumber: inventory?.lotNumber,
-      expiresOn: inventory?.expiresOn,
+      lotNumber: inventory?.lotNumber || '',
+      expiresOn: inventory?.expiresOn || null,
       consumable: {
         id: inventory.consumableId,
         name: inventory.consumableName,
