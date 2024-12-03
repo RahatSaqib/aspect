@@ -245,7 +245,7 @@ const messages = defineMessages({
   reportTBWorkloadSummaryDescription: {
     id: 'pages.ReportIndex.reportTBWorkloadSummaryDescription',
     defaultMessage:
-      'Summary of TB Workload (MTB RIf and Ultra only for last 5 years) grouped by month, quarter and year for all regions.',
+      'Summary of TB Workload grouped by month, quarter and year for all regions.',
   },
   xdrDevicesSummary: {
     id: 'pages.ReportIndex.xdrDevicesSummary',
