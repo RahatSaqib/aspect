@@ -1,5 +1,5 @@
 const { getConstraints } = require('../auth/constraints')
-const { getInventoryBySitesAndConsumable, getInventoryByLot } = require('./common/db')
+const { getInventoryBySitesAndConsumable, getInventoryByLot, appendSiteConsumables } = require('./common/db')
 const { splitCsvWithTrim } = require('../shared/string')
 const { DAYS_STOCK_LEFT_RANGES } = require('../shared/constants')
 
@@ -17,6 +17,11 @@ module.exports = async function (request) {
   } else {
     ;({ total, data } = await listInventoryBySiteAndConsumable(request, dataConstraints))
   }
+  /**
+   * for each site - get array of consumableId's from SiteConsumable table
+   */
+  data = await appendSiteConsumables(data)
+
   return { ok: true, total, length: data.length, data }
 }
 
