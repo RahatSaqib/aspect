@@ -37,10 +37,7 @@ const Consumables = ({ consumableIds, siteId, disabledSites }) => {
     <>
       <Box display="flex" alignItems="center">
         <Typography>{formatMessage(messages.consumablesApplicableForThisSite)}</Typography>
-        <AspectTooltip
-          showHelpIcon
-          title={formatMessage(messages.consumablesApplicableForThisSiteTooltip)}
-        />
+        <AspectTooltip showHelpIcon title={formatMessage(messages.consumablesApplicableForThisSiteTooltip)} />
       </Box>
 
       <CheckBoxList

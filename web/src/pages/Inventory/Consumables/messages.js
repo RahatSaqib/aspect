@@ -7,6 +7,7 @@ export default defineMessages({
   },
   consumablesApplicableForThisSiteTooltip: {
     id: 'pages.consumables.consumablesApplicableForThisSiteTooltip',
-    defaultMessage: 'Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions',
+    defaultMessage:
+      'Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions',
   },
 })
