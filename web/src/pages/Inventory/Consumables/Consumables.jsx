@@ -39,7 +39,7 @@ const Consumables = ({ consumableIds, siteId, disabledSites }) => {
         <Typography>{formatMessage(messages.consumablesApplicableForThisSite)}</Typography>
         <AspectTooltip
           showHelpIcon
-          title="Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions"
+          title={formatMessage(messages.consumablesApplicableForThisSiteTooltip)}
         />
       </Box>
 
