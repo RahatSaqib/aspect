@@ -1,19 +1,22 @@
 import React from 'react'
 import { Box, Card, CardContent, CircularProgress, Grid } from '@mui/material'
+import { useIntl } from 'react-intl'
 import { useParams } from 'react-router-dom'
 import { DetailHeader } from '../../../cleanComponents'
 import { useConsumableById } from '../../../hooks/inventory/useConsumable'
 import { InventoryForm } from './InventoryForm/InventoryForm'
 import { InventoryTabs } from './InventoryTabs'
+import messages from './messages'
 
 export const InventoryDetails = () => {
   const { cartridgeId } = useParams()
+  const { formatMessage } = useIntl()
   const { data, isLoading } = useConsumableById(cartridgeId)
   return isLoading ? (
     <CircularProgress />
   ) : (
     <>
-      <DetailHeader name="Inventory Detail" />
+      <DetailHeader name={formatMessage(messages.inventoryDetail)} />
       <Box component="main" sx={{ pr: 3, width: '100%' }}>
         <Grid container spacing={3}>
           {/* Form Section */}

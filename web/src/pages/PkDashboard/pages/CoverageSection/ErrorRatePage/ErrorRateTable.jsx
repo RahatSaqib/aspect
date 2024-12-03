@@ -4,8 +4,10 @@ import ExpandMore from '@mui/icons-material/ExpandMore'
 import { Box, Table, TableBody, TableCell, TableHead, TableRow, TableSortLabel } from '@mui/material'
 import { makeStyles } from '@mui/styles'
 import orderBy from 'lodash/orderBy'
+import { useIntl } from 'react-intl'
 import { addDepth } from '../../../../../utils/utils/table'
 import { makeNestedData } from './helpers'
+import messages from './messages'
 
 const border = '1px solid rgba(224, 224, 224, 1)'
 
@@ -54,6 +56,8 @@ const Row = ({ row, isChild, index }) => {
 
 const defaultValue = 'No Location'
 export const ErrorRateTable = ({ items, showTotal }) => {
+  const { formatMessage } = useIntl()
+
   const [sort, setSort] = useState({ name: 'name', order: 'asc' })
   const { rootNodes: rows, totalSum } = useMemo(
     () => addDepth(makeNestedData(items ?? [], ['stateName', 'lgaName', 'siteName', 'name'], defaultValue)),
@@ -77,12 +81,12 @@ export const ErrorRateTable = ({ items, showTotal }) => {
   )
   const classes = useStyles()
   const topHeaders = [
-    { id: 'name', title: 'Name', colSpan: 1 },
-    { id: 'numberOfModules', title: 'Total Modules', colSpan: 1 },
-    { id: 'cntMtbResults', title: 'Total Tests', colSpan: 1 },
-    { id: 'cntMtbError', title: 'Errors', colSpan: 2 },
-    { id: 'cntMtbInvalid', title: 'Invalid', colSpan: 2 },
-    { id: 'cntMtbNoResult', title: 'No Result', colSpan: 2 },
+    { id: 'name', title: formatMessage(messages.name), colSpan: 1 },
+    { id: 'numberOfModules', title: formatMessage(messages.totalModules), colSpan: 1 },
+    { id: 'cntMtbResults', title: formatMessage(messages.totalTests), colSpan: 1 },
+    { id: 'cntMtbError', title: formatMessage(messages.errors), colSpan: 2 },
+    { id: 'cntMtbInvalid', title: formatMessage(messages.invalid), colSpan: 2 },
+    { id: 'cntMtbNoResult', title: formatMessage(messages.noResult), colSpan: 2 },
   ]
   return (
     <SortContext.Provider value={{ renderRow }}>

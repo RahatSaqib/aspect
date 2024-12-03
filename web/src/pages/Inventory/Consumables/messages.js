@@ -1,0 +1,13 @@
+import { defineMessages } from 'react-intl'
+
+export default defineMessages({
+  consumablesApplicableForThisSite: {
+    id: 'pages.consumables.consumablesApplicableForThisSite',
+    defaultMessage: 'Consumables applicable for this site',
+  },
+  consumablesApplicableForThisSiteTooltip: {
+    id: 'pages.consumables.consumablesApplicableForThisSiteTooltip',
+    defaultMessage:
+      'Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions',
+  },
+})
