@@ -217,7 +217,7 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.deviceUtilizationPerDayReport',
     defaultMessage: 'Device Utilization per Day',
   },
-  deviceActivityPercentReport_description: {
+  deviceUtilizationPerDayDescription: {
     id: 'pages.ReportIndex.deviceActivityPercentReport_description',
     defaultMessage:
       'This report shows the daily utilization of devices in the selected time period per day. The first sheet displays raw numbers, while the second sheet shows the utilization rate based on the device capacity',
@@ -226,7 +226,7 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.reportCustomFieldsCompletion',
     defaultMessage: 'Percent of custom fields completion for the MTB form',
   },
-  reportCustomFieldsCompletion_description: {
+  reportCustomFieldsCompletionDescription: {
     id: 'pages.ReportIndex.reportCustomFieldsCompletion_description',
     defaultMessage: 'Lists one row per site and shows the percentage of completion of each MTB custom field',
   },
@@ -234,7 +234,7 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.inventoryLog',
     defaultMessage: 'Inventory Log',
   },
-  inventoryLog_description: {
+  inventoryLogDescription: {
     id: 'pages.ReportIndex.inventoryLog_description',
     defaultMessage: 'Lists all the inventory transactions in the filters scope',
   },
@@ -242,15 +242,15 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.reportTBWorkloadSummary',
     defaultMessage: 'Report of TB Workload Summary',
   },
-  reportTBWorkloadSummary_description: {
-    id: 'pages.ReportIndex.reportTBWorkloadSummary_description',
-    defaultMessage: 'Summary of TB Workload grouped by month, quarter and year for all regions',
+  reportTBWorkloadSummaryDescription: {
+    id: 'pages.ReportIndex.reportTBWorkloadSummaryDescription',
+    defaultMessage: 'Summary of TB Workload grouped by month, quarter and year for all regions.',
   },
   xdrDevicesSummary: {
     id: 'pages.ReportIndex.xdrDevicesSummary',
     defaultMessage: 'Summary table for XDR devices',
   },
-  xdrDevicesSummary_description: {
+  xdrDevicesSummaryDescription: {
     id: 'pages.ReportIndex.xdrDevicesSummary_description',
     defaultMessage: 'Lists sites/devices grouped by province showing main XDR parameters',
   },
@@ -258,7 +258,7 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.moduleActivityReport',
     defaultMessage: 'Module Activity Report',
   },
-  moduleActivityReport_description: {
+  moduleActivityReport_Description: {
     id: 'pages.ReportIndex.moduleActivityReport_description',
     defaultMessage: 'Shows devices with one or more inactive modules',
   },
@@ -275,7 +275,7 @@ const messages = defineMessages({
     id: 'pages.ReportIndex.usageStatistics',
     defaultMessage: 'Usage Statistics Report',
   },
-  usageStatistics_description: {
+  usageStatistics_Description: {
     id: 'pages.ReportIndex.usageStatistics_description',
     defaultMessage: 'Shows stats about the use of the system.',
   },
@@ -320,6 +320,14 @@ const messages = defineMessages({
   unreconciled_inventory_report: {
     id: 'pages.ReportIndex.unreconciled_inventory_report',
     defaultMessage: 'List of Unreconciled Inventory',
+  },
+  deviceSummaryReportDescription: {
+    id: 'pages.ReportIndex.deviceSummaryReportDescription',
+    defaultMessage: 'A list of all devices in the system and aggregated test results per device.',
+  },
+  missing_cartridges_report: {
+    id: 'pages.ReportIndex.missing_cartridges_report',
+    defaultMessage: 'List of Missing Lots',
   },
   unreconciled_inventory_report_description: {
     id: 'pages.ReportIndex.unreconciled_inventory_report_description',
