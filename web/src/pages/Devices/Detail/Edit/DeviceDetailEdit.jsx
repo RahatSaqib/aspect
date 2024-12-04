@@ -119,7 +119,7 @@ const DeviceDetailEdit = ({ device, deviceTags, editable }) => {
               error={error?.dailyTestCapacity}
               value={editDevice.dailyTestCapacity}
               onChange={({ target: { value } }) => {
-                setError(error => ({ ...error, dailyTestCapacity: Number(value) < 1 || Number(value) > 256 }))
+                setError(error => ({ ...error, dailyTestCapacity: Number(value) < 1 || Number(value) > 9999 }))
                 setEditDevice({ ...editDevice, dailyTestCapacity: value ? parseInt(value, 10) : '' })
               }}
               InputLabelProps={{
