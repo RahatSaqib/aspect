@@ -38,21 +38,11 @@ async function getInventoryStrategy({ partnerId, deviceId, userId }) {
   const inventoryStrategyKey = `partnerId-${partnerId || 0}_deviceId-${deviceId || 0}`
   let inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
   if (!inventoryStrategy) {
-    // TODO: Remove this part if we will use single strategy for all countries
-    // const partnerPluginName = await getPartnerPluginName({ partnerId })
-    // const deviceTypePluginName = await getDeviceTypePluginName(deviceId)
-    // const { loadPlugin } = require('../../plugin/loadPlugin')
-    // const specificInventoryStrategy = await loadPlugin(partnerPluginName, deviceTypePluginName, 'inventoryStrategy')
     cachedInventoryStrategies[inventoryStrategyKey] = {
       /**
        * first add all exported items for default strategy...
        */
       ...defaultInventoryStrategy,
-      /**
-       * ...and then overwrite those which are defined in
-       * partner or deviceType specific strategy
-       */
-      // ...specificInventoryStrategy,
     }
     inventoryStrategy = cachedInventoryStrategies[inventoryStrategyKey]
     inventoryStrategy.setUserId(userId)
