@@ -1,7 +1,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: \n"
-"POT-Creation-Date: 2024-12-03T04:30:39.539Z\n"
+"POT-Creation-Date: 2024-12-04T13:17:19.809Z\n"
 "PO-Revision-Date: \n"
 "Last-Translator: \n"
 "Language-Team: \n"
@@ -26,7 +26,7 @@ msgstr "módulos \"Não utilizar\""
 #. "No Stock" Inventory Report
 #: extracted_strings.json
 msgid "\"No Stock\" Inventory Report"
-msgstr "\"Relatório de Inventário \"Sem stock"
+msgstr "\"Relatório de inventário \"Sem stock"
 
 #. [pages.DeviceList.thisMonth]
 #. defaultMessage is:
@@ -61,7 +61,7 @@ msgstr "# Número de locais testados Ensaio MTB/XDR"
 #. (New quantity on hand: {nextQuantity} {unitShortName})
 #: extracted_strings.json
 msgid "(New quantity on hand: {nextQuantity} {unitShortName})"
-msgstr "(Nova quantidade em mão: {nextQuantity} {unitShortName})"
+msgstr "(Nova quantidade disponível: {nextQuantity} {unitShortName})"
 
 #. [pages.excluded.InventoryItemsList.inTransitFromSiteName]
 #. defaultMessage is:
@@ -92,7 +92,7 @@ msgstr "* em trânsito a partir de {inTransitFromSiteName}"
 #. ...{contacts, plural, one {# more {name}} other {# more {name}s} }
 #: extracted_strings.json
 msgid "...{contacts, plural, one {# more {name}} other {# more {name}s} }"
-msgstr "...{contactos, plural, one {# more {name}} other {# more {name}s} }"
+msgstr "...{contactos, plural, um {# mais {name}} outro {# mais {name}s} }"
 
 #. [filter.btnGroup.daysStockLeft.upTo14]
 #. defaultMessage is:
@@ -183,6 +183,16 @@ msgid ""
 msgstr ""
 "Uma lista de todos os módulos do dispositivo GeneXpert marcados como 'não "
 "usar'. Inclui nome do dispositivo, serial do módulo."
+
+#. [pages.ReportIndex.deviceSummaryReportDescription]
+#. defaultMessage is:
+#. A list of all devices in the system and aggregated test results per device.
+#: extracted_strings.json
+msgid ""
+"A list of all devices in the system and aggregated test results per device."
+msgstr ""
+"Uma lista de todos os dispositivos no sistema e resultados de testes "
+"agregados por dispositivo."
 
 #. [pages.UpdateLoginDetails.usernameRequired]
 #. defaultMessage is:
@@ -1949,6 +1959,13 @@ msgstr "Coletado em"
 msgid "Collection of Results"
 msgstr "Coleção de resultados"
 
+#. [p.PkDashboard.combinedGX6CGX10CDevices]
+#. defaultMessage is:
+#. Combined GX-6C/GX-10C Devices
+#: extracted_strings.json
+msgid "Combined GX-6C/GX-10C Devices"
+msgstr "Dispositivos GX-6C/GX-10C combinados"
+
 #. [filter.AssaySelectField.assayCommCareGatesRDT]
 #. defaultMessage is:
 #. CommCare Gates RDT
@@ -2118,6 +2135,16 @@ msgstr "Consumíveis"
 msgid "Consumables applicable for the site"
 msgstr "Consumíveis aplicáveis ao sítio"
 
+#. [pages.consumables.consumablesApplicableForThisSite]
+#. defaultMessage is:
+#. Consumables applicable for this site
+#: extracted_strings.json
+msgid "Consumables applicable for this site"
+msgstr "Consumíveis aplicáveis a este sítio"
+
+#. [p.PkDashboard.consumptionRate]
+#. defaultMessage is:
+#. Consumption Rate
 #. [pages.InventoryTabs.New.consumpationRate]
 #. defaultMessage is:
 #. Consumption Rate
@@ -2595,6 +2622,13 @@ msgstr "Status atual da rede"
 msgid "Current Password"
 msgstr "Senha Atual"
 
+#. [p.PkDashboard.currentQty]
+#. defaultMessage is:
+#. Current Qty.
+#: extracted_strings.json
+msgid "Current Qty."
+msgstr "Qtd. atual."
+
 #. [p.PkDashboard.RRCurrent]
 #. defaultMessage is:
 #. Current RRTB Diagnosis
@@ -2933,6 +2967,13 @@ msgstr "Dia(s) anterior(es) ao final do mês"
 #: extracted_strings.json
 msgid "Days"
 msgstr "Dias"
+
+#. [p.PkDashboard.daysLeft]
+#. defaultMessage is:
+#. Days Left
+#: extracted_strings.json
+msgid "Days Left"
+msgstr "Dias restantes"
 
 #. [filter.popover.daysStockLeft]
 #. defaultMessage is:
@@ -4043,6 +4084,13 @@ msgstr "Envio de erro Redefinir senha E-mail"
 msgid "Error: Date Selection Required to Download Report"
 msgstr "Erro: Seleção de data necessária para descarregar o relatório"
 
+#. [pages.ErrorRate.errors]
+#. defaultMessage is:
+#. Errors
+#: extracted_strings.json
+msgid "Errors"
+msgstr "Erros"
+
 #. [components.shared.everyDay]
 #. defaultMessage is:
 #. Every Day(s)
@@ -4683,6 +4731,41 @@ msgstr "GP Não Detectado - NP Detectado"
 #: extracted_strings.json
 msgid "GP Not Detected - NP Not Detected"
 msgstr "GP Não Detectado - NP Não Detectado"
+
+#. [p.PkDashboard.gxSites]
+#. defaultMessage is:
+#. GX Sites
+#: extracted_strings.json
+msgid "GX Sites"
+msgstr "Sites GX"
+
+#. [p.PkDashboard.gx10CDevices]
+#. defaultMessage is:
+#. GX-10C Devices
+#: extracted_strings.json
+msgid "GX-10C Devices"
+msgstr "Dispositivos GX-10C"
+
+#. [p.PkDashboard.gx10CModules]
+#. defaultMessage is:
+#. GX-10C Modules
+#: extracted_strings.json
+msgid "GX-10C Modules"
+msgstr "Módulos GX-10C"
+
+#. [p.PkDashboard.gx6CDevices]
+#. defaultMessage is:
+#. GX-6C Devices
+#: extracted_strings.json
+msgid "GX-6C Devices"
+msgstr "Dispositivos GX-6C"
+
+#. [p.PkDashboard.gx6CModules]
+#. defaultMessage is:
+#. GX-6C Modules
+#: extracted_strings.json
+msgid "GX-6C Modules"
+msgstr "Módulos GX-6C"
 
 #. [filter.sampleType.sampleTypeGastricLavage]
 #. defaultMessage is:
@@ -5831,6 +5914,9 @@ msgstr "Permissões insuficientes"
 #. [legends.Unknown.resultCategoryInvalid]
 #. defaultMessage is:
 #. Invalid
+#. [pages.ErrorRate.invalid]
+#. defaultMessage is:
+#. Invalid
 #: extracted_strings.json
 msgid "Invalid"
 msgstr "Inválido"
@@ -5897,6 +5983,13 @@ msgstr "URL de webhook inválido"
 #: extracted_strings.json
 msgid "Inventory"
 msgstr "Inventário"
+
+#. [pages.Consumable.New.inventoryDetail]
+#. defaultMessage is:
+#. Inventory Detail
+#: extracted_strings.json
+msgid "Inventory Detail"
+msgstr "Detalhe do inventário"
 
 #. [pages.Consumable.New.inventoryDetails]
 #. defaultMessage is:
@@ -6308,6 +6401,13 @@ msgstr "Último"
 msgid "Last 30 Days"
 msgstr "Último 30 dias"
 
+#. [p.PkDashboard.last6Months]
+#. defaultMessage is:
+#. Last 6 Months
+#: extracted_strings.json
+msgid "Last 6 Months"
+msgstr "Últimos 6 meses"
+
 #. [pages.dateRangeSelector.last7Days]
 #. defaultMessage is:
 #. Last 7 Days
@@ -6464,6 +6564,13 @@ msgstr "Licença"
 msgid "Lipid Panel"
 msgstr "Painel de lipídios"
 
+#. [pages.ReportIndex.missing_cartridges_report]
+#. defaultMessage is:
+#. List of Missing Lots
+#: extracted_strings.json
+msgid "List of Missing Lots"
+msgstr "Lista de Lotes Perdidos"
+
 #. [pages.ReportIndex.unreconciled_inventory_report]
 #. defaultMessage is:
 #. List of Unreconciled Inventory
@@ -6594,6 +6701,13 @@ msgstr "Localização"
 #: extracted_strings.json
 msgid "Location Tracking"
 msgstr "Rastreio de localização"
+
+#. [pages.InventoryTabs.New.locationsWithThisItem]
+#. defaultMessage is:
+#. Locations with this Item
+#: extracted_strings.json
+msgid "Locations with this Item"
+msgstr "Locais com este item"
 
 #. [page.contacts.person.locked]
 #. defaultMessage is:
@@ -7675,6 +7789,9 @@ msgstr "NTP"
 #. [pages.admin.name]
 #. defaultMessage is:
 #. Name
+#. [p.PkDashboard.utilizationName]
+#. defaultMessage is:
+#. Name
 #. [pages.NotificationDetail.fieldName]
 #. defaultMessage is:
 #. Name
@@ -7691,6 +7808,9 @@ msgstr "NTP"
 #. defaultMessage is:
 #. Name
 #. [pages.DeviceDetailEdit.name]
+#. defaultMessage is:
+#. Name
+#. [pages.ErrorRate.name]
 #. defaultMessage is:
 #. Name
 #: extracted_strings.json
@@ -8004,6 +8124,9 @@ msgstr "Sem energia"
 #. defaultMessage is:
 #. No Result
 #. [pages.NotificationDetail.type.NoResult]
+#. defaultMessage is:
+#. No Result
+#. [pages.ErrorRate.noResult]
 #. defaultMessage is:
 #. No Result
 #: extracted_strings.json
@@ -9505,6 +9628,9 @@ msgid "Province"
 msgstr "Região"
 
 #. [pages.common.state_PK]
+#. defaultMessage is:
+#. Province/Region
+#. [p.PkDashboard.provinceRegion]
 #. defaultMessage is:
 #. Province/Region
 #: extracted_strings.json
@@ -11171,6 +11297,13 @@ msgstr "Selecione a Semana..."
 msgid "Select Year..."
 msgstr "Selecione o ano..."
 
+#. [pages.InventoryTabs.siteList.selectAllLocations]
+#. defaultMessage is:
+#. Select all Locations to track inventory for this item
+#: extracted_strings.json
+msgid "Select all Locations to track inventory for this item"
+msgstr "Selecionar todos os locais para acompanhar o inventário deste item"
+
 #. [filter.popover.selectDeviceApproval]
 #. defaultMessage is:
 #. Select approval status...
@@ -12070,6 +12203,17 @@ msgstr "A mensagem Sms não deve ter mais de 2000 caracteres"
 msgid "Software Type"
 msgstr "Tipo de software"
 
+#. [pages.consumables.consumablesApplicableForThisSiteTooltip]
+#. defaultMessage is:
+#. Some consumables may appear unavailable for selection change as the site has inventory or unreconciled transactions
+#: extracted_strings.json
+msgid ""
+"Some consumables may appear unavailable for selection change as the site has "
+"inventory or unreconciled transactions"
+msgstr ""
+"Alguns consumíveis podem parecer indisponíveis para alteração da seleção, "
+"uma vez que o local tem inventário ou transacções não reconciliadas"
+
 #. [pages.InventoryTabs.New.trackByLocationTooltip]
 #. defaultMessage is:
 #. Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item
@@ -12281,15 +12425,15 @@ msgstr "Enviar"
 msgid "Success"
 msgstr "Sucesso"
 
-#. [pages.ReportIndex.reportTBWorkloadSummary_description]
+#. [pages.ReportIndex.reportTBWorkloadSummaryDescription]
 #. defaultMessage is:
-#. Summary of TB Workload grouped by month, quarter and year for all regions
+#. Summary of TB Workload grouped by month, quarter and year for all regions.
 #: extracted_strings.json
 msgid ""
-"Summary of TB Workload grouped by month, quarter and year for all regions"
+"Summary of TB Workload grouped by month, quarter and year for all regions."
 msgstr ""
-"Resumo da carga de trabalho de TB agrupada por mês, trimestre e ano para "
-"todas as regiões"
+"Resumo do volume de trabalho em matéria de tuberculose agrupado por mês, "
+"trimestre e ano para todas as regiões."
 
 #. [pages.ReportIndex.xdrDevicesSummary]
 #. defaultMessage is:
@@ -13679,6 +13823,16 @@ msgstr "Total de Erros"
 msgid "Total MTB detected and MTB Trace detected"
 msgstr "Total de MTB detectados e vestígios de MTB detectados"
 
+#. [p.PkDashboard.utilizationTotalModules]
+#. defaultMessage is:
+#. Total Modules
+#. [pages.ErrorRate.totalModules]
+#. defaultMessage is:
+#. Total Modules
+#: extracted_strings.json
+msgid "Total Modules"
+msgstr "Total de módulos"
+
 #. [pages.inventoryList.totalOnHand]
 #. defaultMessage is:
 #. Total On Hand
@@ -13721,7 +13875,13 @@ msgstr ""
 #. [legends.Unknown.TotalTests]
 #. defaultMessage is:
 #. Total Tests
+#. [p.PkDashboard.utilizationTotalTests]
+#. defaultMessage is:
+#. Total Tests
 #. [pages.workload.totalTests]
+#. defaultMessage is:
+#. Total Tests
+#. [pages.ErrorRate.totalTests]
 #. defaultMessage is:
 #. Total Tests
 #. [pages.XDR.cntAll]
@@ -14156,6 +14316,13 @@ msgstr "Mistura de maiúsculas e minúsculas"
 msgid "Usage Statistics Report"
 msgstr "Relatório de Estatísticas de Utilização"
 
+#. [p.PkDashboard.used]
+#. defaultMessage is:
+#. Used
+#: extracted_strings.json
+msgid "Used"
+msgstr "Usado"
+
 #. [page.contacts.person.userLockedOut]
 #. defaultMessage is:
 #. User is locked?
@@ -14214,6 +14381,13 @@ msgid ""
 msgstr ""
 "Taxa de utilização: (Total de testes no período selecionado * 100) / "
 "(Capacidade diária do dispositivo * Dias úteis no período selecionado)"
+
+#. [p.PkDashboard.utilizationPercent]
+#. defaultMessage is:
+#. Utilization%
+#: extracted_strings.json
+msgid "Utilization%"
+msgstr "Utilização%"
 
 #. [pages.Status.clinicalIndicatorsVL.title]
 #. defaultMessage is:
@@ -15409,7 +15583,7 @@ msgstr "o status do fluxo de trabalho é {workflowStatusName}"
 #. {count} of {total}
 #: extracted_strings.json
 msgid "{count} of {total}"
-msgstr "de {count} de {total}"
+msgstr "{count} de {total}"
 
 #. [pages.DeviceList.availabilityOfDays]
 #. defaultMessage is:
@@ -15559,9 +15733,6 @@ msgstr "{unit} desde a semana passada"
 #: extracted_strings.json
 msgid "{unit} total calibrations"
 msgstr "{unit} calibrações totais"
-
-#~ msgid "List of Missing Lots"
-#~ msgstr "Lista de Lotes Perdidos"
 
 #~ msgid "Assay for MTB Rif Ultra"
 #~ msgstr "Ensaio para MTB Rif Ultra"

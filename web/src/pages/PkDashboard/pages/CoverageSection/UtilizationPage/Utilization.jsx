@@ -18,12 +18,7 @@ import messages from '../../../PkDashboard.Messages'
 
 const now = new Date()
 const startOfYearUTC = new Date(Date.UTC(now.getFullYear()))
-const columns = [
-  { name: 'Name', prop: 'name' },
-  { name: 'Total Modules', prop: 'modules' },
-  { name: 'Total Tests', prop: 'cnt' },
-  { name: 'Utilization%', prop: 'rate' },
-]
+
 const nationalFilters = {
   minDate: subYears(startOfYearUTC, 5),
   maxDate: now,
@@ -35,6 +30,12 @@ const UtilizationPage = () => {
     minDate: startOfDay(subtractDays(now, 30)),
     maxDate: endOfDay(now),
   })
+  const columns = [
+    { key: 'Name', name: formatMessage(messages.utilizationName), prop: 'name' },
+    { key: 'Total Modules', name: formatMessage(messages.utilizationTotalModules), prop: 'modules' },
+    { key: 'Total Tests', name: formatMessage(messages.utilizationTotalTests), prop: 'cnt' },
+    { key: 'Utilization%', name: formatMessage(messages.utilizationPercent), prop: 'rate' },
+  ]
 
   const { isLoadingTable, tableData } = useUtilizationTable({ ...filter, tableData: 'tableData' })
 
