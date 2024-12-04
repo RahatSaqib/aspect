@@ -18,6 +18,10 @@ export default defineMessages({
     defaultMessage:
       'Some sites may appear unavailable for selection change as they have inventory or unreconciled transactions for the selected Inventory item',
   },
+  selectAllLocations: {
+    id: 'pages.InventoryTabs.siteList.selectAllLocations',
+    defaultMessage: 'Select all Locations to track inventory for this item',
+  },
   consumpationRate: {
     id: 'pages.InventoryTabs.New.consumpationRate',
     defaultMessage: 'Consumption Rate',
@@ -29,5 +33,9 @@ export default defineMessages({
   definitionText: {
     id: 'pages.InventoryTabs.New.definitionText',
     defaultMessage: 'Define which Assay consume this inventory item',
+  },
+  locationsWithThisItem: {
+    id: 'pages.InventoryTabs.New.locationsWithThisItem',
+    defaultMessage: 'Locations with this Item',
   },
 })

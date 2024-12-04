@@ -40,30 +40,35 @@ const InventoryOverviewPage = () => {
   )
 
   const columns = [
-    { name: 'Name', prop: 'name' },
+    { key: 'Name', name: formatMessage(messages.utilizationName), prop: 'name' },
     {
-      name: 'Current Qty.',
+      key: 'Current Qty.',
+      name: formatMessage(messages.currentQty),
       prop: 'quantity',
       tooltip: 'Its the current quantity in hand, including the expired quantity.',
     },
     {
-      name: 'Last 6 Months',
+      key: 'Last 6 Months',
+      name: formatMessage(messages.last6Months),
       prop: 'usedLastSixMonths',
       tooltip:
         'Its the total cartridges consumed in last 6 months, irrespective of the period selected in filter option',
     },
     {
-      name: 'Used',
+      key: 'Used',
+      name: formatMessage(messages.used),
       prop: 'usedInDateRange',
       tooltip: 'Its the total cartidges consumed in the date range filter selected',
     },
     {
-      name: 'Consumption Rate',
+      key: 'Consumption Rate',
+      name: formatMessage(messages.consumptionRate),
       prop: 'dailyConsumptionRate',
       tooltip: 'Its the average daily consumption of the specific cartridge considering the date range selected',
     },
     {
-      name: 'Days Left',
+      key: 'Days Left',
+      name: formatMessage(messages.daysLeft),
       prop: 'daysOfInventoryLeft',
       tooltip:
         'The number of days left with available and not-expired cartridge and the daily consumption rate of the cartridges',
